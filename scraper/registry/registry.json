@@ -1,0 +1,337 @@
+{
+  "_comment": "Dealer-site registry: the denominator for the 100%-coverage claim. One row per crawlable site (a dealer group site covers many rooftops). Grown by OEM-locator sweeps + state rolls; this seed holds the sites validated by hand so far.",
+  "sites": [
+    {
+      "domain": "hendrickcars.com",
+      "name": "Hendrick Automotive Group",
+      "kind": "group",
+      "platform": "dealer.com",
+      "robots": "permissive",
+      "status": "working",
+      "notes": "Group site, ~90 rooftops. SRP JSON-LD arrays + VDP offer.url. Richest source in prototype runs."
+    },
+    {
+      "domain": "criswellauto.com",
+      "name": "Criswell Auto",
+      "kind": "group",
+      "platform": "dealerinspire",
+      "robots": "permissive",
+      "status": "working",
+      "notes": "Vehicle JSON-LD on VDPs; sitemap lists VDP URLs."
+    },
+    {
+      "domain": "fitzmall.com",
+      "name": "Fitzgerald Auto Mall",
+      "kind": "group",
+      "platform": "unknown",
+      "robots": "permissive",
+      "status": "working",
+      "notes": "Low EV density; JSON-LD present."
+    },
+    {
+      "domain": "longotoyota.com",
+      "name": "Longo Toyota",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "crawl-delay 10",
+      "status": "working",
+      "notes": "No VDPs in sitemap; SRP ItemList bridge + pagination required. Used inventory is Mirai-heavy (FCEV, correctly excluded).",
+      "location": {
+        "city": "El Monte",
+        "state": "CA",
+        "zip": "91731"
+      }
+    },
+    {
+      "domain": "worldhyundai.com",
+      "name": "World Hyundai Matteson",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "site-broken",
+      "notes": "Dealer.com site; homepage fine but ALL inventory paths 404 \u2014 verified in a real browser too (not bot-gating). Recheck later; possibly mid-migration."
+    },
+    {
+      "domain": "dublinchevrolet.com",
+      "name": "Dublin Chevrolet",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "permissive",
+      "status": "working",
+      "notes": "26 EVs via ItemList bridge on first crawl; VDP JSON-LD lacks odometer \u2014 DealerOn platform extractor is the next gap.",
+      "location": {
+        "city": "Dublin",
+        "state": "CA",
+        "zip": "94568"
+      }
+    },
+    {
+      "domain": "classicchevrolet.com",
+      "name": "Classic Chevrolet (Grapevine TX)",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "blocks-bot-ua",
+      "status": "blocked",
+      "notes": "403 to identified bot UA. Policy question, not a technical one \u2014 do not evade."
+    },
+    {
+      "domain": "kearnymesahyundai.com",
+      "name": "Kearny Mesa Hyundai",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "blocks-bot-ua",
+      "status": "blocked",
+      "notes": "403 to identified bot UA."
+    },
+    {
+      "domain": "onetoyota.com",
+      "name": "One Toyota of Oakland",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass (cached query); brand: Toyota"
+    },
+    {
+      "domain": "acuraofpleasanton.com",
+      "name": "Acura of Pleasanton",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass (cached query); brand: Acura"
+    },
+    {
+      "domain": "dublinnissan.com",
+      "name": "Dublin Nissan",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "2 EVs first crawl (DealerOn)",
+      "location": {
+        "city": "Dublin",
+        "state": "CA",
+        "zip": "94568"
+      }
+    },
+    {
+      "domain": "dublingmc.com",
+      "name": "Dublin Buick GMC",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "6 EVs first crawl (DealerOn)",
+      "location": {
+        "city": "Dublin",
+        "state": "CA",
+        "zip": "94568"
+      }
+    },
+    {
+      "domain": "lehmers.com",
+      "name": "Lehmer's GMC & Buick",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Dealer.com fingerprint but 0 vehicles in 30 pages \u2014 discovery gap",
+      "location": {
+        "city": "Concord",
+        "state": "CA",
+        "zip": "94520"
+      }
+    },
+    {
+      "domain": "concordtoyota.com",
+      "name": "Concord Toyota",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "31 EVs first crawl (Dealer.com; incl. non-ItemList SRP arrays)",
+      "location": {
+        "city": "Walnut Creek",
+        "state": "CA",
+        "zip": "94596"
+      }
+    },
+    {
+      "domain": "concord-nissan.com",
+      "name": "Concord Nissan",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "5 EVs first crawl (DealerOn)",
+      "location": {
+        "city": "Concord",
+        "state": "CA",
+        "zip": "94520"
+      }
+    },
+    {
+      "domain": "concordmazda.com",
+      "name": "Concord Mazda",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass (cached query); brand: Mazda"
+    },
+    {
+      "domain": "futurehyundaiofconcord.com",
+      "name": "Future Hyundai of Concord",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass (cached query); brand: Hyundai"
+    },
+    {
+      "domain": "concordchevrolet.com",
+      "name": "Concord Chevrolet",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "13 EVs first crawl (DealerOn)",
+      "location": {
+        "city": "Concord",
+        "state": "CA",
+        "zip": "94520"
+      }
+    },
+    {
+      "domain": "lexusofconcord.com",
+      "name": "Lexus of Concord",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass (cached query); brand: Lexus"
+    },
+    {
+      "domain": "bmwconcord.com",
+      "name": "BMW Concord",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "unreachable",
+      "notes": "Discovered via OSM Overpass (cached query); brand: BMW"
+    },
+    {
+      "domain": "miniofconcord.com",
+      "name": "Mini of Concord",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "unreachable",
+      "notes": "Discovered via OSM Overpass (cached query); brand: Mini"
+    },
+    {
+      "domain": "vwhayward.com",
+      "name": "Team Volkswagen of Hayward",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "30 EVs first crawl (Dealer.com)",
+      "location": {
+        "city": "Hayward",
+        "state": "CA",
+        "zip": "94544"
+      }
+    },
+    {
+      "domain": "vinyl.ink",
+      "name": "Vinyl ink Car Wraps",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OSM Overpass (cached query)"
+    },
+    {
+      "domain": "concordhonda.com",
+      "name": "Concord Honda",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "unreachable",
+      "notes": "Discovered via OSM Overpass (cached query); brand: Honda"
+    },
+    {
+      "domain": "hondaofhayward.com",
+      "name": "Honda of Hayward",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "unreachable",
+      "notes": "Discovered via OSM Overpass (cached query); brand: Honda"
+    },
+    {
+      "domain": "eleasereturns.com",
+      "name": "eLeaseReturns.com",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OSM Overpass (cached query)"
+    },
+    {
+      "domain": "dublinmazda.com",
+      "name": "Dublin Mazda",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OSM Overpass (cached query); brand: Mazda"
+    },
+    {
+      "domain": "livermoreford.net",
+      "name": "Livermore Ford",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OSM Overpass (cached query); brand: Ford",
+      "location": {
+        "city": "Livermore",
+        "state": "CA",
+        "zip": "94551"
+      }
+    },
+    {
+      "domain": "lithiajeepconcord.com",
+      "name": "Lithia Chrysler Dodge Jeep Ram of Concord",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OSM Overpass (cached query)"
+    },
+    {
+      "domain": "lithiafiatconcord.com",
+      "name": "Lithia Fiat of Concord",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "unreachable",
+      "notes": "Discovered via OSM Overpass (cached query)"
+    },
+    {
+      "domain": "diablosubaru.com",
+      "name": "Diablo Subaru of Walnut Creek",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "unreachable",
+      "notes": "Discovered via OSM Overpass (cached query); brand: Subaru"
+    }
+  ],
+  "_sources": [
+    "OpenStreetMap via Overpass API (ODbL) \u2014 \u00a9 OpenStreetMap contributors"
+  ]
+}
