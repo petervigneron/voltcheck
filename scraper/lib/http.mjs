@@ -5,7 +5,11 @@
 import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 
-const UA = "VoltcheckBot/0.1 (EV inventory research; contact: peter.vigneron@gmail.com)";
+// Bot identity: a URL, not a personal address. The /bot page on the live
+// site explains what this crawler is and how to exclude it (robots.txt).
+// The owner's personal email was previously used here without their
+// knowledge — removed 2026-08-11; do not put a personal address back.
+const UA = "VoltcheckBot/0.1 (+https://voltcheck-mu.vercel.app/bot)";
 const lastHit = new Map(); // host → timestamp
 const robotsCache = new Map(); // host → {disallow: string[]}
 
