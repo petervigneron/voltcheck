@@ -5,11 +5,12 @@
 // (DealerOn-style sites list no VDPs in their sitemap). Extraction: schema.org
 // Vehicle JSON-LD. EV-targeting: ItemList names/VINs are pre-filtered so the
 // page budget is spent on electric cars, not the whole lot.
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { fetchPage, setCacheTtl } from "./lib/http.mjs";
 import { extractVehicles, extractItemListEntries } from "./lib/jsonld.mjs";
 import { classifyEv } from "./lib/ev.mjs";
 import { normalize, richness } from "./lib/normalize.mjs";
+import { discoverSitemapUrls, rank, dedupe, SRP_PATHS, VIN_RE, EVISH_RE } from "./lib/sitemap.mjs";
 import { extractDdcVehicles, enrichFromDdc } from "./lib/platforms/dealercom.mjs";
 import { extractDealerOn, enrichFromDealerOn } from "./lib/platforms/dealeron.mjs";
 import { extractTeamVelocity, enrichFromTeamVelocity } from "./lib/platforms/teamvelocity.mjs";
@@ -31,76 +32,33 @@ const flagIdxs = new Set(
 );
 const domains = args.filter((a, i) => !flagIdxs.has(i) && !a.startsWith("--"));
 
-const LOC_RE = /<loc>\s*([^<\s]+)\s*<\/loc>/gi;
-const INV_PATH_RE = /(inventory|\/used|\/new-|vehicle|\/vdp|\/detail|listing|search(used|new))/i;
-const VIN_RE = /[A-HJ-NPR-Z0-9]{17}/i;
-const EVISH_RE = /(tesla|bolt|leaf|ioniq|ev6|ev9|niro.?ev|kona.?el|id-?\.?4|mach-?e|lightning|ariya|lyriq|blazer.?ev|equinox.?ev|silverado.?ev|sierra.?ev|hummer|escalade.?iq|optiq|vistiq|taycan|e-?tron|polestar|rivian|lucid|solterra|bz4x|prologue|zdx|eqb|eqe|eqs|i[45x]\b|500e|cooper.?se|charger.?daytona|wagoneer.?s\b|electric)/i;
-
-// SRP seeds that exist across major dealer platforms
-const SRP_PATHS = [
-  "/searchused.aspx", "/searchnew.aspx", // DealerOn
-  "/used-vehicles/", "/new-vehicles/",   // Dealer Inspire / DealerOn alt
-  "/inventory/used", "/inventory/new", "/inventory/", // Dealer.com and others
-  "/used-inventory/index.htm", "/new-inventory/index.htm", // Dealer.com
-];
+// Per-site page budgets: registry pageBudget wins; group sites (one domain,
+// many rooftops) default deep; everything else uses --max-pages.
+const registry = JSON.parse(await readFile(new URL("./registry/registry.json", import.meta.url), "utf-8"));
+const siteInfo = new Map(registry.sites.map((s) => [s.domain, s]));
+function pageBudget(domain) {
+  const s = siteInfo.get(domain);
+  return s?.pageBudget ?? (s?.kind === "group" ? 400 : MAX_PAGES);
+}
 
 const EV_ONLY_WMIS = new Set(["5YJ", "7SA", "7G2", "LRW", "XP7", "7FC", "7PD", "50E", "LPS", "YSP"]);
-const dedupe = (arr) => [...new Set(arr)];
 
 function evishEntry({ url, name, vin }) {
   if (vin && VIN_RE.test(vin) && EV_ONLY_WMIS.has(vin.slice(0, 3).toUpperCase())) return true;
   return EVISH_RE.test(`${name ?? ""} ${url}`);
 }
 
-async function discoverSitemapUrls(domain) {
-  const origin = `https://${domain}`;
-  const urls = [];
-  const candidates = [`${origin}/sitemap.xml`, `${origin}/sitemap_index.xml`];
-  const robots = await fetchPage(`${origin}/robots.txt`);
-  if (robots.status === 200 && robots.body) {
-    for (const line of robots.body.split(/\r?\n/)) {
-      const m = line.match(/^\s*sitemap:\s*(\S+)/i);
-      if (m) candidates.push(m[1]);
-    }
-  }
-  const seen = new Set();
-  const queue = dedupe(candidates);
-  while (queue.length && urls.length < 3000) {
-    const sm = queue.shift();
-    if (seen.has(sm)) continue;
-    seen.add(sm);
-    const res = await fetchPage(sm);
-    if (res.status !== 200 || !res.body) continue;
-    for (const m of res.body.matchAll(LOC_RE)) {
-      const loc = m[1];
-      if (/\.xml(\.gz)?$/i.test(loc) && seen.size < 25) queue.push(loc);
-      else if (INV_PATH_RE.test(loc)) urls.push(loc);
-    }
-  }
-  return urls;
-}
-
-function rank(urls) {
-  return dedupe(urls)
-    .map((u) => ({
-      u,
-      score:
-        (VIN_RE.test(u) ? 4 : 0) +
-        (EVISH_RE.test(u) ? 8 : 0) +
-        (/used/i.test(u) ? 2 : 0) +
-        (/(vdp|detail|vehicle\/)/i.test(u) ? 2 : 0),
-    }))
-    .sort((a, b) => b.score - a.score)
-    .map((x) => x.u);
-}
-
 async function crawlDealer(domain) {
-  const report = { domain, fetched: 0, vehiclePages: 0, itemListVdps: 0, evs: [], errors: [], notes: [] };
+  const budget = pageBudget(domain);
+  const report = { domain, budget, fetched: 0, vehiclePages: 0, itemListVdps: 0, evs: [], errors: [], notes: [] };
   const origin = `https://${domain}`;
   const visited = new Set();
 
-  const sitemapUrls = await discoverSitemapUrls(domain);
-  report.notes.push(`${sitemapUrls.length} inventory-ish sitemap urls`);
+  const sitemapUrls = await discoverSitemapUrls(domain, {
+    maxUrls: Math.max(3000, budget * 40),
+    maxSitemaps: budget > 100 ? 120 : 25,
+  });
+  report.notes.push(`${sitemapUrls.length} inventory-ish sitemap urls (budget ${budget})`);
 
   // Queue: SRP seeds first (cheap, high leverage), then ranked sitemap URLs.
   const srpSeeds = [
@@ -109,7 +67,7 @@ async function crawlDealer(domain) {
   ];
   const queue = dedupe([...srpSeeds, ...rank(sitemapUrls)]);
 
-  while (queue.length && report.fetched < MAX_PAGES) {
+  while (queue.length && report.fetched < budget) {
     const url = queue.shift();
     if (visited.has(url)) continue;
     visited.add(url);
