@@ -13,6 +13,13 @@ export const SRP_PATHS = [
   "/used-vehicles/", "/new-vehicles/",   // Dealer Inspire / DealerOn alt
   "/inventory/used", "/inventory/new", "/inventory/", // Dealer.com and others
   "/used-inventory/index.htm", "/new-inventory/index.htm", // Dealer.com
+  // Dealer.com EV-facet SRPs (verified on hendrickcars.com cache and
+  // berkshirehathawayautomotive.com) — land directly on the electric
+  // inventory instead of wandering the whole lot. 404s elsewhere cost one
+  // request each.
+  "/new-inventory/electric-vehicles.htm",
+  "/used-inventory/all-electric-used-cars.htm",
+  "/electric/electric-vehicles.htm",
 ];
 
 export const dedupe = (arr) => [...new Set(arr)];
