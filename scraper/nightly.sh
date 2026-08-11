@@ -3,6 +3,9 @@
 # Plain shell + Node — no AI involved, costs nothing to run.
 set -uo pipefail
 cd "$(dirname "$0")"
+# launchd provides only /usr/bin:/bin:/usr/sbin:/sbin — node lives elsewhere
+# (this exact omission silently killed the 2026-08-11 run).
+export PATH="/usr/local/bin:/opt/homebrew/bin:$PATH"
 LOG="logs/nightly-$(date +%Y%m%d).log"
 mkdir -p logs
 
