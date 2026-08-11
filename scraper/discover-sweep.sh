@@ -6,6 +6,9 @@
 # marks them working (or a future auto-probe promotes them).
 set -uo pipefail
 cd "$(dirname "$0")"
+# launchd provides only /usr/bin:/bin:/usr/sbin:/sbin — node lives elsewhere
+# (same bug that killed the 2026-08-11 nightly run).
+export PATH="/usr/local/bin:/opt/homebrew/bin:$PATH"
 LOG="logs/discover-$(date +%Y%m%d).log"
 mkdir -p logs
 
