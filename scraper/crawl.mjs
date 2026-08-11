@@ -14,6 +14,7 @@ import { discoverSitemapUrls, rank, dedupe, SRP_PATHS, VIN_RE, EVISH_RE } from "
 import { extractDdcVehicles, enrichFromDdc } from "./lib/platforms/dealercom.mjs";
 import { extractDealerOn, enrichFromDealerOn } from "./lib/platforms/dealeron.mjs";
 import { extractTeamVelocity, enrichFromTeamVelocity } from "./lib/platforms/teamvelocity.mjs";
+import { extractDrivewayVehicles } from "./lib/platforms/driveway.mjs";
 
 const args = process.argv.slice(2);
 function flag(name, fallback) {
@@ -79,8 +80,9 @@ async function crawlDealer(domain) {
       continue;
     }
 
-    // Extract vehicles present on this page (VDPs, and SRPs that embed arrays)
-    const vehicles = extractVehicles(res.body);
+    // Extract vehicles present on this page (VDPs, and SRPs that embed
+    // arrays; Driveway embeds its JSON-LD inside __NEXT_DATA__ instead)
+    const vehicles = [...extractVehicles(res.body), ...extractDrivewayVehicles(res.body)];
     if (vehicles.length) report.vehiclePages++;
     const isSrp = vehicles.length > 1;
     // Platform layer: Dealer.com and DealerOn pages embed full vehicle records
@@ -111,12 +113,15 @@ async function crawlDealer(domain) {
       queue.unshift(...entries.map((e) => e.url).filter((u) => !visited.has(u)));
     }
 
-    // Pagination: a page that carries an ItemList is an SRP — follow its
-    // rel=next / page-param links so EVs deeper in inventory are reachable.
-    if (allEntries.length) {
+    // Pagination: a page that carries an ItemList OR embeds multiple vehicle
+    // records is an SRP — follow its rel=next / page-param links so EVs
+    // deeper in inventory are reachable. (Dealer.com SRPs embed vehicle
+    // arrays with no ItemList; gating on ItemList alone left their ?start=
+    // pagination unfollowed — found on hendrickcars/BHA 2026-08-11.)
+    if (allEntries.length || isSrp) {
       const next = [
         ...[...res.body.matchAll(/<(?:a|link)[^>]*rel=["']next["'][^>]*href=["']([^"']+)["']/gi)].map((m) => m[1]),
-        ...[...res.body.matchAll(/href=["']([^"']*[?&](?:pt|page|pg)=\d+[^"']*)["']/gi)].map((m) => m[1]),
+        ...[...res.body.matchAll(/href=["']([^"']*[?&](?:pt|page|pg|start)=\d+[^"']*)["']/gi)].map((m) => m[1]),
       ]
         .map((h) => (h.startsWith("http") ? h : origin + (h.startsWith("/") ? h : `/${h}`)))
         .map((h) => h.replace(/&amp;/g, "&"))
