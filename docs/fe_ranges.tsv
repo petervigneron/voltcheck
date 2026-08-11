@@ -1,0 +1,208 @@
+2021	Volkswagen	ID.4 1st	43557	250	97	Rear-Wheel Drive	Electricity
+2021	Volkswagen	ID.4 AWD Pro	44725	249	97	All-Wheel Drive	Electricity
+2021	Volkswagen	ID.4 AWD Pro S	44726	240	93	All-Wheel Drive	Electricity
+2021	Volkswagen	ID.4 Pro	44052	260	99	Rear-Wheel Drive	Electricity
+2021	Volkswagen	ID.4 Pro S	43558	250	97	Rear-Wheel Drive	Electricity
+2022	Volkswagen	ID.4 AWD Pro	45257	251	101	All-Wheel Drive	Electricity
+2022	Volkswagen	ID.4 AWD Pro S	45258	245	95	All-Wheel Drive	Electricity
+2022	Volkswagen	ID.4 Pro	45259	275	107	Rear-Wheel Drive	Electricity
+2022	Volkswagen	ID.4 Pro S	45413	262	102	Rear-Wheel Drive	Electricity
+2023	Volkswagen	ID.4	46032	209	107	Rear-Wheel Drive	Electricity
+2023	Volkswagen	ID.4 AWD Pro	46033	255	99	All-Wheel Drive	Electricity
+2023	Volkswagen	ID.4 AWD Pro S	46034	255	99	All-Wheel Drive	Electricity
+2023	Volkswagen	ID.4 Pro	46035	275	107	Rear-Wheel Drive	Electricity
+2023	Volkswagen	ID.4 Pro S	46036	275	107	Rear-Wheel Drive	Electricity
+2023	Volkswagen	ID.4 S	46037	209	107	Rear-Wheel Drive	Electricity
+2024	Volkswagen	ID.4	47922	206	107	Rear-Wheel Drive	Electricity
+2024	Volkswagen	ID.4 AWD Pro	47485	263	102	All-Wheel Drive	Electricity
+2024	Volkswagen	ID.4 AWD Pro S	47486	263	102	All-Wheel Drive	Electricity
+2024	Volkswagen	ID.4 Pro	47484	291	113	Rear-Wheel Drive	Electricity
+2024	Volkswagen	ID.4 Pro S	47923	291	113	Rear-Wheel Drive	Electricity
+2024	Volkswagen	ID.4 S	47924	206	107	Rear-Wheel Drive	Electricity
+2018	Nissan	Leaf	39860	151	112	Front-Wheel Drive	Electricity
+2019	Nissan	Leaf (40 kW-hr battery pack)	40812	150	112	Front-Wheel Drive	Electricity
+2019	Nissan	Leaf (62 kW-hr battery pack)	41276	226	108	Front-Wheel Drive	Electricity
+2019	Nissan	Leaf SV/SL (62 kW-hr battery pack)	41277	215	104	Front-Wheel Drive	Electricity
+2020	Nissan	Leaf (40 kW-hr battery pack)	42561	149	111	Front-Wheel Drive	Electricity
+2020	Nissan	Leaf (62 kW-hr battery pack)	42562	226	108	Front-Wheel Drive	Electricity
+2020	Nissan	Leaf SV/SL (62 kW-hr battery pack)	42563	215	104	Front-Wheel Drive	Electricity
+2021	Nissan	Leaf (40 kW-hr battery pack)	43664	149	111	Front-Wheel Drive	Electricity
+2021	Nissan	Leaf (62 kW-hr battery pack)	43665	226	108	Front-Wheel Drive	Electricity
+2021	Nissan	Leaf SV/SL (62 kW-hr battery pack)	43666	215	104	Front-Wheel Drive	Electricity
+2022	Nissan	Leaf (40 kW-hr battery pack)	44446	149	111	Front-Wheel Drive	Electricity
+2022	Nissan	Leaf (62 kW-hr battery pack)	44447	226	108	Front-Wheel Drive	Electricity
+2022	Nissan	Leaf SV/SL (62 kW-hr battery pack)	44448	215	104	Front-Wheel Drive	Electricity
+2023	Nissan	ARIYA ENG Plus/EVO Plus e-4ORCE 87kWh	46989	272	92	All-Wheel Drive	Electricity
+2023	Nissan	ARIYA ENGAGE e-4ORCE 63kWh	46990	205	95	All-Wheel Drive	Electricity
+2023	Nissan	ARIYA ENGAGE FWD 63kWh	46013	216	101	Front-Wheel Drive	Electricity
+2023	Nissan	ARIYA EVO Plus/EMP Plus/PRM FWD 87kWh	46014	289	98	Front-Wheel Drive	Electricity
+2023	Nissan	ARIYA PLAT Plus e-4ORCE 87kWh 19	46991	267	90	All-Wheel Drive	Electricity
+2023	Nissan	ARIYA PLAT Plus e-4ORCE 87kWh 20	46992	257	87	All-Wheel Drive	Electricity
+2023	Nissan	ARIYA VENTURE Plus FWD 87kWh	46015	304	103	Front-Wheel Drive	Electricity
+2023	Nissan	LEAF	46016	149	111	Front-Wheel Drive	Electricity
+2023	Nissan	LEAF SV	46017	212	109	Front-Wheel Drive	Electricity
+2024	Nissan	ARIYA ENGAGE e-4ORCE 63kWh	47853	205	95	All-Wheel Drive	Electricity
+2024	Nissan	ARIYA ENGAGE FWD 63kWh	47854	216	101	Front-Wheel Drive	Electricity
+2024	Nissan	ARIYA ENGAGE+/EVOLVE+ e-4ORCE 87kWh	47855	272	92	All-Wheel Drive	Electricity
+2024	Nissan	ARIYA EVOLVE+/EMPOWER+ FWD 87kWh	47856	289	98	Front-Wheel Drive	Electricity
+2024	Nissan	ARIYA PLATINUM+ e-4ORCE 87kWh 19in. Wheels	47857	267	90	All-Wheel Drive	Electricity
+2024	Nissan	ARIYA PLATINUM+ e-4ORCE 87kWh 20in. Wheels	47858	257	87	All-Wheel Drive	Electricity
+2024	Nissan	ARIYA VENTURE Plus FWD 87kWh	47859	304	103	Front-Wheel Drive	Electricity
+2024	Nissan	LEAF	46973	149	111	Front-Wheel Drive	Electricity
+2024	Nissan	LEAF SV	46974	212	109	Front-Wheel Drive	Electricity
+2025	Nissan	ARIYA e-4ORCE 63kWh	48718	205	95	All-Wheel Drive	Electricity
+2025	Nissan	ARIYA ENGAGE+/EVOLVE+ e-4ORCE 87kWh	48719	272	92	All-Wheel Drive	Electricity
+2025	Nissan	ARIYA EVOLVE+ FWD 87kWh	48720	289	98	Front-Wheel Drive	Electricity
+2025	Nissan	ARIYA FWD 63kWh	48721	216	101	Front-Wheel Drive	Electricity
+2025	Nissan	ARIYA PLATINUM+ e-4ORCE 87kWh 19in. Wheels	48722	267	90	All-Wheel Drive	Electricity
+2025	Nissan	ARIYA PLATINUM+ e-4ORCE 87kWh 20in. Wheels	48723	257	87	All-Wheel Drive	Electricity
+2025	Nissan	LEAF	48400	149	111	Front-Wheel Drive	Electricity
+2025	Nissan	LEAF SV	48401	212	109	Front-Wheel Drive	Electricity
+2023	Toyota	bZ4X	45756	252	119	Front-Wheel Drive	Electricity
+2023	Toyota	bZ4X AWD	45758	228	104	All-Wheel Drive	Electricity
+2023	Toyota	bZ4X LIMITED	45757	242	114	Front-Wheel Drive	Electricity
+2023	Toyota	bZ4X LIMITED AWD	45759	222	102	All-Wheel Drive	Electricity
+2024	Toyota	bZ4X	47918	252	119	Front-Wheel Drive	Electricity
+2024	Toyota	bZ4X AWD	47920	228	104	All-Wheel Drive	Electricity
+2024	Toyota	bZ4X Limited	47919	236	112	Front-Wheel Drive	Electricity
+2024	Toyota	bZ4X Limited AWD	47921	222	102	All-Wheel Drive	Electricity
+2025	Toyota	bZ4X	49126	252	119	Front-Wheel Drive	Electricity
+2025	Toyota	bZ4X AWD (18inch Wheels)	49127	228	104	All-Wheel Drive	Electricity
+2025	Toyota	bZ4X AWD (20inch Wheels)	49128	222	102	All-Wheel Drive	Electricity
+2025	Toyota	bZ4X LIMITED	48997	236	112	Front-Wheel Drive	Electricity
+2025	Toyota	bZ4X LIMITED AWD	49129	222	102	All-Wheel Drive	Electricity
+2023	Subaru	Solterra AWD	46030	228	104	All-Wheel Drive	Electricity
+2023	Subaru	Solterra Limited/Touring AWD	46031	222	102	All-Wheel Drive	Electricity
+2024	Subaru	Solterra AWD	47482	227	104	All-Wheel Drive	Electricity
+2024	Subaru	Solterra Limited/Touring AWD	47483	222	102	All-Wheel Drive	Electricity
+2025	Subaru	Solterra AWD	48762	227	104	All-Wheel Drive	Electricity
+2025	Subaru	Solterra Limited/Touring AWD	48763	222	102	All-Wheel Drive	Electricity
+2023	Cadillac	LYRIQ	45749	312	89	Rear-Wheel Drive	Electricity
+2023	Cadillac	LYRIQ AWD	46619	307	89	All-Wheel Drive	Electricity
+2024	Cadillac	LYRIQ	46945	314	88	Rear-Wheel Drive	Electricity
+2024	Cadillac	LYRIQ AWD	47812	307	89	All-Wheel Drive	Electricity
+2025	Cadillac	LYRIQ	48691	326	92	Rear-Wheel Drive	Electricity
+2025	Cadillac	LYRIQ AWD (11 kW Charger)	48692	319	89	All-Wheel Drive	Electricity
+2025	Cadillac	LYRIQ AWD (19 kW Charger)	48693	303	86	All-Wheel Drive	Electricity
+2026	Cadillac	LYRIQ (11 kW Charger)	49631	326	92	Rear-Wheel Drive	Electricity
+2026	Cadillac	LYRIQ (19 kW Charger)	49632	326	91	Rear-Wheel Drive	Electricity
+2026	Cadillac	LYRIQ AWD	49948	303	85	All-Wheel Drive	Electricity
+2026	Cadillac	LYRIQ PAWD	49635	319	89	All-Wheel Drive	Electricity
+2026	Cadillac	LYRIQ PAWD V SERIES (11 kW Charger)	49633	285	80	All-Wheel Drive	Electricity
+2026	Cadillac	LYRIQ PAWD V SERIES (19 kW Charger)	49634	285	80	All-Wheel Drive	Electricity
+2019	Kia	Niro	40786	0	49	Front-Wheel Drive	Regular
+2019	Kia	Niro Electric	41060	239	112	Front-Wheel Drive	Electricity
+2019	Kia	Niro FE	40788	0	50	Front-Wheel Drive	Regular
+2019	Kia	Niro Plug-in Hybrid	40863	560	46	Front-Wheel Drive	Regular Gas and Electricity
+2019	Kia	Niro Touring	40787	0	43	Front-Wheel Drive	Regular
+2020	Kia	Niro	42307	0	49	Front-Wheel Drive	Regular
+2020	Kia	Niro Electric	42514	239	112	Front-Wheel Drive	Electricity
+2020	Kia	Niro FE	42308	0	50	Front-Wheel Drive	Regular
+2020	Kia	Niro Plug-in Hybrid	42354	560	46	Front-Wheel Drive	Regular Gas and Electricity
+2020	Kia	Niro Touring	42309	0	43	Front-Wheel Drive	Regular
+2021	Kia	Niro	43632	0	49	Front-Wheel Drive	Regular
+2021	Kia	Niro Electric	43820	239	112	Front-Wheel Drive	Electricity
+2021	Kia	Niro FE	43633	0	50	Front-Wheel Drive	Regular
+2021	Kia	Niro Plug-in Hybrid	43686	560	46	Front-Wheel Drive	Regular Gas and Electricity
+2021	Kia	Niro Touring	43631	0	43	Front-Wheel Drive	Regular
+2022	Kia	Niro	43979	0	49	Front-Wheel Drive	Regular
+2022	Kia	Niro Electric	44445	239	112	Front-Wheel Drive	Electricity
+2022	Kia	Niro FE	43980	0	50	Front-Wheel Drive	Regular
+2022	Kia	Niro Plug-in Hybrid	44211	560	46	Front-Wheel Drive	Regular Gas and Electricity
+2022	Kia	Niro Touring	43981	0	43	Front-Wheel Drive	Regular
+2023	Kia	Niro	45673	0	49	Front-Wheel Drive	Regular
+2023	Kia	Niro Electric	46008	253	113	Front-Wheel Drive	Electricity
+2023	Kia	Niro FE	45674	0	53	Front-Wheel Drive	Regular
+2023	Kia	Niro Plug-in Hybrid	47221	510	48	Front-Wheel Drive	Regular Gas and Electricity
+2024	Kia	Niro	46867	0	49	Front-Wheel Drive	Regular
+2024	Kia	Niro Electric	46967	253	113	Front-Wheel Drive	Electricity
+2024	Kia	Niro FE	46868	0	53	Front-Wheel Drive	Regular
+2022	BMW	i4 eDrive40 Gran Coupe (18 inch wheels)	45133	301	109	Rear-Wheel Drive	Electricity
+2022	BMW	i4 eDrive40 Gran Coupe (19 inch wheels)	45134	282	99	Rear-Wheel Drive	Electricity
+2022	BMW	i4 M50 Gran Coupe (19 inch wheels)	45131	270	96	All-Wheel Drive	Electricity
+2022	BMW	i4 M50 Gran Coupe (20 inch wheels)	45132	227	80	All-Wheel Drive	Electricity
+2023	BMW	i4 eDrive35 Gran Coupe (18 inch Wheels)	46616	256	113	Rear-Wheel Drive	Electricity
+2023	BMW	i4 eDrive35 Gran Coupe (19 inch Wheels)	46617	235	105	Rear-Wheel Drive	Electricity
+2023	BMW	i4 eDrive40 Gran Coupe (18 inch wheels)	45992	301	109	Rear-Wheel Drive	Electricity
+2023	BMW	i4 eDrive40 Gran Coupe (19 inch Wheels)	46618	282	99	Rear-Wheel Drive	Electricity
+2023	BMW	i4 M50 Gran Coupe (19 inch wheels)	45990	271	96	All-Wheel Drive	Electricity
+2023	BMW	i4 M50 Gran Coupe (20 inch wheels)	45991	227	80	All-Wheel Drive	Electricity
+2024	BMW	i4 eDrive35 Gran Coupe (18 inch Wheels)	46919	276	120	Rear-Wheel Drive	Electricity
+2024	BMW	i4 eDrive35 Gran Coupe (19 inch Wheels)	46920	252	110	Rear-Wheel Drive	Electricity
+2024	BMW	i4 eDrive40 Gran Coupe (18 inch Wheels)	46921	301	109	Rear-Wheel Drive	Electricity
+2024	BMW	i4 eDrive40 Gran Coupe (19 inch Wheels)	46922	283	100	Rear-Wheel Drive	Electricity
+2024	BMW	i4 M50 Gran Coupe (19 inch wheels)	46915	269	95	4-Wheel Drive	Electricity
+2024	BMW	i4 M50 Gran Coupe (20 inch wheels)	46916	227	80	4-Wheel Drive	Electricity
+2024	BMW	i4 xDrive40 Gran Coupe (18 inch Wheels)	46917	307	109	4-Wheel Drive	Electricity
+2024	BMW	i4 xDrive40 Gran Coupe (19 inch Wheels)	46918	279	99	4-Wheel Drive	Electricity
+2025	BMW	i4 eDrive35 Gran Coupe (18 inch Wheels)	48308	266	116	Rear-Wheel Drive	Electricity
+2025	BMW	i4 eDrive35 Gran Coupe (19 inch Wheels)	48309	244	106	Rear-Wheel Drive	Electricity
+2025	BMW	i4 eDrive40 Gran Coupe (18 inch wheels)	48310	318	112	Rear-Wheel Drive	Electricity
+2025	BMW	i4 eDrive40 Gran Coupe (19 inch Wheels)	48311	295	104	Rear-Wheel Drive	Electricity
+2025	BMW	i4 M50 Gran Coupe (19 inch wheels)	48312	267	94	All-Wheel Drive	Electricity
+2025	BMW	i4 M50 Gran Coupe (20 inch wheels)	48313	227	80	All-Wheel Drive	Electricity
+2025	BMW	i4 xDrive40 Gran Coupe (18 inch Wheels)	48314	287	101	All-Wheel Drive	Electricity
+2025	BMW	i4 xDrive40 Gran Coupe (19 inch Wheels)	48315	268	94	All-Wheel Drive	Electricity
+2024	Honda	Prologue AWD Elite	47829	273	92	All-Wheel Drive	Electricity
+2024	Honda	Prologue AWD Touring	47830	281	95	All-Wheel Drive	Electricity
+2024	Honda	Prologue FWD	47828	296	99	Front-Wheel Drive	Electricity
+2025	Honda	Prologue AWD Elite	49090	283	95	All-Wheel Drive	Electricity
+2025	Honda	Prologue AWD Touring	49089	294	99	All-Wheel Drive	Electricity
+2025	Honda	Prologue FWD	49091	308	104	Front-Wheel Drive	Electricity
+2024	Chevrolet	Blazer EV AWD	47445	279	96	All-Wheel Drive	Electricity
+2024	Chevrolet	Blazer EV RWD	47813	324	92	Rear-Wheel Drive	Electricity
+2024	Chevrolet	Equinox EV AWD	47815	285	96	All-Wheel Drive	Electricity
+2024	Chevrolet	Equinox EV FWD	47814	319	108	Front-Wheel Drive	Electricity
+2024	Chevrolet	Silverado EV	46946	450	63	All-Wheel Drive	Electricity
+2024	Chevrolet	Silverado EV	47446	393	67	All-Wheel Drive	Electricity
+2025	Chevrolet	Blazer EV AWD	48342	283	95	All-Wheel Drive	Electricity
+2025	Chevrolet	Blazer EV AWD SS	49068	303	85	All-Wheel Drive	Electricity
+2025	Chevrolet	Blazer EV FWD	49069	312	104	Front-Wheel Drive	Electricity
+2025	Chevrolet	Blazer EV FWD 22 inch tire	49070	283	95	Front-Wheel Drive	Electricity
+2025	Chevrolet	Blazer EV RWD	48694	334	95	Rear-Wheel Drive	Electricity
+2025	Chevrolet	Equinox EV AWD (11 kW Charger)	48695	307	103	All-Wheel Drive	Electricity
+2025	Chevrolet	Equinox EV AWD (19 kW Charger)	48696	307	96	All-Wheel Drive	Electricity
+2025	Chevrolet	Equinox EV FWD	48697	319	109	Front-Wheel Drive	Electricity
+2025	Chevrolet	Silverado EV (11 kW Charger)	48700	408	68	4-Wheel Drive	Electricity
+2025	Chevrolet	Silverado EV (19 kW Charger)	48701	390	64	4-Wheel Drive	Electricity
+2025	Chevrolet	Silverado EV 2WT	49071	282	66	4-Wheel Drive	Electricity
+2025	Chevrolet	Silverado EV 5WT (11 kW Charger)	48699	422	70	4-Wheel Drive	Electricity
+2025	Chevrolet	Silverado EV 5WT (19 kW Charger)	48702	422	70	4-Wheel Drive	Electricity
+2025	Chevrolet	Silverado EV 8WT	48698	492	68	4-Wheel Drive	Electricity
+2026	Chevrolet	Blazer EV AWD	49646	283	94	All-Wheel Drive	Electricity
+2026	Chevrolet	Blazer EV AWD SS	49954	302	85	All-Wheel Drive	Electricity
+2026	Chevrolet	Blazer EV FWD	49644	312	104	Front-Wheel Drive	Electricity
+2026	Chevrolet	Blazer EV FWD 22 inch tire	49645	283	95	Front-Wheel Drive	Electricity
+2026	Chevrolet	Equinox EV AWD (11 kW Charger)	49955	307	103	All-Wheel Drive	Electricity
+2026	Chevrolet	Equinox EV AWD (19 kW Charger)	49956	288	96	All-Wheel Drive	Electricity
+2026	Chevrolet	Equinox EV FWD	49953	319	108	Front-Wheel Drive	Electricity
+2026	Chevrolet	Silverado EV Ext Range (11kW Charger)	49640	410	68	4-Wheel Drive	Electricity
+2026	Chevrolet	Silverado EV Ext Range (19kW Charger)	49641	385	64	4-Wheel Drive	Electricity
+2026	Chevrolet	Silverado EV Ext Range WT	49638	424	70	4-Wheel Drive	Electricity
+2026	Chevrolet	Silverado EV Max Range WT (19kW Charger)	49639	493	68	4-Wheel Drive	Electricity
+2026	Chevrolet	Silverado EV Std Range (11kW Charger)	49643	283	67	4-Wheel Drive	Electricity
+2026	Chevrolet	Silverado EV Std Range WT (11kW Charger)	49642	286	68	4-Wheel Drive	Electricity
+2019	Jaguar	I-Pace	40986	234	76	4-Wheel Drive	Electricity
+2020	Jaguar	I-Pace	41413	234	76	4-Wheel Drive	Electricity
+2021	Jaguar	I-Pace EV400	43889	234	76	4-Wheel Drive	Electricity
+2023	Jaguar	I-Pace EV400 (20 inch tires)	46001	246	85	4-Wheel Drive	Electricity
+2023	Jaguar	I-Pace EV400 (22 inch tires)	46002	217	76	4-Wheel Drive	Electricity
+2024	Jaguar	I-Pace EV400 (20 inch tires)	46963	246	85	4-Wheel Drive	Electricity
+2024	Jaguar	I-Pace EV400 (22 inch tires)	46964	217	76	4-Wheel Drive	Electricity
+2024	GMC	Hummer EV Pickup	46951	314	53	All-Wheel Drive	Electricity
+2024	GMC	Hummer EV Pickup 2M20	48787	311	52	All-Wheel Drive	Electricity
+2024	GMC	Hummer EV Pickup MT Tires	46952	298	50	All-Wheel Drive	Electricity
+2024	GMC	Hummer EV Pickup MT Tires 2M20	48788	279	47	All-Wheel Drive	Electricity
+2024	GMC	Hummer EV SUV	46953	314	53	All-Wheel Drive	Electricity
+2024	GMC	Hummer EV SUV 2M20	48789	303	51	All-Wheel Drive	Electricity
+2024	GMC	Hummer EV SUV MT Tires	46954	298	50	All-Wheel Drive	Electricity
+2024	GMC	Hummer EV SUV MT Tires 2M20	48790	279	47	All-Wheel Drive	Electricity
+2025	GMC	Hummer EV Pickup 2X	48343	318	53	All-Wheel Drive	Electricity
+2025	GMC	Hummer EV Pickup 3X	48344	312	52	All-Wheel Drive	Electricity
+2025	GMC	Hummer EV Pickup MT Tires 2X	48345	282	47	All-Wheel Drive	Electricity
+2025	GMC	Hummer EV Pickup MT Tires 3X	48346	289	48	All-Wheel Drive	Electricity
+2025	GMC	Hummer EV SUV 2X	48347	315	53	All-Wheel Drive	Electricity
+2025	GMC	Hummer EV SUV 3X	48348	312	52	All-Wheel Drive	Electricity
+2025	GMC	Hummer EV SUV MT Tires 2X	48349	282	47	All-Wheel Drive	Electricity
+2025	GMC	Hummer EV SUV MT Tires 3X	48350	289	48	All-Wheel Drive	Electricity
+DONE

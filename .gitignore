@@ -1,0 +1,19 @@
+# Secrets — never committed. Templates live in *.env.example.
+.env
+.env.local
+web/.env.local
+scraper/.env
+
+# Dependencies / build output
+node_modules/
+web/.next/
+web/next-env.d.ts
+
+# Scraper working state (regenerated nightly; web/data/scraped-listings.json
+# IS committed — it's the web app's build-time fallback)
+scraper/cache/
+scraper/logs/
+scraper/out/
+
+# OS noise
+.DS_Store

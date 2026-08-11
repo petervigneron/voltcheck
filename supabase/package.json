@@ -1,0 +1,9 @@
+{
+  "name": "voltcheck-supabase-verify",
+  "private": true,
+  "type": "module",
+  "description": "Runs migrations against embedded Postgres (PGlite) and asserts the ingest history semantics. node verify.mjs",
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.3.14"
+  }
+}

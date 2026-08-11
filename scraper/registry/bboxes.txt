@@ -1,0 +1,7 @@
+# Discovery bounding boxes: south west north east # label
+# One sweep per line, weekly. Add metros as coverage expands.
+37.5 -122.2 38.0 -121.7   # East Bay (done 2026-08-10, re-sweep catches new dealers)
+37.2 -122.05 37.45 -121.75 # San Jose / South Bay
+37.7 -122.52 37.83 -122.35 # San Francisco
+38.4 -121.6 38.75 -121.2  # Sacramento
+33.6 -118.0 34.2 -117.6   # Orange County / Anaheim
