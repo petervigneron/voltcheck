@@ -28,25 +28,20 @@ Updated 2026-08-10 (evening). Supabase is LIVE; Vercel is the only step left.
 - **GitHub** — private repo `petervigneron/voltcheck`, branch `main`. No
   secrets tracked (`.env` files gitignored; only `.env.example` templates).
 
-## Remaining: Vercel
+## Vercel — LIVE (2026-08-11)
 
-Blocked only on a signed-in Vercel session (CLI token expired; browser not
-signed in; password entry is owner-only). Once a session exists:
-
-1. vercel.com → Add New Project → import `petervigneron/voltcheck`.
-2. **Root Directory: `web/`** — the one setting that matters. Framework
-   auto-detects as Next.js.
-3. Environment variables (Production + Preview):
-   - `SUPABASE_URL` = `https://thyseizrqdoqjiqsodzu.supabase.co`
-   - `SUPABASE_ANON_KEY` = the anon key (public-by-design; in `web/.env.local`)
-   The service key is NOT a Vercel variable — it exists only inside the edge
-   function runtime.
-4. Deploy, then verify: the live page should show the same inventory count as
-   local, and Supabase's API logs (dashboard → Logs → API) should show the
-   `/rest/v1/listings` GET from Vercel.
+Production: **https://voltcheck-mu.vercel.app** (project `voltcheck`, hobby
+plan, deployed via CLI from `web/`; CLI re-authenticated through the device
+flow). `SUPABASE_URL` + `SUPABASE_ANON_KEY` are set for Production and
+Preview; the service key is NOT a Vercel variable — it exists only inside
+the edge function runtime. Verified: live page renders the DB inventory and
+Supabase's API logs show the request from the Vercel render.
 
 The site reads the DB at request time (5-minute revalidate), so nightly
-crawls update the live site with no redeploys.
+crawls update the live site with no redeploys. Deploys are CLI-based
+(`npx vercel deploy --prod` from `web/`); connecting the GitHub repo in the
+Vercel dashboard later would enable auto-deploy on push, and needs a
+signed-in github.com browser session (optional).
 
 ## Re-verifying the schema after changes
 
