@@ -9,6 +9,10 @@ export PATH="/usr/local/bin:/opt/homebrew/bin:$PATH"
 LOG="logs/nightly-$(date +%Y%m%d).log"
 mkdir -p logs
 
+# Validate any newly discovered domains first, so tonight's crawl already
+# includes the ones that pass (probe promotes discovered → working).
+node probe.mjs >> "$LOG" 2>&1
+
 DOMAINS=$(python3 -c "
 import json
 r = json.load(open('registry/registry.json'))

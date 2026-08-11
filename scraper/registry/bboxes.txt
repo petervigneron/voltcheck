@@ -5,3 +5,29 @@
 37.7 -122.52 37.83 -122.35 # San Francisco
 38.4 -121.6 38.75 -121.2  # Sacramento
 33.6 -118.0 34.2 -117.6   # Orange County / Anaheim
+33.90 -118.50 34.32 -117.95 # Los Angeles core / San Fernando / SGV
+33.60 -117.95 33.95 -117.55 # Orange County east / Riverside edge
+32.55 -117.25 33.05 -116.90 # San Diego
+33.25 -112.35 33.70 -111.75 # Phoenix / Scottsdale / Mesa
+36.00 -115.35 36.30 -115.00 # Las Vegas
+47.25 -122.50 47.80 -122.05 # Seattle / Tacoma / Bellevue
+45.35 -122.85 45.65 -122.45 # Portland
+39.55 -105.15 39.95 -104.75 # Denver / Aurora
+40.55 -112.05 40.80 -111.75 # Salt Lake City
+32.60 -97.50 33.05 -96.60 # Dallas–Fort Worth
+29.55 -95.70 30.10 -95.15 # Houston
+30.10 -97.95 30.55 -97.55 # Austin
+29.30 -98.75 29.65 -98.30 # San Antonio
+41.60 -88.20 42.15 -87.55 # Chicago
+44.75 -93.50 45.15 -93.00 # Minneapolis / St. Paul
+42.20 -83.50 42.70 -82.90 # Detroit metro
+33.55 -84.65 34.05 -84.15 # Atlanta
+25.60 -80.45 26.35 -80.05 # Miami / Fort Lauderdale
+28.30 -81.60 28.75 -81.15 # Orlando
+27.75 -82.75 28.15 -82.30 # Tampa / St. Pete
+35.05 -81.05 35.45 -80.60 # Charlotte
+35.70 -78.90 36.00 -78.45 # Raleigh / Durham
+38.70 -77.40 39.10 -76.85 # DC / NoVA / suburban MD
+39.80 -75.40 40.15 -74.95 # Philadelphia
+40.45 -74.45 40.95 -73.70 # NYC / North Jersey
+42.20 -71.30 42.55 -70.90 # Boston
