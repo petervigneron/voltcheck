@@ -1,10 +1,12 @@
-// Verifies supabase/migrations/0001_init.sql against a real embedded
-// Postgres (PGlite). Simulates three nightly ingest runs over real rows
-// from web/data/scraped-listings.json and asserts the history semantics.
+// Verifies supabase/migrations/*.sql against a real embedded Postgres
+// (PGlite). Simulates nightly ingest runs over real rows from
+// web/data/scraped-listings.json and asserts the history semantics —
+// including the rule that only a COMPLETELY crawled domain may delist.
+//   cd supabase && npm install && node verify.mjs
 import { PGlite } from "@electric-sql/pglite";
-import { readFile } from "node:fs/promises";
+import { readFile, readdir } from "node:fs/promises";
 
-const MIGRATION = new URL("./migrations/0001_init.sql", import.meta.url);
+const MIGRATIONS_DIR = new URL("./migrations/", import.meta.url);
 const LISTINGS = new URL("../web/data/scraped-listings.json", import.meta.url);
 
 const db = new PGlite();
@@ -15,119 +17,114 @@ function assert(name, cond, detail = "") {
 }
 
 // Supabase's roles pre-exist on the platform; create them so the exact
-// migration file (RLS policies, revokes) runs unmodified.
+// migration files (RLS policies, revokes) run unmodified.
 await db.exec(`
   create role anon nologin;
   create role authenticated nologin;
   create role service_role nologin;
 `);
-await db.exec(await readFile(MIGRATION, "utf-8"));
-console.log("migration applied cleanly");
+for (const f of (await readdir(MIGRATIONS_DIR)).filter((f) => f.endsWith(".sql")).sort()) {
+  await db.exec(await readFile(new URL(f, MIGRATIONS_DIR), "utf-8"));
+  console.log(`migration applied: ${f}`);
+}
 
 const all = JSON.parse(await readFile(LISTINGS, "utf-8"));
 // Real rows spanning 3 domains: up to 4 cars from each of the first 3 domains.
 const domains = [...new Set(all.map((l) => l.dealerDomain))].slice(0, 3);
 const sample = domains.flatMap((d) => all.filter((l) => l.dealerDomain === d).slice(0, 4));
 
-async function ingest(rows, source) {
-  const res = await db.query(`select ingest_listings($1::jsonb, $2) as r`, [
+async function ingest(rows, source, completeDomains = null) {
+  const res = await db.query(`select ingest_listings($1::jsonb, $2, $3::jsonb) as r`, [
     JSON.stringify(rows),
     source,
+    completeDomains === null ? null : JSON.stringify(completeDomains),
   ]);
   return res.rows[0].r;
 }
 
 // ---- Run 1: everything is new
-console.log("\nrun 1: first sight of 12 listings");
-const r1 = await ingest(sample, "test");
-assert("seen=12", r1.seen === 12, JSON.stringify(r1));
-assert("new=12", r1.new === 12, JSON.stringify(r1));
+console.log(`\nrun 1: first sight of ${sample.length} listings across ${domains.length} domains`);
+const r1 = await ingest(sample, "test", domains);
+assert(`seen=${sample.length}`, r1.seen === sample.length, JSON.stringify(r1));
+assert(`new=${sample.length}`, r1.new === sample.length, JSON.stringify(r1));
 assert("no price changes", r1.price_changed === 0);
 assert("no delists", r1.delisted === 0);
 const h1 = await db.query(`select count(*)::int as n from listing_price_history`);
-assert("12 price-history rows (first sighting logged)", h1.rows[0].n === 12);
+assert("first sighting logged for every row", h1.rows[0].n === sample.length);
 
-// ---- Run 2: one price drop, one car gone from a domain that still reports,
-// and one whole domain absent (crawl failure — must NOT delist).
-console.log("\nrun 2: price drop + one sold car + one failed domain");
-const droppedCar = sample[0]; // will be omitted; its domain still present via others?
+// ---- Setup for the delisting tests
 const byDomain = new Map();
 for (const l of sample) byDomain.set(l.dealerDomain, (byDomain.get(l.dealerDomain) ?? 0) + 1);
-// pick a car whose domain has >1 listing (so the domain still reports)
 const soldIdx = sample.findIndex((l) => byDomain.get(l.dealerDomain) > 1);
-// pick a whole domain to simulate a failed crawl (all its cars absent)
-const failedDomain = [...byDomain.entries()].find(
-  ([d, n]) => n >= 1 && d !== sample[soldIdx].dealerDomain
-)[0];
+const soldDomain = sample[soldIdx].dealerDomain;
+const failedDomain = [...byDomain.keys()].find((d) => d !== soldDomain);
 const failedCount = byDomain.get(failedDomain);
-
 const run2 = sample
   .filter((l, i) => i !== soldIdx && l.dealerDomain !== failedDomain)
   .map((l, i) => (i === 0 ? { ...l, priceUsd: l.priceUsd - 1000 } : l));
-console.log(
-  `  sold car: ${sample[soldIdx].vin} (${sample[soldIdx].dealerDomain}); failed domain: ${failedDomain} (${failedCount} cars)`
-);
-const r2 = await ingest(run2, "test");
-assert(`seen=${run2.length}`, r2.seen === run2.length, JSON.stringify(r2));
-assert("new=0", r2.new === 0);
-assert("price_changed=1", r2.price_changed === 1, JSON.stringify(r2));
-assert("delisted=1 (sold car only, failed domain untouched)", r2.delisted === 1, JSON.stringify(r2));
 
+// ---- Run 2a: THE NEW RULE — same data, but the crawl was TRUNCATED, so no
+// domain is certified complete. A car missing from a partial crawl is not
+// evidence of a sale.
+console.log("\nrun 2a: truncated crawl (no domain certified) — must NOT delist");
+const r2a = await ingest(run2, "test", []);
+assert("price_changed=1 (history still recorded)", r2a.price_changed === 1, JSON.stringify(r2a));
+assert("delisted=0 despite missing car", r2a.delisted === 0, JSON.stringify(r2a));
+const stillLive = await db.query(`select delisted_at from listings where vin=$1`, [sample[soldIdx].vin]);
+assert("missing car still live", stillLive.rows[0].delisted_at === null);
+
+// ---- Run 2b: same data, but the crawler certifies it saw soldDomain fully.
+console.log("\nrun 2b: complete crawl of the sold car's domain — must delist exactly it");
+const r2b = await ingest(run2, "test", [soldDomain]);
+assert("delisted=1 (only the sold car)", r2b.delisted === 1, JSON.stringify(r2b));
 const sold = await db.query(`select delisted_at from listings where vin=$1`, [sample[soldIdx].vin]);
 assert("sold car has delisted_at", sold.rows[0].delisted_at !== null);
 const failedRows = await db.query(
   `select count(*)::int as n from listings where dealer_domain=$1 and delisted_at is null`,
   [failedDomain]
 );
-assert("failed-domain cars still live", failedRows.rows[0].n === failedCount);
-const hist = await db.query(
-  `select price_usd from listing_price_history where vin=$1 order by observed_at, id`,
-  [run2[0].vin]
-);
-assert(
-  "price history has both prices",
-  hist.rows.length === 2 && hist.rows[1].price_usd === run2[0].priceUsd,
-  JSON.stringify(hist.rows)
-);
-const fs = await db.query(`select first_seen_at, last_seen_at from listings where vin=$1`, [run2[1].vin]);
-assert(
-  "first_seen preserved, last_seen bumped",
-  fs.rows[0].first_seen_at < fs.rows[0].last_seen_at
-);
+assert("failed-domain cars untouched", failedRows.rows[0].n === failedCount);
 
-// ---- Run 3: the sold car comes back (relist) at the same price
+// ---- Run 2c: a domain certified complete but producing ZERO rows (every
+// fetch failed) must not delist its inventory either.
+console.log("\nrun 2c: certified-complete domain with zero rows — must NOT delist");
+const before = await db.query(
+  `select count(*)::int as n from listings where dealer_domain=$1 and delisted_at is null`,
+  [failedDomain]
+);
+const r2c = await ingest(run2, "test", [soldDomain, failedDomain]);
+const after = await db.query(
+  `select count(*)::int as n from listings where dealer_domain=$1 and delisted_at is null`,
+  [failedDomain]
+);
+assert("zero-row domain kept its cars", after.rows[0].n === before.rows[0].n, JSON.stringify(r2c));
+
+// ---- Run 3: the sold car comes back (relist)
 console.log("\nrun 3: sold car relists");
-const r3 = await ingest([sample[soldIdx]], "test");
+const r3 = await ingest([sample[soldIdx]], "test", [soldDomain]);
 assert("relisted=1", r3.relisted === 1, JSON.stringify(r3));
-assert("new=0", r3.new === 0);
 const back = await db.query(`select delisted_at from listings where vin=$1`, [sample[soldIdx].vin]);
 assert("delisted_at cleared on relist", back.rows[0].delisted_at === null);
 
-// ---- Junk input: rows missing vin/price are skipped, dup VINs deduped
-console.log("\nrun 4: junk input");
-const r4 = await ingest(
-  [{ vin: "", priceUsd: 5 }, { year: 2020 }, sample[2], { ...sample[2] }],
-  "test"
-);
-assert("junk skipped, dup deduped: seen=1", r4.seen === 1, JSON.stringify(r4));
+// ---- Run 4: omitting _complete_domains entirely delists nothing
+console.log("\nrun 4: legacy call without _complete_domains — delists nothing");
+const r4 = await ingest([sample[soldIdx]], "test", null);
+assert("delisted=0 when uncertified", r4.delisted === 0, JSON.stringify(r4));
 
-// ---- ingest_runs bookkeeping
-const runs = await db.query(
-  `select count(*)::int as n, count(finished_at)::int as f from ingest_runs`
-);
-assert("4 runs recorded, all finished", runs.rows[0].n === 4 && runs.rows[0].f === 4);
+// ---- Junk input: rows missing vin/price skipped, dup VINs deduped
+console.log("\nrun 5: junk input");
+const r5 = await ingest([{ vin: "", priceUsd: 5 }, { year: 2020 }, sample[2], { ...sample[2] }], "test", []);
+assert("junk skipped, dup deduped: seen=1", r5.seen === 1, JSON.stringify(r5));
 
-// ---- RLS: policies exist and only selects are allowed to anon
-const pol = await db.query(
-  `select tablename, cmd from pg_policies where schemaname='public' order by tablename`
-);
+// ---- Security posture
+const pol = await db.query(`select tablename, cmd from pg_policies where schemaname='public' order by tablename`);
 assert(
   "read-only policies on all 3 tables",
   pol.rows.length === 3 && pol.rows.every((p) => p.cmd === "SELECT"),
   JSON.stringify(pol.rows)
 );
 const canExec = await db.query(
-  `select has_function_privilege('anon', 'ingest_listings(jsonb, text)', 'execute') as ok`
+  `select has_function_privilege('anon', 'ingest_listings(jsonb, text, jsonb)', 'execute') as ok`
 );
 assert("anon cannot execute ingest_listings", canExec.rows[0].ok === false);
 

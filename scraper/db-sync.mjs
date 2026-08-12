@@ -52,6 +52,18 @@ if (listings.length < MIN_ROWS) {
 }
 
 const source = process.env.DB_SYNC_SOURCE ?? "nightly";
+
+// Which domains did the crawler see COMPLETELY this run? Only those can
+// support delisting (see supabase/migrations/0002). A report without the
+// `truncated` field — older crawl.mjs, or no crawl this run — certifies
+// nothing, so nothing gets delisted.
+let completeDomains = [];
+try {
+  const reports = JSON.parse(await readFile(new URL("./out/report.json", import.meta.url), "utf-8"));
+  completeDomains = reports.filter((r) => r.truncated === false).map((r) => r.domain);
+} catch {
+  console.error("db-sync: no crawl report found — delisting skipped for this run.");
+}
 const res = SERVICE_KEY
   ? await fetch(`${SUPABASE_URL}/rest/v1/rpc/ingest_listings`, {
       method: "POST",
@@ -60,7 +72,7 @@ const res = SERVICE_KEY
         Authorization: `Bearer ${SERVICE_KEY}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ _rows: listings, _source: source }),
+      body: JSON.stringify({ _rows: listings, _source: source, _complete_domains: completeDomains }),
     })
   : await fetch(`${SUPABASE_URL}/functions/v1/ingest`, {
       method: "POST",
@@ -70,7 +82,7 @@ const res = SERVICE_KEY
         "x-ingest-token": process.env.SUPABASE_INGEST_TOKEN,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ rows: listings, source }),
+      body: JSON.stringify({ rows: listings, source, completeDomains }),
     });
 
 if (!res.ok) {
