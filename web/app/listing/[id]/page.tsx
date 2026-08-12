@@ -5,6 +5,8 @@ import { enrichListing } from "@/lib/listings/enrich";
 import { buildChecklist } from "@/lib/checklist";
 import { EnrichmentFacts, Section, NOTE_STYLES, NOTE_TAG } from "@/components/EnrichmentReport";
 import { AskSeller } from "@/components/AskSeller";
+import { PricePaid } from "@/components/PricePaid";
+import { fetchPriceComps } from "@/lib/listings/prices";
 
 function Spec({ label, value }: { label: string; value?: string | number | null }) {
   if (value == null || value === "") return null;
@@ -27,6 +29,8 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
     listing.condition
   );
   const gallery = listing.images?.length ? listing.images : listing.imageUrl ? [listing.imageUrl] : [];
+  // What people actually paid for this model (Washington title records).
+  const priceComps = await fetchPriceComps(listing.make, listing.model, listing.year, listing.mileage);
 
   return (
     <div className="mx-auto max-w-5xl space-y-5 px-4 py-6">
@@ -81,6 +85,8 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
               </p>
             </div>
           )}
+
+          {priceComps && <PricePaid comps={priceComps} askingPrice={listing.priceUsd} />}
 
           {e.row && (
             <Section title="This exact version — researched">

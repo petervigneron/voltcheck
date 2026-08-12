@@ -24,6 +24,8 @@ print(' '.join(s['domain'] for s in r['sites'] if s.get('status') == 'working'))
   node vpic-enrich.mjs
   node ingest.mjs
   node db-sync.mjs
+  # Washington transaction prices refresh monthly upstream; reload on the 5th.
+  [ "$(date +%d)" = "05" ] && node wa-prices.mjs --months 24
   echo "=== done $(date)"
 } >> "$LOG" 2>&1
 

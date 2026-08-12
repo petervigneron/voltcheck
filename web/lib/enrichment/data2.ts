@@ -1433,8 +1433,8 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
         severity: "info",
       },
       {
-        headline: "Battery-module recalls and an SoH display bug \u2014 check campaign status",
-        body: "22V-541 (2022) and 25V-470 (2022\u201325): defective cell modules, remedy includes module or full-pack replacement on affected VINs. Separately, a MY2025\u201326 service action fixes battery state-of-health displays stuck at 100% regardless of actual aging \u2014 don't trust the SoH screen on an unserviced car.",
+        headline: "Battery-module recalls \u2014 check campaign status",
+        body: "22V-541 (2022) and 25V-470 (2022\u201325): defective cell modules, remedy includes module or full-pack replacement on affected VINs.",
         severity: "warning",
       },
     ],
@@ -1470,8 +1470,8 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
         severity: "info",
       },
       {
-        headline: "Battery-module recalls and an SoH display bug \u2014 check campaign status",
-        body: "22V-541 (2022) and 25V-470 (2022\u201325): defective cell modules, remedy includes module or full-pack replacement on affected VINs. Separately, a MY2025\u201326 service action fixes battery state-of-health displays stuck at 100% regardless of actual aging \u2014 don't trust the SoH screen on an unserviced car.",
+        headline: "Battery-module recalls \u2014 check campaign status",
+        body: "22V-541 (2022) and 25V-470 (2022\u201325): defective cell modules, remedy includes module or full-pack replacement on affected VINs.",
         severity: "warning",
       },
     ],
@@ -1507,8 +1507,8 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
         severity: "info",
       },
       {
-        headline: "Battery-module recalls and an SoH display bug \u2014 check campaign status",
-        body: "22V-541 (2022) and 25V-470 (2022\u201325): defective cell modules, remedy includes module or full-pack replacement on affected VINs. Separately, a MY2025\u201326 service action fixes battery state-of-health displays stuck at 100% regardless of actual aging \u2014 don't trust the SoH screen on an unserviced car.",
+        headline: "Battery-module recalls \u2014 check campaign status",
+        body: "22V-541 (2022) and 25V-470 (2022\u201325): defective cell modules, remedy includes module or full-pack replacement on affected VINs.",
         severity: "warning",
       },
     ],
@@ -1544,8 +1544,8 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
         severity: "info",
       },
       {
-        headline: "Battery-module recalls and an SoH display bug \u2014 check campaign status",
-        body: "22V-541 (2022) and 25V-470 (2022\u201325): defective cell modules, remedy includes module or full-pack replacement on affected VINs. Separately, a MY2025\u201326 service action fixes battery state-of-health displays stuck at 100% regardless of actual aging \u2014 don't trust the SoH screen on an unserviced car.",
+        headline: "Battery-module recalls \u2014 check campaign status",
+        body: "22V-541 (2022) and 25V-470 (2022\u201325): defective cell modules, remedy includes module or full-pack replacement on affected VINs.",
         severity: "warning",
       },
     ],
