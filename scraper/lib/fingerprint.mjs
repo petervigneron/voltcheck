@@ -11,6 +11,9 @@ const SIGNATURES = [
   { platform: "dealerfire", res: [/dealerfire/i] },
   { platform: "dealereprocess", res: [/dealereprocess/i] },
   { platform: "team-velocity", res: [/teamvelocityportal\.com/i, /vdpVehicleExteriorColor/] },
+  // No JSON-LD, no VIN in VDP URLs (numeric ids) — fingerprinted while
+  // investigating eleasereturns.com's zero yield; no extractor exists yet.
+  { platform: "dealercarsearch", res: [/dealercarsearch\.com/i] },
 ];
 
 export function fingerprint(html) {
