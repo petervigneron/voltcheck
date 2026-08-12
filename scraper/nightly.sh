@@ -24,6 +24,9 @@ print(' '.join(s['domain'] for s in r['sites'] if s.get('status') == 'working'))
   node vpic-enrich.mjs
   node ingest.mjs
   node db-sync.mjs
+  # Ask every live listing's own page whether it is still for sale. This is
+  # the authoritative sold-signal; the crawl above only discovers.
+  node recheck.mjs --concurrency 10
   # Washington transaction prices refresh monthly upstream; reload on the 5th.
   [ "$(date +%d)" = "05" ] && node wa-prices.mjs --months 24
   echo "=== done $(date)"

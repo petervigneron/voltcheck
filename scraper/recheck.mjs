@@ -1,0 +1,151 @@
+#!/usr/bin/env node
+// Ask every live listing's own page whether it is still for sale.
+//
+// The nightly crawl discovers inventory but is page-budgeted, so absence
+// from a crawl never proved a car sold. Each listing stores its own
+// sourceUrl, so we can check directly — one request per car, which is both
+// cheaper and far better evidence than re-crawling a whole site.
+//
+//   node recheck.mjs [--concurrency 8] [--limit N] [--dry-run]
+//
+// Verdicts (see supabase/migrations/0004):
+//   alive      200 and the VIN appears on the page  -> confirm + refresh price
+//   hard gone  404/410                              -> delist now
+//   soft gone  200 but no VIN                       -> strike; delist on 2nd
+//   anything else (403, timeout, 5xx)               -> no conclusion
+import { readFile } from "node:fs/promises";
+import { fetchRaw } from "./lib/http.mjs";
+import { extractVehicles } from "./lib/jsonld.mjs";
+import { extractDdcVehicles } from "./lib/platforms/dealercom.mjs";
+
+function flag(name, fallback) {
+  const i = process.argv.indexOf(name);
+  return i >= 0 ? Number(process.argv[i + 1]) : fallback;
+}
+const CONCURRENCY = flag("--concurrency", 8);
+const LIMIT = flag("--limit", 0);
+const DRY = process.argv.includes("--dry-run");
+
+async function loadEnv(url) {
+  try {
+    const text = await readFile(url, "utf-8");
+    for (const line of text.split("\n")) {
+      const m = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*?)\s*$/);
+      if (m && !line.trimStart().startsWith("#") && !(m[1] in process.env)) {
+        process.env[m[1]] = m[2].replace(/^["']|["']$/g, "");
+      }
+    }
+  } catch {}
+}
+await loadEnv(new URL("./.env", import.meta.url));
+
+const { SUPABASE_URL, SUPABASE_ANON_KEY: ANON, SUPABASE_INGEST_TOKEN: TOKEN } = process.env;
+if (!SUPABASE_URL || !ANON) {
+  console.error("recheck: no Supabase credentials (scraper/.env) — nothing to check.");
+  process.exit(0);
+}
+
+// Live listings straight from the DB — the recheck is about what the site
+// is currently showing, not what last night's crawl happened to find.
+const listings = [];
+for (let from = 0; ; from += 1000) {
+  const res = await fetch(
+    `${SUPABASE_URL}/rest/v1/listings?select=vin,price_usd,payload&delisted_at=is.null&order=vin.asc`,
+    { headers: { apikey: ANON, Authorization: `Bearer ${ANON}`, Range: `${from}-${from + 999}` } }
+  );
+  if (!res.ok) {
+    console.error(`recheck: listing fetch failed HTTP ${res.status}`);
+    process.exit(1);
+  }
+  const page = await res.json();
+  listings.push(...page);
+  if (page.length < 1000) break;
+}
+const targets = listings.filter((l) => l.payload?.sourceUrl);
+const work = LIMIT ? targets.slice(0, LIMIT) : targets;
+console.error(
+  `recheck: ${work.length} live listings with a source URL (${listings.length - targets.length} without)`
+);
+
+// MUST mirror the precedence in lib/normalize.mjs + platforms/dealercom.mjs:
+// the JSON-LD offer price wins, and the platform's own fields are only a
+// fallback. Reversing this makes every dealer.com car look like it changed
+// price on the first run and writes fiction into listing_price_history.
+const priceOf = (body, vin) => {
+  for (const v of extractVehicles(body)) {
+    if (String(v.vehicleIdentificationNumber ?? "").toUpperCase() !== vin) continue;
+    const offer = Array.isArray(v.offers) ? v.offers[0] : v.offers;
+    const p = Number(String(offer?.price ?? "").replace(/[^0-9.]/g, ""));
+    if (Number.isFinite(p) && p > 500) return Math.round(p);
+  }
+  // askingPrice is NOT a price on these feeds — observed values of 595/695/999
+  // are dealer fees. Only internetPrice is trustworthy, and a car under
+  // $3,000 is a data error rather than a listing, so we decline to guess.
+  const ddc = extractDdcVehicles(body).find((d) => String(d.vin).toUpperCase() === vin);
+  const ddcPrice = Number(String(ddc?.internetPrice ?? "").replace(/[^0-9.]/g, ""));
+  return Number.isFinite(ddcPrice) && ddcPrice > 3000 ? Math.round(ddcPrice) : null;
+};
+
+const alive = [], hardGone = [], softGone = [];
+let errors = 0, cursor = 0;
+
+async function worker() {
+  while (cursor < work.length) {
+    const l = work[cursor++];
+    const vin = l.vin.toUpperCase();
+    let res;
+    try {
+      res = await fetchRaw(l.payload.sourceUrl, { timeoutMs: 20000 });
+    } catch {
+      errors++;
+      continue;
+    }
+    if (res.status === 404 || res.status === 410) {
+      hardGone.push(vin);
+    } else if (res.status === 200 && res.body) {
+      if (res.body.toUpperCase().includes(vin)) {
+        const price = priceOf(res.body, vin);
+        alive.push({ vin, priceUsd: price ?? undefined });
+      } else {
+        softGone.push(vin);
+      }
+    } else {
+      errors++; // 403, 5xx, redirect loop — proves nothing
+    }
+  }
+}
+await Promise.all(Array.from({ length: Math.min(CONCURRENCY, work.length) }, worker));
+
+const changed = alive.filter((a) => {
+  const prev = work.find((l) => l.vin.toUpperCase() === a.vin)?.price_usd;
+  return a.priceUsd != null && a.priceUsd !== prev;
+}).length;
+console.error(
+  `recheck: ${alive.length} still listed (${changed} price changes), ` +
+  `${hardGone.length} pages gone, ${softGone.length} VIN missing, ${errors} inconclusive`
+);
+
+if (DRY) {
+  console.error("[dry run — nothing written]");
+  process.exit(0);
+}
+if (!TOKEN) {
+  console.error("recheck: no ingest token — cannot write results.");
+  process.exit(0);
+}
+
+const res = await fetch(`${SUPABASE_URL}/functions/v1/ingest`, {
+  method: "POST",
+  headers: {
+    apikey: ANON,
+    Authorization: `Bearer ${ANON}`,
+    "x-ingest-token": TOKEN,
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({ dataset: "recheck", alive, hardGone, softGone, rows: [] }),
+});
+if (!res.ok) {
+  console.error(`recheck: FAILED HTTP ${res.status}: ${(await res.text()).slice(0, 300)}`);
+  process.exit(1);
+}
+console.error(`recheck: ${JSON.stringify(await res.json())}`);
