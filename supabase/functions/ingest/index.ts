@@ -14,7 +14,7 @@ Deno.serve(async (req: Request) => {
   if (INGEST_TOKEN.startsWith("__") || req.headers.get("x-ingest-token") !== INGEST_TOKEN) {
     return new Response(JSON.stringify({ error: "forbidden" }), { status: 403 });
   }
-  let body: { rows?: unknown; source?: string; completeDomains?: unknown };
+  let body: { rows?: unknown; source?: string; completeDomains?: unknown; dataset?: string };
   try {
     body = await req.json();
   } catch {
@@ -24,6 +24,20 @@ Deno.serve(async (req: Request) => {
     return new Response(JSON.stringify({ error: "rows must be an array" }), { status: 400 });
   }
   const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+
+  // Second dataset: Washington transaction prices (see migration 0003).
+  if (body.dataset === "wa_sales") {
+    const r = await fetch(`${Deno.env.get("SUPABASE_URL")}/rest/v1/rpc/ingest_wa_sales`, {
+      method: "POST",
+      headers: { apikey: key, Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ _rows: body.rows }),
+    });
+    return new Response(await r.text(), {
+      status: r.status,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
   const res = await fetch(`${Deno.env.get("SUPABASE_URL")}/rest/v1/rpc/ingest_listings`, {
     method: "POST",
     headers: { apikey: key, Authorization: `Bearer ${key}`, "Content-Type": "application/json" },

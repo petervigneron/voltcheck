@@ -119,8 +119,8 @@ assert("junk skipped, dup deduped: seen=1", r5.seen === 1, JSON.stringify(r5));
 // ---- Security posture
 const pol = await db.query(`select tablename, cmd from pg_policies where schemaname='public' order by tablename`);
 assert(
-  "read-only policies on all 3 tables",
-  pol.rows.length === 3 && pol.rows.every((p) => p.cmd === "SELECT"),
+  `every public policy is read-only (${pol.rows.length} tables)`,
+  pol.rows.length >= 3 && pol.rows.every((p) => p.cmd === "SELECT"),
   JSON.stringify(pol.rows)
 );
 const canExec = await db.query(
