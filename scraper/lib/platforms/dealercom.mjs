@@ -4,6 +4,13 @@
 // page serves to everyone. This is the same data the page's own widgets read.
 const MARKER = /DDC\.dataLayer\[['"]vehicles['"]\]\s*=\s*\[/;
 
+// Some dealers' feeds leak invalid JSON escapes into this blob (e.g.
+// "Front\-Wheel Drive" — \- isn't a JSON escape), which makes JSON.parse
+// throw and silently drops the whole vehicles array. Strip the backslash on
+// any escape JSON doesn't recognize; valid escapes (\" \\ \/ \b \f \n \r \t
+// \uXXXX) pass through untouched.
+const sanitizeJson = (s) => s.replace(/\\(?!["\\/bfnrtu])/g, "");
+
 export function extractDdcVehicles(html) {
   const m = html.match(MARKER);
   if (!m) return [];
@@ -21,7 +28,7 @@ export function extractDdcVehicles(html) {
     }
   }
   try {
-    const arr = JSON.parse(html.slice(start, end + 1));
+    const arr = JSON.parse(sanitizeJson(html.slice(start, end + 1)));
     return Array.isArray(arr) ? arr.filter((v) => v && v.vin) : [];
   } catch {
     return [];

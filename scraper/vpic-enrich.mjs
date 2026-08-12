@@ -7,7 +7,18 @@ import { readFile, writeFile } from "node:fs/promises";
 const src = new URL("./out/listings.json", import.meta.url);
 const listings = JSON.parse(await readFile(src, "utf-8"));
 
-const needs = listings.filter((l) => l.vin?.length === 17 && (!l.trim || !l.driveLine || l.vpicBatteryKwh == null));
+// Name-match-only EVs (evConfidence "name_match") are held back by ingest.mjs
+// until vPIC confirms the classification — pull those into the same batch
+// even when their trim/drive/kwh are already filled, so every one gets
+// checked. (Never the reverse: a name match alone never promotes anything.)
+const needsByVin = new Map();
+for (const l of listings) {
+  if (l.vin?.length !== 17) continue;
+  if (!l.trim || !l.driveLine || l.vpicBatteryKwh == null || l.evConfidence === "name_match") {
+    needsByVin.set(l.vin.toUpperCase(), l);
+  }
+}
+const needs = [...needsByVin.values()];
 console.error(`${needs.length} of ${listings.length} listings need vPIC enrichment`);
 
 function normDrive(s) {
@@ -37,8 +48,24 @@ for (let i = 0; i < needs.length; i += 50) {
   await new Promise((r) => setTimeout(r, 400));
 }
 
+// vPIC confirms BEV via ElectrificationLevel ("BEV (Battery Electric
+// Vehicle)") or, when that's blank, a bare "Electric" FuelTypePrimary with no
+// secondary fuel. PHEVs/HEVs report FuelTypePrimary "Electric" too (secondary
+// "Gasoline", ElectrificationLevel "PHEV (...)"), so both are checked and
+// excluded explicitly — this is the only path that promotes a name-match EV,
+// and it never fires on name text alone.
+function vpicConfirmsBev(r) {
+  const level = String(r.ElectrificationLevel ?? "");
+  const fuelPrimary = String(r.FuelTypePrimary ?? "");
+  const fuelSecondary = String(r.FuelTypeSecondary ?? "");
+  if (/hev|phev|hybrid/i.test(level) || /hybrid/i.test(fuelPrimary) || fuelSecondary.trim()) return false;
+  if (/\bbev\b|battery electric/i.test(level)) return true;
+  return /electric/i.test(fuelPrimary);
+}
+
 let filledTrim = 0;
 let filledDrive = 0;
+let promoted = 0;
 for (const l of listings) {
   const r = byVin.get(l.vin?.toUpperCase());
   if (!r) continue;
@@ -56,6 +83,14 @@ for (const l of listings) {
   }
   const kwh = Number(r.BatteryKWh);
   if (Number.isFinite(kwh) && kwh > 0) l.vpicBatteryKwh = kwh;
+  if (l.evConfidence === "name_match" && vpicConfirmsBev(r)) {
+    l.evConfidence = "high";
+    l.evKind = "BEV";
+    l.evConfidenceSource = "vpic";
+    promoted++;
+  }
 }
 await writeFile(src, JSON.stringify(listings, null, 2));
-console.error(`filled trim on ${filledTrim}, drive on ${filledDrive} → out/listings.json`);
+console.error(
+  `filled trim on ${filledTrim}, drive on ${filledDrive}, promoted ${promoted} name-match EVs to high confidence → out/listings.json`
+);
