@@ -14,7 +14,7 @@ Deno.serve(async (req: Request) => {
   if (INGEST_TOKEN.startsWith("__") || req.headers.get("x-ingest-token") !== INGEST_TOKEN) {
     return new Response(JSON.stringify({ error: "forbidden" }), { status: 403 });
   }
-  let body: { rows?: unknown; source?: string };
+  let body: { rows?: unknown; source?: string; completeDomains?: unknown };
   try {
     body = await req.json();
   } catch {
@@ -27,7 +27,12 @@ Deno.serve(async (req: Request) => {
   const res = await fetch(`${Deno.env.get("SUPABASE_URL")}/rest/v1/rpc/ingest_listings`, {
     method: "POST",
     headers: { apikey: key, Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ _rows: body.rows, _source: body.source ?? "nightly" }),
+    body: JSON.stringify({
+      _rows: body.rows,
+      _source: body.source ?? "nightly",
+      // Only domains the crawler saw completely may delist (migration 0002).
+      _complete_domains: Array.isArray(body.completeDomains) ? body.completeDomains : [],
+    }),
   });
   return new Response(await res.text(), {
     status: res.status,

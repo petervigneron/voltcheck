@@ -129,6 +129,11 @@ async function crawlDealer(domain) {
       queue.push(...dedupe(next).slice(0, 5));
     }
   }
+  // Coverage honesty. A crawl that emptied its queue saw everything the
+  // site offered; one that stopped at its page budget saw a subset, and a
+  // different subset each night. Only the former can support "this VIN is
+  // gone, therefore it sold" — see supabase/migrations/0002.
+  report.truncated = queue.length > 0;
   return report;
 }
 
