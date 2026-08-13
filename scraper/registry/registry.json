@@ -217,19 +217,19 @@
       "domain": "bmwconcord.com",
       "name": "BMW Concord",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Discovered via OSM Overpass (cached query); brand: BMW | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (cached query); brand: BMW | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "miniofconcord.com",
       "name": "Mini of Concord",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Discovered via OSM Overpass (cached query); brand: Mini | probe 2026-08-13: homepage error:TypeError"
+      "status": "needs-investigation",
+      "notes": "Discovered via OSM Overpass (cached query); brand: Mini | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor"
     },
     {
       "domain": "vwhayward.com",
@@ -258,10 +258,10 @@
       "domain": "concordhonda.com",
       "name": "Concord Honda",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Discovered via OSM Overpass (cached query); brand: Honda | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (cached query); brand: Honda | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "hondaofhayward.com",
@@ -270,7 +270,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Discovered via OSM Overpass (cached query); brand: Honda | probe 2026-08-13: homepage error:TypeError"
+      "notes": "Discovered via OSM Overpass (cached query); brand: Honda | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
     },
     {
       "domain": "eleasereturns.com",
@@ -325,16 +325,16 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Discovered via OSM Overpass (cached query) | probe 2026-08-13: homepage error:TypeError"
+      "notes": "Discovered via OSM Overpass (cached query) | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
     },
     {
       "domain": "diablosubaru.com",
       "name": "Diablo Subaru of Walnut Creek",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Discovered via OSM Overpass (cached query); brand: Subaru | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (cached query); brand: Subaru | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "berkshirehathawayautomotive.com",
@@ -459,10 +459,10 @@
       "domain": "johnsonautoplaza.com",
       "name": "Johnson Auto Plaza",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Brighton | probe 2026-08-12: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Brighton | probe 2026-08-12: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "alpinenissan.com",
@@ -552,7 +552,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Westminster | probe 2026-08-12: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Westminster | probe 2026-08-12: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
     },
     {
       "domain": "adiautosport.com",
@@ -560,8 +560,8 @@
       "kind": "rooftop",
       "platform": "unknown",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Aurora | probe 2026-08-12: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
+      "status": "needs-investigation",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Aurora | probe 2026-08-12: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
     },
     {
       "domain": "autovineco.com",
@@ -576,10 +576,10 @@
       "domain": "celebrationchevrolet.com",
       "name": "Celebration Chevrolet",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Aurora | probe 2026-08-12: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Aurora | probe 2026-08-12: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "mynextride.com",
@@ -624,7 +624,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Aurora | probe 2026-08-12: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Aurora | probe 2026-08-12: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
     },
     {
       "domain": "schompford.com",
@@ -750,7 +750,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Englewood | probe 2026-08-12: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Englewood | probe 2026-08-12: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
     },
     {
       "domain": "autonationchryslerjeeparapahoe.com",
@@ -882,19 +882,19 @@
       "domain": "mcdonaldvolvocars.com",
       "name": "McDonald Volvo Cars",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Littleton | probe 2026-08-12: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Littleton | probe 2026-08-12: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "phillongdenver.com",
       "name": "Phil Long Ford of Denver",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Littleton | probe 2026-08-12: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Littleton | probe 2026-08-12: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "schompnissan.com",
@@ -911,8 +911,8 @@
       "kind": "rooftop",
       "platform": "unknown",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Boulder | probe 2026-08-12: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
+      "status": "needs-investigation",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Boulder | probe 2026-08-12: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
     },
     {
       "domain": "bouldernissan.com",
@@ -927,10 +927,10 @@
       "domain": "corwintoyotaboulder.com",
       "name": "Corwin Toyota Boulder",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Boulder | probe 2026-08-12: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Boulder | probe 2026-08-12: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "emichvwofboulder.com",
@@ -981,10 +981,10 @@
       "domain": "mikemaroonefordlongmont.com",
       "name": "Mike Maroone Ford Longmont",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Longmont | probe 2026-08-12: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Longmont | probe 2026-08-12: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "prestigechryslerdodge.com",
@@ -1065,7 +1065,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Salida | probe 2026-08-12: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Salida | probe 2026-08-12: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
     },
     {
       "domain": "vistafordco.com",
@@ -1134,10 +1134,10 @@
       "domain": "freewayforddenver.com",
       "name": "Freeway Ford",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Denver | probe 2026-08-12: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Denver | probe 2026-08-12: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "coloradofleetandmobility.com",
@@ -1191,7 +1191,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Castle Rock | probe 2026-08-12: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Castle Rock | probe 2026-08-12: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
     },
     {
       "domain": "castlerockcdjr.com",
@@ -1317,7 +1317,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Parker | probe 2026-08-12: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Parker | probe 2026-08-12: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
     },
     {
       "domain": "alpinebuickgmcsouth.com",
@@ -1377,10 +1377,10 @@
       "domain": "danielslong.com",
       "name": "Daniels Long Chevrolet",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Colorado Springs | probe 2026-08-12: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Colorado Springs | probe 2026-08-12: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "faricykia.com",
@@ -1422,10 +1422,10 @@
       "domain": "benzcoloradosprings.com",
       "name": "Mercedes-Benz of Colorado Springs",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Colorado Springs | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Colorado Springs | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "mikemaroonechevroletnorth.com",
@@ -1458,10 +1458,10 @@
       "domain": "mikemaroonevolkswagen.com",
       "name": "Mike Maroone Volkswagen",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Colorado Springs | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Colorado Springs | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "peakkiacoloradosprings.com",
@@ -1476,37 +1476,37 @@
       "domain": "fordmotorcity.com",
       "name": "Phil Long Ford",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Colorado Springs | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Colorado Springs | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "phillongford.com",
       "name": "Phil Long Ford of Chapel Hills",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Colorado Springs | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Colorado Springs | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "hyundaicoloradosprings.com",
       "name": "Phil Long Hyundai of Motor City",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Colorado Springs | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Colorado Springs | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "rednolandcadillac.com",
       "name": "Red Noland Cadillac",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Colorado Springs | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Colorado Springs | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "faricy.com",
@@ -1551,7 +1551,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Glenwood Springs | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Glenwood Springs | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
     },
     {
       "domain": "mtnchevy.com",
@@ -1749,7 +1749,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Wheat Ridge | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Wheat Ridge | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
     },
     {
       "domain": "foundationkia.com",
@@ -1784,8 +1784,8 @@
       "kind": "rooftop",
       "platform": "unknown",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Fort Collins | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
+      "status": "needs-investigation",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Fort Collins | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
     },
     {
       "domain": "dellenbach.com",
@@ -1800,10 +1800,10 @@
       "domain": "edcarrollmotorco.com",
       "name": "Ed Carroll Motor Company",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Fort Collins | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
+      "status": "needs-investigation",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Fort Collins | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor"
     },
     {
       "domain": "fortcollinsdcjr.com",
@@ -1965,7 +1965,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Grand Junction | probe 2026-08-13: homepage error:TypeError"
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Grand Junction | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
     },
     {
       "domain": "redrockhyundai.com",
@@ -1992,7 +1992,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Grand Junction | probe 2026-08-13: homepage robots_disallowed"
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Grand Junction | probe 2026-08-13: homepage robots_disallowed | probe 2026-08-13: homepage robots_disallowed"
     },
     {
       "domain": "twomplus.com",
@@ -2055,7 +2055,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Pueblo | probe 2026-08-13: homepage error:TypeError"
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Pueblo | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
     },
     {
       "domain": "pueblotoyota.com",
@@ -2082,7 +2082,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Pueblo | probe 2026-08-13: homepage error:TypeError"
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Pueblo | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
     },
     {
       "domain": "spradleykia.com",
@@ -2126,8 +2126,8 @@
       "kind": "rooftop",
       "platform": "unknown",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Greeley | probe 2026-08-13: homepage error:TypeError"
+      "status": "needs-investigation",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Greeley | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
     },
     {
       "domain": "ghentmotors.com",
@@ -2154,7 +2154,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Greeley | probe 2026-08-13: homepage error:TypeError"
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Greeley | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
     },
     {
       "domain": "greeleyvolkswagen.com",
@@ -2190,7 +2190,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Longmont | probe 2026-08-13: homepage robots_disallowed"
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Longmont | probe 2026-08-13: homepage robots_disallowed | probe 2026-08-13: homepage robots_disallowed"
     },
     {
       "domain": "mcdonaldmazdanorth.com",
@@ -2243,8 +2243,8 @@
       "kind": "rooftop",
       "platform": "unknown",
       "robots": "unknown",
-      "status": "http-503",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 1) (OR) — state-published participating-dealer roster, imported 2026-08-12; Wilsonville; sells used | probe 2026-08-13: homepage 503"
+      "status": "needs-investigation",
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 1) (OR) — state-published participating-dealer roster, imported 2026-08-12; Wilsonville; sells used | probe 2026-08-13: homepage 503 | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
     },
     {
       "domain": "autotowngmc.com",
@@ -2313,10 +2313,10 @@
       "domain": "carrauto.com",
       "name": "CARR AUTO GROUP INC",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 1) (OR) — state-published participating-dealer roster, imported 2026-08-12; Beaverton; sells used | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 1) (OR) — state-published participating-dealer roster, imported 2026-08-12; Beaverton; sells used | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "casanovamotors.com",
@@ -2430,10 +2430,10 @@
       "domain": "doherty-ford.com",
       "name": "DOHERTY FORD",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 1) (OR) — state-published participating-dealer roster, imported 2026-08-12; Forest Grove; sells used | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 1) (OR) — state-published participating-dealer roster, imported 2026-08-12; Forest Grove; sells used | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "emmertmotors.com",
@@ -2475,10 +2475,10 @@
       "domain": "gladstonemitsubishi.com",
       "name": "GLADSTONE MITSUBISHI",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 1) (OR) — state-published participating-dealer roster, imported 2026-08-12; Milwaukie; sells used | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 1) (OR) — state-published participating-dealer roster, imported 2026-08-12; Milwaukie; sells used | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "dodgeofgresham.com",
@@ -2511,10 +2511,10 @@
       "domain": "greshamtoyota.com",
       "name": "GRESHAM TOYOTA",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealeron",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 1) (OR) — state-published participating-dealer roster, imported 2026-08-12; Gresham; sells used | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 1) (OR) — state-published participating-dealer roster, imported 2026-08-12; Gresham; sells used | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "herzogmeier.com",
@@ -2574,10 +2574,10 @@
       "domain": "oregoncitysubaru.com",
       "name": "LITHIA SUBARU OF OREGON CITY",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 1) (OR) — state-published participating-dealer roster, imported 2026-08-12; Oregon City; sells used | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 1) (OR) — state-published participating-dealer roster, imported 2026-08-12; Oregon City; sells used | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "lumsautocenter.com",
@@ -2595,7 +2595,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 1) (OR) — state-published participating-dealer roster, imported 2026-08-12; Gladstone; sells used | probe 2026-08-13: homepage error:TypeError"
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 1) (OR) — state-published participating-dealer roster, imported 2026-08-12; Gladstone; sells used | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
     },
     {
       "domain": "mcloughlinchevy.com",
@@ -2610,19 +2610,19 @@
       "domain": "mercedesbenzwilsonville.com",
       "name": "MERCEDES BENZ OF WILSONVILLE",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealeron",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 1) (OR) — state-published participating-dealer roster, imported 2026-08-12; Wilsonville; sells used | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 1) (OR) — state-published participating-dealer roster, imported 2026-08-12; Wilsonville; sells used | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "miniportland.com",
       "name": "MINI OF PORTLAND",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 1) (OR) — state-published participating-dealer roster, imported 2026-08-12; Portland; sells used | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 1) (OR) — state-published participating-dealer roster, imported 2026-08-12; Portland; sells used | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 16 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "motocorsa.com",
@@ -2649,7 +2649,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 1) (OR) — state-published participating-dealer roster, imported 2026-08-12; Beaverton; sells used | probe 2026-08-13: homepage error:TypeError"
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 1) (OR) — state-published participating-dealer roster, imported 2026-08-12; Beaverton; sells used | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
     },
     {
       "domain": "oceancrestmotors.com",
@@ -2700,10 +2700,10 @@
       "domain": "rogerkehdimitsubishi.com",
       "name": "ROGER KEHDI MITSUBISHI",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealeron",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 1) (OR) — state-published participating-dealer roster, imported 2026-08-12; Tigard; sells used | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 1) (OR) — state-published participating-dealer roster, imported 2026-08-12; Tigard; sells used | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "rontonkinacura.com",
@@ -2835,28 +2835,28 @@
       "domain": "sthelensautocenter.com",
       "name": "ST HELENS AUTO CENTER",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealeron",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 1) (OR) — state-published participating-dealer roster, imported 2026-08-12; Warren; sells used | probe 2026-08-13: homepage error:TypeError"
+      "status": "needs-investigation",
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 1) (OR) — state-published participating-dealer roster, imported 2026-08-12; Warren; sells used | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealeron) — likely needs a platform extractor"
     },
     {
       "domain": "subaruofportland.com",
       "name": "SUBARU OF PORTLAND",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 1) (OR) — state-published participating-dealer roster, imported 2026-08-12; Portland; sells used | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 1) (OR) — state-published participating-dealer roster, imported 2026-08-12; Portland; sells used | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "sunsetimports.com",
       "name": "SUNSET IMPORTS",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 1) (OR) — state-published participating-dealer roster, imported 2026-08-12; Beaverton; sells used | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 1) (OR) — state-published participating-dealer roster, imported 2026-08-12; Beaverton; sells used | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "superstarmotorz.com",
@@ -2865,25 +2865,25 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "http-429",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 1) (OR) — state-published participating-dealer roster, imported 2026-08-12; Milwaukie; sells used | probe 2026-08-13: homepage 429"
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 1) (OR) — state-published participating-dealer roster, imported 2026-08-12; Milwaukie; sells used | probe 2026-08-13: homepage 429 | probe 2026-08-13: homepage 429"
     },
     {
       "domain": "swickardhonda.com",
       "name": "SWICKARD HONDA",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealeron",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 1) (OR) — state-published participating-dealer roster, imported 2026-08-12; Gladstone; sells used | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 1) (OR) — state-published participating-dealer roster, imported 2026-08-12; Gladstone; sells used | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "timecdjr.com",
       "name": "TIME CHRYSLER DODGE JEEP RAM OF PORTLAND",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 1) (OR) — state-published participating-dealer roster, imported 2026-08-12; Portland; sells used | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 1) (OR) — state-published participating-dealer roster, imported 2026-08-12; Portland; sells used | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "tonkingladstonehyundai.com",
@@ -2961,10 +2961,10 @@
       "domain": "toyotaofportland.com",
       "name": "TOYOTA OF PORTLAND",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 1) (OR) — state-published participating-dealer roster, imported 2026-08-12; Portland; sells used | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 1) (OR) — state-published participating-dealer roster, imported 2026-08-12; Portland; sells used | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "waterhousemotors.net",
@@ -3042,10 +3042,10 @@
       "domain": "bendhonda.com",
       "name": "BEND HONDA",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 1) (OR) — state-published participating-dealer roster, imported 2026-08-12; Bend; sells used | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 1) (OR) — state-published participating-dealer roster, imported 2026-08-12; Bend; sells used | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "pdxautosource.com",
@@ -3114,10 +3114,10 @@
       "domain": "seaportauto.com",
       "name": "SEAPORT AUTO WHOLESALE",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealeron",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 1) (OR) — state-published participating-dealer roster, imported 2026-08-12; Milwaukie; sells used | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 1) (OR) — state-published participating-dealer roster, imported 2026-08-12; Milwaukie; sells used | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "summitmotorco.com",
@@ -3207,7 +3207,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 2) (OR) — state-published participating-dealer roster, imported 2026-08-12; McMinnville; sells used | probe 2026-08-13: homepage error:TypeError"
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 2) (OR) — state-published participating-dealer roster, imported 2026-08-12; McMinnville; sells used | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
     },
     {
       "domain": "autokings.com",
@@ -3231,10 +3231,10 @@
       "domain": "bmwofsalem.com",
       "name": "BMW OF SALEM",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 2) (OR) — state-published participating-dealer roster, imported 2026-08-12; Salem; sells used | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 2) (OR) — state-published participating-dealer roster, imported 2026-08-12; Salem; sells used | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "capitol-chevy.com",
@@ -3258,10 +3258,10 @@
       "domain": "bendchevrolet.com",
       "name": "CHEVROLET CADILLAC OF BEND",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 2) (OR) — state-published participating-dealer roster, imported 2026-08-12; Bend; sells used | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 2) (OR) — state-published participating-dealer roster, imported 2026-08-12; Bend; sells used | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 24 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "colvinauto.com",
@@ -3276,10 +3276,10 @@
       "domain": "bradschevy.com",
       "name": "COTTAGE GROVE CHEVROLET",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 2) (OR) — state-published participating-dealer roster, imported 2026-08-12; Cottage Grove; sells used | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 2) (OR) — state-published participating-dealer roster, imported 2026-08-12; Cottage Grove; sells used | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "cottagegrovecdjr.com",
@@ -3348,10 +3348,10 @@
       "domain": "hondaofsalem.com",
       "name": "HONDA OF SALEM",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 2) (OR) — state-published participating-dealer roster, imported 2026-08-12; Salem; sells used | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 2) (OR) — state-published participating-dealer roster, imported 2026-08-12; Salem; sells used | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 26 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "hubbardchevrolet.com",
@@ -3447,37 +3447,37 @@
       "domain": "lithiadodgeeugene.com",
       "name": "LITHIA CHRYSLER DODGE JEEP OF EUGENE",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 2) (OR) — state-published participating-dealer roster, imported 2026-08-12; Eugene; sells used | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 2) (OR) — state-published participating-dealer roster, imported 2026-08-12; Eugene; sells used | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "lithiacdjrbend.com",
       "name": "LITHIA CHRYSLER DODGE JEEP RAM OF BEND",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 2) (OR) — state-published participating-dealer roster, imported 2026-08-12; Bend; sells used | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 2) (OR) — state-published participating-dealer roster, imported 2026-08-12; Bend; sells used | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "lithianissaneugene.com",
       "name": "LITHIA NISSAN OF EUGENE",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 2) (OR) — state-published participating-dealer roster, imported 2026-08-12; Eugene; sells used | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 2) (OR) — state-published participating-dealer roster, imported 2026-08-12; Eugene; sells used | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "lithiatoyotaspringfield.com",
       "name": "LITHIA TOYOTA OF SPRINGFIELD",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 2) (OR) — state-published participating-dealer roster, imported 2026-08-12; Springfield; sells used | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 2) (OR) — state-published participating-dealer roster, imported 2026-08-12; Springfield; sells used | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "mazdaofsalem.com",
@@ -3537,10 +3537,10 @@
       "domain": "powerchevrolet.com",
       "name": "POWER CHEVROLET",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealeron",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 2) (OR) — state-published participating-dealer roster, imported 2026-08-12; Sublimity; sells used | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 2) (OR) — state-published participating-dealer roster, imported 2026-08-12; Sublimity; sells used | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "powergmofnewport.com",
@@ -3558,7 +3558,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 2) (OR) — state-published participating-dealer roster, imported 2026-08-12; Newport; sells used | probe 2026-08-13: homepage error:TypeError"
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 2) (OR) — state-published participating-dealer roster, imported 2026-08-12; Newport; sells used | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
     },
     {
       "domain": "powerford.com",
@@ -3600,10 +3600,10 @@
       "domain": "robersonalbanyford.com",
       "name": "ROBERSONS ALBANY FORD",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 2) (OR) — state-published participating-dealer roster, imported 2026-08-12; Albany; sells used | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 2) (OR) — state-published participating-dealer roster, imported 2026-08-12; Albany; sells used | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "salemautocenteror.com",
@@ -3726,10 +3726,10 @@
       "domain": "vwofsalem.com",
       "name": "VOLKSWAGEN OF SALEM",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 2) (OR) — state-published participating-dealer roster, imported 2026-08-12; Salem; sells used | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 2) (OR) — state-published participating-dealer roster, imported 2026-08-12; Salem; sells used | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "volvocarsbend.com",
@@ -3744,10 +3744,10 @@
       "domain": "wilsonmotorsonline.net",
       "name": "WILSON MOTORS",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 2) (OR) — state-published participating-dealer roster, imported 2026-08-12; Corvallis; sells used | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 2) (OR) — state-published participating-dealer roster, imported 2026-08-12; Corvallis; sells used | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "withnellauto.com",
@@ -3791,8 +3791,8 @@
       "kind": "rooftop",
       "platform": "unknown",
       "robots": "unknown",
-      "status": "http-503",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 2) (OR) — state-published participating-dealer roster, imported 2026-08-12; Bend; sells used | probe 2026-08-13: homepage 503"
+      "status": "needs-investigation",
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 2) (OR) — state-published participating-dealer roster, imported 2026-08-12; Bend; sells used | probe 2026-08-13: homepage 503 | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
     },
     {
       "domain": "kendallbmwofbend.com",
@@ -3837,16 +3837,16 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "http-429",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 2) (OR) — state-published participating-dealer roster, imported 2026-08-12; Bend; sells used | probe 2026-08-13: homepage 429"
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 2) (OR) — state-published participating-dealer roster, imported 2026-08-12; Bend; sells used | probe 2026-08-13: homepage 429 | probe 2026-08-13: homepage 429"
     },
     {
       "domain": "pricehondamac.com",
       "name": "PRICE HONDA",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 2) (OR) — state-published participating-dealer roster, imported 2026-08-12; McMinnville; sells used | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 2) (OR) — state-published participating-dealer roster, imported 2026-08-12; McMinnville; sells used | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "raveautosales.com",
@@ -3855,7 +3855,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 2) (OR) — state-published participating-dealer roster, imported 2026-08-12; Corvallis; sells used | probe 2026-08-13: homepage error:TypeError"
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 2) (OR) — state-published participating-dealer roster, imported 2026-08-12; Corvallis; sells used | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
     },
     {
       "domain": "success-autosales.com",
@@ -3918,7 +3918,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 2) (OR) — state-published participating-dealer roster, imported 2026-08-12; Eugene; sells used | probe 2026-08-13: homepage error:TypeError"
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 2) (OR) — state-published participating-dealer roster, imported 2026-08-12; Eugene; sells used | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
     },
     {
       "domain": "airportchevy.com",
@@ -3978,19 +3978,19 @@
       "domain": "craterlakemotors.com",
       "name": "CRATER LAKE FORD",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 3) (OR) — state-published participating-dealer roster, imported 2026-08-12; Medford; sells used | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 3) (OR) — state-published participating-dealer roster, imported 2026-08-12; Medford; sells used | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 4 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "craterlakemazda.com",
       "name": "CRATER LAKE MAZDA",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 3) (OR) — state-published participating-dealer roster, imported 2026-08-12; Medford; sells used | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 3) (OR) — state-published participating-dealer roster, imported 2026-08-12; Medford; sells used | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 3 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "goseegraham.com",
@@ -4050,10 +4050,10 @@
       "domain": "klamathfallssubaru.com",
       "name": "KLAMATH FALLS SUBARU",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 3) (OR) — state-published participating-dealer roster, imported 2026-08-12; Klamath Falls; sells used | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 3) (OR) — state-published participating-dealer roster, imported 2026-08-12; Klamath Falls; sells used | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 12 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "lithiafordroseburg.com",
@@ -4068,64 +4068,64 @@
       "domain": "lithiahondamedford.com",
       "name": "LITHIA MEDFORD HONDA",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 3) (OR) — state-published participating-dealer roster, imported 2026-08-12; Medford; sells used | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 3) (OR) — state-published participating-dealer roster, imported 2026-08-12; Medford; sells used | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "klamathfallstoyota.com",
       "name": "LITHIA TOYOTA OF KLAMATH FALLS",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 3) (OR) — state-published participating-dealer roster, imported 2026-08-12; Klamath Falls; sells used | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 3) (OR) — state-published participating-dealer roster, imported 2026-08-12; Klamath Falls; sells used | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 9 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "lithiatoyotamedford.com",
       "name": "LITHIA TOYOTA OF MEDFORD",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 3) (OR) — state-published participating-dealer roster, imported 2026-08-12; Medford; sells used | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 3) (OR) — state-published participating-dealer roster, imported 2026-08-12; Medford; sells used | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 24 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "lithiagrantspass.com",
       "name": "LITHIAS GRANTS PASS AUTO CENTER",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 3) (OR) — state-published participating-dealer roster, imported 2026-08-12; Grants Pass; sells used | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 3) (OR) — state-published participating-dealer roster, imported 2026-08-12; Grants Pass; sells used | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "medfordbmw.com",
       "name": "MEDFORD BMW",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 3) (OR) — state-published participating-dealer roster, imported 2026-08-12; Medford; sells used | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 3) (OR) — state-published participating-dealer roster, imported 2026-08-12; Medford; sells used | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "medfordnissan.com",
       "name": "MEDFORD NISSAN",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 3) (OR) — state-published participating-dealer roster, imported 2026-08-12; Medford; sells used | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 3) (OR) — state-published participating-dealer roster, imported 2026-08-12; Medford; sells used | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "medfordvw.com",
       "name": "MEDFORD VOLKSWAGEN",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 3) (OR) — state-published participating-dealer roster, imported 2026-08-12; Medford; sells used | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 3) (OR) — state-published participating-dealer roster, imported 2026-08-12; Medford; sells used | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "sosubaru.com",
@@ -4338,10 +4338,10 @@
       "domain": "hometowntoyota.com",
       "name": "HOMETOWN TOYOTA",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 5) (OR) — state-published participating-dealer roster, imported 2026-08-12; Ontario; sells used | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Oregon Clean Vehicle Rebate (region 5) (OR) — state-published participating-dealer roster, imported 2026-08-12; Ontario; sells used | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "legacychryslerjeepdodgeram.net",
@@ -4421,35 +4421,35 @@
       "kind": "rooftop",
       "platform": "unknown",
       "robots": "unknown",
-      "status": "http-503",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Audi Bridgewater | probe 2026-08-13: homepage 503"
+      "status": "needs-investigation",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Audi Bridgewater | probe 2026-08-13: homepage 503 | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
     },
     {
       "domain": "audieatontown.com",
       "name": "Audi",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Audi Eatontown | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Audi Eatontown | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "audifreehold.com",
       "name": "Audi",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "http-503",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Audi Freehold | probe 2026-08-13: homepage 503"
+      "status": "needs-investigation",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Audi Freehold | probe 2026-08-13: homepage 503 | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor"
     },
     {
       "domain": "audimeadowlandsofsecaucus.com",
       "name": "Audi",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "http-503",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Audi Meadowlands | probe 2026-08-13: homepage 503"
+      "status": "needs-investigation",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Audi Meadowlands | probe 2026-08-13: homepage 503 | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor"
     },
     {
       "domain": "audimillburn.com",
@@ -4457,8 +4457,8 @@
       "kind": "rooftop",
       "platform": "unknown",
       "robots": "unknown",
-      "status": "http-503",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Audi Millburn | probe 2026-08-13: homepage 503"
+      "status": "needs-investigation",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Audi Millburn | probe 2026-08-13: homepage 503 | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
     },
     {
       "domain": "audinewton.com",
@@ -4466,35 +4466,35 @@
       "kind": "rooftop",
       "platform": "unknown",
       "robots": "unknown",
-      "status": "http-503",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Audi Newton | probe 2026-08-13: homepage 503"
+      "status": "needs-investigation",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Audi Newton | probe 2026-08-13: homepage 503 | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
     },
     {
       "domain": "audiprinceton.com",
       "name": "Audi",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "http-503",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Audi Princeton | probe 2026-08-13: homepage 503"
+      "status": "needs-investigation",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Audi Princeton | probe 2026-08-13: homepage 503 | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor"
     },
     {
       "domain": "auditurnersville.com",
       "name": "Audi",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Audi Turnersville | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Audi Turnersville | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "bellaudi.com",
       "name": "Audi",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "http-503",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Bell Audi | probe 2026-08-13: homepage 503"
+      "status": "needs-investigation",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Bell Audi | probe 2026-08-13: homepage 503 | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor"
     },
     {
       "domain": "jackdanielsparamusaudi.com",
@@ -4502,8 +4502,8 @@
       "kind": "rooftop",
       "platform": "unknown",
       "robots": "unknown",
-      "status": "http-503",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Jack Daniels Audi of Paramus | probe 2026-08-13: homepage 503"
+      "status": "needs-investigation",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Jack Daniels Audi of Paramus | probe 2026-08-13: homepage 503 | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
     },
     {
       "domain": "jackdanielsusraudi.com",
@@ -4511,17 +4511,17 @@
       "kind": "rooftop",
       "platform": "unknown",
       "robots": "unknown",
-      "status": "http-503",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Jack Daniels Audi of Upper Saddle River | probe 2026-08-13: homepage 503"
+      "status": "needs-investigation",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Jack Daniels Audi of Upper Saddle River | probe 2026-08-13: homepage 503 | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
     },
     {
       "domain": "paulmilleraudi.com",
       "name": "Audi",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "http-503",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Paul Miller Audi | probe 2026-08-13: homepage 503"
+      "status": "needs-investigation",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Paul Miller Audi | probe 2026-08-13: homepage 503 | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor"
     },
     {
       "domain": "bmwatlanticcity.com",
@@ -4554,19 +4554,19 @@
       "domain": "bmwoffreehold.com",
       "name": "BMW",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; BMW of Freehold | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; BMW of Freehold | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "morristownbmw.com",
       "name": "BMW",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealeron",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; BMW of Morristown | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; BMW of Morristown | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "bmwofmtlaurel.com",
@@ -4581,10 +4581,10 @@
       "domain": "bmwramsey.com",
       "name": "BMW",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; BMW of Ramsey | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; BMW of Ramsey | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "bmwofspringfieldnj.com",
@@ -4608,10 +4608,10 @@
       "domain": "circlebmw.com",
       "name": "BMW",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Circle BMW | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Circle BMW | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 4 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "flemingtonbmw.com",
@@ -4626,19 +4626,19 @@
       "domain": "bmwedison.com",
       "name": "BMW",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealeron",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Open Road BMW | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Open Road BMW | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "parkavebmw.com",
       "name": "BMW",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Park Ave BMW | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Park Ave BMW | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "paulmillerbmw.com",
@@ -4698,10 +4698,10 @@
       "domain": "goldcoastcadillac.com",
       "name": "Cadillac",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Gold Coast Cadillac | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Gold Coast Cadillac | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "holmancadillac.com",
@@ -4734,10 +4734,10 @@
       "domain": "morristowncadillac.com",
       "name": "Cadillac",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealeron",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Open Road Cadillac of Morristown | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Open Road Cadillac of Morristown | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "pinebeltcadillac.com",
@@ -4770,10 +4770,10 @@
       "domain": "axischevrolet.com",
       "name": "Chevrolet",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealeron",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Axis Chevrolet | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Axis Chevrolet | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "barlowchevrolet.com",
@@ -4845,7 +4845,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Chv Egg Harbor Inc. Dba Bennett Chevrolet | probe 2026-08-13: homepage error:TypeError"
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Chv Egg Harbor Inc. Dba Bennett Chevrolet | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
     },
     {
       "domain": "cioccachevroletbuickgmcofflemington.com",
@@ -4905,10 +4905,10 @@
       "domain": "hawthornechevrolet.com",
       "name": "Chevrolet",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Hawthorne Chevrolet | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Hawthorne Chevrolet | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 24 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "hessertchevych.com",
@@ -4941,10 +4941,10 @@
       "domain": "lucaschevycars.com",
       "name": "Chevrolet",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Lucas Chevrolet | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Lucas Chevrolet | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "mallchevy.com",
@@ -5040,10 +5040,10 @@
       "domain": "qualitychevroletnj.com",
       "name": "Chevrolet",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealeron",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Quality Chevrolet | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Quality Chevrolet | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "qualitychevybuickgmc.com",
@@ -5151,43 +5151,43 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Fullerton Chrysler Jeep Dodge Ram | probe 2026-08-13: homepage error:TypeError"
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Fullerton Chrysler Jeep Dodge Ram | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
     },
     {
       "domain": "aceford.com",
       "name": "Ford",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Ace Ford | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Ace Ford | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "allamericanfordinoldbridge.com",
       "name": "Ford",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealeron",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; All American Ford in Old Bridge | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; All American Ford in Old Bridge | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "allamericanfordinpointpleasant.com",
       "name": "Ford",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealeron",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; All American Ford in Point Pleasant | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; All American Ford in Point Pleasant | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "allamericanfordofhackensack.com",
       "name": "Ford",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealeron",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; All American Ford of Hackensack | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; All American Ford of Hackensack | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "causewayfordmanahawkin.com",
@@ -5247,10 +5247,10 @@
       "domain": "echelonfordinc.com",
       "name": "Ford",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Echelon Ford | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Echelon Ford | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "familyfd.com",
@@ -5292,19 +5292,19 @@
       "domain": "fullertonford.com",
       "name": "Ford",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Fullerton Ford | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Fullerton Ford | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "gentiliniford.com",
       "name": "Ford",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealeron",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Gentilini Ford | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Gentilini Ford | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "georgewall.com",
@@ -5364,19 +5364,19 @@
       "domain": "larsonford.net",
       "name": "Ford",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealeron",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Larson Ford Inc | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Larson Ford Inc | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "lesterglennford.net",
       "name": "Ford",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Lester Glenn Ford | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Lester Glenn Ford | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "liccardifordnj.com",
@@ -5391,10 +5391,10 @@
       "domain": "lillistonford.com",
       "name": "Ford",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealeron",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Lilliston Ford | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Lilliston Ford | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "lucasmotorcompany.com",
@@ -5403,7 +5403,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Lucas Ford | probe 2026-08-13: homepage error:TypeError"
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Lucas Ford | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
     },
     {
       "domain": "mahwahford.com",
@@ -5418,10 +5418,10 @@
       "domain": "malouffordinc.com",
       "name": "Ford",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Malouf Ford Lincoln | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Malouf Ford Lincoln | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "maplecrestford.com",
@@ -5436,19 +5436,19 @@
       "domain": "maplecrestlincoln.com",
       "name": "Ford",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Maplecrest Ford Lincoln of Union | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Maplecrest Ford Lincoln of Union | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "medfordford.com",
       "name": "Ford",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Medford Ford | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Medford Ford | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "millerford.com",
@@ -5463,19 +5463,19 @@
       "domain": "nielsenford.com",
       "name": "Ford",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Nielsen Ford | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Nielsen Ford | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "nielsenfordmorristown.com",
       "name": "Ford",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Nielsen Ford of Morristown | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Nielsen Ford of Morristown | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "allamericanfordinparamus.com",
@@ -5490,55 +5490,55 @@
       "domain": "performanceforddealer.com",
       "name": "Ford",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Performance Ford | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Performance Ford | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "performancefordeasthanover.com",
       "name": "Ford",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Performance Ford of East Hanover | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Performance Ford of East Hanover | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "qualityautomall.com",
       "name": "Ford",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealeron",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Quality Auto Mall | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Quality Auto Mall | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "23ford.com",
       "name": "Ford",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Route 23 Automall | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Route 23 Automall | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "salernoduaneford.com",
       "name": "Ford",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Salerno Duane Ford | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Salerno Duane Ford | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "seabreezeford.com",
       "name": "Ford",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealeron",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Sea Breeze Ford Inc | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Sea Breeze Ford Inc | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "stevensjerseycityford.com",
@@ -5571,10 +5571,10 @@
       "domain": "verner-cadbyford.com",
       "name": "Ford",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Verner-Cadby Ford | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Verner-Cadby Ford | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 3 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "waynefordcars.com",
@@ -5607,10 +5607,10 @@
       "domain": "avalonhonda.com",
       "name": "Honda",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealeron",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Avalon Honda | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Avalon Honda | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "hondaboardwalk.com",
@@ -5643,10 +5643,10 @@
       "domain": "clintonhonda.com",
       "name": "Honda",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealeron",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Clinton Honda | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Clinton Honda | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "davishonda.net",
@@ -5661,10 +5661,10 @@
       "domain": "dchacademyhonda.com",
       "name": "Honda",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealeron",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; DCH Academy Honda | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; DCH Academy Honda | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "dchkayhonda.com",
@@ -5697,19 +5697,19 @@
       "domain": "hamiltonhonda.com",
       "name": "Honda",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealeron",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Hamilton Honda | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Hamilton Honda | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "hondabridgewater.com",
       "name": "Honda",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Honda of Bridgewater | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Honda of Bridgewater | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 24 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "hondaoffreehold.com",
@@ -5754,7 +5754,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Honda of Tenafly | probe 2026-08-13: homepage error:TypeError"
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Honda of Tenafly | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
     },
     {
       "domain": "hondaoftomsriver.com",
@@ -5868,10 +5868,10 @@
       "domain": "route23honda.com",
       "name": "Honda",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Route 23 Honda | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Route 23 Honda | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "scotthondavineland.com",
@@ -5940,10 +5940,10 @@
       "domain": "franklinsussexhyundai.com",
       "name": "Hyundai",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Franklin Sussex Hyundai | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Franklin Sussex Hyundai | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "fredbeanshyundaiflemington.com",
@@ -5958,10 +5958,10 @@
       "domain": "freeholdhyundai.com",
       "name": "Hyundai",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Freehold Hyundai | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Freehold Hyundai | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "globalautomall.com",
@@ -5976,10 +5976,10 @@
       "domain": "hudsonhyundai.com",
       "name": "Hyundai",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Hudson Hyundai | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Hudson Hyundai | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "hyundaioftrenton.com",
@@ -6039,19 +6039,19 @@
       "domain": "route1hyundai.com",
       "name": "Hyundai",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Route 1 Hyundai | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Route 1 Hyundai | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "sansoneshyundai.com",
       "name": "Hyundai",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealeron",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Sansone Hyundai | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Sansone Hyundai | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "sporthyundai.net",
@@ -6078,7 +6078,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Vineland Hyundai | probe 2026-08-13: TypeError"
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Vineland Hyundai | probe 2026-08-13: TypeError | probe 2026-08-13: TypeError"
     },
     {
       "domain": "waynehyundai.com",
@@ -6096,7 +6096,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Bridgewater Kia | probe 2026-08-13: homepage error:TypeError"
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Bridgewater Kia | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
     },
     {
       "domain": "burlingtonkia.com",
@@ -6129,10 +6129,10 @@
       "domain": "difeokia.com",
       "name": "Kia",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealeron",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Difeo Kia | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Difeo Kia | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "fettekia.com",
@@ -6156,10 +6156,10 @@
       "domain": "globalkia.com",
       "name": "Kia",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Global Kia | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Global Kia | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "jackdanielskia.com",
@@ -6201,19 +6201,19 @@
       "domain": "libertykiaofnj.com",
       "name": "Kia",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Liberty Kia | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Liberty Kia | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "manahawkinkia.com",
       "name": "Kia",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealeron",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Manahawkin Kia | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Manahawkin Kia | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "mattblattkia.com",
@@ -6258,7 +6258,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Nutley Kia | probe 2026-08-13: homepage robots_disallowed"
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Nutley Kia | probe 2026-08-13: homepage robots_disallowed | probe 2026-08-13: homepage robots_disallowed"
     },
     {
       "domain": "performancekiaofdenville.com",
@@ -6309,10 +6309,10 @@
       "domain": "sansoneskia.com",
       "name": "Kia",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealeron",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Sansone Kia | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Sansone Kia | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "turnersvillekia.com",
@@ -6327,10 +6327,10 @@
       "domain": "morristownmini.com",
       "name": "Mini",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealeron",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Mini of Morristown | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Mini of Morristown | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "miniofmtlaurel.com",
@@ -6345,19 +6345,19 @@
       "domain": "miniramsey.com",
       "name": "Mini",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Mini of Ramsey | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Mini of Ramsey | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "miniofedison.com",
       "name": "Mini",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealeron",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Open Road Mini of Edison | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Open Road Mini of Edison | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "acmenissan.com",
@@ -6462,10 +6462,10 @@
       "domain": "nielsennissan.com",
       "name": "Nissan",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Nielsen Nissan | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Nielsen Nissan | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "nielsennissandenville.com",
@@ -6555,7 +6555,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Riverside Nissan | probe 2026-08-13: TypeError"
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Riverside Nissan | probe 2026-08-13: TypeError | probe 2026-08-13: TypeError"
     },
     {
       "domain": "route17nissan.com",
@@ -6573,7 +6573,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Route 23 Nissan | probe 2026-08-13: homepage error:TypeError"
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Route 23 Nissan | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
     },
     {
       "domain": "route33nissan.com",
@@ -6636,16 +6636,16 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Polestar Short Hills | probe 2026-08-13: homepage error:TypeError"
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Polestar Short Hills | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
     },
     {
       "domain": "allamericansubaru.com",
       "name": "Subaru",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealeron",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; All American Subaru | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; All American Subaru | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "cioccasubarunj.com",
@@ -6732,10 +6732,10 @@
       "domain": "openroadsubaru.com",
       "name": "Subaru",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealeron",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Open Road Subaru | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Open Road Subaru | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "paulmillersubaru.com",
@@ -6822,10 +6822,10 @@
       "domain": "victorysubaru.com",
       "name": "Subaru",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealeron",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Victory Subaru | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Victory Subaru | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "waynesubaru.com",
@@ -6876,10 +6876,10 @@
       "domain": "dchbrunswicktoyota.com",
       "name": "Toyota",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; DCH Brunswick Toyota | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; DCH Brunswick Toyota | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "eastcoasttoyota.com",
@@ -6888,7 +6888,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; East Coast Toyota | probe 2026-08-13: homepage error:TypeError"
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; East Coast Toyota | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
     },
     {
       "domain": "shopempiretoyotaofgreenbrook.com",
@@ -6957,10 +6957,10 @@
       "domain": "parkwaytoyota.com",
       "name": "Toyota",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Parkway Toyota | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Parkway Toyota | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "paulmillertoyota.com",
@@ -6975,10 +6975,10 @@
       "domain": "prestigetoyota.com",
       "name": "Toyota",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Prestige Toyota of Ramsey | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Prestige Toyota of Ramsey | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "route22toyota.com",
@@ -6993,19 +6993,19 @@
       "domain": "sansonestoyota.com",
       "name": "Toyota",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealeron",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Sansone Toyota | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Sansone Toyota | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "shoretoyota.com",
       "name": "Toyota",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Shore Toyota | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Shore Toyota | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "teamtoyotaprinceton.com",
@@ -7146,19 +7146,19 @@
       "domain": "gensingervw.com",
       "name": "Volkswagen",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Gensinger Motors Inc | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Gensinger Motors Inc | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "hamiltonvw.net",
       "name": "Volkswagen",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealeron",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Hamilton Volkswagen | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Hamilton Volkswagen | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "jackdanielsvw.com",
@@ -7182,10 +7182,10 @@
       "domain": "openroadvwbridgewater.com",
       "name": "Volkswagen",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealeron",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Open Road Volkswagen of Bridgewater | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Open Road Volkswagen of Bridgewater | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "paulmillervw.com",
@@ -7203,16 +7203,16 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Prestige Volkswagen Subaru | probe 2026-08-13: TypeError"
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Prestige Volkswagen Subaru | probe 2026-08-13: TypeError | probe 2026-08-13: TypeError"
     },
     {
       "domain": "reydelvw.com",
       "name": "Volkswagen",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealeron",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Reydel Volkswagen of Edison | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Reydel Volkswagen of Edison | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "reydelvwlinden.com",
@@ -7245,10 +7245,10 @@
       "domain": "tomsunionvw.com",
       "name": "Volkswagen",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Tom&#039;s Volkswagen of Union | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Tom&#039;s Volkswagen of Union | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 24 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "tomsrivervw.com",
@@ -7290,10 +7290,10 @@
       "domain": "unionvw.com",
       "name": "Volkswagen",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Volkswagen of Union | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Volkswagen of Union | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 24 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "vwprinceton.com",
@@ -7326,10 +7326,10 @@
       "domain": "cherryhillvolvocars.com",
       "name": "Volvo",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Cherry Hill Volvo Cars | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Cherry Hill Volvo Cars | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 24 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "kundertvolvocars.com",
@@ -7353,10 +7353,10 @@
       "domain": "prestigevolvo.com",
       "name": "Volvo",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Prestige Volvo | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in Charge Up New Jersey (NJ) — state-published participating-dealer roster, imported 2026-08-12; Prestige Volvo | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "prestigevolvocarsenglewood.com",
@@ -7434,28 +7434,28 @@
       "domain": "24fordofeaston.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "actonford.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "actontoyota.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealeron",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "acuraofauburn.com",
@@ -7500,16 +7500,16 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
     },
     {
       "domain": "subaruofwakefield.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "alliancemotorgroup.com",
@@ -7562,26 +7562,26 @@
       "kind": "rooftop",
       "platform": "unknown",
       "robots": "unknown",
-      "status": "http-503",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage 503"
+      "status": "needs-investigation",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage 503 | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
     },
     {
       "domain": "audicapecod.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "http-503",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage 503"
+      "status": "needs-investigation",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage 503 | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor"
     },
     {
       "domain": "audishrewsbury.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "http-503",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage 503"
+      "status": "needs-investigation",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage 503 | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor"
     },
     {
       "domain": "audivwfallriver.com",
@@ -7590,16 +7590,16 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
     },
     {
       "domain": "vwpittsfield.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "autobahnusadedham.com",
@@ -7623,10 +7623,10 @@
       "domain": "autofairsubaru.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "balisechevroletbuickgmc.com",
@@ -7722,10 +7722,10 @@
       "domain": "balisesubaruhadley.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "balisetoyota.com",
@@ -7812,10 +7812,10 @@
       "domain": "berterachevy.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "berterachryslerjeep.com",
@@ -7857,10 +7857,10 @@
       "domain": "berterasubaru.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "thebestchevy.com",
@@ -7878,7 +7878,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
     },
     {
       "domain": "billdelucachevrolet.com",
@@ -7956,10 +7956,10 @@
       "domain": "bostonvolvocars.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "status": "needs-investigation",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor"
     },
     {
       "domain": "bristoltoyota.com",
@@ -8010,10 +8010,10 @@
       "domain": "capeislandskia.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:AbortError"
+      "status": "working",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:AbortError | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "carnovapreowned.com",
@@ -8100,19 +8100,19 @@
       "domain": "coastalnissan.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealeron",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "coastalvw.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealeron",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "colonialcadillacwoburn.com",
@@ -8136,19 +8136,19 @@
       "domain": "colonialfordofmarlboro.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "status": "needs-investigation",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor"
     },
     {
       "domain": "colonialford.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "buycolonialhonda.com",
@@ -8319,7 +8319,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage robots_disallowed"
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage robots_disallowed | probe 2026-08-13: homepage robots_disallowed"
     },
     {
       "domain": "danversmotors.com",
@@ -8334,10 +8334,10 @@
       "domain": "dartmouthnissan.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "status": "needs-investigation",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor"
     },
     {
       "domain": "choosediamond.com",
@@ -8469,10 +8469,10 @@
       "domain": "fordnorthampton.net",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 4 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "freidaysautosales.com",
@@ -8496,19 +8496,19 @@
       "domain": "drivegervais.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 7 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "gervaislincoln.net",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "greenwaveev.com",
@@ -8595,10 +8595,10 @@
       "domain": "harrtoyota.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "status": "needs-investigation",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor"
     },
     {
       "domain": "herbchambersalfaromeo.com",
@@ -8775,10 +8775,10 @@
       "domain": "herbconnollychevrolet.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "hermesautosales.com",
@@ -8793,19 +8793,19 @@
       "domain": "hondanorth.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "hondavillage.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "hyannishonda.com",
@@ -8847,10 +8847,10 @@
       "domain": "imperialfordmilford.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "imperialsubaru.com",
@@ -8901,10 +8901,10 @@
       "domain": "irasubaru.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "toyotaofdanvers.com",
@@ -8922,7 +8922,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
     },
     {
       "domain": "ironwolfmotors.com",
@@ -8964,10 +8964,10 @@
       "domain": "jannellford.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "kmmotors.com",
@@ -9162,10 +9162,10 @@
       "domain": "longcadillac.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "longsubaru.com",
@@ -9216,10 +9216,10 @@
       "domain": "martys-chevy.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealeron",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "bostonmotorsportsalfaromeo.com",
@@ -9237,7 +9237,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
     },
     {
       "domain": "mastriahyundaiofplymouth.com",
@@ -9246,7 +9246,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
     },
     {
       "domain": "mastriakia.com",
@@ -9531,10 +9531,10 @@
       "domain": "metrowesthyundai.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "metrowestsubaru.com",
@@ -9576,10 +9576,10 @@
       "domain": "nissan24auto.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "nissanofmerrimackvalley.com",
@@ -9759,7 +9759,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "http-429",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage 429"
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage 429 | probe 2026-08-13: homepage 429"
     },
     {
       "domain": "premiercapecod.com",
@@ -9945,10 +9945,10 @@
       "domain": "route44hyundai.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "route44toyota.com",
@@ -9981,19 +9981,19 @@
       "domain": "saratford.net",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "sentryfordauto.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealeron",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "silkohonda.com",
@@ -10053,10 +10053,10 @@
       "domain": "statelinesubaru.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "stonehamford.com",
@@ -10074,7 +10074,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
     },
     {
       "domain": "swansongmc.com",
@@ -10107,10 +10107,10 @@
       "domain": "highlinemotorgroup.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "topsfieldmotorco.com",
@@ -10143,10 +10143,10 @@
       "domain": "toyotaofwatertown.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "tracyvw.com",
@@ -10218,7 +10218,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: TypeError"
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: TypeError | probe 2026-08-13: TypeError"
     },
     {
       "domain": "volvocarsplymouth.com",
@@ -10233,10 +10233,10 @@
       "domain": "volvocarsdanvers.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "status": "needs-investigation",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor"
     },
     {
       "domain": "wagnerkiaofshrewsbury.com",
@@ -10260,10 +10260,10 @@
       "domain": "warehamfordinc.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 24 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "watertownford.com",
@@ -10289,8 +10289,8 @@
       "kind": "rooftop",
       "platform": "unknown",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:AbortError"
+      "status": "http-403",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:AbortError | probe 2026-08-13: homepage 403"
     },
     {
       "domain": "woburntoyota.com",
@@ -10299,7 +10299,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError"
     },
     {
       "domain": "yesautocenter.com",
@@ -10332,10 +10332,10 @@
       "domain": "willisford.com",
       "name": "Willis Ford",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in DNREC Clean Vehicle Rebate (DE) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in DNREC Clean Vehicle Rebate (DE) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "willisgm.com",
@@ -10404,10 +10404,10 @@
       "domain": "porterchevy.com",
       "name": "Porter Chevrolet Hyundai",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in DNREC Clean Vehicle Rebate (DE) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in DNREC Clean Vehicle Rebate (DE) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 5 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "nucarde.com",
@@ -10422,10 +10422,10 @@
       "domain": "bayshoreford.com",
       "name": "Bayshore Ford Truck Sales, Inc",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in DNREC Clean Vehicle Rebate (DE) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in DNREC Clean Vehicle Rebate (DE) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "porterford.com",
@@ -10461,7 +10461,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Enrolled in DNREC Clean Vehicle Rebate (DE) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage robots_disallowed"
+      "notes": "Enrolled in DNREC Clean Vehicle Rebate (DE) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage robots_disallowed | probe 2026-08-13: homepage robots_disallowed"
     },
     {
       "domain": "sheridannissan.com",
@@ -10476,10 +10476,10 @@
       "domain": "firststatechevy.com",
       "name": "First State Motors, Inc",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealeron",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Enrolled in DNREC Clean Vehicle Rebate (DE) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError"
+      "status": "working",
+      "notes": "Enrolled in DNREC Clean Vehicle Rebate (DE) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "lewesautomall.com",
@@ -10487,8 +10487,8 @@
       "kind": "rooftop",
       "platform": "dealeron",
       "robots": "unknown",
-      "status": "http-502",
-      "notes": "Enrolled in DNREC Clean Vehicle Rebate (DE) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: 0 VIN vehicles in 12 fetches (72 ItemList entries, platform dealeron) — likely needs a platform extractor | probe 2026-08-13: homepage 502"
+      "status": "working",
+      "notes": "Enrolled in DNREC Clean Vehicle Rebate (DE) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: 0 VIN vehicles in 12 fetches (72 ItemList entries, platform dealeron) — likely needs a platform extractor | probe 2026-08-13: homepage 502 | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "igburtonchevyseaford.com",
@@ -10514,8 +10514,8 @@
       "kind": "rooftop",
       "platform": "unknown",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+      "status": "needs-investigation",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05) | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
     },
     {
       "domain": "toyotaofseattle.com",
@@ -10523,8 +10523,8 @@
       "kind": "rooftop",
       "platform": "team-velocity",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Toyota"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Toyota | auto-promoted by probe 2026-08-13: 32 VIN vehicles on 1 page(s), platform team-velocity"
     },
     {
       "domain": "hondaofseattle.com",
@@ -10532,8 +10532,8 @@
       "kind": "rooftop",
       "platform": "team-velocity",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Honda"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Honda | auto-promoted by probe 2026-08-13: 32 VIN vehicles on 1 page(s), platform team-velocity"
     },
     {
       "domain": "westfamilyauto.com",
@@ -10542,7 +10542,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05) | probe 2026-08-13: homepage error:TypeError"
     },
     {
       "domain": "legendautosales.com",
@@ -10550,8 +10550,8 @@
       "kind": "rooftop",
       "platform": "dealerinspire",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05) | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealerinspire"
     },
     {
       "domain": "jdmcarandmotorcycle.com",
@@ -10568,8 +10568,8 @@
       "kind": "rooftop",
       "platform": "unknown",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+      "status": "needs-investigation",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05) | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
     },
     {
       "domain": "dougs.com",
@@ -10587,7 +10587,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05) | probe 2026-08-13: homepage error:TypeError"
     },
     {
       "domain": "best-autollc.com",
@@ -10632,7 +10632,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05) | probe 2026-08-13: homepage error:TypeError"
     },
     {
       "domain": "authenticmotorcars.com",
@@ -10640,8 +10640,8 @@
       "kind": "rooftop",
       "platform": "unknown",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+      "status": "needs-investigation",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05) | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
     },
     {
       "domain": "hyundaiofkirkland.com",
@@ -10649,8 +10649,8 @@
       "kind": "rooftop",
       "platform": "dealer.com",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Hyundai"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Hyundai | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "landmarkmotors.com",
@@ -10658,8 +10658,8 @@
       "kind": "rooftop",
       "platform": "unknown",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05) | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform unknown"
     },
     {
       "domain": "eastsidesubaru.com",
@@ -10667,8 +10667,8 @@
       "kind": "rooftop",
       "platform": "dealer.com",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05) | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "hyundaiofseattle.com",
@@ -10686,7 +10686,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05) | probe 2026-08-13: homepage error:TypeError"
     },
     {
       "domain": "kleancarz.com",
@@ -10694,8 +10694,8 @@
       "kind": "rooftop",
       "platform": "unknown",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+      "status": "needs-investigation",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05) | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
     },
     {
       "domain": "toyotaoflakecity.com",
@@ -10703,8 +10703,8 @@
       "kind": "rooftop",
       "platform": "dealeron",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Toyota"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Toyota | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "pacfordfleet.com",
@@ -10713,7 +10713,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Bill Pierre"
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Bill Pierre | probe 2026-08-13: homepage error:TypeError"
     },
     {
       "domain": "prudentauto.com",
@@ -10728,10 +10728,10 @@
       "domain": "audiseattle.com",
       "name": "Audi Seattle",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "http-503",
-      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Audi"
+      "status": "needs-investigation",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Audi | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor"
     },
     {
       "domain": "universityvw.com",
@@ -10739,8 +10739,8 @@
       "kind": "rooftop",
       "platform": "dealeron",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Volkswagen"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Volkswagen | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "chevrolane.com",
@@ -10757,8 +10757,8 @@
       "kind": "rooftop",
       "platform": "unknown",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+      "status": "needs-investigation",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05) | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
     },
     {
       "domain": "universitymotorsports.com",
@@ -10767,7 +10767,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05) | probe 2026-08-13: homepage error:TypeError"
     },
     {
       "domain": "mazdaofseattle.com",
@@ -10784,8 +10784,8 @@
       "kind": "rooftop",
       "platform": "team-velocity",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05) | auto-promoted by probe 2026-08-13: 3 VIN vehicles on 1 page(s), platform team-velocity"
     },
     {
       "domain": "bellevuenissan.com",
@@ -10800,10 +10800,10 @@
       "domain": "acuraofseattle.com",
       "name": "Acura of Seattle",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "unreachable",
-      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Acura"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Acura | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "enterprisecarsales.com",
@@ -10811,8 +10811,8 @@
       "kind": "rooftop",
       "platform": "unknown",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Enterprise Car Sales"
+      "status": "needs-investigation",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Enterprise Car Sales | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
     },
     {
       "domain": "fordofkirkland.com",
@@ -10847,8 +10847,8 @@
       "kind": "rooftop",
       "platform": "unknown",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Mercedes-Benz"
+      "status": "unreachable",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Mercedes-Benz | probe 2026-08-13: homepage robots_disallowed"
     },
     {
       "domain": "volvoofseattle.com",
@@ -10857,7 +10857,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Volvo"
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Volvo | probe 2026-08-13: homepage error:TypeError"
     },
     {
       "domain": "infinitiofbellevue.com",
@@ -10874,8 +10874,8 @@
       "kind": "rooftop",
       "platform": "dealeron",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05) | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
       "domain": "bmwseattle.com",
@@ -10892,8 +10892,8 @@
       "kind": "rooftop",
       "platform": "unknown",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Toyota"
+      "status": "needs-investigation",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Toyota | probe 2026-08-13: 0 VIN vehicles in 12 fetches (12 ItemList entries, platform unknown) — likely needs a platform extractor"
     },
     {
       "domain": "dougshyundai.com",
@@ -10910,8 +10910,8 @@
       "kind": "rooftop",
       "platform": "dealer.com",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05) | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "donjoseautosales.com",
@@ -10919,8 +10919,8 @@
       "kind": "rooftop",
       "platform": "unknown",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+      "status": "unreachable",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05) | probe 2026-08-13: TypeError"
     },
     {
       "domain": "thesuprememotors.com",
@@ -10928,8 +10928,8 @@
       "kind": "rooftop",
       "platform": "dealercarsearch",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+      "status": "needs-investigation",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05) | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealercarsearch) — likely needs a platform extractor"
     },
     {
       "domain": "townandcountrytrucks.com",
@@ -10937,8 +10937,8 @@
       "kind": "rooftop",
       "platform": "unknown",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+      "status": "needs-investigation",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05) | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
     },
     {
       "domain": "mjfamilyautosales.com",
@@ -10947,7 +10947,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "unreachable",
-      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05) | probe 2026-08-13: homepage error:TypeError"
     },
     {
       "domain": "rentonmazda.com",
@@ -10964,8 +10964,8 @@
       "kind": "rooftop",
       "platform": "dealerinspire",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Nissan"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Nissan | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealerinspire"
     },
     {
       "domain": "seattlemini.com",
@@ -10973,8 +10973,8 @@
       "kind": "rooftop",
       "platform": "dealer.com",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Mini"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Mini | auto-promoted by probe 2026-08-13: 1 VIN vehicles on 1 page(s), platform dealer.com"
     },
     {
       "domain": "dougsmazda.com",
