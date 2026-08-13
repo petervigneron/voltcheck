@@ -24,6 +24,20 @@ export const SRP_PATHS = [
 
 export const dedupe = (arr) => [...new Set(arr)];
 
+// Sitemaps are XML, so URLs arrive entity-encoded: a literal "+" in a path
+// shows up as &#x2B;. Fetching the raw string 404s every time. Found on
+// DealerOn sites 2026-08-12, where it silently sank whole dealers.
+export function decodeEntities(s) {
+  return s
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, h) => String.fromCodePoint(parseInt(h, 16)))
+    .replace(/&#(\d+);/g, (_, d) => String.fromCodePoint(Number(d)))
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'")
+    .replace(/&amp;/g, "&");
+}
+
 // Group sites enumerate tens of thousands of VDPs across sub-sitemaps; caps
 // scale with the caller's page budget so a 500-page crawl isn't starved by
 // prototype-era limits.
@@ -47,7 +61,7 @@ export async function discoverSitemapUrls(domain, { maxUrls = 3000, maxSitemaps 
     const res = await fetchPage(sm);
     if (res.status !== 200 || !res.body) continue;
     for (const m of res.body.matchAll(LOC_RE)) {
-      const loc = m[1];
+      const loc = decodeEntities(m[1]);
       if (/\.xml(\.gz)?$/i.test(loc) && seen.size < maxSitemaps) queue.push(loc);
       else if (INV_PATH_RE.test(loc)) urls.push(loc);
     }
