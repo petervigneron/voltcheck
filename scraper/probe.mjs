@@ -92,6 +92,26 @@ async function probeSite(site) {
       vehicles.filter((v) => isVin(v.vehicleIdentificationNumber ?? v.vin)).length + platformVins.length;
     itemListEntries += extractItemListEntries(res.body).length;
     if (vehiclesWithVin > 0) break; // bar met, stop spending requests
+    // An SRP's ItemList is a list of this dealer's cars, one link each.
+    // The crawler follows these to VDPs; the probe used to merely count
+    // them and then declare the site a failure — which is how DealerOn
+    // dealers with perfectly extractable inventory got written off.
+    for (const e of extractItemListEntries(res.body).slice(0, 2)) {
+      if (fetched >= 12) break;
+      const vdp = await fetchPage(e.url);
+      fetched++;
+      if (vdp.status !== 200 || !vdp.body) continue;
+      const found = [...extractVehicles(vdp.body), ...extractDrivewayVehicles(vdp.body)]
+        .filter((v) => isVin(v.vehicleIdentificationNumber ?? v.vin)).length +
+        extractDdcVehicles(vdp.body).map((d) => d.vin).filter(isVin).length +
+        [extractDealerOn(vdp.body)?.vehicle?.vin, extractTeamVelocity(vdp.body)?.vin].filter(isVin).length;
+      if (found > 0) {
+        vehiclesWithVin += found;
+        pagesWithVehicles++;
+        break;
+      }
+    }
+    if (vehiclesWithVin > 0) break;
   }
 
   if (vehiclesWithVin > 0) {
