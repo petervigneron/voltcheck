@@ -10498,6 +10498,492 @@
       "robots": "unknown",
       "status": "working",
       "notes": "Enrolled in DNREC Clean Vehicle Rebate (DE) — state-published participating-dealer roster, imported 2026-08-13 | auto-promoted by probe 2026-08-13: 2 VIN vehicles on 1 page(s), platform dealeron"
+    },
+    {
+      "domain": "cartersubaruballard.com",
+      "name": "Carter Subaru Ballard",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+    },
+    {
+      "domain": "fivestarautos.com",
+      "name": "Five Star Autos",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+    },
+    {
+      "domain": "toyotaofseattle.com",
+      "name": "Toyota of Seattle",
+      "kind": "rooftop",
+      "platform": "team-velocity",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Toyota"
+    },
+    {
+      "domain": "hondaofseattle.com",
+      "name": "Honda of Seattle",
+      "kind": "rooftop",
+      "platform": "team-velocity",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Honda"
+    },
+    {
+      "domain": "westfamilyauto.com",
+      "name": "iRyde",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "unreachable",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+    },
+    {
+      "domain": "legendautosales.com",
+      "name": "Legend Auto Sales",
+      "kind": "rooftop",
+      "platform": "dealerinspire",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+    },
+    {
+      "domain": "jdmcarandmotorcycle.com",
+      "name": "JDM Car & Motorcycle",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+    },
+    {
+      "domain": "cvluxurycars.com",
+      "name": "Columbia Valley Luxury Cars",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+    },
+    {
+      "domain": "dougs.com",
+      "name": "Doug's Pre-Owned Auto",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+    },
+    {
+      "domain": "mmotorswa.com",
+      "name": "M Motors Auto Sales",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "unreachable",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+    },
+    {
+      "domain": "best-autollc.com",
+      "name": "Best Auto LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+    },
+    {
+      "domain": "campbellvw.com",
+      "name": "Campbell Volkswagen of Edmonds",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Volkswagen"
+    },
+    {
+      "domain": "campbellnissanofedmonds.com",
+      "name": "Campbell Nissan of Edmonds",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Nissan"
+    },
+    {
+      "domain": "seattlemotorsports.net",
+      "name": "Seattle Motorsports",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+    },
+    {
+      "domain": "lotusbellevue.com",
+      "name": "Lotus Bellevue",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "unreachable",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+    },
+    {
+      "domain": "authenticmotorcars.com",
+      "name": "Authentic Motorcars",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+    },
+    {
+      "domain": "hyundaiofkirkland.com",
+      "name": "Hyundai of Kirkland",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Hyundai"
+    },
+    {
+      "domain": "landmarkmotors.com",
+      "name": "Landmark Motors, Inc.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+    },
+    {
+      "domain": "eastsidesubaru.com",
+      "name": "Eastside Subaru Pre-Owned",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+    },
+    {
+      "domain": "hyundaiofseattle.com",
+      "name": "Hyundai of Seattle",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Hyundai"
+    },
+    {
+      "domain": "trucksplusnw.com",
+      "name": "Trucks Plus",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "unreachable",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+    },
+    {
+      "domain": "kleancarz.com",
+      "name": "Klean Carz",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+    },
+    {
+      "domain": "toyotaoflakecity.com",
+      "name": "Toyota of Lake City Showroom",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Toyota"
+    },
+    {
+      "domain": "pacfordfleet.com",
+      "name": "Pierre Fleet & Commercial",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "unreachable",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Bill Pierre"
+    },
+    {
+      "domain": "prudentauto.com",
+      "name": "Prudent Autodeals",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+    },
+    {
+      "domain": "audiseattle.com",
+      "name": "Audi Seattle",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-503",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Audi"
+    },
+    {
+      "domain": "universityvw.com",
+      "name": "University Volkswagen",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Volkswagen"
+    },
+    {
+      "domain": "chevrolane.com",
+      "name": "Paisanos Chevrolane",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+    },
+    {
+      "domain": "paramountmotorsnw.com",
+      "name": "Paramount Motors NW",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+    },
+    {
+      "domain": "universitymotorsports.com",
+      "name": "University Motorsports",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "unreachable",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+    },
+    {
+      "domain": "mazdaofseattle.com",
+      "name": "Lee Johnson Mazda of Seattle",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Mazda"
+    },
+    {
+      "domain": "lynnwoodhonda.com",
+      "name": "Lynnwood Honda",
+      "kind": "rooftop",
+      "platform": "team-velocity",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+    },
+    {
+      "domain": "bellevuenissan.com",
+      "name": "Bellevue Nissan",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Nissan"
+    },
+    {
+      "domain": "acuraofseattle.com",
+      "name": "Acura of Seattle",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "unreachable",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Acura"
+    },
+    {
+      "domain": "enterprisecarsales.com",
+      "name": "Enterprise Car Sales",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Enterprise Car Sales"
+    },
+    {
+      "domain": "fordofkirkland.com",
+      "name": "Ford of Kirkland",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Ford"
+    },
+    {
+      "domain": "wcautoworks.net",
+      "name": "West Coast Auto Works",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+    },
+    {
+      "domain": "acuraofbellevue.com",
+      "name": "Acura of Bellevue",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Acura"
+    },
+    {
+      "domain": "bellevue.mercedescenter.com",
+      "name": "Mercedes-Benz of Bellevue",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Mercedes-Benz"
+    },
+    {
+      "domain": "volvoofseattle.com",
+      "name": "Ravenna Volvo",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "unreachable",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Volvo"
+    },
+    {
+      "domain": "infinitiofbellevue.com",
+      "name": "Infiniti of Bellevue",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Infiniti"
+    },
+    {
+      "domain": "parkplaceltd.com",
+      "name": "Park Place LTD",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+    },
+    {
+      "domain": "bmwseattle.com",
+      "name": "BMW Seattle",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: BMW"
+    },
+    {
+      "domain": "burientoyota.com",
+      "name": "Burien Toyota",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Toyota"
+    },
+    {
+      "domain": "dougshyundai.com",
+      "name": "Doug's Hyundai",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+    },
+    {
+      "domain": "autoquest.net",
+      "name": "AutoQuest.net",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+    },
+    {
+      "domain": "donjoseautosales.com",
+      "name": "Don Jose Auto Sales",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+    },
+    {
+      "domain": "thesuprememotors.com",
+      "name": "Supreme Motors",
+      "kind": "rooftop",
+      "platform": "dealercarsearch",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+    },
+    {
+      "domain": "townandcountrytrucks.com",
+      "name": "Town & Country Trucks & Trailers",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+    },
+    {
+      "domain": "mjfamilyautosales.com",
+      "name": "MJ Family Auto Sales",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "unreachable",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
+    },
+    {
+      "domain": "rentonmazda.com",
+      "name": "Walker's Renton Mazda",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Mazda"
+    },
+    {
+      "domain": "kirklandnissan.com",
+      "name": "Kirkland Nissan",
+      "kind": "rooftop",
+      "platform": "dealerinspire",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Nissan"
+    },
+    {
+      "domain": "seattlemini.com",
+      "name": "Seattle Mini",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Mini"
+    },
+    {
+      "domain": "dougsmazda.com",
+      "name": "Doug's Lynnwood Mazda",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05)"
     }
   ],
   "_sources": [
