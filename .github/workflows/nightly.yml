@@ -25,8 +25,12 @@ on:
         required: false
         default: "false"
 
+# Deliberately NOT sharing a group with the discovery sweep. They both touch
+# registry.json, but blocking the crawl behind a multi-hour sweep means the
+# site can't refresh while discovery runs — unacceptable during bootstrap.
+# The commit step below handles the write race instead.
 concurrency:
-  group: scraper
+  group: crawl
   cancel-in-progress: false
 
 permissions:
@@ -95,10 +99,23 @@ jobs:
 
       # The JSON snapshot is the web app's fallback when Supabase is
       # unreachable, so it needs to stay current in the repo.
+      # Supabase already has the listings by this point, so the site is
+      # updated whether or not this commit lands. Retry around the discovery
+      # sweep's writes, and warn rather than fail if we lose the race — a
+      # red X here would wrongly imply the crawl itself failed.
       - name: Commit refreshed data
+        if: always()
         run: |
           git config user.name "voltcheck-bot"
           git config user.email "noreply@github.com"
           git add scraper/registry/registry.json web/data/scraped-listings.json
-          git diff --staged --quiet || git commit -m "Nightly: registry + listings refresh [skip ci]"
-          git push
+          git diff --staged --quiet && { echo "nothing to commit"; exit 0; }
+          git commit -m "Nightly: registry + listings refresh [skip ci]"
+          for i in 1 2 3 4 5; do
+            if git pull --rebase --autostash && git push; then
+              echo "data refresh pushed"; exit 0
+            fi
+            git rebase --abort 2>/dev/null || true
+            sleep $((i * 10))
+          done
+          echo "::warning::Could not push the data refresh (likely raced the discovery sweep). Supabase already has tonight's listings; the repo snapshot will catch up on the next run."
