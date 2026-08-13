@@ -61,7 +61,9 @@ jobs:
           r = json.load(open('registry/registry.json'))
           print(' '.join(s['domain'] for s in r['sites'] if s.get('status') == 'working'))")
           echo "crawling $(echo $DOMAINS | wc -w) domains"
-          node crawl.mjs $DOMAINS --max-pages ${{ github.event.inputs.max_pages || '80' }} --cache-hours 20 --concurrency 16
+          # cache-hours 0: the runner starts with an empty cache and discards
+          # it, so caching only costs disk — and filled it on run #2.
+          node crawl.mjs $DOMAINS --max-pages ${{ github.event.inputs.max_pages || '80' }} --cache-hours 0 --concurrency 16
 
       - name: VIN enrichment and ingest
         working-directory: scraper
