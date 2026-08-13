@@ -137,15 +137,50 @@ export async function robotsAllows(url) {
   return !disallow.some((rule) => u.pathname.startsWith(rule.replace(/\*$/, "")));
 }
 
+// Plenty of dealers serve only on www and refuse the apex outright
+// (connection refused on :443, not a redirect). We were recording those as
+// "unreachable" — 7 of 8 sampled recovered by simply prefixing www, so a
+// large slice of what looked like blocking was this bug. Retry once on the
+// www host before giving up; the reverse (stripping www) costs nothing to
+// support either.
+function altHost(url) {
+  try {
+    const u = new URL(url);
+    if (u.hostname.startsWith("www.")) u.hostname = u.hostname.slice(4);
+    else u.hostname = "www." + u.hostname;
+    return u.toString();
+  } catch {
+    return null;
+  }
+}
+
+const TRANSPORT_FAIL = /^error:/;
+
 export async function fetchPage(url) {
   const cached = await cacheGet(url);
   if (cached) return { status: cached.status, body: cached.body, finalUrl: cached.finalUrl, fromCache: true };
   if (!(await robotsAllows(url))) return { status: "robots_disallowed", body: null, finalUrl: url };
+  let first;
   try {
     const r = await fetchRaw(url);
     if (r.status === 200 && r.body) await cachePut(url, r.status, r.body, r.finalUrl);
-    return { status: r.status, body: r.body, finalUrl: r.finalUrl };
+    first = { status: r.status, body: r.body, finalUrl: r.finalUrl };
   } catch (e) {
-    return { status: `error:${e.name ?? "unknown"}`, body: null, finalUrl: url };
+    first = { status: `error:${e.name ?? "unknown"}`, body: null, finalUrl: url };
+  }
+  // Only retry on transport failure — a 403/404 is an answer, not a
+  // misdirected request, and retrying those would just double the load.
+  if (!TRANSPORT_FAIL.test(String(first.status))) return first;
+  const alt = altHost(url);
+  if (!alt) return first;
+  try {
+    const r = await fetchRaw(alt);
+    if (r.status === 200 && r.body) {
+      await cachePut(url, r.status, r.body, r.finalUrl);
+      return { status: r.status, body: r.body, finalUrl: r.finalUrl };
+    }
+    return first;
+  } catch {
+    return first;
   }
 }
