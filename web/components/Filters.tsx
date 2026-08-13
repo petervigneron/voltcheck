@@ -117,7 +117,9 @@ export function FilterRail({ makesModels }: { makesModels: Record<string, string
           </button>
         )}
 
-        <div className={`${CELL} flex-1 min-w-[40px] bg-paper`} aria-hidden="true" />
+        {/* Pushes sort to the right on a wide rail; on a phone the rail wraps
+            and an empty stretched cell just reads as a gap. */}
+        <div className={`${CELL} hidden flex-1 min-w-[40px] bg-paper sm:block`} aria-hidden="true" />
 
         <div className={`${CELL} flex items-center bg-paper`}>
           <label className="sr-only" htmlFor="sort">

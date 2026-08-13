@@ -159,7 +159,16 @@ export default async function Browse(props: PageProps<"/">) {
 
         <div className="grid grid-cols-2 md:grid-cols-4">
           <Stat label="Cars listed" value={all.length.toLocaleString()} className="bg-saffron" />
-          <Stat label="Matching now" value={results.length.toLocaleString()} className="bg-putty" />
+          {/* Unfiltered, "matching" just repeats the total — say something else. */}
+          {activeKeys.length > 0 ? (
+            <Stat label="Matching now" value={results.length.toLocaleString()} className="bg-putty" />
+          ) : (
+            <Stat
+              label="Under $30,000"
+              value={all.filter((e) => hasRealPrice(e.listing) && e.listing.priceUsd < 30000).length.toLocaleString()}
+              className="bg-putty"
+            />
+          )}
           <Stat label="200+ mile range" value={longRange.toLocaleString()} className="bg-putty" />
           <Stat
             label={median ? "Median of these" : "Median price"}
