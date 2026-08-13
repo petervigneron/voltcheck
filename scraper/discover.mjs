@@ -38,9 +38,16 @@ let emptyFrom = null; // an empty result seen from some mirror, held in reserve
 if (fromFile) {
   osm = JSON.parse(await readFile(fromFile, "utf-8"));
 }
+// Overpass mirrors answer a dispatcher-timeout page under load even when
+// /api/status reports free slots, and the timeout is transient — the same
+// query succeeds moments later. Two tries with a 15s backoff gave up after
+// ~90s and lost 16 of 16 metros on 2026-08-13. Be patient instead: the
+// sweep runs weekly, so minutes here are cheap and a missed metro is not.
+const ATTEMPTS_PER_MIRROR = 4;
+for (let round = 0; round < 3 && !osm; round++) {
 for (const endpoint of MIRRORS) {
   if (osm) break;
-  for (let attempt = 0; attempt < 2 && !osm; attempt++) {
+  for (let attempt = 0; attempt < ATTEMPTS_PER_MIRROR && !osm; attempt++) {
     try {
       const res = await fetch(endpoint, {
         method: "POST",
@@ -56,14 +63,19 @@ for (const endpoint of MIRRORS) {
         if (parsed.elements?.length) osm = parsed;
         else emptyFrom = parsed;
       } else {
-        // rate-limited or HTML error page — back off and retry/move on
-        await new Promise((r) => setTimeout(r, 15000));
+        // Dispatcher-timeout HTML or a rate-limit page. Exponential backoff
+        // (20s, 40s, 80s, 160s) — the condition clears on its own.
+        await new Promise((r) => setTimeout(r, 20000 * 2 ** attempt));
       }
     } catch {
-      await new Promise((r) => setTimeout(r, 5000));
+      await new Promise((r) => setTimeout(r, 10000 * 2 ** attempt));
     }
   }
   if (osm) break;
+}
+// Every mirror refused this round; wait out the congestion before retrying
+// the whole set rather than abandoning the metro.
+if (!osm && round < 2) await new Promise((r) => setTimeout(r, 120000));
 }
 if (!osm && emptyFrom) {
   // Every mirror that answered returned nothing — treat the bbox as
