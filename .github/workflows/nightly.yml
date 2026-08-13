@@ -1,0 +1,86 @@
+name: Nightly inventory
+
+# The pipeline used to run from a laptop via launchd, which meant it only
+# ran when the lid happened to be open at 3:30 AM — mostly never. This runs
+# it on GitHub's machines instead.
+on:
+  schedule:
+    - cron: "30 10 * * *" # 03:30 America/Los_Angeles (10:30 UTC)
+  workflow_dispatch: {}   # and on demand from the Actions tab
+
+concurrency:
+  group: scraper
+  cancel-in-progress: false
+
+permissions:
+  contents: write # commits the refreshed registry + listings snapshot
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # Validate newly discovered dealers, then crawl everything that works.
+      - name: Probe discovered dealers
+        working-directory: scraper
+        run: node probe.mjs --limit 300 --concurrency 12
+
+      - name: Crawl working dealers
+        working-directory: scraper
+        run: |
+          DOMAINS=$(python3 -c "
+          import json
+          r = json.load(open('registry/registry.json'))
+          print(' '.join(s['domain'] for s in r['sites'] if s.get('status') == 'working'))")
+          echo "crawling $(echo $DOMAINS | wc -w) domains"
+          node crawl.mjs $DOMAINS --max-pages 80 --cache-hours 20 --concurrency 16
+
+      - name: VIN enrichment and ingest
+        working-directory: scraper
+        run: |
+          node vpic-enrich.mjs
+          node ingest.mjs
+
+      - name: Sync to Supabase
+        working-directory: scraper
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_INGEST_TOKEN: ${{ secrets.SUPABASE_INGEST_TOKEN }}
+        run: node db-sync.mjs
+
+      # Ask every live listing's own page whether it is still for sale.
+      # This is the authoritative sold-signal; the crawl only discovers.
+      - name: Recheck live listings
+        working-directory: scraper
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_INGEST_TOKEN: ${{ secrets.SUPABASE_INGEST_TOKEN }}
+        run: node recheck.mjs --concurrency 10
+
+      # Washington transaction prices refresh monthly upstream.
+      - name: Refresh Washington price comps (5th of the month)
+        if: ${{ github.event_name == 'schedule' }}
+        working-directory: scraper
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_INGEST_TOKEN: ${{ secrets.SUPABASE_INGEST_TOKEN }}
+        run: '[ "$(date +%d)" = "05" ] && node wa-prices.mjs --months 24 || echo "not the 5th, skipping"'
+
+      # The JSON snapshot is the web app's fallback when Supabase is
+      # unreachable, so it needs to stay current in the repo.
+      - name: Commit refreshed data
+        run: |
+          git config user.name "voltcheck-bot"
+          git config user.email "noreply@github.com"
+          git add scraper/registry/registry.json web/data/scraped-listings.json
+          git diff --staged --quiet || git commit -m "Nightly: registry + listings refresh [skip ci]"
+          git push
