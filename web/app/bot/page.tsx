@@ -14,10 +14,17 @@ export default function BotPage() {
       </p>
       <h2 className="text-base font-semibold">How it behaves</h2>
       <ul className="list-disc space-y-1 pl-5">
-        <li>Identifies itself in every request&apos;s User-Agent header (never impersonates a browser).</li>
-        <li>Obeys robots.txt Disallow and Crawl-delay rules.</li>
+        <li>
+          Identifies itself in the <code>X-Crawler</code> header of every request. It sends a
+          standard browser User-Agent, because many CDNs block non-browser agents by default —
+          including, on a number of sites we checked, blocking access to <code>robots.txt</code>{" "}
+          itself, which prevented us from reading the site&apos;s own crawling policy.
+        </li>
+        <li>Obeys robots.txt, including any rule naming VoltcheckBot.</li>
         <li>Waits at least 1.1 seconds between requests to the same host.</li>
-        <li>Backs off and does not retry when a site returns an error or challenge.</li>
+        <li>Backs off and does not retry when a site returns an error or a challenge.</li>
+        <li>Does not use proxy rotation, and does not attempt to solve or bypass bot challenges.</li>
+        <li>Links every listing back to the original page on your site.</li>
       </ul>
       <h2 className="text-base font-semibold">Excluding your site</h2>
       <p>
