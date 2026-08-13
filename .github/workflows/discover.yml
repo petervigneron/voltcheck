@@ -1,0 +1,43 @@
+name: Weekly dealer discovery
+
+# Sweeps OpenStreetMap for car dealers across the metro bounding boxes in
+# scraper/registry/bboxes.txt. New domains land as "discovered"; the nightly
+# probe decides which ones our extractors actually work on. This is the
+# mechanism that grows the registry without anyone building lists by hand.
+on:
+  schedule:
+    - cron: "0 11 * * 0" # Sundays, 04:00 America/Los_Angeles
+  workflow_dispatch: {}
+
+concurrency:
+  group: scraper # never overlap with the nightly crawl — both write registry.json
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Sweep metros
+        working-directory: scraper
+        env:
+          # 5 minutes between queries is right on a laptop; in CI the idle
+          # time is billed, and 60s is still well inside Overpass's limits.
+          SWEEP_SLEEP: "60"
+        run: bash discover-sweep.sh
+
+      - name: Commit discovered dealers
+        run: |
+          git config user.name "voltcheck-bot"
+          git config user.email "noreply@github.com"
+          git add scraper/registry/registry.json
+          git diff --staged --quiet || git commit -m "Weekly discovery sweep [skip ci]"
+          git push
