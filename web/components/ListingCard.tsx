@@ -1,110 +1,151 @@
 import Link from "next/link";
 import type { EnrichedListing } from "@/lib/listings/enrich";
+import { Tile, type TileGround, type TileKind } from "./Tile";
+import { hasRealPrice } from "@/lib/listings/price";
 
-const CHIP = {
-  info: "bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300",
-  bad: "bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300",
-  verify: "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300",
-  good: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300",
-} as const;
-
-function Chip({ kind, title, children }: { kind: keyof typeof CHIP; title?: string; children: React.ReactNode }) {
-  return (
-    <span title={title} className={`inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-medium ${CHIP[kind]}`}>
-      {children}
-    </span>
-  );
-}
-
-// Chips call out what's differentiated or wrong — not defaults. Fast charging
+// Tiles call out what's differentiated or wrong — not defaults. Fast charging
 // and a transferable battery warranty are the norm; only their absence earns
 // space on the card.
-export function ListingCard({ e, distanceMi }: { e: EnrichedListing; distanceMi?: number }) {
+function tilesFor(e: EnrichedListing): { kind: TileKind; text: string; title?: string }[] {
   const l = e.listing;
-  const chips: React.ReactNode[] = [];
+  const t: { kind: TileKind; text: string; title?: string }[] = [];
 
   if (e.enrichment.candidates) {
     const ranges = e.enrichment.candidates
       .map((r) => r.range?.epaRangeMi?.value)
       .filter((v): v is number => v !== undefined)
       .sort((a, b) => a - b);
-    chips.push(
-      <Chip key="cand" kind="verify" title={e.enrichment.discriminator}>
-        {ranges.length >= 2 ? `${ranges[0]} or ${ranges[ranges.length - 1]} mi — verify version` : "Version needs verifying"}
-      </Chip>
-    );
+    if (ranges.length >= 2) {
+      t.push({
+        kind: "flag",
+        text: `${ranges[0]}–${ranges[ranges.length - 1]} mi`,
+        title: e.enrichment.discriminator ?? "This listing doesn't say which version it is",
+      });
+    }
   } else if (e.realRangeMi) {
-    chips.push(
-      <Chip key="range" kind="info" title={e.realRangeMi.note ?? "Official EPA rating for this version"}>
-        {e.realRangeMi.value} mi EPA
-      </Chip>
-    );
+    t.push({ kind: "range", text: `${e.realRangeMi.value} mi`, title: e.realRangeMi.note ?? undefined });
   }
-  if (e.usableKwh) {
-    chips.push(
-      <Chip key="kwh" kind="info" title={e.usableKwh.note ?? undefined}>
-        ≈{Math.round(e.usableKwh.value)} kWh
-      </Chip>
-    );
-  }
-  if (e.heatPump?.status === "no") chips.push(<Chip key="hp" kind="bad" title={e.heatPump.detail}>No heat pump</Chip>);
-  if (e.heatPump?.status === "verify") chips.push(<Chip key="hp" kind="verify" title={e.heatPump.detail}>Heat pump: verify</Chip>);
-  if (e.fastCharge.status === "no") chips.push(<Chip key="fc" kind="bad" title={e.fastCharge.detail}>No fast charging</Chip>);
-  if (e.fastCharge.status === "verify") chips.push(<Chip key="fc" kind="verify" title={e.fastCharge.detail}>Fast charging: verify</Chip>);
+
+  if (e.heatPump?.status === "no") t.push({ kind: "miss", text: "No heat pump", title: e.heatPump.detail });
+  else if (e.heatPump?.status === "verify") t.push({ kind: "flag", text: "Heat pump?", title: e.heatPump.detail });
+  else if (e.heatPump?.status === "yes") t.push({ kind: "kit", text: "Heat pump", title: e.heatPump.detail });
+
+  if (e.fastCharge.status === "no") t.push({ kind: "miss", text: "No fast charging", title: e.fastCharge.detail });
+  else if (e.fastCharge.status === "verify") t.push({ kind: "flag", text: "Fast charging?", title: e.fastCharge.detail });
+
   if (l.campaignCheck?.packReplaced) {
-    chips.push(
-      <Chip key="pack" kind="good" title={`GM program ${l.campaignCheck.gmProgramNumber} · ${l.campaignCheck.packReplacedDate}`}>
-        New battery {l.campaignCheck.packReplacedDate?.slice(0, 4)}
-      </Chip>
-    );
+    t.push({
+      kind: "kit",
+      text: `New battery ${l.campaignCheck.packReplacedDate?.slice(0, 4) ?? ""}`.trim(),
+      title: `GM program ${l.campaignCheck.gmProgramNumber} · ${l.campaignCheck.packReplacedDate}`,
+    });
   }
+
+  if (e.usableKwh) t.push({ kind: "spec", text: `${Math.round(e.usableKwh.value)} kWh`, title: e.usableKwh.note ?? undefined });
+  if (l.drive) t.push({ kind: "spec", text: l.drive });
+
+  if (l.mileage != null && l.mileage > 0 && l.mileage < 15000) t.push({ kind: "flag", text: "Low miles" });
+  else if (l.mileage != null && l.mileage > 100000) t.push({ kind: "flag", text: "High miles" });
+
+  return t.slice(0, 4);
+}
+
+function subtitle(e: EnrichedListing, distanceMi?: number) {
+  const l = e.listing;
+  const bits: string[] = [];
+  if (l.condition === "new") bits.push("New");
+  else if (l.mileage != null) bits.push(`${l.mileage.toLocaleString()} mi${l.mileage === 0 ? " (dealer-listed)" : ""}`);
+  if (l.city) bits.push(`${l.city}, ${l.state}`);
+  if (distanceMi !== undefined) bits.push(`${distanceMi} mi away`);
+  return bits.join(" · ");
+}
+
+// One card in five takes a solid ground, alternating cobalt and saffron. It's
+// the rhythm that keeps a long grid from flattening, and the ceiling that keeps
+// it from shouting.
+function groundFor(index: number): TileGround {
+  if (index % 5 !== 1) return "paper";
+  return Math.floor(index / 5) % 2 === 0 ? "cobalt" : "saffron";
+}
+
+const GROUND_CLS: Record<TileGround, string> = {
+  paper: "bg-paper text-ink",
+  cobalt: "bg-cobalt text-paper",
+  saffron: "bg-saffron text-ink",
+};
+
+const META_CLS: Record<TileGround, string> = {
+  paper: "text-ink/60",
+  cobalt: "text-paper/70",
+  saffron: "text-ink/70",
+};
+
+export function ListingCard({
+  e,
+  distanceMi,
+  index = 0,
+}: {
+  e: EnrichedListing;
+  distanceMi?: number;
+  index?: number;
+}) {
+  const l = e.listing;
+  const ground = groundFor(index);
+  const tiles = tilesFor(e);
 
   return (
     <Link
       href={`/listing/${l.id}`}
-      className="group flex gap-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-3 transition hover:border-emerald-500/50 hover:shadow-md"
+      className={`group relative flex flex-col border-r-[3px] border-b-[3px] border-ink focus:outline-none ${GROUND_CLS[ground]}`}
     >
-      <div className="h-28 w-40 flex-none overflow-hidden rounded-lg bg-zinc-100 dark:bg-zinc-800">
-        {l.imageUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element -- external dealer CDN
-          <img src={l.imageUrl} alt="" className="h-full w-full object-cover transition group-hover:scale-[1.03]" loading="lazy" />
+      {/* A missing photo gets a band, not an empty 3:2 hole — three grey voids
+          in a row is a worse first impression than three short cards. */}
+      {l.imageUrl ? (
+        <div className="aspect-[3/2] overflow-hidden border-b-[3px] border-ink bg-putty">
+          {/* eslint-disable-next-line @next/next/no-img-element -- external dealer CDN */}
+          <img src={l.imageUrl} alt="" loading="lazy" className="photo-overscan h-full w-full object-cover" />
+        </div>
+      ) : (
+        <div className="border-b-[3px] border-ink bg-putty px-4 py-2 text-[10.5px] font-extrabold tracking-[0.14em] text-ink/55 uppercase">
+          No photo from the dealer
+        </div>
+      )}
+
+      <div className="flex flex-1 flex-col gap-2 p-4">
+        {hasRealPrice(l) ? (
+          <div className="text-[32px] leading-none font-extrabold tracking-[-0.035em] tabular-nums">
+            ${l.priceUsd.toLocaleString()}
+          </div>
         ) : (
-          <div className="flex h-full items-center justify-center text-2xl text-zinc-300 dark:text-zinc-600">⚡</div>
+          <div
+            className="text-[22px] leading-none font-extrabold tracking-[-0.02em]"
+            title={`The dealer feed listed $${l.priceUsd.toLocaleString()}, which is a lease payment rather than a price`}
+          >
+            Price not posted
+          </div>
+        )}
+        <div>
+          <h2 className="text-[15px] leading-tight font-bold">
+            {l.year} {l.make} {l.model}
+            {l.trim ? ` ${l.trim}` : ""}
+          </h2>
+          <p className={`mt-0.5 text-[12.5px] tabular-nums ${META_CLS[ground]}`}>{subtitle(e, distanceMi)}</p>
+        </div>
+
+        {tiles.length > 0 && (
+          <div className="mt-auto flex flex-wrap gap-1.5 pt-1">
+            {tiles.map((t, i) => (
+              <Tile key={i} kind={t.kind} ground={ground} title={t.title}>
+                {t.text}
+              </Tile>
+            ))}
+          </div>
         )}
       </div>
 
-      <div className="flex min-w-0 flex-1 flex-col">
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <div className="truncate font-semibold group-hover:text-emerald-600 dark:group-hover:text-emerald-400">
-              {l.year} {l.make} {l.model}
-              {l.trim ? <span className="text-zinc-500 dark:text-zinc-400 font-normal"> {l.trim}</span> : null}
-            </div>
-            <div className="mt-0.5 truncate text-xs text-zinc-500 dark:text-zinc-400">
-              {l.condition === "new"
-                ? "New"
-                : l.condition === "certified"
-                  ? `Certified${l.mileage != null ? ` · ${l.mileage.toLocaleString()} mi` : ""}`
-                  : l.mileage != null
-                    ? `${l.mileage.toLocaleString()} mi${l.mileage === 0 ? " (dealer-listed)" : ""}`
-                    : "Used"}
-              {l.city ? ` · ${l.city}, ${l.state}` : ""}
-              {distanceMi !== undefined ? ` · ${distanceMi} mi away` : ""}
-              {l.dealerName ? ` · ${l.dealerName}` : ""}
-            </div>
-          </div>
-          <div className="text-right">
-            <div className="text-lg font-bold tabular-nums">${l.priceUsd.toLocaleString()}</div>
-            {e.trapCount > 0 && (
-              <div className="text-[11px] font-semibold text-rose-600 dark:text-rose-400">
-                {e.trapCount} thing{e.trapCount > 1 ? "s" : ""} to check
-              </div>
-            )}
-          </div>
-        </div>
-
-        {chips.length > 0 && <div className="mt-auto flex flex-wrap gap-1.5 pt-2">{chips.slice(0, 5)}</div>}
-      </div>
+      {/* Hover and keyboard focus both draw the same inset keyline — no shadow,
+          nothing that moves the card off the grid. */}
+      <span className="pointer-events-none absolute inset-0 ring-0 ring-inset ring-cobalt transition-none group-hover:ring-[6px] group-focus-visible:ring-[6px]" />
     </Link>
   );
 }
