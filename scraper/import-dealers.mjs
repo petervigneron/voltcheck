@@ -54,6 +54,19 @@ function toDomain(url) {
   }
 }
 
+// Rosters that are just a list of linked dealer names: take every external
+// anchor and use its own text as the dealer name.
+function parseAnchorRoster(text) {
+  const out = [];
+  for (const m of text.matchAll(/<a[^>]*href=["'](https?:\/\/[^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi)) {
+    const domain = toDomain(m[1]);
+    if (!domain) continue;
+    const name = m[2].replace(/<[^>]+>/g, " ").replace(/&amp;/g, "&").replace(/\s+/g, " ").trim();
+    out.push({ name: name && !/^https?:/i.test(name) ? name : undefined, domain });
+  }
+  return out;
+}
+
 const SOURCES = [
   {
     state: "CO",
@@ -89,6 +102,21 @@ const SOURCES = [
       }));
     },
   })),
+  // Massachusetts MOR-EV paginates its roster 9 dealers at a time. Notably
+  // the only roster that clearly includes independent used lots, which is
+  // where a lot of cheap EVs live.
+  ...Array.from({ length: 37 }, (_, i) => ({
+    state: "MA",
+    program: "MOR-EV",
+    url: `https://mor-ev.org/participating-dealers?page=${i}`,
+    parse: parseAnchorRoster,
+  })),
+  {
+    state: "DE",
+    program: "DNREC Clean Vehicle Rebate",
+    url: "https://driveelectricdelaware.org/rebate-dealership",
+    parse: parseAnchorRoster,
+  },
   {
     state: "NJ",
     program: "Charge Up New Jersey",
