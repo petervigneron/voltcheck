@@ -16,8 +16,12 @@ const money = (n: number) => `$${n.toLocaleString()}`;
 export function PricePaid({ comps, askingPrice }: { comps: PriceComps; askingPrice: number }) {
   const diff = askingPrice - comps.median;
   const pct = Math.round((Math.abs(diff) / comps.median) * 100);
-  // Below 3% the difference is noise against a median of a few hundred cars.
-  const meaningful = pct >= 3;
+  // Two gates before claiming this car is priced above or below the market.
+  // Below 3% the difference is noise against a median of hundreds of cars.
+  // And without mileage control the median mostly reflects how many miles
+  // the comparison cars had, not what this one is worth — so we show the
+  // number as context and make no claim about it.
+  const claimComparison = pct >= 3 && comps.mileageControlled;
 
   return (
     <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5">
@@ -47,13 +51,20 @@ export function PricePaid({ comps, askingPrice }: { comps: PriceComps; askingPri
         )}
       </div>
 
-      {meaningful && (
+      {claimComparison && (
         <p className="mt-3 text-sm text-zinc-700 dark:text-zinc-300">
           This car is listed{" "}
           <span className="font-semibold tabular-nums">
             {money(Math.abs(diff))} {diff > 0 ? "above" : "below"}
           </span>{" "}
           that median ({pct}%).
+        </p>
+      )}
+      {!comps.mileageControlled && (
+        <p className="mt-3 text-sm text-zinc-700 dark:text-zinc-300">
+          Too few sales at a comparable odometer reading to price this car against, so these
+          figures cover the model at any mileage — compare them to the {comps.medianOdometer?.toLocaleString()}
+          {" "}mi median above rather than reading them as this car&apos;s market value.
         </p>
       )}
 

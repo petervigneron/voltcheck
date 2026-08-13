@@ -16,7 +16,15 @@ export interface PriceComps {
   p75: number;
   medianOdometer: number | null;
   /** How far the query had to widen to find a usable sample. */
-  basis: "year_and_mileage" | "year" | "year_range";
+  basis: "year_and_mileage" | "year_and_mileage_wide" | "year" | "year_range";
+  /**
+   * Whether the comparison holds mileage roughly constant. When false the
+   * median is context only — the cars in it may have far fewer or more
+   * miles, and most of what looks like market movement over time is
+   * actually odometer accumulation, so no "above/below market" claim is
+   * made. See supabase/migrations/0005.
+   */
+  mileageControlled: boolean;
   yearLow: number;
   yearHigh: number;
   months: number;
@@ -62,9 +70,12 @@ export async function fetchPriceComps(
 /** Plain-language description of what the sample actually covers. */
 export function describeBasis(c: PriceComps): string {
   const window = c.months === 12 ? "the last year" : `the last ${Math.round(c.months / 12)} years`;
+  const n = c.n.toLocaleString();
   if (c.basis === "year_and_mileage")
-    return `${c.n.toLocaleString()} sales of this model year with similar mileage, over ${window}`;
+    return `${n} sales of this model year with similar mileage, over ${window}`;
+  if (c.basis === "year_and_mileage_wide")
+    return `${n} sales of this model year within a wider mileage range, over ${window}`;
   if (c.basis === "year")
-    return `${c.n.toLocaleString()} sales of this model year, any mileage, over ${window}`;
-  return `${c.n.toLocaleString()} sales from ${c.yearLow}–${c.yearHigh}, any mileage, over ${window}`;
+    return `${n} sales of this model year, any mileage, over ${window}`;
+  return `${n} sales from ${c.yearLow}–${c.yearHigh}, any mileage, over ${window}`;
 }
