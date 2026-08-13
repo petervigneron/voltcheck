@@ -14,9 +14,26 @@ const num = (v) => {
   return Number.isFinite(n) && n > 0 ? n : undefined;
 };
 
+// driveWheelConfiguration arrives as free text ("All-wheel Drive", "AWD") or a
+// schema.org URL (…/AllWheelDriveConfiguration). Map to the registry's tokens.
+const driveLine = (v) => {
+  const s = text(v)?.toUpperCase();
+  if (!s) return undefined;
+  if (/ALL.?WHEEL|AWD/.test(s)) return "AWD";
+  if (/FOUR.?WHEEL|4WD|4X4/.test(s)) return "4WD";
+  if (/REAR.?WHEEL|RWD/.test(s)) return "RWD";
+  if (/FRONT.?WHEEL|FWD/.test(s)) return "FWD";
+  return undefined;
+};
+
 export function normalize(vehicle, { sourceUrl, dealerDomain }) {
   const offer = Array.isArray(vehicle.offers) ? vehicle.offers[0] : vehicle.offers;
   const mileageObj = vehicle.mileageFromOdometer;
+  // Dealer identity/location from the offer's seller block (AutoDealer with a
+  // PostalAddress). Only trusted when structured — a bare string address could
+  // be anything, so it is not guessed at.
+  const seller = Array.isArray(offer?.seller) ? offer.seller[0] : offer?.seller;
+  const addr = seller?.address && typeof seller.address === "object" ? seller.address : undefined;
   const images = (Array.isArray(vehicle.image) ? vehicle.image : [vehicle.image])
     .map(text)
     .filter(Boolean)
@@ -37,6 +54,14 @@ export function normalize(vehicle, { sourceUrl, dealerDomain }) {
     priceUsd: num(offer?.price),
     mileage: num(mileageObj?.value ?? mileageObj),
     exteriorColor: text(vehicle.color),
+    interiorColor: text(vehicle.vehicleInteriorColor),
+    driveLine: driveLine(vehicle.driveWheelConfiguration),
+    stockNumber: text(vehicle.sku ?? vehicle.mpn ?? offer?.sku),
+    previousOwners: num(vehicle.numberOfPreviousOwners),
+    dealerName: text(seller?.name),
+    city: text(addr?.addressLocality),
+    state: text(addr?.addressRegion),
+    zip: text(addr?.postalCode),
     condition: text(vehicle.itemCondition)?.replace(/.*\//, ""),
     imageUrl: text(Array.isArray(vehicle.image) ? vehicle.image[0] : vehicle.image),
     sourceUrl: vdpUrl ?? sourceUrl,

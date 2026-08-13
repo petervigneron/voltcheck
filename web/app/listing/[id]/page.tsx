@@ -149,6 +149,7 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
                     : undefined
                 }
               />
+              <Spec label="Previous owners" value={listing.previousOwners} />
               <Spec label="Drivetrain" value={listing.drive} />
               <Spec label="Exterior" value={listing.exteriorColor} />
               <Spec label="Interior" value={listing.interiorColor} />

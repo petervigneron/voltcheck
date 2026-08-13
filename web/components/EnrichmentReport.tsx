@@ -79,6 +79,7 @@ export function EnrichmentFacts({ row }: { row: EnrichmentRow }) {
             fact={row.charging?.dcFastCharging}
             format={(v) => DCFC_LABEL[v as keyof typeof DCFC_LABEL] ?? String(v)}
           />
+          <FactRow label="Peak DC rate" fact={row.charging?.dcPeakKw} format={(v) => `${v} kW`} />
           <FactRow label="Port" fact={row.charging?.portStandard} />
           <FactRow label="Supercharger access" fact={row.charging?.superchargerAccess} />
 

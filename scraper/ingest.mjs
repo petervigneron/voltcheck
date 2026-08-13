@@ -119,6 +119,7 @@ const listings = raw
     images: r.images?.length > 1 ? r.images.slice(0, 8) : undefined,
     interiorColor: r.interiorColor ?? undefined,
     stockNumber: r.stockNumber ?? undefined,
+    previousOwners: r.previousOwners ?? undefined,
     description: r.description ? r.description.replace(/<br\s*\/?>/gi, "\n").replace(/<[^>]+>/g, "").replace(/\n{3,}/g, "\n\n").trim() : undefined,
     sourceUrl: r.sourceUrl,
     dealerDomain: r.dealerDomain,

@@ -287,6 +287,41 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     ],
   },
 
+  // ── Hyundai Ioniq 5 MY2023–24 — same warranty + ICCU story as MY2022 ──
+  // The warranty facts and the April 2026 ICCU extension are documented for
+  // 2022–24 (docs/HANDOFF.md "ICCU"); the heat-pump fact above is verified for
+  // MY2022 ONLY and is deliberately NOT carried over — thermal is left absent
+  // so the page shows an honest unknown until 2023–24 fitment is researched.
+  // MY2025+ (facelift: NACS port, new packs) needs its own row; do not widen.
+  {
+    id: "ioniq5-2023-2024",
+    make: "HYUNDAI",
+    model: "Ioniq 5",
+    modelYears: [2023, 2024],
+    battery: { packGrossKwh: f(77.4, "mfr", "medium", "Long-range pack; Hyundai publishes one figure and does not say gross or usable. SE Standard Range is 58 kWh.") },
+    charging: { portStandard: f("CCS1", "mfr", "high", "Pre-facelift cars are CCS1; the native NACS port arrives with the MY2025 facelift") },
+    warranty: {
+      batteryYears: f(10, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      sohFloorPct: f(70, "mfr"),
+      batteryTransfers: f(true, "mfr", "high", "HV battery & EV system coverage transfers in full — confirmed in Hyundai's 2026 Owner's Handbook §6"),
+      powertrainTransfers: f(false, "mfr", "high", "Powertrain 10yr/100k is original-owner-only; drops to 5yr/60k for a second owner"),
+      extendedCoverage: f("ICCU: 15 years / 180,000 miles (extended April 2026, up from 10/100)", "mfr"),
+    },
+    buyerNotes: [
+      {
+        headline: "ICCU failure risk — but coverage now runs 15yr/180k",
+        body: "The E-GMP charging control unit (ICCU) can fail (P1A9096, 12V charging stops, possible limp mode; NHTSA 24V204/24V200/24V868). In April 2026 Hyundai extended ICCU coverage to 15 years / 180,000 miles — recent enough that no listing site reflects it. Whether the extension transfers to a second owner is undocumented: get it in writing against this VIN.",
+        severity: "warning",
+      },
+      {
+        headline: "The battery warranty transfers — most sites say otherwise",
+        body: "Aggregators routinely conflate Hyundai's original-owner-only powertrain warranty with the HV battery & EV system coverage, which transfers in full (10yr/100k, 70% SOH floor). On-board charger, BMS, and traction motor are under the transferable coverage.",
+        severity: "info",
+      },
+    ],
+  },
+
   // ── Kia EV6 — the heat pump is a factory option, not a trim feature ──
   {
     id: "ev6-2022-2024",

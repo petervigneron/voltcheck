@@ -23,6 +23,7 @@ export interface Listing {
   images?: string[]; // gallery, when the source provided more than one
   interiorColor?: string;
   stockNumber?: string;
+  previousOwners?: number; // schema.org numberOfPreviousOwners, when the dealer publishes it
   description?: string; // the dealer's own writeup, shown with attribution
   sourceUrl?: string; // canonical listing page on the dealer site
   dealerDomain?: string;
