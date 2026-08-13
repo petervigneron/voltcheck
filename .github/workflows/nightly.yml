@@ -6,7 +6,24 @@ name: Nightly inventory
 on:
   schedule:
     - cron: "30 10 * * *" # 03:30 America/Los_Angeles (10:30 UTC)
-  workflow_dispatch: {}   # and on demand from the Actions tab
+  # On demand, with bootstrap-scale knobs. The scheduled defaults are tuned
+  # for steady state (inventory changes slowly); while building initial
+  # coverage the limiting factor is how fast new dealers get validated and
+  # crawled for the first time, which is a one-time cost per dealer.
+  workflow_dispatch:
+    inputs:
+      probe_limit:
+        description: "Dealers to validate this run (steady state 300; bootstrap 2000+)"
+        required: false
+        default: "300"
+      max_pages:
+        description: "Page budget per non-group dealer"
+        required: false
+        default: "80"
+      skip_crawl:
+        description: "Probe only — useful when clearing a large discovery backlog"
+        required: false
+        default: "false"
 
 concurrency:
   group: scraper
@@ -29,9 +46,10 @@ jobs:
       # Validate newly discovered dealers, then crawl everything that works.
       - name: Probe discovered dealers
         working-directory: scraper
-        run: node probe.mjs --limit 300 --concurrency 12
+        run: node probe.mjs --limit ${{ github.event.inputs.probe_limit || '300' }} --concurrency 12
 
       - name: Crawl working dealers
+        if: ${{ github.event.inputs.skip_crawl != 'true' }}
         working-directory: scraper
         run: |
           DOMAINS=$(python3 -c "
@@ -39,7 +57,7 @@ jobs:
           r = json.load(open('registry/registry.json'))
           print(' '.join(s['domain'] for s in r['sites'] if s.get('status') == 'working'))")
           echo "crawling $(echo $DOMAINS | wc -w) domains"
-          node crawl.mjs $DOMAINS --max-pages 80 --cache-hours 20 --concurrency 16
+          node crawl.mjs $DOMAINS --max-pages ${{ github.event.inputs.max_pages || '80' }} --cache-hours 20 --concurrency 16
 
       - name: VIN enrichment and ingest
         working-directory: scraper
