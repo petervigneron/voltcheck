@@ -5,11 +5,31 @@
 import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 
-// Bot identity: a URL, not a personal address. The /bot page on the live
-// site explains what this crawler is and how to exclude it (robots.txt).
-// The owner's personal email was previously used here without their
-// knowledge — removed 2026-08-11; do not put a personal address back.
-const UA = "VoltcheckBot/0.1 (+https://voltcheck-mu.vercel.app/bot)";
+// Crawler identity — owner's decision, 2026-08-13, after measuring that a
+// declared-bot UA was refused by ~45% of dealers.
+//
+// Those refusals were Cloudflare's default bot management, not the dealers:
+// on a sample of blocked sites even /robots.txt was unreachable, so we could
+// never learn what policy they had actually stated. We now present a normal
+// browser UA so the CDN default doesn't fire, and identify ourselves in
+// X-Crawler instead — an operator reading their logs still finds us and the
+// opt-out page.
+//
+// What did NOT change, and must not: robots.txt is obeyed (including rules
+// naming VoltcheckBot — see CRAWLER_TOKEN below), one request per host per
+// 1.1s, immediate backoff on errors or challenges, every listing linked back
+// to the dealer's own page. No proxy rotation, no challenge-solving: the
+// owner ruled that out explicitly.
+const UA =
+  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36";
+
+// How we identify ourselves in robots.txt. The UA string above no longer
+// contains our name, so rules targeting us by name have to be matched
+// against this token explicitly — otherwise switching the UA would silently
+// stop us honouring dealers who blocked us by name, which is the opposite
+// of the intent.
+const CRAWLER_TOKEN = "voltcheckbot";
+const BOT_PAGE = "https://voltcheck.net/bot";
 const lastHit = new Map(); // host → timestamp
 const robotsCache = new Map(); // host → {disallow: string[]}
 
@@ -57,7 +77,14 @@ export async function fetchRaw(url, { timeoutMs = 15000 } = {}) {
   const t = setTimeout(() => ctrl.abort(), timeoutMs);
   try {
     const res = await fetch(url, {
-      headers: { "user-agent": UA, accept: "text/html,application/xhtml+xml,application/xml,application/json;q=0.9,*/*;q=0.8" },
+      headers: {
+        "user-agent": UA,
+        accept: "text/html,application/xhtml+xml,application/xml,application/json;q=0.9,*/*;q=0.8",
+        "accept-language": "en-US,en;q=0.9",
+        // We are not hiding: this names the crawler and links the page that
+        // explains what it is and how to exclude it.
+        "x-crawler": `VoltcheckBot/0.1 (+${BOT_PAGE})`,
+      },
       redirect: "follow",
       signal: ctrl.signal,
     });
@@ -81,7 +108,11 @@ function parseRobots(txt) {
     const key = rawKey.trim().toLowerCase();
     const val = rest.join(":").trim();
     if (key === "user-agent") {
-      applies = val === "*" || UA.toLowerCase().includes(val.toLowerCase());
+      // Match the wildcard group and any group naming this crawler. Do NOT
+      // test against the browser UA string — that would make us "match"
+      // rules aimed at Chrome and, worse, miss rules aimed at us.
+      const v = val.toLowerCase();
+      applies = v === "*" || v === CRAWLER_TOKEN || v.includes(CRAWLER_TOKEN);
     } else if (applies && key === "disallow" && val) {
       disallow.push(val);
     } else if (applies && key === "crawl-delay") {
