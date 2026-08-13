@@ -18,7 +18,10 @@ mkdir -p logs
     [ -z "${S:-}" ] && continue
     echo "--- bbox $S $W $N $E"
     node discover.mjs "$S" "$W" "$N" "$E"
-    sleep 300
+    # Spacing between Overpass queries. Generous by default on a laptop;
+    # CI sets it lower since idle minutes are billed. Overpass advertises
+    # 2 slots and our queries return in seconds, so 60s is still polite.
+    sleep "${SWEEP_SLEEP:-300}"
   done
   echo "=== done $(date)"
 } >> "$LOG" 2>&1
