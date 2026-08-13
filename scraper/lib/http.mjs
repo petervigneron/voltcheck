@@ -52,10 +52,23 @@ async function cacheGet(url) {
   return null;
 }
 
+// Only write the cache when something will actually read it. This used to
+// write unconditionally, which meant a full crawl spooled every page it
+// fetched to disk even with caching disabled: at 474 domains x 80 pages
+// that filled both a GitHub runner and a laptop, and the run died with
+// ENOSPC. CI passes --cache-hours 0 (a fresh runner starts with an empty
+// cache and throws it away, so caching there is pure cost).
+let cacheBytes = 0;
+const CACHE_BUDGET_BYTES = 2_000_000_000; // 2 GB ceiling, whatever the TTL
+
 async function cachePut(url, status, body, finalUrl) {
+  if (!cacheTtlMs) return;
+  if (cacheBytes > CACHE_BUDGET_BYTES) return;
   try {
     await mkdir(CACHE_DIR, { recursive: true });
-    await writeFile(new URL(cacheKey(url), CACHE_DIR), JSON.stringify({ url, at: Date.now(), status, body, finalUrl }));
+    const payload = JSON.stringify({ url, at: Date.now(), status, body, finalUrl });
+    cacheBytes += payload.length;
+    await writeFile(new URL(cacheKey(url), CACHE_DIR), payload);
   } catch {}
 }
 
