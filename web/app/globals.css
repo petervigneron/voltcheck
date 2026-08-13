@@ -12,6 +12,19 @@
   --font-mono: var(--font-geist-mono);
 }
 
+/* Solid blocks: colour is a category of fact, not decoration. Ink draws every
+   keyline, putty is the neutral that carries most of the page, and each accent
+   means exactly one thing wherever it appears. */
+@theme {
+  --color-ink: #121212;
+  --color-paper: #ffffff;
+  --color-putty: #e8e7e2;
+  --color-cobalt: #1f3fd1; /* range */
+  --color-saffron: #f7b500; /* outlier — look closer, good or bad */
+  --color-vermilion: #e8412a; /* something absent */
+  --color-teal: #0c6b5e; /* equipment present */
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
@@ -22,5 +35,11 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Dealer photos carry their own banners along the edges — phone numbers,
+   "FREE", dealership signage. Overscanning the crop pushes most of them out. */
+.photo-overscan {
+  transform: scale(1.18);
 }
