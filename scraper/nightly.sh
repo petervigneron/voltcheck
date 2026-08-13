@@ -11,7 +11,10 @@ mkdir -p logs
 
 # Validate any newly discovered domains first, so tonight's crawl already
 # includes the ones that pass (probe promotes discovered → working).
-node probe.mjs >> "$LOG" 2>&1
+# The registry now holds ~1,000 state-sourced dealers awaiting validation;
+# at 300/night the backlog clears in days rather than weeks. Politeness is
+# per-host, so concurrency across distinct dealers costs them nothing.
+node probe.mjs --limit 300 --concurrency 12 >> "$LOG" 2>&1
 
 DOMAINS=$(python3 -c "
 import json
