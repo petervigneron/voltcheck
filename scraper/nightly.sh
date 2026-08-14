@@ -27,6 +27,12 @@ print(' '.join(s['domain'] for s in r['sites'] if s.get('status') == 'working'))
   node vpic-enrich.mjs
   node ingest.mjs
   node db-sync.mjs
+  # Sanity-check every price against WA sale medians (the vanhyundai
+  # accessories-total incident, 2026-08-14). Implausible prices are re-read
+  # from the dealer's own page or suppressed; exit 20 means the listings
+  # JSON was corrected and needs one more sync.
+  node price-audit.mjs
+  [ $? -eq 20 ] && node db-sync.mjs
   # Ask every live listing's own page whether it is still for sale. This is
   # the authoritative sold-signal; the crawl above only discovers.
   node recheck.mjs --concurrency 10
