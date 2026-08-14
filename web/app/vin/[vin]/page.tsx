@@ -5,7 +5,7 @@ import { decodeTeslaVin, isTeslaVin } from "@/lib/tesla-vin";
 import { matchEnrichment } from "@/lib/enrichment/match";
 import { buildChecklist } from "@/lib/checklist";
 import { FactRow } from "@/components/FactRow";
-import { EnrichmentFacts, Section, NOTE_STYLES, NOTE_TAG } from "@/components/EnrichmentReport";
+import { EnrichmentFacts, Section, NOTE_STYLE } from "@/components/EnrichmentReport";
 import { AskSeller } from "@/components/AskSeller";
 
 export const dynamic = "force-dynamic";
@@ -40,15 +40,14 @@ export default async function VinPage(props: PageProps<"/vin/[vin]">) {
       </div>
 
       {!decode.usMarket && (
-        <div className={`rounded-lg border p-4 ${NOTE_STYLES.trap}`}>
-          <div className="text-[11px] font-bold tracking-wider">{NOTE_TAG.trap}</div>
-          <div className="mt-1 text-sm font-semibold">
+        <div className={`rounded-lg border p-4 ${NOTE_STYLE}`}>
+          <div className="text-sm font-semibold">
             NHTSA has no record of this manufacturer — likely a grey import
           </div>
           <p className="mt-1 text-sm text-zinc-700 dark:text-zinc-300">
             This VIN pattern (e.g. Shanghai-built LRW… or Berlin-built XP7… Teslas) is not a
-            US-market car. Parts, warranty, software region, and Supercharger access may all
-            differ. Treat any US listing of this VIN with real suspicion.
+            US-market car. Parts, warranty, software region, and Supercharger access may
+            differ.
           </p>
         </div>
       )}

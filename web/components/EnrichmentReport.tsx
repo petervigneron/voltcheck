@@ -3,18 +3,13 @@ import { FactRow } from "./FactRow";
 
 export const HEAT_PUMP_LABEL: Record<HeatPump, string> = {
   standard: "Standard",
-  optional: "Factory option — window sticker is the only authority",
-  awd_only: "AWD only — RWD cars have none",
+  optional: "Factory option — varies per car",
+  awd_only: "AWD only",
   none: "None",
 };
 
-export const NOTE_STYLES = {
-  trap: "border-rose-300 dark:border-rose-800 bg-rose-50 dark:bg-rose-950/40",
-  warning: "border-amber-300 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/40",
-  info: "border-sky-300 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/40",
-} as const;
-
-export const NOTE_TAG = { trap: "TRAP", warning: "CAUTION", info: "WORTH KNOWING" } as const;
+export const NOTE_STYLE =
+  "border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60";
 
 const DCFC_LABEL = {
   standard: "Standard",
@@ -38,23 +33,15 @@ export function Section({ title, children }: { title: string; children: React.Re
 export function EnrichmentFacts({ row }: { row: EnrichmentRow }) {
   return (
     <div>
-      {row.buyerNotes?.map((n) => (
-        <div key={n.headline} className={`mb-3 rounded-lg border p-4 ${NOTE_STYLES[n.severity]}`}>
-          <div className="text-[11px] font-bold tracking-wider">{NOTE_TAG[n.severity]}</div>
-          <div className="mt-1 font-semibold text-sm">{n.headline}</div>
-          <p className="mt-1 text-sm text-zinc-700 dark:text-zinc-300">{n.body}</p>
-          {n.learnMore && (
-            <details className="mt-2">
-              <summary className="cursor-pointer text-xs font-semibold text-zinc-600 dark:text-zinc-400 hover:text-emerald-600 dark:hover:text-emerald-400">
-                How we know this — and what it means for you
-              </summary>
-              <p className="mt-2 text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">
-                {n.learnMore}
-              </p>
-            </details>
-          )}
-        </div>
-      ))}
+      {row.buyerNotes && row.buyerNotes.length > 0 && (
+        <ul className="mb-3 text-sm text-zinc-700 dark:text-zinc-300">
+          {row.buyerNotes.map((n) => (
+            <li key={n.headline} className="py-0.5">
+              {n.headline}
+            </li>
+          ))}
+        </ul>
+      )}
 
       <div className="grid gap-x-10 sm:grid-cols-2">
         <div>

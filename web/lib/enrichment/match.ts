@@ -91,7 +91,9 @@ export function matchEnrichment(
     ? "Two different Model Ys match this listing — 279 mi (~68 kWh) vs 330 mi (~77 kWh) — and listings often blur the trim names. A Fremont-built VIN (11th character F) can only be the 330-mile car; Austin (A) built both, so for an Austin VIN ask for the window sticker or the door-jamb EPA label, which names the exact trim."
     : rows.some((r) => r.trim)
       ? "Exact trim determines which row applies — the VIN does not reliably encode it. Check the window sticker."
-      : undefined;
+      : rows.some((r) => r.drive)
+        ? "The listing doesn't state the drivetrain; AWD and RWD versions carry different EPA ranges."
+        : undefined;
 
   return { candidates: rows, discriminator };
 }

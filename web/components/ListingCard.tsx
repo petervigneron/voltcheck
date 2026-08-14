@@ -3,10 +3,13 @@ import type { EnrichedListing } from "@/lib/listings/enrich";
 import { Tile, type TileGround, type TileKind } from "./Tile";
 import { hasRealPrice } from "@/lib/listings/price";
 
-// Tiles call out what's differentiated or wrong — not defaults. Fast charging
-// and a transferable battery warranty are the norm; only their absence earns
-// space on the card.
-function tilesFor(e: EnrichedListing): { kind: TileKind; text: string; title?: string }[] {
+// The key facts a shopper compares — range, heat pump, drivetrain — come
+// first and always survive the cap; extras (fast charging, new battery, pack
+// size, mileage outliers) fill whatever room is left.
+export function listingTiles(
+  e: EnrichedListing,
+  max?: number
+): { kind: TileKind; text: string; title?: string }[] {
   const l = e.listing;
   const t: { kind: TileKind; text: string; title?: string }[] = [];
 
@@ -30,6 +33,8 @@ function tilesFor(e: EnrichedListing): { kind: TileKind; text: string; title?: s
   else if (e.heatPump?.status === "verify") t.push({ kind: "flag", text: "Heat pump?", title: e.heatPump.detail });
   else if (e.heatPump?.status === "yes") t.push({ kind: "kit", text: "Heat pump", title: e.heatPump.detail });
 
+  if (l.drive) t.push({ kind: "spec", text: l.drive });
+
   if (e.fastCharge.status === "no") t.push({ kind: "miss", text: "No fast charging", title: e.fastCharge.detail });
   else if (e.fastCharge.status === "verify") t.push({ kind: "flag", text: "Fast charging?", title: e.fastCharge.detail });
 
@@ -42,12 +47,11 @@ function tilesFor(e: EnrichedListing): { kind: TileKind; text: string; title?: s
   }
 
   if (e.usableKwh) t.push({ kind: "spec", text: `${Math.round(e.usableKwh.value)} kWh`, title: e.usableKwh.note ?? undefined });
-  if (l.drive) t.push({ kind: "spec", text: l.drive });
 
   if (l.mileage != null && l.mileage > 0 && l.mileage < 15000) t.push({ kind: "flag", text: "Low miles" });
   else if (l.mileage != null && l.mileage > 100000) t.push({ kind: "flag", text: "High miles" });
 
-  return t.slice(0, 4);
+  return max ? t.slice(0, max) : t;
 }
 
 function subtitle(e: EnrichedListing, distanceMi?: number) {
@@ -91,7 +95,7 @@ export function ListingCard({
 }) {
   const l = e.listing;
   const ground = groundFor(index);
-  const tiles = tilesFor(e);
+  const tiles = listingTiles(e, 5);
 
   return (
     <Link

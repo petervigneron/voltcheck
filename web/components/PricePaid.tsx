@@ -13,15 +13,16 @@ const money = (n: number) => `$${n.toLocaleString()}`;
  * stated, and nothing is editorialised — the comparison is shown, the
  * shopper draws the conclusion.
  */
-export function PricePaid({ comps, askingPrice }: { comps: PriceComps; askingPrice: number }) {
-  const diff = askingPrice - comps.median;
+export function PricePaid({ comps, askingPrice }: { comps: PriceComps; askingPrice?: number }) {
+  const diff = askingPrice != null ? askingPrice - comps.median : 0;
   const pct = Math.round((Math.abs(diff) / comps.median) * 100);
-  // Two gates before claiming this car is priced above or below the market.
-  // Below 3% the difference is noise against a median of hundreds of cars.
-  // And without mileage control the median mostly reflects how many miles
-  // the comparison cars had, not what this one is worth — so we show the
-  // number as context and make no claim about it.
-  const claimComparison = pct >= 3 && comps.mileageControlled;
+  // Gates before claiming this car is priced above or below the market.
+  // No claim without a real asking price (junk feed numbers are filtered
+  // upstream by hasRealPrice). Below 3% the difference is noise against a
+  // median of hundreds of cars. And without mileage control the median mostly
+  // reflects how many miles the comparison cars had, not what this one is
+  // worth — so we show the number as context and make no claim about it.
+  const claimComparison = askingPrice != null && pct >= 3 && comps.mileageControlled;
 
   return (
     <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5">

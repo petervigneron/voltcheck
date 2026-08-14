@@ -3,7 +3,10 @@ import { notFound } from "next/navigation";
 import { findListing } from "@/lib/listings/source";
 import { enrichListing } from "@/lib/listings/enrich";
 import { buildChecklist } from "@/lib/checklist";
-import { EnrichmentFacts, Section, NOTE_STYLES, NOTE_TAG } from "@/components/EnrichmentReport";
+import { EnrichmentFacts, Section, NOTE_STYLE } from "@/components/EnrichmentReport";
+import { listingTiles } from "@/components/ListingCard";
+import { Tile } from "@/components/Tile";
+import { hasRealPrice } from "@/lib/listings/price";
 import { AskSeller } from "@/components/AskSeller";
 import { PricePaid } from "@/components/PricePaid";
 import { fetchPriceComps } from "@/lib/listings/prices";
@@ -24,6 +27,7 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
   if (!listing) notFound();
 
   const e = enrichListing(listing);
+  const tiles = listingTiles(e);
   const checklist = buildChecklist(
     { vin: listing.vin, usMarket: true, make: listing.make.toUpperCase(), model: listing.model, modelYear: listing.year },
     listing.condition
@@ -39,100 +43,34 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
       </Link>
 
       <div className="grid gap-6 md:grid-cols-[1fr_320px]">
-        {/* Left: gallery + narrative */}
-        <div className="space-y-5">
-          {gallery.length > 0 && (
-            <div>
-              {/* eslint-disable-next-line @next/next/no-img-element -- external dealer CDN */}
-              <img
-                src={gallery[0]}
-                alt={`${listing.year} ${listing.make} ${listing.model}`}
-                className="aspect-[16/10] w-full rounded-xl object-cover bg-zinc-100 dark:bg-zinc-800"
-              />
-              {gallery.length > 1 && (
-                <div className="mt-2 grid grid-cols-4 gap-2">
-                  {gallery.slice(1, 5).map((src) => (
-                    // eslint-disable-next-line @next/next/no-img-element -- external dealer CDN
-                    <img key={src} src={src} alt="" className="aspect-[4/3] w-full rounded-lg object-cover bg-zinc-100 dark:bg-zinc-800" loading="lazy" />
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {listing.campaignCheck?.packReplaced && (
-            <div className={`rounded-lg border p-4 ${NOTE_STYLES.info}`}>
-              <div className="text-[11px] font-bold tracking-wider">{NOTE_TAG.info}</div>
-              <div className="mt-1 text-sm font-semibold">
-                This car got a new battery at {listing.campaignCheck.odometerAtReplacement?.toLocaleString()} miles
-              </div>
-              <p className="mt-1 text-sm text-zinc-700 dark:text-zinc-300">
-                GM's campaign record shows program {listing.campaignCheck.gmProgramNumber} (battery replacement) completed{" "}
-                {listing.campaignCheck.packReplacedDate}. Replacement packs carry a fresh 8-year/100k parts warranty from the
-                replacement date (GM bulletin 22-NA-119), and the EPA label was never re-rated for the larger cells — this car
-                is underrated on paper.
-              </p>
-            </div>
-          )}
-
-          {e.listing.photoChecks?.dcFastCharge === "confirmed_absent" && (
-            <div className={`rounded-lg border p-4 ${NOTE_STYLES.trap}`}>
-              <div className="text-[11px] font-bold tracking-wider">{NOTE_TAG.trap}</div>
-              <div className="mt-1 text-sm font-semibold">This car cannot DC fast-charge</div>
-              <p className="mt-1 text-sm text-zinc-700 dark:text-zinc-300">
-                The listing's own charge-port photo shows no DC pins — the factory fast-charge option (RPO CBT, $750) was
-                never fitted. GM does not offer a retrofit; the car charges on Level 1/Level 2 AC only.
-              </p>
-            </div>
-          )}
-
-          {priceComps && <PricePaid comps={priceComps} askingPrice={listing.priceUsd} />}
-
-          {e.row && (
-            <Section title="This exact version — researched">
-              <EnrichmentFacts row={e.row} />
-            </Section>
-          )}
-
-          {e.enrichment.candidates && (
-            <Section title="Two different versions wear this badge">
-              {e.enrichment.discriminator && (
-                <p className="mb-4 rounded-lg border border-amber-300 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/40 p-3 text-sm">
-                  {e.enrichment.discriminator}
-                </p>
-              )}
-              <div className="space-y-6">
-                {e.enrichment.candidates.map((row) => (
-                  <div key={row.id} className="rounded-lg border border-zinc-200 dark:border-zinc-800 p-4">
-                    <div className="mb-2 text-sm font-semibold">
-                      {row.range?.epaRangeMi
-                        ? `${row.range.epaRangeMi.value} mi version${row.battery?.packUsableKwh ? ` · ≈${Math.round(row.battery.packUsableKwh.value)} kWh` : ""}`
-                        : row.trim ?? row.id}
-                    </div>
-                    <EnrichmentFacts row={row} />
-                  </div>
-                ))}
-              </div>
-            </Section>
-          )}
-
-          {listing.description && (
-            <Section title={`The dealer's description${listing.dealerName ? ` (${listing.dealerName})` : ""}`}>
-              <p className="text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">{listing.description}</p>
-            </Section>
-          )}
-
-          <AskSeller items={checklist} />
-        </div>
-
-        {/* Right: sticky summary */}
-        <div className="h-fit space-y-4 md:sticky md:top-4">
+        {/* Right: sticky summary. First in the DOM so price and key facts lead
+            on mobile; on md+ it takes the right column. */}
+        <div className="h-fit space-y-4 md:sticky md:top-4 md:col-start-2 md:row-start-1">
           <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5">
             <h1 className="text-xl font-bold leading-tight">
               {listing.year} {listing.make} {listing.model}
             </h1>
             {listing.trim && <p className="text-sm text-zinc-500 dark:text-zinc-400">{listing.trim}</p>}
-            <div className="mt-3 text-3xl font-bold tabular-nums">${listing.priceUsd.toLocaleString()}</div>
+            {hasRealPrice(listing) ? (
+              <div className="mt-3 text-3xl font-bold tabular-nums">${listing.priceUsd.toLocaleString()}</div>
+            ) : (
+              <div
+                className="mt-3 text-2xl font-bold"
+                title={`The dealer feed listed $${listing.priceUsd.toLocaleString()}, which is not a plausible price for this car`}
+              >
+                Price not posted
+              </div>
+            )}
+
+            {tiles.length > 0 && (
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {tiles.map((t, i) => (
+                  <Tile key={i} kind={t.kind} title={t.title}>
+                    {t.text}
+                  </Tile>
+                ))}
+              </div>
+            )}
 
             <div className="mt-4">
               <Spec
@@ -170,6 +108,87 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
               </a>
             )}
           </div>
+        </div>
+
+        {/* Left: gallery + narrative */}
+        <div className="space-y-5 md:col-start-1 md:row-start-1">
+          {gallery.length > 0 && (
+            <div>
+              {/* eslint-disable-next-line @next/next/no-img-element -- external dealer CDN */}
+              <img
+                src={gallery[0]}
+                alt={`${listing.year} ${listing.make} ${listing.model}`}
+                className="aspect-[16/10] w-full rounded-xl object-cover bg-zinc-100 dark:bg-zinc-800"
+              />
+              {gallery.length > 1 && (
+                <div className="mt-2 grid grid-cols-4 gap-2">
+                  {gallery.slice(1, 5).map((src) => (
+                    // eslint-disable-next-line @next/next/no-img-element -- external dealer CDN
+                    <img key={src} src={src} alt="" className="aspect-[4/3] w-full rounded-lg object-cover bg-zinc-100 dark:bg-zinc-800" loading="lazy" />
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {listing.campaignCheck?.packReplaced && (
+            <div className={`rounded-lg border p-4 ${NOTE_STYLE}`}>
+              <div className="text-sm font-semibold">
+                New battery at {listing.campaignCheck.odometerAtReplacement?.toLocaleString()} miles (
+                {listing.campaignCheck.packReplacedDate}) — 8yr/100k parts warranty from that date
+              </div>
+            </div>
+          )}
+
+          {e.listing.photoChecks?.dcFastCharge === "confirmed_absent" && (
+            <div className={`rounded-lg border p-4 ${NOTE_STYLE}`}>
+              <div className="text-sm font-semibold">This car cannot DC fast-charge</div>
+              <p className="mt-1 text-sm text-zinc-700 dark:text-zinc-300">
+                The listing's own charge-port photo shows no DC pins — the factory fast-charge option (RPO CBT, $750) was
+                never fitted. GM does not offer a retrofit; the car charges on Level 1/Level 2 AC only.
+              </p>
+            </div>
+          )}
+
+          {priceComps && (
+            <PricePaid comps={priceComps} askingPrice={hasRealPrice(listing) ? listing.priceUsd : undefined} />
+          )}
+
+          {e.row && (
+            <Section title="This exact version — researched">
+              <EnrichmentFacts row={e.row} />
+            </Section>
+          )}
+
+          {e.enrichment.candidates && (
+            <Section title="Two different versions wear this badge">
+              {e.enrichment.discriminator && (
+                <p className="mb-4 rounded-lg border border-amber-300 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/40 p-3 text-sm">
+                  {e.enrichment.discriminator}
+                </p>
+              )}
+              <div className="space-y-6">
+                {e.enrichment.candidates.map((row) => (
+                  <div key={row.id} className="rounded-lg border border-zinc-200 dark:border-zinc-800 p-4">
+                    <div className="mb-2 text-sm font-semibold">
+                      {row.range?.epaRangeMi
+                        ? `${row.range.epaRangeMi.value} mi version${row.battery?.packUsableKwh ? ` · ≈${Math.round(row.battery.packUsableKwh.value)} kWh` : ""}`
+                        : row.trim ?? row.id}
+                    </div>
+                    <EnrichmentFacts row={row} />
+                  </div>
+                ))}
+              </div>
+            </Section>
+          )}
+
+          {listing.description && (
+            <Section title={`The dealer's description${listing.dealerName ? ` (${listing.dealerName})` : ""}`}>
+              <p className="text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">{listing.description}</p>
+            </Section>
+          )}
+
+          <AskSeller items={checklist} />
         </div>
       </div>
     </div>

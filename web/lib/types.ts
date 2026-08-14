@@ -96,11 +96,11 @@ export interface EnrichmentRow {
   // trim/drivetrain settling an option ambiguity.
   buyerNotes?: {
     headline: string;
-    body: string;
+    // Only the headline renders. `body` survives in older data files as
+    // research context; the UI never shows it.
+    body?: string;
     severity: "info" | "warning" | "trap";
     resolvedBy?: "photo_dcfc" | "campaign_check" | "config_resolved";
-    // Plain-language expandable: how we know this, what it means for the
-    // buyer, and exactly how sure we are. This is where trust is built.
     learnMore?: string;
   }[];
 }

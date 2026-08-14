@@ -1,17 +1,26 @@
 import type { Listing } from "./types";
 
 /**
- * Some dealer feeds publish a lease payment where the price belongs — $499 for
- * a Bolt EUV, $799 for an Ioniq 5. In the live data every value below this
- * floor is one of those, and the cheapest real car is just under $5,000.
+ * Some dealer feeds publish a number that isn't the price where the price
+ * belongs. Two observed shapes:
+ *  - a lease payment ($499 for a Bolt EUV, $799 for an Ioniq 5) — every live
+ *    value below $1,000 was one of these, and the cheapest real car is just
+ *    under $5,000;
+ *  - dealer.com JSON-LD emitting the optional-accessories total as the Offer
+ *    price ($2,293 on a new Ioniq 5 whose visible page said $50,498 —
+ *    VIN 7YAKN4DA0SY005538, verified against the dealer's page 2026-08-14).
  *
- * The old card printed the number small in a list; this layout makes price the
- * biggest thing on the page and sorts by it, so a monthly payment would lead
- * the homepage. House rule applies: we don't know this car's price, so we say
- * so instead of repeating a number that isn't one.
+ * This layout makes price the biggest thing on the page and sorts by it, so a
+ * junk number would lead the homepage and the paid-price comparison. House
+ * rule applies: we don't know this car's price, so we say so instead of
+ * repeating a number that isn't one. New cars get a higher floor because no
+ * new EV lists under $15,000; used floors stay low because old Leafs are real
+ * cars at real four-figure prices.
  */
 export const PRICE_FLOOR_USD = 1000;
+export const NEW_PRICE_FLOOR_USD = 15_000;
 
-export function hasRealPrice(l: Pick<Listing, "priceUsd">): boolean {
-  return typeof l.priceUsd === "number" && l.priceUsd >= PRICE_FLOOR_USD;
+export function hasRealPrice(l: Pick<Listing, "priceUsd" | "condition">): boolean {
+  if (typeof l.priceUsd !== "number") return false;
+  return l.priceUsd >= (l.condition === "new" ? NEW_PRICE_FLOOR_USD : PRICE_FLOOR_USD);
 }
