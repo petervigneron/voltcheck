@@ -1852,4 +1852,61 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     thermal: BMW_HP,
     warranty: BMW_WARRANTY,
   },
+
+  // ── Cadillac Vistiq / Optiq MY2025 + VW ID.4 2025–26 (same pass) ────────
+  // Vistiq: AWD-only, one EPA rating (305; 300 with the 19 kW charger).
+  // Optiq MY2025: fueleconomy.gov has no MY2025 Optiq entry at all (control:
+  // MY2026 is present) — the launch-year figure is GM's own 302-mi estimate.
+  // ID.4 2025–26: drive splits the rating (RWD 291 / AWD 263, plus the 62 kWh
+  // "S"/Standard at 206 in 2025); VW's Part 565 kWh figure flips between 62
+  // and 82 arbitrarily (a 2024 Pro S reads "62"), so these rows ignore it.
+  {
+    id: "cadillac-vistiq-2026-27", make: "CADILLAC", model: "Vistiq", modelYears: [2026, 2027], drive: "AWD",
+    battery: { packGrossKwh: f(102, "mfr", "medium", "Cadillac's own Vistiq specs page") },
+    range: { epaRangeMi: f(305, "mfr", "high", "Vistiq (AWD-only) — EPA, same rating 2026–27; 300 with the 19 kW onboard-charger option", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49636") },
+    charging: { portStandard: f("CCS1", "mfr") },
+    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
+  },
+  {
+    id: "cadillac-optiq-2025", make: "CADILLAC", model: "Optiq", modelYears: [2025, 2025], drive: "AWD",
+    battery: { packGrossKwh: f(85, "mfr", "high", "Cadillac's own Optiq specs page (cadillac.com)") },
+    range: { epaRangeMi: f(302, "mfr", "medium", "GM-estimated — fueleconomy.gov has no MY2025 Optiq entry under any spelling (control: the MY2026 records are present); every MY2025 Optiq is dual-motor AWD") },
+    charging: { portStandard: f("CCS1", "mfr") },
+    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
+  },
+  {
+    id: "id4-2025-rwd-pro", make: "VOLKSWAGEN", model: "ID.4", modelYears: [2025, 2025], trim: ["Pro", "Pro S", "Pro S Plus"], drive: "RWD", ignoreKwhHint: true,
+    battery: { packUsableKwh: f(77, "mfr", "high", "82 kWh gross / 77 usable — the Pro pack") },
+    range: { epaRangeMi: f(291, "mfr", "high", "MY2025 ID.4 Pro / Pro S RWD — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49156") },
+    charging: { portStandard: f("CCS1", "mfr") },
+    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
+  },
+  {
+    id: "id4-2025-awd-pro", make: "VOLKSWAGEN", model: "ID.4", modelYears: [2025, 2025], trim: ["Pro", "Pro S", "Pro S Plus", "1st Edition"], drive: "AWD", ignoreKwhHint: true,
+    battery: { packUsableKwh: f(77, "mfr", "high", "82 kWh gross / 77 usable — the Pro pack") },
+    range: { epaRangeMi: f(263, "mfr", "high", "MY2025 ID.4 AWD Pro / Pro S — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48773") },
+    charging: { portStandard: f("CCS1", "mfr") },
+    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
+  },
+  {
+    id: "id4-2025-standard", make: "VOLKSWAGEN", model: "ID.4", modelYears: [2025, 2025], trim: ["Standard", "S"], drive: "RWD", ignoreKwhHint: true,
+    battery: { packUsableKwh: f(58, "mfr", "high", "62 kWh gross / 58 usable — the Standard pack") },
+    range: { epaRangeMi: f(206, "mfr", "high", "MY2025 ID.4 / ID.4 S (62 kWh Standard pack) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49155") },
+    charging: { portStandard: f("CCS1", "mfr") },
+    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
+  },
+  {
+    id: "id4-2026-rwd", make: "VOLKSWAGEN", model: "ID.4", modelYears: [2026, 2026], drive: "RWD", ignoreKwhHint: true,
+    battery: { packUsableKwh: f(77, "mfr", "high", "82 kWh gross / 77 usable — MY2026 dropped the Standard pack") },
+    range: { epaRangeMi: f(291, "mfr", "high", "MY2026 ID.4 RWD — EPA (the Standard pack is gone; one RWD rating)", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49987") },
+    charging: { portStandard: f("CCS1", "mfr") },
+    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
+  },
+  {
+    id: "id4-2026-awd", make: "VOLKSWAGEN", model: "ID.4", modelYears: [2026, 2026], drive: "AWD", ignoreKwhHint: true,
+    battery: { packUsableKwh: f(77, "mfr", "high", "82 kWh gross / 77 usable") },
+    range: { epaRangeMi: f(263, "mfr", "high", "MY2026 ID.4 AWD — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49988") },
+    charging: { portStandard: f("CCS1", "mfr") },
+    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
+  },
 ];

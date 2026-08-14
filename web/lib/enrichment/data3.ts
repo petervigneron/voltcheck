@@ -1227,10 +1227,10 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
   },
 
   {
-    id: "cadillac-optiq-2027-awd",
+    id: "cadillac-optiq-2027-awd", // window extended to 2026 (same 303-mi EPA rating, id 49948) 2026-08-14
     make: "CADILLAC",
     model: "Optiq",
-    modelYears: [2027, 2027],
+    modelYears: [2026, 2027],
     drive: "AWD",
     battery: { packGrossKwh: f(85, "mfr", "high", "Cadillac's own Optiq specs page (cadillac.com); AWD adds a second motor, not a different pack, per the RWD/AWD EPA records sharing the same platform family") },
     range: { epaRangeMi: f(303, "mfr", "high", "2027 Optiq AWD — EPA", "https://www.fueleconomy.gov") },
