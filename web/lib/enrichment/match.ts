@@ -37,10 +37,17 @@ export function matchEnrichment(
   const { make, model, modelYear } = decode;
   if (!make || !model || !modelYear) return {};
 
+  // Some feeds restate the make inside the model ("Polestar 2" vs "2") —
+  // compare models with any redundant make prefix stripped from both sides.
+  const mk = norm(make);
+  const modelKey = (s: string) => {
+    const n = norm(s);
+    return n.startsWith(mk) && n.length > mk.length ? n.slice(mk.length) : n;
+  };
   let rows = ALL_ROWS.filter(
     (r) =>
-      norm(r.make) === norm(make) &&
-      norm(r.model) === norm(model) &&
+      norm(r.make) === mk &&
+      modelKey(r.model) === modelKey(model) &&
       modelYear >= r.modelYears[0] &&
       modelYear <= r.modelYears[1] &&
       trimMatches(r.trim, decode.trim)

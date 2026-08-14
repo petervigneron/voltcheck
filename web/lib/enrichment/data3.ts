@@ -721,6 +721,9 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
   // trim's figure spelled out in the fact's note and in a buyer note
   // telling the reader this listing's exact trim isn't recorded.
   // ---------------------------------------------------------------------
+  // 2021+ Model S/X moved to data4.ts (2026-08-14): VIN position 8 resolves
+  // dual (5) vs tri-motor Plaid (6), which is exactly what these floor-value
+  // rows existed to work around. Pre-2021 floors below still apply.
   {
     id: "tesla-model-s-2019",
     make: "TESLA",
@@ -753,72 +756,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     ],
   },
 
-  {
-    id: "tesla-model-s-2023",
-    make: "TESLA",
-    model: "Model S",
-    modelYears: [2023, 2023],
-    drive: "AWD",
-    range: { epaRangeMi: f(405, "mfr", "high", "2023 Model S — the only EPA-certified trim fueleconomy.gov lists for MY2023 (no separate Plaid record that year)", "https://www.fueleconomy.gov") },
-    charging: {
-      portStandard: f("NACS", "mfr", "high", "Tesla's proprietary connector"),
-      superchargerAccess: f("native", "mfr", "high"),
-      dcPeakKw: f(250, "agg", "low", "Tesla's design-studio material cites “up to 250 kW” for current-generation cars; no per-trim primary spec table was located"),
-    },
-    thermal: { heatPump: f("standard", "agg", "medium", "Octovalve heat pump, standard on all Tesla models since the January 2021 refresh; corroborated by NHTSA recall 22V050000 describing the heat-pump valve hardware") },
-    warranty: {
-      batteryYears: f(8, "mfr", "high", "“8 years or 150,000 miles, whichever comes first” — Tesla's own vehicle-warranty page (archived capture, dated 2025-04-16)"),
-      batteryMiles: f(150_000, "mfr", "high"),
-      sohFloorPct: f(70, "mfr", "high", "“minimum 70% retention of Battery capacity over the warranty period”"),
-      batteryTransfers: f(true, "mfr", "high", "“Your New Vehicle Limited Warranty will follow your vehicle and be transferred to the new owner when a vehicle ownership transfer is performed through Tesla”"),
-    },
-    buyerNotes: [
-      {
-        headline: "Forward camera and seat-belt anchor recalls — check remedy status",
-        body: "23V489 (forward camera misalignment can silently disable automatic emergency braking, lane assist, and collision warning — not obvious to the driver); 23V488 (front-row seat belts may not connect properly to pretensioner anchors, can detach). Both remedied by free dealer inspection/repair; owner notices mailed September 2023.",
-        severity: "warning",
-      },
-      {
-        headline: "Driver air bag may tear during deployment",
-        body: "24V967 (2021–2025 Model S): the driver's air bag could tear during deployment. Free dealer replacement of the air bag assembly; owner notices mailed February 2025.",
-        severity: "warning",
-      },
-    ],
-  },
 
-  {
-    id: "tesla-model-s-2025",
-    make: "TESLA",
-    model: "Model S",
-    modelYears: [2025, 2025],
-    drive: "AWD",
-    battery: { packGrossKwh: f(100, "vin", "medium", "vPIC battery-capacity decode on inventory VINs of this year — shared pack size across the base/Long Range and Plaid trims, so this does not by itself indicate which trim") },
-    range: { epaRangeMi: f(312, "mfr", "medium", "This listing's exact trim isn't recorded — 312 mi (Plaid, 21″ wheels) is the lowest-range 2025 Model S trim, used here as a floor, not a confirmed match. Full 2025 lineup — EPA: Plaid 21″ 312 / Plaid 19″ 348 / base/Long Range 410", "https://www.fueleconomy.gov") },
-    charging: {
-      portStandard: f("NACS", "mfr", "high", "Tesla's proprietary connector"),
-      superchargerAccess: f("native", "mfr", "high"),
-      dcPeakKw: f(250, "agg", "low", "Tesla's design-studio material cites “up to 250 kW” for current-generation cars; no per-trim primary spec table was located"),
-    },
-    thermal: { heatPump: f("standard", "agg", "medium", "Octovalve heat pump, standard on all Tesla models since the January 2021 refresh") },
-    warranty: {
-      batteryYears: f(8, "mfr", "high", "“8 years or 150,000 miles, whichever comes first” — Tesla's own vehicle-warranty page (archived capture, dated 2025-04-16)"),
-      batteryMiles: f(150_000, "mfr", "high"),
-      sohFloorPct: f(70, "mfr", "high", "“minimum 70% retention of Battery capacity over the warranty period”"),
-      batteryTransfers: f(true, "mfr", "high", "“Your New Vehicle Limited Warranty will follow your vehicle and be transferred to the new owner when a vehicle ownership transfer is performed through Tesla”"),
-    },
-    buyerNotes: [
-      {
-        headline: "This listing doesn't say which 2025 Model S trim this is — range varies by up to 98 miles",
-        body: "The base/Long Range trim is EPA-rated 410 mi; Plaid trades range for performance at 312–348 mi depending on wheel size. This scraped listing has no trim field. Check the window sticker, door-jamb EPA label, or the Tesla owner account tied to this VIN to confirm the actual trim.",
-        severity: "warning",
-      },
-      {
-        headline: "Rearview camera and driver air bag recalls — check remedy status",
-        body: "25V002 (2025 Model S: computer circuit board may short, losing the rearview camera image — free OTA update plus computer replacement if affected); 24V967 (2021–2025: driver air bag may tear during deployment — free replacement). Owner notices mailed 2025.",
-        severity: "warning",
-      },
-    ],
-  },
 
   {
     id: "tesla-model-x-2017",
@@ -889,77 +827,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     ],
   },
 
-  {
-    id: "tesla-model-x-2022",
-    make: "TESLA",
-    model: "Model X",
-    modelYears: [2022, 2022],
-    drive: "AWD",
-    battery: { packGrossKwh: f(100, "vin", "medium", "vPIC battery-capacity decode on inventory VINs of this year — shared pack size across the base/Long Range and Plaid trims, so this does not by itself indicate which trim") },
-    range: { epaRangeMi: f(311, "mfr", "medium", "This listing's exact trim isn't recorded — 311 mi (Plaid, 22″ wheels) is the lowest-range 2022 Model X trim, used here as a floor, not a confirmed match. Full 2022 lineup — EPA: Plaid 22″ 311 / Plaid 20″ 333 / base/Long Range 348", "https://www.fueleconomy.gov") },
-    charging: {
-      portStandard: f("NACS", "mfr", "high", "Tesla's proprietary connector"),
-      superchargerAccess: f("native", "mfr", "high"),
-      dcPeakKw: f(250, "agg", "low", "Tesla's design-studio material cites “up to 250 kW” for current-generation cars; no per-trim primary spec table was located"),
-    },
-    thermal: { heatPump: f("standard", "agg", "medium", "Octovalve heat pump, standard on all Tesla models since the January 2021 refresh") },
-    warranty: {
-      batteryYears: f(8, "mfr", "high", "“8 years or 150,000 miles, whichever comes first” — Tesla's own vehicle-warranty page (archived capture, dated 2025-04-16)"),
-      batteryMiles: f(150_000, "mfr", "high"),
-      sohFloorPct: f(70, "mfr", "high", "“minimum 70% retention of Battery capacity over the warranty period”"),
-      batteryTransfers: f(true, "mfr", "high", "“Your New Vehicle Limited Warranty will follow your vehicle and be transferred to the new owner when a vehicle ownership transfer is performed through Tesla”"),
-    },
-    buyerNotes: [
-      {
-        headline: "This listing doesn't say which 2022 Model X trim this is — range varies by up to 37 miles",
-        body: "The base/Long Range trim is EPA-rated 348 mi; Plaid trades range for performance at 311–333 mi depending on wheel size. This scraped listing has no trim field. Check the window sticker, door-jamb EPA label, or the Tesla owner account tied to this VIN.",
-        severity: "warning",
-      },
-      {
-        headline: "Side curtain air bags and front passenger air bag recalls — check remedy status",
-        body: "22V233 (2021–2022 Model X: front-row side curtain air bags may not deploy correctly with the windows lowered — free dealer replacement of both curtain air bags); 22V843 (2021–2023: front passenger air bag may deploy incorrectly in certain low-speed crashes due to a restraint-control-module calibration issue — free OTA recalibration).",
-        severity: "trap",
-      },
-      {
-        headline: "Infotainment computer can overheat during fast-charging prep",
-        body: "22V296 (2022 Model X): the infotainment CPU may overheat while preparing for a fast charge, causing lag or a restart that briefly loses the rearview camera, gear indicator, and warning displays. Free OTA thermal-management update.",
-        severity: "info",
-      },
-    ],
-  },
 
-  {
-    id: "tesla-model-x-2023",
-    make: "TESLA",
-    model: "Model X",
-    modelYears: [2023, 2023],
-    drive: "AWD",
-    range: { epaRangeMi: f(311, "mfr", "medium", "This listing's exact trim isn't recorded — 311 mi (Plaid, 22″ wheels) is the lowest-range 2023 Model X trim, used here as a floor, not a confirmed match. Full 2023 lineup — EPA: Plaid 22″ 311 / Plaid 20″ 333 / base/Long Range 348", "https://www.fueleconomy.gov") },
-    charging: {
-      portStandard: f("NACS", "mfr", "high", "Tesla's proprietary connector"),
-      superchargerAccess: f("native", "mfr", "high"),
-      dcPeakKw: f(250, "agg", "low", "Tesla's design-studio material cites “up to 250 kW” for current-generation cars; no per-trim primary spec table was located"),
-    },
-    thermal: { heatPump: f("standard", "agg", "medium", "Octovalve heat pump, standard on all Tesla models since the January 2021 refresh") },
-    warranty: {
-      batteryYears: f(8, "mfr", "high", "“8 years or 150,000 miles, whichever comes first” — Tesla's own vehicle-warranty page (archived capture, dated 2025-04-16)"),
-      batteryMiles: f(150_000, "mfr", "high"),
-      sohFloorPct: f(70, "mfr", "high", "“minimum 70% retention of Battery capacity over the warranty period”"),
-      batteryTransfers: f(true, "mfr", "high", "“Your New Vehicle Limited Warranty will follow your vehicle and be transferred to the new owner when a vehicle ownership transfer is performed through Tesla”"),
-    },
-    buyerNotes: [
-      {
-        headline: "This listing doesn't say which 2023 Model X trim this is — range varies by up to 37 miles",
-        body: "The base/Long Range trim is EPA-rated 348 mi; Plaid trades range for performance at 311–333 mi depending on wheel size. This scraped listing has no trim field. Check the window sticker, door-jamb EPA label, or the Tesla owner account tied to this VIN.",
-        severity: "warning",
-      },
-      {
-        headline: "Front passenger air bag, seat belt, and brake-fluid-warning recalls — check remedy status",
-        body: "22V843 (2021–2023: front passenger air bag may deploy incorrectly in certain low-speed crashes); 23V488 (front-row seat belts may not connect properly to pretensioner anchors, can detach); 23V679 (2021–2023: vehicle controller may fail to warn of low brake fluid). All remedied by free OTA update or dealer repair.",
-        severity: "warning",
-      },
-    ],
-  },
 
   // ---------------------------------------------------------------------
   // Mercedes-Benz EQE / EQS family. Warranty terms below (10 yr/155,000 mi,
@@ -1264,10 +1132,12 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     id: "cadillac-escalade-iq-2026",
     make: "CADILLAC",
     model: "Escalade IQ",
-    modelYears: [2026, 2026],
+    modelYears: [2025, 2026], // window extended to the MY2025 launch year (2026-08-14)
     drive: "AWD",
     battery: { packGrossKwh: f(205, "mfr", "high", "Cadillac's own Escalade IQ specs page (cadillac.com)") },
     range: {
+      epaRangeMi: f(465, "mfr", "medium", "Cadillac-estimated 465 mi — NOT an EPA rating; at ~10,600 lb GVWR the Escalade IQ is exempt from EPA range labeling (see note)", "https://www.cadillac.com/electric/escalade-iq"),
+      
       testedRangeMi: f(482, "tested", "high", "70-mph steady-state (InsideEVs): 482.2 mi, using 222.7 kWh. Edmunds' own mixed-driving methodology recorded 558 mi; a third-party 60-mph constant-speed test (Tom Moloughney/State of Charge) recorded 607 mi — all three exceed Cadillac's own 465-mi estimate. No EPA-certified figure exists to compare against."),
     },
     charging: {
@@ -1303,6 +1173,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     model: "Escalade IQL",
     modelYears: [2026, 2026],
     drive: "AWD",
+    range: { epaRangeMi: f(460, "mfr", "medium", "Cadillac-estimated 460 mi — NOT an EPA rating; the IQL shares the Escalade IQ's EPA weight-class exemption", "https://www.cadillac.com/electric/escalade-iql") },
     battery: { packGrossKwh: f(200, "mfr", "medium", "Cadillac's own Escalade IQL specs page states only “over 200 kWh” — vaguer wording than the Escalade IQ page's specific 205 kWh figure") },
     charging: {
       portStandard: f("CCS1", "mfr", "high", "Cadillac's own Escalade IQL specs page"),

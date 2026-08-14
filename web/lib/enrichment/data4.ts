@@ -289,6 +289,31 @@ const I5 = { make: "BMW", model: "i5" };
 const I7 = { make: "BMW", model: "i7" };
 const IX = { make: "BMW", model: "iX" };
 
+
+// ── Tesla Model S / X, refresh era (same pass) ──────────────────────────
+// VIN position 8 per Tesla's Part 565 submissions: 5 = "P2 Dual Motor"
+// (the base/Long Range), 6 = "P2 Tri Motor" (Plaid), and in 2021 the
+// carryover codes 2 = dual standard (Raven Long Range Plus) and 4 = dual
+// performance. This retires the floor-value rows (every 2022 Model X used
+// to show 311 mi, the lowest trim, because the trim was unknowable — the
+// motor code answers it). Plaid ranges carry the base-wheel figure with
+// the bigger-wheel figure noted. Pre-2021 cars keep their floor rows; the
+// 60/75/90/100 pack era needs its own pass.
+const TSX_CHARGING = {
+  portStandard: f<"NACS">("NACS", "mfr"),
+  superchargerAccess: f<"native">("native", "mfr"),
+  dcPeakKw: f(250, "agg", "low", "Tesla's design-studio material cites “up to 250 kW” for current-generation cars"),
+};
+const TSX_W = {
+  batteryYears: f(8, "mfr" as Source),
+  batteryMiles: f(150_000, "mfr" as Source, "high", "Model S/X carry Tesla's longest battery warranty tier"),
+  sohFloorPct: f(70, "mfr" as Source),
+  batteryTransfers: f(true, "mfr" as Source),
+};
+const TSX_PACK = { packGrossKwh: f(100, "vin", "medium", "Tesla's Part 565 submission reports a 100 kWh pack — shared across Long Range and Plaid") };
+const MS = { make: "TESLA", model: "Model S" };
+const MX = { make: "TESLA", model: "Model X" };
+
 export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   // ── MY2022 ─────────────────────────────────────────────────────────────
   {
@@ -2007,21 +2032,21 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     charging: { portStandard: f("CCS1", "mfr") },
   },
   {
-    id: "ex30-2025-single", make: "VOLVO", model: "EX30", modelYears: [2025, 2025], vin8: ["K"], drive: "RWD",
+    id: "ex30-2025-single", make: "VOLVO", model: "EX30", modelYears: [2025, 2025], trim: ["Single Motor"], drive: "RWD",
     battery: { packGrossKwh: f(69, "vin", "high", "69 kWh NMC — Volvo's own Part 565 submission") },
-    range: { epaRangeMi: f(257, "mfr", "high", "MY2025 EX30 Single Motor Extended Range (VIN code K) on 18-inch wheels — EPA; 261 on 19/20s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48449") },
+    range: { epaRangeMi: f(257, "mfr", "high", "MY2025 EX30 Single Motor Extended Range on 18-inch wheels — EPA; 261 on 19/20s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48449") },
     charging: { portStandard: f("CCS1", "mfr") },
   },
   {
-    id: "ex30-2026-single", make: "VOLVO", model: "EX30", modelYears: [2026, 2026], vin8: ["K"], drive: "RWD",
+    id: "ex30-2026-single", make: "VOLVO", model: "EX30", modelYears: [2026, 2026], trim: ["Single Motor"], drive: "RWD",
     battery: { packGrossKwh: f(69, "vin", "high", "69 kWh NMC — Volvo's own Part 565 submission") },
-    range: { epaRangeMi: f(261, "mfr", "high", "MY2026 EX30 Single Motor Extended Range (VIN code K) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49989") },
+    range: { epaRangeMi: f(261, "mfr", "high", "MY2026 EX30 Single Motor Extended Range — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49989") },
     charging: { portStandard: f("CCS1", "mfr") },
   },
   {
-    id: "ex30-2025-26-twin", make: "VOLVO", model: "EX30", modelYears: [2025, 2026], vin8: ["L"], drive: "AWD",
+    id: "ex30-2025-26-twin", make: "VOLVO", model: "EX30", modelYears: [2025, 2026], trim: ["Twin", "Ultra"], drive: "AWD",
     battery: { packGrossKwh: f(69, "vin", "high", "69 kWh NMC — Volvo's own Part 565 submission") },
-    range: { epaRangeMi: f(253, "mfr", "high", "EX30 Twin Performance (VIN code L) — EPA, same rating both years; 250 on 20-inch wheels in 2025", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48775") },
+    range: { epaRangeMi: f(253, "mfr", "high", "EX30 Twin Performance — EPA, same rating both years; 250 on 20-inch wheels in 2025", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48775") },
     charging: { portStandard: f("CCS1", "mfr") },
   },
   {
@@ -2047,5 +2072,255 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packGrossKwh: f(100, "agg", "medium") },
     range: { epaRangeMi: f(303, "mfr", "high", "MY2024 Wagoneer S Launch Edition — EPA (Falken-tire certification); the Pirelli fitment rates 270", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48791") },
     charging: { portStandard: f("CCS1", "mfr") },
+  },
+  {
+    id: "lyriq-v-2026-27", make: "CADILLAC", model: "Lyriq", modelYears: [2026, 2027], vin8: ["L"], trim: ["V-Series", "V Premium", "V Sport"], drive: "AWD",
+    range: { epaRangeMi: f(285, "mfr", "high", "Lyriq-V (PAWD V-Series) — EPA, same rating 2026–27 and both charger configurations", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49633") },
+    charging: { portStandard: f("CCS1", "mfr") },
+    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
+  },
+
+  {
+    id: "ms-2021-23-lr", ...MS, modelYears: [2021, 2023], vin8: ["5"], drive: "AWD", packVariant: "Long Range",
+    battery: TSX_PACK,
+    range: { epaRangeMi: f(405, "mfr", "high", "MY2021–23 Model S (dual-motor VIN code 5) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=44051") },
+    charging: TSX_CHARGING,
+    thermal: { heatPump: f("standard", "mfr"), batteryPreconditioning: f(true, "mfr") },
+    warranty: TSX_W,
+    buyerNotes: [NOTE_FSD],
+  },
+  {
+    id: "ms-2024-lr", ...MS, modelYears: [2024, 2024], vin8: ["5"], drive: "AWD", packVariant: "Long Range",
+    battery: TSX_PACK,
+    range: { epaRangeMi: f(402, "mfr", "high", "MY2024 Model S (dual-motor VIN code 5) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47910") },
+    charging: TSX_CHARGING,
+    thermal: { heatPump: f("standard", "mfr"), batteryPreconditioning: f(true, "mfr") },
+    warranty: TSX_W,
+    buyerNotes: [NOTE_FSD],
+  },
+  {
+    id: "ms-2025-26-lr", ...MS, modelYears: [2025, 2026], vin8: ["5"], drive: "AWD", packVariant: "Long Range",
+    battery: TSX_PACK,
+    range: { epaRangeMi: f(410, "mfr", "high", "MY2025–26 Model S (dual-motor VIN code 5) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49124") },
+    charging: TSX_CHARGING,
+    thermal: { heatPump: f("standard", "mfr"), batteryPreconditioning: f(true, "mfr") },
+    warranty: TSX_W,
+    buyerNotes: [NOTE_FSD],
+  },
+  {
+    id: "ms-2021-plaid", ...MS, modelYears: [2021, 2021], vin8: ["6"], drive: "AWD", packVariant: "Plaid",
+    battery: TSX_PACK,
+    range: { epaRangeMi: f(348, "mfr", "high", "MY2021 Plaid (tri-motor VIN code 6) on 21-inch wheels, the only 2021 Plaid certification — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=44069") },
+    charging: TSX_CHARGING,
+    thermal: { heatPump: f("standard", "mfr"), batteryPreconditioning: f(true, "mfr") },
+    warranty: TSX_W,
+    buyerNotes: [NOTE_FSD],
+  },
+  {
+    id: "ms-2022-23-plaid", ...MS, modelYears: [2022, 2023], vin8: ["6"], drive: "AWD", packVariant: "Plaid",
+    battery: TSX_PACK,
+    range: { epaRangeMi: f(396, "mfr", "high", "MY2022–23 Plaid (tri-motor VIN code 6) on 19-inch wheels — EPA; 348 on 21s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=45015") },
+    charging: TSX_CHARGING,
+    thermal: { heatPump: f("standard", "mfr"), batteryPreconditioning: f(true, "mfr") },
+    warranty: TSX_W,
+    buyerNotes: [NOTE_FSD],
+  },
+  {
+    id: "ms-2024-plaid", ...MS, modelYears: [2024, 2024], vin8: ["6"], drive: "AWD", packVariant: "Plaid",
+    battery: TSX_PACK,
+    range: { epaRangeMi: f(359, "mfr", "high", "MY2024 Plaid on 19-inch wheels — EPA; 320 on 21s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47911") },
+    charging: TSX_CHARGING,
+    thermal: { heatPump: f("standard", "mfr"), batteryPreconditioning: f(true, "mfr") },
+    warranty: TSX_W,
+    buyerNotes: [NOTE_FSD],
+  },
+  {
+    id: "ms-2025-plaid", ...MS, modelYears: [2025, 2025], vin8: ["6"], drive: "AWD", packVariant: "Plaid",
+    battery: TSX_PACK,
+    range: { epaRangeMi: f(348, "mfr", "high", "MY2025 Plaid on 19-inch wheels — EPA; 312 on 21s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48766") },
+    charging: TSX_CHARGING,
+    thermal: { heatPump: f("standard", "mfr"), batteryPreconditioning: f(true, "mfr") },
+    warranty: TSX_W,
+    buyerNotes: [NOTE_FSD],
+  },
+  {
+    id: "ms-2026-plaid", ...MS, modelYears: [2026, 2026], vin8: ["6"], drive: "AWD", packVariant: "Plaid",
+    battery: TSX_PACK,
+    range: { epaRangeMi: f(368, "mfr", "high", "MY2026 Plaid — EPA; 309 on 21-inch wheels", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49742") },
+    charging: TSX_CHARGING,
+    thermal: { heatPump: f("standard", "mfr"), batteryPreconditioning: f(true, "mfr") },
+    warranty: TSX_W,
+    buyerNotes: [NOTE_FSD],
+  },
+  {
+    id: "ms-2021-perf", ...MS, modelYears: [2021, 2021], vin8: ["4"], drive: "AWD", packVariant: "Performance",
+    battery: TSX_PACK,
+    range: { epaRangeMi: f(387, "mfr", "high", "MY2021 Performance carryover (dual-performance VIN code 4) on 19-inch wheels — EPA; 334 on 21s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=43516") },
+    charging: TSX_CHARGING,
+    thermal: { heatPump: f("standard", "mfr"), batteryPreconditioning: f(true, "mfr") },
+    warranty: TSX_W,
+    buyerNotes: [NOTE_FSD],
+  },
+  {
+    id: "mx-2021-lrplus", ...MX, modelYears: [2021, 2021], vin8: ["2"], drive: "AWD", packVariant: "Long Range Plus",
+    battery: TSX_PACK,
+    range: { epaRangeMi: f(371, "mfr", "high", "MY2021 Model X Long Range Plus carryover (dual-standard VIN code 2) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=43403") },
+    charging: TSX_CHARGING,
+    thermal: { heatPump: f("standard", "mfr"), batteryPreconditioning: f(true, "mfr") },
+    warranty: TSX_W,
+    buyerNotes: [NOTE_FSD],
+  },
+  {
+    id: "mx-2021-perf", ...MX, modelYears: [2021, 2021], vin8: ["4"], drive: "AWD", packVariant: "Performance",
+    battery: TSX_PACK,
+    range: { epaRangeMi: f(341, "mfr", "high", "MY2021 Model X Performance carryover (VIN code 4) on 20-inch wheels — EPA; 300 on 22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=43404") },
+    charging: TSX_CHARGING,
+    thermal: { heatPump: f("standard", "mfr"), batteryPreconditioning: f(true, "mfr") },
+    warranty: TSX_W,
+    buyerNotes: [NOTE_FSD],
+  },
+  {
+    id: "mx-2022-23-lr", ...MX, modelYears: [2022, 2023], vin8: ["5"], drive: "AWD", packVariant: "Long Range",
+    battery: TSX_PACK,
+    range: { epaRangeMi: f(348, "mfr", "high", "MY2022–23 Model X (dual-motor VIN code 5) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=45020") },
+    charging: TSX_CHARGING,
+    thermal: { heatPump: f("standard", "mfr"), batteryPreconditioning: f(true, "mfr") },
+    warranty: TSX_W,
+    buyerNotes: [NOTE_FSD],
+  },
+  {
+    id: "mx-2024-lr", ...MX, modelYears: [2024, 2024], vin8: ["5"], drive: "AWD", packVariant: "Long Range",
+    battery: TSX_PACK,
+    range: { epaRangeMi: f(335, "mfr", "high", "MY2024 Model X (dual-motor VIN code 5) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47915") },
+    charging: TSX_CHARGING,
+    thermal: { heatPump: f("standard", "mfr"), batteryPreconditioning: f(true, "mfr") },
+    warranty: TSX_W,
+    buyerNotes: [NOTE_FSD],
+  },
+  {
+    id: "mx-2025-lr", ...MX, modelYears: [2025, 2025], vin8: ["5"], drive: "AWD", packVariant: "Long Range",
+    battery: TSX_PACK,
+    range: { epaRangeMi: f(329, "mfr", "high", "MY2025 Model X (dual-motor VIN code 5) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49125") },
+    charging: TSX_CHARGING,
+    thermal: { heatPump: f("standard", "mfr"), batteryPreconditioning: f(true, "mfr") },
+    warranty: TSX_W,
+    buyerNotes: [NOTE_FSD],
+  },
+  {
+    id: "mx-2026-lr", ...MX, modelYears: [2026, 2026], vin8: ["5"], drive: "AWD", packVariant: "Long Range",
+    battery: TSX_PACK,
+    range: { epaRangeMi: f(352, "mfr", "high", "MY2026 Model X (dual-motor VIN code 5) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49745") },
+    charging: TSX_CHARGING,
+    thermal: { heatPump: f("standard", "mfr"), batteryPreconditioning: f(true, "mfr") },
+    warranty: TSX_W,
+    buyerNotes: [NOTE_FSD],
+  },
+  {
+    id: "mx-2022-23-plaid", ...MX, modelYears: [2022, 2023], vin8: ["6"], drive: "AWD", packVariant: "Plaid",
+    battery: TSX_PACK,
+    range: { epaRangeMi: f(333, "mfr", "high", "MY2022–23 Model X Plaid (tri-motor VIN code 6) on 20-inch wheels — EPA; 311 on 22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=45021") },
+    charging: TSX_CHARGING,
+    thermal: { heatPump: f("standard", "mfr"), batteryPreconditioning: f(true, "mfr") },
+    warranty: TSX_W,
+    buyerNotes: [NOTE_FSD],
+  },
+  {
+    id: "mx-2024-plaid", ...MX, modelYears: [2024, 2024], vin8: ["6"], drive: "AWD", packVariant: "Plaid",
+    battery: TSX_PACK,
+    range: { epaRangeMi: f(326, "mfr", "high", "MY2024 Model X Plaid on 20-inch wheels — EPA; 300 on 22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47916") },
+    charging: TSX_CHARGING,
+    thermal: { heatPump: f("standard", "mfr"), batteryPreconditioning: f(true, "mfr") },
+    warranty: TSX_W,
+    buyerNotes: [NOTE_FSD],
+  },
+  {
+    id: "mx-2025-plaid", ...MX, modelYears: [2025, 2025], vin8: ["6"], drive: "AWD", packVariant: "Plaid",
+    battery: TSX_PACK,
+    range: { epaRangeMi: f(314, "mfr", "high", "MY2025 Model X Plaid on 20-inch wheels — EPA; 294 on 22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48768") },
+    charging: TSX_CHARGING,
+    thermal: { heatPump: f("standard", "mfr"), batteryPreconditioning: f(true, "mfr") },
+    warranty: TSX_W,
+    buyerNotes: [NOTE_FSD],
+  },
+  {
+    id: "mx-2026-plaid", ...MX, modelYears: [2026, 2026], vin8: ["6"], drive: "AWD", packVariant: "Plaid",
+    battery: TSX_PACK,
+    range: { epaRangeMi: f(335, "mfr", "high", "MY2026 Model X Plaid — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49746") },
+    charging: TSX_CHARGING,
+    thermal: { heatPump: f("standard", "mfr"), batteryPreconditioning: f(true, "mfr") },
+    warranty: TSX_W,
+    buyerNotes: [NOTE_FSD],
+  },
+
+  // ── Polestar 2 / Volvo EX90 (same pass) ─────────────────────────────────
+  // Polestar's VIN code doesn't discriminate (every year reads "A"); trim
+  // carries Single vs Dual Motor and the drive field settles unlabeled cars
+  // (single = FWD through 2023, RWD from the 2024 facelift; dual = AWD).
+  // Wheel spreads noted, 19" base figure carried. EX90 2025: Twin and Twin
+  // Performance carry identical EPA ratings, so one row covers both codes;
+  // 2026 K's meaning is unverified (a single-motor variant appeared) — only
+  // the L = Twin row is claimed.
+  {
+    id: "polestar2-2022-single", make: "POLESTAR", model: "Polestar 2", modelYears: [2022, 2022], trim: ["Long Range Single Motor", "Single Motor", "Plus"], drive: "FWD",
+    battery: { packGrossKwh: f(78, "vin", "high", "78 kWh — Polestar's own Part 565 submission") },
+    range: { epaRangeMi: f(270, "mfr", "high", "MY2022 Single Motor (FWD) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=44928") },
+    charging: { portStandard: f("CCS1", "mfr") },
+    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
+  },
+  {
+    id: "polestar2-2022-dual", make: "POLESTAR", model: "Polestar 2", modelYears: [2022, 2022], trim: ["Long Range Dual Motor", "Dual Motor", "Performance", "Plus", "e-AWD"], drive: "AWD",
+    battery: { packGrossKwh: f(78, "vin", "high", "78 kWh — Polestar's own Part 565 submission") },
+    range: { epaRangeMi: f(249, "mfr", "high", "MY2022 Dual Motor (AWD) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=44449") },
+    charging: { portStandard: f("CCS1", "mfr") },
+    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
+  },
+  {
+    id: "polestar2-2023-single", make: "POLESTAR", model: "Polestar 2", modelYears: [2023, 2023], trim: ["Long Range Single Motor", "Single Motor", "Plus"], drive: "FWD",
+    battery: { packGrossKwh: f(78, "vin", "high", "78 kWh — Polestar's own Part 565 submission") },
+    range: { epaRangeMi: f(270, "mfr", "high", "MY2023 Single Motor (FWD) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=45755") },
+    charging: { portStandard: f("CCS1", "mfr") },
+    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
+  },
+  {
+    id: "polestar2-2023-dual", make: "POLESTAR", model: "Polestar 2", modelYears: [2023, 2023], trim: ["Long Range Dual Motor", "Dual Motor", "Performance", "Plus"], drive: "AWD",
+    battery: { packGrossKwh: f(78, "vin", "high", "78 kWh — Polestar's own Part 565 submission") },
+    range: { epaRangeMi: f(260, "mfr", "high", "MY2023 Dual Motor (AWD) — EPA; the Performance Pack rates the same, the BST edition 247", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=45753") },
+    charging: { portStandard: f("CCS1", "mfr") },
+    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
+  },
+  {
+    id: "polestar2-2024-25-single", make: "POLESTAR", model: "Polestar 2", modelYears: [2024, 2025], trim: ["Long Range Single Motor", "Single Motor", "Plus"], drive: "RWD",
+    battery: { packGrossKwh: f(82, "agg", "medium", "The facelift's larger pack; RWD from MY2024") },
+    range: { epaRangeMi: f(320, "mfr", "high", "MY2024 Single Motor (now RWD) on 19-inch wheels — EPA; 307 on 20s; MY2025: 314/300", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46978") },
+    charging: { portStandard: f("CCS1", "mfr") },
+    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
+  },
+  {
+    id: "polestar2-2024-25-dual", make: "POLESTAR", model: "Polestar 2", modelYears: [2024, 2025], trim: ["Long Range Dual Motor", "Dual Motor", "Performance", "Plus"], drive: "AWD",
+    battery: { packGrossKwh: f(82, "agg", "medium") },
+    range: { epaRangeMi: f(276, "mfr", "high", "MY2024 Dual Motor on 19-inch wheels — EPA; 266 on 20s, 247 with the Performance Pack; MY2025: 278/268/254", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46975") },
+    charging: { portStandard: f("CCS1", "mfr") },
+    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
+  },
+  {
+    id: "ex90-2025", make: "VOLVO", model: "EX90", modelYears: [2025, 2025], vin8: ["K", "L"], drive: "AWD",
+    battery: { packGrossKwh: f(111, "vin", "high", "111 kWh — Volvo's own Part 565 submission") },
+    range: { epaRangeMi: f(300, "mfr", "high", "MY2025 EX90 Twin Motor — EPA; Twin and Twin Performance rate identically (310 on 21-inch wheels)", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48777") },
+    charging: { portStandard: f("CCS1", "mfr") },
+    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
+  },
+  {
+    id: "ex90-2026-twin", make: "VOLVO", model: "EX90", modelYears: [2026, 2026], trim: ["Twin Motor", "Twin", "Ultra"], drive: "AWD",
+    battery: { packGrossKwh: f(111, "vin", "high", "111 kWh — Volvo's own Part 565 submission") },
+    range: { epaRangeMi: f(298, "mfr", "high", "MY2026 EX90 Twin Motor — EPA; 305 on 21-inch wheels; Performance rates the same. Keyed on trim: Volvo\u2019s VIN code is the trim level (K=Plus/L=Ultra), not the motor", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50256") },
+    charging: { portStandard: f("CCS1", "mfr") },
+    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
+  },
+  {
+    id: "ex90-2026-single", make: "VOLVO", model: "EX90", modelYears: [2026, 2026], trim: ["Single Motor"], drive: "RWD",
+    battery: { packGrossKwh: f(104, "agg", "medium", "The single-motor EX90 uses the smaller pack") },
+    range: { epaRangeMi: f(276, "mfr", "high", "MY2026 EX90 Single Motor — EPA; 291 on 21-inch wheels", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50254") },
+    charging: { portStandard: f("CCS1", "mfr") },
+    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
   },
 ];

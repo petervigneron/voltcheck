@@ -882,10 +882,11 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
   },
 
   {
-    id: "lyriq-2025-rwd",
+    id: "lyriq-2025-rwd", // vin8 + 2027 extension (same 326 rating) added 2026-08-14
     make: "CADILLAC",
     model: "Lyriq",
-    modelYears: [2025, 2026],
+    modelYears: [2025, 2027],
+    vin8: ["K"], // GM Part 565: K = RWD, L = PAWD
     drive: "RWD",
     battery: { packGrossKwh: f(102, "mfr", "medium", "GM quotes 102 kWh; usable split unpublished"), chemistry: f("NMC", "agg", "medium") },
     range: { epaRangeMi: f(326, "mfr", "high", "EPA figure (11 kW and 19.2 kW chargers)", "https://www.fueleconomy.gov") },
@@ -943,7 +944,8 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     id: "lyriq-2025-awd",
     make: "CADILLAC",
     model: "Lyriq",
-    modelYears: [2025, 2026],
+    modelYears: [2025, 2027],
+    vin8: ["L"], // GM Part 565: L = RWD + PAWD (dual motor)
     drive: "AWD",
     battery: { packGrossKwh: f(102, "mfr", "medium", "GM quotes 102 kWh; usable split unpublished"), chemistry: f("NMC", "agg", "medium") },
     range: { epaRangeMi: f(303, "mfr", "high", "303 (19.2 kW charger) / 319 (11 kW, 2025 PAWD); 2026 V-Series: 285 — EPA", "https://www.fueleconomy.gov") },
