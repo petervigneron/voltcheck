@@ -26,7 +26,7 @@ const CONCURRENCY = flag("--concurrency", 6);
 // --cache-hours N: reuse pages fetched within N hours (0 = always live)
 setCacheTtl(flag("--cache-hours", 0) * 3_600_000);
 const flagIdxs = new Set(
-  ["--max-pages", "--concurrency", "--cache-hours"].flatMap((f) => {
+  ["--max-pages", "--concurrency", "--cache-hours", "--page-budget"].flatMap((f) => {
     const i = args.indexOf(f);
     return i >= 0 ? [i, i + 1] : [];
   })
@@ -37,7 +37,11 @@ const domains = args.filter((a, i) => !flagIdxs.has(i) && !a.startsWith("--"));
 // many rooftops) default deep; everything else uses --max-pages.
 const registry = JSON.parse(await readFile(new URL("./registry/registry.json", import.meta.url), "utf-8"));
 const siteInfo = new Map(registry.sites.map((s) => [s.domain, s]));
+// --page-budget N overrides everything, including a registry pageBudget, so a
+// group site's real depth can be measured without editing the registry.
+const BUDGET_OVERRIDE = flag("--page-budget", 0);
 function pageBudget(domain) {
+  if (BUDGET_OVERRIDE) return BUDGET_OVERRIDE;
   const s = siteInfo.get(domain);
   return s?.pageBudget ?? (s?.kind === "group" ? 400 : MAX_PAGES);
 }
@@ -155,7 +159,12 @@ async function crawlDealer(domain) {
   // site offered; one that stopped at its page budget saw a subset, and a
   // different subset each night. Only the former can support "this VIN is
   // gone, therefore it sold" — see supabase/migrations/0002.
-  report.truncated = queue.length > 0;
+  // A crawl that bailed early never saw the whole site, even if its queue
+  // happened to run dry on the same page — so it must never certify complete.
+  // Without the stoppedEarly term, a dealer having a bad night (every page
+  // erroring, so nothing new gets queued) would report truncated:false and
+  // db-sync would delist every car it has.
+  report.truncated = queue.length > 0 || Boolean(report.stoppedEarly);
   return report;
 }
 
