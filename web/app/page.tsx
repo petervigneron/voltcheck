@@ -5,6 +5,7 @@ import { ListingCard } from "@/components/ListingCard";
 import { SearchBar, FilterRail } from "@/components/Filters";
 import { REMOVABLE, describeFilter } from "@/lib/filters";
 import { hasRealPrice } from "@/lib/listings/price";
+import { bodyTypeOf } from "@/lib/listings/bodyType";
 import { featuredKey } from "@/lib/listings/featured";
 import { milesBetween, zipCoords } from "@/lib/geo";
 
@@ -24,6 +25,7 @@ export default async function Browse(props: PageProps<"/">) {
   const model = s("model");
   const cond = s("cond");
   const drive = s("drive");
+  const body = s("body");
   const minPrice = n("minPrice");
   const maxPrice = n("maxPrice");
   const minYear = n("minYear");
@@ -97,6 +99,8 @@ export default async function Browse(props: PageProps<"/">) {
   else if (cond === "used")
     tests.cond = (e) => e.listing.condition === "used" || e.listing.condition === "certified" || !e.listing.condition;
   if (drive) tests.drive = (e) => e.listing.drive === drive;
+  // Curated model→body map; cars we can't verifiably classify sit this one out.
+  if (body) tests.body = (e) => bodyTypeOf(e.listing) === body;
   // A price filter is about price, so a car whose feed gave us a lease payment
   // instead of one can't satisfy it either way.
   if (minPrice) tests.minPrice = (e) => hasRealPrice(e.listing) && e.listing.priceUsd >= minPrice;
