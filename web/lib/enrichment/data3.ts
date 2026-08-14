@@ -359,6 +359,8 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     id: "ix-2024-2025-xdrive50",
     make: "BMW",
     model: "iX",
+    // Value corrected 303 -> 307 in the 2026-08-14 pass: 2024 rates a flat
+    // 307 on all wheels; 2025 spans 302-309.
     modelYears: [2024, 2025],
     trim: "xDrive50",
     drive: "AWD",
@@ -366,7 +368,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       packGrossKwh: f(111.5, "mfr", "high", "BMW USA press: “Energy capacity, gross/net kWh 111.5/106.3” — shared pack across xDrive50 and M60"),
       packUsableKwh: f(106.3, "mfr", "high", "BMW USA press, same spec table"),
     },
-    range: { epaRangeMi: f(303, "mfr", "high", "2025 xDrive50, 21-inch wheels — EPA; 2024, same wheels: 307 mi. Other wheel sizes rate differently both years.", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(307, "mfr", "high", "MY2024: 307 on every wheel size; MY2025: 302–309 by wheels — EPA", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "agg", "medium", "BMW's own term is “Combined Charging Unit”; not independently re-verified as CCS1 in a xDrive50-specific document, but consistent with the rest of the US BMW BEV lineup"),
       superchargerAccess: f("adapter", "agg", "high", "Opened Dec 2025 via BMW-approved adapter; requires a Remote Software Upgrade first — same platform-level fact as i4/M60"),

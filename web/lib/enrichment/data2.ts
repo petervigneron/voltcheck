@@ -1412,7 +1412,9 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     id: "bmw-i4-edrive40",
     make: "BMW",
     model: "i4",
-    modelYears: [2022, 2025],
+    // 2025 (318 mi) and 2026 (333) get their own rows in data4.ts — one value
+    // for 2022-25 was overstating the split (2026-08-14).
+    modelYears: [2022, 2024],
     trim: "eDrive40",
     battery: {
       packUsableKwh: f(81.5, "mfr", "high", "83.9 gross / 81.5 net (BMW-published)"),
@@ -1449,7 +1451,8 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     id: "bmw-i4-edrive35",
     make: "BMW",
     model: "i4",
-    modelYears: [2023, 2025],
+    // 2024 (276 mi) and 2025 (266) rows live in data4.ts (2026-08-14).
+    modelYears: [2023, 2023],
     trim: "eDrive35",
     battery: {
       packUsableKwh: f(66, "mfr", "high", "70.2 gross / ~66 net (BMW-published)"),
@@ -1486,7 +1489,9 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     id: "bmw-i4-xdrive40",
     make: "BMW",
     model: "i4",
-    modelYears: [2024, 2025],
+    // 287 is the MY2025 figure; MY2024 rated 307 and has its own row in
+    // data4.ts (2026-08-14).
+    modelYears: [2025, 2025],
     trim: "xDrive40",
     battery: {
       packUsableKwh: f(81.5, "mfr", "high", "83.9 gross / 81.5 net (BMW-published)"),

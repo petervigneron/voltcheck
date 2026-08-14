@@ -263,6 +263,32 @@ const H6 = { make: "HYUNDAI", model: "Ioniq 6" };
 const H9 = { make: "HYUNDAI", model: "IONIQ 9" };
 const KONA = { make: "HYUNDAI", model: "Kona Electric" };
 
+
+// ── BMW i4 / i5 / i7 / iX (same pass) ───────────────────────────────────
+// BMW certifies each trim per wheel size and the wheels aren't knowable from
+// a listing, so every row carries the standard-wheel figure with the spread
+// in the note (the convention the earlier i4/iX rows established). Trim
+// names (eDrive35/40, xDrive40/45/50/60, M50/M60/M70) are distinctive
+// enough that no VIN work is needed. "Gran Coupe"/"GC" are body-style noise,
+// stripped at decode. Platform facts (CCS1 port, Supercharger via adapter
+// after a software update, Gen5-eDrive integrated heat pump, 8yr/100k
+// transferable battery warranty) mirror the researched i4/iX rows.
+const BMW_CHARGING = {
+  portStandard: f<"CCS1">("CCS1", "mfr"),
+  superchargerAccess: f<"adapter">("adapter", "agg", "high", "Opened Dec 2025 via BMW-approved adapter; requires a Remote Software Upgrade first"),
+};
+const BMW_HP = { heatPump: f<"standard">("standard", "mfr", "high", "Integrated heat pump for cabin, battery and drive — BMW Gen5-eDrive platform (BMW press)") };
+const BMW_WARRANTY = {
+  batteryYears: f(8, "mfr" as Source),
+  batteryMiles: f(100_000, "mfr" as Source),
+  sohFloorPct: f(70, "mfr" as Source),
+  batteryTransfers: f(true, "mfr" as Source, "high", "NVLW runs to “the first retail purchaser, and each subsequent purchaser”"),
+};
+const I4 = { make: "BMW", model: "i4" };
+const I5 = { make: "BMW", model: "i5" };
+const I7 = { make: "BMW", model: "i7" };
+const IX = { make: "BMW", model: "iX" };
+
 export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   // ── MY2022 ─────────────────────────────────────────────────────────────
   {
@@ -1585,5 +1611,245 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     id: "prologue-2025-26-awd-elite", make: "HONDA", model: "Prologue", modelYears: [2025, 2026], trim: "Elite", drive: "AWD",
     range: { epaRangeMi: f(283, "mfr", "high", "AWD Elite — EPA certifies it separately from the other AWD trims (294 mi)", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49090") },
     charging: PORT_CCS,
+  },
+
+  {
+    id: "i4-2024-edrive35", ...I4, modelYears: [2024, 2024], trim: "eDrive35", drive: "RWD",
+    battery: { packUsableKwh: f(67.1, "mfr", "high", "70.2 gross / 67.1 net (BMW-published, eDrive35)") },
+    range: { epaRangeMi: f(276, "mfr", "high", "MY2024 eDrive35 on 18-inch wheels — EPA; 252 on 19s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46919") },
+    charging: BMW_CHARGING,
+    thermal: BMW_HP,
+    warranty: BMW_WARRANTY,
+  },
+  {
+    id: "i4-2025-edrive35", ...I4, modelYears: [2025, 2025], trim: "eDrive35", drive: "RWD",
+    battery: { packUsableKwh: f(67.1, "mfr", "high", "70.2 gross / 67.1 net (BMW-published, eDrive35)") },
+    range: { epaRangeMi: f(266, "mfr", "high", "MY2025 eDrive35 on 18-inch wheels — EPA; 244 on 19s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48308") },
+    charging: BMW_CHARGING,
+    thermal: BMW_HP,
+    warranty: BMW_WARRANTY,
+  },
+  {
+    id: "i4-2025-edrive40", ...I4, modelYears: [2025, 2025], trim: "eDrive40", drive: "RWD",
+    battery: { packUsableKwh: f(81.5, "mfr", "high", "83.9 gross / 81.5 net (BMW-published)") },
+    range: { epaRangeMi: f(318, "mfr", "high", "MY2025 eDrive40 on 18-inch wheels — EPA; 295 on 19s. Up from 301 in 2022–24", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48310") },
+    charging: BMW_CHARGING,
+    thermal: BMW_HP,
+    warranty: BMW_WARRANTY,
+  },
+  {
+    id: "i4-2024-xdrive40", ...I4, modelYears: [2024, 2024], trim: "xDrive40", drive: "AWD",
+    battery: { packUsableKwh: f(81.5, "mfr", "high", "83.9 gross / 81.5 net (BMW-published)") },
+    range: { epaRangeMi: f(307, "mfr", "high", "MY2024 xDrive40 on 18-inch wheels — EPA; 279 on 19s. 2025 dropped to 287", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46917") },
+    charging: BMW_CHARGING,
+    thermal: BMW_HP,
+    warranty: BMW_WARRANTY,
+  },
+  {
+    id: "i4-2026-edrive35", ...I4, modelYears: [2026, 2026], trim: "eDrive35", drive: "RWD",
+    battery: { packUsableKwh: f(67.1, "mfr", "high", "70.2 gross / 67.1 net (BMW-published, eDrive35)") },
+    range: { epaRangeMi: f(251, "mfr", "high", "MY2026 eDrive35 (19-inch wheels, the only certified configuration) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50187") },
+    charging: BMW_CHARGING,
+    thermal: BMW_HP,
+    warranty: BMW_WARRANTY,
+  },
+  {
+    id: "i4-2026-edrive40", ...I4, modelYears: [2026, 2026], trim: "eDrive40", drive: "RWD",
+    battery: { packUsableKwh: f(81.5, "mfr", "high", "83.9 gross / 81.5 net (BMW-published)") },
+    range: { epaRangeMi: f(333, "mfr", "high", "MY2026 eDrive40 on 18-inch wheels — EPA; 307 on 19s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50188") },
+    charging: BMW_CHARGING,
+    thermal: BMW_HP,
+    warranty: BMW_WARRANTY,
+  },
+  {
+    id: "i4-2026-xdrive40", ...I4, modelYears: [2026, 2026], trim: "xDrive40", drive: "AWD",
+    battery: { packUsableKwh: f(81.5, "mfr", "high", "83.9 gross / 81.5 net (BMW-published)") },
+    range: { epaRangeMi: f(287, "mfr", "high", "MY2026 xDrive40 on 18-inch wheels — EPA; 268 on 19s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50192") },
+    charging: BMW_CHARGING,
+    thermal: BMW_HP,
+    warranty: BMW_WARRANTY,
+  },
+  {
+    id: "i4-2026-m60", ...I4, modelYears: [2026, 2026], trim: "M60", drive: "AWD",
+    battery: { packUsableKwh: f(81.5, "mfr", "high", "83.9 gross / 81.5 net (BMW-published)") },
+    range: { epaRangeMi: f(278, "mfr", "high", "MY2026 M60 xDrive (replaces the M50) on 19-inch wheels — EPA; 232 on 20s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50190") },
+    charging: BMW_CHARGING,
+    thermal: BMW_HP,
+    warranty: BMW_WARRANTY,
+  },
+  {
+    id: "i5-2024-25-edrive40", ...I5, modelYears: [2024, 2025], trim: "eDrive40", drive: "RWD",
+    battery: { packUsableKwh: f(81.5, "mfr", "high", "83.9 gross / 81.5 net (BMW-published)") },
+    range: { epaRangeMi: f(295, "mfr", "high", "MY2024–25 i5 eDrive40 on 19-inch wheels — EPA; 270–278 on 20/21s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46923") },
+    charging: BMW_CHARGING,
+    thermal: BMW_HP,
+    warranty: BMW_WARRANTY,
+  },
+  {
+    id: "i5-2025-xdrive40", ...I5, modelYears: [2025, 2025], trim: "xDrive40", drive: "AWD",
+    range: { epaRangeMi: f(266, "mfr", "high", "MY2025 i5 xDrive40 on 19-inch wheels — EPA; 248–262 on 20/21s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48322") },
+    charging: BMW_CHARGING,
+    thermal: BMW_HP,
+    warranty: BMW_WARRANTY,
+  },
+  {
+    id: "i5-2024-m60", ...I5, modelYears: [2024, 2024], trim: "M60", drive: "AWD",
+    range: { epaRangeMi: f(256, "mfr", "high", "MY2024 i5 M60 xDrive on 19-inch wheels — EPA; 240–248 on 20/21s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46926") },
+    charging: BMW_CHARGING,
+    thermal: BMW_HP,
+    warranty: BMW_WARRANTY,
+  },
+  {
+    id: "i5-2025-m60", ...I5, modelYears: [2025, 2025], trim: "M60", drive: "AWD",
+    range: { epaRangeMi: f(253, "mfr", "high", "MY2025 i5 M60 xDrive on 19-inch wheels — EPA; 239–250 on 20/21s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48319") },
+    charging: BMW_CHARGING,
+    thermal: BMW_HP,
+    warranty: BMW_WARRANTY,
+  },
+  {
+    id: "i5-2026-edrive40", ...I5, modelYears: [2026, 2026], trim: "eDrive40", drive: "RWD",
+    battery: { packUsableKwh: f(81.5, "mfr", "high", "83.9 gross / 81.5 net (BMW-published)") },
+    range: { epaRangeMi: f(310, "mfr", "high", "MY2026 i5 eDrive40 on 19-inch wheels — EPA; 278–300 on 20/21s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49613") },
+    charging: BMW_CHARGING,
+    thermal: BMW_HP,
+    warranty: BMW_WARRANTY,
+  },
+  {
+    id: "i5-2026-xdrive40", ...I5, modelYears: [2026, 2026], trim: "xDrive40", drive: "AWD",
+    range: { epaRangeMi: f(278, "mfr", "high", "MY2026 i5 xDrive40 on 19-inch wheels — EPA; 259–272 on 20/21s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49616") },
+    charging: BMW_CHARGING,
+    thermal: BMW_HP,
+    warranty: BMW_WARRANTY,
+  },
+  {
+    id: "i5-2026-m60", ...I5, modelYears: [2026, 2026], trim: "M60", drive: "AWD",
+    range: { epaRangeMi: f(277, "mfr", "high", "MY2026 i5 M60 xDrive on 19-inch wheels — EPA; 259–266 on 20/21s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50194") },
+    charging: BMW_CHARGING,
+    thermal: BMW_HP,
+    warranty: BMW_WARRANTY,
+  },
+  {
+    id: "i7-2023-xdrive60", ...I7, modelYears: [2023, 2023], trim: "xDrive60", drive: "AWD",
+    range: { epaRangeMi: f(318, "mfr", "high", "MY2023 i7 xDrive60 on 19-inch wheels — EPA; 296–308 on 20/21s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=45993") },
+    charging: BMW_CHARGING,
+    thermal: BMW_HP,
+    warranty: BMW_WARRANTY,
+  },
+  {
+    id: "i7-2024-edrive50", ...I7, modelYears: [2024, 2024], trim: "eDrive50", drive: "RWD",
+    range: { epaRangeMi: f(321, "mfr", "high", "MY2024 i7 eDrive50 on 19-inch wheels — EPA; 301–311 on 20/21s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46929") },
+    charging: BMW_CHARGING,
+    thermal: BMW_HP,
+    warranty: BMW_WARRANTY,
+  },
+  {
+    id: "i7-2024-xdrive60", ...I7, modelYears: [2024, 2024], trim: "xDrive60", drive: "AWD",
+    range: { epaRangeMi: f(317, "mfr", "high", "MY2024 i7 xDrive60 on 19-inch wheels — EPA; 298–307 on 20/21s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46934") },
+    charging: BMW_CHARGING,
+    thermal: BMW_HP,
+    warranty: BMW_WARRANTY,
+  },
+  {
+    id: "i7-2024-m70", ...I7, modelYears: [2024, 2024], trim: "M70", drive: "AWD",
+    range: { epaRangeMi: f(274, "mfr", "high", "MY2024 i7 M70 xDrive on 20-inch wheels — EPA; 291 on 21s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46932") },
+    charging: BMW_CHARGING,
+    thermal: BMW_HP,
+    warranty: BMW_WARRANTY,
+  },
+  {
+    id: "i7-2025-26-edrive50", ...I7, modelYears: [2025, 2026], trim: "eDrive50", drive: "RWD",
+    range: { epaRangeMi: f(314, "mfr", "high", "MY2025–26 i7 eDrive50 on 19-inch wheels — EPA; 301–307 on 20/21s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48325") },
+    charging: BMW_CHARGING,
+    thermal: BMW_HP,
+    warranty: BMW_WARRANTY,
+  },
+  {
+    id: "i7-2025-26-xdrive60", ...I7, modelYears: [2025, 2026], trim: "xDrive60", drive: "AWD",
+    range: { epaRangeMi: f(311, "mfr", "high", "MY2025–26 i7 xDrive60 on 19-inch wheels — EPA; 296–308 on 20/21s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48330") },
+    charging: BMW_CHARGING,
+    thermal: BMW_HP,
+    warranty: BMW_WARRANTY,
+  },
+  {
+    id: "i7-2025-26-m70", ...I7, modelYears: [2025, 2026], trim: "M70", drive: "AWD",
+    range: { epaRangeMi: f(268, "mfr", "high", "MY2025–26 i7 M70 xDrive on 20-inch wheels — EPA (267 for 2026); 285 on 21s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48328") },
+    charging: BMW_CHARGING,
+    thermal: BMW_HP,
+    warranty: BMW_WARRANTY,
+  },
+  {
+    id: "ix-2022-23-xdrive50", ...IX, modelYears: [2022, 2023], trim: "xDrive50", drive: "AWD",
+    battery: { packGrossKwh: f(111.5, "mfr", "high", "111.5 gross / 106.3 net — BMW USA press"), packUsableKwh: f(106.3, "mfr", "high") },
+    range: { epaRangeMi: f(324, "mfr", "high", "MY2022–23 iX xDrive50 on 20-inch wheels — EPA; 305–315 on 21/22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=45135") },
+    charging: BMW_CHARGING,
+    thermal: BMW_HP,
+    warranty: BMW_WARRANTY,
+  },
+  {
+    id: "ix-2024-25-xdrive40", ...IX, modelYears: [2024, 2025], trim: "xDrive40", drive: "AWD",
+    range: { epaRangeMi: f(217, "mfr", "high", "iX xDrive40 — EPA rates every wheel size 211–219; the smaller pack", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46939") },
+    charging: BMW_CHARGING,
+    thermal: BMW_HP,
+    warranty: BMW_WARRANTY,
+  },
+  {
+    id: "ix-2024-m60", ...IX, modelYears: [2024, 2024], trim: "M60", drive: "AWD",
+    battery: { packGrossKwh: f(111.5, "mfr", "high", "111.5 gross / 106.3 net — BMW USA press"), packUsableKwh: f(106.3, "mfr", "high") },
+    range: { epaRangeMi: f(296, "mfr", "high", "MY2024 iX M60 — EPA, both wheel sizes", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46937") },
+    charging: BMW_CHARGING,
+    thermal: BMW_HP,
+    warranty: BMW_WARRANTY,
+  },
+  {
+    id: "ix-2025-m60", ...IX, modelYears: [2025, 2025], trim: "M60", drive: "AWD",
+    battery: { packGrossKwh: f(111.5, "mfr", "high", "111.5 gross / 106.3 net — BMW USA press"), packUsableKwh: f(106.3, "mfr", "high") },
+    range: { epaRangeMi: f(284, "mfr", "high", "MY2025 iX M60 — EPA; 285 on 22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48333") },
+    charging: BMW_CHARGING,
+    thermal: BMW_HP,
+    warranty: BMW_WARRANTY,
+  },
+  {
+    id: "ix-2026-xdrive45", ...IX, modelYears: [2026, 2026], trim: "xDrive45", drive: "AWD",
+    range: { epaRangeMi: f(312, "mfr", "high", "MY2026 iX xDrive45 (facelift) on 20-inch wheels — EPA; 279–297 on larger wheels", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49619") },
+    charging: BMW_CHARGING,
+    thermal: BMW_HP,
+    warranty: BMW_WARRANTY,
+  },
+  {
+    id: "ix-2026-xdrive60", ...IX, modelYears: [2026, 2026], trim: "xDrive60", drive: "AWD",
+    range: { epaRangeMi: f(364, "mfr", "high", "MY2026 iX xDrive60 (facelift) on 20-inch wheels — EPA; 318–341 on larger wheels", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49623") },
+    charging: BMW_CHARGING,
+    thermal: BMW_HP,
+    warranty: BMW_WARRANTY,
+  },
+
+  {
+    id: "i5-2027-edrive40", ...I5, modelYears: [2027, 2027], trim: "eDrive40", drive: "RWD",
+    battery: { packUsableKwh: f(81.5, "mfr", "high", "83.9 gross / 81.5 net (BMW-published)") },
+    range: { epaRangeMi: f(328, "mfr", "high", "MY2027 i5 eDrive40 on 19-inch wheels — EPA; 280–299 on 20/21s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50360") },
+    charging: BMW_CHARGING,
+    thermal: BMW_HP,
+    warranty: BMW_WARRANTY,
+  },
+  {
+    id: "i5-2027-xdrive40", ...I5, modelYears: [2027, 2027], trim: "xDrive40", drive: "AWD",
+    range: { epaRangeMi: f(283, "mfr", "high", "MY2027 i5 xDrive40 on 19-inch wheels — EPA; 262–273 on 20/21s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50603") },
+    charging: BMW_CHARGING,
+    thermal: BMW_HP,
+    warranty: BMW_WARRANTY,
+  },
+  {
+    id: "i7-2027-xdrive50", ...I7, modelYears: [2027, 2027], trim: ["xDrive50", "50 xDrive"], drive: "AWD",
+    range: { epaRangeMi: f(354, "mfr", "high", "MY2027 i7 xDrive50 — EPA; 364 on 21-inch summer tires", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50604") },
+    charging: BMW_CHARGING,
+    thermal: BMW_HP,
+    warranty: BMW_WARRANTY,
+  },
+  {
+    id: "i7-2027-xdrive60", ...I7, modelYears: [2027, 2027], trim: ["xDrive60", "60 xDrive"], drive: "AWD",
+    range: { epaRangeMi: f(344, "mfr", "high", "MY2027 i7 xDrive60 — EPA; 348–362 on summer tires", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50607") },
+    charging: BMW_CHARGING,
+    thermal: BMW_HP,
+    warranty: BMW_WARRANTY,
   },
 ];

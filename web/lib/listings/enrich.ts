@@ -30,7 +30,7 @@ const CAB_STYLES = /^(super\s*crew|super\s*cab|crew\s*cab|regular\s*cab|extended
 // Body-style noise appended to real trims ("Long Range Sport Utility 4D",
 // "Performance Sedan 4D") — stripped, not treated as identity. Whole phrases
 // only: "Sport S" and the like must survive.
-const BODY_NOISE = /\b(sport\s*utility|sedan|hatchback|coupe|4dr|4d|2d)\b/gi;
+const BODY_NOISE = /\b(sports?\s*activity\s*vehicle|sport\s*utility|sedan|hatchback|gran\s*coupe|coupe|gc|4dr|4d|2d)\b/gi;
 
 // Dealer trim strings restate things that aren't the trim: the model name,
 // the drivetrain spelled out, "Dual Motor". Canonicalize before matching so
