@@ -3,6 +3,14 @@ name: Nightly inventory
 # The pipeline used to run from a laptop via launchd, which meant it only
 # ran when the lid happened to be open at 3:30 AM — mostly never. This runs
 # it on GitHub's machines instead.
+#
+# Sharded 2026-08-13: a single job hit the 330-minute cap at ~650 working
+# domains, and nothing reaches Supabase until after the crawl — so a crawl
+# that missed the window persisted zero cars. The crawl now fans out across
+# a fixed matrix; each shard crawls sites where index % SHARDS == shard, and
+# a finalize job merges shard outputs before enrichment and sync. A shard
+# that dies costs its slice, not the night: db-sync only delists for domains
+# whose report says complete, so missing shards certify nothing.
 on:
   schedule:
     - cron: "30 10 * * *" # 03:30 America/Los_Angeles (10:30 UTC)
@@ -36,42 +44,102 @@ concurrency:
 permissions:
   contents: write # commits the refreshed registry + listings snapshot
 
+env:
+  SHARDS: "8"
+
 jobs:
-  crawl:
+  # Validate newly discovered dealers first, so tonight's crawl already
+  # includes the ones that pass. The probed registry travels to the other
+  # jobs as an artifact — shards must see tonight's promotions, and the
+  # finalize job commits this exact file.
+  probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 330
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
-
-      # Validate newly discovered dealers, then crawl everything that works.
       - name: Probe discovered dealers
         working-directory: scraper
         run: node probe.mjs --limit ${{ github.event.inputs.probe_limit || '300' }} --concurrency 12
+      - uses: actions/upload-artifact@v4
+        with:
+          name: registry
+          path: scraper/registry/registry.json
 
-      - name: Crawl working dealers
-        if: ${{ github.event.inputs.skip_crawl != 'true' }}
+  crawl:
+    needs: probe
+    if: ${{ github.event.inputs.skip_crawl != 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    strategy:
+      fail-fast: false # one dead shard must not cancel the others
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7] # keep in sync with env.SHARDS
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: actions/download-artifact@v4
+        with:
+          name: registry
+          path: scraper/registry
+      - name: Crawl shard ${{ matrix.shard }}
         working-directory: scraper
         run: |
           DOMAINS=$(python3 -c "
           import json
           r = json.load(open('registry/registry.json'))
-          print(' '.join(s['domain'] for s in r['sites'] if s.get('status') == 'working'))")
-          echo "crawling $(echo $DOMAINS | wc -w) domains"
+          doms = sorted(s['domain'] for s in r['sites'] if s.get('status') == 'working')
+          print(' '.join(d for i, d in enumerate(doms) if i % ${SHARDS} == ${{ matrix.shard }}))")
+          echo "shard ${{ matrix.shard }}/${SHARDS}: crawling $(echo $DOMAINS | wc -w) domains"
           # cache-hours 0: the runner starts with an empty cache and discards
           # it, so caching only costs disk — and filled it on run #2.
           node crawl.mjs $DOMAINS --max-pages ${{ github.event.inputs.max_pages || '80' }} --cache-hours 0 --concurrency 16
+      - uses: actions/upload-artifact@v4
+        with:
+          name: crawl-out-${{ matrix.shard }}
+          path: scraper/out/
+
+  # Merge shard outputs, enrich, sync, commit. always() + probe success:
+  # this must run even when some shards failed (their work is simply absent
+  # from the merge) and when the crawl was skipped (probe-only runs still
+  # commit registry status changes).
+  finalize:
+    needs: [probe, crawl]
+    if: ${{ always() && needs.probe.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 240 # enrichment + recheck scale with listing count
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: actions/download-artifact@v4
+        with:
+          name: registry
+          path: scraper/registry
+      - uses: actions/download-artifact@v4
+        if: ${{ github.event.inputs.skip_crawl != 'true' }}
+        with:
+          pattern: crawl-out-*
+          path: scraper/out/shards
+      - name: Merge shard outputs
+        if: ${{ github.event.inputs.skip_crawl != 'true' }}
+        working-directory: scraper
+        run: node merge-shards.mjs
 
       - name: VIN enrichment and ingest
+        if: ${{ github.event.inputs.skip_crawl != 'true' }}
         working-directory: scraper
         run: |
           node vpic-enrich.mjs
           node ingest.mjs
 
       - name: Sync to Supabase
+        if: ${{ github.event.inputs.skip_crawl != 'true' }}
         working-directory: scraper
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
@@ -82,6 +150,7 @@ jobs:
       # Ask every live listing's own page whether it is still for sale.
       # This is the authoritative sold-signal; the crawl only discovers.
       - name: Recheck live listings
+        if: ${{ github.event.inputs.skip_crawl != 'true' }}
         working-directory: scraper
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
