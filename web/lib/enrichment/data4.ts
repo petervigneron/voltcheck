@@ -1909,4 +1909,143 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     charging: { portStandard: f("CCS1", "mfr") },
     warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
   },
+
+  // ── Nissan LEAF fill-ins + gen-3 2026 / Volvo XC40-C40-EX30 / Toyota C-HR
+  //    / Jeep Wagoneer S (same pass) ───────────────────────────────────────
+  // 2026 LEAF codes per Nissan Part 565: A = 75 kWh S+/SV+ (S+ rides 18-inch
+  // steel wheels and rates highest), B = Platinum+ (19-inch). First LEAF with
+  // a native NACS port — the CHAdeMO era ends here. Volvo's Part 565 text
+  // names the motor config per VIN ("(eRWD) Single Motor, Extended range" /
+  // "(eAWD) Twin Motor"): 2024 K = single, M = twin; 2021–23 sold twin-only
+  // so the code doesn't matter. EX30: K = Single Motor, L = Twin Performance.
+  {
+    id: "leaf-2011-12", make: "NISSAN", model: "Leaf", modelYears: [2011, 2012],
+    battery: { packGrossKwh: f(24, "mfr", "high") },
+    range: { epaRangeMi: f(73, "mfr", "high", "MY2011–12 (24 kWh) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=30979") },
+    charging: { portStandard: f("CHAdeMO", "mfr", "high", "DC fast charging was optional on early cars; the port is CHAdeMO where fitted") },
+    thermal: { heatPump: f("none", "mfr") },
+  },
+  {
+    id: "leaf-2013", make: "NISSAN", model: "Leaf", modelYears: [2013, 2013],
+    battery: { packGrossKwh: f(24, "mfr", "high") },
+    range: { epaRangeMi: f(75, "mfr", "high", "MY2013 (24 kWh) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=33558") },
+    charging: { portStandard: f("CHAdeMO", "mfr", "high", "DC fast charging optional (standard on SV/SL); CHAdeMO where fitted") },
+    thermal: { heatPump: f("standard", "mfr", "high", "Hybrid heat pump system from MY2013 (SV/SL)") },
+  },
+  {
+    id: "leaf-2016-s", make: "NISSAN", model: "Leaf", modelYears: [2016, 2016], trim: "S",
+    battery: { packGrossKwh: f(24, "mfr", "high", "The S kept the 24 kWh pack in 2016; SV/SL moved to 30 kWh") },
+    range: { epaRangeMi: f(84, "mfr", "high", "MY2016 S (24 kWh) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=37066") },
+    charging: { portStandard: f("CHAdeMO", "mfr") },
+  },
+  {
+    id: "leaf-2016-sv-sl", make: "NISSAN", model: "Leaf", modelYears: [2016, 2016], trim: ["SV", "SL"],
+    battery: { packGrossKwh: f(30, "mfr", "high") },
+    range: { epaRangeMi: f(107, "mfr", "high", "MY2016 SV/SL (30 kWh) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=37067") },
+    charging: { portStandard: f("CHAdeMO", "mfr") },
+  },
+  {
+    id: "leaf-2017", make: "NISSAN", model: "Leaf", modelYears: [2017, 2017],
+    battery: { packGrossKwh: f(30, "mfr", "high") },
+    range: { epaRangeMi: f(107, "mfr", "high", "MY2017 (30 kWh standard) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=38428") },
+    charging: { portStandard: f("CHAdeMO", "mfr") },
+  },
+  {
+    id: "leaf-2026-splus", make: "NISSAN", model: "Leaf", modelYears: [2026, 2026], vin8: ["A"], trim: ["S+", "S"],
+    battery: { packGrossKwh: f(75, "mfr", "high") },
+    range: { epaRangeMi: f(303, "mfr", "high", "MY2026 LEAF S+ (75 kWh, 18-inch steel wheels) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49975") },
+    charging: { portStandard: f("NACS", "mfr", "high", "First LEAF with a native NACS port") },
+    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source) },
+  },
+  {
+    id: "leaf-2026-svplus", make: "NISSAN", model: "Leaf", modelYears: [2026, 2026], vin8: ["A"], trim: ["SV+", "SV"],
+    battery: { packGrossKwh: f(75, "mfr", "high") },
+    range: { epaRangeMi: f(288, "mfr", "high", "MY2026 LEAF SV+ (75 kWh, 18-inch alloys) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49974") },
+    charging: { portStandard: f("NACS", "mfr", "high", "First LEAF with a native NACS port") },
+    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source) },
+  },
+  {
+    id: "leaf-2026-platinum", make: "NISSAN", model: "Leaf", modelYears: [2026, 2026], vin8: ["B"],
+    battery: { packGrossKwh: f(75, "mfr", "high") },
+    range: { epaRangeMi: f(259, "mfr", "high", "MY2026 LEAF Platinum+ (VIN code B; 19-inch wheels) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49976") },
+    charging: { portStandard: f("NACS", "mfr", "high", "First LEAF with a native NACS port") },
+    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source) },
+  },
+  {
+    id: "xc40-recharge-2021", make: "VOLVO", model: "XC40 Recharge Pure Electric", modelYears: [2021, 2021], drive: "AWD",
+    range: { epaRangeMi: f(208, "mfr", "high", "MY2021 XC40 Recharge (twin motor, the only version) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=43295") },
+    charging: { portStandard: f("CCS1", "mfr") },
+  },
+  {
+    id: "xc40-recharge-2022-23", make: "VOLVO", model: "XC40 Recharge Pure Electric", modelYears: [2022, 2023], drive: "AWD",
+    range: { epaRangeMi: f(223, "mfr", "high", "MY2022–23 XC40 Recharge Twin — EPA; every US 2022–23 car is the twin-motor", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=44450") },
+    charging: { portStandard: f("CCS1", "mfr") },
+  },
+  {
+    id: "xc40-recharge-2024-single", make: "VOLVO", model: "XC40 Recharge Pure Electric", modelYears: [2024, 2024], vin8: ["K"], drive: "RWD",
+    range: { epaRangeMi: f(293, "mfr", "high", "MY2024 single-motor extended range (VIN code K — Volvo's Part 565 text names it eRWD Single Motor) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46981") },
+    charging: { portStandard: f("CCS1", "mfr") },
+  },
+  {
+    id: "xc40-recharge-2024-twin", make: "VOLVO", model: "XC40 Recharge Pure Electric", modelYears: [2024, 2024], vin8: ["M"], drive: "AWD",
+    range: { epaRangeMi: f(254, "mfr", "high", "MY2024 Twin (VIN code M — eAWD Twin Motor in Volvo's Part 565 text) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46983") },
+    charging: { portStandard: f("CCS1", "mfr") },
+  },
+  {
+    id: "c40-recharge-2022-23", make: "VOLVO", model: "C40 Recharge Pure Electric", modelYears: [2022, 2023], drive: "AWD",
+    range: { epaRangeMi: f(226, "mfr", "high", "MY2022–23 C40 Recharge Twin — EPA; every US 2022–23 car is the twin-motor", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=44929") },
+    charging: { portStandard: f("CCS1", "mfr") },
+  },
+  {
+    id: "c40-recharge-2024-single", make: "VOLVO", model: "C40 Recharge Pure Electric", modelYears: [2024, 2024], vin8: ["K"], drive: "RWD",
+    range: { epaRangeMi: f(297, "mfr", "high", "MY2024 single-motor extended range (VIN code K) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46980") },
+    charging: { portStandard: f("CCS1", "mfr") },
+  },
+  {
+    id: "c40-recharge-2024-twin", make: "VOLVO", model: "C40 Recharge Pure Electric", modelYears: [2024, 2024], vin8: ["M"], drive: "AWD",
+    range: { epaRangeMi: f(257, "mfr", "high", "MY2024 Twin (VIN code M) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46982") },
+    charging: { portStandard: f("CCS1", "mfr") },
+  },
+  {
+    id: "ex30-2025-single", make: "VOLVO", model: "EX30", modelYears: [2025, 2025], vin8: ["K"], drive: "RWD",
+    battery: { packGrossKwh: f(69, "vin", "high", "69 kWh NMC — Volvo's own Part 565 submission") },
+    range: { epaRangeMi: f(257, "mfr", "high", "MY2025 EX30 Single Motor Extended Range (VIN code K) on 18-inch wheels — EPA; 261 on 19/20s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48449") },
+    charging: { portStandard: f("CCS1", "mfr") },
+  },
+  {
+    id: "ex30-2026-single", make: "VOLVO", model: "EX30", modelYears: [2026, 2026], vin8: ["K"], drive: "RWD",
+    battery: { packGrossKwh: f(69, "vin", "high", "69 kWh NMC — Volvo's own Part 565 submission") },
+    range: { epaRangeMi: f(261, "mfr", "high", "MY2026 EX30 Single Motor Extended Range (VIN code K) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49989") },
+    charging: { portStandard: f("CCS1", "mfr") },
+  },
+  {
+    id: "ex30-2025-26-twin", make: "VOLVO", model: "EX30", modelYears: [2025, 2026], vin8: ["L"], drive: "AWD",
+    battery: { packGrossKwh: f(69, "vin", "high", "69 kWh NMC — Volvo's own Part 565 submission") },
+    range: { epaRangeMi: f(253, "mfr", "high", "EX30 Twin Performance (VIN code L) — EPA, same rating both years; 250 on 20-inch wheels in 2025", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48775") },
+    charging: { portStandard: f("CCS1", "mfr") },
+  },
+  {
+    id: "ex30-cc-2026", make: "VOLVO", model: "EX30 Cross Country", modelYears: [2026, 2026], drive: "AWD",
+    battery: { packGrossKwh: f(69, "vin", "high", "69 kWh NMC — Volvo's own Part 565 submission") },
+    range: { epaRangeMi: f(227, "mfr", "high", "MY2026 EX30 Cross Country on its standard 19-inch wheels — EPA; 203 on 18s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49991") },
+    charging: { portStandard: f("CCS1", "mfr") },
+  },
+  {
+    id: "chr-bev-2026", make: "TOYOTA", model: "C-HR", modelYears: [2026, 2026], drive: "AWD",
+    battery: { packGrossKwh: f(74.7, "agg", "medium") },
+    range: { epaRangeMi: f(287, "mfr", "high", "MY2026 C-HR BEV (AWD-only) on 18-inch wheels — EPA; 273 on 20s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50307") },
+    charging: { portStandard: f("NACS", "agg", "high", "Native NACS port from launch") },
+  },
+  {
+    id: "wagoneer-s-2025-26", make: "JEEP", model: "Wagoneer S", modelYears: [2025, 2026], drive: "AWD",
+    battery: { packGrossKwh: f(100, "agg", "medium") },
+    range: { epaRangeMi: f(294, "mfr", "high", "Wagoneer S AWD — EPA (Falken-tire certification); the Pirelli-tire fitment rates 262–268", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49093") },
+    charging: { portStandard: f("CCS1", "mfr") },
+  },
+  {
+    id: "wagoneer-s-2024", make: "JEEP", model: "Wagoneer S", modelYears: [2024, 2024], drive: "AWD",
+    battery: { packGrossKwh: f(100, "agg", "medium") },
+    range: { epaRangeMi: f(303, "mfr", "high", "MY2024 Wagoneer S Launch Edition — EPA (Falken-tire certification); the Pirelli fitment rates 270", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48791") },
+    charging: { portStandard: f("CCS1", "mfr") },
+  },
 ];

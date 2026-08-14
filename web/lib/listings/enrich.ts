@@ -38,7 +38,13 @@ const BODY_NOISE = /\b(sports?\s*activity\s*vehicle|sport\s*utility|sedan|hatchb
 // row key, and a trim that says nothing beyond the drivetrain drops away.
 function cleanTrim(l: Listing): string | undefined {
   if (!l.trim) return undefined;
-  let t = l.trim.replace(/[()]/g, " ").replace(/\s+/g, " ").trim();
+  // Feeds leak HTML entities ("S&#x2B;" for "S+").
+  let t = l.trim.replace(/&#x2b;|&#43;|&plus;/gi, "+").replace(/[()]/g, " ").replace(/\s+/g, " ").trim();
+  // "S/S+"-style compounds whose halves normalize identically are one trim.
+  const parts = t.split("/").map((p) => p.trim());
+  if (parts.length > 1 && parts.every((p) => p.replace(/[^A-Za-z0-9]/g, "").toUpperCase() === parts[0].replace(/[^A-Za-z0-9]/g, "").toUpperCase())) {
+    t = parts[0];
+  }
   const model = l.model.trim().toLowerCase();
   if (t.toLowerCase().startsWith(model)) t = t.slice(model.length);
   t = t
