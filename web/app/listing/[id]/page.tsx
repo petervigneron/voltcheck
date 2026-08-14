@@ -8,8 +8,8 @@ import { listingTiles } from "@/components/ListingCard";
 import { Tile } from "@/components/Tile";
 import { hasRealPrice } from "@/lib/listings/price";
 import { AskSeller } from "@/components/AskSeller";
-import { PricePaid } from "@/components/PricePaid";
-import { fetchPriceComps } from "@/lib/listings/prices";
+import { RecentSales } from "@/components/RecentSales";
+import { fetchRecentSales } from "@/lib/listings/sales";
 
 function Spec({ label, value }: { label: string; value?: string | number | null }) {
   if (value == null || value === "") return null;
@@ -33,8 +33,8 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
     listing.condition
   );
   const gallery = listing.images?.length ? listing.images : listing.imageUrl ? [listing.imageUrl] : [];
-  // What people actually paid for this model (Washington title records).
-  const priceComps = await fetchPriceComps(listing.make, listing.model, listing.year, listing.mileage);
+  // Recent real-world sales of the same make/model — transaction prices.
+  const recentSales = await fetchRecentSales(listing.make, listing.model);
 
   return (
     <div className="mx-auto max-w-5xl space-y-5 px-4 py-6">
@@ -150,8 +150,8 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
             </div>
           )}
 
-          {priceComps && (
-            <PricePaid comps={priceComps} askingPrice={hasRealPrice(listing) ? listing.priceUsd : undefined} />
+          {recentSales.length > 0 && (
+            <RecentSales sales={recentSales} make={listing.make} model={listing.model} />
           )}
 
           {e.row && (
