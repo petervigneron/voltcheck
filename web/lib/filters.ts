@@ -21,6 +21,19 @@ export const REMOVABLE = [
 
 export type RemovableFilter = (typeof REMOVABLE)[number];
 
+/**
+ * One-click filters on the rail. Each stays in place when active (pressed
+ * state) instead of turning into a remove-chip, so on/off is legible at a
+ * glance. A different value for the same key set from the full panel shows as
+ * a normal chip instead.
+ */
+export const QUICK_TOGGLES: { key: RemovableFilter; value: string; label: string }[] = [
+  { key: "minRange", value: "200", label: "200+ mi range" },
+  { key: "maxMiles", value: "60000", label: "Under 60k miles" },
+  { key: "maxPrice", value: "30000", label: "Under $30,000" },
+  { key: "drive", value: "AWD", label: "AWD" },
+];
+
 const money = (v: string) => `$${Number(v).toLocaleString()}`;
 
 export function describeFilter(key: string, value: string): string | null {

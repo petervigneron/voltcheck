@@ -2,44 +2,127 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useState } from "react";
-import { REMOVABLE, describeFilter } from "@/lib/filters";
+import { REMOVABLE, QUICK_TOGGLES, describeFilter } from "@/lib/filters";
 
 const CELL = "border-r-[3px] border-b-[3px] border-ink";
+// Interactive cells answer hover and keyboard focus with the same inset cobalt
+// keyline the listing cards use.
+const HOVER =
+  "hover:ring-[3px] hover:ring-inset hover:ring-cobalt focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-cobalt";
 const BLOCK = `${CELL} flex items-center gap-2 px-4 py-2.5 text-[13px] font-bold uppercase tracking-[0.04em]`;
 const FIELD =
   "w-full border-[3px] border-ink bg-paper px-2.5 py-1.5 text-[13px] font-semibold text-ink focus:outline-none focus:ring-[3px] focus:ring-cobalt";
 const FIELD_LABEL = "text-[10px] font-extrabold uppercase tracking-[0.14em] text-ink/55";
 
-export function SearchBar() {
-  const router = useRouter();
+export type Suggestion = { label: string; count: number };
+
+export function SearchBar({ suggestions }: { suggestions: Suggestion[] }) {
   const sp = useSearchParams();
   // Keyed on the URL's own value, so navigating back or clearing a filter
   // refills the box without an effect syncing two copies of the same string.
   const current = sp.get("q") ?? "";
+  return <SearchBox key={current} current={current} suggestions={suggestions} />;
+}
+
+function SearchBox({ current, suggestions }: { current: string; suggestions: Suggestion[] }) {
+  const router = useRouter();
+  const sp = useSearchParams();
+  const [text, setText] = useState(current);
+  const [open, setOpen] = useState(false);
+  const [hi, setHi] = useState(0);
+
+  const toks = text.toLowerCase().trim().split(/\s+/).filter(Boolean);
+  // "buzz" should surface "Volkswagen ID. Buzz": every typed token has to land
+  // somewhere in the make+model string, not prefix it.
+  const hits =
+    open && text.trim().length >= 2
+      ? suggestions.filter((s) => toks.every((t) => s.label.toLowerCase().includes(t))).slice(0, 7)
+      : [];
+
+  const go = (q: string) => {
+    setOpen(false);
+    const params = new URLSearchParams(sp.toString());
+    if (q) params.set("q", q);
+    else params.delete("q");
+    params.delete("page");
+    router.push(`/?${params.toString()}`);
+  };
 
   return (
     <form
       className="flex border-b-[3px] border-ink"
       onSubmit={(e) => {
         e.preventDefault();
-        const q = String(new FormData(e.currentTarget).get("q") ?? "").trim();
-        const params = new URLSearchParams(sp.toString());
-        if (q) params.set("q", q);
-        else params.delete("q");
-        router.push(`/?${params.toString()}`);
+        go(text.trim());
       }}
     >
-      <input
-        key={current}
-        name="q"
-        defaultValue={current}
-        aria-label="Search electric cars"
-        placeholder="Make, model, or trim"
-        className="min-w-0 flex-1 border-r-[3px] border-ink bg-paper px-5 py-4 text-[17px] font-medium text-ink placeholder:text-ink/40 focus:outline-none focus:ring-[3px] focus:ring-inset focus:ring-cobalt"
-      />
+      <div className="relative min-w-0 flex-1 border-r-[3px] border-ink">
+        <input
+          name="q"
+          value={text}
+          onChange={(e) => {
+            setText(e.target.value);
+            setOpen(true);
+            setHi(0);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "ArrowDown" && hits.length) {
+              e.preventDefault();
+              setHi((h) => Math.min(h + 1, hits.length - 1));
+            } else if (e.key === "ArrowUp" && hits.length) {
+              e.preventDefault();
+              setHi((h) => Math.max(h - 1, 0));
+            } else if (e.key === "Enter" && hits[hi]) {
+              e.preventDefault();
+              go(hits[hi].label);
+            } else if (e.key === "Escape") {
+              setOpen(false);
+            }
+          }}
+          onBlur={() => setOpen(false)}
+          role="combobox"
+          aria-expanded={hits.length > 0}
+          aria-controls="search-suggestions"
+          aria-autocomplete="list"
+          aria-label="Search electric cars"
+          placeholder="Make, model, or trim"
+          className="w-full bg-paper px-5 py-4 text-[17px] font-medium text-ink placeholder:text-ink/40 focus:outline-none focus:ring-[3px] focus:ring-inset focus:ring-cobalt"
+        />
+        {hits.length > 0 && (
+          <ul
+            id="search-suggestions"
+            role="listbox"
+            aria-label="Suggested models"
+            className="absolute inset-x-0 top-full z-20 border-[3px] border-ink bg-paper"
+          >
+            {hits.map((s, i) => (
+              <li
+                key={s.label}
+                role="option"
+                aria-selected={i === hi}
+                // Mousedown, not click: it fires before the input's blur closes
+                // the list out from under the cursor.
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  go(s.label);
+                }}
+                onMouseEnter={() => setHi(i)}
+                className={`flex cursor-pointer items-baseline justify-between gap-4 px-5 py-2.5 text-[15px] font-semibold ${
+                  i === hi ? "bg-putty" : "bg-paper"
+                }`}
+              >
+                <span className="truncate">{s.label}</span>
+                <span className="shrink-0 text-[11px] font-extrabold uppercase tracking-[0.08em] text-ink/50 tabular-nums">
+                  {s.count} cars
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
       <button
         type="submit"
-        className="bg-cobalt px-7 py-4 text-[15px] font-extrabold tracking-[0.06em] text-paper uppercase focus:outline-none focus:ring-[3px] focus:ring-inset focus:ring-ink"
+        className="bg-cobalt px-7 py-4 text-[15px] font-extrabold tracking-[0.06em] text-paper uppercase hover:ring-[3px] hover:ring-inset hover:ring-ink focus:outline-none focus:ring-[3px] focus:ring-inset focus:ring-ink"
       >
         Search
       </button>
@@ -61,6 +144,8 @@ export function FilterRail({ makesModels }: { makesModels: Record<string, string
         else params.delete(k);
       }
       if ("make" in updates) params.delete("model");
+      // Changed filters mean a different result set — page 3 of it is noise.
+      params.delete("page");
       router.push(`/?${params.toString()}`);
     },
     [router, sp]
@@ -70,15 +155,19 @@ export function FilterRail({ makesModels }: { makesModels: Record<string, string
   const models = make ? (makesModels[make] ?? []) : [];
   const makes = Object.keys(makesModels).sort();
 
+  const quick = QUICK_TOGGLES.map((t) => ({ ...t, on: get(t.key) === t.value }));
+  const quickOn = new Set(quick.filter((t) => t.on).map((t) => t.key));
+
+  // A filter a pressed toggle already represents doesn't also get a chip —
+  // two controls for the same state read as two different filters.
   const active = REMOVABLE.flatMap((k) => {
     const v = get(k);
-    if (!v) return [];
+    if (!v || quickOn.has(k)) return [];
     const label = describeFilter(k, v);
     return label ? [{ key: k, label }] : [];
   });
 
   const heatPumpOn = get("heatPump") === "1";
-  const rangeOn = get("minRange") === "200";
 
   return (
     <div className="border-t-[3px] border-l-[3px] border-ink">
@@ -87,7 +176,7 @@ export function FilterRail({ makesModels }: { makesModels: Record<string, string
           type="button"
           onClick={() => setOpen((v) => !v)}
           aria-expanded={open}
-          className={`${BLOCK} bg-ink text-paper`}
+          className={`${BLOCK} ${HOVER} bg-ink text-paper`}
         >
           {open ? "Close filters" : "All filters"}
           <span aria-hidden="true">{open ? "▲" : "▼"}</span>
@@ -99,23 +188,26 @@ export function FilterRail({ makesModels }: { makesModels: Record<string, string
             type="button"
             onClick={() => apply({ [f.key]: "" })}
             title={`Remove: ${f.label}`}
-            className={`${BLOCK} bg-vermilion text-paper`}
+            className={`${BLOCK} ${HOVER} bg-vermilion text-paper`}
           >
             {f.label}
             <span aria-hidden="true">✕</span>
           </button>
         ))}
 
-        {!heatPumpOn && (
-          <button type="button" onClick={() => apply({ heatPump: "1" })} className={`${BLOCK} bg-paper text-ink`}>
-            Heat pump
+        {quick.map((t) => (
+          <button
+            key={t.key}
+            type="button"
+            aria-pressed={t.on}
+            title={t.on ? `Remove: ${t.label}` : `Only ${t.label.toLowerCase()}`}
+            onClick={() => apply({ [t.key]: t.on ? "" : t.value })}
+            className={`${BLOCK} ${HOVER} ${t.on ? "bg-cobalt text-paper" : "bg-paper text-ink"}`}
+          >
+            <span aria-hidden="true">{t.on ? "✓" : "+"}</span>
+            {t.label}
           </button>
-        )}
-        {!rangeOn && (
-          <button type="button" onClick={() => apply({ minRange: "200" })} className={`${BLOCK} bg-paper text-ink`}>
-            200+ mi
-          </button>
-        )}
+        ))}
 
         {/* Pushes sort to the right on a wide rail; on a phone the rail wraps
             and an empty stretched cell just reads as a gap. */}
@@ -127,10 +219,11 @@ export function FilterRail({ makesModels }: { makesModels: Record<string, string
           </label>
           <select
             id="sort"
-            value={get("sort") || "price"}
-            onChange={(e) => apply({ sort: e.target.value })}
-            className="h-full cursor-pointer appearance-none bg-transparent px-4 py-2.5 text-[13px] font-bold tracking-[0.04em] uppercase focus:outline-none focus:ring-[3px] focus:ring-inset focus:ring-cobalt"
+            value={get("sort") || "featured"}
+            onChange={(e) => apply({ sort: e.target.value === "featured" ? "" : e.target.value })}
+            className="h-full cursor-pointer appearance-none bg-transparent px-4 py-2.5 text-[13px] font-bold tracking-[0.04em] uppercase hover:ring-[3px] hover:ring-inset hover:ring-cobalt focus:outline-none focus:ring-[3px] focus:ring-inset focus:ring-cobalt"
           >
+            <option value="featured">Featured</option>
             <option value="price">Price ↑</option>
             <option value="price-desc">Price ↓</option>
             <option value="year-desc">Year: newest</option>

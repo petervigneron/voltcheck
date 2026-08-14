@@ -5,18 +5,14 @@ import { ListingCard } from "@/components/ListingCard";
 import { SearchBar, FilterRail } from "@/components/Filters";
 import { REMOVABLE, describeFilter } from "@/lib/filters";
 import { hasRealPrice } from "@/lib/listings/price";
+import { featuredKey } from "@/lib/listings/featured";
 import { milesBetween, zipCoords } from "@/lib/geo";
 
 const CELL = "border-r-[3px] border-b-[3px] border-ink";
 
-function Stat({ label, value, className = "" }: { label: string; value: string; className?: string }) {
-  return (
-    <div className={`${CELL} flex flex-col px-5 py-3 ${className}`}>
-      <span className="text-[10.5px] font-extrabold tracking-[0.14em] uppercase">{label}</span>
-      <span className="text-[19px] font-extrabold tracking-[-0.02em] tabular-nums">{value}</span>
-    </div>
-  );
-}
+// The band under the search box: the four deepest models in inventory, each a
+// one-click search. Deep inventory is the popularity signal we actually have.
+const BAND_GROUNDS = ["bg-saffron", "bg-putty", "bg-putty", "bg-teal text-paper"];
 
 export default async function Browse(props: PageProps<"/">) {
   const sp = await props.searchParams;
@@ -28,7 +24,6 @@ export default async function Browse(props: PageProps<"/">) {
   const model = s("model");
   const cond = s("cond");
   const drive = s("drive");
-  const sort = s("sort") || "price";
   const minPrice = n("minPrice");
   const maxPrice = n("maxPrice");
   const minYear = n("minYear");
@@ -38,6 +33,7 @@ export default async function Browse(props: PageProps<"/">) {
   const heatPump = s("heatPump") === "1";
   const zip = s("zip");
   const radius = s("radius") || "50";
+  const sort = s("sort") || "featured";
   const origin = zipCoords(zip);
 
   const listings = await allListings();
@@ -48,6 +44,28 @@ export default async function Browse(props: PageProps<"/">) {
     (makesModels[l.make] ??= []).push(l.model);
   }
   for (const k of Object.keys(makesModels)) makesModels[k] = [...new Set(makesModels[k])].sort();
+
+  // Per-model tally, case-insensitive because dealer feeds disagree on casing
+  // ("Nissan ARIYA" / "Nissan Ariya"); the most common form is the display one.
+  const tally = new Map<string, { count: number; forms: Map<string, { make: string; model: string; n: number }> }>();
+  for (const l of listings) {
+    const form = `${l.make} ${l.model}`;
+    const t = tally.get(form.toLowerCase()) ?? { count: 0, forms: new Map() };
+    t.count += 1;
+    const f = t.forms.get(form) ?? { make: l.make, model: l.model, n: 0 };
+    f.n += 1;
+    t.forms.set(form, f);
+    tally.set(form.toLowerCase(), t);
+  }
+  const canon = [...tally.values()]
+    .map((t) => {
+      const best = [...t.forms.values()].sort((a, b) => b.n - a.n)[0];
+      return { make: best.make, model: best.model, count: t.count };
+    })
+    .sort((a, b) => b.count - a.count);
+  const popular = canon.slice(0, 4);
+  // A model listed once is as likely a feed typo as a car — not suggestion material.
+  const suggestions = canon.filter((c) => c.count >= 2).map((c) => ({ label: `${c.make} ${c.model}`, count: c.count }));
 
   const dist = new Map<string, number>();
   if (origin) {
@@ -99,11 +117,26 @@ export default async function Browse(props: PageProps<"/">) {
   const priceKey = (e: EnrichedListing, low: boolean) =>
     hasRealPrice(e.listing) ? e.listing.priceUsd : low ? Infinity : -Infinity;
 
+  // Anything that isn't an explicit sort falls back to the featured order.
+  const explicitSorts = new Set(["price", "price-desc", "year-desc", "miles", "range-desc", ...(origin ? ["distance"] : [])]);
+  // eslint-disable-next-line react-hooks/purity -- server-rendered per request; the once-a-day reshuffle is the point
+  const day = Math.floor(Date.now() / 86400000);
+  const feat = explicitSorts.has(sort)
+    ? null
+    : new Map(
+        all.map((e) => [
+          e.listing.id,
+          featuredKey(e, tally.get(`${e.listing.make} ${e.listing.model}`.toLowerCase())?.count ?? 0, day),
+        ])
+      );
+
   results.sort((a, b) => {
     if (origin && sort === "distance") {
       return (dist.get(a.listing.id) ?? Infinity) - (dist.get(b.listing.id) ?? Infinity);
     }
     switch (sort) {
+      case "price":
+        return priceKey(a, true) - priceKey(b, true);
       case "price-desc":
         return priceKey(b, false) - priceKey(a, false);
       case "year-desc":
@@ -113,7 +146,7 @@ export default async function Browse(props: PageProps<"/">) {
       case "range-desc":
         return (b.realRangeMi?.value ?? -1) - (a.realRangeMi?.value ?? -1);
       default:
-        return priceKey(a, true) - priceKey(b, true);
+        return (feat!.get(b.listing.id) ?? -Infinity) - (feat!.get(a.listing.id) ?? -Infinity);
     }
   });
 
@@ -143,38 +176,45 @@ export default async function Browse(props: PageProps<"/">) {
     return qs ? `/?${qs}` : "/";
   };
 
-  const longRange = all.filter((e) => (e.realRangeMi?.value ?? 0) >= 200).length;
-  const prices = results
-    .filter((e) => hasRealPrice(e.listing))
-    .map((e) => e.listing.priceUsd)
-    .sort((a, b) => a - b);
-  const median = prices.length ? prices[Math.floor(prices.length / 2)] : null;
+  // Shortcut hrefs keep every other filter; a new search resets paging.
+  const modelHref = (label: string, pressed: boolean) => {
+    const params = new URLSearchParams();
+    for (const [k, v] of Object.entries(sp)) if (typeof v === "string" && k !== "page" && k !== "q") params.set(k, v);
+    if (!pressed) params.set("q", label);
+    const qs = params.toString();
+    return qs ? `/?${qs}` : "/";
+  };
 
   return (
     <div className="mx-auto max-w-[1400px] px-0 sm:px-6 sm:py-6">
       <div className="border-t-[3px] border-l-[3px] border-ink">
         <div className="border-r-[3px] border-ink">
-          <SearchBar />
+          <SearchBar suggestions={suggestions} />
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4">
-          <Stat label="Cars listed" value={all.length.toLocaleString()} className="bg-saffron" />
-          {/* Unfiltered, "matching" just repeats the total — say something else. */}
-          {activeKeys.length > 0 ? (
-            <Stat label="Matching now" value={results.length.toLocaleString()} className="bg-putty" />
-          ) : (
-            <Stat
-              label="Under $30,000"
-              value={all.filter((e) => hasRealPrice(e.listing) && e.listing.priceUsd < 30000).length.toLocaleString()}
-              className="bg-putty"
-            />
-          )}
-          <Stat label="200+ mile range" value={longRange.toLocaleString()} className="bg-putty" />
-          <Stat
-            label={median ? "Median of these" : "Median price"}
-            value={median ? `$${median.toLocaleString()}` : "—"}
-            className="bg-teal text-paper"
-          />
+          {popular.map((p, i) => {
+            const label = `${p.make} ${p.model}`;
+            const pressed = q === label.toLowerCase();
+            return (
+              <Link
+                key={label}
+                href={modelHref(label, pressed)}
+                title={pressed ? `Stop showing only ${label}` : `Show every ${label}`}
+                className={`${CELL} flex flex-col px-5 py-3 hover:ring-[3px] hover:ring-inset hover:ring-cobalt ${
+                  pressed ? "bg-ink text-paper" : BAND_GROUNDS[i]
+                }`}
+              >
+                <span className="text-[10.5px] font-extrabold tracking-[0.14em] uppercase">
+                  {p.make} · {p.count} cars
+                </span>
+                <span className="text-[19px] font-extrabold tracking-[-0.02em]">
+                  {p.model}
+                  {pressed ? " ✕" : ""}
+                </span>
+              </Link>
+            );
+          })}
         </div>
       </div>
 
