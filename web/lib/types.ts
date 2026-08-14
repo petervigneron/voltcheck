@@ -49,7 +49,7 @@ export interface EnrichmentRow {
   make: string;
   model: string;
   modelYears: [number, number]; // inclusive range
-  trim?: string; // undefined = all trims
+  trim?: string | string[]; // undefined = all trims; an array = any of these names (maker renames across a lineup year)
   drive?: "AWD" | "RWD" | "FWD"; // set when drivetrain determines the pack/rating
   packVariant?: string;
   plant?: string; // matches vPIC plant city or Tesla VIN plant code

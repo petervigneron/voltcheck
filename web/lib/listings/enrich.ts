@@ -26,18 +26,43 @@ export interface EnrichedListing {
 // on 21 of 48 Lightnings). A cab style can't discriminate enrichment rows, but
 // left in place it blocks every trim-keyed row from matching.
 const CAB_STYLES = /^(super\s*crew|super\s*cab|crew\s*cab|regular\s*cab|extended\s*cab|double\s*cab|quad\s*cab|king\s*cab)$/i;
+// Body-style noise appended to real trims ("Long Range Sport Utility 4D",
+// "Performance Sedan 4D") — stripped, not treated as identity. Whole phrases
+// only: "Sport S" and the like must survive.
+const BODY_NOISE = /\b(sport\s*utility|sedan|hatchback|coupe|4dr|4d|2d)\b/gi;
+
+// Dealer trim strings restate things that aren't the trim: the model name,
+// the drivetrain spelled out, "Dual Motor". Canonicalize before matching so
+// "Model 3 Long Range Dual Motor All-Wheel Drive" can meet a "Long Range AWD"
+// row key, and a trim that says nothing beyond the drivetrain drops away.
+function cleanTrim(l: Listing): string | undefined {
+  if (!l.trim) return undefined;
+  let t = l.trim.replace(/[()]/g, " ").replace(/\s+/g, " ").trim();
+  const model = l.model.trim().toLowerCase();
+  if (t.toLowerCase().startsWith(model)) t = t.slice(model.length);
+  t = t
+    .replace(/\ball[- ]wheel drive\b/gi, "AWD")
+    .replace(/\brear[- ]wheel drive\b/gi, "RWD")
+    .replace(/\bfront[- ]wheel drive\b/gi, "FWD")
+    .replace(/\bdual motor\b/gi, " ")
+    .replace(BODY_NOISE, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (!t || CAB_STYLES.test(t)) return undefined;
+  if (t.split(" ").every((w) => /^(rwd|awd|fwd|4wd|4x4|4x2)$/i.test(w))) return undefined;
+  return t;
+}
 
 // A listing feed gives us make/model/year/trim directly — no vPIC round-trip
 // needed to match enrichment. The VIN still contributes Tesla plant/year facts.
 function decodeFromListing(l: Listing): VinDecode {
-  const trim = l.trim && CAB_STYLES.test(l.trim.trim()) ? undefined : l.trim;
   return {
     vin: l.vin,
     usMarket: true,
     make: l.make.toUpperCase(),
     model: l.model,
     modelYear: l.year,
-    trim,
+    trim: cleanTrim(l),
     driveType: l.drive,
     batteryKwhHint: l.vpicBatteryKwh,
   };

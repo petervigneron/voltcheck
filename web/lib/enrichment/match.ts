@@ -8,15 +8,17 @@ const ALL_ROWS = [...ENRICHMENT_ROWS, ...RESEARCH_ROWS, ...RESEARCH_ROWS_3, ...R
 
 const norm = (s?: string) => (s ?? "").toUpperCase().replace(/[^A-Z0-9]/g, "");
 
-function trimMatches(rowTrim: string | undefined, decodedTrim: string | undefined): boolean {
+function trimMatches(rowTrim: string | string[] | undefined, decodedTrim: string | undefined): boolean {
   if (!rowTrim) return true; // row applies to all trims
   if (!decodedTrim) return true; // unknown trim: keep row as a candidate
-  const a = norm(rowTrim);
   const b = norm(decodedTrim);
-  // Short trims ("S") must match exactly — substring logic would let Leaf "S"
-  // swallow "SV" and "Pro S".
-  if (a.length < 3 || b.length < 3) return a === b;
-  return a.includes(b) || b.includes(a);
+  return (Array.isArray(rowTrim) ? rowTrim : [rowTrim]).some((rt) => {
+    const a = norm(rt);
+    // Short trims ("S") must match exactly — substring logic would let Leaf "S"
+    // swallow "SV" and "Pro S".
+    if (a.length < 3 || b.length < 3) return a === b;
+    return a.includes(b) || b.includes(a);
+  });
 }
 
 function normalizeDrive(d: string | undefined): "AWD" | "RWD" | "FWD" | undefined {
@@ -48,11 +50,12 @@ export function matchEnrichment(
   // dealer feed can't blur. Must run before the kWh-hint filter: vPIC's
   // battery figure is a model-level constant on some trucks (every 2023
   // Lightning reads "98"), and the hint would otherwise veto the correct
-  // Extended Range row.
+  // Extended Range row. A hard filter, unlike the soft hints below: a row
+  // keyed to specific codes must never match a car with a different code —
+  // matching nothing is honest, matching the wrong pack is not.
   const vin8 = decode.vin?.[7]?.toUpperCase();
   if (vin8) {
-    const vinRows = rows.filter((r) => !r.vin8 || r.vin8.includes(vin8));
-    if (vinRows.length > 0) rows = vinRows;
+    rows = rows.filter((r) => !r.vin8 || r.vin8.includes(vin8));
   }
 
   // Drivetrain resolves pack/rating on many models (Ariya, Lyriq, Blazer…)
@@ -82,9 +85,11 @@ export function matchEnrichment(
   if (decode.trim) {
     const trimSpecific = rows.filter((r) => {
       if (!r.trim) return false;
-      const a = norm(r.trim);
       const b = norm(decode.trim);
-      return a.includes(b) || b.includes(a);
+      return (Array.isArray(r.trim) ? r.trim : [r.trim]).some((rt) => {
+        const a = norm(rt);
+        return a.includes(b) || b.includes(a);
+      });
     });
     if (trimSpecific.length === 1) return { exact: trimSpecific[0] };
     if (trimSpecific.length > 1) rows = trimSpecific;

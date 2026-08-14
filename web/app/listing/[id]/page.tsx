@@ -173,7 +173,7 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
                     <div className="mb-2 text-sm font-semibold">
                       {row.range?.epaRangeMi
                         ? `${row.range.epaRangeMi.value} mi version${row.battery?.packUsableKwh ? ` · ≈${Math.round(row.battery.packUsableKwh.value)} kWh` : ""}`
-                        : row.trim ?? row.id}
+                        : (Array.isArray(row.trim) ? row.trim[0] : row.trim) ?? row.id}
                     </div>
                     <EnrichmentFacts row={row} />
                   </div>

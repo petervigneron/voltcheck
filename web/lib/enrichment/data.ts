@@ -54,6 +54,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     make: "TESLA",
     model: "Model Y",
     modelYears: [2022, 2023],
+    vin8: ["E"], // dual motor, non-Performance — Tesla's own Part 565 motor code
     trim: "Long Range AWD",
     packVariant: "2170",
     battery: {
@@ -84,6 +85,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     make: "TESLA",
     model: "Model Y",
     modelYears: [2022, 2023],
+    vin8: ["E"], // dual motor, non-Performance — Tesla's own Part 565 motor code
     trim: "AWD",
     packVariant: "4680",
     plant: "A",
@@ -119,6 +121,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     make: "TESLA",
     model: "Model Y",
     modelYears: [2024, 2024],
+    vin8: ["E"], // dual motor, non-Performance — Tesla's own Part 565 motor code
     trim: "Long Range AWD",
     battery: {
       packUsableKwh: f(76.5, "est", "medium", "~75–78 kWh; Tesla publishes no usable figure — from BMS logs and teardowns"),
@@ -144,29 +147,9 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     ],
   },
 
-  // ── Tesla Model 3 — the 2020 heat-pump split ──
-  {
-    id: "model-3-2020",
-    make: "TESLA",
-    model: "Model 3",
-    modelYears: [2020, 2020],
-    thermal: { heatPump: f("none", "mfr", "high", "Heat pump arrived with the 2021 refresh, built from ~14 Sept 2020") },
-    charging: { portStandard: f("NACS", "mfr"), superchargerAccess: f("native", "mfr") },
-    buyerNotes: [
-      {
-        headline: "VIN pos. 10: L = MY2020 (no heat pump), M = MY2021 (heat pump)",
-        severity: "trap",
-      },
-    ],
-  },
-  {
-    id: "model-3-2021-plus",
-    make: "TESLA",
-    model: "Model 3",
-    modelYears: [2021, 2026],
-    thermal: { heatPump: f("standard", "mfr") },
-    charging: { portStandard: f("NACS", "mfr"), superchargerAccess: f("native", "mfr") },
-  },
+  // ── Tesla Model 3 — moved to data4.ts (2026-08-14 pass), re-keyed on the
+  // VIN's motor code with per-variant EPA ranges; the 2020 heat-pump split
+  // and pos-10 note carried over to those rows. ──
 
   // ── Chevrolet Bolt — DC fast charging was a $750 option ──
   {
