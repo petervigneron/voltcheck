@@ -10,8 +10,6 @@ import type { BodyType } from "@/lib/filters";
 // Deliberately unmapped, so they don't come back as "gaps" on the next audit:
 // - Polestar 1 (coupe), Taycan/Panamera Cross & Sport Turismo (wagons),
 //   Mercedes SL (roadster): real body styles we don't offer as a filter.
-// - Polestar 2: maker says "fastback"; shopping sites split between sedan
-//   and hatchback. No verifiable single answer.
 // - Dodge Charger / Charger Daytona: sold as both a 2-door and a 4-door
 //   under the same model strings, and trims rarely say which.
 // - BMW M5: sedan and Touring (wagon) share the string; trim only
@@ -177,6 +175,10 @@ const MODEL_BODY: Record<string, BodyType> = {
   "mercedes-benz cla 350": "sedan",
   "mercedes-benz eqe 350+ sedan": "sedan",
   "mercedes-benz s-class": "sedan",
+  // Maker says "fastback" and shopping sites split sedan/hatchback; owner's
+  // call (2026-08): shoppers cross-shop it with the Model 3, so sedan.
+  "polestar 2": "sedan",
+  "polestar polestar 2": "sedan",
   "porsche panamera 4 e-hybrid": "sedan",
   "porsche taycan": "sedan", // wagon variants carry Cross/Sport Turismo in the model string
   "porsche taycan 4s black edition": "sedan",
