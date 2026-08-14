@@ -8,18 +8,12 @@ second owner.
 
 ## Layout
 
-- `docs/ENRICHMENT-SCHEMA.md` — the data model: tiers of knowability (T1 VIN → T4
-  ask-the-seller), field-by-field schema, sources tested August 2026. Read this first.
-- `docs/HANDOFF.md` — verified / n=1 / open research findings and the evidentiary
-  discipline (never promote a claim a tier without a primary source).
-- `docs/OEM-PORTAL-SURVEY.md` — which OEMs expose per-VIN *completed* campaign history
-  (GM, Mercedes verified; Hyundai near-verified; most others open-only).
 - `web/` — Next.js 16 + TypeScript + Tailwind 4 app.
-- `scraper/` — nightly crawl → enrich → ingest pipeline (plain Node, no AI, launchd).
+- `scraper/` — nightly crawl → enrich → ingest pipeline (plain Node, no AI; runs on
+  GitHub Actions).
 - `supabase/` — persistence: migration SQL, PGlite verify harness. Listings live in
   Supabase with full history (first/last seen, every price change, delisted-not-deleted);
-  `web/data/scraped-listings.json` remains the always-working fallback. Setup + deploy
-  checklist: `docs/SETUP-DEPLOY.md`.
+  `web/data/scraped-listings.json` remains the always-working fallback.
 
 ## What works today
 
@@ -59,9 +53,7 @@ Run: `npm run dev` in `web/` (or the `voltcheck-dev` launch config).
   the big open product question. Options on the table: licensed bulk feeds (Marketcheck,
   Auto.dev — being researched), direct dealer syndication, and scraping public listing
   pages (a per-target legality/effort judgment the owner makes; not ruled out).
-- Supabase persistence is built and verified (see `docs/SETUP-DEPLOY.md`) — awaiting the
-  owner's project creation + keys; until then the JSON fallback serves. Enrichment stays
-  in code (versioned editorial content, not feed data).
+- Enrichment stays in code (versioned editorial content, not feed data).
 - GM owner-centre campaign lookup as the first live per-VIN feature (public, no sign-in);
   Mercedes/Hyundai equivalents are user-initiated candidates only (reCAPTCHA-gated).
 - T3.5 photo reads at ingest (Bolt charge-port CCS detection) — the demo already models it.

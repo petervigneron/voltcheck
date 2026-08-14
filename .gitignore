@@ -15,5 +15,8 @@ scraper/cache/
 scraper/logs/
 scraper/out/
 
+# Research and strategy notes — kept local, never in the public repo
+docs/
+
 # OS noise
 .DS_Store
