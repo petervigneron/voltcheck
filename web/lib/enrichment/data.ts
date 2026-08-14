@@ -153,11 +153,13 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
 
   // ── Chevrolet Bolt — DC fast charging was a $750 option ──
   {
-    id: "bolt-ev-2017-2020",
+    // 2020 split out to data4.ts (2026-08-14): its EPA rating is 259, and this
+    // row's single 238 value was undershooting every 2020 car by 21 miles.
+    id: "bolt-ev-2017-2019",
     make: "CHEVROLET",
     model: "Bolt EV",
-    modelYears: [2017, 2020],
-    range: { epaRangeMi: f(238, "mfr", "high", "2017–19: 238; 2020: 259 — EPA figures", "https://www.fueleconomy.gov"), testedRangeMi: f(226, "tested", "high", "70-mph (InsideEVs, 2020): 226 mi; 75-mph (C&D): 220") },
+    modelYears: [2017, 2019],
+    range: { epaRangeMi: f(238, "mfr", "high", "MY2017–19 — EPA", "https://www.fueleconomy.gov") },
     charging: {
       dcFastCharging: f("optional", "mfr", "high", "RPO code CBT, $750 standalone option — optional on BOTH trims through MY2020"),
       portStandard: f("CCS1", "mfr", "high", "Only when the CBT option is present; without it the car is AC-only"),

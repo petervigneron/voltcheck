@@ -94,6 +94,7 @@ const HEAT_PUMP_STD = f<"standard">("standard", "mfr", "high", "“Vapor Injecti
 // cars. The structured pack description tracks the VIN code correctly; the
 // kWh figure does not.
 const OGM_23 = "https://dealerimages.dealereprocess.com/image/upload/v1680045275/1/ford/PDFs/2023_Mustang_Mach-E_Order_Guide.pdf";
+const BOLT27_PRESS = "https://pressroom.chevrolet.com/gmbx/us/en/chevrolet/pressroom/news.detail.html/Pages/news/us/en/2025/oct/1009-2027-Chevrolet-Bolt.html";
 const VIN_23 = "https://content.fordpro.com/content/dam/fordpro/us/en-us/pdf/fleet-vehicles/vin-lookup-and-guides/2023-vin-guide.pdf";
 const ME = { make: "FORD", model: "Mustang Mach-E" };
 
@@ -365,6 +366,82 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(300, "mfr", "high", "Platinum carries the 131 kWh Extended Range pack but is EPA-rated 300 (heavier 22\" wheels)", epa(48708)) },
     thermal: { heatPump: HEAT_PUMP_STD },
     warranty: WARRANTY,
+  },
+
+  // ── Chevrolet Bolt (same pass) ─────────────────────────────────────────
+  // Three gaps closed: MY2020 split out of the old 2017–2020 row (259 EPA,
+  // not 238 — every 2020 car was being undershot by 21 miles), the Bolt EUV
+  // (separate model string, zero coverage), and the relaunched 2027 Bolt —
+  // 255 of the 260 unmatched "Bolt EV" listings. 2027 facts from GM's own
+  // press/spec page; EPA range confirmed on fueleconomy.gov (id 50372).
+  {
+    id: "bolt-ev-2020",
+    make: "CHEVROLET",
+    model: "Bolt EV",
+    modelYears: [2020, 2020],
+    range: {
+      epaRangeMi: f(259, "mfr", "high", "MY2020 — the pack grew to 66 kWh and EPA range rose to 259", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=42191"),
+      testedRangeMi: f(226, "tested", "high", "70-mph (InsideEVs, 2020): 226 mi; 75-mph (C&D): 220"),
+    },
+    charging: {
+      dcFastCharging: f("optional", "mfr", "high", "RPO code CBT, $750 standalone option — optional on BOTH trims through MY2020"),
+      portStandard: f("CCS1", "mfr", "high", "Only when the CBT option is present; without it the car is AC-only"),
+    },
+    thermal: { heatPump: f("none", "mfr") },
+    warranty: {
+      batteryYears: f(8, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      batteryTransfers: f(true, "mfr", "high", "GM booklet: “transferable at no cost to any subsequent person(s)” (verified via extracted booklet text)"),
+    },
+    buyerNotes: [
+      { headline: "DC fast charging: $750 factory option — not on every car", severity: "trap", resolvedBy: "photo_dcfc" },
+      { headline: "Most 2020–22 cars kept their original packs (21V560)", severity: "info", resolvedBy: "campaign_check" },
+      { headline: "No capacity floor on the battery warranty", severity: "warning" },
+    ],
+  },
+  {
+    id: "bolt-euv-2022-23",
+    make: "CHEVROLET",
+    model: "Bolt EUV",
+    modelYears: [2022, 2023],
+    range: { epaRangeMi: f(247, "mfr", "high", "Bolt EUV, both years — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=45750") },
+    charging: { dcFastCharging: f("standard", "mfr"), portStandard: f("CCS1", "mfr") },
+    thermal: { heatPump: f("none", "mfr") },
+    warranty: {
+      batteryYears: f(8, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      batteryTransfers: f(true, "mfr", "high", "GM booklet: “transferable at no cost to any subsequent person(s)” (verified via extracted booklet text)"),
+    },
+    buyerNotes: [
+      { headline: "Most 2020–22 cars kept their original packs (21V560)", severity: "info", resolvedBy: "campaign_check" },
+    ],
+  },
+  {
+    id: "bolt-2027",
+    make: "CHEVROLET",
+    model: "Bolt EV",
+    modelYears: [2027, 2027],
+    packVariant: "65 kWh LFP",
+    battery: {
+      packGrossKwh: f(65, "mfr", "high", "“Battery Rated Energy: 65 kWh” — lithium iron phosphate in prismatic cells, per GM's own spec sheet", BOLT27_PRESS),
+      chemistry: f("LFP", "mfr", "high", undefined, BOLT27_PRESS),
+    },
+    range: { epaRangeMi: f(262, "mfr", "high", "EPA-estimated 262 mi (GM's launch estimate was 255; the certified figure came in higher)", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50372") },
+    charging: {
+      portStandard: f("NACS", "mfr", "high", "“Chevrolet's first vehicle to offer a native NACS charging port”", BOLT27_PRESS),
+      superchargerAccess: f("native", "mfr"),
+      dcFastCharging: f("standard", "mfr"),
+      dcPeakKw: f(150, "mfr", "high", "“Peak charging speed of 150 kW+” — 10–80% in about 25 minutes", BOLT27_PRESS),
+    },
+    thermal: {
+      heatPump: f("standard", "mfr", "high", "“GM Energy Recovery (heat pump) for active cabin and battery heating and cooling”", BOLT27_PRESS),
+      batteryPreconditioning: f(true, "mfr", "high", "Automatic battery preconditioning when DC fast charging is on the route"),
+    },
+    warranty: {
+      batteryYears: f(8, "mfr", "high", undefined, BOLT27_PRESS),
+      batteryMiles: f(100_000, "mfr", "high", undefined, BOLT27_PRESS),
+      batteryTransfers: f(true, "mfr"),
+    },
   },
 
   // ── Mustang Mach-E MY2021 ──────────────────────────────────────────────
