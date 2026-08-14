@@ -17,11 +17,16 @@ function assert(name, cond, detail = "") {
 }
 
 // Supabase's roles pre-exist on the platform; create them so the exact
-// migration files (RLS policies, revokes) run unmodified.
+// migration files (RLS policies, revokes) run unmodified. Supabase also
+// auto-grants select on new tables to anon/authenticated (RLS is the row
+// gate on top) — mirror that with default privileges so 0007's revokes
+// are tested against the same baseline they run against in production.
 await db.exec(`
   create role anon nologin;
   create role authenticated nologin;
   create role service_role nologin;
+  grant usage on schema public to anon, authenticated;
+  alter default privileges in schema public grant select on tables to anon, authenticated;
 `);
 for (const f of (await readdir(MIGRATIONS_DIR)).filter((f) => f.endsWith(".sql")).sort()) {
   await db.exec(await readFile(new URL(f, MIGRATIONS_DIR), "utf-8"));
@@ -116,13 +121,133 @@ console.log("\nrun 5: junk input");
 const r5 = await ingest([{ vin: "", priceUsd: 5 }, { year: 2020 }, sample[2], { ...sample[2] }], "test", []);
 assert("junk skipped, dup deduped: seen=1", r5.seen === 1, JSON.stringify(r5));
 
-// ---- Security posture
+// ---- Run 6: lifecycle events (migration 0006) — the sold car's full story
+// so far reads listed → delisted (2b) → relisted (3). 2c must not have
+// produced a second delist (the car was already delisted), and re-ingesting
+// a known live car (runs 4/5) must produce no events at all.
+console.log("\nrun 6: lifecycle events");
+const soldVin = sample[soldIdx].vin.toUpperCase();
+const ev = await db.query(
+  `select event from listing_events where vin=$1 order by observed_at, id`,
+  [soldVin]
+);
+assert(
+  "sold car events are exactly listed→delisted→relisted",
+  JSON.stringify(ev.rows.map((r) => r.event)) === JSON.stringify(["listed", "delisted", "relisted"]),
+  JSON.stringify(ev.rows)
+);
+const listedTotal = await db.query(`select count(*)::int as n from listing_events where event='listed'`);
+assert("one listed event per VIN ever seen", listedTotal.rows[0].n === sample.length);
+
+// ---- Run 7: mileage history on the ingest path — a changed odometer is
+// logged, an absent one is not an observation.
+console.log("\nrun 7: mileage history via ingest");
+await ingest([{ ...sample[soldIdx], mileage: 99999 }], "test", []);
+const m1 = await db.query(
+  `select count(*)::int as n from listing_mileage_history where vin=$1 and mileage=99999`,
+  [soldVin]
+);
+assert("odometer change logged", m1.rows[0].n === 1);
+const mBefore = await db.query(`select count(*)::int as n from listing_mileage_history`);
+await ingest([{ ...sample[soldIdx], mileage: null }], "test", []);
+const mAfter = await db.query(`select count(*)::int as n from listing_mileage_history`);
+assert("null mileage is not an observation", mAfter.rows[0].n === mBefore.rows[0].n);
+
+// ---- Run 8: the recheck path also feeds both logs
+console.log("\nrun 8: recheck feeds price, mileage, and events");
+async function recheck(alive, hardGone, softGone) {
+  const res = await db.query(
+    `select recheck_listings($1::jsonb, $2::jsonb, $3::jsonb) as r`,
+    [JSON.stringify(alive), JSON.stringify(hardGone), JSON.stringify(softGone)]
+  );
+  return res.rows[0].r;
+}
+const rc = sample.find((l) => l.dealerDomain === failedDomain);
+const rcVin = rc.vin.toUpperCase();
+const r8a = await recheck([{ vin: rc.vin, priceUsd: rc.priceUsd - 500, mileage: 54321 }], [], []);
+assert("recheck confirms and logs price change", r8a.confirmed === 1 && r8a.price_changed === 1, JSON.stringify(r8a));
+const m8 = await db.query(
+  `select count(*)::int as n from listing_mileage_history where vin=$1 and mileage=54321`,
+  [rcVin]
+);
+assert("recheck logs mileage change", m8.rows[0].n === 1);
+
+const r8b = await recheck([], [rc.vin], []);
+assert("hard gone delists", r8b.delisted === 1, JSON.stringify(r8b));
+const r8c = await recheck([{ vin: rc.vin, priceUsd: rc.priceUsd - 500, mileage: 54321 }], [], []);
+assert("recheck confirms the returned car", r8c.confirmed === 1, JSON.stringify(r8c));
+const rcEv = await db.query(
+  `select event from listing_events where vin=$1 order by observed_at, id`,
+  [rcVin]
+);
+assert(
+  "recheck cycle events are listed→delisted→relisted",
+  JSON.stringify(rcEv.rows.map((r) => r.event)) === JSON.stringify(["listed", "delisted", "relisted"]),
+  JSON.stringify(rcEv.rows)
+);
+
+// Soft-gone strikes: first strike is not a delist event, the second is.
+const sg = sample.filter((l) => l.dealerDomain === failedDomain)[1];
+const sgVin = sg.vin.toUpperCase();
+const r8d = await recheck([], [], [sg.vin]);
+assert("first strike does not delist", r8d.struck === 1 && r8d.delisted === 0, JSON.stringify(r8d));
+const sgEv1 = await db.query(
+  `select count(*)::int as n from listing_events where vin=$1 and event='delisted'`,
+  [sgVin]
+);
+assert("no delist event on first strike", sgEv1.rows[0].n === 0);
+await recheck([], [], [sg.vin]);
+const sgRow = await db.query(`select delisted_at from listings where vin=$1`, [sgVin]);
+const sgEv2 = await db.query(
+  `select count(*)::int as n from listing_events where vin=$1 and event='delisted'`,
+  [sgVin]
+);
+assert("second strike delists with exactly one event", sgRow.rows[0].delisted_at !== null && sgEv2.rows[0].n === 1);
+
+// ---- Security posture (migration 0007): the anon role reads exactly what
+// the public site publishes — live listings and their price history — and
+// gets a hard permission error on every archive table.
+console.log("\nposture: anon sees the showroom, not the archive");
 const pol = await db.query(`select tablename, cmd from pg_policies where schemaname='public' order by tablename`);
 assert(
-  `every public policy is read-only (${pol.rows.length} tables)`,
-  pol.rows.length >= 3 && pol.rows.every((p) => p.cmd === "SELECT"),
+  `only live-read policies remain, all read-only (${pol.rows.length})`,
+  pol.rows.length === 2 &&
+    pol.rows.every((p) => p.cmd === "SELECT") &&
+    JSON.stringify(pol.rows.map((p) => p.tablename).sort()) ===
+      JSON.stringify(["listing_price_history", "listings"]),
   JSON.stringify(pol.rows)
 );
+
+const totals = await db.query(`
+  select (select count(*)::int from listings) as all_cars,
+         (select count(*)::int from listings where delisted_at is null) as live_cars,
+         (select count(*)::int from listing_price_history) as all_prices,
+         (select count(*)::int from listing_price_history h
+            join listings l using (vin) where l.delisted_at is null) as live_prices
+`);
+const t = totals.rows[0];
+assert("test data includes delisted rows (posture test has bite)", t.all_cars > t.live_cars && t.all_prices > t.live_prices);
+
+await db.exec(`set role anon`);
+const anonCars = await db.query(`select count(*)::int as n from listings`);
+assert("anon sees only live listings", anonCars.rows[0].n === t.live_cars, `${anonCars.rows[0].n} vs ${t.live_cars}`);
+const anonPrices = await db.query(`select count(*)::int as n from listing_price_history`);
+assert("anon sees only live cars' price history", anonPrices.rows[0].n === t.live_prices, `${anonPrices.rows[0].n} vs ${t.live_prices}`);
+for (const closed of ["listing_mileage_history", "listing_events", "ingest_runs", "wa_ev_sales"]) {
+  let denied = false;
+  try {
+    await db.query(`select count(*) from ${closed}`);
+  } catch {
+    denied = true;
+  }
+  assert(`anon is denied outright on ${closed}`, denied);
+}
+await db.exec(`reset role`);
+
+const canComp = await db.query(
+  `select has_function_privilege('anon', 'wa_price_comps(text, text, int, int, int)', 'execute') as ok`
+);
+assert("anon can still execute wa_price_comps (statistics, not the database)", canComp.rows[0].ok === true);
 const canExec = await db.query(
   `select has_function_privilege('anon', 'ingest_listings(jsonb, text, jsonb)', 'execute') as ok`
 );
