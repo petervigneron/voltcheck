@@ -2,8 +2,9 @@ import type { EnrichmentResult, EnrichmentRow, VinDecode, TeslaVinFacts } from "
 import { ENRICHMENT_ROWS } from "./data";
 import { RESEARCH_ROWS } from "./data2";
 import { RESEARCH_ROWS_3 } from "./data3";
+import { RESEARCH_ROWS_4 } from "./data4";
 
-const ALL_ROWS = [...ENRICHMENT_ROWS, ...RESEARCH_ROWS, ...RESEARCH_ROWS_3];
+const ALL_ROWS = [...ENRICHMENT_ROWS, ...RESEARCH_ROWS, ...RESEARCH_ROWS_3, ...RESEARCH_ROWS_4];
 
 const norm = (s?: string) => (s ?? "").toUpperCase().replace(/[^A-Z0-9]/g, "");
 
@@ -42,6 +43,17 @@ export function matchEnrichment(
       modelYear <= r.modelYears[1] &&
       trimMatches(r.trim, decode.trim)
   );
+
+  // VIN position 8 is the maker's own motor/battery code — the one field a
+  // dealer feed can't blur. Must run before the kWh-hint filter: vPIC's
+  // battery figure is a model-level constant on some trucks (every 2023
+  // Lightning reads "98"), and the hint would otherwise veto the correct
+  // Extended Range row.
+  const vin8 = decode.vin?.[7]?.toUpperCase();
+  if (vin8) {
+    const vinRows = rows.filter((r) => !r.vin8 || r.vin8.includes(vin8));
+    if (vinRows.length > 0) rows = vinRows;
+  }
 
   // Drivetrain resolves pack/rating on many models (Ariya, Lyriq, Blazer…)
   const listingDrive = normalizeDrive(decode.driveType);

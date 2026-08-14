@@ -22,16 +22,22 @@ export interface EnrichedListing {
   trapCount: number;
 }
 
+// Truck feeds routinely put the cab style where the trim belongs ("SuperCrew"
+// on 21 of 48 Lightnings). A cab style can't discriminate enrichment rows, but
+// left in place it blocks every trim-keyed row from matching.
+const CAB_STYLES = /^(super\s*crew|super\s*cab|crew\s*cab|regular\s*cab|extended\s*cab|double\s*cab|quad\s*cab|king\s*cab)$/i;
+
 // A listing feed gives us make/model/year/trim directly — no vPIC round-trip
 // needed to match enrichment. The VIN still contributes Tesla plant/year facts.
 function decodeFromListing(l: Listing): VinDecode {
+  const trim = l.trim && CAB_STYLES.test(l.trim.trim()) ? undefined : l.trim;
   return {
     vin: l.vin,
     usMarket: true,
     make: l.make.toUpperCase(),
     model: l.model,
     modelYear: l.year,
-    trim: l.trim,
+    trim,
     driveType: l.drive,
     batteryKwhHint: l.vpicBatteryKwh,
   };
@@ -136,8 +142,17 @@ export function enrichListing(l: Listing): EnrichedListing {
   }
 
   // Heat pump, resolved against this listing's drivetrain where possible.
+  // Ambiguity between candidate rows doesn't extend to facts they agree on:
+  // a Lightning that may be either ER trim still definitely has no heat pump.
+  let hpFact = row?.thermal?.heatPump;
+  if (!hpFact && enrichment.candidates?.length) {
+    const first = enrichment.candidates[0].thermal?.heatPump;
+    if (first && enrichment.candidates.every((r) => r.thermal?.heatPump?.value === first.value)) {
+      hpFact = first;
+    }
+  }
   let heatPump: EnrichedListing["heatPump"] = null;
-  const hpResolved = row?.thermal?.heatPump;
+  const hpResolved = hpFact;
   if (hpResolved) {
     switch (hpResolved.value) {
       case "standard":

@@ -53,6 +53,10 @@ export interface EnrichmentRow {
   drive?: "AWD" | "RWD" | "FWD"; // set when drivetrain determines the pack/rating
   packVariant?: string;
   plant?: string; // matches vPIC plant city or Tesla VIN plant code
+  // VIN position 8 — the manufacturer's own motor/battery code (Ford: 2022–23
+  // L=Standard Range, V=Extended Range; 2024+ K/7/M/U). Year-scoped by the
+  // row's modelYears, since makers reuse letters across generations.
+  vin8?: string[];
 
   battery?: {
     packGrossKwh?: Fact<number>;
