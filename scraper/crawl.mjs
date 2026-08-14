@@ -57,6 +57,19 @@ const NO_EV_FLOOR = 40; // sells cars, just none of them electric
 
 const EV_ONLY_WMIS = new Set(["5YJ", "7SA", "7G2", "LRW", "XP7", "7FC", "7PD", "50E", "LPS", "YSP"]);
 
+// Dealer platforms emit VDP links in every shape: absolute, root-relative
+// ("/inventory/..."), even bare-relative ("used-2022-volvo-..."). Resolve
+// against the page that linked them; anything that still doesn't parse is
+// dropped, not queued — unresolved relatives reaching fetchPage killed 4 of
+// 8 shards on 2026-08-14 (ERR_INVALID_URL is thrown before any try/catch).
+function abs(href, base) {
+  try {
+    return new URL(href, base).toString();
+  } catch {
+    return null;
+  }
+}
+
 function evishEntry({ url, name, vin }) {
   if (vin && VIN_RE.test(vin) && EV_ONLY_WMIS.has(vin.slice(0, 3).toUpperCase())) return true;
   return EVISH_RE.test(`${name ?? ""} ${url}`);
@@ -119,6 +132,8 @@ async function crawlDealer(domain) {
       const cls = classifyEv(v);
       if (!cls.isEv) continue;
       let rec = normalize(v, { sourceUrl: res.finalUrl, dealerDomain: domain });
+      // A relative vdpUrl would also ship a broken link to the site.
+      if (rec.vdpUrl) rec.vdpUrl = abs(rec.vdpUrl, res.finalUrl) ?? rec.vdpUrl;
       rec.evKind = cls.kind;
       rec.evConfidence = cls.confidence;
       rec.fromVdp = !isSrp;
@@ -128,7 +143,8 @@ async function crawlDealer(domain) {
       report.evs.push(rec);
       // An SRP tile knows its car's own page — fetch the VDP for the full
       // record (odometer, trim, gallery, canonical URL).
-      if (isSrp && rec.vdpUrl && !visited.has(rec.vdpUrl)) queue.unshift(rec.vdpUrl);
+      if (isSrp && rec.vdpUrl && rec.vdpUrl.startsWith("http") && !visited.has(rec.vdpUrl))
+        queue.unshift(rec.vdpUrl);
     }
 
     // Bridge: SRP ItemList → VDP urls, EV-filtered, jump the queue
@@ -136,7 +152,7 @@ async function crawlDealer(domain) {
     const entries = allEntries.filter(evishEntry);
     if (entries.length) {
       report.itemListVdps += entries.length;
-      queue.unshift(...entries.map((e) => e.url).filter((u) => !visited.has(u)));
+      queue.unshift(...entries.map((e) => abs(e.url, res.finalUrl)).filter((u) => u && !visited.has(u)));
     }
 
     // Pagination: a page that carries an ItemList OR embeds multiple vehicle
@@ -149,9 +165,8 @@ async function crawlDealer(domain) {
         ...[...res.body.matchAll(/<(?:a|link)[^>]*rel=["']next["'][^>]*href=["']([^"']+)["']/gi)].map((m) => m[1]),
         ...[...res.body.matchAll(/href=["']([^"']*[?&](?:pt|page|pg|start)=\d+[^"']*)["']/gi)].map((m) => m[1]),
       ]
-        .map((h) => (h.startsWith("http") ? h : origin + (h.startsWith("/") ? h : `/${h}`)))
-        .map((h) => h.replace(/&amp;/g, "&"))
-        .filter((h) => !visited.has(h));
+        .map((h) => abs(h.replace(/&amp;/g, "&"), res.finalUrl))
+        .filter((h) => h && !visited.has(h));
       queue.push(...dedupe(next).slice(0, 5));
     }
   }
@@ -177,7 +192,15 @@ async function worker() {
   while (next < domains.length) {
     const domain = domains[next++];
     console.error(`── crawling ${domain}`);
-    const rep = await crawlDealer(domain);
+    let rep;
+    try {
+      rep = await crawlDealer(domain);
+    } catch (e) {
+      // One domain must never take the whole worker pool's run down with
+      // it. truncated:true — a crashed crawl certifies nothing, so db-sync
+      // will not delist this dealer's cars.
+      rep = { domain, budget: pageBudget(domain), fetched: 0, vehiclePages: 0, itemListVdps: 0, evs: [], errors: [`crash: ${e.message}`], notes: [], truncated: true };
+    }
     reports.push(rep);
     allEvs.push(...rep.evs);
     console.error(

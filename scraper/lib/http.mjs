@@ -170,6 +170,14 @@ function altHost(url) {
 const TRANSPORT_FAIL = /^error:/;
 
 export async function fetchPage(url) {
+  // Garbage in (a relative href that escaped resolution, a malformed
+  // sitemap entry) must come back as an answer, not an exception — an
+  // unhandled throw here takes down every caller sharing the process.
+  try {
+    new URL(url);
+  } catch {
+    return { status: "error:invalid-url", body: null, finalUrl: url };
+  }
   const cached = await cacheGet(url);
   if (cached) return { status: cached.status, body: cached.body, finalUrl: cached.finalUrl, fromCache: true };
   if (!(await robotsAllows(url))) return { status: "robots_disallowed", body: null, finalUrl: url };
