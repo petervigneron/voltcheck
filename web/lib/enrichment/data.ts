@@ -15,6 +15,20 @@ function f<T>(
   return { value, source, asOf: AS_OF, confidence, note, sourceUrl };
 }
 
+// 2026-08-13 Ioniq 5 pass: heat-pump fitment, the facelift row, and DC-peak
+// facts, read directly from Hyundai's per-model-year spec/feature sheets on
+// hyundainews.com (see sourceUrls). Facts verified in that pass carry its date.
+const AS_OF_I5 = "2026-08-13";
+function f5<T>(
+  value: T,
+  source: Source,
+  confidence: Fact<T>["confidence"] = "high",
+  note?: string,
+  sourceUrl?: string
+): Fact<T> {
+  return { value, source, asOf: AS_OF_I5, confidence, note, sourceUrl };
+}
+
 export const ENRICHMENT_ROWS: EnrichmentRow[] = [
   // ── Tesla Model Y — "AWD" (279 mi) is not "Long Range AWD" (330 mi), and
   // listings routinely blur the two. EPA figures verified against
@@ -255,9 +269,15 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     model: "Ioniq 5",
     modelYears: [2022, 2022],
     battery: { packGrossKwh: f(77.4, "mfr", "medium", "Long-range pack; Hyundai publishes one figure and does not say gross or usable. SE Standard Range is 58 kWh.") },
-    charging: { portStandard: f("CCS1", "mfr") },
+    charging: {
+      portStandard: f("CCS1", "mfr"),
+      superchargerAccess: f5("adapter", "mfr", "high", "Hyundai's March 2025 program opened US Superchargers to CCS-port cars via a NACS adapter. The free adapter was one per vehicle, for owners who bought on or before 31 Jan 2025 — it does not automatically follow the car, so ask whether it's included", "https://www.hyundainews.com/releases/4339"),
+      dcPeakKw: f5(235, "tested", "medium", "Hyundai publishes no vehicle peak — its sheet says only \"10–80% in 18 min\" on a >250 kW 800V charger. Instrumented sessions on the 77.4 kWh pack peak at ~233–236 kW (InsideEVs charge analyses; EV Pulse 2022 test). The 58 kWh Standard Range peaks ~177 kW (InsideEVs)", "https://insideevs.com/news/503522/hyundai-ioniq5-fast-charging-analysis/"),
+      architectureV: f5(800, "mfr", "high", "697V-nominal pack; the 2022 spec sheet lists the 800V/350 kW ultra-fast charger as standard", "https://www.hyundainews.com/assets/documents/original/48175-2022Ioniq5ProductGuidespecs090821.pdf"),
+    },
     thermal: {
       heatPump: f("awd_only", "mfr", "high", "MY2022: standard on AWD only — RWD cars have no heat pump"),
+      batteryPreconditioning: f5(false, "mfr", "medium", "The 2022 sheet lists only a battery heater (AWD-only; RWD none) — the \"battery preconditioning function\" line first appears on the 2023 sheet. Medium because the 2022 sheet is from Sept 2021 and Hyundai made mid-year additions that year (the Standard Range trim)", "https://www.hyundainews.com/assets/documents/original/48175-2022Ioniq5ProductGuidespecs090821.pdf"),
     },
     warranty: {
       batteryYears: f(10, "mfr"),
@@ -288,18 +308,25 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
   },
 
   // ── Hyundai Ioniq 5 MY2023–24 — same warranty + ICCU story as MY2022 ──
-  // The warranty facts and the April 2026 ICCU extension are documented for
-  // 2022–24 (docs/HANDOFF.md "ICCU"); the heat-pump fact above is verified for
-  // MY2022 ONLY and is deliberately NOT carried over — thermal is left absent
-  // so the page shows an honest unknown until 2023–24 fitment is researched.
-  // MY2025+ (facelift: NACS port, new packs) needs its own row; do not widen.
+  // Thermal was deliberately absent here until 2023–24 fitment was researched;
+  // resolved 2026-08-13 from Hyundai's own per-model-year feature sheets:
+  // heat pump stayed AWD-only both years. MY2025+ (facelift) has its own row.
   {
     id: "ioniq5-2023-2024",
     make: "HYUNDAI",
     model: "Ioniq 5",
     modelYears: [2023, 2024],
     battery: { packGrossKwh: f(77.4, "mfr", "medium", "Long-range pack; Hyundai publishes one figure and does not say gross or usable. SE Standard Range is 58 kWh.") },
-    charging: { portStandard: f("CCS1", "mfr", "high", "Pre-facelift cars are CCS1; the native NACS port arrives with the MY2025 facelift") },
+    charging: {
+      portStandard: f("CCS1", "mfr", "high", "Pre-facelift cars are CCS1; the native NACS port arrives with the MY2025 facelift"),
+      superchargerAccess: f5("adapter", "mfr", "high", "Hyundai's March 2025 program opened US Superchargers to CCS-port cars via a NACS adapter. The free adapter was one per vehicle, for owners who bought on or before 31 Jan 2025 — it does not automatically follow the car, so ask whether it's included", "https://www.hyundainews.com/releases/4339"),
+      dcPeakKw: f5(235, "tested", "medium", "Hyundai publishes no vehicle peak — its sheets say only \"10–80% in 18 min\" on a >250 kW 800V charger. Instrumented sessions on the 77.4 kWh pack peak at ~233–236 kW (InsideEVs charge analyses; EV Pulse test). The 58 kWh Standard Range peaks ~177 kW (InsideEVs)", "https://insideevs.com/news/503522/hyundai-ioniq5-fast-charging-analysis/"),
+      architectureV: f5(800, "mfr", "high", "697V-nominal long-range pack (522.7V Standard Range); 800V/350 kW ultra-fast charger standard per the model-year spec sheets", "https://www.hyundainews.com/assets/documents/original/56233-2024IONIQ5Specs062623.pdf"),
+    },
+    thermal: {
+      heatPump: f5("awd_only", "mfr", "high", "Verified per model year: the 2023 AND 2024 feature sheets both list \"Heat Pump — AWD-only\" for every trim (SE/SEL/Limited). Control test: the same sheet format prints \"S\" where a heat pump is genuinely standard (e.g. Ioniq 5 N), so this is an affirmative statement, not an omission", "https://www.hyundainews.com/assets/documents/original/56232-2024IONIQ5Features062623.pdf"),
+      batteryPreconditioning: f5(true, "mfr", "high", "\"Battery preconditioning function\" standard on all models per the 2023 and 2024 spec sheets — new for MY2023; the 2022 sheet lists only an AWD-only battery heater", "https://www.hyundainews.com/assets/documents/original/50313-2023IONIQ5ProductSpecifications20220630.pdf"),
+    },
     warranty: {
       batteryYears: f(10, "mfr"),
       batteryMiles: f(100_000, "mfr"),
@@ -310,9 +337,78 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     },
     buyerNotes: [
       {
+        headline: "RWD cars still have no heat pump — through MY2024, not just 2022",
+        body: "Hyundai's own 2023 and 2024 feature sheets list the heat pump as AWD-only on every trim, so the MY2022 trap carried forward unchanged. Two Ioniq 5s with the same badge differ materially in winter range. Check the drivetrain before assuming.",
+        severity: "trap",
+        resolvedBy: "config_resolved",
+      },
+      {
         headline: "ICCU failure risk — but coverage now runs 15yr/180k",
         body: "The E-GMP charging control unit (ICCU) can fail (P1A9096, 12V charging stops, possible limp mode; NHTSA 24V204/24V200/24V868). In April 2026 Hyundai extended ICCU coverage to 15 years / 180,000 miles — recent enough that no listing site reflects it. Whether the extension transfers to a second owner is undocumented: get it in writing against this VIN.",
         severity: "warning",
+      },
+      {
+        headline: "The battery warranty transfers — most sites say otherwise",
+        body: "Aggregators routinely conflate Hyundai's original-owner-only powertrain warranty with the HV battery & EV system coverage, which transfers in full (10yr/100k, 70% SOH floor). On-board charger, BMS, and traction motor are under the transferable coverage.",
+        severity: "info",
+      },
+    ],
+  },
+
+  // ── Hyundai Ioniq 5 MY2025–26 — the facelift: native NACS, 63/84 kWh packs,
+  // US-built (HMGMA). MY2026 is officially a carry-over (Hyundai's 2026
+  // model-year changes release lists only an included L2 cable and colors).
+  // No MY2027 information published as of 2026-08-13 — do not widen this row
+  // until a 2027 spec sheet exists.
+  {
+    id: "ioniq5-2025-2026",
+    make: "HYUNDAI",
+    model: "Ioniq 5",
+    modelYears: [2025, 2026],
+    battery: { packGrossKwh: f5(84.0, "mfr", "medium", "Long-range pack, up from 77.4; Hyundai publishes one figure and does not say gross or usable. SE/SEL Standard Range is 63.0 kWh (up from 58)", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf") },
+    charging: {
+      portStandard: f5("NACS", "mfr", "high", "Native NACS from the MY2025 facelift — first Hyundai with the port. 2025 cars shipped with a CCS adapter included", "https://www.hyundainews.com/assets/documents/original/63444-2025IONIQ5XRTLimited8272024finalmjab.pdf"),
+      superchargerAccess: f5("native", "mfr"),
+      dcPeakKw: f5(257, "tested", "medium", "Hyundai publishes no vehicle peak. Instrumented curves on the 84 kWh pack peak at ~257–260 kW on 800V hardware (EVKX curve: 260 kW peak, 10–80% in 19m33s; owner-logged sessions ~257 kW). Only reachable via the CCS adapter on 800V chargers — see buyer note on Supercharger speeds"),
+      architectureV: f5(800, "mfr", "high", "697V-nominal long-range pack (523V Standard Range); 800V/350 kW ultra-fast charger standard per the 2025 spec sheet", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf"),
+    },
+    thermal: {
+      heatPump: f5("awd_only", "mfr", "high", "The facelift did NOT make the heat pump standard: the 2025 sheet lists \"Heat Pump — AWD-only\" across SE/SEL/XRT/Limited. XRT is AWD-only as a trim, so every XRT has one; RWD cars still have none", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf"),
+      batteryPreconditioning: f5(true, "mfr", "high", "\"Battery preconditioning function\" standard on all models per the 2025 spec sheet", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf"),
+    },
+    warranty: {
+      batteryYears: f(10, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      sohFloorPct: f(70, "mfr"),
+      batteryTransfers: f(true, "mfr", "high", "HV battery & EV system coverage transfers in full — confirmed in Hyundai's 2026 Owner's Handbook §6"),
+      powertrainTransfers: f(false, "mfr", "high", "Powertrain 10yr/100k is original-owner-only; drops to 5yr/60k for a second owner"),
+      // Deliberately NO ICCU extendedCoverage here: the recalls and the April
+      // 2026 15yr/180k extension are documented for 2022–24 cars only.
+    },
+    buyerNotes: [
+      {
+        headline: "HV battery bus-bar recall (fire risk) — check completion against this VIN",
+        body: "NHTSA 25V482 (Aug 2025), expanded by 26V068 (2026), recalls 2025–26 Ioniq 5s for an improperly tightened high-voltage bus bar that can short-circuit; owners were told to park outside until repaired. The remedy is inspection and, where needed, battery system assembly replacement — so the campaign record also tells you whether this car got a new pack. Verify completion, not just recall status.",
+        severity: "warning",
+        resolvedBy: "campaign_check",
+      },
+      {
+        headline: "Native NACS port — but Superchargers are this car's slowest fast option",
+        body: "Hyundai's own sheet: 10–80% takes 30 min on a 400V NACS charger (Tesla Superchargers, 84 kWh pack) vs 20 min on a 350 kW CCS charger using the adapter. The 800V car can't reach full speed on today's 400V Superchargers. 2025 cars shipped with a CCS adapter — confirm it's still with the car.",
+        severity: "info",
+        learnMore:
+          "This is the opposite of what the port suggests. The Ioniq 5's battery runs at roughly 700 volts, but Tesla's current Superchargers deliver DC at around 400 volts, so the car has to convert the voltage on board and can't use its full charging capability there — Hyundai's spec sheet says 10–80% in about 30 minutes on the 84 kWh pack. Plug the same car into a 350 kW CCS station (Electrify America, EVgo, Ionna) through the included CCS adapter and the same charge takes about 20 minutes, with measured peaks around 257–260 kW. Practical upshot for a buyer: the NACS port is a convenience for network access, the CCS adapter is where the speed lives, and a missing adapter is worth negotiating over. These charge times are Hyundai's own published figures; the peak-kW numbers are instrumented third-party measurements, which is why we mark them as tested rather than manufacturer data.",
+      },
+      {
+        headline: "RWD cars still have no heat pump — the facelift didn't change it",
+        body: "The 2025 feature sheet lists the heat pump as AWD-only across SE/SEL/XRT/Limited, same as every year before. XRT is AWD-only as a trim, so every XRT has one. On RWD cars, expect the larger winter-range hit.",
+        severity: "trap",
+        resolvedBy: "config_resolved",
+      },
+      {
+        headline: "The ICCU saga largely predates this car — but don't assume coverage",
+        body: "The ICCU recalls (NHTSA 24V204/24V868) and the April 2026 15yr/180k coverage extension apply to 2022–24 cars; the 2025+ facelift is outside those populations. Whether the facelift's ICCU is a revised design is undocumented. Treat the extension as not applying to this car unless Hyundai's VIN lookup says otherwise.",
+        severity: "info",
       },
       {
         headline: "The battery warranty transfers — most sites say otherwise",
