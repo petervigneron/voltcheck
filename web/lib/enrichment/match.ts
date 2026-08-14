@@ -1,4 +1,4 @@
-import type { EnrichmentResult, EnrichmentRow, VinDecode, TeslaVinFacts } from "../types";
+import type { EnrichmentResult, VinDecode, TeslaVinFacts } from "../types";
 import { ENRICHMENT_ROWS } from "./data";
 import { RESEARCH_ROWS } from "./data2";
 import { RESEARCH_ROWS_3 } from "./data3";
@@ -58,6 +58,17 @@ export function matchEnrichment(
     rows = rows.filter((r) => !r.vin8 || r.vin8.includes(vin8));
   }
 
+  // An exact trim-name match is the strongest listing-side signal there is —
+  // it must win before the soft hints below get a chance to veto it (a junk
+  // kWh hint once resolved an explicit "Light Long Range" to the Light row).
+  if (decode.trim && rows.length > 1) {
+    const b = norm(decode.trim);
+    const exactTrim = rows.filter((r) =>
+      (Array.isArray(r.trim) ? r.trim : r.trim ? [r.trim] : []).some((rt) => norm(rt) === b)
+    );
+    if (exactTrim.length === 1) return { exact: exactTrim[0] };
+  }
+
   // Drivetrain resolves pack/rating on many models (Ariya, Lyriq, Blazer…)
   const listingDrive = normalizeDrive(decode.driveType);
   if (listingDrive) {
@@ -67,7 +78,7 @@ export function matchEnrichment(
 
   // The VIN's battery-size decode discriminates pack variants (Ariya 63 vs
   // 87, ID.4 Standard vs Pro): keep rows whose pack is within 20% of the hint.
-  if (decode.batteryKwhHint) {
+  if (decode.batteryKwhHint && !rows.some((r) => r.ignoreKwhHint)) {
     const hint = decode.batteryKwhHint;
     const kwhRows = rows.filter((r) => {
       const k = r.battery?.packUsableKwh?.value ?? r.battery?.packGrossKwh?.value;
@@ -83,9 +94,9 @@ export function matchEnrichment(
   // "WT - Standard Range" listing resolves to the Standard Range row rather
   // than presenting candidates.
   if (decode.trim) {
+    const b = norm(decode.trim);
     const trimSpecific = rows.filter((r) => {
       if (!r.trim) return false;
-      const b = norm(decode.trim);
       return (Array.isArray(r.trim) ? r.trim : [r.trim]).some((rt) => {
         const a = norm(rt);
         return a.includes(b) || b.includes(a);

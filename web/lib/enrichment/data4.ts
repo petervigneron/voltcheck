@@ -202,6 +202,67 @@ const NOTE_CONNECTED_2526 = {
   severity: "info" as const,
 };
 
+
+// ── Kia EV6 (same pass) ─────────────────────────────────────────────────
+// VIN position 8 = motor config per Kia's Part 565 submissions (vPIC
+// BatteryInfo): A/B = single motor RWD (160 kW rear), C = dual motor AWD
+// (70+160 kW), E = GT (160+270 kW). The pack is NOT in the VIN — Kia's own
+// submission says so explicitly ("Light (58.0 kWh), Wind (77.4 kWh)") — so
+// trim splits it: Light = Standard Range, Wind/GT-Line/Light Long Range =
+// Long Range. AWD Long Range carries two EPA ratings by wheel size: 19"
+// (Wind, Light Long Range) vs 20" (GT-Line). 2025 refresh: packs grow to
+// 63/84 kWh (cell change 111.2Ah → 120.6Ah in the Part 565 data), ranges
+// rise, and the port becomes native NACS. Heat pump fitment, warranty, and
+// the ICCU extension carry over from the retired data3-era EV6 row.
+const K6 = { make: "KIA", model: "EV6" };
+const EV6_WARRANTY = {
+  batteryYears: f(10, "mfr" as Source),
+  batteryMiles: f(100_000, "mfr" as Source),
+  sohFloorPct: f(70, "mfr" as Source),
+  batteryTransfers: f(true, "mfr" as Source, "high", "Kia manual: everything except the Power Train (Original Owner) warranty is fully transferable"),
+  powertrainTransfers: f(false, "mfr" as Source),
+  extendedCoverage: f("ICCU: 15 years / 180,000 miles (extended April 2026, up from 10/100)", "mfr" as Source),
+};
+const EV6_HP_NONE = { heatPump: f<"none">("none", "mfr", "high", "Heat pump unavailable on the Light trim") };
+const EV6_HP_OPT = { heatPump: f<"optional">("optional", "mfr", "high", "Factory option on Wind/GT-Line — window sticker is the authority") };
+const EV6_PORT_CCS = { portStandard: f<"CCS1">("CCS1", "mfr") };
+const EV6_PORT_NACS = { portStandard: f<"NACS">("NACS", "agg", "high", "Native NACS port from the MY2025 refresh") };
+const EV6_58 = { packGrossKwh: f(58, "vin", "high", "“Light (58.0 kWh)” — Kia's own Part 565 submission") };
+const EV6_774 = { packGrossKwh: f(77.4, "vin", "high", "“Wind (77.4 kWh)” — Kia's own Part 565 submission") };
+const EV6_63 = { packGrossKwh: f(63, "agg", "medium", "MY2025-refresh Standard Range pack") };
+const EV6_84 = { packGrossKwh: f(84, "agg", "medium", "MY2025-refresh Long Range pack") };
+const NOTE_EV6_HP = { headline: "Heat pump: factory option — on the window sticker", severity: "trap" as const, resolvedBy: "config_resolved" as const };
+
+
+// ── Kia EV9 / Hyundai Ioniq 6 / IONIQ 9 / Kona Electric (same pass) ─────
+// Same mechanism throughout. Codes per each maker's Part 565 submissions
+// (vPIC BatteryInfo):
+//   EV9:      1 = LR RWD (180.9Ah pack), 2 = SR RWD (120.6Ah), 5 = dual AWD.
+//             AWD splits by trim wheels: GT-Line rides bigger wheels, rates
+//             lower. The 2026 EV9 GT's code is unverified — no row, and a
+//             "GT" key could never swallow "GT-Line" (short-trim exact rule).
+//   Ioniq 6:  A = LR RWD (168 kW), B = Standard Range (111 kW motor),
+//             C = dual AWD. Wheels by trim: SE 18" / SEL+Limited 20".
+//   IONIQ 9:  1 = RWD, 3 = AWD (226 kW), 5 = AWD Performance (315 kW).
+//   Kona:     G = gen1 (2019-23); gen2 6 = Long Range (150 kW),
+//             7 = Standard Range (99 kW).
+// EPA ranges per year/variant via the fueleconomy.gov REST API.
+// Ports: Hyundai/Kia E-GMP cars are CCS1 until each model's NACS refresh —
+// EV6 and EV9 got NACS for MY2025 (EV6 rows above), IONIQ 9 launched
+// native-NACS; Ioniq 6 and Kona stay CCS1 through the years covered here.
+const HK_WARRANTY = {
+  batteryYears: f(10, "mfr" as Source),
+  batteryMiles: f(100_000, "mfr" as Source),
+  sohFloorPct: f(70, "mfr" as Source),
+  batteryTransfers: f(true, "mfr" as Source),
+  powertrainTransfers: f(false, "mfr" as Source, "high", "Hyundai/Kia powertrain 10yr/100k is original-owner-only; battery/EV-system coverage transfers"),
+};
+const PORT_CCS = { portStandard: f<"CCS1">("CCS1", "mfr") };
+const K9 = { make: "KIA", model: "EV9" };
+const H6 = { make: "HYUNDAI", model: "Ioniq 6" };
+const H9 = { make: "HYUNDAI", model: "IONIQ 9" };
+const KONA = { make: "HYUNDAI", model: "Kona Electric" };
+
 export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   // ── MY2022 ─────────────────────────────────────────────────────────────
   {
@@ -1221,5 +1282,308 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     thermal: TES_HP_STD,
     warranty: TES_W120,
     buyerNotes: [NOTE_FSD],
+  },
+
+  {
+    id: "ev6-2022-sr-rwd", ...K6, modelYears: [2022, 2022], vin8: ["A", "B"], trim: "Light", packVariant: "Standard Range",
+    battery: EV6_58,
+    range: { epaRangeMi: f(232, "mfr", "high", "MY2022 Standard Range RWD (Light trim) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=44927") },
+    charging: EV6_PORT_CCS,
+    thermal: EV6_HP_NONE,
+    warranty: EV6_WARRANTY,
+  },
+  {
+    id: "ev6-2022-lr-rwd", ...K6, modelYears: [2022, 2022], vin8: ["A", "B"], trim: ["Wind", "GT-Line"], packVariant: "Long Range",
+    battery: EV6_774,
+    range: { epaRangeMi: f(310, "mfr", "high", "MY2022 Long Range RWD (Wind/GT-Line) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=44926") },
+    charging: EV6_PORT_CCS,
+    thermal: EV6_HP_OPT,
+    warranty: EV6_WARRANTY, buyerNotes: [NOTE_EV6_HP],
+  },
+  {
+    id: "ev6-2022-lr-awd", ...K6, modelYears: [2022, 2022], vin8: ["C"], packVariant: "Long Range",
+    battery: EV6_774,
+    range: { epaRangeMi: f(274, "mfr", "high", "MY2022 Long Range AWD (dual-motor VIN code C) — EPA, one rating for both trims this year", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=44925") },
+    charging: EV6_PORT_CCS,
+    thermal: EV6_HP_OPT,
+    warranty: EV6_WARRANTY, buyerNotes: [NOTE_EV6_HP],
+  },
+  {
+    id: "ev6-2023-24-sr-rwd", ...K6, modelYears: [2023, 2024], vin8: ["A", "B"], trim: "Light", ignoreKwhHint: true, packVariant: "Standard Range",
+    battery: EV6_58,
+    range: { epaRangeMi: f(232, "mfr", "high", "MY2023–24 Standard Range RWD (Light trim) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46007") },
+    charging: EV6_PORT_CCS,
+    thermal: EV6_HP_NONE,
+    warranty: EV6_WARRANTY,
+  },
+  {
+    id: "ev6-2023-24-lr-rwd", ...K6, modelYears: [2023, 2024], vin8: ["A", "B"], trim: ["Wind", "GT-Line", "Light Long Range"], ignoreKwhHint: true, packVariant: "Long Range",
+    battery: EV6_774,
+    range: { epaRangeMi: f(310, "mfr", "high", "MY2023–24 Long Range RWD — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46006") },
+    charging: EV6_PORT_CCS,
+    thermal: EV6_HP_OPT,
+    warranty: EV6_WARRANTY, buyerNotes: [NOTE_EV6_HP],
+  },
+  {
+    id: "ev6-2023-24-lr-awd-19", ...K6, modelYears: [2023, 2024], vin8: ["C"], trim: ["Wind", "Light Long Range", "Light"], packVariant: "Long Range",
+    battery: EV6_774,
+    range: { epaRangeMi: f(282, "mfr", "high", "MY2023–24 Long Range AWD on 19-inch wheels (Wind, Light Long Range) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46004") },
+    charging: EV6_PORT_CCS,
+    thermal: EV6_HP_OPT,
+    warranty: EV6_WARRANTY, buyerNotes: [NOTE_EV6_HP],
+  },
+  {
+    id: "ev6-2023-24-lr-awd-20", ...K6, modelYears: [2023, 2024], vin8: ["C"], trim: "GT-Line", packVariant: "Long Range",
+    battery: EV6_774,
+    range: { epaRangeMi: f(252, "mfr", "high", "MY2023–24 Long Range AWD on the GT-Line's 20-inch wheels — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46005") },
+    charging: EV6_PORT_CCS,
+    thermal: EV6_HP_OPT,
+    warranty: EV6_WARRANTY, buyerNotes: [NOTE_EV6_HP],
+  },
+  {
+    id: "ev6-2023-gt", ...K6, modelYears: [2023, 2023], vin8: ["E"], packVariant: "GT",
+    battery: EV6_774,
+    range: { epaRangeMi: f(206, "mfr", "high", "MY2023 EV6 GT (VIN code E) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46003") },
+    charging: EV6_PORT_CCS,
+    thermal: { heatPump: f<"standard">("standard", "mfr") },
+    warranty: EV6_WARRANTY,
+  },
+  {
+    id: "ev6-2024-gt", ...K6, modelYears: [2024, 2024], vin8: ["E"], packVariant: "GT",
+    battery: EV6_774,
+    range: { epaRangeMi: f(218, "mfr", "high", "MY2024 EV6 GT (VIN code E) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46968") },
+    charging: EV6_PORT_CCS,
+    thermal: { heatPump: f<"standard">("standard", "mfr") },
+    warranty: EV6_WARRANTY,
+  },
+  {
+    id: "ev6-2025-26-sr-rwd", ...K6, modelYears: [2025, 2026], vin8: ["A", "B"], trim: "Light", packVariant: "Standard Range",
+    battery: EV6_63,
+    range: { epaRangeMi: f(237, "mfr", "high", "MY2025–26 Standard Range RWD (Light trim, refreshed 63 kWh pack) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49098") },
+    charging: EV6_PORT_NACS,
+    thermal: EV6_HP_NONE,
+    warranty: EV6_WARRANTY,
+  },
+  {
+    id: "ev6-2025-26-lr-rwd", ...K6, modelYears: [2025, 2026], vin8: ["A", "B"], trim: ["Wind", "GT-Line", "Light Long Range"], packVariant: "Long Range",
+    battery: EV6_84,
+    range: { epaRangeMi: f(319, "mfr", "high", "MY2025–26 Long Range RWD (refreshed 84 kWh pack) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49097") },
+    charging: EV6_PORT_NACS,
+    thermal: EV6_HP_OPT,
+    warranty: EV6_WARRANTY, buyerNotes: [NOTE_EV6_HP],
+  },
+  {
+    id: "ev6-2025-26-lr-awd-19", ...K6, modelYears: [2025, 2026], vin8: ["C"], trim: ["Wind", "Light Long Range", "Light"], packVariant: "Long Range",
+    battery: EV6_84,
+    range: { epaRangeMi: f(295, "mfr", "high", "MY2025–26 Long Range AWD on 19-inch wheels — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49095") },
+    charging: EV6_PORT_NACS,
+    thermal: EV6_HP_OPT,
+    warranty: EV6_WARRANTY, buyerNotes: [NOTE_EV6_HP],
+  },
+  {
+    id: "ev6-2025-26-lr-awd-20", ...K6, modelYears: [2025, 2026], vin8: ["C"], trim: "GT-Line", packVariant: "Long Range",
+    battery: EV6_84,
+    range: { epaRangeMi: f(270, "mfr", "high", "MY2025–26 Long Range AWD on the GT-Line's 20-inch wheels — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49096") },
+    charging: EV6_PORT_NACS,
+    thermal: EV6_HP_OPT,
+    warranty: EV6_WARRANTY, buyerNotes: [NOTE_EV6_HP],
+  },
+  {
+    id: "ev6-2025-26-gt", ...K6, modelYears: [2025, 2026], vin8: ["E"], packVariant: "GT",
+    battery: EV6_84,
+    range: { epaRangeMi: f(231, "mfr", "high", "MY2025–26 EV6 GT (VIN code E) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49094") },
+    charging: EV6_PORT_NACS,
+    thermal: { heatPump: f<"standard">("standard", "mfr") },
+    warranty: EV6_WARRANTY,
+  },
+
+  {
+    id: "ev9-2024-lr-rwd", ...K9, modelYears: [2024, 2024], vin8: ["1"], drive: "RWD", packVariant: "Long Range",
+    battery: { packGrossKwh: f(99.8, "agg", "medium", "Long Range pack (the 180.9Ah cells in Kia's Part 565 data)") },
+    range: { epaRangeMi: f(304, "mfr", "high", "MY2024 Long Range RWD (VIN code 1) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47450") },
+    charging: PORT_CCS,
+    warranty: HK_WARRANTY,
+  },
+  {
+    id: "ev9-2025-lr-rwd", ...K9, modelYears: [2025, 2025], vin8: ["1"], drive: "RWD", packVariant: "Long Range",
+    battery: { packGrossKwh: f(99.8, "agg", "medium", "Long Range pack (the 180.9Ah cells in Kia's Part 565 data)") },
+    range: { epaRangeMi: f(304, "mfr", "high", "MY2025 Long Range RWD (VIN code 1) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48366") },
+    charging: { portStandard: f<"NACS">("NACS", "agg", "high", "Native NACS port from MY2025") },
+    warranty: HK_WARRANTY,
+  },
+  {
+    id: "ev9-2026-lr-rwd", ...K9, modelYears: [2026, 2026], vin8: ["1"], drive: "RWD", packVariant: "Long Range",
+    battery: { packGrossKwh: f(99.8, "agg", "medium", "Long Range pack (the 180.9Ah cells in Kia's Part 565 data)") },
+    range: { epaRangeMi: f(305, "mfr", "high", "MY2026 Long Range RWD (VIN code 1) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49666") },
+    charging: { portStandard: f<"NACS">("NACS", "agg", "high", "Native NACS port from MY2025") },
+    warranty: HK_WARRANTY,
+  },
+  {
+    id: "ev9-2024-sr-rwd", ...K9, modelYears: [2024, 2024], vin8: ["2"], drive: "RWD", packVariant: "Standard Range",
+    battery: { packGrossKwh: f(76.1, "agg", "medium", "Standard Range pack (the 120.6Ah cells in Kia's Part 565 data)") },
+    range: { epaRangeMi: f(230, "mfr", "high", "MY2024 Standard Range RWD (VIN code 2) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47451") },
+    charging: PORT_CCS,
+    warranty: HK_WARRANTY,
+  },
+  {
+    id: "ev9-2025-26-sr-rwd", ...K9, modelYears: [2025, 2026], vin8: ["2"], drive: "RWD", packVariant: "Standard Range",
+    battery: { packGrossKwh: f(76.1, "agg", "medium", "Standard Range pack (the 120.6Ah cells in Kia's Part 565 data)") },
+    range: { epaRangeMi: f(230, "mfr", "high", "MY2025–26 Standard Range RWD (VIN code 2) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48367") },
+    charging: { portStandard: f<"NACS">("NACS", "agg", "high", "Native NACS port from MY2025") },
+    warranty: HK_WARRANTY,
+  },
+  {
+    id: "ev9-2024-awd", ...K9, modelYears: [2024, 2024], vin8: ["5"], trim: ["Wind", "Land", "Light"], drive: "AWD", packVariant: "Long Range",
+    battery: { packGrossKwh: f(99.8, "agg", "medium", "Long Range pack (the 180.9Ah cells in Kia's Part 565 data)") },
+    range: { epaRangeMi: f(280, "mfr", "high", "MY2024 Long Range AWD (VIN code 5), non-GT-Line — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47452") },
+    charging: PORT_CCS,
+    warranty: HK_WARRANTY,
+  },
+  {
+    id: "ev9-2024-awd-gtline", ...K9, modelYears: [2024, 2024], vin8: ["5"], trim: "GT-Line", drive: "AWD", packVariant: "Long Range",
+    battery: { packGrossKwh: f(99.8, "agg", "medium", "Long Range pack (the 180.9Ah cells in Kia's Part 565 data)") },
+    range: { epaRangeMi: f(270, "mfr", "high", "MY2024 Long Range AWD on the GT-Line wheels — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47453") },
+    charging: PORT_CCS,
+    warranty: HK_WARRANTY,
+  },
+  {
+    id: "ev9-2025-awd", ...K9, modelYears: [2025, 2025], vin8: ["5"], trim: ["Wind", "Land", "Light"], drive: "AWD", packVariant: "Long Range",
+    battery: { packGrossKwh: f(99.8, "agg", "medium", "Long Range pack (the 180.9Ah cells in Kia's Part 565 data)") },
+    range: { epaRangeMi: f(280, "mfr", "high", "MY2025 Long Range AWD (VIN code 5), non-GT-Line — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48368") },
+    charging: { portStandard: f<"NACS">("NACS", "agg", "high", "Native NACS port from MY2025") },
+    warranty: HK_WARRANTY,
+  },
+  {
+    id: "ev9-2025-awd-gtline", ...K9, modelYears: [2025, 2025], vin8: ["5"], trim: "GT-Line", drive: "AWD", packVariant: "Long Range",
+    battery: { packGrossKwh: f(99.8, "agg", "medium", "Long Range pack (the 180.9Ah cells in Kia's Part 565 data)") },
+    range: { epaRangeMi: f(270, "mfr", "high", "MY2025 Long Range AWD, GT-Line — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48369") },
+    charging: { portStandard: f<"NACS">("NACS", "agg", "high", "Native NACS port from MY2025") },
+    warranty: HK_WARRANTY,
+  },
+  {
+    id: "ev9-2026-awd", ...K9, modelYears: [2026, 2026], vin8: ["5"], trim: ["Wind", "Land", "Light"], drive: "AWD", packVariant: "Long Range",
+    battery: { packGrossKwh: f(99.8, "agg", "medium", "Long Range pack (the 180.9Ah cells in Kia's Part 565 data)") },
+    range: { epaRangeMi: f(283, "mfr", "high", "MY2026 Long Range AWD (VIN code 5), non-GT-Line — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49667") },
+    charging: { portStandard: f<"NACS">("NACS", "agg", "high", "Native NACS port from MY2025") },
+    warranty: HK_WARRANTY,
+  },
+  {
+    id: "ev9-2026-awd-gtline", ...K9, modelYears: [2026, 2026], vin8: ["5"], trim: "GT-Line", drive: "AWD", packVariant: "Long Range",
+    battery: { packGrossKwh: f(99.8, "agg", "medium", "Long Range pack (the 180.9Ah cells in Kia's Part 565 data)") },
+    range: { epaRangeMi: f(280, "mfr", "high", "MY2026 Long Range AWD, GT-Line — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49668") },
+    charging: { portStandard: f<"NACS">("NACS", "agg", "high", "Native NACS port from MY2025") },
+    warranty: HK_WARRANTY,
+  },
+  {
+    id: "i6-2023-24-lr-rwd-18", ...H6, modelYears: [2023, 2024], vin8: ["A"], trim: "SE", drive: "RWD", packVariant: "Long Range",
+    range: { epaRangeMi: f(361, "mfr", "high", "MY2023–24 Long Range RWD on the SE 18-inch wheels — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46622") },
+    charging: PORT_CCS,
+    warranty: HK_WARRANTY,
+  },
+  {
+    id: "i6-2023-24-lr-rwd-20", ...H6, modelYears: [2023, 2024], vin8: ["A"], trim: ["SEL", "Limited"], drive: "RWD", packVariant: "Long Range",
+    range: { epaRangeMi: f(305, "mfr", "high", "MY2023–24 Long Range RWD on 20-inch wheels (SEL, Limited) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46623") },
+    charging: PORT_CCS,
+    warranty: HK_WARRANTY,
+  },
+  {
+    id: "i6-2023-24-lr-awd-18", ...H6, modelYears: [2023, 2024], vin8: ["C"], trim: "SE", drive: "AWD", packVariant: "Long Range",
+    range: { epaRangeMi: f(316, "mfr", "high", "MY2023–24 Long Range AWD on the SE 18-inch wheels — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46620") },
+    charging: PORT_CCS,
+    warranty: HK_WARRANTY,
+  },
+  {
+    id: "i6-2023-24-lr-awd-20", ...H6, modelYears: [2023, 2024], vin8: ["C"], trim: ["SEL", "Limited"], drive: "AWD", packVariant: "Long Range",
+    range: { epaRangeMi: f(270, "mfr", "high", "MY2023–24 Long Range AWD on 20-inch wheels (SEL, Limited) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46621") },
+    charging: PORT_CCS,
+    warranty: HK_WARRANTY,
+  },
+  {
+    id: "i6-2023-25-sr", ...H6, modelYears: [2023, 2025], vin8: ["B"], trim: "SE Standard Range", drive: "RWD", packVariant: "Standard Range",
+    range: { epaRangeMi: f(240, "mfr", "high", "SE Standard Range RWD (VIN code B, the 111 kW motor in Hyundai Part 565 data) — EPA, same 240-mi rating all three years", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46624") },
+    charging: PORT_CCS,
+    warranty: HK_WARRANTY,
+  },
+  {
+    id: "i6-2025-lr-rwd-18", ...H6, modelYears: [2025, 2025], vin8: ["A"], trim: "SE", drive: "RWD", packVariant: "Long Range",
+    range: { epaRangeMi: f(342, "mfr", "high", "MY2025 Long Range RWD on the SE 18-inch wheels — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48362") },
+    charging: PORT_CCS,
+    warranty: HK_WARRANTY,
+  },
+  {
+    id: "i6-2025-lr-rwd-20", ...H6, modelYears: [2025, 2025], vin8: ["A"], trim: ["SEL", "Limited"], drive: "RWD", packVariant: "Long Range",
+    range: { epaRangeMi: f(291, "mfr", "high", "MY2025 Long Range RWD on 20-inch wheels (SEL, Limited) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48363") },
+    charging: PORT_CCS,
+    warranty: HK_WARRANTY,
+  },
+  {
+    id: "i6-2025-lr-awd-18", ...H6, modelYears: [2025, 2025], vin8: ["C"], trim: "SE", drive: "AWD", packVariant: "Long Range",
+    range: { epaRangeMi: f(316, "mfr", "high", "MY2025 Long Range AWD on the SE 18-inch wheels — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48361") },
+    charging: PORT_CCS,
+    warranty: HK_WARRANTY,
+  },
+  {
+    id: "i6-2025-lr-awd-20", ...H6, modelYears: [2025, 2025], vin8: ["C"], trim: ["SEL", "Limited"], drive: "AWD", packVariant: "Long Range",
+    range: { epaRangeMi: f(270, "mfr", "high", "MY2025 Long Range AWD on 20-inch wheels (SEL, Limited) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48365") },
+    charging: PORT_CCS,
+    warranty: HK_WARRANTY,
+  },
+  {
+    id: "i9-2026-rwd", ...H9, modelYears: [2026, 2026], vin8: ["1"], drive: "RWD", packVariant: "Long Range",
+    battery: { packGrossKwh: f(110.3, "agg", "medium") },
+    range: { epaRangeMi: f(335, "mfr", "high", "MY2026 IONIQ 9 RWD (VIN code 1) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49661") },
+    charging: { portStandard: f<"NACS">("NACS", "agg", "high", "Native NACS port from launch") },
+    warranty: HK_WARRANTY,
+  },
+  {
+    id: "i9-2026-awd", ...H9, modelYears: [2026, 2026], vin8: ["3"], drive: "AWD", packVariant: "Long Range",
+    battery: { packGrossKwh: f(110.3, "agg", "medium") },
+    range: { epaRangeMi: f(320, "mfr", "high", "MY2026 IONIQ 9 AWD (VIN code 3) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49662") },
+    charging: { portStandard: f<"NACS">("NACS", "agg", "high", "Native NACS port from launch") },
+    warranty: HK_WARRANTY,
+  },
+  {
+    id: "i9-2026-awd-perf", ...H9, modelYears: [2026, 2026], vin8: ["5"], drive: "AWD", packVariant: "Long Range",
+    battery: { packGrossKwh: f(110.3, "agg", "medium") },
+    range: { epaRangeMi: f(311, "mfr", "high", "MY2026 IONIQ 9 AWD Performance (VIN code 5, incl. Calligraphy) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49663") },
+    charging: { portStandard: f<"NACS">("NACS", "agg", "high", "Native NACS port from launch") },
+    warranty: HK_WARRANTY,
+  },
+  {
+    id: "kona-2019-23", ...KONA, modelYears: [2019, 2023], vin8: ["G"], drive: "FWD", packVariant: "64 kWh",
+    battery: { packGrossKwh: f(64, "mfr", "high") },
+    range: { epaRangeMi: f(258, "mfr", "high", "Gen-1 Kona Electric (VIN code G), one rating across 2019–23 — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46000") },
+    charging: PORT_CCS,
+    warranty: HK_WARRANTY,
+  },
+  {
+    id: "kona-2024-lr", ...KONA, modelYears: [2024, 2024], vin8: ["6"], drive: "FWD", packVariant: "Long Range",
+    range: { epaRangeMi: f(261, "mfr", "high", "MY2024 Long Range (VIN code 6) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47449") },
+    charging: PORT_CCS,
+    warranty: HK_WARRANTY,
+  },
+  {
+    id: "kona-2025-lr", ...KONA, modelYears: [2025, 2025], vin8: ["6"], drive: "FWD", packVariant: "Long Range",
+    range: { epaRangeMi: f(261, "mfr", "high", "MY2025 Long Range (VIN code 6) on 17-inch wheels — EPA; the N Line 19-inch wheels rate 230", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48357") },
+    charging: PORT_CCS,
+    warranty: HK_WARRANTY,
+  },
+  {
+    id: "kona-2025-lr-nline", ...KONA, modelYears: [2025, 2025], vin8: ["6"], trim: "N Line", drive: "FWD", packVariant: "Long Range",
+    range: { epaRangeMi: f(230, "mfr", "high", "MY2025 Long Range, N Line (19-inch wheels) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48358") },
+    charging: PORT_CCS,
+    warranty: HK_WARRANTY,
+  },
+  {
+    id: "kona-2024-25-sr", ...KONA, modelYears: [2024, 2025], vin8: ["7"], drive: "FWD", packVariant: "Standard Range",
+    battery: { packGrossKwh: f(48.6, "agg", "medium") },
+    range: { epaRangeMi: f(200, "mfr", "high", "Standard Range (VIN code 7, the 99 kW motor) — EPA, same rating both years", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47831") },
+    charging: PORT_CCS,
+    warranty: HK_WARRANTY,
+  },
+  {
+    id: "prologue-2025-26-awd-elite", make: "HONDA", model: "Prologue", modelYears: [2025, 2026], trim: "Elite", drive: "AWD",
+    range: { epaRangeMi: f(283, "mfr", "high", "AWD Elite — EPA certifies it separately from the other AWD trims (294 mi)", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49090") },
+    charging: PORT_CCS,
   },
 ];

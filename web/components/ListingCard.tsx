@@ -38,6 +38,12 @@ export function listingTiles(
   if (e.fastCharge.status === "no") t.push({ kind: "miss", text: "No fast charging", title: e.fastCharge.detail });
   else if (e.fastCharge.status === "verify") t.push({ kind: "flag", text: "Fast charging?", title: e.fastCharge.detail });
 
+  // Which plug the car fast-charges through. J1772 is omitted: it only appears
+  // on cars whose missing DC option already shows as the louder tile above.
+  if (e.port?.value === "NACS") t.push({ kind: "kit", text: "NACS", title: e.port.note ?? "Tesla-style port — plugs into the Supercharger network" });
+  else if (e.port?.value === "CCS1") t.push({ kind: "spec", text: "CCS", title: e.port.note ?? undefined });
+  else if (e.port?.value === "CHAdeMO") t.push({ kind: "flag", text: "CHAdeMO", title: e.port.note ?? "Aging fast-charge standard — new public CHAdeMO stations are rare" });
+
   if (l.campaignCheck?.packReplaced) {
     t.push({
       kind: "kit",

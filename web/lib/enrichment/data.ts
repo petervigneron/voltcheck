@@ -657,30 +657,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
   },
 
   // ── Kia EV6 — the heat pump is a factory option, not a trim feature ──
-  {
-    id: "ev6-2022-2024",
-    make: "KIA",
-    model: "EV6",
-    modelYears: [2022, 2024],
-    charging: { portStandard: f("CCS1", "mfr") },
-    thermal: {
-      heatPump: f("optional", "mfr", "high", "Factory option: unavailable on Light, optional on Wind and GT-Line, standard only on GT"),
-      heatPumpByTrim: { GT: "standard", LIGHT: "none" },
-    },
-    warranty: {
-      batteryYears: f(10, "mfr"),
-      batteryMiles: f(100_000, "mfr"),
-      sohFloorPct: f(70, "mfr"),
-      batteryTransfers: f(true, "mfr", "high", "Kia manual: everything except the Power Train (Original Owner) warranty is fully transferable"),
-      powertrainTransfers: f(false, "mfr"),
-      extendedCoverage: f("ICCU: 15 years / 180,000 miles (extended April 2026, up from 10/100)", "mfr"),
-    },
-    buyerNotes: [
-      {
-        headline: "Heat pump: factory option — on the window sticker",
-        severity: "trap",
-        resolvedBy: "config_resolved",
-      },
-    ],
-  },
+  // ── Kia EV6 — moved to data4.ts (2026-08-14 pass): per-variant rows keyed
+  // on the VIN motor code + trim, with EPA ranges. The heat-pump fitment,
+  // warranty, and ICCU research from this row carried over. ──
 ];

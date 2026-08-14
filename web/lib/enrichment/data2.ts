@@ -1001,7 +1001,9 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     id: "prologue-2025-fwd",
     make: "HONDA",
     model: "Prologue",
-    modelYears: [2025, 2025],
+    // 2026 carries the same 308-mi FWD rating (EPA id 50208) — window extended
+    // in the 2026-08-14 pass.
+    modelYears: [2025, 2026],
     drive: "FWD",
     battery: { packGrossKwh: f(85, "mfr", "medium", "85 kWh (GM Ultium pack); split unpublished"), chemistry: f("NMC", "agg", "medium") },
     range: { epaRangeMi: f(308, "mfr", "high", "EPA figure", "https://www.fueleconomy.gov") },
@@ -1059,7 +1061,10 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     id: "prologue-2025-awd",
     make: "HONDA",
     model: "Prologue",
-    modelYears: [2025, 2025],
+    // 2026 carries the same AWD ratings. EPA certifies the Elite separately
+    // (283 mi, heavier wheels) — that trim's row lives in data4.ts; this row
+    // is the 294-mi rating for the other AWD trims.
+    modelYears: [2025, 2026],
     drive: "AWD",
     battery: { packGrossKwh: f(85, "mfr", "medium", "85 kWh (GM Ultium pack); split unpublished"), chemistry: f("NMC", "agg", "medium") },
     range: { epaRangeMi: f(294, "mfr", "high", "Touring AWD 294; Elite 283 — EPA", "https://www.fueleconomy.gov") },
@@ -1378,7 +1383,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     id: "kia-niro-ev-2023-24",
     make: "KIA",
     model: "Niro EV",
-    modelYears: [2023, 2024],
+    modelYears: [2023, 2026], // 2025–26 carry the same 253-mi rating (EPA ids 48370/49664) — window extended 2026-08-14
     battery: { packGrossKwh: f(64.8, "mfr", "high"), chemistry: f("NMC", "agg", "medium") },
     range: { epaRangeMi: f(253, "mfr", "high", "Wind/Wave — EPA figure", "https://www.fueleconomy.gov"), testedRangeMi: f(210, "tested", "medium", "75-mph (Car and Driver, 2023): 210 mi; Edmunds mixed loop: 280") },
     charging: {

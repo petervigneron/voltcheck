@@ -1,5 +1,5 @@
 import type { Listing } from "./types";
-import type { EnrichmentResult, EnrichmentRow, Fact, VinDecode } from "../types";
+import type { EnrichmentResult, EnrichmentRow, Fact, PortStandard, VinDecode } from "../types";
 import { matchEnrichment } from "../enrichment/match";
 import { decodeTeslaVin, isTeslaVin } from "../tesla-vin";
 import type { TeslaVinFacts } from "../types";
@@ -16,6 +16,7 @@ export interface EnrichedListing {
   realRangeMi?: Fact<number>;
   usableKwh?: Fact<number>;
   packVariant?: string;
+  port?: Fact<PortStandard>;
   heatPump: { status: "yes" | "no" | "verify"; detail: string } | null;
   fastCharge: { status: "yes" | "no" | "verify"; detail: string };
   batteryWarrantyTransfers?: Fact<boolean>;
@@ -49,7 +50,13 @@ function cleanTrim(l: Listing): string | undefined {
     .replace(/\s+/g, " ")
     .trim();
   if (!t || CAB_STYLES.test(t)) return undefined;
-  if (t.split(" ").every((w) => /^(rwd|awd|fwd|4wd|4x4|4x2)$/i.test(w))) return undefined;
+  // Drivetrain tokens inside a trim ("SE RWD", "AWD Pro") aren't identity —
+  // the drive field already carries them, and they break short-trim matching.
+  t = t
+    .split(" ")
+    .filter((w) => !/^(rwd|awd|fwd|4wd|4x4|4x2)$/i.test(w))
+    .join(" ");
+  if (!t) return undefined;
   return t;
 }
 
@@ -166,18 +173,22 @@ export function enrichListing(l: Listing): EnrichedListing {
     if (notes.length !== row.buyerNotes.length) row = { ...row, buyerNotes: notes };
   }
 
-  // Heat pump, resolved against this listing's drivetrain where possible.
   // Ambiguity between candidate rows doesn't extend to facts they agree on:
-  // a Lightning that may be either ER trim still definitely has no heat pump.
-  let hpFact = row?.thermal?.heatPump;
-  if (!hpFact && enrichment.candidates?.length) {
-    const first = enrichment.candidates[0].thermal?.heatPump;
-    if (first && enrichment.candidates.every((r) => r.thermal?.heatPump?.value === first.value)) {
-      hpFact = first;
-    }
-  }
+  // a Lightning that may be either ER trim still definitely has no heat pump,
+  // and either way its port is CCS.
+  const agreed = <T,>(get: (r: EnrichmentRow) => Fact<T> | undefined): Fact<T> | undefined => {
+    const own = row && get(row);
+    if (own) return own;
+    const c = enrichment.candidates;
+    if (!c?.length) return undefined;
+    const first = get(c[0]);
+    if (!first) return undefined;
+    return c.every((r) => get(r)?.value === first.value) ? first : undefined;
+  };
+
+  // Heat pump, resolved against this listing's drivetrain where possible.
   let heatPump: EnrichedListing["heatPump"] = null;
-  const hpResolved = hpFact;
+  const hpResolved = agreed((r) => r.thermal?.heatPump);
   if (hpResolved) {
     switch (hpResolved.value) {
       case "standard":
@@ -233,6 +244,7 @@ export function enrichListing(l: Listing): EnrichedListing {
     realRangeMi: row?.range?.epaRangeMi,
     usableKwh: row?.battery?.packUsableKwh,
     packVariant: row?.packVariant,
+    port: agreed((r) => r.charging?.portStandard),
     heatPump,
     fastCharge,
     batteryWarrantyTransfers: row?.warranty?.batteryTransfers,

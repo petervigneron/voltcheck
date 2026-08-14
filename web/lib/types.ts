@@ -57,6 +57,11 @@ export interface EnrichmentRow {
   // L=Standard Range, V=Extended Range; 2024+ K/7/M/U). Year-scoped by the
   // row's modelYears, since makers reuse letters across generations.
   vin8?: string[];
+  // Set when the maker's Part 565 battery-kWh figure is a model-level
+  // constant, not a per-VIN fact (every 2023 Lightning reads "98", every 2024
+  // EV6 reads "58" — including AWD cars that never had that pack). The
+  // matcher then ignores the vpicBatteryKwh hint for this row's cohort.
+  ignoreKwhHint?: boolean;
 
   battery?: {
     packGrossKwh?: Fact<number>;
