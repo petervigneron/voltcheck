@@ -42,6 +42,15 @@ function pageBudget(domain) {
   return s?.pageBudget ?? (s?.kind === "group" ? 400 : MAX_PAGES);
 }
 
+// Dry-hole floors. Most domains yield a median of 6 cars and some yield none
+// at all, yet every one of them costs a full page budget: a Honda store was
+// observed fetching all 80 pages for zero EVs. At 654 registry domains that
+// waste is what makes a full crawl miss its window, so a crawl now stops once
+// the evidence says there is nothing here. Both floors sit well past the SRP
+// seeds, which are queued first — a real inventory shows itself long before.
+const NO_VEHICLE_FLOOR = 25; // no vehicle record and no ItemList by here => not a shoppable site
+const NO_EV_FLOOR = 40; // sells cars, just none of them electric
+
 const EV_ONLY_WMIS = new Set(["5YJ", "7SA", "7G2", "LRW", "XP7", "7FC", "7PD", "50E", "LPS", "YSP"]);
 
 function evishEntry({ url, name, vin }) {
@@ -69,6 +78,19 @@ async function crawlDealer(domain) {
   const queue = dedupe([...srpSeeds, ...rank(sitemapUrls)]);
 
   while (queue.length && report.fetched < budget) {
+    // Bail on dry holes (see floors above). Checked at the top of the loop
+    // because the paths that matter most here — pages that 404, time out, or
+    // are robots-disallowed — `continue` below without reaching the bottom.
+    // The first dry hole caught this way had burned all 80 fetches on errors.
+    if (report.fetched >= NO_VEHICLE_FLOOR && !report.vehiclePages && !report.itemListVdps) {
+      report.stoppedEarly = `no vehicle records in ${report.fetched} pages`;
+      break;
+    }
+    if (report.fetched >= NO_EV_FLOOR && !report.evs.length) {
+      report.stoppedEarly = `${report.vehiclePages} vehicle pages, no EVs in ${report.fetched}`;
+      break;
+    }
+
     const url = queue.shift();
     if (visited.has(url)) continue;
     visited.add(url);
@@ -150,7 +172,7 @@ async function worker() {
     reports.push(rep);
     allEvs.push(...rep.evs);
     console.error(
-      `── ${domain}: fetched ${rep.fetched}, ${rep.vehiclePages} pages w/ vehicles, ${rep.itemListVdps} ItemList VDPs queued, ${rep.evs.length} EVs`
+      `── ${domain}: fetched ${rep.fetched}, ${rep.vehiclePages} pages w/ vehicles, ${rep.itemListVdps} ItemList VDPs queued, ${rep.evs.length} EVs${rep.stoppedEarly ? ` [bailed: ${rep.stoppedEarly}]` : ""}`
     );
   }
 }
