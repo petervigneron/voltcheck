@@ -123,9 +123,9 @@ export function ListingCard({
         ) : (
           <div
             className="text-[22px] leading-none font-extrabold tracking-[-0.02em]"
-            title={`The dealer feed listed $${l.priceUsd.toLocaleString()}, which is a lease payment rather than a price`}
+            title={`The dealer's feed listed $${l.priceUsd.toLocaleString()}, which is not a plausible price for this car — see the dealer's own page`}
           >
-            Price not posted
+            See dealer for price
           </div>
         )}
         <div>

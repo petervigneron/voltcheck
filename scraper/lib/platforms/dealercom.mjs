@@ -52,7 +52,12 @@ export function enrichFromDdc(rec, ddcVehicle) {
     driveLine: ["FWD", "RWD", "AWD", "4WD"].includes(d.driveLine) ? d.driveLine : undefined,
     exteriorColor: d.exteriorColor ?? rec.exteriorColor,
     interiorColor: d.interiorColor ?? undefined,
-    priceUsd: rec.priceUsd ?? num(d.internetPrice) ?? num(d.askingPrice),
+    // internetPrice is the price the platform's own widgets display, and it
+    // beats the JSON-LD offer price: dealer.com's JSON-LD mirrors askingPrice,
+    // which some rooftops misconfigure — observed carrying the accessories
+    // total ($2,293 on a $50,273 car, vanhyundai.com VIN 7YAKN4DA0SY005538,
+    // 2026-08-14).
+    priceUsd: num(d.internetPrice) ?? num(d.salePrice) ?? rec.priceUsd ?? num(d.askingPrice),
     optionCodes: Array.isArray(d.optionCodes) && d.optionCodes.length ? d.optionCodes : undefined,
     certified: d.certified === "true" || d.certified === true || undefined,
     stockNumber: d.stockNumber ?? undefined,

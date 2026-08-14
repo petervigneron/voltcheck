@@ -56,9 +56,9 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
             ) : (
               <div
                 className="mt-3 text-2xl font-bold"
-                title={`The dealer feed listed $${listing.priceUsd.toLocaleString()}, which is not a plausible price for this car`}
+                title={`The dealer's feed listed $${listing.priceUsd.toLocaleString()}, which is not a plausible price for this car — see the dealer's own page`}
               >
-                Price not posted
+                See dealer for price
               </div>
             )}
 
