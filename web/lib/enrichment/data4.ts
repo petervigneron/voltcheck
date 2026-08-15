@@ -2117,6 +2117,30 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     thermal: { heatPump: f("standard", "mfr", "high", "Hybrid heat pump system from MY2013 (SV/SL)") },
   },
   {
+    id: "leaf-2014-15", make: "NISSAN", model: "Leaf", modelYears: [2014, 2015],
+    battery: { packGrossKwh: f(24, "mfr", "high") },
+    range: { epaRangeMi: f(84, "mfr", "high", "MY2014–15 (24 kWh) — EPA (34699/34918 rate identically)", epa(34699)) },
+    charging: { portStandard: f("CHAdeMO", "mfr", "high", "DC fast charging optional (standard on SV/SL); CHAdeMO where fitted") },
+    thermal: { heatPump: f("standard", "mfr", "high", "Hybrid heat pump system (SV/SL)") },
+  },
+  // Dealers drop the "PLUS": plain SV ended MY2022 and plain SL MY2019, so
+  // a later "SV"/"SL" label can only be the Plus car — year-scoped alias
+  // rows carry the data2 Plus facts (215/212-mi 62-kWh pack).
+  {
+    id: "leaf-2023-25-sv-alias", make: "NISSAN", model: "Leaf", modelYears: [2023, 2025], trim: ["SV"],
+    battery: { packGrossKwh: f(60, "est", "medium", "~60 kWh pack (2023–25 SV PLUS)") },
+    range: { epaRangeMi: f(212, "mfr", "high", "A 2023–25 “SV” can only be the SV PLUS (plain SV ended MY2022) — EPA 212", "https://www.fueleconomy.gov") },
+    charging: { portStandard: f("CHAdeMO", "mfr", "high", "AC charging is standard J1772"), superchargerAccess: f("none", "mfr", "high", "No CHAdeMO→NACS adapter exists"), dcPeakKw: f(100, "agg", "medium") },
+    thermal: { heatPump: f("standard", "agg", "medium") },
+  },
+  {
+    id: "leaf-2020-22-sl-alias", make: "NISSAN", model: "Leaf", modelYears: [2020, 2022], trim: ["SL"],
+    battery: { packGrossKwh: f(62, "est", "medium", "62 kWh gross (SL PLUS)") },
+    range: { epaRangeMi: f(215, "mfr", "high", "A 2020–22 “SL” can only be the SL PLUS (plain SL ended MY2019) — EPA 215", "https://www.fueleconomy.gov") },
+    charging: { portStandard: f("CHAdeMO", "mfr", "high", "AC charging is standard J1772"), superchargerAccess: f("none", "mfr", "high", "No CHAdeMO→NACS adapter exists"), dcPeakKw: f(100, "agg", "medium") },
+    thermal: { heatPump: f("standard", "agg", "medium") },
+  },
+  {
     id: "leaf-2016-s", make: "NISSAN", model: "Leaf", modelYears: [2016, 2016], trim: "S",
     battery: { packGrossKwh: f(24, "mfr", "high", "The S kept the 24 kWh pack in 2016; SV/SL moved to 30 kWh") },
     range: { epaRangeMi: f(84, "mfr", "high", "MY2016 S (24 kWh) — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=37066") },
