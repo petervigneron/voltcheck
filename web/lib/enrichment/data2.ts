@@ -1428,7 +1428,12 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "i4",
     // 2024 (276 mi) and 2025 (266) rows live in data4.ts (2026-08-14).
     modelYears: [2023, 2023],
-    trim: "eDrive35",
+    // One feed labels these cars "eDrive30 GC" — BMW's own Part 565 name
+    // for the VDS 43AW car the US sells as eDrive35 (verified 2026-08-15:
+    // 32 "eDrive30" and 106 "eDrive35" listings share the identical VDS
+    // block, and no eDrive30 was ever EPA-certified in the US).
+    trim: ["eDrive35", "eDrive30"],
+    vinPrefix: ["43AW0"],
     battery: {
       packUsableKwh: f(66, "mfr", "high", "70.2 gross / ~66 net (BMW-published)"),
       chemistry: f("NMC", "agg", "medium"),

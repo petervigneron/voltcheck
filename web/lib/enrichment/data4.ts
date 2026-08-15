@@ -4125,4 +4125,48 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
         { battery: P100, charging: AUDI_CHG_800, thermal: undefined }),
     ];
   })(),
+
+  // ── Lexus RZ + electric ES (2026-08-15) ───────────────────────────────
+  // VIN pos-8: B = RZ, 1 = the new electric ES — which safely fences the
+  // electric rows away from gas/hybrid ES listings that share the bare "ES"
+  // model string. Drive settles FWD-vs-AWD variants (300e/350e are FWD,
+  // 450e/500e AWD); the 2026 RZ 550e exists only as the F SPORT, so tier
+  // trims (Premium/Luxury) imply 450e. Feed model strings restate variants
+  // ("RZ 450e", "ES 500e", "ESe") — rows are emitted per string.
+  ...(() => {
+    const LEX_W = {
+      batteryYears: f(8, "agg" as Source, "medium", "8 yr/100,000 mi EV-battery coverage (Toyota-group terms), consistently documented; not re-verified against a Lexus primary booklet this pass"),
+      batteryMiles: f(100_000, "agg" as Source, "medium"),
+    };
+    const LEX_HP = { heatPump: f<"standard">("standard", "agg", "medium", "Heat pump standard across the RZ/electric-ES line, consistently documented") };
+    const CCS = { portStandard: f<"CCS1">("CCS1", "mfr") };
+    const NACS26 = { portStandard: f<"NACS">("NACS", "mfr", "high", "MY2026 Lexus EVs adopted the native NACS (J3400) port"), superchargerAccess: f<"native">("native", "mfr") };
+    const P747L = { packGrossKwh: f(74.7, "vin", "medium", "74.7 kWh in the Part 565 submissions for MY2026 VINs (RZ and electric ES share the pack family)") };
+    const lex = (id: string, model: string, years: [number, number], vin8: string[], trim: string[] | undefined, drv: "AWD" | "FWD", variant: string, rangeFact: Fact<number>, extra?: Partial<EnrichmentRow>): EnrichmentRow => ({
+      id, make: "LEXUS", model, modelYears: years, vin8, trim, drive: drv, packVariant: variant,
+      range: { epaRangeMi: rangeFact }, charging: CCS, thermal: LEX_HP, warranty: LEX_W, ...extra,
+    });
+    const rz450e_2325 = f(220, "mfr", "high", "MY2023–25 RZ 450e on 18-inch wheels — EPA (46986/47834/49101 rate identically); 196 on 20s", epa(46986));
+    const rz300e = f(266, "mfr", "high", "MY2024–25 RZ 300e (FWD) on 18-inch wheels — EPA (47832/49099 rate identically); 224 on 20s", epa(47832));
+    const rz350e = f(301, "mfr", "high", "MY2026 RZ 350e (FWD) on 18-inch wheels — EPA; 284 on 20s", epa(50291));
+    const rz450e_26 = f(264, "mfr", "high", "MY2026 RZ 450e on 18-inch wheels — EPA; 257 or 228 on the two 20-inch fitments", epa(50217));
+    const P714 = { packGrossKwh: f(71.4, "agg", "medium", "71.4 kWh pack (2023–25 RZ)") };
+    return [
+      // RZ under its variant model strings and the bare "RZ".
+      ...["RZ", "RZ 450e"].map((m, i) => lex(`rz-2023-25-450e-${i}`, m, [2023, 2025], ["B"], undefined, "AWD", "450e", rz450e_2325, { battery: P714 })),
+      ...["RZ", "RZ 300e"].map((m, i) => lex(`rz-2024-25-300e-${i}`, m, [2024, 2025], ["B"], undefined, "FWD", "300e", rz300e, { battery: P714 })),
+      // 2026 rows key on the VDS block — the feed contradicts itself (two
+      // BDADB cars carry model "RZ 450e" but trim "RZ 350e"; the VDS matrix
+      // is unanimous: BDADB = 350e FWD ×18, BCACB = 450e AWD ×12).
+      ...["RZ", "RZ 350e", "RZ 450e"].map((m, i) => lex(`rz-2026-350e-${i}`, m, [2026, 2026], ["B"], undefined, "FWD", "350e", rz350e, { vinPrefix: ["BDADB"], battery: P747L, charging: NACS26 })),
+      ...["RZ", "RZ 450e"].map((m, i) => lex(`rz-2026-450e-${i}`, m, [2026, 2026], ["B"], ["450e", "Premium", "Luxury"], "AWD", "450e", rz450e_26, { vinPrefix: ["BCACB"], battery: P747L, charging: NACS26 })),
+      lex("rz-2026-550e", "RZ", [2026, 2026], ["B"], ["550e", "F Sport", "F SPORT"], "AWD", "550e F SPORT",
+        f(229, "mfr", "high", "MY2026 RZ 550e F SPORT — EPA", epa(50220)), { battery: P747L, charging: NACS26 }),
+      // Electric ES (2026) — code 1 fences these off the gas ES.
+      ...["ESe", "ES", "ES 350e"].map((m, i) => lex(`es350e-2026-${i}`, m, [2026, 2026], ["1"], ["350e", "Premium", "Luxury"], "FWD", "ES 350e",
+        f(307, "mfr", "high", "MY2026 ES 350e (FWD) on 19-inch wheels — EPA; 292 on 21s", epa(50450)), { battery: P747L, charging: NACS26 })),
+      ...["ESe", "ES", "ES 500e"].map((m, i) => lex(`es500e-2026-${i}`, m, [2026, 2026], ["1"], ["500e", "Premium", "Luxury"], "AWD", "ES 500e",
+        f(276, "mfr", "high", "MY2026 ES 500e AWD on 19-inch wheels — EPA; 272 on 21s", epa(50452)), { battery: P747L, charging: NACS26 })),
+    ];
+  })(),
 ];
