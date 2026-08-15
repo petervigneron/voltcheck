@@ -72,6 +72,18 @@ Deno.serve(async (req: Request) => {
     return call("ingest_wa_sales", { _rows: body.rows, _replace: body.replace === true });
   }
 
+  // Reference datasets from migration 0016, all chunked the same way: the
+  // first chunk replaces, the rest append.
+  const REFERENCE_DATASETS: Record<string, string> = {
+    cc4a_sales: "ingest_cc4a_sales",       // California used-EV prices
+    rebate_vins: "ingest_rebate_vins",     // LADWP + Illinois EPA full VINs
+    cheapr_rebates: "ingest_cheapr_rebates", // Connecticut rebate panel
+  };
+  const referenceFn = REFERENCE_DATASETS[body.dataset as string];
+  if (referenceFn) {
+    return call(referenceFn, { _rows: body.rows, _replace: body.replace === true });
+  }
+
   return call("ingest_listings", {
     _rows: body.rows,
     _source: body.source ?? "nightly",
