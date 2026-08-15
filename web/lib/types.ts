@@ -57,6 +57,10 @@ export interface EnrichmentRow {
   // L=Standard Range, V=Extended Range; 2024+ K/7/M/U). Year-scoped by the
   // row's modelYears, since makers reuse letters across generations.
   vin8?: string[];
+  // VIN positions 4–8 — for makers whose VDS encodes model/body/variant as a
+  // block (Mercedes' Baumuster: "EG2BB" = EQE 350+ Sedan, "GM2BB" = the SUV).
+  // A hard filter like vin8: a keyed row never matches a different prefix.
+  vinPrefix?: string[];
   // Set when the maker's Part 565 battery-kWh figure is a model-level
   // constant, not a per-VIN fact (every 2023 Lightning reads "98", every 2024
   // EV6 reads "58" — including AWD cars that never had that pack). The

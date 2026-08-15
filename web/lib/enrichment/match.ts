@@ -64,6 +64,14 @@ export function matchEnrichment(
   if (vin8) {
     rows = rows.filter((r) => !r.vin8 || r.vin8.includes(vin8));
   }
+  // Same contract for makers whose VIN positions 4–8 name the exact variant
+  // (Mercedes' Baumuster block). Dealer trims on these cars routinely carry
+  // the wrong badge ("EQS450+ 4MATIC", a 2026 "580" that is the renamed 550)
+  // — the prefix is the maker's own submission and outranks the trim.
+  const vin48 = decode.vin && decode.vin.length === 17 ? decode.vin.slice(3, 8).toUpperCase() : undefined;
+  if (vin48) {
+    rows = rows.filter((r) => !r.vinPrefix || r.vinPrefix.includes(vin48));
+  }
 
   // An exact trim-name match is the strongest listing-side signal there is —
   // it must win before the soft hints below get a chance to veto it (a junk

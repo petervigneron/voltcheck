@@ -103,12 +103,24 @@ const PORSCHE_NOISE = /\b(type\s*y1a|y1a|w\/?\s*premium\s*(&\s*tech\s*)?package)
 // tier are. quattro-the-drivetrain is already carried by the drive field.
 const AUDI_NOISE = /\b(e-?tron|quattro)\b/gi;
 
+// Mercedes feeds spell one EQ model a dozen ways ("EQE 350+", "AMG EQE",
+// "Mercedes-EQ EQE SUV", "EQE 350 Sedan"…). Collapse to the family name —
+// body and variant are carried by VIN positions 4–8 (Baumuster), which the
+// matcher checks against each row's vinPrefix, so nothing is lost.
+function canonicalModel(l: Listing): string {
+  if (l.make.trim().toUpperCase() === "MERCEDES-BENZ") {
+    const eq = l.model.match(/\bEQ[A-Z]\b/i);
+    if (eq) return eq[0].toUpperCase();
+  }
+  return l.model;
+}
+
 function decodeFromListing(l: Listing): VinDecode {
   return {
     vin: l.vin,
     usMarket: true,
     make: l.make.toUpperCase(),
-    model: l.model,
+    model: canonicalModel(l),
     modelYear: l.year,
     trim: cleanTrim(l),
     driveType: l.drive,

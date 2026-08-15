@@ -400,6 +400,67 @@ const NOTE_MS_EMMC = {
 };
 const msPack = (kwh: number) => ({ packGrossKwh: f(kwh, "mfr", "medium", "Nameplate pack capacity — Tesla badged these cars by pack size") });
 
+// ── Mercedes-Benz EQE / EQS consts (see the row-block comment below) ───
+const EQE = { make: "MERCEDES-BENZ", model: "EQE" };
+const EQS = { make: "MERCEDES-BENZ", model: "EQS" };
+const MB_REL_EQE = "https://media.mbusa.com/releases/release-2f7d9b3c5c8916ac7e38443cec0023e3-all-new-fully-electric-eqe-sedan-to-start-from-74900";
+const MB_REL_EQESUV = "https://media.mbusa.com/releases/release-aba56cd1404245f552982a75a0042334-mercedes-benz-usa-announces-pricing-and-packaging-structures-for-alabama-built-eqe-suv";
+// Warranty verified against MY25/MY26 EQ booklets in docs/WARRANTY-RESEARCH.md
+// (carried forward from the retired data3 EQE/EQS rows, not re-derived).
+const MB_W = {
+  batteryYears: f(10, "mfr" as Source, "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs — verified against MY25/MY26 EQ booklets"),
+  batteryMiles: f(155_000, "mfr" as Source, "high"),
+  extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQE: 204 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance — a skipped-service history can void it.", "mfr" as Source, "high"),
+  batteryTransfers: f(true, "mfr" as Source, "high", "“To the original and each subsequent owner” — verified MY25/MY26 EQ booklets"),
+};
+const EQE_CHG = { portStandard: f<"CCS1">("CCS1", "mfr"), dcPeakKw: f(170, "mfr", "medium", "170 kW peak — Mercedes-Benz USA spec pages (read directly for MY2026; consistent across the EQE family)") };
+const EQS_CHG = { portStandard: f<"CCS1">("CCS1", "mfr"), dcPeakKw: f(200, "mfr", "medium", "200 kW peak — Mercedes-Benz USA spec pages (read directly for MY2026; consistent across the EQS family)") };
+const EQE_PACK_906 = { packUsableKwh: f(90.6, "mfr", "medium", "“Fitted standard with a 90.6 kWh battery” — MBUSA EQE Sedan pricing release; shared across the pre-refresh (2023–24) EQE family") };
+const EQE_PACK_96 = { packUsableKwh: f(96, "mfr", "high", "96 kWh — MBUSA EQE320+ spec page (MY2026); Mercedes' per-VIN Part 565 submissions read 96.00 for MY2025 refresh cars too") };
+const EQE_PACK_905 = { packUsableKwh: f(90.5, "mfr", "medium", "90.5 kWh — MBUSA EQE320 4MATIC spec page (MY2026); not separately confirmed for MY2025") };
+const EQS_PACK_1078 = { packUsableKwh: f(107.8, "agg", "medium", "107.8 kWh usable — the pre-2025 EQS pack, consistently documented across Mercedes materials and press") };
+const EQS_PACK_118 = { packUsableKwh: f(118, "mfr", "high", "118 kWh — MBUSA spec page (MY2026), matching Mercedes' per-VIN Part 565 submissions (vPIC reads 118.00) for 2025–26 cars") };
+const MB_HP_SUV = { heatPump: f<"standard">("standard", "mfr", "high", "“Two all-new standard innovations launch with the EQE SUV… a heat pump” — MBUSA EQE SUV launch release; standard on the EQ SUVs from launch", MB_REL_EQESUV) };
+const MB_HP_SED_EARLY = { heatPump: f<"optional">("optional", "agg", "medium", "Mercedes made the heat pump standard on EQE/EQS sedans starting MY2024 — an earlier sedan likely lacks it unless optioned") };
+const MB_HP_SED = { heatPump: f<"standard">("standard", "agg", "medium", "Standard on EQE/EQS sedans from MY2024 (read directly on the MY2026 MBUSA spec pages)") };
+const NOTE_MB_FUSE = {
+  headline: "Fuse-box fire/power-loss recall — two rounds, check which repair this VIN got",
+  body: "24V115 (MY2023 EQE/EQS: 80-Amp fuses manufactured incorrectly, can cause sudden loss of drive power or fire risk): free replacement fuse box. 25V255: some vehicles repaired under 24V115 received the WRONG replacement fuse box, which itself carries increased fire risk — a second free repair. Confirm this VIN got the correct part, not just “a” repair. (NHTSA's vehicle-level index scopes this to MY2023 only.)",
+  severity: "trap" as const,
+};
+const NOTE_EQE_STEER = {
+  headline: "Steering coupling bolt recall",
+  body: "25V533 (2023–2026 EQE): a steering coupling bolt may be improperly tightened, risking loss of steering control. Owner notices mailed October 2025.",
+  severity: "warning" as const,
+};
+const NOTE_EQE_ROOF = {
+  headline: "Roof-frame absorbers may not be secured — check remedy status",
+  body: "23V555 (2023 EQE 500/350, AMG EQE): roof frame absorbers may not be properly secured and can detach during side-curtain air bag deployment. Free dealer replacement; owner notices mailed September 2023.",
+  severity: "warning" as const,
+};
+const NOTE_EQE_BMS24 = {
+  headline: "Battery-management-system software recall — check remedy status",
+  body: "24V372 (2024 AMG EQE 53 4MATIC and several other EQE/EQS variants): a BMS software fault may cause the high-voltage battery to shut down, a sudden loss of drive power. Free software update; owner notices mailed July 2024.",
+  severity: "trap" as const,
+};
+const NOTE_EQS_NEXTGEN = {
+  headline: "This is the current 400V EQS, not the newly-announced next-generation car",
+  body: "Mercedes announced an upgraded EQS on an 800V architecture with up to 350 kW DC charging in April 2026 — as of this research it was orderable in Germany only, with no confirmed US on-sale date. This listing's EPA record predates that announcement and matches the existing 400V-architecture car's specs exactly (118 kWh, 200 kW). Don't assume this car has the newer, faster-charging hardware.",
+  severity: "info" as const,
+};
+// The MY2023 EQE gap: fueleconomy.gov's public dataset (menu API and the
+// full vehicles.csv download, both checked 2026-08-14) carries NO MY2023
+// EQE records and only four of the MY2023 EQS entries. 2023 figures below
+// that cite no fueleconomy id are the EPA estimates Mercedes announced,
+// as documented by MBUSA releases and contemporary press reporting.
+const mb = (
+  id: string, base: { make: string; model: string }, years: [number, number], prefix: string,
+  variant: string, drv: "AWD" | "RWD", rangeFact: Fact<number>, extra?: Partial<EnrichmentRow>
+): EnrichmentRow => ({
+  id, ...base, modelYears: years, vinPrefix: [prefix], drive: drv, packVariant: variant,
+  range: { epaRangeMi: rangeFact }, warranty: MB_W, ...extra,
+});
+
 // Same caveat as the e-tron GT row in data3: the 8yr/100k HV-battery term is
 // consistently reported but not confirmed in a readable Audi USA primary doc.
 const AUDI_W = {
@@ -3470,4 +3531,175 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: TSX_W,
     buyerNotes: [NOTE_FSD],
   },
+
+  // ── Mercedes-Benz EQE / EQS (same pass) ───────────────────────────────
+  //
+  // VIN positions 4–8 (Mercedes' Baumuster block) name the exact car:
+  // sedans are Bremen-built (WMI W1K), the SUVs Alabama-built (4JG), and
+  // the variant letter block is per-configuration — verified against 330
+  // inventory VINs where every prefix mapped 1:1 onto one variant:
+  //   EQE sedan: EG2BB=350+ · EG1CB=350 4MATIC · EG2CB=500 4MATIC · EG5DB=AMG
+  //   EQE SUV:   GM2BB=350+ · GM1CB=350 4MATIC · GM2CB=500 4MATIC · GM5DB=AMG
+  //   EQS sedan: CG2DB=450+ · CG2EB=450 4MATIC · CG4EB=580 4MATIC · CG5FB=AMG
+  //   EQS SUV:   DM2DB=450+ · DM2EB=450 4MATIC · DM4EB=580 4MATIC · DX5FB=Maybach 680
+  // Dealer trims here are uniquely unreliable — "EQS450+ 4MATIC" composites,
+  // bare "4MATIC", and 2026 cars still badged 450/580 after Mercedes renamed
+  // the SUVs 400/550 and the EQE line 320 — so rows key on vinPrefix alone
+  // (a hard filter) and carry no trim keys at all. The model strings (a
+  // dozen spellings) are collapsed to the family name in decodeFromListing.
+  //
+  // EQE sedan ─ 350+ (RWD)
+  mb("eqe-sed-2023-350plus", EQE, [2023, 2023], "EG2BB", "EQE 350+ Sedan", "RWD",
+    f(305, "mfr", "high", "“Up to 305 miles of range according to EPA estimates” (EQE 350+) — MBUSA EQE Sedan pricing release; no MY2023 EQE records exist in fueleconomy.gov's dataset", MB_REL_EQE),
+    { battery: EQE_PACK_906, charging: EQE_CHG, thermal: MB_HP_SED_EARLY, buyerNotes: [NOTE_MB_FUSE, NOTE_EQE_STEER] }),
+  mb("eqe-sed-2024-350plus", EQE, [2024, 2024], "EG2BB", "EQE 350+ Sedan", "RWD",
+    f(298, "mfr", "high", "MY2024 EQE 350+ — EPA", epa(47459)),
+    { battery: EQE_PACK_906, charging: EQE_CHG, thermal: MB_HP_SED, buyerNotes: [NOTE_EQE_STEER] }),
+  mb("eqe-sed-2025-26-320plus", EQE, [2025, 2026], "EG2BB", "EQE 350+/320+ Sedan", "RWD",
+    f(308, "mfr", "high", "Sold as EQE 350+ in MY2025, renamed EQE 320+ for 2026 — same 308-mi EPA rating (ids 48384/49679)", epa(48384)),
+    { battery: EQE_PACK_96, charging: EQE_CHG, thermal: MB_HP_SED, buyerNotes: [NOTE_EQE_STEER] }),
+  // EQE sedan ─ 350 4MATIC
+  mb("eqe-sed-2023-350-4m", EQE, [2023, 2023], "EG1CB", "EQE 350 4MATIC Sedan", "AWD",
+    f(260, "agg", "medium", "MY2023 EQE 350 4MATIC — the 260-mi EPA figure Mercedes announced, as documented by contemporary press; absent from fueleconomy.gov's dataset (the MY2024 car re-rated 280)"),
+    { battery: EQE_PACK_906, charging: EQE_CHG, thermal: MB_HP_SED_EARLY, buyerNotes: [NOTE_MB_FUSE, NOTE_EQE_STEER, NOTE_EQE_ROOF] }),
+  mb("eqe-sed-2024-350-4m", EQE, [2024, 2024], "EG1CB", "EQE 350 4MATIC Sedan", "AWD",
+    f(280, "mfr", "high", "MY2024 EQE 350 4MATIC — EPA", epa(47458)),
+    { battery: EQE_PACK_906, charging: EQE_CHG, thermal: MB_HP_SED, buyerNotes: [NOTE_EQE_STEER] }),
+  mb("eqe-sed-2025-26-320-4m", EQE, [2025, 2026], "EG1CB", "EQE 350/320 4MATIC Sedan", "AWD",
+    f(267, "mfr", "high", "Sold as EQE 350 4MATIC in MY2025, renamed EQE 320 4MATIC for 2026 — same 267-mi EPA rating (ids 48383/49680)", epa(48383)),
+    { battery: EQE_PACK_905, charging: EQE_CHG, thermal: MB_HP_SED, buyerNotes: [NOTE_EQE_STEER] }),
+  // EQE sedan ─ 500 4MATIC (2023–24 only)
+  mb("eqe-sed-2023-500-4m", EQE, [2023, 2023], "EG2CB", "EQE 500 4MATIC Sedan", "AWD",
+    f(260, "agg", "medium", "MY2023 EQE 500 4MATIC — the 260-mi EPA figure Mercedes announced, as documented by contemporary press; absent from fueleconomy.gov's dataset (the MY2024 car re-rated 298)"),
+    { battery: EQE_PACK_906, charging: EQE_CHG, thermal: MB_HP_SED_EARLY, buyerNotes: [NOTE_MB_FUSE, NOTE_EQE_STEER, NOTE_EQE_ROOF] }),
+  mb("eqe-sed-2024-500-4m", EQE, [2024, 2024], "EG2CB", "EQE 500 4MATIC Sedan", "AWD",
+    f(298, "mfr", "high", "MY2024 EQE 500 4MATIC — EPA", epa(47460)),
+    { battery: EQE_PACK_906, charging: EQE_CHG, thermal: MB_HP_SED, buyerNotes: [NOTE_EQE_STEER] }),
+  // EQE sedan ─ AMG
+  mb("eqe-sed-2023-amg", EQE, [2023, 2023], "EG5DB", "AMG EQE Sedan", "AWD",
+    f(225, "agg", "medium", "MY2023 AMG EQE 4MATIC+ — the 225-mi EPA figure Mercedes announced, as documented by contemporary press; absent from fueleconomy.gov's dataset"),
+    { battery: EQE_PACK_906, charging: EQE_CHG, thermal: MB_HP_SED_EARLY, buyerNotes: [NOTE_MB_FUSE, NOTE_EQE_STEER, NOTE_EQE_ROOF] }),
+  mb("eqe-sed-2024-amg", EQE, [2024, 2024], "EG5DB", "AMG EQE Sedan", "AWD",
+    f(230, "mfr", "high", "MY2024 AMG EQE (EPA model string “AMG EQE 4matic Plus”) — EPA", epa(47457)),
+    { battery: EQE_PACK_906, charging: EQE_CHG, thermal: MB_HP_SED, buyerNotes: [NOTE_EQE_BMS24, NOTE_EQE_STEER] }),
+  mb("eqe-sed-2025-26-amg", EQE, [2025, 2026], "EG5DB", "AMG EQE Sedan", "AWD",
+    f(220, "mfr", "high", "MY2025–26 AMG EQE — EPA (ids 48382/49678 rate identically)", epa(48382)),
+    { charging: EQE_CHG, thermal: MB_HP_SED, buyerNotes: [NOTE_EQE_STEER] }),
+  // EQE SUV ─ 350+/320+ (RWD)
+  mb("eqe-suv-2023-350plus", EQE, [2023, 2023], "GM2BB", "EQE 350+ SUV", "RWD",
+    f(279, "mfr", "high", "“The EQE 350+ SUV delivers 279 miles of range according to EPA estimates” — MBUSA EQE SUV pricing release; no MY2023 EQE records exist in fueleconomy.gov's dataset", MB_REL_EQESUV),
+    { battery: EQE_PACK_906, charging: EQE_CHG, thermal: MB_HP_SUV, buyerNotes: [NOTE_MB_FUSE, NOTE_EQE_STEER] }),
+  mb("eqe-suv-2024-350plus", EQE, [2024, 2024], "GM2BB", "EQE 350+ SUV", "RWD",
+    f(307, "mfr", "high", "MY2024 EQE 350+ SUV — EPA", epa(47846)),
+    { battery: EQE_PACK_906, charging: EQE_CHG, thermal: MB_HP_SUV, buyerNotes: [NOTE_EQE_STEER] }),
+  mb("eqe-suv-2025-27-320plus", EQE, [2025, 2027], "GM2BB", "EQE 350+/320+ SUV", "RWD",
+    f(302, "mfr", "high", "Sold as EQE 350+ SUV in MY2025, renamed EQE 320+ SUV from 2026 — same 302-mi EPA rating (ids 48390/49684/50661)", epa(48390)),
+    { battery: EQE_PACK_96, charging: EQE_CHG, thermal: MB_HP_SUV, buyerNotes: [NOTE_EQE_STEER] }),
+  // EQE SUV ─ 350/320 4MATIC
+  mb("eqe-suv-2023-350-4m", EQE, [2023, 2023], "GM1CB", "EQE 350 4MATIC SUV", "AWD",
+    f(253, "agg", "medium", "MY2023 EQE 350 4MATIC SUV — the 253-mi EPA figure Mercedes announced, as documented by contemporary press; absent from fueleconomy.gov's dataset"),
+    { battery: EQE_PACK_906, charging: EQE_CHG, thermal: MB_HP_SUV, buyerNotes: [NOTE_MB_FUSE, NOTE_EQE_STEER] }),
+  mb("eqe-suv-2024-350-4m", EQE, [2024, 2024], "GM1CB", "EQE 350 4MATIC SUV", "AWD",
+    f(265, "mfr", "high", "MY2024 EQE 350 4MATIC SUV — EPA", epa(47848)),
+    { battery: EQE_PACK_906, charging: EQE_CHG, thermal: MB_HP_SUV, buyerNotes: [NOTE_EQE_STEER] }),
+  mb("eqe-suv-2025-27-320-4m", EQE, [2025, 2027], "GM1CB", "EQE 350/320 4MATIC SUV", "AWD",
+    f(253, "mfr", "high", "Sold as EQE 350 4MATIC SUV in MY2025, renamed EQE 320 4MATIC SUV from 2026 — 253-mi EPA rating (ids 48394/49685; the MY2027 cert is not yet published, MY2026 figure carried)", epa(48394)),
+    { battery: EQE_PACK_905, charging: EQE_CHG, thermal: MB_HP_SUV, buyerNotes: [NOTE_EQE_STEER] }),
+  // EQE SUV ─ 500 4MATIC (2023–24 only)
+  mb("eqe-suv-2023-500-4m", EQE, [2023, 2023], "GM2CB", "EQE 500 4MATIC SUV", "AWD",
+    f(269, "agg", "medium", "MY2023 EQE 500 4MATIC SUV — the 269-mi EPA figure Mercedes announced, as documented by contemporary press; absent from fueleconomy.gov's dataset"),
+    { battery: EQE_PACK_906, charging: EQE_CHG, thermal: MB_HP_SUV, buyerNotes: [NOTE_MB_FUSE, NOTE_EQE_STEER] }),
+  mb("eqe-suv-2024-500-4m", EQE, [2024, 2024], "GM2CB", "EQE 500 4MATIC SUV", "AWD",
+    f(282, "mfr", "high", "MY2024 EQE 500 4MATIC SUV — EPA", epa(47849)),
+    { battery: EQE_PACK_906, charging: EQE_CHG, thermal: MB_HP_SUV, buyerNotes: [NOTE_EQE_STEER] }),
+  // EQE SUV ─ AMG (MY2024+)
+  mb("eqe-suv-2024-amg", EQE, [2024, 2024], "GM5DB", "AMG EQE SUV", "AWD",
+    f(235, "mfr", "high", "MY2024 AMG EQE SUV — EPA", epa(46971)),
+    { battery: EQE_PACK_906, charging: EQE_CHG, thermal: MB_HP_SUV, buyerNotes: [NOTE_EQE_STEER] }),
+  mb("eqe-suv-2025-26-amg", EQE, [2025, 2026], "GM5DB", "AMG EQE SUV", "AWD",
+    f(230, "mfr", "high", "MY2025–26 AMG EQE SUV — EPA (ids 48393/49686 rate identically)", epa(48393)),
+    { charging: EQE_CHG, thermal: MB_HP_SUV, buyerNotes: [NOTE_EQE_STEER] }),
+  // EQS sedan ─ 450+ (RWD)
+  mb("eqs-sed-2022-450plus", EQS, [2022, 2022], "CG2DB", "EQS 450+ Sedan", "RWD",
+    f(350, "mfr", "high", "MY2022 EQS 450+ — EPA", epa(44785)),
+    { battery: EQS_PACK_1078, charging: EQS_CHG, thermal: MB_HP_SED_EARLY }),
+  mb("eqs-sed-2023-450plus", EQS, [2023, 2023], "CG2DB", "EQS 450+ Sedan", "RWD",
+    f(350, "agg", "medium", "MY2023 carryover of the unchanged 2022 certification (350 mi, id 44785) — fueleconomy.gov's dataset lacks most MY2023 EQS sedan entries"),
+    { battery: EQS_PACK_1078, charging: EQS_CHG, thermal: MB_HP_SED_EARLY, buyerNotes: [NOTE_MB_FUSE] }),
+  mb("eqs-sed-2024-450plus", EQS, [2024, 2024], "CG2DB", "EQS 450+ Sedan", "RWD",
+    f(352, "mfr", "high", "MY2024 EQS 450+ — EPA", epa(47463)),
+    { battery: EQS_PACK_1078, charging: EQS_CHG, thermal: MB_HP_SED }),
+  mb("eqs-sed-2025-26-450plus", EQS, [2025, 2026], "CG2DB", "EQS 450+ Sedan", "RWD",
+    f(390, "mfr", "high", "MY2025–26 EQS 450+ (118 kWh pack) — EPA (ids 48388/49681 rate identically)", epa(48388)),
+    { battery: EQS_PACK_118, charging: EQS_CHG, thermal: MB_HP_SED, buyerNotes: [NOTE_EQS_NEXTGEN] }),
+  // EQS sedan ─ 450 4MATIC
+  mb("eqs-sed-2023-450-4m", EQS, [2023, 2023], "CG2EB", "EQS 450 4MATIC Sedan", "AWD",
+    f(340, "mfr", "high", "MY2023 EQS 450 4MATIC — EPA", epa(46009)),
+    { battery: EQS_PACK_1078, charging: EQS_CHG, thermal: MB_HP_SED_EARLY, buyerNotes: [NOTE_MB_FUSE] }),
+  mb("eqs-sed-2024-450-4m", EQS, [2024, 2024], "CG2EB", "EQS 450 4MATIC Sedan", "AWD",
+    f(345, "mfr", "high", "MY2024 EQS 450 4MATIC — EPA", epa(47462)),
+    { battery: EQS_PACK_1078, charging: EQS_CHG, thermal: MB_HP_SED }),
+  mb("eqs-sed-2025-26-450-4m", EQS, [2025, 2026], "CG2EB", "EQS 450 4MATIC Sedan", "AWD",
+    f(367, "mfr", "high", "MY2025–26 EQS 450 4MATIC (118 kWh pack) — EPA (ids 48387/49683 rate identically)", epa(48387)),
+    { battery: EQS_PACK_118, charging: EQS_CHG, thermal: MB_HP_SED, buyerNotes: [NOTE_EQS_NEXTGEN] }),
+  // EQS sedan ─ 580 4MATIC
+  mb("eqs-sed-2022-580-4m", EQS, [2022, 2022], "CG4EB", "EQS 580 4MATIC Sedan", "AWD",
+    f(340, "mfr", "high", "MY2022 EQS 580 4MATIC — EPA", epa(45023)),
+    { battery: EQS_PACK_1078, charging: EQS_CHG, thermal: MB_HP_SED_EARLY }),
+  mb("eqs-sed-2023-580-4m", EQS, [2023, 2023], "CG4EB", "EQS 580 4MATIC Sedan", "AWD",
+    f(340, "agg", "medium", "MY2023 carryover of the unchanged 2022 certification (340 mi, id 45023) — fueleconomy.gov's dataset lacks most MY2023 EQS sedan entries"),
+    { battery: EQS_PACK_1078, charging: EQS_CHG, thermal: MB_HP_SED_EARLY, buyerNotes: [NOTE_MB_FUSE] }),
+  mb("eqs-sed-2024-580-4m", EQS, [2024, 2024], "CG4EB", "EQS 580 4MATIC Sedan", "AWD",
+    f(345, "mfr", "high", "MY2024 EQS 580 4MATIC — EPA", epa(47464)),
+    { battery: EQS_PACK_1078, charging: EQS_CHG, thermal: MB_HP_SED }),
+  mb("eqs-sed-2025-26-580-4m", EQS, [2025, 2026], "CG4EB", "EQS 580 4MATIC Sedan", "AWD",
+    f(371, "mfr", "high", "MY2025–26 EQS 580 4MATIC (118 kWh pack) — EPA (ids 48389/49682 rate identically)", epa(48389)),
+    { battery: EQS_PACK_118, charging: EQS_CHG, thermal: MB_HP_SED, buyerNotes: [NOTE_EQS_NEXTGEN] }),
+  // EQS sedan ─ AMG
+  mb("eqs-sed-2022-amg", EQS, [2022, 2022], "CG5FB", "AMG EQS Sedan", "AWD",
+    f(277, "mfr", "high", "MY2022 AMG EQS — EPA", epa(46330)),
+    { battery: EQS_PACK_1078, charging: EQS_CHG, thermal: MB_HP_SED_EARLY }),
+  mb("eqs-sed-2023-amg", EQS, [2023, 2023], "CG5FB", "AMG EQS Sedan", "AWD",
+    f(277, "agg", "medium", "MY2023 carryover of the unchanged 2022 certification (277 mi, id 46330) — fueleconomy.gov's dataset lacks most MY2023 EQS sedan entries"),
+    { battery: EQS_PACK_1078, charging: EQS_CHG, thermal: MB_HP_SED_EARLY, buyerNotes: [NOTE_MB_FUSE] }),
+  mb("eqs-sed-2024-amg", EQS, [2024, 2024], "CG5FB", "AMG EQS Sedan", "AWD",
+    f(305, "mfr", "high", "MY2024 AMG EQS — EPA", epa(47461)),
+    { battery: EQS_PACK_1078, charging: EQS_CHG, thermal: MB_HP_SED }),
+  mb("eqs-sed-2025-amg", EQS, [2025, 2025], "CG5FB", "AMG EQS Sedan", "AWD",
+    f(315, "mfr", "high", "MY2025 AMG EQS — EPA", epa(48386)),
+    { battery: EQS_PACK_118, charging: EQS_CHG, thermal: MB_HP_SED, buyerNotes: [NOTE_EQS_NEXTGEN] }),
+  // EQS SUV ─ 450+ (RWD)
+  mb("eqs-suv-2023-450plus", EQS, [2023, 2023], "DM2DB", "EQS 450+ SUV", "RWD",
+    f(305, "mfr", "high", "MY2023 EQS 450+ SUV — EPA", epa(46011)),
+    { battery: EQS_PACK_1078, charging: EQS_CHG, thermal: MB_HP_SUV, buyerNotes: [NOTE_MB_FUSE] }),
+  mb("eqs-suv-2024-450plus", EQS, [2024, 2024], "DM2DB", "EQS 450+ SUV", "RWD",
+    f(339, "mfr", "high", "MY2024 EQS 450+ SUV — EPA", epa(47847)),
+    { battery: EQS_PACK_1078, charging: EQS_CHG, thermal: MB_HP_SUV }),
+  mb("eqs-suv-2025-450plus", EQS, [2025, 2025], "DM2DB", "EQS 450+ SUV", "RWD",
+    f(323, "mfr", "high", "MY2025 EQS 450+ SUV (118 kWh pack) — EPA", epa(48392)),
+    { battery: EQS_PACK_118, charging: EQS_CHG, thermal: MB_HP_SUV, buyerNotes: [NOTE_EQS_NEXTGEN] }),
+  // EQS SUV ─ 450/400 4MATIC
+  mb("eqs-suv-2023-450-4m", EQS, [2023, 2023], "DM2EB", "EQS 450 4MATIC SUV", "AWD",
+    f(285, "mfr", "high", "MY2023 EQS 450 4MATIC SUV — EPA", epa(46010)),
+    { battery: EQS_PACK_1078, charging: EQS_CHG, thermal: MB_HP_SUV, buyerNotes: [NOTE_MB_FUSE] }),
+  mb("eqs-suv-2024-450-4m", EQS, [2024, 2024], "DM2EB", "EQS 450 4MATIC SUV", "AWD",
+    f(330, "mfr", "high", "MY2024 EQS 450 4MATIC SUV — EPA", epa(47850)),
+    { battery: EQS_PACK_1078, charging: EQS_CHG, thermal: MB_HP_SUV }),
+  mb("eqs-suv-2025-26-400-4m", EQS, [2025, 2026], "DM2EB", "EQS 450/400 4MATIC SUV", "AWD",
+    f(312, "mfr", "high", "Sold as EQS 450 4MATIC SUV in MY2025, renamed EQS 400 4MATIC SUV for 2026 (dealer trims often still say 450) — same 312-mi EPA rating (ids 48395/49688)", epa(48395)),
+    { battery: EQS_PACK_118, charging: EQS_CHG, thermal: MB_HP_SUV, buyerNotes: [NOTE_EQS_NEXTGEN] }),
+  // EQS SUV ─ 580/550 4MATIC
+  mb("eqs-suv-2023-580-4m", EQS, [2023, 2023], "DM4EB", "EQS 580 4MATIC SUV", "AWD",
+    f(285, "mfr", "high", "MY2023 EQS 580 4MATIC SUV — EPA", epa(46012)),
+    { battery: EQS_PACK_1078, charging: EQS_CHG, thermal: MB_HP_SUV, buyerNotes: [NOTE_MB_FUSE] }),
+  mb("eqs-suv-2024-580-4m", EQS, [2024, 2024], "DM4EB", "EQS 580 4MATIC SUV", "AWD",
+    f(330, "mfr", "high", "MY2024 EQS 580 4MATIC SUV — EPA", epa(47851)),
+    { battery: EQS_PACK_1078, charging: EQS_CHG, thermal: MB_HP_SUV }),
+  mb("eqs-suv-2025-26-550-4m", EQS, [2025, 2026], "DM4EB", "EQS 580/550 4MATIC SUV", "AWD",
+    f(317, "mfr", "high", "Sold as EQS 580 4MATIC SUV in MY2025, renamed EQS 550 4MATIC SUV for 2026 (dealer trims often still say 580) — same 317-mi EPA rating (ids 48396/49689)", epa(48396)),
+    { battery: EQS_PACK_118, charging: EQS_CHG, thermal: MB_HP_SUV, buyerNotes: [NOTE_EQS_NEXTGEN] }),
+  // EQS SUV ─ Maybach 680
+  mb("eqs-suv-2024-maybach", EQS, [2024, 2024], "DX5FB", "Maybach EQS 680 SUV", "AWD",
+    f(280, "mfr", "high", "MY2024 Maybach EQS 680 SUV — EPA carries two 2024 certifications (280 and 321 mi, ids 47465/47852, a wheel/configuration split); the lower figure is used", epa(47465)),
+    { battery: EQS_PACK_1078, charging: EQS_CHG, thermal: MB_HP_SUV }),
 ];
