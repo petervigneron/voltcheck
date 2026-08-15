@@ -213,15 +213,20 @@ export function FilterRail({ makesModels }: { makesModels: Record<string, string
             and an empty stretched cell just reads as a gap. */}
         <div className={`${CELL} hidden flex-1 min-w-[40px] bg-paper sm:block`} aria-hidden="true" />
 
-        <div className={`${CELL} flex items-center bg-paper`}>
-          <label className="sr-only" htmlFor="sort">
-            Sort results
+        {/* The select owns the whole cell so label and chevron stay clickable;
+            without the ▼ an appearance-none select reads as a static label. */}
+        <div className={`${CELL} relative flex items-center bg-paper`}>
+          <label
+            htmlFor="sort"
+            className="pointer-events-none absolute left-4 text-[10px] font-extrabold uppercase tracking-[0.14em] text-ink/55"
+          >
+            Sort
           </label>
           <select
             id="sort"
             value={get("sort") || "featured"}
             onChange={(e) => apply({ sort: e.target.value === "featured" ? "" : e.target.value })}
-            className="h-full cursor-pointer appearance-none bg-transparent px-4 py-2.5 text-[13px] font-bold tracking-[0.04em] uppercase hover:ring-[3px] hover:ring-inset hover:ring-cobalt focus:outline-none focus:ring-[3px] focus:ring-inset focus:ring-cobalt"
+            className="h-full cursor-pointer appearance-none bg-transparent py-2.5 pr-9 pl-14 text-[13px] font-bold tracking-[0.04em] uppercase hover:ring-[3px] hover:ring-inset hover:ring-cobalt focus:outline-none focus:ring-[3px] focus:ring-inset focus:ring-cobalt"
           >
             <option value="featured">Featured</option>
             <option value="price">Price ↑</option>
@@ -231,6 +236,9 @@ export function FilterRail({ makesModels }: { makesModels: Record<string, string
             <option value="range-desc">Range: highest</option>
             <option value="distance">Distance: nearest</option>
           </select>
+          <span aria-hidden="true" className="pointer-events-none absolute right-4 text-[10px]">
+            ▼
+          </span>
         </div>
       </div>
 

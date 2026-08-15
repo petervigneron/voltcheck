@@ -1,13 +1,12 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* The palette below is the design — solid light blocks with ink keylines — so
+   the site renders it regardless of the device's colour scheme. Remapping the
+   dark: variant to a never-set attribute keeps the older detail pages' dark
+   classes inert instead of half-flipping on dark-mode phones. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -25,16 +24,7 @@
   --color-teal: #0c6b5e; /* equipment present */
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
-  background: var(--background);
-  color: var(--foreground);
   font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
