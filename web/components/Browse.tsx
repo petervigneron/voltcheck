@@ -430,7 +430,7 @@ export function Browse() {
         <PopularBand popular={popular} q={q} />
       </div>
 
-      <FilterRail makesModels={makesModels} inferred={inferred} />
+      <FilterRail makesModels={makesModels} inferred={inferred} count={rows === null ? undefined : results.length} />
 
       <SpecFacets facets={facets} />
 

@@ -224,8 +224,18 @@ export function SpecFacets({ facets }: { facets: FacetGroup[] }) {
 }
 
 // `inferred` is the IP-geolocated city when no ZIP is set ("" when the origin
-// exists but the city is unknown); undefined means no origin at all.
-export function FilterRail({ makesModels, inferred }: { makesModels: Record<string, string[]>; inferred?: string }) {
+// exists but the city is unknown); undefined means no origin at all. `count` is
+// how many cars the active filters leave; undefined until the index lands,
+// because "0 cars" while loading is a wrong answer, not a pending one.
+export function FilterRail({
+  makesModels,
+  inferred,
+  count,
+}: {
+  makesModels: Record<string, string[]>;
+  inferred?: string;
+  count?: number;
+}) {
   const sp = useSearchParams();
   const [open, setOpen] = useState(false);
   const get = (k: string) => sp.get(k) ?? "";
@@ -325,9 +335,20 @@ export function FilterRail({ makesModels, inferred }: { makesModels: Record<stri
           </button>
         ))}
 
-        {/* Pushes sort to the right on a wide rail; on a phone the rail wraps
-            and an empty stretched cell just reads as a gap. */}
-        <div className={`${CELL} hidden flex-1 min-w-[40px] bg-paper sm:block`} aria-hidden="true" />
+        {/* The count also does the old spacer's job: it takes the slack between
+            the chips and sort on a wide rail. Until the index lands there's no
+            number to give, and an empty stretched cell only reads as a gap on a
+            phone, so that state keeps the desktop-only spacer it always was. */}
+        {count === undefined ? (
+          <div className={`${CELL} hidden flex-1 min-w-[40px] bg-paper sm:block`} aria-hidden="true" />
+        ) : (
+          <div
+            aria-live="polite"
+            className={`${CELL} flex grow items-center bg-paper px-4 py-2.5 text-[13px] font-bold tracking-[0.04em] whitespace-nowrap text-ink/60 uppercase tabular-nums sm:min-w-fit sm:flex-1 sm:justify-end`}
+          >
+            {count.toLocaleString()} {count === 1 ? "car" : "cars"}
+          </div>
+        )}
 
         {/* The select owns the whole cell so label and chevron stay clickable;
             without the ▼ an appearance-none select reads as a static label. */}
