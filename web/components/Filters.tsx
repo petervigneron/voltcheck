@@ -9,7 +9,10 @@ const CELL = "border-r-[3px] border-b-[3px] border-ink";
 // keyline the listing cards use.
 const HOVER =
   "hover:ring-[3px] hover:ring-inset hover:ring-cobalt focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-cobalt";
-const BLOCK = `${CELL} flex items-center gap-2 px-4 py-2.5 text-[13px] font-bold uppercase tracking-[0.04em]`;
+// On a phone the rail wraps; cells grow to close each row against the right
+// edge — a wall of blocks, not a ragged tetris board. Desktop rows don't wrap,
+// so growth is off and the spacer below handles the slack.
+const BLOCK = `${CELL} flex grow items-center gap-2 px-4 py-2.5 text-[13px] font-bold uppercase tracking-[0.04em] sm:grow-0`;
 const FIELD =
   "w-full border-[3px] border-ink bg-paper px-2.5 py-1.5 text-[13px] font-semibold text-ink focus:outline-none focus:ring-[3px] focus:ring-cobalt";
 const FIELD_LABEL = "text-[10px] font-extrabold uppercase tracking-[0.14em] text-ink/55";
@@ -215,7 +218,7 @@ export function FilterRail({ makesModels }: { makesModels: Record<string, string
 
         {/* The select owns the whole cell so label and chevron stay clickable;
             without the ▼ an appearance-none select reads as a static label. */}
-        <div className={`${CELL} relative flex items-center bg-paper`}>
+        <div className={`${CELL} relative flex grow items-center bg-paper sm:grow-0`}>
           <label
             htmlFor="sort"
             className="pointer-events-none absolute left-4 text-[10px] font-extrabold uppercase tracking-[0.14em] text-ink/55"
@@ -226,11 +229,11 @@ export function FilterRail({ makesModels }: { makesModels: Record<string, string
             id="sort"
             value={get("sort") || "featured"}
             onChange={(e) => apply({ sort: e.target.value === "featured" ? "" : e.target.value })}
-            className="h-full cursor-pointer appearance-none bg-transparent py-2.5 pr-9 pl-14 text-[13px] font-bold tracking-[0.04em] uppercase hover:ring-[3px] hover:ring-inset hover:ring-cobalt focus:outline-none focus:ring-[3px] focus:ring-inset focus:ring-cobalt"
+            className="h-full w-full cursor-pointer appearance-none bg-transparent py-2.5 pr-9 pl-14 text-[13px] font-bold tracking-[0.04em] uppercase hover:ring-[3px] hover:ring-inset hover:ring-cobalt focus:outline-none focus:ring-[3px] focus:ring-inset focus:ring-cobalt"
           >
             <option value="featured">Featured</option>
-            <option value="price">Price ↑</option>
-            <option value="price-desc">Price ↓</option>
+            <option value="price">Price: lowest</option>
+            <option value="price-desc">Price: highest</option>
             <option value="year-desc">Year: newest</option>
             <option value="miles">Mileage: lowest</option>
             <option value="range-desc">Range: highest</option>
