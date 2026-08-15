@@ -8,7 +8,7 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { fetchPage, setCacheTtl } from "./lib/http.mjs";
 import { extractVehicles, extractItemListEntries } from "./lib/jsonld.mjs";
-import { classifyEv } from "./lib/ev.mjs";
+import { classifyEv, EV_ONLY_WMIS } from "./lib/ev.mjs";
 import { normalize, richness } from "./lib/normalize.mjs";
 import { discoverSitemapUrls, rank, dedupe, SRP_PATHS, VIN_RE, EVISH_RE } from "./lib/sitemap.mjs";
 import { extractDdcVehicles, enrichFromDdc } from "./lib/platforms/dealercom.mjs";
@@ -54,8 +54,6 @@ function pageBudget(domain) {
 // seeds, which are queued first — a real inventory shows itself long before.
 const NO_VEHICLE_FLOOR = 25; // no vehicle record and no ItemList by here => not a shoppable site
 const NO_EV_FLOOR = 40; // sells cars, just none of them electric
-
-const EV_ONLY_WMIS = new Set(["5YJ", "7SA", "7G2", "LRW", "XP7", "7FC", "7PD", "50E", "LPS", "YSP"]);
 
 // Dealer platforms emit VDP links in every shape: absolute, root-relative
 // ("/inventory/..."), even bare-relative ("used-2022-volvo-..."). Resolve

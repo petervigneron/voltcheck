@@ -3,6 +3,7 @@
 // Keeps only records complete enough to display honestly; name-match-only EV
 // classifications are dropped until vPIC verification exists.
 import { readFile, writeFile } from "node:fs/promises";
+import { isKnownMake } from "./lib/makes.mjs";
 
 const raw = JSON.parse(await readFile(new URL("./out/listings.json", import.meta.url), "utf-8"));
 // Single-rooftop dealers have exactly one address — listings inherit it from
@@ -98,9 +99,19 @@ function modelYear(y) {
   return y >= 1981 && y <= new Date().getFullYear() + 2 ? y : undefined;
 }
 
+// A make that isn't a real manufacturer (dealer name in the JSON-LD brand)
+// can never match an enrichment row — the matcher keys on make — and
+// vpic-enrich already had its chance to repair it from the VIN. Dropped
+// makes are logged because a genuinely new brand would land here too.
+const unknownMakes = new Map();
 const listings = raw
   .filter((r) => r.vin && modelYear(r.year) && r.make && r.model && r.priceUsd)
   .filter((r) => r.evConfidence === "high")
+  .filter((r) => {
+    if (isKnownMake(r.make)) return true;
+    unknownMakes.set(r.make, (unknownMakes.get(r.make) ?? 0) + 1);
+    return false;
+  })
   .map((r) => ({
     condition: condition(r),
     id: r.vin.toLowerCase(),
@@ -133,6 +144,8 @@ const listings = raw
     sourceUrl: r.sourceUrl,
     dealerDomain: r.dealerDomain,
   }));
+
+for (const [m, n] of unknownMakes) console.error(`dropped ${n} listing(s) with unrecognized make ${JSON.stringify(m)} — real new brand? add it to lib/makes.mjs`);
 
 const dest = new URL("../web/data/scraped-listings.json", import.meta.url);
 await writeFile(dest, JSON.stringify(listings, null, 2));

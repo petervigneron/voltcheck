@@ -1,7 +1,7 @@
 // Is this vehicle an EV? Belt and suspenders: structured fuel-type fields
 // first, then VIN WMI, then model-name match. Anything that only matches by
 // name is flagged lower-confidence so the pipeline can vPIC-verify it later.
-const EV_MODEL_RE = new RegExp(
+export const EV_MODEL_RE = new RegExp(
   [
     "model [3sxy]\\b", "cybertruck",
     "bolt e[uv]v?", "silverado ev", "blazer ev", "equinox ev", "lyriq", "hummer ev",
@@ -22,7 +22,7 @@ const EV_MODEL_RE = new RegExp(
 );
 
 // Tesla, Rivian, Lucid, Polestar build only EVs — WMI alone settles those.
-const EV_ONLY_WMIS = new Set(["5YJ", "7SA", "7G2", "LRW", "XP7", "7FC", "7PD", "50E", "LPS", "YSP"]);
+export const EV_ONLY_WMIS = new Set(["5YJ", "7SA", "7G2", "LRW", "XP7", "7FC", "7PD", "50E", "LPS", "YSP"]);
 
 const text = (v) => (v == null ? "" : typeof v === "string" ? v : JSON.stringify(v));
 
