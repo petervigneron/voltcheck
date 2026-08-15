@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { findListing } from "@/lib/listings/source";
 import { enrichListing , displayTrim } from "@/lib/listings/enrich";
+import { trimClaim } from "@/lib/listings/trimClaim";
 import { buildChecklist } from "@/lib/checklist";
 import { EnrichmentFacts, Section, NOTE_STYLE } from "@/components/EnrichmentReport";
 import { listingTiles } from "@/lib/listings/tiles";
@@ -48,6 +49,10 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
   const recentSales = await fetchRecentSales(listing.make, listing.model, listing.vin);
   // Same title records as the list above, but fitted to this car's exact
   // variant and odometer rather than eyeballed across model years.
+  // Whether we'll print the dealer's trim as a fact. Corpus-free: the
+  // contradiction judgement was made at sync time and rides the payload
+  // (scraper/lib/trim-suspect.mjs), so this page needs nothing but its own row.
+  const claim = trimClaim(listing);
   const vsSold = askVsSold(
     await fetchCompIndex(),
     listing.vin,
@@ -71,7 +76,18 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
             <h1 className="text-xl font-bold leading-tight">
               {listing.year} {listing.make} {listing.model}
             </h1>
-            {displayTrim(listing) && <p className="text-sm text-zinc-500 dark:text-zinc-400">{displayTrim(listing)}</p>}
+            {/* The trim only when we're willing to stand behind it. When the
+                dealer's own description names a different version, showing the
+                disagreement is more useful than picking a side: it tells a
+                shopper the one thing to check on the window sticker. */}
+            {claim.assert ? (
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">{claim.trim}</p>
+            ) : claim.reason === "contradicted" ? (
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                Listed as {claim.feedTrim} — the dealer&rsquo;s own description says{" "}
+                {claim.proseTrim.charAt(0) + claim.proseTrim.slice(1).toLowerCase()}
+              </p>
+            ) : null}
             {hasRealPrice(listing) ? (
               <div className="mt-3 text-3xl font-bold tabular-nums">${listing.priceUsd.toLocaleString()}</div>
             ) : (
@@ -177,7 +193,7 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
           {recentSales.length > 0 && <RecentSales sales={recentSales} vsSold={vsSold} />}
 
           {e.row && (
-            <Section title={`${listing.model}${displayTrim(listing) ? ` ${displayTrim(listing)}` : ""}`}>
+            <Section title={`${listing.model}${claim.assert && displayTrim(listing) ? ` ${claim.trim}` : ""}`}>
               <EnrichmentFacts row={e.row} />
             </Section>
           )}

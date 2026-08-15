@@ -14,6 +14,7 @@
 // the database exists. The JSON file remains the web app's fallback either
 // way — this script adds persistence, it replaces nothing.
 import { readFile, stat } from "node:fs/promises";
+import { markTrimSuspects } from "./lib/trim-suspect.mjs";
 
 // Minimal .env parser — launchd jobs carry no shell environment.
 async function loadEnv(url) {
@@ -50,6 +51,17 @@ if (listings.length < MIN_ROWS) {
   console.error(`db-sync: only ${listings.length} listings (< ${MIN_ROWS}) — refusing to sync a broken crawl.`);
   process.exit(1);
 }
+
+// Whether a listing's own description contradicts its trim field — decided
+// here because it needs the whole corpus AND the descriptions, and the web app
+// has neither together (the browse feed drops description for egress, and the
+// detail page reads one VIN). Must run on the full array, before chunking:
+// chunks are per-domain, and a vocabulary learned from one dealer's inventory
+// would be worthless.
+const suspects = markTrimSuspects(listings);
+console.error(
+  `db-sync: ${suspects} of ${listings.length} listings have a trim their own description contradicts`
+);
 
 const source = process.env.DB_SYNC_SOURCE ?? "nightly";
 

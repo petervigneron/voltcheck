@@ -4,7 +4,7 @@ import { listingTiles } from "./tiles";
 import { bodyTypeOf } from "./bodyType";
 import { hasRealPrice, priceCut } from "./price";
 import { askVsMarket, askVsSold, buildAskIndex, fetchCompIndex } from "./comps";
-import { buildTrimVocabulary, trimClaim } from "./trimClaim";
+import { trimClaim } from "./trimClaim";
 import { zipCoords } from "@/lib/zips";
 import type { CardRow } from "./card";
 
@@ -16,11 +16,8 @@ export async function buildCardIndex(): Promise<CardRow[]> {
   // A few hundred coefficient rows, fetched once and applied to every
   // listing in memory — the whole transaction-price model costs one request.
   const [listings, comps] = await Promise.all([allListings(), fetchCompIndex()]);
-  // Two whole-inventory passes the per-listing work depends on: the trim
-  // vocabulary each model's feeds actually use, and every live asking price
-  // keyed by variant. Both are cheap next to enrichment and both need the
-  // full set, so they run once here rather than per row.
-  const vocab = buildTrimVocabulary(listings);
+  // Every live asking price, keyed by variant — cheap next to enrichment, and
+  // it needs the full set, so it runs once here rather than per row.
   const asks = buildAskIndex(listings);
   const rows: CardRow[] = [];
   for (const l of listings) {
@@ -29,7 +26,7 @@ export async function buildCardIndex(): Promise<CardRow[]> {
     // offered as a facet — a wrong chip is worse than a missing one, because a
     // shopper filtering on "Lariat" would never see the Lariat that a feed
     // mislabelled "Pro".
-    const claim = trimClaim(l, vocab);
+    const claim = trimClaim(l);
     const trim = claim.assert ? displayTrim(l) : undefined;
     const cut = priceCut(l);
     const real = hasRealPrice(l);

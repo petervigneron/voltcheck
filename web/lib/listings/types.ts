@@ -19,6 +19,14 @@ export interface Listing {
   // Scraped-listing extras
   optionCodes?: string[]; // factory option codes (GM RPO etc.) from the dealer's own data
   vpicBatteryKwh?: number; // NHTSA vPIC battery-size decode — version discriminator
+  /**
+   * Set when this listing's own description unambiguously names a DIFFERENT
+   * version than `trim` claims, to the name the description gave. Decided at
+   * sync time (scraper/lib/trim-suspect.mjs), because the judgement needs the
+   * whole corpus and the description, and the browse feed carries neither.
+   * Consumed by lib/listings/trimClaim.ts.
+   */
+  trimSuspect?: string;
   imageUrl?: string;
   images?: string[]; // gallery, when the source provided more than one
   interiorColor?: string;
