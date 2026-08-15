@@ -24,6 +24,8 @@ interface FeedRow {
   payload: Listing;
   first_seen_at: string;
   last_seen_at: string;
+  prev_price_usd: number | null;
+  price_changed_at: string | null;
 }
 
 interface DetailRow {
@@ -54,7 +56,7 @@ export async function fetchListingsFromDb(): Promise<Listing[] | null> {
     const rows: FeedRow[] = [];
     for (let from = 0; ; from += PAGE) {
       const res = await fetch(
-        `${base}/rest/v1/live_listings_feed?select=payload,first_seen_at,last_seen_at&order=vin.asc`,
+        `${base}/rest/v1/live_listings_feed?select=payload,first_seen_at,last_seen_at,prev_price_usd,price_changed_at&order=vin.asc`,
         {
           headers: { ...headers(), Range: `${from}-${from + PAGE - 1}` },
           next: { revalidate: REVALIDATE_SECONDS },
@@ -69,6 +71,8 @@ export async function fetchListingsFromDb(): Promise<Listing[] | null> {
       ...r.payload,
       firstSeenAt: r.first_seen_at,
       lastSeenAt: r.last_seen_at,
+      prevPriceUsd: r.prev_price_usd ?? undefined,
+      priceChangedAt: r.price_changed_at ?? undefined,
     }));
   } catch (err) {
     console.error("[listings] Supabase read failed — serving bundled JSON fallback:", err);

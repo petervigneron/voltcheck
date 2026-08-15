@@ -39,6 +39,8 @@ export interface Listing {
   firstSeenAt?: string;
   lastSeenAt?: string;
   priceHistory?: { priceUsd: number; observedAt: string }[];
+  prevPriceUsd?: number; // the asking price before the current one
+  priceChangedAt?: string; // when the current price took effect
   // Per-VIN campaign history, where an owner portal exposes it (GM today).
   campaignCheck?: {
     packReplaced: boolean;

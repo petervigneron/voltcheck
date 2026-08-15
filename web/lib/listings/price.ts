@@ -24,3 +24,22 @@ export function hasRealPrice(l: Pick<Listing, "priceUsd" | "condition">): boolea
   if (typeof l.priceUsd !== "number") return false;
   return l.priceUsd >= (l.condition === "new" ? NEW_PRICE_FLOOR_USD : PRICE_FLOOR_USD);
 }
+
+/**
+ * A price cut worth a card's attention: at least $500 off, within the last
+ * 14 days, between two prices that both pass the junk-price floor. The $500
+ * bar comes from live data (2026-08-14: any-cut = 7.3% of inventory, ≥$500 =
+ * 3.6% — about two cards per page of sixty, an exception rather than a
+ * pattern; ≥5% = 0.6%, too rare to teach the color's meaning).
+ */
+export const PRICE_CUT_MIN_USD = 500;
+export const PRICE_CUT_WINDOW_DAYS = 14;
+
+export function priceCut(l: Listing): { amountUsd: number; at: string } | null {
+  if (!hasRealPrice(l) || l.prevPriceUsd == null || !l.priceChangedAt) return null;
+  if (!hasRealPrice({ priceUsd: l.prevPriceUsd, condition: l.condition })) return null;
+  const amountUsd = l.prevPriceUsd - l.priceUsd;
+  if (amountUsd < PRICE_CUT_MIN_USD) return null;
+  if (Date.now() - Date.parse(l.priceChangedAt) > PRICE_CUT_WINDOW_DAYS * 86_400_000) return null;
+  return { amountUsd, at: l.priceChangedAt };
+}

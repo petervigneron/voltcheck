@@ -36,6 +36,9 @@ export default async function Browse(props: PageProps<"/">) {
   const zip = s("zip");
   const radius = s("radius") || "50";
   const sort = s("sort") || "featured";
+  // Prototype flag: ?grounds=fact makes card colors mean something (teal =
+  // new battery, cobalt = recent price cut) instead of the one-in-five rhythm.
+  const grounds = s("grounds") === "fact" ? ("fact" as const) : ("rhythm" as const);
   const origin = zipCoords(zip);
 
   const listings = await allListings();
@@ -228,7 +231,7 @@ export default async function Browse(props: PageProps<"/">) {
         <>
           <div className="grid grid-cols-1 border-t-[3px] border-l-[3px] border-ink sm:grid-cols-2 lg:grid-cols-3">
             {shown.map((e, i) => (
-              <ListingCard key={e.listing.id} e={e} distanceMi={dist.get(e.listing.id)} index={i} />
+              <ListingCard key={e.listing.id} e={e} distanceMi={dist.get(e.listing.id)} index={i} grounds={grounds} />
             ))}
           </div>
 

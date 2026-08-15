@@ -6,7 +6,8 @@
 //   kit     equipment present (heat pump, fast charging)
 //   miss    something absent — the only alarm in the system, so it stays rare
 //   flag    an outlier in either direction (4,000 miles, or 149,000)
-export type TileKind = "range" | "spec" | "kit" | "miss" | "flag";
+//   cut     the price came down — states the amount the ground announces
+export type TileKind = "range" | "spec" | "kit" | "miss" | "flag" | "cut";
 
 const KIND: Record<TileKind, string> = {
   range: "bg-cobalt text-paper",
@@ -14,6 +15,7 @@ const KIND: Record<TileKind, string> = {
   kit: "bg-teal text-paper",
   miss: "bg-vermilion text-paper",
   flag: "bg-saffron text-ink",
+  cut: "bg-cobalt text-paper",
 };
 
 // On a card that has taken a solid ground, tiles knock out to white so the
@@ -24,6 +26,7 @@ const ON_COBALT: Record<TileKind, string> = {
   kit: "bg-paper text-cobalt",
   miss: "bg-ink text-paper",
   flag: "bg-saffron text-ink",
+  cut: "bg-paper text-cobalt",
 };
 
 const ON_SAFFRON: Record<TileKind, string> = {
@@ -32,9 +35,19 @@ const ON_SAFFRON: Record<TileKind, string> = {
   kit: "bg-ink text-saffron",
   miss: "bg-vermilion text-paper",
   flag: "bg-ink text-saffron",
+  cut: "bg-cobalt text-paper",
 };
 
-export type TileGround = "paper" | "cobalt" | "saffron";
+const ON_TEAL: Record<TileKind, string> = {
+  range: "bg-paper text-teal",
+  spec: "bg-paper text-teal",
+  kit: "bg-paper text-teal",
+  miss: "bg-ink text-paper",
+  flag: "bg-saffron text-ink",
+  cut: "bg-paper text-teal",
+};
+
+export type TileGround = "paper" | "cobalt" | "saffron" | "teal";
 
 export function Tile({
   kind = "spec",
@@ -47,7 +60,8 @@ export function Tile({
   title?: string;
   children: React.ReactNode;
 }) {
-  const palette = ground === "cobalt" ? ON_COBALT : ground === "saffron" ? ON_SAFFRON : KIND;
+  const palette =
+    ground === "cobalt" ? ON_COBALT : ground === "saffron" ? ON_SAFFRON : ground === "teal" ? ON_TEAL : KIND;
   return (
     <span
       title={title}

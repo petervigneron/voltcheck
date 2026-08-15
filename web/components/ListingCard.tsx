@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { displayTrim, type EnrichedListing } from "@/lib/listings/enrich";
 import { Tile, type TileGround, type TileKind } from "./Tile";
-import { hasRealPrice } from "@/lib/listings/price";
+import { hasRealPrice, priceCut } from "@/lib/listings/price";
 
 // The key facts a shopper compares — range, heat pump, drivetrain — come
 // first and always survive the cap; extras (fast charging, new battery, pack
@@ -70,10 +70,20 @@ function subtitle(e: EnrichedListing, distanceMi?: number) {
   return bits.join(" · ");
 }
 
-// One card in five takes a solid ground, alternating cobalt and saffron. It's
-// the rhythm that keeps a long grid from flattening, and the ceiling that keeps
-// it from shouting.
-function groundFor(index: number): TileGround {
+// Two ways a card earns a solid ground:
+//
+//   rhythm — one card in five, alternating cobalt and saffron; pure pacing,
+//            the colour says nothing about the car (the original scheme).
+//   fact   — the ground IS a card-level fact: teal = the battery pack was
+//            replaced, cobalt = the price came down (≥$500 within 14 days,
+//            see lib/listings/price.ts). Everything else stays paper, and
+//            the rarity is the point — a colored card is an event.
+//
+// The fact never rides on colour alone: a teal card carries the "New
+// battery" tile, a cobalt card gets a "−$2,100" tile prepended.
+export type GroundsMode = "rhythm" | "fact";
+
+function rhythmGround(index: number): TileGround {
   if (index % 5 !== 1) return "paper";
   return Math.floor(index / 5) % 2 === 0 ? "cobalt" : "saffron";
 }
@@ -82,26 +92,49 @@ const GROUND_CLS: Record<TileGround, string> = {
   paper: "bg-paper text-ink",
   cobalt: "bg-cobalt text-paper",
   saffron: "bg-saffron text-ink",
+  teal: "bg-teal text-paper",
 };
 
 const META_CLS: Record<TileGround, string> = {
   paper: "text-ink/60",
   cobalt: "text-paper/70",
   saffron: "text-ink/70",
+  teal: "text-paper/70",
 };
+
+const CUT_DATE_FMT = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
 
 export function ListingCard({
   e,
   distanceMi,
   index = 0,
+  grounds = "rhythm",
 }: {
   e: EnrichedListing;
   distanceMi?: number;
   index?: number;
+  grounds?: GroundsMode;
 }) {
   const l = e.listing;
-  const ground = groundFor(index);
-  const tiles = listingTiles(e, 5);
+  const cut = grounds === "fact" ? priceCut(l) : null;
+  const ground: TileGround =
+    grounds === "fact"
+      ? l.campaignCheck?.packReplaced
+        ? "teal"
+        : cut
+          ? "cobalt"
+          : "paper"
+      : rhythmGround(index);
+  const tiles = cut
+    ? [
+        {
+          kind: "cut" as TileKind,
+          text: `−$${cut.amountUsd.toLocaleString()}`,
+          title: `Was $${l.prevPriceUsd!.toLocaleString()} — cut $${cut.amountUsd.toLocaleString()} on ${CUT_DATE_FMT.format(new Date(cut.at))}`,
+        },
+        ...listingTiles(e, 4),
+      ]
+    : listingTiles(e, 5);
 
   return (
     <Link
