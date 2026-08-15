@@ -54,14 +54,24 @@ export function listingTiles(
     });
   }
 
-  // The chip stays a bare number; which capacity it is rides in the tooltip,
-  // because "84 kWh total" and "77 kWh usable" are not the same claim.
+  // A pack size the maker never published gets the number and the word "est",
+  // because "84 kWh" and "84 kWh, someone measured it" are different claims and
+  // the second one shouldn't be able to pass as the first. Which capacity it is
+  // — usable or total — is the smaller question and stays in the tooltip.
   if (e.packKwh) {
-    const basis = e.packKwh.basis === "total" ? "Total capacity" : "Usable capacity";
+    const { value, basis, estimated, source, note } = e.packKwh;
+    const what = basis === "total" ? "Total capacity" : "Usable capacity";
+    const how = !estimated
+      ? "manufacturer-published"
+      : source === "agg"
+        ? "unverified — no primary source found"
+        : source === "vin"
+          ? "from the maker's Part 565 filing, declared per VIN pattern rather than per car"
+          : "estimated — the maker publishes no figure";
     t.push({
       kind: "spec",
-      text: `${Math.round(e.packKwh.value)} kWh`,
-      title: e.packKwh.note ? `${basis} — ${e.packKwh.note}` : basis,
+      text: `${Math.round(value)} kWh${estimated ? " est" : ""}`,
+      title: `${what}, ${how}${note ? ` · ${note}` : ""}`,
     });
   }
 

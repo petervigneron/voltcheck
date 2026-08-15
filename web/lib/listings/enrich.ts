@@ -1,5 +1,5 @@
 import type { Listing } from "./types";
-import type { EnrichmentResult, EnrichmentRow, Fact, PortStandard, VinDecode } from "../types";
+import type { EnrichmentResult, EnrichmentRow, Fact, PortStandard, Source, VinDecode } from "../types";
 import { matchEnrichment } from "../enrichment/match";
 import { decodeTeslaVin, isTeslaVin } from "../tesla-vin";
 import type { TeslaVinFacts } from "../types";
@@ -20,10 +20,14 @@ export interface EnrichedListing {
    * to prefer, but most makers never publish it — Hyundai's own spec sheet
    * gives one "Battery System Capacity" row and no split, and so do Kia, GM,
    * Honda, Toyota and Volvo. Falling back to the nameplate figure is what makes
-   * a battery number exist at all for those cars; `basis` says which it is so
-   * nothing downstream has to guess.
+   * a battery number exist at all for those cars.
+   *
+   * Usable-vs-total is the smaller question and rides in the tooltip. The one
+   * that has to be visible is `estimated`: whether the maker published this
+   * number or somebody worked it out from a teardown, a BMS log or a spec
+   * aggregator. Those are different claims and a card can't show them alike.
    */
-  packKwh?: { value: number; basis: "usable" | "total"; note?: string };
+  packKwh?: { value: number; basis: "usable" | "total"; estimated: boolean; source: Source; note?: string };
   packVariant?: string;
   port?: Fact<PortStandard>;
   heatPump: { status: "yes" | "no" | "verify"; detail: string } | null;
@@ -152,15 +156,25 @@ function decodeFromListing(l: Listing): VinDecode {
 }
 
 // Usable first — it's the capacity a driver actually gets — then the nameplate
-// figure. Never both: a chip that reads "84 kWh" next to one reading "77 kWh"
-// has to be measuring the same thing, and within a model it now does, because
-// a model's rows come from one maker's disclosure practice.
+// figure. Never both: a chip reading "84 kWh" next to one reading "77 kWh" has
+// to be measuring the same thing, and within a model it does, because a model's
+// rows come from one maker's disclosure practice.
+//
+// Only "mfr" is a published pack size. A Part 565 filing (`vin`) is the maker's
+// own number but declared at VDS-pattern level, which is why the matcher has an
+// ignoreKwhHint escape for cohorts where it's flatly wrong — good enough to
+// show, not good enough to show unqualified. Everything else is a teardown, a
+// BMS log or an aggregator.
 function packSize(row?: EnrichmentRow): EnrichedListing["packKwh"] {
-  const usable = row?.battery?.packUsableKwh;
-  if (usable) return { value: usable.value, basis: "usable", note: usable.note };
-  const gross = row?.battery?.packGrossKwh;
-  if (gross) return { value: gross.value, basis: "total", note: gross.note };
-  return undefined;
+  const fact = row?.battery?.packUsableKwh ?? row?.battery?.packGrossKwh;
+  if (!fact) return undefined;
+  return {
+    value: fact.value,
+    basis: row?.battery?.packUsableKwh ? "usable" : "total",
+    estimated: fact.source !== "mfr",
+    source: fact.source,
+    note: fact.note,
+  };
 }
 
 export function enrichListing(l: Listing): EnrichedListing {
