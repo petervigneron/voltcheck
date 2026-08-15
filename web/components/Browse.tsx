@@ -3,8 +3,8 @@
 import { useEffect, useMemo, useReducer, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { ListingCard, type GroundsMode } from "./ListingCard";
-import { SearchBar, FilterRail, type Suggestion } from "./Filters";
-import { REMOVABLE, describeFilter } from "@/lib/filters";
+import { SearchBar, FilterRail, SpecFacets, type FacetGroup, type Suggestion } from "./Filters";
+import { REMOVABLE, SPEC_FACETS, FACET_CAP, describeFilter, dropSpecFilters, splitValues, type SpecFacet } from "@/lib/filters";
 import { featuredScore, type CardRow } from "@/lib/listings/card";
 import { milesBetween } from "@/lib/geo";
 import { pushUrl } from "@/lib/pushUrl";
@@ -14,6 +14,23 @@ const CELL = "border-r-[3px] border-b-[3px] border-ink";
 // The band under the search box: the four deepest models in inventory, each a
 // one-click search. Deep inventory is the popularity signal we actually have.
 const BAND_GROUNDS = ["bg-saffron", "bg-putty", "bg-putty", "bg-teal text-paper"];
+
+// Which field on a row each spec facet groups by. Values are strings because
+// that's what a URL carries; the numeric facets sort back to numbers.
+const FACET_OF: Record<SpecFacet, (r: CardRow) => string | undefined> = {
+  trim: (r) => r.trim,
+  kwh: (r) => (r.kwh != null ? String(r.kwh) : undefined),
+  epa: (r) => (r.rangeMi != null ? String(r.rangeMi) : undefined),
+};
+
+// Some feeds repeat the make inside the model ("Ford" / "Ford F-150
+// Lightning"), which would read as two models and cost those cars their spec
+// rail. Only the grouping is normalized here — the stored model is untouched.
+const modelKey = (r: CardRow) => {
+  const make = r.make.toLowerCase();
+  const model = r.model.toLowerCase();
+  return `${make} ${model.startsWith(`${make} `) ? model.slice(make.length + 1) : model}`;
+};
 
 // The whole inventory arrives once per visitor (CDN-cached JSON, hourly
 // revalidate) and every filter, sort, and page flip after that is a pure
@@ -95,6 +112,7 @@ function PopularBand({ popular, q }: { popular: { make: string; model: string; c
   const go = (label: string, pressed: boolean) => {
     const params = new URLSearchParams(sp.toString());
     params.delete("page");
+    dropSpecFilters(params);
     if (pressed) params.delete("q");
     else params.set("q", label);
     pushUrl(params);
@@ -194,7 +212,7 @@ export function Browse() {
     return { tally, suggestions, popular: canon.slice(0, 4), makesModels };
   }, [rows]);
 
-  const { results, dist, relief, activeCount } = useMemo(() => {
+  const { results, dist, relief, activeCount, facets } = useMemo(() => {
     const all = rows ?? [];
 
     const dist = new Map<string, number>();
@@ -215,8 +233,16 @@ export function Browse() {
       };
     }
     if (q) {
-      const toks = q.split(/\s+/);
-      tests.q = (r) => toks.every((tok) => r.hay.includes(tok));
+      // A one- or two-letter token is a substring of half the language: "y" in
+      // "tesla model y" lands inside "grey" and drags in every Model 3 painted
+      // Stealth Grey. Short tokens have to match a whole word; longer ones keep
+      // matching inside one, which is what lets "buzz" find "ID. Buzz".
+      const toks = q.split(/\s+/).map((tok) => {
+        if (tok.length > 2) return (hay: string) => hay.includes(tok);
+        const re = new RegExp(`\\b${tok.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`);
+        return (hay: string) => re.test(hay);
+      });
+      tests.q = (r) => toks.every((match) => match(r.hay));
     }
     if (make) tests.make = (r) => r.make === make;
     if (model) tests.model = (r) => r.model === model;
@@ -234,6 +260,18 @@ export function Browse() {
     if (maxMiles) tests.maxMiles = (r) => r.mileage != null && r.mileage <= maxMiles;
     if (minRange) tests.minRange = (r) => !!r.rangeMi && r.rangeMi >= minRange;
     if (heatPump) tests.heatPump = (r) => r.heatPump === "yes";
+    // Values OR within a spec facet ("Lariat or XLT"), facets AND with each
+    // other. A car whose version we can't pin down has no value to match on and
+    // sits the facet out, the same way the drivetrain and body filters work.
+    for (const f of SPEC_FACETS) {
+      const on = new Set(splitValues(s(f.key)));
+      if (!on.size) continue;
+      const get = FACET_OF[f.key];
+      tests[f.key] = (r) => {
+        const v = get(r);
+        return v !== undefined && on.has(v);
+      };
+    }
 
     const activeKeys = REMOVABLE.filter((k) => tests[k]);
     const matches = (r: CardRow, skip?: string) => activeKeys.every((k) => k === skip || tests[k]!(r));
@@ -300,7 +338,70 @@ export function Browse() {
             .sort((a, b) => b.n - a.n)
         : [];
 
-    return { results, dist, relief, activeCount: activeKeys.length };
+    // "Which version of this car?" is only a question once there's one car in
+    // question, so the spec rail is keyed on the results — however they got
+    // narrowed — being a single model. The pool it describes is everything the
+    // other filters allow, with the spec facets themselves lifted: the rail has
+    // to keep offering the versions you didn't pick, not just the one you did.
+    const specKeys = new Set<string>(SPEC_FACETS.map((f) => f.key));
+    const base = all.filter((r) => activeKeys.every((k) => specKeys.has(k) || tests[k]!(r)));
+
+    const byModel = new Map<string, CardRow[]>();
+    for (const r of base) {
+      const k = modelKey(r);
+      const group = byModel.get(k);
+      if (group) group.push(r);
+      else byModel.set(k, [r]);
+    }
+    let pool: CardRow[] = [];
+    for (const group of byModel.values()) if (group.length > pool.length) pool = group;
+    // A handful of feed rows carrying the trim in the model field ("Model Y
+    // Long Range") shouldn't cost 690 Model Ys their rail, so the test is
+    // dominance rather than purity. A genuinely mixed result set — two models
+    // that split the page — has no one set of versions to offer and gets none.
+    const specPool = pool.length >= 2 && pool.length / base.length >= 0.9 ? pool : [];
+
+    const facets: FacetGroup[] = [];
+    for (const f of SPEC_FACETS) {
+      const get = FACET_OF[f.key];
+      const seen = new Set<string>();
+      for (const r of specPool) {
+        const v = get(r);
+        if (v !== undefined) seen.add(v);
+      }
+      // One value isn't a choice, and none means we can't spec this model.
+      if (seen.size < 2) continue;
+      // Counts hold the *other* facets fixed. Counting against the filtered
+      // results instead would zero every unpicked chip in a facet the moment
+      // you picked one, which reads as "no such car".
+      const others = SPEC_FACETS.filter((o) => o.key !== f.key && tests[o.key]);
+      const counts = new Map<string, number>();
+      for (const r of specPool) {
+        const v = get(r);
+        if (v === undefined || !others.every((o) => tests[o.key]!(r))) continue;
+        counts.set(v, (counts.get(v) ?? 0) + 1);
+      }
+      const values: FacetGroup["values"] = [...seen].map((v) => ({
+        v,
+        label: `${v}${f.unit}`,
+        n: counts.get(v) ?? 0,
+      }));
+      // Numbers read in their own order; trims have none, so the deepest stock
+      // leads and anything ruled out falls to the end.
+      if (f.key === "trim") values.sort((a, b) => b.n - a.n || a.v.localeCompare(b.v));
+      else values.sort((a, b) => Number(a.v) - Number(b.v));
+      // Which values survive the cap is a question of stock, not of order.
+      const keep = new Set(
+        [...values]
+          .sort((a, b) => b.n - a.n)
+          .slice(0, FACET_CAP)
+          .map((v) => v.v)
+      );
+      for (const v of values) v.top = keep.has(v.v);
+      facets.push({ key: f.key, label: f.label, values });
+    }
+
+    return { results, dist, relief, activeCount: activeKeys.length, facets };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- s() reads sp, listed
   }, [rows, sp, origin, tally]);
 
@@ -330,6 +431,8 @@ export function Browse() {
       </div>
 
       <FilterRail makesModels={makesModels} inferred={inferred} />
+
+      <SpecFacets facets={facets} />
 
       {rows === null ? (
         failed ? (

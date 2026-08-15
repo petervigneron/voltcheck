@@ -7,6 +7,9 @@ export const REMOVABLE = [
   "q",
   "make",
   "model",
+  "trim",
+  "kwh",
+  "epa",
   "cond",
   "drive",
   "body",
@@ -51,7 +54,43 @@ export const BODY_TYPES = [
 
 export type BodyType = (typeof BODY_TYPES)[number]["value"];
 
+/**
+ * The spec facets — the versions of one model, offered once the results are
+ * down to a single model (components/Filters.tsx SpecFacets). Each holds a
+ * comma-separated list of values that OR together; the facets AND with each
+ * other and with everything else on the rail.
+ */
+export const SPEC_FACETS = [
+  { key: "trim", label: "Trim", unit: "" },
+  { key: "kwh", label: "Battery", unit: " kWh" },
+  { key: "epa", label: "Range", unit: " mi" },
+] as const;
+
+export type SpecFacet = (typeof SPEC_FACETS)[number]["key"];
+
+// Twelve chips is already two rows on a laptop; past that a model's versions
+// stop being scannable, which is the only thing the rail is for. Which twelve
+// is decided by depth of stock, never by position — slicing a range row sorted
+// by miles would hide the longest-range versions, the half most shoppers came
+// for. The rest stay one click away behind "+N more".
+export const FACET_CAP = 12;
+
+/** A trim from the last model means nothing under the next one. */
+export function dropSpecFilters(params: URLSearchParams): void {
+  for (const f of SPEC_FACETS) params.delete(f.key);
+}
+
+export const splitValues = (v: string) => v.split(",").filter(Boolean);
+
+/** Toggle one value inside a facet's list, preserving the order it was picked. */
+export function toggleValue(current: string, value: string): string {
+  const vs = splitValues(current);
+  const next = vs.includes(value) ? vs.filter((v) => v !== value) : [...vs, value];
+  return next.join(",");
+}
+
 const money = (v: string) => `$${Number(v).toLocaleString()}`;
+const orList = (v: string, unit: string) => `${splitValues(v).join(" or ")}${unit}`;
 
 export function describeFilter(key: string, value: string): string | null {
   switch (key) {
@@ -60,6 +99,12 @@ export function describeFilter(key: string, value: string): string | null {
     case "make":
     case "model":
       return value;
+    case "trim":
+      return orList(value, "");
+    case "kwh":
+      return orList(value, " kWh");
+    case "epa":
+      return orList(value, " mi range");
     case "cond":
       return value === "new" ? "New" : "Used & certified";
     case "drive":

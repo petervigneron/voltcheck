@@ -2,7 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { useCallback, useState } from "react";
-import { REMOVABLE, QUICK_TOGGLES, BODY_TYPES, describeFilter } from "@/lib/filters";
+import { REMOVABLE, QUICK_TOGGLES, BODY_TYPES, describeFilter, dropSpecFilters, splitValues, toggleValue } from "@/lib/filters";
 import { pushUrl } from "@/lib/pushUrl";
 
 const CELL = "border-r-[3px] border-b-[3px] border-ink";
@@ -48,6 +48,7 @@ function SearchBox({ current, suggestions }: { current: string; suggestions: Sug
     if (q) params.set("q", q);
     else params.delete("q");
     params.delete("page");
+    dropSpecFilters(params);
     pushUrl(params);
   };
 
@@ -133,6 +134,95 @@ function SearchBox({ current, suggestions }: { current: string; suggestions: Sug
   );
 }
 
+/** One spec axis of a single model, with the count each value would return. */
+export type FacetGroup = {
+  key: string;
+  label: string;
+  /**
+   * Already in display order. `v` is what goes in the URL, `label` is what the
+   * chip reads, and `top` marks the values deep enough in stock to show before
+   * the row is expanded (lib/filters.ts FACET_CAP).
+   */
+  values: { v: string; label: string; n: number; top?: boolean }[];
+};
+
+/**
+ * The spec rail: once the results are one model, the versions of that model.
+ * Only axes that actually vary here get a row, so a model with one battery
+ * size never shows a battery row a shopper can't act on.
+ */
+export function SpecFacets({ facets }: { facets: FacetGroup[] }) {
+  const sp = useSearchParams();
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+
+  const pick = (key: string, v: string) => {
+    const params = new URLSearchParams(sp.toString());
+    const next = toggleValue(params.get(key) ?? "", v);
+    if (next) params.set(key, next);
+    else params.delete(key);
+    params.delete("page");
+    pushUrl(params);
+  };
+
+  if (facets.length === 0) return null;
+
+  return (
+    <div className="border-l-[3px] border-ink">
+      {facets.map((f) => {
+        const on = new Set(splitValues(sp.get(f.key) ?? ""));
+        const open = expanded[f.key];
+        // A value the shopper picked stays put even if it's too thin to have
+        // made the cap — a chip can't vanish out from under its own ✓.
+        const shown = open ? f.values : f.values.filter((v) => v.top || on.has(v.v));
+        const hidden = f.values.length - shown.length;
+        return (
+          <div key={f.key} className="flex flex-wrap items-stretch">
+            <div
+              className={`${CELL} flex w-full items-center bg-putty px-4 py-2.5 sm:w-[132px] ${FIELD_LABEL}`}
+            >
+              {f.label}
+            </div>
+            {shown.map((v) => {
+              const sel = on.has(v.v);
+              // A value the other facets have already ruled out stays visible —
+              // it's part of what this model comes as — but it can't be picked
+              // into an empty page.
+              const dead = v.n === 0 && !sel;
+              return (
+                <button
+                  key={v.v}
+                  type="button"
+                  aria-pressed={sel}
+                  disabled={dead}
+                  title={sel ? `Remove: ${v.label}` : `${v.n} ${v.n === 1 ? "car" : "cars"}`}
+                  onClick={() => pick(f.key, v.v)}
+                  className={`${CELL} flex grow items-center gap-2 px-4 py-2.5 text-[13px] font-bold tracking-[0.04em] uppercase sm:grow-0 ${
+                    dead ? "bg-paper text-ink/30" : `${HOVER} ${sel ? "bg-cobalt text-paper" : "bg-paper text-ink"}`
+                  }`}
+                >
+                  {sel && <span aria-hidden="true">✓</span>}
+                  {v.label}
+                  <span className={`tabular-nums ${sel ? "text-paper/70" : "text-ink/45"}`}>{v.n}</span>
+                </button>
+              );
+            })}
+            {hidden > 0 && (
+              <button
+                type="button"
+                onClick={() => setExpanded((e) => ({ ...e, [f.key]: true }))}
+                className={`${CELL} ${HOVER} flex grow items-center bg-paper px-4 py-2.5 text-[13px] font-bold tracking-[0.04em] text-ink/60 uppercase sm:grow-0`}
+              >
+                +{hidden} more
+              </button>
+            )}
+            <div className={`${CELL} hidden flex-1 min-w-[40px] bg-paper sm:block`} aria-hidden="true" />
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 // `inferred` is the IP-geolocated city when no ZIP is set ("" when the origin
 // exists but the city is unknown); undefined means no origin at all.
 export function FilterRail({ makesModels, inferred }: { makesModels: Record<string, string[]>; inferred?: string }) {
@@ -148,6 +238,7 @@ export function FilterRail({ makesModels, inferred }: { makesModels: Record<stri
         else params.delete(k);
       }
       if ("make" in updates) params.delete("model");
+      if ("make" in updates || "model" in updates) dropSpecFilters(params);
       // Changed filters mean a different result set — page 3 of it is noise.
       params.delete("page");
       pushUrl(params);
@@ -427,7 +518,7 @@ export function FilterRail({ makesModels, inferred }: { makesModels: Record<stri
               checked={heatPumpOn}
               onChange={(e) => apply({ heatPump: e.target.checked ? "1" : "" })}
             />
-            <span className="text-[13px] font-bold uppercase tracking-[0.04em]">Heat pump, confirmed</span>
+            <span className="text-[13px] font-bold uppercase tracking-[0.04em]">Heat pump</span>
           </label>
 
           {sp.size > 0 && (

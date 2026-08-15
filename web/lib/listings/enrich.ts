@@ -90,6 +90,45 @@ const RIVIAN_TIERS = /\b(adventure package|adventure|launch edition|ascend|premi
 // where the trim belongs.
 const PORSCHE_NOISE = /\b(type\s*y1a|y1a|w\/?\s*premium\s*(&\s*tech\s*)?package)\b/gi;
 
+// Feed placeholders and non-trims: the fuel type, a bare door count, "NA".
+const TRIM_JUNK = /^(n\/?a|none|other|unknown|electric|ev|4dr|2dr)$/i;
+// Body words BODY_NOISE doesn't cover; they only ever show up as leftovers
+// once the rest of a body-style string has been stripped.
+// eAWD is Ford's name for a drivetrain cleanTrim already drops under its own;
+// left in, it splits Mach-E Premium into "Premium" and "Premium eAWD".
+const TRIM_BODY = /\b(vehicles?|wagon|suv|crossover|pickup|2wd|eawd)\b/gi;
+// Packaging bolted onto the trim. A wheel option or a special edition isn't a
+// different version of the car, and as a facet value it splits one trim into a
+// dozen chips of one ("Limited, Disney 100 Platinum Edition" is a Limited).
+// The spaced dash is a separator ("GT - Rally"); the tight one is spelling
+// ("GT-Line"), and cutting there would merge every Kia trim into "GT".
+const TRIM_TAIL = /\s*(?:[,|/]|\s-\s|\bw\/|\bwith\b).*$/i;
+
+/**
+ * The trim as a *classifier* — what the in-model spec facets group by. Stricter
+ * than displayTrim, because a value here becomes a chip a shopper picks:
+ * anything that isn't a version of the car has to go, and near-identical
+ * spellings have to land on one value. Undefined when nothing survives; the
+ * per-model casing fold lives in buildIndex.ts, where the whole set is visible.
+ */
+export function specTrim(l: Listing): string | undefined {
+  const cleaned = cleanTrim(l);
+  if (!cleaned) return undefined;
+  let t = cleaned.replace(TRIM_TAIL, "").replace(TRIM_BODY, " ").replace(/\s+/g, " ").trim();
+  // "Premium All-Wheel Drive (Premium AWD)" loses both drivetrain halves and
+  // comes out of cleanTrim reading "Premium Premium".
+  const words = t
+    .split(" ")
+    .filter((w, i, a) => i === 0 || w.toLowerCase() !== a[i - 1].toLowerCase());
+  t = words.join(" ");
+  if (!t || TRIM_JUNK.test(t)) return undefined;
+  // Past four words it's the dealer's feature list, not a trim name.
+  if (words.length > 4) return undefined;
+  // "LARIAT" and "Lariat" have to be one chip. Shouted words come back to
+  // title case; short all-caps trims (XLT, SEL, GT, RS) are how they're spelled.
+  return words.map((w) => (/^[A-Z]{4,}$/.test(w) ? w[0] + w.slice(1).toLowerCase() : w)).join(" ");
+}
+
 function decodeFromListing(l: Listing): VinDecode {
   return {
     vin: l.vin,

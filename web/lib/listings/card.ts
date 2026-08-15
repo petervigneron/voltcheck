@@ -39,6 +39,13 @@ export interface CardRow {
   /** Dealer-zip centroid, for distance filtering and sorting. */
   loc?: [number, number];
   imageUrl?: string;
+  /**
+   * Trim as a classifier, normalized across the model's feeds — the axis the
+   * in-model spec facets group by, not the display string (that's in `title`).
+   */
+  trim?: string;
+  /** Usable pack size, kWh, when the exact version is known. */
+  kwh?: number;
   /** Resolved EPA range when the exact version is known. */
   rangeMi?: number;
   heatPump?: "yes" | "no" | "verify";
