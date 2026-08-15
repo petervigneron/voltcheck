@@ -9,6 +9,7 @@ export const REMOVABLE = [
   "model",
   "cond",
   "drive",
+  "body",
   "minPrice",
   "maxPrice",
   "minYear",
@@ -28,11 +29,27 @@ export type RemovableFilter = (typeof REMOVABLE)[number];
  * a normal chip instead.
  */
 export const QUICK_TOGGLES: { key: RemovableFilter; value: string; label: string }[] = [
+  { key: "body", value: "suv", label: "SUVs" },
   { key: "minRange", value: "200", label: "200+ mi range" },
   { key: "maxMiles", value: "60000", label: "Under 60k miles" },
   { key: "maxPrice", value: "30000", label: "Under $30,000" },
   { key: "drive", value: "AWD", label: "AWD" },
 ];
+
+/**
+ * The body types a listing can be filtered to. The mapping from model to body
+ * type lives server-side in lib/listings/bodyType.ts; only models it can
+ * verifiably classify are included when one of these is set.
+ */
+export const BODY_TYPES = [
+  { value: "suv", label: "SUVs" },
+  { value: "sedan", label: "Sedans" },
+  { value: "truck", label: "Trucks" },
+  { value: "van", label: "Vans" },
+  { value: "hatchback", label: "Hatchbacks" },
+] as const;
+
+export type BodyType = (typeof BODY_TYPES)[number]["value"];
 
 const money = (v: string) => `$${Number(v).toLocaleString()}`;
 
@@ -47,6 +64,8 @@ export function describeFilter(key: string, value: string): string | null {
       return value === "new" ? "New" : "Used & certified";
     case "drive":
       return value;
+    case "body":
+      return BODY_TYPES.find((b) => b.value === value)?.label ?? null;
     case "minPrice":
       return `Over ${money(value)}`;
     case "maxPrice":

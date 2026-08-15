@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useState } from "react";
-import { REMOVABLE, QUICK_TOGGLES, describeFilter } from "@/lib/filters";
+import { REMOVABLE, QUICK_TOGGLES, BODY_TYPES, describeFilter } from "@/lib/filters";
 
 const CELL = "border-r-[3px] border-b-[3px] border-ink";
 // Interactive cells answer hover and keyboard focus with the same inset cobalt
@@ -356,6 +356,20 @@ export function FilterRail({ makesModels }: { makesModels: Record<string, string
               <option>AWD</option>
               <option>RWD</option>
               <option>FWD</option>
+            </select>
+          </label>
+
+          <label className="flex flex-col gap-1">
+            <span className={FIELD_LABEL} title="Only cars whose body style we know are included when this is set">
+              Car type
+            </span>
+            <select className={FIELD} value={get("body")} onChange={(e) => apply({ body: e.target.value })}>
+              <option value="">Any</option>
+              {BODY_TYPES.map((b) => (
+                <option key={b.value} value={b.value}>
+                  {b.label}
+                </option>
+              ))}
             </select>
           </label>
 
