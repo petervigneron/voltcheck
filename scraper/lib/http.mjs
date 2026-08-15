@@ -143,6 +143,39 @@ export async function politePostJson(url, { headers = {}, body, timeoutMs = 2000
   }
 }
 
+// Polite JSON GET for structured public endpoints that need custom headers
+// (e.g. a Referer some inventory APIs require). Same identity/rate-limit/robots
+// respect as fetchPage, but lets the caller add headers fetchPage cannot.
+export async function politeGetJson(url, { headers = {}, timeoutMs = 20000 } = {}) {
+  if (!(await robotsAllows(url))) return { status: "robots_disallowed", json: null };
+  const u = new URL(url);
+  await politeDelay(u.host);
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), timeoutMs);
+  try {
+    const res = await fetch(url, {
+      headers: {
+        "user-agent": UA,
+        accept: "application/json, text/plain, */*",
+        "x-crawler": `VoltcheckBot/0.1 (+${BOT_PAGE})`,
+        ...headers,
+      },
+      redirect: "follow",
+      signal: ctrl.signal,
+    });
+    const text = await res.text();
+    let json = null;
+    try {
+      json = JSON.parse(text);
+    } catch {}
+    return { status: res.status, json, text };
+  } catch (e) {
+    return { status: `error:${e.name ?? "unknown"}`, json: null };
+  } finally {
+    clearTimeout(t);
+  }
+}
+
 function parseRobots(txt) {
   // Collect Disallow + Crawl-delay rules that apply to * or to us. Minimal
   // parser: good enough to respect intent; unknown directives ignored.

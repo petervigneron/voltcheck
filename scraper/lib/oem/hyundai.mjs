@@ -20,7 +20,7 @@
 //   - records carry dealerCode (state-prefixed, e.g. "KS022") and dealerName
 //     but no dealer zip; state is taken from the code prefix, precise
 //     distance is left to a future dealerCode→zip map
-import { politePostJson } from "../http.mjs";
+import { politePostJson, politeGetJson } from "../http.mjs";
 
 export const HYUNDAI = {
   key: "hyundai",
@@ -33,6 +33,34 @@ export const HYUNDAI = {
 const PAGE_SIZE = 30; // server cap
 const NATIONAL_ZIP = "66952"; // ~geographic center of the US; distance:-1 = nationwide
 const VIN_RE = /^[A-HJ-NPR-Z0-9]{17}$/;
+
+// Hyundai Certified Used Vehicles (CPO) — a separate, simpler endpoint than
+// the new-inventory API: GET /var/hyundai/services/inventory/hcuvInventory
+// Models.json?brand=hyundai&zip=&model=&inspectionType=all&radius=. Returns
+// full used records (VIN, price, real mileage, dealer address, a dealer VDP).
+// Unlike the new API it will not span the nation in one call (a huge radius
+// caps the result set), so CPO is swept over a grid of metro ZIPs at 250mi
+// and deduped by VIN — metros are where used EVs cluster anyway.
+export const HYUNDAI_CPO = {
+  key: "hyundai-cpo",
+  // Its own completeness domain, isolated from the new pull on hyundaiusa.com:
+  // a grid sweep can never certify national completeness, so this must never
+  // sit under a domain the new pull marks complete (that would delist CPO
+  // cars the new pull never saw). Marked truncated always; recheck verifies
+  // liveness through each car's real dealer VDP instead.
+  domain: "hyundai-cpo",
+  api: "https://www.hyundaiusa.com/var/hyundai/services/inventory/hcuvInventoryModels.json",
+  models: ["ioniq-5", "ioniq-6", "ioniq-electric", "kona-electric"],
+};
+
+// ~33 metro ZIPs; 250mi circles around these cover the CONUS markets where
+// Hyundai CPO EVs actually sit. Overlap is fine — VIN dedupe handles it.
+const CPO_ZIP_GRID = [
+  "90001", "94102", "92101", "95814", "98101", "97201", "85001", "89101", "87102",
+  "75201", "77001", "78701", "78201", "80202", "84101", "60601", "55401", "63101",
+  "64101", "44101", "48201", "33101", "30301", "28201", "37201", "70112", "10001",
+  "02101", "19101", "20001", "15201", "32801", "33601",
+];
 
 // dealerCode prefixes are USPS state codes ("KS022" → KS). Validate against the
 // real set so a non-state prefix becomes "no state" rather than a fake one.
@@ -177,5 +205,91 @@ export async function pullHyundai({ log = () => {} } = {}) {
   const shortfall = total > 0 && byVin.size < total * 0.9;
   if (shortfall) report.errors.push(`collected ${byVin.size} of ${total} — paging shortfall`);
   report.truncated = report.errors.length > 0 || byVin.size < HYUNDAI.minExpected;
+  return report;
+}
+
+// hcuvInventoryModels Veh record → normalized certified-used listing.
+function toCpoRecord(veh) {
+  const vin = String(veh.VIN ?? "").toUpperCase();
+  if (!VIN_RE.test(vin)) return null;
+  const year = Number(veh.ModelYear);
+  if (!(year >= 1981 && year <= new Date().getFullYear() + 2)) return null;
+  const model = String(veh.Model ?? "").trim();
+  if (!model) return null;
+  const zip = /^\d{5}/.test(String(veh.DlrZipCode ?? "")) ? String(veh.DlrZipCode).slice(0, 5) : undefined;
+  const imgs = [];
+  if (veh.MainImage) imgs.push(String(veh.MainImage));
+  for (const di of Array.isArray(veh.DealerImage) ? veh.DealerImage : []) {
+    if (di?.URL && !imgs.includes(di.URL)) imgs.push(String(di.URL));
+  }
+  const httpsImgs = imgs.map((u) => u.replace(/^http:\/\//, "https://")).filter((u) => u.startsWith("https://")).slice(0, 8);
+  const vdp = typeof veh.DealerVINUrl === "string" && veh.DealerVINUrl.startsWith("http") ? veh.DealerVINUrl : undefined;
+  return {
+    vin,
+    year,
+    make: HYUNDAI.make,
+    model,
+    trim: veh.TrimDesc || undefined,
+    priceUsd: num(veh.SortablePrice ?? veh.FormattedPrice),
+    mileage: Number.isFinite(veh.SortableMileage) ? Math.round(veh.SortableMileage) : num(veh.Mileage),
+    driveLine: drive(veh.Drivetrain || veh.DrivetrainDesc),
+    exteriorColor: veh.ExtColorDesc || undefined,
+    interiorColor: veh.IntColor || undefined,
+    dealerName: veh.DlrName || undefined,
+    zip,
+    certified: true,
+    condition: "certified",
+    imageUrl: httpsImgs[0],
+    images: httpsImgs,
+    // Real dealer VDP — recheck can verify liveness through it, so CPO rows
+    // are NOT added to the locator recheck-skip set.
+    sourceUrl: vdp || "https://www.hyundaiusa.com/us/en/find-certified-used-vehicles",
+    dealerDomain: HYUNDAI_CPO.domain,
+    evKind: "BEV",
+    evConfidence: "high", // queried by EV model name, EngineDesc Electric
+    platform: "hyundai-cpo-locator",
+    fromVdp: Boolean(vdp),
+    scrapedAt: new Date().toISOString(),
+  };
+}
+
+async function cpoFetch(model, zip, report) {
+  const url = `${HYUNDAI_CPO.api}?brand=hyundai&zip=${zip}&model=${model}&inspectionType=all&radius=250`;
+  for (let attempt = 0; ; attempt++) {
+    // The hcuv endpoint 403s without a Referer, so it needs politeGetJson
+    // (custom headers) rather than the plain fetchPage wrapper.
+    const res = await politeGetJson(url, { headers: { referer: "https://www.hyundaiusa.com/us/en/find-certified-used-vehicles" } });
+    report.fetched++;
+    if (res.status === 200 && res.json) return res.json.cpoInventory?.Vehicles ?? [];
+    const transient = String(res.status).startsWith("error:") || res.status === 429 || res.status >= 500;
+    if (attempt === 0 && transient) { await new Promise((r) => setTimeout(r, 5000)); continue; }
+    report.errors.push(`${res.status} cpo ${model}/${zip}`);
+    return [];
+  }
+}
+
+// Sweep Hyundai CPO EVs over the metro ZIP grid. Always truncated:true — a
+// grid can't certify national completeness, so it never drives delisting;
+// recheck handles CPO liveness through each car's dealer VDP.
+export async function pullHyundaiCpo({ log = () => {} } = {}) {
+  const report = { domain: HYUNDAI_CPO.domain, kind: "oem-locator", budget: null, fetched: 0, vehiclePages: 0, itemListVdps: 0, evs: [], errors: [], notes: [] };
+  const byVin = new Map();
+  for (const model of HYUNDAI_CPO.models) {
+    const before = byVin.size;
+    for (const zip of CPO_ZIP_GRID) {
+      const vehicles = await cpoFetch(model, zip, report);
+      for (const v of vehicles) {
+        const veh = v?.Veh ?? v;
+        const rec = toCpoRecord(veh);
+        if (rec) byVin.set(rec.vin, rec);
+      }
+    }
+    log(`hyundai-cpo/${model}: ${byVin.size - before} added, ${byVin.size} cumulative VINs`);
+  }
+  report.evs = [...byVin.values()];
+  report.vehiclePages = report.fetched;
+  report.notes.push(`${byVin.size} certified-used EVs over ${CPO_ZIP_GRID.length} metro ZIPs (grid sweep)`);
+  // Never certify complete: the grid is a sample, not exhaustive coverage.
+  report.truncated = true;
   return report;
 }
