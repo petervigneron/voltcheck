@@ -2545,4 +2545,50 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
     warranty: RIV_W,
   },
+
+  // ── PHEVs: Wrangler 4xe / Grand Cherokee 4xe / X5 45e-50e / Rogue PHEV ──
+  // The range shown is the EPA ALL-ELECTRIC figure (fueleconomy.gov rangeA) —
+  // the honest number for an EV-shopping site — with the gas-assisted total
+  // in the note. None of these DC-fast-charge (J1772 AC only), which the
+  // cards already show as the "No fast charging" tile.
+  {
+    id: "wrangler-4xe-2021-25", make: "JEEP", model: "Wrangler 4xe", modelYears: [2021, 2025], packVariant: "PHEV",
+    range: { epaRangeMi: f(22, "mfr", "high", "Electric-only EPA range; 370 mi total with the gas engine. Identical rating 2021–25", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47278") },
+    charging: { portStandard: f("J1772", "mfr", "high", "AC charging only — no DC fast charge on any 4xe"), dcFastCharging: f("none", "mfr") },
+  },
+  {
+    id: "wrangler-unl-4xe-2021-25", make: "JEEP", model: "Wrangler Unlimited 4xe", modelYears: [2021, 2025], packVariant: "PHEV",
+    range: { epaRangeMi: f(22, "mfr", "high", "Electric-only EPA range; 370 mi total with the gas engine. Identical rating 2021–25", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47278") },
+    charging: { portStandard: f("J1772", "mfr", "high", "AC charging only — no DC fast charge on any 4xe"), dcFastCharging: f("none", "mfr") },
+  },
+  {
+    id: "gc-4xe-2022-25", make: "JEEP", model: "Grand Cherokee 4xe", modelYears: [2022, 2025], packVariant: "PHEV",
+    range: { epaRangeMi: f(26, "mfr", "high", "Electric-only EPA range; 470 mi total with the gas engine. Identical rating 2022–25", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47277") },
+    charging: { portStandard: f("J1772", "mfr", "high", "AC charging only — no DC fast charge"), dcFastCharging: f("none", "mfr") },
+  },
+  {
+    id: "x5-45e-2021-23", make: "BMW", model: "X5 PHEV", modelYears: [2021, 2023], trim: "xDrive45e", packVariant: "PHEV",
+    range: { epaRangeMi: f(31, "mfr", "high", "xDrive45e electric-only EPA range; 400 mi total with the gas engine", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=42807") },
+    charging: { portStandard: f("J1772", "mfr", "high", "AC charging only"), dcFastCharging: f("none", "mfr") },
+  },
+  {
+    id: "x5-50e-2024-26", make: "BMW", model: "X5 PHEV", modelYears: [2024, 2026], trim: "xDrive50e", packVariant: "PHEV",
+    range: { epaRangeMi: f(39, "mfr", "high", "xDrive50e electric-only EPA range (40 for 2026); 440 mi total with the gas engine. MY2024 has no separate fueleconomy.gov entry (control: 2025–26 are present) — same xDrive50e", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49009") },
+    charging: { portStandard: f("J1772", "mfr", "high", "AC charging only"), dcFastCharging: f("none", "mfr") },
+  },
+  {
+    id: "x5-45e-2021-23-alt", make: "BMW", model: "X5", modelYears: [2021, 2023], trim: ["xDrive45e", "45e"], packVariant: "PHEV",
+    range: { epaRangeMi: f(31, "mfr", "high", "xDrive45e electric-only EPA range; 400 mi total with the gas engine", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=42807") },
+    charging: { portStandard: f("J1772", "mfr", "high", "AC charging only"), dcFastCharging: f("none", "mfr") },
+  },
+  {
+    id: "x5-50e-2024-26-alt", make: "BMW", model: "X5", modelYears: [2024, 2026], trim: ["xDrive50e", "50e"], packVariant: "PHEV",
+    range: { epaRangeMi: f(39, "mfr", "high", "xDrive50e electric-only EPA range (40 for 2026); 440 mi total with the gas engine", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49009") },
+    charging: { portStandard: f("J1772", "mfr", "high", "AC charging only"), dcFastCharging: f("none", "mfr") },
+  },
+  {
+    id: "rogue-phev-2025-26", make: "NISSAN", model: "Rogue Plug-In Hybrid", modelYears: [2025, 2026], packVariant: "PHEV",
+    range: { epaRangeMi: f(38, "mfr", "medium", "Electric-only range, Nissan's EPA-estimate (420 mi total with the gas engine) — fueleconomy.gov has no Rogue PHEV entry yet (control: gas Rogues are present)", "https://usa.nissannews.com/en-US/releases/2026-nissan-rogue-plug-in-hybrid-press-kit") },
+    charging: { portStandard: f("J1772", "mfr", "high", "AC charging only"), dcFastCharging: f("none", "mfr") },
+  },
 ];
