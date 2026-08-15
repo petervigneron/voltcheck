@@ -64,33 +64,84 @@ try {
 } catch {
   console.error("db-sync: no crawl report found — delisting skipped for this run.");
 }
-const res = SERVICE_KEY
-  ? await fetch(`${SUPABASE_URL}/rest/v1/rpc/ingest_listings`, {
-      method: "POST",
-      headers: {
-        apikey: SERVICE_KEY,
-        Authorization: `Bearer ${SERVICE_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ _rows: listings, _source: source, _complete_domains: completeDomains }),
-    })
-  : await fetch(`${SUPABASE_URL}/functions/v1/ingest`, {
-      method: "POST",
-      headers: {
-        apikey: process.env.SUPABASE_ANON_KEY,
-        Authorization: `Bearer ${process.env.SUPABASE_ANON_KEY}`,
-        "x-ingest-token": process.env.SUPABASE_INGEST_TOKEN,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ rows: listings, source, completeDomains }),
-    });
-
-if (!res.ok) {
-  console.error(`db-sync: FAILED — HTTP ${res.status}: ${(await res.text()).slice(0, 500)}`);
-  process.exit(1);
+// The feed outgrew a single request (OEM-locator rows pushed it past the
+// gateway's body ceiling), so it ships in chunks. Chunk boundaries MUST fall
+// between dealer domains, never inside one: ingest_listings delists a
+// complete domain's absent VINs per call, so splitting a domain across two
+// calls would delist the second half while ingesting the first. Each chunk
+// therefore carries whole domains plus exactly the completeDomains it holds
+// rows for. (A complete domain with zero rows certifies nothing either way —
+// the SQL requires incoming rows before delisting — so those ride chunk 1.)
+const CHUNK_BYTES = Number(process.env.DB_SYNC_CHUNK_BYTES ?? 8_000_000);
+const byDomain = new Map();
+for (const l of listings) {
+  const d = l.dealerDomain ?? "";
+  if (!byDomain.has(d)) byDomain.set(d, []);
+  byDomain.get(d).push(l);
 }
-const counts = await res.json();
+const completeSet = new Set(completeDomains);
+const chunks = [];
+let cur = { rows: [], completeDomains: [], bytes: 0 };
+for (const [domain, rows] of byDomain) {
+  const bytes = JSON.stringify(rows).length;
+  if (cur.rows.length && cur.bytes + bytes > CHUNK_BYTES) {
+    chunks.push(cur);
+    cur = { rows: [], completeDomains: [], bytes: 0 };
+  }
+  cur.rows.push(...rows);
+  cur.bytes += bytes;
+  if (completeSet.has(domain)) {
+    cur.completeDomains.push(domain);
+    completeSet.delete(domain);
+  }
+}
+chunks.push(cur);
+cur.completeDomains.push(...completeSet); // row-less complete domains: harmless, see above
+
+const send = (rows, doms) =>
+  SERVICE_KEY
+    ? fetch(`${SUPABASE_URL}/rest/v1/rpc/ingest_listings`, {
+        method: "POST",
+        headers: {
+          apikey: SERVICE_KEY,
+          Authorization: `Bearer ${SERVICE_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ _rows: rows, _source: source, _complete_domains: doms }),
+      })
+    : fetch(`${SUPABASE_URL}/functions/v1/ingest`, {
+        method: "POST",
+        headers: {
+          apikey: process.env.SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${process.env.SUPABASE_ANON_KEY}`,
+          "x-ingest-token": process.env.SUPABASE_INGEST_TOKEN,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ rows, source, completeDomains: doms }),
+      });
+
 console.error(
-  `db-sync: run ${counts.run_id} — ${counts.seen} seen, ${counts.new} new, ` +
-  `${counts.price_changed} price changes, ${counts.delisted} delisted, ${counts.relisted} relisted`
+  `db-sync: ${listings.length} rows in ${chunks.length} chunk(s): ` +
+  chunks.map((c) => `${c.rows.length} rows/${(c.bytes / 1e6).toFixed(1)}MB/${c.completeDomains.length} complete`).join(", ")
+);
+
+const totals = { seen: 0, new: 0, price_changed: 0, delisted: 0, relisted: 0 };
+for (const [i, chunk] of chunks.entries()) {
+  const res = await send(chunk.rows, chunk.completeDomains);
+  if (!res.ok) {
+    // A failed chunk leaves its domains un-synced and un-delisted — stale for
+    // a night, never wrongly removed. Exit hard so the failure is visible.
+    console.error(`db-sync: chunk ${i + 1}/${chunks.length} FAILED — HTTP ${res.status}: ${(await res.text()).slice(0, 500)}`);
+    process.exit(1);
+  }
+  const counts = await res.json();
+  for (const k of Object.keys(totals)) totals[k] += counts[k] ?? 0;
+  console.error(
+    `db-sync: chunk ${i + 1}/${chunks.length} run ${counts.run_id} — ${counts.seen} seen, ${counts.new} new, ` +
+    `${counts.price_changed} price changes, ${counts.delisted} delisted, ${counts.relisted} relisted`
+  );
+}
+console.error(
+  `db-sync: total — ${totals.seen} seen, ${totals.new} new, ` +
+  `${totals.price_changed} price changes, ${totals.delisted} delisted, ${totals.relisted} relisted`
 );

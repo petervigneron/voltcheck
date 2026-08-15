@@ -103,12 +103,35 @@ jobs:
           name: crawl-out-${{ matrix.shard }}
           path: scraper/out/
 
+  # OEM find-inventory locators (GM brands): dealer-authorized public JSON
+  # endpoints that list every franchised rooftop's new-EV stock — including
+  # the ~1.5k dealer domains whose own sites are bot-walled. Independent of
+  # the registry (no probe dependency), and its output is shaped exactly like
+  # a crawl shard, so the crawl-out-* artifact pattern sweeps it into the
+  # same merge. If it dies, its domains simply certify nothing tonight.
+  oem-locator:
+    if: ${{ github.event.inputs.skip_crawl != 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Pull OEM locator inventory
+        working-directory: scraper
+        run: node oem-locator.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: crawl-out-oem
+          path: scraper/out/
+
   # Merge shard outputs, enrich, sync, commit. always() + probe success:
   # this must run even when some shards failed (their work is simply absent
   # from the merge) and when the crawl was skipped (probe-only runs still
   # commit registry status changes).
   finalize:
-    needs: [probe, crawl]
+    needs: [probe, crawl, oem-locator]
     if: ${{ always() && needs.probe.result == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 240 # enrichment + recheck scale with listing count

@@ -432,7 +432,7 @@
       "platform": "custom",
       "robots": "unknown",
       "status": "blocked",
-      "notes": "Probed 2026-08-11 (control-tested): Akamai 403 on robots.txt for our UA; inventory API therefore not called. Posture: closed to declared bots."
+      "notes": "Probed 2026-08-11 (control-tested): Akamai 403 on robots.txt for our UA; inventory API therefore not called. Posture: closed to declared bots. | Re-probed 2026-08-15 (browser-UA identity, control-tested): robots.txt now 200 and does not disallow /inventory, but the inventory API itself is Akamai 403 from any non-browser client. Posture unchanged: bot-managed, off-limits."
     },
     {
       "domain": "rivian.com",

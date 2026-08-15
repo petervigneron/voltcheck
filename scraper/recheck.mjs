@@ -17,6 +17,7 @@ import { readFile } from "node:fs/promises";
 import { fetchRaw } from "./lib/http.mjs";
 import { extractVehicles } from "./lib/jsonld.mjs";
 import { extractDdcVehicles } from "./lib/platforms/dealercom.mjs";
+import { OEM_LOCATOR_DOMAINS } from "./lib/oem/gm.mjs";
 
 function flag(name, fallback) {
   const i = process.argv.indexOf(name);
@@ -61,10 +62,20 @@ for (let from = 0; ; from += 1000) {
   listings.push(...page);
   if (page.length < 1000) break;
 }
-const targets = listings.filter((l) => l.payload?.sourceUrl);
+// OEM-locator listings are excluded on two grounds: the locator pull is
+// complete national coverage nightly (its truncated:false already retires
+// gone VINs via db-sync — recheck exists for page-budgeted crawls that can't
+// prove absence), and their VDP pages are client-rendered shells that echo
+// the VIN from the URL, which would read as "alive" forever. They would also
+// be tens of thousands of same-host fetches at the polite rate.
+const targets = listings.filter(
+  (l) => l.payload?.sourceUrl && !OEM_LOCATOR_DOMAINS.has(l.payload.dealerDomain)
+);
+const skippedOem = listings.filter((l) => OEM_LOCATOR_DOMAINS.has(l.payload?.dealerDomain)).length;
 const work = LIMIT ? targets.slice(0, LIMIT) : targets;
 console.error(
-  `recheck: ${work.length} live listings with a source URL (${listings.length - targets.length} without)`
+  `recheck: ${work.length} live listings with a source URL ` +
+  `(${listings.length - targets.length - skippedOem} without, ${skippedOem} OEM-locator rows skipped)`
 );
 
 // MUST mirror the precedence in lib/normalize.mjs + platforms/dealercom.mjs:

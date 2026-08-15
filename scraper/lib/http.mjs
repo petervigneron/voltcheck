@@ -108,6 +108,41 @@ export async function fetchRaw(url, { timeoutMs = 15000 } = {}) {
   }
 }
 
+// Polite JSON POST for structured public endpoints (OEM inventory locators).
+// Same identity, same per-host rate limit, same robots respect as fetchRaw —
+// a POST to a search API is still a crawl request and gets no exemption.
+export async function politePostJson(url, { headers = {}, body, timeoutMs = 20000 } = {}) {
+  if (!(await robotsAllows(url))) return { status: "robots_disallowed", json: null };
+  const u = new URL(url);
+  await politeDelay(u.host);
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), timeoutMs);
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        "user-agent": UA,
+        accept: "application/json, text/plain, */*",
+        "content-type": "application/json",
+        "x-crawler": `VoltcheckBot/0.1 (+${BOT_PAGE})`,
+        ...headers,
+      },
+      body: JSON.stringify(body),
+      signal: ctrl.signal,
+    });
+    const text = await res.text();
+    let json = null;
+    try {
+      json = JSON.parse(text);
+    } catch {}
+    return { status: res.status, json, text };
+  } catch (e) {
+    return { status: `error:${e.name ?? "unknown"}`, json: null };
+  } finally {
+    clearTimeout(t);
+  }
+}
+
 function parseRobots(txt) {
   // Collect Disallow + Crawl-delay rules that apply to * or to us. Minimal
   // parser: good enough to respect intent; unknown directives ignored.
