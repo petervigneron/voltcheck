@@ -451,11 +451,15 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     id: "ioniq5-2025-2026-sr",
     make: "HYUNDAI",
     model: "Ioniq 5",
-    modelYears: [2025, 2026],
-    trim: "Standard Range",
+    modelYears: [2025, 2027],
+    // The SR sells as an SE — feeds write "SE", "SE Standard Range", or just
+    // the range name. Safe to accept bare "SE" here: the B code is a hard
+    // filter, and long-range SEs carry code A.
+    trim: ["Standard Range", "SE Standard Range", "SE"],
     drive: "RWD",
+    vin8: ["B"], // per-VIN Part 565: B = Standard Range single motor (2025–27)
     battery: { packGrossKwh: f6(63.0, "mfr", "medium", "Standard Range pack, up from 58; Hyundai publishes one figure and does not say gross or usable", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf") },
-    range: { epaRangeMi: f6(245, "mfr", "high", "Official EPA rating, 'Ioniq 5 Standard range' — EPA vehicle ids 48714 (2025) / 49961 (2026)", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f6(245, "mfr", "high", "Official EPA rating, 'Ioniq 5 Standard range' — EPA vehicle ids 48714 (2025) / 49961 (2026) / 50646 (2027, identical)", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f5("NACS", "mfr", "high", "Native NACS from the MY2025 facelift; 2025 cars shipped with a CCS adapter included", "https://www.hyundainews.com/assets/documents/original/63444-2025IONIQ5XRTLimited8272024finalmjab.pdf"),
       superchargerAccess: f5("native", "mfr"),
@@ -486,10 +490,11 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     id: "ioniq5-2025-2026-rwd",
     make: "HYUNDAI",
     model: "Ioniq 5",
-    modelYears: [2025, 2026],
+    modelYears: [2025, 2027],
     drive: "RWD",
+    vin8: ["A"], // per-VIN Part 565: A = long-range single motor (2025–27)
     battery: { packGrossKwh: f5(84.0, "mfr", "medium", "Long-range pack, up from 77.4; Hyundai publishes one figure and does not say gross or usable", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf") },
-    range: { epaRangeMi: f6(318, "mfr", "high", "Official EPA rating, 'Ioniq 5 RWD' — EPA vehicle ids 48713 (2025) / 49960 (2026); one rating covers all long-range RWD trims", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f6(318, "mfr", "high", "Official EPA rating, 'Ioniq 5 RWD' — EPA vehicle ids 48713 (2025) / 49960 (2026) / 50645 (2027, identical); one rating covers all long-range RWD trims", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f5("NACS", "mfr", "high", "Native NACS from the MY2025 facelift; 2025 cars shipped with a CCS adapter included", "https://www.hyundainews.com/assets/documents/original/63444-2025IONIQ5XRTLimited8272024finalmjab.pdf"),
       superchargerAccess: f5("native", "mfr"),
@@ -523,10 +528,11 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     id: "ioniq5-2025-2026-awd",
     make: "HYUNDAI",
     model: "Ioniq 5",
-    modelYears: [2025, 2026],
+    modelYears: [2025, 2027],
     drive: "AWD",
+    vin8: ["C"], // per-VIN Part 565: C = long-range dual motor (2025–27)
     battery: { packGrossKwh: f5(84.0, "mfr", "medium", "Long-range pack, up from 77.4; Hyundai publishes one figure and does not say gross or usable", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf") },
-    range: { epaRangeMi: f6(290, "mfr", "high", "Official EPA rating, 'Ioniq 5 AWD (19 inch Wheels)' (SE/SEL) — EPA vehicle ids 48710 (2025) / 49962 (2026). Limited (20\") is rated 269 and XRT 259 — separate rows", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f6(290, "mfr", "high", "Official EPA rating, 'Ioniq 5 AWD (19 inch Wheels)' (SE/SEL) — EPA vehicle ids 48710 (2025) / 49962 (2026) / 50642 (2027, identical). Limited (20\") is rated 269 and XRT 259 — separate rows", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f5("NACS", "mfr", "high", "Native NACS from the MY2025 facelift; 2025 cars shipped with a CCS adapter included", "https://www.hyundainews.com/assets/documents/original/63444-2025IONIQ5XRTLimited8272024finalmjab.pdf"),
       superchargerAccess: f5("native", "mfr"),
@@ -560,11 +566,12 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     id: "ioniq5-2025-2026-awd-limited",
     make: "HYUNDAI",
     model: "Ioniq 5",
-    modelYears: [2025, 2026],
+    modelYears: [2025, 2027],
     trim: "Limited",
     drive: "AWD",
+    vin8: ["C"], // hard C-key: an RWD Limited (code A) must fall to the 318-mi RWD row, not this one
     battery: { packGrossKwh: f5(84.0, "mfr", "medium", "Long-range pack, up from 77.4; Hyundai publishes one figure and does not say gross or usable", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf") },
-    range: { epaRangeMi: f6(269, "mfr", "high", "Official EPA rating, 'Ioniq 5 AWD (20 inch Wheels)' — the Limited AWD's wheels — EPA vehicle ids 48711 (2025) / 49963 (2026)", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f6(269, "mfr", "high", "Official EPA rating, 'Ioniq 5 AWD (20 inch Wheels)' — the Limited AWD's wheels — EPA vehicle ids 48711 (2025) / 49963 (2026) / 50643 (2027, identical)", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f5("NACS", "mfr", "high", "Native NACS from the MY2025 facelift; 2025 cars shipped with a CCS adapter included", "https://www.hyundainews.com/assets/documents/original/63444-2025IONIQ5XRTLimited8272024finalmjab.pdf"),
       superchargerAccess: f5("native", "mfr"),
@@ -598,11 +605,12 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     id: "ioniq5-2025-2026-xrt",
     make: "HYUNDAI",
     model: "Ioniq 5",
-    modelYears: [2025, 2026],
+    modelYears: [2025, 2027],
     trim: "XRT",
     drive: "AWD",
+    vin8: ["C"], // XRT is a dual-motor trim; C = long-range dual motor (2025–27)
     battery: { packGrossKwh: f5(84.0, "mfr", "medium", "Long-range pack, up from 77.4; Hyundai publishes one figure and does not say gross or usable", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf") },
-    range: { epaRangeMi: f6(259, "mfr", "high", "Official EPA rating, 'Ioniq 5 AWD XRT' — EPA vehicle ids 48712 (2025) / 49964 (2026)", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f6(259, "mfr", "high", "Official EPA rating, 'Ioniq 5 AWD XRT' — EPA vehicle ids 48712 (2025) / 49964 (2026) / 50644 (2027, identical)", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f5("NACS", "mfr", "high", "Native NACS from the MY2025 facelift; 2025 cars shipped with a CCS adapter included", "https://www.hyundainews.com/assets/documents/original/63444-2025IONIQ5XRTLimited8272024finalmjab.pdf"),
       superchargerAccess: f5("native", "mfr"),
@@ -632,15 +640,19 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       },
     ],
   },
-  // Sparse on purpose: keyed by trim "N" so an Ioniq 5 N listed under the base
-  // model name doesn't inherit the 290-mile AWD rating. Only facts verified in
-  // this pass are present.
+  // Sparse on purpose: catches an Ioniq 5 N listed under the base model name
+  // so it doesn't inherit the 290-mile AWD rating. Re-keyed 2026-08-14 onto
+  // VIN code 8 (Hyundai's N motor code, per-VIN Part 565) — the old trim-"N"
+  // key never fired (feeds label these cars "Base" or nothing) and the row
+  // was leaking 221 mi into junk-trim code-C candidates. Cars under the
+  // "IONIQ 5 N" model string get fuller rows (incl. the CCS→NACS port split)
+  // in data4.ts.
   {
     id: "ioniq5-n-2025-2026",
     make: "HYUNDAI",
     model: "Ioniq 5",
     modelYears: [2025, 2026],
-    trim: "N",
+    vin8: ["8"],
     drive: "AWD",
     battery: { packGrossKwh: f6(84.0, "mfr", "medium", "Hyundai publishes one figure and does not say gross or usable") },
     range: { epaRangeMi: f6(221, "mfr", "high", "Official EPA rating, 'Ioniq 5 N' — EPA vehicle ids 48360 (2025) / 49965 (2026)", "https://www.fueleconomy.gov") },

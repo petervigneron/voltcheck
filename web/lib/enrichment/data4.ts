@@ -3702,4 +3702,42 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   mb("eqs-suv-2024-maybach", EQS, [2024, 2024], "DX5FB", "Maybach EQS 680 SUV", "AWD",
     f(280, "mfr", "high", "MY2024 Maybach EQS 680 SUV — EPA carries two 2024 certifications (280 and 321 mi, ids 47465/47852, a wheel/configuration split); the lower figure is used", epa(47465)),
     { battery: EQS_PACK_1078, charging: EQS_CHG, thermal: MB_HP_SUV }),
+
+  // ── Hyundai Ioniq 5 N (same pass) ─────────────────────────────────────
+  // Separate model string in the feed ("IONIQ 5 N"), VIN code 8 (dual
+  // motor, N) per Hyundai's Part 565 submissions — the base Ioniq 5 rows in
+  // data.ts key A/B/C. One EPA rating both years (221 mi). The port splits
+  // by year: the Korea-built 2025 N kept CCS1 while the US-built base car
+  // went NACS; the N followed for MY2026.
+  {
+    id: "ioniq5n-2025", make: "HYUNDAI", model: "IONIQ 5 N", modelYears: [2025, 2025], vin8: ["8"], drive: "AWD", packVariant: "N",
+    battery: { packGrossKwh: f(84, "mfr", "medium", "N-specific 84 kWh pack (Hyundai publishes one figure, gross/usable unstated)") },
+    range: { epaRangeMi: f(221, "mfr", "high", "MY2025 Ioniq 5 N — EPA", epa(48360)) },
+    charging: {
+      portStandard: f("CCS1", "mfr", "high", "The Korea-built 2025 N kept the CCS port while the US-built 2025 Ioniq 5 switched to native NACS; the N moved to NACS for MY2026"),
+      architectureV: f(800, "mfr"),
+    },
+    thermal: { heatPump: f("standard", "mfr", "high", "The N feature sheet lists the heat pump as standard (“S”)"), batteryPreconditioning: f(true, "mfr", "high", "N Race/drag-strip preconditioning modes are a headline N feature") },
+    warranty: {
+      batteryYears: f(10, "mfr"), batteryMiles: f(100_000, "mfr"), sohFloorPct: f(70, "mfr"),
+      batteryTransfers: f(true, "mfr", "high", "HV battery & EV system coverage transfers in full — Hyundai Owner's Handbook"),
+      powertrainTransfers: f(false, "mfr", "high", "Powertrain 10yr/100k is original-owner-only; drops to 5yr/60k for a second owner"),
+    },
+  },
+  {
+    id: "ioniq5n-2026", make: "HYUNDAI", model: "IONIQ 5 N", modelYears: [2026, 2026], vin8: ["8"], drive: "AWD", packVariant: "N",
+    battery: { packGrossKwh: f(84, "mfr", "medium", "N-specific 84 kWh pack (Hyundai publishes one figure, gross/usable unstated)") },
+    range: { epaRangeMi: f(221, "mfr", "high", "MY2026 Ioniq 5 N — EPA (unchanged from 2025)", epa(49965)) },
+    charging: {
+      portStandard: f("NACS", "mfr", "high", "MY2026 N adopted the native NACS (J3400) port; a CCS1 adapter is standard equipment"),
+      superchargerAccess: f("native", "mfr"),
+      architectureV: f(800, "mfr"),
+    },
+    thermal: { heatPump: f("standard", "mfr", "high", "The N feature sheet lists the heat pump as standard (“S”)"), batteryPreconditioning: f(true, "mfr", "high", "N Race/drag-strip preconditioning modes are a headline N feature") },
+    warranty: {
+      batteryYears: f(10, "mfr"), batteryMiles: f(100_000, "mfr"), sohFloorPct: f(70, "mfr"),
+      batteryTransfers: f(true, "mfr", "high", "HV battery & EV system coverage transfers in full — Hyundai Owner's Handbook"),
+      powertrainTransfers: f(false, "mfr", "high", "Powertrain 10yr/100k is original-owner-only; drops to 5yr/60k for a second owner"),
+    },
+  },
 ];
