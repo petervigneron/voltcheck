@@ -494,96 +494,12 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
   },
 
   // ---------------------------------------------------------------------
-  // Tesla Model S / Model X — 6 + 6 in inventory. Every one of these
-  // listings carries NO trim string at all (scraped "trim" field is empty)
-  // and almost none carry a battery-kWh hint, so there is no way to
-  // discriminate which of several real EPA-certified trims a given car
-  // actually is. Verified negative from research: unlike Model Y, Model S/X
-  // were built at Fremont only for their entire US production run (no
-  // plant-code split to lean on either).
-  //
-  // Rather than exploding into 3-7 same-year candidate rows (poor UX) or
-  // guessing one trim as if it were confirmed, each row here uses the
-  // lowest-range non-performance EPA figure for that year as a stated
-  // floor — so the site never overstates range — with every other real
-  // trim's figure spelled out in the fact's note and in a buyer note
-  // telling the reader this listing's exact trim isn't recorded.
+  // Tesla Model S / Model X floor rows — fully retired (2026-08-14): the
+  // 2021+ cars moved to vin8-keyed rows in data4.ts earlier that day, and
+  // the pre-2021 S and X floors followed once the motor-code + pack-badge
+  // rows landed (the feed now carries trims, which the floors predate).
   // ---------------------------------------------------------------------
-  // 2021+ Model S/X moved to data4.ts (2026-08-14): VIN position 8 resolves
-  // dual (5) vs tri-motor Plaid (6), which is exactly what these floor-value
-  // rows existed to work around. The Model S 2019 floor moved too (same day,
-  // vin8+pack-badge rows) — only the Model X floors below still apply.
 
-
-
-  {
-    id: "tesla-model-x-2017",
-    make: "TESLA",
-    model: "Model X",
-    modelYears: [2017, 2017],
-    drive: "AWD",
-    range: { epaRangeMi: f(200, "mfr", "medium", "This listing's exact trim isn't recorded — 200 mi (60D) is the lowest-range 2017 Model X trim, used here as a floor, not a confirmed match. Full 2017 lineup — EPA: 60D 200 / 75D 238 / P90D 250 / 90D 257 / P100D 289 / 100D 295", "https://www.fueleconomy.gov") },
-    charging: {
-      portStandard: f("NACS", "mfr", "high", "Tesla's proprietary connector"),
-      superchargerAccess: f("native", "mfr", "high"),
-    },
-    thermal: { heatPump: f("none", "agg", "medium", "Octovalve heat pump arrived with the January 2021 Model S/X refresh; 2017 cars have resistive heat only") },
-    warranty: {
-      batteryYears: f(8, "mfr", "high", "“8 years or 150,000 miles, whichever comes first” — Tesla's own vehicle-warranty page (archived capture, dated 2025-04-16)"),
-      batteryMiles: f(150_000, "mfr", "high"),
-      sohFloorPct: f(70, "mfr", "high", "“minimum 70% retention of Battery capacity over the warranty period”"),
-      batteryTransfers: f(true, "mfr", "high", "“Your New Vehicle Limited Warranty will follow your vehicle and be transferred to the new owner when a vehicle ownership transfer is performed through Tesla”"),
-    },
-    buyerNotes: [
-      {
-        headline: "This listing doesn't say which 2017 Model X trim this is — range varies by up to 95 miles",
-        body: "Tesla sold six distinct EPA-rated configurations in 2017 (60D 200 mi up to 100D 295 mi). This scraped listing has no trim field. Check the window sticker, door-jamb EPA label, or the Tesla owner account tied to this VIN to confirm the actual trim.",
-        severity: "warning",
-      },
-      {
-        headline: "Center display can fail and take rearview camera/turn signals with it",
-        body: "21V035 (2016–2018 Model X): the center display's memory chip wears out over time, eventually causing the display to fail — which also takes out the rearview camera image, defrost controls, and turn-signal chime. Free dealer replacement of the display's daughterboard; software 2020.48.48.12+ warns the owner in advance.",
-        severity: "trap",
-      },
-      {
-        headline: "Second-row seat back may not fully latch",
-        body: "17V639 (2016–2017 Model X): the left-side second-row reclining seat back may not fully latch. Free dealer cable adjustment.",
-        severity: "warning",
-      },
-    ],
-  },
-
-  {
-    id: "tesla-model-x-2018",
-    make: "TESLA",
-    model: "Model X",
-    modelYears: [2018, 2018],
-    drive: "AWD",
-    range: { epaRangeMi: f(238, "mfr", "medium", "This listing's exact trim isn't recorded — 238 mi (75D) is the lowest-range 2018 Model X trim, used here as a floor, not a confirmed match. Full 2018 lineup — EPA: 75D 238 / P100D 289 / 100D 295", "https://www.fueleconomy.gov") },
-    charging: {
-      portStandard: f("NACS", "mfr", "high", "Tesla's proprietary connector"),
-      superchargerAccess: f("native", "mfr", "high"),
-    },
-    thermal: { heatPump: f("none", "agg", "medium", "Octovalve heat pump arrived with the January 2021 Model S/X refresh; 2018 cars have resistive heat only") },
-    warranty: {
-      batteryYears: f(8, "mfr", "high", "“8 years or 150,000 miles, whichever comes first” — Tesla's own vehicle-warranty page (archived capture, dated 2025-04-16)"),
-      batteryMiles: f(150_000, "mfr", "high"),
-      sohFloorPct: f(70, "mfr", "high", "“minimum 70% retention of Battery capacity over the warranty period”"),
-      batteryTransfers: f(true, "mfr", "high", "“Your New Vehicle Limited Warranty will follow your vehicle and be transferred to the new owner when a vehicle ownership transfer is performed through Tesla”"),
-    },
-    buyerNotes: [
-      {
-        headline: "This listing doesn't say which 2018 Model X trim this is — range varies by up to 57 miles",
-        body: "Tesla sold three distinct EPA-rated configurations in 2018 (75D 238 mi up to 100D 295 mi). This scraped listing has no trim field. Check the window sticker, door-jamb EPA label, or the Tesla owner account tied to this VIN to confirm the actual trim.",
-        severity: "warning",
-      },
-      {
-        headline: "Center display can fail and take rearview camera/turn signals with it",
-        body: "21V035 (2016–2018 Model X): the center display's memory chip wears out over time, eventually causing the display to fail — which also takes out the rearview camera image, defrost controls, and turn-signal chime. Free dealer replacement of the display's daughterboard; software 2020.48.48.12+ warns the owner in advance.",
-        severity: "trap",
-      },
-    ],
-  },
 
 
 

@@ -398,6 +398,11 @@ const NOTE_MS_EMMC = {
   body: "21V035 (2012–2018 Model S): the center display's eMMC memory chip wears out over time, eventually causing display failure — taking the rearview camera image, defrost controls, and turn-signal chime with it. Free daughterboard replacement; check this VIN's recall status.",
   severity: "trap" as const,
 };
+const NOTE_MX_EMMC = {
+  headline: "Center display can fail and take rearview camera/defrost with it",
+  body: "21V035 (2016–2018 Model X): the center display's eMMC memory chip wears out over time, eventually causing display failure — taking the rearview camera image, defrost controls, and turn-signal chime with it. Free daughterboard replacement; check this VIN's recall status.",
+  severity: "trap" as const,
+};
 const msPack = (kwh: number) => ({ packGrossKwh: f(kwh, "mfr", "medium", "Nameplate pack capacity — Tesla badged these cars by pack size") });
 
 // ── Mercedes-Benz EQE / EQS consts (see the row-block comment below) ───
@@ -3702,6 +3707,86 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   mb("eqs-suv-2024-maybach", EQS, [2024, 2024], "DX5FB", "Maybach EQS 680 SUV", "AWD",
     f(280, "mfr", "high", "MY2024 Maybach EQS 680 SUV — EPA carries two 2024 certifications (280 and 321 mi, ids 47465/47852, a wheel/configuration split); the lower figure is used", epa(47465)),
     { battery: EQS_PACK_1078, charging: EQS_CHG, thermal: MB_HP_SUV }),
+
+  // ── Tesla Model X, pack era 2016–2020 (same pass) ─────────────────────
+  // Same motor-code scheme as the Model S rows above (2 = dual standard,
+  // 4 = dual performance, per Tesla's Part 565 submissions); pack badge in
+  // the trim picks the row. Retires data3's Model X 2017/2018 floor rows.
+  {
+    id: "mx-2016-17-60d", ...MX, modelYears: [2016, 2017], vin8: ["2"], drive: "AWD", packVariant: "60D",
+    trim: ["60D"], battery: msPack(60),
+    range: { epaRangeMi: f(200, "mfr", "high", "MY2016–17 Model X 60D (software-limited 75 pack) — EPA (38173/38526)", epa(38173)) },
+    charging: MSX_OLD_CHARGING, thermal: MSX_NO_HP, warranty: MSX_OLD_W,
+    buyerNotes: [NOTE_MX_EMMC],
+  },
+  {
+    id: "mx-2016-19-75d", ...MX, modelYears: [2016, 2019], vin8: ["2"], drive: "AWD", packVariant: "75D",
+    trim: ["75D"], battery: msPack(75),
+    range: { epaRangeMi: f(238, "mfr", "high", "MY2016–19 Model X 75D — EPA (37423/38527/39841/41195 all rate 238)", epa(37423)) },
+    charging: MSX_OLD_CHARGING, thermal: MSX_NO_HP, warranty: MSX_OLD_W,
+  },
+  {
+    id: "mx-2016-17-90d", ...MX, modelYears: [2016, 2017], vin8: ["2"], drive: "AWD", packVariant: "90D",
+    trim: ["90D"], battery: msPack(90),
+    range: { epaRangeMi: f(257, "mfr", "high", "MY2016–17 Model X 90D — EPA (36979/38528 rate identically)", epa(36979)) },
+    charging: MSX_OLD_CHARGING, thermal: MSX_NO_HP, warranty: MSX_OLD_W,
+    buyerNotes: [NOTE_MX_EMMC],
+  },
+  {
+    id: "mx-2017-19-100d", ...MX, modelYears: [2017, 2019], vin8: ["2"], drive: "AWD", packVariant: "100D",
+    trim: ["100D"], battery: msPack(100),
+    range: { epaRangeMi: f(295, "mfr", "high", "MY2017–19 Model X 100D — EPA (39831/39842/41196 all rate 295)", epa(39831)) },
+    charging: MSX_OLD_CHARGING, thermal: MSX_NO_HP, warranty: MSX_OLD_W,
+  },
+  {
+    id: "mx-2019-lr", ...MX, modelYears: [2019, 2019], vin8: ["2"], drive: "AWD", packVariant: "Long Range",
+    trim: ["Long Range"], battery: msPack(100),
+    range: { epaRangeMi: f(325, "mfr", "high", "MY2019 Model X Long Range (Raven) — EPA", epa(41514)) },
+    charging: MSX_OLD_CHARGING, thermal: MSX_NO_HP, warranty: MSX_OLD_W,
+  },
+  {
+    id: "mx-2020-lr", ...MX, modelYears: [2020, 2020], vin8: ["2"], drive: "AWD", packVariant: "Long Range",
+    trim: ["Long Range"], battery: msPack(100),
+    range: { epaRangeMi: f(328, "mfr", "high", "MY2020 Model X Long Range — EPA; the mid-year Long Range Plus rates 351", epa(42286)) },
+    charging: MSX_OLD_CHARGING, thermal: MSX_NO_HP, warranty: TSX_W,
+  },
+  {
+    id: "mx-2020-lrplus", ...MX, modelYears: [2020, 2020], vin8: ["2"], drive: "AWD", packVariant: "Long Range Plus",
+    trim: ["Long Range Plus"], battery: msPack(100),
+    range: { epaRangeMi: f(351, "mfr", "high", "MY2020 Model X Long Range Plus — EPA", epa(43413)) },
+    charging: MSX_OLD_CHARGING, thermal: MSX_NO_HP, warranty: TSX_W,
+  },
+  {
+    id: "mx-2020-sr", ...MX, modelYears: [2020, 2020], vin8: ["2"], drive: "AWD", packVariant: "Standard Range",
+    trim: ["Standard Range", "Standard"], battery: msPack(100),
+    range: { epaRangeMi: f(258, "mfr", "high", "MY2020 Model X Standard Range (software-limited) — EPA", epa(42289)) },
+    charging: MSX_OLD_CHARGING, thermal: MSX_NO_HP, warranty: TSX_W,
+  },
+  {
+    id: "mx-2016-17-p90d", ...MX, modelYears: [2016, 2017], vin8: ["4"], drive: "AWD", packVariant: "P90D",
+    trim: ["P90D"], battery: msPack(90),
+    range: { epaRangeMi: f(250, "mfr", "high", "MY2016–17 Model X P90D — EPA (36980/38529 rate identically)", epa(36980)) },
+    charging: MSX_OLD_CHARGING, thermal: MSX_NO_HP, warranty: MSX_OLD_W,
+    buyerNotes: [NOTE_MX_EMMC],
+  },
+  {
+    id: "mx-2016-19-p100d", ...MX, modelYears: [2016, 2019], vin8: ["4"], drive: "AWD", packVariant: "P100D",
+    trim: ["P100D"], battery: msPack(100),
+    range: { epaRangeMi: f(289, "mfr", "high", "MY2016–19 Model X P100D — EPA (38500/38530/39843/41197 all rate 289)", epa(38500)) },
+    charging: MSX_OLD_CHARGING, thermal: MSX_NO_HP, warranty: MSX_OLD_W,
+  },
+  {
+    id: "mx-2019-perf", ...MX, modelYears: [2019, 2019], vin8: ["4"], drive: "AWD", packVariant: "Performance",
+    trim: ["Performance"], battery: msPack(100),
+    range: { epaRangeMi: f(270, "mfr", "high", "MY2019 Model X Performance (Raven) — EPA's only 2019 Performance certification (22-inch wheels)", epa(41515)) },
+    charging: MSX_OLD_CHARGING, thermal: MSX_NO_HP, warranty: MSX_OLD_W,
+  },
+  {
+    id: "mx-2020-perf", ...MX, modelYears: [2020, 2020], vin8: ["4"], drive: "AWD", packVariant: "Performance",
+    trim: ["Performance"], battery: msPack(100),
+    range: { epaRangeMi: f(305, "mfr", "high", "MY2020 Model X Performance on 20-inch wheels — EPA; 272 on 22s", epa(42287)) },
+    charging: MSX_OLD_CHARGING, thermal: MSX_NO_HP, warranty: TSX_W,
+  },
 
   // ── Hyundai Ioniq 5 N (same pass) ─────────────────────────────────────
   // Separate model string in the feed ("IONIQ 5 N"), VIN code 8 (dual
