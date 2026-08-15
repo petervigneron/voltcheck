@@ -1,7 +1,13 @@
 // schema.org Vehicle → one normalized listing record, VIN-keyed.
-const text = (v) => {
+// Dealer feeds render missing fields as literal placeholder strings —
+// "null", "N/A", "-" (observed in production data) — treat them as absent.
+const JUNK = new Set(["", "null", "n/a", "-", "undefined"]);
+export const text = (v) => {
   if (v == null) return undefined;
-  if (typeof v === "string") return v.trim() || undefined;
+  if (typeof v === "string") {
+    const s = v.trim();
+    return JUNK.has(s.toLowerCase()) ? undefined : s;
+  }
   if (typeof v === "number") return String(v);
   if (typeof v === "object") return text(v.name ?? v["@value"] ?? v.value);
   return undefined;

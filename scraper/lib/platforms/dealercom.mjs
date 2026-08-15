@@ -35,6 +35,8 @@ export function extractDdcVehicles(html) {
   }
 }
 
+import { text } from "../normalize.mjs";
+
 const num = (v) => {
   const n = Number(String(v ?? "").replace(/[^0-9.]/g, ""));
   return Number.isFinite(n) && n > 0 ? n : undefined;
@@ -42,16 +44,18 @@ const num = (v) => {
 
 // Merge DDC fields into a normalized record (DDC wins where present — it's
 // the platform's own structured data, richer than the JSON-LD summary).
+// String fields go through text(): DDC serializes missing values as the
+// literal string "null", which must not beat the JSON-LD value or render.
 export function enrichFromDdc(rec, ddcVehicle) {
   if (!ddcVehicle || ddcVehicle.vin?.toUpperCase() !== rec.vin) return rec;
   const d = ddcVehicle;
   return {
     ...rec,
     mileage: num(d.odometer) ?? rec.mileage,
-    trim: d.trim && d.trim !== "null" ? d.trim : rec.trim,
+    trim: text(d.trim) ?? rec.trim,
     driveLine: ["FWD", "RWD", "AWD", "4WD"].includes(d.driveLine) ? d.driveLine : undefined,
-    exteriorColor: d.exteriorColor ?? rec.exteriorColor,
-    interiorColor: d.interiorColor ?? undefined,
+    exteriorColor: text(d.exteriorColor) ?? rec.exteriorColor,
+    interiorColor: text(d.interiorColor),
     // internetPrice is the price the platform's own widgets display, and it
     // beats the JSON-LD offer price: dealer.com's JSON-LD mirrors askingPrice,
     // which some rooftops misconfigure — observed carrying the accessories
@@ -60,14 +64,14 @@ export function enrichFromDdc(rec, ddcVehicle) {
     priceUsd: num(d.internetPrice) ?? num(d.salePrice) ?? rec.priceUsd ?? num(d.askingPrice),
     optionCodes: Array.isArray(d.optionCodes) && d.optionCodes.length ? d.optionCodes : undefined,
     certified: d.certified === "true" || d.certified === true || undefined,
-    stockNumber: d.stockNumber ?? undefined,
-    city: d.address?.city ?? rec.city,
-    state: d.address?.state ?? rec.state,
-    zip: d.address?.postalCode ?? rec.zip,
+    stockNumber: text(d.stockNumber),
+    city: text(d.address?.city) ?? rec.city,
+    state: text(d.address?.state) ?? rec.state,
+    zip: text(d.address?.postalCode) ?? rec.zip,
     // On group sites the accountName is the actual rooftop (e.g. "Hendrick
     // Kia of Cary"), which beats attributing every car to the group domain.
-    dealerName: d.accountName ?? rec.dealerName,
-    condition: d.newOrUsed ?? rec.condition,
+    dealerName: text(d.accountName) ?? rec.dealerName,
+    condition: text(d.newOrUsed) ?? rec.condition,
     platform: "dealer.com",
   };
 }

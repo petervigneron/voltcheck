@@ -31,11 +31,42 @@ function absolutizeImages(l: Listing): Listing {
   return { ...l, imageUrl, images };
 }
 
+// Dealer feeds serialize missing fields as literal placeholder strings —
+// "null", "N/A", "-" (all observed in stored rows) — which then render
+// verbatim ("Exterior null"). The scraper now drops them at extraction, but
+// rows already in the DB and the bundled JSON still carry them, so every
+// listing is scrubbed here before any surface (detail specs, search haystack)
+// sees it.
+const JUNK_STRINGS = new Set(["", "null", "n/a", "-", "undefined"]);
+const SCRUBBED_FIELDS = [
+  "trim",
+  "exteriorColor",
+  "interiorColor",
+  "stockNumber",
+  "description",
+  "dealerName",
+  "city",
+  "state",
+  "zip",
+] as const;
+
+function scrubJunkStrings(l: Listing): Listing {
+  let out = l;
+  for (const k of SCRUBBED_FIELDS) {
+    const v = out[k];
+    if (typeof v === "string" && JUNK_STRINGS.has(v.trim().toLowerCase())) {
+      if (out === l) out = { ...l };
+      out[k] = undefined;
+    }
+  }
+  return out;
+}
+
 export async function allListings(): Promise<Listing[]> {
   const db = await fetchListingsFromDb();
   const byVin = new Map<string, Listing>();
   for (const l of [...(db ?? SCRAPED), ...SAMPLE_LISTINGS]) {
-    if (!byVin.has(l.vin)) byVin.set(l.vin, absolutizeImages(l));
+    if (!byVin.has(l.vin)) byVin.set(l.vin, scrubJunkStrings(absolutizeImages(l)));
   }
   return [...byVin.values()];
 }
@@ -48,5 +79,5 @@ export async function findListing(id: string): Promise<Listing | undefined> {
   // sample rows already carry their description and skip the fetch.
   if (listing.description !== undefined || !dbConfigured()) return listing;
   const detail = await fetchListingDetailFromDb(listing.vin);
-  return detail ? { ...listing, ...detail } : listing;
+  return detail ? scrubJunkStrings({ ...listing, ...detail }) : listing;
 }

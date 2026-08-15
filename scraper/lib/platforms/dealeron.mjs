@@ -2,6 +2,8 @@
 // vehicleDetails (vin, trim, drivetrain, colors, price, fuelType) plus the
 // dealer's city/state/zip, and render odometer as a server-side
 // info__item--mileage block. All in the HTML served to everyone.
+import { text } from "../normalize.mjs";
+
 export function extractDealerOn(html) {
   const m = html.match(/sdDataLayer\s*=\s*\{/);
   if (!m) return null;
@@ -34,9 +36,12 @@ export function extractDealerOn(html) {
 
 const DRIVES = new Set(["FWD", "RWD", "AWD", "4WD"]);
 
+// String fields go through text(), which drops the placeholder literals
+// ("null", "N/A", "-") the dataLayer carries when a field is missing.
 export function enrichFromDealerOn(rec, data) {
   const v = data?.vehicle;
   if (!v || String(v.vin).toUpperCase() !== rec.vin) return rec;
+  const trim = text(v.trim);
   return {
     ...rec,
     // Dealer-stated mileage passes through verbatim, 0 included — it has the
@@ -44,17 +49,17 @@ export function enrichFromDealerOn(rec, data) {
     // shows "Mileage: 0" to shoppers on these cars.) Implausible values get
     // flagged at display, not suppressed.
     mileage: data.mileage ?? rec.mileage,
-    trim: v.trim && v.trim !== "Base" ? v.trim : rec.trim ?? v.trim,
+    trim: trim && trim !== "Base" ? trim : rec.trim ?? trim,
     driveLine: DRIVES.has(v.drivetrain) ? v.drivetrain : rec.driveLine,
-    exteriorColor: v.exteriorColor ?? rec.exteriorColor,
-    interiorColor: v.interiorColor ?? rec.interiorColor,
+    exteriorColor: text(v.exteriorColor) ?? rec.exteriorColor,
+    interiorColor: text(v.interiorColor) ?? rec.interiorColor,
     priceUsd: rec.priceUsd ?? (Number(v.displayedPrice) > 0 ? Number(v.displayedPrice) : undefined),
     condition: typeof v.status === "string" ? v.status.toLowerCase() : rec.condition,
-    city: data.dealer?.city ?? rec.city,
-    state: data.dealer?.state ?? rec.state,
-    zip: data.dealer?.zip ?? rec.zip,
-    dealerName: data.dealer?.name ?? rec.dealerName,
-    stockNumber: v.stockNumber ?? rec.stockNumber,
+    city: text(data.dealer?.city) ?? rec.city,
+    state: text(data.dealer?.state) ?? rec.state,
+    zip: text(data.dealer?.zip) ?? rec.zip,
+    dealerName: text(data.dealer?.name) ?? rec.dealerName,
+    stockNumber: text(v.stockNumber) ?? rec.stockNumber,
     platform: "dealeron",
   };
 }
