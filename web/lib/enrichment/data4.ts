@@ -3834,27 +3834,27 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   ...(() => {
     const AIR = { make: "LUCID", model: "Air" };
     const LUCID_W = {
-      batteryYears: f(8, "mfr" as Source, "high", "\u201cHigh-voltage battery: 8 Years / 100,000 miles (whichever comes first) retaining 70% capacity\u201d \u2014 Lucid's own warranty page (verified in the data3 pass)"),
+      batteryYears: f(8, "mfr" as Source, "high", "\u201cHigh-voltage battery: 8 Years / 100,000 miles (whichever comes first) retaining 70% capacity\u201d — Lucid's own warranty page (verified in the data3 pass)"),
       batteryMiles: f(100_000, "mfr" as Source, "high"),
       sohFloorPct: f(70, "mfr" as Source, "high", "Same Lucid warranty-page quote"),
-      batteryTransfers: f(true, "mfr" as Source, "high", "\u201c\u2026and to subsequent owner(s) if the vehicle is within the applicable coverage period\u201d \u2014 Lucid's own warranty page"),
+      batteryTransfers: f(true, "mfr" as Source, "high", "\u201c\u2026and to subsequent owner(s) if the vehicle is within the applicable coverage period\u201d — Lucid's own warranty page"),
     };
     const LUCID_CHG = {
-      portStandard: f<"CCS1">("CCS1", "mfr", "high", "Lucid's own site: \u201cYour Lucid Air has a J1772 (CCS1) charge port\u201d \u2014 no native NACS port as of the latest material found"),
-      superchargerAccess: f<"adapter">("adapter", "mfr", "high", "All Air owners gained Supercharger access July 31, 2025 via a Lucid-sold NACS-to-CCS1 adapter (~$220); capped around 50 kW on that path \u2014 well below the car's native CCS1 DC peak"),
+      portStandard: f<"CCS1">("CCS1", "mfr", "high", "Lucid's own site: \u201cYour Lucid Air has a J1772 (CCS1) charge port\u201d — no native NACS port as of the latest material found"),
+      superchargerAccess: f<"adapter">("adapter", "mfr", "high", "All Air owners gained Supercharger access July 31, 2025 via a Lucid-sold NACS-to-CCS1 adapter (~$220); capped around 50 kW on that path — well below the car's native CCS1 DC peak"),
     };
     // Lucid IR press release: the heat pump \u201cfirst employed on Lucid Sapphire
-    // now becomes standard across the lineup\u201d \u2014 MY2025 onward.
+    // now becomes standard across the lineup\u201d — MY2025 onward.
     const LUCID_NO_HP = { heatPump: f<"none">("none", "mfr", "high", "Heat pump became standard only from MY2025 (Lucid IR release); pre-2025 Airs other than Sapphire have none") };
-    const LUCID_HP = { heatPump: f<"standard">("standard", "mfr", "high", "\u201cThe heat pump first employed on Lucid Sapphire now becomes standard across the lineup\u201d \u2014 Lucid IR release, MY2025 onward") };
+    const LUCID_HP = { heatPump: f<"standard">("standard", "mfr", "high", "\u201cThe heat pump first employed on Lucid Sapphire now becomes standard across the lineup\u201d — Lucid IR release, MY2025 onward") };
     const NOTE_AIR_CAM = {
       headline: "Rearview-camera recalls apply across the Air lineup",
-      body: "25V670 (2022\u20132025, all trims: camera image can fail, delay, or display inaccurately) and 26V017 (2022\u20132026, cars with the AD02 package: camera may not display in reverse). Both fixed via free OTA update.",
+      body: "25V670 (2022–2025, all trims: camera image can fail, delay, or display inaccurately) and 26V017 (2022–2026, cars with the AD02 package: camera may not display in reverse). Both fixed via free OTA update.",
       severity: "warning" as const,
     };
     const NOTE_AIR_RWD = {
-      headline: "Four RWD-only recalls \u2014 check this VIN's status",
-      body: "24V836 (2024\u20132025 Pure RWD: rear subframe wiring harness too short, can cut power to the rear drive unit; free harness replacement). 25V669 and 26V193 (2024\u20132026 Pure RWD: half-shaft bolts may allow disconnection from the drive unit; free bolt inspection/replacement). 26V309 (2024\u20132025 RWD: Gen 4 inverter internal friction/damage can cause loss of drive power; OTA monitoring plus free replacement if a failure is detected). None apply to AWD Airs.",
+      headline: "Four RWD-only recalls — check this VIN's status",
+      body: "24V836 (2024–2025 Pure RWD: rear subframe wiring harness too short, can cut power to the rear drive unit; free harness replacement). 25V669 and 26V193 (2024–2026 Pure RWD: half-shaft bolts may allow disconnection from the drive unit; free bolt inspection/replacement). 26V309 (2024–2025 RWD: Gen 4 inverter internal friction/damage can cause loss of drive power; OTA monitoring plus free replacement if a failure is detected). None apply to AWD Airs.",
       severity: "trap" as const,
     };
     const NOTE_WHEELS = {
@@ -4011,7 +4011,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
       body: "Recall 22V-444 (wheel hub bolts can loosen; wheels can detach) plus Subaru's follow-up 23V-064 (bolts improperly tightened during the first remedy). Both remedies are free; check completion on this VIN. DC charging peaks at 100 kW; 2023 cars lack the improved cold-weather battery conditioning added for 2024.",
       severity: "warning" as const,
     };
-    const SOL_TESTED = f(200, "tested", "low", "75-mph (Car and Driver): 200 mi \u2014 reported secondhand; no verified instrumented test found");
+    const SOL_TESTED = f(200, "tested", "low", "75-mph (Car and Driver): 200 mi — reported secondhand; no verified instrumented test found");
     const sol = (id: string, years: [number, number], vin8: string[], trim: string[] | undefined, variant: string, rangeFact: Fact<number>, extra?: Partial<EnrichmentRow>): EnrichmentRow => {
       const gen1 = vin8[0] === "A";
       return {
@@ -4230,10 +4230,10 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     const rows: EnrichmentRow[] = [
       hum("hummer-2022-23-pickup", "Hummer EV", [2022, 2023], ["A"], "EV Pickup (Edition 1 / 3X era)", undefined, {
         battery: HUM_PACK_3X,
-        range: { testedRangeMi: f(343, "tested", "high", "70-mph (InsideEVs, 2022 Edition 1): 343 mi \u2014 beat its 329 GM estimate; 75-mph (C&D): 290") },
+        range: { testedRangeMi: f(343, "tested", "high", "70-mph (InsideEVs, 2022 Edition 1): 343 mi — beat its 329 GM estimate; 75-mph (C&D): 290") },
         buyerNotes: [{
           headline: "No EPA range exists for 2022–23 Hummer EVs — GM's own estimate was 329 mi",
-          body: "EPA certification for this weight class began at MY2024. The 2022 Edition 1 carried a GM-estimated 329-mile range (24-module pack); GM estimates are not EPA tests and real-world results vary widely. The MY2024 EPA figures for the same hardware read 314 mi. Recalls: 22V-771 (water intrusion in the HV battery enclosure, 2022\u201323 pickups) and 23V-367 (HV battery pack connections).",
+          body: "EPA certification for this weight class began at MY2024. The 2022 Edition 1 carried a GM-estimated 329-mile range (24-module pack); GM estimates are not EPA tests and real-world results vary widely. The MY2024 EPA figures for the same hardware read 314 mi. Recalls: 22V-771 (water intrusion in the HV battery enclosure, 2022–23 pickups) and 23V-367 (HV battery pack connections).",
           severity: "info" as const,
         }],
       }),
@@ -4315,5 +4315,114 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
       })(),
     ];
     return rows;
+  })(),
+
+  // ── VW ID. Buzz (2026-08-15) ──────────────────────────────────────────
+  // One pack (91 kWh gross per VW's Part 565, read per-VIN), drive splits
+  // the two certs. Trim tiers (Pro S / Pro S Plus / 1st Edition) don't
+  // change the rating.
+  ...(() => {
+    const BUZZ = { make: "VOLKSWAGEN", model: "ID. Buzz" };
+    const VW_W = {
+      batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source),
+      sohFloorPct: f(70, "mfr" as Source, "high", "70% capacity floor — VW's EV battery warranty terms (as on ID.4)"),
+      batteryTransfers: f(true, "mfr" as Source),
+    };
+    const BUZZ_BASE = {
+      battery: { packGrossKwh: f(91, "vin", "high", "91 kWh in VW's Part 565 submissions (86 usable published)") },
+      charging: { portStandard: f<"CCS1">("CCS1", "mfr") },
+      warranty: VW_W,
+    };
+    return [
+      {
+        id: "buzz-2025-rwd", ...BUZZ, modelYears: [2025, 2025] as [number, number], drive: "RWD" as const, packVariant: "Pro S (RWD)",
+        range: { epaRangeMi: f(234, "mfr", "high", "MY2025 ID. Buzz (RWD) — EPA; all RWD tiers share the cert", epa(48444)) },
+        ...BUZZ_BASE,
+      },
+      {
+        id: "buzz-2025-awd", ...BUZZ, modelYears: [2025, 2025] as [number, number], drive: "AWD" as const, packVariant: "4MOTION",
+        range: { epaRangeMi: f(231, "mfr", "high", "MY2025 ID. Buzz 4MOTION — EPA", epa(48445)) },
+        ...BUZZ_BASE,
+      },
+    ];
+  })(),
+
+  // ── Mercedes-Benz EQB (2026-08-15) ────────────────────────────────────
+  // Same Baumuster mechanism as EQE/EQS: 9M0CB = EQB 250+, 9M0KB = 300
+  // 4MATIC, 9M1DB = 350 4MATIC (verified per-VIN against Mercedes' own
+  // Part 565 trims). fueleconomy.gov skips MY2023 EQB entirely — the same
+  // dataset gap as the 2023 EQE — so 2023 rows carry the adjacent-year
+  // cert for identical hardware at agg/medium. Note the MY2024 re-rating:
+  // the 4MATIC cars fell from 243/227 to 205/207.
+  ...(() => {
+    const EQB = { make: "MERCEDES-BENZ", model: "EQB" };
+    const EQB_W = {
+      batteryYears: f(10, "agg" as Source, "medium", "10 yr/100,000 mi — the EQB carries a lower mileage cap than the EQE/EQS family's 155k; consistently documented, not re-verified against the booklet this pass"),
+      batteryMiles: f(100_000, "agg" as Source, "medium"),
+    };
+    const EQB_BASE = {
+      battery: { packUsableKwh: f(66.5, "agg", "medium", "66.5 kWh usable (70.5 gross) — all EQB variants") },
+      charging: { portStandard: f<"CCS1">("CCS1", "mfr") },
+      warranty: EQB_W,
+    };
+    const eqb = (id: string, years: [number, number], prefix: string, variant: string, drv: "AWD" | "FWD", rangeFact: Fact<number>): EnrichmentRow => ({
+      id, ...EQB, modelYears: years, vinPrefix: [prefix], drive: drv, packVariant: variant,
+      range: { epaRangeMi: rangeFact }, ...EQB_BASE,
+    });
+    return [
+      eqb("eqb-2022-300", [2022, 2022], "9M0KB", "EQB 300 4MATIC", "AWD",
+        f(243, "mfr", "high", "MY2022 EQB 300 4MATIC — EPA", epa(46331))),
+      eqb("eqb-2022-350", [2022, 2022], "9M1DB", "EQB 350 4MATIC", "AWD",
+        f(227, "mfr", "high", "MY2022 EQB 350 4MATIC — EPA", epa(46332))),
+      eqb("eqb-2023-250plus", [2023, 2023], "9M0CB", "EQB 250+", "FWD",
+        f(251, "agg", "medium", "MY2023 EQB 250+ — fueleconomy.gov skips MY2023 EQB; the identical car's MY2024 cert (id 47844) is carried")),
+      eqb("eqb-2023-300", [2023, 2023], "9M0KB", "EQB 300 4MATIC", "AWD",
+        f(243, "agg", "medium", "MY2023 EQB 300 4MATIC — fueleconomy.gov skips MY2023 EQB; the identical car's MY2022 cert (id 46331) is carried. The MY2024 re-rating reads 205")),
+      eqb("eqb-2023-350", [2023, 2023], "9M1DB", "EQB 350 4MATIC", "AWD",
+        f(227, "agg", "medium", "MY2023 EQB 350 4MATIC — fueleconomy.gov skips MY2023 EQB; the identical car's MY2022 cert (id 46332) is carried. The MY2024 re-rating reads 207")),
+      eqb("eqb-2024-25-250plus", [2024, 2025], "9M0CB", "EQB 250+", "FWD",
+        f(251, "mfr", "high", "MY2024–25 EQB 250+ — EPA (47844/49116 rate identically)", epa(47844))),
+      eqb("eqb-2024-25-300", [2024, 2025], "9M0KB", "EQB 300 4MATIC", "AWD",
+        f(205, "mfr", "high", "MY2024–25 EQB 300 4MATIC — EPA (48472/49117 rate identically); note the sharp re-rating from 2022–23's 243", epa(48472))),
+      eqb("eqb-2024-25-350", [2024, 2025], "9M1DB", "EQB 350 4MATIC", "AWD",
+        f(207, "mfr", "high", "MY2024–25 EQB 350 4MATIC — EPA (47845/49118 rate identically)", epa(47845))),
+    ];
+  })(),
+
+  // ── Dodge Charger Daytona (2026-08-15) ────────────────────────────────
+  // Pos-8 K = the electric Daytona (Part 565: "Electric Drive", 370 kW =
+  // R/T, 500 kW = Scat Pack) — which fences these rows off the returning
+  // gas Chargers. Tire fitment swings the certs hugely (R/T 268–308,
+  // Scat Pack 216–279); rows carry the standard-fitment figure with the
+  // full spread noted. "R/T Scat Pack" is a Scat Pack.
+  ...(() => {
+    const DODGE_W = {
+      batteryYears: f(8, "agg" as Source, "medium", "8 yr/100,000 mi, 70% capacity floor — Stellantis EV terms, consistently documented; not re-verified against a Dodge booklet this pass"),
+      batteryMiles: f(100_000, "agg" as Source, "medium"),
+      sohFloorPct: f(70, "agg" as Source, "medium"),
+    };
+    const DAY_BASE = {
+      battery: { packGrossKwh: f(100.5, "mfr", "medium", "100.5 kWh gross / 93.9 usable — both Daytona variants"), packUsableKwh: f(93.9, "mfr", "medium") },
+      charging: { portStandard: f<"CCS1">("CCS1", "mfr"), architectureV: f<400>(400, "mfr") },
+      warranty: DODGE_W,
+    };
+    const day = (id: string, model: string, years: [number, number], trim: string[], variant: string, rangeFact: Fact<number>): EnrichmentRow => ({
+      id, make: "DODGE", model, modelYears: years, vin8: ["K"], trim, drive: "AWD", packVariant: variant,
+      range: { epaRangeMi: rangeFact }, ...DAY_BASE,
+    });
+    const RT_TRIMS = ["R/T", "Daytona R/T", "2-DOOR DAYTONA R/T"];
+    const SCAT_TRIMS = ["Scat Pack", "R/T Scat Pack", "Daytona Scat Pack", "Scat Pack Plus"];
+    const rt2425 = f(274, "mfr", "high", "MY2024–25 Daytona R/T on the standard 18-inch fitment — EPA; 20-inch tires rate 268–308 by compound (ids 48782–84, 48994, 49073–74)", epa(48782));
+    const scat24 = f(241, "mfr", "high", "MY2024 Daytona Scat Pack (Track Pack, all-season tires) — EPA; 216 on the track compound", epa(48786));
+    const scat25 = f(279, "mfr", "high", "MY2025 Daytona Scat Pack on the standard 305-width fitment — EPA; Track Pack fitments rate 241 (A/S) / 216 (track compound)", epa(49075));
+    const rt26 = f(263, "mfr", "high", "MY2026 Daytona R/T on the standard 18-inch fitment — EPA; 20-inch tires rate 258–295", epa(49957));
+    const scat26 = f(267, "mfr", "high", "MY2026 Daytona Scat Pack on the standard 305-width fitment — EPA; Track Pack fitments rate 241 (A/S) / 223 (track compound)", epa(49648));
+    return ["Charger Daytona", "Charger", "Charger Daytona EV"].flatMap((m, i): EnrichmentRow[] => [
+      day(`daytona-2024-25-rt-${i}`, m, [2024, 2025], RT_TRIMS, "Daytona R/T", rt2425),
+      day(`daytona-2024-scat-${i}`, m, [2024, 2024], SCAT_TRIMS, "Daytona Scat Pack", scat24),
+      day(`daytona-2025-scat-${i}`, m, [2025, 2025], SCAT_TRIMS, "Daytona Scat Pack", scat25),
+      day(`daytona-2026-rt-${i}`, m, [2026, 2026], RT_TRIMS, "Daytona R/T", rt26),
+      day(`daytona-2026-scat-${i}`, m, [2026, 2026], SCAT_TRIMS, "Daytona Scat Pack", scat26),
+    ]);
   })(),
 ];
