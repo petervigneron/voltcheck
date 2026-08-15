@@ -57,6 +57,13 @@ export interface CardRow {
    * its cohort's own error bar, so any value here is already meaningful.
    */
   askVsSold?: number;
+  /**
+   * Ask minus the mileage-adjusted median of the same variant listed RIGHT NOW
+   * (lib/listings/comps.ts). A weaker signal than askVsSold and never a
+   * substitute for it — asks aren't transactions — so surfaces show it only
+   * where askVsSold is silent, which is most of the site.
+   */
+  askVsMarket?: { deltaUsd: number; peerN: number };
   tiles: CardTile[];
 }
 

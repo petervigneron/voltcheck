@@ -83,6 +83,20 @@ export function ListingCard({
       ti: `Asks ${amount} ${under ? "less" : "more"} than these actually sell for — fitted on Washington State title records (data.wa.gov, ODbL)`,
     });
   }
+  // Where no transaction model reaches — most of the site — the other listings
+  // of the same variant are still a real comparison. Deliberately the quiet
+  // putty tile, not the teal find: asking prices are what dealers want, they
+  // run above what cars fetch, and live inventory over-represents the ones
+  // that aren't selling. Never shown alongside the sold tile.
+  else if (r.askVsMarket != null) {
+    const under = r.askVsMarket.deltaUsd < 0;
+    const amount = `$${Math.abs(r.askVsMarket.deltaUsd).toLocaleString()}`;
+    lead.push({
+      k: "spec" as TileKind,
+      t: `${amount} ${under ? "under" : "over"} asking prices`,
+      ti: `Asks ${amount} ${under ? "less" : "more"} than the ${r.askVsMarket.peerN} of this exact version listed right now, adjusted for mileage. Asking prices, not sales — no record of one of these selling covers this car.`,
+    });
+  }
   const tiles: CardTile[] = lead.length ? [...lead, ...r.tiles.slice(0, Math.max(0, 5 - lead.length))] : r.tiles;
 
   return (
