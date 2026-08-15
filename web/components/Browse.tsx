@@ -249,10 +249,23 @@ export function Browse() {
     const explicitSorts = new Set(["price", "price-desc", "year-desc", "miles", "range-desc", ...(origin ? ["distance"] : [])]);
     // eslint-disable-next-line react-hooks/purity -- the once-a-day reshuffle is the point
     const day = Math.floor(Date.now() / 86400000);
+    // The haystack includes paint, and paint borrows brand names: "lucid"
+    // matches 71 Hyundais in Lucid Blue against 68 actual Lucids, and the
+    // Hyundais outranked them. A car whose year/make/model/trim matches the
+    // words typed is what was meant; a colour match is a bonus hit, not the
+    // answer. Ranking only — nothing is filtered out, and an explicit sort
+    // still wins outright.
+    const qToks = q ? q.split(/\s+/) : [];
+    const identityHit = (r: CardRow) =>
+      qToks.length > 0 && qToks.every((tok) => r.title.toLowerCase().includes(tok));
     const feat = explicitSorts.has(sort)
       ? null
       : new Map(
-          all.map((r) => [r.id, featuredScore(r, tally.get(`${r.make} ${r.model}`.toLowerCase())?.count ?? 0, day)])
+          all.map((r) => [
+            r.id,
+            featuredScore(r, tally.get(`${r.make} ${r.model}`.toLowerCase())?.count ?? 0, day) +
+              (identityHit(r) ? 1000 : 0),
+          ])
         );
 
     results.sort((a, b) => {
