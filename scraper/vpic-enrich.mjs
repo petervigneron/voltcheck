@@ -36,6 +36,34 @@ for (const l of listings) {
 const needs = [...needsByVin.values()];
 console.error(`${needs.length} of ${listings.length} listings need vPIC enrichment`);
 
+/**
+ * Neither vPIC field is reliably the trim, so take whichever survives a junk
+ * filter rather than ranking them. Observed on F-150 Lightnings 2026-08-15:
+ *   2022-23  Series ""          Trim "SuperCrew"   -> nothing (cab style)
+ *   2024     Series "PRO"/"XLT" Trim ""            -> Series
+ *   2025     Series "F-Series"  Trim "XLT"         -> Trim
+ * The old `Trim || Series` filled 31 live listings with "SuperCrew" — every
+ * Lightning is a SuperCrew, so it names no version — and a naive flip to
+ * `Series || Trim` would have stamped "F-Series" on the 2025 trucks instead.
+ */
+const CAB_STYLE_RE =
+  /^(super\s*crew|super\s*cab|crew\s*cab|regular\s*cab|extended\s*cab|double\s*cab|quad\s*cab|king\s*cab)$/i;
+// "F-Series", "E-Series": the model family in the trim column.
+const FAMILY_RE = /^[a-z]-?series$/i;
+
+function vpicTrim(r, l) {
+  for (const cand of [r.Series, r.Trim]) {
+    const t = String(cand ?? "").trim();
+    if (!t) continue;
+    if (CAB_STYLE_RE.test(t) || FAMILY_RE.test(t)) continue;
+    // The make or the model restated where the version belongs.
+    const n = (s) => String(s ?? "").toUpperCase().replace(/[^A-Z0-9]/g, "");
+    if (n(t) === n(l.make) || n(t) === n(l.model)) continue;
+    return t;
+  }
+  return "";
+}
+
 function normDrive(s) {
   const u = String(s ?? "").toUpperCase();
   if (/(AWD|4WD|4X4)/.test(u)) return "AWD";
@@ -114,7 +142,7 @@ for (const l of listings) {
       l.evKind = "PHEV"; // dealer said bare "Electric" on a plug-in hybrid
     }
   }
-  const trim = (r.Trim || r.Series || "").trim();
+  const trim = vpicTrim(r, l);
   if (!l.trim && trim) {
     l.trim = trim;
     l.trimSource = "vpic";
