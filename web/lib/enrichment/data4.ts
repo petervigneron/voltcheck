@@ -4425,4 +4425,118 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
       day(`daytona-2026-scat-${i}`, m, [2026, 2026], SCAT_TRIMS, "Daytona Scat Pack", scat26),
     ]);
   })(),
+
+  // ── PHEV batch 2 (2026-08-15) ─────────────────────────────────────────
+  // Same convention as batch 1 (Wrangler/GC 4xe, X5, Rogue): epaRangeMi is
+  // the ELECTRIC-ONLY EPA figure (rangeA on fueleconomy.gov), with the
+  // gas-assisted total in the note. AC charging only (J1772) unless noted.
+  ...(() => {
+    const phevChg = { portStandard: f<"J1772">("J1772", "mfr", "high", "AC charging only"), dcFastCharging: f<"none">("none", "mfr") };
+    const ph = (id: string, make: string, model: string, years: [number, number], variant: string, rangeFact: Fact<number>, extra?: Partial<EnrichmentRow>): EnrichmentRow => ({
+      id, make, model, modelYears: years, packVariant: variant,
+      range: { epaRangeMi: rangeFact }, charging: phevChg, ...extra,
+    });
+    return [
+      // Mazda CX-90 PHEV — two model spellings in the feed.
+      ...["CX-90 Plug-In Hybrid", "CX-90 Phev"].flatMap((m, i): EnrichmentRow[] => [
+        ph(`cx90-phev-2024-25-${i}`, "MAZDA", m, [2024, 2025], "PHEV",
+          f(26, "mfr", "high", "Electric-only EPA range (490 mi total with the gas engine) — MY2024–25", epa(49030))),
+        ph(`cx90-phev-2026-${i}`, "MAZDA", m, [2026, 2026], "PHEV",
+          f(27, "mfr", "high", "Electric-only EPA range (500 mi total) — MY2026", epa(50267))),
+      ]),
+      // Toyota RAV4 Prime → RAV4 Plug-In Hybrid rename.
+      ph("rav4-prime-2021-24", "TOYOTA", "RAV4 Prime", [2021, 2024], "Prime",
+        f(42, "mfr", "high", "Electric-only EPA range (600 mi total) — MY2021–24, identical certs", epa(42793))),
+      ...["RAV4 Plug-In Hybrid", "RAV4 Prime"].flatMap((m, i): EnrichmentRow[] => [
+        ph(`rav4-phev-2025-${i}`, "TOYOTA", m, [2025, 2025], "PHEV",
+          f(42, "mfr", "high", "Electric-only EPA range (600 mi total) — MY2025 (renamed from Prime)", epa(49160))),
+        ph(`rav4-phev-2026-${i}`, "TOYOTA", m, [2026, 2026], "PHEV (6th gen)",
+          f(50, "agg", "medium", "MY2026 (new generation, incl. GR Sport): Toyota's announced 50-mile electric-only EPA estimate; fueleconomy.gov carries no 2026 RAV4 PHEV cert yet")),
+      ]),
+      // Prius Prime → Prius Plug-In Hybrid; SE (45) vs XSE (40) from 2023.
+      ph("prius-plugin-2012-15", "TOYOTA", "Prius Plug-In Hybrid", [2012, 2015], "Plug-in (gen 1)",
+        f(11, "mfr", "high", "Electric-only EPA range (540 mi total) — the original 2012–15 Prius Plug-in", epa(35598))),
+      ph("prius-prime-2017-22", "TOYOTA", "Prius Prime", [2017, 2022], "Prime (1st gen)",
+        f(25, "mfr", "high", "Electric-only EPA range (640 mi total) — MY2018–22 certs identical", epa(39882))),
+      ...["Prius Prime", "Prius Plug-In Hybrid"].flatMap((m, i): EnrichmentRow[] => [
+        ph(`prius-phev-2023-25-se-${i}`, "TOYOTA", m, [2023, 2025], "SE",
+          f(45, "mfr", "high", "Electric-only EPA range, SE trim on 17-inch wheels (600 mi total) — MY2023–25", epa(47229)), { trim: ["SE"] }),
+        ph(`prius-phev-2023-25-xse-${i}`, "TOYOTA", m, [2023, 2025], "XSE",
+          f(40, "mfr", "high", "Electric-only EPA range, XSE/XSE Premium on 19-inch wheels (550 mi total) — MY2023–25", epa(47228)), { trim: ["XSE", "XSE Premium", "Nightshade"] }),
+        ph(`prius-phev-2026-se-${i}`, "TOYOTA", m, [2026, 2026], "SE",
+          f(45, "agg", "medium", "MY2026 — fueleconomy.gov carries no 2026 Prius PHEV cert yet; the identical MY2025 SE figure is carried"), { trim: ["SE"] }),
+        ph(`prius-phev-2026-xse-${i}`, "TOYOTA", m, [2026, 2026], "XSE",
+          f(40, "agg", "medium", "MY2026 — no 2026 cert yet; the identical MY2025 XSE figure is carried"), { trim: ["XSE", "XSE Premium", "Nightshade"] }),
+      ]),
+      // Chrysler Pacifica Hybrid (the only PHEV minivan) — two spellings.
+      // The bare "Pacifica" model string carries gas vans too — those rows
+      // key on a "Hybrid …" trim, which every PHEV listing carries.
+      ...["Pacifica Hybrid", "Pacifica Plug-In Hybrid", "Pacifica"].flatMap((m, i): EnrichmentRow[] => [
+        ph(`pacifica-2017-18-${i}`, "CHRYSLER", m, [2017, 2018], "Hybrid",
+          f(33, "mfr", "high", "Electric-only EPA range (570 mi total) — MY2017–18", epa(39483)),
+          m === "Pacifica" ? { trim: ["Hybrid"] } : undefined),
+        ph(`pacifica-2019-25-${i}`, "CHRYSLER", m, [2019, 2025], "Hybrid",
+          f(32, "mfr", "high", "Electric-only EPA range (520 mi total) — MY2020–25 certs identical", epa(41943)),
+          m === "Pacifica" ? { trim: ["Hybrid"] } : undefined),
+      ]),
+      // Hyundai/Kia PHEVs.
+      ph("tucson-phev-2022-24", "HYUNDAI", "Tucson Plug-In Hybrid", [2022, 2024], "PHEV",
+        f(33, "mfr", "high", "Electric-only EPA range (420 mi total) — MY2023–24; MY2022 rates identically", epa(46251))),
+      ph("tucson-phev-2025-26", "HYUNDAI", "Tucson Plug-In Hybrid", [2025, 2026], "PHEV",
+        f(32, "mfr", "high", "Electric-only EPA range (420 mi total) — MY2025–26", epa(49011))),
+      ph("sorento-phev-2022-24", "KIA", "Sorento Plug-In Hybrid", [2022, 2024], "PHEV",
+        f(32, "mfr", "high", "Electric-only EPA range (460 mi total) — MY2023–24; MY2022 rates identically", epa(47222))),
+      ph("sorento-phev-2025-26", "KIA", "Sorento Plug-In Hybrid", [2025, 2026], "PHEV",
+        f(30, "mfr", "high", "Electric-only EPA range (440 mi total) — MY2025–26", epa(49012))),
+      ph("sportage-phev-2023-25", "KIA", "Sportage Plug-In Hybrid", [2023, 2025], "PHEV",
+        f(34, "mfr", "high", "Electric-only EPA range (430 mi total) — MY2023–25", epa(47223))),
+      ph("sportage-phev-2026", "KIA", "Sportage Plug-In Hybrid", [2026, 2026], "PHEV",
+        f(33, "mfr", "high", "Electric-only EPA range (470 mi total) — MY2026", epa(49767))),
+      // BMW PHEVs — drive splits the 330e; the M5 is a PHEV.
+      ph("330e-2021-22-rwd", "BMW", "330e", [2021, 2022], "330e", 
+        f(23, "mfr", "high", "Electric-only EPA range (320 mi total) — MY2021–22 RWD; xDrive rates 20", epa(42569)), { drive: "RWD" }),
+      ph("330e-2021-22-awd", "BMW", "330e", [2021, 2022], "330e xDrive",
+        f(20, "mfr", "high", "Electric-only EPA range (290 mi total) — MY2021–22 xDrive", epa(42570)), { drive: "AWD" }),
+      ph("330e-2023-25-rwd", "BMW", "330e", [2023, 2025], "330e",
+        f(22, "mfr", "high", "Electric-only EPA range (310 mi total) — MY2023–24 RWD; xDrive rates 20", epa(47215)), { drive: "RWD" }),
+      ph("330e-2023-25-awd", "BMW", "330e", [2023, 2025], "330e xDrive",
+        f(20, "mfr", "high", "Electric-only EPA range (300 mi total) — MY2023–24 xDrive", epa(47216)), { drive: "AWD" }),
+      ph("550e-2025-27", "BMW", "550e", [2025, 2027], "550e xDrive",
+        f(34, "mfr", "high", "Electric-only EPA range (420–430 mi total) — MY2025–27 certs identical", epa(49005))),
+      ph("750e-2025", "BMW", "750e", [2025, 2025], "750e xDrive",
+        f(34, "mfr", "high", "Electric-only EPA range (470 mi total) — MY2025", epa(49008))),
+      ph("750e-2026", "BMW", "750e", [2026, 2026], "750e xDrive",
+        f(35, "mfr", "high", "Electric-only EPA range (460 mi total) — MY2026", epa(49759))),
+      ph("m5-2025-sedan", "BMW", "M5", [2025, 2025], "M5 (PHEV)",
+        f(27, "mfr", "high", "The G90 M5 is a plug-in hybrid — electric-only EPA range (270 mi total), MY2025 sedan; Touring rates 25", epa(49006))),
+      ph("m5-2026-27-sedan", "BMW", "M5", [2026, 2027], "M5 (PHEV)",
+        f(29, "mfr", "high", "Electric-only EPA range (280 mi total) — MY2026–27 sedan; Touring rates 25", epa(49757))),
+      ph("m5-2025-27-touring", "BMW", "M5", [2025, 2027], "M5 Touring (PHEV)",
+        f(25, "mfr", "high", "Electric-only EPA range (270 mi total) — M5 Touring, MY2025–27", epa(49007)), { trim: ["Touring", "M5 Touring"] }),
+      ph("xm-2023-25", "BMW", "XM", [2023, 2025], "XM (PHEV)",
+        f(31, "mfr", "high", "The XM is a plug-in hybrid — electric-only EPA range (300 mi total), MY2023–25", epa(46627))),
+      ph("xm-2026", "BMW", "XM", [2026, 2026], "XM (PHEV)",
+        f(30, "mfr", "high", "Electric-only EPA range (300 mi total) — MY2026 XM Label", epa(49761))),
+      // Mercedes GLC 350e — the outlier: 54 electric miles and DC fast
+      // charging, rare for a PHEV.
+      // Keyed on the Baumuster block (KM5GB) so 350es listed under the bare
+      // "GLC" string resolve while gas GLCs (different VDS) never match.
+      ...["GLC 350e", "GLC"].flatMap((m, i): EnrichmentRow[] => [
+        ph(`glc350e-2025-${i}`, "MERCEDES-BENZ", m, [2025, 2025], "GLC 350e 4MATIC",
+          f(54, "mfr", "high", "Electric-only EPA range (380 mi total) — the longest of any non-EREV PHEV sold in the US", epa(48674)),
+          { vinPrefix: ["KM5GB"], charging: { portStandard: f<"CCS1">("CCS1", "mfr"), dcFastCharging: f<"standard">("standard", "mfr", "high", "The GLC 350e DC-fast-charges at up to 60 kW — rare for a PHEV") } }),
+        ph(`glc350e-2026-${i}`, "MERCEDES-BENZ", m, [2026, 2026], "GLC 350e 4MATIC",
+          f(54, "agg", "medium", "MY2026 — fueleconomy.gov carries no 2026 GLC 350e cert yet; the identical MY2025 figure is carried"),
+          { vinPrefix: ["KM5GB"], charging: { portStandard: f<"CCS1">("CCS1", "mfr"), dcFastCharging: f<"standard">("standard", "mfr", "high", "The GLC 350e DC-fast-charges at up to 60 kW — rare for a PHEV") } }),
+      ]),
+      // Dodge Hornet R/T (the PHEV Hornet; GT is gas — trim-keyed).
+      ph("hornet-rt-2024-25", "DODGE", "Hornet", [2024, 2025], "R/T (PHEV)",
+        f(33, "mfr", "high", "Electric-only EPA range (360 mi total) — Hornet R/T, MY2024–25. The Hornet GT is pure gas", epa(47275)),
+        { trim: ["R/T", "R/T Plus"] }),
+      // Ford Escape PHEV (gas Escapes share the model string — trim-keyed).
+      ph("escape-phev-2022-26", "FORD", "Escape", [2022, 2026], "PHEV",
+        f(37, "mfr", "high", "Electric-only EPA range (520–560 mi total by year) — Escape PHEV, MY2022–26 certs read 37 every published year (2024 is absent from fueleconomy.gov's dataset; adjacent years are identical)", epa(44931)),
+        { trim: ["PHEV", "Phev", "Plug-In Hybrid", "SEL Plug-In Hybrid", "PHEV FWD"], drive: "FWD" }),
+    ];
+  })(),
 ];

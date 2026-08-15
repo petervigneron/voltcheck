@@ -52,7 +52,7 @@ function cleanTrim(l: Listing): string | undefined {
     mk === "RIVIAN" ? RIVIAN_TIERS
     : mk === "PORSCHE" ? PORSCHE_NOISE
     : mk === "AUDI" ? AUDI_NOISE
-    : mk === "SUBARU" || mk === "LEXUS" ? SERIES_NOISE
+    : mk === "SUBARU" || mk === "LEXUS" || mk === "TOYOTA" ? SERIES_NOISE
     : mk === "LUCID" ? LUCID_NOISE
     : null;
   // Feeds leak HTML entities ("S&#x2B;" for "S+").
@@ -109,7 +109,7 @@ const PORSCHE_NOISE = /\b(type\s*y1a|y1a|w\/?\s*premium\s*(&\s*tech\s*)?package)
 // tier are. quattro-the-drivetrain is already carried by the drive field.
 const AUDI_NOISE = /\b(e-?tron|quattro)\b/gi;
 // Toyota-group feeds label cars "15 Series"/"21 Series" (option-package
-// coding, seen on Solterra and the Lexus ES/RZ) — not trim names. Stripped
+// coding, seen on Solterra, the Lexus ES/RZ, and Prius) — not trim names. Stripped
 // so those cars resolve on drive/other keys or present honest candidates.
 const SERIES_NOISE = /\b\d{2}\s*series\b/gi;
 // Lucid feeds append option packages to the trim ("Grand Touring AWD Dream
