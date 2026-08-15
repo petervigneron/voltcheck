@@ -2215,19 +2215,19 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     charging: { portStandard: f("CCS1", "mfr") },
   },
   {
-    id: "ex30-2025-single", make: "VOLVO", model: "EX30", modelYears: [2025, 2025], trim: ["Single Motor"], drive: "RWD",
+    id: "ex30-2025-single", make: "VOLVO", model: "EX30", modelYears: [2025, 2025], trim: ["Single Motor", "Plus"], drive: "RWD", // bare "Plus" is a tier, not a motor — drive settles it
     battery: { packGrossKwh: f(69, "vin", "high", "69 kWh NMC — Volvo's own Part 565 submission") },
     range: { epaRangeMi: f(257, "mfr", "high", "MY2025 EX30 Single Motor Extended Range on 18-inch wheels — EPA; 261 on 19/20s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48449") },
     charging: { portStandard: f("CCS1", "mfr") },
   },
   {
-    id: "ex30-2026-single", make: "VOLVO", model: "EX30", modelYears: [2026, 2026], trim: ["Single Motor"], drive: "RWD",
+    id: "ex30-2026-single", make: "VOLVO", model: "EX30", modelYears: [2026, 2026], trim: ["Single Motor", "Plus"], drive: "RWD",
     battery: { packGrossKwh: f(69, "vin", "high", "69 kWh NMC — Volvo's own Part 565 submission") },
     range: { epaRangeMi: f(261, "mfr", "high", "MY2026 EX30 Single Motor Extended Range — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49989") },
     charging: { portStandard: f("CCS1", "mfr") },
   },
   {
-    id: "ex30-2025-26-twin", make: "VOLVO", model: "EX30", modelYears: [2025, 2026], trim: ["Twin", "Ultra"], drive: "AWD",
+    id: "ex30-2025-26-twin", make: "VOLVO", model: "EX30", modelYears: [2025, 2026], trim: ["Twin", "Ultra", "Plus"], drive: "AWD",
     battery: { packGrossKwh: f(69, "vin", "high", "69 kWh NMC — Volvo's own Part 565 submission") },
     range: { epaRangeMi: f(253, "mfr", "high", "EX30 Twin Performance — EPA, same rating both years; 250 on 20-inch wheels in 2025", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48775") },
     charging: { portStandard: f("CCS1", "mfr") },
@@ -4598,5 +4598,230 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
       sub("uncharted-2026-27-gt", "Uncharted", ["E"], ["GT"], "AWD", "GT AWD (20-inch)",
         f(273, "mfr", "high", "MY2026–27 Uncharted GT (AWD, 20-inch per Subaru's spec sheet) — EPA (50302/50694)", epa(50302)), SUB_SPEC_UC),
     ];
+  })(),
+
+  // ── Long-tail batch (2026-08-15): MINI, ZDX, Polestar 3, Cayenne, ─────
+  // CLA/G580/E53, CX-70 PHEV, Volt, Outlander PHEV, Brightdrop.
+  ...(() => {
+    const rows: EnrichmentRow[] = [];
+    // MINI — VDS proves identity across sloppy strings: XP3C0/13DJ0 = the
+    // electric Cooper SE hardtop (even when the trim just says "Cooper"),
+    // 53GA0 = Countryman SE ALL4.
+    const MINI_W = { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source, "high", "BMW-group NVLW terms run to each subsequent purchaser") };
+    for (const [i, m] of ["Electric Hardtop 2 Door", "Hardtop 2 Door", "Cooper SE Electric", "SE Hardtop"].entries()) {
+      rows.push({
+        id: `mini-se-2020-21-${i}`, make: "MINI", model: m, modelYears: [2020, 2021], vinPrefix: ["XP3C0"], drive: "FWD", packVariant: "Cooper SE",
+        battery: { packGrossKwh: f(32.6, "mfr", "medium", "32.6 kWh gross / 28.9 usable") },
+        range: { epaRangeMi: f(110, "mfr", "high", "MY2020–21 Cooper SE — EPA (42508/42634 rate identically)", epa(42508)) },
+        charging: { portStandard: f("CCS1", "mfr") }, warranty: MINI_W,
+      });
+      rows.push({
+        id: `mini-se-2022-24-${i}`, make: "MINI", model: m, modelYears: [2022, 2024], vinPrefix: ["13DJ0"], drive: "FWD", packVariant: "Cooper SE",
+        battery: { packGrossKwh: f(32.6, "mfr", "medium", "32.6 kWh gross / 28.9 usable") },
+        range: { epaRangeMi: f(114, "mfr", "high", "MY2022–24 Cooper SE — EPA (2024 id 46972; 2022–23 rate identically). The VDS (13DJ0) marks these electric even when the feed's trim just says “Cooper”", epa(46972)) },
+        charging: { portStandard: f("CCS1", "mfr") }, warranty: MINI_W,
+      });
+    }
+    for (const [i, m] of ["Countryman", "Cooper Countryman", "SE Countryman"].entries()) {
+      rows.push({
+        id: `mini-countryman-se-2025-26-${i}`, make: "MINI", model: m, modelYears: [2025, 2026], vinPrefix: ["53GA0"], drive: "AWD", packVariant: "Countryman SE ALL4",
+        battery: { packGrossKwh: f(66.5, "vin", "high", "66.45 kWh — MINI's Part 565 submissions, per-VIN") },
+        range: { epaRangeMi: f(212, "mfr", "high", "MY2025–26 Countryman SE ALL4 on 18-inch wheels — EPA (48398/50222); 204 on 19s", epa(48398)) },
+        charging: { portStandard: f("CCS1", "mfr") }, warranty: MINI_W,
+      });
+    }
+    // Acura ZDX — K = single-motor RWD, L = dual AWD (per-VIN); the Type S
+    // is trim-keyed within L.
+    const ZDX_W = { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), sohFloorPct: f(70, "agg" as Source, "medium") };
+    const ZDX_CHG = { portStandard: f<"CCS1">("CCS1", "mfr", "high", "Ultium-based, CCS1-native; GM-style NACS adapter covers Superchargers") };
+    rows.push({
+      id: "zdx-2024-25-rwd", make: "ACURA", model: "ZDX", modelYears: [2024, 2025], vin8: ["K"], drive: "RWD", packVariant: "A-Spec RWD",
+      battery: { packGrossKwh: f(102, "mfr", "medium", "102 kWh Ultium pack") },
+      range: { epaRangeMi: f(313, "mfr", "high", "MY2024 ZDX RWD — EPA; MY2025 carries over", epa(47809)) },
+      charging: ZDX_CHG, warranty: ZDX_W,
+    });
+    rows.push({
+      id: "zdx-2024-25-awd", make: "ACURA", model: "ZDX", modelYears: [2024, 2025], vin8: ["L"], drive: "AWD", packVariant: "A-Spec AWD",
+      battery: { packGrossKwh: f(102, "mfr", "medium", "102 kWh Ultium pack") },
+      range: { epaRangeMi: f(304, "mfr", "high", "MY2024 ZDX AWD — EPA; MY2025 carries over", epa(47808)) },
+      charging: ZDX_CHG, warranty: ZDX_W,
+    });
+    rows.push({
+      id: "zdx-2024-25-types", make: "ACURA", model: "ZDX", modelYears: [2024, 2025], vin8: ["L"], trim: ["Type S", "Type-S"], drive: "AWD", packVariant: "Type S",
+      battery: { packGrossKwh: f(102, "mfr", "medium", "102 kWh Ultium pack") },
+      range: { epaRangeMi: f(278, "mfr", "high", "MY2024 ZDX Type S — EPA; MY2025 carries over", epa(48781)) },
+      charging: ZDX_CHG, warranty: ZDX_W,
+    });
+    // Polestar 3 — "Polestar 3" and "3" normalize to the same model key.
+    const P3_W = { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source, "high", "“Fully transferable to subsequent owners free of charge” — Polestar warranty manual (verified for the Polestar 2 rows)") };
+    const P3_PACK = { packGrossKwh: f(111, "vin", "high", "111 kWh in Polestar's Part 565 submissions, per-VIN") };
+    rows.push({
+      id: "p3-2025-lrdm", make: "POLESTAR", model: "Polestar 3", modelYears: [2025, 2025], vin8: ["B"], drive: "AWD", packVariant: "Long Range Dual Motor",
+      // cleanTrim strips "Dual Motor" for non-Rivian makes — keys carry both forms.
+      trim: ["Long Range Dual Motor", "Long Range", "Launch Edition", "Long Range Launch Edition"],
+      battery: P3_PACK,
+      range: { epaRangeMi: f(310, "mfr", "high", "MY2025 Polestar 3 Long Range Dual Motor on 20-inch wheels — EPA; 315 on 21s, 287 on 22s", epa(48408)) },
+      charging: { portStandard: f("CCS1", "mfr") }, warranty: P3_W,
+    });
+    rows.push({
+      id: "p3-2025-perf", make: "POLESTAR", model: "Polestar 3", modelYears: [2025, 2025], vin8: ["B"], drive: "AWD", packVariant: "Performance Pack",
+      trim: ["Performance", "Long Range Performance Pack", "Long Range Performance Package", "Long Range Performance Plus", "Long Range Performance", "Performance Package", "Performance Plus", "Performance Launch Edition"],
+      battery: P3_PACK,
+      range: { epaRangeMi: f(279, "mfr", "high", "MY2025 Polestar 3 with the Performance Pack — EPA", epa(48411)) },
+      charging: { portStandard: f("CCS1", "mfr") }, warranty: P3_W,
+    });
+    rows.push({
+      id: "p3-2026-lrdm", make: "POLESTAR", model: "Polestar 3", modelYears: [2026, 2026], vin8: ["B"], drive: "AWD", packVariant: "Long Range Dual Motor",
+      trim: ["Long Range Dual Motor", "Long Range"],
+      battery: P3_PACK,
+      range: { epaRangeMi: f(312, "mfr", "high", "MY2026 Polestar 3 Long Range Dual Motor on 21-inch wheels — EPA; 281 on 22s", epa(50229)) },
+      charging: { portStandard: f("CCS1", "mfr") }, warranty: P3_W,
+    });
+    // Porsche Cayenne — pos-8 Y = the E-Hybrid PHEVs (gas Cayennes carry
+    // other codes and never match); pos-8 1 = the new 2026 Cayenne
+    // Electric, which has no published EPA certs yet (rangeless on purpose,
+    // 113 kWh per-VIN).
+    const cayPhev = (id: string, model: string, years: [number, number], trim: string[], variant: string, rangeFact: Fact<number>): EnrichmentRow => ({
+      id, make: "PORSCHE", model, modelYears: years, vin8: ["Y"], trim, drive: "AWD", packVariant: variant,
+      range: { epaRangeMi: rangeFact },
+      charging: { portStandard: f("J1772", "mfr", "high", "AC charging only"), dcFastCharging: f("none", "mfr") },
+      warranty: POR_W,
+    });
+    for (const [i, m] of ["Cayenne", "Cayenne E-Hybrid", "Cayenne E-Hybrid Coupe"].entries()) {
+      rows.push(cayPhev(`cay-2021-23-ehybrid-${i}`, m, [2021, 2023], ["E-Hybrid"], "E-Hybrid (PHEV)",
+        f(17, "mfr", "high", "Electric-only EPA range (430 mi total) — MY2021–22 Cayenne E-Hybrid; the Turbo S E-Hybrid rates 15", epa(43775))));
+      rows.push(cayPhev(`cay-2021-23-turbos-${i}`, m, [2021, 2023], ["Turbo S E-Hybrid", "Turbo S"], "Turbo S E-Hybrid (PHEV)",
+        f(15, "mfr", "high", "Electric-only EPA range (370 mi total) — MY2021–22 Turbo S E-Hybrid", epa(43777))));
+      rows.push(cayPhev(`cay-2025-26-ehybrid-${i}`, m, [2025, 2026], ["E-Hybrid"], "E-Hybrid (PHEV)",
+        f(29, "mfr", "high", "Electric-only EPA range (460 mi total) — MY2025 Cayenne E-Hybrid (25.9 kWh pack)", epa(49023))));
+      rows.push(cayPhev(`cay-2025-26-sehybrid-${i}`, m, [2025, 2026], ["S E-Hybrid", "S"], "S E-Hybrid (PHEV)",
+        f(27, "mfr", "high", "Electric-only EPA range (430 mi total) — MY2025 Cayenne S E-Hybrid", epa(49025))));
+      rows.push(cayPhev(`cay-2025-26-turbo-${i}`, m, [2025, 2026], ["Turbo E-Hybrid", "Turbo"], "Turbo E-Hybrid (PHEV)",
+        f(24, "mfr", "high", "Electric-only EPA range (390 mi total) — MY2025 Cayenne Turbo E-Hybrid", epa(49027))));
+    }
+    rows.push(...["Cayenne Turbo E-Hybrid"].map((m): EnrichmentRow => cayPhev("cay-2025-26-turbo-ms", m, [2025, 2026], ["Turbo", "Turbo E-Hybrid", "E-Hybrid"], "Turbo E-Hybrid (PHEV)",
+      f(24, "mfr", "high", "Electric-only EPA range (390 mi total) — MY2025 Cayenne Turbo E-Hybrid", epa(49027)))));
+    for (const [i, m] of ["Cayenne", "Cayenne Electric", "Cayenne S Coupe Electric"].entries()) {
+      rows.push({
+        id: `cay-electric-2026-${i}`, make: "PORSCHE", model: m, modelYears: [2026, 2026], vin8: ["1"], drive: "AWD", packVariant: "Cayenne Electric",
+        battery: { packGrossKwh: f(113, "vin", "high", "113 kWh in Porsche's Part 565 submissions, per-VIN — the new Cayenne Electric") },
+        charging: { portStandard: f("NACS", "mfr", "high", "The Cayenne Electric is Porsche's first native-NACS car"), architectureV: f(800, "mfr") },
+        warranty: POR_W,
+        buyerNotes: [{
+          headline: "No EPA range published yet for the new Cayenne Electric",
+          body: "fueleconomy.gov carried no Cayenne Electric certification at research time (2026-08-15) — the entries under “Cayenne” are the gas cars. Rather than quote a preliminary estimate as fact, this listing shows no range figure; check Porsche's window sticker.",
+          severity: "info" as const,
+        }],
+      });
+    }
+    // Mercedes CLA with EQ Tech (native NACS), G 580, AMG E 53 PHEV.
+    for (const [i, m] of ["CLA 250+ Electric", "CLA 250+ Sedan"].entries()) {
+      rows.push({
+        id: `cla250plus-2026-27-${i}`, make: "MERCEDES-BENZ", model: m, modelYears: [2026, 2027], drive: "RWD", packVariant: "CLA 250+",
+        battery: { packGrossKwh: f(85, "vin", "medium", "85 kWh in Mercedes' Part 565 submissions, per-VIN") },
+        range: { epaRangeMi: f(374, "mfr", "high", "MY2026–27 CLA 250+ with EQ Tech — EPA (the R22 certification Mercedes headlines, ids 50031/50365); a second cert reads 317 (50030) — a config split, check wheels", epa(50031)) },
+        charging: { portStandard: f("NACS", "mfr", "high", "The CLA with EQ Tech is Mercedes' first native-NACS car"), architectureV: f(800, "mfr") },
+        warranty: MB_W,
+      });
+    }
+    for (const [i, m] of ["CLA 350", "CLA 350 Electric"].entries()) {
+      rows.push({
+        id: `cla350-2026-27-${i}`, make: "MERCEDES-BENZ", model: m, modelYears: [2026, 2027], drive: "AWD", packVariant: "CLA 350 4MATIC",
+        battery: { packGrossKwh: f(85, "vin", "medium", "85 kWh in Mercedes' Part 565 submissions, per-VIN") },
+        range: { epaRangeMi: f(312, "mfr", "high", "MY2026–27 CLA 350 4MATIC with EQ Tech — EPA (50032/50660)", epa(50032)) },
+        charging: { portStandard: f("NACS", "mfr", "high", "Native NACS"), architectureV: f(800, "mfr") },
+        warranty: MB_W,
+      });
+    }
+    for (const [variant, trims, drv, rangeF] of [
+      ["CLA 250+", ["250+", "CLA 250+", "250+ Electric", "CLA250+"], "RWD" as const,
+        f(374, "mfr", "high", "MY2026–27 CLA 250+ with EQ Tech — EPA (R22 cert, ids 50031/50365); a second cert reads 317 (50030)", epa(50031))],
+      ["CLA 350 4MATIC", ["350", "CLA 350", "CLA 350 Electric", "CLA350"], "AWD" as const,
+        f(312, "mfr", "high", "MY2026–27 CLA 350 4MATIC with EQ Tech — EPA (50032/50660)", epa(50032))],
+    ] as const) {
+      rows.push({
+        id: `cla-bare-${(variant as string).includes("350") ? "350" : "250plus"}`, make: "MERCEDES-BENZ", model: "CLA", modelYears: [2026, 2027],
+        trim: trims as unknown as string[], drive: drv, packVariant: variant as string,
+        battery: { packGrossKwh: f(85, "vin", "medium", "85 kWh in Mercedes' Part 565 submissions, per-VIN") },
+        range: { epaRangeMi: rangeF as Fact<number> },
+        charging: { portStandard: f("NACS", "mfr", "high", "Native NACS"), architectureV: f(800, "mfr") },
+        warranty: MB_W,
+      });
+    }
+    rows.push({
+      id: "g580-2025-26", make: "MERCEDES-BENZ", model: "G-Class", modelYears: [2025, 2026], trim: ["G 580", "G580", "G 580e", "G 580e 4MATIC"], drive: "AWD", packVariant: "G 580 with EQ Technology",
+      battery: { packGrossKwh: f(122, "vin", "medium", "122 kWh in Mercedes' Part 565 submissions, per-VIN") },
+      range: { epaRangeMi: f(239, "mfr", "high", "G 580 with EQ Technology — EPA (MY2026 cert 49687; the MY2025 launch year is absent from the dataset, hardware identical)", epa(49687)) },
+      charging: { portStandard: f("CCS1", "mfr") }, warranty: MB_W,
+    });
+    for (const [i, m] of ["AMG E 53 E", "AMG E 53e Plug-In Hybrid", "E-Class"].entries()) {
+      rows.push({
+        id: `e53-2026-27-${i}`, make: "MERCEDES-BENZ", model: m, modelYears: [2026, 2027],
+        trim: m === "E-Class" ? ["E 53", "E53", "AMG E 53", "E 53 AMG", "AMG E 53 E"] : undefined,
+        drive: "AWD", packVariant: "AMG E 53 Hybrid (PHEV)",
+        battery: { packGrossKwh: f(28.6, "vin", "medium", "28.6 kWh in Mercedes' Part 565 submissions") },
+        range: { epaRangeMi: f(44, "mfr", "high", "The AMG E 53 is a plug-in hybrid — electric-only EPA range (420 mi total), sedan; the wagon rates 41", epa(49769)) },
+        charging: { portStandard: f("J1772", "mfr", "high", "AC charging only"), dcFastCharging: f("none", "mfr") },
+        warranty: MB_W,
+      });
+    }
+    // Mazda CX-70 PHEV — same powertrain family as CX-90 PHEV.
+    for (const [i, m] of ["CX-70 Plug-In Hybrid", "CX-70 PHEV"].entries()) {
+      rows.push({
+        id: `cx70-phev-2025-${i}`, make: "MAZDA", model: m, modelYears: [2025, 2025], packVariant: "PHEV",
+        range: { epaRangeMi: f(26, "mfr", "high", "Electric-only EPA range (490 mi total) — MY2025", epa(48672)) },
+        charging: { portStandard: f("J1772", "mfr", "high", "AC charging only"), dcFastCharging: f("none", "mfr") },
+      });
+      rows.push({
+        id: `cx70-phev-2026-${i}`, make: "MAZDA", model: m, modelYears: [2026, 2026], packVariant: "PHEV",
+        range: { epaRangeMi: f(32, "mfr", "high", "Electric-only EPA range (520 mi total) — MY2026", epa(50266)) },
+        charging: { portStandard: f("J1772", "mfr", "high", "AC charging only"), dcFastCharging: f("none", "mfr") },
+      });
+    }
+    // Chevrolet Volt — the classic EREV; no DC fast charging on any Volt.
+    rows.push({
+      id: "volt-2011-12", make: "CHEVROLET", model: "Volt", modelYears: [2011, 2012], packVariant: "Gen 1",
+      range: { epaRangeMi: f(35, "mfr", "high", "Electric-only EPA range (380 mi total with the gas generator) — MY2012; MY2011 rates 35", epa(31618)) },
+      charging: { portStandard: f("J1772", "mfr", "high", "AC charging only — no Volt has DC fast charging"), dcFastCharging: f("none", "mfr") },
+    });
+    rows.push({
+      id: "volt-2013-15", make: "CHEVROLET", model: "Volt", modelYears: [2013, 2015], packVariant: "Gen 1",
+      range: { epaRangeMi: f(38, "mfr", "high", "Electric-only EPA range (380 mi total) — MY2013–15", "https://www.fueleconomy.gov") },
+      charging: { portStandard: f("J1772", "mfr", "high", "AC charging only — no Volt has DC fast charging"), dcFastCharging: f("none", "mfr") },
+    });
+    rows.push({
+      id: "volt-2016-19", make: "CHEVROLET", model: "Volt", modelYears: [2016, 2019], packVariant: "Gen 2",
+      range: { epaRangeMi: f(53, "mfr", "high", "Electric-only EPA range (420 mi total) — Gen 2, MY2016–19 (37309/39190 identical)", epa(37309)) },
+      charging: { portStandard: f("J1772", "mfr", "high", "AC charging only — no Volt has DC fast charging (a CCS option existed 2019-only)"), dcFastCharging: f("optional", "mfr", "medium", "DC fast charging became a factory option only for MY2019") },
+    });
+    // Mitsubishi Outlander PHEV — the rare PHEV with a CHAdeMO DC port.
+    for (const [i, m] of ["Outlander PHEV", "Outlander Plug-In Hybrid"].entries()) {
+      rows.push({
+        id: `outlander-phev-2023-25-${i}`, make: "MITSUBISHI", model: m, modelYears: [2023, 2025], packVariant: "PHEV",
+        battery: { packGrossKwh: f(20, "vin", "high", "20 kWh per Mitsubishi's Part 565 submissions") },
+        range: { epaRangeMi: f(38, "mfr", "high", "Electric-only EPA range (420 mi total) — MY2023–25", epa(47280)) },
+        charging: { portStandard: f("CHAdeMO", "mfr", "high", "One of the only PHEVs with DC fast charging — via CHAdeMO, a dying US network"), dcFastCharging: f("standard", "mfr") },
+      });
+      rows.push({
+        id: `outlander-phev-2026-${i}`, make: "MITSUBISHI", model: m, modelYears: [2026, 2026], packVariant: "PHEV",
+        battery: { packGrossKwh: f(22.7, "vin", "high", "22.7 kWh per Mitsubishi's Part 565 submissions — enlarged for MY2026") },
+        range: { epaRangeMi: f(44, "mfr", "high", "Electric-only EPA range (420 mi total) — MY2026, up from 38 on the larger pack", epa(50310)) },
+        charging: { portStandard: f("CHAdeMO", "mfr", "high", "DC fast charging via CHAdeMO, a dying US network"), dcFastCharging: f("standard", "mfr") },
+      });
+    }
+    // Brightdrop Zevo — commercial vans above the EPA-rated weight class;
+    // rangeless on purpose, like the Escalade IQ and 2022-23 Hummers.
+    for (const [i, m] of ["Zevo 600", "Zevo 400", "Zevo"].entries()) {
+      rows.push({
+        id: `zevo-2023-25-${i}`, make: "BRIGHTDROP", model: m, modelYears: [2023, 2025], packVariant: m,
+        charging: { portStandard: f("CCS1", "mfr", "high", "Ultium-based commercial van, CCS1") },
+        buyerNotes: [{
+          headline: "No EPA range rating exists for these commercial vans",
+          body: "The Zevo 400/600 sit in the commercial weight class the EPA doesn't range-rate. GM's own estimate was up to 272 miles (Zevo 600, Ultium pack); treat any quoted figure as a manufacturer estimate, not an EPA test.",
+          severity: "info" as const,
+        }],
+      });
+    }
+    return rows;
   })(),
 ];
