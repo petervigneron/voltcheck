@@ -14,6 +14,16 @@ const num = (v) => {
   return Number.isFinite(n) && n > 0 ? n : undefined;
 };
 
+// vehicleModelDate is nominally a model year but some dealer platforms emit a
+// full date ("2025-01-01"); digit-stripping that yields 20250101, which
+// overflows the DB's smallint year column. Take the leading 4-digit year and
+// bound it to plausible model years instead.
+const modelYear = (v) => {
+  const m = text(v)?.match(/\b(19[89]\d|20\d{2})\b/);
+  const y = m ? Number(m[0]) : undefined;
+  return y >= 1981 && y <= new Date().getFullYear() + 2 ? y : undefined;
+};
+
 // driveWheelConfiguration arrives as free text ("All-wheel Drive", "AWD") or a
 // schema.org URL (…/AllWheelDriveConfiguration). Map to the registry's tokens.
 const driveLine = (v) => {
@@ -46,7 +56,7 @@ export function normalize(vehicle, { sourceUrl, dealerDomain }) {
     description: text(vehicle.description)?.slice(0, 2000),
     vdpUrl,
     vin: text(vehicle.vehicleIdentificationNumber)?.toUpperCase(),
-    year: num(vehicle.vehicleModelDate ?? vehicle.productionDate ?? vehicle.modelDate),
+    year: modelYear(vehicle.vehicleModelDate ?? vehicle.productionDate ?? vehicle.modelDate),
     make: text(vehicle.brand ?? vehicle.manufacturer),
     model: text(vehicle.model),
     trim: text(vehicle.vehicleConfiguration ?? vehicle.trim),

@@ -89,14 +89,23 @@ function condition(r) {
   return undefined;
 }
 
+// The DB stores year as smallint; a dealer feed that slips a date past the
+// crawler (20250101, the 2026-08-15 nightly failure) is repaired to its
+// leading year, and anything still implausible drops the listing rather than
+// aborting the whole sync.
+function modelYear(y) {
+  if (y >= 19800101 && y <= 20991231) y = Math.floor(y / 10000);
+  return y >= 1981 && y <= new Date().getFullYear() + 2 ? y : undefined;
+}
+
 const listings = raw
-  .filter((r) => r.vin && r.year && r.make && r.model && r.priceUsd)
+  .filter((r) => r.vin && modelYear(r.year) && r.make && r.model && r.priceUsd)
   .filter((r) => r.evConfidence === "high")
   .map((r) => ({
     condition: condition(r),
     id: r.vin.toLowerCase(),
     vin: r.vin,
-    year: r.year,
+    year: modelYear(r.year),
     make: canonMake(r.make),
     model: canonModel(r.model),
     trim: r.trim ?? undefined,
