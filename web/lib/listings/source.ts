@@ -1,6 +1,6 @@
 import type { Listing } from "./types";
 import { SAMPLE_LISTINGS } from "./sample";
-import { fetchListingsFromDb } from "./db";
+import { dbConfigured, fetchListingDetailFromDb, fetchListingsFromDb } from "./db";
 import scraped from "@/data/scraped-listings.json";
 
 // Live inventory comes from Supabase (nightly scraper sync, see
@@ -41,5 +41,12 @@ export async function allListings(): Promise<Listing[]> {
 }
 
 export async function findListing(id: string): Promise<Listing | undefined> {
-  return (await allListings()).find((l) => l.id === id);
+  const listing = (await allListings()).find((l) => l.id === id);
+  if (!listing) return undefined;
+  // The bulk feed omits description and price history (egress: they render
+  // only here). One small per-VIN read brings them in; bundled-JSON and
+  // sample rows already carry their description and skip the fetch.
+  if (listing.description !== undefined || !dbConfigured()) return listing;
+  const detail = await fetchListingDetailFromDb(listing.vin);
+  return detail ? { ...listing, ...detail } : listing;
 }

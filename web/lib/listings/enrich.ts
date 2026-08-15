@@ -38,6 +38,7 @@ const BODY_NOISE = /\b(sports?\s*activity\s*vehicle|sport\s*utility|sedan|hatchb
 // row key, and a trim that says nothing beyond the drivetrain drops away.
 function cleanTrim(l: Listing): string | undefined {
   if (!l.trim) return undefined;
+  const makerNoise = l.make.trim().toUpperCase() === "RIVIAN" ? RIVIAN_TIERS : null;
   // Feeds leak HTML entities ("S&#x2B;" for "S+").
   let t = l.trim.replace(/&#x2b;|&#43;|&plus;/gi, "+").replace(/[()]/g, " ").replace(/\s+/g, " ").trim();
   // "S/S+"-style compounds whose halves normalize identically are one trim.
@@ -47,12 +48,14 @@ function cleanTrim(l: Listing): string | undefined {
   }
   const model = l.model.trim().toLowerCase();
   if (t.toLowerCase().startsWith(model)) t = t.slice(model.length);
+  // "Dual Motor" is packaging on a Tesla trim but identity on a Rivian one.
   t = t
     .replace(/\ball[- ]wheel drive\b/gi, "AWD")
     .replace(/\brear[- ]wheel drive\b/gi, "RWD")
     .replace(/\bfront[- ]wheel drive\b/gi, "FWD")
-    .replace(/\bdual motor\b/gi, " ")
+    .replace(makerNoise ? /$^/ : /\bdual motor\b/gi, " ")
     .replace(BODY_NOISE, " ")
+    .replace(makerNoise ?? /$^/, " ")
     .replace(/\s+/g, " ")
     .trim();
   if (!t || CAB_STYLES.test(t)) return undefined;
@@ -68,6 +71,12 @@ function cleanTrim(l: Listing): string | undefined {
 
 // A listing feed gives us make/model/year/trim directly — no vPIC round-trip
 // needed to match enrichment. The VIN still contributes Tesla plant/year facts.
+// Rivian's trims are feature tiers (Adventure, Launch Edition, Ascend,
+// Premium) — the config lives in the pack/motor words that sometimes follow.
+// Strip the tier so "Adventure Quad Motor Large Pack" matches a "Quad Motor"
+// row and a bare "Adventure" honestly presents candidates.
+const RIVIAN_TIERS = /\b(adventure package|adventure|launch edition|ascend|premium)\b/gi;
+
 function decodeFromListing(l: Listing): VinDecode {
   return {
     vin: l.vin,

@@ -1,8 +1,16 @@
 import type { Listing } from "./types";
 
-// Server-side read of live listings from Supabase (PostgREST), with the
-// bundled JSON as fallback (see source.ts). Plain fetch, no client library:
-// the query is one GET and the anon key is read-only under RLS.
+// Server-side reads from Supabase (PostgREST), with the bundled JSON as
+// fallback (see source.ts). Plain fetch, no client library: the queries are
+// GETs and the anon key is read-only under RLS.
+//
+// Egress discipline (free plan, 2026-08-14 incident): the bulk read uses the
+// live_listings_feed view (migration 0011) — payload minus `description`,
+// which is ~45% of payload bytes and renders only on the detail page. The
+// detail page fetches its one row, description and price history included,
+// via fetchListingDetailFromDb. Both requests ask for gzip explicitly (the
+// wire is what Supabase bills; ~3.7x smaller) and revalidate hourly — the
+// data changes about once a day (nightly sync, recheck, price audit).
 //
 // Env (web/.env.local locally, project env vars on Vercel):
 //   SUPABASE_URL=https://<project-ref>.supabase.co
@@ -10,12 +18,16 @@ import type { Listing } from "./types";
 // Both absent → dbConfigured() is false and the app serves the bundled JSON.
 
 const PAGE = 1000;
-const REVALIDATE_SECONDS = 300; // data changes nightly; 5 min staleness is fine
+const REVALIDATE_SECONDS = 3600;
 
-interface DbRow {
+interface FeedRow {
   payload: Listing;
   first_seen_at: string;
   last_seen_at: string;
+}
+
+interface DetailRow {
+  payload: Listing;
   listing_price_history: { price_usd: number; observed_at: string }[];
 }
 
@@ -23,29 +35,33 @@ export function dbConfigured(): boolean {
   return Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY);
 }
 
-/** All live (non-delisted) listings, or null when the DB is unconfigured or
- *  unreachable — the caller falls back to the bundled JSON. */
+function headers(): Record<string, string> {
+  const key = process.env.SUPABASE_ANON_KEY!;
+  return {
+    apikey: key,
+    Authorization: `Bearer ${key}`,
+    "Accept-Encoding": "gzip",
+  };
+}
+
+/** All live (non-delisted) listings — no descriptions, no price history —
+ *  or null when the DB is unconfigured or unreachable, in which case the
+ *  caller falls back to the bundled JSON. */
 export async function fetchListingsFromDb(): Promise<Listing[] | null> {
   if (!dbConfigured()) return null;
   const base = process.env.SUPABASE_URL!.replace(/\/$/, "");
-  const key = process.env.SUPABASE_ANON_KEY!;
-  const select = "payload,first_seen_at,last_seen_at,listing_price_history(price_usd,observed_at)";
   try {
-    const rows: DbRow[] = [];
+    const rows: FeedRow[] = [];
     for (let from = 0; ; from += PAGE) {
       const res = await fetch(
-        `${base}/rest/v1/listings?select=${encodeURIComponent(select)}&delisted_at=is.null&order=vin.asc`,
+        `${base}/rest/v1/live_listings_feed?select=payload,first_seen_at,last_seen_at&order=vin.asc`,
         {
-          headers: {
-            apikey: key,
-            Authorization: `Bearer ${key}`,
-            Range: `${from}-${from + PAGE - 1}`,
-          },
+          headers: { ...headers(), Range: `${from}-${from + PAGE - 1}` },
           next: { revalidate: REVALIDATE_SECONDS },
         }
       );
       if (!res.ok) throw new Error(`PostgREST ${res.status}`);
-      const page = (await res.json()) as DbRow[];
+      const page = (await res.json()) as FeedRow[];
       rows.push(...page);
       if (page.length < PAGE) break;
     }
@@ -53,12 +69,40 @@ export async function fetchListingsFromDb(): Promise<Listing[] | null> {
       ...r.payload,
       firstSeenAt: r.first_seen_at,
       lastSeenAt: r.last_seen_at,
-      priceHistory: (r.listing_price_history ?? [])
-        .map((h) => ({ priceUsd: h.price_usd, observedAt: h.observed_at }))
-        .sort((a, b) => a.observedAt.localeCompare(b.observedAt)),
     }));
   } catch (err) {
     console.error("[listings] Supabase read failed — serving bundled JSON fallback:", err);
+    return null;
+  }
+}
+
+/** The detail-page extras for one listing: the dealer's description and the
+ *  price history. Null when the DB is unconfigured, unreachable, or has no
+ *  such row — the caller just renders without the extras. */
+export async function fetchListingDetailFromDb(
+  vin: string
+): Promise<{ description?: string; priceHistory: Listing["priceHistory"] } | null> {
+  if (!dbConfigured()) return null;
+  const base = process.env.SUPABASE_URL!.replace(/\/$/, "");
+  const select = "payload,listing_price_history(price_usd,observed_at)";
+  try {
+    const res = await fetch(
+      `${base}/rest/v1/listings?select=${encodeURIComponent(select)}&vin=eq.${encodeURIComponent(
+        vin.toUpperCase()
+      )}&limit=1`,
+      { headers: headers(), next: { revalidate: REVALIDATE_SECONDS } }
+    );
+    if (!res.ok) throw new Error(`PostgREST ${res.status}`);
+    const [row] = (await res.json()) as DetailRow[];
+    if (!row) return null;
+    return {
+      description: row.payload.description,
+      priceHistory: (row.listing_price_history ?? [])
+        .map((h) => ({ priceUsd: h.price_usd, observedAt: h.observed_at }))
+        .sort((a, b) => a.observedAt.localeCompare(b.observedAt)),
+    };
+  } catch (err) {
+    console.error("[listings] Supabase detail read failed:", err);
     return null;
   }
 }

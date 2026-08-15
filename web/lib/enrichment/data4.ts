@@ -314,6 +314,30 @@ const TSX_PACK = { packGrossKwh: f(100, "vin", "medium", "Tesla's Part 565 submi
 const MS = { make: "TESLA", model: "Model S" };
 const MX = { make: "TESLA", model: "Model X" };
 
+
+// ── Rivian R1S / R1T (same pass) ────────────────────────────────────────
+// Rivian's VIN code and trims are feature tiers (Adventure/Launch/Ascend),
+// so config comes from the pack/motor words when the feed includes them —
+// cleanTrim strips the tier and keeps "Dual/Tri/Quad Motor" for Rivian.
+// 2022 needs nothing: every truck is a quad-motor Large pack. 2023 adds
+// Dual (Large-only), 2024 multiplies packs (Standard/Standard+/Large/Max),
+// gen2 2025+ adds Large Plus/Tri/Quad. Bare tier-only listings present the
+// year's honest candidate set. Rivian's Part 565 kWh figures are real
+// per-config data (128.9 Large gen1, 106/141 gen2) and help the hint filter.
+// Ranges carry the standard-wheel figure with the spread noted.
+const R1S = { make: "RIVIAN", model: "R1S" };
+const R1T = { make: "RIVIAN", model: "R1T" };
+const RIV_W = {
+  batteryYears: f(8, "mfr" as Source),
+  batteryMiles: f(175_000, "mfr" as Source, "high", "Rivian's battery warranty runs to 175,000 miles — the longest mileage term in the segment"),
+  sohFloorPct: f(70, "mfr" as Source),
+  batteryTransfers: f(true, "mfr" as Source),
+};
+const RIV_PORT1 = { portStandard: f<"CCS1">("CCS1", "mfr") };
+const RIV_128 = { packGrossKwh: f(128.9, "vin", "high", "Rivian's own Part 565 submission: 128.9 kWh (Large pack)") };
+const RIV_106 = { packGrossKwh: f(106, "vin", "high", "Rivian's own Part 565 submission (gen-2 Standard pack)") };
+const RIV_141 = { packGrossKwh: f(141, "vin", "high", "Rivian's own Part 565 submission (Max pack)") };
+
 export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   // ── MY2022 ─────────────────────────────────────────────────────────────
   {
@@ -2322,5 +2346,203 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(276, "mfr", "high", "MY2026 EX90 Single Motor — EPA; 291 on 21-inch wheels", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50254") },
     charging: { portStandard: f("CCS1", "mfr") },
     warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
+  },
+
+  {
+    id: "r1s-2022", ...R1S, modelYears: [2022, 2022], drive: "AWD", packVariant: "Quad · Large pack",
+    battery: RIV_128,
+    range: { epaRangeMi: f(316, "mfr", "high", "MY2022 R1S — every 2022 build is the quad-motor Large pack — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=44461") },
+    charging: RIV_PORT1,
+    thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
+    warranty: RIV_W,
+  },
+  {
+    id: "r1t-2022", ...R1T, modelYears: [2022, 2022], drive: "AWD", packVariant: "Quad · Large pack",
+    battery: RIV_128,
+    range: { epaRangeMi: f(314, "mfr", "high", "MY2022 R1T — every 2022 build is the quad-motor Large pack — EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=44462") },
+    charging: RIV_PORT1,
+    thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
+    warranty: RIV_W,
+  },
+  {
+    id: "r1s-2023-quad", ...R1S, modelYears: [2023, 2023], trim: ["Quad Motor", "Quad", "Quad Motor Large Pack"], drive: "AWD", packVariant: "Quad · Large pack",
+    battery: RIV_128,
+    range: { epaRangeMi: f(321, "mfr", "high", "MY2023 R1S quad-motor on 21-inch wheels — EPA; 274–303 on 20AT/22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46316") },
+    charging: RIV_PORT1,
+    thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
+    warranty: RIV_W,
+  },
+  {
+    id: "r1t-2023-quad", ...R1T, modelYears: [2023, 2023], trim: ["Quad Motor", "Quad", "Quad Motor Large Pack"], drive: "AWD", packVariant: "Quad · Large pack",
+    battery: RIV_128,
+    range: { epaRangeMi: f(328, "mfr", "high", "MY2023 R1T quad-motor on 21-inch wheels — EPA; 289–303 on 20/22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46313") },
+    charging: RIV_PORT1,
+    thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
+    warranty: RIV_W,
+  },
+  {
+    id: "r1s-2023-dual", ...R1S, modelYears: [2023, 2023], trim: ["Dual Motor", "Large Pack", "Large", "Performance"], drive: "AWD", packVariant: "Dual · Large pack",
+    battery: RIV_128,
+    range: { epaRangeMi: f(352, "mfr", "high", "MY2023 R1S Dual (Large pack, the only 2023 dual config) on 21-inch wheels — EPA; 307–341 on 20AT/22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46996") },
+    charging: RIV_PORT1,
+    thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
+    warranty: RIV_W,
+  },
+  {
+    id: "r1t-2023-dual", ...R1T, modelYears: [2023, 2023], trim: ["Dual Motor", "Large Pack", "Large", "Performance"], drive: "AWD", packVariant: "Dual · Large pack",
+    battery: RIV_128,
+    range: { epaRangeMi: f(352, "mfr", "high", "MY2023 R1T Dual (Large pack) on 21-inch wheels — EPA; 341 on 22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47000") },
+    charging: RIV_PORT1,
+    thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
+    warranty: RIV_W,
+  },
+  {
+    id: "r1s-2024-quad", ...R1S, modelYears: [2024, 2024], trim: ["Quad Motor", "Quad", "Quad Motor Large Pack"], drive: "AWD", packVariant: "Quad · Large pack",
+    battery: RIV_128,
+    range: { epaRangeMi: f(321, "mfr", "high", "MY2024 R1S quad on 21-inch wheels — EPA; 274–303 on 20AT/22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47906") },
+    charging: RIV_PORT1,
+    thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
+    warranty: RIV_W,
+  },
+  {
+    id: "r1t-2024-quad", ...R1T, modelYears: [2024, 2024], trim: ["Quad Motor", "Quad", "Quad Motor Large Pack"], drive: "AWD", packVariant: "Quad · Large pack",
+    battery: RIV_128,
+    range: { epaRangeMi: f(328, "mfr", "high", "MY2024 R1T quad on 21-inch wheels — EPA; 289–303 on 20/22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47883") },
+    charging: RIV_PORT1,
+    thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
+    warranty: RIV_W,
+  },
+  {
+    id: "r1s-2024-std", ...R1S, modelYears: [2024, 2024], trim: ["Standard Pack", "Standard", "Dual Motor"], drive: "AWD", packVariant: "Dual · Standard pack",
+    range: { epaRangeMi: f(270, "mfr", "high", "MY2024 R1S Dual Standard on 21-inch wheels — EPA; 255 on 22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47895") },
+    charging: RIV_PORT1,
+    thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
+    warranty: RIV_W,
+  },
+  {
+    id: "r1t-2024-std", ...R1T, modelYears: [2024, 2024], trim: ["Standard Pack", "Standard", "Dual Motor"], drive: "AWD", packVariant: "Dual · Standard pack",
+    range: { epaRangeMi: f(270, "mfr", "high", "MY2024 R1T Dual Standard on 21-inch wheels — EPA; 255 on 22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47872") },
+    charging: RIV_PORT1,
+    thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
+    warranty: RIV_W,
+  },
+  {
+    id: "r1s-2024-stdplus", ...R1S, modelYears: [2024, 2024], trim: ["Standard Plus Pack", "Standard Plus"], drive: "AWD", packVariant: "Dual · Standard+ pack",
+    range: { epaRangeMi: f(315, "mfr", "high", "MY2024 R1S Dual Standard+ on 21-inch wheels — EPA; 277–300 on 20AT/22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47897") },
+    charging: RIV_PORT1,
+    thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
+    warranty: RIV_W,
+  },
+  {
+    id: "r1t-2024-stdplus", ...R1T, modelYears: [2024, 2024], trim: ["Standard Plus Pack", "Standard Plus"], drive: "AWD", packVariant: "Dual · Standard+ pack",
+    range: { epaRangeMi: f(315, "mfr", "high", "MY2024 R1T Dual Standard+ on 21-inch wheels — EPA; 277–300 on 20AT/22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47874") },
+    charging: RIV_PORT1,
+    thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
+    warranty: RIV_W,
+  },
+  {
+    id: "r1s-2024-large", ...R1S, modelYears: [2024, 2024], trim: ["Large Pack", "Large", "Dual Motor"], drive: "AWD", packVariant: "Dual · Large pack",
+    battery: RIV_128,
+    range: { epaRangeMi: f(352, "mfr", "high", "MY2024 R1S Dual Large on 21-inch wheels — EPA; 307–341 on 20AT/22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47891") },
+    charging: RIV_PORT1,
+    thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
+    warranty: RIV_W,
+  },
+  {
+    id: "r1t-2024-large", ...R1T, modelYears: [2024, 2024], trim: ["Large Pack", "Large", "Dual Motor"], drive: "AWD", packVariant: "Dual · Large pack",
+    battery: RIV_128,
+    range: { epaRangeMi: f(352, "mfr", "high", "MY2024 R1T Dual Large on 21-inch wheels — EPA; 307–341 on 20AT/22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47868") },
+    charging: RIV_PORT1,
+    thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
+    warranty: RIV_W,
+  },
+  {
+    id: "r1s-2024-max", ...R1S, modelYears: [2024, 2024], trim: ["Max Pack", "Max", "Dual Motor"], drive: "AWD", packVariant: "Dual · Max pack",
+    battery: RIV_141,
+    range: { epaRangeMi: f(400, "mfr", "high", "MY2024 R1S Dual Max on 21-inch wheels — EPA; 355–380 on 20AT/22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47893") },
+    charging: RIV_PORT1,
+    thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
+    warranty: RIV_W,
+  },
+  {
+    id: "r1t-2024-max", ...R1T, modelYears: [2024, 2024], trim: ["Max Pack", "Max", "Dual Motor"], drive: "AWD", packVariant: "Dual · Max pack",
+    battery: RIV_141,
+    range: { epaRangeMi: f(410, "mfr", "high", "MY2024 R1T Dual Max on 21-inch wheels — EPA; 355–380 on 20AT/22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47870") },
+    charging: RIV_PORT1,
+    thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
+    warranty: RIV_W,
+  },
+  {
+    id: "r1s-2025-26-std", ...R1S, modelYears: [2025, 2026], trim: ["Standard Pack", "Standard", "Dual Motor"], drive: "AWD", packVariant: "Dual · Standard pack",
+    battery: RIV_106,
+    range: { epaRangeMi: f(258, "mfr", "high", "Gen-2 R1S Dual Standard on 20-inch wheels — EPA, 2025–26; 270 on 22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48435") },
+    thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
+    warranty: RIV_W,
+  },
+  {
+    id: "r1t-2025-26-std", ...R1T, modelYears: [2025, 2026], trim: ["Standard Pack", "Standard", "Dual Motor"], drive: "AWD", packVariant: "Dual · Standard pack",
+    battery: RIV_106,
+    range: { epaRangeMi: f(258, "mfr", "high", "Gen-2 R1T Dual Standard on 20-inch wheels — EPA, 2025–26; 270 on 22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48423") },
+    thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
+    warranty: RIV_W,
+  },
+  {
+    id: "r1s-2025-26-large", ...R1S, modelYears: [2025, 2026], trim: ["Large Pack", "Large", "Dual Motor"], drive: "AWD", packVariant: "Dual · Large pack",
+    range: { epaRangeMi: f(300, "mfr", "high", "Gen-2 R1S Dual Large on 20-inch wheels — EPA, 2025–26; 289–329 on 20AT/22s. The Large Plus pack rates 317–330", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48745") },
+    thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
+    warranty: RIV_W,
+  },
+  {
+    id: "r1t-2025-26-large", ...R1T, modelYears: [2025, 2026], trim: ["Large Pack", "Large", "Dual Motor"], drive: "AWD", packVariant: "Dual · Large pack",
+    range: { epaRangeMi: f(300, "mfr", "high", "Gen-2 R1T Dual Large on 20-inch wheels — EPA, 2025–26; 329 on 22s. The Large Plus pack rates 317–330", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48755") },
+    thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
+    warranty: RIV_W,
+  },
+  {
+    id: "r1s-2025-26-largeplus", ...R1S, modelYears: [2025, 2026], trim: ["Large Plus Pack", "Large Plus"], drive: "AWD", packVariant: "Dual · Large Plus pack",
+    range: { epaRangeMi: f(317, "mfr", "high", "Gen-2 R1S Dual Large Plus on 20-inch wheels — EPA, 2025–26; 292–330 on 20AT/22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48747") },
+    thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
+    warranty: RIV_W,
+  },
+  {
+    id: "r1t-2025-26-largeplus", ...R1T, modelYears: [2025, 2026], trim: ["Large Plus Pack", "Large Plus"], drive: "AWD", packVariant: "Dual · Large Plus pack",
+    range: { epaRangeMi: f(317, "mfr", "high", "Gen-2 R1T Dual Large Plus on 20-inch wheels — EPA, 2025–26; 330 on 22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48757") },
+    thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
+    warranty: RIV_W,
+  },
+  {
+    id: "r1s-2025-26-max", ...R1S, modelYears: [2025, 2026], trim: ["Max Pack", "Max", "Dual Motor"], drive: "AWD", packVariant: "Dual · Max pack",
+    battery: RIV_141,
+    range: { epaRangeMi: f(380, "mfr", "high", "Gen-2 R1S Dual Max on 20-inch wheels — EPA, 2025–26; 370–410 on 20AT/22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48433") },
+    thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
+    warranty: RIV_W,
+  },
+  {
+    id: "r1t-2025-26-max", ...R1T, modelYears: [2025, 2026], trim: ["Max Pack", "Max", "Dual Motor"], drive: "AWD", packVariant: "Dual · Max pack",
+    battery: RIV_141,
+    range: { epaRangeMi: f(380, "mfr", "high", "Gen-2 R1T Dual Max on 20-inch wheels — EPA, 2025–26; 420 on 22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48421") },
+    thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
+    warranty: RIV_W,
+  },
+  {
+    id: "r1s-2025-26-tri", ...R1S, modelYears: [2025, 2026], trim: ["Tri Motor", "Tri", "Tri Motor Max Pack"], drive: "AWD", packVariant: "Tri · Max pack",
+    battery: RIV_141,
+    range: { epaRangeMi: f(371, "mfr", "high", "Gen-2 R1S Tri Max on 22-inch wheels — EPA, 2025–26; 329 on 20AT", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48751") },
+    thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
+    warranty: RIV_W,
+  },
+  {
+    id: "r1t-2025-26-tri", ...R1T, modelYears: [2025, 2026], trim: ["Tri Motor", "Tri", "Tri Motor Max Pack"], drive: "AWD", packVariant: "Tri · Max pack",
+    battery: RIV_141,
+    range: { epaRangeMi: f(371, "mfr", "high", "Gen-2 R1T Tri Max on 22-inch wheels — EPA, 2025–26", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48761") },
+    thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
+    warranty: RIV_W,
+  },
+  {
+    id: "r1s-2026-quad", ...R1S, modelYears: [2026, 2026], trim: ["Quad Motor", "Quad", "Quad Motor Large Pack"], drive: "AWD", packVariant: "Quad · Max pack",
+    battery: RIV_141,
+    range: { epaRangeMi: f(374, "mfr", "high", "MY2026 gen-2 R1S Quad Max on 22-inch wheels — EPA; 325–338 on AT/UHP tires", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49740") },
+    thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
+    warranty: RIV_W,
   },
 ];
