@@ -133,7 +133,9 @@ function SearchBox({ current, suggestions }: { current: string; suggestions: Sug
   );
 }
 
-export function FilterRail({ makesModels }: { makesModels: Record<string, string[]> }) {
+// `inferred` is the IP-geolocated city when no ZIP is set ("" when the origin
+// exists but the city is unknown); undefined means no origin at all.
+export function FilterRail({ makesModels, inferred }: { makesModels: Record<string, string[]>; inferred?: string }) {
   const sp = useSearchParams();
   const [open, setOpen] = useState(false);
   const get = (k: string) => sp.get(k) ?? "";
@@ -171,6 +173,15 @@ export function FilterRail({ makesModels }: { makesModels: Record<string, string
 
   const heatPumpOn = get("heatPump") === "1";
 
+  // A radius chosen against the inferred origin has no ZIP chip to represent
+  // it; without one of its own the filter would be invisible.
+  const radiusChip =
+    inferred !== undefined && !get("zip") && get("radius") && get("radius") !== "any"
+      ? `Within ${get("radius")} mi`
+      : null;
+
+  const hasOrigin = inferred !== undefined || !!get("zip");
+
   return (
     <div className="border-t-[3px] border-l-[3px] border-ink">
       <div className="flex flex-wrap items-stretch">
@@ -196,6 +207,18 @@ export function FilterRail({ makesModels }: { makesModels: Record<string, string
             <span aria-hidden="true">✕</span>
           </button>
         ))}
+
+        {radiusChip && (
+          <button
+            type="button"
+            onClick={() => apply({ radius: "" })}
+            title={`Remove: ${radiusChip}`}
+            className={`${BLOCK} ${HOVER} bg-vermilion text-paper`}
+          >
+            {radiusChip}
+            <span aria-hidden="true">✕</span>
+          </button>
+        )}
 
         {quick.map((t) => (
           <button
@@ -236,7 +259,9 @@ export function FilterRail({ makesModels }: { makesModels: Record<string, string
             <option value="year-desc">Year: newest</option>
             <option value="miles">Mileage: lowest</option>
             <option value="range-desc">Range: highest</option>
-            <option value="distance">Distance: nearest</option>
+            {/* Without any origin the option would silently sort by nothing;
+                it still renders if a back-navigated URL already carries it. */}
+            {(hasOrigin || get("sort") === "distance") && <option value="distance">Distance: nearest</option>}
           </select>
           <span aria-hidden="true" className="pointer-events-none absolute right-4 text-[10px]">
             ▼
@@ -272,7 +297,7 @@ export function FilterRail({ makesModels }: { makesModels: Record<string, string
           </label>
 
           <label className="flex flex-col gap-1">
-            <span className={FIELD_LABEL}>Near ZIP</span>
+            <span className={FIELD_LABEL}>{inferred && !get("zip") ? `Near ZIP · now ${inferred}` : "Near ZIP"}</span>
             <input
               className={FIELD}
               inputMode="numeric"

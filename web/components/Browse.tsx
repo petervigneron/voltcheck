@@ -68,6 +68,28 @@ function useOrigin(zip: string): [number, number] | undefined {
   return valid ? (zipCache.get(z) ?? undefined) : undefined;
 }
 
+// With no ZIP typed, Vercel's IP geolocation stands in as the origin, so
+// distance works on arrival. The static shell can't read request headers, so
+// /api/whereami (per-visitor, never CDN-cached) answers instead. Locally the
+// headers are absent and everything degrades to ZIP-only.
+let ipCache: { loc: [number, number]; city: string } | null | undefined;
+
+function useIpOrigin(): { loc: [number, number]; city: string } | undefined {
+  const [, bump] = useReducer((c: number) => c + 1, 0);
+  useEffect(() => {
+    if (ipCache !== undefined) return;
+    fetch("/api/whereami")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((geo: { lat: number | null; lng: number | null; city: string | null } | null) => {
+        // "" = origin known but city unknown; null cache = no origin at all.
+        ipCache = geo && geo.lat !== null && geo.lng !== null ? { loc: [geo.lat, geo.lng], city: geo.city ?? "" } : null;
+        bump();
+      })
+      .catch(() => {});
+  }, []);
+  return ipCache ?? undefined;
+}
+
 function PopularBand({ popular, q }: { popular: { make: string; model: string; count: number }[]; q: string }) {
   const sp = useSearchParams();
   const go = (label: string, pressed: boolean) => {
@@ -127,14 +149,21 @@ export function Browse() {
   const minRange = n("minRange");
   const heatPump = s("heatPump") === "1";
   const zip = s("zip");
-  const radius = s("radius") || "50";
+  const radiusParam = s("radius");
+  const radius = radiusParam || "50";
   const sort = s("sort") || "featured";
   // Prototype flag: ?grounds=fact makes card colors mean something (teal =
   // new battery, cobalt = recent price cut) instead of the one-in-five rhythm.
   const grounds: GroundsMode = s("grounds") === "fact" ? "fact" : "rhythm";
 
   const { rows, failed } = useCardIndex();
-  const origin = useOrigin(zip);
+  // A typed ZIP always wins — even an invalid one, because "Near 00000"
+  // measured from the IP instead would be a lie.
+  const zipOrigin = useOrigin(zip);
+  const ip = useIpOrigin();
+  const origin = zip ? zipOrigin : ip?.loc;
+  // "" = origin inferred but city unknown; undefined = no inferred origin.
+  const inferred = !zip && ip ? ip.city : undefined;
 
   // Per-model tally, case-insensitive because dealer feeds disagree on casing
   // ("Nissan ARIYA" / "Nissan Ariya"); the most common form is the display one.
@@ -176,7 +205,10 @@ export function Browse() {
     // Each active filter is its own predicate, which is what lets an empty
     // result say how many cars dropping any single one would give back.
     const tests: Partial<Record<(typeof REMOVABLE)[number], (r: CardRow) => boolean>> = {};
-    if (origin && radius !== "any") {
+    // An inferred origin only *filters* when the visitor explicitly chose a
+    // radius; otherwise the 50-mile default would silently hide most inventory
+    // behind a guess, with no chip to say so.
+    if (origin && radius !== "any" && (zip || radiusParam)) {
       tests.zip = (r) => {
         const d = dist.get(r.id);
         return d !== undefined && d <= Number(radius);
@@ -249,7 +281,7 @@ export function Browse() {
         ? activeKeys
             .map((k) => ({
               key: k,
-              label: describeFilter(k, s(k)) ?? k,
+              label: (k === "zip" && !zip ? `Within ${radius} mi` : describeFilter(k, s(k))) ?? k,
               n: all.filter((r) => matches(r, k)).length,
             }))
             .sort((a, b) => b.n - a.n)
@@ -284,7 +316,7 @@ export function Browse() {
         <PopularBand popular={popular} q={q} />
       </div>
 
-      <FilterRail makesModels={makesModels} />
+      <FilterRail makesModels={makesModels} inferred={inferred} />
 
       {rows === null ? (
         failed ? (
