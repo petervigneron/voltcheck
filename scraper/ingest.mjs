@@ -28,6 +28,8 @@ const MODEL_ALIASES = {
   "ESCALADE IQ": "Escalade IQ", "ESCALADE IQL": "Escalade IQL",
   "OPTIQ": "Optiq", "LYRIQ": "Lyriq", "VISTIQ": "Vistiq", "CELESTIQ": "Celestiq",
   "IONIQ 5": "Ioniq 5", "IONIQ 6": "Ioniq 6", "IONIQ5": "Ioniq 5", "IONIQ6": "Ioniq 6",
+  "IONIQ 9": "Ioniq 9", "IONIQ 5 N": "Ioniq 5 N", "KONA ELECTRIC": "Kona Electric",
+  "EV3": "EV3",
   "BZ": "bZ", "BZ WOODLAND": "bZ Woodland", "BZ4X": "bZ4X",
   "HUMMER EV": "Hummer EV", "HUMMER EV SUV": "Hummer EV SUV", "HUMMER EV PICKUP": "Hummer EV",
   "ID.4": "ID.4", "ID. BUZZ": "ID. Buzz", "ID.BUZZ": "ID. Buzz",
