@@ -511,38 +511,8 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
   // ---------------------------------------------------------------------
   // 2021+ Model S/X moved to data4.ts (2026-08-14): VIN position 8 resolves
   // dual (5) vs tri-motor Plaid (6), which is exactly what these floor-value
-  // rows existed to work around. Pre-2021 floors below still apply.
-  {
-    id: "tesla-model-s-2019",
-    make: "TESLA",
-    model: "Model S",
-    modelYears: [2019, 2019],
-    drive: "AWD",
-    range: { epaRangeMi: f(259, "mfr", "medium", "This listing's exact trim isn't recorded — 259 mi (75D) is the lowest-range 2019 Model S trim, used here as a floor, not a confirmed match. Full 2019 lineup — EPA: 75D 259 / Standard Range 285 / P100D 315 / Performance 21″ 325 / Performance 19″ 345 / 100D 335 / Long Range 370", "https://www.fueleconomy.gov") },
-    charging: {
-      portStandard: f("NACS", "mfr", "high", "Tesla's proprietary connector"),
-      superchargerAccess: f("native", "mfr", "high"),
-    },
-    thermal: { heatPump: f("none", "agg", "medium", "Octovalve heat pump arrived with the January 2021 Model S/X refresh; pre-refresh cars (through ~end of 2020 production) had resistive heat only — corroborated by NHTSA recall 22V050000, which describes the heat-pump valve hardware as present only on 2021+ cars") },
-    warranty: {
-      batteryYears: f(8, "mfr", "high", "“8 years or 150,000 miles, whichever comes first” — Tesla's own vehicle-warranty page (archived capture, live page blocked by bot-detection; dated 2025-04-16, ~16 months old relative to today but Tesla's S/X battery terms have historically been stable)"),
-      batteryMiles: f(150_000, "mfr", "high", "Model S/X get a higher mileage cap than Model 3/Y — same source"),
-      sohFloorPct: f(70, "mfr", "high", "“minimum 70% retention of Battery capacity over the warranty period” — same Tesla warranty page"),
-      batteryTransfers: f(true, "mfr", "high", "“Your New Vehicle Limited Warranty will follow your vehicle and be transferred to the new owner when a vehicle ownership transfer is performed through Tesla”; “the balance of original Battery and Drive Unit Limited warranty still applies for used vehicles” — same Tesla warranty page"),
-    },
-    buyerNotes: [
-      {
-        headline: "This listing doesn't say which 2019 Model S trim this is — range varies by up to 111 miles",
-        body: "Tesla sold seven distinct EPA-rated configurations in 2019 (75D 259 mi up to Long Range 370 mi). This scraped listing has no trim field. Check the car's window sticker, door-jamb EPA label, or the Tesla owner account tied to this VIN to confirm the actual trim before trusting a specific range figure.",
-        severity: "warning",
-      },
-      {
-        headline: "Hood secondary latch and power-steering recalls — already fixed via update",
-        body: "21V00B (2019 Model S: front trunk latch may be misaligned, secondary latch may not engage, hood could open unexpectedly) and 22V818 (electric power steering may lose assist on rough roads). Both remedied by free dealer service or OTA update; owner notices already mailed.",
-        severity: "info",
-      },
-    ],
-  },
+  // rows existed to work around. The Model S 2019 floor moved too (same day,
+  // vin8+pack-badge rows) — only the Model X floors below still apply.
 
 
 

@@ -378,6 +378,28 @@ const Q4_PACK82_77 = {
   packGrossKwh: f(82, "mfr", "high", "“82 kWh (gross) battery” — Audi USA, 2024 Q4 55 refresh release", Q4_R597),
   packUsableKwh: f(77, "mfr", "high", "“provides 77 kWh of net energy” — Audi USA, 2024 Q4 55 refresh release", Q4_R597),
 };
+// Pre-2021 Model S/X: Tesla's battery warranty for cars sold before ~Feb
+// 2020 was 8 years / unlimited miles with no stated capacity floor — the
+// 150k-mile cap and 70% floor arrived with the 2020 policy. The original
+// warranty follows the car.
+const MSX_OLD_W = {
+  batteryYears: f(8, "agg" as Source, "medium", "8 years, UNLIMITED miles — Tesla's pre-2020 S/X battery & drive warranty (no mileage cap, no capacity floor); the newer 150k-mile/70% terms apply only to cars first sold after the early-2020 policy change"),
+  batteryTransfers: f(true, "mfr" as Source, "high", "“the balance of original Battery and Drive Unit Limited warranty still applies for used vehicles” — Tesla warranty page"),
+};
+const MSX_OLD_CHARGING = {
+  portStandard: f<"NACS">("NACS", "mfr"),
+  superchargerAccess: f<"native">("native", "mfr"),
+};
+const MSX_NO_HP = {
+  heatPump: f<"none">("none", "agg", "medium", "Octovalve heat pump arrived with the January 2021 Model S/X refresh; pre-refresh cars had resistive heat only — corroborated by NHTSA recall 22V050, which describes the heat-pump valve hardware as present only on 2021+ cars"),
+};
+const NOTE_MS_EMMC = {
+  headline: "Center display can fail and take rearview camera/defrost with it",
+  body: "21V035 (2012–2018 Model S): the center display's eMMC memory chip wears out over time, eventually causing display failure — taking the rearview camera image, defrost controls, and turn-signal chime with it. Free daughterboard replacement; check this VIN's recall status.",
+  severity: "trap" as const,
+};
+const msPack = (kwh: number) => ({ packGrossKwh: f(kwh, "mfr", "medium", "Nameplate pack capacity — Tesla badged these cars by pack size") });
+
 // Same caveat as the e-tron GT row in data3: the 8yr/100k HV-battery term is
 // consistently reported but not confirmed in a readable Audi USA primary doc.
 const AUDI_W = {
@@ -3224,4 +3246,228 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
       },
     ];
   }),
+
+  // ── Tesla Model S, pack era 2013–2021 (same pass) ─────────────────────
+  //
+  // VIN position 8 = Tesla's motor code, confirmed per-VIN by Tesla's own
+  // Part 565 submissions (vPIC OtherEngineInfo): 1 = "Single Motor",
+  // 2 = "Dual Motor - Standard", 4 = "Dual Motor - Performance"
+  // (2014→2021 carryover). 2013 used letters: G / N / P, discriminated by
+  // Tesla's submitted battery-energy figure (G → 51 kWh = the 60 pack,
+  // N/P → 81 kWh = the 85 pack; P's inventory trim reads "Performance",
+  // corroborating P = P85). The code pins the motor; within a code the
+  // pack badge in the trim ("75D", "P100D") picks the row, and junk-trim
+  // cars get honest candidates. This retires data3's 2019 floor row, which
+  // had started swallowing trim-carrying cars (a 2019 code-4 "Performance"
+  // showed the 259-mi 75D floor).
+  //
+  // EPA ranges per year/variant from fueleconomy.gov (ids in sourceUrls).
+  // Warranty: pre-2020 first sale = 8yr/UNLIMITED miles, no SOH floor.
+  {
+    id: "ms-2013-60", ...MS, modelYears: [2013, 2013], vin8: ["G"], drive: "RWD", packVariant: "60",
+    battery: msPack(60),
+    range: { epaRangeMi: f(208, "mfr", "medium", "MY2013 Model S 60 — EPA. VIN code G decodes to Tesla's 51 kWh energy submission (the 60 pack). Rare software-locked '40' cars (139 mi) were built on this pack — if the car reports ~139 mi at full charge it's an unlocked-eligible 40", epa(33367)) },
+    charging: MSX_OLD_CHARGING, thermal: MSX_NO_HP, warranty: MSX_OLD_W,
+    buyerNotes: [NOTE_MS_EMMC],
+  },
+  {
+    id: "ms-2013-85", ...MS, modelYears: [2013, 2013], vin8: ["N"], drive: "RWD", packVariant: "85",
+    battery: msPack(85),
+    range: { epaRangeMi: f(265, "mfr", "high", "MY2013 Model S 85 — EPA; VIN code N, Tesla's 81 kWh energy submission", epa(33368)) },
+    charging: MSX_OLD_CHARGING, thermal: MSX_NO_HP, warranty: MSX_OLD_W,
+    buyerNotes: [NOTE_MS_EMMC],
+  },
+  {
+    id: "ms-2013-p85", ...MS, modelYears: [2013, 2013], vin8: ["P"], drive: "RWD", packVariant: "P85",
+    battery: msPack(85),
+    range: { epaRangeMi: f(265, "mfr", "high", "MY2013 P85 — same 85-pack EPA rating as the standard car; VIN code P = performance motor", epa(33368)) },
+    charging: MSX_OLD_CHARGING, thermal: MSX_NO_HP, warranty: MSX_OLD_W,
+    buyerNotes: [NOTE_MS_EMMC],
+  },
+  // Single motor (code 1), 2014–2018 — pack badge picks the row.
+  {
+    id: "ms-2014-15-s60", ...MS, modelYears: [2014, 2015], vin8: ["1"], drive: "RWD", packVariant: "60",
+    trim: ["60", "60 DISC"], battery: msPack(60),
+    range: { epaRangeMi: f(208, "mfr", "high", "MY2014–15 Model S 60 — EPA (ids 34776/36017 rate identically)", epa(34776)) },
+    charging: MSX_OLD_CHARGING, thermal: MSX_NO_HP, warranty: MSX_OLD_W,
+    buyerNotes: [NOTE_MS_EMMC],
+  },
+  {
+    id: "ms-2016-17-s60", ...MS, modelYears: [2016, 2017], vin8: ["1"], drive: "RWD", packVariant: "60",
+    trim: ["60", "60 DISC"], battery: msPack(60),
+    range: { epaRangeMi: f(210, "mfr", "high", "MY2016–17 Model S 60 (software-limited 75 pack in this era) — EPA (38170/38557)", epa(38170)) },
+    charging: MSX_OLD_CHARGING, thermal: MSX_NO_HP, warranty: MSX_OLD_W,
+    buyerNotes: [NOTE_MS_EMMC],
+  },
+  {
+    id: "ms-2016-s70", ...MS, modelYears: [2016, 2016], vin8: ["1"], drive: "RWD", packVariant: "70",
+    trim: ["70"], battery: msPack(70),
+    range: { epaRangeMi: f(234, "mfr", "high", "MY2016 Model S 70 (single motor) — EPA", epa(37233)) },
+    charging: MSX_OLD_CHARGING, thermal: MSX_NO_HP, warranty: MSX_OLD_W,
+    buyerNotes: [NOTE_MS_EMMC],
+  },
+  {
+    id: "ms-2016-18-s75", ...MS, modelYears: [2016, 2018], vin8: ["1"], drive: "RWD", packVariant: "75",
+    trim: ["75", "75kWh", "75 kWh"], battery: msPack(75),
+    range: { epaRangeMi: f(249, "mfr", "high", "MY2016–18 Model S 75 (single motor) — EPA (37421/38558/39837 rate identically)", epa(37421)) },
+    charging: MSX_OLD_CHARGING, thermal: MSX_NO_HP, warranty: MSX_OLD_W,
+    buyerNotes: [NOTE_MS_EMMC],
+  },
+  {
+    id: "ms-2014-16-s85", ...MS, modelYears: [2014, 2016], vin8: ["1"], drive: "RWD", packVariant: "85",
+    trim: ["85", "85 kWh Battery", "85 kWh"], battery: msPack(85),
+    range: { epaRangeMi: f(265, "mfr", "high", "MY2014–16 Model S 85 (single motor) — EPA (34775/35980/37234 rate identically)", epa(34775)) },
+    charging: MSX_OLD_CHARGING, thermal: MSX_NO_HP, warranty: MSX_OLD_W,
+    buyerNotes: [NOTE_MS_EMMC],
+  },
+  {
+    id: "ms-2015-16-s90", ...MS, modelYears: [2015, 2016], vin8: ["1"], drive: "RWD", packVariant: "90",
+    trim: ["90"], battery: msPack(90),
+    range: { epaRangeMi: f(265, "mfr", "high", "MY2015–16 Model S 90 (single motor) — EPA (37236/37235 rate identically)", epa(37236)) },
+    charging: MSX_OLD_CHARGING, thermal: MSX_NO_HP, warranty: MSX_OLD_W,
+    buyerNotes: [NOTE_MS_EMMC],
+  },
+  // Dual motor, standard (code 2), 2014–2021.
+  {
+    id: "ms-2014-85d", ...MS, modelYears: [2014, 2014], vin8: ["2"], drive: "AWD", packVariant: "85D",
+    battery: msPack(85),
+    range: { epaRangeMi: f(242, "mfr", "high", "MY2014 85D — the only 2014 dual-motor-standard certification, so VIN code 2 settles it", epa(35994)) },
+    charging: MSX_OLD_CHARGING, thermal: MSX_NO_HP, warranty: MSX_OLD_W,
+    buyerNotes: [NOTE_MS_EMMC],
+  },
+  {
+    id: "ms-2015-16-70d", ...MS, modelYears: [2015, 2016], vin8: ["2"], drive: "AWD", packVariant: "70D",
+    trim: ["70D"], battery: msPack(70),
+    range: { epaRangeMi: f(240, "mfr", "high", "MY2015–16 70D — EPA (36126/37238 rate identically)", epa(36126)) },
+    charging: MSX_OLD_CHARGING, thermal: MSX_NO_HP, warranty: MSX_OLD_W,
+    buyerNotes: [NOTE_MS_EMMC],
+  },
+  {
+    id: "ms-2016-17-60d", ...MS, modelYears: [2016, 2017], vin8: ["2"], drive: "AWD", packVariant: "60D",
+    trim: ["60D"], battery: msPack(60),
+    range: { epaRangeMi: f(218, "mfr", "high", "MY2016–17 60D (software-limited 75 pack) — EPA (38171/38523)", epa(38171)) },
+    charging: MSX_OLD_CHARGING, thermal: MSX_NO_HP, warranty: MSX_OLD_W,
+    buyerNotes: [NOTE_MS_EMMC],
+  },
+  {
+    id: "ms-2016-19-75d", ...MS, modelYears: [2016, 2019], vin8: ["2"], drive: "AWD", packVariant: "75D",
+    trim: ["75D"], battery: msPack(75),
+    range: { epaRangeMi: f(259, "mfr", "high", "MY2016–19 75D — EPA (37422/38524/39838/41192 all rate 259)", epa(37422)) },
+    charging: MSX_OLD_CHARGING, thermal: MSX_NO_HP, warranty: MSX_OLD_W,
+  },
+  {
+    id: "ms-2015-16-85d", ...MS, modelYears: [2015, 2016], vin8: ["2"], drive: "AWD", packVariant: "85D",
+    trim: ["85D"], battery: msPack(85),
+    range: { epaRangeMi: f(270, "mfr", "high", "MY2015–16 85D — EPA (36009/37239 rate identically)", epa(36009)) },
+    charging: MSX_OLD_CHARGING, thermal: MSX_NO_HP, warranty: MSX_OLD_W,
+    buyerNotes: [NOTE_MS_EMMC],
+  },
+  {
+    id: "ms-2015-90d", ...MS, modelYears: [2015, 2015], vin8: ["2"], drive: "AWD", packVariant: "90D",
+    trim: ["90D"], battery: msPack(90),
+    range: { epaRangeMi: f(270, "mfr", "high", "MY2015 90D — EPA; the 2016–17 90D rates higher (294)", epa(36786)) },
+    charging: MSX_OLD_CHARGING, thermal: MSX_NO_HP, warranty: MSX_OLD_W,
+    buyerNotes: [NOTE_MS_EMMC],
+  },
+  {
+    id: "ms-2016-17-90d", ...MS, modelYears: [2016, 2017], vin8: ["2"], drive: "AWD", packVariant: "90D",
+    trim: ["90D"], battery: msPack(90),
+    range: { epaRangeMi: f(294, "mfr", "high", "MY2016–17 90D — EPA (37240/38569 rate identically); the 2015 car rates 270", epa(37240)) },
+    charging: MSX_OLD_CHARGING, thermal: MSX_NO_HP, warranty: MSX_OLD_W,
+    buyerNotes: [NOTE_MS_EMMC],
+  },
+  {
+    id: "ms-2017-19-100d", ...MS, modelYears: [2017, 2019], vin8: ["2"], drive: "AWD", packVariant: "100D",
+    trim: ["100D"], battery: msPack(100),
+    range: { epaRangeMi: f(335, "mfr", "high", "MY2017–19 100D — EPA (38640/39839/41193 all rate 335)", epa(38640)) },
+    charging: MSX_OLD_CHARGING, thermal: MSX_NO_HP, warranty: MSX_OLD_W,
+  },
+  {
+    id: "ms-2019-sr", ...MS, modelYears: [2019, 2019], vin8: ["2"], drive: "AWD", packVariant: "Standard Range",
+    trim: ["Standard Range", "Standard"], battery: msPack(100),
+    range: { epaRangeMi: f(285, "mfr", "high", "MY2019 Standard Range (Raven, software-limited 100 pack) — EPA", epa(41513)) },
+    charging: MSX_OLD_CHARGING, thermal: MSX_NO_HP, warranty: MSX_OLD_W,
+  },
+  {
+    id: "ms-2019-lr", ...MS, modelYears: [2019, 2019], vin8: ["2"], drive: "AWD", packVariant: "Long Range",
+    trim: ["Long Range"], battery: msPack(100),
+    range: { epaRangeMi: f(370, "mfr", "high", "MY2019 Long Range (Raven) — EPA", epa(41417)) },
+    charging: MSX_OLD_CHARGING, thermal: MSX_NO_HP, warranty: MSX_OLD_W,
+  },
+  {
+    id: "ms-2020-lr", ...MS, modelYears: [2020, 2020], vin8: ["2"], drive: "AWD", packVariant: "Long Range",
+    trim: ["Long Range"], battery: msPack(100),
+    range: { epaRangeMi: f(373, "mfr", "high", "MY2020 Long Range — EPA; the mid-year Long Range Plus rates 402", epa(42282)) },
+    charging: MSX_OLD_CHARGING, thermal: MSX_NO_HP, warranty: TSX_W,
+  },
+  {
+    id: "ms-2020-lrplus", ...MS, modelYears: [2020, 2020], vin8: ["2"], drive: "AWD", packVariant: "Long Range Plus",
+    trim: ["Long Range Plus"], battery: msPack(100),
+    range: { epaRangeMi: f(402, "mfr", "high", "MY2020 Long Range Plus — EPA", epa(42755)) },
+    charging: MSX_OLD_CHARGING, thermal: MSX_NO_HP, warranty: TSX_W,
+  },
+  {
+    id: "ms-2020-sr", ...MS, modelYears: [2020, 2020], vin8: ["2"], drive: "AWD", packVariant: "Standard Range",
+    trim: ["Standard Range", "Standard"], battery: msPack(100),
+    range: { epaRangeMi: f(287, "mfr", "high", "MY2020 Standard Range (software-limited) — EPA", epa(42285)) },
+    charging: MSX_OLD_CHARGING, thermal: MSX_NO_HP, warranty: TSX_W,
+  },
+  {
+    id: "ms-2021-lrplus", ...MS, modelYears: [2021, 2021], vin8: ["2"], drive: "AWD", packVariant: "Long Range Plus",
+    battery: msPack(100),
+    range: { epaRangeMi: f(402, "mfr", "medium", "Carryover Raven Long Range Plus built into early 2021 before the refresh (refresh cars carry VIN code 5, not 2). EPA's 2021 menu lists only refresh certs; this is the identical car's MY2020 certification", epa(42755)) },
+    charging: MSX_OLD_CHARGING, thermal: MSX_NO_HP, warranty: TSX_W,
+  },
+  // Dual motor, performance (code 4), 2015–2020 (2021 carryover exists above).
+  {
+    id: "ms-2015-16-p85d", ...MS, modelYears: [2015, 2016], vin8: ["4"], drive: "AWD", packVariant: "P85D",
+    trim: ["P85D"], battery: msPack(85),
+    range: { epaRangeMi: f(253, "mfr", "high", "MY2015–16 P85D — EPA (36008/37241 rate identically)", epa(36008)) },
+    charging: MSX_OLD_CHARGING, thermal: MSX_NO_HP, warranty: MSX_OLD_W,
+    buyerNotes: [NOTE_MS_EMMC],
+  },
+  {
+    id: "ms-2015-p90d", ...MS, modelYears: [2015, 2015], vin8: ["4"], drive: "AWD", packVariant: "P90D",
+    trim: ["P90D"], battery: msPack(90),
+    range: { epaRangeMi: f(253, "mfr", "high", "MY2015 P90D — EPA; the 2016–17 car rates 270", epa(36787)) },
+    charging: MSX_OLD_CHARGING, thermal: MSX_NO_HP, warranty: MSX_OLD_W,
+    buyerNotes: [NOTE_MS_EMMC],
+  },
+  {
+    id: "ms-2016-17-p90d", ...MS, modelYears: [2016, 2017], vin8: ["4"], drive: "AWD", packVariant: "P90D",
+    trim: ["P90D"], battery: msPack(90),
+    range: { epaRangeMi: f(270, "mfr", "high", "MY2016–17 P90D — EPA (37242/38537 rate identically)", epa(37242)) },
+    charging: MSX_OLD_CHARGING, thermal: MSX_NO_HP, warranty: MSX_OLD_W,
+    buyerNotes: [NOTE_MS_EMMC],
+  },
+  {
+    id: "ms-2016-19-p100d", ...MS, modelYears: [2016, 2019], vin8: ["4"], drive: "AWD", packVariant: "P100D",
+    trim: ["P100D"], battery: msPack(100),
+    range: { epaRangeMi: f(315, "mfr", "high", "MY2016–19 P100D — EPA (38172/38525/39840/41194 all rate 315)", epa(38172)) },
+    charging: MSX_OLD_CHARGING, thermal: MSX_NO_HP, warranty: MSX_OLD_W,
+  },
+  {
+    id: "ms-2019-perf", ...MS, modelYears: [2019, 2019], vin8: ["4"], drive: "AWD", packVariant: "Performance",
+    trim: ["Performance"], battery: msPack(100),
+    range: { epaRangeMi: f(345, "mfr", "high", "MY2019 Performance (Raven) on 19-inch wheels — EPA; 325 on 21s", epa(41418)) },
+    charging: MSX_OLD_CHARGING, thermal: MSX_NO_HP, warranty: MSX_OLD_W,
+  },
+  {
+    id: "ms-2020-perf", ...MS, modelYears: [2020, 2020], vin8: ["4"], drive: "AWD", packVariant: "Performance",
+    trim: ["Performance"], battery: msPack(100),
+    range: { epaRangeMi: f(348, "mfr", "high", "MY2020 Performance on 19-inch wheels — EPA; 326 on 21s", epa(42283)) },
+    charging: MSX_OLD_CHARGING, thermal: MSX_NO_HP, warranty: TSX_W,
+  },
+  // Refresh-era Standard Range (Aug 2023 – early 2024): software-limited,
+  // never separately EPA-certified — without this row those cars match the
+  // 405-mi Long Range row, overstating range by 85 miles.
+  {
+    id: "ms-2023-24-sr", ...MS, modelYears: [2023, 2024], vin8: ["5"], drive: "AWD", packVariant: "Standard Range",
+    trim: ["Standard Range", "Standard"], battery: TSX_PACK,
+    range: { epaRangeMi: f(320, "mfr", "medium", "Standard Range (Aug 2023–early 2024): the Long Range car with range software-locked to a Tesla-advertised 320 mi EPA-est; fueleconomy.gov carries no separate certification for it") },
+    charging: TSX_CHARGING,
+    thermal: { heatPump: f("standard", "mfr"), batteryPreconditioning: f(true, "mfr") },
+    warranty: TSX_W,
+    buyerNotes: [NOTE_FSD],
+  },
 ];
