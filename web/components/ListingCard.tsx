@@ -1,71 +1,16 @@
 import Link from "next/link";
-import { displayTrim, type EnrichedListing } from "@/lib/listings/enrich";
 import { Tile, type TileGround, type TileKind } from "./Tile";
-import { hasRealPrice, priceCut } from "@/lib/listings/price";
+import type { CardRow, CardTile } from "@/lib/listings/card";
 
-// The key facts a shopper compares — range, heat pump, drivetrain — come
-// first and always survive the cap; extras (fast charging, new battery, pack
-// size, mileage outliers) fill whatever room is left.
-export function listingTiles(
-  e: EnrichedListing,
-  max?: number
-): { kind: TileKind; text: string; title?: string }[] {
-  const l = e.listing;
-  const t: { kind: TileKind; text: string; title?: string }[] = [];
+// Renders one precomputed card-index row (lib/listings/card.ts). Everything a
+// card says was decided server-side at index build; this component only lays
+// it out — which is what lets the browse grid live entirely in the browser.
 
-  if (e.enrichment.candidates) {
-    const ranges = e.enrichment.candidates
-      .map((r) => r.range?.epaRangeMi?.value)
-      .filter((v): v is number => v !== undefined)
-      .sort((a, b) => a - b);
-    if (ranges.length >= 2) {
-      t.push({
-        kind: "flag",
-        text: `${ranges[0]}–${ranges[ranges.length - 1]} mi`,
-        title: e.enrichment.discriminator ?? "This listing doesn't say which version it is",
-      });
-    }
-  } else if (e.realRangeMi) {
-    t.push({ kind: "range", text: `${e.realRangeMi.value} mi`, title: e.realRangeMi.note ?? undefined });
-  }
-
-  if (e.heatPump?.status === "no") t.push({ kind: "miss", text: "No heat pump", title: e.heatPump.detail });
-  else if (e.heatPump?.status === "verify") t.push({ kind: "flag", text: "Heat pump?", title: e.heatPump.detail });
-  else if (e.heatPump?.status === "yes") t.push({ kind: "kit", text: "Heat pump", title: e.heatPump.detail });
-
-  if (l.drive) t.push({ kind: "spec", text: l.drive });
-
-  if (e.fastCharge.status === "no") t.push({ kind: "miss", text: "No fast charging", title: e.fastCharge.detail });
-  else if (e.fastCharge.status === "verify") t.push({ kind: "flag", text: "Fast charging?", title: e.fastCharge.detail });
-
-  // Which plug the car fast-charges through. J1772 is omitted: it only appears
-  // on cars whose missing DC option already shows as the louder tile above.
-  if (e.port?.value === "NACS") t.push({ kind: "kit", text: "NACS", title: e.port.note ?? "Tesla-style port — plugs into the Supercharger network" });
-  else if (e.port?.value === "CCS1") t.push({ kind: "spec", text: "CCS", title: e.port.note ?? undefined });
-  else if (e.port?.value === "CHAdeMO") t.push({ kind: "flag", text: "CHAdeMO", title: e.port.note ?? "Aging fast-charge standard — new public CHAdeMO stations are rare" });
-
-  if (l.campaignCheck?.packReplaced) {
-    t.push({
-      kind: "kit",
-      text: `New battery ${l.campaignCheck.packReplacedDate?.slice(0, 4) ?? ""}`.trim(),
-      title: `GM program ${l.campaignCheck.gmProgramNumber} · ${l.campaignCheck.packReplacedDate}`,
-    });
-  }
-
-  if (e.usableKwh) t.push({ kind: "spec", text: `${Math.round(e.usableKwh.value)} kWh`, title: e.usableKwh.note ?? undefined });
-
-  if (l.mileage != null && l.mileage > 0 && l.mileage < 15000) t.push({ kind: "flag", text: "Low miles" });
-  else if (l.mileage != null && l.mileage > 100000) t.push({ kind: "flag", text: "High miles" });
-
-  return max ? t.slice(0, max) : t;
-}
-
-function subtitle(e: EnrichedListing, distanceMi?: number) {
-  const l = e.listing;
+function subtitle(r: CardRow, distanceMi?: number) {
   const bits: string[] = [];
-  if (l.condition === "new") bits.push("New");
-  else if (l.mileage != null) bits.push(`${l.mileage.toLocaleString()} mi${l.mileage === 0 ? " (dealer-listed)" : ""}`);
-  if (l.city) bits.push(`${l.city}, ${l.state}`);
+  if (r.condition === "new") bits.push("New");
+  else if (r.mileage != null) bits.push(`${r.mileage.toLocaleString()} mi${r.mileage === 0 ? " (dealer-listed)" : ""}`);
+  if (r.city) bits.push(`${r.city}, ${r.state}`);
   if (distanceMi !== undefined) bits.push(`${distanceMi} mi away`);
   return bits.join(" · ");
 }
@@ -105,48 +50,47 @@ const META_CLS: Record<TileGround, string> = {
 const CUT_DATE_FMT = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
 
 export function ListingCard({
-  e,
+  r,
   distanceMi,
   index = 0,
   grounds = "rhythm",
 }: {
-  e: EnrichedListing;
+  r: CardRow;
   distanceMi?: number;
   index?: number;
   grounds?: GroundsMode;
 }) {
-  const l = e.listing;
-  const cut = grounds === "fact" ? priceCut(l) : null;
+  const cut = grounds === "fact" ? r.cut : undefined;
   const ground: TileGround =
-    grounds === "fact"
-      ? l.campaignCheck?.packReplaced
-        ? "teal"
-        : cut
-          ? "cobalt"
-          : "paper"
-      : rhythmGround(index);
-  const tiles = cut
+    grounds === "fact" ? (r.packReplaced ? "teal" : cut ? "cobalt" : "paper") : rhythmGround(index);
+  const tiles: CardTile[] = cut
     ? [
         {
-          kind: "cut" as TileKind,
-          text: `−$${cut.amountUsd.toLocaleString()}`,
-          title: `Was $${l.prevPriceUsd!.toLocaleString()} — cut $${cut.amountUsd.toLocaleString()} on ${CUT_DATE_FMT.format(new Date(cut.at))}`,
+          k: "cut" as TileKind,
+          t: `−$${cut.amountUsd.toLocaleString()}`,
+          ti: `Was $${cut.prevUsd.toLocaleString()} — cut $${cut.amountUsd.toLocaleString()} on ${CUT_DATE_FMT.format(new Date(cut.at))}`,
         },
-        ...listingTiles(e, 4),
+        ...r.tiles.slice(0, 4),
       ]
-    : listingTiles(e, 5);
+    : r.tiles;
 
   return (
     <Link
-      href={`/listing/${l.id}`}
+      href={`/listing/${r.id}`}
       className={`group relative flex flex-col border-r-[3px] border-b-[3px] border-ink focus:outline-none ${GROUND_CLS[ground]}`}
     >
       {/* A missing photo gets a band, not an empty 3:2 hole — three grey voids
           in a row is a worse first impression than three short cards. */}
-      {l.imageUrl ? (
+      {r.imageUrl ? (
         <div className="aspect-[3/2] overflow-hidden border-b-[3px] border-ink bg-putty">
           {/* eslint-disable-next-line @next/next/no-img-element -- external dealer CDN */}
-          <img src={l.imageUrl} alt="" loading="lazy" className="photo-overscan h-full w-full object-cover" />
+          <img
+            src={r.imageUrl}
+            alt=""
+            loading={index < 3 ? "eager" : "lazy"}
+            decoding="async"
+            className="photo-overscan h-full w-full object-cover"
+          />
         </div>
       ) : (
         <div className="border-b-[3px] border-ink bg-putty px-4 py-2 text-[10.5px] font-extrabold tracking-[0.14em] text-ink/55 uppercase">
@@ -155,31 +99,28 @@ export function ListingCard({
       )}
 
       <div className="flex flex-1 flex-col gap-2 p-4">
-        {hasRealPrice(l) ? (
+        {r.realPrice ? (
           <div className="text-[32px] leading-none font-extrabold tracking-[-0.035em] tabular-nums">
-            ${l.priceUsd.toLocaleString()}
+            ${r.priceUsd.toLocaleString()}
           </div>
         ) : (
           <div
             className="text-[22px] leading-none font-extrabold tracking-[-0.02em]"
-            title={`The dealer's feed listed $${l.priceUsd.toLocaleString()}, which is not a plausible price for this car — see the dealer's own page`}
+            title={`The dealer's feed listed $${r.priceUsd.toLocaleString()}, which is not a plausible price for this car — see the dealer's own page`}
           >
             See dealer for price
           </div>
         )}
         <div>
-          <h2 className="text-[15px] leading-tight font-bold">
-            {l.year} {l.make} {l.model}
-            {displayTrim(l) ? ` ${displayTrim(l)}` : ""}
-          </h2>
-          <p className={`mt-0.5 text-[12.5px] tabular-nums ${META_CLS[ground]}`}>{subtitle(e, distanceMi)}</p>
+          <h2 className="text-[15px] leading-tight font-bold">{r.title}</h2>
+          <p className={`mt-0.5 text-[12.5px] tabular-nums ${META_CLS[ground]}`}>{subtitle(r, distanceMi)}</p>
         </div>
 
         {tiles.length > 0 && (
           <div className="mt-auto flex flex-wrap gap-1.5 pt-1">
             {tiles.map((t, i) => (
-              <Tile key={i} kind={t.kind} ground={ground} title={t.title}>
-                {t.text}
+              <Tile key={i} kind={t.k} ground={ground} title={t.ti}>
+                {t.t}
               </Tile>
             ))}
           </div>

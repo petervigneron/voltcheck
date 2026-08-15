@@ -1,8 +1,9 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useCallback, useState } from "react";
 import { REMOVABLE, QUICK_TOGGLES, BODY_TYPES, describeFilter } from "@/lib/filters";
+import { pushUrl } from "@/lib/pushUrl";
 
 const CELL = "border-r-[3px] border-b-[3px] border-ink";
 // Interactive cells answer hover and keyboard focus with the same inset cobalt
@@ -28,7 +29,6 @@ export function SearchBar({ suggestions }: { suggestions: Suggestion[] }) {
 }
 
 function SearchBox({ current, suggestions }: { current: string; suggestions: Suggestion[] }) {
-  const router = useRouter();
   const sp = useSearchParams();
   const [text, setText] = useState(current);
   const [open, setOpen] = useState(false);
@@ -48,7 +48,7 @@ function SearchBox({ current, suggestions }: { current: string; suggestions: Sug
     if (q) params.set("q", q);
     else params.delete("q");
     params.delete("page");
-    router.push(`/?${params.toString()}`);
+    pushUrl(params);
   };
 
   return (
@@ -134,7 +134,6 @@ function SearchBox({ current, suggestions }: { current: string; suggestions: Sug
 }
 
 export function FilterRail({ makesModels }: { makesModels: Record<string, string[]> }) {
-  const router = useRouter();
   const sp = useSearchParams();
   const [open, setOpen] = useState(false);
   const get = (k: string) => sp.get(k) ?? "";
@@ -149,9 +148,9 @@ export function FilterRail({ makesModels }: { makesModels: Record<string, string
       if ("make" in updates) params.delete("model");
       // Changed filters mean a different result set — page 3 of it is noise.
       params.delete("page");
-      router.push(`/?${params.toString()}`);
+      pushUrl(params);
     },
-    [router, sp]
+    [sp]
   );
 
   const make = get("make");
@@ -410,7 +409,7 @@ export function FilterRail({ makesModels }: { makesModels: Record<string, string
             <div className="col-span-2 md:col-span-4">
               <button
                 type="button"
-                onClick={() => router.push("/")}
+                onClick={() => pushUrl(new URLSearchParams())}
                 className="border-[3px] border-ink bg-ink px-4 py-2 text-[12px] font-extrabold uppercase tracking-[0.06em] text-paper"
               >
                 Clear everything

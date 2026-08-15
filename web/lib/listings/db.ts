@@ -52,22 +52,32 @@ function headers(): Record<string, string> {
 export async function fetchListingsFromDb(): Promise<Listing[] | null> {
   if (!dbConfigured()) return null;
   const base = process.env.SUPABASE_URL!.replace(/\/$/, "");
+  const feedUrl = `${base}/rest/v1/live_listings_feed?select=payload,first_seen_at,last_seen_at,prev_price_usd,price_changed_at&order=vin.asc`;
   try {
-    const rows: FeedRow[] = [];
-    for (let from = 0; ; from += PAGE) {
-      const res = await fetch(
-        `${base}/rest/v1/live_listings_feed?select=payload,first_seen_at,last_seen_at,prev_price_usd,price_changed_at&order=vin.asc`,
-        {
+    // One cheap request for the row count, then every page in parallel — the
+    // sequential page-after-page loop was ~16 round-trips of serial latency,
+    // the bulk of a 2s TTFB. If the count drifts before the next revalidate
+    // the last page runs short or long by a few rows for an hour; harmless.
+    const countRes = await fetch(feedUrl, {
+      headers: { ...headers(), Range: "0-0", Prefer: "count=exact" },
+      next: { revalidate: REVALIDATE_SECONDS },
+    });
+    if (!countRes.ok) throw new Error(`PostgREST ${countRes.status}`);
+    const total = Number(countRes.headers.get("content-range")?.split("/")[1]);
+    if (!Number.isFinite(total)) throw new Error("PostgREST count missing");
+
+    const pages = await Promise.all(
+      Array.from({ length: Math.ceil(total / PAGE) }, async (_, i) => {
+        const from = i * PAGE;
+        const res = await fetch(feedUrl, {
           headers: { ...headers(), Range: `${from}-${from + PAGE - 1}` },
           next: { revalidate: REVALIDATE_SECONDS },
-        }
-      );
-      if (!res.ok) throw new Error(`PostgREST ${res.status}`);
-      const page = (await res.json()) as FeedRow[];
-      rows.push(...page);
-      if (page.length < PAGE) break;
-    }
-    return rows.map((r) => ({
+        });
+        if (!res.ok) throw new Error(`PostgREST ${res.status}`);
+        return (await res.json()) as FeedRow[];
+      })
+    );
+    return pages.flat().map((r) => ({
       ...r.payload,
       firstSeenAt: r.first_seen_at,
       lastSeenAt: r.last_seen_at,
@@ -76,6 +86,35 @@ export async function fetchListingsFromDb(): Promise<Listing[] | null> {
     }));
   } catch (err) {
     console.error("[listings] Supabase read failed — serving bundled JSON fallback:", err);
+    return null;
+  }
+}
+
+/** One live listing by its site id — the detail page's row without paying for
+ *  the whole feed. Null when the DB is unconfigured/unreachable or the id is
+ *  unknown there (the caller falls back to the bundled JSON and samples). */
+export async function fetchListingByIdFromDb(id: string): Promise<Listing | null> {
+  if (!dbConfigured()) return null;
+  const base = process.env.SUPABASE_URL!.replace(/\/$/, "");
+  try {
+    const res = await fetch(
+      `${base}/rest/v1/live_listings_feed?select=payload,first_seen_at,last_seen_at,prev_price_usd,price_changed_at&payload->>id=eq.${encodeURIComponent(
+        id
+      )}&limit=1`,
+      { headers: headers(), next: { revalidate: REVALIDATE_SECONDS } }
+    );
+    if (!res.ok) throw new Error(`PostgREST ${res.status}`);
+    const [r] = (await res.json()) as FeedRow[];
+    if (!r) return null;
+    return {
+      ...r.payload,
+      firstSeenAt: r.first_seen_at,
+      lastSeenAt: r.last_seen_at,
+      prevPriceUsd: r.prev_price_usd ?? undefined,
+      priceChangedAt: r.price_changed_at ?? undefined,
+    };
+  } catch (err) {
+    console.error("[listings] Supabase by-id read failed:", err);
     return null;
   }
 }

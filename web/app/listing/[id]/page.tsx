@@ -4,12 +4,21 @@ import { findListing } from "@/lib/listings/source";
 import { enrichListing , displayTrim } from "@/lib/listings/enrich";
 import { buildChecklist } from "@/lib/checklist";
 import { EnrichmentFacts, Section, NOTE_STYLE } from "@/components/EnrichmentReport";
-import { listingTiles } from "@/components/ListingCard";
+import { listingTiles } from "@/lib/listings/tiles";
 import { Tile } from "@/components/Tile";
 import { hasRealPrice } from "@/lib/listings/price";
 import { AskSeller } from "@/components/AskSeller";
 import { RecentSales } from "@/components/RecentSales";
 import { fetchRecentSales } from "@/lib/listings/sales";
+
+// ISR: each listing page renders once, then serves from the CDN for an hour —
+// same cadence as the data underneath it (nightly sync, recheck, price audit).
+// The empty generateStaticParams is what opts the route into static rendering;
+// every real id renders on first visit and is cached from then on.
+export const revalidate = 3600;
+export async function generateStaticParams(): Promise<{ id: string }[]> {
+  return [];
+}
 
 function Spec({ label, value }: { label: string; value?: string | number | null }) {
   if (value == null || value === "") return null;

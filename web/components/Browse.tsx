@@ -1,0 +1,365 @@
+"use client";
+
+import { useEffect, useMemo, useReducer, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { ListingCard, type GroundsMode } from "./ListingCard";
+import { SearchBar, FilterRail, type Suggestion } from "./Filters";
+import { REMOVABLE, describeFilter } from "@/lib/filters";
+import { featuredScore, type CardRow } from "@/lib/listings/card";
+import { milesBetween } from "@/lib/geo";
+import { pushUrl } from "@/lib/pushUrl";
+
+const CELL = "border-r-[3px] border-b-[3px] border-ink";
+
+// The band under the search box: the four deepest models in inventory, each a
+// one-click search. Deep inventory is the popularity signal we actually have.
+const BAND_GROUNDS = ["bg-saffron", "bg-putty", "bg-putty", "bg-teal text-paper"];
+
+// The whole inventory arrives once per visitor (CDN-cached JSON, hourly
+// revalidate) and every filter, sort, and page flip after that is a pure
+// in-browser computation — no server round-trip, which is where the latency
+// used to live. Module-level cache so client-side navigation never refetches.
+let indexCache: CardRow[] | null = null;
+let indexPromise: Promise<CardRow[]> | null = null;
+
+function useCardIndex(): { rows: CardRow[] | null; failed: boolean } {
+  const [rows, setRows] = useState<CardRow[] | null>(indexCache);
+  const [failed, setFailed] = useState(false);
+  useEffect(() => {
+    if (indexCache) return;
+    indexPromise ??= fetch("/api/index").then((res) => {
+      if (!res.ok) throw new Error(`index ${res.status}`);
+      return res.json() as Promise<CardRow[]>;
+    });
+    indexPromise.then(
+      (rs) => {
+        indexCache = rs;
+        setRows(rs);
+      },
+      () => {
+        indexPromise = null;
+        setFailed(true);
+      }
+    );
+  }, [failed]);
+  return { rows, failed };
+}
+
+// The shopper's zip resolves through a tiny CDN-cached lookup; listing
+// coordinates already ship in the index. Until the answer lands (or for a zip
+// the gazetteer doesn't know), distance behaves as it always has with an
+// unknown origin: no distance filter.
+const zipCache = new Map<string, [number, number] | null>();
+
+function useOrigin(zip: string): [number, number] | undefined {
+  const [, bump] = useReducer((c: number) => c + 1, 0);
+  const z = zip.trim().slice(0, 5);
+  const valid = /^\d{5}$/.test(z);
+  useEffect(() => {
+    if (!valid || zipCache.has(z)) return;
+    fetch(`/api/zip/${z}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((loc: [number, number] | null) => {
+        zipCache.set(z, loc);
+        bump();
+      })
+      .catch(() => {});
+  }, [z, valid]);
+  return valid ? (zipCache.get(z) ?? undefined) : undefined;
+}
+
+function PopularBand({ popular, q }: { popular: { make: string; model: string; count: number }[]; q: string }) {
+  const sp = useSearchParams();
+  const go = (label: string, pressed: boolean) => {
+    const params = new URLSearchParams(sp.toString());
+    params.delete("page");
+    if (pressed) params.delete("q");
+    else params.set("q", label);
+    pushUrl(params);
+  };
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-4">
+      {popular.map((p, i) => {
+        const label = `${p.make} ${p.model}`;
+        const pressed = q === label.toLowerCase();
+        return (
+          <button
+            key={label}
+            type="button"
+            onClick={() => go(label, pressed)}
+            title={pressed ? `Stop showing only ${label}` : `Show every ${label}`}
+            className={`${CELL} flex flex-col px-5 py-3 text-left hover:ring-[3px] hover:ring-inset hover:ring-cobalt focus:outline-none focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-cobalt ${
+              pressed ? "bg-ink text-paper" : BAND_GROUNDS[i]
+            }`}
+          >
+            <span className="text-[10.5px] font-extrabold tracking-[0.14em] uppercase">
+              {p.make} · {p.count} cars
+            </span>
+            <span className="text-[19px] font-extrabold tracking-[-0.02em]">
+              {p.model}
+              {pressed ? " ✕" : ""}
+            </span>
+          </button>
+        );
+      })}
+      {popular.length === 0 &&
+        BAND_GROUNDS.map((g, i) => <div key={i} className={`${CELL} h-[62px] ${g}`} aria-hidden="true" />)}
+    </div>
+  );
+}
+
+export function Browse() {
+  const sp = useSearchParams();
+  const s = (k: string) => sp.get(k) ?? "";
+  const n = (k: string) => Number(s(k)) || undefined;
+
+  const q = s("q").toLowerCase().trim();
+  const make = s("make");
+  const model = s("model");
+  const cond = s("cond");
+  const drive = s("drive");
+  const body = s("body");
+  const minPrice = n("minPrice");
+  const maxPrice = n("maxPrice");
+  const minYear = n("minYear");
+  const maxYear = n("maxYear");
+  const maxMiles = n("maxMiles");
+  const minRange = n("minRange");
+  const heatPump = s("heatPump") === "1";
+  const zip = s("zip");
+  const radius = s("radius") || "50";
+  const sort = s("sort") || "featured";
+  // Prototype flag: ?grounds=fact makes card colors mean something (teal =
+  // new battery, cobalt = recent price cut) instead of the one-in-five rhythm.
+  const grounds: GroundsMode = s("grounds") === "fact" ? "fact" : "rhythm";
+
+  const { rows, failed } = useCardIndex();
+  const origin = useOrigin(zip);
+
+  // Per-model tally, case-insensitive because dealer feeds disagree on casing
+  // ("Nissan ARIYA" / "Nissan Ariya"); the most common form is the display one.
+  const { tally, suggestions, popular, makesModels } = useMemo(() => {
+    const tally = new Map<string, { count: number; forms: Map<string, { make: string; model: string; n: number }> }>();
+    const makesModels: Record<string, string[]> = {};
+    for (const r of rows ?? []) {
+      (makesModels[r.make] ??= []).push(r.model);
+      const form = `${r.make} ${r.model}`;
+      const t = tally.get(form.toLowerCase()) ?? { count: 0, forms: new Map() };
+      t.count += 1;
+      const f = t.forms.get(form) ?? { make: r.make, model: r.model, n: 0 };
+      f.n += 1;
+      t.forms.set(form, f);
+      tally.set(form.toLowerCase(), t);
+    }
+    for (const k of Object.keys(makesModels)) makesModels[k] = [...new Set(makesModels[k])].sort();
+    const canon = [...tally.values()]
+      .map((t) => {
+        const best = [...t.forms.values()].sort((a, b) => b.n - a.n)[0];
+        return { make: best.make, model: best.model, count: t.count };
+      })
+      .sort((a, b) => b.count - a.count);
+    // A model listed once is as likely a feed typo as a car — not suggestion material.
+    const suggestions: Suggestion[] = canon
+      .filter((c) => c.count >= 2)
+      .map((c) => ({ label: `${c.make} ${c.model}`, count: c.count }));
+    return { tally, suggestions, popular: canon.slice(0, 4), makesModels };
+  }, [rows]);
+
+  const { results, dist, relief, activeCount } = useMemo(() => {
+    const all = rows ?? [];
+
+    const dist = new Map<string, number>();
+    if (origin) {
+      for (const r of all) if (r.loc) dist.set(r.id, Math.round(milesBetween(origin, r.loc)));
+    }
+
+    // Each active filter is its own predicate, which is what lets an empty
+    // result say how many cars dropping any single one would give back.
+    const tests: Partial<Record<(typeof REMOVABLE)[number], (r: CardRow) => boolean>> = {};
+    if (origin && radius !== "any") {
+      tests.zip = (r) => {
+        const d = dist.get(r.id);
+        return d !== undefined && d <= Number(radius);
+      };
+    }
+    if (q) {
+      const toks = q.split(/\s+/);
+      tests.q = (r) => toks.every((tok) => r.hay.includes(tok));
+    }
+    if (make) tests.make = (r) => r.make === make;
+    if (model) tests.model = (r) => r.model === model;
+    if (cond === "new") tests.cond = (r) => r.condition === "new";
+    else if (cond === "used") tests.cond = (r) => r.condition === "used" || r.condition === "certified" || !r.condition;
+    if (drive) tests.drive = (r) => r.drive === drive;
+    // Curated model→body map; cars we can't verifiably classify sit this one out.
+    if (body) tests.body = (r) => r.body === body;
+    // A price filter is about price, so a car whose feed gave us a lease
+    // payment instead of one can't satisfy it either way.
+    if (minPrice) tests.minPrice = (r) => r.realPrice && r.priceUsd >= minPrice;
+    if (maxPrice) tests.maxPrice = (r) => r.realPrice && r.priceUsd <= maxPrice;
+    if (minYear) tests.minYear = (r) => r.year >= minYear;
+    if (maxYear) tests.maxYear = (r) => r.year <= maxYear;
+    if (maxMiles) tests.maxMiles = (r) => r.mileage != null && r.mileage <= maxMiles;
+    if (minRange) tests.minRange = (r) => !!r.rangeMi && r.rangeMi >= minRange;
+    if (heatPump) tests.heatPump = (r) => r.heatPump === "yes";
+
+    const activeKeys = REMOVABLE.filter((k) => tests[k]);
+    const matches = (r: CardRow, skip?: string) => activeKeys.every((k) => k === skip || tests[k]!(r));
+
+    const results = all.filter((r) => matches(r));
+
+    // Cars without a usable price sort to the end either way — they can't
+    // lead a price-sorted page in either direction.
+    const priceKey = (r: CardRow, low: boolean) => (r.realPrice ? r.priceUsd : low ? Infinity : -Infinity);
+
+    // Anything that isn't an explicit sort falls back to the featured order;
+    // the day term reshuffles it once a day, not on every render.
+    const explicitSorts = new Set(["price", "price-desc", "year-desc", "miles", "range-desc", ...(origin ? ["distance"] : [])]);
+    // eslint-disable-next-line react-hooks/purity -- the once-a-day reshuffle is the point
+    const day = Math.floor(Date.now() / 86400000);
+    const feat = explicitSorts.has(sort)
+      ? null
+      : new Map(
+          all.map((r) => [r.id, featuredScore(r, tally.get(`${r.make} ${r.model}`.toLowerCase())?.count ?? 0, day)])
+        );
+
+    results.sort((a, b) => {
+      if (origin && sort === "distance") {
+        return (dist.get(a.id) ?? Infinity) - (dist.get(b.id) ?? Infinity);
+      }
+      switch (sort) {
+        case "price":
+          return priceKey(a, true) - priceKey(b, true);
+        case "price-desc":
+          return priceKey(b, false) - priceKey(a, false);
+        case "year-desc":
+          return b.year - a.year || a.priceUsd - b.priceUsd;
+        case "miles":
+          return (a.mileage ?? Infinity) - (b.mileage ?? Infinity);
+        case "range-desc":
+          return (b.rangeMi ?? -1) - (a.rangeMi ?? -1);
+        default:
+          return (feat!.get(b.id) ?? -Infinity) - (feat!.get(a.id) ?? -Infinity);
+      }
+    });
+
+    // What each filter is costing, only worth computing when nothing matched.
+    const relief =
+      results.length === 0 && all.length > 0
+        ? activeKeys
+            .map((k) => ({
+              key: k,
+              label: describeFilter(k, s(k)) ?? k,
+              n: all.filter((r) => matches(r, k)).length,
+            }))
+            .sort((a, b) => b.n - a.n)
+        : [];
+
+    return { results, dist, relief, activeCount: activeKeys.length };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- s() reads sp, listed
+  }, [rows, sp, origin, tally]);
+
+  // 5,000 cards in one document is not a page anyone can use, and the cards
+  // are photo-first. One screenful of grid at a time, paged through the URL.
+  const PAGE_SIZE = 60;
+  const pageCount = Math.max(1, Math.ceil(results.length / PAGE_SIZE));
+  const page = Math.min(Math.max(1, n("page") ?? 1), pageCount);
+  const shown = results.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const goPage = (p: number) => {
+    const params = new URLSearchParams(sp.toString());
+    if (p > 1) params.set("page", String(p));
+    else params.delete("page");
+    pushUrl(params);
+    window.scrollTo(0, 0);
+  };
+
+  const PAGE_BTN = "px-5 py-4 text-[13px] font-extrabold tracking-[0.06em] uppercase focus:outline-none focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-cobalt";
+
+  return (
+    <div className="mx-auto max-w-[1400px] px-0 sm:px-6 sm:py-6">
+      <div className="border-t-[3px] border-l-[3px] border-ink">
+        <div className="border-r-[3px] border-ink">
+          <SearchBar suggestions={suggestions} />
+        </div>
+        <PopularBand popular={popular} q={q} />
+      </div>
+
+      <FilterRail makesModels={makesModels} />
+
+      {rows === null ? (
+        failed ? (
+          <div className="border-t-[3px] border-l-[3px] border-ink">
+            <div className={`${CELL} bg-vermilion px-6 py-8 text-paper`}>
+              <p className="text-[26px] leading-[1.1] font-extrabold tracking-[-0.025em]">
+                Couldn&apos;t load the inventory.{" "}
+                <button type="button" className="underline" onClick={() => window.location.reload()}>
+                  Try again
+                </button>
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 border-t-[3px] border-l-[3px] border-ink sm:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 6 }, (_, i) => (
+              <div key={i} className={`${CELL} animate-pulse`} aria-hidden="true">
+                <div className="aspect-[3/2] border-b-[3px] border-ink bg-putty" />
+                <div className="h-[118px] bg-paper" />
+              </div>
+            ))}
+          </div>
+        )
+      ) : results.length > 0 ? (
+        <>
+          <div className="grid grid-cols-1 border-t-[3px] border-l-[3px] border-ink sm:grid-cols-2 lg:grid-cols-3">
+            {shown.map((r, i) => (
+              <ListingCard key={r.id} r={r} distanceMi={dist.get(r.id)} index={i} grounds={grounds} />
+            ))}
+          </div>
+
+          <div className="flex flex-wrap border-l-[3px] border-ink">
+            {page > 1 && (
+              <button type="button" onClick={() => goPage(page - 1)} className={`${CELL} bg-paper hover:bg-putty ${PAGE_BTN}`}>
+                ← Previous
+              </button>
+            )}
+            <span className={`${CELL} flex flex-1 items-center bg-paper px-5 py-4 text-[12.5px] font-bold tracking-[0.06em] text-ink/60 uppercase tabular-nums`}>
+              {(page - 1) * PAGE_SIZE + 1}–{(page - 1) * PAGE_SIZE + shown.length} of {results.length.toLocaleString()}
+            </span>
+            {page < pageCount && (
+              <button type="button" onClick={() => goPage(page + 1)} className={`${CELL} bg-ink text-paper hover:bg-cobalt ${PAGE_BTN}`}>
+                Next {Math.min(PAGE_SIZE, results.length - page * PAGE_SIZE)} →
+              </button>
+            )}
+          </div>
+        </>
+      ) : (
+        <div className="border-t-[3px] border-l-[3px] border-ink">
+          <div className={`${CELL} bg-vermilion px-6 py-8 text-paper`}>
+            <p className="text-[26px] leading-[1.1] font-extrabold tracking-[-0.025em]">
+              Nothing matches all {activeCount} filter{activeCount === 1 ? "" : "s"}.
+              {relief[0] && relief[0].n > 0 ? (
+                <>
+                  <br />
+                  Drop {relief[0].label.toLowerCase()} and you get {relief[0].n}.
+                </>
+              ) : null}
+            </p>
+          </div>
+          <div className="flex flex-wrap">
+            {relief.map((r) => (
+              <span
+                key={r.key}
+                className={`${CELL} px-4 py-3 text-[12.5px] font-extrabold tracking-[0.04em] uppercase ${
+                  r.n > 0 ? "bg-saffron text-ink" : "bg-paper text-ink/50"
+                }`}
+              >
+                {r.label} → {r.n}
+              </span>
+            ))}
+            <span className={`${CELL} flex-1 min-w-[40px] bg-paper`} aria-hidden="true" />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

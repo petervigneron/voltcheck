@@ -1,14 +1,18 @@
 import type { Listing } from "./types";
 import { SAMPLE_LISTINGS } from "./sample";
-import { dbConfigured, fetchListingDetailFromDb, fetchListingsFromDb } from "./db";
-import scraped from "@/data/scraped-listings.json";
+import { dbConfigured, fetchListingByIdFromDb, fetchListingDetailFromDb, fetchListingsFromDb } from "./db";
 
 // Live inventory comes from Supabase (nightly scraper sync, see
 // scraper/db-sync.mjs); the bundled JSON is the fallback when the DB is
 // unconfigured or unreachable, so local dev and outages both keep working.
+// The fallback is 17MB of JSON — imported lazily, on the failure path only,
+// so a cold serverless start never parses it just to have it around.
 // Demo rows exercise enrichment cases the current scrape doesn't cover and
 // disappear as real coverage grows.
-const SCRAPED = scraped as Listing[];
+async function fallbackListings(): Promise<Listing[]> {
+  const scraped = await import("@/data/scraped-listings.json");
+  return scraped.default as Listing[];
+}
 
 // Some dealer platforms serve photos from a root-relative path ("/inventory
 // photos/…/1.jpg"), and the scraper stored them as-is — 278 listings whose
@@ -34,14 +38,20 @@ function absolutizeImages(l: Listing): Listing {
 export async function allListings(): Promise<Listing[]> {
   const db = await fetchListingsFromDb();
   const byVin = new Map<string, Listing>();
-  for (const l of [...(db ?? SCRAPED), ...SAMPLE_LISTINGS]) {
+  for (const l of [...(db ?? (await fallbackListings())), ...SAMPLE_LISTINGS]) {
     if (!byVin.has(l.vin)) byVin.set(l.vin, absolutizeImages(l));
   }
   return [...byVin.values()];
 }
 
 export async function findListing(id: string): Promise<Listing | undefined> {
-  const listing = (await allListings()).find((l) => l.id === id);
+  // One row by id, not the whole feed: the detail page shouldn't pay for
+  // 16k listings to show one. Ids the DB doesn't know (sample rows, the
+  // bundled-JSON fallback, just-delisted cars) fall back to the full scan.
+  const fromDb = await fetchListingByIdFromDb(id);
+  const listing = fromDb
+    ? absolutizeImages(fromDb)
+    : (await allListings()).find((l) => l.id === id);
   if (!listing) return undefined;
   // The bulk feed omits description and price history (egress: they render
   // only here). One small per-VIN read brings them in; bundled-JSON and

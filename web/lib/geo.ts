@@ -1,13 +1,6 @@
-import zipData from "@/data/zips.json";
-
-// Census ZCTA centroids (2024 gazetteer, public domain): zip → [lat, lng]
-const ZIPS = zipData as unknown as Record<string, [number, number]>;
-
-export function zipCoords(zip: string | undefined): [number, number] | undefined {
-  if (!zip) return undefined;
-  return ZIPS[zip.trim().slice(0, 5)];
-}
-
+// Pure distance math — client-safe. The zip → coordinates lookup lives in
+// lib/zips.ts, server-side, so the 892K centroid table never ships to (or
+// gets parsed by) anything that only needs to measure a distance.
 export function milesBetween(a: [number, number], b: [number, number]): number {
   const R = 3958.8;
   const toRad = (d: number) => (d * Math.PI) / 180;
