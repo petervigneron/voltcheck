@@ -25,7 +25,7 @@
 //            clients while its landing page is 200. Same verdict as Tesla.
 import { mkdir, writeFile } from "node:fs/promises";
 import { richness } from "./lib/normalize.mjs";
-import { GM_BRANDS, pullGmBrand } from "./lib/oem/gm.mjs";
+import { GM_BRANDS, CARBRAVO, pullGmBrand, pullCarBravo } from "./lib/oem/gm.mjs";
 import { HYUNDAI, pullHyundai } from "./lib/oem/hyundai.mjs";
 import { KIA, pullKia } from "./lib/oem/kia.mjs";
 
@@ -35,6 +35,7 @@ import { KIA, pullKia } from "./lib/oem/kia.mjs";
 const log = (m) => console.error(`── ${m}`);
 const PULLERS = {
   ...Object.fromEntries(GM_BRANDS.map((b) => [b.key, { domain: b.domain, run: () => pullGmBrand(b, { log }) }])),
+  [CARBRAVO.key]: { domain: CARBRAVO.domain, run: () => pullCarBravo({ log }) },
   [HYUNDAI.key]: { domain: HYUNDAI.domain, run: () => pullHyundai({ log }) },
   [KIA.key]: { domain: KIA.domain, run: () => pullKia({ log }) },
 };
@@ -45,7 +46,7 @@ function flag(name, fallback) {
   return i >= 0 ? args[i + 1] : fallback;
 }
 const OUT_DIR = flag("--out", "out");
-const wanted = flag("--brands", "chevrolet,gmc,cadillac,hyundai,kia").split(",").map((s) => s.trim().toLowerCase());
+const wanted = flag("--brands", "chevrolet,gmc,cadillac,carbravo,hyundai,kia").split(",").map((s) => s.trim().toLowerCase());
 const selected = wanted.filter((k) => PULLERS[k]);
 if (!selected.length) {
   console.error(`oem-locator: no known brands in "${wanted}" (have: ${Object.keys(PULLERS).join(",")})`);

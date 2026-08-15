@@ -31,11 +31,24 @@ export const GM_BRANDS = [
   { key: "buick", host: "www.buick.com", prefix: "buick", programId: "BUICK", domain: "buick.com", make: "Buick", minExpected: 0 },
 ];
 
+// CarBravo — GM's certified-used marketplace (carbravo.com), spanning used
+// EVs across every GM brand. Same aec-cp-discovery-api, programId CARBRAVO;
+// filtered to fuelType Electric it yields the used counterpart to the new
+// brand-site pulls above. ~500 used EVs (Bolt EV/EUV, Equinox EV, Blazer EV,
+// Hummer EV, Lyriq, Vistiq). Cursor pagination (nextPageToken), not from/size.
+export const CARBRAVO = {
+  key: "carbravo",
+  api: "https://www.carbravo.com/carbravo/shopping/api/aec-cp-discovery-api/p/v1/vehicles/search",
+  programId: "CARBRAVO",
+  domain: "carbravo.com",
+  minExpected: 100,
+};
+
 // recheck.mjs must skip these: locator coverage is complete every night, so
 // the locator itself is the authoritative liveness signal — and their VDP
 // sourceUrls are client-rendered app shells whose HTML echoes the VIN from
 // the URL, which would fake "alive" forever.
-export const OEM_LOCATOR_DOMAINS = new Set(GM_BRANDS.map((b) => b.domain));
+export const OEM_LOCATOR_DOMAINS = new Set([...GM_BRANDS.map((b) => b.domain), CARBRAVO.domain]);
 
 const PAGE_SIZE = 20; // server cap; asking for more still returns 20
 const WINDOW_MAX = 9980; // from+size must stay under the ~10k result window
@@ -234,5 +247,110 @@ export async function pullGmBrand(brand, { log = () => {} } = {}) {
   const shortfall = total > 0 && byVin.size < total * 0.9;
   if (shortfall) report.errors.push(`collected ${byVin.size} of ${total} — paging shortfall`);
   report.truncated = report.errors.length > 0 || byVin.size < brand.minExpected;
+  return report;
+}
+
+// USPS state codes, for deriving dealer state from a CarBravo dealer's zip
+// centroid is done in the web layer; here we only pass the raw zip through.
+function toCarBravoRecord(hit) {
+  const vin = String(hit.id ?? "").toUpperCase();
+  if (!VIN_RE.test(vin)) return null;
+  const year = Number(hit.year);
+  if (!(year >= 1981 && year <= new Date().getFullYear() + 2)) return null;
+  const model = String(hit.model ?? "").trim();
+  if (!model) return null;
+  const cash = hit.pricing?.cash ?? {};
+  const priceUsd = num(cash.baseDealerFeaturedPrice?.value) ?? num(cash.netPrice?.value) ?? num(cash.dealerFeaturedPrice?.value);
+  const zipRaw = String(hit.dealer?.postalCode ?? "");
+  const zip = /^\d{5}/.test(zipRaw) ? zipRaw.slice(0, 5) : undefined;
+  // CarBravo photos are real used-car images on gcb.evs.onl (https already).
+  const img = hit.images?.[0]?.url && String(hit.images[0].url).startsWith("http") ? hit.images[0].url : undefined;
+  const make = hit.make ?? "Chevrolet";
+  // Every car CarBravo sells is CARBRAVO_CERTIFIED today (including non-GM
+  // trade-ins it inspects and certifies), but read the field rather than
+  // assume, so a future plain-"USED" listing is labelled honestly.
+  const condRaw = String(hit.stockDetails?.condition ?? "").toUpperCase();
+  const certified = /CERT|CPO/.test(condRaw) || condRaw === "";
+  return {
+    vin,
+    year,
+    make,
+    model,
+    trim: hit.variant?.name || undefined,
+    priceUsd,
+    mileage: Number.isFinite(hit.mileage) ? Math.round(hit.mileage) : undefined,
+    exteriorColor: hit.baseExteriorColor || undefined,
+    driveLine: ["FWD", "AWD", "RWD", "4WD"].includes(hit.driveType) ? hit.driveType : undefined,
+    stockNumber: hit.stockDetails?.stockNumber || undefined,
+    dealerName: titleCaseIfShouty(hit.dealer?.name) || undefined,
+    zip,
+    certified: certified || undefined,
+    condition: certified ? "certified" : "used",
+    imageUrl: img,
+    images: img ? [img] : [],
+    // CarBravo VDPs carry their VIN in the query string (stripped from the
+    // deep-link here); a make/model search near the dealer reliably lands the
+    // shopper on the car among a short list.
+    sourceUrl: `https://www.carbravo.com/shopping/inventory/search?make=${encodeURIComponent(make)}&model=${encodeURIComponent(model.toLowerCase())}${zip ? `&zipCode=${zip}` : ""}&radius=50&sort=distance%2CASC`,
+    dealerDomain: CARBRAVO.domain,
+    evKind: "BEV",
+    evConfidence: "high", // fuelType=Electric facet, not a name match
+    platform: "carbravo-locator",
+    fromVdp: false,
+    scrapedAt: new Date().toISOString(),
+  };
+}
+
+// Pull CarBravo's complete national used-EV inventory. One filter (fuelType
+// Electric) across all GM brands, cursor-paginated. Same crawl-shaped report
+// contract as pullGmBrand.
+export async function pullCarBravo({ log = () => {} } = {}) {
+  const report = { domain: CARBRAVO.domain, kind: "oem-locator", budget: null, fetched: 0, vehiclePages: 0, itemListVdps: 0, evs: [], errors: [], notes: [] };
+  const hdrs = { client: "T1_VSR", oemId: "GM", programId: CARBRAVO.programId, tenantId: "0", dealerId: "0" };
+  const byVin = new Map();
+  let total = null;
+  let token = "";
+
+  // Cursor pagination: keep sending the returned nextPageToken until a page
+  // comes back empty. Guard the loop with the reported count too, in case a
+  // token ever loops.
+  for (let page = 0; page < 200; page++) {
+    let data = null;
+    for (let attempt = 0; ; attempt++) {
+      const res = await politePostJson(CARBRAVO.api, {
+        headers: hdrs,
+        body: {
+          filters: { geo: { zipCode: NATIONAL_ZIP, radius: 3000 }, fuelType: { values: ["Electric"] } },
+          sort: { name: "distance", order: "ASC" },
+          paymentTypes: ["CASH"],
+          pagination: { size: PAGE_SIZE, nextPageToken: token },
+        },
+      });
+      report.fetched++;
+      if (res.status === 200 && res.json?.data) { data = res.json.data; break; }
+      const transient = String(res.status).startsWith("error:") || res.status === 429 || res.status >= 500;
+      if (attempt === 0 && transient) { await new Promise((r) => setTimeout(r, 5000)); continue; }
+      report.errors.push(`${res.status} carbravo page=${page}`);
+      break;
+    }
+    if (!data) break; // error recorded; flips truncated below
+    if (total === null) total = data.count ?? 0;
+    const hits = data.hits ?? [];
+    if (!hits.length) break; // no more pages
+    for (const hit of hits) {
+      const rec = toCarBravoRecord(hit);
+      if (rec) byVin.set(rec.vin, rec);
+    }
+    token = data.pagination?.nextPageToken ?? "";
+    if (!token) break; // last page
+    if (page % 5 === 0) log(`carbravo: page ${page + 1}, ${byVin.size}/${total} VINs`);
+  }
+
+  report.evs = [...byVin.values()];
+  report.vehiclePages = report.fetched;
+  report.notes.push(`national used-EV count ${total ?? 0}`);
+  const shortfall = total > 0 && byVin.size < total * 0.9;
+  if (shortfall) report.errors.push(`collected ${byVin.size} of ${total} — paging shortfall`);
+  report.truncated = report.errors.length > 0 || byVin.size < CARBRAVO.minExpected;
   return report;
 }
