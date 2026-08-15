@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { findListing } from "@/lib/listings/source";
-import { enrichListing } from "@/lib/listings/enrich";
+import { enrichListing , displayTrim } from "@/lib/listings/enrich";
 import { buildChecklist } from "@/lib/checklist";
 import { EnrichmentFacts, Section, NOTE_STYLE } from "@/components/EnrichmentReport";
 import { listingTiles } from "@/components/ListingCard";
@@ -50,7 +50,7 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
             <h1 className="text-xl font-bold leading-tight">
               {listing.year} {listing.make} {listing.model}
             </h1>
-            {listing.trim && <p className="text-sm text-zinc-500 dark:text-zinc-400">{listing.trim}</p>}
+            {displayTrim(listing) && <p className="text-sm text-zinc-500 dark:text-zinc-400">{displayTrim(listing)}</p>}
             {hasRealPrice(listing) ? (
               <div className="mt-3 text-3xl font-bold tabular-nums">${listing.priceUsd.toLocaleString()}</div>
             ) : (
@@ -144,7 +144,7 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
             <div className={`rounded-lg border p-4 ${NOTE_STYLE}`}>
               <div className="text-sm font-semibold">This car cannot DC fast-charge</div>
               <p className="mt-1 text-sm text-zinc-700 dark:text-zinc-300">
-                The listing's own charge-port photo shows no DC pins — the factory fast-charge option (RPO CBT, $750) was
+                The listing&rsquo;s own charge-port photo shows no DC pins — the factory fast-charge option (RPO CBT, $750) was
                 never fitted. GM does not offer a retrofit; the car charges on Level 1/Level 2 AC only.
               </p>
             </div>

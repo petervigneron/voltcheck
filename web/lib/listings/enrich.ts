@@ -27,10 +27,19 @@ export interface EnrichedListing {
 // on 21 of 48 Lightnings). A cab style can't discriminate enrichment rows, but
 // left in place it blocks every trim-keyed row from matching.
 const CAB_STYLES = /^(super\s*crew|super\s*cab|crew\s*cab|regular\s*cab|extended\s*cab|double\s*cab|quad\s*cab|king\s*cab)$/i;
+
+// For display surfaces: a cab-style pseudo-trim is not a trim — every
+// Lightning is a SuperCrew, so showing "F-150 Lightning SuperCrew" as if it
+// named a variant is dealer noise, not information.
+export function displayTrim(l: Listing): string | undefined {
+  if (!l.trim) return undefined;
+  const t = l.trim.trim();
+  return CAB_STYLES.test(t) ? undefined : t;
+}
 // Body-style noise appended to real trims ("Long Range Sport Utility 4D",
 // "Performance Sedan 4D") — stripped, not treated as identity. Whole phrases
 // only: "Sport S" and the like must survive.
-const BODY_NOISE = /\b(sports?\s*activity\s*vehicle|sport\s*utility|sedan|hatchback|gran\s*coupe|coupe|gc|4dr|4d|2d)\b/gi;
+const BODY_NOISE = /\b(sports?\s*activity\s*vehicle|sport\s*utility|sedan|sdn|hatchback|gran\s*coupe|coupe|gc|4dr|4d|2d)\b/gi;
 
 // Dealer trim strings restate things that aren't the trim: the model name,
 // the drivetrain spelled out, "Dual Motor". Canonicalize before matching so
@@ -38,7 +47,8 @@ const BODY_NOISE = /\b(sports?\s*activity\s*vehicle|sport\s*utility|sedan|hatchb
 // row key, and a trim that says nothing beyond the drivetrain drops away.
 function cleanTrim(l: Listing): string | undefined {
   if (!l.trim) return undefined;
-  const makerNoise = l.make.trim().toUpperCase() === "RIVIAN" ? RIVIAN_TIERS : null;
+  const mk = l.make.trim().toUpperCase();
+  const makerNoise = mk === "RIVIAN" ? RIVIAN_TIERS : mk === "PORSCHE" ? PORSCHE_NOISE : null;
   // Feeds leak HTML entities ("S&#x2B;" for "S+").
   let t = l.trim.replace(/&#x2b;|&#43;|&plus;/gi, "+").replace(/[()]/g, " ").replace(/\s+/g, " ").trim();
   // "S/S+"-style compounds whose halves normalize identically are one trim.
@@ -53,7 +63,7 @@ function cleanTrim(l: Listing): string | undefined {
     .replace(/\ball[- ]wheel drive\b/gi, "AWD")
     .replace(/\brear[- ]wheel drive\b/gi, "RWD")
     .replace(/\bfront[- ]wheel drive\b/gi, "FWD")
-    .replace(makerNoise ? /$^/ : /\bdual motor\b/gi, " ")
+    .replace(mk === "RIVIAN" ? /$^/ : /\bdual motor\b/gi, " ")
     .replace(BODY_NOISE, " ")
     .replace(makerNoise ?? /$^/, " ")
     .replace(/\s+/g, " ")
@@ -76,6 +86,9 @@ function cleanTrim(l: Listing): string | undefined {
 // Strip the tier so "Adventure Quad Motor Large Pack" matches a "Quad Motor"
 // row and a bare "Adventure" honestly presents candidates.
 const RIVIAN_TIERS = /\b(adventure package|adventure|launch edition|ascend|premium)\b/gi;
+// Porsche feeds leak the internal type code ("Type Y1A") and package suffixes
+// where the trim belongs.
+const PORSCHE_NOISE = /\b(type\s*y1a|y1a|w\/?\s*premium\s*(&\s*tech\s*)?package)\b/gi;
 
 function decodeFromListing(l: Listing): VinDecode {
   return {

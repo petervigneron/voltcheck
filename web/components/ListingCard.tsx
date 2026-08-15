@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { EnrichedListing } from "@/lib/listings/enrich";
+import { displayTrim, type EnrichedListing } from "@/lib/listings/enrich";
 import { Tile, type TileGround, type TileKind } from "./Tile";
 import { hasRealPrice } from "@/lib/listings/price";
 
@@ -137,7 +137,7 @@ export function ListingCard({
         <div>
           <h2 className="text-[15px] leading-tight font-bold">
             {l.year} {l.make} {l.model}
-            {l.trim ? ` ${l.trim}` : ""}
+            {displayTrim(l) ? ` ${displayTrim(l)}` : ""}
           </h2>
           <p className={`mt-0.5 text-[12.5px] tabular-nums ${META_CLS[ground]}`}>{subtitle(e, distanceMi)}</p>
         </div>
