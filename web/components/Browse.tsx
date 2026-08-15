@@ -23,15 +23,6 @@ const FACET_OF: Record<SpecFacet, (r: CardRow) => string | undefined> = {
   epa: (r) => (r.rangeMi != null ? String(r.rangeMi) : undefined),
 };
 
-// Some feeds repeat the make inside the model ("Ford" / "Ford F-150
-// Lightning"), which would read as two models and cost those cars their spec
-// rail. Only the grouping is normalized here — the stored model is untouched.
-const modelKey = (r: CardRow) => {
-  const make = r.make.toLowerCase();
-  const model = r.model.toLowerCase();
-  return `${make} ${model.startsWith(`${make} `) ? model.slice(make.length + 1) : model}`;
-};
-
 // The whole inventory arrives once per visitor (CDN-cached JSON, hourly
 // revalidate) and every filter, sort, and page flip after that is a pure
 // in-browser computation — no server round-trip, which is where the latency
@@ -348,7 +339,9 @@ export function Browse() {
 
     const byModel = new Map<string, CardRow[]>();
     for (const r of base) {
-      const k = modelKey(r);
+      // Case-insensitive, same as the tally above: feeds disagree on casing
+      // ("MODEL 3" / "Model 3") and one model's cars belong in one group.
+      const k = `${r.make} ${r.model}`.toLowerCase();
       const group = byModel.get(k);
       if (group) group.push(r);
       else byModel.set(k, [r]);
