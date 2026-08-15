@@ -4539,4 +4539,40 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
         { trim: ["PHEV", "Phev", "Plug-In Hybrid", "SEL Plug-In Hybrid", "PHEV FWD"], drive: "FWD" }),
     ];
   })(),
+
+  // ── Subaru Trailseeker + Uncharted (2026-08-15) ───────────────────────
+  // Subaru's own spec sheets settle the wheel-per-trim splits exactly:
+  // Trailseeker — "EPA-estimated 281 Premium, 274 Limited and Touring"
+  // (18-inch Premium / 20-inch Limited+Touring); Uncharted — Premium FWD
+  // and Sport ride 18s, GT rides 20s. Both: 74.7 kWh (104 cells, matching
+  // the per-VIN Part 565 figure), native NACS on the right fender, DC
+  // 10→80% "as quickly as 28 minutes". MY2027 certs are identical.
+  ...(() => {
+    const SUB_W = {
+      batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source),
+      sohFloorPct: f(70, "mfr" as Source, "high", "“Retention of 70% or more of the original battery capacity” (Subaru BEV booklet terms, as on Solterra)"),
+      batteryTransfers: f(true, "mfr" as Source, "high", "“Every owner of the vehicle during the warranty period shall be entitled to the benefits”"),
+    };
+    const SUB_SPEC_TS = "https://media.subaru.com/pressrelease/2399/1/2026-subaru-trailseeker-specifications";
+    const SUB_SPEC_UC = "https://s3.amazonaws.com/subarumedia.iconicweb.com/mediasite/specs/2026_Subaru_Uncharted_Specs.pdf";
+    const SUB_PACK = { packGrossKwh: f(74.7, "mfr", "high", "“Lithium-ion: 104 cells, 74.7 kWh” — Subaru spec sheet, matching the per-VIN Part 565 figure") };
+    const SUB_CHG = { portStandard: f<"NACS">("NACS", "mfr", "high", "“NACS charge inlet on right fender” — Subaru spec sheet"), superchargerAccess: f<"native">("native", "mfr") };
+    const sub = (id: string, model: string, vin8: string[], trim: string[] | undefined, drv: "AWD" | "FWD", variant: string, rangeFact: Fact<number>, specUrl: string): EnrichmentRow => ({
+      id, make: "SUBARU", model, modelYears: [2026, 2027], vin8, trim, drive: drv, packVariant: variant,
+      range: { epaRangeMi: rangeFact }, battery: SUB_PACK, charging: SUB_CHG, warranty: SUB_W,
+      buyerNotes: [{ headline: "Wheel size sets the rating — Subaru's spec sheet maps it per trim", body: `Subaru's own specifications document states the per-trim EPA split (see ${specUrl}). 18-inch trims carry the higher figure; 20-inch trims the lower.`, severity: "info" as const }],
+    });
+    return [
+      sub("trailseeker-2026-27-premium", "Trailseeker", ["C"], ["Premium"], "AWD", "Premium (18-inch)",
+        f(281, "mfr", "high", "“EPA-estimated 281 Premium” (18-inch wheels) — Subaru's own spec sheet; EPA ids 50300/50692 rate identically both years", epa(50300)), SUB_SPEC_TS),
+      sub("trailseeker-2026-27-limtour", "Trailseeker", ["C"], ["Limited", "Touring"], "AWD", "Limited/Touring (20-inch)",
+        f(274, "mfr", "high", "“274 Limited and Touring” (20-inch wheels) — Subaru's own spec sheet; EPA ids 50299/50691", epa(50299)), SUB_SPEC_TS),
+      sub("uncharted-2026-27-premium", "Uncharted", ["E"], ["Premium"], "FWD", "Premium FWD (18-inch)",
+        f(308, "mfr", "high", "MY2026–27 Uncharted Premium (FWD, single motor, 18-inch) — EPA (50301/50693)", epa(50301)), SUB_SPEC_UC),
+      sub("uncharted-2026-27-sport", "Uncharted", ["E"], ["Sport"], "AWD", "Sport AWD (18-inch)",
+        f(287, "mfr", "high", "MY2026–27 Uncharted Sport (AWD, 18-inch per Subaru's spec sheet) — EPA (50303/50695)", epa(50303)), SUB_SPEC_UC),
+      sub("uncharted-2026-27-gt", "Uncharted", ["E"], ["GT"], "AWD", "GT AWD (20-inch)",
+        f(273, "mfr", "high", "MY2026–27 Uncharted GT (AWD, 20-inch per Subaru's spec sheet) — EPA (50302/50694)", epa(50302)), SUB_SPEC_UC),
+    ];
+  })(),
 ];
