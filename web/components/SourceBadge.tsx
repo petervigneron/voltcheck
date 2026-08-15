@@ -1,25 +1,24 @@
 import type { Fact } from "@/lib/types";
 
-const LABELS: Record<string, { text: string; cls: string }> = {
-  mfr: { text: "manufacturer", cls: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300" },
-  vpic: { text: "NHTSA vPIC", cls: "bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300" },
-  vin: { text: "VIN decode", cls: "bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300" },
-  photo: { text: "photo-verified", cls: "bg-violet-100 text-violet-800 dark:bg-violet-950 dark:text-violet-300" },
-  dealer: { text: "dealer data", cls: "bg-violet-100 text-violet-800 dark:bg-violet-950 dark:text-violet-300" },
-  tested: { text: "measured tests", cls: "bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300" },
-  est: { text: "estimate", cls: "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300" },
-  agg: { text: "unverified", cls: "bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300" },
-  unknown: { text: "unknown", cls: "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400" },
+// Where a fact came from is our problem, not the shopper's.
+//
+// Every fact used to carry a coloured provenance chip — "NHTSA vPIC",
+// "manufacturer", "dealer data" — which told a buyer nothing they could act
+// on, tripled the visual weight of every row, and published the shape of the
+// research pipeline on every page.
+//
+// What a buyer does need is the one bit that changes how much to trust the
+// number: whether it is measured or estimated. So a solid fact now renders
+// bare, and only a soft one is marked. Silence means sourced.
+const SOFT: Record<string, string> = {
+  est: "est.",
+  agg: "unverified",
 };
 
 export function SourceBadge({ fact }: { fact: Fact<unknown> }) {
-  const l = LABELS[fact.source] ?? LABELS.unknown;
+  const label = SOFT[fact.source];
+  if (!label) return null;
   return (
-    <span
-      className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium ${l.cls}`}
-      title={`Source: ${l.text} · checked ${fact.asOf}${fact.sourceUrl ? ` · ${fact.sourceUrl}` : ""}`}
-    >
-      {l.text}
-    </span>
+    <span className="text-[11px] font-medium text-amber-700 dark:text-amber-500">{label}</span>
   );
 }

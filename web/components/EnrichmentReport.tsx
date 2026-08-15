@@ -3,7 +3,9 @@ import { FactRow } from "./FactRow";
 
 export const HEAT_PUMP_LABEL: Record<HeatPump, string> = {
   standard: "Standard",
-  optional: "Factory option — varies per car",
+  // "Varies per car" is the whole point of this value: it means go check THIS
+  // one. Kept short enough to read as a value, not a sentence.
+  optional: "Varies per car",
   awd_only: "AWD only",
   none: "None",
 };
@@ -13,10 +15,10 @@ export const NOTE_STYLE =
 
 const DCFC_LABEL = {
   standard: "Standard",
-  optional: "Factory option — varies per car",
+  optional: "Varies per car",
   none: "Not capable",
-  fitted: "Fitted — confirmed on this car",
-  not_fitted: "Not fitted on this car",
+  fitted: "Fitted",
+  not_fitted: "Not fitted",
 } as const;
 
 export function Section({ title, children }: { title: string; children: React.ReactNode }) {
@@ -70,15 +72,16 @@ export function EnrichmentFacts({ row }: { row: EnrichmentRow }) {
           <FactRow label="Port" fact={row.charging?.portStandard} />
           <FactRow label="Supercharger access" fact={row.charging?.superchargerAccess} />
 
-          <h3 className="mt-5 text-xs font-semibold text-zinc-400">Warranty, for the next owner</h3>
+          <h3 className="mt-5 text-xs font-semibold text-zinc-400">Warranty</h3>
           <FactRow
             label="HV battery coverage"
             fact={row.warranty?.batteryYears}
             format={(v) => `${v} yr / ${row.warranty?.batteryMiles?.value.toLocaleString() ?? "—"} mi`}
           />
           <FactRow label="Capacity floor" fact={row.warranty?.sohFloorPct} format={(v) => `${v}% SOH`} />
-          <FactRow label="Battery coverage transfers" fact={row.warranty?.batteryTransfers} format={(v) => (v ? "Yes — in full" : "No")} />
-          <FactRow label="Powertrain coverage transfers" fact={row.warranty?.powertrainTransfers} format={(v) => (v ? "Yes" : "No — drops for a second owner")} />
+          {/* The label already says "transfers", so the answer is the answer. */}
+          <FactRow label="Battery coverage transfers" fact={row.warranty?.batteryTransfers} format={(v) => (v ? "Yes" : "No")} />
+          <FactRow label="Powertrain coverage transfers" fact={row.warranty?.powertrainTransfers} format={(v) => (v ? "Yes" : "No")} />
           <FactRow label="Extended coverage" fact={row.warranty?.extendedCoverage} />
         </div>
       </div>

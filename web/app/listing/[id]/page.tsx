@@ -44,7 +44,8 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
   );
   const gallery = listing.images?.length ? listing.images : listing.imageUrl ? [listing.imageUrl] : [];
   // Recent real-world sales of the same make/model — transaction prices.
-  const recentSales = await fetchRecentSales(listing.make, listing.model);
+  // The VIN goes with it so sales of this car's own version sort first.
+  const recentSales = await fetchRecentSales(listing.make, listing.model, listing.vin);
   // Same title records as the list above, but fitted to this car's exact
   // variant and odometer rather than eyeballed across model years.
   const vsSold = askVsSold(
@@ -154,34 +155,35 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
           {listing.campaignCheck?.packReplaced && (
             <div className={`rounded-lg border p-4 ${NOTE_STYLE}`}>
               <div className="text-sm font-semibold">
-                New battery at {listing.campaignCheck.odometerAtReplacement?.toLocaleString()} miles (
-                {listing.campaignCheck.packReplacedDate}) — 8yr/100k parts warranty from that date
+                New battery {listing.campaignCheck.packReplacedDate} at{" "}
+                {listing.campaignCheck.odometerAtReplacement?.toLocaleString()} miles. Warranty 8yr/100k from
+                that date.
               </div>
             </div>
           )}
 
           {e.listing.photoChecks?.dcFastCharge === "confirmed_absent" && (
             <div className={`rounded-lg border p-4 ${NOTE_STYLE}`}>
-              <div className="text-sm font-semibold">This car cannot DC fast-charge</div>
+              {/* The charge-port photo showed no DC pins. That verdict is the
+                  fact; the paragraph explaining how we reached it was three
+                  lines of our workings on the shopper's screen. */}
+              <div className="text-sm font-semibold">Cannot DC fast-charge</div>
               <p className="mt-1 text-sm text-zinc-700 dark:text-zinc-300">
-                The listing&rsquo;s own charge-port photo shows no DC pins — the factory fast-charge option (RPO CBT, $750) was
-                never fitted. GM does not offer a retrofit; the car charges on Level 1/Level 2 AC only.
+                AC Level 1/2 only. No retrofit available.
               </p>
             </div>
           )}
 
-          {recentSales.length > 0 && (
-            <RecentSales sales={recentSales} make={listing.make} model={listing.model} vsSold={vsSold} />
-          )}
+          {recentSales.length > 0 && <RecentSales sales={recentSales} vsSold={vsSold} />}
 
           {e.row && (
-            <Section title="This exact version — researched">
+            <Section title={`${listing.model}${displayTrim(listing) ? ` ${displayTrim(listing)}` : ""}`}>
               <EnrichmentFacts row={e.row} />
             </Section>
           )}
 
           {e.enrichment.candidates && (
-            <Section title="Two different versions wear this badge">
+            <Section title="Two versions wear this badge">
               {e.enrichment.discriminator && (
                 <p className="mb-4 rounded-lg border border-amber-300 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/40 p-3 text-sm">
                   {e.enrichment.discriminator}
@@ -203,7 +205,7 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
           )}
 
           {listing.description && (
-            <Section title={`The dealer's description${listing.dealerName ? ` (${listing.dealerName})` : ""}`}>
+            <Section title="Dealer description">
               <p className="text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">{listing.description}</p>
             </Section>
           )}

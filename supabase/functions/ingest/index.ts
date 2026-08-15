@@ -72,6 +72,11 @@ Deno.serve(async (req: Request) => {
     return call("ingest_wa_sales", { _rows: body.rows, _replace: body.replace === true });
   }
 
+  // VIN(1-8) -> version decodes from NHTSA vPIC (migration 0016).
+  if (body.dataset === "vin_variants") {
+    return call("ingest_vin_variants", { _rows: body.rows, _replace: body.replace === true });
+  }
+
   return call("ingest_listings", {
     _rows: body.rows,
     _source: body.source ?? "nightly",

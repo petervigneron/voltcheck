@@ -10,6 +10,11 @@ export interface RecentSale {
   salePrice: number;
   odometer: number;
   saleDate: string; // YYYY-MM-DD
+  /** The version that sold, resolved from its VIN (migration 0016).
+   *  Null when the VIN doesn't encode one — rendered "Unknown", never guessed. */
+  variant: string | null;
+  /** Same VIN(1-8) cohort as the listing being viewed: the real comparison. */
+  sameVariant: boolean;
 }
 
 const REVALIDATE_SECONDS = 86_400; // upstream refreshes monthly
@@ -17,7 +22,12 @@ const REVALIDATE_SECONDS = 86_400; // upstream refreshes monthly
 // Goes through the recent_sales RPC rather than the table: raw wa_ev_sales
 // reads are revoked for anon (migration 0007), and the RPC caps the excerpt
 // at 10 fixed-order rows so the anon key can never bulk-extract the archive.
-export async function fetchRecentSales(make: string, model: string): Promise<RecentSale[]> {
+//
+// `vin` is this listing's own VIN. Its first 8 characters are the variant
+// cohort, so passing it sorts sales of the SAME version to the front — a
+// Lariat's page compares against Lariats instead of against whichever ten
+// Lightnings sold most recently.
+export async function fetchRecentSales(make: string, model: string, vin?: string): Promise<RecentSale[]> {
   if (!dbConfigured()) return [];
   const base = process.env.SUPABASE_URL!.replace(/\/$/, "");
   const key = process.env.SUPABASE_ANON_KEY!;
@@ -29,7 +39,11 @@ export async function fetchRecentSales(make: string, model: string): Promise<Rec
         Authorization: `Bearer ${key}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ _make: make, _model: model }),
+      body: JSON.stringify({
+        _make: make,
+        _model: model,
+        _vin8: vin && vin.length >= 8 ? vin.slice(0, 8).toUpperCase() : null,
+      }),
       next: { revalidate: REVALIDATE_SECONDS },
     });
     if (!res.ok) throw new Error(`PostgREST ${res.status}`);

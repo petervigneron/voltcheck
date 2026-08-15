@@ -92,16 +92,34 @@ function echoesModel(t, model) {
   return /^(f-?series|e-?series|silverado|sierra|model[123sxy])$/i.test(t.trim());
 }
 
+// vPIC files some trims in caps and some in title case, and the same truck can
+// come back "PRO" one model year and "Pro" the next — two spellings of one
+// version, side by side in the same list.
+//
+// Short all-caps trims are almost always genuine acronyms that must stay
+// shouting (SE, SEL, XLT, LTZ, GT, HSE, 2LT), so the rule is: keep words of
+// three letters or fewer uppercase. The exceptions are the handful of real
+// English words short enough to be caught by it. PRO is the only one in the
+// current data; the rest are here because they are the plausible next ones.
+const SHORT_WORDS = new Set(["PRO", "MAX", "AIR", "GTS", "SKY", "ONE", "DUO"]);
+
+function titleCase(t) {
+  return t.replace(/[A-Za-z]+/g, (w) =>
+    w.length <= 3 && !SHORT_WORDS.has(w.toUpperCase())
+      ? w.toUpperCase()
+      : w[0] + w.slice(1).toLowerCase()
+  );
+}
+
 function trimFrom(r) {
   const model = String(r.Model ?? "");
   for (const raw of [r.Series, r.Trim, r.Series2, r.Trim2]) {
     const t = String(raw ?? "").trim().replace(/\s+/g, " ");
     if (!t || t.length > 32) continue;
     if (CAB_STYLES.test(t) || NOT_A_TRIM.test(t) || echoesModel(t, model)) continue;
-    // Title-case vPIC's shouting ("PRO" → "Pro"), leave real acronyms alone.
-    return /^[A-Z0-9 +-]+$/.test(t) && /[A-Z]{3,}/.test(t)
-      ? t.replace(/[A-Za-z]+/g, (w) => (w.length <= 3 ? w.toUpperCase() : w[0] + w.slice(1).toLowerCase()))
-      : t;
+    // Only fold vPIC's all-caps spellings; a trim it already title-cased is
+    // left exactly as filed.
+    return /^[A-Z0-9 +-]+$/.test(t) && /[A-Z]{2,}/.test(t) ? titleCase(t) : t;
   }
   return null;
 }
