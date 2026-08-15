@@ -1,17 +1,36 @@
 // Ingest gateway: lets the nightly scraper write without holding the
 // project's service key. The scraper posts with an x-ingest-token header;
 // this function checks it and forwards to the right RPC using the service
-// key Supabase injects into edge functions. Rotation = redeploy with a new
-// token.
+// key Supabase injects into edge functions.
 //
-// The committed file carries a placeholder — the deploy step substitutes
-// the real token, which lives only in scraper/.env (gitignored). JWT
-// verification is also on: callers must present the anon key as Bearer.
-const INGEST_TOKEN = "__DEPLOY_TIME_TOKEN__";
+// The token is stored here as a SHA-256 HASH, never in the clear. A hash of
+// 32 random bytes cannot be reversed, so this constant is not a secret: the
+// committed file is exactly what runs, with no deploy-time substitution
+// step and nothing to leak in a deploy log, a transcript, or this repo's
+// public history. The token itself exists in exactly two places, both of
+// them write-only stores: scraper/.env and the GitHub Actions secret
+// SUPABASE_INGEST_TOKEN.
+//
+// Rotate:
+//   TOKEN=$(openssl rand -hex 32)
+//   printf '%s' "$TOKEN" | shasum -a 256      # paste the digest below, redeploy
+//   printf '%s' "$TOKEN" | gh secret set SUPABASE_INGEST_TOKEN
+//   # and update SUPABASE_INGEST_TOKEN in scraper/.env
+// The scraper keeps sending the raw token exactly as before; only this
+// side changed, so a rotation never needs a matching scraper release.
+const INGEST_TOKEN_SHA256 = "5ffd98a98e90db938b589423840b7e86bd10ddf29a18959f608af8da0133e943";
+
+async function sha256Hex(s: string): Promise<string> {
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
+  return Array.from(new Uint8Array(digest))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
 
 Deno.serve(async (req: Request) => {
   if (req.method !== "POST") return new Response("method not allowed", { status: 405 });
-  if (INGEST_TOKEN.startsWith("__") || req.headers.get("x-ingest-token") !== INGEST_TOKEN) {
+  const presented = req.headers.get("x-ingest-token");
+  if (!presented || (await sha256Hex(presented)) !== INGEST_TOKEN_SHA256) {
     return new Response(JSON.stringify({ error: "forbidden" }), { status: 403 });
   }
   let body: Record<string, unknown>;
