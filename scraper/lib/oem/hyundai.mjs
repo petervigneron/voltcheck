@@ -20,6 +20,7 @@
 //   - records carry dealerCode (state-prefixed, e.g. "KS022") and dealerName
 //     but no dealer zip; state is taken from the code prefix, precise
 //     distance is left to a future dealerCode→zip map
+import { readFileSync } from "node:fs";
 import { politePostJson, politeGetJson } from "../http.mjs";
 
 export const HYUNDAI = {
@@ -38,24 +39,63 @@ const VIN_RE = /^[A-HJ-NPR-Z0-9]{17}$/;
 // the new-inventory API: GET /var/hyundai/services/inventory/hcuvInventory
 // Models.json?brand=hyundai&zip=&model=&inspectionType=all&radius=. Returns
 // full used records (VIN, price, real mileage, dealer address, a dealer VDP).
-// Unlike the new API it will not span the nation in one call (a huge radius
-// caps the result set), so CPO is swept over a grid of metro ZIPs at 250mi
-// and deduped by VIN — metros are where used EVs cluster anyway.
+//
+// Coverage is the tricky part. The endpoint hard-caps every response at 120
+// vehicles and offers no pagination, so a single national call misses cars.
+// The fix is a covering grid: query from many centers at a radius small
+// enough that no one cell can hit the cap, and dedupe by VIN. Empirically the
+// densest market (LA) returns 99 Ioniq 5 within radius 100 — under the 120
+// cap — so radius 100 with grid centers ~60mi apart (finer than the ~150mi
+// radius at which even LA fills the cap) guarantees every car is within the
+// 120-nearest of some cell. The grid is generated from the Census ZCTA
+// centroids (web/data/zips.json), one representative ZIP per ~1.4x1.6-degree
+// cell over the CONUS, so it follows where people (and dealers) actually are.
 export const HYUNDAI_CPO = {
   key: "hyundai-cpo",
   // Its own completeness domain, isolated from the new pull on hyundaiusa.com:
-  // a grid sweep can never certify national completeness, so this must never
-  // sit under a domain the new pull marks complete (that would delist CPO
-  // cars the new pull never saw). Marked truncated always; recheck verifies
-  // liveness through each car's real dealer VDP instead.
+  // even a covering grid must never certify national completeness under a
+  // domain the new pull marks complete (that would delist CPO cars the new
+  // pull never saw). Marked truncated always; recheck verifies liveness
+  // through each car's real dealer VDP instead.
   domain: "hyundai-cpo",
   api: "https://www.hyundaiusa.com/var/hyundai/services/inventory/hcuvInventoryModels.json",
-  models: ["ioniq-5", "ioniq-6", "ioniq-electric", "kona-electric"],
+  // The current BEV nameplates. The discontinued "ioniq-electric" (2017–21)
+  // is deliberately omitted — a full-grid sweep returned zero of it, so
+  // querying it is pure wasted calls; re-add it if CPO stock ever appears.
+  models: ["ioniq-5", "ioniq-6", "kona-electric"],
 };
 
-// ~33 metro ZIPs; 250mi circles around these cover the CONUS markets where
-// Hyundai CPO EVs actually sit. Overlap is fine — VIN dedupe handles it.
-const CPO_ZIP_GRID = [
+const CPO_RADIUS = 100; // keeps the densest metro (LA=99) under the 120 cap
+const CPO_CAP = 120; // server's hard per-response cap (no pagination)
+// A couple of off-CONUS metros the lat/lon grid below deliberately excludes.
+const CPO_EXTRA_ZIPS = ["96813", "99501"]; // Honolulu, Anchorage
+
+// Covering grid of representative ZIPs, one per ~1.4x1.6-degree CONUS cell,
+// each cell's rep chosen closest to the cell centre. Returns { cells, zips }:
+// cells is a Map keyed by "cx_cy" grid coordinate (so callers can walk a
+// cell's 8 neighbours), zips is the full ZCTA table (for subdivision).
+function coveringGrid() {
+  let zips;
+  try {
+    zips = JSON.parse(readFileSync(new URL("../../../web/data/zips.json", import.meta.url), "utf-8"));
+  } catch {
+    return null; // fall back to a metro grid if the ZCTA table is unavailable
+  }
+  const LAT = 1.4, LNG = 1.6;
+  const cells = new Map();
+  for (const [zip, v] of Object.entries(zips)) {
+    const [la, ln] = v;
+    if (!(la >= 24 && la <= 49.5 && ln >= -125 && ln <= -66.5)) continue; // CONUS
+    const cx = Math.floor(la / LAT), cy = Math.floor(ln / LNG), key = `${cx}_${cy}`;
+    const d = (la - (cx + 0.5) * LAT) ** 2 + (ln - (cy + 0.5) * LNG) ** 2;
+    const ex = cells.get(key);
+    if (!ex || d < ex.d) cells.set(key, { zip, cx, cy, d });
+  }
+  return { cells, zips };
+}
+
+// Small hand-kept metro grid — the fallback when zips.json can't be read.
+const CPO_FALLBACK_ZIPS = [
   "90001", "94102", "92101", "95814", "98101", "97201", "85001", "89101", "87102",
   "75201", "77001", "78701", "78201", "80202", "84101", "60601", "55401", "63101",
   "64101", "44101", "48201", "33101", "30301", "28201", "37201", "70112", "10001",
@@ -253,8 +293,8 @@ function toCpoRecord(veh) {
   };
 }
 
-async function cpoFetch(model, zip, report) {
-  const url = `${HYUNDAI_CPO.api}?brand=hyundai&zip=${zip}&model=${model}&inspectionType=all&radius=250`;
+async function cpoFetch(model, zip, radius, report) {
+  const url = `${HYUNDAI_CPO.api}?brand=hyundai&zip=${zip}&model=${model}&inspectionType=all&radius=${radius}`;
   for (let attempt = 0; ; attempt++) {
     // The hcuv endpoint 403s without a Referer, so it needs politeGetJson
     // (custom headers) rather than the plain fetchPage wrapper.
@@ -268,28 +308,107 @@ async function cpoFetch(model, zip, report) {
   }
 }
 
-// Sweep Hyundai CPO EVs over the metro ZIP grid. Always truncated:true — a
-// grid can't certify national completeness, so it never drives delisting;
-// recheck handles CPO liveness through each car's dealer VDP.
+// ZIP nearest a target lat/lng, for placing subdivided sub-cell centres.
+function nearestZip(zips, la, ln) {
+  let best = null, bestD = Infinity;
+  for (const [zip, v] of Object.entries(zips)) {
+    const d = (v[0] - la) ** 2 + (v[1] - ln) ** 2;
+    if (d < bestD) { bestD = d; best = zip; }
+  }
+  return best;
+}
+
+// Fetch one (model, zip) cell at a given radius, folding its cars into byVin.
+// If the response hits the hard cap, the cell is holding more than it can
+// return, so subdivide into four quadrant sub-centres at half the radius and
+// recurse — guaranteeing the overflow is captured rather than trusting grid
+// overlap. Bottoms out at a small radius so a pathologically dense ZIP can't
+// loop forever. Returns the cell's own (pre-subdivision) count.
+async function cpoCell(model, zip, radius, zips, byVin, report, seen = new Set(), depth = 0) {
+  if (seen.has(zip)) return 0;
+  seen.add(zip);
+  const vehicles = await cpoFetch(model, zip, radius, report);
+  for (const v of vehicles) {
+    const rec = toCpoRecord(v?.Veh ?? v);
+    if (rec) byVin.set(rec.vin, rec);
+  }
+  if (vehicles.length >= CPO_CAP && radius > 20 && depth < 4 && zips) {
+    const [la, ln] = zips[zip] ?? [];
+    if (la != null) {
+      const off = radius / 138; // ≈ degrees for a half-radius offset (~69mi/deg)
+      const sub = Math.max(20, Math.round(radius / 2));
+      for (const [dla, dln] of [[off, off], [off, -off], [-off, off], [-off, -off]]) {
+        const sz = nearestZip(zips, la + dla, ln + dln);
+        if (sz && !seen.has(sz)) await cpoCell(model, sz, sub, zips, byVin, report, seen, depth + 1);
+      }
+    }
+  }
+  // Only warn about a cap we could NOT subdivide away (min radius / max depth
+  // reached) — that is the one case where cars could still be missed.
+  if (vehicles.length >= CPO_CAP && (radius <= 20 || depth >= 4)) {
+    report.notes.push(`UNRESOLVED cap: ${model}@${zip} r${radius} (${vehicles.length})`);
+  }
+  return vehicles.length;
+}
+
+// Sweep Hyundai CPO EVs over a national covering grid. Two passes keep the
+// call count down without missing anything: pass 1 runs the densest model
+// (Ioniq 5) over every cell to find which cells actually hold cars; pass 2
+// runs the remaining EV models only over those hot cells AND their grid
+// neighbours (so a model present where Ioniq 5 happens to be absent is still
+// caught). Always truncated:true — see HYUNDAI_CPO: coverage completeness
+// still must not drive delisting, which recheck handles via dealer VDPs.
 export async function pullHyundaiCpo({ log = () => {} } = {}) {
   const report = { domain: HYUNDAI_CPO.domain, kind: "oem-locator", budget: null, fetched: 0, vehiclePages: 0, itemListVdps: 0, evs: [], errors: [], notes: [] };
   const byVin = new Map();
-  for (const model of HYUNDAI_CPO.models) {
-    const before = byVin.size;
-    for (const zip of CPO_ZIP_GRID) {
-      const vehicles = await cpoFetch(model, zip, report);
-      for (const v of vehicles) {
-        const veh = v?.Veh ?? v;
-        const rec = toCpoRecord(veh);
-        if (rec) byVin.set(rec.vin, rec);
+  const grid = coveringGrid();
+  const [lead, ...rest] = HYUNDAI_CPO.models;
+  const R = CPO_RADIUS;
+
+  if (!grid) {
+    // Fallback: metro grid at a wide radius, all models (zips.json missing).
+    report.notes.push("zips.json unavailable — metro fallback grid");
+    for (const model of HYUNDAI_CPO.models) {
+      for (const zip of CPO_FALLBACK_ZIPS) await cpoCell(model, zip, 250, null, byVin, report);
+      log(`hyundai-cpo/${model}: ${byVin.size} cumulative VINs`);
+    }
+  } else {
+    const { cells, zips } = grid;
+    // Pass 1: lead model across every cell (capped cells self-subdivide);
+    // remember which cells had cars.
+    const hot = new Set();
+    for (const [key, cell] of cells) {
+      const n = await cpoCell(lead, cell.zip, R, zips, byVin, report);
+      if (n > 0) hot.add(key);
+    }
+    for (const zip of CPO_EXTRA_ZIPS) await cpoCell(lead, zip, R, zips, byVin, report);
+    log(`hyundai-cpo/${lead}: ${byVin.size} VINs across ${cells.size} cells (${hot.size} hot)`);
+
+    // Expand hot cells to include 8-neighbours, so a secondary model sitting
+    // in a cell whose lead-model count was zero is still swept.
+    const sweep = new Set();
+    for (const key of hot) {
+      const [cx, cy] = key.split("_").map(Number);
+      for (let dx = -1; dx <= 1; dx++) for (let dy = -1; dy <= 1; dy++) {
+        const nk = `${cx + dx}_${cy + dy}`;
+        if (cells.has(nk)) sweep.add(nk);
       }
     }
-    log(`hyundai-cpo/${model}: ${byVin.size - before} added, ${byVin.size} cumulative VINs`);
+
+    // Pass 2: remaining models over the hot+neighbour cells (plus extras).
+    for (const model of rest) {
+      const before = byVin.size;
+      for (const key of sweep) await cpoCell(model, cells.get(key).zip, R, zips, byVin, report);
+      for (const zip of CPO_EXTRA_ZIPS) await cpoCell(model, zip, R, zips, byVin, report);
+      log(`hyundai-cpo/${model}: +${byVin.size - before} over ${sweep.size} cells, ${byVin.size} cumulative`);
+    }
+    report.notes.push(`covering grid r${R}: ${cells.size} cells, ${hot.size} hot, ${sweep.size} swept for secondary models`);
   }
+
   report.evs = [...byVin.values()];
   report.vehiclePages = report.fetched;
-  report.notes.push(`${byVin.size} certified-used EVs over ${CPO_ZIP_GRID.length} metro ZIPs (grid sweep)`);
-  // Never certify complete: the grid is a sample, not exhaustive coverage.
+  // Never certify complete: even a covering grid is a snapshot with a hard
+  // per-cell cap, so it must not drive delisting.
   report.truncated = true;
   return report;
 }
