@@ -18,6 +18,18 @@ function f<T>(
 
 export const RESEARCH_ROWS: EnrichmentRow[] = [
   {
+    // 1st Edition (RWD, launch trim): EPA 250 like the Pro S, not the Pro's 260.
+    id: "id4-2021-1st-edition",
+    make: "VOLKSWAGEN",
+    model: "ID.4",
+    modelYears: [2021, 2021],
+    trim: "1st Edition",
+    drive: "RWD",
+    battery: { packUsableKwh: f(77, "mfr", "medium", "82 gross / 77 usable"), chemistry: f("NMC", "agg", "medium") },
+    range: { epaRangeMi: f(250, "mfr", "high", "2021 ID.4 1st Edition — EPA (rates with the Pro S, not the 260-mi Pro)", "https://www.fueleconomy.gov") },
+    charging: { portStandard: f("CCS1", "mfr") },
+  },
+  {
     id: "id4-2021-pro-rwd",
     make: "VOLKSWAGEN",
     model: "ID.4",

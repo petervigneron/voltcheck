@@ -39,7 +39,7 @@ export function displayTrim(l: Listing): string | undefined {
 // Body-style noise appended to real trims ("Long Range Sport Utility 4D",
 // "Performance Sedan 4D") — stripped, not treated as identity. Whole phrases
 // only: "Sport S" and the like must survive.
-const BODY_NOISE = /\b(sports?\s*activity\s*vehicle|sport\s*utility|sedan|sdn|hatchback|gran\s*coupe|coupe|gc|4dr|4d|2d|[24]-door|mid-?size\s*passenger(\s*car)?|small\s*wagon|passenger\s*car)\b/gi;
+const BODY_NOISE = /\b(sports?\s*activity\s*vehicles?|sport\s*utility(\s*vehicles?)?|suv|sedan|sdn|hatchback|gran\s*coupe|coupe|gc|4dr|4d|2d|[24]-door|mid-?size\s*passenger(\s*car)?|small\s*wagon|passenger\s*car)\b/gi;
 
 // Dealer trim strings restate things that aren't the trim: the model name,
 // the drivetrain spelled out, "Dual Motor". Canonicalize before matching so
@@ -91,6 +91,8 @@ function cleanTrim(l: Listing): string | undefined {
     .filter((w) => !/^(rwd|awd|fwd|4wd|4x4|4x2)$/i.test(w))
     .join(" ");
   if (!t) return undefined;
+  // A trim that just says "EV" tells us nothing a BEV listing didn't.
+  if (/^ev$/i.test(t)) return undefined;
   return t;
 }
 
@@ -122,9 +124,30 @@ const LUCID_NOISE = /\b(dream\s*drive(\s*pro)?|glass\s*canopy)\b/gi;
 // body and variant are carried by VIN positions 4–8 (Baumuster), which the
 // matcher checks against each row's vinPrefix, so nothing is lost.
 function canonicalModel(l: Listing): string {
-  if (l.make.trim().toUpperCase() === "MERCEDES-BENZ") {
+  const mk = l.make.trim().toUpperCase();
+  if (mk === "MERCEDES-BENZ") {
     const eq = l.model.match(/\bEQ[A-Z]\b/i);
     if (eq) return eq[0].toUpperCase();
+  }
+  // BMW feeds fold the trim into the model ("i4 eDrive35", "iX xDrive50",
+  // "i4 Gran Coupe") — collapse to the family; the trim field carries the
+  // variant in every observed case. "N Series" models resolve to the PHEV
+  // model string when the trim names one ("5 Series" + "550e xDrive").
+  if (mk === "BMW") {
+    const fam = l.model.match(/^(iX3|i[34578]|iX)\b/i);
+    if (fam && l.model.trim().length > fam[1].length) return fam[1].replace(/^I/, "i");
+    const series = l.model.match(/^[357]\s*series$/i);
+    const phev = series && (l.trim ?? "").match(/\b([357][35]0e|550e)\b/i);
+    if (phev) return phev[1];
+  }
+  // Tesla feeds do the same ("Model 3 Standard Range Plus", "Model Y Long
+  // Range") — the variant re-appears in the trim, which the model-prefix
+  // strip in cleanTrim then exposes for matching.
+  if (mk === "TESLA") {
+    const t = l.model.match(/^(model [3sxy])\b/i);
+    if (t && l.model.trim().length > t[1].length) {
+      return "Model " + t[1].slice(6).toUpperCase();
+    }
   }
   return l.model;
 }

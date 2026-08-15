@@ -3858,19 +3858,19 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   ...(() => {
     const AIR = { make: "LUCID", model: "Air" };
     const LUCID_W = {
-      batteryYears: f(8, "mfr" as Source, "high", "\u201cHigh-voltage battery: 8 Years / 100,000 miles (whichever comes first) retaining 70% capacity\u201d — Lucid's own warranty page (verified in the data3 pass)"),
+      batteryYears: f(8, "mfr" as Source, "high", "“High-voltage battery: 8 Years / 100,000 miles (whichever comes first) retaining 70% capacity” — Lucid's own warranty page (verified in the data3 pass)"),
       batteryMiles: f(100_000, "mfr" as Source, "high"),
       sohFloorPct: f(70, "mfr" as Source, "high", "Same Lucid warranty-page quote"),
-      batteryTransfers: f(true, "mfr" as Source, "high", "\u201c\u2026and to subsequent owner(s) if the vehicle is within the applicable coverage period\u201d — Lucid's own warranty page"),
+      batteryTransfers: f(true, "mfr" as Source, "high", "“\u2026and to subsequent owner(s) if the vehicle is within the applicable coverage period” — Lucid's own warranty page"),
     };
     const LUCID_CHG = {
-      portStandard: f<"CCS1">("CCS1", "mfr", "high", "Lucid's own site: \u201cYour Lucid Air has a J1772 (CCS1) charge port\u201d — no native NACS port as of the latest material found"),
+      portStandard: f<"CCS1">("CCS1", "mfr", "high", "Lucid's own site: “Your Lucid Air has a J1772 (CCS1) charge port” — no native NACS port as of the latest material found"),
       superchargerAccess: f<"adapter">("adapter", "mfr", "high", "All Air owners gained Supercharger access July 31, 2025 via a Lucid-sold NACS-to-CCS1 adapter (~$220); capped around 50 kW on that path — well below the car's native CCS1 DC peak"),
     };
-    // Lucid IR press release: the heat pump \u201cfirst employed on Lucid Sapphire
-    // now becomes standard across the lineup\u201d — MY2025 onward.
+    // Lucid IR press release: the heat pump “first employed on Lucid Sapphire
+    // now becomes standard across the lineup” — MY2025 onward.
     const LUCID_NO_HP = { heatPump: f<"none">("none", "mfr", "high", "Heat pump became standard only from MY2025 (Lucid IR release); pre-2025 Airs other than Sapphire have none") };
-    const LUCID_HP = { heatPump: f<"standard">("standard", "mfr", "high", "\u201cThe heat pump first employed on Lucid Sapphire now becomes standard across the lineup\u201d — Lucid IR release, MY2025 onward") };
+    const LUCID_HP = { heatPump: f<"standard">("standard", "mfr", "high", "“The heat pump first employed on Lucid Sapphire now becomes standard across the lineup” — Lucid IR release, MY2025 onward") };
     const NOTE_AIR_CAM = {
       headline: "Rearview-camera recalls apply across the Air lineup",
       body: "25V670 (2022–2025, all trims: camera image can fail, delay, or display inaccurately) and 26V017 (2022–2026, cars with the AD02 package: camera may not display in reverse). Both fixed via free OTA update.",
@@ -4018,8 +4018,8 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     // blanket row (whose single 227-mi figure the per-trim rows replace).
     const SOL_W = {
       batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source),
-      sohFloorPct: f(70, "mfr" as Source, "high", "\u201cRetention of 70% or more of the original battery capacity\u201d (MY2023 BEV booklet; later years reported same)"),
-      batteryTransfers: f(true, "mfr" as Source, "high", "\u201cEvery owner of the vehicle during the warranty period shall be entitled to the benefits\u201d"),
+      sohFloorPct: f(70, "mfr" as Source, "high", "“Retention of 70% or more of the original battery capacity” (MY2023 BEV booklet; later years reported same)"),
+      batteryTransfers: f(true, "mfr" as Source, "high", "“Every owner of the vehicle during the warranty period shall be entitled to the benefits”"),
     };
     const P728 = { packGrossKwh: f(72.8, "vin", "high", "72.8 kWh in Subaru's Part 565 submissions for gen-1 VINs (CATL pack shared with bZ4X AWD)"), chemistry: f<"NMC">("NMC", "agg", "medium") };
     const P747 = { packGrossKwh: f(74.7, "vin", "high", "74.7 kWh in Subaru's Part 565 submissions for MY2026 VINs") };
@@ -4811,6 +4811,276 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     }
     // Brightdrop Zevo — commercial vans above the EPA-rated weight class;
     // rangeless on purpose, like the Escalade IQ and 2022-23 Hummers.
+    // ── Final tail sweep (2026-08-15): remaining small models ─────────
+    const phevJ = { portStandard: f<"J1772">("J1772", "mfr", "high", "AC charging only"), dcFastCharging: f<"none">("none", "mfr") };
+    const phevRow = (id: string, make: string, model: string, years: [number, number], variant: string, rangeFact: Fact<number>, extra?: Partial<EnrichmentRow>): EnrichmentRow => ({
+      id, make, model, modelYears: years, packVariant: variant, range: { epaRangeMi: rangeFact }, charging: phevJ, ...extra,
+    });
+    // Lexus plug-ins (NX 450h+ / RX 450h+ / TX 550h+) — many model spellings.
+    for (const [i, m] of ["NX 450h+", "NX"].entries()) {
+      rows.push(phevRow(`nx450h-2022-26-${i}`, "LEXUS", m, [2022, 2026], "NX 450h+ (PHEV)",
+        f(37, "mfr", "high", "Electric-only EPA range (550 mi total) — MY2022–26 certs identical", epa(44933)),
+        m === "NX" ? { trim: ["450h+", "450h Plus", "NX 450h+"] } : { drive: "AWD" }));
+    }
+    for (const [i, m] of ["RX 450h+", "RX 450h Plus", "RX"].entries()) {
+      rows.push(phevRow(`rx450h-2024-26-${i}`, "LEXUS", m, [2024, 2026], "RX 450h+ (PHEV)",
+        f(37, "mfr", "high", "Electric-only EPA range (540 mi total) — MY2024–26", epa(49159)),
+        m === "RX" ? { trim: ["450h+", "450h Plus"] } : { drive: "AWD" }));
+    }
+    rows.push(phevRow("tx550h-2024-26", "LEXUS", "TX 550h+", [2024, 2026], "TX 550h+ (PHEV)",
+      f(33, "mfr", "high", "Electric-only EPA range (450 mi total) — MY2024–26", epa(49013)), { drive: "AWD" }));
+    // Lincoln Grand Touring PHEVs.
+    rows.push(phevRow("corsair-gt-2021-22", "LINCOLN", "Corsair", [2021, 2022], "Grand Touring (PHEV)",
+      f(28, "mfr", "high", "Electric-only EPA range (430 mi total) — Corsair Grand Touring", epa(43774)), { trim: ["Grand Touring"], drive: "AWD" }));
+    rows.push(phevRow("corsair-gt-2023-25", "LINCOLN", "Corsair", [2023, 2025], "Grand Touring (PHEV)",
+      f(27, "mfr", "high", "Electric-only EPA range (420–450 mi total) — Corsair Grand Touring", epa(47226)), { trim: ["Grand Touring"], drive: "AWD" }));
+    rows.push(phevRow("aviator-gt-2020-25", "LINCOLN", "Aviator", [2020, 2025], "Grand Touring (PHEV)",
+      f(21, "mfr", "high", "Electric-only EPA range (460 mi total) — Aviator Grand Touring", epa(43214)), { trim: ["Grand Touring", "Black Label Grand Touring"], drive: "AWD" }));
+    // Hyundai/Kia small PHEVs + the Ioniq hatch family.
+    rows.push(phevRow("santafe-phev-2022-24", "HYUNDAI", "Santa Fe Plug-In Hybrid", [2022, 2024], "PHEV",
+      f(31, "mfr", "high", "Electric-only EPA range (440 mi total) — MY2022–24", epa(44024))));
+    rows.push(phevRow("niro-phev-2023-25", "KIA", "Niro Plug-In Hybrid", [2023, 2025], "PHEV",
+      f(34, "mfr", "high", "Electric-only EPA range (510 mi total) — MY2023–25", epa(47221))));
+    rows.push(phevRow("optima-phev-2017-20", "KIA", "Optima Plug-In Hybrid", [2017, 2020], "PHEV",
+      f(29, "mfr", "high", "Electric-only EPA range (610 mi total)", epa(38406))));
+    for (const [i, m] of ["Ioniq Plug-In Hybrid", "Ioniq Plug-in Hybrid"].entries()) {
+      if (i > 0) break; // one norm covers both spellings
+      rows.push(phevRow(`ioniq-phev-2018-22-${i}`, "HYUNDAI", m, [2018, 2022], "PHEV",
+        f(29, "mfr", "high", "Electric-only EPA range (630 mi total) — MY2018–22", epa(40810))));
+    }
+    for (const [i, m] of ["Ioniq Electric", "Ioniq EV"].entries()) {
+      rows.push(phevRow(`ioniq-electric-2017-19-${i}`, "HYUNDAI", m, [2017, 2019], "Electric",
+        f(124, "mfr", "high", "MY2017–19 Ioniq Electric — EPA", epa(40384)),
+        { charging: { portStandard: f<"CCS1">("CCS1", "mfr") } }));
+      rows.push(phevRow(`ioniq-electric-2020-21-${i}`, "HYUNDAI", m, [2020, 2021], "Electric",
+        f(170, "mfr", "high", "MY2020–21 Ioniq Electric (38.3 kWh pack) — EPA", epa(42273)),
+        { charging: { portStandard: f<"CCS1">("CCS1", "mfr") } }));
+    }
+    // Volvo T8 plug-ins — several model spellings.
+    for (const [i, m] of ["XC60 Plug-In Hybrid", "XC60 Recharge Plug-In Hyb", "XC60 Recharge Plug-In Hybrid", "XC60"].entries()) {
+      const keyed = m === "XC60" ? { trim: ["Recharge", "T8", "Polestar"] } : {};
+      rows.push(phevRow(`xc60-t8-2020-21-${i}`, "VOLVO", m, [2020, 2021], "T8 Recharge (PHEV)",
+        f(19, "mfr", "high", "Electric-only EPA range (520 mi total) — MY2020–21 T8", epa(41947)), keyed));
+      rows.push(phevRow(`xc60-t8-2022-26-${i}`, "VOLVO", m, [2022, 2026], "T8 Recharge (PHEV)",
+        f(36, "mfr", "high", "Electric-only EPA range (560 mi total) — the MY2022+ 18.8-kWh long-range T8", epa(46629)), keyed));
+    }
+    for (const [i, m] of ["XC90 Plug-In Hybrid", "XC90 Recharge Plug-In Hyb", "XC90 Recharge Plug-In Hybrid", "XC90"].entries()) {
+      const keyed = m === "XC90" ? { trim: ["Recharge", "T8"] } : {};
+      rows.push(phevRow(`xc90-t8-2020-21-${i}`, "VOLVO", m, [2020, 2021], "T8 Recharge (PHEV)",
+        f(18, "mfr", "high", "Electric-only EPA range (520 mi total) — MY2020–21 T8", epa(41948)), keyed));
+      rows.push(phevRow(`xc90-t8-2022-26-${i}`, "VOLVO", m, [2022, 2026], "T8 Recharge (PHEV)",
+        f(33, "mfr", "high", "Electric-only EPA range (530 mi total) — the MY2022+ long-range T8", epa(46630)), keyed));
+    }
+    // Range Rover P440e/P550e — fueleconomy.gov lists only the mild
+    // hybrids (verified: no PHEV entries any year); Land Rover's quoted
+    // EPA estimate is ~48 electric miles.
+    rows.push(phevRow("rr-phev-2023-26", "LAND ROVER", "Range Rover", [2023, 2026], "PHEV (P440e/P550e)",
+      f(48, "agg", "medium", "Land Rover's quoted electric-only EPA estimate for the P440e/P550e; fueleconomy.gov carries no Range Rover PHEV certification (only MHEVs — verified)"),
+      { vin8: ["4"], drive: "AWD" }));
+    rows.push(phevRow("rrsport-phev-2023-27", "LAND ROVER", "Range Rover Sport", [2023, 2027], "PHEV (P460e/P550e)",
+      f(48, "agg", "medium", "Land Rover's quoted electric-only EPA estimate for the Sport plug-in; fueleconomy.gov carries no cert (only MHEVs — verified)"),
+      { vin8: ["4"], drive: "AWD" }));
+    // Mercedes GLE 450e / S 580e — both absent from fueleconomy.gov.
+    for (const [i, m] of ["GLE 450e", "GLE"].entries()) {
+      rows.push(phevRow(`gle450e-2024-26-${i}`, "MERCEDES-BENZ", m, [2024, 2026], "GLE 450e (PHEV)",
+        f(50, "agg", "medium", "Mercedes' EPA-estimated 50-mile electric range (23.3 kWh pack, press-documented); absent from fueleconomy.gov's dataset"),
+        m === "GLE" ? { trim: ["450e", "GLE 450e Plug-In Hybrid", "GLE400e", "400e"] } : { drive: "AWD" }));
+    }
+    rows.push(phevRow("s580e-2024-26", "MERCEDES-BENZ", "S-Class", [2024, 2026], "S 580e (PHEV)",
+      f(46, "agg", "medium", "S 580e — press-documented EPA electric-only figure; absent from fueleconomy.gov's dataset"),
+      { trim: ["S 580e", "S580e"], drive: "AWD" }));
+    // BMW X3 xDrive30e + 530e (the model canonicalization folds "5 Series"
+    // 530e/550e trims onto these model strings).
+    rows.push(phevRow("x3-30e-2020-21", "BMW", "X3 PHEV", [2020, 2021], "xDrive30e (PHEV)",
+      f(18, "mfr", "high", "Electric-only EPA range (340 mi total) — X3 xDrive30e", epa(42524)), { drive: "AWD" }));
+    rows.push(phevRow("530e-2020-23-rwd", "BMW", "530e", [2020, 2023], "530e (PHEV)",
+      f(21, "mfr", "high", "Electric-only EPA range (340–350 mi total) — 530e RWD, MY2020–23", epa(42108)), { drive: "RWD" }));
+    rows.push(phevRow("530e-2020-23-awd", "BMW", "530e", [2020, 2023], "530e xDrive (PHEV)",
+      f(19, "mfr", "high", "Electric-only EPA range (320–330 mi total) — 530e xDrive, MY2020–23", epa(42109)), { drive: "AWD" }));
+    // Subaru Crosstrek Hybrid (the 2019–23 plug-in) + Alfa Tonale.
+    for (const [i, m] of ["Crosstrek Hybrid", "Crosstrek"].entries()) {
+      rows.push(phevRow(`crosstrek-phev-2019-23-${i}`, "SUBARU", m, [2019, 2023], "Hybrid (PHEV)",
+        f(17, "mfr", "high", "Electric-only EPA range (480 mi total) — the 2019–23 Crosstrek Hybrid is a plug-in", epa(43687)),
+        m === "Crosstrek" ? { trim: ["Hybrid"] } : {}));
+    }
+    rows.push(phevRow("tonale-2024-25", "ALFA ROMEO", "Tonale", [2024, 2025], "PHEV",
+      f(33, "mfr", "high", "Electric-only EPA range (360 mi total) — every US Tonale is the plug-in (same certified powertrain as the Dodge Hornet R/T)", epa(47275))));
+    // Small BEVs.
+    rows.push(phevRow("i3-2017-60ah", "BMW", "i3", [2014, 2017], "i3 (60 Ah)",
+      f(81, "mfr", "high", "MY2017 i3 60-Ah battery — EPA; the 94-Ah car rates 114 (a junk-trim listing shows both as candidates)", epa(38000)),
+      { charging: { portStandard: f<"CCS1">("CCS1", "mfr") } }));
+    rows.push(phevRow("i3-2017-94ah", "BMW", "i3", [2017, 2017], "i3 (94 Ah)",
+      f(114, "mfr", "high", "MY2017 i3 94-Ah battery — EPA", epa(38001)),
+      { charging: { portStandard: f<"CCS1">("CCS1", "mfr") } }));
+    rows.push(phevRow("i3-2018-21-bev", "BMW", "i3", [2018, 2021], "i3 (120 Ah)",
+      f(153, "mfr", "high", "MY2019–21 i3/i3s (120 Ah) — EPA", epa(41054)),
+      { charging: { portStandard: f<"CCS1">("CCS1", "mfr") } }));
+    rows.push(phevRow("i3-2018-21-rex", "BMW", "i3", [2018, 2021], "i3 REx",
+      f(126, "mfr", "medium", "Electric-only range with the gasoline range extender aboard (~200 mi combined, EPA id 41211)", epa(41211)),
+      { trim: ["Range Extender", "REx"], charging: { portStandard: f<"CCS1">("CCS1", "mfr") } }));
+    for (const [i, m] of ["500e", "500", "500e Beauty"].entries()) {
+      rows.push(phevRow(`fiat500e-2013-19-${i}`, "FIAT", m, [2013, 2019], "500e (gen 1)",
+        f(84, "mfr", "high", "MY2013–19 500e — EPA (California/Oregon compliance car)", epa(37156)),
+        { vin8: ["E"], trim: m === "500" ? ["Electric", "Battery Electric"] : undefined, charging: { portStandard: f<"J1772">("J1772", "mfr", "high", "No DC fast charging on the gen-1 500e"), dcFastCharging: f<"none">("none", "mfr") } }));
+      rows.push(phevRow(`fiat500e-2024-26-${i}`, "FIAT", m, [2024, 2026], "500e (gen 2)",
+        f(149, "mfr", "high", "MY2024+ 500e — EPA; 141 with all-season tires", epa(47816)),
+        { vin8: ["4"], charging: { portStandard: f<"CCS1">("CCS1", "mfr") } }));
+    }
+    rows.push(phevRow("smart-ed-2013-17", "SMART", "Fortwo Electric Drive", [2013, 2017], "Electric Drive",
+      f(68, "mfr", "high", "MY2013–17 fortwo electric drive coupe — EPA", epa(34394)),
+      { charging: { portStandard: f<"J1772">("J1772", "mfr") } }));
+    rows.push(phevRow("spark-ev-2014-16", "CHEVROLET", "Spark EV", [2014, 2016], "EV",
+      f(82, "mfr", "high", "MY2014–16 Spark EV — EPA", epa(35120)),
+      { charging: { portStandard: f<"CCS1">("CCS1", "mfr", "high", "DC fast charging was optional") } }));
+    rows.push(phevRow("focus-electric-2017-18", "FORD", "Focus", [2017, 2018], "Electric",
+      f(115, "mfr", "high", "MY2017–18 Focus Electric (33.5 kWh) — EPA", epa(38505)),
+      { trim: ["BEV", "Electric", "Focus Electric"], charging: { portStandard: f<"CCS1">("CCS1", "mfr") } }));
+    rows.push(phevRow("soul-ev-2018-19", "KIA", "Soul", [2018, 2019], "Soul EV",
+      f(111, "mfr", "high", "MY2018–19 Soul EV (30 kWh) — EPA", epa(40768)),
+      { trim: ["EV", "EV+", "Soul EV"], charging: { portStandard: f<"CHAdeMO">("CHAdeMO", "mfr") } }));
+    for (const [i, m] of ["e-Golf", "eGolf"].entries()) {
+      if (i > 0) break; // "e-Golf" and "eGolf" normalize identically
+      rows.push(phevRow(`egolf-2015-16-${i}`, "VOLKSWAGEN", m, [2015, 2016], "e-Golf (24 kWh)",
+        f(83, "mfr", "high", "MY2015–16 e-Golf — EPA", epa(35849)),
+        { charging: { portStandard: f<"CCS1">("CCS1", "mfr", "high", "DC fast charging optional on SE, standard SEL") } }));
+      rows.push(phevRow(`egolf-2017-19-${i}`, "VOLKSWAGEN", m, [2017, 2019], "e-Golf (35.8 kWh)",
+        f(125, "mfr", "high", "MY2017–19 e-Golf — EPA", epa(39871)),
+        { charging: { portStandard: f<"CCS1">("CCS1", "mfr") } }));
+    }
+    // Volvo EX40 (the renamed XC40 Recharge, 2025+).
+    rows.push(phevRow("ex40-2025-26-single", "VOLVO", "EX40", [2025, 2026], "Single Motor",
+      f(296, "mfr", "high", "MY2025–26 EX40 single motor — EPA (48451/49747 rate identically)", epa(48451)),
+      { trim: ["Single Motor", "Plus", "Ultra", "Core"], drive: "RWD", charging: { portStandard: f<"CCS1">("CCS1", "mfr") } }));
+    rows.push(phevRow("ex40-2025-26-twin", "VOLVO", "EX40", [2025, 2026], "Twin Motor",
+      f(260, "mfr", "high", "MY2025–26 EX40 Twin — EPA (48447/49749 rate identically)", epa(48447)),
+      { trim: ["Twin", "Plus", "Ultra", "Core"], drive: "AWD", charging: { portStandard: f<"CCS1">("CCS1", "mfr") } }));
+    // Volvo alias strings for existing XC40/C40 coverage (feed variants).
+    rows.push(phevRow("xc40-twin-alias-2021-22", "VOLVO", "XC40 Recharge Twin Pure Electric", [2021, 2022], "Twin",
+      f(223, "mfr", "high", "MY2022 XC40 Recharge Twin — EPA (MY2021 rates 208, id 43295); every 2021–22 US car is the twin-motor", epa(44450)),
+      { drive: "AWD", charging: { portStandard: f<"CCS1">("CCS1", "mfr") } }));
+    rows.push(phevRow("xc40-bare-alias-2021-22", "VOLVO", "XC40", [2021, 2022], "Recharge Twin",
+      f(223, "mfr", "high", "MY2022 XC40 Recharge (electric — the trim says Recharge) — EPA; MY2021 rates 208", epa(44450)),
+      { trim: ["Recharge", "P8", "Recharge Level 2-Plus", "Recharge Level 2"], drive: "AWD", charging: { portStandard: f<"CCS1">("CCS1", "mfr") } }));
+    rows.push(phevRow("xc40-trunc-alias-2023", "VOLVO", "XC40 Recharge Pure Electr", [2023, 2023], "Twin",
+      f(223, "mfr", "high", "MY2023 XC40 Recharge Twin — EPA (truncated feed model string)", epa(44450)),
+      { drive: "AWD", charging: { portStandard: f<"CCS1">("CCS1", "mfr") } }));
+    rows.push(phevRow("c40-bare-alias-2023", "VOLVO", "C40", [2023, 2023], "Recharge Twin",
+      f(226, "mfr", "high", "MY2023 C40 Recharge Twin — EPA (bare feed model string; every 2022–23 US car is the twin)", epa(44929)),
+      { drive: "AWD", charging: { portStandard: f<"CCS1">("CCS1", "mfr") } }));
+    for (const [i, pair] of ([["Plus", "K", 297, 46980], ["Twin Plus", "M", 257, 46982]] as const).entries()) {
+      rows.push(phevRow(`c40-2024-tier-${i}`, "VOLVO", "C40 Recharge Pure Electric", [2024, 2024], `2024 ${pair[0]}`,
+        f(pair[2], "mfr", "high", `MY2024 C40 Recharge (VIN code ${pair[1]}) — EPA`, epa(pair[3])),
+        { vin8: [pair[1]], trim: ["Plus", "Ultimate", "Twin Plus", "Twin Ultimate"], drive: pair[1] === "K" ? "RWD" : "AWD" }));
+    }
+    rows.push(phevRow("xc40-2024-tier-plus", "VOLVO", "XC40 Recharge Pure Electric", [2024, 2024], "2024 (tier trim)",
+      f(293, "mfr", "high", "MY2024 XC40 Recharge single motor (VIN code K) — EPA; tier trims (Plus/Ultimate) don't name the motor, the code does", epa(46981)),
+      { vin8: ["K"], trim: ["Plus", "Ultimate", "Plus Dark", "Ultimate Dark"], drive: "RWD" }));
+    rows.push(phevRow("xc40-2024-tier-twin", "VOLVO", "XC40 Recharge Pure Electric", [2024, 2024], "2024 Twin (tier trim)",
+      f(254, "mfr", "high", "MY2024 XC40 Recharge Twin (VIN code M) — EPA", epa(46983)),
+      { vin8: ["M"], trim: ["Plus", "Ultimate", "Plus Dark", "Ultimate Dark"], drive: "AWD" }));
+    // Kia/Hyundai bare-string aliases (per-VIN verified BEVs).
+    rows.push(phevRow("niro-bare-2022", "KIA", "Niro", [2019, 2022], "Niro EV",
+      f(239, "mfr", "high", "Niro EV under the bare model string (per-VIN verified BEV) — EPA", "https://www.fueleconomy.gov"),
+      { vin8: ["G"], trim: ["EX", "EX Premium", "S, EX", "S"], charging: { portStandard: f<"CCS1">("CCS1", "mfr") } }));
+    rows.push(phevRow("niro-bare-2023-26", "KIA", "Niro", [2023, 2026], "Niro EV (Wind/Wave)",
+      f(253, "mfr", "high", "Niro EV Wind/Wave under the bare model string (per-VIN verified BEV) — EPA", "https://www.fueleconomy.gov"),
+      { vin8: ["1"], trim: ["Wind", "Wave"], charging: { portStandard: f<"CCS1">("CCS1", "mfr") } }));
+    rows.push(phevRow("kona-bare-2023", "HYUNDAI", "Kona", [2019, 2023], "Kona Electric",
+      f(258, "mfr", "high", "Gen-1 Kona Electric under the bare model string (VIN code G, per-VIN verified BEV) — EPA", epa(46000)),
+      { vin8: ["G"], drive: "FWD", charging: { portStandard: f<"CCS1">("CCS1", "mfr") } }));
+    for (const [i, m] of ["Kona", "Kona EV"].entries()) {
+      rows.push(phevRow(`kona-alias-2024-25-${i}`, "HYUNDAI", m, [2024, 2025], "Kona Electric Long Range",
+        f(261, "mfr", "high", "Gen-2 Kona Electric Long Range (VIN code 6) — EPA", "https://www.fueleconomy.gov"),
+        { vin8: ["6"], drive: "FWD", charging: { portStandard: f<"CCS1">("CCS1", "mfr") } }));
+    }
+    // Jeep 4xe under bare model strings — the trim carries "4xe".
+    rows.push(phevRow("gc-4xe-bare", "JEEP", "Grand Cherokee", [2022, 2025], "4xe (PHEV)",
+      f(26, "mfr", "high", "Electric-only EPA range (470 mi total) — Grand Cherokee 4xe under the bare model string", epa(47277)),
+      { trim: ["4xe"] }));
+    rows.push(phevRow("gc-4xe-abbrev", "JEEP", "GR Cherokee 4XE", [2022, 2025], "4xe (PHEV)",
+      f(26, "mfr", "high", "Electric-only EPA range (470 mi total) — Grand Cherokee 4xe (abbreviated feed string)", epa(47277))));
+    rows.push(phevRow("wrangler-4xe-bare", "JEEP", "Wrangler", [2021, 2025], "4xe (PHEV)",
+      f(22, "mfr", "high", "Electric-only EPA range (370 mi total) — Wrangler 4xe under the bare model string (incl. Willys/Rubicon/High Altitude 4xe)", epa(47278)),
+      { trim: ["4xe"] }));
+    // Taycan 2026–27 (new certs) + the 4S Black Edition model string.
+    rows.push(phevRow("taycan-2026-27-base", "PORSCHE", "Taycan", [2026, 2027], "Base",
+      f(274, "mfr", "high", "MY2026 Taycan (Performance Battery) — EPA; a “Taycan, Taycan 4” feed label presents base and 4 as candidates", epa(50242)),
+      { vin8: ["1"], trim: ["Taycan, Taycan 4"], charging: { portStandard: f<"CCS1">("CCS1", "mfr"), architectureV: f<800>(800, "mfr") }, warranty: POR_W }));
+    rows.push(phevRow("taycan-2026-27-4", "PORSCHE", "Taycan", [2026, 2027], "Taycan 4",
+      f(251, "mfr", "high", "MY2026 Taycan 4 (Performance Battery) — EPA; 294 with the Performance Battery Plus, 315 on 19-inch all-seasons", epa(50457)),
+      { vin8: ["1"], trim: ["4", "Taycan, Taycan 4"], charging: { portStandard: f<"CCS1">("CCS1", "mfr"), architectureV: f<800>(800, "mfr") }, warranty: POR_W }));
+    rows.push(phevRow("taycan-2026-4s-black", "PORSCHE", "Taycan 4S Black Edition", [2026, 2026], "4S Black Edition",
+      f(295, "mfr", "medium", "MY2026 Taycan 4S with the Performance Battery Plus (the Black Edition bundles it) — EPA; 315 on 19-inch all-seasons", epa(50237)),
+      { charging: { portStandard: f<"CCS1">("CCS1", "mfr"), architectureV: f<800>(800, "mfr") }, warranty: POR_W }));
+    // Commercial vans — above the EPA-rated weight class, rangeless like
+    // the Zevo/Escalade IQ pattern.
+    const vanNote = (est: string) => [{
+      headline: "No EPA range rating exists for this commercial van",
+      body: `Commercial vans in this weight class aren't EPA range-rated. ${est} Treat any quoted figure as a manufacturer estimate, not an EPA test.`,
+      severity: "info" as const,
+    }];
+    for (const [i, m] of ["E-Transit", "E-Transit 350", "E-Transit-350", "E-Transit-350 Cargo"].entries()) {
+      rows.push({
+        id: `etransit-2022-26-${i}`, make: "FORD", model: m, modelYears: [2022, 2026], packVariant: "E-Transit",
+        charging: { portStandard: f("CCS1", "mfr") }, buyerNotes: vanNote("Ford targets 126 mi (2022–23, 68 kWh) and 159 mi (2024+, 89 kWh usable) for the low-roof cargo van; roof height and load change it substantially."),
+      });
+    }
+    for (const [i, m] of ["eSprinter 2500"].entries()) {
+      rows.push({
+        id: `esprinter-2024-25-${i}`, make: "MERCEDES-BENZ", model: m, modelYears: [2024, 2025], packVariant: "eSprinter",
+        charging: { portStandard: f("CCS1", "mfr") }, buyerNotes: vanNote("Mercedes quotes ~206 mi (113 kWh usable) for the high-roof cargo body under its own testing."),
+      });
+    }
+    for (const [i, m] of ["Promaster Delivery Van BEV", "ProMaster"].entries()) {
+      rows.push({
+        id: `promaster-ev-2024-25-${i}`, make: "RAM", model: m, modelYears: [2024, 2025], packVariant: "ProMaster EV",
+        trim: m === "ProMaster" ? ["Promaster EV", "EV Super High Roof", "EV High Roof"] : undefined,
+        charging: { portStandard: f("CCS1", "mfr") }, buyerNotes: vanNote("Ram targets up to 162 mi for the Delivery configuration."),
+      });
+    }
+    rows.push({
+      id: "rivian-edv-2023-25", make: "RIVIAN", model: "Delivery", modelYears: [2023, 2025], packVariant: "Delivery van (EDV/ECV)",
+      charging: { portStandard: f("CCS1", "mfr") }, buyerNotes: vanNote("Rivian quotes ~161 mi for the 500-size delivery van."),
+    });
+    // Audi Q5 PHEV (55 TFSI e) — the feed writes "Q5 e" or bare "Q5".
+    for (const [i, m] of ["Q5 e", "Q5"].entries()) {
+      rows.push(phevRow(`q5-phev-2020-21-${i}`, "AUDI", m, [2020, 2021], "55 TFSI e (PHEV)",
+        f(19, "mfr", "high", "Electric-only EPA range (400 mi total) — MY2020–21 Q5 55 TFSI e", epa(43424)),
+        { vin8: ["Y"], drive: "AWD" }));
+      rows.push(phevRow(`q5-phev-2022-24-${i}`, "AUDI", m, [2022, 2024], "55 TFSI e (PHEV)",
+        f(22, "mfr", "high", "Electric-only EPA range (400 mi total) — MY2023–24 Q5 TFSI e (MY2022 rates ~21)", epa(47213)),
+        { vin8: ["Y"], drive: "AWD" }));
+    }
+    // Porsche Panamera E-Hybrid family + the gen-1 Cayenne S E-Hybrid.
+    for (const [i, m] of ["Panamera E-Hybrid", "Panamera 4 E-Hybrid", "Panamera E-Hybrid Sport Turismo"].entries()) {
+      rows.push(phevRow(`panamera-phev-2018-20-${i}`, "PORSCHE", m, [2018, 2020], "E-Hybrid (PHEV)",
+        f(14, "mfr", "high", "Electric-only EPA range (450–490 mi total) — every MY2018–20 Panamera E-Hybrid variant rates 14", epa(41291)),
+        { warranty: POR_W }));
+      rows.push(phevRow(`panamera-phev-2021-24-${i}`, "PORSCHE", m, [2021, 2024], "E-Hybrid (PHEV)",
+        f(19, "mfr", "high", "Electric-only EPA range (480 mi total) — MY2023 4/4S E-Hybrid (Turbo S rates 17)", epa(46256)),
+        { warranty: POR_W }));
+      rows.push(phevRow(`panamera-phev-2025-27-${i}`, "PORSCHE", m, [2025, 2027], "E-Hybrid (PHEV)",
+        f(19, "agg", "medium", "MY2025+ gen-3 Panamera E-Hybrid — carried from the prior generation's 19-mi figure pending fueleconomy certs for the new car"),
+        { warranty: POR_W }));
+    }
+    rows.push(phevRow("cayenne-s-ehybrid-2015-18", "PORSCHE", "Cayenne E-Hybrid", [2015, 2018], "S E-Hybrid (gen 1 PHEV)",
+      f(14, "mfr", "high", "Electric-only EPA range (480 mi total) — the 2015–18 Cayenne S E-Hybrid (pos-8 code 2, distinct from the later Y-code cars)", epa(36709)),
+      { vin8: ["2"], warranty: POR_W }));
+    // Oddballs with real certs.
+    rows.push(phevRow("fisker-ocean-2023", "FISKER", "Ocean", [2023, 2023], "Ocean Extreme",
+      f(360, "mfr", "high", "MY2023 Ocean Extreme One — EPA. Fisker entered bankruptcy in 2024; parts and software support are a real buyer risk", epa(46984)),
+      { charging: { portStandard: f<"CCS1">("CCS1", "mfr") } }));
+    rows.push(phevRow("spectre-2024-26", "ROLLS-ROYCE", "Spectre", [2024, 2026], "Spectre",
+      f(291, "mfr", "high", "MY2024 Spectre on 22-inch wheels — EPA; 266 on 23s (Black Badge: 280/264)", epa(47480)),
+      { charging: { portStandard: f<"CCS1">("CCS1", "mfr") } }));
+    rows.push(phevRow("vf8-2023-25", "VINFAST", "VF 8", [2023, 2025], "VF 8",
+      f(256, "mfr", "high", "MY2025 VF 8 Eco — EPA (the Plus rates 235); early 2023 cars rated lower (City Edition 207)", epa(49086)),
+      { charging: { portStandard: f<"CCS1">("CCS1", "mfr") } }));
+    rows.push(phevRow("polestar1-2020-21", "POLESTAR", "1", [2020, 2021], "Polestar 1 (PHEV)",
+      f(52, "mfr", "high", "Electric-only EPA range (470 mi total) — the Polestar 1 is a plug-in hybrid GT", epa(42744))));
+    rows.push(phevRow("karma-revero-2018-20", "KARMA", "Revero", [2018, 2020], "Revero (EREV)",
+      f(37, "agg", "medium", "Electric-only range, ~360 total with the gas generator — Karma's published figures; low-volume maker, verify support before buying")));
+
     for (const [i, m] of ["Zevo 600", "Zevo 400", "Zevo"].entries()) {
       rows.push({
         id: `zevo-2023-25-${i}`, make: "BRIGHTDROP", model: m, modelYears: [2023, 2025], packVariant: m,
