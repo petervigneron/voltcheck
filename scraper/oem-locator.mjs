@@ -78,6 +78,8 @@ for (const rep of reports) {
   );
   // evs ride out via listings.json; keep report.json compact like crawl.mjs does not — trim here.
   rep.evs = rep.evs.length;
+  // observation stamp for db-sync's stale-evidence guard (migration 0013)
+  rep.crawledAt ??= new Date().toISOString();
 }
 
 await mkdir(new URL(`./${OUT_DIR}/`, import.meta.url), { recursive: true });

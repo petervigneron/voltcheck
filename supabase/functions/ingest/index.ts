@@ -58,5 +58,8 @@ Deno.serve(async (req: Request) => {
     _source: body.source ?? "nightly",
     // Only domains the crawler saw completely may delist (migration 0002).
     _complete_domains: Array.isArray(body.completeDomains) ? body.completeDomains : [],
+    // When the crawler observed the rows; stale evidence can neither
+    // resurrect nor delist past fresher truth (migration 0013).
+    _observed_at: typeof body.observedAt === "string" ? body.observedAt : null,
   });
 });

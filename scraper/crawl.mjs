@@ -216,5 +216,8 @@ for (const ev of allEvs) {
   if (!prev || richness(ev) > richness(prev)) byVin.set(key, ev);
 }
 await writeFile(new URL("./out/listings.json", import.meta.url), JSON.stringify([...byVin.values()], null, 2));
+// crawledAt lets db-sync tell the DB when these rows were observed, so a
+// replayed snapshot can't masquerade as fresh evidence (migration 0013).
+for (const r of reports) r.crawledAt ??= new Date().toISOString();
 await writeFile(new URL("./out/report.json", import.meta.url), JSON.stringify(reports, null, 2));
 console.error(`\n${byVin.size} unique EV listings → scraper/out/listings.json`);

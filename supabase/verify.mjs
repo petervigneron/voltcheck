@@ -38,11 +38,12 @@ const all = JSON.parse(await readFile(LISTINGS, "utf-8"));
 const domains = [...new Set(all.map((l) => l.dealerDomain))].slice(0, 3);
 const sample = domains.flatMap((d) => all.filter((l) => l.dealerDomain === d).slice(0, 4));
 
-async function ingest(rows, source, completeDomains = null) {
-  const res = await db.query(`select ingest_listings($1::jsonb, $2, $3::jsonb) as r`, [
+async function ingest(rows, source, completeDomains = null, observedAt = null) {
+  const res = await db.query(`select ingest_listings($1::jsonb, $2, $3::jsonb, $4::timestamptz) as r`, [
     JSON.stringify(rows),
     source,
     completeDomains === null ? null : JSON.stringify(completeDomains),
+    observedAt,
   ]);
   return res.rows[0].r;
 }
@@ -204,6 +205,50 @@ const sgEv2 = await db.query(
 );
 assert("second strike delists with exactly one event", sgRow.rows[0].delisted_at !== null && sgEv2.rows[0].n === 1);
 
+// ---- Run 9: the observed_at guard (migration 0013). A db-sync replaying a
+// snapshot written BEFORE a recheck delisting must not resurrect the kill —
+// the 2026-08-14 incident — and a stale snapshot must not delist cars seen
+// alive since it was written.
+console.log("\nrun 9: stale evidence overwrites nothing");
+const hourAgo = new Date(Date.now() - 3600_000).toISOString();
+
+// (a) no stale relist: delist rc again, then replay it with an old observedAt.
+await recheck([], [rc.vin], []);
+const evBefore9 = await db.query(
+  `select count(*)::int as n from listing_events where vin=$1`, [rcVin]);
+const ph9 = await db.query(
+  `select count(*)::int as n from listing_price_history where vin=$1`, [rcVin]);
+const r9a = await ingest([{ ...rc, priceUsd: rc.priceUsd - 777 }], "test", [], hourAgo);
+assert("stale replay relists nothing", r9a.relisted === 0, JSON.stringify(r9a));
+assert("stale replay logs no price change", r9a.price_changed === 0, JSON.stringify(r9a));
+const rc9 = await db.query(`select delisted_at from listings where vin=$1`, [rcVin]);
+assert("recheck's kill survives the replay", rc9.rows[0].delisted_at !== null);
+const evAfter9 = await db.query(
+  `select count(*)::int as n from listing_events where vin=$1`, [rcVin]);
+assert("no spurious relisted event", evAfter9.rows[0].n === evBefore9.rows[0].n);
+const ph9b = await db.query(
+  `select count(*)::int as n from listing_price_history where vin=$1`, [rcVin]);
+assert("no stale price logged", ph9b.rows[0].n === ph9.rows[0].n);
+
+// Fresh evidence (no observedAt → observed now) still relists — run 3 semantics.
+const r9b = await ingest([rc], "test", []);
+assert("fresh sync relists", r9b.relisted === 1, JSON.stringify(r9b));
+
+// (b) no stale delist: a complete-domain batch missing a car seen alive
+// AFTER the batch was observed proves nothing about that car.
+const soldRows = sample.filter((l) => l.dealerDomain === soldDomain);
+const victim = soldRows.find((l, i) => i !== 0);
+// Run 3 certified soldDomain while ingesting only the sold car, so the
+// domain's other rows are delisted right now. Reset: bring them all back.
+await ingest(soldRows, "test", [soldDomain]);
+const batch9 = soldRows.filter((l) => l.vin !== victim.vin);
+const r9c = await ingest(batch9, "test", [soldDomain], hourAgo);
+assert("stale absence delists nothing", r9c.delisted === 0, JSON.stringify(r9c));
+const v9 = await db.query(`select delisted_at from listings where vin=$1`, [victim.vin.toUpperCase()]);
+assert("victim still live after stale batch", v9.rows[0].delisted_at === null);
+const r9d = await ingest(batch9, "test", [soldDomain]);
+assert("fresh absence still delists", r9d.delisted === 1, JSON.stringify(r9d));
+
 // ---- Security posture (migration 0007): the anon role reads exactly what
 // the public site publishes — live listings and their price history — and
 // gets a hard permission error on every archive table.
@@ -249,7 +294,7 @@ const canComp = await db.query(
 );
 assert("anon can still execute wa_price_comps (statistics, not the database)", canComp.rows[0].ok === true);
 const canExec = await db.query(
-  `select has_function_privilege('anon', 'ingest_listings(jsonb, text, jsonb)', 'execute') as ok`
+  `select has_function_privilege('anon', 'ingest_listings(jsonb, text, jsonb, timestamptz)', 'execute') as ok`
 );
 assert("anon cannot execute ingest_listings", canExec.rows[0].ok === false);
 

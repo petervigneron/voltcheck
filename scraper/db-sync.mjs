@@ -13,7 +13,7 @@
 // With no .env this exits 0 quietly, so nightly.sh works unchanged before
 // the database exists. The JSON file remains the web app's fallback either
 // way — this script adds persistence, it replaces nothing.
-import { readFile } from "node:fs/promises";
+import { readFile, stat } from "node:fs/promises";
 
 // Minimal .env parser — launchd jobs carry no shell environment.
 async function loadEnv(url) {
@@ -57,12 +57,32 @@ const source = process.env.DB_SYNC_SOURCE ?? "nightly";
 // support delisting (see supabase/migrations/0002). A report without the
 // `truncated` field — older crawl.mjs, or no crawl this run — certifies
 // nothing, so nothing gets delisted.
+//
+// observedAt = when the crawler actually SAW these rows, from the report
+// entries' crawledAt stamps (earliest wins — never claim evidence fresher
+// than it is). ingest_listings (0013) uses it to refuse stale overwrites:
+// a snapshot replayed after a recheck can no longer resurrect the
+// recheck's delistings, nor delist cars seen alive since the crawl. The
+// git-committed snapshot's mtime is checkout time, not crawl time, so it
+// is only the loudly-warned fallback for pre-0013 reports.
 let completeDomains = [];
+let observedAt = null;
 try {
-  const reports = JSON.parse(await readFile(new URL("./out/report.json", import.meta.url), "utf-8"));
+  const reportUrl = new URL("./out/report.json", import.meta.url);
+  const reports = JSON.parse(await readFile(reportUrl, "utf-8"));
   completeDomains = reports.filter((r) => r.truncated === false).map((r) => r.domain);
+  const times = reports.map((r) => Date.parse(r.crawledAt)).filter(Number.isFinite);
+  if (times.length) observedAt = new Date(Math.min(...times)).toISOString();
 } catch {
   console.error("db-sync: no crawl report found — delisting skipped for this run.");
+}
+if (!observedAt) {
+  try {
+    const { mtime } = await stat(new URL("../web/data/scraped-listings.json", import.meta.url));
+    observedAt = mtime.toISOString();
+    console.error(`db-sync: report has no crawledAt — falling back to snapshot mtime ${observedAt}. ` +
+      "If this snapshot came from git (mtime = checkout time), stale rows may masquerade as fresh.");
+  } catch {}
 }
 // The feed outgrew a single request (OEM-locator rows pushed it past the
 // gateway's body ceiling), so it ships in chunks. Chunk boundaries MUST fall
@@ -107,7 +127,7 @@ const send = (rows, doms) =>
           Authorization: `Bearer ${SERVICE_KEY}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ _rows: rows, _source: source, _complete_domains: doms }),
+        body: JSON.stringify({ _rows: rows, _source: source, _complete_domains: doms, _observed_at: observedAt }),
       })
     : fetch(`${SUPABASE_URL}/functions/v1/ingest`, {
         method: "POST",
@@ -117,11 +137,11 @@ const send = (rows, doms) =>
           "x-ingest-token": process.env.SUPABASE_INGEST_TOKEN,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ rows, source, completeDomains: doms }),
+        body: JSON.stringify({ rows, source, completeDomains: doms, observedAt }),
       });
 
 console.error(
-  `db-sync: ${listings.length} rows in ${chunks.length} chunk(s): ` +
+  `db-sync: observed ${observedAt ?? "UNKNOWN (legacy: treated as now)"} — ${listings.length} rows in ${chunks.length} chunk(s): ` +
   chunks.map((c) => `${c.rows.length} rows/${(c.bytes / 1e6).toFixed(1)}MB/${c.completeDomains.length} complete`).join(", ")
 );
 
