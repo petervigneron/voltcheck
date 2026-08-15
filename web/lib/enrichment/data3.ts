@@ -229,7 +229,9 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     make: "AUDI",
     model: "e-tron GT",
     modelYears: [2024, 2024],
-    trim: "quattro Premium Plus",
+    // Trim key dropped 2026-08-14: every 2024 e-tron GT rates 249 (the RS
+    // too), so "Prestige"/"4D Sedan" listings were going unmatched for
+    // nothing. 2022–23 GT/RS rows live in data4.
     drive: "AWD",
     battery: {
       packGrossKwh: f(93, "mfr", "high", "Audi's own e-tron GT tech page (pre-2025-refresh model, matching MY2024): “93 kWh gross”", "https://www.audi.com"),

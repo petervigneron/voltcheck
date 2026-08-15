@@ -4039,4 +4039,90 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
         f(278, "mfr", "high", "MY2026 Solterra XT trims (20-inch wheels; EPA's “Solterra 20 AWD” cert) — EPA", epa(49981))),
     ];
   })(),
+
+  // ── Audi e-tron family: e-tron/Q8 e-tron, e-tron GT, Q6, A6 (2026-08-15) ──
+  //
+  // Codes observed per-VIN across 250 inventory cars: E = e-tron/Q8 family,
+  // W = e-tron GT, F = Q6/SQ6, H = A6/S6 — model-level letters, not variant
+  // codes, so variants key on model string + trim/drive like the Q4. The S
+  // models ("e-tron S", "SQ8", "SQ6", "S6", "RS e-tron GT") are their own
+  // model strings in the feed — S LINE trims on regular cars are an
+  // appearance package, never the S powertrain, and match the regular rows.
+  // MY2025–26 A6 e-tron certs are absent from fueleconomy.gov (menu checked;
+  // A6 appears only under MY2027) — those figures are Audi's announced EPA
+  // estimates, marked agg/medium.
+  ...(() => {
+    const AUDI_CHG_400 = { portStandard: f<"CCS1">("CCS1", "mfr"), architectureV: f<400>(400, "mfr") };
+    const AUDI_CHG_800 = { portStandard: f<"CCS1">("CCS1", "mfr"), architectureV: f<800>(800, "mfr", "high", "PPE/J1 800-volt platform") };
+    const ETRON_HP = { heatPump: f<"standard">("standard", "agg", "medium", "The e-tron launched with a standard heat pump (widely documented); not re-verified against a per-year Audi US spec sheet this pass") };
+    const P95 = { packGrossKwh: f(95, "mfr", "medium", "95 kWh gross — Audi e-tron/e-tron S pack, all years") };
+    const P114 = { packGrossKwh: f(114, "mfr", "medium", "114 kWh gross — the Q8 e-tron's enlarged pack") };
+    const P100 = { packGrossKwh: f(100, "mfr", "medium", "100 kWh gross / 94.4 net — PPE pack shared by Q6 and A6 e-tron"), packUsableKwh: f(94.4, "mfr", "medium") };
+    const GT_PACK = {
+      packGrossKwh: f(93, "mfr", "high", "Audi's own e-tron GT tech page: “93 kWh gross” (pre-2025-refresh car)"),
+      packUsableKwh: f(84, "mfr", "high", "Audi: “84 kWh of energy net”"),
+    };
+    const au = (id: string, model: string, years: [number, number], vin8: string[], variant: string, rangeFact: Fact<number>, extra?: Partial<EnrichmentRow>): EnrichmentRow => ({
+      id, make: "AUDI", model, modelYears: years, vin8, drive: "AWD", packVariant: variant,
+      range: { epaRangeMi: rangeFact }, battery: P95, charging: AUDI_CHG_400, thermal: ETRON_HP, warranty: AUDI_W, ...extra,
+    });
+    return [
+      // e-tron SUV / Sportback (2019–23) — one quattro variant per body/year.
+      au("etron-2019-20", "e-tron", [2019, 2020], ["E"], "55 quattro",
+        f(204, "mfr", "high", "MY2019 e-tron — EPA; MY2020 carried the same certification", epa(41393))),
+      au("etron-2021-22", "e-tron", [2021, 2022], ["E"], "55 quattro",
+        f(222, "mfr", "high", "MY2021–22 e-tron — EPA (43498/44920 rate identically; the 2021 battery-management update added 18 mi over 2019–20)", epa(43498))),
+      au("etron-2023", "e-tron", [2023, 2023], ["E"], "55 quattro",
+        f(226, "mfr", "high", "MY2023 e-tron (final year before the Q8 e-tron rename) — EPA", epa(45984))),
+      au("etronsb-2020-22", "e-tron Sportback", [2020, 2022], ["E"], "55 quattro Sportback",
+        f(218, "mfr", "high", "MY2020–22 e-tron Sportback — EPA (42674/43499/44921 all rate 218)", epa(42674))),
+      au("etronsb-2023", "e-tron Sportback", [2023, 2023], ["E"], "55 quattro Sportback",
+        f(225, "mfr", "high", "MY2023 e-tron Sportback — EPA", epa(45987))),
+      // One feed writes the whole trim into the model field.
+      au("etronsb-2020-22-junkmodel", "e-tron Sportback quattro Premium Plus", [2020, 2022], ["E"], "55 quattro Sportback",
+        f(218, "mfr", "high", "MY2020–22 e-tron Sportback — EPA (see etronsb-2020-22; this row exists for a feed that puts the full trim in the model string)", epa(42674))),
+      au("etron-s-2022-23", "e-tron S", [2022, 2023], ["E"], "S",
+        f(208, "mfr", "high", "MY2022–23 e-tron S on 20-inch wheels — EPA; 181 on 21/22s (45985/46614)", epa(45985))),
+      // Q8 e-tron rename year (2024) + SQ8.
+      au("q8etron-2024", "Q8 e-tron", [2024, 2024], ["E"], "55 quattro",
+        f(285, "mfr", "high", "MY2024 Q8 e-tron quattro — EPA", epa(46913)), { battery: P114 }),
+      au("q8etronsb-2024-a", "Q8 Sportback e-tron", [2024, 2024], ["E"], "55 quattro Sportback",
+        f(296, "mfr", "high", "MY2024 Q8 Sportback e-tron quattro — EPA; 300 in the ultra (aero) configuration", epa(47440)), { battery: P114 }),
+      au("q8etronsb-2024-b", "Q8 e-tron Sportback", [2024, 2024], ["E"], "55 quattro Sportback",
+        f(296, "mfr", "high", "MY2024 Q8 Sportback e-tron quattro — EPA; 300 in the ultra (aero) configuration", epa(47440)), { battery: P114 }),
+      au("sq8etron-2024", "SQ8 e-tron", [2024, 2024], ["E"], "SQ8",
+        f(253, "mfr", "high", "MY2024 SQ8 e-tron on 20-inch wheels — EPA; 218 on 21/22s", epa(47441)), { battery: P114 }),
+      // e-tron GT (J1 platform) 2022–23; the 2024 row lives in data3.
+      au("etrongt-2022-23", "e-tron GT", [2022, 2023], ["W"], "e-tron GT quattro",
+        f(238, "mfr", "high", "MY2022–23 e-tron GT — EPA (44776/45981 rate identically)", epa(44776)),
+        { battery: GT_PACK, charging: { ...AUDI_CHG_800, dcPeakKw: f(270, "mfr", "high", "Audi: “up to 270 kW”") }, thermal: { heatPump: f<"standard">("standard", "mfr", "high", "Audi: the e-tron GT's heat pump is standard") } }),
+      au("rs-etrongt-2022-23", "RS e-tron GT", [2022, 2023], ["W"], "RS e-tron GT",
+        f(232, "mfr", "high", "MY2022–23 RS e-tron GT — EPA (44783/45982 rate identically)", epa(44783)),
+        { battery: GT_PACK, charging: { ...AUDI_CHG_800, dcPeakKw: f(270, "mfr", "high", "Audi: “up to 270 kW”") }, thermal: { heatPump: f<"standard">("standard", "mfr", "high", "Audi: the e-tron GT's heat pump is standard") } }),
+      // Q6 e-tron (PPE) — quattro vs RWD splits on drive; SQ6 is its own
+      // model string.
+      au("q6etron-2025-quattro", "Q6 e-tron", [2025, 2025], ["F"], "quattro",
+        f(307, "mfr", "high", "MY2025 Q6 e-tron quattro on 19-inch wheels — EPA; 295 on 20s", epa(48297)), { battery: P100, charging: AUDI_CHG_800, thermal: undefined }),
+      au("q6etron-2025-rwd", "Q6 e-tron", [2025, 2025], ["F"], "RWD",
+        f(310, "mfr", "high", "MY2025 Q6 e-tron (RWD) on 19-inch wheels — EPA; 298 on 20s, 321 as the ultra", epa(48683)), { drive: "RWD", battery: P100, charging: AUDI_CHG_800, thermal: undefined }),
+      au("q6etron-2027-quattro", "Q6 e-tron", [2027, 2027], ["F"], "quattro",
+        f(325, "mfr", "high", "MY2027 Q6 e-tron quattro on 19-inch tires — EPA; 301 on 20s (EPA lists no 2027 RWD cert)", epa(50376)), { battery: P100, charging: AUDI_CHG_800, thermal: undefined }),
+      au("sq6etron-2025", "SQ6 e-tron", [2025, 2025], ["F"], "SQ6",
+        f(275, "mfr", "high", "MY2025 SQ6 e-tron — EPA", epa(48303)), { battery: P100, charging: AUDI_CHG_800, thermal: undefined }),
+      // A6 e-tron family (2025) — certs absent from fueleconomy.gov until
+      // MY2027; Audi's announced EPA estimates, achieved with the no-cost
+      // "ultra" aero configuration on 19-inch wheels.
+      ...["A6 e-tron", "A6 Sportback e-tron"].flatMap((m, i): EnrichmentRow[] => [
+        au(`a6etron-2025-rwd-${i ? "b" : "a"}`, m, [2025, 2026], ["H"], "RWD (performance)",
+          f(392, "agg", "medium", "MY2025 A6 Sportback e-tron RWD, ultra configuration with 19-inch wheels — Audi's announced EPA estimate; larger wheels rate lower, and fueleconomy.gov carries no 2025–26 A6 e-tron cert (the MY2027 certs read 348 standard / 395 ultra)"),
+          { drive: "RWD", battery: P100, charging: AUDI_CHG_800, thermal: undefined }),
+        au(`a6etron-2025-quattro-${i ? "b" : "a"}`, m, [2025, 2026], ["H"], "quattro",
+          f(377, "agg", "medium", "MY2025 A6 Sportback e-tron quattro, ultra configuration — Audi's announced EPA estimate; larger wheels rate lower (MY2027 certs: 327 standard / 360 ultra)"),
+          { battery: P100, charging: AUDI_CHG_800, thermal: undefined }),
+      ]),
+      au("s6etron-2025", "S6 Sportback e-tron", [2025, 2026], ["H"], "S6",
+        f(324, "agg", "medium", "MY2025 S6 Sportback e-tron — Audi's announced EPA estimate; fueleconomy.gov carries no 2025–26 cert (MY2027: 326/311 by wheel)"),
+        { battery: P100, charging: AUDI_CHG_800, thermal: undefined }),
+    ];
+  })(),
 ];
