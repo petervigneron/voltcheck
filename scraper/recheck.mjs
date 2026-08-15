@@ -21,9 +21,10 @@ import { OEM_LOCATOR_DOMAINS as GM_LOCATOR_DOMAINS } from "./lib/oem/gm.mjs";
 import { HYUNDAI } from "./lib/oem/hyundai.mjs";
 import { KIA } from "./lib/oem/kia.mjs";
 import { OEM_LOCATOR_DOMAINS as NISSAN_LOCATOR_DOMAINS } from "./lib/oem/nissan.mjs";
+import { OEM_LOCATOR_DOMAINS as BMW_LOCATOR_DOMAINS } from "./lib/oem/bmw.mjs";
 
 // Every OEM-locator source domain: recheck skips these (see the filter below).
-const OEM_LOCATOR_DOMAINS = new Set([...GM_LOCATOR_DOMAINS, HYUNDAI.domain, KIA.domain, ...NISSAN_LOCATOR_DOMAINS]);
+const OEM_LOCATOR_DOMAINS = new Set([...GM_LOCATOR_DOMAINS, HYUNDAI.domain, KIA.domain, ...NISSAN_LOCATOR_DOMAINS, ...BMW_LOCATOR_DOMAINS]);
 
 function flag(name, fallback) {
   const i = process.argv.indexOf(name);
