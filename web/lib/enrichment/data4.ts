@@ -3825,4 +3825,218 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
       powertrainTransfers: f(false, "mfr", "high", "Powertrain 10yr/100k is original-owner-only; drops to 5yr/60k for a second owner"),
     },
   },
+
+  // ── Lucid Air (same pass) ─────────────────────────────────────────────
+  // VIN pos-8 is a flat "A" — the trim carries the variant cleanly here
+  // (Dream/Grand Touring/Touring/Pure/Sapphire), and wheel size is the big
+  // EPA lever (up to 51 mi). Rows carry the 19-inch certification with the
+  // larger-wheel figures in the note, per the Plaid/Taycan convention.
+  ...(() => {
+    const AIR = { make: "LUCID", model: "Air" };
+    const LUCID_W = {
+      batteryYears: f(8, "mfr" as Source, "high", "\u201cHigh-voltage battery: 8 Years / 100,000 miles (whichever comes first) retaining 70% capacity\u201d \u2014 Lucid's own warranty page (verified in the data3 pass)"),
+      batteryMiles: f(100_000, "mfr" as Source, "high"),
+      sohFloorPct: f(70, "mfr" as Source, "high", "Same Lucid warranty-page quote"),
+      batteryTransfers: f(true, "mfr" as Source, "high", "\u201c\u2026and to subsequent owner(s) if the vehicle is within the applicable coverage period\u201d \u2014 Lucid's own warranty page"),
+    };
+    const LUCID_CHG = {
+      portStandard: f<"CCS1">("CCS1", "mfr", "high", "Lucid's own site: \u201cYour Lucid Air has a J1772 (CCS1) charge port\u201d \u2014 no native NACS port as of the latest material found"),
+      superchargerAccess: f<"adapter">("adapter", "mfr", "high", "All Air owners gained Supercharger access July 31, 2025 via a Lucid-sold NACS-to-CCS1 adapter (~$220); capped around 50 kW on that path \u2014 well below the car's native CCS1 DC peak"),
+    };
+    // Lucid IR press release: the heat pump \u201cfirst employed on Lucid Sapphire
+    // now becomes standard across the lineup\u201d \u2014 MY2025 onward.
+    const LUCID_NO_HP = { heatPump: f<"none">("none", "mfr", "high", "Heat pump became standard only from MY2025 (Lucid IR release); pre-2025 Airs other than Sapphire have none") };
+    const LUCID_HP = { heatPump: f<"standard">("standard", "mfr", "high", "\u201cThe heat pump first employed on Lucid Sapphire now becomes standard across the lineup\u201d \u2014 Lucid IR release, MY2025 onward") };
+    const NOTE_AIR_CAM = {
+      headline: "Rearview-camera recalls apply across the Air lineup",
+      body: "25V670 (2022\u20132025, all trims: camera image can fail, delay, or display inaccurately) and 26V017 (2022\u20132026, cars with the AD02 package: camera may not display in reverse). Both fixed via free OTA update.",
+      severity: "warning" as const,
+    };
+    const NOTE_AIR_RWD = {
+      headline: "Four RWD-only recalls \u2014 check this VIN's status",
+      body: "24V836 (2024\u20132025 Pure RWD: rear subframe wiring harness too short, can cut power to the rear drive unit; free harness replacement). 25V669 and 26V193 (2024\u20132026 Pure RWD: half-shaft bolts may allow disconnection from the drive unit; free bolt inspection/replacement). 26V309 (2024\u20132025 RWD: Gen 4 inverter internal friction/damage can cause loss of drive power; OTA monitoring plus free replacement if a failure is detected). None apply to AWD Airs.",
+      severity: "trap" as const,
+    };
+    const NOTE_WHEELS = {
+      headline: "Wheel size sets this car's EPA rating — spreads up to 50 miles",
+      body: "The figure shown is the 19-inch-wheel certification; 20- and 21-inch fitments rate meaningfully lower (see the range note). Check the fitted wheels before trusting the number.",
+      severity: "info" as const,
+    };
+    const air = (id: string, years: [number, number], trim: string[], drv: "AWD" | "RWD", variant: string, rangeFact: Fact<number>, extra?: Partial<EnrichmentRow>): EnrichmentRow => ({
+      id, ...AIR, modelYears: years, trim, drive: drv, packVariant: variant,
+      range: { epaRangeMi: rangeFact }, charging: LUCID_CHG, warranty: LUCID_W, buyerNotes: [NOTE_WHEELS, NOTE_AIR_CAM], ...extra,
+    });
+    const PACK112 = { packGrossKwh: f(112, "vin", "high", "112 kWh in Lucid's Part 565 submission for this VIN pattern") };
+    return [
+      air("air-2022-dream-r", [2022, 2022], ["Dream Edition", "Dream", "Dream Edition Range", "Dream R"], "AWD", "Dream Edition Range",
+        f(520, "mfr", "high", "MY2022 Dream Edition Range on 19-inch wheels — EPA; 481 on 21s. Feeds rarely say Range-vs-Performance: a bare “Dream Edition” presents both as candidates", epa(44493)), { battery: PACK112, thermal: LUCID_NO_HP }),
+      air("air-2022-dream-p", [2022, 2022], ["Dream Edition", "Dream", "Dream Edition Performance", "Dream P"], "AWD", "Dream Edition Performance",
+        f(471, "mfr", "high", "MY2022 Dream Edition Performance on 19-inch wheels — EPA; 451 on 21s", epa(44491)), { battery: PACK112, thermal: LUCID_NO_HP }),
+      air("air-2022-gt", [2022, 2022], ["Grand Touring", "GT"], "AWD", "Grand Touring",
+        f(516, "mfr", "high", "MY2022 Grand Touring on 19-inch wheels — EPA; 469 on 21s", epa(44495)), { battery: PACK112, thermal: LUCID_NO_HP }),
+      air("air-2023-gt", [2023, 2023], ["Grand Touring", "GT"], "AWD", "Grand Touring",
+        f(516, "mfr", "high", "MY2023 Grand Touring on 19-inch wheels — EPA; 469 on 20s/21s", epa(46303)), { thermal: LUCID_NO_HP }),
+      air("air-2023-gtp", [2023, 2023], ["Grand Touring Performance", "GT Performance", "GTP"], "AWD", "Grand Touring Performance",
+        f(446, "mfr", "high", "MY2023 Grand Touring Performance (21-inch wheels, the only cert) — EPA", epa(46306)), { thermal: LUCID_NO_HP }),
+      air("air-2023-touring", [2023, 2023], ["Touring"], "AWD", "Touring",
+        f(425, "mfr", "high", "MY2023 Touring on 19-inch wheels — EPA; 384 on 20s/21s", epa(46309)), { thermal: LUCID_NO_HP }),
+      air("air-2023-pure", [2023, 2023], ["Pure"], "AWD", "Pure AWD",
+        f(410, "mfr", "high", "MY2023 Pure AWD on 19-inch wheels — EPA; 384 on 20s. (The RWD Pure arrived MY2024)", epa(46307)), { thermal: LUCID_NO_HP }),
+      air("air-2024-gt", [2024, 2024], ["Grand Touring", "GT"], "AWD", "Grand Touring",
+        f(516, "mfr", "high", "MY2024 Grand Touring (XR drive units) on 19-inch wheels — EPA; 485 on 20s, 450 on 21s", epa(47836)), { thermal: LUCID_NO_HP }),
+      air("air-2025-26-gt", [2025, 2026], ["Grand Touring", "GT"], "AWD", "Grand Touring",
+        f(512, "mfr", "high", "MY2025–26 Grand Touring on 19-inch wheels — EPA (48371/49966 rate identically); 480 on 20s, 446 on 21s", epa(48371)), { thermal: LUCID_HP }),
+      air("air-2024-touring", [2024, 2024], ["Touring"], "AWD", "Touring",
+        f(411, "mfr", "high", "MY2024 Touring on 19-inch wheels — EPA; 382 on 20s, 365 on 21s", epa(47839)), { thermal: LUCID_NO_HP }),
+      air("air-2026-touring", [2026, 2026], ["Touring"], "AWD", "Touring",
+        f(431, "mfr", "high", "MY2026 Touring on 19-inch wheels — EPA; 396 on 20s", epa(49972)), { thermal: LUCID_HP }),
+      air("air-2024-pure", [2024, 2024], ["Pure"], "RWD", "Pure RWD",
+        f(419, "mfr", "high", "MY2024 Pure RWD on 19-inch wheels — EPA; 394 on 20s", epa(47454)), { thermal: LUCID_NO_HP, buyerNotes: [NOTE_WHEELS, NOTE_AIR_CAM, NOTE_AIR_RWD] }),
+      // (MY2025 Pure RWD and Touring live in data3 with fuller per-trim
+      // recall research; certs are identical.)
+      air("air-2026-pure", [2026, 2026], ["Pure"], "RWD", "Pure RWD",
+        f(420, "mfr", "high", "MY2026 Pure RWD on 19-inch wheels — EPA; 372 on 20s", epa(49969)),
+        { thermal: LUCID_HP, buyerNotes: [NOTE_WHEELS, NOTE_AIR_CAM, NOTE_AIR_RWD] }),
+      air("air-2024-26-sapphire", [2024, 2026], ["Sapphire"], "AWD", "Sapphire",
+        f(427, "mfr", "high", "MY2024–26 Sapphire — EPA (47456/48376/49971 all rate 427, no wheel split)", epa(47456)), { thermal: LUCID_HP, buyerNotes: [NOTE_AIR_CAM] }),
+    ];
+  })(),
+
+  // ── Genesis GV60 / Electrified G80 / Electrified GV70 (same pass) ─────
+  // VIN pos-8 is Genesis' motor code per its Part 565 submissions: GV60
+  // B = performance dual (boost 180+180 kW), C = standard dual (160+73.9);
+  // the E-G80/E-GV70 carry 1 (160+160). Wheel packages split GV60 ratings
+  // from MY2024 on — trim names pick them (Standard=19", Advanced=20" from
+  // 2025; Prestige=20" for 2027).
+  ...(() => {
+    const GEN_W = {
+      batteryYears: f(10, "agg" as Source, "medium", "10 yr/100,000 mi EV-battery coverage (Hyundai-group terms), consistently documented; not re-verified against a Genesis primary booklet this pass"),
+      batteryMiles: f(100_000, "agg" as Source, "medium"),
+    };
+    const GEN_CHG = { portStandard: f<"CCS1">("CCS1", "mfr"), architectureV: f<800>(800, "mfr", "high", "E-GMP 800-volt platform") };
+    const P774 = { packGrossKwh: f(77.4, "agg", "medium", "77.4 kWh E-GMP pack (111.2 Ah in Genesis' Part 565 submissions)") };
+    const P84 = { packGrossKwh: f(84, "vin", "medium", "Genesis' Part 565 submissions read 120.6 Ah (~84 kWh refreshed E-GMP pack) for these VINs") };
+    const gen = (id: string, model: string, years: [number, number], vin8: string[] | undefined, trim: string[] | undefined, variant: string, rangeFact: Fact<number>, extra?: Partial<EnrichmentRow>): EnrichmentRow => ({
+      id, make: "GENESIS", model, modelYears: years, vin8, trim, drive: "AWD", packVariant: variant,
+      range: { epaRangeMi: rangeFact }, battery: P774, charging: GEN_CHG, warranty: GEN_W, ...extra,
+    });
+    return [
+      gen("gv60-2023-adv", "GV60", [2023, 2023], ["C"], undefined, "Advanced",
+        f(248, "mfr", "high", "MY2023 GV60 Advanced — EPA; the only 2023 standard-dual config (code C)", epa(45328))),
+      gen("gv60-2023-24-perf", "GV60", [2023, 2024], ["B"], undefined, "Performance",
+        f(235, "mfr", "high", "MY2023–24 GV60 Performance (boost-motor code B) — EPA (45329/46950 rate identically)", epa(45329))),
+      gen("gv60-2024-adv", "GV60", [2024, 2024], ["C"], undefined, "Advanced",
+        f(264, "mfr", "high", "MY2024 GV60 Advanced on 19-inch wheels — EPA; 248 on the 20-inch wheel package", epa(46948))),
+      gen("gv60-2025-std", "GV60", [2025, 2025], ["C"], ["Standard"], "Standard AWD",
+        f(264, "mfr", "high", "MY2025 GV60 Standard AWD (19-inch wheels) — EPA", epa(48356))),
+      gen("gv60-2025-adv", "GV60", [2025, 2025], ["C"], ["Advanced"], "Advanced",
+        f(248, "mfr", "high", "MY2025 GV60 Advanced (20-inch wheels) — EPA", epa(48354))),
+      gen("gv60-2026-std", "GV60", [2026, 2026], ["C"], ["Standard"], "Standard AWD",
+        f(282, "mfr", "high", "MY2026 GV60 Standard AWD (19-inch wheels, refreshed pack) — EPA", epa(49653)), { battery: P84 }),
+      gen("gv60-2026-adv", "GV60", [2026, 2026], ["C"], ["Advanced"], "Advanced",
+        f(267, "mfr", "high", "MY2026 GV60 Advanced (20-inch wheels, refreshed pack) — EPA", epa(49654)), { battery: P84 }),
+      gen("gv60-2026-perf", "GV60", [2026, 2026], ["B"], undefined, "Performance",
+        f(252, "mfr", "high", "MY2026 GV60 Performance — EPA", epa(49655)), { battery: P84 }),
+      gen("gv60-2027-std", "GV60", [2027, 2027], ["C"], ["Standard"], "Standard AWD",
+        f(282, "mfr", "high", "MY2027 GV60 AWD (19-inch wheels) — EPA", epa(50636)), { battery: P84 }),
+      gen("gv60-2027-prestige", "GV60", [2027, 2027], ["C"], ["Prestige"], "Prestige",
+        f(267, "mfr", "high", "MY2027 GV60 Prestige (20-inch wheels) — EPA", epa(50635)), { battery: P84 }),
+      gen("eg80-2023-25", "Electrified G80", [2023, 2025], ["1"], undefined, "Electrified G80",
+        f(282, "mfr", "high", "MY2023–25 Electrified G80 — EPA (45999/47447/48351 all rate 282)", epa(45999)), { battery: { packGrossKwh: f(87.2, "agg", "medium", "87.2 kWh pack (pre-2026 Electrified G80)") } }),
+      gen("egv70-2023-25", "Electrified GV70", [2023, 2025], ["1"], undefined, "Electrified GV70",
+        f(236, "mfr", "high", "MY2024–25 Electrified GV70 — EPA (46947/48353 rate identically); fueleconomy.gov carries no MY2023 entry, but the 2023 car is hardware-identical", epa(46947))),
+    ];
+  })(),
+
+  // ── GMC Sierra EV (same pass) ─────────────────────────────────────────
+  // VIN pos-8 is GM's pack code, verified against inventory trims: L = Max
+  // Range, D = Extended Range, H = Standard Range (new for 2026). vPIC's
+  // per-VIN kWh is a flat 205 on Extended and Max Range trucks alike —
+  // model-level junk, so no row carries a pack figure keyed from it.
+  // fueleconomy.gov has no 2024 Sierra EV record and no 2025 Max Range
+  // record (verified via the model menu — only the 390-mi 2025 ER cert
+  // exists); those two figures are GM's announced EPA ratings.
+  ...(() => {
+    const SEV = { make: "GMC", model: "Sierra EV" };
+    const GM_W = {
+      batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source),
+      sohFloorPct: f(75, "mfr" as Source, "high", "GMC's current EV warranty booklet (read directly for the data3 Ultium rows) states the 75% floor"),
+      batteryTransfers: f(true, "mfr" as Source, "high", "“Transferable at no cost” — GMC EV warranty booklet"),
+    };
+    const SEV_CHG = { portStandard: f<"CCS1">("CCS1", "mfr", "high", "CCS1-native like Silverado EV/Escalade IQ (a GM NACS adapter covers Superchargers) — the opposite of the NACS-native Optiq") };
+    const sev = (id: string, years: [number, number], vin8: string[], variant: string, rangeFact: Fact<number>): EnrichmentRow => ({
+      id, ...SEV, modelYears: years, vin8, drive: "AWD", packVariant: variant,
+      range: { epaRangeMi: rangeFact }, charging: SEV_CHG, warranty: GM_W,
+    });
+    return [
+      sev("sierraev-2024-denali-e1", [2024, 2024], ["L"], "Denali Edition 1 (Max Range)",
+        f(440, "agg", "medium", "MY2024 Denali Edition 1, the only 2024 config — GM's announced EPA rating; absent from fueleconomy.gov's dataset")),
+      sev("sierraev-2025-max", [2025, 2025], ["L"], "Max Range",
+        f(460, "agg", "medium", "MY2025 Max Range pack (VIN code L) — GM's announced EPA rating; fueleconomy.gov carries only the Extended Range 2025 cert")),
+      sev("sierraev-2025-er", [2025, 2025], ["D"], "Extended Range",
+        f(390, "mfr", "high", "MY2025 Extended Range (VIN code D) — EPA", epa(48709))),
+      sev("sierraev-2026-max", [2026, 2026], ["L"], "Max Range",
+        f(460, "agg", "medium", "MY2026 Max Range pack (VIN code L) — GM quotes the same 460-mi rating as 2025; fueleconomy.gov has no 2026 Max Range cert yet")),
+      // 2026 ER/SR rows live in data3 (richer facts + the 26V494 battery
+      // recall note) — upgraded this pass with vin8 keys D/H.
+    ];
+  })(),
+
+  // ── Subaru Solterra (same pass) ───────────────────────────────────────
+  // VIN pos-8: A = gen-1 (2023–25, 72.8 kWh per Subaru's Part 565), C =
+  // the MY2026 refresh (74.7 kWh, native NACS). Premium vs Limited/Touring
+  // is a wheel split; the feed's fake "15/18 Series" trims are stripped in
+  // cleanTrim so those cars present the two certs as candidates.
+  ...(() => {
+    const SOL = { make: "SUBARU", model: "Solterra" };
+    // Warranty, gen-1 charging cap, heat pump, chemistry, tested range, and
+    // the wheel-detachment recall carried forward from the retired data2
+    // blanket row (whose single 227-mi figure the per-trim rows replace).
+    const SOL_W = {
+      batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source),
+      sohFloorPct: f(70, "mfr" as Source, "high", "\u201cRetention of 70% or more of the original battery capacity\u201d (MY2023 BEV booklet; later years reported same)"),
+      batteryTransfers: f(true, "mfr" as Source, "high", "\u201cEvery owner of the vehicle during the warranty period shall be entitled to the benefits\u201d"),
+    };
+    const P728 = { packGrossKwh: f(72.8, "vin", "high", "72.8 kWh in Subaru's Part 565 submissions for gen-1 VINs (CATL pack shared with bZ4X AWD)"), chemistry: f<"NMC">("NMC", "agg", "medium") };
+    const P747 = { packGrossKwh: f(74.7, "vin", "high", "74.7 kWh in Subaru's Part 565 submissions for MY2026 VINs") };
+    const SOL_CHG_G1 = {
+      portStandard: f<"CCS1">("CCS1", "mfr"),
+      superchargerAccess: f<"adapter">("adapter", "agg", "medium", "Adapter program alongside Toyota, late 2025"),
+      dcPeakKw: f(100, "agg", "medium", "100 kW cap through MY2025; weak cold-weather charging on 2023 cars"),
+    };
+    const SOL_CHG_G2 = { portStandard: f<"NACS">("NACS", "mfr", "high", "The MY2026 refresh adopted the native NACS (J3400) port"), superchargerAccess: f<"native">("native", "mfr") };
+    const SOL_HP = { heatPump: f<"standard">("standard", "agg", "medium", "DENSO heat pump system (supplier announcement)") };
+    const NOTE_SOL_WHEELS = {
+      headline: "Same wheel-detachment recall as its Toyota twin",
+      body: "Recall 22V-444 (wheel hub bolts can loosen; wheels can detach) plus Subaru's follow-up 23V-064 (bolts improperly tightened during the first remedy). Both remedies are free; check completion on this VIN. DC charging peaks at 100 kW; 2023 cars lack the improved cold-weather battery conditioning added for 2024.",
+      severity: "warning" as const,
+    };
+    const SOL_TESTED = f(200, "tested", "low", "75-mph (Car and Driver): 200 mi \u2014 reported secondhand; no verified instrumented test found");
+    const sol = (id: string, years: [number, number], vin8: string[], trim: string[] | undefined, variant: string, rangeFact: Fact<number>, extra?: Partial<EnrichmentRow>): EnrichmentRow => {
+      const gen1 = vin8[0] === "A";
+      return {
+        id, ...SOL, modelYears: years, vin8, trim, drive: "AWD", packVariant: variant,
+        range: gen1 ? { epaRangeMi: rangeFact, testedRangeMi: SOL_TESTED } : { epaRangeMi: rangeFact },
+        battery: gen1 ? P728 : P747,
+        charging: gen1 ? SOL_CHG_G1 : SOL_CHG_G2,
+        thermal: SOL_HP, warranty: SOL_W,
+        buyerNotes: gen1 ? [NOTE_SOL_WHEELS] : undefined,
+        ...extra,
+      };
+    };
+    return [
+      sol("solterra-2023-premium", [2023, 2023], ["A"], ["Premium"], "Premium",
+        f(228, "mfr", "high", "MY2023 Solterra Premium (18-inch wheels) — EPA", epa(46030))),
+      sol("solterra-2023-limtour", [2023, 2023], ["A"], ["Limited", "Touring"], "Limited/Touring",
+        f(222, "mfr", "high", "MY2023 Solterra Limited/Touring (20-inch wheels) — EPA", epa(46031))),
+      sol("solterra-2024-25-premium", [2024, 2025], ["A"], ["Premium"], "Premium",
+        f(227, "mfr", "high", "MY2024–25 Solterra Premium — EPA (47482/48762 rate identically)", epa(47482))),
+      sol("solterra-2024-25-limtour", [2024, 2025], ["A"], ["Limited", "Touring"], "Limited/Touring",
+        f(222, "mfr", "high", "MY2024–25 Solterra Limited/Touring — EPA (47483/48763 rate identically)", epa(47483))),
+      sol("solterra-2026-base", [2026, 2026], ["C"], ["Premium", "Limited"], "Premium/Limited",
+        f(288, "mfr", "high", "MY2026 Solterra (refresh) on 18-inch wheels — EPA; the 20-inch XT trims rate 278", epa(49982))),
+      sol("solterra-2026-xt", [2026, 2026], ["C"], ["XT", "Touring XT", "Limited XT"], "XT",
+        f(278, "mfr", "high", "MY2026 Solterra XT trims (20-inch wheels; EPA's “Solterra 20 AWD” cert) — EPA", epa(49981))),
+    ];
+  })(),
 ];

@@ -48,7 +48,13 @@ const BODY_NOISE = /\b(sports?\s*activity\s*vehicle|sport\s*utility|sedan|sdn|ha
 function cleanTrim(l: Listing): string | undefined {
   if (!l.trim) return undefined;
   const mk = l.make.trim().toUpperCase();
-  const makerNoise = mk === "RIVIAN" ? RIVIAN_TIERS : mk === "PORSCHE" ? PORSCHE_NOISE : mk === "AUDI" ? AUDI_NOISE : null;
+  const makerNoise =
+    mk === "RIVIAN" ? RIVIAN_TIERS
+    : mk === "PORSCHE" ? PORSCHE_NOISE
+    : mk === "AUDI" ? AUDI_NOISE
+    : mk === "SUBARU" ? SUBARU_NOISE
+    : mk === "LUCID" ? LUCID_NOISE
+    : null;
   // Feeds leak HTML entities ("S&#x2B;" for "S+").
   let t = l.trim.replace(/&#x2b;|&#43;|&plus;/gi, "+").replace(/[()]/g, " ").replace(/\s+/g, " ").trim();
   // Pipes separate feed fields, not trim words ("50 PREMIUM PLUS QUATTRO AWD
@@ -102,6 +108,14 @@ const PORSCHE_NOISE = /\b(type\s*y1a|y1a|w\/?\s*premium\s*(&\s*tech\s*)?package)
 // quattro Premium Plus") — neither token is trim identity; the number and
 // tier are. quattro-the-drivetrain is already carried by the drive field.
 const AUDI_NOISE = /\b(e-?tron|quattro)\b/gi;
+// Subaru feeds label ~45 Solterras "15 Series"/"18 Series" — not a Subaru
+// trim name (option-package coding). Stripped so those cars present honest
+// Premium-vs-Limited/Touring candidates instead of matching nothing.
+const SUBARU_NOISE = /\b\d{2}\s*series\b/gi;
+// Lucid feeds append option packages to the trim ("Grand Touring AWD Dream
+// Drive Pro") — DreamDrive is ADAS, Glass Canopy a roof; neither is trim
+// identity, and left in place they break the Grand-Touring exact match.
+const LUCID_NOISE = /\b(dream\s*drive(\s*pro)?|glass\s*canopy)\b/gi;
 
 // Mercedes feeds spell one EQ model a dozen ways ("EQE 350+", "AMG EQE",
 // "Mercedes-EQ EQE SUV", "EQE 350 Sedan"…). Collapse to the family name —

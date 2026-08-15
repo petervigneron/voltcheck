@@ -670,6 +670,10 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     make: "GMC",
     model: "Sierra EV",
     modelYears: [2026, 2026],
+    // VIN pos-8 H = Standard Range (GM's pack code, verified against
+    // inventory trims 2026-08-14) — the window-sticker ambiguity the buyer
+    // note below described is now VIN-resolved.
+    vin8: ["H"],
     drive: "AWD",
     battery: { packGrossKwh: f(120, "agg", "low", "Reported by a GM-focused trade outlet, corroborated by a second aggregator; not confirmed on any gmc.com page — GMC's own /specs and /charging pages for Sierra EV both 404") },
     range: { epaRangeMi: f(283, "mfr", "high", "2026 Sierra EV Elevation, Standard Range (the pack this trim ships with by default) — EPA, cross-corroborated by GMC's own site FAQ", "https://www.fueleconomy.gov") },
@@ -685,11 +689,6 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost” — GM EV booklets"),
     },
     buyerNotes: [
-      {
-        headline: "This listing doesn't say which battery pack this Elevation trim has",
-        body: "GMC's own site confirms the Elevation trim ships standard with the Standard Range pack (283 mi EPA) but offers an Extended Range pack (410 mi EPA) as an upgrade on the same trim. This row assumes Standard Range; check the window sticker or door-jamb label to confirm.",
-        severity: "warning",
-      },
       {
         headline: "HV battery module recall — remedy not yet available",
         body: "26V494 (2026 Sierra EV, Silverado EV, Escalade IQ, Escalade IQL): an improperly secured internal module component in the HV battery may move and damage the battery, increasing fire risk. Dealers will replace the entire HV battery free of charge, but owner notification letters were not expected to be mailed until September 14, 2026.",
@@ -708,6 +707,8 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     make: "GMC",
     model: "Sierra EV",
     modelYears: [2026, 2026],
+    // VIN pos-8 D = Extended Range; see the Standard Range row's note.
+    vin8: ["D"],
     drive: "AWD",
     battery: { packGrossKwh: f(170, "agg", "low", "Reported by a GM-focused trade outlet, corroborated by a second aggregator; not confirmed on any gmc.com page — GMC's own /specs and /charging pages for Sierra EV both 404") },
     range: { epaRangeMi: f(410, "mfr", "high", "2026 Sierra EV Elevation with the optional Extended Range pack — EPA, cross-corroborated by GMC's own site FAQ", "https://www.fueleconomy.gov") },
@@ -723,11 +724,6 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost” — GM EV booklets"),
     },
     buyerNotes: [
-      {
-        headline: "This listing doesn't say which battery pack this Elevation trim has",
-        body: "GMC's own site confirms the Elevation trim ships standard with the Standard Range pack (283 mi EPA) but offers this Extended Range pack (410 mi EPA) as an upgrade on the same trim. This row assumes Extended Range; check the window sticker or door-jamb label to confirm.",
-        severity: "warning",
-      },
       {
         headline: "HV battery module recall — remedy not yet available",
         body: "26V494 (2026 Sierra EV, Silverado EV, Escalade IQ, Escalade IQL): an improperly secured internal module component in the HV battery may move and damage the battery, increasing fire risk. Dealers will replace the entire HV battery free of charge, but owner notification letters were not expected to be mailed until September 14, 2026.",

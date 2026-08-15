@@ -1322,36 +1322,9 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     ],
   },
 
-  {
-    id: "subaru-solterra-2023-25",
-    make: "SUBARU",
-    model: "Solterra",
-    modelYears: [2023, 2025],
-    battery: {
-      packGrossKwh: f(72.8, "mfr", "high", "CATL pack shared with bZ4X AWD; usable ~64 est"),
-      chemistry: f("NMC", "agg", "medium"),
-    },
-    range: { epaRangeMi: f(227, "mfr", "high", "222–228 by year/trim (AWD only) — EPA figures", "https://www.fueleconomy.gov"), testedRangeMi: f(200, "tested", "low", "75-mph (Car and Driver): 200 mi — reported secondhand; no verified instrumented test found") },
-    charging: {
-      portStandard: f("CCS1", "mfr"),
-      superchargerAccess: f("adapter", "agg", "medium", "Adapter program alongside Toyota, late 2025"),
-      dcPeakKw: f(100, "agg", "medium", "100 kW cap through MY2025; weak cold-weather charging on 2023 cars"),
-    },
-    thermal: { heatPump: f("standard", "agg", "medium", "DENSO heat pump system (supplier announcement)") },
-    warranty: {
-      batteryYears: f(8, "mfr"),
-      batteryMiles: f(100_000, "mfr"),
-      sohFloorPct: f(70, "mfr", "high", "“Retention of 70% or more of the original battery capacity” (MY2023 BEV booklet; later years reported same)"),
-      batteryTransfers: f(true, "mfr", "high", "“Every owner of the vehicle during the warranty period shall be entitled to the benefits”"),
-    },
-    buyerNotes: [
-      {
-        headline: "Same wheel-detachment recall as its Toyota twin",
-        body: "Recall 22V-444 (wheel hub bolts can loosen; wheels can detach) plus Subaru's follow-up 23V-064 (bolts improperly tightened during the first remedy). Both remedies are free; check completion on this VIN. DC charging peaks at 100 kW; 2023 cars lack the improved cold-weather battery conditioning added for 2024.",
-        severity: "warning",
-      },
-    ],
-  },
+  // Solterra 2023-25: replaced by per-trim vin8-keyed rows in data4.ts
+  // (2026-08-14) — warranty/charging/recall facts carried forward there.
+
 
   {
     id: "kia-niro-ev-2019-22",
