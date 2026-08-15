@@ -366,6 +366,25 @@ const PB2 = { packGrossKwh: f(82.3, "agg", "medium", "Gen-2 Performance Battery"
 const PB2P = { packGrossKwh: f(97, "agg", "medium", "Gen-2 Performance Battery Plus") };
 const MACB = { packGrossKwh: f(100, "vin", "high", "100 kWh gross (95 net) — Porsche's own Part 565 submission") };
 
+// Audi Q4 e-tron (see the row-block comment below for the method).
+const Q4 = { make: "AUDI", model: "Q4 e-tron" };
+const Q4SBA = { make: "AUDI", model: "Q4 e-tron Sportback" };
+const Q4SBB = { make: "AUDI", model: "Q4 Sportback e-tron" };
+const Q4_SPEC22 = "https://media.audiusa.com/assets/documents/original/9155-2022Q4etronTechnicalSpecifications.pdf";
+const Q4_R597 = "https://media.audiusa.com/releases/597";
+const Q4_TIERS = ["Premium", "Premium Plus", "Prestige"];
+const Q4_PACK82 = { packGrossKwh: f(82, "mfr", "high", "82 kWh gross, every US Q4 variant — Audi's 2022 Q4 e-tron technical specifications (pack unchanged through the MY2024 40/50)", Q4_SPEC22) };
+const Q4_PACK82_77 = {
+  packGrossKwh: f(82, "mfr", "high", "“82 kWh (gross) battery” — Audi USA, 2024 Q4 55 refresh release", Q4_R597),
+  packUsableKwh: f(77, "mfr", "high", "“provides 77 kWh of net energy” — Audi USA, 2024 Q4 55 refresh release", Q4_R597),
+};
+// Same caveat as the e-tron GT row in data3: the 8yr/100k HV-battery term is
+// consistently reported but not confirmed in a readable Audi USA primary doc.
+const AUDI_W = {
+  batteryYears: f(8, "agg" as Source, "low", "Commonly reported across dealer/aggregator sources but not confirmed in a readable Audi USA primary document"),
+  batteryMiles: f(100_000, "agg" as Source, "low", "Same caveat as batteryYears"),
+};
+
 export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   // ── MY2022 ─────────────────────────────────────────────────────────────
   {
@@ -3103,4 +3122,106 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
     warranty: POR_W,
   },
+
+  // ── Audi Q4 e-tron / Q4 Sportback e-tron (same pass) ─────────────────
+  //
+  // VIN position 8 is no help here: every US Q4 in inventory decodes to a
+  // flat "Z" across 40/50/55, RWD and quattro alike (control run 2026-08-14),
+  // and vPIC carries no per-VIN battery figure — so these rows key on the
+  // number Audi puts in the trim ("40"/"45"/"50"/"55") plus drivetrain.
+  // The trim arrays deliberately include the bare tier names (Premium /
+  // Premium Plus / Prestige): a 2024 listing that omits the number genuinely
+  // can't be told apart (50 and 55 both sold that year, both quattro), and
+  // presenting 236-vs-258 candidates is honest where guessing is not.
+  //
+  // Variant history (EPA certs, fueleconomy.gov ids in sourceUrls):
+  //   2022: 50 quattro only — Audi's own 2022 spec sheet lists the 40 with
+  //         range "TBD"; it reached the US for MY2023.
+  //   2023: 40 (RWD, 265) · 50 quattro (SUV 236 / Sportback 242)
+  //   2024: 40 + 50 carry over; mid-year the 50 becomes the 55 quattro
+  //         (258, both bodies) — Audi USA release, March 2024
+  //   2025: 45 (RWD, 288) · 55 quattro (258)
+  // Pack: 82 kWh gross all years (2022 spec sheet); the MY2024.5 refresh
+  // states 77 kWh net and 175 kW DC (up from 150 kW on the 50).
+  {
+    id: "q4-2022-50", ...Q4, modelYears: [2022, 2022], packVariant: "50 quattro",
+    battery: Q4_PACK82,
+    range: { epaRangeMi: f(241, "mfr", "high", "MY2022 Q4 50 e-tron quattro — EPA; the only US Q4 variant in 2022 (Audi's 2022 spec sheet lists the 40 as range-TBD, and EPA carries no 2022 40 cert)", epa(44781)) },
+    charging: { portStandard: f("CCS1", "mfr"), architectureV: f(400, "mfr") },
+    warranty: AUDI_W,
+  },
+  {
+    id: "q4-2023-24-40", ...Q4, modelYears: [2023, 2024], drive: "RWD", packVariant: "40 (RWD)",
+    trim: ["40 Premium", "40 Premium Plus", "40 Prestige", ...Q4_TIERS],
+    battery: Q4_PACK82,
+    range: { epaRangeMi: f(265, "mfr", "high", "MY2023–24 Q4 40 e-tron (RWD) — EPA (ids 45983/46910 rate identically)", epa(45983)) },
+    charging: { portStandard: f("CCS1", "mfr"), architectureV: f(400, "mfr") },
+    warranty: AUDI_W,
+  },
+  {
+    id: "q4-2023-24-50", ...Q4, modelYears: [2023, 2024], drive: "AWD", packVariant: "50 quattro",
+    trim: ["50 Premium", "50 Preminum Plus", "50 Premium Plus", "50 Prestige", ...Q4_TIERS],
+    battery: Q4_PACK82,
+    range: { epaRangeMi: f(236, "mfr", "high", "MY2023–24 Q4 50 e-tron quattro — EPA (ids 45988/46911 rate identically); replaced mid-MY2024 by the 55", epa(45988)) },
+    charging: { portStandard: f("CCS1", "mfr"), architectureV: f(400, "mfr"), dcPeakKw: f(150, "mfr", "high", "“up from 150 kW for the Q4 50 e-tron” — Audi USA, 2024 Q4 55 refresh release", Q4_R597) },
+    warranty: AUDI_W,
+  },
+  {
+    id: "q4-2024-25-55", ...Q4, modelYears: [2024, 2025], drive: "AWD", packVariant: "55 quattro",
+    trim: ["55 Premium", "55 Premium Plus", "55 Prestige", ...Q4_TIERS],
+    battery: Q4_PACK82_77,
+    range: { epaRangeMi: f(258, "mfr", "high", "MY2024.5–25 Q4 55 e-tron quattro — EPA (ids 47810/48681 rate identically); the 55 replaced the 50 in spring 2024", epa(47810)) },
+    charging: { portStandard: f("CCS1", "mfr"), architectureV: f(400, "mfr"), dcPeakKw: f(175, "mfr", "high", "“a maximum DC charging power of 175 kW, up from 150 kW” — Audi USA, 2024 Q4 55 refresh release", Q4_R597) },
+    thermal: { batteryPreconditioning: f(true, "mfr", "high", "“will thermally precondition the battery to ensure it charges as quickly as possible” (route-planner triggered) — Audi USA, 2024 Q4 55 refresh release", Q4_R597) },
+    warranty: AUDI_W,
+  },
+  {
+    id: "q4-2025-45", ...Q4, modelYears: [2025, 2025], drive: "RWD", packVariant: "45 (RWD)",
+    trim: ["45 Premium", "45 Premium Plus", "45 Prestige", ...Q4_TIERS],
+    battery: {
+      packGrossKwh: f(82, "mfr", "high", "82 kWh gross — Audi Q4 e-tron line spec, unchanged since 2022", Q4_SPEC22),
+      packUsableKwh: f(77, "mfr", "medium", "The 45 uses the updated pack introduced with the MY2024 55 refresh (82 gross / 77 net); the net figure is not separately restated for the 45 in a US primary document", Q4_R597),
+    },
+    range: { epaRangeMi: f(288, "mfr", "high", "MY2025 Q4 45 e-tron (RWD) — EPA; the longest-range US Q4", epa(48296)) },
+    charging: { portStandard: f("CCS1", "mfr"), architectureV: f(400, "mfr") },
+    warranty: AUDI_W,
+  },
+  // Sportback — the feed spells the model both ways ("Q4 e-tron Sportback"
+  // and "Q4 Sportback e-tron"), so each row exists under both strings.
+  ...[Q4SBA, Q4SBB].flatMap((M, i): EnrichmentRow[] => {
+    const s = i === 0 ? "a" : "b";
+    return [
+      {
+        id: `q4sb-2022-50-${s}`, ...M, modelYears: [2022, 2022] as [number, number], packVariant: "50 quattro",
+        battery: Q4_PACK82,
+        range: { epaRangeMi: f(241, "mfr", "high", "MY2022 Q4 50 e-tron Sportback quattro — EPA; the only US Sportback variant in 2022", epa(44782)) },
+        charging: { portStandard: f("CCS1", "mfr"), architectureV: f(400, "mfr") },
+        warranty: AUDI_W,
+      },
+      {
+        id: `q4sb-2023-50-${s}`, ...M, modelYears: [2023, 2023] as [number, number], packVariant: "50 quattro",
+        battery: Q4_PACK82,
+        range: { epaRangeMi: f(242, "mfr", "high", "MY2023 Q4 Sportback 50 e-tron quattro — EPA; the only US Sportback variant that year", epa(45989)) },
+        charging: { portStandard: f("CCS1", "mfr"), architectureV: f(400, "mfr"), dcPeakKw: f(150, "mfr", "high", "“up from 150 kW for the Q4 50 e-tron” — Audi USA, 2024 Q4 55 refresh release", Q4_R597) },
+        warranty: AUDI_W,
+      },
+      {
+        id: `q4sb-2024-50-${s}`, ...M, modelYears: [2024, 2024] as [number, number], drive: "AWD" as const, packVariant: "50 quattro",
+        trim: ["50 Premium", "50 Preminum Plus", "50 Premium Plus", "50 Prestige", ...Q4_TIERS],
+        battery: Q4_PACK82,
+        range: { epaRangeMi: f(242, "mfr", "high", "MY2024 Q4 Sportback 50 e-tron quattro — EPA; replaced mid-year by the 55", epa(46912)) },
+        charging: { portStandard: f("CCS1", "mfr"), architectureV: f(400, "mfr"), dcPeakKw: f(150, "mfr", "high", "“up from 150 kW for the Q4 50 e-tron” — Audi USA, 2024 Q4 55 refresh release", Q4_R597) },
+        warranty: AUDI_W,
+      },
+      {
+        id: `q4sb-2024-25-55-${s}`, ...M, modelYears: [2024, 2025] as [number, number], drive: "AWD" as const, packVariant: "55 quattro",
+        trim: ["55 Premium", "55 Premium Plus", "55 Prestige", ...Q4_TIERS],
+        battery: Q4_PACK82_77,
+        range: { epaRangeMi: f(258, "mfr", "high", "MY2024.5–25 Q4 Sportback 55 e-tron quattro — EPA (ids 47811/48682 rate identically)", epa(47811)) },
+        charging: { portStandard: f("CCS1", "mfr"), architectureV: f(400, "mfr"), dcPeakKw: f(175, "mfr", "high", "“a maximum DC charging power of 175 kW” — Audi USA, 2024 Q4 55 refresh release", Q4_R597) },
+        thermal: { batteryPreconditioning: f(true, "mfr", "high", "Route-planner triggered thermal preconditioning — Audi USA, 2024 Q4 55 refresh release", Q4_R597) },
+        warranty: AUDI_W,
+      },
+    ];
+  }),
 ];

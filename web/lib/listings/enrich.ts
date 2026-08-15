@@ -48,9 +48,18 @@ const BODY_NOISE = /\b(sports?\s*activity\s*vehicle|sport\s*utility|sedan|sdn|ha
 function cleanTrim(l: Listing): string | undefined {
   if (!l.trim) return undefined;
   const mk = l.make.trim().toUpperCase();
-  const makerNoise = mk === "RIVIAN" ? RIVIAN_TIERS : mk === "PORSCHE" ? PORSCHE_NOISE : null;
+  const makerNoise = mk === "RIVIAN" ? RIVIAN_TIERS : mk === "PORSCHE" ? PORSCHE_NOISE : mk === "AUDI" ? AUDI_NOISE : null;
   // Feeds leak HTML entities ("S&#x2B;" for "S+").
   let t = l.trim.replace(/&#x2b;|&#43;|&plus;/gi, "+").replace(/[()]/g, " ").replace(/\s+/g, " ").trim();
+  // Pipes separate feed fields, not trim words ("50 PREMIUM PLUS QUATTRO AWD
+  // | CONV", "Model 3 | Long range | RWD"). The trim is the first segment
+  // that isn't just the model name restated; later segments are options.
+  if (t.includes("|")) {
+    const modelLc = l.model.trim().toLowerCase();
+    const segs = t.split("|").map((s) => s.trim()).filter(Boolean);
+    t = segs.find((s) => s.toLowerCase() !== modelLc) ?? "";
+    if (!t) return undefined;
+  }
   // "S/S+"-style compounds whose halves normalize identically are one trim.
   const parts = t.split("/").map((p) => p.trim());
   if (parts.length > 1 && parts.every((p) => p.replace(/[^A-Za-z0-9]/g, "").toUpperCase() === parts[0].replace(/[^A-Za-z0-9]/g, "").toUpperCase())) {
@@ -89,6 +98,10 @@ const RIVIAN_TIERS = /\b(adventure package|adventure|launch edition|ascend|premi
 // Porsche feeds leak the internal type code ("Type Y1A") and package suffixes
 // where the trim belongs.
 const PORSCHE_NOISE = /\b(type\s*y1a|y1a|w\/?\s*premium\s*(&\s*tech\s*)?package)\b/gi;
+// Audi restates the sub-brand and drivetrain inside the trim ("50 e-tron
+// quattro Premium Plus") — neither token is trim identity; the number and
+// tier are. quattro-the-drivetrain is already carried by the drive field.
+const AUDI_NOISE = /\b(e-?tron|quattro)\b/gi;
 
 function decodeFromListing(l: Listing): VinDecode {
   return {
