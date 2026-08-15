@@ -10,6 +10,7 @@ import { hasRealPrice } from "@/lib/listings/price";
 import { AskSeller } from "@/components/AskSeller";
 import { RecentSales } from "@/components/RecentSales";
 import { fetchRecentSales } from "@/lib/listings/sales";
+import { askVsSold, fetchCompIndex } from "@/lib/listings/comps";
 
 // ISR: each listing page renders once, then serves from the CDN for an hour —
 // same cadence as the data underneath it (nightly sync, recheck, price audit).
@@ -44,6 +45,16 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
   const gallery = listing.images?.length ? listing.images : listing.imageUrl ? [listing.imageUrl] : [];
   // Recent real-world sales of the same make/model — transaction prices.
   const recentSales = await fetchRecentSales(listing.make, listing.model);
+  // Same title records as the list above, but fitted to this car's exact
+  // variant and odometer rather than eyeballed across model years.
+  const vsSold = askVsSold(
+    await fetchCompIndex(),
+    listing.vin,
+    listing.year,
+    listing.mileage,
+    listing.priceUsd,
+    hasRealPrice(listing)
+  );
 
   return (
     <div className="mx-auto max-w-5xl space-y-5 px-4 py-6">
@@ -160,7 +171,7 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
           )}
 
           {recentSales.length > 0 && (
-            <RecentSales sales={recentSales} make={listing.make} model={listing.model} />
+            <RecentSales sales={recentSales} make={listing.make} model={listing.model} vsSold={vsSold} />
           )}
 
           {e.row && (

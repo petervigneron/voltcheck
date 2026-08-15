@@ -44,6 +44,12 @@ export interface CardRow {
   heatPump?: "yes" | "no" | "verify";
   /** Battery pack replaced under a campaign — the teal ground. */
   packReplaced?: boolean;
+  /**
+   * Ask minus what this variant actually sells for (lib/listings/comps.ts).
+   * Positive = asking above transaction prices. Only set when the gap clears
+   * its cohort's own error bar, so any value here is already meaningful.
+   */
+  askVsSold?: number;
   tiles: CardTile[];
 }
 

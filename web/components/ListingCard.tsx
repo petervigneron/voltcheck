@@ -63,16 +63,27 @@ export function ListingCard({
   const cut = grounds === "fact" ? r.cut : undefined;
   const ground: TileGround =
     grounds === "fact" ? (r.packReplaced ? "teal" : cut ? "cobalt" : "paper") : rhythmGround(index);
-  const tiles: CardTile[] = cut
-    ? [
-        {
-          k: "cut" as TileKind,
-          t: `−$${cut.amountUsd.toLocaleString()}`,
-          ti: `Was $${cut.prevUsd.toLocaleString()} — cut $${cut.amountUsd.toLocaleString()} on ${CUT_DATE_FMT.format(new Date(cut.at))}`,
-        },
-        ...r.tiles.slice(0, 4),
-      ]
-    : r.tiles;
+  const lead: CardTile[] = [];
+  if (cut) {
+    lead.push({
+      k: "cut" as TileKind,
+      t: `−$${cut.amountUsd.toLocaleString()}`,
+      ti: `Was $${cut.prevUsd.toLocaleString()} — cut $${cut.amountUsd.toLocaleString()} on ${CUT_DATE_FMT.format(new Date(cut.at))}`,
+    });
+  }
+  // Asking price against what this exact variant actually sells for. Under
+  // is the find, so it reads as a kit tile; over is a plain miss. The tile
+  // only exists when the gap already cleared its cohort's error bar.
+  if (r.askVsSold != null) {
+    const under = r.askVsSold < 0;
+    const amount = `$${Math.abs(r.askVsSold).toLocaleString()}`;
+    lead.push({
+      k: under ? ("kit" as TileKind) : ("miss" as TileKind),
+      t: `${amount} ${under ? "under" : "over"} sold price`,
+      ti: `Asks ${amount} ${under ? "less" : "more"} than these actually sell for — fitted on Washington State title records (data.wa.gov, ODbL)`,
+    });
+  }
+  const tiles: CardTile[] = lead.length ? [...lead, ...r.tiles.slice(0, Math.max(0, 5 - lead.length))] : r.tiles;
 
   return (
     <Link
