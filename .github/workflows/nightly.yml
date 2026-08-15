@@ -199,6 +199,18 @@ jobs:
           SUPABASE_INGEST_TOKEN: ${{ secrets.SUPABASE_INGEST_TOKEN }}
         run: node recheck.mjs --concurrency 10
 
+      # Re-derive the observed trim-per-VIN-cohort table now that tonight's
+      # listings are settled (migration 0020). Not `if: schedule` — a manual
+      # run changes inventory too, and a stale matview is the failure this
+      # migration exists to prevent.
+      - name: Refresh observed VIN variants
+        working-directory: scraper
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_INGEST_TOKEN: ${{ secrets.SUPABASE_INGEST_TOKEN }}
+        run: node refresh-variants.mjs
+
       # Washington transaction prices refresh monthly upstream.
       - name: Refresh Washington price comps (5th of the month)
         if: ${{ github.event_name == 'schedule' }}

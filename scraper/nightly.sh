@@ -36,6 +36,9 @@ print(' '.join(s['domain'] for s in r['sites'] if s.get('status') == 'working'))
   # Ask every live listing's own page whether it is still for sale. This is
   # the authoritative sold-signal; the crawl above only discovers.
   node recheck.mjs --concurrency 10
+  # Re-derive the observed trim-per-VIN-cohort table now that tonight's
+  # listings are settled (migration 0020).
+  node refresh-variants.mjs
   # Washington transaction prices refresh monthly upstream; reload on the 5th.
   [ "$(date +%d)" = "05" ] && node wa-prices.mjs --months 24
   # And name the versions behind them: new sales bring new VIN cohorts, which

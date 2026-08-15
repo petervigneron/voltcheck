@@ -63,6 +63,13 @@ Deno.serve(async (req: Request) => {
     });
   }
 
+  // Recompute the observed half of vin_variant against the listings the sync
+  // just wrote (migration 0020). Carries no rows, so it has to be routed
+  // above the rows guard.
+  if (body.dataset === "refresh_variants") {
+    return call("refresh_vin_variants", {});
+  }
+
   if (!Array.isArray(body.rows)) {
     return new Response(JSON.stringify({ error: "rows must be an array" }), { status: 400 });
   }
