@@ -12,14 +12,19 @@
 // pagination). A single call from the geographic center of the US with a
 // nation-spanning range therefore covers the whole lower 48 per model.
 //
+// This module pulls BOTH lots under kia.com in one puller:
+//   - New: POST /us/services/en/inventory (above), one call per BEV series.
+//   - CPO (used): POST /us/services/en/cpo/inventory/exactmatch, per model
+//     name, paginated 10-per-call. Full dealer address + real mileage/VDP.
+// They share one report on purpose — certifying kia.com complete on a
+// half-pull would delist the other half (see pullKia's completeness note).
+//
 // Coverage notes:
-//   - The search is per-series, so each EV nameplate is one call
+//   - The search is per-series/per-model, so each EV nameplate is one call
+//     (New) or a short pagination (CPO)
 //   - Range is a real radius from zipLocation; 3500mi from the US center
 //     reaches both coasts. Alaska/Hawaii dealers fall outside it — a known,
 //     negligible gap (as with the GM lane)
-//   - New inventory only here; Kia also exposes a separate CPO endpoint
-//     (/cpoinventory/…) that a later pass can add — CPO is used stock, so
-//     it is the higher-value follow-up
 import { politePostJson } from "../http.mjs";
 
 export const KIA = {
@@ -38,6 +43,15 @@ const EV_SERIES = [
   { code: "9AE", name: "EV3" }, // 2027, just launching — may be zero for now
   { code: "GAE", name: "Niro EV" },
 ];
+
+// Certified Pre-Owned BEV nameplates (kia.com/us/services/en/cpo/inventory/
+// exactmatch, queried by display name; Soul EV/EV3 return zero as of
+// 2026-08-15). CPO is *used* inventory — the higher-value half for a used-EV
+// site — and its records are richer than the New feed (real mileage, trim,
+// interior color, drivetrain, a proper VDP url, full dealer address).
+const CPO_EV_MODELS = ["EV6", "EV9", "Niro EV"];
+const CPO_API = "https://www.kia.com/us/services/en/cpo/inventory/exactmatch";
+const CPO_PAGE = 10; // server returns 10 per call regardless of the end-start window
 
 // Lebanon, KS — the geographic center of the contiguous US.
 const CENTER = { zip: "66952", zipLocation: { longitude: -98.5, latitude: 39.84 }, range: 3500 };
@@ -108,6 +122,86 @@ function toRecord(hit, seriesName) {
   };
 }
 
+// CPO exactmatch record: {dealer:{name,city,state,postalCode,latLong,…},
+// vehicle:{vin,year,mileage,internetPrice,trim,drivetrain,exteriorColor,
+// interiorColor,images,vdpUrl,…}}.
+function toCpoRecord(entry) {
+  const v = entry.vehicle ?? {};
+  const d = entry.dealer ?? {};
+  const vin = String(v.vin ?? "").toUpperCase();
+  if (!VIN_RE.test(vin)) return null;
+  const year = Number(v.year);
+  if (!(year >= 1981 && year <= new Date().getFullYear() + 2)) return null;
+  const model = String(v.model ?? "").trim();
+  if (!model) return null;
+  const state = US_STATES.has(String(d.state ?? "").toUpperCase()) ? String(d.state).toUpperCase() : undefined;
+  const zip = /^\d{5}/.test(String(d.postalCode ?? "")) ? String(d.postalCode).slice(0, 5) : undefined;
+  // Window-sticker photos are served over http; rewrite to https so they load
+  // on our https pages (the CDN serves both).
+  const imgs = (Array.isArray(v.images) ? v.images : [])
+    .map((u) => String(u).replace(/^http:\/\//, "https://"))
+    .filter((u) => u.startsWith("https://"))
+    .slice(0, 8);
+  const vdp = typeof v.vdpUrl === "string" && v.vdpUrl.startsWith("http") ? v.vdpUrl : undefined;
+  return {
+    vin,
+    year,
+    make: KIA.make,
+    model,
+    trim: v.trim || v.cdmTrim || undefined,
+    priceUsd: num(v.internetPrice),
+    mileage: Number.isFinite(v.mileage) ? Math.round(v.mileage) : undefined,
+    driveLine: drive(v.drivetrain || v.trim),
+    exteriorColor: v.exteriorColor || undefined,
+    interiorColor: v.interiorColor || undefined,
+    dealerName: d.name || undefined,
+    city: d.city || undefined,
+    state,
+    zip,
+    certified: true, // CPO — ingest maps this to condition "certified"
+    condition: "certified",
+    imageUrl: imgs[0],
+    images: imgs,
+    sourceUrl: vdp || (d.url && String(d.url).startsWith("http") ? d.url : "https://www.kia.com/us/en/inventory/result?view=cpo"),
+    dealerDomain: KIA.domain,
+    evKind: "BEV",
+    evConfidence: "high",
+    platform: "kia-locator-cpo",
+    fromVdp: Boolean(vdp),
+    scrapedAt: new Date().toISOString(),
+  };
+}
+
+// Page one CPO model to exhaustion (start += 10 until the reported total is
+// covered or a page comes back short). Adds records to byVin; returns the
+// server's totalMatches so the caller can tally national coverage.
+async function searchCpoModel(model, byVin, report) {
+  let total = null;
+  for (let start = 0; total === null || start < total; start += CPO_PAGE) {
+    let data = null;
+    for (let attempt = 0; ; attempt++) {
+      const res = await politePostJson(CPO_API, {
+        headers: { referer: "https://www.kia.com/us/en/inventory/result" },
+        body: { radius: CENTER.range, zipCode: CENTER.zip, model, transmissions: [], trims: [], year: "", dealers: [], sortBy: "LOWEST_PRICE", start, end: start + CPO_PAGE },
+      });
+      report.fetched++;
+      if (res.status === 200 && res.json?.dealerVehicles) { data = res.json; break; }
+      const transient = String(res.status).startsWith("error:") || res.status === 429 || res.status >= 500;
+      if (attempt === 0 && transient) { await new Promise((r) => setTimeout(r, 5000)); continue; }
+      report.errors.push(`${res.status} cpo=${model} start=${start}`);
+      return total ?? 0;
+    }
+    if (total === null) total = data.totalMatches ?? 0;
+    const page = data.dealerVehicles ?? [];
+    if (!page.length) break; // ran dry early (inventory shifted mid-pull)
+    for (const entry of page) {
+      const rec = toCpoRecord(entry);
+      if (rec) byVin.set(rec.vin, rec);
+    }
+  }
+  return total ?? 0;
+}
+
 async function searchSeries(series, report) {
   const body = {
     filterSet: {
@@ -151,6 +245,7 @@ export async function pullKia({ log = () => {} } = {}) {
   const byVin = new Map();
   let totalReported = 0;
 
+  // New inventory: one call per series returns the whole set.
   for (const series of EV_SERIES) {
     const data = await searchSeries(series, report);
     if (!data) continue; // error recorded; contributes to truncated below
@@ -159,15 +254,26 @@ export async function pullKia({ log = () => {} } = {}) {
       const rec = toRecord(hit, series.name);
       if (rec) byVin.set(rec.vin, rec);
     }
-    log(`kia/${series.name}: ${data.count} nationwide, ${byVin.size} cumulative VINs`);
+    log(`kia/${series.name} (new): ${data.count} nationwide, ${byVin.size} cumulative VINs`);
+  }
+  const afterNew = byVin.size;
+
+  // CPO (used) inventory: paginated per model. New and CPO both live under
+  // kia.com, so they MUST be pulled together into one report — certifying the
+  // domain complete on a half-pull would delist the other half. A CPO failure
+  // records an error, which flips truncated:true below.
+  for (const model of CPO_EV_MODELS) {
+    const cpoTotal = await searchCpoModel(model, byVin, report);
+    totalReported += cpoTotal;
+    log(`kia/${model} (cpo): ${cpoTotal} nationwide, ${byVin.size} cumulative VINs`);
   }
 
   report.evs = [...byVin.values()];
   report.vehiclePages = report.fetched;
-  report.notes.push(`national BEV count ${totalReported} across ${EV_SERIES.length} series`);
-  // Completeness (see gm.mjs): no per-series errors AND yield over the floor.
-  // One call per series returns the full set, so a shortfall vs the reported
-  // count means the response itself was truncated.
+  report.notes.push(`national BEV count ${totalReported} (${afterNew} new + ${byVin.size - afterNew} cpo)`);
+  // Completeness (see gm.mjs): no errors from either the New or CPO pulls AND
+  // yield over the floor. Each New series and each CPO page returns its full
+  // slice, so a shortfall vs the reported total means a response was truncated.
   const shortfall = totalReported > 0 && byVin.size < totalReported * 0.9;
   if (shortfall) report.errors.push(`collected ${byVin.size} of ${totalReported} — response shortfall`);
   report.truncated = report.errors.length > 0 || byVin.size < KIA.minExpected;
