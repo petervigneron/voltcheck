@@ -4169,4 +4169,151 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
         f(276, "mfr", "high", "MY2026 ES 500e AWD on 19-inch wheels — EPA; 272 on 21s", epa(50452)), { battery: P747L, charging: NACS26 })),
     ];
   })(),
+
+  // ── Tesla Cybertruck (2026-08-15) ─────────────────────────────────────
+  // VIN pos-8 per Tesla's Part 565: C = single motor ("Long Range" RWD),
+  // D = dual ("Motor: Standard"), E = tri ("Motor: Performance", the
+  // Cyberbeast). Part 565 reads 123 kWh on every variant — one physical
+  // pack. fueleconomy.gov's dataset has NO MY2024 Cybertruck records and no
+  // 2025 Cyberbeast (verified against the menu and vehicles.csv) — those
+  // figures are the launch EPA ratings Tesla published, at agg/medium.
+  ...(() => {
+    const CT = { make: "TESLA", model: "Cybertruck" };
+    const CT_PACK = { packGrossKwh: f(123, "vin", "medium", "123 kWh in Tesla's Part 565 submissions, every variant") };
+    const CT_CHG = { portStandard: f<"NACS">("NACS", "mfr"), superchargerAccess: f<"native">("native", "mfr"), architectureV: f<800>(800, "mfr") };
+    const ct = (id: string, years: [number, number], vin8: string[], drv: "AWD" | "RWD", variant: string, rangeFact: Fact<number>): EnrichmentRow => ({
+      id, ...CT, modelYears: years, vin8, drive: drv, packVariant: variant,
+      range: { epaRangeMi: rangeFact }, battery: CT_PACK, charging: CT_CHG,
+      thermal: { heatPump: f("standard", "mfr"), batteryPreconditioning: f(true, "mfr") },
+      warranty: TSX_W, buyerNotes: [NOTE_FSD],
+    });
+    return [
+      ct("ct-2024-awd", [2024, 2024], ["D"], "AWD", "Dual Motor AWD",
+        f(340, "agg", "medium", "MY2024 Cybertruck AWD — the launch EPA rating Tesla published; fueleconomy.gov's dataset carries no MY2024 Cybertruck records")),
+      ct("ct-2024-beast", [2024, 2024], ["E"], "AWD", "Cyberbeast",
+        f(320, "agg", "medium", "MY2024 Cyberbeast — the launch EPA rating Tesla published; fueleconomy.gov's dataset carries no MY2024 Cybertruck records")),
+      ct("ct-2025-26-awd", [2025, 2026], ["D"], "AWD", "Dual Motor AWD",
+        f(325, "mfr", "high", "MY2025–26 Cybertruck AWD — EPA (49123/50039 rate identically)", epa(49123))),
+      ct("ct-2025-26-lr", [2025, 2026], ["C"], "RWD", "Long Range RWD",
+        f(335, "mfr", "high", "MY2025–26 Cybertruck Long Range (single motor, VIN code C) — EPA", epa(49152))),
+      ct("ct-2025-beast", [2025, 2026], ["E"], "AWD", "Cyberbeast",
+        f(320, "agg", "medium", "Cyberbeast — fueleconomy.gov carries no 2025–26 tri-motor cert; the launch-spec figure is carried forward")),
+    ];
+  })(),
+
+  // ── GMC Hummer EV pickup / SUV (2026-08-15) ───────────────────────────
+  // Body comes from the model string; VIN pos-8 is GM's config code,
+  // verified against 164 inventory trims: A/B = 3X pickup (A = the earlier
+  // 24-module Edition-1-era code), C = 3X SUV, D = 2X pickup, E = 2X SUV.
+  // EPA certification only began at MY2024 (the 2022–23 trucks are in the
+  // >8,500-lb class EPA didn't yet require; vehicles.csv confirms zero
+  // pre-2024 records) — the 2022–23 row is deliberately rangeless like the
+  // Escalade IQ. No 2026 certs yet; MY2025 figures carried at agg/medium.
+  ...(() => {
+    const HUM_GM_W = {
+      batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source),
+      sohFloorPct: f(75, "mfr" as Source, "high", "GM's current EV warranty booklet (read for the data3 Ultium rows) states the 75% floor"),
+      batteryTransfers: f(true, "mfr" as Source, "high", "“Transferable at no cost” — GM EV warranty booklets"),
+    };
+    const HUM_W = HUM_GM_W;
+    const HUM_CHG = {
+      portStandard: f<"CCS1">("CCS1", "mfr", "high", "CCS1-native"),
+      superchargerAccess: f<"adapter">("adapter", "agg", "high", "GM $225 NACS adapter"),
+      dcPeakKw: f(350, "agg", "medium"),
+    };
+    const HUM_TH = { heatPump: f<"standard">("standard", "agg", "medium", "Ultium Energy Recovery") };
+    const HUM_PACK_3X = { packGrossKwh: f(205, "est", "medium", "~205 kWh usable est (213.7 gross reported) — 24-module 3X pack; 2X pack capacity unpublished"), chemistry: f<"NMC">("NMC", "agg", "medium") };
+    const hum = (id: string, model: string, years: [number, number], vin8: string[], variant: string, rangeFact: Fact<number> | undefined, extra?: Partial<EnrichmentRow>): EnrichmentRow => ({
+      id, make: "GMC", model, modelYears: years, vin8, drive: "AWD", packVariant: variant,
+      range: rangeFact ? { epaRangeMi: rangeFact } : undefined, charging: HUM_CHG, thermal: HUM_TH, warranty: HUM_W, ...extra,
+    });
+    const rows: EnrichmentRow[] = [
+      hum("hummer-2022-23-pickup", "Hummer EV", [2022, 2023], ["A"], "EV Pickup (Edition 1 / 3X era)", undefined, {
+        battery: HUM_PACK_3X,
+        range: { testedRangeMi: f(343, "tested", "high", "70-mph (InsideEVs, 2022 Edition 1): 343 mi \u2014 beat its 329 GM estimate; 75-mph (C&D): 290") },
+        buyerNotes: [{
+          headline: "No EPA range exists for 2022–23 Hummer EVs — GM's own estimate was 329 mi",
+          body: "EPA certification for this weight class began at MY2024. The 2022 Edition 1 carried a GM-estimated 329-mile range (24-module pack); GM estimates are not EPA tests and real-world results vary widely. The MY2024 EPA figures for the same hardware read 314 mi. Recalls: 22V-771 (water intrusion in the HV battery enclosure, 2022\u201323 pickups) and 23V-367 (HV battery pack connections).",
+          severity: "info" as const,
+        }],
+      }),
+      hum("hummer-2024-pickup-3x", "Hummer EV", [2024, 2024], ["A", "B"], "3X Pickup",
+        f(314, "mfr", "high", "MY2024 Hummer EV Pickup (3-motor) — EPA; 298 on mud-terrain tires", epa(46951)), { battery: HUM_PACK_3X }),
+      hum("hummer-2024-pickup-2x", "Hummer EV", [2024, 2024], ["D"], "2X Pickup",
+        f(311, "mfr", "high", "MY2024 Hummer EV Pickup 2X (2-motor, “2M20”) — EPA; 279 on mud-terrain tires", epa(48787))),
+      hum("hummer-2025-pickup-3x", "Hummer EV", [2025, 2025], ["A", "B"], "3X Pickup",
+        f(312, "mfr", "high", "MY2025 Hummer EV Pickup 3X — EPA; 289 on mud-terrain tires", epa(48344)), { battery: HUM_PACK_3X }),
+      hum("hummer-2025-pickup-2x", "Hummer EV", [2025, 2025], ["D"], "2X Pickup",
+        f(318, "mfr", "high", "MY2025 Hummer EV Pickup 2X — EPA; 282 on mud-terrain tires", epa(48343))),
+      hum("hummer-2026-pickup-3x", "Hummer EV", [2026, 2026], ["B"], "3X Pickup",
+        f(312, "agg", "medium", "No MY2026 certs in fueleconomy.gov yet — the identical MY2025 3X figure is carried")),
+      hum("hummer-2026-pickup-2x", "Hummer EV", [2026, 2026], ["D"], "2X Pickup",
+        f(318, "agg", "medium", "No MY2026 certs in fueleconomy.gov yet — the identical MY2025 2X figure is carried")),
+      // The SUV rows are emitted under both model strings — feeds list some
+      // SUVs under "Hummer EV", and the C/E codes prove the body.
+      ...["Hummer EV SUV", "Hummer EV"].flatMap((m, i): EnrichmentRow[] => {
+        const sfx = i === 0 ? "" : "-pk";
+        return [
+          hum(`hummer-2024-suv-3x${sfx}`, m, [2024, 2024], ["C"], "3X SUV",
+            f(314, "mfr", "high", "MY2024 Hummer EV SUV (3-motor) — EPA; 298 on mud-terrain tires", epa(46953)), { battery: HUM_PACK_3X }),
+          hum(`hummer-2024-suv-2x${sfx}`, m, [2024, 2024], ["E"], "2X SUV",
+            f(303, "mfr", "high", "MY2024 Hummer EV SUV 2X — EPA; 279 on mud-terrain tires", epa(48789))),
+          hum(`hummer-2025-suv-3x${sfx}`, m, [2025, 2025], ["C"], "3X SUV",
+            f(312, "mfr", "high", "MY2025 Hummer EV SUV 3X — EPA; 289 on mud-terrain tires", epa(48348)), { battery: HUM_PACK_3X }),
+          hum(`hummer-2025-suv-2x${sfx}`, m, [2025, 2025], ["E"], "2X SUV",
+            f(315, "mfr", "high", "MY2025 Hummer EV SUV 2X — EPA; 282 on mud-terrain tires", epa(48347))),
+          hum(`hummer-2026-suv-3x${sfx}`, m, [2026, 2026], ["C"], "3X SUV",
+            f(312, "agg", "medium", "No MY2026 certs in fueleconomy.gov yet — the identical MY2025 3X figure is carried")),
+          hum(`hummer-2026-suv-2x${sfx}`, m, [2026, 2026], ["E"], "2X SUV",
+            f(315, "agg", "medium", "No MY2026 certs in fueleconomy.gov yet — the identical MY2025 2X figure is carried")),
+        ];
+      }),
+      // ── Chevrolet Silverado EV, rebuilt (2026-08-15) ─────────────────
+      // Same GM pack codes as Sierra (H=Standard, D=Extended, L=Max),
+      // verified against 65 inventory trims. EPA rates WT (fleet Work
+      // Truck) and retail configurations separately on the same pack; the
+      // retail Max Range has NO EPA cert in any year — only the WT (8WT)
+      // configuration is certified, so retail-Max rows carry GM's quoted
+      // 460 at agg/medium (the old trim-name rows were matching "RST -
+      // Max Range" trucks to the 493-mi 8WT cert, a 30+ mi overstatement).
+      ...(() => {
+        const SIL = { make: "CHEVROLET", model: "Silverado EV" };
+        const sil = (id: string, years: [number, number], vin8: string[], trim: string[] | undefined, variant: string, rangeFact: Fact<number>, extra?: Partial<EnrichmentRow>): EnrichmentRow => ({
+          id, ...SIL, modelYears: years, vin8, trim, drive: "AWD", packVariant: variant,
+          range: { epaRangeMi: rangeFact }, charging: HUM_CHG, thermal: HUM_TH, warranty: HUM_GM_W, ...extra,
+        });
+        return [
+          sil("silverado-2024-er", [2024, 2024], ["D"], undefined, "Extended Range (3WT)",
+            f(393, "mfr", "high", "MY2024 Silverado EV 3WT — the only 2024 Extended-pack (code D) configuration — EPA", epa(47446))),
+          sil("silverado-2024-max", [2024, 2024], ["L"], undefined, "Max Range (4WT / RST First Edition)",
+            f(450, "mfr", "high", "MY2024 Silverado EV Max pack (code L) — EPA; the 4WT and RST First Edition share this cert", epa(46946)),
+            { range: { epaRangeMi: f(450, "mfr", "high", "MY2024 Silverado EV Max pack (code L) — EPA; the 4WT and RST First Edition share this cert", epa(46946)), testedRangeMi: f(442, "tested", "high", "70-mph (InsideEVs, 2024 RST First Edition): 442 mi; 75-mph (C&D): 400; Edmunds loop: 484") } }),
+          sil("silverado-2025-sr-wt", [2025, 2025], ["H"], undefined, "Standard Range (2WT)",
+            f(282, "mfr", "high", "MY2025 Silverado EV 2WT — EPA", epa(49071))),
+          sil("silverado-2025-er-wt", [2025, 2025], ["D"], ["5WT", "WT", "Work Truck", "WT - Extended Range"], "Extended Range (WT)",
+            f(422, "mfr", "high", "MY2025 Silverado EV 5WT — EPA (both charger options rate 422)", epa(48699))),
+          sil("silverado-2025-er-retail", [2025, 2025], ["D"], ["RST", "LT", "3LT", "3LT LT", "LT - Extended Range", "LT Extended Range 4WD"], "Extended Range",
+            f(408, "mfr", "high", "MY2025 Silverado EV retail Extended Range (RST/LT) with the 11.5 kW charger — EPA; 390 with the 19.2 kW charger", epa(48700))),
+          sil("silverado-2025-max-wt", [2025, 2025], ["L"], ["8WT", "WT", "Work Truck"], "Max Range (WT)",
+            f(492, "mfr", "high", "MY2025 Silverado EV 8WT — EPA", epa(48698)),
+            { range: { epaRangeMi: f(492, "mfr", "high", "MY2025 Silverado EV 8WT — EPA", epa(48698)), testedRangeMi: f(539, "tested", "medium", "Edmunds mixed loop, 2025 WT Max Range: 539 mi — the longest Edmunds has recorded") } }),
+          sil("silverado-2025-max-retail", [2025, 2025], ["L"], ["RST", "3SP RST", "3SP", "RST - Max Range", "Max Range"], "Max Range",
+            f(460, "agg", "medium", "MY2025 RST with the optional Max pack — GM's quoted range; EPA certified only the WT configuration (492, id 48698)")),
+          sil("silverado-2026-sr-wt", [2026, 2026], ["H"], ["WT", "Work Truck", "WT - Standard Range"], "Standard Range (WT)",
+            f(286, "mfr", "high", "MY2026 Silverado EV Standard Range WT — EPA", epa(49642))),
+          sil("silverado-2026-sr-retail", [2026, 2026], ["H"], ["LT", "LT - Standard Range", "Standard Range"], "Standard Range",
+            f(283, "mfr", "high", "MY2026 Silverado EV Standard Range (retail) — EPA", epa(49643))),
+          sil("silverado-2026-er-wt", [2026, 2026], ["D"], ["5WT", "WT", "Work Truck", "WT - Extended Range"], "Extended Range (WT)",
+            f(424, "mfr", "high", "MY2026 Silverado EV Extended Range WT — EPA", epa(49638))),
+          sil("silverado-2026-er-retail", [2026, 2026], ["D"], ["RST", "LT", "3LT", "Trail Boss", "Extended Range", "LT - Extended Range", "Trail Boss - Extended Range", "RST Stars and Steel Edition - Extended Range", "e4WD Crew Cab Extended Range LT"], "Extended Range",
+            f(410, "mfr", "high", "MY2026 Silverado EV Extended Range (retail) with the standard 11.5 kW charger — EPA; 385 with the optional 19.2 kW charger", epa(49640))),
+          sil("silverado-2026-max-wt", [2026, 2026], ["L"], ["8WT", "WT", "Work Truck"], "Max Range (WT)",
+            f(493, "mfr", "high", "MY2026 Silverado EV Max Range WT — EPA", epa(49639))),
+          sil("silverado-2026-max-retail", [2026, 2026], ["L"], ["LT", "Trail Boss", "LT - Max Range", "Max Range", "e4WD Crew Cab Max Range LT", "e4WD Crew Cab Max Range Trail Boss"], "Max Range",
+            f(460, "agg", "medium", "MY2026 retail Max pack (LT/Trail Boss) — GM's quoted range; EPA certified only the WT configuration (493, id 49639)")),
+        ];
+      })(),
+    ];
+    return rows;
+  })(),
 ];
