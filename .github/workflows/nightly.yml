@@ -209,6 +209,20 @@ jobs:
           SUPABASE_INGEST_TOKEN: ${{ secrets.SUPABASE_INGEST_TOKEN }}
         run: '[ "$(date +%d)" = "05" ] && node wa-prices.mjs --months 24 || echo "not the 5th, skipping"'
 
+      # Name the versions behind those sales (migration 0016). Runs with the
+      # price refresh because that is when new VIN cohorts appear — a model
+      # year nobody has decoded shows up as "Unknown" until this runs.
+      # Only the vPIC half needs a job; vin_variant_observed is a view over
+      # live listings and is always current.
+      - name: Refresh VIN variant decodes (5th of the month)
+        if: ${{ github.event_name == 'schedule' }}
+        working-directory: scraper
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_INGEST_TOKEN: ${{ secrets.SUPABASE_INGEST_TOKEN }}
+        run: '[ "$(date +%d)" = "05" ] && node vpic-variants.mjs || echo "not the 5th, skipping"'
+
       # The JSON snapshot is the web app's fallback when Supabase is
       # unreachable, so it needs to stay current in the repo.
       # Supabase already has the listings by this point, so the site is

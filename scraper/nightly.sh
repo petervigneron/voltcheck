@@ -38,6 +38,9 @@ print(' '.join(s['domain'] for s in r['sites'] if s.get('status') == 'working'))
   node recheck.mjs --concurrency 10
   # Washington transaction prices refresh monthly upstream; reload on the 5th.
   [ "$(date +%d)" = "05" ] && node wa-prices.mjs --months 24
+  # And name the versions behind them: new sales bring new VIN cohorts, which
+  # read as "Unknown" until vPIC has decoded them (migration 0016).
+  [ "$(date +%d)" = "05" ] && node vpic-variants.mjs
   echo "=== done $(date)"
 } >> "$LOG" 2>&1
 
