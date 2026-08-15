@@ -15,6 +15,15 @@ export interface EnrichedListing {
   // Card-level summaries
   realRangeMi?: Fact<number>;
   usableKwh?: Fact<number>;
+  /**
+   * The pack size to *show*. Usable capacity is the better number and the one
+   * to prefer, but most makers never publish it — Hyundai's own spec sheet
+   * gives one "Battery System Capacity" row and no split, and so do Kia, GM,
+   * Honda, Toyota and Volvo. Falling back to the nameplate figure is what makes
+   * a battery number exist at all for those cars; `basis` says which it is so
+   * nothing downstream has to guess.
+   */
+  packKwh?: { value: number; basis: "usable" | "total"; note?: string };
   packVariant?: string;
   port?: Fact<PortStandard>;
   heatPump: { status: "yes" | "no" | "verify"; detail: string } | null;
@@ -140,6 +149,18 @@ function decodeFromListing(l: Listing): VinDecode {
     driveType: l.drive,
     batteryKwhHint: l.vpicBatteryKwh,
   };
+}
+
+// Usable first — it's the capacity a driver actually gets — then the nameplate
+// figure. Never both: a chip that reads "84 kWh" next to one reading "77 kWh"
+// has to be measuring the same thing, and within a model it now does, because
+// a model's rows come from one maker's disclosure practice.
+function packSize(row?: EnrichmentRow): EnrichedListing["packKwh"] {
+  const usable = row?.battery?.packUsableKwh;
+  if (usable) return { value: usable.value, basis: "usable", note: usable.note };
+  const gross = row?.battery?.packGrossKwh;
+  if (gross) return { value: gross.value, basis: "total", note: gross.note };
+  return undefined;
 }
 
 export function enrichListing(l: Listing): EnrichedListing {
@@ -310,6 +331,7 @@ export function enrichListing(l: Listing): EnrichedListing {
     row,
     realRangeMi: row?.range?.epaRangeMi,
     usableKwh: row?.battery?.packUsableKwh,
+    packKwh: packSize(row),
     packVariant: row?.packVariant,
     port: agreed((r) => r.charging?.portStandard),
     heatPump,

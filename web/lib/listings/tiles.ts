@@ -54,7 +54,16 @@ export function listingTiles(
     });
   }
 
-  if (e.usableKwh) t.push({ kind: "spec", text: `${Math.round(e.usableKwh.value)} kWh`, title: e.usableKwh.note ?? undefined });
+  // The chip stays a bare number; which capacity it is rides in the tooltip,
+  // because "84 kWh total" and "77 kWh usable" are not the same claim.
+  if (e.packKwh) {
+    const basis = e.packKwh.basis === "total" ? "Total capacity" : "Usable capacity";
+    t.push({
+      kind: "spec",
+      text: `${Math.round(e.packKwh.value)} kWh`,
+      title: e.packKwh.note ? `${basis} — ${e.packKwh.note}` : basis,
+    });
+  }
 
   if (l.mileage != null && l.mileage > 0 && l.mileage < 15000) t.push({ kind: "flag", text: "Low miles" });
   else if (l.mileage != null && l.mileage > 100000) t.push({ kind: "flag", text: "High miles" });
