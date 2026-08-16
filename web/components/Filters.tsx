@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { REMOVABLE, QUICK_TOGGLES, BODY_TYPES, describeFilter, dropSpecFilters, splitValues, toggleValue } from "@/lib/filters";
 import { pushUrl } from "@/lib/pushUrl";
 
@@ -33,6 +33,7 @@ function SearchBox({ current, suggestions }: { current: string; suggestions: Sug
   const [text, setText] = useState(current);
   const [open, setOpen] = useState(false);
   const [hi, setHi] = useState(0);
+  const input = useRef<HTMLInputElement>(null);
 
   const toks = text.toLowerCase().trim().split(/\s+/).filter(Boolean);
   // "buzz" should surface "Volkswagen ID. Buzz": every typed token has to land
@@ -62,6 +63,7 @@ function SearchBox({ current, suggestions }: { current: string; suggestions: Sug
     >
       <div className="relative min-w-0 flex-1 border-r-[3px] border-ink">
         <input
+          ref={input}
           name="q"
           value={text}
           onChange={(e) => {
@@ -90,8 +92,29 @@ function SearchBox({ current, suggestions }: { current: string; suggestions: Sug
           aria-autocomplete="list"
           aria-label="Search electric cars"
           placeholder="Make, model, or trim"
-          className="w-full bg-paper px-5 py-4 text-[17px] font-medium text-ink placeholder:text-ink/40 focus:outline-none focus:ring-[3px] focus:ring-inset focus:ring-cobalt"
+          className="w-full bg-paper py-4 pr-14 pl-5 text-[17px] font-medium text-ink placeholder:text-ink/40 focus:outline-none focus:ring-[3px] focus:ring-inset focus:ring-cobalt"
         />
+        {/* Clearing the box also clears a search already in the URL — a box the
+            shopper emptied that still returns one model reads as a stuck page.
+            Mousedown is suppressed so the click lands without the input's blur
+            stealing focus first. */}
+        {text && (
+          <button
+            type="button"
+            aria-label="Clear search"
+            title="Clear search"
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={() => {
+              setText("");
+              setOpen(false);
+              input.current?.focus();
+              if (current) go("");
+            }}
+            className="absolute top-1/2 right-3 flex size-8 -translate-y-1/2 items-center justify-center border-[3px] border-transparent text-[15px] font-extrabold text-ink/50 hover:border-ink hover:text-ink focus:outline-none focus-visible:border-cobalt focus-visible:text-ink"
+          >
+            <span aria-hidden="true">✕</span>
+          </button>
+        )}
         {hits.length > 0 && (
           <ul
             id="search-suggestions"
@@ -147,6 +170,122 @@ export type FacetGroup = {
 };
 
 /**
+ * Facets whose values are a long open-ended list get a menu instead of a row of
+ * chips: a Model Y's trims run past a dozen and cost two rows of the page, where
+ * battery and range are two or three numbers each and read at a glance. The
+ * value here is what the button says when nothing is picked.
+ */
+const MENU_FACETS: Record<string, string> = { trim: "All trims" };
+
+/** One facet as a closed menu — the label reads what's picked, not what exists. */
+function FacetMenu({
+  f,
+  on,
+  pick,
+  clear,
+  allLabel,
+}: {
+  f: FacetGroup;
+  on: Set<string>;
+  pick: (key: string, v: string) => void;
+  clear: (key: string) => void;
+  allLabel: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const box = useRef<HTMLDivElement>(null);
+
+  // A menu left hanging over the results after the shopper moved on is the
+  // clutter this was meant to remove.
+  useEffect(() => {
+    if (!open) return;
+    const away = (e: PointerEvent) => {
+      if (!box.current?.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("pointerdown", away);
+    return () => document.removeEventListener("pointerdown", away);
+  }, [open]);
+
+  const picked = f.values.filter((v) => on.has(v.v));
+  const label = picked.length ? picked.map((v) => v.label).join(", ") : allLabel;
+
+  return (
+    <div
+      ref={box}
+      className={`${CELL} relative flex grow items-center bg-paper sm:grow-0 sm:w-[280px]`}
+      onKeyDown={(e) => {
+        if (e.key === "Escape") setOpen(false);
+      }}
+    >
+      <button
+        type="button"
+        aria-expanded={open}
+        aria-haspopup="listbox"
+        aria-label={`${f.label}: ${label}`}
+        onClick={() => setOpen((v) => !v)}
+        className={`${HOVER} flex h-full w-full items-center gap-2 px-4 py-2.5 text-[13px] font-bold tracking-[0.04em] uppercase ${
+          picked.length ? "bg-cobalt text-paper" : "bg-paper text-ink"
+        }`}
+      >
+        <span className="min-w-0 flex-1 truncate text-left">{label}</span>
+        <span aria-hidden="true" className="text-[10px]">
+          {open ? "▲" : "▼"}
+        </span>
+      </button>
+
+      {open && (
+        <ul
+          role="listbox"
+          aria-multiselectable="true"
+          aria-label={f.label}
+          className="absolute top-full left-0 z-20 max-h-[340px] w-full min-w-[240px] overflow-y-auto border-[3px] border-ink bg-paper"
+        >
+          <li>
+            <button
+              type="button"
+              onClick={() => {
+                clear(f.key);
+                setOpen(false);
+              }}
+              disabled={!picked.length}
+              className={`flex w-full items-center gap-3 border-b-[3px] border-ink px-4 py-2.5 text-left text-[13px] font-bold tracking-[0.04em] uppercase ${
+                picked.length ? "bg-paper text-ink hover:bg-putty" : "bg-putty text-ink/50"
+              }`}
+            >
+              {allLabel}
+            </button>
+          </li>
+          {f.values.map((v) => {
+            const sel = on.has(v.v);
+            // A value the other facets have already ruled out stays listed — it's
+            // part of what this model comes as — but it can't be picked into an
+            // empty page.
+            const dead = v.n === 0 && !sel;
+            return (
+              <li key={v.v} role="option" aria-selected={sel}>
+                <button
+                  type="button"
+                  disabled={dead}
+                  onClick={() => pick(f.key, v.v)}
+                  className={`flex w-full items-center gap-3 px-4 py-2.5 text-left text-[13px] font-bold tracking-[0.04em] uppercase ${
+                    dead ? "bg-paper text-ink/30" : sel ? "bg-cobalt text-paper" : "bg-paper text-ink hover:bg-putty"
+                  }`}
+                >
+                  <span aria-hidden="true" className="w-3 shrink-0">
+                    {sel ? "✓" : ""}
+                  </span>
+                  <span className="min-w-0 flex-1 truncate">{v.label}</span>
+                  <span className={`shrink-0 tabular-nums ${sel ? "text-paper/70" : "text-ink/45"}`}>{v.n}</span>
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+/**
  * The spec rail: once the results are one model, the versions of that model.
  * Only axes that actually vary here get a row, so a model with one battery
  * size never shows a battery row a shopper can't act on.
@@ -164,6 +303,13 @@ export function SpecFacets({ facets }: { facets: FacetGroup[] }) {
     pushUrl(params);
   };
 
+  const clear = (key: string) => {
+    const params = new URLSearchParams(sp.toString());
+    params.delete(key);
+    params.delete("page");
+    pushUrl(params);
+  };
+
   if (facets.length === 0) return null;
 
   return (
@@ -171,6 +317,7 @@ export function SpecFacets({ facets }: { facets: FacetGroup[] }) {
       {facets.map((f) => {
         const on = new Set(splitValues(sp.get(f.key) ?? ""));
         const open = expanded[f.key];
+        const allLabel = MENU_FACETS[f.key];
         // A value the shopper picked stays put even if it's too thin to have
         // made the cap — a chip can't vanish out from under its own ✓.
         const shown = open ? f.values : f.values.filter((v) => v.top || on.has(v.v));
@@ -182,31 +329,33 @@ export function SpecFacets({ facets }: { facets: FacetGroup[] }) {
             >
               {f.label}
             </div>
-            {shown.map((v) => {
-              const sel = on.has(v.v);
-              // A value the other facets have already ruled out stays visible —
-              // it's part of what this model comes as — but it can't be picked
-              // into an empty page.
-              const dead = v.n === 0 && !sel;
-              return (
-                <button
-                  key={v.v}
-                  type="button"
-                  aria-pressed={sel}
-                  disabled={dead}
-                  title={sel ? `Remove: ${v.label}` : `${v.n} ${v.n === 1 ? "car" : "cars"}`}
-                  onClick={() => pick(f.key, v.v)}
-                  className={`${CELL} flex grow items-center gap-2 px-4 py-2.5 text-[13px] font-bold tracking-[0.04em] uppercase sm:grow-0 ${
-                    dead ? "bg-paper text-ink/30" : `${HOVER} ${sel ? "bg-cobalt text-paper" : "bg-paper text-ink"}`
-                  }`}
-                >
-                  {sel && <span aria-hidden="true">✓</span>}
-                  {v.label}
-                  <span className={`tabular-nums ${sel ? "text-paper/70" : "text-ink/45"}`}>{v.n}</span>
-                </button>
-              );
-            })}
-            {hidden > 0 && (
+            {allLabel && <FacetMenu f={f} on={on} pick={pick} clear={clear} allLabel={allLabel} />}
+            {!allLabel &&
+              shown.map((v) => {
+                const sel = on.has(v.v);
+                // A value the other facets have already ruled out stays visible —
+                // it's part of what this model comes as — but it can't be picked
+                // into an empty page.
+                const dead = v.n === 0 && !sel;
+                return (
+                  <button
+                    key={v.v}
+                    type="button"
+                    aria-pressed={sel}
+                    disabled={dead}
+                    title={sel ? `Remove: ${v.label}` : `${v.n} ${v.n === 1 ? "car" : "cars"}`}
+                    onClick={() => pick(f.key, v.v)}
+                    className={`${CELL} flex grow items-center gap-2 px-4 py-2.5 text-[13px] font-bold tracking-[0.04em] uppercase sm:grow-0 ${
+                      dead ? "bg-paper text-ink/30" : `${HOVER} ${sel ? "bg-cobalt text-paper" : "bg-paper text-ink"}`
+                    }`}
+                  >
+                    {sel && <span aria-hidden="true">✓</span>}
+                    {v.label}
+                    <span className={`tabular-nums ${sel ? "text-paper/70" : "text-ink/45"}`}>{v.n}</span>
+                  </button>
+                );
+              })}
+            {!allLabel && hidden > 0 && (
               <button
                 type="button"
                 onClick={() => setExpanded((e) => ({ ...e, [f.key]: true }))}
