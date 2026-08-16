@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -63,6 +64,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             Estimated figures are marked.
           </div>
         </footer>
+
+        {/* Vercel Web Analytics: first-party, cookieless page counts. The
+            validation question this answers is "does the delta move organic
+            traffic" — nothing here identifies a visitor. */}
+        <Analytics />
       </body>
     </html>
   );
