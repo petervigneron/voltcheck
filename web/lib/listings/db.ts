@@ -179,12 +179,23 @@ export async function fetchCohortFromDb(vinPrefix8: string, year: number): Promi
   if (!dbConfigured()) return null;
   const base = process.env.SUPABASE_URL!.replace(/\/$/, "");
   try {
-    const res = await fetch(
-      `${base}/rest/v1/live_listings_feed?select=vin,payload,first_seen_at,last_seen_at,prev_price_usd,price_changed_at,buyback_disclosed&vin=like.${encodeURIComponent(
-        vinPrefix8.toUpperCase()
-      )}*&payload->>year=eq.${year}&limit=${PAGE}`,
-      { headers: headers(), next: { revalidate: REVALIDATE_SECONDS } }
-    );
+    // Retried on server errors because a miss here is cached: this runs in
+    // an ISR render, so one transient PostgREST 500 (they come in bursts
+    // when the nightly jobs load the database) would bake a page with no
+    // ask-side tile and serve it for the whole revalidate window — the
+    // card-says-it, page-doesn't failure this fetch exists to prevent.
+    // Observed doing exactly that on the first production render.
+    let res: Response;
+    for (let attempt = 0; ; attempt++) {
+      res = await fetch(
+        `${base}/rest/v1/live_listings_feed?select=vin,payload,first_seen_at,last_seen_at,prev_price_usd,price_changed_at,buyback_disclosed&vin=like.${encodeURIComponent(
+          vinPrefix8.toUpperCase()
+        )}*&payload->>year=eq.${year}&limit=${PAGE}`,
+        { headers: headers(), next: { revalidate: REVALIDATE_SECONDS } }
+      );
+      if (res.status < 500 || attempt >= 2) break;
+      await new Promise((r) => setTimeout(r, 300 * (attempt + 1) ** 2));
+    }
     if (!res.ok) throw new Error(`PostgREST ${res.status}`);
     const rows = (await res.json()) as FeedRow[];
     return rows.map((r) => ({
