@@ -154,6 +154,16 @@ jobs:
         working-directory: scraper
         run: node merge-shards.mjs
 
+      # The OEM locator lanes link each car to a VDP on the selling dealer's
+      # own site. Any host we aren't tracking becomes a "discovered" registry
+      # row (name/city/state ride along from the listing), which tomorrow's
+      # probe validates like any other discovery — free registry growth from
+      # pages tonight's run already fetched. Appends only; never edits rows.
+      - name: Harvest dealer rooftops from locator VDP hosts
+        if: ${{ github.event.inputs.skip_crawl != 'true' }}
+        working-directory: scraper
+        run: node harvest-dealers.mjs --write
+
       - name: VIN enrichment and ingest
         if: ${{ github.event.inputs.skip_crawl != 'true' }}
         working-directory: scraper
