@@ -46,10 +46,22 @@
 // The Fiat 500e template ("04" line) already skips the Topolino's "00" line;
 // the 48V guard is belt-and-suspenders for the vehicleData brands too.
 //
-// GAPS (like BMW's coded dealer): the results carry dealerCode + dealerZipCode +
-// lat/lon but no dealer NAME or CITY, so we derive state from the ZIP and leave
-// name/city blank. Images require a separate mackevision render call (the
-// results row carries only a param string), so imageUrl is left empty for now.
+// DEALER NAME/CITY/STATE come from the brand's own "Find a Dealer" directory,
+// /bdlws/MDLSDealerLocator (robots-clean; Disallow only covers /hostd|/hostc).
+// One call per brand — brandCode {J,D,X} for Jeep/Dodge/Fiat, radius 5000 from a
+// central ZIP, resultsPerPage 5000 (the exact params the SRP itself uses) —
+// returns the entire national roster keyed by dealerCode with dealerName/City/
+// State/ZipCode (verified 100% coverage of the inventory's dealerCodes
+// 2026-08-16). Fetched once, cached for the run; a directory failure just leaves
+// geo blank (state still falls back to the ZIP-derived value). The results row's
+// dealerZipCode/lat/lon still ride along as before.
+//
+// IMAGES come from the FCA "iris" studio renderer: every results row carries an
+// `extImage` param string (client/market/brand/vehicle/paint/fabric/sa) — the
+// exact query the brand SRP feeds to /mediaserver/iris. Appending the site's own
+// &pov=fronthero&width=860&height=484&bkgnd=transparent&resp=png yields the same
+// config-exact front-3/4 PNG the site shows (spot-checked: renders the correct
+// paint/trim). imageUrl + images[] are populated from it.
 // The per-VIN sourceUrl is the real brand VDP (/new-inventory/vehicle-details…),
 // a client-rendered shell that echoes the VIN from its own URL — so recheck
 // skips these domains (fake-alive, same rule as GM) and relies on the complete
@@ -65,15 +77,15 @@ import { politeGetJson } from "../http.mjs";
 
 export const STELLANTIS_BRANDS = [
   {
-    key: "jeep", host: "www.jeep.com", domain: "jeep.com", make: "Jeep", brandToken: "Jeep",
+    key: "jeep", host: "www.jeep.com", domain: "jeep.com", make: "Jeep", brandToken: "Jeep", dealerBrandCode: "J",
     discovery: "vehicleData", vehicleDataFile: "vehicleData.getVehicle.prod.jeep.js", minExpected: 100,
   },
   {
-    key: "dodge", host: "www.dodge.com", domain: "dodge.com", make: "Dodge", brandToken: "Dodge",
+    key: "dodge", host: "www.dodge.com", domain: "dodge.com", make: "Dodge", brandToken: "Dodge", dealerBrandCode: "D",
     discovery: "vehicleData", vehicleDataFile: "vehicleData.getVehicle.prod.dodge.js", minExpected: 40,
   },
   {
-    key: "fiat", host: "www.fiatusa.com", domain: "fiatusa.com", make: "Fiat", brandToken: "Fiat",
+    key: "fiat", host: "www.fiatusa.com", domain: "fiatusa.com", make: "Fiat", brandToken: "Fiat", dealerBrandCode: "X",
     discovery: "modelYearTemplate", mycTemplate: (y) => `IUX${y}04`, fixedModel: "500e", minExpected: 5,
   },
 ];
@@ -189,10 +201,21 @@ function vdpUrl(brand, v) {
   return `https://${brand.host}/new-inventory/vehicle-details${seg}${suffix}?${params.join("&")}`;
 }
 
+// FCA "iris" studio render for this exact configuration. `extImage` already
+// carries the full config query (client=fcaus&market=U&brand=…&vehicle=…&paint=…
+// &fabric=…&sa=…); we append the render params the brand SRP itself uses. Guard
+// on a well-formed extImage (must name the client + the option string) so a
+// blank/garbled value yields undefined rather than a broken URL.
+function irisImageUrl(brand, v) {
+  const ext = String(v.extImage ?? "").trim().replace(/^[?&]+/, "");
+  if (!/client=/.test(ext) || !/(?:^|&)sa=/.test(ext)) return undefined;
+  return `https://${brand.host}/mediaserver/iris?${ext}&pov=fronthero&width=860&height=484&bkgnd=transparent&resp=png`;
+}
+
 // One results row → normalized BEV listing, or null if it fails a gate. `cfg`
 // carries the model (and trim, for the vehicleData brands) plus, when known, the
 // exact inventory ccode this query targeted so a stray row can't be mislabeled.
-function toRecord(v, cfg, brand) {
+function toRecord(v, cfg, brand, dealers) {
   const vin = String(v.vin ?? "").toUpperCase();
   if (!VIN_RE.test(vin)) return null;
   // Structural BEV gate: the vehicle's own "Power Source" attribute.
@@ -206,7 +229,13 @@ function toRecord(v, cfg, brand) {
   const model = cfg.model;
   if (!model) return null;
   const trim = cfg.trim ?? cleanTrim(attrVal(v, TRIM_ID), brand.brandToken, model);
-  const zip = /^\d{5}/.test(String(v.dealerZipCode ?? "")) ? String(v.dealerZipCode).slice(0, 5) : undefined;
+  // Dealer geo from the MDLSDealerLocator directory (keyed by dealerCode); its
+  // own dealerZip is authoritative, else fall back to the row's dealerZipCode.
+  const dealer = dealers?.get(String(v.dealerCode ?? ""));
+  const dealerZip = /^\d{5}/.test(String(dealer?.dealerZipCode ?? "")) ? String(dealer.dealerZipCode).slice(0, 5) : undefined;
+  const zip = dealerZip ?? (/^\d{5}/.test(String(v.dealerZipCode ?? "")) ? String(v.dealerZipCode).slice(0, 5) : undefined);
+  const state = (/^[A-Z]{2}$/.test(String(dealer?.dealerState ?? "")) ? dealer.dealerState : undefined) ?? stateFromZip(zip);
+  const img = irisImageUrl(brand, v);
   // Honest ask: net advertised price (MSRP + destination + any dealer
   // adjustment), NOT the discountedPrice that bakes in conditional EV bonus cash.
   const priceUsd = num(v.price?.netPrice) ?? (num(v.price?.msrp) && num(v.price?.destination) ? num(v.price.msrp) + num(v.price.destination) : num(v.price?.msrp));
@@ -220,11 +249,13 @@ function toRecord(v, cfg, brand) {
     driveLine: driveLineOf(v),
     exteriorColor: cleanColor(v.exteriorColorDesc),
     interiorColor: cleanColor(v.interiorColorDesc),
+    dealerName: dealer?.dealerName ? decodeEntities(dealer.dealerName).replace(/\s+/g, " ").trim() : undefined,
+    city: dealer?.dealerCity ? decodeEntities(dealer.dealerCity).replace(/\s+/g, " ").trim() : undefined,
     zip,
-    state: stateFromZip(zip),
+    state,
     condition: "new",
-    imageUrl: undefined,
-    images: [],
+    imageUrl: img,
+    images: img ? [img] : [],
     sourceUrl: vdpUrl(brand, v),
     dealerDomain: brand.domain,
     evKind: "BEV",
@@ -298,9 +329,28 @@ async function getResults(brand, qs, page, report) {
   }
 }
 
+// The brand's national dealer roster from its own "Find a Dealer" directory,
+// keyed by dealerCode → {dealerName, dealerCity, dealerState, dealerZipCode}.
+// One call (resultsPerPage 5000 spans the country); robots-clean. Returns an
+// empty map on any failure — geo then simply stays blank (never fails the pull).
+async function fetchDealerDirectory(brand, report) {
+  const url = `https://${brand.host}/bdlws/MDLSDealerLocator?brandCode=${brand.dealerBrandCode}&func=SALES&radius=5000&zipCode=${NATIONAL_ZIP}&resultsPerPage=5000`;
+  const res = await politeGetJson(url, { headers: { referer: `https://${brand.host}/new-inventory` } });
+  report.fetched++;
+  const rows = res.json?.dealer;
+  if (res.status !== 200 || !Array.isArray(rows)) {
+    report.notes.push(`dealer directory unavailable (${brand.key}) — dealer name/city left blank`);
+    return new Map();
+  }
+  const map = new Map();
+  for (const d of rows) if (d?.dealerCode) map.set(String(d.dealerCode), d);
+  report.notes.push(`dealer directory: ${map.size} ${brand.key} rooftops`);
+  return map;
+}
+
 // Pull one configuration to exhaustion, folding records into byVin. Returns
 // false if a page failed or paging fell short of the reported national count.
-async function pullConfig(brand, cfg, byVin, report) {
+async function pullConfig(brand, cfg, byVin, report, dealers) {
   const qs = cfg.expectedCcode
     ? `ccode=${cfg.expectedCcode}&llp=${encodeURIComponent(cfg.llp ?? "")}`
     : `modelYearCode=${encodeURIComponent(cfg.modelYearCode)}`;
@@ -312,7 +362,7 @@ async function pullConfig(brand, cfg, byVin, report) {
     total = data.metadata?.totalcount ?? 0;
     const rows = data.vehicles ?? [];
     for (const v of rows) {
-      const rec = toRecord(v, cfg, brand);
+      const rec = toRecord(v, cfg, brand, dealers);
       if (rec) byVin.set(rec.vin, rec);
     }
     raw += rows.length;
@@ -337,9 +387,11 @@ export async function pullStellantisBrand(brand, { log = () => {} } = {}) {
   report.notes.push(`${configs.length} candidate BEV configs`);
   log(`${brand.key}: ${configs.length} candidate configs`);
 
+  const dealers = await fetchDealerDirectory(brand, report);
+
   const byVin = new Map();
   for (const cfg of configs) {
-    const ok = await pullConfig(brand, cfg, byVin, report);
+    const ok = await pullConfig(brand, cfg, byVin, report, dealers);
     if (!ok) log(`${brand.key}: config ${cfg.expectedCcode ?? cfg.modelYearCode} failed`);
   }
 
