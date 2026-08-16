@@ -120,7 +120,13 @@ export async function fetchListingsFromDb(): Promise<Listing[] | null> {
     // The expected total, asked for up front so the read can be checked against
     // it. A short read is the failure mode that hides: every request answers
     // 200, the cars just aren't there.
-    const countRes = await fetchWithRetry(`${base}/rest/v1/live_listings_feed?select=vin`, {
+    // Counted on the BASE table, not the view. The view's price-history join
+    // exists for the payload pages; a count through it pays the whole
+    // aggregation just to produce one integer, and on 2026-08-16 that was the
+    // single request whose failure kept flipping builds to the JSON fallback
+    // while plain page reads were healthy. `delisted_at is null` is the
+    // view's own predicate, so the number is the same by construction.
+    const countRes = await fetchWithRetry(`${base}/rest/v1/listings?select=vin&delisted_at=is.null`, {
       headers: { ...headers(), Range: "0-0", Prefer: "count=exact" },
       next: { revalidate: REVALIDATE_SECONDS },
     });
