@@ -88,10 +88,13 @@ export function ListingCard({
   if (r.askVsSold != null) {
     const under = r.askVsSold < 0;
     const amount = `$${Math.abs(r.askVsSold).toLocaleString()}`;
+    // "Paid" is the load-bearing word: it can only mean completed sales, so
+    // the tile carries the ask-vs-sold distinction without a glossary. Its
+    // sibling below says "listings" for the same reason from the other side.
     lead.push({
       k: under ? ("kit" as TileKind) : ("miss" as TileKind),
-      t: `${amount} ${under ? "under" : "over"} sold price`,
-      ti: `Asks ${amount} ${under ? "less" : "more"} than these actually sell for, fitted on Washington State title records (data.wa.gov, ODbL)`,
+      t: `${amount} ${under ? "below" : "above"} what others paid`,
+      ti: `Asks ${amount} ${under ? "less" : "more"} than others paid for this version at similar mileage, from Washington State title records (data.wa.gov, ODbL)`,
     });
   }
   // Where no transaction model reaches — most of the site — the other listings
@@ -112,7 +115,7 @@ export function ListingCard({
       : `the ${r.askVsMarket.peerN} closest matches listed right now: same year and configuration, trims that price alike`;
     lead.push({
       k: "spec" as TileKind,
-      t: `${amount} ${under ? "under" : "over"} asking prices`,
+      t: `${amount} ${under ? "below" : "above"} similar listings`,
       ti: `Asks ${amount} ${under ? "less" : "more"} than ${peers}, adjusted for mileage. Asking prices, not sales; no record of one of these selling covers this car.`,
     });
   }
