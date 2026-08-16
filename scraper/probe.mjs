@@ -23,6 +23,8 @@ import { extractDdcVehicles } from "./lib/platforms/dealercom.mjs";
 import { extractDealerOn } from "./lib/platforms/dealeron.mjs";
 import { extractTeamVelocity } from "./lib/platforms/teamvelocity.mjs";
 import { extractDrivewayVehicles } from "./lib/platforms/driveway.mjs";
+import { extractDcsVehicles, isDealerCarSearch, DCS_SRP_PATH } from "./lib/platforms/dealercarsearch.mjs";
+import { dealerFireVehicles } from "./lib/platforms/dealerfire.mjs";
 import { fingerprint } from "./lib/fingerprint.mjs";
 import { discoverSitemapUrls, rank, dedupe, SRP_PATHS } from "./lib/sitemap.mjs";
 
@@ -66,6 +68,10 @@ async function probeSite(site) {
   const tryUrls = dedupe([
     ...rank(sitemapUrls).slice(0, 6),
     ...SRP_PATHS.map((p) => origin + p),
+    // Dealer Car Search's one SRP path. Without it the probe can still reach
+    // a DCS site through its sitemap, but a site whose sitemap is thin would
+    // be written off again for want of a single request.
+    origin + DCS_SRP_PATH,
   ]);
 
   let vehiclesWithVin = 0;
@@ -81,12 +87,18 @@ async function probeSite(site) {
     // extracts them fine — their SRPs carry vehicles in platform globals,
     // not in schema.org markup.
     const isVin = (v) => v && /^[A-HJ-NPR-Z0-9]{17}$/i.test(v);
-    const vehicles = [...extractVehicles(res.body), ...extractDrivewayVehicles(res.body)];
+    const vehicles = [
+      ...extractVehicles(res.body),
+      ...extractDrivewayVehicles(res.body),
+      ...extractDcsVehicles(res.body, res.finalUrl),
+      ...dealerFireVehicles(res.body, res.finalUrl),
+    ];
     const platformVins = [
       ...extractDdcVehicles(res.body).map((d) => d.vin),
       extractDealerOn(res.body)?.vehicle?.vin,
       extractTeamVelocity(res.body)?.vin,
     ].filter(isVin);
+    if (isDealerCarSearch(res.body) && site.platform !== "dealercarsearch") site.platform = "dealercarsearch";
     if (vehicles.length || platformVins.length) pagesWithVehicles++;
     vehiclesWithVin +=
       vehicles.filter((v) => isVin(v.vehicleIdentificationNumber ?? v.vin)).length + platformVins.length;
@@ -101,7 +113,12 @@ async function probeSite(site) {
       const vdp = await fetchPage(e.url);
       fetched++;
       if (vdp.status !== 200 || !vdp.body) continue;
-      const found = [...extractVehicles(vdp.body), ...extractDrivewayVehicles(vdp.body)]
+      const found = [
+        ...extractVehicles(vdp.body),
+        ...extractDrivewayVehicles(vdp.body),
+        ...extractDcsVehicles(vdp.body, vdp.finalUrl),
+        ...dealerFireVehicles(vdp.body, vdp.finalUrl),
+      ]
         .filter((v) => isVin(v.vehicleIdentificationNumber ?? v.vin)).length +
         extractDdcVehicles(vdp.body).map((d) => d.vin).filter(isVin).length +
         [extractDealerOn(vdp.body)?.vehicle?.vin, extractTeamVelocity(vdp.body)?.vin].filter(isVin).length;

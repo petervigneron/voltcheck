@@ -17,6 +17,7 @@ import { readFile } from "node:fs/promises";
 import { fetchRaw } from "./lib/http.mjs";
 import { extractVehicles } from "./lib/jsonld.mjs";
 import { extractDdcVehicles } from "./lib/platforms/dealercom.mjs";
+import { extractDcsVehicles } from "./lib/platforms/dealercarsearch.mjs";
 import { OEM_LOCATOR_DOMAINS as GM_LOCATOR_DOMAINS } from "./lib/oem/gm.mjs";
 import { HYUNDAI } from "./lib/oem/hyundai.mjs";
 import { KIA } from "./lib/oem/kia.mjs";
@@ -101,7 +102,16 @@ console.error(
 // the JSON-LD offer price wins, and the platform's own fields are only a
 // fallback. Reversing this makes every dealer.com car look like it changed
 // price on the first run and writes fiction into listing_price_history.
-const priceOf = (body, vin) => {
+const priceOf = (body, vin, url) => {
+  // Dealer Car Search publishes no JSON-LD, so without this its rows would
+  // hold whatever price the last crawl saw and never move. The VDP's own data
+  // layer is the same field lib/platforms/dealercarsearch.mjs reads into the
+  // offer, so the precedence above is preserved rather than bypassed.
+  for (const v of extractDcsVehicles(body, url)) {
+    if (String(v.vehicleIdentificationNumber ?? "").toUpperCase() !== vin) continue;
+    const p = Number(v.offers?.price);
+    if (Number.isFinite(p) && p > 500) return Math.round(p);
+  }
   for (const v of extractVehicles(body)) {
     if (String(v.vehicleIdentificationNumber ?? "").toUpperCase() !== vin) continue;
     const offer = Array.isArray(v.offers) ? v.offers[0] : v.offers;
@@ -134,7 +144,7 @@ async function worker() {
       hardGone.push(vin);
     } else if (res.status === 200 && res.body) {
       if (res.body.toUpperCase().includes(vin)) {
-        const price = priceOf(res.body, vin);
+        const price = priceOf(res.body, vin, res.finalUrl ?? l.payload.sourceUrl);
         alive.push({ vin, priceUsd: price ?? undefined });
       } else {
         softGone.push(vin);
