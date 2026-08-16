@@ -33,15 +33,55 @@ Deno.serve(async (req: Request) => {
   if (!presented || (await sha256Hex(presented)) !== INGEST_TOKEN_SHA256) {
     return new Response(JSON.stringify({ error: "forbidden" }), { status: 403 });
   }
+  const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+  const base = Deno.env.get("SUPABASE_URL");
+  const headers = { apikey: key, Authorization: `Bearer ${key}`, "Content-Type": "application/json" };
+
+  // Big payloads must never enter this isolate's memory. The nightly's
+  // listing chunks (7-8MB of JSON) used to be parsed here and re-serialized
+  // for PostgREST — ~100MB+ of transient V8 heap per request — and on
+  // 2026-08-16 back-to-back chunks OOM-killed the worker mid-request:
+  // Cloudflare answered 520 with nothing in the function log (the isolate
+  // died before writing one), then 503s while replacements churned, and
+  // only db-sync's retry ladder got the night through. A client that
+  // already speaks the target function's own parameter shape says so with
+  // x-ingest-rpc and the body streams through untouched; this isolate holds
+  // only the response (a small counts object). The name must be on the
+  // allowlist — the service key forwards to these five functions and
+  // nothing else, the same boundary the parsed paths below enforce.
+  const STREAM_RPCS = new Set([
+    "ingest_listings",
+    "recheck_listings",
+    "ingest_wa_sales",
+    "ingest_vin_variants",
+    "refresh_vin_variants",
+  ]);
+  const streamRpc = req.headers.get("x-ingest-rpc");
+  if (streamRpc) {
+    if (!STREAM_RPCS.has(streamRpc)) {
+      return new Response(JSON.stringify({ error: "unknown rpc" }), { status: 400 });
+    }
+    const r = await fetch(`${base}/rest/v1/rpc/${streamRpc}`, {
+      method: "POST",
+      headers,
+      body: req.body,
+      // Request-body streaming; some fetch implementations reject a stream
+      // body without it, and RequestInit's type doesn't know the field.
+      // deno-lint-ignore no-explicit-any
+      ...({ duplex: "half" } as any),
+    });
+    return new Response(await r.text(), {
+      status: r.status,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
   let body: Record<string, unknown>;
   try {
     body = await req.json();
   } catch {
     return new Response(JSON.stringify({ error: "invalid JSON" }), { status: 400 });
   }
-  const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-  const base = Deno.env.get("SUPABASE_URL");
-  const headers = { apikey: key, Authorization: `Bearer ${key}`, "Content-Type": "application/json" };
   const call = async (fn: string, payload: unknown) => {
     const r = await fetch(`${base}/rest/v1/rpc/${fn}`, {
       method: "POST",

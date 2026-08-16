@@ -135,8 +135,17 @@ cur.completeDomains.push(...completeSet); // row-less complete domains: harmless
 // fails the same way every time, and retrying only delays the real error.
 const TRANSIENT = new Set([429, 500, 502, 503, 504, 520, 521, 522, 523, 524]);
 
-const send = (rows, doms) =>
-  SERVICE_KEY
+// Both modes send the RPC's own parameter shape. The gateway used to get a
+// friendlier {rows, source, ...} body and translate it — which meant parsing
+// 7-8MB of JSON inside a Deno isolate and re-serializing it, ~100MB+ of
+// transient heap per chunk. On 2026-08-16 (after the database-side OOM was
+// fixed) that became the next bottleneck: back-to-back big chunks killed the
+// isolate mid-request (edge 520 with an empty function log, then 503s) and
+// every large chunk needed the retry ladder to land. With x-ingest-rpc the
+// gateway streams this body through to PostgREST untouched.
+const send = (rows, doms) => {
+  const body = JSON.stringify({ _rows: rows, _source: source, _complete_domains: doms, _observed_at: observedAt });
+  return SERVICE_KEY
     ? fetch(`${SUPABASE_URL}/rest/v1/rpc/ingest_listings`, {
         method: "POST",
         headers: {
@@ -144,7 +153,7 @@ const send = (rows, doms) =>
           Authorization: `Bearer ${SERVICE_KEY}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ _rows: rows, _source: source, _complete_domains: doms, _observed_at: observedAt }),
+        body,
       })
     : fetch(`${SUPABASE_URL}/functions/v1/ingest`, {
         method: "POST",
@@ -152,10 +161,12 @@ const send = (rows, doms) =>
           apikey: process.env.SUPABASE_ANON_KEY,
           Authorization: `Bearer ${process.env.SUPABASE_ANON_KEY}`,
           "x-ingest-token": process.env.SUPABASE_INGEST_TOKEN,
+          "x-ingest-rpc": "ingest_listings",
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ rows, source, completeDomains: doms, observedAt }),
+        body,
       });
+};
 
 console.error(
   `db-sync: observed ${observedAt ?? "UNKNOWN (legacy: treated as now)"} — ${listings.length} rows in ${chunks.length} chunk(s): ` +
