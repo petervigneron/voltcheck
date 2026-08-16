@@ -49,6 +49,26 @@ export function dbConfigured(): boolean {
   return Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY);
 }
 
+// One transient 5xx must not decide what shoppers see for the next hour.
+// 2026-08-16: three production deploys in a row shipped the bundled-JSON
+// fallback to the browse grid because a single count request 500d while the
+// nightly sync had the database under load — stale inventory, and the buyback
+// gate silently absent. The walk makes ~60 requests across 8 lanes; at that
+// volume a lone 500 is weather, not an outage, so it gets the scraper's
+// medicine (a short retry ladder) instead of tripping the fallback.
+const RETRY_DELAYS_MS = [2000, 6000];
+async function fetchWithRetry(url: string, init: RequestInit & { next?: { revalidate: number } }) {
+  for (let attempt = 0; ; attempt++) {
+    try {
+      const res = await fetch(url, init);
+      if (res.ok || res.status < 500 || attempt >= RETRY_DELAYS_MS.length) return res;
+    } catch (err) {
+      if (attempt >= RETRY_DELAYS_MS.length) throw err;
+    }
+    await new Promise((r) => setTimeout(r, RETRY_DELAYS_MS[attempt]));
+  }
+}
+
 function headers(): Record<string, string> {
   const key = process.env.SUPABASE_ANON_KEY!;
   return {
@@ -80,7 +100,7 @@ export async function fetchListingsFromDb(): Promise<Listing[] | null> {
     const rows: FeedRow[] = [];
     let after: string | undefined;
     for (;;) {
-      const res = await fetch(`${feedUrl}${range}${after ? `&vin=gt.${after}` : ""}`, {
+      const res = await fetchWithRetry(`${feedUrl}${range}${after ? `&vin=gt.${after}` : ""}`, {
         headers: headers(),
         next: { revalidate: REVALIDATE_SECONDS },
       });
@@ -96,7 +116,7 @@ export async function fetchListingsFromDb(): Promise<Listing[] | null> {
     // The expected total, asked for up front so the read can be checked against
     // it. A short read is the failure mode that hides: every request answers
     // 200, the cars just aren't there.
-    const countRes = await fetch(`${base}/rest/v1/live_listings_feed?select=vin`, {
+    const countRes = await fetchWithRetry(`${base}/rest/v1/live_listings_feed?select=vin`, {
       headers: { ...headers(), Range: "0-0", Prefer: "count=exact" },
       next: { revalidate: REVALIDATE_SECONDS },
     });
