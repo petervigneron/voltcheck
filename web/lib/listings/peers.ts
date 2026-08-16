@@ -4,6 +4,7 @@ import { enrichListing, packIdentity, specTrim } from "./enrich";
 import { trimClaim } from "./trimClaim";
 import { hasRealPrice } from "./price";
 import {
+  askCohortFetchPattern,
   askVsMarket,
   askVsSold,
   buildAskIndex,
@@ -35,7 +36,10 @@ export async function listingPriceSignals(l: Listing): Promise<PriceSignals> {
 
   const [comps, cohort] = await Promise.all([
     fetchCompIndex(),
-    fetchCohortFromDb(l.vin.slice(0, 8), l.year),
+    // The pattern widens the fetch to the whole ask cohort where a VIN digit
+    // is masked (a 2023 Lightning's peers sit on both sides of the GVWR
+    // digit); everywhere else it is the plain vin8 prefix this always was.
+    fetchCohortFromDb(askCohortFetchPattern(l.vin.slice(0, 8)), l.year),
   ]);
 
   // Same derivations as the index build: trim only where trimClaim will

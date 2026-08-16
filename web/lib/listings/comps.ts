@@ -252,7 +252,64 @@ const push = (m: Map<string, AskPeer[]>, k: string, p: AskPeer): void => {
   else m.set(k, [p]);
 };
 
-/** Cohort key is VIN 1-8 + model year — the same key the sold model uses, so
+// ── Not every VIN digit is the vehicle ─────────────────────────────────────
+//
+// VIN 1-8 is the cohort key because it usually pins the version, but a maker
+// can spend one of those positions on something that isn't the car: Ford's
+// position 4 on 1FT trucks is the GVWR/brake class, so one truck's true peer
+// pool splits into pots by axle rating. A 2023 Lightning ER XLT was called
+// "$3k over" against the 4 trucks that shared its GVWR digit while 3 dearer
+// same-pack peers sat across the 1FT6W1EV/1FTVW1EV line; pooled, the claim
+// should have been silent.
+//
+// Merging is only honest where the digit provably isn't price-bearing, so
+// each rule below had to pass three checks against live inventory
+// (2026-08-16, docs/tools) and the maker's own Part 565 filing via vPIC:
+// every merged pot resolves to one enrichment pack identity; pots co-price
+// after mileage adjustment (within-trim where trims exist); and the digit's
+// filed meaning is not a version. What passed:
+//
+//   - Ford 1FT position 4: GVWR/brake class. Pot pairs decode to identical
+//     series/trim/battery; within-trim pot medians agree to noise.
+//   - Rivian position 8, L only: "Launch Edition" is Adventure hardware with
+//     first-year badging, and the pots price $23 apart on n=49. Mapped to A
+//     rather than wildcarded because position 8 is otherwise load-bearing:
+//     E is Explore, a cheaper interior tier.
+//
+// Everything else measured as load-bearing and stays split: VW position 4 is
+// Pro/Pro S (+$1-4k), Polestar position 5 is the Performance pack
+// (+$2.5-3.4k), Honda Prologue position 6 is EX/Touring/Elite (±$3k), Volvo
+// position 8 is Core/Plus/Ultimate (±$1-4.5k), and Mercedes' 4JG-vs-W1K EQE
+// "split" is really one enrichment row wrongly matching both the SUV and the
+// sedan. GM position 6 and Jeep Wrangler position 7 look like trim series
+// and are unverified — do not add a mask without redoing all three checks.
+//
+// The sold model (ev_price_model) stays keyed on the raw VIN 1-8 — its rows
+// are fitted per real prefix, so `key` above still addresses it; only the
+// ask-side peer pools merge here.
+export function askCohortVin8(vin8: string): string {
+  const v = vin8.toUpperCase();
+  if (v.startsWith("1FT")) return `${v.slice(0, 3)}·${v.slice(4)}`;
+  if ((v.startsWith("7FC") || v.startsWith("7PD")) && v[7] === "L") return `${v.slice(0, 7)}A`;
+  return v;
+}
+
+const askKey = (vin8: string, year: number) => key(askCohortVin8(vin8), year);
+
+/** The PostgREST `like` pattern (before the trailing `*`) that fetches every
+ *  listing whose vin8 shares this one's ask cohort — `_` is SQL LIKE's
+ *  single-character wildcard, which PostgREST passes through. A superset is
+ *  fine: an over-fetched row (a Rivian Explore under `7FCTGAA_`) keys to its
+ *  own cohort in buildAskIndex and never enters the subject's pool. */
+export function askCohortFetchPattern(vin8: string): string {
+  const v = vin8.toUpperCase();
+  if (v.startsWith("1FT")) return `${v.slice(0, 3)}_${v.slice(4)}`;
+  if ((v.startsWith("7FC") || v.startsWith("7PD")) && (v[7] === "A" || v[7] === "L")) return `${v.slice(0, 7)}_`;
+  return v;
+}
+
+/** Cohort key is VIN 1-8 + model year — with the non-identity digits above
+ *  masked, so a GVWR class can't split one truck's market into pots — and
  *  the pack code in position 8 keeps Extended and Standard Range apart. */
 export function buildAskIndex(
   listings: {
@@ -270,7 +327,7 @@ export function buildAskIndex(
     if (!l.vin || l.vin.length < 8) continue;
     if (l.mileage == null || l.mileage < 2000 || l.mileage > 200_000) continue;
     if (!Number.isFinite(l.priceUsd) || l.priceUsd < 1000) continue;
-    const k = key(l.vin.slice(0, 8), l.year);
+    const k = askKey(l.vin.slice(0, 8), l.year);
     const peer: AskPeer = {
       vin: l.vin.toUpperCase(),
       mileage: l.mileage,
@@ -303,7 +360,7 @@ export function cohortIdentityMixed(
   if (!vin || vin.length < 8) return false;
   const ids = new Set<string>();
   if (identity) ids.add(identity);
-  for (const p of asks.wide.get(key(vin.slice(0, 8), year)) ?? []) if (p.identity) ids.add(p.identity);
+  for (const p of asks.wide.get(askKey(vin.slice(0, 8), year)) ?? []) if (p.identity) ids.add(p.identity);
   return ids.size > 1;
 }
 
@@ -361,7 +418,7 @@ export function askVsMarket(
   if (mileage == null || mileage < 2000 || mileage > 200_000) return undefined;
   if (!Number.isFinite(askUsd) || askUsd <= 0) return undefined;
 
-  const k = key(vin.slice(0, 8), year);
+  const k = askKey(vin.slice(0, 8), year);
   const self = vin.toUpperCase();
   const comparable = (p: AskPeer) =>
     p.vin !== self && Math.abs(p.mileage - mileage) <= MAX_PEER_MILE_GAP;
@@ -372,8 +429,15 @@ export function askVsMarket(
   // Depreciation per mile is the part of the sold fit that survives outside
   // the fitted band — the intercept is what a thin cohort gets wrong. So we
   // borrow the slope to move peers to this car's mileage even when askVsSold
-  // itself has gone quiet, and say which slope we used.
-  const c = comps.get(k);
+  // itself has gone quiet, and say which slope we used. The sold model is
+  // fitted per REAL vin8, so a masked cohort may span several fitted rows;
+  // the one with the most sales speaks for the pool. For an unmasked cohort
+  // every member shares this car's prefix and this is exactly the old lookup.
+  let c: CompCohort | undefined;
+  for (const v8 of new Set([vin.slice(0, 8), ...(asks.wide.get(k) ?? []).map((p) => p.vin.slice(0, 8))])) {
+    const cand = comps.get(key(v8, year));
+    if (cand && (!c || cand.salesN > c.salesN)) c = cand;
+  }
   const slopeFromSales = c != null && Number.isFinite(c.usdPerMile) && c.usdPerMile < 0;
   const perMile = slopeFromSales ? c!.usdPerMile : FALLBACK_USD_PER_MILE;
   const medianAt = (ps: AskPeer[]) =>

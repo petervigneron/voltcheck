@@ -167,15 +167,20 @@ export async function fetchListingByIdFromDb(id: string): Promise<Listing | null
   }
 }
 
-/** One listing's price-comparison cohort: every live listing sharing its
- *  VIN 1-8 and model year. This is the detail page's slice of the peer pool
- *  the browse index builds from the whole feed (lib/listings/peers.ts) —
- *  fetched narrow so the page keeps its one-row egress discipline instead of
- *  paying for 59k cars to price one. The prefix filter is a range scan on
- *  the vin primary key; cohorts run a handful to a few hundred rows, well
- *  under the 1000-row page. Empty/null on failure: the page then shows no
- *  ask-side claim, which is the honest direction to fail in. */
-export async function fetchCohortFromDb(vinPrefix8: string, year: number): Promise<Listing[] | null> {
+/** One listing's price-comparison cohort: every live listing whose VIN 1-8
+ *  shares its ask-cohort key for this model year. The caller passes a SQL
+ *  LIKE pattern over positions 1-8 (comps.ts askCohortFetchPattern) — a
+ *  plain prefix for most cars, `_` wildcards where a maker spent a VIN digit
+ *  on something that isn't the vehicle (Ford's GVWR class in position 4).
+ *  This is the detail page's slice of the peer pool the browse index builds
+ *  from the whole feed (lib/listings/peers.ts) — fetched narrow so the page
+ *  keeps its one-row egress discipline instead of paying for 59k cars to
+ *  price one. Postgres range-scans the vin primary key on the pattern's
+ *  literal prefix and filters the rest; cohorts run a handful to a few
+ *  hundred rows, well under the 1000-row page. Empty/null on failure: the
+ *  page then shows no ask-side claim, which is the honest direction to fail
+ *  in. */
+export async function fetchCohortFromDb(vinPattern8: string, year: number): Promise<Listing[] | null> {
   if (!dbConfigured()) return null;
   const base = process.env.SUPABASE_URL!.replace(/\/$/, "");
   try {
@@ -189,7 +194,7 @@ export async function fetchCohortFromDb(vinPrefix8: string, year: number): Promi
     for (let attempt = 0; ; attempt++) {
       res = await fetch(
         `${base}/rest/v1/live_listings_feed?select=vin,payload,first_seen_at,last_seen_at,prev_price_usd,price_changed_at,buyback_disclosed&vin=like.${encodeURIComponent(
-          vinPrefix8.toUpperCase()
+          vinPattern8.toUpperCase()
         )}*&payload->>year=eq.${year}&limit=${PAGE}`,
         { headers: headers(), next: { revalidate: REVALIDATE_SECONDS } }
       );
