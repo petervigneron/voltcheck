@@ -33,14 +33,47 @@
 // name for every dealer nationwide (verified 100% coverage 2026-08-16). We fetch
 // it once per run and map dealerId → dealerName.
 //
-// DEALER CITY/STATE/ZIP stay blank, by constraint not oversight: the only BMW
-// endpoint that geocodes a dealer is the "Find a Dealer" directory at
-// /api/dealers/{zip}/{radius}, and bmwusa.com/robots.txt says `Disallow: /api`
-// (wildcard UA) — so it is off-limits. The legacy /bin/dealerLocatorServlet is
-// robots-clean but is a dead stub (returns "Not found" for every parameter form,
-// 405 on POST); the live directory moved behind /api. We do not scrape the
-// per-vehicle dealer VDP for an address. So BMW ships dealerName only.
+// DEALER CITY/STATE/ZIP come from BMW's "Find a Dealer" directory
+// (/api/dealers/{zip}/{radius}), whose CenterId is exactly this inventory's
+// dealerId. That path is Disallow:/api in robots.txt, and the free geocoders
+// that could substitute for it are all either robots-gated or key-gated and top
+// out ~55% with wrong-city errors (Nominatim placed "BMW of El Paso" in
+// Colorado). So, by explicit owner decision (2026-08-16), the directory is
+// treated as the public-address API it is and read OUTSIDE the crawler's robots
+// gate — but ONLY in build-bmw-dealer-geo.mjs, an occasional refresh that
+// enumerates the (static) dealers into registry/bmw-dealer-geo.json. The nightly
+// lane never touches /api; it just reads that committed map. Owner rule: a car
+// is never listed without a location, so a row whose dealer has no directory
+// address is WITHHELD (see collect() in pullBmw).
+import { readFileSync } from "node:fs";
 import { politePostJson } from "../http.mjs";
+
+// Committed dealer-geo map: CenterId(dealerId) → {city, state, zip}. Built by
+// build-bmw-dealer-geo.mjs. Loaded once; an empty map (file missing) disables
+// the withhold rule rather than silently dropping the whole lane.
+function loadDealerGeo() {
+  try {
+    const j = JSON.parse(readFileSync(new URL("../../registry/bmw-dealer-geo.json", import.meta.url), "utf-8"));
+    const m = new Map();
+    // overrides (hand-verified renames the directory is stale on) win over the
+    // directory sweep — see the file's _overridesComment.
+    for (const src of [j.dealers, j.overrides]) for (const [id, g] of Object.entries(src ?? {})) if (g?.state) m.set(String(id), g);
+    return m;
+  } catch {
+    return new Map();
+  }
+}
+const DEALER_GEO = loadDealerGeo();
+
+// Order-insensitive dealer-name key, for the fallback when the inventory
+// dealerId doesn't match a directory CenterId (the directory sometimes lists the
+// same store under a name variant — "Santa Monica BMW" vs "BMW of Santa Monica").
+// Drop "BMW"/filler, sort the remaining tokens, so word order and "of" don't matter.
+const FILLER = /^(bmw|of|the|inc|llc|co|automotive|motors|motor|auto|group|imports|motorcars|ccrc|certified|preowned|pre|owned|mini)$/;
+const nameKey = (s) =>
+  String(s ?? "").toLowerCase().replace(/[^a-z0-9\s]/g, " ").split(/\s+/).filter((t) => t && !FILLER.test(t)).sort().join("");
+const GEO_BY_NAME = new Map();
+for (const g of DEALER_GEO.values()) { const k = nameKey(g.name); if (k && !GEO_BY_NAME.has(k)) GEO_BY_NAME.set(k, g); }
 
 export const BMW = {
   key: "bmw",
@@ -122,8 +155,8 @@ function toRecord(v, dealerNames) {
     driveLine: drive(v.engineDriveType?.name),
     exteriorColor: v.exteriorGenericColor || undefined,
     interiorColor: v.interiorGenericColor || undefined,
-    // Coded dealerId → real dealer name (getFilterableOptions directory); city/
-    // state/zip stay blank (the geocoding directory is robots-disallowed).
+    // Coded dealerId → real dealer name (getFilterableOptions directory).
+    // city/state/zip are attached by collect() from the committed geo map.
     dealerName: dealerNames?.get(String(v.dealerId ?? "")) || undefined,
     condition: "new",
     imageUrl: img,
@@ -200,11 +233,33 @@ export async function pullBmw({ log = () => {} } = {}) {
   report.notes.push(`national BEV count ${total} across ${totalPages} pages`);
   log(`bmw: ${total} EVs, ${totalPages} pages`);
 
+  // Attach dealer geo and enforce the owner rule: no location → not listed.
+  // If the whole map is missing (build never ran / file unreadable) we do NOT
+  // drop the lane — that's a config error, not a data condition — so we ship
+  // geo-less and flag it loudly instead.
+  const enforceGeo = DEALER_GEO.size > 0;
   const byVin = new Map();
+  let withheld = 0;
+  const withheldDealers = new Set();
   const collect = (items) => {
     for (const v of items ?? []) {
       const rec = toRecord(v, dealerNames);
-      if (rec) byVin.set(rec.vin, rec);
+      if (!rec) continue;
+      const id = String(v.dealerId ?? "");
+      // dealerId → directory address; else fall back to an order-insensitive
+      // match on the dealer name (handles the id/name-variant mismatches).
+      let geo = DEALER_GEO.get(id);
+      if (!geo) { const nm = dealerNames.get(id); if (nm) geo = GEO_BY_NAME.get(nameKey(nm)); }
+      if (geo) {
+        rec.city = geo.city || undefined;
+        rec.state = geo.state;
+        rec.zip = geo.zip || undefined;
+      } else if (enforceGeo) {
+        withheld++;
+        withheldDealers.add(String(v.dealerId ?? ""));
+        continue; // no address for this dealer — withhold the car
+      }
+      byVin.set(rec.vin, rec);
     }
   };
   collect(first.result);
@@ -218,10 +273,18 @@ export async function pullBmw({ log = () => {} } = {}) {
 
   report.evs = [...byVin.values()];
   report.vehiclePages = report.fetched;
+  if (!enforceGeo) {
+    report.errors.push("registry/bmw-dealer-geo.json missing/empty — run build-bmw-dealer-geo.mjs; shipping geo-less this run");
+  } else {
+    report.notes.push(`dealer geo: ${DEALER_GEO.size} in map; withheld ${withheld} cars across ${withheldDealers.size} dealers lacking an address`);
+    log(`bmw: withheld ${withheld} cars (no dealer address) across ${withheldDealers.size} dealers`);
+  }
   // Completeness (see gm.mjs): every page fetched cleanly AND yield over floor.
-  // Live drift between the reported count and collected VINs is expected.
+  // Live drift between the reported count and collected VINs is expected. Note
+  // the floor comparison uses the reported total (pre-geo-withhold) — a large
+  // geo-withhold would show as a shortfall, which correctly flags a stale map.
   const shortfall = total > 0 && byVin.size < total * 0.9;
-  if (shortfall) report.errors.push(`collected ${byVin.size} of ${total} — paging shortfall`);
+  if (shortfall) report.errors.push(`collected ${byVin.size} of ${total} — paging shortfall or stale geo map`);
   report.truncated = report.errors.length > 0 || byVin.size < BMW.minExpected;
   return report;
 }

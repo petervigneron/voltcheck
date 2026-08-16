@@ -1,0 +1,2241 @@
+{
+ "_comment": "BMW dealer geo (CenterId → city/state/zip) from bmwusa.com/api/dealers. Regenerate with `node build-bmw-dealer-geo.mjs`. Owner-approved robots exception, see script header.",
+ "_built": "2026-08-16",
+ "dealers": {
+  "10022": {
+   "name": "Cardenas BMW",
+   "city": "Harlingen",
+   "state": "TX",
+   "zip": "78550"
+  },
+  "10695": {
+   "name": "BMW of Bayside",
+   "city": "Douglaston",
+   "state": "NY",
+   "zip": "11362"
+  },
+  "10698": {
+   "name": "Sandy Sansing BMW",
+   "city": "Pensacola",
+   "state": "FL",
+   "zip": "32505"
+  },
+  "10699": {
+   "name": "BMW of Peabody",
+   "city": "Peabody",
+   "state": "MA",
+   "zip": "01960"
+  },
+  "10729": {
+   "name": "Chapman BMW CCRC",
+   "city": "Tempe",
+   "state": "AZ",
+   "zip": "85283"
+  },
+  "10731": {
+   "name": "East Bay BMW",
+   "city": "Pleasanton",
+   "state": "CA",
+   "zip": "94588"
+  },
+  "10732": {
+   "name": "BMW of Bellevue",
+   "city": "Bellevue",
+   "state": "WA",
+   "zip": "98005"
+  },
+  "10736": {
+   "name": "Fields BMW - Lakeland",
+   "city": "Lakeland",
+   "state": "FL",
+   "zip": "33809"
+  },
+  "11010": {
+   "name": "Peterson BMW of Boise",
+   "city": "Boise",
+   "state": "ID",
+   "zip": "83704"
+  },
+  "13761": {
+   "name": "Bert Ogden BMW",
+   "city": "McAllen",
+   "state": "TX",
+   "zip": "78501"
+  },
+  "15268": {
+   "name": "Flow BMW CCRC",
+   "city": "Winston Salem",
+   "state": "NC",
+   "zip": "27127"
+  },
+  "15673": {
+   "name": "Moses BMW",
+   "city": "Saint Albans",
+   "state": "WV",
+   "zip": "25177"
+  },
+  "16345": {
+   "name": "BMW of Toledo",
+   "city": "Toledo",
+   "state": "OH",
+   "zip": "43617"
+  },
+  "16378": {
+   "name": "Sale BMW",
+   "city": "Kinston",
+   "state": "NC",
+   "zip": "28504"
+  },
+  "16418": {
+   "name": "Winslow BMW of Colorado Springs",
+   "city": "Colorado Springs",
+   "state": "CO",
+   "zip": "80918"
+  },
+  "16694": {
+   "name": "Grayson BMW CCRC",
+   "city": "Knoxville",
+   "state": "TN",
+   "zip": "37923"
+  },
+  "16718": {
+   "name": "The Automaster",
+   "city": "Shelburne",
+   "state": "VT",
+   "zip": "05482"
+  },
+  "16734": {
+   "name": "Tom Hesser BMW",
+   "city": "Scranton",
+   "state": "PA",
+   "zip": "18509"
+  },
+  "16815": {
+   "name": "Tulley BMW CCRC",
+   "city": "Nashua",
+   "state": "NH",
+   "zip": "03060"
+  },
+  "16856": {
+   "name": "BMW of Morristown",
+   "city": "Morristown",
+   "state": "NJ",
+   "zip": "07960"
+  },
+  "17966": {
+   "name": "New Century BMW",
+   "city": "Alhambra",
+   "state": "CA",
+   "zip": "91801"
+  },
+  "17990": {
+   "name": "Steve Thomas BMW",
+   "city": "Camarillo",
+   "state": "CA",
+   "zip": "93010"
+  },
+  "20133": {
+   "name": "International Autos",
+   "city": "West Allis",
+   "state": "WI",
+   "zip": "53227"
+  },
+  "20173": {
+   "name": "New Country BMW",
+   "city": "Hartford",
+   "state": "CT",
+   "zip": "06120"
+  },
+  "20268": {
+   "name": "Century West BMW",
+   "city": "North Hollywood",
+   "state": "CA",
+   "zip": "91602"
+  },
+  "20412": {
+   "name": "Capital BMW",
+   "city": "Tallahassee",
+   "state": "FL",
+   "zip": "32304"
+  },
+  "20415": {
+   "name": "Bachrodt BMW",
+   "city": "Rockford",
+   "state": "IL",
+   "zip": "61112"
+  },
+  "20416": {
+   "name": "BMW of Springfield",
+   "city": "Springfield",
+   "state": "MO",
+   "zip": "65809"
+  },
+  "20626": {
+   "name": "Braman BMW CCRC",
+   "city": "Miami",
+   "state": "FL",
+   "zip": "33137"
+  },
+  "20635": {
+   "name": "Preston BMW",
+   "city": "Boardman",
+   "state": "OH",
+   "zip": "44512"
+  },
+  "20648": {
+   "name": "BMW of Gwinnett Place",
+   "city": "Duluth",
+   "state": "GA",
+   "zip": "30096"
+  },
+  "20721": {
+   "name": "Peake BMW",
+   "city": "Kenner",
+   "state": "LA",
+   "zip": "70062"
+  },
+  "20741": {
+   "name": "BMW North Scottsdale",
+   "city": "Phoenix",
+   "state": "AZ",
+   "zip": "85054"
+  },
+  "20989": {
+   "name": "Orange County BMW",
+   "city": "Harriman",
+   "state": "NY",
+   "zip": "10926"
+  },
+  "21102": {
+   "name": "BMW of Bridgewater",
+   "city": "Bridgewater",
+   "state": "NJ",
+   "zip": "08807"
+  },
+  "21181": {
+   "name": "Plaza Motor Company CCRC",
+   "city": "Saint Louis",
+   "state": "MO",
+   "zip": "63146"
+  },
+  "21183": {
+   "name": "Gault Auto Sport BMW",
+   "city": "Endicott",
+   "state": "NY",
+   "zip": "13760"
+  },
+  "21188": {
+   "name": "Irvine BMW",
+   "city": "Irvine",
+   "state": "CA",
+   "zip": "92618"
+  },
+  "21233": {
+   "name": "BMW of Chattanooga",
+   "city": "Chattanooga",
+   "state": "TN",
+   "zip": "37421"
+  },
+  "21234": {
+   "name": "BMW of Nashville CCRC",
+   "city": "Nashville",
+   "state": "TN",
+   "zip": "37228"
+  },
+  "21294": {
+   "name": "BMW of Henderson",
+   "city": "Henderson",
+   "state": "NV",
+   "zip": "89014"
+  },
+  "21295": {
+   "name": "BMW of Turnersville",
+   "city": "Turnersville",
+   "state": "NJ",
+   "zip": "08012"
+  },
+  "21359": {
+   "name": "Park Place BMW",
+   "city": "Rochester",
+   "state": "MN",
+   "zip": "55901"
+  },
+  "21390": {
+   "name": "Beverly Hills BMW",
+   "city": "Los Angeles",
+   "state": "CA",
+   "zip": "90036"
+  },
+  "21470": {
+   "name": "Century BMW CCRC",
+   "city": "Greenville",
+   "state": "SC",
+   "zip": "29607"
+  },
+  "21471": {
+   "name": "BMW of Houston North CCRC",
+   "city": "Houston",
+   "state": "TX",
+   "zip": "77073"
+  },
+  "21538": {
+   "name": "BMW of Idaho Falls",
+   "city": "Idaho Falls",
+   "state": "ID",
+   "zip": "83402"
+  },
+  "21553": {
+   "name": "Coggin BMW Treasure Coast",
+   "city": "Fort Pierce",
+   "state": "FL",
+   "zip": "34982"
+  },
+  "21608": {
+   "name": "Richmond BMW",
+   "city": "Richmond",
+   "state": "VA",
+   "zip": "23294"
+  },
+  "21613": {
+   "name": "BMW of Spokane",
+   "city": "Spokane",
+   "state": "WA",
+   "zip": "99207"
+  },
+  "21614": {
+   "name": "BMW of the Hudson Valley",
+   "city": "Poughkeepsie",
+   "state": "NY",
+   "zip": "12601"
+  },
+  "21616": {
+   "name": "Valley BMW",
+   "city": "Modesto",
+   "state": "CA",
+   "zip": "95356"
+  },
+  "21618": {
+   "name": "BMW of Mountain View",
+   "city": "Mountain View",
+   "state": "CA",
+   "zip": "94040"
+  },
+  "21850": {
+   "name": "Global Imports",
+   "city": "Atlanta",
+   "state": "GA",
+   "zip": "30339"
+  },
+  "21851": {
+   "name": "BMW of Birmingham CCRC",
+   "city": "Irondale",
+   "state": "AL",
+   "zip": "35210"
+  },
+  "21853": {
+   "name": "BMW of Beaumont",
+   "city": "Beaumont",
+   "state": "TX",
+   "zip": "77701"
+  },
+  "22006": {
+   "name": "BMW of Fairfax",
+   "city": "Fairfax",
+   "state": "VA",
+   "zip": "22031"
+  },
+  "22081": {
+   "name": "BMW of Fort Myers",
+   "city": "Fort Myers",
+   "state": "FL",
+   "zip": "33908"
+  },
+  "22083": {
+   "name": "Stevens Creek BMW",
+   "city": "Santa Clara",
+   "state": "CA",
+   "zip": "95051"
+  },
+  "22180": {
+   "name": "Valencia BMW",
+   "city": "Valencia",
+   "state": "CA",
+   "zip": "91355"
+  },
+  "22227": {
+   "name": "Paul Miller BMW CCRC",
+   "city": "Wayne",
+   "state": "NJ",
+   "zip": "07470"
+  },
+  "22800": {
+   "name": "Competition BMW of Smithtown",
+   "city": "Saint James",
+   "state": "NY",
+   "zip": "11780"
+  },
+  "22819": {
+   "name": "BMW of Macon",
+   "city": "Macon",
+   "state": "GA",
+   "zip": "31210"
+  },
+  "22820": {
+   "name": "BMW of San Luis Obispo",
+   "city": "San Luis Obispo",
+   "state": "CA",
+   "zip": "93405"
+  },
+  "23071": {
+   "name": "BMW of Lincoln CCRC",
+   "city": "Lincoln",
+   "state": "NE",
+   "zip": "68521"
+  },
+  "23200": {
+   "name": "Continental BMW of Darien",
+   "city": "Darien",
+   "state": "CT",
+   "zip": "06820"
+  },
+  "23418": {
+   "name": "Flemington BMW",
+   "city": "Flemington",
+   "state": "NJ",
+   "zip": "08822"
+  },
+  "23779": {
+   "name": "Hansel BMW of Santa Rosa CCRC",
+   "city": "Santa Rosa",
+   "state": "CA",
+   "zip": "95407"
+  },
+  "23805": {
+   "name": "BMW of Fort Walton Beach",
+   "city": "Fort Walton Beach",
+   "state": "FL",
+   "zip": "32547"
+  },
+  "23968": {
+   "name": "BMW of Peoria",
+   "city": "Peoria",
+   "state": "IL",
+   "zip": "61615"
+  },
+  "24024": {
+   "name": "Autohaus BMW of Maplewood",
+   "city": "Saint Louis",
+   "state": "MO",
+   "zip": "63143"
+  },
+  "24335": {
+   "name": "BMW of San Diego",
+   "city": "San Diego",
+   "state": "CA",
+   "zip": "92111"
+  },
+  "24336": {
+   "name": "BMW Seattle",
+   "city": "Seattle",
+   "state": "WA",
+   "zip": "98134"
+  },
+  "24618": {
+   "name": "BMW of Bridgeport",
+   "city": "Bridgeport",
+   "state": "CT",
+   "zip": "06606"
+  },
+  "24781": {
+   "name": "BMW of Bakersfield",
+   "city": "Bakersfield",
+   "state": "CA",
+   "zip": "93313"
+  },
+  "24856": {
+   "name": "BMW of Fremont",
+   "city": "Fremont",
+   "state": "CA",
+   "zip": "94538"
+  },
+  "24987": {
+   "name": "Laurel BMW of Westmont",
+   "city": "Westmont",
+   "state": "IL",
+   "zip": "60559"
+  },
+  "25000": {
+   "name": "Critz BMW",
+   "city": "Savannah",
+   "state": "GA",
+   "zip": "31406"
+  },
+  "25244": {
+   "name": "Checkered Flag BMW",
+   "city": "Virginia Beach",
+   "state": "VA",
+   "zip": "23462"
+  },
+  "25770": {
+   "name": "Wide World BMW",
+   "city": "Spring Valley",
+   "state": "NY",
+   "zip": "10977"
+  },
+  "25786": {
+   "name": "BMW of Tulsa",
+   "city": "Tulsa",
+   "state": "OK",
+   "zip": "74133"
+  },
+  "25803": {
+   "name": "MAG BMW of Dublin",
+   "city": "Dublin",
+   "state": "OH",
+   "zip": "43017"
+  },
+  "26167": {
+   "name": "BMW of Austin CCRC",
+   "city": "Round Rock",
+   "state": "TX",
+   "zip": "78665"
+  },
+  "26200": {
+   "name": "Daniels BMW CCRC",
+   "city": "Allentown",
+   "state": "PA",
+   "zip": "18102"
+  },
+  "26273": {
+   "name": "BMW of Columbia",
+   "city": "Columbia",
+   "state": "MO",
+   "zip": "65203"
+  },
+  "26338": {
+   "name": "BMW of Southpoint CCRC",
+   "city": "Durham",
+   "state": "NC",
+   "zip": "27703"
+  },
+  "26419": {
+   "name": "Bill Pearce BMW CCRC",
+   "city": "Reno",
+   "state": "NV",
+   "zip": "89502"
+  },
+  "26540": {
+   "name": "Athens BMW",
+   "city": "Athens",
+   "state": "GA",
+   "zip": "30606"
+  },
+  "26700": {
+   "name": "Sun Motor Cars BMW CCRC",
+   "city": "Mechanicsburg",
+   "state": "PA",
+   "zip": "17050"
+  },
+  "26701": {
+   "name": "BMW of Columbus",
+   "city": "Columbus",
+   "state": "GA",
+   "zip": "31909"
+  },
+  "26703": {
+   "name": "BMW of Warwick CCRC",
+   "city": "Warwick",
+   "state": "RI",
+   "zip": "02886"
+  },
+  "26711": {
+   "name": "BMW of Roxbury",
+   "city": "Kenvil (Roxbury)",
+   "state": "NJ",
+   "zip": "07847"
+  },
+  "26713": {
+   "name": "Apple BMW of York",
+   "city": "York",
+   "state": "PA",
+   "zip": "17404"
+  },
+  "26715": {
+   "name": "Nalley BMW of Decatur CCRC",
+   "city": "Doraville",
+   "state": "GA",
+   "zip": "30360"
+  },
+  "26717": {
+   "name": "BMW of Bloomfield",
+   "city": "Bloomfield",
+   "state": "NJ",
+   "zip": "07003"
+  },
+  "26718": {
+   "name": "BMW Santa Barbara",
+   "city": "Santa Barbara",
+   "state": "CA",
+   "zip": "93105"
+  },
+  "26725": {
+   "name": "Bobby Rahal BMW of South Hills",
+   "city": "Canonsburg",
+   "state": "PA",
+   "zip": "15317"
+  },
+  "26726": {
+   "name": "BMW of Albany",
+   "city": "Albany",
+   "state": "GA",
+   "zip": "31705"
+  },
+  "26731": {
+   "name": "BMW of Dallas",
+   "city": "Dallas",
+   "state": "TX",
+   "zip": "75209"
+  },
+  "26747": {
+   "name": "Momentum BMW",
+   "city": "Houston",
+   "state": "TX",
+   "zip": "77074"
+  },
+  "26776": {
+   "name": "Thompson BMW",
+   "city": "Doylestown",
+   "state": "PA",
+   "zip": "18901"
+  },
+  "26792": {
+   "name": "Bill Jacobs BMW",
+   "city": "Naperville",
+   "state": "IL",
+   "zip": "60540"
+  },
+  "26840": {
+   "name": "Autoplex BMW",
+   "city": "Amarillo",
+   "state": "TX",
+   "zip": "79109"
+  },
+  "26865": {
+   "name": "Kimberly BMW of Davenport",
+   "city": "Davenport",
+   "state": "IA",
+   "zip": "52806"
+  },
+  "27600": {
+   "name": "Dreyer & Reinbold, Inc.",
+   "city": "Greenwood",
+   "state": "IN",
+   "zip": "46143"
+  },
+  "28628": {
+   "name": "Advantage BMW",
+   "city": "Houston",
+   "state": "TX",
+   "zip": "77002"
+  },
+  "28786": {
+   "name": "BMW of Anchorage",
+   "city": "Anchorage",
+   "state": "AK",
+   "zip": "99501"
+  },
+  "29187": {
+   "name": "BMW of Montgomery",
+   "city": "Montgomery",
+   "state": "AL",
+   "zip": "36117"
+  },
+  "29189": {
+   "name": "BMW of Okemos",
+   "city": "Okemos",
+   "state": "MI",
+   "zip": "48864"
+  },
+  "29461": {
+   "name": "BMW of Stratham",
+   "city": "Stratham",
+   "state": "NH",
+   "zip": "03885"
+  },
+  "29672": {
+   "name": "BMW of Des Moines CCRC",
+   "city": "Urbandale",
+   "state": "IA",
+   "zip": "50322"
+  },
+  "29867": {
+   "name": "Fields BMW of Daytona",
+   "city": "Daytona Beach",
+   "state": "FL",
+   "zip": "32124"
+  },
+  "29869": {
+   "name": "BMW of Humboldt Bay",
+   "city": "McKinleyville",
+   "state": "CA",
+   "zip": "95519"
+  },
+  "30374": {
+   "name": "BMW of Atlantic City",
+   "city": "Egg Harbor Township",
+   "state": "NJ",
+   "zip": "08234"
+  },
+  "30414": {
+   "name": "Motorwerks BMW",
+   "city": "Bloomington",
+   "state": "MN",
+   "zip": "55420"
+  },
+  "30462": {
+   "name": "BMW of Freehold",
+   "city": "Freehold",
+   "state": "NJ",
+   "zip": "07728"
+  },
+  "30821": {
+   "name": "BMW of Minnetonka",
+   "city": "Minnetonka",
+   "state": "MN",
+   "zip": "55391"
+  },
+  "30822": {
+   "name": "BMW of Monterey",
+   "city": "Seaside",
+   "state": "CA",
+   "zip": "93955"
+  },
+  "30955": {
+   "name": "BMW of South Atlanta",
+   "city": "Union City",
+   "state": "GA",
+   "zip": "30291"
+  },
+  "30956": {
+   "name": "BMW Encinitas",
+   "city": "Encinitas",
+   "state": "CA",
+   "zip": "92024"
+  },
+  "31015": {
+   "name": "Baron BMW CCRC",
+   "city": "Merriam",
+   "state": "KS",
+   "zip": "66203"
+  },
+  "31026": {
+   "name": "BMW of Sudbury Wholesale Parts Annex",
+   "city": "Holliston",
+   "state": "MA",
+   "zip": "01746"
+  },
+  "31384": {
+   "name": "BMW of Columbia",
+   "city": "Columbia",
+   "state": "SC",
+   "zip": "29203"
+  },
+  "31638": {
+   "name": "BMW of Mt. Laurel CCRC",
+   "city": "Maple Shade",
+   "state": "NJ",
+   "zip": "08052"
+  },
+  "31642": {
+   "name": "BMW of Monrovia",
+   "city": "Monrovia",
+   "state": "CA",
+   "zip": "91016"
+  },
+  "31643": {
+   "name": "Long Beach BMW",
+   "city": "Signal Hill",
+   "state": "CA",
+   "zip": "90755"
+  },
+  "31663": {
+   "name": "BMW of Dayton",
+   "city": "Dayton",
+   "state": "OH",
+   "zip": "45414"
+  },
+  "31833": {
+   "name": "BMW of Northwest Arkansas",
+   "city": "Bentonville",
+   "state": "AR",
+   "zip": "72712"
+  },
+  "32082": {
+   "name": "BMW Tucson",
+   "city": "Tucson",
+   "state": "AZ",
+   "zip": "85705"
+  },
+  "32111": {
+   "name": "BMW of West Springfield",
+   "city": "West Springfield",
+   "state": "MA",
+   "zip": "01089"
+  },
+  "32146": {
+   "name": "BMW of Annapolis CCRC",
+   "city": "Annapolis",
+   "state": "MD",
+   "zip": "21409"
+  },
+  "32147": {
+   "name": "BMW of Sarasota",
+   "city": "Sarasota",
+   "state": "FL",
+   "zip": "34233"
+  },
+  "32467": {
+   "name": "BMW of El Cajon",
+   "city": "El Cajon",
+   "state": "CA",
+   "zip": "92020"
+  },
+  "32652": {
+   "name": "Peter Pan BMW",
+   "city": "San Mateo",
+   "state": "CA",
+   "zip": "94403"
+  },
+  "32923": {
+   "name": "Bluegrass BMW",
+   "city": "Paducah",
+   "state": "KY",
+   "zip": "42001"
+  },
+  "33147": {
+   "name": "BMW of Asheville",
+   "city": "Arden",
+   "state": "NC",
+   "zip": "28704"
+  },
+  "33326": {
+   "name": "BMW of Westchester",
+   "city": "White Plains",
+   "state": "NY",
+   "zip": "10607"
+  },
+  "33540": {
+   "name": "BMW of Traverse City",
+   "city": "Traverse City",
+   "state": "MI",
+   "zip": "49684"
+  },
+  "34400": {
+   "name": "Herb Chambers BMW",
+   "city": "Boston",
+   "state": "MA",
+   "zip": "02134"
+  },
+  "34520": {
+   "name": "BMW of Rochester",
+   "city": "Rochester",
+   "state": "NY",
+   "zip": "14623"
+  },
+  "34521": {
+   "name": "BMW of Southampton",
+   "city": "Southampton",
+   "state": "NY",
+   "zip": "11968"
+  },
+  "34537": {
+   "name": "BMW of Mobile CCRC",
+   "city": "Mobile",
+   "state": "AL",
+   "zip": "36606"
+  },
+  "34559": {
+   "name": "BMW of Newton",
+   "city": "Newton",
+   "state": "NJ",
+   "zip": "07860"
+  },
+  "34748": {
+   "name": "BMW of Gainesville",
+   "city": "Gainesville",
+   "state": "FL",
+   "zip": "32609"
+  },
+  "34753": {
+   "name": "BMW of Reading CCRC",
+   "city": "Reading",
+   "state": "PA",
+   "zip": "19611"
+  },
+  "34821": {
+   "name": "BMW of Ontario",
+   "city": "Ontario",
+   "state": "CA",
+   "zip": "91761"
+  },
+  "34883": {
+   "name": "BMW of Schererville",
+   "city": "Schererville",
+   "state": "IN",
+   "zip": "46375"
+  },
+  "34909": {
+   "name": "BMW of Bloomington CCRC",
+   "city": "Bloomington",
+   "state": "IL",
+   "zip": "61704"
+  },
+  "34910": {
+   "name": "P & W BMW",
+   "city": "Pittsburgh",
+   "state": "PA",
+   "zip": "15213"
+  },
+  "35071": {
+   "name": "Jackie Cooper Imports",
+   "city": "Edmond",
+   "state": "OK",
+   "zip": "73013"
+  },
+  "35121": {
+   "name": "BMW of Sioux Falls",
+   "city": "Sioux Falls",
+   "state": "SD",
+   "zip": "57107"
+  },
+  "35744": {
+   "name": "BMW of Murrieta",
+   "city": "Murrieta",
+   "state": "CA",
+   "zip": "92562"
+  },
+  "35797": {
+   "name": "Passport BMW CCRC",
+   "city": "Suitland",
+   "state": "MD",
+   "zip": "20746"
+  },
+  "36021": {
+   "name": "Kuni BMW",
+   "city": "Beaverton",
+   "state": "OR",
+   "zip": "97005"
+  },
+  "36270": {
+   "name": "BMW of El Paso CCRC",
+   "city": "El Paso",
+   "state": "TX",
+   "zip": "79936"
+  },
+  "36322": {
+   "name": "Taylor BMW",
+   "city": "Evans",
+   "state": "GA",
+   "zip": "30809"
+  },
+  "36459": {
+   "name": "BMW Portland",
+   "city": "Portland",
+   "state": "OR",
+   "zip": "97201"
+  },
+  "36493": {
+   "name": "I. G. Burton BMW",
+   "city": "Milford",
+   "state": "DE",
+   "zip": "19963"
+  },
+  "36582": {
+   "name": "BMW of New London",
+   "city": "New London",
+   "state": "CT",
+   "zip": "06320"
+  },
+  "36634": {
+   "name": "Hilton Head BMW",
+   "city": "Bluffton",
+   "state": "SC",
+   "zip": "29910"
+  },
+  "36635": {
+   "name": "BMW of Cape Cod",
+   "city": "Hyannis",
+   "state": "MA",
+   "zip": "02601"
+  },
+  "36637": {
+   "name": "BMW of Wesley Chapel",
+   "city": "Wesley Chapel",
+   "state": "FL",
+   "zip": "33544"
+  },
+  "36639": {
+   "name": "D-Patrick Motoplex CCRC",
+   "city": "Evansville",
+   "state": "IN",
+   "zip": "47715"
+  },
+  "36640": {
+   "name": "BMW of the Main Line",
+   "city": "Bala Cynwyd",
+   "state": "PA",
+   "zip": "19004"
+  },
+  "36688": {
+   "name": "Newbold BMW",
+   "city": "O Fallon",
+   "state": "IL",
+   "zip": "62269"
+  },
+  "36721": {
+   "name": "Crevier BMW",
+   "city": "Santa Ana",
+   "state": "CA",
+   "zip": "92705"
+  },
+  "36722": {
+   "name": "BMW of Florence",
+   "city": "Florence",
+   "state": "SC",
+   "zip": "29501"
+  },
+  "36752": {
+   "name": "Valley Auto World, Inc.",
+   "city": "Fayetteville",
+   "state": "NC",
+   "zip": "28303"
+  },
+  "36771": {
+   "name": "BMW of Alexandria",
+   "city": "Alexandria",
+   "state": "VA",
+   "zip": "22304"
+  },
+  "39314": {
+   "name": "BMW of Denver Downtown CCRC",
+   "city": "Denver",
+   "state": "CO",
+   "zip": "80231"
+  },
+  "39315": {
+   "name": "BMW Fresno",
+   "city": "Fresno",
+   "state": "CA",
+   "zip": "93650"
+  },
+  "39450": {
+   "name": "BMW of Champaign",
+   "city": "Savoy",
+   "state": "IL",
+   "zip": "61874"
+  },
+  "39668": {
+   "name": "BMW of Salem",
+   "city": "Salem",
+   "state": "OR",
+   "zip": "97301"
+  },
+  "39741": {
+   "name": "BMW of Lynchburg",
+   "city": "Lynchburg",
+   "state": "VA",
+   "zip": "24501"
+  },
+  "39797": {
+   "name": "BMW of Orland Park",
+   "city": "Orland Park",
+   "state": "IL",
+   "zip": "60467"
+  },
+  "40304": {
+   "name": "BMW of Arlington",
+   "city": "Arlington",
+   "state": "TX",
+   "zip": "76011"
+  },
+  "40305": {
+   "name": "BMW of Catonsville",
+   "city": "Baltimore",
+   "state": "MD",
+   "zip": "21228"
+  },
+  "40335": {
+   "name": "BMW of Riverside",
+   "city": "Riverside",
+   "state": "CA",
+   "zip": "92504"
+  },
+  "40713": {
+   "name": "BMW of Devon",
+   "city": "Devon",
+   "state": "PA",
+   "zip": "19333"
+  },
+  "40800": {
+   "name": "Habberstad BMW CCRC",
+   "city": "Huntington",
+   "state": "NY",
+   "zip": "11743"
+  },
+  "40807": {
+   "name": "BMW of Bend",
+   "city": "Bend",
+   "state": "OR",
+   "zip": "97702"
+  },
+  "40808": {
+   "name": "BMW of Greenwich-Mamaroneck",
+   "city": "Mamaroneck",
+   "state": "NY",
+   "zip": "10543"
+  },
+  "41053": {
+   "name": "BMW of Meridian",
+   "city": "Meridian",
+   "state": "MS",
+   "zip": "39301"
+  },
+  "41274": {
+   "name": "BMW of Topeka",
+   "city": "Topeka",
+   "state": "KS",
+   "zip": "66611"
+  },
+  "41518": {
+   "name": "BMW of Freeport",
+   "city": "Freeport",
+   "state": "NY",
+   "zip": "11520"
+  },
+  "41681": {
+   "name": "BMW of Kansas City South",
+   "city": "Kansas City",
+   "state": "MO",
+   "zip": "64114"
+  },
+  "41903": {
+   "name": "South Bay BMW",
+   "city": "Torrance",
+   "state": "CA",
+   "zip": "90504"
+  },
+  "42164": {
+   "name": "BMW of San Antonio",
+   "city": "San Antonio",
+   "state": "TX",
+   "zip": "78249"
+  },
+  "42277": {
+   "name": "BMW of Tri-Cities",
+   "city": "Richland",
+   "state": "WA",
+   "zip": "99352"
+  },
+  "42319": {
+   "name": "BMW of Temple",
+   "city": "Temple",
+   "state": "TX",
+   "zip": "76502"
+  },
+  "42367": {
+   "name": "BMW of Chico",
+   "city": "Chico",
+   "state": "CA",
+   "zip": "95973"
+  },
+  "42766": {
+   "name": "BMW of Wilmington",
+   "city": "Wilmington",
+   "state": "NC",
+   "zip": "28403"
+  },
+  "42868": {
+   "name": "Princeton BMW",
+   "city": "Hamilton",
+   "state": "NJ",
+   "zip": "08619"
+  },
+  "42869": {
+   "name": "BMW of San Rafael",
+   "city": "San Rafael",
+   "state": "CA",
+   "zip": "94901"
+  },
+  "43005": {
+   "name": "BMW of Springfield",
+   "city": "Springfield",
+   "state": "NJ",
+   "zip": "07081"
+  },
+  "43006": {
+   "name": "BMW of Newport",
+   "city": "Middletown",
+   "state": "RI",
+   "zip": "02842"
+  },
+  "43039": {
+   "name": "BMW of Waterbury",
+   "city": "Waterbury",
+   "state": "CT",
+   "zip": "06705"
+  },
+  "43336": {
+   "name": "BMW of Lancaster",
+   "city": "Lancaster",
+   "state": "PA",
+   "zip": "17601"
+  },
+  "43380": {
+   "name": "BMW of College Station",
+   "city": "College Station",
+   "state": "TX",
+   "zip": "77845"
+  },
+  "43383": {
+   "name": "BMW of South Albany",
+   "city": "Glenmont",
+   "state": "NY",
+   "zip": "12077"
+  },
+  "43384": {
+   "name": "Galleria BMW",
+   "city": "D'Iberville",
+   "state": "MS",
+   "zip": "39540"
+  },
+  "43552": {
+   "name": "BMW of Tyler",
+   "city": "Tyler",
+   "state": "TX",
+   "zip": "75701"
+  },
+  "43764": {
+   "name": "Orr BMW of Shreveport",
+   "city": "Shreveport",
+   "state": "LA",
+   "zip": "71105"
+  },
+  "43775": {
+   "name": "BMW of West Houston",
+   "city": "Katy",
+   "state": "TX",
+   "zip": "77449"
+  },
+  "43786": {
+   "name": "BMW of Grapevine",
+   "city": "Grapevine",
+   "state": "TX",
+   "zip": "76051"
+  },
+  "43872": {
+   "name": "BMW of Milwaukee North CCRC",
+   "city": "Milwaukee",
+   "state": "WI",
+   "zip": "53209"
+  },
+  "44013": {
+   "name": "BMW of West St. Louis",
+   "city": "Manchester",
+   "state": "MO",
+   "zip": "63011"
+  },
+  "44235": {
+   "name": "BMW of South Austin",
+   "city": "Austin",
+   "state": "TX",
+   "zip": "78744"
+  },
+  "44427": {
+   "name": "BMW of Palm Springs",
+   "city": "Palm Springs",
+   "state": "CA",
+   "zip": "92264"
+  },
+  "44503": {
+   "name": "BMW of Wichita",
+   "city": "Wichita",
+   "state": "KS",
+   "zip": "67206"
+  },
+  "44610": {
+   "name": "BMW of Vista",
+   "city": "Vista",
+   "state": "CA",
+   "zip": "92081"
+  },
+  "44721": {
+   "name": "Wyoming Valley BMW",
+   "city": "Plains",
+   "state": "PA",
+   "zip": "18702"
+  },
+  "44780": {
+   "name": "BMW of Tuscaloosa",
+   "city": "Tuscaloosa",
+   "state": "AL",
+   "zip": "35405"
+  },
+  "44812": {
+   "name": "BMW of Corpus Christi",
+   "city": "Corpus Christi",
+   "state": "TX",
+   "zip": "78412"
+  },
+  "44821": {
+   "name": "BMW of Little Rock",
+   "city": "Little Rock",
+   "state": "AR",
+   "zip": "72210"
+  },
+  "45051": {
+   "name": "United BMW",
+   "city": "Alpharetta",
+   "state": "GA",
+   "zip": "30004"
+  },
+  "45289": {
+   "name": "BMW of The Woodlands",
+   "city": "The Woodlands",
+   "state": "TX",
+   "zip": "77384"
+  },
+  "45332": {
+   "name": "BMW of Eugene",
+   "city": "Eugene",
+   "state": "OR",
+   "zip": "97401"
+  },
+  "45533": {
+   "name": "BMW of the Permian Basin",
+   "city": "Midland",
+   "state": "TX",
+   "zip": "79706"
+  },
+  "46038": {
+   "name": "BMW Northwest",
+   "city": "Tacoma",
+   "state": "WA",
+   "zip": "98424"
+  },
+  "46222": {
+   "name": "BMW of Akron",
+   "city": "Akron",
+   "state": "OH",
+   "zip": "44302"
+  },
+  "46288": {
+   "name": "BMW of Fort Wayne",
+   "city": "Fort Wayne",
+   "state": "IN",
+   "zip": "46804"
+  },
+  "46387": {
+   "name": "Dubuque BMW",
+   "city": "Dubuque",
+   "state": "IA",
+   "zip": "52002"
+  },
+  "46389": {
+   "name": "Basney BMW",
+   "city": "South Bend",
+   "state": "IN",
+   "zip": "46637"
+  },
+  "46518": {
+   "name": "BMW of Crystal Lake",
+   "city": "Crystal Lake",
+   "state": "IL",
+   "zip": "60012"
+  },
+  "46539": {
+   "name": "BMW of Shrewsbury CCRC",
+   "city": "Worcester",
+   "state": "MA",
+   "zip": "01605"
+  },
+  "46550": {
+   "name": "Walker BMW",
+   "city": "Alexandria",
+   "state": "LA",
+   "zip": "71303"
+  },
+  "46579": {
+   "name": "BMW of Ramsey",
+   "city": "Ramsey",
+   "state": "NJ",
+   "zip": "07446"
+  },
+  "46586": {
+   "name": "BMW of Delray Beach",
+   "city": "Delray Beach",
+   "state": "FL",
+   "zip": "33444"
+  },
+  "46615": {
+   "name": "Kelly BMW",
+   "city": "Columbus",
+   "state": "OH",
+   "zip": "43230"
+  },
+  "46631": {
+   "name": "BMW of Cincinnati North CCRC",
+   "city": "Cincinnati",
+   "state": "OH",
+   "zip": "45246"
+  },
+  "46672": {
+   "name": "New Motors, Inc.",
+   "city": "Erie",
+   "state": "PA",
+   "zip": "16509"
+  },
+  "46697": {
+   "name": "Vista BMW",
+   "city": "Coconut Creek",
+   "state": "FL",
+   "zip": "33073"
+  },
+  "46753": {
+   "name": "Moss Motors, Inc.",
+   "city": "Lafayette",
+   "state": "LA",
+   "zip": "70501"
+  },
+  "46778": {
+   "name": "Tom Bush BMW CCRC",
+   "city": "Jacksonville",
+   "state": "FL",
+   "zip": "32225"
+  },
+  "46786": {
+   "name": "Perillo BMW, Inc.",
+   "city": "Chicago",
+   "state": "IL",
+   "zip": "60610"
+  },
+  "46826": {
+   "name": "Rick Hendrick BMW Charleston",
+   "city": "Charleston",
+   "state": "SC",
+   "zip": "29407"
+  },
+  "46872": {
+   "name": "BMW of North Liberty",
+   "city": "North Liberty",
+   "state": "IA",
+   "zip": "52317"
+  },
+  "46886": {
+   "name": "Arrowhead BMW",
+   "city": "Glendale",
+   "state": "AZ",
+   "zip": "85308"
+  },
+  "46891": {
+   "name": "Braman Motorcars of Jupiter",
+   "city": "Jupiter",
+   "state": "FL",
+   "zip": "33458"
+  },
+  "47046": {
+   "name": "BMW of Buena Park",
+   "city": "Buena Park",
+   "state": "CA",
+   "zip": "90621"
+  },
+  "47212": {
+   "name": "BMW of Myrtle Beach",
+   "city": "Myrtle Beach",
+   "state": "SC",
+   "zip": "29577"
+  },
+  "47724": {
+   "name": "BMW of Sherman Oaks",
+   "city": "Sherman Oaks",
+   "state": "CA",
+   "zip": "91401"
+  },
+  "47727": {
+   "name": "BMW of Ocala",
+   "city": "Ocala",
+   "state": "FL",
+   "zip": "34474"
+  },
+  "47859": {
+   "name": "BMW of Fairfield",
+   "city": "Fairfield",
+   "state": "CA",
+   "zip": "94533"
+  },
+  "47993": {
+   "name": "Autobahn Motorcars",
+   "city": "Fort Worth",
+   "state": "TX",
+   "zip": "76107"
+  },
+  "48081": {
+   "name": "BMW of Williamsport",
+   "city": "Muncy",
+   "state": "PA",
+   "zip": "17756"
+  },
+  "48289": {
+   "name": "BMW of Owings Mills",
+   "city": "Owings Mills",
+   "state": "MD",
+   "zip": "21117"
+  },
+  "48291": {
+   "name": "Santa Fe BMW",
+   "city": "Santa Fe",
+   "state": "NM",
+   "zip": "87507"
+  },
+  "48401": {
+   "name": "Sandia BMW",
+   "city": "Albuquerque",
+   "state": "NM",
+   "zip": "87109"
+  },
+  "48600": {
+   "name": "Melbourne BMW",
+   "city": "Melbourne",
+   "state": "FL",
+   "zip": "32901"
+  },
+  "49134": {
+   "name": "Ferman BMW",
+   "city": "Palm Harbor",
+   "state": "FL",
+   "zip": "34684"
+  },
+  "49543": {
+   "name": "BMW of Jackson",
+   "city": "Jackson",
+   "state": "MS",
+   "zip": "39202"
+  },
+  "49544": {
+   "name": "BMW of San Francisco CCRC",
+   "city": "San Francisco",
+   "state": "CA",
+   "zip": "94103"
+  },
+  "49851": {
+   "name": "BMW of Sterling",
+   "city": "Sterling",
+   "state": "VA",
+   "zip": "20166"
+  },
+  "49962": {
+   "name": "Medford BMW",
+   "city": "Medford",
+   "state": "OR",
+   "zip": "97504"
+  },
+  "50070": {
+   "name": "BMW of Loveland",
+   "city": "Loveland",
+   "state": "CO",
+   "zip": "80538"
+  },
+  "50201": {
+   "name": "Berkshire BMW",
+   "city": "Pittsfield",
+   "state": "MA",
+   "zip": "01201"
+  },
+  "50229": {
+   "name": "BMW of Bowling Green",
+   "city": "Bowling Green",
+   "state": "KY",
+   "zip": "42104"
+  },
+  "50336": {
+   "name": "BMW of Ann Arbor",
+   "city": "Ann Arbor",
+   "state": "MI",
+   "zip": "48103"
+  },
+  "50498": {
+   "name": "BMW of Rochester Hills",
+   "city": "Shelby Township",
+   "state": "MI",
+   "zip": "48317"
+  },
+  "50644": {
+   "name": "BMW of Fort Washington",
+   "city": "Fort Washington",
+   "state": "PA",
+   "zip": "19034"
+  },
+  "50857": {
+   "name": "BMW of Lubbock",
+   "city": "Lubbock",
+   "state": "TX",
+   "zip": "79401"
+  },
+  "50887": {
+   "name": "BMW of Charlottesville",
+   "city": "Charlottesville",
+   "state": "VA",
+   "zip": "22911"
+  },
+  "50888": {
+   "name": "BMW of Grand Blanc",
+   "city": "Grand Blanc",
+   "state": "MI",
+   "zip": "48439"
+  },
+  "50923": {
+   "name": "BMW of Plano",
+   "city": "Plano",
+   "state": "TX",
+   "zip": "75024"
+  },
+  "50929": {
+   "name": "BMW of Tampa",
+   "city": "Tampa",
+   "state": "FL",
+   "zip": "33612"
+  },
+  "50946": {
+   "name": "BMW of Wichita Falls",
+   "city": "Wichita Falls",
+   "state": "TX",
+   "zip": "76301"
+  },
+  "50948": {
+   "name": "BMW of Rockville",
+   "city": "Rockville",
+   "state": "MD",
+   "zip": "20852"
+  },
+  "51007": {
+   "name": "BMW of Norwood",
+   "city": "Norwood",
+   "state": "MA",
+   "zip": "02062"
+  },
+  "51008": {
+   "name": "South Shore BMW",
+   "city": "Rockland",
+   "state": "MA",
+   "zip": "02370"
+  },
+  "51009": {
+   "name": "BMW of Towson",
+   "city": "Towson",
+   "state": "MD",
+   "zip": "21204"
+  },
+  "51029": {
+   "name": "BMW of Clear Lake",
+   "city": "Webster",
+   "state": "TX",
+   "zip": "77598"
+  },
+  "51049": {
+   "name": "BMW of Farmington Hills",
+   "city": "Farmington Hills",
+   "state": "MI",
+   "zip": "48335"
+  },
+  "51085": {
+   "name": "BMW of Ridgefield",
+   "city": "Ridgefield",
+   "state": "CT",
+   "zip": "06877"
+  },
+  "51106": {
+   "name": "BMW of Bloomfield Hills",
+   "city": "Bloomfield Hills",
+   "state": "MI",
+   "zip": "48302"
+  },
+  "51200": {
+   "name": "Keeler BMW",
+   "city": "Latham",
+   "state": "NY",
+   "zip": "12110"
+  },
+  "51458": {
+   "name": "BMW of Escondido",
+   "city": "Escondido",
+   "state": "CA",
+   "zip": "92029"
+  },
+  "51637": {
+   "name": "BMW of Roanoke",
+   "city": "Roanoke",
+   "state": "VA",
+   "zip": "24014"
+  },
+  "51826": {
+   "name": "BMW of Mt. Kisco",
+   "city": "Mount Kisco",
+   "state": "NY",
+   "zip": "10549"
+  },
+  "51991": {
+   "name": "BMW of Greensboro CCRC",
+   "city": "Greensboro",
+   "state": "NC",
+   "zip": "27407"
+  },
+  "52082": {
+   "name": "BMW of Buffalo",
+   "city": "Williamsville",
+   "state": "NY",
+   "zip": "14221"
+  },
+  "52800": {
+   "name": "Karl Knauz Motors",
+   "city": "Lake Bluff",
+   "state": "IL",
+   "zip": "60044"
+  },
+  "53781": {
+   "name": "Isringhausen Imports",
+   "city": "Springfield",
+   "state": "IL",
+   "zip": "62702"
+  },
+  "55200": {
+   "name": "Leith BMW",
+   "city": "Raleigh",
+   "state": "NC",
+   "zip": "27616"
+  },
+  "55806": {
+   "name": "BMW of Murray",
+   "city": "Murray",
+   "state": "UT",
+   "zip": "84107"
+  },
+  "56000": {
+   "name": "BMW of Brooklyn",
+   "city": "Brooklyn",
+   "state": "NY",
+   "zip": "11209"
+  },
+  "56357": {
+   "name": "BMW of Westlake",
+   "city": "Middleburg Heights",
+   "state": "OH",
+   "zip": "44130"
+  },
+  "56592": {
+   "name": "Casey BMW",
+   "city": "Newport News",
+   "state": "VA",
+   "zip": "23608"
+  },
+  "56738": {
+   "name": "Open Road BMW",
+   "city": "Edison",
+   "state": "NJ",
+   "zip": "08817"
+  },
+  "56779": {
+   "name": "Germain BMW of Naples",
+   "city": "Naples",
+   "state": "FL",
+   "zip": "34110"
+  },
+  "56802": {
+   "name": "Roadshow BMW",
+   "city": "Cordova",
+   "state": "TN",
+   "zip": "38018"
+  },
+  "56843": {
+   "name": "BMW of Lafayette CCRC",
+   "city": "Lafayette",
+   "state": "IN",
+   "zip": "47905"
+  },
+  "56892": {
+   "name": "Rick Hill BMW",
+   "city": "Kingsport",
+   "state": "TN",
+   "zip": "37660"
+  },
+  "59127": {
+   "name": "BMW of North Haven",
+   "city": "North Haven",
+   "state": "CT",
+   "zip": "06473"
+  },
+  "61100": {
+   "name": "BMW of Omaha",
+   "city": "Omaha",
+   "state": "NE",
+   "zip": "68154"
+  },
+  "62900": {
+   "name": "BMW of Barrington",
+   "city": "Barrington",
+   "state": "IL",
+   "zip": "60010"
+  },
+  "63766": {
+   "name": "BMW of Madison CCRC",
+   "city": "Madison",
+   "state": "WI",
+   "zip": "53704"
+  },
+  "65734": {
+   "name": "BMW of Santa Maria",
+   "city": "Santa Maria",
+   "state": "CA",
+   "zip": "93455"
+  },
+  "65775": {
+   "name": "BMW of Manhattan",
+   "city": "New York",
+   "state": "NY",
+   "zip": "10019"
+  },
+  "66390": {
+   "name": "Laurel BMW",
+   "city": "Johnstown",
+   "state": "PA",
+   "zip": "15902"
+  },
+  "66641": {
+   "name": "Voss Village BMW",
+   "city": "Dayton",
+   "state": "OH",
+   "zip": "45459"
+  },
+  "66771": {
+   "name": "Circle BMW",
+   "city": "Eatontown",
+   "state": "NJ",
+   "zip": "07724"
+  },
+  "66788": {
+   "name": "Hendrick BMW Northlake",
+   "city": "Charlotte",
+   "state": "NC",
+   "zip": "28269"
+  },
+  "67600": {
+   "name": "Otto's BMW",
+   "city": "West Chester",
+   "state": "PA",
+   "zip": "19382"
+  },
+  "68500": {
+   "name": "Park Avenue BMW",
+   "city": "Rochelle Park",
+   "state": "NJ",
+   "zip": "07662"
+  },
+  "69000": {
+   "name": "Rallye BMW CCRC",
+   "city": "Carle Place",
+   "state": "NY",
+   "zip": "11514"
+  },
+  "75784": {
+   "name": "BMW of Fort Lauderdale CCRC",
+   "city": "Fort Lauderdale",
+   "state": "FL",
+   "zip": "33311"
+  },
+  "76350": {
+   "name": "BMW of Tenafly",
+   "city": "Tenafly",
+   "state": "NJ",
+   "zip": "07670"
+  },
+  "76472": {
+   "name": "BMW of Westbrook",
+   "city": "Westbrook",
+   "state": "ME",
+   "zip": "04092"
+  },
+  "76504": {
+   "name": "Brian Harris BMW",
+   "city": "Baton Rouge",
+   "state": "LA",
+   "zip": "70817"
+  },
+  "76731": {
+   "name": "BMW of Honolulu",
+   "city": "Honolulu",
+   "state": "HI",
+   "zip": "96813"
+  },
+  "76837": {
+   "name": "Pacific BMW",
+   "city": "Glendale",
+   "state": "CA",
+   "zip": "91204"
+  },
+  "79100": {
+   "name": "BMW of Silver Spring",
+   "city": "Silver Spring",
+   "state": "MD",
+   "zip": "20904"
+  },
+  "81000": {
+   "name": "Union Park BMW",
+   "city": "Wilmington",
+   "state": "DE",
+   "zip": "19806"
+  },
+  "85200": {
+   "name": "Elmhurst BMW",
+   "city": "Elmhurst",
+   "state": "IL",
+   "zip": "60126"
+  },
+  "86302": {
+   "name": "Enterprise BMW",
+   "city": "Appleton",
+   "state": "WI",
+   "zip": "54913"
+  },
+  "86327": {
+   "name": "Sewickley BMW",
+   "city": "Sewickley",
+   "state": "PA",
+   "zip": "15143"
+  },
+  "86335": {
+   "name": "BMW of Visalia",
+   "city": "Visalia",
+   "state": "CA",
+   "zip": "93291"
+  },
+  "86513": {
+   "name": "Sterling BMW",
+   "city": "Newport Beach",
+   "state": "CA",
+   "zip": "92663"
+  },
+  "86627": {
+   "name": "Don Jacobs BMW",
+   "city": "Lexington",
+   "state": "KY",
+   "zip": "40503"
+  },
+  "86716": {
+   "name": "Patrick BMW CCRC",
+   "city": "Schaumburg",
+   "state": "IL",
+   "zip": "60173"
+  },
+  "86732": {
+   "name": "Joel Confer BMW",
+   "city": "State College",
+   "state": "PA",
+   "zip": "16803"
+  },
+  "86773": {
+   "name": "Century BMW CCRC",
+   "city": "Huntsville",
+   "state": "AL",
+   "zip": "35816"
+  },
+  "86813": {
+   "name": "A & L BMW",
+   "city": "Monroeville",
+   "state": "PA",
+   "zip": "15146"
+  },
+  "86846": {
+   "name": "Rusnak BMW",
+   "city": "Thousand Oaks",
+   "state": "CA",
+   "zip": "91362"
+  },
+  "86854": {
+   "name": "Burdick BMW",
+   "city": "Cicero",
+   "state": "NY",
+   "zip": "13039"
+  },
+  "86862": {
+   "name": "Sharpe BMW",
+   "city": "Grand Rapids",
+   "state": "MI",
+   "zip": "49508"
+  },
+  "93777": {
+   "name": "Bert Smith International",
+   "city": "Saint Petersburg",
+   "state": "FL",
+   "zip": "33714"
+  },
+  "95801": {
+   "name": "BMW Cleveland",
+   "city": "Solon",
+   "state": "OH",
+   "zip": "44139"
+  },
+  "96255": {
+   "name": "Fields BMW CCRC",
+   "city": "Longwood",
+   "state": "FL",
+   "zip": "32750"
+  },
+  "96499": {
+   "name": "Classic BMW",
+   "city": "Willoughby Hills",
+   "state": "OH",
+   "zip": "44094"
+  },
+  "96603": {
+   "name": "South Motors BMW",
+   "city": "Miami",
+   "state": "FL",
+   "zip": "33157"
+  },
+  "96628": {
+   "name": "Fields BMW",
+   "city": "Northfield",
+   "state": "IL",
+   "zip": "60093"
+  },
+  "96644": {
+   "name": "Cain BMW",
+   "city": "North Canton",
+   "state": "OH",
+   "zip": "44720"
+  },
+  "96717": {
+   "name": "The BMW Store",
+   "city": "Cincinnati",
+   "state": "OH",
+   "zip": "45227"
+  },
+  "96733": {
+   "name": "McKenna BMW CCRC",
+   "city": "Downey",
+   "state": "CA",
+   "zip": "90241"
+  },
+  "96774": {
+   "name": "Zeigler BMW",
+   "city": "Kalamazoo",
+   "state": "MI",
+   "zip": "49008"
+  },
+  "4016 ": {
+   "name": "BMW of Louisville",
+   "city": "Louisville",
+   "state": "KY",
+   "zip": "40299"
+  },
+  "05080": {
+   "name": "Gebhardt BMW",
+   "city": "Boulder",
+   "state": "CO",
+   "zip": "80301"
+  },
+  "05042": {
+   "name": "Schomp BMW of Highlands Ranch",
+   "city": "Highlands Ranch",
+   "state": "CO",
+   "zip": "80129"
+  },
+  "04923": {
+   "name": "BMW of Roseville",
+   "city": "Roseville",
+   "state": "CA",
+   "zip": "95661"
+  },
+  "04618": {
+   "name": "Niello BMW Sacramento",
+   "city": "Sacramento",
+   "state": "CA",
+   "zip": "95825"
+  },
+  "04497": {
+   "name": "BMW Concord",
+   "city": "Concord",
+   "state": "CA",
+   "zip": "94520"
+  },
+  "04514": {
+   "name": "Weatherford BMW CCRC",
+   "city": "Oakland",
+   "state": "CA",
+   "zip": "94612"
+  },
+  "04942": {
+   "name": "Nick Alexander Imports CCRC",
+   "city": "Huntington Park",
+   "state": "CA",
+   "zip": "90255"
+  },
+  "04637": {
+   "name": "Bob Smith BMW",
+   "city": "Calabasas",
+   "state": "CA",
+   "zip": "91302"
+  },
+  "04660": {
+   "name": "Santa Monica BMW",
+   "city": "Santa Monica",
+   "state": "CA",
+   "zip": "90401"
+  }
+ },
+ "overrides": {
+  "52070": {
+   "name": "BMW of Lynnwood",
+   "city": "Lynnwood",
+   "state": "WA",
+   "zip": "98037",
+   "source": "site",
+   "verified": "2026-08-16"
+  },
+  "52309": {
+   "name": "BMW of Carlsbad",
+   "city": "Carlsbad",
+   "state": "CA",
+   "zip": "92008",
+   "source": "site",
+   "verified": "2026-08-16"
+  },
+  "52685": {
+   "name": "BMW of Downtown Los Angeles",
+   "city": "Los Angeles",
+   "state": "CA",
+   "zip": "90001",
+   "source": "site",
+   "verified": "2026-08-16"
+  },
+  "52781": {
+   "name": "BMW of Camarillo",
+   "city": "Camarillo",
+   "state": "CA",
+   "zip": "93010",
+   "source": "web",
+   "verified": "2026-08-16"
+  },
+  "52938": {
+   "name": "BMW of McKinney",
+   "city": "McKinney",
+   "state": "TX",
+   "zip": "75071",
+   "source": "web",
+   "verified": "2026-08-16"
+  },
+  "53086": {
+   "name": "BMW of Coconut Creek",
+   "city": "Coconut Creek",
+   "state": "FL",
+   "zip": "33073",
+   "source": "web",
+   "verified": "2026-08-16"
+  },
+  "53290": {
+   "name": "BMW of Latham",
+   "city": "Latham",
+   "state": "NY",
+   "zip": "12110",
+   "source": "site",
+   "verified": "2026-08-16"
+  },
+  "54068": {
+   "name": "BMW of Chula Vista",
+   "city": "Chula Vista",
+   "state": "CA",
+   "zip": "91911",
+   "source": "site",
+   "verified": "2026-08-16"
+  },
+  "54386": {
+   "name": "BMW of Boston",
+   "city": "Boston",
+   "state": "MA",
+   "zip": "02134",
+   "source": "site",
+   "verified": "2026-08-16"
+  },
+  "54571": {
+   "name": "BMW of State College",
+   "city": "State College",
+   "state": "PA",
+   "zip": "16803",
+   "source": "site",
+   "verified": "2026-08-16"
+  },
+  "54680": {
+   "name": "BMW of Napa Valley",
+   "city": "Fairfield",
+   "state": "CA",
+   "zip": "94533",
+   "source": "site",
+   "verified": "2026-08-16"
+  },
+  "54681": {
+   "name": "Niello BMW of Elk Grove",
+   "city": "Elk Grove",
+   "state": "CA",
+   "zip": "95757",
+   "source": "site",
+   "verified": "2026-08-16"
+  },
+  "54745": {
+   "name": "BMW of Erie",
+   "city": "Erie",
+   "state": "PA",
+   "zip": "16509",
+   "source": "site",
+   "verified": "2026-08-16"
+  },
+  "54793": {
+   "name": "BMW of Dublin",
+   "city": "Dublin",
+   "state": "OH",
+   "zip": "43017",
+   "source": "site",
+   "verified": "2026-08-16"
+  },
+  "54799": {
+   "name": "BMW of Bel Air",
+   "city": "Bel Air",
+   "state": "MD",
+   "zip": "21014",
+   "source": "site",
+   "verified": "2026-08-16"
+  },
+  "54824": {
+   "name": "BMW of Midlothian",
+   "city": "Midlothian",
+   "state": "VA",
+   "zip": "23113",
+   "source": "site",
+   "verified": "2026-08-16"
+  },
+  "54853": {
+   "name": "BMW of Pompano Beach",
+   "city": "Pompano Beach",
+   "state": "FL",
+   "zip": "33062",
+   "source": "web",
+   "verified": "2026-08-16"
+  },
+  "55099": {
+   "name": "BMW of Pembroke Pines",
+   "city": "Pembroke Pines",
+   "state": "FL",
+   "zip": "33331",
+   "source": "web",
+   "verified": "2026-08-16"
+  }
+ },
+ "_overridesComment": "Dealers missing/stale in the /api/dealers directory (mostly recent renames). source: site = dealer's own homepage jsonld/footer; web = dealer contact page, hand-verified. Preserved by build-bmw-dealer-geo.mjs on rebuild. Autogermana BMW (San Juan, PR) deliberately absent: PR is outside the site's 50-states+DC model, so its cars are withheld."
+}
