@@ -32,6 +32,7 @@ import { NISSAN, NISSAN_CPO, pullNissan, pullNissanCpo } from "./lib/oem/nissan.
 import { BMW, pullBmw } from "./lib/oem/bmw.mjs";
 import { MERCEDES, pullMercedes } from "./lib/oem/mercedes.mjs";
 import { GENESIS, pullGenesis } from "./lib/oem/genesis.mjs";
+import { FORD_BLUE_ADVANTAGE, pullFordBlueAdvantage } from "./lib/oem/ford-blue-advantage.mjs";
 
 // One registry of pullers keyed by brand. Each entry is a thunk returning a
 // crawl.mjs-shaped report; new OEM families plug in here without touching the
@@ -48,6 +49,7 @@ const PULLERS = {
   [BMW.key]: { domain: BMW.domain, run: () => pullBmw({ log }) },
   [MERCEDES.key]: { domain: MERCEDES.domain, run: () => pullMercedes({ log }) },
   [GENESIS.key]: { domain: GENESIS.domain, run: () => pullGenesis({ log }) },
+  [FORD_BLUE_ADVANTAGE.key]: { domain: FORD_BLUE_ADVANTAGE.domain, run: () => pullFordBlueAdvantage({ log }) },
 };
 
 const args = process.argv.slice(2);
@@ -56,7 +58,7 @@ function flag(name, fallback) {
   return i >= 0 ? args[i + 1] : fallback;
 }
 const OUT_DIR = flag("--out", "out");
-const wanted = flag("--brands", "chevrolet,gmc,cadillac,carbravo,hyundai,hyundai-cpo,kia,nissan,nissan-cpo,bmw,mercedes,genesis").split(",").map((s) => s.trim().toLowerCase());
+const wanted = flag("--brands", "chevrolet,gmc,cadillac,carbravo,hyundai,hyundai-cpo,kia,nissan,nissan-cpo,bmw,mercedes,genesis,ford-blue-advantage").split(",").map((s) => s.trim().toLowerCase());
 const selected = wanted.filter((k) => PULLERS[k]);
 if (!selected.length) {
   console.error(`oem-locator: no known brands in "${wanted}" (have: ${Object.keys(PULLERS).join(",")})`);
