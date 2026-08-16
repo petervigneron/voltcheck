@@ -332,9 +332,19 @@ export async function fetchPage(url) {
   } catch (e) {
     first = { status: `error:${e.name ?? "unknown"}`, body: null, finalUrl: url };
   }
-  // Only retry on transport failure — a 403/404 is an answer, not a
-  // misdirected request, and retrying those would just double the load.
-  if (!TRANSPORT_FAIL.test(String(first.status))) return first;
+  // Retry on transport failure — and on a *bare* 404, because that one is
+  // measurably a misdirected request, not an answer: dealer platforms
+  // routinely redirect apex→www on the homepage but answer deep apex paths
+  // with a ~10-byte "Not Found" from the load balancer, while the same path
+  // on www serves the page (georgecolemanford.com/used-inventory/index.htm:
+  // 404/10 bytes on the apex, 200/792KB on www — found 2026-08-16 when a
+  // probe sweep scored 267 of 339 fresh franchise rooftops as failures).
+  // The <512-byte guard keeps a site's real 404 an answer: a dealer
+  // platform's own not-found page is a full HTML document (a measured one
+  // was 237KB), so retrying only bare 404s costs nothing on genuinely dead
+  // paths and repairs a systematic false negative. A 403 is still final.
+  const bare404 = first.status === 404 && (first.body?.length ?? 0) < 512;
+  if (!TRANSPORT_FAIL.test(String(first.status)) && !bare404) return first;
   const alt = altHost(url);
   if (!alt) return first;
   try {
