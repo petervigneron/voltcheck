@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Tile, type TileGround, type TileKind } from "./Tile";
-import type { CardRow, CardTile } from "@/lib/listings/card";
+import { askVsMarketTile, type CardRow, type CardTile } from "@/lib/listings/card";
 
 // Renders one precomputed card-index row (lib/listings/card.ts). Everything a
 // card says was decided server-side at index build; this component only lays
@@ -98,26 +98,11 @@ export function ListingCard({
     });
   }
   // Where no transaction model reaches — most of the site — the other listings
-  // of the same variant are still a real comparison. Deliberately the quiet
-  // putty tile, not the teal find: asking prices are what dealers want, they
-  // run above what cars fetch, and live inventory over-represents the ones
-  // that aren't selling. Never shown alongside the sold tile.
+  // of the same variant are still a real comparison. Wording lives in
+  // askVsMarketTile so this card and the listing page can never drift apart.
+  // Never shown alongside the sold tile.
   else if (r.askVsMarket != null) {
-    const under = r.askVsMarket.deltaUsd < 0;
-    const amount = `$${Math.abs(r.askVsMarket.deltaUsd).toLocaleString()}`;
-    // "this exact version" is a claim about the peers, and it was only ever
-    // true where the VIN pins the trim. Where it doesn't, the peers are the
-    // same year and configuration and the comparison still holds — the tile
-    // exists precisely because their trims priced the same — but the tooltip
-    // has to say which of the two it is.
-    const peers = r.askVsMarket.trimMatched
-      ? `the ${r.askVsMarket.peerN} of this exact version listed right now`
-      : `the ${r.askVsMarket.peerN} closest matches listed right now: same year and configuration, trims that price alike`;
-    lead.push({
-      k: "spec" as TileKind,
-      t: `${amount} ${under ? "below" : "above"} similar listings`,
-      ti: `Asks ${amount} ${under ? "less" : "more"} than ${peers}, adjusted for mileage. Asking prices, not sales; no record of one of these selling covers this car.`,
-    });
+    lead.push(askVsMarketTile(r.askVsMarket));
   }
   const tiles: CardTile[] = lead.length ? [...lead, ...r.tiles.slice(0, Math.max(0, 5 - lead.length))] : r.tiles;
 

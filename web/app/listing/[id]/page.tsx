@@ -11,7 +11,8 @@ import { hasRealPrice } from "@/lib/listings/price";
 import { AskSeller } from "@/components/AskSeller";
 import { RecentSales } from "@/components/RecentSales";
 import { fetchRecentSales } from "@/lib/listings/sales";
-import { askVsSold, fetchCompIndex } from "@/lib/listings/comps";
+import { listingPriceSignals } from "@/lib/listings/peers";
+import { askVsMarketTile } from "@/lib/listings/card";
 
 // ISR: each listing page renders once, then serves from the CDN for an hour —
 // same cadence as the data underneath it (nightly sync, recheck, price audit).
@@ -53,20 +54,14 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
   // contradiction judgement was made at sync time and rides the payload
   // (scraper/lib/trim-suspect.mjs), so this page needs nothing but its own row.
   const claim = trimClaim(listing);
-  // A disclosed manufacturer repurchase gets no fitted-price comparison here,
-  // same rule as the browse grid (lib/listings/buildIndex.ts): the model is
-  // fitted on clean-title sales, and the seller's own text says this car
-  // differs from those in a way the model cannot price.
-  const vsSold = listing.buybackDisclosed
-    ? undefined
-    : askVsSold(
-        await fetchCompIndex(),
-        listing.vin,
-        listing.year,
-        listing.mileage,
-        listing.priceUsd,
-        hasRealPrice(listing)
-      );
+  // Both price signals, decided by the same gates as the browse grid
+  // (lib/listings/peers.ts): the sold-side fit against Washington title
+  // records, and — only where that is silent — the ask-side comparison
+  // against the same cohort listed right now. Whatever claim the card made
+  // to earn the click, this page repeats and can defend; a claim that
+  // vanishes here reads as retracted.
+  const { vsSold, vsMarket } = await listingPriceSignals(listing);
+  const marketTile = vsMarket ? askVsMarketTile(vsMarket) : undefined;
 
   return (
     <div className="mx-auto max-w-5xl space-y-5 px-4 py-6">
@@ -76,8 +71,12 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
 
       <div className="grid gap-6 md:grid-cols-[1fr_320px]">
         {/* Right: sticky summary. First in the DOM so price and key facts lead
-            on mobile; on md+ it takes the right column. */}
-        <div className="h-fit space-y-4 md:sticky md:top-4 md:col-start-2 md:row-start-1">
+            on mobile; on md+ it takes the right column. min-w-0 on both
+            columns: grid items refuse to shrink below their content by
+            default, so one card with an unshrinkable row (Recently sold's
+            fixed columns) widened the shared track past a phone screen and
+            clipped every card's right edge — VIN, seller, the button. */}
+        <div className="min-w-0 h-fit space-y-4 md:sticky md:top-4 md:col-start-2 md:row-start-1">
           <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5">
             <h1 className="text-xl font-bold leading-tight">
               {listing.year} {listing.make} {listing.model}
@@ -105,8 +104,13 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
               </div>
             )}
 
-            {tiles.length > 0 && (
+            {(tiles.length > 0 || marketTile) && (
               <div className="mt-3 flex flex-wrap gap-1.5">
+                {marketTile && (
+                  <Tile kind={marketTile.k} title={marketTile.ti}>
+                    {marketTile.t}
+                  </Tile>
+                )}
                 {tiles.map((t, i) => (
                   <Tile key={i} kind={t.kind} title={t.title}>
                     {t.text}
@@ -154,7 +158,7 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
         </div>
 
         {/* Left: gallery + narrative */}
-        <div className="space-y-5 md:col-start-1 md:row-start-1">
+        <div className="min-w-0 space-y-5 md:col-start-1 md:row-start-1">
           {gallery.length > 0 && (
             <div>
               {/* eslint-disable-next-line @next/next/no-img-element -- external dealer CDN */}

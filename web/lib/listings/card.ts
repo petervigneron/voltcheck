@@ -78,6 +78,35 @@ export interface CardRow {
   tiles: CardTile[];
 }
 
+/**
+ * The ask-vs-market claim as a tile — built here so the browse card and the
+ * listing page render the identical words for the identical number. A claim
+ * that greets a shopper on the card and vanishes on the page it links to
+ * reads as retracted; a claim that changes wording reads as two claims.
+ *
+ * Deliberately the quiet putty tile, not the teal find: asking prices are
+ * what dealers want, they run above what cars fetch, and live inventory
+ * over-represents the ones that aren't selling. "Listings" is the
+ * load-bearing word, as "paid" is on the sold tile's side.
+ */
+export function askVsMarketTile(m: NonNullable<CardRow["askVsMarket"]>): CardTile {
+  const under = m.deltaUsd < 0;
+  const amount = `$${Math.abs(m.deltaUsd).toLocaleString()}`;
+  // "this exact version" is a claim about the peers, and it is only true
+  // where the VIN pins the trim. Where it doesn't, the peers are the same
+  // year and configuration and the comparison still holds — the tile exists
+  // precisely because their trims priced the same — but the tooltip has to
+  // say which of the two it is.
+  const peers = m.trimMatched
+    ? `the ${m.peerN} of this exact version listed right now`
+    : `the ${m.peerN} closest matches listed right now: same year and configuration, trims that price alike`;
+  return {
+    k: "spec",
+    t: `${amount} ${under ? "below" : "above"} similar listings`,
+    ti: `Asks ${amount} ${under ? "less" : "more"} than ${peers}, adjusted for mileage. Asking prices, not sales; no record of one of these selling covers this car.`,
+  };
+}
+
 // The default (unsorted) homepage order. Cheapest-first put the junkiest cars
 // on the front page; this scores what makes a listing worth a first look and
 // adds a per-day shuffle so the same good cars don't sit there forever.

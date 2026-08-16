@@ -167,6 +167,40 @@ export async function fetchListingByIdFromDb(id: string): Promise<Listing | null
   }
 }
 
+/** One listing's price-comparison cohort: every live listing sharing its
+ *  VIN 1-8 and model year. This is the detail page's slice of the peer pool
+ *  the browse index builds from the whole feed (lib/listings/peers.ts) —
+ *  fetched narrow so the page keeps its one-row egress discipline instead of
+ *  paying for 59k cars to price one. The prefix filter is a range scan on
+ *  the vin primary key; cohorts run a handful to a few hundred rows, well
+ *  under the 1000-row page. Empty/null on failure: the page then shows no
+ *  ask-side claim, which is the honest direction to fail in. */
+export async function fetchCohortFromDb(vinPrefix8: string, year: number): Promise<Listing[] | null> {
+  if (!dbConfigured()) return null;
+  const base = process.env.SUPABASE_URL!.replace(/\/$/, "");
+  try {
+    const res = await fetch(
+      `${base}/rest/v1/live_listings_feed?select=vin,payload,first_seen_at,last_seen_at,prev_price_usd,price_changed_at,buyback_disclosed&vin=like.${encodeURIComponent(
+        vinPrefix8.toUpperCase()
+      )}*&payload->>year=eq.${year}&limit=${PAGE}`,
+      { headers: headers(), next: { revalidate: REVALIDATE_SECONDS } }
+    );
+    if (!res.ok) throw new Error(`PostgREST ${res.status}`);
+    const rows = (await res.json()) as FeedRow[];
+    return rows.map((r) => ({
+      ...r.payload,
+      firstSeenAt: r.first_seen_at,
+      lastSeenAt: r.last_seen_at,
+      prevPriceUsd: r.prev_price_usd ?? undefined,
+      priceChangedAt: r.price_changed_at ?? undefined,
+      buybackDisclosed: r.buyback_disclosed || undefined,
+    }));
+  } catch (err) {
+    console.error("[listings] Supabase cohort read failed:", err);
+    return null;
+  }
+}
+
 /** The detail-page extras for one listing: the dealer's description and the
  *  price history. Null when the DB is unconfigured, unreachable, or has no
  *  such row — the caller just renders without the extras. */

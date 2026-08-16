@@ -217,6 +217,10 @@ export interface AskPeer {
    *  Supplied by the caller (buildIndex.ts) because deciding it needs
    *  trimClaim's contradiction gate, which comps.ts has no business owning. */
   trimKey?: string;
+  /** Pack-level identity from the enrichment layer (lib/listings/enrich.ts
+   *  packIdentity), supplied by the caller for the same layering reason as
+   *  trimKey. Undefined where enrichment has no exact row for the car. */
+  identity?: string;
 }
 
 /**
@@ -258,6 +262,7 @@ export function buildAskIndex(
     priceUsd: number;
     condition?: string;
     trimKey?: string;
+    identity?: string;
   }[]
 ): AskIndex {
   const index: AskIndex = { wide: new Map(), narrow: new Map() };
@@ -271,11 +276,35 @@ export function buildAskIndex(
       mileage: l.mileage,
       askUsd: l.priceUsd,
       trimKey: l.trimKey,
+      identity: l.identity,
     };
     push(index.wide, k, peer);
     if (l.trimKey) push(index.narrow, `${k}|${l.trimKey}`, peer);
   }
   return index;
+}
+
+/** Does this car's whole VIN cohort mix pack identities? The sold-side twin
+ *  of the peer-pool guard in askVsMarket, for a mixture the trim-span gate
+ *  (cohortIsMixed above) is structurally blind to: Tesla stamps single-motor
+ *  2024 Model Ys with one VIN code whether the pack is Long Range (320 mi)
+ *  or standard (260 mi), and Teslas carry no feed trim, so trim spread reads
+ *  as zero while cohort 7SAYGDED holds two different cars. The fitted line
+ *  was regressed over whatever Washington sold under this prefix; the live
+ *  cohort is the only observable sample of what the prefix contains, so when
+ *  live cars of one prefix resolve to two packs, the fit is a mixture and
+ *  askVsSold must not quote it. */
+export function cohortIdentityMixed(
+  asks: AskIndex,
+  vin: string | undefined,
+  year: number,
+  identity?: string
+): boolean {
+  if (!vin || vin.length < 8) return false;
+  const ids = new Set<string>();
+  if (identity) ids.add(identity);
+  for (const p of asks.wide.get(key(vin.slice(0, 8), year)) ?? []) if (p.identity) ids.add(p.identity);
+  return ids.size > 1;
 }
 
 export interface AskVsMarket {
@@ -325,7 +354,8 @@ export function askVsMarket(
   mileage: number | undefined,
   askUsd: number,
   realPrice: boolean,
-  trimKey?: string
+  trimKey?: string,
+  identity?: string
 ): AskVsMarket | undefined {
   if (!realPrice || !vin || vin.length < 8) return undefined;
   if (mileage == null || mileage < 2000 || mileage > 200_000) return undefined;
@@ -384,6 +414,21 @@ export function askVsMarket(
   }
   const trimMatched = !vinPinsTrim;
   if (peers.length < MIN_PEERS) return undefined;
+
+  // A pool is only a market if its members are the same car, and VIN 1-8
+  // does not always guarantee that: 2024 Model Y cohort 7SAYGDED holds Long
+  // Range RWD (320 mi) and standard RWD (260 mi) trucks under one code, and
+  // its median priced neither. The enrichment layer can tell such cars apart
+  // when the VIN cannot, so a pool whose members resolve to more than one
+  // pack identity is a mixture and quotes nothing. Identity is pack-level
+  // (packVariant before row id) deliberately: the 2022 Lightning Platinum
+  // has its own enrichment row for its 300-mile EPA rating but the same
+  // Extended Range pack as the XLT beside it, and pricing trims apart is the
+  // narrow index's job, not this guard's.
+  const identities = new Set<string>();
+  if (identity) identities.add(identity);
+  for (const p of peers) if (p.identity) identities.add(p.identity);
+  if (identities.size > 1) return undefined;
 
   const peerMedian = medianAt(peers);
   if (!Number.isFinite(peerMedian) || peerMedian <= 0) return undefined;

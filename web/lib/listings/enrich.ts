@@ -354,3 +354,14 @@ export function enrichListing(l: Listing): EnrichedListing {
     trapCount,
   };
 }
+
+/** Pack-level identity for price-comparison pooling (lib/listings/comps.ts):
+ *  which physical version of the car this is, at the granularity that
+ *  determines price-relevant hardware. packVariant groups trim-split rows of
+ *  one pack — the 2022 Lightning Platinum row exists for its 300-mile EPA
+ *  rating, not a different battery — while rows that differ by pack stay
+ *  apart. Undefined means the enrichment layer can't say, which pooling
+ *  treats as "no evidence of mixing", never as a match. */
+export function packIdentity(e: EnrichedListing): string | undefined {
+  return e.row ? e.row.packVariant ?? e.row.id : undefined;
+}

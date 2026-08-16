@@ -13,7 +13,10 @@ function Row({ s }: { s: RecentSale }) {
     <li className="flex items-baseline justify-between gap-3 py-1.5 text-sm">
       <span className="flex min-w-0 items-baseline gap-2">
         <span className="w-10 shrink-0 font-medium tabular-nums">{s.modelYear ?? "—"}</span>
-        <span className={`truncate ${s.variant ? "" : "text-zinc-400 dark:text-zinc-500"}`}>
+        {/* min-w-0 so truncate can actually shrink this span: without it the
+            variant's full nowrap width is the row's minimum, which on a
+            375pt phone pushed the whole page grid past the screen edge. */}
+        <span className={`min-w-0 truncate ${s.variant ? "" : "text-zinc-400 dark:text-zinc-500"}`}>
           {s.variant ?? "Unknown"}
         </span>
       </span>

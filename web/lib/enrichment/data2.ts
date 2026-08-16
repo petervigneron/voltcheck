@@ -497,6 +497,10 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     id: "leaf-s",
     make: "NISSAN",
     model: "Leaf",
+    // Same pack as its trim siblings; packVariant groups them for peer
+    // pooling (lib/listings/enrich.ts packIdentity) - the value restates
+    // this row's own battery fact.
+    packVariant: "40 kWh",
     modelYears: [2018, 2025],
     trim: "S",
     battery: { packGrossKwh: f(40, "mfr", "medium", "40 kWh gross"), chemistry: f("NMC", "agg", "medium") },
@@ -526,6 +530,10 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     id: "leaf-sv",
     make: "NISSAN",
     model: "Leaf",
+    // Same pack as its trim siblings; packVariant groups them for peer
+    // pooling (lib/listings/enrich.ts packIdentity) - the value restates
+    // this row's own battery fact.
+    packVariant: "40 kWh",
     modelYears: [2018, 2022],
     trim: "SV",
     battery: { packGrossKwh: f(40, "mfr", "medium", "40 kWh gross"), chemistry: f("NMC", "agg", "medium") },
@@ -555,6 +563,10 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     id: "leaf-sl",
     make: "NISSAN",
     model: "Leaf",
+    // Same pack as its trim siblings; packVariant groups them for peer
+    // pooling (lib/listings/enrich.ts packIdentity) - the value restates
+    // this row's own battery fact.
+    packVariant: "40 kWh",
     modelYears: [2018, 2019],
     trim: "SL",
     battery: { packGrossKwh: f(40, "mfr", "medium", "40 kWh gross"), chemistry: f("NMC", "agg", "medium") },
@@ -584,6 +596,10 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     id: "leaf-s-plus",
     make: "NISSAN",
     model: "Leaf",
+    // Same pack as its trim siblings; packVariant groups them for peer
+    // pooling (lib/listings/enrich.ts packIdentity) - the value restates
+    // this row's own battery fact.
+    packVariant: "62 kWh e+",
     modelYears: [2019, 2022],
     trim: "S Plus",
     battery: { packGrossKwh: f(62, "mfr", "medium", "62 kWh gross"), chemistry: f("NMC", "agg", "medium") },
@@ -613,6 +629,10 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     id: "leaf-sv-plus",
     make: "NISSAN",
     model: "Leaf",
+    // Same pack as its trim siblings; packVariant groups them for peer
+    // pooling (lib/listings/enrich.ts packIdentity) - the value restates
+    // this row's own battery fact.
+    packVariant: "62 kWh e+",
     modelYears: [2019, 2025],
     trim: "SV Plus",
     battery: { packGrossKwh: f(62, "est", "medium", "62 kWh gross (2023–25: ~60)"), chemistry: f("NMC", "agg", "medium") },
@@ -642,6 +662,10 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     id: "leaf-sl-plus",
     make: "NISSAN",
     model: "Leaf",
+    // Same pack as its trim siblings; packVariant groups them for peer
+    // pooling (lib/listings/enrich.ts packIdentity) - the value restates
+    // this row's own battery fact.
+    packVariant: "62 kWh e+",
     modelYears: [2019, 2022],
     trim: "SL Plus",
     battery: { packGrossKwh: f(62, "mfr", "medium", "62 kWh gross"), chemistry: f("NMC", "agg", "medium") },

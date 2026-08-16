@@ -1,9 +1,10 @@
 import { allListings } from "./source";
-import { displayTrim, enrichListing, specTrim } from "./enrich";
+import { displayTrim, enrichListing, packIdentity, specTrim } from "./enrich";
+import type { EnrichedListing } from "./enrich";
 import { listingTiles } from "./tiles";
 import { bodyTypeOf } from "./bodyType";
 import { hasRealPrice, priceCut } from "./price";
-import { askVsMarket, askVsSold, buildAskIndex, fetchCompIndex } from "./comps";
+import { askVsMarket, askVsSold, buildAskIndex, cohortIdentityMixed, fetchCompIndex } from "./comps";
 import { trimClaim } from "./trimClaim";
 import { zipCoords } from "@/lib/zips";
 import type { CardRow } from "./card";
@@ -26,17 +27,24 @@ export async function buildCardIndex(): Promise<CardRow[]> {
     const t = specTrim(l);
     if (t) trimKeys.set(l.vin, t.toUpperCase());
   }
+  // Enrichment once per listing, up front: the peer index needs each car's
+  // pack identity before any row is built, and the row loop reuses the same
+  // result rather than matching every listing twice.
+  const enriched = new Map<string, EnrichedListing>();
+  for (const l of listings) enriched.set(l.vin, enrichListing(l));
   // Every live asking price, keyed by variant — cheap next to enrichment, and
   // it needs the full set, so it runs once here rather than per row. Disclosed
   // manufacturer repurchases stay out of the peer pool: their asks price a
   // branded history, and one dealer lists dozens, enough to drag a cohort's
   // median down and make its clean-title cars read as overpriced.
   const asks = buildAskIndex(
-    listings.filter((l) => !l.buybackDisclosed).map((l) => ({ ...l, trimKey: trimKeys.get(l.vin) }))
+    listings
+      .filter((l) => !l.buybackDisclosed)
+      .map((l) => ({ ...l, trimKey: trimKeys.get(l.vin), identity: packIdentity(enriched.get(l.vin)!) }))
   );
   const rows: CardRow[] = [];
   for (const l of listings) {
-    const e = enrichListing(l);
+    const e = enriched.get(l.vin)!;
     // A trim the listing's own description contradicts is not printed and not
     // offered as a facet — a wrong chip is worse than a missing one, because a
     // shopper filtering on "Lariat" would never see the Lariat that a feed
@@ -50,14 +58,17 @@ export async function buildCardIndex(): Promise<CardRow[]> {
     // cars; the seller's own text says this car differs from them in a way
     // neither model can price, so any delta would be a false figure with the
     // buyer's money. The card carries the disclosure itself instead.
-    const vsSold = l.buybackDisclosed
+    // A cohort whose live cars resolve to two different packs gets none
+    // either: the sold fit for that VIN prefix is a mixture the trim-span
+    // gate can't see (Teslas file no trim), so it prices nothing.
+    const vsSold = l.buybackDisclosed || cohortIdentityMixed(asks, l.vin, l.year, packIdentity(e))
       ? undefined
       : askVsSold(comps, l.vin, l.year, l.mileage, l.priceUsd, real);
     // Only where the transaction model is silent. Two price claims on one card
     // would invite reading them as corroboration; they aren't the same thing.
     const vsMarket = vsSold || l.buybackDisclosed
       ? undefined
-      : askVsMarket(asks, comps, l.vin, l.year, l.mileage, l.priceUsd, real, trimKeys.get(l.vin));
+      : askVsMarket(asks, comps, l.vin, l.year, l.mileage, l.priceUsd, real, trimKeys.get(l.vin), packIdentity(e));
     rows.push({
       id: l.id,
       hay: `${l.year} ${l.make} ${l.model} ${l.trim ?? ""} ${l.exteriorColor ?? ""}`.toLowerCase(),
