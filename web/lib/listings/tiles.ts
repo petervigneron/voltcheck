@@ -42,9 +42,9 @@ export function listingTiles(
 
   // Which plug the car fast-charges through. J1772 is omitted: it only appears
   // on cars whose missing DC option already shows as the louder tile above.
-  if (e.port?.value === "NACS") t.push({ kind: "kit", text: "NACS", title: e.port.note ?? "Tesla-style port — plugs into the Supercharger network" });
+  if (e.port?.value === "NACS") t.push({ kind: "kit", text: "NACS", title: e.port.note ?? "Tesla-style port; plugs into the Supercharger network" });
   else if (e.port?.value === "CCS1") t.push({ kind: "spec", text: "CCS", title: e.port.note ?? undefined });
-  else if (e.port?.value === "CHAdeMO") t.push({ kind: "flag", text: "CHAdeMO", title: e.port.note ?? "Aging fast-charge standard — new public CHAdeMO stations are rare" });
+  else if (e.port?.value === "CHAdeMO") t.push({ kind: "flag", text: "CHAdeMO", title: e.port.note ?? "Aging fast-charge standard; new public CHAdeMO stations are rare" });
 
   if (l.campaignCheck?.packReplaced) {
     t.push({
@@ -64,10 +64,10 @@ export function listingTiles(
     const how = !estimated
       ? "manufacturer-published"
       : source === "agg"
-        ? "unverified — no primary source found"
+        ? "unverified, no primary source found"
         : source === "vin"
           ? "from the maker's Part 565 filing, declared per VIN pattern rather than per car"
-          : "estimated — the maker publishes no figure";
+          : "estimated, the maker publishes no figure";
     t.push({
       kind: "spec",
       text: `${Math.round(value)} kWh${estimated ? " est" : ""}`,

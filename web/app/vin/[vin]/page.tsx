@@ -42,7 +42,7 @@ export default async function VinPage(props: PageProps<"/vin/[vin]">) {
       {!decode.usMarket && (
         <div className={`rounded-lg border p-4 ${NOTE_STYLE}`}>
           <div className="text-sm font-semibold">
-            NHTSA has no record of this manufacturer — likely a grey import
+            NHTSA has no record of this manufacturer; likely a grey import
           </div>
           <p className="mt-1 text-sm text-zinc-700 dark:text-zinc-300">
             This VIN pattern (e.g. Shanghai-built LRW… or Berlin-built XP7… Teslas) is not a
@@ -80,14 +80,14 @@ export default async function VinPage(props: PageProps<"/vin/[vin]">) {
             </div>
             <div>
               {decode.trim && (
-                <FactRow label="Trim (VIN hint — verify)" fact={{ value: decode.trim, source: "vpic", asOf: "—", confidence: "medium" }} />
+                <FactRow label="Trim (VIN hint, verify)" fact={{ value: decode.trim, source: "vpic", asOf: "—", confidence: "medium" }} />
               )}
               {decode.driveType && (
-                <FactRow label="Drive type (VIN hint — verify)" fact={{ value: decode.driveType, source: "vpic", asOf: "—", confidence: "medium" }} />
+                <FactRow label="Drive type (VIN hint, verify)" fact={{ value: decode.driveType, source: "vpic", asOf: "—", confidence: "medium" }} />
               )}
               {decode.batteryKwhHint !== undefined && (
                 <FactRow
-                  label="Battery kWh (VIN hint — unreliable)"
+                  label="Battery kWh (VIN hint, unreliable)"
                   fact={{
                     value: decode.batteryKwhHint,
                     source: "vpic",
@@ -103,7 +103,7 @@ export default async function VinPage(props: PageProps<"/vin/[vin]">) {
       )}
 
       {enrichment.exact && (
-        <Section title="This exact configuration — researched">
+        <Section title="This exact configuration, researched">
           <EnrichmentFacts row={enrichment.exact} />
         </Section>
       )}
@@ -131,10 +131,10 @@ export default async function VinPage(props: PageProps<"/vin/[vin]">) {
       )}
 
       {decode.usMarket && !enrichment.exact && !enrichment.candidates && (
-        <Section title="This exact configuration — researched">
+        <Section title="This exact configuration, researched">
           <p className="text-sm text-zinc-500 dark:text-zinc-400">
             No researched row for this model yet. The seed corpus currently covers Tesla Model Y
-            and Model 3, Chevrolet Bolt EV, Hyundai Ioniq 5, and Kia EV6 — coverage grows model
+            and Model 3, Chevrolet Bolt EV, Hyundai Ioniq 5, and Kia EV6; coverage grows model
             by model, and nothing here is ever auto-filled from aggregators.
           </p>
         </Section>

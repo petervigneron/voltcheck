@@ -58,7 +58,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     trim: "Long Range AWD",
     packVariant: "2170",
     battery: {
-      packUsableKwh: f(76.5, "est", "medium", "~75–78 kWh; Tesla publishes no usable figure — from BMS logs and teardowns"),
+      packUsableKwh: f(76.5, "est", "medium", "~75–78 kWh; Tesla publishes no usable figure, from BMS logs and teardowns"),
       chemistry: f("NCA", "mfr"),
     },
     range: { epaRangeMi: f(330, "mfr", "high", "Official EPA rating for 'Model Y Long Range AWD'", "https://www.fueleconomy.gov"), testedRangeMi: f(276, "tested", "high", "70-mph test (InsideEVs, 2020 LR AWD): 276 mi; 75-mph (Car and Driver): 220; Edmunds mixed loop (2021): 317. Test cars were EPA 316–326") },
@@ -90,10 +90,10 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     packVariant: "4680",
     plant: "A",
     battery: {
-      packUsableKwh: f(67.5, "est", "medium", "~67–68 kWh; Tesla publishes no usable figure — from BMS logs and teardowns"),
+      packUsableKwh: f(67.5, "est", "medium", "~67–68 kWh; Tesla publishes no usable figure, from BMS logs and teardowns"),
       chemistry: f("NCA", "mfr"),
     },
-    range: { epaRangeMi: f(279, "mfr", "high", "Official EPA rating for 'Model Y AWD' — a distinct trim from Long Range AWD", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(279, "mfr", "high", "Official EPA rating for 'Model Y AWD', a distinct trim from Long Range AWD", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("NACS", "mfr"),
       superchargerAccess: f("native", "mfr"),
@@ -107,7 +107,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     },
     buyerNotes: [
       {
-        headline: "‘Model Y AWD’: 279 mi EPA — not the 330-mi ‘Long Range AWD’",
+        headline: "‘Model Y AWD’: 279 mi EPA, not the 330-mi ‘Long Range AWD’",
         severity: "trap",
       },
       {
@@ -124,10 +124,10 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     vin8: ["E"], // dual motor, non-Performance — Tesla's own Part 565 motor code
     trim: "Long Range AWD",
     battery: {
-      packUsableKwh: f(76.5, "est", "medium", "~75–78 kWh; Tesla publishes no usable figure — from BMS logs and teardowns"),
+      packUsableKwh: f(76.5, "est", "medium", "~75–78 kWh; Tesla publishes no usable figure, from BMS logs and teardowns"),
       chemistry: f("NCA", "mfr"),
     },
-    range: { epaRangeMi: f(310, "mfr", "high", "Official 2024 EPA rating (308 for the AWD-I motor variant) — note this is lower than the 330 often quoted from 2022–23", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(310, "mfr", "high", "Official 2024 EPA rating (308 for the AWD-I motor variant), note this is lower than the 330 often quoted from 2022–23", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("NACS", "mfr"),
       superchargerAccess: f("native", "mfr"),
@@ -159,9 +159,9 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     make: "CHEVROLET",
     model: "Bolt EV",
     modelYears: [2017, 2019],
-    range: { epaRangeMi: f(238, "mfr", "high", "MY2017–19 — EPA", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(238, "mfr", "high", "MY2017–19, EPA", "https://www.fueleconomy.gov") },
     charging: {
-      dcFastCharging: f("optional", "mfr", "high", "RPO code CBT, $750 standalone option — optional on BOTH trims through MY2020"),
+      dcFastCharging: f("optional", "mfr", "high", "RPO code CBT, $750 standalone option, optional on BOTH trims through MY2020"),
       portStandard: f("CCS1", "mfr", "high", "Only when the CBT option is present; without it the car is AC-only"),
     },
     thermal: { heatPump: f("none", "mfr") },
@@ -172,7 +172,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     },
     buyerNotes: [
       {
-        headline: "DC fast charging: $750 factory option — not on every car",
+        headline: "DC fast charging: $750 factory option, not on every car",
         severity: "trap",
         resolvedBy: "photo_dcfc",
       },
@@ -253,22 +253,22 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     trim: "Standard Range",
     drive: "RWD",
     battery: { packGrossKwh: f(58.0, "mfr", "medium", "Hyundai publishes one figure and does not say gross or usable") },
-    range: { epaRangeMi: f6(220, "mfr", "high", "Official EPA rating, 'Ioniq 5 RWD (Standard Range)' — EPA vehicle id 44924", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f6(220, "mfr", "high", "Official EPA rating, 'Ioniq 5 RWD (Standard Range)', EPA vehicle id 44924", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "mfr"),
-      superchargerAccess: f5("adapter", "mfr", "high", "Hyundai's March 2025 program opened US Superchargers to CCS-port cars via a NACS adapter. The free adapter was one per vehicle for owners who bought on or before 31 Jan 2025 — it does not automatically follow the car", "https://www.hyundainews.com/releases/4339"),
+      superchargerAccess: f5("adapter", "mfr", "high", "Hyundai's March 2025 program opened US Superchargers to CCS-port cars via a NACS adapter. The free adapter was one per vehicle for owners who bought on or before 31 Jan 2025, it does not automatically follow the car", "https://www.hyundainews.com/releases/4339"),
       dcPeakKw: f5(177, "tested", "medium", "58 kWh pack peak in instrumented sessions (InsideEVs charge analysis)", "https://insideevs.com/news/503522/hyundai-ioniq5-fast-charging-analysis/"),
       architectureV: f5(800, "mfr", "high", "522.7V-nominal Standard Range pack; 800V/350 kW ultra-fast charger standard", "https://www.hyundainews.com/assets/documents/original/48175-2022Ioniq5ProductGuidespecs090821.pdf"),
     },
     thermal: {
       heatPump: f5("none", "mfr", "high", "Heat pump is AWD-only through MY2024; every Standard Range car is RWD", "https://www.hyundainews.com/assets/documents/original/48175-2022Ioniq5ProductGuidespecs090821.pdf"),
-      batteryPreconditioning: f5(false, "mfr", "medium", "The 2022 sheet lists only a battery heater (AWD-only) — the \"battery preconditioning function\" line first appears on the 2023 sheet", "https://www.hyundainews.com/assets/documents/original/48175-2022Ioniq5ProductGuidespecs090821.pdf"),
+      batteryPreconditioning: f5(false, "mfr", "medium", "The 2022 sheet lists only a battery heater (AWD-only), the \"battery preconditioning function\" line first appears on the 2023 sheet", "https://www.hyundainews.com/assets/documents/original/48175-2022Ioniq5ProductGuidespecs090821.pdf"),
     },
     warranty: {
       batteryYears: f(10, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
-      batteryTransfers: f(true, "mfr", "high", "HV battery & EV system coverage transfers in full — confirmed in Hyundai's 2026 Owner's Handbook §6"),
+      batteryTransfers: f(true, "mfr", "high", "HV battery & EV system coverage transfers in full, confirmed in Hyundai's 2026 Owner's Handbook §6"),
       powertrainTransfers: f(false, "mfr", "high", "Powertrain 10yr/100k is original-owner-only; drops to 5yr/60k for a second owner"),
       extendedCoverage: f("ICCU: 15 years / 180,000 miles (extended April 2026, up from 10/100)", "mfr"),
     },
@@ -280,22 +280,22 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     modelYears: [2022, 2022],
     drive: "RWD",
     battery: { packGrossKwh: f(77.4, "mfr", "medium", "Long-range pack; Hyundai publishes one figure and does not say gross or usable") },
-    range: { epaRangeMi: f6(303, "mfr", "high", "Official EPA rating, 'Ioniq 5 RWD (Long Range)' — EPA vehicle id 44923", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f6(303, "mfr", "high", "Official EPA rating, 'Ioniq 5 RWD (Long Range)', EPA vehicle id 44923", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "mfr"),
-      superchargerAccess: f5("adapter", "mfr", "high", "Hyundai's March 2025 program opened US Superchargers to CCS-port cars via a NACS adapter. The free adapter was one per vehicle for owners who bought on or before 31 Jan 2025 — it does not automatically follow the car", "https://www.hyundainews.com/releases/4339"),
-      dcPeakKw: f5(235, "tested", "medium", "Hyundai publishes no vehicle peak — its sheet says only \"10–80% in 18 min\" on a >250 kW 800V charger. Instrumented sessions on the 77.4 kWh pack peak at ~233–236 kW (InsideEVs; EV Pulse)", "https://insideevs.com/news/503522/hyundai-ioniq5-fast-charging-analysis/"),
+      superchargerAccess: f5("adapter", "mfr", "high", "Hyundai's March 2025 program opened US Superchargers to CCS-port cars via a NACS adapter. The free adapter was one per vehicle for owners who bought on or before 31 Jan 2025, it does not automatically follow the car", "https://www.hyundainews.com/releases/4339"),
+      dcPeakKw: f5(235, "tested", "medium", "Hyundai publishes no vehicle peak, its sheet says only \"10–80% in 18 min\" on a >250 kW 800V charger. Instrumented sessions on the 77.4 kWh pack peak at ~233–236 kW (InsideEVs; EV Pulse)", "https://insideevs.com/news/503522/hyundai-ioniq5-fast-charging-analysis/"),
       architectureV: f5(800, "mfr", "high", "697V-nominal pack; the 2022 spec sheet lists the 800V/350 kW ultra-fast charger as standard", "https://www.hyundainews.com/assets/documents/original/48175-2022Ioniq5ProductGuidespecs090821.pdf"),
     },
     thermal: {
-      heatPump: f5("none", "mfr", "high", "Heat pump is AWD-only for MY2022 — RWD cars have none", "https://www.hyundainews.com/assets/documents/original/48175-2022Ioniq5ProductGuidespecs090821.pdf"),
-      batteryPreconditioning: f5(false, "mfr", "medium", "The 2022 sheet lists only a battery heater (AWD-only) — the \"battery preconditioning function\" line first appears on the 2023 sheet", "https://www.hyundainews.com/assets/documents/original/48175-2022Ioniq5ProductGuidespecs090821.pdf"),
+      heatPump: f5("none", "mfr", "high", "Heat pump is AWD-only for MY2022, RWD cars have none", "https://www.hyundainews.com/assets/documents/original/48175-2022Ioniq5ProductGuidespecs090821.pdf"),
+      batteryPreconditioning: f5(false, "mfr", "medium", "The 2022 sheet lists only a battery heater (AWD-only), the \"battery preconditioning function\" line first appears on the 2023 sheet", "https://www.hyundainews.com/assets/documents/original/48175-2022Ioniq5ProductGuidespecs090821.pdf"),
     },
     warranty: {
       batteryYears: f(10, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
-      batteryTransfers: f(true, "mfr", "high", "HV battery & EV system coverage transfers in full — confirmed in Hyundai's 2026 Owner's Handbook §6"),
+      batteryTransfers: f(true, "mfr", "high", "HV battery & EV system coverage transfers in full, confirmed in Hyundai's 2026 Owner's Handbook §6"),
       powertrainTransfers: f(false, "mfr", "high", "Powertrain 10yr/100k is original-owner-only; drops to 5yr/60k for a second owner"),
       extendedCoverage: f("ICCU: 15 years / 180,000 miles (extended April 2026, up from 10/100)", "mfr"),
     },
@@ -307,22 +307,22 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     modelYears: [2022, 2022],
     drive: "AWD",
     battery: { packGrossKwh: f(77.4, "mfr", "medium", "Long-range pack; Hyundai publishes one figure and does not say gross or usable") },
-    range: { epaRangeMi: f6(256, "mfr", "high", "Official EPA rating, 'Ioniq 5 AWD (Long Range)' — EPA vehicle id 44922", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f6(256, "mfr", "high", "Official EPA rating, 'Ioniq 5 AWD (Long Range)', EPA vehicle id 44922", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "mfr"),
-      superchargerAccess: f5("adapter", "mfr", "high", "Hyundai's March 2025 program opened US Superchargers to CCS-port cars via a NACS adapter. The free adapter was one per vehicle for owners who bought on or before 31 Jan 2025 — it does not automatically follow the car", "https://www.hyundainews.com/releases/4339"),
-      dcPeakKw: f5(235, "tested", "medium", "Hyundai publishes no vehicle peak — its sheet says only \"10–80% in 18 min\" on a >250 kW 800V charger. Instrumented sessions on the 77.4 kWh pack peak at ~233–236 kW (InsideEVs; EV Pulse)", "https://insideevs.com/news/503522/hyundai-ioniq5-fast-charging-analysis/"),
+      superchargerAccess: f5("adapter", "mfr", "high", "Hyundai's March 2025 program opened US Superchargers to CCS-port cars via a NACS adapter. The free adapter was one per vehicle for owners who bought on or before 31 Jan 2025, it does not automatically follow the car", "https://www.hyundainews.com/releases/4339"),
+      dcPeakKw: f5(235, "tested", "medium", "Hyundai publishes no vehicle peak, its sheet says only \"10–80% in 18 min\" on a >250 kW 800V charger. Instrumented sessions on the 77.4 kWh pack peak at ~233–236 kW (InsideEVs; EV Pulse)", "https://insideevs.com/news/503522/hyundai-ioniq5-fast-charging-analysis/"),
       architectureV: f5(800, "mfr", "high", "697V-nominal pack; the 2022 spec sheet lists the 800V/350 kW ultra-fast charger as standard", "https://www.hyundainews.com/assets/documents/original/48175-2022Ioniq5ProductGuidespecs090821.pdf"),
     },
     thermal: {
       heatPump: f5("standard", "mfr", "high", "Standard on AWD (the heat pump is AWD-only this model year)", "https://www.hyundainews.com/assets/documents/original/48175-2022Ioniq5ProductGuidespecs090821.pdf"),
-      batteryPreconditioning: f5(false, "mfr", "medium", "The 2022 sheet lists only a battery heater (AWD-only) — the \"battery preconditioning function\" line first appears on the 2023 sheet", "https://www.hyundainews.com/assets/documents/original/48175-2022Ioniq5ProductGuidespecs090821.pdf"),
+      batteryPreconditioning: f5(false, "mfr", "medium", "The 2022 sheet lists only a battery heater (AWD-only), the \"battery preconditioning function\" line first appears on the 2023 sheet", "https://www.hyundainews.com/assets/documents/original/48175-2022Ioniq5ProductGuidespecs090821.pdf"),
     },
     warranty: {
       batteryYears: f(10, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
-      batteryTransfers: f(true, "mfr", "high", "HV battery & EV system coverage transfers in full — confirmed in Hyundai's 2026 Owner's Handbook §6"),
+      batteryTransfers: f(true, "mfr", "high", "HV battery & EV system coverage transfers in full, confirmed in Hyundai's 2026 Owner's Handbook §6"),
       powertrainTransfers: f(false, "mfr", "high", "Powertrain 10yr/100k is original-owner-only; drops to 5yr/60k for a second owner"),
       extendedCoverage: f("ICCU: 15 years / 180,000 miles (extended April 2026, up from 10/100)", "mfr"),
     },
@@ -342,7 +342,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     range: { epaRangeMi: f6(220, "mfr", "high", "MY2024 EPA rating, 'Ioniq 5 Standard range RWD' (EPA vehicle id 46961); the 2023 spec sheet prints the same 220-mile EPA figure", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "mfr", "high", "Pre-facelift cars are CCS1; the native NACS port arrives with the MY2025 facelift"),
-      superchargerAccess: f5("adapter", "mfr", "high", "Hyundai's March 2025 program opened US Superchargers to CCS-port cars via a NACS adapter. The free adapter was one per vehicle for owners who bought on or before 31 Jan 2025 — it does not automatically follow the car", "https://www.hyundainews.com/releases/4339"),
+      superchargerAccess: f5("adapter", "mfr", "high", "Hyundai's March 2025 program opened US Superchargers to CCS-port cars via a NACS adapter. The free adapter was one per vehicle for owners who bought on or before 31 Jan 2025, it does not automatically follow the car", "https://www.hyundainews.com/releases/4339"),
       dcPeakKw: f5(177, "tested", "medium", "58 kWh pack peak in instrumented sessions (InsideEVs charge analysis)", "https://insideevs.com/news/503522/hyundai-ioniq5-fast-charging-analysis/"),
       architectureV: f5(800, "mfr", "high", "522.7V-nominal Standard Range pack; 800V/350 kW ultra-fast charger standard per the model-year spec sheets", "https://www.hyundainews.com/assets/documents/original/56233-2024IONIQ5Specs062623.pdf"),
     },
@@ -354,7 +354,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       batteryYears: f(10, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
-      batteryTransfers: f(true, "mfr", "high", "HV battery & EV system coverage transfers in full — confirmed in Hyundai's 2026 Owner's Handbook §6"),
+      batteryTransfers: f(true, "mfr", "high", "HV battery & EV system coverage transfers in full, confirmed in Hyundai's 2026 Owner's Handbook §6"),
       powertrainTransfers: f(false, "mfr", "high", "Powertrain 10yr/100k is original-owner-only; drops to 5yr/60k for a second owner"),
       extendedCoverage: f("ICCU: 15 years / 180,000 miles (extended April 2026, up from 10/100)", "mfr"),
     },
@@ -369,19 +369,19 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     range: { epaRangeMi: f6(303, "mfr", "high", "MY2024 EPA rating, 'Ioniq 5 Long range RWD' (EPA vehicle id 46960); the 2023 spec sheet prints the same 303-mile EPA figure for SE/SEL/Limited RWD", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "mfr", "high", "Pre-facelift cars are CCS1; the native NACS port arrives with the MY2025 facelift"),
-      superchargerAccess: f5("adapter", "mfr", "high", "Hyundai's March 2025 program opened US Superchargers to CCS-port cars via a NACS adapter. The free adapter was one per vehicle for owners who bought on or before 31 Jan 2025 — it does not automatically follow the car", "https://www.hyundainews.com/releases/4339"),
-      dcPeakKw: f5(235, "tested", "medium", "Hyundai publishes no vehicle peak — its sheets say only \"10–80% in 18 min\" on a >250 kW 800V charger. Instrumented sessions on the 77.4 kWh pack peak at ~233–236 kW (InsideEVs; EV Pulse)", "https://insideevs.com/news/503522/hyundai-ioniq5-fast-charging-analysis/"),
+      superchargerAccess: f5("adapter", "mfr", "high", "Hyundai's March 2025 program opened US Superchargers to CCS-port cars via a NACS adapter. The free adapter was one per vehicle for owners who bought on or before 31 Jan 2025, it does not automatically follow the car", "https://www.hyundainews.com/releases/4339"),
+      dcPeakKw: f5(235, "tested", "medium", "Hyundai publishes no vehicle peak, its sheets say only \"10–80% in 18 min\" on a >250 kW 800V charger. Instrumented sessions on the 77.4 kWh pack peak at ~233–236 kW (InsideEVs; EV Pulse)", "https://insideevs.com/news/503522/hyundai-ioniq5-fast-charging-analysis/"),
       architectureV: f5(800, "mfr", "high", "697V-nominal long-range pack; 800V/350 kW ultra-fast charger standard per the model-year spec sheets", "https://www.hyundainews.com/assets/documents/original/56233-2024IONIQ5Specs062623.pdf"),
     },
     thermal: {
-      heatPump: f5("none", "mfr", "high", "Heat pump is AWD-only on every trim per the 2023 and 2024 feature sheets — RWD cars have none", "https://www.hyundainews.com/assets/documents/original/56232-2024IONIQ5Features062623.pdf"),
+      heatPump: f5("none", "mfr", "high", "Heat pump is AWD-only on every trim per the 2023 and 2024 feature sheets, RWD cars have none", "https://www.hyundainews.com/assets/documents/original/56232-2024IONIQ5Features062623.pdf"),
       batteryPreconditioning: f5(true, "mfr", "high", "\"Battery preconditioning function\" standard on all models per the 2023 and 2024 spec sheets", "https://www.hyundainews.com/assets/documents/original/50313-2023IONIQ5ProductSpecifications20220630.pdf"),
     },
     warranty: {
       batteryYears: f(10, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
-      batteryTransfers: f(true, "mfr", "high", "HV battery & EV system coverage transfers in full — confirmed in Hyundai's 2026 Owner's Handbook §6"),
+      batteryTransfers: f(true, "mfr", "high", "HV battery & EV system coverage transfers in full, confirmed in Hyundai's 2026 Owner's Handbook §6"),
       powertrainTransfers: f(false, "mfr", "high", "Powertrain 10yr/100k is original-owner-only; drops to 5yr/60k for a second owner"),
       extendedCoverage: f("ICCU: 15 years / 180,000 miles (extended April 2026, up from 10/100)", "mfr"),
     },
@@ -396,8 +396,8 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     range: { epaRangeMi: f6(266, "mfr", "high", "Hyundai's 2023 spec sheet: 266 miles EPA for SE/SEL/Limited AWD (printed in both the powertrain and EPA-ratings tables). The EPA's public dataset has no MY2023 Ioniq 5 records (verified by control test 2026-08-14), so the manufacturer sheet is the citable source", "https://www.hyundainews.com/assets/documents/original/50313-2023IONIQ5ProductSpecifications20220630.pdf") },
     charging: {
       portStandard: f("CCS1", "mfr", "high", "Pre-facelift cars are CCS1; the native NACS port arrives with the MY2025 facelift"),
-      superchargerAccess: f5("adapter", "mfr", "high", "Hyundai's March 2025 program opened US Superchargers to CCS-port cars via a NACS adapter. The free adapter was one per vehicle for owners who bought on or before 31 Jan 2025 — it does not automatically follow the car", "https://www.hyundainews.com/releases/4339"),
-      dcPeakKw: f5(235, "tested", "medium", "Hyundai publishes no vehicle peak — its sheets say only \"10–80% in 18 min\" on a >250 kW 800V charger. Instrumented sessions on the 77.4 kWh pack peak at ~233–236 kW (InsideEVs; EV Pulse)", "https://insideevs.com/news/503522/hyundai-ioniq5-fast-charging-analysis/"),
+      superchargerAccess: f5("adapter", "mfr", "high", "Hyundai's March 2025 program opened US Superchargers to CCS-port cars via a NACS adapter. The free adapter was one per vehicle for owners who bought on or before 31 Jan 2025, it does not automatically follow the car", "https://www.hyundainews.com/releases/4339"),
+      dcPeakKw: f5(235, "tested", "medium", "Hyundai publishes no vehicle peak, its sheets say only \"10–80% in 18 min\" on a >250 kW 800V charger. Instrumented sessions on the 77.4 kWh pack peak at ~233–236 kW (InsideEVs; EV Pulse)", "https://insideevs.com/news/503522/hyundai-ioniq5-fast-charging-analysis/"),
       architectureV: f5(800, "mfr", "high", "697V-nominal long-range pack; 800V/350 kW ultra-fast charger standard per the model-year spec sheets", "https://www.hyundainews.com/assets/documents/original/50313-2023IONIQ5ProductSpecifications20220630.pdf"),
     },
     thermal: {
@@ -408,7 +408,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       batteryYears: f(10, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
-      batteryTransfers: f(true, "mfr", "high", "HV battery & EV system coverage transfers in full — confirmed in Hyundai's 2026 Owner's Handbook §6"),
+      batteryTransfers: f(true, "mfr", "high", "HV battery & EV system coverage transfers in full, confirmed in Hyundai's 2026 Owner's Handbook §6"),
       powertrainTransfers: f(false, "mfr", "high", "Powertrain 10yr/100k is original-owner-only; drops to 5yr/60k for a second owner"),
       extendedCoverage: f("ICCU: 15 years / 180,000 miles (extended April 2026, up from 10/100)", "mfr"),
     },
@@ -420,11 +420,11 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     modelYears: [2024, 2024],
     drive: "AWD",
     battery: { packGrossKwh: f(77.4, "mfr", "medium", "Long-range pack; Hyundai publishes one figure and does not say gross or usable") },
-    range: { epaRangeMi: f6(260, "mfr", "high", "Official EPA rating, 'Ioniq 5 Long range AWD' — EPA vehicle id 46962 (down from 266 in 2023)", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f6(260, "mfr", "high", "Official EPA rating, 'Ioniq 5 Long range AWD', EPA vehicle id 46962 (down from 266 in 2023)", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "mfr", "high", "Pre-facelift cars are CCS1; the native NACS port arrives with the MY2025 facelift"),
-      superchargerAccess: f5("adapter", "mfr", "high", "Hyundai's March 2025 program opened US Superchargers to CCS-port cars via a NACS adapter. The free adapter was one per vehicle for owners who bought on or before 31 Jan 2025 — it does not automatically follow the car", "https://www.hyundainews.com/releases/4339"),
-      dcPeakKw: f5(235, "tested", "medium", "Hyundai publishes no vehicle peak — its sheets say only \"10–80% in 18 min\" on a >250 kW 800V charger. Instrumented sessions on the 77.4 kWh pack peak at ~233–236 kW (InsideEVs; EV Pulse)", "https://insideevs.com/news/503522/hyundai-ioniq5-fast-charging-analysis/"),
+      superchargerAccess: f5("adapter", "mfr", "high", "Hyundai's March 2025 program opened US Superchargers to CCS-port cars via a NACS adapter. The free adapter was one per vehicle for owners who bought on or before 31 Jan 2025, it does not automatically follow the car", "https://www.hyundainews.com/releases/4339"),
+      dcPeakKw: f5(235, "tested", "medium", "Hyundai publishes no vehicle peak, its sheets say only \"10–80% in 18 min\" on a >250 kW 800V charger. Instrumented sessions on the 77.4 kWh pack peak at ~233–236 kW (InsideEVs; EV Pulse)", "https://insideevs.com/news/503522/hyundai-ioniq5-fast-charging-analysis/"),
       architectureV: f5(800, "mfr", "high", "697V-nominal long-range pack; 800V/350 kW ultra-fast charger standard per the model-year spec sheets", "https://www.hyundainews.com/assets/documents/original/56233-2024IONIQ5Specs062623.pdf"),
     },
     thermal: {
@@ -435,7 +435,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       batteryYears: f(10, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
-      batteryTransfers: f(true, "mfr", "high", "HV battery & EV system coverage transfers in full — confirmed in Hyundai's 2026 Owner's Handbook §6"),
+      batteryTransfers: f(true, "mfr", "high", "HV battery & EV system coverage transfers in full, confirmed in Hyundai's 2026 Owner's Handbook §6"),
       powertrainTransfers: f(false, "mfr", "high", "Powertrain 10yr/100k is original-owner-only; drops to 5yr/60k for a second owner"),
       extendedCoverage: f("ICCU: 15 years / 180,000 miles (extended April 2026, up from 10/100)", "mfr"),
     },
@@ -455,7 +455,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     trim: "Standard Range",
     drive: "RWD",
     battery: { packGrossKwh: f6(63.0, "mfr", "medium", "Standard Range pack, up from 58; Hyundai publishes one figure and does not say gross or usable", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf") },
-    range: { epaRangeMi: f6(245, "mfr", "high", "Official EPA rating, 'Ioniq 5 Standard range' — EPA vehicle ids 48714 (2025) / 49961 (2026)", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f6(245, "mfr", "high", "Official EPA rating, 'Ioniq 5 Standard range', EPA vehicle ids 48714 (2025) / 49961 (2026)", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f5("NACS", "mfr", "high", "Native NACS from the MY2025 facelift; 2025 cars shipped with a CCS adapter included", "https://www.hyundainews.com/assets/documents/original/63444-2025IONIQ5XRTLimited8272024finalmjab.pdf"),
       superchargerAccess: f5("native", "mfr"),
@@ -469,7 +469,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       batteryYears: f(10, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
-      batteryTransfers: f(true, "mfr", "high", "HV battery & EV system coverage transfers in full — confirmed in Hyundai's 2026 Owner's Handbook §6"),
+      batteryTransfers: f(true, "mfr", "high", "HV battery & EV system coverage transfers in full, confirmed in Hyundai's 2026 Owner's Handbook §6"),
       powertrainTransfers: f(false, "mfr", "high", "Powertrain 10yr/100k is original-owner-only; drops to 5yr/60k for a second owner"),
       // Deliberately NO ICCU extendedCoverage on facelift rows: the recalls and
       // the April 2026 15yr/180k extension are documented for 2022–24 cars only.
@@ -489,22 +489,22 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     modelYears: [2025, 2026],
     drive: "RWD",
     battery: { packGrossKwh: f5(84.0, "mfr", "medium", "Long-range pack, up from 77.4; Hyundai publishes one figure and does not say gross or usable", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf") },
-    range: { epaRangeMi: f6(318, "mfr", "high", "Official EPA rating, 'Ioniq 5 RWD' — EPA vehicle ids 48713 (2025) / 49960 (2026); one rating covers all long-range RWD trims", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f6(318, "mfr", "high", "Official EPA rating, 'Ioniq 5 RWD', EPA vehicle ids 48713 (2025) / 49960 (2026); one rating covers all long-range RWD trims", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f5("NACS", "mfr", "high", "Native NACS from the MY2025 facelift; 2025 cars shipped with a CCS adapter included", "https://www.hyundainews.com/assets/documents/original/63444-2025IONIQ5XRTLimited8272024finalmjab.pdf"),
       superchargerAccess: f5("native", "mfr"),
-      dcPeakKw: f5(257, "tested", "medium", "Hyundai publishes no vehicle peak. Instrumented curves on the 84 kWh pack peak at ~257–260 kW on 800V hardware — only reachable via the CCS adapter, not on today's 400V Superchargers"),
+      dcPeakKw: f5(257, "tested", "medium", "Hyundai publishes no vehicle peak. Instrumented curves on the 84 kWh pack peak at ~257–260 kW on 800V hardware, only reachable via the CCS adapter, not on today's 400V Superchargers"),
       architectureV: f5(800, "mfr", "high", "697V-nominal long-range pack; 800V/350 kW ultra-fast charger standard per the 2025 spec sheet", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf"),
     },
     thermal: {
-      heatPump: f5("none", "mfr", "high", "The facelift did not make the heat pump standard: AWD-only per the 2025 feature sheet — RWD cars have none", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf"),
+      heatPump: f5("none", "mfr", "high", "The facelift did not make the heat pump standard: AWD-only per the 2025 feature sheet, RWD cars have none", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf"),
       batteryPreconditioning: f5(true, "mfr", "high", "\"Battery preconditioning function\" standard on all models per the 2025 spec sheet", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf"),
     },
     warranty: {
       batteryYears: f(10, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
-      batteryTransfers: f(true, "mfr", "high", "HV battery & EV system coverage transfers in full — confirmed in Hyundai's 2026 Owner's Handbook §6"),
+      batteryTransfers: f(true, "mfr", "high", "HV battery & EV system coverage transfers in full, confirmed in Hyundai's 2026 Owner's Handbook §6"),
       powertrainTransfers: f(false, "mfr", "high", "Powertrain 10yr/100k is original-owner-only; drops to 5yr/60k for a second owner"),
     },
     buyerNotes: [
@@ -526,11 +526,11 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     modelYears: [2025, 2026],
     drive: "AWD",
     battery: { packGrossKwh: f5(84.0, "mfr", "medium", "Long-range pack, up from 77.4; Hyundai publishes one figure and does not say gross or usable", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf") },
-    range: { epaRangeMi: f6(290, "mfr", "high", "Official EPA rating, 'Ioniq 5 AWD (19 inch Wheels)' (SE/SEL) — EPA vehicle ids 48710 (2025) / 49962 (2026). Limited (20\") is rated 269 and XRT 259 — separate rows", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f6(290, "mfr", "high", "Official EPA rating, 'Ioniq 5 AWD (19 inch Wheels)' (SE/SEL), EPA vehicle ids 48710 (2025) / 49962 (2026). Limited (20\") is rated 269 and XRT 259, separate rows", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f5("NACS", "mfr", "high", "Native NACS from the MY2025 facelift; 2025 cars shipped with a CCS adapter included", "https://www.hyundainews.com/assets/documents/original/63444-2025IONIQ5XRTLimited8272024finalmjab.pdf"),
       superchargerAccess: f5("native", "mfr"),
-      dcPeakKw: f5(257, "tested", "medium", "Hyundai publishes no vehicle peak. Instrumented curves on the 84 kWh pack peak at ~257–260 kW on 800V hardware — only reachable via the CCS adapter, not on today's 400V Superchargers"),
+      dcPeakKw: f5(257, "tested", "medium", "Hyundai publishes no vehicle peak. Instrumented curves on the 84 kWh pack peak at ~257–260 kW on 800V hardware, only reachable via the CCS adapter, not on today's 400V Superchargers"),
       architectureV: f5(800, "mfr", "high", "697V-nominal long-range pack; 800V/350 kW ultra-fast charger standard per the 2025 spec sheet", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf"),
     },
     thermal: {
@@ -541,7 +541,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       batteryYears: f(10, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
-      batteryTransfers: f(true, "mfr", "high", "HV battery & EV system coverage transfers in full — confirmed in Hyundai's 2026 Owner's Handbook §6"),
+      batteryTransfers: f(true, "mfr", "high", "HV battery & EV system coverage transfers in full, confirmed in Hyundai's 2026 Owner's Handbook §6"),
       powertrainTransfers: f(false, "mfr", "high", "Powertrain 10yr/100k is original-owner-only; drops to 5yr/60k for a second owner"),
     },
     buyerNotes: [
@@ -564,11 +564,11 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     trim: "Limited",
     drive: "AWD",
     battery: { packGrossKwh: f5(84.0, "mfr", "medium", "Long-range pack, up from 77.4; Hyundai publishes one figure and does not say gross or usable", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf") },
-    range: { epaRangeMi: f6(269, "mfr", "high", "Official EPA rating, 'Ioniq 5 AWD (20 inch Wheels)' — the Limited AWD's wheels — EPA vehicle ids 48711 (2025) / 49963 (2026)", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f6(269, "mfr", "high", "Official EPA rating, 'Ioniq 5 AWD (20 inch Wheels)', the Limited AWD's wheels, EPA vehicle ids 48711 (2025) / 49963 (2026)", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f5("NACS", "mfr", "high", "Native NACS from the MY2025 facelift; 2025 cars shipped with a CCS adapter included", "https://www.hyundainews.com/assets/documents/original/63444-2025IONIQ5XRTLimited8272024finalmjab.pdf"),
       superchargerAccess: f5("native", "mfr"),
-      dcPeakKw: f5(257, "tested", "medium", "Hyundai publishes no vehicle peak. Instrumented curves on the 84 kWh pack peak at ~257–260 kW on 800V hardware — only reachable via the CCS adapter, not on today's 400V Superchargers"),
+      dcPeakKw: f5(257, "tested", "medium", "Hyundai publishes no vehicle peak. Instrumented curves on the 84 kWh pack peak at ~257–260 kW on 800V hardware, only reachable via the CCS adapter, not on today's 400V Superchargers"),
       architectureV: f5(800, "mfr", "high", "697V-nominal long-range pack; 800V/350 kW ultra-fast charger standard per the 2025 spec sheet", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf"),
     },
     thermal: {
@@ -579,7 +579,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       batteryYears: f(10, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
-      batteryTransfers: f(true, "mfr", "high", "HV battery & EV system coverage transfers in full — confirmed in Hyundai's 2026 Owner's Handbook §6"),
+      batteryTransfers: f(true, "mfr", "high", "HV battery & EV system coverage transfers in full, confirmed in Hyundai's 2026 Owner's Handbook §6"),
       powertrainTransfers: f(false, "mfr", "high", "Powertrain 10yr/100k is original-owner-only; drops to 5yr/60k for a second owner"),
     },
     buyerNotes: [
@@ -602,11 +602,11 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     trim: "XRT",
     drive: "AWD",
     battery: { packGrossKwh: f5(84.0, "mfr", "medium", "Long-range pack, up from 77.4; Hyundai publishes one figure and does not say gross or usable", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf") },
-    range: { epaRangeMi: f6(259, "mfr", "high", "Official EPA rating, 'Ioniq 5 AWD XRT' — EPA vehicle ids 48712 (2025) / 49964 (2026)", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f6(259, "mfr", "high", "Official EPA rating, 'Ioniq 5 AWD XRT', EPA vehicle ids 48712 (2025) / 49964 (2026)", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f5("NACS", "mfr", "high", "Native NACS from the MY2025 facelift; 2025 cars shipped with a CCS adapter included", "https://www.hyundainews.com/assets/documents/original/63444-2025IONIQ5XRTLimited8272024finalmjab.pdf"),
       superchargerAccess: f5("native", "mfr"),
-      dcPeakKw: f5(257, "tested", "medium", "Hyundai publishes no vehicle peak. Instrumented curves on the 84 kWh pack peak at ~257–260 kW on 800V hardware — only reachable via the CCS adapter, not on today's 400V Superchargers"),
+      dcPeakKw: f5(257, "tested", "medium", "Hyundai publishes no vehicle peak. Instrumented curves on the 84 kWh pack peak at ~257–260 kW on 800V hardware, only reachable via the CCS adapter, not on today's 400V Superchargers"),
       architectureV: f5(800, "mfr", "high", "697V-nominal long-range pack; 800V/350 kW ultra-fast charger standard per the 2025 spec sheet", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf"),
     },
     thermal: {
@@ -617,7 +617,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       batteryYears: f(10, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
-      batteryTransfers: f(true, "mfr", "high", "HV battery & EV system coverage transfers in full — confirmed in Hyundai's 2026 Owner's Handbook §6"),
+      batteryTransfers: f(true, "mfr", "high", "HV battery & EV system coverage transfers in full, confirmed in Hyundai's 2026 Owner's Handbook §6"),
       powertrainTransfers: f(false, "mfr", "high", "Powertrain 10yr/100k is original-owner-only; drops to 5yr/60k for a second owner"),
     },
     buyerNotes: [
@@ -643,7 +643,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     trim: "N",
     drive: "AWD",
     battery: { packGrossKwh: f6(84.0, "mfr", "medium", "Hyundai publishes one figure and does not say gross or usable") },
-    range: { epaRangeMi: f6(221, "mfr", "high", "Official EPA rating, 'Ioniq 5 N' — EPA vehicle ids 48360 (2025) / 49965 (2026)", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f6(221, "mfr", "high", "Official EPA rating, 'Ioniq 5 N', EPA vehicle ids 48360 (2025) / 49965 (2026)", "https://www.fueleconomy.gov") },
     thermal: {
       heatPump: f5("standard", "mfr", "high", "The N feature sheet lists the heat pump as standard (\"S\")"),
     },
@@ -651,7 +651,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       batteryYears: f(10, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
-      batteryTransfers: f(true, "mfr", "high", "HV battery & EV system coverage transfers in full — confirmed in Hyundai's 2026 Owner's Handbook §6"),
+      batteryTransfers: f(true, "mfr", "high", "HV battery & EV system coverage transfers in full, confirmed in Hyundai's 2026 Owner's Handbook §6"),
       powertrainTransfers: f(false, "mfr", "high", "Powertrain 10yr/100k is original-owner-only; drops to 5yr/60k for a second owner"),
     },
   },

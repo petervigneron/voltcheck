@@ -57,22 +57,22 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       packUsableKwh: f(75, "agg", "medium", "Corroborated by an independent InsideEVs review; not the exact wording of Polestar's own spec table"),
     },
     range: {
-      epaRangeMi: f(233, "mfr", "high", "2021 Polestar 2 dual-motor Launch Edition — the only EPA-certified US variant for MY2021 — EPA", "https://www.fueleconomy.gov"),
-      testedRangeMi: f(226, "tested", "high", "70-mph steady highway (InsideEVs): 226 mi sustained before needing to slow, +7 mi on secondary roads = 233.4 mi total — essentially matched EPA combined and slightly beat EPA highway (222 mi)"),
+      epaRangeMi: f(233, "mfr", "high", "2021 Polestar 2 dual-motor Launch Edition, the only EPA-certified US variant for MY2021, EPA", "https://www.fueleconomy.gov"),
+      testedRangeMi: f(226, "tested", "high", "70-mph steady highway (InsideEVs): 226 mi sustained before needing to slow, +7 mi on secondary roads = 233.4 mi total, essentially matched EPA combined and slightly beat EPA highway (222 mi)"),
     },
     charging: {
       portStandard: f("CCS1", "agg", "medium", "Widely reported as CCS1 for the US market; not confirmed in a Polestar primary spec document"),
       dcPeakKw: f(150, "agg", "medium", "Polestar's rated peak; see buyer note on the real-world shortfall InsideEVs measured on this specific car"),
     },
-    thermal: { heatPump: f("none", "agg", "medium", "Heat pump was introduced via a “Plus Pack” announced April 2021 for updated/MY2022 builds — not confirmed standard on the original MY2021 Launch Edition") },
+    thermal: { heatPump: f("none", "agg", "medium", "Heat pump was introduced via a “Plus Pack” announced April 2021 for updated/MY2022 builds, not confirmed standard on the original MY2021 Launch Edition") },
     warranty: {
-      batteryYears: f(8, "mfr", "high", "“Eight (8) years or 100,000 miles/160,000 kilometers” — Polestar's own Warranty Policy and Procedures Manual (produced to NHTSA under FOIA), applies to all Polestar vehicles"),
+      batteryYears: f(8, "mfr", "high", "“Eight (8) years or 100,000 miles/160,000 kilometers”, Polestar's own Warranty Policy and Procedures Manual (produced to NHTSA under FOIA), applies to all Polestar vehicles"),
       batteryMiles: f(100_000, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high", "“Any remaining portion of the warranty is fully transferable to subsequent owners free of charge” — Polestar's own Warranty Policy and Procedures Manual"),
+      batteryTransfers: f(true, "mfr", "high", "“Any remaining portion of the warranty is fully transferable to subsequent owners free of charge”, Polestar's own Warranty Policy and Procedures Manual"),
     },
     buyerNotes: [
       {
-        headline: "HV battery software fault can cut drive power — check this VIN's status",
+        headline: "HV battery software fault can cut drive power, check this VIN's status",
         body: "21V110 (2021–2022 Polestar 2): the Battery Energy Control Module microprocessor may reset and disconnect the high-voltage system, causing loss of drive power. Free OTA or dealer software fix; owner notices mailed April 2021.",
         severity: "trap",
       },
@@ -83,7 +83,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       },
       {
         headline: "Real-world DC fast-charge peak fell well short of the rated 150 kW",
-        body: "InsideEVs measured only about 99 kW peak DC charging on a 2021 Polestar 2 test car, against Polestar's 150 kW rating — attributed at the time to a software/network compatibility limit, which may not reflect current software on every car.",
+        body: "InsideEVs measured only about 99 kW peak DC charging on a 2021 Polestar 2 test car, against Polestar's 150 kW rating, attributed at the time to a software/network compatibility limit, which may not reflect current software on every car.",
         severity: "info",
       },
       {
@@ -105,29 +105,29 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     trim: "M60",
     drive: "AWD",
     battery: {
-      packGrossKwh: f(111.5, "mfr", "high", "BMW USA press: “Energy capacity, gross/net kWh 111.5/106.3” — shared pack across xDrive50 and M60"),
+      packGrossKwh: f(111.5, "mfr", "high", "BMW USA press: “Energy capacity, gross/net kWh 111.5/106.3”, shared pack across xDrive50 and M60"),
       packUsableKwh: f(106.3, "mfr", "high", "BMW USA press, same spec table"),
     },
     range: {
-      epaRangeMi: f(288, "mfr", "high", "2023 iX M60, 21-inch wheels — EPA; 22-inch wheels: 274 mi (BMW voluntarily lowered this from a preliminary 291 mi estimate before final certification)", "https://www.fueleconomy.gov"),
-      testedRangeMi: f(325, "tested", "medium", "Edmunds real-world test, 22-inch-wheel M60: 325 mi — reported tier, Edmunds domain-wide 403s block direct verification; no InsideEVs 70-mph or Car and Driver 75-mph test found for M60 specifically"),
+      epaRangeMi: f(288, "mfr", "high", "2023 iX M60, 21-inch wheels, EPA; 22-inch wheels: 274 mi (BMW voluntarily lowered this from a preliminary 291 mi estimate before final certification)", "https://www.fueleconomy.gov"),
+      testedRangeMi: f(325, "tested", "medium", "Edmunds real-world test, 22-inch-wheel M60: 325 mi, reported tier, Edmunds domain-wide 403s block direct verification; no InsideEVs 70-mph or Car and Driver 75-mph test found for M60 specifically"),
     },
     charging: {
       portStandard: f("CCS1", "agg", "medium", "BMW's own term is “Combined Charging Unit”; not independently re-verified as CCS1 in the M60-specific press document, but consistent with the rest of the US BMW BEV lineup"),
-      superchargerAccess: f("adapter", "agg", "high", "Opened Dec 2025 via BMW-approved adapter; requires a Remote Software Upgrade first — same platform-level fact as i4"),
-      dcPeakKw: f(195, "mfr", "high", "BMW USA press: “Maximum charging, DC kW 195” — platform-level figure shared with xDrive50; some secondary aggregators round this to 200 kW"),
+      superchargerAccess: f("adapter", "agg", "high", "Opened Dec 2025 via BMW-approved adapter; requires a Remote Software Upgrade first, same platform-level fact as i4"),
+      dcPeakKw: f(195, "mfr", "high", "BMW USA press: “Maximum charging, DC kW 195”, platform-level figure shared with xDrive50; some secondary aggregators round this to 200 kW"),
     },
-    thermal: { heatPump: f("standard", "mfr", "high", "BMW USA iX launch press release: “Integrated Heating and Cooling System with Heat Pump Function…for both the BMW eDrive components and the vehicle interior” — platform-level; M60 shares the same drivetrain/battery/thermal hardware") },
+    thermal: { heatPump: f("standard", "mfr", "high", "BMW USA iX launch press release: “Integrated Heating and Cooling System with Heat Pump Function…for both the BMW eDrive components and the vehicle interior”, platform-level; M60 shares the same drivetrain/battery/thermal hardware") },
     warranty: {
       batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
       batteryTransfers: f(true, "mfr", "high", "NVLW runs to “the first retail purchaser, and each subsequent purchaser”"),
-      extendedCoverage: f("MY2023 capacity-floor status is unresolved (MY2022 verified as no floor; MY2026 verified at 70% SoH; MY2023–25 booklets unobtainable). BMW Certified MY22–25 EVs delivered certified after 2026-03-01 get an 8yr/100k, 75%-SoH CPO battery coverage — verified.", "mfr", "high"),
+      extendedCoverage: f("MY2023 capacity-floor status is unresolved (MY2022 verified as no floor; MY2026 verified at 70% SoH; MY2023–25 booklets unobtainable). BMW Certified MY22–25 EVs delivered certified after 2026-03-01 get an 8yr/100k, 75%-SoH CPO battery coverage, verified.", "mfr", "high"),
     },
     buyerNotes: [
       {
-        headline: "Multiple HV battery recalls — check this VIN's status",
-        body: "22V541 (2022–23 iX/i4: internal battery damage, short-circuit/fire risk, park-it/park-outside advisory, battery replacement); 25V470 (2022–2025 iX: battery cell module improperly assembled, fire risk — remedy was still pending as of the September 2025 interim notice, with parts anticipated by end of 2025); 22V944 (HV battery ECU software, power interruption); 23V449 (HV battery charging unit improperly assembled, stall risk).",
+        headline: "Multiple HV battery recalls, check this VIN's status",
+        body: "22V541 (2022–23 iX/i4: internal battery damage, short-circuit/fire risk, park-it/park-outside advisory, battery replacement); 25V470 (2022–2025 iX: battery cell module improperly assembled, fire risk, remedy was still pending as of the September 2025 interim notice, with parts anticipated by end of 2025); 22V944 (HV battery ECU software, power interruption); 23V449 (HV battery charging unit improperly assembled, stall risk).",
         severity: "trap",
       },
       {
@@ -137,7 +137,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       },
       {
         headline: "The MY2025–26 “SoH stuck at 100%” bug does not apply to this car",
-        body: "This service action (NHTSA bulletin SIB 61 20 25) is scoped explicitly to the G60 platform — i5 eDrive40, i5 xDrive40, and 550e xDrive built Feb–Oct 2025. The iX (I20 platform) is not named in the bulletin, so an unrepaired SoH reading on this car is not evidence of that specific bug.",
+        body: "This service action (NHTSA bulletin SIB 61 20 25) is scoped explicitly to the G60 platform, i5 eDrive40, i5 xDrive40, and 550e xDrive built Feb–Oct 2025. The iX (I20 platform) is not named in the bulletin, so an unrepaired SoH reading on this car is not evidence of that specific bug.",
         severity: "info",
       },
     ],
@@ -153,26 +153,26 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     trim: "xDrive50",
     drive: "AWD",
     battery: {
-      packGrossKwh: f(111.5, "mfr", "high", "BMW USA press: “Energy capacity, gross/net kWh 111.5/106.3” — shared pack across xDrive50 and M60"),
+      packGrossKwh: f(111.5, "mfr", "high", "BMW USA press: “Energy capacity, gross/net kWh 111.5/106.3”, shared pack across xDrive50 and M60"),
       packUsableKwh: f(106.3, "mfr", "high", "BMW USA press, same spec table"),
     },
-    range: { epaRangeMi: f(307, "mfr", "high", "MY2024: 307 on every wheel size; MY2025: 302–309 by wheels — EPA", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(307, "mfr", "high", "MY2024: 307 on every wheel size; MY2025: 302–309 by wheels, EPA", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "agg", "medium", "BMW's own term is “Combined Charging Unit”; not independently re-verified as CCS1 in a xDrive50-specific document, but consistent with the rest of the US BMW BEV lineup"),
-      superchargerAccess: f("adapter", "agg", "high", "Opened Dec 2025 via BMW-approved adapter; requires a Remote Software Upgrade first — same platform-level fact as i4/M60"),
-      dcPeakKw: f(195, "mfr", "high", "BMW USA press: “Maximum charging, DC kW 195” — platform-level figure shared with M60"),
+      superchargerAccess: f("adapter", "agg", "high", "Opened Dec 2025 via BMW-approved adapter; requires a Remote Software Upgrade first, same platform-level fact as i4/M60"),
+      dcPeakKw: f(195, "mfr", "high", "BMW USA press: “Maximum charging, DC kW 195”, platform-level figure shared with M60"),
     },
-    thermal: { heatPump: f("standard", "mfr", "high", "BMW USA iX launch press release: integrated heat pump for cabin, battery, and drive — platform-level; xDrive50 shares the same drivetrain/battery/thermal hardware as M60") },
+    thermal: { heatPump: f("standard", "mfr", "high", "BMW USA iX launch press release: integrated heat pump for cabin, battery, and drive, platform-level; xDrive50 shares the same drivetrain/battery/thermal hardware as M60") },
     warranty: {
       batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
       batteryTransfers: f(true, "mfr", "high", "NVLW runs to “the first retail purchaser, and each subsequent purchaser”"),
-      extendedCoverage: f("MY2024–25 capacity-floor status is unresolved (MY2022 verified as no floor; MY2026 verified at 70% SoH; MY2023–25 booklets unobtainable). BMW Certified MY22–25 EVs delivered certified after 2026-03-01 get an 8yr/100k, 75%-SoH CPO battery coverage — verified.", "mfr", "high"),
+      extendedCoverage: f("MY2024–25 capacity-floor status is unresolved (MY2022 verified as no floor; MY2026 verified at 70% SoH; MY2023–25 booklets unobtainable). BMW Certified MY22–25 EVs delivered certified after 2026-03-01 get an 8yr/100k, 75%-SoH CPO battery coverage, verified.", "mfr", "high"),
     },
     buyerNotes: [
       {
-        headline: "Multiple HV battery recalls — check this VIN's status",
-        body: "23V295 (2022–2024 xDrive50: HV battery cell monitoring circuit loose connections can cause a stall); 25V470 (2022–2025 iX: battery cell module improperly assembled, fire risk — remedy was still pending as of the September 2025 interim notice, parts anticipated by end of 2025).",
+        headline: "Multiple HV battery recalls, check this VIN's status",
+        body: "23V295 (2022–2024 xDrive50: HV battery cell monitoring circuit loose connections can cause a stall); 25V470 (2022–2025 iX: battery cell module improperly assembled, fire risk, remedy was still pending as of the September 2025 interim notice, parts anticipated by end of 2025).",
         severity: "trap",
       },
       {
@@ -182,7 +182,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       },
       {
         headline: "The MY2025–26 “SoH stuck at 100%” bug does not apply to this car",
-        body: "This service action (NHTSA bulletin SIB 61 20 25) is scoped explicitly to the G60 platform — i5 eDrive40, i5 xDrive40, and 550e xDrive built Feb–Oct 2025. The iX (I20 platform) is not named in the bulletin.",
+        body: "This service action (NHTSA bulletin SIB 61 20 25) is scoped explicitly to the G60 platform, i5 eDrive40, i5 xDrive40, and 550e xDrive built Feb–Oct 2025. The iX (I20 platform) is not named in the bulletin.",
         severity: "info",
       },
     ],
@@ -195,7 +195,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     modelYears: [2026, 2026],
     trim: "M70",
     drive: "AWD",
-    range: { epaRangeMi: f(303, "mfr", "high", "2026 iX M70, 21-inch wheels — EPA; 22-inch wheels: 284 mi. A 23-inch wheel option also exists on this trim, figure not fetched.", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(303, "mfr", "high", "2026 iX M70, 21-inch wheels, EPA; 22-inch wheels: 284 mi. A 23-inch wheel option also exists on this trim, figure not fetched.", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "agg", "low", "Inferred by platform continuity from the outgoing xDrive50/M60 generation; not independently confirmed for the MY2026-refresh M70"),
       superchargerAccess: f("adapter", "agg", "low", "Inferred by platform continuity; not independently confirmed for M70"),
@@ -204,18 +204,18 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
-      sohFloorPct: f(70, "mfr", "high", "MY2026 BEVs have a verified 70% SoH floor with “restore to at least 70%” remedy — full booklet read"),
+      sohFloorPct: f(70, "mfr", "high", "MY2026 BEVs have a verified 70% SoH floor with “restore to at least 70%” remedy, full booklet read"),
       batteryTransfers: f(true, "mfr", "high", "NVLW runs to “the first retail purchaser, and each subsequent purchaser”"),
     },
     buyerNotes: [
       {
-        headline: "This is a new-generation iX — battery specs not yet independently confirmed",
-        body: "M70 is part of BMW's 2026 iX refresh (replacing the xDrive40/xDrive50/M60 lineup with xDrive45/xDrive60/M70). Battery capacity for this generation was not confirmed in this research pass — don't assume it matches the outgoing generation's 111.5/106.3 kWh pack.",
+        headline: "This is a new-generation iX, battery specs not yet independently confirmed",
+        body: "M70 is part of BMW's 2026 iX refresh (replacing the xDrive40/xDrive50/M60 lineup with xDrive45/xDrive60/M70). Battery capacity for this generation was not confirmed in this research pass, don't assume it matches the outgoing generation's 111.5/106.3 kWh pack.",
         severity: "info",
       },
       {
         headline: "No recalls on file yet",
-        body: "As of 2026-08-10, NHTSA's recall database returns zero campaigns for the 2026 iX M70 — consistent with this being a brand-new model-year refresh.",
+        body: "As of 2026-08-10, NHTSA's recall database returns zero campaigns for the 2026 iX M70, consistent with this being a brand-new model-year refresh.",
         severity: "info",
       },
     ],
@@ -233,26 +233,26 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     drive: "AWD",
     battery: {
       packGrossKwh: f(93, "mfr", "high", "Audi's own e-tron GT tech page (pre-2025-refresh model, matching MY2024): “93 kWh gross”", "https://www.audi.com"),
-      packUsableKwh: f(84, "mfr", "high", "Audi: “84 kWh of energy net” — do not confuse with the 2025+ refreshed e-tron GT's larger 105/97 kWh pack"),
+      packUsableKwh: f(84, "mfr", "high", "Audi: “84 kWh of energy net”, do not confuse with the 2025+ refreshed e-tron GT's larger 105/97 kWh pack"),
     },
     range: {
-      epaRangeMi: f(249, "mfr", "high", "2024 Audi e-tron GT quattro — EPA (RS e-tron GT performance variant rates identically at 249 mi despite higher output)", "https://www.fueleconomy.gov"),
-      testedRangeMi: f(273, "tested", "medium", "Edmunds test of the MY2022 e-tron GT (273 mi) — same-generation battery, but predates the MY2024 EPA rating bump from 238 to 249 mi; no test found matching the 2024 car's exact rating"),
+      epaRangeMi: f(249, "mfr", "high", "2024 Audi e-tron GT quattro, EPA (RS e-tron GT performance variant rates identically at 249 mi despite higher output)", "https://www.fueleconomy.gov"),
+      testedRangeMi: f(273, "tested", "medium", "Edmunds test of the MY2022 e-tron GT (273 mi), same-generation battery, but predates the MY2024 EPA rating bump from 238 to 249 mi; no test found matching the 2024 car's exact rating"),
     },
     charging: {
       portStandard: f("CCS1", "agg", "medium", "Universal across US e-tron GT production; not independently re-confirmed against a primary Audi spec sheet in this research pass"),
       architectureV: f(800, "mfr", "high", "Audi: “approx. 800 volts”"),
-      dcPeakKw: f(270, "mfr", "high", "Audi: “up to 270 kW”, 5%→80% SoC in under 22.5 minutes — do not confuse with the 2025+ refreshed e-tron GT's 320 kW rating on a different pack"),
+      dcPeakKw: f(270, "mfr", "high", "Audi: “up to 270 kW”, 5%→80% SoC in under 22.5 minutes, do not confuse with the 2025+ refreshed e-tron GT's 320 kW rating on a different pack"),
     },
-    thermal: { heatPump: f("standard", "mfr", "high", "Audi: “the e-tron GT includes a heat pump that heats the interior with the waste heat of the high-voltage components” — standard, not optional") },
+    thermal: { heatPump: f("standard", "mfr", "high", "Audi: “the e-tron GT includes a heat pump that heats the interior with the waste heat of the high-voltage components”, standard, not optional") },
     warranty: {
-      batteryYears: f(8, "agg", "low", "Commonly reported across dealer/aggregator sources but not confirmed in a readable Audi USA primary document — Audi's own new-vehicle warranty page states only the 4yr/50k basic term and does not separately address the HV battery"),
+      batteryYears: f(8, "agg", "low", "Commonly reported across dealer/aggregator sources but not confirmed in a readable Audi USA primary document, Audi's own new-vehicle warranty page states only the 4yr/50k basic term and does not separately address the HV battery"),
       batteryMiles: f(100_000, "agg", "low", "Same caveat as batteryYears"),
     },
     buyerNotes: [
       {
-        headline: "HV battery short-circuit recall — check this VIN's status",
-        body: "24V228 and 24V726 (2024 e-tron GT/RS e-tron GT): the HV battery may short internally, fire risk. 24V726 supersedes and expands 24V228 — cars already repaired under the earlier campaign still need the newer remedy (advanced diagnostic software, plus interim 80% charge cap or online monitoring in some cases).",
+        headline: "HV battery short-circuit recall, check this VIN's status",
+        body: "24V228 and 24V726 (2024 e-tron GT/RS e-tron GT): the HV battery may short internally, fire risk. 24V726 supersedes and expands 24V228, cars already repaired under the earlier campaign still need the newer remedy (advanced diagnostic software, plus interim 80% charge cap or online monitoring in some cases).",
         severity: "trap",
       },
       {
@@ -290,24 +290,24 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     drive: "RWD",
     battery: { packGrossKwh: f(84, "mfr", "high", "Lucid's own 2025 Pure technical-spec sheet: “84 kWh (16 module)”; no usable/net split published by Lucid", "https://lucidmotors.com") },
     range: {
-      epaRangeMi: f(420, "mfr", "high", "2025 Air Pure RWD, 19-inch wheels (standard) — EPA; 20-inch wheel option: 372 mi", "https://www.fueleconomy.gov"),
-      testedRangeMi: f(366, "tested", "high", "70-mph steady-state (InsideEVs): 365.6 mi — 12.9% below the 420-mi EPA rating. Edmunds test on 20-inch wheels/summer tires: 349 mi (vs 372 mi EPA for that config) — reported tier, Edmunds fetch blocked. Car and Driver ~310 mi at 75 mph reported only via secondary summary, not independently confirmed."),
+      epaRangeMi: f(420, "mfr", "high", "2025 Air Pure RWD, 19-inch wheels (standard), EPA; 20-inch wheel option: 372 mi", "https://www.fueleconomy.gov"),
+      testedRangeMi: f(366, "tested", "high", "70-mph steady-state (InsideEVs): 365.6 mi, 12.9% below the 420-mi EPA rating. Edmunds test on 20-inch wheels/summer tires: 349 mi (vs 372 mi EPA for that config), reported tier, Edmunds fetch blocked. Car and Driver ~310 mi at 75 mph reported only via secondary summary, not independently confirmed."),
     },
     charging: {
-      portStandard: f("CCS1", "mfr", "high", "Lucid's own site: “Your Lucid Air has a J1772 (CCS1) charge port” — confirmed current as of the most recent Lucid material found (July 2025); still no native NACS port"),
-      superchargerAccess: f("adapter", "mfr", "high", "All Air owners gained Supercharger access July 31, 2025 via a Lucid-sold NACS-to-CCS1 adapter ($220); capped around 50 kW / up to 200 mi of range per hour on that adapter path — well below the car's native CCS1 DC peak"),
-      dcPeakKw: f(219, "agg", "low", "Lucid's own Pure spec sheet gives only a charge-time estimate, no peak-kW figure (pack architecture is “650V+” per that sheet — outside this site's 400/800V field, noted here instead). A third-party instrumented test (evchargingstations.com) measured 219 kW peak on a 350 kW DC charger, sustained above 210 kW to 18% SOC — secondary, unverified"),
+      portStandard: f("CCS1", "mfr", "high", "Lucid's own site: “Your Lucid Air has a J1772 (CCS1) charge port”, confirmed current as of the most recent Lucid material found (July 2025); still no native NACS port"),
+      superchargerAccess: f("adapter", "mfr", "high", "All Air owners gained Supercharger access July 31, 2025 via a Lucid-sold NACS-to-CCS1 adapter ($220); capped around 50 kW / up to 200 mi of range per hour on that adapter path, well below the car's native CCS1 DC peak"),
+      dcPeakKw: f(219, "agg", "low", "Lucid's own Pure spec sheet gives only a charge-time estimate, no peak-kW figure (pack architecture is “650V+” per that sheet, outside this site's 400/800V field, noted here instead). A third-party instrumented test (evchargingstations.com) measured 219 kW peak on a 350 kW DC charger, sustained above 210 kW to 18% SOC, secondary, unverified"),
     },
-    thermal: { heatPump: f("standard", "mfr", "high", "Lucid IR press release: “The heat pump first employed on Lucid Sapphire now becomes standard across the lineup” — MY2025 onward; not standard in earlier model years") },
+    thermal: { heatPump: f("standard", "mfr", "high", "Lucid IR press release: “The heat pump first employed on Lucid Sapphire now becomes standard across the lineup”, MY2025 onward; not standard in earlier model years") },
     warranty: {
-      batteryYears: f(8, "mfr", "high", "“High-voltage battery: 8 Years / 100,000 miles (whichever comes first) retaining 70% capacity” — Lucid's own warranty page"),
+      batteryYears: f(8, "mfr", "high", "“High-voltage battery: 8 Years / 100,000 miles (whichever comes first) retaining 70% capacity”, Lucid's own warranty page"),
       batteryMiles: f(100_000, "mfr", "high"),
       sohFloorPct: f(70, "mfr", "high", "Same Lucid warranty-page quote"),
-      batteryTransfers: f(true, "mfr", "high", "“…and to subsequent owner(s) if the vehicle is within the applicable coverage period” — Lucid's own warranty page"),
+      batteryTransfers: f(true, "mfr", "high", "“…and to subsequent owner(s) if the vehicle is within the applicable coverage period”, Lucid's own warranty page"),
     },
     buyerNotes: [
       {
-        headline: "Four RWD-only recalls — check this VIN's status",
+        headline: "Four RWD-only recalls, check this VIN's status",
         body: "24V836 (2024–2025 Pure RWD: rear subframe wiring harness too short, can cut power to the rear drive unit; free harness replacement, notices mailed December 2024). 25V669 and 26V193 (2024–2026 Pure RWD: half-shaft bolts may allow disconnection from the drive unit; free bolt inspection/replacement, notices through mid-2026). 26V309 (2024–2025 RWD: Gen 4 inverter internal friction/damage can cause loss of drive power; OTA monitoring plus free replacement if a failure is detected, notices mailed July 2026). None of these four apply to the AWD Touring.",
         severity: "trap",
       },
@@ -327,18 +327,18 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     trim: "Touring",
     drive: "AWD",
     battery: { packGrossKwh: f(92, "mfr", "high", "Lucid's own 2025 Touring technical-spec sheet: “92 kWh (18 module)”; no usable/net split published by Lucid", "https://lucidmotors.com") },
-    range: { epaRangeMi: f(406, "mfr", "high", "2025 Air Touring AWD, 19-inch wheels (standard) — EPA; 20-inch: 377 mi; 21-inch: 361 mi", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(406, "mfr", "high", "2025 Air Touring AWD, 19-inch wheels (standard), EPA; 20-inch: 377 mi; 21-inch: 361 mi", "https://www.fueleconomy.gov") },
     charging: {
-      portStandard: f("CCS1", "mfr", "high", "Lucid's own site: “Your Lucid Air has a J1772 (CCS1) charge port” — confirmed current as of the most recent Lucid material found (July 2025); still no native NACS port"),
-      superchargerAccess: f("adapter", "mfr", "high", "All Air owners gained Supercharger access July 31, 2025 via a Lucid-sold NACS-to-CCS1 adapter ($220); capped around 50 kW / up to 200 mi of range per hour on that adapter path — well below the car's native CCS1 DC peak"),
-      dcPeakKw: f(250, "mfr", "high", "Lucid's own Touring spec sheet: “DC charge power: Up to 250 kW” (pack architecture is “700V+” per that sheet — outside this site's 400/800V field, noted here instead)"),
+      portStandard: f("CCS1", "mfr", "high", "Lucid's own site: “Your Lucid Air has a J1772 (CCS1) charge port”, confirmed current as of the most recent Lucid material found (July 2025); still no native NACS port"),
+      superchargerAccess: f("adapter", "mfr", "high", "All Air owners gained Supercharger access July 31, 2025 via a Lucid-sold NACS-to-CCS1 adapter ($220); capped around 50 kW / up to 200 mi of range per hour on that adapter path, well below the car's native CCS1 DC peak"),
+      dcPeakKw: f(250, "mfr", "high", "Lucid's own Touring spec sheet: “DC charge power: Up to 250 kW” (pack architecture is “700V+” per that sheet, outside this site's 400/800V field, noted here instead)"),
     },
-    thermal: { heatPump: f("standard", "mfr", "high", "Lucid IR press release: “The heat pump first employed on Lucid Sapphire now becomes standard across the lineup” — MY2025 onward; not standard in earlier model years") },
+    thermal: { heatPump: f("standard", "mfr", "high", "Lucid IR press release: “The heat pump first employed on Lucid Sapphire now becomes standard across the lineup”, MY2025 onward; not standard in earlier model years") },
     warranty: {
-      batteryYears: f(8, "mfr", "high", "“High-voltage battery: 8 Years / 100,000 miles (whichever comes first) retaining 70% capacity” — Lucid's own warranty page"),
+      batteryYears: f(8, "mfr", "high", "“High-voltage battery: 8 Years / 100,000 miles (whichever comes first) retaining 70% capacity”, Lucid's own warranty page"),
       batteryMiles: f(100_000, "mfr", "high"),
       sohFloorPct: f(70, "mfr", "high", "Same Lucid warranty-page quote"),
-      batteryTransfers: f(true, "mfr", "high", "“…and to subsequent owner(s) if the vehicle is within the applicable coverage period” — Lucid's own warranty page"),
+      batteryTransfers: f(true, "mfr", "high", "“…and to subsequent owner(s) if the vehicle is within the applicable coverage period”, Lucid's own warranty page"),
     },
     buyerNotes: [
       {
@@ -368,9 +368,9 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     modelYears: [2026, 2026],
     drive: "FWD",
     battery: { packGrossKwh: f(57.7, "mfr", "high", "Toyota press: base FWD pack (XLE FWD)") },
-    range: { epaRangeMi: f(236, "mfr", "high", "2026 Toyota bZ, base 57.7 kWh pack, FWD — EPA; a larger 74.7 kWh pack (XLE FWD Plus) is also available on this drivetrain, rated 314 mi — see buyer note", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(236, "mfr", "high", "2026 Toyota bZ, base 57.7 kWh pack, FWD, EPA; a larger 74.7 kWh pack (XLE FWD Plus) is also available on this drivetrain, rated 314 mi, see buyer note", "https://www.fueleconomy.gov") },
     charging: {
-      portStandard: f("NACS", "mfr", "high", "Toyota press release: “NACS charging port” — confirmed change from the outgoing bZ4X's CCS1-only port"),
+      portStandard: f("NACS", "mfr", "high", "Toyota press release: “NACS charging port”, confirmed change from the outgoing bZ4X's CCS1-only port"),
       dcPeakKw: f(150, "agg", "medium", "Widely reported flat across the 2026 bZ lineup; Toyota's own release states only “10% to 80% in around 30 minutes,” no kW figure"),
     },
     thermal: { heatPump: f("standard", "mfr", "high", "Toyota press release: “Heat pump system for both heating and air-conditioning” listed as standard") },
@@ -383,11 +383,11 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     buyerNotes: [
       {
         headline: "This listing's trim label doesn't match any real Toyota bZ grade",
-        body: "Toyota's actual MY2026 bZ grades are XLE FWD, XLE FWD Plus, XLE AWD, Limited FWD, and Limited AWD — none named “Series.” This row assumes the base 57.7 kWh XLE FWD pack (236 mi EPA); a larger 74.7 kWh XLE FWD Plus pack is also sold on this same FWD drivetrain, rated 314 mi. Check the window sticker or door-jamb label to confirm which pack this car has.",
+        body: "Toyota's actual MY2026 bZ grades are XLE FWD, XLE FWD Plus, XLE AWD, Limited FWD, and Limited AWD, none named “Series.” This row assumes the base 57.7 kWh XLE FWD pack (236 mi EPA); a larger 74.7 kWh XLE FWD Plus pack is also sold on this same FWD drivetrain, rated 314 mi. Check the window sticker or door-jamb label to confirm which pack this car has.",
         severity: "warning",
       },
       {
-        headline: "HV battery ECU recall — check this VIN's status",
+        headline: "HV battery ECU recall, check this VIN's status",
         body: "26V393 (2026 Toyota bZ, Lexus RZ, and Subaru Solterra): the ECU controlling the HV battery may fault, causing loss of drive power. Free ECU software update; owner notices expected August 2026.",
         severity: "warning",
       },
@@ -401,9 +401,9 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     modelYears: [2026, 2026],
     drive: "FWD",
     battery: { packGrossKwh: f(74.7, "mfr", "high", "Toyota press: larger FWD pack (XLE FWD Plus)") },
-    range: { epaRangeMi: f(314, "mfr", "high", "2026 Toyota bZ, larger 74.7 kWh pack, FWD (XLE FWD Plus) — EPA; a smaller 57.7 kWh base pack is also available on this drivetrain, rated 236 mi — see buyer note", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(314, "mfr", "high", "2026 Toyota bZ, larger 74.7 kWh pack, FWD (XLE FWD Plus), EPA; a smaller 57.7 kWh base pack is also available on this drivetrain, rated 236 mi, see buyer note", "https://www.fueleconomy.gov") },
     charging: {
-      portStandard: f("NACS", "mfr", "high", "Toyota press release: “NACS charging port” — confirmed change from the outgoing bZ4X's CCS1-only port"),
+      portStandard: f("NACS", "mfr", "high", "Toyota press release: “NACS charging port”, confirmed change from the outgoing bZ4X's CCS1-only port"),
       dcPeakKw: f(150, "agg", "medium", "Widely reported flat across the 2026 bZ lineup; Toyota's own release states only “10% to 80% in around 30 minutes,” no kW figure"),
     },
     thermal: { heatPump: f("standard", "mfr", "high", "Toyota press release: “Heat pump system for both heating and air-conditioning” listed as standard") },
@@ -416,11 +416,11 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     buyerNotes: [
       {
         headline: "This listing's trim label doesn't match any real Toyota bZ grade",
-        body: "Toyota's actual MY2026 bZ grades are XLE FWD, XLE FWD Plus, XLE AWD, Limited FWD, and Limited AWD — none named “Series.” This row assumes the larger 74.7 kWh XLE FWD Plus pack (314 mi EPA); a smaller 57.7 kWh base pack is also sold on this same FWD drivetrain, rated 236 mi. Check the window sticker or door-jamb label to confirm which pack this car has.",
+        body: "Toyota's actual MY2026 bZ grades are XLE FWD, XLE FWD Plus, XLE AWD, Limited FWD, and Limited AWD, none named “Series.” This row assumes the larger 74.7 kWh XLE FWD Plus pack (314 mi EPA); a smaller 57.7 kWh base pack is also sold on this same FWD drivetrain, rated 236 mi. Check the window sticker or door-jamb label to confirm which pack this car has.",
         severity: "warning",
       },
       {
-        headline: "HV battery ECU recall — check this VIN's status",
+        headline: "HV battery ECU recall, check this VIN's status",
         body: "26V393 (2026 Toyota bZ, Lexus RZ, and Subaru Solterra): the ECU controlling the HV battery may fault, causing loss of drive power. Free ECU software update; owner notices expected August 2026.",
         severity: "warning",
       },
@@ -434,9 +434,9 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     modelYears: [2026, 2026],
     drive: "AWD",
     battery: { packGrossKwh: f(74.7, "mfr", "high", "Toyota press: single AWD pack shared by XLE AWD and Limited AWD") },
-    range: { epaRangeMi: f(288, "mfr", "high", "2026 Toyota bZ XLE AWD — EPA; Limited AWD (same battery, different equipment): 278 mi", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(288, "mfr", "high", "2026 Toyota bZ XLE AWD, EPA; Limited AWD (same battery, different equipment): 278 mi", "https://www.fueleconomy.gov") },
     charging: {
-      portStandard: f("NACS", "mfr", "high", "Toyota press release: “NACS charging port” — confirmed change from the outgoing bZ4X's CCS1-only port"),
+      portStandard: f("NACS", "mfr", "high", "Toyota press release: “NACS charging port”, confirmed change from the outgoing bZ4X's CCS1-only port"),
       dcPeakKw: f(150, "agg", "medium", "Widely reported flat across the 2026 bZ lineup; Toyota's own release states only “10% to 80% in around 30 minutes,” no kW figure"),
     },
     thermal: { heatPump: f("standard", "mfr", "high", "Toyota press release: “Heat pump system for both heating and air-conditioning” listed as standard") },
@@ -449,11 +449,11 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     buyerNotes: [
       {
         headline: "This listing's trim label doesn't match any real Toyota bZ grade",
-        body: "Toyota's actual MY2026 bZ grades are XLE FWD, XLE FWD Plus, XLE AWD, Limited FWD, and Limited AWD — none named “Series.” XLE AWD and Limited AWD share the same 74.7 kWh battery; range differs only slightly (288 vs 278 mi) by equipment.",
+        body: "Toyota's actual MY2026 bZ grades are XLE FWD, XLE FWD Plus, XLE AWD, Limited FWD, and Limited AWD, none named “Series.” XLE AWD and Limited AWD share the same 74.7 kWh battery; range differs only slightly (288 vs 278 mi) by equipment.",
         severity: "info",
       },
       {
-        headline: "HV battery ECU recall — check this VIN's status",
+        headline: "HV battery ECU recall, check this VIN's status",
         body: "26V393 (2026 Toyota bZ, Lexus RZ, and Subaru Solterra): the ECU controlling the HV battery may fault, causing loss of drive power. Free ECU software update; owner notices expected August 2026.",
         severity: "warning",
       },
@@ -467,12 +467,12 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     modelYears: [2026, 2026],
     drive: "AWD",
     battery: { packGrossKwh: f(74.7, "mfr", "high", "Toyota press: bZ Woodland and Woodland Premium both use this pack") },
-    range: { epaRangeMi: f(281, "mfr", "high", "2026 bZ Woodland, standard 235/60R18 tires — EPA; Woodland Premium's all-terrain 235/65R18 tires: 260 mi", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(281, "mfr", "high", "2026 bZ Woodland, standard 235/60R18 tires, EPA; Woodland Premium's all-terrain 235/65R18 tires: 260 mi", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("NACS", "mfr", "high", "Toyota's bZ Woodland press release: “NACS charging port”; onboard AC charger 11 kW, ~7.0 hr Level 2 full charge"),
       dcPeakKw: f(150, "agg", "medium", "Widely reported flat across the 2026 bZ lineup; Toyota's own release states only “10% to 80% in around 30 minutes,” no kW figure"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "A dealer page quoting Toyota's own spec sheet states heat pump standard; Toyota's own bZ Woodland press release itself doesn't mention it directly — one tier less direct than the base bZ's confirmation") },
+    thermal: { heatPump: f("standard", "agg", "medium", "A dealer page quoting Toyota's own spec sheet states heat pump standard; Toyota's own bZ Woodland press release itself doesn't mention it directly, one tier less direct than the base bZ's confirmation") },
     warranty: {
       batteryYears: f(8, "mfr", "high", "Toyota's 8yr/100k battery+transaxle+inverter warranty, verified against both MY2023 and MY2026 guides, carries to the new bZ nameplate"),
       batteryMiles: f(100_000, "mfr", "high"),
@@ -482,12 +482,12 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     buyerNotes: [
       {
         headline: "This listing's trim label doesn't match any real Toyota bZ Woodland grade",
-        body: "Toyota's actual bZ Woodland lineup is “Woodland” and “Woodland Premium” — not “Series”-numbered. This row assumes base Woodland with standard-tire 281 mi EPA range; Woodland Premium's all-terrain tires bring that down to 260 mi. Check the window sticker or door-jamb label.",
+        body: "Toyota's actual bZ Woodland lineup is “Woodland” and “Woodland Premium”, not “Series”-numbered. This row assumes base Woodland with standard-tire 281 mi EPA range; Woodland Premium's all-terrain tires bring that down to 260 mi. Check the window sticker or door-jamb label.",
         severity: "warning",
       },
       {
-        headline: "No recalls found yet — but this is a very new nameplate",
-        body: "As of 2026-08-10, NHTSA's recall database returns zero campaigns for bZ Woodland, and NHTSA's own model taxonomy doesn't yet list “Woodland” as a distinct model at all. Treat this as “not yet checkable” rather than a clean safety record — worth a re-check as the nameplate matures.",
+        headline: "No recalls found yet, but this is a very new nameplate",
+        body: "As of 2026-08-10, NHTSA's recall database returns zero campaigns for bZ Woodland, and NHTSA's own model taxonomy doesn't yet list “Woodland” as a distinct model at all. Treat this as “not yet checkable” rather than a clean safety record, worth a re-check as the nameplate matures.",
         severity: "info",
       },
     ],
@@ -518,26 +518,26 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     model: "Model S",
     modelYears: [2019, 2019],
     drive: "AWD",
-    range: { epaRangeMi: f(259, "mfr", "medium", "This listing's exact trim isn't recorded — 259 mi (75D) is the lowest-range 2019 Model S trim, used here as a floor, not a confirmed match. Full 2019 lineup — EPA: 75D 259 / Standard Range 285 / P100D 315 / Performance 21″ 325 / Performance 19″ 345 / 100D 335 / Long Range 370", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(259, "mfr", "medium", "This listing's exact trim isn't recorded, 259 mi (75D) is the lowest-range 2019 Model S trim, used here as a floor, not a confirmed match. Full 2019 lineup, EPA: 75D 259 / Standard Range 285 / P100D 315 / Performance 21″ 325 / Performance 19″ 345 / 100D 335 / Long Range 370", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("NACS", "mfr", "high", "Tesla's proprietary connector"),
       superchargerAccess: f("native", "mfr", "high"),
     },
-    thermal: { heatPump: f("none", "agg", "medium", "Octovalve heat pump arrived with the January 2021 Model S/X refresh; pre-refresh cars (through ~end of 2020 production) had resistive heat only — corroborated by NHTSA recall 22V050000, which describes the heat-pump valve hardware as present only on 2021+ cars") },
+    thermal: { heatPump: f("none", "agg", "medium", "Octovalve heat pump arrived with the January 2021 Model S/X refresh; pre-refresh cars (through ~end of 2020 production) had resistive heat only, corroborated by NHTSA recall 22V050000, which describes the heat-pump valve hardware as present only on 2021+ cars") },
     warranty: {
-      batteryYears: f(8, "mfr", "high", "“8 years or 150,000 miles, whichever comes first” — Tesla's own vehicle-warranty page (archived capture, live page blocked by bot-detection; dated 2025-04-16, ~16 months old relative to today but Tesla's S/X battery terms have historically been stable)"),
-      batteryMiles: f(150_000, "mfr", "high", "Model S/X get a higher mileage cap than Model 3/Y — same source"),
-      sohFloorPct: f(70, "mfr", "high", "“minimum 70% retention of Battery capacity over the warranty period” — same Tesla warranty page"),
-      batteryTransfers: f(true, "mfr", "high", "“Your New Vehicle Limited Warranty will follow your vehicle and be transferred to the new owner when a vehicle ownership transfer is performed through Tesla”; “the balance of original Battery and Drive Unit Limited warranty still applies for used vehicles” — same Tesla warranty page"),
+      batteryYears: f(8, "mfr", "high", "“8 years or 150,000 miles, whichever comes first”, Tesla's own vehicle-warranty page (archived capture, live page blocked by bot-detection; dated 2025-04-16, ~16 months old relative to today but Tesla's S/X battery terms have historically been stable)"),
+      batteryMiles: f(150_000, "mfr", "high", "Model S/X get a higher mileage cap than Model 3/Y, same source"),
+      sohFloorPct: f(70, "mfr", "high", "“minimum 70% retention of Battery capacity over the warranty period”, same Tesla warranty page"),
+      batteryTransfers: f(true, "mfr", "high", "“Your New Vehicle Limited Warranty will follow your vehicle and be transferred to the new owner when a vehicle ownership transfer is performed through Tesla”; “the balance of original Battery and Drive Unit Limited warranty still applies for used vehicles”, same Tesla warranty page"),
     },
     buyerNotes: [
       {
-        headline: "This listing doesn't say which 2019 Model S trim this is — range varies by up to 111 miles",
+        headline: "This listing doesn't say which 2019 Model S trim this is, range varies by up to 111 miles",
         body: "Tesla sold seven distinct EPA-rated configurations in 2019 (75D 259 mi up to Long Range 370 mi). This scraped listing has no trim field. Check the car's window sticker, door-jamb EPA label, or the Tesla owner account tied to this VIN to confirm the actual trim before trusting a specific range figure.",
         severity: "warning",
       },
       {
-        headline: "Hood secondary latch and power-steering recalls — already fixed via update",
+        headline: "Hood secondary latch and power-steering recalls, already fixed via update",
         body: "21V00B (2019 Model S: front trunk latch may be misaligned, secondary latch may not engage, hood could open unexpectedly) and 22V818 (electric power steering may lose assist on rough roads). Both remedied by free dealer service or OTA update; owner notices already mailed.",
         severity: "info",
       },
@@ -552,27 +552,27 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     model: "Model X",
     modelYears: [2017, 2017],
     drive: "AWD",
-    range: { epaRangeMi: f(200, "mfr", "medium", "This listing's exact trim isn't recorded — 200 mi (60D) is the lowest-range 2017 Model X trim, used here as a floor, not a confirmed match. Full 2017 lineup — EPA: 60D 200 / 75D 238 / P90D 250 / 90D 257 / P100D 289 / 100D 295", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(200, "mfr", "medium", "This listing's exact trim isn't recorded, 200 mi (60D) is the lowest-range 2017 Model X trim, used here as a floor, not a confirmed match. Full 2017 lineup, EPA: 60D 200 / 75D 238 / P90D 250 / 90D 257 / P100D 289 / 100D 295", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("NACS", "mfr", "high", "Tesla's proprietary connector"),
       superchargerAccess: f("native", "mfr", "high"),
     },
     thermal: { heatPump: f("none", "agg", "medium", "Octovalve heat pump arrived with the January 2021 Model S/X refresh; 2017 cars have resistive heat only") },
     warranty: {
-      batteryYears: f(8, "mfr", "high", "“8 years or 150,000 miles, whichever comes first” — Tesla's own vehicle-warranty page (archived capture, dated 2025-04-16)"),
+      batteryYears: f(8, "mfr", "high", "“8 years or 150,000 miles, whichever comes first”, Tesla's own vehicle-warranty page (archived capture, dated 2025-04-16)"),
       batteryMiles: f(150_000, "mfr", "high"),
       sohFloorPct: f(70, "mfr", "high", "“minimum 70% retention of Battery capacity over the warranty period”"),
       batteryTransfers: f(true, "mfr", "high", "“Your New Vehicle Limited Warranty will follow your vehicle and be transferred to the new owner when a vehicle ownership transfer is performed through Tesla”"),
     },
     buyerNotes: [
       {
-        headline: "This listing doesn't say which 2017 Model X trim this is — range varies by up to 95 miles",
+        headline: "This listing doesn't say which 2017 Model X trim this is, range varies by up to 95 miles",
         body: "Tesla sold six distinct EPA-rated configurations in 2017 (60D 200 mi up to 100D 295 mi). This scraped listing has no trim field. Check the window sticker, door-jamb EPA label, or the Tesla owner account tied to this VIN to confirm the actual trim.",
         severity: "warning",
       },
       {
         headline: "Center display can fail and take rearview camera/turn signals with it",
-        body: "21V035 (2016–2018 Model X): the center display's memory chip wears out over time, eventually causing the display to fail — which also takes out the rearview camera image, defrost controls, and turn-signal chime. Free dealer replacement of the display's daughterboard; software 2020.48.48.12+ warns the owner in advance.",
+        body: "21V035 (2016–2018 Model X): the center display's memory chip wears out over time, eventually causing the display to fail, which also takes out the rearview camera image, defrost controls, and turn-signal chime. Free dealer replacement of the display's daughterboard; software 2020.48.48.12+ warns the owner in advance.",
         severity: "trap",
       },
       {
@@ -589,27 +589,27 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     model: "Model X",
     modelYears: [2018, 2018],
     drive: "AWD",
-    range: { epaRangeMi: f(238, "mfr", "medium", "This listing's exact trim isn't recorded — 238 mi (75D) is the lowest-range 2018 Model X trim, used here as a floor, not a confirmed match. Full 2018 lineup — EPA: 75D 238 / P100D 289 / 100D 295", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(238, "mfr", "medium", "This listing's exact trim isn't recorded, 238 mi (75D) is the lowest-range 2018 Model X trim, used here as a floor, not a confirmed match. Full 2018 lineup, EPA: 75D 238 / P100D 289 / 100D 295", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("NACS", "mfr", "high", "Tesla's proprietary connector"),
       superchargerAccess: f("native", "mfr", "high"),
     },
     thermal: { heatPump: f("none", "agg", "medium", "Octovalve heat pump arrived with the January 2021 Model S/X refresh; 2018 cars have resistive heat only") },
     warranty: {
-      batteryYears: f(8, "mfr", "high", "“8 years or 150,000 miles, whichever comes first” — Tesla's own vehicle-warranty page (archived capture, dated 2025-04-16)"),
+      batteryYears: f(8, "mfr", "high", "“8 years or 150,000 miles, whichever comes first”, Tesla's own vehicle-warranty page (archived capture, dated 2025-04-16)"),
       batteryMiles: f(150_000, "mfr", "high"),
       sohFloorPct: f(70, "mfr", "high", "“minimum 70% retention of Battery capacity over the warranty period”"),
       batteryTransfers: f(true, "mfr", "high", "“Your New Vehicle Limited Warranty will follow your vehicle and be transferred to the new owner when a vehicle ownership transfer is performed through Tesla”"),
     },
     buyerNotes: [
       {
-        headline: "This listing doesn't say which 2018 Model X trim this is — range varies by up to 57 miles",
+        headline: "This listing doesn't say which 2018 Model X trim this is, range varies by up to 57 miles",
         body: "Tesla sold three distinct EPA-rated configurations in 2018 (75D 238 mi up to 100D 295 mi). This scraped listing has no trim field. Check the window sticker, door-jamb EPA label, or the Tesla owner account tied to this VIN to confirm the actual trim.",
         severity: "warning",
       },
       {
         headline: "Center display can fail and take rearview camera/turn signals with it",
-        body: "21V035 (2016–2018 Model X): the center display's memory chip wears out over time, eventually causing the display to fail — which also takes out the rearview camera image, defrost controls, and turn-signal chime. Free dealer replacement of the display's daughterboard; software 2020.48.48.12+ warns the owner in advance.",
+        body: "21V035 (2016–2018 Model X): the center display's memory chip wears out over time, eventually causing the display to fail, which also takes out the rearview camera image, defrost controls, and turn-signal chime. Free dealer replacement of the display's daughterboard; software 2020.48.48.12+ warns the owner in advance.",
         severity: "trap",
       },
     ],
@@ -638,27 +638,27 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     trim: "EQE 500 4MATIC",
     drive: "AWD",
     battery: { packUsableKwh: f(90.6, "agg", "low", "Widely reported across aggregators; Mercedes' own press materials (media.mbusa.com) are blocked by bot-detection and could not be independently confirmed for MY2023 specifically") },
-    range: { epaRangeMi: f(298, "mfr", "medium", "fueleconomy.gov has no MY2023 record for this trim — the identical trim string “EQE 500 4matic” exists only under MY2024 (298 mi). Used here as the best verified figure; this is a year mismatch, not a confirmed 2023-specific rating", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(298, "mfr", "medium", "fueleconomy.gov has no MY2023 record for this trim, the identical trim string “EQE 500 4matic” exists only under MY2024 (298 mi). Used here as the best verified figure; this is a year mismatch, not a confirmed 2023-specific rating", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "agg", "medium"),
       dcPeakKw: f(170, "agg", "low", "Widely reported; not confirmed against a primary Mercedes document for MY2023"),
-      architectureV: f(400, "agg", "low", "Reported by secondary sources (electrive.com, autoevolution); not confirmed on a Mercedes primary document — the CCS 500A/400V ceiling matches the 170 kW peak"),
+      architectureV: f(400, "agg", "low", "Reported by secondary sources (electrive.com, autoevolution); not confirmed on a Mercedes primary document, the CCS 500A/400V ceiling matches the 170 kW peak"),
     },
-    thermal: { heatPump: f("optional", "agg", "medium", "Mercedes made the heat pump standard on EQE/EQS sedans starting MY2024 — the 2023 sedan likely lacks it unless optioned. (It was already standard on the EQE SUV since MY2023.)") },
+    thermal: { heatPump: f("optional", "agg", "medium", "Mercedes made the heat pump standard on EQE/EQS sedans starting MY2024, the 2023 sedan likely lacks it unless optioned. (It was already standard on the EQE SUV since MY2023.)") },
     warranty: {
-      batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs — verified against MY25/MY26 EQ booklets"),
+      batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets"),
       batteryMiles: f(155_000, "mfr", "high"),
-      extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQE: 204 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance — a skipped-service history can void it.", "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner” — verified MY25/MY26 EQ booklets"),
+      extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQE: 204 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance, a skipped-service history can void it.", "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner”, verified MY25/MY26 EQ booklets"),
     },
     buyerNotes: [
       {
-        headline: "Fuse-box fire/power-loss recall — two rounds, check which repair this VIN got",
-        body: "24V115 (80-Amp fuses manufactured incorrectly, can cause sudden loss of drive power or fire risk): free replacement fuse box. 25V255: some vehicles repaired under 24V115 received the WRONG replacement fuse box, which itself carries increased fire risk — a second free repair. Confirm this VIN got the correct part, not just “a” repair.",
+        headline: "Fuse-box fire/power-loss recall, two rounds, check which repair this VIN got",
+        body: "24V115 (80-Amp fuses manufactured incorrectly, can cause sudden loss of drive power or fire risk): free replacement fuse box. 25V255: some vehicles repaired under 24V115 received the WRONG replacement fuse box, which itself carries increased fire risk, a second free repair. Confirm this VIN got the correct part, not just “a” repair.",
         severity: "trap",
       },
       {
-        headline: "Roof-frame absorbers may not be secured — check remedy status",
+        headline: "Roof-frame absorbers may not be secured, check remedy status",
         body: "23V555 (2023 EQE 500/350, AMG EQE): roof frame absorbers may not be properly secured and can detach during side-curtain air bag deployment. Free dealer replacement; owner notices mailed September 2023.",
         severity: "warning",
       },
@@ -679,8 +679,8 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     drive: "AWD",
     battery: { packUsableKwh: f(90.5, "mfr", "high", "Mercedes-Benz USA's own EQE320 4MATIC spec page") },
     range: {
-      epaRangeMi: f(267, "mfr", "high", "2026 EQE320 4MATIC — EPA", "https://www.fueleconomy.gov"),
-      testedRangeMi: f(332, "tested", "high", "70-mph highway test (Consumer Reports): 332 mi — beat EPA by ~65 mi"),
+      epaRangeMi: f(267, "mfr", "high", "2026 EQE320 4MATIC, EPA", "https://www.fueleconomy.gov"),
+      testedRangeMi: f(332, "tested", "high", "70-mph highway test (Consumer Reports): 332 mi, beat EPA by ~65 mi"),
     },
     charging: {
       portStandard: f("CCS1", "mfr", "high", "Mercedes-Benz USA spec page: CCS DC port / J1772 AC port"),
@@ -688,15 +688,15 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     },
     thermal: { heatPump: f("standard", "mfr", "high", "Mercedes-Benz USA spec page lists “Innovative heat pump” as standard") },
     warranty: {
-      batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs — verified against MY25/MY26 EQ booklets"),
+      batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets"),
       batteryMiles: f(155_000, "mfr", "high"),
       extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQE: 204 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance.", "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner” — verified MY25/MY26 EQ booklets"),
+      batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner”, verified MY25/MY26 EQ booklets"),
     },
     buyerNotes: [
       {
         headline: "No recalls on file yet",
-        body: "As of 2026-08-10, NHTSA's recall database returns zero campaigns for the MY2026 EQE320 4MATIC — consistent with this being a brand-new nameplate/model-year introduction.",
+        body: "As of 2026-08-10, NHTSA's recall database returns zero campaigns for the MY2026 EQE320 4MATIC, consistent with this being a brand-new nameplate/model-year introduction.",
         severity: "info",
       },
     ],
@@ -710,17 +710,17 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     trim: "EQE320+",
     drive: "RWD",
     battery: { packUsableKwh: f(96, "mfr", "high", "Mercedes-Benz USA's own EQE320+ spec page") },
-    range: { epaRangeMi: f(308, "mfr", "high", "2026 EQE320+ — EPA", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(308, "mfr", "high", "2026 EQE320+, EPA", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "mfr", "high", "Mercedes-Benz USA spec page"),
       dcPeakKw: f(170, "mfr", "high", "Mercedes-Benz USA spec page"),
     },
     thermal: { heatPump: f("standard", "mfr", "high", "Mercedes-Benz USA spec page lists heat pump as standard") },
     warranty: {
-      batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs — verified against MY25/MY26 EQ booklets"),
+      batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets"),
       batteryMiles: f(155_000, "mfr", "high"),
       extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQE: 204 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance.", "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner” — verified MY25/MY26 EQ booklets"),
+      batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner”, verified MY25/MY26 EQ booklets"),
     },
     buyerNotes: [
       {
@@ -739,22 +739,22 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     trim: "AMG EQE 4MATIC",
     drive: "AWD",
     battery: { packUsableKwh: f(90.6, "agg", "low", "Widely reported by aggregators; corroborated indirectly via Mercedes-Benz USA's current AMG EQE Sedan spec page (same powertrain generation, no evidence of a mid-cycle battery change), but no MY2024-specific primary document was located") },
-    range: { epaRangeMi: f(230, "mfr", "high", "2024 AMG EQE 4MATIC (EPA model string “AMG EQE 4matic Plus”) — EPA", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(230, "mfr", "high", "2024 AMG EQE 4MATIC (EPA model string “AMG EQE 4matic Plus”), EPA", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "agg", "medium"),
       dcPeakKw: f(170, "agg", "low", "Widely reported; corroborated indirectly via the current AMG EQE Sedan spec page, not a MY2024-specific primary document"),
     },
     thermal: { heatPump: f("standard", "agg", "medium", "Corroborated via the current AMG EQE Sedan spec page; not a MY2024-specific primary document") },
     warranty: {
-      batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs — verified against MY25/MY26 EQ booklets; reasonably extends to the AMG performance variant of the same platform"),
+      batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets; reasonably extends to the AMG performance variant of the same platform"),
       batteryMiles: f(155_000, "mfr", "high"),
       extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQE: 204 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance.", "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner” — verified MY25/MY26 EQ booklets"),
+      batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner”, verified MY25/MY26 EQ booklets"),
     },
     buyerNotes: [
       {
-        headline: "Battery-management-system software recall — check remedy status",
-        body: "24V372 (2024 AMG EQE 53 4MATIC and several other EQE/EQS variants): a BMS software fault may cause the high-voltage battery to shut down, a sudden loss of drive power. Free software update; owner notices mailed July 2024. Note: the separate 24V115 fuse-box recall does NOT apply to this 2024 model year — NHTSA's own vehicle-level index scopes that one to MY2023 only.",
+        headline: "Battery-management-system software recall, check remedy status",
+        body: "24V372 (2024 AMG EQE 53 4MATIC and several other EQE/EQS variants): a BMS software fault may cause the high-voltage battery to shut down, a sudden loss of drive power. Free software update; owner notices mailed July 2024. Note: the separate 24V115 fuse-box recall does NOT apply to this 2024 model year, NHTSA's own vehicle-level index scopes that one to MY2023 only.",
         severity: "trap",
       },
       {
@@ -773,22 +773,22 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     trim: "EQE320 4MATIC",
     drive: "AWD",
     battery: { packUsableKwh: f(90.5, "agg", "medium", "Mercedes-Benz USA's live configurator has already rolled forward past this model year for this SUV nameplate, so a direct MY2026-labeled primary spec page could not be retrieved. Aggregated secondary sources converge on this figure, matching the sedan AWD pack size exactly") },
-    range: { epaRangeMi: f(253, "mfr", "high", "2026 EQE SUV, EQE320 4MATIC — EPA", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(253, "mfr", "high", "2026 EQE SUV, EQE320 4MATIC, EPA", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "agg", "medium"),
       dcPeakKw: f(170, "agg", "low", "Assumed consistent with the EQE sedan family; not independently confirmed for the SUV body style"),
     },
     thermal: { heatPump: f("standard", "agg", "medium", "Standard on the EQE SUV since MY2023; presumed to continue for 2026 but not independently re-verified for this specific model year") },
     warranty: {
-      batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs — verified against MY25/MY26 EQ booklets"),
+      batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets"),
       batteryMiles: f(155_000, "mfr", "high"),
       extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQE: 204 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance.", "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner” — verified MY25/MY26 EQ booklets"),
+      batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner”, verified MY25/MY26 EQ booklets"),
     },
     buyerNotes: [
       {
         headline: "No recalls on file yet",
-        body: "As of 2026-08-10, NHTSA's recall database returns zero campaigns for the MY2026 EQE SUV 320 4MATIC — consistent with this being a brand-new nameplate/model-year introduction.",
+        body: "As of 2026-08-10, NHTSA's recall database returns zero campaigns for the MY2026 EQE SUV 320 4MATIC, consistent with this being a brand-new nameplate/model-year introduction.",
         severity: "info",
       },
     ],
@@ -802,7 +802,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     trim: "EQS450 4MATIC",
     drive: "AWD",
     battery: { packUsableKwh: f(118, "mfr", "high", "Mercedes-Benz USA's own EQS450 4MATIC spec page") },
-    range: { epaRangeMi: f(367, "mfr", "high", "2026 EQS450 4MATIC — EPA", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(367, "mfr", "high", "2026 EQS450 4MATIC, EPA", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "mfr", "high", "Mercedes-Benz USA spec page"),
       dcPeakKw: f(200, "mfr", "high", "Mercedes-Benz USA spec page: 200 kW peak, 31 min 10–80%"),
@@ -810,20 +810,20 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     },
     thermal: { heatPump: f("standard", "mfr", "high", "Mercedes-Benz USA spec page lists heat pump as standard") },
     warranty: {
-      batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs — verified against MY25/MY26 EQ booklets"),
+      batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets"),
       batteryMiles: f(155_000, "mfr", "high"),
       extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQS: 192 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance.", "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner” — verified MY25/MY26 EQ booklets"),
+      batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner”, verified MY25/MY26 EQ booklets"),
     },
     buyerNotes: [
       {
         headline: "This is the current 400V EQS, not the newly-announced next-generation car",
-        body: "Mercedes announced an upgraded EQS on an 800V architecture with up to 350 kW DC charging in April 2026 — as of this research it was orderable in Germany only, with no confirmed US on-sale date. This listing's EPA record predates that announcement and matches the existing 400V-architecture car's specs exactly (118 kWh, 367 mi, 200 kW). Don't assume this car has the newer, faster-charging hardware.",
+        body: "Mercedes announced an upgraded EQS on an 800V architecture with up to 350 kW DC charging in April 2026, as of this research it was orderable in Germany only, with no confirmed US on-sale date. This listing's EPA record predates that announcement and matches the existing 400V-architecture car's specs exactly (118 kWh, 367 mi, 200 kW). Don't assume this car has the newer, faster-charging hardware.",
         severity: "info",
       },
       {
         headline: "No recalls on file yet",
-        body: "As of 2026-08-10, NHTSA's recall database returns zero campaigns for the MY2026 EQS450 4MATIC — consistent with this being a brand-new nameplate/model-year introduction.",
+        body: "As of 2026-08-10, NHTSA's recall database returns zero campaigns for the MY2026 EQS450 4MATIC, consistent with this being a brand-new nameplate/model-year introduction.",
         severity: "info",
       },
     ],
@@ -850,27 +850,27 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     modelYears: [2026, 2027],
     drive: "RWD",
     battery: { packGrossKwh: f(85, "mfr", "high", "Cadillac's own Optiq specs page (cadillac.com)") },
-    range: { epaRangeMi: f(317, "mfr", "high", "2026 and 2027 Optiq RWD — EPA (identical both years)", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(317, "mfr", "high", "2026 and 2027 Optiq RWD, EPA (identical both years)", "https://www.fueleconomy.gov") },
     charging: {
-      portStandard: f("NACS", "mfr", "high", "Cadillac's own Optiq specs page: “J3400 (NACS)” — native NACS, unlike the CCS1-native pattern used by Escalade IQ/Sierra EV/Silverado EV/Lyriq"),
-      superchargerAccess: f("native", "mfr", "high", "Charge port is NACS natively — no adapter needed for Superchargers; a GM-approved adapter is instead needed for CCS/J1772 chargers"),
+      portStandard: f("NACS", "mfr", "high", "Cadillac's own Optiq specs page: “J3400 (NACS)”, native NACS, unlike the CCS1-native pattern used by Escalade IQ/Sierra EV/Silverado EV/Lyriq"),
+      superchargerAccess: f("native", "mfr", "high", "Charge port is NACS natively, no adapter needed for Superchargers; a GM-approved adapter is instead needed for CCS/J1772 chargers"),
       dcPeakKw: f(150, "mfr", "high", "Cadillac's own Optiq specs page: 150 kW peak, up to 81 mi added in ~10 min"),
     },
     thermal: { heatPump: f("standard", "agg", "medium", "GM's Ultium Energy Recovery heat pump is platform-wide standard; independently corroborated for the Optiq specifically by a trade-press writeup") },
     warranty: {
-      batteryYears: f(8, "mfr", "high", "“8 years or 100,000 miles” — GMC's current-edition Electric Vehicle Limited Warranty booklet, read directly; same Ultium/BEV3 propulsion-battery-warranty family confirmed for the Cadillac brand via the 2022 Lyriq booklet"),
+      batteryYears: f(8, "mfr", "high", "“8 years or 100,000 miles”, GMC's current-edition Electric Vehicle Limited Warranty booklet, read directly; same Ultium/BEV3 propulsion-battery-warranty family confirmed for the Cadillac brand via the 2022 Lyriq booklet"),
       batteryMiles: f(100_000, "mfr", "high"),
-      sohFloorPct: f(75, "mfr", "high", "“The battery will be replaced/repaired if the capacity falls below 75% of its original value during the warranty period, as determined by a certified dealer” — GMC's current-edition EV warranty booklet, read directly"),
-      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost” — GM EV booklets"),
+      sohFloorPct: f(75, "mfr", "high", "“The battery will be replaced/repaired if the capacity falls below 75% of its original value during the warranty period, as determined by a certified dealer”, GMC's current-edition EV warranty booklet, read directly"),
+      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost”, GM EV booklets"),
     },
     buyerNotes: [
       {
-        headline: "This car charges differently than most other GM EVs — no Supercharger adapter needed",
+        headline: "This car charges differently than most other GM EVs, no Supercharger adapter needed",
         body: "Optiq has a native NACS (Tesla-style) charge port, unlike Escalade IQ, Sierra EV, Silverado EV, and Lyriq, which are all CCS1-native and need a GM adapter for Superchargers. On Optiq, it's the reverse: a GM-approved adapter is needed to use CCS or J1772 chargers.",
         severity: "info",
       },
       {
-        headline: "Tire tread-detachment recall — check this VIN's status",
+        headline: "Tire tread-detachment recall, check this VIN's status",
         body: "25V704 (2025–2026 Optiq and Chevy Equinox EV with 21-inch Continental all-season tires from DOT week 4024): partial or full tread detachment risk. Free dealer inspection/replacement; owner notices mailed November 2025.",
         severity: "trap",
       },
@@ -889,22 +889,22 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     modelYears: [2026, 2027],
     drive: "AWD",
     battery: { packGrossKwh: f(85, "mfr", "high", "Cadillac's own Optiq specs page (cadillac.com); AWD adds a second motor, not a different pack, per the RWD/AWD EPA records sharing the same platform family") },
-    range: { epaRangeMi: f(303, "mfr", "high", "2027 Optiq AWD — EPA", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(303, "mfr", "high", "2027 Optiq AWD, EPA", "https://www.fueleconomy.gov") },
     charging: {
-      portStandard: f("NACS", "mfr", "high", "Cadillac's own Optiq specs page: “J3400 (NACS)” — native NACS, unlike the CCS1-native pattern used by Escalade IQ/Sierra EV/Silverado EV/Lyriq"),
-      superchargerAccess: f("native", "mfr", "high", "Charge port is NACS natively — no adapter needed for Superchargers; a GM-approved adapter is instead needed for CCS/J1772 chargers"),
+      portStandard: f("NACS", "mfr", "high", "Cadillac's own Optiq specs page: “J3400 (NACS)”, native NACS, unlike the CCS1-native pattern used by Escalade IQ/Sierra EV/Silverado EV/Lyriq"),
+      superchargerAccess: f("native", "mfr", "high", "Charge port is NACS natively, no adapter needed for Superchargers; a GM-approved adapter is instead needed for CCS/J1772 chargers"),
       dcPeakKw: f(150, "mfr", "high", "Cadillac's own Optiq specs page: 150 kW peak, up to 81 mi added in ~10 min"),
     },
     thermal: { heatPump: f("standard", "agg", "medium", "GM's Ultium Energy Recovery heat pump is platform-wide standard; independently corroborated for the Optiq specifically by a trade-press writeup") },
     warranty: {
-      batteryYears: f(8, "mfr", "high", "“8 years or 100,000 miles” — GMC's current-edition Electric Vehicle Limited Warranty booklet, read directly; same Ultium/BEV3 propulsion-battery-warranty family confirmed for the Cadillac brand via the 2022 Lyriq booklet"),
+      batteryYears: f(8, "mfr", "high", "“8 years or 100,000 miles”, GMC's current-edition Electric Vehicle Limited Warranty booklet, read directly; same Ultium/BEV3 propulsion-battery-warranty family confirmed for the Cadillac brand via the 2022 Lyriq booklet"),
       batteryMiles: f(100_000, "mfr", "high"),
-      sohFloorPct: f(75, "mfr", "high", "“The battery will be replaced/repaired if the capacity falls below 75% of its original value during the warranty period, as determined by a certified dealer” — GMC's current-edition EV warranty booklet, read directly"),
-      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost” — GM EV booklets"),
+      sohFloorPct: f(75, "mfr", "high", "“The battery will be replaced/repaired if the capacity falls below 75% of its original value during the warranty period, as determined by a certified dealer”, GMC's current-edition EV warranty booklet, read directly"),
+      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost”, GM EV booklets"),
     },
     buyerNotes: [
       {
-        headline: "This car charges differently than most other GM EVs — no Supercharger adapter needed",
+        headline: "This car charges differently than most other GM EVs, no Supercharger adapter needed",
         body: "Optiq has a native NACS (Tesla-style) charge port, unlike Escalade IQ, Sierra EV, Silverado EV, and Lyriq, which are all CCS1-native and need a GM adapter for Superchargers. On Optiq, it's the reverse: a GM-approved adapter is needed to use CCS or J1772 chargers.",
         severity: "info",
       },
@@ -924,32 +924,32 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     drive: "AWD",
     battery: { packGrossKwh: f(205, "mfr", "high", "Cadillac's own Escalade IQ specs page (cadillac.com)") },
     range: {
-      epaRangeMi: f(465, "mfr", "medium", "Cadillac-estimated 465 mi — NOT an EPA rating; at ~10,600 lb GVWR the Escalade IQ is exempt from EPA range labeling (see note)", "https://www.cadillac.com/electric/escalade-iq"),
+      epaRangeMi: f(465, "mfr", "medium", "Cadillac-estimated 465 mi, NOT an EPA rating; at ~10,600 lb GVWR the Escalade IQ is exempt from EPA range labeling (see note)", "https://www.cadillac.com/electric/escalade-iq"),
       
-      testedRangeMi: f(482, "tested", "high", "70-mph steady-state (InsideEVs): 482.2 mi, using 222.7 kWh. Edmunds' own mixed-driving methodology recorded 558 mi; a third-party 60-mph constant-speed test (Tom Moloughney/State of Charge) recorded 607 mi — all three exceed Cadillac's own 465-mi estimate. No EPA-certified figure exists to compare against."),
+      testedRangeMi: f(482, "tested", "high", "70-mph steady-state (InsideEVs): 482.2 mi, using 222.7 kWh. Edmunds' own mixed-driving methodology recorded 558 mi; a third-party 60-mph constant-speed test (Tom Moloughney/State of Charge) recorded 607 mi, all three exceed Cadillac's own 465-mi estimate. No EPA-certified figure exists to compare against."),
     },
     charging: {
       portStandard: f("CCS1", "mfr", "high", "Cadillac's own Escalade IQ specs page"),
-      superchargerAccess: f("adapter", "mfr", "high", "GM-approved adapter, 29,000+ Tesla Superchargers — the opposite pattern from Optiq, which is NACS-native"),
+      superchargerAccess: f("adapter", "mfr", "high", "GM-approved adapter, 29,000+ Tesla Superchargers, the opposite pattern from Optiq, which is NACS-native"),
       dcPeakKw: f(350, "mfr", "high", "Cadillac's own Escalade IQ specs page: 350 kW peak, up to 117 mi in ~10 min"),
       architectureV: f(800, "mfr", "high", "Cadillac's own Escalade IQ specs page"),
     },
     thermal: { heatPump: f("standard", "agg", "low", "GM's Ultium Energy Recovery heat pump is platform-wide standard; not independently re-confirmed for Escalade IQ specifically") },
     warranty: {
-      batteryYears: f(8, "mfr", "high", "“8 years or 100,000 miles” — GMC's current-edition Electric Vehicle Limited Warranty booklet, read directly; same Ultium/BEV3 propulsion-battery-warranty family confirmed for the Cadillac brand via the 2022 Lyriq booklet"),
+      batteryYears: f(8, "mfr", "high", "“8 years or 100,000 miles”, GMC's current-edition Electric Vehicle Limited Warranty booklet, read directly; same Ultium/BEV3 propulsion-battery-warranty family confirmed for the Cadillac brand via the 2022 Lyriq booklet"),
       batteryMiles: f(100_000, "mfr", "high"),
-      sohFloorPct: f(75, "mfr", "high", "“The battery will be replaced/repaired if the capacity falls below 75% of its original value during the warranty period, as determined by a certified dealer” — GMC's current-edition EV warranty booklet, read directly"),
-      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost” — GM EV booklets"),
+      sohFloorPct: f(75, "mfr", "high", "“The battery will be replaced/repaired if the capacity falls below 75% of its original value during the warranty period, as determined by a certified dealer”, GMC's current-edition EV warranty booklet, read directly"),
+      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost”, GM EV booklets"),
     },
     buyerNotes: [
       {
-        headline: "No EPA-certified range exists for this vehicle — Cadillac's own figure is not an EPA rating",
-        body: "At roughly 10,600 lb GVWR, Escalade IQ exceeds the 10,000 lb cutoff for EPA's fuel-economy/range labeling program — the same weight-class exemption that applies to the Hummer EV. fueleconomy.gov has no Escalade IQ record under any model year checked, confirming the exemption applies here too. Cadillac's own marketing states “465 miles, Cadillac-estimated” — its own site explicitly does not call this an EPA figure. Independent instrumented tests (below) suggest the real-world range is at least in that neighborhood, but there is no government-certified number to cite.",
+        headline: "No EPA-certified range exists for this vehicle, Cadillac's own figure is not an EPA rating",
+        body: "At roughly 10,600 lb GVWR, Escalade IQ exceeds the 10,000 lb cutoff for EPA's fuel-economy/range labeling program, the same weight-class exemption that applies to the Hummer EV. fueleconomy.gov has no Escalade IQ record under any model year checked, confirming the exemption applies here too. Cadillac's own marketing states “465 miles, Cadillac-estimated”, its own site explicitly does not call this an EPA figure. Independent instrumented tests (below) suggest the real-world range is at least in that neighborhood, but there is no government-certified number to cite.",
         severity: "warning",
       },
       {
-        headline: "HV battery module recall — remedy not yet available",
-        body: "26V494 (2026 Escalade IQ, Escalade IQL, Sierra EV, Silverado EV): an improperly secured internal module component in the HV battery may move and damage the battery, increasing fire risk. Dealers will replace the entire HV battery free of charge, but owner notification letters were not expected to be mailed until September 14, 2026 — as of this writing, the remedy process had not yet started for affected owners.",
+        headline: "HV battery module recall, remedy not yet available",
+        body: "26V494 (2026 Escalade IQ, Escalade IQL, Sierra EV, Silverado EV): an improperly secured internal module component in the HV battery may move and damage the battery, increasing fire risk. Dealers will replace the entire HV battery free of charge, but owner notification letters were not expected to be mailed until September 14, 2026, as of this writing, the remedy process had not yet started for affected owners.",
         severity: "trap",
       },
     ],
@@ -961,8 +961,8 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     model: "Escalade IQL",
     modelYears: [2026, 2026],
     drive: "AWD",
-    range: { epaRangeMi: f(460, "mfr", "medium", "Cadillac-estimated 460 mi — NOT an EPA rating; the IQL shares the Escalade IQ's EPA weight-class exemption", "https://www.cadillac.com/electric/escalade-iql") },
-    battery: { packGrossKwh: f(200, "mfr", "medium", "Cadillac's own Escalade IQL specs page states only “over 200 kWh” — vaguer wording than the Escalade IQ page's specific 205 kWh figure") },
+    range: { epaRangeMi: f(460, "mfr", "medium", "Cadillac-estimated 460 mi, NOT an EPA rating; the IQL shares the Escalade IQ's EPA weight-class exemption", "https://www.cadillac.com/electric/escalade-iql") },
+    battery: { packGrossKwh: f(200, "mfr", "medium", "Cadillac's own Escalade IQL specs page states only “over 200 kWh”, vaguer wording than the Escalade IQ page's specific 205 kWh figure") },
     charging: {
       portStandard: f("CCS1", "mfr", "high", "Cadillac's own Escalade IQL specs page"),
       superchargerAccess: f("adapter", "mfr", "high", "GM-approved adapter, 29,000+ Tesla Superchargers"),
@@ -971,20 +971,20 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     },
     thermal: { heatPump: f("standard", "agg", "low", "GM's Ultium Energy Recovery heat pump is platform-wide standard; not independently re-confirmed for Escalade IQL specifically") },
     warranty: {
-      batteryYears: f(8, "mfr", "high", "“8 years or 100,000 miles” — GMC's current-edition Electric Vehicle Limited Warranty booklet, read directly; same Ultium/BEV3 propulsion-battery-warranty family confirmed for the Cadillac brand via the 2022 Lyriq booklet"),
+      batteryYears: f(8, "mfr", "high", "“8 years or 100,000 miles”, GMC's current-edition Electric Vehicle Limited Warranty booklet, read directly; same Ultium/BEV3 propulsion-battery-warranty family confirmed for the Cadillac brand via the 2022 Lyriq booklet"),
       batteryMiles: f(100_000, "mfr", "high"),
-      sohFloorPct: f(75, "mfr", "high", "“The battery will be replaced/repaired if the capacity falls below 75% of its original value during the warranty period, as determined by a certified dealer” — GMC's current-edition EV warranty booklet, read directly"),
-      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost” — GM EV booklets"),
+      sohFloorPct: f(75, "mfr", "high", "“The battery will be replaced/repaired if the capacity falls below 75% of its original value during the warranty period, as determined by a certified dealer”, GMC's current-edition EV warranty booklet, read directly"),
+      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost”, GM EV booklets"),
     },
     buyerNotes: [
       {
-        headline: "No EPA-certified range exists for this vehicle — Cadillac's own figure is not an EPA rating",
-        body: "fueleconomy.gov has no Escalade IQL record under any model year checked. Cadillac's own marketing states “460 miles, Cadillac-estimated” — its own site explicitly does not call this an EPA figure. The shorter-wheelbase Escalade IQ has been independently tested well past its own estimate, but no reviewer has published a tested figure for the IQL specifically — don't assume the IQ's test results carry over.",
+        headline: "No EPA-certified range exists for this vehicle, Cadillac's own figure is not an EPA rating",
+        body: "fueleconomy.gov has no Escalade IQL record under any model year checked. Cadillac's own marketing states “460 miles, Cadillac-estimated”, its own site explicitly does not call this an EPA figure. The shorter-wheelbase Escalade IQ has been independently tested well past its own estimate, but no reviewer has published a tested figure for the IQL specifically, don't assume the IQ's test results carry over.",
         severity: "warning",
       },
       {
-        headline: "HV battery module recall — remedy not yet available",
-        body: "26V494 (2026 Escalade IQ, Escalade IQL, Sierra EV, Silverado EV): an improperly secured internal module component in the HV battery may move and damage the battery, increasing fire risk. Dealers will replace the entire HV battery free of charge, but owner notification letters were not expected to be mailed until September 14, 2026 — as of this writing, the remedy process had not yet started for affected owners.",
+        headline: "HV battery module recall, remedy not yet available",
+        body: "26V494 (2026 Escalade IQ, Escalade IQL, Sierra EV, Silverado EV): an improperly secured internal module component in the HV battery may move and damage the battery, increasing fire risk. Dealers will replace the entire HV battery free of charge, but owner notification letters were not expected to be mailed until September 14, 2026, as of this writing, the remedy process had not yet started for affected owners.",
         severity: "trap",
       },
     ],
@@ -996,18 +996,18 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     model: "Sierra EV",
     modelYears: [2026, 2026],
     drive: "AWD",
-    battery: { packGrossKwh: f(120, "agg", "low", "Reported by a GM-focused trade outlet, corroborated by a second aggregator; not confirmed on any gmc.com page — GMC's own /specs and /charging pages for Sierra EV both 404") },
-    range: { epaRangeMi: f(283, "mfr", "high", "2026 Sierra EV Elevation, Standard Range (the pack this trim ships with by default) — EPA, cross-corroborated by GMC's own site FAQ", "https://www.fueleconomy.gov") },
+    battery: { packGrossKwh: f(120, "agg", "low", "Reported by a GM-focused trade outlet, corroborated by a second aggregator; not confirmed on any gmc.com page, GMC's own /specs and /charging pages for Sierra EV both 404") },
+    range: { epaRangeMi: f(283, "mfr", "high", "2026 Sierra EV Elevation, Standard Range (the pack this trim ships with by default), EPA, cross-corroborated by GMC's own site FAQ", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "agg", "low", "Not stated on any GMC page found for Sierra EV specifically; inferred by platform-family analogy to Silverado EV, which shares this Ultium truck platform"),
       dcPeakKw: f(220, "agg", "low", "Reported by a GM-focused trade outlet; not confirmed on a GM page"),
     },
     thermal: { heatPump: f("standard", "agg", "low", "GM's Ultium Energy Recovery heat pump is platform-wide standard; not independently confirmed on any GMC page for Sierra EV") },
     warranty: {
-      batteryYears: f(8, "mfr", "high", "“8 years or 100,000 miles” — GMC's current-edition Electric Vehicle Limited Warranty booklet, read directly and directly governs this brand/model"),
+      batteryYears: f(8, "mfr", "high", "“8 years or 100,000 miles”, GMC's current-edition Electric Vehicle Limited Warranty booklet, read directly and directly governs this brand/model"),
       batteryMiles: f(100_000, "mfr", "high"),
-      sohFloorPct: f(75, "mfr", "high", "“The battery will be replaced/repaired if the capacity falls below 75% of its original value during the warranty period, as determined by a certified dealer” — GMC's current-edition EV warranty booklet, read directly"),
-      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost” — GM EV booklets"),
+      sohFloorPct: f(75, "mfr", "high", "“The battery will be replaced/repaired if the capacity falls below 75% of its original value during the warranty period, as determined by a certified dealer”, GMC's current-edition EV warranty booklet, read directly"),
+      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost”, GM EV booklets"),
     },
     buyerNotes: [
       {
@@ -1016,7 +1016,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
         severity: "warning",
       },
       {
-        headline: "HV battery module recall — remedy not yet available",
+        headline: "HV battery module recall, remedy not yet available",
         body: "26V494 (2026 Sierra EV, Silverado EV, Escalade IQ, Escalade IQL): an improperly secured internal module component in the HV battery may move and damage the battery, increasing fire risk. Dealers will replace the entire HV battery free of charge, but owner notification letters were not expected to be mailed until September 14, 2026.",
         severity: "trap",
       },
@@ -1034,18 +1034,18 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     model: "Sierra EV",
     modelYears: [2026, 2026],
     drive: "AWD",
-    battery: { packGrossKwh: f(170, "agg", "low", "Reported by a GM-focused trade outlet, corroborated by a second aggregator; not confirmed on any gmc.com page — GMC's own /specs and /charging pages for Sierra EV both 404") },
-    range: { epaRangeMi: f(410, "mfr", "high", "2026 Sierra EV Elevation with the optional Extended Range pack — EPA, cross-corroborated by GMC's own site FAQ", "https://www.fueleconomy.gov") },
+    battery: { packGrossKwh: f(170, "agg", "low", "Reported by a GM-focused trade outlet, corroborated by a second aggregator; not confirmed on any gmc.com page, GMC's own /specs and /charging pages for Sierra EV both 404") },
+    range: { epaRangeMi: f(410, "mfr", "high", "2026 Sierra EV Elevation with the optional Extended Range pack, EPA, cross-corroborated by GMC's own site FAQ", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "agg", "low", "Not stated on any GMC page found for Sierra EV specifically; inferred by platform-family analogy to Silverado EV, which shares this Ultium truck platform"),
       dcPeakKw: f(300, "agg", "low", "Reported by a GM-focused trade outlet; not confirmed on a GM page"),
     },
     thermal: { heatPump: f("standard", "agg", "low", "GM's Ultium Energy Recovery heat pump is platform-wide standard; not independently confirmed on any GMC page for Sierra EV") },
     warranty: {
-      batteryYears: f(8, "mfr", "high", "“8 years or 100,000 miles” — GMC's current-edition Electric Vehicle Limited Warranty booklet, read directly and directly governs this brand/model"),
+      batteryYears: f(8, "mfr", "high", "“8 years or 100,000 miles”, GMC's current-edition Electric Vehicle Limited Warranty booklet, read directly and directly governs this brand/model"),
       batteryMiles: f(100_000, "mfr", "high"),
-      sohFloorPct: f(75, "mfr", "high", "“The battery will be replaced/repaired if the capacity falls below 75% of its original value during the warranty period, as determined by a certified dealer” — GMC's current-edition EV warranty booklet, read directly"),
-      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost” — GM EV booklets"),
+      sohFloorPct: f(75, "mfr", "high", "“The battery will be replaced/repaired if the capacity falls below 75% of its original value during the warranty period, as determined by a certified dealer”, GMC's current-edition EV warranty booklet, read directly"),
+      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost”, GM EV booklets"),
     },
     buyerNotes: [
       {
@@ -1054,7 +1054,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
         severity: "warning",
       },
       {
-        headline: "HV battery module recall — remedy not yet available",
+        headline: "HV battery module recall, remedy not yet available",
         body: "26V494 (2026 Sierra EV, Silverado EV, Escalade IQ, Escalade IQL): an improperly secured internal module component in the HV battery may move and damage the battery, increasing fire risk. Dealers will replace the entire HV battery free of charge, but owner notification letters were not expected to be mailed until September 14, 2026.",
         severity: "trap",
       },

@@ -203,7 +203,7 @@ export function enrichListing(l: Listing): EnrichedListing {
         ...row,
         thermal: {
           ...row.thermal,
-          heatPump: { ...hp, value: resolved, note: `Resolved for this ${l.trim ?? l.drive} — ${hp.note ?? ""}` },
+          heatPump: { ...hp, value: resolved, note: `Resolved for this ${l.trim ?? l.drive}. ${hp.note ?? ""}` },
         },
       };
     }
@@ -228,7 +228,7 @@ export function enrichListing(l: Listing): EnrichedListing {
           confidence: fitted ? "high" : "medium",
           note: fitted
             ? "Option code CBT (DC fast charging) present in the dealer's own data for this car"
-            : "Option code CBT absent from the dealer's option list — this car likely cannot fast-charge; confirm with a charge-port photo",
+            : "Option code CBT absent from the dealer's option list. This car likely cannot fast-charge; confirm with a charge-port photo",
         },
       },
     };
@@ -251,11 +251,11 @@ export function enrichListing(l: Listing): EnrichedListing {
           note:
             photoDcfc === "confirmed_present"
               ? "CCS port confirmed from this listing’s charge-port photo"
-              : "Charge-port photo shows no DC pins — not retrofittable at sensible cost",
+              : "Charge-port photo shows no DC pins; not retrofittable at sensible cost",
         },
         portStandard:
           photoDcfc === "confirmed_absent"
-            ? { value: "J1772", source: "photo", asOf, confidence: "high", note: "AC charging only — the DC option was never fitted" }
+            ? { value: "J1772", source: "photo", asOf, confidence: "high", note: "AC charging only; the DC option was never fitted" }
             : row.charging?.portStandard,
       },
     };
@@ -302,13 +302,13 @@ export function enrichListing(l: Listing): EnrichedListing {
       case "awd_only":
         heatPump =
           l.drive === "AWD"
-            ? { status: "yes", detail: "Heat pump (AWD cars only — this one is AWD)" }
+            ? { status: "yes", detail: "Heat pump (AWD cars only, and this one is AWD)" }
             : l.drive
-              ? { status: "no", detail: "AWD-only this year — this RWD car has none" }
-              : { status: "verify", detail: "AWD cars only — confirm drivetrain" };
+              ? { status: "no", detail: "AWD-only this year; this RWD car has none" }
+              : { status: "verify", detail: "AWD cars only; confirm drivetrain" };
         break;
       case "optional":
-        heatPump = { status: "verify", detail: "Factory option — window sticker is the only authority" };
+        heatPump = { status: "verify", detail: "Factory option; the window sticker is the only authority" };
         break;
     }
   }
@@ -320,13 +320,13 @@ export function enrichListing(l: Listing): EnrichedListing {
   if (photo === "confirmed_present") {
     fastCharge = { status: "yes", detail: "CCS port confirmed from this listing’s charge-port photo" };
   } else if (photo === "confirmed_absent") {
-    fastCharge = { status: "no", detail: "Charge-port photo shows no DC pins — this car cannot fast-charge, and it is not retrofittable" };
+    fastCharge = { status: "no", detail: "Charge-port photo shows no DC pins; this car cannot fast-charge, and it is not retrofittable" };
   } else if (dcfc === "fitted") {
     fastCharge = { status: "yes", detail: "DC fast-charge option confirmed in the dealer's own data" };
   } else if (dcfc === "not_fitted") {
-    fastCharge = { status: "no", detail: "Fast-charge option absent from the dealer's option data — likely cannot fast-charge" };
+    fastCharge = { status: "no", detail: "Fast-charge option absent from the dealer's option data; likely cannot fast-charge" };
   } else if (dcfc === "optional") {
-    fastCharge = { status: "verify", detail: "Was a $750 factory option — check the charge-port photo or glovebox RPO sticker" };
+    fastCharge = { status: "verify", detail: "Was a $750 factory option; check the charge-port photo or glovebox RPO sticker" };
   } else if (dcfc === "none") {
     fastCharge = { status: "no", detail: "Not fast-charge capable" };
   } else {

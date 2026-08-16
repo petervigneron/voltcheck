@@ -27,7 +27,7 @@ export function VinForm({ compact = false }: { compact?: boolean }) {
         <input
           value={vin}
           onChange={(e) => setVin(e.target.value)}
-          placeholder="Paste a VIN — e.g. 7SAYGDEE5RA235597"
+          placeholder="Paste a VIN, e.g. 7SAYGDEE5RA235597"
           spellCheck={false}
           autoCapitalize="characters"
           className="flex-1 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-4 py-3 font-mono text-sm tracking-wide text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"

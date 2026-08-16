@@ -16,7 +16,7 @@ export default function BotPage() {
       <ul className="list-disc space-y-1 pl-5">
         <li>
           Identifies itself in the <code>X-Crawler</code> header of every request. It sends a
-          standard browser User-Agent, because many CDNs block non-browser agents by default —
+          standard browser User-Agent, because many CDNs block non-browser agents by default,
           including, on a number of sites we checked, blocking access to <code>robots.txt</code>{" "}
           itself, which prevented us from reading the site&apos;s own crawling policy.
         </li>

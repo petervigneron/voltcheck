@@ -25,7 +25,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     trim: "Pro",
     drive: "RWD",
     battery: { packUsableKwh: f(77, "mfr", "medium", "82 gross / 77 usable"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(260, "mfr", "high", "2021 Pro RWD; 1st Edition/Pro S: 250 — EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(234, "tested", "high", "70-mph (InsideEVs, First Edition RWD): 234 mi; 75-mph (C&D): 190; Edmunds loop: 287–288") },
+    range: { epaRangeMi: f(260, "mfr", "high", "2021 Pro RWD; 1st Edition/Pro S: 250, EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(234, "tested", "high", "70-mph (InsideEVs, First Edition RWD): 234 mi; 75-mph (C&D): 190; Edmunds loop: 287–288") },
     charging: {
       portStandard: f("CCS1", "mfr"),
       superchargerAccess: f("adapter", "mfr", "high", "VW-approved NACS adapter ($200), access opened Nov 2025"),
@@ -36,7 +36,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new (verified MY2025 booklet; earlier years reported same)"),
-      batteryTransfers: f(true, "mfr", "high", "“Automatically transferred without cost” — VW EV warranty booklet"),
+      batteryTransfers: f(true, "mfr", "high", "“Automatically transferred without cost”, VW EV warranty booklet"),
     },
     buyerNotes: [
       {
@@ -45,8 +45,8 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
         severity: "warning",
       },
       {
-        headline: "Battery and door-handle recalls — check this VIN's campaign status",
-        body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine — an unrepaired one is materially worse until fixed.",
+        headline: "Battery and door-handle recalls, check this VIN's campaign status",
+        body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine, an unrepaired one is materially worse until fixed.",
         severity: "trap",
       },
       {
@@ -65,7 +65,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     trim: "Pro",
     drive: "AWD",
     battery: { packUsableKwh: f(77, "mfr", "medium", "82 gross / 77 usable"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(249, "mfr", "high", "2021 Pro AWD; Pro S AWD: 240 — EPA", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(249, "mfr", "high", "2021 Pro AWD; Pro S AWD: 240, EPA", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "mfr"),
       superchargerAccess: f("adapter", "mfr", "high", "VW-approved NACS adapter ($200), access opened Nov 2025"),
@@ -76,7 +76,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new (verified MY2025 booklet; earlier years reported same)"),
-      batteryTransfers: f(true, "mfr", "high", "“Automatically transferred without cost” — VW EV warranty booklet"),
+      batteryTransfers: f(true, "mfr", "high", "“Automatically transferred without cost”, VW EV warranty booklet"),
     },
     buyerNotes: [
       {
@@ -85,8 +85,8 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
         severity: "warning",
       },
       {
-        headline: "Battery and door-handle recalls — check this VIN's campaign status",
-        body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine — an unrepaired one is materially worse until fixed.",
+        headline: "Battery and door-handle recalls, check this VIN's campaign status",
+        body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine, an unrepaired one is materially worse until fixed.",
         severity: "trap",
       },
       {
@@ -105,7 +105,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     trim: "Pro",
     drive: "RWD",
     battery: { packUsableKwh: f(77, "mfr", "medium", "82 gross / 77 usable"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(275, "mfr", "high", "2022 Pro RWD; Pro S: 262 — EPA", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(275, "mfr", "high", "2022 Pro RWD; Pro S: 262, EPA", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "mfr"),
       superchargerAccess: f("adapter", "mfr", "high", "VW-approved NACS adapter ($200), access opened Nov 2025"),
@@ -116,7 +116,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new (verified MY2025 booklet; earlier years reported same)"),
-      batteryTransfers: f(true, "mfr", "high", "“Automatically transferred without cost” — VW EV warranty booklet"),
+      batteryTransfers: f(true, "mfr", "high", "“Automatically transferred without cost”, VW EV warranty booklet"),
     },
     buyerNotes: [
       {
@@ -125,8 +125,8 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
         severity: "warning",
       },
       {
-        headline: "Battery and door-handle recalls — check this VIN's campaign status",
-        body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine — an unrepaired one is materially worse until fixed.",
+        headline: "Battery and door-handle recalls, check this VIN's campaign status",
+        body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine, an unrepaired one is materially worse until fixed.",
         severity: "trap",
       },
       {
@@ -145,7 +145,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     trim: "Pro",
     drive: "AWD",
     battery: { packUsableKwh: f(77, "mfr", "medium", "82 gross / 77 usable"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(251, "mfr", "high", "2022 Pro AWD; Pro S: 245 — EPA", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(251, "mfr", "high", "2022 Pro AWD; Pro S: 245, EPA", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "mfr"),
       superchargerAccess: f("adapter", "mfr", "high", "VW-approved NACS adapter ($200), access opened Nov 2025"),
@@ -156,7 +156,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new (verified MY2025 booklet; earlier years reported same)"),
-      batteryTransfers: f(true, "mfr", "high", "“Automatically transferred without cost” — VW EV warranty booklet"),
+      batteryTransfers: f(true, "mfr", "high", "“Automatically transferred without cost”, VW EV warranty booklet"),
     },
     buyerNotes: [
       {
@@ -165,8 +165,8 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
         severity: "warning",
       },
       {
-        headline: "Battery and door-handle recalls — check this VIN's campaign status",
-        body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine — an unrepaired one is materially worse until fixed.",
+        headline: "Battery and door-handle recalls, check this VIN's campaign status",
+        body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine, an unrepaired one is materially worse until fixed.",
         severity: "trap",
       },
       {
@@ -185,7 +185,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     trim: "Pro",
     drive: "RWD",
     battery: { packUsableKwh: f(77, "mfr", "medium", "82 gross / 77 usable"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(275, "mfr", "high", "2023 Pro / Pro S RWD — EPA", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(275, "mfr", "high", "2023 Pro / Pro S RWD, EPA", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "mfr"),
       superchargerAccess: f("adapter", "mfr", "high", "VW-approved NACS adapter ($200), access opened Nov 2025"),
@@ -196,7 +196,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new (verified MY2025 booklet; earlier years reported same)"),
-      batteryTransfers: f(true, "mfr", "high", "“Automatically transferred without cost” — VW EV warranty booklet"),
+      batteryTransfers: f(true, "mfr", "high", "“Automatically transferred without cost”, VW EV warranty booklet"),
     },
     buyerNotes: [
       {
@@ -205,8 +205,8 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
         severity: "warning",
       },
       {
-        headline: "Battery and door-handle recalls — check this VIN's campaign status",
-        body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine — an unrepaired one is materially worse until fixed.",
+        headline: "Battery and door-handle recalls, check this VIN's campaign status",
+        body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine, an unrepaired one is materially worse until fixed.",
         severity: "trap",
       },
       {
@@ -225,7 +225,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     trim: "Pro",
     drive: "AWD",
     battery: { packUsableKwh: f(77, "mfr", "medium", "82 gross / 77 usable"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(255, "mfr", "high", "2023 Pro / Pro S AWD — EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(269, "tested", "medium", "Edmunds mixed loop, 2023 Pro S AWD: 269 mi (no steady-speed test found)") },
+    range: { epaRangeMi: f(255, "mfr", "high", "2023 Pro / Pro S AWD, EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(269, "tested", "medium", "Edmunds mixed loop, 2023 Pro S AWD: 269 mi (no steady-speed test found)") },
     charging: {
       portStandard: f("CCS1", "mfr"),
       superchargerAccess: f("adapter", "mfr", "high", "VW-approved NACS adapter ($200), access opened Nov 2025"),
@@ -236,7 +236,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new (verified MY2025 booklet; earlier years reported same)"),
-      batteryTransfers: f(true, "mfr", "high", "“Automatically transferred without cost” — VW EV warranty booklet"),
+      batteryTransfers: f(true, "mfr", "high", "“Automatically transferred without cost”, VW EV warranty booklet"),
     },
     buyerNotes: [
       {
@@ -245,8 +245,8 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
         severity: "warning",
       },
       {
-        headline: "Battery and door-handle recalls — check this VIN's campaign status",
-        body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine — an unrepaired one is materially worse until fixed.",
+        headline: "Battery and door-handle recalls, check this VIN's campaign status",
+        body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine, an unrepaired one is materially worse until fixed.",
         severity: "trap",
       },
       {
@@ -265,7 +265,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     trim: "Pro",
     drive: "RWD",
     battery: { packUsableKwh: f(77, "mfr", "medium", "82 gross / 77 usable"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(291, "mfr", "high", "2024 Pro / Pro S RWD — EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(299, "tested", "medium", "Edmunds mixed loop, 2024 Pro S RWD: 299 mi") },
+    range: { epaRangeMi: f(291, "mfr", "high", "2024 Pro / Pro S RWD, EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(299, "tested", "medium", "Edmunds mixed loop, 2024 Pro S RWD: 299 mi") },
     charging: {
       portStandard: f("CCS1", "mfr"),
       superchargerAccess: f("adapter", "mfr", "high", "VW-approved NACS adapter ($200), access opened Nov 2025"),
@@ -276,7 +276,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new (verified MY2025 booklet; earlier years reported same)"),
-      batteryTransfers: f(true, "mfr", "high", "“Automatically transferred without cost” — VW EV warranty booklet"),
+      batteryTransfers: f(true, "mfr", "high", "“Automatically transferred without cost”, VW EV warranty booklet"),
     },
     buyerNotes: [
       {
@@ -285,8 +285,8 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
         severity: "warning",
       },
       {
-        headline: "Battery and door-handle recalls — check this VIN's campaign status",
-        body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine — an unrepaired one is materially worse until fixed.",
+        headline: "Battery and door-handle recalls, check this VIN's campaign status",
+        body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine, an unrepaired one is materially worse until fixed.",
         severity: "trap",
       },
       {
@@ -305,7 +305,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     trim: "Pro",
     drive: "AWD",
     battery: { packUsableKwh: f(77, "mfr", "medium", "82 gross / 77 usable"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(263, "mfr", "high", "2024 Pro / Pro S AWD — EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(240, "tested", "medium", "75-mph (Car and Driver), 2024 Pro S AWD: 240 mi") },
+    range: { epaRangeMi: f(263, "mfr", "high", "2024 Pro / Pro S AWD, EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(240, "tested", "medium", "75-mph (Car and Driver), 2024 Pro S AWD: 240 mi") },
     charging: {
       portStandard: f("CCS1", "mfr"),
       superchargerAccess: f("adapter", "mfr", "high", "VW-approved NACS adapter ($200), access opened Nov 2025"),
@@ -316,7 +316,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new (verified MY2025 booklet; earlier years reported same)"),
-      batteryTransfers: f(true, "mfr", "high", "“Automatically transferred without cost” — VW EV warranty booklet"),
+      batteryTransfers: f(true, "mfr", "high", "“Automatically transferred without cost”, VW EV warranty booklet"),
     },
     buyerNotes: [
       {
@@ -325,8 +325,8 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
         severity: "warning",
       },
       {
-        headline: "Battery and door-handle recalls — check this VIN's campaign status",
-        body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine — an unrepaired one is materially worse until fixed.",
+        headline: "Battery and door-handle recalls, check this VIN's campaign status",
+        body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine, an unrepaired one is materially worse until fixed.",
         severity: "trap",
       },
       {
@@ -344,7 +344,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     modelYears: [2023, 2023],
     trim: "Standard",
     battery: { packUsableKwh: f(58, "est", "medium", "62 gross / ~58 usable"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(209, "mfr", "high", "2023 Standard (62 kWh) — EPA", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(209, "mfr", "high", "2023 Standard (62 kWh), EPA", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "mfr"),
       superchargerAccess: f("adapter", "mfr", "high", "VW-approved NACS adapter ($200), access opened Nov 2025"),
@@ -355,7 +355,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new (verified MY2025 booklet; earlier years reported same)"),
-      batteryTransfers: f(true, "mfr", "high", "“Automatically transferred without cost” — VW EV warranty booklet"),
+      batteryTransfers: f(true, "mfr", "high", "“Automatically transferred without cost”, VW EV warranty booklet"),
     },
     buyerNotes: [
       {
@@ -364,8 +364,8 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
         severity: "warning",
       },
       {
-        headline: "Battery and door-handle recalls — check this VIN's campaign status",
-        body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine — an unrepaired one is materially worse until fixed.",
+        headline: "Battery and door-handle recalls, check this VIN's campaign status",
+        body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine, an unrepaired one is materially worse until fixed.",
         severity: "trap",
       },
       {
@@ -383,7 +383,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     modelYears: [2023, 2023],
     trim: "S",
     battery: { packUsableKwh: f(58, "est", "medium", "62 gross / ~58 usable"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(209, "mfr", "high", "2023 S (62 kWh) — EPA", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(209, "mfr", "high", "2023 S (62 kWh), EPA", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "mfr"),
       superchargerAccess: f("adapter", "mfr", "high", "VW-approved NACS adapter ($200), access opened Nov 2025"),
@@ -394,7 +394,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new (verified MY2025 booklet; earlier years reported same)"),
-      batteryTransfers: f(true, "mfr", "high", "“Automatically transferred without cost” — VW EV warranty booklet"),
+      batteryTransfers: f(true, "mfr", "high", "“Automatically transferred without cost”, VW EV warranty booklet"),
     },
     buyerNotes: [
       {
@@ -403,8 +403,8 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
         severity: "warning",
       },
       {
-        headline: "Battery and door-handle recalls — check this VIN's campaign status",
-        body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine — an unrepaired one is materially worse until fixed.",
+        headline: "Battery and door-handle recalls, check this VIN's campaign status",
+        body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine, an unrepaired one is materially worse until fixed.",
         severity: "trap",
       },
       {
@@ -422,7 +422,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     modelYears: [2024, 2024],
     trim: "Standard",
     battery: { packUsableKwh: f(58, "est", "medium", "62 gross / ~58 usable"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(206, "mfr", "high", "2024 Standard (62 kWh) — EPA", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(206, "mfr", "high", "2024 Standard (62 kWh), EPA", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "mfr"),
       superchargerAccess: f("adapter", "mfr", "high", "VW-approved NACS adapter ($200), access opened Nov 2025"),
@@ -433,7 +433,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new (verified MY2025 booklet; earlier years reported same)"),
-      batteryTransfers: f(true, "mfr", "high", "“Automatically transferred without cost” — VW EV warranty booklet"),
+      batteryTransfers: f(true, "mfr", "high", "“Automatically transferred without cost”, VW EV warranty booklet"),
     },
     buyerNotes: [
       {
@@ -442,8 +442,8 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
         severity: "warning",
       },
       {
-        headline: "Battery and door-handle recalls — check this VIN's campaign status",
-        body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine — an unrepaired one is materially worse until fixed.",
+        headline: "Battery and door-handle recalls, check this VIN's campaign status",
+        body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine, an unrepaired one is materially worse until fixed.",
         severity: "trap",
       },
       {
@@ -461,7 +461,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     modelYears: [2024, 2024],
     trim: "S",
     battery: { packUsableKwh: f(58, "est", "medium", "62 gross / ~58 usable"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(206, "mfr", "high", "2024 S (62 kWh) — EPA", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(206, "mfr", "high", "2024 S (62 kWh), EPA", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "mfr"),
       superchargerAccess: f("adapter", "mfr", "high", "VW-approved NACS adapter ($200), access opened Nov 2025"),
@@ -472,7 +472,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new (verified MY2025 booklet; earlier years reported same)"),
-      batteryTransfers: f(true, "mfr", "high", "“Automatically transferred without cost” — VW EV warranty booklet"),
+      batteryTransfers: f(true, "mfr", "high", "“Automatically transferred without cost”, VW EV warranty booklet"),
     },
     buyerNotes: [
       {
@@ -481,8 +481,8 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
         severity: "warning",
       },
       {
-        headline: "Battery and door-handle recalls — check this VIN's campaign status",
-        body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine — an unrepaired one is materially worse until fixed.",
+        headline: "Battery and door-handle recalls, check this VIN's campaign status",
+        body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine, an unrepaired one is materially worse until fixed.",
         severity: "trap",
       },
       {
@@ -500,7 +500,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     modelYears: [2018, 2025],
     trim: "S",
     battery: { packGrossKwh: f(40, "mfr", "medium", "40 kWh gross"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(149, "mfr", "high", "2018: 151; 2019: 150; 2020–25: 149 — EPA", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(149, "mfr", "high", "2018: 151; 2019: 150; 2020–25: 149, EPA", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CHAdeMO", "mfr", "high", "AC charging is standard J1772"),
       superchargerAccess: f("none", "mfr", "high", "No CHAdeMO→NACS adapter exists"),
@@ -510,7 +510,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      batteryTransfers: f(true, "mfr", "high", "“Original and subsequent owner(s)” — voided only if exported within 6 months of first sale"),
+      batteryTransfers: f(true, "mfr", "high", "“Original and subsequent owner(s)”, voided only if exported within 6 months of first sale"),
       extendedCoverage: f("Capacity warranty: below 9 of 12 gauge bars (Nissan states no percentage)", "mfr", "high", "2018+ 62/40 kWh: 8yr/100k; 2014-era: 5yr/60k"),
     },
     buyerNotes: [
@@ -529,7 +529,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     modelYears: [2018, 2022],
     trim: "SV",
     battery: { packGrossKwh: f(40, "mfr", "medium", "40 kWh gross"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(149, "mfr", "high", "2018: 151; 2019: 150; 2020–22: 149 — EPA", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(149, "mfr", "high", "2018: 151; 2019: 150; 2020–22: 149, EPA", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CHAdeMO", "mfr", "high", "AC charging is standard J1772"),
       superchargerAccess: f("none", "mfr", "high", "No CHAdeMO→NACS adapter exists"),
@@ -539,7 +539,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      batteryTransfers: f(true, "mfr", "high", "“Original and subsequent owner(s)” — voided only if exported within 6 months of first sale"),
+      batteryTransfers: f(true, "mfr", "high", "“Original and subsequent owner(s)”, voided only if exported within 6 months of first sale"),
       extendedCoverage: f("Capacity warranty: below 9 of 12 gauge bars (Nissan states no percentage)", "mfr", "high", "2018+ 62/40 kWh: 8yr/100k; 2014-era: 5yr/60k"),
     },
     buyerNotes: [
@@ -558,7 +558,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     modelYears: [2018, 2019],
     trim: "SL",
     battery: { packGrossKwh: f(40, "mfr", "medium", "40 kWh gross"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(150, "mfr", "high", "2018: 151; 2019: 150 — EPA", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(150, "mfr", "high", "2018: 151; 2019: 150, EPA", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CHAdeMO", "mfr", "high", "AC charging is standard J1772"),
       superchargerAccess: f("none", "mfr", "high", "No CHAdeMO→NACS adapter exists"),
@@ -568,7 +568,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      batteryTransfers: f(true, "mfr", "high", "“Original and subsequent owner(s)” — voided only if exported within 6 months of first sale"),
+      batteryTransfers: f(true, "mfr", "high", "“Original and subsequent owner(s)”, voided only if exported within 6 months of first sale"),
       extendedCoverage: f("Capacity warranty: below 9 of 12 gauge bars (Nissan states no percentage)", "mfr", "high", "2018+ 62/40 kWh: 8yr/100k; 2014-era: 5yr/60k"),
     },
     buyerNotes: [
@@ -597,7 +597,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      batteryTransfers: f(true, "mfr", "high", "“Original and subsequent owner(s)” — voided only if exported within 6 months of first sale"),
+      batteryTransfers: f(true, "mfr", "high", "“Original and subsequent owner(s)”, voided only if exported within 6 months of first sale"),
       extendedCoverage: f("Capacity warranty: below 9 of 12 gauge bars (Nissan states no percentage)", "mfr", "high", "2018+ 62/40 kWh: 8yr/100k; 2014-era: 5yr/60k"),
     },
     buyerNotes: [
@@ -616,7 +616,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     modelYears: [2019, 2025],
     trim: "SV Plus",
     battery: { packGrossKwh: f(62, "est", "medium", "62 kWh gross (2023–25: ~60)"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(215, "mfr", "high", "2019–22: 215; 2023–25: 212 — EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(190, "tested", "medium", "70-mph test of the same-pack 2020 SL Plus (InsideEVs): 190 mi") },
+    range: { epaRangeMi: f(215, "mfr", "high", "2019–22: 215; 2023–25: 212, EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(190, "tested", "medium", "70-mph test of the same-pack 2020 SL Plus (InsideEVs): 190 mi") },
     charging: {
       portStandard: f("CHAdeMO", "mfr", "high", "AC charging is standard J1772"),
       superchargerAccess: f("none", "mfr", "high", "No CHAdeMO→NACS adapter exists"),
@@ -626,7 +626,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      batteryTransfers: f(true, "mfr", "high", "“Original and subsequent owner(s)” — voided only if exported within 6 months of first sale"),
+      batteryTransfers: f(true, "mfr", "high", "“Original and subsequent owner(s)”, voided only if exported within 6 months of first sale"),
       extendedCoverage: f("Capacity warranty: below 9 of 12 gauge bars (Nissan states no percentage)", "mfr", "high", "2018+ 62/40 kWh: 8yr/100k; 2014-era: 5yr/60k"),
     },
     buyerNotes: [
@@ -655,7 +655,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      batteryTransfers: f(true, "mfr", "high", "“Original and subsequent owner(s)” — voided only if exported within 6 months of first sale"),
+      batteryTransfers: f(true, "mfr", "high", "“Original and subsequent owner(s)”, voided only if exported within 6 months of first sale"),
       extendedCoverage: f("Capacity warranty: below 9 of 12 gauge bars (Nissan states no percentage)", "mfr", "high", "2018+ 62/40 kWh: 8yr/100k; 2014-era: 5yr/60k"),
     },
     buyerNotes: [
@@ -675,7 +675,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     trim: "Engage",
     drive: "FWD",
     battery: { packUsableKwh: f(63, "mfr", "medium", "63 kWh usable (Nissan-quoted); Engage+ is the 87 kWh pack"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(216, "mfr", "high", "Engage FWD (63 kWh) — EPA", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(216, "mfr", "high", "Engage FWD (63 kWh), EPA", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "mfr"),
       superchargerAccess: f("adapter", "mfr", "high", "Nissan OEM NACS adapter (part T99F9-5MP1B), early 2025"),
@@ -685,7 +685,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: { batteryYears: f(8, "agg", "medium"), batteryMiles: f(100_000, "agg", "medium") },
     buyerNotes: [
       {
-        headline: "2023 build-year recalls — confirm completion",
+        headline: "2023 build-year recalls, confirm completion",
         body: "2023-only: steering-wheel bolt (23V-131), inverter software that can shut down the EV system while driving (23V-657 + 24V-560), front-motor O-rings (24V-391). All have free fixes; check this VIN's status.",
         severity: "warning",
       },
@@ -700,7 +700,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     trim: "Engage",
     drive: "AWD",
     battery: { packUsableKwh: f(63, "mfr", "medium", "63 kWh usable; Engage+ e-4ORCE (87 kWh): 272 mi"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(205, "mfr", "high", "Engage e-4ORCE (63 kWh) — EPA; Engage+ e-4ORCE: 272", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(205, "mfr", "high", "Engage e-4ORCE (63 kWh), EPA; Engage+ e-4ORCE: 272", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "mfr"),
       superchargerAccess: f("adapter", "mfr", "high", "Nissan OEM NACS adapter (part T99F9-5MP1B), early 2025"),
@@ -710,7 +710,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: { batteryYears: f(8, "agg", "medium"), batteryMiles: f(100_000, "agg", "medium") },
     buyerNotes: [
       {
-        headline: "2023 build-year recalls — confirm completion",
+        headline: "2023 build-year recalls, confirm completion",
         body: "2023-only: steering-wheel bolt (23V-131), inverter software that can shut down the EV system while driving (23V-657 + 24V-560), front-motor O-rings (24V-391). All have free fixes; check this VIN's status.",
         severity: "warning",
       },
@@ -724,7 +724,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     modelYears: [2023, 2025],
     drive: "FWD",
     battery: { packUsableKwh: f(87, "mfr", "medium", "87 kWh usable (Nissan-quoted)"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(289, "mfr", "high", "Evolve+/Empower+ FWD: 289; Venture+ (2023–24): 304 — EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(240, "tested", "medium", "75-mph (Car and Driver, Empower+ FWD): 240 mi") },
+    range: { epaRangeMi: f(289, "mfr", "high", "Evolve+/Empower+ FWD: 289; Venture+ (2023–24): 304, EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(240, "tested", "medium", "75-mph (Car and Driver, Empower+ FWD): 240 mi") },
     charging: {
       portStandard: f("CCS1", "mfr"),
       superchargerAccess: f("adapter", "mfr", "high", "Nissan OEM NACS adapter (part T99F9-5MP1B), early 2025"),
@@ -734,7 +734,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: { batteryYears: f(8, "agg", "medium"), batteryMiles: f(100_000, "agg", "medium") },
     buyerNotes: [
       {
-        headline: "2023 build-year recalls — confirm completion",
+        headline: "2023 build-year recalls, confirm completion",
         body: "2023-only: steering-wheel bolt (23V-131), inverter software that can shut down the EV system while driving (23V-657 + 24V-560), front-motor O-rings (24V-391). All have free fixes; check this VIN's status.",
         severity: "warning",
       },
@@ -748,7 +748,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     modelYears: [2023, 2025],
     drive: "AWD",
     battery: { packUsableKwh: f(87, "mfr", "medium", "87 kWh usable (Nissan-quoted)"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(267, "mfr", "high", "e-4ORCE 87 kWh: Engage+/Evolve+ 272; Platinum+ 257–267 by wheels — EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(250, "tested", "high", "70-mph (InsideEVs, 2025 Platinum+ e-4ORCE 20-inch): 250 mi; 75-mph (C&D): 210; Edmunds loop: 265") },
+    range: { epaRangeMi: f(267, "mfr", "high", "e-4ORCE 87 kWh: Engage+/Evolve+ 272; Platinum+ 257–267 by wheels, EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(250, "tested", "high", "70-mph (InsideEVs, 2025 Platinum+ e-4ORCE 20-inch): 250 mi; 75-mph (C&D): 210; Edmunds loop: 265") },
     charging: {
       portStandard: f("CCS1", "mfr"),
       superchargerAccess: f("adapter", "mfr", "high", "Nissan OEM NACS adapter (part T99F9-5MP1B), early 2025"),
@@ -758,7 +758,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: { batteryYears: f(8, "agg", "medium"), batteryMiles: f(100_000, "agg", "medium") },
     buyerNotes: [
       {
-        headline: "2023 build-year recalls — confirm completion",
+        headline: "2023 build-year recalls, confirm completion",
         body: "2023-only: steering-wheel bolt (23V-131), inverter software that can shut down the EV system while driving (23V-657 + 24V-560), front-motor O-rings (24V-391). All have free fixes; check this VIN's status.",
         severity: "warning",
       },
@@ -772,7 +772,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     modelYears: [2023, 2023],
     drive: "FWD",
     battery: { packGrossKwh: f(71.4, "est", "medium", "FWD 71.4 (Panasonic) / AWD 72.8 (CATL) gross; usable ~64 est"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(252, "mfr", "high", "2023 XLE FWD; Limited: 242 — EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(227, "tested", "medium", "Edmunds mixed loop, 2023 Limited FWD: 227 mi (one of few EVs to miss EPA on that loop)") },
+    range: { epaRangeMi: f(252, "mfr", "high", "2023 XLE FWD; Limited: 242, EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(227, "tested", "medium", "Edmunds mixed loop, 2023 Limited FWD: 227 mi (one of few EVs to miss EPA on that loop)") },
     charging: {
       portStandard: f("CCS1", "mfr", "high", "Free OEM NACS adapter program for MY23–25"),
       superchargerAccess: f("adapter", "mfr"),
@@ -787,8 +787,8 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     },
     buyerNotes: [
       {
-        headline: "Launch recall: wheels could detach — and early software gimped charging",
-        body: "The 2022 launch stop-sale (22V-444) was for wheel hub bolts loosening to the point of wheel detachment; verify the remedy on any 2023. Early software also refused DC fast charging below 32°F on AWD cars and limited sessions — confirm software is current. AWD's 100 kW charging cap is permanent.",
+        headline: "Launch recall: wheels could detach, and early software gimped charging",
+        body: "The 2022 launch stop-sale (22V-444) was for wheel hub bolts loosening to the point of wheel detachment; verify the remedy on any 2023. Early software also refused DC fast charging below 32°F on AWD cars and limited sessions, confirm software is current. AWD's 100 kW charging cap is permanent.",
         severity: "warning",
       },
     ],
@@ -801,7 +801,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     modelYears: [2024, 2025],
     drive: "FWD",
     battery: { packGrossKwh: f(71.4, "est", "medium", "FWD 71.4 (Panasonic) / AWD 72.8 (CATL) gross; usable ~64 est"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(236, "mfr", "high", "XLE/Limited FWD — EPA", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(236, "mfr", "high", "XLE/Limited FWD, EPA", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "mfr", "high", "Free OEM NACS adapter program for MY23–25"),
       superchargerAccess: f("adapter", "mfr"),
@@ -816,8 +816,8 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     },
     buyerNotes: [
       {
-        headline: "Launch recall: wheels could detach — and early software gimped charging",
-        body: "The 2022 launch stop-sale (22V-444) was for wheel hub bolts loosening to the point of wheel detachment; verify the remedy on any 2023. Early software also refused DC fast charging below 32°F on AWD cars and limited sessions — confirm software is current. AWD's 100 kW charging cap is permanent.",
+        headline: "Launch recall: wheels could detach, and early software gimped charging",
+        body: "The 2022 launch stop-sale (22V-444) was for wheel hub bolts loosening to the point of wheel detachment; verify the remedy on any 2023. Early software also refused DC fast charging below 32°F on AWD cars and limited sessions, confirm software is current. AWD's 100 kW charging cap is permanent.",
         severity: "warning",
       },
     ],
@@ -830,7 +830,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     modelYears: [2023, 2025],
     drive: "AWD",
     battery: { packGrossKwh: f(71.4, "est", "medium", "FWD 71.4 (Panasonic) / AWD 72.8 (CATL) gross; usable ~64 est"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(228, "mfr", "high", "XLE AWD; Limited/20-inch: 222 — EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(160, "tested", "high", "75-mph (Car and Driver, 2023 Limited AWD): 160 mi") },
+    range: { epaRangeMi: f(228, "mfr", "high", "XLE AWD; Limited/20-inch: 222, EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(160, "tested", "high", "75-mph (Car and Driver, 2023 Limited AWD): 160 mi") },
     charging: {
       portStandard: f("CCS1", "mfr", "high", "Free OEM NACS adapter program for MY23–25"),
       superchargerAccess: f("adapter", "mfr"),
@@ -845,8 +845,8 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     },
     buyerNotes: [
       {
-        headline: "Launch recall: wheels could detach — and early software gimped charging",
-        body: "The 2022 launch stop-sale (22V-444) was for wheel hub bolts loosening to the point of wheel detachment; verify the remedy on any 2023. Early software also refused DC fast charging below 32°F on AWD cars and limited sessions — confirm software is current. AWD's 100 kW charging cap is permanent.",
+        headline: "Launch recall: wheels could detach, and early software gimped charging",
+        body: "The 2022 launch stop-sale (22V-444) was for wheel hub bolts loosening to the point of wheel detachment; verify the remedy on any 2023. Early software also refused DC fast charging below 32°F on AWD cars and limited sessions, confirm software is current. AWD's 100 kW charging cap is permanent.",
         severity: "warning",
       },
     ],
@@ -859,7 +859,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     modelYears: [2023, 2024],
     drive: "RWD",
     battery: { packGrossKwh: f(102, "mfr", "medium", "GM quotes 102 kWh; usable split unpublished"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(312, "mfr", "high", "2023: 312; 2024: 314 — EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(330, "tested", "high", "70-mph (InsideEVs, 2023 RWD): 330 mi; 75-mph (C&D): 270; Edmunds loop (2024): 319") },
+    range: { epaRangeMi: f(312, "mfr", "high", "2023: 312; 2024: 314, EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(330, "tested", "high", "70-mph (InsideEVs, 2023 RWD): 330 mi; 75-mph (C&D): 270; Edmunds loop (2024): 319") },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
       superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
@@ -869,13 +869,13 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      sohFloorPct: f(75, "mfr", "high", "“Below 75% of its original value” — GM EV booklets (extracted text)"),
-      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost” — GM EV booklets"),
+      sohFloorPct: f(75, "mfr", "high", "“Below 75% of its original value”, GM EV booklets (extracted text)"),
+      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost”, GM EV booklets"),
     },
     buyerNotes: [
       {
         headline: "Early cars: blank-display recalls and infotainment growing pains",
-        body: "2023–24: driver display can go blank while driving (22V-710, 25V-356 — software fixes), plus 23V-367 (HV battery pack connections, 2023) and 24V-589 (AWD ABS activation). All free fixes — check completion on this VIN. Early 2023 software was rough; later updates substantially improved it.",
+        body: "2023–24: driver display can go blank while driving (22V-710, 25V-356, software fixes), plus 23V-367 (HV battery pack connections, 2023) and 24V-589 (AWD ABS activation). All free fixes, check completion on this VIN. Early 2023 software was rough; later updates substantially improved it.",
         severity: "warning",
       },
     ],
@@ -899,13 +899,13 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      sohFloorPct: f(75, "mfr", "high", "“Below 75% of its original value” — GM EV booklets (extracted text)"),
-      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost” — GM EV booklets"),
+      sohFloorPct: f(75, "mfr", "high", "“Below 75% of its original value”, GM EV booklets (extracted text)"),
+      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost”, GM EV booklets"),
     },
     buyerNotes: [
       {
         headline: "Early cars: blank-display recalls and infotainment growing pains",
-        body: "2023–24: driver display can go blank while driving (22V-710, 25V-356 — software fixes), plus 23V-367 (HV battery pack connections, 2023) and 24V-589 (AWD ABS activation). All free fixes — check completion on this VIN. Early 2023 software was rough; later updates substantially improved it.",
+        body: "2023–24: driver display can go blank while driving (22V-710, 25V-356, software fixes), plus 23V-367 (HV battery pack connections, 2023) and 24V-589 (AWD ABS activation). All free fixes, check completion on this VIN. Early 2023 software was rough; later updates substantially improved it.",
         severity: "warning",
       },
     ],
@@ -928,13 +928,13 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      sohFloorPct: f(75, "mfr", "high", "“Below 75% of its original value” — GM EV booklets (extracted text)"),
-      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost” — GM EV booklets"),
+      sohFloorPct: f(75, "mfr", "high", "“Below 75% of its original value”, GM EV booklets (extracted text)"),
+      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost”, GM EV booklets"),
     },
     buyerNotes: [
       {
         headline: "Early cars: blank-display recalls and infotainment growing pains",
-        body: "2023–24: driver display can go blank while driving (22V-710, 25V-356 — software fixes), plus 23V-367 (HV battery pack connections, 2023) and 24V-589 (AWD ABS activation). All free fixes — check completion on this VIN. Early 2023 software was rough; later updates substantially improved it.",
+        body: "2023–24: driver display can go blank while driving (22V-710, 25V-356, software fixes), plus 23V-367 (HV battery pack connections, 2023) and 24V-589 (AWD ABS activation). All free fixes, check completion on this VIN. Early 2023 software was rough; later updates substantially improved it.",
         severity: "warning",
       },
     ],
@@ -948,7 +948,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     vin8: ["L"], // GM Part 565: L = RWD + PAWD (dual motor)
     drive: "AWD",
     battery: { packGrossKwh: f(102, "mfr", "medium", "GM quotes 102 kWh; usable split unpublished"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(303, "mfr", "high", "303 (19.2 kW charger) / 319 (11 kW, 2025 PAWD); 2026 V-Series: 285 — EPA", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(303, "mfr", "high", "303 (19.2 kW charger) / 319 (11 kW, 2025 PAWD); 2026 V-Series: 285, EPA", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
       superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
@@ -958,13 +958,13 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      sohFloorPct: f(75, "mfr", "high", "“Below 75% of its original value” — GM EV booklets (extracted text)"),
-      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost” — GM EV booklets"),
+      sohFloorPct: f(75, "mfr", "high", "“Below 75% of its original value”, GM EV booklets (extracted text)"),
+      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost”, GM EV booklets"),
     },
     buyerNotes: [
       {
         headline: "Early cars: blank-display recalls and infotainment growing pains",
-        body: "2023–24: driver display can go blank while driving (22V-710, 25V-356 — software fixes), plus 23V-367 (HV battery pack connections, 2023) and 24V-589 (AWD ABS activation). All free fixes — check completion on this VIN. Early 2023 software was rough; later updates substantially improved it.",
+        body: "2023–24: driver display can go blank while driving (22V-710, 25V-356, software fixes), plus 23V-367 (HV battery pack connections, 2023) and 24V-589 (AWD ABS activation). All free fixes, check completion on this VIN. Early 2023 software was rough; later updates substantially improved it.",
         severity: "warning",
       },
     ],
@@ -987,7 +987,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      sohFloorPct: f(75, "mfr", "high", "“Replaced/repaired if the capacity falls below 75% of its original value” — Honda BEV Warranty Basebook"),
+      sohFloorPct: f(75, "mfr", "high", "“Replaced/repaired if the capacity falls below 75% of its original value”, Honda BEV Warranty Basebook"),
       batteryTransfers: f(true, "mfr", "high", "No owner restriction in Honda's BEV booklet (only the rust warranty is original-owner-only)"),
     },
     buyerNotes: [
@@ -1018,7 +1018,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      sohFloorPct: f(75, "mfr", "high", "“Replaced/repaired if the capacity falls below 75% of its original value” — Honda BEV Warranty Basebook"),
+      sohFloorPct: f(75, "mfr", "high", "“Replaced/repaired if the capacity falls below 75% of its original value”, Honda BEV Warranty Basebook"),
       batteryTransfers: f(true, "mfr", "high", "No owner restriction in Honda's BEV booklet (only the rust warranty is original-owner-only)"),
     },
     buyerNotes: [
@@ -1037,7 +1037,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     modelYears: [2024, 2024],
     drive: "AWD",
     battery: { packGrossKwh: f(85, "mfr", "medium", "85 kWh (GM Ultium pack); split unpublished"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(281, "mfr", "high", "Touring AWD 281; Elite 273 — EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(240, "tested", "medium", "75-mph (Car and Driver, Elite AWD): 240 mi; Edmunds mixed loop: 320") },
+    range: { epaRangeMi: f(281, "mfr", "high", "Touring AWD 281; Elite 273, EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(240, "tested", "medium", "75-mph (Car and Driver, Elite AWD): 240 mi; Edmunds mixed loop: 320") },
     charging: {
       portStandard: f("CCS1", "mfr"),
       superchargerAccess: f("adapter", "mfr", "high", "Honda-approved NACS adapter, mid-2025"),
@@ -1047,7 +1047,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      sohFloorPct: f(75, "mfr", "high", "“Replaced/repaired if the capacity falls below 75% of its original value” — Honda BEV Warranty Basebook"),
+      sohFloorPct: f(75, "mfr", "high", "“Replaced/repaired if the capacity falls below 75% of its original value”, Honda BEV Warranty Basebook"),
       batteryTransfers: f(true, "mfr", "high", "No owner restriction in Honda's BEV booklet (only the rust warranty is original-owner-only)"),
     },
     buyerNotes: [
@@ -1069,7 +1069,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     modelYears: [2025, 2026],
     drive: "AWD",
     battery: { packGrossKwh: f(85, "mfr", "medium", "85 kWh (GM Ultium pack); split unpublished"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(294, "mfr", "high", "Touring AWD 294; Elite 283 — EPA", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(294, "mfr", "high", "Touring AWD 294; Elite 283, EPA", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "mfr"),
       superchargerAccess: f("adapter", "mfr", "high", "Honda-approved NACS adapter, mid-2025"),
@@ -1079,7 +1079,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      sohFloorPct: f(75, "mfr", "high", "“Replaced/repaired if the capacity falls below 75% of its original value” — Honda BEV Warranty Basebook"),
+      sohFloorPct: f(75, "mfr", "high", "“Replaced/repaired if the capacity falls below 75% of its original value”, Honda BEV Warranty Basebook"),
       batteryTransfers: f(true, "mfr", "high", "No owner restriction in Honda's BEV booklet (only the rust warranty is original-owner-only)"),
     },
     buyerNotes: [
@@ -1098,7 +1098,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     modelYears: [2024, 2026],
     drive: "FWD",
     battery: { packGrossKwh: f(85, "mfr", "medium", "GM-quoted 85 kWh; split unpublished"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(319, "mfr", "high", "All years — EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(303, "tested", "high", "70-mph (InsideEVs, 2024 2RS FWD): 303 mi; 75-mph (C&D): 260; Edmunds loop (2025): 356") },
+    range: { epaRangeMi: f(319, "mfr", "high", "All years, EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(303, "tested", "high", "70-mph (InsideEVs, 2024 2RS FWD): 303 mi; 75-mph (C&D): 260; Edmunds loop (2025): 356") },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
       superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
@@ -1108,8 +1108,8 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      sohFloorPct: f(75, "mfr", "high", "“Below 75% of its original value” — GM EV booklets (extracted text)"),
-      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost” — GM EV booklets"),
+      sohFloorPct: f(75, "mfr", "high", "“Below 75% of its original value”, GM EV booklets (extracted text)"),
+      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost”, GM EV booklets"),
     },
     buyerNotes: [
       {
@@ -1127,7 +1127,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     modelYears: [2024, 2026],
     drive: "AWD",
     battery: { packGrossKwh: f(85, "mfr", "medium", "GM-quoted 85 kWh; split unpublished"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(297, "mfr", "high", "2024: 285; 2025–26: 307 (288 with 19.2 kW charger) — EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(260, "tested", "low", "75-mph (Car and Driver): 260 mi — reported secondhand") },
+    range: { epaRangeMi: f(297, "mfr", "high", "2024: 285; 2025–26: 307 (288 with 19.2 kW charger), EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(260, "tested", "low", "75-mph (Car and Driver): 260 mi, reported secondhand") },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
       superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
@@ -1137,8 +1137,8 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      sohFloorPct: f(75, "mfr", "high", "“Below 75% of its original value” — GM EV booklets (extracted text)"),
-      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost” — GM EV booklets"),
+      sohFloorPct: f(75, "mfr", "high", "“Below 75% of its original value”, GM EV booklets (extracted text)"),
+      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost”, GM EV booklets"),
     },
     buyerNotes: [
       {
@@ -1156,7 +1156,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     modelYears: [2025, 2026],
     drive: "FWD",
     battery: { packGrossKwh: f(85, "mfr", "medium", "85 kWh (FWD/AWD)"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(312, "mfr", "high", "312; 283 with 22-inch wheels — EPA", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(312, "mfr", "high", "312; 283 with 22-inch wheels, EPA", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
       superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
@@ -1166,13 +1166,13 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      sohFloorPct: f(75, "mfr", "high", "“Below 75% of its original value” — GM EV booklets (extracted text)"),
-      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost” — GM EV booklets"),
+      sohFloorPct: f(75, "mfr", "high", "“Below 75% of its original value”, GM EV booklets (extracted text)"),
+      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost”, GM EV booklets"),
     },
     buyerNotes: [
       {
-        headline: "Early 2024s shipped with rough software — a stop-sale rough",
-        body: "GM halted Blazer EV sales in Dec 2023 over software faults (frozen displays, DC-charging failures); the remedy was a service-campaign software update, not an NHTSA recall — confirm it was applied to early-VIN 2024 cars. NHTSA recalls: 24V-487 (front lower control arm), 25V-433/26V-031 (parking-brake harness). No Apple CarPlay or Android Auto on any trim.",
+        headline: "Early 2024s shipped with rough software, a stop-sale rough",
+        body: "GM halted Blazer EV sales in Dec 2023 over software faults (frozen displays, DC-charging failures); the remedy was a service-campaign software update, not an NHTSA recall, confirm it was applied to early-VIN 2024 cars. NHTSA recalls: 24V-487 (front lower control arm), 25V-433/26V-031 (parking-brake harness). No Apple CarPlay or Android Auto on any trim.",
         severity: "warning",
       },
     ],
@@ -1185,7 +1185,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     modelYears: [2024, 2026],
     drive: "AWD",
     battery: { packGrossKwh: f(85, "mfr", "medium", "85 kWh (FWD/AWD)"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(283, "mfr", "high", "2024: 279; 2025–26: 283 — EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(200, "tested", "high", "75-mph (Car and Driver, 2024 RS AWD): 200 mi vs 279 EPA; Edmunds mixed loop: 320") },
+    range: { epaRangeMi: f(283, "mfr", "high", "2024: 279; 2025–26: 283, EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(200, "tested", "high", "75-mph (Car and Driver, 2024 RS AWD): 200 mi vs 279 EPA; Edmunds mixed loop: 320") },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
       superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
@@ -1195,13 +1195,13 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      sohFloorPct: f(75, "mfr", "high", "“Below 75% of its original value” — GM EV booklets (extracted text)"),
-      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost” — GM EV booklets"),
+      sohFloorPct: f(75, "mfr", "high", "“Below 75% of its original value”, GM EV booklets (extracted text)"),
+      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost”, GM EV booklets"),
     },
     buyerNotes: [
       {
-        headline: "Early 2024s shipped with rough software — a stop-sale rough",
-        body: "GM halted Blazer EV sales in Dec 2023 over software faults (frozen displays, DC-charging failures); the remedy was a service-campaign software update, not an NHTSA recall — confirm it was applied to early-VIN 2024 cars. NHTSA recalls: 24V-487 (front lower control arm), 25V-433/26V-031 (parking-brake harness). No Apple CarPlay or Android Auto on any trim.",
+        headline: "Early 2024s shipped with rough software, a stop-sale rough",
+        body: "GM halted Blazer EV sales in Dec 2023 over software faults (frozen displays, DC-charging failures); the remedy was a service-campaign software update, not an NHTSA recall, confirm it was applied to early-VIN 2024 cars. NHTSA recalls: 24V-487 (front lower control arm), 25V-433/26V-031 (parking-brake harness). No Apple CarPlay or Android Auto on any trim.",
         severity: "warning",
       },
     ],
@@ -1214,7 +1214,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     modelYears: [2024, 2025],
     drive: "RWD",
     battery: { packGrossKwh: f(102, "mfr", "medium", "102 kWh (RWD/SS)"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(334, "mfr", "high", "2024: 324; 2025: 334 — EPA", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(334, "mfr", "high", "2024: 324; 2025: 334, EPA", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
       superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
@@ -1224,13 +1224,13 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      sohFloorPct: f(75, "mfr", "high", "“Below 75% of its original value” — GM EV booklets (extracted text)"),
-      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost” — GM EV booklets"),
+      sohFloorPct: f(75, "mfr", "high", "“Below 75% of its original value”, GM EV booklets (extracted text)"),
+      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost”, GM EV booklets"),
     },
     buyerNotes: [
       {
-        headline: "Early 2024s shipped with rough software — a stop-sale rough",
-        body: "GM halted Blazer EV sales in Dec 2023 over software faults (frozen displays, DC-charging failures); the remedy was a service-campaign software update, not an NHTSA recall — confirm it was applied to early-VIN 2024 cars. NHTSA recalls: 24V-487 (front lower control arm), 25V-433/26V-031 (parking-brake harness). No Apple CarPlay or Android Auto on any trim.",
+        headline: "Early 2024s shipped with rough software, a stop-sale rough",
+        body: "GM halted Blazer EV sales in Dec 2023 over software faults (frozen displays, DC-charging failures); the remedy was a service-campaign software update, not an NHTSA recall, confirm it was applied to early-VIN 2024 cars. NHTSA recalls: 24V-487 (front lower control arm), 25V-433/26V-031 (parking-brake harness). No Apple CarPlay or Android Auto on any trim.",
         severity: "warning",
       },
     ],
@@ -1244,7 +1244,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     trim: "SS",
     drive: "AWD",
     battery: { packGrossKwh: f(102, "mfr", "medium", "102 kWh (RWD/SS)"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(303, "mfr", "high", "2025: 303; 2026: 302 — EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(250, "tested", "high", "75-mph (Car and Driver, 2025 SS): 250 mi") },
+    range: { epaRangeMi: f(303, "mfr", "high", "2025: 303; 2026: 302, EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(250, "tested", "high", "75-mph (Car and Driver, 2025 SS): 250 mi") },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
       superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
@@ -1254,13 +1254,13 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      sohFloorPct: f(75, "mfr", "high", "“Below 75% of its original value” — GM EV booklets (extracted text)"),
-      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost” — GM EV booklets"),
+      sohFloorPct: f(75, "mfr", "high", "“Below 75% of its original value”, GM EV booklets (extracted text)"),
+      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost”, GM EV booklets"),
     },
     buyerNotes: [
       {
-        headline: "Early 2024s shipped with rough software — a stop-sale rough",
-        body: "GM halted Blazer EV sales in Dec 2023 over software faults (frozen displays, DC-charging failures); the remedy was a service-campaign software update, not an NHTSA recall — confirm it was applied to early-VIN 2024 cars. NHTSA recalls: 24V-487 (front lower control arm), 25V-433/26V-031 (parking-brake harness). No Apple CarPlay or Android Auto on any trim.",
+        headline: "Early 2024s shipped with rough software, a stop-sale rough",
+        body: "GM halted Blazer EV sales in Dec 2023 over software faults (frozen displays, DC-charging failures); the remedy was a service-campaign software update, not an NHTSA recall, confirm it was applied to early-VIN 2024 cars. NHTSA recalls: 24V-487 (front lower control arm), 25V-433/26V-031 (parking-brake harness). No Apple CarPlay or Android Auto on any trim.",
         severity: "warning",
       },
     ],
@@ -1272,7 +1272,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Hummer EV",
     modelYears: [2022, 2025],
     battery: { packGrossKwh: f(205, "est", "medium", "~205 kWh usable est (213.7 gross reported); smaller 2M20 variants from 2024, capacity unpublished"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(314, "mfr", "high", "2024–25: 298–318 by config/tires — EPA. 2022–23: no EPA rating exists (GM est. 329)", "https://www.fueleconomy.gov"), testedRangeMi: f(343, "tested", "high", "70-mph (InsideEVs, 2022 Edition 1): 343 mi — beat its 329 GM estimate; 75-mph (C&D): 290") },
+    range: { epaRangeMi: f(314, "mfr", "high", "2024–25: 298–318 by config/tires, EPA. 2022–23: no EPA rating exists (GM est. 329)", "https://www.fueleconomy.gov"), testedRangeMi: f(343, "tested", "high", "70-mph (InsideEVs, 2022 Edition 1): 343 mi, beat its 329 GM estimate; 75-mph (C&D): 290") },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
       superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
@@ -1282,8 +1282,8 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      sohFloorPct: f(75, "mfr", "high", "“Below 75% of its original value” — GM EV booklets (extracted text)"),
-      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost” — GM EV booklets"),
+      sohFloorPct: f(75, "mfr", "high", "“Below 75% of its original value”, GM EV booklets (extracted text)"),
+      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost”, GM EV booklets"),
     },
     buyerNotes: [
       {
@@ -1300,7 +1300,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Hummer EV SUV",
     modelYears: [2024, 2025],
     battery: { packGrossKwh: f(205, "est", "medium", "~205 kWh usable est; smaller-pack variants unpublished"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(312, "mfr", "high", "312–315 (282–289 with MT tires) — EPA", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(312, "mfr", "high", "312–315 (282–289 with MT tires), EPA", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
       superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
@@ -1310,8 +1310,8 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      sohFloorPct: f(75, "mfr", "high", "“Below 75% of its original value” — GM EV booklets (extracted text)"),
-      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost” — GM EV booklets"),
+      sohFloorPct: f(75, "mfr", "high", "“Below 75% of its original value”, GM EV booklets (extracted text)"),
+      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost”, GM EV booklets"),
     },
     buyerNotes: [
       {
@@ -1331,7 +1331,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       packGrossKwh: f(72.8, "mfr", "high", "CATL pack shared with bZ4X AWD; usable ~64 est"),
       chemistry: f("NMC", "agg", "medium"),
     },
-    range: { epaRangeMi: f(227, "mfr", "high", "222–228 by year/trim (AWD only) — EPA figures", "https://www.fueleconomy.gov"), testedRangeMi: f(200, "tested", "low", "75-mph (Car and Driver): 200 mi — reported secondhand; no verified instrumented test found") },
+    range: { epaRangeMi: f(227, "mfr", "high", "222–228 by year/trim (AWD only), EPA figures", "https://www.fueleconomy.gov"), testedRangeMi: f(200, "tested", "low", "75-mph (Car and Driver): 200 mi, reported secondhand; no verified instrumented test found") },
     charging: {
       portStandard: f("CCS1", "mfr"),
       superchargerAccess: f("adapter", "agg", "medium", "Adapter program alongside Toyota, late 2025"),
@@ -1359,13 +1359,13 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Niro EV",
     modelYears: [2019, 2022],
     battery: { packGrossKwh: f(64, "mfr", "high", "Kia-quoted 64 kWh"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(239, "mfr", "high", "All trims — EPA figure", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(239, "mfr", "high", "All trims, EPA figure", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "mfr"),
       superchargerAccess: f("adapter", "mfr", "high", "Kia NACS adapter ($249), live April 2025"),
       dcPeakKw: f(77, "agg", "medium", "~77–85 kW real peak; slow DC charging regardless of trim"),
     },
-    thermal: { heatPump: f("optional", "mfr", "high", "Optional every year (Cold Weather Package, ~$1,100: heat pump + battery heater) — window sticker check") },
+    thermal: { heatPump: f("optional", "mfr", "high", "Optional every year (Cold Weather Package, ~$1,100: heat pump + battery heater), window sticker check") },
     warranty: {
       batteryYears: f(10, "mfr"),
       batteryMiles: f(100_000, "mfr"),
@@ -1387,13 +1387,13 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Niro EV",
     modelYears: [2023, 2026], // 2025–26 carry the same 253-mi rating (EPA ids 48370/49664) — window extended 2026-08-14
     battery: { packGrossKwh: f(64.8, "mfr", "high"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(253, "mfr", "high", "Wind/Wave — EPA figure", "https://www.fueleconomy.gov"), testedRangeMi: f(210, "tested", "medium", "75-mph (Car and Driver, 2023): 210 mi; Edmunds mixed loop: 280") },
+    range: { epaRangeMi: f(253, "mfr", "high", "Wind/Wave, EPA figure", "https://www.fueleconomy.gov"), testedRangeMi: f(210, "tested", "medium", "75-mph (Car and Driver, 2023): 210 mi; Edmunds mixed loop: 280") },
     charging: {
       portStandard: f("CCS1", "mfr"),
       superchargerAccess: f("adapter", "mfr", "high", "Kia NACS adapter ($249), live April 2025"),
-      dcPeakKw: f(85, "agg", "medium", "~45 min 10–80% — slow for the class"),
+      dcPeakKw: f(85, "agg", "medium", "~45 min 10–80%, slow for the class"),
     },
-    thermal: { heatPump: f("optional", "mfr", "high", "Preserve Package option on both Wind and Wave — window sticker check") },
+    thermal: { heatPump: f("optional", "mfr", "high", "Preserve Package option on both Wind and Wave, window sticker check") },
     warranty: {
       batteryYears: f(10, "mfr"),
       batteryMiles: f(100_000, "mfr"),
@@ -1403,7 +1403,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     },
     buyerNotes: [
       {
-        headline: "Heat pump is still an option package — check the sticker",
+        headline: "Heat pump is still an option package, check the sticker",
         body: "The Preserve Package (heat pump + battery warmer) was optional on both trims. Two identical-looking Niro EVs differ in winter.",
         severity: "trap",
       },
@@ -1536,7 +1536,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       packUsableKwh: f(81.5, "mfr", "high", "83.9 gross / 81.5 net (BMW-published)"),
       chemistry: f("NMC", "agg", "medium"),
     },
-    range: { epaRangeMi: f(269, "mfr", "high", "227\u2013271 by year and wheels \u2014 EPA figures", "https://www.fueleconomy.gov"), testedRangeMi: f(239, "tested", "high", "70-mph (InsideEVs, 2022 M50): 239 mi — beat its 227 EPA; Edmunds loop: 268") },
+    range: { epaRangeMi: f(269, "mfr", "high", "227\u2013271 by year and wheels \u2014 EPA figures", "https://www.fueleconomy.gov"), testedRangeMi: f(239, "tested", "high", "70-mph (InsideEVs, 2022 M50): 239 mi, beat its 227 EPA; Edmunds loop: 268") },
     charging: {
       portStandard: f("CCS1", "mfr"),
       superchargerAccess: f("adapter", "agg", "high", "Opened Dec 2025 via BMW-approved adapter; requires a Remote Software Upgrade first"),
@@ -1628,7 +1628,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     modelYears: [2025, 2026],
     trim: "Max Range",
     battery: { packUsableKwh: f(205, "est", "medium", "~205 kWh usable (213.7 gross reported)"), chemistry: f("NCM", "agg", "medium") },
-    range: { epaRangeMi: f(493, "mfr", "high", "2025 8WT: 492 mi; 2026 Max: 493 mi \u2014 EPA figures", "https://www.fueleconomy.gov"), testedRangeMi: f(539, "tested", "medium", "Edmunds mixed loop, 2025 WT Max Range: 539 mi — the longest Edmunds has recorded") },
+    range: { epaRangeMi: f(493, "mfr", "high", "2025 8WT: 492 mi; 2026 Max: 493 mi \u2014 EPA figures", "https://www.fueleconomy.gov"), testedRangeMi: f(539, "tested", "medium", "Edmunds mixed loop, 2025 WT Max Range: 539 mi, the longest Edmunds has recorded") },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
       superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
@@ -1746,20 +1746,20 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     range: { epaRangeMi: f(234, "mfr", "high", "2019–21: 234; 2023–24: 246 (20″) / 217 (22″). No US MY2022 exists (no MY2022 was sold in the US)", "https://www.fueleconomy.gov"), testedRangeMi: f(195, "tested", "high", "70-mph (InsideEVs, 2022 EV400): 195 mi; 75-mph (C&D, 2019): 190") },
     charging: {
       portStandard: f("CCS1", "mfr"),
-      superchargerAccess: f("none", "agg", "medium", "JLR was network-whitelisted (~Aug 2025) but no approved adapter confirmed shipping — treat as no Supercharger access until verified"),
+      superchargerAccess: f("none", "agg", "medium", "JLR was network-whitelisted (~Aug 2025) but no approved adapter confirmed shipping, treat as no Supercharger access until verified"),
       dcPeakKw: f(100, "agg", "medium", "Slow: 100–104 kW"),
     },
     thermal: { heatPump: f("standard", "mfr", "high", "Jaguar-published thermal system with heat pump") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      sohFloorPct: f(70, "mfr", "high", "“Shall perform to at least 70% of as-new capacity” — Jaguar Passport to Service"),
+      sohFloorPct: f(70, "mfr", "high", "“Shall perform to at least 70% of as-new capacity”, Jaguar Passport to Service"),
       batteryTransfers: f(true, "mfr", "high", "“In favor of the original purchaser and each subsequent owner”; EliteCare (incl. 5yr/60k maintenance) “fully transferable”"),
     },
     buyerNotes: [
       {
-        headline: "The battery recall saga defines this car — check the VIN before anything else",
-        body: "Verified from Jaguar's NHTSA filings: for MY2019 cars the final remedy is a REPURCHASE — Jaguar buys the car back (recall H536) — so a 2019 on a lot may be a car Jaguar offered to buy. MY2020–21 cars (26V-067) run a 90% charge cap with the final fix still ‘under development’ as of Feb 2026. Jaguar ended I-PACE production in 2024.",
+        headline: "The battery recall saga defines this car, check the VIN before anything else",
+        body: "Verified from Jaguar's NHTSA filings: for MY2019 cars the final remedy is a REPURCHASE, Jaguar buys the car back (recall H536), so a 2019 on a lot may be a car Jaguar offered to buy. MY2020–21 cars (26V-067) run a 90% charge cap with the final fix still ‘under development’ as of Feb 2026. Jaguar ended I-PACE production in 2024.",
         severity: "trap",
       },
     ],

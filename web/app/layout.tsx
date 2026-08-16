@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Voltcheck — know the EV behind the listing",
+  title: "Voltcheck: know the EV behind the listing",
   description:
     "Every EV for sale, new and used, with what actually matters: the real pack, the real range, and what the warranty does for you.",
   metadataBase: new URL("https://voltcheck.net"),

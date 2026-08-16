@@ -11,7 +11,7 @@ export function buildChecklist(decode: VinDecode, condition?: string): Checklist
     : [
         {
           question: "Battery health report",
-          why: "The seller can pull one from the car — it's the only real degradation data; nothing remote can measure it.",
+          why: "The seller can pull one from the car; it's the only real degradation data, and nothing remote can measure it.",
         },
         {
           question: "Build date (door-jamb sticker) and original in-service date",
@@ -24,7 +24,7 @@ export function buildChecklist(decode: VinDecode, condition?: string): Checklist
 
   if (!isNew && make === "CHEVROLET" && model.includes("BOLT")) {
     items.unshift({
-      question: "GM campaign history for this VIN — which 21V560 program number?",
+      question: "GM campaign history for this VIN: which 21V560 program number?",
       why: "N212343880/81 = new modules or pack, N212343883 = software only. Free at GM's owner centre; \"recall complete\" alone doesn't say which.",
     });
   }
