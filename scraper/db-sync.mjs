@@ -164,28 +164,46 @@ console.error(
 
 const totals = { seen: 0, new: 0, price_changed: 0, delisted: 0, relisted: 0 };
 for (const [i, chunk] of chunks.entries()) {
-  // Retry transient edge failures before giving up on the night. On 2026-08-16
-  // chunk 5 of 8 came back 520 (a Cloudflare "origin returned nothing usable",
-  // not our payload — it failed in 42s, well inside the function's 150s wall
-  // clock, and the four chunks either side of it were the same size and fine).
-  // With no retry that one blip cost chunks 5-8 their sync AND skipped the
-  // price audit, recheck and variant refresh that run after it. The odds of
-  // getting hit compound with chunk count, and the OEM lanes have taken the
-  // feed from ~53k rows to ~64.5k, so this went from unlikely to routine.
+  // Retry transient failures — and give a crashed database time to get up.
+  // The 2026-08-16 diagnosis (postgres_logs, three failed nights): the "520
+  // blip" was never Cloudflare. The sync's row churn — every VIN's full row
+  // rewritten every night — walks the Nano instance into its memory ceiling
+  // after ~4-6 chunks regardless of chunk composition; the OOM killer takes
+  // Postgres down mid-statement ("database system was not properly shut
+  // down; automatic recovery in progress"), and recovery holds the door
+  // shut for ~2 minutes of 500/503/520. The first retry schedule here
+  // (10/20/30s) spent all three retries inside that window, so the night
+  // failed anyway. These waits outlast a recovery cycle — and the same
+  // chunk then passes, because a fresh post-crash backend's per-row memory
+  // budget starts over (observed: the post-crash replay cleared 4 more
+  // chunks before pressure built again).
+  // A dying database also resets connections mid-request, which fetch()
+  // surfaces as a thrown error rather than a status — treat those as
+  // transient too (status 0 below); before this, one reset crashed the
+  // whole script as an unhandled rejection.
   // Replay is safe: ingest_listings upserts by VIN and derives delisting from
   // the payload it is handed, so re-sending a chunk converges to the same
   // state (it only costs an extra run id).
-  let res = await send(chunk.rows, chunk.completeDomains);
-  for (let attempt = 1; attempt <= 3 && !res.ok && TRANSIENT.has(res.status); attempt++) {
-    const waitMs = 10_000 * attempt;
-    console.error(`db-sync: chunk ${i + 1}/${chunks.length} HTTP ${res.status} — retry ${attempt}/3 in ${waitMs / 1000}s`);
-    await new Promise((r) => setTimeout(r, waitMs));
-    res = await send(chunk.rows, chunk.completeDomains);
+  const attempt = async () => {
+    try {
+      return await send(chunk.rows, chunk.completeDomains);
+    } catch (e) {
+      return { ok: false, status: 0, text: async () => String(e?.cause?.code ?? e?.message ?? e) };
+    }
+  };
+  let res = await attempt();
+  for (const waitS of [30, 120, 240]) {
+    if (res.ok || !(res.status === 0 || TRANSIENT.has(res.status))) break;
+    const label = res.status === 0 ? `network error (${(await res.text()).slice(0, 120)})` : `HTTP ${res.status}`;
+    console.error(`db-sync: chunk ${i + 1}/${chunks.length} ${label} — retrying in ${waitS}s`);
+    await new Promise((r) => setTimeout(r, waitS * 1000));
+    res = await attempt();
   }
   if (!res.ok) {
     // A failed chunk leaves its domains un-synced and un-delisted — stale for
     // a night, never wrongly removed. Exit hard so the failure is visible.
-    console.error(`db-sync: chunk ${i + 1}/${chunks.length} FAILED — HTTP ${res.status}: ${(await res.text()).slice(0, 500)}`);
+    const detail = (await res.text()).slice(0, 500);
+    console.error(`db-sync: chunk ${i + 1}/${chunks.length} FAILED — ${res.status === 0 ? "network error" : `HTTP ${res.status}`}: ${detail}`);
     process.exit(1);
   }
   const counts = await res.json();
