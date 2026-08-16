@@ -92,18 +92,15 @@ export interface CardRow {
 export function askVsMarketTile(m: NonNullable<CardRow["askVsMarket"]>): CardTile {
   const under = m.deltaUsd < 0;
   const amount = `$${Math.abs(m.deltaUsd).toLocaleString()}`;
-  // "this exact version" is a claim about the peers, and it is only true
-  // where the VIN pins the trim. Where it doesn't, the peers are the same
-  // year and configuration and the comparison still holds — the tile exists
-  // precisely because their trims priced the same — but the tooltip has to
-  // say which of the two it is.
-  const peers = m.trimMatched
-    ? `the ${m.peerN} of this exact version listed right now`
-    : `the ${m.peerN} closest matches listed right now: same year and configuration, trims that price alike`;
+  // "Similar" deliberately claims less than we sometimes know (trimMatched
+  // peers are the same version, not merely similar) — owner-trimmed copy,
+  // and underclaiming is the safe direction. The one caveat that must
+  // survive any future trim is "asking prices, not sales": it is the only
+  // place the tooltip separates this tile from the sold-price one.
   return {
     k: "spec",
     t: `${amount} ${under ? "below" : "above"} similar listings`,
-    ti: `Asks ${amount} ${under ? "less" : "more"} than ${peers}, adjusted for mileage. Asking prices, not sales; no record of one of these selling covers this car.`,
+    ti: `${amount} ${under ? "less" : "more"} than ${m.peerN} similar cars, adjusted for mileage. Asking prices, not sales.`,
   };
 }
 
