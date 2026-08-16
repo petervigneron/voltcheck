@@ -624,11 +624,23 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
   // docs/WARRANTY-RESEARCH.md against MY25/MY26 EQ booklets — carried
   // forward here rather than re-derived.
   //
-  // Research finding worth flagging: fueleconomy.gov has NO MY2023
-  // certification for "EQE 500 4matic" — the identical trim name only
-  // exists under MY2024 (298 mi). Used here as the best verified figure
-  // for the 2023 listing, with the year mismatch stated explicitly rather
-  // than silently carried over.
+  // Two research findings that shape every row in this block:
+  //
+  // 1. Sedan and SUV are different cars filed under one name. Dealers file
+  //    both bodies as model "EQE" with the same trim strings ("500 4MATIC"),
+  //    and vPIC agrees they are distinct vehicles ("EQE-Class Sedan" vs
+  //    "EQE-Class SUV"). Only the VIN separates them: W1K = Bremen sedan,
+  //    4JG = Tuscaloosa SUV. Live inventory 2026-08-16 priced them ~$3.7k
+  //    apart (27 sedans vs 42 SUVs, mileage-adjusted), so every Mercedes row
+  //    here is WMI-keyed — pooling the bodies printed a false price gap.
+  //
+  // 2. fueleconomy.gov has NO MY2023 EQE certification of either body. The
+  //    MY2024 records (sedan 298 mi, SUV 282 mi) belong to the updated
+  //    MY2024 cars and must not be carried back: Mercedes' own MY2023
+  //    EPA-estimated figures, corroborated across franchise-dealer spec
+  //    pages and launch coverage, were sedan 260 mi / SUV 269 mi. This row
+  //    previously printed the MY2024 sedan figure (298) for 2023 cars — a
+  //    38-mile overstatement, replaced 2026-08-16.
   // ---------------------------------------------------------------------
   {
     id: "eqe-2023-500-4matic",
@@ -637,8 +649,9 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     modelYears: [2023, 2023],
     trim: "EQE 500 4MATIC",
     drive: "AWD",
+    wmi: ["W1K"],
     battery: { packUsableKwh: f(90.6, "agg", "low", "Widely reported across aggregators; Mercedes' own press materials (media.mbusa.com) are blocked by bot-detection and could not be independently confirmed for MY2023 specifically") },
-    range: { epaRangeMi: f(298, "mfr", "medium", "fueleconomy.gov has no MY2023 record for this trim, the identical trim string “EQE 500 4matic” exists only under MY2024 (298 mi). Used here as the best verified figure; this is a year mismatch, not a confirmed 2023-specific rating", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(260, "mfr", "medium", "Mercedes' own EPA-estimated figure for the MY2023 EQE 500 4MATIC sedan, corroborated across multiple Mercedes franchise-dealer spec pages and period reviews. fueleconomy.gov has no MY2023 EQE record at all; its MY2024 “EQE 500 4matic” certification (298 mi) is the updated MY2024 car and is not carried back", "https://www.mbofwilmington.com/2023-eqe-sedan-range/") },
     charging: {
       portStandard: f("CCS1", "agg", "medium"),
       dcPeakKw: f(170, "agg", "low", "Widely reported; not confirmed against a primary Mercedes document for MY2023"),
@@ -667,6 +680,59 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
         body: "25V533 (2023–2026 EQE): a steering coupling bolt may be improperly tightened, risking loss of steering control. Owner notices mailed October 2025.",
         severity: "warning",
       },
+      {
+        headline: "Pedestrian-alert sound software recall",
+        body: "25V366 (2023–2024 EQE 500 4MATIC among others): the Acoustic Vehicle Alerting System software can fail to play the required pedestrian warning sound. Free dealer software update.",
+        severity: "info",
+      },
+    ],
+  },
+
+  // The other body under the same showroom name: Tuscaloosa-built (4JG), a
+  // different vPIC model ("EQE-Class SUV"), its own EPA rating, and its own
+  // recall history — 24V372 covers the 2023 SUV but not the 2023 sedan, and
+  // the sedan's roof-absorber/steering-bolt campaigns don't reach the SUV.
+  // Most listings arrive as model "EQE" with sedan-identical trim strings;
+  // the wmi key is what routes them here.
+  {
+    id: "eqe-suv-2023-500-4matic",
+    make: "MERCEDES-BENZ",
+    model: "EQE SUV",
+    modelAliases: ["EQE"],
+    modelYears: [2023, 2023],
+    trim: ["EQE 500 4MATIC", "500 SUV"],
+    drive: "AWD",
+    wmi: ["4JG"],
+    battery: { packUsableKwh: f(90.6, "agg", "low", "Same EVA2-platform pack as the EQE sedan; widely reported across aggregators, and Mercedes' own press materials (media.mbusa.com) are bot-walled so it could not be confirmed on a primary document") },
+    range: { epaRangeMi: f(269, "mfr", "medium", "Mercedes' own EPA-estimated figure announced for the MY2023 EQE 500 4MATIC SUV. fueleconomy.gov has no MY2023 EQE record of either body; its MY2024 “EQE 500 4matic (SUV)” certification (282 mi) is the updated MY2024 car and is not carried back", "https://insideevs.com/news/668377/2023-mercedes-eqe-suv-epa-range-price/") },
+    charging: {
+      portStandard: f("CCS1", "agg", "medium"),
+      dcPeakKw: f(170, "agg", "low", "Widely reported, matching the sedan's EVA2 hardware; not confirmed against a primary Mercedes document for MY2023"),
+      architectureV: f(400, "agg", "low", "Reported by secondary sources; the CCS 500A/400V ceiling matches the 170 kW peak"),
+    },
+    thermal: { heatPump: f("standard", "agg", "medium", "Standard on the EQE SUV from its MY2023 launch — unlike the 2023 sedan, where it was optional") },
+    warranty: {
+      batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets"),
+      batteryMiles: f(155_000, "mfr", "high"),
+      extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQE: 204 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance, a skipped-service history can void it.", "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner”, verified MY25/MY26 EQ booklets"),
+    },
+    buyerNotes: [
+      {
+        headline: "Battery-management-system software recall, check remedy status",
+        body: "24V372 (2023–2025 EQE SUV 350/350+/500 4MATIC, plus EQS SUVs and 2024 sedans): a BMS software fault may cause the high-voltage battery to shut down, a sudden loss of drive power. Free software update; owner notices mailed July 2024. NHTSA's vehicle-level index scopes this to the SUV for MY2023 — the 2023 sedan is not included.",
+        severity: "trap",
+      },
+      {
+        headline: "Some fuse-box repairs used the wrong part, check which fix this VIN got",
+        body: "25V255 (NHTSA's vehicle-level scope includes the 2023 EQE SUV 350/500 4MATIC): some vehicles repaired under the 24V115 fuse-box campaign received an INCORRECT replacement fuse box, which itself carries increased fire risk — a second free repair. Confirm this VIN either was never in 24V115 scope or got the corrected part.",
+        severity: "warning",
+      },
+      {
+        headline: "Pedestrian-alert sound software recall",
+        body: "25V366 (2023–2025 EQE SUV among others): the Acoustic Vehicle Alerting System software can fail to play the required pedestrian warning sound. Free dealer software update.",
+        severity: "info",
+      },
     ],
   },
 
@@ -674,9 +740,11 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     id: "eqe-2026-320-4matic",
     make: "MERCEDES-BENZ",
     model: "EQE",
+    modelAliases: ["EQE 320"],
     modelYears: [2026, 2026],
     trim: "EQE320 4MATIC",
     drive: "AWD",
+    wmi: ["W1K"],
     battery: { packUsableKwh: f(90.5, "mfr", "high", "Mercedes-Benz USA's own EQE320 4MATIC spec page") },
     range: {
       epaRangeMi: f(267, "mfr", "high", "2026 EQE320 4MATIC, EPA", "https://www.fueleconomy.gov"),
@@ -706,9 +774,11 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     id: "eqe-2026-320-plus-rwd",
     make: "MERCEDES-BENZ",
     model: "EQE",
+    modelAliases: ["EQE 320"],
     modelYears: [2026, 2026],
     trim: "EQE320+",
     drive: "RWD",
+    wmi: ["W1K"],
     battery: { packUsableKwh: f(96, "mfr", "high", "Mercedes-Benz USA's own EQE320+ spec page") },
     range: { epaRangeMi: f(308, "mfr", "high", "2026 EQE320+, EPA", "https://www.fueleconomy.gov") },
     charging: {
@@ -735,9 +805,14 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     id: "eqe-amg-2024-4matic",
     make: "MERCEDES-BENZ",
     model: "EQE AMG",
+    // Only unambiguous AMG spellings — never bare "EQE": a trim-less "EQE"
+    // listing must not resolve to AMG figures. The MY2024 AMG EQE SUV (4JG)
+    // files the same trim strings; the wmi key keeps it out.
+    modelAliases: ["AMG EQE", "AMG EQE Sedan"],
     modelYears: [2024, 2024],
     trim: "AMG EQE 4MATIC",
     drive: "AWD",
+    wmi: ["W1K"],
     battery: { packUsableKwh: f(90.6, "agg", "low", "Widely reported by aggregators; corroborated indirectly via Mercedes-Benz USA's current AMG EQE Sedan spec page (same powertrain generation, no evidence of a mid-cycle battery change), but no MY2024-specific primary document was located") },
     range: { epaRangeMi: f(230, "mfr", "high", "2024 AMG EQE 4MATIC (EPA model string “AMG EQE 4matic Plus”), EPA", "https://www.fueleconomy.gov") },
     charging: {
@@ -769,9 +844,17 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     id: "eqe-suv-2026-320-4matic",
     make: "MERCEDES-BENZ",
     model: "EQE SUV",
+    // Not bare "EQE": MY2026 sells both a 320 4MATIC and a 320+ SUV, and a
+    // trim-less "EQE"-filed 4JG listing (five live on 2026-08-16) would
+    // resolve here as the only SUV row — an exact match the data can't
+    // support. The 2023 500 row keeps the bare alias despite the same
+    // trim-less residual because 40+ live listings file that way with real
+    // trims; no trim-less 4JG 2023 EQE was observed.
+    modelAliases: ["EQE 320"],
     modelYears: [2026, 2026],
     trim: "EQE320 4MATIC",
     drive: "AWD",
+    wmi: ["4JG"],
     battery: { packUsableKwh: f(90.5, "agg", "medium", "Mercedes-Benz USA's live configurator has already rolled forward past this model year for this SUV nameplate, so a direct MY2026-labeled primary spec page could not be retrieved. Aggregated secondary sources converge on this figure, matching the sedan AWD pack size exactly") },
     range: { epaRangeMi: f(253, "mfr", "high", "2026 EQE SUV, EQE320 4MATIC, EPA", "https://www.fueleconomy.gov") },
     charging: {
@@ -801,6 +884,10 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     modelYears: [2026, 2026],
     trim: "EQS450 4MATIC",
     drive: "AWD",
+    // Every live "EQS"-filed EQS SUV sampled 2026-08-16 was 4JG with
+    // sedan-identical trim strings ("450 4MATIC"); this row is the
+    // Sindelfingen sedan only.
+    wmi: ["W1K"],
     battery: { packUsableKwh: f(118, "mfr", "high", "Mercedes-Benz USA's own EQS450 4MATIC spec page") },
     range: { epaRangeMi: f(367, "mfr", "high", "2026 EQS450 4MATIC, EPA", "https://www.fueleconomy.gov") },
     charging: {

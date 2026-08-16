@@ -17,6 +17,13 @@ function trimMatches(rowTrim: string | string[] | undefined, decodedTrim: string
     // Short trims ("S") must match exactly — substring logic would let Leaf "S"
     // swallow "SV" and "Pro S".
     if (a.length < 3 || b.length < 3) return a === b;
+    // A trailing "+" is identity, not punctuation, on Mercedes trims — the
+    // EQE320+ (RWD, bigger pack) is a different car from the EQE320 4MATIC,
+    // but norm() strips the plus and "EQE320" would substring-match
+    // "EQE3204MATIC". When only one side carries a "+", substring credit is
+    // off; plain equality still passes, so "AMG EQE 4MATIC+" meets a row
+    // keyed "AMG EQE 4MATIC".
+    if (/\+/.test(rt) !== /\+/.test(decodedTrim)) return a === b;
     return a.includes(b) || b.includes(a);
   });
 }
@@ -47,11 +54,21 @@ export function matchEnrichment(
   let rows = ALL_ROWS.filter(
     (r) =>
       norm(r.make) === mk &&
-      modelKey(r.model) === modelKey(model) &&
+      [r.model, ...(r.modelAliases ?? [])].some((m) => modelKey(m) === modelKey(model)) &&
       modelYear >= r.modelYears[0] &&
       modelYear <= r.modelYears[1] &&
       trimMatches(r.trim, decode.trim)
   );
+
+  // VIN positions 1–3 name the body where showroom strings can't: dealers
+  // file Mercedes' sedan and SUV under the same model and trim ("EQE",
+  // "500 4MATIC"), and only the WMI separates W1K (Bremen sedan) from 4JG
+  // (Tuscaloosa SUV) — different EPA ranges, different prices. Hard, like
+  // vin8 below: a row keyed to WMIs must never match a VIN outside them.
+  const wmi = decode.vin?.slice(0, 3).toUpperCase();
+  if (wmi) {
+    rows = rows.filter((r) => !r.wmi || r.wmi.includes(wmi));
+  }
 
   // VIN position 8 is the maker's own motor/battery code — the one field a
   // dealer feed can't blur. Must run before the kWh-hint filter: vPIC's

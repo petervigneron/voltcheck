@@ -57,6 +57,19 @@ export interface EnrichmentRow {
   // L=Standard Range, V=Extended Range; 2024+ K/7/M/U). Year-scoped by the
   // row's modelYears, since makers reuse letters across generations.
   vin8?: string[];
+  // VIN positions 1–3 (world manufacturer identifier) — the body-style
+  // discriminator when one showroom name covers two different cars. Mercedes
+  // dealers file the EQE sedan and the EQE SUV under the same model and trim
+  // strings ("EQE" / "500 4MATIC"), but Bremen sedans are W1K and Tuscaloosa
+  // SUVs are 4JG, and the two bodies carry different EPA ranges and prices.
+  // A hard filter like vin8: a row keyed to WMIs never matches a VIN outside
+  // them.
+  wmi?: string[];
+  // Other model strings dealer feeds file this car under — most EQE SUV
+  // listings arrive as model "EQE". Each alias matches exactly as `model`
+  // does; the VIN-level wmi filter is what keeps an alias from poaching the
+  // other body's listings.
+  modelAliases?: string[];
   // Set when the maker's Part 565 battery-kWh figure is a model-level
   // constant, not a per-VIN fact (every 2023 Lightning reads "98", every 2024
   // EV6 reads "58" — including AWD cars that never had that pack). The
