@@ -17,8 +17,19 @@ import { SHARDS, packIndex } from "@/lib/listings/pack";
 export const dynamic = "force-static";
 export const revalidate = 3600;
 
-export function generateStaticParams() {
-  return Array.from({ length: SHARDS }, (_, i) => ({ shard: String(i) }));
+// Empty on purpose — same pattern as the listing pages: each shard renders on
+// its first request and is CDN-cached from then on, instead of prerendering at
+// build time. Prerendering put the whole deploy at the database's mercy: six
+// shards, each walking the full feed inside Next's 60-second prerender
+// timeout, against a Nano instance that other lanes were loading — 2026-08-16
+// every shard timed out three times and five straight deploys died. Runtime
+// rendering has no such coupling, and it demonstrably fits the function
+// budget: hourly revalidation has been re-running this exact build in
+// production since the egress fix. Cost: the first browse visit after a
+// deploy pays the render once per shard — warm them (CLAUDE.md deploy steps)
+// rather than making every deploy gamble on database weather.
+export function generateStaticParams(): { shard: string }[] {
+  return [];
 }
 
 // A car's shard is a property of the car, never of its position in the build.
