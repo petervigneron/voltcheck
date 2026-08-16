@@ -69,9 +69,21 @@ const sinceIso = since.toISOString().slice(0, 10);
 // Floor at $5,000: WA's own docs note sale_price is a DECLARED figure, and
 // the low tail is family transfers and salvage, not market sales. Ceiling
 // guards data-entry noise.
+//
+// Odometer brands are dropped because mileage is the price model's only
+// regressor (supabase/migrations/0015): a row whose reading is disclosed as
+// wrong contributes a point on the wrong part of the curve. These are the
+// federally required title disclosures, so a car carrying one has a history
+// worth pricing differently even setting the reading aside — WA publishes no
+// title brand at all, and this is the closest thing to one in the dataset.
+// 176 rows of 60,302 over 24 months, and they sell ~40% below clean ones.
+// NULL survives on purpose: most rows are "Odometer reading is not collected
+// at time of renewal" or have no code, and absent is not the same as branded.
+const ODOMETER_BRANDS = ["Not actual mileage", "Exceeds mechanical limits"];
 const where =
   `new_or_used_vehicle='Used' AND sale_price>5000 AND sale_price<250000 ` +
-  `AND date_of_vehicle_sale>'${sinceIso}'`;
+  `AND date_of_vehicle_sale>'${sinceIso}' ` +
+  `AND (odometer_code IS NULL OR odometer_code NOT IN(${ODOMETER_BRANDS.map((b) => `'${b}'`).join(",")}))`;
 
 const rows = [];
 for (let offset = 0; ; offset += PAGE) {
