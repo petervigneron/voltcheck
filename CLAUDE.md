@@ -46,6 +46,16 @@ you mean to ship (`git worktree add <dir> <sha>`, copy `web/.vercel/` in, then
 `vercel --prod` from its `web/`), never from this directory unless
 `git status` is clean.
 
+Every Vercel build walks the entire feed out of the one free-plan database —
+the same database the survey scripts in `docs/tools/` walk, the ingest lane
+writes to, and every other session's build reads. It cannot take that from
+two of us at once: on 2026-08-16 three sessions ran surveys and deploys
+concurrently, the Nano instance crash-looped, and five straight builds
+failed or shipped the stale bundled fallback. Before deploying, check
+`vercel ls` for a build already running and wait it out; don't run full-feed
+scripts while any deploy is building. `FEED_LANES=2` exists for deploying
+while the database is busy.
+
 ## Database
 
 - Migrations are numbered and append-only. Never renumber or rewrite an

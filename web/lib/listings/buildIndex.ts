@@ -16,7 +16,17 @@ import type { CardRow } from "./card";
 export async function buildCardIndex(): Promise<CardRow[]> {
   // A few hundred coefficient rows, fetched once and applied to every
   // listing in memory — the whole transaction-price model costs one request.
-  const [listings, comps] = await Promise.all([allListings(), fetchCompIndex()]);
+  const [feed, comps] = await Promise.all([allListings(), fetchCompIndex()]);
+  // A row without an id or VIN cannot be linked, sharded, or deduped — and
+  // one of them killed a production build outright (2026-08-16, a TypeError
+  // in shardOf(undefined) while prerendering /api/index; the row was gone
+  // from the feed within the hour, so most likely it was read mid-ingest).
+  // One half-written row must cost the site one card, not the whole build.
+  const listings = feed.filter((l) => {
+    if (typeof l.id === "string" && l.id && typeof l.vin === "string" && l.vin) return true;
+    console.error(`[index] dropping malformed row: vin=${l.vin ?? "?"} id=${l.id ?? "?"} ${l.make ?? ""} ${l.model ?? ""}`);
+    return false;
+  });
   // The trim we are willing to compare ON, decided once for the whole run so
   // the peer index and the lookup can never disagree about a car. Uppercased
   // because one dealer's "PRO" and the next one's "Pro" are one trim, and two
