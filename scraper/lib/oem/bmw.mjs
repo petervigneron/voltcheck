@@ -24,8 +24,22 @@
 // Each hit carries a real dealer VDP (vehicleDetailsPage, e.g. a dealer.com
 // page), used as the click-through sourceUrl. The record's dealerDomain is the
 // brand domain bmwusa.com (the completeness/delisting key, like GM's
-// chevrolet.com), NOT the physical dealer — the API exposes only a coded
-// dealerId, no dealer name/city, so dealer geo is left blank (a known gap).
+// chevrolet.com), NOT the physical dealer — the inventory record exposes only a
+// coded dealerId, no dealer name/city.
+//
+// DEALER NAME is filled from the same GraphQL endpoint: getFilterableOptions
+// returns the "dealer" filter dropdown as {code,name} pairs (dealerIds), keyed
+// by the exact dealerId the inventory rows carry — one cheap query resolves the
+// name for every dealer nationwide (verified 100% coverage 2026-08-16). We fetch
+// it once per run and map dealerId → dealerName.
+//
+// DEALER CITY/STATE/ZIP stay blank, by constraint not oversight: the only BMW
+// endpoint that geocodes a dealer is the "Find a Dealer" directory at
+// /api/dealers/{zip}/{radius}, and bmwusa.com/robots.txt says `Disallow: /api`
+// (wildcard UA) — so it is off-limits. The legacy /bin/dealerLocatorServlet is
+// robots-clean but is a dead stub (returns "Not found" for every parameter form,
+// 405 on POST); the live directory moved behind /api. We do not scrape the
+// per-vehicle dealer VDP for an address. So BMW ships dealerName only.
 import { politePostJson } from "../http.mjs";
 
 export const BMW = {
@@ -52,7 +66,7 @@ const QUERY = `query($zip: String!, $bucket: BucketType!, $filter: FilterInput, 
     totalPages
     result {
       vin name modelYear totalMsrp baseMsrp
-      fuelType used sold
+      fuelType used sold dealerId
       exteriorGenericColor interiorGenericColor
       engineDriveType { name }
       initialCOSYURL
@@ -87,7 +101,7 @@ function splitName(name) {
   return { model: s.slice(0, sp), trim: s.slice(sp + 1).trim() || undefined };
 }
 
-function toRecord(v) {
+function toRecord(v, dealerNames) {
   const vin = String(v.vin ?? "").toUpperCase();
   if (!VIN_RE.test(vin)) return null;
   if (String(v.fuelType ?? "").toUpperCase() !== "E") return null; // structured BEV guard
@@ -108,6 +122,9 @@ function toRecord(v) {
     driveLine: drive(v.engineDriveType?.name),
     exteriorColor: v.exteriorGenericColor || undefined,
     interiorColor: v.interiorGenericColor || undefined,
+    // Coded dealerId → real dealer name (getFilterableOptions directory); city/
+    // state/zip stay blank (the geocoding directory is robots-disallowed).
+    dealerName: dealerNames?.get(String(v.dealerId ?? "")) || undefined,
     condition: "new",
     imageUrl: img,
     images: img ? [img] : [],
@@ -142,11 +159,35 @@ async function searchPage(pageIndex, report) {
   }
 }
 
+// Dealer-name directory: getFilterableOptions.dealerIds is the "dealer" filter
+// dropdown, {code,name} for every BMW center, keyed by the same dealerId the
+// inventory rows carry. One query, robots-clean (same /inventory/graphql the
+// lane already uses). Returns Map(dealerId → name); an empty map on any failure
+// (dealerName simply stays blank — never fails the pull).
+async function fetchDealerNames(report) {
+  const res = await politePostJson(BMW.api, {
+    headers: { origin: "https://www.bmwusa.com" },
+    body: { query: `query { getFilterableOptions { dealerIds { code name } } }` },
+  });
+  report.fetched++;
+  const pairs = res.json?.data?.getFilterableOptions?.dealerIds;
+  if (res.status !== 200 || !Array.isArray(pairs)) {
+    report.notes.push("dealer-name directory unavailable — dealerName left blank");
+    return new Map();
+  }
+  const map = new Map();
+  for (const d of pairs) if (d?.code && d?.name) map.set(String(d.code), String(d.name).trim());
+  report.notes.push(`dealer-name directory: ${map.size} centers`);
+  return map;
+}
+
 // Pull BMW's complete national new BEV inventory. crawl.mjs-shaped report; see
 // gm.mjs for the completeness contract (truncated:false certifies bmwusa.com
 // fully covered, licensing nightly delisting).
 export async function pullBmw({ log = () => {} } = {}) {
   const report = { domain: BMW.domain, kind: "oem-locator", budget: null, fetched: 0, vehiclePages: 0, itemListVdps: 0, evs: [], errors: [], notes: [] };
+
+  const dealerNames = await fetchDealerNames(report);
 
   const first = await searchPage(0, report);
   if (!first) {
@@ -162,7 +203,7 @@ export async function pullBmw({ log = () => {} } = {}) {
   const byVin = new Map();
   const collect = (items) => {
     for (const v of items ?? []) {
-      const rec = toRecord(v);
+      const rec = toRecord(v, dealerNames);
       if (rec) byVin.set(rec.vin, rec);
     }
   };
