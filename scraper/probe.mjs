@@ -58,14 +58,29 @@ async function probeSite(site) {
   }
   if (site.platform === "unknown" || !site.platform) site.platform = fingerprint(home.body);
 
+  // When the platform is known, its own SRP goes first. The 12-fetch budget
+  // covers 6 sitemap URLs plus about six guesses, and /used-inventory/
+  // index.htm is guess #8 — so on a dealer.com site whose sitemap ranks six
+  // useless URLs the budget expired before the one path that was certain to
+  // work. Ten such sites sat in needs-investigation with live inventory
+  // (smythevolvocars.com among them, found 2026-08-16).
+  const PLATFORM_SRPS = {
+    "dealer.com": ["/used-inventory/index.htm", "/all-inventory/index.htm"],
+    dealeron: ["/searchused.aspx", "/searchnew.aspx"],
+    dealercarsearch: [DCS_SRP_PATH],
+    dealerinspire: ["/used-vehicles/"],
+  };
+  const platformFirst = (PLATFORM_SRPS[site.platform] ?? []).map((p) => origin + p);
+
   // Try SRP seeds + top-ranked sitemap inventory URLs until something
   // extracts or the fetch budget runs out.
-  // Real URLs from the site's own sitemap come FIRST — they are known to
+  // Real URLs from the site's own sitemap come next — they are known to
   // exist, whereas SRP_PATHS are guesses that 404 on most platforms. (Until
   // 2026-08-11 the guesses ran first and consumed the whole fetch budget, so
   // dealer.com sites we can definitely extract were scored as failures.)
   const sitemapUrls = await discoverSitemapUrls(site.domain, { maxUrls: 400, maxSitemaps: 8 });
   const tryUrls = dedupe([
+    ...platformFirst,
     ...rank(sitemapUrls).slice(0, 6),
     ...SRP_PATHS.map((p) => origin + p),
     // Dealer Car Search's one SRP path. Without it the probe can still reach
