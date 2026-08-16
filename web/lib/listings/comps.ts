@@ -170,24 +170,67 @@ export interface AskPeer {
   vin: string;
   mileage: number;
   askUsd: number;
+  /** Normalized trim, or undefined where we aren't willing to assert one.
+   *  Supplied by the caller (buildIndex.ts) because deciding it needs
+   *  trimClaim's contradiction gate, which comps.ts has no business owning. */
+  trimKey?: string;
 }
-export type AskIndex = Map<string, AskPeer[]>;
+
+/**
+ * Peers at two resolutions, because VIN 1-8 is a cohort key of wildly varying
+ * quality and the caller can't know which kind it got.
+ *
+ * For 295 of the 515 cohorts big enough to price anything, positions 1-8
+ * already separate the trims and the wide group is exactly right. But Ford
+ * stamped no trim on 2022-23 Lightnings (every truck is `W1E`; only the pack
+ * code in position 8 varies) and Tesla's position 8 is a motor code, so the
+ * other 220 mix Pro with Platinum — trucks that were $30k apart new.
+ * Comparing against that mixture is what told a 2023 Lightning Platinum
+ * asking $69,685 it was $18,408 over a median drawn mostly from Pros and XLTs.
+ *
+ * `narrow` therefore keys on trim as well, and askVsMarket picks between them
+ * per listing rather than globally. Measured 2026-08-15: splitting EVERY
+ * cohort by trim instead costs 14% of claims, changes the median claim by $0
+ * and flips no verdict at all, because in a single-trim cohort the split only
+ * thins the peer group.
+ */
+export interface AskIndex {
+  wide: Map<string, AskPeer[]>;
+  narrow: Map<string, AskPeer[]>;
+}
+
+const push = (m: Map<string, AskPeer[]>, k: string, p: AskPeer): void => {
+  const bucket = m.get(k);
+  if (bucket) bucket.push(p);
+  else m.set(k, [p]);
+};
 
 /** Cohort key is VIN 1-8 + model year — the same key the sold model uses, so
  *  the pack code in position 8 keeps Extended and Standard Range apart. */
 export function buildAskIndex(
-  listings: { vin?: string; year: number; mileage?: number; priceUsd: number; condition?: string }[]
+  listings: {
+    vin?: string;
+    year: number;
+    mileage?: number;
+    priceUsd: number;
+    condition?: string;
+    trimKey?: string;
+  }[]
 ): AskIndex {
-  const index: AskIndex = new Map();
+  const index: AskIndex = { wide: new Map(), narrow: new Map() };
   for (const l of listings) {
     if (!l.vin || l.vin.length < 8) continue;
     if (l.mileage == null || l.mileage < 2000 || l.mileage > 200_000) continue;
     if (!Number.isFinite(l.priceUsd) || l.priceUsd < 1000) continue;
     const k = key(l.vin.slice(0, 8), l.year);
-    const bucket = index.get(k);
-    const peer = { vin: l.vin.toUpperCase(), mileage: l.mileage, askUsd: l.priceUsd };
-    if (bucket) bucket.push(peer);
-    else index.set(k, [peer]);
+    const peer: AskPeer = {
+      vin: l.vin.toUpperCase(),
+      mileage: l.mileage,
+      askUsd: l.priceUsd,
+      trimKey: l.trimKey,
+    };
+    push(index.wide, k, peer);
+    if (l.trimKey) push(index.narrow, `${k}|${l.trimKey}`, peer);
   }
   return index;
 }
@@ -202,6 +245,9 @@ export interface AskVsMarket {
   /** True when the mileage adjustment used the cohort's own sold-fit slope
    *  rather than a fallback, i.e. the adjustment is anchored in transactions. */
   slopeFromSales: boolean;
+  /** True when the peers are the same TRIM, not just the same VIN cohort.
+   *  Copy that says "this exact version" may only run when this is true. */
+  trimMatched: boolean;
 }
 
 // Four peers is the floor. Below that the median is one or two dealers'
@@ -235,17 +281,20 @@ export function askVsMarket(
   year: number,
   mileage: number | undefined,
   askUsd: number,
-  realPrice: boolean
+  realPrice: boolean,
+  trimKey?: string
 ): AskVsMarket | undefined {
   if (!realPrice || !vin || vin.length < 8) return undefined;
   if (mileage == null || mileage < 2000 || mileage > 200_000) return undefined;
   if (!Number.isFinite(askUsd) || askUsd <= 0) return undefined;
 
   const k = key(vin.slice(0, 8), year);
-  const peers = (asks.get(k) ?? []).filter(
-    (p) => p.vin !== vin.toUpperCase() && Math.abs(p.mileage - mileage) <= MAX_PEER_MILE_GAP
-  );
-  if (peers.length < MIN_PEERS) return undefined;
+  const self = vin.toUpperCase();
+  const comparable = (p: AskPeer) =>
+    p.vin !== self && Math.abs(p.mileage - mileage) <= MAX_PEER_MILE_GAP;
+
+  const widePeers = (asks.wide.get(k) ?? []).filter(comparable);
+  if (widePeers.length < MIN_PEERS) return undefined;
 
   // Depreciation per mile is the part of the sold fit that survives outside
   // the fitted band — the intercept is what a thin cohort gets wrong. So we
@@ -254,9 +303,46 @@ export function askVsMarket(
   const c = comps.get(k);
   const slopeFromSales = c != null && Number.isFinite(c.usdPerMile) && c.usdPerMile < 0;
   const perMile = slopeFromSales ? c!.usdPerMile : FALLBACK_USD_PER_MILE;
+  const medianAt = (ps: AskPeer[]) =>
+    median(ps.map((p) => p.askUsd + perMile * (mileage - p.mileage)));
 
-  const adjusted = peers.map((p) => p.askUsd + perMile * (mileage - p.mileage));
-  const peerMedian = median(adjusted);
+  const trimPeers = trimKey ? (asks.narrow.get(`${k}|${trimKey}`) ?? []).filter(comparable) : [];
+
+  // Does the VIN pin the trim, or only the pack? Asked of the WHOLE cohort
+  // rather than the mileage-windowed peers, and by counting versions rather
+  // than measuring what they cost.
+  //
+  // Both parts were mistakes I made first. Windowing starved the question on
+  // exactly the cohorts it exists for — most Lightning listings carry a cab
+  // style where the trim belongs, so few trims cleared any per-trim minimum.
+  // And pricing it needed several listings PER trim before it could answer,
+  // which the small cohorts can never supply; those are the cohorts where a
+  // four-car mixed median is most dangerous, and it let a 2022 Platinum be
+  // called $11,384 over a median drawn from a Pro, an XLT and a Lariat.
+  //
+  // Counting is the honest question anyway: this is not "is the mixture
+  // expensive" but "are these the same car". Only asserted trims count — a
+  // cohort we have no trim evidence about cannot argue that it is mixed, which
+  // is the one hole left here, and it closes as feeds improve.
+  const cohortTrims = new Set<string>();
+  for (const p of asks.wide.get(k) ?? []) if (p.trimKey) cohortTrims.add(p.trimKey);
+  const vinPinsTrim = cohortTrims.size <= 1;
+
+  let peers: AskPeer[];
+  if (vinPinsTrim) {
+    peers = widePeers;
+  } else if (trimPeers.length >= MIN_PEERS) {
+    peers = trimPeers;
+  } else {
+    // The cohort holds several versions and too few of this car's are listed.
+    // The wide median is a mixture of different cars, so quoting a distance
+    // from it would be inventing precision we do not have.
+    return undefined;
+  }
+  const trimMatched = !vinPinsTrim;
+  if (peers.length < MIN_PEERS) return undefined;
+
+  const peerMedian = medianAt(peers);
   if (!Number.isFinite(peerMedian) || peerMedian <= 0) return undefined;
 
   const delta = askUsd - peerMedian;
@@ -268,6 +354,7 @@ export function askVsMarket(
     peerMedianUsd: Math.round(peerMedian),
     peerN: peers.length,
     slopeFromSales,
+    trimMatched,
   };
 }
 

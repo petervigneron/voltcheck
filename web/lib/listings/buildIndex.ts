@@ -16,9 +16,19 @@ export async function buildCardIndex(): Promise<CardRow[]> {
   // A few hundred coefficient rows, fetched once and applied to every
   // listing in memory — the whole transaction-price model costs one request.
   const [listings, comps] = await Promise.all([allListings(), fetchCompIndex()]);
+  // The trim we are willing to compare ON, decided once for the whole run so
+  // the peer index and the lookup can never disagree about a car. Uppercased
+  // because one dealer's "PRO" and the next one's "Pro" are one trim, and two
+  // cohorts of one is the failure mode this whole split exists to avoid.
+  const trimKeys = new Map<string, string>();
+  for (const l of listings) {
+    if (!trimClaim(l).assert) continue;
+    const t = specTrim(l);
+    if (t) trimKeys.set(l.vin, t.toUpperCase());
+  }
   // Every live asking price, keyed by variant — cheap next to enrichment, and
   // it needs the full set, so it runs once here rather than per row.
-  const asks = buildAskIndex(listings);
+  const asks = buildAskIndex(listings.map((l) => ({ ...l, trimKey: trimKeys.get(l.vin) })));
   const rows: CardRow[] = [];
   for (const l of listings) {
     const e = enrichListing(l);
@@ -35,7 +45,7 @@ export async function buildCardIndex(): Promise<CardRow[]> {
     // would invite reading them as corroboration; they aren't the same thing.
     const vsMarket = vsSold
       ? undefined
-      : askVsMarket(asks, comps, l.vin, l.year, l.mileage, l.priceUsd, real);
+      : askVsMarket(asks, comps, l.vin, l.year, l.mileage, l.priceUsd, real, trimKeys.get(l.vin));
     rows.push({
       id: l.id,
       hay: `${l.year} ${l.make} ${l.model} ${l.trim ?? ""} ${l.exteriorColor ?? ""}`.toLowerCase(),
@@ -60,7 +70,9 @@ export async function buildCardIndex(): Promise<CardRow[]> {
       heatPump: e.heatPump?.status,
       packReplaced: l.campaignCheck?.packReplaced || undefined,
       askVsSold: vsSold?.deltaUsd,
-      askVsMarket: vsMarket ? { deltaUsd: vsMarket.deltaUsd, peerN: vsMarket.peerN } : undefined,
+      askVsMarket: vsMarket
+        ? { deltaUsd: vsMarket.deltaUsd, peerN: vsMarket.peerN, trimMatched: vsMarket.trimMatched }
+        : undefined,
       tiles: listingTiles(e, 5).map((t) => ({ k: t.kind, t: t.text, ti: t.title })),
     });
   }

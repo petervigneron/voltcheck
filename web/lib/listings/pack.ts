@@ -65,7 +65,8 @@ interface PackedRow {
   hp?: Coded;
   pr?: 1;
   as?: number;
-  am?: [number, number];
+  /** [delta, peerN, trimMatched] — the flag rides as 0/1 to stay one byte. */
+  am?: [number, number, 0 | 1];
   /** Indices into PackedIndex.t. */
   ts?: number[];
 }
@@ -143,7 +144,8 @@ export function packIndex(rows: CardRow[]): PackedIndex {
     if (row.heatPump !== undefined) p.hp = code(HEAT_PUMPS, row.heatPump);
     if (row.packReplaced) p.pr = 1;
     if (row.askVsSold !== undefined) p.as = row.askVsSold;
-    if (row.askVsMarket) p.am = [row.askVsMarket.deltaUsd, row.askVsMarket.peerN];
+    if (row.askVsMarket)
+      p.am = [row.askVsMarket.deltaUsd, row.askVsMarket.peerN, row.askVsMarket.trimMatched ? 1 : 0];
     if (row.tiles.length) p.ts = row.tiles.map(tileId);
     return p;
   });
@@ -180,7 +182,9 @@ export function unpackIndex(x: PackedIndex): CardRow[] {
     heatPump: p.hp === undefined ? undefined : decode(HEAT_PUMPS, p.hp),
     packReplaced: p.pr ? true : undefined,
     askVsSold: p.as,
-    askVsMarket: p.am ? { deltaUsd: p.am[0], peerN: p.am[1] } : undefined,
+    askVsMarket: p.am
+      ? { deltaUsd: p.am[0], peerN: p.am[1], trimMatched: p.am[2] === 1 }
+      : undefined,
     // The dictionary hands back the same tile object to every row that cites
     // it. Nothing mutates a tile, and sharing is what the format is for.
     tiles: (p.ts ?? []).map((id) => x.t[id]),

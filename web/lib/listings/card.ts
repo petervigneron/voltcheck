@@ -63,7 +63,7 @@ export interface CardRow {
    * substitute for it — asks aren't transactions — so surfaces show it only
    * where askVsSold is silent, which is most of the site.
    */
-  askVsMarket?: { deltaUsd: number; peerN: number };
+  askVsMarket?: { deltaUsd: number; peerN: number; trimMatched: boolean };
   tiles: CardTile[];
 }
 

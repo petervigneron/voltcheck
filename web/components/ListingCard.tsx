@@ -91,10 +91,18 @@ export function ListingCard({
   else if (r.askVsMarket != null) {
     const under = r.askVsMarket.deltaUsd < 0;
     const amount = `$${Math.abs(r.askVsMarket.deltaUsd).toLocaleString()}`;
+    // "this exact version" is a claim about the peers, and it was only ever
+    // true where the VIN pins the trim. Where it doesn't, the peers are the
+    // same year and configuration and the comparison still holds — the tile
+    // exists precisely because their trims priced the same — but the tooltip
+    // has to say which of the two it is.
+    const peers = r.askVsMarket.trimMatched
+      ? `the ${r.askVsMarket.peerN} of this exact version listed right now`
+      : `the ${r.askVsMarket.peerN} closest matches listed right now — same year and configuration, trims that price alike`;
     lead.push({
       k: "spec" as TileKind,
       t: `${amount} ${under ? "under" : "over"} asking prices`,
-      ti: `Asks ${amount} ${under ? "less" : "more"} than the ${r.askVsMarket.peerN} of this exact version listed right now, adjusted for mileage. Asking prices, not sales — no record of one of these selling covers this car.`,
+      ti: `Asks ${amount} ${under ? "less" : "more"} than ${peers}, adjusted for mileage. Asking prices, not sales — no record of one of these selling covers this car.`,
     });
   }
   const tiles: CardTile[] = lead.length ? [...lead, ...r.tiles.slice(0, Math.max(0, 5 - lead.length))] : r.tiles;
