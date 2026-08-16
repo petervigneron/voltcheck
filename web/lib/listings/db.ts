@@ -28,7 +28,11 @@ const REVALIDATE_SECONDS = 3600;
 // than the 33 characters VINs may legally use, because a feed that ignores the
 // standard should still be read, not skipped.
 const BUCKETS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-const LANES = 8;
+// Overridable because 8 lanes is also a load spike: when the database is
+// already struggling (post-sync churn on the small instance), a deploy's only
+// path to a clean build is walking gently — FEED_LANES=2 halves-twice the
+// concurrency at the cost of build time. Default unchanged.
+const LANES = Math.max(1, Number(process.env.FEED_LANES) || 8);
 
 interface FeedRow {
   vin: string;
