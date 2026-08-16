@@ -27,8 +27,13 @@ export async function buildCardIndex(): Promise<CardRow[]> {
     if (t) trimKeys.set(l.vin, t.toUpperCase());
   }
   // Every live asking price, keyed by variant — cheap next to enrichment, and
-  // it needs the full set, so it runs once here rather than per row.
-  const asks = buildAskIndex(listings.map((l) => ({ ...l, trimKey: trimKeys.get(l.vin) })));
+  // it needs the full set, so it runs once here rather than per row. Disclosed
+  // manufacturer repurchases stay out of the peer pool: their asks price a
+  // branded history, and one dealer lists dozens, enough to drag a cohort's
+  // median down and make its clean-title cars read as overpriced.
+  const asks = buildAskIndex(
+    listings.filter((l) => !l.buybackDisclosed).map((l) => ({ ...l, trimKey: trimKeys.get(l.vin) }))
+  );
   const rows: CardRow[] = [];
   for (const l of listings) {
     const e = enrichListing(l);
@@ -40,10 +45,17 @@ export async function buildCardIndex(): Promise<CardRow[]> {
     const trim = claim.assert ? displayTrim(l) : undefined;
     const cut = priceCut(l);
     const real = hasRealPrice(l);
-    const vsSold = askVsSold(comps, l.vin, l.year, l.mileage, l.priceUsd, real);
+    // A disclosed manufacturer repurchase gets no price claim on either
+    // surface. The models are fitted on and compared against clean-title
+    // cars; the seller's own text says this car differs from them in a way
+    // neither model can price, so any delta would be a false figure with the
+    // buyer's money. The card carries the disclosure itself instead.
+    const vsSold = l.buybackDisclosed
+      ? undefined
+      : askVsSold(comps, l.vin, l.year, l.mileage, l.priceUsd, real);
     // Only where the transaction model is silent. Two price claims on one card
     // would invite reading them as corroboration; they aren't the same thing.
-    const vsMarket = vsSold
+    const vsMarket = vsSold || l.buybackDisclosed
       ? undefined
       : askVsMarket(asks, comps, l.vin, l.year, l.mileage, l.priceUsd, real, trimKeys.get(l.vin));
     rows.push({
@@ -69,6 +81,7 @@ export async function buildCardIndex(): Promise<CardRow[]> {
       rangeMi: e.realRangeMi?.value,
       heatPump: e.heatPump?.status,
       packReplaced: l.campaignCheck?.packReplaced || undefined,
+      buyback: l.buybackDisclosed || undefined,
       askVsSold: vsSold?.deltaUsd,
       askVsMarket: vsMarket
         ? { deltaUsd: vsMarket.deltaUsd, peerN: vsMarket.peerN, trimMatched: vsMarket.trimMatched }

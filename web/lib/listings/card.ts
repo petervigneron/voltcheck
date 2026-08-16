@@ -14,6 +14,10 @@ export interface CardTile {
   t: string;
   /** Tooltip — the fact's provenance, same text the detail page shows. */
   ti?: string;
+  /** Allow the tile text to wrap. Set only on tiles built in the card
+   *  component itself (never packed): the one current user is the
+   *  manufacturer-repurchase disclosure, longer than a narrow card. */
+  w?: boolean;
 }
 
 export interface CardRow {
@@ -51,6 +55,13 @@ export interface CardRow {
   heatPump?: "yes" | "no" | "verify";
   /** Battery pack replaced under a campaign — the teal ground. */
   packReplaced?: boolean;
+  /**
+   * The seller's own description discloses a manufacturer repurchase
+   * (buyback). The card states the fact and carries no price claim: a
+   * repurchase differs from its clean-title cohort in exactly the way a
+   * "$4,000 under sold price" tile would deny.
+   */
+  buyback?: boolean;
   /**
    * Ask minus what this variant actually sells for (lib/listings/comps.ts).
    * Positive = asking above transaction prices. Only set when the gap clears

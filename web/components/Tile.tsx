@@ -53,11 +53,16 @@ export function Tile({
   kind = "spec",
   ground = "paper",
   title,
+  wrap = false,
   children,
 }: {
   kind?: TileKind;
   ground?: TileGround;
   title?: string;
+  /** Tiles keep to one line so the row reads as chips; a tile whose text is
+   *  longer than a narrow card (the manufacturer-repurchase disclosure) opts
+   *  into wrapping instead of overflowing the card edge. */
+  wrap?: boolean;
   children: React.ReactNode;
 }) {
   const palette =
@@ -65,7 +70,7 @@ export function Tile({
   return (
     <span
       title={title}
-      className={`inline-flex items-center whitespace-nowrap px-2 py-1 text-[11px] font-extrabold tracking-[0.05em] uppercase ${palette[kind]}`}
+      className={`inline-flex items-center ${wrap ? "whitespace-normal" : "whitespace-nowrap"} px-2 py-1 text-[11px] font-extrabold tracking-[0.05em] uppercase ${palette[kind]}`}
     >
       {children}
     </span>

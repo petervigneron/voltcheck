@@ -53,14 +53,20 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
   // contradiction judgement was made at sync time and rides the payload
   // (scraper/lib/trim-suspect.mjs), so this page needs nothing but its own row.
   const claim = trimClaim(listing);
-  const vsSold = askVsSold(
-    await fetchCompIndex(),
-    listing.vin,
-    listing.year,
-    listing.mileage,
-    listing.priceUsd,
-    hasRealPrice(listing)
-  );
+  // A disclosed manufacturer repurchase gets no fitted-price comparison here,
+  // same rule as the browse grid (lib/listings/buildIndex.ts): the model is
+  // fitted on clean-title sales, and the seller's own text says this car
+  // differs from those in a way the model cannot price.
+  const vsSold = listing.buybackDisclosed
+    ? undefined
+    : askVsSold(
+        await fetchCompIndex(),
+        listing.vin,
+        listing.year,
+        listing.mileage,
+        listing.priceUsd,
+        hasRealPrice(listing)
+      );
 
   return (
     <div className="mx-auto max-w-5xl space-y-5 px-4 py-6">
@@ -84,7 +90,7 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
               <p className="text-sm text-zinc-500 dark:text-zinc-400">{claim.trim}</p>
             ) : claim.reason === "contradicted" ? (
               <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                Listed as {claim.feedTrim} — the dealer&rsquo;s own description says{" "}
+                Listed as {claim.feedTrim}, but the dealer&rsquo;s own description says{" "}
                 {claim.proseTrim.charAt(0) + claim.proseTrim.slice(1).toLowerCase()}
               </p>
             ) : null}
@@ -93,7 +99,7 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
             ) : (
               <div
                 className="mt-3 text-2xl font-bold"
-                title={`The dealer's feed listed $${listing.priceUsd.toLocaleString()}, which is not a plausible price for this car — see the dealer's own page`}
+                title={`The dealer's feed listed $${listing.priceUsd.toLocaleString()}, which is not a plausible price for this car; see the dealer's own page`}
               >
                 See dealer for price
               </div>
@@ -165,6 +171,16 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
                   ))}
                 </div>
               )}
+            </div>
+          )}
+
+          {listing.buybackDisclosed && (
+            <div className={`rounded-lg border p-4 ${NOTE_STYLE}`}>
+              <div className="text-sm font-semibold">Manufacturer repurchase (dealer information)</div>
+              <p className="mt-1 text-sm text-zinc-700 dark:text-zinc-300">
+                The dealer&rsquo;s description below discloses that this vehicle was repurchased by its
+                manufacturer. Price comparisons are not shown for repurchased cars.
+              </p>
             </div>
           )}
 

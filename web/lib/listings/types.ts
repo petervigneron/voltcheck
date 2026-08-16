@@ -49,6 +49,15 @@ export interface Listing {
   priceHistory?: { priceUsd: number; observedAt: string }[];
   prevPriceUsd?: number; // the asking price before the current one
   priceChangedAt?: string; // when the current price took effect
+  /**
+   * The seller's own description discloses a manufacturer repurchase (lemon-law
+   * or goodwill buyback). Read at write time by the database (migration 0024)
+   * because the browse feed strips descriptions; the patterns are audited
+   * disclosure templates, so absence asserts nothing about cars whose sellers
+   * stayed silent. Gates every price claim: a repurchase is priced against its
+   * clean-title cohort nowhere on this site.
+   */
+  buybackDisclosed?: boolean;
   // Per-VIN campaign history, where an owner portal exposes it (GM today).
   campaignCheck?: {
     packReplaced: boolean;

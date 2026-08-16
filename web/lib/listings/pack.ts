@@ -64,6 +64,7 @@ interface PackedRow {
   rm?: number;
   hp?: Coded;
   pr?: 1;
+  bb?: 1;
   as?: number;
   /** [delta, peerN, trimMatched] — the flag rides as 0/1 to stay one byte. */
   am?: [number, number, 0 | 1];
@@ -160,6 +161,7 @@ export function packIndex(rows: CardRow[]): PackedIndex {
     if (row.rangeMi !== undefined) p.rm = row.rangeMi;
     if (row.heatPump !== undefined) p.hp = code(HEAT_PUMPS, row.heatPump);
     if (row.packReplaced) p.pr = 1;
+    if (row.buyback) p.bb = 1;
     if (row.askVsSold !== undefined) p.as = row.askVsSold;
     if (row.askVsMarket)
       p.am = [row.askVsMarket.deltaUsd, row.askVsMarket.peerN, row.askVsMarket.trimMatched ? 1 : 0];
@@ -198,6 +200,7 @@ export function unpackIndex(x: PackedIndex): CardRow[] {
     rangeMi: p.rm,
     heatPump: p.hp === undefined ? undefined : decode(HEAT_PUMPS, p.hp),
     packReplaced: p.pr ? true : undefined,
+    buyback: p.bb ? true : undefined,
     askVsSold: p.as,
     askVsMarket: p.am
       ? { deltaUsd: p.am[0], peerN: p.am[1], trimMatched: p.am[2] === 1 }

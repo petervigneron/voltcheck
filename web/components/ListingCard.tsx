@@ -68,7 +68,18 @@ export function ListingCard({
     lead.push({
       k: "cut" as TileKind,
       t: `−$${cut.amountUsd.toLocaleString()}`,
-      ti: `Was $${cut.prevUsd.toLocaleString()} — cut $${cut.amountUsd.toLocaleString()} on ${CUT_DATE_FMT.format(new Date(cut.at))}`,
+      ti: `Was $${cut.prevUsd.toLocaleString()}, cut $${cut.amountUsd.toLocaleString()} on ${CUT_DATE_FMT.format(new Date(cut.at))}`,
+    });
+  }
+  // The seller's own description discloses a manufacturer repurchase. The
+  // fact leads the card, and it is the reason no price claim rides with it:
+  // buildIndex.ts keeps these cars out of both price models entirely.
+  if (r.buyback) {
+    lead.push({
+      k: "flag" as TileKind,
+      t: "Manufacturer repurchase (dealer information)",
+      ti: "The dealer's own listing discloses that this vehicle was repurchased by its manufacturer. Price comparisons are not shown for repurchased cars.",
+      w: true,
     });
   }
   // Asking price against what this exact variant actually sells for. Under
@@ -80,7 +91,7 @@ export function ListingCard({
     lead.push({
       k: under ? ("kit" as TileKind) : ("miss" as TileKind),
       t: `${amount} ${under ? "under" : "over"} sold price`,
-      ti: `Asks ${amount} ${under ? "less" : "more"} than these actually sell for — fitted on Washington State title records (data.wa.gov, ODbL)`,
+      ti: `Asks ${amount} ${under ? "less" : "more"} than these actually sell for, fitted on Washington State title records (data.wa.gov, ODbL)`,
     });
   }
   // Where no transaction model reaches — most of the site — the other listings
@@ -98,11 +109,11 @@ export function ListingCard({
     // has to say which of the two it is.
     const peers = r.askVsMarket.trimMatched
       ? `the ${r.askVsMarket.peerN} of this exact version listed right now`
-      : `the ${r.askVsMarket.peerN} closest matches listed right now — same year and configuration, trims that price alike`;
+      : `the ${r.askVsMarket.peerN} closest matches listed right now: same year and configuration, trims that price alike`;
     lead.push({
       k: "spec" as TileKind,
       t: `${amount} ${under ? "under" : "over"} asking prices`,
-      ti: `Asks ${amount} ${under ? "less" : "more"} than ${peers}, adjusted for mileage. Asking prices, not sales — no record of one of these selling covers this car.`,
+      ti: `Asks ${amount} ${under ? "less" : "more"} than ${peers}, adjusted for mileage. Asking prices, not sales; no record of one of these selling covers this car.`,
     });
   }
   const tiles: CardTile[] = lead.length ? [...lead, ...r.tiles.slice(0, Math.max(0, 5 - lead.length))] : r.tiles;
@@ -139,7 +150,7 @@ export function ListingCard({
         ) : (
           <div
             className="text-[22px] leading-none font-extrabold tracking-[-0.02em]"
-            title={`The dealer's feed listed $${r.priceUsd.toLocaleString()}, which is not a plausible price for this car — see the dealer's own page`}
+            title={`The dealer's feed listed $${r.priceUsd.toLocaleString()}, which is not a plausible price for this car; see the dealer's own page`}
           >
             See dealer for price
           </div>
@@ -152,7 +163,7 @@ export function ListingCard({
         {tiles.length > 0 && (
           <div className="mt-auto flex flex-wrap gap-1.5 pt-1">
             {tiles.map((t, i) => (
-              <Tile key={i} kind={t.k} ground={ground} title={t.ti}>
+              <Tile key={i} kind={t.k} ground={ground} title={t.ti} wrap={t.w}>
                 {t.t}
               </Tile>
             ))}
