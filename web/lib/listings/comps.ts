@@ -22,6 +22,13 @@ export interface CompCohort {
   /** Odometer band the line was fitted over. Outside it, the line is a guess. */
   odoLo: number;
   odoHi: number;
+  /** Cheapest and dearest this cohort actually sold for. An ask outside the
+   *  band is a price no car in the cohort ever reached. */
+  saleLo: number;
+  saleHi: number;
+  /** How far apart the versions in this cohort ASK, from live inventory
+   *  (migration 0022). Big means the line describes a mixture, not a car. */
+  trimSpanUsd: number;
   /** This cohort's own median absolute residual — its error bar, in dollars. */
   residMedaeUsd: number;
 }
@@ -39,7 +46,7 @@ export async function fetchCompIndex(): Promise<CompIndex> {
   const anon = process.env.SUPABASE_ANON_KEY!;
   try {
     const res = await fetch(
-      `${base}/rest/v1/ev_price_model?select=vin8,model_year,intercept_usd,usd_per_mile,sales_n,odo_lo,odo_hi,resid_medae_usd`,
+      `${base}/rest/v1/ev_price_model?select=vin8,model_year,intercept_usd,usd_per_mile,sales_n,odo_lo,odo_hi,sale_lo,sale_hi,trim_span_usd,resid_medae_usd`,
       {
         headers: {
           apikey: anon,
@@ -59,6 +66,9 @@ export async function fetchCompIndex(): Promise<CompIndex> {
           sales_n: number;
           odo_lo: string | number;
           odo_hi: string | number;
+          sale_lo: string | number;
+          sale_hi: string | number;
+          trim_span_usd: string | number;
           resid_medae_usd: string | number;
         }[]
       | null;
@@ -72,6 +82,9 @@ export async function fetchCompIndex(): Promise<CompIndex> {
         salesN: r.sales_n,
         odoLo: Number(r.odo_lo),
         odoHi: Number(r.odo_hi),
+        saleLo: Number(r.sale_lo),
+        saleHi: Number(r.sale_hi),
+        trimSpanUsd: Number(r.trim_span_usd),
         residMedaeUsd: Number(r.resid_medae_usd),
       });
     }
@@ -110,6 +123,27 @@ const MIN_ABS_USD = 1500;
 // $52,995 for a 32k-mile Model Y is exactly the fact a shopper wants.
 const MAX_UNDER_FRACTION = 0.3;
 
+// ── Is this cohort one car, or several? ────────────────────────────────────
+//
+// The line is fitted per VIN(1-8) + model year. That key usually carries the
+// trim, but Ford stamped none on 2022-23 Lightnings and Tesla's position 8 is
+// a motor code, so some cohorts run Pro through Platinum — cars $30k apart new
+// — and the line lands in the middle of the mixture.
+//
+// The resulting error is BIASED, not noisy, which is why the residual cap
+// never caught it: every loaded car reads as overpriced and every basic one as
+// a bargain. wa_ev_sales carries no trim, so the sales cannot be split; what
+// migration 0022 measures instead is how far apart those versions ASK in live
+// inventory, which is the only place trim exists for these VINs. Where that
+// span clears this cohort's own error bar, the line is describing a mixture
+// and has no business quoting a number at one car.
+//
+// Held against the cohort's own bar rather than a fixed figure, for the same
+// reason the show-threshold is: a $3,000 spread is decisive in a cohort that
+// predicts itself to $1,500 and is noise in one that predicts itself to $5,000.
+const cohortIsMixed = (c: CompCohort): boolean =>
+  c.trimSpanUsd >= Math.max(c.residMedaeUsd, MIN_ABS_USD);
+
 export function askVsSold(
   comps: CompIndex,
   vin: string | undefined,
@@ -131,6 +165,15 @@ export function askVsSold(
   // is what called a 5,900-mile 2020 Taycan $11k underpriced off a fit
   // built on 40k-mile cars, so the band is a hard gate, not a warning.
   if (mileage < c.odoLo || mileage > c.odoHi) return undefined;
+
+  // Nor about a car it cannot tell apart from a different version of itself.
+  if (cohortIsMixed(c)) return undefined;
+
+  // The price axis of the same argument as the odometer band above. A cohort
+  // whose dearest sale was $61,798 cannot say by how much a $62,025 ask is
+  // over the market — it has never seen a car sell at this level, so the
+  // distance is extrapolation dressed as a measurement.
+  if (askUsd > c.saleHi || askUsd < c.saleLo) return undefined;
 
   const sold = c.interceptUsd + c.usdPerMile * mileage;
   if (!Number.isFinite(sold) || sold <= 0) return undefined;
