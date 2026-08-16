@@ -57,7 +57,14 @@ function useCardIndex(): { rows: CardRow[] | null; failed: boolean } {
           return unpackIndex((await res.json()) as PackedIndex);
         })
       )
-    ).then((shards) => shards.flat());
+    ).then((shards) => {
+      // Shard membership is keyed on the car (api/index/[shard]), so a car
+      // arriving twice means two shards were cached from different builds of
+      // the old positional scheme — possible until every cache has turned
+      // over. A doubled card reads as two cars for sale; keep the first.
+      const seen = new Set<string>();
+      return shards.flat().filter((r) => !seen.has(r.id) && (seen.add(r.id), true));
+    });
     indexPromise.then(
       (rs) => {
         indexCache = rs;

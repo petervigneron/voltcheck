@@ -1,5 +1,5 @@
 import { buildCardIndex } from "@/lib/listings/buildIndex";
-import { SHARDS, packIndex, shardOf } from "@/lib/listings/pack";
+import { SHARDS, packIndex } from "@/lib/listings/pack";
 
 // The browse grid's dataset: CDN-cached JSON the client filters locally. Static
 // + hourly revalidate matches the data's actual cadence (nightly sync, recheck,
@@ -21,6 +21,24 @@ export function generateStaticParams() {
   return Array.from({ length: SHARDS }, (_, i) => ({ shard: String(i) }));
 }
 
+// A car's shard is a property of the car, never of its position in the build.
+// The six responses revalidate independently, so a browser can hold shards
+// from two different hours' builds at once; when membership was positional
+// (round-robin on index), any insertion between those builds shifted every
+// position after it — the same car served from two shards, its neighbor from
+// none. First live-DB deploy: 8,133 cars doubled, ~7,300 invisible. Keyed on
+// the car's own id, a mixed-vintage shard set can serve a stale row, but
+// never a doubled or dropped one. (FNV-1a, same recipe as card.ts's hash01,
+// which isn't exported.)
+function shardOf(id: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < id.length; i++) {
+    h ^= id.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return (h >>> 0) % SHARDS;
+}
+
 export async function GET(_req: Request, { params }: { params: Promise<{ shard: string }> }) {
   const { shard } = await params;
   const n = Number(shard);
@@ -28,5 +46,5 @@ export async function GET(_req: Request, { params }: { params: Promise<{ shard: 
     return Response.json({ error: "no such shard" }, { status: 404 });
   }
   const rows = await buildCardIndex();
-  return Response.json(packIndex(rows.filter((_, i) => shardOf(i) === n)));
+  return Response.json(packIndex(rows.filter((r) => shardOf(r.id) === n)));
 }
