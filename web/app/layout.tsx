@@ -55,14 +55,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <main className="flex-1">{children}</main>
 
         <footer className="mt-8 bg-ink text-paper/70">
-          {/* Only promises the UI visibly keeps: SourceBadge marks est/agg
-              figures, and unknowable facts render as "Unknown" or a
-              which-version question rather than a guess. The old first half
-              ("facts carry their source and check-date") described the
-              provenance chips, which were removed by design — a footer
-              claiming things the pages don't show reads as boilerplate. */}
+          {/* The one promise the UI visibly keeps on every page: SourceBadge
+              marks est/agg figures. The older, longer versions promised
+              provenance chips (removed by design) and unknowability
+              handling — true, but footer prose; the owner trimmed it. */}
           <div className="mx-auto max-w-[1400px] px-5 py-4 text-[11px] font-semibold tracking-[0.08em] uppercase sm:px-6">
-            Estimated figures are marked. When something is unknowable, we say so.
+            Estimated figures are marked.
           </div>
         </footer>
       </body>
