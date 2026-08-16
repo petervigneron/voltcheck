@@ -71,6 +71,23 @@ interface PackedRow {
   ts?: number[];
 }
 
+/**
+ * How many files the index is served in. Vercel caps a single prerendered
+ * response at ~19 MB; one file held every car, so the cap was a ceiling on the
+ * whole inventory — 39k cars filled 31 MB of it and blocked every deploy until
+ * the packing above. Six files make the cap ~114 MB of packed rows, which is
+ * several times any inventory this site is likely to carry, and the browser
+ * fetches them at once so a shopper waits for the slowest, not the sum.
+ *
+ * Read by both the route (which prerenders one response per shard) and the
+ * browser (which asks for all of them), so the two can't disagree.
+ */
+export const SHARDS = 6;
+
+/** Which shard a row belongs to. Round-robin, so the shards stay within a row
+ *  or two of each other however the inventory is distributed. */
+export const shardOf = (i: number) => i % SHARDS;
+
 export interface PackedIndex {
   /** Bumped whenever the shape below changes, so a stale cached body is
    *  recognizable rather than silently misread as the current one. */

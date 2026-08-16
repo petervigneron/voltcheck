@@ -6,7 +6,7 @@ import { ListingCard, type GroundsMode } from "./ListingCard";
 import { SearchBar, FilterRail, SpecFacets, type FacetGroup, type Suggestion } from "./Filters";
 import { REMOVABLE, SPEC_FACETS, FACET_CAP, describeFilter, dropSpecFilters, splitValues, type SpecFacet } from "@/lib/filters";
 import { featuredScore, type CardRow } from "@/lib/listings/card";
-import { unpackIndex, type PackedIndex } from "@/lib/listings/pack";
+import { SHARDS, unpackIndex, type PackedIndex } from "@/lib/listings/pack";
 import { milesBetween } from "@/lib/geo";
 import { pushUrl } from "@/lib/pushUrl";
 
@@ -45,12 +45,19 @@ function useCardIndex(): { rows: CardRow[] | null; failed: boolean } {
   const [failed, setFailed] = useState(false);
   useEffect(() => {
     if (indexCache) return;
-    indexPromise ??= fetch("/api/index").then(async (res) => {
-      if (!res.ok) throw new Error(`index ${res.status}`);
-      // Unpacking 39k rows is one pass over already-parsed JSON — cheaper than
-      // the parse itself, and it happens once per visitor.
-      return unpackIndex((await res.json()) as PackedIndex);
-    });
+    // Every shard at once: the wait is the slowest file, not the sum of them.
+    // One shard failing fails the load — a grid quietly missing a sixth of the
+    // inventory is the failure this whole path exists to prevent.
+    indexPromise ??= Promise.all(
+      Array.from({ length: SHARDS }, (_, i) =>
+        fetch(`/api/index/${i}`).then(async (res) => {
+          if (!res.ok) throw new Error(`index shard ${i}: ${res.status}`);
+          // Unpacking is one pass over already-parsed JSON — cheaper than the
+          // parse itself, and it happens once per visitor.
+          return unpackIndex((await res.json()) as PackedIndex);
+        })
+      )
+    ).then((shards) => shards.flat());
     indexPromise.then(
       (rs) => {
         indexCache = rs;

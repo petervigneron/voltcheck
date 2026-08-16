@@ -17,10 +17,21 @@ import type { Listing } from "./types";
 //   SUPABASE_ANON_KEY=...   (anon/publishable key — safe for read-only use)
 // Both absent → dbConfigured() is false and the app serves the bundled JSON.
 
+// PostgREST caps any response at 1000 rows regardless of the range asked for —
+// asking for more returns 1000 and no error, so a bigger page size buys nothing
+// and hides the shortfall.
 const PAGE = 1000;
 const REVALIDATE_SECONDS = 3600;
 
+// The VIN space, split so the pages can be walked in parallel. Buckets that hold
+// no cars cost one empty request; the alphabet is deliberately the full 36 rather
+// than the 33 characters VINs may legally use, because a feed that ignores the
+// standard should still be read, not skipped.
+const BUCKETS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+const LANES = 8;
+
 interface FeedRow {
+  vin: string;
   payload: Listing;
   first_seen_at: string;
   last_seen_at: string;
@@ -52,13 +63,39 @@ function headers(): Record<string, string> {
 export async function fetchListingsFromDb(): Promise<Listing[] | null> {
   if (!dbConfigured()) return null;
   const base = process.env.SUPABASE_URL!.replace(/\/$/, "");
-  const feedUrl = `${base}/rest/v1/live_listings_feed?select=payload,first_seen_at,last_seen_at,prev_price_usd,price_changed_at&order=vin.asc`;
+  const feedUrl = `${base}/rest/v1/live_listings_feed?select=vin,payload,first_seen_at,last_seen_at,prev_price_usd,price_changed_at&order=vin.asc&limit=${PAGE}`;
+
+  // Each page asks for the thousand VINs *after* the last one it saw, rather
+  // than for a numbered slice. The offset form asked the database to build the
+  // whole sorted feed and then count 40,000 rows into it — with a price-history
+  // lookup per row along the way — so the deep pages ran past the statement
+  // timeout. At 39k cars 53 of those in parallel stayed just inside the limit;
+  // at 52k, 32 of them died, the whole read was abandoned, and the site quietly
+  // served the bundled snapshot instead: no Kia or Hyundai locator inventory,
+  // 39,047 cars where there were 52,833. Keyed on VIN, each page is an index
+  // range scan on the primary key and costs the same as the first.
+  const walk = async (lo: string, hi: string | undefined): Promise<FeedRow[]> => {
+    const range = `&vin=gte.${lo}` + (hi ? `&vin=lt.${hi}` : "");
+    const rows: FeedRow[] = [];
+    let after: string | undefined;
+    for (;;) {
+      const res = await fetch(`${feedUrl}${range}${after ? `&vin=gt.${after}` : ""}`, {
+        headers: headers(),
+        next: { revalidate: REVALIDATE_SECONDS },
+      });
+      if (!res.ok) throw new Error(`PostgREST ${res.status}`);
+      const page = (await res.json()) as FeedRow[];
+      rows.push(...page);
+      if (page.length < PAGE) return rows;
+      after = page[page.length - 1].vin;
+    }
+  };
+
   try {
-    // One cheap request for the row count, then every page in parallel — the
-    // sequential page-after-page loop was ~16 round-trips of serial latency,
-    // the bulk of a 2s TTFB. If the count drifts before the next revalidate
-    // the last page runs short or long by a few rows for an hour; harmless.
-    const countRes = await fetch(feedUrl, {
+    // The expected total, asked for up front so the read can be checked against
+    // it. A short read is the failure mode that hides: every request answers
+    // 200, the cars just aren't there.
+    const countRes = await fetch(`${base}/rest/v1/live_listings_feed?select=vin`, {
       headers: { ...headers(), Range: "0-0", Prefer: "count=exact" },
       next: { revalidate: REVALIDATE_SECONDS },
     });
@@ -66,18 +103,26 @@ export async function fetchListingsFromDb(): Promise<Listing[] | null> {
     const total = Number(countRes.headers.get("content-range")?.split("/")[1]);
     if (!Number.isFinite(total)) throw new Error("PostgREST count missing");
 
-    const pages = await Promise.all(
-      Array.from({ length: Math.ceil(total / PAGE) }, async (_, i) => {
-        const from = i * PAGE;
-        const res = await fetch(feedUrl, {
-          headers: { ...headers(), Range: `${from}-${from + PAGE - 1}` },
-          next: { revalidate: REVALIDATE_SECONDS },
-        });
-        if (!res.ok) throw new Error(`PostgREST ${res.status}`);
-        return (await res.json()) as FeedRow[];
+    const queue = BUCKETS.map((c, i) => [c, BUCKETS[i + 1]] as const);
+    const collected: FeedRow[][] = [];
+    await Promise.all(
+      Array.from({ length: LANES }, async () => {
+        for (let b; (b = queue.shift()); ) collected.push(await walk(b[0], b[1]));
       })
     );
-    return pages.flat().map((r) => ({
+    const rows = collected.flat();
+
+    // Rows can be delisted between the count and the last page, so a handful
+    // either way is normal drift; a real shortfall means pages went missing and
+    // has to be visible in the build log, not inferred later from a make that
+    // looks thin.
+    if (rows.length < total * 0.99) {
+      console.error(
+        `[listings] SHORT READ: ${rows.length} rows of ${total} expected — the feed is being served incomplete`
+      );
+    }
+
+    return rows.map((r) => ({
       ...r.payload,
       firstSeenAt: r.first_seen_at,
       lastSeenAt: r.last_seen_at,
