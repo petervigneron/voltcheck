@@ -17,6 +17,10 @@
 //   Kia    — open JSON API (isInitialRequest resolves dealers server-side),
 //            one call per BEV series from the US center, ~7.4k BEVs (plus a
 //            separate CPO endpoint not yet tapped) → lib/oem/kia.mjs
+//   VW     — Group Stock Locator BFF (gsl.feature-app.io/bff/car/search), open
+//            to Node once you know market=passenger is a vehicle class and not
+//            a country code. Single-manufacturer, so no trade-ins: ~513 used +
+//            ~1.5k new BEVs → lib/oem/vw.mjs
 //   Audi   — open Apollo router (omnigraph.audi.com), operation read out of the
 //            inventory feature-app bundle. Returns the Audi network's whole
 //            used stock, so roughly half of what it yields is other makes'
@@ -42,6 +46,7 @@ import { GENESIS, pullGenesis } from "./lib/oem/genesis.mjs";
 import { FORD_BLUE_ADVANTAGE, pullFordBlueAdvantage } from "./lib/oem/ford-blue-advantage.mjs";
 import { HONDA, pullHonda } from "./lib/oem/honda.mjs";
 import { AUDI, pullAudi } from "./lib/oem/audi.mjs";
+import { VW, pullVw } from "./lib/oem/vw.mjs";
 
 // One registry of pullers keyed by brand. Each entry is a thunk returning a
 // crawl.mjs-shaped report; new OEM families plug in here without touching the
@@ -62,6 +67,7 @@ const PULLERS = {
   [FORD_BLUE_ADVANTAGE.key]: { domain: FORD_BLUE_ADVANTAGE.domain, run: () => pullFordBlueAdvantage({ log }) },
   [HONDA.key]: { domain: HONDA.domain, run: () => pullHonda({ log }) },
   [AUDI.key]: { domain: AUDI.domain, run: () => pullAudi({ log }) },
+  [VW.key]: { domain: VW.domain, run: () => pullVw({ log }) },
 };
 
 const args = process.argv.slice(2);
@@ -70,7 +76,7 @@ function flag(name, fallback) {
   return i >= 0 ? args[i + 1] : fallback;
 }
 const OUT_DIR = flag("--out", "out");
-const wanted = flag("--brands", "chevrolet,gmc,cadillac,carbravo,hyundai,hyundai-cpo,kia,nissan,nissan-cpo,bmw,mercedes,jeep,dodge,fiat,genesis,ford-blue-advantage,honda,audi").split(",").map((s) => s.trim().toLowerCase());
+const wanted = flag("--brands", "chevrolet,gmc,cadillac,carbravo,hyundai,hyundai-cpo,kia,nissan,nissan-cpo,bmw,mercedes,jeep,dodge,fiat,genesis,ford-blue-advantage,honda,audi,vw").split(",").map((s) => s.trim().toLowerCase());
 const selected = wanted.filter((k) => PULLERS[k]);
 if (!selected.length) {
   console.error(`oem-locator: no known brands in "${wanted}" (have: ${Object.keys(PULLERS).join(",")})`);
