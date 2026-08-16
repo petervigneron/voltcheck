@@ -177,10 +177,15 @@ export async function politeGetJson(url, { headers = {}, timeoutMs = 20000 } = {
 }
 
 function parseRobots(txt) {
-  // Collect Disallow + Crawl-delay rules that apply to * or to us. Minimal
-  // parser: good enough to respect intent; unknown directives ignored.
+  // Collect Allow + Disallow + Crawl-delay rules that apply to * or to us.
+  // Minimal parser: good enough to respect intent; unknown directives ignored.
+  // Allow is collected (not just Disallow) because the standard lets a specific
+  // Allow override a broader Disallow — e.g. Stellantis brand sites Disallow
+  // /hostd/ but explicitly Allow /hostd/inventory/getinventoryresults.json.
+  // Ignoring Allow would over-block a path the site owner deliberately opened.
   const lines = txt.split(/\r?\n/);
   let applies = false;
+  const allow = [];
   const disallow = [];
   let crawlDelayMs;
   for (const line of lines) {
@@ -194,6 +199,8 @@ function parseRobots(txt) {
       // rules aimed at Chrome and, worse, miss rules aimed at us.
       const v = val.toLowerCase();
       applies = v === "*" || v === CRAWLER_TOKEN || v.includes(CRAWLER_TOKEN);
+    } else if (applies && key === "allow" && val) {
+      allow.push(val);
     } else if (applies && key === "disallow" && val) {
       disallow.push(val);
     } else if (applies && key === "crawl-delay") {
@@ -201,21 +208,56 @@ function parseRobots(txt) {
       if (Number.isFinite(s) && s > 0) crawlDelayMs = Math.min(s, 30) * 1000;
     }
   }
-  return { disallow, crawlDelayMs };
+  return { allow, disallow, crawlDelayMs };
 }
+
+// Does `path` match a robots rule? Supports `*` wildcards and a trailing `$`
+// end-anchor (the two extensions every major crawler honours); a plain prefix
+// rule falls out as the no-wildcard case.
+function robotsPathMatch(path, rule) {
+  if (!rule) return false;
+  const anchored = rule.endsWith("$");
+  const pattern = anchored ? rule.slice(0, -1) : rule;
+  const segs = pattern.split("*");
+  let idx = 0;
+  for (let i = 0; i < segs.length; i++) {
+    const seg = segs[i];
+    if (!seg) continue;
+    if (i === 0) {
+      if (!path.startsWith(seg)) return false;
+      idx = seg.length;
+    } else {
+      const at = path.indexOf(seg, idx);
+      if (at < 0) return false;
+      idx = at + seg.length;
+    }
+  }
+  return anchored ? idx === path.length : true;
+}
+
+// Length of the rule's literal path (the `$` anchor is not a path character),
+// used for the longest-match tie-break below.
+const robotsRuleLen = (rule) => (rule.endsWith("$") ? rule.length - 1 : rule.length).valueOf();
 
 export async function robotsAllows(url) {
   const u = new URL(url);
   if (!robotsCache.has(u.host)) {
     try {
       const { status, body } = await fetchRaw(`${u.origin}/robots.txt`, { timeoutMs: 8000 });
-      robotsCache.set(u.host, status === 200 ? parseRobots(body) : { disallow: [] });
+      robotsCache.set(u.host, status === 200 ? parseRobots(body) : { allow: [], disallow: [] });
     } catch {
-      robotsCache.set(u.host, { disallow: [] });
+      robotsCache.set(u.host, { allow: [], disallow: [] });
     }
   }
-  const { disallow } = robotsCache.get(u.host);
-  return !disallow.some((rule) => u.pathname.startsWith(rule.replace(/\*$/, "")));
+  const { allow = [], disallow = [] } = robotsCache.get(u.host);
+  // Standard precedence: the longest matching rule wins; an Allow ties out a
+  // Disallow of equal length. If nothing disallows the path, it is allowed.
+  let bestAllow = -1;
+  let bestDisallow = -1;
+  for (const rule of allow) if (robotsPathMatch(u.pathname, rule)) bestAllow = Math.max(bestAllow, robotsRuleLen(rule));
+  for (const rule of disallow) if (robotsPathMatch(u.pathname, rule)) bestDisallow = Math.max(bestDisallow, robotsRuleLen(rule));
+  if (bestDisallow < 0) return true;
+  return bestAllow >= bestDisallow;
 }
 
 // Plenty of dealers serve only on www and refuse the apex outright
