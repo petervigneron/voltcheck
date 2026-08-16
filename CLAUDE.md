@@ -39,6 +39,13 @@ Vercel is **not** hooked to git pushes here. A commit on `main` changes
 nothing that a shopper can see. Deploying is a CLI step, and it is the user's
 call — ask, don't assume a merge means ship.
 
+The CLI deploys the **working tree**, not a commit — and with several sessions
+sharing this tree, that means someone else's half-finished edits can ship to
+shoppers under your deploy. Deploy from a clean worktree pinned to the commit
+you mean to ship (`git worktree add <dir> <sha>`, copy `web/.vercel/` in, then
+`vercel --prod` from its `web/`), never from this directory unless
+`git status` is clean.
+
 ## Database
 
 - Migrations are numbered and append-only. Never renumber or rewrite an
