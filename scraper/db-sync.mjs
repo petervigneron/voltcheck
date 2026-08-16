@@ -130,6 +130,11 @@ for (const [domain, rows] of byDomain) {
 chunks.push(cur);
 cur.completeDomains.push(...completeSet); // row-less complete domains: harmless, see above
 
+// Statuses worth a second attempt: gateway/origin blips and rate limits.
+// Deliberately excludes 4xx like 401/413 — a bad token or an oversized body
+// fails the same way every time, and retrying only delays the real error.
+const TRANSIENT = new Set([429, 500, 502, 503, 504, 520, 521, 522, 523, 524]);
+
 const send = (rows, doms) =>
   SERVICE_KEY
     ? fetch(`${SUPABASE_URL}/rest/v1/rpc/ingest_listings`, {
@@ -159,7 +164,24 @@ console.error(
 
 const totals = { seen: 0, new: 0, price_changed: 0, delisted: 0, relisted: 0 };
 for (const [i, chunk] of chunks.entries()) {
-  const res = await send(chunk.rows, chunk.completeDomains);
+  // Retry transient edge failures before giving up on the night. On 2026-08-16
+  // chunk 5 of 8 came back 520 (a Cloudflare "origin returned nothing usable",
+  // not our payload — it failed in 42s, well inside the function's 150s wall
+  // clock, and the four chunks either side of it were the same size and fine).
+  // With no retry that one blip cost chunks 5-8 their sync AND skipped the
+  // price audit, recheck and variant refresh that run after it. The odds of
+  // getting hit compound with chunk count, and the OEM lanes have taken the
+  // feed from ~53k rows to ~64.5k, so this went from unlikely to routine.
+  // Replay is safe: ingest_listings upserts by VIN and derives delisting from
+  // the payload it is handed, so re-sending a chunk converges to the same
+  // state (it only costs an extra run id).
+  let res = await send(chunk.rows, chunk.completeDomains);
+  for (let attempt = 1; attempt <= 3 && !res.ok && TRANSIENT.has(res.status); attempt++) {
+    const waitMs = 10_000 * attempt;
+    console.error(`db-sync: chunk ${i + 1}/${chunks.length} HTTP ${res.status} — retry ${attempt}/3 in ${waitMs / 1000}s`);
+    await new Promise((r) => setTimeout(r, waitMs));
+    res = await send(chunk.rows, chunk.completeDomains);
+  }
   if (!res.ok) {
     // A failed chunk leaves its domains un-synced and un-delisted — stale for
     // a night, never wrongly removed. Exit hard so the failure is visible.
