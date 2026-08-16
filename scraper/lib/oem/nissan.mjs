@@ -66,11 +66,39 @@ export const OEM_LOCATOR_DOMAINS = new Set([NISSAN.domain, NISSAN_CPO.domain]);
 const MARKET = { lang: "en", region: "us", brand: "nissan", application: "inventory" };
 const LIMIT = 12; // server page-size cap
 const OFFSET_MAX = 120; // server offset cap (offset+limit ≈ 132 max per point)
-const CELL_RADIUS_MI = 100; // client-side radius bounding each grid cell
-const SUBDIVIDE_SPAN_MI = 50; // first sub-centre distance (½ the radius, well inside the cell)
-const MAX_DEPTH = 4; // subdivision depth cap (a pathologically dense metro)
-const EXTRA_ZIPS = ["96813", "99501"]; // Honolulu, Anchorage (off the CONUS grid)
+const CELL_RADIUS_MI = 100; // client-side radius bounding a metro cell; halves each subdivision
+const MAX_DEPTH = 2; // subdivision depth cap (≤21 cells/metro: radius 100→50→25mi)
+const REQUEST_BUDGET = 300; // hard per-lot request ceiling — keeps this single-host
+// serial lane polite (~5-6 min/lot). Coverage is truncated best-effort anyway,
+// and the densest metros (swept first) are where the subdivision spend matters.
 const VIN_RE = /^[A-HJ-NPR-Z0-9]{17}$/;
+
+// Anchor the sweep on metros, not a full national ZCTA grid. This endpoint
+// takes no radius (radius:null = nationwide distance-sorted, capped at ~132 per
+// point), so a full ~450-cell national grid means ~450 requests PER lot just to
+// discover that most cells are empty — and it is all one host at 1.1s/request,
+// which made the nightly run 40+ minutes. LEAF/ARIYA cluster in metros, so a
+// curated metro list + adaptive subdivision captures the overwhelming majority
+// at ~1/5 the cost. Coverage is a best-effort sample either way (truncated:true
+// always — see header), so trading the long rural tail for a practical runtime
+// is the right call. One representative ZIP per metro (must exist in
+// web/data/zips.json for its lat/lng); Honolulu + Anchorage included.
+const METRO_ZIPS = [
+  // California
+  "90001", "90015", "91101", "92801", "92101", "92660", "93301", "93720", "95814", "95112", "94102", "94538", "94596", "95376",
+  // Pacific NW + Mountain
+  "98101", "98402", "99201", "97201", "97401", "83702", "89101", "89501", "84101", "85001", "85701", "80202", "80904", "87102",
+  // Southwest + Texas
+  "79901", "75201", "76101", "77001", "78201", "78701", "73102", "74101",
+  // Midwest
+  "60601", "53202", "55401", "50309", "68102", "66101", "64101", "63101", "46201", "43215", "44101", "45201", "48201", "49503", "53703",
+  // Southeast
+  "70112", "39201", "36601", "35203", "72201", "37201", "38103", "40202", "30301", "29201", "29601", "28201", "27601", "32201", "32801", "33101", "33601", "33901",
+  // Mid-Atlantic + Northeast
+  "20001", "23219", "21201", "19101", "15201", "10001", "11201", "12207", "13202", "14604", "06103", "02101", "03101", "04101",
+  // Off-CONUS
+  "96813", "99501",
+];
 
 const NEW_QUERY = `query getInventory($market: Market!, $location: Geolocation!, $queryFilters: [InventoryFilterQuery!]!, $modelCodes: [String], $pagination: PaginationInput, $radius: Int, $sortMode: InventorySortModeEnum) {
   Inventory { getInventory(market:$market, location:$location, queryFilters:$queryFilters, modelCodes:$modelCodes, pagination:$pagination, radius:$radius, sortMode:$sortMode) {
@@ -239,12 +267,12 @@ async function gql(api, op, query, variables, report) {
   }
 }
 
-// Fetch one grid cell: page offset 0..120, keeping only cars within
-// CELL_RADIUS_MI (results are distance-sorted, so stop as soon as a whole page
-// falls outside). Returns { records, dense } — dense means we paged to the
-// ceiling with every car still inside the radius, i.e. the cell holds more
-// within-radius cars than the cap can return, so it should be subdivided.
-async function fetchCell(cfg, loc, report) {
+// Fetch one grid cell: page offset 0..120, keeping only cars within `radius`
+// (results are distance-sorted, so stop as soon as a whole page falls outside).
+// Returns { records, dense } — dense means we paged to the ceiling with every
+// car still inside the radius, i.e. the cell holds more within-radius cars than
+// the cap can return, so it should be subdivided (at a smaller radius).
+async function fetchCell(cfg, loc, radius, report) {
   const records = [];
   let hitCeiling = false;
   let sawBeyond = false;
@@ -257,7 +285,7 @@ async function fetchCell(cfg, loc, report) {
     let pageAllBeyond = true;
     for (const m of models) {
       const miles = m.dealer?.distance?.miles;
-      if (miles != null && miles > CELL_RADIUS_MI) { sawBeyond = true; continue; }
+      if (miles != null && miles > radius) { sawBeyond = true; continue; }
       pageAllBeyond = false;
       const rec = cfg.toRecord(m);
       if (rec) records.push(rec);
@@ -269,20 +297,23 @@ async function fetchCell(cfg, loc, report) {
   return { records, dense: hitCeiling && !sawBeyond };
 }
 
-// Walk one cell, recursing into four closer sub-centres when it is dense. `span`
-// is the sub-centre offset in miles, halved each level so a dense metro
-// converges instead of re-querying the same point.
-async function gridCell(cfg, zip, zips, byVin, report, seen, depth, span) {
-  if (seen.has(zip)) return;
+// Walk one cell, recursing into four closer sub-centres when it is dense. The
+// radius HALVES each level (100→50→25mi): a dense metro's sub-centres each cover
+// a tighter disc, so they stop reading "dense" and the recursion converges
+// instead of the 4^depth blow-up you get when every overlapping sub-centre still
+// sees the whole metro. The sub-centres are placed one radius apart so their
+// discs tile the parent's.
+async function gridCell(cfg, zip, zips, byVin, report, seen, depth, radius) {
+  if (seen.has(zip) || report.fetched >= REQUEST_BUDGET) return;
   seen.add(zip);
   const c = zips[zip];
   if (!c) return;
   const loc = { latitude: c[0], longitude: c[1], postalCode: zip };
-  const { records, dense } = await fetchCell(cfg, loc, report);
+  const { records, dense } = await fetchCell(cfg, loc, radius, report);
   for (const rec of records) byVin.set(rec.vin, rec);
   if (dense && depth < MAX_DEPTH) {
-    const sub = Math.max(20, Math.round(span / 2));
-    for (const sz of subdivideZips(zips, c[0], c[1], span)) {
+    const sub = Math.max(15, Math.round(radius / 2));
+    for (const sz of subdivideZips(zips, c[0], c[1], sub)) {
       if (!seen.has(sz)) await gridCell(cfg, sz, zips, byVin, report, seen, depth + 1, sub);
     }
   } else if (dense) {
@@ -290,35 +321,49 @@ async function gridCell(cfg, zip, zips, byVin, report, seen, depth, span) {
   }
 }
 
-// Sweep the national covering grid for one config (new or cpo). Shared by both
-// pullers below.
+// Sweep the metro anchors for one config (new or cpo), subdividing dense metros.
+// Shared by both pullers below. Uses the ZCTA table only for lat/lng lookups
+// (metro centres + subdivided sub-centres); the metro list itself is METRO_ZIPS.
 async function sweep(cfg, report, log) {
   const byVin = new Map();
   const grid = coveringGrid();
   if (!grid) {
-    report.errors.push("web/data/zips.json unavailable — cannot build covering grid");
+    report.errors.push("web/data/zips.json unavailable — cannot resolve metro coordinates");
     report.truncated = true;
     return report;
   }
-  const { cells, zips } = grid;
+  const { zips } = grid;
   const seen = new Set();
-  let done = 0;
-  // NISSAN_MAX_CELLS caps the base-grid cells swept — a smoke-test / ops throttle
-  // only; unset in the nightly, so the full national grid runs.
+  // NISSAN_MAX_CELLS caps the metros swept — a smoke-test / ops throttle only.
   const maxCells = Number(process.env.NISSAN_MAX_CELLS) || Infinity;
-  for (const [, cell] of cells) {
-    if (done >= maxCells) { report.notes.push(`NISSAN_MAX_CELLS=${maxCells} — partial sweep`); break; }
-    await gridCell(cfg, cell.zip, zips, byVin, report, seen, 0, SUBDIVIDE_SPAN_MI);
-    if (++done % 100 === 0) log(`${cfg.op}: ${done}/${cells.size} cells, ${byVin.size} VINs`);
+  const anchors = METRO_ZIPS.filter((z) => zips[z]).slice(0, maxCells);
+
+  // Pass 1: one base query per metro — guarantees national metro coverage before
+  // any budget can run out (the densest metros come first in the list).
+  const dense = [];
+  for (const zip of anchors) {
+    seen.add(zip);
+    const c = zips[zip];
+    const r = await fetchCell(cfg, { latitude: c[0], longitude: c[1], postalCode: zip }, CELL_RADIUS_MI, report);
+    for (const rec of r.records) byVin.set(rec.vin, rec);
+    if (r.dense) dense.push(zip);
   }
-  for (const zip of EXTRA_ZIPS) {
-    if (zips[zip]) await gridCell(cfg, zip, zips, byVin, report, seen, 0, SUBDIVIDE_SPAN_MI);
+  log(`${cfg.op}: pass1 ${anchors.length} metros → ${byVin.size} VINs (${dense.length} dense), ${report.fetched} reqs`);
+
+  // Pass 2: subdivide the dense metros (radius halves each level) until the
+  // per-lot budget is spent. gridCell recurses from depth 1.
+  for (const zip of dense) {
+    if (report.fetched >= REQUEST_BUDGET) { report.notes.push(`request budget ${REQUEST_BUDGET} hit — ${dense.indexOf(zip)}/${dense.length} dense metros subdivided`); break; }
+    const c = zips[zip];
+    for (const sz of subdivideZips(zips, c[0], c[1], CELL_RADIUS_MI / 2)) {
+      await gridCell(cfg, sz, zips, byVin, report, seen, 1, CELL_RADIUS_MI / 2);
+    }
   }
   report.evs = [...byVin.values()];
   report.vehiclePages = report.fetched;
-  report.notes.push(`covering grid r${CELL_RADIUS_MI}mi: ${cells.size} cells, ${byVin.size} BEVs`);
-  // Never certify complete: a distance-capped grid is a snapshot, so it must
-  // not drive delisting (see header).
+  report.notes.push(`metro grid r${CELL_RADIUS_MI}mi: ${anchors.length} anchors, ${dense.length} dense, ${byVin.size} BEVs, ${report.fetched} requests`);
+  // Never certify complete: a distance-capped metro sample is not exhaustive, so
+  // it must not drive delisting (see header).
   report.truncated = true;
   return report;
 }
