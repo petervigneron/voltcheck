@@ -10911,7 +10911,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Enterprise Car Sales | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | 2026-08-16: client-rendered, no server-side vehicle data found on homepage; inventory paths 404 without a location context."
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Enterprise Car Sales | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | 2026-08-16: client-rendered, no server-side vehicle data found on homepage; inventory paths 404 without a location context. | 2026-08-16: RESOLVED — inventory lives on the api.ehi.com OpenSearch BFF, covered nightly by lib/oem/enterprise.mjs (oem-locator lane, complete national sweep); do not crawl or re-probe this domain."
     },
     {
       "domain": "fordofkirkland.com",

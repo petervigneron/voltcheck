@@ -33,6 +33,11 @@
 //   Ford   — legacy shop.ford.com aemservices API retired (404); the new
 //            ford.com/inventory results route is Akamai 403 to non-browser
 //            clients while its landing page is 200. Same verdict as Tesla.
+//   Enterprise Car Sales — not an OEM but the same lane shape: their AEM SPA
+//            queries an OpenSearch BFF on api.ehi.com via a page-published
+//            anonymous-token flow, open to plain Node. One query is their
+//            whole national used stock (~14.5k, ~136 BEV incl. used Teslas)
+//            → lib/oem/enterprise.mjs
 import { mkdir, writeFile } from "node:fs/promises";
 import { richness } from "./lib/normalize.mjs";
 import { GM_BRANDS, CARBRAVO, pullGmBrand, pullCarBravo } from "./lib/oem/gm.mjs";
@@ -47,6 +52,7 @@ import { FORD_BLUE_ADVANTAGE, pullFordBlueAdvantage } from "./lib/oem/ford-blue-
 import { HONDA, pullHonda } from "./lib/oem/honda.mjs";
 import { AUDI, pullAudi } from "./lib/oem/audi.mjs";
 import { VW, pullVw } from "./lib/oem/vw.mjs";
+import { ENTERPRISE, pullEnterprise } from "./lib/oem/enterprise.mjs";
 
 // One registry of pullers keyed by brand. Each entry is a thunk returning a
 // crawl.mjs-shaped report; new OEM families plug in here without touching the
@@ -68,6 +74,7 @@ const PULLERS = {
   [HONDA.key]: { domain: HONDA.domain, run: () => pullHonda({ log }) },
   [AUDI.key]: { domain: AUDI.domain, run: () => pullAudi({ log }) },
   [VW.key]: { domain: VW.domain, run: () => pullVw({ log }) },
+  [ENTERPRISE.key]: { domain: ENTERPRISE.domain, run: () => pullEnterprise({ log }) },
 };
 
 const args = process.argv.slice(2);
@@ -76,7 +83,7 @@ function flag(name, fallback) {
   return i >= 0 ? args[i + 1] : fallback;
 }
 const OUT_DIR = flag("--out", "out");
-const wanted = flag("--brands", "chevrolet,gmc,cadillac,carbravo,hyundai,hyundai-cpo,kia,nissan,nissan-cpo,bmw,mercedes,jeep,dodge,fiat,genesis,ford-blue-advantage,honda,audi,vw").split(",").map((s) => s.trim().toLowerCase());
+const wanted = flag("--brands", "chevrolet,gmc,cadillac,carbravo,hyundai,hyundai-cpo,kia,nissan,nissan-cpo,bmw,mercedes,jeep,dodge,fiat,genesis,ford-blue-advantage,honda,audi,vw,enterprise").split(",").map((s) => s.trim().toLowerCase());
 const selected = wanted.filter((k) => PULLERS[k]);
 if (!selected.length) {
   console.error(`oem-locator: no known brands in "${wanted}" (have: ${Object.keys(PULLERS).join(",")})`);

@@ -27,17 +27,20 @@ import { OEM_LOCATOR_DOMAINS as MERCEDES_LOCATOR_DOMAINS } from "./lib/oem/merce
 import { OEM_LOCATOR_DOMAINS as STELLANTIS_LOCATOR_DOMAINS } from "./lib/oem/stellantis.mjs";
 import { OEM_LOCATOR_DOMAINS as GENESIS_LOCATOR_DOMAINS } from "./lib/oem/genesis.mjs";
 import { OEM_LOCATOR_DOMAINS as VW_LOCATOR_DOMAINS } from "./lib/oem/vw.mjs";
+import { OEM_LOCATOR_DOMAINS as ENTERPRISE_LOCATOR_DOMAINS } from "./lib/oem/enterprise.mjs";
 
 // Every OEM-locator source domain: recheck skips these (see the filter below).
 // (Ford Blue Advantage, Honda and Audi are intentionally NOT here — their rows
-// carry real dealer VDPs, so recheck verifies them per the normal path.)
+// carry real dealer VDPs, so recheck verifies them per the normal path.
+// enterprisecarsales.com IS here: Enterprise is the merchant itself and its
+// pull is the complete index nightly, so the sweep is the liveness check.)
 //
 // vw.com IS here, and for a sharper reason than the rest: its per-car page is
 // a client-rendered shell that returns byte-identical 200s for a real and a
 // fabricated car key and never contains the VIN. Rechecking it would not just
 // be useless, it would trip the "200 but no VIN" soft-gone rule on every VW
 // row and delist the entire lane. vw.mjs certifies its pull complete instead.
-const OEM_LOCATOR_DOMAINS = new Set([...GM_LOCATOR_DOMAINS, HYUNDAI.domain, KIA.domain, ...NISSAN_LOCATOR_DOMAINS, ...BMW_LOCATOR_DOMAINS, ...MERCEDES_LOCATOR_DOMAINS, ...STELLANTIS_LOCATOR_DOMAINS, ...GENESIS_LOCATOR_DOMAINS, ...VW_LOCATOR_DOMAINS]);
+const OEM_LOCATOR_DOMAINS = new Set([...GM_LOCATOR_DOMAINS, HYUNDAI.domain, KIA.domain, ...NISSAN_LOCATOR_DOMAINS, ...BMW_LOCATOR_DOMAINS, ...MERCEDES_LOCATOR_DOMAINS, ...STELLANTIS_LOCATOR_DOMAINS, ...GENESIS_LOCATOR_DOMAINS, ...VW_LOCATOR_DOMAINS, ...ENTERPRISE_LOCATOR_DOMAINS]);
 
 function flag(name, fallback) {
   const i = process.argv.indexOf(name);
