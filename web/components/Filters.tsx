@@ -171,11 +171,13 @@ export type FacetGroup = {
 
 /**
  * Facets whose values are a long open-ended list get a menu instead of a row of
- * chips: a Model Y's trims run past a dozen and cost two rows of the page, where
- * battery and range are two or three numbers each and read at a glance. The
- * value here is what the button says when nothing is picked.
+ * chips. A Model Y has 17 EPA figures and a dozen trims — between them they cost
+ * three rows of the page before a single car is visible. Battery is two or three
+ * numbers on the models that vary at all, which still reads at a glance, so it
+ * keeps its chips. The value here is what the button says when nothing is
+ * picked; it doubles as the menu row that clears the facet.
  */
-const MENU_FACETS: Record<string, string> = { trim: "All trims" };
+const MENU_FACETS: Record<string, string> = { trim: "All trims", epa: "Any range" };
 
 /** One facet as a closed menu — the label reads what's picked, not what exists. */
 function FacetMenu({
