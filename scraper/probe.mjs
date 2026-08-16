@@ -27,19 +27,29 @@ import { extractDcsVehicles, isDealerCarSearch, DCS_SRP_PATH } from "./lib/platf
 import { dealerFireVehicles } from "./lib/platforms/dealerfire.mjs";
 import { fingerprint } from "./lib/fingerprint.mjs";
 import { discoverSitemapUrls, rank, dedupe, SRP_PATHS } from "./lib/sitemap.mjs";
+import { spaSignals, countVinUrls } from "./lib/spa-signals.mjs";
 
 function flag(name, fallback) {
   const i = process.argv.indexOf(name);
   return i >= 0 ? Number(process.argv[i + 1]) : fallback;
 }
+function strFlag(name, fallback) {
+  const i = process.argv.indexOf(name);
+  return i >= 0 ? process.argv[i + 1] : fallback;
+}
 const LIMIT = flag("--limit", 120);
 const CONCURRENCY = flag("--concurrency", 6);
+// Nightly probes the fresh "discovered" rows. --status needs-investigation
+// re-sweeps the written-off pile instead — worth doing after an extractor or
+// detector improves, since those verdicts date from whatever the probe knew
+// at the time.
+const STATUS = strFlag("--status", "discovered");
 
 const regUrl = new URL("./registry/registry.json", import.meta.url);
 const registry = JSON.parse(await readFile(regUrl, "utf-8"));
-const candidates = registry.sites.filter((s) => s.status === "discovered").slice(0, LIMIT);
+const candidates = registry.sites.filter((s) => s.status === STATUS).slice(0, LIMIT);
 if (!candidates.length) {
-  console.error("probe: no discovered sites awaiting validation");
+  console.error(`probe: no "${STATUS}" sites awaiting validation`);
   process.exit(0);
 }
 
@@ -150,8 +160,18 @@ async function probeSite(site) {
     site.status = "working";
     site.notes = `${site.notes ?? ""} | auto-promoted by probe ${today}: ${vehiclesWithVin} VIN vehicles on ${pagesWithVehicles} page(s), platform ${site.platform}`.trim();
   } else {
+    // Say WHY nothing extracted, not just that it didn't. A client-rendered
+    // site with a visible data layer is a lane candidate, not a dead end —
+    // enterprisecarsales.com sat here three days while its HTML published
+    // the api key for a national inventory API (now lib/oem/enterprise.mjs).
+    const signals = spaSignals(home.body);
+    const vinUrls = countVinUrls(sitemapUrls);
+    if (vinUrls > 0) signals.unshift(`vin-url-sitemap:${vinUrls}`);
+    const verdict = signals.length
+      ? `client-rendered or API-backed; leads: ${signals.join(", ")}`
+      : "likely needs a platform extractor";
     site.status = "needs-investigation";
-    site.notes = `${site.notes ?? ""} | probe ${today}: 0 VIN vehicles in ${fetched} fetches (${itemListEntries} ItemList entries, platform ${site.platform}) — likely needs a platform extractor`.trim();
+    site.notes = `${site.notes ?? ""} | probe ${today}: 0 VIN vehicles in ${fetched} fetches (${itemListEntries} ItemList entries, platform ${site.platform}) — ${verdict}`.trim();
   }
   console.error(`  ${site.domain} → ${site.status} (${site.platform})`);
 }
@@ -173,6 +193,19 @@ async function worker() {
 }
 await Promise.all(Array.from({ length: Math.min(CONCURRENCY, candidates.length) }, worker));
 
-await writeFile(regUrl, JSON.stringify(registry, null, 2));
-const counts = registry.sites.reduce((a, s) => ((a[s.status] = (a[s.status] ?? 0) + 1), a), {});
+// Merge-on-write: a long sweep shares this tree with other sessions (and the
+// registry is hand-curated), so rewriting the file from a registry loaded
+// hours ago would clobber any edit made meanwhile. Re-read at write time and
+// fold in only the fields this probe actually changes, keyed by domain.
+const fresh = JSON.parse(await readFile(regUrl, "utf-8"));
+const probed = new Map(candidates.map((s) => [s.domain, s]));
+for (const site of fresh.sites) {
+  const p = probed.get(site.domain);
+  if (!p) continue;
+  site.status = p.status;
+  site.notes = p.notes;
+  site.platform = p.platform;
+}
+await writeFile(regUrl, JSON.stringify(fresh, null, 2));
+const counts = fresh.sites.reduce((a, s) => ((a[s.status] = (a[s.status] ?? 0) + 1), a), {});
 console.error(`probe: done — registry now ${JSON.stringify(counts)}`);
