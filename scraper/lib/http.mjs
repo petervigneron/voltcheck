@@ -4,6 +4,7 @@
 // record why rather than working around it.
 import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { gunzipSync } from "node:zlib";
 
 // Crawler identity — owner's decision, 2026-08-13, after measuring that a
 // declared-bot UA was refused by ~45% of dealers.
@@ -83,6 +84,38 @@ async function politeDelay(host) {
   lastHit.set(host, Date.now());
 }
 
+// Plenty of dealers publish their vehicle sitemap as sitemap-vehicle.xml.gz
+// and serve it with Content-Encoding: gzip as well — fetch strips the
+// transfer encoding and hands back the .gz file itself, whose bytes are not
+// XML, so every <loc> in it was invisible and those sites looked like they
+// listed no vehicle pages at all (DealerFire, found 2026-08-16). Unwrap gzip
+// members until the bytes stop looking gzipped; anything that isn't gzip
+// passes through untouched.
+const isGzip = (buf) => buf.length > 2 && buf[0] === 0x1f && buf[1] === 0x8b;
+
+async function readBody(res) {
+  let buf = Buffer.from(await res.arrayBuffer());
+  if (!isGzip(buf)) {
+    // Not gzip: decode exactly as res.text() would have. Some dealer CMSes
+    // still serve windows-1252, and hard-coding utf-8 here would mojibake
+    // every accented model name and trim on those sites.
+    const charset = /charset=["']?([\w-]+)/i.exec(res.headers.get("content-type") ?? "")?.[1];
+    try {
+      return new TextDecoder(charset || "utf-8").decode(buf);
+    } catch {
+      return buf.toString("utf-8");
+    }
+  }
+  for (let i = 0; i < 3 && isGzip(buf); i++) {
+    try {
+      buf = gunzipSync(buf);
+    } catch {
+      break;
+    }
+  }
+  return buf.toString("utf-8");
+}
+
 export async function fetchRaw(url, { timeoutMs = 15000 } = {}) {
   const u = new URL(url);
   await politeDelay(u.host);
@@ -101,7 +134,7 @@ export async function fetchRaw(url, { timeoutMs = 15000 } = {}) {
       redirect: "follow",
       signal: ctrl.signal,
     });
-    const body = await res.text();
+    const body = await readBody(res);
     return { status: res.status, body, finalUrl: res.url };
   } finally {
     clearTimeout(t);

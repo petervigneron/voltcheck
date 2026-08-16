@@ -15,6 +15,16 @@ import { extractDdcVehicles, enrichFromDdc } from "./lib/platforms/dealercom.mjs
 import { extractDealerOn, enrichFromDealerOn } from "./lib/platforms/dealeron.mjs";
 import { extractTeamVelocity, enrichFromTeamVelocity } from "./lib/platforms/teamvelocity.mjs";
 import { extractDrivewayVehicles } from "./lib/platforms/driveway.mjs";
+import { extractDcsVehicles, dcsNextPageUrl, dcsSeeds, isDealerCarSearch } from "./lib/platforms/dealercarsearch.mjs";
+import {
+  extractDealerFire,
+  extractDealerFireDealers,
+  enrichFromDealerFire,
+  dealerFireVehicles,
+  dealerFireSeeds,
+  dealerFireNextPageUrl,
+  isDealerFire,
+} from "./lib/platforms/dealerfire.mjs";
 
 const args = process.argv.slice(2);
 function flag(name, fallback) {
@@ -92,7 +102,56 @@ async function crawlDealer(domain) {
   ];
   const queue = dedupe([...srpSeeds, ...rank(sitemapUrls)]);
 
+  // Dealer Car Search sites are crawled through their own search page rather
+  // than one sitemap VDP at a time: a single SRP request enumerates up to 100
+  // cars, and its fuel-type facet hands back the electric ones on their own.
+  // Sites the registry already knows run it are seeded up front; the rest are
+  // recognised from the first DCS page this crawl happens to fetch (their
+  // sitemaps do list /vdp/ URLs, so one usually turns up on its own).
+  const dcs = { seeded: false, srp: new Set(), done: 0, failed: false, evVdps: new Set(), trimmed: false };
+  function seedDcs() {
+    if (dcs.seeded) return;
+    dcs.seeded = true;
+    const seeds = dcsSeeds(origin).filter((u) => !visited.has(u));
+    for (const u of seeds) dcs.srp.add(u);
+    queue.unshift(...seeds);
+    report.notes.push("dealercarsearch: seeded SRP + electric-facet SRP");
+  }
+  if (siteInfo.get(domain)?.platform === "dealercarsearch") seedDcs();
+
+  // DealerFire's SRP slug is per-rooftop ("/cars-for-sale-hillsboro-or"), so
+  // there is nothing to seed until a page of theirs tells us its own — which
+  // its SearchAction JSON-LD does. One request at limit=100 then replaces a
+  // hundred VDP fetches at their Crawl-delay of 10s.
+  let dfSeeded = false;
+  function seedDealerFire(html, pageUrl) {
+    if (dfSeeded) return;
+    const seeds = dealerFireSeeds(html, pageUrl).filter((u) => !visited.has(u));
+    if (!seeds.length) return;
+    dfSeeded = true;
+    queue.unshift(...seeds);
+    report.notes.push(`dealerfire: seeded ${seeds.length} SRP(s)`);
+  }
+
   while (queue.length && report.fetched < budget) {
+    // A completed DCS search walk has enumerated every car the dealer lists,
+    // so whatever is left in the queue can only re-find them — one page at a
+    // time, at the cost of the whole budget. Keep the EV detail pages still
+    // owed a fetch and drop the rest. Skipped if any SRP page in the walk
+    // failed: a walk with a hole in it saw a subset, and claiming otherwise
+    // would let db-sync delist cars that were merely unfetched.
+    if (dcs.seeded && !dcs.trimmed && !dcs.failed && dcs.done > 0 && dcs.done === dcs.srp.size) {
+      dcs.trimmed = true;
+      const owed = queue.filter((u) => dcs.evVdps.has(u));
+      queue.length = 0;
+      queue.push(...owed);
+      report.notes.push(`dealercarsearch: ${dcs.done} SRP pages covered the lot, ${owed.length} EV pages owed`);
+      // The loop's own `while (queue.length)` was tested before this ran, so
+      // an emptied queue has to be caught here or the next shift() hands
+      // fetchPage an undefined URL.
+      if (!queue.length) break;
+    }
+
     // Bail on dry holes (see floors above). Checked at the top of the loop
     // because the paths that matter most here — pages that 404, time out, or
     // are robots-disallowed — `continue` below without reaching the bottom.
@@ -111,15 +170,39 @@ async function crawlDealer(domain) {
     visited.add(url);
     const res = await fetchPage(url);
     report.fetched++;
-    if (res.status === "robots_disallowed") continue;
+    if (res.status === "robots_disallowed") {
+      if (dcs.srp.has(url)) dcs.failed = true;
+      continue;
+    }
     if (res.status !== 200 || !res.body) {
+      if (dcs.srp.has(url)) dcs.failed = true;
       report.errors.push(`${res.status} ${url}`);
       continue;
     }
+    if (dcs.srp.has(url)) {
+      // A 200 is not enough to count an SRP page as covered: plenty of sites
+      // answer any unknown path with a soft-404 homepage, and two of those
+      // would look like a finished walk and hand db-sync a licence to delist
+      // the dealer's whole inventory. It has to be a DCS page.
+      if (isDealerCarSearch(res.body)) dcs.done++;
+      else dcs.failed = true;
+    } else if (!dcs.seeded && isDealerCarSearch(res.body)) seedDcs();
 
     // Extract vehicles present on this page (VDPs, and SRPs that embed
-    // arrays; Driveway embeds its JSON-LD inside __NEXT_DATA__ instead)
-    const vehicles = [...extractVehicles(res.body), ...extractDrivewayVehicles(res.body)];
+    // arrays; Driveway embeds its JSON-LD inside __NEXT_DATA__ instead;
+    // Dealer Car Search emits no JSON-LD at all and is read from its Tealium
+    // product list plus the visible tiles)
+    const dcsVehicles = extractDcsVehicles(res.body, res.finalUrl);
+    const dcsVins = new Set(dcsVehicles.map((v) => v.vehicleIdentificationNumber));
+    if (isDealerFire(res.body)) seedDealerFire(res.body, res.finalUrl);
+    const dealerFire = extractDealerFire(res.body);
+    const dealerFireRooftops = dealerFire.size ? extractDealerFireDealers(res.body) : [];
+    const vehicles = [
+      ...extractVehicles(res.body),
+      ...extractDrivewayVehicles(res.body),
+      ...dcsVehicles,
+      ...dealerFireVehicles(res.body, res.finalUrl),
+    ];
     if (vehicles.length) report.vehiclePages++;
     const isSrp = vehicles.length > 1;
     // Platform layer: Dealer.com and DealerOn pages embed full vehicle records
@@ -138,11 +221,35 @@ async function crawlDealer(domain) {
       if (rec.vin && ddcByVin.has(rec.vin)) rec = enrichFromDdc(rec, ddcByVin.get(rec.vin));
       if (dealerOn) rec = enrichFromDealerOn(rec, dealerOn);
       if (teamVelocity) rec = enrichFromTeamVelocity(rec, teamVelocity);
+      if (rec.vin && dcsVins.has(rec.vin)) rec.platform = "dealercarsearch";
+      if (dealerFire.size) rec = enrichFromDealerFire(rec, dealerFire, dealerFireRooftops);
       report.evs.push(rec);
       // An SRP tile knows its car's own page — fetch the VDP for the full
       // record (odometer, trim, gallery, canonical URL).
-      if (isSrp && rec.vdpUrl && rec.vdpUrl.startsWith("http") && !visited.has(rec.vdpUrl))
+      if (isSrp && rec.vdpUrl && rec.vdpUrl.startsWith("http") && !visited.has(rec.vdpUrl)) {
         queue.unshift(rec.vdpUrl);
+        if (rec.platform === "dealercarsearch") dcs.evVdps.add(rec.vdpUrl);
+      }
+    }
+
+    // DCS paginates with ?page=N behind a <button onClick=…>, which the
+    // rel=next / href scan below cannot see.
+    if (dcs.srp.has(url)) {
+      const nextSrp = dcsNextPageUrl(res.body, res.finalUrl);
+      if (nextSrp && !visited.has(nextSrp) && !dcs.srp.has(nextSrp)) {
+        dcs.srp.add(nextSrp);
+        // Ahead of the sitemap URLs, not behind them: pushed to the back, the
+        // second SRP page sat behind ~180 sitemap VDPs and three of ten test
+        // sites burned their whole page budget without ever reaching it — so
+        // the walk never completed and the crawl could certify nothing.
+        queue.unshift(nextSrp);
+      }
+    }
+    // Same for DealerFire, which pages with ?limit=&offset= on links the
+    // generic scan doesn't recognise either.
+    if (dealerFire.size > 1) {
+      const nextDf = dealerFireNextPageUrl(res.body, res.finalUrl);
+      if (nextDf && !visited.has(nextDf)) queue.unshift(nextDf);
     }
 
     // Bridge: SRP ItemList → VDP urls, EV-filtered, jump the queue

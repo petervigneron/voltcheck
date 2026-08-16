@@ -12,11 +12,20 @@ export const EV_MODEL_RE = new RegExp(
     "ev6", "ev9", "niro ev", "soul ev",
     "id\\.? ?4", "id\\.? ?buzz", "e-tron", "q4 e", "q8 e", "taycan", "macan electric",
     "mach-e", "mach e", "f-150 lightning", "lightning",
-    "i3\\b", "i4\\b", "i5\\b", "i7\\b", "ix\\b",
+    // \b in front of the iX too, for the same reason as the C40 above: bare
+    // "ix\b" matched the tail of every word ending in those letters, so a
+    // Toyota Matrix and a Pontiac Grand Prix both came back name-matched EVs
+    // (2026-08-16). vPIC declined to confirm them and ingest held them, as
+    // designed — the cost was the decode, not a false listing.
+    "i3\\b", "i4\\b", "i5\\b", "i7\\b", "\\bix\\b",
     "eqb", "eqe", "eqs",
     "polestar [234]", "r1t", "r1s", "lucid air", "lucid gravity",
     "bz4x", "solterra", "rz ?[34]50", "prologue", "zdx",
-    "ex30", "ex90", "c40", "xc40 recharge",
+    // \b on the C40: unanchored, it matched inside "XC40", so every petrol
+    // XC40 came back a name-matched EV (a 2022 XC40 T5 AWD R-Design on
+    // gaautoworld.com, 2026-08-16). vPIC refuted them before ingest, so
+    // nothing false reached the site — it just spent a decode on each.
+    "ex30", "ex90", "\\bc40", "xc40 recharge",
   ].join("|"),
   "i"
 );
