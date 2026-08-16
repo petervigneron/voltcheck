@@ -736,6 +736,500 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     ],
   },
 
+  // -------------------------------------------------------------------
+  // EQE 350 / 350+, both bodies, 2023–2025 — the volume trims. Live
+  // inventory 2026-08-16: 286 SUV 350 4MATICs and 178 SUV 350+ alone.
+  //
+  // Dealer strings, checked against VIN positions 4–8 (Mercedes' Baumuster:
+  // EG2BB = 350+ sedan, EG1CB = 350 4MATIC sedan, GM2BB = 350+ SUV,
+  // GM1CB = 350 4MATIC SUV) across all 600+ live 350-family listings:
+  // every "+"-less filing ("350", "350 SUV", "EQE 350", "350 4MATIC") is a
+  // 4MATIC, and every 350+ carries its plus in some spelling. So bare-"350"
+  // trims key the 4MATIC rows only, and the one-sided-plus rule in
+  // trimMatches keeps them out of the 350+ rows. A bare "4MATIC" stays
+  // genuinely ambiguous between 350 and 500 — candidates, not a guess;
+  // before these rows existed it exact-matched the 500 row by default.
+  //
+  // MY2023 ranges are Mercedes' own announced EPA-estimates (no MY2023 EQE
+  // certification of either body exists on fueleconomy.gov — verified via
+  // its menu API 2026-08-16). MY2024/2025 figures are EPA certifications
+  // read directly from fueleconomy.gov, per-body ("(SUV)"-suffixed model
+  // strings) and per-year — the two years differ (sedan 350+ 298→308,
+  // SUV 350+ 307→302), so neither is carried across.
+  //
+  // Recall scopes are from NHTSA's vehicle-level index per campaign
+  // (api.nhtsa.gov, read 2026-08-16), which names the bodies separately
+  // ("EQE 350" vs "EQE SUV 350 4MATIC"): the fuse-box (24V115), roof-
+  // absorber (23V555) and steering-bolt (25V533) campaigns list no EQE
+  // SUVs; the BMS campaign (24V372) reaches sedans only for MY2024 but
+  // SUVs for MY2023–25; the AVAS campaign (25V366) lists the 350+ sedan
+  // but not the 350 4MATIC sedan.
+  // -------------------------------------------------------------------
+  {
+    id: "eqe-2023-350-plus",
+    make: "MERCEDES-BENZ",
+    model: "EQE",
+    modelAliases: ["EQE 350+", "EQE 350 Sedan", "EQE 350+ Sedan"],
+    modelYears: [2023, 2023],
+    trim: "EQE 350+",
+    drive: "RWD",
+    wmi: ["W1K"],
+    battery: { packUsableKwh: f(90.6, "mfr", "medium", "“Fitted standard with a 90.6 kWh battery, the EQE 350+ delivers 305 miles of range” — Mercedes' own MY2023 EQE Sedan launch release, read directly (media.mbusa.com)") },
+    range: { epaRangeMi: f(305, "mfr", "medium", "“Up to 305 miles of range according to EPA estimates” — Mercedes' own MY2023 launch release for the EQE 350+ sedan. fueleconomy.gov has no MY2023 EQE record of either body; its MY2024 “EQE 350 Plus” certification (298 mi) is the updated MY2024 car and is not carried back", "https://media.mbusa.com/releases/release-2f7d9b3c5c8916ac7e38443cec0023e3-all-new-fully-electric-eqe-sedan-to-start-from-74900") },
+    charging: {
+      portStandard: f("CCS1", "agg", "medium"),
+      dcPeakKw: f(170, "agg", "low", "Widely reported; not confirmed against a primary Mercedes document for MY2023"),
+      architectureV: f(400, "agg", "low", "Reported by secondary sources; the CCS 500A/400V ceiling matches the 170 kW peak"),
+    },
+    thermal: { heatPump: f("optional", "agg", "medium", "Mercedes made the heat pump standard on EQE/EQS sedans starting MY2024, the 2023 sedan likely lacks it unless optioned. (It was already standard on the EQE SUV since MY2023.)") },
+    warranty: {
+      batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets"),
+      batteryMiles: f(155_000, "mfr", "high"),
+      extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQE: 204 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance, a skipped-service history can void it.", "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner”, verified MY25/MY26 EQ booklets"),
+    },
+    buyerNotes: [
+      {
+        headline: "Fuse-box fire/power-loss recall, check remedy status",
+        body: "24V115 (2023–2024 EQE 350 among others): the 80-Amp fuses may have been manufactured incorrectly, which can cause sudden loss of drive power or a fire risk. Free dealer replacement of the fuse box; owner notices mailed April 2024. (NHTSA's wrong-part follow-up 25V255 lists the 350 4MATIC and 500 4MATIC, not the 350+ sedan.)",
+        severity: "trap",
+      },
+      {
+        headline: "Roof-frame absorbers may not be secured, check remedy status",
+        body: "23V555 (2023 EQE 500/350, AMG EQE): roof frame absorbers may not be properly secured and can detach during side-curtain air bag deployment. Free dealer replacement; owner notices mailed September 2023.",
+        severity: "warning",
+      },
+      {
+        headline: "Steering coupling bolt recall",
+        body: "25V533 (2023–2026 EQE): a steering coupling bolt may be improperly tightened, risking loss of steering control. Owner notices mailed October 2025.",
+        severity: "warning",
+      },
+      {
+        headline: "Pedestrian-alert sound software recall",
+        body: "25V366 (2023–2024 EQE 350+ among others): the Acoustic Vehicle Alerting System software can fail to play the required pedestrian warning sound. Free dealer software update.",
+        severity: "info",
+      },
+    ],
+  },
+
+  {
+    id: "eqe-2024-350-plus",
+    make: "MERCEDES-BENZ",
+    model: "EQE",
+    modelAliases: ["EQE 350+", "EQE 350 Sedan", "EQE 350+ Sedan"],
+    modelYears: [2024, 2024],
+    trim: "EQE 350+",
+    drive: "RWD",
+    wmi: ["W1K"],
+    battery: { packUsableKwh: f(90.6, "agg", "medium", "Carry-over of the pre-refresh pack Mercedes quoted for MY2023 (“Fitted standard with a 90.6 kWh battery”); the larger 96 kWh pack arrived with the MY2025 refresh") },
+    range: { epaRangeMi: f(298, "mfr", "high", "MY2024 EQE 350+, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47459") },
+    charging: {
+      portStandard: f("CCS1", "agg", "medium"),
+      dcPeakKw: f(170, "agg", "low", "Widely reported; not confirmed against a primary Mercedes document for MY2024"),
+    },
+    thermal: { heatPump: f("standard", "agg", "medium", "Standard on EQE/EQS sedans from MY2024 (read directly on the MY2026 MBUSA spec pages)") },
+    warranty: {
+      batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets"),
+      batteryMiles: f(155_000, "mfr", "high"),
+      extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQE: 204 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance, a skipped-service history can void it.", "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner”, verified MY25/MY26 EQ booklets"),
+    },
+    buyerNotes: [
+      {
+        headline: "Fuse-box fire/power-loss recall, check remedy status",
+        body: "24V115 (2023–2024 EQE 350 among others): the 80-Amp fuses may have been manufactured incorrectly, which can cause sudden loss of drive power or a fire risk. Free dealer replacement of the fuse box; owner notices mailed April 2024.",
+        severity: "trap",
+      },
+      {
+        headline: "Battery-management-system software recall, check remedy status",
+        body: "24V372 (2024 EQE 350+/350 4MATIC/500 4MATIC sedans, plus 2023–2025 EQE SUVs): a BMS software fault may cause the high-voltage battery to shut down, a sudden loss of drive power. Free software update; owner notices mailed July 2024. NHTSA's vehicle-level index scopes the sedan to MY2024 only.",
+        severity: "trap",
+      },
+      {
+        headline: "Steering coupling bolt recall",
+        body: "25V533 (2023–2026 EQE): a steering coupling bolt may be improperly tightened, risking loss of steering control. Owner notices mailed October 2025.",
+        severity: "warning",
+      },
+      {
+        headline: "Pedestrian-alert sound software recall",
+        body: "25V366 (2023–2024 EQE 350+ among others): the Acoustic Vehicle Alerting System software can fail to play the required pedestrian warning sound. Free dealer software update.",
+        severity: "info",
+      },
+    ],
+  },
+
+  {
+    id: "eqe-2025-350-plus",
+    make: "MERCEDES-BENZ",
+    model: "EQE",
+    modelAliases: ["EQE 350+", "EQE 350 Sedan", "EQE 350+ Sedan"],
+    modelYears: [2025, 2025],
+    trim: "EQE 350+",
+    drive: "RWD",
+    wmi: ["W1K"],
+    battery: { packUsableKwh: f(96, "vin", "medium", "Mercedes' per-VIN Part 565 filings on live MY2025 350+ sedans read 96.00 kWh — the pack the MY2026 EQE320+ (same 308-mi certification, renamed) lists on its MBUSA spec page; press coverage documented the larger pack arriving with the MY2025 refresh") },
+    range: { epaRangeMi: f(308, "mfr", "high", "MY2025 EQE 350+, EPA — the same certification the renamed MY2026 EQE320+ carries forward", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48384") },
+    charging: {
+      portStandard: f("CCS1", "agg", "medium"),
+      dcPeakKw: f(170, "agg", "low", "170 kW on the MY2026 EQE320+ MBUSA spec page, whose certification this car shares; not confirmed on a MY2025-specific document"),
+    },
+    thermal: { heatPump: f("standard", "agg", "medium", "Standard on EQE/EQS sedans from MY2024 (read directly on the MY2026 MBUSA spec pages)") },
+    warranty: {
+      batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets"),
+      batteryMiles: f(155_000, "mfr", "high"),
+      extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQE: 204 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance, a skipped-service history can void it.", "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner”, verified MY25/MY26 EQ booklets"),
+    },
+    buyerNotes: [
+      {
+        headline: "Steering coupling bolt recall",
+        body: "25V533 (2023–2026 EQE): a steering coupling bolt may be improperly tightened, risking loss of steering control. Owner notices mailed October 2025.",
+        severity: "warning",
+      },
+    ],
+  },
+
+  {
+    id: "eqe-2023-350-4matic",
+    make: "MERCEDES-BENZ",
+    model: "EQE",
+    modelAliases: ["EQE 350"],
+    modelYears: [2023, 2023],
+    trim: "EQE 350 4MATIC",
+    drive: "AWD",
+    wmi: ["W1K"],
+    battery: { packUsableKwh: f(90.6, "agg", "medium", "Same EVA2 pack across the MY2023 EQE sedan line — Mercedes' launch release quotes 90.6 kWh for the 350+, and period reviews report the same pack for the 4MATIC") },
+    range: { epaRangeMi: f(260, "mfr", "medium", "Mercedes' own EPA-estimated figure for the MY2023 EQE 350 4MATIC sedan, corroborated across multiple Mercedes franchise-dealer spec pages and period reviews. fueleconomy.gov has no MY2023 EQE record at all; its MY2024 “EQE 350 4matic” certification (280 mi) is the updated MY2024 car and is not carried back", "https://www.mbkcsouth.com/2023-eqe-sedan-range/") },
+    charging: {
+      portStandard: f("CCS1", "agg", "medium"),
+      dcPeakKw: f(170, "agg", "low", "Widely reported; not confirmed against a primary Mercedes document for MY2023"),
+      architectureV: f(400, "agg", "low", "Reported by secondary sources; the CCS 500A/400V ceiling matches the 170 kW peak"),
+    },
+    thermal: { heatPump: f("optional", "agg", "medium", "Mercedes made the heat pump standard on EQE/EQS sedans starting MY2024, the 2023 sedan likely lacks it unless optioned. (It was already standard on the EQE SUV since MY2023.)") },
+    warranty: {
+      batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets"),
+      batteryMiles: f(155_000, "mfr", "high"),
+      extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQE: 204 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance, a skipped-service history can void it.", "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner”, verified MY25/MY26 EQ booklets"),
+    },
+    buyerNotes: [
+      {
+        headline: "Fuse-box fire/power-loss recall, two rounds, check which repair this VIN got",
+        body: "24V115 (80-Amp fuses manufactured incorrectly, can cause sudden loss of drive power or fire risk): free replacement fuse box. 25V255: some vehicles repaired under 24V115 received the WRONG replacement fuse box, which itself carries increased fire risk, a second free repair — NHTSA's vehicle-level scope for that follow-up includes the 2023 EQE 350 4MATIC sedan. Confirm this VIN got the correct part, not just “a” repair.",
+        severity: "trap",
+      },
+      {
+        headline: "Roof-frame absorbers may not be secured, check remedy status",
+        body: "23V555 (2023 EQE 500/350, AMG EQE): roof frame absorbers may not be properly secured and can detach during side-curtain air bag deployment. Free dealer replacement; owner notices mailed September 2023.",
+        severity: "warning",
+      },
+      {
+        headline: "Steering coupling bolt recall",
+        body: "25V533 (2023–2026 EQE): a steering coupling bolt may be improperly tightened, risking loss of steering control. Owner notices mailed October 2025.",
+        severity: "warning",
+      },
+    ],
+  },
+
+  {
+    id: "eqe-2024-350-4matic",
+    make: "MERCEDES-BENZ",
+    model: "EQE",
+    modelAliases: ["EQE 350"],
+    modelYears: [2024, 2024],
+    trim: "EQE 350 4MATIC",
+    drive: "AWD",
+    wmi: ["W1K"],
+    battery: { packUsableKwh: f(90.6, "agg", "medium", "Carry-over of the pre-refresh EVA2 pack; the MY2025 refresh's larger 96 kWh pack went to the 350+ and 500, not the 350 4MATIC") },
+    range: { epaRangeMi: f(280, "mfr", "high", "MY2024 EQE 350 4MATIC, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47458") },
+    charging: {
+      portStandard: f("CCS1", "agg", "medium"),
+      dcPeakKw: f(170, "agg", "low", "Widely reported; not confirmed against a primary Mercedes document for MY2024"),
+    },
+    thermal: { heatPump: f("standard", "agg", "medium", "Standard on EQE/EQS sedans from MY2024 (read directly on the MY2026 MBUSA spec pages)") },
+    warranty: {
+      batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets"),
+      batteryMiles: f(155_000, "mfr", "high"),
+      extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQE: 204 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance, a skipped-service history can void it.", "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner”, verified MY25/MY26 EQ booklets"),
+    },
+    buyerNotes: [
+      {
+        headline: "Fuse-box fire/power-loss recall, check remedy status",
+        body: "24V115 (2023–2024 EQE 350 among others): the 80-Amp fuses may have been manufactured incorrectly, which can cause sudden loss of drive power or a fire risk. Free dealer replacement of the fuse box; owner notices mailed April 2024.",
+        severity: "trap",
+      },
+      {
+        headline: "Battery-management-system software recall, check remedy status",
+        body: "24V372 (2024 EQE 350+/350 4MATIC/500 4MATIC sedans, plus 2023–2025 EQE SUVs): a BMS software fault may cause the high-voltage battery to shut down, a sudden loss of drive power. Free software update; owner notices mailed July 2024. NHTSA's vehicle-level index scopes the sedan to MY2024 only.",
+        severity: "trap",
+      },
+      {
+        headline: "Steering coupling bolt recall",
+        body: "25V533 (2023–2026 EQE): a steering coupling bolt may be improperly tightened, risking loss of steering control. Owner notices mailed October 2025.",
+        severity: "warning",
+      },
+    ],
+  },
+
+  {
+    id: "eqe-2025-350-4matic",
+    make: "MERCEDES-BENZ",
+    model: "EQE",
+    modelAliases: ["EQE 350"],
+    modelYears: [2025, 2025],
+    trim: "EQE 350 4MATIC",
+    drive: "AWD",
+    wmi: ["W1K"],
+    battery: { packUsableKwh: f(90.5, "agg", "low", "The MY2026 EQE320 4MATIC — which carries this exact 267-mi certification forward — is a 90.5 kWh car on Mercedes' own spec page, and press reporting on the MY2025 refresh kept the smaller pack on the 350 4MATIC. Mercedes' per-VIN Part 565 filings on live MY2025 350 4MATICs read 96.00, contradicting both; the conflict is flagged here rather than resolved") },
+    range: { epaRangeMi: f(267, "mfr", "high", "MY2025 EQE 350 4MATIC, EPA — the same certification the renamed MY2026 EQE320 4MATIC carries forward", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48383") },
+    charging: {
+      portStandard: f("CCS1", "agg", "medium"),
+      dcPeakKw: f(170, "agg", "low", "170 kW on the MY2026 EQE320 4MATIC MBUSA spec page, whose certification this car shares; not confirmed on a MY2025-specific document"),
+    },
+    thermal: { heatPump: f("standard", "agg", "medium", "Standard on EQE/EQS sedans from MY2024 (read directly on the MY2026 MBUSA spec pages)") },
+    warranty: {
+      batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets"),
+      batteryMiles: f(155_000, "mfr", "high"),
+      extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQE: 204 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance, a skipped-service history can void it.", "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner”, verified MY25/MY26 EQ booklets"),
+    },
+    buyerNotes: [
+      {
+        headline: "Steering coupling bolt recall",
+        body: "25V533 (2023–2026 EQE): a steering coupling bolt may be improperly tightened, risking loss of steering control. Owner notices mailed October 2025.",
+        severity: "warning",
+      },
+    ],
+  },
+
+  // The SUV counterparts — Tuscaloosa-built (4JG), separate EPA ratings,
+  // and a recall history that is broader than the sedan's for the BMS
+  // campaign (MY2023–25 vs sedan MY2024 only) and narrower for the fuse,
+  // roof and steering campaigns (no EQE SUVs listed at all).
+  {
+    id: "eqe-suv-2023-350-plus",
+    make: "MERCEDES-BENZ",
+    model: "EQE SUV",
+    modelAliases: ["EQE", "EQE 350+", "Mercedes-EQ EQE SUV"],
+    modelYears: [2023, 2023],
+    trim: ["EQE 350+", "350+ SUV"],
+    drive: "RWD",
+    wmi: ["4JG"],
+    battery: { packUsableKwh: f(90.6, "agg", "low", "Same EVA2-platform pack as the EQE sedan; widely reported across aggregators, and Mercedes' own press materials for the SUV do not state a pack size") },
+    range: { epaRangeMi: f(279, "mfr", "medium", "Mercedes' own EPA-estimated figure announced for the MY2023 EQE 350+ SUV. fueleconomy.gov has no MY2023 EQE record of either body; its MY2024 “EQE 350 Plus (SUV)” certification (307 mi) is the updated MY2024 car and is not carried back", "https://insideevs.com/news/668377/2023-mercedes-eqe-suv-epa-range-price/") },
+    charging: {
+      portStandard: f("CCS1", "agg", "medium"),
+      dcPeakKw: f(170, "agg", "low", "Widely reported, matching the sedan's EVA2 hardware; not confirmed against a primary Mercedes document for MY2023"),
+      architectureV: f(400, "agg", "low", "Reported by secondary sources; the CCS 500A/400V ceiling matches the 170 kW peak"),
+    },
+    thermal: { heatPump: f("standard", "mfr", "high", "“Two all-new standard innovations launch with the EQE SUV to further improve range: a heat pump and an intelligent powertrain management system” — MBUSA EQE SUV launch release, read directly") },
+    warranty: {
+      batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets"),
+      batteryMiles: f(155_000, "mfr", "high"),
+      extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQE: 204 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance, a skipped-service history can void it.", "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner”, verified MY25/MY26 EQ booklets"),
+    },
+    buyerNotes: [
+      {
+        headline: "Battery-management-system software recall, check remedy status",
+        body: "24V372 (2023–2025 EQE SUV 350/350+/500 4MATIC, plus EQS SUVs and 2024 sedans): a BMS software fault may cause the high-voltage battery to shut down, a sudden loss of drive power. Free software update; owner notices mailed July 2024. NHTSA's vehicle-level index scopes this to the SUV for MY2023 — the 2023 sedan is not included.",
+        severity: "trap",
+      },
+      {
+        headline: "Pedestrian-alert sound software recall",
+        body: "25V366 (2023–2025 EQE SUV among others): the Acoustic Vehicle Alerting System software can fail to play the required pedestrian warning sound. Free dealer software update.",
+        severity: "info",
+      },
+    ],
+  },
+
+  {
+    id: "eqe-suv-2024-350-plus",
+    make: "MERCEDES-BENZ",
+    model: "EQE SUV",
+    modelAliases: ["EQE", "EQE 350+", "Mercedes-EQ EQE SUV"],
+    modelYears: [2024, 2024],
+    trim: ["EQE 350+", "350+ SUV"],
+    drive: "RWD",
+    wmi: ["4JG"],
+    battery: { packUsableKwh: f(90.6, "agg", "low", "Same EVA2-platform pack as the EQE sedan; widely reported across aggregators, and Mercedes' own press materials for the SUV do not state a pack size") },
+    range: { epaRangeMi: f(307, "mfr", "high", "MY2024 EQE 350+ SUV, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47846") },
+    charging: {
+      portStandard: f("CCS1", "agg", "medium"),
+      dcPeakKw: f(170, "agg", "low", "Widely reported, matching the sedan's EVA2 hardware; not confirmed against a primary Mercedes document for MY2024"),
+    },
+    thermal: { heatPump: f("standard", "mfr", "high", "“Two all-new standard innovations launch with the EQE SUV to further improve range: a heat pump and an intelligent powertrain management system” — MBUSA EQE SUV launch release, read directly; standard since launch") },
+    warranty: {
+      batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets"),
+      batteryMiles: f(155_000, "mfr", "high"),
+      extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQE: 204 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance, a skipped-service history can void it.", "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner”, verified MY25/MY26 EQ booklets"),
+    },
+    buyerNotes: [
+      {
+        headline: "Battery-management-system software recall, check remedy status",
+        body: "24V372 (2023–2025 EQE SUV 350/350+/500 4MATIC, plus EQS SUVs and 2024 sedans): a BMS software fault may cause the high-voltage battery to shut down, a sudden loss of drive power. Free software update; owner notices mailed July 2024.",
+        severity: "trap",
+      },
+      {
+        headline: "Pedestrian-alert sound software recall",
+        body: "25V366 (2023–2025 EQE SUV among others): the Acoustic Vehicle Alerting System software can fail to play the required pedestrian warning sound. Free dealer software update.",
+        severity: "info",
+      },
+    ],
+  },
+
+  {
+    id: "eqe-suv-2025-350-plus",
+    make: "MERCEDES-BENZ",
+    model: "EQE SUV",
+    modelAliases: ["EQE", "EQE 350+", "Mercedes-EQ EQE SUV"],
+    modelYears: [2025, 2025],
+    trim: ["EQE 350+", "350+ SUV"],
+    drive: "RWD",
+    wmi: ["4JG"],
+    battery: { packUsableKwh: f(96, "agg", "medium", "The MY2026 EQE320+ SUV — which carries this exact 302-mi certification forward under the new name — files 96.00 kWh per VIN under Part 565, and the sedan 350+ moved to the 96 kWh pack for MY2025; no MY2025-SUV-specific primary document located") },
+    range: { epaRangeMi: f(302, "mfr", "high", "MY2025 EQE 350+ SUV, EPA — the same certification the renamed MY2026 EQE320+ SUV carries forward", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48390") },
+    charging: {
+      portStandard: f("CCS1", "agg", "medium"),
+      dcPeakKw: f(170, "agg", "low", "Widely reported, matching the EQE family's EVA2 hardware; not confirmed against a MY2025-specific Mercedes document"),
+    },
+    thermal: { heatPump: f("standard", "mfr", "high", "“Two all-new standard innovations launch with the EQE SUV to further improve range: a heat pump and an intelligent powertrain management system” — MBUSA EQE SUV launch release, read directly; standard since launch") },
+    warranty: {
+      batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets"),
+      batteryMiles: f(155_000, "mfr", "high"),
+      extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQE: 204 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance, a skipped-service history can void it.", "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner”, verified MY25/MY26 EQ booklets"),
+    },
+    buyerNotes: [
+      {
+        headline: "Battery-management-system software recall, check remedy status",
+        body: "24V372 (2023–2025 EQE SUV 350/350+/500 4MATIC, plus EQS SUVs and 2024 sedans): a BMS software fault may cause the high-voltage battery to shut down, a sudden loss of drive power. Free software update; owner notices mailed July 2024.",
+        severity: "trap",
+      },
+      {
+        headline: "Pedestrian-alert sound software recall",
+        body: "25V366 (2023–2025 EQE SUV among others): the Acoustic Vehicle Alerting System software can fail to play the required pedestrian warning sound. Free dealer software update.",
+        severity: "info",
+      },
+    ],
+  },
+
+  {
+    id: "eqe-suv-2023-350-4matic",
+    make: "MERCEDES-BENZ",
+    model: "EQE SUV",
+    modelAliases: ["EQE", "EQE 350", "EQE 350 SUV"],
+    modelYears: [2023, 2023],
+    trim: ["EQE 350 4MATIC", "350 SUV"],
+    drive: "AWD",
+    wmi: ["4JG"],
+    battery: { packUsableKwh: f(90.6, "agg", "low", "Same EVA2-platform pack as the EQE sedan; widely reported across aggregators, and Mercedes' own press materials for the SUV do not state a pack size") },
+    range: { epaRangeMi: f(253, "mfr", "medium", "Mercedes' own EPA-estimated figure announced for the MY2023 EQE 350 4MATIC SUV. fueleconomy.gov has no MY2023 EQE record of either body; its MY2024 “EQE 350 4matic (SUV)” certification (265 mi) is the updated MY2024 car and is not carried back", "https://insideevs.com/news/668377/2023-mercedes-eqe-suv-epa-range-price/") },
+    charging: {
+      portStandard: f("CCS1", "agg", "medium"),
+      dcPeakKw: f(170, "agg", "low", "Widely reported, matching the sedan's EVA2 hardware; not confirmed against a primary Mercedes document for MY2023"),
+      architectureV: f(400, "agg", "low", "Reported by secondary sources; the CCS 500A/400V ceiling matches the 170 kW peak"),
+    },
+    thermal: { heatPump: f("standard", "mfr", "high", "“Two all-new standard innovations launch with the EQE SUV to further improve range: a heat pump and an intelligent powertrain management system” — MBUSA EQE SUV launch release, read directly") },
+    warranty: {
+      batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets"),
+      batteryMiles: f(155_000, "mfr", "high"),
+      extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQE: 204 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance, a skipped-service history can void it.", "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner”, verified MY25/MY26 EQ booklets"),
+    },
+    buyerNotes: [
+      {
+        headline: "Battery-management-system software recall, check remedy status",
+        body: "24V372 (2023–2025 EQE SUV 350/350+/500 4MATIC, plus EQS SUVs and 2024 sedans): a BMS software fault may cause the high-voltage battery to shut down, a sudden loss of drive power. Free software update; owner notices mailed July 2024. NHTSA's vehicle-level index scopes this to the SUV for MY2023 — the 2023 sedan is not included.",
+        severity: "trap",
+      },
+      {
+        headline: "Some fuse-box repairs used the wrong part, check which fix this VIN got",
+        body: "25V255 (NHTSA's vehicle-level scope includes the 2023 EQE SUV 350/500 4MATIC): some vehicles repaired under the 24V115 fuse-box campaign received an INCORRECT replacement fuse box, which itself carries increased fire risk — a second free repair. Confirm this VIN either was never in 24V115 scope or got the corrected part.",
+        severity: "warning",
+      },
+      {
+        headline: "Pedestrian-alert sound software recall",
+        body: "25V366 (2023–2025 EQE SUV among others): the Acoustic Vehicle Alerting System software can fail to play the required pedestrian warning sound. Free dealer software update.",
+        severity: "info",
+      },
+    ],
+  },
+
+  {
+    id: "eqe-suv-2024-350-4matic",
+    make: "MERCEDES-BENZ",
+    model: "EQE SUV",
+    modelAliases: ["EQE", "EQE 350", "EQE 350 SUV"],
+    modelYears: [2024, 2024],
+    trim: ["EQE 350 4MATIC", "350 SUV"],
+    drive: "AWD",
+    wmi: ["4JG"],
+    battery: { packUsableKwh: f(90.6, "agg", "low", "Same EVA2-platform pack as the EQE sedan; widely reported across aggregators, and Mercedes' own press materials for the SUV do not state a pack size") },
+    range: { epaRangeMi: f(265, "mfr", "high", "MY2024 EQE 350 4MATIC SUV, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47848") },
+    charging: {
+      portStandard: f("CCS1", "agg", "medium"),
+      dcPeakKw: f(170, "agg", "low", "Widely reported, matching the sedan's EVA2 hardware; not confirmed against a primary Mercedes document for MY2024"),
+    },
+    thermal: { heatPump: f("standard", "mfr", "high", "“Two all-new standard innovations launch with the EQE SUV to further improve range: a heat pump and an intelligent powertrain management system” — MBUSA EQE SUV launch release, read directly; standard since launch") },
+    warranty: {
+      batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets"),
+      batteryMiles: f(155_000, "mfr", "high"),
+      extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQE: 204 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance, a skipped-service history can void it.", "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner”, verified MY25/MY26 EQ booklets"),
+    },
+    buyerNotes: [
+      {
+        headline: "Battery-management-system software recall, check remedy status",
+        body: "24V372 (2023–2025 EQE SUV 350/350+/500 4MATIC, plus EQS SUVs and 2024 sedans): a BMS software fault may cause the high-voltage battery to shut down, a sudden loss of drive power. Free software update; owner notices mailed July 2024.",
+        severity: "trap",
+      },
+      {
+        headline: "Pedestrian-alert sound software recall",
+        body: "25V366 (2023–2025 EQE SUV among others): the Acoustic Vehicle Alerting System software can fail to play the required pedestrian warning sound. Free dealer software update.",
+        severity: "info",
+      },
+    ],
+  },
+
+  {
+    id: "eqe-suv-2025-350-4matic",
+    make: "MERCEDES-BENZ",
+    model: "EQE SUV",
+    modelAliases: ["EQE", "EQE 350", "EQE 350 SUV"],
+    modelYears: [2025, 2025],
+    trim: ["EQE 350 4MATIC", "350 SUV"],
+    drive: "AWD",
+    wmi: ["4JG"],
+    battery: { packUsableKwh: f(90.5, "agg", "low", "The MY2026 EQE320 4MATIC SUV — which carries this exact 253-mi certification forward under the new name — files 90.5 kWh per VIN under Part 565, matching its MBUSA spec page; not separately confirmed for MY2025") },
+    range: { epaRangeMi: f(253, "mfr", "high", "MY2025 EQE 350 4MATIC SUV, EPA — the same certification the renamed MY2026 EQE320 4MATIC SUV carries forward", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48394") },
+    charging: {
+      portStandard: f("CCS1", "agg", "medium"),
+      dcPeakKw: f(170, "agg", "low", "Widely reported, matching the EQE family's EVA2 hardware; not confirmed against a MY2025-specific Mercedes document"),
+    },
+    thermal: { heatPump: f("standard", "mfr", "high", "“Two all-new standard innovations launch with the EQE SUV to further improve range: a heat pump and an intelligent powertrain management system” — MBUSA EQE SUV launch release, read directly; standard since launch") },
+    warranty: {
+      batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets"),
+      batteryMiles: f(155_000, "mfr", "high"),
+      extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQE: 204 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance, a skipped-service history can void it.", "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner”, verified MY25/MY26 EQ booklets"),
+    },
+    buyerNotes: [
+      {
+        headline: "Battery-management-system software recall, check remedy status",
+        body: "24V372 (2023–2025 EQE SUV 350/350+/500 4MATIC, plus EQS SUVs and 2024 sedans): a BMS software fault may cause the high-voltage battery to shut down, a sudden loss of drive power. Free software update; owner notices mailed July 2024.",
+        severity: "trap",
+      },
+      {
+        headline: "Pedestrian-alert sound software recall",
+        body: "25V366 (2023–2025 EQE SUV among others): the Acoustic Vehicle Alerting System software can fail to play the required pedestrian warning sound. Free dealer software update.",
+        severity: "info",
+      },
+    ],
+  },
+
   {
     id: "eqe-2026-320-4matic",
     make: "MERCEDES-BENZ",

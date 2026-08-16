@@ -51,10 +51,15 @@ export function matchEnrichment(
     const n = norm(s);
     return n.startsWith(mk) && n.length > mk.length ? n.slice(mk.length) : n;
   };
+  // The trailing "+" is identity at the model level too: dealers file the
+  // EQE 350+ under model "EQE 350+", which norm() collapses onto "EQE 350" —
+  // the 4MATIC's filing. Same rule as trimMatches: a one-sided plus is two
+  // different cars, not a spelling variant.
+  const plusParity = (a: string, b: string) => a.includes("+") === b.includes("+");
   let rows = ALL_ROWS.filter(
     (r) =>
       norm(r.make) === mk &&
-      [r.model, ...(r.modelAliases ?? [])].some((m) => modelKey(m) === modelKey(model)) &&
+      [r.model, ...(r.modelAliases ?? [])].some((m) => modelKey(m) === modelKey(model) && plusParity(m, model)) &&
       modelYear >= r.modelYears[0] &&
       modelYear <= r.modelYears[1] &&
       trimMatches(r.trim, decode.trim)
