@@ -1,0 +1,37 @@
+name: Alert emails
+
+# Daily digest for saved-search alerts (web/scripts/send-alerts.mjs): new
+# listings and price cuts per confirmed subscription. Scheduled after the
+# nightly pipeline has synced and refreshed the freshness matview, so today's
+# arrivals carry today's dates. The script needs no npm install — it imports
+# only dependency-free lib modules under Node's type stripping — and exits 0
+# when RESEND_API_KEY / SUPABASE_SERVICE_ROLE_KEY aren't configured yet, so
+# this workflow is green-but-inert until those secrets exist.
+on:
+  schedule:
+    - cron: "30 18 * * *" # 11:30 America/Los_Angeles — nightly finalize is long done
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: alerts
+  cancel-in-progress: false
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Send alert digests
+        working-directory: web
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+        run: node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs scripts/send-alerts.mjs

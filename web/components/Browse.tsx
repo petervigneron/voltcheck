@@ -4,8 +4,10 @@ import { useEffect, useMemo, useReducer } from "react";
 import { useSearchParams } from "next/navigation";
 import { ListingCard, type GroundsMode } from "./ListingCard";
 import { SearchBar, FilterRail, SpecFacets, type FacetGroup, type Suggestion } from "./Filters";
-import { REMOVABLE, SPEC_FACETS, FACET_CAP, describeFilter, dropSpecFilters, splitValues, type SpecFacet } from "@/lib/filters";
+import { AlertSignup } from "./AlertSignup";
+import { SPEC_FACETS, FACET_CAP, describeFilter, dropSpecFilters } from "@/lib/filters";
 import { featuredScore, type CardRow } from "@/lib/listings/card";
+import { FACET_OF, activeFilterKeys, buildTests, rowMatches } from "@/lib/listings/match";
 import { useCardIndex } from "@/lib/listings/useCardIndex";
 import { milesBetween } from "@/lib/geo";
 import { pushUrl } from "@/lib/pushUrl";
@@ -15,14 +17,6 @@ const CELL = "border-r-[3px] border-b-[3px] border-ink";
 // The band under the search box: the four deepest models in inventory, each a
 // one-click search. Deep inventory is the popularity signal we actually have.
 const BAND_GROUNDS = ["bg-saffron", "bg-putty", "bg-putty", "bg-teal text-paper"];
-
-// Which field on a row each spec facet groups by. Values are strings because
-// that's what a URL carries; the numeric facets sort back to numbers.
-const FACET_OF: Record<SpecFacet, (r: CardRow) => string | undefined> = {
-  trim: (r) => r.trim,
-  kwh: (r) => (r.kwh != null ? String(r.kwh) : undefined),
-  epa: (r) => (r.rangeMi != null ? String(r.rangeMi) : undefined),
-};
 
 // Some feeds repeat the make inside the model ("Ford" / "Ford F-150
 // Lightning"), which would read as two models and cost those cars their spec
@@ -128,18 +122,6 @@ export function Browse() {
   const n = (k: string) => Number(s(k)) || undefined;
 
   const q = s("q").toLowerCase().trim();
-  const make = s("make");
-  const model = s("model");
-  const cond = s("cond");
-  const drive = s("drive");
-  const body = s("body");
-  const minPrice = n("minPrice");
-  const maxPrice = n("maxPrice");
-  const minYear = n("minYear");
-  const maxYear = n("maxYear");
-  const maxMiles = n("maxMiles");
-  const minRange = n("minRange");
-  const heatPump = s("heatPump") === "1";
   const zip = s("zip");
   const radiusParam = s("radius");
   const radius = radiusParam || "50";
@@ -194,61 +176,13 @@ export function Browse() {
       for (const r of all) if (r.loc) dist.set(r.id, Math.round(milesBetween(origin, r.loc)));
     }
 
-    // Each active filter is its own predicate, which is what lets an empty
-    // result say how many cars dropping any single one would give back.
-    const tests: Partial<Record<(typeof REMOVABLE)[number], (r: CardRow) => boolean>> = {};
-    // An inferred origin only *filters* when the visitor explicitly chose a
-    // radius; otherwise the 50-mile default would silently hide most inventory
-    // behind a guess, with no chip to say so.
-    if (origin && radius !== "any" && (zip || radiusParam)) {
-      tests.zip = (r) => {
-        const d = dist.get(r.id);
-        return d !== undefined && d <= Number(radius);
-      };
-    }
-    if (q) {
-      // A one- or two-letter token is a substring of half the language: "y" in
-      // "tesla model y" lands inside "grey" and drags in every Model 3 painted
-      // Stealth Grey. Short tokens have to match a whole word; longer ones keep
-      // matching inside one, which is what lets "buzz" find "ID. Buzz".
-      const toks = q.split(/\s+/).map((tok) => {
-        if (tok.length > 2) return (hay: string) => hay.includes(tok);
-        const re = new RegExp(`\\b${tok.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`);
-        return (hay: string) => re.test(hay);
-      });
-      tests.q = (r) => toks.every((match) => match(r.hay));
-    }
-    if (make) tests.make = (r) => r.make === make;
-    if (model) tests.model = (r) => r.model === model;
-    if (cond === "new") tests.cond = (r) => r.condition === "new";
-    else if (cond === "used") tests.cond = (r) => r.condition === "used" || r.condition === "certified" || !r.condition;
-    if (drive) tests.drive = (r) => r.drive === drive;
-    // Curated model→body map; cars we can't verifiably classify sit this one out.
-    if (body) tests.body = (r) => r.body === body;
-    // A price filter is about price, so a car whose feed gave us a lease
-    // payment instead of one can't satisfy it either way.
-    if (minPrice) tests.minPrice = (r) => r.realPrice && r.priceUsd >= minPrice;
-    if (maxPrice) tests.maxPrice = (r) => r.realPrice && r.priceUsd <= maxPrice;
-    if (minYear) tests.minYear = (r) => r.year >= minYear;
-    if (maxYear) tests.maxYear = (r) => r.year <= maxYear;
-    if (maxMiles) tests.maxMiles = (r) => r.mileage != null && r.mileage <= maxMiles;
-    if (minRange) tests.minRange = (r) => !!r.rangeMi && r.rangeMi >= minRange;
-    if (heatPump) tests.heatPump = (r) => r.heatPump === "yes";
-    // Values OR within a spec facet ("Lariat or XLT"), facets AND with each
-    // other. A car whose version we can't pin down has no value to match on and
-    // sits the facet out, the same way the drivetrain and body filters work.
-    for (const f of SPEC_FACETS) {
-      const on = new Set(splitValues(s(f.key)));
-      if (!on.size) continue;
-      const get = FACET_OF[f.key];
-      tests[f.key] = (r) => {
-        const v = get(r);
-        return v !== undefined && on.has(v);
-      };
-    }
+    // The predicates themselves live in lib/listings/match.ts, shared with
+    // the alert sender so an email can never fire on a car this grid
+    // wouldn't show. Distance context: only an actual origin filters.
+    const tests = buildTests(s, { distanceMi: origin ? (r) => dist.get(r.id) : undefined });
 
-    const activeKeys = REMOVABLE.filter((k) => tests[k]);
-    const matches = (r: CardRow, skip?: string) => activeKeys.every((k) => k === skip || tests[k]!(r));
+    const activeKeys = activeFilterKeys(tests);
+    const matches = (r: CardRow, skip?: string) => rowMatches(tests, r, skip);
 
     const results = all.filter((r) => matches(r));
 
@@ -453,6 +387,8 @@ export function Browse() {
               </button>
             )}
           </div>
+
+          <AlertSignup />
         </>
       ) : (
         <div className="border-t-[3px] border-l-[3px] border-ink">
@@ -480,6 +416,8 @@ export function Browse() {
             ))}
             <span className={`${CELL} flex-1 min-w-[40px] bg-paper`} aria-hidden="true" />
           </div>
+          {/* Zero matches is the strongest alert case: "tell me when one appears". */}
+          <AlertSignup />
         </div>
       )}
     </div>
