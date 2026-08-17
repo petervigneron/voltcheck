@@ -44,6 +44,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
                 Browse
               </Link>
               <Link
+                href="/saved"
+                className="flex items-center px-5 hover:bg-cobalt focus:outline-none focus:ring-[3px] focus:ring-inset focus:ring-cobalt"
+              >
+                Saved
+              </Link>
+              <Link
                 href="/vin"
                 className="flex items-center px-5 hover:bg-cobalt focus:outline-none focus:ring-[3px] focus:ring-inset focus:ring-cobalt"
               >

@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useReducer, useState } from "react";
+import { useEffect, useMemo, useReducer } from "react";
 import { useSearchParams } from "next/navigation";
 import { ListingCard, type GroundsMode } from "./ListingCard";
 import { SearchBar, FilterRail, SpecFacets, type FacetGroup, type Suggestion } from "./Filters";
 import { REMOVABLE, SPEC_FACETS, FACET_CAP, describeFilter, dropSpecFilters, splitValues, type SpecFacet } from "@/lib/filters";
 import { featuredScore, type CardRow } from "@/lib/listings/card";
-import { SHARDS, unpackIndex, type PackedIndex } from "@/lib/listings/pack";
+import { useCardIndex } from "@/lib/listings/useCardIndex";
 import { milesBetween } from "@/lib/geo";
 import { pushUrl } from "@/lib/pushUrl";
 
@@ -33,51 +33,8 @@ const modelKey = (r: CardRow) => {
   return `${make} ${model.startsWith(`${make} `) ? model.slice(make.length + 1) : model}`;
 };
 
-// The whole inventory arrives once per visitor (CDN-cached JSON, hourly
-// revalidate) and every filter, sort, and page flip after that is a pure
-// in-browser computation — no server round-trip, which is where the latency
-// used to live. Module-level cache so client-side navigation never refetches.
-let indexCache: CardRow[] | null = null;
-let indexPromise: Promise<CardRow[]> | null = null;
-
-function useCardIndex(): { rows: CardRow[] | null; failed: boolean } {
-  const [rows, setRows] = useState<CardRow[] | null>(indexCache);
-  const [failed, setFailed] = useState(false);
-  useEffect(() => {
-    if (indexCache) return;
-    // Every shard at once: the wait is the slowest file, not the sum of them.
-    // One shard failing fails the load — a grid quietly missing a sixth of the
-    // inventory is the failure this whole path exists to prevent.
-    indexPromise ??= Promise.all(
-      Array.from({ length: SHARDS }, (_, i) =>
-        fetch(`/api/index/${i}`).then(async (res) => {
-          if (!res.ok) throw new Error(`index shard ${i}: ${res.status}`);
-          // Unpacking is one pass over already-parsed JSON — cheaper than the
-          // parse itself, and it happens once per visitor.
-          return unpackIndex((await res.json()) as PackedIndex);
-        })
-      )
-    ).then((shards) => {
-      // Shard membership is keyed on the car (api/index/[shard]), so a car
-      // arriving twice means two shards were cached from different builds of
-      // the old positional scheme — possible until every cache has turned
-      // over. A doubled card reads as two cars for sale; keep the first.
-      const seen = new Set<string>();
-      return shards.flat().filter((r) => !seen.has(r.id) && (seen.add(r.id), true));
-    });
-    indexPromise.then(
-      (rs) => {
-        indexCache = rs;
-        setRows(rs);
-      },
-      () => {
-        indexPromise = null;
-        setFailed(true);
-      }
-    );
-  }, [failed]);
-  return { rows, failed };
-}
+// The inventory index hook lives in lib/listings/useCardIndex.ts — /saved
+// reads the same module-level cache, so the two pages share one download.
 
 // The shopper's zip resolves through a tiny CDN-cached lookup; listing
 // coordinates already ship in the index. Until the answer lands (or for a zip

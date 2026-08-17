@@ -9,6 +9,8 @@ import { listingTiles } from "@/lib/listings/tiles";
 import { Tile } from "@/components/Tile";
 import { hasRealPrice } from "@/lib/listings/price";
 import { AskSeller } from "@/components/AskSeller";
+import { SaveToggle } from "@/components/SaveToggle";
+import { DealerLink } from "@/components/DealerLink";
 import { RecentSales } from "@/components/RecentSales";
 import { fetchRecentSales } from "@/lib/listings/sales";
 import { listingPriceSignals } from "@/lib/listings/peers";
@@ -145,15 +147,20 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
             </div>
 
             {listing.sourceUrl && (
-              <a
+              <DealerLink
                 href={listing.sourceUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+                listingId={listing.id}
                 className="mt-4 block rounded-lg bg-emerald-600 py-2.5 text-center text-sm font-semibold text-white hover:bg-emerald-500"
               >
                 View original listing ↗
-              </a>
+              </DealerLink>
             )}
+            <SaveToggle
+              variant="detail"
+              id={listing.id}
+              title={`${listing.year} ${listing.make} ${listing.model}`}
+              priceUsd={hasRealPrice(listing) ? listing.priceUsd : undefined}
+            />
           </div>
         </div>
 

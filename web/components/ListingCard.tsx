@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Tile, type TileGround, type TileKind } from "./Tile";
+import { SaveToggle } from "./SaveToggle";
 import { askVsMarketTile, type CardRow, type CardTile } from "@/lib/listings/card";
 
 // Renders one precomputed card-index row (lib/listings/card.ts). Everything a
@@ -158,6 +159,10 @@ export function ListingCard({
           </div>
         )}
       </div>
+
+      {/* Save toggle, keylined into the top-right corner. It preventDefaults
+          its own click so saving never navigates. */}
+      <SaveToggle id={r.id} title={r.title} priceUsd={r.realPrice ? r.priceUsd : undefined} />
 
       {/* Hover and keyboard focus both draw the same inset keyline — no shadow,
           nothing that moves the card off the grid. */}
