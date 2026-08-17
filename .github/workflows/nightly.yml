@@ -264,7 +264,7 @@ jobs:
             echo "::warning::/api/revalidate unreachable (route not deployed yet?); site refreshes on the 24h cache backstop instead"
             exit 0
           fi
-          for s in 0 1 2 3 4 5; do
+          for s in first 0 1 2 3 4 5; do
             curl -fsS --retry 2 --max-time 300 -o /dev/null "https://voltcheck.net/api/index/$s" \
               || echo "::warning::shard $s warm-up failed; its first visitor pays the render"
           done

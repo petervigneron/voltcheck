@@ -29,5 +29,8 @@ export async function POST(req: Request) {
   }
   revalidateTag(FEED_CACHE_TAG, { expire: 0 });
   for (let s = 0; s < SHARDS; s++) revalidatePath(`/api/index/${s}`);
+  // The seventh body under the shard route: the first-paint payload. Same
+  // data, same staleness rules.
+  revalidatePath("/api/index/first");
   return Response.json({ revalidated: true });
 }
