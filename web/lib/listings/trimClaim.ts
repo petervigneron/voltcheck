@@ -1,6 +1,7 @@
 import type { Listing } from "./types";
 import { matchEnrichment } from "../enrichment/match";
 import { decodeTeslaVin, isTeslaVin } from "../tesla-vin";
+import { renamedTrim } from "./trimRename";
 
 /**
  * Whether we are willing to print this listing's trim as a fact.
@@ -102,7 +103,9 @@ export type TrimClaim =
   | { assert: false; reason: "contradicted"; feedTrim: string; proseTrim: string };
 
 export function trimClaim(l: Listing): TrimClaim {
-  const raw = (l.trim ?? "").trim();
+  // Read the trim the maker names for this model year, not the feed's stale
+  // token: Cadillac's 2026 Escalade IQ/IQL rename (see trimRename.ts).
+  const raw = (renamedTrim(l) ?? "").trim();
   if (!raw) return { assert: false, reason: "no-trim" };
   if (CAB_STYLES.test(raw)) return { assert: false, reason: "cab-style" };
   if (PLACEHOLDER.test(raw)) return { assert: false, reason: "placeholder" };
