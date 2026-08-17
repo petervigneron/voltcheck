@@ -97,9 +97,35 @@ function versionNamedByVinAlone(l: Listing): string | undefined {
 const namesVersion = (haystack: string, name: string): boolean =>
   new RegExp(`(^|[^A-Za-z0-9])${name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}([^A-Za-z0-9]|$)`, "i").test(haystack);
 
+/**
+ * Makes whose VIN carries no trim code, so the dealer's label is the only trim
+ * evidence that exists — nothing in the VIN, and nothing vPIC can backfill,
+ * confirms or denies it. Ford stamped no trim on 2022-23 F-150 Lightnings and
+ * Tesla has never filed one with vPIC, so its position 8 is a motor code, not a
+ * version. This is the same closed set migration 0016_vin_variant.sql names:
+ * its cohort-consensus resolver abstains on exactly these VINs (2022-23
+ * Lightning agrees only 41%, four trims sharing one code), and docs/LIGHTNING-VIN.md
+ * documents the VIN layout. Kept as narrow as that calibration — the 2024+
+ * Lightning is deliberately out of scope, its VIN codes and evidence are their
+ * own question.
+ */
+function trimNotVinEncoded(l: Listing): boolean {
+  if (l.vin && isTeslaVin(l.vin)) return true; // Tesla files no trim, any year
+  if (l.year < 2022 || l.year > 2023) return false;
+  // The Lightning by its VIN signature first (1FT + "W1E" + the L/V pack code in
+  // position 8): a dealer that filed the truck as a plain "F-150" is still
+  // selling a Lightning, and its trim is no more encoded for the mislabel. Same
+  // signature the price cohort keys on (comps.ts packHidesTrim).
+  const v = (l.vin ?? "").toUpperCase();
+  if (v.startsWith("1FT") && v.slice(4, 7) === "W1E") return true;
+  const make = l.make.trim().toUpperCase();
+  const model = l.model.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+  return make === "FORD" && model === "F150LIGHTNING";
+}
+
 export type TrimClaim =
   | { assert: true; trim: string }
-  | { assert: false; reason: "no-trim" | "cab-style" | "placeholder" }
+  | { assert: false; reason: "no-trim" | "cab-style" | "placeholder" | "not-vin-encoded" }
   | { assert: false; reason: "contradicted"; feedTrim: string; proseTrim: string };
 
 export function trimClaim(l: Listing): TrimClaim {
@@ -120,6 +146,19 @@ export function trimClaim(l: Listing): TrimClaim {
       return { assert: true, trim: raw };
     }
     return { assert: false, reason: "contradicted", feedTrim: raw, proseTrim: prose };
+  }
+  // No prose to argue with, but for a make the VIN doesn't encode a trim on, the
+  // bare feed label is a guess we can't check — the exact thing the accuracy
+  // study caught us printing (a "Pro" chip on a Lariat truck). Same test the
+  // prose branch uses, minus the prose: assert only where the VIN NAMES this
+  // version on its own; otherwise go quiet. For a Lightning the VIN never does
+  // (Pro through Platinum share one code), so the chip drops; a Tesla whose
+  // plant pins the trim still asserts, exactly as the Mach-E GT does above.
+  if (trimNotVinEncoded(l)) {
+    const fromVin = versionNamedByVinAlone(l);
+    if (!fromVin || !namesVersion(fromVin, raw)) {
+      return { assert: false, reason: "not-vin-encoded" };
+    }
   }
   return { assert: true, trim: raw };
 }

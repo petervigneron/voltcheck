@@ -308,6 +308,33 @@ export function askCohortFetchPattern(vin8: string): string {
   return v;
 }
 
+/**
+ * True for VIN cohorts where ONE pack identity spans several real trims, so a
+ * single-identity peer pool is not a single car — and neither the cohort key
+ * nor the identity guard below can split it.
+ *
+ * The 2022-23 F-150 Lightning is the one such cohort. Ford stamped no trim in
+ * the VIN (position 8 is the pack code, L or V), and Pro through Platinum — cars
+ * $30k apart new — all share the Extended-Range pack the enrichment layer keys
+ * identity on. The asserted-trim count in `vinPinsTrim` was the only thing that
+ * ever separated them; once the accuracy study stopped us asserting the
+ * unverifiable dealer trim on these trucks (trimClaim's not-vin-encoded gate),
+ * that count goes to zero and would read as "the VIN pins the trim" — the exact
+ * inversion this guards against.
+ *
+ * Detected by VIN, not model string: it also catches a Lightning a dealer filed
+ * as a plain "F-150" (VIN `1FTVW1EL…`), and it sits beside the other 1FT rules
+ * this file already owns. Tesla is deliberately NOT here — its VIN carries no
+ * trim either, but its pack identity (Long Range, Performance, Plaid) IS the
+ * version, so a single-identity Tesla pool is genuinely one car and the wide
+ * median is honest.
+ */
+export function packHidesTrim(vin: string | undefined, year: number): boolean {
+  if (!vin || vin.length < 8) return false;
+  const v = vin.toUpperCase();
+  return v.startsWith("1FT") && v.slice(4, 7) === "W1E" && (year === 2022 || year === 2023);
+}
+
 /** Cohort key is VIN 1-8 + model year — with the non-identity digits above
  *  masked, so a GVWR class can't split one truck's market into pots — and
  *  the pack code in position 8 keeps Extended and Standard Range apart. */
@@ -459,11 +486,19 @@ export function askVsMarket(
   //
   // Counting is the honest question anyway: this is not "is the mixture
   // expensive" but "are these the same car". Only asserted trims count — a
-  // cohort we have no trim evidence about cannot argue that it is mixed, which
-  // is the one hole left here, and it closes as feeds improve.
+  // cohort we have no trim evidence about cannot argue that it is mixed.
+  //
+  // That hole used to close "as feeds improve"; instead it opened wider. The
+  // accuracy study found we were asserting the dealer's unverifiable trim on
+  // 2022-23 Lightnings and stopped us (trimClaim's not-vin-encoded gate), so
+  // those trucks now carry NO asserted trim — cohortTrims empties and this test
+  // would read "the VIN pins the trim" on the very cohort that most notoriously
+  // doesn't. packHidesTrim names that cohort by VIN; there, an empty count is
+  // not evidence of one trim, so the wide median is refused and the narrow,
+  // same-trim pool answers or the card stays silent.
   const cohortTrims = new Set<string>();
   for (const p of asks.wide.get(k) ?? []) if (p.trimKey) cohortTrims.add(p.trimKey);
-  const vinPinsTrim = cohortTrims.size <= 1;
+  const vinPinsTrim = cohortTrims.size <= 1 && !packHidesTrim(vin, year);
 
   let peers: AskPeer[];
   if (vinPinsTrim) {
