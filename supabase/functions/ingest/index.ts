@@ -62,6 +62,11 @@ Deno.serve(async (req: Request) => {
     // stay as the rollback path.
     "stage_monthly_load",
     "commit_monthly_load",
+    // Which rooftops offered the same VIN tonight (migration 0036) — the
+    // dealer-group graph merge-shards.mjs used to throw away. Stream route
+    // only: the body already speaks the RPC's parameter shape, so there is
+    // nothing for this isolate to translate.
+    "ingest_colisting",
   ]);
   const streamRpc = req.headers.get("x-ingest-rpc");
   if (streamRpc) {
