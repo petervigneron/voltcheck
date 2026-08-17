@@ -26,6 +26,7 @@ import { fetchPage, setCacheTtl } from "./lib/http.mjs";
 const args = process.argv.slice(2);
 const WRITE = args.includes("--write");
 const LIMIT = (() => { const i = args.indexOf("--limit"); return i >= 0 ? Number(args[i + 1]) : 0; })();
+const CONC = (() => { const i = args.indexOf("--concurrency"); return i >= 0 ? Number(args[i + 1]) : 24; })();
 const csvPath = args.find((a) => !a.startsWith("--"));
 setCacheTtl(24 * 3600_000);
 
@@ -156,7 +157,7 @@ for (const dom of order) {
 let fetched = 0, next2 = 0;
 const fetchList = order.filter((dom) => !knownDomains.has(dom) && wantDomains.get(dom).some((i) => !verified.has(i)));
 console.error(`${fetchList.length} resolving domains to fetch+verify`);
-await Promise.all(Array.from({ length: 24 }, async () => {
+await Promise.all(Array.from({ length: CONC }, async () => {
   while (next2 < fetchList.length) {
     const dom = fetchList[next2++];
     const owners = wantDomains.get(dom).filter((i) => !verified.has(i) && !already.has(i));
