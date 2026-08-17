@@ -75,8 +75,15 @@ export function listingTiles(
     });
   }
 
-  if (l.mileage != null && l.mileage > 0 && l.mileage < 15000) t.push({ kind: "flag", text: "Low miles" });
-  else if (l.mileage != null && l.mileage > 100000) t.push({ kind: "flag", text: "High miles" });
+  // Only a used car can have low miles. On a new one the odometer reads
+  // delivery and demo trips, so the flag fired on ~6,800 cars that had nothing
+  // to boast about — a 2026 i5 with 3 miles on it and a Range Rover with 1 —
+  // and said, of a car whose own card already reads "New", that its mileage
+  // was a reason to buy it. High miles stays unconditional: a "new" car with
+  // 100,000 miles on it is a fact worth printing whatever the feed calls it.
+  if (l.condition !== "new" && l.mileage != null && l.mileage > 0 && l.mileage < 15000) {
+    t.push({ kind: "flag", text: "Low miles" });
+  } else if (l.mileage != null && l.mileage > 100000) t.push({ kind: "flag", text: "High miles" });
 
   return max ? t.slice(0, max) : t;
 }
