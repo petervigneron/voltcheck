@@ -213,7 +213,9 @@ function FacetMenu({
   return (
     <div
       ref={box}
-      className={`${CELL} relative flex grow items-center bg-paper sm:grow-0 sm:w-[280px]`}
+      // Grows to close its row instead of sitting at a fixed width beside a
+      // spacer — see SpecFacets on why the menus stopped having a row each.
+      className={`${CELL} relative flex grow items-center bg-paper sm:basis-[280px]`}
       onKeyDown={(e) => {
         if (e.key === "Escape") setOpen(false);
       }}
@@ -314,50 +316,72 @@ export function SpecFacets({ facets }: { facets: FacetGroup[] }) {
 
   if (facets.length === 0) return null;
 
+  // The menu facets share one row. A menu is a single 280px control, so on its
+  // own row it sat next to some 1,100px of empty cell — and with trim and
+  // range both menus that was two near-empty rows above the first car, which
+  // is most of what a search used to push off the screen. Side by side they
+  // close the row between them. Chip facets keep a row each: a battery row is
+  // already a row of blocks and has nothing to share.
+  const label = (f: FacetGroup) => (
+    <div key={`${f.key}-label`} className={`${CELL} flex w-full items-center bg-putty px-4 py-2.5 sm:w-[132px] ${FIELD_LABEL}`}>
+      {f.label}
+    </div>
+  );
+  const menus = facets.filter((f) => MENU_FACETS[f.key]);
+  const chipRows = facets.filter((f) => !MENU_FACETS[f.key]);
+
   return (
     <div className="border-l-[3px] border-ink">
-      {facets.map((f) => {
+      {menus.length > 0 && (
+        <div className="flex flex-wrap items-stretch">
+          {menus.map((f) => [
+            label(f),
+            <FacetMenu
+              key={f.key}
+              f={f}
+              on={new Set(splitValues(sp.get(f.key) ?? ""))}
+              pick={pick}
+              clear={clear}
+              allLabel={MENU_FACETS[f.key]}
+            />,
+          ])}
+        </div>
+      )}
+      {chipRows.map((f) => {
         const on = new Set(splitValues(sp.get(f.key) ?? ""));
         const open = expanded[f.key];
-        const allLabel = MENU_FACETS[f.key];
         // A value the shopper picked stays put even if it's too thin to have
         // made the cap — a chip can't vanish out from under its own ✓.
         const shown = open ? f.values : f.values.filter((v) => v.top || on.has(v.v));
         const hidden = f.values.length - shown.length;
         return (
           <div key={f.key} className="flex flex-wrap items-stretch">
-            <div
-              className={`${CELL} flex w-full items-center bg-putty px-4 py-2.5 sm:w-[132px] ${FIELD_LABEL}`}
-            >
-              {f.label}
-            </div>
-            {allLabel && <FacetMenu f={f} on={on} pick={pick} clear={clear} allLabel={allLabel} />}
-            {!allLabel &&
-              shown.map((v) => {
-                const sel = on.has(v.v);
-                // A value the other facets have already ruled out stays visible —
-                // it's part of what this model comes as — but it can't be picked
-                // into an empty page.
-                const dead = v.n === 0 && !sel;
-                return (
-                  <button
-                    key={v.v}
-                    type="button"
-                    aria-pressed={sel}
-                    disabled={dead}
-                    title={sel ? `Remove: ${v.label}` : `${v.n} ${v.n === 1 ? "car" : "cars"}`}
-                    onClick={() => pick(f.key, v.v)}
-                    className={`${CELL} flex grow items-center gap-2 px-4 py-2.5 text-[13px] font-bold tracking-[0.04em] uppercase sm:grow-0 ${
-                      dead ? "bg-paper text-ink/30" : `${HOVER} ${sel ? "bg-cobalt text-paper" : "bg-paper text-ink"}`
-                    }`}
-                  >
-                    {sel && <span aria-hidden="true">✓</span>}
-                    {v.label}
-                    <span className={`tabular-nums ${sel ? "text-paper/70" : "text-ink/45"}`}>{v.n}</span>
-                  </button>
-                );
-              })}
-            {!allLabel && hidden > 0 && (
+            {label(f)}
+            {shown.map((v) => {
+              const sel = on.has(v.v);
+              // A value the other facets have already ruled out stays visible —
+              // it's part of what this model comes as — but it can't be picked
+              // into an empty page.
+              const dead = v.n === 0 && !sel;
+              return (
+                <button
+                  key={v.v}
+                  type="button"
+                  aria-pressed={sel}
+                  disabled={dead}
+                  title={sel ? `Remove: ${v.label}` : `${v.n} ${v.n === 1 ? "car" : "cars"}`}
+                  onClick={() => pick(f.key, v.v)}
+                  className={`${CELL} flex grow items-center gap-2 px-4 py-2.5 text-[13px] font-bold tracking-[0.04em] uppercase sm:grow-0 ${
+                    dead ? "bg-paper text-ink/30" : `${HOVER} ${sel ? "bg-cobalt text-paper" : "bg-paper text-ink"}`
+                  }`}
+                >
+                  {sel && <span aria-hidden="true">✓</span>}
+                  {v.label}
+                  <span className={`tabular-nums ${sel ? "text-paper/70" : "text-ink/45"}`}>{v.n}</span>
+                </button>
+              );
+            })}
+            {hidden > 0 && (
               <button
                 type="button"
                 onClick={() => setExpanded((e) => ({ ...e, [f.key]: true }))}
@@ -378,14 +402,18 @@ export function SpecFacets({ facets }: { facets: FacetGroup[] }) {
 // exists but the city is unknown); undefined means no origin at all. `count` is
 // how many cars the active filters leave; undefined until the index lands,
 // because "0 cars" while loading is a wrong answer, not a pending one.
+// `quickCounts` is what each toggle would leave, keyed "key=value" — also
+// undefined until the index lands, and for the same reason.
 export function FilterRail({
   makesModels,
   inferred,
   count,
+  quickCounts,
 }: {
   makesModels: Record<string, string[]>;
   inferred?: string;
   count?: number;
+  quickCounts?: Record<string, number>;
 }) {
   const sp = useSearchParams();
   const [open, setOpen] = useState(false);
@@ -411,7 +439,15 @@ export function FilterRail({
   const models = make ? (makesModels[make] ?? []) : [];
   const makes = Object.keys(makesModels).sort();
 
-  const quick = QUICK_TOGGLES.map((t) => ({ ...t, on: get(t.key) === t.value }));
+  // A toggle that would return nothing against what's already on isn't
+  // offered. "+ AWD" on a Chevrolet Bolt search is not a filter — the car was
+  // never built that way — and a button whose only outcome is an empty page
+  // costs the shopper a click to learn something the rail could have said by
+  // staying quiet. A toggle that is currently ON always stays, whatever it
+  // counts: the only way to switch it off is for it to be there.
+  const quick = QUICK_TOGGLES.map((t) => ({ ...t, on: get(t.key) === t.value })).filter(
+    (t) => t.on || !quickCounts || quickCounts[`${t.key}=${t.value}`] > 0
+  );
   const quickOn = new Set(quick.filter((t) => t.on).map((t) => t.key));
 
   // A filter a pressed toggle already represents doesn't also get a chip —
