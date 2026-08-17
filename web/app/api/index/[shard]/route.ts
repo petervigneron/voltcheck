@@ -1,4 +1,5 @@
 import { buildCardIndex } from "@/lib/listings/buildIndex";
+import { buildFirstPaint } from "@/lib/listings/firstPaint";
 import { SHARDS, packIndex } from "@/lib/listings/pack";
 
 // The browse grid's dataset: CDN-cached JSON the client filters locally. Static
@@ -52,6 +53,17 @@ function shardOf(id: string): number {
 
 export async function GET(_req: Request, { params }: { params: Promise<{ shard: string }> }) {
   const { shard } = await params;
+  // The seventh body under this route: the first-paint payload — the top page
+  // of featured cards plus the band, suggestions, and counts, a couple dozen
+  // KB against the shards' 3.3 MB (lib/listings/firstPaint.ts). It lives here
+  // rather than in its own route so it inherits this file's exact caching
+  // shape: render-on-first-request, never prerendered at build (the 2026-08-16
+  // lesson above), CDN-cached for the same hour as the shards it fronts. Same
+  // cached data reads, so it adds no database load — one more render per hour.
+  if (shard === "first") {
+    const rows = await buildCardIndex();
+    return Response.json(buildFirstPaint(rows));
+  }
   const n = Number(shard);
   if (!Number.isInteger(n) || n < 0 || n >= SHARDS) {
     return Response.json({ error: "no such shard" }, { status: 404 });

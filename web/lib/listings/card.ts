@@ -5,7 +5,9 @@ import type { BodyType } from "@/lib/filters";
 // listing, built hourly on the server (lib/listings/buildIndex.ts, served by
 // /api/index) and filtered/sorted entirely in the browser. Every field is
 // either displayed on a card or tested by a filter — nothing speculative
-// rides along, because 16k of these ship to every first-time visitor.
+// rides along, because 70k+ of these ship to every first-time visitor (behind
+// a 60-card first paint, lib/listings/firstPaint.ts, but the full set still
+// downloads — a field added here costs 71,000 copies on the wire).
 //
 // This module is client-safe: types and pure scoring only, no data imports.
 

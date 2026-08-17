@@ -3,12 +3,14 @@
 import { useEffect, useMemo, useReducer } from "react";
 import { useSearchParams } from "next/navigation";
 import { ListingCard, type GroundsMode } from "./ListingCard";
-import { SearchBar, FilterRail, SpecFacets, type FacetGroup, type Suggestion } from "./Filters";
+import { SearchBar, FilterRail, SpecFacets, type FacetGroup } from "./Filters";
 import { AlertSignup } from "./AlertSignup";
 import { SPEC_FACETS, FACET_CAP, QUICK_TOGGLES, describeFilter, dropSpecFilters } from "@/lib/filters";
 import { featuredScore, type CardRow } from "@/lib/listings/card";
+import { FIRST_PAGE_SIZE } from "@/lib/listings/firstPaint";
 import { FACET_OF, activeFilterKeys, buildTests, rowMatches } from "@/lib/listings/match";
-import { useCardIndex } from "@/lib/listings/useCardIndex";
+import { modelTally } from "@/lib/listings/tally";
+import { firstPaintWonRace, useCardIndex, useFirstPaint } from "@/lib/listings/useCardIndex";
 import { milesBetween } from "@/lib/geo";
 import { pushUrl } from "@/lib/pushUrl";
 
@@ -130,6 +132,10 @@ export function Browse() {
   // new battery, cobalt = recent price cut) instead of the one-in-five rhythm.
   const grounds: GroundsMode = s("grounds") === "fact" ? "fact" : "rhythm";
 
+  // The first-paint fetch goes out before the index fetch — hook order is
+  // request order, and the payload the first card waits on should never queue
+  // behind 3 MB of shards.
+  const first = useFirstPaint();
   const { rows, failed } = useCardIndex();
   // A typed ZIP always wins — even an invalid one, because "Near 00000"
   // measured from the IP instead would be a lie.
@@ -139,34 +145,25 @@ export function Browse() {
   // "" = origin inferred but city unknown; undefined = no inferred origin.
   const inferred = !zip && ip ? ip.city : undefined;
 
-  // Per-model tally, case-insensitive because dealer feeds disagree on casing
-  // ("Nissan ARIYA" / "Nissan Ariya"); the most common form is the display one.
-  const { tally, suggestions, popular, makesModels } = useMemo(() => {
-    const tally = new Map<string, { count: number; forms: Map<string, { make: string; model: string; n: number }> }>();
-    const makesModels: Record<string, string[]> = {};
-    for (const r of rows ?? []) {
-      (makesModels[r.make] ??= []).push(r.model);
-      const form = `${r.make} ${r.model}`;
-      const t = tally.get(form.toLowerCase()) ?? { count: 0, forms: new Map() };
-      t.count += 1;
-      const f = t.forms.get(form) ?? { make: r.make, model: r.model, n: 0 };
-      f.n += 1;
-      t.forms.set(form, f);
-      tally.set(form.toLowerCase(), t);
-    }
-    for (const k of Object.keys(makesModels)) makesModels[k] = [...new Set(makesModels[k])].sort();
-    const canon = [...tally.values()]
-      .map((t) => {
-        const best = [...t.forms.values()].sort((a, b) => b.n - a.n)[0];
-        return { make: best.make, model: best.model, count: t.count };
-      })
-      .sort((a, b) => b.count - a.count);
-    // A model listed once is as likely a feed typo as a car — not suggestion material.
-    const suggestions: Suggestion[] = canon
-      .filter((c) => c.count >= 2)
-      .map((c) => ({ label: `${c.make} ${c.model}`, count: c.count }));
-    return { tally, suggestions, popular: canon.slice(0, 4), makesModels };
-  }, [rows]);
+  // Per-model tally (lib/listings/tally.ts, shared with the server's
+  // first-paint build). Until the index lands, the first-paint payload's own
+  // tally — computed by the same function over the same hourly index — stands
+  // in, so the band, the suggestions, and the dropdowns work on arrival. Once
+  // the index is here it takes over: the band's counts must agree with what
+  // tapping the band returns, and only the index answers that.
+  const own = useMemo(() => modelTally(rows ?? []), [rows]);
+  const counts = own.counts;
+  const { suggestions, popular, makesModels } = rows === null && first ? first : own;
+
+  // The pristine landing state — no filters, featured order, page 1 — is the
+  // one state the first-paint payload can answer for, because it's exactly
+  // what the server rendered. The dummy distance context makes a zip/radius
+  // param count as a filter whether or not an origin has resolved yet.
+  const pristine =
+    activeFilterKeys(buildTests(s, { distanceMi: () => undefined })).length === 0 &&
+    sort === "featured" &&
+    (n("page") ?? 1) === 1;
+  const firstView = rows === null && !failed && pristine && first ? first : null;
 
   const { results, dist, relief, activeCount, facets, quickCounts } = useMemo(() => {
     const all = rows ?? [];
@@ -198,8 +195,13 @@ export function Browse() {
     // Anything that isn't an explicit sort falls back to the featured order;
     // the day term reshuffles it once a day, not on every render.
     const explicitSorts = new Set(["price", "price-desc", "year-desc", "miles", "range-desc", ...(origin ? ["distance"] : [])]);
+    // The server's first paint and this recompute must score with the same day
+    // term, or a payload rendered before UTC midnight and a sort after it
+    // would reorder the grid under the shopper. So the payload's day wins for
+    // the session whenever we have one; the local clock is only for visitors
+    // the payload never reached.
     // eslint-disable-next-line react-hooks/purity -- the once-a-day reshuffle is the point
-    const day = Math.floor(Date.now() / 86400000);
+    const day = first?.day ?? Math.floor(Date.now() / 86400000);
     // The haystack includes paint, and paint borrows brand names: "lucid"
     // matches 71 Hyundais in Lucid Blue against 68 actual Lucids, and the
     // Hyundais outranked them. A car whose year/make/model/trim matches the
@@ -236,11 +238,30 @@ export function Browse() {
       // grid spent between a keystroke and a repaint. Same order, measured
       // identical over the full feed: 145ms -> 49ms unfiltered, 33ms -> 2ms on
       // a search that leaves a few thousand cars.
+      //
+      // If the shopper is looking at the first-paint page when the index
+      // lands, that page's cards are pinned to the front in that exact order.
+      // On the same hour's index the recompute reproduces the server's page
+      // anyway and the pin is a no-op; the pin is for the mixed-vintage case —
+      // first paint from one hourly build, shards from the next — where a
+      // slightly different tally would otherwise reshuffle the grid under the
+      // shopper. (A pinned car the fresher index no longer carries simply
+      // isn't in `results` — delisted beats stable.) Filters lift the pin:
+      // a filtered order is being asked for, not swapped underneath anyone.
+      // And a payload that lost the race to the index never pins at all —
+      // adopting its order mid-session would repage a grid the shopper has
+      // already been paging under the index's own ordering.
+      const pin =
+        first && firstPaintWonRace() && activeKeys.length === 0
+          ? new Map(first.rows.map((r, i) => [r.id, i]))
+          : null;
       const scored = results.map((r) => ({
         r,
         k:
-          featuredScore(r, tally.get(`${r.make} ${r.model}`.toLowerCase())?.count ?? 0, day) +
-          (identityHit(r) ? 1000 : 0),
+          pin?.has(r.id)
+            ? 1e6 - pin.get(r.id)!
+            : featuredScore(r, counts.get(`${r.make} ${r.model}`.toLowerCase()) ?? 0, day) +
+              (identityHit(r) ? 1000 : 0),
       }));
       scored.sort((a, b) => b.k - a.k);
       for (let i = 0; i < scored.length; i++) results[i] = scored[i].r;
@@ -341,12 +362,18 @@ export function Browse() {
     }
 
     return { results, dist, relief, activeCount: activeKeys.length, facets, quickCounts };
+    // `first` is read but deliberately not a dependency: it can only change
+    // once (null -> loaded), and if that happens after the index already
+    // painted, re-sorting a grid the shopper is looking at is exactly the
+    // reshuffle this file works to prevent. The next interaction re-runs the
+    // memo and picks it up.
     // eslint-disable-next-line react-hooks/exhaustive-deps -- s() reads sp, listed
-  }, [rows, sp, origin, tally]);
+  }, [rows, sp, origin, counts]);
 
   // 5,000 cards in one document is not a page anyone can use, and the cards
   // are photo-first. One screenful of grid at a time, paged through the URL.
-  const PAGE_SIZE = 60;
+  // The size is the first-paint payload's, so the server's slice IS page one.
+  const PAGE_SIZE = FIRST_PAGE_SIZE;
   const pageCount = Math.max(1, Math.ceil(results.length / PAGE_SIZE));
   const page = Math.min(Math.max(1, n("page") ?? 1), pageCount);
   const shown = results.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -369,18 +396,51 @@ export function Browse() {
         <PopularBand popular={popular} q={q} />
       </div>
 
-      {/* Both counts wait on the index: "0 cars" and a rail stripped of every
-          toggle are wrong answers while loading, not pending ones. */}
+      {/* Both counts wait on an answer: "0 cars" and a rail stripped of every
+          toggle are wrong answers while loading, not pending ones. In the
+          pristine state the first-paint payload already holds the answer —
+          computed over the same hourly index, so it is the count, not a guess.
+          A filtered arrival has no answer until the index lands. */}
       <FilterRail
         makesModels={makesModels}
         inferred={inferred}
-        count={rows === null ? undefined : results.length}
-        quickCounts={rows === null ? undefined : quickCounts}
+        count={rows !== null ? results.length : firstView ? firstView.total : undefined}
+        quickCounts={rows !== null ? quickCounts : firstView ? firstView.quick : undefined}
       />
 
       <SpecFacets facets={facets} />
 
-      {rows === null ? (
+      {firstView ? (
+        // The first-paint grid: the same 60 cards, in the same order, that the
+        // full computation below reproduces once the index lands — so the
+        // handoff is invisible. Paging or filtering away from here before then
+        // gets the honest pending skeleton, never a result computed from 60
+        // cards standing in for the country.
+        <>
+          <div className="grid grid-cols-1 border-t-[3px] border-l-[3px] border-ink sm:grid-cols-2 lg:grid-cols-3">
+            {firstView.rows.map((r, i) => (
+              <ListingCard
+                key={r.id}
+                r={r}
+                distanceMi={origin && r.loc ? Math.round(milesBetween(origin, r.loc)) : undefined}
+                index={i}
+                grounds={grounds}
+              />
+            ))}
+          </div>
+          <div className="flex flex-wrap border-l-[3px] border-ink">
+            <span className={`${CELL} flex flex-1 items-center bg-paper px-5 py-4 text-[12.5px] font-bold tracking-[0.06em] text-ink/60 uppercase tabular-nums`}>
+              1–{firstView.rows.length} of {firstView.total.toLocaleString()}
+            </span>
+            {firstView.total > PAGE_SIZE && (
+              <button type="button" onClick={() => goPage(2)} className={`${CELL} bg-ink text-paper hover:bg-cobalt ${PAGE_BTN}`}>
+                Next {Math.min(PAGE_SIZE, firstView.total - PAGE_SIZE)} →
+              </button>
+            )}
+          </div>
+          <AlertSignup />
+        </>
+      ) : rows === null ? (
         failed ? (
           <div className="border-t-[3px] border-l-[3px] border-ink">
             <div className={`${CELL} bg-vermilion px-6 py-8 text-paper`}>
