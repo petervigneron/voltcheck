@@ -322,8 +322,21 @@ export function SpecFacets({ facets }: { facets: FacetGroup[] }) {
   // is most of what a search used to push off the screen. Side by side they
   // close the row between them. Chip facets keep a row each: a battery row is
   // already a row of blocks and has nothing to share.
-  const label = (f: FacetGroup) => (
-    <div key={`${f.key}-label`} className={`${CELL} flex w-full items-center bg-putty px-4 py-2.5 sm:w-[132px] ${FIELD_LABEL}`}>
+  //
+  // On a phone a menu's heading is dropped entirely. The label cell goes full
+  // width there, so "TRIM" and "RANGE" each cost a whole row to announce a
+  // control that is already reading "All trims" / "Any range" one row below —
+  // four rows of phone screen for two dropdowns, above the first car. The
+  // button says what it is, and its aria-label still spells out "Trim: All
+  // trims" for anyone not reading the screen. Chip rows keep their heading:
+  // a row of bare numbers has nothing else to say what axis it is.
+  const label = (f: FacetGroup, dropOnPhone = false) => (
+    <div
+      key={`${f.key}-label`}
+      className={`${CELL} items-center bg-putty px-4 py-2.5 ${FIELD_LABEL} ${
+        dropOnPhone ? "hidden sm:flex sm:w-[132px]" : "flex w-full sm:w-[132px]"
+      }`}
+    >
       {f.label}
     </div>
   );
@@ -335,7 +348,7 @@ export function SpecFacets({ facets }: { facets: FacetGroup[] }) {
       {menus.length > 0 && (
         <div className="flex flex-wrap items-stretch">
           {menus.map((f) => [
-            label(f),
+            label(f, true),
             <FacetMenu
               key={f.key}
               f={f}
