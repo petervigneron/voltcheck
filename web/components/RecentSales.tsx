@@ -43,7 +43,18 @@ function Row({ s }: { s: RecentSale }) {
  *
  *  Sales of this car's own version sort first (recent_sales takes its VIN),
  *  so the top of the list is the comparison the shopper is actually making. */
-export function RecentSales({ sales, vsSold }: { sales: RecentSale[]; vsSold?: AskVsSold }) {
+export function RecentSales({
+  sales,
+  vsSold,
+  scatter,
+}: {
+  sales: RecentSale[];
+  vsSold?: AskVsSold;
+  /** The price-vs-mileage chart (components/PriceScatter.tsx), rendered here
+   *  so its sold points sit above the rows they plot and under the card's
+   *  ODbL attribution line, which covers both. */
+  scatter?: React.ReactNode;
+}) {
   const same = sales.filter((s) => s.sameVariant);
   const other = sales.filter((s) => !s.sameVariant);
 
@@ -59,6 +70,8 @@ export function RecentSales({ sales, vsSold }: { sales: RecentSale[]; vsSold?: A
           {vsSold.soldUsd.toLocaleString()}
         </p>
       )}
+
+      {scatter}
 
       {same.length > 0 && (
         <ul className="mt-3 divide-y divide-zinc-100 dark:divide-zinc-800">

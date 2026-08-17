@@ -176,9 +176,15 @@ export async function fetchListingByIdFromDb(id: string): Promise<Listing | null
   if (!dbConfigured()) return null;
   const base = process.env.SUPABASE_URL!.replace(/\/$/, "");
   try {
+    // Keyed on vin, not payload->>id: the id IS the lowercase VIN
+    // (scraper/ingest.mjs; verified across all rows 2026-08-17), and the
+    // payload-expression filter was a ~1s seq scan of the wide table on
+    // every uncached detail render — the vin form is a primary-key lookup.
+    // An id that isn't a VIN (sample rows) just misses here and resolves
+    // through the caller's fallback scan, same as before.
     const res = await fetch(
-      `${base}/rest/v1/live_listings_feed?select=payload,first_seen_at,last_seen_at,prev_price_usd,price_changed_at,buyback_disclosed,listed_on&payload->>id=eq.${encodeURIComponent(
-        id
+      `${base}/rest/v1/live_listings_feed?select=payload,first_seen_at,last_seen_at,prev_price_usd,price_changed_at,buyback_disclosed,listed_on&vin=eq.${encodeURIComponent(
+        id.toUpperCase()
       )}&limit=1`,
       { headers: headers(), next: { revalidate: REVALIDATE_SECONDS } }
     );

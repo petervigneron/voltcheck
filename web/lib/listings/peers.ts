@@ -25,14 +25,24 @@ import {
 export interface PriceSignals {
   vsSold?: AskVsSold;
   vsMarket?: AskVsMarket;
+  /**
+   * The cohort's other live asks, for the price-vs-mileage chart — the same
+   * members the ask index above was built from (real prices, repurchases
+   * already out), so the chart can never plot a car the comparison wouldn't
+   * count. sameTrim: true = same asserted trim as this car; false = a
+   * different asserted trim; null = one side unknown. The chart renders the
+   * distinction (solid vs hollow) because a mixed cloud read as one cohort
+   * is exactly the biased-mixture error 0022 suppresses in the models.
+   */
+  peerAsks: { mileage: number; priceUsd: number; sameTrim: boolean | null }[];
 }
 
 export async function listingPriceSignals(l: Listing): Promise<PriceSignals> {
   // A disclosed manufacturer repurchase gets no price claim on either
   // surface — same rule, same reason as the browse grid: the models price
   // clean-title cars and the seller's own text says this isn't one.
-  if (l.buybackDisclosed) return {};
-  if (!l.vin || l.vin.length < 8) return {};
+  if (l.buybackDisclosed) return { peerAsks: [] };
+  if (!l.vin || l.vin.length < 8) return { peerAsks: [] };
 
   const [comps, cohort] = await Promise.all([
     fetchCompIndex(),
@@ -67,5 +77,14 @@ export async function listingPriceSignals(l: Listing): Promise<PriceSignals> {
   const vsMarket = vsSold
     ? undefined
     : askVsMarket(asks, comps, l.vin, l.year, l.mileage, l.priceUsd, real, trimKey, identity);
-  return { vsSold, vsMarket };
+
+  const peerAsks = members
+    .filter((m) => m.vin !== l.vin && hasRealPrice(m) && m.mileage != null && m.mileage > 0)
+    .map((m) => ({
+      mileage: m.mileage!,
+      priceUsd: m.priceUsd,
+      sameTrim: m.trimKey && trimKey ? m.trimKey === trimKey : null,
+    }));
+
+  return { vsSold, vsMarket, peerAsks };
 }

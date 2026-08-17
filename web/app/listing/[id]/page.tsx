@@ -15,6 +15,8 @@ import { RecentSales } from "@/components/RecentSales";
 import { fetchRecentSales } from "@/lib/listings/sales";
 import { listingPriceSignals } from "@/lib/listings/peers";
 import { askVsMarketTile } from "@/lib/listings/card";
+import { PriceScatter } from "@/components/PriceScatter";
+import { PriceSparkline } from "@/components/PriceSparkline";
 
 // ISR: each listing page renders once, then serves from the CDN for an hour —
 // same cadence as the data underneath it (nightly sync, recheck, price audit).
@@ -75,8 +77,19 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
   // against the same cohort listed right now. Whatever claim the card made
   // to earn the click, this page repeats and can defend; a claim that
   // vanishes here reads as retracted.
-  const { vsSold, vsMarket } = await listingPriceSignals(listing);
+  const { vsSold, vsMarket, peerAsks } = await listingPriceSignals(listing);
   const marketTile = vsMarket ? askVsMarketTile(vsMarket) : undefined;
+  // The price-vs-mileage picture, only when this car itself can be plotted —
+  // a chart that can't locate its subject is decoration. PriceScatter adds
+  // its own ≥4-other-points floor.
+  const scatter =
+    hasRealPrice(listing) && listing.mileage != null && listing.mileage > 0 ? (
+      <PriceScatter
+        sales={recentSales}
+        peerAsks={peerAsks}
+        self={{ mileage: listing.mileage, priceUsd: listing.priceUsd }}
+      />
+    ) : null;
 
   return (
     <div className="mx-auto max-w-5xl space-y-5 px-4 py-6">
@@ -118,6 +131,8 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
                 See dealer for price
               </div>
             )}
+
+            {listing.priceHistory && <PriceSparkline history={listing.priceHistory} />}
 
             {(tiles.length > 0 || marketTile) && (
               <div className="mt-3 flex flex-wrap gap-1.5">
@@ -237,7 +252,19 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
             </div>
           )}
 
-          {recentSales.length > 0 && <RecentSales sales={recentSales} vsSold={vsSold} />}
+          {recentSales.length > 0 ? (
+            <RecentSales sales={recentSales} vsSold={vsSold} scatter={scatter} />
+          ) : scatter ? (
+            // No transaction data for this cohort, but the live asks are
+            // still a real comparison — the chart alone, under the ask-side
+            // heading so nobody reads gray circles as sales.
+            <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5">
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+                Asking prices, this cohort
+              </h2>
+              {scatter}
+            </div>
+          ) : null}
 
           {e.row && (
             <Section title={`${listing.model}${claim.assert && displayTrim(listing) ? ` ${claim.trim}` : ""}`}>
