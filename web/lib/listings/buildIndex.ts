@@ -103,6 +103,7 @@ export async function buildCardIndex(): Promise<CardRow[]> {
       heatPump: e.heatPump?.status,
       packReplaced: l.campaignCheck?.packReplaced || undefined,
       buyback: l.buybackDisclosed || undefined,
+      listedOn: l.listedOn,
       askVsSold: vsSold?.deltaUsd,
       askVsMarket: vsMarket
         ? { deltaUsd: vsMarket.deltaUsd, peerN: vsMarket.peerN, trimMatched: vsMarket.trimMatched }

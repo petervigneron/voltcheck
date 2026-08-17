@@ -63,6 +63,12 @@ export interface CardRow {
    */
   buyback?: boolean;
   /**
+   * The date this car appeared on its seller's site ("2026-08-15"), present
+   * only when that is honestly a listing date (migration 0028's guards).
+   * Absent means unknowable — most inventory predates tracking — never "old".
+   */
+  listedOn?: string;
+  /**
    * Ask minus what this variant actually sells for (lib/listings/comps.ts).
    * Positive = asking above transaction prices. Only set when the gap clears
    * its cohort's own error bar, so any value here is already meaningful.

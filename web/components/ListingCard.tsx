@@ -7,8 +7,18 @@ import { askVsMarketTile, type CardRow, type CardTile } from "@/lib/listings/car
 // card says was decided server-side at index build; this component only lays
 // it out — which is what lets the browse grid live entirely in the browser.
 
+// listedOn exists only on rows whose appearance is honestly a listing date
+// (migration 0028) — a few percent of inventory today, growing nightly — so
+// "Just listed" is an event, not wallpaper. Module scope: one clock reading
+// per page visit, stable across re-renders (and outside the render for the
+// hooks purity rule); a visit long enough for it to matter is a tab left
+// open overnight.
+const JUST_LISTED_MS = 7 * 86_400_000;
+const LOADED_AT = Date.now();
+
 function subtitle(r: CardRow, distanceMi?: number) {
   const bits: string[] = [];
+  if (r.listedOn && LOADED_AT - Date.parse(r.listedOn) < JUST_LISTED_MS) bits.push("Just listed");
   if (r.condition === "new") bits.push("New");
   else if (r.mileage != null) bits.push(`${r.mileage.toLocaleString()} mi${r.mileage === 0 ? " (dealer-listed)" : ""}`);
   if (r.city) bits.push(`${r.city}, ${r.state}`);

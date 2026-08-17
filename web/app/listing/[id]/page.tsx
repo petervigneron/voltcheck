@@ -25,14 +25,27 @@ export async function generateStaticParams(): Promise<{ id: string }[]> {
   return [];
 }
 
-function Spec({ label, value }: { label: string; value?: string | number | null }) {
+function Spec({ label, value, title }: { label: string; value?: string | number | null; title?: string }) {
   if (value == null || value === "") return null;
   return (
-    <div className="flex justify-between gap-4 border-b border-zinc-100 dark:border-zinc-800 py-1.5 text-sm last:border-0">
+    <div title={title} className="flex justify-between gap-4 border-b border-zinc-100 dark:border-zinc-800 py-1.5 text-sm last:border-0">
       <span className="text-zinc-500 dark:text-zinc-400">{label}</span>
       <span className="text-right font-medium">{value}</span>
     </div>
   );
+}
+
+const LISTED_FMT = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
+
+// Renders only for cars whose appearance is honestly a listing date
+// (migration 0028's guards) — everything else stays quiet rather than
+// printing tracking-start noise as an age. ISR makes the day count stale by
+// up to an hour, which cannot move it by a day's width in a wrong direction
+// often enough to matter.
+function listedValue(listedOn: string): string {
+  const days = Math.max(0, Math.floor((Date.now() - Date.parse(listedOn)) / 86_400_000));
+  const when = days === 0 ? "today" : days === 1 ? "1 day ago" : `${days} days ago`;
+  return `${LISTED_FMT.format(new Date(listedOn))} (${when})`;
 }
 
 export default async function ListingPage(props: PageProps<"/listing/[id]">) {
@@ -136,6 +149,13 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
                     : undefined
                 }
               />
+              {listing.listedOn && (
+                <Spec
+                  label="Listed"
+                  value={listedValue(listing.listedOn)}
+                  title="When this car appeared on the seller's site, from Voltcheck's nightly check — shown only when the seller was already being tracked when it appeared. The true listing date can be up to a day earlier."
+                />
+              )}
               <Spec label="Previous owners" value={listing.previousOwners} />
               <Spec label="Drivetrain" value={listing.drive} />
               <Spec label="Exterior" value={listing.exteriorColor} />

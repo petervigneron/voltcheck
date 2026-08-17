@@ -42,6 +42,7 @@ interface FeedRow {
   prev_price_usd: number | null;
   price_changed_at: string | null;
   buyback_disclosed: boolean;
+  listed_on: string | null;
 }
 
 interface DetailRow {
@@ -88,7 +89,7 @@ function headers(): Record<string, string> {
 export async function fetchListingsFromDb(): Promise<Listing[] | null> {
   if (!dbConfigured()) return null;
   const base = process.env.SUPABASE_URL!.replace(/\/$/, "");
-  const feedUrl = `${base}/rest/v1/live_listings_feed?select=vin,payload,first_seen_at,last_seen_at,prev_price_usd,price_changed_at,buyback_disclosed&order=vin.asc&limit=${PAGE}`;
+  const feedUrl = `${base}/rest/v1/live_listings_feed?select=vin,payload,first_seen_at,last_seen_at,prev_price_usd,price_changed_at,buyback_disclosed,listed_on&order=vin.asc&limit=${PAGE}`;
 
   // Each page asks for the thousand VINs *after* the last one it saw, rather
   // than for a numbered slice. The offset form asked the database to build the
@@ -160,6 +161,7 @@ export async function fetchListingsFromDb(): Promise<Listing[] | null> {
       prevPriceUsd: r.prev_price_usd ?? undefined,
       priceChangedAt: r.price_changed_at ?? undefined,
       buybackDisclosed: r.buyback_disclosed || undefined,
+      listedOn: r.listed_on ?? undefined,
     }));
   } catch (err) {
     console.error("[listings] Supabase read failed — serving bundled JSON fallback:", err);
@@ -175,7 +177,7 @@ export async function fetchListingByIdFromDb(id: string): Promise<Listing | null
   const base = process.env.SUPABASE_URL!.replace(/\/$/, "");
   try {
     const res = await fetch(
-      `${base}/rest/v1/live_listings_feed?select=payload,first_seen_at,last_seen_at,prev_price_usd,price_changed_at,buyback_disclosed&payload->>id=eq.${encodeURIComponent(
+      `${base}/rest/v1/live_listings_feed?select=payload,first_seen_at,last_seen_at,prev_price_usd,price_changed_at,buyback_disclosed,listed_on&payload->>id=eq.${encodeURIComponent(
         id
       )}&limit=1`,
       { headers: headers(), next: { revalidate: REVALIDATE_SECONDS } }
@@ -190,6 +192,7 @@ export async function fetchListingByIdFromDb(id: string): Promise<Listing | null
       prevPriceUsd: r.prev_price_usd ?? undefined,
       priceChangedAt: r.price_changed_at ?? undefined,
       buybackDisclosed: r.buyback_disclosed || undefined,
+      listedOn: r.listed_on ?? undefined,
     };
   } catch (err) {
     console.error("[listings] Supabase by-id read failed:", err);
@@ -223,7 +226,7 @@ export async function fetchCohortFromDb(vinPattern8: string, year: number): Prom
     let res: Response;
     for (let attempt = 0; ; attempt++) {
       res = await fetch(
-        `${base}/rest/v1/live_listings_feed?select=vin,payload,first_seen_at,last_seen_at,prev_price_usd,price_changed_at,buyback_disclosed&vin=like.${encodeURIComponent(
+        `${base}/rest/v1/live_listings_feed?select=vin,payload,first_seen_at,last_seen_at,prev_price_usd,price_changed_at,buyback_disclosed,listed_on&vin=like.${encodeURIComponent(
           vinPattern8.toUpperCase()
         )}*&payload->>year=eq.${year}&limit=${PAGE}`,
         { headers: headers(), next: { revalidate: REVALIDATE_SECONDS } }
@@ -240,6 +243,7 @@ export async function fetchCohortFromDb(vinPattern8: string, year: number): Prom
       prevPriceUsd: r.prev_price_usd ?? undefined,
       priceChangedAt: r.price_changed_at ?? undefined,
       buybackDisclosed: r.buyback_disclosed || undefined,
+      listedOn: r.listed_on ?? undefined,
     }));
   } catch (err) {
     console.error("[listings] Supabase cohort read failed:", err);

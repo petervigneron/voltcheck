@@ -1,0 +1,21 @@
+-- The feed read opens with an exact count of live rows (web/lib/listings/
+-- db.ts) so a short read can't pass as a complete one. That count seq-scans
+-- the wide listings table — every row ~1.6KB, so at 73k rows it's ~130MB of
+-- heap for one integer. Measured 2026-08-17: 11.3s cold (16,671 buffers,
+-- 5,384 from disk) against anon's 3-second statement timeout. It fit when
+-- the table was half this size; the locator lanes' growth (39k → 69k live)
+-- quietly pushed the site's single most load-bearing request past its
+-- budget, and every hourly revalidate that lost the race served the bundled
+-- snapshot instead — the same failure as the 2026-08-16 deploy incident,
+-- now happening on schedule rather than under load.
+--
+-- A partial index over exactly the live rows makes the count an index-only
+-- scan over ~250 pages. Not CONCURRENTLY: migrations here run in a
+-- transaction, and a couple of seconds of ShareLock on a table only the
+-- nightly writes is cheaper than hand-running unlogged DDL out-of-band.
+-- Applied 2026-08-17 with a one-time out-of-band VACUUM (ANALYZE) listings —
+-- vacuum can't run inside the migration's transaction, and the index-only
+-- scan needs the visibility map current before it stops touching heap.
+-- Measured: 11.3s cold before; 206 in 0.4–0.8s after.
+create index listings_live_vin on listings (vin) where delisted_at is null;
+analyze listings;

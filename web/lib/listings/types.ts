@@ -46,6 +46,14 @@ export interface Listing {
   // price-drop display; timestamps are ISO strings.
   firstSeenAt?: string;
   lastSeenAt?: string;
+  /**
+   * The date this car appeared on its seller's site — present only when that
+   * appearance is honestly a listing date (migration 0028: the domain was
+   * already under tracking, the arrival was ordinary daily flow rather than a
+   * coverage batch, and the lane enumerates its full inventory nightly).
+   * Absent means unknowable, not new: most inventory predates tracking.
+   */
+  listedOn?: string;
   priceHistory?: { priceUsd: number; observedAt: string }[];
   prevPriceUsd?: number; // the asking price before the current one
   priceChangedAt?: string; // when the current price took effect
