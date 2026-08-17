@@ -24,6 +24,25 @@ import { gunzipSync } from "node:zlib";
 const UA =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36";
 
+// A malformed response can crash the whole process from inside Node's own
+// HTTP parser: undici's `assert(!this.paused)` fires in a TLS socket event
+// handler, where no try/catch around fetch() can reach it (crawl shard 1 died
+// this way on 2026-08-17 and its whole slice of the night was lost — out/ is
+// written only at the end, so a dead shard uploads nothing). Swallowing the
+// assertion is safe for us: the poisoned connection is already dead, the
+// fetch that owns it is aborted by its own timeout and surfaces as an
+// ordinary error result, and every consumer of this module treats fetch
+// errors as answers. Only undici assertions are swallowed — anything else
+// still crashes, as it should.
+process.on("uncaughtException", (e) => {
+  if (e?.code === "ERR_ASSERTION" && /undici/.test(e?.stack ?? "")) {
+    console.error(`http: survived undici parser crash: ${e.message?.split("\n")[0] ?? e}`);
+    return;
+  }
+  console.error(e);
+  process.exit(1);
+});
+
 // How we identify ourselves in robots.txt. The UA string above no longer
 // contains our name, so rules targeting us by name have to be matched
 // against this token explicitly — otherwise switching the UA would silently
