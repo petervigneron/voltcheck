@@ -1,0 +1,33 @@
+import { createHash, timingSafeEqual } from "node:crypto";
+import { revalidatePath, revalidateTag } from "next/cache";
+import { FEED_CACHE_TAG } from "@/lib/listings/db";
+import { SHARDS } from "@/lib/listings/pack";
+
+// The nightly pipeline's "the data just changed" signal. The feed walk is
+// cached a full day (lib/listings/db.ts) because the data changes exactly
+// when the pipeline runs; this route is how the pipeline says so. It expires
+// every fetch tagged "feed" and marks the six index shards stale, so the
+// caller's warming curls rebuild them right then — one walk, at night,
+// instead of hourly re-walks all day (the 33 GB/mo egress incident,
+// 2026-08-17). Called by nightly.yml's revalidate step, and by hand after
+// any out-of-cycle db-sync.
+//
+// Auth is the ingest gateway's pattern: the public repo carries only the
+// sha256 of the secret; CI carries the plaintext (FEED_REVALIDATE_SECRET,
+// also in the owner's local docs/feed-revalidate-secret.txt). Rotating it
+// is one hash swap here. A guessing attacker can't invalidate anything, so
+// they can't make us walk the database on demand — which is exactly the
+// bill this cache exists to avoid.
+const SECRET_SHA256 = "0c8c6c5e5dc8b75b5afa4c5b8db75d9c12381691fc15d7e0a79459ea46cf0dbf";
+
+export async function POST(req: Request) {
+  const given = req.headers.get("x-revalidate-secret") ?? "";
+  const digest = createHash("sha256").update(given).digest();
+  const want = Buffer.from(SECRET_SHA256, "hex");
+  if (!timingSafeEqual(digest, want)) {
+    return Response.json({ error: "unauthorized" }, { status: 401 });
+  }
+  revalidateTag(FEED_CACHE_TAG, { expire: 0 });
+  for (let s = 0; s < SHARDS; s++) revalidatePath(`/api/index/${s}`);
+  return Response.json({ revalidated: true });
+}

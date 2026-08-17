@@ -1,10 +1,12 @@
 import { buildCardIndex } from "@/lib/listings/buildIndex";
 import { SHARDS, packIndex } from "@/lib/listings/pack";
 
-// The browse grid's dataset: CDN-cached JSON the client filters locally. Static
-// + hourly revalidate matches the data's actual cadence (nightly sync, recheck,
-// price audit) — visitors hit the edge cache, Supabase sees one rebuild an hour,
-// and every filter click after first load is zero-network.
+// The browse grid's dataset: CDN-cached JSON the client filters locally.
+// Visitors hit the edge cache, and every filter click after first load is
+// zero-network. The route re-renders hourly, but its Supabase reads are
+// cached a full day under the "feed" tag and expired by /api/revalidate when
+// the nightly pipeline actually changes the data — so the hourly re-render
+// is compute against a warm data cache, not a database walk.
 //
 // Served in SHARDS files rather than one. Vercel refuses to store a prerendered
 // response over ~19 MB, so a single file made that cap a hard limit on how many
@@ -12,8 +14,8 @@ import { SHARDS, packIndex } from "@/lib/listings/pack";
 // but the ceiling would have come back with the next season of inventory.
 //
 // buildCardIndex runs once per shard, but its Supabase reads are the same
-// fetches with the same revalidate, so Next serves them from the data cache and
-// the database is read once per hour however many shards there are.
+// fetches with the same cache entries, so Next serves them from the data cache
+// and the database is walked once per nightly however many shards there are.
 export const dynamic = "force-static";
 export const revalidate = 3600;
 

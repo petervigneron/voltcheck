@@ -8,9 +8,21 @@ import type { Listing } from "./types";
 // live_listings_feed view (migration 0011) — payload minus `description`,
 // which is ~45% of payload bytes and renders only on the detail page. The
 // detail page fetches its one row, description and price history included,
-// via fetchListingDetailFromDb. Both requests ask for gzip explicitly (the
-// wire is what Supabase bills; ~3.7x smaller) and revalidate hourly — the
-// data changes about once a day (nightly sync, recheck, price audit).
+// via fetchListingDetailFromDb. All requests ask for gzip explicitly (the
+// wire is what Supabase bills; ~3.7x smaller).
+//
+// Cache cadence (2026-08-17 incident, 33 GB against the 5 GB/mo quota): the
+// data changes once a day — nightly sync, price audit, recheck — but an
+// hourly revalidate re-walked the ~13 MB feed 24 times a day at best, and in
+// practice ~78 times, because pages over the 2 MB entry ceiling fell out of
+// the data cache and every shard render re-walked around them. Measured from
+// edge logs: 13,466 walk pages/day ≈ 1.2 GB/day. So the feed walk now caches
+// a full DAY and is expired by the pipeline itself: nightly.yml's last step
+// POSTs /api/revalidate, which expires the "feed" tag the moment the data
+// actually changed. The TTL is only the backstop for a lost signal — the
+// site is never fresher than the pipeline and never staler than a day.
+// After any out-of-cycle db-sync, send that same POST (see the route file
+// for the secret's shape) or accept up to a day of staleness.
 //
 // Env (web/.env.local locally, project env vars on Vercel):
 //   SUPABASE_URL=https://<project-ref>.supabase.co
@@ -40,7 +52,15 @@ import type { Listing } from "./types";
 // ~175 requests per walk instead of ~108 — but they are cacheable, so the
 // database sees them once an hour instead of the fat ones six times.
 const PAGE = 500;
+// The bulk feed: a day, expired early by /api/revalidate (see header).
+const FEED_REVALIDATE_SECONDS = 86400;
+// Per-VIN reads (detail page, cohort) stay hourly: a few dozen small
+// requests a day, and the detail page is where an out-of-cycle price
+// correction should show up without waiting for tomorrow.
 const REVALIDATE_SECONDS = 3600;
+// Every fetch that reads listings data carries this tag; one
+// revalidateTag(FEED_CACHE_TAG) in /api/revalidate expires them all.
+export const FEED_CACHE_TAG = "feed";
 
 // The VIN space, split so the pages can be walked in parallel. Buckets that hold
 // no cars cost one empty request; the alphabet is deliberately the full 36 rather
@@ -81,7 +101,7 @@ export function dbConfigured(): boolean {
 // volume a lone 500 is weather, not an outage, so it gets the scraper's
 // medicine (a short retry ladder) instead of tripping the fallback.
 const RETRY_DELAYS_MS = [2000, 6000];
-async function fetchWithRetry(url: string, init: RequestInit & { next?: { revalidate: number } }) {
+async function fetchWithRetry(url: string, init: RequestInit & { next?: { revalidate: number; tags?: string[] } }) {
   for (let attempt = 0; ; attempt++) {
     try {
       const res = await fetch(url, init);
@@ -102,10 +122,40 @@ function headers(): Record<string, string> {
   };
 }
 
+// A dev server walks the production database exactly like prod does, and
+// dev's fetch cache is cold on every restart while each of the six index
+// shards walks independently — measured 2026-08-17 at ~4,300 feed pages
+// (~0.4 GB of the free plan's 5 GB/mo) in one day from one machine. One
+// in-process walk per 15 minutes is plenty for local work; restart the dev
+// server (or wait it out) to re-read. Production never memoizes here: a
+// warm lambda holding rows past the nightly tag-expiry would serve
+// yesterday's cars all day.
+const DEV_MEMO_MS = 15 * 60 * 1000;
+let devWalk: { at: number; promise: Promise<Listing[] | null> } | null = null;
+
 /** All live (non-delisted) listings — no descriptions, no price history —
  *  or null when the DB is unconfigured or unreachable, in which case the
  *  caller falls back to the bundled JSON. */
 export async function fetchListingsFromDb(): Promise<Listing[] | null> {
+  if (process.env.NODE_ENV !== "production") {
+    if (devWalk && Date.now() - devWalk.at < DEV_MEMO_MS) return devWalk.promise;
+    const memo = { at: Date.now(), promise: fetchListingsFromDbUncached() };
+    devWalk = memo;
+    // A failed or fallback walk must not stick for 15 minutes.
+    memo.promise.then(
+      (rows) => {
+        if (!rows && devWalk === memo) devWalk = null;
+      },
+      () => {
+        if (devWalk === memo) devWalk = null;
+      }
+    );
+    return memo.promise;
+  }
+  return fetchListingsFromDbUncached();
+}
+
+async function fetchListingsFromDbUncached(): Promise<Listing[] | null> {
   if (!dbConfigured()) return null;
   const base = process.env.SUPABASE_URL!.replace(/\/$/, "");
   const feedUrl = `${base}/rest/v1/live_listings_feed?select=vin,payload,first_seen_at,last_seen_at,prev_price_usd,price_changed_at,buyback_disclosed,listed_on&order=vin.asc&limit=${PAGE}`;
@@ -126,7 +176,7 @@ export async function fetchListingsFromDb(): Promise<Listing[] | null> {
     for (;;) {
       const res = await fetchWithRetry(`${feedUrl}${range}${after ? `&vin=gt.${after}` : ""}`, {
         headers: headers(),
-        next: { revalidate: REVALIDATE_SECONDS },
+        next: { revalidate: FEED_REVALIDATE_SECONDS, tags: [FEED_CACHE_TAG] },
       });
       if (!res.ok) throw new Error(`PostgREST ${res.status}`);
       const body = await res.text();
@@ -160,13 +210,28 @@ export async function fetchListingsFromDb(): Promise<Listing[] | null> {
     // single request whose failure kept flipping builds to the JSON fallback
     // while plain page reads were healthy. `delisted_at is null` is the
     // view's own predicate, so the number is the same by construction.
-    const countRes = await fetchWithRetry(`${base}/rest/v1/listings?select=vin&delisted_at=is.null`, {
-      headers: { ...headers(), Range: "0-0", Prefer: "count=exact" },
-      next: { revalidate: REVALIDATE_SECONDS },
-    });
-    if (!countRes.ok) throw new Error(`PostgREST ${countRes.status}`);
-    const total = Number(countRes.headers.get("content-range")?.split("/")[1]);
-    if (!Number.isFinite(total)) throw new Error("PostgREST count missing");
+    // Same tag and TTL as the pages: the count is the short-read guard, so
+    // it must always be the same vintage as the pages it checks. In practice
+    // it re-fetches every render anyway — PostgREST answers a Range request
+    // 206, and Next only caches 200s — which is also why its failure must
+    // not be fatal: the count is a GUARD on the walk, not part of it. On
+    // 2026-08-16 this was the request whose failure kept flipping builds to
+    // the stale bundled fallback while every page read was healthy. If the
+    // guard itself is unreachable after retries, say so loudly and serve the
+    // walk unvalidated — fresh-but-unchecked beats provably stale.
+    let total: number | null = null;
+    try {
+      const countRes = await fetchWithRetry(`${base}/rest/v1/listings?select=vin&delisted_at=is.null`, {
+        headers: { ...headers(), Range: "0-0", Prefer: "count=exact" },
+        next: { revalidate: FEED_REVALIDATE_SECONDS, tags: [FEED_CACHE_TAG] },
+      });
+      if (!countRes.ok) throw new Error(`PostgREST ${countRes.status}`);
+      const n = Number(countRes.headers.get("content-range")?.split("/")[1]);
+      if (!Number.isFinite(n)) throw new Error("PostgREST count missing");
+      total = n;
+    } catch (err) {
+      console.error("[listings] count request failed — serving the walk without the short-read check:", err);
+    }
 
     const queue = BUCKETS.map((c, i) => [c, BUCKETS[i + 1]] as const);
     const collected: FeedRow[][] = [];
@@ -181,7 +246,7 @@ export async function fetchListingsFromDb(): Promise<Listing[] | null> {
     // either way is normal drift; a real shortfall means pages went missing and
     // has to be visible in the build log, not inferred later from a make that
     // looks thin.
-    if (rows.length < total * 0.99) {
+    if (total !== null && rows.length < total * 0.99) {
       console.error(
         `[listings] SHORT READ: ${rows.length} rows of ${total} expected — the feed is being served incomplete`
       );
@@ -219,7 +284,7 @@ export async function fetchListingByIdFromDb(id: string): Promise<Listing | null
       `${base}/rest/v1/live_listings_feed?select=payload,first_seen_at,last_seen_at,prev_price_usd,price_changed_at,buyback_disclosed,listed_on&vin=eq.${encodeURIComponent(
         id.toUpperCase()
       )}&limit=1`,
-      { headers: headers(), next: { revalidate: REVALIDATE_SECONDS } }
+      { headers: headers(), next: { revalidate: REVALIDATE_SECONDS, tags: [FEED_CACHE_TAG] } }
     );
     if (!res.ok) throw new Error(`PostgREST ${res.status}`);
     const [r] = (await res.json()) as FeedRow[];
@@ -268,7 +333,7 @@ export async function fetchCohortFromDb(vinPattern8: string, year: number): Prom
         `${base}/rest/v1/live_listings_feed?select=vin,payload,first_seen_at,last_seen_at,prev_price_usd,price_changed_at,buyback_disclosed,listed_on&vin=like.${encodeURIComponent(
           vinPattern8.toUpperCase()
         )}*&payload->>year=eq.${year}&limit=${PAGE}`,
-        { headers: headers(), next: { revalidate: REVALIDATE_SECONDS } }
+        { headers: headers(), next: { revalidate: REVALIDATE_SECONDS, tags: [FEED_CACHE_TAG] } }
       );
       if (res.status < 500 || attempt >= 2) break;
       await new Promise((r) => setTimeout(r, 300 * (attempt + 1) ** 2));
@@ -304,7 +369,7 @@ export async function fetchListingDetailFromDb(
       `${base}/rest/v1/listings?select=${encodeURIComponent(select)}&vin=eq.${encodeURIComponent(
         vin.toUpperCase()
       )}&limit=1`,
-      { headers: headers(), next: { revalidate: REVALIDATE_SECONDS } }
+      { headers: headers(), next: { revalidate: REVALIDATE_SECONDS, tags: [FEED_CACHE_TAG] } }
     );
     if (!res.ok) throw new Error(`PostgREST ${res.status}`);
     const [row] = (await res.json()) as DetailRow[];
