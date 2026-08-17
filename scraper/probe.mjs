@@ -24,6 +24,7 @@ import { extractDealerOn } from "./lib/platforms/dealeron.mjs";
 import { extractTeamVelocity } from "./lib/platforms/teamvelocity.mjs";
 import { extractDrivewayVehicles } from "./lib/platforms/driveway.mjs";
 import { extractDcsVehicles, isDealerCarSearch, DCS_SRP_PATH } from "./lib/platforms/dealercarsearch.mjs";
+import { dealrVehicles, DEALR_SRP_PATH } from "./lib/platforms/dealrcloud.mjs";
 import { dealerFireVehicles } from "./lib/platforms/dealerfire.mjs";
 import { fingerprint } from "./lib/fingerprint.mjs";
 import { discoverSitemapUrls, rank, dedupe, SRP_PATHS } from "./lib/sitemap.mjs";
@@ -79,6 +80,11 @@ async function probeSite(site) {
     dealeron: ["/searchused.aspx", "/searchnew.aspx"],
     dealercarsearch: [DCS_SRP_PATH],
     dealerinspire: ["/used-vehicles/"],
+    dealrcloud: [DEALR_SRP_PATH],
+    // Team Velocity SRPs server-render Vehicle JSON-LD, but only on this
+    // path — the sitemap-ranked guesses spent the budget before reaching it
+    // on all 13 cohort rooftops (2026-08-16).
+    "team-velocity": ["/inventory/used", "/inventory/new"],
   };
   const platformFirst = (PLATFORM_SRPS[site.platform] ?? []).map((p) => origin + p);
 
@@ -117,6 +123,7 @@ async function probeSite(site) {
       ...extractDrivewayVehicles(res.body),
       ...extractDcsVehicles(res.body, res.finalUrl),
       ...dealerFireVehicles(res.body, res.finalUrl),
+      ...dealrVehicles(res.body, res.finalUrl),
     ];
     const platformVins = [
       ...extractDdcVehicles(res.body).map((d) => d.vin),
@@ -143,6 +150,7 @@ async function probeSite(site) {
         ...extractDrivewayVehicles(vdp.body),
         ...extractDcsVehicles(vdp.body, vdp.finalUrl),
         ...dealerFireVehicles(vdp.body, vdp.finalUrl),
+        ...dealrVehicles(vdp.body, vdp.finalUrl),
       ]
         .filter((v) => isVin(v.vehicleIdentificationNumber ?? v.vin)).length +
         extractDdcVehicles(vdp.body).map((d) => d.vin).filter(isVin).length +

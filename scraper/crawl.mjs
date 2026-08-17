@@ -16,6 +16,7 @@ import { extractDealerOn, enrichFromDealerOn } from "./lib/platforms/dealeron.mj
 import { extractTeamVelocity, enrichFromTeamVelocity } from "./lib/platforms/teamvelocity.mjs";
 import { extractDrivewayVehicles } from "./lib/platforms/driveway.mjs";
 import { extractDcsVehicles, dcsNextPageUrl, dcsSeeds, isDealerCarSearch } from "./lib/platforms/dealercarsearch.mjs";
+import { dealrVehicles, dealrNextPageUrl, dealrSeeds, isDealrCloud } from "./lib/platforms/dealrcloud.mjs";
 import {
   extractDealerFire,
   extractDealerFireDealers,
@@ -96,10 +97,19 @@ async function crawlDealer(domain) {
   report.notes.push(`${sitemapUrls.length} inventory-ish sitemap urls (budget ${budget})`);
 
   // Queue: SRP seeds first (cheap, high leverage), then ranked sitemap URLs.
-  const srpSeeds = [
-    ...SRP_PATHS.map((p) => origin + p),
-    ...rank(sitemapUrls.filter((u) => /search|inventory|used-vehicles|new-vehicles/i.test(u))).slice(0, 4),
-  ];
+  // Dealer Venom is the exception: its SRPs render client-side (Algolia/
+  // Typesense), so the guessed SRP paths and the ItemList bridge can never
+  // fire — but its sitemap enumerates every VDP by VIN, so the sitemap IS the
+  // inventory walk. Spend the whole budget on ranked VDPs (EV-ish first)
+  // instead of burning half of it on 13 guesses that 404 or serve an empty
+  // shell (measured on burientoyota.com 2026-08-16).
+  const isVenom = siteInfo.get(domain)?.platform === "dealervenom";
+  const srpSeeds = isVenom
+    ? []
+    : [
+        ...SRP_PATHS.map((p) => origin + p),
+        ...rank(sitemapUrls.filter((u) => /search|inventory|used-vehicles|new-vehicles/i.test(u))).slice(0, 4),
+      ];
   const queue = dedupe([...srpSeeds, ...rank(sitemapUrls)]);
 
   // Dealer Car Search sites are crawled through their own search page rather
@@ -118,6 +128,20 @@ async function crawlDealer(domain) {
     report.notes.push("dealercarsearch: seeded SRP + electric-facet SRP");
   }
   if (siteInfo.get(domain)?.platform === "dealercarsearch") seedDcs();
+
+  // dealr.cloud walks through its one /inventory SRP (?page=N is answered
+  // server-side); tiles carry VIN+price+mileage, so most of the lot never
+  // needs a VDP fetch. Registry-known sites seed up front, the rest are
+  // recognised from the first dealr page the crawl fetches.
+  let dealrSeeded = false;
+  function seedDealr() {
+    if (dealrSeeded) return;
+    dealrSeeded = true;
+    const seeds = dealrSeeds(origin).filter((u) => !visited.has(u));
+    queue.unshift(...seeds);
+    report.notes.push("dealrcloud: seeded SRP");
+  }
+  if (siteInfo.get(domain)?.platform === "dealrcloud") seedDealr();
 
   // DealerFire's SRP slug is per-rooftop ("/cars-for-sale-hillsboro-or"), so
   // there is nothing to seed until a page of theirs tells us its own — which
@@ -195,10 +219,16 @@ async function crawlDealer(domain) {
     const dcsVehicles = extractDcsVehicles(res.body, res.finalUrl);
     const dcsVins = new Set(dcsVehicles.map((v) => v.vehicleIdentificationNumber));
     if (isDealerFire(res.body)) seedDealerFire(res.body, res.finalUrl);
+    if (!dealrSeeded && isDealrCloud(res.body)) seedDealr();
     const dealerFire = extractDealerFire(res.body);
     const dealerFireRooftops = dealerFire.size ? extractDealerFireDealers(res.body) : [];
+    // On dealr.cloud pages the platform records REPLACE the generic JSON-LD:
+    // dealr's own Car node carries no VIN, so keeping both would emit the
+    // same car twice — once VIN-keyed, once URL-keyed — and the VIN-less
+    // twin would survive the byVin dedupe as a phantom listing.
+    const dealrVs = dealrVehicles(res.body, res.finalUrl);
     const vehicles = [
-      ...extractVehicles(res.body),
+      ...(dealrVs.length ? dealrVs : extractVehicles(res.body)),
       ...extractDrivewayVehicles(res.body),
       ...dcsVehicles,
       ...dealerFireVehicles(res.body, res.finalUrl),
@@ -250,6 +280,11 @@ async function crawlDealer(domain) {
     if (dealerFire.size > 1) {
       const nextDf = dealerFireNextPageUrl(res.body, res.finalUrl);
       if (nextDf && !visited.has(nextDf)) queue.unshift(nextDf);
+    }
+    // And dealr.cloud, whose pager is markup markers rather than hrefs.
+    if (dealrVs.length > 1) {
+      const nextDealr = dealrNextPageUrl(res.body, res.finalUrl);
+      if (nextDealr && !visited.has(nextDealr)) queue.unshift(nextDealr);
     }
 
     // Bridge: SRP ItemList → VDP urls, EV-filtered, jump the queue

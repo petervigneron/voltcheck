@@ -2,7 +2,16 @@
 // HTML. Platform → extractor strategy; one fingerprint covers thousands of
 // rooftops. Signatures chosen from pages actually crawled in this project.
 const SIGNATURES = [
-  // DealerOn first: their sites often serve images from pictures.dealer.com,
+  // Dealer Venom (bucket.dealervenom.com assets): WordPress shell, Algolia/
+  // Typesense client-rendered SRPs, server-rendered VDPs behind a vdp_gate
+  // cookie redirect, and a sitemap that enumerates every VDP by VIN. Checked
+  // first because its pages also carry dealer.com/dealerinspire strings
+  // (harrtoyota.com fingerprinted as both across two probes, 2026-08-16).
+  { platform: "dealervenom", res: [/dealervenom/i] },
+  // dealr.cloud: server-rendered SaaS for independents; its JSON-LD carries
+  // no VIN, so lib/platforms/dealrcloud.mjs reads the tile markup instead.
+  { platform: "dealrcloud", res: [/cdn\.dealrcloud\.com|dealr-dealer-id/i] },
+  // DealerOn next: their sites often serve images from pictures.dealer.com,
   // which would false-positive the Dealer.com check (bit us on lehmers.com).
   { platform: "dealeron", res: [/dealeron-js\.aspx/i, /DealerOn/i, /searchused\.aspx/i, /sdDataLayer/] },
   { platform: "dealer.com", res: [/DDC\.dataLayer/, /ddc-/i, /Dealer\.com/i] },

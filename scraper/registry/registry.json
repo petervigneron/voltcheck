@@ -95,13 +95,13 @@
       "notes": "Discovered via OSM Overpass (cached query); brand: Toyota | probe 2026-08-13: homepage 403"
     },
     {
-      "domain": "acuraofpleasanton.com",
+      "domain": "dublinacura.com",
       "name": "Acura of Pleasanton",
       "kind": "rooftop",
       "platform": "team-velocity",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (cached query); brand: Acura | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — client-rendered or API-backed; leads: api-hosts:websites.api.teamvelocityportal.com+advid.api.teamvelocityportal.com+offermanager.api.teamvelocityportal.com | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — client-rendered or API-backed; leads: api-hosts:websites.api.teamvelocityportal.com+advid.api.teamvelocityportal.com+offermanager.api.teamvelocityportal.com"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (cached query); brand: Acura | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — client-rendered or API-backed; leads: api-hosts:websites.api.teamvelocityportal.com+advid.api.teamvelocityportal.com+offermanager.api.teamvelocityportal.com | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — client-rendered or API-backed; leads: api-hosts:websites.api.teamvelocityportal.com+advid.api.teamvelocityportal.com+offermanager.api.teamvelocityportal.com | 2026-08-16: rooftop rebranded — acuraofpleasanton.com 404s every deep path (only the homepage redirects), which is why probes read 0 vehicles; row re-keyed to the live domain, whose Team Velocity /inventory/used serves Vehicle JSON-LD server-side | validated 2026-08-16: Team Velocity SRP (/inventory/used|new) server-renders Vehicle JSON-LD; crawl: 7 EVs"
     },
     {
       "domain": "dublinnissan.com",
@@ -456,10 +456,10 @@
       "domain": "broombroomauto.com",
       "name": "Broom Broom Auto Sales",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealrcloud",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Aurora | probe 2026-08-12: 0 VIN vehicles in 8 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Aurora | probe 2026-08-12: 0 VIN vehicles in 8 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | validated 2026-08-16: dealr.cloud extractor (lib/platforms/dealrcloud.mjs) reads SRP tiles + VDP containers server-side, ?page=N walks the lot; crawl: 19 vehicle pages, 0 EVs in stock tonight"
     },
     {
       "domain": "johnsonautoplaza.com",
@@ -564,19 +564,19 @@
       "domain": "adiautosport.com",
       "name": "ADI Autosport, LLC",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealrcloud",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Aurora | probe 2026-08-12: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Aurora | probe 2026-08-12: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | validated 2026-08-16: dealr.cloud extractor (lib/platforms/dealrcloud.mjs) reads SRP tiles + VDP containers server-side, ?page=N walks the lot; crawl: 25 vehicle pages, 0 EVs in stock tonight"
     },
     {
       "domain": "autovineco.com",
       "name": "AutoVine",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealrcloud",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Aurora | probe 2026-08-12: 0 VIN vehicles in 8 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Aurora | probe 2026-08-12: 0 VIN vehicles in 8 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | validated 2026-08-16: dealr.cloud extractor (lib/platforms/dealrcloud.mjs) reads SRP tiles + VDP containers server-side, ?page=N walks the lot; crawl: 12 vehicle pages, 0 EVs in stock tonight"
     },
     {
       "domain": "celebrationchevrolet.com",
@@ -918,10 +918,10 @@
       "domain": "boulderh.com",
       "name": "Boulder Hybrids",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealrcloud",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Boulder | probe 2026-08-12: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Boulder | probe 2026-08-12: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | validated 2026-08-16: dealr.cloud extractor (lib/platforms/dealrcloud.mjs) reads SRP tiles + VDP containers server-side, ?page=N walks the lot; crawl: 1 EVs"
     },
     {
       "domain": "bouldernissan.com",
@@ -1035,10 +1035,10 @@
       "domain": "autosearch-usa.com",
       "name": "AutoSearch USA",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealrcloud",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Louisville | probe 2026-08-12: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Louisville | probe 2026-08-12: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | validated 2026-08-16: dealr.cloud extractor (lib/platforms/dealrcloud.mjs) reads SRP tiles + VDP containers server-side, ?page=N walks the lot; crawl: 10 vehicle pages, 0 EVs in stock tonight"
     },
     {
       "domain": "audiflatirons.com",
@@ -1116,10 +1116,10 @@
       "domain": "cherrycreekautomotive.com",
       "name": "Cherry Creek Automotive",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealrcloud",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Denver | probe 2026-08-12: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Denver | probe 2026-08-12: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | validated 2026-08-16: dealr.cloud extractor (lib/platforms/dealrcloud.mjs) reads SRP tiles + VDP containers server-side, ?page=N walks the lot; crawl: 1 EVs"
     },
     {
       "domain": "emichkia.com",
@@ -1289,10 +1289,10 @@
       "domain": "jfrcars.com",
       "name": "JFR & Associates",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealrcloud",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Littleton | probe 2026-08-12: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:static.cargurus.com+www.cargurus.com+dealr.cloud"
+      "status": "working",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Littleton | probe 2026-08-12: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:static.cargurus.com+www.cargurus.com+dealr.cloud | validated 2026-08-16: dealr.cloud extractor (lib/platforms/dealrcloud.mjs) reads SRP tiles + VDP containers server-side, ?page=N walks the lot; crawl: 24 vehicle pages, 0 EVs in stock tonight"
     },
     {
       "domain": "johnelwaycadillac.com",
@@ -1601,10 +1601,10 @@
       "domain": "alfredautosales.com",
       "name": "Alfred Automotive",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealrcloud",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Arvada | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Arvada | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | validated 2026-08-16: dealr.cloud extractor (lib/platforms/dealrcloud.mjs) reads SRP tiles + VDP containers server-side, ?page=N walks the lot; crawl: 22 vehicle pages, 0 EVs in stock tonight"
     },
     {
       "domain": "autonationbuickgmcwest.com",
@@ -1756,10 +1756,10 @@
       "domain": "elevatedmotors.com",
       "name": "Elevated Motors",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealrcloud",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Wheat Ridge | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Wheat Ridge | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | validated 2026-08-16: dealr.cloud extractor (lib/platforms/dealrcloud.mjs) reads SRP tiles + VDP containers server-side, ?page=N walks the lot; crawl: 2 EVs"
     },
     {
       "domain": "foundationchevrolet.com",
@@ -1801,10 +1801,10 @@
       "domain": "giantautowarehouse.com",
       "name": "Auto Warehouse, Inc.",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealrcloud",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Fort Collins | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:static.cargurus.com+www.cargurus.com+dealr.cloud"
+      "status": "working",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Fort Collins | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:static.cargurus.com+www.cargurus.com+dealr.cloud | validated 2026-08-16: dealr.cloud extractor (lib/platforms/dealrcloud.mjs) reads SRP tiles + VDP containers server-side, ?page=N walks the lot; crawl: 7 EVs"
     },
     {
       "domain": "dellenbach.com",
@@ -1901,10 +1901,10 @@
       "domain": "watchdogautomotive.com",
       "name": "Watchdog Automotive",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealrcloud",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Fort Collins | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Fort Collins | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | validated 2026-08-16: dealr.cloud confirmed but /inventory answers 'No vehicles were found' — empty lot, not an extraction failure (template verified on sibling rooftops); nightly crawl will pick up stock when it appears"
     },
     {
       "domain": "bmwofloveland.com",
@@ -1937,10 +1937,10 @@
       "domain": "flosautosales.com",
       "name": "Flo's Auto Sales, LLC",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealrcloud",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Loveland | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Loveland | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | validated 2026-08-16: dealr.cloud extractor (lib/platforms/dealrcloud.mjs) reads SRP tiles + VDP containers server-side, ?page=N walks the lot; crawl: 4 EVs"
     },
     {
       "domain": "loveford.com",
@@ -2019,19 +2019,19 @@
       "domain": "twomplus.com",
       "name": "Two M Plus",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealrcloud",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Grand Junction | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Grand Junction | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | validated 2026-08-16: dealr.cloud extractor (lib/platforms/dealrcloud.mjs) reads SRP tiles + VDP containers server-side, ?page=N walks the lot; crawl: 1 EVs"
     },
     {
-      "domain": "truwestauto.com",
+      "domain": "truwestcdjr.com",
       "name": "Truwest CDJR",
       "kind": "rooftop",
       "platform": "team-velocity",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Cortez | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — client-rendered or API-backed; leads: api-hosts:websites.api.teamvelocityportal.com+advid.api.teamvelocityportal.com+offermanager.api.teamvelocityportal.com"
+      "status": "working",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Cortez | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — client-rendered or API-backed; leads: api-hosts:websites.api.teamvelocityportal.com+advid.api.teamvelocityportal.com+offermanager.api.teamvelocityportal.com | 2026-08-16: rooftop rebranded — truwestauto.com 404s every deep path (only the homepage redirects), which is why probes read 0 vehicles; row re-keyed to the live domain, whose Team Velocity /inventory/used serves Vehicle JSON-LD server-side | validated 2026-08-16: Team Velocity SRP (/inventory/used|new) server-renders Vehicle JSON-LD; crawl: 31 vehicle pages, 0 EVs in stock tonight"
     },
     {
       "domain": "korfford.com",
@@ -2064,10 +2064,10 @@
       "domain": "discountmotorsonline.com",
       "name": "Discount Motors",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealrcloud",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Pueblo | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Pueblo | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | validated 2026-08-16: dealr.cloud extractor (lib/platforms/dealrcloud.mjs) reads SRP tiles + VDP containers server-side, ?page=N walks the lot; crawl: 2 EVs"
     },
     {
       "domain": "shoplibertymotors.com",
@@ -2146,10 +2146,10 @@
       "domain": "autointegrity.net",
       "name": "Auto Integrity",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealrcloud",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Greeley | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Greeley | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | validated 2026-08-16: dealr.cloud extractor (lib/platforms/dealrcloud.mjs) reads SRP tiles + VDP containers server-side, ?page=N walks the lot; crawl: 6 EVs"
     },
     {
       "domain": "ghentmotors.com",
@@ -7494,10 +7494,10 @@
       "domain": "eprius.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealrcloud",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:static.cargurus.com+www.cargurus.com+dealr.cloud"
+      "status": "working",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:static.cargurus.com+www.cargurus.com+dealr.cloud | validated 2026-08-16: dealr.cloud extractor (lib/platforms/dealrcloud.mjs) reads SRP tiles + VDP containers server-side, ?page=N walks the lot; crawl: 29 EVs"
     },
     {
       "domain": "24fordofeaston.com",
@@ -8477,10 +8477,10 @@
       "domain": "everettautogallery.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealrcloud",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | validated 2026-08-16: dealr.cloud extractor (lib/platforms/dealrcloud.mjs) reads SRP tiles + VDP containers server-side, ?page=N walks the lot; crawl: 27 vehicle pages, 0 EVs in stock tonight"
     },
     {
       "domain": "everettusedcar.net",
@@ -8668,10 +8668,10 @@
       "domain": "harrtoyota.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "dealerinspire",
+      "platform": "dealervenom",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | 2026-08-16: homepage fingerprints dealerinspire, not dealer.com — relabelled and queued for the nightly probe | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealerinspire) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealerinspire) — client-rendered or API-backed; leads: vin-url-sitemap:467, api-hosts:api.w.org, algolia, typesense"
+      "status": "working",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | 2026-08-16: homepage fingerprints dealerinspire, not dealer.com — relabelled and queued for the nightly probe | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealerinspire) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealerinspire) — client-rendered or API-backed; leads: vin-url-sitemap:467, api-hosts:api.w.org, algolia, typesense | validated 2026-08-16: Dealer Venom platform — sitemap enumerates every VDP by VIN, VDPs are server-rendered Car JSON-LD behind a vdp_gate cookie redirect (http.mjs cookie jar); crawl: 18 EVs extracted"
     },
     {
       "domain": "herbchambersalfaromeo.com",
@@ -9184,10 +9184,10 @@
       "domain": "lexingtontoyota.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealervenom",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:136, api-hosts:api.w.org, algolia, typesense"
+      "status": "working",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:136, api-hosts:api.w.org, algolia, typesense | validated 2026-08-16: Dealer Venom platform — sitemap enumerates every VDP by VIN, VDPs are server-rendered Car JSON-LD behind a vdp_gate cookie redirect (http.mjs cookie jar); crawl: 3 EVs extracted"
     },
     {
       "domain": "lexusofwatertown.com",
@@ -10990,10 +10990,10 @@
       "domain": "burientoyota.com",
       "name": "Burien Toyota",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealervenom",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Toyota | probe 2026-08-13: 0 VIN vehicles in 12 fetches (12 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (12 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:303, api-hosts:api.w.org, algolia, typesense"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass bbox (47.25,-122.5,47.8,-122.05); brand: Toyota | probe 2026-08-13: 0 VIN vehicles in 12 fetches (12 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (12 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:303, api-hosts:api.w.org, algolia, typesense | validated 2026-08-16: Dealer Venom platform — sitemap enumerates every VDP by VIN, VDPs are server-rendered Car JSON-LD behind a vdp_gate cookie redirect (http.mjs cookie jar); crawl: 10 EVs extracted"
     },
     {
       "domain": "dougshyundai.com",
@@ -11282,8 +11282,8 @@
       "kind": "rooftop",
       "platform": "team-velocity",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Honda | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | 2026-08-16: homepage fingerprints team-velocity, not dealer.com — relabelled and queued for the nightly probe | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — client-rendered or API-backed; leads: api-hosts:websites.api.teamvelocityportal.com+advid.api.teamvelocityportal.com+offermanager.api.teamvelocityportal.com"
+      "status": "site-moved",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Honda | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | 2026-08-16: homepage fingerprints team-velocity, not dealer.com — relabelled and queued for the nightly probe | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — client-rendered or API-backed; leads: api-hosts:websites.api.teamvelocityportal.com+advid.api.teamvelocityportal.com+offermanager.api.teamvelocityportal.com | 2026-08-16: rebranded to cvhonda.com, which the registry already tracks as its own working row — this row is retired, not a coverage gap"
     },
     {
       "domain": "paoliford.com",
@@ -12043,13 +12043,13 @@
       "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Toyota | auto-promoted by probe 2026-08-14: 2 VIN vehicles on 1 page(s), platform unknown"
     },
     {
-      "domain": "volvopaloalto.com",
+      "domain": "volvocarspaloalto.com",
       "name": "Volvo Cars Palo Alto",
       "kind": "rooftop",
       "platform": "team-velocity",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Volvo | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | 2026-08-16: homepage fingerprints team-velocity, not dealer.com — relabelled and queued for the nightly probe | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — client-rendered or API-backed; leads: api-hosts:websites.api.teamvelocityportal.com+advid.api.teamvelocityportal.com+offermanager.api.teamvelocityportal.com"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Volvo | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | 2026-08-16: homepage fingerprints team-velocity, not dealer.com — relabelled and queued for the nightly probe | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — client-rendered or API-backed; leads: api-hosts:websites.api.teamvelocityportal.com+advid.api.teamvelocityportal.com+offermanager.api.teamvelocityportal.com | 2026-08-16: rooftop rebranded — volvopaloalto.com 404s every deep path (only the homepage redirects), which is why probes read 0 vehicles; row re-keyed to the live domain, whose Team Velocity /inventory/used serves Vehicle JSON-LD server-side | validated 2026-08-16: Team Velocity SRP (/inventory/used|new) server-renders Vehicle JSON-LD; crawl: 17 EVs"
     },
     {
       "domain": "poudresportscar.com",
@@ -13166,10 +13166,10 @@
       "domain": "davidsonsmotors.com",
       "name": "Davidson's Motors",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealrcloud",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | validated 2026-08-16: dealr.cloud extractor (lib/platforms/dealrcloud.mjs) reads SRP tiles + VDP containers server-side, ?page=N walks the lot; crawl: 26 vehicle pages, 0 EVs in stock tonight"
     },
     {
       "domain": "irontrailchevrolet.com",
@@ -14245,13 +14245,13 @@
       "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: BMW"
     },
     {
-      "domain": "phillipsburgeastonhyundai.com",
+      "domain": "browndaubhyundai.com",
       "name": "Phillipsburg Easton Hyundai",
       "kind": "rooftop",
       "platform": "team-velocity",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | 2026-08-16: homepage fingerprints team-velocity, not dealer.com — relabelled and queued for the nightly probe | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — client-rendered or API-backed; leads: api-hosts:websites.api.teamvelocityportal.com+advid.api.teamvelocityportal.com+offermanager.api.teamvelocityportal.com"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | 2026-08-16: homepage fingerprints team-velocity, not dealer.com — relabelled and queued for the nightly probe | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — client-rendered or API-backed; leads: api-hosts:websites.api.teamvelocityportal.com+advid.api.teamvelocityportal.com+offermanager.api.teamvelocityportal.com | 2026-08-16: rooftop rebranded — phillipsburgeastonhyundai.com 404s every deep path (only the homepage redirects), which is why probes read 0 vehicles; row re-keyed to the live domain, whose Team Velocity /inventory/used serves Vehicle JSON-LD server-side | validated 2026-08-16: Team Velocity SRP (/inventory/used|new) server-renders Vehicle JSON-LD; crawl: 8 EVs"
     },
     {
       "domain": "shottenkirkfortmadison.com",
@@ -14551,13 +14551,13 @@
       "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13)"
     },
     {
-      "domain": "lhmtoyotacorona.com",
+      "domain": "coronatoyota.com",
       "name": "Larry H. Miller Toyota Corona",
       "kind": "rooftop",
       "platform": "team-velocity",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — client-rendered or API-backed; leads: api-hosts:websites.api.teamvelocityportal.com+advid.api.teamvelocityportal.com+offermanager.api.teamvelocityportal.com"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — client-rendered or API-backed; leads: api-hosts:websites.api.teamvelocityportal.com+advid.api.teamvelocityportal.com+offermanager.api.teamvelocityportal.com | 2026-08-16: rooftop rebranded — lhmtoyotacorona.com 404s every deep path (only the homepage redirects), which is why probes read 0 vehicles; row re-keyed to the live domain, whose Team Velocity /inventory/used serves Vehicle JSON-LD server-side | validated 2026-08-16: Team Velocity SRP (/inventory/used|new) server-renders Vehicle JSON-LD; crawl: 2 EVs"
     },
     {
       "domain": "findlaydowntownhondaspokane.com",
@@ -15939,7 +15939,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:78, api-hosts:static.cargurus.com+www.cargurus.com"
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:78, api-hosts:static.cargurus.com+www.cargurus.com | 2026-08-16: not Dealer Venom — Clawson-family template shared only with clawsonhonda.com; /search/used/{VIN} sitemap VDPs carry the VIN in a dataLayer/autoipacket blob, no vehicle JSON-LD; 2-rooftop template, extractor not built (singleton economics)"
     },
     {
       "domain": "mansfield.mercedesdealer.com",
@@ -16287,10 +16287,10 @@
       "domain": "queensborotoyota.com",
       "name": "Queensboro Toyota",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealervenom",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Toyota | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:226, api-hosts:api.w.org, algolia, typesense"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Toyota | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:226, api-hosts:api.w.org, algolia, typesense | validated 2026-08-16: Dealer Venom platform — sitemap enumerates every VDP by VIN, VDPs are server-rendered Car JSON-LD behind a vdp_gate cookie redirect (http.mjs cookie jar); crawl: 7 EVs extracted"
     },
     {
       "domain": "meritsautosales.com",
@@ -17448,10 +17448,10 @@
       "domain": "marinadelreytoyota.com",
       "name": "Toyota",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealervenom",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Toyota | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:126, api-hosts:api.w.org+static.cargurus.com, algolia, typesense"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Toyota | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:126, api-hosts:api.w.org+static.cargurus.com, algolia, typesense | validated 2026-08-16: Dealer Venom platform — sitemap enumerates every VDP by VIN, VDPs are server-rendered Car JSON-LD behind a vdp_gate cookie redirect (http.mjs cookie jar); crawl: 8 EVs extracted"
     },
     {
       "domain": "carleasingservice.com",
@@ -19205,10 +19205,10 @@
       "domain": "toyotaofhollywood.com",
       "name": "Toyota of Hollywood",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealervenom",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Toyota | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:981, api-hosts:api.w.org, algolia, typesense"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Toyota | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:981, api-hosts:api.w.org, algolia, typesense | validated 2026-08-16: Dealer Venom platform — sitemap enumerates every VDP by VIN, VDPs are server-rendered Car JSON-LD behind a vdp_gate cookie redirect (http.mjs cookie jar); crawl: 18 EVs extracted"
     },
     {
       "domain": "fourmsales.com",
@@ -19277,10 +19277,10 @@
       "domain": "aclcars.com",
       "name": "Auto Connection of Lancaster, Inc.",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealrcloud",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | validated 2026-08-16: dealr.cloud extractor (lib/platforms/dealrcloud.mjs) reads SRP tiles + VDP containers server-side, ?page=N walks the lot; crawl: 27 vehicle pages, 0 EVs in stock tonight"
     },
     {
       "domain": "chapmanfordllc.com",
@@ -20900,10 +20900,10 @@
       "domain": "burgiomotors.com",
       "name": "Burgio Motors",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealrcloud",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | validated 2026-08-16: dealr.cloud extractor (lib/platforms/dealrcloud.mjs) reads SRP tiles + VDP containers server-side, ?page=N walks the lot; crawl: 29 vehicle pages, 0 EVs in stock tonight"
     },
     {
       "domain": "fordofelizabethton.com",
@@ -20918,10 +20918,10 @@
       "domain": "coloradotrucks.com",
       "name": "McCarty Motors",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealrcloud",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | validated 2026-08-16: dealr.cloud extractor (lib/platforms/dealrcloud.mjs) reads SRP tiles + VDP containers server-side, ?page=N walks the lot; crawl: 24 vehicle pages, 0 EVs in stock tonight"
     },
     {
       "domain": "shamrockautobrokers.com",
@@ -21136,10 +21136,10 @@
       "domain": "southcreekauto.com",
       "name": "South Creek",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealrcloud",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | validated 2026-08-16: dealr.cloud extractor (lib/platforms/dealrcloud.mjs) reads SRP tiles + VDP containers server-side, ?page=N walks the lot; crawl: 26 vehicle pages, 0 EVs in stock tonight"
     },
     {
       "domain": "volvocarscoolsprings.com",
@@ -21155,10 +21155,10 @@
       "domain": "sprinklerusedcars.com",
       "name": "Sprinkler Used Cars",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealrcloud",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud+api.visitor.chat"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud+api.visitor.chat | validated 2026-08-16: dealr.cloud extractor (lib/platforms/dealrcloud.mjs) reads SRP tiles + VDP containers server-side, ?page=N walks the lot; crawl: 27 vehicle pages, 0 EVs in stock tonight"
     },
     {
       "domain": "pacelineauto.com",
@@ -22368,10 +22368,10 @@
       "domain": "1stnissan.com",
       "name": "1st Nissan of Simi Valley",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealervenom",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Nissan | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:65, api-hosts:api.w.org, algolia, typesense"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Nissan | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:65, api-hosts:api.w.org, algolia, typesense | validated 2026-08-16: Dealer Venom platform — sitemap enumerates every VDP by VIN, VDPs are server-rendered Car JSON-LD behind a vdp_gate cookie redirect (http.mjs cookie jar); crawl: 10 EVs extracted"
     },
     {
       "domain": "avisalaska.com",
@@ -22386,10 +22386,10 @@
       "domain": "1stkia.com",
       "name": "1st Kia of Simi Valley",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealervenom",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Kia | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:135, api-hosts:api.w.org, algolia, typesense"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Kia | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:135, api-hosts:api.w.org, algolia, typesense | validated 2026-08-16: Dealer Venom platform — sitemap enumerates every VDP by VIN, VDPs are server-rendered Car JSON-LD behind a vdp_gate cookie redirect (http.mjs cookie jar); crawl: 3 EVs extracted"
     },
     {
       "domain": "northpointchryslerjeep.net",
@@ -22422,10 +22422,10 @@
       "domain": "1sthonda.com",
       "name": "First Honda Simi Valley",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealervenom",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Honda | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:115, api-hosts:api.w.org, algolia, typesense"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Honda | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:115, api-hosts:api.w.org, algolia, typesense | validated 2026-08-16: Dealer Venom platform — sitemap enumerates every VDP by VIN, VDPs are server-rendered Car JSON-LD behind a vdp_gate cookie redirect (http.mjs cookie jar); crawl: 1 EVs extracted"
     },
     {
       "domain": "fairviewcars.com",
@@ -22584,10 +22584,10 @@
       "domain": "coolridesonline.com",
       "name": "Cool Rides",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealrcloud",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | validated 2026-08-16: dealr.cloud extractor (lib/platforms/dealrcloud.mjs) reads SRP tiles + VDP containers server-side, ?page=N walks the lot; crawl: 21 vehicle pages, 0 EVs in stock tonight"
     },
     {
       "domain": "landersfamilypreowned.com",
@@ -26358,10 +26358,10 @@
       "domain": "toyotasunnyvale.com",
       "name": "Toyota Sunnyvale",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealervenom",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Toyota | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:601, api-hosts:api.w.org, algolia, typesense"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Toyota | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:601, api-hosts:api.w.org, algolia, typesense | validated 2026-08-16: Dealer Venom platform — sitemap enumerates every VDP by VIN, VDPs are server-rendered Car JSON-LD behind a vdp_gate cookie redirect (http.mjs cookie jar); crawl: 59 EVs extracted"
     },
     {
       "domain": "quirkford.com",
@@ -29722,10 +29722,10 @@
       "domain": "gometroamerica.com",
       "name": "Metro America Auto Sales",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealrcloud",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | validated 2026-08-16: dealr.cloud extractor (lib/platforms/dealrcloud.mjs) reads SRP tiles + VDP containers server-side, ?page=N walks the lot; crawl: 28 vehicle pages, 0 EVs in stock tonight"
     },
     {
       "domain": "columbiachev.com",
@@ -30066,10 +30066,10 @@
       "domain": "teamtoyotaglenmills.com",
       "name": "Team Toyota of Glen Mills",
       "kind": "rooftop",
-      "platform": "dealer.com",
+      "platform": "dealervenom",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | 2026-08-16: homepage carries no marker of the labelled platform — label reset, requeued for the nightly probe to refingerprint | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — client-rendered or API-backed; leads: vin-url-sitemap:314, api-hosts:api.w.org, algolia, typesense"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | 2026-08-16: homepage carries no marker of the labelled platform — label reset, requeued for the nightly probe to refingerprint | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — client-rendered or API-backed; leads: vin-url-sitemap:314, api-hosts:api.w.org, algolia, typesense | validated 2026-08-16: Dealer Venom platform — sitemap enumerates every VDP by VIN, VDPs are server-rendered Car JSON-LD behind a vdp_gate cookie redirect (http.mjs cookie jar); crawl: 11 EVs extracted"
     },
     {
       "domain": "napolimotors.com",
@@ -30193,10 +30193,10 @@
       "domain": "colonialtoyotact.com",
       "name": "Colonial Toyota",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealervenom",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Toyota | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:678, api-hosts:api.w.org, algolia, typesense"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Toyota | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:678, api-hosts:api.w.org, algolia, typesense | validated 2026-08-16: Dealer Venom platform — sitemap enumerates every VDP by VIN, VDPs are server-rendered Car JSON-LD behind a vdp_gate cookie redirect (http.mjs cookie jar); crawl: 13 EVs extracted"
     },
     {
       "domain": "chevroletofmilford.com",
@@ -30262,13 +30262,13 @@
       "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Toyota | auto-promoted by probe 2026-08-14: 1 VIN vehicles on 1 page(s), platform dealeron"
     },
     {
-      "domain": "arlingtonhonda.com",
+      "domain": "saffordhondaarlington.com",
       "name": "Brown's Arlington Honda",
       "kind": "rooftop",
       "platform": "team-velocity",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Honda | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — client-rendered or API-backed; leads: api-hosts:websites.api.teamvelocityportal.com+advid.api.teamvelocityportal.com+offermanager.api.teamvelocityportal.com"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Honda | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — client-rendered or API-backed; leads: api-hosts:websites.api.teamvelocityportal.com+advid.api.teamvelocityportal.com+offermanager.api.teamvelocityportal.com | 2026-08-16: rooftop rebranded — arlingtonhonda.com 404s every deep path (only the homepage redirects), which is why probes read 0 vehicles; row re-keyed to the live domain, whose Team Velocity /inventory/used serves Vehicle JSON-LD server-side | validated 2026-08-16: Team Velocity SRP (/inventory/used|new) server-renders Vehicle JSON-LD; crawl: 33 EVs"
     },
     {
       "domain": "theautomartinc.com",
@@ -30820,13 +30820,13 @@
       "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Mazda"
     },
     {
-      "domain": "hondaoflancaster.com",
+      "domain": "hondalancaster.com",
       "name": "Honda Lancaster",
       "kind": "rooftop",
       "platform": "team-velocity",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Honda | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — client-rendered or API-backed; leads: api-hosts:websites.api.teamvelocityportal.com+advid.api.teamvelocityportal.com+offermanager.api.teamvelocityportal.com"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Honda | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — client-rendered or API-backed; leads: api-hosts:websites.api.teamvelocityportal.com+advid.api.teamvelocityportal.com+offermanager.api.teamvelocityportal.com | 2026-08-16: rooftop rebranded — hondaoflancaster.com 404s every deep path (only the homepage redirects), which is why probes read 0 vehicles; row re-keyed to the live domain, whose Team Velocity /inventory/used serves Vehicle JSON-LD server-side | validated 2026-08-16: Team Velocity SRP (/inventory/used|new) server-renders Vehicle JSON-LD; crawl: 5 EVs"
     },
     {
       "domain": "101aautosales.com",
@@ -32028,13 +32028,13 @@
       "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Honda | probe 2026-08-14: homepage robots_disallowed"
     },
     {
-      "domain": "jordanmotorcars.net",
+      "domain": "jordanmotorcars.com",
       "name": "Jordan Motorcars",
       "kind": "rooftop",
       "platform": "team-velocity",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — client-rendered or API-backed; leads: api-hosts:websites.api.teamvelocityportal.com+advid.api.teamvelocityportal.com+offermanager.api.teamvelocityportal.com"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — client-rendered or API-backed; leads: api-hosts:websites.api.teamvelocityportal.com+advid.api.teamvelocityportal.com+offermanager.api.teamvelocityportal.com | 2026-08-16: rooftop rebranded — jordanmotorcars.net 404s every deep path (only the homepage redirects), which is why probes read 0 vehicles; row re-keyed to the live domain, whose Team Velocity /inventory/used serves Vehicle JSON-LD server-side | validated 2026-08-16: Team Velocity SRP (/inventory/used|new) server-renders Vehicle JSON-LD; crawl: 5 EVs"
     },
     {
       "domain": "morriesonalaskachevrolet.com",
@@ -33783,10 +33783,10 @@
       "domain": "southparkmitsubishi.com",
       "name": "South Park Mitsubishi",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealervenom",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:110, api-hosts:api.w.org, algolia, typesense"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:110, api-hosts:api.w.org, algolia, typesense | validated 2026-08-16: Dealer Venom platform — sitemap enumerates every VDP by VIN, VDPs are server-rendered Car JSON-LD behind a vdp_gate cookie redirect (http.mjs cookie jar); crawl: 40 vehicle pages, 0 EVs in stock tonight"
     },
     {
       "domain": "wheels-and-dealsmn.com",
@@ -33837,10 +33837,10 @@
       "domain": "mazalmotors.com",
       "name": "Mazal Motors",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealrcloud",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | validated 2026-08-16: dealr.cloud extractor (lib/platforms/dealrcloud.mjs) reads SRP tiles + VDP containers server-side, ?page=N walks the lot; crawl: 28 vehicle pages, 0 EVs in stock tonight"
     },
     {
       "domain": "midwaytoyota.com",
@@ -34044,10 +34044,10 @@
       "domain": "toyotaofnaperville.com",
       "name": "Toyota",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealervenom",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Toyota | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:583, api-hosts:api.w.org, algolia, typesense"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Toyota | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:583, api-hosts:api.w.org, algolia, typesense | validated 2026-08-16: Dealer Venom platform — sitemap enumerates every VDP by VIN, VDPs are server-rendered Car JSON-LD behind a vdp_gate cookie redirect (http.mjs cookie jar); crawl: 17 EVs extracted"
     },
     {
       "domain": "platinumautobrokers.com",
@@ -34530,10 +34530,10 @@
       "domain": "battlegroundkia.com",
       "name": "Battleground Kia",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealervenom",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Kia | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:501, api-hosts:api.w.org, algolia, typesense"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Kia | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:501, api-hosts:api.w.org, algolia, typesense | validated 2026-08-16: Dealer Venom platform — sitemap enumerates every VDP by VIN, VDPs are server-rendered Car JSON-LD behind a vdp_gate cookie redirect (http.mjs cookie jar); crawl: 1 EVs extracted"
     },
     {
       "domain": "wallacesubarujohnsoncity.com",
@@ -36431,10 +36431,10 @@
       "domain": "discountautobrokersllc.com",
       "name": "Discount Auto Brokers LLC",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealrcloud",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | validated 2026-08-16: dealr.cloud extractor (lib/platforms/dealrcloud.mjs) reads SRP tiles + VDP containers server-side, ?page=N walks the lot; crawl: 2 vehicle pages, 0 EVs in stock tonight"
     },
     {
       "domain": "beavertontoyota.com",
@@ -38527,10 +38527,10 @@
       "domain": "woodcitymotors.com",
       "name": "Wood City Motors",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealervenom",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:84, api-hosts:api.w.org, algolia, typesense"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:84, api-hosts:api.w.org, algolia, typesense | validated 2026-08-16: Dealer Venom platform — sitemap enumerates every VDP by VIN, VDPs are server-rendered Car JSON-LD behind a vdp_gate cookie redirect (http.mjs cookie jar); crawl: 40 vehicle pages, 0 EVs in stock tonight"
     },
     {
       "domain": "premierautosofdallas.com",
@@ -39072,7 +39072,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:64, api-hosts:automobiles.honda.com"
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:64, api-hosts:automobiles.honda.com | 2026-08-16: not Dealer Venom — /Used/{yr}/{make}/{model}/{VIN}/ sitemap, 800KB VDPs without vehicle JSON-LD; single-site template, extractor not built"
     },
     {
       "domain": "nissanofmissionhills.com",
@@ -39313,10 +39313,10 @@
       "domain": "networkautosource.net",
       "name": "Network Auto Source",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealrcloud",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud+api.quotible.com"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud+api.quotible.com | validated 2026-08-16: dealr.cloud extractor (lib/platforms/dealrcloud.mjs) reads SRP tiles + VDP containers server-side, ?page=N walks the lot; crawl: 28 vehicle pages, 0 EVs in stock tonight"
     },
     {
       "domain": "stuckeyfordbellefonte.com",
@@ -39358,10 +39358,10 @@
       "domain": "foxtoyotaclinton.com",
       "name": "Fox Toyota",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealervenom",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Toyota | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:403, api-hosts:api.w.org, algolia, typesense"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Toyota | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:403, api-hosts:api.w.org, algolia, typesense | validated 2026-08-16: Dealer Venom platform — sitemap enumerates every VDP by VIN, VDPs are server-rendered Car JSON-LD behind a vdp_gate cookie redirect (http.mjs cookie jar); crawl: 7 EVs extracted"
     },
     {
       "domain": "subaruofloveland.com",
@@ -39430,10 +39430,10 @@
       "domain": "arlingtontoyota.com",
       "name": "Arlington Toyota",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealervenom",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Toyota | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:995, api-hosts:api.w.org, algolia, typesense"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Toyota | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:995, api-hosts:api.w.org, algolia, typesense | validated 2026-08-16: Dealer Venom platform — sitemap enumerates every VDP by VIN, VDPs are server-rendered Car JSON-LD behind a vdp_gate cookie redirect (http.mjs cookie jar); crawl: 44 EVs extracted"
     },
     {
       "domain": "faulknervolvocarslancaster.com",
@@ -41305,8 +41305,8 @@
       "kind": "rooftop",
       "platform": "team-velocity",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | 2026-08-16: homepage fingerprints team-velocity, not dealer.com — relabelled and queued for the nightly probe | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — client-rendered or API-backed; leads: api-hosts:websites.api.teamvelocityportal.com+advid.api.teamvelocityportal.com+offermanager.api.teamvelocityportal.com"
+      "status": "site-moved",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | 2026-08-16: homepage fingerprints team-velocity, not dealer.com — relabelled and queued for the nightly probe | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — client-rendered or API-backed; leads: api-hosts:websites.api.teamvelocityportal.com+advid.api.teamvelocityportal.com+offermanager.api.teamvelocityportal.com | 2026-08-16: rebranded to nissanofclovis.com, which the registry already tracks as its own working row — this row is retired, not a coverage gap"
     },
     {
       "domain": "houdekautocenter.com",
@@ -42577,10 +42577,10 @@
       "domain": "findlaytoyota.com",
       "name": "Findlay Toyota",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealervenom",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Toyota | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:990, api-hosts:api.w.org, algolia, typesense"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Toyota | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:990, api-hosts:api.w.org, algolia, typesense | validated 2026-08-16: Dealer Venom platform — sitemap enumerates every VDP by VIN, VDPs are server-rendered Car JSON-LD behind a vdp_gate cookie redirect (http.mjs cookie jar); crawl: 54 EVs extracted"
     },
     {
       "domain": "lamborghinilasvegas.com",
@@ -43931,10 +43931,10 @@
       "domain": "unlimiteddenver.com",
       "name": "Unlimited Auto Sales",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealrcloud",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | validated 2026-08-16: dealr.cloud extractor (lib/platforms/dealrcloud.mjs) reads SRP tiles + VDP containers server-side, ?page=N walks the lot; crawl: 28 vehicle pages, 0 EVs in stock tonight"
     },
     {
       "domain": "van2autos.com",
@@ -44139,10 +44139,10 @@
       "domain": "diehltoyotabutler.com",
       "name": "Diehl Toyota of Butler",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealervenom",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Diehl | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:908, api-hosts:api.w.org, algolia, typesense"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Diehl | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:908, api-hosts:api.w.org, algolia, typesense | validated 2026-08-16: Dealer Venom platform — sitemap enumerates every VDP by VIN, VDPs are server-rendered Car JSON-LD behind a vdp_gate cookie redirect (http.mjs cookie jar); crawl: 6 EVs extracted"
     },
     {
       "domain": "koolchevy.com",
@@ -44284,10 +44284,10 @@
       "domain": "keyautodenver.com",
       "name": "Key Auto Denver",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealrcloud",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | validated 2026-08-16: dealr.cloud extractor (lib/platforms/dealrcloud.mjs) reads SRP tiles + VDP containers server-side, ?page=N walks the lot; crawl: 26 vehicle pages, 0 EVs in stock tonight"
     },
     {
       "domain": "carshop.com",
@@ -44383,10 +44383,10 @@
       "domain": "hondaofcartersville.com",
       "name": "Shottenkirk Honda of Cartersville",
       "kind": "rooftop",
-      "platform": "dealer.com",
+      "platform": "dealervenom",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Honda | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | 2026-08-16: homepage carries no marker of the labelled platform — label reset, requeued for the nightly probe to refingerprint | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — client-rendered or API-backed; leads: vin-url-sitemap:715, api-hosts:api.w.org, algolia, typesense"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Honda | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | 2026-08-16: homepage carries no marker of the labelled platform — label reset, requeued for the nightly probe to refingerprint | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — client-rendered or API-backed; leads: vin-url-sitemap:715, api-hosts:api.w.org, algolia, typesense | validated 2026-08-16: Dealer Venom platform — sitemap enumerates every VDP by VIN, VDPs are server-rendered Car JSON-LD behind a vdp_gate cookie redirect (http.mjs cookie jar); crawl: 5 EVs extracted"
     },
     {
       "domain": "schaumburgtoyota.com",
@@ -45467,16 +45467,16 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:54, api-hosts:api.w.org+api.whatsapp.com"
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:54, api-hosts:api.w.org+api.whatsapp.com | 2026-08-16: not Dealer Venom — WordPress inventory plugin, /inventory/{yr}/{make}/{model}/{st}/{city}/{VIN}/ server-rendered but no vehicle JSON-LD; single-site template, extractor not built"
     },
     {
-      "domain": "northbros.com",
+      "domain": "northbrothersford.net",
       "name": "North Brothers Ford",
       "kind": "rooftop",
       "platform": "team-velocity",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Ford | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — client-rendered or API-backed; leads: api-hosts:websites.api.teamvelocityportal.com+advid.api.teamvelocityportal.com+offermanager.api.teamvelocityportal.com"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Ford | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — client-rendered or API-backed; leads: api-hosts:websites.api.teamvelocityportal.com+advid.api.teamvelocityportal.com+offermanager.api.teamvelocityportal.com | 2026-08-16: rooftop rebranded — northbros.com 404s every deep path (only the homepage redirects), which is why probes read 0 vehicles; row re-keyed to the live domain, whose Team Velocity /inventory/used serves Vehicle JSON-LD server-side | validated 2026-08-16: Team Velocity SRP (/inventory/used|new) server-renders Vehicle JSON-LD; crawl: 9 EVs"
     },
     {
       "domain": "superiormotorcompany.com",
@@ -45834,10 +45834,10 @@
       "domain": "lynchtoyota.com",
       "name": "Lynch Toyota",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealervenom",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Toyota | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:349, api-hosts:api.w.org, algolia, typesense"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Toyota | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:349, api-hosts:api.w.org, algolia, typesense | validated 2026-08-16: Dealer Venom platform — sitemap enumerates every VDP by VIN, VDPs are server-rendered Car JSON-LD behind a vdp_gate cookie redirect (http.mjs cookie jar); crawl: 8 EVs extracted"
     },
     {
       "domain": "currytoyotact.com",
@@ -45969,10 +45969,10 @@
       "domain": "greentreetoyota.com",
       "name": "Greentree Toyota",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealervenom",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Toyota | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:536, api-hosts:api.w.org, algolia, typesense"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Toyota | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:536, api-hosts:api.w.org, algolia, typesense | validated 2026-08-16: Dealer Venom platform — sitemap enumerates every VDP by VIN, VDPs are server-rendered Car JSON-LD behind a vdp_gate cookie redirect (http.mjs cookie jar); crawl: 7 EVs extracted"
     },
     {
       "domain": "319motors.com",
@@ -46095,10 +46095,10 @@
       "domain": "bluegillmotors.com",
       "name": "Bluegill Motors",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealrcloud",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | validated 2026-08-16: dealr.cloud extractor (lib/platforms/dealrcloud.mjs) reads SRP tiles + VDP containers server-side, ?page=N walks the lot; crawl: 23 vehicle pages, 0 EVs in stock tonight"
     },
     {
       "domain": "edwardschryslerdodgejeep.com",
@@ -46329,10 +46329,10 @@
       "domain": "saltlakeimports.com",
       "name": "Salt Lake Imports",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealrcloud",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | validated 2026-08-16: dealr.cloud confirmed but /inventory answers 'No vehicles were found' — empty lot, not an extraction failure (template verified on sibling rooftops); nightly crawl will pick up stock when it appears"
     },
     {
       "domain": "koonstoyotawestminster.com",
@@ -46527,10 +46527,10 @@
       "domain": "krausetoyota.com",
       "name": "Krause Toyota",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealervenom",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Toyota | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:117, api-hosts:api.w.org, algolia, typesense"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Toyota | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:117, api-hosts:api.w.org, algolia, typesense | validated 2026-08-16: Dealer Venom platform — sitemap enumerates every VDP by VIN, VDPs are server-rendered Car JSON-LD behind a vdp_gate cookie redirect (http.mjs cookie jar); crawl: 7 EVs extracted"
     },
     {
       "domain": "autoplexautomall.com",
@@ -49371,7 +49371,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:1, api-hosts:api.w.org"
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:1, api-hosts:api.w.org | 2026-08-16: not Dealer Venom — WordPress/Yoast /listings/{stock} pages, sitemap has 1 VIN-bearing URL; single-site template, extractor not built"
     },
     {
       "domain": "tustintoyota.com",
@@ -50470,10 +50470,10 @@
       "domain": "masterchevrolet.com",
       "name": "Master Chevrolet",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealervenom",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Chevrolet | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:167, api-hosts:api.w.org, algolia, typesense"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Chevrolet | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:167, api-hosts:api.w.org, algolia, typesense | validated 2026-08-16: Dealer Venom platform — sitemap enumerates every VDP by VIN, VDPs are server-rendered Car JSON-LD behind a vdp_gate cookie redirect (http.mjs cookie jar); crawl: 40 vehicle pages, 0 EVs in stock tonight"
     },
     {
       "domain": "longmotors.com",
@@ -51807,10 +51807,10 @@
       "domain": "carsofcville.com",
       "name": "Cars of Charlottesville",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealrcloud",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | validated 2026-08-16: dealr.cloud extractor (lib/platforms/dealrcloud.mjs) reads SRP tiles + VDP containers server-side, ?page=N walks the lot; crawl: 28 vehicle pages, 0 EVs in stock tonight"
     },
     {
       "domain": "springfieldhyundai.com",
@@ -52095,10 +52095,10 @@
       "domain": "tohamazinnusedcars.com",
       "name": "Toyota of Hollywood's AmaZinn Used Cars",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealervenom",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:1000, api-hosts:api.w.org, algolia, typesense"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:1000, api-hosts:api.w.org, algolia, typesense | validated 2026-08-16: Dealer Venom platform — sitemap enumerates every VDP by VIN, VDPs are server-rendered Car JSON-LD behind a vdp_gate cookie redirect (http.mjs cookie jar); crawl: 3 EVs extracted"
     },
     {
       "domain": "ycityautogroup.com",
@@ -53140,10 +53140,10 @@
       "domain": "toyotasb.com",
       "name": "Toyota of San Bernardino",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealervenom",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Toyota | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:693, api-hosts:api.w.org, algolia, typesense"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Toyota | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:693, api-hosts:api.w.org, algolia, typesense | validated 2026-08-16: Dealer Venom platform — sitemap enumerates every VDP by VIN, VDPs are server-rendered Car JSON-LD behind a vdp_gate cookie redirect (http.mjs cookie jar); crawl: 25 EVs extracted"
     },
     {
       "domain": "samsusedcarsoh.com",
@@ -55294,10 +55294,10 @@
       "domain": "walsertoyota.com",
       "name": "Walser Toyota",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealervenom",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:914, api-hosts:api.w.org, algolia, typesense"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:914, api-hosts:api.w.org, algolia, typesense | validated 2026-08-16: Dealer Venom platform — sitemap enumerates every VDP by VIN, VDPs are server-rendered Car JSON-LD behind a vdp_gate cookie redirect (http.mjs cookie jar); crawl: 5 EVs extracted"
     },
     {
       "domain": "luvford.com",
@@ -55567,7 +55567,7 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Honda | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:100, api-hosts:static.cargurus.com+www.cargurus.com"
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Honda | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:100, api-hosts:static.cargurus.com+www.cargurus.com | 2026-08-16: not Dealer Venom — Clawson-family template shared only with clawsontruckcenter.com; /search/used/{VIN} sitemap VDPs carry the VIN in a dataLayer/autoipacket blob, no vehicle JSON-LD; 2-rooftop template, extractor not built (singleton economics)"
     },
     {
       "domain": "blackstonecadillac.com",
@@ -56953,8 +56953,8 @@
       "kind": "rooftop",
       "platform": "team-velocity",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Honda | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — client-rendered or API-backed; leads: api-hosts:websites.api.teamvelocityportal.com+advid.api.teamvelocityportal.com+offermanager.api.teamvelocityportal.com"
+      "status": "site-moved",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Honda | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — client-rendered or API-backed; leads: api-hosts:websites.api.teamvelocityportal.com+advid.api.teamvelocityportal.com+offermanager.api.teamvelocityportal.com | 2026-08-16: rebranded to dahlhondaonalaska.com, which the registry already tracks as its own working row — this row is retired, not a coverage gap"
     },
     {
       "domain": "russdarrowchrysler.net",
@@ -58832,10 +58832,10 @@
       "domain": "galetoyota.com",
       "name": "Gale Toyota",
       "kind": "rooftop",
-      "platform": "dealer.com",
+      "platform": "dealervenom",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Toyota | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | 2026-08-16: homepage carries no marker of the labelled platform — label reset, requeued for the nightly probe to refingerprint | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — client-rendered or API-backed; leads: vin-url-sitemap:256, api-hosts:api.w.org, algolia, typesense"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Toyota | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | 2026-08-16: homepage carries no marker of the labelled platform — label reset, requeued for the nightly probe to refingerprint | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — client-rendered or API-backed; leads: vin-url-sitemap:256, api-hosts:api.w.org, algolia, typesense | validated 2026-08-16: Dealer Venom platform — sitemap enumerates every VDP by VIN, VDPs are server-rendered Car JSON-LD behind a vdp_gate cookie redirect (http.mjs cookie jar); crawl: 7 EVs extracted"
     },
     {
       "domain": "caposio.com",
@@ -58977,10 +58977,10 @@
       "domain": "wittmotors.com",
       "name": "Witt Motors",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealrcloud",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | validated 2026-08-16: dealr.cloud extractor (lib/platforms/dealrcloud.mjs) reads SRP tiles + VDP containers server-side, ?page=N walks the lot; crawl: 28 vehicle pages, 0 EVs in stock tonight"
     },
     {
       "domain": "asburyauto.com",
@@ -59894,10 +59894,10 @@
       "domain": "atlantichonda.com",
       "name": "Atlantic Honda",
       "kind": "rooftop",
-      "platform": "dealer.com",
+      "platform": "dealervenom",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OEM locator VDP host (lane honda-prologue, 26 listing(s), Bay Shore, NY) 2026-08-16 | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — client-rendered or API-backed; leads: vin-url-sitemap:338, api-hosts:api.w.org, algolia, typesense",
+      "status": "working",
+      "notes": "Discovered via OEM locator VDP host (lane honda-prologue, 26 listing(s), Bay Shore, NY) 2026-08-16 | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — client-rendered or API-backed; leads: vin-url-sitemap:338, api-hosts:api.w.org, algolia, typesense | validated 2026-08-16: Dealer Venom platform — sitemap enumerates every VDP by VIN, VDPs are server-rendered Car JSON-LD behind a vdp_gate cookie redirect (http.mjs cookie jar); crawl: 26 EVs extracted",
       "location": {
         "city": "Bay Shore",
         "state": "NY",
@@ -64594,10 +64594,10 @@
       "domain": "burlingtonkianc.com",
       "name": "Battleground Kia",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealervenom",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OEM locator VDP host (lane kia.com, 1 listing(s), Greensboro, NC) 2026-08-16 | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:501, api-hosts:api.w.org, algolia, typesense",
+      "status": "working",
+      "notes": "Discovered via OEM locator VDP host (lane kia.com, 1 listing(s), Greensboro, NC) 2026-08-16 | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: vin-url-sitemap:501, api-hosts:api.w.org, algolia, typesense | validated 2026-08-16: Dealer Venom platform — sitemap enumerates every VDP by VIN, VDPs are server-rendered Car JSON-LD behind a vdp_gate cookie redirect (http.mjs cookie jar); crawl: 1 EVs extracted",
       "location": {
         "city": "Greensboro",
         "state": "NC",
@@ -65587,10 +65587,10 @@
       "domain": "cogginshondaofbennington.com",
       "name": "Coggins Honda of Bennington",
       "kind": "rooftop",
-      "platform": "dealer.com",
+      "platform": "dealervenom",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OEM locator VDP host (lane honda-prologue, 4 listing(s), Bennington, VT) 2026-08-16 | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — client-rendered or API-backed; leads: vin-url-sitemap:216, api-hosts:api.w.org, algolia, typesense",
+      "status": "working",
+      "notes": "Discovered via OEM locator VDP host (lane honda-prologue, 4 listing(s), Bennington, VT) 2026-08-16 | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — client-rendered or API-backed; leads: vin-url-sitemap:216, api-hosts:api.w.org, algolia, typesense | validated 2026-08-16: Dealer Venom platform — sitemap enumerates every VDP by VIN, VDPs are server-rendered Car JSON-LD behind a vdp_gate cookie redirect (http.mjs cookie jar); crawl: 6 EVs extracted",
       "location": {
         "city": "Bennington",
         "state": "VT",
@@ -76619,13 +76619,13 @@
       }
     },
     {
-      "domain": "saffordbrownhondaglenburnie.com",
+      "domain": "saffordhondaglenburnie.com",
       "name": "Safford Honda Glen Burnie",
       "kind": "rooftop",
       "platform": "team-velocity",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OEM locator VDP host (lane honda-prologue, 1 listing(s), Glen Burnie, MD) 2026-08-16 | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — client-rendered or API-backed; leads: api-hosts:websites.api.teamvelocityportal.com+advid.api.teamvelocityportal.com+offermanager.api.teamvelocityportal.com",
+      "status": "working",
+      "notes": "Discovered via OEM locator VDP host (lane honda-prologue, 1 listing(s), Glen Burnie, MD) 2026-08-16 | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform team-velocity) — client-rendered or API-backed; leads: api-hosts:websites.api.teamvelocityportal.com+advid.api.teamvelocityportal.com+offermanager.api.teamvelocityportal.com | 2026-08-16: rooftop rebranded — saffordbrownhondaglenburnie.com 404s every deep path (only the homepage redirects), which is why probes read 0 vehicles; row re-keyed to the live domain, whose Team Velocity /inventory/used serves Vehicle JSON-LD server-side | validated 2026-08-16: Team Velocity SRP (/inventory/used|new) server-renders Vehicle JSON-LD; crawl: 9 EVs",
       "location": {
         "city": "Glen Burnie",
         "state": "MD",
@@ -77180,10 +77180,10 @@
       "domain": "shottenkirkhondarome.com",
       "name": "Shottenkirk Honda Rome",
       "kind": "rooftop",
-      "platform": "dealer.com",
+      "platform": "dealervenom",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OEM locator VDP host (lane honda-prologue, 4 listing(s), Rome, GA) 2026-08-16 | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — client-rendered or API-backed; leads: vin-url-sitemap:1000, api-hosts:api.w.org, algolia, typesense",
+      "status": "working",
+      "notes": "Discovered via OEM locator VDP host (lane honda-prologue, 4 listing(s), Rome, GA) 2026-08-16 | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — client-rendered or API-backed; leads: vin-url-sitemap:1000, api-hosts:api.w.org, algolia, typesense | validated 2026-08-16: Dealer Venom platform — sitemap enumerates every VDP by VIN, VDPs are server-rendered Car JSON-LD behind a vdp_gate cookie redirect (http.mjs cookie jar); crawl: 9 EVs extracted",
       "location": {
         "city": "Rome",
         "state": "GA",
@@ -77613,10 +77613,10 @@
       "domain": "stamfordford.com",
       "name": "Stamford Ford Lincoln",
       "kind": "rooftop",
-      "platform": "dealer.com",
+      "platform": "dealervenom",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OEM locator VDP host (lane ford-blue-advantage, 1 listing(s), Stamford, CT) 2026-08-16 | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — client-rendered or API-backed; leads: vin-url-sitemap:196, api-hosts:api.w.org, algolia, typesense",
+      "status": "working",
+      "notes": "Discovered via OEM locator VDP host (lane ford-blue-advantage, 1 listing(s), Stamford, CT) 2026-08-16 | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — client-rendered or API-backed; leads: vin-url-sitemap:196, api-hosts:api.w.org, algolia, typesense | validated 2026-08-16: Dealer Venom platform — sitemap enumerates every VDP by VIN, VDPs are server-rendered Car JSON-LD behind a vdp_gate cookie redirect (http.mjs cookie jar); crawl: 1 EVs extracted",
       "location": {
         "city": "Stamford",
         "state": "CT",

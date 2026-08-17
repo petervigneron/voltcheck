@@ -18,6 +18,7 @@ import { fetchRaw } from "./lib/http.mjs";
 import { extractVehicles } from "./lib/jsonld.mjs";
 import { extractDdcVehicles } from "./lib/platforms/dealercom.mjs";
 import { extractDcsVehicles } from "./lib/platforms/dealercarsearch.mjs";
+import { dealrVehicles } from "./lib/platforms/dealrcloud.mjs";
 import { OEM_LOCATOR_DOMAINS as GM_LOCATOR_DOMAINS } from "./lib/oem/gm.mjs";
 import { HYUNDAI } from "./lib/oem/hyundai.mjs";
 import { KIA } from "./lib/oem/kia.mjs";
@@ -111,6 +112,15 @@ const priceOf = (body, vin, url) => {
   // layer is the same field lib/platforms/dealercarsearch.mjs reads into the
   // offer, so the precedence above is preserved rather than bypassed.
   for (const v of extractDcsVehicles(body, url)) {
+    if (String(v.vehicleIdentificationNumber ?? "").toUpperCase() !== vin) continue;
+    const p = Number(v.offers?.price);
+    if (Number.isFinite(p) && p > 500) return Math.round(p);
+  }
+  // dealr.cloud's JSON-LD Car has no VIN (and on some templates doesn't
+  // parse), so like DCS its price is read from the platform's own markup —
+  // the same entry-price field lib/platforms/dealrcloud.mjs builds the offer
+  // from, so JSON-LD-first precedence is preserved, not bypassed.
+  for (const v of dealrVehicles(body, url)) {
     if (String(v.vehicleIdentificationNumber ?? "").toUpperCase() !== vin) continue;
     const p = Number(v.offers?.price);
     if (Number.isFinite(p) && p > 500) return Math.round(p);

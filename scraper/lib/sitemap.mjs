@@ -5,7 +5,12 @@ import { fetchPage } from "./http.mjs";
 export const LOC_RE = /<loc>\s*([^<\s]+)\s*<\/loc>/gi;
 export const INV_PATH_RE = /(inventory|\/used|\/new-|vehicle|\/vdp|\/detail|listing|search(used|new))/i;
 export const VIN_RE = /[A-HJ-NPR-Z0-9]{17}/i;
-export const EVISH_RE = /(tesla|bolt|leaf|ioniq|ev6|ev9|niro.?ev|kona.?el|id-?\.?4|mach-?e|lightning|ariya|lyriq|blazer.?ev|equinox.?ev|silverado.?ev|sierra.?ev|hummer|escalade.?iq|optiq|vistiq|taycan|e-?tron|polestar|rivian|lucid|solterra|bz4x|prologue|zdx|eqb|eqe|eqs|i[45x]\b|500e|cooper.?se|charger.?daytona|wagoneer.?s\b|electric)/i;
+// \bbz\b: Toyota renamed the bZ4X to plain "bZ" for 2026, so Venom-style
+// /vehicle/New/2026/Toyota/bZ/{VIN}/ URLs carry no other EV marker. The
+// Primes are PHEVs classifyEv keeps; spelled out (not bare "prime") so a
+// Prime-branded dealer group's every URL doesn't rank EV-ish. Ranking-only
+// cost either way: a false match here wastes a fetch, never makes a claim.
+export const EVISH_RE = /(tesla|bolt|leaf|ioniq|ev6|ev9|niro.?ev|kona.?el|id-?\.?4|mach-?e|lightning|ariya|lyriq|blazer.?ev|equinox.?ev|silverado.?ev|sierra.?ev|hummer|escalade.?iq|optiq|vistiq|taycan|e-?tron|polestar|rivian|lucid|solterra|bz4x|\bbz\b|rav4.?prime|prius.?prime|prologue|zdx|eqb|eqe|eqs|i[45x]\b|500e|cooper.?se|charger.?daytona|wagoneer.?s\b|electric)/i;
 
 // SRP seeds that exist across major dealer platforms
 export const SRP_PATHS = [

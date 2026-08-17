@@ -116,28 +116,69 @@ async function readBody(res) {
   return buf.toString("utf-8");
 }
 
+// Session-only cookie jar, one name→value map per host. Native fetch carries
+// no cookies, and Dealer Venom VDPs answer the first request with a 302 to
+// the same URL that sets a vdp_gate cookie — cookieless, that loop never
+// terminates and fetch dies on its redirect cap, which made all 34 Venom
+// rooftops read as "client-rendered" (found on burientoyota.com 2026-08-16;
+// with the cookie the same URL serves a 466KB server-rendered page). It is a
+// plain Set-Cookie handshake — no JS, no challenge — so honouring it is
+// browser behavior, not bot-wall evasion. Redirects are followed manually so
+// the 3xx hop's Set-Cookie is seen; each hop pays the per-host politeness
+// delay like any other request.
+const cookieJar = new Map(); // host → Map(name → value)
+
+function storeCookies(host, res) {
+  const set = res.headers.getSetCookie?.() ?? [];
+  if (!set.length) return;
+  const jar = cookieJar.get(host) ?? new Map();
+  for (const line of set) {
+    const [pair] = line.split(";");
+    const eq = pair.indexOf("=");
+    if (eq > 0) jar.set(pair.slice(0, eq).trim(), pair.slice(eq + 1).trim());
+  }
+  cookieJar.set(host, jar);
+}
+
+function cookieHeader(host) {
+  const jar = cookieJar.get(host);
+  return jar?.size ? [...jar].map(([k, v]) => `${k}=${v}`).join("; ") : undefined;
+}
+
+const MAX_REDIRECTS = 5;
+
 export async function fetchRaw(url, { timeoutMs = 15000 } = {}) {
-  const u = new URL(url);
-  await politeDelay(u.host);
-  const ctrl = new AbortController();
-  const t = setTimeout(() => ctrl.abort(), timeoutMs);
-  try {
-    const res = await fetch(url, {
-      headers: {
+  let current = new URL(url);
+  for (let hop = 0; ; hop++) {
+    await politeDelay(current.host);
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), timeoutMs);
+    try {
+      const headers = {
         "user-agent": UA,
         accept: "text/html,application/xhtml+xml,application/xml,application/json;q=0.9,*/*;q=0.8",
         "accept-language": "en-US,en;q=0.9",
         // We are not hiding: this names the crawler and links the page that
         // explains what it is and how to exclude it.
         "x-crawler": `VoltcheckBot/0.1 (+${BOT_PAGE})`,
-      },
-      redirect: "follow",
-      signal: ctrl.signal,
-    });
-    const body = await readBody(res);
-    return { status: res.status, body, finalUrl: res.url };
-  } finally {
-    clearTimeout(t);
+      };
+      const cookie = cookieHeader(current.host);
+      if (cookie) headers.cookie = cookie;
+      const res = await fetch(current, { headers, redirect: "manual", signal: ctrl.signal });
+      storeCookies(current.host, res);
+      const loc = res.headers.get("location");
+      if (res.status >= 300 && res.status < 400 && loc && hop < MAX_REDIRECTS) {
+        try {
+          await res.body?.cancel();
+        } catch {}
+        current = new URL(loc, current);
+        continue;
+      }
+      const body = await readBody(res);
+      return { status: res.status, body, finalUrl: current.toString() };
+    } finally {
+      clearTimeout(t);
+    }
   }
 }
 
