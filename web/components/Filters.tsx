@@ -415,8 +415,8 @@ export function SpecFacets({ facets }: { facets: FacetGroup[] }) {
 // exists but the city is unknown); undefined means no origin at all. `count` is
 // how many cars the active filters leave; undefined until the index lands,
 // because "0 cars" while loading is a wrong answer, not a pending one.
-// `quickCounts` is what each toggle would leave, keyed "key=value" — also
-// undefined until the index lands, and for the same reason.
+// `quickCounts` is what each toggle would leave and out of how many, keyed
+// "key=value" — also undefined until the index lands, and for the same reason.
 export function FilterRail({
   makesModels,
   inferred,
@@ -426,7 +426,7 @@ export function FilterRail({
   makesModels: Record<string, string[]>;
   inferred?: string;
   count?: number;
-  quickCounts?: Record<string, number>;
+  quickCounts?: Record<string, { n: number; of: number }>;
 }) {
   const sp = useSearchParams();
   const [open, setOpen] = useState(false);
@@ -452,15 +452,40 @@ export function FilterRail({
   const models = make ? (makesModels[make] ?? []) : [];
   const makes = Object.keys(makesModels).sort();
 
-  // A toggle that would return nothing against what's already on isn't
-  // offered. "+ AWD" on a Chevrolet Bolt search is not a filter — the car was
-  // never built that way — and a button whose only outcome is an empty page
-  // costs the shopper a click to learn something the rail could have said by
-  // staying quiet. A toggle that is currently ON always stays, whatever it
-  // counts: the only way to switch it off is for it to be there.
-  const quick = QUICK_TOGGLES.map((t) => ({ ...t, on: get(t.key) === t.value })).filter(
-    (t) => t.on || !quickCounts || quickCounts[`${t.key}=${t.value}`] > 0
-  );
+  // A toggle earns its place by dividing the results. It can fail at that from
+  // either end, and only one end was handled at first:
+  //
+  //   nothing  "+ AWD" on a Chevrolet Bolt search — the car was never built
+  //            that way, so the button's only outcome is an empty page.
+  //   everything  "+ SUVs" on a Bolt EUV search, where every last one is an
+  //            SUV; "+ 200+ mi range" on a BMW i5, where 709 of 736 clear it.
+  //            The shopper spends a click and the page barely moves.
+  //
+  // Measured over 15 model searches × these 5 toggles: 13 returned nothing, 10
+  // returned literally everything, and a further handful sat at 96-99.9%.
+  // That's a third of the rail costing attention and dividing nothing.
+  //
+  // 95% is a judgement call, not a discovered constant — the distribution runs
+  // smoothly from 99.96% down through 96.3% (the i5 range case) to 94.7% (200+
+  // miles on an F-150 Lightning) with no natural break, so the line was drawn
+  // just under the cases that read as broken. Tune it against real searches
+  // rather than in the abstract. Nothing is lost when a toggle is dropped:
+  // every one of these keys is still set from All filters, which is the
+  // considered path anyway — the rail is shortcuts, not capability.
+  //
+  // Deliberately asymmetric at the bottom: a toggle leaving ONE car (the lone
+  // sub-$30k Taycan, the lone cheap Lightning) is kept. That is a find, not
+  // noise, and it is exactly what a shopper hunting the bottom of a market
+  // wants the button for. Only literally-zero is dropped.
+  //
+  // A toggle that is currently ON always stays, whatever it counts: the only
+  // way to switch it off is for it to be there.
+  const DIVIDES_ENOUGH = 0.95;
+  const quick = QUICK_TOGGLES.map((t) => ({ ...t, on: get(t.key) === t.value })).filter((t) => {
+    if (t.on || !quickCounts) return true;
+    const c = quickCounts[`${t.key}=${t.value}`];
+    return !!c && c.n > 0 && c.n < c.of * DIVIDES_ENOUGH;
+  });
   const quickOn = new Set(quick.filter((t) => t.on).map((t) => t.key));
 
   // A filter a pressed toggle already represents doesn't also get a chip —

@@ -279,15 +279,12 @@ export function Browse() {
             .sort((a, b) => b.n - a.n)
         : [];
 
-    // What each quick toggle would leave, counted against everything else
-    // that's on. A toggle that would leave nothing is not a filter, it's a
-    // dead end: the Bolt EV was never sold with all-wheel drive and is a
-    // hatchback (the SUV is the EUV, a different model), so on a Bolt search
-    // "+ AWD" and "+ SUVs" are two buttons whose only outcome is an empty
-    // page. Its own key is lifted the way the spec facets lift theirs, so a
-    // toggle still counts honestly when the panel has set that key to some
-    // other value.
-    const quickCounts: Record<string, number> = {};
+    // What each quick toggle would leave, and out of how many — counted
+    // against everything else that's on, with its own key lifted the way the
+    // spec facets lift theirs, so a toggle still counts honestly when the
+    // panel has set that key to some other value. The rail decides from the
+    // ratio which toggles are worth offering (components/Filters.tsx).
+    const quickCounts: Record<string, { n: number; of: number }> = {};
     for (const t of QUICK_TOGGLES) {
       const test = buildTests((k) => (k === t.key ? t.value : ""))[t.key]!;
       const pool = activeKeys.includes(t.key)
@@ -295,7 +292,7 @@ export function Browse() {
         : results;
       let n = 0;
       for (const r of pool) if (test(r)) n++;
-      quickCounts[`${t.key}=${t.value}`] = n;
+      quickCounts[`${t.key}=${t.value}`] = { n, of: pool.length };
     }
 
     // "Which version of this car?" is only a question once there's one car in

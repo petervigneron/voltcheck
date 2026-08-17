@@ -25,8 +25,13 @@ import { modelTally, type ModelCount } from "./tally";
 export const FIRST_PAGE_SIZE = 60;
 
 export interface FirstPaint {
-  /** Bumped with the shape, so a stale cached body is recognizable. */
-  v: 1;
+  /** Bumped with the shape, so a stale cached body is recognizable. Went to 2
+   *  when `quick` grew from a bare count to count-of-total: the rail needs the
+   *  denominator to tell a toggle that divides the results from one that keeps
+   *  all of them (components/Filters.tsx). A cached v1 body is rejected rather
+   *  than misread — its bare numbers would silently answer `undefined` for
+   *  every ratio and strip the rail. */
+  v: 2;
   /**
    * The day term the featured order was scored with. The client reuses it for
    * its own full-index sort, so a payload rendered before UTC midnight and a
@@ -34,8 +39,10 @@ export interface FirstPaint {
    */
   day: number;
   total: number;
-  /** What each quick toggle would leave against no other filters, keyed "key=value". */
-  quick: Record<string, number>;
+  /** What each quick toggle would leave against no other filters, and out of
+   *  how many, keyed "key=value". `of` is the whole feed: this payload only
+   *  ever describes the unfiltered landing page. */
+  quick: Record<string, { n: number; of: number }>;
   popular: ModelCount[];
   suggestions: { label: string; count: number }[];
   makesModels: Record<string, string[]>;
@@ -54,15 +61,15 @@ export function buildFirstPaint(rows: CardRow[]): FirstPaint {
     k: featuredScore(r, counts.get(`${r.make} ${r.model}`.toLowerCase()) ?? 0, day),
   }));
   scored.sort((a, b) => b.k - a.k);
-  const quick: Record<string, number> = {};
+  const quick: Record<string, { n: number; of: number }> = {};
   for (const t of QUICK_TOGGLES) {
     const test = buildTests((k) => (k === t.key ? t.value : ""))[t.key]!;
     let n = 0;
     for (const r of rows) if (test(r)) n++;
-    quick[`${t.key}=${t.value}`] = n;
+    quick[`${t.key}=${t.value}`] = { n, of: rows.length };
   }
   return {
-    v: 1,
+    v: 2,
     day,
     total: rows.length,
     quick,
@@ -76,7 +83,7 @@ export function buildFirstPaint(rows: CardRow[]): FirstPaint {
 export interface FirstPaintData {
   day: number;
   total: number;
-  quick: Record<string, number>;
+  quick: Record<string, { n: number; of: number }>;
   popular: ModelCount[];
   suggestions: { label: string; count: number }[];
   makesModels: Record<string, string[]>;
@@ -87,7 +94,7 @@ export interface FirstPaintData {
  *  failed body downgrades to today's behavior (wait for the index), never to
  *  a misread page. */
 export function unpackFirstPaint(x: unknown): FirstPaintData | null {
-  if (!x || typeof x !== "object" || (x as FirstPaint).v !== 1) return null;
+  if (!x || typeof x !== "object" || (x as FirstPaint).v !== 2) return null;
   const f = x as FirstPaint;
   return {
     day: f.day,
