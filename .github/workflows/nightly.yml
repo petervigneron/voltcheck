@@ -245,6 +245,30 @@ jobs:
           SUPABASE_INGEST_TOKEN: ${{ secrets.SUPABASE_INGEST_TOKEN }}
         run: '[ "$(date +%d)" = "05" ] && node vpic-variants.mjs || echo "not the 5th, skipping"'
 
+      # Tell the site its data changed. The browse feed is cached a full day
+      # (web/lib/listings/db.ts) because it changes exactly when this
+      # pipeline runs — this step is the "it just ran" signal. It expires the
+      # feed cache tag, then warms the six index shards so the one nightly
+      # database walk happens here instead of on a shopper. always(): even a
+      # night that failed after db-sync changed the data, and revalidating a
+      # night that changed nothing costs one walk. A missing secret or an
+      # old deploy without the route degrades to the 24-hour cache backstop —
+      # stale by at most a day, and the warning below says which happened.
+      - name: Revalidate the site's feed cache
+        if: always()
+        env:
+          FEED_REVALIDATE_SECRET: ${{ secrets.FEED_REVALIDATE_SECRET }}
+        run: |
+          [ -z "$FEED_REVALIDATE_SECRET" ] && { echo "::warning::FEED_REVALIDATE_SECRET unset; site refreshes on the 24h cache backstop instead"; exit 0; }
+          if ! curl -fsS --retry 3 --max-time 60 -X POST -H "x-revalidate-secret: $FEED_REVALIDATE_SECRET" https://voltcheck.net/api/revalidate; then
+            echo "::warning::/api/revalidate unreachable (route not deployed yet?); site refreshes on the 24h cache backstop instead"
+            exit 0
+          fi
+          for s in 0 1 2 3 4 5; do
+            curl -fsS --retry 2 --max-time 300 -o /dev/null "https://voltcheck.net/api/index/$s" \
+              || echo "::warning::shard $s warm-up failed; its first visitor pays the render"
+          done
+
       # The JSON snapshot is the web app's fallback when Supabase is
       # unreachable, so it needs to stay current in the repo.
       # Supabase already has the listings by this point, so the site is

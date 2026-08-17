@@ -65,6 +65,18 @@ build time (deliberate: prerendering them put every deploy at the database's
 mercy). Warm `first` first: it is the one the next visitor's first card waits
 on.
 
+The browse feed is cached a **day**, not an hour (the 2026-08-17 egress
+incident: hourly re-walks were ~1.2 GB/day against a 5 GB/month quota).
+nightly.yml's last step POSTs `voltcheck.net/api/revalidate`, which expires
+the `feed` cache tag and warms the shards — the site refreshes when the data
+actually changes, and at most a day later if that signal is lost. The secret
+is the GitHub Actions secret `FEED_REVALIDATE_SECRET` (plaintext in the local
+`docs/feed-revalidate-secret.txt`; the route pins its sha256). After any
+**out-of-cycle db-sync**, send that POST yourself — until the next nightly,
+shoppers are seeing yesterday's feed. And don't point full-feed scripts at
+Supabase when `voltcheck.net/api/index/0`–`5` already serve the same rows off
+Vercel's CDN for free.
+
 ## Database
 
 - Migrations are numbered and append-only. Never renumber or rewrite an
