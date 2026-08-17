@@ -30,6 +30,10 @@ export function spaSignals(html) {
   for (const m of s.matchAll(/https?:\/\/([a-z0-9.-]+)(\/[a-z0-9./_-]*)?/gi)) {
     const host = m[1].toLowerCase();
     const path = m[2] ?? "";
+    // api.w.org is WordPress's REST discovery link, present on every WP page —
+    // a platform fact, not a data-layer lead. In the 2026-08-16 sweep it
+    // drowned the host stats (233 rows); report it as a signal instead.
+    if (host === "api.w.org") continue;
     if (HOST_NOISE.test(host)) continue;
     if (/^api\.|\.api\.|\.cloud$/.test(host) || /\/api\/|\/graphql/i.test(path)) hosts.add(host);
     if (hosts.size >= 3) break;
@@ -53,6 +57,7 @@ export function spaSignals(html) {
   // Client-rendered shell markers: the reason server-side extraction saw an
   // empty page. Framework-precise ones only — a bare <div id="root"> also
   // appears on server-rendered pages and would cry wolf.
+  if (/api\.w\.org/.test(s)) signals.push("wordpress");
   if (/__NEXT_DATA__|self\.__next_f/.test(s)) signals.push("nextjs");
   if (/__NUXT__/.test(s)) signals.push("nuxt");
   if (/window\.__INITIAL_STATE__|window\.__PRELOADED_STATE__/.test(s)) signals.push("spa-state-blob");
