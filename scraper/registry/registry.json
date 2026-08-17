@@ -101308,6 +101308,4724 @@
         "state": "FL",
         "zip": "33612"
       }
+    },
+    {
+      "domain": "jimspacificgarages.com",
+      "name": "JIM'S PACIFIC GARAGES",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "PASCO",
+        "state": "WA",
+        "zip": "99301"
+      }
+    },
+    {
+      "domain": "braunnorthwest.com",
+      "name": "BRAUN NORTHWEST, INC.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "CHEHALIS",
+        "state": "WA",
+        "zip": "98532"
+      }
+    },
+    {
+      "domain": "alpinehausmarina.com",
+      "name": "ALPINE HAUS MARINA",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "SPOKANE VALLEY",
+        "state": "WA",
+        "zip": "99216"
+      }
+    },
+    {
+      "domain": "sangstermotors.com",
+      "name": "DON SANGSTER MOTORS, INC.",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | auto-promoted by probe 2026-08-17: 24 VIN vehicles on 1 page(s), platform dealer.com",
+      "location": {
+        "city": "WENATCHEE",
+        "state": "WA",
+        "zip": "98801"
+      }
+    },
+    {
+      "domain": "jimfugateford.com",
+      "name": "FUGATE FORD",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealeron) — likely needs a platform extractor",
+      "location": {
+        "city": "ENUMCLAW",
+        "state": "WA",
+        "zip": "98022"
+      }
+    },
+    {
+      "domain": "aaasweeping.com",
+      "name": "AAA SWEEPING, L.L.C.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "SPOKANE VALLEY",
+        "state": "WA",
+        "zip": "99216"
+      }
+    },
+    {
+      "domain": "maxxautosplus.com",
+      "name": "MAXX AUTOS PLUS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 1 VIN vehicles on 1 page(s), platform unknown",
+      "location": {
+        "city": "PUYALLUP",
+        "state": "WA",
+        "zip": "98371"
+      }
+    },
+    {
+      "domain": "frontierchev.com",
+      "name": "FRONTIER CHEVROLET",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 2 VIN vehicles on 1 page(s), platform dealeron",
+      "location": {
+        "city": "ANACORTES",
+        "state": "WA",
+        "zip": "98221"
+      }
+    },
+    {
+      "domain": "tituswillchevrolet.com",
+      "name": "TITUS-WILL CHEVROLET",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 2 VIN vehicles on 1 page(s), platform dealeron",
+      "location": {
+        "city": "TACOMA",
+        "state": "WA",
+        "zip": "98444"
+      }
+    },
+    {
+      "domain": "tituswill.com",
+      "name": "TITUS-WILL CHEVROLET",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealeron) — likely needs a platform extractor",
+      "location": {
+        "city": "OLYMPIA",
+        "state": "WA",
+        "zip": "98502"
+      }
+    },
+    {
+      "domain": "boothladuke.com",
+      "name": "COUNTRY CHEVROLET",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | auto-promoted by probe 2026-08-17: 2 VIN vehicles on 1 page(s), platform dealeron",
+      "location": {
+        "city": "COLVILLE",
+        "state": "WA",
+        "zip": "99114"
+      }
+    },
+    {
+      "domain": "thompsonbees.com",
+      "name": "THOMPSON BEES",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "OROVILLE",
+        "state": "WA",
+        "zip": "98844"
+      }
+    },
+    {
+      "domain": "allamericanclassics.com",
+      "name": "ALL AMERICAN CLASSICS, INC.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "VANCOUVER",
+        "state": "WA",
+        "zip": "98682"
+      }
+    },
+    {
+      "domain": "johnsonrv.com",
+      "name": "JOHNSON RV",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 1 VIN vehicles on 1 page(s), platform unknown",
+      "location": {
+        "city": "FIFE",
+        "state": "WA",
+        "zip": "98424"
+      }
+    },
+    {
+      "domain": "agapeautoconnection.com",
+      "name": "AGAPE AUTO CONNECTION",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "EVERETT",
+        "state": "WA",
+        "zip": "98208"
+      }
+    },
+    {
+      "domain": "denpergroup.com",
+      "name": "DENPER GROUP, INC.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "KIRKLAND",
+        "state": "WA",
+        "zip": "98034"
+      }
+    },
+    {
+      "domain": "richscarcorner.com",
+      "name": "RICH'S CAR CORNER, INC.",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | auto-promoted by probe 2026-08-17: 1 VIN vehicles on 1 page(s), platform dealeron",
+      "location": {
+        "city": "SHORELINE",
+        "state": "WA",
+        "zip": "98133"
+      }
+    },
+    {
+      "domain": "bydesignautogroup.com",
+      "name": "BY DESIGN AUTO GROUP, INC.",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | auto-promoted by probe 2026-08-17: 1 VIN vehicles on 1 page(s), platform dealeron",
+      "location": {
+        "city": "BURLINGTON",
+        "state": "WA",
+        "zip": "98233"
+      }
+    },
+    {
+      "domain": "heritagehomecenter.com",
+      "name": "HERITAGE HOME CENTER",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "EVERETT",
+        "state": "WA",
+        "zip": "98204"
+      }
+    },
+    {
+      "domain": "northwesteuro.com",
+      "name": "NORTHWEST EURO LLC",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 16 VIN vehicles on 1 page(s), platform dealer.com",
+      "location": {
+        "city": "SEATTLE",
+        "state": "WA",
+        "zip": "98199"
+      }
+    },
+    {
+      "domain": "younkerbros.com",
+      "name": "YOUNKER BROS., INC.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "SPOKANE VALLEY",
+        "state": "WA",
+        "zip": "99212"
+      }
+    },
+    {
+      "domain": "rallyeauto.com",
+      "name": "RALLYE AUTO SALES INC",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | auto-promoted by probe 2026-08-17: 21 VIN vehicles on 1 page(s), platform dealer.com",
+      "location": {
+        "city": "BURLINGTON",
+        "state": "WA",
+        "zip": "98233"
+      }
+    },
+    {
+      "domain": "rustyridesauto.com",
+      "name": "RUSTY RIDES AUTO SALES",
+      "kind": "rooftop",
+      "platform": "dealercarsearch",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | auto-promoted by probe 2026-08-17: 13 VIN vehicles on 1 page(s), platform dealercarsearch",
+      "location": {
+        "city": "PORT ORCHARD",
+        "state": "WA",
+        "zip": "98367"
+      }
+    },
+    {
+      "domain": "manierimotorworks.com",
+      "name": "MANIERI MOTORWORKS LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "BELLINGHAM",
+        "state": "WA",
+        "zip": "98226"
+      }
+    },
+    {
+      "domain": "pacificcoastauto.com",
+      "name": "PACIFIC COAST AUTO CENTER",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | auto-promoted by probe 2026-08-17: 10 VIN vehicles on 1 page(s), platform dealer.com",
+      "location": {
+        "city": "BURLINGTON",
+        "state": "WA",
+        "zip": "98233"
+      }
+    },
+    {
+      "domain": "canopycountry.com",
+      "name": "CANOPY COUNTRY RV CENTER",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "UNION GAP",
+        "state": "WA",
+        "zip": "98903"
+      }
+    },
+    {
+      "domain": "clickitrvspokane.com",
+      "name": "CLICKIT RV, LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "SPOKANE",
+        "state": "WA",
+        "zip": "99218"
+      }
+    },
+    {
+      "domain": "michaelssubaru.com",
+      "name": "MICHAELS SUBARU OF BELLEVUE",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 24 VIN vehicles on 1 page(s), platform dealer.com",
+      "location": {
+        "city": "BELLEVUE",
+        "state": "WA",
+        "zip": "98007"
+      }
+    },
+    {
+      "domain": "speckbuickgmc.com",
+      "name": "SPECK BUICK GMC OF TRICITIES",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 2 VIN vehicles on 1 page(s), platform dealeron",
+      "location": {
+        "city": "PASCO",
+        "state": "WA",
+        "zip": "99301"
+      }
+    },
+    {
+      "domain": "rainbowautoservice.com",
+      "name": "RAINBOW AUTO SERVICE LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "BELLINGHAM",
+        "state": "WA",
+        "zip": "98226"
+      }
+    },
+    {
+      "domain": "stillbuilt.com",
+      "name": "STILLBUILT MOTORSPORTS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "ANACORTES",
+        "state": "WA",
+        "zip": "98221"
+      }
+    },
+    {
+      "domain": "heartlandtoyota.com",
+      "name": "HEARTLAND TOYOTA",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 19 VIN vehicles on 1 page(s), platform dealer.com",
+      "location": {
+        "city": "BREMERTON",
+        "state": "WA",
+        "zip": "98312"
+      }
+    },
+    {
+      "domain": "bandcmotorsports.com",
+      "name": "B & C MOTORSPORTS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: homepage 403",
+      "location": {
+        "city": "ROY",
+        "state": "WA",
+        "zip": "98580"
+      }
+    },
+    {
+      "domain": "excellentchoiceautosales.com",
+      "name": "EXCELLENT CHOICE AUTO SALES",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "EVERETT",
+        "state": "WA",
+        "zip": "98204"
+      }
+    },
+    {
+      "domain": "owenequipment.com",
+      "name": "OWEN EQUIPMENT COMPANY",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "KENT",
+        "state": "WA",
+        "zip": "98031"
+      }
+    },
+    {
+      "domain": "swickardtoyota.com",
+      "name": "SWICKARD TOYOTA",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 1 VIN vehicles on 1 page(s), platform dealeron",
+      "location": {
+        "city": "EDMONDS",
+        "state": "WA",
+        "zip": "98026"
+      }
+    },
+    {
+      "domain": "issaquahautos.com",
+      "name": "ISSAQUAH AUTOS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "ISSAQUAH",
+        "state": "WA",
+        "zip": "98027"
+      }
+    },
+    {
+      "domain": "wallawallatoyota.com",
+      "name": "WALLA WALLA TOYOTA",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 1 VIN vehicles on 1 page(s), platform dealeron",
+      "location": {
+        "city": "WALLA WALLA",
+        "state": "WA",
+        "zip": "99362"
+      }
+    },
+    {
+      "domain": "allabouttransmissions.com",
+      "name": "ALL ABOUT TRANSMISSIONS & AUTOMOTIVE",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "BREMERTON",
+        "state": "WA",
+        "zip": "98312"
+      }
+    },
+    {
+      "domain": "sunrisechevrolet.com",
+      "name": "SUNRISE CHEVROLET, INC.",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 18 VIN vehicles on 1 page(s), platform dealer.com",
+      "location": {
+        "city": "OMAK",
+        "state": "WA",
+        "zip": "98841"
+      }
+    },
+    {
+      "domain": "powersportsnorthwest.com",
+      "name": "POWERSPORTS NORTHWEST",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "CHEHALIS",
+        "state": "WA",
+        "zip": "98532"
+      }
+    },
+    {
+      "domain": "lakesbodyshop.com",
+      "name": "LAKES AUTO SALES",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "LAKEWOOD",
+        "state": "WA",
+        "zip": "98499"
+      }
+    },
+    {
+      "domain": "rubystreetmotors.com",
+      "name": "RUBY STREET MOTORS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "SPOKANE VALLEY",
+        "state": "WA",
+        "zip": "99206"
+      }
+    },
+    {
+      "domain": "brooksbiddle.com",
+      "name": "BROOKS BIDDLE SUZUKI INC",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | auto-promoted by probe 2026-08-17: 1 VIN vehicles on 1 page(s), platform dealeron",
+      "location": {
+        "city": "BOTHELL",
+        "state": "WA",
+        "zip": "98011"
+      }
+    },
+    {
+      "domain": "treelinevans.com",
+      "name": "TREELINE VANS, LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "MARYSVILLE",
+        "state": "WA",
+        "zip": "98271"
+      }
+    },
+    {
+      "domain": "cliffsqualityauto.com",
+      "name": "CLIFFS QUALITY AUTO",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "SPOKANE",
+        "state": "WA",
+        "zip": "99207"
+      }
+    },
+    {
+      "domain": "globalautosales.com",
+      "name": "GLOBAL AUTO SALES LLC",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor",
+      "location": {
+        "city": "AUBURN",
+        "state": "WA",
+        "zip": "98002"
+      }
+    },
+    {
+      "domain": "centralwashingtonrv.com",
+      "name": "CENTRAL WASHINGTON RV",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "YAKIMA",
+        "state": "WA",
+        "zip": "98901"
+      }
+    },
+    {
+      "domain": "northwestbussales.com",
+      "name": "NORTHWEST BUS SALES, INC.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "FEDERAL WAY",
+        "state": "WA",
+        "zip": "98003"
+      }
+    },
+    {
+      "domain": "awesomeford.com",
+      "name": "AWESOME FORD",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 2 VIN vehicles on 1 page(s), platform dealeron",
+      "location": {
+        "city": "CHEHALIS",
+        "state": "WA",
+        "zip": "98532"
+      }
+    },
+    {
+      "domain": "kleynsautosales.com",
+      "name": "KLEYN'S AUTO SALES, INC.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | auto-promoted by probe 2026-08-17: 1 VIN vehicles on 1 page(s), platform unknown",
+      "location": {
+        "city": "EPHRATA",
+        "state": "WA",
+        "zip": "98823"
+      }
+    },
+    {
+      "domain": "puyallupvw.com",
+      "name": "VOLKSWAGEN OF PUYALLUP",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor",
+      "location": {
+        "city": "PUYALLUP",
+        "state": "WA",
+        "zip": "98371"
+      }
+    },
+    {
+      "domain": "mainlymusclecars.com",
+      "name": "MAINLY MUSCLE CARS, LLC",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor",
+      "location": {
+        "city": "GRANITE FALLS",
+        "state": "WA",
+        "zip": "98252"
+      }
+    },
+    {
+      "domain": "gasmotorsports.com",
+      "name": "G.A.S MOTORSPORTS LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "AUBURN",
+        "state": "WA",
+        "zip": "98001"
+      }
+    },
+    {
+      "domain": "westerncascade.com",
+      "name": "WESTERN CASCADE",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "TUKWILA",
+        "state": "WA",
+        "zip": "98178"
+      }
+    },
+    {
+      "domain": "bajaautos.com",
+      "name": "BAJA AUTO SALES",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 1 VIN vehicles on 1 page(s), platform unknown",
+      "location": {
+        "city": "PACIFIC",
+        "state": "WA",
+        "zip": "98047"
+      }
+    },
+    {
+      "domain": "valleyrvsupercenter.com",
+      "name": "VALLEY RV SUPERCENTER",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 1 VIN vehicles on 1 page(s), platform unknown",
+      "location": {
+        "city": "KENT",
+        "state": "WA",
+        "zip": "98032"
+      }
+    },
+    {
+      "domain": "vcautodeals.com",
+      "name": "VC AUTO DEALS LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "MARYSVILLE",
+        "state": "WA",
+        "zip": "98270"
+      }
+    },
+    {
+      "domain": "superamericaautos.com",
+      "name": "SUPER AMERICA AUTO SALES",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "SEATTLE",
+        "state": "WA",
+        "zip": "98103"
+      }
+    },
+    {
+      "domain": "brotherspowersports.com",
+      "name": "THE BROTHERS POWERSPORTS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "BREMERTON",
+        "state": "WA",
+        "zip": "98312"
+      }
+    },
+    {
+      "domain": "owensautosales.com",
+      "name": "OWEN'S AUTO SALES",
+      "kind": "rooftop",
+      "platform": "dealercarsearch",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 26 VIN vehicles on 1 page(s), platform dealercarsearch",
+      "location": {
+        "city": "PUYALLUP",
+        "state": "WA",
+        "zip": "98371"
+      }
+    },
+    {
+      "domain": "kirklandrvsales.com",
+      "name": "KIRKLAND RV SALES",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "EVERETT",
+        "state": "WA",
+        "zip": "98204"
+      }
+    },
+    {
+      "domain": "irydeautosale.com",
+      "name": "IRYDE AUTO SALE LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: homepage 403",
+      "location": {
+        "city": "KENT",
+        "state": "WA",
+        "zip": "98032"
+      }
+    },
+    {
+      "domain": "hansenbros.com",
+      "name": "HANSEN BROS. TRANSFER & STORAGE CO.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "LYNNWOOD",
+        "state": "WA",
+        "zip": "98087"
+      }
+    },
+    {
+      "domain": "pkautoimports.com",
+      "name": "PK AUTO IMPORTS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "FEDERAL WAY",
+        "state": "WA",
+        "zip": "98003"
+      }
+    },
+    {
+      "domain": "cortesautocenter.com",
+      "name": "CORTES AUTO CENTER, INC.",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 24 VIN vehicles on 1 page(s), platform dealer.com",
+      "location": {
+        "city": "BURLINGTON",
+        "state": "WA",
+        "zip": "98233"
+      }
+    },
+    {
+      "domain": "penserna.com",
+      "name": "PENSER NA EUROPEAN AUTO",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "TUMWATER",
+        "state": "WA",
+        "zip": "98512"
+      }
+    },
+    {
+      "domain": "bretzrv.com",
+      "name": "BRETZ RV & MARINE",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor",
+      "location": {
+        "city": "LIBERTY LAKE",
+        "state": "WA",
+        "zip": "99019"
+      }
+    },
+    {
+      "domain": "automotivevelocity.com",
+      "name": "AUTOMOTIVE VELOCITY",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "MONROE",
+        "state": "WA",
+        "zip": "98272"
+      }
+    },
+    {
+      "domain": "graymotors.com",
+      "name": "GRAY MOTORS",
+      "kind": "rooftop",
+      "platform": "dealercarsearch",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | auto-promoted by probe 2026-08-17: 5 VIN vehicles on 1 page(s), platform dealercarsearch",
+      "location": {
+        "city": "PORT ANGELES",
+        "state": "WA",
+        "zip": "98362"
+      }
+    },
+    {
+      "domain": "caromoto.com",
+      "name": "CAROMOTO",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "REDMOND",
+        "state": "WA",
+        "zip": "98052"
+      }
+    },
+    {
+      "domain": "centraliaauction.com",
+      "name": "CENTRALIA AUCTION",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "MCKENNA",
+        "state": "WA",
+        "zip": "98558"
+      }
+    },
+    {
+      "domain": "mgkautogroup.com",
+      "name": "MGK AUTO GROUP",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "KENT",
+        "state": "WA",
+        "zip": "98031"
+      }
+    },
+    {
+      "domain": "rvcountry.com",
+      "name": "RV COUNTRY",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "FIFE",
+        "state": "WA",
+        "zip": "98424"
+      }
+    },
+    {
+      "domain": "zizomotors.com",
+      "name": "ZIZO MOTORS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "BELLEVUE",
+        "state": "WA",
+        "zip": "98007"
+      }
+    },
+    {
+      "domain": "chadchambersautos.com",
+      "name": "CHAD CHAMBERS AUTO SALES",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 1 VIN vehicles on 1 page(s), platform dealeron",
+      "location": {
+        "city": "LYNDEN",
+        "state": "WA",
+        "zip": "98264"
+      }
+    },
+    {
+      "domain": "moseauto.com",
+      "name": "MOSE AUTO SALES",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "SEATTLE",
+        "state": "WA",
+        "zip": "98108"
+      }
+    },
+    {
+      "domain": "bellinghampawnshop.com",
+      "name": "BELLINGHAM PAWNSHOP LLC",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor",
+      "location": {
+        "city": "BELLINGHAM",
+        "state": "WA",
+        "zip": "98226"
+      }
+    },
+    {
+      "domain": "binfordmetals.com",
+      "name": "BINFORD METALS LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "KENT",
+        "state": "WA",
+        "zip": "98032"
+      }
+    },
+    {
+      "domain": "lifeautosales.com",
+      "name": "LIFE AUTO SALES INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "TACOMA",
+        "state": "WA",
+        "zip": "98404"
+      }
+    },
+    {
+      "domain": "gilbertmotorsusa.com",
+      "name": "GILBERT MOTORS USA, LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: homepage 403",
+      "location": {
+        "city": "UNION GAP",
+        "state": "WA",
+        "zip": "98903"
+      }
+    },
+    {
+      "domain": "goodchevrolet.com",
+      "name": "GOOD CHEVROLET, INC.",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor",
+      "location": {
+        "city": "RENTON",
+        "state": "WA",
+        "zip": "98055"
+      }
+    },
+    {
+      "domain": "coachcorral.com",
+      "name": "COACH CORRAL, INC.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "MOUNT VERNON",
+        "state": "WA",
+        "zip": "98274"
+      }
+    },
+    {
+      "domain": "sourcemotor.com",
+      "name": "SOURCE MOTOR SALES LLC",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor",
+      "location": {
+        "city": "BELLEVUE",
+        "state": "WA",
+        "zip": "98005"
+      }
+    },
+    {
+      "domain": "paulsmotor.com",
+      "name": "PAUL'S MOTOR, INC.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "VANCOUVER",
+        "state": "WA",
+        "zip": "98663"
+      }
+    },
+    {
+      "domain": "westhillschrysler.com",
+      "name": "WEST HILLS CHRYSLER JEEP DODGE",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor",
+      "location": {
+        "city": "BREMERTON",
+        "state": "WA",
+        "zip": "98312"
+      }
+    },
+    {
+      "domain": "motorsnorthwest.com",
+      "name": "MOTORS NORTHWEST",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | auto-promoted by probe 2026-08-17: 24 VIN vehicles on 1 page(s), platform dealer.com",
+      "location": {
+        "city": "TACOMA",
+        "state": "WA",
+        "zip": "98409"
+      }
+    },
+    {
+      "domain": "yaktownmotors.com",
+      "name": "YAKTOWN MOTORS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "UNION GAP",
+        "state": "WA",
+        "zip": "98903"
+      }
+    },
+    {
+      "domain": "koolittrucksales.com",
+      "name": "KOOLIT TRUCK SALES, INC.",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor",
+      "location": {
+        "city": "SUMNER",
+        "state": "WA",
+        "zip": "98390"
+      }
+    },
+    {
+      "domain": "puyalluprv.com",
+      "name": "PUYALLUP RV",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | auto-promoted by probe 2026-08-17: 1 VIN vehicles on 1 page(s), platform unknown",
+      "location": {
+        "city": "PUYALLUP",
+        "state": "WA",
+        "zip": "98373"
+      }
+    },
+    {
+      "domain": "eastsideharley.com",
+      "name": "EASTSIDE HARLEY-DAVIDSON",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "BELLEVUE",
+        "state": "WA",
+        "zip": "98005"
+      }
+    },
+    {
+      "domain": "brysonsales.com",
+      "name": "BRYSON SALES & SERVICE OF WASHINGTON, INC.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "EVERETT",
+        "state": "WA",
+        "zip": "98204"
+      }
+    },
+    {
+      "domain": "carstarsolympia.com",
+      "name": "CARSTARS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "OLYMPIA",
+        "state": "WA",
+        "zip": "98501"
+      }
+    },
+    {
+      "domain": "davescarconnection.com",
+      "name": "DAVES CAR CONNECTION LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "SNOHOMISH",
+        "state": "WA",
+        "zip": "98296"
+      }
+    },
+    {
+      "domain": "nitehawksweepers.com",
+      "name": "NITE-HAWK SWEEPER, LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "KENT",
+        "state": "WA",
+        "zip": "98032"
+      }
+    },
+    {
+      "domain": "a10thautosales.com",
+      "name": "A+ 10TH AUTO SALES",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "PASCO",
+        "state": "WA",
+        "zip": "99301"
+      }
+    },
+    {
+      "domain": "enumclawchryslerjeepdodge.com",
+      "name": "ENUMCLAW CHRYSLER JEEP DODGE",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealeron) — likely needs a platform extractor",
+      "location": {
+        "city": "ENUMCLAW",
+        "state": "WA",
+        "zip": "98022"
+      }
+    },
+    {
+      "domain": "410autowrecking.com",
+      "name": "410 AUTO WRECKING",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "BUCKLEY",
+        "state": "WA",
+        "zip": "98321"
+      }
+    },
+    {
+      "domain": "broadmoorrv.com",
+      "name": "BROADMOOR RV SUPERSTORE INC.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "PASCO",
+        "state": "WA",
+        "zip": "99301"
+      }
+    },
+    {
+      "domain": "jessford.com",
+      "name": "JESS FORD OF PULLMAN",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "PULLMAN",
+        "state": "WA",
+        "zip": "99163"
+      }
+    },
+    {
+      "domain": "goldboyzautosales.com",
+      "name": "GOLDBOYZ AUTO SALES",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "PUYALLUP",
+        "state": "WA",
+        "zip": "98372"
+      }
+    },
+    {
+      "domain": "finesseautosales.com",
+      "name": "FINESSE AUTO SALES LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "SEATTLE",
+        "state": "WA",
+        "zip": "98108"
+      }
+    },
+    {
+      "domain": "blackdiamondauto.com",
+      "name": "BLACK DIAMOND AUTO",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "BLACK DIAMOND",
+        "state": "WA",
+        "zip": "98010"
+      }
+    },
+    {
+      "domain": "sabetimotors.com",
+      "name": "SABETI MOTORS LLC",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 24 VIN vehicles on 1 page(s), platform dealer.com",
+      "location": {
+        "city": "TACOMA",
+        "state": "WA",
+        "zip": "98409"
+      }
+    },
+    {
+      "domain": "mikesautoexchange.com",
+      "name": "MIKE'S AUTO EXCHANGE LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "ELK",
+        "state": "WA",
+        "zip": "99009"
+      }
+    },
+    {
+      "domain": "vistaautosales.com",
+      "name": "VISTA AUTO SALES AND LEASING, INC.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "LAKEWOOD",
+        "state": "WA",
+        "zip": "98499"
+      }
+    },
+    {
+      "domain": "cosmopolitanmotors.com",
+      "name": "COSMOPOLITAN MOTORS, L.L.C.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "BREMERTON",
+        "state": "WA",
+        "zip": "98312"
+      }
+    },
+    {
+      "domain": "bidadooauctions.com",
+      "name": "BIDADOO AUCTIONS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "KENT",
+        "state": "WA",
+        "zip": "98032"
+      }
+    },
+    {
+      "domain": "griotmotors.com",
+      "name": "GRIOT'S MOTORS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "TACOMA",
+        "state": "WA",
+        "zip": "98409"
+      }
+    },
+    {
+      "domain": "speedwaychevrolet.com",
+      "name": "SPEEDWAY CHEVROLET, LLC",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 2 VIN vehicles on 1 page(s), platform dealeron",
+      "location": {
+        "city": "MONROE",
+        "state": "WA",
+        "zip": "98272"
+      }
+    },
+    {
+      "domain": "cobalttruck.com",
+      "name": "COBALT TRUCK EQUIPMENT",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "SPOKANE",
+        "state": "WA",
+        "zip": "99212"
+      }
+    },
+    {
+      "domain": "autochoiceisyours.com",
+      "name": "AUTOCHOICE IS YOURS DOT COM, LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "COLLEGE PLACE",
+        "state": "WA",
+        "zip": "99324"
+      }
+    },
+    {
+      "domain": "wildaboutcarsgarage.com",
+      "name": "WILD ABOUT CARS GARAGE LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "SEATTLE",
+        "state": "WA",
+        "zip": "98103"
+      }
+    },
+    {
+      "domain": "chipmantaylor.com",
+      "name": "CHIPMAN & TAYLOR CHEVROLET CO.",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 2 VIN vehicles on 1 page(s), platform dealeron",
+      "location": {
+        "city": "PULLMAN",
+        "state": "WA",
+        "zip": "99163"
+      }
+    },
+    {
+      "domain": "tacomarv.com",
+      "name": "TACOMA RV CENTER, INC.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "FIFE",
+        "state": "WA",
+        "zip": "98424"
+      }
+    },
+    {
+      "domain": "topspecauto.com",
+      "name": "TOP SPEC AUTO",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor",
+      "location": {
+        "city": "EVERETT",
+        "state": "WA",
+        "zip": "98203"
+      }
+    },
+    {
+      "domain": "sunriseautomobile.com",
+      "name": "SUNRISE AUTOMOBILE CORPORATION",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "DES MOINES",
+        "state": "WA",
+        "zip": "98198"
+      }
+    },
+    {
+      "domain": "bellinghamnissan.com",
+      "name": "BELLINGHAM NISSAN",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 24 VIN vehicles on 1 page(s), platform dealer.com",
+      "location": {
+        "city": "BELLINGHAM",
+        "state": "WA",
+        "zip": "98229"
+      }
+    },
+    {
+      "domain": "coastalrvs.com",
+      "name": "COASTAL RV & AUTO SALES",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "MONTESANO",
+        "state": "WA",
+        "zip": "98563"
+      }
+    },
+    {
+      "domain": "overturfmotors.com",
+      "name": "OVERTURF VOLKSWAGEN AUDI KIA",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | auto-promoted by probe 2026-08-17: 24 VIN vehicles on 1 page(s), platform dealer.com",
+      "location": {
+        "city": "KENNEWICK",
+        "state": "WA",
+        "zip": "99336"
+      }
+    },
+    {
+      "domain": "pnwsautosales.com",
+      "name": "PNWS #1 AUTO SALES LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "SPANAWAY",
+        "state": "WA",
+        "zip": "98387"
+      }
+    },
+    {
+      "domain": "billharrisusedcars.com",
+      "name": "BILL HARRIS USED CARS, INC.",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | auto-promoted by probe 2026-08-17: 48 VIN vehicles on 1 page(s), platform dealer.com",
+      "location": {
+        "city": "SELAH",
+        "state": "WA",
+        "zip": "98942"
+      }
+    },
+    {
+      "domain": "rvsnorthwest.com",
+      "name": "RVS NORTHWEST",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor",
+      "location": {
+        "city": "SPOKANE VALLEY",
+        "state": "WA",
+        "zip": "99016"
+      }
+    },
+    {
+      "domain": "clearviewrv.com",
+      "name": "CLEARVIEW R.V., INC.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "SNOHOMISH",
+        "state": "WA",
+        "zip": "98296"
+      }
+    },
+    {
+      "domain": "mapleleafmotors.com",
+      "name": "MAPLE LEAF MOTORS",
+      "kind": "rooftop",
+      "platform": "dealercarsearch",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 92 VIN vehicles on 1 page(s), platform dealercarsearch",
+      "location": {
+        "city": "SPANAWAY",
+        "state": "WA",
+        "zip": "98387"
+      }
+    },
+    {
+      "domain": "mafeautosales.com",
+      "name": "MAFE AUTO SALES",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "KENNEWICK",
+        "state": "WA",
+        "zip": "99336"
+      }
+    },
+    {
+      "domain": "matchboxautosales.com",
+      "name": "MATCHBOX AUTO SALES",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "SPOKANE",
+        "state": "WA",
+        "zip": "99207"
+      }
+    },
+    {
+      "domain": "pantherroadclassics.com",
+      "name": "PANTHER ROAD CLASSICS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "EDMONDS",
+        "state": "WA",
+        "zip": "98026"
+      }
+    },
+    {
+      "domain": "countrymotorhomes.com",
+      "name": "COUNTRY MOTORHOMES",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "MOUNT VERNON",
+        "state": "WA",
+        "zip": "98274"
+      }
+    },
+    {
+      "domain": "pnwvehicleservices.com",
+      "name": "PNW VEHICLE SERVICES LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "ANACORTES",
+        "state": "WA",
+        "zip": "98221"
+      }
+    },
+    {
+      "domain": "nwezauto.com",
+      "name": "NW EZ AUTO LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "TACOMA",
+        "state": "WA",
+        "zip": "98444"
+      }
+    },
+    {
+      "domain": "jrlhernandezautosales.com",
+      "name": "JRL HERNANDEZ AUTO SALES INC",
+      "kind": "rooftop",
+      "platform": "dealercarsearch",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 6 VIN vehicles on 1 page(s), platform dealercarsearch",
+      "location": {
+        "city": "TACOMA",
+        "state": "WA",
+        "zip": "98444"
+      }
+    },
+    {
+      "domain": "svautosales.com",
+      "name": "SV AUTO SALES LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: homepage 403",
+      "location": {
+        "city": "TACOMA",
+        "state": "WA",
+        "zip": "98444"
+      }
+    },
+    {
+      "domain": "boekiusa.com",
+      "name": "BOEKI USA LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "VANCOUVER",
+        "state": "WA",
+        "zip": "98660"
+      }
+    },
+    {
+      "domain": "genepankeymotors.com",
+      "name": "GENE PANKEY MOTOR COMPANY, INC.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "TACOMA",
+        "state": "WA",
+        "zip": "98409"
+      }
+    },
+    {
+      "domain": "rhinoautocenter.com",
+      "name": "RHINO AUTO CENTER LLC",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor",
+      "location": {
+        "city": "YAKIMA",
+        "state": "WA",
+        "zip": "98902"
+      }
+    },
+    {
+      "domain": "gilchristchev.com",
+      "name": "GILCHRIST CHEVROLET, INC.",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealeron) — likely needs a platform extractor",
+      "location": {
+        "city": "TACOMA",
+        "state": "WA",
+        "zip": "98409"
+      }
+    },
+    {
+      "domain": "bainesusedauto.com",
+      "name": "BAINES USED AUTO LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "YAKIMA",
+        "state": "WA",
+        "zip": "98901"
+      }
+    },
+    {
+      "domain": "treacyinvestments.com",
+      "name": "TREACY INVESTMENTS, LLC",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor",
+      "location": {
+        "city": "KELSO",
+        "state": "WA",
+        "zip": "98626"
+      }
+    },
+    {
+      "domain": "seattlemotorcars.com",
+      "name": "SEATTLE MOTOR CARS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "PUYALLUP",
+        "state": "WA",
+        "zip": "98372"
+      }
+    },
+    {
+      "domain": "yazanautosales.com",
+      "name": "YAZAN AUTO SALES",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "TACOMA",
+        "state": "WA",
+        "zip": "98409"
+      }
+    },
+    {
+      "domain": "gracejdm.com",
+      "name": "GRACE JDM IMPORT",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "unreachable",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: homepage error:AbortError",
+      "location": {
+        "city": "SEATTLE",
+        "state": "WA",
+        "zip": "98117"
+      }
+    },
+    {
+      "domain": "snakeriverauctions.com",
+      "name": "SNAKE RIVER AUCTIONS LLC",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor",
+      "location": {
+        "city": "RICHLAND",
+        "state": "WA",
+        "zip": "99354"
+      }
+    },
+    {
+      "domain": "rangetruck.com",
+      "name": "RANGE TRUCK GROUP LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "FIFE",
+        "state": "WA",
+        "zip": "98424"
+      }
+    },
+    {
+      "domain": "davesauto.com",
+      "name": "DAVE'S AUTO",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "CHENEY",
+        "state": "WA",
+        "zip": "99004"
+      }
+    },
+    {
+      "domain": "cspeckmotors.com",
+      "name": "C. SPECK MOTORS, INC.",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | auto-promoted by probe 2026-08-17: 2 VIN vehicles on 1 page(s), platform dealeron",
+      "location": {
+        "city": "SUNNYSIDE",
+        "state": "WA",
+        "zip": "98944"
+      }
+    },
+    {
+      "domain": "revolvemotors.com",
+      "name": "REVOLVE MOTORS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 1 VIN vehicles on 1 page(s), platform unknown",
+      "location": {
+        "city": "RENTON",
+        "state": "WA",
+        "zip": "98057"
+      }
+    },
+    {
+      "domain": "puyallupnissan.com",
+      "name": "PUYALLUP NISSAN",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | auto-promoted by probe 2026-08-17: 24 VIN vehicles on 1 page(s), platform dealer.com",
+      "location": {
+        "city": "PUYALLUP",
+        "state": "WA",
+        "zip": "98371"
+      }
+    },
+    {
+      "domain": "jimreedmotors.com",
+      "name": "JIM REED MOTORS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "BREMERTON",
+        "state": "WA",
+        "zip": "98312"
+      }
+    },
+    {
+      "domain": "haselwood.com",
+      "name": "HASELWOOD CHEVROLET GMC",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | auto-promoted by probe 2026-08-17: 43 VIN vehicles on 1 page(s), platform dealer.com",
+      "location": {
+        "city": "BREMERTON",
+        "state": "WA",
+        "zip": "98312"
+      }
+    },
+    {
+      "domain": "nelsontruck.com",
+      "name": "NELSON TRUCK EQUIPMENT CO., INC.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "KENT",
+        "state": "WA",
+        "zip": "98032"
+      }
+    },
+    {
+      "domain": "rnrrv.com",
+      "name": "R'N'R R V CENTER",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "LIBERTY LAKE",
+        "state": "WA",
+        "zip": "99019"
+      }
+    },
+    {
+      "domain": "ruddellauto.com",
+      "name": "RUDDELL AUTO",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 2 VIN vehicles on 1 page(s), platform dealeron",
+      "location": {
+        "city": "PORT ANGELES",
+        "state": "WA",
+        "zip": "98362"
+      }
+    },
+    {
+      "domain": "armadilloautosales.com",
+      "name": "ARMADILLO AUTO SALES",
+      "kind": "rooftop",
+      "platform": "dealercarsearch",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | auto-promoted by probe 2026-08-17: 54 VIN vehicles on 1 page(s), platform dealercarsearch",
+      "location": {
+        "city": "LYNNWOOD",
+        "state": "WA",
+        "zip": "98087"
+      }
+    },
+    {
+      "domain": "spaldings.com",
+      "name": "D & M AUTO SALES",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "SPOKANE VALLEY",
+        "state": "WA",
+        "zip": "99206"
+      }
+    },
+    {
+      "domain": "rwcidealease.com",
+      "name": "RWC IDEALEASE",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "TUKWILA",
+        "state": "WA",
+        "zip": "98168"
+      }
+    },
+    {
+      "domain": "stokesauction.com",
+      "name": "STOKES AUCTION",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "PORT ORCHARD",
+        "state": "WA",
+        "zip": "98367"
+      }
+    },
+    {
+      "domain": "chuckolsonchev.com",
+      "name": "CHUCK OLSON CHEVROLET, INC.",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 2 VIN vehicles on 1 page(s), platform dealeron",
+      "location": {
+        "city": "SHORELINE",
+        "state": "WA",
+        "zip": "98133"
+      }
+    },
+    {
+      "domain": "sorensensautomotive.com",
+      "name": "SORENSEN'S AUTOMOTIVE",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "GRAHAM",
+        "state": "WA",
+        "zip": "98338"
+      }
+    },
+    {
+      "domain": "villagetransmission.com",
+      "name": "VILLAGE AUTO SALES",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "EDMONDS",
+        "state": "WA",
+        "zip": "98026"
+      }
+    },
+    {
+      "domain": "exoticmotorsimports.com",
+      "name": "EXOTIC MOTORS IMPORTS, LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: homepage 403",
+      "location": {
+        "city": "REDMOND",
+        "state": "WA",
+        "zip": "98052"
+      }
+    },
+    {
+      "domain": "washingtonautocarriage.com",
+      "name": "WASHINGTON AUTO CARRIAGE",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "SPOKANE VALLEY",
+        "state": "WA",
+        "zip": "99212"
+      }
+    },
+    {
+      "domain": "bookerauction.com",
+      "name": "BOOKER AUCTION COMPANY",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "ELTOPIA",
+        "state": "WA",
+        "zip": "99330"
+      }
+    },
+    {
+      "domain": "pierreford.com",
+      "name": "PIERRE FORD OF LYNNWOOD",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 24 VIN vehicles on 1 page(s), platform dealer.com",
+      "location": {
+        "city": "LYNNWOOD",
+        "state": "WA",
+        "zip": "98036"
+      }
+    },
+    {
+      "domain": "valleytruck.com",
+      "name": "VALLEY EQUIPMENT AND TRUCK INC.",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor",
+      "location": {
+        "city": "PACIFIC",
+        "state": "WA",
+        "zip": "98047"
+      }
+    },
+    {
+      "domain": "chevroletpuyallup.com",
+      "name": "CHEVROLET OF PUYALLUP",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealeron) — likely needs a platform extractor",
+      "location": {
+        "city": "PUYALLUP",
+        "state": "WA",
+        "zip": "98371"
+      }
+    },
+    {
+      "domain": "rogerjobsmotors.com",
+      "name": "ROGER JOBS MOTORS, INC.",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor",
+      "location": {
+        "city": "BELLINGHAM",
+        "state": "WA",
+        "zip": "98229"
+      }
+    },
+    {
+      "domain": "lklmotors.com",
+      "name": "LKL MOTORS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "PUYALLUP",
+        "state": "WA",
+        "zip": "98373"
+      }
+    },
+    {
+      "domain": "apachecamping.com",
+      "name": "APACHE CAMPING CENTER, INC.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "TACOMA",
+        "state": "WA",
+        "zip": "98444"
+      }
+    },
+    {
+      "domain": "vipmotorsportskennewick.com",
+      "name": "VIP MOTORSPORTS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "KENNEWICK",
+        "state": "WA",
+        "zip": "99336"
+      }
+    },
+    {
+      "domain": "kamanauctions.com",
+      "name": "KAMAN AUCTIONS LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "EDMONDS",
+        "state": "WA",
+        "zip": "98026"
+      }
+    },
+    {
+      "domain": "jennifersautosales.com",
+      "name": "JENNIFER'S GREENACRES AUTO SALES",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | auto-promoted by probe 2026-08-17: 1 VIN vehicles on 1 page(s), platform dealeron",
+      "location": {
+        "city": "SPOKANE VALLEY",
+        "state": "WA",
+        "zip": "99216"
+      }
+    },
+    {
+      "domain": "hinshaws.com",
+      "name": "HINSHAW'S HONDA",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "AUBURN",
+        "state": "WA",
+        "zip": "98002"
+      }
+    },
+    {
+      "domain": "butteramotors.com",
+      "name": "BUTTERA MOTORS, INC.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "KIRKLAND",
+        "state": "WA",
+        "zip": "98034"
+      }
+    },
+    {
+      "domain": "randcotanks.com",
+      "name": "RANDCO TANKS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "KELSO",
+        "state": "WA",
+        "zip": "98626"
+      }
+    },
+    {
+      "domain": "awesomerv.com",
+      "name": "AWESOME RV",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | auto-promoted by probe 2026-08-17: 1 VIN vehicles on 1 page(s), platform unknown",
+      "location": {
+        "city": "CHEHALIS",
+        "state": "WA",
+        "zip": "98532"
+      }
+    },
+    {
+      "domain": "stirlinghonda.com",
+      "name": "STIRLING HONDA",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 1 VIN vehicles on 1 page(s), platform dealeron",
+      "location": {
+        "city": "LONGVIEW",
+        "state": "WA",
+        "zip": "98632"
+      }
+    },
+    {
+      "domain": "rsmotorslynnwood.com",
+      "name": "RS MOTORS LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "LYNNWOOD",
+        "state": "WA",
+        "zip": "98087"
+      }
+    },
+    {
+      "domain": "norlift.com",
+      "name": "NORLIFT, INC.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "SPOKANE VALLEY",
+        "state": "WA",
+        "zip": "99212"
+      }
+    },
+    {
+      "domain": "millenniummotors.com",
+      "name": "MILLENNIUM MOTORS, INC.",
+      "kind": "rooftop",
+      "platform": "dealercarsearch",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | auto-promoted by probe 2026-08-17: 21 VIN vehicles on 1 page(s), platform dealercarsearch",
+      "location": {
+        "city": "MONROE",
+        "state": "WA",
+        "zip": "98272"
+      }
+    },
+    {
+      "domain": "scarffford.com",
+      "name": "SCARFF FORD",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor",
+      "location": {
+        "city": "AUBURN",
+        "state": "WA",
+        "zip": "98002"
+      }
+    },
+    {
+      "domain": "westernsystems.com",
+      "name": "WESTERN SYSTEMS & FABRICATION",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "SPOKANE VALLEY",
+        "state": "WA",
+        "zip": "99212"
+      }
+    },
+    {
+      "domain": "tacomadodgechryslerjeep.com",
+      "name": "TACOMA DODGE CHRYSLER JEEP",
+      "kind": "rooftop",
+      "platform": "dealerinspire",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealerinspire) — likely needs a platform extractor",
+      "location": {
+        "city": "TACOMA",
+        "state": "WA",
+        "zip": "98409"
+      }
+    },
+    {
+      "domain": "smartmotorz.com",
+      "name": "SMART MOTORZ",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | auto-promoted by probe 2026-08-17: 4 VIN vehicles on 1 page(s), platform unknown",
+      "location": {
+        "city": "KENT",
+        "state": "WA",
+        "zip": "98032"
+      }
+    },
+    {
+      "domain": "cooperauto.com",
+      "name": "COOPER AUTO SALES",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "CLINTON",
+        "state": "WA",
+        "zip": "98236"
+      }
+    },
+    {
+      "domain": "patmoorequalitycars.com",
+      "name": "PAT MOORE QUALITY CARS, INC.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | auto-promoted by probe 2026-08-17: 1 VIN vehicles on 1 page(s), platform unknown",
+      "location": {
+        "city": "VANCOUVER",
+        "state": "WA",
+        "zip": "98686"
+      }
+    },
+    {
+      "domain": "bulldogmotors.com",
+      "name": "BULLDOG MOTORS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | auto-promoted by probe 2026-08-17: 1 VIN vehicles on 1 page(s), platform unknown",
+      "location": {
+        "city": "PASCO",
+        "state": "WA",
+        "zip": "99301"
+      }
+    },
+    {
+      "domain": "pierregmc.com",
+      "name": "PIERRE GMC OF EVERETT",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 24 VIN vehicles on 1 page(s), platform dealer.com",
+      "location": {
+        "city": "EVERETT",
+        "state": "WA",
+        "zip": "98203"
+      }
+    },
+    {
+      "domain": "brucknertruck.com",
+      "name": "BRUCKNER'S TRUCK & EQUIPMENT",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "YAKIMA",
+        "state": "WA",
+        "zip": "98901"
+      }
+    },
+    {
+      "domain": "dieselalliancetrucks.com",
+      "name": "DIESEL ALLIANCE TRUCKS LLC",
+      "kind": "rooftop",
+      "platform": "dealercarsearch",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | auto-promoted by probe 2026-08-17: 8 VIN vehicles on 1 page(s), platform dealercarsearch",
+      "location": {
+        "city": "SPOKANE VALLEY",
+        "state": "WA",
+        "zip": "99016"
+      }
+    },
+    {
+      "domain": "porscheseattlenorth.com",
+      "name": "PORSCHE SEATTLE NORTH",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 1 VIN vehicles on 1 page(s), platform dealeron",
+      "location": {
+        "city": "LYNNWOOD",
+        "state": "WA",
+        "zip": "98037"
+      }
+    },
+    {
+      "domain": "buncerental.com",
+      "name": "BUNCE RENTAL, INC.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "TACOMA",
+        "state": "WA",
+        "zip": "98409"
+      }
+    },
+    {
+      "domain": "fdmmotors.com",
+      "name": "FDM MOTORS",
+      "kind": "rooftop",
+      "platform": "dealercarsearch",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 28 VIN vehicles on 1 page(s), platform dealercarsearch",
+      "location": {
+        "city": "SPOKANE",
+        "state": "WA",
+        "zip": "99207"
+      }
+    },
+    {
+      "domain": "bluecompass.com",
+      "name": "BLUE COMPASS RV",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "PASCO",
+        "state": "WA",
+        "zip": "99301"
+      }
+    },
+    {
+      "domain": "kentrv.com",
+      "name": "KENT RV",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "KENT",
+        "state": "WA",
+        "zip": "98031"
+      }
+    },
+    {
+      "domain": "yakimachrysler.com",
+      "name": "YAKIMA CHRYSLER DODGE JEEP RAM FIAT",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor",
+      "location": {
+        "city": "UNION GAP",
+        "state": "WA",
+        "zip": "98903"
+      }
+    },
+    {
+      "domain": "ehliindustrial.com",
+      "name": "EHLI AUCTIONS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "TACOMA",
+        "state": "WA",
+        "zip": "98444"
+      }
+    },
+    {
+      "domain": "westernbus.com",
+      "name": "WESTERN BUS SALES, INC.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the OR license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "BORING",
+        "state": "OR",
+        "zip": "97009"
+      }
+    },
+    {
+      "domain": "hughesfire.com",
+      "name": "HUGHES FIRE EQUIPMENT, INC.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the OR license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "SPRINGFIELD",
+        "state": "OR",
+        "zip": "97477"
+      }
+    },
+    {
+      "domain": "utcautobrokers.com",
+      "name": "UTC AUTO BROKERS LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "EVERETT",
+        "state": "WA",
+        "zip": "98201"
+      }
+    },
+    {
+      "domain": "peacevansseattle.com",
+      "name": "PEACE VANS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "SEATTLE",
+        "state": "WA",
+        "zip": "98134"
+      }
+    },
+    {
+      "domain": "yarbro.com",
+      "name": "CHUCK YARBRO AUCTIONEERS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "MOSES LAKE",
+        "state": "WA",
+        "zip": "98837"
+      }
+    },
+    {
+      "domain": "tacomanissan.com",
+      "name": "TACOMA NISSAN",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor",
+      "location": {
+        "city": "TACOMA",
+        "state": "WA",
+        "zip": "98409"
+      }
+    },
+    {
+      "domain": "campncar.com",
+      "name": "CAMP N CAR",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "PORT TOWNSEND",
+        "state": "WA",
+        "zip": "98368"
+      }
+    },
+    {
+      "domain": "jetchevrolet.com",
+      "name": "JET CHEVROLET",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 2 VIN vehicles on 1 page(s), platform dealeron",
+      "location": {
+        "city": "FEDERAL WAY",
+        "state": "WA",
+        "zip": "98003"
+      }
+    },
+    {
+      "domain": "gritoverland.com",
+      "name": "GRIT OVERLAND",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "WASHOUGAL",
+        "state": "WA",
+        "zip": "98671"
+      }
+    },
+    {
+      "domain": "kindredautosales.com",
+      "name": "KINDRED AUTO SALES LLC",
+      "kind": "rooftop",
+      "platform": "dealercarsearch",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 100 VIN vehicles on 1 page(s), platform dealercarsearch",
+      "location": {
+        "city": "LYNNWOOD",
+        "state": "WA",
+        "zip": "98087"
+      }
+    },
+    {
+      "domain": "russomotors.com",
+      "name": "RUSSO MOTORS LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "SEATTLE",
+        "state": "WA",
+        "zip": "98103"
+      }
+    },
+    {
+      "domain": "universalautosalesfinance.com",
+      "name": "UNIVERSAL AUTO SALES & FINANCE LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "KIRKLAND",
+        "state": "WA",
+        "zip": "98033"
+      }
+    },
+    {
+      "domain": "auburnautosales.com",
+      "name": "AUBURN AUTO SALES LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "AUBURN",
+        "state": "WA",
+        "zip": "98002"
+      }
+    },
+    {
+      "domain": "raregarageauto.com",
+      "name": "RARE GARAGE AUTO, L.L.C.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "MONROE",
+        "state": "WA",
+        "zip": "98272"
+      }
+    },
+    {
+      "domain": "kiromotors.com",
+      "name": "KIRO MOTORS LLC",
+      "kind": "rooftop",
+      "platform": "dealercarsearch",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 31 VIN vehicles on 1 page(s), platform dealercarsearch",
+      "location": {
+        "city": "LAKEWOOD",
+        "state": "WA",
+        "zip": "98498"
+      }
+    },
+    {
+      "domain": "knudtsenfoothillslincoln.com",
+      "name": "KNUDTSEN FOOTHILLS LLC II DBA KNUDTSEN FOOTHILLS LINCOLN",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | auto-promoted by probe 2026-08-17: 24 VIN vehicles on 1 page(s), platform dealer.com",
+      "location": {
+        "city": "SPOKANE",
+        "state": "WA",
+        "zip": "99207"
+      }
+    },
+    {
+      "domain": "3plusautosales.com",
+      "name": "3 PLUS AUTO SALES",
+      "kind": "rooftop",
+      "platform": "dealercarsearch",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 29 VIN vehicles on 1 page(s), platform dealercarsearch",
+      "location": {
+        "city": "TACOMA",
+        "state": "WA",
+        "zip": "98409"
+      }
+    },
+    {
+      "domain": "chrisholstromconcepts.com",
+      "name": "CHRIS HOLSTROM CONCEPTS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "PUYALLUP",
+        "state": "WA",
+        "zip": "98372"
+      }
+    },
+    {
+      "domain": "vgaautosales.com",
+      "name": "VGA AUTO CENTER AND SALES",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "KENT",
+        "state": "WA",
+        "zip": "98031"
+      }
+    },
+    {
+      "domain": "leesjdm.com",
+      "name": "LEES JDM & MORE, LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "TACOMA",
+        "state": "WA",
+        "zip": "98409"
+      }
+    },
+    {
+      "domain": "riversideautosales.com",
+      "name": "RIVERSIDE AUTO SALES",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 23 VIN vehicles on 1 page(s), platform dealer.com",
+      "location": {
+        "city": "CAMAS",
+        "state": "WA",
+        "zip": "98607"
+      }
+    },
+    {
+      "domain": "maplegroverv.com",
+      "name": "MAPLE GROVE RV",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "EVERETT",
+        "state": "WA",
+        "zip": "98204"
+      }
+    },
+    {
+      "domain": "quincyquicklube.com",
+      "name": "QUINCY QUICK LUBE LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "QUINCY",
+        "state": "WA",
+        "zip": "98848"
+      }
+    },
+    {
+      "domain": "dierksdiesel.com",
+      "name": "DIERKS DIESEL & AUTO PERFORMANCE",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "DEER PARK",
+        "state": "WA",
+        "zip": "99006"
+      }
+    },
+    {
+      "domain": "fieldsmotorcarsbellevue.com",
+      "name": "ROLLS-ROYCE MOTOR CARS SEATTLE",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 24 VIN vehicles on 1 page(s), platform dealer.com",
+      "location": {
+        "city": "BELLEVUE",
+        "state": "WA",
+        "zip": "98005"
+      }
+    },
+    {
+      "domain": "ronsautomotive.com",
+      "name": "RONS AUTOMOTIVE",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "SPOKANE",
+        "state": "WA",
+        "zip": "99207"
+      }
+    },
+    {
+      "domain": "speckchrysler.com",
+      "name": "SPECK CHRYSLER JEEP DODGE RAM",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealeron) — likely needs a platform extractor",
+      "location": {
+        "city": "SUNNYSIDE",
+        "state": "WA",
+        "zip": "98944"
+      }
+    },
+    {
+      "domain": "rollinsauto.com",
+      "name": "ROLLINS AUTOMOTIVE",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "SPOKANE VALLEY",
+        "state": "WA",
+        "zip": "99206"
+      }
+    },
+    {
+      "domain": "rrvrepair.com",
+      "name": "RRV REPAIR",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "ARLINGTON",
+        "state": "WA",
+        "zip": "98223"
+      }
+    },
+    {
+      "domain": "truedealsauto.com",
+      "name": "TRUE DEALS AUTO LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "SPOKANE VALLEY",
+        "state": "WA",
+        "zip": "99212"
+      }
+    },
+    {
+      "domain": "fingride.com",
+      "name": "PREMIER MOTORSPORTS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "VANCOUVER",
+        "state": "WA",
+        "zip": "98665"
+      }
+    },
+    {
+      "domain": "customtrucksnw.com",
+      "name": "CUSTOM TRUCKS NW",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 24 VIN vehicles on 1 page(s), platform dealer.com",
+      "location": {
+        "city": "PUYALLUP",
+        "state": "WA",
+        "zip": "98372"
+      }
+    },
+    {
+      "domain": "priceford.com",
+      "name": "PRICE FORD LINCOLN",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | auto-promoted by probe 2026-08-17: 23 VIN vehicles on 1 page(s), platform dealer.com",
+      "location": {
+        "city": "PORT ANGELES",
+        "state": "WA",
+        "zip": "98362"
+      }
+    },
+    {
+      "domain": "autohousenw.com",
+      "name": "AUTOHOUSE NW",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: homepage 403",
+      "location": {
+        "city": "TACOMA",
+        "state": "WA",
+        "zip": "98409"
+      }
+    },
+    {
+      "domain": "autoconnectionseast.com",
+      "name": "AUTO CONNECTIONS OF BELLEVUE",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "BELLEVUE",
+        "state": "WA",
+        "zip": "98005"
+      }
+    },
+    {
+      "domain": "harborchryslerjeepdodge.com",
+      "name": "HARBOR CHRYSLER JEEP DODGE",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 1 VIN vehicles on 1 page(s), platform dealeron",
+      "location": {
+        "city": "ABERDEEN",
+        "state": "WA",
+        "zip": "98520"
+      }
+    },
+    {
+      "domain": "pacifictravelcenter.com",
+      "name": "PACIFIC TRAVEL CENTER, INC.",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor",
+      "location": {
+        "city": "TACOMA",
+        "state": "WA",
+        "zip": "98444"
+      }
+    },
+    {
+      "domain": "v8autosales.com",
+      "name": "V8 AUTO SALES",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "SPOKANE",
+        "state": "WA",
+        "zip": "99217"
+      }
+    },
+    {
+      "domain": "mccurleysubaru.com",
+      "name": "MCCURLEY SUBARU",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 16 VIN vehicles on 1 page(s), platform dealer.com",
+      "location": {
+        "city": "PASCO",
+        "state": "WA",
+        "zip": "99301"
+      }
+    },
+    {
+      "domain": "elmonterv.com",
+      "name": "EL MONTE RV",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "SEATTLE",
+        "state": "WA",
+        "zip": "98108"
+      }
+    },
+    {
+      "domain": "billrobertsonnissan.com",
+      "name": "BILL ROBERTSON NISSAN",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | auto-promoted by probe 2026-08-17: 2 VIN vehicles on 1 page(s), platform dealer.com",
+      "location": {
+        "city": "PASCO",
+        "state": "WA",
+        "zip": "99301"
+      }
+    },
+    {
+      "domain": "9thstauto.com",
+      "name": "9TH ST. AUTO, INC.",
+      "kind": "rooftop",
+      "platform": "dealercarsearch",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | auto-promoted by probe 2026-08-17: 38 VIN vehicles on 1 page(s), platform dealercarsearch",
+      "location": {
+        "city": "WALLA WALLA",
+        "state": "WA",
+        "zip": "99362"
+      }
+    },
+    {
+      "domain": "fountainmotor.com",
+      "name": "FOUNTAIN RENTAL/LEASING",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "BELLINGHAM",
+        "state": "WA",
+        "zip": "98225"
+      }
+    },
+    {
+      "domain": "southtacomaauto.com",
+      "name": "SOUTH TACOMA AUTO SALES",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | auto-promoted by probe 2026-08-17: 1 VIN vehicles on 1 page(s), platform unknown",
+      "location": {
+        "city": "TACOMA",
+        "state": "WA",
+        "zip": "98409"
+      }
+    },
+    {
+      "domain": "sunsetchevrolet.com",
+      "name": "SUNSET CHEVROLET, INC.",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 2 VIN vehicles on 1 page(s), platform dealeron",
+      "location": {
+        "city": "SUMNER",
+        "state": "WA",
+        "zip": "98390"
+      }
+    },
+    {
+      "domain": "ericksontank.com",
+      "name": "ERICKSON TANK & PUMP, LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "QUINCY",
+        "state": "WA",
+        "zip": "98848"
+      }
+    },
+    {
+      "domain": "davenportmotors.com",
+      "name": "DAVENPORT MOTOR COMPANY",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "DAVENPORT",
+        "state": "WA",
+        "zip": "99122"
+      }
+    },
+    {
+      "domain": "baydos.com",
+      "name": "BAYDO'S RV CENTER",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "FIFE",
+        "state": "WA",
+        "zip": "98424"
+      }
+    },
+    {
+      "domain": "desertvalleypowersports.com",
+      "name": "DESERT VALLEY POWERSPORTS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "PROSSER",
+        "state": "WA",
+        "zip": "99350"
+      }
+    },
+    {
+      "domain": "greatnorthwesttransport.com",
+      "name": "GREAT NORTHWEST TRANSPORT, LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "PASCO",
+        "state": "WA",
+        "zip": "99301"
+      }
+    },
+    {
+      "domain": "autoshoppersyakima.com",
+      "name": "AUTO SHOPPERS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "YAKIMA",
+        "state": "WA",
+        "zip": "98901"
+      }
+    },
+    {
+      "domain": "rentonsubaru.com",
+      "name": "WALKER'S RENTON SUBARU",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | auto-promoted by probe 2026-08-17: 48 VIN vehicles on 1 page(s), platform dealer.com",
+      "location": {
+        "city": "RENTON",
+        "state": "WA",
+        "zip": "98057"
+      }
+    },
+    {
+      "domain": "oryanmarine.com",
+      "name": "O'RYAN MARINE",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "REDMOND",
+        "state": "WA",
+        "zip": "98052"
+      }
+    },
+    {
+      "domain": "alanwebbautogroup.com",
+      "name": "ALAN WEBB AUTO GROUP",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealeron) — likely needs a platform extractor",
+      "location": {
+        "city": "VANCOUVER",
+        "state": "WA",
+        "zip": "98661"
+      }
+    },
+    {
+      "domain": "shredsupply.com",
+      "name": "SHREDSUPPLY, INC.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "AIRWAY HEIGHTS",
+        "state": "WA",
+        "zip": "99001"
+      }
+    },
+    {
+      "domain": "goldenwestmobility.com",
+      "name": "GOLDENWEST MOBILITY, INC.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "SPOKANE",
+        "state": "WA",
+        "zip": "99208"
+      }
+    },
+    {
+      "domain": "labrosseautosales.com",
+      "name": "LABROSSE AUTO SALES",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "SPOKANE VALLEY",
+        "state": "WA",
+        "zip": "99016"
+      }
+    },
+    {
+      "domain": "zsport.com",
+      "name": "Z SPORT, INC.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "EVERETT",
+        "state": "WA",
+        "zip": "98201"
+      }
+    },
+    {
+      "domain": "funkesautosales.com",
+      "name": "FUNKE'S AUTO SALES",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "CLARKSTON",
+        "state": "WA",
+        "zip": "99403"
+      }
+    },
+    {
+      "domain": "subaruyakima.com",
+      "name": "MCCURLEY SUBARU OF YAKIMA",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor",
+      "location": {
+        "city": "UNION GAP",
+        "state": "WA",
+        "zip": "98903"
+      }
+    },
+    {
+      "domain": "seattlewatersports.com",
+      "name": "SEATTLE WATER SPORTS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "KENMORE",
+        "state": "WA",
+        "zip": "98028"
+      }
+    },
+    {
+      "domain": "chevroleteverett.com",
+      "name": "CHEVROLET OF EVERETT, INC.",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealeron) — likely needs a platform extractor",
+      "location": {
+        "city": "EVERETT",
+        "state": "WA",
+        "zip": "98203"
+      }
+    },
+    {
+      "domain": "ferrariseattle.com",
+      "name": "FERRARI OF SEATTLE",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealeron) — likely needs a platform extractor",
+      "location": {
+        "city": "SEATTLE",
+        "state": "WA",
+        "zip": "98122"
+      }
+    },
+    {
+      "domain": "koenigsubaru.com",
+      "name": "KOENIG SUBARU",
+      "kind": "rooftop",
+      "platform": "team-velocity",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | auto-promoted by probe 2026-08-17: 1 VIN vehicles on 1 page(s), platform team-velocity",
+      "location": {
+        "city": "PORT ANGELES",
+        "state": "WA",
+        "zip": "98362"
+      }
+    },
+    {
+      "domain": "okchevrolet.com",
+      "name": "OK CHEVROLET, INC.",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor",
+      "location": {
+        "city": "TONASKET",
+        "state": "WA",
+        "zip": "98855"
+      }
+    },
+    {
+      "domain": "raminautosales.com",
+      "name": "RAMIN AUTO SALES & DEALERSHIP LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "TACOMA",
+        "state": "WA",
+        "zip": "98409"
+      }
+    },
+    {
+      "domain": "alphatruckrentals.com",
+      "name": "ALPHA TRUCK RENTALS",
+      "kind": "rooftop",
+      "platform": "dealercarsearch",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 2 VIN vehicles on 1 page(s), platform dealercarsearch",
+      "location": {
+        "city": "BUCKLEY",
+        "state": "WA",
+        "zip": "98321"
+      }
+    },
+    {
+      "domain": "robbinsautosales.com",
+      "name": "ELDON ROBBINS AUTO SALES, INC.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "LONGVIEW",
+        "state": "WA",
+        "zip": "98632"
+      }
+    },
+    {
+      "domain": "mcmotors.com",
+      "name": "MC MOTORS",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealeron) — likely needs a platform extractor",
+      "location": {
+        "city": "KENNEWICK",
+        "state": "WA",
+        "zip": "99337"
+      }
+    },
+    {
+      "domain": "gcautomotivegroup.com",
+      "name": "GC AUTOMOTIVE GROUP",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor",
+      "location": {
+        "city": "YAKIMA",
+        "state": "WA",
+        "zip": "98902"
+      }
+    },
+    {
+      "domain": "columbiariverauto.com",
+      "name": "COLUMBIA RIVER AUTO SALES, LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "PATEROS",
+        "state": "WA",
+        "zip": "98846"
+      }
+    },
+    {
+      "domain": "cambomotors.com",
+      "name": "CAMBO MOTORS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: homepage 403",
+      "location": {
+        "city": "AUBURN",
+        "state": "WA",
+        "zip": "98002"
+      }
+    },
+    {
+      "domain": "novashiftauto.com",
+      "name": "NOVASHIFT AUTO DEALERS LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "FEDERAL WAY",
+        "state": "WA",
+        "zip": "98003"
+      }
+    },
+    {
+      "domain": "nickysautosales.com",
+      "name": "NICKY'S AUTO SALES",
+      "kind": "rooftop",
+      "platform": "dealercarsearch",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 26 VIN vehicles on 1 page(s), platform dealercarsearch",
+      "location": {
+        "city": "SPOKANE",
+        "state": "WA",
+        "zip": "99202"
+      }
+    },
+    {
+      "domain": "cortesnissan.com",
+      "name": "CORTES NISSAN",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 24 VIN vehicles on 1 page(s), platform dealer.com",
+      "location": {
+        "city": "SPOKANE VALLEY",
+        "state": "WA",
+        "zip": "99212"
+      }
+    },
+    {
+      "domain": "southhillrv.com",
+      "name": "SOUTH HILL RV SALES",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "PUYALLUP",
+        "state": "WA",
+        "zip": "98373"
+      }
+    },
+    {
+      "domain": "standardautosales.com",
+      "name": "STANDARD AUTO SALES, LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "unreachable",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: homepage error:TypeError",
+      "location": {
+        "city": "AUBURN",
+        "state": "WA",
+        "zip": "98002"
+      }
+    },
+    {
+      "domain": "northwestminitrucks.com",
+      "name": "NORTHWEST MINI TRUCKS LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "VANCOUVER",
+        "state": "WA",
+        "zip": "98686"
+      }
+    },
+    {
+      "domain": "gtownmotors.com",
+      "name": "G TOWN MOTORS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "GRANDVIEW",
+        "state": "WA",
+        "zip": "98930"
+      }
+    },
+    {
+      "domain": "omarsrv.com",
+      "name": "OMAR'S RV SALES, LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "WENATCHEE",
+        "state": "WA",
+        "zip": "98801"
+      }
+    },
+    {
+      "domain": "landroverbellevue.com",
+      "name": "JAGUAR LAND ROVER BELLEVUE",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 24 VIN vehicles on 1 page(s), platform dealer.com",
+      "location": {
+        "city": "BELLEVUE",
+        "state": "WA",
+        "zip": "98005"
+      }
+    },
+    {
+      "domain": "northwestautoremarketing.com",
+      "name": "NORTHWEST AUTO REMARKETING",
+      "kind": "rooftop",
+      "platform": "dealercarsearch",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | auto-promoted by probe 2026-08-17: 60 VIN vehicles on 1 page(s), platform dealercarsearch",
+      "location": {
+        "city": "AIRWAY HEIGHTS",
+        "state": "WA",
+        "zip": "99001"
+      }
+    },
+    {
+      "domain": "omakdodge.com",
+      "name": "OMAK DODGE",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | auto-promoted by probe 2026-08-17: 24 VIN vehicles on 1 page(s), platform dealer.com",
+      "location": {
+        "city": "OMAK",
+        "state": "WA",
+        "zip": "98841"
+      }
+    },
+    {
+      "domain": "retiredklassics.com",
+      "name": "RE-TIRED KLASSICS, LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "EDMONDS",
+        "state": "WA",
+        "zip": "98026"
+      }
+    },
+    {
+      "domain": "kellehermotors.com",
+      "name": "KELLEHER MOTOR COMPANY",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor",
+      "location": {
+        "city": "ELLENSBURG",
+        "state": "WA",
+        "zip": "98926"
+      }
+    },
+    {
+      "domain": "hmcautogroup.com",
+      "name": "HMC AUTO GROUP, LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "BELLINGHAM",
+        "state": "WA",
+        "zip": "98226"
+      }
+    },
+    {
+      "domain": "strohsautomotive.com",
+      "name": "STROH'S AUTOMOTIVE SERVICES, LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "GIG HARBOR",
+        "state": "WA",
+        "zip": "98335"
+      }
+    },
+    {
+      "domain": "mbseattle.com",
+      "name": "MERCEDES BENZ OF SEATTLE",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 1 VIN vehicles on 1 page(s), platform dealeron",
+      "location": {
+        "city": "SEATTLE",
+        "state": "WA",
+        "zip": "98134"
+      }
+    },
+    {
+      "domain": "fifthgearautomotive.com",
+      "name": "FIFTH GEAR AUTOMOTIVE LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "unreachable",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: homepage error:TypeError",
+      "location": {
+        "city": "VANCOUVER",
+        "state": "WA",
+        "zip": "98663"
+      }
+    },
+    {
+      "domain": "coumbsrv.com",
+      "name": "COUMBS RV TRUCK ACCESSORIES",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "OLYMPIA",
+        "state": "WA",
+        "zip": "98501"
+      }
+    },
+    {
+      "domain": "seattlervadventures.com",
+      "name": "SEATTLE RV ADVENTURES",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor",
+      "location": {
+        "city": "ROY",
+        "state": "WA",
+        "zip": "98580"
+      }
+    },
+    {
+      "domain": "fxcollisioncenter.com",
+      "name": "FX COLLISION CENTER",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor",
+      "location": {
+        "city": "KENT",
+        "state": "WA",
+        "zip": "98042"
+      }
+    },
+    {
+      "domain": "bestdeals.com",
+      "name": "BEST DEALS, INC.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "BREWSTER",
+        "state": "WA",
+        "zip": "98812"
+      }
+    },
+    {
+      "domain": "speckfordprosser.com",
+      "name": "SPECK FORD, INC.",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 2 VIN vehicles on 1 page(s), platform dealeron",
+      "location": {
+        "city": "PROSSER",
+        "state": "WA",
+        "zip": "99350"
+      }
+    },
+    {
+      "domain": "leejohnsonchevrolet.com",
+      "name": "LEE JOHNSON CHEVROLET, INC.",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 2 VIN vehicles on 1 page(s), platform dealeron",
+      "location": {
+        "city": "KIRKLAND",
+        "state": "WA",
+        "zip": "98033"
+      }
+    },
+    {
+      "domain": "speckprosser.com",
+      "name": "SPECK CHEVROLET OF PROSSER",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealeron) — likely needs a platform extractor",
+      "location": {
+        "city": "PROSSER",
+        "state": "WA",
+        "zip": "99350"
+      }
+    },
+    {
+      "domain": "oakharbormotors.com",
+      "name": "OAK HARBOR MOTORS, INC.",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealeron) — likely needs a platform extractor",
+      "location": {
+        "city": "OAK HARBOR",
+        "state": "WA",
+        "zip": "98277"
+      }
+    },
+    {
+      "domain": "gamblinmotors.com",
+      "name": "ART GAMBLIN MOTORS",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 2 VIN vehicles on 1 page(s), platform dealeron",
+      "location": {
+        "city": "ENUMCLAW",
+        "state": "WA",
+        "zip": "98022"
+      }
+    },
+    {
+      "domain": "ladaautosales.com",
+      "name": "LADA AUTO SALES",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "TACOMA",
+        "state": "WA",
+        "zip": "98409"
+      }
+    },
+    {
+      "domain": "allmotorscenter.net",
+      "name": "ALL MOTORS CENTER",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "SPOKANE",
+        "state": "WA",
+        "zip": "99202"
+      }
+    },
+    {
+      "domain": "dobsonstuttgart.com",
+      "name": "DOBSON STUTTGART",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "SEATTLE",
+        "state": "WA",
+        "zip": "98199"
+      }
+    },
+    {
+      "domain": "1stautoservice.com",
+      "name": "1ST AUTO SERVICE",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "AUBURN",
+        "state": "WA",
+        "zip": "98002"
+      }
+    },
+    {
+      "domain": "kitsapautooutlet.com",
+      "name": "KITSAP AUTO OUTLET",
+      "kind": "rooftop",
+      "platform": "dealerfire",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | auto-promoted by probe 2026-08-17: 7 VIN vehicles on 1 page(s), platform dealerfire",
+      "location": {
+        "city": "PORT ORCHARD",
+        "state": "WA",
+        "zip": "98367"
+      }
+    },
+    {
+      "domain": "townauto.net",
+      "name": "TOWN AUTO TACOMA",
+      "kind": "rooftop",
+      "platform": "dealercarsearch",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 30 VIN vehicles on 1 page(s), platform dealercarsearch",
+      "location": {
+        "city": "TACOMA",
+        "state": "WA",
+        "zip": "98444"
+      }
+    },
+    {
+      "domain": "dansgarage.net",
+      "name": "DAN'S GARAGE",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "KENNEWICK",
+        "state": "WA",
+        "zip": "99336"
+      }
+    },
+    {
+      "domain": "sportscarsinternational.net",
+      "name": "SPORTS CARS INTERNATIONAL",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: homepage 403",
+      "location": {
+        "city": "LYNNWOOD",
+        "state": "WA",
+        "zip": "98036"
+      }
+    },
+    {
+      "domain": "mccurley.net",
+      "name": "MERCEDES-BENZ OF TRI- CITIES",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | auto-promoted by probe 2026-08-17: 24 VIN vehicles on 1 page(s), platform dealer.com",
+      "location": {
+        "city": "KENNEWICK",
+        "state": "WA",
+        "zip": "99336"
+      }
+    },
+    {
+      "domain": "sunsetauto.net",
+      "name": "SUNSET AUTO SALES",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "EVERETT",
+        "state": "WA",
+        "zip": "98204"
+      }
+    },
+    {
+      "domain": "marysautosales.net",
+      "name": "MARY'S AUTO SALES LLC",
+      "kind": "rooftop",
+      "platform": "dealercarsearch",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 11 VIN vehicles on 1 page(s), platform dealercarsearch",
+      "location": {
+        "city": "EVERETT",
+        "state": "WA",
+        "zip": "98204"
+      }
+    },
+    {
+      "domain": "speedworx.net",
+      "name": "SPEEDWORX LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "ANACORTES",
+        "state": "WA",
+        "zip": "98221"
+      }
+    },
+    {
+      "domain": "equityestatesales.net",
+      "name": "EQUITY ESTATE SALES",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "KENNEWICK",
+        "state": "WA",
+        "zip": "99336"
+      }
+    },
+    {
+      "domain": "toyotalakecity.net",
+      "name": "TOYOTA OF LAKE CITY",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealeron) — likely needs a platform extractor",
+      "location": {
+        "city": "SEATTLE",
+        "state": "WA",
+        "zip": "98125"
+      }
+    },
+    {
+      "domain": "pascoautowrecking.net",
+      "name": "PASCO AUTO WRECKING, INC.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "PASCO",
+        "state": "WA",
+        "zip": "99301"
+      }
+    },
+    {
+      "domain": "missionmotors.net",
+      "name": "MISSION MOTORS, INC.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "STANWOOD",
+        "state": "WA",
+        "zip": "98292"
+      }
+    },
+    {
+      "domain": "provisionauto.net",
+      "name": "PROVISION AUTO",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "SPOKANE VALLEY",
+        "state": "WA",
+        "zip": "99212"
+      }
+    },
+    {
+      "domain": "patarmstrongford.net",
+      "name": "PAT ARMSTRONG FORD, INC.",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | auto-promoted by probe 2026-08-17: 24 VIN vehicles on 1 page(s), platform dealer.com",
+      "location": {
+        "city": "EAST WENATCHEE",
+        "state": "WA",
+        "zip": "98802"
+      }
+    },
+    {
+      "domain": "kitsaptractor.net",
+      "name": "KITSAP TRACTOR & EQUIPMENT",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "SILVERDALE",
+        "state": "WA",
+        "zip": "98383"
+      }
+    },
+    {
+      "domain": "allstarautomotive.net",
+      "name": "ALL STAR AUTOMOTIVE, INC.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "TACOMA",
+        "state": "WA",
+        "zip": "98409"
+      }
+    },
+    {
+      "domain": "vancouvercar.net",
+      "name": "VANCOUVER CAR COMPANY",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "VANCOUVER",
+        "state": "WA",
+        "zip": "98665"
+      }
+    },
+    {
+      "domain": "archibalds.net",
+      "name": "ARCHIBALD'S, INC.",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | auto-promoted by probe 2026-08-17: 24 VIN vehicles on 1 page(s), platform dealer.com",
+      "location": {
+        "city": "KENNEWICK",
+        "state": "WA",
+        "zip": "99336"
+      }
+    },
+    {
+      "domain": "betterall.net",
+      "name": "BETTERALL",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "YAKIMA",
+        "state": "WA",
+        "zip": "98901"
+      }
+    },
+    {
+      "domain": "completeautomotive.net",
+      "name": "COMPLETE AUTOMOTIVE, INC.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "SEATTLE",
+        "state": "WA",
+        "zip": "98119"
+      }
+    },
+    {
+      "domain": "tdimotors.net",
+      "name": "TDI MOTORS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "KIRKLAND",
+        "state": "WA",
+        "zip": "98034"
+      }
+    },
+    {
+      "domain": "kentcars.net",
+      "name": "KENT USED CARS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "KENT",
+        "state": "WA",
+        "zip": "98032"
+      }
+    },
+    {
+      "domain": "adventurervcenter.net",
+      "name": "ADVENTURE RV CENTER LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "UNIVERSITY PLACE",
+        "state": "WA",
+        "zip": "98466"
+      }
+    },
+    {
+      "domain": "cascadetrader.net",
+      "name": "CASCADE TRADER, INC.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "CHEHALIS",
+        "state": "WA",
+        "zip": "98532"
+      }
+    },
+    {
+      "domain": "imperiumautogroup.net",
+      "name": "IMPERIUM AUTO GROUP",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "KENT",
+        "state": "WA",
+        "zip": "98032"
+      }
+    },
+    {
+      "domain": "dngautosales.net",
+      "name": "DNG AUTO SALES",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "unreachable",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: homepage error:TypeError",
+      "location": {
+        "city": "AUBURN",
+        "state": "WA",
+        "zip": "98002"
+      }
+    },
+    {
+      "domain": "aamotors.net",
+      "name": "AA MOTORS LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | auto-promoted by probe 2026-08-17: 1 VIN vehicles on 1 page(s), platform unknown",
+      "location": {
+        "city": "TACOMA",
+        "state": "WA",
+        "zip": "98409"
+      }
+    },
+    {
+      "domain": "millenniumauto.biz",
+      "name": "MILLENNIUM AUTO SALES",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "KENNEWICK",
+        "state": "WA",
+        "zip": "99336"
+      }
+    },
+    {
+      "domain": "losamigos.biz",
+      "name": "LOS AMIGOS",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor",
+      "location": {
+        "city": "AUBURN",
+        "state": "WA",
+        "zip": "98002"
+      }
+    },
+    {
+      "domain": "ausedcarlot.biz",
+      "name": "A USED CAR LOT LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "TACOMA",
+        "state": "WA",
+        "zip": "98409"
+      }
+    },
+    {
+      "domain": "integrityautosales.us",
+      "name": "INTEGRITY AUTO SALES LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "unreachable",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: homepage error:TypeError",
+      "location": {
+        "city": "SEATTLE",
+        "state": "WA",
+        "zip": "98117"
+      }
+    },
+    {
+      "domain": "autostars.us",
+      "name": "AUTOSTARS MOTOR GROUP, INC.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: homepage 403",
+      "location": {
+        "city": "YAKIMA",
+        "state": "WA",
+        "zip": "98903"
+      }
+    },
+    {
+      "domain": "autowerkstatt.us",
+      "name": "AUTO-WERKSTATT LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "KENT",
+        "state": "WA",
+        "zip": "98032"
+      }
+    },
+    {
+      "domain": "rideautosales.us",
+      "name": "RIDE AUTO SALES LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "REDMOND",
+        "state": "WA",
+        "zip": "98052"
+      }
+    },
+    {
+      "domain": "greentruck.us",
+      "name": "GREEN TRUCK",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "BELLINGHAM",
+        "state": "WA",
+        "zip": "98225"
+      }
+    },
+    {
+      "domain": "championautogroup.us",
+      "name": "CHAMPION AUTO GROUP",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: homepage 403",
+      "location": {
+        "city": "SPOKANE VALLEY",
+        "state": "WA",
+        "zip": "99212"
+      }
+    },
+    {
+      "domain": "deltadealer.us",
+      "name": "DELTA DEALER, LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "VANCOUVER",
+        "state": "WA",
+        "zip": "98661"
+      }
+    },
+    {
+      "domain": "olympicautomotive.us",
+      "name": "OLYMPIC AUTOMOTIVE",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "LYNNWOOD",
+        "state": "WA",
+        "zip": "98087"
+      }
     }
   ],
   "_sources": [
