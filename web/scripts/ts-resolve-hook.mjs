@@ -12,11 +12,18 @@
 //            be rendered in a test rather than only reasoned about.
 //
 //   node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs <script>
-import { registerHooks } from "node:module";
+import { createRequire, registerHooks } from "node:module";
 import { readFileSync } from "node:fs";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { dirname, resolve as resolvePath } from "node:path";
-import ts from "typescript";
+
+// typescript is loaded lazily, on the first .tsx file only: the alerts
+// workflow (alerts.yml) runs this hook with NO npm install on the runner —
+// send-alerts.mjs imports only dependency-free lib modules — and a top-level
+// import here would crash that job at startup. require() is sync, which the
+// load hook needs anyway.
+let _ts = null;
+const requireTs = () => (_ts ??= createRequire(import.meta.url)("typescript"));
 
 const WEB_ROOT = resolvePath(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -49,6 +56,7 @@ registerHooks({
   },
   load(url, context, nextLoad) {
     if (url.endsWith(".tsx")) {
+      const ts = requireTs();
       const source = readFileSync(fileURLToPath(url), "utf8");
       const { outputText } = ts.transpileModule(source, {
         compilerOptions: {
