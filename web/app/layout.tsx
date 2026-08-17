@@ -29,29 +29,36 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="flex min-h-full flex-col bg-putty text-ink">
         <header className="bg-ink text-paper">
-          <div className="mx-auto flex max-w-[1400px] items-stretch px-0 sm:px-6">
+          {/* The wordmark plus three nav links wanted 434px of a 375px phone,
+              and the overflow widened the whole document rather than clipping
+              quietly: every row below — the band, the filter rail, the grid —
+              was laid out to 434 and had its right edge cut off. So the bar
+              shrinks to fit at phone sizes, and wraps rather than overflowing
+              if it still can't (320px screens), because a header that pushes
+              the page sideways breaks every page on the site, not just itself. */}
+          <div className="mx-auto flex max-w-[1400px] flex-wrap items-stretch px-0 sm:px-6">
             <Link
               href="/"
-              className="px-5 py-4 text-[21px] font-extrabold tracking-[-0.03em] focus:outline-none focus:ring-[3px] focus:ring-inset focus:ring-cobalt"
+              className="px-4 py-3.5 text-[18px] font-extrabold tracking-[-0.03em] focus:outline-none focus:ring-[3px] focus:ring-inset focus:ring-cobalt sm:px-5 sm:py-4 sm:text-[21px]"
             >
               VOLTCHECK
             </Link>
-            <nav className="ml-auto flex items-stretch text-[12.5px] font-extrabold tracking-[0.06em] uppercase">
+            <nav className="ml-auto flex items-stretch text-[11.5px] font-extrabold tracking-[0.04em] uppercase sm:text-[12.5px] sm:tracking-[0.06em]">
               <Link
                 href="/"
-                className="flex items-center px-5 hover:bg-cobalt focus:outline-none focus:ring-[3px] focus:ring-inset focus:ring-cobalt"
+                className="flex items-center px-3 hover:bg-cobalt sm:px-5 focus:outline-none focus:ring-[3px] focus:ring-inset focus:ring-cobalt"
               >
                 Browse
               </Link>
               <Link
                 href="/saved"
-                className="flex items-center px-5 hover:bg-cobalt focus:outline-none focus:ring-[3px] focus:ring-inset focus:ring-cobalt"
+                className="flex items-center px-3 hover:bg-cobalt sm:px-5 focus:outline-none focus:ring-[3px] focus:ring-inset focus:ring-cobalt"
               >
                 Saved
               </Link>
               <Link
                 href="/vin"
-                className="flex items-center px-5 hover:bg-cobalt focus:outline-none focus:ring-[3px] focus:ring-inset focus:ring-cobalt"
+                className="flex items-center px-3 hover:bg-cobalt sm:px-5 focus:outline-none focus:ring-[3px] focus:ring-inset focus:ring-cobalt"
               >
                 VIN check
               </Link>
