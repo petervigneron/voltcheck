@@ -10,6 +10,7 @@
 // Monthly is plenty — the upstream file only updates monthly.
 import { readFile } from "node:fs/promises";
 import { fetchWithRetry } from "./lib/retry.mjs";
+import { stagedLoad } from "./lib/staged-load.mjs";
 
 const SODA = "https://data.wa.gov/resource/rpr4-cgyd.json";
 const PAGE = 50000;
@@ -92,12 +93,6 @@ for (let offset = 0; ; offset += PAGE) {
     `${SODA}?$select=vin_1_10,make,model,model_year,electric_vehicle_type,sale_price,` +
     `odometer_reading,date_of_vehicle_sale,county,city,zip,transaction_type` +
     `&$where=${encodeURIComponent(where)}&$order=date_of_vehicle_sale&$limit=${PAGE}&$offset=${offset}`;
-  // Read-only, so retrying is unconditionally safe. The write loop below is
-  // deliberately NOT retried: its chunks append after a first-chunk replace,
-  // and a chunk that committed but lost its response would, when replayed,
-  // duplicate sale rows — and duplicated sales skew the price medians the
-  // site quotes. A failed month costs a refresh; a silent double-count
-  // costs a wrong number.
   const res = await fetchWithRetry(`wa-prices: SODA offset ${offset}`, () =>
     fetch(url, { headers: { "user-agent": "VoltcheckBot/0.1 (+https://voltcheck-mu.vercel.app/bot)" } })
   );
@@ -146,27 +141,9 @@ if (!SUPABASE_URL || !TOKEN || !ANON) {
   process.exit(0);
 }
 
-// Chunked: ~57k rows in one jsonb payload blows the statement timeout.
-// Only the first batch replaces; the rest append.
-const CHUNK = 4000;
-let inserted = 0;
-for (let i = 0; i < out.length; i += CHUNK) {
-  const batch = out.slice(i, i + CHUNK);
-  const res = await fetch(`${SUPABASE_URL}/functions/v1/ingest`, {
-    method: "POST",
-    headers: {
-      apikey: ANON,
-      Authorization: `Bearer ${ANON}`,
-      "x-ingest-token": TOKEN,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ dataset: "wa_sales", rows: batch, replace: i === 0 }),
-  });
-  if (!res.ok) {
-    console.error(`wa-prices: FAILED at row ${i} — HTTP ${res.status}: ${(await res.text()).slice(0, 300)}`);
-    process.exit(1);
-  }
-  inserted += (await res.json()).inserted ?? 0;
-  console.error(`  loaded ${inserted}/${out.length}`);
-}
+// Chunked because the whole archive in one jsonb payload blows the statement
+// timeout. Staged + committed (lib/staged-load.mjs, migration 0033) so a
+// mid-load failure leaves last month's table live instead of half-replaced,
+// and a lost response can be retried without duplicating sale rows.
+const inserted = await stagedLoad({ dataset: "wa_sales", rows: out, chunkSize: 4000, name: "wa-prices" });
 console.error(`wa-prices: ${inserted} transactions loaded`);

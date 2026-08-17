@@ -19,6 +19,7 @@
 // model year we've never seen.
 import { readFile } from "node:fs/promises";
 import { fetchWithRetry } from "./lib/retry.mjs";
+import { stagedLoad } from "./lib/staged-load.mjs";
 
 const SODA = "https://data.wa.gov/resource/rpr4-cgyd.json";
 const BATCH = 50;
@@ -54,8 +55,6 @@ const where =
 const url =
   `${SODA}?$select=substring(vin_1_10,1,8) as v8,model_year,count(*) as n` +
   `&$where=${encodeURIComponent(where)}&$group=v8,model_year&$limit=50000`;
-// Read-only; the ingest writes below stay retry-free for the same
-// duplicate-on-replay reason documented in wa-prices.mjs.
 const res = await fetchWithRetry("vpic-variants: SODA cohorts", () =>
   fetch(url, {
     headers: { "user-agent": "VoltcheckBot/0.1 (+https://voltcheck.net/bot)" },
@@ -224,24 +223,7 @@ if (!SUPABASE_URL || !TOKEN || !ANON) {
   process.exit(0);
 }
 
-const CHUNK = 1000;
-let loaded = 0;
-for (let i = 0; i < out.length; i += CHUNK) {
-  const res = await fetch(`${SUPABASE_URL}/functions/v1/ingest`, {
-    method: "POST",
-    headers: {
-      apikey: ANON,
-      Authorization: `Bearer ${ANON}`,
-      "x-ingest-token": TOKEN,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ dataset: "vin_variants", rows: out.slice(i, i + CHUNK), replace: i === 0 }),
-  });
-  if (!res.ok) {
-    console.error(`vpic-variants: FAILED at ${i} — HTTP ${res.status}: ${(await res.text()).slice(0, 300)}`);
-    process.exit(1);
-  }
-  loaded += (await res.json()).inserted ?? 0;
-  console.error(`  loaded ${loaded}/${out.length}`);
-}
+// Staged + committed (lib/staged-load.mjs, migration 0033): a mid-load
+// failure leaves last month's decodes live, and retries can't duplicate.
+const loaded = await stagedLoad({ dataset: "vin_variants", rows: out, chunkSize: 1000, name: "vpic-variants" });
 console.error(`vpic-variants: ${loaded} variants loaded`);

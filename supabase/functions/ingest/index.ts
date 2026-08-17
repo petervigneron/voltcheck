@@ -47,14 +47,21 @@ Deno.serve(async (req: Request) => {
   // already speaks the target function's own parameter shape says so with
   // x-ingest-rpc and the body streams through untouched; this isolate holds
   // only the response (a small counts object). The name must be on the
-  // allowlist — the service key forwards to these five functions and
-  // nothing else, the same boundary the parsed paths below enforce.
+  // allowlist — the service key forwards to these functions and nothing
+  // else, the same boundary the parsed paths below enforce.
   const STREAM_RPCS = new Set([
     "ingest_listings",
     "recheck_listings",
     "ingest_wa_sales",
     "ingest_vin_variants",
     "refresh_vin_variants",
+    // Staged monthly loads (migration 0033): chunks land keyed by
+    // (dataset, batch, chunk) so a replayed chunk overwrites itself instead
+    // of duplicating, and the commit swaps the live table in one
+    // transaction. The plain ingest_wa_sales / ingest_vin_variants routes
+    // stay as the rollback path.
+    "stage_monthly_load",
+    "commit_monthly_load",
   ]);
   const streamRpc = req.headers.get("x-ingest-rpc");
   if (streamRpc) {
