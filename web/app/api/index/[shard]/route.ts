@@ -4,10 +4,18 @@ import { SHARDS, packIndex } from "@/lib/listings/pack";
 
 // The browse grid's dataset: CDN-cached JSON the client filters locally.
 // Visitors hit the edge cache, and every filter click after first load is
-// zero-network. The route re-renders hourly, but its Supabase reads are
-// cached a full day under the "feed" tag and expired by /api/revalidate when
-// the nightly pipeline actually changes the data — so the hourly re-render
-// is compute against a warm data cache, not a database walk.
+// zero-network. The route output is cached a full DAY and refreshed by
+// /api/revalidate + the nightly's warming curls when the data actually
+// changes — the route cache is the layer that has to carry this, because
+// the fetch-level data cache does NOT survive in production: a full feed
+// walk is ~175 MB of stringified entries, which blows the Vercel Data
+// Cache's allowance and evicts itself; measured 2026-08-17 20:55 UTC, when
+// all seven bodies' hourly route caches expired together and each re-render
+// walked the whole feed (998 pages in one minute, the same page fetched
+// 9x). An hourly route TTL therefore means ~5 full walks an hour, not
+// "compute against a warm data cache". Day-long output + nightly warm means
+// the walk happens once, at night — the in-process memo in db.ts is what
+// lets the seven sequential warm renders share it.
 //
 // Served in SHARDS files rather than one. Vercel refuses to store a prerendered
 // response over ~19 MB, so a single file made that cap a hard limit on how many
@@ -18,7 +26,7 @@ import { SHARDS, packIndex } from "@/lib/listings/pack";
 // fetches with the same cache entries, so Next serves them from the data cache
 // and the database is walked once per nightly however many shards there are.
 export const dynamic = "force-static";
-export const revalidate = 3600;
+export const revalidate = 86400;
 
 // Empty on purpose — same pattern as the listing pages: each shard renders on
 // its first request and is CDN-cached from then on, instead of prerendering at
@@ -60,8 +68,8 @@ export async function GET(_req: Request, { params }: { params: Promise<{ shard: 
   // KB against the shards' 3.3 MB (lib/listings/firstPaint.ts). It lives here
   // rather than in its own route so it inherits this file's exact caching
   // shape: render-on-first-request, never prerendered at build (the 2026-08-16
-  // lesson above), CDN-cached for the same hour as the shards it fronts. Same
-  // cached data reads, so it adds no database load — one more render per hour.
+  // lesson above), CDN-cached for the same day as the shards it fronts. Same
+  // walk memo, so it adds no database load — one more render per nightly.
   if (shard === "first") {
     const rows = await buildCardIndex();
     return Response.json(buildFirstPaint(rows));

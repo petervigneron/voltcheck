@@ -16,13 +16,19 @@ import type { Listing } from "./types";
 // hourly revalidate re-walked the ~13 MB feed 24 times a day at best, and in
 // practice ~78 times, because pages over the 2 MB entry ceiling fell out of
 // the data cache and every shard render re-walked around them. Measured from
-// edge logs: 13,466 walk pages/day ≈ 1.2 GB/day. So the feed walk now caches
-// a full DAY and is expired by the pipeline itself: nightly.yml's last step
-// POSTs /api/revalidate, which expires the "feed" tag the moment the data
-// actually changed. The TTL is only the backstop for a lost signal — the
-// site is never fresher than the pipeline and never staler than a day.
-// After any out-of-cycle db-sync, send that same POST (see the route file
-// for the secret's shape) or accept up to a day of staleness.
+// edge logs: 13,466 walk pages/day ≈ 1.2 GB/day. The fix lives at the ROUTE
+// layer: the index routes cache their output a full DAY, and nightly.yml's
+// last step POSTs /api/revalidate — which expires them the moment the data
+// actually changed — then warms them, so the one walk happens at night. The
+// fetch-level revalidate/tags below are kept for whatever the platform cache
+// can hold, but they are NOT what carries this in production: a full walk is
+// ~175 MB of stringified entries and evicts itself from the Vercel Data
+// Cache (measured 2026-08-17, every re-render re-walked, tails included);
+// the in-process memo below is what lets one walk serve all seven warm
+// renders. The day TTLs are only the backstop for a lost signal — the site
+// is never fresher than the pipeline and never staler than a day. After any
+// out-of-cycle db-sync, send that same POST (see the route file for the
+// secret's shape) or accept up to a day of staleness.
 //
 // Env (web/.env.local locally, project env vars on Vercel):
 //   SUPABASE_URL=https://<project-ref>.supabase.co
@@ -122,37 +128,41 @@ function headers(): Record<string, string> {
   };
 }
 
-// A dev server walks the production database exactly like prod does, and
-// dev's fetch cache is cold on every restart while each of the six index
-// shards walks independently — measured 2026-08-17 at ~4,300 feed pages
-// (~0.4 GB of the free plan's 5 GB/mo) in one day from one machine. One
-// in-process walk per 15 minutes is plenty for local work; restart the dev
-// server (or wait it out) to re-read. Production never memoizes here: a
-// warm lambda holding rows past the nightly tag-expiry would serve
-// yesterday's cars all day.
-const DEV_MEMO_MS = 15 * 60 * 1000;
-let devWalk: { at: number; promise: Promise<Listing[] | null> } | null = null;
+// One walk shared by every render in this process for ten minutes. Two
+// distinct problems, one memo:
+//   - Production: the fetch-level data cache does NOT hold the walk on
+//     Vercel — ~175 MB of stringified entries per walk blows the Data
+//     Cache's allowance and evicts itself (measured 2026-08-17: every route
+//     re-render re-walked, tail pages included). The seven index bodies are
+//     warmed by sequential curls that land on the same warm lambda, so this
+//     memo is what turns seven renders into one walk.
+//   - Dev: the fetch cache is cold on every restart and each shard route
+//     walks independently — measured 2026-08-17 at ~4,300 feed pages
+//     (~0.4 GB of the free plan's 5 GB/mo) in one day from one machine.
+// Ten minutes is long enough to bridge a warm-up sequence and short enough
+// that a lambda outliving the nightly revalidate can serve at most ten
+// stale minutes — the routes themselves cache a day, so the memo's TTL is
+// never the user-visible staleness.
+const WALK_MEMO_MS = 10 * 60 * 1000;
+let walkMemo: { at: number; promise: Promise<Listing[] | null> } | null = null;
 
 /** All live (non-delisted) listings — no descriptions, no price history —
  *  or null when the DB is unconfigured or unreachable, in which case the
  *  caller falls back to the bundled JSON. */
 export async function fetchListingsFromDb(): Promise<Listing[] | null> {
-  if (process.env.NODE_ENV !== "production") {
-    if (devWalk && Date.now() - devWalk.at < DEV_MEMO_MS) return devWalk.promise;
-    const memo = { at: Date.now(), promise: fetchListingsFromDbUncached() };
-    devWalk = memo;
-    // A failed or fallback walk must not stick for 15 minutes.
-    memo.promise.then(
-      (rows) => {
-        if (!rows && devWalk === memo) devWalk = null;
-      },
-      () => {
-        if (devWalk === memo) devWalk = null;
-      }
-    );
-    return memo.promise;
-  }
-  return fetchListingsFromDbUncached();
+  if (walkMemo && Date.now() - walkMemo.at < WALK_MEMO_MS) return walkMemo.promise;
+  const memo = { at: Date.now(), promise: fetchListingsFromDbUncached() };
+  walkMemo = memo;
+  // A failed or fallback walk must not stick for ten minutes.
+  memo.promise.then(
+    (rows) => {
+      if (!rows && walkMemo === memo) walkMemo = null;
+    },
+    () => {
+      if (walkMemo === memo) walkMemo = null;
+    }
+  );
+  return memo.promise;
 }
 
 async function fetchListingsFromDbUncached(): Promise<Listing[] | null> {
