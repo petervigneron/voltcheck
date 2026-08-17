@@ -1,5 +1,38 @@
-import type { EnrichmentRow, HeatPump } from "@/lib/types";
+import type { Chemistry, EnrichmentRow, HeatPump } from "@/lib/types";
 import { FactRow } from "./FactRow";
+import { CHEMISTRY_INFO } from "@/lib/enrichment/chemistry-info";
+
+// The Chemistry row's hover/focus tooltip: what this cell chemistry means for
+// the shopper, framed as general family traits rather than a claim about this
+// specific car.
+function chemistryHint(value: Chemistry) {
+  const info = CHEMISTRY_INFO[value];
+  if (!info) return undefined;
+  return (
+    <div>
+      <div className="font-semibold text-zinc-900 dark:text-zinc-100">
+        {value} — {info.full}
+      </div>
+      <ul className="mt-2 space-y-0.5">
+        {info.pros.map((p) => (
+          <li key={p} className="flex gap-1.5">
+            <span aria-hidden className="text-emerald-600 dark:text-emerald-500">+</span>
+            <span>{p}</span>
+          </li>
+        ))}
+        {info.cons.map((c) => (
+          <li key={c} className="flex gap-1.5">
+            <span aria-hidden className="text-amber-600 dark:text-amber-500">−</span>
+            <span>{c}</span>
+          </li>
+        ))}
+      </ul>
+      <div className="mt-2 text-[10px] uppercase tracking-wide text-zinc-400 dark:text-zinc-500">
+        General traits of this battery family, not a measurement of this car
+      </div>
+    </div>
+  );
+}
 
 export const HEAT_PUMP_LABEL: Record<HeatPump, string> = {
   standard: "Standard",
@@ -50,7 +83,11 @@ export function EnrichmentFacts({ row }: { row: EnrichmentRow }) {
           <h3 className="mt-2 text-xs font-semibold text-zinc-400">Battery & range</h3>
           <FactRow label="Usable capacity" fact={row.battery?.packUsableKwh} format={(v) => `${v} kWh`} />
           <FactRow label="Gross capacity" fact={row.battery?.packGrossKwh} format={(v) => `${v} kWh`} />
-          <FactRow label="Chemistry" fact={row.battery?.chemistry} />
+          <FactRow
+            label="Chemistry"
+            fact={row.battery?.chemistry}
+            hint={row.battery?.chemistry ? chemistryHint(row.battery.chemistry.value) : undefined}
+          />
           <FactRow label="EPA range" fact={row.range?.epaRangeMi} format={(v) => `${v} mi`} />
           <FactRow label="Real-world tested range" fact={row.range?.testedRangeMi} format={(v) => `${v} mi`} />
 
