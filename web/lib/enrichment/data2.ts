@@ -882,7 +882,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Lyriq",
     modelYears: [2023, 2024],
     drive: "RWD",
-    battery: { packGrossKwh: f(102, "mfr", "medium", "GM quotes 102 kWh; usable split unpublished"), chemistry: f("NMC", "agg", "medium") },
+    battery: { packGrossKwh: f(102, "mfr", "medium", "GM quotes 102 kWh; usable split unpublished"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(312, "mfr", "high", "2023: 312; 2024: 314, EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(330, "tested", "high", "70-mph (InsideEVs, 2023 RWD): 330 mi; 75-mph (C&D): 270; Edmunds loop (2024): 319") },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
@@ -912,7 +912,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     modelYears: [2025, 2027],
     vin8: ["K"], // GM Part 565: K = RWD, L = PAWD
     drive: "RWD",
-    battery: { packGrossKwh: f(102, "mfr", "medium", "GM quotes 102 kWh; usable split unpublished"), chemistry: f("NMC", "agg", "medium") },
+    battery: { packGrossKwh: f(102, "mfr", "medium", "GM quotes 102 kWh; usable split unpublished"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(326, "mfr", "high", "EPA figure (11 kW and 19.2 kW chargers)", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
@@ -941,7 +941,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Lyriq",
     modelYears: [2023, 2024],
     drive: "AWD",
-    battery: { packGrossKwh: f(102, "mfr", "medium", "GM quotes 102 kWh; usable split unpublished"), chemistry: f("NMC", "agg", "medium") },
+    battery: { packGrossKwh: f(102, "mfr", "medium", "GM quotes 102 kWh; usable split unpublished"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(307, "mfr", "high", "EPA figure", "https://www.fueleconomy.gov"), testedRangeMi: f(220, "tested", "medium", "75-mph (Car and Driver): 220 mi") },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
@@ -971,7 +971,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     modelYears: [2025, 2027],
     vin8: ["L"], // GM Part 565: L = RWD + PAWD (dual motor)
     drive: "AWD",
-    battery: { packGrossKwh: f(102, "mfr", "medium", "GM quotes 102 kWh; usable split unpublished"), chemistry: f("NMC", "agg", "medium") },
+    battery: { packGrossKwh: f(102, "mfr", "medium", "GM quotes 102 kWh; usable split unpublished"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(303, "mfr", "high", "303 (19.2 kW charger) / 319 (11 kW, 2025 PAWD); 2026 V-Series: 285, EPA", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
@@ -1000,7 +1000,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Prologue",
     modelYears: [2024, 2024],
     drive: "FWD",
-    battery: { packGrossKwh: f(85, "mfr", "medium", "85 kWh (GM Ultium pack); split unpublished"), chemistry: f("NMC", "agg", "medium") },
+    battery: { packGrossKwh: f(85, "mfr", "medium", "85 kWh (GM Ultium pack); split unpublished"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(296, "mfr", "high", "EPA figure", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "mfr"),
@@ -1031,7 +1031,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     // in the 2026-08-14 pass.
     modelYears: [2025, 2026],
     drive: "FWD",
-    battery: { packGrossKwh: f(85, "mfr", "medium", "85 kWh (GM Ultium pack); split unpublished"), chemistry: f("NMC", "agg", "medium") },
+    battery: { packGrossKwh: f(85, "mfr", "medium", "85 kWh (GM Ultium pack); split unpublished"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(308, "mfr", "high", "EPA figure", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "mfr"),
@@ -1060,7 +1060,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Prologue",
     modelYears: [2024, 2024],
     drive: "AWD",
-    battery: { packGrossKwh: f(85, "mfr", "medium", "85 kWh (GM Ultium pack); split unpublished"), chemistry: f("NMC", "agg", "medium") },
+    battery: { packGrossKwh: f(85, "mfr", "medium", "85 kWh (GM Ultium pack); split unpublished"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(281, "mfr", "high", "Touring AWD 281; Elite 273, EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(240, "tested", "medium", "75-mph (Car and Driver, Elite AWD): 240 mi; Edmunds mixed loop: 320") },
     charging: {
       portStandard: f("CCS1", "mfr"),
@@ -1092,7 +1092,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     // is the 294-mi rating for the other AWD trims.
     modelYears: [2025, 2026],
     drive: "AWD",
-    battery: { packGrossKwh: f(85, "mfr", "medium", "85 kWh (GM Ultium pack); split unpublished"), chemistry: f("NMC", "agg", "medium") },
+    battery: { packGrossKwh: f(85, "mfr", "medium", "85 kWh (GM Ultium pack); split unpublished"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(294, "mfr", "high", "Touring AWD 294; Elite 283, EPA", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "mfr"),
@@ -1121,7 +1121,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Equinox EV",
     modelYears: [2024, 2026],
     drive: "FWD",
-    battery: { packGrossKwh: f(85, "mfr", "medium", "GM-quoted 85 kWh; split unpublished"), chemistry: f("NMC", "agg", "medium") },
+    battery: { packGrossKwh: f(85, "mfr", "medium", "GM-quoted 85 kWh; split unpublished"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(319, "mfr", "high", "All years, EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(303, "tested", "high", "70-mph (InsideEVs, 2024 2RS FWD): 303 mi; 75-mph (C&D): 260; Edmunds loop (2025): 356") },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
@@ -1150,7 +1150,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Equinox EV",
     modelYears: [2024, 2026],
     drive: "AWD",
-    battery: { packGrossKwh: f(85, "mfr", "medium", "GM-quoted 85 kWh; split unpublished"), chemistry: f("NMC", "agg", "medium") },
+    battery: { packGrossKwh: f(85, "mfr", "medium", "GM-quoted 85 kWh; split unpublished"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(297, "mfr", "high", "2024: 285; 2025–26: 307 (288 with 19.2 kW charger), EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(260, "tested", "low", "75-mph (Car and Driver): 260 mi, reported secondhand") },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
@@ -1179,7 +1179,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Blazer EV",
     modelYears: [2025, 2026],
     drive: "FWD",
-    battery: { packGrossKwh: f(85, "mfr", "medium", "85 kWh (FWD/AWD)"), chemistry: f("NMC", "agg", "medium") },
+    battery: { packGrossKwh: f(85, "mfr", "medium", "85 kWh (FWD/AWD)"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(312, "mfr", "high", "312; 283 with 22-inch wheels, EPA", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
@@ -1208,7 +1208,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Blazer EV",
     modelYears: [2024, 2026],
     drive: "AWD",
-    battery: { packGrossKwh: f(85, "mfr", "medium", "85 kWh (FWD/AWD)"), chemistry: f("NMC", "agg", "medium") },
+    battery: { packGrossKwh: f(85, "mfr", "medium", "85 kWh (FWD/AWD)"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(283, "mfr", "high", "2024: 279; 2025–26: 283, EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(200, "tested", "high", "75-mph (Car and Driver, 2024 RS AWD): 200 mi vs 279 EPA; Edmunds mixed loop: 320") },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
@@ -1237,7 +1237,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Blazer EV",
     modelYears: [2024, 2025],
     drive: "RWD",
-    battery: { packGrossKwh: f(102, "mfr", "medium", "102 kWh (RWD/SS)"), chemistry: f("NMC", "agg", "medium") },
+    battery: { packGrossKwh: f(102, "mfr", "medium", "102 kWh (RWD/SS)"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(334, "mfr", "high", "2024: 324; 2025: 334, EPA", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
@@ -1267,7 +1267,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     modelYears: [2025, 2026],
     trim: "SS",
     drive: "AWD",
-    battery: { packGrossKwh: f(102, "mfr", "medium", "102 kWh (RWD/SS)"), chemistry: f("NMC", "agg", "medium") },
+    battery: { packGrossKwh: f(102, "mfr", "medium", "102 kWh (RWD/SS)"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(303, "mfr", "high", "2025: 303; 2026: 302, EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(250, "tested", "high", "75-mph (Car and Driver, 2025 SS): 250 mi") },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
@@ -1295,7 +1295,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     make: "GMC",
     model: "Hummer EV",
     modelYears: [2022, 2025],
-    battery: { packGrossKwh: f(205, "est", "medium", "~205 kWh usable est (213.7 gross reported); smaller 2M20 variants from 2024, capacity unpublished"), chemistry: f("NMC", "agg", "medium") },
+    battery: { packGrossKwh: f(205, "est", "medium", "~205 kWh usable est (213.7 gross reported); smaller 2M20 variants from 2024, capacity unpublished"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(314, "mfr", "high", "2024–25: 298–318 by config/tires, EPA. 2022–23: no EPA rating exists (GM est. 329)", "https://www.fueleconomy.gov"), testedRangeMi: f(343, "tested", "high", "70-mph (InsideEVs, 2022 Edition 1): 343 mi, beat its 329 GM estimate; 75-mph (C&D): 290") },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
@@ -1323,7 +1323,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     make: "GMC",
     model: "Hummer EV SUV",
     modelYears: [2024, 2025],
-    battery: { packGrossKwh: f(205, "est", "medium", "~205 kWh usable est; smaller-pack variants unpublished"), chemistry: f("NMC", "agg", "medium") },
+    battery: { packGrossKwh: f(205, "est", "medium", "~205 kWh usable est; smaller-pack variants unpublished"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(312, "mfr", "high", "312–315 (282–289 with MT tires), EPA", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
@@ -1593,7 +1593,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Silverado EV",
     modelYears: [2025, 2026],
     trim: "Standard Range",
-    battery: { packUsableKwh: f(119, "est", "medium", "~119 kWh usable (GM publishes no official split)"), chemistry: f("NCM", "agg", "medium") },
+    battery: { packUsableKwh: f(119, "est", "medium", "~119 kWh usable (GM publishes no official split)"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(283, "mfr", "high", "2025 2WT: 282 mi; 2026 Standard: 283\u2013286 mi \u2014 EPA figures", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
@@ -1622,7 +1622,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Silverado EV",
     modelYears: [2025, 2026],
     trim: "Extended Range",
-    battery: { packUsableKwh: f(170, "est", "medium", "~170 kWh usable (GM publishes no official split)"), chemistry: f("NCM", "agg", "medium") },
+    battery: { packUsableKwh: f(170, "est", "medium", "~170 kWh usable (GM publishes no official split)"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(424, "mfr", "high", "2025 5WT: 422 mi; 2026 Extended: 424 mi (410/385 with equipment differences) \u2014 EPA figures", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
@@ -1651,7 +1651,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Silverado EV",
     modelYears: [2025, 2026],
     trim: "Max Range",
-    battery: { packUsableKwh: f(205, "est", "medium", "~205 kWh usable (213.7 gross reported)"), chemistry: f("NCM", "agg", "medium") },
+    battery: { packUsableKwh: f(205, "est", "medium", "~205 kWh usable (213.7 gross reported)"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(493, "mfr", "high", "2025 8WT: 492 mi; 2026 Max: 493 mi \u2014 EPA figures", "https://www.fueleconomy.gov"), testedRangeMi: f(539, "tested", "medium", "Edmunds mixed loop, 2025 WT Max Range: 539 mi, the longest Edmunds has recorded") },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
@@ -1680,7 +1680,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Silverado EV",
     modelYears: [2024, 2024],
     trim: "3WT",
-    battery: { packUsableKwh: f(170, "est", "medium", "~170 kWh usable"), chemistry: f("NCM", "agg", "medium") },
+    battery: { packUsableKwh: f(170, "est", "medium", "~170 kWh usable"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(393, "mfr", "high", "2024 3WT \u2014 EPA figure", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
@@ -1709,7 +1709,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Silverado EV",
     modelYears: [2024, 2024],
     trim: "4WT",
-    battery: { packUsableKwh: f(205, "est", "medium", "~205 kWh usable"), chemistry: f("NCM", "agg", "medium") },
+    battery: { packUsableKwh: f(205, "est", "medium", "~205 kWh usable"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(450, "mfr", "high", "2024 4WT \u2014 EPA figure", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
@@ -1738,7 +1738,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Silverado EV",
     modelYears: [2025, 2026],
     trim: "RST",
-    battery: { packUsableKwh: f(205, "est", "medium", "~205 kWh usable (Max pack)"), chemistry: f("NCM", "agg", "medium") },
+    battery: { packUsableKwh: f(205, "est", "medium", "~205 kWh usable (Max pack)"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(408, "mfr", "high", "2025 RST: 408 mi (390 with 19.2 kW charger); 2026: 410/385 \u2014 EPA figures", "https://www.fueleconomy.gov"), testedRangeMi: f(442, "tested", "high", "70-mph (InsideEVs, 2024 RST First Edition): 442 mi; 75-mph (C&D): 400; Edmunds loop: 484") },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
