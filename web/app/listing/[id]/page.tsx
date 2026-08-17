@@ -17,6 +17,8 @@ import { listingPriceSignals } from "@/lib/listings/peers";
 import { askVsMarketTile } from "@/lib/listings/card";
 import { PriceScatter } from "@/components/PriceScatter";
 import { PriceSparkline } from "@/components/PriceSparkline";
+import { BatteryRisk } from "@/components/BatteryRisk";
+import { batteryRisk } from "@/lib/nhtsa/battery";
 
 // ISR: each listing page renders once, then serves from the CDN for an hour —
 // same cadence as the data underneath it (nightly sync, recheck, price audit).
@@ -71,6 +73,13 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
   // contradiction judgement was made at sync time and rides the payload
   // (scraper/lib/trim-suspect.mjs), so this page needs nothing but its own row.
   const claim = trimClaim(listing);
+  // What NHTSA holds against this car's make/model/year: battery recalls, and
+  // a count of the battery complaints owners have filed. Read from a file the
+  // scraper refreshes monthly, on the server, on this page only — the browse
+  // index has no room for it and a count with no fleet size behind it is not
+  // something two cards should be compared on. Silent for any cohort whose
+  // name we could not place in NHTSA's own vocabulary.
+  const battery = await batteryRisk(listing.make, listing.model, listing.year);
   // Both price signals, decided by the same gates as the browse grid
   // (lib/listings/peers.ts): the sold-side fit against Washington title
   // records, and — only where that is silent — the ask-side comparison
@@ -265,6 +274,8 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
               {scatter}
             </div>
           ) : null}
+
+          <BatteryRisk data={battery} vin={listing.vin} />
 
           {e.row && (
             <Section title={`${listing.model}${claim.assert && displayTrim(listing) ? ` ${claim.trim}` : ""}`}>

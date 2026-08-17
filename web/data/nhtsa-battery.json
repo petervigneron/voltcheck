@@ -1,0 +1,3876 @@
+{
+ "ACURA|ZDX|2024": {
+  "resolved": [
+   "ZDX"
+  ],
+  "complaintsTotal": 53,
+  "complaintsBattery": 2,
+  "complaintsPack": 2,
+  "fires": 0,
+  "recallsTotal": 5,
+  "recallsBattery": [
+   {
+    "campaign": "25V018000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM: CABLES",
+    "summary": "Honda (American Honda Motor Co.) is recalling certain 2024 Acura ZDX vehicles.  The front passenger stabilizer bar bracket bolts may become loose and detach from the frame, which can damage the high voltage cables or EV battery coolant lines."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "ALFA ROMEO|TONALE|2024": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "AUDI|A6 SPORTBACK E-TRON|2025": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "AUDI|E-TRON GT|2022": {
+  "resolved": [
+   "AUDI E-TRON GT"
+  ],
+  "complaintsTotal": 7,
+  "complaintsBattery": 2,
+  "complaintsPack": 2,
+  "fires": 0,
+  "recallsTotal": 13,
+  "recallsBattery": [
+   {
+    "campaign": "23V842000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:CHARGING:CABLE/CORD:ONBOARD",
+    "summary": "Volkswagen Group of America, Inc. (Audi) is recalling certain 2022-2024 RS e-tron GT, e-tron GT, Q4 e-tron Sportback, Q4 e-tron, 2020-2021 Audi A8, 2019-2024 e-tron Quattro, 2020-2024 e-tron Sportback Quattro, Q5, and 2021-2022 A7 vehicles.  When using the industrial 220V/240V plug at the 100% charge setting, some home power outlets may be incapable of handling the electrical current required to utilize the compact charging system, causing the outlet or charging cable to overheat."
+   },
+   {
+    "campaign": "24V228000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Volkswagen Group of America, Inc. (Volkswagen) is recalling certain 2022-2024 Audi RS E-Tron GT and E-Tron GT vehicles.  The high-voltage battery may experience a short circuit within the battery modules."
+   },
+   {
+    "campaign": "24V229000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Volkswagen Group of America, Inc. (Volkswagen) is recalling certain 2022-2023 Audi RS E-Tron GT and E-Tron GT vehicles.  The high-voltage battery may experience a short circuit within the battery modules."
+   },
+   {
+    "campaign": "24V726000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Volkswagen Group of America, Inc. (Audi) is recalling certain 2022-2024 E-TRON GT, and RS E-TRON GT vehicles.  The high-voltage battery may experience a short circuit within the battery module."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "AUDI|E-TRON GT|2023": {
+  "resolved": [
+   "AUDI E-TRON GT"
+  ],
+  "complaintsTotal": 10,
+  "complaintsBattery": 1,
+  "complaintsPack": 1,
+  "fires": 0,
+  "recallsTotal": 8,
+  "recallsBattery": [
+   {
+    "campaign": "23V613000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Volkswagen Group of America, Inc. (Audi) is recalling certain 2023 Audi RS E-Tron GT and E-Tron GT vehicles.  The high-voltage battery may have an insufficient amount of sealant, which can allow liquid to accumulate in the battery."
+   },
+   {
+    "campaign": "23V842000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:CHARGING:CABLE/CORD:ONBOARD",
+    "summary": "Volkswagen Group of America, Inc. (Audi) is recalling certain 2022-2024 RS e-tron GT, e-tron GT, Q4 e-tron Sportback, Q4 e-tron, 2020-2021 Audi A8, 2019-2024 e-tron Quattro, 2020-2024 e-tron Sportback Quattro, Q5, and 2021-2022 A7 vehicles.  When using the industrial 220V/240V plug at the 100% charge setting, some home power outlets may be incapable of handling the electrical current required to utilize the compact charging system, causing the outlet or charging cable to overheat."
+   },
+   {
+    "campaign": "24V228000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Volkswagen Group of America, Inc. (Volkswagen) is recalling certain 2022-2024 Audi RS E-Tron GT and E-Tron GT vehicles.  The high-voltage battery may experience a short circuit within the battery modules."
+   },
+   {
+    "campaign": "24V229000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Volkswagen Group of America, Inc. (Volkswagen) is recalling certain 2022-2023 Audi RS E-Tron GT and E-Tron GT vehicles.  The high-voltage battery may experience a short circuit within the battery modules."
+   },
+   {
+    "campaign": "24V726000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Volkswagen Group of America, Inc. (Audi) is recalling certain 2022-2024 E-TRON GT, and RS E-TRON GT vehicles.  The high-voltage battery may experience a short circuit within the battery module."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "AUDI|E-TRON GT|2024": {
+  "resolved": [
+   "RS E-TRON GT"
+  ],
+  "complaintsTotal": 1,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 5,
+  "recallsBattery": [
+   {
+    "campaign": "23V842000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:CHARGING:CABLE/CORD:ONBOARD",
+    "summary": "Volkswagen Group of America, Inc. (Audi) is recalling certain 2022-2024 RS e-tron GT, e-tron GT, Q4 e-tron Sportback, Q4 e-tron, 2020-2021 Audi A8, 2019-2024 e-tron Quattro, 2020-2024 e-tron Sportback Quattro, Q5, and 2021-2022 A7 vehicles.  When using the industrial 220V/240V plug at the 100% charge setting, some home power outlets may be incapable of handling the electrical current required to utilize the compact charging system, causing the outlet or charging cable to overheat."
+   },
+   {
+    "campaign": "24V228000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Volkswagen Group of America, Inc. (Volkswagen) is recalling certain 2022-2024 Audi RS E-Tron GT and E-Tron GT vehicles.  The high-voltage battery may experience a short circuit within the battery modules."
+   },
+   {
+    "campaign": "24V726000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Volkswagen Group of America, Inc. (Audi) is recalling certain 2022-2024 E-TRON GT, and RS E-TRON GT vehicles.  The high-voltage battery may experience a short circuit within the battery module."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "AUDI|E-TRON SPORTBACK|2022": {
+  "resolved": [
+   "AUDI E-TRON SPORTBACK"
+  ],
+  "complaintsTotal": 29,
+  "complaintsBattery": 6,
+  "complaintsPack": 6,
+  "fires": 1,
+  "recallsTotal": 2,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "AUDI|E-TRON SPORTBACK|2023": {
+  "resolved": [
+   "AUDI Q4 SPORTBACK E-TRON"
+  ],
+  "complaintsTotal": 27,
+  "complaintsBattery": 4,
+  "complaintsPack": 4,
+  "fires": 0,
+  "recallsTotal": 2,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "AUDI|E-TRON|2019": {
+  "resolved": [
+   "E-TRON"
+  ],
+  "complaintsTotal": 77,
+  "complaintsBattery": 17,
+  "complaintsPack": 16,
+  "fires": 1,
+  "recallsTotal": 5,
+  "recallsBattery": [
+   {
+    "campaign": "19V434000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Volkswagen Group of America, Inc. (Audi) is recalling certain 2019 Audi e-tron vehicles.  Moisture can enter the high-voltage battery system through a faulty seal on the charging socket."
+   },
+   {
+    "campaign": "23V842000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:CHARGING:CABLE/CORD:ONBOARD",
+    "summary": "Volkswagen Group of America, Inc. (Audi) is recalling certain 2022-2024 RS e-tron GT, e-tron GT, Q4 e-tron Sportback, Q4 e-tron, 2020-2021 Audi A8, 2019-2024 e-tron Quattro, 2020-2024 e-tron Sportback Quattro, Q5, and 2021-2022 A7 vehicles.  When using the industrial 220V/240V plug at the 100% charge setting, some home power outlets may be incapable of handling the electrical current required to utilize the compact charging system, causing the outlet or charging cable to overheat."
+   },
+   {
+    "campaign": "23V867000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY THERMAL:MANAGEMENT:SOFTWARE",
+    "summary": "Volkswagen Group of America, Inc. (Audi) is recalling certain 2020-2022 E-Tron Sportback Quattro and 2019-2022 E-Tron Quattro vehicles.  Certain high-voltage battery modules may overheat."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "AUDI|E-TRON|2021": {
+  "resolved": [
+   "E-TRON"
+  ],
+  "complaintsTotal": 36,
+  "complaintsBattery": 5,
+  "complaintsPack": 5,
+  "fires": 0,
+  "recallsTotal": 9,
+  "recallsBattery": [
+   {
+    "campaign": "23V842000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:CHARGING:CABLE/CORD:ONBOARD",
+    "summary": "Volkswagen Group of America, Inc. (Audi) is recalling certain 2022-2024 RS e-tron GT, e-tron GT, Q4 e-tron Sportback, Q4 e-tron, 2020-2021 Audi A8, 2019-2024 e-tron Quattro, 2020-2024 e-tron Sportback Quattro, Q5, and 2021-2022 A7 vehicles.  When using the industrial 220V/240V plug at the 100% charge setting, some home power outlets may be incapable of handling the electrical current required to utilize the compact charging system, causing the outlet or charging cable to overheat."
+   },
+   {
+    "campaign": "23V867000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY THERMAL:MANAGEMENT:SOFTWARE",
+    "summary": "Volkswagen Group of America, Inc. (Audi) is recalling certain 2020-2022 E-Tron Sportback Quattro and 2019-2022 E-Tron Quattro vehicles.  Certain high-voltage battery modules may overheat."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "AUDI|E-TRON|2022": {
+  "resolved": [
+   "AUDI E-TRON"
+  ],
+  "complaintsTotal": 29,
+  "complaintsBattery": 6,
+  "complaintsPack": 6,
+  "fires": 1,
+  "recallsTotal": 5,
+  "recallsBattery": [
+   {
+    "campaign": "23V842000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:CHARGING:CABLE/CORD:ONBOARD",
+    "summary": "Volkswagen Group of America, Inc. (Audi) is recalling certain 2022-2024 RS e-tron GT, e-tron GT, Q4 e-tron Sportback, Q4 e-tron, 2020-2021 Audi A8, 2019-2024 e-tron Quattro, 2020-2024 e-tron Sportback Quattro, Q5, and 2021-2022 A7 vehicles.  When using the industrial 220V/240V plug at the 100% charge setting, some home power outlets may be incapable of handling the electrical current required to utilize the compact charging system, causing the outlet or charging cable to overheat."
+   },
+   {
+    "campaign": "23V867000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY THERMAL:MANAGEMENT:SOFTWARE",
+    "summary": "Volkswagen Group of America, Inc. (Audi) is recalling certain 2020-2022 E-Tron Sportback Quattro and 2019-2022 E-Tron Quattro vehicles.  Certain high-voltage battery modules may overheat."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "AUDI|E-TRON|2023": {
+  "resolved": [
+   "AUDI E-TRON"
+  ],
+  "complaintsTotal": 5,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 2,
+  "recallsBattery": [
+   {
+    "campaign": "23V842000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:CHARGING:CABLE/CORD:ONBOARD",
+    "summary": "Volkswagen Group of America, Inc. (Audi) is recalling certain 2022-2024 RS e-tron GT, e-tron GT, Q4 e-tron Sportback, Q4 e-tron, 2020-2021 Audi A8, 2019-2024 e-tron Quattro, 2020-2024 e-tron Sportback Quattro, Q5, and 2021-2022 A7 vehicles.  When using the industrial 220V/240V plug at the 100% charge setting, some home power outlets may be incapable of handling the electrical current required to utilize the compact charging system, causing the outlet or charging cable to overheat."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "AUDI|Q4 E-TRON SPORTBACK|2023": {
+  "resolved": [
+   "AUDI Q4 SPORTBACK E-TRON"
+  ],
+  "complaintsTotal": 27,
+  "complaintsBattery": 4,
+  "complaintsPack": 4,
+  "fires": 0,
+  "recallsTotal": 0,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "AUDI|Q4 E-TRON|2022": {
+  "resolved": [
+   "AUDI Q4 E-TRON"
+  ],
+  "complaintsTotal": 2,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 5,
+  "recallsBattery": [
+   {
+    "campaign": "23V842000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:CHARGING:CABLE/CORD:ONBOARD",
+    "summary": "Volkswagen Group of America, Inc. (Audi) is recalling certain 2022-2024 RS e-tron GT, e-tron GT, Q4 e-tron Sportback, Q4 e-tron, 2020-2021 Audi A8, 2019-2024 e-tron Quattro, 2020-2024 e-tron Sportback Quattro, Q5, and 2021-2022 A7 vehicles.  When using the industrial 220V/240V plug at the 100% charge setting, some home power outlets may be incapable of handling the electrical current required to utilize the compact charging system, causing the outlet or charging cable to overheat."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "AUDI|Q4 E-TRON|2023": {
+  "resolved": [
+   "AUDI Q4 E-TRON"
+  ],
+  "complaintsTotal": 16,
+  "complaintsBattery": 3,
+  "complaintsPack": 3,
+  "fires": 0,
+  "recallsTotal": 4,
+  "recallsBattery": [
+   {
+    "campaign": "23V842000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:CHARGING:CABLE/CORD:ONBOARD",
+    "summary": "Volkswagen Group of America, Inc. (Audi) is recalling certain 2022-2024 RS e-tron GT, e-tron GT, Q4 e-tron Sportback, Q4 e-tron, 2020-2021 Audi A8, 2019-2024 e-tron Quattro, 2020-2024 e-tron Sportback Quattro, Q5, and 2021-2022 A7 vehicles.  When using the industrial 220V/240V plug at the 100% charge setting, some home power outlets may be incapable of handling the electrical current required to utilize the compact charging system, causing the outlet or charging cable to overheat."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "AUDI|Q4 E-TRON|2024": {
+  "resolved": [
+   "Q4 E-TRON"
+  ],
+  "complaintsTotal": 21,
+  "complaintsBattery": 2,
+  "complaintsPack": 1,
+  "fires": 0,
+  "recallsTotal": 3,
+  "recallsBattery": [
+   {
+    "campaign": "23V842000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:CHARGING:CABLE/CORD:ONBOARD",
+    "summary": "Volkswagen Group of America, Inc. (Audi) is recalling certain 2022-2024 RS e-tron GT, e-tron GT, Q4 e-tron Sportback, Q4 e-tron, 2020-2021 Audi A8, 2019-2024 e-tron Quattro, 2020-2024 e-tron Sportback Quattro, Q5, and 2021-2022 A7 vehicles.  When using the industrial 220V/240V plug at the 100% charge setting, some home power outlets may be incapable of handling the electrical current required to utilize the compact charging system, causing the outlet or charging cable to overheat."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "AUDI|Q4 E-TRON|2025": {
+  "resolved": [
+   "Q4 E-TRON"
+  ],
+  "complaintsTotal": 4,
+  "complaintsBattery": 2,
+  "complaintsPack": 2,
+  "fires": 0,
+  "recallsTotal": 1,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "AUDI|Q4 SPORTBACK E-TRON|2023": {
+  "resolved": [
+   "AUDI Q4 SPORTBACK E-TRON"
+  ],
+  "complaintsTotal": 27,
+  "complaintsBattery": 4,
+  "complaintsPack": 4,
+  "fires": 0,
+  "recallsTotal": 1,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "AUDI|Q4 SPORTBACK E-TRON|2024": {
+  "resolved": [
+   "Q4 SPORTBACK E-TRON"
+  ],
+  "complaintsTotal": 5,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 1,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "AUDI|Q5 E|2024": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "AUDI|Q6 E-TRON|2025": {
+  "resolved": [
+   "Q6 E-TRON"
+  ],
+  "complaintsTotal": 28,
+  "complaintsBattery": 5,
+  "complaintsPack": 5,
+  "fires": 0,
+  "recallsTotal": 3,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "AUDI|Q8 E-TRON SPORTBACK|2024": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "AUDI|Q8 E-TRON|2024": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "AUDI|Q8 SPORTBACK E-TRON|2024": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "AUDI|RS E-TRON GT PERFORMANCE|2025": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "AUDI|RS E-TRON GT|2022": {
+  "resolved": [
+   "AUDI RS E-TRON GT"
+  ],
+  "complaintsTotal": 4,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 7,
+  "recallsBattery": [
+   {
+    "campaign": "23V842000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:CHARGING:CABLE/CORD:ONBOARD",
+    "summary": "Volkswagen Group of America, Inc. (Audi) is recalling certain 2022-2024 RS e-tron GT, e-tron GT, Q4 e-tron Sportback, Q4 e-tron, 2020-2021 Audi A8, 2019-2024 e-tron Quattro, 2020-2024 e-tron Sportback Quattro, Q5, and 2021-2022 A7 vehicles.  When using the industrial 220V/240V plug at the 100% charge setting, some home power outlets may be incapable of handling the electrical current required to utilize the compact charging system, causing the outlet or charging cable to overheat."
+   },
+   {
+    "campaign": "24V228000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Volkswagen Group of America, Inc. (Volkswagen) is recalling certain 2022-2024 Audi RS E-Tron GT and E-Tron GT vehicles.  The high-voltage battery may experience a short circuit within the battery modules."
+   },
+   {
+    "campaign": "24V229000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Volkswagen Group of America, Inc. (Volkswagen) is recalling certain 2022-2023 Audi RS E-Tron GT and E-Tron GT vehicles.  The high-voltage battery may experience a short circuit within the battery modules."
+   },
+   {
+    "campaign": "24V726000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Volkswagen Group of America, Inc. (Audi) is recalling certain 2022-2024 E-TRON GT, and RS E-TRON GT vehicles.  The high-voltage battery may experience a short circuit within the battery module."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "AUDI|RS E-TRON GT|2023": {
+  "resolved": [
+   "AUDI RS E-TRON GT"
+  ],
+  "complaintsTotal": 2,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 8,
+  "recallsBattery": [
+   {
+    "campaign": "23V613000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Volkswagen Group of America, Inc. (Audi) is recalling certain 2023 Audi RS E-Tron GT and E-Tron GT vehicles.  The high-voltage battery may have an insufficient amount of sealant, which can allow liquid to accumulate in the battery."
+   },
+   {
+    "campaign": "23V842000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:CHARGING:CABLE/CORD:ONBOARD",
+    "summary": "Volkswagen Group of America, Inc. (Audi) is recalling certain 2022-2024 RS e-tron GT, e-tron GT, Q4 e-tron Sportback, Q4 e-tron, 2020-2021 Audi A8, 2019-2024 e-tron Quattro, 2020-2024 e-tron Sportback Quattro, Q5, and 2021-2022 A7 vehicles.  When using the industrial 220V/240V plug at the 100% charge setting, some home power outlets may be incapable of handling the electrical current required to utilize the compact charging system, causing the outlet or charging cable to overheat."
+   },
+   {
+    "campaign": "24V228000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Volkswagen Group of America, Inc. (Volkswagen) is recalling certain 2022-2024 Audi RS E-Tron GT and E-Tron GT vehicles.  The high-voltage battery may experience a short circuit within the battery modules."
+   },
+   {
+    "campaign": "24V229000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Volkswagen Group of America, Inc. (Volkswagen) is recalling certain 2022-2023 Audi RS E-Tron GT and E-Tron GT vehicles.  The high-voltage battery may experience a short circuit within the battery modules."
+   },
+   {
+    "campaign": "24V726000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Volkswagen Group of America, Inc. (Audi) is recalling certain 2022-2024 E-TRON GT, and RS E-TRON GT vehicles.  The high-voltage battery may experience a short circuit within the battery module."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "AUDI|RS E-TRON GT|2024": {
+  "resolved": [
+   "RS E-TRON GT"
+  ],
+  "complaintsTotal": 1,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 5,
+  "recallsBattery": [
+   {
+    "campaign": "23V842000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:CHARGING:CABLE/CORD:ONBOARD",
+    "summary": "Volkswagen Group of America, Inc. (Audi) is recalling certain 2022-2024 RS e-tron GT, e-tron GT, Q4 e-tron Sportback, Q4 e-tron, 2020-2021 Audi A8, 2019-2024 e-tron Quattro, 2020-2024 e-tron Sportback Quattro, Q5, and 2021-2022 A7 vehicles.  When using the industrial 220V/240V plug at the 100% charge setting, some home power outlets may be incapable of handling the electrical current required to utilize the compact charging system, causing the outlet or charging cable to overheat."
+   },
+   {
+    "campaign": "24V228000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Volkswagen Group of America, Inc. (Volkswagen) is recalling certain 2022-2024 Audi RS E-Tron GT and E-Tron GT vehicles.  The high-voltage battery may experience a short circuit within the battery modules."
+   },
+   {
+    "campaign": "24V726000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Volkswagen Group of America, Inc. (Audi) is recalling certain 2022-2024 E-TRON GT, and RS E-TRON GT vehicles.  The high-voltage battery may experience a short circuit within the battery module."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "AUDI|SQ6 E-TRON|2025": {
+  "resolved": [
+   "SQ6 E-TRON"
+  ],
+  "complaintsTotal": 4,
+  "complaintsBattery": 1,
+  "complaintsPack": 1,
+  "fires": 0,
+  "recallsTotal": 2,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "AUDI|SQ8 E-TRON|2024": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "BMW|330E|2023": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "BMW|I4|2023": {
+  "resolved": [
+   "I4 GRAN COUPE"
+  ],
+  "complaintsTotal": 44,
+  "complaintsBattery": 6,
+  "complaintsPack": 6,
+  "fires": 1,
+  "recallsTotal": 7,
+  "recallsBattery": [
+   {
+    "campaign": "22V944000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY THERMAL:MANAGEMENT:SOFTWARE",
+    "summary": "BMW of North America, LLC (BMW) is recalling certain 2022-2023 iX xDrive40, iX xDrive50, iX M60, i4 eDrive35, i4 eDrive40, i4 M50, and 2023 i7 xDrive60 vehicles.  The high voltage battery electronic control unit (ECU) software may cause an interruption of electrical power."
+   },
+   {
+    "campaign": "23V295000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "BMW of North America, LLC (BMW) is recalling certain 2022-2024 iX xDrive50 and 2023 i4 eDrive35, i4 eDrive40, and i4 M50 Hybrid Electric vehicles.  The high voltage battery cell monitoring circuit may have improperly secured electrical connections which can result in an engine stall."
+   },
+   {
+    "campaign": "23V449000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:HYBRID MANAGEMENT",
+    "summary": "BMW of North America, LLC (BMW) is recalling certain 2022-2023 iX xDrive50, iX M60, i4 eDrive40, i4 M50, and 2023 i760 xDrive hybrid electric vehicles.  The high voltage battery combined charging unit (CCU) may not have been manufactured correctly, resulting in improperly connected and/or assembled components inside the CCU."
+   },
+   {
+    "campaign": "25V395000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION MOTOR:CONTROLLER:SOFTWARE",
+    "summary": "BMW of North America, LLC (BMW) is recalling certain 2022-2025 i4, 2022-2024 IX, 2023-2024 I7, and 2024 I5 vehicles. The electric drive motor software may shut down the high-voltage system, causing a loss of drive power."
+   },
+   {
+    "campaign": "25V470000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "BMW of North America, LLC (BMW) is recalling certain 2022-2025 IX, 2023-2024 I7, and 2022-2023 i4 vehicles. The high-voltage battery cell modules may not have been assembled properly, resulting in stress on the module frame and possible module failure."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "BMW|I4|2024": {
+  "resolved": [
+   "I4 GRAN COUPE"
+  ],
+  "complaintsTotal": 26,
+  "complaintsBattery": 1,
+  "complaintsPack": 1,
+  "fires": 0,
+  "recallsTotal": 3,
+  "recallsBattery": [
+   {
+    "campaign": "24V135000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "BMW of North America, LLC (BMW) is recalling certain 2024 i4 xDrive40, i4 M50 and i5 eDrive40 vehicles.  The high-voltage battery module may contain insufficient weld seams, which can result in the battery overheating."
+   },
+   {
+    "campaign": "25V395000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION MOTOR:CONTROLLER:SOFTWARE",
+    "summary": "BMW of North America, LLC (BMW) is recalling certain 2022-2025 i4, 2022-2024 IX, 2023-2024 I7, and 2024 I5 vehicles. The electric drive motor software may shut down the high-voltage system, causing a loss of drive power."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "BMW|I4|2025": {
+  "resolved": [
+   "I4 XDRIVE40",
+   "I4 EDRIVE40"
+  ],
+  "complaintsTotal": 12,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 2,
+  "recallsBattery": [
+   {
+    "campaign": "25V395000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION MOTOR:CONTROLLER:SOFTWARE",
+    "summary": "BMW of North America, LLC (BMW) is recalling certain 2022-2025 i4, 2022-2024 IX, 2023-2024 I7, and 2024 I5 vehicles. The electric drive motor software may shut down the high-voltage system, causing a loss of drive power."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "BMW|I4|2026": {
+  "resolved": [
+   "I4 GRAN COUPE BEV"
+  ],
+  "complaintsTotal": 1,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 0,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "BMW|I5|2024": {
+  "resolved": [
+   "I5"
+  ],
+  "complaintsTotal": 20,
+  "complaintsBattery": 2,
+  "complaintsPack": 2,
+  "fires": 0,
+  "recallsTotal": 7,
+  "recallsBattery": [
+   {
+    "campaign": "24V135000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "BMW of North America, LLC (BMW) is recalling certain 2024 i4 xDrive40, i4 M50 and i5 eDrive40 vehicles.  The high-voltage battery module may contain insufficient weld seams, which can result in the battery overheating."
+   },
+   {
+    "campaign": "25V395000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION MOTOR:CONTROLLER:SOFTWARE",
+    "summary": "BMW of North America, LLC (BMW) is recalling certain 2022-2025 i4, 2022-2024 IX, 2023-2024 I7, and 2024 I5 vehicles. The electric drive motor software may shut down the high-voltage system, causing a loss of drive power."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "BMW|I5|2025": {
+  "resolved": [
+   "I5"
+  ],
+  "complaintsTotal": 6,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 3,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "BMW|I5|2026": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "BMW|I7|2023": {
+  "resolved": [
+   "I7 SEDAN"
+  ],
+  "complaintsTotal": 8,
+  "complaintsBattery": 1,
+  "complaintsPack": 1,
+  "fires": 0,
+  "recallsTotal": 11,
+  "recallsBattery": [
+   {
+    "campaign": "22V944000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY THERMAL:MANAGEMENT:SOFTWARE",
+    "summary": "BMW of North America, LLC (BMW) is recalling certain 2022-2023 iX xDrive40, iX xDrive50, iX M60, i4 eDrive35, i4 eDrive40, i4 M50, and 2023 i7 xDrive60 vehicles.  The high voltage battery electronic control unit (ECU) software may cause an interruption of electrical power."
+   },
+   {
+    "campaign": "25V395000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION MOTOR:CONTROLLER:SOFTWARE",
+    "summary": "BMW of North America, LLC (BMW) is recalling certain 2022-2025 i4, 2022-2024 IX, 2023-2024 I7, and 2024 I5 vehicles. The electric drive motor software may shut down the high-voltage system, causing a loss of drive power."
+   },
+   {
+    "campaign": "25V470000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "BMW of North America, LLC (BMW) is recalling certain 2022-2025 IX, 2023-2024 I7, and 2022-2023 i4 vehicles. The high-voltage battery cell modules may not have been assembled properly, resulting in stress on the module frame and possible module failure."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "BMW|I7|2024": {
+  "resolved": [
+   "I7 SEDAN"
+  ],
+  "complaintsTotal": 15,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 6,
+  "recallsBattery": [
+   {
+    "campaign": "25V395000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION MOTOR:CONTROLLER:SOFTWARE",
+    "summary": "BMW of North America, LLC (BMW) is recalling certain 2022-2025 i4, 2022-2024 IX, 2023-2024 I7, and 2024 I5 vehicles. The electric drive motor software may shut down the high-voltage system, causing a loss of drive power."
+   },
+   {
+    "campaign": "25V470000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "BMW of North America, LLC (BMW) is recalling certain 2022-2025 IX, 2023-2024 I7, and 2022-2023 i4 vehicles. The high-voltage battery cell modules may not have been assembled properly, resulting in stress on the module frame and possible module failure."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "BMW|I7|2025": {
+  "resolved": [
+   "I7"
+  ],
+  "complaintsTotal": 1,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 2,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "BMW|I7|2026": {
+  "resolved": [
+   "I7 SEDAN BEV"
+  ],
+  "complaintsTotal": 1,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 0,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "BMW|IX XDRIVE50|2024": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "BMW|IX|2022": {
+  "resolved": [
+   "IX"
+  ],
+  "complaintsTotal": 29,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 11,
+  "recallsBattery": [
+   {
+    "campaign": "22V541000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "BMW of North America, LLC (BMW) is recalling certain 2022-2023 iX xDrive50, iX M60, 2022 i4 eDrive40, and i4 M50 vehicles. The high voltage battery may have internal damage, resulting in an electrical short-circuit."
+   },
+   {
+    "campaign": "22V944000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY THERMAL:MANAGEMENT:SOFTWARE",
+    "summary": "BMW of North America, LLC (BMW) is recalling certain 2022-2023 iX xDrive40, iX xDrive50, iX M60, i4 eDrive35, i4 eDrive40, i4 M50, and 2023 i7 xDrive60 vehicles.  The high voltage battery electronic control unit (ECU) software may cause an interruption of electrical power."
+   },
+   {
+    "campaign": "23V295000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "BMW of North America, LLC (BMW) is recalling certain 2022-2024 iX xDrive50 and 2023 i4 eDrive35, i4 eDrive40, and i4 M50 Hybrid Electric vehicles.  The high voltage battery cell monitoring circuit may have improperly secured electrical connections which can result in an engine stall."
+   },
+   {
+    "campaign": "23V449000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:HYBRID MANAGEMENT",
+    "summary": "BMW of North America, LLC (BMW) is recalling certain 2022-2023 iX xDrive50, iX M60, i4 eDrive40, i4 M50, and 2023 i760 xDrive hybrid electric vehicles.  The high voltage battery combined charging unit (CCU) may not have been manufactured correctly, resulting in improperly connected and/or assembled components inside the CCU."
+   },
+   {
+    "campaign": "25V395000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION MOTOR:CONTROLLER:SOFTWARE",
+    "summary": "BMW of North America, LLC (BMW) is recalling certain 2022-2025 i4, 2022-2024 IX, 2023-2024 I7, and 2024 I5 vehicles. The electric drive motor software may shut down the high-voltage system, causing a loss of drive power."
+   },
+   {
+    "campaign": "25V470000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "BMW of North America, LLC (BMW) is recalling certain 2022-2025 IX, 2023-2024 I7, and 2022-2023 i4 vehicles. The high-voltage battery cell modules may not have been assembled properly, resulting in stress on the module frame and possible module failure."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "BMW|IX|2023": {
+  "resolved": [
+   "IX"
+  ],
+  "complaintsTotal": 38,
+  "complaintsBattery": 4,
+  "complaintsPack": 4,
+  "fires": 0,
+  "recallsTotal": 12,
+  "recallsBattery": [
+   {
+    "campaign": "22V541000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "BMW of North America, LLC (BMW) is recalling certain 2022-2023 iX xDrive50, iX M60, 2022 i4 eDrive40, and i4 M50 vehicles. The high voltage battery may have internal damage, resulting in an electrical short-circuit."
+   },
+   {
+    "campaign": "22V944000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY THERMAL:MANAGEMENT:SOFTWARE",
+    "summary": "BMW of North America, LLC (BMW) is recalling certain 2022-2023 iX xDrive40, iX xDrive50, iX M60, i4 eDrive35, i4 eDrive40, i4 M50, and 2023 i7 xDrive60 vehicles.  The high voltage battery electronic control unit (ECU) software may cause an interruption of electrical power."
+   },
+   {
+    "campaign": "23V295000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "BMW of North America, LLC (BMW) is recalling certain 2022-2024 iX xDrive50 and 2023 i4 eDrive35, i4 eDrive40, and i4 M50 Hybrid Electric vehicles.  The high voltage battery cell monitoring circuit may have improperly secured electrical connections which can result in an engine stall."
+   },
+   {
+    "campaign": "23V449000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:HYBRID MANAGEMENT",
+    "summary": "BMW of North America, LLC (BMW) is recalling certain 2022-2023 iX xDrive50, iX M60, i4 eDrive40, i4 M50, and 2023 i760 xDrive hybrid electric vehicles.  The high voltage battery combined charging unit (CCU) may not have been manufactured correctly, resulting in improperly connected and/or assembled components inside the CCU."
+   },
+   {
+    "campaign": "25V395000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION MOTOR:CONTROLLER:SOFTWARE",
+    "summary": "BMW of North America, LLC (BMW) is recalling certain 2022-2025 i4, 2022-2024 IX, 2023-2024 I7, and 2024 I5 vehicles. The electric drive motor software may shut down the high-voltage system, causing a loss of drive power."
+   },
+   {
+    "campaign": "25V470000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "BMW of North America, LLC (BMW) is recalling certain 2022-2025 IX, 2023-2024 I7, and 2022-2023 i4 vehicles. The high-voltage battery cell modules may not have been assembled properly, resulting in stress on the module frame and possible module failure."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "BMW|IX|2024": {
+  "resolved": [
+   "IX"
+  ],
+  "complaintsTotal": 32,
+  "complaintsBattery": 5,
+  "complaintsPack": 5,
+  "fires": 2,
+  "recallsTotal": 4,
+  "recallsBattery": [
+   {
+    "campaign": "23V295000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "BMW of North America, LLC (BMW) is recalling certain 2022-2024 iX xDrive50 and 2023 i4 eDrive35, i4 eDrive40, and i4 M50 Hybrid Electric vehicles.  The high voltage battery cell monitoring circuit may have improperly secured electrical connections which can result in an engine stall."
+   },
+   {
+    "campaign": "25V395000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION MOTOR:CONTROLLER:SOFTWARE",
+    "summary": "BMW of North America, LLC (BMW) is recalling certain 2022-2025 i4, 2022-2024 IX, 2023-2024 I7, and 2024 I5 vehicles. The electric drive motor software may shut down the high-voltage system, causing a loss of drive power."
+   },
+   {
+    "campaign": "25V470000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "BMW of North America, LLC (BMW) is recalling certain 2022-2025 IX, 2023-2024 I7, and 2022-2023 i4 vehicles. The high-voltage battery cell modules may not have been assembled properly, resulting in stress on the module frame and possible module failure."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "BMW|IX|2025": {
+  "resolved": [
+   "IX"
+  ],
+  "complaintsTotal": 12,
+  "complaintsBattery": 1,
+  "complaintsPack": 1,
+  "fires": 0,
+  "recallsTotal": 1,
+  "recallsBattery": [
+   {
+    "campaign": "25V470000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "BMW of North America, LLC (BMW) is recalling certain 2022-2025 IX, 2023-2024 I7, and 2022-2023 i4 vehicles. The high-voltage battery cell modules may not have been assembled properly, resulting in stress on the module frame and possible module failure."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "BMW|IX|2026": {
+  "resolved": [
+   "IX BEV",
+   "IX XDRIVE60"
+  ],
+  "complaintsTotal": 3,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 0,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "BMW|M5|2026": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "BMW|X5 PHEV|2021": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "BMW|X5 PHEV|2022": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "BMW|X5 PHEV|2023": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "BMW|X5 PHEV|2024": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "BMW|X5 PHEV|2025": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "BMW|X5 PHEV|2026": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "BRIGHTDROP|ZEVO 400|2024": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "BRIGHTDROP|ZEVO 600|2024": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "CADILLAC|ESCALADE IQL|2026": {
+  "resolved": [
+   "ESCALADE IQL"
+  ],
+  "complaintsTotal": 2,
+  "complaintsBattery": 1,
+  "complaintsPack": 1,
+  "fires": 0,
+  "recallsTotal": 2,
+  "recallsBattery": [
+   {
+    "campaign": "26V494000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "General Motors, LLC is recalling certain 2026 Cadillac Escalade IQ, Escalade IQL, GMC Sierra EV, and Chevrolet Silverado EV vehicles. The high voltage battery may have an improperly secured internal module component."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "CADILLAC|ESCALADE IQ|2025": {
+  "resolved": [
+   "ESCALADE IQ"
+  ],
+  "complaintsTotal": 4,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 0,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "CADILLAC|ESCALADE IQ|2026": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "CADILLAC|LYRIQ|2023": {
+  "resolved": [
+   "LYRIQ"
+  ],
+  "complaintsTotal": 24,
+  "complaintsBattery": 2,
+  "complaintsPack": 2,
+  "fires": 0,
+  "recallsTotal": 7,
+  "recallsBattery": [
+   {
+    "campaign": "23V367000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "General Motors, LLC (GM) is recalling certain 2022 GMC Hummer EV and 2023 Cadillac Lyriq vehicles.  Certain connections within the high-voltage battery pack may be out of position or incorrectly welded, which can cause a loss of drive power."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "CADILLAC|LYRIQ|2024": {
+  "resolved": [
+   "LYRIQ"
+  ],
+  "complaintsTotal": 111,
+  "complaintsBattery": 7,
+  "complaintsPack": 7,
+  "fires": 1,
+  "recallsTotal": 6,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "CADILLAC|LYRIQ|2025": {
+  "resolved": [
+   "LYRIQ"
+  ],
+  "complaintsTotal": 15,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 3,
+  "recallsBattery": [
+   {
+    "campaign": "25V483000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "General Motors (GM) is recalling certain 2026 Cadillac VISTIQ vehicles and 2025 Cadillac LYRIQ vehicles. The bolts attaching the high voltage battery to the interior floor may be missing or loose."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "CADILLAC|LYRIQ|2026": {
+  "resolved": [
+   "LYRIQ BEV"
+  ],
+  "complaintsTotal": 6,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 1,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "CADILLAC|OPTIQ|2025": {
+  "resolved": [
+   "OPTIQ"
+  ],
+  "complaintsTotal": 12,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 2,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "CADILLAC|OPTIQ|2026": {
+  "resolved": [
+   "OPTIQ BEV"
+  ],
+  "complaintsTotal": 1,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 2,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "CADILLAC|VISTIQ|2026": {
+  "resolved": [
+   "VISTIQ BEV"
+  ],
+  "complaintsTotal": 19,
+  "complaintsBattery": 2,
+  "complaintsPack": 2,
+  "fires": 0,
+  "recallsTotal": 4,
+  "recallsBattery": [
+   {
+    "campaign": "25V483000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "General Motors (GM) is recalling certain 2026 Cadillac VISTIQ vehicles and 2025 Cadillac LYRIQ vehicles. The bolts attaching the high voltage battery to the interior floor may be missing or loose."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "CHEVROLET|BLAZER EV|2024": {
+  "resolved": [
+   "BLAZER EV"
+  ],
+  "complaintsTotal": 76,
+  "complaintsBattery": 5,
+  "complaintsPack": 5,
+  "fires": 0,
+  "recallsTotal": 5,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "CHEVROLET|BLAZER EV|2025": {
+  "resolved": [
+   "BLAZER EV"
+  ],
+  "complaintsTotal": 18,
+  "complaintsBattery": 1,
+  "complaintsPack": 1,
+  "fires": 0,
+  "recallsTotal": 3,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "CHEVROLET|BLAZER EV|2026": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "CHEVROLET|BOLT EUV|2022": {
+  "resolved": [
+   "BOLT EUV"
+  ],
+  "complaintsTotal": 26,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 4,
+  "recallsBattery": [
+   {
+    "campaign": "21V650000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "General Motors, LLC (GM) is recalling certain 2020-2022 Chevrolet Bolt EV and 2022 Chevrolet Bolt EUV vehicles.  The high voltage battery could catch fire when charged to full or nearly full capacity."
+   },
+   {
+    "campaign": "24V481000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "General Motors, LLC (GM) is recalling certain 2020-2022 Chevrolet Bolt EV and 2022 Chevrolet Bolt EUV vehicles that were previously remedied under recall number 21V-650.  The advanced diagnostic software may have been incorrectly installed and fail to detect defective battery modules, possibly resulting in a battery fire."
+   },
+   {
+    "campaign": "24V812000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "General Motors, LLC (GM) is recalling certain 2020-2022 Chevrolet Bolt EV and 2022 Bolt EUV vehicles previously repaired under Recall 21V-650.  The installation of advanced diagnostic software may have failed.  As such, the high voltage battery could catch fire when charged to full or nearly full capacity."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "CHEVROLET|BOLT EUV|2023": {
+  "resolved": [
+   "BOLT EUV"
+  ],
+  "complaintsTotal": 110,
+  "complaintsBattery": 3,
+  "complaintsPack": 3,
+  "fires": 1,
+  "recallsTotal": 0,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "CHEVROLET|BOLT EV|2017": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "CHEVROLET|BOLT EV|2019": {
+  "resolved": [
+   "BOLT EV"
+  ],
+  "complaintsTotal": 175,
+  "complaintsBattery": 49,
+  "complaintsPack": 49,
+  "fires": 9,
+  "recallsTotal": 6,
+  "recallsBattery": [
+   {
+    "campaign": "20V701000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "General Motors LLC (GM) is recalling all 2017-2018 and certain 2019 Chevrolet Bolt EV vehicles.  The high voltage battery could catch fire when charged to full or nearly full capacity."
+   },
+   {
+    "campaign": "21V560000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "General Motors LLC (GM) is recalling certain 2017-2019 Chevrolet Bolt EV vehicles previously recalled under NHTSA recall number 20V-701.  The high voltage battery could catch fire when charged to full or nearly full capacity."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "CHEVROLET|BOLT EV|2020": {
+  "resolved": [
+   "BOLT EV"
+  ],
+  "complaintsTotal": 172,
+  "complaintsBattery": 24,
+  "complaintsPack": 24,
+  "fires": 3,
+  "recallsTotal": 8,
+  "recallsBattery": [
+   {
+    "campaign": "21V650000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "General Motors, LLC (GM) is recalling certain 2020-2022 Chevrolet Bolt EV and 2022 Chevrolet Bolt EUV vehicles.  The high voltage battery could catch fire when charged to full or nearly full capacity."
+   },
+   {
+    "campaign": "24V481000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "General Motors, LLC (GM) is recalling certain 2020-2022 Chevrolet Bolt EV and 2022 Chevrolet Bolt EUV vehicles that were previously remedied under recall number 21V-650.  The advanced diagnostic software may have been incorrectly installed and fail to detect defective battery modules, possibly resulting in a battery fire."
+   },
+   {
+    "campaign": "24V812000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "General Motors, LLC (GM) is recalling certain 2020-2022 Chevrolet Bolt EV and 2022 Bolt EUV vehicles previously repaired under Recall 21V-650.  The installation of advanced diagnostic software may have failed.  As such, the high voltage battery could catch fire when charged to full or nearly full capacity."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "CHEVROLET|BOLT EV|2021": {
+  "resolved": [
+   "BOLT EV"
+  ],
+  "complaintsTotal": 66,
+  "complaintsBattery": 8,
+  "complaintsPack": 8,
+  "fires": 0,
+  "recallsTotal": 5,
+  "recallsBattery": [
+   {
+    "campaign": "21V650000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "General Motors, LLC (GM) is recalling certain 2020-2022 Chevrolet Bolt EV and 2022 Chevrolet Bolt EUV vehicles.  The high voltage battery could catch fire when charged to full or nearly full capacity."
+   },
+   {
+    "campaign": "24V481000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "General Motors, LLC (GM) is recalling certain 2020-2022 Chevrolet Bolt EV and 2022 Chevrolet Bolt EUV vehicles that were previously remedied under recall number 21V-650.  The advanced diagnostic software may have been incorrectly installed and fail to detect defective battery modules, possibly resulting in a battery fire."
+   },
+   {
+    "campaign": "24V812000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "General Motors, LLC (GM) is recalling certain 2020-2022 Chevrolet Bolt EV and 2022 Bolt EUV vehicles previously repaired under Recall 21V-650.  The installation of advanced diagnostic software may have failed.  As such, the high voltage battery could catch fire when charged to full or nearly full capacity."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "CHEVROLET|BOLT EV|2023": {
+  "resolved": [
+   "BOLT EV"
+  ],
+  "complaintsTotal": 58,
+  "complaintsBattery": 4,
+  "complaintsPack": 4,
+  "fires": 1,
+  "recallsTotal": 3,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "CHEVROLET|BOLT EV|2027": {
+  "resolved": [
+   "BOLT EV"
+  ],
+  "complaintsTotal": 3,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 1,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "CHEVROLET|EQUINOX EV|2024": {
+  "resolved": [
+   "EQUINOX EV"
+  ],
+  "complaintsTotal": 107,
+  "complaintsBattery": 2,
+  "complaintsPack": 2,
+  "fires": 0,
+  "recallsTotal": 1,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "CHEVROLET|EQUINOX EV|2025": {
+  "resolved": [
+   "EQUINOX EV"
+  ],
+  "complaintsTotal": 161,
+  "complaintsBattery": 4,
+  "complaintsPack": 4,
+  "fires": 0,
+  "recallsTotal": 6,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "CHEVROLET|EQUINOX EV|2026": {
+  "resolved": [
+   "EQUINOX EV BEV"
+  ],
+  "complaintsTotal": 8,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 3,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "CHEVROLET|SILVERADO EV|2024": {
+  "resolved": [
+   "SILVERADO EV"
+  ],
+  "complaintsTotal": 25,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 4,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "CHEVROLET|SILVERADO EV|2025": {
+  "resolved": [
+   "SILVERADO EV"
+  ],
+  "complaintsTotal": 13,
+  "complaintsBattery": 2,
+  "complaintsPack": 2,
+  "fires": 0,
+  "recallsTotal": 1,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "CHEVROLET|SILVERADO EV|2026": {
+  "resolved": [
+   "SILVERADO EV BEV"
+  ],
+  "complaintsTotal": 5,
+  "complaintsBattery": 1,
+  "complaintsPack": 1,
+  "fires": 0,
+  "recallsTotal": 4,
+  "recallsBattery": [
+   {
+    "campaign": "26V494000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "General Motors, LLC is recalling certain 2026 Cadillac Escalade IQ, Escalade IQL, GMC Sierra EV, and Chevrolet Silverado EV vehicles. The high voltage battery may have an improperly secured internal module component."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "CHRYSLER|PACIFICA PLUG-IN HYBRID|2023": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "CHRYSLER|PACIFICA PLUG-IN HYBRID|2024": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "CHRYSLER|PACIFICA|2024": {
+  "resolved": [
+   "PACIFICA"
+  ],
+  "complaintsTotal": 40,
+  "complaintsBattery": 2,
+  "complaintsPack": 2,
+  "fires": 0,
+  "recallsTotal": 11,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "DODGE|CHARGER DAYTONA|2024": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "DODGE|CHARGER DAYTONA|2025": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "DODGE|HORNET|2024": {
+  "resolved": [
+   "HORNET"
+  ],
+  "complaintsTotal": 18,
+  "complaintsBattery": 1,
+  "complaintsPack": 1,
+  "fires": 1,
+  "recallsTotal": 7,
+  "recallsBattery": [
+   {
+    "campaign": "23V623000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM: CABLES:FASTENER/CONNECTOR",
+    "summary": "Chrysler (FCA US, LLC) is recalling certain 2023-2024 Alfa Romeo Tonale and 2023-2024 Dodge Hornet plug-in hybrid electric vehicles.  The 12-volt battery positive cable and/or high voltage connector cable may not be tightened properly, which can overheat the electrical connections and result in a fire while parked or driving."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "FORD|F-150 LIGHTNING|2022": {
+  "resolved": [
+   "F-150 (Super Crew) Lightning BEV"
+  ],
+  "complaintsTotal": 295,
+  "complaintsBattery": 21,
+  "complaintsPack": 21,
+  "fires": 2,
+  "recallsTotal": 0,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "FORD|F-150 LIGHTNING|2023": {
+  "resolved": [
+   "F-150 (SUPER CREW) LIGHTNING BEV"
+  ],
+  "complaintsTotal": 196,
+  "complaintsBattery": 9,
+  "complaintsPack": 9,
+  "fires": 2,
+  "recallsTotal": 2,
+  "recallsBattery": [
+   {
+    "campaign": "23V168000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Ford Motor Company (Ford) is recalling certain 2023 F-150 Lightning pickup trucks.  The high-voltage battery pack may experience an electrical short-circuit when the battery is fully charged or near fully charged."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "FORD|F-150 LIGHTNING|2024": {
+  "resolved": [
+   "F-150 (SUPER CREW) LIGHTNING BEV"
+  ],
+  "complaintsTotal": 27,
+  "complaintsBattery": 1,
+  "complaintsPack": 1,
+  "fires": 1,
+  "recallsTotal": 0,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "FORD|F-150 LIGHTNING|2025": {
+  "resolved": [
+   "F-150 (SUPER CREW) LIGHTNING BEV"
+  ],
+  "complaintsTotal": 6,
+  "complaintsBattery": 2,
+  "complaintsPack": 2,
+  "fires": 1,
+  "recallsTotal": 0,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "FORD|MUSTANG MACH-E|2021": {
+  "resolved": [
+   "MUSTANG MACH-E"
+  ],
+  "complaintsTotal": 340,
+  "complaintsBattery": 46,
+  "complaintsPack": 45,
+  "fires": 1,
+  "recallsTotal": 13,
+  "recallsBattery": [
+   {
+    "campaign": "22V412000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY:MANAGEMENT SYSTEM/ENERGY CONTROL MODULE (BMS/BECM):SOFTWARE",
+    "summary": "Ford Motor Company (Ford) is recalling certain 2021-2022 Mustang Mach-E vehicles.  The high voltage battery main contactors may overheat."
+   },
+   {
+    "campaign": "23V687000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY:MANAGEMENT SYSTEM/ENERGY CONTROL MODULE (BMS/BECM)",
+    "summary": "Ford Motor Company (Ford) is recalling certain 2021-2022 Mustang Mach-E vehicles equipped with an extended range battery.  The high voltage battery main contactors may overheat."
+   },
+   {
+    "campaign": "25V130000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY:MANAGEMENT SYSTEM/ENERGY CONTROL MODULE (BMS/BECM):SOFTWARE",
+    "summary": "Ford Motor Company (Ford) is recalling certain 2021-2022 Mustang Mach-E vehicles previously repaired incorrectly under recall number 22V-412.  The high voltage battery main contactors may overheat."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "FORD|MUSTANG MACH-E|2022": {
+  "resolved": [
+   "MUSTANG MACH-E"
+  ],
+  "complaintsTotal": 128,
+  "complaintsBattery": 29,
+  "complaintsPack": 28,
+  "fires": 0,
+  "recallsTotal": 9,
+  "recallsBattery": [
+   {
+    "campaign": "22V412000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY:MANAGEMENT SYSTEM/ENERGY CONTROL MODULE (BMS/BECM):SOFTWARE",
+    "summary": "Ford Motor Company (Ford) is recalling certain 2021-2022 Mustang Mach-E vehicles.  The high voltage battery main contactors may overheat."
+   },
+   {
+    "campaign": "23V687000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY:MANAGEMENT SYSTEM/ENERGY CONTROL MODULE (BMS/BECM)",
+    "summary": "Ford Motor Company (Ford) is recalling certain 2021-2022 Mustang Mach-E vehicles equipped with an extended range battery.  The high voltage battery main contactors may overheat."
+   },
+   {
+    "campaign": "25V130000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY:MANAGEMENT SYSTEM/ENERGY CONTROL MODULE (BMS/BECM):SOFTWARE",
+    "summary": "Ford Motor Company (Ford) is recalling certain 2021-2022 Mustang Mach-E vehicles previously repaired incorrectly under recall number 22V-412.  The high voltage battery main contactors may overheat."
+   },
+   {
+    "campaign": "25V441000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY:MANAGEMENT SYSTEM/ENERGY CONTROL MODULE (BMS/BECM)",
+    "summary": "Ford Motor Company (Ford) is recalling certain 2022 Mustang Mach E vehicles equipped with an extended range battery. The high voltage battery main contactors may overheat."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "FORD|MUSTANG MACH-E|2023": {
+  "resolved": [
+   "MUSTANG MACH-E BEV"
+  ],
+  "complaintsTotal": 115,
+  "complaintsBattery": 11,
+  "complaintsPack": 11,
+  "fires": 1,
+  "recallsTotal": 5,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "FORD|MUSTANG MACH-E|2024": {
+  "resolved": [
+   "MUSTANG MACH-E BEV"
+  ],
+  "complaintsTotal": 42,
+  "complaintsBattery": 4,
+  "complaintsPack": 3,
+  "fires": 0,
+  "recallsTotal": 4,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "FORD|MUSTANG MACH-E|2025": {
+  "resolved": [
+   "MUSTANG MACH-E BEV"
+  ],
+  "complaintsTotal": 12,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 6,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "FORD|MUSTANG MACH-E|2026": {
+  "resolved": [
+   "MUSTANG MACH-E BEV BEV"
+  ],
+  "complaintsTotal": 1,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 2,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "GENESIS|GV60|2023": {
+  "resolved": [
+   "GV60"
+  ],
+  "complaintsTotal": 58,
+  "complaintsBattery": 18,
+  "complaintsPack": 18,
+  "fires": 0,
+  "recallsTotal": 8,
+  "recallsBattery": [
+   {
+    "campaign": "24V204000",
+    "component": "ELECTRICAL SYSTEM:12V/24V/48V BATTERY",
+    "summary": "Hyundai Motor America (Hyundai) is recalling certain 2022-2024 IONIQ 5, 2023-2024 IONIQ 6, Genesis GV60, Genesis GV70 \"Electrified,\" and Genesis G80 \"Electrified\" vehicles.  The Integrated Charging Control Unit (ICCU) may become damaged and stop charging the 12-Volt battery, which can result in a loss of drive power."
+   },
+   {
+    "campaign": "24V868000",
+    "component": "ELECTRICAL SYSTEM:12V/24V/48V BATTERY",
+    "summary": "Hyundai Motor America (Hyundai) is recalling certain 2022-2024 IONIQ 5, 2023-2025 IONIQ 6, Genesis GV60, Genesis GV70 \"Electrified,\" and Genesis G80 \"Electrified\" vehicles.  The Integrated Charging Control Unit (ICCU) may become damaged and stop charging the 12-volt battery, which can result in a loss of drive power."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "GMC|HUMMER EV SUV|2024": {
+  "resolved": [
+   "HUMMER EV SUV"
+  ],
+  "complaintsTotal": 8,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 0,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "GMC|HUMMER EV SUV|2025": {
+  "resolved": [
+   "HUMMER EV SUV"
+  ],
+  "complaintsTotal": 7,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 0,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "GMC|HUMMER EV SUV|2026": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "GMC|HUMMER EV|2023": {
+  "resolved": [
+   "HUMMER EV PICKUP"
+  ],
+  "complaintsTotal": 1,
+  "complaintsBattery": 1,
+  "complaintsPack": 1,
+  "fires": 0,
+  "recallsTotal": 2,
+  "recallsBattery": [
+   {
+    "campaign": "22V771000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "General Motors, LLC (GM) is recalling certain 2022 BrightDrop EV600 and 2022-2023 GMC Hummer EV Pickup electric vehicles.  The high voltage battery pack enclosure may not be properly sealed, allowing water to enter the pack."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "GMC|HUMMER EV|2024": {
+  "resolved": [
+   "HUMMER EV SUV"
+  ],
+  "complaintsTotal": 8,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 2,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "GMC|HUMMER EV|2025": {
+  "resolved": [
+   "HUMMER EV"
+  ],
+  "complaintsTotal": 4,
+  "complaintsBattery": 2,
+  "complaintsPack": 2,
+  "fires": 0,
+  "recallsTotal": 0,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "GMC|SIERRA EV|2025": {
+  "resolved": [
+   "SIERRA EV"
+  ],
+  "complaintsTotal": 7,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 1,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "GMC|SIERRA EV|2026": {
+  "resolved": [
+   "SIERRA EV BEV"
+  ],
+  "complaintsTotal": 4,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 4,
+  "recallsBattery": [
+   {
+    "campaign": "26V494000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "General Motors, LLC is recalling certain 2026 Cadillac Escalade IQ, Escalade IQL, GMC Sierra EV, and Chevrolet Silverado EV vehicles. The high voltage battery may have an improperly secured internal module component."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "HONDA|PROLOGUE|2024": {
+  "resolved": [
+   "PROLOGUE EV"
+  ],
+  "complaintsTotal": 808,
+  "complaintsBattery": 73,
+  "complaintsPack": 73,
+  "fires": 0,
+  "recallsTotal": 3,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "HONDA|PROLOGUE|2025": {
+  "resolved": [
+   "PROLOGUE EV"
+  ],
+  "complaintsTotal": 140,
+  "complaintsBattery": 15,
+  "complaintsPack": 14,
+  "fires": 0,
+  "recallsTotal": 1,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "HONDA|PROLOGUE|2026": {
+  "resolved": [
+   "PROLOGUE BEV"
+  ],
+  "complaintsTotal": 6,
+  "complaintsBattery": 1,
+  "complaintsPack": 1,
+  "fires": 0,
+  "recallsTotal": 0,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "HYUNDAI|IONIQ 5 N|2025": {
+  "resolved": [
+   "IONIQ 5 N"
+  ],
+  "complaintsTotal": 18,
+  "complaintsBattery": 7,
+  "complaintsPack": 7,
+  "fires": 0,
+  "recallsTotal": 0,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "HYUNDAI|IONIQ 5|2022": {
+  "resolved": [
+   "IONIQ 5"
+  ],
+  "complaintsTotal": 401,
+  "complaintsBattery": 227,
+  "complaintsPack": 226,
+  "fires": 1,
+  "recallsTotal": 3,
+  "recallsBattery": [
+   {
+    "campaign": "24V204000",
+    "component": "ELECTRICAL SYSTEM:12V/24V/48V BATTERY",
+    "summary": "Hyundai Motor America (Hyundai) is recalling certain 2022-2024 IONIQ 5, 2023-2024 IONIQ 6, Genesis GV60, Genesis GV70 \"Electrified,\" and Genesis G80 \"Electrified\" vehicles.  The Integrated Charging Control Unit (ICCU) may become damaged and stop charging the 12-Volt battery, which can result in a loss of drive power."
+   },
+   {
+    "campaign": "24V868000",
+    "component": "ELECTRICAL SYSTEM:12V/24V/48V BATTERY",
+    "summary": "Hyundai Motor America (Hyundai) is recalling certain 2022-2024 IONIQ 5, 2023-2025 IONIQ 6, Genesis GV60, Genesis GV70 \"Electrified,\" and Genesis G80 \"Electrified\" vehicles.  The Integrated Charging Control Unit (ICCU) may become damaged and stop charging the 12-volt battery, which can result in a loss of drive power."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "HYUNDAI|IONIQ 5|2023": {
+  "resolved": [
+   "IONIQ 5"
+  ],
+  "complaintsTotal": 385,
+  "complaintsBattery": 209,
+  "complaintsPack": 208,
+  "fires": 2,
+  "recallsTotal": 4,
+  "recallsBattery": [
+   {
+    "campaign": "24V204000",
+    "component": "ELECTRICAL SYSTEM:12V/24V/48V BATTERY",
+    "summary": "Hyundai Motor America (Hyundai) is recalling certain 2022-2024 IONIQ 5, 2023-2024 IONIQ 6, Genesis GV60, Genesis GV70 \"Electrified,\" and Genesis G80 \"Electrified\" vehicles.  The Integrated Charging Control Unit (ICCU) may become damaged and stop charging the 12-Volt battery, which can result in a loss of drive power."
+   },
+   {
+    "campaign": "24V868000",
+    "component": "ELECTRICAL SYSTEM:12V/24V/48V BATTERY",
+    "summary": "Hyundai Motor America (Hyundai) is recalling certain 2022-2024 IONIQ 5, 2023-2025 IONIQ 6, Genesis GV60, Genesis GV70 \"Electrified,\" and Genesis G80 \"Electrified\" vehicles.  The Integrated Charging Control Unit (ICCU) may become damaged and stop charging the 12-volt battery, which can result in a loss of drive power."
+   },
+   {
+    "campaign": "26V432000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Hyundai Motor America (Hyundai) is recalling certain 2023-2024 Ioniq 5 vehicles. The high voltage battery cells may contain misaligned electrodes, which can lead to a fire while parked or driving."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "HYUNDAI|IONIQ 5|2024": {
+  "resolved": [
+   "IONIQ 5"
+  ],
+  "complaintsTotal": 219,
+  "complaintsBattery": 142,
+  "complaintsPack": 142,
+  "fires": 0,
+  "recallsTotal": 3,
+  "recallsBattery": [
+   {
+    "campaign": "24V204000",
+    "component": "ELECTRICAL SYSTEM:12V/24V/48V BATTERY",
+    "summary": "Hyundai Motor America (Hyundai) is recalling certain 2022-2024 IONIQ 5, 2023-2024 IONIQ 6, Genesis GV60, Genesis GV70 \"Electrified,\" and Genesis G80 \"Electrified\" vehicles.  The Integrated Charging Control Unit (ICCU) may become damaged and stop charging the 12-Volt battery, which can result in a loss of drive power."
+   },
+   {
+    "campaign": "24V868000",
+    "component": "ELECTRICAL SYSTEM:12V/24V/48V BATTERY",
+    "summary": "Hyundai Motor America (Hyundai) is recalling certain 2022-2024 IONIQ 5, 2023-2025 IONIQ 6, Genesis GV60, Genesis GV70 \"Electrified,\" and Genesis G80 \"Electrified\" vehicles.  The Integrated Charging Control Unit (ICCU) may become damaged and stop charging the 12-volt battery, which can result in a loss of drive power."
+   },
+   {
+    "campaign": "26V432000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Hyundai Motor America (Hyundai) is recalling certain 2023-2024 Ioniq 5 vehicles. The high voltage battery cells may contain misaligned electrodes, which can lead to a fire while parked or driving."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "HYUNDAI|IONIQ 5|2025": {
+  "resolved": [
+   "IONIQ 5"
+  ],
+  "complaintsTotal": 285,
+  "complaintsBattery": 178,
+  "complaintsPack": 177,
+  "fires": 0,
+  "recallsTotal": 9,
+  "recallsBattery": [
+   {
+    "campaign": "25V482000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Hyundai Motor America (Hyundai) is recalling certain 2025 IONIQ 5 vehicles. The high voltage battery system may contain an improperly tightened bus bar, which can cause a short-circuit."
+   },
+   {
+    "campaign": "26V068000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Hyundai Motor America (Hyundai) is recalling certain 2025-2026 IONIQ 5 and 2026 IONIQ 9 vehicles. The high voltage battery system may contain an improperly tightened bus bar, which can cause a short-circuit."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "HYUNDAI|IONIQ 5|2026": {
+  "resolved": [
+   "IONIQ 5 BEV"
+  ],
+  "complaintsTotal": 19,
+  "complaintsBattery": 6,
+  "complaintsPack": 6,
+  "fires": 0,
+  "recallsTotal": 2,
+  "recallsBattery": [
+   {
+    "campaign": "26V068000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Hyundai Motor America (Hyundai) is recalling certain 2025-2026 IONIQ 5 and 2026 IONIQ 9 vehicles. The high voltage battery system may contain an improperly tightened bus bar, which can cause a short-circuit."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "HYUNDAI|IONIQ 6|2023": {
+  "resolved": [
+   "IONIQ 6"
+  ],
+  "complaintsTotal": 56,
+  "complaintsBattery": 25,
+  "complaintsPack": 25,
+  "fires": 0,
+  "recallsTotal": 5,
+  "recallsBattery": [
+   {
+    "campaign": "24V204000",
+    "component": "ELECTRICAL SYSTEM:12V/24V/48V BATTERY",
+    "summary": "Hyundai Motor America (Hyundai) is recalling certain 2022-2024 IONIQ 5, 2023-2024 IONIQ 6, Genesis GV60, Genesis GV70 \"Electrified,\" and Genesis G80 \"Electrified\" vehicles.  The Integrated Charging Control Unit (ICCU) may become damaged and stop charging the 12-Volt battery, which can result in a loss of drive power."
+   },
+   {
+    "campaign": "24V868000",
+    "component": "ELECTRICAL SYSTEM:12V/24V/48V BATTERY",
+    "summary": "Hyundai Motor America (Hyundai) is recalling certain 2022-2024 IONIQ 5, 2023-2025 IONIQ 6, Genesis GV60, Genesis GV70 \"Electrified,\" and Genesis G80 \"Electrified\" vehicles.  The Integrated Charging Control Unit (ICCU) may become damaged and stop charging the 12-volt battery, which can result in a loss of drive power."
+   },
+   {
+    "campaign": "25V606000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:CHARGING:PORT",
+    "summary": "Hyundai Motor America (Hyundai) is recalling certain 2023-2025 IONIQ 6 electric vehicles. The charging port door panel may detach."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "HYUNDAI|IONIQ 6|2024": {
+  "resolved": [
+   "IONIQ 6"
+  ],
+  "complaintsTotal": 37,
+  "complaintsBattery": 17,
+  "complaintsPack": 17,
+  "fires": 0,
+  "recallsTotal": 5,
+  "recallsBattery": [
+   {
+    "campaign": "24V204000",
+    "component": "ELECTRICAL SYSTEM:12V/24V/48V BATTERY",
+    "summary": "Hyundai Motor America (Hyundai) is recalling certain 2022-2024 IONIQ 5, 2023-2024 IONIQ 6, Genesis GV60, Genesis GV70 \"Electrified,\" and Genesis G80 \"Electrified\" vehicles.  The Integrated Charging Control Unit (ICCU) may become damaged and stop charging the 12-Volt battery, which can result in a loss of drive power."
+   },
+   {
+    "campaign": "24V868000",
+    "component": "ELECTRICAL SYSTEM:12V/24V/48V BATTERY",
+    "summary": "Hyundai Motor America (Hyundai) is recalling certain 2022-2024 IONIQ 5, 2023-2025 IONIQ 6, Genesis GV60, Genesis GV70 \"Electrified,\" and Genesis G80 \"Electrified\" vehicles.  The Integrated Charging Control Unit (ICCU) may become damaged and stop charging the 12-volt battery, which can result in a loss of drive power."
+   },
+   {
+    "campaign": "25V606000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:CHARGING:PORT",
+    "summary": "Hyundai Motor America (Hyundai) is recalling certain 2023-2025 IONIQ 6 electric vehicles. The charging port door panel may detach."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "HYUNDAI|IONIQ 6|2025": {
+  "resolved": [
+   "IONIQ 6"
+  ],
+  "complaintsTotal": 33,
+  "complaintsBattery": 18,
+  "complaintsPack": 18,
+  "fires": 0,
+  "recallsTotal": 3,
+  "recallsBattery": [
+   {
+    "campaign": "24V868000",
+    "component": "ELECTRICAL SYSTEM:12V/24V/48V BATTERY",
+    "summary": "Hyundai Motor America (Hyundai) is recalling certain 2022-2024 IONIQ 5, 2023-2025 IONIQ 6, Genesis GV60, Genesis GV70 \"Electrified,\" and Genesis G80 \"Electrified\" vehicles.  The Integrated Charging Control Unit (ICCU) may become damaged and stop charging the 12-volt battery, which can result in a loss of drive power."
+   },
+   {
+    "campaign": "25V606000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:CHARGING:PORT",
+    "summary": "Hyundai Motor America (Hyundai) is recalling certain 2023-2025 IONIQ 6 electric vehicles. The charging port door panel may detach."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "HYUNDAI|IONIQ 9|2026": {
+  "resolved": [
+   "IONIQ 9 BEV"
+  ],
+  "complaintsTotal": 29,
+  "complaintsBattery": 16,
+  "complaintsPack": 16,
+  "fires": 0,
+  "recallsTotal": 2,
+  "recallsBattery": [
+   {
+    "campaign": "26V068000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Hyundai Motor America (Hyundai) is recalling certain 2025-2026 IONIQ 5 and 2026 IONIQ 9 vehicles. The high voltage battery system may contain an improperly tightened bus bar, which can cause a short-circuit."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "HYUNDAI|KONA ELECTRIC|2023": {
+  "resolved": [
+   "KONA ELECTRIC"
+  ],
+  "complaintsTotal": 5,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 0,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "HYUNDAI|KONA ELECTRIC|2024": {
+  "resolved": [
+   "KONA ELECTRIC"
+  ],
+  "complaintsTotal": 15,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 0,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "HYUNDAI|KONA ELECTRIC|2025": {
+  "resolved": [
+   "KONA ELECTRIC"
+  ],
+  "complaintsTotal": 1,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 1,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "HYUNDAI|KONA EV|2024": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "HYUNDAI|KONA|2023": {
+  "resolved": [
+   "KONA"
+  ],
+  "complaintsTotal": 63,
+  "complaintsBattery": 1,
+  "complaintsPack": 1,
+  "fires": 0,
+  "recallsTotal": 1,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "HYUNDAI|SANTA FE PLUG-IN HYBRID|2023": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "JEEP|GRAND CHEROKEE 4XE|2022": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "JEEP|GRAND CHEROKEE 4XE|2023": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "JEEP|GRAND CHEROKEE 4XE|2024": {
+  "resolved": [
+   "GRAND CHEROKEE 4XE"
+  ],
+  "complaintsTotal": 22,
+  "complaintsBattery": 3,
+  "complaintsPack": 3,
+  "fires": 2,
+  "recallsTotal": 2,
+  "recallsBattery": [
+   {
+    "campaign": "24V720000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Chrysler (FCA US, LLC) is recalling certain 2020-2024 Jeep Wrangler 4XE and 2022-2024 Jeep Grand Cherokee 4XE vehicles.  The high voltage battery may fail internally and lead to a vehicle fire while parked or driving."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "JEEP|WAGONEER S|2024": {
+  "resolved": [
+   "WAGONEER S"
+  ],
+  "complaintsTotal": 27,
+  "complaintsBattery": 3,
+  "complaintsPack": 2,
+  "fires": 0,
+  "recallsTotal": 5,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "JEEP|WAGONEER S|2025": {
+  "resolved": [
+   "WAGONEER S"
+  ],
+  "complaintsTotal": 47,
+  "complaintsBattery": 3,
+  "complaintsPack": 3,
+  "fires": 0,
+  "recallsTotal": 6,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "JEEP|WRANGLER 4XE|2021": {
+  "resolved": [
+   "WRANGLER UNLIMITED PHEV"
+  ],
+  "complaintsTotal": 4,
+  "complaintsBattery": 1,
+  "complaintsPack": 1,
+  "fires": 0,
+  "recallsTotal": 2,
+  "recallsBattery": [
+   {
+    "campaign": "24V720000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Chrysler (FCA US, LLC) is recalling certain 2020-2024 Jeep Wrangler 4XE and 2022-2024 Jeep Grand Cherokee 4XE vehicles.  The high voltage battery may fail internally and lead to a vehicle fire while parked or driving."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "JEEP|WRANGLER 4XE|2022": {
+  "resolved": [
+   "WRANGLER UNLIMITED PHEV"
+  ],
+  "complaintsTotal": 376,
+  "complaintsBattery": 65,
+  "complaintsPack": 65,
+  "fires": 8,
+  "recallsTotal": 2,
+  "recallsBattery": [
+   {
+    "campaign": "24V720000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Chrysler (FCA US, LLC) is recalling certain 2020-2024 Jeep Wrangler 4XE and 2022-2024 Jeep Grand Cherokee 4XE vehicles.  The high voltage battery may fail internally and lead to a vehicle fire while parked or driving."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "JEEP|WRANGLER 4XE|2023": {
+  "resolved": [
+   "WRANGLER UNLIMITED PHEV"
+  ],
+  "complaintsTotal": 4,
+  "complaintsBattery": 1,
+  "complaintsPack": 1,
+  "fires": 0,
+  "recallsTotal": 3,
+  "recallsBattery": [
+   {
+    "campaign": "24V720000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Chrysler (FCA US, LLC) is recalling certain 2020-2024 Jeep Wrangler 4XE and 2022-2024 Jeep Grand Cherokee 4XE vehicles.  The high voltage battery may fail internally and lead to a vehicle fire while parked or driving."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "JEEP|WRANGLER 4XE|2024": {
+  "resolved": [
+   "WRANGLER 4-DOOR 4XE"
+  ],
+  "complaintsTotal": 212,
+  "complaintsBattery": 25,
+  "complaintsPack": 25,
+  "fires": 5,
+  "recallsTotal": 4,
+  "recallsBattery": [
+   {
+    "campaign": "24V720000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Chrysler (FCA US, LLC) is recalling certain 2020-2024 Jeep Wrangler 4XE and 2022-2024 Jeep Grand Cherokee 4XE vehicles.  The high voltage battery may fail internally and lead to a vehicle fire while parked or driving."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "JEEP|WRANGLER 4XE|2025": {
+  "resolved": [
+   "WRANGLER 4-DOOR 4XE"
+  ],
+  "complaintsTotal": 9,
+  "complaintsBattery": 2,
+  "complaintsPack": 2,
+  "fires": 0,
+  "recallsTotal": 3,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "JEEP|WRANGLER UNLIMITED 4XE|2022": {
+  "resolved": [
+   "WRANGLER UNLIMITED PHEV"
+  ],
+  "complaintsTotal": 376,
+  "complaintsBattery": 65,
+  "complaintsPack": 65,
+  "fires": 8,
+  "recallsTotal": 0,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "JEEP|WRANGLER|2023": {
+  "resolved": [
+   "WRANGLER"
+  ],
+  "complaintsTotal": 337,
+  "complaintsBattery": 69,
+  "complaintsPack": 69,
+  "fires": 5,
+  "recallsTotal": 14,
+  "recallsBattery": [
+   {
+    "campaign": "22V768000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Chrysler (FCA US, LLC) is recalling certain 2022-2023 Jeep Wrangler Plug-In Hybrid Electric (PHEV) vehicles.  The high voltage (HV) battery pack assembly was built with incorrect fasteners to secure the 200-amp fuse, which can generate excessive heat."
+   },
+   {
+    "campaign": "23V303000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Chrysler (FCA US, LLC) is recalling certain 2022-2023 Jeep Wrangler Plug-In Hybrid Electric vehicles (PHEV).  The high voltage (HV) battery pack assembly was built with incorrect fasteners to secure the 200-amp fuse, which can generate excessive heat."
+   },
+   {
+    "campaign": "23V787000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Chrysler (FCA US, LLC) is recalling certain 2021-2023 Jeep Wrangler Plug-In Hybrid Electric (PHEV) vehicles.  The high voltage battery may fail internally and lead to a vehicle fire while parked or driving."
+   },
+   {
+    "campaign": "25V741000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Chrysler (FCA US, LLC) is recalling certain 2020-2025 Jeep Wrangler 4Xe and 2022-2026 Grand Cherokee 4Xe vehicles. The high voltage battery may fail internally and lead to a vehicle fire while parked or driving."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "KIA|EV6|2022": {
+  "resolved": [
+   "EV6"
+  ],
+  "complaintsTotal": 275,
+  "complaintsBattery": 145,
+  "complaintsPack": 144,
+  "fires": 0,
+  "recallsTotal": 4,
+  "recallsBattery": [
+   {
+    "campaign": "24V200000",
+    "component": "ELECTRICAL SYSTEM:12V/24V/48V BATTERY",
+    "summary": "Kia America, Inc. (Kia) is recalling certain 2022-2024 EV6 vehicles.  The Integrated Charging Control Unit (ICCU) may become damaged and stop charging the 12-Volt battery, which can result in a loss of drive power."
+   },
+   {
+    "campaign": "24V867000",
+    "component": "ELECTRICAL SYSTEM:12V/24V/48V BATTERY",
+    "summary": "Kia America, Inc. (Kia) is recalling certain 2022-2024 EV6 vehicles.  The Integrated Charging Control Unit (ICCU) may become damaged and stop charging the 12-volt battery, which can result in a loss of drive power."
+   },
+   {
+    "campaign": "26V431000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Kia America, Inc. (Kia) is recalling certain 2022-2024 EV6 and 2024 EV9 vehicles. The high voltage battery cells may contain misaligned electrodes, which can lead to a fire while parked or driving."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "KIA|EV6|2023": {
+  "resolved": [
+   "EV6"
+  ],
+  "complaintsTotal": 132,
+  "complaintsBattery": 70,
+  "complaintsPack": 70,
+  "fires": 0,
+  "recallsTotal": 4,
+  "recallsBattery": [
+   {
+    "campaign": "24V200000",
+    "component": "ELECTRICAL SYSTEM:12V/24V/48V BATTERY",
+    "summary": "Kia America, Inc. (Kia) is recalling certain 2022-2024 EV6 vehicles.  The Integrated Charging Control Unit (ICCU) may become damaged and stop charging the 12-Volt battery, which can result in a loss of drive power."
+   },
+   {
+    "campaign": "24V867000",
+    "component": "ELECTRICAL SYSTEM:12V/24V/48V BATTERY",
+    "summary": "Kia America, Inc. (Kia) is recalling certain 2022-2024 EV6 vehicles.  The Integrated Charging Control Unit (ICCU) may become damaged and stop charging the 12-volt battery, which can result in a loss of drive power."
+   },
+   {
+    "campaign": "26V431000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Kia America, Inc. (Kia) is recalling certain 2022-2024 EV6 and 2024 EV9 vehicles. The high voltage battery cells may contain misaligned electrodes, which can lead to a fire while parked or driving."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "KIA|EV6|2024": {
+  "resolved": [
+   "EV6"
+  ],
+  "complaintsTotal": 71,
+  "complaintsBattery": 41,
+  "complaintsPack": 41,
+  "fires": 1,
+  "recallsTotal": 3,
+  "recallsBattery": [
+   {
+    "campaign": "24V200000",
+    "component": "ELECTRICAL SYSTEM:12V/24V/48V BATTERY",
+    "summary": "Kia America, Inc. (Kia) is recalling certain 2022-2024 EV6 vehicles.  The Integrated Charging Control Unit (ICCU) may become damaged and stop charging the 12-Volt battery, which can result in a loss of drive power."
+   },
+   {
+    "campaign": "24V867000",
+    "component": "ELECTRICAL SYSTEM:12V/24V/48V BATTERY",
+    "summary": "Kia America, Inc. (Kia) is recalling certain 2022-2024 EV6 vehicles.  The Integrated Charging Control Unit (ICCU) may become damaged and stop charging the 12-volt battery, which can result in a loss of drive power."
+   },
+   {
+    "campaign": "26V431000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Kia America, Inc. (Kia) is recalling certain 2022-2024 EV6 and 2024 EV9 vehicles. The high voltage battery cells may contain misaligned electrodes, which can lead to a fire while parked or driving."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "KIA|EV6|2025": {
+  "resolved": [
+   "EV6"
+  ],
+  "complaintsTotal": 52,
+  "complaintsBattery": 29,
+  "complaintsPack": 29,
+  "fires": 0,
+  "recallsTotal": 0,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "KIA|EV9|2024": {
+  "resolved": [
+   "EV9"
+  ],
+  "complaintsTotal": 205,
+  "complaintsBattery": 16,
+  "complaintsPack": 16,
+  "fires": 0,
+  "recallsTotal": 7,
+  "recallsBattery": [
+   {
+    "campaign": "26V431000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Kia America, Inc. (Kia) is recalling certain 2022-2024 EV6 and 2024 EV9 vehicles. The high voltage battery cells may contain misaligned electrodes, which can lead to a fire while parked or driving."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "KIA|EV9|2026": {
+  "resolved": [
+   "EV9 BEV"
+  ],
+  "complaintsTotal": 19,
+  "complaintsBattery": 7,
+  "complaintsPack": 7,
+  "fires": 0,
+  "recallsTotal": 1,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "KIA|NIRO EV|2022": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "KIA|NIRO EV|2023": {
+  "resolved": [
+   "NIRO EV"
+  ],
+  "complaintsTotal": 15,
+  "complaintsBattery": 1,
+  "complaintsPack": 1,
+  "fires": 0,
+  "recallsTotal": 3,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "KIA|NIRO EV|2024": {
+  "resolved": [
+   "NIRO EV"
+  ],
+  "complaintsTotal": 6,
+  "complaintsBattery": 1,
+  "complaintsPack": 1,
+  "fires": 0,
+  "recallsTotal": 2,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "KIA|NIRO EV|2025": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "KIA|NIRO EV|2026": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "KIA|NIRO|2024": {
+  "resolved": [
+   "NIRO"
+  ],
+  "complaintsTotal": 9,
+  "complaintsBattery": 1,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 1,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "KIA|SORENTO PLUG-IN HYBRID|2025": {
+  "resolved": [
+   "SORENTO PLUG-IN HYBRID"
+  ],
+  "complaintsTotal": 8,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 0,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "LEXUS|RZ 450E|2023": {
+  "resolved": [
+   "RZ 450E"
+  ],
+  "complaintsTotal": 10,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 0,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "LUCID|AIR|2022": {
+  "resolved": [
+   "AIR"
+  ],
+  "complaintsTotal": 23,
+  "complaintsBattery": 1,
+  "complaintsPack": 1,
+  "fires": 0,
+  "recallsTotal": 14,
+  "recallsBattery": [
+   {
+    "campaign": "24V497000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY THERMAL:MANAGEMENT:SOFTWARE",
+    "summary": "Lucid USA, Inc. (Lucid) is recalling certain 2022-2023 Air vehicles.  When a hardware communication fault is detected, the High Voltage Interlock (HVIL) software could disconnect the high voltage contactors while the vehicle is in motion, causing a loss of drive power."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "LUCID|AIR|2023": {
+  "resolved": [
+   "AIR"
+  ],
+  "complaintsTotal": 24,
+  "complaintsBattery": 1,
+  "complaintsPack": 1,
+  "fires": 0,
+  "recallsTotal": 11,
+  "recallsBattery": [
+   {
+    "campaign": "24V497000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY THERMAL:MANAGEMENT:SOFTWARE",
+    "summary": "Lucid USA, Inc. (Lucid) is recalling certain 2022-2023 Air vehicles.  When a hardware communication fault is detected, the High Voltage Interlock (HVIL) software could disconnect the high voltage contactors while the vehicle is in motion, causing a loss of drive power."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "LUCID|AIR|2024": {
+  "resolved": [
+   "AIR"
+  ],
+  "complaintsTotal": 7,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 8,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "LUCID|AIR|2025": {
+  "resolved": [
+   "AIR"
+  ],
+  "complaintsTotal": 14,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 6,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "MAZDA|CX-70 PLUG-IN HYBRID|2025": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "MAZDA|CX-90 PLUG-IN HYBRID|2024": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "MERCEDES-BENZ|CLA|2026": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "MERCEDES-BENZ|EQB|2022": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "MERCEDES-BENZ|EQB|2023": {
+  "resolved": [
+   "EQB"
+  ],
+  "complaintsTotal": 87,
+  "complaintsBattery": 39,
+  "complaintsPack": 39,
+  "fires": 0,
+  "recallsTotal": 0,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "MERCEDES-BENZ|EQB|2024": {
+  "resolved": [
+   "EQB"
+  ],
+  "complaintsTotal": 11,
+  "complaintsBattery": 2,
+  "complaintsPack": 2,
+  "fires": 0,
+  "recallsTotal": 0,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "MERCEDES-BENZ|EQB|2025": {
+  "resolved": [
+   "EQB 300 4MATIC"
+  ],
+  "complaintsTotal": 2,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 0,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "MERCEDES-BENZ|EQE 350+|2023": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "MERCEDES-BENZ|EQE 350|2023": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "MERCEDES-BENZ|EQE AMG|2024": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "MERCEDES-BENZ|EQE|2023": {
+  "resolved": [
+   "EQE"
+  ],
+  "complaintsTotal": 39,
+  "complaintsBattery": 4,
+  "complaintsPack": 4,
+  "fires": 1,
+  "recallsTotal": 0,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "MERCEDES-BENZ|EQE|2024": {
+  "resolved": [
+   "EQE"
+  ],
+  "complaintsTotal": 19,
+  "complaintsBattery": 1,
+  "complaintsPack": 1,
+  "fires": 0,
+  "recallsTotal": 0,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "MERCEDES-BENZ|EQE|2025": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "MERCEDES-BENZ|EQE|2026": {
+  "resolved": [
+   "EQE 320+"
+  ],
+  "complaintsTotal": 1,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 0,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "MERCEDES-BENZ|EQS 450+|2023": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "MERCEDES-BENZ|EQS 450+|2024": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "MERCEDES-BENZ|EQS 450|2023": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "MERCEDES-BENZ|EQS 580|2023": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "MERCEDES-BENZ|EQS|2022": {
+  "resolved": [
+   "EQS"
+  ],
+  "complaintsTotal": 46,
+  "complaintsBattery": 2,
+  "complaintsPack": 2,
+  "fires": 1,
+  "recallsTotal": 0,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "MERCEDES-BENZ|EQS|2023": {
+  "resolved": [
+   "EQS"
+  ],
+  "complaintsTotal": 66,
+  "complaintsBattery": 7,
+  "complaintsPack": 7,
+  "fires": 1,
+  "recallsTotal": 0,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "MERCEDES-BENZ|EQS|2024": {
+  "resolved": [
+   "EQS"
+  ],
+  "complaintsTotal": 13,
+  "complaintsBattery": 3,
+  "complaintsPack": 3,
+  "fires": 1,
+  "recallsTotal": 0,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "MERCEDES-BENZ|EQS|2025": {
+  "resolved": [
+   "EQS SUV 580 4MATIC"
+  ],
+  "complaintsTotal": 1,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 2,
+  "recallsBattery": [
+   {
+    "campaign": "24V372000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY:MANAGEMENT SYSTEM/ENERGY CONTROL MODULE (BMS/BECM):SOFTWARE",
+    "summary": "Mercedes-Benz USA, LLC (MBUSA) is recalling certain 2024 EQE 350 4MATIC, EQE 350+, EQE 500 4MATIC, EQS 450 4MATIC, EQS 450+, EQS 580 4MATIC, AMG EQE 53 4MATIC, AMG EQS 53 4MATIC, 2023-2025 EQE SUV 350 4MATIC, EQE SUV 350+, EQE SUV 500 4MATIC, EQS SUV 450 4MATIC, EQS SUV 450+, EQS SUV 580 4MATIC, 2024-2025 EQS SUV 680 4MATIC, and AMG EQE SUV 53 4MATIC vehicles.  The battery management system software may cause the high-voltage battery to shut down, which can result in a sudden loss of drive power."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "MERCEDES-BENZ|EQS|2026": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "MERCEDES-BENZ|G-CLASS|2025": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "MERCEDES-BENZ|GLC 350E|2025": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "MINI|ELECTRIC HARDTOP 2 DOOR|2024": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "MINI|HARDTOP 2 DOOR|2024": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "NISSAN|ARIYA|2023": {
+  "resolved": [
+   "ARIYA"
+  ],
+  "complaintsTotal": 39,
+  "complaintsBattery": 3,
+  "complaintsPack": 2,
+  "fires": 0,
+  "recallsTotal": 4,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "NISSAN|ARIYA|2024": {
+  "resolved": [
+   "ARIYA"
+  ],
+  "complaintsTotal": 6,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 0,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "NISSAN|ARIYA|2025": {
+  "resolved": [
+   "ARIYA"
+  ],
+  "complaintsTotal": 7,
+  "complaintsBattery": 1,
+  "complaintsPack": 1,
+  "fires": 0,
+  "recallsTotal": 0,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "NISSAN|LEAF|2018": {
+  "resolved": [
+   "LEAF"
+  ],
+  "complaintsTotal": 66,
+  "complaintsBattery": 5,
+  "complaintsPack": 5,
+  "fires": 1,
+  "recallsTotal": 4,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "NISSAN|LEAF|2019": {
+  "resolved": [
+   "LEAF"
+  ],
+  "complaintsTotal": 252,
+  "complaintsBattery": 39,
+  "complaintsPack": 39,
+  "fires": 1,
+  "recallsTotal": 5,
+  "recallsBattery": [
+   {
+    "campaign": "24V700000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Nissan North America, Inc. (Nissan) is recalling certain 2019-2020 LEAF vehicles equipped with a Level 3 quick charging port.  The lithium-ion battery may overheat during Level 3 charging."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "NISSAN|LEAF|2022": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "NISSAN|LEAF|2023": {
+  "resolved": [
+   "LEAF (40 KWH BATTERY)"
+  ],
+  "complaintsTotal": 19,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 3,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "NISSAN|LEAF|2024": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "NISSAN|LEAF|2025": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "POLESTAR|2|2021": {
+  "resolved": [
+   "POLESTAR 2"
+  ],
+  "complaintsTotal": 147,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 5,
+  "recallsBattery": [
+   {
+    "campaign": "21V110000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY:MANAGEMENT SYSTEM/ENERGY CONTROL MODULE (BMS/BECM):SOFTWARE",
+    "summary": "Polestar Automotive USA, Inc. (Polestar) is recalling certain 2021-2022 Polestar 2 vehicles.  The Battery Energy Control Module (BECM) microprocessor may reset and cause the high voltage system to disconnect."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "POLESTAR|2|2022": {
+  "resolved": [
+   "POLESTAR 2"
+  ],
+  "complaintsTotal": 304,
+  "complaintsBattery": 1,
+  "complaintsPack": 1,
+  "fires": 0,
+  "recallsTotal": 4,
+  "recallsBattery": [
+   {
+    "campaign": "21V110000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY:MANAGEMENT SYSTEM/ENERGY CONTROL MODULE (BMS/BECM):SOFTWARE",
+    "summary": "Polestar Automotive USA, Inc. (Polestar) is recalling certain 2021-2022 Polestar 2 vehicles.  The Battery Energy Control Module (BECM) microprocessor may reset and cause the high voltage system to disconnect."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "POLESTAR|2|2023": {
+  "resolved": [
+   "POLESTAR 2"
+  ],
+  "complaintsTotal": 114,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 4,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "POLESTAR|2|2024": {
+  "resolved": [
+   "POLESTAR 2"
+  ],
+  "complaintsTotal": 23,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 5,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "POLESTAR|3|2025": {
+  "resolved": [
+   "POLESTAR 3"
+  ],
+  "complaintsTotal": 78,
+  "complaintsBattery": 9,
+  "complaintsPack": 9,
+  "fires": 0,
+  "recallsTotal": 6,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "POLESTAR|POLESTAR 2|2022": {
+  "resolved": [
+   "POLESTAR 2"
+  ],
+  "complaintsTotal": 304,
+  "complaintsBattery": 1,
+  "complaintsPack": 1,
+  "fires": 0,
+  "recallsTotal": 4,
+  "recallsBattery": [
+   {
+    "campaign": "21V110000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY:MANAGEMENT SYSTEM/ENERGY CONTROL MODULE (BMS/BECM):SOFTWARE",
+    "summary": "Polestar Automotive USA, Inc. (Polestar) is recalling certain 2021-2022 Polestar 2 vehicles.  The Battery Energy Control Module (BECM) microprocessor may reset and cause the high voltage system to disconnect."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "POLESTAR|POLESTAR 2|2023": {
+  "resolved": [
+   "POLESTAR 2"
+  ],
+  "complaintsTotal": 114,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 4,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "POLESTAR|POLESTAR 2|2024": {
+  "resolved": [
+   "POLESTAR 2"
+  ],
+  "complaintsTotal": 23,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 5,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "POLESTAR|POLESTAR 3|2025": {
+  "resolved": [
+   "POLESTAR 3"
+  ],
+  "complaintsTotal": 78,
+  "complaintsBattery": 9,
+  "complaintsPack": 9,
+  "fires": 0,
+  "recallsTotal": 6,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "PORSCHE|CAYENNE E-HYBRID|2025": {
+  "resolved": [
+   "E3.2 CAYENNE E-HYBRID COUPÉ"
+  ],
+  "complaintsTotal": 1,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 1,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "PORSCHE|MACAN ELECTRIC|2024": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "PORSCHE|MACAN ELECTRIC|2025": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "PORSCHE|MACAN ELECTRIC|2026": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "PORSCHE|MACAN|2025": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "PORSCHE|TAYCAN|2020": {
+  "resolved": [
+   "TAYCAN"
+  ],
+  "complaintsTotal": 91,
+  "complaintsBattery": 5,
+  "complaintsPack": 5,
+  "fires": 1,
+  "recallsTotal": 12,
+  "recallsBattery": [
+   {
+    "campaign": "24V731000",
+    "component": "ELECTRICAL SYSTEM:SOFTWARE",
+    "summary": "Porsche Cars North America, Inc. (Porsche) is recalling certain 2020-2023 Taycan vehicles.  The high-voltage battery may experience a short circuit within the battery module."
+   },
+   {
+    "campaign": "24V732000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Porsche Cars North America, Inc. (Porsche) is recalling certain 2021-2024 Taycan vehicles.  The high-voltage battery may experience a short circuit within the battery module."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "PORSCHE|TAYCAN|2021": {
+  "resolved": [
+   "TAYCAN"
+  ],
+  "complaintsTotal": 69,
+  "complaintsBattery": 5,
+  "complaintsPack": 5,
+  "fires": 2,
+  "recallsTotal": 21,
+  "recallsBattery": [
+   {
+    "campaign": "23V840000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Porsche Cars North America, Inc. (Porsche) is recalling certain 2021-2023 Porsche Taycan, 2021-2022 Taycan 4S, Taycan Turbo S, Taycan Turbo, Taycan 4 Cross Turismo, Taycan 4S Cross Turismo, Taycan Turbo Cross Turismo, 2022 Taycan GTS, and Taycan GTS Sport Turismo vehicles.  The high-voltage battery may experience a short circuit within the battery modules."
+   },
+   {
+    "campaign": "23V841000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:CHARGING:CABLE/CORD:ONBOARD",
+    "summary": "Porsche Cars North America, Inc. (Porsche) is recalling various models and model years.  Please see the recall report for a list of the included vehicles.  When using the industrial 220V/240V plug at the 100% charge setting, some home power outlets may be incapable of handling the electrical current required to utilize the compact charging system, causing the outlet or charging cable to overheat."
+   },
+   {
+    "campaign": "24V215000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Porsche Cars North America, Inc. (Porsche) is recalling certain 2021-2023 Taycan, Taycan 4 Cross Turismo, 2020-2023 Taycan 4S, Taycan Turbo S, 2021-2022 Taycan 4S Cross Turismo, 2022 Taycan Turbo S Cross Turismo, 2022-2023 Taycan GTS, 2023 Taycan GTS Sport Turismo, and 2020-2021 Taycan Turbo vehicles.  The high-voltage battery may experience a short circuit within the battery modules."
+   },
+   {
+    "campaign": "24V217000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Porsche Cars North America, Inc. (Porsche) is recalling certain 2021-2024 Taycan, 2020-2024 Taycan 4S, Taycan Turbo, 2021-2023 Taycan 4 Cross Turismo, 2022-2023 Taycan 4S Cross Turismo, Taycan Turbo S Cross Turismo, 2023 Taycan Turbo Cross Turismo, 2022-2024 Taycan GTS, Taycan GTS Sport Turismo, and 2020-2023 Taycan Turbo S vehicles.  The high-voltage battery may experience a short circuit within the battery modules."
+   },
+   {
+    "campaign": "24V731000",
+    "component": "ELECTRICAL SYSTEM:SOFTWARE",
+    "summary": "Porsche Cars North America, Inc. (Porsche) is recalling certain 2020-2023 Taycan vehicles.  The high-voltage battery may experience a short circuit within the battery module."
+   },
+   {
+    "campaign": "24V732000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Porsche Cars North America, Inc. (Porsche) is recalling certain 2021-2024 Taycan vehicles.  The high-voltage battery may experience a short circuit within the battery module."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "PORSCHE|TAYCAN|2022": {
+  "resolved": [
+   "TAYCAN"
+  ],
+  "complaintsTotal": 79,
+  "complaintsBattery": 10,
+  "complaintsPack": 9,
+  "fires": 2,
+  "recallsTotal": 12,
+  "recallsBattery": [
+   {
+    "campaign": "23V840000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Porsche Cars North America, Inc. (Porsche) is recalling certain 2021-2023 Porsche Taycan, 2021-2022 Taycan 4S, Taycan Turbo S, Taycan Turbo, Taycan 4 Cross Turismo, Taycan 4S Cross Turismo, Taycan Turbo Cross Turismo, 2022 Taycan GTS, and Taycan GTS Sport Turismo vehicles.  The high-voltage battery may experience a short circuit within the battery modules."
+   },
+   {
+    "campaign": "23V841000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:CHARGING:CABLE/CORD:ONBOARD",
+    "summary": "Porsche Cars North America, Inc. (Porsche) is recalling various models and model years.  Please see the recall report for a list of the included vehicles.  When using the industrial 220V/240V plug at the 100% charge setting, some home power outlets may be incapable of handling the electrical current required to utilize the compact charging system, causing the outlet or charging cable to overheat."
+   },
+   {
+    "campaign": "24V215000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Porsche Cars North America, Inc. (Porsche) is recalling certain 2021-2023 Taycan, Taycan 4 Cross Turismo, 2020-2023 Taycan 4S, Taycan Turbo S, 2021-2022 Taycan 4S Cross Turismo, 2022 Taycan Turbo S Cross Turismo, 2022-2023 Taycan GTS, 2023 Taycan GTS Sport Turismo, and 2020-2021 Taycan Turbo vehicles.  The high-voltage battery may experience a short circuit within the battery modules."
+   },
+   {
+    "campaign": "24V217000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Porsche Cars North America, Inc. (Porsche) is recalling certain 2021-2024 Taycan, 2020-2024 Taycan 4S, Taycan Turbo, 2021-2023 Taycan 4 Cross Turismo, 2022-2023 Taycan 4S Cross Turismo, Taycan Turbo S Cross Turismo, 2023 Taycan Turbo Cross Turismo, 2022-2024 Taycan GTS, Taycan GTS Sport Turismo, and 2020-2023 Taycan Turbo S vehicles.  The high-voltage battery may experience a short circuit within the battery modules."
+   },
+   {
+    "campaign": "24V731000",
+    "component": "ELECTRICAL SYSTEM:SOFTWARE",
+    "summary": "Porsche Cars North America, Inc. (Porsche) is recalling certain 2020-2023 Taycan vehicles.  The high-voltage battery may experience a short circuit within the battery module."
+   },
+   {
+    "campaign": "24V732000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Porsche Cars North America, Inc. (Porsche) is recalling certain 2021-2024 Taycan vehicles.  The high-voltage battery may experience a short circuit within the battery module."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "PORSCHE|TAYCAN|2023": {
+  "resolved": [
+   "TAYCAN"
+  ],
+  "complaintsTotal": 19,
+  "complaintsBattery": 3,
+  "complaintsPack": 3,
+  "fires": 0,
+  "recallsTotal": 11,
+  "recallsBattery": [
+   {
+    "campaign": "23V615000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Porsche Cars North America, Inc. (Porsche) is recalling certain 2023 Taycan, Taycan 4S, Taycan Turbo S, Taycan Turbo, Taycan GTS, Taycan 4 Cross Turismo, Taycan 4S Cross Turismo, Taycan Turbo S Cross Turismo, Taycan Turbo Cross Turismo, and Taycan GTS Sport Turismo vehicles.  The high-voltage battery may have an insufficient amount of sealant, which can allow liquid to accumulate in the battery."
+   },
+   {
+    "campaign": "23V840000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Porsche Cars North America, Inc. (Porsche) is recalling certain 2021-2023 Porsche Taycan, 2021-2022 Taycan 4S, Taycan Turbo S, Taycan Turbo, Taycan 4 Cross Turismo, Taycan 4S Cross Turismo, Taycan Turbo Cross Turismo, 2022 Taycan GTS, and Taycan GTS Sport Turismo vehicles.  The high-voltage battery may experience a short circuit within the battery modules."
+   },
+   {
+    "campaign": "23V841000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:CHARGING:CABLE/CORD:ONBOARD",
+    "summary": "Porsche Cars North America, Inc. (Porsche) is recalling various models and model years.  Please see the recall report for a list of the included vehicles.  When using the industrial 220V/240V plug at the 100% charge setting, some home power outlets may be incapable of handling the electrical current required to utilize the compact charging system, causing the outlet or charging cable to overheat."
+   },
+   {
+    "campaign": "24V215000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Porsche Cars North America, Inc. (Porsche) is recalling certain 2021-2023 Taycan, Taycan 4 Cross Turismo, 2020-2023 Taycan 4S, Taycan Turbo S, 2021-2022 Taycan 4S Cross Turismo, 2022 Taycan Turbo S Cross Turismo, 2022-2023 Taycan GTS, 2023 Taycan GTS Sport Turismo, and 2020-2021 Taycan Turbo vehicles.  The high-voltage battery may experience a short circuit within the battery modules."
+   },
+   {
+    "campaign": "24V217000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Porsche Cars North America, Inc. (Porsche) is recalling certain 2021-2024 Taycan, 2020-2024 Taycan 4S, Taycan Turbo, 2021-2023 Taycan 4 Cross Turismo, 2022-2023 Taycan 4S Cross Turismo, Taycan Turbo S Cross Turismo, 2023 Taycan Turbo Cross Turismo, 2022-2024 Taycan GTS, Taycan GTS Sport Turismo, and 2020-2023 Taycan Turbo S vehicles.  The high-voltage battery may experience a short circuit within the battery modules."
+   },
+   {
+    "campaign": "24V731000",
+    "component": "ELECTRICAL SYSTEM:SOFTWARE",
+    "summary": "Porsche Cars North America, Inc. (Porsche) is recalling certain 2020-2023 Taycan vehicles.  The high-voltage battery may experience a short circuit within the battery module."
+   },
+   {
+    "campaign": "24V732000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Porsche Cars North America, Inc. (Porsche) is recalling certain 2021-2024 Taycan vehicles.  The high-voltage battery may experience a short circuit within the battery module."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "PORSCHE|TAYCAN|2024": {
+  "resolved": [
+   "TAYCAN"
+  ],
+  "complaintsTotal": 9,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 6,
+  "recallsBattery": [
+   {
+    "campaign": "23V841000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:CHARGING:CABLE/CORD:ONBOARD",
+    "summary": "Porsche Cars North America, Inc. (Porsche) is recalling various models and model years.  Please see the recall report for a list of the included vehicles.  When using the industrial 220V/240V plug at the 100% charge setting, some home power outlets may be incapable of handling the electrical current required to utilize the compact charging system, causing the outlet or charging cable to overheat."
+   },
+   {
+    "campaign": "24V217000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Porsche Cars North America, Inc. (Porsche) is recalling certain 2021-2024 Taycan, 2020-2024 Taycan 4S, Taycan Turbo, 2021-2023 Taycan 4 Cross Turismo, 2022-2023 Taycan 4S Cross Turismo, Taycan Turbo S Cross Turismo, 2023 Taycan Turbo Cross Turismo, 2022-2024 Taycan GTS, Taycan GTS Sport Turismo, and 2020-2023 Taycan Turbo S vehicles.  The high-voltage battery may experience a short circuit within the battery modules."
+   },
+   {
+    "campaign": "24V732000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Porsche Cars North America, Inc. (Porsche) is recalling certain 2021-2024 Taycan vehicles.  The high-voltage battery may experience a short circuit within the battery module."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "PORSCHE|TAYCAN|2025": {
+  "resolved": [
+   "J1.2 TAYCAN"
+  ],
+  "complaintsTotal": 2,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 4,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "RIVIAN|R1S|2022": {
+  "resolved": [
+   "R1S"
+  ],
+  "complaintsTotal": 4,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 12,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "RIVIAN|R1S|2023": {
+  "resolved": [
+   "R1S"
+  ],
+  "complaintsTotal": 72,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 9,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "RIVIAN|R1S|2024": {
+  "resolved": [
+   "R1S"
+  ],
+  "complaintsTotal": 16,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 6,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "RIVIAN|R1S|2025": {
+  "resolved": [
+   "R1S"
+  ],
+  "complaintsTotal": 51,
+  "complaintsBattery": 1,
+  "complaintsPack": 1,
+  "fires": 0,
+  "recallsTotal": 10,
+  "recallsBattery": [
+   {
+    "campaign": "25V537000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Rivian Automotive, LLC (Rivian) is recalling certain 2025 R1S and R1T vehicles. An improperly grounded connection inside the High Voltage Distribution Box (HVDB) may cause a loss of drive power."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "RIVIAN|R1T|2022": {
+  "resolved": [
+   "R1T"
+  ],
+  "complaintsTotal": 64,
+  "complaintsBattery": 3,
+  "complaintsPack": 3,
+  "fires": 0,
+  "recallsTotal": 11,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "RIVIAN|R1T|2023": {
+  "resolved": [
+   "R1T"
+  ],
+  "complaintsTotal": 37,
+  "complaintsBattery": 1,
+  "complaintsPack": 1,
+  "fires": 1,
+  "recallsTotal": 7,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "RIVIAN|R1T|2025": {
+  "resolved": [
+   "R1T"
+  ],
+  "complaintsTotal": 10,
+  "complaintsBattery": 1,
+  "complaintsPack": 1,
+  "fires": 0,
+  "recallsTotal": 7,
+  "recallsBattery": [
+   {
+    "campaign": "25V537000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Rivian Automotive, LLC (Rivian) is recalling certain 2025 R1S and R1T vehicles. An improperly grounded connection inside the High Voltage Distribution Box (HVDB) may cause a loss of drive power."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "SUBARU|SOLTERRA|2023": {
+  "resolved": [
+   "Solterra"
+  ],
+  "complaintsTotal": 25,
+  "complaintsBattery": 2,
+  "complaintsPack": 2,
+  "fires": 0,
+  "recallsTotal": 4,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "SUBARU|SOLTERRA|2024": {
+  "resolved": [
+   "Solterra"
+  ],
+  "complaintsTotal": 14,
+  "complaintsBattery": 2,
+  "complaintsPack": 2,
+  "fires": 0,
+  "recallsTotal": 2,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "SUBARU|SOLTERRA|2025": {
+  "resolved": [
+   "SOLTERRA"
+  ],
+  "complaintsTotal": 4,
+  "complaintsBattery": 1,
+  "complaintsPack": 1,
+  "fires": 0,
+  "recallsTotal": 2,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "TESLA|CYBERTRUCK|2024": {
+  "resolved": [
+   "CYBERTRUCK"
+  ],
+  "complaintsTotal": 168,
+  "complaintsBattery": 9,
+  "complaintsPack": 9,
+  "fires": 1,
+  "recallsTotal": 11,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "TESLA|CYBERTRUCK|2025": {
+  "resolved": [
+   "CYBERTRUCK (ALL VARIANTS)"
+  ],
+  "complaintsTotal": 22,
+  "complaintsBattery": 1,
+  "complaintsPack": 1,
+  "fires": 0,
+  "recallsTotal": 3,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "TESLA|MODEL 3|2018": {
+  "resolved": [
+   "MODEL 3"
+  ],
+  "complaintsTotal": 996,
+  "complaintsBattery": 18,
+  "complaintsPack": 16,
+  "fires": 1,
+  "recallsTotal": 19,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "TESLA|MODEL 3|2019": {
+  "resolved": [
+   "MODEL 3"
+  ],
+  "complaintsTotal": 606,
+  "complaintsBattery": 7,
+  "complaintsPack": 7,
+  "fires": 2,
+  "recallsTotal": 22,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "TESLA|MODEL 3|2020": {
+  "resolved": [
+   "MODEL 3"
+  ],
+  "complaintsTotal": 445,
+  "complaintsBattery": 3,
+  "complaintsPack": 3,
+  "fires": 0,
+  "recallsTotal": 21,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "TESLA|MODEL 3|2021": {
+  "resolved": [
+   "MODEL 3"
+  ],
+  "complaintsTotal": 655,
+  "complaintsBattery": 11,
+  "complaintsPack": 11,
+  "fires": 1,
+  "recallsTotal": 22,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "TESLA|MODEL 3|2022": {
+  "resolved": [
+   "MODEL 3"
+  ],
+  "complaintsTotal": 757,
+  "complaintsBattery": 9,
+  "complaintsPack": 9,
+  "fires": 4,
+  "recallsTotal": 18,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "TESLA|MODEL 3|2023": {
+  "resolved": [
+   "MODEL 3"
+  ],
+  "complaintsTotal": 415,
+  "complaintsBattery": 9,
+  "complaintsPack": 8,
+  "fires": 0,
+  "recallsTotal": 12,
+  "recallsBattery": [
+   {
+    "campaign": "23V434000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Tesla, Inc. (Tesla) is recalling certain 2023 Model 3 and Model Y vehicles.  The pyrotechnic battery disconnect may be defective."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "TESLA|MODEL 3|2024": {
+  "resolved": [
+   "MODEL 3"
+  ],
+  "complaintsTotal": 207,
+  "complaintsBattery": 1,
+  "complaintsPack": 1,
+  "fires": 0,
+  "recallsTotal": null,
+  "recallsBattery": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "TESLA|MODEL 3|2025": {
+  "resolved": [
+   "MODEL 3 (ALL VARIANTS)"
+  ],
+  "complaintsTotal": 113,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 3,
+  "recallsBattery": [
+   {
+    "campaign": "25V690000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:FUSES, RELAYS, CONTACTS, AND SHUNTS",
+    "summary": "Tesla, Inc. (Tesla) is recalling certain 2025 Model 3 and 2026 Model Y vehicles. The battery pack contactors may fail, causing a loss of drive power."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "TESLA|MODEL 3|2026": {
+  "resolved": [
+   "MODEL 3 BEV"
+  ],
+  "complaintsTotal": 15,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 1,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "TESLA|MODEL S|2012": {
+  "resolved": [
+   "MODEL S"
+  ],
+  "complaintsTotal": 59,
+  "complaintsBattery": 4,
+  "complaintsPack": 4,
+  "fires": 0,
+  "recallsTotal": 8,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "TESLA|MODEL S|2013": {
+  "resolved": [
+   "MODEL S"
+  ],
+  "complaintsTotal": 459,
+  "complaintsBattery": 43,
+  "complaintsPack": 43,
+  "fires": 11,
+  "recallsTotal": 11,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "TESLA|MODEL S|2014": {
+  "resolved": [
+   "MODEL S"
+  ],
+  "complaintsTotal": 365,
+  "complaintsBattery": 16,
+  "complaintsPack": 16,
+  "fires": 2,
+  "recallsTotal": 9,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "TESLA|MODEL S|2015": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "TESLA|MODEL S|2016": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "TESLA|MODEL S|2017": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "TESLA|MODEL S|2018": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "TESLA|MODEL S|2019": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "TESLA|MODEL S|2020": {
+  "resolved": [
+   "MODEL S (ALL VARIANTS)"
+  ],
+  "complaintsTotal": 80,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 11,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "TESLA|MODEL S|2021": {
+  "resolved": [
+   "MODEL S"
+  ],
+  "complaintsTotal": 176,
+  "complaintsBattery": 2,
+  "complaintsPack": 2,
+  "fires": 0,
+  "recallsTotal": 24,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "TESLA|MODEL S|2022": {
+  "resolved": [
+   "MODEL S (ALL VARIANTS)"
+  ],
+  "complaintsTotal": 136,
+  "complaintsBattery": 2,
+  "complaintsPack": 2,
+  "fires": 0,
+  "recallsTotal": 20,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "TESLA|MODEL S|2023": {
+  "resolved": [
+   "MODEL S (ALL VARIANTS)",
+   "MODEL S (ALL VARIANTS) LATER RELEASE"
+  ],
+  "complaintsTotal": 111,
+  "complaintsBattery": 1,
+  "complaintsPack": 1,
+  "fires": 0,
+  "recallsTotal": 13,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "TESLA|MODEL S|2024": {
+  "resolved": [
+   "MODEL S (ALL VARIANTS)"
+  ],
+  "complaintsTotal": 38,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 6,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "TESLA|MODEL S|2025": {
+  "resolved": [
+   "MODEL S (ALL VARIANTS)"
+  ],
+  "complaintsTotal": 6,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 2,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "TESLA|MODEL X|2016": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "TESLA|MODEL X|2017": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "TESLA|MODEL X|2018": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "TESLA|MODEL X|2019": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "TESLA|MODEL X|2020": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "TESLA|MODEL X|2021": {
+  "resolved": [
+   "MODEL X 5-SEAT",
+   "MODEL X 6-SEAT",
+   "MODEL X 7-SEAT"
+  ],
+  "complaintsTotal": 39,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 24,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "TESLA|MODEL X|2022": {
+  "resolved": [
+   "MODEL X (ALL VARIANTS)"
+  ],
+  "complaintsTotal": 123,
+  "complaintsBattery": 3,
+  "complaintsPack": 3,
+  "fires": 1,
+  "recallsTotal": 22,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "TESLA|MODEL X|2023": {
+  "resolved": [
+   "MODEL X (ALL VARIANTS)",
+   "MODEL X (ALL VARIANTS) LATER RELEASE"
+  ],
+  "complaintsTotal": 192,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 17,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "TESLA|MODEL X|2024": {
+  "resolved": [
+   "MODEL X (ALL VARIANTS)"
+  ],
+  "complaintsTotal": 25,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 8,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "TESLA|MODEL Y|2020": {
+  "resolved": [
+   "MODEL Y"
+  ],
+  "complaintsTotal": 272,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 24,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "TESLA|MODEL Y|2021": {
+  "resolved": [
+   "MODEL Y 5-SEAT",
+   "MODEL Y 7-SEAT"
+  ],
+  "complaintsTotal": 1053,
+  "complaintsBattery": 21,
+  "complaintsPack": 18,
+  "fires": 4,
+  "recallsTotal": 23,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "TESLA|MODEL Y|2022": {
+  "resolved": [
+   "MODEL Y 7-SEAT",
+   "MODEL Y  5-SEAT"
+  ],
+  "complaintsTotal": 844,
+  "complaintsBattery": 11,
+  "complaintsPack": 10,
+  "fires": 3,
+  "recallsTotal": 20,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "TESLA|MODEL Y|2023": {
+  "resolved": [
+   "MODEL Y (All Variants)",
+   "MODEL Y (ALL VARIANTS) LATER RELEASE",
+   "MODEL Y RWD EARLY RELEASE",
+   "MODEL Y RWD LATER RELEASE"
+  ],
+  "complaintsTotal": 1125,
+  "complaintsBattery": 13,
+  "complaintsPack": 13,
+  "fires": 3,
+  "recallsTotal": 17,
+  "recallsBattery": [
+   {
+    "campaign": "23V434000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Tesla, Inc. (Tesla) is recalling certain 2023 Model 3 and Model Y vehicles.  The pyrotechnic battery disconnect may be defective."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "TESLA|MODEL Y|2024": {
+  "resolved": [
+   "MODEL Y (All Variants)",
+   "MODEL Y RWD"
+  ],
+  "complaintsTotal": 310,
+  "complaintsBattery": 9,
+  "complaintsPack": 8,
+  "fires": 2,
+  "recallsTotal": 5,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "TESLA|MODEL Y|2025": {
+  "resolved": [
+   "MODEL Y"
+  ],
+  "complaintsTotal": 92,
+  "complaintsBattery": 3,
+  "complaintsPack": 3,
+  "fires": 2,
+  "recallsTotal": 3,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "TESLA|MODEL Y|2026": {
+  "resolved": [
+   "MODEL Y BEV"
+  ],
+  "complaintsTotal": 0,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 0,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "TESLA|ROADSTER|2010": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "TOYOTA|BZ4X|2023": {
+  "resolved": [
+   "BZ4X"
+  ],
+  "complaintsTotal": 5,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 4,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "TOYOTA|BZ4X|2024": {
+  "resolved": [
+   "BZ4X"
+  ],
+  "complaintsTotal": 24,
+  "complaintsBattery": 2,
+  "complaintsPack": 2,
+  "fires": 0,
+  "recallsTotal": 3,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "TOYOTA|BZ4X|2025": {
+  "resolved": [
+   "BZ4X"
+  ],
+  "complaintsTotal": 5,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 2,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "TOYOTA|BZ|2026": {
+  "resolved": [
+   "BZ BEV"
+  ],
+  "complaintsTotal": 15,
+  "complaintsBattery": 2,
+  "complaintsPack": 2,
+  "fires": 0,
+  "recallsTotal": 1,
+  "recallsBattery": [
+   {
+    "campaign": "26V393000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM",
+    "summary": "Toyota Motor Engineering & Manufacturing (Toyota) is recalling certain 2026 Toyota BZ, Lexus RZ, and Subaru Solterra battery electric vehicles. The electronic control unit (ECU) that controls the high voltage battery may experience a fault, resulting in a loss of drive power."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "TOYOTA|C-HR|2026": {
+  "resolved": [
+   "C-HR BEV"
+  ],
+  "complaintsTotal": 4,
+  "complaintsBattery": 1,
+  "complaintsPack": 1,
+  "fires": 0,
+  "recallsTotal": 0,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "TOYOTA|PRIUS PLUG-IN HYBRID|2026": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "TOYOTA|PRIUS PRIME|2024": {
+  "resolved": [
+   "PRIUS PRIME"
+  ],
+  "complaintsTotal": 11,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 4,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "TOYOTA|RAV4 PLUG-IN HYBRID|2025": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "TOYOTA|RAV4 PRIME|2021": {
+  "resolved": [
+   "RAV4 PRIME"
+  ],
+  "complaintsTotal": 98,
+  "complaintsBattery": 12,
+  "complaintsPack": 12,
+  "fires": 1,
+  "recallsTotal": 4,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "TOYOTA|RAV4 PRIME|2023": {
+  "resolved": [
+   "RAV4 PRIME"
+  ],
+  "complaintsTotal": 62,
+  "complaintsBattery": 1,
+  "complaintsPack": 1,
+  "fires": 0,
+  "recallsTotal": 2,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "TOYOTA|RAV4 PRIME|2024": {
+  "resolved": [
+   "RAV4 PRIME"
+  ],
+  "complaintsTotal": 28,
+  "complaintsBattery": 0,
+  "complaintsPack": 0,
+  "fires": 0,
+  "recallsTotal": 2,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "VOLKSWAGEN|ID. BUZZ|2025": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "VOLKSWAGEN|ID.4|2021": {
+  "resolved": [
+   "ID.4"
+  ],
+  "complaintsTotal": 326,
+  "complaintsBattery": 13,
+  "complaintsPack": 13,
+  "fires": 0,
+  "recallsTotal": 11,
+  "recallsBattery": [
+   {
+    "campaign": "22V162000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Volkswagen Group of America, Inc. (Volkswagen) is recalling certain 2021 ID4 vehicles.  Incorrect soldering of the flexible printed circuit assembled (FPCA), inside the high voltage (HV) battery, may cause an unreliable connection."
+   },
+   {
+    "campaign": "23V040000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY:MANAGEMENT SYSTEM/ENERGY CONTROL MODULE (BMS/BECM):SOFTWARE",
+    "summary": "Volkswagen Group of America, Inc. (Volkswagen) is recalling certain 2021 ID.4 vehicles.  Software programing may cause the high voltage (HV) battery management control module to restart or the pulse inverter to deactivate."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "VOLKSWAGEN|ID.4|2022": {
+  "resolved": [
+   "ID.4"
+  ],
+  "complaintsTotal": 134,
+  "complaintsBattery": 3,
+  "complaintsPack": 3,
+  "fires": 1,
+  "recallsTotal": 7,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "VOLKSWAGEN|ID.4|2023": {
+  "resolved": [
+   "ID.4"
+  ],
+  "complaintsTotal": 448,
+  "complaintsBattery": 31,
+  "complaintsPack": 31,
+  "fires": 5,
+  "recallsTotal": 13,
+  "recallsBattery": [
+   {
+    "campaign": "22V830000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION MOTOR",
+    "summary": "Volkswagen Group of America, Inc. (Volkswagen) is recalling certain 2023 ID4 vehicles.  The electric motor sealing ring was improperly assembled, which may allow coolant to leak into the high-voltage system and interfere with the CAN communication and power supply."
+   },
+   {
+    "campaign": "25V836000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Volkswagen Group of America, Inc. (Volkswagen) is recalling certain 2023-2024 ID.4 vehicles. The high voltage (HV) battery cell modules may contain misaligned electrodes that can result in a battery fire."
+   },
+   {
+    "campaign": "26V028000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Volkswagen Group of America, Inc. (Volkswagen) is recalling certain 2023-2024 ID.4 vehicles. The high voltage (HV) battery cell modules may contain misaligned electrodes that can result in a battery fire."
+   },
+   {
+    "campaign": "26V030000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Volkswagen Group of America, Inc. (Volkswagen) is recalling certain 2023-2025 ID.4 vehicles. The high-voltage battery may overheat."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "VOLKSWAGEN|ID.4|2024": {
+  "resolved": [
+   "ID.4"
+  ],
+  "complaintsTotal": 48,
+  "complaintsBattery": 6,
+  "complaintsPack": 6,
+  "fires": 1,
+  "recallsTotal": 8,
+  "recallsBattery": [
+   {
+    "campaign": "25V836000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Volkswagen Group of America, Inc. (Volkswagen) is recalling certain 2023-2024 ID.4 vehicles. The high voltage (HV) battery cell modules may contain misaligned electrodes that can result in a battery fire."
+   },
+   {
+    "campaign": "26V028000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Volkswagen Group of America, Inc. (Volkswagen) is recalling certain 2023-2024 ID.4 vehicles. The high voltage (HV) battery cell modules may contain misaligned electrodes that can result in a battery fire."
+   },
+   {
+    "campaign": "26V030000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Volkswagen Group of America, Inc. (Volkswagen) is recalling certain 2023-2025 ID.4 vehicles. The high-voltage battery may overheat."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "VOLKSWAGEN|ID.4|2025": {
+  "resolved": [
+   "ID.4"
+  ],
+  "complaintsTotal": 25,
+  "complaintsBattery": 2,
+  "complaintsPack": 2,
+  "fires": 1,
+  "recallsTotal": 1,
+  "recallsBattery": [
+   {
+    "campaign": "26V030000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Volkswagen Group of America, Inc. (Volkswagen) is recalling certain 2023-2025 ID.4 vehicles. The high-voltage battery may overheat."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "VOLVO|C40 RECHARGE PURE ELECTRIC|2023": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "VOLVO|C40 RECHARGE PURE ELECTRIC|2024": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "VOLVO|EX30|2025": {
+  "resolved": [
+   "EX30"
+  ],
+  "complaintsTotal": 8,
+  "complaintsBattery": 2,
+  "complaintsPack": 2,
+  "fires": 0,
+  "recallsTotal": 3,
+  "recallsBattery": [
+   {
+    "campaign": "26V001000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Volvo Car USA, LLC (Volvo Car) is recalling certain 2025 EX30 vehicles. The high-voltage battery may experience a short circuit and overheat."
+   },
+   {
+    "campaign": "26V103000",
+    "component": "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY",
+    "summary": "Volvo Car USA, LLC (Volvo Car) is recalling certain 2025 EX30 vehicles. The high voltage battery may experience a short circuit and overheat."
+   }
+  ],
+  "fetchedAt": "2026-08-17"
+ },
+ "VOLVO|EX30|2026": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "VOLVO|EX90|2025": {
+  "resolved": [
+   "EX90"
+  ],
+  "complaintsTotal": 65,
+  "complaintsBattery": 5,
+  "complaintsPack": 5,
+  "fires": 0,
+  "recallsTotal": 3,
+  "recallsBattery": [],
+  "fetchedAt": "2026-08-17"
+ },
+ "VOLVO|XC40 RECHARGE PURE ELECTRIC|2023": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "VOLVO|XC40 RECHARGE PURE ELECTRIC|2024": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ },
+ "VOLVO|XC90 PLUG-IN HYBRID|2025": {
+  "resolved": null,
+  "fetchedAt": "2026-08-17"
+ }
+}
