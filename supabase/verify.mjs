@@ -253,13 +253,20 @@ assert("fresh absence still delists", r9d.delisted === 1, JSON.stringify(r9d));
 // the public site publishes — live listings and their price history — and
 // gets a hard permission error on every archive table.
 console.log("\nposture: anon sees the showroom, not the archive");
-const pol = await db.query(`select tablename, cmd from pg_policies where schemaname='public' order by tablename`);
+const pol = await db.query(`select tablename, cmd from pg_policies where schemaname='public' order by tablename, cmd`);
+// The exact public policy surface: live reads (0007), the vin_variant_vpic
+// read (0016), and the insert-only events sink (0027 — reads revoked there).
+// Compared exactly so a new policy, or a read policy growing a write command,
+// fails loudly.
+const expectedPolicies = [
+  ["events", "INSERT"],
+  ["listing_price_history", "SELECT"],
+  ["listings", "SELECT"],
+  ["vin_variant_vpic", "SELECT"],
+];
 assert(
-  `only live-read policies remain, all read-only (${pol.rows.length})`,
-  pol.rows.length === 2 &&
-    pol.rows.every((p) => p.cmd === "SELECT") &&
-    JSON.stringify(pol.rows.map((p) => p.tablename).sort()) ===
-      JSON.stringify(["listing_price_history", "listings"]),
+  `public policy surface is exactly the known set (${pol.rows.length})`,
+  JSON.stringify(pol.rows.map((p) => [p.tablename, p.cmd])) === JSON.stringify(expectedPolicies),
   JSON.stringify(pol.rows)
 );
 
