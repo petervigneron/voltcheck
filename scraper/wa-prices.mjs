@@ -7,7 +7,10 @@
 //
 //   node wa-prices.mjs [--months 24] [--dry-run]
 //
-// Monthly is plenty — the upstream file only updates monthly.
+// Monthly is plenty — the upstream file only updates monthly. --months 0
+// means the whole archive (WA's rows start 2016-05): the load REPLACES the
+// table (migration 0033), so the nightly must always pull full depth or a
+// monthly run quietly truncates ten years of history back to its own window.
 import { readFile } from "node:fs/promises";
 import { fetchWithRetry } from "./lib/retry.mjs";
 import { stagedLoad } from "./lib/staged-load.mjs";
@@ -66,7 +69,9 @@ function canonModel(m) {
 
 const since = new Date();
 since.setMonth(since.getMonth() - MONTHS);
-const sinceIso = since.toISOString().slice(0, 10);
+// 0 = full archive. A fixed date rather than no clause, so the query shape
+// (and the index it uses upstream) stays the same either way.
+const sinceIso = MONTHS > 0 ? since.toISOString().slice(0, 10) : "2015-01-01";
 
 // Floor at $5,000: WA's own docs note sale_price is a DECLARED figure, and
 // the low tail is family transfers and salvage, not market sales. Ceiling
