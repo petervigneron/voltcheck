@@ -3,6 +3,7 @@ import type { EnrichmentResult, EnrichmentRow, Fact, PortStandard, Source, VinDe
 import { matchEnrichment } from "../enrichment/match";
 import { decodeTeslaVin, isTeslaVin } from "../tesla-vin";
 import type { TeslaVinFacts } from "../types";
+import { renamedTrim } from "./trimRename";
 
 // What a listing card can honestly say. Every field is either a provenanced
 // fact, an explicit "verify" flag, or absent — never a model-level guess
@@ -45,8 +46,9 @@ const CAB_STYLES = /^(super\s*crew|super\s*cab|crew\s*cab|regular\s*cab|extended
 // Lightning is a SuperCrew, so showing "F-150 Lightning SuperCrew" as if it
 // named a variant is dealer noise, not information.
 export function displayTrim(l: Listing): string | undefined {
-  if (!l.trim) return undefined;
-  const t = l.trim.trim();
+  const raw = renamedTrim(l);
+  if (!raw) return undefined;
+  const t = raw.trim();
   return CAB_STYLES.test(t) ? undefined : t;
 }
 // Body-style noise appended to real trims ("Long Range Sport Utility 4D",
@@ -59,11 +61,12 @@ const BODY_NOISE = /\b(sports?\s*activity\s*vehicle|sport\s*utility|sedan|sdn|ha
 // "Model 3 Long Range Dual Motor All-Wheel Drive" can meet a "Long Range AWD"
 // row key, and a trim that says nothing beyond the drivetrain drops away.
 function cleanTrim(l: Listing): string | undefined {
-  if (!l.trim) return undefined;
+  const rawTrim = renamedTrim(l);
+  if (!rawTrim) return undefined;
   const mk = l.make.trim().toUpperCase();
   const makerNoise = mk === "RIVIAN" ? RIVIAN_TIERS : mk === "PORSCHE" ? PORSCHE_NOISE : null;
   // Feeds leak HTML entities ("S&#x2B;" for "S+").
-  let t = l.trim.replace(/&#x2b;|&#43;|&plus;/gi, "+").replace(/[()]/g, " ").replace(/\s+/g, " ").trim();
+  let t = rawTrim.replace(/&#x2b;|&#43;|&plus;/gi, "+").replace(/[()]/g, " ").replace(/\s+/g, " ").trim();
   // "S/S+"-style compounds whose halves normalize identically are one trim.
   const parts = t.split("/").map((p) => p.trim());
   if (parts.length > 1 && parts.every((p) => p.replace(/[^A-Za-z0-9]/g, "").toUpperCase() === parts[0].replace(/[^A-Za-z0-9]/g, "").toUpperCase())) {
