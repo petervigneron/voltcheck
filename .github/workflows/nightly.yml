@@ -229,7 +229,10 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
           SUPABASE_INGEST_TOKEN: ${{ secrets.SUPABASE_INGEST_TOKEN }}
-        run: '[ "$(date +%d)" = "05" ] && node wa-prices.mjs --months 24 || echo "not the 5th, skipping"'
+        # --months 0 = the whole archive back to 2016. The load REPLACES the
+        # table, so a windowed pull here would truncate the full history the
+        # model's depreciation work depends on.
+        run: '[ "$(date +%d)" = "05" ] && node wa-prices.mjs --months 0 || echo "not the 5th, skipping"'
 
       # Name the versions behind those sales (migration 0016). Runs with the
       # price refresh because that is when new VIN cohorts appear — a model

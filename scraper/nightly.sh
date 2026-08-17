@@ -40,7 +40,9 @@ print(' '.join(s['domain'] for s in r['sites'] if s.get('status') == 'working'))
   # listings are settled (migration 0020).
   node refresh-variants.mjs
   # Washington transaction prices refresh monthly upstream; reload on the 5th.
-  [ "$(date +%d)" = "05" ] && node wa-prices.mjs --months 24
+  # --months 0 = full archive: the load replaces the table, so a windowed
+  # pull would truncate the 2016-onward history.
+  [ "$(date +%d)" = "05" ] && node wa-prices.mjs --months 0
   # And name the versions behind them: new sales bring new VIN cohorts, which
   # read as "Unknown" until vPIC has decoded them (migration 0016).
   [ "$(date +%d)" = "05" ] && node vpic-variants.mjs
