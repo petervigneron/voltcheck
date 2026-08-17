@@ -9,6 +9,7 @@
 //
 // Monthly is plenty — the upstream file only updates monthly.
 import { readFile } from "node:fs/promises";
+import { fetchWithRetry } from "./lib/retry.mjs";
 
 const SODA = "https://data.wa.gov/resource/rpr4-cgyd.json";
 const PAGE = 50000;
@@ -91,7 +92,15 @@ for (let offset = 0; ; offset += PAGE) {
     `${SODA}?$select=vin_1_10,make,model,model_year,electric_vehicle_type,sale_price,` +
     `odometer_reading,date_of_vehicle_sale,county,city,zip,transaction_type` +
     `&$where=${encodeURIComponent(where)}&$order=date_of_vehicle_sale&$limit=${PAGE}&$offset=${offset}`;
-  const res = await fetch(url, { headers: { "user-agent": "VoltcheckBot/0.1 (+https://voltcheck-mu.vercel.app/bot)" } });
+  // Read-only, so retrying is unconditionally safe. The write loop below is
+  // deliberately NOT retried: its chunks append after a first-chunk replace,
+  // and a chunk that committed but lost its response would, when replayed,
+  // duplicate sale rows — and duplicated sales skew the price medians the
+  // site quotes. A failed month costs a refresh; a silent double-count
+  // costs a wrong number.
+  const res = await fetchWithRetry(`wa-prices: SODA offset ${offset}`, () =>
+    fetch(url, { headers: { "user-agent": "VoltcheckBot/0.1 (+https://voltcheck-mu.vercel.app/bot)" } })
+  );
   if (!res.ok) {
     console.error(`wa-prices: SODA HTTP ${res.status} — ${(await res.text()).slice(0, 200)}`);
     process.exit(1);

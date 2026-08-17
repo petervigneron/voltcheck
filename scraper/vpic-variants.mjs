@@ -18,6 +18,7 @@
 // Monthly, alongside wa-prices.mjs: cohorts only appear when WA publishes a
 // model year we've never seen.
 import { readFile } from "node:fs/promises";
+import { fetchWithRetry } from "./lib/retry.mjs";
 
 const SODA = "https://data.wa.gov/resource/rpr4-cgyd.json";
 const BATCH = 50;
@@ -53,9 +54,13 @@ const where =
 const url =
   `${SODA}?$select=substring(vin_1_10,1,8) as v8,model_year,count(*) as n` +
   `&$where=${encodeURIComponent(where)}&$group=v8,model_year&$limit=50000`;
-const res = await fetch(url, {
-  headers: { "user-agent": "VoltcheckBot/0.1 (+https://voltcheck.net/bot)" },
-});
+// Read-only; the ingest writes below stay retry-free for the same
+// duplicate-on-replay reason documented in wa-prices.mjs.
+const res = await fetchWithRetry("vpic-variants: SODA cohorts", () =>
+  fetch(url, {
+    headers: { "user-agent": "VoltcheckBot/0.1 (+https://voltcheck.net/bot)" },
+  })
+);
 if (!res.ok) {
   console.error(`vpic-variants: SODA HTTP ${res.status} — ${(await res.text()).slice(0, 200)}`);
   process.exit(1);
@@ -150,13 +155,18 @@ for (let i = 0; i < cohorts.length; i += BATCH) {
   const batch = cohorts.slice(i, i + BATCH);
   const body =
     `DATA=${encodeURIComponent(batch.map((c) => `${c.vin8},${c.modelYear}`).join(";"))}&format=json`;
-  const res = await fetch("https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValuesBatch/", {
-    method: "POST",
-    headers: { "content-type": "application/x-www-form-urlencoded" },
-    body,
-  });
+  const res = await fetchWithRetry(
+    `vpic-variants: batch ${i / BATCH}`,
+    () =>
+      fetch("https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValuesBatch/", {
+        method: "POST",
+        headers: { "content-type": "application/x-www-form-urlencoded" },
+        body,
+      }),
+    { waits: [5, 15] } // vPIC read: degrade fast, see vpic-enrich.mjs
+  );
   if (!res.ok) {
-    console.error(`vpic-variants: batch ${i / BATCH} failed HTTP ${res.status}`);
+    console.error(`vpic-variants: batch ${i / BATCH} failed ${res.status === 0 ? await res.text() : `HTTP ${res.status}`}`);
     continue;
   }
   const json = await res.json();

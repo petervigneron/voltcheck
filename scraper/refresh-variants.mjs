@@ -10,6 +10,7 @@
 // Runs after recheck, which is the last step that changes what's live.
 // REFRESH ... CONCURRENTLY, so readers are never blocked.
 import { readFile } from "node:fs/promises";
+import { fetchWithRetry } from "./lib/retry.mjs";
 
 async function loadEnv(url) {
   try {
@@ -30,16 +31,22 @@ if (!SUPABASE_URL || !TOKEN || !ANON) {
   process.exit(0);
 }
 
-const res = await fetch(`${SUPABASE_URL}/functions/v1/ingest`, {
-  method: "POST",
-  headers: {
-    apikey: ANON,
-    Authorization: `Bearer ${ANON}`,
-    "x-ingest-token": TOKEN,
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify({ dataset: "refresh_variants" }),
-});
+// This is the last step of the night that touches the database, and it runs
+// unconditionally — so after the 08-14→08-17 red streak was traced to bare
+// unretried fetches in db-sync and recheck, this bare fetch was the next
+// domino waiting. Replay is safe: it only refreshes materialized views.
+const res = await fetchWithRetry("refresh-variants", () =>
+  fetch(`${SUPABASE_URL}/functions/v1/ingest`, {
+    method: "POST",
+    headers: {
+      apikey: ANON,
+      Authorization: `Bearer ${ANON}`,
+      "x-ingest-token": TOKEN,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ dataset: "refresh_variants" }),
+  })
+);
 const text = await res.text();
 if (!res.ok) {
   console.error(`refresh-variants: FAILED HTTP ${res.status} — ${text.slice(0, 300)}`);

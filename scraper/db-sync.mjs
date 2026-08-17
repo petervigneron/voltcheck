@@ -15,6 +15,7 @@
 // way — this script adds persistence, it replaces nothing.
 import { readFile, stat } from "node:fs/promises";
 import { markTrimSuspects } from "./lib/trim-suspect.mjs";
+import { fetchWithRetry } from "./lib/retry.mjs";
 
 // Minimal .env parser — launchd jobs carry no shell environment.
 async function loadEnv(url) {
@@ -130,11 +131,6 @@ for (const [domain, rows] of byDomain) {
 chunks.push(cur);
 cur.completeDomains.push(...completeSet); // row-less complete domains: harmless, see above
 
-// Statuses worth a second attempt: gateway/origin blips and rate limits.
-// Deliberately excludes 4xx like 401/413 — a bad token or an oversized body
-// fails the same way every time, and retrying only delays the real error.
-const TRANSIENT = new Set([429, 500, 502, 503, 504, 520, 521, 522, 523, 524]);
-
 // Both modes send the RPC's own parameter shape. The gateway used to get a
 // friendlier {rows, source, ...} body and translate it — which meant parsing
 // 7-8MB of JSON inside a Deno isolate and re-serializing it, ~100MB+ of
@@ -176,40 +172,19 @@ console.error(
 const totals = { seen: 0, new: 0, price_changed: 0, delisted: 0, relisted: 0 };
 for (const [i, chunk] of chunks.entries()) {
   // Retry transient failures — and give a crashed database time to get up.
-  // The 2026-08-16 diagnosis (postgres_logs, three failed nights): the "520
-  // blip" was never Cloudflare. The sync's row churn — every VIN's full row
-  // rewritten every night — walks the Nano instance into its memory ceiling
-  // after ~4-6 chunks regardless of chunk composition; the OOM killer takes
-  // Postgres down mid-statement ("database system was not properly shut
-  // down; automatic recovery in progress"), and recovery holds the door
-  // shut for ~2 minutes of 500/503/520. The first retry schedule here
-  // (10/20/30s) spent all three retries inside that window, so the night
-  // failed anyway. These waits outlast a recovery cycle — and the same
-  // chunk then passes, because a fresh post-crash backend's per-row memory
-  // budget starts over (observed: the post-crash replay cleared 4 more
-  // chunks before pressure built again).
-  // A dying database also resets connections mid-request, which fetch()
-  // surfaces as a thrown error rather than a status — treat those as
-  // transient too (status 0 below); before this, one reset crashed the
-  // whole script as an unhandled rejection.
+  // The 2026-08-16 diagnosis (postgres_logs, three failed nights) that sized
+  // the waits lives in lib/retry.mjs, where the whole pipeline now shares
+  // one ladder instead of per-script copies: the "520 blip" was never
+  // Cloudflare, it was the Nano instance OOMing under the sync's row churn,
+  // and the same chunk passes after a wait that outlasts the ~2-minute
+  // recovery cycle (observed: the post-crash replay cleared 4 more chunks
+  // before pressure built again).
   // Replay is safe: ingest_listings upserts by VIN and derives delisting from
   // the payload it is handed, so re-sending a chunk converges to the same
   // state (it only costs an extra run id).
-  const attempt = async () => {
-    try {
-      return await send(chunk.rows, chunk.completeDomains);
-    } catch (e) {
-      return { ok: false, status: 0, text: async () => String(e?.cause?.code ?? e?.message ?? e) };
-    }
-  };
-  let res = await attempt();
-  for (const waitS of [30, 120, 240]) {
-    if (res.ok || !(res.status === 0 || TRANSIENT.has(res.status))) break;
-    const label = res.status === 0 ? `network error (${(await res.text()).slice(0, 120)})` : `HTTP ${res.status}`;
-    console.error(`db-sync: chunk ${i + 1}/${chunks.length} ${label} — retrying in ${waitS}s`);
-    await new Promise((r) => setTimeout(r, waitS * 1000));
-    res = await attempt();
-  }
+  const res = await fetchWithRetry(`db-sync: chunk ${i + 1}/${chunks.length}`, () =>
+    send(chunk.rows, chunk.completeDomains)
+  );
   if (!res.ok) {
     // A failed chunk leaves its domains un-synced and un-delisted — stale for
     // a night, never wrongly removed. Exit hard so the failure is visible.

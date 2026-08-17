@@ -5,6 +5,7 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { isKnownMake } from "./lib/makes.mjs";
 import { EV_MODEL_RE, EV_ONLY_WMIS } from "./lib/ev.mjs";
+import { fetchWithRetry } from "./lib/retry.mjs";
 
 const src = new URL("./out/listings.json", import.meta.url);
 const listings = JSON.parse(await readFile(src, "utf-8"));
@@ -75,13 +76,23 @@ function normDrive(s) {
 const byVin = new Map();
 for (let i = 0; i < needs.length; i += 50) {
   const batch = needs.slice(i, i + 50).map((l) => l.vin);
-  const res = await fetch("https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValuesBatch/", {
-    method: "POST",
-    headers: { "content-type": "application/x-www-form-urlencoded" },
-    body: `DATA=${encodeURIComponent(batch.join(";"))}&format=json`,
-  });
+  // Short waits, unlike the database's ladder: vPIC has no 2-minute recovery
+  // cycle to outlast, and there are hundreds of batches — a full outage must
+  // degrade to "these VINs stay unenriched tonight" quickly, not stall for
+  // hours. fetchWithRetry also turns a thrown fetch (connection reset) into
+  // a skipped batch instead of an unhandled rejection killing the run.
+  const res = await fetchWithRetry(
+    `vPIC batch ${i / 50}`,
+    () =>
+      fetch("https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValuesBatch/", {
+        method: "POST",
+        headers: { "content-type": "application/x-www-form-urlencoded" },
+        body: `DATA=${encodeURIComponent(batch.join(";"))}&format=json`,
+      }),
+    { waits: [5, 15] }
+  );
   if (!res.ok) {
-    console.error(`vPIC batch ${i / 50} failed: HTTP ${res.status}`);
+    console.error(`vPIC batch ${i / 50} failed: ${res.status === 0 ? await res.text() : `HTTP ${res.status}`}`);
     continue;
   }
   const json = await res.json();
