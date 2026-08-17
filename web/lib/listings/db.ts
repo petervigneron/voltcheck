@@ -19,8 +19,27 @@ import type { Listing } from "./types";
 
 // PostgREST caps any response at 1000 rows regardless of the range asked for —
 // asking for more returns 1000 and no error, so a bigger page size buys nothing
-// and hides the shortfall.
-const PAGE = 1000;
+// and hides the shortfall. But the binding limit is smaller than that and comes
+// from our side: Next refuses to store a fetch-cache entry over 2 MB
+// (node_modules/next/dist/server/lib/incremental-cache/index.js, "items over
+// 2MB can not be cached"). A full page of the W bucket — BMW/Mercedes/Audi/VW,
+// the fattest payloads at ~1.07 kB a row — measured 2,402,435 bytes as an entry
+// and silently stopped being cached once inventory grew enough to fill those
+// pages. Every other bucket was still inside the limit, several of them only
+// just: at 1000 rows K and Y sat within 20% of it.
+//
+// Uncached is not merely slower: /api/index renders six shards off this same
+// walk and relies on the data cache to make that one database read an hour.
+// An over-limit page is refetched by every shard, and because the walk is
+// keyset-paginated W's nine full pages come back one after another — nine
+// sequential uncached round trips on the critical path of every revalidation,
+// against the free-plan instance. Observed locally at 43-109 s per shard.
+//
+// 500 puts the worst bucket at ~1.2 MB of entry, 43% under the ceiling, with
+// room for payloads to grow by three quarters before it matters. It costs
+// ~175 requests per walk instead of ~108 — but they are cacheable, so the
+// database sees them once an hour instead of the fat ones six times.
+const PAGE = 500;
 const REVALIDATE_SECONDS = 3600;
 
 // The VIN space, split so the pages can be walked in parallel. Buckets that hold
@@ -110,7 +129,21 @@ export async function fetchListingsFromDb(): Promise<Listing[] | null> {
         next: { revalidate: REVALIDATE_SECONDS },
       });
       if (!res.ok) throw new Error(`PostgREST ${res.status}`);
-      const page = (await res.json()) as FeedRow[];
+      const body = await res.text();
+      // Crossing the cache ceiling is silent — the page just stops being
+      // stored and every shard refetches it, which is how the last one went
+      // unnoticed until a shard render was taking a minute and a half. Next
+      // measures the entry JSON.stringify'd, which escapes every quote in the
+      // body and comes out ~1.32x its size (measured: 500 W rows are 907,932
+      // bytes of body, 1000 were the 2,402,435-byte entry Next rejected), so
+      // the ceiling lands at ~1.59 MB of body. Warn at 1.3 MB, four fifths of
+      // the way there and still in time to drop PAGE.
+      if (body.length > 1_300_000) {
+        console.warn(
+          `[listings] feed page ${lo}-${hi ?? "end"} is ${body.length} bytes — close to the 2MB fetch-cache ceiling; lower PAGE (currently ${PAGE})`
+        );
+      }
+      const page = JSON.parse(body) as FeedRow[];
       rows.push(...page);
       if (page.length < PAGE) return rows;
       after = page[page.length - 1].vin;
