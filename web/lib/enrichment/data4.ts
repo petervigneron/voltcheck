@@ -548,7 +548,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
       testedRangeMi: f(226, "tested", "high", "70-mph (InsideEVs, 2020): 226 mi; 75-mph (C&D): 220"),
     },
     charging: {
-      dcFastCharging: f("optional", "mfr", "high", "RPO code CBT, $750 standalone option, optional on BOTH trims through MY2020"),
+      dcFastCharging: f("optional", "mfr", "high", "$750 factory option; fitted cars have two extra pins under the J1772 socket"),
       portStandard: f("CCS1", "mfr", "high", "Only when the CBT option is present; without it the car is AC-only"),
     },
     thermal: { heatPump: f("none", "mfr") },

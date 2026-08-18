@@ -19,6 +19,7 @@ import { PriceScatter } from "@/components/PriceScatter";
 import { PriceSparkline } from "@/components/PriceSparkline";
 import { BatteryRisk } from "@/components/BatteryRisk";
 import { batteryRisk } from "@/lib/nhtsa/battery";
+import { batteryWarranty } from "@/lib/listings/warranty";
 
 // ISR: each listing page renders once, then serves from the CDN for an hour —
 // same cadence as the data underneath it (nightly sync, recheck, price audit).
@@ -66,7 +67,13 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
   const gallery = listing.images?.length ? listing.images : listing.imageUrl ? [listing.imageUrl] : [];
   // Recent real-world sales of the same make/model — transaction prices.
   // The VIN goes with it so sales of this car's own version sort first.
-  const recentSales = await fetchRecentSales(listing.make, listing.model, listing.vin);
+  const recentSales = await fetchRecentSales(
+    listing.make,
+    listing.model,
+    listing.vin,
+    listing.year,
+    listing.mileage
+  );
   // Same title records as the list above, but fitted to this car's exact
   // variant and odometer rather than eyeballed across model years.
   // Whether we'll print the dealer's trim as a fact. Corpus-free: the
@@ -279,7 +286,7 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
 
           {e.row && (
             <Section title={`${listing.model}${claim.assert && displayTrim(listing) ? ` ${claim.trim}` : ""}`}>
-              <EnrichmentFacts row={e.row} />
+              <EnrichmentFacts row={e.row} warranty={batteryWarranty(e.row, listing)} />
             </Section>
           )}
 

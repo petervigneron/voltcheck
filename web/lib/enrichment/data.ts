@@ -152,6 +152,18 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
   // and pos-10 note carried over to those rows. ──
 
   // ── Chevrolet Bolt — DC fast charging was a $750 option ──
+  //
+  // The 21V560 recall notes that used to sit in these rows are gone
+  // (2026-08-17). They said "most 2017–19 cars got new battery modules" and
+  // "most 2020–22 cars kept their original packs" — true of the cohort, and
+  // unusable by someone looking at one car, because whether THIS one was
+  // remediated is not derivable: NHTSA publishes recalls by vehicle but
+  // completion only per VIN behind GM's owner login, and `resolvedBy:
+  // "campaign_check"` names a `campaignCheck` field no scraper has ever
+  // populated, so the note could never retire itself either. The version a
+  // shopper can act on already exists, in buildChecklist: which 21V560
+  // program number this VIN got, and what each one means. Don't restore
+  // these without a per-VIN source behind them.
   {
     // 2020 split out to data4.ts (2026-08-14): its EPA rating is 259, and this
     // row's single 238 value was undershooting every 2020 car by 21 miles.
@@ -161,8 +173,8 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     modelYears: [2017, 2019],
     range: { epaRangeMi: f(238, "mfr", "high", "MY2017–19, EPA", "https://www.fueleconomy.gov") },
     charging: {
-      dcFastCharging: f("optional", "mfr", "high", "RPO code CBT, $750 standalone option, optional on BOTH trims through MY2020"),
-      portStandard: f("CCS1", "mfr", "high", "Only when the CBT option is present; without it the car is AC-only"),
+      dcFastCharging: f("optional", "mfr", "high", "$750 factory option; fitted cars have two extra pins under the J1772 socket"),
+      portStandard: f("CCS1", "mfr", "high", "Only on cars with the fast-charge option; without it, AC charging only"),
     },
     thermal: { heatPump: f("none", "mfr") },
     warranty: {
@@ -175,11 +187,6 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
         headline: "DC fast charging: $750 factory option, not on every car",
         severity: "trap",
         resolvedBy: "photo_dcfc",
-      },
-      {
-        headline: "Most 2017–19 cars got new battery modules under recall 21V560",
-        severity: "info",
-        resolvedBy: "campaign_check",
       },
       {
         headline: "No capacity floor on the battery warranty",
@@ -195,7 +202,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     trim: "LT",
     range: { epaRangeMi: f(259, "mfr", "high", "EPA figure", "https://www.fueleconomy.gov") },
     charging: {
-      dcFastCharging: f("optional", "mfr", "high", "RPO CBT still optional on LT in MY2021; standard on Premier"),
+      dcFastCharging: f("optional", "mfr", "high", "A factory option on the LT this year; standard on the Premier"),
     },
     thermal: { heatPump: f("none", "mfr") },
     warranty: { batteryYears: f(8, "mfr"), batteryMiles: f(100_000, "mfr"), batteryTransfers: f(true, "mfr", "high", "GM booklet: \u201ctransferable at no cost to any subsequent person(s)\u201d (verified via extracted booklet text)") },
@@ -204,11 +211,6 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
         headline: "DC fast charging: optional on LT this year",
         severity: "trap",
         resolvedBy: "photo_dcfc",
-      },
-      {
-        headline: "Most 2020–22 cars kept their original packs (21V560)",
-        severity: "info",
-        resolvedBy: "campaign_check",
       },
     ],
   },
@@ -233,11 +235,6 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     thermal: { heatPump: f("none", "mfr") },
     warranty: { batteryYears: f(8, "mfr"), batteryMiles: f(100_000, "mfr"), batteryTransfers: f(true, "mfr", "high", "GM booklet: \u201ctransferable at no cost to any subsequent person(s)\u201d (verified via extracted booklet text)") },
     buyerNotes: [
-      {
-        headline: "Most 2020–22 cars kept their original packs (21V560)",
-        severity: "info",
-        resolvedBy: "campaign_check",
-      },
     ],
   },
 

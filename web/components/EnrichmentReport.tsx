@@ -1,4 +1,5 @@
 import type { EnrichmentRow, HeatPump } from "@/lib/types";
+import type { BatteryWarranty } from "@/lib/listings/warranty";
 import { FactRow } from "./FactRow";
 
 export const HEAT_PUMP_LABEL: Record<HeatPump, string> = {
@@ -32,7 +33,19 @@ export function Section({ title, children }: { title: string; children: React.Re
   );
 }
 
-export function EnrichmentFacts({ row }: { row: EnrichmentRow }) {
+export function EnrichmentFacts({
+  row,
+  warranty,
+}: {
+  row: EnrichmentRow;
+  /** This car's own battery-warranty standing, when it can be settled.
+   *  Absent on the candidate rows, where there is no single car to settle. */
+  warranty?: BatteryWarranty;
+}) {
+  // A dead warranty has nothing to transfer to a second owner and no capacity
+  // floor to hold the pack to, so those rows go with it rather than sitting
+  // underneath reading "Yes".
+  const expired = warranty?.state === "expired";
   return (
     <div>
       {row.buyerNotes && row.buyerNotes.length > 0 && (
@@ -73,15 +86,41 @@ export function EnrichmentFacts({ row }: { row: EnrichmentRow }) {
           <FactRow label="Supercharger access" fact={row.charging?.superchargerAccess} />
 
           <h3 className="mt-5 text-xs font-semibold text-zinc-400">Warranty</h3>
-          <FactRow
-            label="HV battery coverage"
-            fact={row.warranty?.batteryYears}
-            format={(v) => `${v} yr / ${row.warranty?.batteryMiles?.value.toLocaleString() ?? "—"} mi`}
-          />
-          <FactRow label="Capacity floor" fact={row.warranty?.sohFloorPct} format={(v) => `${v}% SOH`} />
-          {/* The label already says "transfers", so the answer is the answer. */}
-          <FactRow label="Battery coverage transfers" fact={row.warranty?.batteryTransfers} format={(v) => (v ? "Yes" : "No")} />
-          <FactRow label="Powertrain coverage transfers" fact={row.warranty?.powertrainTransfers} format={(v) => (v ? "Yes" : "No")} />
+          {/* What the shopper is buying is one car's remaining coverage, not
+              the terms it was sold under. Where this car's own odometer and
+              model year settle it (lib/listings/warranty.ts) the answer takes
+              the row and the terms move to the tooltip; where they do not, the
+              terms are the honest answer and stand as before. */}
+          {warranty && warranty.state !== "unknown" ? (
+            <FactRow
+              label="HV battery coverage"
+              fact={{
+                // Provenance rides on whichever term settled it — a warranty
+                // can expire on mileage alone, on a row that carries a mileage
+                // limit and no year term, so neither may be assumed present.
+                ...(row.warranty?.batteryYears ?? row.warranty?.batteryMiles),
+                value: warranty.label,
+                note: warranty.why,
+                source: (row.warranty?.batteryYears ?? row.warranty?.batteryMiles)?.source ?? "mfr",
+                asOf: (row.warranty?.batteryYears ?? row.warranty?.batteryMiles)?.asOf ?? "—",
+                confidence: "high",
+              }}
+            />
+          ) : (
+            <FactRow
+              label="HV battery coverage"
+              fact={row.warranty?.batteryYears}
+              format={(v) => `${v} yr / ${row.warranty?.batteryMiles?.value.toLocaleString() ?? "—"} mi`}
+            />
+          )}
+          {!expired && (
+            <>
+              <FactRow label="Capacity floor" fact={row.warranty?.sohFloorPct} format={(v) => `${v}% SOH`} />
+              {/* The label already says "transfers", so the answer is the answer. */}
+              <FactRow label="Battery coverage transfers" fact={row.warranty?.batteryTransfers} format={(v) => (v ? "Yes" : "No")} />
+              <FactRow label="Powertrain coverage transfers" fact={row.warranty?.powertrainTransfers} format={(v) => (v ? "Yes" : "No")} />
+            </>
+          )}
           <FactRow label="Extended coverage" fact={row.warranty?.extendedCoverage} />
         </div>
       </div>
