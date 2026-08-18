@@ -137,6 +137,19 @@ function anchoredSubseq(a: string[], b: string[]): boolean {
 
 const NOISE = new Set(["ELECTRIC", "EV", "BEV", "PHEV", "RECHARGE", "PURE", "PLUG", "HYBRID"]);
 
+// Certified but never retailed: configurations the EPA rates that no shopper
+// can buy, which therefore must not widen a model's variant space. The one
+// known case is the Motional "Ioniq 5 Robo taxi" (168 mi, MY2025-26, verified
+// in epa_vehicle_variants 2026-08-17) — left in, that single row was the only
+// sub-200-mile Ioniq 5, and it put "+ 200+ mi range" back on the Ioniq 5 rail
+// (lib/listings/quickRail.ts) with hiding ~700 range-unresolved cars as the
+// button's only possible effect: the exact false filter this catalogue exists
+// to remove. Police packages are deliberately NOT excluded — ex-fleet police
+// cars do reach dealer lots, and the feed already carries "Blazer EV Police
+// Package" as a model of its own. Add here only with the EPA string in hand
+// and a rail failure it reproduces.
+const FLEET_ONLY = /\bROBO ?TAXI\b/i;
+
 // Feed spellings the token rules can't bridge, applied before tokenizing.
 // Each entry is a claim checked against both sides of the join; add here only
 // with the EPA string in hand.
@@ -190,6 +203,7 @@ export function buildVariantDigest(
   // the EPA files "Leaf" and "LEAF" as two baseModels for one car.
   const byMake = new Map<string, Map<string, BaseGroup>>();
   for (const r of epaRows) {
+    if (FLEET_ONLY.test(r.model)) continue;
     const mk = normMake(r.make);
     const baseToks = tokenize(r.base_model ?? r.model);
     const baseKey = baseToks.join(" ");

@@ -3,6 +3,7 @@
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { REMOVABLE, QUICK_TOGGLES, BODY_TYPES, describeFilter, dropSpecFilters, splitValues, toggleValue } from "@/lib/filters";
+import { quickToggleState, type QuickCount } from "@/lib/listings/quickRail";
 import { pushUrl } from "@/lib/pushUrl";
 
 const CELL = "border-r-[3px] border-b-[3px] border-ink";
@@ -429,8 +430,9 @@ export function SpecFacets({ facets }: { facets: FacetGroup[] }) {
 // exists but the city is unknown); undefined means no origin at all. `count` is
 // how many cars the active filters leave; undefined until the index lands,
 // because "0 cars" while loading is a wrong answer, not a pending one.
-// `quickCounts` is what each toggle would leave and out of how many, keyed
-// "key=value" — also undefined until the index lands, and for the same reason.
+// `quickCounts` is what each toggle would leave and out of how many (plus the
+// catalogue verdict for variant toggles), keyed "key=value" — also undefined
+// until the index lands, and for the same reason.
 export function FilterRail({
   makesModels,
   inferred,
@@ -440,7 +442,7 @@ export function FilterRail({
   makesModels: Record<string, string[]>;
   inferred?: string;
   count?: number;
-  quickCounts?: Record<string, { n: number; of: number }>;
+  quickCounts?: Record<string, QuickCount>;
 }) {
   const sp = useSearchParams();
   const [open, setOpen] = useState(false);
@@ -466,66 +468,28 @@ export function FilterRail({
   const models = make ? (makesModels[make] ?? []) : [];
   const makes = Object.keys(makesModels).sort();
 
-  // A toggle earns its place by dividing the cars it can actually judge — but
-  // "enough" depends on what the toggle is asking about (lib/filters.ts axis).
+  // Which toggles show, and in what state, is quickRail.ts's call — variant
+  // toggles are catalogue-first (offer what the models COME as, per the EPA's
+  // certification records: dead when the version exists but none are listed,
+  // absent when it never existed; inventory inference only where the
+  // catalogue is silent), market toggles must divide this week's judgeable
+  // listings. The full reasoning and the measurements live with the rule.
   //
-  // Three ways a toggle fails to divide, and the first pass caught only one:
+  // Two rules sit above it because they are about this rail, not the data:
   //
-  //   nothing   "+ AWD" on a Chevrolet Bolt — never built that way, so the
-  //             button's only outcome is an empty page.
-  //   everything  "+ SUVs" on a Bolt EUV, where all 106 are SUVs.
-  //   only the unknowns  the subtle one. These toggles admit only cars we can
-  //             verifiably classify, so a car we know nothing about fails all
-  //             of them. On an F-150 Lightning "+ 200+ mi range" excludes 19
-  //             of 357 and NOT ONE is under 200 miles — every Lightning is
-  //             230, 240, 300 or 320, and the 19 are trucks whose range we
-  //             never resolved. Shown, it reads as a range filter and acts as
-  //             a "do we have data" filter: matching the wrong thing.
-  //
-  // Hence `of` counts only cars with an answer on that axis (QUICK_KNOWS), and
-  // the bar below is a share of the ones that genuinely fail.
-  //
-  // Where the two axes part company is thin stock. A VARIANT toggle asks what
-  // the car is, so one real counter-example is the whole argument: Volvo sold
-  // a single-motor EX30 alongside the twin-motor, and 10 rear-drive cars in
-  // 285 is proof the choice exists, not noise to round away. A MARKET toggle
-  // asks what this week's listings hold, where two cars over 60k miles in
-  // 4,603 Lyriqs really is noise, so it has to clear 5%.
-  //
-  // Measured over the 90 models with 50+ cars, 450 toggle slots: 116 survive.
-  // A flat 5% on everything left 110 but dropped the EX30 case; no floor at
-  // all left 155 and kept the Lyriq noise.
-  //
-  // Still inventory-shaped, and that is now the LAST gap, not a data problem:
-  // the catalogue exists. lib/listings/variantCatalog.ts joins the EPA's own
-  // certification data (epa_vehicle_variants, migration 0037) to the feed's
-  // model strings and ships a per-model digest in the first-paint payload
-  // (FirstPaintData.variants) — drivetrains, body, per-year rated ranges, for
-  // all 88 of the 50+ car models (measured 2026-08-17). The catalogue-first
-  // rule this enables: a VARIANT toggle consults the digest before the
-  // inventory — offer "+ AWD" iff the catalogued models in the results
-  // include an AWD version (even with zero in stock today, rendered dead the
-  // way SpecFacets deads an exhausted value: the choice exists, none listed
-  // right now), and never offer it when the catalogue says single-drive.
-  // Inventory inference stays ONLY for models the digest omits — absence
-  // means unknown, never "no such version" (the EPA file has measured holes:
-  // MY2023 Ioniq 5, everything over 8,500 lb GVWR). Years flagged e:1 are
-  // enrichment-sourced and non-exhaustive — they may add a choice, never
-  // remove one. Not wired here yet; the shipped digest is the prerequisite.
+  //   - A toggle that is currently ON always renders live, whatever it
+  //     counts: the only way to switch it off is for it to be there.
+  //   - Until an answer lands (index, or the pristine payload) quickCounts is
+  //     undefined and every toggle shows, live — a rail stripped bare while
+  //     loading is a wrong answer, not a pending one. If the payload never
+  //     lands, the catalogue verdicts are simply absent for the session and
+  //     the variant rule degrades to inventory inference.
   //
   // Nothing is lost when a toggle is dropped: All filters still sets every one
-  // of these keys. The rail is shortcuts, not capability. And measuring the
-  // share of FAILS is what keeps the rare find — the lone sub-$30k Taycan
-  // passes while 288 peers fail, so that button stays.
-  //
-  // A toggle that is currently ON always stays, whatever it counts: the only
-  // way to switch it off is for it to be there.
-  const MARKET_SHARE = 0.95;
-  const quick = QUICK_TOGGLES.map((t) => ({ ...t, on: get(t.key) === t.value })).filter((t) => {
-    if (t.on || !quickCounts) return true;
-    const c = quickCounts[`${t.key}=${t.value}`];
-    if (!c || c.n === 0) return false;
-    return t.axis === "variant" ? c.n < c.of : c.n < c.of * MARKET_SHARE;
+  // of these keys. The rail is shortcuts, not capability.
+  const quick = QUICK_TOGGLES.map((t) => ({ ...t, on: get(t.key) === t.value })).flatMap((t) => {
+    const state = t.on || !quickCounts ? "live" : quickToggleState(t.axis, quickCounts[`${t.key}=${t.value}`]);
+    return state === "hidden" ? [] : [{ ...t, dead: state === "dead" }];
   });
 
   const quickOn = new Set(quick.filter((t) => t.on).map((t) => t.key));
@@ -588,14 +552,27 @@ export function FilterRail({
           </button>
         )}
 
+        {/* A dead toggle is a version these models come in with none listed
+            right now — kept visible and unpickable, the way SpecFacets deads
+            an exhausted value, because the choice existing is real information
+            and a click into an empty page is not. */}
         {quick.map((t) => (
           <button
             key={t.key}
             type="button"
             aria-pressed={t.on}
-            title={t.on ? `Remove: ${t.label}` : `Only ${t.label.toLowerCase()}`}
+            disabled={t.dead}
+            title={
+              t.dead
+                ? `No ${t.label.toLowerCase()} in stock right now`
+                : t.on
+                  ? `Remove: ${t.label}`
+                  : `Only ${t.label.toLowerCase()}`
+            }
             onClick={() => apply({ [t.key]: t.on ? "" : t.value })}
-            className={`${BLOCK} ${HOVER} ${t.on ? "bg-cobalt text-paper" : "bg-paper text-ink"}`}
+            className={`${BLOCK} ${
+              t.dead ? "bg-paper text-ink/30" : `${HOVER} ${t.on ? "bg-cobalt text-paper" : "bg-paper text-ink"}`
+            }`}
           >
             <span aria-hidden="true">{t.on ? "✓" : "+"}</span>
             {t.label}

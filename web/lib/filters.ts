@@ -31,28 +31,32 @@ export type RemovableFilter = (typeof REMOVABLE)[number];
  * glance. A different value for the same key set from the full panel shows as
  * a normal chip instead.
  *
- * `axis` decides how hard a toggle has to work to stay on the rail
- * (components/Filters.tsx), and the two kinds ask genuinely different
+ * `axis` decides how a toggle earns its place on the rail
+ * (lib/listings/quickRail.ts), and the two kinds ask genuinely different
  * questions:
  *
  *   variant  what the car IS. Drivetrain, body, the range its version was
  *            rated at — things the maker decided once and a shopper picks
- *            between. Any real example of the other kind justifies the
- *            button: Volvo sold the EX30 as a single-motor RWD as well as a
+ *            between, so the variant catalogue (the EPA's certification
+ *            records), not this week's stock, decides whether the choice
+ *            exists: Volvo sold the EX30 as a single-motor RWD as well as a
  *            twin-motor AWD, so "+ AWD" is a real choice on an EX30 search
- *            even though today only 10 of 285 in stock are rear-drive.
- *            Thin stock is not the same as no such car.
+ *            even the week zero rear-drives are listed — and "+ AWD" on a
+ *            Chevrolet Bolt is not a choice at all.
  *   market   what today's listings happen to hold. Mileage and price are not
  *            properties of the model, they are properties of the cars for
  *            sale this week, so these have to clear a share to be worth a
  *            click — two cars over 60k miles in 4,603 Lyriqs is not a filter.
  */
-export const QUICK_TOGGLES: {
-  key: RemovableFilter;
-  value: string;
-  label: string;
-  axis: "variant" | "market";
-}[] = [
+/** The variant-axis toggle keys — the ones the variant catalogue can answer
+ *  for (lib/listings/quickRail.ts). A type of its own so `axis: "variant"`
+ *  narrows `key` to what offerVariantToggle accepts. */
+export type VariantToggleKey = Extract<RemovableFilter, "body" | "minRange" | "drive">;
+
+export const QUICK_TOGGLES: (
+  | { key: VariantToggleKey; value: string; label: string; axis: "variant" }
+  | { key: RemovableFilter; value: string; label: string; axis: "market" }
+)[] = [
   { key: "body", value: "suv", label: "SUVs", axis: "variant" },
   { key: "minRange", value: "200", label: "200+ mi range", axis: "variant" },
   { key: "maxMiles", value: "60000", label: "Under 60k miles", axis: "market" },

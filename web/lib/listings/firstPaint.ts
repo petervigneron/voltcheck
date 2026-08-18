@@ -2,6 +2,7 @@ import { QUICK_TOGGLES } from "@/lib/filters";
 import { featuredScore, type CardRow } from "./card";
 import { QUICK_KNOWS, buildTests } from "./match";
 import { packIndex, unpackIndex, type PackedIndex } from "./pack";
+import { offerVariantToggle, type QuickCount } from "./quickRail";
 import { modelTally, type ModelCount } from "./tally";
 import type { VariantDigest } from "./variantCatalog";
 
@@ -45,9 +46,16 @@ export interface FirstPaint {
   /** What each quick toggle would leave against no other filters, and out of
    *  how many it can judge, keyed "key=value". `of` counts only cars with an
    *  answer on that axis (match.ts QUICK_KNOWS), never the whole feed — see
-   *  components/Filters.tsx for why an unknown must not read as a division.
-   *  This payload only ever describes the unfiltered landing page. */
-  quick: Record<string, { n: number; of: number }>;
+   *  lib/listings/quickRail.ts for why an unknown must not read as a
+   *  division. Variant-axis entries also carry the catalogue verdict `offer`
+   *  when the digest below was readable — computed server-side because the
+   *  verdict's inventory fallback needs the whole feed, which the pristine
+   *  client doesn't have yet. `offer`/`all` joined the v3 shape without a
+   *  bump: production still served v2 when they landed (checked 2026-08-17),
+   *  so no v3 body without them was ever cached — and even one of those would
+   *  only fall back to inventory inference, never misread. This payload only
+   *  ever describes the unfiltered landing page. */
+  quick: Record<string, QuickCount>;
   popular: ModelCount[];
   suggestions: { label: string; count: number }[];
   makesModels: Record<string, string[]>;
@@ -77,7 +85,7 @@ export function buildFirstPaint(rows: CardRow[], variants?: VariantDigest): Firs
     k: featuredScore(r, counts.get(`${r.make} ${r.model}`.toLowerCase()) ?? 0, day),
   }));
   scored.sort((a, b) => b.k - a.k);
-  const quick: Record<string, { n: number; of: number }> = {};
+  const quick: Record<string, QuickCount> = {};
   for (const t of QUICK_TOGGLES) {
     const test = buildTests((k) => (k === t.key ? t.value : ""))[t.key]!;
     const knows = QUICK_KNOWS[t.key];
@@ -88,7 +96,11 @@ export function buildFirstPaint(rows: CardRow[], variants?: VariantDigest): Firs
       of++;
       if (test(r)) n++;
     }
-    quick[`${t.key}=${t.value}`] = { n, of };
+    const entry: QuickCount = { n, of, all: rows.length };
+    // The catalogue verdict for the pristine state (quickRail.ts). No digest →
+    // no verdict, and the rail falls back to inventory inference.
+    if (t.axis === "variant" && variants) entry.offer = offerVariantToggle(t.key, t.value, rows, variants);
+    quick[`${t.key}=${t.value}`] = entry;
   }
   return {
     v: 3,
@@ -106,7 +118,7 @@ export function buildFirstPaint(rows: CardRow[], variants?: VariantDigest): Firs
 export interface FirstPaintData {
   day: number;
   total: number;
-  quick: Record<string, { n: number; of: number }>;
+  quick: Record<string, QuickCount>;
   popular: ModelCount[];
   suggestions: { label: string; count: number }[];
   makesModels: Record<string, string[]>;

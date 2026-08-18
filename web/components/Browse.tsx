@@ -9,6 +9,7 @@ import { SPEC_FACETS, FACET_CAP, QUICK_TOGGLES, describeFilter, dropSpecFilters 
 import { featuredScore, type CardRow } from "@/lib/listings/card";
 import { FIRST_PAGE_SIZE } from "@/lib/listings/firstPaint";
 import { FACET_OF, QUICK_KNOWS, activeFilterKeys, buildTests, rowMatches } from "@/lib/listings/match";
+import { offerVariantToggle, type QuickCount } from "@/lib/listings/quickRail";
 import { modelTally } from "@/lib/listings/tally";
 import { firstPaintWonRace, useCardIndex, useFirstPaint } from "@/lib/listings/useCardIndex";
 import { milesBetween } from "@/lib/geo";
@@ -287,9 +288,18 @@ export function Browse() {
     // `of` deliberately excludes cars with no answer on that axis
     // (QUICK_KNOWS). A toggle that "excludes" 19 Lightnings only because their
     // range was never resolved has divided nothing about range, and the rail
-    // must not read that as the button doing work. The rail turns n/of into
-    // the show-or-hide call (components/Filters.tsx).
-    const quickCounts: Record<string, { n: number; of: number }> = {};
+    // must not read that as the button doing work.
+    //
+    // Variant-axis entries also carry the catalogue verdict (quickRail.ts):
+    // does a matching version of the models in this pool exist at all, per the
+    // EPA's certification records? The digest rides in the first-paint payload
+    // — same non-dependency discipline as `day` above: if it lands after the
+    // index already painted, the next interaction picks it up, and until then
+    // (or forever, if the payload failed) `offer` stays absent and the rail
+    // falls back to inventory inference. The rail turns n/of/offer into the
+    // live/dead/hidden call (quickRail.ts quickToggleState).
+    const digest = first?.variants;
+    const quickCounts: Record<string, QuickCount> = {};
     for (const t of QUICK_TOGGLES) {
       const test = buildTests((k) => (k === t.key ? t.value : ""))[t.key]!;
       const knows = QUICK_KNOWS[t.key];
@@ -303,7 +313,9 @@ export function Browse() {
         of++;
         if (test(r)) n++;
       }
-      quickCounts[`${t.key}=${t.value}`] = { n, of };
+      const entry: QuickCount = { n, of, all: pool.length };
+      if (t.axis === "variant" && digest) entry.offer = offerVariantToggle(t.key, t.value, pool, digest);
+      quickCounts[`${t.key}=${t.value}`] = entry;
     }
 
     // "Which version of this car?" is only a question once there's one car in
