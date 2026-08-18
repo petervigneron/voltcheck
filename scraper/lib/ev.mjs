@@ -30,8 +30,19 @@ export const EV_MODEL_RE = new RegExp(
   "i"
 );
 
-// Tesla, Rivian, Lucid, Polestar build only EVs — WMI alone settles those.
-export const EV_ONLY_WMIS = new Set(["5YJ", "7SA", "7G2", "LRW", "XP7", "7FC", "7PD", "50E", "LPS", "YSP"]);
+// Makers whose every car is a BEV, so the WMI alone settles it. Membership
+// here is load-bearing in a way that is easy to miss: vpic-enrich's
+// fuelTextOnly guard deliberately SKIPS vPIC verification for these VINs, so
+// a wrong entry ships a non-EV at high confidence with nothing downstream to
+// catch it.
+//
+// LPS was wrong and was removed 2026-08-18. Polestar used it for the BEV
+// Polestar 2 AND the Polestar 1, which is a plug-in hybrid — four 2021
+// Polestar 1s were live on the site as EVs because of it. Polestar 2/3/4 lose
+// nothing: they match EV_MODEL_RE by nameplate, so they arrive as
+// "name_match" and vPIC promotes them, while a Polestar 1 gets refuted. The
+// slower path is the correct one when the VIN genuinely does not settle it.
+export const EV_ONLY_WMIS = new Set(["5YJ", "7SA", "7G2", "LRW", "XP7", "7FC", "7PD", "50E", "YSP"]);
 
 const text = (v) => (v == null ? "" : typeof v === "string" ? v : JSON.stringify(v));
 
