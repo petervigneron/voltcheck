@@ -31,7 +31,15 @@ export const EV_MODEL_RE = new RegExp(
 );
 
 // Tesla, Rivian, Lucid, Polestar build only EVs — WMI alone settles those.
-export const EV_ONLY_WMIS = new Set(["5YJ", "7SA", "7G2", "LRW", "XP7", "7FC", "7PD", "50E", "LPS", "YSP"]);
+//
+// 7UU is Lucid's SECOND WMI and was missing here: the Air is 50E but every
+// Gravity is 7UU, so a used Gravity on a dealer site fell through to the
+// name-match path and only landed if the listing said "Lucid Gravity" rather
+// than, say, "Gravity Grand Touring". Verified per-VIN against vPIC rather than
+// inferred — 7UUG1TJK2VA046654 decodes Make LUCID, Manufacturer "LUCID USA,
+// INC.", Model Gravity, FuelTypePrimary Electric, ElectrificationLevel "BEV
+// (Battery Electric Vehicle)" (2026-08-18).
+export const EV_ONLY_WMIS = new Set(["5YJ", "7SA", "7G2", "LRW", "XP7", "7FC", "7PD", "50E", "7UU", "LPS", "YSP"]);
 
 const text = (v) => (v == null ? "" : typeof v === "string" ? v : JSON.stringify(v));
 

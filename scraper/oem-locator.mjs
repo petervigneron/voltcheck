@@ -26,6 +26,24 @@
 //            used stock, so roughly half of what it yields is other makes'
 //            trade-ins — including used Teslas, which no other lane can reach.
 //            ~2.5k used + ~2.1k new BEVs → lib/oem/audi.mjs
+//   Lucid  — direct sale, one central pool: buynow.lucidmotors.com's inventory
+//            API is open to Node once you know `sortType` is load-bearing (it
+//            returns an empty array, not an error, without it). Its NEW answer
+//            is one car per configuration and so can never be certified; its
+//            USED answer is the complete national set. ~110 used/demo +
+//            ~1.6k new Air/Gravity → lib/oem/lucid.mjs
+//   Rivian — NOT BUILDABLE, and the reason is policy, not bot management, so
+//            there is nothing to retry. rivian.com/robots.txt states
+//            `disallow: /api/` for user-agent *, and every inventory path is
+//            under it: the shop SPA at /configurations/list (itself allowed,
+//            including ?INVENTORY_TYPE=PRE_OWNED_VEHICLE) inlines its whole ENV
+//            in the page, and the only data services named there are
+//            rivian.com/api/gql/{gateway,content,orders}/graphql. Confirmed
+//            live: loading the pre-owned list page fires exactly one data
+//            request, to /api/gql/orders/graphql. There is no second host, no
+//            server-rendered payload (0 VINs in the 228KB page) and no
+//            robots-clean route to the same data. Used Rivians reach us only
+//            second-hand, via dealer sites and the Audi/Enterprise lanes.
 //   Tesla  — Akamai 403 on the inventory API itself (robots.txt is 200 and
 //            permits /inventory; the block is bot management, not policy).
 //            Off-limits: we do not work around bot detection. Note that used
@@ -53,6 +71,7 @@ import { HONDA, pullHonda } from "./lib/oem/honda.mjs";
 import { AUDI, pullAudi } from "./lib/oem/audi.mjs";
 import { VW, pullVw } from "./lib/oem/vw.mjs";
 import { ENTERPRISE, pullEnterprise } from "./lib/oem/enterprise.mjs";
+import { LUCID, LUCID_NEW, pullLucid, pullLucidNew } from "./lib/oem/lucid.mjs";
 
 // One registry of pullers keyed by brand. Each entry is a thunk returning a
 // crawl.mjs-shaped report; new OEM families plug in here without touching the
@@ -75,6 +94,8 @@ const PULLERS = {
   [AUDI.key]: { domain: AUDI.domain, run: () => pullAudi({ log }) },
   [VW.key]: { domain: VW.domain, run: () => pullVw({ log }) },
   [ENTERPRISE.key]: { domain: ENTERPRISE.domain, run: () => pullEnterprise({ log }) },
+  [LUCID.key]: { domain: LUCID.domain, run: () => pullLucid({ log }) },
+  [LUCID_NEW.key]: { domain: LUCID_NEW.domain, run: () => pullLucidNew({ log }) },
 };
 
 const args = process.argv.slice(2);
@@ -83,7 +104,7 @@ function flag(name, fallback) {
   return i >= 0 ? args[i + 1] : fallback;
 }
 const OUT_DIR = flag("--out", "out");
-const wanted = flag("--brands", "chevrolet,gmc,cadillac,carbravo,hyundai,hyundai-cpo,kia,nissan,nissan-cpo,bmw,mercedes,jeep,dodge,fiat,genesis,ford-blue-advantage,honda,audi,vw,enterprise").split(",").map((s) => s.trim().toLowerCase());
+const wanted = flag("--brands", "chevrolet,gmc,cadillac,carbravo,hyundai,hyundai-cpo,kia,nissan,nissan-cpo,bmw,mercedes,jeep,dodge,fiat,genesis,ford-blue-advantage,honda,audi,vw,enterprise,lucid,lucid-new").split(",").map((s) => s.trim().toLowerCase());
 const selected = wanted.filter((k) => PULLERS[k]);
 if (!selected.length) {
   console.error(`oem-locator: no known brands in "${wanted}" (have: ${Object.keys(PULLERS).join(",")})`);
