@@ -20,7 +20,17 @@ export const EV_MODEL_RE = new RegExp(
     "i3\\b", "i4\\b", "i5\\b", "i7\\b", "\\bix\\b",
     "eqb", "eqe", "eqs",
     "polestar [234]", "r1t", "r1s", "lucid air", "lucid gravity",
-    "bz4x", "solterra", "rz ?[34]50", "prologue", "zdx",
+    "bz4x", "solterra", "prologue", "zdx",
+    // The Lexus RZ enumerated its variants and got the list wrong as Lexus
+    // added them: "rz ?[34]50" covered the RZ 350e and RZ 450e but not the
+    // RZ 300e or the RZ 550e, so half of Lexus's only BEV nameplate fell
+    // through to name_match (found 2026-08-18 building lib/oem/toyota.mjs,
+    // where the live CPO lot carries all four). Every RZ variant Lexus has
+    // sold is battery-electric, so widening the digits is a correction, not a
+    // relaxation. The \b in front is the same guard the iX and C40 entries
+    // above needed: unanchored, "rz" matches inside other words.
+    // 300e / 350e / 450e / 550e — the second digit is 0 or 5, so [3-5][05]0.
+    "\\brz ?[3-5][05]0e?\\b",
     // \b on the C40: unanchored, it matched inside "XC40", so every petrol
     // XC40 came back a name-matched EV (a 2022 XC40 T5 AWD R-Design on
     // gaautoworld.com, 2026-08-16). vPIC refuted them before ingest, so
