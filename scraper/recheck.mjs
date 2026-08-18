@@ -78,12 +78,29 @@ if (!SUPABASE_URL || !ANON) {
 
 // Live listings straight from the DB — the recheck is about what the site
 // is currently showing, not what last night's crawl happened to find.
+//
+// Select only the two payload fields this script reads (sourceUrl to fetch,
+// dealerDomain for the OEM filter) instead of the whole payload — the full
+// object drags every listing's description and image list across the wire
+// nightly, and Supabase bills the wire (egress quota hit 661% on 2026-08-17).
+// The Accept-Encoding header is load-bearing: Node's fetch sends none by
+// default and Supabase then answers uncompressed, which made this read
+// ~1.1 MB per 1000-row page. Narrowed and gzipped it is ~44 KB (measured
+// 2026-08-17), ~25x less. undici decompresses transparently, res.json()
+// is unchanged.
 const listings = [];
 for (let from = 0; ; from += 1000) {
   const res = await fetchWithRetry(`recheck: listing fetch rows ${from}+`, () =>
     fetch(
-      `${SUPABASE_URL}/rest/v1/listings?select=vin,price_usd,payload&delisted_at=is.null&order=vin.asc`,
-      { headers: { apikey: ANON, Authorization: `Bearer ${ANON}`, Range: `${from}-${from + 999}` } }
+      `${SUPABASE_URL}/rest/v1/listings?select=vin,price_usd,sourceUrl:payload->>sourceUrl,dealerDomain:payload->>dealerDomain&delisted_at=is.null&order=vin.asc`,
+      {
+        headers: {
+          apikey: ANON,
+          Authorization: `Bearer ${ANON}`,
+          Range: `${from}-${from + 999}`,
+          "Accept-Encoding": "gzip",
+        },
+      }
     )
   );
   if (!res.ok) {
@@ -101,9 +118,9 @@ for (let from = 0; ; from += 1000) {
 // the VIN from the URL, which would read as "alive" forever. They would also
 // be tens of thousands of same-host fetches at the polite rate.
 const targets = listings.filter(
-  (l) => l.payload?.sourceUrl && !OEM_LOCATOR_DOMAINS.has(l.payload.dealerDomain)
+  (l) => l.sourceUrl && !OEM_LOCATOR_DOMAINS.has(l.dealerDomain)
 );
-const skippedOem = listings.filter((l) => OEM_LOCATOR_DOMAINS.has(l.payload?.dealerDomain)).length;
+const skippedOem = listings.filter((l) => OEM_LOCATOR_DOMAINS.has(l.dealerDomain)).length;
 const work = LIMIT ? targets.slice(0, LIMIT) : targets;
 console.error(
   `recheck: ${work.length} live listings with a source URL ` +
@@ -147,7 +164,7 @@ async function worker() {
     const vin = l.vin.toUpperCase();
     let res;
     try {
-      res = await fetchRaw(l.payload.sourceUrl, { timeoutMs: 20000 });
+      res = await fetchRaw(l.sourceUrl, { timeoutMs: 20000 });
     } catch {
       errors++;
       continue;
@@ -156,7 +173,7 @@ async function worker() {
       hardGone.push(vin);
     } else if (res.status === 200 && res.body) {
       if (res.body.toUpperCase().includes(vin)) {
-        const price = priceOf(res.body, vin, res.finalUrl ?? l.payload.sourceUrl);
+        const price = priceOf(res.body, vin, res.finalUrl ?? l.sourceUrl);
         alive.push({ vin, priceUsd: price ?? undefined });
       } else {
         softGone.push(vin);
