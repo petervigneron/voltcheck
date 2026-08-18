@@ -27,6 +27,7 @@ import { OEM_LOCATOR_DOMAINS as BMW_LOCATOR_DOMAINS } from "./lib/oem/bmw.mjs";
 import { OEM_LOCATOR_DOMAINS as MERCEDES_LOCATOR_DOMAINS } from "./lib/oem/mercedes.mjs";
 import { OEM_LOCATOR_DOMAINS as STELLANTIS_LOCATOR_DOMAINS } from "./lib/oem/stellantis.mjs";
 import { OEM_LOCATOR_DOMAINS as GENESIS_LOCATOR_DOMAINS } from "./lib/oem/genesis.mjs";
+import { OEM_LOCATOR_DOMAINS as SUBARU_LOCATOR_DOMAINS } from "./lib/oem/subaru.mjs";
 import { OEM_LOCATOR_DOMAINS as VW_LOCATOR_DOMAINS } from "./lib/oem/vw.mjs";
 import { OEM_LOCATOR_DOMAINS as POLESTAR_LOCATOR_DOMAINS } from "./lib/oem/polestar.mjs";
 import { OEM_LOCATOR_DOMAINS as ENTERPRISE_LOCATOR_DOMAINS } from "./lib/oem/enterprise.mjs";
@@ -55,7 +56,7 @@ import { OEM_LOCATOR_DOMAINS as LUCID_LOCATOR_DOMAINS } from "./lib/oem/lucid.mj
 // and the payload carries no per-VIN dealer VDP to fall back on. toyota.mjs
 // certifies its pull complete instead — off a covering proof over Lexus's own
 // national dealer directory, not a sample.
-const OEM_LOCATOR_DOMAINS = new Set([...GM_LOCATOR_DOMAINS, HYUNDAI.domain, KIA.domain, ...NISSAN_LOCATOR_DOMAINS, ...BMW_LOCATOR_DOMAINS, ...MERCEDES_LOCATOR_DOMAINS, ...STELLANTIS_LOCATOR_DOMAINS, ...GENESIS_LOCATOR_DOMAINS, ...VW_LOCATOR_DOMAINS, ...POLESTAR_LOCATOR_DOMAINS, ...ENTERPRISE_LOCATOR_DOMAINS, ...LEXUS_LOCATOR_DOMAINS, ...LUCID_LOCATOR_DOMAINS]);
+const OEM_LOCATOR_DOMAINS = new Set([...GM_LOCATOR_DOMAINS, HYUNDAI.domain, KIA.domain, ...NISSAN_LOCATOR_DOMAINS, ...BMW_LOCATOR_DOMAINS, ...MERCEDES_LOCATOR_DOMAINS, ...STELLANTIS_LOCATOR_DOMAINS, ...GENESIS_LOCATOR_DOMAINS, ...VW_LOCATOR_DOMAINS, ...POLESTAR_LOCATOR_DOMAINS, ...ENTERPRISE_LOCATOR_DOMAINS, ...LEXUS_LOCATOR_DOMAINS, ...LUCID_LOCATOR_DOMAINS, ...SUBARU_LOCATOR_DOMAINS]);
 
 function flag(name, fallback) {
   const i = process.argv.indexOf(name);
