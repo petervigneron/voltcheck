@@ -52,7 +52,27 @@ export const EV_MODEL_RE = new RegExp(
 // nothing: they match EV_MODEL_RE by nameplate, so they arrive as
 // "name_match" and vPIC promotes them, while a Polestar 1 gets refuted. The
 // slower path is the correct one when the VIN genuinely does not settle it.
-export const EV_ONLY_WMIS = new Set(["5YJ", "7SA", "7G2", "LRW", "XP7", "7FC", "7PD", "50E", "YSP"]);
+// LPS was wrong and was removed 2026-08-18 (Polestar 1 is a plug-in hybrid
+// sharing the Polestar 2's WMI). Worth recording WHY it was the entry that
+// broke, because it generalises: vPIC's DecodeWMI shows LPS is registered to
+// "ZHEJIANG HAOQING AUTOMOBILE MFG CO LTD" — a Geely contract plant, not a
+// brand — so it can carry whatever that factory builds. The safe entries are
+// the ones registered to the EV maker itself with no parent company.
+//
+// 7UU added 2026-08-18: Lucid's SECOND WMI, and it was missing. The Air is 50E
+// but every Gravity is 7UU, so a used Gravity on a dealer site fell through to
+// the name-match path and only landed if the listing said "Lucid Gravity"
+// rather than, say, "Gravity Grand Touring". Checked against vPIC rather than
+// inferred, both per-VIN and per-WMI: 7UUG1TJK2VA046654 decodes Make LUCID,
+// FuelTypePrimary Electric, ElectrificationLevel "BEV (Battery Electric
+// Vehicle)"; DecodeWMI/7UU and /50E both return ManufacturerName "LUCID USA,
+// INC." with an empty ParentCompanyName, and vPIC lists exactly two models
+// ever built under that make (Air, Gravity), both battery-electric.
+// Rivian's 7FC/7PD were re-checked at the same time and stay: DecodeWMI
+// returns Make RIVIAN / "RIVIAN AUTOMOTIVE LLC" / no parent company for both,
+// and vPIC's model list for the make is R1T, R1S, RCV, EDV, R2 — Rivian has
+// never built a plug-in hybrid or a combustion vehicle under any of them.
+export const EV_ONLY_WMIS = new Set(["5YJ", "7SA", "7G2", "LRW", "XP7", "7FC", "7PD", "50E", "7UU", "YSP"]);
 
 const text = (v) => (v == null ? "" : typeof v === "string" ? v : JSON.stringify(v));
 
