@@ -235,6 +235,24 @@ jobs:
           SUPABASE_INGEST_TOKEN: ${{ secrets.SUPABASE_INGEST_TOKEN }}
         run: node recheck.mjs --concurrency 10
 
+      # recheck skips both Lucid domains (their VDP is a client-rendered shell
+      # that 200s with no VIN). The used lane is retired by db-sync's complete
+      # sweep, but the NEW lane is truncated:true — db-sync can't delist from it,
+      # so a sold new Lucid would linger forever. This asks Lucid's per-VIN
+      # isSaleable oracle directly and retires the ones that no longer exist,
+      # writing through the same recheck_listings path (migration 0004).
+      # continue-on-error: it depends on the Lucid new lane's rows, and a bad
+      # night on one endpoint must not abort the variant refresh that follows.
+      - name: Recheck new Lucid stock (isSaleable oracle)
+        if: ${{ github.event.inputs.skip_crawl != 'true' }}
+        continue-on-error: true
+        working-directory: scraper
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_INGEST_TOKEN: ${{ secrets.SUPABASE_INGEST_TOKEN }}
+        run: node lucid-liveness.mjs --concurrency 8
+
       # Re-derive the observed trim-per-VIN-cohort table now that tonight's
       # listings are settled (migration 0020). Not `if: schedule` — a manual
       # run changes inventory too, and a stale matview is the failure this
