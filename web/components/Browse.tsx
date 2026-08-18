@@ -13,6 +13,7 @@ import { modelTally } from "@/lib/listings/tally";
 import { firstPaintWonRace, useCardIndex, useFirstPaint } from "@/lib/listings/useCardIndex";
 import { milesBetween } from "@/lib/geo";
 import { pushUrl } from "@/lib/pushUrl";
+import { rememberBrowseQuery } from "@/lib/browseState";
 
 const CELL = "border-r-[3px] border-b-[3px] border-ink";
 
@@ -164,6 +165,13 @@ export function Browse() {
     sort === "featured" &&
     (n("page") ?? 1) === 1;
   const firstView = rows === null && !failed && pristine && first ? first : null;
+
+  // Park the grid's current query string so a listing detail page can send the
+  // shopper back to these exact results, not an unfiltered page one
+  // (lib/browseState.ts, components/BackToResults.tsx).
+  useEffect(() => {
+    rememberBrowseQuery(sp.toString());
+  }, [sp]);
 
   const { results, dist, relief, activeCount, facets, quickCounts } = useMemo(() => {
     const all = rows ?? [];

@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import { BackToResults } from "@/components/BackToResults";
 import { findListing } from "@/lib/listings/source";
 import { enrichListing , displayTrim } from "@/lib/listings/enrich";
 import { trimClaim } from "@/lib/listings/trimClaim";
@@ -109,9 +109,7 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
 
   return (
     <div className="mx-auto max-w-5xl space-y-5 px-4 py-6">
-      <Link href="/" className="text-xs text-zinc-400 hover:text-emerald-500">
-        ← back to results
-      </Link>
+      <BackToResults />
 
       <div className="grid gap-6 md:grid-cols-[1fr_320px]">
         {/* Right: sticky summary. First in the DOM so price and key facts lead
