@@ -3,6 +3,9 @@ import type { AskVsSold } from "@/lib/listings/comps";
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
+/** Above this many sales the rows fold behind a one-line summary. */
+const SHOW_INLINE = 4;
+
 function monthYear(isoDate: string): string {
   const [y, m] = isoDate.split("-");
   return `${MONTHS[Number(m) - 1]} ${y}`;
@@ -43,6 +46,16 @@ function Row({ s }: { s: RecentSale }) {
  *
  *  Sales of this car's own version sort first (recent_sales takes its VIN),
  *  so the top of the list is the comparison the shopper is actually making. */
+/** One line saying what the rows below add up to, so the block can be read
+ *  without being opened: how many sales, and the range of money involved. */
+function summary(sales: RecentSale[]): string {
+  const prices = sales.map((s) => s.salePrice);
+  const lo = Math.min(...prices);
+  const hi = Math.max(...prices);
+  const n = `${sales.length} ${sales.length === 1 ? "sale" : "sales"}`;
+  return lo === hi ? `${n} at $${lo.toLocaleString()}` : `${n}, $${lo.toLocaleString()}–$${hi.toLocaleString()}`;
+}
+
 export function RecentSales({
   sales,
   vsSold,
@@ -58,21 +71,8 @@ export function RecentSales({
   const same = sales.filter((s) => s.sameVariant);
   const other = sales.filter((s) => !s.sameVariant);
 
-  return (
-    <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5">
-      <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
-        Recently sold
-      </h2>
-
-      {vsSold && (
-        <p className="mt-2 border-l-4 border-emerald-500 pl-3 text-sm font-semibold">
-          Asks ${Math.abs(vsSold.deltaUsd).toLocaleString()} {vsSold.deltaUsd < 0 ? "under" : "over"} $
-          {vsSold.soldUsd.toLocaleString()}
-        </p>
-      )}
-
-      {scatter}
-
+  const rows = (
+    <>
       {same.length > 0 && (
         <ul className="mt-3 divide-y divide-zinc-100 dark:divide-zinc-800">
           {same.map((s, i) => (
@@ -94,6 +94,39 @@ export function RecentSales({
             ))}
           </ul>
         </>
+      )}
+    </>
+  );
+
+  return (
+    <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5">
+      <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+        Recently sold
+      </h2>
+
+      {vsSold && (
+        <p className="mt-2 border-l-4 border-emerald-500 pl-3 text-sm font-semibold">
+          Asks ${Math.abs(vsSold.deltaUsd).toLocaleString()} {vsSold.deltaUsd < 0 ? "under" : "over"} $
+          {vsSold.soldUsd.toLocaleString()}
+        </p>
+      )}
+
+      {scatter}
+
+      {/* Ten rows of year/version/miles/price/date was the tallest thing on
+          the page, and the chart above already plots every one of them. Past a
+          handful the table stops being the answer and becomes the workings, so
+          it folds: the count and the money it spans stay on the face of the
+          card, and the rows are one click away for anyone checking. */}
+      {sales.length > SHOW_INLINE ? (
+        <details className="mt-3">
+          <summary className="cursor-pointer text-sm text-zinc-600 dark:text-zinc-400 hover:text-emerald-600 dark:hover:text-emerald-400">
+            {summary(sales)}
+          </summary>
+          {rows}
+        </details>
+      ) : (
+        rows
       )}
 
       {/* ODbL attribution: required wherever these rows render, so this line

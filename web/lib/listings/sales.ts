@@ -27,7 +27,20 @@ const REVALIDATE_SECONDS = 86_400; // upstream refreshes monthly
 // cohort, so passing it sorts sales of the SAME version to the front — a
 // Lariat's page compares against Lariats instead of against whichever ten
 // Lightnings sold most recently.
-export async function fetchRecentSales(make: string, model: string, vin?: string): Promise<RecentSale[]> {
+//
+// `year` and `mileage` are this car's own, and they BAND the list rather than
+// sort it (migration 0037). VIN(1-8) turned out not to separate generations —
+// a 2023 Bolt 2LT and a 2017 Bolt Premier share 1G1FX6S0 — and nothing bounded
+// the odometer at all, so a 137,703-mile car was being shown against 21,691-
+// mile sales of the same nameplate. Either omitted, its half of the band is
+// skipped rather than guessed.
+export async function fetchRecentSales(
+  make: string,
+  model: string,
+  vin?: string,
+  year?: number,
+  mileage?: number | null
+): Promise<RecentSale[]> {
   if (!dbConfigured()) return [];
   const base = process.env.SUPABASE_URL!.replace(/\/$/, "");
   const key = process.env.SUPABASE_ANON_KEY!;
@@ -43,6 +56,10 @@ export async function fetchRecentSales(make: string, model: string, vin?: string
         _make: make,
         _model: model,
         _vin8: vin && vin.length >= 8 ? vin.slice(0, 8).toUpperCase() : null,
+        _year: year ?? null,
+        // A delivery-mileage car has no odometer band worth applying and a
+        // zero would band it to ±15,000 of nothing; the year band carries it.
+        _odometer: mileage != null && mileage > 0 ? mileage : null,
       }),
       next: { revalidate: REVALIDATE_SECONDS },
     });
