@@ -94,13 +94,14 @@ export function EnrichmentFacts({
           {warranty && warranty.state !== "unknown" ? (
             <FactRow
               label="HV battery coverage"
+              title={warranty.why}
               fact={{
                 // Provenance rides on whichever term settled it — a warranty
                 // can expire on mileage alone, on a row that carries a mileage
                 // limit and no year term, so neither may be assumed present.
                 ...(row.warranty?.batteryYears ?? row.warranty?.batteryMiles),
                 value: warranty.label,
-                note: warranty.why,
+                note: undefined,
                 source: (row.warranty?.batteryYears ?? row.warranty?.batteryMiles)?.source ?? "mfr",
                 asOf: (row.warranty?.batteryYears ?? row.warranty?.batteryMiles)?.asOf ?? "—",
                 confidence: "high",

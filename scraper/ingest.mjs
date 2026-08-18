@@ -135,6 +135,12 @@ const listings = raw
     zip: r.zip ?? domainLoc.get(r.dealerDomain)?.zip ?? undefined,
     dealerName: r.dealerName ?? undefined,
     optionCodes: r.optionCodes ?? undefined,
+    // Per-VIN battery coverage and pack-replacement history from the maker's
+    // own owner portal (gm-warranty.mjs). Both are stable per car — dates and
+    // mileages, never the portal's self-updating Active/Expired status — so
+    // they are safe in the payload under migration 0025's equality rule.
+    batteryCoverage: r.batteryCoverage ?? undefined,
+    campaignCheck: r.campaignCheck ?? undefined,
     vpicBatteryKwh: r.vpicBatteryKwh ?? ariyaVds(r).kwh ?? undefined,
     exteriorColor: r.exteriorColor ?? undefined,
     imageUrl: r.imageUrl ?? r.images?.[0] ?? undefined,

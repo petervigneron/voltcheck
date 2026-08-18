@@ -169,6 +169,11 @@ jobs:
         working-directory: scraper
         run: |
           node vpic-enrich.mjs
+          # Per-VIN battery coverage from GM's owner portal. Bounded per night
+          # (a few thousand VINs on the first pass, none once cached) and
+          # never fatal: a car without it falls back to abstaining, which is
+          # the same thing the site did before this lane existed.
+          node gm-warranty.mjs --limit 600 || echo "gm-warranty failed, continuing"
           node ingest.mjs
 
       - name: Sync to Supabase
@@ -304,7 +309,10 @@ jobs:
         run: |
           git config user.name "voltcheck-bot"
           git config user.email "noreply@github.com"
-          git add scraper/registry/registry.json web/data/scraped-listings.json
+          # gm-warranty.json is the per-VIN cache: committing it is what makes
+          # the lane cheap, because a VIN already in it is never asked again.
+          # Lose it and the next run re-fetches every car from scratch.
+          git add scraper/registry/registry.json scraper/registry/gm-warranty.json web/data/scraped-listings.json
           git diff --staged --quiet && { echo "nothing to commit"; exit 0; }
           git commit -m "Nightly: registry + listings refresh [skip ci]"
           for i in 1 2 3 4 5; do

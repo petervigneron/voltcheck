@@ -34,15 +34,19 @@ export function FactRow({
   label,
   fact,
   format,
+  title,
 }: {
   label: string;
   fact?: Fact<unknown>;
   format?: (v: unknown) => string;
+  /** Working shown only on hover. For rows whose value is already the whole
+   *  answer, where a note underneath would restate it in more words. */
+  title?: string;
 }) {
   const note = inlineNote(fact?.note);
   return (
     <div
-      title={fact?.note && !note ? fact.note : undefined}
+      title={title ?? (fact?.note && !note ? fact.note : undefined)}
       className="flex items-baseline justify-between gap-4 py-2 border-b border-zinc-100 dark:border-zinc-800 last:border-0"
     >
       <div className="text-sm text-zinc-500 dark:text-zinc-400">{label}</div>

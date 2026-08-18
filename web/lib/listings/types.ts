@@ -73,4 +73,32 @@ export interface Listing {
     odometerAtReplacement?: number;
     gmProgramNumber?: string;
   };
+  /**
+   * This car's own battery coverage, straight from the manufacturer's owner
+   * portal keyed on its VIN (scraper/gm-warranty.mjs). It is the only source
+   * on the site that knows the IN-SERVICE DATE, which is what actually starts
+   * a warranty clock and which no dealer feed and no VIN decode carries — and
+   * on a recalled Bolt it is also the only way to learn that the clock was
+   * restarted by a replacement pack.
+   *
+   * Stores dates and mileages only, never the portal's own "Active"/"Expired"
+   * status: that is computed against the moment of the request, and a value
+   * that changes on its own would break the payload-equality invariant that
+   * migration 0025 depends on (payload-equal must imply row-equal). The
+   * comparison against today happens at render, in lib/listings/warranty.ts.
+   */
+  batteryCoverage?: {
+    /** When the warranty in force actually began, and at what odometer. On a
+     *  replaced pack this is the replacement, not the car's first sale. */
+    startDate: string;
+    startMileage?: number;
+    expiresDate: string;
+    expiresMileage?: number;
+    /** The car's original in-service date, kept even when a replacement pack
+     *  supersedes it: it is what every other warranty on the car runs from. */
+    inServiceDate?: string;
+    /** True when this coverage came from a recall pack replacement rather
+     *  than the original sale. */
+    fromReplacement: boolean;
+  };
 }
