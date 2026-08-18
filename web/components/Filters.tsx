@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { REMOVABLE, QUICK_TOGGLES, BODY_TYPES, describeFilter, dropSpecFilters, splitValues, toggleValue } from "@/lib/filters";
 import { pushUrl } from "@/lib/pushUrl";
+import { SaveSearchToggle } from "./SaveSearchToggle";
 
 const CELL = "border-r-[3px] border-b-[3px] border-ink";
 // Interactive cells answer hover and keyboard focus with the same inset cobalt
@@ -636,6 +637,10 @@ export function FilterRail({
             ▼
           </span>
         </div>
+
+        {/* Keep this search: snapshots the current filters to the Searches tab
+            under Saved (components/SaveSearchToggle.tsx). */}
+        <SaveSearchToggle />
       </div>
 
       {open && (
