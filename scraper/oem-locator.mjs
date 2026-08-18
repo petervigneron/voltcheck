@@ -50,6 +50,7 @@ import { STELLANTIS_BRANDS, pullStellantisBrand } from "./lib/oem/stellantis.mjs
 import { GENESIS, pullGenesis } from "./lib/oem/genesis.mjs";
 import { FORD_BLUE_ADVANTAGE, pullFordBlueAdvantage } from "./lib/oem/ford-blue-advantage.mjs";
 import { HONDA, pullHonda } from "./lib/oem/honda.mjs";
+import { SUBARU, pullSubaru } from "./lib/oem/subaru.mjs";
 import { AUDI, pullAudi } from "./lib/oem/audi.mjs";
 import { VW, pullVw } from "./lib/oem/vw.mjs";
 import { ENTERPRISE, pullEnterprise } from "./lib/oem/enterprise.mjs";
@@ -72,6 +73,7 @@ const PULLERS = {
   [GENESIS.key]: { domain: GENESIS.domain, run: () => pullGenesis({ log }) },
   [FORD_BLUE_ADVANTAGE.key]: { domain: FORD_BLUE_ADVANTAGE.domain, run: () => pullFordBlueAdvantage({ log }) },
   [HONDA.key]: { domain: HONDA.domain, run: () => pullHonda({ log }) },
+  [SUBARU.key]: { domain: SUBARU.domain, run: () => pullSubaru({ log }) },
   [AUDI.key]: { domain: AUDI.domain, run: () => pullAudi({ log }) },
   [VW.key]: { domain: VW.domain, run: () => pullVw({ log }) },
   [ENTERPRISE.key]: { domain: ENTERPRISE.domain, run: () => pullEnterprise({ log }) },
@@ -83,7 +85,7 @@ function flag(name, fallback) {
   return i >= 0 ? args[i + 1] : fallback;
 }
 const OUT_DIR = flag("--out", "out");
-const wanted = flag("--brands", "chevrolet,gmc,cadillac,carbravo,hyundai,hyundai-cpo,kia,nissan,nissan-cpo,bmw,mercedes,jeep,dodge,fiat,genesis,ford-blue-advantage,honda,audi,vw,enterprise").split(",").map((s) => s.trim().toLowerCase());
+const wanted = flag("--brands", "chevrolet,gmc,cadillac,carbravo,hyundai,hyundai-cpo,kia,nissan,nissan-cpo,bmw,mercedes,jeep,dodge,fiat,genesis,ford-blue-advantage,honda,subaru,audi,vw,enterprise").split(",").map((s) => s.trim().toLowerCase());
 const selected = wanted.filter((k) => PULLERS[k]);
 if (!selected.length) {
   console.error(`oem-locator: no known brands in "${wanted}" (have: ${Object.keys(PULLERS).join(",")})`);
