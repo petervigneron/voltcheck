@@ -1,6 +1,6 @@
 import { QUICK_TOGGLES } from "@/lib/filters";
 import { featuredScore, type CardRow } from "./card";
-import { buildTests } from "./match";
+import { QUICK_KNOWS, buildTests } from "./match";
 import { packIndex, unpackIndex, type PackedIndex } from "./pack";
 import { modelTally, type ModelCount } from "./tally";
 
@@ -40,8 +40,10 @@ export interface FirstPaint {
   day: number;
   total: number;
   /** What each quick toggle would leave against no other filters, and out of
-   *  how many, keyed "key=value". `of` is the whole feed: this payload only
-   *  ever describes the unfiltered landing page. */
+   *  how many it can judge, keyed "key=value". `of` counts only cars with an
+   *  answer on that axis (match.ts QUICK_KNOWS), never the whole feed — see
+   *  components/Filters.tsx for why an unknown must not read as a division.
+   *  This payload only ever describes the unfiltered landing page. */
   quick: Record<string, { n: number; of: number }>;
   popular: ModelCount[];
   suggestions: { label: string; count: number }[];
@@ -64,9 +66,15 @@ export function buildFirstPaint(rows: CardRow[]): FirstPaint {
   const quick: Record<string, { n: number; of: number }> = {};
   for (const t of QUICK_TOGGLES) {
     const test = buildTests((k) => (k === t.key ? t.value : ""))[t.key]!;
+    const knows = QUICK_KNOWS[t.key];
     let n = 0;
-    for (const r of rows) if (test(r)) n++;
-    quick[`${t.key}=${t.value}`] = { n, of: rows.length };
+    let of = 0;
+    for (const r of rows) {
+      if (knows && !knows(r)) continue;
+      of++;
+      if (test(r)) n++;
+    }
+    quick[`${t.key}=${t.value}`] = { n, of };
   }
   return {
     v: 2,

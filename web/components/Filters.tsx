@@ -452,31 +452,43 @@ export function FilterRail({
   const models = make ? (makesModels[make] ?? []) : [];
   const makes = Object.keys(makesModels).sort();
 
-  // A toggle earns its place by dividing the results. It can fail at that from
-  // either end, and only one end was handled at first:
+  // A toggle earns its place by dividing the cars it can actually judge.
   //
-  //   nothing  "+ AWD" on a Chevrolet Bolt search — the car was never built
-  //            that way, so the button's only outcome is an empty page.
-  //   everything  "+ SUVs" on a Bolt EUV search, where every last one is an
-  //            SUV; "+ 200+ mi range" on a BMW i5, where 709 of 736 clear it.
-  //            The shopper spends a click and the page barely moves.
+  // It can fail at that three ways, and the first pass only caught one:
   //
-  // Measured over 15 model searches × these 5 toggles: 13 returned nothing, 10
-  // returned literally everything, and a further handful sat at 96-99.9%.
-  // That's a third of the rail costing attention and dividing nothing.
+  //   nothing   "+ AWD" on a Chevrolet Bolt — never built that way, so the
+  //             button's only outcome is an empty page.
+  //   everything  "+ SUVs" on a Bolt EUV, where all 106 are SUVs. A click, and
+  //             the page does not move.
+  //   only the unknowns  the subtle one. These toggles admit only cars we can
+  //             verifiably classify, so a car we know nothing about fails all
+  //             of them. On an F-150 Lightning search "+ 200+ mi range"
+  //             excludes 19 of 357 trucks and NOT ONE is under 200 miles —
+  //             every Lightning is 230, 240, 300 or 320, and the 19 are trucks
+  //             whose range we never resolved. On an Ioniq 5 it hides 700 cars,
+  //             none of them short-range. Shown, it reads as a range filter and
+  //             acts as a "do we have data" filter: matching the wrong thing.
   //
-  // 95% is a judgement call, not a discovered constant — the distribution runs
-  // smoothly from 99.96% down through 96.3% (the i5 range case) to 94.7% (200+
-  // miles on an F-150 Lightning) with no natural break, so the line was drawn
-  // just under the cases that read as broken. Tune it against real searches
-  // rather than in the abstract. Nothing is lost when a toggle is dropped:
-  // every one of these keys is still set from All filters, which is the
-  // considered path anyway — the rail is shortcuts, not capability.
+  // So `of` counts only cars with an answer on that axis (match.ts
+  // QUICK_KNOWS), and the test below asks what share of those genuinely fail.
+  // Across all 90 models with 50+ cars, of 450 toggle slots: 112 returned
+  // nothing, 74 returned everything, 109 divided only by what we don't know,
+  // and 155 genuinely divided.
   //
-  // Deliberately asymmetric at the bottom: a toggle leaving ONE car (the lone
-  // sub-$30k Taycan, the lone cheap Lightning) is kept. That is a find, not
-  // noise, and it is exactly what a shopper hunting the bottom of a market
-  // wants the button for. Only literally-zero is dropped.
+  // 5% of judgeable cars is the bar. Below it sits a real tail of noise —
+  // "Under 60k miles" on a Lyriq search separates 2 cars out of 4,603. The
+  // alternatives measured the same way: no floor keeps 155 toggles, 1% keeps
+  // 137, 2% keeps 128, 5% keeps 110. Tune against real searches, not in the
+  // abstract.
+  //
+  // Nothing is lost when a toggle is dropped: every one of these keys is still
+  // set from All filters, which is the considered path anyway. The rail is
+  // shortcuts, not capability.
+  //
+  // Note this is a share of FAILS, which is what keeps the rare find: the lone
+  // sub-$30k Taycan passes while 288 peers fail, a 99.7% fail share, so the
+  // button stays exactly where a shopper hunting the bottom of the market
+  // wants it. Only a toggle that matches nothing at all is dropped from below.
   //
   // A toggle that is currently ON always stays, whatever it counts: the only
   // way to switch it off is for it to be there.

@@ -8,7 +8,7 @@ import { AlertSignup } from "./AlertSignup";
 import { SPEC_FACETS, FACET_CAP, QUICK_TOGGLES, describeFilter, dropSpecFilters } from "@/lib/filters";
 import { featuredScore, type CardRow } from "@/lib/listings/card";
 import { FIRST_PAGE_SIZE } from "@/lib/listings/firstPaint";
-import { FACET_OF, activeFilterKeys, buildTests, rowMatches } from "@/lib/listings/match";
+import { FACET_OF, QUICK_KNOWS, activeFilterKeys, buildTests, rowMatches } from "@/lib/listings/match";
 import { modelTally } from "@/lib/listings/tally";
 import { firstPaintWonRace, useCardIndex, useFirstPaint } from "@/lib/listings/useCardIndex";
 import { milesBetween } from "@/lib/geo";
@@ -279,20 +279,31 @@ export function Browse() {
             .sort((a, b) => b.n - a.n)
         : [];
 
-    // What each quick toggle would leave, and out of how many — counted
-    // against everything else that's on, with its own key lifted the way the
-    // spec facets lift theirs, so a toggle still counts honestly when the
-    // panel has set that key to some other value. The rail decides from the
-    // ratio which toggles are worth offering (components/Filters.tsx).
+    // What each quick toggle would leave, and out of how many cars it can
+    // actually judge — counted against everything else that's on, with its own
+    // key lifted the way the spec facets lift theirs, so a toggle still counts
+    // honestly when the panel has set that key to some other value.
+    //
+    // `of` deliberately excludes cars with no answer on that axis
+    // (QUICK_KNOWS). A toggle that "excludes" 19 Lightnings only because their
+    // range was never resolved has divided nothing about range, and the rail
+    // must not read that as the button doing work. The rail turns n/of into
+    // the show-or-hide call (components/Filters.tsx).
     const quickCounts: Record<string, { n: number; of: number }> = {};
     for (const t of QUICK_TOGGLES) {
       const test = buildTests((k) => (k === t.key ? t.value : ""))[t.key]!;
+      const knows = QUICK_KNOWS[t.key];
       const pool = activeKeys.includes(t.key)
         ? all.filter((r) => activeKeys.every((k) => k === t.key || tests[k]!(r)))
         : results;
       let n = 0;
-      for (const r of pool) if (test(r)) n++;
-      quickCounts[`${t.key}=${t.value}`] = { n, of: pool.length };
+      let of = 0;
+      for (const r of pool) {
+        if (knows && !knows(r)) continue;
+        of++;
+        if (test(r)) n++;
+      }
+      quickCounts[`${t.key}=${t.value}`] = { n, of };
     }
 
     // "Which version of this car?" is only a question once there's one car in

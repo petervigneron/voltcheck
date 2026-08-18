@@ -106,6 +106,33 @@ export function buildTests(get: (k: string) => string, ctx: MatchContext = {}): 
   return tests;
 }
 
+/**
+ * Whether a row has a knowable answer on a quick toggle's axis — the
+ * denominator for "does this toggle divide anything".
+ *
+ * The toggles only ever admit cars we can verifiably classify, so a car we
+ * know nothing about fails every one of them. That makes a pure count of
+ * non-matches a lie about what the button does: on an F-150 Lightning search
+ * "200+ mi range" excludes 19 of 357 trucks, and NOT ONE of them is under 200
+ * miles — every Lightning is 230, 240, 300 or 320. The 19 are trucks whose
+ * range we never resolved. Offered, that button reads as a range filter and
+ * acts as a "do we have data" filter. Same story on an Ioniq 5, where it hides
+ * 700 cars and none of them are short-range.
+ *
+ * So the rail counts fails among cars it can actually judge. Keep these in
+ * step with the predicates in buildTests above: each one answers "could this
+ * row ever pass or fail this filter on its merits", not "does it pass".
+ */
+export const QUICK_KNOWS: Partial<Record<RemovableFilter, (r: CardRow) => boolean>> = {
+  body: (r) => r.body !== undefined,
+  minRange: (r) => r.rangeMi != null,
+  maxMiles: (r) => r.mileage != null,
+  drive: (r) => r.drive !== undefined,
+  // A lease payment where a price should be isn't a cheap car, it's no price.
+  maxPrice: (r) => r.realPrice,
+  minPrice: (r) => r.realPrice,
+};
+
 /** The filters that are actually on, in the order they read. */
 export function activeFilterKeys(tests: FilterTests): RemovableFilter[] {
   return REMOVABLE.filter((k) => tests[k]);
