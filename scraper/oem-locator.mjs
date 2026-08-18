@@ -26,6 +26,18 @@
 //            used stock, so roughly half of what it yields is other makes'
 //            trade-ins — including used Teslas, which no other lane can reach.
 //            ~2.5k used + ~2.1k new BEVs → lib/oem/audi.mjs
+//   Volvo  — the "Certified by Volvo" national used store (cpo.volvocars.us,
+//            a Codeweavers storefront over services.codeweavers.net). Every
+//            Volvo rooftop's used stock, certified and not: ~707 BEVs across
+//            171 dealer domains → lib/oem/volvo.mjs. Volvo's own NEW-car
+//            catalogue on volvocars.com is server-rendered and complete but
+//            publishes no VIN at all, so it cannot be ingested — see that
+//            module's header before re-probing it.
+//   Polestar — pre-owned only, and a different service from the VIN-less
+//            preconfigured-cars API that was rejected earlier:
+//            pc-api.polestar.com/eu-north-1/partner-rm-tool/public/'s
+//            searchVehicleAds does carry the VIN. ~194 BEVs, provably
+//            complete → lib/oem/polestar.mjs
 //   Tesla  — Akamai 403 on the inventory API itself (robots.txt is 200 and
 //            permits /inventory; the block is bot management, not policy).
 //            Off-limits: we do not work around bot detection. Note that used
@@ -52,6 +64,8 @@ import { FORD_BLUE_ADVANTAGE, pullFordBlueAdvantage } from "./lib/oem/ford-blue-
 import { HONDA, pullHonda } from "./lib/oem/honda.mjs";
 import { AUDI, pullAudi } from "./lib/oem/audi.mjs";
 import { VW, pullVw } from "./lib/oem/vw.mjs";
+import { VOLVO, pullVolvo } from "./lib/oem/volvo.mjs";
+import { POLESTAR, pullPolestar } from "./lib/oem/polestar.mjs";
 import { ENTERPRISE, pullEnterprise } from "./lib/oem/enterprise.mjs";
 
 // One registry of pullers keyed by brand. Each entry is a thunk returning a
@@ -74,6 +88,8 @@ const PULLERS = {
   [HONDA.key]: { domain: HONDA.domain, run: () => pullHonda({ log }) },
   [AUDI.key]: { domain: AUDI.domain, run: () => pullAudi({ log }) },
   [VW.key]: { domain: VW.domain, run: () => pullVw({ log }) },
+  [VOLVO.key]: { domain: VOLVO.domain, run: () => pullVolvo({ log }) },
+  [POLESTAR.key]: { domain: POLESTAR.domain, run: () => pullPolestar({ log }) },
   [ENTERPRISE.key]: { domain: ENTERPRISE.domain, run: () => pullEnterprise({ log }) },
 };
 
@@ -83,7 +99,7 @@ function flag(name, fallback) {
   return i >= 0 ? args[i + 1] : fallback;
 }
 const OUT_DIR = flag("--out", "out");
-const wanted = flag("--brands", "chevrolet,gmc,cadillac,carbravo,hyundai,hyundai-cpo,kia,nissan,nissan-cpo,bmw,mercedes,jeep,dodge,fiat,genesis,ford-blue-advantage,honda,audi,vw,enterprise").split(",").map((s) => s.trim().toLowerCase());
+const wanted = flag("--brands", "chevrolet,gmc,cadillac,carbravo,hyundai,hyundai-cpo,kia,nissan,nissan-cpo,bmw,mercedes,jeep,dodge,fiat,genesis,ford-blue-advantage,honda,audi,vw,volvo,polestar,enterprise").split(",").map((s) => s.trim().toLowerCase());
 const selected = wanted.filter((k) => PULLERS[k]);
 if (!selected.length) {
   console.error(`oem-locator: no known brands in "${wanted}" (have: ${Object.keys(PULLERS).join(",")})`);

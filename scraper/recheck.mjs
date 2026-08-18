@@ -28,6 +28,7 @@ import { OEM_LOCATOR_DOMAINS as MERCEDES_LOCATOR_DOMAINS } from "./lib/oem/merce
 import { OEM_LOCATOR_DOMAINS as STELLANTIS_LOCATOR_DOMAINS } from "./lib/oem/stellantis.mjs";
 import { OEM_LOCATOR_DOMAINS as GENESIS_LOCATOR_DOMAINS } from "./lib/oem/genesis.mjs";
 import { OEM_LOCATOR_DOMAINS as VW_LOCATOR_DOMAINS } from "./lib/oem/vw.mjs";
+import { OEM_LOCATOR_DOMAINS as POLESTAR_LOCATOR_DOMAINS } from "./lib/oem/polestar.mjs";
 import { OEM_LOCATOR_DOMAINS as ENTERPRISE_LOCATOR_DOMAINS } from "./lib/oem/enterprise.mjs";
 
 // Every OEM-locator source domain: recheck skips these (see the filter below).
@@ -41,7 +42,11 @@ import { OEM_LOCATOR_DOMAINS as ENTERPRISE_LOCATOR_DOMAINS } from "./lib/oem/ent
 // fabricated car key and never contains the VIN. Rechecking it would not just
 // be useless, it would trip the "200 but no VIN" soft-gone rule on every VW
 // row and delist the entire lane. vw.mjs certifies its pull complete instead.
-const OEM_LOCATOR_DOMAINS = new Set([...GM_LOCATOR_DOMAINS, HYUNDAI.domain, KIA.domain, ...NISSAN_LOCATOR_DOMAINS, ...BMW_LOCATOR_DOMAINS, ...MERCEDES_LOCATOR_DOMAINS, ...STELLANTIS_LOCATOR_DOMAINS, ...GENESIS_LOCATOR_DOMAINS, ...VW_LOCATOR_DOMAINS, ...ENTERPRISE_LOCATOR_DOMAINS]);
+// polestar-preowned IS here for exactly the same measured reason (a real ad id
+// and an all-zeroes one both return the same 3,715-byte shell); volvo-cpo is
+// deliberately NOT, because its rows carry real dealer VDPs that drop the VIN
+// when the car is gone, which is evidence recheck can act on.
+const OEM_LOCATOR_DOMAINS = new Set([...GM_LOCATOR_DOMAINS, HYUNDAI.domain, KIA.domain, ...NISSAN_LOCATOR_DOMAINS, ...BMW_LOCATOR_DOMAINS, ...MERCEDES_LOCATOR_DOMAINS, ...STELLANTIS_LOCATOR_DOMAINS, ...GENESIS_LOCATOR_DOMAINS, ...VW_LOCATOR_DOMAINS, ...POLESTAR_LOCATOR_DOMAINS, ...ENTERPRISE_LOCATOR_DOMAINS]);
 
 function flag(name, fallback) {
   const i = process.argv.indexOf(name);
