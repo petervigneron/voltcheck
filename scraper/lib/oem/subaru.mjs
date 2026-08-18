@@ -55,12 +55,21 @@
 // refuses to certify if it ever sees a repeated VIN (vw.mjs's rule — VW's new
 // sweep looked fine until the dupes were counted).
 //
-// recheck SKIPS subaru.com, on GM's rule rather than VW's: the sweep is the
-// liveness check. The per-VIN detailsUrl is a real dealer VDP, but it points at
-// ~640 different dealer platforms (one is a bare redirector,
-// premiersubaru.com/catcher.esl?vehicleId=…), so rechecking would spray 1.5k
-// requests across 640 hosts to learn what the complete nightly sweep already
-// says. The VDP is still the shopper's click-through.
+// recheck SKIPS subaru.com, on GM's rule rather than VW's, and the fabricated-id
+// control says why. Sampling six distinct dealer platforms out of the 476 the
+// detailsUrls span: five return 200 on the real car with the VIN echoed in the
+// HTML (so recheck would read them correctly), one — capitolsubarusj.com — 403s
+// our client on a car the sweep just saw live (inconclusive, harmless). But
+// FOUR of the six address the car by an opaque platform id rather than the VIN
+// (premiersubaru.com/catcher.esl?vehicleId=87c11f3c…), so the fabricated-id
+// control cannot even be run on them: there is no id to falsify, and no way to
+// tell a retired id from a reused one. On the one platform where the control
+// does run (dchsubaruthousandoaks.com) it behaves properly — real VIN 200s and
+// echoes, fabricated VIN 200s and does not. So this is NOT vw.mjs's situation,
+// where rechecking would have delisted the whole lane; recheck would mostly
+// work. It is skipped because it would spray ~1.5k requests across 476
+// third-party dealer hosts to learn what a complete nightly sweep already
+// says. The VDP stays the shopper's click-through.
 //
 // WHAT IS DELIBERATELY NOT CLAIMED:
 //  - evConfidence is "high" only for Solterra, whose nameplate is in
