@@ -452,52 +452,58 @@ export function FilterRail({
   const models = make ? (makesModels[make] ?? []) : [];
   const makes = Object.keys(makesModels).sort();
 
-  // A toggle earns its place by dividing the cars it can actually judge.
+  // A toggle earns its place by dividing the cars it can actually judge — but
+  // "enough" depends on what the toggle is asking about (lib/filters.ts axis).
   //
-  // It can fail at that three ways, and the first pass only caught one:
+  // Three ways a toggle fails to divide, and the first pass caught only one:
   //
   //   nothing   "+ AWD" on a Chevrolet Bolt — never built that way, so the
   //             button's only outcome is an empty page.
-  //   everything  "+ SUVs" on a Bolt EUV, where all 106 are SUVs. A click, and
-  //             the page does not move.
+  //   everything  "+ SUVs" on a Bolt EUV, where all 106 are SUVs.
   //   only the unknowns  the subtle one. These toggles admit only cars we can
   //             verifiably classify, so a car we know nothing about fails all
-  //             of them. On an F-150 Lightning search "+ 200+ mi range"
-  //             excludes 19 of 357 trucks and NOT ONE is under 200 miles —
-  //             every Lightning is 230, 240, 300 or 320, and the 19 are trucks
-  //             whose range we never resolved. On an Ioniq 5 it hides 700 cars,
-  //             none of them short-range. Shown, it reads as a range filter and
-  //             acts as a "do we have data" filter: matching the wrong thing.
+  //             of them. On an F-150 Lightning "+ 200+ mi range" excludes 19
+  //             of 357 and NOT ONE is under 200 miles — every Lightning is
+  //             230, 240, 300 or 320, and the 19 are trucks whose range we
+  //             never resolved. Shown, it reads as a range filter and acts as
+  //             a "do we have data" filter: matching the wrong thing.
   //
-  // So `of` counts only cars with an answer on that axis (match.ts
-  // QUICK_KNOWS), and the test below asks what share of those genuinely fail.
-  // Across all 90 models with 50+ cars, of 450 toggle slots: 112 returned
-  // nothing, 74 returned everything, 109 divided only by what we don't know,
-  // and 155 genuinely divided.
+  // Hence `of` counts only cars with an answer on that axis (QUICK_KNOWS), and
+  // the bar below is a share of the ones that genuinely fail.
   //
-  // 5% of judgeable cars is the bar. Below it sits a real tail of noise —
-  // "Under 60k miles" on a Lyriq search separates 2 cars out of 4,603. The
-  // alternatives measured the same way: no floor keeps 155 toggles, 1% keeps
-  // 137, 2% keeps 128, 5% keeps 110. Tune against real searches, not in the
-  // abstract.
+  // Where the two axes part company is thin stock. A VARIANT toggle asks what
+  // the car is, so one real counter-example is the whole argument: Volvo sold
+  // a single-motor EX30 alongside the twin-motor, and 10 rear-drive cars in
+  // 285 is proof the choice exists, not noise to round away. A MARKET toggle
+  // asks what this week's listings hold, where two cars over 60k miles in
+  // 4,603 Lyriqs really is noise, so it has to clear 5%.
   //
-  // Nothing is lost when a toggle is dropped: every one of these keys is still
-  // set from All filters, which is the considered path anyway. The rail is
-  // shortcuts, not capability.
+  // Measured over the 90 models with 50+ cars, 450 toggle slots: 116 survive.
+  // A flat 5% on everything left 110 but dropped the EX30 case; no floor at
+  // all left 155 and kept the Lyriq noise.
   //
-  // Note this is a share of FAILS, which is what keeps the rare find: the lone
-  // sub-$30k Taycan passes while 288 peers fail, a 99.7% fail share, so the
-  // button stays exactly where a shopper hunting the bottom of the market
-  // wants it. Only a toggle that matches nothing at all is dropped from below.
+  // Still inventory-shaped, and that is the known gap. The right source for a
+  // variant axis is the model's catalog, not what happens to be for sale: if
+  // every EX30 in stock were AWD this still goes quiet, though Volvo's RWD one
+  // exists. lib/enrichment carries drivetrain for 41 of these 90 models (46%),
+  // so a catalog-first rule would go silent on the rest — the data has to come
+  // first. Written up for the owner rather than half-built here.
+  //
+  // Nothing is lost when a toggle is dropped: All filters still sets every one
+  // of these keys. The rail is shortcuts, not capability. And measuring the
+  // share of FAILS is what keeps the rare find — the lone sub-$30k Taycan
+  // passes while 288 peers fail, so that button stays.
   //
   // A toggle that is currently ON always stays, whatever it counts: the only
   // way to switch it off is for it to be there.
-  const DIVIDES_ENOUGH = 0.95;
+  const MARKET_SHARE = 0.95;
   const quick = QUICK_TOGGLES.map((t) => ({ ...t, on: get(t.key) === t.value })).filter((t) => {
     if (t.on || !quickCounts) return true;
     const c = quickCounts[`${t.key}=${t.value}`];
-    return !!c && c.n > 0 && c.n < c.of * DIVIDES_ENOUGH;
+    if (!c || c.n === 0) return false;
+    return t.axis === "variant" ? c.n < c.of : c.n < c.of * MARKET_SHARE;
   });
+
   const quickOn = new Set(quick.filter((t) => t.on).map((t) => t.key));
 
   // A filter a pressed toggle already represents doesn't also get a chip —
