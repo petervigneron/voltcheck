@@ -21,6 +21,17 @@ import { fetchPage } from "./lib/http.mjs";
 import { extractVehicles, extractItemListEntries } from "./lib/jsonld.mjs";
 import { extractDdcVehicles } from "./lib/platforms/dealercom.mjs";
 import { extractDealerOn } from "./lib/platforms/dealeron.mjs";
+
+// DealerOn ships two templates and only the older one has an sdDataLayer to
+// read a VIN out of; the current one carries its cars as data-dotagging
+// attributes. Reading `?.vehicle?.vin` alone made every dotagging site look
+// like it had no extractable inventory, which is how they got probed as
+// failures and then crawled without odometers.
+function dealerOnVins(html) {
+  const d = extractDealerOn(html);
+  if (!d) return [];
+  return [d.vehicle?.vin, ...d.dotagging.keys()].filter(Boolean);
+}
 import { extractTeamVelocity } from "./lib/platforms/teamvelocity.mjs";
 import { extractDrivewayVehicles } from "./lib/platforms/driveway.mjs";
 import { extractDcsVehicles, isDealerCarSearch, DCS_SRP_PATH } from "./lib/platforms/dealercarsearch.mjs";
@@ -120,7 +131,7 @@ async function probeSite(site) {
     ];
     const platformVins = [
       ...extractDdcVehicles(res.body).map((d) => d.vin),
-      extractDealerOn(res.body)?.vehicle?.vin,
+      ...dealerOnVins(res.body),
       extractTeamVelocity(res.body)?.vin,
     ].filter(isVin);
     if (isDealerCarSearch(res.body) && site.platform !== "dealercarsearch") site.platform = "dealercarsearch";
@@ -146,7 +157,7 @@ async function probeSite(site) {
       ]
         .filter((v) => isVin(v.vehicleIdentificationNumber ?? v.vin)).length +
         extractDdcVehicles(vdp.body).map((d) => d.vin).filter(isVin).length +
-        [extractDealerOn(vdp.body)?.vehicle?.vin, extractTeamVelocity(vdp.body)?.vin].filter(isVin).length;
+        [...dealerOnVins(vdp.body), extractTeamVelocity(vdp.body)?.vin].filter(isVin).length;
       if (found > 0) {
         vehiclesWithVin += found;
         pagesWithVehicles++;
