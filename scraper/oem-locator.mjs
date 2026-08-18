@@ -26,6 +26,51 @@
 //            used stock, so roughly half of what it yields is other makes'
 //            trade-ins — including used Teslas, which no other lane can reach.
 //            ~2.5k used + ~2.1k new BEVs → lib/oem/audi.mjs
+//   Subaru — subaru.com's own /services/* JSON (NOT Toyota's GraphQL, despite
+//            the Solterra being a bZ4X sibling — the 2026-08-15 "Subaru = AWS
+//            WAF" verdict was about the rendered page, not these endpoints).
+//            Model codes discovered from the catalogue's marketing `types`, so
+//            the lane picked up Trailseeker + Uncharted the day they shipped.
+//            ~1.4k new + ~100 certified BEVs → lib/oem/subaru.mjs
+//
+// Probed and found to have NO US BEV to sell — negatives, control-tested, so
+// nobody spends another day on them (the Acura ZDX note in the locator memory
+// is the model for this). Both APIs are OPEN and buildable; only the cars are
+// missing, so each entry says what to do when that changes.
+//   Mazda  — mazdausa.com/api/inv/search is open to plain Node and answers
+//            with `vc` (the CARLINE code, e.g. CX5 — not the year-prefixed
+//            26CX5 the page markup uses, which silently returns 0 and is how
+//            an hour went), `yr`, `dlrId` (from /handlers/dealer.ajax), `s=d`,
+//            `p`, `ps`, `cond=n|c`. Mazda's catalogue at /api/vehicles/model/
+//            {modelCodeWithYear} carries a structural BEV flag, isEvModel, and
+//            all twelve models the inventory tool offers for 2026 read false —
+//            the CX-70 PHEV (C7P) and CX-90 PHEV (C9P) included, correctly.
+//            The only US Mazda BEV ever was the MX-30 EV: /api/vehicles/model/
+//            23m30 still resolves it (title "Mazda MX-30 EV", isEvModel true,
+//            carlineCode M30), and vc=M30 returns 0 new AND 0 certified across
+//            2019-2027 over all 58 California-region dealers — California was
+//            its only market. Control on the same query shape at the same
+//            moment: 1,930 new CX-5, 151 certified CX-5, 156 certified CX-30.
+//            Build the lane on isEvModel when the 6e lands; it is a day's work.
+//   Mitsubishi — clickshop.mitsubishicars.com/api/graphql (an AutoFi BFF) is
+//            open to plain Node; introspection is off, so the operations came
+//            out of the _next chunks (VehiclesSummary / SearchVehiclesTotal /
+//            SearchVehicles, all taking {filters}). With filters:{} — no geo
+//            scope, i.e. the whole national index — the fuel facet lists
+//            exactly Gasoline and Hybrid, and the model facet lists Outlander
+//            Sport, Eclipse Cross, Outlander, Outlander PHEV, Mirage G4,
+//            Mirage. Counted: 12,673 vehicles total, fuelType Electric 0,
+//            Gasoline 12,101, Hybrid 572 — and 12,101 + 572 = 12,673 exactly,
+//            so the facet partitions the entire index and no BEV can be hiding
+//            in an unqueried bucket. Mitsubishi's own electrified-lineup page
+//            agrees: the 2027 Eclipse Sportback EV is "Coming Soon", with no
+//            price and no Build & Price. The Outlander PHEV is a PHEV and does
+//            not qualify. Revisit when the Eclipse Sportback ships.
+//   Fiat   — has a lane already, inside the Stellantis family rather than its
+//            own file: STELLANTIS_BRANDS' fiat entry queries the 500e by
+//            modelYearCode because fiatusa.com's robots forbids the /services/
+//            catalogue the Jeep/Dodge entries read. Verified live this session:
+//            56 500e, 17 states, 4 requests, 0 errors, complete.
 //   Tesla  — Akamai 403 on the inventory API itself (robots.txt is 200 and
 //            permits /inventory; the block is bot management, not policy).
 //            Off-limits: we do not work around bot detection. Note that used
