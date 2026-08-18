@@ -48,9 +48,35 @@
 // {1: 129}); the sets from Dallas and Los Angeles differ by 5 VINs each way,
 // and every swapped pair is the same trim with a nearer storage yard (LA sees
 // San Diego cars, Dallas sees Houston cars). So the true new fleet is bigger
-// than any one answer, and a 24-metro union grows Air 129 -> 145 and Gravity
-// 973 -> 1432. That can never be certified exhaustive: truncated:true, synthetic
-// domain, no delisting authority — the same contract as ford-blue-advantage.
+// than any one answer, and moving the query point is the only lever that
+// surfaces more of it. That can never be certified exhaustive: truncated:true,
+// synthetic domain, no delisting authority — the contract ford-blue-advantage
+// has.
+//
+// HOW THE NEW SWEEP MOVES THAT POINT, and the version of it that was thrown
+// away. The obvious construction — the shared CONUS covering grid, 121 anchors,
+// each asking the national question at distance=10000 — was built, run, and
+// deleted. It collected 1,218 VINs in 281 requests over 12m42s and moved 1.17
+// GB, because a Gravity answer at full radius is 973 rows of ~10 KB each (9.66
+// MB, measured) and every anchor re-downloads substantially the same catalogue:
+// at national radius most configs resolve to the same big hubs whatever you ask
+// from. It also failed 39 of 121 Gravity calls with transport TypeErrors, which
+// is what repeatedly pulling 10 MB over one connection looks like.
+//
+// The replacement asks LOCAL questions at the places the cars actually are. Two
+// facts make it work. First, radius is what changes the answer: six metros at
+// distance=150 lifted the Gravity union 973 -> 1,755 for 35 MB, where a seventh
+// pass at distance=400 over the same six added 27 VINs — the radius axis
+// saturates almost immediately, the location axis does not. Second, the
+// national baseline names every place Lucid keeps cars: across both models it
+// returns just 35 distinct location ZIPs (Port Hueneme, the Philadelphia CSX
+// railyard, Pier 80, Tampa...), so there is no need to guess at geography. The
+// sweep is therefore: one national call per model for the baseline catalogue,
+// then the hub list read out of that answer, thinned so no two query points sit
+// within THIN_MILES of each other (the Bay Area alone lists six hubs whose
+// 150-mile circles are nearly the same circle), then one local call per hub per
+// model. Self-adapting: when Lucid opens or closes a yard the sweep follows it
+// without an edit.
 //
 // USED is the opposite, and it is the half we actually want. The same sweep
 // returns 105 used rows from all 24 metros with ZERO union growth, and those
@@ -101,6 +127,11 @@ const MODELS = [
 
 const PAGE = 1000; // service ceiling ("requestedVehiclesNum must be <= 1000")
 const RADIUS = 10000; // miles; service ceiling, spans the country from anywhere
+const LOCAL_RADIUS = 150; // miles; the hub sweep's radius — see the header note
+const THIN_MILES = 60; // minimum spacing between hub query points
+// A full-radius Gravity answer is ~10 MB, and the default 20s budget is what
+// turned 39 of those into transport TypeErrors on the first build.
+const TIMEOUT_MS = 60000;
 
 // Used/demo lane: one national sweep, plus a second origin whose VIN set must
 // match it exactly before the lane certifies completeness.
@@ -274,29 +305,37 @@ function toRecord(v, { model, type }) {
   };
 }
 
-// One GET, with a single retry on transient failure. Returns the rows array, or
-// null on an error the caller must record (which flips truncated).
-async function apiGet({ path, type, lat, long }, report, label) {
+// One GET with a short retry ladder. Multi-megabyte answers drop connections
+// often enough that a single retry is not enough — 39 of 121 Gravity calls
+// failed that way on the first build of this lane. Returns the rows array, or
+// null on an error the caller must record.
+async function apiGet({ path, type, lat, long, distance = RADIUS }, report, label) {
   const url = `${BASE}${path}?long=${long}&lat=${lat}&type=${type}` +
-    `&sortType=price&sortOrder=asc&distance=${RADIUS}&requestedVehiclesNum=${PAGE}`;
+    `&sortType=price&sortOrder=asc&distance=${distance}&requestedVehiclesNum=${PAGE}`;
   for (let attempt = 0; ; attempt++) {
-    const res = await politeGetJson(url, { headers: HEADERS });
+    const res = await politeGetJson(url, { headers: HEADERS, timeoutMs: TIMEOUT_MS });
     report.fetched++;
     if (res.status === "robots_disallowed") { report.errors.push(`robots disallows ${path || "/vehicles"}`); return null; }
     if (res.status === 200 && Array.isArray(res.json?.data)) return res.json.data;
     const transient = String(res.status).startsWith("error:") || res.status === 429 || res.status >= 500;
-    if (attempt === 0 && transient) { await new Promise((r) => setTimeout(r, 5000)); continue; }
+    if (attempt < 2 && transient) { await new Promise((r) => setTimeout(r, 4000 * (attempt + 1))); continue; }
     report.errors.push(`${res.status} ${label}`);
     return null;
   }
 }
 
-// Fold one API answer into byVin, counting rows the location rule withheld.
-function collect(rows, ctx, byVin, stats) {
+// Fold one API answer into byVin. Rows the record rules reject are counted by
+// VIN, not by occurrence: the same un-placeable car comes back from every query
+// point it is in range of, and counting hits instead of cars reported 16,919
+// "withheld rows" for what were really a few hundred distinct vehicles.
+function collect(rows, ctx, byVin, withheld) {
   for (const v of rows) {
     const rec = toRecord(v, ctx);
     if (rec) { rec.dealerDomain = ctx.domain; byVin.set(rec.vin, rec); }
-    else if (VIN_RE.test(String(v.VIN ?? "").toUpperCase())) stats.withheld++;
+    else {
+      const vin = String(v.VIN ?? "").toUpperCase();
+      if (VIN_RE.test(vin)) withheld.add(vin);
+    }
   }
 }
 
@@ -309,7 +348,7 @@ const blankReport = (domain) => ({
 export async function pullLucid({ log = () => {} } = {}) {
   const report = blankReport(LUCID.domain);
   const byVin = new Map();
-  const stats = { withheld: 0 };
+  const withheld = new Set();
   let proven = true;
 
   for (const m of MODELS) {
@@ -317,7 +356,7 @@ export async function pullLucid({ log = () => {} } = {}) {
       const label = `${m.model}/${type}`;
       const home = await apiGet({ path: m.path, type, ...HOME_ORIGIN }, report, label);
       if (home === null) { proven = false; continue; }
-      collect(home, { ...m, type, domain: LUCID.domain }, byVin, stats);
+      collect(home, { ...m, type, domain: LUCID.domain }, byVin, withheld);
 
       // The completeness claim is "this answer is the whole national set", so
       // prove it every night instead of trusting the 2026-08-18 measurement:
@@ -326,7 +365,7 @@ export async function pullLucid({ log = () => {} } = {}) {
       if (!home.length) { report.notes.push(`${label}: 0`); continue; }
       const check = await apiGet({ path: m.path, type, ...CHECK_ORIGIN }, report, `${label} (check)`);
       if (check === null) { proven = false; continue; }
-      collect(check, { ...m, type, domain: LUCID.domain }, byVin, stats);
+      collect(check, { ...m, type, domain: LUCID.domain }, byVin, withheld);
       const a = new Set(home.map((v) => v.VIN));
       const b = new Set(check.map((v) => v.VIN));
       const drift = [...a].filter((v) => !b.has(v)).length + [...b].filter((v) => !a.has(v)).length;
@@ -341,7 +380,7 @@ export async function pullLucid({ log = () => {} } = {}) {
 
   report.evs = [...byVin.values()];
   report.vehiclePages = report.fetched;
-  if (stats.withheld) report.notes.push(`${stats.withheld} rows withheld (no resolvable state, no stated price, or an unusable year)`);
+  if (withheld.size) report.notes.push(`${withheld.size} cars withheld (no resolvable state, no stated price, or an unusable year)`);
   // Certify complete only if every call succeeded, both origins agreed, and the
   // yield cleared the floor. Anything else and db-sync must not delist.
   report.truncated = !proven || report.errors.length > 0 || byVin.size < LUCID.minExpected;
@@ -349,64 +388,96 @@ export async function pullLucid({ log = () => {} } = {}) {
 }
 
 // ── Lane 2: new stock. Per-config sample, never complete. ────────────────────
-//
-// Because the service returns the nearest car per configuration, moving the
-// query point is the only lever that surfaces more VINs. Reuse the shared CONUS
-// covering grid as the set of query points and union the answers; growth
-// flattens but never provably stops, which is exactly why this lane is
-// truncated. Falls back to a metro list if the ZCTA table is unreadable.
-const FALLBACK_ORIGINS = [
-  [34.05, -118.24], [37.77, -122.42], [47.61, -122.33], [33.45, -112.07],
-  [39.74, -104.99], [32.78, -96.8], [29.76, -95.37], [41.88, -87.63],
-  [42.33, -83.05], [33.75, -84.39], [25.76, -80.19], [35.23, -80.84],
-  [38.91, -77.04], [40.71, -74.01], [42.36, -71.06], [39.95, -75.17],
-  [44.98, -93.27], [38.63, -90.2], [40.76, -111.89], [45.52, -122.68],
-];
 
-function gridOrigins() {
-  try {
-    const zips = JSON.parse(readFileSync(new URL("../../../web/data/zips.json", import.meta.url), "utf-8"));
-    const LAT = 2.8, LNG = 3.2; // coarser than grid.mjs: the query is national, the point only picks the tie-break
-    const cells = new Map();
-    for (const [, v] of Object.entries(zips)) {
-      const [la, ln] = v;
-      if (!(la >= 24 && la <= 49.5 && ln >= -125 && ln <= -66.5)) continue; // CONUS
-      const cx = Math.floor(la / LAT), cy = Math.floor(ln / LNG), key = `${cx}_${cy}`;
-      const d = (la - (cx + 0.5) * LAT) ** 2 + (ln - (cy + 0.5) * LNG) ** 2;
-      const ex = cells.get(key);
-      if (!ex || d < ex.d) cells.set(key, { la, ln, d });
+// ZIP -> [lat, lng]. The payload gives a location ZIP but no coordinates, and
+// the sweep needs coordinates to query around a hub. Read once, lazily; if the
+// table is unavailable the lane degrades to its national baseline rather than
+// guessing at where a ZIP is.
+let zipTable;
+function zipCoords(zip) {
+  if (zipTable === undefined) {
+    try {
+      zipTable = JSON.parse(readFileSync(new URL("../../../web/data/zips.json", import.meta.url), "utf-8"));
+    } catch {
+      zipTable = null;
     }
-    const out = [...cells.values()].map((c) => [c.la, c.ln]);
-    return out.length >= 20 ? out : FALLBACK_ORIGINS;
-  } catch {
-    return FALLBACK_ORIGINS;
   }
+  const v = zipTable?.[String(zip)];
+  return Array.isArray(v) && v.length === 2 ? v : null;
+}
+
+const MI_PER_DEG_LAT = 69;
+function milesApart(a, b) {
+  const dLat = (a[0] - b[0]) * MI_PER_DEG_LAT;
+  const dLng = (a[1] - b[1]) * MI_PER_DEG_LAT * Math.cos(((a[0] + b[0]) / 2) * Math.PI / 180);
+  return Math.hypot(dLat, dLng);
+}
+
+// The distinct storage yards named by the baseline answers, thinned so no two
+// query points are closer than THIN_MILES. Busiest hubs first, so when two sit
+// close together the one holding more cars is the one kept.
+function hubOrigins(rowsByModel) {
+  const count = new Map();
+  for (const rows of rowsByModel) {
+    for (const v of rows) {
+      const z = String(v.address?.zipcode ?? "");
+      if (/^\d{5}$/.test(z)) count.set(z, (count.get(z) ?? 0) + 1);
+    }
+  }
+  const ranked = [...count.entries()].sort((a, b) => b[1] - a[1]);
+  const kept = [];
+  for (const [zip] of ranked) {
+    const c = zipCoords(zip);
+    if (!c) continue;
+    if (kept.every((k) => milesApart(k, c) >= THIN_MILES)) kept.push(c);
+  }
+  return kept;
 }
 
 export async function pullLucidNew({ log = () => {} } = {}) {
   const report = blankReport(LUCID_NEW.domain);
   const byVin = new Map();
-  const stats = { withheld: 0 };
-  const origins = gridOrigins();
+  const withheld = new Set();
+  const ctx = (m) => ({ ...m, type: "new", domain: LUCID_NEW.domain });
 
+  // Pass 1 — the national baseline per model: every configuration exactly once,
+  // and the list of places Lucid is holding cars.
+  const baselines = [];
   for (const m of MODELS) {
-    let perCall = 0;
-    for (const [lat, long] of origins) {
-      const rows = await apiGet({ path: m.path, type: "new", lat, long }, report, `${m.model}/new @${lat},${long}`);
-      if (rows === null) continue; // error recorded; lane is truncated anyway
-      perCall = Math.max(perCall, rows.length);
-      collect(rows, { ...m, type: "new", domain: LUCID_NEW.domain }, byVin, stats);
+    const rows = await apiGet({ path: m.path, type: "new", ...HOME_ORIGIN }, report, `${m.model}/new national`);
+    if (rows === null) continue;
+    baselines.push(rows);
+    collect(rows, ctx(m), byVin, withheld);
+    report.notes.push(`${m.model}/new national baseline: ${rows.length} configurations`);
+    // A baseline sitting on the row ceiling would mean a real cap rather than
+    // the per-config collapse, and the baseline would no longer be a full
+    // catalogue — worth seeing in the report.
+    if (rows.length >= PAGE) report.notes.push(`${m.model}/new baseline hit the ${PAGE}-row ceiling — answers may be cut, not just deduped`);
+  }
+  log(`lucid-new: baselines give ${byVin.size} VINs`);
+
+  // Pass 2 — one local query per hub per model. Each returns the nearest car
+  // per configuration *within LOCAL_RADIUS*, which is a genuinely different car
+  // from the national answer wherever a config has stock near that hub.
+  const hubs = hubOrigins(baselines);
+  if (!hubs.length) {
+    report.notes.push("no hub coordinates resolved — national baseline only");
+  } else {
+    for (const m of MODELS) {
+      const before = byVin.size;
+      for (const [lat, long] of hubs) {
+        const rows = await apiGet({ path: m.path, type: "new", lat, long, distance: LOCAL_RADIUS }, report, `${m.model}/new @${lat},${long}`);
+        if (rows === null) continue; // error recorded; lane is truncated anyway
+        collect(rows, ctx(m), byVin, withheld);
+      }
+      report.notes.push(`${m.model}/new hub sweep: ${hubs.length} hubs at ${LOCAL_RADIUS}mi, +${byVin.size - before} VINs`);
+      log(`lucid-new/${m.model}: +${byVin.size - before} from ${hubs.length} hubs, ${byVin.size} cumulative VINs`);
     }
-    report.notes.push(`${m.model}/new: largest single answer ${perCall}, ${byVin.size} cumulative VINs over ${origins.length} origins`);
-    log(`lucid-new/${m.model}: largest answer ${perCall}, ${byVin.size} cumulative VINs`);
-    // The per-config collapse means a single answer sitting on the row ceiling
-    // would be a different failure (a real cap), worth seeing in the report.
-    if (perCall >= PAGE) report.notes.push(`${m.model}/new hit the ${PAGE}-row ceiling — answers may be cut, not just deduped`);
   }
 
   report.evs = [...byVin.values()];
   report.vehiclePages = report.fetched;
-  if (stats.withheld) report.notes.push(`${stats.withheld} rows withheld (no resolvable state, no stated price, or an unusable year)`);
+  if (withheld.size) report.notes.push(`${withheld.size} cars withheld (no resolvable state, no stated price, or an unusable year)`);
   if (byVin.size < LUCID_NEW.minExpected) report.errors.push(`collected ${byVin.size} < floor ${LUCID_NEW.minExpected} — endpoint may have moved`);
   report.truncated = true; // per-config sample: never certifies, never delists
   return report;
