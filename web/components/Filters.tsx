@@ -32,7 +32,15 @@ function SearchBox({ current, suggestions }: { current: string; suggestions: Sug
   const sp = useSearchParams();
   const [text, setText] = useState(current);
   const [open, setOpen] = useState(false);
-  const [hi, setHi] = useState(0);
+  // Which suggestion the keyboard is on, or -1 for "none — Enter means the
+  // words I typed". It starts at -1 and returns there on every keystroke,
+  // because the typed text is a real search and usually a broader one than any
+  // single suggestion: "bolt" is 3,763 cars across the EV and the EUV,
+  // "brightdrop" is 61 vans filed under six different model spellings, "ioniq"
+  // is 7,007 across twelve. Pre-selecting the first suggestion — which is what
+  // starting at 0 did — meant Enter silently narrowed every one of those to one
+  // model, and there was no way to ask the broad question from the keyboard.
+  const [hi, setHi] = useState(-1);
   const input = useRef<HTMLInputElement>(null);
 
   const toks = text.toLowerCase().trim().split(/\s+/).filter(Boolean);
@@ -69,7 +77,7 @@ function SearchBox({ current, suggestions }: { current: string; suggestions: Sug
           onChange={(e) => {
             setText(e.target.value);
             setOpen(true);
-            setHi(0);
+            setHi(-1);
           }}
           onKeyDown={(e) => {
             if (e.key === "ArrowDown" && hits.length) {
@@ -77,10 +85,14 @@ function SearchBox({ current, suggestions }: { current: string; suggestions: Sug
               setHi((h) => Math.min(h + 1, hits.length - 1));
             } else if (e.key === "ArrowUp" && hits.length) {
               e.preventDefault();
-              setHi((h) => Math.max(h - 1, 0));
-            } else if (e.key === "Enter" && hits[hi]) {
+              // Back past the first suggestion returns to the typed text
+              // rather than sticking on it.
+              setHi((h) => Math.max(h - 1, -1));
+            } else if (e.key === "Enter" && hi >= 0 && hits[hi]) {
               e.preventDefault();
               go(hits[hi].label);
+              // Enter with nothing highlighted falls through to the form's own
+              // submit, which searches the typed words.
             } else if (e.key === "Escape") {
               setOpen(false);
             }
@@ -89,6 +101,7 @@ function SearchBox({ current, suggestions }: { current: string; suggestions: Sug
           role="combobox"
           aria-expanded={hits.length > 0}
           aria-controls="search-suggestions"
+          aria-activedescendant={hi >= 0 && hits[hi] ? `search-option-${hi}` : undefined}
           aria-autocomplete="list"
           aria-label="Search electric cars"
           placeholder="Make, model, or trim"
@@ -125,6 +138,7 @@ function SearchBox({ current, suggestions }: { current: string; suggestions: Sug
             {hits.map((s, i) => (
               <li
                 key={s.label}
+                id={`search-option-${i}`}
                 role="option"
                 aria-selected={i === hi}
                 // Mousedown, not click: it fires before the input's blur closes
