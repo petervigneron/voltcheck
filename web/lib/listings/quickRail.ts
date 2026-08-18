@@ -100,6 +100,14 @@ export interface QuickCount {
 
 const digestKey = (r: CardRow) => `${r.make} ${r.model}`.toLowerCase();
 
+// Everything below reads a year's retail fields (`d`, `r`) and never its `f`
+// sidecar. `f` holds versions the EPA rated that no shopper can buy — today
+// the Motional Ioniq 5 robotaxi — and a filter exists to divide cars someone
+// could actually turn up and buy. Counting the robotaxi's 168 miles as an
+// Ioniq 5 version is what put "+ 200+ mi range" back on that search, where
+// its only possible effect was hiding ~700 range-unresolved cars. This one
+// line is where that judgement lives; the catalogue itself keeps the row.
+
 /**
  * The catalogue-first verdict for one variant-axis toggle over one pool of
  * result rows: true iff a matching version AND a non-matching version both

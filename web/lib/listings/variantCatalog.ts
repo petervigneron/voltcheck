@@ -55,6 +55,16 @@ export interface YearVariants {
    * the corpus has rows for; Mercedes also sold the RWD 350+).
    */
   e?: 1;
+  /**
+   * Versions the EPA rated for this year that no shopper can buy — see
+   * FLEET_ONLY. Kept OUT of `d`/`r` and parked here rather than discarded, so
+   * the digest never disagrees with the EPA while the retail fields stay the
+   * safe default: a consumer that ignores `f` gets the showroom, and one that
+   * wants the certification record unions it back in. The rail ignores it
+   * (lib/listings/quickRail.ts) because a filter exists to divide cars a
+   * shopper could actually buy.
+   */
+  f?: { d?: Drive[]; r?: number[] };
 }
 
 /** One model's catalogued variant space. */
@@ -138,7 +148,12 @@ function anchoredSubseq(a: string[], b: string[]): boolean {
 const NOISE = new Set(["ELECTRIC", "EV", "BEV", "PHEV", "RECHARGE", "PURE", "PLUG", "HYBRID"]);
 
 // Certified but never retailed: configurations the EPA rates that no shopper
-// can buy, which therefore must not widen a model's variant space. The one
+// can buy, which therefore must not widen a model's RETAIL variant space.
+// These are recorded, not discarded — they land in a year's `f` sidecar, so
+// the digest never contradicts the EPA and a consumer that wants the whole
+// certification record can union `f` back in. Only the showroom fields
+// (`d`/`r`, the model-level drive list, and the body class) leave them out,
+// because those answer "what could a shopper buy". The one
 // known case is the Motional "Ioniq 5 Robo taxi" (168 mi, MY2025-26, verified
 // in epa_vehicle_variants 2026-08-17) — left in, that single row was the only
 // sub-200-mile Ioniq 5, and it put "+ 200+ mi range" back on the Ioniq 5 rail
@@ -203,7 +218,6 @@ export function buildVariantDigest(
   // the EPA files "Leaf" and "LEAF" as two baseModels for one car.
   const byMake = new Map<string, Map<string, BaseGroup>>();
   for (const r of epaRows) {
-    if (FLEET_ONLY.test(r.model)) continue;
     const mk = normMake(r.make);
     const baseToks = tokenize(r.base_model ?? r.model);
     const baseKey = baseToks.join(" ");
@@ -305,24 +319,39 @@ const VCLASS_BODY: [RegExp, BodyType][] = [
 ];
 
 function aggregate(rows: EpaVariantRow[]): ModelVariants | null {
-  const years = new Map<number, { d: Set<Drive>; r: Set<number> }>();
+  type Bucket = { d: Set<Drive>; r: Set<number> };
+  const blank = (): { retail: Bucket; fleet: Bucket } => ({
+    retail: { d: new Set(), r: new Set() },
+    fleet: { d: new Set(), r: new Set() },
+  });
+  const years = new Map<number, ReturnType<typeof blank>>();
   const allDrives = new Set<Drive>();
   for (const r of rows) {
     let y = years.get(r.model_year);
-    if (!y) years.set(r.model_year, (y = { d: new Set(), r: new Set() }));
+    if (!y) years.set(r.model_year, (y = blank()));
+    // A fleet-only configuration is still a rating the EPA published, so it is
+    // recorded — just not as part of the showroom. Only the retail bucket
+    // feeds `d`/`r` and the model-level drive list.
+    const fleet = FLEET_ONLY.test(r.model);
+    const bucket = fleet ? y.fleet : y.retail;
     if (r.drive) {
-      y.d.add(r.drive);
-      allDrives.add(r.drive);
+      bucket.d.add(r.drive);
+      if (!fleet) allDrives.add(r.drive);
     }
-    if (r.ev_type === "BEV" && r.epa_range_mi) y.r.add(r.epa_range_mi);
+    if (r.ev_type === "BEV" && r.epa_range_mi) bucket.r.add(r.epa_range_mi);
   }
   if (allDrives.size === 0) return null;
 
   const y: Record<number, YearVariants> = {};
   for (const [year, v] of [...years].sort((a, b) => a[0] - b[0])) {
-    if (v.d.size === 0) continue; // a year that says nothing claims nothing
-    const entry: YearVariants = { d: [...v.d].sort() };
-    if (v.r.size) entry.r = [...v.r].sort((a, b) => a - b);
+    if (v.retail.d.size === 0) continue; // a year that says nothing claims nothing
+    const entry: YearVariants = { d: [...v.retail.d].sort() };
+    if (v.retail.r.size) entry.r = [...v.retail.r].sort((a, b) => a - b);
+    if (v.fleet.d.size || v.fleet.r.size) {
+      entry.f = {};
+      if (v.fleet.d.size) entry.f.d = [...v.fleet.d].sort();
+      if (v.fleet.r.size) entry.f.r = [...v.fleet.r].sort((a, b) => a - b);
+    }
     y[year] = entry;
   }
 
@@ -331,6 +360,7 @@ function aggregate(rows: EpaVariantRow[]): ModelVariants | null {
   // stay silent here on purpose.
   let b: BodyType | undefined | "mixed";
   for (const r of rows) {
+    if (FLEET_ONLY.test(r.model)) continue;
     const mapped = r.vclass ? VCLASS_BODY.find(([re]) => re.test(r.vclass!))?.[1] : undefined;
     if (b === undefined) b = mapped;
     else if (b !== mapped) b = "mixed";
