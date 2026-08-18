@@ -25,6 +25,7 @@ import {
   dealerFireNextPageUrl,
   isDealerFire,
 } from "./lib/platforms/dealerfire.mjs";
+import { isDealerVenom, extractDealerVenomConfig, pullDealerVenom } from "./lib/platforms/dealervenom.mjs";
 
 const args = process.argv.slice(2);
 function flag(name, fallback) {
@@ -119,6 +120,17 @@ async function crawlDealer(domain) {
   }
   if (siteInfo.get(domain)?.platform === "dealercarsearch") seedDcs();
 
+  // DealerVenom is API-backed (see the pull block below) and reveals its
+  // Typesense config only in the page's own <script> — reliably on the
+  // homepage, not on the client-rendered VDP shells. Seed the homepage first
+  // for any site the registry can't already place on an HTML-extractable
+  // platform (dealervenom, or still-unknown), so a DealerVenom site is caught
+  // on page one instead of burning its budget on empty shells. Only ~353
+  // working sites are unknown-platform, so the extra fetch is negligible.
+  const dv = { done: false };
+  const dvPlat = siteInfo.get(domain)?.platform;
+  if (!dvPlat || dvPlat === "unknown" || dvPlat === "dealervenom") queue.unshift(origin + "/");
+
   // DealerFire's SRP slug is per-rooftop ("/cars-for-sale-hillsboro-or"), so
   // there is nothing to seed until a page of theirs tells us its own — which
   // its SearchAction JSON-LD does. One request at limit=100 then replaces a
@@ -179,6 +191,41 @@ async function crawlDealer(domain) {
       report.errors.push(`${res.status} ${url}`);
       continue;
     }
+
+    // DealerVenom renders no inventory in HTML — it lives in a Typesense index
+    // whose client config is inline on every page. On the first page that
+    // reveals it, pull the whole collection through the search API and finish:
+    // the rest of this site's pages have nothing for the walk to find.
+    if (!dv.done && isDealerVenom(res.body)) {
+      const cfg = extractDealerVenomConfig(res.body);
+      if (cfg) {
+        dv.done = true;
+        const before = report.evs.length;
+        const { vehicles: dvVehicles, complete, found } = await pullDealerVenom(cfg, origin);
+        for (const v of dvVehicles) {
+          const cls = classifyEv(v);
+          if (!cls.isEv) continue;
+          let rec = normalize(v, { sourceUrl: v.offers?.url || origin, dealerDomain: domain });
+          if (rec.vdpUrl) rec.vdpUrl = abs(rec.vdpUrl, origin) ?? rec.vdpUrl;
+          rec.evKind = cls.kind;
+          rec.evConfidence = cls.confidence;
+          rec.fromVdp = true;
+          rec.platform = "dealervenom";
+          report.evs.push(rec);
+        }
+        if (report.evs.length > before) report.vehiclePages++;
+        report.notes.push(
+          `dealervenom: ${found} in index, ${report.evs.length - before} EV(s) admitted (${complete ? "complete" : "partial"})`
+        );
+        // A partial or failed pull must never certify a complete crawl, or
+        // db-sync would delist cars we merely failed to finish fetching
+        // (migration 0002, and the truncated: note at the end of this loop).
+        if (!complete) report.stoppedEarly = "dealervenom partial pull";
+        queue.length = 0;
+        break;
+      }
+    }
+
     if (dcs.srp.has(url)) {
       // A 200 is not enough to count an SRP page as covered: plenty of sites
       // answer any unknown path with a soft-404 homepage, and two of those

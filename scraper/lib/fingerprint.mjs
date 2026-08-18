@@ -2,6 +2,12 @@
 // HTML. Platform → extractor strategy; one fingerprint covers thousands of
 // rooftops. Signatures chosen from pages actually crawled in this project.
 const SIGNATURES = [
+  // DealerVenom (WordPress front end, Toyota-heavy) renders no inventory in
+  // HTML — it queries a Typesense index whose client config is inline on every
+  // page. lib/platforms/dealervenom.mjs pulls the collection via the search
+  // API. `typesenseSearchAdapter` is the vendor's search-client init; the
+  // `dealervenom` brand token is the second signal.
+  { platform: "dealervenom", res: [/typesenseSearchAdapter/i, /dealervenom/i] },
   // DealerOn first: their sites often serve images from pictures.dealer.com,
   // which would false-positive the Dealer.com check (bit us on lehmers.com).
   { platform: "dealeron", res: [/dealeron-js\.aspx/i, /DealerOn/i, /searchused\.aspx/i, /sdDataLayer/] },

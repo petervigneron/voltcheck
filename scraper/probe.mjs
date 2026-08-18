@@ -37,6 +37,7 @@ import { extractDrivewayVehicles } from "./lib/platforms/driveway.mjs";
 import { extractDcsVehicles, isDealerCarSearch, DCS_SRP_PATH } from "./lib/platforms/dealercarsearch.mjs";
 import { dealerFireVehicles } from "./lib/platforms/dealerfire.mjs";
 import { fingerprint } from "./lib/fingerprint.mjs";
+import { isDealerVenom, extractDealerVenomConfig, countDealerVenom } from "./lib/platforms/dealervenom.mjs";
 import { discoverSitemapUrls, rank, dedupe, SRP_PATHS } from "./lib/sitemap.mjs";
 import { spaSignals, countVinUrls } from "./lib/spa-signals.mjs";
 
@@ -78,6 +79,24 @@ async function probeSite(site) {
     return;
   }
   if (site.platform === "unknown" || !site.platform) site.platform = fingerprint(home.body);
+
+  // DealerVenom serves no inventory HTML, so the SRP-guess walk below would
+  // score it a failure. Confirm its Typesense index directly instead: one
+  // request, and a non-empty VIN'd result promotes it — the nightly crawl's
+  // dealervenom pull then reads the whole lot.
+  if (isDealerVenom(home.body)) {
+    const cfg = extractDealerVenomConfig(home.body);
+    if (cfg) {
+      const { ok, found, hasVin } = await countDealerVenom(cfg);
+      if (ok && found > 0 && hasVin) {
+        site.platform = "dealervenom";
+        site.status = "working";
+        site.notes = `${site.notes ?? ""} | auto-promoted by probe ${today}: dealervenom Typesense index, ${found} vehicles`.trim();
+        console.error(`  ${site.domain} → working (dealervenom, ${found})`);
+        return;
+      }
+    }
+  }
 
   // When the platform is known, its own SRP goes first. The 12-fetch budget
   // covers 6 sitemap URLs plus about six guesses, and /used-inventory/
