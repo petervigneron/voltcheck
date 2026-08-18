@@ -1,6 +1,7 @@
 import { buildCardIndex } from "@/lib/listings/buildIndex";
 import { buildFirstPaint } from "@/lib/listings/firstPaint";
 import { SHARDS, packIndex } from "@/lib/listings/pack";
+import { buildVariantDigestForRows } from "@/lib/listings/variantCatalog";
 
 // The browse grid's dataset: CDN-cached JSON the client filters locally.
 // Visitors hit the edge cache, and every filter click after first load is
@@ -72,7 +73,12 @@ export async function GET(_req: Request, { params }: { params: Promise<{ shard: 
   // walk memo, so it adds no database load — one more render per nightly.
   if (shard === "first") {
     const rows = await buildCardIndex();
-    return Response.json(buildFirstPaint(rows));
+    // The variant catalogue digest rides in this payload (a few KB): what each
+    // model comes as, per the EPA's certification data, keyed by the feed's
+    // own model strings. Its read failing yields undefined, and the payload
+    // ships without the field — every model then reads as unknown, which is
+    // the fallback-to-inventory direction, never "single variant".
+    return Response.json(buildFirstPaint(rows, await buildVariantDigestForRows(rows)));
   }
   const n = Number(shard);
   if (!Number.isInteger(n) || n < 0 || n >= SHARDS) {

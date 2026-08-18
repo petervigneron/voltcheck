@@ -3,6 +3,7 @@ import { featuredScore, type CardRow } from "./card";
 import { QUICK_KNOWS, buildTests } from "./match";
 import { packIndex, unpackIndex, type PackedIndex } from "./pack";
 import { modelTally, type ModelCount } from "./tally";
+import type { VariantDigest } from "./variantCatalog";
 
 // The first-paint payload for the pristine landing page — /api/index/first.
 //
@@ -30,8 +31,10 @@ export interface FirstPaint {
    *  denominator to tell a toggle that divides the results from one that keeps
    *  all of them (components/Filters.tsx). A cached v1 body is rejected rather
    *  than misread — its bare numbers would silently answer `undefined` for
-   *  every ratio and strip the rail. */
-  v: 2;
+   *  every ratio and strip the rail. Went to 3 when `variants` arrived, on the
+   *  same reasoning: a v2 body would answer "unknown" for every model and
+   *  silently put the rail back on inventory inference. */
+  v: 3;
   /**
    * The day term the featured order was scored with. The client reuses it for
    * its own full-index sort, so a payload rendered before UTC midnight and a
@@ -48,11 +51,22 @@ export interface FirstPaint {
   popular: ModelCount[];
   suggestions: { label: string; count: number }[];
   makesModels: Record<string, string[]>;
+  /**
+   * The variant catalogue digest (lib/listings/variantCatalog.ts): per feed
+   * model, the drivetrains, body, and per-year rated ranges it was actually
+   * SOLD in, from the EPA's certification data — what lets the rail offer a
+   * version with zero cars in stock and never offer one that doesn't exist.
+   * ABSENT (whole field, a model's key, or a model's year) always means
+   * unknown — fall back to inventory inference, never to "single variant".
+   * The field is missing entirely when the catalogue read failed at render
+   * time; a few KB against the payload's couple dozen.
+   */
+  variants?: VariantDigest;
   /** The top FIRST_PAGE_SIZE cards in featured order, packed like a shard. */
   top: PackedIndex;
 }
 
-export function buildFirstPaint(rows: CardRow[]): FirstPaint {
+export function buildFirstPaint(rows: CardRow[], variants?: VariantDigest): FirstPaint {
   const { counts, suggestions, popular, makesModels } = modelTally(rows);
   const day = Math.floor(Date.now() / 86400000);
   // Identical scoring to Browse's featured branch (no search, so no identity
@@ -77,13 +91,14 @@ export function buildFirstPaint(rows: CardRow[]): FirstPaint {
     quick[`${t.key}=${t.value}`] = { n, of };
   }
   return {
-    v: 2,
+    v: 3,
     day,
     total: rows.length,
     quick,
     popular,
     suggestions,
     makesModels,
+    ...(variants ? { variants } : {}),
     top: packIndex(scored.slice(0, FIRST_PAGE_SIZE).map((s) => s.r)),
   };
 }
@@ -95,6 +110,8 @@ export interface FirstPaintData {
   popular: ModelCount[];
   suggestions: { label: string; count: number }[];
   makesModels: Record<string, string[]>;
+  /** See FirstPaint.variants — absent means every model reads as unknown. */
+  variants?: VariantDigest;
   rows: CardRow[];
 }
 
@@ -102,7 +119,7 @@ export interface FirstPaintData {
  *  failed body downgrades to today's behavior (wait for the index), never to
  *  a misread page. */
 export function unpackFirstPaint(x: unknown): FirstPaintData | null {
-  if (!x || typeof x !== "object" || (x as FirstPaint).v !== 2) return null;
+  if (!x || typeof x !== "object" || (x as FirstPaint).v !== 3) return null;
   const f = x as FirstPaint;
   return {
     day: f.day,
@@ -111,6 +128,7 @@ export function unpackFirstPaint(x: unknown): FirstPaintData | null {
     popular: f.popular,
     suggestions: f.suggestions,
     makesModels: f.makesModels,
+    variants: f.variants,
     rows: unpackIndex(f.top),
   };
 }

@@ -496,12 +496,22 @@ export function FilterRail({
   // A flat 5% on everything left 110 but dropped the EX30 case; no floor at
   // all left 155 and kept the Lyriq noise.
   //
-  // Still inventory-shaped, and that is the known gap. The right source for a
-  // variant axis is the model's catalog, not what happens to be for sale: if
-  // every EX30 in stock were AWD this still goes quiet, though Volvo's RWD one
-  // exists. lib/enrichment carries drivetrain for 41 of these 90 models (46%),
-  // so a catalog-first rule would go silent on the rest — the data has to come
-  // first. Written up for the owner rather than half-built here.
+  // Still inventory-shaped, and that is now the LAST gap, not a data problem:
+  // the catalogue exists. lib/listings/variantCatalog.ts joins the EPA's own
+  // certification data (epa_vehicle_variants, migration 0037) to the feed's
+  // model strings and ships a per-model digest in the first-paint payload
+  // (FirstPaintData.variants) — drivetrains, body, per-year rated ranges, for
+  // all 88 of the 50+ car models (measured 2026-08-17). The catalogue-first
+  // rule this enables: a VARIANT toggle consults the digest before the
+  // inventory — offer "+ AWD" iff the catalogued models in the results
+  // include an AWD version (even with zero in stock today, rendered dead the
+  // way SpecFacets deads an exhausted value: the choice exists, none listed
+  // right now), and never offer it when the catalogue says single-drive.
+  // Inventory inference stays ONLY for models the digest omits — absence
+  // means unknown, never "no such version" (the EPA file has measured holes:
+  // MY2023 Ioniq 5, everything over 8,500 lb GVWR). Years flagged e:1 are
+  // enrichment-sourced and non-exhaustive — they may add a choice, never
+  // remove one. Not wired here yet; the shipped digest is the prerequisite.
   //
   // Nothing is lost when a toggle is dropped: All filters still sets every one
   // of these keys. The rail is shortcuts, not capability. And measuring the
