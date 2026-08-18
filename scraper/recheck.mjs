@@ -30,6 +30,7 @@ import { OEM_LOCATOR_DOMAINS as GENESIS_LOCATOR_DOMAINS } from "./lib/oem/genesi
 import { OEM_LOCATOR_DOMAINS as VW_LOCATOR_DOMAINS } from "./lib/oem/vw.mjs";
 import { OEM_LOCATOR_DOMAINS as POLESTAR_LOCATOR_DOMAINS } from "./lib/oem/polestar.mjs";
 import { OEM_LOCATOR_DOMAINS as ENTERPRISE_LOCATOR_DOMAINS } from "./lib/oem/enterprise.mjs";
+import { OEM_LOCATOR_DOMAINS as LEXUS_LOCATOR_DOMAINS } from "./lib/oem/toyota.mjs";
 
 // Every OEM-locator source domain: recheck skips these (see the filter below).
 // (Ford Blue Advantage, Honda and Audi are intentionally NOT here — their rows
@@ -46,7 +47,14 @@ import { OEM_LOCATOR_DOMAINS as ENTERPRISE_LOCATOR_DOMAINS } from "./lib/oem/ent
 // and an all-zeroes one both return the same 3,715-byte shell); volvo-cpo is
 // deliberately NOT, because its rows carry real dealer VDPs that drop the VIN
 // when the car is gone, which is evidence recheck can act on.
-const OEM_LOCATOR_DOMAINS = new Set([...GM_LOCATOR_DOMAINS, HYUNDAI.domain, KIA.domain, ...NISSAN_LOCATOR_DOMAINS, ...BMW_LOCATOR_DOMAINS, ...MERCEDES_LOCATOR_DOMAINS, ...STELLANTIS_LOCATOR_DOMAINS, ...GENESIS_LOCATOR_DOMAINS, ...VW_LOCATOR_DOMAINS, ...POLESTAR_LOCATOR_DOMAINS, ...ENTERPRISE_LOCATOR_DOMAINS]);
+//
+// lexus.com IS here for exactly the vw.com reason, established the same way:
+// /search-inventory/{details,vehicle}/{vin} returns byte-identical 31,591-byte
+// HTML for a real VIN and a fabricated one, with the VIN nowhere in the body,
+// and the payload carries no per-VIN dealer VDP to fall back on. toyota.mjs
+// certifies its pull complete instead — off a covering proof over Lexus's own
+// national dealer directory, not a sample.
+const OEM_LOCATOR_DOMAINS = new Set([...GM_LOCATOR_DOMAINS, HYUNDAI.domain, KIA.domain, ...NISSAN_LOCATOR_DOMAINS, ...BMW_LOCATOR_DOMAINS, ...MERCEDES_LOCATOR_DOMAINS, ...STELLANTIS_LOCATOR_DOMAINS, ...GENESIS_LOCATOR_DOMAINS, ...VW_LOCATOR_DOMAINS, ...POLESTAR_LOCATOR_DOMAINS, ...ENTERPRISE_LOCATOR_DOMAINS, ...LEXUS_LOCATOR_DOMAINS]);
 
 function flag(name, fallback) {
   const i = process.argv.indexOf(name);

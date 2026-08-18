@@ -38,6 +38,13 @@
 //            pc-api.polestar.com/eu-north-1/partner-rm-tool/public/'s
 //            searchVehicleAds does carry the VIN. ~194 BEVs, provably
 //            complete → lib/oem/polestar.mjs
+//   Lexus  — Toyota and Lexus share one inventory GraphQL and it is behind an
+//            AWS WAF CAPTCHA challenge, so Toyota's bZ4X is unreachable (and
+//            toyota.com's robots disallows /search-inventory* besides). Lexus
+//            keeps a second, same-origin REST endpoint on www.lexus.com that
+//            answers plain Node — its L/Certified lot, filterable to the RZ,
+//            ~70 used BEVs → lib/oem/toyota.mjs, which documents the Toyota
+//            negative in full so nobody re-probes it.
 //   Tesla  — Akamai 403 on the inventory API itself (robots.txt is 200 and
 //            permits /inventory; the block is bot management, not policy).
 //            Off-limits: we do not work around bot detection. Note that used
@@ -67,6 +74,7 @@ import { VW, pullVw } from "./lib/oem/vw.mjs";
 import { VOLVO, pullVolvo } from "./lib/oem/volvo.mjs";
 import { POLESTAR, pullPolestar } from "./lib/oem/polestar.mjs";
 import { ENTERPRISE, pullEnterprise } from "./lib/oem/enterprise.mjs";
+import { LEXUS, pullLexus } from "./lib/oem/toyota.mjs";
 
 // One registry of pullers keyed by brand. Each entry is a thunk returning a
 // crawl.mjs-shaped report; new OEM families plug in here without touching the
@@ -91,6 +99,7 @@ const PULLERS = {
   [VOLVO.key]: { domain: VOLVO.domain, run: () => pullVolvo({ log }) },
   [POLESTAR.key]: { domain: POLESTAR.domain, run: () => pullPolestar({ log }) },
   [ENTERPRISE.key]: { domain: ENTERPRISE.domain, run: () => pullEnterprise({ log }) },
+  [LEXUS.key]: { domain: LEXUS.domain, run: () => pullLexus({ log }) },
 };
 
 const args = process.argv.slice(2);
@@ -99,7 +108,7 @@ function flag(name, fallback) {
   return i >= 0 ? args[i + 1] : fallback;
 }
 const OUT_DIR = flag("--out", "out");
-const wanted = flag("--brands", "chevrolet,gmc,cadillac,carbravo,hyundai,hyundai-cpo,kia,nissan,nissan-cpo,bmw,mercedes,jeep,dodge,fiat,genesis,ford-blue-advantage,honda,audi,vw,volvo,polestar,enterprise").split(",").map((s) => s.trim().toLowerCase());
+const wanted = flag("--brands", "chevrolet,gmc,cadillac,carbravo,hyundai,hyundai-cpo,kia,nissan,nissan-cpo,bmw,mercedes,jeep,dodge,fiat,genesis,ford-blue-advantage,honda,audi,vw,volvo,polestar,lexus,enterprise").split(",").map((s) => s.trim().toLowerCase());
 const selected = wanted.filter((k) => PULLERS[k]);
 if (!selected.length) {
   console.error(`oem-locator: no known brands in "${wanted}" (have: ${Object.keys(PULLERS).join(",")})`);
