@@ -42,6 +42,7 @@ import { isDealerVenom, extractDealerVenomConfig, countDealerVenom } from "./lib
 import { overfuelVehicles, overfuelSeeds, isOverfuel, overfuelApiConfig, countOverfuelApi } from "./lib/platforms/overfuel.mjs";
 import { isDealr, countDealr } from "./lib/platforms/dealr.mjs";
 import { isDealerSync, countDealerSync } from "./lib/platforms/dealersync.mjs";
+import { isAutoManager, countAutoManager } from "./lib/platforms/automanager.mjs";
 import { discoverSitemapUrls, rank, dedupe, SRP_PATHS } from "./lib/sitemap.mjs";
 import { spaSignals, countVinUrls } from "./lib/spa-signals.mjs";
 
@@ -168,6 +169,21 @@ async function probeSite(site) {
       site.status = "working";
       site.notes = `${site.notes ?? ""} | auto-promoted by probe ${today}: dealersync API, ${found} vehicles`.trim();
       console.error(`  ${site.domain} → working (dealersync, ${found})`);
+      return;
+    }
+  }
+
+  // AutoManager (WebManager): the SRP is server-rendered but carries no
+  // schema.org and keys VDPs by an opaque hash, so it filed as unknown. Its
+  // /view-inventory page does carry the VIN per card — one fetch confirms VIN'd
+  // inventory and promotes it, then the nightly crawl pages the whole lot.
+  if (isAutoManager(home.body)) {
+    const { ok, found, hasVin } = await countAutoManager(origin);
+    if (ok && found > 0 && hasVin) {
+      site.platform = "automanager";
+      site.status = "working";
+      site.notes = `${site.notes ?? ""} | auto-promoted by probe ${today}: automanager SRP, ${found} vehicles`.trim();
+      console.error(`  ${site.domain} → working (automanager, ${found})`);
       return;
     }
   }

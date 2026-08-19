@@ -28,6 +28,7 @@ import {
 import { isDealerVenom, extractDealerVenomConfig, pullDealerVenom } from "./lib/platforms/dealervenom.mjs";
 import { isDealr, pullDealr } from "./lib/platforms/dealr.mjs";
 import { isDealerSync, pullDealerSync } from "./lib/platforms/dealersync.mjs";
+import { isAutoManager, pullAutoManager } from "./lib/platforms/automanager.mjs";
 import { extractDealerWebsitesVehicles } from "./lib/platforms/dealerwebsites.mjs";
 import {
   isOverfuel,
@@ -142,6 +143,7 @@ async function crawlDealer(domain) {
   const of = { done: false };
   const dl = { done: false };
   const ds = { done: false };
+  const am = { done: false };
   const dvPlat = siteInfo.get(domain)?.platform;
   if (
     !dvPlat ||
@@ -149,7 +151,8 @@ async function crawlDealer(domain) {
     dvPlat === "dealervenom" ||
     dvPlat === "overfuel" ||
     dvPlat === "dealr" ||
-    dvPlat === "dealersync"
+    dvPlat === "dealersync" ||
+    dvPlat === "automanager"
   )
     queue.unshift(origin + "/");
 
@@ -357,6 +360,36 @@ async function crawlDealer(domain) {
           `dealersync: ${found} in inventory, ${report.evs.length - before} EV(s) admitted (${complete ? "complete" : "partial"})`
         );
         if (!complete) report.stoppedEarly = "dealersync partial pull";
+        queue.length = 0;
+        break;
+      }
+    }
+
+    // AutoManager (WebManager) server-renders its lot at /view-inventory, paged
+    // ?page=N, with the VIN in each card but no schema.org. On the first
+    // AutoManager page seen — the homepage, seeded above — page the SRP to
+    // completion and finish; the rest of this site's pages have nothing new.
+    if (!am.done && isAutoManager(res.body)) {
+      am.done = true;
+      const before = report.evs.length;
+      const { vehicles: amVehicles, complete, found, ok } = await pullAutoManager(origin);
+      if (ok) {
+        for (const v of amVehicles) {
+          const cls = classifyEv(v);
+          if (!cls.isEv) continue;
+          let rec = normalize(v, { sourceUrl: v.offers?.url || origin, dealerDomain: domain });
+          if (rec.vdpUrl) rec.vdpUrl = abs(rec.vdpUrl, origin) ?? rec.vdpUrl;
+          rec.evKind = cls.kind;
+          rec.evConfidence = cls.confidence;
+          rec.fromVdp = true;
+          rec.platform = "automanager";
+          report.evs.push(rec);
+        }
+        if (report.evs.length > before) report.vehiclePages++;
+        report.notes.push(
+          `automanager: ${found} in inventory, ${report.evs.length - before} EV(s) admitted (${complete ? "complete" : "partial"})`
+        );
+        if (!complete) report.stoppedEarly = "automanager partial pull";
         queue.length = 0;
         break;
       }

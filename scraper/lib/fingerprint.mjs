@@ -31,6 +31,10 @@ const SIGNATURES = [
   // .mjs reads the whole lot out of its inline BootstrapService bootstrap. The
   // asset host is on every page; the factory name is the second signal.
   { platform: "dealerwebsites", res: [/dealerwebsites\.com/i, /app\.inventory["']\)\.factory\(\s*["']BootstrapService["']/] },
+  // AutoManager (brands as "WebManager"): server-rendered SRP, no schema.org,
+  // hash-keyed VDP URLs — lib/platforms/automanager.mjs pages /view-inventory and
+  // lifts the VIN from each card. Its asset/app hosts are on every page.
+  { platform: "automanager", res: [/wm\.automanager\.com/i, /clients\.automanager\.com/i, /automanagerprodcdn/i] },
   { platform: "dealer.com", res: [/DDC\.dataLayer/, /ddc-/i, /Dealer\.com/i] },
   { platform: "dealerinspire", res: [/dealerinspire/i, /window\.DI_/i, /di-widget/i] },
   { platform: "sincro", res: [/sincro/i, /cdk_?global/i] },
