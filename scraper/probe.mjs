@@ -36,6 +36,7 @@ import { extractTeamVelocity } from "./lib/platforms/teamvelocity.mjs";
 import { extractDrivewayVehicles } from "./lib/platforms/driveway.mjs";
 import { extractDcsVehicles, isDealerCarSearch, DCS_SRP_PATH } from "./lib/platforms/dealercarsearch.mjs";
 import { dealerFireVehicles } from "./lib/platforms/dealerfire.mjs";
+import { extractDealerWebsitesVehicles } from "./lib/platforms/dealerwebsites.mjs";
 import { fingerprint } from "./lib/fingerprint.mjs";
 import { isDealerVenom, extractDealerVenomConfig, countDealerVenom } from "./lib/platforms/dealervenom.mjs";
 import { overfuelVehicles, overfuelSeeds, isOverfuel, overfuelApiConfig, countOverfuelApi } from "./lib/platforms/overfuel.mjs";
@@ -182,6 +183,7 @@ async function probeSite(site) {
     dealeron: ["/searchused.aspx", "/searchnew.aspx"],
     dealercarsearch: [DCS_SRP_PATH],
     dealerinspire: ["/used-vehicles/"],
+    dealerwebsites: ["/inventory"], // the blob lives here, not at /inventory/
   };
   // Overfuel's SRP is a per-rooftop slug ("/used-cars-albuquerque-nm") with no
   // fixed path to guess — but the homepage links it, so read it off the page we
@@ -224,6 +226,7 @@ async function probeSite(site) {
     const vehicles = [
       ...extractVehicles(res.body),
       ...extractMicrodataVehicles(res.body),
+      ...extractDealerWebsitesVehicles(res.body, res.finalUrl),
       ...extractDrivewayVehicles(res.body),
       ...extractDcsVehicles(res.body, res.finalUrl),
       ...dealerFireVehicles(res.body, res.finalUrl),

@@ -27,6 +27,10 @@ const SIGNATURES = [
   // /Inventory/Search JSON API. lib/platforms/dealersync.mjs pages it. Its asset
   // host dealersync.com is on every page including the homepage.
   { platform: "dealersync", res: [/dealersync\.com/i] },
+  // DealerWebsites: Angular SRP with no schema.org — lib/platforms/dealerwebsites
+  // .mjs reads the whole lot out of its inline BootstrapService bootstrap. The
+  // asset host is on every page; the factory name is the second signal.
+  { platform: "dealerwebsites", res: [/dealerwebsites\.com/i, /app\.inventory["']\)\.factory\(\s*["']BootstrapService["']/] },
   { platform: "dealer.com", res: [/DDC\.dataLayer/, /ddc-/i, /Dealer\.com/i] },
   { platform: "dealerinspire", res: [/dealerinspire/i, /window\.DI_/i, /di-widget/i] },
   { platform: "sincro", res: [/sincro/i, /cdk_?global/i] },

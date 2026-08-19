@@ -28,6 +28,7 @@ import {
 import { isDealerVenom, extractDealerVenomConfig, pullDealerVenom } from "./lib/platforms/dealervenom.mjs";
 import { isDealr, pullDealr } from "./lib/platforms/dealr.mjs";
 import { isDealerSync, pullDealerSync } from "./lib/platforms/dealersync.mjs";
+import { extractDealerWebsitesVehicles } from "./lib/platforms/dealerwebsites.mjs";
 import {
   isOverfuel,
   overfuelVehicles,
@@ -385,6 +386,7 @@ async function crawlDealer(domain) {
     const vehicles = [
       ...extractVehicles(res.body),
       ...extractMicrodataVehicles(res.body),
+      ...extractDealerWebsitesVehicles(res.body, res.finalUrl),
       ...extractDrivewayVehicles(res.body),
       ...dcsVehicles,
       ...dealerFireVehicles(res.body, res.finalUrl),

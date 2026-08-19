@@ -12,6 +12,7 @@ export const SRP_PATHS = [
   "/searchused.aspx", "/searchnew.aspx", // DealerOn
   "/used-vehicles/", "/new-vehicles/",   // Dealer Inspire / DealerOn alt
   "/inventory/used", "/inventory/new", "/inventory/", // Dealer.com and others
+  "/inventory", // DealerWebsites (its Angular bootstrap ships the whole lot here; /inventory/ 200s WITHOUT the blob)
   "/used-inventory/index.htm", "/new-inventory/index.htm", // Dealer.com
   // Dealer.com EV-facet SRPs (verified on hendrickcars.com cache and
   // berkshirehathawayautomotive.com) — land directly on the electric
