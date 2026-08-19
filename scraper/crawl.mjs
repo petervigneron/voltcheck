@@ -27,6 +27,7 @@ import {
 } from "./lib/platforms/dealerfire.mjs";
 import { isDealerVenom, extractDealerVenomConfig, pullDealerVenom } from "./lib/platforms/dealervenom.mjs";
 import { isDealr, pullDealr } from "./lib/platforms/dealr.mjs";
+import { isDealerSync, pullDealerSync } from "./lib/platforms/dealersync.mjs";
 import {
   isOverfuel,
   overfuelVehicles,
@@ -139,8 +140,16 @@ async function crawlDealer(domain) {
   const dv = { done: false };
   const of = { done: false };
   const dl = { done: false };
+  const ds = { done: false };
   const dvPlat = siteInfo.get(domain)?.platform;
-  if (!dvPlat || dvPlat === "unknown" || dvPlat === "dealervenom" || dvPlat === "overfuel" || dvPlat === "dealr")
+  if (
+    !dvPlat ||
+    dvPlat === "unknown" ||
+    dvPlat === "dealervenom" ||
+    dvPlat === "overfuel" ||
+    dvPlat === "dealr" ||
+    dvPlat === "dealersync"
+  )
     queue.unshift(origin + "/");
 
   // Overfuel hides its inventory behind a per-rooftop SRP slug
@@ -317,6 +326,36 @@ async function crawlDealer(domain) {
         // A partial or failed pull must never certify a complete crawl, or
         // db-sync would delist cars we merely failed to finish fetching.
         if (!complete) report.stoppedEarly = "dealr partial pull";
+        queue.length = 0;
+        break;
+      }
+    }
+
+    // DealerSync renders a client-side shell; its whole lot is behind a same-
+    // origin /Inventory/Search JSON API. On the first DealerSync page seen — the
+    // homepage, seeded above — page the API to completion and finish. The page
+    // HTML carries the per-rooftop inventory slug the VDP URLs need.
+    if (!ds.done && isDealerSync(res.body)) {
+      ds.done = true;
+      const before = report.evs.length;
+      const { vehicles: dsVehicles, complete, found, ok } = await pullDealerSync(origin, res.body);
+      if (ok) {
+        for (const v of dsVehicles) {
+          const cls = classifyEv(v);
+          if (!cls.isEv) continue;
+          let rec = normalize(v, { sourceUrl: v.offers?.url || origin, dealerDomain: domain });
+          if (rec.vdpUrl) rec.vdpUrl = abs(rec.vdpUrl, origin) ?? rec.vdpUrl;
+          rec.evKind = cls.kind;
+          rec.evConfidence = cls.confidence;
+          rec.fromVdp = true;
+          rec.platform = "dealersync";
+          report.evs.push(rec);
+        }
+        if (report.evs.length > before) report.vehiclePages++;
+        report.notes.push(
+          `dealersync: ${found} in inventory, ${report.evs.length - before} EV(s) admitted (${complete ? "complete" : "partial"})`
+        );
+        if (!complete) report.stoppedEarly = "dealersync partial pull";
         queue.length = 0;
         break;
       }

@@ -40,6 +40,7 @@ import { fingerprint } from "./lib/fingerprint.mjs";
 import { isDealerVenom, extractDealerVenomConfig, countDealerVenom } from "./lib/platforms/dealervenom.mjs";
 import { overfuelVehicles, overfuelSeeds, isOverfuel, overfuelApiConfig, countOverfuelApi } from "./lib/platforms/overfuel.mjs";
 import { isDealr, countDealr } from "./lib/platforms/dealr.mjs";
+import { isDealerSync, countDealerSync } from "./lib/platforms/dealersync.mjs";
 import { discoverSitemapUrls, rank, dedupe, SRP_PATHS } from "./lib/sitemap.mjs";
 import { spaSignals, countVinUrls } from "./lib/spa-signals.mjs";
 
@@ -137,6 +138,21 @@ async function probeSite(site) {
       site.status = "working";
       site.notes = `${site.notes ?? ""} | auto-promoted by probe ${today}: dealr API, ${found} vehicles`.trim();
       console.error(`  ${site.domain} → working (dealr, ${found})`);
+      return;
+    }
+  }
+
+  // DealerSync renders no VIN'd inventory in HTML — the whole lot is behind its
+  // same-origin /Inventory/Search JSON API. Confirm it directly: one request,
+  // and a non-empty VIN'd result promotes it, so the nightly crawl's dealersync
+  // pull reads the whole lot.
+  if (isDealerSync(home.body)) {
+    const { ok, found, hasVin } = await countDealerSync(origin);
+    if (ok && found > 0 && hasVin) {
+      site.platform = "dealersync";
+      site.status = "working";
+      site.notes = `${site.notes ?? ""} | auto-promoted by probe ${today}: dealersync API, ${found} vehicles`.trim();
+      console.error(`  ${site.domain} → working (dealersync, ${found})`);
       return;
     }
   }

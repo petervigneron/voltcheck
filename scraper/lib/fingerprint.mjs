@@ -22,6 +22,11 @@ const SIGNATURES = [
   // asset host cdn.dealrcloud.com is on every page including the homepage; the
   // inventory grid's card class and the API call name are the second signals.
   { platform: "dealr", res: [/cdn\.dealrcloud\.com/i, /getInventorySubset/, /dealr-inventory-list__vehicle/] },
+  // DealerSync (small independent lots): renders a client-side shell — no
+  // schema.org, numeric-id VDP URLs — but serves its whole lot from a same-origin
+  // /Inventory/Search JSON API. lib/platforms/dealersync.mjs pages it. Its asset
+  // host dealersync.com is on every page including the homepage.
+  { platform: "dealersync", res: [/dealersync\.com/i] },
   { platform: "dealer.com", res: [/DDC\.dataLayer/, /ddc-/i, /Dealer\.com/i] },
   { platform: "dealerinspire", res: [/dealerinspire/i, /window\.DI_/i, /di-widget/i] },
   { platform: "sincro", res: [/sincro/i, /cdk_?global/i] },
