@@ -19,6 +19,10 @@ const SIGNATURES = [
   // the per-car data layer it pushes are the signatures that actually fire.
   { platform: "dealerfire", res: [/dealerfire/i, /cdn-ds\.com/i, /pushData\(\s*['"]VehicleObject_/] },
   { platform: "dealereprocess", res: [/dealereprocess/i] },
+  // Overfuel (mobile-first independent-lot sites): its asset host is on every
+  // page, and its SRP ItemList/Product inventory is read by
+  // lib/platforms/overfuel.mjs. VDPs carry generic Vehicle JSON-LD.
+  { platform: "overfuel", res: [/overfuel\.com/i] },
   { platform: "team-velocity", res: [/teamvelocityportal\.com/i, /vdpVehicleExteriorColor/] },
   // No JSON-LD anywhere and numeric-id VDP URLs, so nothing generic hooks it;
   // lib/platforms/dealercarsearch.mjs reads its Tealium product list instead.

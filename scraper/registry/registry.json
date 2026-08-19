@@ -204564,6 +204564,48 @@
       "robots": "unknown",
       "status": "needs-investigation",
       "notes": "Discovered via Common Crawl dealer-platform URL fingerprint sweep (CC-MAIN-2026-30), 2026-08-17 — site serves inventory paths matching a platform we extract | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: wordpress"
+    },
+    {
+      "domain": "magpiemotors.com",
+      "name": "Magpie Motors",
+      "kind": "rooftop",
+      "platform": "dealercarsearch",
+      "robots": "permissive",
+      "status": "working",
+      "notes": "Albuquerque NM independent EV-heavy lot. Hand-validated 2026-08-18: DealerCarSearch (dealer id 23151); SRP walk covered the lot (2 pages, truncated=false), 11 EVs admitted (Bolt, Equinox EV, Ioniq 5, EV6, Leaf, Prologue, 500e). VIN+price from the Tealium product list; odometer/trim not emitted by this platform (known DCS gap). robots.txt Allows * (Disallow blocks are per-bot: MJ12/Semrush/Ahrefs).",
+      "location": {
+        "city": "Albuquerque",
+        "state": "NM",
+        "zip": "87102"
+      }
+    },
+    {
+      "domain": "www.mandfauto.com",
+      "name": "M&F Auto Sales",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "permissive",
+      "status": "working",
+      "notes": "Albuquerque NM independent, BMW/Mercedes/Tesla focus, 3 rooftops (Coors, Academy, Rio Rancho). Hand-validated 2026-08-18: Dealer.com behind Akamai — a bare-UA curl 403s (BOT-BROWSER-IMPERSONATOR) but the production fetcher clears it, 6 EVs with full data (5 Tesla + a Leaf, VIN/price/mileage). truncated at budget (180-url sitemap); EVs still ingest, delisting deferred.",
+      "location": {
+        "city": "Albuquerque",
+        "state": "NM",
+        "zip": "87120"
+      }
+    },
+    {
+      "domain": "www.712autosales.com",
+      "name": "712 Auto Sales",
+      "kind": "rooftop",
+      "platform": "overfuel",
+      "robots": "permissive",
+      "status": "working",
+      "notes": "Albuquerque NM independent. First Overfuel site — built lib/platforms/overfuel.mjs for it 2026-08-18: SRP is an ItemList of ListItem->Product whose url (VIN in slug) + price the generic extractItemListEntries can't see, and the SRP slug (/used-cars-albuquerque-nm) is unguessable, so the lot went unenumerated. New lane seeds the SRP off the homepage, parses its Products, and follows rel=next to the front of the queue; VDPs carry generic Vehicle JSON-LD. Caught 3 EVs (Subaru Solterra, Rivian R1S, and a Lexus RZ the sitemap-only path had missed). truncated at budget; EVs ingest, delisting deferred.",
+      "location": {
+        "city": "Albuquerque",
+        "state": "NM",
+        "zip": "87109"
+      }
     }
   ],
   "_sources": [

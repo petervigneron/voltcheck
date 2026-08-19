@@ -26,6 +26,7 @@ import {
   isDealerFire,
 } from "./lib/platforms/dealerfire.mjs";
 import { isDealerVenom, extractDealerVenomConfig, pullDealerVenom } from "./lib/platforms/dealervenom.mjs";
+import { isOverfuel, overfuelVehicles, overfuelSeeds, overfuelNextPageUrl } from "./lib/platforms/overfuel.mjs";
 
 const args = process.argv.slice(2);
 function flag(name, fallback) {
@@ -129,7 +130,22 @@ async function crawlDealer(domain) {
   // working sites are unknown-platform, so the extra fetch is negligible.
   const dv = { done: false };
   const dvPlat = siteInfo.get(domain)?.platform;
-  if (!dvPlat || dvPlat === "unknown" || dvPlat === "dealervenom") queue.unshift(origin + "/");
+  if (!dvPlat || dvPlat === "unknown" || dvPlat === "dealervenom" || dvPlat === "overfuel") queue.unshift(origin + "/");
+
+  // Overfuel hides its inventory behind a per-rooftop SRP slug
+  // ("/used-cars-albuquerque-nm") that no path guess finds and that its own
+  // ItemList doesn't expose as a followable link — so the SRP is read off the
+  // first Overfuel page seen (the homepage, seeded above) and jumped to the
+  // front, exactly like DealerFire's per-rooftop search slug.
+  let ofSeeded = false;
+  function seedOverfuel(html, pageUrl) {
+    if (ofSeeded) return;
+    const seeds = overfuelSeeds(html, pageUrl).filter((u) => !visited.has(u));
+    if (!seeds.length) return;
+    ofSeeded = true;
+    queue.unshift(...seeds);
+    report.notes.push(`overfuel: seeded ${seeds.length} SRP(s)`);
+  }
 
   // DealerFire's SRP slug is per-rooftop ("/cars-for-sale-hillsboro-or"), so
   // there is nothing to seed until a page of theirs tells us its own — which
@@ -242,13 +258,17 @@ async function crawlDealer(domain) {
     const dcsVehicles = extractDcsVehicles(res.body, res.finalUrl);
     const dcsVins = new Set(dcsVehicles.map((v) => v.vehicleIdentificationNumber));
     if (isDealerFire(res.body)) seedDealerFire(res.body, res.finalUrl);
+    if (isOverfuel(res.body)) seedOverfuel(res.body, res.finalUrl);
     const dealerFire = extractDealerFire(res.body);
     const dealerFireRooftops = dealerFire.size ? extractDealerFireDealers(res.body) : [];
+    const overfuel = overfuelVehicles(res.body, res.finalUrl);
+    const overfuelVins = new Set(overfuel.map((v) => v.vehicleIdentificationNumber));
     const vehicles = [
       ...extractVehicles(res.body),
       ...extractDrivewayVehicles(res.body),
       ...dcsVehicles,
       ...dealerFireVehicles(res.body, res.finalUrl),
+      ...overfuel,
     ];
     if (vehicles.length) report.vehiclePages++;
     const isSrp = vehicles.length > 1;
@@ -269,6 +289,7 @@ async function crawlDealer(domain) {
       if (dealerOn) rec = enrichFromDealerOn(rec, dealerOn);
       if (teamVelocity) rec = enrichFromTeamVelocity(rec, teamVelocity);
       if (rec.vin && dcsVins.has(rec.vin)) rec.platform = "dealercarsearch";
+      if (rec.vin && overfuelVins.has(rec.vin)) rec.platform = "overfuel";
       if (dealerFire.size) rec = enrichFromDealerFire(rec, dealerFire, dealerFireRooftops);
       report.evs.push(rec);
       // An SRP tile knows its car's own page — fetch the VDP for the full
@@ -297,6 +318,12 @@ async function crawlDealer(domain) {
     if (dealerFire.size > 1) {
       const nextDf = dealerFireNextPageUrl(res.body, res.finalUrl);
       if (nextDf && !visited.has(nextDf)) queue.unshift(nextDf);
+    }
+    // Overfuel SRPs page with rel=next ("/…/page/2"). Jump it ahead of the
+    // sitemap so the whole ItemList is walked before budget runs out.
+    if (overfuel.length) {
+      const nextOf = overfuelNextPageUrl(res.body, res.finalUrl);
+      if (nextOf && !visited.has(nextOf)) queue.unshift(nextOf);
     }
 
     // Bridge: SRP ItemList → VDP urls, EV-filtered, jump the queue

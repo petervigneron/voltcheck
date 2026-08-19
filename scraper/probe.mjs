@@ -38,6 +38,7 @@ import { extractDcsVehicles, isDealerCarSearch, DCS_SRP_PATH } from "./lib/platf
 import { dealerFireVehicles } from "./lib/platforms/dealerfire.mjs";
 import { fingerprint } from "./lib/fingerprint.mjs";
 import { isDealerVenom, extractDealerVenomConfig, countDealerVenom } from "./lib/platforms/dealervenom.mjs";
+import { overfuelVehicles, overfuelSeeds } from "./lib/platforms/overfuel.mjs";
 import { discoverSitemapUrls, rank, dedupe, SRP_PATHS } from "./lib/sitemap.mjs";
 import { spaSignals, countVinUrls } from "./lib/spa-signals.mjs";
 
@@ -110,7 +111,13 @@ async function probeSite(site) {
     dealercarsearch: [DCS_SRP_PATH],
     dealerinspire: ["/used-vehicles/"],
   };
-  const platformFirst = (PLATFORM_SRPS[site.platform] ?? []).map((p) => origin + p);
+  // Overfuel's SRP is a per-rooftop slug ("/used-cars-albuquerque-nm") with no
+  // fixed path to guess — but the homepage links it, so read it off the page we
+  // already have rather than adding it to the guess table.
+  const platformFirst = [
+    ...(PLATFORM_SRPS[site.platform] ?? []).map((p) => origin + p),
+    ...(site.platform === "overfuel" ? overfuelSeeds(home.body, origin) : []),
+  ];
 
   // Try SRP seeds + top-ranked sitemap inventory URLs until something
   // extracts or the fetch budget runs out.
@@ -147,6 +154,7 @@ async function probeSite(site) {
       ...extractDrivewayVehicles(res.body),
       ...extractDcsVehicles(res.body, res.finalUrl),
       ...dealerFireVehicles(res.body, res.finalUrl),
+      ...overfuelVehicles(res.body, res.finalUrl),
     ];
     const platformVins = [
       ...extractDdcVehicles(res.body).map((d) => d.vin),
