@@ -107,7 +107,12 @@ function modelYear(y) {
 // makes are logged because a genuinely new brand would land here too.
 const unknownMakes = new Map();
 const listings = raw
-  .filter((r) => r.vin && modelYear(r.year) && r.make && r.model && r.priceUsd)
+  // priceUsd == null means no price signal at all — drop it. priceUsd === 0 is
+  // a deliberate abstain (resolveDdcPrice could not name the advertised price
+  // from the served fields, or it looked like a conditional false bargain):
+  // keep the car, let hasRealPrice render it as "no price" instead of dropping
+  // a real listing. 0 survives ingest_listings because price_usd is NOT NULL.
+  .filter((r) => r.vin && modelYear(r.year) && r.make && r.model && r.priceUsd != null)
   .filter((r) => r.evConfidence === "high")
   .filter((r) => {
     if (isKnownMake(r.make)) return true;
