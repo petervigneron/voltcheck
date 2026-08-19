@@ -1,3 +1,5 @@
+import { cache } from "react";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { BackToResults } from "@/components/BackToResults";
 import { findListing } from "@/lib/listings/source";
@@ -30,6 +32,49 @@ export async function generateStaticParams(): Promise<{ id: string }[]> {
   return [];
 }
 
+// One fetch per request, shared between generateMetadata and the page body.
+// findListing isn't plain-fetch-memoizable (it branches into a full scan and a
+// second detail read), so React cache() dedupes it explicitly.
+const getListing = cache(findListing);
+
+// Per-car title/description/canonical/OG. Without this every listing inherited
+// the one site-wide title from the root layout, so Google saw thousands of
+// identical <title>s — nothing to rank. The description names what this page
+// answers that the dealer's listing does not: the battery and warranty behind
+// the VIN. No numeric claim goes in the description; the page owns those.
+export async function generateMetadata(props: PageProps<"/listing/[id]">): Promise<Metadata> {
+  const { id } = await props.params;
+  const listing = await getListing(id);
+  if (!listing) return {};
+
+  const claim = trimClaim(listing);
+  const trim = claim.assert && displayTrim(listing) ? ` ${claim.trim}` : "";
+  const name = `${listing.year} ${listing.make} ${listing.model}${trim}`;
+  const miles = listing.mileage != null ? `${listing.mileage.toLocaleString()} mi` : "";
+  const price = hasRealPrice(listing) ? `$${listing.priceUsd.toLocaleString()}` : "See dealer for price";
+  const where = listing.city ? ` in ${listing.city}, ${listing.state}` : "";
+  const path = `/listing/${listing.id}`;
+  const image = listing.images?.[0] ?? listing.imageUrl ?? undefined;
+
+  const title = `${name}${miles ? `, ${miles}` : ""} | Voltcheck`;
+  const description =
+    `${name}${where}, ${price}${miles ? `, ${miles}` : ""}. ` +
+    `Voltcheck breaks down the real battery pack, EPA range, and warranty status behind VIN ${listing.vin.toUpperCase()}.`;
+
+  return {
+    title,
+    description,
+    alternates: { canonical: path },
+    openGraph: {
+      title,
+      description,
+      type: "website",
+      url: path,
+      images: image ? [image] : undefined,
+    },
+  };
+}
+
 function Spec({ label, value, title }: { label: string; value?: string | number | null; title?: string }) {
   if (value == null || value === "") return null;
   return (
@@ -55,7 +100,7 @@ function listedValue(listedOn: string): string {
 
 export default async function ListingPage(props: PageProps<"/listing/[id]">) {
   const { id } = await props.params;
-  const listing = await findListing(id);
+  const listing = await getListing(id);
   if (!listing) notFound();
 
   const e = enrichListing(listing);

@@ -1,3 +1,5 @@
+import { cache } from "react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { decodeVin, isValidVin } from "@/lib/vpic";
@@ -10,12 +12,37 @@ import { AskSeller } from "@/components/AskSeller";
 
 export const dynamic = "force-dynamic";
 
+// Shared between generateMetadata and the page so a request decodes the VIN once.
+const getDecode = cache(decodeVin);
+
+// VIN reports are a tool, not indexable content: the VIN space is effectively
+// infinite and near-duplicate across cars, so these are marked noindex,follow
+// (owner call). Real title/description still render for when someone shares a
+// report link. Model-level indexable content lives on the spec pages instead.
+export async function generateMetadata(props: PageProps<"/vin/[vin]">): Promise<Metadata> {
+  const { vin: rawVin } = await props.params;
+  const vin = decodeURIComponent(rawVin).toUpperCase();
+  const noindex = { robots: { index: false, follow: true } };
+  if (!isValidVin(vin)) return { title: "VIN check | Voltcheck", ...noindex };
+
+  const decode = await getDecode(vin);
+  const identity = [decode.modelYear, decode.make, decode.model, decode.trim].filter(Boolean).join(" ");
+  const name = decode.usMarket ? identity || "Vehicle" : "Non-US-market vehicle";
+
+  return {
+    title: `${name} — VIN ${vin} | Voltcheck`,
+    description: `What VIN ${vin} decodes to: ${name}. Voltcheck shows the battery pack, EPA range, and warranty for this exact configuration where it has one researched.`,
+    openGraph: { title: `${name} — VIN check`, description: `The battery, range, and warranty behind VIN ${vin}.`, type: "website", url: `/vin/${vin}` },
+    ...noindex,
+  };
+}
+
 export default async function VinPage(props: PageProps<"/vin/[vin]">) {
   const { vin: rawVin } = await props.params;
   const vin = decodeURIComponent(rawVin).toUpperCase();
   if (!isValidVin(vin)) notFound();
 
-  const decode = await decodeVin(vin);
+  const decode = await getDecode(vin);
   const tesla = isTeslaVin(vin) ? decodeTeslaVin(vin) : null;
   const enrichment = matchEnrichment(decode, tesla);
   const checklist = buildChecklist(decode);
