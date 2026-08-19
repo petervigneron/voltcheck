@@ -64,12 +64,26 @@ const STATUS = strFlag("--status", "discovered");
 // cluster, this re-probes just that cluster — a small, attributable registry
 // write — instead of re-touching the whole written-off pile.
 const MATCH = strFlag("--match", "").toLowerCase();
+// --domains-file <path>: restrict the sweep to an explicit newline-separated
+// domain list. When a new extractor recognises a vendor by its assets (not by
+// anything in the notes), --match has no token to hook — this re-probes exactly
+// the sites a scan found running that vendor.
+const DOMAINS_FILE = strFlag("--domains-file", "");
+const DOMAIN_SET = DOMAINS_FILE
+  ? new Set(
+      (await readFile(new URL(DOMAINS_FILE, `file://${process.cwd()}/`), "utf-8"))
+        .split("\n")
+        .map((d) => d.trim().toLowerCase())
+        .filter(Boolean)
+    )
+  : null;
 
 const regUrl = new URL("./registry/registry.json", import.meta.url);
 const registry = JSON.parse(await readFile(regUrl, "utf-8"));
 const candidates = registry.sites
   .filter((s) => s.status === STATUS)
   .filter((s) => !MATCH || `${s.domain} ${s.notes ?? ""}`.toLowerCase().includes(MATCH))
+  .filter((s) => !DOMAIN_SET || DOMAIN_SET.has(s.domain.toLowerCase()))
   .slice(0, LIMIT);
 if (!candidates.length) {
   console.error(`probe: no "${STATUS}" sites awaiting validation`);
