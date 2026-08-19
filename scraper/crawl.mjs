@@ -12,7 +12,9 @@ import { classifyEv, EV_ONLY_WMIS } from "./lib/ev.mjs";
 import { normalize, richness } from "./lib/normalize.mjs";
 import { discoverSitemapUrls, rank, dedupe, SRP_PATHS, VIN_RE, EVISH_RE } from "./lib/sitemap.mjs";
 import { extractDdcVehicles, enrichFromDdc } from "./lib/platforms/dealercom.mjs";
+import { dealerComApiConfig, pullDealerComApi } from "./lib/platforms/dealercom-api.mjs";
 import { extractDealerOn, enrichFromDealerOn } from "./lib/platforms/dealeron.mjs";
+import { isDealerOnApi, dealerOnLots, pullDealerOnApi } from "./lib/platforms/dealeron-api.mjs";
 import { extractTeamVelocity, enrichFromTeamVelocity, teamVelocityApiIds, pullTeamVelocityApi } from "./lib/platforms/teamvelocity.mjs";
 import { extractDrivewayVehicles } from "./lib/platforms/driveway.mjs";
 import { extractDcsVehicles, dcsNextPageUrl, dcsSeeds, isDealerCarSearch } from "./lib/platforms/dealercarsearch.mjs";
@@ -139,6 +141,8 @@ async function crawlDealer(domain) {
   const dv = { done: false };
   const of = { done: false };
   const tv = { done: false };
+  const ddcApi = { done: false };
+  const deolApi = { done: false };
   const dvPlat = siteInfo.get(domain)?.platform;
   if (!dvPlat || ["unknown", "dealervenom", "overfuel", "team-velocity"].includes(dvPlat)) queue.unshift(origin + "/");
 
@@ -342,6 +346,89 @@ async function crawlDealer(domain) {
         if (!complete || offDomain) report.stoppedEarly = "team-velocity api (group or partial)";
         queue.length = 0;
         break;
+      }
+    }
+
+    // Dealer.com storefronts serve their whole lot from a same-origin inventory
+    // API — full records (odometer, trim, the price stack, the owning rooftop's
+    // address), an exact totalCount, and no per-car VDP. On the first page that
+    // carries the site config, pull the lot through the API and finish: this is
+    // what the SRP page-walk and the VDP follows below used to do, in a handful
+    // of calls instead of one per car. If the API doesn't answer (an older
+    // template with no widget endpoint), fall through to the HTML extractor.
+    if (!ddcApi.done) {
+      const cfg = dealerComApiConfig(res.body);
+      if (cfg) {
+        ddcApi.done = true;
+        const before = report.evs.length;
+        const { vehicles, ddcByVin, complete, found, ok } = await pullDealerComApi(cfg, origin);
+        if (ok) {
+          for (const v of vehicles) {
+            const cls = classifyEv(v);
+            if (!cls.isEv) continue;
+            let rec = normalize(v, { sourceUrl: v.offers?.url || origin, dealerDomain: domain });
+            // enrichFromDdc reruns the shared price resolve and merges the DDC
+            // fields, exactly as the HTML path does — so the number and shape
+            // that reach the row are identical to a VDP fetch's.
+            if (rec.vin && ddcByVin.has(rec.vin)) rec = enrichFromDdc(rec, ddcByVin.get(rec.vin));
+            if (rec.vdpUrl) rec.vdpUrl = abs(rec.vdpUrl, origin) ?? rec.vdpUrl;
+            rec.evKind = cls.kind;
+            rec.evConfidence = cls.confidence;
+            rec.fromVdp = true;
+            report.evs.push(rec);
+          }
+          if (report.evs.length > before) report.vehiclePages++;
+          report.notes.push(
+            `dealercom-api: ${found} in lot, ${report.evs.length - before} EV(s) admitted (${complete ? "complete" : "partial"})`
+          );
+          // A partial or failed pull must never certify a complete crawl, or
+          // db-sync would delist cars we merely failed to finish fetching.
+          if (!complete) report.stoppedEarly = "dealercom-api partial pull";
+          queue.length = 0;
+          break;
+        }
+        // ok=false: the endpoint never answered. Leave the HTML extractor below
+        // to handle this domain rather than certifying an empty API pull.
+        report.notes.push("dealercom-api: no response, falling back to HTML");
+      }
+    }
+
+    // DealerOn's Cosmos storefront renders no inventory in HTML — a spaCosmos
+    // shell fetches its cars from a same-origin JSON endpoint keyed by the
+    // dealerId/pageId inline in the page's tagging block. On the first SRP that
+    // reveals them, pull both the used and new lots through the API and finish:
+    // full VehicleCards (odometer, trim, the price stack), an exact TotalCount,
+    // no per-car VDP. Falls through to the HTML extractor if the API is silent.
+    if (!deolApi.done && isDealerOnApi(res.body)) {
+      const lots = await dealerOnLots(res.body, res.finalUrl, origin);
+      // dealerOnLots fetches the sibling search page (used↔new) for its pageId;
+      // count that request so coverage accounting stays honest.
+      report.fetched++;
+      if (lots.length) {
+        deolApi.done = true;
+        const before = report.evs.length;
+        const { vehicles, complete, found, ok } = await pullDealerOnApi(lots, origin);
+        if (ok) {
+          for (const v of vehicles) {
+            const cls = classifyEv(v);
+            if (!cls.isEv) continue;
+            let rec = normalize(v, { sourceUrl: v.offers?.url || origin, dealerDomain: domain });
+            if (rec.vdpUrl) rec.vdpUrl = abs(rec.vdpUrl, origin) ?? rec.vdpUrl;
+            rec.evKind = cls.kind;
+            rec.evConfidence = cls.confidence;
+            rec.fromVdp = true;
+            rec.platform = "dealeron";
+            report.evs.push(rec);
+          }
+          if (report.evs.length > before) report.vehiclePages++;
+          report.notes.push(
+            `dealeron-api: ${found} in ${lots.length} lot(s), ${report.evs.length - before} EV(s) admitted (${complete ? "complete" : "partial"})`
+          );
+          if (!complete) report.stoppedEarly = "dealeron-api partial pull";
+          queue.length = 0;
+          break;
+        }
+        report.notes.push("dealeron-api: no response, falling back to HTML");
       }
     }
 
