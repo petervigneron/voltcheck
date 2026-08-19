@@ -254,6 +254,24 @@ jobs:
             echo "::warning::Listings admitted under old rules are no longer EVs by vPIC — see /tmp/non-ev-vins.txt"
           elif [ "$rc" -ne 0 ]; then exit "$rc"; fi
 
+      # Which lots reached us with the odometer missing on (nearly) every used
+      # car — a broken platform parser, not bad luck. Report-only like the EV
+      # audit above; the baseline is today's known-broken count, so a NEW lot
+      # going dark shouts and the backlog doesn't. Lower --max-broken-dealers as
+      # per-platform parsers land (dealer.com/DealerOn odometer capture).
+      - name: Audit listing completeness by dealer
+        if: ${{ github.event.inputs.skip_crawl != 'true' }}
+        continue-on-error: true
+        working-directory: scraper
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          rc=0; node completeness-audit.mjs --max-broken-dealers 202 || rc=$?
+          if [ "$rc" -eq 10 ]; then
+            echo "::warning::A dealer's used cars lost their mileage (broken platform parser) — see the step log for the lot list"
+          elif [ "$rc" -ne 0 ]; then exit "$rc"; fi
+
       # Re-derive the observed trim-per-VIN-cohort table now that tonight's
       # listings are settled (migration 0020). Not `if: schedule` — a manual
       # run changes inventory too, and a stale matview is the failure this
