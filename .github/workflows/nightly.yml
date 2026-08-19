@@ -224,16 +224,12 @@ jobs:
           rc=0; node price-audit.mjs || rc=$?
           if [ "$rc" -eq 20 ]; then node db-sync.mjs; elif [ "$rc" -ne 0 ]; then exit "$rc"; fi
 
-      # Ask every live listing's own page whether it is still for sale.
-      # This is the authoritative sold-signal; the crawl only discovers.
-      - name: Recheck live listings
-        if: ${{ github.event.inputs.skip_crawl != 'true' }}
-        working-directory: scraper
-        env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-          SUPABASE_INGEST_TOKEN: ${{ secrets.SUPABASE_INGEST_TOKEN }}
-        run: node recheck.mjs --concurrency 10
+      # Recheck (the authoritative sold-signal) is no longer here — it is its
+      # own job below. Folded into finalize it shared this 240-minute budget
+      # with enrichment and db-sync, and because recheck commits its whole
+      # night in one terminal write, every time finalize hit the ceiling
+      # mid-recheck the entire sold-signal was thrown away (delistings went
+      # 2,186/night → 0 over 08-17…19, and sold cars stayed on the site).
 
       # Re-judge already-admitted rows against today's classification rules.
       # ingest decides once and never revisits; recheck only asks "still for
@@ -360,3 +356,50 @@ jobs:
             sleep $((i * 10))
           done
           echo "::warning::Could not push the data refresh (likely raced the discovery sweep). Supabase already has tonight's listings; the repo snapshot will catch up on the next run."
+
+  # The authoritative sold-signal, split out of finalize (2026-08-19). Its own
+  # job means its own clock. recheck fetches every live dealer listing's page
+  # and commits the result — every 404 a delisting — in one terminal write, so
+  # sharing finalize's 240-minute budget meant a timeout mid-run discarded the
+  # entire night's removals (delistings fell 2,186/night → 0 over 08-17…19 and
+  # sold cars stayed live). --deadline-min stops fetching with time to spare and
+  # writes what it found; a slow night lands partial delistings, the rest wait
+  # for tomorrow. always() + probe success: it must run even when finalize timed
+  # out, because it reads live rows straight from the DB, not from finalize.
+  recheck:
+    needs: [probe, finalize]
+    if: ${{ always() && needs.probe.result == 'success' && github.event.inputs.skip_crawl != 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Recheck live listings
+        working-directory: scraper
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_INGEST_TOKEN: ${{ secrets.SUPABASE_INGEST_TOKEN }}
+        # Deadline sits ~50 min under the job timeout so the terminal write
+        # always lands; concurrency unchanged from when this ran in finalize.
+        run: node recheck.mjs --concurrency 10 --deadline-min 280
+      # Expire the feed cache so tonight's delistings leave the site now, not on
+      # tomorrow's revalidate — finalize's earlier revalidate carried the
+      # crawl's data, this one carries recheck's removals. Same degrade-to-24h
+      # backstop as finalize's copy.
+      - name: Revalidate the site's feed cache
+        if: always()
+        env:
+          FEED_REVALIDATE_SECRET: ${{ secrets.FEED_REVALIDATE_SECRET }}
+        run: |
+          [ -z "$FEED_REVALIDATE_SECRET" ] && { echo "::warning::FEED_REVALIDATE_SECRET unset; site refreshes on the 24h cache backstop instead"; exit 0; }
+          if ! curl -fsS --retry 3 --max-time 60 -X POST -H "x-revalidate-secret: $FEED_REVALIDATE_SECRET" https://voltcheck.net/api/revalidate; then
+            echo "::warning::/api/revalidate unreachable; site refreshes on the 24h cache backstop instead"
+            exit 0
+          fi
+          for s in first 0 1 2 3 4 5; do
+            curl -fsS --retry 2 --max-time 300 -o /dev/null "https://voltcheck.net/api/index/$s" \
+              || echo "::warning::shard $s warm-up failed; its first visitor pays the render"
+          done

@@ -68,6 +68,15 @@ function flag(name, fallback) {
 const CONCURRENCY = flag("--concurrency", 8);
 const LIMIT = flag("--limit", 0);
 const DRY = process.argv.includes("--dry-run");
+// Stop fetching after this many minutes and write what we have. recheck's
+// whole night rides on the single terminal ingest POST below, so being killed
+// mid-run (finalize's job timeout did this every night from 08-17, discarding
+// the entire sold-signal — delistings fell to zero) forfeits everything. With
+// a deadline the loop bails early and still reaches the write: a slow night
+// lands the delistings it found and leaves the rest for tomorrow, which is the
+// conservative direction. Anchored at process start (≈ job start). 0 = no cap.
+const DEADLINE_MIN = flag("--deadline-min", 0);
+const DEADLINE_AT = DEADLINE_MIN > 0 ? Date.now() + DEADLINE_MIN * 60_000 : Infinity;
 
 async function loadEnv(url) {
   try {
@@ -176,7 +185,7 @@ const alive = [], hardGone = [], softGone = [];
 let errors = 0, cursor = 0;
 
 async function worker() {
-  while (cursor < work.length) {
+  while (cursor < work.length && Date.now() < DEADLINE_AT) {
     const l = work[cursor++];
     const vin = l.vin.toUpperCase();
     let res;
@@ -209,6 +218,13 @@ const changed = alive.filter((a) => {
   const prev = work.find((l) => l.vin.toUpperCase() === a.vin)?.price_usd;
   return a.priceUsd != null && a.priceUsd !== prev;
 }).length;
+const unchecked = work.length - (alive.length + hardGone.length + softGone.length + errors);
+if (unchecked > 0 && Number.isFinite(DEADLINE_AT)) {
+  console.error(
+    `recheck: hit the ${DEADLINE_MIN}-minute deadline with ${unchecked} listings unchecked — ` +
+    `writing what we have; the rest are rechecked next run`
+  );
+}
 console.error(
   `recheck: ${alive.length} still listed (${changed} price changes), ` +
   `${hardGone.length} pages gone, ${softGone.length} VIN missing, ${errors} inconclusive`
