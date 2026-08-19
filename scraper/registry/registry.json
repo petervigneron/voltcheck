@@ -836,10 +836,10 @@
       "domain": "carfindersdenver.com",
       "name": "CarFinders Inc",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealersync",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Littleton | probe 2026-08-12: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
+      "status": "working",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Littleton | probe 2026-08-12: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-19: dealersync API, 38 vehicles"
     },
     {
       "domain": "autotrek.com",
@@ -9867,10 +9867,10 @@
       "domain": "prestigeautomart.net",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealersync",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: 0 VIN vehicles in 12 fetches (1 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (1 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (1 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (1 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (1 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (1 ItemList entries, platform unknown) — likely needs a platform extractor"
+      "status": "working",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: 0 VIN vehicles in 12 fetches (1 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (1 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (1 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (1 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (1 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (1 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-19: dealersync API, 564 vehicles"
     },
     {
       "domain": "pridechevy.com",
@@ -16935,10 +16935,10 @@
       "domain": "steveandsonsrvsandautos.com",
       "name": "Steve & Sons Auto Sales",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealersync",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-19: dealersync API, 125 vehicles"
     },
     {
       "domain": "aventuramall.com",
@@ -21851,10 +21851,10 @@
       "domain": "tucsonusedautocenters.com",
       "name": "Tucson Used Auto Center",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealersync",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-19: dealersync API, 124 vehicles"
     },
     {
       "domain": "roncraftchevrolet.com",
@@ -24984,10 +24984,10 @@
       "domain": "feslerauto.com",
       "name": "Fesler Auto",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealersync",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-19: dealersync API, 39 vehicles"
     },
     {
       "domain": "leavittauto.com",
@@ -25850,10 +25850,10 @@
       "domain": "kandsrides.com",
       "name": "K & S Alfa Romeo",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealersync",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Alfa Romeo | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: Alfa Romeo | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-19: dealersync API, 183 vehicles"
     },
     {
       "domain": "edkenleyford.net",
@@ -26800,10 +26800,10 @@
       "domain": "ownacarfresno.com",
       "name": "Own A Car",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealersync",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-19: dealersync API, 476 vehicles"
     },
     {
       "domain": "lathamfordmotors.com",
@@ -29026,10 +29026,10 @@
       "domain": "cascadeautocenter.com",
       "name": "Cascade Auto Center",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealersync",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-19: dealersync API, 53 vehicles"
     },
     {
       "domain": "miniofescondido.com",
@@ -48764,10 +48764,10 @@
       "domain": "champagnemotorcarcompany.com",
       "name": "Champagne Motor Car Company",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealersync",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: homepage error:TypeError | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: homepage error:TypeError | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-19: dealersync API, 148 vehicles"
     },
     {
       "domain": "drivespitzercdjr.com",
@@ -51073,10 +51073,10 @@
       "domain": "tucsonusedautos.com",
       "name": "Tucson Used Auto Sales",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealersync",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-19: dealersync API, 124 vehicles"
     },
     {
       "domain": "suburbanfordofsterlingheights.com",
@@ -51663,10 +51663,10 @@
       "domain": "reitsmaautosales.com",
       "name": "Reitsma Auto Sales",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealersync",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (1 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (1 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (1 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (1 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (1 ItemList entries, platform unknown) — likely needs a platform extractor"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (1 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (1 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (1 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (1 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (1 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-19: dealersync API, 70 vehicles"
     },
     {
       "domain": "gatewayclassiccars.com",
@@ -57077,10 +57077,10 @@
       "domain": "thriftycarsalessacramento.com",
       "name": "Thrifty Car Sales of Sacramento",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealersync",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (1 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (1 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (1 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (1 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (1 ItemList entries, platform unknown) — likely needs a platform extractor"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (1 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (1 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (1 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (1 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (1 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-19: dealersync API, 74 vehicles"
     },
     {
       "domain": "opelikachryslerjeepdodgeram.com",
@@ -57554,10 +57554,10 @@
       "domain": "fairwayautobrokers.com",
       "name": "Fairway Auto Brokers",
       "kind": "rooftop",
-      "platform": "dealer.com",
+      "platform": "dealersync",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | 2026-08-16: homepage carries no marker of the labelled platform — label reset, requeued for the nightly probe to refingerprint | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | 2026-08-16: homepage carries no marker of the labelled platform — label reset, requeued for the nightly probe to refingerprint | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | auto-promoted by probe 2026-08-19: dealersync API, 116 vehicles"
     },
     {
       "domain": "trmotor.net",
@@ -57941,10 +57941,10 @@
       "domain": "bahaauto.com",
       "name": "Baha Auto of Cicero",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealersync",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: homepage error:TypeError | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: homepage error:TypeError | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-19: dealersync API, 481 vehicles"
     },
     {
       "domain": "swopetoyota.com",
@@ -88601,10 +88601,10 @@
       "domain": "flautomax.com",
       "name": "AUTOMAX OF PA, INC",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealersync",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "FL license roll (FLHSMV, lic VI independent), email-domain signal — browser-context crawl of the published dealer lists 2026-08-16 | probe 2026-08-17: 0 VIN vehicles in 12 fetches (1 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (1 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (1 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "FL license roll (FLHSMV, lic VI independent), email-domain signal — browser-context crawl of the published dealer lists 2026-08-16 | probe 2026-08-17: 0 VIN vehicles in 12 fetches (1 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (1 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (1 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-19: dealersync API, 66 vehicles",
       "location": {
         "city": "MIAMI",
         "state": "FL",
@@ -88937,10 +88937,10 @@
       "domain": "fortmyersautomall.com",
       "name": "TREEHOUSE HOLDINGS INC",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealersync",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "FL license roll (FLHSMV, lic VI independent), email-domain signal — browser-context crawl of the published dealer lists 2026-08-16 | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "FL license roll (FLHSMV, lic VI independent), email-domain signal — browser-context crawl of the published dealer lists 2026-08-16 | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-19: dealersync API, 26 vehicles",
       "location": {
         "city": "FORT MYERS",
         "state": "FL",
@@ -89469,10 +89469,10 @@
       "domain": "genxmotors.com",
       "name": "GEN X CORPORATION",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealersync",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "FL license roll (FLHSMV, lic VI independent), email-domain signal — browser-context crawl of the published dealer lists 2026-08-16 | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "FL license roll (FLHSMV, lic VI independent), email-domain signal — browser-context crawl of the published dealer lists 2026-08-16 | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-19: dealersync API, 96 vehicles",
       "location": {
         "city": "MELBOURNE",
         "state": "FL",
@@ -90883,10 +90883,10 @@
       "domain": "ineedacarnow.com",
       "name": "FORT LAUDERDALE AUTO LEASING CORP",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealersync",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "FL license roll (FLHSMV, lic VI independent), email-domain signal — browser-context crawl of the published dealer lists 2026-08-16 | probe 2026-08-17: 0 VIN vehicles in 12 fetches (1 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (1 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (1 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "FL license roll (FLHSMV, lic VI independent), email-domain signal — browser-context crawl of the published dealer lists 2026-08-16 | probe 2026-08-17: 0 VIN vehicles in 12 fetches (1 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (1 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (1 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-19: dealersync API, 16 vehicles",
       "location": {
         "city": "WEST PALM BEACH",
         "state": "FL",
@@ -92493,10 +92493,10 @@
       "domain": "lee-cars.com",
       "name": "LEE AUTO GROUP INC",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealersync",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "FL license roll (FLHSMV, lic VF franchise), email-domain signal — browser-context crawl of the published dealer lists 2026-08-16 | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "FL license roll (FLHSMV, lic VF franchise), email-domain signal — browser-context crawl of the published dealer lists 2026-08-16 | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-19: dealersync API, 264 vehicles",
       "location": {
         "city": "FORT MYERS",
         "state": "FL",
@@ -102713,10 +102713,10 @@
       "domain": "goldboyzautosales.com",
       "name": "GOLDBOYZ AUTO SALES",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealersync",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-19: dealersync API, 130 vehicles",
       "location": {
         "city": "PUYALLUP",
         "state": "WA",
@@ -102783,10 +102783,10 @@
       "domain": "vistaautosales.com",
       "name": "VISTA AUTO SALES AND LEASING, INC.",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealersync",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-19: dealersync API, 95 vehicles",
       "location": {
         "city": "LAKEWOOD",
         "state": "WA",
@@ -103651,10 +103651,10 @@
       "domain": "lklmotors.com",
       "name": "LKL MOTORS",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealersync",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-19: dealersync API, 40 vehicles",
       "location": {
         "city": "PUYALLUP",
         "state": "WA",
@@ -103679,10 +103679,10 @@
       "domain": "vipmotorsportskennewick.com",
       "name": "VIP MOTORSPORTS",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealersync",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-19: dealersync API, 146 vehicles",
       "location": {
         "city": "KENNEWICK",
         "state": "WA",
@@ -105163,10 +105163,10 @@
       "domain": "gtownmotors.com",
       "name": "G TOWN MOTORS",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealersync",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-19: dealersync API, 114 vehicles",
       "location": {
         "city": "GRANDVIEW",
         "state": "WA",
@@ -105877,10 +105877,10 @@
       "domain": "millenniumauto.biz",
       "name": "MILLENNIUM AUTO SALES",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealersync",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-19: dealersync API, 103 vehicles",
       "location": {
         "city": "KENNEWICK",
         "state": "WA",
@@ -115845,10 +115845,10 @@
       "domain": "ridgeviewmotors.com",
       "name": "RIDGEVIEW MOTORS INC",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealersync",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-19: dealersync API, 27 vehicles",
       "location": {
         "city": "SPENCERPORT",
         "state": "NY",
@@ -116615,10 +116615,10 @@
       "domain": "shawsautosales.com",
       "name": "SHAWS AUTO SALES",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealersync",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-19: dealersync API, 88 vehicles",
       "location": {
         "city": "NORFOLK",
         "state": "NY",
@@ -117315,10 +117315,10 @@
       "domain": "summitviewauto.com",
       "name": "SUMMIT VIEW AUTO LLC",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealersync",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-19: dealersync API, 135 vehicles",
       "location": {
         "city": "SPENCERPORT",
         "state": "NY",
@@ -117945,10 +117945,10 @@
       "domain": "tuckahoeautoland.com",
       "name": "TUCKAHOE AUTOLAND CORP",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealersync",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-19: dealersync API, 47 vehicles",
       "location": {
         "city": "YONKERS",
         "state": "NY",
@@ -118897,10 +118897,10 @@
       "domain": "yonkersautoland.com",
       "name": "YONKERS AUTOLAND CORP",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealersync",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-19: dealersync API, 46 vehicles",
       "location": {
         "city": "YONKERS",
         "state": "NY",
@@ -175976,10 +175976,10 @@
       "domain": "ownacar.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealersync",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Discovered via Common Crawl dealer-platform URL fingerprint sweep (CC-MAIN-2026-30), 2026-08-17 — site serves inventory paths matching a platform we extract | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: wordpress | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: wordpress"
+      "notes": "Discovered via Common Crawl dealer-platform URL fingerprint sweep (CC-MAIN-2026-30), 2026-08-17 — site serves inventory paths matching a platform we extract | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: wordpress | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: wordpress | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealersync) — client-rendered or API-backed; leads: wordpress"
     },
     {
       "domain": "oxendaleautooutlet.com",
