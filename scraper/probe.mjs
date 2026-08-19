@@ -44,6 +44,7 @@ import { isDealr, countDealr } from "./lib/platforms/dealr.mjs";
 import { isDealerSync, countDealerSync } from "./lib/platforms/dealersync.mjs";
 import { isAutoManager, countAutoManager } from "./lib/platforms/automanager.mjs";
 import { isAutoRevo, countAutoRevo } from "./lib/platforms/autorevo.mjs";
+import { isV12, countV12 } from "./lib/platforms/v12.mjs";
 import { discoverSitemapUrls, rank, dedupe, SRP_PATHS } from "./lib/sitemap.mjs";
 import { spaSignals, countVinUrls } from "./lib/spa-signals.mjs";
 
@@ -199,6 +200,20 @@ async function probeSite(site) {
       site.status = "working";
       site.notes = `${site.notes ?? ""} | auto-promoted by probe ${today}: autorevo SRP, ${found} vehicles`.trim();
       console.error(`  ${site.domain} → working (autorevo, ${found})`);
+      return;
+    }
+  }
+
+  // V12Software: server-rendered SRP at /inventory with the VIN in a labelled
+  // row. One fetch confirms VIN'd inventory and promotes it; the nightly crawl
+  // then pages the whole lot.
+  if (isV12(home.body)) {
+    const { ok, found, hasVin } = await countV12(origin);
+    if (ok && found > 0 && hasVin) {
+      site.platform = "v12";
+      site.status = "working";
+      site.notes = `${site.notes ?? ""} | auto-promoted by probe ${today}: v12 SRP, ${found} vehicles`.trim();
+      console.error(`  ${site.domain} → working (v12, ${found})`);
       return;
     }
   }

@@ -39,6 +39,10 @@ const SIGNATURES = [
   // lib/platforms/autorevo.mjs pages /vehicles and lifts the VIN from each card's
   // labelled definition list. Its image CDN host is on every page.
   { platform: "autorevo", res: [/cf-img\.autorevo\.com/i, /autorevo\.com/i] },
+  // V12Software: server-rendered SRP, no schema.org, id-keyed VDP URLs —
+  // lib/platforms/v12.mjs pages /inventory and lifts the VIN from each card's
+  // "VIN Number" row. Its asset host is on every page.
+  { platform: "v12", res: [/v12soft\.com/i, /v12software\.com/i] },
   { platform: "dealer.com", res: [/DDC\.dataLayer/, /ddc-/i, /Dealer\.com/i] },
   { platform: "dealerinspire", res: [/dealerinspire/i, /window\.DI_/i, /di-widget/i] },
   { platform: "sincro", res: [/sincro/i, /cdk_?global/i] },
