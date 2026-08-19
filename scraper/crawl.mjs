@@ -34,6 +34,7 @@ import {
   overfuelApiConfig,
   pullOverfuelApi,
 } from "./lib/platforms/overfuel.mjs";
+import { dealrVehicles, dealrNextPageUrl, dealrSeeds, isDealrCloud } from "./lib/platforms/dealrcloud.mjs";
 
 const args = process.argv.slice(2);
 function flag(name, fallback) {
@@ -154,6 +155,19 @@ async function crawlDealer(domain) {
     queue.unshift(...seeds);
     report.notes.push(`overfuel: seeded ${seeds.length} SRP(s)`);
   }
+
+  // dealr.cloud walks its one /inventory SRP (?page=N answered server-side).
+  // Seeded up front for a known-dealrcloud site, else recognised from the first
+  // dealr page the crawl fetches.
+  let dealrSeeded = false;
+  function seedDealr() {
+    if (dealrSeeded) return;
+    dealrSeeded = true;
+    const seeds = dealrSeeds(origin).filter((u) => !visited.has(u));
+    queue.unshift(...seeds);
+    report.notes.push("dealrcloud: seeded SRP");
+  }
+  if (siteInfo.get(domain)?.platform === "dealrcloud") seedDealr();
 
   // DealerFire's SRP slug is per-rooftop ("/cars-for-sale-hillsboro-or"), so
   // there is nothing to seed until a page of theirs tells us its own — which
@@ -302,12 +316,18 @@ async function crawlDealer(domain) {
     const dcsVins = new Set(dcsVehicles.map((v) => v.vehicleIdentificationNumber));
     if (isDealerFire(res.body)) seedDealerFire(res.body, res.finalUrl);
     if (isOverfuel(res.body)) seedOverfuel(res.body, res.finalUrl);
+    if (!dealrSeeded && isDealrCloud(res.body)) seedDealr();
     const dealerFire = extractDealerFire(res.body);
     const dealerFireRooftops = dealerFire.size ? extractDealerFireDealers(res.body) : [];
     const overfuel = overfuelVehicles(res.body, res.finalUrl);
     const overfuelVins = new Set(overfuel.map((v) => v.vehicleIdentificationNumber));
+    // On dealr.cloud pages the platform records REPLACE the generic JSON-LD:
+    // dealr's own Car node carries no VIN, so keeping both would emit the same
+    // car twice — once VIN-keyed, once URL-keyed — and the VIN-less twin would
+    // survive the byVin dedupe as a phantom listing.
+    const dealrVs = dealrVehicles(res.body, res.finalUrl);
     const vehicles = [
-      ...extractVehicles(res.body),
+      ...(dealrVs.length ? dealrVs : extractVehicles(res.body)),
       ...extractDrivewayVehicles(res.body),
       ...dcsVehicles,
       ...dealerFireVehicles(res.body, res.finalUrl),
@@ -361,6 +381,11 @@ async function crawlDealer(domain) {
     if (dealerFire.size > 1) {
       const nextDf = dealerFireNextPageUrl(res.body, res.finalUrl);
       if (nextDf && !visited.has(nextDf)) queue.unshift(nextDf);
+    }
+    // And dealr.cloud, whose pager is markup markers rather than hrefs.
+    if (dealrVs.length > 1) {
+      const nextDealr = dealrNextPageUrl(res.body, res.finalUrl);
+      if (nextDealr && !visited.has(nextDealr)) queue.unshift(nextDealr);
     }
     // Overfuel SRPs page with rel=next ("/…/page/2"). Jump it ahead of the
     // sitemap so the whole ItemList is walked before budget runs out.

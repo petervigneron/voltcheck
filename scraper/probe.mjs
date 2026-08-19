@@ -39,6 +39,7 @@ import { dealerFireVehicles } from "./lib/platforms/dealerfire.mjs";
 import { fingerprint } from "./lib/fingerprint.mjs";
 import { isDealerVenom, extractDealerVenomConfig, countDealerVenom } from "./lib/platforms/dealervenom.mjs";
 import { overfuelVehicles, overfuelSeeds, isOverfuel, overfuelApiConfig, countOverfuelApi } from "./lib/platforms/overfuel.mjs";
+import { dealrVehicles, DEALR_SRP_PATH } from "./lib/platforms/dealrcloud.mjs";
 import { discoverSitemapUrls, rank, dedupe, SRP_PATHS } from "./lib/sitemap.mjs";
 import { spaSignals, countVinUrls } from "./lib/spa-signals.mjs";
 
@@ -57,12 +58,22 @@ const CONCURRENCY = flag("--concurrency", 6);
 // detector improves, since those verdicts date from whatever the probe knew
 // at the time.
 const STATUS = strFlag("--status", "discovered");
+// --match <regex>: probe only rows whose domain or notes match, tested against
+// the domain and the notes (case-insensitive). This is the scoped re-probe an
+// extractor improvement calls for — re-check just the leads a new/fixed lane
+// covers (e.g. --match 'teamvelocityportal|dealr\.cloud') instead of walking
+// the whole written-off pile, which is both cheaper and higher-yield.
+const MATCH = strFlag("--match", null);
+const matchRe = MATCH ? new RegExp(MATCH, "i") : null;
 
 const regUrl = new URL("./registry/registry.json", import.meta.url);
 const registry = JSON.parse(await readFile(regUrl, "utf-8"));
-const candidates = registry.sites.filter((s) => s.status === STATUS).slice(0, LIMIT);
+const candidates = registry.sites
+  .filter((s) => s.status === STATUS)
+  .filter((s) => !matchRe || matchRe.test(s.domain) || matchRe.test(s.notes ?? ""))
+  .slice(0, LIMIT);
 if (!candidates.length) {
-  console.error(`probe: no "${STATUS}" sites awaiting validation`);
+  console.error(`probe: no "${STATUS}"${MATCH ? ` sites matching /${MATCH}/` : " sites"} awaiting validation`);
   process.exit(0);
 }
 
@@ -128,6 +139,11 @@ async function probeSite(site) {
     dealeron: ["/searchused.aspx", "/searchnew.aspx"],
     dealercarsearch: [DCS_SRP_PATH],
     dealerinspire: ["/used-vehicles/"],
+    dealrcloud: [DEALR_SRP_PATH],
+    // Team Velocity SRPs server-render Vehicle JSON-LD, but only on this path —
+    // the sitemap-ranked guesses spent the budget before reaching it on all 13
+    // cohort rooftops (2026-08-16).
+    "team-velocity": ["/inventory/used", "/inventory/new"],
   };
   // Overfuel's SRP is a per-rooftop slug ("/used-cars-albuquerque-nm") with no
   // fixed path to guess — but the homepage links it, so read it off the page we
@@ -173,6 +189,7 @@ async function probeSite(site) {
       ...extractDcsVehicles(res.body, res.finalUrl),
       ...dealerFireVehicles(res.body, res.finalUrl),
       ...overfuelVehicles(res.body, res.finalUrl),
+      ...dealrVehicles(res.body, res.finalUrl),
     ];
     const platformVins = [
       ...extractDdcVehicles(res.body).map((d) => d.vin),
@@ -199,6 +216,7 @@ async function probeSite(site) {
         ...extractDrivewayVehicles(vdp.body),
         ...extractDcsVehicles(vdp.body, vdp.finalUrl),
         ...dealerFireVehicles(vdp.body, vdp.finalUrl),
+        ...dealrVehicles(vdp.body, vdp.finalUrl),
       ]
         .filter((v) => isVin(v.vehicleIdentificationNumber ?? v.vin)).length +
         extractDdcVehicles(vdp.body).map((d) => d.vin).filter(isVin).length +

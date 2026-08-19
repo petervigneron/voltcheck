@@ -17,6 +17,9 @@ const SIGNATURES = [
   // pictures.dealer.com. static.overfuel.com is the specific, load-bearing
   // signal, so it wins the tie.
   { platform: "overfuel", res: [/overfuel\.com/i] },
+  // dealr.cloud: server-rendered SaaS for independents; its JSON-LD carries
+  // no VIN, so lib/platforms/dealrcloud.mjs reads the tile markup instead.
+  { platform: "dealrcloud", res: [/cdn\.dealrcloud\.com|dealr-dealer-id/i] },
   { platform: "dealer.com", res: [/DDC\.dataLayer/, /ddc-/i, /Dealer\.com/i] },
   { platform: "dealerinspire", res: [/dealerinspire/i, /window\.DI_/i, /di-widget/i] },
   { platform: "sincro", res: [/sincro/i, /cdk_?global/i] },
