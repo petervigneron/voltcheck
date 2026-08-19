@@ -1,7 +1,9 @@
 # Voltcheck
 
-An EV shopping site — every EV for sale in the United States, new and
-used. Live at voltcheck.net.
+The most comprehensive listings of all EVs and PHEVs for sale in the
+United States — new, used, and certified. Comprehensiveness is the whole
+point: every electrified vehicle on the market, not a curated subset. Live
+at voltcheck.net.
 
 Three lanes, and they are worked on independently:
 
