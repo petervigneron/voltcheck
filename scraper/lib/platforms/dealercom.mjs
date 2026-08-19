@@ -2,6 +2,8 @@
 // odometer, trim, driveLine, colors, images, features, and GM RPO optionCodes —
 // in `DDC.dataLayer['vehicles'] = [ {...} ]`, server-rendered in the HTML the
 // page serves to everyone. This is the same data the page's own widgets read.
+import { priceFloor } from "../price-floor.mjs";
+
 const MARKER = /DDC\.dataLayer\[['"]vehicles['"]\]\s*=\s*\[/;
 
 // Some dealers' feeds leak invalid JSON escapes into this blob (e.g.
@@ -40,12 +42,12 @@ const num = (v) => {
   return Number.isFinite(n) && n > 0 ? n : undefined;
 };
 
-// Junk-price floors, mirrored from web/lib/listings/price.ts
-// (NEW_PRICE_FLOOR_USD / PRICE_FLOOR_USD) and scraper/price-audit.mjs — three
-// copies, keep them in sync. No new EV lists under $15k; old Leafs are real
-// cars at real four-figure prices.
-const NEW_PRICE_FLOOR = 15_000;
-const USED_PRICE_FLOOR = 1_000;
+// Junk-price floors live in lib/price-floor.mjs (one scraper copy, mirrored
+// in web/lib/listings/price.ts). Year-aware since 2026-08-19: dealer.com
+// intermittently serves a finance payment as JSON-LD offers.price on used
+// cars — $1,280 on a 2024 Wrangler 4xe with every DDC field zeroed
+// (beckchryslerdodgejeep.com, verified live) — and with no MSRP anchor the
+// old flat $1,000 used floor let it through as the price.
 
 // Abstain sentinel. 0 keeps the row alive through ingest_listings (price_usd is
 // NOT NULL, so a dropped field would read as a delisting) while hasRealPrice
@@ -89,7 +91,7 @@ export function resolveDdcPrice(rec, d) {
   const jsonld = num(rec.priceUsd); // normalize() already read offers.price
   const msrp = num(d.msrp);
   const isNew = (d.newOrUsed ?? rec.condition) === "new";
-  const floor = isNew ? NEW_PRICE_FLOOR : USED_PRICE_FLOOR;
+  const floor = priceFloor({ isNew, year: rec.year ?? num(d.modelYear) });
 
   // DDC selling-price fields that clear the junk floor, sorted low→high.
   const ddcFields = [num(d.internetPrice), num(d.salePrice), num(d.askingPrice)]

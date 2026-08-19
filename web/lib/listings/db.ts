@@ -1,4 +1,5 @@
 import type { Listing } from "./types";
+import { hasRealPrice } from "./price";
 
 // Server-side reads from Supabase (PostgREST), with the bundled JSON as
 // fallback (see source.ts). Plain fetch, no client library: the queries are
@@ -386,7 +387,18 @@ export async function fetchListingDetailFromDb(
     if (!row) return null;
     return {
       description: row.payload.description,
+      // Points that aren't prices stay out of the sparkline: $0 abstains, and
+      // the payment-figure artifacts that reached history before the
+      // extractor guard existed ($1,996 dips on hyundaioflasvegas.com VINs,
+      // 2026-08-19) would otherwise draw a price cut that never happened.
       priceHistory: (row.listing_price_history ?? [])
+        .filter((h) =>
+          hasRealPrice({
+            priceUsd: h.price_usd,
+            condition: row.payload.condition,
+            year: row.payload.year,
+          })
+        )
         .map((h) => ({ priceUsd: h.price_usd, observedAt: h.observed_at }))
         .sort((a, b) => a.observedAt.localeCompare(b.observedAt)),
     };

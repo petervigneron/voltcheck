@@ -11,9 +11,9 @@ import { resolveDdcPrice, PRICE_ABSTAIN } from "../lib/platforms/dealercom.mjs";
 
 // jsonld arrives on rec.priceUsd (normalize() read offers.price); the rest are
 // DDC.dataLayer fields. Only the fields the page actually served are set.
-const run = ({ jsonld, msrp, internet, sale, asking, newOrUsed }) =>
+const run = ({ jsonld, msrp, internet, sale, asking, newOrUsed, year }) =>
   resolveDdcPrice(
-    { priceUsd: jsonld, condition: newOrUsed },
+    { priceUsd: jsonld, condition: newOrUsed, year },
     {
       msrp,
       internetPrice: internet,
@@ -83,8 +83,34 @@ test("no usable signal at all abstains", () => {
   assert.equal(run({ jsonld: 2293, newOrUsed: "new" }), PRICE_ABSTAIN);
 });
 
-test("a genuinely cheap used car clears the low floor and is kept", () => {
-  assert.equal(run({ jsonld: 4200, internet: 4200, newOrUsed: "used" }), 4200);
+test("a genuinely cheap OLD used car clears the low floor and is kept", () => {
+  // A four-figure 2013 Leaf is a real car at a real price.
+  assert.equal(run({ jsonld: 4200, internet: 4200, newOrUsed: "used", year: 2013 }), 4200);
+});
+
+test("a finance payment served as the price of a recent used car abstains (Wrangler 4xe)", () => {
+  // beckchryslerdodgejeep.com, VIN 1C4RJXP62RW249692, verified live
+  // 2026-08-19: JSON-LD offers.price carried $1,280 and every DDC price
+  // field was zero. Reached production as the car's price ($1,280) before
+  // the year-aware floor; same artifact shipped $1,493 on a 2023 Model Y
+  // and $1,150 on a 2023 EQE from other dealer.com rooftops.
+  assert.equal(
+    run({ jsonld: 1280, internet: 0, sale: 0, asking: 0, msrp: 0, newOrUsed: "used", year: 2024 }),
+    PRICE_ABSTAIN
+  );
+});
+
+test("a payment in JSON-LD yields to a plausible DDC field on a recent used car", () => {
+  // If the platform's own fields still carry the real ask while JSON-LD
+  // flickers to a payment, the ask is served data we can stand behind.
+  assert.equal(
+    run({ jsonld: 1493, internet: 34413, sale: 34413, newOrUsed: "used", year: 2023 }),
+    34413
+  );
+});
+
+test("a real recent used ask is untouched by the recent-used floor", () => {
+  assert.equal(run({ jsonld: 29943, internet: 31213, newOrUsed: "used", year: 2023 }), 29943);
 });
 
 test("a no-discount new car at MSRP does not get lowered or abstained", () => {

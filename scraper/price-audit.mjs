@@ -30,14 +30,17 @@ import { readFile, writeFile } from "node:fs/promises";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
+import { priceFloor } from "./lib/price-floor.mjs";
 
 const execFileP = promisify(execFile);
 
 const LOW_RATIO = 0.35;
 const HIGH_RATIO = 3;
-// Mirrors web/lib/listings/price.ts (PRICE_FLOOR_USD / NEW_PRICE_FLOOR_USD).
-const USED_FLOOR = 1000;
-const NEW_FLOOR = 15000;
+// Absolute floors come from lib/price-floor.mjs (mirrored in
+// web/lib/listings/price.ts). Year-aware: a used 2020+ EV under $5k is a
+// finance payment in the price slot, not an ask — see that file for the
+// live cases.
+const floorOf = (l) => priceFloor({ isNew: l.condition === "new", year: l.year });
 
 function flag(name, fallback) {
   const i = process.argv.indexOf(name);
@@ -128,7 +131,7 @@ for (const l of listings) {
       });
     }
   } else {
-    const floor = l.condition === "new" ? NEW_FLOOR : USED_FLOOR;
+    const floor = floorOf(l);
     if (l.priceUsd < floor) {
       flagged.push({ l, why: `below the $${floor} ${l.condition ?? "used"} floor (no WA comps)` });
     }
@@ -171,12 +174,15 @@ async function reverify(url, vin) {
 }
 
 function plausible(l, priceUsd) {
+  // The absolute floor binds even where WA comps exist: a payment figure on
+  // a car whose cohort median is low could otherwise sneak inside LOW_RATIO.
+  if (priceUsd < floorOf(l)) return false;
   const comp = medians.get(groupKey(l));
   if (comp) {
     const ratio = priceUsd / comp.median;
     return ratio >= LOW_RATIO && ratio <= HIGH_RATIO;
   }
-  return priceUsd >= (l.condition === "new" ? NEW_FLOOR : USED_FLOOR);
+  return true;
 }
 
 let corrected = 0,
@@ -196,8 +202,13 @@ for (const [i, { l }] of flagged.entries()) {
     console.error(`price-audit: ${l.vin} could not re-verify (${v.reason ?? "no price extracted"}) — price suppressed`);
     l.priceUsd = 0;
     suppressed++;
-  } else if (v.priceUsd === l.priceUsd) {
+  } else if (v.priceUsd === l.priceUsd && v.priceUsd >= floorOf(l)) {
     // The dealer really asks this; implausible is not the same as wrong.
+    // But re-reading the same sub-floor number is NOT confirmation — the
+    // page that served a payment as the price serves it consistently
+    // (caritenorthorlando.com's $1,493 Model Y passed this exact branch on
+    // 2026-08-19), so below the floor the match proves only that the junk
+    // is stable, and the price is suppressed instead.
     console.error(`price-audit: ${l.vin} page confirms $${v.priceUsd} — kept`);
     confirmed++;
   } else if (plausible(l, v.priceUsd)) {

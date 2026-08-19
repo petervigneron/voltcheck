@@ -4,6 +4,7 @@
 // classifications are dropped until vPIC verification exists.
 import { readFile, writeFile } from "node:fs/promises";
 import { isKnownMake } from "./lib/makes.mjs";
+import { priceFloor } from "./lib/price-floor.mjs";
 
 const raw = JSON.parse(await readFile(new URL("./out/listings.json", import.meta.url), "utf-8"));
 // Single-rooftop dealers have exactly one address — listings inherit it from
@@ -128,7 +129,14 @@ const listings = raw
     model: canonModel(r.model),
     trim: r.trim ?? undefined,
     drive: inferDrive(r) ?? ariyaVds(r).drive ?? toyotaVds(r).drive,
-    priceUsd: r.priceUsd,
+    // Last plausibility gate before the database, covering every lane (the
+    // dealer.com resolver has its own, but DealerOn/DCS/OEM records land here
+    // straight from normalize). A sub-floor number is a payment or fee that
+    // slipped into the price slot (lib/price-floor.mjs names the live cases),
+    // so it becomes an abstain — the car stays, the claim goes quiet.
+    priceUsd: r.priceUsd >= priceFloor({ isNew: condition(r) === "new", year: modelYear(r.year) })
+      ? r.priceUsd
+      : 0,
     // Platform-extracted odometers (r.platform set) are trusted as-is — 0 is
     // real on a near-new car. JSON-LD-only mileage below 500 is
     // indistinguishable from the junk some SRPs emit, so it renders as

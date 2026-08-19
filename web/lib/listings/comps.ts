@@ -1,4 +1,5 @@
 import { dbConfigured } from "./db";
+import { hasRealPrice } from "./price";
 
 // What these cars actually SELL for, against what this dealer is ASKING.
 //
@@ -326,7 +327,10 @@ export function buildAskIndex(
   for (const l of listings) {
     if (!l.vin || l.vin.length < 8) continue;
     if (l.mileage == null || l.mileage < 2000 || l.mileage > 200_000) continue;
-    if (!Number.isFinite(l.priceUsd) || l.priceUsd < 1000) continue;
+    // hasRealPrice, not a bare floor: a payment figure extracted as the price
+    // ($1,493 on a 2023 Model Y, live 2026-08-19) cleared the old `< 1000`
+    // check and would seed the ask cohort with a false comp.
+    if (!Number.isFinite(l.priceUsd) || !hasRealPrice(l)) continue;
     const k = askKey(l.vin.slice(0, 8), l.year);
     const peer: AskPeer = {
       vin: l.vin.toUpperCase(),

@@ -18,6 +18,7 @@ import { fetchRaw } from "./lib/http.mjs";
 import { fetchWithRetry } from "./lib/retry.mjs";
 import { extractVehicles } from "./lib/jsonld.mjs";
 import { extractDdcVehicles } from "./lib/platforms/dealercom.mjs";
+import { priceFloor } from "./lib/price-floor.mjs";
 import { extractDcsVehicles } from "./lib/platforms/dealercarsearch.mjs";
 import { dealrVehicles } from "./lib/platforms/dealrcloud.mjs";
 import { OEM_LOCATOR_DOMAINS as GM_LOCATOR_DOMAINS } from "./lib/oem/gm.mjs";
@@ -131,7 +132,14 @@ console.error(
 // the JSON-LD offer price wins, and the platform's own fields are only a
 // fallback. Reversing this makes every dealer.com car look like it changed
 // price on the first run and writes fiction into listing_price_history.
-const priceOf = (body, vin, url) => {
+//
+// `floor` is the plausibility gate from lib/price-floor.mjs, computed from
+// the listing we're rechecking. dealer.com intermittently serves a finance
+// payment as the JSON-LD offer price ($1,996 dips on hyundaioflasvegas.com
+// that recovered days later, 2026-08-19) — a sub-floor reading here proves
+// nothing about the price, so it returns null (leave the stored price alone)
+// rather than writing a false cut into listing_price_history.
+const priceOf = (body, vin, url, floor) => {
   // Dealer Car Search publishes no JSON-LD, so without this its rows would
   // hold whatever price the last crawl saw and never move. The VDP's own data
   // layer is the same field lib/platforms/dealercarsearch.mjs reads into the
@@ -139,7 +147,7 @@ const priceOf = (body, vin, url) => {
   for (const v of extractDcsVehicles(body, url)) {
     if (String(v.vehicleIdentificationNumber ?? "").toUpperCase() !== vin) continue;
     const p = Number(v.offers?.price);
-    if (Number.isFinite(p) && p > 500) return Math.round(p);
+    if (Number.isFinite(p) && p >= floor) return Math.round(p);
   }
   // dealr.cloud's JSON-LD Car has no VIN (and on some templates doesn't
   // parse), so like DCS its price is read from the platform's own markup —
@@ -148,20 +156,20 @@ const priceOf = (body, vin, url) => {
   for (const v of dealrVehicles(body, url)) {
     if (String(v.vehicleIdentificationNumber ?? "").toUpperCase() !== vin) continue;
     const p = Number(v.offers?.price);
-    if (Number.isFinite(p) && p > 500) return Math.round(p);
+    if (Number.isFinite(p) && p >= floor) return Math.round(p);
   }
   for (const v of extractVehicles(body)) {
     if (String(v.vehicleIdentificationNumber ?? "").toUpperCase() !== vin) continue;
     const offer = Array.isArray(v.offers) ? v.offers[0] : v.offers;
     const p = Number(String(offer?.price ?? "").replace(/[^0-9.]/g, ""));
-    if (Number.isFinite(p) && p > 500) return Math.round(p);
+    if (Number.isFinite(p) && p >= floor) return Math.round(p);
   }
   // askingPrice is NOT a price on these feeds — observed values of 595/695/999
   // are dealer fees. Only internetPrice is trustworthy, and a car under
   // $3,000 is a data error rather than a listing, so we decline to guess.
   const ddc = extractDdcVehicles(body).find((d) => String(d.vin).toUpperCase() === vin);
   const ddcPrice = Number(String(ddc?.internetPrice ?? "").replace(/[^0-9.]/g, ""));
-  return Number.isFinite(ddcPrice) && ddcPrice > 3000 ? Math.round(ddcPrice) : null;
+  return Number.isFinite(ddcPrice) && ddcPrice >= Math.max(3000, floor) ? Math.round(ddcPrice) : null;
 };
 
 const alive = [], hardGone = [], softGone = [];
@@ -182,7 +190,10 @@ async function worker() {
       hardGone.push(vin);
     } else if (res.status === 200 && res.body) {
       if (res.body.toUpperCase().includes(vin)) {
-        const price = priceOf(res.body, vin, res.finalUrl ?? l.payload.sourceUrl);
+        const price = priceOf(res.body, vin, res.finalUrl ?? l.payload.sourceUrl, priceFloor({
+          isNew: l.payload.condition === "new",
+          year: l.payload.year,
+        }));
         alive.push({ vin, priceUsd: price ?? undefined });
       } else {
         softGone.push(vin);
