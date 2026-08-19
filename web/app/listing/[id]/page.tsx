@@ -23,11 +23,17 @@ import { BatteryRisk } from "@/components/BatteryRisk";
 import { batteryRisk } from "@/lib/nhtsa/battery";
 import { batteryWarranty } from "@/lib/listings/warranty";
 
-// ISR: each listing page renders once, then serves from the CDN for an hour —
-// same cadence as the data underneath it (nightly sync, recheck, price audit).
+// ISR: each listing page renders once, then serves from the CDN for a day —
+// the true cadence of the data underneath it (nightly sync, recheck, price
+// audit all run once a day), matching the sitemap and /api/index shards which
+// are already 86400. It was 3600, which rewrote each page's cache entry up to
+// 24x/day as Googlebot re-crawled the thousands of listing URLs in the
+// sitemaps — the bulk of the account's ISR Writes, for staleness the nightly
+// data can't fill. A day-stale price here is bounded by the same day the
+// browse feed is already cached for (see CLAUDE.md egress note).
 // The empty generateStaticParams is what opts the route into static rendering;
 // every real id renders on first visit and is cached from then on.
-export const revalidate = 3600;
+export const revalidate = 86400;
 export async function generateStaticParams(): Promise<{ id: string }[]> {
   return [];
 }
