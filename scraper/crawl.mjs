@@ -7,7 +7,7 @@
 // page budget is spent on electric cars, not the whole lot.
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { fetchPage, setCacheTtl } from "./lib/http.mjs";
-import { extractVehicles, extractItemListEntries } from "./lib/jsonld.mjs";
+import { extractVehicles, extractMicrodataVehicles, extractItemListEntries } from "./lib/jsonld.mjs";
 import { classifyEv, EV_ONLY_WMIS } from "./lib/ev.mjs";
 import { normalize, richness } from "./lib/normalize.mjs";
 import { discoverSitemapUrls, rank, dedupe, SRP_PATHS, VIN_RE, EVISH_RE } from "./lib/sitemap.mjs";
@@ -384,6 +384,7 @@ async function crawlDealer(domain) {
     const overfuelVins = new Set(overfuel.map((v) => v.vehicleIdentificationNumber));
     const vehicles = [
       ...extractVehicles(res.body),
+      ...extractMicrodataVehicles(res.body),
       ...extractDrivewayVehicles(res.body),
       ...dcsVehicles,
       ...dealerFireVehicles(res.body, res.finalUrl),

@@ -18,7 +18,7 @@
 // promoted on vibes.
 import { readFile, writeFile } from "node:fs/promises";
 import { fetchPage } from "./lib/http.mjs";
-import { extractVehicles, extractItemListEntries } from "./lib/jsonld.mjs";
+import { extractVehicles, extractMicrodataVehicles, extractItemListEntries } from "./lib/jsonld.mjs";
 import { extractDdcVehicles } from "./lib/platforms/dealercom.mjs";
 import { extractDealerOn } from "./lib/platforms/dealeron.mjs";
 
@@ -223,6 +223,7 @@ async function probeSite(site) {
     const isVin = (v) => v && /^[A-HJ-NPR-Z0-9]{17}$/i.test(v);
     const vehicles = [
       ...extractVehicles(res.body),
+      ...extractMicrodataVehicles(res.body),
       ...extractDrivewayVehicles(res.body),
       ...extractDcsVehicles(res.body, res.finalUrl),
       ...dealerFireVehicles(res.body, res.finalUrl),
@@ -250,6 +251,7 @@ async function probeSite(site) {
       if (vdp.status !== 200 || !vdp.body) continue;
       const found = [
         ...extractVehicles(vdp.body),
+        ...extractMicrodataVehicles(vdp.body),
         ...extractDrivewayVehicles(vdp.body),
         ...extractDcsVehicles(vdp.body, vdp.finalUrl),
         ...dealerFireVehicles(vdp.body, vdp.finalUrl),
