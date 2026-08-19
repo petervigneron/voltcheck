@@ -138,6 +138,7 @@ import { VW, pullVw } from "./lib/oem/vw.mjs";
 import { VOLVO, pullVolvo } from "./lib/oem/volvo.mjs";
 import { POLESTAR, pullPolestar } from "./lib/oem/polestar.mjs";
 import { ENTERPRISE, pullEnterprise } from "./lib/oem/enterprise.mjs";
+import { DRIVEWAY, pullDriveway } from "./lib/oem/driveway.mjs";
 import { LEXUS, pullLexus } from "./lib/oem/toyota.mjs";
 import { LUCID, LUCID_NEW, pullLucid, pullLucidNew } from "./lib/oem/lucid.mjs";
 
@@ -165,6 +166,7 @@ const PULLERS = {
   [VOLVO.key]: { domain: VOLVO.domain, run: () => pullVolvo({ log }) },
   [POLESTAR.key]: { domain: POLESTAR.domain, run: () => pullPolestar({ log }) },
   [ENTERPRISE.key]: { domain: ENTERPRISE.domain, run: () => pullEnterprise({ log }) },
+  [DRIVEWAY.key]: { domain: DRIVEWAY.domain, run: () => pullDriveway({ log }) },
   [LEXUS.key]: { domain: LEXUS.domain, run: () => pullLexus({ log }) },
   [LUCID.key]: { domain: LUCID.domain, run: () => pullLucid({ log }) },
   [LUCID_NEW.key]: { domain: LUCID_NEW.domain, run: () => pullLucidNew({ log }) },
@@ -176,7 +178,7 @@ function flag(name, fallback) {
   return i >= 0 ? args[i + 1] : fallback;
 }
 const OUT_DIR = flag("--out", "out");
-const wanted = flag("--brands", "chevrolet,gmc,cadillac,carbravo,hyundai,hyundai-cpo,kia,nissan,nissan-cpo,bmw,mercedes,jeep,dodge,fiat,genesis,ford-blue-advantage,honda,audi,vw,volvo,polestar,lexus,lucid,lucid-new,subaru,enterprise").split(",").map((s) => s.trim().toLowerCase());
+const wanted = flag("--brands", "chevrolet,gmc,cadillac,carbravo,hyundai,hyundai-cpo,kia,nissan,nissan-cpo,bmw,mercedes,jeep,dodge,fiat,genesis,ford-blue-advantage,honda,audi,vw,volvo,polestar,lexus,lucid,lucid-new,subaru,enterprise,driveway").split(",").map((s) => s.trim().toLowerCase());
 const selected = wanted.filter((k) => PULLERS[k]);
 if (!selected.length) {
   console.error(`oem-locator: no known brands in "${wanted}" (have: ${Object.keys(PULLERS).join(",")})`);
