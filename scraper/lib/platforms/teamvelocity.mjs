@@ -1,10 +1,138 @@
-// Team Velocity platform (teamvelocityportal.com API; seen on livermoreford.net,
-// dublinmazda.com). Unlike Dealer.com/DealerOn there's no single JSON blob —
-// VDPs server-render a long sequence of `var name = 'value';` assignments that
-// the page's own JS reads directly. The vehicle-specific block (vin, trim,
-// driveTrain, vdpVehicle*) plus a dealer-info block (city/state/zip/clientName,
-// present on every page) carry the odometer/interior/address fields the
-// generic JSON-LD summary is missing.
+// Team Velocity platform (teamvelocityportal.com).
+//
+// PRIMARY PATH is the platform's own open inventory API — one call returns a
+// rooftop's whole lot as JSON, so the per-VDP HTML scraping below is now the
+// fallback for a page we happen to have in hand. Every Team Velocity page
+// carries the rooftop's ids inline (`var accountId = '71000'; var campaignId =
+// '7226';`), and
+//   GET websites.api.teamvelocityportal.com/tvm-services/inventory/vehicles
+//        ?AccountID=&CampaignId=&Type=Used&Limit=
+// answers a plain browser-UA GET (no auth, no token) with vin, year/make/model/
+// trim, miles, sellingPrice, the declared fuel, condition and the VDP url. It
+// also lives on the Team Velocity host, so it clears the Akamai wall that 403s
+// some dealer front-ends. See lib/platforms/overfuel.mjs for the same shape.
+//
+// EV signal (verified against live lots, do not simplify): `isElectric` means
+// "plugs in", NOT battery-electric — on truwestcdjr its three isElectric cars
+// are Jeep 4xe PHEVs with fuel_Type "Hybrid Fuel". And `isElectric` UNDER-counts
+// BEVs: a Dublin BMW i4 carried isElectric=false with fuel_Type "Electric Fuel
+// System". So fuel_Type is the reliable marker: /electric/ → BEV; isElectric +
+// /hybrid/ → PHEV. We hand classifyEv a fuelType string built from those and let
+// it make the call, exactly as every other lane does.
+import { classifyEv } from "../ev.mjs";
+import { politeGetJson } from "../http.mjs";
+
+const API = "https://websites.api.teamvelocityportal.com/tvm-services/inventory/vehicles";
+const API_LIMIT = 200;
+const API_MAX_PAGES = 30; // runaway guard; a page < limit ends the walk
+const TV_VIN_RE = /^[A-HJ-NPR-Z0-9]{17}$/;
+const posNum = (v) => {
+  const n = Number(v);
+  return Number.isFinite(n) && n > 0 ? n : undefined;
+};
+
+// The rooftop's ids, read from any Team Velocity page's inline globals.
+export function teamVelocityApiIds(html) {
+  if (typeof html !== "string") return null;
+  const accountId = html.match(/\baccountId\s*=\s*['"](\d+)['"]/)?.[1];
+  const campaignId = html.match(/\bcampaignId\s*=\s*['"](\d+)['"]/)?.[1];
+  if (!accountId || !campaignId) return null;
+  return { accountId, campaignId };
+}
+
+// The declared fuel, mapped so classifyEv reads it: fuel_Type names the BEVs
+// ("Electric Fuel System"); a plug-in shows up as isElectric with a hybrid
+// fuel_Type. Anything else is left as-is (classifyEv returns not-EV).
+function fuelTypeFor(r) {
+  const f = String(r.fuel_Type ?? "");
+  if (/electric/i.test(f)) return "Electric";
+  if (r.isElectric && /hybrid/i.test(f)) return "Plug-in Hybrid Electric";
+  return f || undefined;
+}
+
+// One API record → schema.org Vehicle node, shaped like the other producers.
+// The price is `sellingPrice` (the dealer-shown asking price); internetPrice is
+// 0 on real cars, so it is never used — the false-bargain guardrail, same as the
+// dealer.com resolver. Exported for the classification test.
+export function teamVelocityApiVehicle(r) {
+  const vin = String(r?.vin ?? "").toUpperCase();
+  if (!TV_VIN_RE.test(vin)) return null;
+  const vdp = typeof r.vdpUrl === "string" && /^https?:\/\//.test(r.vdpUrl) ? r.vdpUrl : undefined;
+  const cond = String(r.type ?? "").toLowerCase();
+  return {
+    "@type": "Vehicle",
+    vehicleIdentificationNumber: vin,
+    vehicleModelDate: r.year != null ? String(r.year) : undefined,
+    brand: r.make || undefined,
+    model: r.model || undefined,
+    vehicleConfiguration: r.trim || undefined,
+    name: [r.year, r.make, r.model, r.trim].filter(Boolean).join(" ") || undefined,
+    mileageFromOdometer: posNum(r.miles) != null ? { "@type": "QuantitativeValue", value: Number(r.miles) } : undefined,
+    color: r.exteriorColor || undefined,
+    vehicleInteriorColor: r.interiorColor || undefined,
+    driveWheelConfiguration: DRIVES.has(String(r.driveTrain ?? "").toUpperCase()) ? String(r.driveTrain).toUpperCase() : undefined,
+    sku: r.stockNumber ? String(r.stockNumber) : undefined,
+    image: typeof r.firstPhotoUrl === "string" && r.firstPhotoUrl ? [r.firstPhotoUrl] : undefined,
+    itemCondition: cond === "new" ? "new" : "used",
+    fuelType: fuelTypeFor(r),
+    vehicleEngine: { "@type": "EngineSpecification", fuelType: fuelTypeFor(r) },
+    offers: {
+      "@type": "Offer",
+      price: posNum(r.sellingPrice) ?? posNum(r.yourPrice),
+      priceCurrency: "USD",
+      url: vdp,
+      seller: {
+        "@type": "AutoDealer",
+        name: r.dealerName || r.clientName || undefined,
+        address: {
+          "@type": "PostalAddress",
+          addressLocality: r.addressCity || undefined,
+          addressRegion: r.addressState || undefined,
+          postalCode: r.addressZip || undefined,
+        },
+      },
+    },
+    // carried through for the caller's per-car rooftop attribution
+    certified: r.certified === true || /certified|cpo/i.test(String(r.certifiedType ?? "")) || undefined,
+  };
+}
+
+const apiUrl = (ids, page) =>
+  `${API}?AccountID=${ids.accountId}&CampaignId=${ids.campaignId}&Type=Used&Limit=${API_LIMIT}&Page=${page}`;
+
+// Page a rooftop's used inventory to completion, returning schema.org nodes.
+// `complete` is true only when a short page ends the walk (offset-vs-total is not
+// trusted; the endpoint has no reliable total on this call). A partial pull
+// leaves complete=false so the caller never certifies a crawl it didn't finish.
+export async function pullTeamVelocityApi(ids) {
+  const out = [];
+  let ok = false;
+  let reachedEnd = false;
+  for (let page = 1; page <= API_MAX_PAGES; page++) {
+    const { status, json } = await politeGetJson(apiUrl(ids, page));
+    const cars = json?.inventoryVehicles;
+    if (status !== 200 || !Array.isArray(cars)) break;
+    ok = true;
+    for (const r of cars) {
+      const node = teamVelocityApiVehicle(r);
+      if (node) out.push(node);
+    }
+    if (cars.length < API_LIMIT) {
+      reachedEnd = true;
+      break;
+    }
+  }
+  return { vehicles: out, complete: ok && reachedEnd, found: out.length, ok };
+}
+
+// Cheap probe liveness: one request, does this rooftop hold VIN'd inventory?
+export async function countTeamVelocityApi(ids) {
+  const { status, json } = await politeGetJson(apiUrl(ids, 1));
+  const cars = json?.inventoryVehicles;
+  if (status !== 200 || !Array.isArray(cars)) return { ok: false, found: 0, hasVin: false };
+  return { ok: true, found: cars.length, hasVin: cars.some((r) => TV_VIN_RE.test(String(r?.vin ?? "").toUpperCase())) };
+}
+
 function grabVar(html, name) {
   const m = html.match(new RegExp(`var\\s+${name}\\s*=\\s*["']([^"']*)["']`));
   return m && m[1] !== "" ? m[1] : undefined;

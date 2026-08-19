@@ -13,7 +13,7 @@ import { normalize, richness } from "./lib/normalize.mjs";
 import { discoverSitemapUrls, rank, dedupe, SRP_PATHS, VIN_RE, EVISH_RE } from "./lib/sitemap.mjs";
 import { extractDdcVehicles, enrichFromDdc } from "./lib/platforms/dealercom.mjs";
 import { extractDealerOn, enrichFromDealerOn } from "./lib/platforms/dealeron.mjs";
-import { extractTeamVelocity, enrichFromTeamVelocity } from "./lib/platforms/teamvelocity.mjs";
+import { extractTeamVelocity, enrichFromTeamVelocity, teamVelocityApiIds, pullTeamVelocityApi } from "./lib/platforms/teamvelocity.mjs";
 import { extractDrivewayVehicles } from "./lib/platforms/driveway.mjs";
 import { extractDcsVehicles, dcsNextPageUrl, dcsSeeds, isDealerCarSearch } from "./lib/platforms/dealercarsearch.mjs";
 import {
@@ -138,8 +138,9 @@ async function crawlDealer(domain) {
   // working sites are unknown-platform, so the extra fetch is negligible.
   const dv = { done: false };
   const of = { done: false };
+  const tv = { done: false };
   const dvPlat = siteInfo.get(domain)?.platform;
-  if (!dvPlat || dvPlat === "unknown" || dvPlat === "dealervenom" || dvPlat === "overfuel") queue.unshift(origin + "/");
+  if (!dvPlat || ["unknown", "dealervenom", "overfuel", "team-velocity"].includes(dvPlat)) queue.unshift(origin + "/");
 
   // Overfuel hides its inventory behind a per-rooftop SRP slug
   // ("/used-cars-albuquerque-nm") that no path guess finds and that its own
@@ -294,6 +295,51 @@ async function crawlDealer(domain) {
         // A partial or failed pull must never certify a complete crawl, or
         // db-sync would delist cars we merely failed to finish fetching.
         if (!complete) report.stoppedEarly = "overfuel partial pull";
+        queue.length = 0;
+        break;
+      }
+    }
+
+    // Team Velocity serves its whole lot from an open API keyed by the account/
+    // campaign ids inline in every page. Pull it and finish. Each car is
+    // attributed to its OWN vdp host, because one account can be a dealer group
+    // (dublinacura's account 80283 serves cars under dublinhonda.com); the crawl
+    // certifies complete only when every car sits on the crawled domain — a
+    // group spans rooftops, so it stays truncated and recheck retires per VIN.
+    if (!tv.done) {
+      const ids = teamVelocityApiIds(res.body);
+      if (ids) {
+        tv.done = true;
+        const before = report.evs.length;
+        const { vehicles: tvVehicles, complete, found } = await pullTeamVelocityApi(ids);
+        let offDomain = false;
+        for (const v of tvVehicles) {
+          const cls = classifyEv(v);
+          if (!cls.isEv) continue;
+          const vdp = v.offers?.url;
+          if (!vdp) continue; // no per-VIN page → nothing recheck could retire
+          let host;
+          try {
+            host = new URL(vdp).host.replace(/^www\./, "");
+          } catch {
+            continue;
+          }
+          if (host !== domain.replace(/^www\./, "")) offDomain = true;
+          let rec = normalize(v, { sourceUrl: vdp, dealerDomain: host });
+          rec.vdpUrl = abs(rec.vdpUrl, origin) ?? rec.vdpUrl;
+          rec.evKind = cls.kind;
+          rec.evConfidence = cls.confidence;
+          rec.fromVdp = true;
+          rec.platform = "team-velocity";
+          report.evs.push(rec);
+        }
+        if (report.evs.length > before) report.vehiclePages++;
+        report.notes.push(
+          `team-velocity-api: ${found} used, ${report.evs.length - before} EV(s) admitted (${complete ? "complete" : "partial"}${offDomain ? ", group" : ""})`
+        );
+        // Complete only for a true single rooftop; a group spans domains, so its
+        // absence-from-this-query can't license db-sync to delist anyone.
+        if (!complete || offDomain) report.stoppedEarly = "team-velocity api (group or partial)";
         queue.length = 0;
         break;
       }

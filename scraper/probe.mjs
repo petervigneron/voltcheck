@@ -32,7 +32,7 @@ function dealerOnVins(html) {
   if (!d) return [];
   return [d.vehicle?.vin, ...d.dotagging.keys()].filter(Boolean);
 }
-import { extractTeamVelocity } from "./lib/platforms/teamvelocity.mjs";
+import { extractTeamVelocity, teamVelocityApiIds, countTeamVelocityApi } from "./lib/platforms/teamvelocity.mjs";
 import { extractDrivewayVehicles } from "./lib/platforms/driveway.mjs";
 import { extractDcsVehicles, isDealerCarSearch, DCS_SRP_PATH } from "./lib/platforms/dealercarsearch.mjs";
 import { dealerFireVehicles } from "./lib/platforms/dealerfire.mjs";
@@ -123,6 +123,23 @@ async function probeSite(site) {
         site.status = "working";
         site.notes = `${site.notes ?? ""} | auto-promoted by probe ${today}: overfuel API, ${found} vehicles`.trim();
         console.error(`  ${site.domain} → working (overfuel, ${found})`);
+        return;
+      }
+    }
+  }
+
+  // Team Velocity serves its lot from an open API keyed by ids inline in the
+  // page — confirm it directly, like DealerVenom/Overfuel, rather than walking
+  // the client-rendered HTML the crawl otherwise sees nothing in.
+  {
+    const ids = teamVelocityApiIds(home.body);
+    if (ids) {
+      const { ok, found, hasVin } = await countTeamVelocityApi(ids);
+      if (ok && found > 0 && hasVin) {
+        site.platform = "team-velocity";
+        site.status = "working";
+        site.notes = `${site.notes ?? ""} | auto-promoted by probe ${today}: team-velocity API, ${found} vehicles`.trim();
+        console.error(`  ${site.domain} → working (team-velocity, ${found})`);
         return;
       }
     }
