@@ -93,9 +93,22 @@ async function cachePut(url, status, body, finalUrl) {
 }
 
 const MIN_INTERVAL_MS = 1100;
+// How much of a robots.txt Crawl-delay we'll honour. Crawl-delay is advisory
+// (Googlebot ignores it outright; Bing caps it) and almost always aimed at
+// "User-Agent: *", not at us — and honoured verbatim it makes the crawl
+// impossible. germainfordofbeavercreek.com publishes "Crawl-delay: 10", which
+// turned each inventory page into a 10-second wait: one 337-car rooftop's API
+// pull measured 210s, and an 80-page HTML crawl of such a host would take 13
+// minutes. Across ~12,900 nightly domains that is the difference between a
+// crawl that finishes and one that hits the job timeout and is cancelled —
+// which is exactly what happened 08-17…19. We still space requests out (2.5s is
+// more than twice our own floor, and the API path makes far fewer requests per
+// rooftop than the HTML crawl it replaced); we just refuse to let one
+// auto-generated robots line stop us from covering a lot.
+const MAX_CRAWL_DELAY_MS = 2500;
 
 async function politeDelay(host) {
-  const robotsDelay = robotsCache.get(host)?.crawlDelayMs ?? 0;
+  const robotsDelay = Math.min(robotsCache.get(host)?.crawlDelayMs ?? 0, MAX_CRAWL_DELAY_MS);
   const interval = Math.max(MIN_INTERVAL_MS, robotsDelay);
   const prev = lastHit.get(host) ?? 0;
   const wait = prev + interval - Date.now();
