@@ -38,16 +38,25 @@ const NOT_INVENTORY = [
   "mykaarma", "w.org", "gstatic", "googleapis", "google.com", "facebook",
   "doubleclick", "cloudflare", "jsdelivr", "cookielaw", "onetrust", "hotjar",
   "recaptcha", "youtube", "vimeo", "gravatar", "wp.com", "sentry", "segment",
-  "twilio", "podium", "gubagoo", "cloudinary",
+  "twilio", "podium", "gubagoo", "cloudinary", "woodsidecredit",
 ];
 
-// Hosts we already have an extractor/lane for — a lead here is a re-probe
-// target (the verdict predates the lane), not a new build.
+// Hosts we already cover, so the tool never sends anyone to rebuild a lane that
+// exists (it nearly did: omnigraph.audi.com read "UNBUILT" until this list knew
+// lib/oem/audi.mjs already pulls the whole Audi network's BEVs nationally).
+// Two kinds of "covered":
+//   oem  — a national OEM lane already ingests these rooftops' EVs under a
+//          synthetic domain; the parked dealer-domain rows are redundant for EV
+//          coverage, NOT a gap. Grep lib/oem/ before adding a build here.
+//   site — a per-site extractor exists; a parked lead is a re-probe target whose
+//          verdict predates the lane, not a new build.
 const HAVE_LANE = [
-  { re: /teamvelocityportal/i, lane: "team-velocity" },
-  { re: /dealr\.cloud/i, lane: "dealrcloud" },
-  { re: /overfuel/i, lane: "overfuel" },
-  { re: /typesense|dealervenom/i, lane: "dealervenom" },
+  { re: /omnigraph\.audi\.com|renderer\.one\.audi/i, lane: "oem:audi", kind: "oem" },
+  { re: /shop\.ford\.com|mps\.ford\.com|foundational\.ford\.com/i, lane: "oem:ford", kind: "oem" },
+  { re: /teamvelocityportal/i, lane: "team-velocity", kind: "site" },
+  { re: /dealr\.cloud/i, lane: "dealrcloud", kind: "site" },
+  { re: /overfuel/i, lane: "overfuel", kind: "site" },
+  { re: /typesense|dealervenom/i, lane: "dealervenom", kind: "site" },
 ];
 
 const registry = JSON.parse(await readFile(new URL("./registry/registry.json", import.meta.url), "utf-8"));
@@ -69,12 +78,16 @@ for (const s of registry.sites) {
 }
 
 const rows = [...byHost.entries()]
-  .map(([host, domains]) => ({
-    host,
-    rooftops: domains.size,
-    lane: HAVE_LANE.find((l) => l.re.test(host))?.lane ?? null,
-    sample: [...domains].slice(0, 5),
-  }))
+  .map(([host, domains]) => {
+    const hit = HAVE_LANE.find((l) => l.re.test(host));
+    return {
+      host,
+      rooftops: domains.size,
+      lane: hit?.lane ?? null,
+      kind: hit?.kind ?? "unbuilt",
+      sample: [...domains].slice(0, 5),
+    };
+  })
   .filter((r) => r.rooftops >= MIN)
   .sort((a, b) => b.rooftops - a.rooftops);
 
@@ -84,10 +97,13 @@ if (asJson) {
   console.error(`wrote scraper/out/api-leads.json (${rows.length} hosts)`);
 } else {
   const totalRooftops = new Set([...byHost.values()].flatMap((s) => [...s])).size;
-  console.log(`API-host leads across ${totalRooftops} parked rooftops (hosts on ≥${MIN}, widgets filtered):\n`);
-  console.log("rooftops  lane          host / sample");
+  const unbuilt = rows.filter((r) => r.kind === "unbuilt");
+  console.log(`API-host leads across ${totalRooftops} parked rooftops (hosts on ≥${MIN}, widgets filtered).`);
+  console.log(`Tags: [oem:*] already ingested nationally (not a gap) · [name] have a per-site lane (re-probe) · [BUILD] genuinely unbuilt.`);
+  console.log(`${unbuilt.length} hosts are genuinely unbuilt.\n`);
+  console.log("rooftops  status         host / sample");
   for (const r of rows) {
-    const tag = r.lane ? `[${r.lane}]` : "[UNBUILT]";
+    const tag = r.kind === "unbuilt" ? "[BUILD]" : `[${r.lane}]`;
     console.log(`${String(r.rooftops).padStart(6)}  ${tag.padEnd(13)} ${r.host}`);
     console.log(`${" ".repeat(22)}${r.sample.join(", ")}`);
   }
