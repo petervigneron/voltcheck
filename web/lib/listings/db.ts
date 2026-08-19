@@ -93,7 +93,6 @@ interface FeedRow {
 
 interface DetailRow {
   payload: Listing;
-  listing_price_history: { price_usd: number; observed_at: string }[];
 }
 
 export function dbConfigured(): boolean {
@@ -374,24 +373,38 @@ export async function fetchListingDetailFromDb(
 ): Promise<{ description?: string; priceHistory: Listing["priceHistory"] } | null> {
   if (!dbConfigured()) return null;
   const base = process.env.SUPABASE_URL!.replace(/\/$/, "");
-  const select = "payload,listing_price_history(price_usd,observed_at)";
+  const vinKey = encodeURIComponent(vin.toUpperCase());
   try {
-    const res = await fetch(
-      `${base}/rest/v1/listings?select=${encodeURIComponent(select)}&vin=eq.${encodeURIComponent(
-        vin.toUpperCase()
-      )}&limit=1`,
-      { headers: headers(), next: { revalidate: REVALIDATE_SECONDS, tags: [FEED_CACHE_TAG] } }
-    );
+    // History comes from listing_price_display (0040), not the raw table:
+    // the raw log carries steps our own lanes manufactured by reading
+    // different price fields off the same page (crawl internetPrice vs
+    // recheck JSON-LD — the 08-17 recheck alone wrote 7,734 such "changes").
+    // The view keeps only same-lane steps with no methodology transition
+    // between them, so the sparkline can't draw a cut the dealer never made.
+    // It's a windowed view PostgREST can't embed through listings, hence the
+    // second request.
+    const [res, histRes] = await Promise.all([
+      fetch(`${base}/rest/v1/listings?select=payload&vin=eq.${vinKey}&limit=1`, {
+        headers: headers(),
+        next: { revalidate: REVALIDATE_SECONDS, tags: [FEED_CACHE_TAG] },
+      }),
+      fetch(
+        `${base}/rest/v1/listing_price_display?select=price_usd,observed_at&vin=eq.${vinKey}&order=observed_at.asc`,
+        { headers: headers(), next: { revalidate: REVALIDATE_SECONDS, tags: [FEED_CACHE_TAG] } }
+      ),
+    ]);
     if (!res.ok) throw new Error(`PostgREST ${res.status}`);
+    if (!histRes.ok) throw new Error(`PostgREST history ${histRes.status}`);
     const [row] = (await res.json()) as DetailRow[];
     if (!row) return null;
+    const hist = (await histRes.json()) as { price_usd: number; observed_at: string }[];
     return {
       description: row.payload.description,
       // Points that aren't prices stay out of the sparkline: $0 abstains, and
       // the payment-figure artifacts that reached history before the
       // extractor guard existed ($1,996 dips on hyundaioflasvegas.com VINs,
       // 2026-08-19) would otherwise draw a price cut that never happened.
-      priceHistory: (row.listing_price_history ?? [])
+      priceHistory: hist
         .filter((h) =>
           hasRealPrice({
             priceUsd: h.price_usd,
