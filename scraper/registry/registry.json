@@ -36885,8 +36885,8 @@
       "kind": "rooftop",
       "platform": "overfuel",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:api.overfuel.com, nextjs | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:api.overfuel.com, nextjs | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform overfuel) — client-rendered or API-backed; leads: api-hosts:api.overfuel.com, nextjs"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:api.overfuel.com, nextjs | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:api.overfuel.com, nextjs | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform overfuel) — client-rendered or API-backed; leads: api-hosts:api.overfuel.com, nextjs | overfuel API lane 2026-08-19: dealer 638, 71 vehicles pulled complete, 0 EV(s). Client-rendered franchise rooftop — SRP/VDP HTML 404s to a crawler, so api.overfuel.com/api/1.0/dealers/638/search is the only path."
     },
     {
       "domain": "sunlandfordinc.com",
@@ -85605,10 +85605,10 @@
       "domain": "citymitsubishi.com",
       "name": "FORTUNA NOVA INC",
       "kind": "rooftop",
-      "platform": "dealer.com",
+      "platform": "overfuel",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "FL license roll (FLHSMV, lic VI independent), email-domain signal — browser-context crawl of the published dealer lists 2026-08-16 | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — client-rendered or API-backed; leads: api-hosts:api.overfuel.com, nextjs | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — client-rendered or API-backed; leads: api-hosts:api.overfuel.com, nextjs",
+      "status": "working",
+      "notes": "FL license roll (FLHSMV, lic VI independent), email-domain signal — browser-context crawl of the published dealer lists 2026-08-16 | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — client-rendered or API-backed; leads: api-hosts:api.overfuel.com, nextjs | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — client-rendered or API-backed; leads: api-hosts:api.overfuel.com, nextjs | overfuel API lane 2026-08-19: dealer 1052, 208 vehicles pulled complete, 30 EV(s). Client-rendered franchise rooftop — SRP/VDP HTML 404s to a crawler, so api.overfuel.com/api/1.0/dealers/1052/search is the only path. Relabeled from dealer.com (sister-domain string tripped the dealer.com substring check).",
       "location": {
         "city": "JACKSONVILLE",
         "state": "FL",
@@ -108483,8 +108483,8 @@
       "kind": "rooftop",
       "platform": "overfuel",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:api.overfuel.com, nextjs | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform overfuel) — client-rendered or API-backed; leads: api-hosts:api.overfuel.com, nextjs",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:api.overfuel.com, nextjs | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform overfuel) — client-rendered or API-backed; leads: api-hosts:api.overfuel.com, nextjs | overfuel API lane 2026-08-19: dealer 2211, 1732 vehicles pulled complete, 48 EV(s). Client-rendered franchise rooftop — SRP/VDP HTML 404s to a crawler, so api.overfuel.com/api/1.0/dealers/2211/search is the only path.",
       "location": {
         "city": "BREWSTER",
         "state": "NY",
@@ -109337,8 +109337,8 @@
       "kind": "rooftop",
       "platform": "overfuel",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:api.overfuel.com, nextjs | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform overfuel) — client-rendered or API-backed; leads: api-hosts:api.overfuel.com, nextjs",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:api.overfuel.com, nextjs | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform overfuel) — client-rendered or API-backed; leads: api-hosts:api.overfuel.com, nextjs | overfuel API lane 2026-08-19: dealer 678, 94 vehicles pulled complete, 4 EV(s). Client-rendered franchise rooftop — SRP/VDP HTML 404s to a crawler, so api.overfuel.com/api/1.0/dealers/678/search is the only path.",
       "location": {
         "city": "SODUS",
         "state": "NY",
@@ -181970,10 +181970,10 @@
       "domain": "riverfallsautodealer.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "dealer.com",
+      "platform": "overfuel",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via Common Crawl dealer-platform URL fingerprint sweep (CC-MAIN-2026-30), 2026-08-17 — site serves inventory paths matching a platform we extract | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — client-rendered or API-backed; leads: api-hosts:api.overfuel.com, nextjs | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — client-rendered or API-backed; leads: api-hosts:api.overfuel.com, nextjs"
+      "status": "working",
+      "notes": "Discovered via Common Crawl dealer-platform URL fingerprint sweep (CC-MAIN-2026-30), 2026-08-17 — site serves inventory paths matching a platform we extract | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — client-rendered or API-backed; leads: api-hosts:api.overfuel.com, nextjs | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — client-rendered or API-backed; leads: api-hosts:api.overfuel.com, nextjs | overfuel API lane 2026-08-19: dealer 2251, 120 vehicles pulled complete, 2 EV(s). Client-rendered franchise rooftop — SRP/VDP HTML 404s to a crawler, so api.overfuel.com/api/1.0/dealers/2251/search is the only path. Relabeled from dealer.com (sister-domain string tripped the dealer.com substring check)."
     },
     {
       "domain": "riverheadbayvw.com",

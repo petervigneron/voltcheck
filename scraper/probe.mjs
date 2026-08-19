@@ -38,7 +38,7 @@ import { extractDcsVehicles, isDealerCarSearch, DCS_SRP_PATH } from "./lib/platf
 import { dealerFireVehicles } from "./lib/platforms/dealerfire.mjs";
 import { fingerprint } from "./lib/fingerprint.mjs";
 import { isDealerVenom, extractDealerVenomConfig, countDealerVenom } from "./lib/platforms/dealervenom.mjs";
-import { overfuelVehicles, overfuelSeeds } from "./lib/platforms/overfuel.mjs";
+import { overfuelVehicles, overfuelSeeds, isOverfuel, overfuelApiConfig, countOverfuelApi } from "./lib/platforms/overfuel.mjs";
 import { discoverSitemapUrls, rank, dedupe, SRP_PATHS } from "./lib/sitemap.mjs";
 import { spaSignals, countVinUrls } from "./lib/spa-signals.mjs";
 
@@ -94,6 +94,24 @@ async function probeSite(site) {
         site.status = "working";
         site.notes = `${site.notes ?? ""} | auto-promoted by probe ${today}: dealervenom Typesense index, ${found} vehicles`.trim();
         console.error(`  ${site.domain} → working (dealervenom, ${found})`);
+        return;
+      }
+    }
+  }
+
+  // Overfuel serves the whole lot from an open API keyed by a dealer id inline
+  // in the page. Confirm it directly — one request — rather than walking the
+  // client-rendered HTML, which 404s on the franchise rooftops. The nightly
+  // crawl's overfuel-api block then pulls the full inventory.
+  if (isOverfuel(home.body)) {
+    const cfg = overfuelApiConfig(home.body);
+    if (cfg) {
+      const { ok, found, hasVin } = await countOverfuelApi(cfg);
+      if (ok && found > 0 && hasVin) {
+        site.platform = "overfuel";
+        site.status = "working";
+        site.notes = `${site.notes ?? ""} | auto-promoted by probe ${today}: overfuel API, ${found} vehicles`.trim();
+        console.error(`  ${site.domain} → working (overfuel, ${found})`);
         return;
       }
     }

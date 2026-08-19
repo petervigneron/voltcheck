@@ -1,32 +1,178 @@
-// Overfuel (overfuel.com; "mobile-first dealership websites"). The platform of
-// the small independent lot — 712 Auto Sales (Albuquerque) is the first we saw.
+// Overfuel (overfuel.com; "mobile-first dealership websites"). Runs everything
+// from a small independent lot (712 Auto Sales, the first we saw) to a franchise
+// group (Gravity Autos, Woody's) — 1,761 cars on steponeauto, 95 on 712.
 //
-// Unlike Dealer Car Search, Overfuel is friendly to the generic pipeline: its
-// VDPs publish a full schema.org Vehicle node (the generic extractor reads them
-// with mileage, trim and colours). What the generic pipeline can't do is
-// ENUMERATE the lot. Two gaps:
+// Every Overfuel rooftop serves its inventory from ONE open, unauthenticated API
+//   GET https://api.overfuel.com/api/1.0/dealers/{dealerId}/search?limit=&offset=
+// whose `dealerId` is inline in the page's Next.js __NEXT_DATA__ ("dealerId":1052),
+// and whose response is the whole lot as structured JSON — vin, year/make/model/
+// trim, mileage, the dealer-declared `fuel` ("Electric"), price, colours, the VDP
+// url. `meta.total` bounds it and `robots.txt` is `Disallow:` (empty) — so this
+// is the primary path, pulled to completion like DealerVenom's Typesense lane
+// (`pullOverfuelApi`), and it's the ONLY path for the franchise sites, whose SRP
+// and VDP HTML routes 404 to a crawler (the inventory is client-rendered).
 //
-//   1. The SRP lives at a per-rooftop slug ("/used-cars-albuquerque-nm") that no
-//      path guess will find, so a crawl that doesn't happen to reach it through
-//      the sitemap wanders the whole lot one VDP at a time.
-//   2. The SRP's inventory is an ItemList of ListItem→Product nodes whose url
-//      sits on the nested Product, not the ListItem — so the generic
-//      extractItemListEntries (which reads ListItem.url) sees nothing, and the
-//      SRP contributes no discovery bridge at all.
-//
-// So this module names the platform (its asset/API hosts are on every page),
-// reads the SRP link off any Overfuel page so the crawl can seed it, and parses
-// the SRP's Products into vehicle records. Each Product carries the VDP url with
-// the VIN embedded in its slug
-// (…-used-2024-subaru-solterra-premium-JTMABABA1RA062847-in-albuquerque-nm) plus
-// name and price, so a rooftop is enumerated from ≤4 SRP fetches before a single
-// VDP is opened, and the EV ones are then followed for their full record.
+// The HTML helpers below (isOverfuel/overfuelSeeds/overfuelVehicles/…) are the
+// fallback for any Overfuel page that doesn't expose a dealerId: the SRP is an
+// ItemList of ListItem→Product nodes whose url (VIN embedded in its slug) and
+// price sit on the nested Product, which the generic extractItemListEntries
+// (reads ListItem.url) can't see — so we parse it here and jump rel=next.
 import { extractNodes } from "../jsonld.mjs";
+import { politeGetJson } from "../http.mjs";
 
 const ASSET_RE = /(?:static|api|www)\.overfuel\.com/i;
 
 export function isOverfuel(html) {
   return typeof html === "string" && ASSET_RE.test(html);
+}
+
+// The dealer id the API is keyed by, read from the page's __NEXT_DATA__. Only an
+// Overfuel page's id is trusted (the ASSET_RE gate), and only a plain positive
+// integer — the id is interpolated into a hardcoded api.overfuel.com path, so a
+// non-numeric value could not redirect the request elsewhere, but rejecting it
+// keeps a malformed page from issuing a junk request.
+export function overfuelApiConfig(html) {
+  if (typeof html !== "string" || !ASSET_RE.test(html)) return null;
+  const id = html.match(/"dealer(?:Id|_id)"\s*:\s*(\d{1,9})\b/)?.[1];
+  if (!id) return null;
+  return { dealerId: Number(id) };
+}
+
+const API_VIN_RE = /^[A-HJ-NPR-Z0-9]{17}$/;
+const numOrU = (v) => {
+  const n = Number(v);
+  return Number.isFinite(n) && n > 0 ? n : undefined;
+};
+
+// One API record → a schema.org Vehicle node, shaped like the DCS/DealerFire/
+// DealerVenom producers so it flows through the same classifyEv/normalize path.
+// Field names are from a live document, not guessed.
+function apiVehicleNode(r, origin) {
+  const vin = String(r?.vin ?? "").toUpperCase();
+  if (!API_VIN_RE.test(vin)) return null;
+
+  // The advertised price is `price`. `specialprice` (a lower sale figure) is
+  // deliberately NOT used: it is 0 on every record observed, and adopting it
+  // unvalidated risks printing a conditional/incentive price as the asking
+  // price — the false bargain the house rule forbids, where caution runs
+  // asymmetric toward the higher, unconditional number. `originalprice` is
+  // inconsistent (sometimes above, sometimes below `price`) so it is ignored.
+  const price = numOrU(r.price);
+
+  const cond = String(r.condition ?? "").toLowerCase();
+  const itemCondition = /new/.test(cond) ? "new" : "used";
+
+  const images = Array.isArray(r.photos)
+    ? r.photos.filter((u) => typeof u === "string" && u)
+    : typeof r.featuredphoto === "string" && r.featuredphoto
+      ? [r.featuredphoto]
+      : [];
+
+  let url = origin;
+  if (typeof r.url === "string" && r.url) {
+    try {
+      url = new URL(r.url, origin).toString();
+    } catch {}
+  }
+
+  const dealer = r.dealer && typeof r.dealer === "object" ? r.dealer : null;
+
+  return {
+    "@type": "Vehicle",
+    vehicleIdentificationNumber: vin,
+    vehicleModelDate: r.year != null ? String(r.year) : undefined,
+    brand: r.make || undefined,
+    model: r.model || undefined,
+    vehicleConfiguration: r.trim || undefined,
+    name: r.title || [r.year, r.make, r.model, r.trim].filter(Boolean).join(" ") || undefined,
+    mileageFromOdometer: numOrU(r.mileage) != null ? { "@type": "QuantitativeValue", value: Number(r.mileage) } : undefined,
+    color: r.exteriorcolor || undefined,
+    vehicleInteriorColor: r.interiorcolor || undefined,
+    driveWheelConfiguration: r.drivetrainstandard || undefined,
+    sku: r.stocknumber ? String(r.stocknumber) : undefined,
+    image: images.length ? images : undefined,
+    itemCondition,
+    // The dealer's own declared fuel ("Electric", "Gasoline", "Hybrid",
+    // "Diesel", "Flex Fuel"); classifyEv reads it and decides — nothing here
+    // pre-judges which values count as electric.
+    vehicleEngine: { "@type": "EngineSpecification", fuelType: r.fuel || undefined },
+    fuelType: r.fuel || undefined,
+    offers: {
+      "@type": "Offer",
+      price,
+      priceCurrency: "USD",
+      url,
+      seller: dealer
+        ? {
+            "@type": "AutoDealer",
+            name: dealer.name || undefined,
+            address: {
+              "@type": "PostalAddress",
+              addressLocality: dealer.city || undefined,
+              addressRegion: dealer.state || undefined,
+            },
+          }
+        : undefined,
+    },
+  };
+}
+
+const API_LIMIT = 200; // honoured by the endpoint (meta.limit echoes it back)
+const API_MAX_PAGES = 60; // 60 * 200 = 12k, a runaway guard well past any lot seen
+
+function apiUrl(dealerId, offset) {
+  return `https://api.overfuel.com/api/1.0/dealers/${dealerId}/search?limit=${API_LIMIT}&offset=${offset}`;
+}
+
+// Page a dealer's inventory to completion and return every vehicle as a
+// schema.org Vehicle node. `complete` is true ONLY when the walk reached the
+// reported `meta.total` (or a clean empty lot): a partial or failed pull returns
+// complete=false so the caller reports truncated:true and db-sync never delists
+// a lot on the strength of an API hiccup.
+export async function pullOverfuelApi(config, origin) {
+  const out = [];
+  let offset = 0;
+  let total = 0;
+  let ok = false;
+  let reachedEnd = false;
+  let pages = 0;
+
+  // Completeness is "we reached the last page", NOT "offset caught up to
+  // meta.total": the endpoint's `total` can overrun the records it will actually
+  // page out by one or two (a sold/hidden row it still counts — steponeauto
+  // reports 1761 and pages out 1760), which would peg an otherwise-complete pull
+  // as partial forever. A page shorter than the limit is the last page; an empty
+  // page confirms the end when the count lands on an exact multiple. Only a
+  // mid-stream error or the runaway cap leaves reachedEnd false → partial.
+  while (pages < API_MAX_PAGES) {
+    const { status, json } = await politeGetJson(apiUrl(config.dealerId, offset));
+    if (status !== 200 || !json || !Array.isArray(json.results)) break;
+    ok = true;
+    if (Number.isFinite(json.meta?.total)) total = json.meta.total;
+    for (const r of json.results) {
+      const node = apiVehicleNode(r, origin);
+      if (node) out.push(node);
+    }
+    offset += json.results.length;
+    pages++;
+    if (json.results.length < API_LIMIT) {
+      reachedEnd = true;
+      break;
+    }
+  }
+
+  const complete = ok && reachedEnd;
+  return { vehicles: out, complete, found: total || offset, ok };
+}
+
+// Cheap liveness check for probe.mjs: one request, does this dealer hold VIN'd
+// inventory? Keeps the probe's fetch budget intact — the full paged pull happens
+// later, in the nightly crawl.
+export async function countOverfuelApi(config) {
+  const { status, json } = await politeGetJson(apiUrl(config.dealerId, 0));
+  if (status !== 200 || !json || !Array.isArray(json.results)) return { ok: false, found: 0, hasVin: false };
+  const hasVin = json.results.some((r) => API_VIN_RE.test(String(r?.vin ?? "").toUpperCase()));
+  return { ok: true, found: Number.isFinite(json.meta?.total) ? json.meta.total : json.results.length, hasVin };
 }
 
 const VIN_RE = /\b([A-HJ-NPR-Z0-9]{17})\b/i;

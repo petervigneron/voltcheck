@@ -5,6 +5,7 @@ import {
   overfuelSeeds,
   overfuelVehicles,
   overfuelNextPageUrl,
+  overfuelApiConfig,
 } from "../lib/platforms/overfuel.mjs";
 import { classifyEv } from "../lib/ev.mjs";
 
@@ -71,4 +72,23 @@ test("a page without the Overfuel asset host yields nothing", () => {
   // Same ItemList markup, no overfuel host — must not be mistaken for Overfuel.
   const foreign = SRP.replace(/static\.overfuel\.com/g, "cdn.example.com");
   assert.deepEqual(overfuelVehicles(foreign, ORIGIN), []);
+});
+
+// The API is the primary path: the dealer id read from __NEXT_DATA__ is what the
+// nightly crawl pages the whole lot from.
+const NEXT = `<script src="https://static.overfuel.com/x.js"></script>
+<script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{"dealerId":1052,"dealer_id":1052}}}</script>`;
+
+test("overfuelApiConfig reads the dealer id from an Overfuel page", () => {
+  assert.deepEqual(overfuelApiConfig(NEXT), { dealerId: 1052 });
+});
+
+test("overfuelApiConfig requires the Overfuel host — a foreign page with a dealerId is ignored", () => {
+  const foreign = NEXT.replace(/static\.overfuel\.com/g, "cdn.example.com");
+  assert.equal(overfuelApiConfig(foreign), null);
+});
+
+test("overfuelApiConfig rejects a missing or non-numeric id", () => {
+  assert.equal(overfuelApiConfig(`<img src="https://static.overfuel.com/a.png"> no id here`), null);
+  assert.equal(overfuelApiConfig(`https://static.overfuel.com <b>"dealerId":"abc"</b>`), null);
 });

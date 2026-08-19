@@ -26,7 +26,14 @@ import {
   isDealerFire,
 } from "./lib/platforms/dealerfire.mjs";
 import { isDealerVenom, extractDealerVenomConfig, pullDealerVenom } from "./lib/platforms/dealervenom.mjs";
-import { isOverfuel, overfuelVehicles, overfuelSeeds, overfuelNextPageUrl } from "./lib/platforms/overfuel.mjs";
+import {
+  isOverfuel,
+  overfuelVehicles,
+  overfuelSeeds,
+  overfuelNextPageUrl,
+  overfuelApiConfig,
+  pullOverfuelApi,
+} from "./lib/platforms/overfuel.mjs";
 
 const args = process.argv.slice(2);
 function flag(name, fallback) {
@@ -129,6 +136,7 @@ async function crawlDealer(domain) {
   // on page one instead of burning its budget on empty shells. Only ~353
   // working sites are unknown-platform, so the extra fetch is negligible.
   const dv = { done: false };
+  const of = { done: false };
   const dvPlat = siteInfo.get(domain)?.platform;
   if (!dvPlat || dvPlat === "unknown" || dvPlat === "dealervenom" || dvPlat === "overfuel") queue.unshift(origin + "/");
 
@@ -237,6 +245,41 @@ async function crawlDealer(domain) {
         // db-sync would delist cars we merely failed to finish fetching
         // (migration 0002, and the truncated: note at the end of this loop).
         if (!complete) report.stoppedEarly = "dealervenom partial pull";
+        queue.length = 0;
+        break;
+      }
+    }
+
+    // Overfuel serves its whole lot from an open API keyed by a dealer id that
+    // sits inline in every page's __NEXT_DATA__. On the first page that reveals
+    // it, pull the inventory through the API and finish — this is the complete,
+    // structured source (mileage, declared fuel, price) and, on the franchise
+    // rooftops, the ONLY one, since their SRP/VDP HTML 404s to a crawler. The
+    // HTML SRP path below stays as the fallback for any page with no dealer id.
+    if (!of.done && isOverfuel(res.body)) {
+      const cfg = overfuelApiConfig(res.body);
+      if (cfg) {
+        of.done = true;
+        const before = report.evs.length;
+        const { vehicles: ofVehicles, complete, found } = await pullOverfuelApi(cfg, origin);
+        for (const v of ofVehicles) {
+          const cls = classifyEv(v);
+          if (!cls.isEv) continue;
+          let rec = normalize(v, { sourceUrl: v.offers?.url || origin, dealerDomain: domain });
+          if (rec.vdpUrl) rec.vdpUrl = abs(rec.vdpUrl, origin) ?? rec.vdpUrl;
+          rec.evKind = cls.kind;
+          rec.evConfidence = cls.confidence;
+          rec.fromVdp = true;
+          rec.platform = "overfuel";
+          report.evs.push(rec);
+        }
+        if (report.evs.length > before) report.vehiclePages++;
+        report.notes.push(
+          `overfuel-api: ${found} in inventory, ${report.evs.length - before} EV(s) admitted (${complete ? "complete" : "partial"})`
+        );
+        // A partial or failed pull must never certify a complete crawl, or
+        // db-sync would delist cars we merely failed to finish fetching.
+        if (!complete) report.stoppedEarly = "overfuel partial pull";
         queue.length = 0;
         break;
       }

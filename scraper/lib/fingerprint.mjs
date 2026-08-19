@@ -11,6 +11,12 @@ const SIGNATURES = [
   // DealerOn first: their sites often serve images from pictures.dealer.com,
   // which would false-positive the Dealer.com check (bit us on lehmers.com).
   { platform: "dealeron", res: [/dealeron-js\.aspx/i, /DealerOn/i, /searchused\.aspx/i, /sdDataLayer/] },
+  // Before dealer.com: an Overfuel rooftop whose sister domain is
+  // "…autodealer.com" (somersetautodealer.com) trips the loose /Dealer\.com/i
+  // substring check, and Overfuel sites also serve some images from
+  // pictures.dealer.com. static.overfuel.com is the specific, load-bearing
+  // signal, so it wins the tie.
+  { platform: "overfuel", res: [/overfuel\.com/i] },
   { platform: "dealer.com", res: [/DDC\.dataLayer/, /ddc-/i, /Dealer\.com/i] },
   { platform: "dealerinspire", res: [/dealerinspire/i, /window\.DI_/i, /di-widget/i] },
   { platform: "sincro", res: [/sincro/i, /cdk_?global/i] },
@@ -19,10 +25,6 @@ const SIGNATURES = [
   // the per-car data layer it pushes are the signatures that actually fire.
   { platform: "dealerfire", res: [/dealerfire/i, /cdn-ds\.com/i, /pushData\(\s*['"]VehicleObject_/] },
   { platform: "dealereprocess", res: [/dealereprocess/i] },
-  // Overfuel (mobile-first independent-lot sites): its asset host is on every
-  // page, and its SRP ItemList/Product inventory is read by
-  // lib/platforms/overfuel.mjs. VDPs carry generic Vehicle JSON-LD.
-  { platform: "overfuel", res: [/overfuel\.com/i] },
   { platform: "team-velocity", res: [/teamvelocityportal\.com/i, /vdpVehicleExteriorColor/] },
   // No JSON-LD anywhere and numeric-id VDP URLs, so nothing generic hooks it;
   // lib/platforms/dealercarsearch.mjs reads its Tealium product list instead.
