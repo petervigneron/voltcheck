@@ -456,10 +456,10 @@
       "domain": "broombroomauto.com",
       "name": "Broom Broom Auto Sales",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Aurora | probe 2026-08-12: 0 VIN vehicles in 8 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Aurora | probe 2026-08-12: 0 VIN vehicles in 8 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | auto-promoted by probe 2026-08-19: dealr API, 16 vehicles"
     },
     {
       "domain": "johnsonautoplaza.com",
@@ -564,19 +564,19 @@
       "domain": "adiautosport.com",
       "name": "ADI Autosport, LLC",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Aurora | probe 2026-08-12: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Aurora | probe 2026-08-12: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealr) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
     },
     {
       "domain": "autovineco.com",
       "name": "AutoVine",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Aurora | probe 2026-08-12: 0 VIN vehicles in 8 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Aurora | probe 2026-08-12: 0 VIN vehicles in 8 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | auto-promoted by probe 2026-08-19: dealr API, 12 vehicles"
     },
     {
       "domain": "celebrationchevrolet.com",
@@ -918,10 +918,10 @@
       "domain": "boulderh.com",
       "name": "Boulder Hybrids",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Boulder | probe 2026-08-12: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Boulder | probe 2026-08-12: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | auto-promoted by probe 2026-08-19: dealr API, 11 vehicles"
     },
     {
       "domain": "bouldernissan.com",
@@ -1035,10 +1035,10 @@
       "domain": "autosearch-usa.com",
       "name": "AutoSearch USA",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Louisville | probe 2026-08-12: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Louisville | probe 2026-08-12: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | auto-promoted by probe 2026-08-19: dealr API, 7 vehicles"
     },
     {
       "domain": "audiflatirons.com",
@@ -1116,10 +1116,10 @@
       "domain": "cherrycreekautomotive.com",
       "name": "Cherry Creek Automotive",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Denver | probe 2026-08-12: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Denver | probe 2026-08-12: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealr) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
     },
     {
       "domain": "emichkia.com",
@@ -1289,10 +1289,10 @@
       "domain": "jfrcars.com",
       "name": "JFR & Associates",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Littleton | probe 2026-08-12: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:static.cargurus.com+www.cargurus.com+dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:static.cargurus.com+www.cargurus.com+dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:static.cargurus.com+www.cargurus.com+dealr.cloud"
+      "status": "working",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Littleton | probe 2026-08-12: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:static.cargurus.com+www.cargurus.com+dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:static.cargurus.com+www.cargurus.com+dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:static.cargurus.com+www.cargurus.com+dealr.cloud | auto-promoted by probe 2026-08-19: dealr API, 97 vehicles"
     },
     {
       "domain": "johnelwaycadillac.com",
@@ -1601,10 +1601,10 @@
       "domain": "alfredautosales.com",
       "name": "Alfred Automotive",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Arvada | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Arvada | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | auto-promoted by probe 2026-08-19: dealr API, 21 vehicles"
     },
     {
       "domain": "autonationbuickgmcwest.com",
@@ -1756,10 +1756,10 @@
       "domain": "elevatedmotors.com",
       "name": "Elevated Motors",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Wheat Ridge | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Wheat Ridge | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealr) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
     },
     {
       "domain": "foundationchevrolet.com",
@@ -1801,10 +1801,10 @@
       "domain": "giantautowarehouse.com",
       "name": "Auto Warehouse, Inc.",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Fort Collins | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:static.cargurus.com+www.cargurus.com+dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:static.cargurus.com+www.cargurus.com+dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:static.cargurus.com+www.cargurus.com+dealr.cloud"
+      "status": "working",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Fort Collins | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:static.cargurus.com+www.cargurus.com+dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:static.cargurus.com+www.cargurus.com+dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:static.cargurus.com+www.cargurus.com+dealr.cloud | auto-promoted by probe 2026-08-19: dealr API, 114 vehicles"
     },
     {
       "domain": "dellenbach.com",
@@ -1901,10 +1901,10 @@
       "domain": "watchdogautomotive.com",
       "name": "Watchdog Automotive",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Fort Collins | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Fort Collins | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealr) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
     },
     {
       "domain": "bmwofloveland.com",
@@ -1937,10 +1937,10 @@
       "domain": "flosautosales.com",
       "name": "Flo's Auto Sales, LLC",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Loveland | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Loveland | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | auto-promoted by probe 2026-08-19: dealr API, 13 vehicles"
     },
     {
       "domain": "loveford.com",
@@ -2019,10 +2019,10 @@
       "domain": "twomplus.com",
       "name": "Two M Plus",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Grand Junction | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Grand Junction | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | auto-promoted by probe 2026-08-19: dealr API, 16 vehicles"
     },
     {
       "domain": "truwestauto.com",
@@ -2064,10 +2064,10 @@
       "domain": "discountmotorsonline.com",
       "name": "Discount Motors",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Pueblo | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Pueblo | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | auto-promoted by probe 2026-08-19: dealr API, 131 vehicles"
     },
     {
       "domain": "shoplibertymotors.com",
@@ -2146,10 +2146,10 @@
       "domain": "autointegrity.net",
       "name": "Auto Integrity",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Greeley | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "notes": "Enrolled in Vehicle Exchange Colorado (CO) — state-published participating-dealer roster, imported 2026-08-12; Greeley | probe 2026-08-13: homepage error:TypeError | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealr) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
     },
     {
       "domain": "ghentmotors.com",
@@ -7494,10 +7494,10 @@
       "domain": "eprius.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:static.cargurus.com+www.cargurus.com+dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:static.cargurus.com+www.cargurus.com+dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:static.cargurus.com+www.cargurus.com+dealr.cloud"
+      "status": "working",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:static.cargurus.com+www.cargurus.com+dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:static.cargurus.com+www.cargurus.com+dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:static.cargurus.com+www.cargurus.com+dealr.cloud | auto-promoted by probe 2026-08-19: dealr API, 36 vehicles"
     },
     {
       "domain": "24fordofeaston.com",
@@ -8477,10 +8477,10 @@
       "domain": "everettautogallery.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Enrolled in MOR-EV (MA) — state-published participating-dealer roster, imported 2026-08-13 | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-13: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | auto-promoted by probe 2026-08-19: dealr API, 29 vehicles"
     },
     {
       "domain": "everettusedcar.net",
@@ -13166,10 +13166,10 @@
       "domain": "davidsonsmotors.com",
       "name": "Davidson's Motors",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealr) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
     },
     {
       "domain": "irontrailchevrolet.com",
@@ -19277,10 +19277,10 @@
       "domain": "aclcars.com",
       "name": "Auto Connection of Lancaster, Inc.",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | auto-promoted by probe 2026-08-19: dealr API, 117 vehicles"
     },
     {
       "domain": "chapmanfordllc.com",
@@ -19937,10 +19937,10 @@
       "domain": "highoctaneperformancecars.com",
       "name": "High Octane Performance Cars",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | requeued 2026-08-16: unreachable verdict predates the www/apex bare-404 retry and gzip fix in lib/http.mjs | probe 2026-08-17: homepage error:TypeError | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud+api.sendinblue.com | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud+api.sendinblue.com"
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | requeued 2026-08-16: unreachable verdict predates the www/apex bare-404 retry and gzip fix in lib/http.mjs | probe 2026-08-17: homepage error:TypeError | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud+api.sendinblue.com | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud+api.sendinblue.com | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealr) — client-rendered or API-backed; leads: api-hosts:dealr.cloud+api.sendinblue.com"
     },
     {
       "domain": "villageautomotive.com",
@@ -20900,10 +20900,10 @@
       "domain": "burgiomotors.com",
       "name": "Burgio Motors",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | auto-promoted by probe 2026-08-19: dealr API, 65 vehicles"
     },
     {
       "domain": "fordofelizabethton.com",
@@ -20918,10 +20918,10 @@
       "domain": "coloradotrucks.com",
       "name": "McCarty Motors",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealr) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
     },
     {
       "domain": "shamrockautobrokers.com",
@@ -21136,10 +21136,10 @@
       "domain": "southcreekauto.com",
       "name": "South Creek",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | auto-promoted by probe 2026-08-19: dealr API, 69 vehicles"
     },
     {
       "domain": "volvocarscoolsprings.com",
@@ -21155,10 +21155,10 @@
       "domain": "sprinklerusedcars.com",
       "name": "Sprinkler Used Cars",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud+api.visitor.chat | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud+api.visitor.chat | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud+api.visitor.chat"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud+api.visitor.chat | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud+api.visitor.chat | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud+api.visitor.chat | auto-promoted by probe 2026-08-19: dealr API, 98 vehicles"
     },
     {
       "domain": "pacelineauto.com",
@@ -22584,10 +22584,10 @@
       "domain": "coolridesonline.com",
       "name": "Cool Rides",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | auto-promoted by probe 2026-08-19: dealr API, 21 vehicles"
     },
     {
       "domain": "landersfamilypreowned.com",
@@ -29722,10 +29722,10 @@
       "domain": "gometroamerica.com",
       "name": "Metro America Auto Sales",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | auto-promoted by probe 2026-08-19: dealr API, 54 vehicles"
     },
     {
       "domain": "columbiachev.com",
@@ -33837,10 +33837,10 @@
       "domain": "mazalmotors.com",
       "name": "Mazal Motors",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | auto-promoted by probe 2026-08-19: dealr API, 37 vehicles"
     },
     {
       "domain": "midwaytoyota.com",
@@ -36431,10 +36431,10 @@
       "domain": "discountautobrokersllc.com",
       "name": "Discount Auto Brokers LLC",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | auto-promoted by probe 2026-08-19: dealr API, 46 vehicles"
     },
     {
       "domain": "beavertontoyota.com",
@@ -39313,10 +39313,10 @@
       "domain": "networkautosource.net",
       "name": "Network Auto Source",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud+api.quotible.com | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud+api.quotible.com | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud+api.quotible.com"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud+api.quotible.com | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud+api.quotible.com | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud+api.quotible.com | auto-promoted by probe 2026-08-19: dealr API, 35 vehicles"
     },
     {
       "domain": "stuckeyfordbellefonte.com",
@@ -40399,10 +40399,10 @@
       "domain": "victorymotorsofcolorado.com",
       "name": "Liberty Auto Sales",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | requeued 2026-08-16: unreachable verdict predates the www/apex bare-404 retry and gzip fix in lib/http.mjs | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | requeued 2026-08-16: unreachable verdict predates the www/apex bare-404 retry and gzip fix in lib/http.mjs | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | auto-promoted by probe 2026-08-19: dealr API, 483 vehicles"
     },
     {
       "domain": "invergrovehyundai.com",
@@ -43931,10 +43931,10 @@
       "domain": "unlimiteddenver.com",
       "name": "Unlimited Auto Sales",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | auto-promoted by probe 2026-08-19: dealr API, 76 vehicles"
     },
     {
       "domain": "van2autos.com",
@@ -44284,10 +44284,10 @@
       "domain": "keyautodenver.com",
       "name": "Key Auto Denver",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealr) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
     },
     {
       "domain": "carshop.com",
@@ -45257,10 +45257,10 @@
       "domain": "cuttingedgeautomotive.com",
       "name": "Cutting Edge",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | requeued 2026-08-16: unreachable verdict predates the www/apex bare-404 retry and gzip fix in lib/http.mjs | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | requeued 2026-08-16: unreachable verdict predates the www/apex bare-404 retry and gzip fix in lib/http.mjs | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | auto-promoted by probe 2026-08-19: dealr API, 43 vehicles"
     },
     {
       "domain": "fbwestchester.com",
@@ -46095,10 +46095,10 @@
       "domain": "bluegillmotors.com",
       "name": "Bluegill Motors",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | auto-promoted by probe 2026-08-19: dealr API, 31 vehicles"
     },
     {
       "domain": "edwardschryslerdodgejeep.com",
@@ -46329,10 +46329,10 @@
       "domain": "saltlakeimports.com",
       "name": "Salt Lake Imports",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealr) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
     },
     {
       "domain": "koonstoyotawestminster.com",
@@ -51807,10 +51807,10 @@
       "domain": "carsofcville.com",
       "name": "Cars of Charlottesville",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | auto-promoted by probe 2026-08-19: dealr API, 57 vehicles"
     },
     {
       "domain": "springfieldhyundai.com",
@@ -58977,10 +58977,10 @@
       "domain": "wittmotors.com",
       "name": "Witt Motors",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | auto-promoted by probe 2026-08-19: dealr API, 33 vehicles"
     },
     {
       "domain": "asburyauto.com",
@@ -87005,10 +87005,10 @@
       "domain": "dreammotorsjax.com",
       "name": "DREAM MOTORS LLC",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "FL license roll (FLHSMV, lic VI independent), email-domain signal — browser-context crawl of the published dealer lists 2026-08-16 | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud",
+      "status": "working",
+      "notes": "FL license roll (FLHSMV, lic VI independent), email-domain signal — browser-context crawl of the published dealer lists 2026-08-16 | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | auto-promoted by probe 2026-08-19: dealr API, 103 vehicles",
       "location": {
         "city": "JACKSONVILLE",
         "state": "FL",
@@ -87439,10 +87439,10 @@
       "domain": "ebenzzmotors.com",
       "name": "IAN'S AUTO EXPORTS, INC.",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "FL license roll (FLHSMV, lic VI independent), email-domain signal — browser-context crawl of the published dealer lists 2026-08-16 | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud",
+      "status": "working",
+      "notes": "FL license roll (FLHSMV, lic VI independent), email-domain signal — browser-context crawl of the published dealer lists 2026-08-16 | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | auto-promoted by probe 2026-08-19: dealr API, 57 vehicles",
       "location": {
         "city": "JUPITER",
         "state": "FL",
@@ -91457,10 +91457,10 @@
       "domain": "jldauto.net",
       "name": "JLD AUTO GROUP LLC",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "FL license roll (FLHSMV, lic VI independent), email-domain signal — browser-context crawl of the published dealer lists 2026-08-16 | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud",
+      "status": "working",
+      "notes": "FL license roll (FLHSMV, lic VI independent), email-domain signal — browser-context crawl of the published dealer lists 2026-08-16 | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | auto-promoted by probe 2026-08-19: dealr API, 12 vehicles",
       "location": {
         "city": "STUART",
         "state": "FL",
@@ -99857,10 +99857,10 @@
       "domain": "tropicalautosale.com",
       "name": "ALABAS CORP",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "FL license roll (FLHSMV, lic VI independent), email-domain signal — browser-context crawl of the published dealer lists 2026-08-16 | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud",
+      "notes": "FL license roll (FLHSMV, lic VI independent), email-domain signal — browser-context crawl of the published dealer lists 2026-08-16 | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealr) — client-rendered or API-backed; leads: api-hosts:dealr.cloud",
       "location": {
         "city": "NORTH PALM BEACH",
         "state": "FL",
@@ -103189,10 +103189,10 @@
       "domain": "genepankeymotors.com",
       "name": "GENE PANKEY MOTOR COMPANY, INC.",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | auto-promoted by probe 2026-08-19: dealr API, 100 vehicles",
       "location": {
         "city": "TACOMA",
         "state": "WA",
@@ -109867,10 +109867,10 @@
       "domain": "silverstarmotors.com",
       "name": "SILVER STAR MOTORS",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | auto-promoted by probe 2026-08-19: dealr API, 115 vehicles",
       "location": {
         "city": "LIC",
         "state": "NY",
@@ -112457,10 +112457,10 @@
       "domain": "jettmotors.com",
       "name": "JETT MOTORS LLC",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | auto-promoted by probe 2026-08-19: dealr API, 22 vehicles",
       "location": {
         "city": "BOONEVILLE",
         "state": "NY",
@@ -112471,10 +112471,10 @@
       "domain": "jimspearsautosales.com",
       "name": "JIM SPEARS AUTO SALES",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealr) — client-rendered or API-backed; leads: api-hosts:dealr.cloud",
       "location": {
         "city": "BINGHAMTON",
         "state": "NY",
@@ -113647,10 +113647,10 @@
       "domain": "mapledalemotors.com",
       "name": "MAPLEDALE MOTORS LLC",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | auto-promoted by probe 2026-08-19: dealr API, 48 vehicles",
       "location": {
         "city": "BARNEVELD",
         "state": "NY",
@@ -115537,10 +115537,10 @@
       "domain": "queensburyautomall.com",
       "name": "QUEENSBURY AUTO MALL",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | auto-promoted by probe 2026-08-19: dealr API, 59 vehicles",
       "location": {
         "city": "QUEENSBURY",
         "state": "NY",
@@ -116699,10 +116699,10 @@
       "domain": "signatureautoranch.com",
       "name": "SIGNATURE AUTO RANCH",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud+static.cargurus.com | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud+static.cargurus.com",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud+static.cargurus.com | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud+static.cargurus.com | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealr) — client-rendered or API-backed; leads: api-hosts:dealr.cloud+static.cargurus.com",
       "location": {
         "city": "LATHAM",
         "state": "NY",
@@ -117049,10 +117049,10 @@
       "domain": "specialhmotors.com",
       "name": "SPECIAL H MOTORS LLC",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | auto-promoted by probe 2026-08-19: dealr API, 12 vehicles",
       "location": {
         "city": "MONTICELLO",
         "state": "NY",
@@ -145403,10 +145403,10 @@
       "domain": "findtheperfectcar.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Discovered via Common Crawl dealer-platform URL fingerprint sweep (CC-MAIN-2026-30), 2026-08-17 — site serves inventory paths matching a platform we extract | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "notes": "Discovered via Common Crawl dealer-platform URL fingerprint sweep (CC-MAIN-2026-30), 2026-08-17 — site serves inventory paths matching a platform we extract | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealr) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
     },
     {
       "domain": "finleymotors.com",
@@ -188171,19 +188171,19 @@
       "domain": "sterlingautoplex.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via Common Crawl dealer-platform URL fingerprint sweep (CC-MAIN-2026-30), 2026-08-17 — site serves inventory paths matching a platform we extract | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Discovered via Common Crawl dealer-platform URL fingerprint sweep (CC-MAIN-2026-30), 2026-08-17 — site serves inventory paths matching a platform we extract | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | auto-promoted by probe 2026-08-19: dealr API, 106 vehicles"
     },
     {
       "domain": "sterlingautosalesft.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealr",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via Common Crawl dealer-platform URL fingerprint sweep (CC-MAIN-2026-30), 2026-08-17 — site serves inventory paths matching a platform we extract | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud"
+      "status": "working",
+      "notes": "Discovered via Common Crawl dealer-platform URL fingerprint sweep (CC-MAIN-2026-30), 2026-08-17 — site serves inventory paths matching a platform we extract | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: api-hosts:dealr.cloud | auto-promoted by probe 2026-08-19: dealr API, 163 vehicles"
     },
     {
       "domain": "sterlingsubaru.com",
