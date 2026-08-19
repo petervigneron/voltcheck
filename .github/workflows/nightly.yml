@@ -97,8 +97,17 @@ jobs:
           echo "shard ${{ matrix.shard }}/${SHARDS}: crawling $(echo $DOMAINS | wc -w) domains"
           # cache-hours 0: the runner starts with an empty cache and discards
           # it, so caching only costs disk — and filled it on run #2.
-          node crawl.mjs $DOMAINS --max-pages ${{ github.event.inputs.max_pages || '80' }} --cache-hours 0 --concurrency 16
+          # --deadline-min 300 stops crawling in time to write out/ before the
+          # 330-minute job timeout, so the shard hands up its work instead of
+          # being cancelled mid-run (which skipped the upload below and lost the
+          # whole night — every shard did this on 2026-08-19). crawl.mjs also
+          # checkpoints out/ every two minutes as a backstop.
+          node crawl.mjs $DOMAINS --max-pages ${{ github.event.inputs.max_pages || '80' }} --cache-hours 0 --concurrency 16 --deadline-min 300
+      # always(): upload even if the crawl step was cancelled or errored, so the
+      # last checkpoint (or the deadline write) still reaches the merge. Without
+      # this a timed-out shard uploaded nothing.
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: crawl-out-${{ matrix.shard }}
           path: scraper/out/

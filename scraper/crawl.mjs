@@ -45,10 +45,19 @@ function flag(name, fallback) {
 }
 const MAX_PAGES = flag("--max-pages", 25);
 const CONCURRENCY = flag("--concurrency", 6);
+// Stop taking new domains after this many minutes and write what's crawled so
+// far. crawl.mjs used to write out/ only after every worker finished, so a
+// shard killed by the CI job timeout — which skips the upload-artifact step —
+// handed up nothing: on 2026-08-19 all 8 shards timed out at 5h30m and the
+// day's dealer discoveries were thrown away. With a deadline the pool stops
+// pulling domains in time to reach a clean final write (and the checkpoint
+// below covers a harder kill). Anchored at process start. 0 = no cap.
+const DEADLINE_MIN = flag("--deadline-min", 0);
+const DEADLINE_AT = DEADLINE_MIN > 0 ? Date.now() + DEADLINE_MIN * 60_000 : Infinity;
 // --cache-hours N: reuse pages fetched within N hours (0 = always live)
 setCacheTtl(flag("--cache-hours", 0) * 3_600_000);
 const flagIdxs = new Set(
-  ["--max-pages", "--concurrency", "--cache-hours", "--page-budget"].flatMap((f) => {
+  ["--max-pages", "--concurrency", "--cache-hours", "--page-budget", "--deadline-min"].flatMap((f) => {
     const i = args.indexOf(f);
     return i >= 0 ? [i, i + 1] : [];
   })
@@ -569,7 +578,7 @@ const allEvs = [];
 const reports = [];
 let next = 0;
 async function worker() {
-  while (next < domains.length) {
+  while (next < domains.length && Date.now() < DEADLINE_AT) {
     const domain = domains[next++];
     console.error(`── crawling ${domain}`);
     let rep;
@@ -588,18 +597,47 @@ async function worker() {
     );
   }
 }
-await Promise.all(Array.from({ length: Math.min(CONCURRENCY, domains.length) }, worker));
-
-await mkdir(new URL("./out/", import.meta.url), { recursive: true });
-const byVin = new Map();
-for (const ev of allEvs) {
-  const key = ev.vin ?? `${ev.dealerDomain}:${ev.sourceUrl}`;
-  const prev = byVin.get(key);
-  if (!prev || richness(ev) > richness(prev)) byVin.set(key, ev);
-}
-await writeFile(new URL("./out/listings.json", import.meta.url), JSON.stringify([...byVin.values()], null, 2));
+// Write the crawl's output as it stands. Called on a timer while the workers
+// run (a checkpoint) and once when they finish, so a shard that is killed —
+// by its deadline or a harder job-timeout — still leaves its night's work on
+// disk for the upload step to grab, instead of losing it all to an
+// end-of-run write that never happened. Guarded so a checkpoint and the final
+// write can't interleave two writers on the same file.
 // crawledAt lets db-sync tell the DB when these rows were observed, so a
 // replayed snapshot can't masquerade as fresh evidence (migration 0013).
-for (const r of reports) r.crawledAt ??= new Date().toISOString();
-await writeFile(new URL("./out/report.json", import.meta.url), JSON.stringify(reports, null, 2));
-console.error(`\n${byVin.size} unique EV listings → scraper/out/listings.json`);
+let writing = false;
+async function writeOutput() {
+  if (writing) return undefined;
+  writing = true;
+  try {
+    await mkdir(new URL("./out/", import.meta.url), { recursive: true });
+    const byVin = new Map();
+    for (const ev of allEvs) {
+      const key = ev.vin ?? `${ev.dealerDomain}:${ev.sourceUrl}`;
+      const prev = byVin.get(key);
+      if (!prev || richness(ev) > richness(prev)) byVin.set(key, ev);
+    }
+    await writeFile(new URL("./out/listings.json", import.meta.url), JSON.stringify([...byVin.values()], null, 2));
+    for (const r of reports) r.crawledAt ??= new Date().toISOString();
+    await writeFile(new URL("./out/report.json", import.meta.url), JSON.stringify(reports, null, 2));
+    return byVin.size;
+  } finally {
+    writing = false;
+  }
+}
+
+// Checkpoint every two minutes. unref() so the timer never keeps the process
+// alive on its own once the workers are done.
+const checkpoint = setInterval(() => { writeOutput().catch(() => {}); }, 120_000);
+checkpoint.unref?.();
+await Promise.all(Array.from({ length: Math.min(CONCURRENCY, domains.length) }, worker));
+clearInterval(checkpoint);
+
+const unique = await writeOutput();
+if (Number.isFinite(DEADLINE_AT) && reports.length < domains.length) {
+  console.error(
+    `crawl: stopped at the ${DEADLINE_MIN}-minute deadline after ${reports.length}/${domains.length} domains — ` +
+    `wrote what's crawled; the rest are picked up next run`
+  );
+}
+console.error(`\n${unique} unique EV listings → scraper/out/listings.json`);
