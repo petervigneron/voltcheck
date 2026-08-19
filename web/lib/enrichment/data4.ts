@@ -65,6 +65,27 @@ const NO_HEAT_PUMP = f<"none">(
 );
 const HEAT_PUMP_STD = f<"standard">("standard", "mfr", "high", "“Vapor Injection Heat Pump”, standard equipment in Ford's order guide", OG_24);
 
+// Charge port and Supercharger access, shared by every Lightning model year.
+// Sourced to Ford's media newsroom rather than the fromtheroad spec CDN the
+// rows above cite: that CDN refuses crawler fetches (connection reset), while
+// the newsroom articles load, and both facts are stated there in prose.
+//   Port — every Lightning ships the CCS1 (SAE J1772 Combo) DC inlet. Ford's
+//   May 2023 announcement framed a built-in NACS port as a change for FUTURE
+//   EVs, and the adapter program below hands these trucks a NACS adapter
+//   precisely because their port is CCS.
+//   Supercharger — F-150 Lightning retail customers gained access to 15,000+
+//   Tesla Superchargers via a complimentary NACS Fast Charging Adapter,
+//   reservations opening 29 Feb 2024.
+// Both are the manufacturer's own claim; the note paraphrases the release
+// (the article body isn't quotable from here) and links it, per the house
+// rule that a surfaced fact carries its source.
+const NACS_NEWS = "https://media.ford.com/content/fordmedia/fna/us/en/news/2024/01/31/ford-to-offer-complimentary-tesla-supercharger-adapter-to-eligib.html";
+const PORT_NEWS = "https://media.ford.com/content/fordmedia/fna/us/en/news/2023/05/25/ford-ev-customers-to-gain-access-to-12-000-tesla-superchargers--.html";
+const LIGHTNING_CHARGING = {
+  portStandard: f<"CCS1">("CCS1", "mfr", "high", "CCS1 (SAE J1772 Combo) DC inlet on every Lightning; Ford announced a built-in NACS port only for future EVs, and its Supercharger program supplies these CCS trucks a NACS adapter", PORT_NEWS),
+  superchargerAccess: f<"adapter">("adapter", "mfr", "high", "F-150 Lightning retail customers gained access to 15,000+ Tesla Superchargers through a complimentary NACS Fast Charging Adapter, reservations from 29 Feb 2024", NACS_NEWS),
+};
+
 // ── Mustang Mach-E (same pass) ──────────────────────────────────────────
 //
 // Re-keyed from the trim-keyed data3 rows onto VIN position 8. Ford's VIN
@@ -378,6 +399,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(230, "mfr", "high", "EPA rating for the Standard Range pack (VIN engine code L)", epa(45318)) },
     thermal: { heatPump: NO_HEAT_PUMP },
     warranty: WARRANTY,
+    charging: LIGHTNING_CHARGING,
   },
   {
     id: "lightning-2022-er",
@@ -389,6 +411,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(320, "mfr", "high", "EPA rating for the Extended Range pack (VIN engine code V), non-Platinum trims", epa(45317)) },
     thermal: { heatPump: NO_HEAT_PUMP },
     warranty: WARRANTY,
+    charging: LIGHTNING_CHARGING,
   },
   {
     id: "lightning-2022-er-platinum",
@@ -401,6 +424,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(300, "mfr", "high", "Platinum carries the same Extended Range pack but is EPA-rated 300 (heavier 22\" wheels)", epa(45316)) },
     thermal: { heatPump: NO_HEAT_PUMP },
     warranty: WARRANTY,
+    charging: LIGHTNING_CHARGING,
   },
 
   // ── MY2023 — SR bumped to 240; packs documented on Ford's 2023 sheet ───
@@ -415,6 +439,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(240, "mfr", "high", "EPA rating for the Standard Range pack (VIN engine code L)", epa(46329)) },
     thermal: { heatPump: NO_HEAT_PUMP },
     warranty: WARRANTY,
+    charging: LIGHTNING_CHARGING,
   },
   {
     id: "lightning-2023-er",
@@ -427,6 +452,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(320, "mfr", "high", "EPA rating for the Extended Range pack (VIN engine code V), non-Platinum trims", epa(46327)) },
     thermal: { heatPump: NO_HEAT_PUMP },
     warranty: WARRANTY,
+    charging: LIGHTNING_CHARGING,
   },
   {
     id: "lightning-2023-er-platinum",
@@ -440,6 +466,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(300, "mfr", "high", "Platinum carries the same Extended Range pack but is EPA-rated 300 (heavier 22\" wheels)", epa(46328)) },
     thermal: { heatPump: NO_HEAT_PUMP },
     warranty: WARRANTY,
+    charging: LIGHTNING_CHARGING,
   },
 
   // ── MY2024 — heat pump arrives; VIN codes change to K / 7 / M ──────────
@@ -454,6 +481,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(240, "mfr", "high", "EPA rating for the Standard Range pack (VIN engine code K)", epa(47821)) },
     thermal: { heatPump: HEAT_PUMP_STD },
     warranty: WARRANTY,
+    charging: LIGHTNING_CHARGING,
   },
   {
     id: "lightning-2024-er",
@@ -466,6 +494,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(320, "mfr", "high", "EPA rating for the Extended Range pack (VIN engine code 7, or M with dual onboard chargers), non-Platinum trims", epa(47818)) },
     thermal: { heatPump: HEAT_PUMP_STD },
     warranty: WARRANTY,
+    charging: LIGHTNING_CHARGING,
   },
   {
     id: "lightning-2024-er-platinum",
@@ -479,6 +508,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(300, "mfr", "high", "Platinum carries the same Extended Range pack but is EPA-rated 300 (heavier 22\" wheels)", epa(47819)) },
     thermal: { heatPump: HEAT_PUMP_STD },
     warranty: WARRANTY,
+    charging: LIGHTNING_CHARGING,
   },
 
   // ── MY2025 — a third pack appears: 123 kWh ER (VIN code U, "5P90S") ────
@@ -493,6 +523,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(240, "mfr", "high", "EPA rating for the Standard Range pack (VIN engine code K)", epa(48707)) },
     thermal: { heatPump: HEAT_PUMP_STD },
     warranty: WARRANTY,
+    charging: LIGHTNING_CHARGING,
   },
   {
     id: "lightning-2025-er123",
@@ -505,6 +536,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(300, "mfr", "high", "EPA rating for the 123 kWh Extended Range pack (VIN engine code U; EPA lists it as “ER2”), standard on Flash, optional on Pro/XLT", epa(49077)) },
     thermal: { heatPump: HEAT_PUMP_STD },
     warranty: WARRANTY,
+    charging: LIGHTNING_CHARGING,
   },
   {
     id: "lightning-2025-er131",
@@ -517,6 +549,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(320, "mfr", "high", "EPA rating for the 131 kWh Extended Range pack (VIN engine code 7; EPA lists it as “ER1”), non-Platinum trims", epa(48705)) },
     thermal: { heatPump: HEAT_PUMP_STD },
     warranty: WARRANTY,
+    charging: LIGHTNING_CHARGING,
   },
   {
     id: "lightning-2025-er131-platinum",
@@ -530,6 +563,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(300, "mfr", "high", "Platinum carries the 131 kWh Extended Range pack but is EPA-rated 300 (heavier 22\" wheels)", epa(48708)) },
     thermal: { heatPump: HEAT_PUMP_STD },
     warranty: WARRANTY,
+    charging: LIGHTNING_CHARGING,
   },
 
   // ── Chevrolet Bolt (same pass) ─────────────────────────────────────────

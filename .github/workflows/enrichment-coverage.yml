@@ -10,9 +10,10 @@ name: Enrichment coverage
 # shoppers with no port, chemistry, or charging facts at all).
 #
 # This runs web/scripts/enrichment-coverage.mjs on every change to the
-# enrichment files. It ratchets against a baseline (251 cohorts miss a core
-# field today): the backlog is allowed, a NEW half-stocked cohort is not. Lower
-# --max-core-fails as backfill lands; never raise it to hide a regression.
+# enrichment files. It ratchets against a baseline (241 cohorts miss a core
+# field, down from 251 once the Lightning charge port was filled): the backlog
+# is allowed, a NEW half-stocked cohort is not. Lower --max-core-fails as
+# backfill lands; never raise it to hide a regression.
 # No install and no secrets — the script imports only the dependency-free
 # enrichment modules under Node's type stripping.
 on:
@@ -41,4 +42,4 @@ jobs:
           node-version: "22"
       - name: Report enrichment coverage
         working-directory: web
-        run: node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs scripts/enrichment-coverage.mjs --max-core-fails 251
+        run: node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs scripts/enrichment-coverage.mjs --max-core-fails 241
