@@ -39,8 +39,12 @@ working directory. That makes staging a shared resource.
 ## Deploys are not automatic
 
 Vercel is **not** hooked to git pushes here. A commit on `main` changes
-nothing that a shopper can see. Deploying is a CLI step, and it is the user's
-call — ask, don't assume a merge means ship.
+nothing that a shopper can see. Deploying is a CLI step — and it is part of
+finishing: when your work changes `web/`, deploy it (owner, 2026-08-19: "I
+don't like it when you finish code and don't deploy it — hard for me to have
+any idea what needs to go live"). If you genuinely can't deploy (a build
+already running, database busy), say explicitly what is committed but not
+yet live rather than leaving it silent.
 
 The CLI deploys the **working tree**, not a commit — and with several sessions
 sharing this tree, that means someone else's half-finished edits can ship to
