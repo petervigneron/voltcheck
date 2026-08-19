@@ -204606,6 +204606,3969 @@
         "state": "NM",
         "zip": "87109"
       }
+    },
+    {
+      "domain": "alexandersubaruinc.com",
+      "name": "Alexander Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Muncy, PA) 2026-08-19",
+      "location": {
+        "city": "Muncy",
+        "state": "PA",
+        "zip": "17756"
+      }
+    },
+    {
+      "domain": "atsubaru.net",
+      "name": "A & T Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 2 listing(s), Sellersville, PA) 2026-08-19",
+      "location": {
+        "city": "Sellersville",
+        "state": "PA",
+        "zip": "18960"
+      }
+    },
+    {
+      "domain": "audicharleston.com",
+      "name": "Audi Charleston",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane audi-network, 1 listing(s), Charleston, SC) 2026-08-19",
+      "location": {
+        "city": "Charleston",
+        "state": "SC",
+        "zip": "29414"
+      }
+    },
+    {
+      "domain": "audieatontownnj.com",
+      "name": "Audi Eatontown",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane audi-network, 2 listing(s), Eatontown, NJ) 2026-08-19",
+      "location": {
+        "city": "Eatontown",
+        "state": "NJ",
+        "zip": "07724"
+      }
+    },
+    {
+      "domain": "audierie.com",
+      "name": "Audi Erie",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane audi-network, 1 listing(s), Erie, PA) 2026-08-19",
+      "location": {
+        "city": "Erie",
+        "state": "PA",
+        "zip": "16509"
+      }
+    },
+    {
+      "domain": "audigrandrapids.com",
+      "name": "Audi Grand Rapids",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane audi-network, 1 listing(s), Grand Rapids, MI) 2026-08-19",
+      "location": {
+        "city": "Grand Rapids",
+        "state": "MI",
+        "zip": "49546"
+      }
+    },
+    {
+      "domain": "audikalamazoo.com",
+      "name": "Audi Kalamazoo",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane audi-network, 1 listing(s), Kalamazoo, MI) 2026-08-19",
+      "location": {
+        "city": "Kalamazoo",
+        "state": "MI",
+        "zip": "49009"
+      }
+    },
+    {
+      "domain": "audinorthaustin.com",
+      "name": "Audi North Austin",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane audi-network, 2 listing(s), Austin, TX) 2026-08-19",
+      "location": {
+        "city": "Austin",
+        "state": "TX",
+        "zip": "78750"
+      }
+    },
+    {
+      "domain": "audiomaha.com",
+      "name": "Audi Omaha",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane audi-network, 10 listing(s), Omaha, NE) 2026-08-19",
+      "location": {
+        "city": "Omaha",
+        "state": "NE",
+        "zip": "68118"
+      }
+    },
+    {
+      "domain": "audipittsburgh.com",
+      "name": "Audi Pittsburgh",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane audi-network, 2 listing(s), Pittsburgh, PA) 2026-08-19",
+      "location": {
+        "city": "Pittsburgh",
+        "state": "PA",
+        "zip": "15222"
+      }
+    },
+    {
+      "domain": "audistatecollege.com",
+      "name": "Audi State College",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane audi-network, 2 listing(s), State College, PA) 2026-08-19",
+      "location": {
+        "city": "State College",
+        "state": "PA",
+        "zip": "16801"
+      }
+    },
+    {
+      "domain": "auditurnersvillenj.com",
+      "name": "Audi Turnersville",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane audi-network, 1 listing(s), Blackwood, NJ) 2026-08-19",
+      "location": {
+        "city": "Blackwood",
+        "state": "NJ",
+        "zip": "08012"
+      }
+    },
+    {
+      "domain": "audiwarwickri.com",
+      "name": "Audi Warwick",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane audi-network, 1 listing(s), Warwick, RI) 2026-08-19",
+      "location": {
+        "city": "Warwick",
+        "state": "RI",
+        "zip": "02886"
+      }
+    },
+    {
+      "domain": "austinsubaru.com",
+      "name": "Austin Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 4 listing(s), AUSTIN, TX) 2026-08-19",
+      "location": {
+        "city": "AUSTIN",
+        "state": "TX",
+        "zip": "78757"
+      }
+    },
+    {
+      "domain": "autobahnvolvoftworth.com",
+      "name": "Autobahn Volvo Cars Fort Worth",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 4 listing(s), Fort Worth, TX) 2026-08-19",
+      "location": {
+        "city": "Fort Worth",
+        "state": "TX",
+        "zip": "76107"
+      }
+    },
+    {
+      "domain": "autonationsubaruspokane.com",
+      "name": "AutoNation Subaru Spokane Valley",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 2 listing(s), Spokane Valley, WA) 2026-08-19",
+      "location": {
+        "city": "Spokane Valley",
+        "state": "WA",
+        "zip": "99206"
+      }
+    },
+    {
+      "domain": "autoparkford.com",
+      "name": "Auto Park Ford Bremen",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane ford-blue-advantage, 1 listing(s), Bremen, IN) 2026-08-19",
+      "location": {
+        "city": "Bremen",
+        "state": "IN",
+        "zip": "46506"
+      }
+    },
+    {
+      "domain": "autostarsubaru.com",
+      "name": "Autostar Subaru of Silverthorne",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 2 listing(s), Silverthorne, CO) 2026-08-19",
+      "location": {
+        "city": "Silverthorne",
+        "state": "CO",
+        "zip": "80498"
+      }
+    },
+    {
+      "domain": "balisehondanorthalttleboro.com",
+      "name": "Balise Honda of North Attleboro",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane honda-prologue, 7 listing(s), North Attleboro, MA) 2026-08-19",
+      "location": {
+        "city": "North Attleboro",
+        "state": "MA",
+        "zip": "02760"
+      }
+    },
+    {
+      "domain": "baxtersubarulavista.com",
+      "name": "Baxter Subaru La Vista",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), La Vista, NE) 2026-08-19",
+      "location": {
+        "city": "La Vista",
+        "state": "NE",
+        "zip": "68128"
+      }
+    },
+    {
+      "domain": "baxtersubaruomaha.com",
+      "name": "Baxter Subaru Omaha",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Omaha, NE) 2026-08-19",
+      "location": {
+        "city": "Omaha",
+        "state": "NE",
+        "zip": "68118"
+      }
+    },
+    {
+      "domain": "bedardhonda.com",
+      "name": "Bedard Bros. Honda",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane honda-prologue, 1 listing(s), Cheshire, MA) 2026-08-19",
+      "location": {
+        "city": "Cheshire",
+        "state": "MA",
+        "zip": "01225"
+      }
+    },
+    {
+      "domain": "bertsmithsubaru.com",
+      "name": "Bert Smith Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 2 listing(s), Saint Petersburg, FL) 2026-08-19",
+      "location": {
+        "city": "Saint Petersburg",
+        "state": "FL",
+        "zip": "33713"
+      }
+    },
+    {
+      "domain": "beyervolvocarsfallschurch.com",
+      "name": "Beyer Volvo Cars Falls Church",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 4 listing(s), Falls Church, VA) 2026-08-19",
+      "location": {
+        "city": "Falls Church",
+        "state": "VA",
+        "zip": "22046"
+      }
+    },
+    {
+      "domain": "bloomingtonsubaru.com",
+      "name": "Bloomington Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 4 listing(s), Bloomington, MN) 2026-08-19",
+      "location": {
+        "city": "Bloomington",
+        "state": "MN",
+        "zip": "55420"
+      }
+    },
+    {
+      "domain": "bmwsouthpoint.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane bmwusa.com, 1 listing(s)) 2026-08-19"
+    },
+    {
+      "domain": "boardmansubaru.com",
+      "name": "Boardman Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 6 listing(s), Boardman, OH) 2026-08-19",
+      "location": {
+        "city": "Boardman",
+        "state": "OH",
+        "zip": "44512"
+      }
+    },
+    {
+      "domain": "bobjohnsonsubaru.com",
+      "name": "Bob Johnson Subaru Watertown",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 3 listing(s), Watertown, NY) 2026-08-19",
+      "location": {
+        "city": "Watertown",
+        "state": "NY",
+        "zip": "13601"
+      }
+    },
+    {
+      "domain": "bobmooresubaru.com",
+      "name": "Bob Moore Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 4 listing(s), Oklahoma City, OK) 2026-08-19",
+      "location": {
+        "city": "Oklahoma City",
+        "state": "OK",
+        "zip": "73131"
+      }
+    },
+    {
+      "domain": "bravohonda.com",
+      "name": "Bravo Honda",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane honda-prologue, 1 listing(s), Victoria, TX) 2026-08-19",
+      "location": {
+        "city": "Victoria",
+        "state": "TX",
+        "zip": "77904"
+      }
+    },
+    {
+      "domain": "brilliancesubaru.com",
+      "name": "Brilliance Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Elgin, IL) 2026-08-19",
+      "location": {
+        "city": "Elgin",
+        "state": "IL",
+        "zip": "60123"
+      }
+    },
+    {
+      "domain": "brooklynparksubaru.com",
+      "name": "Morrie's Brooklyn Park Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Brooklyn Park, MN) 2026-08-19",
+      "location": {
+        "city": "Brooklyn Park",
+        "state": "MN",
+        "zip": "55445"
+      }
+    },
+    {
+      "domain": "burlingtonsubaru.com",
+      "name": "Burlington Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 6 listing(s), Burlington, VT) 2026-08-19",
+      "location": {
+        "city": "Burlington",
+        "state": "VT",
+        "zip": "05401"
+      }
+    },
+    {
+      "domain": "busamsubaru.com",
+      "name": "Busam Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Fairfield, OH) 2026-08-19",
+      "location": {
+        "city": "Fairfield",
+        "state": "OH",
+        "zip": "45014"
+      }
+    },
+    {
+      "domain": "byersvolvo.com",
+      "name": "Byers Volvo",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 1 listing(s), Columbus, OH) 2026-08-19",
+      "location": {
+        "city": "Columbus",
+        "state": "OH",
+        "zip": "43213"
+      }
+    },
+    {
+      "domain": "capitalandsubaru.net",
+      "name": "Capitaland Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Glenville, NY) 2026-08-19",
+      "location": {
+        "city": "Glenville",
+        "state": "NY",
+        "zip": "12302"
+      }
+    },
+    {
+      "domain": "caseysubaru.com",
+      "name": "Casey Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 2 listing(s), Newport News, VA) 2026-08-19",
+      "location": {
+        "city": "Newport News",
+        "state": "VA",
+        "zip": "23608"
+      }
+    },
+    {
+      "domain": "castlesubaru.com",
+      "name": "Castle Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), PORTAGE, IN) 2026-08-19",
+      "location": {
+        "city": "PORTAGE",
+        "state": "IN",
+        "zip": "46368"
+      }
+    },
+    {
+      "domain": "castlesubarumchenry.com",
+      "name": "Castle Subaru of McHenry",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), McHenry, IL) 2026-08-19",
+      "location": {
+        "city": "McHenry",
+        "state": "IL",
+        "zip": "60050"
+      }
+    },
+    {
+      "domain": "cavendersubarumidlandodessa.com",
+      "name": "Cavender Subaru of Midland Odessa",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Midland, TX) 2026-08-19",
+      "location": {
+        "city": "Midland",
+        "state": "TX",
+        "zip": "79703"
+      }
+    },
+    {
+      "domain": "centennialsubaru.com",
+      "name": "Centennial Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Las Vegas, NV) 2026-08-19",
+      "location": {
+        "city": "Las Vegas",
+        "state": "NV",
+        "zip": "89149"
+      }
+    },
+    {
+      "domain": "charlestonhonda.com",
+      "name": "Hendrick Honda of Charleston",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane honda-prologue, 1 listing(s), Charleston, SC) 2026-08-19",
+      "location": {
+        "city": "Charleston",
+        "state": "SC",
+        "zip": "29407"
+      }
+    },
+    {
+      "domain": "citylimitssubaru.com",
+      "name": "City Limits Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 3 listing(s), Buda, TX) 2026-08-19",
+      "location": {
+        "city": "Buda",
+        "state": "TX",
+        "zip": "78610"
+      }
+    },
+    {
+      "domain": "clearlakesubaru.com",
+      "name": "Subaru of Clear Lake",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Houston, TX) 2026-08-19",
+      "location": {
+        "city": "Houston",
+        "state": "TX",
+        "zip": "77034"
+      }
+    },
+    {
+      "domain": "cmasvalleysubaru.com",
+      "name": "CMA's Valley Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 2 listing(s), STAUNTON, VA) 2026-08-19",
+      "location": {
+        "city": "STAUNTON",
+        "state": "VA",
+        "zip": "24401"
+      }
+    },
+    {
+      "domain": "cochranhondasouth.com",
+      "name": "#1 Cochran Honda South Hills",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane honda-prologue, 3 listing(s), Mcmurray, PA) 2026-08-19",
+      "location": {
+        "city": "Mcmurray",
+        "state": "PA",
+        "zip": "15317"
+      }
+    },
+    {
+      "domain": "cochransubarubutler.com",
+      "name": "#1 Cochran Subaru of Butler County",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 2 listing(s), Renfrew, PA) 2026-08-19",
+      "location": {
+        "city": "Renfrew",
+        "state": "PA",
+        "zip": "16053"
+      }
+    },
+    {
+      "domain": "coconutcreeksubaru.com",
+      "name": "Coconut Creek Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 3 listing(s), Coconut Creek, FL) 2026-08-19",
+      "location": {
+        "city": "Coconut Creek",
+        "state": "FL",
+        "zip": "33073"
+      }
+    },
+    {
+      "domain": "competitionsubaru.com",
+      "name": "Competition Subaru of Smithtown",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 11 listing(s), St James, NY) 2026-08-19",
+      "location": {
+        "city": "St James",
+        "state": "NY",
+        "zip": "11780"
+      }
+    },
+    {
+      "domain": "conleysubaru.com",
+      "name": "Conley Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 3 listing(s), Bradenton, FL) 2026-08-19",
+      "location": {
+        "city": "Bradenton",
+        "state": "FL",
+        "zip": "34207"
+      }
+    },
+    {
+      "domain": "courtesyvolvocarsofscottsdale.com",
+      "name": "Courtesy Volvo Cars of Scottsdale",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 2 listing(s), Scottsdale, AZ) 2026-08-19",
+      "location": {
+        "city": "Scottsdale",
+        "state": "AZ",
+        "zip": "85251"
+      }
+    },
+    {
+      "domain": "crosscreeksubaru.com",
+      "name": "Cross Creek Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 2 listing(s), Fayetteville, NC) 2026-08-19",
+      "location": {
+        "city": "Fayetteville",
+        "state": "NC",
+        "zip": "28303"
+      }
+    },
+    {
+      "domain": "crownsubaruwv.com",
+      "name": "Crown Subaru of Wheeling",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Triadelphia, WV) 2026-08-19",
+      "location": {
+        "city": "Triadelphia",
+        "state": "WV",
+        "zip": "26059"
+      }
+    },
+    {
+      "domain": "currysubaru.com",
+      "name": "Curry Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 3 listing(s), Cortlandt Manor, NY) 2026-08-19",
+      "location": {
+        "city": "Cortlandt Manor",
+        "state": "NY",
+        "zip": "10567"
+      }
+    },
+    {
+      "domain": "cypresscoastsubaru.com",
+      "name": "Cypress Coast Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 2 listing(s), Seaside, CA) 2026-08-19",
+      "location": {
+        "city": "Seaside",
+        "state": "CA",
+        "zip": "93955"
+      }
+    },
+    {
+      "domain": "dahlsubarulacrosse.com",
+      "name": "Dahl Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), La Crosse, WI) 2026-08-19",
+      "location": {
+        "city": "La Crosse",
+        "state": "WI",
+        "zip": "54601"
+      }
+    },
+    {
+      "domain": "davewrightsubaru.com",
+      "name": "Dave Wright Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 2 listing(s), Hiawatha, IA) 2026-08-19",
+      "location": {
+        "city": "Hiawatha",
+        "state": "IA",
+        "zip": "52233"
+      }
+    },
+    {
+      "domain": "dchsubaruthousandoaks.com",
+      "name": "DCH Subaru of Thousand Oaks",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 4 listing(s), Thousand Oaks, CA) 2026-08-19",
+      "location": {
+        "city": "Thousand Oaks",
+        "state": "CA",
+        "zip": "91362"
+      }
+    },
+    {
+      "domain": "delrayhonda.com",
+      "name": "Delray Honda",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane honda-prologue, 5 listing(s), Delray Beach, FL) 2026-08-19",
+      "location": {
+        "city": "Delray Beach",
+        "state": "FL",
+        "zip": "33483"
+      }
+    },
+    {
+      "domain": "diehlsubaru.com",
+      "name": "Diehl Subaru of Massillon",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 3 listing(s), Massillon, OH) 2026-08-19",
+      "location": {
+        "city": "Massillon",
+        "state": "OH",
+        "zip": "44646"
+      }
+    },
+    {
+      "domain": "doggetthondamedcenter.com",
+      "name": "Doggett Honda Med Center",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane honda-prologue, 1 listing(s), Houston, TX) 2026-08-19",
+      "location": {
+        "city": "Houston",
+        "state": "TX",
+        "zip": "77054"
+      }
+    },
+    {
+      "domain": "douglasssubaru.com",
+      "name": "Douglass Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Waco, TX) 2026-08-19",
+      "location": {
+        "city": "Waco",
+        "state": "TX",
+        "zip": "76712"
+      }
+    },
+    {
+      "domain": "dougsmithsubaru.com",
+      "name": "Doug Smith Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), American Fork, UT) 2026-08-19",
+      "location": {
+        "city": "American Fork",
+        "state": "UT",
+        "zip": "84003"
+      }
+    },
+    {
+      "domain": "doylestownvolvocars.com",
+      "name": "Keystone Motors (Doylestown)",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 2 listing(s), Doylestown, PA) 2026-08-19",
+      "location": {
+        "city": "Doylestown",
+        "state": "PA",
+        "zip": "18901"
+      }
+    },
+    {
+      "domain": "drivelibertysubaru.com",
+      "name": "Liberty Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Libertyville, IL) 2026-08-19",
+      "location": {
+        "city": "Libertyville",
+        "state": "IL",
+        "zip": "60048"
+      }
+    },
+    {
+      "domain": "eastbaybmw.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane bmwusa.com, 13 listing(s)) 2026-08-19"
+    },
+    {
+      "domain": "eidesubaru.com",
+      "name": "Eide Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Mandan, ND) 2026-08-19",
+      "location": {
+        "city": "Mandan",
+        "state": "ND",
+        "zip": "58554"
+      }
+    },
+    {
+      "domain": "elkgrovesubaru.com",
+      "name": "Elk Grove Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 6 listing(s), Elk Grove, CA) 2026-08-19",
+      "location": {
+        "city": "Elk Grove",
+        "state": "CA",
+        "zip": "95757"
+      }
+    },
+    {
+      "domain": "encinitasford.com",
+      "name": "Encinitas Ford",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane ford-blue-advantage, 1 listing(s), Encinitas, CA) 2026-08-19",
+      "location": {
+        "city": "Encinitas",
+        "state": "CA",
+        "zip": "92024"
+      }
+    },
+    {
+      "domain": "ertlesubaru.com",
+      "name": "Ertle Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 4 listing(s), Stroudsburg, PA) 2026-08-19",
+      "location": {
+        "city": "Stroudsburg",
+        "state": "PA",
+        "zip": "18360"
+      }
+    },
+    {
+      "domain": "evanstonsubaru.com",
+      "name": "McGrath Evanston Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 2 listing(s), Skokie, IL) 2026-08-19",
+      "location": {
+        "city": "Skokie",
+        "state": "IL",
+        "zip": "60076"
+      }
+    },
+    {
+      "domain": "fairfieldsubaru.com",
+      "name": "Fairfield Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 6 listing(s), Fairfield, CA) 2026-08-19",
+      "location": {
+        "city": "Fairfield",
+        "state": "CA",
+        "zip": "94534"
+      }
+    },
+    {
+      "domain": "farrishsubaru.com",
+      "name": "Farrish Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 2 listing(s), Fairfax, VA) 2026-08-19",
+      "location": {
+        "city": "Fairfax",
+        "state": "VA",
+        "zip": "22030"
+      }
+    },
+    {
+      "domain": "faulknersubarumechanicsburg.com",
+      "name": "Faulkner Subaru Mechanicsburg",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Mechanicsburg, PA) 2026-08-19",
+      "location": {
+        "city": "Mechanicsburg",
+        "state": "PA",
+        "zip": "17050"
+      }
+    },
+    {
+      "domain": "fergusonsubaru.com",
+      "name": "Ferguson Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 8 listing(s), Broken Arrow, OK) 2026-08-19",
+      "location": {
+        "city": "Broken Arrow",
+        "state": "OK",
+        "zip": "74012"
+      }
+    },
+    {
+      "domain": "fiestasubaru.com",
+      "name": "Fiesta Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Albuquerque, NM) 2026-08-19",
+      "location": {
+        "city": "Albuquerque",
+        "state": "NM",
+        "zip": "87110"
+      }
+    },
+    {
+      "domain": "findlaysubaru.com",
+      "name": "Findlay Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 3 listing(s), St George, UT) 2026-08-19",
+      "location": {
+        "city": "St George",
+        "state": "UT",
+        "zip": "84790"
+      }
+    },
+    {
+      "domain": "findlaysubaruprescott.com",
+      "name": "Findlay Subaru Prescott",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 4 listing(s), Prescott, AZ) 2026-08-19",
+      "location": {
+        "city": "Prescott",
+        "state": "AZ",
+        "zip": "86305"
+      }
+    },
+    {
+      "domain": "fivestarcars.com",
+      "name": "Five Star Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 3 listing(s), Oneonta, NY) 2026-08-19",
+      "location": {
+        "city": "Oneonta",
+        "state": "NY",
+        "zip": "13820"
+      }
+    },
+    {
+      "domain": "fletchersubaru.com",
+      "name": "Frank Fletcher Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Joplin, MO) 2026-08-19",
+      "location": {
+        "city": "Joplin",
+        "state": "MO",
+        "zip": "64801"
+      }
+    },
+    {
+      "domain": "flowsubaruburlington.com",
+      "name": "Flow Subaru Burlington",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 2 listing(s), Burlington, NC) 2026-08-19",
+      "location": {
+        "city": "Burlington",
+        "state": "NC",
+        "zip": "27215"
+      }
+    },
+    {
+      "domain": "fowlersubaru.com",
+      "name": "Ken Fowler Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 3 listing(s), Ukiah, CA) 2026-08-19",
+      "location": {
+        "city": "Ukiah",
+        "state": "CA",
+        "zip": "95482"
+      }
+    },
+    {
+      "domain": "fredandersonsubaru.com",
+      "name": "Fred Anderson Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 4 listing(s), Asheville, NC) 2026-08-19",
+      "location": {
+        "city": "Asheville",
+        "state": "NC",
+        "zip": "28806"
+      }
+    },
+    {
+      "domain": "fuszsubaru.com",
+      "name": "Lou Fusz Subaru O'Fallon",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 2 listing(s), O'Fallon, MO) 2026-08-19",
+      "location": {
+        "city": "O'Fallon",
+        "state": "MO",
+        "zip": "63368"
+      }
+    },
+    {
+      "domain": "futurefordofsacramento.com",
+      "name": "Future Ford of Sacramento",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane ford-blue-advantage, 1 listing(s), Sacramento, CA) 2026-08-19",
+      "location": {
+        "city": "Sacramento",
+        "state": "CA",
+        "zip": "95841"
+      }
+    },
+    {
+      "domain": "gallatinsubaru.com",
+      "name": "Gallatin Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Bozeman, MT) 2026-08-19",
+      "location": {
+        "city": "Bozeman",
+        "state": "MT",
+        "zip": "59715"
+      }
+    },
+    {
+      "domain": "garciasubaruofalbuquerque.com",
+      "name": "Garcia Subaru North",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Albuquerque, NM) 2026-08-19",
+      "location": {
+        "city": "Albuquerque",
+        "state": "NM",
+        "zip": "87109"
+      }
+    },
+    {
+      "domain": "gillmansubarunorth.com",
+      "name": "Team Gillman Subaru North",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 2 listing(s), Houston, TX) 2026-08-19",
+      "location": {
+        "city": "Houston",
+        "state": "TX",
+        "zip": "77090"
+      }
+    },
+    {
+      "domain": "gillmansubarusanantonio.com",
+      "name": "Gillman Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 3 listing(s), Selma, TX) 2026-08-19",
+      "location": {
+        "city": "Selma",
+        "state": "TX",
+        "zip": "78154"
+      }
+    },
+    {
+      "domain": "glakessubaru.com",
+      "name": "Great Lakes Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Findlay, OH) 2026-08-19",
+      "location": {
+        "city": "Findlay",
+        "state": "OH",
+        "zip": "45840"
+      }
+    },
+    {
+      "domain": "grandhyundaicanton.com",
+      "name": "Grand Hyundai Of Canton",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane hyundaiusa.com, 2 listing(s), GA) 2026-08-19",
+      "location": {
+        "state": "GA"
+      }
+    },
+    {
+      "domain": "greenwaykiaeast.com",
+      "name": "Greenway Kia West",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane kia.com, 1 listing(s), Orlando, FL) 2026-08-19",
+      "location": {
+        "city": "Orlando",
+        "state": "FL",
+        "zip": "32808"
+      }
+    },
+    {
+      "domain": "gregorissubaru.com",
+      "name": "Gregoris Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 3 listing(s), Valley Stream, NY) 2026-08-19",
+      "location": {
+        "city": "Valley Stream",
+        "state": "NY",
+        "zip": "11580"
+      }
+    },
+    {
+      "domain": "groovesubaru.com",
+      "name": "Groove Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Englewood, CO) 2026-08-19",
+      "location": {
+        "city": "Englewood",
+        "state": "CO",
+        "zip": "80113"
+      }
+    },
+    {
+      "domain": "group1kiatomball.com",
+      "name": "Group 1 Kia Tomball",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane kia.com, 1 listing(s), Tomball, TX) 2026-08-19",
+      "location": {
+        "city": "Tomball",
+        "state": "TX",
+        "zip": "77375"
+      }
+    },
+    {
+      "domain": "group1subaruelpaso.com",
+      "name": "Group 1 Subaru El Paso",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 2 listing(s), El Paso, TX) 2026-08-19",
+      "location": {
+        "city": "El Paso",
+        "state": "TX",
+        "zip": "79925"
+      }
+    },
+    {
+      "domain": "group1subarurivertown.com",
+      "name": "Group 1 Subaru Rivertown",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Columbus, GA) 2026-08-19",
+      "location": {
+        "city": "Columbus",
+        "state": "GA",
+        "zip": "31904"
+      }
+    },
+    {
+      "domain": "grubbsvolvocars.com",
+      "name": "Grubbs Volvo Cars Grapevine",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 7 listing(s), Grapevine, TX) 2026-08-19",
+      "location": {
+        "city": "Grapevine",
+        "state": "TX",
+        "zip": "76051"
+      }
+    },
+    {
+      "domain": "gustmansubaru.com",
+      "name": "Gustman Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Appleton, WI) 2026-08-19",
+      "location": {
+        "city": "Appleton",
+        "state": "WI",
+        "zip": "54914"
+      }
+    },
+    {
+      "domain": "hadwinwhitesubaru.com",
+      "name": "Hadwin-White Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 3 listing(s), Conway, SC) 2026-08-19",
+      "location": {
+        "city": "Conway",
+        "state": "SC",
+        "zip": "29526"
+      }
+    },
+    {
+      "domain": "hanleesnapasubaru.com",
+      "name": "Hanlees Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 3 listing(s), Napa, CA) 2026-08-19",
+      "location": {
+        "city": "Napa",
+        "state": "CA",
+        "zip": "94559"
+      }
+    },
+    {
+      "domain": "hanselsubaru.com",
+      "name": "Hansel Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 4 listing(s), Santa Rosa, CA) 2026-08-19",
+      "location": {
+        "city": "Santa Rosa",
+        "state": "CA",
+        "zip": "95407"
+      }
+    },
+    {
+      "domain": "harveysubaru.com",
+      "name": "Harvey Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 2 listing(s), Bossier City, LA) 2026-08-19",
+      "location": {
+        "city": "Bossier City",
+        "state": "LA",
+        "zip": "71111"
+      }
+    },
+    {
+      "domain": "hawksubaru.com",
+      "name": "Hawk Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 2 listing(s), Plainfield, IL) 2026-08-19",
+      "location": {
+        "city": "Plainfield",
+        "state": "IL",
+        "zip": "60586"
+      }
+    },
+    {
+      "domain": "hellosubarutemecula.com",
+      "name": "Hello Subaru of Temecula",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 4 listing(s), Temecula, CA) 2026-08-19",
+      "location": {
+        "city": "Temecula",
+        "state": "CA",
+        "zip": "92591"
+      }
+    },
+    {
+      "domain": "hendrickbmwcharlotte.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane bmwusa.com, 2 listing(s)) 2026-08-19"
+    },
+    {
+      "domain": "howardorloffvolvocars.com",
+      "name": "Howard Orloff Volvo Cars",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 6 listing(s), Chicago, IL) 2026-08-19",
+      "location": {
+        "city": "Chicago",
+        "state": "IL",
+        "zip": "60622"
+      }
+    },
+    {
+      "domain": "hughessubaru.com",
+      "name": "Hughes Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Athens, GA) 2026-08-19",
+      "location": {
+        "city": "Athens",
+        "state": "GA",
+        "zip": "30606"
+      }
+    },
+    {
+      "domain": "huntersubaru.com",
+      "name": "Hunter Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 2 listing(s), Fletcher, NC) 2026-08-19",
+      "location": {
+        "city": "Fletcher",
+        "state": "NC",
+        "zip": "28732"
+      }
+    },
+    {
+      "domain": "huntervolvocarsasheville.com",
+      "name": "Hunter Volvo Cars Asheville",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 4 listing(s), Fletcher, NC) 2026-08-19",
+      "location": {
+        "city": "Fletcher",
+        "state": "NC",
+        "zip": "28732"
+      }
+    },
+    {
+      "domain": "hyundaieugene.com",
+      "name": "Hyundai Eugene",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane hyundaiusa.com, 2 listing(s), OR) 2026-08-19",
+      "location": {
+        "state": "OR"
+      }
+    },
+    {
+      "domain": "hyundaimacon.com",
+      "name": "Alm Hyundai Macon",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane hyundaiusa.com, 1 listing(s), GA) 2026-08-19",
+      "location": {
+        "state": "GA"
+      }
+    },
+    {
+      "domain": "iravolvocarssouthshore.com",
+      "name": "Ira Volvo Cars South Shore",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 2 listing(s), Rockland, MA) 2026-08-19",
+      "location": {
+        "city": "Rockland",
+        "state": "MA",
+        "zip": "02370"
+      }
+    },
+    {
+      "domain": "jamesriverford.com",
+      "name": "James River Ford",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane ford-blue-advantage, 1 listing(s), Ozark, MO) 2026-08-19",
+      "location": {
+        "city": "Ozark",
+        "state": "MO",
+        "zip": "65721"
+      }
+    },
+    {
+      "domain": "jarrettfordofcharlottecounty.net",
+      "name": "Jarrett Ford of Charlotte County",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane ford-blue-advantage, 1 listing(s), Port Charlotte, FL) 2026-08-19",
+      "location": {
+        "city": "Port Charlotte",
+        "state": "FL",
+        "zip": "33952"
+      }
+    },
+    {
+      "domain": "jeffwylervolvocarsdublin.com",
+      "name": "Jeff Wyler Volvo Cars Dublin",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 1 listing(s), Dublin, OH) 2026-08-19",
+      "location": {
+        "city": "Dublin",
+        "state": "OH",
+        "zip": "43017"
+      }
+    },
+    {
+      "domain": "jenkinssubaruwv.com",
+      "name": "Herb Gordon Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Silver Spring, MD) 2026-08-19",
+      "location": {
+        "city": "Silver Spring",
+        "state": "MD",
+        "zip": "20904"
+      }
+    },
+    {
+      "domain": "jerryseinersubaru.com",
+      "name": "Jerry Seiner Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 6 listing(s), Valencia, CA) 2026-08-19",
+      "location": {
+        "city": "Valencia",
+        "state": "CA",
+        "zip": "91355"
+      }
+    },
+    {
+      "domain": "kendallsubarumarysville.com",
+      "name": "Kendall Subaru of Marysville",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Marysville, WA) 2026-08-19",
+      "location": {
+        "city": "Marysville",
+        "state": "WA",
+        "zip": "98271"
+      }
+    },
+    {
+      "domain": "kenganleysubarubedford.com",
+      "name": "Ken Ganley Subaru Bedford",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 4 listing(s), Bedford, OH) 2026-08-19",
+      "location": {
+        "city": "Bedford",
+        "state": "OH",
+        "zip": "44146"
+      }
+    },
+    {
+      "domain": "kenganleysubarunortholmsted.com",
+      "name": "Ken Ganley Subaru North Olmsted",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), North Olmsted, OH) 2026-08-19",
+      "location": {
+        "city": "North Olmsted",
+        "state": "OH",
+        "zip": "44070"
+      }
+    },
+    {
+      "domain": "kengarffvolvocars.com",
+      "name": "Ken Garff Volvo Cars",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 8 listing(s), Salt Lake City, UT) 2026-08-19",
+      "location": {
+        "city": "Salt Lake City",
+        "state": "UT",
+        "zip": "84111"
+      }
+    },
+    {
+      "domain": "kengarffwestvalleyford.com",
+      "name": "Ken Garff West Valley Ford",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane ford-blue-advantage, 1 listing(s), West Valley City, UT) 2026-08-19",
+      "location": {
+        "city": "West Valley City",
+        "state": "UT",
+        "zip": "84120"
+      }
+    },
+    {
+      "domain": "kennyrosssubaru.com",
+      "name": "Kenny Ross Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 5 listing(s), North Huntingdon, PA) 2026-08-19",
+      "location": {
+        "city": "North Huntingdon",
+        "state": "PA",
+        "zip": "15642"
+      }
+    },
+    {
+      "domain": "kiaofleesburg.com",
+      "name": "Kia of Leesburg",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane kia.com, 2 listing(s), Leesburg, FL) 2026-08-19",
+      "location": {
+        "city": "Leesburg",
+        "state": "FL",
+        "zip": "34788"
+      }
+    },
+    {
+      "domain": "kirbysubaruofventura.com",
+      "name": "Kirby Subaru of Ventura",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 8 listing(s), Ventura, CA) 2026-08-19",
+      "location": {
+        "city": "Ventura",
+        "state": "CA",
+        "zip": "93003"
+      }
+    },
+    {
+      "domain": "landmarkford.com",
+      "name": "Landmark Ford",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane ford-blue-advantage, 1 listing(s), Tigard, OR) 2026-08-19",
+      "location": {
+        "city": "Tigard",
+        "state": "OR",
+        "zip": "97223"
+      }
+    },
+    {
+      "domain": "leessummitsubaru.com",
+      "name": "Lee's Summit Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 3 listing(s), Lee's Summit, MO) 2026-08-19",
+      "location": {
+        "city": "Lee's Summit",
+        "state": "MO",
+        "zip": "64064"
+      }
+    },
+    {
+      "domain": "lindsayvolvocarsofalexandria.com",
+      "name": "Lindsay Volvo Cars of Alexandria",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 11 listing(s), Alexandria, VA) 2026-08-19",
+      "location": {
+        "city": "Alexandria",
+        "state": "VA",
+        "zip": "22302"
+      }
+    },
+    {
+      "domain": "maitasubaru.com",
+      "name": "Maita Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 5 listing(s), Sacramento, CA) 2026-08-19",
+      "location": {
+        "city": "Sacramento",
+        "state": "CA",
+        "zip": "95821"
+      }
+    },
+    {
+      "domain": "markmillersubarumidtown.com",
+      "name": "Mark Miller Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 4 listing(s), Salt Lake City, UT) 2026-08-19",
+      "location": {
+        "city": "Salt Lake City",
+        "state": "UT",
+        "zip": "84115"
+      }
+    },
+    {
+      "domain": "matthewssubaru.com",
+      "name": "Matthews Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 3 listing(s), Vestal, NY) 2026-08-19",
+      "location": {
+        "city": "Vestal",
+        "state": "NY",
+        "zip": "13850"
+      }
+    },
+    {
+      "domain": "mcgrathhondastcharles.com",
+      "name": "McGrath Honda of St. Charles",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane honda-prologue, 1 listing(s), St Charles, IL) 2026-08-19",
+      "location": {
+        "city": "St Charles",
+        "state": "IL",
+        "zip": "60174"
+      }
+    },
+    {
+      "domain": "mcgrathvolvocars.com",
+      "name": "McGrath Volvo Cars Barrington",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 1 listing(s), Barrington, IL) 2026-08-19",
+      "location": {
+        "city": "Barrington",
+        "state": "IL",
+        "zip": "60010"
+      }
+    },
+    {
+      "domain": "mearsvolvocars.com",
+      "name": "Mears Volvo Cars",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 2 listing(s), Lubbock, TX) 2026-08-19",
+      "location": {
+        "city": "Lubbock",
+        "state": "TX",
+        "zip": "79424"
+      }
+    },
+    {
+      "domain": "millshonda.com",
+      "name": "Mills Honda",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane honda-prologue, 1 listing(s), Baxter, MN) 2026-08-19",
+      "location": {
+        "city": "Baxter",
+        "state": "MN",
+        "zip": "56425"
+      }
+    },
+    {
+      "domain": "modernsubaru.com",
+      "name": "Modern Subaru of Boone",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 2 listing(s), Boone, NC) 2026-08-19",
+      "location": {
+        "city": "Boone",
+        "state": "NC",
+        "zip": "28607"
+      }
+    },
+    {
+      "domain": "modestosubaru.com",
+      "name": "Modesto Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 14 listing(s), Modesto, CA) 2026-08-19",
+      "location": {
+        "city": "Modesto",
+        "state": "CA",
+        "zip": "95356"
+      }
+    },
+    {
+      "domain": "mohawkhonda.com",
+      "name": "Mohawk Honda",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane honda-prologue, 1 listing(s), Scotia, NY) 2026-08-19",
+      "location": {
+        "city": "Scotia",
+        "state": "NY",
+        "zip": "12302"
+      }
+    },
+    {
+      "domain": "montgomerysubaru.com",
+      "name": "Montgomery Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 3 listing(s), Montgomery, AL) 2026-08-19",
+      "location": {
+        "city": "Montgomery",
+        "state": "AL",
+        "zip": "36116"
+      }
+    },
+    {
+      "domain": "morrieseauclairesubaru.com",
+      "name": "Morrie's Eau Claire Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Eau Claire, WI) 2026-08-19",
+      "location": {
+        "city": "Eau Claire",
+        "state": "WI",
+        "zip": "54701"
+      }
+    },
+    {
+      "domain": "motorcarsvolvocars.com",
+      "name": "Motorcars Volvo Cars",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 2 listing(s), Bedford, OH) 2026-08-19",
+      "location": {
+        "city": "Bedford",
+        "state": "OH",
+        "zip": "44146"
+      }
+    },
+    {
+      "domain": "motormilesubaru.com",
+      "name": "Motor Mile Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 2 listing(s), Christiansburg, VA) 2026-08-19",
+      "location": {
+        "city": "Christiansburg",
+        "state": "VA",
+        "zip": "24073"
+      }
+    },
+    {
+      "domain": "moyerkia.com",
+      "name": "Moyer Kia",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane kia.com, 1 listing(s), Lebanon, PA) 2026-08-19",
+      "location": {
+        "city": "Lebanon",
+        "state": "PA",
+        "zip": "17042"
+      }
+    },
+    {
+      "domain": "myislandsubaru.com",
+      "name": "Island Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Staten Island, NY) 2026-08-19",
+      "location": {
+        "city": "Staten Island",
+        "state": "NY",
+        "zip": "10305"
+      }
+    },
+    {
+      "domain": "napletonsubaru.com",
+      "name": "Napleton Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 2 listing(s), Rockford, IL) 2026-08-19",
+      "location": {
+        "city": "Rockford",
+        "state": "IL",
+        "zip": "61107"
+      }
+    },
+    {
+      "domain": "newmotorsbmw.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane bmwusa.com, 1 listing(s)) 2026-08-19"
+    },
+    {
+      "domain": "normreevessubarurockwall.com",
+      "name": "Norm Reeves Subaru Superstore Rockwall",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 3 listing(s), Rockwall, TX) 2026-08-19",
+      "location": {
+        "city": "Rockwall",
+        "state": "TX",
+        "zip": "75087"
+      }
+    },
+    {
+      "domain": "northcoastsubaru.com",
+      "name": "North Coast Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Glen Cove, NY) 2026-08-19",
+      "location": {
+        "city": "Glen Cove",
+        "state": "NY",
+        "zip": "11542"
+      }
+    },
+    {
+      "domain": "northcountrysubaru.com",
+      "name": "North Country Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 2 listing(s), Queensbury, NY) 2026-08-19",
+      "location": {
+        "city": "Queensbury",
+        "state": "NY",
+        "zip": "12804"
+      }
+    },
+    {
+      "domain": "norwalksubaru.com",
+      "name": "Garavel Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Norwalk, CT) 2026-08-19",
+      "location": {
+        "city": "Norwalk",
+        "state": "CT",
+        "zip": "06851"
+      }
+    },
+    {
+      "domain": "oceansubaruoc.com",
+      "name": "Ocean Subaru of Fullerton",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 11 listing(s), Fullerton, CA) 2026-08-19",
+      "location": {
+        "city": "Fullerton",
+        "state": "CA",
+        "zip": "92832"
+      }
+    },
+    {
+      "domain": "ourismansubaruwaldorf.com",
+      "name": "Ourisman Subaru Waldorf",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 2 listing(s), Waldorf, MD) 2026-08-19",
+      "location": {
+        "city": "Waldorf",
+        "state": "MD",
+        "zip": "20601"
+      }
+    },
+    {
+      "domain": "palatinesubaru.com",
+      "name": "Napleton's Palatine Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Palatine, IL) 2026-08-19",
+      "location": {
+        "city": "Palatine",
+        "state": "IL",
+        "zip": "60074"
+      }
+    },
+    {
+      "domain": "palmspringssubaru.com",
+      "name": "Palm Springs Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 8 listing(s), Cathedral City, CA) 2026-08-19",
+      "location": {
+        "city": "Cathedral City",
+        "state": "CA",
+        "zip": "92234"
+      }
+    },
+    {
+      "domain": "parkersubaru.com",
+      "name": "Parker Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Coeur D Alene, ID) 2026-08-19",
+      "location": {
+        "city": "Coeur D Alene",
+        "state": "ID",
+        "zip": "83815"
+      }
+    },
+    {
+      "domain": "penzsubaruofrochester.com",
+      "name": "Subaru of Rochester",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 3 listing(s), Rochester, MN) 2026-08-19",
+      "location": {
+        "city": "Rochester",
+        "state": "MN",
+        "zip": "55904"
+      }
+    },
+    {
+      "domain": "peoriasubaru.com",
+      "name": "Peoria Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 5 listing(s), Peoria, AZ) 2026-08-19",
+      "location": {
+        "city": "Peoria",
+        "state": "AZ",
+        "zip": "85382"
+      }
+    },
+    {
+      "domain": "premiersubaruoffremont.com",
+      "name": "Premier Subaru of Fremont",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 9 listing(s), Fremont, CA) 2026-08-19",
+      "location": {
+        "city": "Fremont",
+        "state": "CA",
+        "zip": "94538"
+      }
+    },
+    {
+      "domain": "quantrellsubaru.com",
+      "name": "Quantrell Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 2 listing(s), Lexington, KY) 2026-08-19",
+      "location": {
+        "city": "Lexington",
+        "state": "KY",
+        "zip": "40509"
+      }
+    },
+    {
+      "domain": "quantrellvolvocars.com",
+      "name": "Quantrell Volvo Cars",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 2 listing(s), Lexington, KY) 2026-08-19",
+      "location": {
+        "city": "Lexington",
+        "state": "KY",
+        "zip": "40509"
+      }
+    },
+    {
+      "domain": "quirksubaruma.com",
+      "name": "Quirk Works Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Braintree, MA) 2026-08-19",
+      "location": {
+        "city": "Braintree",
+        "state": "MA",
+        "zip": "02184"
+      }
+    },
+    {
+      "domain": "rallyebmw.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane bmwusa.com, 1 listing(s)) 2026-08-19"
+    },
+    {
+      "domain": "reggiejacksonairporthonda.com",
+      "name": "Reggie Jackson Airport Honda",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane honda-prologue, 1 listing(s), Raleigh, NC) 2026-08-19",
+      "location": {
+        "city": "Raleigh",
+        "state": "NC",
+        "zip": "27617"
+      }
+    },
+    {
+      "domain": "rickhendrickbmw.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane bmwusa.com, 1 listing(s)) 2026-08-19"
+    },
+    {
+      "domain": "rileysubaru.net",
+      "name": "Riley Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 2 listing(s), Dubuque, IA) 2026-08-19",
+      "location": {
+        "city": "Dubuque",
+        "state": "IA",
+        "zip": "52003"
+      }
+    },
+    {
+      "domain": "riverheadbaysubaru.com",
+      "name": "Riverhead Bay Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 3 listing(s), Riverhead, NY) 2026-08-19",
+      "location": {
+        "city": "Riverhead",
+        "state": "NY",
+        "zip": "11901"
+      }
+    },
+    {
+      "domain": "rogerssubaru.com",
+      "name": "Rogers Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 2 listing(s), Lewiston, ID) 2026-08-19",
+      "location": {
+        "city": "Lewiston",
+        "state": "ID",
+        "zip": "83501"
+      }
+    },
+    {
+      "domain": "royaleastsubaru.com",
+      "name": "Royal Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Bloomington, IN) 2026-08-19",
+      "location": {
+        "city": "Bloomington",
+        "state": "IN",
+        "zip": "47401"
+      }
+    },
+    {
+      "domain": "royalsubaru.com",
+      "name": "Royal Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 2 listing(s), Cortland, NY) 2026-08-19",
+      "location": {
+        "city": "Cortland",
+        "state": "NY",
+        "zip": "13045"
+      }
+    },
+    {
+      "domain": "saffordsubarumanassas.com",
+      "name": "Safford Subaru Manassas",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 2 listing(s), Manassas, VA) 2026-08-19",
+      "location": {
+        "city": "Manassas",
+        "state": "VA",
+        "zip": "20110"
+      }
+    },
+    {
+      "domain": "sangerasubaru.com",
+      "name": "Sangera Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 14 listing(s), Bakersfield, CA) 2026-08-19",
+      "location": {
+        "city": "Bakersfield",
+        "state": "CA",
+        "zip": "93313"
+      }
+    },
+    {
+      "domain": "santamonicasubaru.com",
+      "name": "Santa Monica Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 10 listing(s), Santa Monica, CA) 2026-08-19",
+      "location": {
+        "city": "Santa Monica",
+        "state": "CA",
+        "zip": "90404"
+      }
+    },
+    {
+      "domain": "schallersubaru.com",
+      "name": "Schaller Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Berlin, CT) 2026-08-19",
+      "location": {
+        "city": "Berlin",
+        "state": "CT",
+        "zip": "06037"
+      }
+    },
+    {
+      "domain": "schompsubaru.co",
+      "name": "Schomp Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 9 listing(s), Aurora, CO) 2026-08-19",
+      "location": {
+        "city": "Aurora",
+        "state": "CO",
+        "zip": "80012"
+      }
+    },
+    {
+      "domain": "serrasubaruakron.com",
+      "name": "Serra Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 2 listing(s), Akron, OH) 2026-08-19",
+      "location": {
+        "city": "Akron",
+        "state": "OH",
+        "zip": "44312"
+      }
+    },
+    {
+      "domain": "serravolvocarsoftraversecity.com",
+      "name": "Serra Volvo Cars of Traverse City",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 1 listing(s), Traverse City, MI) 2026-08-19",
+      "location": {
+        "city": "Traverse City",
+        "state": "MI",
+        "zip": "49686"
+      }
+    },
+    {
+      "domain": "sesivolvocars.com",
+      "name": "Sesi Volvo Cars",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 1 listing(s), Ann Arbor, MI) 2026-08-19",
+      "location": {
+        "city": "Ann Arbor",
+        "state": "MI",
+        "zip": "48103"
+      }
+    },
+    {
+      "domain": "sewellsubaru.com",
+      "name": "Sewell Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Dallas, TX) 2026-08-19",
+      "location": {
+        "city": "Dallas",
+        "state": "TX",
+        "zip": "75209"
+      }
+    },
+    {
+      "domain": "sheehysubarufredericksburg.com",
+      "name": "Sheehy Subaru of Fredericksburg",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Fredericksburg, VA) 2026-08-19",
+      "location": {
+        "city": "Fredericksburg",
+        "state": "VA",
+        "zip": "22408"
+      }
+    },
+    {
+      "domain": "shinglespringssubaru.com",
+      "name": "Shingle Springs Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 3 listing(s), Shingle Springs, CA) 2026-08-19",
+      "location": {
+        "city": "Shingle Springs",
+        "state": "CA",
+        "zip": "95682"
+      }
+    },
+    {
+      "domain": "sierrasubaru.com",
+      "name": "Sierra Subaru of Monrovia",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 9 listing(s), Monrovia, CA) 2026-08-19",
+      "location": {
+        "city": "Monrovia",
+        "state": "CA",
+        "zip": "91016"
+      }
+    },
+    {
+      "domain": "southernteamsubaru.com",
+      "name": "Southern Team Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Roanoke, VA) 2026-08-19",
+      "location": {
+        "city": "Roanoke",
+        "state": "VA",
+        "zip": "24019"
+      }
+    },
+    {
+      "domain": "spanglersubaru.com",
+      "name": "Spangler Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Johnstown, PA) 2026-08-19",
+      "location": {
+        "city": "Johnstown",
+        "state": "PA",
+        "zip": "15904"
+      }
+    },
+    {
+      "domain": "speedwaysubaru.com",
+      "name": "Speedway Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Indianapolis, IN) 2026-08-19",
+      "location": {
+        "city": "Indianapolis",
+        "state": "IN",
+        "zip": "46202"
+      }
+    },
+    {
+      "domain": "sportsubarusouth.com",
+      "name": "Sport Subaru South",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Orlando, FL) 2026-08-19",
+      "location": {
+        "city": "Orlando",
+        "state": "FL",
+        "zip": "32837"
+      }
+    },
+    {
+      "domain": "spreensubaru.com",
+      "name": "Spreen Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 10 listing(s), San Bernardino, CA) 2026-08-19",
+      "location": {
+        "city": "San Bernardino",
+        "state": "CA",
+        "zip": "92408"
+      }
+    },
+    {
+      "domain": "starsubaru.com",
+      "name": "Star Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 3 listing(s), Bayside, NY) 2026-08-19",
+      "location": {
+        "city": "Bayside",
+        "state": "NY",
+        "zip": "11361"
+      }
+    },
+    {
+      "domain": "statelineautoranchsubaru.com",
+      "name": "Stateline Auto Ranch Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Fruitland, ID) 2026-08-19",
+      "location": {
+        "city": "Fruitland",
+        "state": "ID",
+        "zip": "83619"
+      }
+    },
+    {
+      "domain": "stcloudsubaru.com",
+      "name": "Luther St. Cloud Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), St. Cloud, MN) 2026-08-19",
+      "location": {
+        "city": "St. Cloud",
+        "state": "MN",
+        "zip": "56301"
+      }
+    },
+    {
+      "domain": "steingoldvolvocars.com",
+      "name": "Steingold Volvo Cars",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 1 listing(s), Pawtucket, RI) 2026-08-19",
+      "location": {
+        "city": "Pawtucket",
+        "state": "RI",
+        "zip": "02861"
+      }
+    },
+    {
+      "domain": "stevenscreeksubaru.com",
+      "name": "Stevens Creek Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 11 listing(s), Santa Clara, CA) 2026-08-19",
+      "location": {
+        "city": "Santa Clara",
+        "state": "CA",
+        "zip": "95117"
+      }
+    },
+    {
+      "domain": "stuckeysubaru.com",
+      "name": "Stuckey Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Hollidaysburg, PA) 2026-08-19",
+      "location": {
+        "city": "Hollidaysburg",
+        "state": "PA",
+        "zip": "16648"
+      }
+    },
+    {
+      "domain": "subaru.fusz.com",
+      "name": "Lou Fusz Subaru - St Louis",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Creve Coeur, MO) 2026-08-19",
+      "location": {
+        "city": "Creve Coeur",
+        "state": "MO",
+        "zip": "63141"
+      }
+    },
+    {
+      "domain": "subarubythebay.com",
+      "name": "Subaru By-the-Bay",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Charlevoix, MI) 2026-08-19",
+      "location": {
+        "city": "Charlevoix",
+        "state": "MI",
+        "zip": "49720"
+      }
+    },
+    {
+      "domain": "subarufairbanks.com",
+      "name": "Kendall Subaru of Fairbanks",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 2 listing(s), Fairbanks, AK) 2026-08-19",
+      "location": {
+        "city": "Fairbanks",
+        "state": "AK",
+        "zip": "99701"
+      }
+    },
+    {
+      "domain": "subaruftwaltonbeach.com",
+      "name": "Step One Subaru Fort Walton Beach",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 4 listing(s), Fort Walton Beach, FL) 2026-08-19",
+      "location": {
+        "city": "Fort Walton Beach",
+        "state": "FL",
+        "zip": "32547"
+      }
+    },
+    {
+      "domain": "subarulakeland.com",
+      "name": "Subaru Lakeland",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 6 listing(s), Lakeland, FL) 2026-08-19",
+      "location": {
+        "city": "Lakeland",
+        "state": "FL",
+        "zip": "33813"
+      }
+    },
+    {
+      "domain": "subarulockport.com",
+      "name": "West Herr Subaru of Lockport",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 2 listing(s), Lockport, NY) 2026-08-19",
+      "location": {
+        "city": "Lockport",
+        "state": "NY",
+        "zip": "14094"
+      }
+    },
+    {
+      "domain": "subarumelbourne.com",
+      "name": "Subaru of Melbourne",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 2 listing(s), Melbourne, FL) 2026-08-19",
+      "location": {
+        "city": "Melbourne",
+        "state": "FL",
+        "zip": "32904"
+      }
+    },
+    {
+      "domain": "subarumorgantown.com",
+      "name": "Subaru of Morgantown",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Morgantown, WV) 2026-08-19",
+      "location": {
+        "city": "Morgantown",
+        "state": "WV",
+        "zip": "26505"
+      }
+    },
+    {
+      "domain": "subarunewnan.net",
+      "name": "Subaru of Newnan",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 2 listing(s), Newnan, GA) 2026-08-19",
+      "location": {
+        "city": "Newnan",
+        "state": "GA",
+        "zip": "30265"
+      }
+    },
+    {
+      "domain": "subarunorthorlando.com",
+      "name": "Subaru North Orlando",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Sanford, FL) 2026-08-19",
+      "location": {
+        "city": "Sanford",
+        "state": "FL",
+        "zip": "32773"
+      }
+    },
+    {
+      "domain": "subaruofauburn.com",
+      "name": "Rairdon's Subaru of Auburn",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 2 listing(s), Auburn, WA) 2026-08-19",
+      "location": {
+        "city": "Auburn",
+        "state": "WA",
+        "zip": "98002"
+      }
+    },
+    {
+      "domain": "subaruofchico.com",
+      "name": "Subaru of Chico",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 2 listing(s), Chico, CA) 2026-08-19",
+      "location": {
+        "city": "Chico",
+        "state": "CA",
+        "zip": "95973"
+      }
+    },
+    {
+      "domain": "subaruofcolumbia.com",
+      "name": "Subaru of Columbia",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 2 listing(s), Columbia, MO) 2026-08-19",
+      "location": {
+        "city": "Columbia",
+        "state": "MO",
+        "zip": "65203"
+      }
+    },
+    {
+      "domain": "subaruoffortmyers.com",
+      "name": "Subaru of Fort Myers",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 3 listing(s), Fort Myers, FL) 2026-08-19",
+      "location": {
+        "city": "Fort Myers",
+        "state": "FL",
+        "zip": "33966"
+      }
+    },
+    {
+      "domain": "subaruofglendale.net",
+      "name": "Subaru of Glendale",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 15 listing(s), Glendale, CA) 2026-08-19",
+      "location": {
+        "city": "Glendale",
+        "state": "CA",
+        "zip": "91204"
+      }
+    },
+    {
+      "domain": "subaruofgwinnett.com",
+      "name": "Subaru of Gwinnett",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 4 listing(s), Duluth, GA) 2026-08-19",
+      "location": {
+        "city": "Duluth",
+        "state": "GA",
+        "zip": "30096"
+      }
+    },
+    {
+      "domain": "subaruofhayward.com",
+      "name": "Subaru of Hayward",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 6 listing(s), Hayward, CA) 2026-08-19",
+      "location": {
+        "city": "Hayward",
+        "state": "CA",
+        "zip": "94544"
+      }
+    },
+    {
+      "domain": "subaruofjanesville.com",
+      "name": "Janesville Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Janesville, WI) 2026-08-19",
+      "location": {
+        "city": "Janesville",
+        "state": "WI",
+        "zip": "53545"
+      }
+    },
+    {
+      "domain": "subaruoflasvegas.com",
+      "name": "Subaru of Las Vegas",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 3 listing(s), Las Vegas, NV) 2026-08-19",
+      "location": {
+        "city": "Las Vegas",
+        "state": "NV",
+        "zip": "89118"
+      }
+    },
+    {
+      "domain": "subaruofmissoula.com",
+      "name": "Subaru of Missoula",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Missoula, MT) 2026-08-19",
+      "location": {
+        "city": "Missoula",
+        "state": "MT",
+        "zip": "59808"
+      }
+    },
+    {
+      "domain": "subaruofoakland.com",
+      "name": "Downtown Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 3 listing(s), Oakland, CA) 2026-08-19",
+      "location": {
+        "city": "Oakland",
+        "state": "CA",
+        "zip": "94611"
+      }
+    },
+    {
+      "domain": "subaruofontario.com",
+      "name": "Subaru of Ontario",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 14 listing(s), Ontario, CA) 2026-08-19",
+      "location": {
+        "city": "Ontario",
+        "state": "CA",
+        "zip": "91761"
+      }
+    },
+    {
+      "domain": "subaruofportrichey.com",
+      "name": "Subaru of Port Richey",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Port Richey, FL) 2026-08-19",
+      "location": {
+        "city": "Port Richey",
+        "state": "FL",
+        "zip": "34668"
+      }
+    },
+    {
+      "domain": "subaruofrichmond.com",
+      "name": "Moore Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Richmond, VA) 2026-08-19",
+      "location": {
+        "city": "Richmond",
+        "state": "VA",
+        "zip": "23294"
+      }
+    },
+    {
+      "domain": "subaruofsanluisobispo.com",
+      "name": "Subaru of San Luis Obispo",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 5 listing(s), San Luis Obispo, CA) 2026-08-19",
+      "location": {
+        "city": "San Luis Obispo",
+        "state": "CA",
+        "zip": "93405"
+      }
+    },
+    {
+      "domain": "subaruofsantafe.com",
+      "name": "Subaru of Santa Fe",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Santa Fe, NM) 2026-08-19",
+      "location": {
+        "city": "Santa Fe",
+        "state": "NM",
+        "zip": "87507"
+      }
+    },
+    {
+      "domain": "subaruofsonora.com",
+      "name": "Subaru of Sonora",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 2 listing(s), Sonora, CA) 2026-08-19",
+      "location": {
+        "city": "Sonora",
+        "state": "CA",
+        "zip": "95370"
+      }
+    },
+    {
+      "domain": "subaruoftroy.com",
+      "name": "Subaru of Troy",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 2 listing(s), Troy, NY) 2026-08-19",
+      "location": {
+        "city": "Troy",
+        "state": "NY",
+        "zip": "12180"
+      }
+    },
+    {
+      "domain": "subaruofwichita.com",
+      "name": "Subaru of Wichita",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 2 listing(s), Wichita, KS) 2026-08-19",
+      "location": {
+        "city": "Wichita",
+        "state": "KS",
+        "zip": "67207"
+      }
+    },
+    {
+      "domain": "subaruorangecoast.com",
+      "name": "Subaru Orange Coast",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 11 listing(s), Santa Ana, CA) 2026-08-19",
+      "location": {
+        "city": "Santa Ana",
+        "state": "CA",
+        "zip": "92705"
+      }
+    },
+    {
+      "domain": "subaruorchardpark.com",
+      "name": "West Herr Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 8 listing(s), Orchard Park, NY) 2026-08-19",
+      "location": {
+        "city": "Orchard Park",
+        "state": "NY",
+        "zip": "14127"
+      }
+    },
+    {
+      "domain": "subarupeoria.com",
+      "name": "Uftring Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 2 listing(s), East Peoria, IL) 2026-08-19",
+      "location": {
+        "city": "East Peoria",
+        "state": "IL",
+        "zip": "61611"
+      }
+    },
+    {
+      "domain": "subaruraleigh.com",
+      "name": "Southern States Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Raleigh, NC) 2026-08-19",
+      "location": {
+        "city": "Raleigh",
+        "state": "NC",
+        "zip": "27609"
+      }
+    },
+    {
+      "domain": "subarurochester.com",
+      "name": "West Herr Subaru of Rochester",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Rochester, NY) 2026-08-19",
+      "location": {
+        "city": "Rochester",
+        "state": "NY",
+        "zip": "14626"
+      }
+    },
+    {
+      "domain": "subarusouthhills.com",
+      "name": "Subaru of South Hills",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 3 listing(s), McMurray, PA) 2026-08-19",
+      "location": {
+        "city": "McMurray",
+        "state": "PA",
+        "zip": "15317"
+      }
+    },
+    {
+      "domain": "subarusuperstore.com",
+      "name": "Subaru Superstore of Chandler",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 3 listing(s), Chandler, AZ) 2026-08-19",
+      "location": {
+        "city": "Chandler",
+        "state": "AZ",
+        "zip": "85286"
+      }
+    },
+    {
+      "domain": "subarusuperstorewest.com",
+      "name": "Subaru Superstore of Surprise",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 2 listing(s), Surprise, AZ) 2026-08-19",
+      "location": {
+        "city": "Surprise",
+        "state": "AZ",
+        "zip": "85388"
+      }
+    },
+    {
+      "domain": "summitsubaru.com",
+      "name": "Summit Subaru El Cajon",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 9 listing(s), El Cajon, CA) 2026-08-19",
+      "location": {
+        "city": "El Cajon",
+        "state": "CA",
+        "zip": "92020"
+      }
+    },
+    {
+      "domain": "tameronsubaru.com",
+      "name": "Tameron Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 3 listing(s), Mobile, AL) 2026-08-19",
+      "location": {
+        "city": "Mobile",
+        "state": "AL",
+        "zip": "36606"
+      }
+    },
+    {
+      "domain": "tascasubaruyonkers.com",
+      "name": "Tasca Subaru of Yonkers",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Yonkers, NY) 2026-08-19",
+      "location": {
+        "city": "Yonkers",
+        "state": "NY",
+        "zip": "10704"
+      }
+    },
+    {
+      "domain": "teraford.com",
+      "name": "TERA Ford",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane ford-blue-advantage, 1 listing(s), Plano, IL) 2026-08-19",
+      "location": {
+        "city": "Plano",
+        "state": "IL",
+        "zip": "60545"
+      }
+    },
+    {
+      "domain": "timmonssubaru.com",
+      "name": "Timmons Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 13 listing(s), Long Beach, CA) 2026-08-19",
+      "location": {
+        "city": "Long Beach",
+        "state": "CA",
+        "zip": "90807"
+      }
+    },
+    {
+      "domain": "tonyhondakona.com",
+      "name": "Tony Honda Kona",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane honda-prologue, 1 listing(s), Kailua Kona, HI) 2026-08-19",
+      "location": {
+        "city": "Kailua Kona",
+        "state": "HI",
+        "zip": "96740"
+      }
+    },
+    {
+      "domain": "trustsubaru.com",
+      "name": "Trust Antelope Valley Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 8 listing(s), Lancaster, CA) 2026-08-19",
+      "location": {
+        "city": "Lancaster",
+        "state": "CA",
+        "zip": "93534"
+      }
+    },
+    {
+      "domain": "tucsonsubaru.com",
+      "name": "Tucson Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 3 listing(s), Tucson, AZ) 2026-08-19",
+      "location": {
+        "city": "Tucson",
+        "state": "AZ",
+        "zip": "85704"
+      }
+    },
+    {
+      "domain": "tvsubaru.com",
+      "name": "Treasure Valley Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Nampa, ID) 2026-08-19",
+      "location": {
+        "city": "Nampa",
+        "state": "ID",
+        "zip": "83687"
+      }
+    },
+    {
+      "domain": "twinfalls-subaru.com",
+      "name": "Twin Falls Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 3 listing(s), Twin Falls, ID) 2026-08-19",
+      "location": {
+        "city": "Twin Falls",
+        "state": "ID",
+        "zip": "83301"
+      }
+    },
+    {
+      "domain": "unionparkbmw.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane bmwusa.com, 4 listing(s)) 2026-08-19"
+    },
+    {
+      "domain": "unionparkvolvocars.com",
+      "name": "Union Park Volvo Cars",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 1 listing(s), Wilmington, DE) 2026-08-19",
+      "location": {
+        "city": "Wilmington",
+        "state": "DE",
+        "zip": "19806"
+      }
+    },
+    {
+      "domain": "vanbortelsubaru.net",
+      "name": "Van Bortel Subaru of Victor",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 5 listing(s), Victor, NY) 2026-08-19",
+      "location": {
+        "city": "Victor",
+        "state": "NY",
+        "zip": "14564"
+      }
+    },
+    {
+      "domain": "vitivolvocarstiverton.com",
+      "name": "Viti Volvo Cars Tiverton",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 3 listing(s), Tiverton, RI) 2026-08-19",
+      "location": {
+        "city": "Tiverton",
+        "state": "RI",
+        "zip": "02878"
+      }
+    },
+    {
+      "domain": "volvocarscanton.com",
+      "name": "Volvo Cars Canton",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 2 listing(s), Canton, OH) 2026-08-19",
+      "location": {
+        "city": "Canton",
+        "state": "OH",
+        "zip": "44703"
+      }
+    },
+    {
+      "domain": "volvocarscarlsbad.com",
+      "name": "Volvo Cars Carlsbad",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 11 listing(s), Carlsbad, CA) 2026-08-19",
+      "location": {
+        "city": "Carlsbad",
+        "state": "CA",
+        "zip": "92009"
+      }
+    },
+    {
+      "domain": "volvocarscerritos.com",
+      "name": "Volvo Cars Cerritos",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 2 listing(s), Cerritos, CA) 2026-08-19",
+      "location": {
+        "city": "Cerritos",
+        "state": "CA",
+        "zip": "90703"
+      }
+    },
+    {
+      "domain": "volvocarscharlottesville.com",
+      "name": "CMA's Volvo Cars of Charlottesville",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 1 listing(s), Charlottesville, VA) 2026-08-19",
+      "location": {
+        "city": "Charlottesville",
+        "state": "VA",
+        "zip": "22901"
+      }
+    },
+    {
+      "domain": "volvocarsdublin.com",
+      "name": "Volvo Cars Dublin",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 2 listing(s), Dublin, CA) 2026-08-19",
+      "location": {
+        "city": "Dublin",
+        "state": "CA",
+        "zip": "94568"
+      }
+    },
+    {
+      "domain": "volvocarsescondido.com",
+      "name": "Volvo Cars Escondido",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 2 listing(s), Escondido, CA) 2026-08-19",
+      "location": {
+        "city": "Escondido",
+        "state": "CA",
+        "zip": "92029"
+      }
+    },
+    {
+      "domain": "volvocarsfredericksburg.com",
+      "name": "Volvo Cars Fredericksburg",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 1 listing(s), Fredericksburg, VA) 2026-08-19",
+      "location": {
+        "city": "Fredericksburg",
+        "state": "VA",
+        "zip": "22401"
+      }
+    },
+    {
+      "domain": "volvocarsgilbert.com",
+      "name": "Volvo Cars Gilbert",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 1 listing(s), Gilbert, AZ) 2026-08-19",
+      "location": {
+        "city": "Gilbert",
+        "state": "AZ",
+        "zip": "85297"
+      }
+    },
+    {
+      "domain": "volvocarsglencove.com",
+      "name": "Volvo Cars Glen Cove",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 1 listing(s), Glen Cove, NY) 2026-08-19",
+      "location": {
+        "city": "Glen Cove",
+        "state": "NY",
+        "zip": "11542"
+      }
+    },
+    {
+      "domain": "volvocarshagerstown.com",
+      "name": "Younger Volvo Cars Hagerstown",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 1 listing(s), Hagerstown, MD) 2026-08-19",
+      "location": {
+        "city": "Hagerstown",
+        "state": "MD",
+        "zip": "21740"
+      }
+    },
+    {
+      "domain": "volvocarshampton.com",
+      "name": "Wynne Volvo Cars Hampton",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 2 listing(s), Hampton, VA) 2026-08-19",
+      "location": {
+        "city": "Hampton",
+        "state": "VA",
+        "zip": "23666"
+      }
+    },
+    {
+      "domain": "volvocarskeene.com",
+      "name": "Volvo Cars Keene",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 1 listing(s), East Swanzey, NH) 2026-08-19",
+      "location": {
+        "city": "East Swanzey",
+        "state": "NH",
+        "zip": "03446"
+      }
+    },
+    {
+      "domain": "volvocarslisle.com",
+      "name": "Volvo Cars Lisle",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 5 listing(s), Lisle, IL) 2026-08-19",
+      "location": {
+        "city": "Lisle",
+        "state": "IL",
+        "zip": "60532"
+      }
+    },
+    {
+      "domain": "volvocarsmallofgeorgia.com",
+      "name": "Volvo Cars Mall of Georgia",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 9 listing(s), Buford, GA) 2026-08-19",
+      "location": {
+        "city": "Buford",
+        "state": "GA",
+        "zip": "30519"
+      }
+    },
+    {
+      "domain": "volvocarsmanhattan.com",
+      "name": "Volvo Cars Manhattan",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 3 listing(s), New York, NY) 2026-08-19",
+      "location": {
+        "city": "New York",
+        "state": "NY",
+        "zip": "10036"
+      }
+    },
+    {
+      "domain": "volvocarsmarin.com",
+      "name": "Volvo Cars Marin",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 2 listing(s), San Rafael, CA) 2026-08-19",
+      "location": {
+        "city": "San Rafael",
+        "state": "CA",
+        "zip": "94901"
+      }
+    },
+    {
+      "domain": "volvocarsmissionviejo.com",
+      "name": "Volvo Cars Mission Viejo",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 7 listing(s), Mission Viejo, CA) 2026-08-19",
+      "location": {
+        "city": "Mission Viejo",
+        "state": "CA",
+        "zip": "92692"
+      }
+    },
+    {
+      "domain": "volvocarsnorthpoint.com",
+      "name": "North Point Volvo Cars",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 7 listing(s), Alpharetta, GA) 2026-08-19",
+      "location": {
+        "city": "Alpharetta",
+        "state": "GA",
+        "zip": "30009"
+      }
+    },
+    {
+      "domain": "volvocarsofmacon.com",
+      "name": "Volvo Cars of Macon",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 1 listing(s), Macon, GA) 2026-08-19",
+      "location": {
+        "city": "Macon",
+        "state": "GA",
+        "zip": "31210"
+      }
+    },
+    {
+      "domain": "volvocarsofsantamonica.com",
+      "name": "Volvo Cars Santa Monica",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 16 listing(s), Santa Monica, CA) 2026-08-19",
+      "location": {
+        "city": "Santa Monica",
+        "state": "CA",
+        "zip": "90404"
+      }
+    },
+    {
+      "domain": "volvocarsoklahomacity.com",
+      "name": "Volvo Cars Oklahoma City",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 3 listing(s), Edmond, OK) 2026-08-19",
+      "location": {
+        "city": "Edmond",
+        "state": "OK",
+        "zip": "73013"
+      }
+    },
+    {
+      "domain": "volvocarsorlandpark.com",
+      "name": "Volvo  Cars Orland Park",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 1 listing(s), Tinley Park, IL) 2026-08-19",
+      "location": {
+        "city": "Tinley Park",
+        "state": "IL",
+        "zip": "60477"
+      }
+    },
+    {
+      "domain": "volvocarspalmsprings.com",
+      "name": "Volvo Cars Palm Springs",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 2 listing(s), Cathedral City, CA) 2026-08-19",
+      "location": {
+        "city": "Cathedral City",
+        "state": "CA",
+        "zip": "92234"
+      }
+    },
+    {
+      "domain": "volvocarspaloalto.com",
+      "name": "Volvo Cars Palo Alto",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 4 listing(s), Palo Alto, CA) 2026-08-19",
+      "location": {
+        "city": "Palo Alto",
+        "state": "CA",
+        "zip": "94306"
+      }
+    },
+    {
+      "domain": "volvocarssanfrancisco.com",
+      "name": "Volvo Cars San Francisco",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 3 listing(s), San Francisco, CA) 2026-08-19",
+      "location": {
+        "city": "San Francisco",
+        "state": "CA",
+        "zip": "94103"
+      }
+    },
+    {
+      "domain": "volvocarssarasota.com",
+      "name": "Volvo Cars Sarasota",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 2 listing(s), Sarasota, FL) 2026-08-19",
+      "location": {
+        "city": "Sarasota",
+        "state": "FL",
+        "zip": "34231"
+      }
+    },
+    {
+      "domain": "volvocarsseattle.com",
+      "name": "Volvo Cars Seattle",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 2 listing(s), Seattle, WA) 2026-08-19",
+      "location": {
+        "city": "Seattle",
+        "state": "WA",
+        "zip": "98105"
+      }
+    },
+    {
+      "domain": "volvocarsshreveport.com",
+      "name": "Volvo Cars Shreveport",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 1 listing(s), Shreveport, LA) 2026-08-19",
+      "location": {
+        "city": "Shreveport",
+        "state": "LA",
+        "zip": "71105"
+      }
+    },
+    {
+      "domain": "volvocarssouthbay.com",
+      "name": "Volvo Cars South Bay",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 2 listing(s), Torrance, CA) 2026-08-19",
+      "location": {
+        "city": "Torrance",
+        "state": "CA",
+        "zip": "90504"
+      }
+    },
+    {
+      "domain": "volvocarssugarland.com",
+      "name": "Volvo Cars Sugar Land",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 3 listing(s), Houston, TX) 2026-08-19",
+      "location": {
+        "city": "Houston",
+        "state": "TX",
+        "zip": "77072"
+      }
+    },
+    {
+      "domain": "volvocarswestport.com",
+      "name": "Volvo Cars Westport",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 1 listing(s), Westport, CT) 2026-08-19",
+      "location": {
+        "city": "Westport",
+        "state": "CT",
+        "zip": "06880"
+      }
+    },
+    {
+      "domain": "volvofrederick.com",
+      "name": "Volvo Cars of Frederick",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 7 listing(s), Frederick, MD) 2026-08-19",
+      "location": {
+        "city": "Frederick",
+        "state": "MD",
+        "zip": "21704"
+      }
+    },
+    {
+      "domain": "volvooakpark.com",
+      "name": "The Autobarn Volvo Cars Oak Park",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 3 listing(s), Oak Park, IL) 2026-08-19",
+      "location": {
+        "city": "Oak Park",
+        "state": "IL",
+        "zip": "60304"
+      }
+    },
+    {
+      "domain": "volvooflouisville.com",
+      "name": "Volvo Cars of Louisville",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 1 listing(s), Louisville, KY) 2026-08-19",
+      "location": {
+        "city": "Louisville",
+        "state": "KY",
+        "zip": "40299"
+      }
+    },
+    {
+      "domain": "volvoservicesandiego.com",
+      "name": "Volvo Cars San Diego",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 10 listing(s), San Diego, CA) 2026-08-19",
+      "location": {
+        "city": "San Diego",
+        "state": "CA",
+        "zip": "92111"
+      }
+    },
+    {
+      "domain": "wagnersubaru.com",
+      "name": "Wagner Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Fairborn, OH) 2026-08-19",
+      "location": {
+        "city": "Fairborn",
+        "state": "OH",
+        "zip": "45324"
+      }
+    },
+    {
+      "domain": "walsersubaru.com",
+      "name": "Walser Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Burnsville, MN) 2026-08-19",
+      "location": {
+        "city": "Burnsville",
+        "state": "MN",
+        "zip": "55306"
+      }
+    },
+    {
+      "domain": "walsersubarustpaul.com",
+      "name": "Walser Subaru St. Paul",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), S. St. Paul, MN) 2026-08-19",
+      "location": {
+        "city": "S. St. Paul",
+        "state": "MN",
+        "zip": "55075"
+      }
+    },
+    {
+      "domain": "wcvolvocars.com",
+      "name": "Volvo Cars West County",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 7 listing(s), Manchester, MO) 2026-08-19",
+      "location": {
+        "city": "Manchester",
+        "state": "MO",
+        "zip": "63011"
+      }
+    },
+    {
+      "domain": "weaverbrothersvolvocars.com",
+      "name": "Weaver Brothers Volvo Cars",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 2 listing(s), Raleigh, NC) 2026-08-19",
+      "location": {
+        "city": "Raleigh",
+        "state": "NC",
+        "zip": "27604"
+      }
+    },
+    {
+      "domain": "williamssubaruofsayre.com",
+      "name": "Williams Subaru of Sayre",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 2 listing(s), Sayre, PA) 2026-08-19",
+      "location": {
+        "city": "Sayre",
+        "state": "PA",
+        "zip": "18840"
+      }
+    },
+    {
+      "domain": "wynnvolvocarsnorristown.com",
+      "name": "Wynn Volvo Cars Norristown",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 1 listing(s), Norristown, PA) 2026-08-19",
+      "location": {
+        "city": "Norristown",
+        "state": "PA",
+        "zip": "19403"
+      }
     }
   ],
   "_sources": [
