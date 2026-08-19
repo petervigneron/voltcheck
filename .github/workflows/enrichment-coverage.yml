@@ -1,0 +1,44 @@
+name: Enrichment coverage
+
+# Guards the one thing the site exists to do: tell a shopper the battery,
+# charging, and warranty facts behind a VIN. The enrichment data
+# (web/lib/enrichment/data*.ts) is hand-filled cohort by cohort, and a
+# half-stocked cohort is invisible on the site — its empty fields render as
+# "Unknown", identical to a fact that's genuinely unknowable. Nothing measured
+# the difference, so partial coverage shipped looking complete and only a human
+# opening a listing ever caught it (that's how a 2024 F-150 Lightning reached
+# shoppers with no port, chemistry, or charging facts at all).
+#
+# This runs web/scripts/enrichment-coverage.mjs on every change to the
+# enrichment files. It ratchets against a baseline (251 cohorts miss a core
+# field today): the backlog is allowed, a NEW half-stocked cohort is not. Lower
+# --max-core-fails as backfill lands; never raise it to hide a regression.
+# No install and no secrets — the script imports only the dependency-free
+# enrichment modules under Node's type stripping.
+on:
+  push:
+    paths:
+      - "web/lib/enrichment/**"
+      - "web/scripts/enrichment-coverage.mjs"
+      - ".github/workflows/enrichment-coverage.yml"
+  pull_request:
+    paths:
+      - "web/lib/enrichment/**"
+      - "web/scripts/enrichment-coverage.mjs"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Report enrichment coverage
+        working-directory: web
+        run: node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs scripts/enrichment-coverage.mjs --max-core-fails 251
