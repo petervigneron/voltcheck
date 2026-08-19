@@ -39,6 +39,7 @@ import { dealerFireVehicles } from "./lib/platforms/dealerfire.mjs";
 import { fingerprint } from "./lib/fingerprint.mjs";
 import { isDealerVenom, extractDealerVenomConfig, countDealerVenom } from "./lib/platforms/dealervenom.mjs";
 import { overfuelVehicles, overfuelSeeds, isOverfuel, overfuelApiConfig, countOverfuelApi } from "./lib/platforms/overfuel.mjs";
+import { isDealr, countDealr } from "./lib/platforms/dealr.mjs";
 import { discoverSitemapUrls, rank, dedupe, SRP_PATHS } from "./lib/sitemap.mjs";
 import { spaSignals, countVinUrls } from "./lib/spa-signals.mjs";
 
@@ -114,6 +115,21 @@ async function probeSite(site) {
         console.error(`  ${site.domain} → working (overfuel, ${found})`);
         return;
       }
+    }
+  }
+
+  // Dealr renders no VIN'd inventory in HTML (its JSON-LD lists cars as bare
+  // @type:Car with no VIN) — but it serves the whole lot from a paged JSON API.
+  // Confirm that directly: one request, and a non-empty VIN'd result promotes
+  // it, so the nightly crawl's dealr pull reads the whole lot.
+  if (isDealr(home.body)) {
+    const { ok, found, hasVin } = await countDealr(origin);
+    if (ok && found > 0 && hasVin) {
+      site.platform = "dealr";
+      site.status = "working";
+      site.notes = `${site.notes ?? ""} | auto-promoted by probe ${today}: dealr API, ${found} vehicles`.trim();
+      console.error(`  ${site.domain} → working (dealr, ${found})`);
+      return;
     }
   }
 

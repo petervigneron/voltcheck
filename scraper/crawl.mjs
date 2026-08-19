@@ -26,6 +26,7 @@ import {
   isDealerFire,
 } from "./lib/platforms/dealerfire.mjs";
 import { isDealerVenom, extractDealerVenomConfig, pullDealerVenom } from "./lib/platforms/dealervenom.mjs";
+import { isDealr, pullDealr } from "./lib/platforms/dealr.mjs";
 import {
   isOverfuel,
   overfuelVehicles,
@@ -137,8 +138,10 @@ async function crawlDealer(domain) {
   // working sites are unknown-platform, so the extra fetch is negligible.
   const dv = { done: false };
   const of = { done: false };
+  const dl = { done: false };
   const dvPlat = siteInfo.get(domain)?.platform;
-  if (!dvPlat || dvPlat === "unknown" || dvPlat === "dealervenom" || dvPlat === "overfuel") queue.unshift(origin + "/");
+  if (!dvPlat || dvPlat === "unknown" || dvPlat === "dealervenom" || dvPlat === "overfuel" || dvPlat === "dealr")
+    queue.unshift(origin + "/");
 
   // Overfuel hides its inventory behind a per-rooftop SRP slug
   // ("/used-cars-albuquerque-nm") that no path guess finds and that its own
@@ -280,6 +283,40 @@ async function crawlDealer(domain) {
         // A partial or failed pull must never certify a complete crawl, or
         // db-sync would delist cars we merely failed to finish fetching.
         if (!complete) report.stoppedEarly = "overfuel partial pull";
+        queue.length = 0;
+        break;
+      }
+    }
+
+    // Dealr renders no VIN'd inventory in HTML (its JSON-LD lists cars as bare
+    // @type:Car), but serves the whole lot from a paged JSON API. On the first
+    // Dealr page seen — the homepage, seeded above, carries the cdn.dealrcloud
+    // signature — page the API to completion and finish; the rest of the site's
+    // pages have nothing for the walk to find. pullDealr resolves the canonical
+    // (apex/www) host itself, so it needs only the origin.
+    if (!dl.done && isDealr(res.body)) {
+      dl.done = true;
+      const before = report.evs.length;
+      const { vehicles: dlVehicles, complete, found, ok } = await pullDealr(origin);
+      if (ok) {
+        for (const v of dlVehicles) {
+          const cls = classifyEv(v);
+          if (!cls.isEv) continue;
+          let rec = normalize(v, { sourceUrl: v.offers?.url || origin, dealerDomain: domain });
+          if (rec.vdpUrl) rec.vdpUrl = abs(rec.vdpUrl, origin) ?? rec.vdpUrl;
+          rec.evKind = cls.kind;
+          rec.evConfidence = cls.confidence;
+          rec.fromVdp = true;
+          rec.platform = "dealr";
+          report.evs.push(rec);
+        }
+        if (report.evs.length > before) report.vehiclePages++;
+        report.notes.push(
+          `dealr: ${found} in inventory, ${report.evs.length - before} EV(s) admitted (${complete ? "complete" : "partial"})`
+        );
+        // A partial or failed pull must never certify a complete crawl, or
+        // db-sync would delist cars we merely failed to finish fetching.
+        if (!complete) report.stoppedEarly = "dealr partial pull";
         queue.length = 0;
         break;
       }

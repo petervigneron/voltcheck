@@ -17,6 +17,11 @@ const SIGNATURES = [
   // pictures.dealer.com. static.overfuel.com is the specific, load-bearing
   // signal, so it wins the tie.
   { platform: "overfuel", res: [/overfuel\.com/i] },
+  // Dealr (small independent lots): no VIN'd JSON-LD, numeric-id VDP URLs —
+  // lib/platforms/dealr.mjs pages its getInventorySubset JSON API instead. The
+  // asset host cdn.dealrcloud.com is on every page including the homepage; the
+  // inventory grid's card class and the API call name are the second signals.
+  { platform: "dealr", res: [/cdn\.dealrcloud\.com/i, /getInventorySubset/, /dealr-inventory-list__vehicle/] },
   { platform: "dealer.com", res: [/DDC\.dataLayer/, /ddc-/i, /Dealer\.com/i] },
   { platform: "dealerinspire", res: [/dealerinspire/i, /window\.DI_/i, /di-widget/i] },
   { platform: "sincro", res: [/sincro/i, /cdk_?global/i] },
