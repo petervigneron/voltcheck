@@ -43,6 +43,7 @@ import { overfuelVehicles, overfuelSeeds, isOverfuel, overfuelApiConfig, countOv
 import { isDealr, countDealr } from "./lib/platforms/dealr.mjs";
 import { isDealerSync, countDealerSync } from "./lib/platforms/dealersync.mjs";
 import { isAutoManager, countAutoManager } from "./lib/platforms/automanager.mjs";
+import { isAutoRevo, countAutoRevo } from "./lib/platforms/autorevo.mjs";
 import { discoverSitemapUrls, rank, dedupe, SRP_PATHS } from "./lib/sitemap.mjs";
 import { spaSignals, countVinUrls } from "./lib/spa-signals.mjs";
 
@@ -184,6 +185,20 @@ async function probeSite(site) {
       site.status = "working";
       site.notes = `${site.notes ?? ""} | auto-promoted by probe ${today}: automanager SRP, ${found} vehicles`.trim();
       console.error(`  ${site.domain} → working (automanager, ${found})`);
+      return;
+    }
+  }
+
+  // AutoRevo: server-rendered SRP at /vehicles with the VIN in a labelled
+  // definition list but no schema.org. One fetch confirms VIN'd inventory and
+  // promotes it; the nightly crawl then pages the whole lot.
+  if (isAutoRevo(home.body)) {
+    const { ok, found, hasVin } = await countAutoRevo(origin);
+    if (ok && found > 0 && hasVin) {
+      site.platform = "autorevo";
+      site.status = "working";
+      site.notes = `${site.notes ?? ""} | auto-promoted by probe ${today}: autorevo SRP, ${found} vehicles`.trim();
+      console.error(`  ${site.domain} → working (autorevo, ${found})`);
       return;
     }
   }

@@ -29,6 +29,7 @@ import { isDealerVenom, extractDealerVenomConfig, pullDealerVenom } from "./lib/
 import { isDealr, pullDealr } from "./lib/platforms/dealr.mjs";
 import { isDealerSync, pullDealerSync } from "./lib/platforms/dealersync.mjs";
 import { isAutoManager, pullAutoManager } from "./lib/platforms/automanager.mjs";
+import { isAutoRevo, pullAutoRevo } from "./lib/platforms/autorevo.mjs";
 import { extractDealerWebsitesVehicles } from "./lib/platforms/dealerwebsites.mjs";
 import {
   isOverfuel,
@@ -144,6 +145,7 @@ async function crawlDealer(domain) {
   const dl = { done: false };
   const ds = { done: false };
   const am = { done: false };
+  const ar = { done: false };
   const dvPlat = siteInfo.get(domain)?.platform;
   if (
     !dvPlat ||
@@ -152,7 +154,8 @@ async function crawlDealer(domain) {
     dvPlat === "overfuel" ||
     dvPlat === "dealr" ||
     dvPlat === "dealersync" ||
-    dvPlat === "automanager"
+    dvPlat === "automanager" ||
+    dvPlat === "autorevo"
   )
     queue.unshift(origin + "/");
 
@@ -390,6 +393,35 @@ async function crawlDealer(domain) {
           `automanager: ${found} in inventory, ${report.evs.length - before} EV(s) admitted (${complete ? "complete" : "partial"})`
         );
         if (!complete) report.stoppedEarly = "automanager partial pull";
+        queue.length = 0;
+        break;
+      }
+    }
+
+    // AutoRevo server-renders its lot at /vehicles, paged ?page=N, the VIN in a
+    // labelled definition list. On the first AutoRevo page seen (the homepage,
+    // seeded above), page the SRP to completion and finish.
+    if (!ar.done && isAutoRevo(res.body)) {
+      ar.done = true;
+      const before = report.evs.length;
+      const { vehicles: arVehicles, complete, found, ok } = await pullAutoRevo(origin);
+      if (ok) {
+        for (const v of arVehicles) {
+          const cls = classifyEv(v);
+          if (!cls.isEv) continue;
+          let rec = normalize(v, { sourceUrl: v.offers?.url || origin, dealerDomain: domain });
+          if (rec.vdpUrl) rec.vdpUrl = abs(rec.vdpUrl, origin) ?? rec.vdpUrl;
+          rec.evKind = cls.kind;
+          rec.evConfidence = cls.confidence;
+          rec.fromVdp = true;
+          rec.platform = "autorevo";
+          report.evs.push(rec);
+        }
+        if (report.evs.length > before) report.vehiclePages++;
+        report.notes.push(
+          `autorevo: ${found} in inventory, ${report.evs.length - before} EV(s) admitted (${complete ? "complete" : "partial"})`
+        );
+        if (!complete) report.stoppedEarly = "autorevo partial pull";
         queue.length = 0;
         break;
       }

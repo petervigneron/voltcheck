@@ -15,6 +15,7 @@
 // listing, just without an asking price, which normalize already allows.
 
 import { fetchPage } from "../http.mjs";
+import { isPlausibleVin } from "../vin.mjs";
 
 const AM_MARK = /wm\.automanager\.com|clients\.automanager\.com|automanagerprodcdn|automanager\.com/i;
 
@@ -33,7 +34,6 @@ const decode = (s) =>
     .replace(/\s+/g, " ")
     .trim();
 
-const VIN_RE = /^[A-HJ-NPR-Z0-9]{17}$/;
 const PER_PAGE_GUARD = 60; // pages; a runaway guard, not a real ceiling
 
 // A labelled detail row: <span class="preamble">Fuel:</span> <span…>Diesel</span>
@@ -87,7 +87,7 @@ function vehicleNode({ frag, href, slug }, origin) {
     labelled(frag, "VIN")
   );
   const v = String(vin ?? "").toUpperCase();
-  if (!VIN_RE.test(v)) return null;
+  if (!isPlausibleVin(v)) return null;
 
   const title = decode(frag.match(/title=["']([^"']*(?:19|20)\d{2}[^"']*)["']/i)?.[1] ?? "");
   const sl = fromSlug(slug);

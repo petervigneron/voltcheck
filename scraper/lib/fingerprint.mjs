@@ -35,6 +35,10 @@ const SIGNATURES = [
   // hash-keyed VDP URLs — lib/platforms/automanager.mjs pages /view-inventory and
   // lifts the VIN from each card. Its asset/app hosts are on every page.
   { platform: "automanager", res: [/wm\.automanager\.com/i, /clients\.automanager\.com/i, /automanagerprodcdn/i] },
+  // AutoRevo: server-rendered SRP, no schema.org, numeric-id VDP URLs —
+  // lib/platforms/autorevo.mjs pages /vehicles and lifts the VIN from each card's
+  // labelled definition list. Its image CDN host is on every page.
+  { platform: "autorevo", res: [/cf-img\.autorevo\.com/i, /autorevo\.com/i] },
   { platform: "dealer.com", res: [/DDC\.dataLayer/, /ddc-/i, /Dealer\.com/i] },
   { platform: "dealerinspire", res: [/dealerinspire/i, /window\.DI_/i, /di-widget/i] },
   { platform: "sincro", res: [/sincro/i, /cdk_?global/i] },
