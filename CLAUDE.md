@@ -1,6 +1,7 @@
 # Voltcheck
 
-A used-EV shopping site. Live at voltcheck.net.
+An EV shopping site — every EV for sale in the United States, new and
+used. Live at voltcheck.net.
 
 Three lanes, and they are worked on independently:
 
