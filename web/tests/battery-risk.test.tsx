@@ -79,8 +79,8 @@ test("a battery recall renders as one line: campaign number and component", () =
   assert.ok(html.includes("TRACTION BATTERY"), html);
   assert.ok(html.includes("11 (11 pack-level)"), html);
   // The count is our classification of NHTSA's rows, so it wears the site's
-  // aggregate qualifier (components/SourceBadge.tsx).
-  assert.ok(html.includes("unverified"), html);
+  // aggregate qualifier (components/SourceBadge.tsx), which reads "est.".
+  assert.ok(html.includes("est."), html);
   // The VIN is the shopper's own answer, and NHTSA gives it per VIN.
   assert.ok(html.includes(`nhtsa.gov/recalls?vin=${VIN}`), html);
 });

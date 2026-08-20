@@ -124,15 +124,11 @@ const ME_WARRANTY = {
   batteryMiles: f(100_000, "mfr" as Source),
   sohFloorPct: f(70, "mfr" as Source, "high", "“Less than 70 percent of…beginning of life capacity…is considered excessive”, Ford Warranty Guide"),
   batteryTransfers: f(true, "mfr" as Source, "high", "“If you bought a previously owned…electric vehicle, you are eligible for any remaining warranty coverages”, every Ford MY guide"),
-  // Ford's flat powertrain term, same for every owner — it transfers with the
-  // car (unlike Hyundai/Kia, whose 10yr/100k drops to 5yr/60k for a second
-  // owner). Confirmed against ford.com warranty support, 2026-08-20.
-  // extendedCoverage is deliberately left unset: Ford also warrants "unique
-  // electric vehicle components" for 8yr/100k, but its own page never lists
-  // whether the traction motor sits in that bucket or under this 5yr/60k
-  // powertrain term — an unresolved scope, so the row stays quiet rather than
-  // guess (see CLAUDE.md house rule on claims).
-  powertrainTerms: f("5 yr / 60,000 mi", "mfr" as Source, "high", "Ford New Vehicle Limited Warranty: powertrain coverage is 5 years / 60,000 miles, and it transfers to subsequent owners", "https://www.ford.com/support/how-tos/warranty/warranties-and-coverage/what-parts-are-covered-by-the-powertrain-warranty"),
+  // powertrainTerms is filled centrally in backfill.ts (resolvePowertrain):
+  // Ford's BEV Warranty Guide covers the electric drive unit WITH the battery
+  // at 8yr/100k, so "Electric drive: 8 yr / 100,000 mi" is the honest figure —
+  // the 5yr/60k "powertrain" term covers only non-EV driveline parts and would
+  // understate the motor coverage a shopper cares about.
 };
 
 const ME_KWH_SR_NMC = f(70, "mfr", "high", "“70kWh Usable Capacity Standard Range High-Voltage Battery”, Ford 2023 order guide", OGM_23);
@@ -172,17 +168,17 @@ const noteConnected = (my: number) => ({
 // ranges per NHTSA): 26V417 = 2021–23, 25V404 = 2021–25, 26V487 = 2023–25,
 // 25V863 = 2024–26, 25V885 = 2025–26.
 const NOTE_RECALLS_2122 = {
-  headline: "Two open recalls — the rear-differential one (26V417) has no fix until late 2026; the door-latch one (25V404) has a free software fix to confirm",
+  headline: "Two open recalls; the differential one has no fix yet, the door-latch one does",
   body: "26V417 (rear differential pinion shaft may fracture, 2021–2023 Mach-E): Ford's remedy was not yet available as of the July 2026 interim notice, with a fix anticipated late December 2026. 25V404 (electronic door latches can stay locked on low battery charge, trapping an occupant, 2021–2025): this one has a free software fix; owner notices mailed September 2025.",
   severity: "trap" as const,
 };
 const NOTE_RECALLS_2023 = {
-  headline: "Three open recalls — two still await a remedy (differential shaft 26V417, quarter-window trim 26V487); the door-latch one (25V404) has a free fix to confirm",
+  headline: "Three open recalls; two still have no fix, the door-latch one does",
   body: "26V417 (rear differential pinion shaft may fracture, 2021–2023 Mach-E): Ford's remedy was not yet available as of the July 2026 interim notice, with a fix anticipated late December 2026. 26V487 (rear quarter-window trim may detach, 2023–2025): remedy not yet available as of the September 2026 interim notice. 25V404 (electronic door latches can stay locked on low battery charge, trapping an occupant, 2021–2025): this one has a free software fix; owner notices mailed September 2025.",
   severity: "trap" as const,
 };
 const NOTE_RECALLS_2024 = {
-  headline: "Three recalls, all with free software fixes except the quarter-window trim (26V487), whose remedy isn't available yet — confirm the fixes on this car",
+  headline: "Three recalls with free fixes; the quarter-window one has no remedy yet",
   body: "26V487 (rear quarter-window trim may detach, 2023–2025): remedy not yet available as of the September 2026 interim notice. 25V404 (electronic door latches can stay locked on low battery charge, trapping an occupant, 2021–2025): free software fix; owner notices mailed September 2025. 25V863 (integrated park module may fail to lock into park, risking rollaway; 2024–2026): OTA or dealer software update, owner notices mailed February 2026.",
   severity: "trap" as const,
 };
@@ -222,7 +218,7 @@ const NOTE_HP_VIN10 = {
 };
 
 const NOTE_RECALLS_2526 = {
-  headline: "Recalls with free software fixes (park module 25V863, lighting 25V885; 2025 builds may add more) — confirm they've been applied to this car",
+  headline: "Open recalls with free software fixes; confirm they were applied to this car",
   body: "25V863 (integrated park module may fail to lock into park, risking rollaway; 2024–2026 Mach-E) and 25V885 (Light Driver Control Module B can fail, killing turn signals and headlights; 2025–2026) both have free OTA or dealer software fixes, confirm they've been applied. 2025 builds may additionally be under 26V487 (rear quarter-window trim may detach; remedy not yet available as of the September 2026 interim notice) and 25V404 (door latches; free software fix).",
   severity: "warning" as const,
 };
@@ -689,7 +685,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packUsableKwh: ME_KWH_ER, chemistry: ME_NMC_ER },
     range: {
       epaRangeMi: f(305, "mfr", "high", "MY2021 California Route 1 (Extended Range RWD with aero wheels), EPA", epa(43683)),
-      testedRangeMi: f(287, "tested", "high", "70-mph (InsideEVs, 2021 California Route 1, Extended Range RWD): 287 mi", "https://insideevs.com/reviews/527004/mustang-mache-route1-range-test/"),
+      testedRangeMi: f(287, "tested", "high", "70-mph steady-state highway (InsideEVs)", "https://insideevs.com/reviews/527004/mustang-mache-route1-range-test/"),
     },
     charging: { ...ME_PORT_EARLY, dcPeakKw: ME_DC_ER },
     thermal: { heatPump: ME_NO_HP },
@@ -702,7 +698,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packUsableKwh: ME_KWH_ER, chemistry: ME_NMC_ER },
     range: {
       epaRangeMi: f(270, "mfr", "high", "MY2021 Extended Range AWD (VIN engine code U), incl. First Edition, EPA", epa(43603)),
-      testedRangeMi: f(285, "tested", "high", "70-mph (InsideEVs, 2021 Extended Range AWD): 285 mi, past its 270 EPA", "https://insideevs.com/reviews/502506/mustang-mach-e-70mph-range-test/"),
+      testedRangeMi: f(285, "tested", "high", "70-mph steady-state highway (InsideEVs)", "https://insideevs.com/reviews/502506/mustang-mach-e-70mph-range-test/"),
     },
     charging: { ...ME_PORT_EARLY, dcPeakKw: ME_DC_ER },
     thermal: { heatPump: ME_NO_HP },
@@ -767,7 +763,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packUsableKwh: ME_KWH_ER, chemistry: ME_NMC_ER },
     range: {
       epaRangeMi: f(314, "mfr", "high", "MY2022 California Route 1 Extended Range RWD, EPA", epa(45141)),
-      testedRangeMi: f(287, "tested", "medium", "70-mph on the physically identical 2021 California Route 1 pack (InsideEVs): 287 mi — no separate 2022 instrumented test found", "https://insideevs.com/reviews/527004/mustang-mache-route1-range-test/"),
+      testedRangeMi: f(287, "tested", "medium", "70-mph test of the identical 2021 pack (InsideEVs)", "https://insideevs.com/reviews/527004/mustang-mache-route1-range-test/"),
     },
     charging: { ...ME_PORT_EARLY, dcPeakKw: ME_DC_ER },
     thermal: { heatPump: ME_NO_HP },
@@ -780,7 +776,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packUsableKwh: ME_KWH_ER, chemistry: ME_NMC_ER },
     range: {
       epaRangeMi: f(277, "mfr", "high", "MY2022 Extended Range AWD (VIN engine code U), non-California-Route-1, EPA", epa(45139)),
-      testedRangeMi: f(285, "tested", "medium", "70-mph on the physically identical 2021 Extended Range AWD pack (InsideEVs): 285 mi — no separate 2022 instrumented test found", "https://insideevs.com/reviews/502506/mustang-mach-e-70mph-range-test/"),
+      testedRangeMi: f(285, "tested", "medium", "70-mph test of the identical 2021 pack (InsideEVs)", "https://insideevs.com/reviews/502506/mustang-mach-e-70mph-range-test/"),
     },
     charging: { ...ME_PORT_EARLY, dcPeakKw: ME_DC_ER },
     thermal: { heatPump: ME_NO_HP },
@@ -875,7 +871,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packUsableKwh: ME_KWH_ER, chemistry: ME_NMC_ER },
     range: {
       epaRangeMi: f(290, "mfr", "high", "MY2023 Extended Range AWD (VIN engine code U), non-California-Route-1, EPA", epa(46513)),
-      testedRangeMi: f(285, "tested", "high", "70-mph (InsideEVs, 2023 Premium Extended Range AWD): 285 mi against a 290 EPA", "https://insideevs.com/reviews/663649/ford-mustang-mache-range-test/"),
+      testedRangeMi: f(285, "tested", "high", "70-mph steady-state highway (InsideEVs)", "https://insideevs.com/reviews/663649/ford-mustang-mache-range-test/"),
     },
     charging: { ...ME_PORT_EARLY, dcPeakKw: ME_DC_ER },
     thermal: { heatPump: ME_NO_HP },

@@ -3,6 +3,7 @@ import { ENRICHMENT_ROWS } from "./data";
 import { RESEARCH_ROWS } from "./data2";
 import { RESEARCH_ROWS_3 } from "./data3";
 import { RESEARCH_ROWS_4 } from "./data4";
+import { applyBackfill } from "./backfill";
 
 const ALL_ROWS = [...ENRICHMENT_ROWS, ...RESEARCH_ROWS, ...RESEARCH_ROWS_3, ...RESEARCH_ROWS_4];
 
@@ -37,7 +38,20 @@ function normalizeDrive(d: string | undefined): "AWD" | "RWD" | "FWD" | undefine
   return undefined;
 }
 
+// Public entry: resolve the row(s), then fill the centralized backfill facts
+// (tested range, electric-drive warranty, recall notes) onto whatever we
+// return. applyBackfill only fills gaps, so hand-curated values always win.
 export function matchEnrichment(
+  decode: VinDecode,
+  tesla: TeslaVinFacts | null
+): EnrichmentResult {
+  const r = matchEnrichmentRaw(decode, tesla);
+  if (r.exact) return { ...r, exact: applyBackfill(r.exact) };
+  if (r.candidates) return { ...r, candidates: r.candidates.map((c) => applyBackfill(c)!) };
+  return r;
+}
+
+function matchEnrichmentRaw(
   decode: VinDecode,
   tesla: TeslaVinFacts | null
 ): EnrichmentResult {

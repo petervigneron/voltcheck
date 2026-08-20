@@ -45,7 +45,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
         severity: "warning",
       },
       {
-        headline: "HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with an 80% charge cap until fixed, plus a door-handle recall (24V-651) — confirm the repairs on this car",
+        headline: "Battery and door-handle recalls; confirm the repairs were done on this car",
         body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine, an unrepaired one is materially worse until fixed.",
         severity: "trap",
       },
@@ -85,7 +85,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
         severity: "warning",
       },
       {
-        headline: "HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with an 80% charge cap until fixed, plus a door-handle recall (24V-651) — confirm the repairs on this car",
+        headline: "Battery and door-handle recalls; confirm the repairs were done on this car",
         body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine, an unrepaired one is materially worse until fixed.",
         severity: "trap",
       },
@@ -125,7 +125,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
         severity: "warning",
       },
       {
-        headline: "HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with an 80% charge cap until fixed, plus a door-handle recall (24V-651) — confirm the repairs on this car",
+        headline: "Battery and door-handle recalls; confirm the repairs were done on this car",
         body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine, an unrepaired one is materially worse until fixed.",
         severity: "trap",
       },
@@ -165,7 +165,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
         severity: "warning",
       },
       {
-        headline: "HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with an 80% charge cap until fixed, plus a door-handle recall (24V-651) — confirm the repairs on this car",
+        headline: "Battery and door-handle recalls; confirm the repairs were done on this car",
         body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine, an unrepaired one is materially worse until fixed.",
         severity: "trap",
       },
@@ -205,7 +205,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
         severity: "warning",
       },
       {
-        headline: "HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with an 80% charge cap until fixed, plus a door-handle recall (24V-651) — confirm the repairs on this car",
+        headline: "Battery and door-handle recalls; confirm the repairs were done on this car",
         body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine, an unrepaired one is materially worse until fixed.",
         severity: "trap",
       },
@@ -245,7 +245,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
         severity: "warning",
       },
       {
-        headline: "HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with an 80% charge cap until fixed, plus a door-handle recall (24V-651) — confirm the repairs on this car",
+        headline: "Battery and door-handle recalls; confirm the repairs were done on this car",
         body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine, an unrepaired one is materially worse until fixed.",
         severity: "trap",
       },
@@ -285,7 +285,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
         severity: "warning",
       },
       {
-        headline: "HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with an 80% charge cap until fixed, plus a door-handle recall (24V-651) — confirm the repairs on this car",
+        headline: "Battery and door-handle recalls; confirm the repairs were done on this car",
         body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine, an unrepaired one is materially worse until fixed.",
         severity: "trap",
       },
@@ -325,7 +325,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
         severity: "warning",
       },
       {
-        headline: "HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with an 80% charge cap until fixed, plus a door-handle recall (24V-651) — confirm the repairs on this car",
+        headline: "Battery and door-handle recalls; confirm the repairs were done on this car",
         body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine, an unrepaired one is materially worse until fixed.",
         severity: "trap",
       },
@@ -364,7 +364,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
         severity: "warning",
       },
       {
-        headline: "HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with an 80% charge cap until fixed, plus a door-handle recall (24V-651) — confirm the repairs on this car",
+        headline: "Battery and door-handle recalls; confirm the repairs were done on this car",
         body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine, an unrepaired one is materially worse until fixed.",
         severity: "trap",
       },
@@ -403,7 +403,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
         severity: "warning",
       },
       {
-        headline: "HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with an 80% charge cap until fixed, plus a door-handle recall (24V-651) — confirm the repairs on this car",
+        headline: "Battery and door-handle recalls; confirm the repairs were done on this car",
         body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine, an unrepaired one is materially worse until fixed.",
         severity: "trap",
       },
@@ -442,7 +442,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
         severity: "warning",
       },
       {
-        headline: "HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with an 80% charge cap until fixed, plus a door-handle recall (24V-651) — confirm the repairs on this car",
+        headline: "Battery and door-handle recalls; confirm the repairs were done on this car",
         body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine, an unrepaired one is materially worse until fixed.",
         severity: "trap",
       },
@@ -481,7 +481,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
         severity: "warning",
       },
       {
-        headline: "HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with an 80% charge cap until fixed, plus a door-handle recall (24V-651) — confirm the repairs on this car",
+        headline: "Battery and door-handle recalls; confirm the repairs were done on this car",
         body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine, an unrepaired one is materially worse until fixed.",
         severity: "trap",
       },
@@ -1466,7 +1466,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
         severity: "info",
       },
       {
-        headline: "Battery-module recalls \u2014 check campaign status",
+        headline: "Battery-module recall; confirm the fix was done on this car",
         body: "22V-541 (2022) and 25V-470 (2022\u201325): defective cell modules, remedy includes module or full-pack replacement on affected VINs.",
         severity: "warning",
       },
@@ -1504,7 +1504,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
         severity: "info",
       },
       {
-        headline: "Battery-module recalls \u2014 check campaign status",
+        headline: "Battery-module recall; confirm the fix was done on this car",
         body: "22V-541 (2022) and 25V-470 (2022\u201325): defective cell modules, remedy includes module or full-pack replacement on affected VINs.",
         severity: "warning",
       },
@@ -1543,7 +1543,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
         severity: "info",
       },
       {
-        headline: "Battery-module recalls \u2014 check campaign status",
+        headline: "Battery-module recall; confirm the fix was done on this car",
         body: "22V-541 (2022) and 25V-470 (2022\u201325): defective cell modules, remedy includes module or full-pack replacement on affected VINs.",
         severity: "warning",
       },
@@ -1580,7 +1580,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
         severity: "info",
       },
       {
-        headline: "Battery-module recalls \u2014 check campaign status",
+        headline: "Battery-module recall; confirm the fix was done on this car",
         body: "22V-541 (2022) and 25V-470 (2022\u201325): defective cell modules, remedy includes module or full-pack replacement on affected VINs.",
         severity: "warning",
       },
@@ -1782,7 +1782,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     },
     buyerNotes: [
       {
-        headline: "Battery recall dominates this car — 2019s were bought back by Jaguar (H536); 2020–21s (26V-067) run a 90% charge cap with no final fix yet",
+        headline: "Battery recall defines this car; confirm whether it was bought back or is charge-capped",
         body: "Verified from Jaguar's NHTSA filings: for MY2019 cars the final remedy is a REPURCHASE, Jaguar buys the car back (recall H536), so a 2019 on a lot may be a car Jaguar offered to buy. MY2020–21 cars (26V-067) run a 90% charge cap with the final fix still ‘under development’ as of Feb 2026. Jaguar ended I-PACE production in 2024.",
         severity: "trap",
       },
