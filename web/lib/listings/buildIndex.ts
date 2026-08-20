@@ -74,9 +74,15 @@ export async function buildCardIndex(): Promise<CardRow[]> {
     const vsSold = l.buybackDisclosed || cohortIdentityMixed(asks, l.vin, l.year, packIdentity(e))
       ? undefined
       : askVsSold(comps, l.vin, l.year, l.mileage, l.priceUsd, real);
-    // Only where the transaction model is silent. Two price claims on one card
-    // would invite reading them as corroboration; they aren't the same thing.
-    const vsMarket = vsSold || l.buybackDisclosed
+    // 2026-08-20 (docs/agents/pricing-model-2026-08-20.md): askVsMarket now
+    // computes whenever it can, not only where vsSold above is silent. The
+    // single-state (WA) sold model reaches 4.7% of listings and measured
+    // 7-35% high outside the Northwest, so its delta is withheld from every
+    // display surface until a second regional dataset can validate an
+    // offset — vsSold is still computed for slopeFromSales (askVsMarket's
+    // mileage adjustment borrows its fitted usd_per_mile) and stays the
+    // internal signal the "Recently sold" panel's raw rows already are.
+    const vsMarket = l.buybackDisclosed
       ? undefined
       : askVsMarket(asks, comps, l.vin, l.year, l.mileage, l.priceUsd, real, trimKeys.get(l.vin), packIdentity(e));
     rows.push({

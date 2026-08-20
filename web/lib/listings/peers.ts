@@ -72,11 +72,13 @@ export async function listingPriceSignals(l: Listing): Promise<PriceSignals> {
   const vsSold = cohortIdentityMixed(asks, l.vin, l.year, identity)
     ? undefined
     : askVsSold(comps, l.vin, l.year, l.mileage, l.priceUsd, real);
-  // Only where the transaction model is silent, exactly as on the card: two
-  // price claims on one surface invite reading them as corroboration.
-  const vsMarket = vsSold
-    ? undefined
-    : askVsMarket(asks, comps, l.vin, l.year, l.mileage, l.priceUsd, real, trimKey, identity);
+  // 2026-08-20 (docs/agents/pricing-model-2026-08-20.md): askVsMarket now
+  // computes whenever it can, exactly as on the card, rather than only
+  // where vsSold above is silent — see the matching comment in
+  // buildIndex.ts for the reasoning. vsSold is still computed and still
+  // returned below for RecentSales' internal use (slopeFromSales), it just
+  // no longer gates or renders as its own claim anywhere.
+  const vsMarket = askVsMarket(asks, comps, l.vin, l.year, l.mileage, l.priceUsd, real, trimKey, identity);
 
   const peerAsks = members
     .filter((m) => m.vin !== l.vin && hasRealPrice(m) && m.mileage != null && m.mileage > 0)

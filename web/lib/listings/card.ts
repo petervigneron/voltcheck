@@ -74,13 +74,21 @@ export interface CardRow {
    * Ask minus what this variant actually sells for (lib/listings/comps.ts).
    * Positive = asking above transaction prices. Only set when the gap clears
    * its cohort's own error bar, so any value here is already meaningful.
+   *
+   * 2026-08-20 (docs/agents/pricing-model-2026-08-20.md): computed and kept
+   * on the row — askVsMarket's slopeFromSales still borrows the fitted
+   * usd_per_mile behind this — but no surface renders it. The single-state
+   * (WA) sold model reaches 4.7% of listings and measured 7-35% high outside
+   * the Northwest, so the claim is withheld until a second regional dataset
+   * validates an offset. Kept in the feed shape rather than dropped so
+   * nothing else reading this payload silently loses the field.
    */
   askVsSold?: number;
   /**
    * Ask minus the mileage-adjusted median of the same variant listed RIGHT NOW
-   * (lib/listings/comps.ts). A weaker signal than askVsSold and never a
-   * substitute for it — asks aren't transactions — so surfaces show it only
-   * where askVsSold is silent, which is most of the site.
+   * (lib/listings/comps.ts). Since 2026-08-20 this is the only comparison
+   * tile any surface renders, computed wherever it can be rather than only
+   * where askVsSold is silent (see that field's comment).
    */
   askVsMarket?: { deltaUsd: number; peerN: number; trimMatched: boolean };
   tiles: CardTile[];

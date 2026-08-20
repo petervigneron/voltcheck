@@ -139,11 +139,14 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
   // name we could not place in NHTSA's own vocabulary.
   const battery = await batteryRisk(listing.make, listing.model, listing.year);
   // Both price signals, decided by the same gates as the browse grid
-  // (lib/listings/peers.ts): the sold-side fit against Washington title
-  // records, and — only where that is silent — the ask-side comparison
-  // against the same cohort listed right now. Whatever claim the card made
-  // to earn the click, this page repeats and can defend; a claim that
-  // vanishes here reads as retracted.
+  // (lib/listings/peers.ts). vsSold (the Washington-title-fit) is computed
+  // but, since 2026-08-20 (docs/agents/pricing-model-2026-08-20.md), never
+  // rendered as its own claim — see the comment at ListingCard.tsx's
+  // askVsMarket tile for why. vsMarket, the ask-side comparison against the
+  // same cohort listed right now, is this page's only price-comparison tile,
+  // matching the card. Whatever claim the card made to earn the click, this
+  // page repeats and can defend; a claim that vanishes here reads as
+  // retracted.
   const { vsSold, vsMarket, peerAsks } = await listingPriceSignals(listing);
   const marketTile = vsMarket ? askVsMarketTile(vsMarket) : undefined;
   // The price-vs-mileage picture, only when this car itself can be plotted —

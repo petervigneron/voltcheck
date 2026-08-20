@@ -104,12 +104,13 @@ export function RecentSales({
         Recently sold
       </h2>
 
-      {vsSold && (
-        <p className="mt-2 border-l-4 border-emerald-500 pl-3 text-sm font-semibold">
-          ${Math.abs(vsSold.deltaUsd).toLocaleString()} {vsSold.deltaUsd < 0 ? "below" : "above"} recently
-          sold comparable models
-        </p>
-      )}
+      {/* 2026-08-20 (docs/agents/pricing-model-2026-08-20.md): this panel no
+          longer restates vsSold as a claim — the single-state (WA) sold
+          model reached 4.7% of listings and measured 7-35% high outside the
+          Northwest, so it's withheld from every display surface until a
+          second regional dataset validates an offset. vsSold is still
+          passed in and still computed (comps.ts); the raw rows below are
+          the honest version of this panel's job — facts, no verdict. */}
 
       {scatter}
 

@@ -93,26 +93,20 @@ export function ListingCard({
       w: true,
     });
   }
-  // Asking price against what this exact variant actually sells for. Under
-  // is the find, so it reads as a kit tile; over is a plain miss. The tile
-  // only exists when the gap already cleared its cohort's error bar.
-  if (r.askVsSold != null) {
-    const under = r.askVsSold < 0;
-    const amount = `$${Math.abs(r.askVsSold).toLocaleString()}`;
-    // "Paid" is the load-bearing word: it can only mean completed sales, so
-    // the tile carries the ask-vs-sold distinction without a glossary. Its
-    // sibling below says "listings" for the same reason from the other side.
-    lead.push({
-      k: under ? ("kit" as TileKind) : ("miss" as TileKind),
-      t: `${amount} ${under ? "below" : "above"} what others paid`,
-      ti: `Asks ${amount} ${under ? "less" : "more"} than others paid for this version at similar mileage, from Washington State title records (data.wa.gov, ODbL)`,
-    });
-  }
-  // Where no transaction model reaches — most of the site — the other listings
-  // of the same variant are still a real comparison. Wording lives in
-  // askVsMarketTile so this card and the listing page can never drift apart.
-  // Never shown alongside the sold tile.
-  else if (r.askVsMarket != null) {
+  // 2026-08-20 (docs/agents/pricing-model-2026-08-20.md): the "$X below/above
+  // what others paid" tile (r.askVsSold, fitted on Washington title records
+  // alone) no longer renders here. That single-state model reached only 4.7%
+  // of listings and, checked against California sale data on matched
+  // cohorts, read 7-35% high outside the Northwest — a confident-looking
+  // teal claim standing on less than its own visual treatment implied.
+  // It stays withheld until a second regional dataset can validate an
+  // offset (see the memo's migration path). The computation is untouched:
+  // askVsMarket below still borrows its fitted usd_per_mile for the mileage
+  // slope, and it keeps powering the "Recently sold" panel's raw rows on the
+  // listing page. The other listings of the same variant are, for now, the
+  // one comparison this card makes. Wording lives in askVsMarketTile so this
+  // card and the listing page can never drift apart.
+  if (r.askVsMarket != null) {
     lead.push(askVsMarketTile(r.askVsMarket));
   }
   const tiles: CardTile[] = lead.length ? [...lead, ...r.tiles.slice(0, Math.max(0, 5 - lead.length))] : r.tiles;
