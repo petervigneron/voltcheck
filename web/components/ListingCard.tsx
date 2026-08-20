@@ -149,11 +149,7 @@ export function ListingCard({
         ) : (
           <div
             className="text-[22px] leading-none font-extrabold tracking-[-0.02em]"
-            title={
-              r.priceUsd
-                ? `The dealer's feed listed $${r.priceUsd.toLocaleString()}, which is not a plausible price for this car; see the dealer's own page`
-                : `Voltcheck couldn't confirm this car's advertised price from the dealer's feed; see the dealer's own page`
-            }
+            title="Voltcheck couldn't confirm this car's advertised price from the dealer's feed; see the dealer's own page"
           >
             See dealer for price
           </div>

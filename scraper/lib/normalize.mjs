@@ -10,8 +10,47 @@ const text = (v) => {
 const num = (v) => {
   const s = text(v);
   if (!s) return undefined;
+  // Keep the sign: a dealer landing page can emit the "you save $5,500"
+  // incentive in the price slot as a negative Offer.price ("-5500", seen on
+  // pricefordofsimivalley.com's Mach-E JSON-LD, 2026-08-20). Digit-stripping
+  // the minus turned that discount into a $5,500 asking price. A negative or
+  // zero price is not an asking price — drop it.
+  const neg = /^\s*-/.test(s);
   const n = Number(s.replace(/[^0-9.]/g, ""));
-  return Number.isFinite(n) && n > 0 ? n : undefined;
+  return Number.isFinite(n) && n > 0 && !neg ? n : undefined;
+};
+
+// One schema.org Vehicle increasingly carries several offers — a cash/sale
+// price and a lease or subscription payment beside it. The payment offers are
+// labelled: a GoodRelations businessFunction of LeaseOut/Rent (anything but
+// Sell), a paymentFrequency (MONTH, WEEK…), or a price that lives inside a
+// UnitPriceSpecification billed per period. Reading offers[0] blindly took a
+// "$1,990/mo" Model X lease (motorenvy.com) and a "$5,399/mo" Rolls lease
+// (ogaracoach.com) as the asking price. The asking price comes only from a
+// sale offer; a payment offer never supplies it.
+const isLeaseOffer = (o) => {
+  if (!o || typeof o !== "object") return false;
+  if (o.paymentFrequency != null) return true;
+  const bf = (Array.isArray(o.businessFunction) ? o.businessFunction : [o.businessFunction])
+    .map((x) => text(x)?.toLowerCase())
+    .filter(Boolean);
+  if (bf.some((x) => /lease|rent/.test(x))) return true;
+  // A businessFunction that is present but names no sell/sale function is not
+  // a cash price either (GoodRelations Sell = .../v1#Sell).
+  if (bf.length && !bf.some((x) => /sell|sale/.test(x))) return true;
+  const specs = Array.isArray(o.priceSpecification)
+    ? o.priceSpecification
+    : o.priceSpecification
+      ? [o.priceSpecification]
+      : [];
+  return specs.some(
+    (s) =>
+      s &&
+      (s.unitCode != null ||
+        s.billingIncrement != null ||
+        s.billingDuration != null ||
+        s.referenceQuantity != null),
+  );
 };
 
 // vehicleModelDate is nominally a model year but some dealer platforms emit a
@@ -37,7 +76,14 @@ const driveLine = (v) => {
 };
 
 export function normalize(vehicle, { sourceUrl, dealerDomain }) {
-  const offer = Array.isArray(vehicle.offers) ? vehicle.offers[0] : vehicle.offers;
+  const offers = (Array.isArray(vehicle.offers) ? vehicle.offers : [vehicle.offers]).filter(Boolean);
+  // The asking price comes only from a sale offer with a real positive price;
+  // a lease/subscription/discount offer never supplies it. Everything else on
+  // the offer (seller, url, stock) reads from the priced sale offer when there
+  // is one, else the best available offer for metadata only.
+  const saleOffers = offers.filter((o) => !isLeaseOffer(o));
+  const pricedOffer = saleOffers.find((o) => num(o.price) != null);
+  const offer = pricedOffer ?? saleOffers[0] ?? offers[0];
   const mileageObj = vehicle.mileageFromOdometer;
   // Dealer identity/location from the offer's seller block (AutoDealer with a
   // PostalAddress). Only trusted when structured — a bare string address could
@@ -61,7 +107,7 @@ export function normalize(vehicle, { sourceUrl, dealerDomain }) {
     model: text(vehicle.model),
     trim: text(vehicle.vehicleConfiguration ?? vehicle.trim),
     name: text(vehicle.name),
-    priceUsd: num(offer?.price),
+    priceUsd: num(pricedOffer?.price),
     mileage: num(mileageObj?.value ?? mileageObj),
     exteriorColor: text(vehicle.color),
     interiorColor: text(vehicle.vehicleInteriorColor),
