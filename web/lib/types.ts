@@ -103,6 +103,15 @@ export interface EnrichmentRow {
     // vs the model-level "standard"/"optional"/"none".
     dcFastCharging?: Fact<"standard" | "optional" | "none" | "fitted" | "not_fitted">;
     architectureV?: Fact<400 | 800>;
+    // Max AC (Level 2) acceptance rate — separate from dcPeakKw, and the
+    // number that actually sets home/public L2 charge time. Named in
+    // docs/ENRICHMENT-SCHEMA.md as ac_onboard_kw; never implemented until now.
+    acOnboardKw?: Fact<number>;
+    // Whether the car can authenticate and bill a DC session with no app/card
+    // (ISO 15118). Often an owner entitlement rather than a fixed hardware
+    // fact (e.g. tied to a bundled charging plan) — the row's note should say
+    // so when it is. Named in docs/ENRICHMENT-SCHEMA.md as plug_and_charge.
+    plugAndCharge?: Fact<boolean>;
   };
   thermal?: {
     heatPump?: Fact<HeatPump>;
@@ -110,6 +119,17 @@ export interface EnrichmentRow {
     // trim name → resolved status (e.g. EV6: GT standard, Light unavailable).
     heatPumpByTrim?: Record<string, HeatPump>;
     batteryPreconditioning?: Fact<boolean>;
+  };
+  // Facts about the vehicle as a physical object, not its EV systems —
+  // currently just tow rating, added for the ID. Buzz, but not really an
+  // EV-specific fact, hence its own group rather than living under battery
+  // or charging.
+  specs?: {
+    // The maximum (braked) tow rating a maker publishes; note text should
+    // state the unbraked figure too where one exists, since the two numbers
+    // are usually printed side by side and a shopper towing anything needs
+    // both.
+    towRatingLb?: Fact<number>;
   };
   warranty?: {
     batteryYears?: Fact<number>;

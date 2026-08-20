@@ -79,6 +79,16 @@ export function EnrichmentFacts({
             fact={row.thermal?.heatPump}
             format={(v) => HEAT_PUMP_LABEL[v as HeatPump]}
           />
+
+          {/* Thin field (one model so far) — silent when absent rather than
+              one more "Unknown" row on every other car. See gaps 1/2 note
+              on architectureV/chargeTime1080Min above. */}
+          {row.specs?.towRatingLb && (
+            <>
+              <h3 className="mt-5 text-xs font-semibold text-zinc-400">Towing</h3>
+              <FactRow label="Tow rating" fact={row.specs.towRatingLb} format={(v) => `${(v as number).toLocaleString()} lb braked`} />
+            </>
+          )}
         </div>
         <div>
           <h3 className="mt-2 text-xs font-semibold text-zinc-400">Charging</h3>
@@ -107,6 +117,12 @@ export function EnrichmentFacts({
               fact={row.charging.chargeTime1080Min}
               format={(v) => `${v} min`}
             />
+          )}
+          {row.charging?.acOnboardKw && (
+            <FactRow label="AC onboard charger" fact={row.charging.acOnboardKw} format={(v) => `${v} kW`} />
+          )}
+          {row.charging?.plugAndCharge && (
+            <FactRow label="Plug & Charge" fact={row.charging.plugAndCharge} format={(v) => (v ? "Yes" : "No")} />
           )}
           <FactRow label="Port" fact={row.charging?.portStandard} />
           <FactRow
