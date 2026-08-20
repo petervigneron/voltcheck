@@ -94427,8 +94427,8 @@
       "kind": "rooftop",
       "platform": "unknown",
       "robots": "unknown",
-      "status": "working",
-      "notes": "FL license roll (FLHSMV, lic VI independent), email-domain signal — browser-context crawl of the published dealer lists 2026-08-16 | auto-promoted by probe 2026-08-17: 1 VIN vehicles on 1 page(s), platform unknown",
+      "status": "excluded-subscription",
+      "notes": "EXCLUDED 2026-08-20: a car-subscription service, not a dealer selling cars — every VDP lists a monthly LeaseOut offer beside a Sell offer whose price is a notional buyout ($1,990/mo vs $102,999 on a 2019 Model X), both availability=OutOfStock, so nothing is actually for sale. Owner: no subscription services on the site. status != 'working' keeps it out of the nightly crawl (nightly.yml + nightly.sh filter on 'working'); the normalize subscription guard is the backstop if a probe ever re-promotes it. | FL license roll (FLHSMV, lic VI independent), email-domain signal — browser-context crawl of the published dealer lists 2026-08-16 | auto-promoted by probe 2026-08-17: 1 VIN vehicles on 1 page(s), platform unknown",
       "location": {
         "city": "FORT LAUDERDALE",
         "state": "FL",

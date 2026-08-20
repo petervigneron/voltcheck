@@ -52,6 +52,37 @@ test("a lease-only vehicle yields no price rather than the payment", () => {
   assert.equal(price(v), undefined);
 });
 
+test("a subscription service's out-of-stock buyout beside a lease is not a price", () => {
+  // motorenvy.com Model X: a $1,990/mo LeaseOut and a $102,999 Sell, BOTH
+  // OutOfStock — the car can't be bought, so no asking price.
+  const v = {
+    vehicleIdentificationNumber: "V",
+    offers: [
+      { "@type": "Offer", price: "1990", availability: "OutOfStock", businessFunction: "LeaseOut", paymentFrequency: "MONTH" },
+      { "@type": "Offer", price: "102999", availability: "OutOfStock", businessFunction: "Sell" },
+    ],
+  };
+  assert.equal(price(v), undefined);
+});
+
+test("an out-of-stock sale offer with NO lease beside it is left alone", () => {
+  // A plain dealer that marks a sold/pending car OutOfStock, or omits
+  // availability, keeps its price — the subscription guard needs a lease too.
+  assert.equal(price({ vehicleIdentificationNumber: "V", offers: { "@type": "Offer", price: "42000", availability: "OutOfStock" } }), 42000);
+  assert.equal(price({ vehicleIdentificationNumber: "V", offers: { "@type": "Offer", price: "42000" } }), 42000);
+});
+
+test("a lease beside an IN-STOCK sale offer keeps the sale price", () => {
+  const v = {
+    vehicleIdentificationNumber: "V",
+    offers: [
+      { "@type": "Offer", price: "399", businessFunction: "LeaseOut", paymentFrequency: "MONTH" },
+      { "@type": "Offer", price: "38000", availability: "https://schema.org/InStock", businessFunction: "Sell" },
+    ],
+  };
+  assert.equal(price(v), 38000);
+});
+
 test("an explicit Sale businessFunction is honored", () => {
   assert.equal(
     price({

@@ -53,6 +53,19 @@ const isLeaseOffer = (o) => {
   );
 };
 
+// A car-subscription service (motorenvy.com) isn't a dealer selling cars: it
+// lists a monthly LeaseOut offer beside a Sell offer whose price is a notional
+// buyout ($102,999 on a 2019 Model X), and BOTH are availability=OutOfStock —
+// the car can't actually be bought. We only want cars that are for sale, so a
+// sale offer counts only when it's available. Scoped to vehicles that also
+// carry a lease offer, so a plain dealer that leaves availability off a
+// for-sale car (or marks a genuinely sold one OutOfStock) is untouched.
+const OUT_OF_STOCK = /outofstock|soldout|discontinued/;
+const isAvailable = (o) => {
+  const a = text(o?.availability)?.toLowerCase();
+  return !a || !OUT_OF_STOCK.test(a);
+};
+
 // vehicleModelDate is nominally a model year but some dealer platforms emit a
 // full date ("2025-01-01"); digit-stripping that yields 20250101, which
 // overflows the DB's smallint year column. Take the leading 4-digit year and
@@ -80,8 +93,11 @@ export function normalize(vehicle, { sourceUrl, dealerDomain }) {
   // The asking price comes only from a sale offer with a real positive price;
   // a lease/subscription/discount offer never supplies it. Everything else on
   // the offer (seller, url, stock) reads from the priced sale offer when there
-  // is one, else the best available offer for metadata only.
-  const saleOffers = offers.filter((o) => !isLeaseOffer(o));
+  // is one, else the best available offer for metadata only. When a lease offer
+  // is present, the sale offer must also be available for purchase — a
+  // subscription service's out-of-stock buyout price is not an asking price.
+  const leased = offers.some(isLeaseOffer);
+  const saleOffers = offers.filter((o) => !isLeaseOffer(o) && (!leased || isAvailable(o)));
   const pricedOffer = saleOffers.find((o) => num(o.price) != null);
   const offer = pricedOffer ?? saleOffers[0] ?? offers[0];
   const mileageObj = vehicle.mileageFromOdometer;
