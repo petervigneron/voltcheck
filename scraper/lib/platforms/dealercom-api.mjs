@@ -39,6 +39,7 @@
 // the resolver returns an identical number to the pre-API path, including its
 // abstain-to-0 behaviour, with no VDP fetch.
 import { politePostJson } from "../http.mjs";
+import { stabilizeImages } from "../images.mjs";
 
 const API_VIN_RE = /^[A-HJ-NPR-Z0-9]{17}$/;
 
@@ -104,9 +105,12 @@ export function mapRecord(r, accounts, origin) {
   // here decides EV-ness — classifyEv does, downstream.
   const fuel = r.fuelType || tracking.get("normalFuelType") || undefined;
   const isNew = String(r.condition ?? "").toLowerCase() === "new";
-  const images = (Array.isArray(r.images) ? r.images : [])
-    .map((i) => (typeof i?.uri === "string" ? i.uri : undefined))
-    .filter(Boolean);
+  // Every image in the record's own images[] list — not just the hero. URLs
+  // observed live carry no query string (content-hashed CDN path), but
+  // stabilizeImages() strips one defensively; see scraper/lib/images.mjs.
+  const images = stabilizeImages(
+    (Array.isArray(r.images) ? r.images : []).map((i) => (typeof i?.uri === "string" ? i.uri : undefined)).filter(Boolean),
+  );
 
   let vdpUrl = origin;
   if (typeof r.link === "string" && r.link) {

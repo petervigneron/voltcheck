@@ -27,6 +27,7 @@
 // ways, 2026-08-19). VehicleInternetPrice is 0 on these records and TaggingPrice
 // is the MSRP, so neither is the number a shopper reads; the price library is.
 import { fetchPage, politeGetJson } from "../http.mjs";
+import { stabilizeImages } from "../images.mjs";
 
 const API_VIN_RE = /^[A-HJ-NPR-Z0-9]{17}$/;
 
@@ -136,15 +137,21 @@ export function vehicleNode(vc, origin) {
   const photos = Array.isArray(vc.VehicleImageModel?.VehicleImageCarouselModel?.PhotoList)
     ? vc.VehicleImageModel.VehicleImageCarouselModel.PhotoList
     : [];
-  const images = photos
-    .map((p) => {
-      try {
-        return new URL(p, origin).toString();
-      } catch {
-        return null;
-      }
-    })
-    .filter(Boolean);
+  // Every photo in the carousel's own PhotoList — not just the hero. URLs
+  // observed live carry no query string (root-relative, filename-indexed
+  // paths), but stabilizeImages() strips one defensively; see
+  // scraper/lib/images.mjs.
+  const images = stabilizeImages(
+    photos
+      .map((p) => {
+        try {
+          return new URL(p, origin).toString();
+        } catch {
+          return null;
+        }
+      })
+      .filter(Boolean),
+  );
 
   let vdpUrl = origin;
   const rawUrl = vc.VehicleDetailUrl || vc.VehicleImageModel?.VehicleDetailUrl;

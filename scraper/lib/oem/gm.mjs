@@ -21,6 +21,7 @@
 //   - one zip + radius 3000 converges on the national count, so a single
 //     fixed center covers the country (66952 ≈ geographic center of the US)
 import { politePostJson } from "../http.mjs";
+import { stabilizeImages } from "../images.mjs";
 
 export const GM_BRANDS = [
   { key: "chevrolet", host: "www.chevrolet.com", prefix: "chevrolet", programId: "CHEVROLET", domain: "chevrolet.com", make: "Chevrolet", minExpected: 2000 },
@@ -263,8 +264,17 @@ function toCarBravoRecord(hit) {
   const priceUsd = num(cash.baseDealerFeaturedPrice?.value) ?? num(cash.netPrice?.value) ?? num(cash.dealerFeaturedPrice?.value);
   const zipRaw = String(hit.dealer?.postalCode ?? "");
   const zip = /^\d{5}/.test(zipRaw) ? zipRaw.slice(0, 5) : undefined;
-  // CarBravo photos are real used-car images on gcb.evs.onl (https already).
-  const img = hit.images?.[0]?.url && String(hit.images[0].url).startsWith("http") ? hit.images[0].url : undefined;
+  // CarBravo photos are real used-car images on gcb.evs.onl (https already) —
+  // hit.images is the whole gallery, not just a hero shot, so carry every
+  // https entry rather than truncating to [0]. stabilizeImages() strips any
+  // volatile query string defensively (not live-verified for URL stability
+  // this session; design doc, 2026-08-20).
+  const imgs = stabilizeImages(
+    (Array.isArray(hit.images) ? hit.images : [])
+      .map((i) => (typeof i?.url === "string" && i.url.startsWith("http") ? i.url : undefined))
+      .filter(Boolean),
+  );
+  const img = imgs[0];
   const make = hit.make ?? "Chevrolet";
   // Every car CarBravo sells is CARBRAVO_CERTIFIED today (including non-GM
   // trade-ins it inspects and certifies), but read the field rather than
@@ -287,7 +297,7 @@ function toCarBravoRecord(hit) {
     certified: certified || undefined,
     condition: certified ? "certified" : "used",
     imageUrl: img,
-    images: img ? [img] : [],
+    images: imgs,
     // CarBravo VDPs carry their VIN in the query string (stripped from the
     // deep-link here); a make/model search near the dealer reliably lands the
     // shopper on the car among a short list.

@@ -29,6 +29,7 @@
 // mislabelled plug-in being filtered out at the source.
 
 import { politeGetJson } from "../http.mjs";
+import { stabilizeImages } from "../images.mjs";
 
 // Page-level fingerprint. `typesenseSearchAdapter` is the vendor's search
 // client init and appears on every page it serves; the `dealervenom` brand
@@ -79,7 +80,10 @@ function vehicleNode(d, origin) {
   const itemCondition = cond === "used" || cond === "new" ? cond : undefined;
 
   const mileage = Number(d.mileage);
-  const images = Array.isArray(d.imageUrls) ? d.imageUrls.filter((u) => typeof u === "string" && u) : [];
+  // Not live-verified for URL stability this session (design doc,
+  // 2026-08-20) — stabilizeImages() strips any volatile query string
+  // defensively before this rides the payload-equality guard in 0025.
+  const images = stabilizeImages(Array.isArray(d.imageUrls) ? d.imageUrls.filter((u) => typeof u === "string" && u) : []);
   const dealer = d.dealer && typeof d.dealer === "object" ? d.dealer : null;
 
   let url = origin;

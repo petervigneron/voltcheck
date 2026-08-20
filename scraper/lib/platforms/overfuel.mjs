@@ -19,6 +19,7 @@
 // (reads ListItem.url) can't see — so we parse it here and jump rel=next.
 import { extractNodes } from "../jsonld.mjs";
 import { politeGetJson } from "../http.mjs";
+import { stabilizeImages } from "../images.mjs";
 
 const ASSET_RE = /(?:static|api|www)\.overfuel\.com/i;
 
@@ -62,11 +63,16 @@ function apiVehicleNode(r, origin) {
   const cond = String(r.condition ?? "").toLowerCase();
   const itemCondition = /new/.test(cond) ? "new" : "used";
 
-  const images = Array.isArray(r.photos)
-    ? r.photos.filter((u) => typeof u === "string" && u)
-    : typeof r.featuredphoto === "string" && r.featuredphoto
-      ? [r.featuredphoto]
-      : [];
+  // Not live-verified for URL stability this session (design doc,
+  // 2026-08-20) — stabilizeImages() strips any volatile query string
+  // defensively before this rides the payload-equality guard in 0025.
+  const images = stabilizeImages(
+    Array.isArray(r.photos)
+      ? r.photos.filter((u) => typeof u === "string" && u)
+      : typeof r.featuredphoto === "string" && r.featuredphoto
+        ? [r.featuredphoto]
+        : [],
+  );
 
   let url = origin;
   if (typeof r.url === "string" && r.url) {
