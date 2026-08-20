@@ -38,9 +38,14 @@ const numOrU = (v) => {
 };
 
 // The <script id="dealeron_tagging_data"> JSON, present on every DealerOn SRP.
-// Returns {dealerId, pageId} only for a search results page (pageType
-// "itemlist") — a VDP carries a different pageId that the SRP endpoint rejects,
-// so gating on itemlist keeps a VDP from seeding a junk pull.
+// Returns {dealerId, pageId} only for a search results page — pageType is
+// usually "itemlist", but some rooftops (BMW of Spokane, diagnosed 2026-08-20:
+// docs/agents/coverage-audit-2026-08-20.md) tag their SRP "custom" instead
+// while still carrying a real dealerId/pageId pair. A VDP or an unrelated CMS
+// page carries no such pair (or a pageId the SRP endpoint rejects), so the
+// dealerId/pageId check — not the pageType label — is what keeps a non-SRP
+// page from seeding a junk pull; "custom" alone, without both ids, still
+// returns null.
 export function dealerOnTagging(html) {
   if (typeof html !== "string") return null;
   const m = html.match(/id="dealeron_tagging_data"[^>]*>\s*(\{[\s\S]*?\})\s*</);
@@ -51,7 +56,8 @@ export function dealerOnTagging(html) {
   } catch {
     return null;
   }
-  if (String(data.pageType).toLowerCase() !== "itemlist") return null;
+  const pageType = String(data.pageType).toLowerCase();
+  if (pageType !== "itemlist" && pageType !== "custom") return null;
   const dealerId = String(data.dealerId ?? "").match(/^\d{2,9}$/)?.[0];
   const pageId = String(data.pageId ?? "").match(/^\d{2,12}$/)?.[0];
   if (!dealerId || !pageId) return null;
@@ -64,21 +70,43 @@ export function isDealerOnApi(html) {
   return typeof html === "string" && /vhcliaa/.test(html) && /dealeron_tagging_data/.test(html);
 }
 
+// The origin actually reachable over TLS for a page that just answered —
+// bmwofspokane.com's bare apex resolves to DealerOn's shared Fastly IP and
+// presents its wildcard *.dealeron.com cert, which doesn't cover the apex
+// hostname at all (verified live 2026-08-20: TLS handshake fails outright,
+// curl: "no alternative certificate subject name matches"); www.<domain> has
+// its own valid cert. fetchPage silently recovers via its own apex/www retry,
+// so a page fetch's finalUrl already names a host that works — anchoring the
+// JSON API calls to it (instead of to crawl.mjs's guessed bare `origin`)
+// keeps politeGetJson, which has no such retry, from failing every call on a
+// rooftop like this one.
+function workingOrigin(url, fallback) {
+  try {
+    return new URL(url).origin;
+  } catch {
+    return fallback;
+  }
+}
+
 // The lots to pull for a rooftop: the SRP that revealed the config, plus its
 // sibling (used↔new) so both inventories are covered. The sibling's pageId is
 // read from its own search page — the only place it appears. Returns a deduped
-// list of {dealerId, pageId}; an unreachable sibling just yields the one lot.
+// list of {dealerId, pageId, origin}; an unreachable sibling just yields the
+// one lot. Each lot carries the origin its own page actually answered on, not
+// the bare crawl origin, per the TLS note above.
 export async function dealerOnLots(html, pageUrl, origin) {
   const here = dealerOnTagging(html);
   if (!here) return [];
-  const lots = [here];
+  const lots = [{ ...here, origin: workingOrigin(pageUrl, origin) }];
   const isNew = /searchnew/i.test(pageUrl);
   const siblingPath = isNew ? "/searchused.aspx" : "/searchnew.aspx";
   try {
     const sib = await fetchPage(origin + siblingPath);
     if (sib.status === 200 && sib.body) {
       const other = dealerOnTagging(sib.body);
-      if (other && other.pageId !== here.pageId) lots.push(other);
+      if (other && other.pageId !== here.pageId) {
+        lots.push({ ...other, origin: workingOrigin(sib.finalUrl, lots[0].origin) });
+      }
     }
   } catch {}
   return lots;
@@ -251,14 +279,16 @@ async function pullLot(dealerId, pageId, origin, referer) {
 // Pull every lot for a rooftop and merge. `complete` is true only when EVERY
 // lot completed AND at least one answered — a single failed lot taints the
 // crawl's completeness so db-sync won't delist behind a half-read rooftop.
+// `origin` is the fallback for a lot dealerOnLots couldn't attribute (should
+// not happen in practice, since every lot it returns carries its own).
 export async function pullDealerOnApi(lots, origin) {
-  const referer = `${origin}/searchused.aspx`;
   const vehicles = [];
   let found = 0;
   let anyOk = false;
   let allComplete = true;
   for (const lot of lots) {
-    const r = await pullLot(lot.dealerId, lot.pageId, origin, referer);
+    const lotOrigin = lot.origin || origin;
+    const r = await pullLot(lot.dealerId, lot.pageId, lotOrigin, `${lotOrigin}/searchused.aspx`);
     if (r.ok) anyOk = true;
     if (!r.complete) allComplete = false;
     vehicles.push(...r.vehicles);

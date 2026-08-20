@@ -61,6 +61,28 @@ test("dealerOnTagging returns null when the block is absent or malformed", () =>
   assert.equal(dealerOnTagging(`<script id="dealeron_tagging_data">{not json}</script>`), null);
 });
 
+// BMW of Spokane (diagnosed 2026-08-20): its SRP tags itself pageType:"custom"
+// instead of "itemlist" but still carries a real dealerId/pageId — the API
+// path should still engage rather than falling back to the slow HTML walk.
+test("dealerOnTagging accepts a custom-tagged SRP that carries real ids", () => {
+  const customSrp = `<script id="dealeron_tagging_data" type="application/json">{"dealerId":"25890","pageId":3160807,"pageType":"custom","items":["3GYK3EM50TS160759"]}</script>`;
+  assert.deepEqual(dealerOnTagging(customSrp), { dealerId: "25890", pageId: "3160807" });
+});
+
+test("dealerOnTagging still rejects a custom page missing dealerId or pageId", () => {
+  const noIds = `<script id="dealeron_tagging_data" type="application/json">{"pageType":"custom"}</script>`;
+  assert.equal(dealerOnTagging(noIds), null);
+  const noPageId = `<script id="dealeron_tagging_data" type="application/json">{"dealerId":"25890","pageType":"custom"}</script>`;
+  assert.equal(dealerOnTagging(noPageId), null);
+  const noDealerId = `<script id="dealeron_tagging_data" type="application/json">{"pageId":3160807,"pageType":"custom"}</script>`;
+  assert.equal(dealerOnTagging(noDealerId), null);
+});
+
+test("dealerOnTagging still rejects other non-SRP pageTypes even with ids present", () => {
+  const other = `<script id="dealeron_tagging_data" type="application/json">{"dealerId":"25890","pageId":3160807,"pageType":"home"}</script>`;
+  assert.equal(dealerOnTagging(other), null);
+});
+
 test("priceFromLibrary prefers the calc_INTERNET PRICE line", () => {
   // 54083 = selling 53998 + doc fee 85; the number the VDP JSON-LD published.
   assert.equal(priceFromLibrary(CARD.VehiclePriceLibrary), 54083);
