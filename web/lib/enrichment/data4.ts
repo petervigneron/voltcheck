@@ -639,6 +639,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
       superchargerAccess: f("native", "mfr"),
       dcFastCharging: f("standard", "mfr"),
       dcPeakKw: f(150, "mfr", "high", "“Peak charging speed of 150 kW+”, 10–80% in about 25 minutes", BOLT27_PRESS),
+      chargeTime1080Min: f(25, "mfr", "high", "GM's own press release, figure stated as approximate", BOLT27_PRESS),
     },
     thermal: {
       heatPump: f("standard", "mfr", "high", "“GM Energy Recovery (heat pump) for active cabin and battery heating and cooling”", BOLT27_PRESS),

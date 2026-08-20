@@ -72,9 +72,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           {/* The one promise the UI visibly keeps on every page: SourceBadge
               marks est/agg figures. The older, longer versions promised
               provenance chips (removed by design) and unknowability
-              handling — true, but footer prose; the owner trimmed it. */}
-          <div className="mx-auto max-w-[1400px] px-5 py-4 text-[11px] font-semibold tracking-[0.08em] uppercase sm:px-6">
-            Estimated figures are marked.
+              handling — true, but footer prose; the owner trimmed it. The
+              methodology link is the one place that longer explanation still
+              lives, one unobtrusive line down, not narrated here. */}
+          <div className="mx-auto flex max-w-[1400px] flex-wrap items-center gap-x-3 gap-y-1 px-5 py-4 text-[11px] font-semibold tracking-[0.08em] uppercase sm:px-6">
+            <span>Estimated figures are marked.</span>
+            <Link href="/methodology" className="underline decoration-paper/40 underline-offset-2 hover:text-paper hover:decoration-paper">
+              How we source this data
+            </Link>
           </div>
         </footer>
 

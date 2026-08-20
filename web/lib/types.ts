@@ -92,6 +92,13 @@ export interface EnrichmentRow {
     portStandard?: Fact<PortStandard>;
     superchargerAccess?: Fact<SuperchargerAccess>;
     dcPeakKw?: Fact<number>;
+    // Minutes for a 10%→80% state-of-charge DC session — a headline number
+    // makers publish about as often as EPA range, but it's only true under
+    // the condition the maker tested it at (usually the car's own peak rate,
+    // on a compatible high-power station); state that condition in the note
+    // the way dcPeakKw's own notes do, or this becomes exactly the
+    // context-free "18 minutes!" claim docs/ENRICHMENT-SCHEMA.md warns about.
+    chargeTime1080Min?: Fact<number>;
     // "fitted"/"not_fitted" are per-car resolutions (photo or window sticker),
     // vs the model-level "standard"/"optional"/"none".
     dcFastCharging?: Fact<"standard" | "optional" | "none" | "fitted" | "not_fitted">;

@@ -46,6 +46,20 @@ export function listingTiles(
   else if (e.port?.value === "CCS1") t.push({ kind: "spec", text: "CCS", title: e.port.note ?? undefined });
   else if (e.port?.value === "CHAdeMO") t.push({ kind: "flag", text: "CHAdeMO", title: e.port.note ?? "Aging fast-charge standard; new public CHAdeMO stations are rare" });
 
+  // The maker's own 10-80% DC figure, previously buried in dcPeakKw's tooltip
+  // note (see docs/agents/enrichment-gaps-2026-08-20.md) — condition (which
+  // charger, whose peak rate) rides in the title, same as dcPeakKw's own notes.
+  // Every row migrated so far is mfr-sourced; the "est" suffix is here so a
+  // future agg/tested row doesn't silently read as the maker's own claim.
+  if (e.chargeTime1080Min) {
+    const { value, source, note } = e.chargeTime1080Min;
+    t.push({
+      kind: "spec",
+      text: `${value} min 10–80%${source !== "mfr" ? " est" : ""}`,
+      title: note ?? undefined,
+    });
+  }
+
   if (l.campaignCheck?.packReplaced) {
     t.push({
       kind: "kit",

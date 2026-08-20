@@ -88,6 +88,26 @@ export function EnrichmentFacts({
             format={(v) => DCFC_LABEL[v as keyof typeof DCFC_LABEL] ?? String(v)}
           />
           <FactRow label="Peak DC rate" fact={row.charging?.dcPeakKw} format={(v) => `${v} kW`} />
+          {/* Both fields below are thin (20% and ~3% of the corpus today) —
+              unlike the rest of this grid, an absent value stays silent
+              instead of adding another "Unknown" row; the surface should
+              read as "no data yet" for a field most rows will never carry,
+              not as one more line to scan past. See
+              docs/agents/enrichment-gaps-2026-08-20.md gaps 1 and 2. */}
+          {row.charging?.architectureV && (
+            <FactRow
+              label="Pack architecture"
+              fact={row.charging.architectureV}
+              format={(v) => `${v}V`}
+            />
+          )}
+          {row.charging?.chargeTime1080Min && (
+            <FactRow
+              label="10–80% charge time"
+              fact={row.charging.chargeTime1080Min}
+              format={(v) => `${v} min`}
+            />
+          )}
           <FactRow label="Port" fact={row.charging?.portStandard} />
           <FactRow
             label="Supercharger access"

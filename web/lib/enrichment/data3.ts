@@ -372,6 +372,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     charging: {
       portStandard: f("NACS", "mfr", "high", "Toyota press release: “NACS charging port”, confirmed change from the outgoing bZ4X's CCS1-only port"),
       dcPeakKw: f(150, "agg", "medium", "Widely reported flat across the 2026 bZ lineup; Toyota's own release states only “10% to 80% in around 30 minutes,” no kW figure"),
+      chargeTime1080Min: f(30, "mfr", "medium", "Toyota's own release, stated as approximate"),
     },
     thermal: { heatPump: f("standard", "mfr", "high", "Toyota press release: “Heat pump system for both heating and air-conditioning” listed as standard") },
     warranty: {
@@ -405,6 +406,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     charging: {
       portStandard: f("NACS", "mfr", "high", "Toyota press release: “NACS charging port”, confirmed change from the outgoing bZ4X's CCS1-only port"),
       dcPeakKw: f(150, "agg", "medium", "Widely reported flat across the 2026 bZ lineup; Toyota's own release states only “10% to 80% in around 30 minutes,” no kW figure"),
+      chargeTime1080Min: f(30, "mfr", "medium", "Toyota's own release, stated as approximate"),
     },
     thermal: { heatPump: f("standard", "mfr", "high", "Toyota press release: “Heat pump system for both heating and air-conditioning” listed as standard") },
     warranty: {
@@ -438,6 +440,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     charging: {
       portStandard: f("NACS", "mfr", "high", "Toyota press release: “NACS charging port”, confirmed change from the outgoing bZ4X's CCS1-only port"),
       dcPeakKw: f(150, "agg", "medium", "Widely reported flat across the 2026 bZ lineup; Toyota's own release states only “10% to 80% in around 30 minutes,” no kW figure"),
+      chargeTime1080Min: f(30, "mfr", "medium", "Toyota's own release, stated as approximate"),
     },
     thermal: { heatPump: f("standard", "mfr", "high", "Toyota press release: “Heat pump system for both heating and air-conditioning” listed as standard") },
     warranty: {
@@ -471,6 +474,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     charging: {
       portStandard: f("NACS", "mfr", "high", "Toyota's bZ Woodland press release: “NACS charging port”; onboard AC charger 11 kW, ~7.0 hr Level 2 full charge"),
       dcPeakKw: f(150, "agg", "medium", "Widely reported flat across the 2026 bZ lineup; Toyota's own release states only “10% to 80% in around 30 minutes,” no kW figure"),
+      chargeTime1080Min: f(30, "mfr", "medium", "Toyota's own release, stated as approximate"),
     },
     thermal: { heatPump: f("standard", "agg", "medium", "A dealer page quoting Toyota's own spec sheet states heat pump standard; Toyota's own bZ Woodland press release itself doesn't mention it directly, one tier less direct than the base bZ's confirmation") },
     warranty: {
@@ -753,6 +757,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     charging: {
       portStandard: f("CCS1", "mfr", "high", "Mercedes-Benz USA spec page: CCS DC port / J1772 AC port"),
       dcPeakKw: f(170, "mfr", "high", "Mercedes-Benz USA spec page: 170 kW peak, 32 min 10–80%"),
+      chargeTime1080Min: f(32, "mfr", "high", "Mercedes-Benz USA spec page"),
     },
     thermal: { heatPump: f("standard", "mfr", "high", "Mercedes-Benz USA spec page lists “Innovative heat pump” as standard") },
     warranty: {
@@ -893,6 +898,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     charging: {
       portStandard: f("CCS1", "mfr", "high", "Mercedes-Benz USA spec page"),
       dcPeakKw: f(200, "mfr", "high", "Mercedes-Benz USA spec page: 200 kW peak, 31 min 10–80%"),
+      chargeTime1080Min: f(31, "mfr", "high", "Mercedes-Benz USA spec page"),
       architectureV: f(400, "agg", "medium", "Not stated explicitly on Mercedes-Benz USA's spec page; independently corroborated by two secondary sources and consistent with the 200 kW DC figure (500A × 400V CCS ceiling)"),
     },
     thermal: { heatPump: f("standard", "mfr", "high", "Mercedes-Benz USA spec page lists heat pump as standard") },

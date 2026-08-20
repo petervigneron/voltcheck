@@ -31,6 +31,7 @@ export interface EnrichedListing {
   packKwh?: { value: number; basis: "usable" | "total"; estimated: boolean; source: Source; note?: string };
   packVariant?: string;
   port?: Fact<PortStandard>;
+  chargeTime1080Min?: Fact<number>;
   heatPump: { status: "yes" | "no" | "verify"; detail: string } | null;
   fastCharge: { status: "yes" | "no" | "verify"; detail: string };
   batteryWarrantyTransfers?: Fact<boolean>;
@@ -351,6 +352,7 @@ export function enrichListing(l: Listing): EnrichedListing {
     packKwh: packSize(row),
     packVariant: row?.packVariant,
     port: agreed((r) => r.charging?.portStandard),
+    chargeTime1080Min: agreed((r) => r.charging?.chargeTime1080Min),
     heatPump,
     fastCharge,
     batteryWarrantyTransfers: row?.warranty?.batteryTransfers,
