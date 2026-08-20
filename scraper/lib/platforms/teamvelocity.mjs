@@ -6,11 +6,22 @@
 // carries the rooftop's ids inline (`var accountId = '71000'; var campaignId =
 // '7226';`), and
 //   GET websites.api.teamvelocityportal.com/tvm-services/inventory/vehicles
-//        ?AccountID=&CampaignId=&Type=Used&Limit=
+//        ?AccountID=&CampaignId=&Type=All&Limit=
 // answers a plain browser-UA GET (no auth, no token) with vin, year/make/model/
 // trim, miles, sellingPrice, the declared fuel, condition and the VDP url. It
 // also lives on the Team Velocity host, so it clears the Akamai wall that 403s
 // some dealer front-ends. See lib/platforms/overfuel.mjs for the same shape.
+//
+// Type=All, not Type=Used: the call was hard-coded to Type=Used, which made
+// every new-inventory car at every Team Velocity rooftop invisible — caught
+// 2026-08-20 on vwofoakland.com, whose site shows 4 new ID. Buzz that the
+// crawl never saw. Probed live: Type=Used and Type=New each return only their
+// own condition, but Type=All pages New and Used together (verified against
+// vwofoakland.com: 96 used + 125 new = 221, matching a Type=All walk exactly,
+// with a page short of Limit still correctly ending it). No server-side fuel
+// filter is added here — same house rule as dealercom-api.mjs and
+// dealeron-api.mjs: pull the whole lot and let classifyEv decide downstream,
+// because a server-side EV filter was tried once and false-delisted real cars.
 //
 // EV signal (verified against live lots, do not simplify): `isElectric` means
 // "plugs in", NOT battery-electric — on truwestcdjr its three isElectric cars
@@ -98,12 +109,13 @@ export function teamVelocityApiVehicle(r) {
 }
 
 const apiUrl = (ids, page) =>
-  `${API}?AccountID=${ids.accountId}&CampaignId=${ids.campaignId}&Type=Used&Limit=${API_LIMIT}&Page=${page}`;
+  `${API}?AccountID=${ids.accountId}&CampaignId=${ids.campaignId}&Type=All&Limit=${API_LIMIT}&Page=${page}`;
 
-// Page a rooftop's used inventory to completion, returning schema.org nodes.
-// `complete` is true only when a short page ends the walk (offset-vs-total is not
-// trusted; the endpoint has no reliable total on this call). A partial pull
-// leaves complete=false so the caller never certifies a crawl it didn't finish.
+// Page a rooftop's whole lot (new + used + CPO) to completion, returning
+// schema.org nodes. `complete` is true only when a short page ends the walk
+// (offset-vs-total is not trusted; the endpoint has no reliable total on this
+// call). A partial pull leaves complete=false so the caller never certifies a
+// crawl it didn't finish.
 export async function pullTeamVelocityApi(ids) {
   const out = [];
   let ok = false;
