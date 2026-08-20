@@ -72,7 +72,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     },
     buyerNotes: [
       {
-        headline: "HV battery software fault can cut drive power, check this VIN's status",
+        headline: "A battery-control-module fault (21V110) can cut drive power — free software fix; confirm it's been applied to this car",
         body: "21V110 (2021–2022 Polestar 2): the Battery Energy Control Module microprocessor may reset and disconnect the high-voltage system, causing loss of drive power. Free OTA or dealer software fix; owner notices mailed April 2021.",
         severity: "trap",
       },
@@ -126,7 +126,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     },
     buyerNotes: [
       {
-        headline: "Multiple HV battery recalls, check this VIN's status",
+        headline: "Four battery recalls including a park-outside fire risk (22V541, battery replacement) and one (25V470) whose remedy was still pending in late 2025 — confirm status on this car",
         body: "22V541 (2022–23 iX/i4: internal battery damage, short-circuit/fire risk, park-it/park-outside advisory, battery replacement); 25V470 (2022–2025 iX: battery cell module improperly assembled, fire risk, remedy was still pending as of the September 2025 interim notice, with parts anticipated by end of 2025); 22V944 (HV battery ECU software, power interruption); 23V449 (HV battery charging unit improperly assembled, stall risk).",
         severity: "trap",
       },
@@ -171,7 +171,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     },
     buyerNotes: [
       {
-        headline: "Multiple HV battery recalls, check this VIN's status",
+        headline: "Two battery recalls — a cell-monitoring stall risk (23V295) and a fire risk (25V470) whose remedy was still pending in late 2025 — confirm both on this car",
         body: "23V295 (2022–2024 xDrive50: HV battery cell monitoring circuit loose connections can cause a stall); 25V470 (2022–2025 iX: battery cell module improperly assembled, fire risk, remedy was still pending as of the September 2025 interim notice, parts anticipated by end of 2025).",
         severity: "trap",
       },
@@ -251,7 +251,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     },
     buyerNotes: [
       {
-        headline: "HV battery short-circuit recall, check this VIN's status",
+        headline: "A battery short-circuit fire recall (24V726, superseding 24V228) — even cars fixed under the earlier campaign need the newer remedy; confirm this one",
         body: "24V228 and 24V726 (2024 e-tron GT/RS e-tron GT): the HV battery may short internally, fire risk. 24V726 supersedes and expands 24V228, cars already repaired under the earlier campaign still need the newer remedy (advanced diagnostic software, plus interim 80% charge cap or online monitoring in some cases).",
         severity: "trap",
       },
@@ -307,7 +307,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     },
     buyerNotes: [
       {
-        headline: "Four RWD-only recalls, check this VIN's status",
+        headline: "Four recalls on RWD builds (none on the AWD Touring) — harness power-loss (24V836), half-shaft bolts (25V669/26V193), inverter power-loss (26V309); confirm each on this car",
         body: "24V836 (2024–2025 Pure RWD: rear subframe wiring harness too short, can cut power to the rear drive unit; free harness replacement, notices mailed December 2024). 25V669 and 26V193 (2024–2026 Pure RWD: half-shaft bolts may allow disconnection from the drive unit; free bolt inspection/replacement, notices through mid-2026). 26V309 (2024–2025 RWD: Gen 4 inverter internal friction/damage can cause loss of drive power; OTA monitoring plus free replacement if a failure is detected, notices mailed July 2026). None of these four apply to the AWD Touring.",
         severity: "trap",
       },
@@ -387,7 +387,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
         severity: "warning",
       },
       {
-        headline: "HV battery ECU recall, check this VIN's status",
+        headline: "A battery-ECU fault (26V393) can cut drive power — free software update; confirm it's been applied to this car",
         body: "26V393 (2026 Toyota bZ, Lexus RZ, and Subaru Solterra): the ECU controlling the HV battery may fault, causing loss of drive power. Free ECU software update; owner notices expected August 2026.",
         severity: "warning",
       },
@@ -420,7 +420,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
         severity: "warning",
       },
       {
-        headline: "HV battery ECU recall, check this VIN's status",
+        headline: "A battery-ECU fault (26V393) can cut drive power — free software update; confirm it's been applied to this car",
         body: "26V393 (2026 Toyota bZ, Lexus RZ, and Subaru Solterra): the ECU controlling the HV battery may fault, causing loss of drive power. Free ECU software update; owner notices expected August 2026.",
         severity: "warning",
       },
@@ -453,7 +453,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
         severity: "info",
       },
       {
-        headline: "HV battery ECU recall, check this VIN's status",
+        headline: "A battery-ECU fault (26V393) can cut drive power — free software update; confirm it's been applied to this car",
         body: "26V393 (2026 Toyota bZ, Lexus RZ, and Subaru Solterra): the ECU controlling the HV battery may fault, causing loss of drive power. Free ECU software update; owner notices expected August 2026.",
         severity: "warning",
       },
@@ -666,7 +666,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     },
     buyerNotes: [
       {
-        headline: "Fuse-box fire/power-loss recall, two rounds, check which repair this VIN got",
+        headline: "A fuse-box fire/power-loss recall (24V115), then a second (25V255) because some repairs used the wrong part — confirm this car got the corrected fuse box, not just \"a\" repair",
         body: "24V115 (80-Amp fuses manufactured incorrectly, can cause sudden loss of drive power or fire risk): free replacement fuse box. 25V255: some vehicles repaired under 24V115 received the WRONG replacement fuse box, which itself carries increased fire risk, a second free repair. Confirm this VIN got the correct part, not just “a” repair.",
         severity: "trap",
       },
@@ -724,7 +724,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
         severity: "trap",
       },
       {
-        headline: "Some fuse-box repairs used the wrong part, check which fix this VIN got",
+        headline: "Some fuse-box recall repairs (24V115) used a wrong, fire-risk part, fixed by a second recall (25V255) — confirm this car was never in scope or got the corrected part",
         body: "25V255 (NHTSA's vehicle-level scope includes the 2023 EQE SUV 350/500 4MATIC): some vehicles repaired under the 24V115 fuse-box campaign received an INCORRECT replacement fuse box, which itself carries increased fire risk — a second free repair. Confirm this VIN either was never in 24V115 scope or got the corrected part.",
         severity: "warning",
       },
@@ -957,7 +957,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
         severity: "info",
       },
       {
-        headline: "Tire tread-detachment recall, check this VIN's status",
+        headline: "A tire tread-detachment recall (25V704) on 21-inch Continental tires from one production week — free inspection/replacement; confirm this car's tires",
         body: "25V704 (2025–2026 Optiq and Chevy Equinox EV with 21-inch Continental all-season tires from DOT week 4024): partial or full tread detachment risk. Free dealer inspection/replacement; owner notices mailed November 2025.",
         severity: "trap",
       },
