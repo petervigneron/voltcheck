@@ -32,7 +32,7 @@ export interface EnrichedListing {
   packVariant?: string;
   port?: Fact<PortStandard>;
   chargeTime1080Min?: Fact<number>;
-  heatPump: { status: "yes" | "no" | "verify"; detail: string } | null;
+  heatPump: { status: "yes" | "no" | "verify"; detail: string; source: Source } | null;
   fastCharge: { status: "yes" | "no" | "verify"; detail: string };
   batteryWarrantyTransfers?: Fact<boolean>;
   trapCount: number;
@@ -296,23 +296,24 @@ export function enrichListing(l: Listing): EnrichedListing {
   let heatPump: EnrichedListing["heatPump"] = null;
   const hpResolved = agreed((r) => r.thermal?.heatPump);
   if (hpResolved) {
+    const source = hpResolved.source;
     switch (hpResolved.value) {
       case "standard":
-        heatPump = { status: "yes", detail: "Heat pump standard" };
+        heatPump = { status: "yes", detail: "Heat pump standard", source };
         break;
       case "none":
-        heatPump = { status: "no", detail: "No heat pump on this model year" };
+        heatPump = { status: "no", detail: "No heat pump on this model year", source };
         break;
       case "awd_only":
         heatPump =
           l.drive === "AWD"
-            ? { status: "yes", detail: "Heat pump (AWD cars only, and this one is AWD)" }
+            ? { status: "yes", detail: "Heat pump (AWD cars only, and this one is AWD)", source }
             : l.drive
-              ? { status: "no", detail: "AWD-only this year; this RWD car has none" }
-              : { status: "verify", detail: "AWD cars only; confirm drivetrain" };
+              ? { status: "no", detail: "AWD-only this year; this RWD car has none", source }
+              : { status: "verify", detail: "AWD cars only; confirm drivetrain", source };
         break;
       case "optional":
-        heatPump = { status: "verify", detail: "Factory option; the window sticker is the only authority" };
+        heatPump = { status: "verify", detail: "Factory option; the window sticker is the only authority", source };
         break;
     }
   }

@@ -31,9 +31,13 @@ export function listingTiles(
     t.push({ kind: "range", text: `${e.realRangeMi.value} mi`, title: e.realRangeMi.note ?? undefined });
   }
 
-  if (e.heatPump?.status === "no") t.push({ kind: "miss", text: "No heat pump", title: e.heatPump.detail });
+  // "est" whenever the underlying fact isn't the maker's own figure (ID.4,
+  // Leaf, Ariya, ID. Buzz all ship agg-sourced heat-pump facts) — same
+  // convention as chargeTime1080Min below.
+  const hpEst = e.heatPump && e.heatPump.source !== "mfr" ? " est" : "";
+  if (e.heatPump?.status === "no") t.push({ kind: "miss", text: `No heat pump${hpEst}`, title: e.heatPump.detail });
   else if (e.heatPump?.status === "verify") t.push({ kind: "flag", text: "Heat pump?", title: e.heatPump.detail });
-  else if (e.heatPump?.status === "yes") t.push({ kind: "kit", text: "Heat pump", title: e.heatPump.detail });
+  else if (e.heatPump?.status === "yes") t.push({ kind: "kit", text: `Heat pump${hpEst}`, title: e.heatPump.detail });
 
   if (l.drive) t.push({ kind: "spec", text: l.drive });
 
@@ -42,9 +46,13 @@ export function listingTiles(
 
   // Which plug the car fast-charges through. J1772 is omitted: it only appears
   // on cars whose missing DC option already shows as the louder tile above.
-  if (e.port?.value === "NACS") t.push({ kind: "kit", text: "NACS", title: e.port.note ?? "Tesla-style port; plugs into the Supercharger network" });
-  else if (e.port?.value === "CCS1") t.push({ kind: "spec", text: "CCS", title: e.port.note ?? undefined });
-  else if (e.port?.value === "CHAdeMO") t.push({ kind: "flag", text: "CHAdeMO", title: e.port.note ?? "Aging fast-charge standard; new public CHAdeMO stations are rare" });
+  // "est" whenever the port fact is agg-sourced rather than the maker's own
+  // spec (GM Ultium, Cadillac Lyriq, Audi e-tron GT, Mercedes EQE rows among
+  // others) — same convention as chargeTime1080Min.
+  const portEst = e.port && e.port.source !== "mfr" ? " est" : "";
+  if (e.port?.value === "NACS") t.push({ kind: "kit", text: `NACS${portEst}`, title: e.port.note ?? "Tesla-style port; plugs into the Supercharger network" });
+  else if (e.port?.value === "CCS1") t.push({ kind: "spec", text: `CCS${portEst}`, title: e.port.note ?? undefined });
+  else if (e.port?.value === "CHAdeMO") t.push({ kind: "flag", text: `CHAdeMO${portEst}`, title: e.port.note ?? "Aging fast-charge standard; new public CHAdeMO stations are rare" });
 
   // The maker's own 10-80% DC figure, previously buried in dcPeakKw's tooltip
   // note (see docs/agents/enrichment-gaps-2026-08-20.md) — condition (which
