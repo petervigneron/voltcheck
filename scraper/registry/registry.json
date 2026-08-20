@@ -37756,7 +37756,8 @@
       "platform": "dealeron",
       "robots": "unknown",
       "status": "working",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: BMW | requeued 2026-08-16: unreachable verdict predates the www/apex bare-404 retry and gzip fix in lib/http.mjs | auto-promoted by probe 2026-08-17: 1 VIN vehicles on 1 page(s), platform dealeron"
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13); brand: BMW | requeued 2026-08-16: unreachable verdict predates the www/apex bare-404 retry and gzip fix in lib/http.mjs | auto-promoted by probe 2026-08-17: 1 VIN vehicles on 1 page(s), platform dealeron | diagnosed 2026-08-20 from the ID. Buzz coverage audit (docs/agents/coverage-audit-2026-08-20.md), which flagged this rooftop as registered-but-still-missing: root cause is NOT this registry row, it's lib/platforms/dealeron-api.mjs's dealerOnTagging() gating the fast/complete API path on pageType===\"itemlist\" (line 54) — this site's SRP tags itself pageType:\"custom\" instead (dealerId+pageId both present, so it's a real search page), so every crawl falls back to the slow per-page ItemList/HTML walk, which the prior 1-page probe barely touched | pageBudget raised as a registry-side stopgap: smoke test at --page-budget 250 found 41 EVs incl. the exact 2025 VW ID. Buzz Pro S (VIN WVGAWVEBXSH012750) the audit traced, still truncated (61 ItemList VDPs left queued); re-tested at 450 to see if more budget clears it — same 41 EVs, 104 VDPs still queued, no new EVs for 200 more pages — so 250 already captures everything this budget tier is going to find and further budget is pure cost. The durable fix is a code change to the pageType gate (or to the site's stale API entirely), not attempted here per instruction not to touch dealeron-api.mjs blind on the same day its multi-photo change landed.",
+      "pageBudget": 250
     },
     {
       "domain": "subaruspokane.com",
@@ -172001,7 +172002,7 @@
       "platform": "dealeron",
       "robots": "unknown",
       "status": "working",
-      "notes": "Discovered via Common Crawl dealer-platform URL fingerprint sweep (CC-MAIN-2026-30), 2026-08-17 — site serves inventory paths matching a platform we extract | auto-promoted by probe 2026-08-17: 1 VIN vehicles on 1 page(s), platform dealeron"
+      "notes": "Discovered via Common Crawl dealer-platform URL fingerprint sweep (CC-MAIN-2026-30), 2026-08-17 — site serves inventory paths matching a platform we extract | auto-promoted by probe 2026-08-17: 1 VIN vehicles on 1 page(s), platform dealeron | diagnosed 2026-08-20 from the ID. Buzz coverage audit (docs/agents/coverage-audit-2026-08-20.md), which flagged this rooftop as registered-but-still-missing: the bare apex mosesvolkswagen.com serves a TLS cert for *.dealeron.com, not itself (ERR_TLS_CERT_ALTNAME_INVALID on a direct connection) — page fetches survive because fetchPage()'s www/apex retry (lib/http.mjs) papers over it, but the DealerOn API call in lib/platforms/dealeron-api.mjs builds its URL from crawl.mjs's `origin` (crawl.mjs:110, always the bare domain) with no equivalent www fallback, so pullLot() throws on every call and the crawl falls back to the slow HTML/ItemList walk, which then bails at the NO_EV_FLOOR (0 EVs in 40 pages) before ever reaching the cars this dealer does list. Diagnosis-only, not a registry fix: switching this row's domain to www.mosesvolkswagen.com would dodge the cert but changes dealerDomain identity for every existing listing/price-history row keyed to the bare domain, which is out of scope for a registry curation pass. Confirmed independently (crawl.mjs www.mosesvolkswagen.com, not committed) that the API works fine over www and the site's full 161-vehicle inventory (94 used + 67 new, complete pull) is 100% gasoline/hybrid — zero EVs or PHEVs on the lot as of 2026-08-20, so even a fixed crawl would not find the Buzz the audit inferred here; either it already sold or the audit's WV-level inference pointed at the wrong specific rooftop."
     },
     {
       "domain": "mossbrosautogroup.com",
@@ -210611,6 +210612,118 @@
         "city": "Newark",
         "state": "CA",
         "zip": "94560"
+      }
+    },
+    {
+      "domain": "vwofoakland.com",
+      "name": "Volkswagen of Oakland",
+      "kind": "rooftop",
+      "platform": "team-velocity",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Added from ID. Buzz coverage audit (docs/agents/coverage-audit-2026-08-20.md) — audit sampled a cars.com Buzz listing here, dealer not yet in registry | fingerprint re-verified independently (real browser + curl agree: team-velocity) | crawl.mjs smoke test 2026-08-20: team-velocity API, 9 EV(s) admitted, complete (5 used ID.4, 2 used Tesla, 1 used Mercedes EQS) | site's own homepage lists 4 NEW ID. Buzz for sale that this crawl does not capture — lib/platforms/teamvelocity.mjs's API call is hard-coded Type=Used, a pre-existing extractor limitation shared by every team-velocity rooftop (mirrors the vw.mjs OEM-locator's own new-car gap), not something this registry addition fixes",
+      "location": {
+        "city": "Oakland",
+        "state": "CA",
+        "zip": "94612"
+      }
+    },
+    {
+      "domain": "cupplescars.com",
+      "name": "Cupples Car Company",
+      "kind": "rooftop",
+      "platform": "dealercarsearch",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Added from ID. Buzz coverage audit (docs/agents/coverage-audit-2026-08-20.md) — independent used-car dealer (Belmont, NH), audit sampled a cars.com Buzz listing here, dealer not yet in registry | fingerprint re-verified independently (site_platform: dcs) | crawl.mjs smoke test 2026-08-20: dealercarsearch SRP walk complete, 3 EV(s) admitted incl. a 2025 VW ID Buzz PRO S (VIN WVGAWVEB9SH013016) — the exact listing the audit traced",
+      "location": {
+        "city": "Belmont",
+        "state": "NH",
+        "zip": "03220"
+      }
+    },
+    {
+      "domain": "burnsvillevw.com",
+      "name": "Luther Burnsville Volkswagen",
+      "kind": "rooftop",
+      "platform": "dealerinspire",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "From ID. Buzz coverage audit (docs/agents/coverage-audit-2026-08-20.md), which fingerprinted this dealer.inspire.com host (matches, confirmed by real-browser probe: di-uploads-podNN.dealerinspire.com preconnects) | crawl.mjs smoke test 2026-08-20: every path 403s (homepage, searchused/new, used/new-vehicles) even though a real browser loads the site fine — Cloudflare bot management fires on our Node/undici request despite the browser-UA header (not a UA-string policy block; other dealerinspire rooftops such as criswellauto.com fetch fine), confirmed persistent on retry | 0 EVs — not added working, recorded so a future probe doesn't re-discover and re-investigate this domain from scratch",
+      "location": {
+        "city": "Burnsville",
+        "state": "MN",
+        "zip": "55306"
+      }
+    },
+    {
+      "domain": "fowlervw.com",
+      "name": "Fowler Volkswagen of Norman",
+      "kind": "rooftop",
+      "platform": "dealerinspire",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "From ID. Buzz coverage audit (docs/agents/coverage-audit-2026-08-20.md), which listed this domain as dealer.com — independently re-fingerprinted via real browser 2026-08-20 and it is DealerInspire (di-uploads-podNN.dealerinspire.com, dealerinspire-shared-assets.s3.amazonaws.com, no genuine dealer.com signal — the audit's dealer.com read was likely a false-positive analytics pixel); discrepancy noted per instructions, trusting this fetch | crawl.mjs smoke test 2026-08-20: every path 403s to our Node crawler though a real browser loads the site fine (same Cloudflare bot-management pattern as burnsvillevw.com) | 0 EVs — not added working, recorded so a future probe doesn't re-discover and re-investigate this domain from scratch",
+      "location": {
+        "city": "Norman",
+        "state": "OK",
+        "zip": "73069"
+      }
+    },
+    {
+      "domain": "bobmoorevolkswagen.com",
+      "name": "Bob Moore Volkswagen",
+      "kind": "rooftop",
+      "platform": "dealerinspire",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "From ID. Buzz coverage audit (docs/agents/coverage-audit-2026-08-20.md), which listed this domain as dealer.com — independently re-fingerprinted via real browser 2026-08-20 and it is DealerInspire (di-uploads-podNN.dealerinspire.com, dealerinspire-inventory-display, DealerInspireInventory.ready; the only dealer.com hit was assets.prod.analytics.dealer.com, a third-party analytics pixel embedded on many non-dealer.com sites, not the platform); discrepancy noted per instructions, trusting this fetch | crawl.mjs smoke test 2026-08-20: every path 403s to our Node crawler though a real browser loads the site fine (same Cloudflare bot-management pattern as burnsvillevw.com) | 0 EVs — not added working, recorded so a future probe doesn't re-discover and re-investigate this domain from scratch",
+      "location": {
+        "city": "Oklahoma City",
+        "state": "OK",
+        "zip": "73114"
+      }
+    },
+    {
+      "domain": "capomazda.com",
+      "name": "Capistrano Mazda",
+      "kind": "rooftop",
+      "platform": "dealerinspire",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "From ID. Buzz coverage audit (docs/agents/coverage-audit-2026-08-20.md) — trade-in Buzz sampled on cars.com; fingerprint re-verified independently (real browser: clean dealerinspire match, matches audit) | crawl.mjs smoke test 2026-08-20: every path 403s to our Node crawler though a real browser loads the site fine — Cloudflare bot management fires on our request despite the browser-UA header (other dealerinspire rooftops fetch fine), confirmed persistent on retry | 0 EVs — not added working, recorded so a future probe doesn't re-discover and re-investigate this domain from scratch",
+      "location": {
+        "city": "San Juan Capistrano",
+        "state": "CA",
+        "zip": "92675"
+      }
+    },
+    {
+      "domain": "sunrise-ford.com",
+      "name": "Sunrise Ford",
+      "kind": "rooftop",
+      "platform": "dealerinspire",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "From ID. Buzz coverage audit (docs/agents/coverage-audit-2026-08-20.md) — trade-in Buzz sampled on cars.com; fingerprint re-verified independently (real browser: clean dealerinspire match, matches audit) | crawl.mjs smoke test 2026-08-20: every path 403s to our Node crawler though a real browser loads the site fine — same Cloudflare bot-management pattern as the other four dealerinspire adds in this batch, confirmed persistent on retry | 0 EVs — not added working, recorded so a future probe doesn't re-discover and re-investigate this domain from scratch",
+      "location": {
+        "city": "Fort Pierce",
+        "state": "FL",
+        "zip": "34982"
+      }
+    },
+    {
+      "domain": "antwerpenvw.com",
+      "name": "Antwerpen Volkswagen",
+      "kind": "rooftop",
+      "platform": "dealereprocess",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "From ID. Buzz coverage audit (docs/agents/coverage-audit-2026-08-20.md), which left the platform unconfirmed (plain curl 403'd, flagged as needing a real-browser probe) — resolved 2026-08-20 via real browser: cdn.dealereprocess.org / cloudflareimages.dealereprocess.com throughout, no other platform signal. DealerEProcess is already known off-limits under the no-evasion rule (see the ~23 dealereprocess rows elsewhere in this file: 'homepage returns a Cloudflare bot challenge... platform is off-limits under the no-evasion rule, not unbuilt'), so this one Pasadena-MD Buzz record we do have almost certainly arrives via the VW CPO locator lane (lib/oem/vw.mjs), not a crawl of this domain — not added working",
+      "location": {
+        "city": "Pasadena",
+        "state": "MD",
+        "zip": "21122"
       }
     }
   ],
