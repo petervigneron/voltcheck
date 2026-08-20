@@ -241,8 +241,8 @@ const EV6_WARRANTY = {
   batteryMiles: f(100_000, "mfr" as Source),
   sohFloorPct: f(70, "mfr" as Source),
   batteryTransfers: f(true, "mfr" as Source, "high", "Kia manual: everything except the Power Train (Original Owner) warranty is fully transferable"),
-  powertrainTransfers: f(false, "mfr" as Source),
-  extendedCoverage: f("ICCU: 15 years / 180,000 miles (extended April 2026, up from 10/100)", "mfr" as Source),
+  powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr" as Source, "high", "Kia powertrain warranty: 10yr/100k for the original owner, 5yr/60k for subsequent owners"),
+  extendedCoverage: f("ICCU: 15 years / 180,000 miles", "mfr" as Source),
 };
 const EV6_HP_NONE = { heatPump: f<"none">("none", "mfr", "high", "Heat pump unavailable on the Light trim") };
 const EV6_HP_OPT = { heatPump: f<"optional">("optional", "mfr", "high", "Factory option on Wind/GT-Line, window sticker is the authority") };
@@ -276,7 +276,7 @@ const HK_WARRANTY = {
   batteryMiles: f(100_000, "mfr" as Source),
   sohFloorPct: f(70, "mfr" as Source),
   batteryTransfers: f(true, "mfr" as Source),
-  powertrainTransfers: f(false, "mfr" as Source, "high", "Hyundai/Kia powertrain 10yr/100k is original-owner-only; battery/EV-system coverage transfers"),
+  powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr" as Source, "high", "Hyundai/Kia powertrain warranty: 10yr/100k for the original owner, 5yr/60k for subsequent owners"),
 };
 const PORT_CCS = { portStandard: f<"CCS1">("CCS1", "mfr") };
 const K9 = { make: "KIA", model: "EV9" };

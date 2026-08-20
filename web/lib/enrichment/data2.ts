@@ -1395,7 +1395,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
       batteryTransfers: f(true, "mfr", "high", "Kia: everything except the original-owner powertrain warranty transfers in full"),
-      powertrainTransfers: f(false, "mfr"),
+      powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr", "high", "Kia powertrain warranty: 10yr/100k for the original owner, 5yr/60k for subsequent owners"),
     },
     buyerNotes: [
       {
@@ -1423,7 +1423,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
       batteryTransfers: f(true, "mfr"),
-      powertrainTransfers: f(false, "mfr"),
+      powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr", "high", "Kia powertrain warranty: 10yr/100k for the original owner, 5yr/60k for subsequent owners"),
     },
     buyerNotes: [
       {

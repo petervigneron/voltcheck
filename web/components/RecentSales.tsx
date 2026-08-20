@@ -106,8 +106,8 @@ export function RecentSales({
 
       {vsSold && (
         <p className="mt-2 border-l-4 border-emerald-500 pl-3 text-sm font-semibold">
-          Asks ${Math.abs(vsSold.deltaUsd).toLocaleString()} {vsSold.deltaUsd < 0 ? "under" : "over"} $
-          {vsSold.soldUsd.toLocaleString()}
+          ${Math.abs(vsSold.deltaUsd).toLocaleString()} {vsSold.deltaUsd < 0 ? "below" : "above"} recently
+          sold comparable models
         </p>
       )}
 

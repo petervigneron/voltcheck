@@ -1,4 +1,4 @@
-import type { EnrichmentRow, HeatPump } from "@/lib/types";
+import type { EnrichmentRow, HeatPump, SuperchargerAccess } from "@/lib/types";
 import type { BatteryWarranty } from "@/lib/listings/warranty";
 import { FactRow } from "./FactRow";
 
@@ -13,6 +13,12 @@ export const HEAT_PUMP_LABEL: Record<HeatPump, string> = {
 
 export const NOTE_STYLE =
   "border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60";
+
+const SUPERCHARGER_LABEL: Record<SuperchargerAccess, string> = {
+  native: "Native",
+  adapter: "Adapter",
+  none: "None",
+};
 
 const DCFC_LABEL = {
   standard: "Standard",
@@ -83,7 +89,11 @@ export function EnrichmentFacts({
           />
           <FactRow label="Peak DC rate" fact={row.charging?.dcPeakKw} format={(v) => `${v} kW`} />
           <FactRow label="Port" fact={row.charging?.portStandard} />
-          <FactRow label="Supercharger access" fact={row.charging?.superchargerAccess} />
+          <FactRow
+            label="Supercharger access"
+            fact={row.charging?.superchargerAccess}
+            format={(v) => SUPERCHARGER_LABEL[v as SuperchargerAccess] ?? String(v)}
+          />
 
           <h3 className="mt-5 text-xs font-semibold text-zinc-400">Warranty</h3>
           {/* What the shopper is buying is one car's remaining coverage, not
@@ -119,7 +129,7 @@ export function EnrichmentFacts({
               <FactRow label="Capacity floor" fact={row.warranty?.sohFloorPct} format={(v) => `${v}% SOH`} />
               {/* The label already says "transfers", so the answer is the answer. */}
               <FactRow label="Battery coverage transfers" fact={row.warranty?.batteryTransfers} format={(v) => (v ? "Yes" : "No")} />
-              <FactRow label="Powertrain coverage transfers" fact={row.warranty?.powertrainTransfers} format={(v) => (v ? "Yes" : "No")} />
+              <FactRow label="Powertrain" fact={row.warranty?.powertrainTerms} />
             </>
           )}
           <FactRow label="Extended coverage" fact={row.warranty?.extendedCoverage} />

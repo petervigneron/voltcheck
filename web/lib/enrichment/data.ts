@@ -266,8 +266,8 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
       batteryTransfers: f(true, "mfr", "high", "HV battery & EV system coverage transfers in full, confirmed in Hyundai's 2026 Owner's Handbook §6"),
-      powertrainTransfers: f(false, "mfr", "high", "Powertrain 10yr/100k is original-owner-only; drops to 5yr/60k for a second owner"),
-      extendedCoverage: f("ICCU: 15 years / 180,000 miles (extended April 2026, up from 10/100)", "mfr"),
+      powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr", "high", "Hyundai powertrain warranty: 10yr/100k for the original owner, 5yr/60k for subsequent owners"),
+      extendedCoverage: f("ICCU: 15 years / 180,000 miles", "mfr"),
     },
   },
   {
@@ -293,8 +293,8 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
       batteryTransfers: f(true, "mfr", "high", "HV battery & EV system coverage transfers in full, confirmed in Hyundai's 2026 Owner's Handbook §6"),
-      powertrainTransfers: f(false, "mfr", "high", "Powertrain 10yr/100k is original-owner-only; drops to 5yr/60k for a second owner"),
-      extendedCoverage: f("ICCU: 15 years / 180,000 miles (extended April 2026, up from 10/100)", "mfr"),
+      powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr", "high", "Hyundai powertrain warranty: 10yr/100k for the original owner, 5yr/60k for subsequent owners"),
+      extendedCoverage: f("ICCU: 15 years / 180,000 miles", "mfr"),
     },
   },
   {
@@ -312,7 +312,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       architectureV: f5(800, "mfr", "high", "697V-nominal pack; the 2022 spec sheet lists the 800V/350 kW ultra-fast charger as standard", "https://www.hyundainews.com/assets/documents/original/48175-2022Ioniq5ProductGuidespecs090821.pdf"),
     },
     thermal: {
-      heatPump: f5("standard", "mfr", "high", "Standard on AWD (the heat pump is AWD-only this model year)", "https://www.hyundainews.com/assets/documents/original/48175-2022Ioniq5ProductGuidespecs090821.pdf"),
+      heatPump: f5("standard", "mfr", "high", "Standard on AWD", "https://www.hyundainews.com/assets/documents/original/48175-2022Ioniq5ProductGuidespecs090821.pdf"),
       batteryPreconditioning: f5(false, "mfr", "medium", "The 2022 sheet lists only a battery heater (AWD-only), the \"battery preconditioning function\" line first appears on the 2023 sheet", "https://www.hyundainews.com/assets/documents/original/48175-2022Ioniq5ProductGuidespecs090821.pdf"),
     },
     warranty: {
@@ -320,8 +320,8 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
       batteryTransfers: f(true, "mfr", "high", "HV battery & EV system coverage transfers in full, confirmed in Hyundai's 2026 Owner's Handbook §6"),
-      powertrainTransfers: f(false, "mfr", "high", "Powertrain 10yr/100k is original-owner-only; drops to 5yr/60k for a second owner"),
-      extendedCoverage: f("ICCU: 15 years / 180,000 miles (extended April 2026, up from 10/100)", "mfr"),
+      powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr", "high", "Hyundai powertrain warranty: 10yr/100k for the original owner, 5yr/60k for subsequent owners"),
+      extendedCoverage: f("ICCU: 15 years / 180,000 miles", "mfr"),
     },
   },
 
@@ -352,8 +352,8 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
       batteryTransfers: f(true, "mfr", "high", "HV battery & EV system coverage transfers in full, confirmed in Hyundai's 2026 Owner's Handbook §6"),
-      powertrainTransfers: f(false, "mfr", "high", "Powertrain 10yr/100k is original-owner-only; drops to 5yr/60k for a second owner"),
-      extendedCoverage: f("ICCU: 15 years / 180,000 miles (extended April 2026, up from 10/100)", "mfr"),
+      powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr", "high", "Hyundai powertrain warranty: 10yr/100k for the original owner, 5yr/60k for subsequent owners"),
+      extendedCoverage: f("ICCU: 15 years / 180,000 miles", "mfr"),
     },
   },
   {
@@ -379,8 +379,8 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
       batteryTransfers: f(true, "mfr", "high", "HV battery & EV system coverage transfers in full, confirmed in Hyundai's 2026 Owner's Handbook §6"),
-      powertrainTransfers: f(false, "mfr", "high", "Powertrain 10yr/100k is original-owner-only; drops to 5yr/60k for a second owner"),
-      extendedCoverage: f("ICCU: 15 years / 180,000 miles (extended April 2026, up from 10/100)", "mfr"),
+      powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr", "high", "Hyundai powertrain warranty: 10yr/100k for the original owner, 5yr/60k for subsequent owners"),
+      extendedCoverage: f("ICCU: 15 years / 180,000 miles", "mfr"),
     },
   },
   {
@@ -406,8 +406,8 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
       batteryTransfers: f(true, "mfr", "high", "HV battery & EV system coverage transfers in full, confirmed in Hyundai's 2026 Owner's Handbook §6"),
-      powertrainTransfers: f(false, "mfr", "high", "Powertrain 10yr/100k is original-owner-only; drops to 5yr/60k for a second owner"),
-      extendedCoverage: f("ICCU: 15 years / 180,000 miles (extended April 2026, up from 10/100)", "mfr"),
+      powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr", "high", "Hyundai powertrain warranty: 10yr/100k for the original owner, 5yr/60k for subsequent owners"),
+      extendedCoverage: f("ICCU: 15 years / 180,000 miles", "mfr"),
     },
   },
   {
@@ -433,8 +433,8 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
       batteryTransfers: f(true, "mfr", "high", "HV battery & EV system coverage transfers in full, confirmed in Hyundai's 2026 Owner's Handbook §6"),
-      powertrainTransfers: f(false, "mfr", "high", "Powertrain 10yr/100k is original-owner-only; drops to 5yr/60k for a second owner"),
-      extendedCoverage: f("ICCU: 15 years / 180,000 miles (extended April 2026, up from 10/100)", "mfr"),
+      powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr", "high", "Hyundai powertrain warranty: 10yr/100k for the original owner, 5yr/60k for subsequent owners"),
+      extendedCoverage: f("ICCU: 15 years / 180,000 miles", "mfr"),
     },
   },
 
@@ -467,7 +467,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
       batteryTransfers: f(true, "mfr", "high", "HV battery & EV system coverage transfers in full, confirmed in Hyundai's 2026 Owner's Handbook §6"),
-      powertrainTransfers: f(false, "mfr", "high", "Powertrain 10yr/100k is original-owner-only; drops to 5yr/60k for a second owner"),
+      powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr", "high", "Hyundai powertrain warranty: 10yr/100k for the original owner, 5yr/60k for subsequent owners"),
       // Deliberately NO ICCU extendedCoverage on facelift rows: the recalls and
       // the April 2026 15yr/180k extension are documented for 2022–24 cars only.
     },
@@ -502,7 +502,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
       batteryTransfers: f(true, "mfr", "high", "HV battery & EV system coverage transfers in full, confirmed in Hyundai's 2026 Owner's Handbook §6"),
-      powertrainTransfers: f(false, "mfr", "high", "Powertrain 10yr/100k is original-owner-only; drops to 5yr/60k for a second owner"),
+      powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr", "high", "Hyundai powertrain warranty: 10yr/100k for the original owner, 5yr/60k for subsequent owners"),
     },
     buyerNotes: [
       {
@@ -539,7 +539,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
       batteryTransfers: f(true, "mfr", "high", "HV battery & EV system coverage transfers in full, confirmed in Hyundai's 2026 Owner's Handbook §6"),
-      powertrainTransfers: f(false, "mfr", "high", "Powertrain 10yr/100k is original-owner-only; drops to 5yr/60k for a second owner"),
+      powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr", "high", "Hyundai powertrain warranty: 10yr/100k for the original owner, 5yr/60k for subsequent owners"),
     },
     buyerNotes: [
       {
@@ -577,7 +577,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
       batteryTransfers: f(true, "mfr", "high", "HV battery & EV system coverage transfers in full, confirmed in Hyundai's 2026 Owner's Handbook §6"),
-      powertrainTransfers: f(false, "mfr", "high", "Powertrain 10yr/100k is original-owner-only; drops to 5yr/60k for a second owner"),
+      powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr", "high", "Hyundai powertrain warranty: 10yr/100k for the original owner, 5yr/60k for subsequent owners"),
     },
     buyerNotes: [
       {
@@ -615,7 +615,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
       batteryTransfers: f(true, "mfr", "high", "HV battery & EV system coverage transfers in full, confirmed in Hyundai's 2026 Owner's Handbook §6"),
-      powertrainTransfers: f(false, "mfr", "high", "Powertrain 10yr/100k is original-owner-only; drops to 5yr/60k for a second owner"),
+      powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr", "high", "Hyundai powertrain warranty: 10yr/100k for the original owner, 5yr/60k for subsequent owners"),
     },
     buyerNotes: [
       {
@@ -649,7 +649,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
       batteryTransfers: f(true, "mfr", "high", "HV battery & EV system coverage transfers in full, confirmed in Hyundai's 2026 Owner's Handbook §6"),
-      powertrainTransfers: f(false, "mfr", "high", "Powertrain 10yr/100k is original-owner-only; drops to 5yr/60k for a second owner"),
+      powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr", "high", "Hyundai powertrain warranty: 10yr/100k for the original owner, 5yr/60k for subsequent owners"),
     },
   },
 

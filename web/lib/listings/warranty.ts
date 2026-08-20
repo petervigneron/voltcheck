@@ -143,7 +143,26 @@ export function batteryWarranty(
   const timeSafe = earliestExpiryYear != null && now.getUTCFullYear() < earliestExpiryYear;
   const milesSafe = miles != null && odo != null && odo < miles;
   if (timeSafe && milesSafe) {
-    return { state: "active", label: "In force", why: `${(miles! - odo!).toLocaleString()} mi left of ${miles!.toLocaleString()}, and inside the ${years}-year term` };
+    // "In force" with nothing after it answered the question and then dropped
+    // it: in force for how long? The mileage headroom is exact — the odometer
+    // is dealer-stated and only climbs — so it can be stated flat. The time
+    // side cannot: the term runs from an in-service date we don't have, so we
+    // give the floor that assumption can't undercut. Read least-favourably (the
+    // earliest in-service the model year allows), coverage is guaranteed on the
+    // clock through the end of earliestExpiryYear - 1, so that many whole years
+    // from now is a minimum, marked "+". Whichever limit lands first ends it,
+    // hence "or".
+    const milesLeft = miles! - odo!;
+    const minYearsLeft = earliestExpiryYear! - 1 - now.getUTCFullYear();
+    const label =
+      minYearsLeft >= 1
+        ? `In force · ${milesLeft.toLocaleString()} mi or ${minYearsLeft}+ yr left`
+        : `In force · ${milesLeft.toLocaleString()} mi left`;
+    return {
+      state: "active",
+      label,
+      why: `${milesLeft.toLocaleString()} mi left of ${miles!.toLocaleString()}. The ${years}-year term runs from an in-service date we don't have, so the years shown are a floor — read from the earliest in-service this model year allows.`,
+    };
   }
 
   return { state: "unknown" };

@@ -109,7 +109,7 @@ export interface EnrichmentRow {
     batteryMiles?: Fact<number>;
     sohFloorPct?: Fact<number>;
     batteryTransfers?: Fact<boolean>;
-    powertrainTransfers?: Fact<boolean>;
+    powertrainTerms?: Fact<string>;
     extendedCoverage?: Fact<string>;
   };
   // Free-form flags the report surfaces prominently. `resolvedBy` names the
