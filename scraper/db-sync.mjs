@@ -106,7 +106,36 @@ if (!observedAt) {
 // therefore carries whole domains plus exactly the completeDomains it holds
 // rows for. (A complete domain with zero rows certifies nothing either way —
 // the SQL requires incoming rows before delisting — so those ride chunk 1.)
-const CHUNK_BYTES = Number(process.env.DB_SYNC_CHUNK_BYTES ?? 8_000_000);
+//
+// 2026-08-21: the 8MB target was sized for the gateway's body ceiling, not
+// for ingest_listings' execution time — and those aren't the same budget.
+// Diagnosed tonight's 11 straight 57014 (statement timeout) failures down to
+// a specific mechanism, confirmed with EXPLAIN (ANALYZE, BUFFERS) against a
+// real 8,000-row/2,016-domain chunk rolled back after measuring: `listings`
+// carries three indexes partial on `delisted_at IS NULL` (listings_live_vin,
+// listings_vin_prefix, listings_live_idx — each added for a real past read
+// timeout, 0030/0031). Postgres's HOT-update shortcut is all-or-nothing per
+// row: because relisting/delisting flips a row's membership in those three
+// partial indexes, every new/relisted/delisted row forces a full write into
+// all 5 indexes on `listings` instead of a cheap in-place update. Measured
+// cost: the exact upsert statement took 9,160ms for a chunk whose 891
+// relisted rows needed that write; dropping the three partial indexes (in a
+// rolled-back transaction, to isolate the cost) cut it to 1,114ms — an 8x
+// difference from those three indexes alone. That cost tracks
+// (new + relisted + delisted) row counts, not chunk bytes — which is exactly
+// why "chunk size doesn't correlate with failure" (a byte-capped chunk can
+// still land a heavy-churn night's rows in one call). Restructuring those
+// three indexes is not a same-night move (no staging database, each was
+// added to fix a specific prior read-timeout incident, and merging them
+// needs real testing) — so the lever here is a smaller byte target, which
+// bounds worst-case churn-per-call as a side effect of bounding row count.
+// 3MB (~1/3 of the old target) should bring typical chunks from the
+// ~7,000-10,600 rows that took 41-96s down to something in the low
+// thousands, well clear of the 60s statement_timeout even on a heavy-churn
+// night. This does not fix the underlying write-amplification (see the
+// proposed statement_timeout headroom migration, not yet applied pending
+// sequencing) — it just keeps each call's share of it under the ceiling.
+const CHUNK_BYTES = Number(process.env.DB_SYNC_CHUNK_BYTES ?? 3_000_000);
 const byDomain = new Map();
 for (const l of listings) {
   const d = l.dealerDomain ?? "";
