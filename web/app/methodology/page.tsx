@@ -14,38 +14,32 @@ export default function MethodologyPage() {
   return (
     <div className="mx-auto max-w-2xl px-4 py-16">
       <h1 className="text-2xl font-bold tracking-tight text-ink">Where this data comes from</h1>
-      <p className="mt-4 text-sm leading-relaxed text-ink/70">
-        Every spec on this site is either a fact we can prove, or it isn&rsquo;t shown.
-      </p>
 
       <h2 className="mt-8 text-[11px] font-extrabold uppercase tracking-[0.08em] text-ink/50">
-        Primary sources, used wherever they exist
+        Primary sources
       </h2>
       <ul className="mt-2 list-disc space-y-1 pl-5 text-sm leading-relaxed text-ink/80">
-        <li>The manufacturer&rsquo;s own spec sheets, press materials, and window stickers</li>
-        <li>EPA range and efficiency, from fueleconomy.gov&rsquo;s own data</li>
-        <li>Vehicle decode data — make, model, year, plant — from NHTSA&rsquo;s vPIC database</li>
+        <li>The manufacturer&rsquo;s spec sheets, press materials, and window stickers</li>
+        <li>EPA range and efficiency, from fueleconomy.gov&rsquo;s data</li>
+        <li>Vehicle decode data (make, model, year, plant) from NHTSA&rsquo;s vPIC database</li>
         <li>Battery recalls and complaints, from NHTSA</li>
-        <li>Washington State DOL title records, for what similar cars actually sold for</li>
+        <li>Washington State DOL title records</li>
       </ul>
 
       <p className="mt-6 text-sm leading-relaxed text-ink/80">
-        Where no primary source exists, we use named secondary sources — a spec aggregator, an
-        outlet&rsquo;s own instrumented test — and mark the figure <strong>est</strong>. An
-        estimate is never shown the way a manufacturer figure is.
+        Where no primary source exists, we use named secondary sources (a spec aggregator, an
+        outlet&rsquo;s own instrumented test) and mark the figure <strong>est</strong>.
       </p>
 
       <p className="mt-4 text-sm leading-relaxed text-ink/80">
         When we can&rsquo;t support a claim, we show nothing: no default value, no best guess, no
-        &ldquo;typically.&rdquo; A blank field means we don&rsquo;t know — and neither does anyone
-        printing a number there.
+        &ldquo;typically.&rdquo;
       </p>
 
       <p className="mt-4 text-sm leading-relaxed text-ink/80">
-        Some things — battery health, an exact build date, whether an option was actually
-        installed on one specific car — can&rsquo;t be known from a listing at all. Where that
-        matters, a listing&rsquo;s &ldquo;Worth asking the seller&rdquo; panel names the question
-        instead of us guessing at an answer.
+        Some information about electric cars (battery health, build date) can be estimated but is
+        difficult to know without a physical inspection. In these cases, we recommend contacting
+        sellers directly.
       </p>
     </div>
   );
