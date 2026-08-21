@@ -1,87 +1,67 @@
-import type { Fact } from "@/lib/types";
 import type { BatteryRisk as BatteryRiskData } from "@/lib/nhtsa/battery";
 import { Section } from "./EnrichmentReport";
-import { SourceBadge } from "./SourceBadge";
-
-/** NHTSA's component paths are colon-delimited and long —
- *  "ELECTRICAL SYSTEM:PROPULSION SYSTEM:TRACTION BATTERY:MANAGEMENT
- *  SYSTEM/ENERGY CONTROL MODULE (BMS/BECM):SOFTWARE". Their words, unedited;
- *  the colons become middots so the line reads, it truncates rather than
- *  wraps, and the whole path is on the hover. Picking one segment out would
- *  be us deciding what the recall was about. */
-function componentLine(component: string): string {
-  return component.split(":").join(" · ");
-}
 
 /** What NHTSA has on file for this car's make, model and year.
  *
- *  Recalls are the government's own per-cohort claim, so they render bare.
- *  The complaint count is ours — our classification of their rows — so it
- *  carries the same qualifier every other aggregate on the site carries.
+ *  A recall campaign is filed against a cohort, not a VIN: NHTSA's own
+ *  recallsByVehicle API takes a make/model/year, never a VIN, and no free,
+ *  no-bot-wall source resolves whether THIS car sat in the affected build
+ *  window or was already fixed (surveyed 2026-08-09 in
+ *  docs/OEM-PORTAL-SURVEY.md; every OEM portal with real completion history
+ *  — Mercedes, Hyundai — sits behind reCAPTCHA, and re-checked 2026-08-21 in
+ *  docs/agents/per-vin-options-2026-08-21.md, no other make exposes one
+ *  free). The one place a genuine per-VIN answer exists is GM's owner
+ *  centre, already wired in as `campaignCheck` (scraper/gm-warranty.mjs) —
+ *  where that fact covers this car, it's the better answer and this panel
+ *  steps aside for it rather than print a weaker version underneath.
  *
- *  Nothing here is a rating. Complaint counts have no fleet size under them
- *  (NHTSA publishes no denominator), so they are never coloured, ranked, or
- *  set next to another car's. They are a count of filings and they say so.
+ *  So the line below states the one thing the cohort data actually
+ *  supports — that NHTSA has a battery recall on file for this model — and
+ *  hands the real question, does it apply to this car and is it fixed, to
+ *  the one place that can actually answer it per VIN: NHTSA's own VIN
+ *  lookup.
  *
- *  Renders nothing at all when the cohort is unresolved or absent from the
- *  refresh — no empty state, no "no data". See lib/nhtsa/battery.ts. */
-export function BatteryRisk({ data, vin }: { data: BatteryRiskData | null; vin: string }) {
-  if (!data) return null;
+ *  The complaint count that used to sit here is gone for the same reason
+ *  the recall number and NHTSA's taxonomy string are gone from the
+ *  headline: NHTSA publishes no fleet size behind a complaint count, so it
+ *  cannot say this model is worse or better than any other, and it says
+ *  nothing about this specific truck. A number a shopper can't act on
+ *  doesn't belong on the page just because NHTSA happened to publish it.
+ *
+ *  Renders nothing when the cohort is unresolved, when NHTSA has no battery
+ *  recall on file for it, or when a stronger per-VIN fact already covers
+ *  it. No empty state, no "no recalls" — see lib/nhtsa/battery.ts on why a
+ *  clean answer and an unasked one already look identical this far
+ *  upstream, so neither is safe to assert. */
+export function BatteryRisk({
+  data,
+  vin,
+  packReplaced,
+}: {
+  data: BatteryRiskData | null;
+  vin: string;
+  /** This exact VIN already has a confirmed, dated pack replacement (GM's
+   *  owner centre, surfaced elsewhere on this page as a per-VIN fact) — the
+   *  thing this panel wishes it could say but can't reach on its own. */
+  packReplaced?: boolean;
+}) {
+  if (!data || data.recalls.length === 0 || packReplaced) return null;
 
-  const counted: Fact<number> = {
-    value: data.complaintsBattery,
-    source: "agg",
-    asOf: data.asOf,
-    confidence: "medium",
-  };
+  const n = data.recalls.length;
 
   return (
-    <Section title="Battery recalls & complaints">
-      {data.recalls.length > 0 && (
-        <ul>
-          {data.recalls.map((r) => (
-            <li
-              key={r.campaign}
-              className="flex items-baseline gap-3 border-b border-zinc-100 py-2 text-sm last:border-0"
-            >
-              <span className="w-24 shrink-0 font-medium tabular-nums">{r.campaign}</span>
-              {/* min-w-0 so truncate can shrink this: without it the full
-                  component path is the row's minimum width and the page grid
-                  goes past a phone screen. */}
-              <span className="min-w-0 truncate text-zinc-700" title={r.component}>
-                {componentLine(r.component)}
-              </span>
-            </li>
-          ))}
-        </ul>
-      )}
-
-      <div
-        className={`flex items-baseline justify-between gap-4 py-2 text-sm ${
-          data.recalls.length > 0 ? "border-t border-zinc-100" : ""
-        }`}
-      >
-        <span className="text-zinc-500">Battery complaints filed</span>
-        <span className="text-right">
-          <span className="font-medium tabular-nums">
-            {data.complaintsBattery.toLocaleString()} ({data.complaintsPack.toLocaleString()} pack-level)
-          </span>{" "}
-          <SourceBadge fact={counted} />
-        </span>
-      </div>
-
-      {/* Attribution and the shopper's own next step in one line: a recall is
-          answered per VIN, and this car's VIN is the answer NHTSA will give. */}
-      <p className="mt-1 border-t border-zinc-100 pt-2 text-[11px] text-zinc-400">
-        <a
-          href={`https://www.nhtsa.gov/recalls?vin=${encodeURIComponent(vin)}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="hover:text-emerald-600"
-        >
-          NHTSA — check this VIN ↗
-        </a>
+    <Section title="Recalls">
+      <p className="text-sm text-zinc-700">
+        NHTSA has {n === 1 ? "a battery recall" : `${n} battery recalls`} on file for this model.
       </p>
+      <a
+        href={`https://www.nhtsa.gov/recalls?vin=${encodeURIComponent(vin)}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-2 inline-block text-sm font-medium text-emerald-700 hover:text-emerald-600"
+      >
+        Check this VIN on NHTSA ↗
+      </a>
     </Section>
   );
 }

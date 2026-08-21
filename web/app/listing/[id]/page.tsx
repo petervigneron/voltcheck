@@ -20,6 +20,7 @@ import { askVsMarketTile } from "@/lib/listings/card";
 import { PriceScatter } from "@/components/PriceScatter";
 import { PriceSparkline } from "@/components/PriceSparkline";
 import { BatteryRisk } from "@/components/BatteryRisk";
+import { Gallery } from "@/components/Gallery";
 import { batteryRisk } from "@/lib/nhtsa/battery";
 import { batteryWarranty } from "@/lib/listings/warranty";
 
@@ -270,22 +271,7 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
         {/* Left: gallery + narrative */}
         <div className="min-w-0 space-y-5 md:col-start-1 md:row-start-1">
           {gallery.length > 0 && (
-            <div>
-              {/* eslint-disable-next-line @next/next/no-img-element -- external dealer CDN */}
-              <img
-                src={gallery[0]}
-                alt={`${listing.year} ${listing.make} ${listing.model}`}
-                className="aspect-[16/10] w-full rounded-xl object-cover bg-zinc-100 dark:bg-zinc-800"
-              />
-              {gallery.length > 1 && (
-                <div className="mt-2 grid grid-cols-4 gap-2">
-                  {gallery.slice(1, 5).map((src) => (
-                    // eslint-disable-next-line @next/next/no-img-element -- external dealer CDN
-                    <img key={src} src={src} alt="" className="aspect-[4/3] w-full rounded-lg object-cover bg-zinc-100 dark:bg-zinc-800" loading="lazy" />
-                  ))}
-                </div>
-              )}
-            </div>
+            <Gallery images={gallery} alt={`${listing.year} ${listing.make} ${listing.model}`} />
           )}
 
           {listing.buybackDisclosed && (
@@ -334,13 +320,17 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
             </div>
           ) : null}
 
-          <BatteryRisk data={battery} vin={listing.vin} />
-
           {e.row && (
             <Section title={`${listing.model}${claim.assert && displayTrim(listing) ? ` ${claim.trim}` : ""}`}>
               <EnrichmentFacts row={e.row} warranty={batteryWarranty(e.row, listing)} />
             </Section>
           )}
+
+          {/* Below the enrichment card on purpose: a recall is a cohort fact
+              and this page's headline facts are about the car in front of
+              the shopper. See components/BatteryRisk.tsx for why it can't
+              say more than "NHTSA has one on file" for most makes. */}
+          <BatteryRisk data={battery} vin={listing.vin} packReplaced={listing.campaignCheck?.packReplaced} />
 
           {e.enrichment.candidates && (
             <Section title="Two versions wear this badge">
