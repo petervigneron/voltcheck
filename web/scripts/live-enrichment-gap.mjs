@@ -1,8 +1,10 @@
-// Which live listings resolve to NO enrichment row at all — the check that
-// should have existed from the start. Run from web/:
+// Which live listings resolve to NO enrichment row at all, AND — for the
+// ones that DO match — how complete that matched row actually is. Run from
+// web/:
 //
 //   node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs \
-//     scripts/live-enrichment-gap.mjs [--json] [--max-groups N] [--top N]
+//     scripts/live-enrichment-gap.mjs [--json] [--max-groups N] [--top N] \
+//     [--completeness-top N]
 //
 // WHY THIS EXISTS: the enrichment corpus (lib/enrichment/data*.ts, ~440 rows)
 // is filled in by hand, one model as someone thought of it, at a time.
@@ -54,13 +56,43 @@
 // production path also misses it, but a "total" verdict (no row at ANY trim)
 // is unaffected by any of that, because it never depends on trim or VIN.
 //
+// A THIRD kind this script used to miss entirely: a listing can match a row
+// and that row can still be full of holes. 2023 F-150 Lightning Pro
+// (voltcheck.net/listing/1ft6w1ev4pwg56454) matched a real row and still
+// showed four blank fields — this script would have called that listing
+// "covered" right alongside a fully-researched one, because it only ever
+// asked "did the matcher return something," never "is what it returned any
+// good." COMPLETENESS below asks the second question.
+//
+// COMPLETENESS, measured only on listings with a single EXACT match — a
+// listing that only matched ambiguous candidates (enrichment.candidates, no
+// enrichment.exact) has no one settled row to score, so it's left out of
+// this measurement rather than guessing which candidate the shopper is
+// looking at:
+//
+//   For each exact-matched row, check the fields below and count which are
+//   absent. "Which fields" is the judgment call this report has to state
+//   plainly rather than bury in code: it reuses exactly the core+expected
+//   tiers enrichment-coverage.mjs (this directory) already defined for the
+//   static corpus — "published for essentially every modern EV" (core) and
+//   "knowable and high-value but with real exceptions" (expected). Fields
+//   that script tiers "optional" (gross pack kWh, independently tested
+//   range, extended-coverage terms) are deliberately excluded here too: Tesla
+//   never publishes a gross kWh split at all, most models never got an
+//   independent range test, and counting those as "missing" would manufacture
+//   a research to-do list of facts that don't exist industry-wide, rather
+//   than surfacing real, closable gaps. See EXPECTED_FIELDS below for the
+//   exact list and each field's own per-field caveat.
+//
 // It reports; it does not edit. Filling a row or fixing a trim string is a
 // research/code act with a primary source, never something this script
 // guesses. Exit 0 = no more distinct gap groups than the baseline measured
 // the day this check was born; 10 = a NEW group appeared (a new model went
 // live with no enrichment, or an existing row stopped matching) — same
 // ratchet shape as enrichment-coverage.mjs and completeness-audit.mjs, so the
-// nightly can shout without failing the build.
+// nightly can shout without failing the build. Completeness is reporting
+// only so far — no baseline has been calibrated for it (see the BASELINE
+// note below), so it never affects the exit code.
 //
 // BASELINE NOT YET CALIBRATED. This was first run 2026-08-21 while a db-sync
 // was mid-write against the same database: successive fetches of the same
@@ -99,6 +131,34 @@ const REPORT_PATH = val("--out", "/tmp/live-enrichment-gap.json");
 // a previously-matching row broke.
 const BASELINE = Number(val("--max-groups", "999999"));
 const FEED_BASE = val("--feed-base", "https://voltcheck.net");
+const COMPLETENESS_TOP = Number(val("--completeness-top", "20"));
+
+// The fields an exact-matched row is expected to carry — see the
+// COMPLETENESS section of the header comment for why this list is exactly
+// enrichment-coverage.mjs's core+expected tiers and nothing more. `present`
+// reads the same row shape EnrichmentReport.tsx does; a field counts as
+// missing only when the fact itself is absent, never on its value.
+const EXPECTED_FIELDS = [
+  // Usable OR gross satisfies this, matching enrichment-coverage.mjs's own
+  // "pack kWh" getter exactly (packUsableKwh ?? packGrossKwh) — Hyundai and
+  // Polestar both publish a single unlabeled figure (see their rows' own
+  // notes: "Hyundai publishes one figure and does not say gross or usable"),
+  // so requiring packUsableKwh specifically would count their published fact
+  // as a gap it isn't.
+  { key: "packKwh", tier: "core", label: "pack kWh (usable or gross)", present: (r) => !!(r.battery?.packUsableKwh || r.battery?.packGrossKwh) },
+  { key: "epaRangeMi", tier: "core", label: "EPA range", present: (r) => !!r.range?.epaRangeMi },
+  { key: "heatPump", tier: "core", label: "heat pump", present: (r) => !!r.thermal?.heatPump },
+  { key: "batteryYears", tier: "core", label: "battery warranty term", present: (r) => !!r.warranty?.batteryYears },
+  { key: "portStandard", tier: "core", label: "charge port", present: (r) => !!r.charging?.portStandard },
+  // Tier "expected", not "core", for the same reason enrichment-coverage.mjs
+  // gives it that tier: a maker not splitting these out, or not having
+  // tested/published them, is a real (if less common) case, not a bug.
+  { key: "dcFastCharging", tier: "expected", label: "DC fast charging capability", present: (r) => !!r.charging?.dcFastCharging },
+  { key: "chemistry", tier: "expected", label: "chemistry", present: (r) => !!r.battery?.chemistry },
+  { key: "dcPeakKw", tier: "expected", label: "peak DC rate", present: (r) => !!r.charging?.dcPeakKw },
+  { key: "superchargerAccess", tier: "expected", label: "Supercharger access", present: (r) => !!r.charging?.superchargerAccess },
+  { key: "batteryTransfers", tier: "expected", label: "battery warranty transfers", present: (r) => !!r.warranty?.batteryTransfers },
+];
 
 // Mirrors match.ts's own make/model normalization (norm() + the make-prefix
 // strip in modelKey()) so this report's buckets are the matcher's own
@@ -157,6 +217,34 @@ const matched = (r) => !!(r.exact || (r.candidates && r.candidates.length));
 // One evaluation per listing, against the two decodes described above.
 const groups = new Map(); // groupKey -> { make, model, total: Map<listingId,...>? just counts, ... }
 
+// COMPLETENESS aggregation — exact matches only (see header comment for why
+// candidates-only matches are left out).
+let exactMatched = 0; // denominator: exact-matched listings actually scored
+let incompleteMatched = 0; // of those, how many are missing at least one expected field
+const fieldMissCounts = new Map(); // fieldKey -> count of exact-matched listings missing it
+const completenessGroups = new Map(); // "MAKE|||MODELKEY" -> group
+
+function recordCompleteness(row, make, model, year) {
+  exactMatched++;
+  const missing = EXPECTED_FIELDS.filter((f) => !f.present(row));
+  if (missing.length === 0) return;
+  incompleteMatched++;
+  for (const f of missing) fieldMissCounts.set(f.key, (fieldMissCounts.get(f.key) ?? 0) + 1);
+
+  const displayMake = foldMake(make, model);
+  const key = `${displayMake}|||${modelKey(displayMake, model)}`;
+  let g = completenessGroups.get(key);
+  if (!g) {
+    g = { make: displayMake, model, count: 0, minYear: year, maxYear: year, modelSpellings: new Map(), missingFieldCounts: new Map() };
+    completenessGroups.set(key, g);
+  }
+  g.count++;
+  g.minYear = Math.min(g.minYear, year);
+  g.maxYear = Math.max(g.maxYear, year);
+  g.modelSpellings.set(model, (g.modelSpellings.get(model) ?? 0) + 1);
+  for (const f of missing) g.missingFieldCounts.set(f.key, (g.missingFieldCounts.get(f.key) ?? 0) + 1);
+}
+
 let totalMiss = 0;
 let partialMiss = 0;
 
@@ -173,7 +261,10 @@ for (const l of listings) {
     driveType: l.drive,
   };
   const full = matchEnrichment(decodeFull, null);
-  if (matched(full)) continue;
+  if (matched(full)) {
+    if (full.exact) recordCompleteness(full.exact, make, model, l.year);
+    continue;
+  }
 
   const decodeCoarse = { ...decodeFull, trim: undefined, driveType: undefined };
   const coarse = matchEnrichment(decodeCoarse, null);
@@ -220,6 +311,26 @@ const totalListings = listings.length;
 const totalGapListings = totalMiss + partialMiss;
 const pct = (n, d) => (d ? Math.round((1000 * n) / d) / 10 : 0);
 
+const rankedCompleteness = [...completenessGroups.values()]
+  .map((g) => ({
+    make: g.make,
+    model: mostCommon(g.modelSpellings),
+    count: g.count,
+    years: g.minYear === g.maxYear ? `${g.minYear}` : `${g.minYear}-${g.maxYear}`,
+    missingFields: [...g.missingFieldCounts.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .map(([k, n]) => `${EXPECTED_FIELDS.find((f) => f.key === k).label} (${n})`),
+  }))
+  .sort((a, b) => b.count - a.count);
+
+const perFieldMiss = EXPECTED_FIELDS.map((f) => ({
+  key: f.key,
+  tier: f.tier,
+  label: f.label,
+  missing: fieldMissCounts.get(f.key) ?? 0,
+  of: exactMatched,
+}));
+
 const report = {
   generatedAt: new Date().toISOString(),
   totalListings,
@@ -230,6 +341,20 @@ const report = {
   groupCount: ranked.length,
   baseline: BASELINE,
   groups: ranked,
+  completeness: {
+    methodology:
+      "Measured only on listings that resolved to a single EXACT enrichment row (ambiguous candidates-only matches have no one settled row to score). " +
+      "\"Expected\" fields are exactly enrichment-coverage.mjs's core+expected tiers — fields that script already treats as \"published for essentially " +
+      "every modern EV\" or \"knowable with real exceptions\". Its \"optional\" tier (gross pack kWh, independently tested range, extended-coverage terms) " +
+      "is excluded on purpose: those are genuinely thin industry-wide (Tesla never publishes a gross kWh split), so counting them would manufacture gaps " +
+      "that can't be closed rather than surface ones that can.",
+    exactMatchedListings: exactMatched,
+    incompleteListings: incompleteMatched,
+    incompleteSharePct: pct(incompleteMatched, exactMatched),
+    perField: perFieldMiss,
+    groupCount: rankedCompleteness.length,
+    groups: rankedCompleteness,
+  },
 };
 
 await mkdir(dirname(REPORT_PATH), { recursive: true }).catch(() => {});
@@ -254,6 +379,26 @@ for (const g of ranked.slice(0, TOP)) {
   if (g.exampleTrims) console.log(`      trims seen: ${g.exampleTrims.join(", ")}`);
 }
 if (ranked.length > TOP) console.log(`  … and ${ranked.length - TOP} more groups (full list in ${REPORT_PATH})`);
+
+console.log(`\nCompleteness — ${report.completeness.exactMatchedListings} exact-matched live listings scored`);
+console.log(`  (${report.completeness.methodology})`);
+console.log(
+  `  missing at least one expected field: ${report.completeness.incompleteListings} (${report.completeness.incompleteSharePct}%)`
+);
+console.log(`  per-field misses, across all exact-matched listings:`);
+for (const f of perFieldMiss) {
+  const p = pct(f.missing, f.of);
+  console.log(`    [${f.tier.padEnd(8)}] ${f.label.padEnd(28)} missing on ${String(f.missing).padStart(5)}/${f.of} listings (${p}%)`);
+}
+console.log(`\nField-completeness gap list, ranked by listing count (top ${COMPLETENESS_TOP} of ${rankedCompleteness.length}):`);
+for (const g of rankedCompleteness.slice(0, COMPLETENESS_TOP)) {
+  const label = `${g.make} ${g.model} (${g.years})`;
+  console.log(`  ${label.padEnd(46)} ${String(g.count).padStart(5)} listings`);
+  console.log(`      missing: ${g.missingFields.join(", ")}`);
+}
+if (rankedCompleteness.length > COMPLETENESS_TOP) {
+  console.log(`  … and ${rankedCompleteness.length - COMPLETENESS_TOP} more groups (full list in ${REPORT_PATH})`);
+}
 
 console.log(`\nFull report written to ${REPORT_PATH}`);
 

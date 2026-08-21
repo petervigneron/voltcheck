@@ -120,26 +120,33 @@ export function FactRow({
    *  answer, where a note underneath would restate it in more words. */
   title?: string;
 }) {
-  const note = inlineNote(fact?.note);
+  // No fact means no research has settled this for this car — that is
+  // silence, not a value, so the row itself doesn't exist. This is distinct
+  // from a Fact whose own value happens to read "unknown" (no such case
+  // exists in this schema today: Source never encodes "we checked and it
+  // can't be known", and the one place on the site that prints the word
+  // "Unknown" as a real, kept answer — the sold-data panel's per-VIN trim,
+  // where Ford stamped no trim code on 2022-23 Lightnings — is a plain
+  // nullable string in RecentSales.tsx, not a Fact, and never touches
+  // FactRow). If a Source is ever added for "researched, unknowable", it
+  // gets its own branch here that prints the word; it must not reuse this
+  // absent-fact path.
+  if (!fact) return null;
+
+  const note = inlineNote(fact.note);
   return (
     <div
-      title={title ?? (fact?.note && !note ? fact.note : undefined)}
+      title={title ?? (fact.note && !note ? fact.note : undefined)}
       className="flex items-baseline justify-between gap-4 py-2 border-b border-zinc-100 dark:border-zinc-800 last:border-0"
     >
       <div className="text-sm text-zinc-500 dark:text-zinc-400">{label}</div>
       <div className="text-right">
-        {fact ? (
-          <>
-            <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
-              {format ? format(fact.value) : String(fact.value)}
-            </span>{" "}
-            <SourceBadge fact={fact} />
-            {fact.sourceUrl && <Citation fact={fact} />}
-            {note && <div className="mt-0.5 max-w-xs text-xs text-zinc-500 dark:text-zinc-400">{note}</div>}
-          </>
-        ) : (
-          <span className="text-sm text-zinc-400 dark:text-zinc-500">Unknown</span>
-        )}
+        <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
+          {format ? format(fact.value) : String(fact.value)}
+        </span>{" "}
+        <SourceBadge fact={fact} />
+        {fact.sourceUrl && <Citation fact={fact} />}
+        {note && <div className="mt-0.5 max-w-xs text-xs text-zinc-500 dark:text-zinc-400">{note}</div>}
       </div>
     </div>
   );

@@ -58,23 +58,70 @@ export function EnrichmentFacts({
   // floor to hold the pack to, so those rows go with it rather than sitting
   // underneath reading "Yes".
   const expired = warranty?.state === "expired";
+
+  // FactRow now renders nothing for an absent fact (see FactRow.tsx), which
+  // clears the field-level "Unknown" rows on their own. That leaves one more
+  // place the same complaint applies at a coarser grain: a section heading
+  // with every row under it gone is still a label the shopper scans for
+  // nothing. Each heading below is gated on at least one fact in its group
+  // actually being present for THIS row, computed from the same optional
+  // chains the rows themselves read — not a second source of truth, just
+  // whether any of them resolve to something.
+  const hasBatteryRange = !!(
+    row.battery?.packUsableKwh ||
+    row.battery?.packGrossKwh ||
+    row.battery?.chemistry ||
+    row.range?.epaRangeMi ||
+    row.range?.testedRangeMi
+  );
+  const hasThermal = !!row.thermal?.heatPump;
+  const hasCharging = !!(
+    row.charging?.dcFastCharging ||
+    row.charging?.dcPeakKw ||
+    row.charging?.architectureV ||
+    row.charging?.chargeTime1080Min ||
+    row.charging?.acOnboardKw ||
+    row.charging?.plugAndCharge ||
+    row.charging?.portStandard ||
+    row.charging?.superchargerAccess
+  );
+  // A settled warranty state (warranty.state !== "unknown") always rests on
+  // a batteryYears or batteryMiles fact — see lib/listings/warranty.ts — so
+  // it counts as content on its own; the raw fields cover candidate rows,
+  // which get no `warranty` prop at all (see the JSDoc above).
+  const hasWarranty = !!(
+    (warranty && warranty.state !== "unknown") ||
+    row.warranty?.batteryYears ||
+    row.warranty?.sohFloorPct ||
+    row.warranty?.batteryTransfers ||
+    row.warranty?.powertrainTerms ||
+    row.warranty?.extendedCoverage
+  );
   return (
     <div>
       <div className="grid gap-x-10 sm:grid-cols-2">
         <div>
-          <h3 className="mt-2 text-xs font-semibold text-zinc-400">Battery & range</h3>
-          <FactRow label="Usable capacity" fact={row.battery?.packUsableKwh} format={(v) => `${v} kWh`} />
-          <FactRow label="Gross capacity" fact={row.battery?.packGrossKwh} format={(v) => `${v} kWh`} />
-          <FactRow label="Chemistry" fact={row.battery?.chemistry} />
-          <FactRow label="EPA range" fact={row.range?.epaRangeMi} format={(v) => `${v} mi`} />
-          <FactRow label="Real-world tested range" fact={row.range?.testedRangeMi} format={(v) => `${v} mi`} />
+          {hasBatteryRange && (
+            <>
+              <h3 className="mt-2 text-xs font-semibold text-zinc-400">Battery & range</h3>
+              <FactRow label="Usable capacity" fact={row.battery?.packUsableKwh} format={(v) => `${v} kWh`} />
+              <FactRow label="Gross capacity" fact={row.battery?.packGrossKwh} format={(v) => `${v} kWh`} />
+              <FactRow label="Chemistry" fact={row.battery?.chemistry} />
+              <FactRow label="EPA range" fact={row.range?.epaRangeMi} format={(v) => `${v} mi`} />
+              <FactRow label="Real-world tested range" fact={row.range?.testedRangeMi} format={(v) => `${v} mi`} />
+            </>
+          )}
 
-          <h3 className="mt-5 text-xs font-semibold text-zinc-400">Thermal</h3>
-          <FactRow
-            label="Heat pump"
-            fact={row.thermal?.heatPump}
-            format={(v) => HEAT_PUMP_LABEL[v as HeatPump]}
-          />
+          {hasThermal && (
+            <>
+              <h3 className="mt-5 text-xs font-semibold text-zinc-400">Thermal</h3>
+              <FactRow
+                label="Heat pump"
+                fact={row.thermal?.heatPump}
+                format={(v) => HEAT_PUMP_LABEL[v as HeatPump]}
+              />
+            </>
+          )}
 
           {/* Thin field (one model so far) — silent when absent rather than
               one more "Unknown" row on every other car. See gaps 1/2 note
@@ -87,92 +134,100 @@ export function EnrichmentFacts({
           )}
         </div>
         <div>
-          <h3 className="mt-2 text-xs font-semibold text-zinc-400">Charging</h3>
-          {/* A peak DC rate already implies the car can DC fast charge, so
-              this row would just repeat that as a second line — "DC fast
-              charging: Unknown" sitting directly above "Peak DC rate: 200
-              kW" is exactly the self-contradicting duplication this guards
-              against. Only shown for rows with no peak-kW fact, where it's
-              the one piece of information the page has on the subject. */}
-          {!row.charging?.dcPeakKw && (
-            <FactRow
-              label="DC fast charging"
-              fact={row.charging?.dcFastCharging}
-              format={(v) => DCFC_LABEL[v as keyof typeof DCFC_LABEL] ?? String(v)}
-            />
-          )}
-          <FactRow label="Peak DC rate" fact={row.charging?.dcPeakKw} format={(v) => `${v} kW`} />
-          {/* Both fields below are thin (20% and ~3% of the corpus today) —
-              unlike the rest of this grid, an absent value stays silent
-              instead of adding another "Unknown" row; the surface should
-              read as "no data yet" for a field most rows will never carry,
-              not as one more line to scan past. See
-              docs/agents/enrichment-gaps-2026-08-20.md gaps 1 and 2. */}
-          {row.charging?.architectureV && (
-            <FactRow
-              label="Pack architecture"
-              fact={row.charging.architectureV}
-              format={(v) => `${v}V`}
-            />
-          )}
-          {row.charging?.chargeTime1080Min && (
-            <FactRow
-              label="10–80% charge time"
-              fact={row.charging.chargeTime1080Min}
-              format={(v) => `${v} min`}
-            />
-          )}
-          {row.charging?.acOnboardKw && (
-            <FactRow label="AC onboard charger" fact={row.charging.acOnboardKw} format={(v) => `${v} kW`} />
-          )}
-          {row.charging?.plugAndCharge && (
-            <FactRow label="Plug & Charge" fact={row.charging.plugAndCharge} format={(v) => (v ? "Yes" : "No")} />
-          )}
-          <FactRow label="Port" fact={row.charging?.portStandard} />
-          <FactRow
-            label="Supercharger access"
-            fact={row.charging?.superchargerAccess}
-            format={(v) => SUPERCHARGER_LABEL[v as SuperchargerAccess] ?? String(v)}
-          />
-
-          <h3 className="mt-5 text-xs font-semibold text-zinc-400">Warranty</h3>
-          {/* What the shopper is buying is one car's remaining coverage, not
-              the terms it was sold under. Where this car's own odometer and
-              model year settle it (lib/listings/warranty.ts) the answer takes
-              the row and the terms move to the tooltip; where they do not, the
-              terms are the honest answer and stand as before. */}
-          {warranty && warranty.state !== "unknown" ? (
-            <FactRow
-              label="HV battery coverage"
-              title={warranty.why}
-              fact={{
-                // Provenance rides on whichever term settled it — a warranty
-                // can expire on mileage alone, on a row that carries a mileage
-                // limit and no year term, so neither may be assumed present.
-                ...(row.warranty?.batteryYears ?? row.warranty?.batteryMiles),
-                value: warranty.label,
-                note: undefined,
-                source: (row.warranty?.batteryYears ?? row.warranty?.batteryMiles)?.source ?? "mfr",
-                asOf: (row.warranty?.batteryYears ?? row.warranty?.batteryMiles)?.asOf ?? "—",
-                confidence: "high",
-              }}
-            />
-          ) : (
-            <FactRow
-              label="HV battery coverage"
-              fact={row.warranty?.batteryYears}
-              format={(v) => `${v} yr / ${row.warranty?.batteryMiles?.value.toLocaleString() ?? "—"} mi`}
-            />
-          )}
-          {!expired && (
+          {hasCharging && (
             <>
-              <FactRow label="Capacity floor" fact={row.warranty?.sohFloorPct} format={(v) => `${v}% SOH`} />
-              {/* The label already says "transfers", so the answer is the answer. */}
-              <FactRow label="Battery coverage transfers" fact={row.warranty?.batteryTransfers} format={(v) => (v ? "Yes" : "No")} />
-              <FactRow label="Powertrain" fact={row.warranty?.powertrainTerms} />
+              <h3 className="mt-2 text-xs font-semibold text-zinc-400">Charging</h3>
+              {/* A peak DC rate already implies the car can DC fast charge, so
+                  this row would just repeat that as a second line — "DC fast
+                  charging: Unknown" sitting directly above "Peak DC rate: 200
+                  kW" is exactly the self-contradicting duplication this guards
+                  against. Only shown for rows with no peak-kW fact, where it's
+                  the one piece of information the page has on the subject. */}
+              {!row.charging?.dcPeakKw && (
+                <FactRow
+                  label="DC fast charging"
+                  fact={row.charging?.dcFastCharging}
+                  format={(v) => DCFC_LABEL[v as keyof typeof DCFC_LABEL] ?? String(v)}
+                />
+              )}
+              <FactRow label="Peak DC rate" fact={row.charging?.dcPeakKw} format={(v) => `${v} kW`} />
+              {/* Both fields below are thin (20% and ~3% of the corpus today) —
+                  unlike the rest of this grid, an absent value stays silent
+                  instead of adding another "Unknown" row; the surface should
+                  read as "no data yet" for a field most rows will never carry,
+                  not as one more line to scan past. See
+                  docs/agents/enrichment-gaps-2026-08-20.md gaps 1 and 2. */}
+              {row.charging?.architectureV && (
+                <FactRow
+                  label="Pack architecture"
+                  fact={row.charging.architectureV}
+                  format={(v) => `${v}V`}
+                />
+              )}
+              {row.charging?.chargeTime1080Min && (
+                <FactRow
+                  label="10–80% charge time"
+                  fact={row.charging.chargeTime1080Min}
+                  format={(v) => `${v} min`}
+                />
+              )}
+              {row.charging?.acOnboardKw && (
+                <FactRow label="AC onboard charger" fact={row.charging.acOnboardKw} format={(v) => `${v} kW`} />
+              )}
+              {row.charging?.plugAndCharge && (
+                <FactRow label="Plug & Charge" fact={row.charging.plugAndCharge} format={(v) => (v ? "Yes" : "No")} />
+              )}
+              <FactRow label="Port" fact={row.charging?.portStandard} />
+              <FactRow
+                label="Supercharger access"
+                fact={row.charging?.superchargerAccess}
+                format={(v) => SUPERCHARGER_LABEL[v as SuperchargerAccess] ?? String(v)}
+              />
             </>
           )}
-          <FactRow label="Extended coverage" fact={row.warranty?.extendedCoverage} />
+
+          {hasWarranty && (
+            <>
+              <h3 className="mt-5 text-xs font-semibold text-zinc-400">Warranty</h3>
+              {/* What the shopper is buying is one car's remaining coverage, not
+                  the terms it was sold under. Where this car's own odometer and
+                  model year settle it (lib/listings/warranty.ts) the answer takes
+                  the row and the terms move to the tooltip; where they do not, the
+                  terms are the honest answer and stand as before. */}
+              {warranty && warranty.state !== "unknown" ? (
+                <FactRow
+                  label="HV battery coverage"
+                  title={warranty.why}
+                  fact={{
+                    // Provenance rides on whichever term settled it — a warranty
+                    // can expire on mileage alone, on a row that carries a mileage
+                    // limit and no year term, so neither may be assumed present.
+                    ...(row.warranty?.batteryYears ?? row.warranty?.batteryMiles),
+                    value: warranty.label,
+                    note: undefined,
+                    source: (row.warranty?.batteryYears ?? row.warranty?.batteryMiles)?.source ?? "mfr",
+                    asOf: (row.warranty?.batteryYears ?? row.warranty?.batteryMiles)?.asOf ?? "—",
+                    confidence: "high",
+                  }}
+                />
+              ) : (
+                <FactRow
+                  label="HV battery coverage"
+                  fact={row.warranty?.batteryYears}
+                  format={(v) => `${v} yr / ${row.warranty?.batteryMiles?.value.toLocaleString() ?? "—"} mi`}
+                />
+              )}
+              {!expired && (
+                <>
+                  <FactRow label="Capacity floor" fact={row.warranty?.sohFloorPct} format={(v) => `${v}% SOH`} />
+                  {/* The label already says "transfers", so the answer is the answer. */}
+                  <FactRow label="Battery coverage transfers" fact={row.warranty?.batteryTransfers} format={(v) => (v ? "Yes" : "No")} />
+                  <FactRow label="Powertrain" fact={row.warranty?.powertrainTerms} />
+                </>
+              )}
+              <FactRow label="Extended coverage" fact={row.warranty?.extendedCoverage} />
+            </>
+          )}
         </div>
       </div>
 
