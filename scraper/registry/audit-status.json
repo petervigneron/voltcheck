@@ -1,0 +1,11 @@
+{
+  "_comment": "Written by scraper/lib/audit-status.mjs. Do not hand-edit — see that file's header.",
+  "checks": {
+    "feed-shard-health": {
+      "lastRunAt": "2026-08-21T19:01:02.432Z",
+      "result": "fail",
+      "detail": "/api/index/0: unexpected shape; /api/index/1: unexpected shape; /api/index/2: This operation was aborted; /api/index/3: This operation was aborted; /api/index/4: unexpected shape; /api/index/5: unexpected shape",
+      "expectedEveryHours": 8
+    }
+  }
+}
