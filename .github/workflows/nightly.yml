@@ -317,15 +317,34 @@ jobs:
     needs: [probe, finalize-prep]
     if: ${{ always() && (github.event.inputs.recover_run_id != '' || needs.probe.result == 'success') }}
     runs-on: ubuntu-latest
-    # Small and fast on purpose: everything left in this job (gm-warranty,
+    # Small and bounded on purpose: everything left in this job (gm-warranty,
     # ingest, db-sync, the price audit, revalidate) does NOT scale with the
     # vPIC backlog the way enrichment does, and the whole point of splitting
-    # it out is that it must not need a large budget to be reliable. The old
-    # 240m finalize left this half only "~90m for gm-warranty + ingest +
-    # db-sync + the audits + revalidate" after enrichment's cap — comfortably
-    # inside 90m even before the six audit/refresh steps below moved to
-    # finalize-audits and stopped sharing this clock at all.
-    timeout-minutes: 90
+    # it out is that it must not need a large budget to be reliable. But 90m
+    # was sized on the assumption that only ingest+db-sync+audit+revalidate
+    # lived here, sharing the old 240m finalize's leftover — it under-counted
+    # gm-warranty, which sat in this job from the start and on 2026-08-21 (run
+    # 32474806496) ran 2h35m without finishing 600 VINs (root cause: its own
+    # per-VIN retry ladder, fixed in gm-warranty.mjs — see the timeout below).
+    # Re-sized from real numbers instead of guessing again:
+    #   - gm-warranty: now hard-capped at 30m below (600 VINs at its ~1.2s
+    #     pace need ~12m even with zero cache hits; 30m leaves room for a
+    #     GM-side outage without room to repeat 2026-08-21).
+    #   - db-sync + price-audit: a clean night (run 32044269696, 2026-08-17,
+    #     ~70k rows) measured 6m29s + 12m3s = ~19m. Both share retry.mjs's
+    #     default 30/120/240s ladder per chunk (sized to outlast Supabase's
+    #     ~2-minute OOM recovery) — a bad night needing that ladder on even a
+    #     couple of chunks plausibly costs tens of minutes more than the clean
+    #     baseline (a same-day recovery db-sync outside this workflow was
+    #     observed retrying across 13 chunks), so budget generously rather
+    #     than from the clean-night number alone.
+    #   - revalidate + checkout/setup overhead: a few minutes.
+    # Sum of worst-cases lands near 90m already before any margin, which is
+    # exactly the "no margin" state that let gm-warranty starve this job in
+    # the first place. 150m gives real headroom while staying well under
+    # finalize-prep's 330m and the 360m GitHub-hosted max — raising this
+    # ceiling is cheap, so size it for a bad night, not an average one.
+    timeout-minutes: 150
     permissions:
       contents: read # only reads the repo (no commit happens in this job)
       actions: read # needed for the cross-run artifact download below
@@ -374,7 +393,29 @@ jobs:
           # the same thing the site did before this lane existed. Must run
           # before ingest — it writes batteryCoverage/campaignCheck directly
           # onto out/listings.json records, which ingest.mjs reads.
-          node gm-warranty.mjs --limit 600 || echo "gm-warranty failed, continuing"
+          #
+          # timeout 30m: this job's entire budget exists to guarantee ingest
+          # and db-sync happen, and on 2026-08-21 (run 32474806496, job
+          # 96775025417) gm-warranty is what broke that guarantee — vpic-
+          # enrich (in the separate finalize-prep job) finished cleanly at
+          # 14:12:35Z, well inside its own cap, then gm-warranty ran from
+          # 14:12:36Z to this job's 16:47:43Z cancellation (2h35m) without
+          # finishing 600 VINs, and db-sync never ran. The log showed the
+          # actual cost: 21 distinct VINs each burned the full 30/120/240s
+          # retry ladder (390s) on an HTTP 500 that this endpoint returns as
+          # its NORMAL answer for "not a GM vehicle" (see the control test in
+          # gm-warranty.mjs) — over two hours of pure waiting for retries that
+          # were never going to succeed. That is the actual root cause, and
+          # it is fixed at the source in gm-warranty.mjs (short waits, the
+          # same fix vpic-enrich.mjs already carries for the same class of
+          # external-API call). This timeout is the backstop, not the fix: an
+          # unrelated GM-side outage or a new failure mode must still not be
+          # able to spend this job's clock. 30m comfortably covers 600 VINs
+          # at the ~1.2s pace even with a retry on every one of them, and
+          # whatever gets answered before a cut-short run is cached in
+          # registry/gm-warranty.json, so nothing already answered is re-asked
+          # tomorrow.
+          timeout 30m node gm-warranty.mjs --limit 600 || echo "gm-warranty hit its 30m cap — continuing so ingest and db-sync still run; VINs already answered are cached in registry/gm-warranty.json and won't be re-fetched"
           node ingest.mjs
 
       - name: Sync to Supabase

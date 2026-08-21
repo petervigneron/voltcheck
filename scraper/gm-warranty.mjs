@@ -86,11 +86,29 @@ const num = (v) => {
 };
 
 async function getJson(label, url) {
-  const res = await fetchWithRetry(label, () =>
-    fetch(url, {
-      headers: { "User-Agent": UA, Accept: "application/json", "X-Crawler": "VoltcheckBot (+https://voltcheck.net/crawler)" },
-      signal: AbortSignal.timeout(20_000),
-    })
+  // Short waits, unlike the database's ladder (retry.mjs's default 30/120/
+  // 240s, sized to outlast Supabase's ~2-minute OOM recovery cycle): this is
+  // a per-VIN call to an external OEM endpoint whose own documented behavior
+  // is to answer 500 for "not a GM vehicle" (see the control test above) —
+  // that is the endpoint's normal answer, not evidence of an outage worth a
+  // multi-minute retry. vpic-enrich.mjs and nhtsa-battery.mjs already made
+  // this same call for their own external APIs; this one had been left on
+  // the default. On 2026-08-21 (run 32474806496) that default ladder is what
+  // actually starved db-sync: 21 VINs in one run each burned the full 390s
+  // (30+120+240) before falling back to the exact same "no coverage" answer
+  // a short wait would have reached in seconds, costing over two hours of
+  // pure waiting inside the 90-minute job whose only job is to reach
+  // Supabase. The final fallback behavior on a real 500 is unchanged either
+  // way (readCoverage(null) below still caches it as unavailable) — shortening
+  // the wait only removes wasted time, it does not change what gets recorded.
+  const res = await fetchWithRetry(
+    label,
+    () =>
+      fetch(url, {
+        headers: { "User-Agent": UA, Accept: "application/json", "X-Crawler": "VoltcheckBot (+https://voltcheck.net/crawler)" },
+        signal: AbortSignal.timeout(20_000),
+      }),
+    { waits: [5, 15] }
   );
   // 500 is this endpoint's answer for "not a GM vehicle" — a real negative,
   // cached like any other so it is asked once and not again.
