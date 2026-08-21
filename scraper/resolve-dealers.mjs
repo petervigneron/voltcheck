@@ -12,9 +12,15 @@
 // resolving candidates are fetched, politely, once per domain. And a match is
 // claimed ONLY when the page itself asserts the identity: it shows the roll's
 // phone number (digit-exact), or the dealer's squashed name together with its
-// city or zip. A parked domain, a different Eagle Auto Sales three states
+// zip (preferred — near-unique) or, only when the roll carries no zip, its
+// city alone. A parked domain, a different Eagle Auto Sales three states
 // away, or a lot using its accountant's domain all fail that check and are
 // dropped — matching nothing is honest, matching the wrong thing is not.
+// City-alone used to be an equal fallback even when a zip was known and
+// disagreed; a 30-sample hand-check on 2026-08-20 caught the failure mode
+// this comment already warned about — hudsoncollision.com matched "Hudson
+// Collision Center" + "Hudson" to a same-named, same-city-named shop in
+// Hudson, OHIO, not the licensed one in Hudson, NY — so zip now gates first.
 //
 // Verified dealers are appended to the registry as "discovered", the same
 // contract as every discovery source: probe.mjs validates extraction before
@@ -176,7 +182,18 @@ await Promise.all(Array.from({ length: CONC }, async () => {
       else {
         const nm = squash(d.name).replace(/ /g, "");
         const cty = squash(d.city ?? "").replace(/ /g, "");
-        if (nm.length >= 8 && pageSquash.includes(nm) && ((cty && pageSquash.includes(cty)) || (d.zip && pageDigits.includes(d.zip)))) how = "name+city";
+        // Zip beats city when we have one: a hand-check of 30 verified NY
+        // matches (2026-08-20) found hudsoncollision.com — a real business,
+        // just the wrong one — matched on name + "hudson" because Hudson, OH
+        // has an unrelated same-named collision shop and the roll's own
+        // Hudson, NY zip was never required. City names collide across
+        // states constantly (Hudson, Springfield, Rome, Greenville…); a
+        // 5-digit zip essentially never does. So when the roll row carries a
+        // zip, require it — city alone no longer clears the gate on its own.
+        if (nm.length >= 8 && pageSquash.includes(nm)) {
+          if (d.zip && pageDigits.includes(d.zip)) how = "name+zip";
+          else if (!d.zip && cty && pageSquash.includes(cty)) how = "name+city";
+        }
       }
       if (how) verified.set(i, { domain: dom, how });
     }
