@@ -1,5 +1,6 @@
 import type { Listing } from "./types";
 import { hasRealPrice } from "./price";
+import { SHARDS } from "./pack";
 
 // Server-side reads from Supabase (PostgREST), with the bundled JSON as
 // fallback (see source.ts). Plain fetch, no client library: the queries are
@@ -165,7 +166,87 @@ export async function fetchListingsFromDb(): Promise<Listing[] | null> {
   return memo.promise;
 }
 
-async function fetchListingsFromDbUncached(): Promise<Listing[] | null> {
+// Thresholds for "the walk came back short," reused verbatim from
+// scraper/lib/sync-guard-logic.mjs rather than re-guessed: that file
+// calibrated them from this pipeline's own logged history (ordinary
+// night-over-night churn measured at 1.0-2.4%; the 2026-08-21 incident this
+// guard exists for dropped the whole feed ~32%, from ~87,082 confirmed
+// listings to the 58,741 that got served and cached). GLOBAL sits far above
+// real drift and far below a real incident on purpose. WARN is worth a
+// human's attention; FAIL means don't trust this read.
+export const SHORT_READ_WARN_DROP = 0.08;
+export const SHORT_READ_FAIL_DROP = 0.15;
+
+export type FeedReadVerdict = "ok" | "warn" | "fail";
+
+/** How short a walk came back against the count taken moments before it,
+ *  classified against the calibration above. `total === null` means the
+ *  count guard itself failed (already handled by the caller as "serve
+ *  unvalidated") — there is nothing to classify against, so this reports
+ *  "ok" rather than inventing a verdict from no data. */
+export function classifyFeedRead(rowCount: number, total: number | null): FeedReadVerdict {
+  if (total === null || total <= 0) return "ok";
+  const drop = (total - rowCount) / total;
+  if (drop >= SHORT_READ_FAIL_DROP) return "fail";
+  if (drop >= SHORT_READ_WARN_DROP) return "warn";
+  return "ok";
+}
+
+// The escape hatch for a FAIL-level short read. The render still completes
+// and its rows are still returned — throwing here would trip the exact
+// "flapping to stale fallback" failure this file's callers were built to
+// avoid (2026-08-16: a single failed request flipped three straight deploys
+// to the bundled JSON snapshot while every other read was healthy). Serving
+// a suspect read once is the acceptable half of that tradeoff; what tonight
+// showed is that the OTHER half — letting it sit as the day-long cached
+// truth (FEED_REVALIDATE_SECONDS, the routes' own `revalidate = 86400`) —
+// is not. revalidateTag expires the fetch-level entries this walk's own
+// pages just wrote, the same mechanism /api/revalidate/route.ts uses after
+// a sync; revalidatePath is called alongside it for the same routes that
+// route calls, because that route's own comments show revalidateTag alone
+// wasn't trusted to reach a force-static route with an empty
+// generateStaticParams() — belt and suspenders, not redundancy for its own
+// sake. The next request (the next shopper, or feed-audits.yml's 6-hourly
+// feed-shard-check.mjs probe) gets a fresh walk instead of another hour of
+// the same wrong snapshot.
+//
+// Dynamic import, not a top-level one: revalidateTag/revalidatePath rely on
+// a request-scoped store Next only sets up while actually handling a Route
+// Handler or Server Action request (confirmed: calling it outside one
+// throws "Invariant: static generation store missing") — a context a plain
+// script or test never has. A top-level import would also make this module
+// unloadable outside Next's own bundler resolution. Either way the failure
+// must not be fatal: a render trying to protect shoppers from a stale cache
+// must not itself crash over the attempt.
+let escapeFeedCache: (shardCount: number) => void = (shardCount) => {
+  import("next/cache")
+    .then(({ revalidateTag, revalidatePath }) => {
+      revalidateTag(FEED_CACHE_TAG, { expire: 0 });
+      revalidatePath("/api/index/first");
+      for (let s = 0; s < shardCount; s++) revalidatePath(`/api/index/${s}`);
+    })
+    .catch((err) => {
+      console.error(
+        "[listings] SHORT READ: could not schedule an early revalidate (best-effort, not fatal — the day-long TTL is the fallback):",
+        err
+      );
+    });
+};
+
+/** Test seam only: swap the cache-escape side effect for a spy and get back
+ *  a function that restores the real one. Production code never calls this. */
+export function __setFeedCacheEscapeForTest(fn: (shardCount: number) => void): () => void {
+  const prev = escapeFeedCache;
+  escapeFeedCache = fn;
+  return () => {
+    escapeFeedCache = prev;
+  };
+}
+
+// Exported (only fetchListingsFromDb is meant to be called in production —
+// this skips the ten-minute memo) so a test can drive one walk at a time
+// without fighting module-level shared state.
+export async function fetchListingsFromDbUncached(): Promise<Listing[] | null> {
   if (!dbConfigured()) return null;
   const base = process.env.SUPABASE_URL!.replace(/\/$/, "");
   const feedUrl = `${base}/rest/v1/live_listings_feed?select=vin,payload,first_seen_at,last_seen_at,prev_price_usd,price_changed_at,buyback_disclosed,listed_on&order=vin.asc&limit=${PAGE}`;
@@ -253,14 +334,19 @@ async function fetchListingsFromDbUncached(): Promise<Listing[] | null> {
     const rows = collected.flat();
 
     // Rows can be delisted between the count and the last page, so a handful
-    // either way is normal drift; a real shortfall means pages went missing and
-    // has to be visible in the build log, not inferred later from a make that
-    // looks thin.
-    if (total !== null && rows.length < total * 0.99) {
+    // either way is normal drift (the calibration above already builds that
+    // in); a real shortfall means pages went missing and has to be visible,
+    // not inferred later from a make that looks thin. Serving this render is
+    // still correct either way — see escapeFeedCache's comment for why FAIL
+    // doesn't throw — but FAIL must not let this become the cached truth for
+    // the next 86,400 seconds the way it did tonight.
+    const verdict = classifyFeedRead(rows.length, total);
+    if (verdict !== "ok") {
       console.error(
-        `[listings] SHORT READ: ${rows.length} rows of ${total} expected — the feed is being served incomplete`
+        `[listings] SHORT READ (${verdict.toUpperCase()}): ${rows.length} rows of ${total} expected — the feed is being served incomplete`
       );
     }
+    if (verdict === "fail") escapeFeedCache(SHARDS);
 
     return rows.map((r) => ({
       ...r.payload,
