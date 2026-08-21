@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { allListings } from "@/lib/listings/source";
+import { FACT_SHEETS } from "@/lib/facts/registry";
 
 const BASE = "https://voltcheck.net";
 
@@ -20,6 +21,16 @@ function staticRoutes(now: Date): MetadataRoute.Sitemap {
     { url: `${BASE}/`, lastModified: now, changeFrequency: "daily", priority: 1 },
     { url: `${BASE}/vin`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
     { url: `${BASE}/bot`, lastModified: now, changeFrequency: "yearly", priority: 0.2 },
+    { url: `${BASE}/facts`, lastModified: now, changeFrequency: "monthly", priority: 0.5 },
+    // Each fact sheet's lastModified tracks its audit record's last-checked
+    // date (lib/facts/registry.ts dateModified), not build time — same
+    // freshness signal its FAQPage JSON-LD carries.
+    ...FACT_SHEETS.map((s) => ({
+      url: `${BASE}/facts/${s.make}/${s.model}/${s.topic}`,
+      lastModified: new Date(s.dateModified),
+      changeFrequency: "monthly" as const,
+      priority: 0.5,
+    })),
   ];
 }
 

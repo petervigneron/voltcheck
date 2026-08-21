@@ -80,6 +80,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <Link href="/methodology" className="underline decoration-paper/40 underline-offset-2 hover:text-paper hover:decoration-paper">
               How we source this data
             </Link>
+            <Link href="/facts" className="underline decoration-paper/40 underline-offset-2 hover:text-paper hover:decoration-paper">
+              Fact sheets
+            </Link>
           </div>
         </footer>
 
