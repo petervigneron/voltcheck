@@ -210225,10 +210225,10 @@
       "domain": "albanynissan.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "team-velocity",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OEM locator VDP host (lane albanynissan.com, 5 listing(s), Albany, GA) 2026-08-20",
+      "status": "working",
+      "notes": "Discovered via OEM locator VDP host (lane albanynissan.com, 5 listing(s), Albany, GA) 2026-08-20 | auto-promoted by probe 2026-08-21: team-velocity API, 200 vehicles",
       "location": {
         "city": "Albany",
         "state": "GA",
@@ -210239,10 +210239,10 @@
       "domain": "barberford.net",
       "name": "Barber Ford - MI",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "team-velocity",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OEM locator VDP host (lane ford-blue-advantage, 1 listing(s), Holland, MI) 2026-08-20",
+      "status": "working",
+      "notes": "Discovered via OEM locator VDP host (lane ford-blue-advantage, 1 listing(s), Holland, MI) 2026-08-20 | auto-promoted by probe 2026-08-21: team-velocity API, 200 vehicles",
       "location": {
         "city": "Holland",
         "state": "MI",
@@ -210253,10 +210253,10 @@
       "domain": "bentleyjacksonville.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "team-velocity",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OEM locator VDP host (lane bentleyjacksonville.com, 1 listing(s), Jacksonville, FL) 2026-08-20",
+      "status": "working",
+      "notes": "Discovered via OEM locator VDP host (lane bentleyjacksonville.com, 1 listing(s), Jacksonville, FL) 2026-08-20 | auto-promoted by probe 2026-08-21: team-velocity API, 86 vehicles",
       "location": {
         "city": "Jacksonville",
         "state": "FL",
@@ -210269,8 +210269,8 @@
       "kind": "rooftop",
       "platform": "unknown",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OEM locator VDP host (lane ford-blue-advantage, 1 listing(s), San Antonio, TX) 2026-08-20",
+      "status": "http-403",
+      "notes": "Discovered via OEM locator VDP host (lane ford-blue-advantage, 1 listing(s), San Antonio, TX) 2026-08-20 | probe 2026-08-21: homepage 403",
       "location": {
         "city": "San Antonio",
         "state": "TX",
@@ -210281,10 +210281,10 @@
       "domain": "desotoford.net",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "team-velocity",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OEM locator VDP host (lane desotoford.net, 1 listing(s), Arcadia, FL) 2026-08-20",
+      "status": "working",
+      "notes": "Discovered via OEM locator VDP host (lane desotoford.net, 1 listing(s), Arcadia, FL) 2026-08-20 | auto-promoted by probe 2026-08-21: team-velocity API, 200 vehicles",
       "location": {
         "city": "Arcadia",
         "state": "FL",
@@ -210295,10 +210295,10 @@
       "domain": "dtvwchicago.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "team-velocity",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OEM locator VDP host (lane dtvwchicago.com, 6 listing(s), Chicago, IL) 2026-08-20",
+      "status": "working",
+      "notes": "Discovered via OEM locator VDP host (lane dtvwchicago.com, 6 listing(s), Chicago, IL) 2026-08-20 | auto-promoted by probe 2026-08-21: team-velocity API, 200 vehicles",
       "location": {
         "city": "Chicago",
         "state": "IL",
@@ -210311,8 +210311,8 @@
       "kind": "rooftop",
       "platform": "unknown",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OEM locator VDP host (lane express.planethyundai.com, 1 listing(s), Golden, CO) 2026-08-20",
+      "status": "http-403",
+      "notes": "Discovered via OEM locator VDP host (lane express.planethyundai.com, 1 listing(s), Golden, CO) 2026-08-20 | probe 2026-08-21: homepage 403",
       "location": {
         "city": "Golden",
         "state": "CO",
@@ -210323,10 +210323,10 @@
       "domain": "fowlerdodge.net",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "team-velocity",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OEM locator VDP host (lane fowlerdodge.net, 1 listing(s), Oklahoma City, OK) 2026-08-20",
+      "status": "working",
+      "notes": "Discovered via OEM locator VDP host (lane fowlerdodge.net, 1 listing(s), Oklahoma City, OK) 2026-08-20 | auto-promoted by probe 2026-08-21: team-velocity API, 200 vehicles",
       "location": {
         "city": "Oklahoma City",
         "state": "OK",
@@ -210339,8 +210339,8 @@
       "kind": "rooftop",
       "platform": "unknown",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OEM locator VDP host (lane fowlervw.com, 3 listing(s), Norman, OK) 2026-08-20",
+      "status": "http-403",
+      "notes": "Discovered via OEM locator VDP host (lane fowlervw.com, 3 listing(s), Norman, OK) 2026-08-20 | probe 2026-08-21: homepage 403",
       "location": {
         "city": "Norman",
         "state": "OK",
@@ -210351,10 +210351,10 @@
       "domain": "gurleyleepsubaru.com",
       "name": "Gurley Leep Subaru",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "team-velocity",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Mishawaka, IN) 2026-08-20",
+      "status": "working",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Mishawaka, IN) 2026-08-20 | auto-promoted by probe 2026-08-21: team-velocity API, 200 vehicles",
       "location": {
         "city": "Mishawaka",
         "state": "IN",
@@ -210365,10 +210365,10 @@
       "domain": "jimcolemannissanec.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "team-velocity",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OEM locator VDP host (lane jimcolemannissanec.com, 16 listing(s), Bethesda, MD) 2026-08-20",
+      "status": "working",
+      "notes": "Discovered via OEM locator VDP host (lane jimcolemannissanec.com, 16 listing(s), Bethesda, MD) 2026-08-20 | auto-promoted by probe 2026-08-21: team-velocity API, 200 vehicles",
       "location": {
         "city": "Bethesda",
         "state": "MD",
@@ -210379,10 +210379,10 @@
       "domain": "kiaofmankato.com",
       "name": "Kia of Mankato",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "team-velocity",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OEM locator VDP host (lane kia.com, 1 listing(s), Mankato, MN) 2026-08-20",
+      "status": "working",
+      "notes": "Discovered via OEM locator VDP host (lane kia.com, 1 listing(s), Mankato, MN) 2026-08-20 | auto-promoted by probe 2026-08-21: team-velocity API, 200 vehicles",
       "location": {
         "city": "Mankato",
         "state": "MN",
@@ -210395,8 +210395,8 @@
       "kind": "rooftop",
       "platform": "unknown",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OEM locator VDP host (lane manlyhonda.com, 3 listing(s), Santa Rosa, CA) 2026-08-20",
+      "status": "working",
+      "notes": "Discovered via OEM locator VDP host (lane manlyhonda.com, 3 listing(s), Santa Rosa, CA) 2026-08-20 | auto-promoted by probe 2026-08-21: 1 VIN vehicles on 1 page(s), platform unknown",
       "location": {
         "city": "Santa Rosa",
         "state": "CA",
@@ -210407,10 +210407,10 @@
       "domain": "maseratijacksonville.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "team-velocity",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OEM locator VDP host (lane maseratijacksonville.com, 2 listing(s), Jacksonville, FL) 2026-08-20",
+      "status": "working",
+      "notes": "Discovered via OEM locator VDP host (lane maseratijacksonville.com, 2 listing(s), Jacksonville, FL) 2026-08-20 | auto-promoted by probe 2026-08-21: team-velocity API, 74 vehicles",
       "location": {
         "city": "Jacksonville",
         "state": "FL",
@@ -210423,8 +210423,8 @@
       "kind": "rooftop",
       "platform": "unknown",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OEM locator VDP host (lane mbfoothill.com, 20 listing(s), Foothill Ranch, CA) 2026-08-20",
+      "status": "http-403",
+      "notes": "Discovered via OEM locator VDP host (lane mbfoothill.com, 20 listing(s), Foothill Ranch, CA) 2026-08-20 | probe 2026-08-21: homepage 403",
       "location": {
         "city": "Foothill Ranch",
         "state": "CA",
@@ -210437,8 +210437,8 @@
       "kind": "rooftop",
       "platform": "unknown",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OEM locator VDP host (lane mblaguna.com, 22 listing(s), Laguna Niguel, CA) 2026-08-20",
+      "status": "http-403",
+      "notes": "Discovered via OEM locator VDP host (lane mblaguna.com, 22 listing(s), Laguna Niguel, CA) 2026-08-20 | probe 2026-08-21: homepage 403",
       "location": {
         "city": "Laguna Niguel",
         "state": "CA",
@@ -210451,8 +210451,8 @@
       "kind": "rooftop",
       "platform": "unknown",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OEM locator VDP host (lane mbofrichmond.com, 1 listing(s), Henrico, VA) 2026-08-20",
+      "status": "http-403",
+      "notes": "Discovered via OEM locator VDP host (lane mbofrichmond.com, 1 listing(s), Henrico, VA) 2026-08-20 | probe 2026-08-21: homepage 403",
       "location": {
         "city": "Henrico",
         "state": "VA",
@@ -210465,8 +210465,8 @@
       "kind": "rooftop",
       "platform": "unknown",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OEM locator VDP host (lane mercedesbenzofbarrington.com, 1 listing(s), Barrington, IL) 2026-08-20",
+      "status": "http-403",
+      "notes": "Discovered via OEM locator VDP host (lane mercedesbenzofbarrington.com, 1 listing(s), Barrington, IL) 2026-08-20 | probe 2026-08-21: homepage 403",
       "location": {
         "city": "Barrington",
         "state": "IL",
@@ -210477,10 +210477,10 @@
       "domain": "morriesbuffaloford.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "team-velocity",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OEM locator VDP host (lane morriesbuffaloford.com, 1 listing(s), West Salem, WI) 2026-08-20",
+      "status": "working",
+      "notes": "Discovered via OEM locator VDP host (lane morriesbuffaloford.com, 1 listing(s), West Salem, WI) 2026-08-20 | auto-promoted by probe 2026-08-21: team-velocity API, 200 vehicles",
       "location": {
         "city": "West Salem",
         "state": "WI",
@@ -210493,8 +210493,8 @@
       "kind": "rooftop",
       "platform": "unknown",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OEM locator VDP host (lane motorwerks.com, 10 listing(s), Barrington, IL) 2026-08-20",
+      "status": "http-403",
+      "notes": "Discovered via OEM locator VDP host (lane motorwerks.com, 10 listing(s), Barrington, IL) 2026-08-20 | probe 2026-08-21: homepage 403",
       "location": {
         "city": "Barrington",
         "state": "IL",
@@ -210505,10 +210505,10 @@
       "domain": "murgadofordchicago.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "team-velocity",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OEM locator VDP host (lane murgadofordchicago.com, 1 listing(s), Chicago, IL) 2026-08-20",
+      "status": "working",
+      "notes": "Discovered via OEM locator VDP host (lane murgadofordchicago.com, 1 listing(s), Chicago, IL) 2026-08-20 | auto-promoted by probe 2026-08-21: team-velocity API, 200 vehicles",
       "location": {
         "city": "Chicago",
         "state": "IL",
@@ -210519,10 +210519,10 @@
       "domain": "olathelincoln.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "team-velocity",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OEM locator VDP host (lane olathelincoln.com, 1 listing(s), Olathe, KS) 2026-08-20",
+      "status": "working",
+      "notes": "Discovered via OEM locator VDP host (lane olathelincoln.com, 1 listing(s), Olathe, KS) 2026-08-20 | auto-promoted by probe 2026-08-21: team-velocity API, 200 vehicles",
       "location": {
         "city": "Olathe",
         "state": "KS",
@@ -210533,10 +210533,10 @@
       "domain": "smartluxurymotors.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "team-velocity",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OEM locator VDP host (lane smartluxurymotors.com, 3 listing(s), Davenport, IA) 2026-08-20",
+      "status": "working",
+      "notes": "Discovered via OEM locator VDP host (lane smartluxurymotors.com, 3 listing(s), Davenport, IA) 2026-08-20 | auto-promoted by probe 2026-08-21: team-velocity API, 200 vehicles",
       "location": {
         "city": "Davenport",
         "state": "IA",
@@ -210549,8 +210549,8 @@
       "kind": "rooftop",
       "platform": "unknown",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OEM locator VDP host (lane tedrussellford.net, 1 listing(s), Knoxville, TN) 2026-08-20",
+      "status": "http-403",
+      "notes": "Discovered via OEM locator VDP host (lane tedrussellford.net, 1 listing(s), Knoxville, TN) 2026-08-20 | probe 2026-08-21: homepage 403",
       "location": {
         "city": "Knoxville",
         "state": "TN",
@@ -210563,8 +210563,8 @@
       "kind": "rooftop",
       "platform": "unknown",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OEM locator VDP host (lane used.castleautoplex.netlook.com, 1 listing(s), McHenry, IL) 2026-08-20",
+      "status": "unreachable",
+      "notes": "Discovered via OEM locator VDP host (lane used.castleautoplex.netlook.com, 1 listing(s), McHenry, IL) 2026-08-20 | probe 2026-08-21: homepage error:TypeError",
       "location": {
         "city": "McHenry",
         "state": "IL",
@@ -210575,10 +210575,10 @@
       "domain": "vinfastlisle.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "team-velocity",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OEM locator VDP host (lane vinfastlisle.com, 2 listing(s), Lisle, IL) 2026-08-20",
+      "status": "working",
+      "notes": "Discovered via OEM locator VDP host (lane vinfastlisle.com, 2 listing(s), Lisle, IL) 2026-08-20 | auto-promoted by probe 2026-08-21: team-velocity API, 200 vehicles",
       "location": {
         "city": "Lisle",
         "state": "IL",
@@ -210589,10 +210589,10 @@
       "domain": "vwlenox.com",
       "name": "Volkswagen Lenox",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OEM locator VDP host (lane vwpittsfield.com, 1 listing(s), Lenox, MA) 2026-08-20",
+      "status": "working",
+      "notes": "Discovered via OEM locator VDP host (lane vwpittsfield.com, 1 listing(s), Lenox, MA) 2026-08-20 | auto-promoted by probe 2026-08-21: 48 VIN vehicles on 1 page(s), platform dealer.com",
       "location": {
         "city": "Lenox",
         "state": "MA",
@@ -210603,10 +210603,10 @@
       "domain": "winnvw.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "team-velocity",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OEM locator VDP host (lane winnvw.com, 9 listing(s), Newark, CA) 2026-08-20",
+      "status": "working",
+      "notes": "Discovered via OEM locator VDP host (lane winnvw.com, 9 listing(s), Newark, CA) 2026-08-20 | auto-promoted by probe 2026-08-21: team-velocity API, 200 vehicles",
       "location": {
         "city": "Newark",
         "state": "CA",
@@ -210659,10 +210659,10 @@
       "domain": "fowlervw.com",
       "name": "Fowler Volkswagen of Norman",
       "kind": "rooftop",
-      "platform": "dealerinspire",
+      "platform": "unknown",
       "robots": "unknown",
       "status": "http-403",
-      "notes": "From ID. Buzz coverage audit (docs/agents/coverage-audit-2026-08-20.md), which listed this domain as dealer.com — independently re-fingerprinted via real browser 2026-08-20 and it is DealerInspire (di-uploads-podNN.dealerinspire.com, dealerinspire-shared-assets.s3.amazonaws.com, no genuine dealer.com signal — the audit's dealer.com read was likely a false-positive analytics pixel); discrepancy noted per instructions, trusting this fetch | crawl.mjs smoke test 2026-08-20: every path 403s to our Node crawler though a real browser loads the site fine (same Cloudflare bot-management pattern as burnsvillevw.com) | 0 EVs — not added working, recorded so a future probe doesn't re-discover and re-investigate this domain from scratch",
+      "notes": "Discovered via OEM locator VDP host (lane fowlervw.com, 3 listing(s), Norman, OK) 2026-08-20 | probe 2026-08-21: homepage 403",
       "location": {
         "city": "Norman",
         "state": "OK",
@@ -210723,6 +210723,845 @@
         "city": "Pasadena",
         "state": "MD",
         "zip": "21122"
+      }
+    },
+    {
+      "domain": "5starford.com",
+      "name": "Five Star Ford in North Richland Hills",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane ford-blue-advantage, 1 listing(s), North Richland Hills, TX) 2026-08-21",
+      "location": {
+        "city": "North Richland Hills",
+        "state": "TX",
+        "zip": "76180"
+      }
+    },
+    {
+      "domain": "ahford.net",
+      "name": "Arlington Heights Ford",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane ford-blue-advantage, 2 listing(s), Arlington Heights, IL) 2026-08-21",
+      "location": {
+        "city": "Arlington Heights",
+        "state": "IL",
+        "zip": "60004"
+      }
+    },
+    {
+      "domain": "audibakersfieldstage.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane audibakersfieldstage.com, 2 listing(s), BAKERSFIELD, CA) 2026-08-21",
+      "location": {
+        "city": "BAKERSFIELD",
+        "state": "CA",
+        "zip": "93313"
+      }
+    },
+    {
+      "domain": "ballauto.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane ballauto.com, 12 listing(s), National City, CA) 2026-08-21",
+      "location": {
+        "city": "National City",
+        "state": "CA",
+        "zip": "91950"
+      }
+    },
+    {
+      "domain": "beachblvdofcars.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane beachblvdofcars.com, 9 listing(s), Huntington Beach, CA) 2026-08-21",
+      "location": {
+        "city": "Huntington Beach",
+        "state": "CA",
+        "zip": "92647-4807"
+      }
+    },
+    {
+      "domain": "bmwofnewlondon.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane bmwofnewlondon.com, 1 listing(s), New London, CT) 2026-08-21",
+      "location": {
+        "city": "New London",
+        "state": "CT",
+        "zip": "06320"
+      }
+    },
+    {
+      "domain": "browndaubhyundai.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane browndaubhyundai.com, 9 listing(s), Nazareth, PA) 2026-08-21",
+      "location": {
+        "city": "Nazareth",
+        "state": "PA",
+        "zip": "18064"
+      }
+    },
+    {
+      "domain": "cardinalemazda.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane cardinalemazda.com, 9 listing(s), Salinas, CA) 2026-08-21",
+      "location": {
+        "city": "Salinas",
+        "state": "CA",
+        "zip": "93907"
+      }
+    },
+    {
+      "domain": "cardinalenissan.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane cardinalenissan.com, 4 listing(s), Seaside, CA) 2026-08-21",
+      "location": {
+        "city": "Seaside",
+        "state": "CA",
+        "zip": "93955-4239"
+      }
+    },
+    {
+      "domain": "cardinalewaycdjr.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane cardinalewaycdjr.com, 6 listing(s), Santa Rosa, CA) 2026-08-21",
+      "location": {
+        "city": "Santa Rosa",
+        "state": "CA",
+        "zip": "95407"
+      }
+    },
+    {
+      "domain": "cardinalewaymazdapeoria.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane cardinalewaymazdapeoria.com, 8 listing(s), Peoria, AZ) 2026-08-21",
+      "location": {
+        "city": "Peoria",
+        "state": "AZ",
+        "zip": "85382"
+      }
+    },
+    {
+      "domain": "cardinalewayvw.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane cardinalewayvw.com, 7 listing(s), Corona, CA) 2026-08-21",
+      "location": {
+        "city": "Corona",
+        "state": "CA",
+        "zip": "92882"
+      }
+    },
+    {
+      "domain": "clintnewelltoyota.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane clintnewelltoyota.com, 6 listing(s), Roseburg, OR) 2026-08-21",
+      "location": {
+        "city": "Roseburg",
+        "state": "OR",
+        "zip": "97470"
+      }
+    },
+    {
+      "domain": "conwayfordinc.com",
+      "name": "Conway Ford",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane ford-blue-advantage, 1 listing(s), Conway, SC) 2026-08-21",
+      "location": {
+        "city": "Conway",
+        "state": "SC",
+        "zip": "29526"
+      }
+    },
+    {
+      "domain": "curryauto.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane curryauto.com, 6 listing(s), Kingston, NY) 2026-08-21",
+      "location": {
+        "city": "Kingston",
+        "state": "NY",
+        "zip": "12401"
+      }
+    },
+    {
+      "domain": "cypresscoastlincoln.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane cypresscoastlincoln.com, 1 listing(s), Seaside, CA) 2026-08-21",
+      "location": {
+        "city": "Seaside",
+        "state": "CA",
+        "zip": "93955"
+      }
+    },
+    {
+      "domain": "davidsonfordclay.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane davidsonfordclay.com, 1 listing(s), Liverpool, NY) 2026-08-21",
+      "location": {
+        "city": "Liverpool",
+        "state": "NY",
+        "zip": "13090"
+      }
+    },
+    {
+      "domain": "dealer18101.dealeron.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane dealer18101.dealeron.com, 3 listing(s), NC) 2026-08-21",
+      "location": {
+        "state": "NC",
+        "zip": "28031"
+      }
+    },
+    {
+      "domain": "deanteamvwballwin.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane deanteamvwballwin.com, 2 listing(s), Ballwin, MO) 2026-08-21",
+      "location": {
+        "city": "Ballwin",
+        "state": "MO",
+        "zip": "63011"
+      }
+    },
+    {
+      "domain": "dialnissan.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane dialnissan.com, 24 listing(s), Chicago, IL) 2026-08-21",
+      "location": {
+        "city": "Chicago",
+        "state": "IL",
+        "zip": "60636"
+      }
+    },
+    {
+      "domain": "fathers-sons.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane fathers-sons.com, 6 listing(s), West Springfield, MA) 2026-08-21",
+      "location": {
+        "city": "West Springfield",
+        "state": "MA",
+        "zip": "01089"
+      }
+    },
+    {
+      "domain": "fowlerdodge.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane fowlerdodge.com, 2 listing(s), Oklahoma City, OK) 2026-08-21",
+      "location": {
+        "city": "Oklahoma City",
+        "state": "OK",
+        "zip": "73139"
+      }
+    },
+    {
+      "domain": "fowlerkialongmont.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane fowlerkialongmont.com, 12 listing(s), Longmont, CO) 2026-08-21",
+      "location": {
+        "city": "Longmont",
+        "state": "CO",
+        "zip": "80504"
+      }
+    },
+    {
+      "domain": "genesisofcorona.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane genesisofcorona.com, 2 listing(s), Corona, CA) 2026-08-21",
+      "location": {
+        "city": "Corona",
+        "state": "CA",
+        "zip": "92882"
+      }
+    },
+    {
+      "domain": "geraldjonesautogroup.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane geraldjonesautogroup.com, 1 listing(s), Martinez, GA) 2026-08-21",
+      "location": {
+        "city": "Martinez",
+        "state": "GA",
+        "zip": "30907-5206"
+      }
+    },
+    {
+      "domain": "golfmillford.org",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane golfmillford.org, 1 listing(s), North Riverside, IL) 2026-08-21",
+      "location": {
+        "city": "North Riverside",
+        "state": "IL",
+        "zip": "60546"
+      }
+    },
+    {
+      "domain": "grahamautomall.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane grahamautomall.com, 1 listing(s), Mansfield, OH) 2026-08-21",
+      "location": {
+        "city": "Mansfield",
+        "state": "OH",
+        "zip": "44906"
+      }
+    },
+    {
+      "domain": "hertrichfordofelkton.com",
+      "name": "Hertrich Ford of Elkton",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane fordofelkton.com, 3 listing(s), Elkton, MD) 2026-08-21",
+      "location": {
+        "city": "Elkton",
+        "state": "MD",
+        "zip": "21921"
+      }
+    },
+    {
+      "domain": "hondaoakland.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane hondaoakland.com, 2 listing(s), Oakland, CA) 2026-08-21",
+      "location": {
+        "city": "Oakland",
+        "state": "CA",
+        "zip": "94611"
+      }
+    },
+    {
+      "domain": "huntingtonbeachmazda.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane huntingtonbeachmazda.com, 4 listing(s), Tustin, CA) 2026-08-21",
+      "location": {
+        "city": "Tustin",
+        "state": "CA",
+        "zip": "92782"
+      }
+    },
+    {
+      "domain": "lacysubaru.com",
+      "name": "Lacy Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Catskill, NY) 2026-08-21",
+      "location": {
+        "city": "Catskill",
+        "state": "NY",
+        "zip": "12414"
+      }
+    },
+    {
+      "domain": "lafontainehonda.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane lafontainehonda.com, 1 listing(s), Dearborn, MI) 2026-08-21",
+      "location": {
+        "city": "Dearborn",
+        "state": "MI",
+        "zip": "48124"
+      }
+    },
+    {
+      "domain": "legacyfordtx.com",
+      "name": "LEGACY FORD OF ROSENBERG",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane ford-blue-advantage, 1 listing(s), Rosenberg, TX) 2026-08-21",
+      "location": {
+        "city": "Rosenberg",
+        "state": "TX",
+        "zip": "77471"
+      }
+    },
+    {
+      "domain": "machaikms.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane machaikms.com, 2 listing(s), Flowood, MS) 2026-08-21",
+      "location": {
+        "city": "Flowood",
+        "state": "MS",
+        "zip": "39232"
+      }
+    },
+    {
+      "domain": "maguiresubaru.com",
+      "name": "Maguire Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Ithaca, NY) 2026-08-21",
+      "location": {
+        "city": "Ithaca",
+        "state": "NY",
+        "zip": "14850"
+      }
+    },
+    {
+      "domain": "mariannachevrolet.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane mariannachevrolet.com, 3 listing(s), Marianna, FL) 2026-08-21",
+      "location": {
+        "city": "Marianna",
+        "state": "FL",
+        "zip": "32446"
+      }
+    },
+    {
+      "domain": "matthewsplanetpreowned.com",
+      "name": "Matthews on the Parkway",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane matthewsontheparkway.com, 1 listing(s), Vestal, NY) 2026-08-21",
+      "location": {
+        "city": "Vestal",
+        "state": "NY",
+        "zip": "13850"
+      }
+    },
+    {
+      "domain": "mckennavwcerritos.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane mckennavwcerritos.com, 2 listing(s), Cerritos, CA) 2026-08-21",
+      "location": {
+        "city": "Cerritos",
+        "state": "CA",
+        "zip": "90703"
+      }
+    },
+    {
+      "domain": "morganhill-cdjr.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane morganhill-cdjr.com, 11 listing(s), Morgan Hill, CA) 2026-08-21",
+      "location": {
+        "city": "Morgan Hill",
+        "state": "CA",
+        "zip": "95037"
+      }
+    },
+    {
+      "domain": "mydallashyundai.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane mydallashyundai.com, 1 listing(s), Dallas, TX) 2026-08-21",
+      "location": {
+        "city": "Dallas",
+        "state": "TX",
+        "zip": "75232"
+      }
+    },
+    {
+      "domain": "new.antitochcdjr.netlook.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane new.antitochcdjr.netlook.com, 2 listing(s), Antioch, IL) 2026-08-21",
+      "location": {
+        "city": "Antioch",
+        "state": "IL",
+        "zip": "60002"
+      }
+    },
+    {
+      "domain": "new.findlayvw.netlook.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane new.findlayvw.netlook.com, 13 listing(s), Henderson, NV) 2026-08-21",
+      "location": {
+        "city": "Henderson",
+        "state": "NV",
+        "zip": "89014"
+      }
+    },
+    {
+      "domain": "new.kiacountrysavannah.netlook.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane new.kiacountrysavannah.netlook.com, 14 listing(s), Savannah, GA) 2026-08-21",
+      "location": {
+        "city": "Savannah",
+        "state": "GA",
+        "zip": "31405"
+      }
+    },
+    {
+      "domain": "new.mydublinchevrolet.netlook.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane new.mydublinchevrolet.netlook.com, 2 listing(s), Dublin, GA) 2026-08-21",
+      "location": {
+        "city": "Dublin",
+        "state": "GA",
+        "zip": "31021"
+      }
+    },
+    {
+      "domain": "new.russellhonda.netlook.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane new.russellhonda.netlook.com, 1 listing(s), North Little Rock, AR) 2026-08-21",
+      "location": {
+        "city": "North Little Rock",
+        "state": "AR",
+        "zip": "72117"
+      }
+    },
+    {
+      "domain": "northbrothersford.net",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane northbrothersford.net, 11 listing(s), Westland, MI) 2026-08-21",
+      "location": {
+        "city": "Westland",
+        "state": "MI",
+        "zip": "48185"
+      }
+    },
+    {
+      "domain": "reedmantollsubaru.com",
+      "name": "Reedman-Toll Subaru",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Langhorne, PA) 2026-08-21",
+      "location": {
+        "city": "Langhorne",
+        "state": "PA",
+        "zip": "19047"
+      }
+    },
+    {
+      "domain": "russdarrowwauwatosa.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane russdarrowwauwatosa.com, 1 listing(s), Lincolnwood, IL) 2026-08-21",
+      "location": {
+        "city": "Lincolnwood",
+        "state": "IL",
+        "zip": "60712"
+      }
+    },
+    {
+      "domain": "sheehysubaruhagerstown.com",
+      "name": "Sheehy Subaru of Hagerstown",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Hagerstown, MD) 2026-08-21",
+      "location": {
+        "city": "Hagerstown",
+        "state": "MD",
+        "zip": "21740"
+      }
+    },
+    {
+      "domain": "smartkiadavenport.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane smartkiadavenport.com, 1 listing(s), Davenport, IA) 2026-08-21",
+      "location": {
+        "city": "Davenport",
+        "state": "IA",
+        "zip": "52806"
+      }
+    },
+    {
+      "domain": "smartlexusofquadcities.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane smartlexusofquadcities.com, 6 listing(s), Davenport, IA) 2026-08-21",
+      "location": {
+        "city": "Davenport",
+        "state": "IA",
+        "zip": "52806-5900"
+      }
+    },
+    {
+      "domain": "smithvolvocars.com",
+      "name": "Smith Volvo Cars",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volvo-cpo, 1 listing(s), San Luis Obispo, CA) 2026-08-21",
+      "location": {
+        "city": "San Luis Obispo",
+        "state": "CA",
+        "zip": "93401"
+      }
+    },
+    {
+      "domain": "subarubeckley.com",
+      "name": "Friendship Subaru of Beckley",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane subaru.com, 1 listing(s), Mount Hope, WV) 2026-08-21",
+      "location": {
+        "city": "Mount Hope",
+        "state": "WV",
+        "zip": "25880"
+      }
+    },
+    {
+      "domain": "tadgcars.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane tadgcars.com, 1 listing(s), Huntington Beach, CA) 2026-08-21",
+      "location": {
+        "city": "Huntington Beach",
+        "state": "CA",
+        "zip": "92648"
+      }
+    },
+    {
+      "domain": "valleyfordofcolumbus.com",
+      "name": "Valley Ford",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane ford-blue-advantage, 1 listing(s), Columbus, OH) 2026-08-21",
+      "location": {
+        "city": "Columbus",
+        "state": "OH",
+        "zip": "43228"
+      }
+    },
+    {
+      "domain": "volkswagenbakersfield.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane volkswagenbakersfield.com, 10 listing(s), Bakersfield, CA) 2026-08-21",
+      "location": {
+        "city": "Bakersfield",
+        "state": "CA",
+        "zip": "93313"
+      }
+    },
+    {
+      "domain": "waltmasseychevroletcolumbia.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane waltmasseychevroletcolumbia.com, 1 listing(s), Columbia, MS) 2026-08-21",
+      "location": {
+        "city": "Columbia",
+        "state": "MS",
+        "zip": "39429"
+      }
+    },
+    {
+      "domain": "waltmasseychevroletlucedale.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane waltmasseychevroletlucedale.com, 1 listing(s), Lucedale, MS) 2026-08-21",
+      "location": {
+        "city": "Lucedale",
+        "state": "MS",
+        "zip": "39452"
+      }
+    },
+    {
+      "domain": "waltmasseychevroletmarion.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane waltmasseychevroletmarion.com, 1 listing(s), Marion, AR) 2026-08-21",
+      "location": {
+        "city": "Marion",
+        "state": "AR",
+        "zip": "72364"
+      }
+    },
+    {
+      "domain": "waltmasseygmclucedale.com",
+      "name": "Dealership Website",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane waltmasseygmclucedale.com, 3 listing(s), Lucedale, MS) 2026-08-21",
+      "location": {
+        "city": "Lucedale",
+        "state": "MS",
+        "zip": "39452"
       }
     }
   ],
