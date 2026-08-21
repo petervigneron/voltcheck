@@ -33,6 +33,7 @@ const args = process.argv.slice(2);
 const WRITE = args.includes("--write");
 const LIMIT = (() => { const i = args.indexOf("--limit"); return i >= 0 ? Number(args[i + 1]) : 0; })();
 const CONC = (() => { const i = args.indexOf("--concurrency"); return i >= 0 ? Number(args[i + 1]) : 24; })();
+const DUMP_UNRESOLVED = (() => { const i = args.indexOf("--dump-unresolved"); return i >= 0 ? args[i + 1] : null; })();
 const csvPath = args.find((a) => !a.startsWith("--"));
 setCacheTtl(24 * 3600_000);
 
@@ -58,8 +59,21 @@ function candidates(name, city) {
   const subs = [];
   for (let i = 0; i < words.length; i++)
     for (let j = i + 1; j <= words.length; j++) {
-      const sub = words.slice(i, j).filter((w) => w !== "of" && w !== "and");
+      const raw = words.slice(i, j);
+      const sub = raw.filter((w) => w !== "of" && w !== "and");
       if (sub.length && !(sub.length === 1 && sub[0].length < 6)) subs.push(sub);
+      // "Brand of City" is the standard US franchise-dealer naming pattern
+      // (toyotaofbayridge.com, vwoforchardpark.com) and plenty of dealers'
+      // real domains keep the "of" rather than dropping it — but the sub
+      // above always drops it, so that whole naming convention was
+      // unreachable regardless of DNS budget. Keep "of" as its own variant
+      // (verified against a hand-checked sample of NY license-roll misses,
+      // 2026-08-20) without touching the drop-it default the rest of the
+      // corpus already resolves 52% of names against.
+      if (raw.length !== sub.length && raw.includes("of")) {
+        const withOf = raw.filter((w) => w !== "and");
+        if (withOf.length >= 2) subs.push(withOf);
+      }
     }
   const full = words.filter((w) => w !== "of" && w !== "and");
   for (let k = 1; k < full.length - 1; k++) subs.push(full.filter((_, i) => i !== k));
@@ -204,6 +218,15 @@ console.error(`\nverified: ${verified.size} of ${work.length} dealers (${already
 const byHow = {};
 for (const v of verified.values()) byHow[v.how] = (byHow[v.how] || 0) + 1;
 console.error("verification method:", JSON.stringify(byHow));
+
+if (DUMP_UNRESOLVED) {
+  const unresolved = work
+    .map((d, i) => ({ i, d }))
+    .filter(({ i }) => !verified.has(i) && !already.has(i))
+    .map(({ d }) => d);
+  await writeFile(DUMP_UNRESOLVED, JSON.stringify(unresolved, null, 2));
+  console.error(`dumped ${unresolved.length} unresolved dealers to ${DUMP_UNRESOLVED}`);
+}
 
 // ── append to registry ──────────────────────────────────────────────────────
 const today = new Date().toISOString().slice(0, 10);
