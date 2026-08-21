@@ -84,6 +84,24 @@ function toyotaVds(r) {
   return {};
 }
 
+// VW ID. Buzz VDS: VIN position 5 encodes drivetrain — W = RWD (Pro S), Y =
+// AWD (Pro S Plus, 1st Edition). Corroborated against NHTSA vPIC's own
+// DriveType decode of 119 sampled Buzz VINs spanning all 7 observed 6-char
+// prefixes (WVGAWV/WVG5WV/WVGKWV/WVGRWV = W -> RWD, WVG6YV/WVGNYV/WVGJYV =
+// Y -> AWD): zero mismatches, 2026-08-21. Position 4 is unmapped (varies by
+// pack/trim, not drivetrain). Model text varies across feeds ("ID. Buzz",
+// "ID Buzz", "Id. Buzz") so it's matched loosely rather than against the
+// canonical name (canonModel hasn't run on `r` yet at this point in the
+// pipeline). WMI WVG is shared with some ID.4 imports — this deliberately
+// does NOT extend to ID.4, whose own position-5 mapping hasn't been checked.
+function vwBuzzVds(r) {
+  const isBuzz = /^id\.?\s*buzz$/i.test((r.model ?? "").trim());
+  if (!isBuzz || !r.vin?.startsWith("WVG")) return {};
+  const map = { W: "RWD", Y: "AWD" };
+  const hit = map[r.vin[4]];
+  return hit ? { drive: hit } : {};
+}
+
 function condition(r) {
   if (r.certified) return "certified";
   const c = `${r.condition ?? ""} ${r.sourceUrl ?? ""}`.toLowerCase();
@@ -128,7 +146,7 @@ const listings = raw
     make: canonMake(r.make),
     model: canonModel(r.model),
     trim: r.trim ?? undefined,
-    drive: inferDrive(r) ?? ariyaVds(r).drive ?? toyotaVds(r).drive,
+    drive: inferDrive(r) ?? ariyaVds(r).drive ?? toyotaVds(r).drive ?? vwBuzzVds(r).drive,
     // Last plausibility gate before the database, covering every lane (the
     // dealer.com resolver has its own, but DealerOn/DCS/OEM records land here
     // straight from normalize). A sub-floor number is a payment or fee that
