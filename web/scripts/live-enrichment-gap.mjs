@@ -113,6 +113,27 @@ const modelKey = (make, model) => {
   return n.startsWith(mk) && n.length > mk.length ? n.slice(mk.length) : n;
 };
 
+// A dealer feed can carry the SAME vehicle under two different `make`
+// strings — confirmed live 2026-08-21 (coordinator report from the Ram
+// ProMaster research pass): BrightDrop's Zevo van appears as both make
+// "BrightDrop"/"Brightdrop" and make "Chevrolet" (its GM commercial parent),
+// for the same physical vehicle. This is NOT just a reporting nuisance:
+// match.ts filters on an exact `norm(r.make) === norm(decode.make)` with no
+// cross-brand alias table at all (verified by reading match.ts), so a
+// "Chevrolet"-labeled Zevo will never match a BrightDrop-keyed row in
+// production either, however good the model-level research is — a second,
+// distinct matching-architecture gap alongside the total/partial split this
+// script already measures. Folding it here so the ranked list doesn't
+// understate the model's live footprint by splitting it across two make
+// buckets; the fold is display/grouping ONLY — every match verdict above
+// this point was already decided using the listing's own `make`, exactly
+// as production does, so the fold can't hide or manufacture a match.
+const REPORT_MODEL_MAKE_FOLD = [{ modelRe: /^zevo\b/i, canonicalMake: "BRIGHTDROP" }];
+const foldMake = (make, model) => {
+  const fold = REPORT_MODEL_MAKE_FOLD.find((f) => f.modelRe.test(model));
+  return fold ? fold.canonicalMake : make;
+};
+
 async function fetchShard(n) {
   const url = n === "first" ? `${FEED_BASE}/api/index/first` : `${FEED_BASE}/api/index/${n}`;
   const res = await fetch(url, { signal: AbortSignal.timeout(60_000) });
@@ -160,16 +181,18 @@ for (const l of listings) {
   if (kind === "total") totalMiss++;
   else partialMiss++;
 
-  const key = `${make}|||${modelKey(make, model)}|||${kind}`;
+  const displayMake = foldMake(make, model);
+  const key = `${displayMake}|||${modelKey(displayMake, model)}|||${kind}`;
   let g = groups.get(key);
   if (!g) {
-    g = { make, model, kind, count: 0, minYear: l.year, maxYear: l.year, modelSpellings: new Map(), trims: new Map() };
+    g = { make: displayMake, model, kind, count: 0, minYear: l.year, maxYear: l.year, modelSpellings: new Map(), trims: new Map(), rawMakes: new Map() };
     groups.set(key, g);
   }
   g.count++;
   g.minYear = Math.min(g.minYear, l.year);
   g.maxYear = Math.max(g.maxYear, l.year);
   g.modelSpellings.set(model, (g.modelSpellings.get(model) ?? 0) + 1);
+  g.rawMakes.set(make, (g.rawMakes.get(make) ?? 0) + 1);
   if (kind === "partial") {
     const t = l.trim ?? "(no trim on this listing)";
     g.trims.set(t, (g.trims.get(t) ?? 0) + 1);
@@ -185,6 +208,10 @@ const ranked = [...groups.values()]
     kind: g.kind,
     count: g.count,
     years: g.minYear === g.maxYear ? `${g.minYear}` : `${g.minYear}-${g.maxYear}`,
+    // Only worth printing when the group actually mixes make strings for
+    // what the fold table says is one vehicle (REPORT_MODEL_MAKE_FOLD) —
+    // absent for every ordinary group, which has exactly one raw make.
+    rawMakes: g.rawMakes.size > 1 ? [...g.rawMakes.entries()].sort((a, b) => b[1] - a[1]).map(([m, n]) => `${m} (${n})`) : undefined,
     exampleTrims: g.kind === "partial" ? [...g.trims.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5).map(([t, n]) => `${t} (${n})`) : undefined,
   }))
   .sort((a, b) => b.count - a.count);
@@ -223,6 +250,7 @@ console.log(`Ranked gap list (top ${TOP} of ${ranked.length}):`);
 for (const g of ranked.slice(0, TOP)) {
   const label = `${g.make} ${g.model} (${g.years})`;
   console.log(`  ${label.padEnd(46)} ${String(g.count).padStart(5)} listings  [${g.kind}]`);
+  if (g.rawMakes) console.log(`      make split in the feed: ${g.rawMakes.join(", ")} — same vehicle, listed under different make strings`);
   if (g.exampleTrims) console.log(`      trims seen: ${g.exampleTrims.join(", ")}`);
 }
 if (ranked.length > TOP) console.log(`  … and ${ranked.length - TOP} more groups (full list in ${REPORT_PATH})`);
