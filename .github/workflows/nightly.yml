@@ -178,19 +178,34 @@ jobs:
         working-directory: scraper
         run: |
           # Time-cap vpic-enrich so it can never eat the whole finalize budget.
-          # 2026-08-20: the first full crawl after the crawl-timeout fix handed
-          # finalize a huge new-VIN backlog; unsharded, vPIC-rate-limited
-          # enrichment ran the entire 240m job cap and was cancelled, so the
-          # steps AFTER it — ingest, db-sync, revalidate — never ran and the
-          # night's crawl never reached prod (shoppers kept seeing stale prices;
-          # recovered by hand from the crawl-out-* artifacts). vpic-enrich writes
-          # out/listings.json once at the end, so a kill leaves the merged file
-          # intact and ingest proceeds un-enriched — the cap is all-or-nothing on
-          # decodes that night, and they resume next run once the backlog is
-          # smaller. 150m leaves ~90m for gm-warranty + ingest + db-sync + the
-          # audits + revalidate. The real bottleneck fix (shard/checkpoint
-          # vpic-enrich, or run db-sync before enrichment) is still owed.
-          timeout 150m node vpic-enrich.mjs || echo "vpic-enrich hit its 150m time cap — continuing so ingest + db-sync still run; decodes resume next night"
+          # 2026-08-20 03:30 run (32361191733): the first full crawl after the
+          # crawl-timeout fix handed finalize a huge new-VIN backlog; unsharded,
+          # vPIC-rate-limited enrichment ran the entire 240m job cap and was
+          # cancelled, so the steps AFTER it — ingest, db-sync, revalidate —
+          # never ran and the night's crawl never reached prod (shoppers kept
+          # seeing stale prices; recovered by hand from the crawl-out-*
+          # artifacts). 150m leaves ~90m for gm-warranty + ingest + db-sync +
+          # the audits + revalidate.
+          #
+          # Reordering db-sync ahead of enrichment (the other option on the
+          # table) was rejected: ingest.mjs keeps only evConfidence === "high",
+          # and vpic-enrich is what promotes name_match listings to "high" (a
+          # brand-new EV whose dealer page omitted fuel type) AND demotes
+          # fuel-text-only "high" rows that vPIC refutes (the 2015 Prius Two
+          # that shipped as an EV because its page said fuelType "Electric",
+          # 2026-08-15). Ingesting before enrichment runs would drop real EVs
+          # and admit non-EVs unrefuted — the exact false-claim shape the house
+          # rule on claims exists to prevent. So enrichment stays before
+          # ingest, capped, with a positive fallback for when it's cut short.
+          #
+          # vpic-enrich.mjs now applies and checkpoints each batch's decodes as
+          # they arrive (every 2 minutes, same pattern as crawl.mjs's shard
+          # checkpoint) instead of holding everything for one write at the end.
+          # Before this a `timeout` kill threw away every decode already
+          # fetched, so a big backlog reran from zero and could re-blow the cap
+          # night after night; now a kill keeps what was decoded, so the
+          # backlog actually shrinks run over run.
+          timeout 150m node vpic-enrich.mjs || echo "vpic-enrich hit its 150m time cap — continuing so ingest + db-sync still run; decoded VINs are checkpointed, the rest resume next night"
           # Per-VIN battery coverage from GM's owner portal. Bounded per night
           # (a few thousand VINs on the first pass, none once cached) and
           # never fatal: a car without it falls back to abstaining, which is
@@ -199,6 +214,7 @@ jobs:
           node ingest.mjs
 
       - name: Sync to Supabase
+        id: db-sync
         if: ${{ github.event.inputs.skip_crawl != 'true' }}
         working-directory: scraper
         env:
@@ -334,15 +350,31 @@ jobs:
       # pipeline runs — this step is the "it just ran" signal. It expires the
       # feed cache tag, then warms the six index shards so the one nightly
       # database walk happens here instead of on a shopper. always(): even a
-      # night that failed after db-sync changed the data, and revalidating a
-      # night that changed nothing costs one walk. A missing secret or an
-      # old deploy without the route degrades to the 24-hour cache backstop —
-      # stale by at most a day, and the warning below says which happened.
+      # night that failed AFTER db-sync changed the data — e.g. the price
+      # audit or an admitted-listings check erroring below — should still
+      # reveal what db-sync wrote, and revalidating a night that changed
+      # nothing costs one walk. A missing secret or an old deploy without the
+      # route degrades to the 24-hour cache backstop — stale by at most a day,
+      # and the warning below says which happened.
+      #
+      # But always() must not paper over db-sync itself never running. That
+      # was exactly the 2026-08-20 03:30 failure (32361191733): vpic-enrich
+      # ate the whole job budget, "Sync to Supabase" was skipped, and this
+      # step ran anyway and re-warmed yesterday's feed — a green revalidate on
+      # a night that shipped nothing, so the run looked fine while shoppers
+      # saw stale prices for 16+ hours before anyone noticed. So on a real
+      # crawl night, check db-sync's own outcome first: a skip or failure here
+      # means tonight's crawl never reached Supabase, and re-warming the cache
+      # would only make that invisible. Fail loudly instead of revalidating.
       - name: Revalidate the site's feed cache
         if: always()
         env:
           FEED_REVALIDATE_SECRET: ${{ secrets.FEED_REVALIDATE_SECRET }}
         run: |
+          if [ "${{ github.event.inputs.skip_crawl }}" != "true" ] && [ "${{ steps.db-sync.outcome }}" != "success" ]; then
+            echo "::error::db-sync did not complete (step outcome: '${{ steps.db-sync.outcome }}') — tonight's crawl has NOT reached Supabase. Skipping revalidate so the site does not look refreshed; recover from the crawl-out-* artifacts (merge-shards, ingest, db-sync, revalidate) rather than waiting for tomorrow's run."
+            exit 1
+          fi
           [ -z "$FEED_REVALIDATE_SECRET" ] && { echo "::warning::FEED_REVALIDATE_SECRET unset; site refreshes on the 24h cache backstop instead"; exit 0; }
           if ! curl -fsS --retry 3 --max-time 60 -X POST -H "x-revalidate-secret: $FEED_REVALIDATE_SECRET" https://voltcheck.net/api/revalidate; then
             echo "::warning::/api/revalidate unreachable (route not deployed yet?); site refreshes on the 24h cache backstop instead"

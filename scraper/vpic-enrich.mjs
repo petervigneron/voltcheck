@@ -73,35 +73,6 @@ function normDrive(s) {
   return undefined;
 }
 
-const byVin = new Map();
-for (let i = 0; i < needs.length; i += 50) {
-  const batch = needs.slice(i, i + 50).map((l) => l.vin);
-  // Short waits, unlike the database's ladder: vPIC has no 2-minute recovery
-  // cycle to outlast, and there are hundreds of batches — a full outage must
-  // degrade to "these VINs stay unenriched tonight" quickly, not stall for
-  // hours. fetchWithRetry also turns a thrown fetch (connection reset) into
-  // a skipped batch instead of an unhandled rejection killing the run.
-  const res = await fetchWithRetry(
-    `vPIC batch ${i / 50}`,
-    () =>
-      fetch("https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValuesBatch/", {
-        method: "POST",
-        headers: { "content-type": "application/x-www-form-urlencoded" },
-        body: `DATA=${encodeURIComponent(batch.join(";"))}&format=json`,
-      }),
-    { waits: [5, 15] }
-  );
-  if (!res.ok) {
-    console.error(`vPIC batch ${i / 50} failed: ${res.status === 0 ? await res.text() : `HTTP ${res.status}`}`);
-    continue;
-  }
-  const json = await res.json();
-  for (const r of json.Results ?? []) {
-    if (r.VIN) byVin.set(r.VIN.toUpperCase(), r);
-  }
-  await new Promise((r) => setTimeout(r, 400));
-}
-
 // vPIC confirms BEV via ElectrificationLevel ("BEV (Battery Electric
 // Vehicle)") or, when that's blank, a bare "Electric" FuelTypePrimary with no
 // secondary fuel. PHEVs/HEVs report FuelTypePrimary "Electric" too (secondary
@@ -137,9 +108,13 @@ let filledDrive = 0;
 let promoted = 0;
 let fixedMake = 0;
 let demoted = 0;
-for (const l of listings) {
-  const r = byVin.get(l.vin?.toUpperCase());
-  if (!r) continue;
+let decoded = 0;
+
+// Applies one vPIC decode row to its listing in place. `listings` holds the
+// same object references as `needsByVin`, so this mutates the array
+// checkpointed below — no separate merge step.
+function applyDecode(l, r) {
+  decoded++;
   if (!isKnownMake(l.make) && isKnownMake(r.Make)) {
     l.make = r.Make.trim();
     l.makeSource = "vpic";
@@ -174,7 +149,61 @@ for (const l of listings) {
     promoted++;
   }
 }
-await writeFile(src, JSON.stringify(listings, null, 2));
+
+// Checkpointed like crawl.mjs's writeOutput: called on a timer while batches
+// are still in flight, and once more when the loop ends or is cut short by
+// the nightly workflow's `timeout 150m`. 2026-08-20: on a night with a huge
+// new-VIN backlog, vpic-enrich ran the whole run to a single write at the
+// very end, so a `timeout` kill threw away every decode already fetched —
+// the backlog didn't shrink and the next night paid the same cost again.
+// Applying each batch's decodes immediately (above) and checkpointing here
+// means a kill keeps whatever was decoded before it, so the backlog actually
+// shrinks night over night instead of resetting to zero.
+let writing = false;
+async function writeOutput() {
+  if (writing) return;
+  writing = true;
+  try {
+    await writeFile(src, JSON.stringify(listings, null, 2));
+  } finally {
+    writing = false;
+  }
+}
+const checkpoint = setInterval(() => { writeOutput().catch(() => {}); }, 120_000);
+checkpoint.unref?.();
+
+for (let i = 0; i < needs.length; i += 50) {
+  const batch = needs.slice(i, i + 50).map((l) => l.vin);
+  // Short waits, unlike the database's ladder: vPIC has no 2-minute recovery
+  // cycle to outlast, and there are hundreds of batches — a full outage must
+  // degrade to "these VINs stay unenriched tonight" quickly, not stall for
+  // hours. fetchWithRetry also turns a thrown fetch (connection reset) into
+  // a skipped batch instead of an unhandled rejection killing the run.
+  const res = await fetchWithRetry(
+    `vPIC batch ${i / 50}`,
+    () =>
+      fetch("https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValuesBatch/", {
+        method: "POST",
+        headers: { "content-type": "application/x-www-form-urlencoded" },
+        body: `DATA=${encodeURIComponent(batch.join(";"))}&format=json`,
+      }),
+    { waits: [5, 15] }
+  );
+  if (!res.ok) {
+    console.error(`vPIC batch ${i / 50} failed: ${res.status === 0 ? await res.text() : `HTTP ${res.status}`}`);
+    continue;
+  }
+  const json = await res.json();
+  for (const r of json.Results ?? []) {
+    if (!r.VIN) continue;
+    const l = needsByVin.get(r.VIN.toUpperCase());
+    if (l) applyDecode(l, r);
+  }
+  await new Promise((r) => setTimeout(r, 400));
+}
+
+clearInterval(checkpoint);
+await writeOutput();
 console.error(
-  `filled trim on ${filledTrim}, drive on ${filledDrive}, promoted ${promoted} name-match EVs to high confidence, repaired ${fixedMake} makes, refuted ${demoted} non-EVs → out/listings.json`
+  `decoded ${decoded}/${needs.length}, filled trim on ${filledTrim}, drive on ${filledDrive}, promoted ${promoted} name-match EVs to high confidence, repaired ${fixedMake} makes, refuted ${demoted} non-EVs → out/listings.json`
 );
