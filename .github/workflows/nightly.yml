@@ -571,6 +571,50 @@ jobs:
             echo "::warning::A dealer's used cars lost their mileage (broken platform parser) — see the step log for the lot list"
           elif [ "$rc" -ne 0 ]; then exit "$rc"; fi
 
+      # Which live listings resolve to NO enrichment row at all — the check
+      # that should have existed from the start. The enrichment corpus
+      # (web/lib/enrichment/data*.ts) is filled in by hand, model by model, as
+      # someone thought of it, and nothing ever reconciled it against what's
+      # actually live: a Ram ProMaster EV reached the site with a completely
+      # empty enrichment card, and the owner found it by eye (2026-08-21).
+      # This runs the production matcher (web/lib/enrichment/match.ts, plus
+      # whatever backfill.ts contributes) against the CDN-cached browse
+      # shards — the same voltcheck.net/api/index/0..5 a shopper's browser
+      # reads — never Supabase directly, so it costs the database nothing and
+      # is safe to run even while a db-sync is still writing. `always()`
+      # because it audits the CURRENT live site, not tonight's crawl: it owes
+      # nothing to finalize-ingest's result and should run whether tonight was
+      # a full crawl, a probe-only night, or an upstream step failed.
+      # Report-only, like the audits above: exit 10 means a NEW gap group
+      # appeared (a model went live with no enrichment, or a previously-
+      # matching row stopped matching) and the ratchet baseline needs
+      # attention, not that tonight's data refresh is bad.
+      #
+      # --max-groups is deliberately UNSET here: the script's own baseline
+      # (see its header) has not been calibrated against a healthy feed yet —
+      # its first run landed mid-db-sync and read a half-written database, so
+      # it defaults to a number high enough to never fail rather than ship a
+      # baseline measured against corrupted data. Once this has run against a
+      # settled feed, pin the real group count here with --max-groups N so
+      # the ratchet actually catches regressions instead of only reporting.
+      - name: Audit live listings against the enrichment corpus
+        if: always()
+        working-directory: web
+        run: |
+          rc=0
+          node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs \
+            scripts/live-enrichment-gap.mjs --out /tmp/live-enrichment-gap.json --top 60 || rc=$?
+          if [ "$rc" -eq 10 ]; then
+            echo "::warning::Live inventory includes a make/model the enrichment corpus doesn't cover (or no longer matches) — see the step log's ranked list and /tmp/live-enrichment-gap.json for the full one"
+          elif [ "$rc" -ne 0 ]; then exit "$rc"; fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: live-enrichment-gap
+          path: /tmp/live-enrichment-gap.json
+          if-no-files-found: warn
+          retention-days: 14
+
       # Re-derive the observed trim-per-VIN-cohort table now that tonight's
       # listings are settled (migration 0020). Gated on finalize-ingest's own
       # result rather than skip_crawl — a probe-only run still needs this
