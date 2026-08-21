@@ -53,7 +53,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     modelYears: [2021, 2021],
     drive: "AWD",
     battery: {
-      packGrossKwh: f(78, "mfr", "high", "Polestar's own US spec sheet: “78 kWh lithium-ion, 27 modules”", "https://www.polestar.com"),
+      packGrossKwh: f(78, "mfr", "high", undefined, "https://www.polestar.com"),
       packUsableKwh: f(75, "agg", "medium", "Corroborated by an independent InsideEVs review; not the exact wording of Polestar's own spec table"),
     },
     range: {
@@ -66,9 +66,9 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     },
     thermal: { heatPump: f("none", "agg", "medium", "Heat pump was introduced via a “Plus Pack” announced April 2021 for updated/MY2022 builds, not confirmed standard on the original MY2021 Launch Edition") },
     warranty: {
-      batteryYears: f(8, "mfr", "high", "“Eight (8) years or 100,000 miles/160,000 kilometers”, Polestar's own Warranty Policy and Procedures Manual (produced to NHTSA under FOIA), applies to all Polestar vehicles"),
+      batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high", "“Any remaining portion of the warranty is fully transferable to subsequent owners free of charge”, Polestar's own Warranty Policy and Procedures Manual"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -121,7 +121,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high", "NVLW runs to “the first retail purchaser, and each subsequent purchaser”"),
+      batteryTransfers: f(true, "mfr", "high"),
       extendedCoverage: f("MY2023 capacity-floor status is unresolved (MY2022 verified as no floor; MY2026 verified at 70% SoH; MY2023–25 booklets unobtainable). BMW Certified MY22–25 EVs delivered certified after 2026-03-01 get an 8yr/100k, 75%-SoH CPO battery coverage, verified.", "mfr", "high"),
     },
     buyerNotes: [
@@ -166,7 +166,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high", "NVLW runs to “the first retail purchaser, and each subsequent purchaser”"),
+      batteryTransfers: f(true, "mfr", "high"),
       extendedCoverage: f("MY2024–25 capacity-floor status is unresolved (MY2022 verified as no floor; MY2026 verified at 70% SoH; MY2023–25 booklets unobtainable). BMW Certified MY22–25 EVs delivered certified after 2026-03-01 get an 8yr/100k, 75%-SoH CPO battery coverage, verified.", "mfr", "high"),
     },
     buyerNotes: [
@@ -204,8 +204,8 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
-      sohFloorPct: f(70, "mfr", "high", "MY2026 BEVs have a verified 70% SoH floor with “restore to at least 70%” remedy, full booklet read"),
-      batteryTransfers: f(true, "mfr", "high", "NVLW runs to “the first retail purchaser, and each subsequent purchaser”"),
+      sohFloorPct: f(70, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -241,10 +241,10 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     },
     charging: {
       portStandard: f("CCS1", "agg", "medium", "Universal across US e-tron GT production; not independently re-confirmed against a primary Audi spec sheet in this research pass"),
-      architectureV: f(800, "mfr", "high", "Audi: “approx. 800 volts”"),
+      architectureV: f(800, "mfr", "high"),
       dcPeakKw: f(270, "mfr", "high", "Audi: “up to 270 kW”, 5%→80% SoC in under 22.5 minutes, do not confuse with the 2025+ refreshed e-tron GT's 320 kW rating on a different pack"),
     },
-    thermal: { heatPump: f("standard", "mfr", "high", "Audi: “the e-tron GT includes a heat pump that heats the interior with the waste heat of the high-voltage components”, standard, not optional") },
+    thermal: { heatPump: f("standard", "mfr", "high") },
     warranty: {
       batteryYears: f(8, "agg", "low", "Commonly reported across dealer/aggregator sources but not confirmed in a readable Audi USA primary document, Audi's own new-vehicle warranty page states only the 4yr/50k basic term and does not separately address the HV battery"),
       batteryMiles: f(100_000, "agg", "low", "Same caveat as batteryYears"),
@@ -300,10 +300,10 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     },
     thermal: { heatPump: f("standard", "mfr", "high", "Lucid IR press release: “The heat pump first employed on Lucid Sapphire now becomes standard across the lineup”, MY2025 onward; not standard in earlier model years") },
     warranty: {
-      batteryYears: f(8, "mfr", "high", "“High-voltage battery: 8 Years / 100,000 miles (whichever comes first) retaining 70% capacity”, Lucid's own warranty page"),
+      batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
       sohFloorPct: f(70, "mfr", "high", "Same Lucid warranty-page quote"),
-      batteryTransfers: f(true, "mfr", "high", "“…and to subsequent owner(s) if the vehicle is within the applicable coverage period”, Lucid's own warranty page"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -335,10 +335,10 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     },
     thermal: { heatPump: f("standard", "mfr", "high", "Lucid IR press release: “The heat pump first employed on Lucid Sapphire now becomes standard across the lineup”, MY2025 onward; not standard in earlier model years") },
     warranty: {
-      batteryYears: f(8, "mfr", "high", "“High-voltage battery: 8 Years / 100,000 miles (whichever comes first) retaining 70% capacity”, Lucid's own warranty page"),
+      batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
       sohFloorPct: f(70, "mfr", "high", "Same Lucid warranty-page quote"),
-      batteryTransfers: f(true, "mfr", "high", "“…and to subsequent owner(s) if the vehicle is within the applicable coverage period”, Lucid's own warranty page"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -374,12 +374,12 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       dcPeakKw: f(150, "agg", "medium", "Widely reported flat across the 2026 bZ lineup; Toyota's own release states only “10% to 80% in around 30 minutes,” no kW figure"),
       chargeTime1080Min: f(30, "mfr", "medium", "Toyota's own release, stated as approximate"),
     },
-    thermal: { heatPump: f("standard", "mfr", "high", "Toyota press release: “Heat pump system for both heating and air-conditioning” listed as standard") },
+    thermal: { heatPump: f("standard", "mfr", "high") },
     warranty: {
       batteryYears: f(8, "mfr", "high", "Toyota's 8yr/100k battery+transaxle+inverter warranty, verified against both MY2023 and MY2026 guides, carries to the new bZ nameplate"),
       batteryMiles: f(100_000, "mfr", "high"),
-      sohFloorPct: f(70, "mfr", "high", "“Below 70% of original capacity” covered; ≤30% loss “considered normal”"),
-      batteryTransfers: f(true, "mfr", "high", "“Warranty coverage is automatically transferred at no cost to subsequent vehicle owners”"),
+      sohFloorPct: f(70, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -408,12 +408,12 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       dcPeakKw: f(150, "agg", "medium", "Widely reported flat across the 2026 bZ lineup; Toyota's own release states only “10% to 80% in around 30 minutes,” no kW figure"),
       chargeTime1080Min: f(30, "mfr", "medium", "Toyota's own release, stated as approximate"),
     },
-    thermal: { heatPump: f("standard", "mfr", "high", "Toyota press release: “Heat pump system for both heating and air-conditioning” listed as standard") },
+    thermal: { heatPump: f("standard", "mfr", "high") },
     warranty: {
       batteryYears: f(8, "mfr", "high", "Toyota's 8yr/100k battery+transaxle+inverter warranty, verified against both MY2023 and MY2026 guides, carries to the new bZ nameplate"),
       batteryMiles: f(100_000, "mfr", "high"),
-      sohFloorPct: f(70, "mfr", "high", "“Below 70% of original capacity” covered; ≤30% loss “considered normal”"),
-      batteryTransfers: f(true, "mfr", "high", "“Warranty coverage is automatically transferred at no cost to subsequent vehicle owners”"),
+      sohFloorPct: f(70, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -442,12 +442,12 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       dcPeakKw: f(150, "agg", "medium", "Widely reported flat across the 2026 bZ lineup; Toyota's own release states only “10% to 80% in around 30 minutes,” no kW figure"),
       chargeTime1080Min: f(30, "mfr", "medium", "Toyota's own release, stated as approximate"),
     },
-    thermal: { heatPump: f("standard", "mfr", "high", "Toyota press release: “Heat pump system for both heating and air-conditioning” listed as standard") },
+    thermal: { heatPump: f("standard", "mfr", "high") },
     warranty: {
       batteryYears: f(8, "mfr", "high", "Toyota's 8yr/100k battery+transaxle+inverter warranty, verified against both MY2023 and MY2026 guides, carries to the new bZ nameplate"),
       batteryMiles: f(100_000, "mfr", "high"),
-      sohFloorPct: f(70, "mfr", "high", "“Below 70% of original capacity” covered; ≤30% loss “considered normal”"),
-      batteryTransfers: f(true, "mfr", "high", "“Warranty coverage is automatically transferred at no cost to subsequent vehicle owners”"),
+      sohFloorPct: f(70, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -480,8 +480,8 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr", "high", "Toyota's 8yr/100k battery+transaxle+inverter warranty, verified against both MY2023 and MY2026 guides, carries to the new bZ nameplate"),
       batteryMiles: f(100_000, "mfr", "high"),
-      sohFloorPct: f(70, "mfr", "high", "“Below 70% of original capacity” covered; ≤30% loss “considered normal”"),
-      batteryTransfers: f(true, "mfr", "high", "“Warranty coverage is automatically transferred at no cost to subsequent vehicle owners”"),
+      sohFloorPct: f(70, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -531,8 +531,8 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr", "high", "“8 years or 150,000 miles, whichever comes first”, Tesla's own vehicle-warranty page (archived capture, live page blocked by bot-detection; dated 2025-04-16, ~16 months old relative to today but Tesla's S/X battery terms have historically been stable)"),
       batteryMiles: f(150_000, "mfr", "high", "Model S/X get a higher mileage cap than Model 3/Y, same source"),
-      sohFloorPct: f(70, "mfr", "high", "“minimum 70% retention of Battery capacity over the warranty period”, same Tesla warranty page"),
-      batteryTransfers: f(true, "mfr", "high", "“Your New Vehicle Limited Warranty will follow your vehicle and be transferred to the new owner when a vehicle ownership transfer is performed through Tesla”; “the balance of original Battery and Drive Unit Limited warranty still applies for used vehicles”, same Tesla warranty page"),
+      sohFloorPct: f(70, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -565,8 +565,8 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr", "high", "“8 years or 150,000 miles, whichever comes first”, Tesla's own vehicle-warranty page (archived capture, dated 2025-04-16)"),
       batteryMiles: f(150_000, "mfr", "high"),
-      sohFloorPct: f(70, "mfr", "high", "“minimum 70% retention of Battery capacity over the warranty period”"),
-      batteryTransfers: f(true, "mfr", "high", "“Your New Vehicle Limited Warranty will follow your vehicle and be transferred to the new owner when a vehicle ownership transfer is performed through Tesla”"),
+      sohFloorPct: f(70, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -602,8 +602,8 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr", "high", "“8 years or 150,000 miles, whichever comes first”, Tesla's own vehicle-warranty page (archived capture, dated 2025-04-16)"),
       batteryMiles: f(150_000, "mfr", "high"),
-      sohFloorPct: f(70, "mfr", "high", "“minimum 70% retention of Battery capacity over the warranty period”"),
-      batteryTransfers: f(true, "mfr", "high", "“Your New Vehicle Limited Warranty will follow your vehicle and be transferred to the new owner when a vehicle ownership transfer is performed through Tesla”"),
+      sohFloorPct: f(70, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -666,7 +666,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets"),
       batteryMiles: f(155_000, "mfr", "high"),
       extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQE: 204 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance, a skipped-service history can void it.", "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner”, verified MY25/MY26 EQ booklets"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -719,7 +719,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets"),
       batteryMiles: f(155_000, "mfr", "high"),
       extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQE: 204 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance, a skipped-service history can void it.", "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner”, verified MY25/MY26 EQ booklets"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -759,12 +759,12 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       dcPeakKw: f(170, "mfr", "high", "Mercedes-Benz USA spec page: 170 kW peak, 32 min 10–80%"),
       chargeTime1080Min: f(32, "mfr", "high", "Mercedes-Benz USA spec page"),
     },
-    thermal: { heatPump: f("standard", "mfr", "high", "Mercedes-Benz USA spec page lists “Innovative heat pump” as standard") },
+    thermal: { heatPump: f("standard", "mfr", "high") },
     warranty: {
       batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets"),
       batteryMiles: f(155_000, "mfr", "high"),
       extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQE: 204 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance.", "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner”, verified MY25/MY26 EQ booklets"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -790,12 +790,12 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       portStandard: f("CCS1", "mfr", "high", "Mercedes-Benz USA spec page"),
       dcPeakKw: f(170, "mfr", "high", "Mercedes-Benz USA spec page"),
     },
-    thermal: { heatPump: f("standard", "mfr", "high", "Mercedes-Benz USA spec page lists heat pump as standard") },
+    thermal: { heatPump: f("standard", "mfr", "high") },
     warranty: {
       batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets"),
       batteryMiles: f(155_000, "mfr", "high"),
       extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQE: 204 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance.", "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner”, verified MY25/MY26 EQ booklets"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -829,7 +829,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets; reasonably extends to the AMG performance variant of the same platform"),
       batteryMiles: f(155_000, "mfr", "high"),
       extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQE: 204 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance.", "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner”, verified MY25/MY26 EQ booklets"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -871,7 +871,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets"),
       batteryMiles: f(155_000, "mfr", "high"),
       extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQE: 204 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance.", "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner”, verified MY25/MY26 EQ booklets"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -901,12 +901,12 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       chargeTime1080Min: f(31, "mfr", "high", "Mercedes-Benz USA spec page"),
       architectureV: f(400, "agg", "medium", "Not stated explicitly on Mercedes-Benz USA's spec page; independently corroborated by two secondary sources and consistent with the 200 kW DC figure (500A × 400V CCS ceiling)"),
     },
-    thermal: { heatPump: f("standard", "mfr", "high", "Mercedes-Benz USA spec page lists heat pump as standard") },
+    thermal: { heatPump: f("standard", "mfr", "high") },
     warranty: {
       batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets"),
       batteryMiles: f(155_000, "mfr", "high"),
       extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQS: 192 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance.", "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner”, verified MY25/MY26 EQ booklets"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -951,10 +951,10 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     },
     thermal: { heatPump: f("standard", "agg", "medium", "GM's Ultium Energy Recovery heat pump is platform-wide standard; independently corroborated for the Optiq specifically by a trade-press writeup") },
     warranty: {
-      batteryYears: f(8, "mfr", "high", "“8 years or 100,000 miles”, GMC's current-edition Electric Vehicle Limited Warranty booklet, read directly; same Ultium/BEV3 propulsion-battery-warranty family confirmed for the Cadillac brand via the 2022 Lyriq booklet"),
+      batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
-      sohFloorPct: f(75, "mfr", "high", "“The battery will be replaced/repaired if the capacity falls below 75% of its original value during the warranty period, as determined by a certified dealer”, GMC's current-edition EV warranty booklet, read directly"),
-      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost”, GM EV booklets"),
+      sohFloorPct: f(75, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -990,10 +990,10 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     },
     thermal: { heatPump: f("standard", "agg", "medium", "GM's Ultium Energy Recovery heat pump is platform-wide standard; independently corroborated for the Optiq specifically by a trade-press writeup") },
     warranty: {
-      batteryYears: f(8, "mfr", "high", "“8 years or 100,000 miles”, GMC's current-edition Electric Vehicle Limited Warranty booklet, read directly; same Ultium/BEV3 propulsion-battery-warranty family confirmed for the Cadillac brand via the 2022 Lyriq booklet"),
+      batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
-      sohFloorPct: f(75, "mfr", "high", "“The battery will be replaced/repaired if the capacity falls below 75% of its original value during the warranty period, as determined by a certified dealer”, GMC's current-edition EV warranty booklet, read directly"),
-      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost”, GM EV booklets"),
+      sohFloorPct: f(75, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -1029,10 +1029,10 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     },
     thermal: { heatPump: f("standard", "agg", "low", "GM's Ultium Energy Recovery heat pump is platform-wide standard; not independently re-confirmed for Escalade IQ specifically") },
     warranty: {
-      batteryYears: f(8, "mfr", "high", "“8 years or 100,000 miles”, GMC's current-edition Electric Vehicle Limited Warranty booklet, read directly; same Ultium/BEV3 propulsion-battery-warranty family confirmed for the Cadillac brand via the 2022 Lyriq booklet"),
+      batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
-      sohFloorPct: f(75, "mfr", "high", "“The battery will be replaced/repaired if the capacity falls below 75% of its original value during the warranty period, as determined by a certified dealer”, GMC's current-edition EV warranty booklet, read directly"),
-      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost”, GM EV booklets"),
+      sohFloorPct: f(75, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -1064,10 +1064,10 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     },
     thermal: { heatPump: f("standard", "agg", "low", "GM's Ultium Energy Recovery heat pump is platform-wide standard; not independently re-confirmed for Escalade IQL specifically") },
     warranty: {
-      batteryYears: f(8, "mfr", "high", "“8 years or 100,000 miles”, GMC's current-edition Electric Vehicle Limited Warranty booklet, read directly; same Ultium/BEV3 propulsion-battery-warranty family confirmed for the Cadillac brand via the 2022 Lyriq booklet"),
+      batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
-      sohFloorPct: f(75, "mfr", "high", "“The battery will be replaced/repaired if the capacity falls below 75% of its original value during the warranty period, as determined by a certified dealer”, GMC's current-edition EV warranty booklet, read directly"),
-      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost”, GM EV booklets"),
+      sohFloorPct: f(75, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -1097,10 +1097,10 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     },
     thermal: { heatPump: f("standard", "agg", "low", "GM's Ultium Energy Recovery heat pump is platform-wide standard; not independently confirmed on any GMC page for Sierra EV") },
     warranty: {
-      batteryYears: f(8, "mfr", "high", "“8 years or 100,000 miles”, GMC's current-edition Electric Vehicle Limited Warranty booklet, read directly and directly governs this brand/model"),
+      batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
-      sohFloorPct: f(75, "mfr", "high", "“The battery will be replaced/repaired if the capacity falls below 75% of its original value during the warranty period, as determined by a certified dealer”, GMC's current-edition EV warranty booklet, read directly"),
-      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost”, GM EV booklets"),
+      sohFloorPct: f(75, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -1135,10 +1135,10 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     },
     thermal: { heatPump: f("standard", "agg", "low", "GM's Ultium Energy Recovery heat pump is platform-wide standard; not independently confirmed on any GMC page for Sierra EV") },
     warranty: {
-      batteryYears: f(8, "mfr", "high", "“8 years or 100,000 miles”, GMC's current-edition Electric Vehicle Limited Warranty booklet, read directly and directly governs this brand/model"),
+      batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
-      sohFloorPct: f(75, "mfr", "high", "“The battery will be replaced/repaired if the capacity falls below 75% of its original value during the warranty period, as determined by a certified dealer”, GMC's current-edition EV warranty booklet, read directly"),
-      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost”, GM EV booklets"),
+      sohFloorPct: f(75, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {

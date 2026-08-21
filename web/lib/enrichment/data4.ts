@@ -52,8 +52,8 @@ const epa = (id: number) => `https://www.fueleconomy.gov/feg/Find.do?action=sbs&
 const WARRANTY = {
   batteryYears: f(8, "mfr" as Source, "high", undefined, SPECS_23),
   batteryMiles: f(100_000, "mfr" as Source, "high", undefined, SPECS_23),
-  sohFloorPct: f(70, "mfr" as Source, "high", "“Retaining a minimum of 70 percent of its original capacity”, Ford spec sheet", SPECS_23),
-  batteryTransfers: f(true, "mfr" as Source, "high", "“If you bought a previously owned…electric vehicle, you are eligible for any remaining warranty coverages”, every Ford MY guide"),
+  sohFloorPct: f(70, "mfr" as Source, "high", undefined, SPECS_23),
+  batteryTransfers: f(true, "mfr" as Source, "high"),
 };
 
 const NO_HEAT_PUMP = f<"none">(
@@ -63,7 +63,7 @@ const NO_HEAT_PUMP = f<"none">(
   "Resistive heater only, Ford's 2024 order guide introduces the heat pump as New/Changed for MY2024, so 2022–23 trucks have none",
   OG_24
 );
-const HEAT_PUMP_STD = f<"standard">("standard", "mfr", "high", "“Vapor Injection Heat Pump”, standard equipment in Ford's order guide", OG_24);
+const HEAT_PUMP_STD = f<"standard">("standard", "mfr", "high", undefined, OG_24);
 
 // Charge port and Supercharger access, shared by every Lightning model year.
 // Sourced to Ford's media newsroom rather than the fromtheroad spec CDN the
@@ -122,8 +122,8 @@ const ME = { make: "FORD", model: "Mustang Mach-E" };
 const ME_WARRANTY = {
   batteryYears: f(8, "mfr" as Source),
   batteryMiles: f(100_000, "mfr" as Source),
-  sohFloorPct: f(70, "mfr" as Source, "high", "“Less than 70 percent of…beginning of life capacity…is considered excessive”, Ford Warranty Guide"),
-  batteryTransfers: f(true, "mfr" as Source, "high", "“If you bought a previously owned…electric vehicle, you are eligible for any remaining warranty coverages”, every Ford MY guide"),
+  sohFloorPct: f(70, "mfr" as Source, "high"),
+  batteryTransfers: f(true, "mfr" as Source, "high"),
   // powertrainTerms is filled centrally in backfill.ts (resolvePowertrain):
   // Ford's BEV Warranty Guide covers the electric drive unit WITH the battery
   // at 8yr/100k, so "Electric drive: 8 yr / 100,000 mi" is the honest figure —
@@ -131,8 +131,8 @@ const ME_WARRANTY = {
   // understate the motor coverage a shopper cares about.
 };
 
-const ME_KWH_SR_NMC = f(70, "mfr", "high", "“70kWh Usable Capacity Standard Range High-Voltage Battery”, Ford 2023 order guide", OGM_23);
-const ME_KWH_ER = f(91, "mfr", "high", "“91kWh Usable Capacity Extended Range High-Voltage Battery”, Ford 2023 order guide", OGM_23);
+const ME_KWH_SR_NMC = f(70, "mfr", "high", undefined, OGM_23);
+const ME_KWH_ER = f(91, "mfr", "high", undefined, OGM_23);
 const ME_KWH_ER_LATE = f(91, "agg", "low", "Extended Range pack, some sources report 88 kWh, some 91; not resolved to a single mfr-published usable figure");
 const ME_KWH_SR_LATE = f(73, "agg", "medium", "Standard Range pack (LFP)");
 const ME_NMC_EARLY = f<"NMC">("NMC", "mfr", "high", "Predates the mid-MY2023 chemistry switch, every 2021–22 Standard Range pack is NMC");
@@ -308,7 +308,7 @@ const BMW_WARRANTY = {
   batteryYears: f(8, "mfr" as Source),
   batteryMiles: f(100_000, "mfr" as Source),
   sohFloorPct: f(70, "mfr" as Source),
-  batteryTransfers: f(true, "mfr" as Source, "high", "NVLW runs to “the first retail purchaser, and each subsequent purchaser”"),
+  batteryTransfers: f(true, "mfr" as Source, "high"),
 };
 const I4 = { make: "BMW", model: "i4" };
 const I5 = { make: "BMW", model: "i5" };
@@ -440,7 +440,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     modelYears: [2023, 2023],
     vin8: ["L"],
     packVariant: "Standard Range",
-    battery: { packUsableKwh: f(98, "mfr", "high", "“98 kWh of usable energy”, Ford 2023 spec sheet", SPECS_23) },
+    battery: { packUsableKwh: f(98, "mfr", "high", undefined, SPECS_23) },
     range: { epaRangeMi: f(240, "mfr", "high", "EPA rating for the Standard Range pack (VIN engine code L)", epa(46329)) },
     thermal: { heatPump: NO_HEAT_PUMP },
     warranty: WARRANTY,
@@ -453,7 +453,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     modelYears: [2023, 2023],
     vin8: ["V"],
     packVariant: "Extended Range",
-    battery: { packUsableKwh: f(131, "mfr", "high", "“131 kWh of usable energy”, Ford 2023 spec sheet", SPECS_23) },
+    battery: { packUsableKwh: f(131, "mfr", "high", undefined, SPECS_23) },
     range: { epaRangeMi: f(320, "mfr", "high", "EPA rating for the Extended Range pack (VIN engine code V), non-Platinum trims", epa(46327)) },
     thermal: { heatPump: NO_HEAT_PUMP },
     warranty: WARRANTY,
@@ -467,7 +467,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     vin8: ["V"],
     trim: "Platinum",
     packVariant: "Extended Range",
-    battery: { packUsableKwh: f(131, "mfr", "high", "“131 kWh of usable energy”, Ford 2023 spec sheet", SPECS_23) },
+    battery: { packUsableKwh: f(131, "mfr", "high", undefined, SPECS_23) },
     range: { epaRangeMi: f(300, "mfr", "high", "Platinum carries the same Extended Range pack but is EPA-rated 300 (heavier 22\" wheels)", epa(46328)) },
     thermal: { heatPump: NO_HEAT_PUMP },
     warranty: WARRANTY,
@@ -482,7 +482,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     modelYears: [2024, 2024],
     vin8: ["K"],
     packVariant: "Standard Range",
-    battery: { packUsableKwh: f(98, "mfr", "high", "“98 kWh Usable Capacity Standard Range High-Voltage Battery”, Ford 2024 order guide", OG_24) },
+    battery: { packUsableKwh: f(98, "mfr", "high", undefined, OG_24) },
     range: { epaRangeMi: f(240, "mfr", "high", "EPA rating for the Standard Range pack (VIN engine code K)", epa(47821)) },
     thermal: { heatPump: HEAT_PUMP_STD },
     warranty: WARRANTY,
@@ -495,7 +495,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     modelYears: [2024, 2024],
     vin8: ["7", "M"],
     packVariant: "Extended Range",
-    battery: { packUsableKwh: f(131, "mfr", "high", "“131 kWh Usable Capacity Extended Range High-Voltage Battery”, Ford 2024 order guide", OG_24) },
+    battery: { packUsableKwh: f(131, "mfr", "high", undefined, OG_24) },
     range: { epaRangeMi: f(320, "mfr", "high", "EPA rating for the Extended Range pack (VIN engine code 7, or M with dual onboard chargers), non-Platinum trims", epa(47818)) },
     thermal: { heatPump: HEAT_PUMP_STD },
     warranty: WARRANTY,
@@ -509,7 +509,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     vin8: ["7", "M"],
     trim: "Platinum",
     packVariant: "Extended Range",
-    battery: { packUsableKwh: f(131, "mfr", "high", "“131 kWh Usable Capacity Extended Range High-Voltage Battery”, Ford 2024 order guide", OG_24) },
+    battery: { packUsableKwh: f(131, "mfr", "high", undefined, OG_24) },
     range: { epaRangeMi: f(300, "mfr", "high", "Platinum carries the same Extended Range pack but is EPA-rated 300 (heavier 22\" wheels)", epa(47819)) },
     thermal: { heatPump: HEAT_PUMP_STD },
     warranty: WARRANTY,
@@ -524,7 +524,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     modelYears: [2025, 2025],
     vin8: ["K"],
     packVariant: "Standard Range",
-    battery: { packUsableKwh: f(98, "mfr", "high", "“98 kWh of usable energy”, Ford 2025 spec sheet", SPECS_25) },
+    battery: { packUsableKwh: f(98, "mfr", "high", undefined, SPECS_25) },
     range: { epaRangeMi: f(240, "mfr", "high", "EPA rating for the Standard Range pack (VIN engine code K)", epa(48707)) },
     thermal: { heatPump: HEAT_PUMP_STD },
     warranty: WARRANTY,
@@ -537,7 +537,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     modelYears: [2025, 2025],
     vin8: ["U"],
     packVariant: "Extended Range (123 kWh)",
-    battery: { packUsableKwh: f(123, "mfr", "high", "“123 kWh of usable energy”, the smaller of two 2025 Extended Range packs, new this year (order code 99U)", SPECS_25) },
+    battery: { packUsableKwh: f(123, "mfr", "high", "The smaller of two 2025 Extended Range packs, new this year (order code 99U)", SPECS_25) },
     range: { epaRangeMi: f(300, "mfr", "high", "EPA rating for the 123 kWh Extended Range pack (VIN engine code U; EPA lists it as “ER2”), standard on Flash, optional on Pro/XLT", epa(49077)) },
     thermal: { heatPump: HEAT_PUMP_STD },
     warranty: WARRANTY,
@@ -550,7 +550,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     modelYears: [2025, 2025],
     vin8: ["7"],
     packVariant: "Extended Range (131 kWh)",
-    battery: { packUsableKwh: f(131, "mfr", "high", "“131 kWh of usable energy”, Ford 2025 spec sheet", SPECS_25) },
+    battery: { packUsableKwh: f(131, "mfr", "high", undefined, SPECS_25) },
     range: { epaRangeMi: f(320, "mfr", "high", "EPA rating for the 131 kWh Extended Range pack (VIN engine code 7; EPA lists it as “ER1”), non-Platinum trims", epa(48705)) },
     thermal: { heatPump: HEAT_PUMP_STD },
     warranty: WARRANTY,
@@ -564,7 +564,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     vin8: ["7"],
     trim: "Platinum",
     packVariant: "Extended Range (131 kWh)",
-    battery: { packUsableKwh: f(131, "mfr", "high", "“131 kWh of usable energy”, Ford 2025 spec sheet", SPECS_25) },
+    battery: { packUsableKwh: f(131, "mfr", "high", undefined, SPECS_25) },
     range: { epaRangeMi: f(300, "mfr", "high", "Platinum carries the 131 kWh Extended Range pack but is EPA-rated 300 (heavier 22\" wheels)", epa(48708)) },
     thermal: { heatPump: HEAT_PUMP_STD },
     warranty: WARRANTY,
@@ -594,7 +594,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      batteryTransfers: f(true, "mfr", "high", "GM booklet: “transferable at no cost to any subsequent person(s)” (verified via extracted booklet text)"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       { headline: "DC fast charging: $750 factory option, not on every car", severity: "trap", resolvedBy: "photo_dcfc" },
@@ -613,7 +613,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      batteryTransfers: f(true, "mfr", "high", "GM booklet: “transferable at no cost to any subsequent person(s)” (verified via extracted booklet text)"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       { headline: "Most 2020–22 cars kept their original packs (21V560)", severity: "info", resolvedBy: "campaign_check" },
@@ -626,19 +626,19 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     modelYears: [2027, 2027],
     packVariant: "65 kWh LFP",
     battery: {
-      packGrossKwh: f(65, "mfr", "high", "“Battery Rated Energy: 65 kWh”, lithium iron phosphate in prismatic cells, per GM's own spec sheet", BOLT27_PRESS),
+      packGrossKwh: f(65, "mfr", "high", undefined, BOLT27_PRESS),
       chemistry: f("LFP", "mfr", "high", undefined, BOLT27_PRESS),
     },
     range: { epaRangeMi: f(262, "mfr", "high", "EPA-estimated 262 mi (GM's launch estimate was 255; the certified figure came in higher)", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50372") },
     charging: {
-      portStandard: f("NACS", "mfr", "high", "“Chevrolet's first vehicle to offer a native NACS charging port”", BOLT27_PRESS),
+      portStandard: f("NACS", "mfr", "high", undefined, BOLT27_PRESS),
       superchargerAccess: f("native", "mfr"),
       dcFastCharging: f("standard", "mfr"),
-      dcPeakKw: f(150, "mfr", "high", "“Peak charging speed of 150 kW+”, 10–80% in about 25 minutes", BOLT27_PRESS),
+      dcPeakKw: f(150, "mfr", "high", undefined, BOLT27_PRESS),
       chargeTime1080Min: f(25, "mfr", "high", "GM's own press release, figure stated as approximate", BOLT27_PRESS),
     },
     thermal: {
-      heatPump: f("standard", "mfr", "high", "“GM Energy Recovery (heat pump) for active cabin and battery heating and cooling”", BOLT27_PRESS),
+      heatPump: f("standard", "mfr", "high", undefined, BOLT27_PRESS),
       batteryPreconditioning: f(true, "mfr", "high", "Automatic battery preconditioning when DC fast charging is on the route"),
     },
     warranty: {

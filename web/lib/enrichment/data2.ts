@@ -31,28 +31,18 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       superchargerAccess: f("adapter", "mfr", "high", "VW-approved NACS adapter ($200), access opened Nov 2025"),
       dcPeakKw: f(170, "agg", "medium"),
     },
-    thermal: { heatPump: f("none", "agg", "medium", "No US ID.4 has a heat pump in any year/trim") },
+    thermal: { heatPump: f("none", "agg", "medium") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new (verified MY2025 booklet; earlier years reported same)"),
-      batteryTransfers: f(true, "mfr", "high", "“Automatically transferred without cost”, VW EV warranty booklet"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
-      {
-        headline: "No US ID.4 has a heat pump",
-        body: "All US ID.4 model years and trims use a resistive cabin heater; the heat pump offered in Europe was never available here.",
-        severity: "warning",
-      },
       {
         headline: "Battery and door-handle recalls; confirm the repairs were done on this car",
         body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine, an unrepaired one is materially worse until fixed.",
         severity: "trap",
-      },
-      {
-        headline: "Rental or rideshare history permanently voids the HV warranty",
-        body: "VW's booklet: commercial use voids the high-voltage system warranty, and “if a commercial vehicle is sold to a subsequent retail owner, this warranty still does not apply.”",
-        severity: "warning",
       },
     ],
   },
@@ -71,28 +61,18 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       superchargerAccess: f("adapter", "mfr", "high", "VW-approved NACS adapter ($200), access opened Nov 2025"),
       dcPeakKw: f(170, "agg", "medium"),
     },
-    thermal: { heatPump: f("none", "agg", "medium", "No US ID.4 has a heat pump in any year/trim") },
+    thermal: { heatPump: f("none", "agg", "medium") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new (verified MY2025 booklet; earlier years reported same)"),
-      batteryTransfers: f(true, "mfr", "high", "“Automatically transferred without cost”, VW EV warranty booklet"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
-      {
-        headline: "No US ID.4 has a heat pump",
-        body: "All US ID.4 model years and trims use a resistive cabin heater; the heat pump offered in Europe was never available here.",
-        severity: "warning",
-      },
       {
         headline: "Battery and door-handle recalls; confirm the repairs were done on this car",
         body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine, an unrepaired one is materially worse until fixed.",
         severity: "trap",
-      },
-      {
-        headline: "Rental or rideshare history permanently voids the HV warranty",
-        body: "VW's booklet: commercial use voids the high-voltage system warranty, and “if a commercial vehicle is sold to a subsequent retail owner, this warranty still does not apply.”",
-        severity: "warning",
       },
     ],
   },
@@ -111,28 +91,18 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       superchargerAccess: f("adapter", "mfr", "high", "VW-approved NACS adapter ($200), access opened Nov 2025"),
       dcPeakKw: f(170, "agg", "medium"),
     },
-    thermal: { heatPump: f("none", "agg", "medium", "No US ID.4 has a heat pump in any year/trim") },
+    thermal: { heatPump: f("none", "agg", "medium") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new (verified MY2025 booklet; earlier years reported same)"),
-      batteryTransfers: f(true, "mfr", "high", "“Automatically transferred without cost”, VW EV warranty booklet"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
-      {
-        headline: "No US ID.4 has a heat pump",
-        body: "All US ID.4 model years and trims use a resistive cabin heater; the heat pump offered in Europe was never available here.",
-        severity: "warning",
-      },
       {
         headline: "Battery and door-handle recalls; confirm the repairs were done on this car",
         body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine, an unrepaired one is materially worse until fixed.",
         severity: "trap",
-      },
-      {
-        headline: "Rental or rideshare history permanently voids the HV warranty",
-        body: "VW's booklet: commercial use voids the high-voltage system warranty, and “if a commercial vehicle is sold to a subsequent retail owner, this warranty still does not apply.”",
-        severity: "warning",
       },
     ],
   },
@@ -151,28 +121,18 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       superchargerAccess: f("adapter", "mfr", "high", "VW-approved NACS adapter ($200), access opened Nov 2025"),
       dcPeakKw: f(170, "agg", "medium"),
     },
-    thermal: { heatPump: f("none", "agg", "medium", "No US ID.4 has a heat pump in any year/trim") },
+    thermal: { heatPump: f("none", "agg", "medium") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new (verified MY2025 booklet; earlier years reported same)"),
-      batteryTransfers: f(true, "mfr", "high", "“Automatically transferred without cost”, VW EV warranty booklet"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
-      {
-        headline: "No US ID.4 has a heat pump",
-        body: "All US ID.4 model years and trims use a resistive cabin heater; the heat pump offered in Europe was never available here.",
-        severity: "warning",
-      },
       {
         headline: "Battery and door-handle recalls; confirm the repairs were done on this car",
         body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine, an unrepaired one is materially worse until fixed.",
         severity: "trap",
-      },
-      {
-        headline: "Rental or rideshare history permanently voids the HV warranty",
-        body: "VW's booklet: commercial use voids the high-voltage system warranty, and “if a commercial vehicle is sold to a subsequent retail owner, this warranty still does not apply.”",
-        severity: "warning",
       },
     ],
   },
@@ -191,28 +151,18 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       superchargerAccess: f("adapter", "mfr", "high", "VW-approved NACS adapter ($200), access opened Nov 2025"),
       dcPeakKw: f(170, "agg", "medium"),
     },
-    thermal: { heatPump: f("none", "agg", "medium", "No US ID.4 has a heat pump in any year/trim") },
+    thermal: { heatPump: f("none", "agg", "medium") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new (verified MY2025 booklet; earlier years reported same)"),
-      batteryTransfers: f(true, "mfr", "high", "“Automatically transferred without cost”, VW EV warranty booklet"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
-      {
-        headline: "No US ID.4 has a heat pump",
-        body: "All US ID.4 model years and trims use a resistive cabin heater; the heat pump offered in Europe was never available here.",
-        severity: "warning",
-      },
       {
         headline: "Battery and door-handle recalls; confirm the repairs were done on this car",
         body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine, an unrepaired one is materially worse until fixed.",
         severity: "trap",
-      },
-      {
-        headline: "Rental or rideshare history permanently voids the HV warranty",
-        body: "VW's booklet: commercial use voids the high-voltage system warranty, and “if a commercial vehicle is sold to a subsequent retail owner, this warranty still does not apply.”",
-        severity: "warning",
       },
     ],
   },
@@ -231,28 +181,18 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       superchargerAccess: f("adapter", "mfr", "high", "VW-approved NACS adapter ($200), access opened Nov 2025"),
       dcPeakKw: f(170, "agg", "medium"),
     },
-    thermal: { heatPump: f("none", "agg", "medium", "No US ID.4 has a heat pump in any year/trim") },
+    thermal: { heatPump: f("none", "agg", "medium") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new (verified MY2025 booklet; earlier years reported same)"),
-      batteryTransfers: f(true, "mfr", "high", "“Automatically transferred without cost”, VW EV warranty booklet"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
-      {
-        headline: "No US ID.4 has a heat pump",
-        body: "All US ID.4 model years and trims use a resistive cabin heater; the heat pump offered in Europe was never available here.",
-        severity: "warning",
-      },
       {
         headline: "Battery and door-handle recalls; confirm the repairs were done on this car",
         body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine, an unrepaired one is materially worse until fixed.",
         severity: "trap",
-      },
-      {
-        headline: "Rental or rideshare history permanently voids the HV warranty",
-        body: "VW's booklet: commercial use voids the high-voltage system warranty, and “if a commercial vehicle is sold to a subsequent retail owner, this warranty still does not apply.”",
-        severity: "warning",
       },
     ],
   },
@@ -271,28 +211,18 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       superchargerAccess: f("adapter", "mfr", "high", "VW-approved NACS adapter ($200), access opened Nov 2025"),
       dcPeakKw: f(170, "agg", "medium"),
     },
-    thermal: { heatPump: f("none", "agg", "medium", "No US ID.4 has a heat pump in any year/trim") },
+    thermal: { heatPump: f("none", "agg", "medium") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new (verified MY2025 booklet; earlier years reported same)"),
-      batteryTransfers: f(true, "mfr", "high", "“Automatically transferred without cost”, VW EV warranty booklet"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
-      {
-        headline: "No US ID.4 has a heat pump",
-        body: "All US ID.4 model years and trims use a resistive cabin heater; the heat pump offered in Europe was never available here.",
-        severity: "warning",
-      },
       {
         headline: "Battery and door-handle recalls; confirm the repairs were done on this car",
         body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine, an unrepaired one is materially worse until fixed.",
         severity: "trap",
-      },
-      {
-        headline: "Rental or rideshare history permanently voids the HV warranty",
-        body: "VW's booklet: commercial use voids the high-voltage system warranty, and “if a commercial vehicle is sold to a subsequent retail owner, this warranty still does not apply.”",
-        severity: "warning",
       },
     ],
   },
@@ -311,28 +241,18 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       superchargerAccess: f("adapter", "mfr", "high", "VW-approved NACS adapter ($200), access opened Nov 2025"),
       dcPeakKw: f(170, "agg", "medium"),
     },
-    thermal: { heatPump: f("none", "agg", "medium", "No US ID.4 has a heat pump in any year/trim") },
+    thermal: { heatPump: f("none", "agg", "medium") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new (verified MY2025 booklet; earlier years reported same)"),
-      batteryTransfers: f(true, "mfr", "high", "“Automatically transferred without cost”, VW EV warranty booklet"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
-      {
-        headline: "No US ID.4 has a heat pump",
-        body: "All US ID.4 model years and trims use a resistive cabin heater; the heat pump offered in Europe was never available here.",
-        severity: "warning",
-      },
       {
         headline: "Battery and door-handle recalls; confirm the repairs were done on this car",
         body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine, an unrepaired one is materially worse until fixed.",
         severity: "trap",
-      },
-      {
-        headline: "Rental or rideshare history permanently voids the HV warranty",
-        body: "VW's booklet: commercial use voids the high-voltage system warranty, and “if a commercial vehicle is sold to a subsequent retail owner, this warranty still does not apply.”",
-        severity: "warning",
       },
     ],
   },
@@ -350,28 +270,18 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       superchargerAccess: f("adapter", "mfr", "high", "VW-approved NACS adapter ($200), access opened Nov 2025"),
       dcPeakKw: f(140, "agg", "medium"),
     },
-    thermal: { heatPump: f("none", "agg", "medium", "No US ID.4 has a heat pump in any year/trim") },
+    thermal: { heatPump: f("none", "agg", "medium") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new (verified MY2025 booklet; earlier years reported same)"),
-      batteryTransfers: f(true, "mfr", "high", "“Automatically transferred without cost”, VW EV warranty booklet"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
-      {
-        headline: "No US ID.4 has a heat pump",
-        body: "All US ID.4 model years and trims use a resistive cabin heater; the heat pump offered in Europe was never available here.",
-        severity: "warning",
-      },
       {
         headline: "Battery and door-handle recalls; confirm the repairs were done on this car",
         body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine, an unrepaired one is materially worse until fixed.",
         severity: "trap",
-      },
-      {
-        headline: "Rental or rideshare history permanently voids the HV warranty",
-        body: "VW's booklet: commercial use voids the high-voltage system warranty, and “if a commercial vehicle is sold to a subsequent retail owner, this warranty still does not apply.”",
-        severity: "warning",
       },
     ],
   },
@@ -389,28 +299,18 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       superchargerAccess: f("adapter", "mfr", "high", "VW-approved NACS adapter ($200), access opened Nov 2025"),
       dcPeakKw: f(140, "agg", "medium"),
     },
-    thermal: { heatPump: f("none", "agg", "medium", "No US ID.4 has a heat pump in any year/trim") },
+    thermal: { heatPump: f("none", "agg", "medium") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new (verified MY2025 booklet; earlier years reported same)"),
-      batteryTransfers: f(true, "mfr", "high", "“Automatically transferred without cost”, VW EV warranty booklet"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
-      {
-        headline: "No US ID.4 has a heat pump",
-        body: "All US ID.4 model years and trims use a resistive cabin heater; the heat pump offered in Europe was never available here.",
-        severity: "warning",
-      },
       {
         headline: "Battery and door-handle recalls; confirm the repairs were done on this car",
         body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine, an unrepaired one is materially worse until fixed.",
         severity: "trap",
-      },
-      {
-        headline: "Rental or rideshare history permanently voids the HV warranty",
-        body: "VW's booklet: commercial use voids the high-voltage system warranty, and “if a commercial vehicle is sold to a subsequent retail owner, this warranty still does not apply.”",
-        severity: "warning",
       },
     ],
   },
@@ -428,28 +328,18 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       superchargerAccess: f("adapter", "mfr", "high", "VW-approved NACS adapter ($200), access opened Nov 2025"),
       dcPeakKw: f(140, "agg", "medium"),
     },
-    thermal: { heatPump: f("none", "agg", "medium", "No US ID.4 has a heat pump in any year/trim") },
+    thermal: { heatPump: f("none", "agg", "medium") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new (verified MY2025 booklet; earlier years reported same)"),
-      batteryTransfers: f(true, "mfr", "high", "“Automatically transferred without cost”, VW EV warranty booklet"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
-      {
-        headline: "No US ID.4 has a heat pump",
-        body: "All US ID.4 model years and trims use a resistive cabin heater; the heat pump offered in Europe was never available here.",
-        severity: "warning",
-      },
       {
         headline: "Battery and door-handle recalls; confirm the repairs were done on this car",
         body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine, an unrepaired one is materially worse until fixed.",
         severity: "trap",
-      },
-      {
-        headline: "Rental or rideshare history permanently voids the HV warranty",
-        body: "VW's booklet: commercial use voids the high-voltage system warranty, and “if a commercial vehicle is sold to a subsequent retail owner, this warranty still does not apply.”",
-        severity: "warning",
       },
     ],
   },
@@ -467,28 +357,18 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       superchargerAccess: f("adapter", "mfr", "high", "VW-approved NACS adapter ($200), access opened Nov 2025"),
       dcPeakKw: f(140, "agg", "medium"),
     },
-    thermal: { heatPump: f("none", "agg", "medium", "No US ID.4 has a heat pump in any year/trim") },
+    thermal: { heatPump: f("none", "agg", "medium") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new (verified MY2025 booklet; earlier years reported same)"),
-      batteryTransfers: f(true, "mfr", "high", "“Automatically transferred without cost”, VW EV warranty booklet"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
-      {
-        headline: "No US ID.4 has a heat pump",
-        body: "All US ID.4 model years and trims use a resistive cabin heater; the heat pump offered in Europe was never available here.",
-        severity: "warning",
-      },
       {
         headline: "Battery and door-handle recalls; confirm the repairs were done on this car",
         body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine, an unrepaired one is materially worse until fixed.",
         severity: "trap",
-      },
-      {
-        headline: "Rental or rideshare history permanently voids the HV warranty",
-        body: "VW's booklet: commercial use voids the high-voltage system warranty, and “if a commercial vehicle is sold to a subsequent retail owner, this warranty still does not apply.”",
-        severity: "warning",
       },
     ],
   },
@@ -705,7 +585,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       superchargerAccess: f("adapter", "mfr", "high", "Nissan OEM NACS adapter (part T99F9-5MP1B), early 2025"),
       dcPeakKw: f(130, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "Reported standard on all US trims") },
+    thermal: { heatPump: f("standard", "agg", "medium") },
     warranty: { batteryYears: f(8, "agg", "medium"), batteryMiles: f(100_000, "agg", "medium") },
     buyerNotes: [
       {
@@ -730,7 +610,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       superchargerAccess: f("adapter", "mfr", "high", "Nissan OEM NACS adapter (part T99F9-5MP1B), early 2025"),
       dcPeakKw: f(130, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "Reported standard on all US trims") },
+    thermal: { heatPump: f("standard", "agg", "medium") },
     warranty: { batteryYears: f(8, "agg", "medium"), batteryMiles: f(100_000, "agg", "medium") },
     buyerNotes: [
       {
@@ -754,7 +634,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       superchargerAccess: f("adapter", "mfr", "high", "Nissan OEM NACS adapter (part T99F9-5MP1B), early 2025"),
       dcPeakKw: f(130, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "Reported standard on all US trims") },
+    thermal: { heatPump: f("standard", "agg", "medium") },
     warranty: { batteryYears: f(8, "agg", "medium"), batteryMiles: f(100_000, "agg", "medium") },
     buyerNotes: [
       {
@@ -778,7 +658,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       superchargerAccess: f("adapter", "mfr", "high", "Nissan OEM NACS adapter (part T99F9-5MP1B), early 2025"),
       dcPeakKw: f(130, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "Reported standard on all US trims") },
+    thermal: { heatPump: f("standard", "agg", "medium") },
     warranty: { batteryYears: f(8, "agg", "medium"), batteryMiles: f(100_000, "agg", "medium") },
     buyerNotes: [
       {
@@ -802,12 +682,12 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       superchargerAccess: f("adapter", "mfr"),
       dcPeakKw: f(150, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "mfr", "high", "Toyota pressroom: heat pump for heating and A/C, all trims") },
+    thermal: { heatPump: f("standard", "mfr", "high") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      sohFloorPct: f(70, "mfr", "high", "“Below 70% of original capacity” covered; ≤30% loss “considered normal”"),
-      batteryTransfers: f(true, "mfr", "high", "“Warranty coverage is automatically transferred at no cost to subsequent vehicle owners”"),
+      sohFloorPct: f(70, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -831,12 +711,12 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       superchargerAccess: f("adapter", "mfr"),
       dcPeakKw: f(150, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "mfr", "high", "Toyota pressroom: heat pump for heating and A/C, all trims") },
+    thermal: { heatPump: f("standard", "mfr", "high") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      sohFloorPct: f(70, "mfr", "high", "“Below 70% of original capacity” covered; ≤30% loss “considered normal”"),
-      batteryTransfers: f(true, "mfr", "high", "“Warranty coverage is automatically transferred at no cost to subsequent vehicle owners”"),
+      sohFloorPct: f(70, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -860,12 +740,12 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       superchargerAccess: f("adapter", "mfr"),
       dcPeakKw: f(100, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "mfr", "high", "Toyota pressroom: heat pump for heating and A/C, all trims") },
+    thermal: { heatPump: f("standard", "mfr", "high") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      sohFloorPct: f(70, "mfr", "high", "“Below 70% of original capacity” covered; ≤30% loss “considered normal”"),
-      batteryTransfers: f(true, "mfr", "high", "“Warranty coverage is automatically transferred at no cost to subsequent vehicle owners”"),
+      sohFloorPct: f(70, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -893,8 +773,8 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      sohFloorPct: f(75, "mfr", "high", "“Below 75% of its original value”, GM EV booklets (extracted text)"),
-      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost”, GM EV booklets"),
+      sohFloorPct: f(75, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -923,8 +803,8 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      sohFloorPct: f(75, "mfr", "high", "“Below 75% of its original value”, GM EV booklets (extracted text)"),
-      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost”, GM EV booklets"),
+      sohFloorPct: f(75, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -952,8 +832,8 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      sohFloorPct: f(75, "mfr", "high", "“Below 75% of its original value”, GM EV booklets (extracted text)"),
-      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost”, GM EV booklets"),
+      sohFloorPct: f(75, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -982,8 +862,8 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      sohFloorPct: f(75, "mfr", "high", "“Below 75% of its original value”, GM EV booklets (extracted text)"),
-      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost”, GM EV booklets"),
+      sohFloorPct: f(75, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -1011,7 +891,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      sohFloorPct: f(75, "mfr", "high", "“Replaced/repaired if the capacity falls below 75% of its original value”, Honda BEV Warranty Basebook"),
+      sohFloorPct: f(75, "mfr", "high"),
       batteryTransfers: f(true, "mfr", "high", "No owner restriction in Honda's BEV booklet (only the rust warranty is original-owner-only)"),
     },
     buyerNotes: [
@@ -1042,7 +922,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      sohFloorPct: f(75, "mfr", "high", "“Replaced/repaired if the capacity falls below 75% of its original value”, Honda BEV Warranty Basebook"),
+      sohFloorPct: f(75, "mfr", "high"),
       batteryTransfers: f(true, "mfr", "high", "No owner restriction in Honda's BEV booklet (only the rust warranty is original-owner-only)"),
     },
     buyerNotes: [
@@ -1071,7 +951,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      sohFloorPct: f(75, "mfr", "high", "“Replaced/repaired if the capacity falls below 75% of its original value”, Honda BEV Warranty Basebook"),
+      sohFloorPct: f(75, "mfr", "high"),
       batteryTransfers: f(true, "mfr", "high", "No owner restriction in Honda's BEV booklet (only the rust warranty is original-owner-only)"),
     },
     buyerNotes: [
@@ -1103,7 +983,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      sohFloorPct: f(75, "mfr", "high", "“Replaced/repaired if the capacity falls below 75% of its original value”, Honda BEV Warranty Basebook"),
+      sohFloorPct: f(75, "mfr", "high"),
       batteryTransfers: f(true, "mfr", "high", "No owner restriction in Honda's BEV booklet (only the rust warranty is original-owner-only)"),
     },
     buyerNotes: [
@@ -1132,8 +1012,8 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      sohFloorPct: f(75, "mfr", "high", "“Below 75% of its original value”, GM EV booklets (extracted text)"),
-      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost”, GM EV booklets"),
+      sohFloorPct: f(75, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -1161,8 +1041,8 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      sohFloorPct: f(75, "mfr", "high", "“Below 75% of its original value”, GM EV booklets (extracted text)"),
-      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost”, GM EV booklets"),
+      sohFloorPct: f(75, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -1190,8 +1070,8 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      sohFloorPct: f(75, "mfr", "high", "“Below 75% of its original value”, GM EV booklets (extracted text)"),
-      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost”, GM EV booklets"),
+      sohFloorPct: f(75, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -1219,8 +1099,8 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      sohFloorPct: f(75, "mfr", "high", "“Below 75% of its original value”, GM EV booklets (extracted text)"),
-      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost”, GM EV booklets"),
+      sohFloorPct: f(75, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -1248,8 +1128,8 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      sohFloorPct: f(75, "mfr", "high", "“Below 75% of its original value”, GM EV booklets (extracted text)"),
-      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost”, GM EV booklets"),
+      sohFloorPct: f(75, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -1278,8 +1158,8 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      sohFloorPct: f(75, "mfr", "high", "“Below 75% of its original value”, GM EV booklets (extracted text)"),
-      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost”, GM EV booklets"),
+      sohFloorPct: f(75, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -1306,8 +1186,8 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      sohFloorPct: f(75, "mfr", "high", "“Below 75% of its original value”, GM EV booklets (extracted text)"),
-      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost”, GM EV booklets"),
+      sohFloorPct: f(75, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -1334,8 +1214,8 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      sohFloorPct: f(75, "mfr", "high", "“Below 75% of its original value”, GM EV booklets (extracted text)"),
-      batteryTransfers: f(true, "mfr", "high", "“Transferable at no cost”, GM EV booklets"),
+      sohFloorPct: f(75, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -1361,12 +1241,12 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       superchargerAccess: f("adapter", "agg", "medium", "Adapter program alongside Toyota, late 2025"),
       dcPeakKw: f(100, "agg", "medium", "100 kW cap through MY2025; weak cold-weather charging on 2023 cars"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "DENSO heat pump system (supplier announcement)") },
+    thermal: { heatPump: f("standard", "agg", "medium") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "“Retention of 70% or more of the original battery capacity” (MY2023 BEV booklet; later years reported same)"),
-      batteryTransfers: f(true, "mfr", "high", "“Every owner of the vehicle during the warranty period shall be entitled to the benefits”"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -1395,7 +1275,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
       batteryTransfers: f(true, "mfr", "high", "Kia: everything except the original-owner powertrain warranty transfers in full"),
-      powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr", "high", "Kia powertrain warranty: 10yr/100k for the original owner, 5yr/60k for subsequent owners"),
+      powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -1423,7 +1303,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
       batteryTransfers: f(true, "mfr"),
-      powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr", "high", "Kia powertrain warranty: 10yr/100k for the original owner, 5yr/60k for subsequent owners"),
+      powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -1456,7 +1336,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      batteryTransfers: f(true, "mfr", "high", "NVLW runs to \u201cthe first retail purchaser, and each subsequent purchaser\u201d"),
+      batteryTransfers: f(true, "mfr", "high"),
       extendedCoverage: f("MY2022 has NO capacity floor (defects-only, verified). BMW Certified MY22\u201325 cars delivered after Mar 2026 get an 8yr/100k, 75%-SoH CPO battery coverage", "mfr", "high"),
     },
     buyerNotes: [
@@ -1494,7 +1374,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      batteryTransfers: f(true, "mfr", "high", "NVLW runs to \u201cthe first retail purchaser, and each subsequent purchaser\u201d"),
+      batteryTransfers: f(true, "mfr", "high"),
       extendedCoverage: f("MY2022 has NO capacity floor (defects-only, verified). BMW Certified MY22\u201325 cars delivered after Mar 2026 get an 8yr/100k, 75%-SoH CPO battery coverage", "mfr", "high"),
     },
     buyerNotes: [
@@ -1533,7 +1413,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      batteryTransfers: f(true, "mfr", "high", "NVLW runs to \u201cthe first retail purchaser, and each subsequent purchaser\u201d"),
+      batteryTransfers: f(true, "mfr", "high"),
       extendedCoverage: f("MY2022 has NO capacity floor (defects-only, verified). BMW Certified MY22\u201325 cars delivered after Mar 2026 get an 8yr/100k, 75%-SoH CPO battery coverage", "mfr", "high"),
     },
     buyerNotes: [
@@ -1570,7 +1450,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      batteryTransfers: f(true, "mfr", "high", "NVLW runs to \u201cthe first retail purchaser, and each subsequent purchaser\u201d"),
+      batteryTransfers: f(true, "mfr", "high"),
       extendedCoverage: f("MY2022 has NO capacity floor (defects-only, verified). BMW Certified MY22\u201325 cars delivered after Mar 2026 get an 8yr/100k, 75%-SoH CPO battery coverage", "mfr", "high"),
     },
     buyerNotes: [
@@ -1773,11 +1653,11 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       superchargerAccess: f("none", "agg", "medium", "JLR was network-whitelisted (~Aug 2025) but no approved adapter confirmed shipping, treat as no Supercharger access until verified"),
       dcPeakKw: f(100, "agg", "medium", "Slow: 100–104 kW"),
     },
-    thermal: { heatPump: f("standard", "mfr", "high", "Jaguar-published thermal system with heat pump") },
+    thermal: { heatPump: f("standard", "mfr", "high") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      sohFloorPct: f(70, "mfr", "high", "“Shall perform to at least 70% of as-new capacity”, Jaguar Passport to Service"),
+      sohFloorPct: f(70, "mfr", "high"),
       batteryTransfers: f(true, "mfr", "high", "“In favor of the original purchaser and each subsequent owner”; EliteCare (incl. 5yr/60k maintenance) “fully transferable”"),
     },
     buyerNotes: [

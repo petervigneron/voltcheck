@@ -6,7 +6,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Where this data comes from | Voltcheck",
   description:
-    "How Voltcheck sources every spec, price, and warranty fact on the site, and what it does when a claim can't be proven.",
+    "The manufacturer, EPA, NHTSA, and state title sources behind every spec, price, and warranty fact on Voltcheck.",
   alternates: { canonical: "/methodology" },
 };
 
