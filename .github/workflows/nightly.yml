@@ -18,11 +18,31 @@ name: Nightly inventory
 # report/refresh steps, revalidate, and the commit — so a slow enrichment
 # pass or a slow ingest starved db-sync, the only step a shopper's browser
 # ever depends on. a7792ee/d97bd22 (2026-08-20) made that failure LOUD (time-
-# capped enrichment, checkpointed so a kill doesn't reset the backlog, and a
-# revalidate that refuses to warm the cache when db-sync didn't actually run)
-# but didn't make success likely — the night after that fix shipped,
-# enrichment plus ingest again ate the entire 240 minutes and db-sync never
-# ran. The clock was the bug, not any one step's speed.
+# capped enrichment, and a revalidate that refuses to warm the cache when
+# db-sync didn't actually run) but didn't make success likely — a sixth night
+# was lost the same way (run 32474806496, 2026-08-21): the job's 240-minute
+# clock ran out and db-sync never ran. Reading that run's own log afterward
+# found the vPIC pass was NOT the cause that night — it completed cleanly in
+# 85 minutes, inside its own cap. gm-warranty.mjs (a separate step, no
+# deadline of its own; see its timeout below, added the same day) hung for
+# the following 2h35m retrying VINs against a GM endpoint that was returning
+# HTTP 500 for all of them, and ingest never even started. The clock split
+# below still stands on its own merits (nothing downstream shares finalize-
+# prep's budget with finalize-ingest's anymore, so THIS failure mode — a
+# slow/hung step earlier in the pipeline preventing db-sync from getting a
+# turn at all — cannot recur once every step in the chain has its own cap).
+#
+# Separately, checkpointing every 2 minutes into out/listings.json (a7792ee's
+# other half) turned out not to be the fix it claimed to be: merge-shards.mjs
+# regenerates listings.json from scratch every night from that night's fresh
+# crawl shards, so that checkpoint never survived past the run that wrote
+# it — confirmed by 32474806496's own log, which shows a full, clean 110,186-
+# VIN decode that was then discarded when the job was cancelled hours later
+# for the gm-warranty reason above, with nothing to show for the 85 minutes
+# it took. vpic-enrich.mjs now checkpoints into a VIN-keyed cache file instead
+# (registry/vpic-cache.json, committed to the repo like gm-warranty.json below
+# it) — a decode is permanent once made, so a completed pass is never lost
+# again and the backlog shrinks run over run instead of resetting.
 #
 # Now three jobs, each with its own clock, state handed forward as artifacts
 # exactly like the crawl→finalize handoff above:
@@ -77,8 +97,9 @@ on:
           enriched a night's crawl but never reached Supabase (a lost night).
           When set, probe/crawl/oem-locator/finalize-prep/finalize-audits/
           recheck are all skipped and finalize-ingest downloads that run's
-          finalize-prep-out/finalize-prep-registry artifacts instead of this
-          run's own — turning what used to be a several-step manual recovery
+          finalize-prep-out/finalize-prep-registry/finalize-prep-vpic-cache
+          artifacts instead of this run's own — turning what used to be a
+          several-step manual recovery
           (merge-shards, ingest, db-sync, revalidate by hand from downloaded
           crawl-out-* artifacts) into filling in one field. Leave blank for a
           normal run.
@@ -274,14 +295,21 @@ jobs:
           # rule on claims exists to prevent. So enrichment stays before
           # ingest, capped, with a positive fallback for when it's cut short.
           #
-          # vpic-enrich.mjs applies and checkpoints each batch's decodes as
-          # they arrive (every 2 minutes, same pattern as crawl.mjs's shard
-          # checkpoint) instead of holding everything for one write at the end.
-          # Before this a `timeout` kill threw away every decode already
-          # fetched, so a big backlog reran from zero and could re-blow the cap
-          # night after night; now a kill keeps what was decoded, so the
-          # backlog actually shrinks run over run.
-          timeout 300m node vpic-enrich.mjs || echo "vpic-enrich hit its 300m time cap — continuing so the merged output still ships; decoded VINs are checkpointed, the rest resume next night"
+          # vpic-enrich.mjs checks registry/vpic-cache.json (checked out from
+          # the last commit, below) before ever asking vPIC for a VIN, and
+          # writes every answer — including a genuinely empty one — back into
+          # that same file every 2 minutes as batches arrive, same interval as
+          # crawl.mjs's shard checkpoint. A vPIC decode is immutable per VIN,
+          # so this cache is what actually makes a `timeout` kill
+          # non-destructive: whatever was decoded before the kill is decoded
+          # forever, and the backlog shrinks run over run. (The OLD checkpoint
+          # here wrote only to out/listings.json, which merge-shards.mjs
+          # regenerates from scratch every night — that checkpoint could not
+          # survive a runner teardown and never actually shrank anything; see
+          # the top-of-file comment.) The cache file travels forward via the
+          # finalize-prep-vpic-cache artifact below and is committed to the
+          # repo by finalize-audits, exactly like gm-warranty.json.
+          timeout 300m node vpic-enrich.mjs || echo "vpic-enrich hit its 300m time cap — continuing so the merged output still ships; every VIN decoded so far is already saved in registry/vpic-cache.json and will not be re-fetched tomorrow, only genuinely new VINs will be"
 
       # Make sure scraper/out/ exists even in skip_crawl (probe-only) mode,
       # where nothing above wrote it — otherwise the upload below has nothing
@@ -305,6 +333,17 @@ jobs:
         with:
           name: finalize-prep-registry
           path: scraper/registry/registry.json
+      # The vPIC decode cache, separate from the registry artifact above
+      # because it's updated here (by vpic-enrich.mjs) rather than by probe.
+      # always(): a time-capped or cancelled run must still hand forward
+      # whatever it decoded before being cut off — that's the entire point of
+      # checkpointing into this file instead of only out/listings.json.
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: finalize-prep-vpic-cache
+          path: scraper/registry/vpic-cache.json
+          if-no-files-found: warn
 
   # Ingest + db-sync + revalidate — the only steps a shopper's browser
   # actually depends on — split out on 2026-08-21 specifically so they get a
@@ -379,6 +418,17 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: finalize-prep-registry
+          path: scraper/registry
+          run-id: ${{ github.event.inputs.recover_run_id || github.run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      # Unconditional like registry.json above: the cache exists every run
+      # (checked out from the last commit even when nothing new was decoded
+      # tonight) and finalize-audits' commit needs it passed through so a
+      # probe-only or recovery run doesn't accidentally regress the
+      # committed cache on its next re-upload.
+      - uses: actions/download-artifact@v4
+        with:
+          name: finalize-prep-vpic-cache
           path: scraper/registry
           run-id: ${{ github.event.inputs.recover_run_id || github.run_id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -718,21 +768,22 @@ jobs:
         run: |
           git config user.name "voltcheck-bot"
           git config user.email "noreply@github.com"
-          # gm-warranty.json is the per-VIN cache: committing it is what makes
-          # the lane cheap, because a VIN already in it is never asked again.
-          # Lose it and the next run re-fetches every car from scratch.
+          # gm-warranty.json and vpic-cache.json are per-VIN caches: committing
+          # them is what makes each lane cheap, because a VIN already in one
+          # is never asked again. Lose either file and the next run re-fetches
+          # every car from scratch — vpic-cache.json losing this race is
+          # exactly the six-night outage this cache was built to end.
           # audit-status.json is different in kind: it's not a cache, it's the
           # committed "did each check actually run" record (scraper/lib/
           # audit-status.mjs) — sync-guard.mjs and price-audit.mjs already
-          # wrote tonight's entries into it earlier in finalize-ingest,
-          # carried here via the finalize-ingest-registry artifact
-          # (whole-directory handoff, same as the gm-warranty cache);
-          # colisting-sync below adds its own entry before this commit.
-          # Losing this file's commit doesn't lose data, only makes the NEXT
-          # run's "was this normal" comparison and feed-audits.yml's
-          # staleness check briefly blind — worth committing every night
-          # regardless.
-          git add scraper/registry/registry.json scraper/registry/gm-warranty.json scraper/registry/audit-status.json web/data/scraped-listings.json
+          # wrote tonight's entries into it earlier in finalize-ingest, carried
+          # here via the finalize-ingest-registry artifact (whole-directory,
+          # same handoff as the two caches); colisting-sync/the EV-rules and
+          # completeness audits below add theirs before this commit. Losing
+          # this file's commit doesn't lose data, only makes the NEXT run's
+          # "was this normal" comparison and feed-audits.yml's staleness check
+          # briefly blind — worth committing every night regardless.
+          git add scraper/registry/registry.json scraper/registry/gm-warranty.json scraper/registry/vpic-cache.json scraper/registry/audit-status.json web/data/scraped-listings.json
           git diff --staged --quiet && { echo "nothing to commit"; exit 0; }
           git commit -m "Nightly: registry + listings refresh [skip ci]"
           for i in 1 2 3 4 5; do
