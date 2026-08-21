@@ -29,6 +29,12 @@
 // it.
 import { readFile } from "node:fs/promises";
 import { fetchWithRetry } from "./lib/retry.mjs";
+import { recordRun } from "./lib/audit-status.mjs";
+
+async function finish(code, result, detail) {
+  await recordRun("colisting-sync", { result, detail, expectedEveryHours: 27 });
+  process.exit(code);
+}
 
 // Minimal .env parser — same as db-sync.mjs; launchd jobs and bare `node`
 // invocations carry no shell environment.
@@ -48,7 +54,7 @@ await loadEnv(new URL("./.env", import.meta.url));
 const { SUPABASE_URL, SUPABASE_ANON_KEY: ANON, SUPABASE_INGEST_TOKEN: TOKEN } = process.env;
 if (!SUPABASE_URL || !ANON || !TOKEN) {
   console.error("colisting-sync: no Supabase credentials (scraper/.env) — skipping.");
-  process.exit(0);
+  await finish(0, "inconclusive", "no Supabase credentials");
 }
 
 let rows;
@@ -58,11 +64,11 @@ try {
   // No merge ran this invocation (probe-only night, or a local run). Nothing
   // to say about the world; not a failure.
   console.error("colisting-sync: no out/colisting-pairs.json — nothing to sync.");
-  process.exit(0);
+  await finish(0, "inconclusive", "no out/colisting-pairs.json (probe-only or local run)");
 }
 if (!Array.isArray(rows)) {
   console.error("colisting-sync: out/colisting-pairs.json is not an array — refusing to send it.");
-  process.exit(1);
+  await finish(1, "fail", "out/colisting-pairs.json is not an array");
 }
 if (rows.length === 0) {
   // Genuinely possible and genuinely meaningful: it means no VIN appeared on
@@ -70,7 +76,7 @@ if (rows.length === 0) {
   // say so, because on a normal night this number is in the thousands and a
   // zero is far more likely to mean the merge broke than that the market did.
   console.error("colisting-sync: 0 multi-domain VINs tonight — nothing to send (expected thousands; check merge-shards).");
-  process.exit(0);
+  await finish(0, "warn", "0 multi-domain VINs tonight (expected thousands)");
 }
 
 // The night key. Same derivation as db-sync's `observedAt`: the EARLIEST
@@ -153,7 +159,7 @@ for (const [i, chunk] of chunks.entries()) {
       `colisting-sync: chunk ${i + 1}/${chunks.length} FAILED — ` +
       `${res.status === 0 ? "network error" : `HTTP ${res.status}`}: ${(await res.text()).slice(0, 300)}`
     );
-    process.exit(1);
+    await finish(1, "fail", `chunk ${i + 1}/${chunks.length} failed`);
   }
   const out = await res.json();
   inserted += out.inserted ?? 0;
@@ -162,3 +168,4 @@ for (const [i, chunk] of chunks.entries()) {
   }
 }
 console.error(`colisting-sync: ${inserted} co-listing rows recorded`);
+await finish(0, "ok", `${rows.length} multi-domain VINs across ${domains.size} domains, ${inserted} inserted`);

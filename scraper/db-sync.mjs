@@ -13,9 +13,10 @@
 // With no .env this exits 0 quietly, so nightly.sh works unchanged before
 // the database exists. The JSON file remains the web app's fallback either
 // way — this script adds persistence, it replaces nothing.
-import { readFile, stat } from "node:fs/promises";
+import { readFile, stat, writeFile } from "node:fs/promises";
 import { markTrimSuspects } from "./lib/trim-suspect.mjs";
 import { fetchWithRetry } from "./lib/retry.mjs";
+import { laneOf, OEM_LOCATOR_DOMAINS } from "./lib/oem-lane-domains.mjs";
 
 // Minimal .env parser — launchd jobs carry no shell environment.
 async function loadEnv(url) {
@@ -113,6 +114,131 @@ for (const l of listings) {
   byDomain.get(d).push(l);
 }
 const completeSet = new Set(completeDomains);
+
+// Refuse to delist a whole LANE (national OEM-locator pulls vs crawled
+// dealer rooftops — scraper/lib/oem-lane-domains.mjs) whose tonight's
+// "complete" coverage doesn't remotely match what was live before this sync.
+// A single dealer legitimately closing out its whole (small) lot is normal;
+// an entire lane — tens of thousands of rows behind one crawl or one API
+// call — losing more than half its previously-live inventory overnight is a
+// broken crawl/locator, not a fleet-wide sale. Same reasoning as MIN_ROWS
+// above ("a catastrophically small feed means the crawl broke, not that
+// inventory vanished"), scoped to a lane instead of the whole feed, and it
+// only ever narrows what gets marked complete — new rows and price changes
+// for that lane's domains still land, only the delisting permission is
+// withheld for this run. The two lanes are checked at different granularity
+// (per domain for OEM, in aggregate for dealer) — see the comment at each
+// branch below for why a single approach doesn't fit both.
+//
+// DELIST_GUARD_MIN_COVERAGE is picked from the real churn this pipeline has
+// actually logged, not a guess: two ordinary nights' own db-sync totals
+// (2026-08-17, runs 32022327707/32044269696) delisted 2.4% and 1.0% of that
+// night's seen rows, and the same day's recheck sold-signal delisted 2.6% of
+// what it checked. A lane legitimately losing half its live inventory in one
+// night has no precedent in this pipeline's history; the 2026-08-21 salvage
+// came close (~28k of ~87k rows, ~32%) and was NOT real inventory loss. A
+// 50% floor sits ~20x above the observed baseline churn (so it will not cry
+// wolf on a normal night) and comfortably below any event seen or plausible
+// here (so it catches one). Tightens as more nights accumulate real numbers
+// in registry/audit-status.json.
+const DELIST_GUARD_MIN_COVERAGE = Number(process.env.DELIST_GUARD_MIN_COVERAGE ?? 0.5);
+const READ_KEY = process.env.SUPABASE_ANON_KEY || SERVICE_KEY;
+
+async function liveCountForDomains(domains) {
+  // domains === null means "no domain filter" (feed-wide total).
+  const filter = domains ? `&dealer_domain=in.(${domains.map(encodeURIComponent).join(",")})` : "";
+  const res = await fetchWithRetry(
+    `db-sync: live count (${domains ? domains.length + " domains" : "total"})`,
+    () =>
+      fetch(`${SUPABASE_URL}/rest/v1/listings?select=vin&delisted_at=is.null${filter}`, {
+        headers: { apikey: READ_KEY, Authorization: `Bearer ${READ_KEY}`, Range: "0-0", Prefer: "count=exact" },
+      })
+  );
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const n = Number(res.headers.get("content-range")?.split("/")[1]);
+  if (!Number.isFinite(n)) throw new Error("count missing from content-range header");
+  return n;
+}
+
+const laneReport = {};
+if (READ_KEY) {
+  try {
+    const completeByLane = { oem: [], dealer: [] };
+    for (const d of completeDomains) completeByLane[laneOf(d)].push(d);
+
+    // OEM lane: checked PER DOMAIN, not as one aggregate. Each OEM domain is
+    // its own independent API pull (chevrolet.com succeeding tells you
+    // nothing about cadillac.com tonight — oem-locator.mjs's header
+    // documents several brands as "truncated always" by design), and this
+    // lane has few enough domains (~28, scraper/lib/oem-lane-domains.mjs)
+    // that querying each complete one's own prior count is cheap. Comparing
+    // instead against the WHOLE lane's prior total would have been a real
+    // bug: on a night only Chevrolet reports complete, its ~2k rows against
+    // the full lane's ~41k prior total reads as 5% coverage and the guard
+    // would refuse to delist Chevrolet's own sold cars forever, for reasons
+    // that have nothing to do with Chevrolet's own crawl quality.
+    for (const domain of completeByLane.oem) {
+      const incoming = byDomain.get(domain)?.length ?? 0;
+      const priorLive = await liveCountForDomains([domain]);
+      if (priorLive <= 0) continue; // no prior baseline for this domain yet
+      const coverage = incoming / priorLive;
+      const refused = coverage < DELIST_GUARD_MIN_COVERAGE;
+      laneReport[domain] = { lane: "oem", incoming, priorLive, coverage, refused };
+      if (refused) {
+        console.error(
+          `db-sync: REFUSING to delist "${domain}" — tonight's complete crawl carries ${incoming} rows against ` +
+            `${priorLive} previously live (${(coverage * 100).toFixed(1)}% coverage, floor ` +
+            `${(DELIST_GUARD_MIN_COVERAGE * 100).toFixed(0)}%). Marking it incomplete for this sync so nothing on ` +
+            `it is delisted tonight; new rows and price changes still land.`
+        );
+        completeSet.delete(domain);
+      }
+    }
+
+    // Dealer lane: checked in AGGREGATE across every complete rooftop
+    // tonight, the opposite tradeoff from OEM above — there can be
+    // thousands of independent dealer domains, so pricing a per-domain query
+    // for each is not affordable, but it's also not the right granularity:
+    // one dealer's whole (small) lot legitimately selling out is normal and
+    // must not trip anything. A CRAWL-INFRASTRUCTURE failure wide enough to
+    // matter shows up in the aggregate — it moves hundreds of domains at
+    // once — while ordinary per-dealer churn across thousands of independent
+    // lots washes out and never swings this total by anything close to the
+    // floor. This is exactly the shape of the one real historical event
+    // (git history, bd8f662a -> 8981600, 2026-08-19): the dealer lane's
+    // committed snapshot went from 15,926 rows to 0 in one night because the
+    // crawl itself was cancelled mid-run, not because every dealer sold out.
+    const dealerDomains = completeByLane.dealer;
+    if (dealerDomains.length) {
+      const priorLive = (await liveCountForDomains(null)) - (await liveCountForDomains([...OEM_LOCATOR_DOMAINS]));
+      if (priorLive > 0) {
+        const incoming = dealerDomains.reduce((s, d) => s + (byDomain.get(d)?.length ?? 0), 0);
+        const coverage = incoming / priorLive;
+        const refused = coverage < DELIST_GUARD_MIN_COVERAGE;
+        laneReport.dealer = { lane: "dealer", incoming, priorLive, domainsComplete: dealerDomains.length, coverage, refused };
+        if (refused) {
+          console.error(
+            `db-sync: REFUSING to delist the "dealer" lane — tonight's ${dealerDomains.length} complete domain(s) ` +
+              `carry ${incoming} rows against ${priorLive} previously live (${(coverage * 100).toFixed(1)}% coverage, ` +
+              `floor ${(DELIST_GUARD_MIN_COVERAGE * 100).toFixed(0)}%). Marking them incomplete for this sync so ` +
+              `nothing in this lane is delisted tonight; new rows and price changes still land.`
+          );
+          for (const d of dealerDomains) completeSet.delete(d);
+        }
+      }
+    }
+  } catch (e) {
+    console.error(
+      `db-sync: lane delist-coverage guard could not read prior live counts (${e.message}) — skipping the guard ` +
+        "for this run. Delisting proceeds without it; this is reported so a silent skip doesn't read as a pass."
+    );
+    laneReport._guardError = e.message;
+  }
+} else {
+  console.error("db-sync: no readable key for the lane delist-coverage guard — skipping it.");
+  laneReport._guardError = "no readable key";
+}
+
 const chunks = [];
 let cur = { rows: [], completeDomains: [], bytes: 0 };
 for (const [domain, rows] of byDomain) {
@@ -203,3 +329,18 @@ console.error(
   `db-sync: total — ${totals.seen} seen, ${totals.new} new, ` +
   `${totals.price_changed} price changes, ${totals.delisted} delisted, ${totals.relisted} relisted`
 );
+
+// Ephemeral (not committed — lives only in this job's out/), read by
+// sync-guard.mjs right after this script exits. Carries this run's own
+// figures forward without a second Supabase round trip: the lane guard
+// above already paid for the prior-live-count reads it needed, and the RPC
+// totals above are this call's own authoritative numbers, not a re-read of
+// anything that could have changed underneath it.
+try {
+  await writeFile(
+    new URL("./out/sync-totals.json", import.meta.url),
+    JSON.stringify({ observedAt, source, totals, laneReport }, null, 2) + "\n"
+  );
+} catch (e) {
+  console.error(`db-sync: could not write out/sync-totals.json (${e.message}) — sync-guard will run without this run's totals`);
+}

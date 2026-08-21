@@ -29,11 +29,17 @@
 // --max-broken-dealers as parsers land; never raise it to hide a regression.
 // Exit 0 = at or under baseline, 10 = over (so the nightly can shout).
 import { readFile } from "node:fs/promises";
+import { recordRun } from "./lib/audit-status.mjs";
 
 const arg = (n, d) => { const i = process.argv.indexOf(n); return i >= 0 ? process.argv[i + 1] : d; };
 const LIMIT = Number(arg("--limit", 0));
 const BASELINE = Number(arg("--max-broken-dealers", 0));
 const AS_JSON = process.argv.includes("--json");
+
+async function finish(code, result, detail) {
+  await recordRun("completeness-audit", { result, detail, expectedEveryHours: 27 });
+  process.exit(code);
+}
 
 // A lot needs this many used/certified cars before its null-mileage RATE means
 // anything — one used car with no odometer is not evidence of a broken parser.
@@ -46,7 +52,7 @@ for (const line of (await readFile(new URL("./.env", import.meta.url), "utf-8"))
   if (m && !line.trimStart().startsWith("#") && !(m[1] in process.env)) process.env[m[1]] = m[2].replace(/^["']|["']$/g, "");
 }
 const { SUPABASE_URL, SUPABASE_ANON_KEY: ANON } = process.env;
-if (!SUPABASE_URL || !ANON) { console.error("completeness-audit: no Supabase credentials"); process.exit(0); }
+if (!SUPABASE_URL || !ANON) { console.error("completeness-audit: no Supabase credentials"); await finish(0, "inconclusive", "no Supabase credentials"); }
 const H = { apikey: ANON, Authorization: `Bearer ${ANON}` };
 
 // Page through live used/certified listings — only the columns the checks
@@ -60,7 +66,7 @@ for (let from = 0; ; from += 1000) {
       `&delisted_at=is.null&condition=in.(used,certified)&order=dealer_domain.asc`,
     { headers: { ...H, Range: `${from}-${from + 999}` } }
   );
-  if (!res.ok) { console.error(`completeness-audit: fetch failed HTTP ${res.status}`); process.exit(1); }
+  if (!res.ok) { console.error(`completeness-audit: fetch failed HTTP ${res.status}`); await finish(1, "fail", `fetch failed HTTP ${res.status}`); }
   const page = await res.json();
   if (!Array.isArray(page) || !page.length) break;
   rows.push(...page);
@@ -93,7 +99,7 @@ if (AS_JSON) {
     brokenDealers: broken.length, carsInBroken,
     broken: broken.map((d) => ({ domain: d.domain, used: d.used, nullMi: d.nullMi })),
   }, null, 2));
-  process.exit(broken.length > BASELINE ? 10 : 0);
+  await finish(broken.length > BASELINE ? 10 : 0, broken.length > BASELINE ? "warn" : "ok", `${live.length} live, ${broken.length} broken-parser lots (baseline ${BASELINE})`);
 }
 
 console.log(`Listing completeness — ${live.length} live used/certified listings\n`);
@@ -110,6 +116,6 @@ if (broken.length > 40) console.log(`  … and ${broken.length - 40} more lots`)
 const failed = broken.length > BASELINE;
 console.log(`\n${failed ? "FAIL" : "OK"} — ${broken.length} broken-parser lots (baseline ${BASELINE})`);
 if (failed) console.log(`  ${broken.length - BASELINE} more than the committed baseline — a lot's mileage capture regressed.`);
-process.exit(failed ? 10 : 0);
+await finish(failed ? 10 : 0, failed ? "warn" : "ok", `${live.length} live, ${broken.length} broken-parser lots (baseline ${BASELINE})`);
 
 function pct(n, d) { return d ? Math.round((1000 * n) / d) / 10 : 0; }

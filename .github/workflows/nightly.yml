@@ -448,6 +448,31 @@ jobs:
           rc=0; node price-audit.mjs || rc=$?
           if [ "$rc" -eq 20 ]; then node db-sync.mjs; elif [ "$rc" -ne 0 ]; then exit "$rc"; fi
 
+      # The listing-count regression alarm: six lost nights left every
+      # downstream audit un-run and silent, and then — the night this was
+      # built — a manual salvage sync dropped the live count from 87,082 to
+      # 58,741 (~28k rows) with nothing automated noticing; a human found it
+      # by curling the API. sync-guard.mjs reads the live count twice, a
+      # short pause apart, GLOBAL and per LANE (national OEM-locator pulls vs
+      # crawled dealer rooftops — a whole lane disappearing while others were
+      # fine is exactly this incident's shape), and refuses to judge a read
+      # that isn't stable between those two samples: the incident turned out
+      # to be a render caught mid-write, not real data loss, and the correct
+      # response to that is to wait, not to act. It never re-syncs, never
+      # forces a revalidate, never deletes or restores anything — it only
+      # alarms (registry/audit-status.json + this step's own exit code) and
+      # the next step's gate decides whether to warm the cache. No
+      # continue-on-error: a real regression or an unstable read must make
+      # this job red, the same as db-sync failing outright.
+      - name: Listing-count regression check
+        id: sync_guard
+        if: ${{ github.event.inputs.skip_crawl != 'true' }}
+        working-directory: scraper
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: node sync-guard.mjs
+
       # Tell the site its data changed. The browse feed is cached a full day
       # (web/lib/listings/db.ts) because it changes exactly when this
       # pipeline runs — this step is the "it just ran" signal. It expires the
@@ -471,6 +496,10 @@ jobs:
       # purpose (db-sync and this step both live in finalize-ingest) — it
       # doesn't need to cross a job boundary, which is exactly what a7792ee/
       # d97bd22's guard needs to keep working unmodified through this split.
+      # The sync_guard check below is the same idea applied to the 2026-08-21
+      # incident: db-sync can succeed (every RPC call returns 200) while the
+      # live count it just wrote is a mid-write snapshot or a real regression
+      # — a "the write succeeded" signal was never going to catch either.
       - name: Revalidate the site's feed cache
         if: always()
         env:
@@ -478,6 +507,10 @@ jobs:
         run: |
           if [ "${{ github.event.inputs.skip_crawl }}" != "true" ] && [ "${{ steps.db_sync.outcome }}" != "success" ]; then
             echo "::error::db-sync did not complete (step outcome: '${{ steps.db_sync.outcome }}') — tonight's crawl has NOT reached Supabase. Skipping revalidate so the site does not look refreshed; re-run this workflow with recover_run_id set to this run's ID to retry just ingest+sync against the already-merged data, rather than waiting for tomorrow's run."
+            exit 1
+          fi
+          if [ "${{ github.event.inputs.skip_crawl }}" != "true" ] && [ "${{ steps.sync_guard.outcome }}" != "success" ]; then
+            echo "::error::sync-guard did not pass (step outcome: '${{ steps.sync_guard.outcome }}') — either a live-count regression past its fail threshold, or a read unstable enough that it could not be judged (see that step's log). Skipping revalidate rather than warming the cache with a snapshot nobody has confirmed is right; this needs a human, not a retry."
             exit 1
           fi
           [ -z "$FEED_REVALIDATE_SECRET" ] && { echo "::warning::FEED_REVALIDATE_SECRET unset; site refreshes on the 24h cache backstop instead"; exit 0; }
@@ -517,15 +550,28 @@ jobs:
           path: web/data/scraped-listings.json
           if-no-files-found: warn
 
-  # Everything that is archival or report-only: which rooftops share
-  # inventory, whether admitted listings still pass today's EV rules,
-  # whether a dealer's odometers went missing, the monthly comp/variant
-  # refreshes, and the commit of the refreshed registry + listings snapshot.
-  # None of it is on the path to a shopper's browser — finalize-ingest's
+  # Everything that is archival, report-only, AND needs tonight's own crawl
+  # state to mean anything: which rooftops shared inventory (only visible in
+  # this run's out/colisting-pairs.json, gone once the runner is deleted),
+  # the monthly comp/variant refreshes, and the commit of the refreshed
+  # registry + listings snapshot (+ audit-status.json, see that step). None
+  # of it is on the path to a shopper's browser — finalize-ingest's
   # revalidate already happened — so it gets its own job rather than sharing
   # a clock with (or risking) the sync. Skipped entirely during an
   # ingest-only recovery run, matching the manual recovery procedure this
   # replaces (merge, ingest, sync, revalidate — no audits, no commit).
+  #
+  # The EV-rules audit and the listing-completeness audit used to live here
+  # too, gated on `needs.finalize-ingest.result == 'success'` like
+  # colisting-sync above. That gate is right for colisting-sync (it reads
+  # THIS run's crawl artifact) but was accidentally wrong for the other two —
+  # both of them query the LIVE database directly and need nothing this run
+  # produced, yet a finalize-ingest failure (the exact night they're most
+  # needed) skipped them right along with the artifact-dependent step they
+  # were only ever bundled next to. They moved to feed-audits.yml, on their
+  # own schedule, decoupled from tonight's crawl/ingest entirely — see that
+  # file for which checks genuinely need pipeline state (must stay here or in
+  # finalize-ingest) versus which only need the live feed (belong there).
   finalize-audits:
     needs: [probe, finalize-ingest]
     if: ${{ always() && needs.probe.result == 'success' && github.event.inputs.recover_run_id == '' }}
@@ -574,43 +620,6 @@ jobs:
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
           SUPABASE_INGEST_TOKEN: ${{ secrets.SUPABASE_INGEST_TOKEN }}
         run: node colisting-sync.mjs
-
-      # Re-judge already-admitted rows against today's classification rules.
-      # ingest decides once and never revisits; recheck only asks "still for
-      # sale?", which a real car answers yes to forever. That gap kept six
-      # plug-in-hybrid Polestar 1s live, one at $157,049. Reports only —
-      # exit 10 means it found some, and the run should say so loudly without
-      # failing the night's ingest.
-      - name: Audit admitted listings against current rules
-        if: ${{ needs.finalize-ingest.result == 'success' && github.event.inputs.skip_crawl != 'true' }}
-        continue-on-error: true
-        working-directory: scraper
-        env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-        run: |
-          rc=0; node audit-listings.mjs --write-vins /tmp/non-ev-vins.txt || rc=$?
-          if [ "$rc" -eq 10 ]; then
-            echo "::warning::Listings admitted under old rules are no longer EVs by vPIC — see /tmp/non-ev-vins.txt"
-          elif [ "$rc" -ne 0 ]; then exit "$rc"; fi
-
-      # Which lots reached us with the odometer missing on (nearly) every used
-      # car — a broken platform parser, not bad luck. Report-only like the EV
-      # audit above; the baseline is today's known-broken count, so a NEW lot
-      # going dark shouts and the backlog doesn't. Lower --max-broken-dealers as
-      # per-platform parsers land (dealer.com/DealerOn odometer capture).
-      - name: Audit listing completeness by dealer
-        if: ${{ needs.finalize-ingest.result == 'success' && github.event.inputs.skip_crawl != 'true' }}
-        continue-on-error: true
-        working-directory: scraper
-        env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-        run: |
-          rc=0; node completeness-audit.mjs --max-broken-dealers 202 || rc=$?
-          if [ "$rc" -eq 10 ]; then
-            echo "::warning::A dealer's used cars lost their mileage (broken platform parser) — see the step log for the lot list"
-          elif [ "$rc" -ne 0 ]; then exit "$rc"; fi
 
       # Which live listings resolve to NO enrichment row at all — the check
       # that should have existed from the start. The enrichment corpus
@@ -712,7 +721,18 @@ jobs:
           # gm-warranty.json is the per-VIN cache: committing it is what makes
           # the lane cheap, because a VIN already in it is never asked again.
           # Lose it and the next run re-fetches every car from scratch.
-          git add scraper/registry/registry.json scraper/registry/gm-warranty.json web/data/scraped-listings.json
+          # audit-status.json is different in kind: it's not a cache, it's the
+          # committed "did each check actually run" record (scraper/lib/
+          # audit-status.mjs) — sync-guard.mjs and price-audit.mjs already
+          # wrote tonight's entries into it earlier in finalize-ingest,
+          # carried here via the finalize-ingest-registry artifact
+          # (whole-directory handoff, same as the gm-warranty cache);
+          # colisting-sync below adds its own entry before this commit.
+          # Losing this file's commit doesn't lose data, only makes the NEXT
+          # run's "was this normal" comparison and feed-audits.yml's
+          # staleness check briefly blind — worth committing every night
+          # regardless.
+          git add scraper/registry/registry.json scraper/registry/gm-warranty.json scraper/registry/audit-status.json web/data/scraped-listings.json
           git diff --staged --quiet && { echo "nothing to commit"; exit 0; }
           git commit -m "Nightly: registry + listings refresh [skip ci]"
           for i in 1 2 3 4 5; do

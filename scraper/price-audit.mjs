@@ -31,8 +31,17 @@ import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
 import { priceFloor } from "./lib/price-floor.mjs";
+import { recordRun } from "./lib/audit-status.mjs";
 
 const execFileP = promisify(execFile);
+
+// Records that this audit actually ran (registry/audit-status.json) at every
+// exit point — the meta-problem this whole mechanism exists for is a check
+// that never runs reading identically to one that ran and passed.
+async function finish(code, result, detail) {
+  await recordRun("price-audit", { result, detail, expectedEveryHours: 27 });
+  process.exit(code);
+}
 
 const LOW_RATIO = 0.35;
 const HIGH_RATIO = 3;
@@ -105,7 +114,7 @@ if (SUPABASE_URL && KEY) {
   // A broken comps source must not read as "nothing is auditable".
   if (failures > groups.size / 10) {
     console.error(`price-audit: ${failures}/${groups.size} wa_price_comps calls failed — aborting.`);
-    process.exit(1);
+    await finish(1, "fail", `${failures}/${groups.size} wa_price_comps calls failed`);
   }
   console.error(
     `price-audit: ${medians.size}/${groups.size} make/model/year groups have WA comps` +
@@ -140,7 +149,7 @@ for (const l of listings) {
 console.error(
   `price-audit: ${listings.length} listings, ${audited} audited against WA medians, ${flagged.length} flagged`
 );
-if (!flagged.length) process.exit(0);
+if (!flagged.length) await finish(0, "ok", `${listings.length} listings, ${audited} audited against WA medians, 0 flagged`);
 
 for (const { l, why } of flagged) {
   console.error(
@@ -228,6 +237,7 @@ for (const [i, { l }] of flagged.entries()) {
 console.error(
   `price-audit: ${corrected} corrected, ${confirmed} confirmed, ${suppressed} suppressed`
 );
-if (corrected + suppressed === 0) process.exit(0);
+const detail = `${flagged.length} flagged, ${corrected} corrected, ${confirmed} confirmed, ${suppressed} suppressed`;
+if (corrected + suppressed === 0) await finish(0, "ok", detail);
 await writeFile(LISTINGS_URL, JSON.stringify(listings, null, 2));
-process.exit(20);
+await finish(20, "ok", detail);

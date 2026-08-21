@@ -1,0 +1,158 @@
+name: Feed audits
+
+# Report-only checks against the LIVE feed, decoupled from nightly.yml's own
+# fate on purpose. The bug this workflow exists to fix: finalize was
+# cancelled at its time cap six nights running (2026-08-18..21) before any of
+# its downstream audits ever executed, and nothing anywhere said so — a lost
+# night looked exactly like a quiet one. This workflow's only dependency is
+# the internet: it reads the live database directly and the production CDN
+# endpoints, never an artifact from nightly.yml, so it keeps reporting even
+# on a night the main pipeline never gets out of bed.
+#
+# What's here vs what stayed in nightly.yml, and why:
+#   - audit-status-check.mjs — the liveness meta-check itself. Reads ONE
+#     committed file (scraper/registry/audit-status.json) and alarms if ANY
+#     registered check, including this workflow's own, hasn't recorded a run
+#     recently. This has to live somewhere nightly.yml dying can't take down
+#     with it — this is that somewhere.
+#   - EV-rules audit (audit-listings.mjs) / listing-completeness audit
+#     (completeness-audit.mjs) — moved here from nightly.yml's finalize-audits
+#     job 2026-08-21. Both query the live database directly and need nothing
+#     tonight's crawl produced, but they used to sit gated on
+#     `needs.finalize-ingest.result == 'success'` (right for colisting-sync,
+#     which reads that run's own crawl artifact; accidentally wrong for
+#     these two) — so a finalize-ingest failure, exactly the night they are
+#     most worth running, skipped them along with the artifact-dependent
+#     step they happened to be bundled next to.
+#   - feed-shard-check.mjs — hits the actual production CDN endpoints a
+#     shopper's browser reads (voltcheck.net/api/index/*) and cross-checks
+#     the reported total against sync-guard's own last confirmed count
+#     (scraper/registry/audit-status.json's lastGoodCounts). A mismatch is
+#     the signature of the 2026-08-21 poisoned-cache incident (a render
+#     landed mid-write and got cached for a day) — nothing that only checks
+#     the database, however carefully, would ever see that from this side.
+#
+# STAYED in nightly.yml, and why they must:
+#   - sync-guard.mjs (the listing-count regression alarm) needs to run
+#     immediately after THIS run's own db-sync, gating THIS run's revalidate
+#     — that's pre/post-sync pipeline state, not live-feed state.
+#   - price-audit.mjs can correct a price and re-trigger db-sync; that only
+#     means anything inside the same pipeline run that produced the price.
+#   - colisting-sync.mjs's data (out/colisting-pairs.json) exists only in
+#     that run's own artifact and is gone once the runner is deleted — it
+#     cannot be recomputed from the database afterwards, so there is no
+#     "live feed" version of this check to move.
+on:
+  schedule:
+    # Independent of nightly's 10:30 UTC cron on purpose — this workflow's
+    # whole point is to keep reporting on a schedule nightly.yml's own
+    # troubles can't touch. Every 6 hours: frequent enough that a stale
+    # nightly run is caught same-day, cheap enough (a handful of read-only
+    # requests) not to matter next to the nightly database walk.
+    - cron: "15 */6 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write # commits registry/audit-status.json forward
+
+concurrency:
+  group: feed-audits
+  cancel-in-progress: false
+
+jobs:
+  audits:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # First, so it reports on the state left by the PREVIOUS cycle (was
+      # every check current before this run touches anything) — the honest
+      # question, not one this run has already answered by running.
+      - name: Audit liveness (staleness meta-check)
+        id: staleness
+        continue-on-error: true
+        working-directory: scraper
+        run: node audit-status-check.mjs
+
+      # Re-judge already-admitted rows against today's classification rules.
+      # ingest decides once and never revisits; recheck only asks "still for
+      # sale?", which a real car answers yes to forever. That gap kept six
+      # plug-in-hybrid Polestar 1s live, one at $157,049.
+      - name: EV-rules audit (live database)
+        id: ev_rules
+        continue-on-error: true
+        working-directory: scraper
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          rc=0; node audit-listings.mjs --write-vins /tmp/non-ev-vins.txt || rc=$?
+          if [ "$rc" -eq 10 ]; then
+            echo "::warning::Listings admitted under old rules are no longer EVs by vPIC — see /tmp/non-ev-vins.txt"
+          elif [ "$rc" -ne 0 ]; then exit "$rc"; fi
+
+      # Which lots reached us with the odometer missing on (nearly) every
+      # used car — a broken platform parser, not bad luck. The baseline is
+      # today's known-broken count, so a NEW lot going dark shouts and the
+      # backlog doesn't. Lower --max-broken-dealers as per-platform parsers
+      # land (dealer.com/DealerOn odometer capture).
+      - name: Listing completeness by dealer (live database)
+        id: completeness
+        continue-on-error: true
+        working-directory: scraper
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          rc=0; node completeness-audit.mjs --max-broken-dealers 202 || rc=$?
+          if [ "$rc" -eq 10 ]; then
+            echo "::warning::A dealer's used cars lost their mileage (broken platform parser) — see the step log for the lot list"
+          elif [ "$rc" -ne 0 ]; then exit "$rc"; fi
+
+      - name: Feed shard health (production CDN endpoints)
+        id: feed_shards
+        continue-on-error: true
+        working-directory: scraper
+        run: node feed-shard-check.mjs
+
+      # audit-status.json only — never registry.json/gm-warranty.json/
+      # vpic-cache.json/scraped-listings.json, which are nightly.yml's to
+      # write. Same retry-with-rebase shape as nightly.yml's commit step:
+      # this workflow and nightly.yml's finalize-audits can both touch this
+      # one file on an overlapping schedule.
+      - name: Commit refreshed audit status
+        if: always()
+        run: |
+          git config user.name "voltcheck-bot"
+          git config user.email "noreply@github.com"
+          git add scraper/registry/audit-status.json
+          git diff --staged --quiet && { echo "nothing to commit"; exit 0; }
+          git commit -m "Feed audits: refresh audit-status.json [skip ci]"
+          for i in 1 2 3 4 5; do
+            if git pull --rebase --autostash && git push; then
+              echo "audit status pushed"; exit 0
+            fi
+            git rebase --abort 2>/dev/null || true
+            sleep $((i * 10))
+          done
+          echo "::warning::Could not push audit-status.json (raced another commit) — it will catch up next run."
+
+      # Every check above uses continue-on-error so the rest still run and
+      # still commit their result even when one fails — but that means none
+      # of them, alone, turns this JOB red. This step is what does: it reads
+      # each one's actual outcome and fails loudly if any of them did not
+      # pass, so "some audits ran" can never read as "everything is fine".
+      - name: Fail if any audit above did not pass
+        if: always()
+        run: |
+          bad=0
+          check() { [ "$2" = "success" ] || { echo "::error::$1 did not pass (outcome: $2)"; bad=1; }; }
+          check "audit-status-check (staleness)" "${{ steps.staleness.outcome }}"
+          check "EV-rules audit"                 "${{ steps.ev_rules.outcome }}"
+          check "listing completeness audit"     "${{ steps.completeness.outcome }}"
+          check "feed shard health"              "${{ steps.feed_shards.outcome }}"
+          [ "$bad" -eq 0 ] || exit 1

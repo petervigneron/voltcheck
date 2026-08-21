@@ -30,17 +30,23 @@
 // Exit 0 = clean, 10 = refuted rows found (so the nightly can shout).
 import { readFile, writeFile } from "node:fs/promises";
 import { EV_MODEL_RE, EV_ONLY_WMIS } from "./lib/ev.mjs";
+import { recordRun } from "./lib/audit-status.mjs";
 
 const arg = (n, d) => { const i = process.argv.indexOf(n); return i >= 0 ? process.argv[i + 1] : d; };
 const LIMIT = Number(arg("--limit", 0));
 const VIN_OUT = arg("--write-vins", null);
+
+async function finish(code, result, detail) {
+  await recordRun("ev-rules-audit", { result, detail, expectedEveryHours: 27 });
+  process.exit(code);
+}
 
 for (const line of (await readFile(new URL("./.env", import.meta.url), "utf-8")).split("\n")) {
   const m = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*?)\s*$/);
   if (m && !line.trimStart().startsWith("#") && !(m[1] in process.env)) process.env[m[1]] = m[2].replace(/^["']|["']$/g, "");
 }
 const { SUPABASE_URL, SUPABASE_ANON_KEY: ANON } = process.env;
-if (!SUPABASE_URL || !ANON) { console.error("audit: no Supabase credentials"); process.exit(0); }
+if (!SUPABASE_URL || !ANON) { console.error("audit: no Supabase credentials"); await finish(0, "inconclusive", "no Supabase credentials"); }
 const H = { apikey: ANON, Authorization: `Bearer ${ANON}` };
 
 // Page through live listings. Selecting only what the rules need keeps this
@@ -51,7 +57,7 @@ for (let from = 0; ; from += 1000) {
     `${SUPABASE_URL}/rest/v1/listings?select=vin,year,make,model,payload->>trim&delisted_at=is.null&order=vin.asc`,
     { headers: { ...H, Range: `${from}-${from + 999}` } }
   );
-  if (!res.ok) { console.error(`audit: listing fetch failed HTTP ${res.status}`); process.exit(1); }
+  if (!res.ok) { console.error(`audit: listing fetch failed HTTP ${res.status}`); await finish(1, "fail", `listing fetch failed HTTP ${res.status}`); }
   const page = await res.json();
   if (!Array.isArray(page) || !page.length) break;
   rows.push(...page);
@@ -69,7 +75,7 @@ const vouched = (r) => {
 };
 const unvouched = live.filter((r) => !vouched(r) && String(r.vin ?? "").length === 17);
 console.error(`audit: ${live.length - unvouched.length} vouched by WMI or nameplate, ${unvouched.length} need vPIC`);
-if (!unvouched.length) { console.error("audit: clean"); process.exit(0); }
+if (!unvouched.length) { console.error("audit: clean"); await finish(0, "ok", `${live.length} live, all vouched by WMI or nameplate`); }
 
 // Same decoder, same batch size and courtesy pause as vpic-enrich.mjs.
 const byVin = new Map();
@@ -116,4 +122,4 @@ if (VIN_OUT && bad.length) {
   await writeFile(VIN_OUT, bad.map((b) => b.vin).join("\n"));
   console.error(`\naudit: VINs written to ${VIN_OUT}`);
 }
-process.exit(bad.length ? 10 : 0);
+await finish(bad.length ? 10 : 0, bad.length ? "warn" : "ok", `${live.length} live, ${bad.length} refuted by vPIC, ${undecided} undecided`);
