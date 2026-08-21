@@ -30,6 +30,18 @@ export interface VinDecode {
   bodyClass?: string;
   // T2 hints
   trim?: string;
+  /**
+   * Set when the listing's own description names a different version than
+   * `trim` claims and the VIN can't settle it (lib/listings/trimTrust.ts).
+   *
+   * `trim` above still carries the disputed string, because the matcher needs
+   * it: the question it asks is whether the trim CHANGED the answer, which
+   * can only be asked by matching both with it and without it. Distrusting a
+   * trim is not the same as not having one — a listing with no trim gets no
+   * trim-keyed row at all, while this one is definitely one of the cohort's
+   * versions and we simply may not say which.
+   */
+  trimUntrusted?: boolean;
   driveType?: string;
   batteryKwhHint?: number;
   errorText?: string;

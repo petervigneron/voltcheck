@@ -1,6 +1,5 @@
 import type { Listing } from "./types";
-import { matchEnrichment } from "../enrichment/match";
-import { decodeTeslaVin, isTeslaVin } from "../tesla-vin";
+import { trimTrust } from "./trimTrust";
 import { renamedTrim } from "./trimRename";
 
 /**
@@ -47,56 +46,6 @@ const CAB_STYLES =
 const PLACEHOLDER =
   /^(n\/?a|none|other|unknown|base|standard|electric|ev|\d?dr|\d?d|awd|rwd|fwd|4wd|4x4|4x2|2wd)$/i;
 
-/**
- * The version the VIN names on its own, or undefined.
- *
- * "On its own" is the whole point, and the reason this re-runs the matcher
- * with the trim REMOVED rather than reading the ordinary match. A row can be
- * keyed to both a VIN code and a trim — the 2022 Lightning Platinum is
- * `vin8: ["V"], trim: "Platinum"` — so a match made with the disputed trim in
- * hand proves nothing about that trim. Asking what the VIN resolves to with
- * no trim at all is the only non-circular question.
- *
- * The two cases this separates, both live:
- *   Mach-E 3FMTK4SE2PMA38629 — position 8 is E, which IS the GT motor, and E
- *     alone resolves to one row ("Extended Range · GT"). The feed's "GT" is
- *     corroborated by the VIN and the prose calling it a Premium is wrong.
- *   Lightning 1FT6W1EV0NWG09760 — position 8 is V, which means Extended
- *     Range and says nothing about Pro vs Lariat: V alone leaves two rows.
- *     The VIN cannot defend the feed here, so the contradiction stands.
- *
- * Only rows the VIN actually keyed count. A row that matched on make/model/
- * year alone is not VIN evidence, however unique it is.
- */
-function versionNamedByVinAlone(l: Listing): string | undefined {
-  if (!l.vin) return undefined;
-  const tesla = isTeslaVin(l.vin) ? decodeTeslaVin(l.vin) : null;
-  const r = matchEnrichment(
-    {
-      vin: l.vin,
-      usMarket: true,
-      make: l.make.toUpperCase(),
-      model: l.model,
-      modelYear: l.year,
-      trim: undefined,
-      driveType: l.drive,
-      batteryKwhHint: l.vpicBatteryKwh,
-    },
-    tesla
-  );
-  const row = r.exact;
-  if (!row) return undefined;
-  // vin8 is the maker's own motor/battery code; plant comes from VIN position
-  // 11. Anything else in the row was not decided by the VIN.
-  if (!row.vin8?.length && !row.plant) return undefined;
-  const names = [row.packVariant, ...(Array.isArray(row.trim) ? row.trim : row.trim ? [row.trim] : [])];
-  const joined = names.filter(Boolean).join(" · ");
-  return joined || undefined;
-}
-
-const namesVersion = (haystack: string, name: string): boolean =>
-  new RegExp(`(^|[^A-Za-z0-9])${name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}([^A-Za-z0-9]|$)`, "i").test(haystack);
-
 export type TrimClaim =
   | { assert: true; trim: string }
   | { assert: false; reason: "no-trim" | "cab-style" | "placeholder" }
@@ -109,17 +58,16 @@ export function trimClaim(l: Listing): TrimClaim {
   if (!raw) return { assert: false, reason: "no-trim" };
   if (CAB_STYLES.test(raw)) return { assert: false, reason: "cab-style" };
   if (PLACEHOLDER.test(raw)) return { assert: false, reason: "placeholder" };
-  const prose = (l.trimSuspect ?? "").trim();
-  if (prose) {
-    // The VIN outranks the prose where it actually speaks. Position 8 is the
-    // one field a dealer's data entry can't blur, so when it names a version
-    // by itself and that version is the one the feed claims — and not the one
-    // the description claims — the description is the thing that's wrong.
-    const fromVin = versionNamedByVinAlone(l);
-    if (fromVin && namesVersion(fromVin, raw) && !namesVersion(fromVin, prose)) {
-      return { assert: true, trim: raw };
-    }
-    return { assert: false, reason: "contradicted", feedTrim: raw, proseTrim: prose };
+  // The VIN outranks the prose where it actually speaks. Position 8 is the one
+  // field a dealer's data entry can't blur, so when it names a version by
+  // itself and that version is the one the feed claims — and not the one the
+  // description claims — the description is the thing that's wrong. That
+  // judgement now lives in trimTrust.ts, because the enrichment matcher has to
+  // reach the same verdict: a trim we won't print must not be allowed to pick
+  // the range and pack size printed in its place.
+  const trust = trimTrust(l, raw);
+  if (!trust.trusted) {
+    return { assert: false, reason: "contradicted", feedTrim: raw, proseTrim: trust.proseTrim };
   }
   return { assert: true, trim: raw };
 }

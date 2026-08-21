@@ -51,12 +51,30 @@ test("enrichListing: a trim CONTRADICTED by the listing's own description (trimS
   // comment describes for the Lightning "Pro"/"Lariat" case.
   const l: Listing = { ...base, vin: MY2024_D_VIN, trim: "Long Range", trimSuspect: "Standard" };
   const e = enrichListing(l);
-  // Falls back to what vin8 "D" resolves to WITHOUT trust in the trim: only
-  // the trim-agnostic row (my-2024-rwd) still matches, so it is a single,
-  // different, and correct answer — not a guess and not the discredited one.
-  assert.equal(e.row?.id, "my-2024-rwd");
   assert.notEqual(e.row?.id, "my-2024-lr-rwd");
-  assert.equal(e.realRangeMi?.value, 260);
+
+  // This test originally asserted `my-2024-rwd` / 260 mi here, on the reading
+  // that dropping the disputed trim leaves "a single, different, and correct
+  // answer — not a guess". It is a guess, and correcting it is the point of
+  // the follow-up change.
+  //
+  // Withholding a trim does not demote a listing to a generic row; it demotes
+  // it to whichever row happens to carry no trim key, and here that row is the
+  // plain RWD car — a different specific version, not a safe superset. Nothing
+  // about the evidence selected it: this listing returns 260 mi whether its
+  // description said "Standard", "Performance" or anything else, because the
+  // choice is made by which row lacks a trim key rather than by what the
+  // description actually named. Swept across every (make, model, year, trim)
+  // in the corpus, that rule swapped one exact row for a DIFFERENT exact row
+  // on 39 combinations, and it is not biased toward caution: a 2022 Ioniq 5
+  // Standard Range moved from its own 220 mi to the trim-less RWD row's
+  // 303 mi, an 83-mile overstatement in the direction that costs a shopper
+  // money.
+  //
+  // The car is one of these two and we cannot say which, so we say that.
+  assert.equal(e.row, undefined);
+  assert.equal(e.realRangeMi, undefined);
+  assert.deepEqual(e.enrichment.candidates?.map((c) => c.id).sort(), ["my-2024-lr-rwd", "my-2024-rwd"]);
 });
 
 // Real corpus: MY2019 Model 3 vin8 "A" is shared by THREE trim-specific rows

@@ -4,6 +4,7 @@ import { matchEnrichment } from "../enrichment/match";
 import { decodeTeslaVin, isTeslaVin } from "../tesla-vin";
 import type { TeslaVinFacts } from "../types";
 import { renamedTrim } from "./trimRename";
+import { trimTrust } from "./trimTrust";
 
 // What a listing card can honestly say. Every field is either a provenanced
 // fact, an explicit "verify" flag, or absent — never a model-level guess
@@ -157,22 +158,40 @@ export function specTrim(l: Listing): string | undefined {
 // hardest is Tesla: Model 3/Y rows in data4.ts share one VIN-8 code across
 // several trims with different EPA ranges and packs (e.g. 2019 Model 3 "A"
 // covers Standard Range Plus, Long Range, AND Mid Range), so trim is the
-// *only* thing separating them once vin8 narrows the field.
+// *only* thing separating them once vin8 narrows the field. 461 pairs of rows
+// across the corpus have that shape.
 //
-// The fix asks the same non-circular question trimClaim.ts's
-// versionNamedByVinAlone already asks for display purposes: what does this
-// car resolve to WITHOUT the disputed trim? That may leave several candidate
-// rows with no single confident answer (matchEnrichment's existing
-// trim-specific-row-needs-a-stated-trim rule, e980c05, then does its job) —
-// silence is the honest outcome, not a regression.
+// This first shipped (6878a99) as `trim: l.trimSuspect ? undefined : ...`, and
+// that turns out to be unsafe in a way worth spelling out, because it reads
+// like the obviously conservative move. Withholding a disputed trim does NOT
+// demote a listing to a generic row. It demotes it to whichever row happens to
+// carry no trim key, and that row is usually another specific version, so the
+// matcher lands on a different definite answer rather than on no answer.
+// Swept across every (make, model, year, trim) the corpus knows, a bare
+// withhold swapped one exact row for a DIFFERENT exact row on 39 combinations.
+// A 2022 Ioniq 5 Standard Range moved from its own 220 mi to the trim-less RWD
+// row's 303 mi — an 83-mile overstatement, in the direction that costs a
+// shopper money. And the fallback isn't evidence-driven: a MY2024 Model Y
+// vin8 "D" fed as "Long Range" lands on the 260 mi RWD row whether its
+// description said "Standard", "Performance" or anything else, because the
+// choice is made by which row lacks a trim key, not by what the description
+// actually named.
+//
+// So the trim is handed over WITH a flag rather than blanked, because the
+// matcher needs the disputed string to ask whether it changed anything:
+// matching both ways and keeping the answer only when the two agree is the
+// same non-circular question trimTrust.ts's versionNamedByVinAlone asks for
+// display. See matchWithoutTrustedTrim in lib/enrichment/match.ts.
 function decodeFromListing(l: Listing): VinDecode {
+  const trim = cleanTrim(l);
   return {
     vin: l.vin,
     usMarket: true,
     make: l.make.toUpperCase(),
     model: l.model,
     modelYear: l.year,
-    trim: l.trimSuspect ? undefined : cleanTrim(l),
+    trim,
+    trimUntrusted: trimTrust(l, trim).trusted ? undefined : true,
     driveType: l.drive,
     batteryKwhHint: l.vpicBatteryKwh,
   };
@@ -212,9 +231,13 @@ export function enrichListing(l: Listing): EnrichedListing {
   let configResolved = false;
   const hp = row?.thermal?.heatPump;
   if (row && hp) {
-    // Same rule as decodeFromListing: a contradicted trim can't be trusted to
-    // pick the right entry out of heatPumpByTrim either.
-    const trimKey = l.trimSuspect ? "" : (l.trim ?? "").toUpperCase().replace(/[^A-Z0-9]/g, "");
+    // Same rule as decodeFromListing, and through the same shared verdict
+    // rather than a second reading of `trimSuspect`: a contradicted trim can't
+    // be trusted to pick the right entry out of heatPumpByTrim either. Asking
+    // trimTrust instead of the raw flag matters in one direction — where the
+    // VIN itself names the version the feed claims, the description is the
+    // thing that's wrong and the trim stays usable as a key.
+    const trimKey = trimTrust(l, l.trim).trusted ? (l.trim ?? "").toUpperCase().replace(/[^A-Z0-9]/g, "") : "";
     const byTrim = row.thermal?.heatPumpByTrim;
     let resolved: typeof hp.value | undefined;
     if (byTrim && trimKey && byTrim[trimKey] !== undefined) {

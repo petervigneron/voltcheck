@@ -100,15 +100,89 @@ export function matchEnrichment(
   decode: VinDecode,
   tesla: TeslaVinFacts | null
 ): EnrichmentResult {
-  const r = matchEnrichmentRaw(decode, tesla);
+  const r = decode.trimUntrusted ? matchWithoutTrustedTrim(decode, tesla) : matchEnrichmentRaw(decode, tesla);
   if (r.exact) return { ...r, exact: applyBackfill(r.exact) };
   if (r.candidates) return { ...r, candidates: r.candidates.map((c) => applyBackfill(c)!) };
   return r;
 }
 
-function matchEnrichmentRaw(
+/**
+ * The listing's trim is contradicted by its own description and the VIN can't
+ * defend it (lib/listings/trimTrust.ts). The trim is still in `decode.trim`,
+ * because the only useful question is whether it CHANGED the answer, and that
+ * takes both matches:
+ *
+ *   honouring it   — the row the feed's claim picks, i.e. today's answer;
+ *   withholding it — the row the VIN, drivetrain and battery hint pick alone.
+ *
+ * Agree, and the trim was never load-bearing: it narrowed nothing, so nothing
+ * about it being wrong changes the facts. That is the Lightning and Mach-E
+ * shape this was written for — keyed on VIN position 8, with trim only naming
+ * a narrower override the disputed value doesn't reach — and the Ariya shape,
+ * settled by its drivetrain. All ten live `trimSuspect` listings on 2026-08-21
+ * were of this kind, and none of them moves.
+ *
+ * Disagree, and the trim WAS load-bearing, so neither answer is safe. Note in
+ * particular that the withheld answer is not a safe fallback and must never be
+ * taken on its own: withholding the trim doesn't demote a listing to a generic
+ * row, it demotes it to whichever row happens to carry no trim key, and that
+ * row is usually another specific version. Measured across the corpus
+ * 2026-08-21: on 39 (make, model, year, trim) combinations a bare withhold
+ * swapped one exact row for a different exact row — a 2022 Ioniq 5 Standard
+ * Range would have gone from its own 220 mi to the trim-less RWD row's 303 mi.
+ * Printing 303 on a car we have just decided we can't identify is the
+ * matching-the-wrong-thing failure exactly, and in the expensive direction.
+ *
+ * So a disagreement resolves to candidates over every row the VIN allows,
+ * which is what the "exact trim determines which row applies" discriminator
+ * already existed to explain, and `agreed()` in lib/listings/enrich.ts still
+ * surfaces the facts they share — the port standard doesn't care which Model 3
+ * this is. Never an `exact`, and never on a single surviving row.
+ *
+ * That last rule is the deliberately conservative one, so here is what it
+ * costs. Sweeping every (make, model, year, trim) the corpus knows, 40 cohorts
+ * fall to nothing rather than to candidates because only one row survives.
+ * Twenty-six of them are separated from their siblings by the DRIVETRAIN
+ * alone — and on those nameplates the trim IS the drivetrain (BMW eDrive40 vs
+ * M60, Volvo Single vs Twin Motor, ID.4 Pro RWD vs Pro AWD, EQE320+ vs EQE320
+ * 4MATIC). The drive field arrives in the same feed record as the trim we have
+ * just decided is wrong, so letting it settle single-vs-dual when
+ * single-vs-dual is the dispute would be circular. Eleven more are the only
+ * row we hold for that model year, where "narrowed to one" narrowed nothing
+ * and the car may be a version we never researched. That leaves two —
+ * `model-y-lr-awd-2024` and `i6-2023-25-sr` — where a vin8 code the dealer
+ * cannot blur does identify the row and we stay quiet anyway. Recovering them
+ * would mean asserting a trim-keyed row's range on a car whose trim we just
+ * declared unknowable, and a false range costs a shopper money in a way
+ * silence does not. Two cohorts, and no live listing among them on 2026-08-21.
+ */
+function matchWithoutTrustedTrim(
   decode: VinDecode,
   tesla: TeslaVinFacts | null
+): EnrichmentResult {
+  const honoured = matchEnrichmentRaw(decode, tesla);
+  const withheld = matchEnrichmentRaw({ ...decode, trim: undefined }, tesla);
+  if (honoured.exact && honoured.exact.id === withheld.exact?.id) return honoured;
+
+  const spanning = matchEnrichmentRaw({ ...decode, trim: undefined }, tesla, { ignoreRowTrims: true });
+  const rows = spanning.candidates ?? (spanning.exact ? [spanning.exact] : []);
+  if (rows.length < 2) return {};
+  return {
+    candidates: rows,
+    discriminator:
+      "This listing's trim field is contradicted by its own description, and the VIN doesn't name the version on its own — so we won't pick between these. The window sticker or the door-jamb label settles it.",
+  };
+}
+
+function matchEnrichmentRaw(
+  decode: VinDecode,
+  tesla: TeslaVinFacts | null,
+  // matchWithoutTrustedTrim's last step only: keep trim-keyed rows in play
+  // even though the decode carries no trim, so the set of versions the car
+  // could be can be shown. Never set on an ordinary match — a listing that
+  // simply has no trim must keep falling through to nothing, which is the
+  // whole point of trimMatches() refusing an absent trim.
+  opts?: { ignoreRowTrims?: boolean }
 ): EnrichmentResult {
   const { make, model, modelYear } = decode;
   if (!make || !model || !modelYear) return {};
@@ -126,7 +200,7 @@ function matchEnrichmentRaw(
       [r.model, ...(r.modelAliases ?? [])].some((m) => modelKey(m) === modelKey(model)) &&
       modelYear >= r.modelYears[0] &&
       modelYear <= r.modelYears[1] &&
-      trimMatches(r.trim, decode.trim)
+      (opts?.ignoreRowTrims || trimMatches(r.trim, decode.trim))
   );
 
   // VIN positions 1–3 name the body where showroom strings can't: dealers
