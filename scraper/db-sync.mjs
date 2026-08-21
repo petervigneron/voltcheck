@@ -15,6 +15,7 @@
 // way — this script adds persistence, it replaces nothing.
 import { readFile, stat, writeFile } from "node:fs/promises";
 import { markTrimSuspects } from "./lib/trim-suspect.mjs";
+import { loadTrimOverrides, applyTrimOverrides } from "./lib/trim-overrides.mjs";
 import { fetchWithRetry } from "./lib/retry.mjs";
 import { laneOf, OEM_LOCATOR_DOMAINS } from "./lib/oem-lane-domains.mjs";
 
@@ -64,6 +65,16 @@ const suspects = markTrimSuspects(listings);
 console.error(
   `db-sync: ${suspects} of ${listings.length} listings have a trim their own description contradicts`
 );
+
+// A short, hand-verified list for exactly the cases the automated check above
+// cannot see — no description at all, most often a dealer.com bulk-API pull
+// (see scraper/lib/trim-overrides.mjs for how the first row, a Lightning
+// wrongly fed as "Pro", was found and confirmed).
+const overrides = await loadTrimOverrides();
+const overridden = applyTrimOverrides(listings, overrides);
+if (overridden) {
+  console.error(`db-sync: ${overridden} listing(s) flagged by hand-verified trim overrides`);
+}
 
 const source = process.env.DB_SYNC_SOURCE ?? "nightly";
 

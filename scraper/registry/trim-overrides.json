@@ -1,0 +1,12 @@
+{
+  "_comment": "Hand-curated, VIN-keyed. Each row is a single listing's trim we have personally verified is contradicted by evidence our automated crawl did not capture (usually because the dealer.com bulk inventory API — scraper/lib/platforms/dealercom-api.mjs — carries no free-text description field, so scraper/lib/trim-suspect.mjs never got a description to check the feed's trim against). Applied by scraper/lib/trim-overrides.mjs, which only ever SETS trimSuspect (never rewrites `trim` itself) — same contract as the automated detector, so web/lib/listings/trimClaim.ts handles it identically: the feed's trim is suppressed, not replaced, unless the VIN itself corroborates the feed (it never does for a cab-style-only VIN like 2022-23 F-150 Lightning). Never regenerate or bulk-populate this file — every row here was read by hand off the dealer's own page.",
+  "overrides": [
+    {
+      "vin": "1FT6W1EV4PWG56454",
+      "namedVersion": "XLT",
+      "reason": "Dealer's own dealer.com storefront names the truck 'Pro' in its structured trim field, but the same VDP's Dealer Notes widget (ws-dealernotes, likely auto-populated from a Chrome Data/CARFAX build-string, not a marketing blurb) reads verbatim: 'Oxford White 2023 Ford F-150 Lightning XLT AWD Single-Speed Automatic Electric Motor'. Ford's own window sticker for this VIN is unavailable (windowsticker.forddirect.com returns the 'not yet released' placeholder), and vPIC's Trim field returns only 'SuperCrew' (a cab style, not a trim, for 2022-23 Lightnings) — so this Dealer Notes sentence is the only trim evidence that exists for this VIN. Reported by the owner 2026-08-21; verified by fetching the live VDP in a real browser (the dealer.com API endpoint itself is Akamai-walled to a bare curl).",
+      "sourceUrl": "https://islandautogroup.com/used/Ford/2023-Ford-F-150-Lightning-1b72a9bcac181bbdf7ea8270d1c931c4.htm",
+      "verifiedAt": "2026-08-21"
+    }
+  ]
+}
