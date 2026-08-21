@@ -28,6 +28,12 @@ const DCFC_LABEL = {
   not_fitted: "Not fitted",
 } as const;
 
+const SEVERITY_LABEL: Record<"info" | "warning" | "trap", string> = {
+  info: "Note",
+  warning: "Warning",
+  trap: "Watch for",
+};
+
 export function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5">
@@ -54,16 +60,6 @@ export function EnrichmentFacts({
   const expired = warranty?.state === "expired";
   return (
     <div>
-      {row.buyerNotes && row.buyerNotes.length > 0 && (
-        <ul className="mb-3 text-sm text-zinc-700 dark:text-zinc-300">
-          {row.buyerNotes.map((n) => (
-            <li key={n.headline} className="py-0.5">
-              {n.headline}
-            </li>
-          ))}
-        </ul>
-      )}
-
       <div className="grid gap-x-10 sm:grid-cols-2">
         <div>
           <h3 className="mt-2 text-xs font-semibold text-zinc-400">Battery & range</h3>
@@ -92,11 +88,19 @@ export function EnrichmentFacts({
         </div>
         <div>
           <h3 className="mt-2 text-xs font-semibold text-zinc-400">Charging</h3>
-          <FactRow
-            label="DC fast charging"
-            fact={row.charging?.dcFastCharging}
-            format={(v) => DCFC_LABEL[v as keyof typeof DCFC_LABEL] ?? String(v)}
-          />
+          {/* A peak DC rate already implies the car can DC fast charge, so
+              this row would just repeat that as a second line — "DC fast
+              charging: Unknown" sitting directly above "Peak DC rate: 200
+              kW" is exactly the self-contradicting duplication this guards
+              against. Only shown for rows with no peak-kW fact, where it's
+              the one piece of information the page has on the subject. */}
+          {!row.charging?.dcPeakKw && (
+            <FactRow
+              label="DC fast charging"
+              fact={row.charging?.dcFastCharging}
+              format={(v) => DCFC_LABEL[v as keyof typeof DCFC_LABEL] ?? String(v)}
+            />
+          )}
           <FactRow label="Peak DC rate" fact={row.charging?.dcPeakKw} format={(v) => `${v} kW`} />
           {/* Both fields below are thin (20% and ~3% of the corpus today) —
               unlike the rest of this grid, an absent value stays silent
@@ -171,6 +175,30 @@ export function EnrichmentFacts({
           <FactRow label="Extended coverage" fact={row.warranty?.extendedCoverage} />
         </div>
       </div>
+
+      {/* Below the grid, not above it — a buyer note used to render as a
+          bullet list leading the whole page, ahead of every fact. Same
+          label/value row language as the grid above it now, just with the
+          severity standing in for a label, so a trap or a warning about
+          this car reads as one more line to scan, not a headline. */}
+      {row.buyerNotes && row.buyerNotes.length > 0 && (
+        <div className="mt-5">
+          <h3 className="text-xs font-semibold text-zinc-400">Notes</h3>
+          {row.buyerNotes.map((n) => (
+            <div
+              key={n.headline}
+              className="flex items-baseline justify-between gap-4 py-2 border-b border-zinc-100 dark:border-zinc-800 last:border-0"
+            >
+              <div className="text-sm text-zinc-500 dark:text-zinc-400 shrink-0">
+                {SEVERITY_LABEL[n.severity] ?? "Note"}
+              </div>
+              <div className="text-right text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                {n.headline}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

@@ -57,5 +57,16 @@ export function buildChecklist(decode: VinDecode, condition?: string): Checklist
     });
   }
 
+  // Was a blanket "rental/rideshare voids the HV warranty" buyer note on the
+  // Buzz rows (data5.ts) — a cohort fact, not something we can tell from a
+  // VIN. VW's booklet does state it for every VW EV, so the question is
+  // real; it just needs the seller's title history to answer for this car.
+  if (!isNew && make === "VOLKSWAGEN" && model.includes("BUZZ")) {
+    items.push({
+      question: "Was this vehicle ever titled or used as a rental or rideshare vehicle?",
+      why: "VW's HV battery warranty is void for commercial use, even for a later retail owner; only the seller's title history can answer this.",
+    });
+  }
+
   return items;
 }

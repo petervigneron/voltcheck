@@ -15,6 +15,14 @@ import type { EnrichmentRow, Fact, Source } from "../types";
 // Buzz production for the US market and selling down MY2025 stock until a
 // MY2027 return — "2025 onward" therefore resolves to exactly one model year
 // today; do not add a MY2026 row from this file without new research.
+//
+// Copy-fix pass (2026-08-20, owner review of the live page): every note
+// below was re-read against the house rule that a note is a qualifier, not a
+// citation or a restatement — see FactRow.tsx's header comment. Deleted
+// notes that only repeated the value shown above them or named a source
+// (the hover citation on any sourceUrl now carries that); kept only the ones
+// stating a real per-car condition (plugAndCharge's ownership window,
+// towRatingLb's unbraked figure, which has no field of its own).
 const AS_OF = "2026-08-20";
 
 function f<T>(
@@ -31,41 +39,37 @@ function f<T>(
 const NACS_RELEASE = "https://media.vw.com/releases/1891";
 const PNC_RELEASE = "https://media.vw.com/releases/1823";
 
+// VW's own MY2025 US retail order guide (Volkswagen of America letterhead,
+// "2025 ID. Buzz"; mirrored byte-identically at two dealer hosts, MD5
+// 07bc03a6370cda774fbd23d7fc15f306). Its two-page "Available Features"
+// table itemizes every heated feature by trim — mirrors, steering wheel,
+// front seats, 2nd-row seats, washer nozzles, windshield — down to a
+// dot/dash grid per trim, and contains zero occurrences of "pump" anywhere
+// in the document. Same document family and same control-test logic already
+// used to confirm the ID.4 has no US heat pump (docs/agents/
+// factsheet-heatpump-by-year.md): a feature this granular about heating
+// would carry a heat pump line the same way if the car had one.
+const ORDER_GUIDE = "https://volkswagenorderguides.com/wp-content/uploads/2024/09/2025_Volkswagen_ID.Buzz_Order_Guide.pdf";
+
 // VW's own EV warranty booklet ("USA Warranty and Maintenance, Electric
 // models, Model year 2025"), text-searched to confirm it names the Buzz.
 const WARRANTY = {
   batteryYears: f(8, "mfr" as Source, "high"),
   batteryMiles: f(100_000, "mfr" as Source, "high"),
-  sohFloorPct: f(70, "mfr" as Source, "high", "HV battery warranted 8 years, 100,000 miles, 70 percent floor"),
-  batteryTransfers: f(true, "mfr" as Source, "high", "Battery warranty transfers automatically at no cost to new owner"),
+  sohFloorPct: f(70, "mfr" as Source, "high"),
+  batteryTransfers: f(true, "mfr" as Source, "high"),
 };
 
-// One VW-authored page states a US Buzz voltage figure, and it's a
-// different (European) car — see the research doc's caveat. 400V here is
-// independent-review-sourced (The Drive) plus the well-documented fact that
-// MEB, the Buzz/ID.4 platform, is 400V across the board, distinct from VW
-// Group's 800V PPE. No usable link for either source, so no sourceUrl.
-const ARCHITECTURE_V = f(400 as const, "agg" as Source, "medium", "MEB platform runs a 400-volt architecture, per independent review");
-
-// Not available on the US car. Every V2L reference found is a "Volkswagen
-// Commercial Vehicles" Summer 2026 software update for the EUROPEAN Buzz —
-// explicitly not US, "not before MY2027" per Carscoops. Expressed here as a
-// per-car fact only (no cross-market comparison in the rendered headline);
-// the market context lives in `body`, which the UI never shows.
-const V2L_NOTE = {
-  headline: "No V2L (vehicle-to-load) power-out on this car",
-  body: "The 2.0 kW V2L power-out reported in EV press is a separate market's 'Summer 2026' commercial-vehicle software update, not confirmed for any US MY2025 or planned MY2027 Buzz.",
-  severity: "trap" as const,
-};
-
-// Same VW EV warranty booklet as the ID.4 rows (data2.ts); the commercial-use
-// exclusion is stated for every VW EV, not just the ID.4, so it carries over
-// verbatim rather than being re-researched per model.
-const RENTAL_VOIDS_WARRANTY = {
-  headline: "Rental or rideshare history permanently voids the HV warranty",
-  body: "VW's booklet: commercial use voids the high-voltage system warranty, and “if a commercial vehicle is sold to a subsequent retail owner, this warranty still does not apply.”",
-  severity: "warning" as const,
-};
+// architectureV (pack voltage) deliberately has no row: checked four
+// VW-authored US documents for this model (the order guide above, the
+// per-trim tech-spec PDF, the EV warranty booklet, the Quick-Start Guide) —
+// none states a system voltage. The only VW-authored page that states one is
+// volkswagen-newsroom.com's EUROPEAN ID. Buzz drive-system page, a different
+// car (150 kW/~79 kWh EU spec vs. this car's 210 kW/91 kWh US spec) and
+// explicitly excluded by the house rule against EU-sourced Buzz specs. An
+// uncitable claim doesn't belong on the page — see FactRow.tsx's citation
+// rule — so the field is omitted rather than shipped as an unsourced "agg"
+// guess.
 
 export const RESEARCH_ROWS_5: EnrichmentRow[] = [
   {
@@ -76,29 +80,28 @@ export const RESEARCH_ROWS_5: EnrichmentRow[] = [
     modelYears: [2025, 2025],
     drive: "RWD",
     battery: {
-      packGrossKwh: f(91, "mfr", "high", "91 kWh gross battery, Volkswagen technical specifications sheet"),
-      packUsableKwh: f(86, "mfr", "high", "86 kWh usable of 91 kWh gross, Volkswagen spec sheet"),
+      packGrossKwh: f(91, "mfr", "high"),
+      packUsableKwh: f(86, "mfr", "high"),
       chemistry: f("NMC", "agg", "medium"),
     },
     range: {
-      epaRangeMi: f(234, "mfr", "high", "EPA-rated 234 miles, 83 MPGe combined, Volkswagen spec sheet", "https://www.fueleconomy.gov/ws/rest/vehicle/48444"),
-      epaKwhPer100Mi: f(37, "mfr", "medium", "VW's own combined kWh/100mi print, not derived from MPGe"),
+      epaRangeMi: f(234, "mfr", "high", undefined, "https://www.fueleconomy.gov/ws/rest/vehicle/48444"),
+      epaKwhPer100Mi: f(37, "mfr", "medium"),
     },
     charging: {
       portStandard: f("CCS1", "mfr", "high"),
-      dcPeakKw: f(200, "mfr", "high", "DC fast charge 200 kW peak, 10 to 80 percent in 26 minutes"),
+      dcFastCharging: f("standard", "mfr", "high"),
+      dcPeakKw: f(200, "mfr", "high"),
       chargeTime1080Min: f(26, "mfr", "high"),
-      superchargerAccess: f("adapter", "mfr", "high", "NACS adapter purchased separately, $200, $100 rebate for original MY25 owners", NACS_RELEASE),
-      architectureV: ARCHITECTURE_V,
-      acOnboardKw: f(11, "mfr", "high", "11 kW AC onboard charger, maximum acceptance rate, VW spec sheet"),
-      plugAndCharge: f(true, "mfr", "high", "Plug&Charge active only for original owner, first three years", PNC_RELEASE),
+      superchargerAccess: f("adapter", "mfr", "high", undefined, NACS_RELEASE),
+      acOnboardKw: f(11, "mfr", "high"),
+      plugAndCharge: f(true, "mfr", "high", "Original owner only, first three years", PNC_RELEASE),
     },
-    thermal: { heatPump: f("none", "agg", "medium", "No heat pump on US-market cars; resistive cabin heater only") },
+    thermal: { heatPump: f("none", "mfr", "high", undefined, ORDER_GUIDE) },
     specs: {
-      towRatingLb: f(2600, "mfr", "high", "Tow rating 2,600 lb braked, 1,650 lb unbraked, factory hitch"),
+      towRatingLb: f(2600, "mfr", "high", "1,650 lb unbraked"),
     },
     warranty: WARRANTY,
-    buyerNotes: [V2L_NOTE, RENTAL_VOIDS_WARRANTY],
   },
 
   {
@@ -109,28 +112,27 @@ export const RESEARCH_ROWS_5: EnrichmentRow[] = [
     modelYears: [2025, 2025],
     drive: "AWD",
     battery: {
-      packGrossKwh: f(91, "mfr", "high", "91 kWh gross battery, Volkswagen technical specifications sheet"),
-      packUsableKwh: f(86, "mfr", "high", "86 kWh usable of 91 kWh gross, Volkswagen spec sheet"),
+      packGrossKwh: f(91, "mfr", "high"),
+      packUsableKwh: f(86, "mfr", "high"),
       chemistry: f("NMC", "agg", "medium"),
     },
     range: {
-      epaRangeMi: f(231, "mfr", "high", "EPA-rated 231 miles, 80 MPGe combined, Volkswagen 4MOTION spec sheet", "https://www.fueleconomy.gov/ws/rest/vehicle/48445"),
-      epaKwhPer100Mi: f(38, "mfr", "medium", "VW's own combined kWh/100mi print, not derived from MPGe"),
+      epaRangeMi: f(231, "mfr", "high", undefined, "https://www.fueleconomy.gov/ws/rest/vehicle/48445"),
+      epaKwhPer100Mi: f(38, "mfr", "medium"),
     },
     charging: {
       portStandard: f("CCS1", "mfr", "high"),
-      dcPeakKw: f(200, "mfr", "high", "DC fast charge 200 kW peak, 10 to 80 percent in 26 minutes"),
+      dcFastCharging: f("standard", "mfr", "high"),
+      dcPeakKw: f(200, "mfr", "high"),
       chargeTime1080Min: f(26, "mfr", "high"),
-      superchargerAccess: f("adapter", "mfr", "high", "NACS adapter purchased separately, $200, $100 rebate for original MY25 owners", NACS_RELEASE),
-      architectureV: ARCHITECTURE_V,
-      acOnboardKw: f(11, "mfr", "high", "11 kW AC onboard charger, maximum acceptance rate, VW spec sheet"),
-      plugAndCharge: f(true, "mfr", "high", "Plug&Charge active only for original owner, first three years", PNC_RELEASE),
+      superchargerAccess: f("adapter", "mfr", "high", undefined, NACS_RELEASE),
+      acOnboardKw: f(11, "mfr", "high"),
+      plugAndCharge: f(true, "mfr", "high", "Original owner only, first three years", PNC_RELEASE),
     },
-    thermal: { heatPump: f("none", "agg", "medium", "No heat pump on US-market cars; resistive cabin heater only") },
+    thermal: { heatPump: f("none", "mfr", "high", undefined, ORDER_GUIDE) },
     specs: {
-      towRatingLb: f(3500, "mfr", "high", "Tow rating 3,500 lb braked, 1,650 lb unbraked, factory hitch"),
+      towRatingLb: f(3500, "mfr", "high", "1,650 lb unbraked"),
     },
     warranty: WARRANTY,
-    buyerNotes: [V2L_NOTE, RENTAL_VOIDS_WARRANTY],
   },
 ];
