@@ -146,6 +146,25 @@ export function specTrim(l: Listing): string | undefined {
   return words.map((w) => (/^[A-Z]{4,}$/.test(w) ? w[0] + w.slice(1).toLowerCase() : w)).join(" ");
 }
 
+// A trim the pipeline has already flagged as contradicted (`trimSuspect` —
+// scraper/lib/trim-suspect.mjs, and the hand-curated scraper/lib/
+// trim-overrides.mjs) must not be allowed to steer which enrichment row this
+// car matches. trimClaim.ts already refuses to PRINT this trim, on exactly
+// this listing, for exactly this reason; letting the matcher still use it to
+// pick a row would let a wrong trim import a wrong range or battery figure
+// while the badge that would have tipped a shopper off stays hidden — the
+// false-claim shape the site exists to prevent, and the one place it bites
+// hardest is Tesla: Model 3/Y rows in data4.ts share one VIN-8 code across
+// several trims with different EPA ranges and packs (e.g. 2019 Model 3 "A"
+// covers Standard Range Plus, Long Range, AND Mid Range), so trim is the
+// *only* thing separating them once vin8 narrows the field.
+//
+// The fix asks the same non-circular question trimClaim.ts's
+// versionNamedByVinAlone already asks for display purposes: what does this
+// car resolve to WITHOUT the disputed trim? That may leave several candidate
+// rows with no single confident answer (matchEnrichment's existing
+// trim-specific-row-needs-a-stated-trim rule, e980c05, then does its job) —
+// silence is the honest outcome, not a regression.
 function decodeFromListing(l: Listing): VinDecode {
   return {
     vin: l.vin,
@@ -153,7 +172,7 @@ function decodeFromListing(l: Listing): VinDecode {
     make: l.make.toUpperCase(),
     model: l.model,
     modelYear: l.year,
-    trim: cleanTrim(l),
+    trim: l.trimSuspect ? undefined : cleanTrim(l),
     driveType: l.drive,
     batteryKwhHint: l.vpicBatteryKwh,
   };
@@ -193,7 +212,9 @@ export function enrichListing(l: Listing): EnrichedListing {
   let configResolved = false;
   const hp = row?.thermal?.heatPump;
   if (row && hp) {
-    const trimKey = (l.trim ?? "").toUpperCase().replace(/[^A-Z0-9]/g, "");
+    // Same rule as decodeFromListing: a contradicted trim can't be trusted to
+    // pick the right entry out of heatPumpByTrim either.
+    const trimKey = l.trimSuspect ? "" : (l.trim ?? "").toUpperCase().replace(/[^A-Z0-9]/g, "");
     const byTrim = row.thermal?.heatPumpByTrim;
     let resolved: typeof hp.value | undefined;
     if (byTrim && trimKey && byTrim[trimKey] !== undefined) {
