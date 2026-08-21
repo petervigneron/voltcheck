@@ -11,6 +11,45 @@ name: Nightly inventory
 # a finalize job merges shard outputs before enrichment and sync. A shard
 # that dies costs its slice, not the night: db-sync only delists for domains
 # whose report says complete, so missing shards certify nothing.
+#
+# finalize was itself split three ways 2026-08-21, after five straight lost
+# nights (Aug 18, 19, 19-manual, 20, 21). It was one job with one 240-minute
+# clock shared by merge, harvest, vPIC enrichment, ingest, db-sync, six
+# report/refresh steps, revalidate, and the commit — so a slow enrichment
+# pass or a slow ingest starved db-sync, the only step a shopper's browser
+# ever depends on. a7792ee/d97bd22 (2026-08-20) made that failure LOUD (time-
+# capped enrichment, checkpointed so a kill doesn't reset the backlog, and a
+# revalidate that refuses to warm the cache when db-sync didn't actually run)
+# but didn't make success likely — the night after that fix shipped,
+# enrichment plus ingest again ate the entire 240 minutes and db-sync never
+# ran. The clock was the bug, not any one step's speed.
+#
+# Now three jobs, each with its own clock, state handed forward as artifacts
+# exactly like the crawl→finalize handoff above:
+#   finalize-prep    merge + harvest + vPIC enrichment. Allowed to be slow,
+#                    allowed to run its enrichment cap all the way out —
+#                    nothing downstream shares its budget anymore.
+#   finalize-ingest  ingest + db-sync + price-audit + revalidate. Small,
+#                    fast, and now UNSTARVABLE: it gets a fresh timeout no
+#                    matter how long finalize-prep took, so the one step that
+#                    changes what a shopper sees stops being a coin flip.
+#   finalize-audits  colisting-sync, the EV-rules and completeness audits,
+#                    the variant/price-comp refreshes, and the data commit —
+#                    archival and report-only, never on the path to a
+#                    shopper's browser.
+#
+# vPIC enrichment stays BEFORE ingest, in finalize-prep, on purpose — ingest
+# keeps only evConfidence "high", and vpic-enrich.mjs is what promotes
+# name-match listings to "high" (a brand-new EV whose page omitted fuel
+# type) AND demotes fuel-text-only "high" rows vPIC refutes (the 2015 Prius
+# Two that shipped as an EV because its page said fuelType "Electric",
+# 2026-08-15). Running ingest+sync as their own scheduled job on their own
+# cadence, decoupled from enrichment entirely, was considered and rejected:
+# it would let a fuel-text-only false EV reach Supabase and stay live for a
+# full night before the next enrichment pass caught it — the exact
+# false-claim shape the house rule on claims exists to prevent. Splitting
+# the JOB, not the ORDER, is what fixes the clock problem without touching
+# that guarantee.
 on:
   schedule:
     - cron: "30 10 * * *" # 03:30 America/Los_Angeles (10:30 UTC)
@@ -32,6 +71,19 @@ on:
         description: "Probe only — useful when clearing a large discovery backlog"
         required: false
         default: "false"
+      recover_run_id:
+        description: >-
+          Run ID of a prior nightly run whose finalize-prep already merged and
+          enriched a night's crawl but never reached Supabase (a lost night).
+          When set, probe/crawl/oem-locator/finalize-prep/finalize-audits/
+          recheck are all skipped and finalize-ingest downloads that run's
+          finalize-prep-out/finalize-prep-registry artifacts instead of this
+          run's own — turning what used to be a several-step manual recovery
+          (merge-shards, ingest, db-sync, revalidate by hand from downloaded
+          crawl-out-* artifacts) into filling in one field. Leave blank for a
+          normal run.
+        required: false
+        default: ""
 
 # Deliberately NOT sharing a group with the discovery sweep. They both touch
 # registry.json, but blocking the crawl behind a multi-hour sweep means the
@@ -51,8 +103,11 @@ jobs:
   # Validate newly discovered dealers first, so tonight's crawl already
   # includes the ones that pass. The probed registry travels to the other
   # jobs as an artifact — shards must see tonight's promotions, and the
-  # finalize job commits this exact file.
+  # finalize-audits job commits this exact file. Skipped entirely during an
+  # ingest-only recovery run: a recovery re-plays an already-crawled night,
+  # it validates nothing new.
   probe:
+    if: ${{ github.event.inputs.recover_run_id == '' }}
     runs-on: ubuntu-latest
     timeout-minutes: 120
     steps:
@@ -70,7 +125,7 @@ jobs:
 
   crawl:
     needs: probe
-    if: ${{ github.event.inputs.skip_crawl != 'true' }}
+    if: ${{ github.event.inputs.skip_crawl != 'true' && github.event.inputs.recover_run_id == '' }}
     runs-on: ubuntu-latest
     timeout-minutes: 330
     strategy:
@@ -119,7 +174,7 @@ jobs:
   # a crawl shard, so the crawl-out-* artifact pattern sweeps it into the
   # same merge. If it dies, its domains simply certify nothing tonight.
   oem-locator:
-    if: ${{ github.event.inputs.skip_crawl != 'true' }}
+    if: ${{ github.event.inputs.skip_crawl != 'true' && github.event.inputs.recover_run_id == '' }}
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
@@ -135,15 +190,24 @@ jobs:
           name: crawl-out-oem
           path: scraper/out/
 
-  # Merge shard outputs, enrich, sync, commit. always() + probe success:
+  # Merge shard outputs and run vPIC enrichment. always() + probe success:
   # this must run even when some shards failed (their work is simply absent
   # from the merge) and when the crawl was skipped (probe-only runs still
-  # commit registry status changes).
-  finalize:
+  # need their registry pass-through, see below). Nothing here reaches a
+  # shopper directly — that's finalize-ingest's job, on its own clock — so
+  # this one is allowed to be slow. Its whole output (merged listings/report/
+  # colisting-pairs and the harvest-updated registry) travels forward as two
+  # artifacts, same pattern as the crawl→finalize handoff above.
+  finalize-prep:
     needs: [probe, crawl, oem-locator]
-    if: ${{ always() && needs.probe.result == 'success' }}
+    if: ${{ always() && needs.probe.result == 'success' && github.event.inputs.recover_run_id == '' }}
     runs-on: ubuntu-latest
-    timeout-minutes: 240 # enrichment + recheck scale with listing count
+    # Raised from finalize's old 240m: crawl and recheck already run at 330m
+    # (the GitHub-hosted-runner max is 360m) and there was no reason this job
+    # was the tightest of the three — its old ceiling was sized to protect
+    # ingest+db-sync's turn in the SAME job, which no longer happens now that
+    # they have their own job and their own clock below.
+    timeout-minutes: 330
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -173,22 +237,34 @@ jobs:
         working-directory: scraper
         run: node harvest-dealers.mjs --write
 
-      - name: VIN enrichment and ingest
+      - name: VIN enrichment (vpic)
         if: ${{ github.event.inputs.skip_crawl != 'true' }}
         working-directory: scraper
         run: |
-          # Time-cap vpic-enrich so it can never eat the whole finalize budget.
+          # Time-cap vpic-enrich so a huge backlog can never eat this job's
+          # whole budget either. Raised from 150m to 300m on the 2026-08-21
+          # split: 150m was sized to leave room for gm-warranty + ingest +
+          # db-sync + six audit/refresh steps + revalidate, all sharing THIS
+          # job's clock. None of that runs here anymore — merge-shards and
+          # harvest-dealers together take minutes, not hours — so enrichment
+          # can now use nearly this job's entire 330m ceiling and shrink the
+          # backlog faster, with zero risk to the sync those other steps used
+          # to threaten.
+          #
           # 2026-08-20 03:30 run (32361191733): the first full crawl after the
           # crawl-timeout fix handed finalize a huge new-VIN backlog; unsharded,
-          # vPIC-rate-limited enrichment ran the entire 240m job cap and was
+          # vPIC-rate-limited enrichment ran the entire old 240m job cap and was
           # cancelled, so the steps AFTER it — ingest, db-sync, revalidate —
           # never ran and the night's crawl never reached prod (shoppers kept
           # seeing stale prices; recovered by hand from the crawl-out-*
-          # artifacts). 150m leaves ~90m for gm-warranty + ingest + db-sync +
-          # the audits + revalidate.
+          # artifacts). The 2026-08-21 split removes that failure mode
+          # structurally instead of just widening the cap further: ingest and
+          # db-sync now live in a separate job with their own clock, so even a
+          # night that runs this cap all the way out cannot starve the sync.
           #
           # Reordering db-sync ahead of enrichment (the other option on the
-          # table) was rejected: ingest.mjs keeps only evConfidence === "high",
+          # table, and considered again for this split — see the top-of-file
+          # comment) was rejected: ingest.mjs keeps only evConfidence === "high",
           # and vpic-enrich is what promotes name_match listings to "high" (a
           # brand-new EV whose dealer page omitted fuel type) AND demotes
           # fuel-text-only "high" rows that vPIC refutes (the 2015 Prius Two
@@ -198,18 +274,106 @@ jobs:
           # rule on claims exists to prevent. So enrichment stays before
           # ingest, capped, with a positive fallback for when it's cut short.
           #
-          # vpic-enrich.mjs now applies and checkpoints each batch's decodes as
+          # vpic-enrich.mjs applies and checkpoints each batch's decodes as
           # they arrive (every 2 minutes, same pattern as crawl.mjs's shard
           # checkpoint) instead of holding everything for one write at the end.
           # Before this a `timeout` kill threw away every decode already
           # fetched, so a big backlog reran from zero and could re-blow the cap
           # night after night; now a kill keeps what was decoded, so the
           # backlog actually shrinks run over run.
-          timeout 150m node vpic-enrich.mjs || echo "vpic-enrich hit its 150m time cap — continuing so ingest + db-sync still run; decoded VINs are checkpointed, the rest resume next night"
+          timeout 300m node vpic-enrich.mjs || echo "vpic-enrich hit its 300m time cap — continuing so the merged output still ships; decoded VINs are checkpointed, the rest resume next night"
+
+      # Make sure scraper/out/ exists even in skip_crawl (probe-only) mode,
+      # where nothing above wrote it — otherwise the upload below has nothing
+      # to find and errors instead of shipping an (empty, expected) artifact.
+      - name: Ensure out/ exists for the handoff
+        if: always()
+        run: mkdir -p scraper/out
+
+      # Hands the merged+enriched state to finalize-ingest, same pattern as
+      # the crawl→finalize-prep handoff above. always(): a partial or
+      # cancelled run should still ship whatever it produced rather than
+      # leaving finalize-ingest with nothing to work from.
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: finalize-prep-out
+          path: scraper/out/
+          if-no-files-found: warn
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: finalize-prep-registry
+          path: scraper/registry/registry.json
+
+  # Ingest + db-sync + revalidate — the only steps a shopper's browser
+  # actually depends on — split out on 2026-08-21 specifically so they get a
+  # clock nothing upstream can spend. needs finalize-prep for the normal
+  # nightly artifact handoff, but always() + the recover_run_id escape hatch
+  # below let this job run standalone against an OLDER run's finalize-prep
+  # output — that is the one-click recovery path for a night whose
+  # finalize-prep succeeded but whose sync never happened.
+  finalize-ingest:
+    needs: [probe, finalize-prep]
+    if: ${{ always() && (github.event.inputs.recover_run_id != '' || needs.probe.result == 'success') }}
+    runs-on: ubuntu-latest
+    # Small and fast on purpose: everything left in this job (gm-warranty,
+    # ingest, db-sync, the price audit, revalidate) does NOT scale with the
+    # vPIC backlog the way enrichment does, and the whole point of splitting
+    # it out is that it must not need a large budget to be reliable. The old
+    # 240m finalize left this half only "~90m for gm-warranty + ingest +
+    # db-sync + the audits + revalidate" after enrichment's cap — comfortably
+    # inside 90m even before the six audit/refresh steps below moved to
+    # finalize-audits and stopped sharing this clock at all.
+    timeout-minutes: 90
+    permissions:
+      contents: read # only reads the repo (no commit happens in this job)
+      actions: read # needed for the cross-run artifact download below
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      # Cross-run download unconditionally (modulo skip_crawl below): when
+      # recover_run_id is unset it falls back to `|| github.run_id`, i.e.
+      # this run's own finalize-prep — identical behavior to a plain
+      # same-run download-artifact, just always routed through the
+      # run-id-aware form. That means the recovery path exercises the exact
+      # same code every normal night runs, instead of being a rarely-tested
+      # branch.
+      #
+      # skip_crawl (probe-only) gate on the out/ download only: finalize-prep
+      # ships an empty out/ artifact in that mode (nothing crawled, nothing
+      # merged) and nothing below reads it — gm-warranty/ingest are
+      # themselves skip_crawl-gated — so downloading it would just be an
+      # artifact-not-found failure for no reason. registry.json always
+      # exists (probe writes it every run) and finalize-audits' commit needs
+      # it passed through even in probe-only mode, so that download stays
+      # unconditional.
+      - uses: actions/download-artifact@v4
+        if: ${{ github.event.inputs.skip_crawl != 'true' }}
+        with:
+          name: finalize-prep-out
+          path: scraper/out
+          run-id: ${{ github.event.inputs.recover_run_id || github.run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: finalize-prep-registry
+          path: scraper/registry
+          run-id: ${{ github.event.inputs.recover_run_id || github.run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: GM per-VIN warranty and ingest
+        if: ${{ github.event.inputs.skip_crawl != 'true' }}
+        working-directory: scraper
+        run: |
           # Per-VIN battery coverage from GM's owner portal. Bounded per night
           # (a few thousand VINs on the first pass, none once cached) and
           # never fatal: a car without it falls back to abstaining, which is
-          # the same thing the site did before this lane existed.
+          # the same thing the site did before this lane existed. Must run
+          # before ingest — it writes batteryCoverage/campaignCheck directly
+          # onto out/listings.json records, which ingest.mjs reads.
           node gm-warranty.mjs --limit 600 || echo "gm-warranty failed, continuing"
           node ingest.mjs
 
@@ -223,33 +387,14 @@ jobs:
           SUPABASE_INGEST_TOKEN: ${{ secrets.SUPABASE_INGEST_TOKEN }}
         run: node db-sync.mjs
 
-      # Which rooftops offered the same VIN tonight (migration 0036). The
-      # merge dedupes one VIN to one record, so this evidence exists only in
-      # out/colisting-pairs.json on this runner and is gone when it is
-      # deleted — it cannot be recomputed from the database afterwards.
-      # Separate from db-sync because db-sync runs a second time when the
-      # price audit corrects a price, and a price correction says nothing new
-      # about who shares inventory.
-      # continue-on-error: this is archive, not the showroom. A failure here
-      # costs one night of the graph; letting it abort the recheck that
-      # follows would cost the sold-signal for every live car, and a red X on
-      # the job would wrongly imply the crawl failed.
-      - name: Record dealer-group co-listings
-        if: ${{ github.event.inputs.skip_crawl != 'true' }}
-        continue-on-error: true
-        working-directory: scraper
-        env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-          SUPABASE_INGEST_TOKEN: ${{ secrets.SUPABASE_INGEST_TOKEN }}
-        run: node colisting-sync.mjs
-
       # Sanity-check every price against WA sale medians (the vanhyundai
       # accessories-total incident, 2026-08-14). Implausible prices are
       # re-read from the dealer's own page or suppressed; exit 20 means the
       # listings JSON was corrected — sync once more, and the corrected
-      # snapshot rides the data commit below. continue-on-error: a broken
-      # comps lookup must not skip the recheck that follows.
+      # snapshot rides the data commit in finalize-audits. continue-on-error:
+      # a broken comps lookup must not skip the revalidate that follows —
+      # kept in this job (not finalize-audits) specifically so that
+      # revalidate below still reflects any correction it makes.
       - name: Price plausibility audit
         if: ${{ github.event.inputs.skip_crawl != 'true' }}
         continue-on-error: true
@@ -262,12 +407,132 @@ jobs:
           rc=0; node price-audit.mjs || rc=$?
           if [ "$rc" -eq 20 ]; then node db-sync.mjs; elif [ "$rc" -ne 0 ]; then exit "$rc"; fi
 
-      # Recheck (the authoritative sold-signal) is no longer here — it is its
-      # own job below. Folded into finalize it shared this 240-minute budget
-      # with enrichment and db-sync, and because recheck commits its whole
-      # night in one terminal write, every time finalize hit the ceiling
-      # mid-recheck the entire sold-signal was thrown away (delistings went
-      # 2,186/night → 0 over 08-17…19, and sold cars stayed on the site).
+      # Tell the site its data changed. The browse feed is cached a full day
+      # (web/lib/listings/db.ts) because it changes exactly when this
+      # pipeline runs — this step is the "it just ran" signal. It expires the
+      # feed cache tag, then warms the six index shards so the one nightly
+      # database walk happens here instead of on a shopper. always(): even a
+      # night whose price audit errored above should still reveal what
+      # db-sync wrote. A missing secret or an old deploy without the route
+      # degrades to the 24-hour cache backstop — stale by at most a day, and
+      # the warning below says which happened.
+      #
+      # But always() must not paper over db-sync itself never running. That
+      # was exactly the 2026-08-20 03:30 failure (32361191733): vpic-enrich
+      # ate the whole job budget, "Sync to Supabase" was skipped, and this
+      # step ran anyway and re-warmed yesterday's feed — a green revalidate on
+      # a night that shipped nothing, so the run looked fine while shoppers
+      # saw stale prices for 16+ hours before anyone noticed. So on a real
+      # crawl night, check db-sync's own outcome first: a skip or failure here
+      # means tonight's crawl never reached Supabase, and re-warming the cache
+      # would only make that invisible. Fail loudly instead of revalidating.
+      # This gate stays a same-job `steps.db_sync.outcome` reference on
+      # purpose (db-sync and this step both live in finalize-ingest) — it
+      # doesn't need to cross a job boundary, which is exactly what a7792ee/
+      # d97bd22's guard needs to keep working unmodified through this split.
+      - name: Revalidate the site's feed cache
+        if: always()
+        env:
+          FEED_REVALIDATE_SECRET: ${{ secrets.FEED_REVALIDATE_SECRET }}
+        run: |
+          if [ "${{ github.event.inputs.skip_crawl }}" != "true" ] && [ "${{ steps.db_sync.outcome }}" != "success" ]; then
+            echo "::error::db-sync did not complete (step outcome: '${{ steps.db_sync.outcome }}') — tonight's crawl has NOT reached Supabase. Skipping revalidate so the site does not look refreshed; re-run this workflow with recover_run_id set to this run's ID to retry just ingest+sync against the already-merged data, rather than waiting for tomorrow's run."
+            exit 1
+          fi
+          [ -z "$FEED_REVALIDATE_SECRET" ] && { echo "::warning::FEED_REVALIDATE_SECRET unset; site refreshes on the 24h cache backstop instead"; exit 0; }
+          if ! curl -fsS --retry 3 --max-time 60 -X POST -H "x-revalidate-secret: $FEED_REVALIDATE_SECRET" https://voltcheck.net/api/revalidate; then
+            echo "::warning::/api/revalidate unreachable (route not deployed yet?); site refreshes on the 24h cache backstop instead"
+            exit 0
+          fi
+          for s in first 0 1 2 3 4 5; do
+            curl -fsS --retry 2 --max-time 300 -o /dev/null "https://voltcheck.net/api/index/$s" \
+              || echo "::warning::shard $s warm-up failed; its first visitor pays the render"
+          done
+
+      # Hand the ingest/sync results forward to finalize-audits: the
+      # gm-warranty cache and registry (unchanged pass-through) together so
+      # the commit step there gets both from one artifact, and the ingested
+      # listings snapshot (post price-audit correction, if any) separately.
+      # always(): a partial run should still ship whatever it produced.
+      # skip_crawl-gated like its download above — in probe-only mode out/
+      # was never downloaded, so there is nothing here to re-upload, and
+      # finalize-audits' colisting-sync (the only consumer) is itself
+      # skip_crawl-gated.
+      - uses: actions/upload-artifact@v4
+        if: ${{ always() && github.event.inputs.skip_crawl != 'true' }}
+        with:
+          name: finalize-ingest-out
+          path: scraper/out/
+          if-no-files-found: warn
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: finalize-ingest-registry
+          path: scraper/registry/
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: finalize-ingest-listings
+          path: web/data/scraped-listings.json
+          if-no-files-found: warn
+
+  # Everything that is archival or report-only: which rooftops share
+  # inventory, whether admitted listings still pass today's EV rules,
+  # whether a dealer's odometers went missing, the monthly comp/variant
+  # refreshes, and the commit of the refreshed registry + listings snapshot.
+  # None of it is on the path to a shopper's browser — finalize-ingest's
+  # revalidate already happened — so it gets its own job rather than sharing
+  # a clock with (or risking) the sync. Skipped entirely during an
+  # ingest-only recovery run, matching the manual recovery procedure this
+  # replaces (merge, ingest, sync, revalidate — no audits, no commit).
+  finalize-audits:
+    needs: [probe, finalize-ingest]
+    if: ${{ always() && needs.probe.result == 'success' && github.event.inputs.recover_run_id == '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      # skip_crawl-gated: finalize-ingest only uploads this artifact when
+      # there was a real crawl to hand forward (see its upload step); in
+      # probe-only mode it doesn't exist, and colisting-sync below (the only
+      # consumer) is itself skip_crawl-gated.
+      - uses: actions/download-artifact@v4
+        if: ${{ github.event.inputs.skip_crawl != 'true' }}
+        with:
+          name: finalize-ingest-out
+          path: scraper/out
+      - uses: actions/download-artifact@v4
+        with:
+          name: finalize-ingest-registry
+          path: scraper/registry
+      - uses: actions/download-artifact@v4
+        with:
+          name: finalize-ingest-listings
+          path: web/data
+
+      # Which rooftops offered the same VIN tonight (migration 0036). The
+      # merge dedupes one VIN to one record, so this evidence exists only in
+      # out/colisting-pairs.json — carried here via the finalize-ingest-out
+      # artifact — and is gone when the runner is deleted; it cannot be
+      # recomputed from the database afterwards. Separate from db-sync
+      # because db-sync runs a second time when the price audit corrects a
+      # price, and a price correction says nothing new about who shares
+      # inventory. continue-on-error: this is archive, not the showroom. A
+      # failure here costs one night of the graph; it must not block the
+      # rest of this job, and a red X here would wrongly imply the crawl
+      # itself failed.
+      - name: Record dealer-group co-listings
+        if: ${{ needs.finalize-ingest.result == 'success' && github.event.inputs.skip_crawl != 'true' }}
+        continue-on-error: true
+        working-directory: scraper
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_INGEST_TOKEN: ${{ secrets.SUPABASE_INGEST_TOKEN }}
+        run: node colisting-sync.mjs
 
       # Re-judge already-admitted rows against today's classification rules.
       # ingest decides once and never revisits; recheck only asks "still for
@@ -276,7 +541,7 @@ jobs:
       # exit 10 means it found some, and the run should say so loudly without
       # failing the night's ingest.
       - name: Audit admitted listings against current rules
-        if: ${{ github.event.inputs.skip_crawl != 'true' }}
+        if: ${{ needs.finalize-ingest.result == 'success' && github.event.inputs.skip_crawl != 'true' }}
         continue-on-error: true
         working-directory: scraper
         env:
@@ -294,7 +559,7 @@ jobs:
       # going dark shouts and the backlog doesn't. Lower --max-broken-dealers as
       # per-platform parsers land (dealer.com/DealerOn odometer capture).
       - name: Audit listing completeness by dealer
-        if: ${{ github.event.inputs.skip_crawl != 'true' }}
+        if: ${{ needs.finalize-ingest.result == 'success' && github.event.inputs.skip_crawl != 'true' }}
         continue-on-error: true
         working-directory: scraper
         env:
@@ -307,10 +572,13 @@ jobs:
           elif [ "$rc" -ne 0 ]; then exit "$rc"; fi
 
       # Re-derive the observed trim-per-VIN-cohort table now that tonight's
-      # listings are settled (migration 0020). Not `if: schedule` — a manual
-      # run changes inventory too, and a stale matview is the failure this
-      # migration exists to prevent.
+      # listings are settled (migration 0020). Gated on finalize-ingest's own
+      # result rather than skip_crawl — a probe-only run still needs this
+      # (nothing upstream failed, there's simply nothing new to settle), but
+      # a real crawl night whose db-sync failed should not refresh from
+      # data that never actually landed.
       - name: Refresh observed VIN variants
+        if: ${{ needs.finalize-ingest.result == 'success' }}
         working-directory: scraper
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
@@ -320,7 +588,7 @@ jobs:
 
       # Washington transaction prices refresh monthly upstream.
       - name: Refresh Washington price comps (5th of the month)
-        if: ${{ github.event_name == 'schedule' }}
+        if: ${{ needs.finalize-ingest.result == 'success' && github.event_name == 'schedule' }}
         working-directory: scraper
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
@@ -337,53 +605,13 @@ jobs:
       # Only the vPIC half needs a job; vin_variant_observed is a view over
       # live listings and is always current.
       - name: Refresh VIN variant decodes (5th of the month)
-        if: ${{ github.event_name == 'schedule' }}
+        if: ${{ needs.finalize-ingest.result == 'success' && github.event_name == 'schedule' }}
         working-directory: scraper
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
           SUPABASE_INGEST_TOKEN: ${{ secrets.SUPABASE_INGEST_TOKEN }}
         run: '[ "$(date +%d)" = "05" ] && node vpic-variants.mjs || echo "not the 5th, skipping"'
-
-      # Tell the site its data changed. The browse feed is cached a full day
-      # (web/lib/listings/db.ts) because it changes exactly when this
-      # pipeline runs — this step is the "it just ran" signal. It expires the
-      # feed cache tag, then warms the six index shards so the one nightly
-      # database walk happens here instead of on a shopper. always(): even a
-      # night that failed AFTER db-sync changed the data — e.g. the price
-      # audit or an admitted-listings check erroring below — should still
-      # reveal what db-sync wrote, and revalidating a night that changed
-      # nothing costs one walk. A missing secret or an old deploy without the
-      # route degrades to the 24-hour cache backstop — stale by at most a day,
-      # and the warning below says which happened.
-      #
-      # But always() must not paper over db-sync itself never running. That
-      # was exactly the 2026-08-20 03:30 failure (32361191733): vpic-enrich
-      # ate the whole job budget, "Sync to Supabase" was skipped, and this
-      # step ran anyway and re-warmed yesterday's feed — a green revalidate on
-      # a night that shipped nothing, so the run looked fine while shoppers
-      # saw stale prices for 16+ hours before anyone noticed. So on a real
-      # crawl night, check db-sync's own outcome first: a skip or failure here
-      # means tonight's crawl never reached Supabase, and re-warming the cache
-      # would only make that invisible. Fail loudly instead of revalidating.
-      - name: Revalidate the site's feed cache
-        if: always()
-        env:
-          FEED_REVALIDATE_SECRET: ${{ secrets.FEED_REVALIDATE_SECRET }}
-        run: |
-          if [ "${{ github.event.inputs.skip_crawl }}" != "true" ] && [ "${{ steps.db_sync.outcome }}" != "success" ]; then
-            echo "::error::db-sync did not complete (step outcome: '${{ steps.db_sync.outcome }}') — tonight's crawl has NOT reached Supabase. Skipping revalidate so the site does not look refreshed; recover from the crawl-out-* artifacts (merge-shards, ingest, db-sync, revalidate) rather than waiting for tomorrow's run."
-            exit 1
-          fi
-          [ -z "$FEED_REVALIDATE_SECRET" ] && { echo "::warning::FEED_REVALIDATE_SECRET unset; site refreshes on the 24h cache backstop instead"; exit 0; }
-          if ! curl -fsS --retry 3 --max-time 60 -X POST -H "x-revalidate-secret: $FEED_REVALIDATE_SECRET" https://voltcheck.net/api/revalidate; then
-            echo "::warning::/api/revalidate unreachable (route not deployed yet?); site refreshes on the 24h cache backstop instead"
-            exit 0
-          fi
-          for s in first 0 1 2 3 4 5; do
-            curl -fsS --retry 2 --max-time 300 -o /dev/null "https://voltcheck.net/api/index/$s" \
-              || echo "::warning::shard $s warm-up failed; its first visitor pays the render"
-          done
 
       # The JSON snapshot is the web app's fallback when Supabase is
       # unreachable, so it needs to stay current in the repo.
@@ -414,15 +642,18 @@ jobs:
   # The authoritative sold-signal, split out of finalize (2026-08-19). Its own
   # job means its own clock. recheck fetches every live dealer listing's page
   # and commits the result — every 404 a delisting — in one terminal write, so
-  # sharing finalize's 240-minute budget meant a timeout mid-run discarded the
-  # entire night's removals (delistings fell 2,186/night → 0 over 08-17…19 and
-  # sold cars stayed live). --deadline-min stops fetching with time to spare and
-  # writes what it found; a slow night lands partial delistings, the rest wait
-  # for tomorrow. always() + probe success: it must run even when finalize timed
-  # out, because it reads live rows straight from the DB, not from finalize.
+  # sharing finalize's old 240-minute budget meant a timeout mid-run discarded
+  # the entire night's removals (delistings fell 2,186/night → 0 over 08-17…19
+  # and sold cars stayed live). --deadline-min stops fetching with time to
+  # spare and writes what it found; a slow night lands partial delistings, the
+  # rest wait for tomorrow. always() + probe success: it must run even when
+  # finalize-audits (or an earlier finalize-* job) timed out, because it reads
+  # live rows straight from the DB, not from anything upstream. Skipped during
+  # an ingest-only recovery run — that path exists to land ingest+sync for an
+  # already-crawled night, not to re-run the sold-signal sweep.
   recheck:
-    needs: [probe, finalize]
-    if: ${{ always() && needs.probe.result == 'success' && github.event.inputs.skip_crawl != 'true' }}
+    needs: [probe, finalize-audits]
+    if: ${{ always() && needs.probe.result == 'success' && github.event.inputs.skip_crawl != 'true' && github.event.inputs.recover_run_id == '' }}
     runs-on: ubuntu-latest
     timeout-minutes: 330
     steps:
@@ -440,9 +671,9 @@ jobs:
         # always lands; concurrency unchanged from when this ran in finalize.
         run: node recheck.mjs --concurrency 10 --deadline-min 280
       # Expire the feed cache so tonight's delistings leave the site now, not on
-      # tomorrow's revalidate — finalize's earlier revalidate carried the
+      # tomorrow's revalidate — finalize-ingest's earlier revalidate carried the
       # crawl's data, this one carries recheck's removals. Same degrade-to-24h
-      # backstop as finalize's copy.
+      # backstop as finalize-ingest's copy.
       - name: Revalidate the site's feed cache
         if: always()
         env:
