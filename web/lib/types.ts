@@ -102,7 +102,13 @@ export interface EnrichmentRow {
     // "fitted"/"not_fitted" are per-car resolutions (photo or window sticker),
     // vs the model-level "standard"/"optional"/"none".
     dcFastCharging?: Fact<"standard" | "optional" | "none" | "fitted" | "not_fitted">;
-    architectureV?: Fact<400 | 800>;
+    // Pack nominal voltage. Not a two-valued enum: the Lucid Gravity GT is
+    // 926V, well sourced from Lucid's own material, so `400 | 800` couldn't
+    // express the truth for three shipped Lucid vehicles (Air, Gravity,
+    // Gravity GT all differ). A plain number, like every other charging spec
+    // here — FactRow renders it as `${v}V` and never branched on the two old
+    // values.
+    architectureV?: Fact<number>;
     // Max AC (Level 2) acceptance rate — separate from dcPeakKw, and the
     // number that actually sets home/public L2 charge time. Named in
     // docs/ENRICHMENT-SCHEMA.md as ac_onboard_kw; never implemented until now.

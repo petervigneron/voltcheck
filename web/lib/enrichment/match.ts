@@ -10,25 +10,79 @@ const ALL_ROWS = [...ENRICHMENT_ROWS, ...RESEARCH_ROWS, ...RESEARCH_ROWS_3, ...R
 
 const norm = (s?: string) => (s ?? "").toUpperCase().replace(/[^A-Z0-9]/g, "");
 
-function trimMatches(rowTrim: string | string[] | undefined, decodedTrim: string | undefined): boolean {
-  if (!rowTrim) return true; // row applies to all trims
-  if (!decodedTrim) return true; // unknown trim: keep row as a candidate
-  const b = norm(decodedTrim);
-  return (Array.isArray(rowTrim) ? rowTrim : [rowTrim]).some((rt) => {
-    const a = norm(rt);
-    // Short trims ("S") must match exactly — substring logic would let Leaf "S"
-    // swallow "SV" and "Pro S".
-    if (a.length < 3 || b.length < 3) return a === b;
-    // A trailing "+" is identity, not punctuation, on Mercedes trims — the
-    // EQE320+ (RWD, bigger pack) is a different car from the EQE320 4MATIC,
-    // but norm() strips the plus and "EQE320" would substring-match
-    // "EQE3204MATIC". When only one side carries a "+", substring credit is
-    // off; plain equality still passes, so "AMG EQE 4MATIC+" meets a row
-    // keyed "AMG EQE 4MATIC".
-    if (/\+/.test(rt) !== /\+/.test(decodedTrim)) return a === b;
-    return a.includes(b) || b.includes(a);
-  });
+// "+" names a distinct car on several nameplates — Mercedes' EQE320+ (RWD,
+// bigger pack) is a different vehicle from the EQE320 4MATIC, the Nissan Leaf
+// 2026 S+ a different pack than the S — but norm() strips it like any other
+// symbol, so two trims differing ONLY by a trailing "+" collapse to the same
+// string ("250" and "250+" both norm to "250"; so do "EQE320" and "EQE320+").
+// A gas CLA 250 and an electric CLA 250+ are exactly this shape. Every trim
+// comparison below checks "+" presence FIRST and refuses the match outright
+// when it differs on just one side — this used to fall through to a plain
+// `a === b`, which is precisely the case that must be rejected: once "+" is
+// stripped, "250" and "250+" ARE equal, so that fallback matched the exact
+// pair it was written to keep apart. (It only avoided false substring credit,
+// e.g. "EQE320" swallowing "EQE3204MATIC" — a real problem, but the fix must
+// not also manufacture a false plain-equality match.)
+function trimPlusMismatch(rt: string, decodedTrim: string): boolean {
+  return /\+/.test(rt) !== /\+/.test(decodedTrim);
 }
+
+// Exact identity: used where a listing's trim must name one specific row,
+// not just overlap with it (an unambiguous listing-side signal).
+function trimStringsExact(rt: string, decodedTrim: string): boolean {
+  if (trimPlusMismatch(rt, decodedTrim)) return false;
+  return norm(rt) === norm(decodedTrim);
+}
+
+// Overlap: substring-tolerant, for rows/listings that restate the trim with
+// extra words on either side ("EQE 500 4MATIC" vs "500 4MATIC").
+function trimStringsOverlap(rt: string, decodedTrim: string): boolean {
+  if (trimPlusMismatch(rt, decodedTrim)) return false;
+  const a = norm(rt);
+  const b = norm(decodedTrim);
+  // Short trims ("S") must match exactly — substring logic would let Leaf "S"
+  // swallow "SV" and "Pro S".
+  if (a.length < 3 || b.length < 3) return a === b;
+  return a.includes(b) || b.includes(a);
+}
+
+// Exported for direct unit testing (web/tests/match.test.ts) — the "+"
+// significance and no-trim behavior are worth pinning down independent of
+// whatever happens to be in the enrichment corpus on a given day.
+export function trimMatches(rowTrim: string | string[] | undefined, decodedTrim: string | undefined): boolean {
+  if (!rowTrim) return true; // row applies to all trims
+  // A trim-specific row needs the listing to actually say which trim it is.
+  // An absent listing trim used to pass this unconditionally ("keep row as a
+  // candidate"), which is how a no-trim listing could pick up ANY row for its
+  // make/model/year — including a row for a completely different car (a
+  // mild-hybrid CLA with no trim string picking up an electric CLA's battery
+  // and charging facts). Silence is the honest failure here, not a guess.
+  if (!decodedTrim) return false;
+  return (Array.isArray(rowTrim) ? rowTrim : [rowTrim]).some((rt) => trimStringsOverlap(rt, decodedTrim));
+}
+
+// A dealer feed can carry the SAME vehicle under two different `make`
+// strings. Confirmed live 2026-08-21: BrightDrop's Zevo van arrives as make
+// "BrightDrop"/"Brightdrop" (its own brand) AND as make "Chevrolet" (its GM
+// commercial parent), for the identical physical van — match.ts's exact
+// `norm(make) === norm(make)` equality had no way to see those as one make,
+// so a Chevrolet-labeled Zevo could never match a BrightDrop-keyed row no
+// matter how good the research was. Keyed by MODEL, not by make alone:
+// folding "Chevrolet" wholesale would wrongly swallow every real Chevrolet EV
+// (Bolt, Equinox EV, Blazer EV, Silverado EV). Checked 2026-08-21 against the
+// live corpus for the same shape elsewhere — Polestar/Volvo and Genesis/
+// Hyundai both arrive under one consistent make string (casing aside, which
+// norm() already folds) — so this table stays a single curated entry, not a
+// general cross-brand fold. This is production matching, not the separate
+// report-only fold in scripts/live-enrichment-gap.mjs's
+// REPORT_MODEL_MAKE_FOLD (which only relabels a chart bucket after every
+// match verdict is already decided); add another row here only when a
+// specific vehicle is confirmed to arrive under two make strings.
+const MAKE_ALIASES: { modelRe: RegExp; canonicalMake: string }[] = [{ modelRe: /^zevo\b/i, canonicalMake: "BRIGHTDROP" }];
+export const canonicalMake = (make: string | undefined, model: string | undefined): string => {
+  const alias = MAKE_ALIASES.find((a) => a.modelRe.test(model ?? ""));
+  return alias ? norm(alias.canonicalMake) : norm(make);
+};
 
 function normalizeDrive(d: string | undefined): "AWD" | "RWD" | "FWD" | undefined {
   if (!d) return undefined;
@@ -61,14 +115,14 @@ function matchEnrichmentRaw(
 
   // Some feeds restate the make inside the model ("Polestar 2" vs "2") —
   // compare models with any redundant make prefix stripped from both sides.
-  const mk = norm(make);
+  const mk = canonicalMake(make, model);
   const modelKey = (s: string) => {
     const n = norm(s);
     return n.startsWith(mk) && n.length > mk.length ? n.slice(mk.length) : n;
   };
   let rows = ALL_ROWS.filter(
     (r) =>
-      norm(r.make) === mk &&
+      canonicalMake(r.make, r.model) === mk &&
       [r.model, ...(r.modelAliases ?? [])].some((m) => modelKey(m) === modelKey(model)) &&
       modelYear >= r.modelYears[0] &&
       modelYear <= r.modelYears[1] &&
@@ -101,9 +155,9 @@ function matchEnrichmentRaw(
   // it must win before the soft hints below get a chance to veto it (a junk
   // kWh hint once resolved an explicit "Light Long Range" to the Light row).
   if (decode.trim && rows.length > 1) {
-    const b = norm(decode.trim);
+    const dt = decode.trim;
     const exactTrim = rows.filter((r) =>
-      (Array.isArray(r.trim) ? r.trim : r.trim ? [r.trim] : []).some((rt) => norm(rt) === b)
+      (Array.isArray(r.trim) ? r.trim : r.trim ? [r.trim] : []).some((rt) => trimStringsExact(rt, dt))
     );
     if (exactTrim.length === 1) return { exact: exactTrim[0] };
   }
@@ -133,13 +187,10 @@ function matchEnrichmentRaw(
   // "WT - Standard Range" listing resolves to the Standard Range row rather
   // than presenting candidates.
   if (decode.trim) {
-    const b = norm(decode.trim);
+    const dt = decode.trim;
     const trimSpecific = rows.filter((r) => {
       if (!r.trim) return false;
-      return (Array.isArray(r.trim) ? r.trim : [r.trim]).some((rt) => {
-        const a = norm(rt);
-        return a.includes(b) || b.includes(a);
-      });
+      return (Array.isArray(r.trim) ? r.trim : [r.trim]).some((rt) => trimStringsOverlap(rt, dt));
     });
     if (trimSpecific.length === 1) return { exact: trimSpecific[0] };
     if (trimSpecific.length > 1) rows = trimSpecific;
