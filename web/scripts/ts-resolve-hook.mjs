@@ -10,6 +10,12 @@
 //   load     Node strips types but does not transform JSX, so a .tsx file has
 //            to go through TypeScript itself. This is what lets a component
 //            be rendered in a test rather than only reasoned about.
+//   json     the bundler imports a .json file as a module with a default
+//            export; plain Node ESM refuses one without an import attribute
+//            the bundler doesn't want. Without this, the bundled-snapshot
+//            fallback in lib/listings/source.ts is untestable — and that is
+//            the path the site takes during an outage, the one most worth a
+//            test. Measured at 677 ms for the real 50 MB snapshot.
 //
 //   node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs <script>
 import { createRequire, registerHooks } from "node:module";
@@ -55,6 +61,10 @@ registerHooks({
     }
   },
   load(url, context, nextLoad) {
+    if (url.endsWith(".json")) {
+      const source = readFileSync(fileURLToPath(url), "utf8");
+      return { format: "module", source: `export default ${source}`, shortCircuit: true };
+    }
     if (url.endsWith(".tsx")) {
       const ts = requireTs();
       const source = readFileSync(fileURLToPath(url), "utf8");

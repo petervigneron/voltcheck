@@ -71,19 +71,87 @@ export async function allListings(): Promise<Listing[]> {
   return (await allListingsWithOrigin()).listings;
 }
 
+// A real listing's id is its VIN — id === vin.toLowerCase() for every row the
+// scraper writes (scraper/ingest.mjs), and for all 58,730 rows of the bundled
+// snapshot (checked 2026-08-22: zero exceptions, zero non-VIN-shaped ids).
+// Demo rows are the other kind: all eleven SAMPLE_LISTINGS ids are hyphenated
+// slugs, so no id can be both.
+//
+// Same shape test the sitemap uses (app/sitemap/[shard]/route.ts) except for
+// case, and deliberately: that route is deciding what to publish, so it wants
+// only the canonical lowercase form, while this one is deciding whether a URL
+// a crawler already typed is worth a database request. /listing/<UPPERCASE
+// VIN> resolves today — the read uppercases the id anyway — and a
+// lowercase-only test here would start 404ing it.
+const VIN_SHAPED = /^[a-zA-Z0-9]{17}$/;
+
+/** One VIN out of the bundled snapshot, for when the database can't say.
+ *  The import is the same lazy one allListingsWithOrigin uses and the module
+ *  registry caches it, so an outage parses that JSON once per instance —
+ *  where the walk it replaces paid 226 requests per render. */
+async function findInSnapshot(id: string): Promise<Listing | undefined> {
+  const key = id.toLowerCase();
+  const row = (await fallbackListings()).find((l) => l.id === key);
+  return row ? absolutizeImages(row) : undefined;
+}
+
+/**
+ * One listing by id, without ever walking the feed.
+ *
+ * What this replaced, and why it had to go: the fallback used to be
+ * `(await allListings()).find(...)` — a FULL WALK, 226 PostgREST requests
+ * against a 100,297-row feed — taken on EVERY id the per-VIN read didn't
+ * return. That is the read amplification behind the 2026-08-22 incident. The
+ * per-VIN read misses on every request while the database is sick, and the
+ * sitemap advertises ~100,297 listing URLs, so a crawler working through them
+ * became a walk generator: 2,500-4,900 feed-page requests an hour against a
+ * ~20/hour baseline, 13 GB of disk reads over 44 hours. db.ts's 60-second
+ * cooldown bounds that case; it does nothing for the healthy one, where an
+ * unknown id still cost a walk.
+ *
+ * The walk was never buying what its comment claimed. It read the same view
+ * the per-VIN read does (live_listings_feed, `WHERE delisted_at IS NULL`), so
+ * on a healthy database it can only ever return rows that read already
+ * covered — plus the eleven demo rows. A just-delisted car is invisible to
+ * both. So each branch below returns exactly what the walk would have:
+ *
+ *   not VIN-shaped   only a demo row can have that id. No request.
+ *   database has it  the row. One request, as before.
+ *   database says no this VIN is not for sale. 404 — the same answer the
+ *                    walk gave, since the walk reads the same view. It is
+ *                    also the honest one for a sold car.
+ *   database silent  the bundled snapshot, which is exactly what a failed
+ *                    walk would have handed back via allListings(), minus the
+ *                    226 requests spent failing.
+ */
+async function resolveListing(id: string): Promise<{ listing?: Listing; live: boolean }> {
+  if (!VIN_SHAPED.test(id)) {
+    const sample = SAMPLE_LISTINGS.find((l) => l.id === id);
+    return { listing: sample && absolutizeImages(sample), live: false };
+  }
+  if (!dbConfigured()) return { listing: await findInSnapshot(id), live: false };
+  const { answered, listing } = await fetchListingByIdFromDb(id);
+  if (listing) return { listing: absolutizeImages(listing), live: true };
+  if (answered) return { live: true };
+  return { listing: await findInSnapshot(id), live: false };
+}
+
 export async function findListing(id: string): Promise<Listing | undefined> {
-  // One row by id, not the whole feed: the detail page shouldn't pay for
-  // 16k listings to show one. Ids the DB doesn't know (sample rows, the
-  // bundled-JSON fallback, just-delisted cars) fall back to the full scan.
-  const fromDb = await fetchListingByIdFromDb(id);
-  const listing = fromDb
-    ? absolutizeImages(fromDb)
-    : (await allListings()).find((l) => l.id === id);
+  const { listing, live } = await resolveListing(id);
   if (!listing) return undefined;
   // The bulk feed omits description and price history (egress: they render
-  // only here). One small per-VIN read brings them in; bundled-JSON and
-  // sample rows already carry their description and skip the fetch.
-  if (listing.description !== undefined || !dbConfigured()) return listing;
+  // only here), so a row that came from the database needs one small per-VIN
+  // read to get them.
+  //
+  // A row that did NOT come from the database doesn't: a demo row's VIN is
+  // synthetic and has never been in `listings`, and a snapshot row is only
+  // being served because the database just failed to answer for this very
+  // VIN — asking it a second question about the same car is two more
+  // requests into a database that is already down, for a description it
+  // won't return. Both used to make that call whenever they had no
+  // description of their own (most rows have none), which doubled the cost
+  // of exactly the outage this file was being fixed for.
+  if (!live || listing.description !== undefined) return listing;
   const detail = await fetchListingDetailFromDb(listing.vin);
   return detail ? { ...listing, ...detail } : listing;
 }

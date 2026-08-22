@@ -536,29 +536,65 @@ function refuseDuringBuild(what: string): void {
   );
 }
 
+/** What a by-id read produced, and — separately — whether the database was
+ *  the one that said so.
+ *
+ *    { answered: true,  listing: <row> }   this VIN is live inventory
+ *    { answered: true,  listing: null }    PostgREST answered, and it holds no
+ *                                          live row for this VIN
+ *    { answered: false, listing: null }    unconfigured, unreachable, or 5xx —
+ *                                          we learned nothing about this VIN
+ *
+ * The middle case used to be indistinguishable from the last one (both were
+ * a bare `null`), and that ambiguity is what made source.ts fall back to a
+ * FULL FEED WALK on every miss: with no way to tell "not for sale" from "the
+ * database is down", it had to ask the expensive question. They want opposite
+ * answers — a known-absent VIN is a 404, an unanswered one is the bundled
+ * snapshot — so the read reports which it was. */
+export type ListingByIdRead = { answered: boolean; listing: Listing | null };
+
 /** One live listing by its site id — the detail page's row without paying for
- *  the whole feed. Null when the DB is unconfigured/unreachable or the id is
- *  unknown there (the caller falls back to the bundled JSON and samples). */
-export async function fetchListingByIdFromDb(id: string): Promise<Listing | null> {
-  if (!dbConfigured()) return null;
+ *  the whole feed. See ListingByIdRead for what the two flavours of "no row"
+ *  mean and why they are distinguished. */
+export async function fetchListingByIdFromDb(id: string): Promise<ListingByIdRead> {
+  if (!dbConfigured()) return { answered: false, listing: null };
   const base = process.env.SUPABASE_URL!.replace(/\/$/, "");
   try {
     // Keyed on vin, not payload->>id: the id IS the lowercase VIN
     // (scraper/ingest.mjs; verified across all rows 2026-08-17), and the
     // payload-expression filter was a ~1s seq scan of the wide table on
     // every uncached detail render — the vin form is a primary-key lookup.
-    // An id that isn't a VIN (sample rows) just misses here and resolves
-    // through the caller's fallback scan, same as before.
-    const res = await fetch(
-      `${base}/rest/v1/live_listings_feed?select=payload,first_seen_at,last_seen_at,prev_price_usd,price_changed_at,buyback_disclosed,listed_on&vin=eq.${encodeURIComponent(
-        id.toUpperCase()
-      )}&limit=1`,
-      { headers: headers(), next: { revalidate: REVALIDATE_SECONDS, tags: [FEED_CACHE_TAG] } }
-    );
+    // An id that isn't a VIN (sample rows) can't be in this table at all, so
+    // the caller doesn't spend a request asking — it resolves those against
+    // SAMPLE_LISTINGS directly (source.ts).
+    //
+    // Retried once on a server error, for the same reason fetchCohortFromDb
+    // is: this runs inside an ISR render cached for `revalidate = 86400`, so
+    // one transient 500 would bake its consequence — a snapshot row, or a
+    // 404 — into the page for a day. One retry, not the cohort's ladder of
+    // two: a miss here no longer costs a 226-request walk, so the cheap
+    // insurance is a second single-row read, and during a real outage this
+    // path runs once per detail request and shouldn't double its own cost.
+    // Skipped entirely when a feed walk has just failed, which is this
+    // module's existing "the database is down" signal — retrying into that
+    // buys nothing and the caller has a snapshot to serve.
+    let res: Response;
+    for (let attempt = 0; ; attempt++) {
+      res = await fetch(
+        `${base}/rest/v1/live_listings_feed?select=payload,first_seen_at,last_seen_at,prev_price_usd,price_changed_at,buyback_disclosed,listed_on&vin=eq.${encodeURIComponent(
+          id.toUpperCase()
+        )}&limit=1`,
+        { headers: headers(), next: { revalidate: REVALIDATE_SECONDS, tags: [FEED_CACHE_TAG] } }
+      );
+      if (res.status < 500 || attempt >= 1 || feedWalkFailedRecently()) break;
+      await new Promise((r) => setTimeout(r, 300));
+    }
     if (!res.ok) throw new Error(`PostgREST ${res.status}`);
     const [r] = (await res.json()) as FeedRow[];
-    if (!r) return null;
-    return {
+    // PostgREST answered with an empty result: there is no live listing for
+    // this VIN. Not a failure — the honest answer for a car that sold.
+    if (!r) return { answered: true, listing: null };
+    const listing: Listing = {
       ...r.payload,
       firstSeenAt: r.first_seen_at,
       lastSeenAt: r.last_seen_at,
@@ -567,9 +603,10 @@ export async function fetchListingByIdFromDb(id: string): Promise<Listing | null
       buybackDisclosed: r.buyback_disclosed || undefined,
       listedOn: r.listed_on ?? undefined,
     };
+    return { answered: true, listing };
   } catch (err) {
     console.error("[listings] Supabase by-id read failed:", err);
-    return null;
+    return { answered: false, listing: null };
   }
 }
 
