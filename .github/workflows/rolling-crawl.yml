@@ -1,0 +1,207 @@
+name: Rolling crawl
+
+# One nightly burst is what keeps breaking. This crawls a SLICE of the
+# registry every half hour instead, and syncs that slice on its own.
+#
+# The failure this exists to end: nightly.yml crawls all 13,165 working
+# rooftops, merges them, and hands db-sync ~100,000 rows to push in one go as
+# 37 chunks. On 2026-08-22 the free-tier Nano took 8 of those chunks and
+# collapsed on the 9th (504, 504, 503, "connection termination"); the morning's
+# scheduled run had died on chunk 1. Nothing about that is a query bug — the
+# same ALTER statement measured 905 s and then 37 s on the same table two hours
+# apart — it is one instance being handed a day's writes at once. Spreading the
+# same total work across 48 runs never builds the peak.
+#
+# WHY THIS IS A SMALL CHANGE AND NOT A REDESIGN: a batch of whole dealer
+# domains is ALREADY the unit this pipeline trusts. db-sync chunks by whole
+# domain and says why — "splitting a domain across two calls would delist the
+# second half while ingesting the first" — and ingest_listings only delists
+# inside a domain whose crawl report says truncated:false. A slice is just one
+# of tonight's chunks, crawled and pushed on its own clock. Everything that
+# makes a partial sync safe was already built and is exercised every night.
+#
+# WHAT ACTUALLY HAD TO CHANGE: the dealer lane's delist-coverage guard divided
+# a run's rows by what the WHOLE lane had live, so a 274-rooftop slice carrying
+# ~2,000 rows against ~59,000 read as 3% coverage, tripped the 50% floor, and
+# would have refused to delist a slice that crawled perfectly — every run,
+# forever. Fixed separately (def9b87): the denominator is now the prior live
+# count of the domains the run actually attempted. That commit is inert for a
+# whole-fleet run and is what makes this workflow's slices legal.
+#
+# ORDER IS NOT NEGOTIABLE: vpic-enrich runs BEFORE ingest, exactly as
+# nightly.yml does, and for the reason its header gives at length — ingest
+# keeps only evConfidence "high", and vpic-enrich is what promotes real EVs
+# whose dealer page omitted fuel type AND demotes fuel-text-only rows vPIC
+# refutes (the 2015 Prius Two that shipped as an EV, 2026-08-15). Ingesting a
+# slice before enriching it would put false EVs in front of shoppers, which is
+# the house rule on claims, not a performance preference. A slice's enrichment
+# is small and mostly cache hits, so this costs minutes, not hours.
+
+on:
+  schedule:
+    # Every 30 minutes: 48 runs a day, one full sweep of the registry.
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+    inputs:
+      slice:
+        description: "Slice to crawl (0-based). Blank = derive from the clock, as the schedule does."
+        required: false
+        default: ""
+      slices:
+        description: "How many slices the registry is cut into."
+        required: false
+        default: "48"
+      sync:
+        description: "Push this slice to Supabase. 'false' crawls and reports only — use it to watch coverage and timing without writing."
+        required: false
+        default: "true"
+
+# Its own group, deliberately NOT nightly.yml's "crawl". Sharing it would park
+# every rolling run behind a 5-hour nightly and GitHub would cancel all but the
+# newest pending one, so a whole night's slices would evaporate. During the
+# side-by-side trial the two lanes may therefore overlap. That is safe rather
+# than merely tolerable: ingest_listings (migration 0013) refuses stale
+# overwrites by observedAt, so whichever lane saw a car LAST wins and an older
+# snapshot can never resurrect a newer delisting. Once this lane is trusted,
+# nightly.yml's crawl/finalize-ingest jobs come out and the question dies.
+concurrency:
+  group: rolling-crawl
+  cancel-in-progress: false
+
+permissions:
+  contents: write # commits the vPIC decode cache
+
+jobs:
+  slice:
+    # Inert until someone sets the repository variable ROLLING_CRAWL_ENABLED to
+    # "true" (Settings -> Secrets and variables -> Actions -> Variables). It
+    # ships switched OFF on purpose: merging a workflow that immediately starts
+    # writing to production every 30 minutes is not a decision a merge should
+    # make. Manual dispatch always runs, so a single slice can be watched
+    # end to end before the schedule is ever turned on.
+    if: ${{ vars.ROLLING_CRAWL_ENABLED == 'true' || github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    # 25 minutes against a 30-minute cadence. The steps below are individually
+    # capped to finish inside it; the job cap is the backstop that guarantees a
+    # slow slice cannot still be running when the next one starts.
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # The slice index comes from the CLOCK, not from stored state. 48
+      # half-hours is exactly one day, so minutes-since-midnight / 30 walks
+      # 0..47 once per day and repeats — no cursor to persist, no cursor to
+      # corrupt, and a missed run costs that one slice a day rather than
+      # shifting every slice after it. Domains are sorted before slicing (the
+      # same `sorted()` nightly.yml uses) so membership is stable between runs
+      # and a rooftop stays in the same slice as long as the registry does.
+      - name: Choose this run's slice
+        id: pick
+        working-directory: scraper
+        run: |
+          SLICES="${{ github.event.inputs.slices || '48' }}"
+          SLICE="${{ github.event.inputs.slice }}"
+          if [ -z "$SLICE" ]; then
+            # 10# forces base 10. Without it bash reads a zero-padded hour or
+            # minute as octal and dies — "09: value too great for base" — which
+            # would have failed every run in the 08:00 and 09:00 UTC hours and
+            # at :08 and :09 past every hour. Verified under bash, not zsh:
+            # zsh evaluates $((09 * 60)) happily and hides it.
+            MINS=$(( 10#$(date -u +%H) * 60 + 10#$(date -u +%M) ))
+            SLICE=$(( MINS / (1440 / SLICES) % SLICES ))
+          fi
+          echo "slices=$SLICES" >> "$GITHUB_OUTPUT"
+          echo "slice=$SLICE" >> "$GITHUB_OUTPUT"
+          DOMAINS=$(python3 -c "
+          import json
+          r = json.load(open('registry/registry.json'))
+          doms = sorted(s['domain'] for s in r['sites'] if s.get('status') == 'working')
+          print(' '.join(d for i, d in enumerate(doms) if i % $SLICES == $SLICE))")
+          echo "$DOMAINS" > /tmp/domains.txt
+          echo "slice $SLICE/$SLICES: $(echo $DOMAINS | wc -w) domains"
+
+      # --deadline-min 14 leaves ~10 minutes for enrich + ingest + sync inside
+      # the 25-minute job cap. A slice that runs long hands up what it has (the
+      # deadline write) instead of being killed with nothing, the same
+      # discipline nightly.yml's shards use after 2026-08-19, when all 8 shards
+      # were cancelled at 5h30m and the whole night was lost.
+      - name: Crawl the slice
+        working-directory: scraper
+        run: |
+          node crawl.mjs $(cat /tmp/domains.txt) \
+            --max-pages 80 --cache-hours 0 --concurrency 16 --deadline-min 14
+
+      # Bare invocation, capped from outside — vpic-enrich.mjs takes no flags
+      # and reads out/listings.json, which for this run holds only the slice.
+      # Nearly all of it is cache hits against registry/vpic-cache.json, so 6
+      # minutes is generous; a slice that hits its cap still ships, because
+      # every VIN decoded is already written back to the cache and the rows it
+      # did not reach simply stay out of this slice's ingest.
+      - name: VIN enrichment (vpic)
+        working-directory: scraper
+        run: |
+          timeout 6m node vpic-enrich.mjs || \
+            echo "::warning::vpic-enrich hit its 6m cap on slice ${{ steps.pick.outputs.slice }}; decoded VINs are cached and will not be re-fetched"
+
+      - name: Ingest
+        working-directory: scraper
+        run: node ingest.mjs
+
+      - name: Sync this slice to Supabase
+        if: ${{ github.event.inputs.sync != 'false' }}
+        working-directory: scraper
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_INGEST_TOKEN: ${{ secrets.SUPABASE_INGEST_TOKEN }}
+        run: node db-sync.mjs
+
+      # DELIBERATELY NOT COMMITTED HERE: web/data/scraped-listings.json.
+      # ingest.mjs rewrites that file with whatever it just processed, so a
+      # slice run leaves it holding ~2,000 cars instead of ~100,000. It is the
+      # snapshot the site falls back to when Supabase cannot answer — committing
+      # a slice's copy would shrink the fallback from 58,730 cars to one
+      # slice's worth, and the site would serve that silently, with every
+      # request returning 200. That is the 2026-08-16 incident's shape with a
+      # far worse number. Only a whole-fleet run may write that file, so
+      # nightly.yml keeps sole ownership of it.
+      #
+      # vpic-cache.json IS committed: it is a per-VIN decode cache, and a
+      # decode is permanent once made. Losing it means re-fetching every VIN
+      # from vPIC, which is the six-night outage that cache was built to end.
+      # The pull-rebase-retry loop is nightly.yml's, because 48 runs a day will
+      # race the nightly and the discovery sweep for this file.
+      - name: Commit the vPIC cache
+        if: always()
+        run: |
+          git config user.name "voltcheck-bot"
+          git config user.email "noreply@github.com"
+          git add scraper/registry/vpic-cache.json
+          git diff --staged --quiet && { echo "nothing to commit"; exit 0; }
+          git commit -m "Rolling crawl: vPIC cache after slice ${{ steps.pick.outputs.slice }} [skip ci]"
+          for i in 1 2 3 4 5; do
+            if git pull --rebase --autostash && git push; then
+              echo "vpic cache pushed"; exit 0
+            fi
+            git rebase --abort 2>/dev/null || true
+            sleep $((i * 10))
+          done
+          echo "::warning::Could not push the vPIC cache for slice ${{ steps.pick.outputs.slice }} (raced another run). The decodes are not lost from Supabase's point of view; they will simply be re-fetched next time this slice comes round."
+
+      # No revalidate. Deliberate, and the one place this lane must NOT copy
+      # nightly.yml. /api/revalidate expires the feed cache and re-warms all
+      # six browse shards, and a warm is a full ~226-page walk of every car.
+      # Doing that 48 times a day is the 2026-08-17 egress incident on purpose:
+      # hourly re-walks measured ~1.2 GB/day against a 5 GB/month quota. The
+      # site's cache therefore lags the database by design here, exactly as it
+      # already lags it by up to a day. Refreshing the site stays a scheduled
+      # act on its own cadence, decoupled from how often data lands.
+      - name: What this slice did
+        if: always()
+        run: |
+          echo "slice ${{ steps.pick.outputs.slice }} of ${{ steps.pick.outputs.slices }}"
+          echo "domains: $(cat /tmp/domains.txt | wc -w)"
+          echo "sync: ${{ github.event.inputs.sync || 'true' }}"
