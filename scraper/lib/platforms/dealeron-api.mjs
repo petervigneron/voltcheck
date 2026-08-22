@@ -26,6 +26,7 @@
 // JSON-LD offers.price the old path used (dublinchevrolet OPTIQ: 54083 both
 // ways, 2026-08-19). VehicleInternetPrice is 0 on these records and TaggingPrice
 // is the MSRP, so neither is the number a shopper reads; the price library is.
+import { conditionToken } from "../condition.mjs";
 import { fetchPage, politeGetJson } from "../http.mjs";
 import { stabilizeImages } from "../images.mjs";
 
@@ -155,8 +156,13 @@ export function vehicleNode(vc, origin) {
   if (!API_VIN_RE.test(vin)) return null;
 
   const price = priceFromLibrary(vc.VehiclePriceLibrary) ?? numOrU(vc.VehicleInternetPrice);
-  const cond = String(vc.VehicleCondition ?? vc.VehicleType ?? "").toLowerCase();
-  const itemCondition = cond.includes("new") ? "new" : "used";
+  // VehicleType is the machine token ("new"/"used"); VehicleCondition is the
+  // localized string the storefront prints, and reading THAT first is what
+  // published es.fordofkendall.com's whole Spanish new lot as used — "Nuevo"
+  // does not contain "new". Unknown stays unknown: the old `: "used"` tail
+  // asserted a condition on any card whose field was missing or unfamiliar.
+  // See ../condition.mjs for the measurements and the certified rule.
+  const itemCondition = conditionToken(vc.VehicleType) ?? conditionToken(vc.VehicleCondition);
   const mileage = numOrU(vc.VehicleMileage) ?? numOrU(vc.Mileage);
   // Declared fuel ("Electric Fuel System", "Gas/Electric Hybrid", "Gasoline").
   // classifyEv reads it and decides — nothing here pre-judges electric-ness.
@@ -208,7 +214,7 @@ export function vehicleNode(vc, origin) {
     driveWheelConfiguration: driveToken(vc.VehicleDriveTrain),
     sku: vc.VehicleStockNumber ? String(vc.VehicleStockNumber) : undefined,
     image: images.length ? images : undefined,
-    itemCondition,
+    ...(itemCondition ? { itemCondition } : {}),
     // Certification is a warranty claim: take it only from the feed's own CPO
     // flag, never inferred — the same rule the HTML dotagging path holds to.
     ...(vc.VehicleCpo === true ? { certified: true } : {}),

@@ -38,6 +38,7 @@
 // the same internet/sale/asking/msrp fields the DDC.dataLayer record did — so
 // the resolver returns an identical number to the pre-API path, including its
 // abstain-to-0 behaviour, with no VDP fetch.
+import { conditionToken } from "../condition.mjs";
 import { politePostJson } from "../http.mjs";
 import { stabilizeImages } from "../images.mjs";
 
@@ -104,7 +105,14 @@ export function mapRecord(r, accounts, origin) {
   // classifyEv reads; the tracking normalFuelType is a second signal. Nothing
   // here decides EV-ness — classifyEv does, downstream.
   const fuel = r.fuelType || tracking.get("normalFuelType") || undefined;
-  const isNew = String(r.condition ?? "").toLowerCase() === "new";
+  // `type` is the machine token ("new"/"used"); `condition` is the string the
+  // storefront prints, and it is neither a fixed vocabulary nor English on
+  // every rooftop — "New", "USED", "Pre-Owned", "Certified Pre-Owned",
+  // "Certified Used", "BMW Certified", "Certified by Volvo" all appear in one
+  // 115-rooftop sample. The old `=== "new"` test therefore had exactly one
+  // spelling of new and turned everything else, an ABSENT field included,
+  // into a "used" claim. Unknown now stays unknown; see ../condition.mjs.
+  const cond = conditionToken(r.type) ?? conditionToken(r.condition);
   // Every image in the record's own images[] list — not just the hero. URLs
   // observed live carry no query string (content-hashed CDN path), but
   // stabilizeImages() strips one defensively; see scraper/lib/images.mjs.
@@ -135,7 +143,7 @@ export function mapRecord(r, accounts, origin) {
     vehicleInteriorColor: interiorColor,
     driveWheelConfiguration: driveRaw || undefined,
     image: images.length ? images : undefined,
-    itemCondition: isNew ? "new" : "used",
+    ...(cond ? { itemCondition: cond } : {}),
     fuelType: fuel,
     vehicleEngine: { "@type": "EngineSpecification", fuelType: fuel },
     offers: {
@@ -163,7 +171,10 @@ export function mapRecord(r, accounts, origin) {
     internetPrice: tp.internetPrice,
     salePrice: tp.salePrice,
     askingPrice: tp.askingPrice,
-    newOrUsed: isNew ? "new" : "used",
+    // undefined when the record said nothing: enrichFromDdc reads
+    // `d.newOrUsed ?? rec.condition`, so an unknown here falls through to the
+    // node above rather than becoming a claim.
+    newOrUsed: cond,
     certified: r.certified === true,
     stockNumber: r.stockNumber ? String(r.stockNumber) : undefined,
     accountName: account?.name || addr?.accountName || undefined,

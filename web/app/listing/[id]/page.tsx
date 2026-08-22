@@ -219,10 +219,22 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
             )}
 
             <div className="mt-4">
+              {/* No row at all when the seller never said. This used to read
+                  "Used" for anything that wasn't new or certified, which
+                  turned an absent field into a printed claim about the car —
+                  the same else-branch the platform extractors used to carry
+                  (scraper/lib/condition.mjs). Spec renders nothing for
+                  undefined, so the line simply isn't there. */}
               <Spec
                 label="Condition"
                 value={
-                  listing.condition === "new" ? "New" : listing.condition === "certified" ? "Certified pre-owned" : "Used"
+                  listing.condition === "new"
+                    ? "New"
+                    : listing.condition === "certified"
+                      ? "Certified pre-owned"
+                      : listing.condition === "used"
+                        ? "Used"
+                        : undefined
                 }
               />
               <Spec

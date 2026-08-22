@@ -23,6 +23,18 @@
 // odometer parse existed. The fix is a per-platform parser, and this names the
 // worklist by dealer so the clusters are visible.
 //
+// READ A "BROKEN LOT" VERDICT TWICE. This audit's denominator is the lot's
+// used/certified cars, so a lot that publishes NEW cars as used arrives here
+// as a wall of used cars with no odometer — which is what a broken mileage
+// parser looks like, and is not one. That is how es.fordofkendall.com landed
+// on this list on 2026-08-22: DealerOn served it "Nuevo", the extractor read
+// the display string with an English test, and 34 new Mach-Es joined the used
+// denominator. Fixed in scraper/lib/condition.mjs. Before writing a parser,
+// check the flagged lot's model years — no-odometer rows that are all current
+// or next model year are a condition problem, not a mileage one — and re-crawl
+// it, because entries here go stale (weberchevrolet.com, named the same day,
+// showed 0 of 5 missing on a fresh crawl).
+//
 // It reports; it does not edit. And it ratchets: 202 broken lots exist the day
 // it's born, so the gate is "no MORE than the committed baseline", not zero —
 // a NEW lot going dark turns it red, the backlog doesn't. Lower

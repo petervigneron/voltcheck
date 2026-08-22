@@ -103,7 +103,11 @@ export function listingTiles(
   // and said, of a car whose own card already reads "New", that its mileage
   // was a reason to buy it. High miles stays unconditional: a "new" car with
   // 100,000 miles on it is a fact worth printing whatever the feed calls it.
-  if (l.condition !== "new" && l.mileage != null && l.mileage > 0 && l.mileage < 15000) {
+  // Asked positively — a car we KNOW is used — rather than "not new". The
+  // negative form fired on any car whose condition we never resolved, which
+  // after the platform extractors stopped asserting "used" from an absent
+  // field (scraper/lib/condition.mjs) includes cars that are new.
+  if ((l.condition === "used" || l.condition === "certified") && l.mileage != null && l.mileage > 0 && l.mileage < 15000) {
     t.push({ kind: "flag", text: "Low miles" });
   } else if (l.mileage != null && l.mileage > 100000) t.push({ kind: "flag", text: "High miles" });
 

@@ -4,6 +4,7 @@
 // classifications are dropped until vPIC verification exists.
 import { readFile, writeFile } from "node:fs/promises";
 import { isKnownMake } from "./lib/makes.mjs";
+import { publishedCondition } from "./lib/condition.mjs";
 import { fuelTextOnly } from "./lib/ev.mjs";
 import { priceFloor } from "./lib/price-floor.mjs";
 
@@ -103,14 +104,9 @@ function vwBuzzVds(r) {
   return hit ? { drive: hit } : {};
 }
 
-function condition(r) {
-  if (r.certified) return "certified";
-  const c = `${r.condition ?? ""} ${r.sourceUrl ?? ""}`.toLowerCase();
-  if (/certified/.test(c)) return "certified";
-  if (/\bnew\b|\/new-/.test(c)) return "new";
-  if (/used|\/used-/.test(c)) return "used";
-  return undefined;
-}
+// Delegated to lib/condition.mjs, which owns the whole condition vocabulary
+// (including the non-English half) and the measurements behind it.
+const condition = (r) => publishedCondition(r);
 
 // The DB stores year as smallint; a dealer feed that slips a date past the
 // crawler (20250101, the 2026-08-15 nightly failure) is repaired to its
