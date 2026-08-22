@@ -1,0 +1,157 @@
+name: Refresh site cache
+
+# The site's browse cache used to be refreshed by exactly one thing: the last
+# step of nightly.yml, right after the night's data landed. That worked because
+# there WAS a moment when the data moved. rolling-crawl.yml removes that moment
+# — a slice of the registry lands every 30 minutes — so refreshing has to
+# become a scheduled act of its own, on a cadence chosen for cost rather than
+# triggered by an event that no longer exists.
+#
+# TWICE A DAY, and the arithmetic is why. A refresh is a full walk of the feed:
+# ~231 requests, measured at 122.6 MB decompressed and ~27 MB on the wire
+# (web/ session, 2026-08-22, against 100,573 rows). Against the 5 GB/month free
+# egress quota:
+#
+#     1/day   ~0.81 GB/mo    roughly today
+#     2/day   ~1.62 GB/mo    this — about a third of quota
+#     4/day   ~3.24 GB/mo    ~two thirds, before deploys, which each cost a walk
+#    48/day  ~29 GB/mo       the 2026-08-17 egress incident, on purpose
+#
+# Two rather than four because MORE REFRESHES CANNOT MAKE A CAR FRESHER THAN
+# ITS OWN CRAWL. rolling-crawl sweeps all 13,165 rooftops once a day, exactly
+# as the nightly did, so any given car's data is at most ~24h old regardless of
+# how often the site re-reads it. Refreshing twice halves the site's worst-case
+# lag from ~24h to ~12h, which is strictly better than today at close to
+# today's cost; refreshing four times spends another third of the quota to
+# shave a lag the crawl cadence makes meaningless. The feed is also growing
+# (100,297 rows this morning, 100,584 tonight) and coverage is the mission, so
+# per-walk cost only rises — the headroom is worth keeping.
+#
+# ONLY ONE CRON HERE, not two. nightly.yml's final step already revalidates and
+# warms when its own sync succeeds, at roughly 16:00 UTC. This is that firing's
+# ~12-hour counterpart, which makes TWO refreshes a day in total. If the
+# nightly's crawl/ingest lane is ever retired in favour of rolling-crawl, its
+# revalidate goes with it and a second cron (~16:00 UTC) belongs here.
+#
+# There is no attempt to time this to when data "just moved". With slices
+# landing all day, any refresh catches a sweep partway through — the feed is a
+# mixture of per-domain vintages, which it has always been. Uneven, not
+# incoherent. A fixed schedule is therefore correct and chasing a good moment
+# is not.
+
+on:
+  schedule:
+    - cron: "0 4 * * *" # 04:00 UTC, ~12h from the nightly's own revalidate
+  workflow_dispatch:
+
+concurrency:
+  group: refresh-site
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  actions: read # reads whether nightly.yml is mid-run (see the guard below)
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # Skip entirely if the nightly is running: it revalidates and warms as
+      # its own last step, so firing here as well would spend a second walk to
+      # do the same job, and would do it against an instance already carrying
+      # the night's writes. Fails OPEN — a GitHub API hiccup lets the refresh
+      # proceed, because a skipped refresh is staler data while a doubled one
+      # only costs egress. Named permissions narrow the token to exactly what
+      # is listed, so `actions: read` above is what keeps this from silently
+      # reporting "not running" every time.
+      - name: Is the nightly running?
+        id: nightly
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          BUSY=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow nightly.yml \
+                   --status in_progress --limit 1 --json databaseId --jq 'length' 2>/dev/null || echo 0)
+          echo "busy=$BUSY" >> "$GITHUB_OUTPUT"
+          echo "nightly in progress: $BUSY"
+
+      # The same gate nightly.yml applies before its own revalidate, and for
+      # the same reason: expiring a good cache and re-warming it against a
+      # database that cannot serve a walk is how the browse grid gets poisoned.
+      # A page is NOT the gate — 35 of 36 bucket pages answered in ~0.3 s on
+      # 2026-08-22 and the full walk still died — so this checks the count and
+      # then a real feed page under the 1.5 s ceiling the nightly uses, and
+      # refuses rather than warming into a sick instance.
+      #
+      # Since 049f41b the browse shards throw on a fallback read rather than
+      # serving the bundled snapshot, so a bad warm now degrades to "stale but
+      # correct" instead of "fresh but half empty". That makes this gate a cost
+      # control more than a correctness one — but it stays, because burning a
+      # walk to cache nothing is still worth avoiding.
+      - name: Can the database serve a walk?
+        id: gate
+        if: ${{ steps.nightly.outputs.busy == '0' }}
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_ANON_KEY" ]; then
+            echo "::warning::no Supabase credentials; skipping the refresh rather than guessing"
+            echo "ok=false" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          auth=(-H "apikey: $SUPABASE_ANON_KEY" -H "Authorization: Bearer $SUPABASE_ANON_KEY")
+          code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 20 "${auth[@]}" \
+            -H "Range: 0-0" -H "Prefer: count=exact" \
+            "$SUPABASE_URL/rest/v1/listings?select=vin&delisted_at=is.null") || code=000
+          if [ "$code" != "200" ] && [ "$code" != "206" ]; then
+            echo "::warning::database cannot answer the listing count (HTTP $code); skipping this refresh, the site keeps the cache it has"
+            echo "ok=false" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          sel="vin,payload,first_seen_at,last_seen_at,prev_price_usd,price_changed_at,buyback_disclosed,listed_on"
+          read -r pcode ptime < <(curl -s -o /dev/null -w "%{http_code} %{time_total}" --max-time 20 "${auth[@]}" \
+            "$SUPABASE_URL/rest/v1/live_listings_feed?select=$sel&order=vin.asc&limit=500&vin=gte.W" || echo "000 99")
+          if [ "$pcode" != "200" ] || awk "BEGIN{exit !($ptime > 1.5)}"; then
+            echo "::warning::a fat feed page returned $pcode in ${ptime}s (ceiling 1.5s); skipping this refresh"
+            echo "ok=false" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          echo "count HTTP $code, fat feed page ${ptime}s — safe to refresh"
+          echo "ok=true" >> "$GITHUB_OUTPUT"
+
+      # first FIRST: it is the payload the next visitor's first card waits on.
+      # Then the six shards, then the six sitemaps — the sitemaps ride the walk
+      # memo the shard warm just paid for, so they cost no extra database read.
+      - name: Expire and warm
+        if: ${{ steps.gate.outputs.ok == 'true' }}
+        env:
+          FEED_REVALIDATE_SECRET: ${{ secrets.FEED_REVALIDATE_SECRET }}
+        run: |
+          if [ -z "$FEED_REVALIDATE_SECRET" ]; then
+            echo "::warning::FEED_REVALIDATE_SECRET unset; the site refreshes on its 24h cache backstop instead"; exit 0
+          fi
+          curl -fsS --retry 3 --max-time 60 -X POST \
+            -H "x-revalidate-secret: $FEED_REVALIDATE_SECRET" https://voltcheck.net/api/revalidate \
+            || { echo "::warning::/api/revalidate unreachable; 24h backstop applies"; exit 0; }
+          for s in first 0 1 2 3 4 5; do
+            curl -fsS --retry 2 --max-time 300 -o /dev/null "https://voltcheck.net/api/index/$s" \
+              || echo "::warning::shard $s warm failed; its first visitor pays the render"
+          done
+          for s in 0 1 2 3 4 5; do
+            curl -fsS --retry 2 --max-time 300 -o /dev/null "https://voltcheck.net/sitemap/$s.xml" \
+              || echo "::warning::sitemap $s warm failed; crawlers keep the previous copy"
+          done
+
+      # Seven 200s are not seven correct bodies. This counts the ROWS in what
+      # was just cached and fails if the shards disagree with each other or
+      # with the total — the 2026-08-21 shape, where five shards served ~9,800
+      # rows each and every endpoint answered 200 for most of a day.
+      - name: Verify what we just warmed
+        if: ${{ steps.gate.outputs.ok == 'true' }}
+        working-directory: scraper
+        env:
+          FEED_REVALIDATE_SECRET: ${{ secrets.FEED_REVALIDATE_SECRET }}
+        run: node feed-shard-check.mjs
