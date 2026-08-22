@@ -72,7 +72,23 @@ export function EnrichmentFacts({
     row.battery?.packGrossKwh ||
     row.battery?.chemistry ||
     row.range?.epaRangeMi ||
-    row.range?.testedRangeMi
+    row.range?.epaRangeTotalMi ||
+    row.range?.testedRangeMi ||
+    row.range?.mpgeElectric ||
+    row.range?.mpgeCombined ||
+    row.range?.mpgGasoline
+  );
+  // A PHEV row is any row carrying at least one fact that only exists for a
+  // plug-in hybrid. Once true, epaRangeMi stops being labeled "EPA range" —
+  // on a BEV that's the whole story, but on a PHEV it is only the
+  // electric-only figure, and printing it under the BEV's label right next
+  // to (or instead of) the total range is exactly the confusion a PHEV page
+  // cannot afford. See docs/agents/phev-enrichment-2026-08-21.md §2.
+  const isPhevRange = !!(
+    row.range?.epaRangeTotalMi ||
+    row.range?.mpgeElectric ||
+    row.range?.mpgeCombined ||
+    row.range?.mpgGasoline
   );
   const hasThermal = !!row.thermal?.heatPump;
   const hasCharging = !!(
@@ -107,8 +123,27 @@ export function EnrichmentFacts({
               <FactRow label="Usable capacity" fact={row.battery?.packUsableKwh} format={(v) => `${v} kWh`} />
               <FactRow label="Gross capacity" fact={row.battery?.packGrossKwh} format={(v) => `${v} kWh`} />
               <FactRow label="Chemistry" fact={row.battery?.chemistry} />
-              <FactRow label="EPA range" fact={row.range?.epaRangeMi} format={(v) => `${v} mi`} />
+              <FactRow
+                label={isPhevRange ? "Electric-only range" : "EPA range"}
+                fact={row.range?.epaRangeMi}
+                format={(v) => `${v} mi`}
+              />
+              {/* PHEV-only: the total, gas-assisted figure, always a separate
+                  row from the one above and never blended into it — a
+                  shopper needs both numbers, not just the bigger one. */}
+              <FactRow
+                label="Total range (gas + electric)"
+                fact={row.range?.epaRangeTotalMi}
+                format={(v) => `${v} mi`}
+              />
               <FactRow label="Real-world tested range" fact={row.range?.testedRangeMi} format={(v) => `${v} mi`} />
+              <FactRow label="MPGe (electric)" fact={row.range?.mpgeElectric} format={(v) => `${v} MPGe`} />
+              <FactRow label="MPGe (EPA composite)" fact={row.range?.mpgeCombined} format={(v) => `${v} MPGe`} />
+              <FactRow
+                label="MPG (gasoline, after battery depletes)"
+                fact={row.range?.mpgGasoline}
+                format={(v) => `${v} MPG`}
+              />
             </>
           )}
 

@@ -392,6 +392,340 @@ const PB2 = { packGrossKwh: f(82.3, "agg", "medium", "Gen-2 Performance Battery"
 const PB2P = { packGrossKwh: f(97, "agg", "medium", "Gen-2 Performance Battery Plus") };
 const MACB = { packGrossKwh: f(100, "vin", "high", "100 kWh gross (95 net), Porsche's own Part 565 submission") };
 
+  // ── Sixth research tranche (2026-08-21): Chevrolet Volt, Toyota RAV4
+  // Prime, Toyota Prius Prime, Chrysler Pacifica Hybrid, Ford Escape PHEV,
+  // Honda Clarity Plug-In Hybrid — the fully-sourced models from
+  // docs/agents/phev-enrichment-2026-08-21.md, added after the schema gained
+  // epaRangeTotalMi/mpgeElectric/mpgeCombined/mpgGasoline (types.ts). Values,
+  // source tags, confidence, and note text are the research doc's, not
+  // re-derived. Volt is the owner's own trigger case (2014 Gen 1, VIN
+  // 1G1RD6E45EU113896). Volvo XC90/XC60, Hyundai Tucson, and Mazda CX-90 were
+  // only partially sourced (EPA yes, battery/charging/warranty no) and are
+  // deliberately NOT here — see the doc's §5, a later pass.
+  const AS_OF_PHEV = "2026-08-21";
+  function fp<T>(
+    value: T,
+    source: Source,
+    confidence: Fact<T>["confidence"] = "high",
+    note?: string,
+    sourceUrl?: string
+  ): Fact<T> {
+    return { value, source, asOf: AS_OF_PHEV, confidence, note, sourceUrl };
+  }
+
+  // Chevrolet Volt — three genuinely different eras. Battery split between
+  // 2011–12 and 2013–15 comes from GM's own battery-comparison PDF, which
+  // gives a Gen-1 range (16.0–17.1 kWh gross / 10.2–11.2 kWh usable) without a
+  // clean per-era confirmation, hence "medium" rather than "high" for that
+  // one split (not because the number is shaky). DC fast charging never
+  // shipped on any Volt but wasn't control-tested against a primary GM
+  // document this pass, so it's tagged "est" rather than "mfr" despite being
+  // essentially uncontested.
+  const VOLT_BATTERY_PDF = "https://media.gm.com/content/dam/Media/microsites/product/Volt_2016/doc/VOLT_BATTERY.pdf";
+  const VOLT_NO_DCFC = fp<"none">("none", "est", "high", "Never shipped a CCS/CHAdeMO port, any generation; well-established but not control-tested against a primary GM document this pass");
+  const VOLT_WARRANTY = { batteryYears: fp(8, "mfr", "high"), batteryMiles: fp(100_000, "mfr", "high") };
+  const VOLT_ROWS: EnrichmentRow[] = [
+    {
+      id: "volt-2011-12", make: "CHEVROLET", model: "Volt", modelYears: [2011, 2012],
+      battery: {
+        packGrossKwh: fp(16.0, "mfr", "medium", "GM's own PDF gives 16.0–17.1 kWh across Gen 1 (2011–15) without a clean per-era split", VOLT_BATTERY_PDF),
+        packUsableKwh: fp(10.2, "mfr", "medium", undefined, VOLT_BATTERY_PDF),
+      },
+      range: {
+        epaRangeMi: fp(35, "mfr", "high", "Electric-only EPA range; Gen 1 required premium gas, Gen 2 (2016+) regular", epa(30980)),
+        epaRangeTotalMi: fp(380, "mfr", "high", undefined, epa(30980)),
+        mpgeElectric: fp(93, "mfr", "high", "94 for MY2012", epa(30980)),
+        mpgeCombined: fp(60, "mfr", "high", undefined, epa(30980)),
+        mpgGasoline: fp(37, "mfr", "high", "Premium gasoline required", epa(30980)),
+      },
+      charging: {
+        acOnboardKw: fp(3.3, "est", "medium", "Not independently re-derived from a primary GM document this pass"),
+        dcFastCharging: VOLT_NO_DCFC,
+      },
+      warranty: VOLT_WARRANTY,
+    },
+    {
+      // The owner's own trigger case: 2014 is a Gen 1 Volt, in this bucket.
+      id: "volt-2013-15", make: "CHEVROLET", model: "Volt", modelYears: [2013, 2015],
+      battery: {
+        packGrossKwh: fp(17.1, "mfr", "medium", "Same Gen-1 GM PDF; larger usable window vs. 2011–12 via a software update", VOLT_BATTERY_PDF),
+        packUsableKwh: fp(11.2, "mfr", "medium", undefined, VOLT_BATTERY_PDF),
+      },
+      range: {
+        epaRangeMi: fp(38, "mfr", "high", "Electric-only EPA range; Gen 1 required premium gas, Gen 2 (2016+) regular", epa(33900)),
+        epaRangeTotalMi: fp(380, "mfr", "high", undefined, epa(33900)),
+        mpgeElectric: fp(98, "mfr", "high", undefined, epa(33900)),
+        mpgeCombined: fp(62, "mfr", "high", undefined, epa(33900)),
+        mpgGasoline: fp(37, "mfr", "high", "Premium gasoline required", epa(33900)),
+      },
+      charging: {
+        acOnboardKw: fp(3.3, "est", "medium", "Not independently re-derived from a primary GM document this pass"),
+        dcFastCharging: VOLT_NO_DCFC,
+      },
+      warranty: VOLT_WARRANTY,
+    },
+    {
+      id: "volt-2016-19", make: "CHEVROLET", model: "Volt", modelYears: [2016, 2019],
+      battery: {
+        packGrossKwh: fp(18.4, "mfr", "high", "Gen 2", VOLT_BATTERY_PDF),
+        packUsableKwh: fp(14.0, "mfr", "high", undefined, VOLT_BATTERY_PDF),
+      },
+      range: {
+        epaRangeMi: fp(53, "mfr", "high", "Electric-only EPA range; Gen 2 uses regular gasoline (Gen 1 required premium). Identical rating 2016–19", epa(36863)),
+        epaRangeTotalMi: fp(420, "mfr", "high", undefined, epa(36863)),
+        mpgeElectric: fp(106, "mfr", "high", undefined, epa(36863)),
+        mpgeCombined: fp(77, "mfr", "high", "79 in some model years", epa(36863)),
+        mpgGasoline: fp(42, "mfr", "high", "Regular gasoline", epa(36863)),
+      },
+      charging: {
+        acOnboardKw: fp(3.6, "est", "medium", "DOE/INL bench test + GM supplier material corroborate 3.6 kW; not confirmed from a GM primary spec document this pass"),
+        dcFastCharging: VOLT_NO_DCFC,
+      },
+      warranty: VOLT_WARRANTY,
+    },
+  ];
+
+  // Toyota RAV4 Prime — one generation, stable ratings.
+  const RAV4_PRIME_RELEASE = "https://pressroom.toyota.com/plug-and-play-with-the-2024-rav4-prime/";
+  const TOYOTA_WARRANTY_EXT = "https://pressroom.toyota.com/toyota-extends-battery-warranty-for-model-year-2020-hybrid-plug-in-and-fuel-cell-electric-vehicles/";
+  const TOYOTA_WARRANTY_2020PLUS = { batteryYears: fp(10, "mfr", "high", undefined, TOYOTA_WARRANTY_EXT), batteryMiles: fp(150_000, "mfr", "high", undefined, TOYOTA_WARRANTY_EXT) };
+  const TOYOTA_WARRANTY_PRE2020 = { batteryYears: fp(8, "mfr", "high"), batteryMiles: fp(100_000, "mfr", "high") };
+  const RAV4_PRIME_ROW: EnrichmentRow = {
+    id: "rav4-prime-2021-25", make: "TOYOTA", model: "RAV4 Prime", modelYears: [2021, 2025],
+    modelAliases: ["RAV4 PHEV", "RAV4 Plug-In Hybrid", "RAV4 PLUG-IN"],
+    battery: { packGrossKwh: fp(18.1, "mfr", "high", "No usable-kWh figure published by Toyota", RAV4_PRIME_RELEASE) },
+    range: {
+      epaRangeMi: fp(42, "mfr", "high", "Electric-only EPA range. Identical rating 2021–2025", epa(42793)),
+      epaRangeTotalMi: fp(600, "mfr", "high", undefined, epa(42793)),
+      mpgeElectric: fp(94, "mfr", "high", undefined, epa(42793)),
+      mpgeCombined: fp(65, "mfr", "high", undefined, epa(42793)),
+      mpgGasoline: fp(38, "mfr", "high", undefined, epa(42793)),
+    },
+    charging: {
+      acOnboardKw: fp(6.6, "mfr", "medium", "SE-grade equipment line on the 2024 release; 2021–23 shipped 3.3 kW standard with 6.6 kW an SE/XSE Premium option on some trims — exact year/trim gating not resolved this pass", RAV4_PRIME_RELEASE),
+      dcFastCharging: fp("none", "mfr", "high", "Control-tested against Toyota's own bZ4X press materials, which name DC fast charging explicitly; the RAV4 Prime release never does", RAV4_PRIME_RELEASE),
+    },
+    thermal: { heatPump: fp("standard", "mfr", "high", undefined, RAV4_PRIME_RELEASE) },
+    warranty: TOYOTA_WARRANTY_2020PLUS,
+  };
+
+  // Toyota Prius Prime — Gen 2 (2017–2022) and Gen 3 (2023–2025) genuinely
+  // differ, and Gen 3's SE trim differs from base/LE/XLE enough (45/600 vs
+  // 40/550 mi) to need its own row — an undefined-trim row would otherwise
+  // understate the SE. Gen 2's warranty crosses Toyota's own 2020 battery-
+  // warranty-extension line (2017–19 vs 2020–22), which the research doc
+  // flags as a real per-year fact, so Gen 2 is split for that reason even
+  // though every other fact is identical across it.
+  const PRIUS_ALIASES = ["Prius PHEV", "Prius PHEV SE", "Prius Plug-In Hybrid"];
+  const PRIUS_GEN2_BATTERY = { packGrossKwh: fp(8.79, "est", "medium", "Secondary-sourced (PriusChat teardown cross-referencing Toyota parts data): 95s1p cells, 351.5V nominal") };
+  const PRIUS_GEN2_RANGE = {
+    epaRangeMi: fp(25, "mfr", "high", "Electric-only EPA range. Identical rating 2017–2022", epa(38531)),
+    epaRangeTotalMi: fp(640, "mfr", "high", undefined, epa(38531)),
+    mpgeElectric: fp(133, "mfr", "high", undefined, epa(38531)),
+    mpgeCombined: fp(78, "mfr", "high", undefined, epa(38531)),
+    mpgGasoline: fp(54, "mfr", "high", undefined, epa(38531)),
+  };
+  const PRIUS_GEN2_CHARGING = {
+    acOnboardKw: fp(3.3, "est", "medium", "Secondary-sourced (16A/230V); no Toyota primary document pulled this pass"),
+    dcFastCharging: fp<"none">("none", "est", "medium", "Same PHEV architecture as RAV4 Prime, but not re-run against a Prius-specific control document this pass"),
+  };
+  const PRIUS_GEN3_BATTERY = { packGrossKwh: fp(13.6, "mfr", "high", "No usable-kWh split found from a Toyota document") };
+  const PRIUS_GEN3_CHARGING = {
+    // Onboard AC charger omitted: sources conflict 3.5 vs 6.6 kW and this
+    // pass didn't resolve it to one number — omit rather than guess.
+    dcFastCharging: fp<"none">("none", "est", "medium", "Same PHEV architecture as RAV4 Prime, but not re-run against a Prius-specific control document this pass"),
+  };
+  const PRIUS_GEN3_THERMAL = { heatPump: fp<"standard">("standard", "mfr", "high", "Same heat-pump system Toyota describes for the RAV4 Prime, quoted from that press release rather than a Prius-specific one", RAV4_PRIME_RELEASE) };
+  const PRIUS_PRIME_ROWS: EnrichmentRow[] = [
+    {
+      id: "prius-prime-2017-19", make: "TOYOTA", model: "Prius Prime", modelYears: [2017, 2019],
+      modelAliases: PRIUS_ALIASES,
+      battery: PRIUS_GEN2_BATTERY,
+      range: PRIUS_GEN2_RANGE,
+      charging: PRIUS_GEN2_CHARGING,
+      warranty: TOYOTA_WARRANTY_PRE2020,
+    },
+    {
+      id: "prius-prime-2020-22", make: "TOYOTA", model: "Prius Prime", modelYears: [2020, 2022],
+      modelAliases: PRIUS_ALIASES,
+      battery: PRIUS_GEN2_BATTERY,
+      range: PRIUS_GEN2_RANGE,
+      charging: PRIUS_GEN2_CHARGING,
+      warranty: TOYOTA_WARRANTY_2020PLUS,
+    },
+    {
+      id: "prius-prime-2023-25-base", make: "TOYOTA", model: "Prius Prime", modelYears: [2023, 2025],
+      modelAliases: PRIUS_ALIASES,
+      battery: PRIUS_GEN3_BATTERY,
+      range: {
+        epaRangeMi: fp(40, "mfr", "high", 'Electric-only EPA range, base/LE/XLE trims. Identical rating 2023–2025; EPA renamed the model string to "Prius PHEV" for MY2025', epa(47228)),
+        epaRangeTotalMi: fp(550, "mfr", "high", undefined, epa(47228)),
+        mpgeElectric: fp(114, "mfr", "high", undefined, epa(47228)),
+        mpgeCombined: fp(79, "mfr", "high", undefined, epa(47228)),
+        mpgGasoline: fp(48, "mfr", "high", undefined, epa(47228)),
+      },
+      charging: PRIUS_GEN3_CHARGING,
+      thermal: PRIUS_GEN3_THERMAL,
+      warranty: TOYOTA_WARRANTY_2020PLUS,
+    },
+    {
+      id: "prius-prime-2023-25-se", make: "TOYOTA", model: "Prius Prime", modelYears: [2023, 2025], trim: "SE",
+      modelAliases: PRIUS_ALIASES,
+      battery: PRIUS_GEN3_BATTERY,
+      range: {
+        epaRangeMi: fp(45, "mfr", "high", "Electric-only EPA range, SE trim. Identical rating 2023–2025", epa(47229)),
+        epaRangeTotalMi: fp(600, "mfr", "high", undefined, epa(47229)),
+        mpgeElectric: fp(127, "mfr", "high", undefined, epa(47229)),
+        mpgeCombined: fp(89, "mfr", "high", undefined, epa(47229)),
+        mpgGasoline: fp(52, "mfr", "high", undefined, epa(47229)),
+      },
+      charging: PRIUS_GEN3_CHARGING,
+      thermal: PRIUS_GEN3_THERMAL,
+      warranty: TOYOTA_WARRANTY_2020PLUS,
+    },
+  ];
+
+  // Chrysler Pacifica Hybrid — one generation, EPA rating stepped down in
+  // MY2020. modelAliases includes bare "Pacifica": confirmed by VIN sample in
+  // the research doc to be the Hybrid every time, and safe by construction —
+  // scraper/lib/ev.mjs's classifyEv only admits a listing at evConfidence
+  // "high" when the feed's own fuel-type text says "electric" and "plug"; a
+  // gas Pacifica's fuel-type text never does, so it never reaches this
+  // database under any name, bare or not.
+  const PACIFICA_2024_SPEC = "https://chryslermedia.iconicweb.com/mediasite/specs/2024_CH_Pacifica_Plug-in_Hybrid_SP.pdf";
+  const PACIFICA_ALIASES = ["Pacifica Plug-In Hybrid", "Pacifica"];
+  const PACIFICA_BATTERY = { packGrossKwh: fp(16, "mfr", "high", "96-cell Li-ion, 360V nominal", PACIFICA_2024_SPEC) };
+  const PACIFICA_CHARGING = {
+    acOnboardKw: fp(6.6, "est", "medium", "Recurs across independent sources; not itemized as a line item in Stellantis's own spec sheets"),
+    dcFastCharging: fp<"none">("none", "mfr", "high", "Control-tested: the same Stellantis spec-sheet family names DC fast charging for the Wagoneer S; neither the 2020 nor the 2024 Pacifica sheet does", PACIFICA_2024_SPEC),
+  };
+  const PACIFICA_THERMAL = { heatPump: fp<"none">("none", "est", "medium", "Resistive electric heater plus engine coolant; the engine is required for heat and defrost") };
+  const PACIFICA_WARRANTY = { batteryYears: fp(8, "mfr", "high", "10 yr / 150,000 mi in California and other ZEV-adopting states"), batteryMiles: fp(100_000, "mfr", "high") };
+  const PACIFICA_ROWS: EnrichmentRow[] = [
+    {
+      id: "pacifica-hybrid-2017-19", make: "CHRYSLER", model: "Pacifica Hybrid", modelYears: [2017, 2019],
+      modelAliases: PACIFICA_ALIASES,
+      battery: PACIFICA_BATTERY,
+      range: {
+        epaRangeMi: fp(33, "mfr", "high", "Electric-only EPA range", epa(38491)),
+        epaRangeTotalMi: fp(570, "mfr", "high", undefined, epa(38491)),
+        mpgeElectric: fp(84, "mfr", "high", undefined, epa(38491)),
+        mpgeCombined: fp(52, "mfr", "high", undefined, epa(38491)),
+        mpgGasoline: fp(32, "mfr", "high", undefined, epa(38491)),
+      },
+      charging: PACIFICA_CHARGING,
+      thermal: PACIFICA_THERMAL,
+      warranty: PACIFICA_WARRANTY,
+    },
+    {
+      id: "pacifica-hybrid-2020-25", make: "CHRYSLER", model: "Pacifica Hybrid", modelYears: [2020, 2025],
+      modelAliases: PACIFICA_ALIASES,
+      battery: PACIFICA_BATTERY,
+      range: {
+        epaRangeMi: fp(32, "mfr", "high", "Electric-only EPA range. Identical rating 2020–2025", epa(41943)),
+        epaRangeTotalMi: fp(520, "mfr", "high", undefined, epa(41943)),
+        mpgeElectric: fp(82, "mfr", "high", undefined, epa(41943)),
+        mpgeCombined: fp(48, "mfr", "high", undefined, epa(41943)),
+        mpgGasoline: fp(30, "mfr", "high", undefined, epa(41943)),
+      },
+      charging: PACIFICA_CHARGING,
+      thermal: PACIFICA_THERMAL,
+      warranty: PACIFICA_WARRANTY,
+    },
+  ];
+
+  // Ford Escape PHEV — one generation, minor year-to-year updates. Bare
+  // "Escape" is the larger alias bucket (confirmed by VIN sample to be PHEV)
+  // and is safe by the same classifyEv reasoning as Pacifica above: a gas
+  // Escape's fuel-type text never says "electric", so it never reaches this
+  // database.
+  const FORD_ESCAPE_WARRANTY_URL = "https://www.ford.com/support/how-tos/warranty/warranties-and-coverage/what-is-the-warranty-on-my-ford-hybrid-or-electric-vehicle-battery/";
+  const ESCAPE_ALIASES = ["Escape", "Escape Plug-In Hybrid"];
+  const ESCAPE_BATTERY = { packGrossKwh: fp(14.4, "est", "medium", "Secondary-sourced across multiple outlets; no Ford press document found this pass") };
+  const ESCAPE_CHARGING = {
+    acOnboardKw: fp(3.3, "est", "medium", "Secondary-sourced; no Ford press document found this pass"),
+    dcFastCharging: fp<"none">("none", "est", "high", "Universally reported; not control-tested against a Ford primary document this pass"),
+  };
+  // Ford's own page states no CARB-state extension, unlike Toyota/Stellantis.
+  const ESCAPE_WARRANTY = { batteryYears: fp(8, "mfr", "high", undefined, FORD_ESCAPE_WARRANTY_URL), batteryMiles: fp(100_000, "mfr", "high", undefined, FORD_ESCAPE_WARRANTY_URL) };
+  const ESCAPE_ROWS: EnrichmentRow[] = [
+    {
+      id: "escape-phev-2020-22", make: "FORD", model: "Escape PHEV", modelYears: [2020, 2022],
+      modelAliases: ESCAPE_ALIASES,
+      battery: ESCAPE_BATTERY,
+      range: {
+        epaRangeMi: fp(37, "mfr", "high", "Electric-only EPA range", epa(42743)),
+        epaRangeTotalMi: fp(530, "mfr", "high", undefined, epa(42743)),
+        mpgeElectric: fp(102, "mfr", "high", undefined, epa(42743)),
+        mpgeCombined: fp(66, "mfr", "high", undefined, epa(42743)),
+        mpgGasoline: fp(41, "mfr", "high", undefined, epa(42743)),
+      },
+      charging: ESCAPE_CHARGING,
+      warranty: ESCAPE_WARRANTY,
+    },
+    {
+      id: "escape-phev-2023", make: "FORD", model: "Escape PHEV", modelYears: [2023, 2023],
+      modelAliases: ESCAPE_ALIASES,
+      battery: ESCAPE_BATTERY,
+      range: {
+        epaRangeMi: fp(37, "mfr", "high", "Electric-only EPA range", epa(47220)),
+        epaRangeTotalMi: fp(520, "mfr", "high", undefined, epa(47220)),
+        mpgeElectric: fp(101, "mfr", "high", undefined, epa(47220)),
+        mpgeCombined: fp(65, "mfr", "high", undefined, epa(47220)),
+        mpgGasoline: fp(40, "mfr", "high", undefined, epa(47220)),
+      },
+      charging: ESCAPE_CHARGING,
+      warranty: ESCAPE_WARRANTY,
+    },
+    {
+      id: "escape-phev-2024-25", make: "FORD", model: "Escape PHEV", modelYears: [2024, 2025],
+      modelAliases: ESCAPE_ALIASES,
+      battery: ESCAPE_BATTERY,
+      range: {
+        epaRangeMi: fp(37, "mfr", "high", "Electric-only EPA range. Identical rating 2024–2025", epa(48663)),
+        epaRangeTotalMi: fp(560, "mfr", "high", undefined, epa(48663)),
+        mpgeElectric: fp(101, "mfr", "high", undefined, epa(48663)),
+        mpgeCombined: fp(65, "mfr", "high", undefined, epa(48663)),
+        mpgGasoline: fp(40, "mfr", "high", undefined, epa(48663)),
+      },
+      charging: ESCAPE_CHARGING,
+      warranty: ESCAPE_WARRANTY,
+    },
+  ];
+
+  // Honda Clarity Plug-In Hybrid — single generation, ratings never changed.
+  // No modelAliases, deliberately: 13 of 14 live Clarity listings are bare-
+  // named per the research doc, but unlike Escape/Pacifica above, a bare
+  // "Clarity" is NOT safe to alias. Honda also sold a Clarity EV (BEV) and a
+  // Clarity FCV under the same bare name, and classifyEv admits a real
+  // Clarity EV at the same "high" confidence a Clarity PHEV gets — the
+  // gas-car protection Escape/Pacifica get doesn't apply, because a Clarity
+  // EV genuinely is an EV. match.ts has no field that tells them apart once
+  // both are aliased to "Clarity", so aliasing it would risk stamping a BEV's
+  // listing with this row's PHEV battery/range/charging facts. No Clarity EV
+  // has been observed in the live feed to make that collision real yet — if
+  // one appears, this decision should be revisited, but the safe move today
+  // is fewer matches, not a wrong one.
+  const CLARITY_PHEV_ROW: EnrichmentRow = {
+    id: "clarity-phev-2018-21", make: "HONDA", model: "Clarity Plug-In Hybrid", modelYears: [2018, 2021],
+    battery: { packGrossKwh: fp(17, "est", "medium", "Secondary-sourced (Honda Owners site vehicle-specs pages, 2020/2021)") },
+    range: {
+      epaRangeMi: fp(48, "mfr", "high", "Electric-only EPA range. Identical rating 2018–2021", epa(39782)),
+      epaRangeTotalMi: fp(340, "mfr", "high", undefined, epa(39782)),
+      mpgeElectric: fp(110, "mfr", "high", undefined, epa(39782)),
+      mpgeCombined: fp(76, "mfr", "high", undefined, epa(39782)),
+      mpgGasoline: fp(42, "mfr", "high", undefined, epa(39782)),
+    },
+    charging: {
+      acOnboardKw: fp(6.6, "est", "medium", "Secondary-sourced (32A); no Honda press document pulled this pass"),
+      dcFastCharging: fp("none", "est", "high", "Universally reported; not control-tested against a Honda primary document this pass"),
+    },
+    warranty: {
+      batteryYears: fp(8, "est", "medium", "Possibly 10 yr / 150,000 mi in CARB states, matching the Toyota/Stellantis pattern, but not confirmed against a Honda primary document or exact state list this pass"),
+      batteryMiles: fp(100_000, "est", "medium"),
+    },
+  };
+
 export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   // ── MY2022 ─────────────────────────────────────────────────────────────
   {
@@ -2630,50 +2964,95 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
 
   // ── PHEVs: Wrangler 4xe / Grand Cherokee 4xe / X5 45e-50e / Rogue PHEV ──
-  // The range shown is the EPA ALL-ELECTRIC figure (fueleconomy.gov rangeA) —
-  // the honest number for an EV-shopping site — with the gas-assisted total
-  // in the note. None of these DC-fast-charge (J1772 AC only), which the
-  // cards already show as the "No fast charging" tile.
+  // epaRangeMi is the EPA ALL-ELECTRIC figure (fueleconomy.gov rangeA) — the
+  // honest headline for an EV-shopping site — and epaRangeTotalMi is the
+  // separate gas-assisted total (types.ts, added 2026-08-21). Both used to
+  // live as one epaRangeMi plus a note stating the total in prose; that
+  // dropped the total range out of anything a card or a future feature could
+  // read as data. Migrated here, not re-researched — see
+  // docs/agents/phev-enrichment-2026-08-21.md §2. MPGe/gas-MPG were never
+  // sourced for these six rows in the original pass, so they stay absent
+  // rather than guessed. None of these DC-fast-charge (J1772 AC only), which
+  // the cards already show as the "No fast charging" tile.
   {
     id: "wrangler-4xe-2021-25", make: "JEEP", model: "Wrangler 4xe", modelYears: [2021, 2025], packVariant: "PHEV",
-    range: { epaRangeMi: f(22, "mfr", "high", "Electric-only EPA range; 370 mi total with the gas engine. Identical rating 2021–25", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47278") },
+    range: {
+      epaRangeMi: f(22, "mfr", "high", "Electric-only EPA range. Identical rating 2021–25", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47278"),
+      epaRangeTotalMi: f(370, "mfr", "high", undefined, "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47278"),
+    },
     charging: { portStandard: f("J1772", "mfr", "high", "AC charging only, no DC fast charge on any 4xe"), dcFastCharging: f("none", "mfr") },
   },
   {
     id: "wrangler-unl-4xe-2021-25", make: "JEEP", model: "Wrangler Unlimited 4xe", modelYears: [2021, 2025], packVariant: "PHEV",
-    range: { epaRangeMi: f(22, "mfr", "high", "Electric-only EPA range; 370 mi total with the gas engine. Identical rating 2021–25", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47278") },
+    range: {
+      epaRangeMi: f(22, "mfr", "high", "Electric-only EPA range. Identical rating 2021–25", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47278"),
+      epaRangeTotalMi: f(370, "mfr", "high", undefined, "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47278"),
+    },
     charging: { portStandard: f("J1772", "mfr", "high", "AC charging only, no DC fast charge on any 4xe"), dcFastCharging: f("none", "mfr") },
   },
   {
+    // modelAliases added 2026-08-21: the bare "Grand Cherokee" bucket (~56
+    // listings, more than half this model's volume) was falling through with
+    // no row at all — every sampled bare-model VIN decodes to a 4xe, and a
+    // gas Grand Cherokee never reaches this database in the first place
+    // (scraper/lib/ev.mjs's classifyEv only admits it at evConfidence "high"
+    // when the feed's own fuel-type text says "electric" and "plug" — a gas
+    // SUV's fuelType never does). See docs/agents/phev-enrichment-2026-08-21.md §6.
     id: "gc-4xe-2022-25", make: "JEEP", model: "Grand Cherokee 4xe", modelYears: [2022, 2025], packVariant: "PHEV",
-    range: { epaRangeMi: f(26, "mfr", "high", "Electric-only EPA range; 470 mi total with the gas engine. Identical rating 2022–25", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47277") },
+    modelAliases: ["Grand Cherokee"],
+    range: {
+      epaRangeMi: f(26, "mfr", "high", "Electric-only EPA range. Identical rating 2022–25", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47277"),
+      epaRangeTotalMi: f(470, "mfr", "high", undefined, "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47277"),
+    },
     charging: { portStandard: f("J1772", "mfr", "high", "AC charging only, no DC fast charge"), dcFastCharging: f("none", "mfr") },
   },
   {
     id: "x5-45e-2021-23", make: "BMW", model: "X5 PHEV", modelYears: [2021, 2023], trim: "xDrive45e", packVariant: "PHEV",
-    range: { epaRangeMi: f(31, "mfr", "high", "xDrive45e electric-only EPA range; 400 mi total with the gas engine", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=42807") },
+    range: {
+      epaRangeMi: f(31, "mfr", "high", "xDrive45e electric-only EPA range", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=42807"),
+      epaRangeTotalMi: f(400, "mfr", "high", undefined, "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=42807"),
+    },
     charging: { portStandard: f("J1772", "mfr", "high", "AC charging only"), dcFastCharging: f("none", "mfr") },
   },
   {
     id: "x5-50e-2024-26", make: "BMW", model: "X5 PHEV", modelYears: [2024, 2026], trim: "xDrive50e", packVariant: "PHEV",
-    range: { epaRangeMi: f(39, "mfr", "high", "xDrive50e electric-only EPA range (40 for 2026); 440 mi total with the gas engine. MY2024 has no separate fueleconomy.gov entry (control: 2025–26 are present), same xDrive50e", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49009") },
+    range: {
+      epaRangeMi: f(39, "mfr", "high", "xDrive50e electric-only EPA range (40 for 2026). MY2024 has no separate fueleconomy.gov entry (control: 2025–26 are present), same xDrive50e", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49009"),
+      epaRangeTotalMi: f(440, "mfr", "high", undefined, "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49009"),
+    },
     charging: { portStandard: f("J1772", "mfr", "high", "AC charging only"), dcFastCharging: f("none", "mfr") },
   },
   {
     id: "x5-45e-2021-23-alt", make: "BMW", model: "X5", modelYears: [2021, 2023], trim: ["xDrive45e", "45e"], packVariant: "PHEV",
-    range: { epaRangeMi: f(31, "mfr", "high", "xDrive45e electric-only EPA range; 400 mi total with the gas engine", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=42807") },
+    range: {
+      epaRangeMi: f(31, "mfr", "high", "xDrive45e electric-only EPA range", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=42807"),
+      epaRangeTotalMi: f(400, "mfr", "high", undefined, "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=42807"),
+    },
     charging: { portStandard: f("J1772", "mfr", "high", "AC charging only"), dcFastCharging: f("none", "mfr") },
   },
   {
     id: "x5-50e-2024-26-alt", make: "BMW", model: "X5", modelYears: [2024, 2026], trim: ["xDrive50e", "50e"], packVariant: "PHEV",
-    range: { epaRangeMi: f(39, "mfr", "high", "xDrive50e electric-only EPA range (40 for 2026); 440 mi total with the gas engine", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49009") },
+    range: {
+      epaRangeMi: f(39, "mfr", "high", "xDrive50e electric-only EPA range (40 for 2026)", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49009"),
+      epaRangeTotalMi: f(440, "mfr", "high", undefined, "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49009"),
+    },
     charging: { portStandard: f("J1772", "mfr", "high", "AC charging only"), dcFastCharging: f("none", "mfr") },
   },
   {
     id: "rogue-phev-2025-26", make: "NISSAN", model: "Rogue Plug-In Hybrid", modelYears: [2025, 2026], packVariant: "PHEV",
-    range: { epaRangeMi: f(38, "mfr", "medium", "Electric-only range, Nissan's EPA-estimate (420 mi total with the gas engine), fueleconomy.gov has no Rogue PHEV entry yet (control: gas Rogues are present)", "https://usa.nissannews.com/en-US/releases/2026-nissan-rogue-plug-in-hybrid-press-kit") },
+    range: {
+      epaRangeMi: f(38, "mfr", "medium", "Electric-only range, Nissan's EPA-estimate; fueleconomy.gov has no Rogue PHEV entry yet (control: gas Rogues are present)", "https://usa.nissannews.com/en-US/releases/2026-nissan-rogue-plug-in-hybrid-press-kit"),
+      epaRangeTotalMi: f(420, "mfr", "medium", undefined, "https://usa.nissannews.com/en-US/releases/2026-nissan-rogue-plug-in-hybrid-press-kit"),
+    },
     charging: { portStandard: f("J1772", "mfr", "high", "AC charging only"), dcFastCharging: f("none", "mfr") },
   },
+
+  ...VOLT_ROWS,
+  RAV4_PRIME_ROW,
+  ...PRIUS_PRIME_ROWS,
+  ...PACIFICA_ROWS,
+  ...ESCAPE_ROWS,
+  CLARITY_PHEV_ROW,
 
   {
     id: "taycan-2020-4s", ...TAY, modelYears: [2020, 2020], trim: ["4S", "4S with Performance Pack"], packVariant: "Performance Battery Plus",

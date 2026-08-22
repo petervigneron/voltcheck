@@ -94,11 +94,35 @@ export interface EnrichmentRow {
     chemistry?: Fact<Chemistry>;
   };
   range?: {
+    // BEV: the car's whole EPA range — unchanged meaning, don't repurpose it.
+    // PHEV: the EPA ELECTRIC-ONLY range (fueleconomy.gov's `rangeA`, on
+    // fuelType2/electricity) — the headline number for an EV-shopping site,
+    // and the one a PHEV row should always carry even where the rest of this
+    // group is thin. Never the blended or total figure for a PHEV; that's
+    // epaRangeTotalMi below. A PHEV row with both fields set is how a shopper
+    // tells them apart on the card; see EnrichmentReport.tsx's label swap.
     epaRangeMi?: Fact<number>;
+    // PHEV only. Total range with the gas engine running after the battery
+    // depletes (fueleconomy.gov's plain `range`, fuelType1+fuelType2
+    // combined). Absent for BEVs — there is no second number to hold.
+    epaRangeTotalMi?: Fact<number>;
     // Aggregate of named instrumented tests (Edmunds loop, C&D 75-mph,
     // InsideEVs 70-mph); note lists each test attributed.
     testedRangeMi?: Fact<number>;
     epaKwhPer100Mi?: Fact<number>;
+    // PHEV only, from fueleconomy.gov: `combA08`, MPGe while running on the
+    // battery (fuelType2). Distinct from mpgeCombined below — this is the
+    // pure-electric figure, not the blended one.
+    mpgeElectric?: Fact<number>;
+    // PHEV only, from fueleconomy.gov's `phevComb`: EPA's own blended
+    // gasoline-electricity composite MPGe, used in its annual-fuel-cost math.
+    // A third number, distinct from both mpgeElectric and mpgGasoline —
+    // don't collapse it into either.
+    mpgeCombined?: Fact<number>;
+    // PHEV only, from fueleconomy.gov's `comb08`: MPG on gasoline
+    // (fuelType1) once the battery is depleted — the number that matters
+    // once a shopper stops plugging in.
+    mpgGasoline?: Fact<number>;
   };
   charging?: {
     portStandard?: Fact<PortStandard>;
