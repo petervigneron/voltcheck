@@ -97,33 +97,84 @@
 -- immediately after this migration -- it cannot live in here, VACUUM does not
 -- run inside a transaction block.
 --
--- WHAT THIS COSTS TO APPLY, measured the hard way on 2026-08-22. The first
--- attempt was killed by its own 900 s statement_timeout and rolled back with
--- nothing changed: the rewrite of 112,681 rows did not finish inside 15
--- minutes on the free-tier Nano (2 shared vCPU, 455 MB RAM, 224 MB of it
--- shared_buffers, against a 226 MB heap). Extrapolating from a temp-table
--- rehearsal was wrong by more than an order of magnitude -- 5,100 of the
--- 28,954 heap pages rebuilt in 4.5 s as a temp table, which predicted ~26 s
--- for the whole table. A temp table writes no WAL and rebuilds no indexes;
--- the real rewrite WAL-logs the new heap and all five indexes, and Supabase
--- runs wal_level=logical so none of that can be skipped.
+-- WHAT IT COST TO APPLY, and the one thing that decides it. The first
+-- attempt, at 12:08 UTC on 2026-08-22, was killed by its own 900 s
+-- statement_timeout and rolled back with nothing changed. The second, at
+-- 13:56 UTC, ran the identical statement in 37 SECONDS. Nothing about the
+-- statement changed between them; the database did. The morning attempt ran
+-- during that day's incident, when the anon count was returning HTTP 500 and
+-- db-sync's first chunk was timing out at the gateway's 150 s wall clock. The
+-- afternoon attempt ran once a fat feed page answered in 1.1 s.
 --
--- So this migration is NOT safe to fire and forget. It takes an ACCESS
--- EXCLUSIVE lock on `listings` for at least 15 minutes, during which every
--- read of the table blocks -- including a shard route-cache miss on
--- voltcheck.net, which would render against a blocked database and cache the
--- bundled fallback snapshot for a full day. That is the exact shape of the
--- 2026-08-21 incident (five shards serving ~9,788 rows each).
+-- So the cost of this rewrite is not a property of its size. It is a property
+-- of the instance's health at the moment you fire it, and it swings by more
+-- than 25x. Gate on a real feed page before starting -- not on a status
+-- endpoint, not on the cheap COUNT -- and if the answer is slow, do not fire
+-- and hope. A rewrite that runs long holds ACCESS EXCLUSIVE on `listings`
+-- while it does, every read of the table blocks behind it, and a shard
+-- route-cache miss during that window renders against a blocked database and
+-- caches the bundled fallback for a full day. That is the 2026-08-21 shape
+-- (five shards serving ~9,788 rows each).
 --
--- Apply it in the window right after nightly.yml's final revalidate-and-warm
--- step, when all six shards plus /api/index/first hold a fresh 24 h route
--- cache and none of them will need to re-render during the lock. Not while a
--- deploy is building, not while db-sync is running, and with
--- statement_timeout set well above 900 s -- the management API's HTTP
--- response dies at Cloudflare's ~100 s cap either way, but the backend keeps
--- running, so watch it from a second connection with queries that do not
--- touch `listings` (pg_stat_activity and pg_stat_progress_* take no lock;
--- pg_relation_size does, and will simply queue behind the rewrite).
+-- The safe window is one where no shard can re-render during the lock. The
+-- nightly's final revalidate-and-warm creates it, but it is not the only way
+-- to get it, and on the day this landed the nightly failed at db-sync so the
+-- warm never ran. What actually matters is measurable directly: the six
+-- shards and /api/index/first were 7.8 h into a 24 h route cache, so ~16 h of
+-- life remained and none of them could re-render during a lock of any
+-- plausible length. Verify the property, do not assume the ritual that
+-- usually produces it. Also confirmed before firing: no Vercel build in
+-- flight, no db-sync running, and pg_stat_activity idle.
+--
+-- Extrapolating the duration from a temp-table rehearsal was useless in both
+-- directions -- 5,100 of the 28,954 heap pages rebuilt in 4.5 s as a temp
+-- table, predicting ~26 s. A temp table writes no WAL and rebuilds no
+-- indexes, and Supabase runs wal_level=logical so none of that can be
+-- skipped. The prediction happened to land near the healthy figure by
+-- coincidence, having been wrong by 25x four hours earlier.
+--
+-- Watch it from a second connection with queries that take no lock on the
+-- table -- pg_stat_activity and pg_stat_progress_* are fine; pg_relation_size
+-- is not, and will simply queue behind the rewrite. The management API's HTTP
+-- response dies at Cloudflare's ~100 s cap regardless, but the backend keeps
+-- running, so the response is not the result.
+--
+-- APPLIED 2026-08-22 13:56 UTC, then `vacuum (analyze) listings` (3 s -- a
+-- rewrite leaves relallvisible at 0, and this table's design depends on being
+-- vacuumed):
+--
+--   heap                    226 MB -> 113 MB      (28,954 -> 14,464 pages)
+--   rows per page             3.92 -> 7.79        (predicted 7.81)
+--   TOAST                    35 MB -> 6,360 kB
+--   indexes                  25 MB -> 14 MB       (rebuilt by the rewrite)
+--   listings, all in          300 MB -> 133 MB
+--   whole database           463 MB -> 310 MB
+--   relallvisible                 0 -> 100%
+--
+-- Correctness re-proved on the finished table, all 112,681 rows: 18,205 carry
+-- a description and 94,476 have payload_public NULL (they sum), 0 rows where
+-- `payload ? 'description'` disagrees with `payload_public is null`, 0 rows
+-- where coalesce(payload_public, payload) differs from the old
+-- `payload - 'description'`, and 0 descriptions reaching the view.
+--
+-- WHERE THE WIN ACTUALLY COMES FROM -- not where this migration first
+-- predicted it. The premise was that halving rows-per-page halves the heap
+-- pages a feed page touches. It does not, and EXPLAIN (ANALYZE, BUFFERS) on a
+-- W-bucket page says so: the `listings` leg reads 411 buffers after the
+-- change against 414 before it. The feed walks in vin order and the rows are
+-- not clustered by vin, so a 500-row page lands on ~one heap page per row no
+-- matter how many rows would fit on a page. Denser pages do not help an
+-- access pattern that touches each page once.
+--
+-- What halving the table does do is make it fit in memory. `listings` and all
+-- its indexes are now 133 MB against 224 MB of shared_buffers, where 300 MB
+-- could never be resident; the same EXPLAIN reports 7,699 buffers hit and
+-- ZERO read. That is the difference between a feed walk served from RAM and
+-- one served from a free-tier Nano's disk, which is the resource this
+-- database actually runs out of -- its lifetime iowait is 24,416 s against
+-- 3,098 s of user CPU. The second-order wins are real too: 153 MB back
+-- against the free tier's 500 MB (the database was at 463 MB, i.e. 93%), and
+-- every row rewrite in the ingest lane now moves ~48% fewer bytes.
 
 create or replace view live_listings_feed
 with (security_invoker = false) as
