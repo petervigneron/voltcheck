@@ -486,17 +486,37 @@ jobs:
       # a broken comps lookup must not skip the revalidate that follows —
       # kept in this job (not finalize-audits) specifically so that
       # revalidate below still reflects any correction it makes.
+      # `!cancelled()` rather than the default, and that is the whole point of
+      # this line. This audit reads the LIVE database — the prices a shopper
+      # can see right now — and it does not audit tonight's write. It used to
+      # be an ordinary step, so a failed db-sync above skipped it, and on
+      # 2026-08-22 audit-status-check reported that price-audit "has never
+      # recorded a run" because db-sync had failed on every night it was
+      # scheduled. A sync that fails is not a reason to stop checking what is
+      # already published; if anything it is a reason to look harder.
       - name: Price plausibility audit
-        if: ${{ github.event.inputs.skip_crawl != 'true' }}
+        if: ${{ !cancelled() && github.event.inputs.skip_crawl != 'true' }}
         continue-on-error: true
         working-directory: scraper
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
           SUPABASE_INGEST_TOKEN: ${{ secrets.SUPABASE_INGEST_TOKEN }}
+        # The rc=20 branch re-syncs what the audit corrected, and that is the
+        # one part that must NOT run after a failed db-sync: it would hand a
+        # second bulk write to an instance that just refused the first, which
+        # is the contention rolling-crawl.yml exists to stop building. The
+        # audit still runs and still records its verdict; only the re-sync
+        # waits for a night the database was well.
         run: |
           rc=0; node price-audit.mjs || rc=$?
-          if [ "$rc" -eq 20 ]; then node db-sync.mjs; elif [ "$rc" -ne 0 ]; then exit "$rc"; fi
+          if [ "$rc" -eq 20 ]; then
+            if [ "${{ steps.db_sync.outcome }}" = "success" ]; then
+              node db-sync.mjs
+            else
+              echo "::warning::price-audit corrected rows but db-sync failed earlier tonight; skipping the follow-up sync rather than re-loading a database that just refused a write. The corrections land on the next healthy sync."
+            fi
+          elif [ "$rc" -ne 0 ]; then exit "$rc"; fi
 
       # The listing-count regression alarm: six lost nights left every
       # downstream audit un-run and silent, and then — the night this was
@@ -514,9 +534,17 @@ jobs:
       # the next step's gate decides whether to warm the cache. No
       # continue-on-error: a real regression or an unstable read must make
       # this job red, the same as db-sync failing outright.
+      # `!cancelled()` for the same reason as the audit above, and more
+      # sharply. This step's own header describes the incident it was built
+      # for: "six lost nights left every downstream audit un-run and silent".
+      # It was then written as an ordinary step, so a failed db-sync skipped
+      # it — and six lost nights is exactly what happened, with this alarm
+      # silent through all of them. It writes nothing (see the header), so
+      # there is no state it can damage by running on a bad night, and a bad
+      # night is when a count regression is most likely.
       - name: Listing-count regression check
         id: sync_guard
-        if: ${{ github.event.inputs.skip_crawl != 'true' }}
+        if: ${{ !cancelled() && github.event.inputs.skip_crawl != 'true' }}
         working-directory: scraper
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
