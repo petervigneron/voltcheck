@@ -1,0 +1,210 @@
+name: Refresh the bundled fallback snapshot
+
+# web/data/scraped-listings.json is the snapshot the site serves when Supabase
+# cannot answer, and until now it had exactly one producer: ingest.mjs, writing
+# whatever the night's whole-fleet crawl had just processed. nightly.yml owned
+# it by being the only thing that ever crawled everything at once, and
+# rolling-crawl.yml refuses to touch it for precisely that reason — its own
+# header spells out that a slice's copy would shrink the fallback to ~2,000
+# cars.
+#
+# Taking the whole-fleet crawl out of nightly.yml therefore leaves that file
+# with no owner at all. It had already stopped being refreshed: last written
+# 2026-08-19, 58,730 rows, against a live feed of 100,446 — 42% short and three
+# days stale, because nightly.yml had been failing at db-sync every night. And
+# 58,730 is not an anonymous number here. It is the figure in CLAUDE.md, in
+# db.ts's catch and in feed-shard-check.mjs, because that snapshot divided
+# across six browse shards is the ~9,788 rows/shard that hid 34,000 cars for
+# most of 2026-08-21.
+#
+# So the snapshot gets a producer that does not depend on anyone crawling the
+# whole world in one night: scraper/refresh-fallback.mjs walks
+# live_listings_feed and writes the payloads back out. Its header carries the
+# reasoning, including — measured, not assumed — why the free CDN shards cannot
+# be the source: /api/index/[shard] serves packed CardRows, a display
+# projection with no sourceUrl, no dealerDomain, no sellerType, no zip, no
+# colours and no gallery, so a snapshot built from them would publish a listing
+# page with no dealer and no link, silently, with every request 200.
+#
+# WEEKLY, and three things decide it:
+#
+#   COST. A full walk is ~231 requests, ~122 MB decompressed and ~27 MB on the
+#   wire (refresh-site.yml's header has the arithmetic). Weekly is ~117 MB/month
+#   against the 5 GB free egress quota, about 2%. Daily would be ~0.8 GB — a
+#   fifth of the quota spent making a FALLBACK fresher.
+#
+#   VALUE. Since 049f41b the browse shards and the sitemaps both THROW rather
+#   than serve a fallback read, so this file's remaining production job is the
+#   listing detail page during an outage, plus local dev and CI. Nobody is
+#   reading it when things work; a week of drift costs a car sold last Tuesday
+#   still showing during an outage, and a car listed last Tuesday 404ing during
+#   one. Neither is worth a daily walk.
+#
+#   SIZE. The result is a ~70 MB blob in git, and GitHub refuses any push
+#   containing a file over 100 MB. 52 of those a year is already the outer edge
+#   of reasonable; 365 is not. The script warns with the arithmetic once the
+#   file passes 80 MB.
+#
+# Sunday 21:40 UTC because every other slot is taken: rolling-crawl at :00 and
+# :30, refresh-site at 04:00 and 16:00, nightly at 10:30, feed-audits at :15
+# past every sixth hour, alerts at 18:30, discover at 11:00 Sundays. :40 puts
+# this in the middle of a rolling slice's CRAWL rather than its sync.
+#
+# It does not deploy, and that is unchanged rather than an omission: nightly.yml
+# committed this file for months without deploying either. A committed snapshot
+# reaches shoppers on the next deploy of web/, whenever that is — which is the
+# right coupling for a file that is only read when the database is already down.
+
+on:
+  schedule:
+    - cron: "40 21 * * 0" # Sundays, 14:40 America/Los_Angeles
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Walk and check, but write nothing. Use it to see what a refresh would produce."
+        required: false
+        default: "false"
+      force:
+        description: "Write a snapshot more than 10% smaller than the one it replaces. Only for a real collapse in inventory."
+        required: false
+        default: "false"
+
+concurrency:
+  group: refresh-fallback
+  cancel-in-progress: false
+
+permissions:
+  contents: write # commits the refreshed snapshot
+  actions: read # reads whether nightly.yml is mid-run (see the guard below)
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # Skip if the nightly is running. A full walk against an instance already
+      # carrying the night's writes is the 2026-08-16 crash-loop, where three
+      # sessions ran full-feed reads at once and five straight builds failed.
+      #
+      # This one fails CLOSED, unlike the identical guards in refresh-site.yml
+      # and rolling-crawl.yml, and the asymmetry is the reason. Those two skip
+      # something that matters within hours, so an unreadable GitHub API had
+      # better let them through. This runs weekly, on a file nobody reads while
+      # the database is healthy — a skipped week costs almost nothing, and
+      # walking into the nightly costs the thing this whole lane exists to
+      # avoid. The skip is a ::warning:: so a run of weeks of them is visible
+      # rather than inferred, and workflow_dispatch is always available.
+      - name: Is the nightly running?
+        id: nightly
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          BUSY=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow nightly.yml \
+                   --status in_progress --limit 1 --json databaseId --jq 'length' 2>/dev/null || echo unknown)
+          if [ "$BUSY" = "unknown" ]; then
+            echo "::warning::could not ask GitHub whether nightly.yml is running; standing down rather than walking the feed blind. The snapshot keeps its current vintage until next Sunday, or a manual run."
+            echo "go=false" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          if [ "$BUSY" != "0" ]; then
+            echo "::warning::nightly.yml is mid-run; standing down so a full walk does not land on top of its writes."
+            echo "go=false" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          echo "nightly not running"
+          echo "go=true" >> "$GITHUB_OUTPUT"
+
+      # refresh-site.yml's gate, verbatim in intent: the count, then a real FAT
+      # feed page under a 1.5 s ceiling. A page is not a walk — 35 of 36 bucket
+      # pages answered in ~0.3 s on 2026-08-22 and the full walk still died — so
+      # this is a cheap way to not START a walk that cannot finish, not a
+      # promise that one will. refresh-fallback.mjs is what actually decides,
+      # and it refuses on a short read.
+      - name: Can the database serve a walk?
+        id: gate
+        if: ${{ steps.nightly.outputs.go == 'true' }}
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_ANON_KEY" ]; then
+            echo "::warning::no Supabase credentials; the snapshot keeps its current vintage"
+            echo "ok=false" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          auth=(-H "apikey: $SUPABASE_ANON_KEY" -H "Authorization: Bearer $SUPABASE_ANON_KEY")
+          code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 20 "${auth[@]}" \
+            -H "Range: 0-0" -H "Prefer: count=exact" \
+            "$SUPABASE_URL/rest/v1/listings?select=vin&delisted_at=is.null") || code=000
+          if [ "$code" != "200" ] && [ "$code" != "206" ]; then
+            echo "::warning::database cannot answer the listing count (HTTP $code); standing down"
+            echo "ok=false" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          sel="vin,payload,first_seen_at,last_seen_at,prev_price_usd,price_changed_at,buyback_disclosed,listed_on"
+          read -r pcode ptime < <(curl -s -o /dev/null -w "%{http_code} %{time_total}" --max-time 20 "${auth[@]}" \
+            "$SUPABASE_URL/rest/v1/live_listings_feed?select=$sel&order=vin.asc&limit=500&vin=gte.W" || echo "000 99")
+          if [ "$pcode" != "200" ] || awk "BEGIN{exit !($ptime > 1.5)}"; then
+            echo "::warning::a fat feed page returned $pcode in ${ptime}s (ceiling 1.5s); standing down"
+            echo "ok=false" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          echo "count HTTP $code, fat feed page ${ptime}s — safe to walk"
+          echo "ok=true" >> "$GITHUB_OUTPUT"
+
+      # FEED_LANES=2 on purpose: this is a background job with nowhere to be.
+      # CLAUDE.md names 2 as the way to walk while the database is busy, and a
+      # weekly snapshot can afford the extra minutes in exchange for not being a
+      # load spike on the free-tier instance. A refusal here is a RED run —
+      # every reason the script refuses is a reason somebody should look.
+      - name: Rebuild the snapshot
+        id: build
+        if: ${{ steps.gate.outputs.ok == 'true' }}
+        working-directory: scraper
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          FEED_LANES: "2"
+        run: |
+          # pipefail, or the `| tee` below swallows the script's exit code and a
+          # refusal reports as a green step — which is the failure this whole
+          # file is about, reproduced in its own plumbing.
+          set -o pipefail
+          args=()
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then args+=(--dry-run); fi
+          if [ "${{ github.event.inputs.force }}" = "true" ]; then args+=(--force); fi
+          node --max-old-space-size=6144 refresh-fallback.mjs "${args[@]}" | tee "$RUNNER_TEMP/report.json"
+          echo "report=$(cat "$RUNNER_TEMP/report.json")" >> "$GITHUB_OUTPUT"
+
+      # Stage ONE explicit path. CLAUDE.md's rule about `git add -A` is about a
+      # shared working tree, which a runner is not, but the reason survives the
+      # move: a broad stage here would sweep up whatever the checkout happens to
+      # have dirtied and commit it under this message. The pull-rebase-retry
+      # loop is rolling-crawl.yml's, because 48 slice runs a day plus the
+      # nightly plus the discovery sweep all push to main and one of them will
+      # be mid-flight.
+      - name: Commit the snapshot
+        if: ${{ steps.gate.outputs.ok == 'true' && github.event.inputs.dry_run != 'true' }}
+        run: |
+          git config user.name "voltcheck-bot"
+          git config user.email "noreply@github.com"
+          git add web/data/scraped-listings.json
+          git diff --staged --quiet && { echo "the walk produced a byte-identical snapshot; nothing to commit"; exit 0; }
+          ROWS=$(jq -r .rows "$RUNNER_TEMP/report.json")
+          git commit -m "Refresh the bundled fallback snapshot: $ROWS cars [skip ci]"
+          for i in 1 2 3 4 5; do
+            if git pull --rebase --autostash && git push; then
+              echo "snapshot pushed"; exit 0
+            fi
+            git rebase --abort 2>/dev/null || true
+            sleep $((i * 10))
+          done
+          echo "::error::could not push the refreshed snapshot (raced another run). The fallback keeps its previous vintage; re-run this workflow."
+          exit 1
+
+      - name: What this run did
+        if: always()
+        run: |
+          echo "nightly clear: ${{ steps.nightly.outputs.go }}"
+          echo "walk gate:     ${{ steps.gate.outputs.ok }}"
+          echo "report:        ${{ steps.build.outputs.report }}"

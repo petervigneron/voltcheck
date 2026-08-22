@@ -236,8 +236,15 @@ jobs:
       # a slice's copy would shrink the fallback from 58,730 cars to one
       # slice's worth, and the site would serve that silently, with every
       # request returning 200. That is the 2026-08-16 incident's shape with a
-      # far worse number. Only a whole-fleet run may write that file, so
-      # nightly.yml keeps sole ownership of it.
+      # far worse number. Only a whole-fleet view of the inventory may write
+      # that file, and a slice is by definition not one.
+      #
+      # Its owner is refresh-fallback.yml, weekly, and it does not crawl at all:
+      # it walks live_listings_feed and writes the payloads back out. That is
+      # what makes this lane's refusal permanent rather than a gap waiting for
+      # nightly.yml to come back — the snapshot no longer needs anybody to
+      # crawl the whole world in one night, only the database to hold what the
+      # slices have been putting into it all day.
       #
       # vpic-cache.json IS committed: it is a per-VIN decode cache, and a
       # decode is permanent once made. Losing it means re-fetching every VIN
