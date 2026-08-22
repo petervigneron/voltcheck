@@ -4,13 +4,24 @@ name: Nightly inventory
 # ran when the lid happened to be open at 3:30 AM — mostly never. This runs
 # it on GitHub's machines instead.
 #
-# Sharded 2026-08-13: a single job hit the 330-minute cap at ~650 working
-# domains, and nothing reaches Supabase until after the crawl — so a crawl
-# that missed the window persisted zero cars. The crawl now fans out across
-# a fixed matrix; each shard crawls sites where index % SHARDS == shard, and
-# a finalize job merges shard outputs before enrichment and sync. A shard
-# that dies costs its slice, not the night: db-sync only delists for domains
-# whose report says complete, so missing shards certify nothing.
+# THIS WORKFLOW NO LONGER CRAWLS DEALERS (2026-08-22). rolling-crawl.yml does,
+# a slice of the registry every half hour, and the eight-shard whole-fleet
+# crawl that used to live here is gone — see the block where the `crawl` job
+# was, below, for what made that safe and what had to be rehomed first. What
+# is left is the work no slice does: dealer discovery, the OEM locator lanes,
+# the delisting sweep, the audits, and the monthly refreshes.
+#
+# The history below is kept because the reasoning still governs the jobs that
+# remain, and because it is the record of what this pipeline learned.
+#
+# Sharded 2026-08-13 (crawl now retired, see above): a single job hit the
+# 330-minute cap at ~650 working domains, and nothing reaches Supabase until
+# after the crawl — so a crawl that missed the window persisted zero cars. The
+# crawl fanned out across a fixed matrix and a finalize job merged shard
+# outputs before enrichment and sync. A shard that died cost its slice, not
+# the night: db-sync only delists for domains whose report says complete, so
+# missing shards certify nothing. That last property is exactly what lets
+# rolling-crawl.yml carry the crawl one slice at a time now.
 #
 # finalize was itself split three ways 2026-08-21, after five straight lost
 # nights (Aug 18, 19, 19-manual, 20, 21). It was one job with one 240-minute
@@ -118,11 +129,14 @@ permissions:
   contents: write # commits the refreshed registry + listings snapshot
 
 env:
+  # Kept for the OEM locator lane's artifact naming and the recovery paths that
+  # read crawl-out-* from an older run's artifacts; nothing in this workflow
+  # shards a crawl any more.
   SHARDS: "8"
 
 jobs:
-  # Validate newly discovered dealers first, so tonight's crawl already
-  # includes the ones that pass. The probed registry travels to the other
+  # Validate newly discovered dealers first, so the rooftops that pass are in
+  # the registry before rolling-crawl.yml's next sweep reaches their slice. The probed registry travels to the other
   # jobs as an artifact — shards must see tonight's promotions, and the
   # finalize-audits job commits this exact file. Skipped entirely during an
   # ingest-only recovery run: a recovery re-plays an already-crawled night,
@@ -144,49 +158,48 @@ jobs:
           name: registry
           path: scraper/registry/registry.json
 
-  crawl:
-    needs: probe
-    if: ${{ github.event.inputs.skip_crawl != 'true' && github.event.inputs.recover_run_id == '' }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 330
-    strategy:
-      fail-fast: false # one dead shard must not cancel the others
-      matrix:
-        shard: [0, 1, 2, 3, 4, 5, 6, 7] # keep in sync with env.SHARDS
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-      - uses: actions/download-artifact@v4
-        with:
-          name: registry
-          path: scraper/registry
-      - name: Crawl shard ${{ matrix.shard }}
-        working-directory: scraper
-        run: |
-          DOMAINS=$(python3 -c "
-          import json
-          r = json.load(open('registry/registry.json'))
-          doms = sorted(s['domain'] for s in r['sites'] if s.get('status') == 'working')
-          print(' '.join(d for i, d in enumerate(doms) if i % ${SHARDS} == ${{ matrix.shard }}))")
-          echo "shard ${{ matrix.shard }}/${SHARDS}: crawling $(echo $DOMAINS | wc -w) domains"
-          # cache-hours 0: the runner starts with an empty cache and discards
-          # it, so caching only costs disk — and filled it on run #2.
-          # --deadline-min 300 stops crawling in time to write out/ before the
-          # 330-minute job timeout, so the shard hands up its work instead of
-          # being cancelled mid-run (which skipped the upload below and lost the
-          # whole night — every shard did this on 2026-08-19). crawl.mjs also
-          # checkpoints out/ every two minutes as a backstop.
-          node crawl.mjs $DOMAINS --max-pages ${{ github.event.inputs.max_pages || '80' }} --cache-hours 0 --concurrency 16 --deadline-min 300
-      # always(): upload even if the crawl step was cancelled or errored, so the
-      # last checkpoint (or the deadline write) still reaches the merge. Without
-      # this a timed-out shard uploaded nothing.
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: crawl-out-${{ matrix.shard }}
-          path: scraper/out/
+  # THE WHOLE-FLEET DEALER CRAWL LIVED HERE AND IS GONE (2026-08-22).
+  #
+  # rolling-crawl.yml crawls the same rooftops — the two lanes selected them
+  # with character-for-character identical code:
+  #
+  #     doms = sorted(s['domain'] for s in r['sites'] if s.get('status') == 'working')
+  #
+  # 13,165 working rooftops, split 8 ways here and 48 ways there. Keeping both
+  # meant crawling every dealer twice a day and, far worse, handing this
+  # database ~100,000 rows in one 37-chunk push. That push is what has failed
+  # every scheduled night this month: eight chunks in, then 504, 504, 503,
+  # "connection termination". rolling-crawl.yml was added to end exactly that
+  # burst and says so in its own header — but the commit that added it touched
+  # only itself (f2a1a71, 207 insertions, one file), so the thing being
+  # replaced was never switched off and both lanes ran.
+  #
+  # WHAT MADE THIS SAFE TO CUT, rather than just smaller: delisting is opt-in
+  # per domain and always has been. db-sync.mjs only delists domains whose
+  # report says `truncated === false`, and "a report without the `truncated`
+  # field — older crawl.mjs, or no crawl this run — certifies nothing, so
+  # nothing gets delisted". A lane that does not crawl a rooftop cannot
+  # delist that rooftop's cars. This job's absence removes dealer domains
+  # from tonight's report.json and therefore removes nightly's permission to
+  # delist them; rolling-crawl.yml carries that permission now, slice by
+  # slice, which is what its delist-coverage denominator fix (def9b87) made
+  # legal.
+  #
+  # AND WHAT HAD TO BE REHOMED FIRST: ingest.mjs rewrites
+  # web/data/scraped-listings.json with whatever it just processed. With this
+  # job gone nightly ingests only the OEM locator lanes, so leaving the commit
+  # in place would have shrunk the outage snapshot to ~38,000 cars — worse
+  # than the 58,730 it had drifted to, and the 2026-08-16 incident's exact
+  # shape. refresh-fallback.yml owns that file now: it walks the database
+  # weekly and never crawls anything. That workflow landed before this cut,
+  # deliberately, and this job could not have gone first.
+  #
+  # WHAT NIGHTLY STILL DOES, and why it is still a workflow: probe (dealer
+  # discovery), oem-locator (~38k EVs from OEM APIs that no dealer crawl
+  # reaches), recheck (the delisting sweep over live listings), the price and
+  # count audits, the co-listing graph, and the monthly WA/variant refreshes.
+  # None of those are a dealer crawl and none of them are duplicated by the
+  # slices.
 
   # OEM find-inventory locators (GM brands): dealer-authorized public JSON
   # endpoints that list every franchised rooftop's new-EV stock — including
@@ -220,7 +233,7 @@ jobs:
   # colisting-pairs and the harvest-updated registry) travels forward as two
   # artifacts, same pattern as the crawl→finalize handoff above.
   finalize-prep:
-    needs: [probe, crawl, oem-locator]
+    needs: [probe, oem-locator]
     if: ${{ always() && needs.probe.result == 'success' && github.event.inputs.recover_run_id == '' }}
     runs-on: ubuntu-latest
     # Raised from finalize's old 240m: crawl and recheck already run at 330m
@@ -238,8 +251,24 @@ jobs:
         with:
           name: registry
           path: scraper/registry
+      # continue-on-error since 2026-08-22, when the dealer crawl left this
+      # workflow. This pattern used to match nine artifacts (eight crawl
+      # shards plus the locator) and could only come back empty if every one
+      # of them died; oem-locator is its ONLY producer now, and
+      # download-artifact@v4 fails the step outright when a pattern matches
+      # nothing.
+      #
+      # To be precise about what this does and does not buy: the night still
+      # fails if the locator produced nothing — merge-shards.mjs exits 1 on an
+      # absent out/shards, and a night with no inventory at all SHOULD be
+      # loud. What changes is who says so. Without this the run dies on an
+      # artifact-plumbing error that reads like broken CI; with it, the next
+      # step says "merge-shards: out/shards does not exist", which is the
+      # actual fact. The audits are unaffected either way: finalize-audits and
+      # recheck are both always()-gated on probe, not on this job.
       - uses: actions/download-artifact@v4
         if: ${{ github.event.inputs.skip_crawl != 'true' }}
+        continue-on-error: true
         with:
           pattern: crawl-out-*
           path: scraper/out/shards
