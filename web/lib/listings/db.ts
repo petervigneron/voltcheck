@@ -167,8 +167,19 @@ let walkMemo: { at: number; promise: Promise<Listing[] | null> } | null = null;
 // number: 226 requests, measured against a 100,297-row feed (201 pages of
 // PAGE=500 plus the bucket boundaries) — against an instance whose ordinary
 // baseline was measured at ~20 feed-page requests an hour on a quiet day.
-// One attempt a minute per lambda is still generous; it is the difference
-// between bounded and proportional-to-traffic.
+// The bound this actually buys, stated as measured rather than as intended.
+// This is module state, so its scope is a module instance, and Next does not
+// give you one instance per server: measured 2026-08-22 on `next start`, a
+// listing page and /api/index/[shard] shared a cooldown (the second answered
+// in 0.03s) while /sitemap/[shard] did not and walked on its own (21.7s).
+// So the guarantee is "at most one failed walk per minute per module
+// instance", not per server and certainly not per deployment — on Vercel,
+// where concurrent requests get their own lambdas, cross-instance sharing was
+// never available anyway. What that converts is the SHAPE of the load: from
+// proportional to request volume, to proportional to (route bundles x
+// concurrency) and capped by the clock. Measured end to end over one pass of
+// three index routes, three detail pages and two sitemaps against a database
+// answering 500 to everything: 114 requests before, 43 after.
 //
 // Why this had to move from the sitemap route into the walk itself
 // (2026-08-22, while the incident was still running). The parallel session
