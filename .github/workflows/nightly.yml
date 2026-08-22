@@ -878,9 +878,34 @@ jobs:
       #      good cache buys nothing and risks everything.
       #   2. a live database probe. recheck can succeed against a database that
       #      still cannot complete the FEED WALK — they are different queries,
-      #      and the walk is the one the warm-up depends on. One anon count
-      #      request, the same shape web/lib/listings/db.ts uses as its guard,
-      #      answers that directly. Never expire a cache you cannot refill.
+      #      and the walk is the one the warm-up depends on. Never expire a
+      #      cache you cannot refill.
+      #
+      #      The probe is a real FEED PAGE, not the count, and the distinction
+      #      is load-bearing. The count is an index-only scan over
+      #      listings_live_idx; once the visibility map is fresh it touches
+      #      almost no heap and collapses to milliseconds. The walk selects
+      #      payload, so it reads the heap (and toast) for every row and runs
+      #      the view's LATERAL price-history lookup, no matter how fresh the
+      #      visibility map is. There is a real window — wide open the night
+      #      this was written, with an autovacuum running — where the count
+      #      answers in 20ms and the walk still cannot finish. A count-based
+      #      gate reads that window as "healthy, go warm", and warming in that
+      #      window is exactly what poisons the cache. Same argument as guard
+      #      1, one level up.
+      #
+      #      Probed on the W bucket specifically: BMW/Mercedes/Audi/VW, whose
+      #      payloads db.ts measured as the fattest at ~1.07 kB a row. A
+      #      cheap bucket answering fast proves nothing about the expensive
+      #      ones; the worst page is the one the walk waits on.
+      #
+      #      And it is gated on LATENCY, not just on a 200. 3 seconds is
+      #      PostgREST's anon statement timeout, not a health bar — a page
+      #      that takes 2.9s is a page that will not finish a walk. The walk
+      #      is ~226 requests across 8 lanes, so ~28 pages sequentially per
+      #      lane; at 1.5s a page that is ~42s, inside the render budget with
+      #      margin. Above it, the warm-up times out and caches nothing (or
+      #      caches the snapshot), which is the whole failure.
       #   3. feed-shard-check.mjs afterwards, which counts the ROWS in what we
       #      just warmed instead of trusting seven 200s. If we poisoned the
       #      cache anyway, the night goes red and says so.
@@ -896,15 +921,29 @@ jobs:
             exit 1
           fi
           if [ -n "$SUPABASE_URL" ] && [ -n "$SUPABASE_ANON_KEY" ]; then
-            code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 20 \
-              -H "apikey: $SUPABASE_ANON_KEY" -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
+            auth=(-H "apikey: $SUPABASE_ANON_KEY" -H "Authorization: Bearer $SUPABASE_ANON_KEY")
+            # Cheap first: the count guard db.ts uses. A fast fail is a fast fail.
+            code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 20 "${auth[@]}" \
               -H "Range: 0-0" -H "Prefer: count=exact" \
               "$SUPABASE_URL/rest/v1/listings?select=vin&delisted_at=is.null") || code=000
             if [ "$code" != "200" ] && [ "$code" != "206" ]; then
               echo "::error::the database cannot answer the listing count (HTTP $code) — a warm-up now would render the bundled 58,730-row snapshot and cache it for a day. Skipping revalidate; production keeps the complete cache it already has."
               exit 1
             fi
-            echo "database answered the count guard (HTTP $code); safe to expire and re-warm"
+            # Then the one that decides it: a real feed page from the fattest
+            # bucket, same select list, order and limit db.ts walks with.
+            sel="vin,payload,first_seen_at,last_seen_at,prev_price_usd,price_changed_at,buyback_disclosed,listed_on"
+            read -r pcode ptime < <(curl -s -o /dev/null -w "%{http_code} %{time_total}" --max-time 20 "${auth[@]}" \
+              "$SUPABASE_URL/rest/v1/live_listings_feed?select=$sel&order=vin.asc&limit=500&vin=gte.W" || echo "000 99")
+            if [ "$pcode" != "200" ]; then
+              echo "::error::the database cannot serve a feed page (HTTP $pcode) — the count answered but the WALK cannot run, which is the query the warm-up depends on. Skipping revalidate; production keeps the complete cache it already has."
+              exit 1
+            fi
+            if awk "BEGIN{exit !($ptime > 1.5)}"; then
+              echo "::error::a feed page took ${ptime}s (ceiling 1.5s) — the walk is ~28 sequential pages per lane, so the warm-up would time out and cache nothing useful. Skipping revalidate; production keeps the complete cache it already has."
+              exit 1
+            fi
+            echo "database answered the count (HTTP $code) and a fat feed page in ${ptime}s; safe to expire and re-warm"
           fi
           [ -z "$FEED_REVALIDATE_SECRET" ] && { echo "::warning::FEED_REVALIDATE_SECRET unset; site refreshes on the 24h cache backstop instead"; exit 0; }
           if ! curl -fsS --retry 3 --max-time 60 -X POST -H "x-revalidate-secret: $FEED_REVALIDATE_SECRET" https://voltcheck.net/api/revalidate; then
