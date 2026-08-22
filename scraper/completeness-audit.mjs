@@ -59,10 +59,17 @@ const H = { apikey: ANON, Authorization: `Bearer ${ANON}` };
 // need, to stay off the anon statement timeout (same discipline as
 // audit-listings.mjs). New cars legitimately have no odometer, so they are out
 // of scope; this is a used-car completeness check.
+//
+// trimSuspect is read off `payload`, not `payload_public`: since 0042 the
+// generated column is NULL for the 84% of listings that never had a
+// description to strip, and reading it here would have quietly reported
+// almost no contradicted trims. The two carry the same trimSuspect either
+// way, and the extraction happens server-side, so no description crosses the
+// wire.
 const rows = [];
 for (let from = 0; ; from += 1000) {
   const res = await fetch(
-    `${SUPABASE_URL}/rest/v1/listings?select=dealer_domain,mileage,state,condition,susp:payload_public->>trimSuspect` +
+    `${SUPABASE_URL}/rest/v1/listings?select=dealer_domain,mileage,state,condition,susp:payload->>trimSuspect` +
       `&delisted_at=is.null&condition=in.(used,certified)&order=dealer_domain.asc`,
     { headers: { ...H, Range: `${from}-${from + 999}` } }
   );
