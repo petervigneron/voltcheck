@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { generateSitemaps } from "./sitemap";
+import { BASE, shardUrls } from "@/lib/sitemap";
 
 // Tells crawlers what to index and where the sitemaps are. Everything public is
 // crawlable; the two disallowed paths are per-user or token surfaces with no
@@ -7,19 +7,24 @@ import { generateSitemaps } from "./sitemap";
 // email-token pages. /api is left crawlable on purpose: Googlebot fetches
 // /api/index/* when it renders the client browse grid.
 //
-// The listing sitemap is sharded (50k-URL cap), and Next serves no combined
-// index at /sitemap.xml, so we emit one Sitemap line per shard from the same
-// generateSitemaps that produces them — the shard count stays a single source
-// of truth as inventory grows.
-export default async function robots(): Promise<MetadataRoute.Robots> {
-  const shards = await generateSitemaps();
+// The listing sitemap is sharded (50k-URL cap), so this lists the index plus
+// one Sitemap line per shard, all from lib/sitemap.ts's SITEMAP_SHARDS — the
+// shard count stays a single source of truth as inventory grows.
+//
+// It used to derive that count by calling the sitemap's generateSitemaps(),
+// which walked the entire live feed just to divide by 40,000. That was the
+// fourth full database walk in every production build, and on 2026-08-22 it
+// was helping kill them (see lib/sitemap.ts). robots.txt now reads nothing:
+// it is a constant, it prerenders in milliseconds, and it stays up whatever
+// the database is doing.
+export default function robots(): MetadataRoute.Robots {
   return {
     rules: {
       userAgent: "*",
       allow: "/",
       disallow: ["/saved", "/alerts/"],
     },
-    sitemap: shards.map((s) => `https://voltcheck.net/sitemap/${s.id}.xml`),
-    host: "https://voltcheck.net",
+    sitemap: [`${BASE}/sitemap.xml`, ...shardUrls()],
+    host: BASE,
   };
 }

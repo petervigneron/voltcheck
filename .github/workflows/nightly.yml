@@ -572,6 +572,21 @@ jobs:
             curl -fsS --retry 2 --max-time 300 -o /dev/null "https://voltcheck.net/api/index/$s" \
               || echo "::warning::shard $s warm-up failed; its first visitor pays the render"
           done
+          # And the sitemaps, which stopped being build artifacts on
+          # 2026-08-22 (web/app/sitemap/[shard]/route.ts: prerendering them
+          # walked the whole feed inside Next's 60-second budget and killed
+          # four production builds in a row). They render on first request
+          # and cache for the same day as the index shards, so this pass is
+          # now what keeps a crawler's copy current. Warmed immediately after
+          # the shards on purpose: db.ts's ten-minute walk memo is still
+          # holding the walk the loop above just paid for, so these six cost
+          # no extra database read. A failure here is a stale sitemap, never
+          # a wrong one — the route refuses to publish anything but a live
+          # feed — so it warns rather than failing the night.
+          for s in 0 1 2 3 4 5; do
+            curl -fsS --retry 2 --max-time 300 -o /dev/null "https://voltcheck.net/sitemap/$s.xml" \
+              || echo "::warning::sitemap shard $s warm-up failed; crawlers keep yesterday's copy until the next request renders it"
+          done
 
       # Hand the ingest/sync results forward to finalize-audits: the
       # gm-warranty cache and registry (unchanged pass-through) together so
@@ -843,4 +858,19 @@ jobs:
           for s in first 0 1 2 3 4 5; do
             curl -fsS --retry 2 --max-time 300 -o /dev/null "https://voltcheck.net/api/index/$s" \
               || echo "::warning::shard $s warm-up failed; its first visitor pays the render"
+          done
+          # And the sitemaps, which stopped being build artifacts on
+          # 2026-08-22 (web/app/sitemap/[shard]/route.ts: prerendering them
+          # walked the whole feed inside Next's 60-second budget and killed
+          # four production builds in a row). They render on first request
+          # and cache for the same day as the index shards, so this pass is
+          # now what keeps a crawler's copy current. Warmed immediately after
+          # the shards on purpose: db.ts's ten-minute walk memo is still
+          # holding the walk the loop above just paid for, so these six cost
+          # no extra database read. A failure here is a stale sitemap, never
+          # a wrong one — the route refuses to publish anything but a live
+          # feed — so it warns rather than failing the night.
+          for s in 0 1 2 3 4 5; do
+            curl -fsS --retry 2 --max-time 300 -o /dev/null "https://voltcheck.net/sitemap/$s.xml" \
+              || echo "::warning::sitemap shard $s warm-up failed; crawlers keep yesterday's copy until the next request renders it"
           done

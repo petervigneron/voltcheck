@@ -128,7 +128,9 @@ function mockSupabase(total: number | "unreachable", rowCount: number) {
 
 test("a truncated read is still served to the visitor, but escapes the day-long cache", async () => {
   const calls: number[] = [];
-  const restoreEscape = __setFeedCacheEscapeForTest((shardCount) => calls.push(shardCount));
+  const restoreEscape = __setFeedCacheEscapeForTest((shardCount) => {
+    calls.push(shardCount);
+  });
   const restoreFetch = mockSupabase(1000, 600); // 40% short — well past the 15% fail floor
   try {
     const rows = await fetchListingsFromDbUncached();
@@ -143,7 +145,9 @@ test("a truncated read is still served to the visitor, but escapes the day-long 
 
 test("a normal read serves its rows and never touches the cache-escape hatch", async () => {
   const calls: number[] = [];
-  const restoreEscape = __setFeedCacheEscapeForTest((shardCount) => calls.push(shardCount));
+  const restoreEscape = __setFeedCacheEscapeForTest((shardCount) => {
+    calls.push(shardCount);
+  });
   const restoreFetch = mockSupabase(1000, 995); // 0.5% short — ordinary drift
   try {
     const rows = await fetchListingsFromDbUncached();
@@ -161,7 +165,9 @@ test("a warn-level read serves its rows and never touches the cache-escape hatch
   // escapes the cache. Confirms the two levels are genuinely handled
   // differently, not just logged differently.
   const calls: number[] = [];
-  const restoreEscape = __setFeedCacheEscapeForTest((shardCount) => calls.push(shardCount));
+  const restoreEscape = __setFeedCacheEscapeForTest((shardCount) => {
+    calls.push(shardCount);
+  });
   const restoreFetch = mockSupabase(1000, 900); // 10% short — warn band, not fail
   try {
     const rows = await fetchListingsFromDbUncached();
@@ -179,7 +185,9 @@ test("a failed count guard serves the walk unvalidated and never escapes the cac
   // failure must not be fatal, and with no total to compare against there
   // is nothing to classify as short — classifyFeedRead(_, null) is "ok".
   const calls: number[] = [];
-  const restoreEscape = __setFeedCacheEscapeForTest((shardCount) => calls.push(shardCount));
+  const restoreEscape = __setFeedCacheEscapeForTest((shardCount) => {
+    calls.push(shardCount);
+  });
   const restoreFetch = mockSupabase("unreachable", 600);
   try {
     const rows = await fetchListingsFromDbUncached();

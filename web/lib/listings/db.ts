@@ -1,6 +1,7 @@
 import type { Listing } from "./types";
 import { hasRealPrice } from "./price";
 import { SHARDS } from "./pack";
+import { SITEMAP_SHARDS } from "../sitemap";
 
 // Server-side reads from Supabase (PostgREST), with the bundled JSON as
 // fallback (see source.ts). Plain fetch, no client library: the queries are
@@ -192,50 +193,73 @@ export function classifyFeedRead(rowCount: number, total: number | null): FeedRe
   return "ok";
 }
 
-// The escape hatch for a FAIL-level short read. The render still completes
+// The escape hatch for a read we do not want to keep: a FAIL-level short
+// read, or a fall-back to the bundled snapshot. The render still completes
 // and its rows are still returned — throwing here would trip the exact
 // "flapping to stale fallback" failure this file's callers were built to
 // avoid (2026-08-16: a single failed request flipped three straight deploys
 // to the bundled JSON snapshot while every other read was healthy). Serving
-// a suspect read once is the acceptable half of that tradeoff; what tonight
-// showed is that the OTHER half — letting it sit as the day-long cached
-// truth (FEED_REVALIDATE_SECONDS, the routes' own `revalidate = 86400`) —
-// is not. revalidateTag expires the fetch-level entries this walk's own
-// pages just wrote, the same mechanism /api/revalidate/route.ts uses after
-// a sync; revalidatePath is called alongside it for the same routes that
-// route calls, because that route's own comments show revalidateTag alone
-// wasn't trusted to reach a force-static route with an empty
-// generateStaticParams() — belt and suspenders, not redundancy for its own
-// sake. The next request (the next shopper, or feed-audits.yml's 6-hourly
-// feed-shard-check.mjs probe) gets a fresh walk instead of another hour of
-// the same wrong snapshot.
+// a suspect read once is the acceptable half of that tradeoff; letting it
+// sit as the day-long cached truth (FEED_REVALIDATE_SECONDS, the routes'
+// own `revalidate = 86400`) is not.
+//
+// HOW MUCH THIS ACTUALLY BUYS — measured 2026-08-22, because the comment
+// that used to be here overstated it. Next refuses revalidateTag/
+// revalidatePath during a static render, and BOTH of this hatch's callers
+// are `dynamic = "force-static"` routes:
+//
+//   Dynamic server usage: Route /api/index/[shard] couldn't be rendered
+//   statically because it used `revalidateTag feed`   (digest DYNAMIC_SERVER_USAGE)
+//
+// so the call throws, the catch below swallows it, and nothing is expired.
+// Reproduced on /api/index/[shard] and /sitemap/[shard] against a database
+// that was genuinely answering PostgREST 500s. Deferring the call with
+// `after()` does not help — the static-generation store is still in scope
+// when the callback runs (also measured). There is no way to expire a route
+// cache from inside the render that filled it; only an outside caller can,
+// which is what /api/revalidate is.
+//
+// So this hatch is live insurance for any future DYNAMIC caller, and today
+// it is a no-op. What actually catches a poisoned cache is, in order:
+//   1. the FEED FALLBACK / SHORT READ lines below, in the function log;
+//   2. the sitemap refusing to publish at all on a non-live feed
+//      (app/sitemap/[shard]/route.ts) — a throw is not cached, so each
+//      request retries and the shard heals itself the moment the database
+//      does;
+//   3. scraper/feed-shard-check.mjs, every 6 hours, which compares the
+//      shards' actual ROW COUNTS against what /api/index/first reports and
+//      against sync-guard's last confirmed database count, and POSTs
+//      /api/revalidate to clear the bad entry when they disagree.
+// (2) and (3) are the load-bearing ones. Do not let this comment drift back
+// into implying (1)+this hatch is a fix.
 //
 // Dynamic import, not a top-level one: revalidateTag/revalidatePath rely on
 // a request-scoped store Next only sets up while actually handling a Route
-// Handler or Server Action request (confirmed: calling it outside one
-// throws "Invariant: static generation store missing") — a context a plain
-// script or test never has. A top-level import would also make this module
-// unloadable outside Next's own bundler resolution. Either way the failure
-// must not be fatal: a render trying to protect shoppers from a stale cache
-// must not itself crash over the attempt.
-let escapeFeedCache: (shardCount: number) => void = (shardCount) => {
-  import("next/cache")
-    .then(({ revalidateTag, revalidatePath }) => {
-      revalidateTag(FEED_CACHE_TAG, { expire: 0 });
-      revalidatePath("/api/index/first");
-      for (let s = 0; s < shardCount; s++) revalidatePath(`/api/index/${s}`);
-    })
-    .catch((err) => {
-      console.error(
-        "[listings] SHORT READ: could not schedule an early revalidate (best-effort, not fatal — the day-long TTL is the fallback):",
-        err
-      );
-    });
+// Handler or Server Action request — a context a plain script or test never
+// has. A top-level import would also make this module unloadable outside
+// Next's own bundler resolution.
+let escapeFeedCache: (shardCount: number) => void | Promise<void> = async (shardCount) => {
+  try {
+    const { revalidateTag, revalidatePath } = await import("next/cache");
+    revalidateTag(FEED_CACHE_TAG, { expire: 0 });
+    revalidatePath("/api/index/first");
+    for (let s = 0; s < shardCount; s++) revalidatePath(`/api/index/${s}`);
+    // The sitemap shards render off this same walk and cache for the same
+    // day (app/sitemap/[shard]/route.ts). A suspect read that reaches them
+    // publishes a URL list to a crawler, which is a slower and stickier kind
+    // of wrong than a thin browse page — expire them together.
+    for (let s = 0; s < SITEMAP_SHARDS; s++) revalidatePath(`/sitemap/${s}.xml`);
+  } catch (err) {
+    console.error(
+      "[listings] SUSPECT READ: could not schedule an early revalidate (best-effort, not fatal — see the note above):",
+      err
+    );
+  }
 };
 
 /** Test seam only: swap the cache-escape side effect for a spy and get back
  *  a function that restores the real one. Production code never calls this. */
-export function __setFeedCacheEscapeForTest(fn: (shardCount: number) => void): () => void {
+export function __setFeedCacheEscapeForTest(fn: (shardCount: number) => void | Promise<void>): () => void {
   const prev = escapeFeedCache;
   escapeFeedCache = fn;
   return () => {
@@ -338,15 +362,22 @@ export async function fetchListingsFromDbUncached(): Promise<Listing[] | null> {
     // in); a real shortfall means pages went missing and has to be visible,
     // not inferred later from a make that looks thin. Serving this render is
     // still correct either way — see escapeFeedCache's comment for why FAIL
-    // doesn't throw — but FAIL must not let this become the cached truth for
-    // the next 86,400 seconds the way it did tonight.
+    // doesn't throw at request time — but FAIL must not let this become the
+    // cached truth for the next 86,400 seconds the way it did tonight. The
+    // one place it DOES throw is a production build (refuseDuringBuild),
+    // where the read becomes a permanent artifact instead of a cache entry.
     const verdict = classifyFeedRead(rows.length, total);
     if (verdict !== "ok") {
       console.error(
         `[listings] SHORT READ (${verdict.toUpperCase()}): ${rows.length} rows of ${total} expected — the feed is being served incomplete`
       );
     }
-    if (verdict === "fail") escapeFeedCache(SHARDS);
+    if (verdict === "fail") {
+      refuseDuringBuild(
+        `the feed walk came back ${rows.length} rows of ${total} expected`
+      );
+      await escapeFeedCache(SHARDS);
+    }
 
     return rows.map((r) => ({
       ...r.payload,
@@ -358,9 +389,68 @@ export async function fetchListingsFromDbUncached(): Promise<Listing[] | null> {
       listedOn: r.listed_on ?? undefined,
     }));
   } catch (err) {
-    console.error("[listings] Supabase read failed — serving bundled JSON fallback:", err);
+    // A build refusal raised above is not a read failure to be recovered
+    // from — it is the deliberate stop. Let it out unrelabelled.
+    if (err instanceof BuildFeedRefusal) throw err;
+    // Reached only when the database IS configured (checked at the top) and
+    // still did not answer — so the caller is about to serve the committed
+    // snapshot, 58,730 cars standing in for ~100,300, with every request
+    // returning 200. That is the 2026-08-16 incident: three production
+    // deploys in a row shipped it to the browse grid and looked clean.
+    //
+    // Serving it is still right for a shopper-facing render — an outage
+    // should not black out the site, and this file's own history (the
+    // "flapping to stale fallback" note on escapeFeedCache) is what a throw
+    // here would recreate. So the fallback gets the same treatment a
+    // FAIL-level short read gets: served once, and named unmistakably in the
+    // log. The log line is deliberately not the old
+    // "serving bundled JSON fallback" — that phrasing read like a routine
+    // degradation and sat unremarked through the 2026-08-16 and 2026-08-21
+    // incidents.
+    //
+    // Note what this does NOT do: it does not stop the render from being
+    // cached for the day. escapeFeedCache is a no-op from a force-static
+    // route (see its comment — measured, not assumed). The callers that can
+    // refuse are the ones that do: the sitemap publishes nothing on a
+    // non-live feed, and feed-shard-check.mjs catches a poisoned browse
+    // cache within 6 hours and clears it through /api/revalidate.
+    refuseDuringBuild("the feed walk fell back to the committed snapshot");
+    console.error(
+      "[listings] FEED FALLBACK: Supabase read failed — serving the bundled JSON snapshot, which is NOT live inventory:",
+      err
+    );
+    await escapeFeedCache(SHARDS);
     return null;
   }
+}
+
+/**
+ * A build must never bake a feed read it cannot stand behind.
+ *
+ * Nothing in this app reads the feed during `next build` any more — the
+ * browse index shards and the sitemap shards both render on first request
+ * (app/api/index/[shard]/route.ts, app/sitemap/[shard]/route.ts), each for
+ * the same reason: a prerender that walks the database puts every deploy at
+ * the database's mercy, and four builds died that way on 2026-08-22. This is
+ * the tripwire for re-introducing that coupling by accident.
+ *
+ * It fires only in the build phase, where a bad read becomes a permanent
+ * artifact rather than a cache entry the next request replaces. In that
+ * situation there is no good "serve it anyway": a deploy that quietly ships
+ * the snapshot as if it were live inventory is exactly the failure the log
+ * line above was supposed to prevent and didn't, because a green build reads
+ * as a healthy one. Failing loudly is the honest outcome — CLAUDE.md's rule
+ * is that a claim we cannot stand behind does not get made.
+ */
+class BuildFeedRefusal extends Error {}
+
+function refuseDuringBuild(what: string): void {
+  if (process.env.NEXT_PHASE !== "phase-production-build") return;
+  throw new BuildFeedRefusal(
+    `[listings] BUILD ABORTED: ${what}. Something in this build prerenders the live feed — it should not; ` +
+      "the feed-reading routes render on first request on purpose (see app/api/index/[shard]/route.ts). " +
+      "Shipping this build would bake incomplete inventory into a deploy that looks clean."
+  );
 }
 
 /** One live listing by its site id — the detail page's row without paying for

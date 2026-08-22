@@ -2,6 +2,7 @@ import { createHash, timingSafeEqual } from "node:crypto";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { FEED_CACHE_TAG } from "@/lib/listings/db";
 import { SHARDS } from "@/lib/listings/pack";
+import { SITEMAP_SHARDS } from "@/lib/sitemap";
 
 // The nightly pipeline's "the data just changed" signal. The feed walk is
 // cached a full day (lib/listings/db.ts) because the data changes exactly
@@ -32,5 +33,12 @@ export async function POST(req: Request) {
   // The seventh body under the shard route: the first-paint payload. Same
   // data, same staleness rules.
   revalidatePath("/api/index/first");
+  // The sitemap shards render off the same feed walk and cache for the same
+  // day (app/sitemap/[shard]/route.ts). They stopped being build artifacts on
+  // 2026-08-22 — which means this route, and the caller's warming curls after
+  // it, are now what keeps them current. Warmed in the same pass as the index
+  // shards, they cost no extra database read: db.ts's ten-minute walk memo is
+  // still holding the walk the index warm-up just paid for.
+  for (let s = 0; s < SITEMAP_SHARDS; s++) revalidatePath(`/sitemap/${s}.xml`);
   return Response.json({ revalidated: true });
 }

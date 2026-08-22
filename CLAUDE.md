@@ -70,7 +70,23 @@ until `vercel promote <deployment-url>`), then **warm the browse index** —
 the first-paint payload and the shards render on first request rather than at
 build time (deliberate: prerendering them put every deploy at the database's
 mercy). Warm `first` first: it is the one the next visitor's first card waits
-on.
+on. Then **warm the sitemaps** — `/sitemap/0.xml` through `/5.xml` — which
+render on first request for the same reason since 2026-08-22.
+
+Then **check the shards' row counts, not their status codes.** A poisoned
+shard answers 200. On 2026-08-21 five of them served ~9,800 rows each where
+~16,700 was right, hiding 34,000 cars for most of a day; ~9,788 is what the
+committed fallback snapshot divides into, so that is very likely what it was.
+The six counts must sum to the `total` in `/api/index/first` and sit within a
+few percent of each other. `scraper/feed-shard-check.mjs` is this check, and
+it runs every 6 hours in feed-audits.yml.
+
+**Do not deploy while Supabase is erroring.** A build survives it now — the
+feed is no longer read at build time at all — but a fresh deployment starts
+with an empty route cache, so the first render of each shard against a sick
+database caches the bundled snapshot for a full day. That is the 2026-08-16
+and 2026-08-21 incident, and post-deploy warming is what pulls the trigger.
+Check the database answers before deploying, not just that the build is green.
 
 The browse feed is cached a **day**, not an hour (the 2026-08-17 egress
 incident: hourly re-walks were ~1.2 GB/day against a 5 GB/month quota).

@@ -35,13 +35,40 @@ function absolutizeImages(l: Listing): Listing {
   return { ...l, imageUrl, images };
 }
 
-export async function allListings(): Promise<Listing[]> {
+/**
+ * Where the rows a caller is holding actually came from.
+ *
+ *   "db"           the live feed. The only origin that may be published as
+ *                  current inventory.
+ *   "unconfigured" no SUPABASE_URL/ANON_KEY — local dev and CI. The bundled
+ *                  snapshot is the intended answer here.
+ *   "fallback"     the database IS configured and did not answer, so these
+ *                  are the committed snapshot's rows. The site keeps working,
+ *                  but this is 58,730 cars standing in for ~100,300 and it
+ *                  must never be mistaken for the live feed.
+ *
+ * The distinction exists because the third case used to be invisible. On
+ * 2026-08-16 three production deploys in a row shipped the snapshot to the
+ * browse grid — every request 200, the site looked clean, ~40,000 cars simply
+ * weren't there. Callers that publish a claim about what is for sale (the
+ * sitemap) refuse to serve on "fallback"; callers that just have to keep the
+ * lights on (the browse index) serve it but do not let it become the day's
+ * cached truth (see db.ts's catch).
+ */
+export type FeedOrigin = "db" | "fallback" | "unconfigured";
+
+export async function allListingsWithOrigin(): Promise<{ listings: Listing[]; origin: FeedOrigin }> {
   const db = await fetchListingsFromDb();
+  const origin: FeedOrigin = db ? "db" : dbConfigured() ? "fallback" : "unconfigured";
   const byVin = new Map<string, Listing>();
   for (const l of [...(db ?? (await fallbackListings())), ...SAMPLE_LISTINGS]) {
     if (!byVin.has(l.vin)) byVin.set(l.vin, absolutizeImages(l));
   }
-  return [...byVin.values()];
+  return { listings: [...byVin.values()], origin };
+}
+
+export async function allListings(): Promise<Listing[]> {
+  return (await allListingsWithOrigin()).listings;
 }
 
 export async function findListing(id: string): Promise<Listing | undefined> {
