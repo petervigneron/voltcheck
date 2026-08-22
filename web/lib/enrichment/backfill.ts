@@ -151,7 +151,6 @@ export const TESTED_BY_ROWID: Record<string, Fact<number>> = {
   "bolt-ev-2021-lt": f(229, "tested", "medium", "70-mph steady-state highway (InsideEVs)", "https://insideevs.com/reviews/423144/chevy-bolt-ev-70-mph-range-test/"),
   "bolt-ev-2021-premier": f(229, "tested", "medium", "70-mph steady-state highway (InsideEVs)", "https://insideevs.com/reviews/423144/chevy-bolt-ev-70-mph-range-test/"),
   "bz-2026-fwd-plus": f(250, "tested", "high", "75-mph steady-state highway range (Car and Driver)", "https://www.caranddriver.com/toyota/bz"),
-  "bz4x-2024-fwd": f(227, "tested", "medium", "Edmunds real-world EV Range Test (mixed 60% city/40% hwy loop) (Edmunds)", "https://www.edmunds.com/toyota/bz4x/"),
   "cadillac-optiq-2025": f(252, "tested", "high", "70-mph steady-state highway range test (InsideEVs)", "https://insideevs.com/reviews/756344/cadillac-optiq-awd-70-mph-range-test/"),
   "cadillac-optiq-2027-awd": f(252, "tested", "medium", "70-mph steady-state highway range test (InsideEVs)", "https://insideevs.com/reviews/756344/cadillac-optiq-awd-70-mph-range-test/"),
   "eqe-amg-2024-4matic": f(230, "tested", "medium", "75-mph steady-state highway range (Car and Driver)", "https://www.caranddriver.com/mercedes-amg/eqe53-2023"),
@@ -247,7 +246,7 @@ export const TESTED_BY_ROWID: Record<string, Fact<number>> = {
 // Pass 2: parity-derived range where no direct test of the exact config exists;
 // marked "est" so the row wears the estimate badge, not a bare tested figure.
 export const TESTED_EST_BY_ROWID: Record<string, Fact<number>> = {
-  "ariya-engage-fwd": f(144, "est", "medium", "75 mph constant-speed highway range test (InsideEVs)", "https://insideevs.com/news/613536/base-nissan-ariya-range-test/"),
+  "ariya-63-fwd": f(144, "est", "medium", "75 mph constant-speed highway range test (InsideEVs)", "https://insideevs.com/news/613536/base-nissan-ariya-range-test/"),
   "blazer-rwd": f(275, "est", "medium", "70-mph highway range test (MotorTrend)", "https://www.motortrend.com/reviews/2025-chevrolet-blazer-ev-yearlong-review-verdict"),
   "bmw-i4-xdrive40": f(239, "est", "medium", "InsideEVs 70 mph highway range test (InsideEVs)", "https://insideevs.com/reviews/590360/bmw-i4-m50-range-test/"),
   "bolt-ev-2017-2019": f(180, "est", "medium", "75-mph highway range test (Car and Driver)", "https://www.caranddriver.com/reviews/a15099446/2017-chevrolet-bolt-ev-test-review/"),

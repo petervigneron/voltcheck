@@ -85,17 +85,25 @@ test("Mach-E: a VIN that names the version on its own defends the feed's trim", 
   assert.equal(rowIds(l), "EXACT:mache-2023-gt");
 });
 
-test("Ariya: a drivetrain-resolved row survives a contradicted trim", () => {
+test("Ariya: a VIN-resolved row survives a contradicted trim", () => {
   // Eight live listings on 2026-08-21: the feed says EVOLVE+, the description
-  // says ENGAGE. Both land on the 87 kWh AWD row, which is keyed on the
-  // drivetrain and not on either name, so the dispute costs nothing.
+  // says ENGAGE. Both land on the 87 kWh AWD row, which since 2026-08-22 is
+  // keyed on the VIN descriptor (DF0B) rather than on either name, so the
+  // dispute costs nothing — the point this test was written to make, and now
+  // made by the VIN instead of by the drivetrain.
+  //
+  // The expected range moved 267 -> 272 in that same pass. 267 is the
+  // Platinum+ figure (EPA id 46991, and only on its standard 19-inch wheels);
+  // 272 is what EPA files for Engage+/Evolve+ e-4ORCE (46989). The old row
+  // covered every 87 kWh AWD Ariya with one number and 235 live listings were
+  // carrying the wrong one of the two.
   const l = listing({
     vin: "JN1DF0BB5RM731868", year: 2024, make: "Nissan", model: "ARIYA",
     trim: "EVOLVE+", drive: "AWD", trimSuspect: "ENGAGE",
   });
   assert.equal(trimClaim(l).assert, false);
   assert.equal(rowIds(l), "EXACT:ariya-87-awd");
-  assert.equal(enrichListing(l).realRangeMi?.value, 267);
+  assert.equal(enrichListing(l).realRangeMi?.value, 272);
 });
 
 // ── The cohorts this change exists for ──────────────────────────────────────

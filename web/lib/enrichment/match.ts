@@ -236,6 +236,17 @@ function matchEnrichmentRaw(
     rows = rows.filter((r) => !r.wmi || r.wmi.includes(wmi));
   }
 
+  // The vehicle descriptor (VIN position 4 on) separates cars a trim string
+  // cannot. The Cadillac Lyriq is why: `trimStringsOverlap` is substring-
+  // tolerant both ways, so the V-Series row's "V Sport" key swallowed every
+  // ordinary Lyriq listing that said only "Sport", and 878 of them printed
+  // the V's 285 mi. The V is a different VIN — 1GYXP against 1GYKP — and no
+  // amount of trim-string curation fixes a feed that writes "Sport" for both.
+  const vds = decode.vin?.slice(3).toUpperCase();
+  if (vds) {
+    rows = rows.filter((r) => !r.vds || r.vds.some((p) => vds.startsWith(p.toUpperCase())));
+  }
+
   // VIN position 8 is the maker's own motor/battery code — the one field a
   // dealer feed can't blur. Must run before the kWh-hint filter: vPIC's
   // battery figure is a model-level constant on some trucks (every 2023

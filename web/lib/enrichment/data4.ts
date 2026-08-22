@@ -2022,21 +2022,21 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "i9-2026-rwd", ...H9, modelYears: [2026, 2026], vin8: ["1"], drive: "RWD", packVariant: "Long Range",
-    battery: { packGrossKwh: f(110.3, "agg", "medium") },
+    battery: { packGrossKwh: f(110.3, "mfr", "high", undefined, "https://www.hyundainews.com/assets/documents/original/65341-2026IONIQ9SpecsFeatures20250305.pdf") },
     range: { epaRangeMi: f(335, "mfr", "high", "MY2026 IONIQ 9 RWD (VIN code 1), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49661") },
     charging: { portStandard: f<"NACS">("NACS", "agg", "high", "Native NACS port from launch") },
     warranty: HK_WARRANTY,
   },
   {
     id: "i9-2026-awd", ...H9, modelYears: [2026, 2026], vin8: ["3"], drive: "AWD", packVariant: "Long Range",
-    battery: { packGrossKwh: f(110.3, "agg", "medium") },
+    battery: { packGrossKwh: f(110.3, "mfr", "high", undefined, "https://www.hyundainews.com/assets/documents/original/65341-2026IONIQ9SpecsFeatures20250305.pdf") },
     range: { epaRangeMi: f(320, "mfr", "high", "MY2026 IONIQ 9 AWD (VIN code 3), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49662") },
     charging: { portStandard: f<"NACS">("NACS", "agg", "high", "Native NACS port from launch") },
     warranty: HK_WARRANTY,
   },
   {
     id: "i9-2026-awd-perf", ...H9, modelYears: [2026, 2026], vin8: ["5"], drive: "AWD", packVariant: "Long Range",
-    battery: { packGrossKwh: f(110.3, "agg", "medium") },
+    battery: { packGrossKwh: f(110.3, "mfr", "high", undefined, "https://www.hyundainews.com/assets/documents/original/65341-2026IONIQ9SpecsFeatures20250305.pdf") },
     range: { epaRangeMi: f(311, "mfr", "high", "MY2026 IONIQ 9 AWD Performance (VIN code 5, incl. Calligraphy), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49663") },
     charging: { portStandard: f<"NACS">("NACS", "agg", "high", "Native NACS port from launch") },
     warranty: HK_WARRANTY,
@@ -2515,8 +2515,18 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     charging: { portStandard: f("CCS1", "mfr") },
   },
   {
-    id: "lyriq-v-2026-27", make: "CADILLAC", model: "Lyriq", modelYears: [2026, 2027], vin8: ["L"], trim: ["V-Series", "V Premium", "V Sport"], drive: "AWD",
-    range: { epaRangeMi: f(285, "mfr", "high", "Lyriq-V (PAWD V-Series), EPA, same rating 2026–27 and both charger configurations", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49633") },
+    // Keyed on the V's own descriptor (1GYXP against an ordinary Lyriq's
+    // 1GYKP), not on its trim. "V Sport" was in this row's trim array, and
+    // trimStringsOverlap is substring-tolerant both ways, so it swallowed
+    // every listing whose trim read only "Sport" — 878 ordinary AWD Lyriqs
+    // (520 MY2026, 358 MY2027) were printing the V-Series' 285 mi and no pack
+    // size at all. The trim key is gone rather than curated: all 327 live V
+    // listings are 1GYXP and all 5,283 ordinary ones are 1GYKP, so the
+    // descriptor settles it outright — and a trim key would have gone on
+    // refusing the 21 real V cars whose trim field reads "-V" or a bare "V",
+    // both below trimStringsOverlap's three-character floor.
+    id: "lyriq-v-2026-27", make: "CADILLAC", model: "Lyriq", modelYears: [2026, 2027], vin8: ["L"], vds: ["XP"], drive: "AWD",
+    range: { epaRangeMi: f(285, "mfr", "high", undefined, "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49633") },
     charging: { portStandard: f("CCS1", "mfr") },
     warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
   },

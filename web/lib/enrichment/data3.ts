@@ -633,7 +633,22 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     model: "Model S",
     modelYears: [2019, 2019],
     drive: "AWD",
-    range: { epaRangeMi: f(259, "mfr", "medium", "This listing's exact trim isn't recorded, 259 mi (75D) is the lowest-range 2019 Model S trim, used here as a floor, not a confirmed match. Full 2019 lineup, EPA: 75D 259 / Standard Range 285 / P100D 315 / Performance 21″ 325 / Performance 19″ 345 / 100D 335 / Long Range 370", "https://www.fueleconomy.gov") },
+    // No EPA range on these three. They used to print the lowest-range trim of
+    // the year as a "floor" and say so in a note — but that note runs ~50
+    // words, so noteRule's 14-word cap kept it off the page entirely, and what
+    // a shopper actually saw was a plain range chip carrying a manufacturer
+    // citation. 61 of the 109 live cars on these rows had their own dealer
+    // trim naming a higher-range configuration, by up to 111 miles.
+    //
+    // Understating is not the safe direction here. The printed figure IS the
+    // browse filter's minRange and one of featuredScore's buckets, so a
+    // 295-mile 100D shown as 200 drops out of a "250 miles or more" search
+    // altogether. And nothing available separates 60D/75D/90D/100D: VIN
+    // position 7 is E on all 112 live cars, position 8 only tells Performance
+    // from not, vPIC returns Series, Trim and BatteryKWh all blank, and the
+    // dealer's trim string is exactly what 6a6e4f3 stopped letting decide a
+    // range. Every other pre-2021 S/X bucket already prints nothing; these
+    // three were the anomaly, not the norm.
     charging: {
       portStandard: f("NACS", "mfr", "high", "Tesla's proprietary connector"),
       superchargerAccess: f("native", "mfr", "high"),
@@ -667,7 +682,22 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     model: "Model X",
     modelYears: [2017, 2017],
     drive: "AWD",
-    range: { epaRangeMi: f(200, "mfr", "medium", "This listing's exact trim isn't recorded, 200 mi (60D) is the lowest-range 2017 Model X trim, used here as a floor, not a confirmed match. Full 2017 lineup, EPA: 60D 200 / 75D 238 / P90D 250 / 90D 257 / P100D 289 / 100D 295", "https://www.fueleconomy.gov") },
+    // No EPA range on these three. They used to print the lowest-range trim of
+    // the year as a "floor" and say so in a note — but that note runs ~50
+    // words, so noteRule's 14-word cap kept it off the page entirely, and what
+    // a shopper actually saw was a plain range chip carrying a manufacturer
+    // citation. 61 of the 109 live cars on these rows had their own dealer
+    // trim naming a higher-range configuration, by up to 111 miles.
+    //
+    // Understating is not the safe direction here. The printed figure IS the
+    // browse filter's minRange and one of featuredScore's buckets, so a
+    // 295-mile 100D shown as 200 drops out of a "250 miles or more" search
+    // altogether. And nothing available separates 60D/75D/90D/100D: VIN
+    // position 7 is E on all 112 live cars, position 8 only tells Performance
+    // from not, vPIC returns Series, Trim and BatteryKWh all blank, and the
+    // dealer's trim string is exactly what 6a6e4f3 stopped letting decide a
+    // range. Every other pre-2021 S/X bucket already prints nothing; these
+    // three were the anomaly, not the norm.
     charging: {
       portStandard: f("NACS", "mfr", "high", "Tesla's proprietary connector"),
       superchargerAccess: f("native", "mfr", "high"),
@@ -704,7 +734,22 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     model: "Model X",
     modelYears: [2018, 2018],
     drive: "AWD",
-    range: { epaRangeMi: f(238, "mfr", "medium", "This listing's exact trim isn't recorded, 238 mi (75D) is the lowest-range 2018 Model X trim, used here as a floor, not a confirmed match. Full 2018 lineup, EPA: 75D 238 / P100D 289 / 100D 295", "https://www.fueleconomy.gov") },
+    // No EPA range on these three. They used to print the lowest-range trim of
+    // the year as a "floor" and say so in a note — but that note runs ~50
+    // words, so noteRule's 14-word cap kept it off the page entirely, and what
+    // a shopper actually saw was a plain range chip carrying a manufacturer
+    // citation. 61 of the 109 live cars on these rows had their own dealer
+    // trim naming a higher-range configuration, by up to 111 miles.
+    //
+    // Understating is not the safe direction here. The printed figure IS the
+    // browse filter's minRange and one of featuredScore's buckets, so a
+    // 295-mile 100D shown as 200 drops out of a "250 miles or more" search
+    // altogether. And nothing available separates 60D/75D/90D/100D: VIN
+    // position 7 is E on all 112 live cars, position 8 only tells Performance
+    // from not, vPIC returns Series, Trim and BatteryKWh all blank, and the
+    // dealer's trim string is exactly what 6a6e4f3 stopped letting decide a
+    // range. Every other pre-2021 S/X bucket already prints nothing; these
+    // three were the anomaly, not the norm.
     charging: {
       portStandard: f("NACS", "mfr", "high", "Tesla's proprietary connector"),
       superchargerAccess: f("native", "mfr", "high"),

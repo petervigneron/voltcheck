@@ -77,6 +77,15 @@ export interface EnrichmentRow {
   // A hard filter like vin8: a row keyed to WMIs never matches a VIN outside
   // them.
   wmi?: string[];
+  // VIN positions 4 onward — the vehicle descriptor, where a maker encodes the
+  // things a dealer feed blurs. Each entry is a prefix starting at position 4,
+  // so "X" keys on position 4 alone and "AF0B" on positions 4-7. A hard filter
+  // like `wmi` and `vin8`: a row keyed to descriptors never matches a VIN
+  // outside them. Added 2026-08-22 for two cars the trim string could not
+  // separate honestly — the Cadillac Lyriq V-Series (1GYXP, against an
+  // ordinary 1GYKP) and the Nissan Ariya's 63-vs-87 kWh packs, where position
+  // 8 carries the drivetrain and says nothing about the pack.
+  vds?: string[];
   // Other model strings dealer feeds file this car under — most EQE SUV
   // listings arrive as model "EQE". Each alias matches exactly as `model`
   // does; the VIN-level wmi filter is what keeps an alias from poaching the

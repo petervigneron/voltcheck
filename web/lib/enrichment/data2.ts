@@ -16,6 +16,10 @@ function f<T>(
   return { value, source, asOf: AS_OF, confidence, note, sourceUrl };
 }
 
+// A fueleconomy.gov citation that resolves to the exact record a figure came
+// from, rather than the site's front door (same convention as data3/data4.ts).
+const epa = (id: number) => `https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=${id}`;
+
 export const RESEARCH_ROWS: EnrichmentRow[] = [
   {
     id: "id4-2021-pro-rwd",
@@ -25,7 +29,67 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     trim: "Pro",
     drive: "RWD",
     battery: { packUsableKwh: f(77, "mfr", "medium", "82 gross / 77 usable"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(260, "mfr", "high", "2021 Pro RWD; 1st Edition/Pro S: 250, EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(234, "tested", "high", "70-mph (InsideEVs, First Edition RWD): 234 mi; 75-mph (C&D): 190; Edmunds loop: 287–288") },
+    range: { epaRangeMi: f(260, "mfr", "high", undefined, epa(44052)) },
+    charging: {
+      portStandard: f("CCS1", "mfr"),
+      superchargerAccess: f("adapter", "mfr", "high", "VW-approved NACS adapter ($200), access opened Nov 2025"),
+      dcPeakKw: f(170, "agg", "medium"),
+    },
+    thermal: { heatPump: f("none", "agg", "medium") },
+    warranty: {
+      batteryYears: f(8, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new"),
+      batteryTransfers: f(true, "mfr", "high"),
+    },
+    buyerNotes: [
+      {
+        headline: "Battery and door-handle recalls; confirm the repairs were done on this car",
+        body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine, an unrepaired one is materially worse until fixed.",
+        severity: "trap",
+      },
+    ],
+  },
+
+  {
+    id: "id4-2021-pros-rwd",
+    make: "VOLKSWAGEN",
+    model: "ID.4",
+    modelYears: [2021, 2021],
+    trim: "Pro S",
+    drive: "RWD",
+    battery: { packUsableKwh: f(77, "mfr", "medium", "82 gross / 77 usable"), chemistry: f("NMC", "agg", "medium") },
+    range: { epaRangeMi: f(250, "mfr", "high", undefined, epa(43558)) },
+    charging: {
+      portStandard: f("CCS1", "mfr"),
+      superchargerAccess: f("adapter", "mfr", "high", "VW-approved NACS adapter ($200), access opened Nov 2025"),
+      dcPeakKw: f(170, "agg", "medium"),
+    },
+    thermal: { heatPump: f("none", "agg", "medium") },
+    warranty: {
+      batteryYears: f(8, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new"),
+      batteryTransfers: f(true, "mfr", "high"),
+    },
+    buyerNotes: [
+      {
+        headline: "Battery and door-handle recalls; confirm the repairs were done on this car",
+        body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine, an unrepaired one is materially worse until fixed.",
+        severity: "trap",
+      },
+    ],
+  },
+
+  {
+    id: "id4-2021-1st",
+    make: "VOLKSWAGEN",
+    model: "ID.4",
+    modelYears: [2021, 2021],
+    trim: "1st Edition",
+    drive: "RWD",
+    battery: { packUsableKwh: f(77, "mfr", "medium", "82 gross / 77 usable"), chemistry: f("NMC", "agg", "medium") },
+    range: { epaRangeMi: f(250, "mfr", "high", undefined, epa(43557)), testedRangeMi: f(234, "tested", "high", "70 mph steady-state highway (InsideEVs)") },
     charging: {
       portStandard: f("CCS1", "mfr"),
       superchargerAccess: f("adapter", "mfr", "high", "VW-approved NACS adapter ($200), access opened Nov 2025"),
@@ -55,7 +119,37 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     trim: "Pro",
     drive: "AWD",
     battery: { packUsableKwh: f(77, "mfr", "medium", "82 gross / 77 usable"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(249, "mfr", "high", "2021 Pro AWD; Pro S AWD: 240, EPA", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(249, "mfr", "high", undefined, epa(44725)) },
+    charging: {
+      portStandard: f("CCS1", "mfr"),
+      superchargerAccess: f("adapter", "mfr", "high", "VW-approved NACS adapter ($200), access opened Nov 2025"),
+      dcPeakKw: f(170, "agg", "medium"),
+    },
+    thermal: { heatPump: f("none", "agg", "medium") },
+    warranty: {
+      batteryYears: f(8, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new"),
+      batteryTransfers: f(true, "mfr", "high"),
+    },
+    buyerNotes: [
+      {
+        headline: "Battery and door-handle recalls; confirm the repairs were done on this car",
+        body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine, an unrepaired one is materially worse until fixed.",
+        severity: "trap",
+      },
+    ],
+  },
+
+  {
+    id: "id4-2021-pros-awd",
+    make: "VOLKSWAGEN",
+    model: "ID.4",
+    modelYears: [2021, 2021],
+    trim: "Pro S",
+    drive: "AWD",
+    battery: { packUsableKwh: f(77, "mfr", "medium", "82 gross / 77 usable"), chemistry: f("NMC", "agg", "medium") },
+    range: { epaRangeMi: f(240, "mfr", "high", undefined, epa(44726)) },
     charging: {
       portStandard: f("CCS1", "mfr"),
       superchargerAccess: f("adapter", "mfr", "high", "VW-approved NACS adapter ($200), access opened Nov 2025"),
@@ -85,7 +179,37 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     trim: "Pro",
     drive: "RWD",
     battery: { packUsableKwh: f(77, "mfr", "medium", "82 gross / 77 usable"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(275, "mfr", "high", "2022 Pro RWD; Pro S: 262, EPA", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(275, "mfr", "high", undefined, epa(45259)) },
+    charging: {
+      portStandard: f("CCS1", "mfr"),
+      superchargerAccess: f("adapter", "mfr", "high", "VW-approved NACS adapter ($200), access opened Nov 2025"),
+      dcPeakKw: f(170, "agg", "medium"),
+    },
+    thermal: { heatPump: f("none", "agg", "medium") },
+    warranty: {
+      batteryYears: f(8, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new"),
+      batteryTransfers: f(true, "mfr", "high"),
+    },
+    buyerNotes: [
+      {
+        headline: "Battery and door-handle recalls; confirm the repairs were done on this car",
+        body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine, an unrepaired one is materially worse until fixed.",
+        severity: "trap",
+      },
+    ],
+  },
+
+  {
+    id: "id4-2022-pros-rwd",
+    make: "VOLKSWAGEN",
+    model: "ID.4",
+    modelYears: [2022, 2022],
+    trim: "Pro S",
+    drive: "RWD",
+    battery: { packUsableKwh: f(77, "mfr", "medium", "82 gross / 77 usable"), chemistry: f("NMC", "agg", "medium") },
+    range: { epaRangeMi: f(262, "mfr", "high", undefined, epa(45413)) },
     charging: {
       portStandard: f("CCS1", "mfr"),
       superchargerAccess: f("adapter", "mfr", "high", "VW-approved NACS adapter ($200), access opened Nov 2025"),
@@ -115,7 +239,37 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     trim: "Pro",
     drive: "AWD",
     battery: { packUsableKwh: f(77, "mfr", "medium", "82 gross / 77 usable"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(251, "mfr", "high", "2022 Pro AWD; Pro S: 245, EPA", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(251, "mfr", "high", undefined, epa(45257)) },
+    charging: {
+      portStandard: f("CCS1", "mfr"),
+      superchargerAccess: f("adapter", "mfr", "high", "VW-approved NACS adapter ($200), access opened Nov 2025"),
+      dcPeakKw: f(170, "agg", "medium"),
+    },
+    thermal: { heatPump: f("none", "agg", "medium") },
+    warranty: {
+      batteryYears: f(8, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new"),
+      batteryTransfers: f(true, "mfr", "high"),
+    },
+    buyerNotes: [
+      {
+        headline: "Battery and door-handle recalls; confirm the repairs were done on this car",
+        body: "2023–25 Chattanooga-built cars: HV battery cell-module recalls (25V-836, 26V-028, 26V-030) with module replacement as remedy and an interim 80% charge cap with DC fast charging disabled. All years: door-handle water-intrusion recall (24V-651, doors can open while driving). A repaired car is fine, an unrepaired one is materially worse until fixed.",
+        severity: "trap",
+      },
+    ],
+  },
+
+  {
+    id: "id4-2022-pros-awd",
+    make: "VOLKSWAGEN",
+    model: "ID.4",
+    modelYears: [2022, 2022],
+    trim: "Pro S",
+    drive: "AWD",
+    battery: { packUsableKwh: f(77, "mfr", "medium", "82 gross / 77 usable"), chemistry: f("NMC", "agg", "medium") },
+    range: { epaRangeMi: f(245, "mfr", "high", undefined, epa(45258)) },
     charging: {
       portStandard: f("CCS1", "mfr"),
       superchargerAccess: f("adapter", "mfr", "high", "VW-approved NACS adapter ($200), access opened Nov 2025"),
@@ -571,15 +725,47 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     ],
   },
 
+  // ---------------------------------------------------------------------
+  // Nissan Ariya MY2023-2025. Re-keyed on the VIN 2026-08-22, because the
+  // trim string was deciding the PACK and getting it wrong in the expensive
+  // direction: 20 live 63 kWh cars were being shown an 87 kWh pack and 62-73
+  // more miles than EPA files for them, having fallen through to the 87 kWh
+  // rows on a junk trim (48 listings arrive with the body style "Small" in
+  // the trim field) or on no trim at all. One of them, JN1CF0BB9RM735014, the
+  // dealer itself advertises as "ENGAGE+ e-4ORCE"; the VIN says plain Engage.
+  //
+  // The VIN's descriptor separates all six configurations with no overlap in
+  // 951 live listings, and vPIC corroborates it per VIN (EngineKW 66 on every
+  // 63 kWh car, 91 on every 87 kWh one; Trim returns VENTURE only on position
+  // 7 = A and PLAT only on position 7 = C). Position 8 carries the drivetrain
+  // and says nothing about the pack, which is why vin8 alone could not do it.
+  //
+  //   AF0B  FWD 63  216      CF0B  AWD 63  205
+  //   BF0B  FWD 87  289      DF0B  AWD 87  272
+  //   BF0A  FWD 87  304      DF0C  AWD 87  267   (Venture+ / Platinum+)
+  //
+  // Every rating is identical across 2023, 2024 and 2025, so one row spans
+  // all three. `ignoreKwhHint` is set for the same reason the Lightning rows
+  // set it: vPIC returns BatteryKWh 66 with BatteryKWh_to 91 for the Ariya, a
+  // model-level RANGE rather than a per-VIN value, and lib/vpic.ts reads the
+  // low end. That hint was vetoing the 87 kWh rows on three cars that are
+  // 87 kWh.
+  //
+  // Platinum+ is EPA-rated 267 on 19-inch wheels and 257 on 20s. Nissan's own
+  // product page captions the car "with available 20-inch wheels", so 19s are
+  // standard and 267 is the standard configuration's figure.
+  // ---------------------------------------------------------------------
+
   {
-    id: "ariya-engage-fwd",
+    id: "ariya-63-fwd",
     make: "NISSAN",
     model: "Ariya",
     modelYears: [2023, 2025],
-    trim: "Engage",
+    vds: ["AF0B"],
     drive: "FWD",
-    battery: { packUsableKwh: f(63, "mfr", "medium", "63 kWh usable (Nissan-quoted); Engage+ is the 87 kWh pack"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(216, "mfr", "high", "Engage FWD (63 kWh), EPA", "https://www.fueleconomy.gov") },
+    ignoreKwhHint: true,
+    battery: { packUsableKwh: f(63, "mfr", "medium"), chemistry: f("NMC", "agg", "medium") },
+    range: { epaRangeMi: f(216, "mfr", "high", undefined, epa(46013)) },
     charging: {
       portStandard: f("CCS1", "mfr"),
       superchargerAccess: f("adapter", "mfr", "high", "Nissan OEM NACS adapter (part T99F9-5MP1B), early 2025"),
@@ -597,14 +783,15 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
   },
 
   {
-    id: "ariya-engage-awd",
+    id: "ariya-63-awd",
     make: "NISSAN",
     model: "Ariya",
     modelYears: [2023, 2025],
-    trim: "Engage",
+    vds: ["CF0B"],
     drive: "AWD",
-    battery: { packUsableKwh: f(63, "mfr", "medium", "63 kWh usable; Engage+ e-4ORCE (87 kWh): 272 mi"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(205, "mfr", "high", "Engage e-4ORCE (63 kWh), EPA; Engage+ e-4ORCE: 272", "https://www.fueleconomy.gov") },
+    ignoreKwhHint: true,
+    battery: { packUsableKwh: f(63, "mfr", "medium"), chemistry: f("NMC", "agg", "medium") },
+    range: { epaRangeMi: f(205, "mfr", "high", undefined, epa(46990)) },
     charging: {
       portStandard: f("CCS1", "mfr"),
       superchargerAccess: f("adapter", "mfr", "high", "Nissan OEM NACS adapter (part T99F9-5MP1B), early 2025"),
@@ -626,9 +813,37 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     make: "NISSAN",
     model: "Ariya",
     modelYears: [2023, 2025],
+    vds: ["BF0B"],
     drive: "FWD",
-    battery: { packUsableKwh: f(87, "mfr", "medium", "87 kWh usable (Nissan-quoted)"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(289, "mfr", "high", "Evolve+/Empower+ FWD: 289; Venture+ (2023–24): 304, EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(240, "tested", "medium", "75-mph (Car and Driver, Empower+ FWD): 240 mi") },
+    ignoreKwhHint: true,
+    battery: { packUsableKwh: f(87, "mfr", "medium"), chemistry: f("NMC", "agg", "medium") },
+    range: { epaRangeMi: f(289, "mfr", "high", undefined, epa(46014)) },
+    charging: {
+      portStandard: f("CCS1", "mfr"),
+      superchargerAccess: f("adapter", "mfr", "high", "Nissan OEM NACS adapter (part T99F9-5MP1B), early 2025"),
+      dcPeakKw: f(130, "agg", "medium"),
+    },
+    thermal: { heatPump: f("standard", "agg", "medium") },
+    warranty: { batteryYears: f(8, "agg", "medium"), batteryMiles: f(100_000, "agg", "medium") },
+    buyerNotes: [
+      {
+        headline: "2023 build-year recalls, confirm completion",
+        body: "2023-only: steering-wheel bolt (23V-131), inverter software that can shut down the EV system while driving (23V-657 + 24V-560), front-motor O-rings (24V-391). All have free fixes; check this VIN's status.",
+        severity: "warning",
+      },
+    ],
+  },
+
+  {
+    id: "ariya-87-fwd-venture",
+    make: "NISSAN",
+    model: "Ariya",
+    modelYears: [2023, 2025],
+    vds: ["BF0A"],
+    drive: "FWD",
+    ignoreKwhHint: true,
+    battery: { packUsableKwh: f(87, "mfr", "medium"), chemistry: f("NMC", "agg", "medium") },
+    range: { epaRangeMi: f(304, "mfr", "high", undefined, epa(46015)) },
     charging: {
       portStandard: f("CCS1", "mfr"),
       superchargerAccess: f("adapter", "mfr", "high", "Nissan OEM NACS adapter (part T99F9-5MP1B), early 2025"),
@@ -650,9 +865,11 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     make: "NISSAN",
     model: "Ariya",
     modelYears: [2023, 2025],
+    vds: ["DF0B"],
     drive: "AWD",
-    battery: { packUsableKwh: f(87, "mfr", "medium", "87 kWh usable (Nissan-quoted)"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(267, "mfr", "high", "e-4ORCE 87 kWh: Engage+/Evolve+ 272; Platinum+ 257–267 by wheels, EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(250, "tested", "high", "70-mph (InsideEVs, 2025 Platinum+ e-4ORCE 20-inch): 250 mi; 75-mph (C&D): 210; Edmunds loop: 265") },
+    ignoreKwhHint: true,
+    battery: { packUsableKwh: f(87, "mfr", "medium"), chemistry: f("NMC", "agg", "medium") },
+    range: { epaRangeMi: f(272, "mfr", "high", undefined, epa(46989)) },
     charging: {
       portStandard: f("CCS1", "mfr"),
       superchargerAccess: f("adapter", "mfr", "high", "Nissan OEM NACS adapter (part T99F9-5MP1B), early 2025"),
@@ -670,13 +887,124 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
   },
 
   {
-    id: "bz4x-2023-fwd",
+    id: "ariya-87-awd-platinum",
+    make: "NISSAN",
+    model: "Ariya",
+    modelYears: [2023, 2025],
+    vds: ["DF0C"],
+    drive: "AWD",
+    ignoreKwhHint: true,
+    battery: { packUsableKwh: f(87, "mfr", "medium"), chemistry: f("NMC", "agg", "medium") },
+    range: { epaRangeMi: f(267, "mfr", "high", "19-inch wheels", epa(46991)) },
+    charging: {
+      portStandard: f("CCS1", "mfr"),
+      superchargerAccess: f("adapter", "mfr", "high", "Nissan OEM NACS adapter (part T99F9-5MP1B), early 2025"),
+      dcPeakKw: f(130, "agg", "medium"),
+    },
+    thermal: { heatPump: f("standard", "agg", "medium") },
+    warranty: { batteryYears: f(8, "agg", "medium"), batteryMiles: f(100_000, "agg", "medium") },
+    buyerNotes: [
+      {
+        headline: "2023 build-year recalls, confirm completion",
+        body: "2023-only: steering-wheel bolt (23V-131), inverter software that can shut down the EV system while driving (23V-657 + 24V-560), front-motor O-rings (24V-391). All have free fixes; check this VIN's status.",
+        severity: "warning",
+      },
+    ],
+  },
+
+  // ---------------------------------------------------------------------
+  // Toyota bZ4X MY2023-2025. Re-keyed on trim 2026-08-22, same shape as the
+  // 2026 bZ: one row per drivetrain carrying what every grade shares and NO
+  // range, plus a trim-keyed row per grade. The rows used to be keyed on
+  // drivetrain alone and were wrong in both directions on 162 live listings -
+  // 91 Limiteds shown the XLE's figure (252 where EPA files 242, 228 where it
+  // files 222) and 51 XLE FWDs shown the Limited's 236 where EPA files 252,
+  // because the MY2024-25 FWD row carried the Limited number for both grades.
+  //
+  // EPA never prints the word "XLE": the plain "bZ4X" entry is XLE by
+  // elimination from the US lineup. That holds for 2023-24, where XLE and
+  // Limited are the whole lineup, and stops holding for 2025, when Nightshade
+  // joins - which is exactly why the XLE rows are keyed to the trim string
+  // rather than left trim-agnostic. A Nightshade matches the drivetrain row
+  // and is shown no range, because EPA's third 2025 AWD entry (id 49128, 20in
+  // wheels, 222 mi) is only PLAUSIBLY the Nightshade and we have no primary
+  // source saying so.
+  //
+  // EPA records (re-pulled 2026-08-22): XLE FWD 252 all three years (45756 /
+  // 47918 / 49126); Limited FWD 242 in 2023 (45757) then 236 (47919 / 48997);
+  // XLE AWD 228 (45758 / 47920 / 49127); Limited AWD 222 (45759 / 47921 /
+  // 49129). Pack from the EPA wall-energy figures: FWD 71.4 (Panasonic), AWD
+  // 72.8 (CATL) - the AWD rows used to print the FWD's 71.4 while their own
+  // note said 72.8.
+  // ---------------------------------------------------------------------
+
+  {
+    id: "bz4x-fwd",
+    make: "TOYOTA",
+    model: "bZ4X",
+    modelYears: [2023, 2025],
+    drive: "FWD",
+    battery: { packGrossKwh: f(71.4, "est", "medium"), chemistry: f("NMC", "agg", "medium") },
+    charging: {
+      portStandard: f("CCS1", "mfr", "high", "Free OEM NACS adapter program for MY23–25"),
+      superchargerAccess: f("adapter", "mfr"),
+      dcPeakKw: f(150, "agg", "medium"),
+    },
+    thermal: { heatPump: f("standard", "mfr", "high") },
+    warranty: {
+      batteryYears: f(8, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      sohFloorPct: f(70, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
+    },
+    buyerNotes: [
+      {
+        headline: "Launch recall: wheels could detach, and early software gimped charging",
+        body: "The 2022 launch stop-sale (22V-444) was for wheel hub bolts loosening to the point of wheel detachment; verify the remedy on any 2023. Early software also refused DC fast charging below 32°F on AWD cars and limited sessions, confirm software is current. AWD's 100 kW charging cap is permanent.",
+        severity: "warning",
+      },
+    ],
+  },
+
+  {
+    id: "bz4x-xle-fwd",
+    make: "TOYOTA",
+    model: "bZ4X",
+    modelYears: [2023, 2025],
+    trim: "XLE",
+    drive: "FWD",
+    battery: { packGrossKwh: f(71.4, "est", "medium"), chemistry: f("NMC", "agg", "medium") },
+    range: { epaRangeMi: f(252, "mfr", "high", undefined, epa(45756)) },
+    charging: {
+      portStandard: f("CCS1", "mfr", "high", "Free OEM NACS adapter program for MY23–25"),
+      superchargerAccess: f("adapter", "mfr"),
+      dcPeakKw: f(150, "agg", "medium"),
+    },
+    thermal: { heatPump: f("standard", "mfr", "high") },
+    warranty: {
+      batteryYears: f(8, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      sohFloorPct: f(70, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
+    },
+    buyerNotes: [
+      {
+        headline: "Launch recall: wheels could detach, and early software gimped charging",
+        body: "The 2022 launch stop-sale (22V-444) was for wheel hub bolts loosening to the point of wheel detachment; verify the remedy on any 2023. Early software also refused DC fast charging below 32°F on AWD cars and limited sessions, confirm software is current. AWD's 100 kW charging cap is permanent.",
+        severity: "warning",
+      },
+    ],
+  },
+
+  {
+    id: "bz4x-ltd-fwd-2023",
     make: "TOYOTA",
     model: "bZ4X",
     modelYears: [2023, 2023],
+    trim: "Limited",
     drive: "FWD",
-    battery: { packGrossKwh: f(71.4, "est", "medium", "FWD 71.4 (Panasonic) / AWD 72.8 (CATL) gross; usable ~64 est"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(252, "mfr", "high", "2023 XLE FWD; Limited: 242, EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(227, "tested", "medium", "Edmunds mixed loop, 2023 Limited FWD: 227 mi (one of few EVs to miss EPA on that loop)") },
+    battery: { packGrossKwh: f(71.4, "est", "medium"), chemistry: f("NMC", "agg", "medium") },
+    range: { epaRangeMi: f(242, "mfr", "high", undefined, epa(45757)), testedRangeMi: f(227, "tested", "medium", "Edmunds mixed loop") },
     charging: {
       portStandard: f("CCS1", "mfr", "high", "Free OEM NACS adapter program for MY23–25"),
       superchargerAccess: f("adapter", "mfr"),
@@ -699,13 +1027,14 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
   },
 
   {
-    id: "bz4x-2024-fwd",
+    id: "bz4x-ltd-fwd-2024",
     make: "TOYOTA",
     model: "bZ4X",
     modelYears: [2024, 2025],
+    trim: "Limited",
     drive: "FWD",
-    battery: { packGrossKwh: f(71.4, "est", "medium", "FWD 71.4 (Panasonic) / AWD 72.8 (CATL) gross; usable ~64 est"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(236, "mfr", "high", "XLE/Limited FWD, EPA", "https://www.fueleconomy.gov") },
+    battery: { packGrossKwh: f(71.4, "est", "medium"), chemistry: f("NMC", "agg", "medium") },
+    range: { epaRangeMi: f(236, "mfr", "high", undefined, epa(47919)) },
     charging: {
       portStandard: f("CCS1", "mfr", "high", "Free OEM NACS adapter program for MY23–25"),
       superchargerAccess: f("adapter", "mfr"),
@@ -728,13 +1057,102 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
   },
 
   {
-    id: "bz4x-2023-awd",
+    id: "bz4x-awd",
     make: "TOYOTA",
     model: "bZ4X",
     modelYears: [2023, 2025],
     drive: "AWD",
-    battery: { packGrossKwh: f(71.4, "est", "medium", "FWD 71.4 (Panasonic) / AWD 72.8 (CATL) gross; usable ~64 est"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(228, "mfr", "high", "XLE AWD; Limited/20-inch: 222, EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(160, "tested", "high", "75-mph (Car and Driver, 2023 Limited AWD): 160 mi") },
+    battery: { packGrossKwh: f(72.8, "est", "medium"), chemistry: f("NMC", "agg", "medium") },
+    charging: {
+      portStandard: f("CCS1", "mfr", "high", "Free OEM NACS adapter program for MY23–25"),
+      superchargerAccess: f("adapter", "mfr"),
+      dcPeakKw: f(100, "agg", "medium"),
+    },
+    thermal: { heatPump: f("standard", "mfr", "high") },
+    warranty: {
+      batteryYears: f(8, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      sohFloorPct: f(70, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
+    },
+    buyerNotes: [
+      {
+        headline: "Launch recall: wheels could detach, and early software gimped charging",
+        body: "The 2022 launch stop-sale (22V-444) was for wheel hub bolts loosening to the point of wheel detachment; verify the remedy on any 2023. Early software also refused DC fast charging below 32°F on AWD cars and limited sessions, confirm software is current. AWD's 100 kW charging cap is permanent.",
+        severity: "warning",
+      },
+    ],
+  },
+
+  {
+    id: "bz4x-xle-awd",
+    make: "TOYOTA",
+    model: "bZ4X",
+    modelYears: [2023, 2024],
+    trim: "XLE",
+    drive: "AWD",
+    battery: { packGrossKwh: f(72.8, "est", "medium"), chemistry: f("NMC", "agg", "medium") },
+    range: { epaRangeMi: f(228, "mfr", "high", undefined, epa(45758)) },
+    charging: {
+      portStandard: f("CCS1", "mfr", "high", "Free OEM NACS adapter program for MY23–25"),
+      superchargerAccess: f("adapter", "mfr"),
+      dcPeakKw: f(100, "agg", "medium"),
+    },
+    thermal: { heatPump: f("standard", "mfr", "high") },
+    warranty: {
+      batteryYears: f(8, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      sohFloorPct: f(70, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
+    },
+    buyerNotes: [
+      {
+        headline: "Launch recall: wheels could detach, and early software gimped charging",
+        body: "The 2022 launch stop-sale (22V-444) was for wheel hub bolts loosening to the point of wheel detachment; verify the remedy on any 2023. Early software also refused DC fast charging below 32°F on AWD cars and limited sessions, confirm software is current. AWD's 100 kW charging cap is permanent.",
+        severity: "warning",
+      },
+    ],
+  },
+
+  {
+    id: "bz4x-xle-awd-2025",
+    make: "TOYOTA",
+    model: "bZ4X",
+    modelYears: [2025, 2025],
+    trim: "XLE",
+    drive: "AWD",
+    battery: { packGrossKwh: f(72.8, "est", "medium"), chemistry: f("NMC", "agg", "medium") },
+    range: { epaRangeMi: f(228, "mfr", "high", "18-inch wheels", epa(49127)) },
+    charging: {
+      portStandard: f("CCS1", "mfr", "high", "Free OEM NACS adapter program for MY23–25"),
+      superchargerAccess: f("adapter", "mfr"),
+      dcPeakKw: f(100, "agg", "medium"),
+    },
+    thermal: { heatPump: f("standard", "mfr", "high") },
+    warranty: {
+      batteryYears: f(8, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      sohFloorPct: f(70, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
+    },
+    buyerNotes: [
+      {
+        headline: "Launch recall: wheels could detach, and early software gimped charging",
+        body: "The 2022 launch stop-sale (22V-444) was for wheel hub bolts loosening to the point of wheel detachment; verify the remedy on any 2023. Early software also refused DC fast charging below 32°F on AWD cars and limited sessions, confirm software is current. AWD's 100 kW charging cap is permanent.",
+        severity: "warning",
+      },
+    ],
+  },
+
+  {
+    id: "bz4x-ltd-awd",
+    make: "TOYOTA",
+    model: "bZ4X",
+    modelYears: [2023, 2025],
+    trim: "Limited",
+    drive: "AWD",
+    battery: { packGrossKwh: f(72.8, "est", "medium"), chemistry: f("NMC", "agg", "medium") },
+    range: { epaRangeMi: f(222, "mfr", "high", undefined, epa(45759)), testedRangeMi: f(160, "tested", "high", "75 mph (Car and Driver)") },
     charging: {
       portStandard: f("CCS1", "mfr", "high", "Free OEM NACS adapter program for MY23–25"),
       superchargerAccess: f("adapter", "mfr"),
@@ -791,6 +1209,12 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Lyriq",
     modelYears: [2025, 2027],
     vin8: ["K"], // GM Part 565: K = RWD, L = PAWD
+    // The V-Series is 1GYXP where an ordinary Lyriq is 1GYKP, and those two
+    // are the only descriptors in 5,610 live listings. Keying both sides of
+    // the split means a real V is never served an ordinary car's range just
+    // because its trim field reads "-V", which is below the trim matcher's
+    // three-character floor.
+    vds: ["KP"],
     drive: "RWD",
     battery: { packGrossKwh: f(102, "mfr", "medium"), chemistry: f("NMC", "agg", "medium") },
     range: { epaRangeMi: f(326, "mfr", "high", "EPA figure (11 kW and 19.2 kW chargers)", "https://www.fueleconomy.gov") },
@@ -850,6 +1274,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Lyriq",
     modelYears: [2025, 2027],
     vin8: ["L"], // GM Part 565: L = RWD + PAWD (dual motor)
+    vds: ["KP"], // ordinary Lyriq; the V-Series is 1GYXP — see lyriq-2025-rwd
     drive: "AWD",
     battery: { packGrossKwh: f(102, "mfr", "medium"), chemistry: f("NMC", "agg", "medium") },
     range: { epaRangeMi: f(303, "mfr", "high", "303 (19.2 kW charger) / 319 (11 kW, 2025 PAWD); 2026 V-Series: 285, EPA", "https://www.fueleconomy.gov") },
@@ -1226,20 +1651,132 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     ],
   },
 
+  // ---------------------------------------------------------------------
+  // Subaru Solterra MY2023-2025 (AWD only). One row used to cover the whole
+  // lineup at 227 mi with the note "222-228 by year/trim" - and 229 live
+  // Limited and Touring listings were claiming five miles more than EPA files
+  // for them. EPA names the upper config "Limited/Touring AWD" explicitly;
+  // the lower entry is plain "Solterra AWD", which is Premium by elimination
+  // (the US lineup is exactly Premium/Limited/Touring). Split by trim, and
+  // split Premium by year rather than collapsing its 228/227 - both are EPA's
+  // own figure for that year, so there is nothing to round.
+  //
+  // EPA records (re-pulled 2026-08-22): Premium 228 in 2023 (46030), 227 in
+  // 2024-25 (47482 / 48762); Limited/Touring 222 all three years (46031 /
+  // 47483 / 48763). A trim we cannot read ("15 Series", "Premier", blank -
+  // 18 listings) matches the trim-agnostic row and is shown no range.
+  // ---------------------------------------------------------------------
+
   {
-    id: "subaru-solterra-2023-25",
+    id: "subaru-solterra",
     make: "SUBARU",
     model: "Solterra",
     modelYears: [2023, 2025],
     battery: {
-      packGrossKwh: f(72.8, "mfr", "high", "CATL pack shared with bZ4X AWD; usable ~64 est"),
+      packGrossKwh: f(72.8, "mfr", "high", "CATL pack, shared with the bZ4X AWD"),
       chemistry: f("NMC", "agg", "medium"),
     },
-    range: { epaRangeMi: f(227, "mfr", "high", "222–228 by year/trim (AWD only), EPA figures", "https://www.fueleconomy.gov"), testedRangeMi: f(200, "tested", "low", "75 mph (Car and Driver)") },
+    range: { testedRangeMi: f(200, "tested", "low", "75 mph (Car and Driver)") },
     charging: {
       portStandard: f("CCS1", "mfr"),
       superchargerAccess: f("adapter", "agg", "medium", "Adapter program alongside Toyota, late 2025"),
-      dcPeakKw: f(100, "agg", "medium", "100 kW cap through MY2025; weak cold-weather charging on 2023 cars"),
+      dcPeakKw: f(100, "agg", "medium", "100 kW cap through MY2025"),
+    },
+    thermal: { heatPump: f("standard", "agg", "medium") },
+    warranty: {
+      batteryYears: f(8, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      sohFloorPct: f(70, "mfr", "high", "“Retention of 70% or more of the original battery capacity” (MY2023 BEV booklet; later years reported same)"),
+      batteryTransfers: f(true, "mfr", "high"),
+    },
+    buyerNotes: [
+      {
+        headline: "Same wheel-detachment recall as its Toyota twin",
+        body: "Recall 22V-444 (wheel hub bolts can loosen; wheels can detach) plus Subaru's follow-up 23V-064 (bolts improperly tightened during the first remedy). Both remedies are free; check completion on this VIN. DC charging peaks at 100 kW; 2023 cars lack the improved cold-weather battery conditioning added for 2024.",
+        severity: "warning",
+      },
+    ],
+  },
+
+  {
+    id: "subaru-solterra-premium-2023",
+    make: "SUBARU",
+    model: "Solterra",
+    modelYears: [2023, 2023],
+    trim: "Premium",
+    battery: {
+      packGrossKwh: f(72.8, "mfr", "high", "CATL pack, shared with the bZ4X AWD"),
+      chemistry: f("NMC", "agg", "medium"),
+    },
+    range: { epaRangeMi: f(228, "mfr", "high", undefined, epa(46030)), testedRangeMi: f(200, "tested", "low", "75 mph (Car and Driver)") },
+    charging: {
+      portStandard: f("CCS1", "mfr"),
+      superchargerAccess: f("adapter", "agg", "medium", "Adapter program alongside Toyota, late 2025"),
+      dcPeakKw: f(100, "agg", "medium", "100 kW cap through MY2025"),
+    },
+    thermal: { heatPump: f("standard", "agg", "medium") },
+    warranty: {
+      batteryYears: f(8, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      sohFloorPct: f(70, "mfr", "high", "“Retention of 70% or more of the original battery capacity” (MY2023 BEV booklet; later years reported same)"),
+      batteryTransfers: f(true, "mfr", "high"),
+    },
+    buyerNotes: [
+      {
+        headline: "Same wheel-detachment recall as its Toyota twin",
+        body: "Recall 22V-444 (wheel hub bolts can loosen; wheels can detach) plus Subaru's follow-up 23V-064 (bolts improperly tightened during the first remedy). Both remedies are free; check completion on this VIN. DC charging peaks at 100 kW; 2023 cars lack the improved cold-weather battery conditioning added for 2024.",
+        severity: "warning",
+      },
+    ],
+  },
+
+  {
+    id: "subaru-solterra-premium-2024",
+    make: "SUBARU",
+    model: "Solterra",
+    modelYears: [2024, 2025],
+    trim: "Premium",
+    battery: {
+      packGrossKwh: f(72.8, "mfr", "high", "CATL pack, shared with the bZ4X AWD"),
+      chemistry: f("NMC", "agg", "medium"),
+    },
+    range: { epaRangeMi: f(227, "mfr", "high", undefined, epa(47482)), testedRangeMi: f(200, "tested", "low", "75 mph (Car and Driver)") },
+    charging: {
+      portStandard: f("CCS1", "mfr"),
+      superchargerAccess: f("adapter", "agg", "medium", "Adapter program alongside Toyota, late 2025"),
+      dcPeakKw: f(100, "agg", "medium", "100 kW cap through MY2025"),
+    },
+    thermal: { heatPump: f("standard", "agg", "medium") },
+    warranty: {
+      batteryYears: f(8, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      sohFloorPct: f(70, "mfr", "high", "“Retention of 70% or more of the original battery capacity” (MY2023 BEV booklet; later years reported same)"),
+      batteryTransfers: f(true, "mfr", "high"),
+    },
+    buyerNotes: [
+      {
+        headline: "Same wheel-detachment recall as its Toyota twin",
+        body: "Recall 22V-444 (wheel hub bolts can loosen; wheels can detach) plus Subaru's follow-up 23V-064 (bolts improperly tightened during the first remedy). Both remedies are free; check completion on this VIN. DC charging peaks at 100 kW; 2023 cars lack the improved cold-weather battery conditioning added for 2024.",
+        severity: "warning",
+      },
+    ],
+  },
+
+  {
+    id: "subaru-solterra-ltd-touring",
+    make: "SUBARU",
+    model: "Solterra",
+    modelYears: [2023, 2025],
+    trim: ["Limited", "Touring"],
+    battery: {
+      packGrossKwh: f(72.8, "mfr", "high", "CATL pack, shared with the bZ4X AWD"),
+      chemistry: f("NMC", "agg", "medium"),
+    },
+    range: { epaRangeMi: f(222, "mfr", "high", undefined, epa(46031)), testedRangeMi: f(200, "tested", "low", "75 mph (Car and Driver)") },
+    charging: {
+      portStandard: f("CCS1", "mfr"),
+      superchargerAccess: f("adapter", "agg", "medium", "Adapter program alongside Toyota, late 2025"),
+      dcPeakKw: f(100, "agg", "medium", "100 kW cap through MY2025"),
     },
     thermal: { heatPump: f("standard", "agg", "medium") },
     warranty: {

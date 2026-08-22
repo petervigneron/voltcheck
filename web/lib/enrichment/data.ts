@@ -249,7 +249,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     modelYears: [2022, 2022],
     trim: "Standard Range",
     drive: "RWD",
-    battery: { packGrossKwh: f(58.0, "mfr", "medium", "Hyundai publishes one figure and does not say gross or usable") },
+    battery: { packGrossKwh: f(58.0, "mfr", "high") },
     range: { epaRangeMi: f6(220, "mfr", "high", "Official EPA rating, 'Ioniq 5 RWD (Standard Range)', EPA vehicle id 44924", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "mfr"),
@@ -276,7 +276,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     model: "Ioniq 5",
     modelYears: [2022, 2022],
     drive: "RWD",
-    battery: { packGrossKwh: f(77.4, "mfr", "medium", "Long-range pack; Hyundai publishes one figure and does not say gross or usable") },
+    battery: { packGrossKwh: f(77.4, "mfr", "high", "Long Range pack") },
     range: { epaRangeMi: f6(303, "mfr", "high", "Official EPA rating, 'Ioniq 5 RWD (Long Range)', EPA vehicle id 44923", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "mfr"),
@@ -304,7 +304,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     model: "Ioniq 5",
     modelYears: [2022, 2022],
     drive: "AWD",
-    battery: { packGrossKwh: f(77.4, "mfr", "medium", "Long-range pack; Hyundai publishes one figure and does not say gross or usable") },
+    battery: { packGrossKwh: f(77.4, "mfr", "high", "Long Range pack") },
     range: { epaRangeMi: f6(256, "mfr", "high", "Official EPA rating, 'Ioniq 5 AWD (Long Range)', EPA vehicle id 44922", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "mfr"),
@@ -337,7 +337,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     modelYears: [2023, 2024],
     trim: "Standard Range",
     drive: "RWD",
-    battery: { packGrossKwh: f(58.0, "mfr", "medium", "Hyundai publishes one figure and does not say gross or usable") },
+    battery: { packGrossKwh: f(58.0, "mfr", "high") },
     range: { epaRangeMi: f6(220, "mfr", "high", "MY2024 EPA rating, 'Ioniq 5 Standard range RWD' (EPA vehicle id 46961); the 2023 spec sheet prints the same 220-mile EPA figure", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "mfr", "high", "Pre-facelift cars are CCS1; the native NACS port arrives with the MY2025 facelift"),
@@ -364,7 +364,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     model: "Ioniq 5",
     modelYears: [2023, 2024],
     drive: "RWD",
-    battery: { packGrossKwh: f(77.4, "mfr", "medium", "Long-range pack; Hyundai publishes one figure and does not say gross or usable") },
+    battery: { packGrossKwh: f(77.4, "mfr", "high", "Long Range pack") },
     range: { epaRangeMi: f6(303, "mfr", "high", "MY2024 EPA rating, 'Ioniq 5 Long range RWD' (EPA vehicle id 46960); the 2023 spec sheet prints the same 303-mile EPA figure for SE/SEL/Limited RWD", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "mfr", "high", "Pre-facelift cars are CCS1; the native NACS port arrives with the MY2025 facelift"),
@@ -392,7 +392,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     model: "Ioniq 5",
     modelYears: [2023, 2023],
     drive: "AWD",
-    battery: { packGrossKwh: f(77.4, "mfr", "medium", "Long-range pack; Hyundai publishes one figure and does not say gross or usable") },
+    battery: { packGrossKwh: f(77.4, "mfr", "high", "Long Range pack") },
     range: { epaRangeMi: f6(266, "mfr", "high", "Hyundai's 2023 spec sheet: 266 miles EPA for SE/SEL/Limited AWD (printed in both the powertrain and EPA-ratings tables). The EPA's public dataset has no MY2023 Ioniq 5 records (verified by control test 2026-08-14), so the manufacturer sheet is the citable source", "https://www.hyundainews.com/assets/documents/original/50313-2023IONIQ5ProductSpecifications20220630.pdf") },
     charging: {
       portStandard: f("CCS1", "mfr", "high", "Pre-facelift cars are CCS1; the native NACS port arrives with the MY2025 facelift"),
@@ -420,7 +420,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     model: "Ioniq 5",
     modelYears: [2024, 2024],
     drive: "AWD",
-    battery: { packGrossKwh: f(77.4, "mfr", "medium", "Long-range pack; Hyundai publishes one figure and does not say gross or usable") },
+    battery: { packGrossKwh: f(77.4, "mfr", "high", "Long Range pack") },
     range: { epaRangeMi: f6(260, "mfr", "high", "Official EPA rating, 'Ioniq 5 Long range AWD', EPA vehicle id 46962 (down from 266 in 2023)", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "mfr", "high", "Pre-facelift cars are CCS1; the native NACS port arrives with the MY2025 facelift"),
@@ -456,7 +456,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     modelYears: [2025, 2026],
     trim: "Standard Range",
     drive: "RWD",
-    battery: { packGrossKwh: f6(63.0, "mfr", "medium", "Standard Range pack, up from 58; Hyundai publishes one figure and does not say gross or usable", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf") },
+    battery: { packGrossKwh: f6(63.0, "mfr", "high", "Standard Range pack", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf") },
     range: { epaRangeMi: f6(245, "mfr", "high", "Official EPA rating, 'Ioniq 5 Standard range', EPA vehicle ids 48714 (2025) / 49961 (2026)", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f5("NACS", "mfr", "high", "Native NACS from the MY2025 facelift; 2025 cars shipped with a CCS adapter included", "https://www.hyundainews.com/assets/documents/original/63444-2025IONIQ5XRTLimited8272024finalmjab.pdf"),
@@ -490,7 +490,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     model: "Ioniq 5",
     modelYears: [2025, 2026],
     drive: "RWD",
-    battery: { packGrossKwh: f5(84.0, "mfr", "medium", "Long-range pack, up from 77.4; Hyundai publishes one figure and does not say gross or usable", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf") },
+    battery: { packGrossKwh: f5(84.0, "mfr", "high", "Long Range pack", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf") },
     range: { epaRangeMi: f6(318, "mfr", "high", "Official EPA rating, 'Ioniq 5 RWD', EPA vehicle ids 48713 (2025) / 49960 (2026); one rating covers all long-range RWD trims", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f5("NACS", "mfr", "high", "Native NACS from the MY2025 facelift; 2025 cars shipped with a CCS adapter included", "https://www.hyundainews.com/assets/documents/original/63444-2025IONIQ5XRTLimited8272024finalmjab.pdf"),
@@ -527,7 +527,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     model: "Ioniq 5",
     modelYears: [2025, 2026],
     drive: "AWD",
-    battery: { packGrossKwh: f5(84.0, "mfr", "medium", "Long-range pack, up from 77.4; Hyundai publishes one figure and does not say gross or usable", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf") },
+    battery: { packGrossKwh: f5(84.0, "mfr", "high", "Long Range pack", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf") },
     range: { epaRangeMi: f6(290, "mfr", "high", "Official EPA rating, 'Ioniq 5 AWD (19 inch Wheels)' (SE/SEL), EPA vehicle ids 48710 (2025) / 49962 (2026). Limited (20\") is rated 269 and XRT 259, separate rows", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f5("NACS", "mfr", "high", "Native NACS from the MY2025 facelift; 2025 cars shipped with a CCS adapter included", "https://www.hyundainews.com/assets/documents/original/63444-2025IONIQ5XRTLimited8272024finalmjab.pdf"),
@@ -565,7 +565,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     modelYears: [2025, 2026],
     trim: "Limited",
     drive: "AWD",
-    battery: { packGrossKwh: f5(84.0, "mfr", "medium", "Long-range pack, up from 77.4; Hyundai publishes one figure and does not say gross or usable", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf") },
+    battery: { packGrossKwh: f5(84.0, "mfr", "high", "Long Range pack", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf") },
     range: { epaRangeMi: f6(269, "mfr", "high", "Official EPA rating, 'Ioniq 5 AWD (20 inch Wheels)', the Limited AWD's wheels, EPA vehicle ids 48711 (2025) / 49963 (2026)", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f5("NACS", "mfr", "high", "Native NACS from the MY2025 facelift; 2025 cars shipped with a CCS adapter included", "https://www.hyundainews.com/assets/documents/original/63444-2025IONIQ5XRTLimited8272024finalmjab.pdf"),
@@ -603,7 +603,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     modelYears: [2025, 2026],
     trim: "XRT",
     drive: "AWD",
-    battery: { packGrossKwh: f5(84.0, "mfr", "medium", "Long-range pack, up from 77.4; Hyundai publishes one figure and does not say gross or usable", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf") },
+    battery: { packGrossKwh: f5(84.0, "mfr", "high", "Long Range pack", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf") },
     range: { epaRangeMi: f6(259, "mfr", "high", "Official EPA rating, 'Ioniq 5 AWD XRT', EPA vehicle ids 48712 (2025) / 49964 (2026)", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f5("NACS", "mfr", "high", "Native NACS from the MY2025 facelift; 2025 cars shipped with a CCS adapter included", "https://www.hyundainews.com/assets/documents/original/63444-2025IONIQ5XRTLimited8272024finalmjab.pdf"),
@@ -644,7 +644,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     modelYears: [2025, 2026],
     trim: "N",
     drive: "AWD",
-    battery: { packGrossKwh: f6(84.0, "mfr", "medium", "Hyundai publishes one figure and does not say gross or usable") },
+    battery: { packGrossKwh: f6(84.0, "mfr", "high") },
     range: { epaRangeMi: f6(221, "mfr", "high", "Official EPA rating, 'Ioniq 5 N', EPA vehicle ids 48360 (2025) / 49965 (2026)", "https://www.fueleconomy.gov") },
     thermal: {
       heatPump: f5("standard", "mfr", "high"),

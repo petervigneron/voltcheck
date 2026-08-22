@@ -127,3 +127,48 @@ test("canonicalMake: Polestar and Genesis have no equivalent make split (checked
   assert.equal(canonicalMake("Polestar", "Polestar 2"), canonicalMake("POLESTAR", "2"));
   assert.equal(canonicalMake("Genesis", "GV60"), "GENESIS");
 });
+
+// ── The VIN descriptor key (positions 4 on) ─────────────────────────────────
+//
+// Added 2026-08-22 for two cars whose trim string was deciding facts it could
+// not carry. `trimStringsOverlap` is substring-tolerant in both directions, so
+// the Cadillac Lyriq V-Series row's "V Sport" key swallowed every ordinary
+// Lyriq listing whose trim read only "Sport" — 878 of them printed the V's
+// 285 mi. The V is 1GYXP where an ordinary Lyriq is 1GYKP, and those are the
+// only two descriptors in 5,610 live listings.
+
+test("vds: the V-Series row takes 1GYXP and refuses 1GYKP, whatever the trim says", () => {
+  const v = (vin: string, trim?: string) =>
+    matchEnrichment(decode({ vin, make: "CADILLAC", model: "Lyriq", modelYear: 2026, trim, driveType: "AWD" }), null);
+  // An ordinary Lyriq badged "Sport" is not a V-Series, and the VIN says so.
+  assert.equal(v("1GYKPNRL3SZ307993", "Sport").exact?.id, "lyriq-2025-awd");
+  assert.equal(v("1GYKPNRL3SZ307993", "Sport").exact?.range?.epaRangeMi?.value, 303);
+  // A real V-Series resolves even when its trim field is "-V", which is below
+  // trimStringsOverlap's three-character floor and used to match nothing.
+  for (const t of ["-V", "V", "V-Series", undefined]) {
+    assert.equal(v("1GYXPNRL3SZ307993", t).exact?.id, "lyriq-v-2026-27", `trim ${t}`);
+  }
+});
+
+test("vds: the Ariya's pack comes from the VIN, so a junk trim can't inflate it", () => {
+  const a = (vin8: string, drive: string, trim?: string) =>
+    matchEnrichment(decode({ vin: vin8 + "9RM735014", make: "NISSAN", model: "Ariya", modelYear: 2024, trim, driveType: drive }), null).exact;
+  // "Small" is a body style one vendor writes into the trim field; 48 live
+  // listings carry it, and they used to fall through to the 87 kWh rows.
+  for (const trim of [undefined, "Small", "ENGAGE+ e-4ORCE"]) {
+    const r = a("JN1AF0BA", "FWD", trim);
+    assert.equal(r?.battery?.packUsableKwh?.value, 63, `FWD 63 kWh, trim ${trim}`);
+    assert.equal(r?.range?.epaRangeMi?.value, 216);
+  }
+  assert.equal(a("JN1BF0AA", "FWD")?.range?.epaRangeMi?.value, 304); // Venture+
+  assert.equal(a("JN1DF0BB", "AWD")?.range?.epaRangeMi?.value, 272);
+  assert.equal(a("JN1DF0CD", "AWD")?.range?.epaRangeMi?.value, 267); // Platinum+
+});
+
+// A VIN outside a row's descriptors must never match it — the same hard-filter
+// contract wmi and vin8 already carry.
+test("vds is a hard filter, not a hint", () => {
+  const r = matchEnrichment(decode({ vin: "JN1ZZZZZ9RM735014", make: "NISSAN", model: "Ariya", modelYear: 2024, driveType: "FWD" }), null);
+  assert.equal(r.exact, undefined);
+  assert.equal(r.candidates, undefined);
+});
