@@ -156,6 +156,26 @@ export function matchEnrichment(
  * declared unknowable, and a false range costs a shopper money in a way
  * silence does not. Two cohorts, and no live listing among them on 2026-08-21.
  */
+// Exported for lib/listings/teslaRangeAbstain.ts: which row(s) the VIN,
+// drivetrain, and battery-size hint narrow a car to on their own, with the
+// claimed trim never in the room to decide anything, one way or the other.
+//
+// This is deliberately NOT "drop the trim and see what's left" — that
+// question is answered by matchEnrichmentRaw({ ...decode, trim: undefined })
+// without `ignoreRowTrims`, and it is the wrong question here, for the same
+// reason matchWithoutTrustedTrim's own doc comment gives at length: dropping
+// a trim doesn't demote a listing to a generic answer, it demotes it to
+// whichever row happens to carry no trim key, and calling that "the VIN
+// resolved it" would be false in exactly the cohorts that need this most —
+// Tesla's 2024 Model 3/Y rows, where the untrimmed row is real (a plain RWD
+// car exists) but is not more true of THIS car than the trimmed row is.
+// `ignoreRowTrims` keeps every row for the model/year/vin8/wmi in play,
+// trimmed or not, so a result only collapses to one when vin8, plant,
+// drivetrain, or the battery-size hint actually did the collapsing.
+export function matchIgnoringTrim(decode: VinDecode, tesla: TeslaVinFacts | null): EnrichmentResult {
+  return matchEnrichmentRaw({ ...decode, trim: undefined }, tesla, { ignoreRowTrims: true });
+}
+
 function matchWithoutTrustedTrim(
   decode: VinDecode,
   tesla: TeslaVinFacts | null

@@ -5,6 +5,7 @@ import { decodeTeslaVin, isTeslaVin } from "../tesla-vin";
 import type { TeslaVinFacts } from "../types";
 import { renamedTrim } from "./trimRename";
 import { trimTrust } from "./trimTrust";
+import { abstainTeslaRange } from "./teslaRangeAbstain";
 
 // What a listing card can honestly say. Every field is either a provenanced
 // fact, an explicit "verify" flag, or absent — never a model-level guess
@@ -321,6 +322,20 @@ export function enrichListing(l: Listing): EnrichedListing {
       return true;
     });
     if (notes.length !== row.buyerNotes.length) row = { ...row, buyerNotes: notes };
+  }
+
+  // Bounded abstention (owner decision, 2026-08-21, measured in
+  // docs/agents/trim-error-rate-2026-08-21.md): drop the RANGE figure only,
+  // never the whole row, on Tesla Model 3/Y listings that sit in one of eight
+  // VIN-8/model-year buckets where our own rows disagree by up to 91 miles
+  // (2024 Model 3, VIN-8 "A": 272 mi RWD vs 363 mi Long Range) and nothing
+  // beyond the dealer's own trim string says which one this is — see
+  // lib/listings/teslaRangeAbstain.ts for the eight buckets and why 99.4% of
+  // the ~1,301 affected listings have no corroboration at all. Port,
+  // chemistry, and warranty still come from this same row; only its range
+  // goes quiet.
+  if (row?.range && (row.range.epaRangeMi || row.range.testedRangeMi) && abstainTeslaRange(l)) {
+    row = { ...row, range: { ...row.range, epaRangeMi: undefined, testedRangeMi: undefined } };
   }
 
   // Ambiguity between candidate rows doesn't extend to facts they agree on:

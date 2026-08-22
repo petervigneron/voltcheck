@@ -36,11 +36,17 @@ const base: Listing = {
 // 260 mi EPA, the plain RWD). Trim is the only thing that tells them apart.
 const MY2024_D_VIN = "5YJYGDED1RF000000"; // WMI 5YJ, vin8 D, year code R=2024
 
-test("enrichListing: an UNDISPUTED 'Long Range' trim still resolves to the Long Range row", () => {
+test("enrichListing: an UNDISPUTED 'Long Range' trim still resolves to the Long Range row, but the range itself abstains", () => {
+  // This is one of the eight VIN-8/model-year buckets
+  // lib/listings/teslaRangeAbstain.ts exists for (docs/agents/
+  // trim-error-rate-2026-08-21.md §4): nothing here disputes the trim, but
+  // nothing corroborates it either, so the row still resolves (packVariant,
+  // port, warranty stay real) while the range figure it would have picked —
+  // 320 vs the 260 mi plain RWD car shares the same VIN-8 — goes quiet.
   const l: Listing = { ...base, vin: MY2024_D_VIN, trim: "Long Range" };
   const e = enrichListing(l);
   assert.equal(e.row?.id, "my-2024-lr-rwd");
-  assert.equal(e.realRangeMi?.value, 320);
+  assert.equal(e.realRangeMi, undefined);
 });
 
 test("enrichListing: a trim CONTRADICTED by the listing's own description (trimSuspect set) must not use that trim to pick a row", () => {
