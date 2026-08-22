@@ -101,3 +101,17 @@ export function classifyEv(vehicle) {
 
   return { isEv: false };
 }
+
+// A "high" classification backed by nothing but the dealer's own fuel-type
+// text — VIN not an EV-only WMI, model/name not a known EV — is only as good
+// as the dealer's data entry (a 2015 Prius Two shipped as an EV because its
+// page said fuelType "Electric", 2026-08-15). vpic-enrich.mjs puts these to
+// vPIC and demotes the ones it refutes; ingest.mjs refuses the ones vPIC was
+// never asked about. Both need the same predicate, so it lives here rather
+// than in one of them — they disagreeing about which rows are unverified is
+// the failure this whole lane exists to prevent.
+export function fuelTextOnly(l) {
+  if (l.evConfidence !== "high" || l.evConfidenceSource === "vpic") return false;
+  if (EV_ONLY_WMIS.has(String(l.vin ?? "").slice(0, 3).toUpperCase())) return false;
+  return !EV_MODEL_RE.test([l.model, l.name, l.trim].filter(Boolean).join(" "));
+}

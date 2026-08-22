@@ -4,6 +4,7 @@
 // classifications are dropped until vPIC verification exists.
 import { readFile, writeFile } from "node:fs/promises";
 import { isKnownMake } from "./lib/makes.mjs";
+import { fuelTextOnly } from "./lib/ev.mjs";
 import { priceFloor } from "./lib/price-floor.mjs";
 
 const raw = JSON.parse(await readFile(new URL("./out/listings.json", import.meta.url), "utf-8"));
@@ -125,6 +126,7 @@ function modelYear(y) {
 // vpic-enrich already had its chance to repair it from the VIN. Dropped
 // makes are logged because a genuinely new brand would land here too.
 const unknownMakes = new Map();
+const unverified = [];
 const listings = raw
   // priceUsd == null means no price signal at all — drop it. priceUsd === 0 is
   // a deliberate abstain (resolveDdcPrice could not name the advertised price
@@ -133,6 +135,34 @@ const listings = raw
   // a real listing. 0 survives ingest_listings because price_usd is NOT NULL.
   .filter((r) => r.vin && modelYear(r.year) && r.make && r.model && r.priceUsd != null)
   .filter((r) => r.evConfidence === "high")
+  // "high" alone was never the guarantee it reads as. For a car vouched by an
+  // EV-only WMI or a known EV nameplate it is fine — the VIN or the model name
+  // settles it. For a car whose ONLY evidence is the dealer's own fuel-type
+  // field, "high" means vPIC either agreed or was never asked, and this filter
+  // could not tell those apart. vpic-enrich.mjs runs first precisely to close
+  // that gap, but it is time-capped (300m in the nightly, 6m on a rolling
+  // slice) and hitting the cap is an expected outcome, not a failure — so
+  // every VIN it did not reach was published as a verified EV on the strength
+  // of a dealer's data entry.
+  //
+  // That is how 308 non-EVs came to be live on 2026-08-22: petrol and
+  // mild-hybrid cars — 231 Volvo XC40 B4/B5s, 26 Mercedes CLA 220s, twelve
+  // Lexus "h" hybrids, a 2023 Ram 1500 Big Horn — sitting on a site that says
+  // it lists electric cars. Nothing revisits an admission afterwards
+  // (audit-listings.mjs explains why recheck cannot), so each one stayed
+  // until somebody deleted it by hand.
+  //
+  // Now the check is explicit: a fuel-text-only classification is held until
+  // vPIC has ANSWERED for that VIN, exactly as a name-match classification is
+  // already held until vPIC confirms it. Held, not dropped — a decode is
+  // permanent once made (registry/vpic-cache.json), so the car lands on the
+  // next run. The abstain direction matters: this can withhold a real EV for
+  // a cycle, and it cannot publish one we never checked.
+  .filter((r) => {
+    if (!fuelTextOnly(r) || r.evVpicAsked) return true;
+    unverified.push(r.vin);
+    return false;
+  })
   .filter((r) => {
     if (isKnownMake(r.make)) return true;
     unknownMakes.set(r.make, (unknownMakes.get(r.make) ?? 0) + 1);
@@ -185,6 +215,15 @@ const listings = raw
   }));
 
 for (const [m, n] of unknownMakes) console.error(`dropped ${n} listing(s) with unrecognized make ${JSON.stringify(m)} — real new brand? add it to lib/makes.mjs`);
+// Loud on purpose. A number here is not an error — it is enrichment having run
+// out of clock — but it IS a night where some real EVs are missing from the
+// feed, and coverage is the whole point of this site. Silence would let that
+// become permanent without anyone noticing.
+if (unverified.length) {
+  console.error(
+    `held ${unverified.length} fuel-text-only listing(s) whose VIN vPIC was never asked about — they are not published until a vpic-enrich pass reaches them (e.g. ${unverified.slice(0, 5).join(", ")})`
+  );
+}
 
 const dest = new URL("../web/data/scraped-listings.json", import.meta.url);
 await writeFile(dest, JSON.stringify(listings, null, 2));

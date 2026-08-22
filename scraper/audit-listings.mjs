@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Re-judge every live listing against today's classification rules.
 //
-//   node audit-listings.mjs [--limit N] [--write-vins <file>]
+//   node audit-listings.mjs [--limit N] [--write-vins <file>] [--json <file>]
 //
 // WHY THIS EXISTS: ingest admits a car once, and nothing ever revisits that
 // decision. When a classification rule changes, listings already in the table
@@ -35,6 +35,15 @@ import { recordRun } from "./lib/audit-status.mjs";
 const arg = (n, d) => { const i = process.argv.indexOf(n); return i >= 0 ? process.argv[i + 1] : d; };
 const LIMIT = Number(arg("--limit", 0));
 const VIN_OUT = arg("--write-vins", null);
+// The console report prints the first 40 refuted rows and counts the rest.
+// That is the right shape for a nightly log and the wrong shape for acting on
+// the list: the 2026-08-22 run reported 320 rows and showed 40 of them, and
+// the 280 it elided were not the same KIND of row as the 40 it showed (real
+// plug-in hybrids vPIC mislabels are mixed in among genuine non-EVs, and
+// neither group clusters). --json writes every refuted row with the vPIC
+// fields the verdict was made on, so the judgement can be made off the whole
+// list instead of a sample of it.
+const JSON_OUT = arg("--json", null);
 
 async function finish(code, result, detail) {
   await recordRun("ev-rules-audit", { result, detail, expectedEveryHours: 27 });
@@ -119,7 +128,21 @@ let undecided = 0;
 for (const row of unvouched) {
   const d = byVin.get(String(row.vin).toUpperCase());
   if (!d) { undecided++; continue; }
-  if (refutes(d)) bad.push({ ...row, level: d.ElectrificationLevel, fuel: `${d.FuelTypePrimary ?? ""}${d.FuelTypeSecondary ? "/" + d.FuelTypeSecondary : ""}` });
+  if (refutes(d)) bad.push({
+    ...row,
+    level: d.ElectrificationLevel,
+    fuel: `${d.FuelTypePrimary ?? ""}${d.FuelTypeSecondary ? "/" + d.FuelTypeSecondary : ""}`,
+    // Kept separate from the display string above: a judgement about whether
+    // vPIC is RIGHT has to read the raw fields, not a formatted summary.
+    vpic: {
+      ElectrificationLevel: d.ElectrificationLevel ?? "",
+      FuelTypePrimary: d.FuelTypePrimary ?? "",
+      FuelTypeSecondary: d.FuelTypeSecondary ?? "",
+      Series: d.Series ?? "",
+      Trim: d.Trim ?? "",
+      Make: d.Make ?? "",
+    },
+  });
 }
 
 console.error(`\naudit: ${bad.length} live listings are NOT electric by vPIC (${undecided} undecided — left alone)`);
@@ -127,6 +150,11 @@ for (const b of bad.slice(0, 40)) {
   console.error(`  ${b.vin}  ${b.year} ${b.make} ${b.model}${b.trim ? " " + b.trim : ""}  [${b.level || b.fuel}]`);
 }
 if (bad.length > 40) console.error(`  … and ${bad.length - 40} more`);
+
+if (JSON_OUT) {
+  await writeFile(JSON_OUT, JSON.stringify({ live: live.length, unvouched: unvouched.length, undecided, refuted: bad }, null, 2));
+  console.error(`\naudit: ${bad.length} refuted row(s) written to ${JSON_OUT}`);
+}
 
 if (VIN_OUT && bad.length) {
   await writeFile(VIN_OUT, bad.map((b) => b.vin).join("\n"));

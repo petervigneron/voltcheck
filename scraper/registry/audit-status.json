@@ -6,6 +6,12 @@
       "result": "ok",
       "detail": "total 100297; shards 16686/16670/16844/16524/16837/16736; sitemap URLs 100296",
       "expectedEveryHours": 8
+    },
+    "ev-rules-audit": {
+      "lastRunAt": "2026-08-22T20:23:39.131Z",
+      "result": "warn",
+      "detail": "100717 live, 308 refuted by vPIC, 0 undecided",
+      "expectedEveryHours": 27
     }
   }
 }

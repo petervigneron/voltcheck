@@ -46,7 +46,7 @@
 // either way) and never fatal.
 import { readFile, writeFile } from "node:fs/promises";
 import { isKnownMake } from "./lib/makes.mjs";
-import { EV_MODEL_RE, EV_ONLY_WMIS } from "./lib/ev.mjs";
+import { EV_MODEL_RE, EV_ONLY_WMIS, fuelTextOnly } from "./lib/ev.mjs";
 import { fetchWithRetry } from "./lib/retry.mjs";
 
 const src = new URL("./out/listings.json", import.meta.url);
@@ -62,16 +62,6 @@ try {
   // wrong decode. Never let a broken cache file crash the run.
   if (e.code !== "ENOENT") console.error(`vpic-enrich: cache unreadable (${e.message}), starting empty`);
   cache = {};
-}
-
-// A "high" classification backed by nothing but the dealer's own fuel-type
-// text — VIN not an EV-only WMI, model/name not a known EV — is only as good
-// as the dealer's data entry (a 2015 Prius Two shipped as an EV because its
-// page said fuelType "Electric", 2026-08-15). Those get vPIC-checked below.
-function fuelTextOnly(l) {
-  if (l.evConfidence !== "high" || l.evConfidenceSource === "vpic") return false;
-  if (EV_ONLY_WMIS.has(String(l.vin ?? "").slice(0, 3).toUpperCase())) return false;
-  return !EV_MODEL_RE.test([l.model, l.name, l.trim].filter(Boolean).join(" "));
 }
 
 // Name-match-only EVs (evConfidence "name_match") are held back by ingest.mjs
@@ -177,6 +167,24 @@ function applyDecode(l, r) {
     fixedMake++;
   }
   if (fuelTextOnly(l)) {
+    // The stamp is the point of this line, and it is deliberately set for a
+    // BLANK decode too. ingest.mjs could not previously tell "vPIC said
+    // electric" from "vPIC was never asked" — both arrive as evConfidence
+    // "high" — so whenever this pass ran out of clock, every VIN it had not
+    // reached was published as a verified EV on the strength of a dealer's
+    // fuel-type field. The nightly's comment says running enrichment before
+    // ingest guarantees the check; the ordering does, the `timeout 300m`
+    // above it (and the 6m cap on a rolling slice) does not. Recording that
+    // vPIC ANSWERED, whatever it answered, is what makes the guarantee
+    // checkable instead of assumed.
+    //
+    // Not "answered usefully": vPIC returns a genuinely empty row for some
+    // VINs, and 42 live listings sit permanently in that state — every
+    // hydrogen fuel-cell car in the feed (Mirai, NEXO, CR-V eFCEV) plus
+    // Nissan's e-POWER cars. Demanding an affirmative electric answer would
+    // withhold those forever, which is a coverage regression dressed up as
+    // rigour. A silent answer is still an answer; only never-asked is held.
+    l.evVpicAsked = true;
     if (vpicRefutesEv(r)) {
       l.evConfidence = "vpic_refuted"; // ingest keeps only "high"
       demoted++;
@@ -228,8 +236,23 @@ for (const l of needs) {
   if (hit) fromCache.push(l);
   else toFetch.push(l);
 }
+// Order matters now that ingest holds what this pass did not reach. Two very
+// different jobs share this queue: deciding whether a car may be PUBLISHED
+// (fuel-text-only rows to verify, name-match rows to promote) and filling in
+// trim/drive/kWh on cars already certain to be listed. Only the first kind
+// costs coverage when the clock runs out, so it goes first — the cap then
+// bites on cosmetics, and the withheld set stays near empty in practice.
+// Measured against the live feed and the committed cache before this change:
+// of 16,186 listings that neither WMI nor nameplate can vouch for, 14,800
+// were already vPIC-confirmed and only 1,028 had never been decoded at all —
+// and a decode is permanent once made, so that backlog drains and does not
+// come back.
+const critical = (l) => l.evConfidence === "name_match" || fuelTextOnly(l);
+toFetch.sort((a, b) => Number(critical(b)) - Number(critical(a)));
+const criticalCount = toFetch.filter(critical).length;
 console.error(
-  `${needs.length} of ${listings.length} listings need vPIC enrichment (${fromCache.length} already cached, ${toFetch.length} genuinely unseen)`
+  `${needs.length} of ${listings.length} listings need vPIC enrichment (${fromCache.length} already cached, ${toFetch.length} genuinely unseen, ` +
+    `${criticalCount} of those classification-critical and fetched first)`
 );
 
 for (const l of fromCache) applyDecode(l, cache[l.vin.toUpperCase()]);
@@ -300,6 +323,15 @@ for (let i = 0; i < toFetch.length; i += 50) {
 
 clearInterval(checkpoint);
 await writeOutput();
+// Say the withheld number out loud. It is the price of the guarantee, and a
+// cap that silently costs coverage is the thing this change exists to stop —
+// so it has to be visible in the log whether it is 0 or 900.
+const unasked = listings.filter((l) => fuelTextOnly(l) && !l.evVpicAsked).length;
 console.error(
   `decoded ${decoded}/${needs.length} (${fromCache.length} from cache, ${decoded - fromCache.length}/${toFetch.length} fetched), filled trim on ${filledTrim}, drive on ${filledDrive}, promoted ${promoted} name-match EVs to high confidence, repaired ${fixedMake} makes, refuted ${demoted} non-EVs → out/listings.json; cache now holds ${Object.keys(cache).length} VINs → registry/vpic-cache.json`
+);
+console.error(
+  unasked
+    ? `vpic-enrich: ${unasked} fuel-text-only listing(s) were never put to vPIC this run — ingest will HOLD them rather than publish an unverified EV claim. They are held, not lost: the next run decodes them and they land.`
+    : `vpic-enrich: every fuel-text-only listing was put to vPIC — nothing held back at ingest.`
 );
