@@ -49,6 +49,9 @@ function trimStringsOverlap(rt: string, decodedTrim: string): boolean {
 // Exported for direct unit testing (web/tests/match.test.ts) — the "+"
 // significance and no-trim behavior are worth pinning down independent of
 // whatever happens to be in the enrichment corpus on a given day.
+const rowTrims = (r: { trim?: string | string[] }): string[] =>
+  Array.isArray(r.trim) ? r.trim : r.trim ? [r.trim] : [];
+
 export function trimMatches(rowTrim: string | string[] | undefined, decodedTrim: string | undefined): boolean {
   if (!rowTrim) return true; // row applies to all trims
   // A trim-specific row needs the listing to actually say which trim it is.
@@ -282,12 +285,24 @@ function matchEnrichmentRaw(
   // than presenting candidates.
   if (decode.trim) {
     const dt = decode.trim;
-    const trimSpecific = rows.filter((r) => {
-      if (!r.trim) return false;
-      return (Array.isArray(r.trim) ? r.trim : [r.trim]).some((rt) => trimStringsOverlap(rt, dt));
-    });
+    const trimSpecific = rows.filter((r) => rowTrims(r).some((rt) => trimStringsOverlap(rt, dt)));
     if (trimSpecific.length === 1) return { exact: trimSpecific[0] };
-    if (trimSpecific.length > 1) rows = trimSpecific;
+    if (trimSpecific.length > 1) {
+      // Overlap is substring-tolerant in both directions, so a grade whose
+      // name contains another grade's swallows it: "XLE Plus" overlaps a
+      // listing that says only "XLE", and a 2026 bZ XLE FWD therefore tied
+      // with the XLE FWD Plus row — 236 mi against 314, decided by nothing,
+      // and 1,950 live listings deep. The early exact-trim pass above can't
+      // help there: it runs before the drivetrain filter, where "XLE" still
+      // matched the FWD and AWD XLE rows both, so it saw two exact hits and
+      // stood aside. Ask it again now that drivetrain has narrowed the
+      // field — an exact name is still the strongest listing-side signal
+      // there is, and it should not lose to a longer name that merely
+      // contains it.
+      const exactTrim = trimSpecific.filter((r) => rowTrims(r).some((rt) => trimStringsExact(rt, dt)));
+      if (exactTrim.length === 1) return { exact: exactTrim[0] };
+      rows = trimSpecific;
+    }
   }
 
   // Plant discriminates Tesla pack variants — from VIN position 11, no lookup.

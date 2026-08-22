@@ -22,6 +22,18 @@ function f<T>(
   return { value, source, asOf: AS_OF, confidence, note, sourceUrl };
 }
 
+// A fueleconomy.gov citation that resolves to the exact record a figure came
+// from, rather than the site's front door (same convention as data4.ts).
+const epa = (id: number) => `https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=${id}`;
+
+// NHTSA 26V393 covers the 2026 bZ, Lexus RZ and Subaru Solterra, so every bZ
+// row carries the identical note; bZ Woodland is not in the campaign.
+const BZ_RECALL_NOTE = {
+  headline: "A battery-ECU fault can cut drive power; free update, confirm it on this car",
+  body: "26V393 (2026 Toyota bZ, Lexus RZ, and Subaru Solterra): the ECU controlling the HV battery may fault, causing loss of drive power. Free ECU software update; owner notices expected August 2026.",
+  severity: "warning" as const,
+};
+
 export const RESEARCH_ROWS_3: EnrichmentRow[] = [
   // ---------------------------------------------------------------------
   // Ford Mustang Mach-E — moved to data4.ts (2026-08-14 pass), re-keyed on
@@ -106,7 +118,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     drive: "AWD",
     battery: {
       packGrossKwh: f(111.5, "mfr", "high", "BMW USA press: “Energy capacity, gross/net kWh 111.5/106.3”, shared pack across xDrive50 and M60"),
-      packUsableKwh: f(106.3, "mfr", "high", "BMW USA press, same spec table"),
+      packUsableKwh: f(106.3, "mfr", "high"),
     },
     range: {
       epaRangeMi: f(288, "mfr", "high", "2023 iX M60, 21-inch wheels, EPA; 22-inch wheels: 274 mi (BMW voluntarily lowered this from a preliminary 291 mi estimate before final certification)", "https://www.fueleconomy.gov"),
@@ -154,7 +166,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     drive: "AWD",
     battery: {
       packGrossKwh: f(111.5, "mfr", "high", "BMW USA press: “Energy capacity, gross/net kWh 111.5/106.3”, shared pack across xDrive50 and M60"),
-      packUsableKwh: f(106.3, "mfr", "high", "BMW USA press, same spec table"),
+      packUsableKwh: f(106.3, "mfr", "high"),
     },
     range: { epaRangeMi: f(307, "mfr", "high", "MY2024: 307 on every wheel size; MY2025: 302–309 by wheels, EPA", "https://www.fueleconomy.gov") },
     charging: {
@@ -198,9 +210,9 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     range: { epaRangeMi: f(303, "mfr", "high", "2026 iX M70, 21-inch wheels, EPA; 22-inch wheels: 284 mi. A 23-inch wheel option also exists on this trim, figure not fetched.", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "agg", "low", "Inferred by platform continuity from the outgoing xDrive50/M60 generation; not independently confirmed for the MY2026-refresh M70"),
-      superchargerAccess: f("adapter", "agg", "low", "Inferred by platform continuity; not independently confirmed for M70"),
+      superchargerAccess: f("adapter", "agg", "low"),
     },
-    thermal: { heatPump: f("standard", "agg", "low", "Inferred by platform continuity from the outgoing generation; not independently re-confirmed for M70") },
+    thermal: { heatPump: f("standard", "agg", "low") },
     warranty: {
       batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
@@ -302,7 +314,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
-      sohFloorPct: f(70, "mfr", "high", "Same Lucid warranty-page quote"),
+      sohFloorPct: f(70, "mfr", "high"),
       batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
@@ -337,7 +349,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
-      sohFloorPct: f(70, "mfr", "high", "Same Lucid warranty-page quote"),
+      sohFloorPct: f(70, "mfr", "high"),
       batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
@@ -351,150 +363,249 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
 
   // ---------------------------------------------------------------------
   // Toyota bZ / bZ Woodland (2026 redesign — distinct nameplate from bZ4X,
-  // which already has its own rows). Research finding worth flagging loudly:
-  // this site's own scraped inventory data carries trim labels ("11 Series",
-  // "15 Series", "17 Series") that do not correspond to any real Toyota bZ
-  // grade name in Toyota's press materials, fueleconomy.gov, NHTSA, or CARB
-  // filings — Toyota's actual MY2026 grades are XLE FWD, XLE FWD Plus, XLE
-  // AWD, Limited FWD, Limited AWD (bZ), and Woodland / Woodland Premium (bZ
-  // Woodland). These rows are keyed by drivetrain only (no trim field) and
-  // say so explicitly in a buyer note, since the label on the listing itself
-  // cannot be trusted to mean anything.
+  // which already has its own rows).
+  //
+  // These rows were written keyed on drivetrain alone, on the finding that
+  // our feed labelled these cars "11 Series" / "15 Series" / "17 Series",
+  // which are not Toyota grade names. Re-counted against the live feed
+  // 2026-08-22: of 2,589 MY2026 bZ listings, 1,950 read "XLE", 402 "Limited",
+  // 199 "XLE Plus", and 3 "15 Series". The junk labels are the exception now,
+  // not the rule, and keying on drivetrain alone was costing real accuracy —
+  // every AWD Limited was being shown the XLE AWD's 288 mi when EPA rates it
+  // 278, and every one of those 2,589 cars carried a buyer note telling its
+  // shopper the trim wasn't a real grade.
+  //
+  // So: one trim-agnostic row per nameplate carrying what every version
+  // shares (port, peak rate, heat pump, warranty, the recall), and a
+  // trim-keyed row per grade carrying the two facts that actually vary —
+  // pack size and EPA range. A car whose trim we can't read matches the
+  // agnostic row and is shown no range at all, which is the honest answer
+  // when 236 and 314 are both live on the same drivetrain. No note explains
+  // that; the absence is the statement.
+  //
+  // MY2026 grades and EPA records (fueleconomy.gov, re-pulled 2026-08-22):
+  //   XLE FWD       57.7 kWh  236 mi  id 49983
+  //   XLE FWD Plus  74.7 kWh  314 mi  id 50042
+  //   Limited FWD   74.7 kWh  299 mi  id 50043 / 296 mi id 49984
+  //   XLE AWD       74.7 kWh  288 mi  id 49985
+  //   Limited AWD   74.7 kWh  278 mi  id 49986
+  //   Woodland      74.7 kWh  281 mi  id 50305 (235/60R18)
+  //   Woodland Prem 74.7 kWh  260 mi  id 50306 (235/65R18)
+  //
+  // Limited FWD has two EPA records three miles apart. They are not two
+  // grades: both are "bZ LIMITED" FWD, both draw 8.0 hr on 240V and ~80 kWh
+  // at the wall (the 74.7 kWh pack; the 57.7 kWh XLE draws 6.0 hr and 61
+  // kWh), so this is one pack from two cell suppliers — 191 Ah at ~391 V and
+  // 200 Ah at ~373 V — exactly the split already recorded on the bZ4X. A VIN
+  // cannot tell them apart, so the row states the lower of the two published
+  // figures. That is a 1% choice made in the direction that cannot cost a
+  // shopper money, not a rule that the lowest EPA figure wins generally.
   // ---------------------------------------------------------------------
   {
-    id: "bz-2026-fwd-standard",
+    id: "bz-2026",
     make: "TOYOTA",
     model: "bZ",
     modelYears: [2026, 2026],
-    drive: "FWD",
-    battery: { packGrossKwh: f(57.7, "mfr", "high", "Toyota press: base FWD pack (XLE FWD)") },
-    range: { epaRangeMi: f(236, "mfr", "high", "2026 Toyota bZ, base 57.7 kWh pack, FWD, EPA; a larger 74.7 kWh pack (XLE FWD Plus) is also available on this drivetrain, rated 314 mi, see buyer note", "https://www.fueleconomy.gov") },
     charging: {
-      portStandard: f("NACS", "mfr", "high", "Toyota press release: “NACS charging port”, confirmed change from the outgoing bZ4X's CCS1-only port"),
-      dcPeakKw: f(150, "agg", "medium", "Widely reported flat across the 2026 bZ lineup; Toyota's own release states only “10% to 80% in around 30 minutes,” no kW figure"),
-      chargeTime1080Min: f(30, "mfr", "medium", "Toyota's own release, stated as approximate"),
+      portStandard: f("NACS", "mfr", "high"),
+      dcPeakKw: f(150, "agg", "medium"),
+      chargeTime1080Min: f(30, "mfr", "medium"),
     },
     thermal: { heatPump: f("standard", "mfr", "high") },
     warranty: {
-      batteryYears: f(8, "mfr", "high", "Toyota's 8yr/100k battery+transaxle+inverter warranty, verified against both MY2023 and MY2026 guides, carries to the new bZ nameplate"),
+      batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
       sohFloorPct: f(70, "mfr", "high"),
       batteryTransfers: f(true, "mfr", "high"),
     },
-    buyerNotes: [
-      {
-        headline: "This listing's trim label doesn't match any real Toyota bZ grade",
-        body: "Toyota's actual MY2026 bZ grades are XLE FWD, XLE FWD Plus, XLE AWD, Limited FWD, and Limited AWD, none named “Series.” This row assumes the base 57.7 kWh XLE FWD pack (236 mi EPA); a larger 74.7 kWh XLE FWD Plus pack is also sold on this same FWD drivetrain, rated 314 mi. Check the window sticker or door-jamb label to confirm which pack this car has.",
-        severity: "warning",
-      },
-      {
-        headline: "A battery-ECU fault can cut drive power; free update, confirm it on this car",
-        body: "26V393 (2026 Toyota bZ, Lexus RZ, and Subaru Solterra): the ECU controlling the HV battery may fault, causing loss of drive power. Free ECU software update; owner notices expected August 2026.",
-        severity: "warning",
-      },
-    ],
+    buyerNotes: [BZ_RECALL_NOTE],
   },
 
   {
-    id: "bz-2026-fwd-plus",
+    id: "bz-2026-fwd-xle",
     make: "TOYOTA",
     model: "bZ",
     modelYears: [2026, 2026],
+    trim: ["XLE", "XLE FWD"],
     drive: "FWD",
-    battery: { packGrossKwh: f(74.7, "mfr", "high", "Toyota press: larger FWD pack (XLE FWD Plus)") },
-    range: { epaRangeMi: f(314, "mfr", "high", "2026 Toyota bZ, larger 74.7 kWh pack, FWD (XLE FWD Plus), EPA; a smaller 57.7 kWh base pack is also available on this drivetrain, rated 236 mi, see buyer note", "https://www.fueleconomy.gov") },
+    battery: { packGrossKwh: f(57.7, "mfr", "high") },
+    range: { epaRangeMi: f(236, "mfr", "high", undefined, epa(49983)) },
     charging: {
-      portStandard: f("NACS", "mfr", "high", "Toyota press release: “NACS charging port”, confirmed change from the outgoing bZ4X's CCS1-only port"),
-      dcPeakKw: f(150, "agg", "medium", "Widely reported flat across the 2026 bZ lineup; Toyota's own release states only “10% to 80% in around 30 minutes,” no kW figure"),
-      chargeTime1080Min: f(30, "mfr", "medium", "Toyota's own release, stated as approximate"),
+      portStandard: f("NACS", "mfr", "high"),
+      dcPeakKw: f(150, "agg", "medium"),
+      chargeTime1080Min: f(30, "mfr", "medium"),
     },
     thermal: { heatPump: f("standard", "mfr", "high") },
     warranty: {
-      batteryYears: f(8, "mfr", "high", "Toyota's 8yr/100k battery+transaxle+inverter warranty, verified against both MY2023 and MY2026 guides, carries to the new bZ nameplate"),
+      batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
       sohFloorPct: f(70, "mfr", "high"),
       batteryTransfers: f(true, "mfr", "high"),
     },
-    buyerNotes: [
-      {
-        headline: "This listing's trim label doesn't match any real Toyota bZ grade",
-        body: "Toyota's actual MY2026 bZ grades are XLE FWD, XLE FWD Plus, XLE AWD, Limited FWD, and Limited AWD, none named “Series.” This row assumes the larger 74.7 kWh XLE FWD Plus pack (314 mi EPA); a smaller 57.7 kWh base pack is also sold on this same FWD drivetrain, rated 236 mi. Check the window sticker or door-jamb label to confirm which pack this car has.",
-        severity: "warning",
-      },
-      {
-        headline: "A battery-ECU fault can cut drive power; free update, confirm it on this car",
-        body: "26V393 (2026 Toyota bZ, Lexus RZ, and Subaru Solterra): the ECU controlling the HV battery may fault, causing loss of drive power. Free ECU software update; owner notices expected August 2026.",
-        severity: "warning",
-      },
-    ],
+    buyerNotes: [BZ_RECALL_NOTE],
   },
 
   {
-    id: "bz-2026-awd",
+    id: "bz-2026-fwd-xle-plus",
     make: "TOYOTA",
     model: "bZ",
     modelYears: [2026, 2026],
+    trim: ["XLE Plus", "XLE FWD Plus"],
+    drive: "FWD",
+    battery: { packGrossKwh: f(74.7, "mfr", "high") },
+    range: { epaRangeMi: f(314, "mfr", "high", undefined, epa(50042)) },
+    charging: {
+      portStandard: f("NACS", "mfr", "high"),
+      dcPeakKw: f(150, "agg", "medium"),
+      chargeTime1080Min: f(30, "mfr", "medium"),
+    },
+    thermal: { heatPump: f("standard", "mfr", "high") },
+    warranty: {
+      batteryYears: f(8, "mfr", "high"),
+      batteryMiles: f(100_000, "mfr", "high"),
+      sohFloorPct: f(70, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
+    },
+    buyerNotes: [BZ_RECALL_NOTE],
+  },
+
+  {
+    id: "bz-2026-fwd-limited",
+    make: "TOYOTA",
+    model: "bZ",
+    modelYears: [2026, 2026],
+    trim: ["Limited", "Limited FWD"],
+    drive: "FWD",
+    battery: { packGrossKwh: f(74.7, "mfr", "high") },
+    range: { epaRangeMi: f(296, "mfr", "high", undefined, epa(49984)) },
+    charging: {
+      portStandard: f("NACS", "mfr", "high"),
+      dcPeakKw: f(150, "agg", "medium"),
+      chargeTime1080Min: f(30, "mfr", "medium"),
+    },
+    thermal: { heatPump: f("standard", "mfr", "high") },
+    warranty: {
+      batteryYears: f(8, "mfr", "high"),
+      batteryMiles: f(100_000, "mfr", "high"),
+      sohFloorPct: f(70, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
+    },
+    buyerNotes: [BZ_RECALL_NOTE],
+  },
+
+  {
+    id: "bz-2026-awd-xle",
+    make: "TOYOTA",
+    model: "bZ",
+    modelYears: [2026, 2026],
+    trim: ["XLE", "XLE AWD"],
     drive: "AWD",
-    battery: { packGrossKwh: f(74.7, "mfr", "high", "Toyota press: single AWD pack shared by XLE AWD and Limited AWD") },
-    range: { epaRangeMi: f(288, "mfr", "high", "2026 Toyota bZ XLE AWD, EPA; Limited AWD (same battery, different equipment): 278 mi", "https://www.fueleconomy.gov") },
+    battery: { packGrossKwh: f(74.7, "mfr", "high") },
+    range: { epaRangeMi: f(288, "mfr", "high", undefined, epa(49985)) },
     charging: {
-      portStandard: f("NACS", "mfr", "high", "Toyota press release: “NACS charging port”, confirmed change from the outgoing bZ4X's CCS1-only port"),
-      dcPeakKw: f(150, "agg", "medium", "Widely reported flat across the 2026 bZ lineup; Toyota's own release states only “10% to 80% in around 30 minutes,” no kW figure"),
-      chargeTime1080Min: f(30, "mfr", "medium", "Toyota's own release, stated as approximate"),
+      portStandard: f("NACS", "mfr", "high"),
+      dcPeakKw: f(150, "agg", "medium"),
+      chargeTime1080Min: f(30, "mfr", "medium"),
     },
     thermal: { heatPump: f("standard", "mfr", "high") },
     warranty: {
-      batteryYears: f(8, "mfr", "high", "Toyota's 8yr/100k battery+transaxle+inverter warranty, verified against both MY2023 and MY2026 guides, carries to the new bZ nameplate"),
+      batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
       sohFloorPct: f(70, "mfr", "high"),
       batteryTransfers: f(true, "mfr", "high"),
     },
-    buyerNotes: [
-      {
-        headline: "This listing's trim label doesn't match any real Toyota bZ grade",
-        body: "Toyota's actual MY2026 bZ grades are XLE FWD, XLE FWD Plus, XLE AWD, Limited FWD, and Limited AWD, none named “Series.” XLE AWD and Limited AWD share the same 74.7 kWh battery; range differs only slightly (288 vs 278 mi) by equipment.",
-        severity: "info",
-      },
-      {
-        headline: "A battery-ECU fault can cut drive power; free update, confirm it on this car",
-        body: "26V393 (2026 Toyota bZ, Lexus RZ, and Subaru Solterra): the ECU controlling the HV battery may fault, causing loss of drive power. Free ECU software update; owner notices expected August 2026.",
-        severity: "warning",
-      },
-    ],
+    buyerNotes: [BZ_RECALL_NOTE],
   },
 
   {
-    id: "bz-woodland-2026-awd",
+    id: "bz-2026-awd-limited",
+    make: "TOYOTA",
+    model: "bZ",
+    modelYears: [2026, 2026],
+    trim: ["Limited", "Limited AWD"],
+    drive: "AWD",
+    battery: { packGrossKwh: f(74.7, "mfr", "high") },
+    range: { epaRangeMi: f(278, "mfr", "high", undefined, epa(49986)) },
+    charging: {
+      portStandard: f("NACS", "mfr", "high"),
+      dcPeakKw: f(150, "agg", "medium"),
+      chargeTime1080Min: f(30, "mfr", "medium"),
+    },
+    thermal: { heatPump: f("standard", "mfr", "high") },
+    warranty: {
+      batteryYears: f(8, "mfr", "high"),
+      batteryMiles: f(100_000, "mfr", "high"),
+      sohFloorPct: f(70, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
+    },
+    buyerNotes: [BZ_RECALL_NOTE],
+  },
+
+  {
+    id: "bz-woodland-2026",
     make: "TOYOTA",
     model: "bZ Woodland",
     modelYears: [2026, 2026],
     drive: "AWD",
-    battery: { packGrossKwh: f(74.7, "mfr", "high", "Toyota press: bZ Woodland and Woodland Premium both use this pack") },
-    range: { epaRangeMi: f(281, "mfr", "high", "2026 bZ Woodland, standard 235/60R18 tires, EPA; Woodland Premium's all-terrain 235/65R18 tires: 260 mi", "https://www.fueleconomy.gov") },
+    battery: { packGrossKwh: f(74.7, "mfr", "high") },
     charging: {
-      portStandard: f("NACS", "mfr", "high", "Toyota's bZ Woodland press release: “NACS charging port”; onboard AC charger 11 kW, ~7.0 hr Level 2 full charge"),
-      dcPeakKw: f(150, "agg", "medium", "Widely reported flat across the 2026 bZ lineup; Toyota's own release states only “10% to 80% in around 30 minutes,” no kW figure"),
-      chargeTime1080Min: f(30, "mfr", "medium", "Toyota's own release, stated as approximate"),
+      portStandard: f("NACS", "mfr", "high"),
+      dcPeakKw: f(150, "agg", "medium"),
+      chargeTime1080Min: f(30, "mfr", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "A dealer page quoting Toyota's own spec sheet states heat pump standard; Toyota's own bZ Woodland press release itself doesn't mention it directly, one tier less direct than the base bZ's confirmation") },
+    thermal: { heatPump: f("standard", "agg", "medium") },
     warranty: {
-      batteryYears: f(8, "mfr", "high", "Toyota's 8yr/100k battery+transaxle+inverter warranty, verified against both MY2023 and MY2026 guides, carries to the new bZ nameplate"),
+      batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
       sohFloorPct: f(70, "mfr", "high"),
       batteryTransfers: f(true, "mfr", "high"),
     },
-    buyerNotes: [
-      {
-        headline: "This listing's trim label doesn't match any real Toyota bZ Woodland grade",
-        body: "Toyota's actual bZ Woodland lineup is “Woodland” and “Woodland Premium”, not “Series”-numbered. This row assumes base Woodland with standard-tire 281 mi EPA range; Woodland Premium's all-terrain tires bring that down to 260 mi. Check the window sticker or door-jamb label.",
-        severity: "warning",
-      },
-      {
-        headline: "No recalls found yet, but this is a very new nameplate",
-        body: "As of 2026-08-10, NHTSA's recall database returns zero campaigns for bZ Woodland, and NHTSA's own model taxonomy doesn't yet list “Woodland” as a distinct model at all. Treat this as “not yet checkable” rather than a clean safety record, worth a re-check as the nameplate matures.",
-        severity: "info",
-      },
-    ],
+  },
+
+  {
+    id: "bz-woodland-2026-base",
+    make: "TOYOTA",
+    model: "bZ Woodland",
+    modelYears: [2026, 2026],
+    trim: ["Woodland", "bZ Woodland"],
+    drive: "AWD",
+    battery: { packGrossKwh: f(74.7, "mfr", "high") },
+    range: { epaRangeMi: f(281, "mfr", "high", undefined, epa(50305)) },
+    charging: {
+      portStandard: f("NACS", "mfr", "high"),
+      dcPeakKw: f(150, "agg", "medium"),
+      chargeTime1080Min: f(30, "mfr", "medium"),
+    },
+    thermal: { heatPump: f("standard", "agg", "medium") },
+    warranty: {
+      batteryYears: f(8, "mfr", "high"),
+      batteryMiles: f(100_000, "mfr", "high"),
+      sohFloorPct: f(70, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
+    },
+  },
+
+  {
+    id: "bz-woodland-2026-premium",
+    make: "TOYOTA",
+    model: "bZ Woodland",
+    modelYears: [2026, 2026],
+    trim: ["Woodland Premium", "bZ Woodland Premium", "Premium", "Premium AWD"],
+    drive: "AWD",
+    battery: { packGrossKwh: f(74.7, "mfr", "high") },
+    range: { epaRangeMi: f(260, "mfr", "high", undefined, epa(50306)) },
+    charging: {
+      portStandard: f("NACS", "mfr", "high"),
+      dcPeakKw: f(150, "agg", "medium"),
+      chargeTime1080Min: f(30, "mfr", "medium"),
+    },
+    thermal: { heatPump: f("standard", "agg", "medium") },
+    warranty: {
+      batteryYears: f(8, "mfr", "high"),
+      batteryMiles: f(100_000, "mfr", "high"),
+      sohFloorPct: f(70, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
+    },
   },
 
   // ---------------------------------------------------------------------
@@ -658,7 +769,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     range: { epaRangeMi: f(260, "mfr", "medium", "Mercedes' own EPA-estimated figure for the MY2023 EQE 500 4MATIC sedan, corroborated across multiple Mercedes franchise-dealer spec pages and period reviews. fueleconomy.gov has no MY2023 EQE record at all; its MY2024 “EQE 500 4matic” certification (298 mi) is the updated MY2024 car and is not carried back", "https://www.mbofwilmington.com/2023-eqe-sedan-range/") },
     charging: {
       portStandard: f("CCS1", "agg", "medium"),
-      dcPeakKw: f(170, "agg", "low", "Widely reported; not confirmed against a primary Mercedes document for MY2023"),
+      dcPeakKw: f(170, "agg", "low"),
       architectureV: f(400, "agg", "low", "Reported by secondary sources (electrive.com, autoevolution); not confirmed on a Mercedes primary document, the CCS 500A/400V ceiling matches the 170 kW peak"),
     },
     thermal: { heatPump: f("optional", "agg", "medium", "Mercedes made the heat pump standard on EQE/EQS sedans starting MY2024, the 2023 sedan likely lacks it unless optioned. (It was already standard on the EQE SUV since MY2023.)") },
@@ -712,7 +823,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     charging: {
       portStandard: f("CCS1", "agg", "medium"),
       dcPeakKw: f(170, "agg", "low", "Widely reported, matching the sedan's EVA2 hardware; not confirmed against a primary Mercedes document for MY2023"),
-      architectureV: f(400, "agg", "low", "Reported by secondary sources; the CCS 500A/400V ceiling matches the 170 kW peak"),
+      architectureV: f(400, "agg", "low"),
     },
     thermal: { heatPump: f("standard", "agg", "medium", "Standard on the EQE SUV from its MY2023 launch — unlike the 2023 sedan, where it was optional") },
     warranty: {
@@ -749,15 +860,15 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     trim: "EQE320 4MATIC",
     drive: "AWD",
     wmi: ["W1K"],
-    battery: { packUsableKwh: f(90.5, "mfr", "high", "Mercedes-Benz USA's own EQE320 4MATIC spec page") },
+    battery: { packUsableKwh: f(90.5, "mfr", "high") },
     range: {
       epaRangeMi: f(267, "mfr", "high", "2026 EQE320 4MATIC, EPA", "https://www.fueleconomy.gov"),
       testedRangeMi: f(332, "tested", "high", "70-mph highway test (Consumer Reports): 332 mi, beat EPA by ~65 mi"),
     },
     charging: {
-      portStandard: f("CCS1", "mfr", "high", "Mercedes-Benz USA spec page: CCS DC port / J1772 AC port"),
-      dcPeakKw: f(170, "mfr", "high", "Mercedes-Benz USA spec page: 170 kW peak, 32 min 10–80%"),
-      chargeTime1080Min: f(32, "mfr", "high", "Mercedes-Benz USA spec page"),
+      portStandard: f("CCS1", "mfr", "high", "AC charging is J1772"),
+      dcPeakKw: f(170, "mfr", "high"),
+      chargeTime1080Min: f(32, "mfr", "high"),
     },
     thermal: { heatPump: f("standard", "mfr", "high") },
     warranty: {
@@ -784,11 +895,11 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     trim: "EQE320+",
     drive: "RWD",
     wmi: ["W1K"],
-    battery: { packUsableKwh: f(96, "mfr", "high", "Mercedes-Benz USA's own EQE320+ spec page") },
+    battery: { packUsableKwh: f(96, "mfr", "high") },
     range: { epaRangeMi: f(308, "mfr", "high", "2026 EQE320+, EPA", "https://www.fueleconomy.gov") },
     charging: {
-      portStandard: f("CCS1", "mfr", "high", "Mercedes-Benz USA spec page"),
-      dcPeakKw: f(170, "mfr", "high", "Mercedes-Benz USA spec page"),
+      portStandard: f("CCS1", "mfr", "high"),
+      dcPeakKw: f(170, "mfr", "high"),
     },
     thermal: { heatPump: f("standard", "mfr", "high") },
     warranty: {
@@ -824,7 +935,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       portStandard: f("CCS1", "agg", "medium"),
       dcPeakKw: f(170, "agg", "low", "Widely reported; corroborated indirectly via the current AMG EQE Sedan spec page, not a MY2024-specific primary document"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "Corroborated via the current AMG EQE Sedan spec page; not a MY2024-specific primary document") },
+    thermal: { heatPump: f("standard", "agg", "medium") },
     warranty: {
       batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets; reasonably extends to the AMG performance variant of the same platform"),
       batteryMiles: f(155_000, "mfr", "high"),
@@ -893,12 +1004,12 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     // sedan-identical trim strings ("450 4MATIC"); this row is the
     // Sindelfingen sedan only.
     wmi: ["W1K"],
-    battery: { packUsableKwh: f(118, "mfr", "high", "Mercedes-Benz USA's own EQS450 4MATIC spec page") },
+    battery: { packUsableKwh: f(118, "mfr", "high") },
     range: { epaRangeMi: f(367, "mfr", "high", "2026 EQS450 4MATIC, EPA", "https://www.fueleconomy.gov") },
     charging: {
-      portStandard: f("CCS1", "mfr", "high", "Mercedes-Benz USA spec page"),
-      dcPeakKw: f(200, "mfr", "high", "Mercedes-Benz USA spec page: 200 kW peak, 31 min 10–80%"),
-      chargeTime1080Min: f(31, "mfr", "high", "Mercedes-Benz USA spec page"),
+      portStandard: f("CCS1", "mfr", "high"),
+      dcPeakKw: f(200, "mfr", "high"),
+      chargeTime1080Min: f(31, "mfr", "high"),
       architectureV: f(400, "agg", "medium", "Not stated explicitly on Mercedes-Benz USA's spec page; independently corroborated by two secondary sources and consistent with the 200 kW DC figure (500A × 400V CCS ceiling)"),
     },
     thermal: { heatPump: f("standard", "mfr", "high") },
@@ -942,7 +1053,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     model: "Optiq",
     modelYears: [2026, 2027],
     drive: "RWD",
-    battery: { packGrossKwh: f(85, "mfr", "high", "Cadillac's own Optiq specs page (cadillac.com)") },
+    battery: { packGrossKwh: f(85, "mfr", "high") },
     range: { epaRangeMi: f(317, "mfr", "high", "2026 and 2027 Optiq RWD, EPA (identical both years)", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("NACS", "mfr", "high", "Cadillac's own Optiq specs page: “J3400 (NACS)”, native NACS, unlike the CCS1-native pattern used by Escalade IQ/Sierra EV/Silverado EV/Lyriq"),
@@ -1015,17 +1126,17 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     model: "Escalade IQ",
     modelYears: [2025, 2026], // window extended to the MY2025 launch year (2026-08-14)
     drive: "AWD",
-    battery: { packGrossKwh: f(205, "mfr", "high", "Cadillac's own Escalade IQ specs page (cadillac.com)") },
+    battery: { packGrossKwh: f(205, "mfr", "high") },
     range: {
       epaRangeMi: f(465, "mfr", "medium", "Cadillac-estimated 465 mi, NOT an EPA rating; at ~10,600 lb GVWR the Escalade IQ is exempt from EPA range labeling (see note)", "https://www.cadillac.com/electric/escalade-iq"),
       
       testedRangeMi: f(482, "tested", "high", "70-mph steady-state (InsideEVs): 482.2 mi, using 222.7 kWh. Edmunds' own mixed-driving methodology recorded 558 mi; a third-party 60-mph constant-speed test (Tom Moloughney/State of Charge) recorded 607 mi, all three exceed Cadillac's own 465-mi estimate. No EPA-certified figure exists to compare against."),
     },
     charging: {
-      portStandard: f("CCS1", "mfr", "high", "Cadillac's own Escalade IQ specs page"),
+      portStandard: f("CCS1", "mfr", "high"),
       superchargerAccess: f("adapter", "mfr", "high", "GM-approved adapter, 29,000+ Tesla Superchargers, the opposite pattern from Optiq, which is NACS-native"),
       dcPeakKw: f(350, "mfr", "high", "Cadillac's own Escalade IQ specs page: 350 kW peak, up to 117 mi in ~10 min"),
-      architectureV: f(800, "mfr", "high", "Cadillac's own Escalade IQ specs page"),
+      architectureV: f(800, "mfr", "high"),
     },
     thermal: { heatPump: f("standard", "agg", "low", "GM's Ultium Energy Recovery heat pump is platform-wide standard; not independently re-confirmed for Escalade IQ specifically") },
     warranty: {
@@ -1057,10 +1168,10 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     range: { epaRangeMi: f(460, "mfr", "medium", "Cadillac-estimated 460 mi, NOT an EPA rating; the IQL shares the Escalade IQ's EPA weight-class exemption", "https://www.cadillac.com/electric/escalade-iql") },
     battery: { packGrossKwh: f(200, "mfr", "medium", "Cadillac's own Escalade IQL specs page states only “over 200 kWh”, vaguer wording than the Escalade IQ page's specific 205 kWh figure") },
     charging: {
-      portStandard: f("CCS1", "mfr", "high", "Cadillac's own Escalade IQL specs page"),
+      portStandard: f("CCS1", "mfr", "high"),
       superchargerAccess: f("adapter", "mfr", "high", "GM-approved adapter, 29,000+ Tesla Superchargers"),
-      dcPeakKw: f(350, "mfr", "high", "Cadillac's own Escalade IQL specs page"),
-      architectureV: f(800, "mfr", "high", "Cadillac's own Escalade IQL specs page"),
+      dcPeakKw: f(350, "mfr", "high"),
+      architectureV: f(800, "mfr", "high"),
     },
     thermal: { heatPump: f("standard", "agg", "low", "GM's Ultium Energy Recovery heat pump is platform-wide standard; not independently re-confirmed for Escalade IQL specifically") },
     warranty: {
@@ -1093,7 +1204,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     range: { epaRangeMi: f(283, "mfr", "high", "2026 Sierra EV Elevation, Standard Range (the pack this trim ships with by default), EPA, cross-corroborated by GMC's own site FAQ", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "agg", "low", "Not stated on any GMC page found for Sierra EV specifically; inferred by platform-family analogy to Silverado EV, which shares this Ultium truck platform"),
-      dcPeakKw: f(220, "agg", "low", "Reported by a GM-focused trade outlet; not confirmed on a GM page"),
+      dcPeakKw: f(220, "agg", "low"),
     },
     thermal: { heatPump: f("standard", "agg", "low", "GM's Ultium Energy Recovery heat pump is platform-wide standard; not independently confirmed on any GMC page for Sierra EV") },
     warranty: {
@@ -1131,7 +1242,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     range: { epaRangeMi: f(410, "mfr", "high", "2026 Sierra EV Elevation with the optional Extended Range pack, EPA, cross-corroborated by GMC's own site FAQ", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "agg", "low", "Not stated on any GMC page found for Sierra EV specifically; inferred by platform-family analogy to Silverado EV, which shares this Ultium truck platform"),
-      dcPeakKw: f(300, "agg", "low", "Reported by a GM-focused trade outlet; not confirmed on a GM page"),
+      dcPeakKw: f(300, "agg", "low"),
     },
     thermal: { heatPump: f("standard", "agg", "low", "GM's Ultium Energy Recovery heat pump is platform-wide standard; not independently confirmed on any GMC page for Sierra EV") },
     warranty: {

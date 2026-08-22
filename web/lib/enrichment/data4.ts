@@ -137,7 +137,7 @@ const ME_KWH_ER_LATE = f(91, "agg", "low", "Extended Range pack, some sources re
 const ME_KWH_SR_LATE = f(73, "agg", "medium", "Standard Range pack (LFP)");
 const ME_NMC_EARLY = f<"NMC">("NMC", "mfr", "high", "Predates the mid-MY2023 chemistry switch, every 2021–22 Standard Range pack is NMC");
 const ME_NMC_2023 = f<"NMC">("NMC", "mfr", "high", "The mid-MY2023 LFP switch came with new VIN codes (4/5); an M or S code is a pre-switch NMC build", VIN_23);
-const ME_LFP = f<"LFP">("LFP", "mfr", "high", "Ford's Part 565 submission marks this VIN code LFP (lithium iron phosphate)");
+const ME_LFP = f<"LFP">("LFP", "mfr", "high");
 const ME_NMC_ER = f<"NMC">("NMC", "agg", "medium");
 
 const ME_PORT_EARLY = {
@@ -245,8 +245,8 @@ const EV6_WARRANTY = {
   batteryYears: f(10, "mfr" as Source),
   batteryMiles: f(100_000, "mfr" as Source),
   sohFloorPct: f(70, "mfr" as Source),
-  batteryTransfers: f(true, "mfr" as Source, "high", "Kia manual: everything except the Power Train (Original Owner) warranty is fully transferable"),
-  powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr" as Source, "high", "Kia powertrain warranty: 10yr/100k for the original owner, 5yr/60k for subsequent owners"),
+  batteryTransfers: f(true, "mfr" as Source, "high"),
+  powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr" as Source, "high"),
   extendedCoverage: f("ICCU: 15 years / 180,000 miles", "mfr" as Source),
 };
 const EV6_HP_NONE = { heatPump: f<"none">("none", "mfr", "high", "Heat pump unavailable on the Light trim") };
@@ -281,7 +281,7 @@ const HK_WARRANTY = {
   batteryMiles: f(100_000, "mfr" as Source),
   sohFloorPct: f(70, "mfr" as Source),
   batteryTransfers: f(true, "mfr" as Source),
-  powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr" as Source, "high", "Hyundai/Kia powertrain warranty: 10yr/100k for the original owner, 5yr/60k for subsequent owners"),
+  powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr" as Source, "high"),
 };
 const PORT_CCS = { portStandard: f<"CCS1">("CCS1", "mfr") };
 const K9 = { make: "KIA", model: "EV9" };
@@ -303,7 +303,7 @@ const BMW_CHARGING = {
   portStandard: f<"CCS1">("CCS1", "mfr"),
   superchargerAccess: f<"adapter">("adapter", "agg", "high", "Opened Dec 2025 via BMW-approved adapter; requires a Remote Software Upgrade first"),
 };
-const BMW_HP = { heatPump: f<"standard">("standard", "mfr", "high", "Integrated heat pump for cabin, battery and drive, BMW Gen5-eDrive platform (BMW press)") };
+const BMW_HP = { heatPump: f<"standard">("standard", "mfr", "high", "Cabin, battery and drive") };
 const BMW_WARRANTY = {
   batteryYears: f(8, "mfr" as Source),
   batteryMiles: f(100_000, "mfr" as Source),
@@ -360,9 +360,9 @@ const RIV_W = {
   batteryTransfers: f(true, "mfr" as Source),
 };
 const RIV_PORT1 = { portStandard: f<"CCS1">("CCS1", "mfr") };
-const RIV_128 = { packGrossKwh: f(128.9, "vin", "high", "Rivian's own Part 565 submission: 128.9 kWh (Large pack)") };
-const RIV_106 = { packGrossKwh: f(106, "vin", "high", "Rivian's own Part 565 submission (gen-2 Standard pack)") };
-const RIV_141 = { packGrossKwh: f(141, "vin", "high", "Rivian's own Part 565 submission (Max pack)") };
+const RIV_128 = { packGrossKwh: f(128.9, "vin", "high", "Large pack") };
+const RIV_106 = { packGrossKwh: f(106, "vin", "high", "Gen-2 Standard pack") };
+const RIV_141 = { packGrossKwh: f(141, "vin", "high", "Max pack") };
 
 
 // ── Porsche Taycan / Macan Electric (same pass) ─────────────────────────
@@ -386,11 +386,11 @@ const POR_W = {
   sohFloorPct: f(70, "mfr" as Source),
   batteryTransfers: f(true, "mfr" as Source),
 };
-const PB1 = { packGrossKwh: f(79.2, "vin", "high", "Performance Battery, 79.2 kWh in Porsche's own Part 565 submission for this VIN pattern") };
-const PB1P = { packGrossKwh: f(93.4, "vin", "high", "Performance Battery Plus, 93.4 kWh in Porsche's own Part 565 submission") };
+const PB1 = { packGrossKwh: f(79.2, "vin", "high", "Performance Battery") };
+const PB1P = { packGrossKwh: f(93.4, "vin", "high", "Performance Battery Plus") };
 const PB2 = { packGrossKwh: f(82.3, "agg", "medium", "Gen-2 Performance Battery") };
 const PB2P = { packGrossKwh: f(97, "agg", "medium", "Gen-2 Performance Battery Plus") };
-const MACB = { packGrossKwh: f(100, "vin", "high", "100 kWh gross (95 net), Porsche's own Part 565 submission") };
+const MACB = { packGrossKwh: f(100, "vin", "high", "95 kWh net") };
 
   // ── Sixth research tranche (2026-08-21): Chevrolet Volt, Toyota RAV4
   // Prime, Toyota Prius Prime, Chrysler Pacifica Hybrid, Ford Escape PHEV,
@@ -439,7 +439,7 @@ const MACB = { packGrossKwh: f(100, "vin", "high", "100 kWh gross (95 net), Pors
         mpgGasoline: fp(37, "mfr", "high", "Premium gasoline required", epa(30980)),
       },
       charging: {
-        acOnboardKw: fp(3.3, "est", "medium", "Not independently re-derived from a primary GM document this pass"),
+        acOnboardKw: fp(3.3, "est", "medium"),
         dcFastCharging: VOLT_NO_DCFC,
       },
       warranty: VOLT_WARRANTY,
@@ -459,7 +459,7 @@ const MACB = { packGrossKwh: f(100, "vin", "high", "100 kWh gross (95 net), Pors
         mpgGasoline: fp(37, "mfr", "high", "Premium gasoline required", epa(33900)),
       },
       charging: {
-        acOnboardKw: fp(3.3, "est", "medium", "Not independently re-derived from a primary GM document this pass"),
+        acOnboardKw: fp(3.3, "est", "medium"),
         dcFastCharging: VOLT_NO_DCFC,
       },
       warranty: VOLT_WARRANTY,
@@ -493,7 +493,7 @@ const MACB = { packGrossKwh: f(100, "vin", "high", "100 kWh gross (95 net), Pors
   const RAV4_PRIME_ROW: EnrichmentRow = {
     id: "rav4-prime-2021-25", make: "TOYOTA", model: "RAV4 Prime", modelYears: [2021, 2025],
     modelAliases: ["RAV4 PHEV", "RAV4 Plug-In Hybrid", "RAV4 PLUG-IN"],
-    battery: { packGrossKwh: fp(18.1, "mfr", "high", "No usable-kWh figure published by Toyota", RAV4_PRIME_RELEASE) },
+    battery: { packGrossKwh: fp(18.1, "mfr", "high", undefined, RAV4_PRIME_RELEASE) },
     range: {
       epaRangeMi: fp(42, "mfr", "high", "Electric-only EPA range. Identical rating 2021–2025", epa(42793)),
       epaRangeTotalMi: fp(600, "mfr", "high", undefined, epa(42793)),
@@ -526,10 +526,10 @@ const MACB = { packGrossKwh: f(100, "vin", "high", "100 kWh gross (95 net), Pors
     mpgGasoline: fp(54, "mfr", "high", undefined, epa(38531)),
   };
   const PRIUS_GEN2_CHARGING = {
-    acOnboardKw: fp(3.3, "est", "medium", "Secondary-sourced (16A/230V); no Toyota primary document pulled this pass"),
+    acOnboardKw: fp(3.3, "est", "medium", "16A at 230V"),
     dcFastCharging: fp<"none">("none", "est", "medium", "Same PHEV architecture as RAV4 Prime, but not re-run against a Prius-specific control document this pass"),
   };
-  const PRIUS_GEN3_BATTERY = { packGrossKwh: fp(13.6, "mfr", "high", "No usable-kWh split found from a Toyota document") };
+  const PRIUS_GEN3_BATTERY = { packGrossKwh: fp(13.6, "mfr", "high") };
   const PRIUS_GEN3_CHARGING = {
     // Onboard AC charger omitted: sources conflict 3.5 vs 6.6 kW and this
     // pass didn't resolve it to one number — omit rather than guess.
@@ -641,10 +641,10 @@ const MACB = { packGrossKwh: f(100, "vin", "high", "100 kWh gross (95 net), Pors
   // database.
   const FORD_ESCAPE_WARRANTY_URL = "https://www.ford.com/support/how-tos/warranty/warranties-and-coverage/what-is-the-warranty-on-my-ford-hybrid-or-electric-vehicle-battery/";
   const ESCAPE_ALIASES = ["Escape", "Escape Plug-In Hybrid"];
-  const ESCAPE_BATTERY = { packGrossKwh: fp(14.4, "est", "medium", "Secondary-sourced across multiple outlets; no Ford press document found this pass") };
+  const ESCAPE_BATTERY = { packGrossKwh: fp(14.4, "est", "medium") };
   const ESCAPE_CHARGING = {
-    acOnboardKw: fp(3.3, "est", "medium", "Secondary-sourced; no Ford press document found this pass"),
-    dcFastCharging: fp<"none">("none", "est", "high", "Universally reported; not control-tested against a Ford primary document this pass"),
+    acOnboardKw: fp(3.3, "est", "medium"),
+    dcFastCharging: fp<"none">("none", "est", "high"),
   };
   // Ford's own page states no CARB-state extension, unlike Toyota/Stellantis.
   const ESCAPE_WARRANTY = { batteryYears: fp(8, "mfr", "high", undefined, FORD_ESCAPE_WARRANTY_URL), batteryMiles: fp(100_000, "mfr", "high", undefined, FORD_ESCAPE_WARRANTY_URL) };
@@ -717,8 +717,8 @@ const MACB = { packGrossKwh: f(100, "vin", "high", "100 kWh gross (95 net), Pors
       mpgGasoline: fp(42, "mfr", "high", undefined, epa(39782)),
     },
     charging: {
-      acOnboardKw: fp(6.6, "est", "medium", "Secondary-sourced (32A); no Honda press document pulled this pass"),
-      dcFastCharging: fp("none", "est", "high", "Universally reported; not control-tested against a Honda primary document this pass"),
+      acOnboardKw: fp(6.6, "est", "medium", "32A"),
+      dcFastCharging: fp("none", "est", "high"),
     },
     warranty: {
       batteryYears: fp(8, "est", "medium", "Possibly 10 yr / 150,000 mi in CARB states, matching the Toyota/Stellantis pattern, but not confirmed against a Honda primary document or exact state list this pass"),
@@ -969,7 +969,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
       superchargerAccess: f("native", "mfr"),
       dcFastCharging: f("standard", "mfr"),
       dcPeakKw: f(150, "mfr", "high", undefined, BOLT27_PRESS),
-      chargeTime1080Min: f(25, "mfr", "high", "GM's own press release, figure stated as approximate", BOLT27_PRESS),
+      chargeTime1080Min: f(25, "mfr", "high", undefined, BOLT27_PRESS),
     },
     thermal: {
       heatPump: f("standard", "mfr", "high", undefined, BOLT27_PRESS),
@@ -1544,7 +1544,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "m3-2024-perf", ...T3, model: "Model 3", modelYears: [2024, 2024], vin8: ["T"], 
     packVariant: "Performance",
-    range: { epaRangeMi: f(303, "mfr", "high", "MY2024 Performance (VIN code T, Tesla's Part 565 submission: Dual Motor – Performance), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48796") },
+    range: { epaRangeMi: f(303, "mfr", "high", "MY2024 Performance, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48796") },
     charging: TES_CHARGING,
     thermal: TES_HP_STD,
     warranty: TES_W120,
@@ -1891,77 +1891,77 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
 
   {
     id: "ev9-2024-lr-rwd", ...K9, modelYears: [2024, 2024], vin8: ["1"], drive: "RWD", packVariant: "Long Range",
-    battery: { packGrossKwh: f(99.8, "agg", "medium", "Long Range pack (the 180.9Ah cells in Kia's Part 565 data)") },
+    battery: { packGrossKwh: f(99.8, "agg", "medium", "Long Range pack") },
     range: { epaRangeMi: f(304, "mfr", "high", "MY2024 Long Range RWD (VIN code 1), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47450") },
     charging: PORT_CCS,
     warranty: HK_WARRANTY,
   },
   {
     id: "ev9-2025-lr-rwd", ...K9, modelYears: [2025, 2025], vin8: ["1"], drive: "RWD", packVariant: "Long Range",
-    battery: { packGrossKwh: f(99.8, "agg", "medium", "Long Range pack (the 180.9Ah cells in Kia's Part 565 data)") },
+    battery: { packGrossKwh: f(99.8, "agg", "medium", "Long Range pack") },
     range: { epaRangeMi: f(304, "mfr", "high", "MY2025 Long Range RWD (VIN code 1), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48366") },
     charging: { portStandard: f<"NACS">("NACS", "agg", "high", "Native NACS port from MY2025") },
     warranty: HK_WARRANTY,
   },
   {
     id: "ev9-2026-lr-rwd", ...K9, modelYears: [2026, 2026], vin8: ["1"], drive: "RWD", packVariant: "Long Range",
-    battery: { packGrossKwh: f(99.8, "agg", "medium", "Long Range pack (the 180.9Ah cells in Kia's Part 565 data)") },
+    battery: { packGrossKwh: f(99.8, "agg", "medium", "Long Range pack") },
     range: { epaRangeMi: f(305, "mfr", "high", "MY2026 Long Range RWD (VIN code 1), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49666") },
     charging: { portStandard: f<"NACS">("NACS", "agg", "high", "Native NACS port from MY2025") },
     warranty: HK_WARRANTY,
   },
   {
     id: "ev9-2024-sr-rwd", ...K9, modelYears: [2024, 2024], vin8: ["2"], drive: "RWD", packVariant: "Standard Range",
-    battery: { packGrossKwh: f(76.1, "agg", "medium", "Standard Range pack (the 120.6Ah cells in Kia's Part 565 data)") },
+    battery: { packGrossKwh: f(76.1, "agg", "medium", "Standard Range pack") },
     range: { epaRangeMi: f(230, "mfr", "high", "MY2024 Standard Range RWD (VIN code 2), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47451") },
     charging: PORT_CCS,
     warranty: HK_WARRANTY,
   },
   {
     id: "ev9-2025-26-sr-rwd", ...K9, modelYears: [2025, 2026], vin8: ["2"], drive: "RWD", packVariant: "Standard Range",
-    battery: { packGrossKwh: f(76.1, "agg", "medium", "Standard Range pack (the 120.6Ah cells in Kia's Part 565 data)") },
+    battery: { packGrossKwh: f(76.1, "agg", "medium", "Standard Range pack") },
     range: { epaRangeMi: f(230, "mfr", "high", "MY2025–26 Standard Range RWD (VIN code 2), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48367") },
     charging: { portStandard: f<"NACS">("NACS", "agg", "high", "Native NACS port from MY2025") },
     warranty: HK_WARRANTY,
   },
   {
     id: "ev9-2024-awd", ...K9, modelYears: [2024, 2024], vin8: ["5"], trim: ["Wind", "Land", "Light"], drive: "AWD", packVariant: "Long Range",
-    battery: { packGrossKwh: f(99.8, "agg", "medium", "Long Range pack (the 180.9Ah cells in Kia's Part 565 data)") },
+    battery: { packGrossKwh: f(99.8, "agg", "medium", "Long Range pack") },
     range: { epaRangeMi: f(280, "mfr", "high", "MY2024 Long Range AWD (VIN code 5), non-GT-Line, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47452") },
     charging: PORT_CCS,
     warranty: HK_WARRANTY,
   },
   {
     id: "ev9-2024-awd-gtline", ...K9, modelYears: [2024, 2024], vin8: ["5"], trim: "GT-Line", drive: "AWD", packVariant: "Long Range",
-    battery: { packGrossKwh: f(99.8, "agg", "medium", "Long Range pack (the 180.9Ah cells in Kia's Part 565 data)") },
+    battery: { packGrossKwh: f(99.8, "agg", "medium", "Long Range pack") },
     range: { epaRangeMi: f(270, "mfr", "high", "MY2024 Long Range AWD on the GT-Line wheels, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47453") },
     charging: PORT_CCS,
     warranty: HK_WARRANTY,
   },
   {
     id: "ev9-2025-awd", ...K9, modelYears: [2025, 2025], vin8: ["5"], trim: ["Wind", "Land", "Light"], drive: "AWD", packVariant: "Long Range",
-    battery: { packGrossKwh: f(99.8, "agg", "medium", "Long Range pack (the 180.9Ah cells in Kia's Part 565 data)") },
+    battery: { packGrossKwh: f(99.8, "agg", "medium", "Long Range pack") },
     range: { epaRangeMi: f(280, "mfr", "high", "MY2025 Long Range AWD (VIN code 5), non-GT-Line, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48368") },
     charging: { portStandard: f<"NACS">("NACS", "agg", "high", "Native NACS port from MY2025") },
     warranty: HK_WARRANTY,
   },
   {
     id: "ev9-2025-awd-gtline", ...K9, modelYears: [2025, 2025], vin8: ["5"], trim: "GT-Line", drive: "AWD", packVariant: "Long Range",
-    battery: { packGrossKwh: f(99.8, "agg", "medium", "Long Range pack (the 180.9Ah cells in Kia's Part 565 data)") },
+    battery: { packGrossKwh: f(99.8, "agg", "medium", "Long Range pack") },
     range: { epaRangeMi: f(270, "mfr", "high", "MY2025 Long Range AWD, GT-Line, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48369") },
     charging: { portStandard: f<"NACS">("NACS", "agg", "high", "Native NACS port from MY2025") },
     warranty: HK_WARRANTY,
   },
   {
     id: "ev9-2026-awd", ...K9, modelYears: [2026, 2026], vin8: ["5"], trim: ["Wind", "Land", "Light"], drive: "AWD", packVariant: "Long Range",
-    battery: { packGrossKwh: f(99.8, "agg", "medium", "Long Range pack (the 180.9Ah cells in Kia's Part 565 data)") },
+    battery: { packGrossKwh: f(99.8, "agg", "medium", "Long Range pack") },
     range: { epaRangeMi: f(283, "mfr", "high", "MY2026 Long Range AWD (VIN code 5), non-GT-Line, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49667") },
     charging: { portStandard: f<"NACS">("NACS", "agg", "high", "Native NACS port from MY2025") },
     warranty: HK_WARRANTY,
   },
   {
     id: "ev9-2026-awd-gtline", ...K9, modelYears: [2026, 2026], vin8: ["5"], trim: "GT-Line", drive: "AWD", packVariant: "Long Range",
-    battery: { packGrossKwh: f(99.8, "agg", "medium", "Long Range pack (the 180.9Ah cells in Kia's Part 565 data)") },
+    battery: { packGrossKwh: f(99.8, "agg", "medium", "Long Range pack") },
     range: { epaRangeMi: f(280, "mfr", "high", "MY2026 Long Range AWD, GT-Line, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49668") },
     charging: { portStandard: f<"NACS">("NACS", "agg", "high", "Native NACS port from MY2025") },
     warranty: HK_WARRANTY,
@@ -2081,7 +2081,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
 
   {
     id: "i4-2024-edrive35", ...I4, modelYears: [2024, 2024], trim: "eDrive35", drive: "RWD",
-    battery: { packUsableKwh: f(67.1, "mfr", "high", "70.2 gross / 67.1 net (BMW-published, eDrive35)") },
+    battery: { packUsableKwh: f(67.1, "mfr", "high", "70.2 kWh gross") },
     range: { epaRangeMi: f(276, "mfr", "high", "MY2024 eDrive35 on 18-inch wheels, EPA; 252 on 19s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46919") },
     charging: BMW_CHARGING,
     thermal: BMW_HP,
@@ -2089,7 +2089,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "i4-2025-edrive35", ...I4, modelYears: [2025, 2025], trim: "eDrive35", drive: "RWD",
-    battery: { packUsableKwh: f(67.1, "mfr", "high", "70.2 gross / 67.1 net (BMW-published, eDrive35)") },
+    battery: { packUsableKwh: f(67.1, "mfr", "high", "70.2 kWh gross") },
     range: { epaRangeMi: f(266, "mfr", "high", "MY2025 eDrive35 on 18-inch wheels, EPA; 244 on 19s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48308") },
     charging: BMW_CHARGING,
     thermal: BMW_HP,
@@ -2097,7 +2097,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "i4-2025-edrive40", ...I4, modelYears: [2025, 2025], trim: "eDrive40", drive: "RWD",
-    battery: { packUsableKwh: f(81.5, "mfr", "high", "83.9 gross / 81.5 net (BMW-published)") },
+    battery: { packUsableKwh: f(81.5, "mfr", "high", "83.9 kWh gross") },
     range: { epaRangeMi: f(318, "mfr", "high", "MY2025 eDrive40 on 18-inch wheels, EPA; 295 on 19s. Up from 301 in 2022–24", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48310") },
     charging: BMW_CHARGING,
     thermal: BMW_HP,
@@ -2105,7 +2105,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "i4-2024-xdrive40", ...I4, modelYears: [2024, 2024], trim: "xDrive40", drive: "AWD",
-    battery: { packUsableKwh: f(81.5, "mfr", "high", "83.9 gross / 81.5 net (BMW-published)") },
+    battery: { packUsableKwh: f(81.5, "mfr", "high", "83.9 kWh gross") },
     range: { epaRangeMi: f(307, "mfr", "high", "MY2024 xDrive40 on 18-inch wheels, EPA; 279 on 19s. 2025 dropped to 287", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46917") },
     charging: BMW_CHARGING,
     thermal: BMW_HP,
@@ -2113,7 +2113,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "i4-2026-edrive35", ...I4, modelYears: [2026, 2026], trim: "eDrive35", drive: "RWD",
-    battery: { packUsableKwh: f(67.1, "mfr", "high", "70.2 gross / 67.1 net (BMW-published, eDrive35)") },
+    battery: { packUsableKwh: f(67.1, "mfr", "high", "70.2 kWh gross") },
     range: { epaRangeMi: f(251, "mfr", "high", "MY2026 eDrive35 (19-inch wheels, the only certified configuration), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50187") },
     charging: BMW_CHARGING,
     thermal: BMW_HP,
@@ -2121,7 +2121,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "i4-2026-edrive40", ...I4, modelYears: [2026, 2026], trim: "eDrive40", drive: "RWD",
-    battery: { packUsableKwh: f(81.5, "mfr", "high", "83.9 gross / 81.5 net (BMW-published)") },
+    battery: { packUsableKwh: f(81.5, "mfr", "high", "83.9 kWh gross") },
     range: { epaRangeMi: f(333, "mfr", "high", "MY2026 eDrive40 on 18-inch wheels, EPA; 307 on 19s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50188") },
     charging: BMW_CHARGING,
     thermal: BMW_HP,
@@ -2129,7 +2129,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "i4-2026-xdrive40", ...I4, modelYears: [2026, 2026], trim: "xDrive40", drive: "AWD",
-    battery: { packUsableKwh: f(81.5, "mfr", "high", "83.9 gross / 81.5 net (BMW-published)") },
+    battery: { packUsableKwh: f(81.5, "mfr", "high", "83.9 kWh gross") },
     range: { epaRangeMi: f(287, "mfr", "high", "MY2026 xDrive40 on 18-inch wheels, EPA; 268 on 19s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50192") },
     charging: BMW_CHARGING,
     thermal: BMW_HP,
@@ -2137,7 +2137,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "i4-2026-m60", ...I4, modelYears: [2026, 2026], trim: "M60", drive: "AWD",
-    battery: { packUsableKwh: f(81.5, "mfr", "high", "83.9 gross / 81.5 net (BMW-published)") },
+    battery: { packUsableKwh: f(81.5, "mfr", "high", "83.9 kWh gross") },
     range: { epaRangeMi: f(278, "mfr", "high", "MY2026 M60 xDrive (replaces the M50) on 19-inch wheels, EPA; 232 on 20s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50190") },
     charging: BMW_CHARGING,
     thermal: BMW_HP,
@@ -2145,7 +2145,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "i5-2024-25-edrive40", ...I5, modelYears: [2024, 2025], trim: "eDrive40", drive: "RWD",
-    battery: { packUsableKwh: f(81.5, "mfr", "high", "83.9 gross / 81.5 net (BMW-published)") },
+    battery: { packUsableKwh: f(81.5, "mfr", "high", "83.9 kWh gross") },
     range: { epaRangeMi: f(295, "mfr", "high", "MY2024–25 i5 eDrive40 on 19-inch wheels, EPA; 270–278 on 20/21s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46923") },
     charging: BMW_CHARGING,
     thermal: BMW_HP,
@@ -2174,7 +2174,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "i5-2026-edrive40", ...I5, modelYears: [2026, 2026], trim: "eDrive40", drive: "RWD",
-    battery: { packUsableKwh: f(81.5, "mfr", "high", "83.9 gross / 81.5 net (BMW-published)") },
+    battery: { packUsableKwh: f(81.5, "mfr", "high", "83.9 kWh gross") },
     range: { epaRangeMi: f(310, "mfr", "high", "MY2026 i5 eDrive40 on 19-inch wheels, EPA; 278–300 on 20/21s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49613") },
     charging: BMW_CHARGING,
     thermal: BMW_HP,
@@ -2245,7 +2245,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "ix-2022-23-xdrive50", ...IX, modelYears: [2022, 2023], trim: "xDrive50", drive: "AWD",
-    battery: { packGrossKwh: f(111.5, "mfr", "high", "111.5 gross / 106.3 net, BMW USA press"), packUsableKwh: f(106.3, "mfr", "high") },
+    battery: { packGrossKwh: f(111.5, "mfr", "high"), packUsableKwh: f(106.3, "mfr", "high") },
     range: { epaRangeMi: f(324, "mfr", "high", "MY2022–23 iX xDrive50 on 20-inch wheels, EPA; 305–315 on 21/22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=45135") },
     charging: BMW_CHARGING,
     thermal: BMW_HP,
@@ -2260,7 +2260,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "ix-2024-m60", ...IX, modelYears: [2024, 2024], trim: "M60", drive: "AWD",
-    battery: { packGrossKwh: f(111.5, "mfr", "high", "111.5 gross / 106.3 net, BMW USA press"), packUsableKwh: f(106.3, "mfr", "high") },
+    battery: { packGrossKwh: f(111.5, "mfr", "high"), packUsableKwh: f(106.3, "mfr", "high") },
     range: { epaRangeMi: f(296, "mfr", "high", "MY2024 iX M60, EPA, both wheel sizes", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46937") },
     charging: BMW_CHARGING,
     thermal: BMW_HP,
@@ -2268,7 +2268,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "ix-2025-m60", ...IX, modelYears: [2025, 2025], trim: "M60", drive: "AWD",
-    battery: { packGrossKwh: f(111.5, "mfr", "high", "111.5 gross / 106.3 net, BMW USA press"), packUsableKwh: f(106.3, "mfr", "high") },
+    battery: { packGrossKwh: f(111.5, "mfr", "high"), packUsableKwh: f(106.3, "mfr", "high") },
     range: { epaRangeMi: f(284, "mfr", "high", "MY2025 iX M60, EPA; 285 on 22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48333") },
     charging: BMW_CHARGING,
     thermal: BMW_HP,
@@ -2291,7 +2291,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
 
   {
     id: "i5-2027-edrive40", ...I5, modelYears: [2027, 2027], trim: "eDrive40", drive: "RWD",
-    battery: { packUsableKwh: f(81.5, "mfr", "high", "83.9 gross / 81.5 net (BMW-published)") },
+    battery: { packUsableKwh: f(81.5, "mfr", "high", "83.9 kWh gross") },
     range: { epaRangeMi: f(328, "mfr", "high", "MY2027 i5 eDrive40 on 19-inch wheels, EPA; 280–299 on 20/21s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50360") },
     charging: BMW_CHARGING,
     thermal: BMW_HP,
@@ -2328,14 +2328,14 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   // and 82 arbitrarily (a 2024 Pro S reads "62"), so these rows ignore it.
   {
     id: "cadillac-vistiq-2026-27", make: "CADILLAC", model: "Vistiq", modelYears: [2026, 2027], drive: "AWD",
-    battery: { packGrossKwh: f(102, "mfr", "medium", "Cadillac's own Vistiq specs page") },
+    battery: { packGrossKwh: f(102, "mfr", "medium") },
     range: { epaRangeMi: f(305, "mfr", "high", "Vistiq (AWD-only), EPA, same rating 2026–27; 300 with the 19 kW onboard-charger option", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49636") },
     charging: { portStandard: f("CCS1", "mfr") },
     warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
   },
   {
     id: "cadillac-optiq-2025", make: "CADILLAC", model: "Optiq", modelYears: [2025, 2025], drive: "AWD",
-    battery: { packGrossKwh: f(85, "mfr", "high", "Cadillac's own Optiq specs page (cadillac.com)") },
+    battery: { packGrossKwh: f(85, "mfr", "high") },
     range: { epaRangeMi: f(302, "mfr", "medium", "GM-estimated, fueleconomy.gov has no MY2025 Optiq entry under any spelling (control: the MY2026 records are present); every MY2025 Optiq is dual-motor AWD") },
     charging: { portStandard: f("CCS1", "mfr") },
     warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
@@ -2454,7 +2454,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "xc40-recharge-2024-twin", make: "VOLVO", model: "XC40 Recharge Pure Electric", modelYears: [2024, 2024], vin8: ["M"], drive: "AWD",
-    range: { epaRangeMi: f(254, "mfr", "high", "MY2024 Twin (VIN code M, eAWD Twin Motor in Volvo's Part 565 text), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46983") },
+    range: { epaRangeMi: f(254, "mfr", "high", "MY2024 Twin Motor, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46983") },
     charging: { portStandard: f("CCS1", "mfr") },
   },
   {
@@ -2474,25 +2474,25 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "ex30-2025-single", make: "VOLVO", model: "EX30", modelYears: [2025, 2025], trim: ["Single Motor"], drive: "RWD",
-    battery: { packGrossKwh: f(69, "vin", "high", "69 kWh NMC, Volvo's own Part 565 submission") },
+    battery: { packGrossKwh: f(69, "vin", "high"), chemistry: f("NMC", "vin", "high") },
     range: { epaRangeMi: f(257, "mfr", "high", "MY2025 EX30 Single Motor Extended Range on 18-inch wheels, EPA; 261 on 19/20s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48449") },
     charging: { portStandard: f("CCS1", "mfr") },
   },
   {
     id: "ex30-2026-single", make: "VOLVO", model: "EX30", modelYears: [2026, 2026], trim: ["Single Motor"], drive: "RWD",
-    battery: { packGrossKwh: f(69, "vin", "high", "69 kWh NMC, Volvo's own Part 565 submission") },
+    battery: { packGrossKwh: f(69, "vin", "high"), chemistry: f("NMC", "vin", "high") },
     range: { epaRangeMi: f(261, "mfr", "high", "MY2026 EX30 Single Motor Extended Range, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49989") },
     charging: { portStandard: f("CCS1", "mfr") },
   },
   {
     id: "ex30-2025-26-twin", make: "VOLVO", model: "EX30", modelYears: [2025, 2026], trim: ["Twin", "Ultra"], drive: "AWD",
-    battery: { packGrossKwh: f(69, "vin", "high", "69 kWh NMC, Volvo's own Part 565 submission") },
+    battery: { packGrossKwh: f(69, "vin", "high"), chemistry: f("NMC", "vin", "high") },
     range: { epaRangeMi: f(253, "mfr", "high", "EX30 Twin Performance, EPA, same rating both years; 250 on 20-inch wheels in 2025", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48775") },
     charging: { portStandard: f("CCS1", "mfr") },
   },
   {
     id: "ex30-cc-2026", make: "VOLVO", model: "EX30 Cross Country", modelYears: [2026, 2026], drive: "AWD",
-    battery: { packGrossKwh: f(69, "vin", "high", "69 kWh NMC, Volvo's own Part 565 submission") },
+    battery: { packGrossKwh: f(69, "vin", "high"), chemistry: f("NMC", "vin", "high") },
     range: { epaRangeMi: f(227, "mfr", "high", "MY2026 EX30 Cross Country on its standard 19-inch wheels, EPA; 203 on 18s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49991") },
     charging: { portStandard: f("CCS1", "mfr") },
   },
@@ -2703,28 +2703,28 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   // the L = Twin row is claimed.
   {
     id: "polestar2-2022-single", make: "POLESTAR", model: "Polestar 2", modelYears: [2022, 2022], trim: ["Long Range Single Motor", "Single Motor", "Plus"], drive: "FWD",
-    battery: { packGrossKwh: f(78, "vin", "high", "78 kWh, Polestar's own Part 565 submission") },
+    battery: { packGrossKwh: f(78, "vin", "high") },
     range: { epaRangeMi: f(270, "mfr", "high", "MY2022 Single Motor (FWD), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=44928") },
     charging: { portStandard: f("CCS1", "mfr") },
     warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
   },
   {
     id: "polestar2-2022-dual", make: "POLESTAR", model: "Polestar 2", modelYears: [2022, 2022], trim: ["Long Range Dual Motor", "Dual Motor", "Performance", "Plus", "e-AWD"], drive: "AWD",
-    battery: { packGrossKwh: f(78, "vin", "high", "78 kWh, Polestar's own Part 565 submission") },
+    battery: { packGrossKwh: f(78, "vin", "high") },
     range: { epaRangeMi: f(249, "mfr", "high", "MY2022 Dual Motor (AWD), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=44449") },
     charging: { portStandard: f("CCS1", "mfr") },
     warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
   },
   {
     id: "polestar2-2023-single", make: "POLESTAR", model: "Polestar 2", modelYears: [2023, 2023], trim: ["Long Range Single Motor", "Single Motor", "Plus"], drive: "FWD",
-    battery: { packGrossKwh: f(78, "vin", "high", "78 kWh, Polestar's own Part 565 submission") },
+    battery: { packGrossKwh: f(78, "vin", "high") },
     range: { epaRangeMi: f(270, "mfr", "high", "MY2023 Single Motor (FWD), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=45755") },
     charging: { portStandard: f("CCS1", "mfr") },
     warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
   },
   {
     id: "polestar2-2023-dual", make: "POLESTAR", model: "Polestar 2", modelYears: [2023, 2023], trim: ["Long Range Dual Motor", "Dual Motor", "Performance", "Plus"], drive: "AWD",
-    battery: { packGrossKwh: f(78, "vin", "high", "78 kWh, Polestar's own Part 565 submission") },
+    battery: { packGrossKwh: f(78, "vin", "high") },
     range: { epaRangeMi: f(260, "mfr", "high", "MY2023 Dual Motor (AWD), EPA; the Performance Pack rates the same, the BST edition 247", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=45753") },
     charging: { portStandard: f("CCS1", "mfr") },
     warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
@@ -2745,14 +2745,14 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "ex90-2025", make: "VOLVO", model: "EX90", modelYears: [2025, 2025], vin8: ["K", "L"], drive: "AWD",
-    battery: { packGrossKwh: f(111, "vin", "high", "111 kWh, Volvo's own Part 565 submission") },
+    battery: { packGrossKwh: f(111, "vin", "high") },
     range: { epaRangeMi: f(300, "mfr", "high", "MY2025 EX90 Twin Motor, EPA; Twin and Twin Performance rate identically (310 on 21-inch wheels)", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48777") },
     charging: { portStandard: f("CCS1", "mfr") },
     warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
   },
   {
     id: "ex90-2026-twin", make: "VOLVO", model: "EX90", modelYears: [2026, 2026], trim: ["Twin Motor", "Twin", "Ultra"], drive: "AWD",
-    battery: { packGrossKwh: f(111, "vin", "high", "111 kWh, Volvo's own Part 565 submission") },
+    battery: { packGrossKwh: f(111, "vin", "high") },
     range: { epaRangeMi: f(298, "mfr", "high", "MY2026 EX90 Twin Motor, EPA; 305 on 21-inch wheels; Performance rates the same. Keyed on trim: Volvo\u2019s VIN code is the trim level (K=Plus/L=Ultra), not the motor", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50256") },
     charging: { portStandard: f("CCS1", "mfr") },
     warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },

@@ -255,7 +255,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       portStandard: f("CCS1", "mfr"),
       superchargerAccess: f5("adapter", "mfr", "high", "Hyundai's March 2025 program opened US Superchargers to CCS-port cars via a NACS adapter. The free adapter was one per vehicle for owners who bought on or before 31 Jan 2025, it does not automatically follow the car", "https://www.hyundainews.com/releases/4339"),
       dcPeakKw: f5(177, "tested", "medium", "58 kWh pack peak in instrumented sessions (InsideEVs charge analysis)", "https://insideevs.com/news/503522/hyundai-ioniq5-fast-charging-analysis/"),
-      architectureV: f5(800, "mfr", "high", "522.7V-nominal Standard Range pack; 800V/350 kW ultra-fast charger standard", "https://www.hyundainews.com/assets/documents/original/48175-2022Ioniq5ProductGuidespecs090821.pdf"),
+      architectureV: f5(800, "mfr", "high", "522.7 V nominal, Standard Range pack", "https://www.hyundainews.com/assets/documents/original/48175-2022Ioniq5ProductGuidespecs090821.pdf"),
     },
     thermal: {
       heatPump: f5("none", "mfr", "high", "Heat pump is AWD-only through MY2024; every Standard Range car is RWD", "https://www.hyundainews.com/assets/documents/original/48175-2022Ioniq5ProductGuidespecs090821.pdf"),
@@ -282,8 +282,8 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       portStandard: f("CCS1", "mfr"),
       superchargerAccess: f5("adapter", "mfr", "high", "Hyundai's March 2025 program opened US Superchargers to CCS-port cars via a NACS adapter. The free adapter was one per vehicle for owners who bought on or before 31 Jan 2025, it does not automatically follow the car", "https://www.hyundainews.com/releases/4339"),
       dcPeakKw: f5(235, "tested", "medium", "Hyundai publishes no vehicle peak, its sheet says only \"10–80% in 18 min\" on a >250 kW 800V charger. Instrumented sessions on the 77.4 kWh pack peak at ~233–236 kW (InsideEVs; EV Pulse)", "https://insideevs.com/news/503522/hyundai-ioniq5-fast-charging-analysis/"),
-      chargeTime1080Min: f5(18, "mfr", "high", "Hyundai's own figure, using a compatible ≥250 kW 800V charger", "https://www.hyundainews.com/assets/documents/original/48175-2022Ioniq5ProductGuidespecs090821.pdf"),
-      architectureV: f5(800, "mfr", "high", "697V-nominal pack; the 2022 spec sheet lists the 800V/350 kW ultra-fast charger as standard", "https://www.hyundainews.com/assets/documents/original/48175-2022Ioniq5ProductGuidespecs090821.pdf"),
+      chargeTime1080Min: f5(18, "mfr", "high", "With a ≥250 kW 800V charger", "https://www.hyundainews.com/assets/documents/original/48175-2022Ioniq5ProductGuidespecs090821.pdf"),
+      architectureV: f5(800, "mfr", "high", "697 V nominal", "https://www.hyundainews.com/assets/documents/original/48175-2022Ioniq5ProductGuidespecs090821.pdf"),
     },
     thermal: {
       heatPump: f5("none", "mfr", "high", "Heat pump is AWD-only for MY2022, RWD cars have none", "https://www.hyundainews.com/assets/documents/original/48175-2022Ioniq5ProductGuidespecs090821.pdf"),
@@ -310,8 +310,8 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       portStandard: f("CCS1", "mfr"),
       superchargerAccess: f5("adapter", "mfr", "high", "Hyundai's March 2025 program opened US Superchargers to CCS-port cars via a NACS adapter. The free adapter was one per vehicle for owners who bought on or before 31 Jan 2025, it does not automatically follow the car", "https://www.hyundainews.com/releases/4339"),
       dcPeakKw: f5(235, "tested", "medium", "Hyundai publishes no vehicle peak, its sheet says only \"10–80% in 18 min\" on a >250 kW 800V charger. Instrumented sessions on the 77.4 kWh pack peak at ~233–236 kW (InsideEVs; EV Pulse)", "https://insideevs.com/news/503522/hyundai-ioniq5-fast-charging-analysis/"),
-      chargeTime1080Min: f5(18, "mfr", "high", "Hyundai's own figure, using a compatible ≥250 kW 800V charger", "https://www.hyundainews.com/assets/documents/original/48175-2022Ioniq5ProductGuidespecs090821.pdf"),
-      architectureV: f5(800, "mfr", "high", "697V-nominal pack; the 2022 spec sheet lists the 800V/350 kW ultra-fast charger as standard", "https://www.hyundainews.com/assets/documents/original/48175-2022Ioniq5ProductGuidespecs090821.pdf"),
+      chargeTime1080Min: f5(18, "mfr", "high", "With a ≥250 kW 800V charger", "https://www.hyundainews.com/assets/documents/original/48175-2022Ioniq5ProductGuidespecs090821.pdf"),
+      architectureV: f5(800, "mfr", "high", "697 V nominal", "https://www.hyundainews.com/assets/documents/original/48175-2022Ioniq5ProductGuidespecs090821.pdf"),
     },
     thermal: {
       heatPump: f5("standard", "mfr", "high", "Standard on AWD", "https://www.hyundainews.com/assets/documents/original/48175-2022Ioniq5ProductGuidespecs090821.pdf"),
@@ -343,7 +343,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       portStandard: f("CCS1", "mfr", "high", "Pre-facelift cars are CCS1; the native NACS port arrives with the MY2025 facelift"),
       superchargerAccess: f5("adapter", "mfr", "high", "Hyundai's March 2025 program opened US Superchargers to CCS-port cars via a NACS adapter. The free adapter was one per vehicle for owners who bought on or before 31 Jan 2025, it does not automatically follow the car", "https://www.hyundainews.com/releases/4339"),
       dcPeakKw: f5(177, "tested", "medium", "58 kWh pack peak in instrumented sessions (InsideEVs charge analysis)", "https://insideevs.com/news/503522/hyundai-ioniq5-fast-charging-analysis/"),
-      architectureV: f5(800, "mfr", "high", "522.7V-nominal Standard Range pack; 800V/350 kW ultra-fast charger standard per the model-year spec sheets", "https://www.hyundainews.com/assets/documents/original/56233-2024IONIQ5Specs062623.pdf"),
+      architectureV: f5(800, "mfr", "high", "522.7 V nominal, Standard Range pack", "https://www.hyundainews.com/assets/documents/original/56233-2024IONIQ5Specs062623.pdf"),
     },
     thermal: {
       heatPump: f5("none", "mfr", "high", "Heat pump is AWD-only per the 2023 and 2024 feature sheets; every Standard Range car is RWD", "https://www.hyundainews.com/assets/documents/original/56232-2024IONIQ5Features062623.pdf"),
@@ -370,8 +370,8 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       portStandard: f("CCS1", "mfr", "high", "Pre-facelift cars are CCS1; the native NACS port arrives with the MY2025 facelift"),
       superchargerAccess: f5("adapter", "mfr", "high", "Hyundai's March 2025 program opened US Superchargers to CCS-port cars via a NACS adapter. The free adapter was one per vehicle for owners who bought on or before 31 Jan 2025, it does not automatically follow the car", "https://www.hyundainews.com/releases/4339"),
       dcPeakKw: f5(235, "tested", "medium", "Hyundai publishes no vehicle peak, its sheets say only \"10–80% in 18 min\" on a >250 kW 800V charger. Instrumented sessions on the 77.4 kWh pack peak at ~233–236 kW (InsideEVs; EV Pulse)", "https://insideevs.com/news/503522/hyundai-ioniq5-fast-charging-analysis/"),
-      chargeTime1080Min: f5(18, "mfr", "high", "Hyundai's own figure, using a compatible ≥250 kW 800V charger", "https://www.hyundainews.com/assets/documents/original/56233-2024IONIQ5Specs062623.pdf"),
-      architectureV: f5(800, "mfr", "high", "697V-nominal long-range pack; 800V/350 kW ultra-fast charger standard per the model-year spec sheets", "https://www.hyundainews.com/assets/documents/original/56233-2024IONIQ5Specs062623.pdf"),
+      chargeTime1080Min: f5(18, "mfr", "high", "With a ≥250 kW 800V charger", "https://www.hyundainews.com/assets/documents/original/56233-2024IONIQ5Specs062623.pdf"),
+      architectureV: f5(800, "mfr", "high", "697 V nominal, long-range pack", "https://www.hyundainews.com/assets/documents/original/56233-2024IONIQ5Specs062623.pdf"),
     },
     thermal: {
       heatPump: f5("none", "mfr", "high", "Heat pump is AWD-only on every trim per the 2023 and 2024 feature sheets, RWD cars have none", "https://www.hyundainews.com/assets/documents/original/56232-2024IONIQ5Features062623.pdf"),
@@ -398,11 +398,11 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       portStandard: f("CCS1", "mfr", "high", "Pre-facelift cars are CCS1; the native NACS port arrives with the MY2025 facelift"),
       superchargerAccess: f5("adapter", "mfr", "high", "Hyundai's March 2025 program opened US Superchargers to CCS-port cars via a NACS adapter. The free adapter was one per vehicle for owners who bought on or before 31 Jan 2025, it does not automatically follow the car", "https://www.hyundainews.com/releases/4339"),
       dcPeakKw: f5(235, "tested", "medium", "Hyundai publishes no vehicle peak, its sheets say only \"10–80% in 18 min\" on a >250 kW 800V charger. Instrumented sessions on the 77.4 kWh pack peak at ~233–236 kW (InsideEVs; EV Pulse)", "https://insideevs.com/news/503522/hyundai-ioniq5-fast-charging-analysis/"),
-      chargeTime1080Min: f5(18, "mfr", "high", "Hyundai's own figure, using a compatible ≥250 kW 800V charger", "https://www.hyundainews.com/assets/documents/original/50313-2023IONIQ5ProductSpecifications20220630.pdf"),
-      architectureV: f5(800, "mfr", "high", "697V-nominal long-range pack; 800V/350 kW ultra-fast charger standard per the model-year spec sheets", "https://www.hyundainews.com/assets/documents/original/50313-2023IONIQ5ProductSpecifications20220630.pdf"),
+      chargeTime1080Min: f5(18, "mfr", "high", "With a ≥250 kW 800V charger", "https://www.hyundainews.com/assets/documents/original/50313-2023IONIQ5ProductSpecifications20220630.pdf"),
+      architectureV: f5(800, "mfr", "high", "697 V nominal, long-range pack", "https://www.hyundainews.com/assets/documents/original/50313-2023IONIQ5ProductSpecifications20220630.pdf"),
     },
     thermal: {
-      heatPump: f5("standard", "mfr", "high", "Standard on AWD (the heat pump is AWD-only per the 2023 feature sheet)", "https://www.hyundainews.com/assets/documents/original/56232-2024IONIQ5Features062623.pdf"),
+      heatPump: f5("standard", "mfr", "high", "Standard on AWD", "https://www.hyundainews.com/assets/documents/original/56232-2024IONIQ5Features062623.pdf"),
       batteryPreconditioning: f5(true, "mfr", "high", "\"Battery preconditioning function\" standard on all models per the 2023 spec sheet", "https://www.hyundainews.com/assets/documents/original/50313-2023IONIQ5ProductSpecifications20220630.pdf"),
     },
     warranty: {
@@ -426,11 +426,11 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       portStandard: f("CCS1", "mfr", "high", "Pre-facelift cars are CCS1; the native NACS port arrives with the MY2025 facelift"),
       superchargerAccess: f5("adapter", "mfr", "high", "Hyundai's March 2025 program opened US Superchargers to CCS-port cars via a NACS adapter. The free adapter was one per vehicle for owners who bought on or before 31 Jan 2025, it does not automatically follow the car", "https://www.hyundainews.com/releases/4339"),
       dcPeakKw: f5(235, "tested", "medium", "Hyundai publishes no vehicle peak, its sheets say only \"10–80% in 18 min\" on a >250 kW 800V charger. Instrumented sessions on the 77.4 kWh pack peak at ~233–236 kW (InsideEVs; EV Pulse)", "https://insideevs.com/news/503522/hyundai-ioniq5-fast-charging-analysis/"),
-      chargeTime1080Min: f5(18, "mfr", "high", "Hyundai's own figure, using a compatible ≥250 kW 800V charger", "https://www.hyundainews.com/assets/documents/original/56233-2024IONIQ5Specs062623.pdf"),
-      architectureV: f5(800, "mfr", "high", "697V-nominal long-range pack; 800V/350 kW ultra-fast charger standard per the model-year spec sheets", "https://www.hyundainews.com/assets/documents/original/56233-2024IONIQ5Specs062623.pdf"),
+      chargeTime1080Min: f5(18, "mfr", "high", "With a ≥250 kW 800V charger", "https://www.hyundainews.com/assets/documents/original/56233-2024IONIQ5Specs062623.pdf"),
+      architectureV: f5(800, "mfr", "high", "697 V nominal, long-range pack", "https://www.hyundainews.com/assets/documents/original/56233-2024IONIQ5Specs062623.pdf"),
     },
     thermal: {
-      heatPump: f5("standard", "mfr", "high", "Standard on AWD (the heat pump is AWD-only per the 2024 feature sheet)", "https://www.hyundainews.com/assets/documents/original/56232-2024IONIQ5Features062623.pdf"),
+      heatPump: f5("standard", "mfr", "high", "Standard on AWD", "https://www.hyundainews.com/assets/documents/original/56232-2024IONIQ5Features062623.pdf"),
       batteryPreconditioning: f5(true, "mfr", "high", "\"Battery preconditioning function\" standard on all models per the 2024 spec sheet", "https://www.hyundainews.com/assets/documents/original/56233-2024IONIQ5Specs062623.pdf"),
     },
     warranty: {
@@ -461,7 +461,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     charging: {
       portStandard: f5("NACS", "mfr", "high", "Native NACS from the MY2025 facelift; 2025 cars shipped with a CCS adapter included", "https://www.hyundainews.com/assets/documents/original/63444-2025IONIQ5XRTLimited8272024finalmjab.pdf"),
       superchargerAccess: f5("native", "mfr"),
-      architectureV: f5(800, "mfr", "high", "523V-nominal Standard Range pack; 800V/350 kW ultra-fast charger standard per the 2025 spec sheet", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf"),
+      architectureV: f5(800, "mfr", "high", "523 V nominal, Standard Range pack", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf"),
     },
     thermal: {
       heatPump: f5("none", "mfr", "high", "Heat pump is AWD-only per the 2025 feature sheet; every Standard Range car is RWD", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf"),
@@ -496,7 +496,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       portStandard: f5("NACS", "mfr", "high", "Native NACS from the MY2025 facelift; 2025 cars shipped with a CCS adapter included", "https://www.hyundainews.com/assets/documents/original/63444-2025IONIQ5XRTLimited8272024finalmjab.pdf"),
       superchargerAccess: f5("native", "mfr"),
       dcPeakKw: f5(257, "tested", "medium", "Hyundai publishes no vehicle peak. Instrumented curves on the 84 kWh pack peak at ~257–260 kW on 800V hardware, only reachable via the CCS adapter, not on today's 400V Superchargers"),
-      architectureV: f5(800, "mfr", "high", "697V-nominal long-range pack; 800V/350 kW ultra-fast charger standard per the 2025 spec sheet", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf"),
+      architectureV: f5(800, "mfr", "high", "697 V nominal, long-range pack", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf"),
     },
     thermal: {
       heatPump: f5("none", "mfr", "high", "The facelift did not make the heat pump standard: AWD-only per the 2025 feature sheet, RWD cars have none", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf"),
@@ -533,10 +533,10 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       portStandard: f5("NACS", "mfr", "high", "Native NACS from the MY2025 facelift; 2025 cars shipped with a CCS adapter included", "https://www.hyundainews.com/assets/documents/original/63444-2025IONIQ5XRTLimited8272024finalmjab.pdf"),
       superchargerAccess: f5("native", "mfr"),
       dcPeakKw: f5(257, "tested", "medium", "Hyundai publishes no vehicle peak. Instrumented curves on the 84 kWh pack peak at ~257–260 kW on 800V hardware, only reachable via the CCS adapter, not on today's 400V Superchargers"),
-      architectureV: f5(800, "mfr", "high", "697V-nominal long-range pack; 800V/350 kW ultra-fast charger standard per the 2025 spec sheet", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf"),
+      architectureV: f5(800, "mfr", "high", "697 V nominal, long-range pack", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf"),
     },
     thermal: {
-      heatPump: f5("standard", "mfr", "high", "Standard on AWD (the heat pump is AWD-only per the 2025 feature sheet)", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf"),
+      heatPump: f5("standard", "mfr", "high", "Standard on AWD", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf"),
       batteryPreconditioning: f5(true, "mfr", "high", "\"Battery preconditioning function\" standard on all models per the 2025 spec sheet", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf"),
     },
     warranty: {
@@ -571,10 +571,10 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       portStandard: f5("NACS", "mfr", "high", "Native NACS from the MY2025 facelift; 2025 cars shipped with a CCS adapter included", "https://www.hyundainews.com/assets/documents/original/63444-2025IONIQ5XRTLimited8272024finalmjab.pdf"),
       superchargerAccess: f5("native", "mfr"),
       dcPeakKw: f5(257, "tested", "medium", "Hyundai publishes no vehicle peak. Instrumented curves on the 84 kWh pack peak at ~257–260 kW on 800V hardware, only reachable via the CCS adapter, not on today's 400V Superchargers"),
-      architectureV: f5(800, "mfr", "high", "697V-nominal long-range pack; 800V/350 kW ultra-fast charger standard per the 2025 spec sheet", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf"),
+      architectureV: f5(800, "mfr", "high", "697 V nominal, long-range pack", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf"),
     },
     thermal: {
-      heatPump: f5("standard", "mfr", "high", "Standard on AWD (the heat pump is AWD-only per the 2025 feature sheet)", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf"),
+      heatPump: f5("standard", "mfr", "high", "Standard on AWD", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf"),
       batteryPreconditioning: f5(true, "mfr", "high", "\"Battery preconditioning function\" standard on all models per the 2025 spec sheet", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf"),
     },
     warranty: {
@@ -609,7 +609,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       portStandard: f5("NACS", "mfr", "high", "Native NACS from the MY2025 facelift; 2025 cars shipped with a CCS adapter included", "https://www.hyundainews.com/assets/documents/original/63444-2025IONIQ5XRTLimited8272024finalmjab.pdf"),
       superchargerAccess: f5("native", "mfr"),
       dcPeakKw: f5(257, "tested", "medium", "Hyundai publishes no vehicle peak. Instrumented curves on the 84 kWh pack peak at ~257–260 kW on 800V hardware, only reachable via the CCS adapter, not on today's 400V Superchargers"),
-      architectureV: f5(800, "mfr", "high", "697V-nominal long-range pack; 800V/350 kW ultra-fast charger standard per the 2025 spec sheet", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf"),
+      architectureV: f5(800, "mfr", "high", "697 V nominal, long-range pack", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf"),
     },
     thermal: {
       heatPump: f5("standard", "mfr", "high", "XRT is an AWD-only trim, and the heat pump is standard on AWD per the 2025 feature sheet", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf"),
@@ -647,7 +647,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     battery: { packGrossKwh: f6(84.0, "mfr", "medium", "Hyundai publishes one figure and does not say gross or usable") },
     range: { epaRangeMi: f6(221, "mfr", "high", "Official EPA rating, 'Ioniq 5 N', EPA vehicle ids 48360 (2025) / 49965 (2026)", "https://www.fueleconomy.gov") },
     thermal: {
-      heatPump: f5("standard", "mfr", "high", "The N feature sheet lists the heat pump as standard (\"S\")"),
+      heatPump: f5("standard", "mfr", "high"),
     },
     warranty: {
       batteryYears: f(10, "mfr"),

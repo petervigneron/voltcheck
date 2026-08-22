@@ -14,6 +14,10 @@ name: Enrichment coverage
 # field, down from 251 once the Lightning charge port was filled): the backlog
 # is allowed, a NEW half-stocked cohort is not. Lower --max-core-fails as
 # backfill lands; never raise it to hide a regression.
+#
+# web/scripts/note-hygiene.mjs runs beside it, on the other half of the same
+# promise: not whether a fact is there, but whether what we wrote under it is
+# for the shopper or for us.
 # No install and no secrets — the script imports only the dependency-free
 # enrichment modules under Node's type stripping.
 on:
@@ -43,3 +47,14 @@ jobs:
       - name: Report enrichment coverage
         working-directory: web
         run: node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs scripts/enrichment-coverage.mjs --max-core-fails 241
+      # A note either cites a source, states a fact, or says nothing. Swept out
+      # by hand on 2026-08-20 (VW ID. Buzz) and again on 2026-08-22 (Toyota
+      # bZ), both times because the owner opened a listing and read it. No
+      # ratchet on this one: the backlog is zero, so any new breach is new.
+      - name: Check note hygiene
+        # The coverage step above is red on main already (255 cohorts against
+        # its 241 ratchet, measured 2026-08-22), and a failed step would take
+        # this one with it. They guard different things; run both.
+        if: always()
+        working-directory: web
+        run: node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs scripts/note-hygiene.mjs
