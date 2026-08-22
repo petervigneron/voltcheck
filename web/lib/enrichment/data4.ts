@@ -2253,7 +2253,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "ix-2024-25-xdrive40", ...IX, modelYears: [2024, 2025], trim: "xDrive40", drive: "AWD",
-    range: { epaRangeMi: f(217, "mfr", "high", "iX xDrive40, EPA rates every wheel size 211–219; the smaller pack", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46939") },
+    range: { epaRangeMi: f(217, "mfr", "high", "20-inch wheels, standard", epa(46939)) },
     charging: BMW_CHARGING,
     thermal: BMW_HP,
     warranty: BMW_WARRANTY,
@@ -2487,7 +2487,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "ex30-2025-26-twin", make: "VOLVO", model: "EX30", modelYears: [2025, 2026], trim: ["Twin", "Ultra"], drive: "AWD",
     battery: { packGrossKwh: f(69, "vin", "high"), chemistry: f("NMC", "vin", "high") },
-    range: { epaRangeMi: f(253, "mfr", "high", "EX30 Twin Performance, EPA, same rating both years; 250 on 20-inch wheels in 2025", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48775") },
+    range: { epaRangeMi: f(253, "mfr", "high", "19-inch wheels, standard", epa(48775)) },
     charging: { portStandard: f("CCS1", "mfr") },
   },
   {
@@ -2505,13 +2505,35 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "wagoneer-s-2025-26", make: "JEEP", model: "Wagoneer S", modelYears: [2025, 2026], drive: "AWD",
     battery: { packGrossKwh: f(100, "agg", "medium") },
-    range: { epaRangeMi: f(294, "mfr", "high", "Wagoneer S AWD, EPA (Falken-tire certification); the Pirelli-tire fitment rates 262–268", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49093") },
+    // No epaRangeMi. EPA certifies the Wagoneer S twice and separates the two
+    // only by TIRE SUPPLIER — "Wagoneer S AWD (Falken tire)" against
+    // "(Pirelli tire)" — 294 against 262 in MY2025 and 268 in MY2026, and 303
+    // against 270 in MY2024. That is not an option a buyer picks, it is not in
+    // the trim (the feed says Limited or Launch Edition), it is not in the VIN,
+    // and vPIC carries no tire field, so nothing on a listing can tell the two
+    // apart. Jeep's own "up to 294 miles" is a best case, not a standard
+    // configuration. Printing 294 risks overstating by 32 on an unknown share
+    // of 304 live cars, which is the direction that costs a shopper money;
+    // printing the lower understates by as much, and the printed figure is the
+    // browse filter's minRange. Same call as the bZ Woodland, where 21 miles
+    // of unknowable spread also went silent.
     charging: { portStandard: f("CCS1", "mfr") },
   },
   {
     id: "wagoneer-s-2024", make: "JEEP", model: "Wagoneer S", modelYears: [2024, 2024], drive: "AWD",
     battery: { packGrossKwh: f(100, "agg", "medium") },
-    range: { epaRangeMi: f(303, "mfr", "high", "MY2024 Wagoneer S Launch Edition, EPA (Falken-tire certification); the Pirelli fitment rates 270", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48791") },
+    // No epaRangeMi. EPA certifies the Wagoneer S twice and separates the two
+    // only by TIRE SUPPLIER — "Wagoneer S AWD (Falken tire)" against
+    // "(Pirelli tire)" — 294 against 262 in MY2025 and 268 in MY2026, and 303
+    // against 270 in MY2024. That is not an option a buyer picks, it is not in
+    // the trim (the feed says Limited or Launch Edition), it is not in the VIN,
+    // and vPIC carries no tire field, so nothing on a listing can tell the two
+    // apart. Jeep's own "up to 294 miles" is a best case, not a standard
+    // configuration. Printing 294 risks overstating by 32 on an unknown share
+    // of 304 live cars, which is the direction that costs a shopper money;
+    // printing the lower understates by as much, and the printed figure is the
+    // browse filter's minRange. Same call as the bZ Woodland, where 21 miles
+    // of unknowable spread also went silent.
     charging: { portStandard: f("CCS1", "mfr") },
   },
   {

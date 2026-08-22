@@ -718,22 +718,35 @@ jobs:
       # matching row stopped matching) and the ratchet baseline needs
       # attention, not that tonight's data refresh is bad.
       #
-      # --max-groups is deliberately UNSET here: the script's own baseline
-      # (see its header) has not been calibrated against a healthy feed yet —
-      # its first run landed mid-db-sync and read a half-written database, so
-      # it defaults to a number high enough to never fail rather than ship a
-      # baseline measured against corrupted data. Once this has run against a
-      # settled feed, pin the real group count here with --max-groups N so
-      # the ratchet actually catches regressions instead of only reporting.
+      # --max-groups was deliberately UNSET until 2026-08-22: the script's own
+      # baseline had never been calibrated against a healthy feed, because its
+      # first run landed mid-db-sync and read a half-written database, so it
+      # defaulted to a number high enough to never fail rather than ship a
+      # baseline measured against corrupted data. Calibrated now, against a
+      # feed verified healthy the honest way — a full 232-page walk returning
+      # 100,717 rows in 30.8s with zero failed pages, run from outside the
+      # site, plus six shards summing to the same total as /api/index/first.
+      #
+      # 491 groups, 19,531 of 100,728 live listings (19.4%) with no enrichment
+      # row at all. That is a large backlog and pinning it is not an
+      # endorsement of it: the point is that a NEW uncovered model now fails
+      # instead of adding one more line to a warning nobody reads. Ratchet it
+      # DOWN as rows land; never up to hide a regression. The biggest groups
+      # today are Lucid Gravity (1,592 across MY2026-27), Audi Q6/SQ6 e-tron,
+      # Mercedes CLA, Subaru Trailseeker and Jeep Recon — EPA has published
+      # records for all of those, so they are research gaps, not data gaps.
+      # The genuine data gaps are MY2027 Toyota bZ (not yet certified) and the
+      # GVWR-exempt trucks, which have no EPA rating to find.
       - name: Audit live listings against the enrichment corpus
         if: always()
         working-directory: web
         run: |
           rc=0
           node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs \
-            scripts/live-enrichment-gap.mjs --out /tmp/live-enrichment-gap.json --top 60 || rc=$?
+            scripts/live-enrichment-gap.mjs --out /tmp/live-enrichment-gap.json --top 60 --max-groups 491 || rc=$?
           if [ "$rc" -eq 10 ]; then
-            echo "::warning::Live inventory includes a make/model the enrichment corpus doesn't cover (or no longer matches) — see the step log's ranked list and /tmp/live-enrichment-gap.json for the full one"
+            echo "::error::Live inventory grew a make/model the enrichment corpus doesn't cover (or a row stopped matching) — above the 491-group baseline pinned 2026-08-22. See the step log's ranked list and /tmp/live-enrichment-gap.json."
+            exit 10
           elif [ "$rc" -ne 0 ]; then exit "$rc"; fi
       - uses: actions/upload-artifact@v4
         if: always()

@@ -121,7 +121,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       packUsableKwh: f(106.3, "mfr", "high"),
     },
     range: {
-      epaRangeMi: f(288, "mfr", "high", "2023 iX M60, 21-inch wheels, EPA; 22-inch wheels: 274 mi (BMW voluntarily lowered this from a preliminary 291 mi estimate before final certification)", "https://www.fueleconomy.gov"),
+      epaRangeMi: f(288, "mfr", "high", "21-inch wheels, standard", epa(45326)),
       testedRangeMi: f(325, "tested", "medium", "Edmunds real-world test, 22-inch-wheel M60: 325 mi, reported tier, Edmunds domain-wide 403s block direct verification; no InsideEVs 70-mph or Car and Driver 75-mph test found for M60 specifically"),
     },
     charging: {
@@ -207,7 +207,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     modelYears: [2026, 2026],
     trim: "M70",
     drive: "AWD",
-    range: { epaRangeMi: f(303, "mfr", "high", "2026 iX M70, 21-inch wheels, EPA; 22-inch wheels: 284 mi. A 23-inch wheel option also exists on this trim, figure not fetched.", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(303, "mfr", "high", "21-inch wheels, standard", epa(49627)) },
     charging: {
       portStandard: f("CCS1", "agg", "low", "Inferred by platform continuity from the outgoing xDrive50/M60 generation; not independently confirmed for the MY2026-refresh M70"),
       superchargerAccess: f("adapter", "agg", "low"),
@@ -302,7 +302,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     drive: "RWD",
     battery: { packGrossKwh: f(84, "mfr", "high", "Lucid's own 2025 Pure technical-spec sheet: “84 kWh (16 module)”; no usable/net split published by Lucid", "https://lucidmotors.com") },
     range: {
-      epaRangeMi: f(420, "mfr", "high", "2025 Air Pure RWD, 19-inch wheels (standard), EPA; 20-inch wheel option: 372 mi", "https://www.fueleconomy.gov"),
+      epaRangeMi: f(420, "mfr", "high", "19-inch wheels, standard", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48374"),
       testedRangeMi: f(366, "tested", "high", "70-mph steady-state (InsideEVs): 365.6 mi, 12.9% below the 420-mi EPA rating. Edmunds test on 20-inch wheels/summer tires: 349 mi (vs 372 mi EPA for that config), reported tier, Edmunds fetch blocked. Car and Driver ~310 mi at 75 mph reported only via secondary summary, not independently confirmed."),
     },
     charging: {
@@ -339,7 +339,42 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     trim: "Touring",
     drive: "AWD",
     battery: { packGrossKwh: f(92, "mfr", "high", "Lucid's own 2025 Touring technical-spec sheet: “92 kWh (18 module)”; no usable/net split published by Lucid", "https://lucidmotors.com") },
-    range: { epaRangeMi: f(406, "mfr", "high", "2025 Air Touring AWD, 19-inch wheels (standard), EPA; 20-inch: 377 mi; 21-inch: 361 mi", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(406, "mfr", "high", "19-inch wheels, standard", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48377") },
+    charging: {
+      portStandard: f("CCS1", "mfr", "high", "Lucid's own site: “Your Lucid Air has a J1772 (CCS1) charge port”, confirmed current as of the most recent Lucid material found (July 2025); still no native NACS port"),
+      superchargerAccess: f("adapter", "mfr", "high", "All Air owners gained Supercharger access July 31, 2025 via a Lucid-sold NACS-to-CCS1 adapter ($220); capped around 50 kW / up to 200 mi of range per hour on that adapter path, well below the car's native CCS1 DC peak"),
+      dcPeakKw: f(250, "mfr", "high", "Lucid's own Touring spec sheet: “DC charge power: Up to 250 kW” (pack architecture is “700V+” per that sheet, outside this site's 400/800V field, noted here instead)"),
+    },
+    thermal: { heatPump: f("standard", "mfr", "high", "Lucid IR press release: “The heat pump first employed on Lucid Sapphire now becomes standard across the lineup”, MY2025 onward; not standard in earlier model years") },
+    warranty: {
+      batteryYears: f(8, "mfr", "high"),
+      batteryMiles: f(100_000, "mfr", "high"),
+      sohFloorPct: f(70, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
+    },
+    buyerNotes: [
+      {
+        headline: "Rearview-camera recalls apply across the Air lineup",
+        body: "25V670 (2022–2025, all trims: camera image can fail, delay, or display inaccurately) and 26V017 (2022–2026, cars with the AD02 package: camera may not display in reverse). Both fixed via free OTA update. The Pure RWD's wiring-harness, half-shaft, and inverter recalls do not apply to this AWD Touring.",
+        severity: "warning",
+      },
+    ],
+  },
+
+  {
+    // The Grand Touring needs its own row because "Touring" is a substring of
+    // "Grand Touring", so trimStringsOverlap handed all 7 live MY2025 Grand
+    // Tourings the Touring row's 406 mi — understating Lucid's flagship by 74.
+    // Its standard wheel is the 20-inch Aero Lite (Lucid's own per-trim spec
+    // data), not the 19 the Pure and Touring get, so the standard-config
+    // figure here is 480 rather than the 19-inch 512.
+    id: "lucid-air-2025-grand-touring-awd",
+    make: "LUCID",
+    model: "Air",
+    modelYears: [2025, 2025],
+    trim: "Grand Touring",
+    drive: "AWD",
+    range: { epaRangeMi: f(480, "mfr", "high", "20-inch wheels, standard", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48372") },
     charging: {
       portStandard: f("CCS1", "mfr", "high", "Lucid's own site: “Your Lucid Air has a J1772 (CCS1) charge port”, confirmed current as of the most recent Lucid material found (July 2025); still no native NACS port"),
       superchargerAccess: f("adapter", "mfr", "high", "All Air owners gained Supercharger access July 31, 2025 via a Lucid-sold NACS-to-CCS1 adapter ($220); capped around 50 kW / up to 200 mi of range per hour on that adapter path, well below the car's native CCS1 DC peak"),
@@ -1173,7 +1208,6 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     drive: "AWD",
     battery: { packGrossKwh: f(205, "mfr", "high") },
     range: {
-      epaRangeMi: f(465, "mfr", "medium", "Cadillac-estimated 465 mi, NOT an EPA rating; at ~10,600 lb GVWR the Escalade IQ is exempt from EPA range labeling (see note)", "https://www.cadillac.com/electric/escalade-iq"),
       
       testedRangeMi: f(482, "tested", "high", "70-mph steady-state (InsideEVs): 482.2 mi, using 222.7 kWh. Edmunds' own mixed-driving methodology recorded 558 mi; a third-party 60-mph constant-speed test (Tom Moloughney/State of Charge) recorded 607 mi, all three exceed Cadillac's own 465-mi estimate. No EPA-certified figure exists to compare against."),
     },
@@ -1193,7 +1227,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     buyerNotes: [
       {
         headline: "No EPA-certified range exists for this vehicle, Cadillac's own figure is not an EPA rating",
-        body: "At roughly 10,600 lb GVWR, Escalade IQ exceeds the 10,000 lb cutoff for EPA's fuel-economy/range labeling program, the same weight-class exemption that applies to the Hummer EV. fueleconomy.gov has no Escalade IQ record under any model year checked, confirming the exemption applies here too. Cadillac's own marketing states “465 miles, Cadillac-estimated”, its own site explicitly does not call this an EPA figure. Independent instrumented tests (below) suggest the real-world range is at least in that neighborhood, but there is no government-certified number to cite.",
+        body: "At roughly 10,600 lb GVWR, Escalade IQ exceeds the 10,000 lb cutoff for EPA's fuel-economy/range labeling program, NHTSA's own VIN decode places both the IQ and the IQL in GVWR Class 3, over 10,000 lb. fueleconomy.gov has no Escalade IQ or IQL record under any model year checked, on either nameplate. Cadillac's own marketing states “465 miles, Cadillac-estimated”, its own site explicitly does not call this an EPA figure. Independent instrumented tests (below) suggest the real-world range is at least in that neighborhood, but there is no government-certified number to cite.",
         severity: "warning",
       },
       {
@@ -1210,7 +1244,12 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     model: "Escalade IQL",
     modelYears: [2026, 2026],
     drive: "AWD",
-    range: { epaRangeMi: f(460, "mfr", "medium", "Cadillac-estimated 460 mi, NOT an EPA rating; the IQL shares the Escalade IQ's EPA weight-class exemption", "https://www.cadillac.com/electric/escalade-iql") },
+    // No epaRangeMi: EnrichmentReport renders that field under the literal
+    // label "EPA range", and no EPA rating exists for this vehicle. Cadillac's
+    // own 460-mile figure is a manufacturer estimate and stays in the buyer
+    // note, where it is labelled as one; the tested figure is the only number
+    // this card prints, which is right — it is a real measurement with a
+    // stated method, not a government rating in disguise.
     battery: { packGrossKwh: f(200, "mfr", "medium", "Cadillac's own Escalade IQL specs page states only “over 200 kWh”, vaguer wording than the Escalade IQ page's specific 205 kWh figure") },
     charging: {
       portStandard: f("CCS1", "mfr", "high"),

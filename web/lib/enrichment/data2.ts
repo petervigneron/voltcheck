@@ -1269,6 +1269,16 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
   },
 
   {
+    // 319, not 303. EPA certifies the AWD Lyriq twice, by onboard charger:
+    // 11.5 kW rates 319 and the optional 19.2 kW rates 303, and not one of
+    // 4,579 live MY2025-27 listings states which it has. The standard
+    // configuration is the 11.5 kW module, so 319 is the figure this row owes
+    // its shopper. Verified two ways: GM's own Monroney for a real MY2025 car
+    // (1GYKPNRL3SZ307993) reads "CHARGING MODULE, 11.5 KW" and "Driving Range
+    // ... 319 miles", and Cadillac's MY2027 LYRIQ page lists the 11.5 kW
+    // module under key STANDARD features with the 19.2 kW under AVAILABLE
+    // ones. MY2026 is inferred from the identical EPA structure between two
+    // verified years, not from a document of its own.
     id: "lyriq-2025-awd",
     make: "CADILLAC",
     model: "Lyriq",
@@ -1277,7 +1287,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     vds: ["KP"], // ordinary Lyriq; the V-Series is 1GYXP — see lyriq-2025-rwd
     drive: "AWD",
     battery: { packGrossKwh: f(102, "mfr", "medium"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(303, "mfr", "high", "303 (19.2 kW charger) / 319 (11 kW, 2025 PAWD); 2026 V-Series: 285, EPA", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(319, "mfr", "high", "11.5 kW onboard charger, standard", epa(48692)) },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
       superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
@@ -1364,9 +1374,47 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     make: "HONDA",
     model: "Prologue",
     modelYears: [2024, 2024],
+    trim: ["EX", "Touring"],
+    vds: ["KHV", "KHX"],
     drive: "AWD",
     battery: { packGrossKwh: f(85, "mfr", "medium", "GM Ultium pack"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(281, "mfr", "high", "Touring AWD 281; Elite 273, EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(240, "tested", "medium", "75-mph (Car and Driver, Elite AWD): 240 mi; Edmunds mixed loop: 320") },
+    range: { epaRangeMi: f(281, "mfr", "high", undefined, epa(47830)), testedRangeMi: f(240, "tested", "medium", "75-mph (Car and Driver, Elite AWD): 240 mi; Edmunds mixed loop: 320") },
+    charging: {
+      portStandard: f("CCS1", "mfr"),
+      superchargerAccess: f("adapter", "mfr", "high", "Honda-approved NACS adapter, mid-2025"),
+      dcPeakKw: f(155, "agg", "medium"),
+    },
+    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
+    warranty: {
+      batteryYears: f(8, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      sohFloorPct: f(75, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
+    },
+    buyerNotes: [
+      {
+        headline: "Two recalls on 2024 cars",
+        body: "24V-540 (front lower control arm, shared with Blazer EV) and 26V-112 (instrument display failure, software). Free fixes; check completion.",
+        severity: "info",
+      },
+    ],
+  },
+
+  {
+    // Honda certifies the Elite separately from EX and Touring in every year,
+    // and the MY2024 Elite row was missing: 44 live 2024 Elites fell into the
+    // EX/Touring row and printed 281 against their own 273. Keyed on the VIN
+    // descriptor as well as the trim — KHZ is the Elite AWD — so a trim-less
+    // Elite resolves too.
+    id: "prologue-2024-awd-elite",
+    make: "HONDA",
+    model: "Prologue",
+    modelYears: [2024, 2024],
+    trim: "Elite",
+    vds: ["KHZ"],
+    drive: "AWD",
+    battery: { packGrossKwh: f(85, "mfr", "medium", "GM Ultium pack"), chemistry: f("NMC", "agg", "medium") },
+    range: { epaRangeMi: f(273, "mfr", "high", undefined, epa(47829)), testedRangeMi: f(240, "tested", "medium", "75-mph (Car and Driver, Elite AWD): 240 mi; Edmunds mixed loop: 320") },
     charging: {
       portStandard: f("CCS1", "mfr"),
       superchargerAccess: f("adapter", "mfr", "high", "Honda-approved NACS adapter, mid-2025"),
@@ -1396,9 +1444,11 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     // (283 mi, heavier wheels) — that trim's row lives in data4.ts; this row
     // is the 294-mi rating for the other AWD trims.
     modelYears: [2025, 2026],
+    trim: ["EX", "Touring"],
+    vds: ["KHV", "KHX"],
     drive: "AWD",
     battery: { packGrossKwh: f(85, "mfr", "medium", "GM Ultium pack"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(294, "mfr", "high", "Touring AWD 294; Elite 283, EPA", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(294, "mfr", "high", undefined, epa(49089)) },
     charging: {
       portStandard: f("CCS1", "mfr"),
       superchargerAccess: f("adapter", "mfr", "high", "Honda-approved NACS adapter, mid-2025"),
@@ -1479,13 +1529,18 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
   },
 
   {
+    // The 22-inch wheel that rates 283 is part of a $3,750 option package on
+    // RS FWD only, and nothing on a listing states wheel size — not the trim,
+    // not the name, not the VIN (the two VDS codes differ by Super Cruise and
+    // both appear at 283 and at 312). Standard is 19-inch on LT and 21-inch on
+    // RS, and both rate 312.
     id: "blazer-fwd",
     make: "CHEVROLET",
     model: "Blazer EV",
     modelYears: [2025, 2026],
     drive: "FWD",
     battery: { packGrossKwh: f(85, "mfr", "medium", "FWD/AWD"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(312, "mfr", "high", "312; 283 with 22-inch wheels, EPA", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(312, "mfr", "high", undefined, epa(49069)) },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
       superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
@@ -1508,13 +1563,15 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
   },
 
   {
-    id: "blazer-awd",
+    // Split by year 2026-08-22: the row spanned 2024-26 at 283 and MY2024 is
+    // certified 279.
+    id: "blazer-awd-2024",
     make: "CHEVROLET",
     model: "Blazer EV",
-    modelYears: [2024, 2026],
+    modelYears: [2024, 2024],
     drive: "AWD",
     battery: { packGrossKwh: f(85, "mfr", "medium", "FWD/AWD"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(283, "mfr", "high", "2024: 279; 2025–26: 283, EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(200, "tested", "high", "75-mph (Car and Driver, 2024 RS AWD): 200 mi vs 279 EPA; Edmunds mixed loop: 320") },
+    range: { epaRangeMi: f(279, "mfr", "high", undefined, epa(47445)), testedRangeMi: f(200, "tested", "high", "75-mph (Car and Driver, 2024 RS AWD): 200 mi vs 279 EPA; Edmunds mixed loop: 320") },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
       superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
@@ -1537,13 +1594,46 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
   },
 
   {
-    id: "blazer-rwd",
+    // Split by year 2026-08-22: the row spanned 2024-26 at 283 and MY2024 is
+    // certified 279.
+    id: "blazer-awd-2025",
     make: "CHEVROLET",
     model: "Blazer EV",
-    modelYears: [2024, 2025],
+    modelYears: [2025, 2026],
+    drive: "AWD",
+    battery: { packGrossKwh: f(85, "mfr", "medium", "FWD/AWD"), chemistry: f("NMC", "agg", "medium") },
+    range: { epaRangeMi: f(283, "mfr", "high", undefined, epa(48342)), testedRangeMi: f(200, "tested", "high", "75-mph (Car and Driver, 2024 RS AWD): 200 mi vs 279 EPA; Edmunds mixed loop: 320") },
+    charging: {
+      portStandard: f("CCS1", "agg", "high"),
+      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
+      dcPeakKw: f(150, "agg", "medium"),
+    },
+    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
+    warranty: {
+      batteryYears: f(8, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      sohFloorPct: f(75, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
+    },
+    buyerNotes: [
+      {
+        headline: "Early 2024s shipped with rough software, a stop-sale rough",
+        body: "GM halted Blazer EV sales in Dec 2023 over software faults (frozen displays, DC-charging failures); the remedy was a service-campaign software update, not an NHTSA recall, confirm it was applied to early-VIN 2024 cars. NHTSA recalls: 24V-487 (front lower control arm), 25V-433/26V-031 (parking-brake harness). No Apple CarPlay or Android Auto on any trim.",
+        severity: "warning",
+      },
+    ],
+  },
+
+  {
+    // Split by year 2026-08-22: 18 live MY2024 RS listings were printing
+    // MY2025's 334 against their own 324.
+    id: "blazer-rwd-2024",
+    make: "CHEVROLET",
+    model: "Blazer EV",
+    modelYears: [2024, 2024],
     drive: "RWD",
     battery: { packGrossKwh: f(102, "mfr", "medium", "RWD/SS"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(334, "mfr", "high", "2024: 324; 2025: 334, EPA", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(324, "mfr", "high", undefined, epa(47813)) },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
       superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
@@ -1566,14 +1656,75 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
   },
 
   {
-    id: "blazer-ss",
+    // Split by year 2026-08-22: 18 live MY2024 RS listings were printing
+    // MY2025's 334 against their own 324.
+    id: "blazer-rwd-2025",
     make: "CHEVROLET",
     model: "Blazer EV",
-    modelYears: [2025, 2026],
+    modelYears: [2025, 2025],
+    drive: "RWD",
+    battery: { packGrossKwh: f(102, "mfr", "medium", "RWD/SS"), chemistry: f("NMC", "agg", "medium") },
+    range: { epaRangeMi: f(334, "mfr", "high", undefined, epa(48694)) },
+    charging: {
+      portStandard: f("CCS1", "agg", "high"),
+      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
+      dcPeakKw: f(190, "agg", "medium"),
+    },
+    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
+    warranty: {
+      batteryYears: f(8, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      sohFloorPct: f(75, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
+    },
+    buyerNotes: [
+      {
+        headline: "Early 2024s shipped with rough software, a stop-sale rough",
+        body: "GM halted Blazer EV sales in Dec 2023 over software faults (frozen displays, DC-charging failures); the remedy was a service-campaign software update, not an NHTSA recall, confirm it was applied to early-VIN 2024 cars. NHTSA recalls: 24V-487 (front lower control arm), 25V-433/26V-031 (parking-brake harness). No Apple CarPlay or Android Auto on any trim.",
+        severity: "warning",
+      },
+    ],
+  },
+
+  {
+    id: "blazer-ss-2025",
+    make: "CHEVROLET",
+    model: "Blazer EV",
+    modelYears: [2025, 2025],
     trim: "SS",
     drive: "AWD",
     battery: { packGrossKwh: f(102, "mfr", "medium", "RWD/SS"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(303, "mfr", "high", "2025: 303; 2026: 302, EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(250, "tested", "high", "75-mph (Car and Driver, 2025 SS): 250 mi") },
+    range: { epaRangeMi: f(303, "mfr", "high", undefined, epa(49068)), testedRangeMi: f(250, "tested", "high", "75-mph (Car and Driver, 2025 SS): 250 mi") },
+    charging: {
+      portStandard: f("CCS1", "agg", "high"),
+      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
+      dcPeakKw: f(190, "agg", "medium"),
+    },
+    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
+    warranty: {
+      batteryYears: f(8, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      sohFloorPct: f(75, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
+    },
+    buyerNotes: [
+      {
+        headline: "Early 2024s shipped with rough software, a stop-sale rough",
+        body: "GM halted Blazer EV sales in Dec 2023 over software faults (frozen displays, DC-charging failures); the remedy was a service-campaign software update, not an NHTSA recall, confirm it was applied to early-VIN 2024 cars. NHTSA recalls: 24V-487 (front lower control arm), 25V-433/26V-031 (parking-brake harness). No Apple CarPlay or Android Auto on any trim.",
+        severity: "warning",
+      },
+    ],
+  },
+
+  {
+    id: "blazer-ss-2026",
+    make: "CHEVROLET",
+    model: "Blazer EV",
+    modelYears: [2026, 2026],
+    trim: "SS",
+    drive: "AWD",
+    battery: { packGrossKwh: f(102, "mfr", "medium", "RWD/SS"), chemistry: f("NMC", "agg", "medium") },
+    range: { epaRangeMi: f(302, "mfr", "high", undefined, epa(49954)), testedRangeMi: f(250, "tested", "high", "75-mph (Car and Driver, 2025 SS): 250 mi") },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
       superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
@@ -1624,12 +1775,52 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
   },
 
   {
-    id: "hummer-ev-suv",
+    // Split by year 2026-08-22. This row printed 312 for both years, and 312
+    // corresponds to no MY2024 configuration at all: MY2024 certifies 314
+    // (standard tires) / 303 (2M20) / 298 and 279 (mud-terrain). 312 is
+    // MY2025's 3X figure, written from 2025 data and stretched back over 149
+    // live MY2024 listings. Mud-terrain tires are an extra-cost option, so the
+    // unsuffixed certification is the standard fitment.
+    id: "hummer-ev-suv-2024",
     make: "GMC",
     model: "Hummer EV SUV",
-    modelYears: [2024, 2025],
+    modelYears: [2024, 2024],
     battery: { packUsableKwh: f(205, "est", "medium"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(312, "mfr", "high", "312–315 (282–289 with MT tires), EPA", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(314, "mfr", "high", "All-terrain tires, standard", epa(46953)) },
+    charging: {
+      portStandard: f("CCS1", "agg", "high"),
+      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
+      dcPeakKw: f(350, "agg", "medium"),
+    },
+    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
+    warranty: {
+      batteryYears: f(8, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      sohFloorPct: f(75, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
+    },
+    buyerNotes: [
+      {
+        headline: "2022–23 trucks have no EPA range rating",
+        body: "2022–23 Hummer EVs exceed the GVWR class the EPA rates, so any range figure quoted for them is GM's estimate (Edition 1: 329 mi), not an EPA rating. Curb weight ~9,000 lb; EPA efficiency (2024+, rated trucks): 47–53 MPGe. Recalls: 22V-771 (water intrusion in the HV battery enclosure, 2022–23 pickups) and 23V-367 (HV battery pack connections).",
+        severity: "info",
+      },
+    ],
+  },
+
+  {
+    // Split by year 2026-08-22. This row printed 312 for both years, and 312
+    // corresponds to no MY2024 configuration at all: MY2024 certifies 314
+    // (standard tires) / 303 (2M20) / 298 and 279 (mud-terrain). 312 is
+    // MY2025's 3X figure, written from 2025 data and stretched back over 149
+    // live MY2024 listings. Mud-terrain tires are an extra-cost option, so the
+    // unsuffixed certification is the standard fitment.
+    id: "hummer-ev-suv-2025",
+    make: "GMC",
+    model: "Hummer EV SUV",
+    modelYears: [2025, 2025],
+    battery: { packUsableKwh: f(205, "est", "medium"), chemistry: f("NMC", "agg", "medium") },
+    range: { epaRangeMi: f(312, "mfr", "high", "All-terrain tires, standard", epa(48348)) },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
       superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
@@ -1863,7 +2054,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       packUsableKwh: f(81.5, "mfr", "high", "83.9 kWh gross"),
       chemistry: f("NMC", "agg", "medium"),
     },
-    range: { epaRangeMi: f(301, "mfr", "high", "282\u2013318 by year and wheels: 301/282 (18\u2033/19\u2033) 2022\u201324, 318/295 in 2025 \u2014 EPA figures", "https://www.fueleconomy.gov"), testedRangeMi: f(280, "tested", "medium", "75-mph (Car and Driver, 2025): 280 mi") },
+    range: { epaRangeMi: f(301, "mfr", "high", "18-inch wheels, standard", epa(45133)), testedRangeMi: f(280, "tested", "medium", "75-mph (Car and Driver, 2025): 280 mi") },
     charging: {
       portStandard: f("CCS1", "mfr"),
       superchargerAccess: f("adapter", "agg", "high", "Opened Dec 2025 via BMW-approved adapter; requires a Remote Software Upgrade first"),
@@ -1901,7 +2092,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       packUsableKwh: f(66, "mfr", "high", "70.2 gross / ~66 net (BMW-published)"),
       chemistry: f("NMC", "agg", "medium"),
     },
-    range: { epaRangeMi: f(256, "mfr", "high", "235\u2013276 by year and wheels \u2014 EPA figures", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(256, "mfr", "high", "18-inch wheels, standard", epa(46616)) },
     charging: {
       portStandard: f("CCS1", "mfr"),
       superchargerAccess: f("adapter", "agg", "high", "Opened Dec 2025 via BMW-approved adapter; requires a Remote Software Upgrade first"),
@@ -1940,7 +2131,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       packUsableKwh: f(81.5, "mfr", "high", "83.9 kWh gross"),
       chemistry: f("NMC", "agg", "medium"),
     },
-    range: { epaRangeMi: f(287, "mfr", "high", "268\u2013307 by year and wheels \u2014 EPA figures", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(287, "mfr", "high", "18-inch wheels, standard", epa(48314)) },
     charging: {
       portStandard: f("CCS1", "mfr"),
       superchargerAccess: f("adapter", "agg", "high", "Opened Dec 2025 via BMW-approved adapter; requires a Remote Software Upgrade first"),
@@ -1968,16 +2159,22 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
   },
 
   {
-    id: "bmw-i4-m50",
+    // Split by year 2026-08-22: one row spanning 2022-25 printed 269, which is
+    // only MY2024's figure. EPA rates the standard 19-inch M50 separately every
+    // year — 270 / 271 / 269 / 267 — and 109 live listings sat on the single
+    // number. The 42-mile gap to the 20-inch fitment is a different axis, and
+    // is handled by labelling the standard wheel rather than by a note naming
+    // the other figure.
+    id: "bmw-i4-m50-2022",
     make: "BMW",
     model: "i4",
-    modelYears: [2022, 2025],
+    modelYears: [2022, 2022],
     trim: "M50",
     battery: {
       packUsableKwh: f(81.5, "mfr", "high", "83.9 kWh gross"),
       chemistry: f("NMC", "agg", "medium"),
     },
-    range: { epaRangeMi: f(269, "mfr", "high", "227\u2013271 by year and wheels \u2014 EPA figures", "https://www.fueleconomy.gov"), testedRangeMi: f(239, "tested", "high", "70-mph (InsideEVs, 2022 M50): 239 mi, beat its 227 EPA; Edmunds loop: 268") },
+    range: { epaRangeMi: f(270, "mfr", "high", "19-inch wheels, standard", epa(45131)), testedRangeMi: f(239, "tested", "high", "70-mph (InsideEVs, 2022 M50): 239 mi, beat its 227 EPA; Edmunds loop: 268") },
     charging: {
       portStandard: f("CCS1", "mfr"),
       superchargerAccess: f("adapter", "agg", "high", "Opened Dec 2025 via BMW-approved adapter; requires a Remote Software Upgrade first"),
@@ -2005,100 +2202,166 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
   },
 
   {
-    id: "silverado-wt-standard",
-    make: "CHEVROLET",
-    model: "Silverado EV",
-    modelYears: [2025, 2026],
-    trim: "Standard Range",
-    battery: { packUsableKwh: f(119, "est", "medium"), chemistry: f("NCM", "agg", "medium") },
-    range: { epaRangeMi: f(283, "mfr", "high", "2025 2WT: 282 mi; 2026 Standard: 283\u2013286 mi \u2014 EPA figures", "https://www.fueleconomy.gov") },
-    charging: {
-      portStandard: f("CCS1", "agg", "high"),
-      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
-      dcPeakKw: f(300, "agg", "medium"),
+    // Split by year 2026-08-22: one row spanning 2022-25 printed 269, which is
+    // only MY2024's figure. EPA rates the standard 19-inch M50 separately every
+    // year — 270 / 271 / 269 / 267 — and 109 live listings sat on the single
+    // number. The 42-mile gap to the 20-inch fitment is a different axis, and
+    // is handled by labelling the standard wheel rather than by a note naming
+    // the other figure.
+    id: "bmw-i4-m50-2025",
+    make: "BMW",
+    model: "i4",
+    modelYears: [2025, 2025],
+    trim: "M50",
+    battery: {
+      packUsableKwh: f(81.5, "mfr", "high", "83.9 kWh gross"),
+      chemistry: f("NMC", "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
+    range: { epaRangeMi: f(267, "mfr", "high", "19-inch wheels, standard", epa(48312)), testedRangeMi: f(239, "tested", "high", "70-mph (InsideEVs, 2022 M50): 239 mi, beat its 227 EPA; Edmunds loop: 268") },
+    charging: {
+      portStandard: f("CCS1", "mfr"),
+      superchargerAccess: f("adapter", "agg", "high", "Opened Dec 2025 via BMW-approved adapter; requires a Remote Software Upgrade first"),
+      dcPeakKw: f(205, "agg", "medium"),
+    },
+    thermal: { heatPump: f("standard", "mfr", "high", "Cabin, battery and drive") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      sohFloorPct: f(75, "mfr", "high", "\u201cBelow 75% of its original value\u201d \u2014 GM EV booklets (extracted text)"),
-      batteryTransfers: f(true, "mfr", "high", "\u201cTransferable at no cost\u201d \u2014 GM EV booklets"),
+      batteryTransfers: f(true, "mfr", "high"),
+      extendedCoverage: f("MY2022 has NO capacity floor (defects-only, verified). BMW Certified MY22\u201325 cars delivered after Mar 2026 get an 8yr/100k, 75%-SoH CPO battery coverage", "mfr", "high"),
     },
     buyerNotes: [
       {
-        headline: "NHTSA recalls on file",
-        body: "Seat-belt anchorage: 23V-786, 24V-087, 25V-015. HV wiring harness: 24V-320 (multi-model). Free remedies; check completion on this VIN.",
+        headline: "A 2022 i4 bought certified now has better battery coverage than it had new",
+        body: "The 2022 i4's factory battery warranty covers defects only \u2014 no capacity floor (verified in the booklet). But BMW's CPO program adds an 8-year/100k, 75%-state-of-health coverage to MY22\u201325 EVs delivered certified after March 2026. Where you buy this car changes what protects its battery.",
         severity: "info",
+      },
+      {
+        headline: "Battery-module recall; confirm the fix was done on this car",
+        body: "22V-541 (2022) and 25V-470 (2022\u201325): defective cell modules, remedy includes module or full-pack replacement on affected VINs.",
+        severity: "warning",
       },
     ],
   },
 
   {
-    id: "silverado-wt-extended",
-    make: "CHEVROLET",
-    model: "Silverado EV",
-    modelYears: [2025, 2026],
-    trim: "Extended Range",
-    battery: { packUsableKwh: f(170, "est", "medium"), chemistry: f("NCM", "agg", "medium") },
-    range: { epaRangeMi: f(424, "mfr", "high", "2025 5WT: 422 mi; 2026 Extended: 424 mi (410/385 with equipment differences) \u2014 EPA figures", "https://www.fueleconomy.gov") },
-    charging: {
-      portStandard: f("CCS1", "agg", "high"),
-      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
-      dcPeakKw: f(350, "agg", "medium"),
+    // Split by year 2026-08-22: one row spanning 2022-25 printed 269, which is
+    // only MY2024's figure. EPA rates the standard 19-inch M50 separately every
+    // year — 270 / 271 / 269 / 267 — and 109 live listings sat on the single
+    // number. The 42-mile gap to the 20-inch fitment is a different axis, and
+    // is handled by labelling the standard wheel rather than by a note naming
+    // the other figure.
+    id: "bmw-i4-m50-2024",
+    make: "BMW",
+    model: "i4",
+    modelYears: [2024, 2024],
+    trim: "M50",
+    battery: {
+      packUsableKwh: f(81.5, "mfr", "high", "83.9 kWh gross"),
+      chemistry: f("NMC", "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
+    range: { epaRangeMi: f(269, "mfr", "high", "19-inch wheels, standard", epa(46915)), testedRangeMi: f(239, "tested", "high", "70-mph (InsideEVs, 2022 M50): 239 mi, beat its 227 EPA; Edmunds loop: 268") },
+    charging: {
+      portStandard: f("CCS1", "mfr"),
+      superchargerAccess: f("adapter", "agg", "high", "Opened Dec 2025 via BMW-approved adapter; requires a Remote Software Upgrade first"),
+      dcPeakKw: f(205, "agg", "medium"),
+    },
+    thermal: { heatPump: f("standard", "mfr", "high", "Cabin, battery and drive") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      sohFloorPct: f(75, "mfr", "high", "\u201cBelow 75% of its original value\u201d \u2014 GM EV booklets (extracted text)"),
-      batteryTransfers: f(true, "mfr", "high", "\u201cTransferable at no cost\u201d \u2014 GM EV booklets"),
+      batteryTransfers: f(true, "mfr", "high"),
+      extendedCoverage: f("MY2022 has NO capacity floor (defects-only, verified). BMW Certified MY22\u201325 cars delivered after Mar 2026 get an 8yr/100k, 75%-SoH CPO battery coverage", "mfr", "high"),
     },
     buyerNotes: [
       {
-        headline: "NHTSA recalls on file",
-        body: "Seat-belt anchorage: 23V-786, 24V-087, 25V-015. HV wiring harness: 24V-320 (multi-model). Free remedies; check completion on this VIN.",
+        headline: "A 2022 i4 bought certified now has better battery coverage than it had new",
+        body: "The 2022 i4's factory battery warranty covers defects only \u2014 no capacity floor (verified in the booklet). But BMW's CPO program adds an 8-year/100k, 75%-state-of-health coverage to MY22\u201325 EVs delivered certified after March 2026. Where you buy this car changes what protects its battery.",
         severity: "info",
+      },
+      {
+        headline: "Battery-module recall; confirm the fix was done on this car",
+        body: "22V-541 (2022) and 25V-470 (2022\u201325): defective cell modules, remedy includes module or full-pack replacement on affected VINs.",
+        severity: "warning",
       },
     ],
   },
 
   {
-    id: "silverado-wt-max",
-    make: "CHEVROLET",
-    model: "Silverado EV",
-    modelYears: [2025, 2026],
-    trim: "Max Range",
-    battery: { packUsableKwh: f(205, "est", "medium", "213.7 kWh gross"), chemistry: f("NCM", "agg", "medium") },
-    range: { epaRangeMi: f(493, "mfr", "high", "2025 8WT: 492 mi; 2026 Max: 493 mi \u2014 EPA figures", "https://www.fueleconomy.gov"), testedRangeMi: f(539, "tested", "medium", "Edmunds mixed loop, 2025 WT Max Range: 539 mi, the longest Edmunds has recorded") },
-    charging: {
-      portStandard: f("CCS1", "agg", "high"),
-      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
-      dcPeakKw: f(350, "agg", "medium"),
+    // Split by year 2026-08-22: one row spanning 2022-25 printed 269, which is
+    // only MY2024's figure. EPA rates the standard 19-inch M50 separately every
+    // year — 270 / 271 / 269 / 267 — and 109 live listings sat on the single
+    // number. The 42-mile gap to the 20-inch fitment is a different axis, and
+    // is handled by labelling the standard wheel rather than by a note naming
+    // the other figure.
+    id: "bmw-i4-m50-2023",
+    make: "BMW",
+    model: "i4",
+    modelYears: [2023, 2023],
+    trim: "M50",
+    battery: {
+      packUsableKwh: f(81.5, "mfr", "high", "83.9 kWh gross"),
+      chemistry: f("NMC", "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
+    range: { epaRangeMi: f(271, "mfr", "high", "19-inch wheels, standard", epa(45990)), testedRangeMi: f(239, "tested", "high", "70-mph (InsideEVs, 2022 M50): 239 mi, beat its 227 EPA; Edmunds loop: 268") },
+    charging: {
+      portStandard: f("CCS1", "mfr"),
+      superchargerAccess: f("adapter", "agg", "high", "Opened Dec 2025 via BMW-approved adapter; requires a Remote Software Upgrade first"),
+      dcPeakKw: f(205, "agg", "medium"),
+    },
+    thermal: { heatPump: f("standard", "mfr", "high", "Cabin, battery and drive") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      sohFloorPct: f(75, "mfr", "high", "\u201cBelow 75% of its original value\u201d \u2014 GM EV booklets (extracted text)"),
-      batteryTransfers: f(true, "mfr", "high", "\u201cTransferable at no cost\u201d \u2014 GM EV booklets"),
+      batteryTransfers: f(true, "mfr", "high"),
+      extendedCoverage: f("MY2022 has NO capacity floor (defects-only, verified). BMW Certified MY22\u201325 cars delivered after Mar 2026 get an 8yr/100k, 75%-SoH CPO battery coverage", "mfr", "high"),
     },
     buyerNotes: [
       {
-        headline: "NHTSA recalls on file",
-        body: "Seat-belt anchorage: 23V-786, 24V-087, 25V-015. HV wiring harness: 24V-320 (multi-model). Free remedies; check completion on this VIN.",
+        headline: "A 2022 i4 bought certified now has better battery coverage than it had new",
+        body: "The 2022 i4's factory battery warranty covers defects only \u2014 no capacity floor (verified in the booklet). But BMW's CPO program adds an 8-year/100k, 75%-state-of-health coverage to MY22\u201325 EVs delivered certified after March 2026. Where you buy this car changes what protects its battery.",
         severity: "info",
+      },
+      {
+        headline: "Battery-module recall; confirm the fix was done on this car",
+        body: "22V-541 (2022) and 25V-470 (2022\u201325): defective cell modules, remedy includes module or full-pack replacement on affected VINs.",
+        severity: "warning",
       },
     ],
   },
 
+  // ---------------------------------------------------------------------
+  // Chevrolet Silverado EV. Re-keyed on the VIN descriptor 2026-08-22. The
+  // rows were keyed on trim strings "Standard Range" / "Extended Range" /
+  // "Max Range", and the feed does not carry those: `trim` reads "LT", "WT",
+  // "Trail Boss" or "RST", and the pack name lives in the listing NAME. So
+  // the rows were being reached through substring luck and the kWh hint, and
+  // ~215 live listings were wrong.
+  //
+  // The descriptor carries the exact GM trim code, the pack AND the weight
+  // class. Position 4 is the class: `1GC1` is Class 2H and rated, `1GC4` is
+  // Class 3 and has NO EPA rating in existence. That is a control-tested
+  // negative, not a research gap — 11 Class-3 window stickers from GM's own
+  // Monroney service (cws.gm.com/vs-cws/vehshop/v2/vehicle/windowsticker)
+  // all have a blank fuel-economy panel, and EPA's API has no entry for any
+  // of them. 109 Class-3 listings were printing a range that does not exist,
+  // including 7 RST Max trucks showing an Extended pack's 408.
+  //
+  // Also note the 2025 "(11 kW)/(19 kW)" EPA pair is not an unstated option:
+  // it is trim-determined, LT Extended shipping the 11.5 kW charger (408) and
+  // RST Extended the 19.2 kW (390). And EPA id 49641 (2026 Extended, 19 kW,
+  // 385) matches no VIN in our inventory — 0 of 7 Class-2H Extended stickers
+  // carried that charger — so 410 is the standard configuration for 2026.
+  // ---------------------------------------------------------------------
+
   {
-    id: "silverado-3wt",
+    id: "silverado-2024-3wt",
     make: "CHEVROLET",
     model: "Silverado EV",
     modelYears: [2024, 2024],
-    trim: "3WT",
+    vds: ["10UED"],
     battery: { packUsableKwh: f(170, "est", "medium"), chemistry: f("NCM", "agg", "medium") },
-    range: { epaRangeMi: f(393, "mfr", "high", "2024 3WT \u2014 EPA figure", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(393, "mfr", "high", undefined, epa(47446)) },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
       superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
@@ -2121,13 +2384,13 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
   },
 
   {
-    id: "silverado-4wt",
+    id: "silverado-2024-4wt",
     make: "CHEVROLET",
     model: "Silverado EV",
     modelYears: [2024, 2024],
-    trim: "4WT",
+    vds: ["10VEL"],
     battery: { packUsableKwh: f(205, "est", "medium"), chemistry: f("NCM", "agg", "medium") },
-    range: { epaRangeMi: f(450, "mfr", "high", "2024 4WT \u2014 EPA figure", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(450, "mfr", "high", undefined, epa(46946)) },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
       superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
@@ -2150,13 +2413,334 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
   },
 
   {
-    id: "silverado-rst",
+    id: "silverado-2025-2wt",
     make: "CHEVROLET",
     model: "Silverado EV",
-    modelYears: [2025, 2026],
-    trim: "RST",
-    battery: { packUsableKwh: f(205, "est", "medium", "Max pack"), chemistry: f("NCM", "agg", "medium") },
-    range: { epaRangeMi: f(408, "mfr", "high", "2025 RST: 408 mi (390 with 19.2 kW charger); 2026: 410/385 \u2014 EPA figures", "https://www.fueleconomy.gov"), testedRangeMi: f(442, "tested", "high", "70-mph (InsideEVs, 2024 RST First Edition): 442 mi; 75-mph (C&D): 400; Edmunds loop: 484") },
+    modelYears: [2025, 2025],
+    vds: ["10TEF"],
+    battery: { packUsableKwh: f(119, "est", "medium"), chemistry: f("NCM", "agg", "medium") },
+    range: { epaRangeMi: f(282, "mfr", "high", undefined, epa(49071)) },
+    charging: {
+      portStandard: f("CCS1", "agg", "high"),
+      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
+      dcPeakKw: f(350, "agg", "medium"),
+    },
+    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
+    warranty: {
+      batteryYears: f(8, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      sohFloorPct: f(75, "mfr", "high", "\u201cBelow 75% of its original value\u201d \u2014 GM EV booklets (extracted text)"),
+      batteryTransfers: f(true, "mfr", "high", "\u201cTransferable at no cost\u201d \u2014 GM EV booklets"),
+    },
+    buyerNotes: [
+      {
+        headline: "NHTSA recalls on file",
+        body: "Seat-belt anchorage: 23V-786, 24V-087, 25V-015. HV wiring harness: 24V-320 (multi-model). Free remedies; check completion on this VIN.",
+        severity: "info",
+      },
+    ],
+  },
+
+  {
+    id: "silverado-2025-3lt",
+    make: "CHEVROLET",
+    model: "Silverado EV",
+    modelYears: [2025, 2025],
+    vds: ["10ZED"],
+    battery: { packUsableKwh: f(170, "est", "medium"), chemistry: f("NCM", "agg", "medium") },
+    range: { epaRangeMi: f(408, "mfr", "high", undefined, epa(48700)) },
+    charging: {
+      portStandard: f("CCS1", "agg", "high"),
+      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
+      dcPeakKw: f(350, "agg", "medium"),
+    },
+    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
+    warranty: {
+      batteryYears: f(8, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      sohFloorPct: f(75, "mfr", "high", "\u201cBelow 75% of its original value\u201d \u2014 GM EV booklets (extracted text)"),
+      batteryTransfers: f(true, "mfr", "high", "\u201cTransferable at no cost\u201d \u2014 GM EV booklets"),
+    },
+    buyerNotes: [
+      {
+        headline: "NHTSA recalls on file",
+        body: "Seat-belt anchorage: 23V-786, 24V-087, 25V-015. HV wiring harness: 24V-320 (multi-model). Free remedies; check completion on this VIN.",
+        severity: "info",
+      },
+    ],
+  },
+
+  {
+    id: "silverado-2025-rst",
+    make: "CHEVROLET",
+    model: "Silverado EV",
+    modelYears: [2025, 2025],
+    vds: ["101ED"],
+    battery: { packUsableKwh: f(170, "est", "medium"), chemistry: f("NCM", "agg", "medium") },
+    range: { epaRangeMi: f(390, "mfr", "high", undefined, epa(48701)) },
+    charging: {
+      portStandard: f("CCS1", "agg", "high"),
+      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
+      dcPeakKw: f(350, "agg", "medium"),
+    },
+    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
+    warranty: {
+      batteryYears: f(8, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      sohFloorPct: f(75, "mfr", "high", "\u201cBelow 75% of its original value\u201d \u2014 GM EV booklets (extracted text)"),
+      batteryTransfers: f(true, "mfr", "high", "\u201cTransferable at no cost\u201d \u2014 GM EV booklets"),
+    },
+    buyerNotes: [
+      {
+        headline: "NHTSA recalls on file",
+        body: "Seat-belt anchorage: 23V-786, 24V-087, 25V-015. HV wiring harness: 24V-320 (multi-model). Free remedies; check completion on this VIN.",
+        severity: "info",
+      },
+    ],
+  },
+
+  {
+    id: "silverado-2025-5wt",
+    make: "CHEVROLET",
+    model: "Silverado EV",
+    modelYears: [2025, 2025],
+    vds: ["10VED"],
+    battery: { packUsableKwh: f(170, "est", "medium"), chemistry: f("NCM", "agg", "medium") },
+    range: { epaRangeMi: f(422, "mfr", "high", undefined, epa(48702)) },
+    charging: {
+      portStandard: f("CCS1", "agg", "high"),
+      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
+      dcPeakKw: f(350, "agg", "medium"),
+    },
+    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
+    warranty: {
+      batteryYears: f(8, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      sohFloorPct: f(75, "mfr", "high", "\u201cBelow 75% of its original value\u201d \u2014 GM EV booklets (extracted text)"),
+      batteryTransfers: f(true, "mfr", "high", "\u201cTransferable at no cost\u201d \u2014 GM EV booklets"),
+    },
+    buyerNotes: [
+      {
+        headline: "NHTSA recalls on file",
+        body: "Seat-belt anchorage: 23V-786, 24V-087, 25V-015. HV wiring harness: 24V-320 (multi-model). Free remedies; check completion on this VIN.",
+        severity: "info",
+      },
+    ],
+  },
+
+  {
+    id: "silverado-2025-8wt",
+    make: "CHEVROLET",
+    model: "Silverado EV",
+    modelYears: [2025, 2025],
+    vds: ["10WEL"],
+    battery: { packUsableKwh: f(205, "est", "medium"), chemistry: f("NCM", "agg", "medium") },
+    range: { epaRangeMi: f(492, "mfr", "high", undefined, epa(48698)) },
+    charging: {
+      portStandard: f("CCS1", "agg", "high"),
+      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
+      dcPeakKw: f(350, "agg", "medium"),
+    },
+    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
+    warranty: {
+      batteryYears: f(8, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      sohFloorPct: f(75, "mfr", "high", "\u201cBelow 75% of its original value\u201d \u2014 GM EV booklets (extracted text)"),
+      batteryTransfers: f(true, "mfr", "high", "\u201cTransferable at no cost\u201d \u2014 GM EV booklets"),
+    },
+    buyerNotes: [
+      {
+        headline: "NHTSA recalls on file",
+        body: "Seat-belt anchorage: 23V-786, 24V-087, 25V-015. HV wiring harness: 24V-320 (multi-model). Free remedies; check completion on this VIN.",
+        severity: "info",
+      },
+    ],
+  },
+
+  {
+    id: "silverado-2026-standard",
+    make: "CHEVROLET",
+    model: "Silverado EV",
+    modelYears: [2026, 2026],
+    vds: ["10UEH", "10YEH"],
+    battery: { packUsableKwh: f(119, "est", "medium"), chemistry: f("NCM", "agg", "medium") },
+    range: { epaRangeMi: f(283, "mfr", "high", undefined, epa(49643)) },
+    charging: {
+      portStandard: f("CCS1", "agg", "high"),
+      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
+      dcPeakKw: f(350, "agg", "medium"),
+    },
+    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
+    warranty: {
+      batteryYears: f(8, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      sohFloorPct: f(75, "mfr", "high", "\u201cBelow 75% of its original value\u201d \u2014 GM EV booklets (extracted text)"),
+      batteryTransfers: f(true, "mfr", "high", "\u201cTransferable at no cost\u201d \u2014 GM EV booklets"),
+    },
+    buyerNotes: [
+      {
+        headline: "NHTSA recalls on file",
+        body: "Seat-belt anchorage: 23V-786, 24V-087, 25V-015. HV wiring harness: 24V-320 (multi-model). Free remedies; check completion on this VIN.",
+        severity: "info",
+      },
+    ],
+  },
+
+  {
+    id: "silverado-2026-extended",
+    make: "CHEVROLET",
+    model: "Silverado EV",
+    modelYears: [2026, 2026],
+    vds: ["10ZED", "103ED"],
+    battery: { packUsableKwh: f(170, "est", "medium"), chemistry: f("NCM", "agg", "medium") },
+    range: { epaRangeMi: f(410, "mfr", "high", undefined, epa(49640)) },
+    charging: {
+      portStandard: f("CCS1", "agg", "high"),
+      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
+      dcPeakKw: f(350, "agg", "medium"),
+    },
+    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
+    warranty: {
+      batteryYears: f(8, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      sohFloorPct: f(75, "mfr", "high", "\u201cBelow 75% of its original value\u201d \u2014 GM EV booklets (extracted text)"),
+      batteryTransfers: f(true, "mfr", "high", "\u201cTransferable at no cost\u201d \u2014 GM EV booklets"),
+    },
+    buyerNotes: [
+      {
+        headline: "NHTSA recalls on file",
+        body: "Seat-belt anchorage: 23V-786, 24V-087, 25V-015. HV wiring harness: 24V-320 (multi-model). Free remedies; check completion on this VIN.",
+        severity: "info",
+      },
+    ],
+  },
+
+  {
+    id: "silverado-2026-5wt",
+    make: "CHEVROLET",
+    model: "Silverado EV",
+    modelYears: [2026, 2026],
+    vds: ["10VED"],
+    battery: { packUsableKwh: f(170, "est", "medium"), chemistry: f("NCM", "agg", "medium") },
+    range: { epaRangeMi: f(424, "mfr", "high", undefined, epa(49638)) },
+    charging: {
+      portStandard: f("CCS1", "agg", "high"),
+      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
+      dcPeakKw: f(350, "agg", "medium"),
+    },
+    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
+    warranty: {
+      batteryYears: f(8, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      sohFloorPct: f(75, "mfr", "high", "\u201cBelow 75% of its original value\u201d \u2014 GM EV booklets (extracted text)"),
+      batteryTransfers: f(true, "mfr", "high", "\u201cTransferable at no cost\u201d \u2014 GM EV booklets"),
+    },
+    buyerNotes: [
+      {
+        headline: "NHTSA recalls on file",
+        body: "Seat-belt anchorage: 23V-786, 24V-087, 25V-015. HV wiring harness: 24V-320 (multi-model). Free remedies; check completion on this VIN.",
+        severity: "info",
+      },
+    ],
+  },
+
+  {
+    id: "silverado-2026-8wt",
+    make: "CHEVROLET",
+    model: "Silverado EV",
+    modelYears: [2026, 2026],
+    vds: ["10WEL"],
+    battery: { packUsableKwh: f(205, "est", "medium"), chemistry: f("NCM", "agg", "medium") },
+    range: { epaRangeMi: f(493, "mfr", "high", undefined, epa(49639)) },
+    charging: {
+      portStandard: f("CCS1", "agg", "high"),
+      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
+      dcPeakKw: f(350, "agg", "medium"),
+    },
+    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
+    warranty: {
+      batteryYears: f(8, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      sohFloorPct: f(75, "mfr", "high", "\u201cBelow 75% of its original value\u201d \u2014 GM EV booklets (extracted text)"),
+      batteryTransfers: f(true, "mfr", "high", "\u201cTransferable at no cost\u201d \u2014 GM EV booklets"),
+    },
+    buyerNotes: [
+      {
+        headline: "NHTSA recalls on file",
+        body: "Seat-belt anchorage: 23V-786, 24V-087, 25V-015. HV wiring harness: 24V-320 (multi-model). Free remedies; check completion on this VIN.",
+        severity: "info",
+      },
+    ],
+  },
+
+  {
+    // Class 3 (VIN position 4 = 4, over 10,000 lb GVWR): above EPA's
+    // light-duty labelling threshold, so no rating exists to print.
+    id: "silverado-class3-standard",
+    make: "CHEVROLET",
+    model: "Silverado EV",
+    modelYears: [2024, 2026],
+    vds: ["4"],
+    vin8: ["H", "F"],
+    battery: { packUsableKwh: f(119, "est", "medium"), chemistry: f("NCM", "agg", "medium") },
+    charging: {
+      portStandard: f("CCS1", "agg", "high"),
+      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
+      dcPeakKw: f(350, "agg", "medium"),
+    },
+    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
+    warranty: {
+      batteryYears: f(8, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      sohFloorPct: f(75, "mfr", "high", "\u201cBelow 75% of its original value\u201d \u2014 GM EV booklets (extracted text)"),
+      batteryTransfers: f(true, "mfr", "high", "\u201cTransferable at no cost\u201d \u2014 GM EV booklets"),
+    },
+    buyerNotes: [
+      {
+        headline: "NHTSA recalls on file",
+        body: "Seat-belt anchorage: 23V-786, 24V-087, 25V-015. HV wiring harness: 24V-320 (multi-model). Free remedies; check completion on this VIN.",
+        severity: "info",
+      },
+    ],
+  },
+
+  {
+    id: "silverado-class3-extended",
+    make: "CHEVROLET",
+    model: "Silverado EV",
+    modelYears: [2024, 2026],
+    vds: ["4"],
+    vin8: ["D"],
+    battery: { packUsableKwh: f(170, "est", "medium"), chemistry: f("NCM", "agg", "medium") },
+    charging: {
+      portStandard: f("CCS1", "agg", "high"),
+      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
+      dcPeakKw: f(350, "agg", "medium"),
+    },
+    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
+    warranty: {
+      batteryYears: f(8, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      sohFloorPct: f(75, "mfr", "high", "\u201cBelow 75% of its original value\u201d \u2014 GM EV booklets (extracted text)"),
+      batteryTransfers: f(true, "mfr", "high", "\u201cTransferable at no cost\u201d \u2014 GM EV booklets"),
+    },
+    buyerNotes: [
+      {
+        headline: "NHTSA recalls on file",
+        body: "Seat-belt anchorage: 23V-786, 24V-087, 25V-015. HV wiring harness: 24V-320 (multi-model). Free remedies; check completion on this VIN.",
+        severity: "info",
+      },
+    ],
+  },
+
+  {
+    id: "silverado-class3-max",
+    make: "CHEVROLET",
+    model: "Silverado EV",
+    modelYears: [2024, 2026],
+    vds: ["4"],
+    vin8: ["L"],
+    battery: { packUsableKwh: f(205, "est", "medium"), chemistry: f("NCM", "agg", "medium") },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
       superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),

@@ -142,7 +142,8 @@ test("vds: the V-Series row takes 1GYXP and refuses 1GYKP, whatever the trim say
     matchEnrichment(decode({ vin, make: "CADILLAC", model: "Lyriq", modelYear: 2026, trim, driveType: "AWD" }), null);
   // An ordinary Lyriq badged "Sport" is not a V-Series, and the VIN says so.
   assert.equal(v("1GYKPNRL3SZ307993", "Sport").exact?.id, "lyriq-2025-awd");
-  assert.equal(v("1GYKPNRL3SZ307993", "Sport").exact?.range?.epaRangeMi?.value, 303);
+  // 319, the standard 11.5 kW charger's figure — see lyriq-2025-awd.
+  assert.equal(v("1GYKPNRL3SZ307993", "Sport").exact?.range?.epaRangeMi?.value, 319);
   // A real V-Series resolves even when its trim field is "-V", which is below
   // trimStringsOverlap's three-character floor and used to match nothing.
   for (const t of ["-V", "V", "V-Series", undefined]) {
