@@ -98,9 +98,13 @@ way on 2026-08-22: 35 of 36 VIN-bucket pages answered in ~0.3s, the deploy
 went ahead, and `/api/index/first` then rendered for 249 seconds and cached
 the snapshot anyway. A walk is ~226 sequential pages and the instance's
 latency is bimodal (see the CPU/IO findings), so single pages say nothing
-about whether one can clear. Run a real walk from outside the site — copy
-db.ts's shape: 36 buckets, PAGE=500, keyset on `vin=gt.` — and deploy only if
-it returns the full row count. If a deploy does poison the cache,
+about whether one can clear. `scraper/walk-gate.mjs` is that walk — run it
+from outside the site and deploy only if it exits 0. It walks db.ts's shape
+(36 buckets, PAGE=500, keyset on `vin=gt.`, `FEED_LANES` lanes, and db.ts's
+own column list — a `select=vin` walk can be served from an index and clears
+on a box the real walk dies on) and checks what it returned against the count
+the database itself reports, so a silent short read fails it too. Do not put
+it on a schedule: it moves ~117 MB a run. If a deploy does poison the cache,
 `vercel promote <previous-deployment-url>` restores it in seconds: the ISR
 cache is per deployment, so the previous one still holds its warm entries.
 
