@@ -1005,6 +1005,8 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     id: "bolt-euv-2022-23",
     make: "CHEVROLET",
     model: "Bolt EUV",
+    // Same vPIC stripping as the Bolt EV rows, same reason it is safe.
+    modelAliases: ["Bolt"],
     modelYears: [2022, 2023],
     range: { epaRangeMi: f(247, "mfr", "high", "Bolt EUV, both years, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=45750") },
     charging: { dcFastCharging: f("standard", "mfr"), portStandard: f("CCS1", "mfr") },
@@ -2524,16 +2526,22 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "c40-recharge-2022-23", make: "VOLVO", model: "C40 Recharge Pure Electric", modelYears: [2022, 2023], drive: "AWD",
+    // vPIC decodes these as plain "C40"; the C40 was electric-only in the US.
+    modelAliases: ["C40"],
     range: { epaRangeMi: f(226, "mfr", "high", "MY2022–23 C40 Recharge Twin, EPA; every US 2022–23 car is the twin-motor", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=44929") },
     charging: { portStandard: f("CCS1", "mfr") },
   },
   {
     id: "c40-recharge-2024-single", make: "VOLVO", model: "C40 Recharge Pure Electric", modelYears: [2024, 2024], vin8: ["K"], drive: "RWD",
+    // vPIC decodes these as plain "C40"; the C40 was electric-only in the US.
+    modelAliases: ["C40"],
     range: { epaRangeMi: f(297, "mfr", "high", "MY2024 single-motor extended range (VIN code K), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46980") },
     charging: { portStandard: f("CCS1", "mfr") },
   },
   {
     id: "c40-recharge-2024-twin", make: "VOLVO", model: "C40 Recharge Pure Electric", modelYears: [2024, 2024], vin8: ["M"], drive: "AWD",
+    // vPIC decodes these as plain "C40"; the C40 was electric-only in the US.
+    modelAliases: ["C40"],
     range: { epaRangeMi: f(257, "mfr", "high", "MY2024 Twin (VIN code M), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46982") },
     charging: { portStandard: f("CCS1", "mfr") },
   },
@@ -2557,6 +2565,8 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "ex30-cc-2026", make: "VOLVO", model: "EX30 Cross Country", modelYears: [2026, 2026], drive: "AWD",
+    // vPIC abbreviates this one: "EX30 CC".
+    modelAliases: ["EX30 CC"],
     battery: { packGrossKwh: f(69, "vin", "high"), chemistry: f("NMC", "vin", "high") },
     range: { epaRangeMi: f(227, "mfr", "high", "MY2026 EX30 Cross Country on its standard 19-inch wheels, EPA; 203 on 18s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49991") },
     charging: { portStandard: f("CCS1", "mfr") },

@@ -760,6 +760,13 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     id: "ariya-63-fwd",
     make: "NISSAN",
     model: "Ariya",
+    // vPIC calls this car "Ariya Hatchback"; the feed calls it "ARIYA". The
+    // /vin/ page matches on the decoder's string, so without this alias every
+    // Ariya answered the VIN check with "No researched row for this model
+    // yet" — see tests/phev-vpic-aliases.test.ts. The `vds` filter below does
+    // NOT cover this: it picks between rows once the model has matched, so a
+    // model-string miss loses all six rows before it ever runs.
+    modelAliases: ["Ariya Hatchback", "Ariya MPV"],
     modelYears: [2023, 2025],
     vds: ["AF0B"],
     drive: "FWD",
@@ -786,6 +793,13 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     id: "ariya-63-awd",
     make: "NISSAN",
     model: "Ariya",
+    // vPIC calls this car "Ariya Hatchback"; the feed calls it "ARIYA". The
+    // /vin/ page matches on the decoder's string, so without this alias every
+    // Ariya answered the VIN check with "No researched row for this model
+    // yet" — see tests/phev-vpic-aliases.test.ts. The `vds` filter below does
+    // NOT cover this: it picks between rows once the model has matched, so a
+    // model-string miss loses all six rows before it ever runs.
+    modelAliases: ["Ariya Hatchback", "Ariya MPV"],
     modelYears: [2023, 2025],
     vds: ["CF0B"],
     drive: "AWD",
@@ -812,6 +826,13 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     id: "ariya-87-fwd",
     make: "NISSAN",
     model: "Ariya",
+    // vPIC calls this car "Ariya Hatchback"; the feed calls it "ARIYA". The
+    // /vin/ page matches on the decoder's string, so without this alias every
+    // Ariya answered the VIN check with "No researched row for this model
+    // yet" — see tests/phev-vpic-aliases.test.ts. The `vds` filter below does
+    // NOT cover this: it picks between rows once the model has matched, so a
+    // model-string miss loses all six rows before it ever runs.
+    modelAliases: ["Ariya Hatchback", "Ariya MPV"],
     modelYears: [2023, 2025],
     vds: ["BF0B"],
     drive: "FWD",
@@ -838,6 +859,13 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     id: "ariya-87-fwd-venture",
     make: "NISSAN",
     model: "Ariya",
+    // vPIC calls this car "Ariya Hatchback"; the feed calls it "ARIYA". The
+    // /vin/ page matches on the decoder's string, so without this alias every
+    // Ariya answered the VIN check with "No researched row for this model
+    // yet" — see tests/phev-vpic-aliases.test.ts. The `vds` filter below does
+    // NOT cover this: it picks between rows once the model has matched, so a
+    // model-string miss loses all six rows before it ever runs.
+    modelAliases: ["Ariya Hatchback", "Ariya MPV"],
     modelYears: [2023, 2025],
     vds: ["BF0A"],
     drive: "FWD",
@@ -864,6 +892,13 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     id: "ariya-87-awd",
     make: "NISSAN",
     model: "Ariya",
+    // vPIC calls this car "Ariya Hatchback"; the feed calls it "ARIYA". The
+    // /vin/ page matches on the decoder's string, so without this alias every
+    // Ariya answered the VIN check with "No researched row for this model
+    // yet" — see tests/phev-vpic-aliases.test.ts. The `vds` filter below does
+    // NOT cover this: it picks between rows once the model has matched, so a
+    // model-string miss loses all six rows before it ever runs.
+    modelAliases: ["Ariya Hatchback", "Ariya MPV"],
     modelYears: [2023, 2025],
     vds: ["DF0B"],
     drive: "AWD",
@@ -890,6 +925,13 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     id: "ariya-87-awd-platinum",
     make: "NISSAN",
     model: "Ariya",
+    // vPIC calls this car "Ariya Hatchback"; the feed calls it "ARIYA". The
+    // /vin/ page matches on the decoder's string, so without this alias every
+    // Ariya answered the VIN check with "No researched row for this model
+    // yet" — see tests/phev-vpic-aliases.test.ts. The `vds` filter below does
+    // NOT cover this: it picks between rows once the model has matched, so a
+    // model-string miss loses all six rows before it ever runs.
+    modelAliases: ["Ariya Hatchback", "Ariya MPV"],
     modelYears: [2023, 2025],
     vds: ["DF0C"],
     drive: "AWD",
@@ -1758,6 +1800,11 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     id: "hummer-ev-pickup",
     make: "GMC",
     model: "Hummer EV",
+    // vPIC calls the truck "Hummer EV Pickup" (the SUV rows decode as
+    // "Hummer EV SUV", which the corpus already answers to). Safe as an
+    // alias because GMC's Hummer EV has only ever been electric — there is
+    // no combustion car of that name for it to poach.
+    modelAliases: ["Hummer EV Pickup"],
     modelYears: [2022, 2025],
     battery: { packUsableKwh: f(205, "est", "medium", "213.7 kWh gross; 2024+ 2M20 variants are smaller"), chemistry: f("NMC", "agg", "medium") },
     range: { epaRangeMi: f(314, "mfr", "high", "2024–25: 298–318 by config/tires, EPA. 2022–23: no EPA rating exists (GM est. 329)", "https://www.fueleconomy.gov"), testedRangeMi: f(343, "tested", "high", "70-mph (InsideEVs, 2022 Edition 1): 343 mi, beat its 329 GM estimate; 75-mph (C&D): 290") },

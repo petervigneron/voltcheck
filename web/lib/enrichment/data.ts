@@ -170,6 +170,13 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     id: "bolt-ev-2017-2019",
     make: "CHEVROLET",
     model: "Bolt EV",
+    // vPIC drops the "EV": it decodes every one of these as plain "Bolt".
+    // Safe as an alias — the Chevrolet Bolt has only ever been electric, so
+    // no combustion car answers to the bare name. Contrast Equinox, Blazer,
+    // Silverado, Kona, Niro, F-150, Wrangler, XC40, Sierra and Rogue, which
+    // vPIC also strips to a bare name that a PETROL car shares; those are
+    // deliberately NOT aliased. See scraper/vpic-model-alias-check.mjs.
+    modelAliases: ["Bolt"],
     modelYears: [2017, 2019],
     range: { epaRangeMi: f(238, "mfr", "high", "MY2017–19, EPA", "https://www.fueleconomy.gov") },
     charging: {
@@ -198,6 +205,13 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     id: "bolt-ev-2021-lt",
     make: "CHEVROLET",
     model: "Bolt EV",
+    // vPIC drops the "EV": it decodes every one of these as plain "Bolt".
+    // Safe as an alias — the Chevrolet Bolt has only ever been electric, so
+    // no combustion car answers to the bare name. Contrast Equinox, Blazer,
+    // Silverado, Kona, Niro, F-150, Wrangler, XC40, Sierra and Rogue, which
+    // vPIC also strips to a bare name that a PETROL car shares; those are
+    // deliberately NOT aliased. See scraper/vpic-model-alias-check.mjs.
+    modelAliases: ["Bolt"],
     modelYears: [2021, 2021],
     trim: "LT",
     range: { epaRangeMi: f(259, "mfr", "high", undefined, "https://www.fueleconomy.gov") },
@@ -218,6 +232,13 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     id: "bolt-ev-2021-premier",
     make: "CHEVROLET",
     model: "Bolt EV",
+    // vPIC drops the "EV": it decodes every one of these as plain "Bolt".
+    // Safe as an alias — the Chevrolet Bolt has only ever been electric, so
+    // no combustion car answers to the bare name. Contrast Equinox, Blazer,
+    // Silverado, Kona, Niro, F-150, Wrangler, XC40, Sierra and Rogue, which
+    // vPIC also strips to a bare name that a PETROL car shares; those are
+    // deliberately NOT aliased. See scraper/vpic-model-alias-check.mjs.
+    modelAliases: ["Bolt"],
     modelYears: [2021, 2021],
     trim: "Premier",
     range: { epaRangeMi: f(259, "mfr", "high", undefined, "https://www.fueleconomy.gov") },
@@ -229,6 +250,13 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     id: "bolt-2022-plus",
     make: "CHEVROLET",
     model: "Bolt EV",
+    // vPIC drops the "EV": it decodes every one of these as plain "Bolt".
+    // Safe as an alias — the Chevrolet Bolt has only ever been electric, so
+    // no combustion car answers to the bare name. Contrast Equinox, Blazer,
+    // Silverado, Kona, Niro, F-150, Wrangler, XC40, Sierra and Rogue, which
+    // vPIC also strips to a bare name that a PETROL car shares; those are
+    // deliberately NOT aliased. See scraper/vpic-model-alias-check.mjs.
+    modelAliases: ["Bolt"],
     modelYears: [2022, 2023],
     range: { epaRangeMi: f(259, "mfr", "high", undefined, "https://www.fueleconomy.gov"), testedRangeMi: f(260, "tested", "high", "70-mph (InsideEVs, 2022): 260 mi; Edmunds mixed loop: 278") },
     charging: { dcFastCharging: f("standard", "mfr"), portStandard: f("CCS1", "mfr") },
