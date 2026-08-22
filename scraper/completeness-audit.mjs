@@ -47,10 +47,20 @@ const MIN_USED = 5;
 // At or above this share missing, the lot is not unlucky, it's unread.
 const BROKEN_AT = 0.9;
 
-for (const line of (await readFile(new URL("./.env", import.meta.url), "utf-8")).split("\n")) {
-  const m = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*?)\s*$/);
-  if (m && !line.trimStart().startsWith("#") && !(m[1] in process.env)) process.env[m[1]] = m[2].replace(/^["']|["']$/g, "");
-}
+// Wrapped, because NO .env FILE IS A SUPPORTED STATE — it is in fact the
+// normal state on CI, where the workflow supplies SUPABASE_URL and
+// SUPABASE_ANON_KEY as step env instead. Unwrapped, this threw
+// ENOENT .../scraper/.env on every GitHub run and killed the script before
+// the credential check below could do its job, so this audit had NEVER once
+// run in CI while appearing scheduled — the feed-audits lane was red from
+// 2026-08-21 for exactly this. Same guard colisting-sync.mjs, db-sync.mjs and
+// seven others already carry; these two were the odd ones out.
+try {
+  for (const line of (await readFile(new URL("./.env", import.meta.url), "utf-8")).split("\n")) {
+    const m = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*?)\s*$/);
+    if (m && !line.trimStart().startsWith("#") && !(m[1] in process.env)) process.env[m[1]] = m[2].replace(/^["']|["']$/g, "");
+  }
+} catch {}
 const { SUPABASE_URL, SUPABASE_ANON_KEY: ANON } = process.env;
 if (!SUPABASE_URL || !ANON) { console.error("completeness-audit: no Supabase credentials"); await finish(0, "inconclusive", "no Supabase credentials"); }
 const H = { apikey: ANON, Authorization: `Bearer ${ANON}` };
