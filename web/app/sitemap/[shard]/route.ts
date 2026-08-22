@@ -1,3 +1,4 @@
+import { feedWalkFailedRecently } from "@/lib/listings/db";
 import { allListingsWithOrigin } from "@/lib/listings/source";
 import { FACT_SHEETS } from "@/lib/facts/registry";
 import { BASE, SITEMAP_SHARDS, type SitemapEntry, renderUrlset, sitemapShardOf } from "@/lib/sitemap";
@@ -56,6 +57,27 @@ export async function GET(_req: Request, { params }: { params: Promise<{ shard: 
   const n = m ? Number(m[1]) : NaN;
   if (!Number.isInteger(n) || n < 0 || n >= SITEMAP_SHARDS) {
     return new Response("Not Found", { status: 404 });
+  }
+
+  // Fail fast while the database is known to be down, without paying for
+  // another walk to find out. This route throws on anything but a live feed
+  // (below), so a walk it starts during an outage is spent on nothing — and
+  // because a throw is never cached, an unbounded version would re-walk on
+  // every crawler request for the outage's whole duration.
+  //
+  // Measured against a PostgREST that answers 500 to everything: one crawler
+  // pass over all six shards costs 27 database requests and ~18 seconds with
+  // this breaker, against 162 requests and ~108 seconds without it. (A failed
+  // walk is cheaper than a successful one — 27 requests, not the 226 a full
+  // 100,297-row walk takes — because the retry ladder gives up and the walk
+  // aborts on its first bucket. The 18 seconds is that ladder, and it is
+  // function time paid per crawler request.)
+  //
+  // The browse grid deliberately does NOT do this: it has a shopper waiting,
+  // and a stale grid beats an empty one. Nobody is waiting on a sitemap, and
+  // a crawler retries a 503 by design.
+  if (feedWalkFailedRecently()) {
+    return new Response("Feed unavailable", { status: 503, headers: { "Retry-After": "300" } });
   }
 
   const { listings, origin } = await allListingsWithOrigin();

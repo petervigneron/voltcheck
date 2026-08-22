@@ -148,6 +148,45 @@ function headers(): Record<string, string> {
 const WALK_MEMO_MS = 10 * 60 * 1000;
 let walkMemo: { at: number; promise: Promise<Listing[] | null> } | null = null;
 
+// When the last walk failed outright, so a caller that has nothing useful to
+// do with a failed walk can skip starting another one.
+//
+// Concurrent requests already share an in-flight walk — walkMemo is assigned
+// synchronously, before the promise settles — so the amplification this
+// bounds is SEQUENTIAL: one failed walk per request, forever, for as long as
+// the database is sick. A render that SUCCEEDS gets cached and stops asking;
+// a render that throws is never cached, so it asks again on every request.
+// Since 2026-08-22 the sitemap shards are exactly that kind of render (they
+// refuse to publish anything but a live feed), which is a load source this
+// app did not have while they were build artifacts — they cost the database
+// nothing at runtime then, because they were rendered once at build. Left
+// unbounded, a crawler working through six shards during an outage would pay
+// for six full failed walks each pass.
+//
+// Sized against what a walk actually costs the database rather than a round
+// number: 226 requests, measured against a 100,297-row feed (201 pages of
+// PAGE=500 plus the bucket boundaries) — against an instance whose ordinary
+// baseline was measured at ~20 feed-page requests an hour on a quiet day.
+// One attempt a minute per lambda is still generous; it is the difference
+// between bounded and proportional-to-crawler-traffic.
+let lastWalkFailureAt = 0;
+const WALK_FAILURE_COOLDOWN_MS = 60_000;
+
+/** True when a feed walk failed within the last `withinMs` — for callers that
+ *  would only throw the result away. Deliberately NOT consulted by anything
+ *  that renders for a shopper: a browse render still walks and still falls
+ *  back, because a stale grid beats an empty one. The sitemap has no such
+ *  tradeoff to make (nobody is waiting on it, and a crawler retries a 5xx by
+ *  design), so it is the one caller that can afford to fail fast. */
+export function feedWalkFailedRecently(withinMs: number = WALK_FAILURE_COOLDOWN_MS): boolean {
+  return lastWalkFailureAt > 0 && Date.now() - lastWalkFailureAt < withinMs;
+}
+
+/** Test seam: production code never calls this. */
+export function __resetWalkFailureForTest(): void {
+  lastWalkFailureAt = 0;
+}
+
 /** All live (non-delisted) listings — no descriptions, no price history —
  *  or null when the DB is unconfigured or unreachable, in which case the
  *  caller falls back to the bundled JSON. */
@@ -414,6 +453,7 @@ export async function fetchListingsFromDbUncached(): Promise<Listing[] | null> {
     // refuse are the ones that do: the sitemap publishes nothing on a
     // non-live feed, and feed-shard-check.mjs catches a poisoned browse
     // cache within 6 hours and clears it through /api/revalidate.
+    lastWalkFailureAt = Date.now();
     refuseDuringBuild("the feed walk fell back to the committed snapshot");
     console.error(
       "[listings] FEED FALLBACK: Supabase read failed — serving the bundled JSON snapshot, which is NOT live inventory:",
