@@ -27,11 +27,29 @@ name: Refresh site cache
 # (100,297 rows this morning, 100,584 tonight) and coverage is the mission, so
 # per-walk cost only rises — the headroom is worth keeping.
 #
-# ONLY ONE CRON HERE, not two. nightly.yml's final step already revalidates and
-# warms when its own sync succeeds, at roughly 16:00 UTC. This is that firing's
-# ~12-hour counterpart, which makes TWO refreshes a day in total. If the
-# nightly's crawl/ingest lane is ever retired in favour of rolling-crawl, its
-# revalidate goes with it and a second cron (~16:00 UTC) belongs here.
+# TWO CRONS, EACH GATED ON THE CACHE'S OWN AGE — not one cron assuming the
+# nightly provides the other. nightly.yml does revalidate and warm as its last
+# step, but ONLY when its db-sync succeeded, which is deliberate (a lost night
+# must fail loud rather than look refreshed). Step outcomes bear that out: it
+# fired most nights, and failed BOTH of today's runs. So pairing one
+# unconditional cron here with one conditional firing over there means that on
+# any night the sync fails, the site silently drops to a single refresh a day —
+# ~24h worst-case lag instead of the ~12h chosen — with nothing reporting it.
+# That is today, and it gets less predictable as rolling-crawl takes ingest
+# over and the nightly's role changes.
+#
+# So both slots are scheduled here, and each reads the CDN's `age` on
+# /api/index/first and skips if the cache is younger than ~11h. The cadence
+# then holds itself at 2/day in every branch:
+#
+#   nightly revalidated ~16:00  ->  04:00 sees ~12h, refreshes
+#                               ->  16:00 sees ~0h,  SKIPS        = 2/day
+#   nightly failed or retired   ->  04:00 refreshes, 16:00 refreshes = 2/day
+#
+# Same ~1.62 GB/mo either way, no triple refresh, no edit needed on the day the
+# nightly lane goes away, and "the nightly did not revalidate again" becomes a
+# visible skipped/refreshed log line instead of something to infer. 11h rather
+# than 12 so ordinary cron jitter cannot make a legitimate refresh skip itself.
 #
 # There is no attempt to time this to when data "just moved". With slices
 # landing all day, any refresh catches a sweep partway through — the feed is a
@@ -41,7 +59,8 @@ name: Refresh site cache
 
 on:
   schedule:
-    - cron: "0 4 * * *" # 04:00 UTC, ~12h from the nightly's own revalidate
+    - cron: "0 4 * * *" # both slots are scheduled; the age gate below decides
+    - cron: "0 16 * * *" # which of them actually spends a walk
   workflow_dispatch:
 
 concurrency:
@@ -80,6 +99,41 @@ jobs:
           echo "busy=$BUSY" >> "$GITHUB_OUTPUT"
           echo "nightly in progress: $BUSY"
 
+      # Is the cache already fresh enough that this slot should stand down?
+      # `age` is the CDN's own count of seconds since it cached the body, so it
+      # resets to ~0 after any revalidate-and-warm, whoever ran it. That makes
+      # it a direct reading of "has something already refreshed recently"
+      # rather than an assumption about who was supposed to.
+      #
+      # Unreadable age => REFRESH, not skip. Failing to read the header is not
+      # evidence of freshness, and the costs are asymmetric: a redundant
+      # refresh is ~27 MB, while a wrongly-skipped one leaves the site a day
+      # stale. A non-200 is different and does skip — if the site itself is
+      # unwell, expiring its cache is the last thing to do.
+      - name: Is the cache still fresh?
+        id: age
+        if: ${{ steps.nightly.outputs.busy == '0' }}
+        run: |
+          MIN_AGE=39600 # 11h
+          H=$(curl -sI --max-time 20 https://voltcheck.net/api/index/first || true)
+          CODE=$(printf '%s' "$H" | head -1 | awk '{print $2}')
+          AGE=$(printf '%s' "$H" | grep -i '^age:' | tr -d '\r' | awk '{print $2}' | head -1)
+          if [ "$CODE" != "200" ]; then
+            echo "::warning::/api/index/first returned '${CODE:-no response}' — skipping this refresh rather than expiring the cache of a site that is not answering"
+            echo "stale=false" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          if [ -z "$AGE" ]; then
+            echo "no age header (CDN MISS or header stripped) — refreshing, because an unreadable age is not evidence of freshness"
+            echo "stale=true" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          if [ "$AGE" -lt "$MIN_AGE" ]; then
+            echo "cache is ${AGE}s old (under ${MIN_AGE}s) — something already refreshed it, so this slot stands down"
+            echo "stale=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "cache is ${AGE}s old (>= ${MIN_AGE}s) — this slot refreshes"
+            echo "stale=true" >> "$GITHUB_OUTPUT"
+          fi
+
       # The same gate nightly.yml applies before its own revalidate, and for
       # the same reason: expiring a good cache and re-warming it against a
       # database that cannot serve a walk is how the browse grid gets poisoned.
@@ -95,7 +149,7 @@ jobs:
       # walk to cache nothing is still worth avoiding.
       - name: Can the database serve a walk?
         id: gate
-        if: ${{ steps.nightly.outputs.busy == '0' }}
+        if: ${{ steps.nightly.outputs.busy == '0' && steps.age.outputs.stale == 'true' }}
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
