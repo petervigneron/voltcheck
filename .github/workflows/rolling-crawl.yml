@@ -70,6 +70,12 @@ concurrency:
 
 permissions:
   contents: write # commits the vPIC decode cache
+  actions: read # reads whether nightly.yml is mid-run, for the sync guard below.
+  # Naming any permission narrows the token to exactly what is named, so
+  # omitting this would not leave the guard's `gh run list` merely
+  # under-privileged — it would fail, be swallowed by the guard's fail-open
+  # `|| echo 0`, and the guard would report "nightly not running" every single
+  # time while looking like it worked.
 
 jobs:
   slice:
@@ -150,8 +156,30 @@ jobs:
         working-directory: scraper
         run: node ingest.mjs
 
+      # Don't push a slice while the nightly is pushing everything. The two
+      # lanes are CORRECT when they overlap — ingest_listings (0013) refuses
+      # stale overwrites by observedAt, so the lane that saw a car last wins —
+      # but correctness is not the concern here, load is. The whole reason this
+      # workflow exists is that this instance falls over when writes arrive
+      # together, and adding a slice's chunk on top of the nightly's 37 is
+      # precisely the pile-up it was built to stop. Crawling still happens; only
+      # the push waits, and the slice's rows are not lost — the same rooftops
+      # come round again on the next sweep. Cheap to check and it fails OPEN
+      # (a GitHub API hiccup lets the sync proceed) because a missed sync is
+      # worse than an overlapping one.
+      - name: Is the nightly mid-sync?
+        id: nightly
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          BUSY=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow nightly.yml \
+                   --status in_progress --limit 1 --json databaseId --jq 'length' 2>/dev/null || echo 0)
+          echo "busy=$BUSY" >> "$GITHUB_OUTPUT"
+          [ "$BUSY" != "0" ] && echo "::warning::nightly.yml is running; skipping this slice's push so the two lanes do not write at once. The rooftops come round again next sweep."
+          echo "nightly in progress: $BUSY"
+
       - name: Sync this slice to Supabase
-        if: ${{ github.event.inputs.sync != 'false' }}
+        if: ${{ github.event.inputs.sync != 'false' && steps.nightly.outputs.busy == '0' }}
         working-directory: scraper
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
