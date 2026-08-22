@@ -522,7 +522,14 @@ const MACB = { packGrossKwh: f(100, "vin", "high", "95 kWh net") };
   const TOYOTA_WARRANTY_PRE2020 = { batteryYears: fp(8, "mfr", "high"), batteryMiles: fp(100_000, "mfr", "high") };
   const RAV4_PRIME_ROW: EnrichmentRow = {
     id: "rav4-prime-2021-25", make: "TOYOTA", model: "RAV4 Prime", modelYears: [2021, 2025],
-    modelAliases: ["RAV4 PHEV", "RAV4 Plug-In Hybrid", "RAV4 PLUG-IN"],
+    // "RAV4 Prime (PHEV)" is vPIC's own model string, not a dealer's. The
+    // /vin/ lookup page matches on what vPIC returns rather than on a feed's
+    // model field, and vPIC suffixes Toyota's two Prime nameplates — every
+    // other PHEV in this file decodes to a bare name ("Volt", "Escape",
+    // "Clarity", "Pacifica", checked by VIN 2026-08-22). Without it the VIN
+    // check answered "No researched row for this model yet" on a car this
+    // file has thirteen sourced facts about.
+    modelAliases: ["RAV4 PHEV", "RAV4 Plug-In Hybrid", "RAV4 PLUG-IN", "RAV4 Prime (PHEV)"],
     battery: { packGrossKwh: fp(18.1, "mfr", "high", undefined, RAV4_PRIME_RELEASE) },
     range: {
       epaRangeMi: fp(42, "mfr", "high", "Electric-only EPA range. Identical rating 2021–2025", epa(42793)),
@@ -547,7 +554,9 @@ const MACB = { packGrossKwh: f(100, "vin", "high", "95 kWh net") };
   // warranty-extension line (2017–19 vs 2020–22), which the research doc
   // flags as a real per-year fact, so Gen 2 is split for that reason even
   // though every other fact is identical across it.
-  const PRIUS_ALIASES = ["Prius PHEV", "Prius PHEV SE", "Prius Plug-In Hybrid"];
+  // "Prius Prime (PHEV)" is vPIC's string for every Prime model year, the
+  // same /vin/-page gap described on the RAV4 Prime row above.
+  const PRIUS_ALIASES = ["Prius PHEV", "Prius PHEV SE", "Prius Plug-In Hybrid", "Prius Prime (PHEV)"];
   const PRIUS_PRIME_2017_RELEASE = "https://pressroom.toyota.com/prime-mover-toyota-creates-2017-prius-prime/";
   const PRIUS_GEN2_BATTERY = { packGrossKwh: fp(8.79, "est", "medium", "Secondary-sourced (PriusChat teardown cross-referencing Toyota parts data): 95s1p cells, 351.5V nominal") };
   const PRIUS_GEN2_RANGE = {
