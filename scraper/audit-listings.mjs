@@ -28,7 +28,7 @@
 // It reports and exits; it does not delete. Removing production rows is a
 // deliberate act, and the report gives the exact VIN list to do it with.
 // Exit 0 = clean, 10 = refuted rows found (so the nightly can shout).
-import { readFile, writeFile } from "node:fs/promises";
+import { readdir, readFile, writeFile } from "node:fs/promises";
 import { EV_MODEL_RE, EV_ONLY_WMIS } from "./lib/ev.mjs";
 import { recordRun } from "./lib/audit-status.mjs";
 
@@ -123,12 +123,36 @@ const refutes = (r) => {
   return /gasoline|diesel|flex|e85/i.test(fuels) && !/electric/i.test(fuels);
 };
 
+// Cars a human has already looked at and kept. 26 live listings are refuted by
+// vPIC and belong here anyway — it decodes the BMW XM as plain "Gasoline" and
+// the Polestar 1 as "Strong HEV", and both are plug-in hybrids. Without this
+// the audit would report the same 26 every night forever, and a check that
+// cries wolf nightly is a check nobody reads, which is how it came to have
+// never run at all. They are still printed, just under "settled" rather than
+// as a finding, and a NEW refutation is what makes this exit non-zero.
+//
+// Every registry/ev-rules-audit-*.json is read and unioned, so a later
+// adjudication adds a file rather than editing one — append-only, like the
+// migrations. A missing or unreadable file means nothing is excluded, which is
+// the loud direction.
+const settled = new Map();
+try {
+  const dir = new URL("./registry/", import.meta.url);
+  for (const f of (await readdir(dir)).filter((f) => /^ev-rules-audit-.*\.json$/.test(f))) {
+    try {
+      const doc = JSON.parse(await readFile(new URL(f, dir), "utf-8"));
+      for (const r of doc.rows ?? []) if (r.verdict === "keep" && r.vin) settled.set(String(r.vin).toUpperCase(), r.reason ?? "");
+    } catch (e) { console.error(`audit: ${f} unreadable (${e.message}) — nothing excluded from it`); }
+  }
+} catch { /* no registry dir is not a state worth failing on */ }
+
 const bad = [];
+const known = [];
 let undecided = 0;
 for (const row of unvouched) {
   const d = byVin.get(String(row.vin).toUpperCase());
   if (!d) { undecided++; continue; }
-  if (refutes(d)) bad.push({
+  if (refutes(d)) (settled.has(String(row.vin).toUpperCase()) ? known : bad).push({
     ...row,
     level: d.ElectrificationLevel,
     fuel: `${d.FuelTypePrimary ?? ""}${d.FuelTypeSecondary ? "/" + d.FuelTypeSecondary : ""}`,
@@ -145,7 +169,13 @@ for (const row of unvouched) {
   });
 }
 
-console.error(`\naudit: ${bad.length} live listings are NOT electric by vPIC (${undecided} undecided — left alone)`);
+if (known.length) {
+  console.error(`\naudit: ${known.length} refuted listing(s) already adjudicated and KEPT — vPIC is wrong about these, not the feed:`);
+  const byReason = new Map();
+  for (const k of known) byReason.set(settled.get(k.vin.toUpperCase()), (byReason.get(settled.get(k.vin.toUpperCase())) ?? 0) + 1);
+  for (const [reason, n] of [...byReason].sort((a, b) => b[1] - a[1])) console.error(`  ${String(n).padStart(4)}  ${String(reason).slice(0, 120)}`);
+}
+console.error(`\naudit: ${bad.length} live listings are NOT electric by vPIC (${undecided} undecided — left alone, ${known.length} already adjudicated)`);
 for (const b of bad.slice(0, 40)) {
   console.error(`  ${b.vin}  ${b.year} ${b.make} ${b.model}${b.trim ? " " + b.trim : ""}  [${b.level || b.fuel}]`);
 }
@@ -160,4 +190,4 @@ if (VIN_OUT && bad.length) {
   await writeFile(VIN_OUT, bad.map((b) => b.vin).join("\n"));
   console.error(`\naudit: VINs written to ${VIN_OUT}`);
 }
-await finish(bad.length ? 10 : 0, bad.length ? "warn" : "ok", `${live.length} live, ${bad.length} refuted by vPIC, ${undecided} undecided`);
+await finish(bad.length ? 10 : 0, bad.length ? "warn" : "ok", `${live.length} live, ${bad.length} newly refuted by vPIC, ${known.length} adjudicated-and-kept, ${undecided} undecided`);
