@@ -1,4 +1,4 @@
-import { allListings } from "./source";
+import { allListingsWithOrigin, type FeedOrigin } from "./source";
 import { displayTrim, enrichListing, packIdentity, specTrim } from "./enrich";
 import type { EnrichedListing } from "./enrich";
 import { listingTiles } from "./tiles";
@@ -13,10 +13,15 @@ import type { CardRow } from "./card";
 // once per request: enrichment, tiles, body type, zip centroid, price-cut
 // eligibility. The 14-day price-cut window and "new battery" grounds are
 // evaluated here; an hour of staleness on a 14-day window is noise.
-export async function buildCardIndex(): Promise<CardRow[]> {
+export async function buildCardIndex(): Promise<{ rows: CardRow[]; origin: FeedOrigin }> {
   // A few hundred coefficient rows, fetched once and applied to every
   // listing in memory — the whole transaction-price model costs one request.
-  const [feed, comps] = await Promise.all([allListings(), fetchCompIndex()]);
+  //
+  // `origin` rides out with the rows rather than being dropped here. The
+  // caller has to be able to tell 100,297 live cars from the 58,730-row
+  // bundled snapshot, because on this route the difference is invisible in
+  // the response: both are a valid grid, and the thin one is only wrong.
+  const [{ listings: feed, origin }, comps] = await Promise.all([allListingsWithOrigin(), fetchCompIndex()]);
   // A row without an id or VIN cannot be linked, sharded, or deduped — and
   // one of them killed a production build outright (2026-08-16, a TypeError
   // in shardOf(undefined) while prerendering /api/index; the row was gone
@@ -118,7 +123,7 @@ export async function buildCardIndex(): Promise<CardRow[]> {
     });
   }
   canonicalizeTrims(rows);
-  return rows;
+  return { rows, origin };
 }
 
 // specTrim normalizes each listing in isolation, which can't settle casing that

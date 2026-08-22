@@ -1,6 +1,7 @@
 import { buildCardIndex } from "@/lib/listings/buildIndex";
 import { buildFirstPaint } from "@/lib/listings/firstPaint";
 import { SHARDS, packIndex } from "@/lib/listings/pack";
+import type { FeedOrigin } from "@/lib/listings/source";
 
 // The browse grid's dataset: CDN-cached JSON the client filters locally.
 // Visitors hit the edge cache, and every filter click after first load is
@@ -61,6 +62,48 @@ function shardOf(id: string): number {
   return (h >>> 0) % SHARDS;
 }
 
+// The browse grid's version of the sitemap route's refusal, and it exists
+// because the two protections that were supposed to cover this both turn out
+// to be no-ops in the one render context that matters. Traced 2026-08-22:
+//
+//   refuseDuringBuild()  fires ONLY in the build phase, by design — at
+//                        runtime it returns immediately.
+//   escapeFeedCache()    calls revalidateTag, which Next REFUSES inside a
+//                        force-static render; the call throws, db.ts's catch
+//                        swallows it and logs "best-effort, not fatal".
+//
+// and the handler below used to return unconditionally without ever looking
+// at `origin`. So at expiry a sick database produced a completed render
+// carrying the 58,730-row bundled snapshot, answered 200, and that became the
+// cached truth for another 86,400 seconds. Nothing in the path could refuse
+// it. That is the 2026-08-21 incident's mechanism, and it needed no deploy and
+// no crawler to happen — just the clock.
+//
+// Throwing is what the sitemap route already does on an IDENTICAL caching
+// shape (force-static + revalidate 86400), and the semantics were verified
+// here rather than assumed, because the whole fix rests on them. A temporary
+// force-static route with revalidate=5 under `next start`: while healthy its
+// timestamp advanced every cycle, so regeneration was genuinely running; once
+// every render threw, the timestamp FROZE and all five subsequent requests
+// still got 200 with the last good body, with ten throws in the server log.
+// Next retains a stale entry when a revalidation throws and never replaces
+// it. So a sick database now costs FRESHNESS, not COVERAGE.
+//
+// The cost, stated plainly because it changes an operating rule rather than
+// just this file: this protects an entry that ALREADY EXISTS. A fresh
+// deployment has none, so a warm that hits a sick database 500s the grid
+// instead of quietly serving it thin. "Never deploy while Supabase is
+// erroring" (CLAUDE.md) stops being advice and becomes load-bearing — which
+// is the right way round, because a 500 is loud, self-healing and gone the
+// moment a walk succeeds, where a thin grid is silent, sticky for a day, and
+// hid 34,000 cars for most of 2026-08-21 before anyone noticed.
+function refuseFallback(origin: FeedOrigin, what: string): void {
+  if (origin !== "fallback") return;
+  throw new Error(
+    `[index] refusing to cache ${what}: the feed fell back to the bundled snapshot, which is not live inventory`
+  );
+}
+
 export async function GET(_req: Request, { params }: { params: Promise<{ shard: string }> }) {
   const { shard } = await params;
   // The seventh body under this route: the first-paint payload — the top page
@@ -71,13 +114,19 @@ export async function GET(_req: Request, { params }: { params: Promise<{ shard: 
   // lesson above), CDN-cached for the same day as the shards it fronts. Same
   // walk memo, so it adds no database load — one more render per nightly.
   if (shard === "first") {
-    const rows = await buildCardIndex();
+    const { rows, origin } = await buildCardIndex();
+    // "first" gets the same refusal as the numbered shards, and needs it just
+    // as much: it carries the grid's total car count and its featured cards,
+    // so a thin one understates the whole site's inventory on the first paint
+    // of every visit.
+    refuseFallback(origin, "the first-paint payload");
     return Response.json(buildFirstPaint(rows));
   }
   const n = Number(shard);
   if (!Number.isInteger(n) || n < 0 || n >= SHARDS) {
     return Response.json({ error: "no such shard" }, { status: 404 });
   }
-  const rows = await buildCardIndex();
+  const { rows, origin } = await buildCardIndex();
+  refuseFallback(origin, `shard ${n}`);
   return Response.json(packIndex(rows.filter((r) => shardOf(r.id) === n)));
 }

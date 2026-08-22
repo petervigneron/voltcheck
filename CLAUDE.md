@@ -81,12 +81,28 @@ The six counts must sum to the `total` in `/api/index/first` and sit within a
 few percent of each other. `scraper/feed-shard-check.mjs` is this check, and
 it runs every 6 hours in feed-audits.yml.
 
-**Do not deploy while Supabase is erroring.** A build survives it now — the
-feed is no longer read at build time at all — but a fresh deployment starts
-with an empty route cache, so the first render of each shard against a sick
-database caches the bundled snapshot for a full day. That is the 2026-08-16
-and 2026-08-21 incident, and post-deploy warming is what pulls the trigger.
-Check the database answers before deploying, not just that the build is green.
+**Do not deploy while Supabase is erroring.** Since 2026-08-22 this is a hard
+rule, not a caution, because the penalty changed: `/api/index/[shard]` now
+refuses to serve a feed that fell back to the bundled snapshot (it throws on
+`origin === "fallback"`, the same way the sitemap shards do). A cached shard
+is protected by that — a throw leaves the previous entry in place, so a sick
+database costs freshness rather than coverage — but **a fresh deployment has
+no previous entry to fall back on**. Warming one against a sick database
+returns 500s on the browse grid until a walk completes. The old failure was
+worse but quieter: the snapshot cached for a full day, 58,730 cars standing in
+for ~100,300, which is the 2026-08-16 and 2026-08-21 incident and hid 34,000
+cars for most of a day. Loud and self-healing was the deliberate trade.
+
+**"The database answers" means a full WALK, not a page.** Verified the hard
+way on 2026-08-22: 35 of 36 VIN-bucket pages answered in ~0.3s, the deploy
+went ahead, and `/api/index/first` then rendered for 249 seconds and cached
+the snapshot anyway. A walk is ~226 sequential pages and the instance's
+latency is bimodal (see the CPU/IO findings), so single pages say nothing
+about whether one can clear. Run a real walk from outside the site — copy
+db.ts's shape: 36 buckets, PAGE=500, keyset on `vin=gt.` — and deploy only if
+it returns the full row count. If a deploy does poison the cache,
+`vercel promote <previous-deployment-url>` restores it in seconds: the ISR
+cache is per deployment, so the previous one still holds its warm entries.
 
 The browse feed is cached a **day**, not an hour (the 2026-08-17 egress
 incident: hourly re-walks were ~1.2 GB/day against a 5 GB/month quota).
