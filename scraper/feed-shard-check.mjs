@@ -173,23 +173,50 @@ if (shardRows.size === SHARDS.length) {
 // guaranteed. A shard that refuses to publish answers 5xx by design — the
 // route will not serve a URL list built from anything but the live feed — so
 // a failure here is real, not cosmetic.
+//
+// WHICH sitemaps, though, is read from robots.txt rather than hardcoded, and
+// that is not incidental. The shard count is a property of the DEPLOYED build,
+// not of this checkout: on 2026-08-22 the repo moved from three shards to six
+// while production was still serving three, and a hardcoded list of six would
+// have failed this audit at the next 06:15Z run for a reason that has nothing
+// to do with feed health. An audit that cries wolf about its own deploy lag is
+// worse than no audit — this workflow's whole premise is that a red run means
+// something. robots.txt is served by whatever build is live and is the list we
+// actually hand crawlers, so checking exactly it is both deploy-agnostic and a
+// better question: are the URLs we are advertising real?
 let sitemapUrls = 0;
-for (const shard of SHARDS) {
+let robots = "";
+try {
+  robots = await fetchText("/robots.txt", 30_000);
+  if (!robots.trim()) throw new Error("empty body");
+  console.log("feed-shard-check: /robots.txt answered");
+} catch (e) {
+  problems.push(`/robots.txt: ${e.message}`);
+}
+
+const advertised = [...robots.matchAll(/^\s*Sitemap:\s*(\S+)/gim)]
+  .map((m) => m[1])
+  .filter((u) => u.startsWith(BASE))
+  .map((u) => u.slice(BASE.length));
+if (robots && advertised.length === 0) {
+  problems.push("robots.txt advertises no sitemaps — crawlers are being given nothing to index");
+}
+
+for (const path of advertised) {
   try {
-    const xml = await fetchText(`/sitemap/${shard}.xml`, 120_000);
+    const xml = await fetchText(path, 120_000);
+    // A <sitemapindex> lists other sitemaps, not pages: verify it is non-empty
+    // but keep its <loc>s out of the page-URL total.
+    if (/<sitemapindex/i.test(xml)) {
+      const n = (xml.match(/<loc>/g) ?? []).length;
+      if (n === 0) throw new Error("sitemap index lists no sitemaps");
+      console.log(`feed-shard-check: ${path} answered — index of ${n} sitemaps`);
+      continue;
+    }
     const n = (xml.match(/<loc>/g) ?? []).length;
     if (n === 0) throw new Error("no <loc> entries");
     sitemapUrls += n;
-    console.log(`feed-shard-check: /sitemap/${shard}.xml answered — ${n} URLs`);
-  } catch (e) {
-    problems.push(`/sitemap/${shard}.xml: ${e.message}`);
-  }
-}
-for (const path of ["/sitemap.xml", "/robots.txt"]) {
-  try {
-    const body = await fetchText(path, 30_000);
-    if (!body.trim()) throw new Error("empty body");
-    console.log(`feed-shard-check: ${path} answered`);
+    console.log(`feed-shard-check: ${path} answered — ${n} URLs`);
   } catch (e) {
     problems.push(`${path}: ${e.message}`);
   }
