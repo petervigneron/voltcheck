@@ -383,7 +383,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     charging: {
       portStandard: f("CCS1", "mfr", "high", "Lucid's own site: “Your Lucid Air has a J1772 (CCS1) charge port”, confirmed current as of the most recent Lucid material found (July 2025); still no native NACS port"),
       superchargerAccess: f("adapter", "mfr", "high", "All Air owners gained Supercharger access July 31, 2025 via a Lucid-sold NACS-to-CCS1 adapter ($220); capped around 50 kW / up to 200 mi of range per hour on that adapter path, well below the car's native CCS1 DC peak"),
-      dcPeakKw: f(250, "mfr", "high", "Lucid's own Touring spec sheet: “DC charge power: Up to 250 kW” (pack architecture is “700V+” per that sheet, outside this site's 400/800V field, noted here instead)"),
+      dcPeakKw: f(300, "mfr", "high", undefined, "https://lucidmotors.com/media/document/lucid-air-grand-touring-technical-specs-2025.pdf"),
     },
     thermal: { heatPump: f("standard", "mfr", "high", "Lucid IR press release: “The heat pump first employed on Lucid Sapphire now becomes standard across the lineup”, MY2025 onward; not standard in earlier model years") },
     warranty: {
