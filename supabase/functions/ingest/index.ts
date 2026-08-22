@@ -67,6 +67,15 @@ Deno.serve(async (req: Request) => {
     // only: the body already speaks the RPC's parameter shape, so there is
     // nothing for this isolate to translate.
     "ingest_colisting",
+    // Retiring listings that should never have been admitted (migration
+    // 0043). The only DESTRUCTIVE route on this allowlist, so it is worth
+    // being explicit about why it is here: audit-listings.mjs re-judges every
+    // live listing and had no way to act on what it found, and the deliberate
+    // act it asks for needs a mechanism that is auditable rather than a hand
+    // -typed DELETE against prod. The function itself refuses a call large
+    // enough to be a mistake rather than a judgement, and records every VIN
+    // it removes in retired_listing.
+    "retire_misclassified_listings",
   ]);
   const streamRpc = req.headers.get("x-ingest-rpc");
   if (streamRpc) {
