@@ -90,7 +90,7 @@ jobs:
     # 25 minutes against a 30-minute cadence. The steps below are individually
     # capped to finish inside it; the job cap is the backstop that guarantees a
     # slow slice cannot still be running when the next one starts.
-    timeout-minutes: 25
+    timeout-minutes: 28
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -121,11 +121,24 @@ jobs:
           fi
           echo "slices=$SLICES" >> "$GITHUB_OUTPUT"
           echo "slice=$SLICE" >> "$GITHUB_OUTPUT"
+          # ROTATED BY DAY, and this is not a nicety. The first test slice
+          # (run 32592775372) crawled 207 of its 275 domains before hitting the
+          # deadline. Slice membership is stable and crawl.mjs works the list in
+          # order, so without rotation the SAME ~68 rooftops at the tail would
+          # be dropped on every sweep, for ever — a permanent, silent coverage
+          # hole in the one thing this project treats as the mission. Starting
+          # each day at a different offset means a truncated slice costs
+          # different rooftops each time and everything is reached within a few
+          # days. The deadline was raised too, so truncation should now be rare;
+          # this is the net for when it happens anyway.
+          DOY=$(date -u +%j)
           DOMAINS=$(python3 -c "
           import json
           r = json.load(open('registry/registry.json'))
           doms = sorted(s['domain'] for s in r['sites'] if s.get('status') == 'working')
-          print(' '.join(d for i, d in enumerate(doms) if i % $SLICES == $SLICE))")
+          mine = [d for i, d in enumerate(doms) if i % $SLICES == $SLICE]
+          off = int('$DOY') % (len(mine) or 1)
+          print(' '.join(mine[off:] + mine[:off]))")
           echo "$DOMAINS" > /tmp/domains.txt
           echo "slice $SLICE/$SLICES: $(echo $DOMAINS | wc -w) domains"
 
@@ -138,7 +151,7 @@ jobs:
         working-directory: scraper
         run: |
           node crawl.mjs $(cat /tmp/domains.txt) \
-            --max-pages 80 --cache-hours 0 --concurrency 16 --deadline-min 14
+            --max-pages 80 --cache-hours 0 --concurrency 20 --deadline-min 20
 
       # Bare invocation, capped from outside — vpic-enrich.mjs takes no flags
       # and reads out/listings.json, which for this run holds only the slice.
