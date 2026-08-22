@@ -168,19 +168,39 @@ jobs:
       # no slice loses a single page of coverage.
       #
       # The deadline drops 20 -> 18 for the same reason it exists: it stops
-      # workers taking NEW domains but cannot cancel the ones in flight, so the
-      # real stop is the deadline plus however long the slowest running crawl
-      # takes to drain (6.6 minutes on the measured run). At 18 that lands
-      # around 24, inside the cap, instead of 26.6 with 1.4 minutes to spare.
-      # A slice that runs long hands up what it has instead of being killed
-      # with nothing, the same discipline nightly.yml's shards use after
+      # workers taking NEW domains but cannot cancel the ones in flight. A
+      # slice that runs long hands up what it has instead of being killed with
+      # nothing, the same discipline nightly.yml's shards use after
       # 2026-08-19, when all 8 shards were cancelled at 5h30m and the whole
       # night was lost.
+      #
+      # --domain-cap-min 8 is the change that actually bounds this step, and it
+      # exists because the concurrency raise above UNDERPERFORMED its own
+      # prediction. Re-running the identical slice measured 24.4 minutes at 32
+      # workers against 26.6 at 20 — twelve extra workers bought 2.25 minutes,
+      # not the eight the arithmetic said. Every one of the 274 domains
+      # finished both times, so the run was never throughput-bound: it was
+      # waiting on its slowest single rooftop, and no number of workers
+      # shortens the longest individual crawl.
+      #
+      # So the worst case here is now arithmetic instead of luck: no domain may
+      # hold a worker past 8 minutes, and no worker may start a new domain
+      # after 18, which puts the ceiling at 26 inside a 28-minute job cap. It
+      # is deliberately not tighter. A capped rooftop is a rooftop we only
+      # half-crawled, and if the cap were low enough to bite the big group
+      # sites every visit they would be permanently half-crawled — the same
+      # permanent silent coverage hole the day-rotation above exists to
+      # prevent. At 8 minutes only a pathological dealer is affected, and a
+      # capped domain certifies nothing (report.truncated is
+      # `queue.length > 0 || Boolean(report.stoppedEarly)`, control-tested), so
+      # db-sync will not delist its cars — the pages it did not reach are that
+      # rooftop's next visit, not a deletion.
       - name: Crawl the slice
         working-directory: scraper
         run: |
           node crawl.mjs $(cat /tmp/domains.txt) \
-            --max-pages 80 --cache-hours 0 --concurrency 32 --deadline-min 18
+            --max-pages 80 --cache-hours 0 --concurrency 32 --deadline-min 18 \
+            --domain-cap-min 8
 
       # Bare invocation, capped from outside — vpic-enrich.mjs takes no flags
       # and reads out/listings.json, which for this run holds only the slice.

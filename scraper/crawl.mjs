@@ -45,6 +45,23 @@ function flag(name, fallback) {
 }
 const MAX_PAGES = flag("--max-pages", 25);
 const CONCURRENCY = flag("--concurrency", 6);
+// How long ONE domain may hold a worker. --deadline-min below governs the whole
+// run and can only stop workers taking NEW domains; it cannot end a crawl
+// already in flight, so a single slow rooftop keeps setting the clock for
+// everyone after the deadline has passed. Measured on rolling-crawl slice 41
+// (2026-08-22): every one of its 274 domains finished, so nothing was
+// throughput-bound, yet the run took 26.6 minutes at concurrency 20 and 24.4 at
+// concurrency 32 — adding 12 workers bought 2.25 minutes, because the run was
+// waiting on one dealer either way. Doubling the workers cannot shorten the
+// longest single crawl; only this can.
+//
+// 0 disables it, which is the default and what nightly-style whole-fleet runs
+// with hours of headroom should keep. A domain that hits the cap sets
+// stoppedEarly, and `report.truncated` below is already
+// `queue.length > 0 || Boolean(report.stoppedEarly)` — so it certifies nothing
+// and db-sync will not delist that dealer's cars. The unfetched pages are not
+// lost, they are simply that rooftop's next visit.
+const DOMAIN_CAP_MIN = flag("--domain-cap-min", 0);
 // Stop taking new domains after this many minutes and write what's crawled so
 // far. crawl.mjs used to write out/ only after every worker finished, so a
 // shard killed by the CI job timeout — which skips the upload-artifact step —
@@ -57,7 +74,7 @@ const DEADLINE_AT = DEADLINE_MIN > 0 ? Date.now() + DEADLINE_MIN * 60_000 : Infi
 // --cache-hours N: reuse pages fetched within N hours (0 = always live)
 setCacheTtl(flag("--cache-hours", 0) * 3_600_000);
 const flagIdxs = new Set(
-  ["--max-pages", "--concurrency", "--cache-hours", "--page-budget", "--deadline-min"].flatMap((f) => {
+  ["--max-pages", "--concurrency", "--cache-hours", "--page-budget", "--deadline-min", "--domain-cap-min"].flatMap((f) => {
     const i = args.indexOf(f);
     return i >= 0 ? [i, i + 1] : [];
   })
@@ -106,6 +123,7 @@ function evishEntry({ url, name, vin }) {
 
 async function crawlDealer(domain) {
   const budget = pageBudget(domain);
+  const domainCapAt = DOMAIN_CAP_MIN > 0 ? Date.now() + DOMAIN_CAP_MIN * 60_000 : 0;
   const report = { domain, budget, fetched: 0, vehiclePages: 0, itemListVdps: 0, evs: [], errors: [], notes: [] };
   const origin = `https://${domain}`;
   const visited = new Set();
@@ -226,6 +244,14 @@ async function crawlDealer(domain) {
     }
     if (report.fetched >= NO_EV_FLOOR && !report.evs.length) {
       report.stoppedEarly = `${report.vehiclePages} vehicle pages, no EVs in ${report.fetched}`;
+      break;
+    }
+    // The per-domain clock (see DOMAIN_CAP_MIN). Checked here with the other
+    // early exits so it catches the pages that never reach the bottom of the
+    // loop — timeouts and robots-disallowed `continue` past it — which are
+    // exactly the slow ones this cap exists for.
+    if (domainCapAt && Date.now() > domainCapAt) {
+      report.stoppedEarly = `${DOMAIN_CAP_MIN}-minute per-domain cap after ${report.fetched} pages`;
       break;
     }
 
