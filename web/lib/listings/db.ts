@@ -168,16 +168,41 @@ let walkMemo: { at: number; promise: Promise<Listing[] | null> } | null = null;
 // PAGE=500 plus the bucket boundaries) — against an instance whose ordinary
 // baseline was measured at ~20 feed-page requests an hour on a quiet day.
 // One attempt a minute per lambda is still generous; it is the difference
-// between bounded and proportional-to-crawler-traffic.
+// between bounded and proportional-to-traffic.
+//
+// Why this had to move from the sitemap route into the walk itself
+// (2026-08-22, while the incident was still running). The parallel session
+// pulled the statement-timeout cancellations straight out of postgres_logs —
+// 78 a minute at peak, bursty rather than constant, and the dominant
+// cancelled statement is this file's live_listings_feed page read. Bursty is
+// the signature of "a render starts a walk, the walk dies, the next request
+// starts another": a render that SUCCEEDS is cached and stops asking, but a
+// render that never completes caches nothing, so the next request re-walks.
+// Slow database -> render times out -> nothing cached -> re-walk -> slower
+// database, and nothing in the system broke that cycle.
+//
+// The two routes feeding it are the ones with no breaker of their own:
+// /api/index/* renders, and — the amplifier — every listing detail page,
+// because findListing() falls back to a FULL WALK whenever its per-VIN read
+// misses (source.ts), and during an outage the per-VIN read misses every
+// time. The sitemap points crawlers at 100,297 listing URLs, so a crawler
+// working through them becomes a walk generator. A breaker on the sitemap
+// route alone would not have touched any of this; the live deployment
+// serves its sitemaps as static build artifacts and makes no runtime walk at
+// all (verified: /sitemap/0.xml, 6.9 MB, 0.95s off the CDN).
+//
+// The cost, stated plainly: during an outage the browse shards now cache the
+// 58,730-row bundled snapshot instead of timing out. That is a real
+// degradation and it is the deliberate trade — it is bounded, it is
+// recoverable by POSTing /api/revalidate once the database answers, and
+// feed-shard-check.mjs catches it within 6 hours if nobody does. Renders
+// that never complete are not recoverable by anything.
 let lastWalkFailureAt = 0;
 const WALK_FAILURE_COOLDOWN_MS = 60_000;
 
-/** True when a feed walk failed within the last `withinMs` — for callers that
- *  would only throw the result away. Deliberately NOT consulted by anything
- *  that renders for a shopper: a browse render still walks and still falls
- *  back, because a stale grid beats an empty one. The sitemap has no such
- *  tradeoff to make (nobody is waiting on it, and a crawler retries a 5xx by
- *  design), so it is the one caller that can afford to fail fast. */
+/** True when a feed walk failed within the last `withinMs`. Consulted by
+ *  fetchListingsFromDb itself, and separately by the sitemap route so it can
+ *  answer 503 + Retry-After rather than the 500 a thrown render would give. */
 export function feedWalkFailedRecently(withinMs: number = WALK_FAILURE_COOLDOWN_MS): boolean {
   return lastWalkFailureAt > 0 && Date.now() - lastWalkFailureAt < withinMs;
 }
@@ -192,6 +217,13 @@ export function __resetWalkFailureForTest(): void {
  *  caller falls back to the bundled JSON. */
 export async function fetchListingsFromDb(): Promise<Listing[] | null> {
   if (walkMemo && Date.now() - walkMemo.at < WALK_MEMO_MS) return walkMemo.promise;
+  // Don't start a walk we already know will fail. This is the whole loop
+  // breaker — see WALK_FAILURE_COOLDOWN_MS above for the measurements. It
+  // returns null, which is the same answer the walk would have produced, so
+  // the caller serves the bundled snapshot exactly as it would have anyway:
+  // the render COMPLETES instead of timing out, and a render that completes
+  // gets cached and stops asking.
+  if (feedWalkFailedRecently()) return null;
   const memo = { at: Date.now(), promise: fetchListingsFromDbUncached() };
   walkMemo = memo;
   // A failed or fallback walk must not stick for ten minutes.
