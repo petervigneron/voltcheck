@@ -588,6 +588,19 @@ jobs:
               || echo "::warning::sitemap shard $s warm-up failed; crawlers keep yesterday's copy until the next request renders it"
           done
 
+      # Seven 200s do not mean seven correct bodies. The gate above decides
+      # whether it is safe to WARM; this checks what the warm actually
+      # produced, by counting rows. The 2026-08-21 incident is the case: five
+      # shards served ~9,800 rows each, every endpoint answered 200, and it
+      # stood for most of a day.
+      - name: Verify what we just warmed
+        if: always()
+        continue-on-error: true
+        working-directory: scraper
+        env:
+          FEED_REVALIDATE_SECRET: ${{ secrets.FEED_REVALIDATE_SECRET }}
+        run: node feed-shard-check.mjs
+
       # Hand the ingest/sync results forward to finalize-audits: the
       # gm-warranty cache and registry (unchanged pass-through) together so
       # the commit step there gets both from one artifact, and the ingested
@@ -833,6 +846,7 @@ jobs:
         with:
           node-version: "22"
       - name: Recheck live listings
+        id: recheck
         working-directory: scraper
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
@@ -843,13 +857,55 @@ jobs:
         run: node recheck.mjs --concurrency 10 --deadline-min 280
       # Expire the feed cache so tonight's delistings leave the site now, not on
       # tomorrow's revalidate — finalize-ingest's earlier revalidate carried the
-      # crawl's data, this one carries recheck's removals. Same degrade-to-24h
-      # backstop as finalize-ingest's copy.
+      # crawl's data, this one carries recheck's removals.
+      #
+      # This step used to be `if: always()` with no refusal, and its comment
+      # claimed it was the same as finalize-ingest's copy. It was not.
+      # finalize-ingest's copy refuses outright when db-sync or sync-guard
+      # didn't pass — "skipping revalidate rather than warming the cache with a
+      # snapshot nobody has confirmed is right" — and that refusal is the part
+      # that matters. Without it this step would expire an intact cache and
+      # re-warm seven routes against whatever the database happened to be
+      # doing, which on a bad night means caching the 58,730-row bundled
+      # snapshot for a full day behind HTTP 200s. Caught 2026-08-22 while the
+      # database was mid-incident and production was serving a complete,
+      # correct 100,297-row cache: this step was ~6 hours from cron and would
+      # have thrown that away with nobody pressing anything.
+      #
+      # Three guards, in the order they can fail:
+      #   1. recheck's own outcome. This revalidate exists to publish recheck's
+      #      removals; if recheck didn't finish there are none, so expiring a
+      #      good cache buys nothing and risks everything.
+      #   2. a live database probe. recheck can succeed against a database that
+      #      still cannot complete the FEED WALK — they are different queries,
+      #      and the walk is the one the warm-up depends on. One anon count
+      #      request, the same shape web/lib/listings/db.ts uses as its guard,
+      #      answers that directly. Never expire a cache you cannot refill.
+      #   3. feed-shard-check.mjs afterwards, which counts the ROWS in what we
+      #      just warmed instead of trusting seven 200s. If we poisoned the
+      #      cache anyway, the night goes red and says so.
       - name: Revalidate the site's feed cache
         if: always()
         env:
           FEED_REVALIDATE_SECRET: ${{ secrets.FEED_REVALIDATE_SECRET }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: |
+          if [ "${{ steps.recheck.outcome }}" != "success" ]; then
+            echo "::error::recheck did not complete (step outcome: '${{ steps.recheck.outcome }}') — it has no removals to publish. Skipping revalidate rather than expiring a good cache and re-warming it against an unknown database; the site keeps what it has and refreshes on the 24h backstop."
+            exit 1
+          fi
+          if [ -n "$SUPABASE_URL" ] && [ -n "$SUPABASE_ANON_KEY" ]; then
+            code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 20 \
+              -H "apikey: $SUPABASE_ANON_KEY" -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
+              -H "Range: 0-0" -H "Prefer: count=exact" \
+              "$SUPABASE_URL/rest/v1/listings?select=vin&delisted_at=is.null") || code=000
+            if [ "$code" != "200" ] && [ "$code" != "206" ]; then
+              echo "::error::the database cannot answer the listing count (HTTP $code) — a warm-up now would render the bundled 58,730-row snapshot and cache it for a day. Skipping revalidate; production keeps the complete cache it already has."
+              exit 1
+            fi
+            echo "database answered the count guard (HTTP $code); safe to expire and re-warm"
+          fi
           [ -z "$FEED_REVALIDATE_SECRET" ] && { echo "::warning::FEED_REVALIDATE_SECRET unset; site refreshes on the 24h cache backstop instead"; exit 0; }
           if ! curl -fsS --retry 3 --max-time 60 -X POST -H "x-revalidate-secret: $FEED_REVALIDATE_SECRET" https://voltcheck.net/api/revalidate; then
             echo "::warning::/api/revalidate unreachable; site refreshes on the 24h cache backstop instead"
@@ -874,3 +930,16 @@ jobs:
             curl -fsS --retry 2 --max-time 300 -o /dev/null "https://voltcheck.net/sitemap/$s.xml" \
               || echo "::warning::sitemap shard $s warm-up failed; crawlers keep yesterday's copy until the next request renders it"
           done
+
+      # Seven 200s do not mean seven correct bodies. This counts the rows in
+      # what the step above just cached and fails the night if the shards
+      # disagree with each other or with the total — the 2026-08-21 shape,
+      # where five shards served ~9,800 rows each and every endpoint answered
+      # 200 for most of a day.
+      - name: Verify what we just warmed
+        if: always()
+        continue-on-error: true
+        working-directory: scraper
+        env:
+          FEED_REVALIDATE_SECRET: ${{ secrets.FEED_REVALIDATE_SECRET }}
+        run: node feed-shard-check.mjs
