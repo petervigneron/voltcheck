@@ -36,6 +36,7 @@ import { OEM_LOCATOR_DOMAINS as ENTERPRISE_LOCATOR_DOMAINS } from "./lib/oem/ent
 import { OEM_LOCATOR_DOMAINS as LEXUS_LOCATOR_DOMAINS } from "./lib/oem/toyota.mjs";
 import { OEM_LOCATOR_DOMAINS as LUCID_LOCATOR_DOMAINS } from "./lib/oem/lucid.mjs";
 import { OEM_LOCATOR_DOMAINS as DRIVEWAY_LOCATOR_DOMAINS } from "./lib/oem/driveway.mjs";
+import { oemAliveVins, trustGoneVerdict } from "./lib/recheck-oem-crosscheck.mjs";
 
 // Every OEM-locator source domain: recheck skips these (see the filter below).
 // (Ford Blue Advantage, Honda and Audi are intentionally NOT here — their rows
@@ -137,6 +138,35 @@ console.error(
   `(${listings.length - targets.length - skippedOem} without, ${skippedOem} OEM-locator rows skipped)`
 );
 
+// Four domains (hyundai-cpo, ford-blue-advantage, honda-prologue,
+// audi-network) are always-truncated by design, so db-sync's completeness
+// guard can never delist them — recheck's per-VDP check above is their ONLY
+// delisting path, and it has a measured false-negative rate on exactly these
+// domains (docs/agents/relist-churn-2026-08-21.md: a daily delist/relist
+// drumbeat since tracking began, 94-100% of it via recheck). Their own
+// locator sweep, by contrast, has good national coverage — that's why
+// db-sync already trusts it enough to relist a VIN the moment it reappears
+// there. So before delisting on these four domains, cross-check the verdict
+// against tonight's own sweep: if it still lists the VIN, one dealer VDP's
+// rendering quirk doesn't outvote a national inventory pull. (Nissan's two
+// synthetic domains are a different case, already excluded from recheck
+// entirely above via OEM_LOCATOR_DOMAINS — see lib/recheck-oem-crosscheck.mjs
+// for why they don't belong here too.) Read from the same merged feed
+// db-sync just wrote to Supabase (this job's own checkout, already fresh
+// from tonight's commit) — no extra fetches, no DB read. Missing/unreadable
+// feed degrades to the unchanged behavior (every verdict trusted), never
+// the reverse.
+let oemAlive = new Set();
+try {
+  const feedUrl = new URL("../web/data/scraped-listings.json", import.meta.url);
+  const feed = JSON.parse(await readFile(feedUrl, "utf-8"));
+  oemAlive = oemAliveVins(feed);
+  console.error(`recheck: ${oemAlive.size} VINs from tonight's own OEM-locator sweep loaded for cross-check`);
+} catch {
+  console.error("recheck: no nightly feed to cross-check OEM-locator domains against — verdicts pass through unchanged");
+}
+let crossChecked = 0;
+
 // MUST mirror the precedence in lib/normalize.mjs + platforms/dealercom.mjs:
 // the JSON-LD offer price wins, and the platform's own fields are only a
 // fallback. Reversing this makes every dealer.com car look like it changed
@@ -195,8 +225,14 @@ async function worker() {
       errors++;
       continue;
     }
+    const domain = l.payload.dealerDomain;
     if (res.status === 404 || res.status === 410) {
-      hardGone.push(vin);
+      if (trustGoneVerdict(vin, domain, oemAlive)) {
+        hardGone.push(vin);
+      } else {
+        crossChecked++;
+        alive.push({ vin }); // tonight's own OEM-locator sweep still lists it
+      }
     } else if (res.status === 200 && res.body) {
       if (res.body.toUpperCase().includes(vin)) {
         const price = priceOf(res.body, vin, res.finalUrl ?? l.payload.sourceUrl, priceFloor({
@@ -204,8 +240,11 @@ async function worker() {
           year: l.payload.year,
         }));
         alive.push({ vin, priceUsd: price ?? undefined });
-      } else {
+      } else if (trustGoneVerdict(vin, domain, oemAlive)) {
         softGone.push(vin);
+      } else {
+        crossChecked++;
+        alive.push({ vin }); // tonight's own OEM-locator sweep still lists it
       }
     } else {
       errors++; // 403, 5xx, redirect loop — proves nothing
@@ -227,7 +266,8 @@ if (unchecked > 0 && Number.isFinite(DEADLINE_AT)) {
 }
 console.error(
   `recheck: ${alive.length} still listed (${changed} price changes), ` +
-  `${hardGone.length} pages gone, ${softGone.length} VIN missing, ${errors} inconclusive`
+  `${hardGone.length} pages gone, ${softGone.length} VIN missing, ${errors} inconclusive` +
+  (crossChecked ? `, ${crossChecked} OEM-locator gone verdicts overridden by tonight's own sweep` : "")
 );
 
 if (DRY) {
