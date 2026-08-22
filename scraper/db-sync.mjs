@@ -91,11 +91,19 @@ const source = process.env.DB_SYNC_SOURCE ?? "nightly";
 // git-committed snapshot's mtime is checkout time, not crawl time, so it
 // is only the loudly-warned fallback for pre-0013 reports.
 let completeDomains = [];
+// Every domain this run ATTEMPTED, complete or not. The delist guard below
+// needs it as its denominator: "did this run get back what these domains had"
+// is a question about the domains the run was asked to crawl, not about the
+// whole fleet. With one nightly crawl over everything the two are the same
+// set; with the crawl split into batches they are not, and only this one
+// stays meaningful.
+let attemptedDomains = [];
 let observedAt = null;
 try {
   const reportUrl = new URL("./out/report.json", import.meta.url);
   const reports = JSON.parse(await readFile(reportUrl, "utf-8"));
   completeDomains = reports.filter((r) => r.truncated === false).map((r) => r.domain);
+  attemptedDomains = reports.map((r) => r.domain).filter(Boolean);
   const times = reports.map((r) => Date.parse(r.crawledAt)).filter(Number.isFinite);
   if (times.length) observedAt = new Date(Math.min(...times)).toISOString();
 } catch {
@@ -200,6 +208,18 @@ async function liveCountForDomains(domains) {
   return n;
 }
 
+// liveCountForDomains puts every domain in one IN() list, which is fine for a
+// batch and not for a few thousand. Summing over slices keeps the same answer
+// affordable at any batch size; the slices are disjoint so the sum is exact.
+const COUNT_SLICE = 250;
+async function liveCountForDomainsChunked(domains) {
+  let total = 0;
+  for (let i = 0; i < domains.length; i += COUNT_SLICE) {
+    total += await liveCountForDomains(domains.slice(i, i + COUNT_SLICE));
+  }
+  return total;
+}
+
 const laneReport = {};
 if (READ_KEY) {
   try {
@@ -250,12 +270,59 @@ if (READ_KEY) {
     // crawl itself was cancelled mid-run, not because every dealer sold out.
     const dealerDomains = completeByLane.dealer;
     if (dealerDomains.length) {
-      const priorLive = (await liveCountForDomains(null)) - (await liveCountForDomains([...OEM_LOCATOR_DOMAINS]));
+      // Denominator = what THIS RUN'S dealer domains had live before it, not
+      // what the whole dealer lane had. The two are the same number on a
+      // nightly crawl over every rooftop, so this does not change that case.
+      // They stop being the same the moment the crawl is split into batches,
+      // and then only this form is meaningful: a batch of 200 rooftops
+      // carrying its own ~2k rows against the lane's ~59k prior total reads
+      // as 3% coverage, trips the 50% floor, and the guard refuses to delist
+      // a batch that crawled perfectly — every run, forever.
+      //
+      // That is not a hypothetical: it is the exact bug the OEM branch above
+      // was already written to avoid, in its own words — "on a night only
+      // Chevrolet reports complete, its ~2k rows against the full lane's ~41k
+      // prior total reads as 5% coverage and the guard would refuse to delist
+      // Chevrolet's own sold cars forever, for reasons that have nothing to
+      // do with Chevrolet's own crawl quality". The dealer branch had the
+      // same flaw latent; one crawl over everything just kept it hidden.
+      //
+      // The protection is unchanged, because the comparison is still "rows I
+      // got back" against "rows these same domains had before" — scale-free.
+      // A parser break that empties every SRP still shows near-zero coverage
+      // against those domains' own prior counts and is still refused. What it
+      // no longer does is judge a batch by inventory it was never asked to
+      // crawl. Domains never attempted cannot be delisted regardless: they
+      // are absent from completeDomains, and the SQL delists only within a
+      // domain it was handed rows for.
+      // Cost is why this is a threshold and not simply the precise form. The
+      // feed carries ~7,000 live dealer domains, so naming them all costs ~29
+      // count requests against the 2 the whole-lane subtraction costs — and
+      // this exact count query is what returned HTTP 500 for seven minutes
+      // during the 2026-08-22 incident before db-sync gave up. A batch names
+      // few enough domains to price precisely; a whole-fleet run does not,
+      // and for a whole-fleet run the two denominators are the same number
+      // anyway. So: precise when it is affordable, subtraction when it is not,
+      // and the run records which one it used.
+      const dealerAttempted = attemptedDomains.filter((d) => laneOf(d) === "dealer");
+      const precise = dealerAttempted.length > 0 && dealerAttempted.length <= COUNT_SLICE * 2;
+      const priorLive = precise
+        ? await liveCountForDomainsChunked(dealerAttempted)
+        : (await liveCountForDomains(null)) - (await liveCountForDomains([...OEM_LOCATOR_DOMAINS]));
       if (priorLive > 0) {
         const incoming = dealerDomains.reduce((s, d) => s + (byDomain.get(d)?.length ?? 0), 0);
         const coverage = incoming / priorLive;
         const refused = coverage < DELIST_GUARD_MIN_COVERAGE;
-        laneReport.dealer = { lane: "dealer", incoming, priorLive, domainsComplete: dealerDomains.length, coverage, refused };
+        laneReport.dealer = {
+          lane: "dealer",
+          incoming,
+          priorLive,
+          domainsComplete: dealerDomains.length,
+          domainsAttempted: dealerAttempted.length,
+          basis: precise ? "attempted-domains" : "whole-lane",
+          coverage,
+          refused,
+        };
         if (refused) {
           console.error(
             `db-sync: REFUSING to delist the "dealer" lane — tonight's ${dealerDomains.length} complete domain(s) ` +
