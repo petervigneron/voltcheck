@@ -142,16 +142,45 @@ jobs:
           echo "$DOMAINS" > /tmp/domains.txt
           echo "slice $SLICE/$SLICES: $(echo $DOMAINS | wc -w) domains"
 
-      # --deadline-min 14 leaves ~10 minutes for enrich + ingest + sync inside
-      # the 25-minute job cap. A slice that runs long hands up what it has (the
-      # deadline write) instead of being killed with nothing, the same
-      # discipline nightly.yml's shards use after 2026-08-19, when all 8 shards
-      # were cancelled at 5h30m and the whole night was lost.
+      # Measured 2026-08-22, and the numbers below are the reason for the two
+      # flags that changed. Slice 41 (a clean run, all 274 domains, no
+      # truncation) spent 26.6 minutes here — against a 28-minute job cap and a
+      # 30-minute cron. Everything after this step took 0.6 minutes TOTAL
+      # (vpic 0.1, ingest 0.0, sync 0.3, commit 0.2), so the budget was never
+      # the problem; the crawl simply had no margin, and one slice in six was
+      # being killed at the cap having synced nothing.
+      #
+      # WHY CONCURRENCY, AND NOT FEWER DOMAINS OR FEWER PAGES. Compare the two
+      # lanes on the same crawler: nightly.yml runs 1,646 domains per shard at
+      # concurrency 16 in ~100 minutes, which is ~1.0 min/domain. This slice
+      # managed ~1.9 min/domain on the same flags. The gap is not speed, it is
+      # QUEUE LENGTH — 274 domains across 20 workers is under 14 domains each,
+      # so a run ends when its unluckiest worker finishes and one slow rooftop
+      # sets the clock for everyone. Nightly's 103-per-worker queues average
+      # that away. More workers means shorter queues means less tail.
+      #
+      # It costs no politeness, which is the thing that would have ruled it
+      # out: crawlDealer fetches ONE page at a time for its domain (the await
+      # in its own loop), and the only Promise.all in crawl.mjs is this worker
+      # pool over DISTINCT domains. Concurrency 32 is 32 dealers being crawled
+      # politely at once, not 32 requests at one dealer. Per-rooftop request
+      # rate, robots Crawl-delay handling and --max-pages are all untouched, so
+      # no slice loses a single page of coverage.
+      #
+      # The deadline drops 20 -> 18 for the same reason it exists: it stops
+      # workers taking NEW domains but cannot cancel the ones in flight, so the
+      # real stop is the deadline plus however long the slowest running crawl
+      # takes to drain (6.6 minutes on the measured run). At 18 that lands
+      # around 24, inside the cap, instead of 26.6 with 1.4 minutes to spare.
+      # A slice that runs long hands up what it has instead of being killed
+      # with nothing, the same discipline nightly.yml's shards use after
+      # 2026-08-19, when all 8 shards were cancelled at 5h30m and the whole
+      # night was lost.
       - name: Crawl the slice
         working-directory: scraper
         run: |
           node crawl.mjs $(cat /tmp/domains.txt) \
-            --max-pages 80 --cache-hours 0 --concurrency 20 --deadline-min 20
+            --max-pages 80 --cache-hours 0 --concurrency 32 --deadline-min 18
 
       # Bare invocation, capped from outside — vpic-enrich.mjs takes no flags
       # and reads out/listings.json, which for this run holds only the slice.
