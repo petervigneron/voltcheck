@@ -90,27 +90,67 @@ const rowLabel = (r) => {
 
 const rows = ALL_ROWS.filter((r) => !MAKE || r.make?.toUpperCase() === MAKE);
 
-// Per-row evaluation.
+// A row may declare, in `abstains` (lib/types.ts), that it is deliberately
+// silent on a core field — the base row of a nameplate whose grades carry the
+// figure that varies, or a cohort nothing can separate. That is a decision,
+// not a hole, so it doesn't count against the bar. The abstention itself is
+// then checked, because an unchecked escape hatch is just a slower way to
+// launder a gap:
+//
+//   - the reason is required, and must read as a sentence rather than a
+//     shrug, so `abstains: { epaRangeMi: "n/a" }` is an error;
+//   - abstaining on a field the row actually carries is an error — the two
+//     statements contradict each other and one of them is stale;
+//   - only core fields can be abstained from (`expected`/`optional` fail
+//     nothing already, so an abstention there is noise);
+//   - and every abstention is printed below with its reason. The count is
+//     part of the report on purpose: this is the number to watch if the bar
+//     ever starts looking suspiciously easy.
+//
+// These are hard errors, independent of --max-core-fails. The baseline
+// forgives a backlog it can see; it does not forgive a broken annotation.
+const CORE_KEYS = new Set(CORE.map((f) => f.key));
+const abstentionErrors = [];
+for (const r of rows) {
+  for (const [key, reason] of Object.entries(r.abstains ?? {})) {
+    const field = FIELDS.find((f) => f.key === key);
+    if (!field) abstentionErrors.push(`${rowLabel(r)}: abstains on "${key}", which is not a field this report knows`);
+    else if (!CORE_KEYS.has(key)) abstentionErrors.push(`${rowLabel(r)}: abstains on "${key}", which is not a core field — nothing to excuse`);
+    else if (field.get(r) != null) abstentionErrors.push(`${rowLabel(r)}: abstains on "${key}" but carries a value for it — one of the two is stale`);
+    if (typeof reason !== "string" || reason.trim().split(/\s+/).length < 5)
+      abstentionErrors.push(`${rowLabel(r)}: abstains on "${key}" without a reason — say why the silence is the honest answer, in a sentence`);
+  }
+}
+
+// Per-row evaluation. `missingCore` is what fails; an abstained field moves
+// to `abstained` instead, so the report can still show it.
 const evaluated = rows.map((r) => {
+  const abstains = r.abstains ?? {};
   const missing = FIELDS.filter((f) => f.get(r) == null);
-  const missingCore = missing.filter((f) => f.tier === "core");
-  return { r, missing, missingCore };
+  const abstained = missing.filter((f) => f.key in abstains);
+  const missingCore = missing.filter((f) => f.tier === "core" && !(f.key in abstains));
+  return { r, missing, missingCore, abstained };
 });
 
-// Per-field aggregate: how many cohorts lack each field.
+// Per-field aggregate: how many cohorts lack each field, and how many of
+// those are deliberate. `missing` stays the raw count — the size of the hole
+// doesn't change because we decided some of it was on purpose.
 const perField = FIELDS.map((f) => ({
   ...f,
   missing: rows.filter((r) => f.get(r) == null).length,
+  abstained: rows.filter((r) => f.get(r) == null && f.key in (r.abstains ?? {})).length,
   total: rows.length,
 }));
 
 if (AS_JSON) {
   console.log(JSON.stringify({
     rows: rows.length,
-    perField: perField.map(({ key, tier, missing, total }) => ({ key, tier, missing, total })),
+    perField: perField.map(({ key, tier, missing, abstained, total }) => ({ key, tier, missing, abstained, total })),
     coreFailures: evaluated.filter((e) => e.missingCore.length).map((e) => ({ id: e.r.id, label: rowLabel(e.r), missingCore: e.missingCore.map((f) => f.key) })),
+    abstentions: evaluated.filter((e) => e.abstained.length).map((e) => ({ id: e.r.id, label: rowLabel(e.r), fields: Object.fromEntries(e.abstained.map((f) => [f.key, e.r.abstains[f.key]])) })),
+    abstentionErrors,
   }, null, 2));
-  process.exit(evaluated.some((e) => e.missingCore.length) ? 10 : 0);
+  process.exit(abstentionErrors.length || evaluated.some((e) => e.missingCore.length) ? 10 : 0);
 }
 
 console.log(`Enrichment coverage — ${rows.length} cohorts${MAKE ? ` (${MAKE})` : ""}\n`);
@@ -119,7 +159,7 @@ console.log("Field coverage (cohorts missing this field):");
 for (const tier of ["core", "expected", "optional"]) {
   for (const f of perField.filter((x) => x.tier === tier)) {
     const pct = Math.round((100 * (f.total - f.missing)) / f.total);
-    const bar = f.missing === 0 ? "" : `  ← ${f.missing} missing`;
+    const bar = f.missing === 0 ? "" : `  ← ${f.missing} missing${f.abstained ? ` (${f.abstained} deliberate)` : ""}`;
     console.log(`  [${tier.padEnd(8)}] ${f.label.padEnd(30)} ${String(f.total - f.missing).padStart(4)}/${f.total} (${pct}%)${bar}`);
   }
 }
@@ -138,10 +178,29 @@ if (SHOW_ALL) {
   }
 }
 
-const failed = coreFail.length > BASELINE;
+// Printed every run, not behind --all: the whole point of writing an
+// abstention down is that someone reads it back.
+const abstaining = evaluated.filter((e) => e.abstained.length);
+if (abstaining.length) {
+  console.log(`\nCohorts deliberately silent on a core field: ${abstaining.length}`);
+  for (const e of abstaining) {
+    for (const f of e.abstained) {
+      console.log(`  ${rowLabel(e.r).padEnd(48)} ${f.label}: ${e.r.abstains[f.key]}`);
+    }
+  }
+}
+
+if (abstentionErrors.length) {
+  console.log(`\nBROKEN ABSTENTIONS: ${abstentionErrors.length}`);
+  for (const m of abstentionErrors) console.log(`  ${m}`);
+}
+
+const failed = coreFail.length > BASELINE || abstentionErrors.length > 0;
 console.log(
   `\n${failed ? "FAIL" : "OK"} — ${coreFail.length} cohorts miss a core field (baseline ${BASELINE}); ` +
-    `${CORE.length} core fields checked across ${rows.length} cohorts`
+    `${CORE.length} core fields checked across ${rows.length} cohorts` +
+    (abstaining.length ? `; ${abstaining.length} deliberately silent` : "")
 );
-if (failed) console.log(`  ${coreFail.length - BASELINE} more than the committed baseline — a cohort regressed or was added half-stocked.`);
+if (coreFail.length > BASELINE) console.log(`  ${coreFail.length - BASELINE} more than the committed baseline — a cohort regressed or was added half-stocked.`);
+if (abstentionErrors.length) console.log(`  ${abstentionErrors.length} abstention(s) above are malformed — fix the annotation, not the baseline.`);
 process.exit(failed ? 10 : 0);

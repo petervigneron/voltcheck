@@ -13,6 +13,18 @@ export interface Fact<T> {
 
 export type HeatPump = "standard" | "optional" | "awd_only" | "none";
 export type PortStandard = "NACS" | "CCS1" | "CHAdeMO" | "J1772";
+
+// The core fields scripts/enrichment-coverage.mjs holds every row to, and so
+// the only ones a row can declare a deliberate silence on. Deliberately not
+// widened to every field in EnrichmentRow: `expected` and `optional` fields
+// already fail nothing, so an abstention on one would be noise, and keeping
+// the union narrow is what stops this from becoming a general opt-out.
+export type AbstainableField =
+  | "packUsableKwh"
+  | "epaRangeMi"
+  | "heatPump"
+  | "batteryWarranty"
+  | "portStandard";
 export type SuperchargerAccess = "native" | "adapter" | "none";
 export type Chemistry = "LFP" | "NMC" | "NCA" | "NCM";
 
@@ -96,6 +108,29 @@ export interface EnrichmentRow {
   // EV6 reads "58" — including AWD cars that never had that pack). The
   // matcher then ignores the vpicBatteryKwh hint for this row's cohort.
   ignoreKwhHint?: boolean;
+  // Fields this row is deliberately silent on, and why. NOT a research
+  // backlog — an entry here is a decision that saying nothing is the honest
+  // answer, so scripts/enrichment-coverage.mjs stops counting it as a hole.
+  //
+  // It exists because the corpus grew a shape the coverage check couldn't
+  // read. A nameplate is now often covered by a BASE row carrying what every
+  // version shares, plus a trim-keyed row per grade carrying the facts that
+  // vary (data3.ts's 2026 bZ, data2.ts's bZ4X and Solterra). A car whose trim
+  // we can't read matches the base row and is shown no range, "which is the
+  // honest answer when 236 and 314 are both live on the same drivetrain" —
+  // and the check, which walks rows and demands five core fields of each,
+  // scored those five base rows as five newly half-stocked cohorts. It was
+  // failing the corpus for getting MORE precise, which is backwards.
+  //
+  // The other shape is a row with no siblings to defer to: the 2017-19 Tesla
+  // Model S/X, where nothing in a VIN or a dealer feed separates 60D from
+  // 100D and the row prints no range rather than one trim's figure.
+  //
+  // Guarded, so it cannot become a way to launder a gap: the reason is
+  // required and must be a sentence, abstaining on a field the row actually
+  // carries is an error, and the coverage report prints every abstention in
+  // its own section with its reason. A rising count is meant to be read.
+  abstains?: Partial<Record<AbstainableField, string>>;
 
   battery?: {
     packGrossKwh?: Fact<number>;

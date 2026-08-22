@@ -374,6 +374,11 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     modelYears: [2025, 2025],
     trim: "Grand Touring",
     drive: "AWD",
+    // Pack read off the same Lucid document the 480-mile figure above was
+    // checked against — its range table prints 512/480/446 for 19/20/21-inch
+    // wheels, which is where this row's standard-config choice comes from.
+    // Same shape as the Pure (84, 16 module) and Touring (92, 18 module) rows.
+    battery: { packGrossKwh: f(117, "mfr", "high", "Lucid's own 2025 Grand Touring technical-spec sheet: \u201c117 (22 module)\u201d; no usable/net split published by Lucid", "https://lucidmotors.com/media/document/lucid-air-grand-touring-technical-specs-2025.pdf") },
     range: { epaRangeMi: f(480, "mfr", "high", "20-inch wheels, standard", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48372") },
     charging: {
       portStandard: f("CCS1", "mfr", "high", "Lucid's own site: “Your Lucid Air has a J1772 (CCS1) charge port”, confirmed current as of the most recent Lucid material found (July 2025); still no native NACS port"),
@@ -441,6 +446,13 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     make: "TOYOTA",
     model: "bZ",
     modelYears: [2026, 2026],
+    // Base row for the nameplate — see the block comment above. Both facts
+    // that vary by grade live on the trim-keyed rows; this one carries only
+    // what every 2026 bZ shares.
+    abstains: {
+      packUsableKwh: "Varies by grade (XLE FWD 57.7 kWh, every other grade 74.7); the trim-keyed rows below carry it, and a car whose grade we cannot read is shown nothing",
+      epaRangeMi: "Varies by grade across 236 to 314 miles on the same nameplate; the trim-keyed rows below carry it, and picking one for a car we cannot place would be a coin flip",
+    },
     charging: {
       portStandard: f("NACS", "mfr", "high"),
       dcPeakKw: f(150, "agg", "medium"),
@@ -582,6 +594,9 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     model: "bZ Woodland",
     modelYears: [2026, 2026],
     drive: "AWD",
+    // Base row; the pack is shared but the tyres are not, and they are worth
+    // 21 miles.
+    abstains: { epaRangeMi: "Varies by grade on tyre size alone (base 281 on 235/60R18, Premium 260 on 235/65R18); the trim-keyed rows below carry it" },
     battery: { packGrossKwh: f(74.7, "mfr", "high") },
     charging: {
       portStandard: f("NACS", "mfr", "high"),
@@ -684,6 +699,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     // dealer's trim string is exactly what 6a6e4f3 stopped letting decide a
     // range. Every other pre-2021 S/X bucket already prints nothing; these
     // three were the anomaly, not the norm.
+    abstains: { epaRangeMi: "Nothing in the VIN, vPIC or the feed separates 60D from 100D on these cars, and the four are up to 111 miles apart" },
     charging: {
       portStandard: f("NACS", "mfr", "high", "Tesla's proprietary connector"),
       superchargerAccess: f("native", "mfr", "high"),
@@ -733,6 +749,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     // dealer's trim string is exactly what 6a6e4f3 stopped letting decide a
     // range. Every other pre-2021 S/X bucket already prints nothing; these
     // three were the anomaly, not the norm.
+    abstains: { epaRangeMi: "Nothing in the VIN, vPIC or the feed separates 60D from 100D on these cars, and the four are up to 111 miles apart" },
     charging: {
       portStandard: f("NACS", "mfr", "high", "Tesla's proprietary connector"),
       superchargerAccess: f("native", "mfr", "high"),
@@ -785,6 +802,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     // dealer's trim string is exactly what 6a6e4f3 stopped letting decide a
     // range. Every other pre-2021 S/X bucket already prints nothing; these
     // three were the anomaly, not the norm.
+    abstains: { epaRangeMi: "Nothing in the VIN, vPIC or the feed separates 60D from 100D on these cars, and the four are up to 111 miles apart" },
     charging: {
       portStandard: f("NACS", "mfr", "high", "Tesla's proprietary connector"),
       superchargerAccess: f("native", "mfr", "high"),
@@ -1202,13 +1220,13 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
 
   {
     id: "cadillac-escalade-iq-2026",
+    abstains: { epaRangeMi: "No EPA rating exists: NHTSA's VIN decode puts this in GVWR Class 3, above EPA's labelling threshold, and fueleconomy.gov has no record under either nameplate; Cadillac's own figure is an estimate and stays in the buyer note" },
     make: "CADILLAC",
     model: "Escalade IQ",
     modelYears: [2025, 2026], // window extended to the MY2025 launch year (2026-08-14)
     drive: "AWD",
     battery: { packGrossKwh: f(205, "mfr", "high") },
     range: {
-      
       testedRangeMi: f(482, "tested", "high", "70-mph steady-state (InsideEVs): 482.2 mi, using 222.7 kWh. Edmunds' own mixed-driving methodology recorded 558 mi; a third-party 60-mph constant-speed test (Tom Moloughney/State of Charge) recorded 607 mi, all three exceed Cadillac's own 465-mi estimate. No EPA-certified figure exists to compare against."),
     },
     charging: {
@@ -1240,6 +1258,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
 
   {
     id: "cadillac-escalade-iql-2026",
+    abstains: { epaRangeMi: "No EPA rating exists: NHTSA's VIN decode puts this in GVWR Class 3, above EPA's labelling threshold, and fueleconomy.gov has no record under either nameplate; Cadillac's own figure is an estimate and stays in the buyer note" },
     make: "CADILLAC",
     model: "Escalade IQL",
     modelYears: [2026, 2026],

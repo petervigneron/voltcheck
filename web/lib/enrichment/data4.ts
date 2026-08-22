@@ -413,6 +413,33 @@ const MACB = { packGrossKwh: f(100, "vin", "high", "95 kWh net") };
     return { value, source, asOf: AS_OF_PHEV, confidence, note, sourceUrl };
   }
 
+  // The AC inlet. All fourteen rows below carry it, because without it the
+  // detail page printed "Port: Unknown" on every one of them — a car whose
+  // plug we supposedly hadn't researched, sitting directly under a row
+  // already reading "DC fast charging: Not available". That is exactly the
+  // half-stocked render scripts/enrichment-coverage.mjs was built to catch,
+  // and it caught it: the port was the field it named on all fourteen.
+  //
+  // "No DC port" and "J1772 AC inlet" are two different facts and only the
+  // first is what `dcFastCharging: none` records, so this is stated rather
+  // than derived from it.
+  //
+  // Tagged `est`, not `mfr`, and that is the deliberate half of this. No
+  // manufacturer document consulted this pass names the connector: the 2024
+  // Pacifica spec sheet already cited below has no charging section at all,
+  // and Toyota's RAV4 Prime release says "level II charger" without saying
+  // which standard that is. J1772 is the only Level 2 AC inlet any US-market
+  // plug-in has been fitted with across these model years, which is why the
+  // confidence is high — but uncontested is not the same as sourced, and the
+  // house rule is that anything short of the maker's own figure carries the
+  // est marker. NOTE: the eight PHEV rows already in this file (Wrangler and
+  // Grand Cherokee 4xe, X5 45e/50e, Rogue PHEV) tag the same fact `mfr` with
+  // no sourceUrl. They are not changed here — demoting a figure another pass
+  // may have verified, on nothing but the absence of a URL, would be its own
+  // unevidenced claim — but the two tags cannot both be right, and whichever
+  // pass next opens a maker's manual should settle all twenty-two together.
+  const PHEV_J1772 = fp<"J1772">("J1772", "est", "high", "AC charging only, no DC fast charge");
+
   // Chevrolet Volt — three genuinely different eras. Battery split between
   // 2011–12 and 2013–15 comes from GM's own battery-comparison PDF, which
   // gives a Gen-1 range (16.0–17.1 kWh gross / 10.2–11.2 kWh usable) without a
@@ -440,6 +467,7 @@ const MACB = { packGrossKwh: f(100, "vin", "high", "95 kWh net") };
       },
       charging: {
         acOnboardKw: fp(3.3, "est", "medium"),
+        portStandard: PHEV_J1772,
         dcFastCharging: VOLT_NO_DCFC,
       },
       warranty: VOLT_WARRANTY,
@@ -460,6 +488,7 @@ const MACB = { packGrossKwh: f(100, "vin", "high", "95 kWh net") };
       },
       charging: {
         acOnboardKw: fp(3.3, "est", "medium"),
+        portStandard: PHEV_J1772,
         dcFastCharging: VOLT_NO_DCFC,
       },
       warranty: VOLT_WARRANTY,
@@ -479,6 +508,7 @@ const MACB = { packGrossKwh: f(100, "vin", "high", "95 kWh net") };
       },
       charging: {
         acOnboardKw: fp(3.6, "est", "medium", "DOE/INL bench test + GM supplier material corroborate 3.6 kW; not confirmed from a GM primary spec document this pass"),
+        portStandard: PHEV_J1772,
         dcFastCharging: VOLT_NO_DCFC,
       },
       warranty: VOLT_WARRANTY,
@@ -503,6 +533,7 @@ const MACB = { packGrossKwh: f(100, "vin", "high", "95 kWh net") };
     },
     charging: {
       acOnboardKw: fp(6.6, "mfr", "medium", "SE-grade equipment line on the 2024 release; 2021–23 shipped 3.3 kW standard with 6.6 kW an SE/XSE Premium option on some trims — exact year/trim gating not resolved this pass", RAV4_PRIME_RELEASE),
+      portStandard: PHEV_J1772,
       dcFastCharging: fp("none", "mfr", "high", "Control-tested against Toyota's own bZ4X press materials, which name DC fast charging explicitly; the RAV4 Prime release never does", RAV4_PRIME_RELEASE),
     },
     thermal: { heatPump: fp("standard", "mfr", "high", undefined, RAV4_PRIME_RELEASE) },
@@ -517,6 +548,7 @@ const MACB = { packGrossKwh: f(100, "vin", "high", "95 kWh net") };
   // flags as a real per-year fact, so Gen 2 is split for that reason even
   // though every other fact is identical across it.
   const PRIUS_ALIASES = ["Prius PHEV", "Prius PHEV SE", "Prius Plug-In Hybrid"];
+  const PRIUS_PRIME_2017_RELEASE = "https://pressroom.toyota.com/prime-mover-toyota-creates-2017-prius-prime/";
   const PRIUS_GEN2_BATTERY = { packGrossKwh: fp(8.79, "est", "medium", "Secondary-sourced (PriusChat teardown cross-referencing Toyota parts data): 95s1p cells, 351.5V nominal") };
   const PRIUS_GEN2_RANGE = {
     epaRangeMi: fp(25, "mfr", "high", "Electric-only EPA range. Identical rating 2017–2022", epa(38531)),
@@ -527,14 +559,33 @@ const MACB = { packGrossKwh: f(100, "vin", "high", "95 kWh net") };
   };
   const PRIUS_GEN2_CHARGING = {
     acOnboardKw: fp(3.3, "est", "medium", "16A at 230V"),
+    portStandard: PHEV_J1772,
     dcFastCharging: fp<"none">("none", "est", "medium", "Same PHEV architecture as RAV4 Prime, but not re-run against a Prius-specific control document this pass"),
   };
   const PRIUS_GEN3_BATTERY = { packGrossKwh: fp(13.6, "mfr", "high") };
   const PRIUS_GEN3_CHARGING = {
+    portStandard: PHEV_J1772,
     // Onboard AC charger omitted: sources conflict 3.5 vs 6.6 kW and this
     // pass didn't resolve it to one number — omit rather than guess.
     dcFastCharging: fp<"none">("none", "est", "medium", "Same PHEV architecture as RAV4 Prime, but not re-run against a Prius-specific control document this pass"),
   };
+  // Gen 2's own source, found 2026-08-22 and closing one of the four heat-pump
+  // gaps docs/agents/phev-enrichment-2026-08-21.md left open (its §5: "Prius
+  // Prime: ... Gen 2 heat pump status"). Toyota's MY2017 launch release
+  // describes it directly: "The climate control system can also operate
+  // without the engine running, with a heat pump that allows the system to
+  // cool or heat the cabin while driving in EV mode", and "The heat pump can
+  // function without the engine running in weather down to 14 degrees F,
+  // where a conventional heat pump system could only function with the
+  // temperature above 32 F."
+  //
+  // Worth knowing for the Gen 3 row below: it carries the heat pump on the
+  // RAV4 Prime release's "based on Prius Prime's" line, but the RAV4 Prime
+  // launched for MY2021 and the only Prius Prime in production then was
+  // THIS one. So that borrowed citation was always pointing at Gen 2. Gen 3
+  // is left as it stands — the system did carry forward — but a Gen-3
+  // -specific source is still the thing that would settle it.
+  const PRIUS_GEN2_THERMAL = { heatPump: fp<"standard">("standard", "mfr", "high", "Heats the cabin in EV mode down to 14°F", PRIUS_PRIME_2017_RELEASE) };
   const PRIUS_GEN3_THERMAL = { heatPump: fp<"standard">("standard", "mfr", "high", "Same heat-pump system Toyota describes for the RAV4 Prime, quoted from that press release rather than a Prius-specific one", RAV4_PRIME_RELEASE) };
   const PRIUS_PRIME_ROWS: EnrichmentRow[] = [
     {
@@ -543,6 +594,7 @@ const MACB = { packGrossKwh: f(100, "vin", "high", "95 kWh net") };
       battery: PRIUS_GEN2_BATTERY,
       range: PRIUS_GEN2_RANGE,
       charging: PRIUS_GEN2_CHARGING,
+      thermal: PRIUS_GEN2_THERMAL,
       warranty: TOYOTA_WARRANTY_PRE2020,
     },
     {
@@ -551,6 +603,7 @@ const MACB = { packGrossKwh: f(100, "vin", "high", "95 kWh net") };
       battery: PRIUS_GEN2_BATTERY,
       range: PRIUS_GEN2_RANGE,
       charging: PRIUS_GEN2_CHARGING,
+      thermal: PRIUS_GEN2_THERMAL,
       warranty: TOYOTA_WARRANTY_2020PLUS,
     },
     {
@@ -597,6 +650,7 @@ const MACB = { packGrossKwh: f(100, "vin", "high", "95 kWh net") };
   const PACIFICA_BATTERY = { packGrossKwh: fp(16, "mfr", "high", "96-cell Li-ion, 360V nominal", PACIFICA_2024_SPEC) };
   const PACIFICA_CHARGING = {
     acOnboardKw: fp(6.6, "est", "medium", "Recurs across independent sources; not itemized as a line item in Stellantis's own spec sheets"),
+    portStandard: PHEV_J1772,
     dcFastCharging: fp<"none">("none", "mfr", "high", "Control-tested: the same Stellantis spec-sheet family names DC fast charging for the Wagoneer S; neither the 2020 nor the 2024 Pacifica sheet does", PACIFICA_2024_SPEC),
   };
   const PACIFICA_THERMAL = { heatPump: fp<"none">("none", "est", "medium", "Resistive electric heater plus engine coolant; the engine is required for heat and defrost") };
@@ -644,6 +698,7 @@ const MACB = { packGrossKwh: f(100, "vin", "high", "95 kWh net") };
   const ESCAPE_BATTERY = { packGrossKwh: fp(14.4, "est", "medium") };
   const ESCAPE_CHARGING = {
     acOnboardKw: fp(3.3, "est", "medium"),
+    portStandard: PHEV_J1772,
     dcFastCharging: fp<"none">("none", "est", "high"),
   };
   // Ford's own page states no CARB-state extension, unlike Toyota/Stellantis.
@@ -718,6 +773,7 @@ const MACB = { packGrossKwh: f(100, "vin", "high", "95 kWh net") };
     },
     charging: {
       acOnboardKw: fp(6.6, "est", "medium", "32A"),
+      portStandard: PHEV_J1772,
       dcFastCharging: fp("none", "est", "high"),
     },
     warranty: {

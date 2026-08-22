@@ -944,6 +944,10 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "bZ4X",
     modelYears: [2023, 2025],
     drive: "FWD",
+    // The base row of the pair: XLE and Limited are 252 and 242/236, and this
+    // row is what a car matches when its trim string names neither. Printing
+    // one of the two would be a coin flip on a shopper's range.
+    abstains: { epaRangeMi: "Varies by grade (XLE 252, Limited 242 then 236); the trim-keyed rows below carry it, and a car whose grade we cannot read is shown nothing" },
     battery: { packGrossKwh: f(71.4, "est", "medium"), chemistry: f("NMC", "agg", "medium") },
     charging: {
       portStandard: f("CCS1", "mfr", "high", "Free OEM NACS adapter program for MY23–25"),
@@ -1062,6 +1066,10 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "bZ4X",
     modelYears: [2023, 2025],
     drive: "AWD",
+    // Base row, and the 2025 Nightshade lands here: EPA's third 2025 AWD
+    // entry (id 49128, 222 mi) is only plausibly its rating and no primary
+    // source says so, so this row says nothing rather than guessing.
+    abstains: { epaRangeMi: "Varies by grade (XLE 228, Limited 222); the trim-keyed rows below carry it, and the 2025 Nightshade matches here because no source ties it to an EPA record" },
     battery: { packGrossKwh: f(72.8, "est", "medium"), chemistry: f("NMC", "agg", "medium") },
     charging: {
       portStandard: f("CCS1", "mfr", "high", "Free OEM NACS adapter program for MY23–25"),
@@ -1863,6 +1871,9 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     make: "SUBARU",
     model: "Solterra",
     modelYears: [2023, 2025],
+    // Base row. The 18 listings whose trim reads "15 Series", "Premier" or
+    // nothing at all match here and are shown the tested figure only.
+    abstains: { epaRangeMi: "Varies by grade (Premium 228 in 2023 then 227, Limited/Touring 222); the trim-keyed rows below carry it, and an unreadable trim is shown nothing" },
     battery: {
       packGrossKwh: f(72.8, "mfr", "high", "CATL pack, shared with the bZ4X AWD"),
       chemistry: f("NMC", "agg", "medium"),
@@ -2677,6 +2688,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     // Class 3 (VIN position 4 = 4, over 10,000 lb GVWR): above EPA's
     // light-duty labelling threshold, so no rating exists to print.
     id: "silverado-class3-standard",
+    abstains: { epaRangeMi: "No EPA rating exists: at over 10,000 lb GVWR these are above EPA's light-duty labelling threshold, confirmed by a blank Monroney range panel and no fueleconomy.gov record" },
     make: "CHEVROLET",
     model: "Silverado EV",
     modelYears: [2024, 2026],
@@ -2706,6 +2718,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
 
   {
     id: "silverado-class3-extended",
+    abstains: { epaRangeMi: "No EPA rating exists: at over 10,000 lb GVWR these are above EPA's light-duty labelling threshold, confirmed by a blank Monroney range panel and no fueleconomy.gov record" },
     make: "CHEVROLET",
     model: "Silverado EV",
     modelYears: [2024, 2026],
@@ -2735,6 +2748,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
 
   {
     id: "silverado-class3-max",
+    abstains: { epaRangeMi: "No EPA rating exists: at over 10,000 lb GVWR these are above EPA's light-duty labelling threshold, confirmed by a blank Monroney range panel and no fueleconomy.gov record" },
     make: "CHEVROLET",
     model: "Silverado EV",
     modelYears: [2024, 2026],
