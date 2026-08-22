@@ -113,10 +113,19 @@ jobs:
             echo "::warning::A dealer's used cars lost their mileage (broken platform parser) — see the step log for the lot list"
           elif [ "$rc" -ne 0 ]; then exit "$rc"; fi
 
+      # FEED_REVALIDATE_SECRET is here so a detected problem can be REPAIRED,
+      # not only reported. A route cache cannot be expired from inside the
+      # render that filled it — Next rejects revalidateTag during a
+      # force-static render, measured 2026-08-22 — so /api/revalidate, called
+      # from outside, is the only thing that can clear a poisoned shard. The
+      # script POSTs it only when a check has already failed, and still exits
+      # 1 afterwards: a repaired incident is still an incident.
       - name: Feed shard health (production CDN endpoints)
         id: feed_shards
         continue-on-error: true
         working-directory: scraper
+        env:
+          FEED_REVALIDATE_SECRET: ${{ secrets.FEED_REVALIDATE_SECRET }}
         run: node feed-shard-check.mjs
 
       # audit-status.json only — never registry.json/gm-warranty.json/
