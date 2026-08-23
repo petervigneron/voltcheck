@@ -160,7 +160,7 @@
 // six hours in feed-audits.yml. Duplicating it here would give it a second,
 // weaker home.
 import { readFile, writeFile, stat } from "node:fs/promises";
-import { encodeSnapshot } from "./lib/snapshot.mjs";
+import { encodeSnapshot, decodeSnapshot } from "./lib/snapshot.mjs";
 
 const arg = (n, d) => { const i = process.argv.indexOf(n); return i >= 0 ? process.argv[i + 1] : d; };
 const DRY = process.argv.includes("--dry-run");
@@ -315,8 +315,11 @@ async function liveCount() {
  *  once is ~200 MB of objects for nothing. */
 async function previousRowCount() {
   try {
-    const rows = JSON.parse(await readFile(SNAPSHOT, "utf-8"));
-    if (!Array.isArray(rows)) throw new Error("not an array");
+    // decodeSnapshot, not JSON.parse: since 2026-08-22 the file on disk is a
+    // gzip+base64 envelope, and a bare parse sees an object where it expects
+    // an array. The decoder accepts the legacy plain array too, and validates
+    // the envelope's own row count, so truncation still fails loudly here.
+    const rows = decodeSnapshot(await readFile(SNAPSHOT, "utf-8"));
     return rows.length;
   } catch (err) {
     if (err.code === "ENOENT") return null;
