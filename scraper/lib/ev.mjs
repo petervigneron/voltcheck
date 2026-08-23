@@ -12,7 +12,16 @@ export const EV_MODEL_RE = new RegExp(
     "leaf", "ariya",
     "ioniq 5", "ioniq 6", "ioniq5", "ioniq6", "kona electric",
     "ev6", "ev9", "niro ev", "soul ev",
-    "id\\.? ?4", "id\\.? ?buzz", "e-tron", "q4 e", "q8 e", "taycan", "macan electric",
+    // \b in front of the ID.4 and ID. Buzz: unanchored, "id\.? ?4" matched
+    // the tail of "Hybrid 4WD" / "E-Hybrid 4" / "Hybrid 4MATIC", so 167 rows
+    // of one crawl (57 Toyota Sequoia Hybrid 4WDs, 32 Panamera E-Hybrid 4s,
+    // F-150 Hybrid 4x4s, Tundra i-FORCE MAX 4WDs …) came back name-matched
+    // BEVs (measured 2026-08-23 on out/listings.json). vPIC refuted the
+    // conventional hybrids and held the Panameras, so nothing false reached
+    // the site — but a nameplate match VOUCHES a dealer's fuel-type text
+    // without vPIC (fuelTextOnly), so a Sequoia a dealer tagged "Electric"
+    // would have shipped. The anchor closes that.
+    "\\bid\\.? ?4", "\\bid\\.? ?buzz", "e-tron", "q4 e", "q8 e", "taycan", "macan electric",
     "mach-e", "mach e", "f-150 lightning", "lightning",
     // \b in front of the iX too, for the same reason as the C40 above: bare
     // "ix\b" matched the tail of every word ending in those letters, so a
@@ -124,7 +133,10 @@ export const PHEV_MODEL_RE = new RegExp(
     // BMW: the trailing "e" on a model number / xDrive code is the plug-in
     // designation in this era (EPA: 330e, 530e, 550e, 740e, 745e, 750e,
     // X3 xDrive30e, X5 xDrive40e/45e/50e). XM and i8 were only ever plug-ins.
-    "\\b(330e|530e|550e|740e|740le|745e|750e)\\b", "\\bxdrive ?(30|40|45|50)e\\b", "\\bxm\\b", "\\bi8\\b",
+    // The lookbehind keeps "550e" off the Lexus RZ 550e, a BEV that shares
+    // the number (found in the 2026-08-23 sweep of out/listings.json; it was
+    // the only non-plug-in the list matched across 110k names).
+    "(?<!\\brz ?)\\b(330e|530e|550e|740e|740le|745e|750e)\\b", "\\bxdrive ?(30|40|45|50)e\\b", "\\bxm\\b", "\\bi8\\b",
     // Mercedes: the "e" suffix again (C350e, S550e/S560e/S580e, GLC350e,
     // GLE450e/GLE550e), plus AMG's "E Performance" plug-in designation.
     "\\bc ?350 ?e\\b", "\\bs ?(550|560|580) ?e\\b", "\\bglc ?350 ?e\\b", "\\bgle ?(450|550) ?e\\b", "\\be[ -]performance\\b",

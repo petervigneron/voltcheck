@@ -2,6 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
   classifyEv,
+  EV_MODEL_RE,
   fuelTextOnly,
   nameplateVouches,
   phevNameplate,
@@ -155,6 +156,8 @@ const NOT_PLUG_INS = [
   "2023 Tesla Model 3",
   "2024 Chevrolet Bolt EUV",
   "2023 Toyota Matrix",
+  "2026 Lexus RZ 550e F Sport",           // BEV sharing BMW's 550e number
+  "2026 LEXUS RZ 450e RZ 550e F SPORT",
 ];
 
 test("PHEV_MODEL_RE matches none of the nearest non-plug-ins", () => {
@@ -237,6 +240,17 @@ test("a hybrid fuel string no longer refutes a BEV nameplate outright — it ask
 test("the BEV list wins when a name is on both (2025 Countryman SE is EV_MODEL_RE's)", () => {
   const c = classifyEv({ fuelType: "Hybrid", name: "2025 MINI Countryman SE ALL4", model: "Countryman SE", vehicleModelDate: "2025" });
   assert.equal(c.kind, "BEV?");
+});
+
+test("EV_MODEL_RE's ID.4 token is anchored: a Sequoia Hybrid 4WD is not an ID.4", () => {
+  // 167 rows of one crawl matched the unanchored "id\.? ?4" through the tail
+  // of "Hybrid 4WD" / "E-Hybrid 4" / "Hybrid 4MATIC" (2026-08-23).
+  for (const n of ["2024 Toyota Sequoia Hybrid 4WD", "2023 Ford F-150 Hybrid 4x4", "2026 Porsche Panamera E-Hybrid 4", "2024 Mercedes-Benz GLE 450 Hybrid 4MATIC"]) {
+    assert.ok(!EV_MODEL_RE.test(n), `must not match EV_MODEL_RE: ${n}`);
+  }
+  for (const n of ["2024 Volkswagen ID.4 Pro S", "2023 VW ID4", "2025 Volkswagen ID. Buzz Pro S", "2025 VW ID.Buzz"]) {
+    assert.ok(EV_MODEL_RE.test(n), `must match EV_MODEL_RE: ${n}`);
+  }
 });
 
 test("the BEV controls still classify as before", () => {
