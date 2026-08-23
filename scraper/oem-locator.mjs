@@ -132,6 +132,18 @@
 //            42 ZDX it does see would have left 16 Prologues behind. Provably
 //            complete (rows vs the service's own count), which it has to be:
 //            its per-VIN page is fake-alive → lib/oem/acura-cpo.mjs
+//   Stellantis CPO — the used half stellantis.mjs left alone, and no longer
+//            negligible now PHEVs count (~433 nationally: Wrangler 4xe, Grand
+//            Cherokee 4xe, Pacifica Hybrid, 500e). fcacertified.com's
+//            get_brand_data is the certified catalogue per brand; the brand
+//            storefronts paginate through a Laravel form POST that needs the
+//            search page's session cookie and CSRF token, which is why
+//            http.mjs gained politeGetWithHeaders. `miles=9999` makes one
+//            query national and `vehicle_type` switches the two CPO tiers
+//            → lib/oem/stellantis-cpo.mjs
+//   Lexus CPO — already built, and it is the LEXUS entry above: /rest/lexus/
+//            inventorySearch/cpo has no `new`/`used` sibling, so that lane is
+//            the L/Certified lot and nothing else. Nothing to add here.
 //   Enterprise Car Sales — not an OEM but the same lane shape: their AEM SPA
 //            queries an OpenSearch BFF on api.ehi.com via a page-published
 //            anonymous-token flow, open to plain Node. One query is their
@@ -167,6 +179,7 @@ import { LEXUS, pullLexus } from "./lib/oem/toyota.mjs";
 import { LUCID, LUCID_NEW, pullLucid, pullLucidNew } from "./lib/oem/lucid.mjs";
 import { HONDA_CPO, pullHondaCpo } from "./lib/oem/honda-cpo.mjs";
 import { ACURA_CPO, pullAcuraCpo } from "./lib/oem/acura-cpo.mjs";
+import { STELLANTIS_CPO, pullStellantisCpo } from "./lib/oem/stellantis-cpo.mjs";
 
 // One registry of pullers keyed by brand. Each entry is a thunk returning a
 // crawl.mjs-shaped report; new OEM families plug in here without touching the
@@ -199,6 +212,7 @@ const PULLERS = {
   [LUCID_NEW.key]: { domain: LUCID_NEW.domain, run: () => pullLucidNew({ log }) },
   [HONDA_CPO.key]: { domain: HONDA_CPO.domain, run: () => pullHondaCpo({ log }) },
   [ACURA_CPO.key]: { domain: ACURA_CPO.domain, run: () => pullAcuraCpo({ log }) },
+  [STELLANTIS_CPO.key]: { domain: STELLANTIS_CPO.domain, run: () => pullStellantisCpo({ log }) },
 };
 
 const args = process.argv.slice(2);
@@ -207,7 +221,7 @@ function flag(name, fallback) {
   return i >= 0 ? args[i + 1] : fallback;
 }
 const OUT_DIR = flag("--out", "out");
-const wanted = flag("--brands", "chevrolet,gmc,cadillac,carbravo,hyundai,hyundai-cpo,kia,nissan,nissan-cpo,bmw,mercedes,jeep,dodge,fiat,genesis,ford-blue-advantage,honda,honda-cpo,acura-cpo,audi,vw,volvo,polestar,lexus,lucid,lucid-new,subaru,enterprise,driveway,echopark").split(",").map((s) => s.trim().toLowerCase());
+const wanted = flag("--brands", "chevrolet,gmc,cadillac,carbravo,hyundai,hyundai-cpo,kia,nissan,nissan-cpo,bmw,mercedes,jeep,dodge,fiat,genesis,ford-blue-advantage,honda,honda-cpo,acura-cpo,stellantis-cpo,audi,vw,volvo,polestar,lexus,lucid,lucid-new,subaru,enterprise,driveway,echopark").split(",").map((s) => s.trim().toLowerCase());
 const selected = wanted.filter((k) => PULLERS[k]);
 if (!selected.length) {
   console.error(`oem-locator: no known brands in "${wanted}" (have: ${Object.keys(PULLERS).join(",")})`);
