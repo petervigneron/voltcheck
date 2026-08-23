@@ -63,10 +63,35 @@ import { SITEMAP_SHARDS } from "../sitemap";
 const PAGE = 500;
 // The bulk feed: a day, expired early by /api/revalidate (see header).
 const FEED_REVALIDATE_SECONDS = 86400;
-// Per-VIN reads (detail page, cohort) stay hourly: a few dozen small
-// requests a day, and the detail page is where an out-of-cycle price
-// correction should show up without waiting for tomorrow.
-const REVALIDATE_SECONDS = 3600;
+// Per-VIN reads (detail page, cohort). A DAY, not the hour they used to be,
+// and the reason is that this constant was never only about Supabase traffic:
+// in the App Router a fetch's revalidate LOWERS the revalidate of the whole
+// route that rendered it — Next 16.3.0, patch-fetch.js: `if (revalidateStore
+// && finalRevalidate < revalidateStore.revalidate) revalidateStore.revalidate
+// = finalRevalidate`. Every one of these four fetches runs inside
+// /listing/[id], so an hour here quietly overrode that route's own
+// `revalidate = 86400` and kept ~100,300 listing pages on an hourly cache.
+//
+// That is the bug the 2026-08-19 commit "stop rewriting listing caches
+// hourly" believed it had fixed: it raised the route export and left this
+// constant alone, so nothing changed. Measured on production 2026-08-23 —
+// a random 40 of the sitemap's listing URLs came back x-vercel-cache: STALE
+// at ages from 5,618 s to 43,361 s, while pages rendered 120 s and 513 s
+// earlier came back HIT. The boundary sits inside (513 s, 5,618 s), which
+// contains 3600 and rules out 86400. The account was at 300% of its 200,000
+// free monthly ISR Writes and 75% of its 10 GB Fast Origin Transfer, both of
+// which are ~entirely this route: it is the only surface with more than a
+// couple of dozen cache entries.
+//
+// The freshness this hour was bought for — "an out-of-cycle price correction
+// should show up without waiting for tomorrow" — does not depend on it.
+// These fetches carry FEED_CACHE_TAG, so the /api/revalidate POST that
+// CLAUDE.md already requires after any out-of-cycle db-sync expires them
+// immediately, and expiring the data cache invalidates the route cache built
+// on it. Without that POST the page is now bounded by a day, which is the
+// bound its own route file already claims and the same one the browse feed
+// runs on.
+const REVALIDATE_SECONDS = 86400;
 // Every fetch that reads listings data carries this tag; one
 // revalidateTag(FEED_CACHE_TAG) in /api/revalidate expires them all.
 export const FEED_CACHE_TAG = "feed";

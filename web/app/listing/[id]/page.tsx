@@ -32,6 +32,13 @@ import { batteryWarranty } from "@/lib/listings/warranty";
 // sitemaps — the bulk of the account's ISR Writes, for staleness the nightly
 // data can't fill. A day-stale price here is bounded by the same day the
 // browse feed is already cached for (see CLAUDE.md egress note).
+//
+// This export alone did NOT deliver that day, and nothing noticed for four
+// days: a fetch's `next.revalidate` lowers the revalidate of the route that
+// rendered it, and the per-VIN reads this page makes were still asking for an
+// hour (lib/listings/db.ts REVALIDATE_SECONDS, raised to a day on 2026-08-23,
+// with the production measurement that caught it). Changing the number below
+// is not enough by itself — check what the page's fetches ask for too.
 // The empty generateStaticParams is what opts the route into static rendering;
 // every real id renders on first visit and is cached from then on.
 export const revalidate = 86400;
