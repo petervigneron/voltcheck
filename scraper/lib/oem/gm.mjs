@@ -44,6 +44,18 @@ export const CARBRAVO = {
   programId: "CARBRAVO",
   domain: "carbravo.com",
   minExpected: 100,
+  // Used PLUG-IN stock (2026-08-23). CarBravo's fuelType filter accepts no
+  // plug-in value (["Plug-In Electric/Gas"], ["Hybrid"], ["PHEV"] all return
+  // 0 against a 34.7k index) and the records' own fuelType strings are
+  // unreliable for these cars (real 2021/2023 Wrangler 4xe rows read
+  // "Premium unleaded"), so the gate is the MODEL identity instead: each of
+  // these names is GM's own model vocabulary (probed: "Wrangler 4xe" 34,
+  // "Grand Cherokee 4xe" 25, "Pacifica Hybrid" 3, "Volt" 1) and each
+  // nameplate has only ever been a plug-in. "Hornet" is deliberately absent —
+  // that model value mixes the gas Hornet GT with the R/T plug-in and CANNOT
+  // be gated per record here; Hornets reach the site via lanes with real
+  // fuel signals. vpic-enrich re-verifies every VIN downstream regardless.
+  phevModels: ["Volt", "Wrangler 4xe", "Grand Cherokee 4xe", "Pacifica Hybrid", "ELR"],
 };
 
 // recheck.mjs must skip these: locator coverage is complete every night, so
@@ -258,13 +270,16 @@ export async function pullGmBrand(brand, { log = () => {} } = {}) {
 
 // USPS state codes, for deriving dealer state from a CarBravo dealer's zip
 // centroid is done in the web layer; here we only pass the raw zip through.
-function toCarBravoRecord(hit) {
+function toCarBravoRecord(hit, phevModel) {
   const vin = String(hit.id ?? "").toUpperCase();
   if (!VIN_RE.test(vin)) return null;
   const year = Number(hit.year);
   if (!(year >= 1981 && year <= new Date().getFullYear() + 2)) return null;
   const model = String(hit.model ?? "").trim();
   if (!model) return null;
+  // A plug-in model query's rows must BE that model — anything else drops
+  // rather than ships under the wrong identity.
+  if (phevModel && model.toLowerCase() !== phevModel.toLowerCase()) return null;
   const cash = hit.pricing?.cash ?? {};
   const { priceUsd, priceProvenance } = pickTaggedPrice("gm-carbravo", [
     ["baseDealerFeaturedPrice", num(cash.baseDealerFeaturedPrice?.value)],
@@ -313,8 +328,11 @@ function toCarBravoRecord(hit) {
     // shopper on the car among a short list.
     sourceUrl: `https://www.carbravo.com/shopping/inventory/search?make=${encodeURIComponent(make)}&model=${encodeURIComponent(model.toLowerCase())}${zip ? `&zipCode=${zip}` : ""}&radius=50&sort=distance%2CASC`,
     dealerDomain: CARBRAVO.domain,
-    evKind: "BEV",
-    evConfidence: "high", // fuelType=Electric facet, not a name match
+    evKind: phevModel ? "PHEV" : "BEV",
+    // GM's own fuel string where present; for the plug-in models the MODEL
+    // identity is the gate (see CARBRAVO.phevModels) and rides along here.
+    fuelType: hit.fuelType || undefined,
+    evConfidence: "high", // fuelType=Electric facet / plug-in-only model identity
     platform: "carbravo-locator",
     fromVdp: false,
     scrapedAt: new Date().toISOString(),
@@ -328,47 +346,60 @@ export async function pullCarBravo({ log = () => {} } = {}) {
   const report = { domain: CARBRAVO.domain, kind: "oem-locator", budget: null, fetched: 0, vehiclePages: 0, itemListVdps: 0, evs: [], errors: [], notes: [] };
   const hdrs = { client: "T1_VSR", oemId: "GM", programId: CARBRAVO.programId, tenantId: "0", dealerId: "0" };
   const byVin = new Map();
-  let total = null;
-  let token = "";
 
-  // Cursor pagination: keep sending the returned nextPageToken until a page
-  // comes back empty. Guard the loop with the reported count too, in case a
-  // token ever loops.
-  for (let page = 0; page < 200; page++) {
-    let data = null;
-    for (let attempt = 0; ; attempt++) {
-      const res = await politePostJson(CARBRAVO.api, {
-        headers: hdrs,
-        body: {
-          filters: { geo: { zipCode: NATIONAL_ZIP, radius: 3000 }, fuelType: { values: ["Electric"] } },
-          sort: { name: "distance", order: "ASC" },
-          paymentTypes: ["CASH"],
-          pagination: { size: PAGE_SIZE, nextPageToken: token },
-        },
-      });
-      report.fetched++;
-      if (res.status === 200 && res.json?.data) { data = res.json.data; break; }
-      const transient = String(res.status).startsWith("error:") || res.status === 429 || res.status >= 500;
-      if (attempt === 0 && transient) { await new Promise((r) => setTimeout(r, 5000)); continue; }
-      report.errors.push(`${res.status} carbravo page=${page}`);
-      break;
+  // Cursor-paginate one filter set to exhaustion. `phevModel` names the
+  // plug-in model being queried (null = the Electric facet walk); it flows
+  // into toCarBravoRecord's gate and the record's evKind. Guard the loop with
+  // the reported count too, in case a token ever loops.
+  const walk = async (filters, phevModel, label) => {
+    let total = null;
+    let token = "";
+    for (let page = 0; page < 200; page++) {
+      let data = null;
+      for (let attempt = 0; ; attempt++) {
+        const res = await politePostJson(CARBRAVO.api, {
+          headers: hdrs,
+          body: {
+            filters: { geo: { zipCode: NATIONAL_ZIP, radius: 3000 }, ...filters },
+            sort: { name: "distance", order: "ASC" },
+            paymentTypes: ["CASH"],
+            pagination: { size: PAGE_SIZE, nextPageToken: token },
+          },
+        });
+        report.fetched++;
+        if (res.status === 200 && res.json?.data) { data = res.json.data; break; }
+        const transient = String(res.status).startsWith("error:") || res.status === 429 || res.status >= 500;
+        if (attempt === 0 && transient) { await new Promise((r) => setTimeout(r, 5000)); continue; }
+        report.errors.push(`${res.status} carbravo ${label} page=${page}`);
+        break;
+      }
+      if (!data) break; // error recorded; flips truncated below
+      if (total === null) total = data.count ?? 0;
+      const hits = data.hits ?? [];
+      if (!hits.length) break; // no more pages
+      for (const hit of hits) {
+        const rec = toCarBravoRecord(hit, phevModel);
+        if (rec) byVin.set(rec.vin, rec);
+      }
+      token = data.pagination?.nextPageToken ?? "";
+      if (!token) break; // last page
+      if (page % 5 === 0) log(`carbravo/${label}: page ${page + 1}, ${byVin.size}/${total} VINs`);
     }
-    if (!data) break; // error recorded; flips truncated below
-    if (total === null) total = data.count ?? 0;
-    const hits = data.hits ?? [];
-    if (!hits.length) break; // no more pages
-    for (const hit of hits) {
-      const rec = toCarBravoRecord(hit);
-      if (rec) byVin.set(rec.vin, rec);
-    }
-    token = data.pagination?.nextPageToken ?? "";
-    if (!token) break; // last page
-    if (page % 5 === 0) log(`carbravo: page ${page + 1}, ${byVin.size}/${total} VINs`);
+    return total ?? 0;
+  };
+
+  // BEVs: the fuelType facet. Plug-ins: per-model walks (the facet has no
+  // plug-in value — see CARBRAVO.phevModels), all folded into one report so
+  // carbravo.com is only ever certified whole.
+  let total = await walk({ fuelType: { values: ["Electric"] } }, null, "electric");
+  for (const m of CARBRAVO.phevModels) {
+    total += await walk({ model: { values: [m] } }, m, m.toLowerCase().replace(/\s+/g, "-"));
   }
 
   report.evs = [...byVin.values()];
   report.vehiclePages = report.fetched;
-  report.notes.push(`national used-EV count ${total ?? 0}`);
+  const phevN = report.evs.filter((r) => r.evKind === "PHEV").length;
+  report.notes.push(`national used-EV count ${total} (${byVin.size - phevN} BEV + ${phevN} PHEV collected)`);
   const shortfall = total > 0 && byVin.size < total * 0.9;
   if (shortfall) report.errors.push(`collected ${byVin.size} of ${total} — paging shortfall`);
   report.truncated = report.errors.length > 0 || byVin.size < CARBRAVO.minExpected;
