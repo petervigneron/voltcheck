@@ -114,9 +114,17 @@ test("vehicleNode classifies a Cadillac OPTIQ as a BEV on its declared fuel", ()
   assert.deepEqual(classifyEv(vehicleNode(CARD, ORIGIN)), { isEv: true, kind: "BEV", confidence: "high" });
 });
 
-test("a Gas/Electric Hybrid card is not admitted as an EV", () => {
+test("a Gas/Electric Hybrid card is not admitted as an EV on the fuel field", () => {
+  // The card is an OPTIQ, a known BEV nameplate: a hybrid fuel string no
+  // longer refutes it outright (since 2026-08-23 it falls through to the
+  // nameplate check, because "Hybrid" is also what dealer.com prints on a
+  // Wrangler 4xe). What it must never do is admit the car at high confidence
+  // on that fuel text — vPIC has to settle it.
   const node = vehicleNode({ ...CARD, VehicleFuelType: "Gas/Electric Hybrid" }, ORIGIN);
-  assert.equal(classifyEv(node).isEv, false);
+  assert.notEqual(classifyEv(node).confidence, "high");
+  // And with no EV nameplate to ask about, a hybrid is simply not an EV.
+  const crv = vehicleNode({ ...CARD, VehicleMake: "Honda", VehicleModel: "CR-V Hybrid", VehicleFuelType: "Gas/Electric Hybrid" }, ORIGIN);
+  assert.equal(classifyEv(crv).isEv, false);
 });
 
 test("vehicleNode recovers the VIN from the image carousel when the card field is blank", () => {

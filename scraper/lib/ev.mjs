@@ -1,6 +1,8 @@
-// Is this vehicle an EV? Belt and suspenders: structured fuel-type fields
-// first, then VIN WMI, then model-name match. Anything that only matches by
-// name is flagged lower-confidence so the pipeline can vPIC-verify it later.
+// Is this vehicle an EV (battery-electric or plug-in hybrid)? Belt and
+// suspenders: structured fuel-type fields first, then VIN WMI, then model-name
+// match. Anything that only matches by name is flagged lower-confidence
+// ("BEV?" / "PHEV?", confidence name_match) so vpic-enrich.mjs can confirm it
+// before ingest lets it through; a name match alone never publishes a car.
 export const EV_MODEL_RE = new RegExp(
   [
     "model [3sxy]\\b", "cybertruck",
@@ -74,6 +76,119 @@ export const EV_MODEL_RE = new RegExp(
 // never built a plug-in hybrid or a combustion vehicle under any of them.
 export const EV_ONLY_WMIS = new Set(["5YJ", "7SA", "7G2", "LRW", "XP7", "7FC", "7PD", "50E", "7UU", "YSP"]);
 
+// Plug-in hybrid nameplates. Separate from EV_MODEL_RE on purpose: a match
+// here says "this car plugs in", never "this car is battery-electric", and the
+// two lists are consulted in that order so a name on both (the 2025 Countryman
+// SE, a BEV sharing its name with the 2018-23 plug-in) asks vPIC as BEV? and
+// lets the decode settle the kind.
+//
+// Why this list exists (2026-08-23): dealer.com and DealerOn — ~94% of the
+// crawl — declare a Jeep Wrangler 4xe with fuelType "Hybrid", the identical
+// string a CR-V Hybrid gets, and classifyEv read that as "not an EV". Nothing
+// downstream could catch it because no plug-in nameplate was known anywhere.
+// Autotrader lists ~46,700 PHEVs nationally; the feed carried ~4,500.
+//
+// Every entry was checked against EPA's fueleconomy.gov vehicles.csv
+// (atvType "Plug-in Hybrid", by make/model/year) before it went in, and the
+// ones a nameplate alone cannot settle are year-gated below rather than
+// listed here. Names that share a badge with a conventional hybrid or petrol
+// car in some year are NOT entries: "Tonale" (a 2.0T petrol Tonale exists
+// from 2025), "RX 450h" (a conventional hybrid 2010-22; only the "+" is the
+// plug-in), "Santa Fe"/"Tucson"/"Sorento"/"Niro"/"CX-90" (those arrive via
+// the explicit "PHEV"/"Plug-in" token in their own names, see
+// PHEV_NAME_CLAIM_RE). Rejected outright, because the primary source does not
+// certify them as plug-ins: Lamborghini Revuelto (EPA atvType "Hybrid"),
+// Nissan Rogue Plug-In Hybrid and Ram 1500 Ramcharger (no EPA rows at all),
+// BMW 545e/760e/225xe and Mercedes CLA 250e/E 350e/GLE 350de (never
+// certified for the US).
+//
+// Same anchoring discipline as the iX/C40/RZ lessons above: \b on every
+// short token, never a bare substring. "volt" additionally refuses a digit
+// or hyphen in front of it, because "48-Volt" is how dealers describe a
+// mild-hybrid starter-generator and that is the exact opposite claim.
+export const PHEV_MODEL_RE = new RegExp(
+  [
+    // Stellantis
+    "\\b4xe\\b", "pacifica hybrid", "\\bhornet r/?t\\b", "\\btonale\\b.*\\beawd\\b",
+    // Toyota / Lexus — the "+" (or EPA's "Plus") is what separates the
+    // RX 450h+ plug-in from the 2010-22 RX 450h hybrid; NX 450h and TX 550h
+    // were only ever sold as the "+" car, so they may drop it.
+    "\\b(prius|rav4) prime\\b", "\\bnx ?450h\\b", "\\brx ?450h ?(\\+|plus\\b)", "\\btx ?550h\\b",
+    // Honda: every Clarity plugs in or is an FCEV (vPIC decides the kind).
+    "\\bclarity\\b",
+    // Ford / Lincoln: "Energi" was only ever the plug-in badge; "Grand
+    // Touring" is the plug-in trim on both Lincolns and nothing else.
+    "\\benergi\\b", "\\b(aviator|corsair) grand touring\\b",
+    // GM
+    "(?<![\\d-])(?<!\\d )\\bvolt\\b", "\\belr\\b",
+    // BMW: the trailing "e" on a model number / xDrive code is the plug-in
+    // designation in this era (EPA: 330e, 530e, 550e, 740e, 745e, 750e,
+    // X3 xDrive30e, X5 xDrive40e/45e/50e). XM and i8 were only ever plug-ins.
+    "\\b(330e|530e|550e|740e|740le|745e|750e)\\b", "\\bxdrive ?(30|40|45|50)e\\b", "\\bxm\\b", "\\bi8\\b",
+    // Mercedes: the "e" suffix again (C350e, S550e/S560e/S580e, GLC350e,
+    // GLE450e/GLE550e), plus AMG's "E Performance" plug-in designation.
+    "\\bc ?350 ?e\\b", "\\bs ?(550|560|580) ?e\\b", "\\bglc ?350 ?e\\b", "\\bgle ?(450|550) ?e\\b", "\\be[ -]performance\\b",
+    // Audi: "TFSI e" is the plug-in badge on every model that wears it.
+    "\\btfsi ?e\\b",
+    // Porsche: "E-Hybrid" is the plug-in badge on every Cayenne/Panamera.
+    "\\be-hybrid\\b", "\\b918 spyder\\b",
+    // Volvo: T8 / Recharge on these bodies is the plug-in (the XC40 and C40
+    // Recharge are BEVs and are deliberately not in this list — they live in
+    // EV_MODEL_RE). "Polestar Engineered" is the S60/V60 T8 by another name.
+    "\\b(xc90|xc60|s60|v60|s90|v90)\\b.*\\b(t8|recharge)\\b", "\\bpolestar engineered\\b", "\\bpolestar 1\\b",
+    // Land Rover: the P###e codes are the plug-ins.
+    "\\bp(300|400|440|460|510|550)e\\b",
+    // MINI's 2018-23 plug-in, distinct from the Cooper SE hatch (BEV).
+    "\\bcooper s ?e countryman\\b",
+    // Bentley / exotics
+    "\\bbentayga hybrid\\b", "\\bflying spur hybrid\\b",
+    "\\bsf90\\b", "\\b296 ?(gtb|gts|speciale)\\b", "\\bartura\\b", "\\bmclaren p1\\b", "\\burus se\\b",
+    "\\brevero\\b", "\\bgs-?6\\b", "\\bfisker karma\\b", "\\bvalhalla\\b",
+  ].join("|"),
+  "i"
+);
+
+// Nameplates that are plug-ins only in some model years. Outside the window
+// (or with no year at all) they do not match — abstaining is the honest
+// direction, because the same name on the other side of the gate is a
+// conventional hybrid or a petrol car.
+//   Crosstrek Hybrid: EPA certifies the 2019-23 car as a plug-in and the 2026
+//   one as a conventional hybrid. 2022 is a hole in EPA's file, not a petrol
+//   year (registry/ev-rules-audit-2026-08-22.json adjudicated it kept).
+//   BMW M5: petrol through 2023; every 2025+ M5 is a plug-in.
+//   Bentley Continental GT/GTC and Flying Spur: petrol through 2024; every
+//   2025+ one is a plug-in ("Ultra Performance Hybrid").
+//   AMG E 53 Hybrid: the 2019-23 "AMG E 53" was a 48V mild hybrid; the 2025+
+//   car is a plug-in and carries "Hybrid" in its name.
+const PHEV_YEAR_GATED = [
+  { re: /\bcrosstrek hybrid\b/i, from: 2019, to: 2023 },
+  { re: /\bm5\b/i, from: 2025 },
+  { re: /\bcontinental gtc?\b|\bflying spur\b/i, from: 2025 },
+  { re: /\be ?53 hybrid\b/i, from: 2025 },
+];
+
+// A plug-in claim made in the car's own NAME rather than a fuel field —
+// "Tucson Plug-in Hybrid", "Outlander PHEV", "CX-90 PHEV". This is the
+// dealer's (or the maker's) word, so it only ever produces a name_match that
+// vPIC must confirm; it never vouches on its own.
+export const PHEV_NAME_CLAIM_RE = /\bphev\b|plug[\s-]?in/i;
+
+// A plug-in claim in a FUEL field. Accepted as the dealer's explicit
+// statement ("Plug-In Hybrid", "Plug-in Gas/Electric Hybrid", "PHEV",
+// "Plug-In Electric/Gas" — Stellantis's own string for the 4xe and Pacifica
+// Hybrid). "Hybrid" alone is still not an EV.
+const PHEV_FUEL_RE = /plug[\s-]?in|\bphev\b/i;
+
+// Does the nameplate settle that this car plugs in? `year` gates the names
+// that are only plug-ins in some model years.
+export function phevNameplate(name, year) {
+  if (!name) return false;
+  if (PHEV_MODEL_RE.test(name)) return true;
+  const y = Number(year);
+  if (!Number.isFinite(y)) return false;
+  return PHEV_YEAR_GATED.some((g) => y >= g.from && y <= (g.to ?? Infinity) && g.re.test(name));
+}
+
 const text = (v) => (v == null ? "" : typeof v === "string" ? v : JSON.stringify(v));
 
 export function classifyEv(vehicle) {
@@ -83,11 +198,18 @@ export function classifyEv(vehicle) {
     ...(Array.isArray(vehicle.vehicleEngine) ? vehicle.vehicleEngine.map((e) => e?.fuelType) : []),
   ].map(text).join(" ").toLowerCase();
 
-  if (fuelFields.includes("electric")) {
-    // "electric" alone still admits hybrids ("Gas/Electric Hybrid")
-    if (fuelFields.includes("hybrid") || fuelFields.includes("gas")) {
-      return fuelFields.includes("plug") ? { isEv: true, kind: "PHEV", confidence: "high" } : { isEv: false };
-    }
+  // An explicit plug-in claim in the fuel field is the dealer's own word, the
+  // same standing a bare "Electric" has for a BEV. Checked before the electric
+  // test because "Plug-In Hybrid" carries no "electric" at all — the old rule
+  // demanded both words and so threw every one of these away.
+  if (PHEV_FUEL_RE.test(fuelFields)) return { isEv: true, kind: "PHEV", confidence: "high" };
+
+  // "electric" alone still admits hybrids ("Gas/Electric Hybrid"). A hybrid
+  // fuel string without a plug is NOT a refutation, though — it is what
+  // dealer.com prints on a Wrangler 4xe — so it falls through to the
+  // nameplate check below instead of returning not-an-EV here. The nameplate
+  // path only ever yields a name_match that vPIC must confirm.
+  if (fuelFields.includes("electric") && !fuelFields.includes("hybrid") && !fuelFields.includes("gas")) {
     return { isEv: true, kind: "BEV", confidence: "high" };
   }
 
@@ -98,8 +220,27 @@ export function classifyEv(vehicle) {
 
   const name = [vehicle.name, vehicle.model, text(vehicle.model?.name)].map(text).join(" ");
   if (EV_MODEL_RE.test(name)) return { isEv: true, kind: "BEV?", confidence: "name_match" };
+  // The plug-in badge is often in the trim, not the model ("Wrangler" /
+  // "Rubicon 4xe", "XC90" / "T8 Recharge"), so the trim joins the haystack
+  // here. EV_MODEL_RE above keeps its original haystack on purpose: widening
+  // it is a change to the BEV rule, not this one.
+  const nameWithTrim = `${name} ${text(vehicle.vehicleConfiguration)}`;
+  const year = Number(text(vehicle.vehicleModelDate).match(/\b(19[89]\d|20\d{2})\b/)?.[0]);
+  if (phevNameplate(nameWithTrim, year) || PHEV_NAME_CLAIM_RE.test(nameWithTrim)) {
+    return { isEv: true, kind: "PHEV?", confidence: "name_match" };
+  }
 
   return { isEv: false };
+}
+
+// Can the car's own name vouch for an electrified powertrain, without asking
+// vPIC? True for a known BEV nameplate or a plug-in nameplate (year-gated
+// where the name alone does not settle it). The generic "PHEV"/"Plug-in"
+// name token deliberately does NOT vouch: it is the same party's claim as the
+// fuel field, not an independent one.
+export function nameplateVouches(l) {
+  const name = [l.make, l.model, l.name, l.trim].filter(Boolean).join(" ");
+  return EV_MODEL_RE.test(name) || phevNameplate(name, l.year);
 }
 
 // A "high" classification backed by nothing but the dealer's own fuel-type
@@ -110,8 +251,64 @@ export function classifyEv(vehicle) {
 // never asked about. Both need the same predicate, so it lives here rather
 // than in one of them — they disagreeing about which rows are unverified is
 // the failure this whole lane exists to prevent.
+//
+// A plug-in nameplate vouches the same way a BEV nameplate does (2026-08-23):
+// a dealer's "Plug-In Hybrid" on a car whose own name says 4xe / Energi /
+// E-Hybrid is two sources agreeing, and that is the standard "Electric" on a
+// Lyriq already ships under. It also matters for the plug-ins vPIC is simply
+// wrong about — it decodes the BMW XM and the S 580e as bare Gasoline and the
+// Polestar 1 as Strong HEV (registry/ev-rules-audit-2026-08-22.json) — which
+// a vPIC-only gate would refute every night.
 export function fuelTextOnly(l) {
   if (l.evConfidence !== "high" || l.evConfidenceSource === "vpic") return false;
   if (EV_ONLY_WMIS.has(String(l.vin ?? "").slice(0, 3).toUpperCase())) return false;
-  return !EV_MODEL_RE.test([l.model, l.name, l.trim].filter(Boolean).join(" "));
+  return !nameplateVouches(l);
+}
+
+// ── What a vPIC decode row proves ──────────────────────────────────────────
+// Shared by vpic-enrich.mjs (which promotes/demotes on them) and
+// audit-listings.mjs (which re-judges live rows by them). One definition on
+// purpose: an audit that judged more harshly than ingest would retire cars
+// ingest would happily admit tomorrow, and vice versa.
+// vPIC confirms BEV via ElectrificationLevel ("BEV (Battery Electric
+// Vehicle)") or, when that's blank, a bare "Electric" FuelTypePrimary with no
+// secondary fuel. PHEVs/HEVs report FuelTypePrimary "Electric" too (secondary
+// "Gasoline", ElectrificationLevel "PHEV (...)"), so both are checked and
+// excluded explicitly — this is the only path that promotes a name-match EV,
+// and it never fires on name text alone.
+// The reverse check, for demoting fuel-text-only classifications: demotion is
+// evidence-based only. A blank vPIC decode proves nothing and must not delist
+// a real EV — only an affirmative non-plug-in hybrid level or a pure
+// combustion fuel row refutes. (Control-tested 2026-08-15: Prius Two → Strong
+// HEV refuted; Cayenne "S" E-Hybrid, GLC 350e, AMG E 53 → PHEV kept; the GLC
+// reports FuelTypePrimary "Gasoline" WITH level PHEV, which is why the level
+// is consulted first.)
+export function vpicRefutesEv(r) {
+  const level = String(r.ElectrificationLevel ?? "");
+  if (/phev|plug|bev|battery electric/i.test(level)) return false;
+  if (/hev|hybrid|mild/i.test(level)) return true;
+  const fuels = `${r.FuelTypePrimary ?? ""} ${r.FuelTypeSecondary ?? ""}`;
+  return /gasoline|diesel|flex|e85/i.test(fuels) && !/electric/i.test(fuels);
+}
+
+export function vpicConfirmsBev(r) {
+  const level = String(r.ElectrificationLevel ?? "");
+  const fuelPrimary = String(r.FuelTypePrimary ?? "");
+  const fuelSecondary = String(r.FuelTypeSecondary ?? "");
+  if (/hev|phev|hybrid/i.test(level) || /hybrid/i.test(fuelPrimary) || fuelSecondary.trim()) return false;
+  if (/\bbev\b|battery electric/i.test(level)) return true;
+  return /electric/i.test(fuelPrimary);
+}
+
+// vPIC confirms a plug-in hybrid ONLY through an affirmative ElectrificationLevel
+// ("PHEV (Plug-in Hybrid Electric Vehicle)"). The fuel pair is not enough:
+// "Electric" + "Gasoline" is what a conventional hybrid can report too, and a
+// blank level is silence, not agreement. This is the only path that promotes
+// a "PHEV?" name match, and it errs toward abstaining — vPIC decodes the BMW XM
+// and the Mercedes S 580e as bare Gasoline and the Polestar 1 as Strong HEV
+// (registry/ev-rules-audit-2026-08-22.json), so those nameplates never land
+// through this path and are held instead. Held is honest; a Strong HEV string
+// promoted as a plug-in would not be.
+export function vpicConfirmsPhev(r) {
+  return /\bphev\b|plug-?in/i.test(String(r.ElectrificationLevel ?? ""));
 }
