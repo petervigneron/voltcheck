@@ -21,6 +21,19 @@ import { readFileSync } from "node:fs";
 import { findListing } from "../lib/listings/source";
 import { SAMPLE_LISTINGS } from "../lib/listings/sample";
 import { __resetWalkFailureForTest } from "../lib/listings/db";
+import { decodeSnapshot } from "../lib/listings/snapshot";
+
+/** The committed snapshot, through the SAME decoder source.ts uses. This is the
+ *  control on the compressed format (2026-08-22): scraper/ and web/ each carry
+ *  their own copy of the codec across the lane boundary, and this is what stops
+ *  them drifting — a snapshot the site cannot decode fails here, loudly, instead
+ *  of 404ing every listing page during the outage the file exists for. */
+function snapshotRows(): { id: string; vin: string }[] {
+  return decodeSnapshot(JSON.parse(readFileSync("data/scraped-listings.json", "utf8"))) as unknown as {
+    id: string;
+    vin: string;
+  }[];
+}
 
 const SUPABASE_URL = "https://example.supabase.co";
 
@@ -163,7 +176,7 @@ test("a database that 500s serves the bundled snapshot, without a walk", async (
   // and it still resolves — the row now comes straight out of the bundled
   // JSON instead of out of a walk that fails 226 times first. The VIN is a
   // real one from the committed snapshot.
-  const snapshotId = (JSON.parse(readFileSync("data/scraped-listings.json", "utf8")) as { id: string }[])[0].id;
+  const snapshotId = snapshotRows()[0].id;
   const mock = mockSupabase(() => ({ status: 500 }));
   try {
     const found = await findListing(snapshotId);
@@ -198,7 +211,7 @@ test("every bundled snapshot row is keyed by its own lowercase VIN", async () =>
   // real cars. Checked here against the committed file rather than assumed,
   // so a future snapshot that breaks the rule fails loudly instead of
   // quietly 404ing.
-  const rows = JSON.parse(readFileSync("data/scraped-listings.json", "utf8")) as { id: string; vin: string }[];
+  const rows = snapshotRows();
   assert.ok(rows.length > 0);
   const offenders = rows.filter((r) => r.id !== String(r.vin ?? "").toLowerCase() || !/^[a-z0-9]{17}$/.test(r.id));
   assert.deepEqual(offenders.slice(0, 5), []);

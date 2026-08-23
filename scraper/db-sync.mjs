@@ -18,6 +18,7 @@ import { markTrimSuspects } from "./lib/trim-suspect.mjs";
 import { loadTrimOverrides, applyTrimOverrides } from "./lib/trim-overrides.mjs";
 import { fetchWithRetry } from "./lib/retry.mjs";
 import { laneOf, OEM_LOCATOR_DOMAINS } from "./lib/oem-lane-domains.mjs";
+import { readSnapshot } from "./lib/snapshot.mjs";
 
 // Minimal .env parser — launchd jobs carry no shell environment.
 async function loadEnv(url) {
@@ -41,9 +42,7 @@ if (!SUPABASE_URL || (!SERVICE_KEY && !GATEWAY)) {
   process.exit(0);
 }
 
-const listings = JSON.parse(
-  await readFile(new URL("../web/data/scraped-listings.json", import.meta.url), "utf-8")
-);
+const listings = await readSnapshot(new URL("../web/data/scraped-listings.json", import.meta.url));
 
 // A catastrophically small feed means the crawl broke, not that the
 // inventory vanished. Don't push it — a fetch failure is never evidence

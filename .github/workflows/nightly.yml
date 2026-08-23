@@ -126,7 +126,7 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
-  contents: write # commits the refreshed registry + listings snapshot
+  contents: write # commits the refreshed registry and per-VIN caches
 
 env:
   # Kept for the OEM locator lane's artifact naming and the recovery paths that
@@ -661,7 +661,10 @@ jobs:
       # Hand the ingest/sync results forward to finalize-audits: the
       # gm-warranty cache and registry (unchanged pass-through) together so
       # the commit step there gets both from one artifact, and the ingested
-      # listings snapshot (post price-audit correction, if any) separately.
+      # listings snapshot separately — kept as a RECOVERY artifact only, since
+      # this job's ingest covers the OEM lanes rather than the whole fleet and
+      # so must never be committed over the weekly snapshot (see
+      # finalize-audits' commit step).
       # always(): a partial run should still ship whatever it produced.
       # skip_crawl-gated like its download above — in probe-only mode out/
       # was never downloaded, so there is nothing here to re-upload, and
@@ -689,7 +692,7 @@ jobs:
   # state to mean anything: which rooftops shared inventory (only visible in
   # this run's out/colisting-pairs.json, gone once the runner is deleted),
   # the monthly comp/variant refreshes, and the commit of the refreshed
-  # registry + listings snapshot (+ audit-status.json, see that step). None
+  # registry and per-VIN caches (+ audit-status.json, see that step). None
   # of it is on the path to a shopper's browser — finalize-ingest's
   # revalidate already happened — so it gets its own job rather than sharing
   # a clock with (or risking) the sync. Skipped entirely during an
@@ -730,10 +733,11 @@ jobs:
         with:
           name: finalize-ingest-registry
           path: scraper/registry
-      - uses: actions/download-artifact@v4
-        with:
-          name: finalize-ingest-listings
-          path: web/data
+      # DELIBERATELY NOT DOWNLOADED: finalize-ingest-listings, the snapshot
+      # ingest.mjs wrote. Nothing in this job reads it — colisting-sync takes
+      # finalize-ingest-out, and the enrichment-gap audit reads the CDN shards
+      # — and pulling it in was actively harmful, which is why it is gone
+      # rather than merely unused. See the commit step below.
 
       # Which rooftops offered the same VIN tonight (migration 0036). The
       # merge dedupes one VIN to one record, so this evidence exists only in
@@ -861,7 +865,7 @@ jobs:
       # updated whether or not this commit lands. Retry around the discovery
       # sweep's writes, and warn rather than fail if we lose the race — a
       # red X here would wrongly imply the crawl itself failed.
-      - name: Commit refreshed data
+      - name: Commit refreshed registry
         if: always()
         run: |
           git config user.name "voltcheck-bot"
@@ -881,9 +885,25 @@ jobs:
           # this file's commit doesn't lose data, only makes the NEXT run's
           # "was this normal" comparison and feed-audits.yml's staleness check
           # briefly blind — worth committing every night regardless.
-          git add scraper/registry/registry.json scraper/registry/gm-warranty.json scraper/registry/vpic-cache.json scraper/registry/audit-status.json web/data/scraped-listings.json
+          # web/data/scraped-listings.json IS NOT STAGED HERE, and its absence
+          # is the point. When this workflow still ran the whole-fleet crawl,
+          # ingest.mjs's output was a whole-fleet view and committing it was
+          # correct. That crawl is gone: nightly now ingests only the OEM
+          # locator lanes, so ingest.mjs leaves this file holding ~38,000 cars
+          # instead of ~100,000 — and this step was still committing it, every
+          # night, over the ~100,000-row snapshot refresh-fallback.yml writes on
+          # Sundays. The site would have served that silently during an outage,
+          # every request 200, ~62,000 cars simply not there: the 2026-08-16 and
+          # 2026-08-21 incident shape with a worse number, and precisely the
+          # thing rolling-crawl.yml refuses to do for the same reason (see its
+          # own note about not committing a slice's copy).
+          #
+          # Only a whole-fleet view may write that file, and this job no longer
+          # has one. refresh-fallback.yml owns it: it walks live_listings_feed
+          # weekly and crawls nothing.
+          git add scraper/registry/registry.json scraper/registry/gm-warranty.json scraper/registry/vpic-cache.json scraper/registry/audit-status.json
           git diff --staged --quiet && { echo "nothing to commit"; exit 0; }
-          git commit -m "Nightly: registry + listings refresh [skip ci]"
+          git commit -m "Nightly: registry refresh [skip ci]"
           for i in 1 2 3 4 5; do
             if git pull --rebase --autostash && git push; then
               echo "data refresh pushed"; exit 0

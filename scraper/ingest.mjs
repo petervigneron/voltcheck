@@ -2,7 +2,8 @@
 // scraper/out/listings.json → web/data/scraped-listings.json (web Listing shape).
 // Keeps only records complete enough to display honestly; name-match-only EV
 // classifications are dropped until vPIC verification exists.
-import { readFile, writeFile } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
+import { writeSnapshot } from "./lib/snapshot.mjs";
 import { isKnownMake } from "./lib/makes.mjs";
 import { publishedCondition } from "./lib/condition.mjs";
 import { fuelTextOnly } from "./lib/ev.mjs";
@@ -222,5 +223,9 @@ if (unverified.length) {
 }
 
 const dest = new URL("../web/data/scraped-listings.json", import.meta.url);
-await writeFile(dest, JSON.stringify(listings, null, 2));
-console.error(`${listings.length} listings → web/data/scraped-listings.json (${raw.length - listings.length} dropped as incomplete/unverified)`);
+// Compressed envelope, via the shared codec — see lib/snapshot.mjs for the
+// measurements and for why the three alternatives were rejected. This used to
+// be `JSON.stringify(listings, null, 2)`, 850 bytes a row, on a file git
+// refuses to push over 100 MB.
+const { bytes } = await writeSnapshot(dest, listings);
+console.error(`${listings.length} listings → web/data/scraped-listings.json, ${(bytes / 1048576).toFixed(1)} MB (${raw.length - listings.length} dropped as incomplete/unverified)`);

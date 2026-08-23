@@ -1,17 +1,27 @@
 import type { Listing } from "./types";
 import { SAMPLE_LISTINGS } from "./sample";
+import { decodeSnapshot } from "./snapshot";
 import { dbConfigured, fetchListingByIdFromDb, fetchListingDetailFromDb, fetchListingsFromDb } from "./db";
 
 // Live inventory comes from Supabase (nightly scraper sync, see
 // scraper/db-sync.mjs); the bundled JSON is the fallback when the DB is
 // unconfigured or unreachable, so local dev and outages both keep working.
-// The fallback is 17MB of JSON — imported lazily, on the failure path only,
-// so a cold serverless start never parses it just to have it around.
+// The fallback is a gzipped snapshot — 5.4MB on disk against the 40.7MB of
+// JSON it holds (see lib/listings/snapshot.ts for why it is compressed, and
+// for the measurements) — imported lazily, on the failure path only, so a
+// cold serverless start never parses it just to have it around.
 // Demo rows exercise enrichment cases the current scrape doesn't cover and
 // disappear as real coverage grows.
+let snapshotCache: Listing[] | undefined;
 async function fallbackListings(): Promise<Listing[]> {
-  const scraped = await import("@/data/scraped-listings.json");
-  return scraped.default as Listing[];
+  // Decoded once per instance and held: the module registry caches the import,
+  // but not the gunzip, and an outage that resolves ten VINs should pay for
+  // one decode rather than ten. (~174 ms each, measured on 58,730 rows.)
+  if (!snapshotCache) {
+    const scraped = await import("@/data/scraped-listings.json");
+    snapshotCache = decodeSnapshot(scraped.default);
+  }
+  return snapshotCache;
 }
 
 // Some dealer platforms serve photos from a root-relative path ("/inventory

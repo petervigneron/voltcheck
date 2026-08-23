@@ -26,11 +26,12 @@
 // re-runs db-sync.mjs to push the corrections), 1 = audit could not run.
 //
 //   node price-audit.mjs [--dry-run] [--verify-cap 60]
-import { readFile, writeFile } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
 import { priceFloor } from "./lib/price-floor.mjs";
+import { readSnapshot, writeSnapshot } from "./lib/snapshot.mjs";
 import { recordRun } from "./lib/audit-status.mjs";
 
 const execFileP = promisify(execFile);
@@ -72,7 +73,7 @@ async function loadEnv(url) {
 await loadEnv(new URL("./.env", import.meta.url));
 
 const LISTINGS_URL = new URL("../web/data/scraped-listings.json", import.meta.url);
-const listings = JSON.parse(await readFile(LISTINGS_URL, "utf-8"));
+const listings = await readSnapshot(LISTINGS_URL);
 
 // ---- WA medians via wa_price_comps --------------------------------------
 // Raw wa_ev_sales reads are hard-closed to anon (migration 0007: the site
@@ -239,5 +240,5 @@ console.error(
 );
 const detail = `${flagged.length} flagged, ${corrected} corrected, ${confirmed} confirmed, ${suppressed} suppressed`;
 if (corrected + suppressed === 0) await finish(0, "ok", detail);
-await writeFile(LISTINGS_URL, JSON.stringify(listings, null, 2));
+await writeSnapshot(LISTINGS_URL, listings);
 await finish(20, "ok", detail);

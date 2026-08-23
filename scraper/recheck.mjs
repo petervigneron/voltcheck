@@ -14,6 +14,7 @@
 //   soft gone  200 but no VIN                       -> strike; delist on 2nd
 //   anything else (403, timeout, 5xx)               -> no conclusion
 import { readFile } from "node:fs/promises";
+import { readSnapshot } from "./lib/snapshot.mjs";
 import { fetchRaw } from "./lib/http.mjs";
 import { fetchWithRetry } from "./lib/retry.mjs";
 import { extractVehicles } from "./lib/jsonld.mjs";
@@ -159,7 +160,7 @@ console.error(
 let oemAlive = new Set();
 try {
   const feedUrl = new URL("../web/data/scraped-listings.json", import.meta.url);
-  const feed = JSON.parse(await readFile(feedUrl, "utf-8"));
+  const feed = await readSnapshot(feedUrl);
   oemAlive = oemAliveVins(feed);
   console.error(`recheck: ${oemAlive.size} VINs from tonight's own OEM-locator sweep loaded for cross-check`);
 } catch {

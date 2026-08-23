@@ -40,10 +40,17 @@ name: Refresh the bundled fallback snapshot
 #   still showing during an outage, and a car listed last Tuesday 404ing during
 #   one. Neither is worth a daily walk.
 #
-#   SIZE. The result is a ~70 MB blob in git, and GitHub refuses any push
-#   containing a file over 100 MB. 52 of those a year is already the outer edge
-#   of reasonable; 365 is not. The script warns with the arithmetic once the
-#   file passes 80 MB.
+#   SIZE. The result is a blob in git, and GitHub refuses any push containing a
+#   file over 100 MB. 52 of those a year is already the outer edge of
+#   reasonable; 365 is not. As plain JSON this was also a live collision course
+#   — 70 MB at the current feed, the limit at ~144,000 cars — so the snapshot is
+#   now written as a gzip+base64 envelope (scraper/lib/snapshot.mjs carries the
+#   measurements and why narrowing the shape, capping the rows, and moving the
+#   file out of git were each rejected). 9.3 MB at the current feed, ceiling out
+#   near 1,083,000 cars. The script warns at 60 MB and REFUSES to write past
+#   90 MB, so the ceiling can only ever surface here, as a red run of this
+#   workflow with the arithmetic in the log — never as a rejected push in some
+#   unrelated workflow days later.
 #
 # Sunday 21:40 UTC because every other slot is taken: rolling-crawl at :00 and
 # :30, refresh-site at 04:00 and 16:00, nightly at 10:30, feed-audits at :15

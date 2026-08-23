@@ -5,6 +5,11 @@
 //   cd supabase && npm install && node verify.mjs
 import { PGlite } from "@electric-sql/pglite";
 import { readFile, readdir } from "node:fs/promises";
+// The snapshot is a compressed envelope since 2026-08-22 (scraper/lib/snapshot.mjs
+// carries the reasoning). Reaching across to the scraper lane for the codec
+// rather than re-implementing it: this file is a verifier, and a verifier that
+// carries its own private copy of the format can pass while the real readers fail.
+import { readSnapshot } from "../scraper/lib/snapshot.mjs";
 
 const MIGRATIONS_DIR = new URL("./migrations/", import.meta.url);
 const LISTINGS = new URL("../web/data/scraped-listings.json", import.meta.url);
@@ -33,7 +38,7 @@ for (const f of (await readdir(MIGRATIONS_DIR)).filter((f) => f.endsWith(".sql")
   console.log(`migration applied: ${f}`);
 }
 
-const all = JSON.parse(await readFile(LISTINGS, "utf-8"));
+const all = await readSnapshot(LISTINGS);
 // Real rows spanning 3 domains: up to 4 cars from each of the first 3 domains.
 const domains = [...new Set(all.map((l) => l.dealerDomain))].slice(0, 3);
 const sample = domains.flatMap((d) => all.filter((l) => l.dealerDomain === d).slice(0, 4));

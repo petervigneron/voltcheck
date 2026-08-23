@@ -93,16 +93,27 @@
 // reading when things work. The site's own freshness is refresh-site.yml's job
 // and runs twice a day; this is the copy of last resort.
 //
-// The other reason for weekly is that the result is a ~70 MB blob in git. See
-// SIZE_WARN_BYTES below — GitHub blocks a push containing any file over 100 MB,
-// and at 727 bytes a row this file gets there at ~144,000 cars.
+// The other reason for weekly is that the result is a blob in git, and GitHub
+// blocks a push containing any file over 100 MB. That was a live collision
+// course while the file was plain JSON: at 727 bytes a row it reached the
+// ceiling at ~144,000 cars, and coverage is the mission. It is now written as a
+// gzip+base64 envelope (lib/snapshot.mjs), 97 bytes a row — 9.3 MB at the live
+// feed's 100,446 rows instead of 70 MB, with the ceiling out at ~1,083,000
+// cars. See SIZE_WARN_BYTES / SIZE_REFUSE_BYTES below: this script now refuses
+// to write a file git could not push, so the ceiling stays a decision made here
+// rather than a rejected push in some unrelated workflow days later.
 //
 // WHAT IT WRITES, AND WHAT IT DELIBERATELY LEAVES OUT
 //
 // The `payload` column and nothing else — the same object ingest.mjs writes, so
 // every existing reader (recheck.mjs's OEM cross-check, price-audit.mjs,
 // nhtsa-battery.mjs, supabase/verify.mjs, web/tests/find-listing.test.ts) sees
-// the shape it already expects.
+// the shape it already expects. The rows are unchanged by compression: the
+// envelope is a container, not a projection, and encodeSnapshot round-trips
+// them before returning. Narrowing the shape was considered and measured — the
+// honest saving is 3% (only `id` is redundant, being vin.toLowerCase() on every
+// row), and anything bigger means deleting a field a shopper sees on the detail
+// page. lib/snapshot.mjs's header carries that table and the rejected options.
 //
 // It does NOT add the history columns db.ts layers on top of payload
 // (firstSeenAt, lastSeenAt, prevPriceUsd, priceChangedAt, buybackDisclosed,
@@ -149,6 +160,7 @@
 // six hours in feed-audits.yml. Duplicating it here would give it a second,
 // weaker home.
 import { readFile, writeFile, stat } from "node:fs/promises";
+import { encodeSnapshot } from "./lib/snapshot.mjs";
 
 const arg = (n, d) => { const i = process.argv.indexOf(n); return i >= 0 ? process.argv[i + 1] : d; };
 const DRY = process.argv.includes("--dry-run");
@@ -213,11 +225,27 @@ const SHRINK_TOLERANCE = 0.10;
 // database. Advisory only — see the header.
 const CDN_TOLERANCE = 0.10;
 
-// GitHub refuses any push containing a file over 100 MB, and this one is
-// committed. At 727 bytes a row that ceiling arrives at ~144,000 cars, and
-// coverage is the mission, so the number only goes up. Warn well before, with
-// the arithmetic, so the day it matters is a decision and not a red push.
-const SIZE_WARN_BYTES = 80 * 1024 * 1024;
+// GitHub refuses any push containing a file over 100 MB — a hard block, not a
+// warning — and this file is committed. That used to be a live collision
+// course: at 727 bytes a row compact the snapshot hit the ceiling at ~144,000
+// cars, and coverage is the mission, so the number only goes up.
+//
+// It is now written as a gzip+base64 envelope (lib/snapshot.mjs, which carries
+// the measurements and why the alternatives were rejected). At 97 bytes a row
+// the ceiling moved to roughly 1,083,000 cars, past any plausible US EV+PHEV
+// inventory. These two guards are what keep it that way if something regresses
+// — a codec change, a payload that stops compressing, a field that arrives
+// carrying per-row entropy.
+//
+// The REFUSAL is the point, and it is what "a decision, not a red push" means
+// concretely: the script declines to write a file git could not push, says the
+// arithmetic, and leaves the previous snapshot in place. A `git push` rejected
+// with GH001 in some other workflow, days later, is the failure mode this
+// avoids — it is remote from the cause, it blocks whatever else that push was
+// carrying, and there is nothing useful to do about it at that point. 90 MB
+// leaves room under the limit for the commit that carries it.
+const SIZE_WARN_BYTES = 60 * 1024 * 1024;
+const SIZE_REFUSE_BYTES = 90 * 1024 * 1024;
 const GITHUB_FILE_LIMIT = 100 * 1024 * 1024;
 
 /** This script's whole claim is "these are the rows the site would have read".
@@ -440,24 +468,46 @@ try {
   console.error(`refresh-fallback: could not cross-check against ${CDN_BASE}/api/index/first (${e.message}) — advisory only, carrying on`);
 }
 
-// Compact, not ingest.mjs's `null, 2`, and the 12 MB is the whole reason: at
-// 850 bytes a row pretty-printed this file reaches GitHub's 100 MB push limit
-// at ~123,000 cars and at 727 compact it reaches it at ~144,000. Nobody reads
-// an 80 MB diff either way, so the indentation was buying nothing and costing
-// a fifth of the headroom.
+// The compressed envelope, via the codec every reader shares. It round-trips
+// the rows before returning, so a codec that would have written an
+// undecodable snapshot throws here rather than at 3am on the outage path.
+//
 // Serialised even under --dry-run: a dry run whose reported size is an
-// estimate is a dry run that cannot tell you the thing the size guard below is
-// for, and the string costs seconds.
-const body = JSON.stringify(listings);
+// estimate is a dry run that cannot tell you the thing the size guards below
+// are for, and the encode costs about a second.
+const body = encodeSnapshot(listings);
 const size = Buffer.byteLength(body);
+const rawSize = Buffer.byteLength(JSON.stringify(listings));
+const perRow = size / Math.max(1, listings.length);
+const ceiling = Math.floor(GITHUB_FILE_LIMIT / perRow);
 
-if (size > SIZE_WARN_BYTES) {
-  const perRow = size / Math.max(1, listings.length);
+// The arithmetic, every run, not only near the edge — this is the number that
+// decides when this file needs a decision again, and it should be readable in
+// a green run's log rather than reconstructed from an incident.
+console.error(
+  `refresh-fallback: ${(size / 1048576).toFixed(1)} MB on disk holding ${(rawSize / 1048576).toFixed(1)} MB of JSON ` +
+    `(${perRow.toFixed(0)} B/row compressed, ${(rawSize / Math.max(1, listings.length)).toFixed(0)} B/row raw). ` +
+    `GitHub's ${GITHUB_FILE_LIMIT / 1048576} MB file limit arrives at about ${ceiling.toLocaleString()} cars.`
+);
+
+if (size > SIZE_REFUSE_BYTES) {
+  problems.push(
+    `the snapshot would be ${(size / 1048576).toFixed(1)} MB, over this script's ${SIZE_REFUSE_BYTES / 1048576} MB ceiling. ` +
+      `GitHub refuses any push containing a file over ${GITHUB_FILE_LIMIT / 1048576} MB, so writing this would not fail here — ` +
+      "it would fail as a rejected push in whatever workflow next tried to commit anything, days from now and nowhere near " +
+      `the cause. At ${perRow.toFixed(0)} bytes a row the limit is ~${ceiling.toLocaleString()} cars and this run holds ` +
+      `${listings.length.toLocaleString()}. The snapshot on disk is unchanged and the site's fallback still works; what is ` +
+      "needed is a decision about the format (lib/snapshot.mjs's header has the options and what each was measured to cost), " +
+      "not a bigger number here."
+  );
+} else if (size > SIZE_WARN_BYTES) {
   console.error(
-    `::warning::refresh-fallback: the snapshot is ${(size / 1048576).toFixed(1)} MB. GitHub refuses any push containing a ` +
-      `file over ${GITHUB_FILE_LIMIT / 1048576} MB, and at ${perRow.toFixed(0)} bytes a row this one gets there at about ` +
-      `${Math.floor(GITHUB_FILE_LIMIT / perRow).toLocaleString()} cars. Coverage is the mission, so that day is coming: it ` +
-      "needs a decision (a narrower fallback shape, or moving the snapshot out of git), not a red push on the morning it lands."
+    `::warning::refresh-fallback: the snapshot is ${(size / 1048576).toFixed(1)} MB, past the ${SIZE_WARN_BYTES / 1048576} MB ` +
+      `mark. At ${perRow.toFixed(0)} bytes a row GitHub's ${GITHUB_FILE_LIMIT / 1048576} MB file limit arrives at about ` +
+      `${ceiling.toLocaleString()} cars, and this run holds ${listings.length.toLocaleString()}. Compression already bought ` +
+      "this file an order of magnitude, so getting here again means something regressed — check that the envelope is still " +
+      `being written (${(rawSize / Math.max(1, size)).toFixed(1)}x compression this run; it was 7.5x when built) before ` +
+      `reaching for a narrower shape. This script REFUSES at ${SIZE_REFUSE_BYTES / 1048576} MB rather than writing a file git cannot push.`
   );
 }
 
@@ -466,6 +516,7 @@ const report = {
   rows: listings.length, expected, previous, pages, errors, seconds,
   mb: Number((bytes / 1048576).toFixed(1)),
   bytes: size,
+  uncompressedBytes: rawSize,
   lanes: LANES,
   wrote: false,
   dryRun: DRY,

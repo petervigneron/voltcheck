@@ -24,6 +24,7 @@ import { existsSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { fetchWithRetry } from "./lib/retry.mjs";
+import { readSnapshot } from "./lib/snapshot.mjs";
 import {
   API,
   cohortKey,
@@ -79,7 +80,7 @@ async function getJson(label, url) {
  *  new gets the recall notice from the dealer, and this page is about the
  *  used one. */
 async function cohorts() {
-  const rows = JSON.parse(await readFile(FEED, "utf8"));
+  const rows = await readSnapshot(FEED);
   const counts = new Map();
   const labels = new Map();
   for (const r of rows) {
