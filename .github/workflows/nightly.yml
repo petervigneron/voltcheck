@@ -1012,13 +1012,38 @@ jobs:
           fi
           if [ -n "$SUPABASE_URL" ] && [ -n "$SUPABASE_ANON_KEY" ]; then
             auth=(-H "apikey: $SUPABASE_ANON_KEY" -H "Authorization: Bearer $SUPABASE_ANON_KEY")
-            # Cheap first: the count guard db.ts uses. A fast fail is a fast fail.
+            # Cheap first: the count guard db.ts uses. ADVISORY ONLY — it does
+            # not get a veto, and 2026-08-23 is why. recheck had just written
+            # its night's work (2,455 delistings, 1,131 struck, 12,134 price
+            # changes), this count returned HTTP 500 at 18:36:59, and the job
+            # exited without publishing any of it. Autovacuum ran at 18:37:39.
+            # Forty seconds. The same query, unchanged, answered in 0.17-0.64 s
+            # once it had.
+            #
+            # That is the whole failure: a count over ~100k live rows is an
+            # index-only scan on listings_live_idx and costs ~277 ms, but only
+            # while the visibility map is current. A write burst leaves it
+            # stale, the scan starts visiting the heap instead, and it blows
+            # anon's 3 s timeout — for the few minutes between the pipeline's
+            # own writes and the vacuum that cleans up after them. This gate
+            # runs inside that window BY CONSTRUCTION: it is the step right
+            # after the writes. So the guard reliably failed at the one moment
+            # it was guaranteed to be wrong, and cost the site a day of showing
+            # cars that had sold.
+            #
+            # It is also the check CLAUDE.md already lists as a FALSE GATE
+            # ("the cheap COUNT is a false gate — vacuum fixes it but NOT the
+            # walk"). It was only ever here to fail fast and save ~20 s; the
+            # feed page below is what actually decides, it is one of the very
+            # pages the warm-up walks, and it does not depend on the visibility
+            # map. A real outage still fails it. Nothing weaker is being
+            # trusted — the veto simply moves to the stronger of the two
+            # checks that were always both here.
             code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 20 "${auth[@]}" \
               -H "Range: 0-0" -H "Prefer: count=exact" \
               "$SUPABASE_URL/rest/v1/listings?select=vin&delisted_at=is.null") || code=000
             if [ "$code" != "200" ] && [ "$code" != "206" ]; then
-              echo "::error::the database cannot answer the listing count (HTTP $code) — a warm-up now would render the bundled 58,730-row snapshot and cache it for a day. Skipping revalidate; production keeps the complete cache it already has."
-              exit 1
+              echo "::warning::the listing count did not answer (HTTP $code) — most likely the post-write vacuum window, which is where this step always runs. Not skipping on this alone; the feed-page check below decides."
             fi
             # Then the one that decides it: a real feed page from the fattest
             # bucket, same select list, order and limit db.ts walks with.
