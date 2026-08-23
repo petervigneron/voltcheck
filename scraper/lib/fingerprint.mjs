@@ -42,6 +42,9 @@ const SIGNATURES = [
   // the per-car data layer it pushes are the signatures that actually fire.
   { platform: "dealerfire", res: [/dealerfire/i, /cdn-ds\.com/i, /pushData\(\s*['"]VehicleObject_/] },
   { platform: "dealereprocess", res: [/dealereprocess/i] },
+  // AutoManager WebManager: its own CDN, photo blob and admin host. Pages carry
+  // no JSON-LD at all, so lib/platforms/automanager.mjs reads the SRP tiles.
+  { platform: "automanager", res: [/automanagerprodcdn\.azureedge\.net|automanager\.blob\.core\.windows\.net|wm\.automanager\.com/i] },
   { platform: "team-velocity", res: [/teamvelocityportal\.com/i, /vdpVehicleExteriorColor/] },
   // No JSON-LD anywhere and numeric-id VDP URLs, so nothing generic hooks it;
   // lib/platforms/dealercarsearch.mjs reads its Tealium product list instead.

@@ -39,6 +39,12 @@ import {
 } from "./lib/platforms/overfuel.mjs";
 import { dealrVehicles, dealrNextPageUrl, dealrSeeds, isDealrCloud } from "./lib/platforms/dealrcloud.mjs";
 import { isRideMotive, rideMotiveConfig, pullRideMotiveApi } from "./lib/platforms/ridemotive.mjs";
+import {
+  isAutoManager,
+  autoManagerSeeds,
+  autoManagerVehicles,
+  autoManagerNextPageUrl,
+} from "./lib/platforms/automanager.mjs";
 
 const args = process.argv.slice(2);
 function flag(name, fallback) {
@@ -218,6 +224,18 @@ async function crawlDealer(domain) {
     report.notes.push("dealrcloud: seeded SRP");
   }
   if (siteInfo.get(domain)?.platform === "dealrcloud") seedDealr();
+
+  // AutoManager WebManager: one /view-inventory SRP, ten cars a page, plain
+  // ?page=N. Nothing on the site is JSON-LD, so the SRP is the only door.
+  let amSeeded = false;
+  function seedAutoManager() {
+    if (amSeeded) return;
+    amSeeded = true;
+    const seeds = autoManagerSeeds(origin).filter((u) => !visited.has(u));
+    queue.unshift(...seeds);
+    report.notes.push("automanager: seeded SRP");
+  }
+  if (siteInfo.get(domain)?.platform === "automanager") seedAutoManager();
 
   // DealerFire's SRP slug is per-rooftop ("/cars-for-sale-hillsboro-or"), so
   // there is nothing to seed until a page of theirs tells us its own — which
@@ -559,6 +577,7 @@ async function crawlDealer(domain) {
     if (isDealerFire(res.body)) seedDealerFire(res.body, res.finalUrl);
     if (isOverfuel(res.body)) seedOverfuel(res.body, res.finalUrl);
     if (!dealrSeeded && isDealrCloud(res.body)) seedDealr();
+    if (!amSeeded && isAutoManager(res.body)) seedAutoManager();
     const dealerFire = extractDealerFire(res.body);
     const dealerFireRooftops = dealerFire.size ? extractDealerFireDealers(res.body) : [];
     const overfuel = overfuelVehicles(res.body, res.finalUrl);
@@ -568,12 +587,14 @@ async function crawlDealer(domain) {
     // car twice — once VIN-keyed, once URL-keyed — and the VIN-less twin would
     // survive the byVin dedupe as a phantom listing.
     const dealrVs = dealrVehicles(res.body, res.finalUrl);
+    const autoManager = autoManagerVehicles(res.body, res.finalUrl);
     const vehicles = [
       ...(dealrVs.length ? dealrVs : extractVehicles(res.body)),
       ...extractDrivewayVehicles(res.body),
       ...dcsVehicles,
       ...dealerFireVehicles(res.body, res.finalUrl),
       ...overfuel,
+      ...autoManager,
     ];
     if (vehicles.length) report.vehiclePages++;
     const isSrp = vehicles.length > 1;
@@ -634,6 +655,13 @@ async function crawlDealer(domain) {
     if (overfuel.length) {
       const nextOf = overfuelNextPageUrl(res.body, res.finalUrl);
       if (nextOf && !visited.has(nextOf)) queue.unshift(nextOf);
+    }
+    // AutoManager's pager is a plain ?page=N link list; jump it ahead of the
+    // sitemap for the same reason as the others — ten cars a page means an EV
+    // is routinely on page 5.
+    if (autoManager.length) {
+      const nextAm = autoManagerNextPageUrl(res.body, res.finalUrl);
+      if (nextAm && !visited.has(nextAm)) queue.unshift(nextAm);
     }
 
     // Bridge: SRP ItemList → VDP urls, EV-filtered, jump the queue

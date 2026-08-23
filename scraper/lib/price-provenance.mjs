@@ -111,6 +111,14 @@ export const TV_SELLING = "tv-selling";               // Team Velocity sellingPr
 // to update.
 export const MOTIVE_PRICE = "motive-price";
 
+// AutoManager WebManager's rendered tile price — the number under the price
+// label the rooftop prints ("Internet Price" on every rooftop sampled).
+// Explicitly NOT the CarGurus badge's `data-cg-price` that sits in the same
+// tile: on crescentauto.net one tile renders $10,500 while its badge says
+// 10990.0000, and another tile in the same page has them equal, which is the
+// combination that would quietly publish a $490 price cut nobody made.
+export const AUTOMANAGER_PRICE = "automanager-price";
+
 // OEM/aggregator inventory APIs. Each lane reads one documented field out of
 // one vendor's endpoint; none of them shares a code path with any other, so
 // each gets its own tag rather than a single "oem" bucket that would let a
@@ -163,7 +171,7 @@ const KNOWN = new Set([
   DDC_INTERNET, DDC_SALE, DDC_ASKING, DDC_MSRP,
   DEOL_INTERNET, DEOL_SELLING, DEOL_MSRP, DEOL_CARD_INTERNET, DEOL_DISPLAYED,
   DFIRE_ADVERTISED, DVENOM_FINAL, DEALR_ENTRY, DCS_TILE, OVERFUEL_PRICE, TV_SELLING,
-  MOTIVE_PRICE,
+  MOTIVE_PRICE, AUTOMANAGER_PRICE,
 ]);
 
 /** True for a tag this build knows how to emit. OEM lane tags are accepted by

@@ -75,6 +75,7 @@ import { fingerprint } from "./lib/fingerprint.mjs";
 import { isDealerVenom, extractDealerVenomConfig, countDealerVenom } from "./lib/platforms/dealervenom.mjs";
 import { overfuelVehicles, overfuelSeeds, isOverfuel, overfuelApiConfig, countOverfuelApi } from "./lib/platforms/overfuel.mjs";
 import { dealrVehicles, DEALR_SRP_PATH } from "./lib/platforms/dealrcloud.mjs";
+import { autoManagerVehicles, AUTOMANAGER_SRP_PATH } from "./lib/platforms/automanager.mjs";
 import { isRideMotive, rideMotiveConfig, countRideMotiveApi } from "./lib/platforms/ridemotive.mjs";
 import { discoverSitemapUrls, rank, dedupe, SRP_PATHS } from "./lib/sitemap.mjs";
 import { spaSignals, countVinUrls } from "./lib/spa-signals.mjs";
@@ -272,6 +273,7 @@ async function probeSite(site) {
     dealercarsearch: [DCS_SRP_PATH],
     dealerinspire: ["/used-vehicles/"],
     dealrcloud: [DEALR_SRP_PATH],
+    automanager: [AUTOMANAGER_SRP_PATH],
     // Team Velocity SRPs server-render Vehicle JSON-LD, but only on this path —
     // the sitemap-ranked guesses spent the budget before reaching it on all 13
     // cohort rooftops (2026-08-16).
@@ -325,6 +327,7 @@ async function probeSite(site) {
       ...dealerFireVehicles(res.body, res.finalUrl),
       ...overfuelVehicles(res.body, res.finalUrl),
       ...dealrVehicles(res.body, res.finalUrl),
+      ...autoManagerVehicles(res.body, res.finalUrl),
     ];
     const platformVins = [
       ...extractDdcVehicles(res.body).map((d) => d.vin),
