@@ -120,6 +120,12 @@
 //            anonymous-token flow, open to plain Node. One query is their
 //            whole national used stock (~14.5k, ~136 BEV incl. used Teslas)
 //            → lib/oem/enterprise.mjs
+//   EchoPark — Sonic Automotive's used-car retailer, 17 stores, one national
+//            stock. Akamai 403s its JSON API, its VDPs and its faceted paths,
+//            but the server-rendered SRP at www.echopark.com/used-cars is open
+//            and embeds that same API's JSON in a __STORE__ script. ?take=500
+//            (clamped to 498) walks all 6,163 cars in 13 requests → ~437 EVs,
+//            68 of them used Teslas → lib/oem/echopark.mjs
 import { mkdir, writeFile } from "node:fs/promises";
 import { richness } from "./lib/normalize.mjs";
 import { GM_BRANDS, CARBRAVO, pullGmBrand, pullCarBravo } from "./lib/oem/gm.mjs";
@@ -139,6 +145,7 @@ import { VOLVO, pullVolvo } from "./lib/oem/volvo.mjs";
 import { POLESTAR, pullPolestar } from "./lib/oem/polestar.mjs";
 import { ENTERPRISE, pullEnterprise } from "./lib/oem/enterprise.mjs";
 import { DRIVEWAY, pullDriveway } from "./lib/oem/driveway.mjs";
+import { ECHOPARK, pullEchoPark } from "./lib/oem/echopark.mjs";
 import { LEXUS, pullLexus } from "./lib/oem/toyota.mjs";
 import { LUCID, LUCID_NEW, pullLucid, pullLucidNew } from "./lib/oem/lucid.mjs";
 
@@ -167,6 +174,7 @@ const PULLERS = {
   [POLESTAR.key]: { domain: POLESTAR.domain, run: () => pullPolestar({ log }) },
   [ENTERPRISE.key]: { domain: ENTERPRISE.domain, run: () => pullEnterprise({ log }) },
   [DRIVEWAY.key]: { domain: DRIVEWAY.domain, run: () => pullDriveway({ log }) },
+  [ECHOPARK.key]: { domain: ECHOPARK.domain, run: () => pullEchoPark({ log }) },
   [LEXUS.key]: { domain: LEXUS.domain, run: () => pullLexus({ log }) },
   [LUCID.key]: { domain: LUCID.domain, run: () => pullLucid({ log }) },
   [LUCID_NEW.key]: { domain: LUCID_NEW.domain, run: () => pullLucidNew({ log }) },
@@ -178,7 +186,7 @@ function flag(name, fallback) {
   return i >= 0 ? args[i + 1] : fallback;
 }
 const OUT_DIR = flag("--out", "out");
-const wanted = flag("--brands", "chevrolet,gmc,cadillac,carbravo,hyundai,hyundai-cpo,kia,nissan,nissan-cpo,bmw,mercedes,jeep,dodge,fiat,genesis,ford-blue-advantage,honda,audi,vw,volvo,polestar,lexus,lucid,lucid-new,subaru,enterprise,driveway").split(",").map((s) => s.trim().toLowerCase());
+const wanted = flag("--brands", "chevrolet,gmc,cadillac,carbravo,hyundai,hyundai-cpo,kia,nissan,nissan-cpo,bmw,mercedes,jeep,dodge,fiat,genesis,ford-blue-advantage,honda,audi,vw,volvo,polestar,lexus,lucid,lucid-new,subaru,enterprise,driveway,echopark").split(",").map((s) => s.trim().toLowerCase());
 const selected = wanted.filter((k) => PULLERS[k]);
 if (!selected.length) {
   console.error(`oem-locator: no known brands in "${wanted}" (have: ${Object.keys(PULLERS).join(",")})`);
