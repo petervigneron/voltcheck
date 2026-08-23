@@ -31,10 +31,12 @@
 // prose note, and its `verdict` is the distinction:
 //
 //   working     — VIN'd inventory extracted. Promoted.
-//   empty       — every fetch answered, nothing carried a VIN. A real verdict.
+//   empty       — every fetch answered, nothing carried a VIN. A real verdict,
+//                 and it comes in two shapes the `why` field separates:
+//                 nothing-to-walk (no sitemap, no ItemList — no way IN) and
+//                 the plain kind (we read real pages and found no VIN).
 //   transient   — something did not answer: a network error, a timeout, a 429
-//                 or 5xx, or a homepage that arrived with no sitemap and no
-//                 links to try. Says nothing about the site yet.
+//                 or a 5xx. Says nothing about the site yet.
 //   blocked     — the site refused us on purpose (403, robots).
 //   gone        — 404/410 at the front door.
 //
@@ -42,8 +44,14 @@
 // any verdict is written, because concurrency is the most likely cause: the
 // retry costs one extra pass over the few rows that need it and it is what
 // turns "we hammered them" back into an answer. Only the retry's verdict is
-// recorded. Pass --no-retry to skip it (the measurement runs did, to count how
-// many rows the retry actually rescues).
+// recorded. Pass --no-retry to skip it.
+//
+// How wide "transient" should be was measured rather than argued, and the
+// first answer was wrong — see lib/probe-verdict.mjs. On a seeded random 150
+// of the pile (seed 20260823) the original rule produced 85 transient rows and
+// a serial re-probe of all 85 rescued zero, because 73 of them were the
+// nothing-to-walk kind, which is stable. Narrowed to "something failed to
+// answer", the requeue population goes from ~57% of the pile to ~9%.
 //
 // The structured object also carries the api-host leads as a LIST rather than
 // only inside the prose, so api-leads.mjs can stop parsing sentences, and the
@@ -394,10 +402,11 @@ async function probeSite(site) {
     ? `client-rendered or API-backed; leads: ${signals.join(", ")}`
     : "likely needs a platform extractor";
 
-  // Which kind of nothing — see lib/probe-verdict.mjs for why "answered but
-  // had nothing to walk" counts as transient.
+  // Which kind of nothing — see lib/probe-verdict.mjs, including the measured
+  // reason "answered but had nothing to walk" is NOT transient.
   const transientFailures = failures.filter((f) => f.kind === "transient");
-  const verdict = emptyOrTransient({ failures, sitemapUrls: sitemapUrls.length, itemListEntries });
+  const verdict = emptyOrTransient({ failures });
+  const nothingToWalk = sitemapUrls.length === 0 && itemListEntries === 0;
 
   site.status = "needs-investigation";
   site.notes = (
@@ -410,11 +419,14 @@ async function probeSite(site) {
     vehicles: 0,
     itemList: itemListEntries,
     sitemapUrls: sitemapUrls.length,
-    // Which of the two transient shapes this was, so a later sweep can tell a
-    // row that timed out from one that answered and had nothing to walk —
-    // they are not equally likely to turn into a promotion, and the split is
-    // how anyone finds that out.
-    ...(verdict === "transient" ? { why: transientFailures.length ? "failed-fetch" : "nothing-to-walk" } : {}),
+    // Two shapes of "empty" that read the same in the note and are not the
+    // same finding: a site whose pages we fetched and read (needs a better
+    // extractor, or has no cars) versus one that published no sitemap and no
+    // ItemList, so there was never a page to read (needs a way IN). The
+    // second is 73 of the 150 rows in the 2026-08-23 sample — the single
+    // biggest bucket in the written-off pile, and a worklist of its own.
+    ...(verdict === "empty" && nothingToWalk ? { why: "nothing-to-walk" } : {}),
+    ...(verdict === "transient" ? { why: "failed-fetch" } : {}),
     ...(canonicalHost ? { canonicalHost } : {}),
     // The leads as data, not prose: api-leads.mjs ranks these hosts, and it
     // had to regex them back out of a sentence to do it (finding #1 in its

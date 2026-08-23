@@ -57,16 +57,31 @@ export function seededShuffle(list, seed) {
   return out;
 }
 
-/** The verdict for a walk that extracted no VIN.
+/** The verdict for a walk that extracted no VIN: transient ONLY when something
+ *  actually failed to answer.
  *
- *  `nothingToWalk` — a homepage that answered and then offered nothing to try,
- *  no sitemap and no ItemList — is counted transient rather than empty on
- *  purpose. That is the shape a site has when its front page is served under
- *  load without the nav the rest of the walk needs, and it is cheap to be
- *  wrong in this direction: the cost is one serial re-probe, where the cost of
- *  the other direction is a live lot written off permanently. */
-export function emptyOrTransient({ failures = [], sitemapUrls = 0, itemListEntries = 0 } = {}) {
-  const transient = failures.filter((f) => f.kind === "transient").length;
-  if (transient > 0) return "transient";
-  return sitemapUrls === 0 && itemListEntries === 0 ? "transient" : "empty";
+ *  This started out wider. "The homepage answered and then offered nothing to
+ *  try — no sitemap, no ItemList" was also counted transient, on the theory
+ *  that it is the shape of a front page served under load without its nav, and
+ *  that being wrong in this direction only costs a re-probe.
+ *
+ *  Measured, and it does not hold. On a seeded random 150 of the
+ *  needs-investigation pile (seed 20260823, probed at concurrency 12 and then
+ *  re-probed IN SERIES), 85 rows came back transient — 73 of them of the
+ *  nothing-to-walk kind — and the serial retry rescued exactly ZERO of the 85.
+ *  Nothing-to-walk turns out to be stable: those rooftops answer their
+ *  homepage every time and genuinely publish no sitemap and no ItemList, which
+ *  is a real finding about the site (it needs a platform extractor, or it has
+ *  no inventory) and not a report about our own concurrency. Labelling it
+ *  transient put 73 of 150 rows into a nightly requeue that could never
+ *  promote them.
+ *
+ *  So it is "empty" now, and the caller records why — `nothing-to-walk` versus
+ *  a walk that fetched real pages and found no VIN on them. The requeue
+ *  population drops from ~57% of the pile to ~9%, which is the rows where
+ *  something actually did not answer: the case that DID promote on a serial
+ *  retry (sarchioneofwaynesburg.com and mercedesbenzbrooklyn.com, 319 and 528
+ *  vehicles, minutes after being scored as nothing at concurrency 3). */
+export function emptyOrTransient({ failures = [] } = {}) {
+  return failures.some((f) => f.kind === "transient") ? "transient" : "empty";
 }

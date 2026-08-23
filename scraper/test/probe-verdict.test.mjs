@@ -18,17 +18,19 @@ test("failureKind separates the site's answer from our attempt", () => {
   assert.equal(failureKind(400), "other");
 });
 
-test("emptyOrTransient calls a walk empty only when everything answered", () => {
-  assert.equal(emptyOrTransient({ failures: [], sitemapUrls: 400, itemListEntries: 0 }), "empty");
-  assert.equal(emptyOrTransient({ failures: [{ kind: "gone" }], sitemapUrls: 12, itemListEntries: 0 }), "empty");
-  assert.equal(
-    emptyOrTransient({ failures: [{ kind: "transient" }], sitemapUrls: 400, itemListEntries: 30 }),
-    "transient",
-  );
-  // A homepage that answered and offered nothing to walk is not a finding
-  // about the site — it is the shape a site has when served under load.
-  assert.equal(emptyOrTransient({ failures: [], sitemapUrls: 0, itemListEntries: 0 }), "transient");
-  assert.equal(emptyOrTransient(), "transient");
+test("emptyOrTransient is transient only when something failed to answer", () => {
+  assert.equal(emptyOrTransient({ failures: [] }), "empty");
+  assert.equal(emptyOrTransient({ failures: [{ kind: "gone" }, { kind: "blocked" }] }), "empty");
+  assert.equal(emptyOrTransient({ failures: [{ kind: "transient" }] }), "transient");
+  assert.equal(emptyOrTransient({ failures: [{ kind: "gone" }, { kind: "transient" }] }), "transient");
+  assert.equal(emptyOrTransient(), "empty");
+});
+
+test("a site that answered and offered nothing to walk is empty, not transient", () => {
+  // The rule that made it transient was measured wrong: 73 of 150 sampled
+  // rows had this shape and a serial re-probe rescued none of them. See
+  // lib/probe-verdict.mjs.
+  assert.equal(emptyOrTransient({ failures: [], sitemapUrls: 0, itemListEntries: 0 }), "empty");
 });
 
 test("apiHostsFrom hands back a list, so nobody has to parse the sentence", () => {
