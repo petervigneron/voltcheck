@@ -3098,15 +3098,38 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     charging: { portStandard: f("J1772", "mfr", "high", "AC charging only, no DC fast charge on any 4xe"), dcFastCharging: f("none", "mfr") },
   },
   {
-    // modelAliases added 2026-08-21: the bare "Grand Cherokee" bucket (~56
-    // listings, more than half this model's volume) was falling through with
-    // no row at all — every sampled bare-model VIN decodes to a 4xe, and a
-    // gas Grand Cherokee never reaches this database in the first place
-    // (scraper/lib/ev.mjs's classifyEv only admits it at evConfidence "high"
-    // when the feed's own fuel-type text says "electric" and "plug" — a gas
-    // SUV's fuelType never does). See docs/agents/phev-enrichment-2026-08-21.md §6.
-    id: "gc-4xe-2022-25", make: "JEEP", model: "Grand Cherokee 4xe", modelYears: [2022, 2025], packVariant: "PHEV",
-    modelAliases: ["Grand Cherokee"],
+    // The bare model string ("Wrangler", "Wrangler Unlimited") carries the same
+    // facts as the two rows above — the 4xe was 4-door only, and both rows
+    // print the identical 22/370/J1772 anyway — so this is one alt row rather
+    // than a 2-door/4-door pair, which would only have manufactured an
+    // ambiguity between two identical answers.
+    //
+    // The `trim` key is what makes the bare model string safe, and it is not
+    // decoration. `modelAliases: ["Wrangler"]` on a trim-less row would claim
+    // 22 electric miles for every petrol Wrangler VIN typed into /vin/, which
+    // decodes to make JEEP, model "Wrangler" and nothing that says 4xe. The
+    // feed can't produce that car (classifyEv never admits a gas Wrangler),
+    // but /vin/ takes any VIN a shopper pastes in, and a false range there is
+    // the same false claim. Requiring the listing's own trim to say "4xe"
+    // costs nothing: all 139 live bare-model 4xe listings on 2026-08-23 carry
+    // it ("Unlimited Sahara 4XE", "Unltd Rubicon 4XE", "Sport S 4xe", "Sport
+    // 4XE", "Willys 4xe", "High Altitude 4xe", or bare "4XE"), and not one of
+    // them is trim-less. scripts/phev-enrichment-gap.mjs is the check that
+    // says so, and it will say so again if a feed ever starts sending the
+    // model without the trim.
+    id: "wrangler-4xe-2021-25-alt", make: "JEEP", model: "Wrangler", modelAliases: ["Wrangler Unlimited"],
+    modelYears: [2021, 2025], trim: ["4xe"], packVariant: "PHEV",
+    range: {
+      epaRangeMi: f(22, "mfr", "high", "Electric-only EPA range. Identical rating 2021–25", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47278"),
+      epaRangeTotalMi: f(370, "mfr", "high", undefined, "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47278"),
+    },
+    charging: { portStandard: f("J1772", "mfr", "high", "AC charging only, no DC fast charge on any 4xe"), dcFastCharging: f("none", "mfr") },
+  },
+  {
+    // "GR Cherokee 4XE" is one dealer's abbreviation, and the string names the
+    // plug-in itself, so it needs no trim guard the way the bare name does.
+    id: "gc-4xe-2022-25", make: "JEEP", model: "Grand Cherokee 4xe", modelAliases: ["GR Cherokee 4XE"],
+    modelYears: [2022, 2025], packVariant: "PHEV",
     range: {
       epaRangeMi: f(26, "mfr", "high", "Electric-only EPA range. Identical rating 2022–25", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47277"),
       epaRangeTotalMi: f(470, "mfr", "high", undefined, "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47277"),
@@ -3114,7 +3137,33 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     charging: { portStandard: f("J1772", "mfr", "high", "AC charging only, no DC fast charge"), dcFastCharging: f("none", "mfr") },
   },
   {
-    id: "x5-45e-2021-23", make: "BMW", model: "X5 PHEV", modelYears: [2021, 2023], trim: "xDrive45e", packVariant: "PHEV",
+    // The bare "Grand Cherokee" bucket, split out of the row above 2026-08-23
+    // and given the same `trim` guard the Wrangler alt row explains at length.
+    // It arrived on 2026-08-21 as a trim-less `modelAliases: ["Grand Cherokee"]`
+    // on that row, reasoning that a gas Grand Cherokee never reaches this
+    // database — true of the feed, and not true of /vin/, which decodes
+    // whatever VIN a shopper pastes in and would have printed 26 electric
+    // miles for a petrol Limited. Measured before moving it: all 64 live
+    // bare-model listings on 2026-08-23 say 4XE in their trim and none is
+    // trim-less, so the guard costs no coverage at all.
+    id: "gc-4xe-2022-25-alt", make: "JEEP", model: "Grand Cherokee", modelYears: [2022, 2025], trim: ["4xe"], packVariant: "PHEV",
+    range: {
+      epaRangeMi: f(26, "mfr", "high", "Electric-only EPA range. Identical rating 2022–25", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47277"),
+      epaRangeTotalMi: f(470, "mfr", "high", undefined, "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47277"),
+    },
+    charging: { portStandard: f("J1772", "mfr", "high", "AC charging only, no DC fast charge"), dcFastCharging: f("none", "mfr") },
+  },
+  {
+    // No `trim` on the "X5 PHEV" rows, unlike their "X5" siblings below. The
+    // model string has already said plug-in, and BMW sold exactly one X5
+    // plug-in in each of these windows — the xDrive45e through 2023, the
+    // xDrive50e from 2024 — so the trim narrows nothing here and only ever
+    // refused cars. It refused 23 live 2026 listings that arrive as model
+    // "X5 PHEV" with no trim at all (trimMatches declines a trim-specific row
+    // when the listing names no trim, deliberately). The guard stays on the
+    // bare-"X5" rows, which is where it is load-bearing: those must not match
+    // a petrol xDrive40i.
+    id: "x5-45e-2021-23", make: "BMW", model: "X5 PHEV", modelYears: [2021, 2023], packVariant: "PHEV",
     range: {
       epaRangeMi: f(31, "mfr", "high", "xDrive45e electric-only EPA range", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=42807"),
       epaRangeTotalMi: f(400, "mfr", "high", undefined, "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=42807"),
@@ -3122,7 +3171,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     charging: { portStandard: f("J1772", "mfr", "high", "AC charging only"), dcFastCharging: f("none", "mfr") },
   },
   {
-    id: "x5-50e-2024-26", make: "BMW", model: "X5 PHEV", modelYears: [2024, 2026], trim: "xDrive50e", packVariant: "PHEV",
+    id: "x5-50e-2024-26", make: "BMW", model: "X5 PHEV", modelAliases: ["X5 xDrive50e"], modelYears: [2024, 2026], packVariant: "PHEV",
     range: {
       epaRangeMi: f(39, "mfr", "high", "xDrive50e electric-only EPA range (40 for 2026). MY2024 has no separate fueleconomy.gov entry (control: 2025–26 are present), same xDrive50e", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49009"),
       epaRangeTotalMi: f(440, "mfr", "high", undefined, "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49009"),

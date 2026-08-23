@@ -1,0 +1,87 @@
+name: PHEV enrichment gap
+
+# Do the plug-in hybrids arriving in the feed reach an enrichment row?
+#
+# On 2026-08-23 the scraper learned to recognise plug-ins by nameplate
+# (scraper/lib/ev.mjs's PHEV_MODEL_RE, confirmed through vPIC in
+# vpic-enrich.mjs), because dealer.com and DealerOn — ~94% of the crawl —
+# file a Jeep Wrangler 4xe with fuelType "Hybrid", the same string a CR-V
+# Hybrid gets. The feed carried ~4,500 plug-ins against the ~46,700 Autotrader
+# lists nationally, so the plug-in half of this inventory is about to multiply,
+# and it arrives under model and trim strings nothing in web/ was shaped for:
+# "X5 PHEV", "XC90 Plug-In Hybrid", model "Wrangler" with the badge hiding in
+# the trim ("Sport S 4xe"), "NX 450h+", and casing variants of all of them.
+#
+# A plug-in that matches no enrichment row is invisible: its card renders
+# exactly like a car whose facts are genuinely unknowable. The only detector
+# was a human opening a listing — which is how a Ram ProMaster's empty card
+# was found, and luck is not a monitor. So: build the check.
+#
+# Why this is its own workflow and not a step in feed-audits.yml, which is
+# otherwise the right home (report-only, live CDN, nothing nightly.yml can
+# take down): feed-audits runs every 6 hours, and a full pass reads all six
+# browse shards, ~40 MB. Four times a day is ~4.8 GB a month of Vercel
+# bandwidth for a report that changes at the pace of a nightly ingest. Once a
+# day is the honest cadence for what it measures.
+#
+# It also runs on any push that touches the enrichment corpus or the matcher,
+# which is the tight loop that matters: an alias edit gets checked against the
+# live feed rather than against someone's memory of it.
+#
+# Reads the production CDN only — no database, no secrets. The ratchet is on
+# the number of distinct unmatched model-string shapes, so a new nameplate
+# going live with nothing behind it turns this red while the known research
+# backlog does not. The cross-kind guard inside the script (a plug-in wearing
+# a battery-electric car's row) is NOT ratcheted: that one is a false claim on
+# the site, and any occurrence fails.
+on:
+  schedule:
+    # 04:45 UTC — after nightly.yml's 10:30 cycle has long since landed and
+    # revalidated, and away from feed-audits.yml's :15 slots so two workflows
+    # aren't pulling the same shards at once.
+    - cron: "45 4 * * *"
+  push:
+    paths:
+      - "web/lib/enrichment/**"
+      - "web/scripts/phev-enrichment-gap.mjs"
+      - "scraper/lib/ev.mjs"
+      - ".github/workflows/phev-enrichment-gap.yml"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: phev-enrichment-gap
+  cancel-in-progress: false
+
+jobs:
+  gap:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      # Full checkout, not web/ alone: the script imports scraper/lib/ev.mjs
+      # rather than mirroring its nameplate regexes, so that the population it
+      # measures cannot drift away from the population the feed contains.
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Measure PHEV enrichment coverage against the live feed
+        working-directory: web
+        run: |
+          rc=0
+          node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs \
+            scripts/phev-enrichment-gap.mjs --max-groups 111 --top 40 || rc=$?
+          if [ "$rc" -eq 10 ]; then
+            echo "::error::PHEV enrichment gap check failed — a plug-in nameplate went live with no enrichment row, a row stopped matching, or a plug-in is showing a battery-electric car's facts. See the ranked list above."
+            exit 1
+          fi
+          exit "$rc"
+      - name: Upload the full gap report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phev-enrichment-gap
+          path: /tmp/phev-enrichment-gap.json
+          if-no-files-found: warn

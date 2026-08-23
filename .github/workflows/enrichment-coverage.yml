@@ -50,6 +50,22 @@ name: Enrichment coverage
 # Archived owner's manuals are the next place to look. Put the number back to
 # 241 when they are filled.
 #
+# 248 -> 250, 2026-08-23, and the same arithmetic applies: no row lost a fact.
+# Two rows were added so that plug-ins listed under the nameplate they share
+# with a petrol car reach the research that already exists —
+#
+#   wrangler-4xe-2021-25-alt   JEEP Wrangler / Wrangler Unlimited, trim 4xe
+#   gc-4xe-2022-25-alt         JEEP Grand Cherokee, trim 4xe
+#
+# — and each carries exactly what its already-committed sibling carries (the
+# electric-only and total EPA ranges, and the J1772/no-DC charging facts) and
+# exactly the same core-field holes: no pack kWh, no heat pump, no battery
+# warranty term. They are two more instances of a gap this file already counts
+# six times over, not two new ones, and they buy 203 live listings a card that
+# says something. web/tests/phev-bare-model-aliases.test.ts pins why they are
+# keyed on the trim, and web/scripts/phev-enrichment-gap.mjs is the check that
+# found them.
+#
 # Note what does NOT need a raise any more: a row that is deliberately silent
 # on a core field now says so in `abstains` (lib/types.ts), which the script
 # excuses and then prints in its own section with its reason. Eight rows use
@@ -89,7 +105,7 @@ jobs:
           node-version: "22"
       - name: Report enrichment coverage
         working-directory: web
-        run: node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs scripts/enrichment-coverage.mjs --max-core-fails 248
+        run: node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs scripts/enrichment-coverage.mjs --max-core-fails 250
       # A note either cites a source, states a fact, or says nothing. Swept out
       # by hand on 2026-08-20 (VW ID. Buzz) and again on 2026-08-22 (Toyota
       # bZ), both times because the owner opened a listing and read it. No
