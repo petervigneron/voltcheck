@@ -22,6 +22,23 @@ test("a same-named shop in a same-named city, wrong state, is refused", () => {
   assert.equal(identityRule(HUDSON_NY, oh), null);
 });
 
+// Found by hand-checking claimed matches on 2026-08-23: searching the page's
+// digits run together for five digits matches any five-digit window of any
+// phone number or price on the page. Land'n Sea Inc — a Manhattan apparel
+// manufacturer — cleared "name + zip" against LAND N SEA CO of Marysville WA
+// 98270 that way, and Three Rivers Marine of Crystal River FLORIDA cleared it
+// against the same-named licensee in Woodinville WA.
+test("a zip must be printed as a zip, not found inside the page's digits", () => {
+  const d = { name: "Land N Sea Co", city: "Marysville", zip: "98270", phone: "" };
+  // 98270 appears here only as a window of a longer number.
+  const soup = page("<h1>Land'n Sea Inc.</h1><p>Order #4459827033 — New York, NY 10018</p>");
+  assert.equal(identityRule(d, soup), null);
+  const real = page("<h1>Land N Sea Co</h1><address>Marysville, WA 98270</address>");
+  assert.equal(identityRule(d, real), "name+zip");
+  const plusFour = page("<h1>Land N Sea Co</h1><address>Marysville WA 982701234</address>");
+  assert.equal(identityRule(d, plusFour), "name+zip");
+});
+
 test("city alone clears only when the roll row has no zip at all", () => {
   const noZip = { ...HUDSON_NY, zip: "" };
   const oh = page("<title>Hudson Collision Center</title><p>Hudson</p>");

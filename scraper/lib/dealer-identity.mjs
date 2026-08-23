@@ -22,10 +22,30 @@ const decode = (s) => s
 
 export function pageEvidence(body) {
   const text = decode(body.slice(0, 500_000));
+  const stripped = text.replace(/<[^>]+>/g, " ");
   return {
+    // Phone numbers arrive split by their own punctuation — "(253) 472-7483"
+    // — so the phone rule has to look in every digit on the page run
+    // together. The zip rule must NOT: see zipOnPage.
     digits: text.replace(/\D+/g, ""),
-    squashed: squash(text.replace(/<[^>]+>/g, " ")).replace(/ /g, ""),
+    digitRuns: new Set((text.match(/\d+/g) ?? [])),
+    squashed: squash(stripped).replace(/ /g, ""),
   };
+}
+
+// A zip has to be printed AS a zip, not found inside the page's digits run
+// together. Searching the concatenated digit string for five digits matches
+// any five-digit window of any phone number, price, product code or
+// timestamp on the page, and that is not a hypothetical: it put Land'n Sea
+// Inc, a Manhattan apparel manufacturer, under LAND N SEA CO of Marysville
+// WA 98270, and Three Rivers Marine of Crystal River FLORIDA under the
+// same-named licensee in Woodinville WA. Both cleared "name + zip" on 2026-08-23
+// against pages that never print those zips at all. So the zip must be its own
+// run of digits, or the first five of a ZIP+4.
+function zipOnPage(zip, evidence) {
+  if (evidence.digitRuns.has(zip)) return true;
+  for (const run of evidence.digitRuns) if (run.length === 9 && run.startsWith(zip)) return true;
+  return false;
 }
 
 // Returns the name of the rule that cleared, or null. Rules, strongest first:
@@ -49,7 +69,7 @@ export function identityRule(dealer, evidence) {
   if (phone.length === 10 && digits.includes(phone)) return "phone";
   if (phone.length === 9 && digits.includes(phone) && nameOnPage) return "name+phone9";
   if (!nameOnPage) return null;
-  if (dealer.zip) return digits.includes(dealer.zip) ? "name+zip" : null;
+  if (dealer.zip) return zipOnPage(dealer.zip, evidence) ? "name+zip" : null;
   const city = squash(dealer.city ?? "").replace(/ /g, "");
   return city && squashed.includes(city) ? "name+city" : null;
 }
