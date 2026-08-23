@@ -125,6 +125,13 @@
 //            the EV gate is structural rather than the nameplate we queried.
 //            Certified AND HondaTrue-used, on a national covering grid
 //            → lib/oem/honda-cpo.mjs
+//   Acura CPO — acuracertified.com's Tekion discovery API. One nationwide
+//            walk (no radius = the whole country, 8.7k cars at 20 a page) and
+//            not a fuel-facet query, because the ~1.8k non-Acura trade-ins on
+//            Acura lots carry no fuelType and the facet cannot see them — the
+//            42 ZDX it does see would have left 16 Prologues behind. Provably
+//            complete (rows vs the service's own count), which it has to be:
+//            its per-VIN page is fake-alive → lib/oem/acura-cpo.mjs
 //   Enterprise Car Sales — not an OEM but the same lane shape: their AEM SPA
 //            queries an OpenSearch BFF on api.ehi.com via a page-published
 //            anonymous-token flow, open to plain Node. One query is their
@@ -159,6 +166,7 @@ import { ECHOPARK, pullEchoPark } from "./lib/oem/echopark.mjs";
 import { LEXUS, pullLexus } from "./lib/oem/toyota.mjs";
 import { LUCID, LUCID_NEW, pullLucid, pullLucidNew } from "./lib/oem/lucid.mjs";
 import { HONDA_CPO, pullHondaCpo } from "./lib/oem/honda-cpo.mjs";
+import { ACURA_CPO, pullAcuraCpo } from "./lib/oem/acura-cpo.mjs";
 
 // One registry of pullers keyed by brand. Each entry is a thunk returning a
 // crawl.mjs-shaped report; new OEM families plug in here without touching the
@@ -190,6 +198,7 @@ const PULLERS = {
   [LUCID.key]: { domain: LUCID.domain, run: () => pullLucid({ log }) },
   [LUCID_NEW.key]: { domain: LUCID_NEW.domain, run: () => pullLucidNew({ log }) },
   [HONDA_CPO.key]: { domain: HONDA_CPO.domain, run: () => pullHondaCpo({ log }) },
+  [ACURA_CPO.key]: { domain: ACURA_CPO.domain, run: () => pullAcuraCpo({ log }) },
 };
 
 const args = process.argv.slice(2);
@@ -198,7 +207,7 @@ function flag(name, fallback) {
   return i >= 0 ? args[i + 1] : fallback;
 }
 const OUT_DIR = flag("--out", "out");
-const wanted = flag("--brands", "chevrolet,gmc,cadillac,carbravo,hyundai,hyundai-cpo,kia,nissan,nissan-cpo,bmw,mercedes,jeep,dodge,fiat,genesis,ford-blue-advantage,honda,honda-cpo,audi,vw,volvo,polestar,lexus,lucid,lucid-new,subaru,enterprise,driveway,echopark").split(",").map((s) => s.trim().toLowerCase());
+const wanted = flag("--brands", "chevrolet,gmc,cadillac,carbravo,hyundai,hyundai-cpo,kia,nissan,nissan-cpo,bmw,mercedes,jeep,dodge,fiat,genesis,ford-blue-advantage,honda,honda-cpo,acura-cpo,audi,vw,volvo,polestar,lexus,lucid,lucid-new,subaru,enterprise,driveway,echopark").split(",").map((s) => s.trim().toLowerCase());
 const selected = wanted.filter((k) => PULLERS[k]);
 if (!selected.length) {
   console.error(`oem-locator: no known brands in "${wanted}" (have: ${Object.keys(PULLERS).join(",")})`);
