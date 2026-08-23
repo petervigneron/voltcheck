@@ -88,18 +88,30 @@ const H = { apikey: ANON, Authorization: `Bearer ${ANON}` };
 // almost no contradicted trims. The two carry the same trimSuspect either
 // way, and the extraction happens server-side, so no description crosses the
 // wire.
+// KEYSET (`vin=gt.`), not Range/OFFSET — this loop failed with HTTP 500 at
+// 13:16Z on 2026-08-23 for the same reason recheck.mjs did four hours after
+// it (see the note there: OFFSET 96000 costs 18,538 ms against anon's 3s
+// statement_timeout, keyset 17.9 ms, and keyset does not grow with the feed).
+// Ordering moves from dealer_domain to vin because keyset needs a UNIQUE key
+// — a non-unique cursor can drop or repeat rows across a page boundary, which
+// here would mean silently auditing a subset and reporting it as the whole.
+// Nothing downstream reads these rows in order: they are aggregated into a
+// map keyed by dealer_domain below.
 const rows = [];
-for (let from = 0; ; from += 1000) {
+for (let after = ""; ; ) {
   const res = await fetch(
-    `${SUPABASE_URL}/rest/v1/listings?select=dealer_domain,mileage,state,condition,susp:payload->>trimSuspect` +
-      `&delisted_at=is.null&condition=in.(used,certified)&order=dealer_domain.asc`,
-    { headers: { ...H, Range: `${from}-${from + 999}` } }
+    `${SUPABASE_URL}/rest/v1/listings?select=vin,dealer_domain,mileage,state,condition,susp:payload->>trimSuspect` +
+      `&delisted_at=is.null&condition=in.(used,certified)` +
+      (after ? `&vin=gt.${encodeURIComponent(after)}` : "") +
+      `&order=vin.asc&limit=1000`,
+    { headers: H }
   );
   if (!res.ok) { console.error(`completeness-audit: fetch failed HTTP ${res.status}`); await finish(1, "fail", `fetch failed HTTP ${res.status}`); }
   const page = await res.json();
   if (!Array.isArray(page) || !page.length) break;
   rows.push(...page);
   if (page.length < 1000 || (LIMIT && rows.length >= LIMIT)) break;
+  after = page[page.length - 1].vin;
 }
 const live = LIMIT ? rows.slice(0, LIMIT) : rows;
 

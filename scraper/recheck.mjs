@@ -108,12 +108,39 @@ if (!SUPABASE_URL || !ANON) {
 
 // Live listings straight from the DB — the recheck is about what the site
 // is currently showing, not what last night's crawl happened to find.
+//
+// KEYSET, not Range/OFFSET, and the difference is the whole job. This loop
+// used to ask for `Range: <from>-<from+999>`, which PostgREST turns into
+// OFFSET — so the database had to produce and throw away every row before the
+// one asked for. The cost grew with the offset, and on 2026-08-23 it finally
+// crossed anon's 3s statement_timeout partway down the feed:
+//
+//   recheck: listing fetch rows 96000+: HTTP 500 — retrying in 30s
+//   recheck: listing fetch rows 96000+: HTTP 500 — retrying in 120s
+//   recheck: listing fetch rows 96000+: HTTP 500 — retrying in 240s
+//   recheck: listing fetch failed HTTP 500
+//
+// The retries could not help: nothing about the query gets cheaper on a
+// second attempt. Measured on a healthy idle instance the same day —
+//
+//   OFFSET 96000 LIMIT 1000  ->  18,538 ms, 87,193 buffers, 97,000 rows read
+//   WHERE vin > '<last>'     ->      17.9 ms,    938 buffers,  1,000 rows read
+//
+// — a thousandfold, and more to the point a CONSTANT: the keyset form costs
+// the same at row 96,000 as at row 0, so it does not quietly re-break the
+// night coverage grows past some new threshold. That is exactly how this one
+// arrived; the same loop was fine at 58k rows and fine at 87k.
+//
+// This is the shape web/lib/listings/db.ts has walked the feed with all
+// along (`vin=gt.`), for the same reason. The two lanes now agree.
 const listings = [];
-for (let from = 0; ; from += 1000) {
-  const res = await fetchWithRetry(`recheck: listing fetch rows ${from}+`, () =>
+for (let after = ""; ; ) {
+  const res = await fetchWithRetry(`recheck: listing fetch after ${after || "start"}`, () =>
     fetch(
-      `${SUPABASE_URL}/rest/v1/listings?select=vin,price_usd,payload&delisted_at=is.null&order=vin.asc`,
-      { headers: { apikey: ANON, Authorization: `Bearer ${ANON}`, Range: `${from}-${from + 999}` } }
+      `${SUPABASE_URL}/rest/v1/listings?select=vin,price_usd,payload&delisted_at=is.null` +
+        (after ? `&vin=gt.${encodeURIComponent(after)}` : "") +
+        `&order=vin.asc&limit=1000`,
+      { headers: { apikey: ANON, Authorization: `Bearer ${ANON}` } }
     )
   );
   if (!res.ok) {
@@ -123,6 +150,7 @@ for (let from = 0; ; from += 1000) {
   const page = await res.json();
   listings.push(...page);
   if (page.length < 1000) break;
+  after = page[page.length - 1].vin;
 }
 // OEM-locator listings are excluded on two grounds: the locator pull is
 // complete national coverage nightly (its truncated:false already retires

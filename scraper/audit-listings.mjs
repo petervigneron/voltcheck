@@ -68,19 +68,29 @@ const { SUPABASE_URL, SUPABASE_ANON_KEY: ANON } = process.env;
 if (!SUPABASE_URL || !ANON) { console.error("audit: no Supabase credentials"); await finish(0, "inconclusive", "no Supabase credentials"); }
 const H = { apikey: ANON, Authorization: `Bearer ${ANON}` };
 
-// Page through live listings. Selecting only what the rules need keeps this
-// off the 8s anon statement timeout that a wide scan now trips at 81k rows.
+// Page through live listings, KEYSET (`vin=gt.`) rather than Range/OFFSET.
+// Selecting only what the rules need was the earlier half of keeping this off
+// the anon statement timeout, and it bought time rather than fixing anything:
+// a narrower select makes each row cheaper, but OFFSET still makes the
+// database produce and discard every row ahead of the one asked for, so the
+// cost keeps climbing with inventory and trips the timeout again at some
+// larger row count. recheck.mjs hit exactly that on 2026-08-23 at row 96,000
+// (18,538 ms for one page, against anon's 3s); see the note there for the
+// measurements. Keyset costs the same at row 96,000 as at row 0.
 const rows = [];
-for (let from = 0; ; from += 1000) {
+for (let after = ""; ; ) {
   const res = await fetch(
-    `${SUPABASE_URL}/rest/v1/listings?select=vin,year,make,model,payload->>trim&delisted_at=is.null&order=vin.asc`,
-    { headers: { ...H, Range: `${from}-${from + 999}` } }
+    `${SUPABASE_URL}/rest/v1/listings?select=vin,year,make,model,payload->>trim&delisted_at=is.null` +
+      (after ? `&vin=gt.${encodeURIComponent(after)}` : "") +
+      `&order=vin.asc&limit=1000`,
+    { headers: H }
   );
   if (!res.ok) { console.error(`audit: listing fetch failed HTTP ${res.status}`); await finish(1, "fail", `listing fetch failed HTTP ${res.status}`); }
   const page = await res.json();
   if (!Array.isArray(page) || !page.length) break;
   rows.push(...page);
   if (page.length < 1000 || (LIMIT && rows.length >= LIMIT)) break;
+  after = page[page.length - 1].vin;
 }
 const live = LIMIT ? rows.slice(0, LIMIT) : rows;
 console.error(`audit: ${live.length} live listings`);
