@@ -31,6 +31,7 @@ export const OEM_LOCATOR_DOMAINS = new Set([
   "buick.com",
   "carbravo.com",
   "genesis.com",
+  "genesis-cpo",
   "kia.com",
   "lucidmotors.com",
   "lucid-new",

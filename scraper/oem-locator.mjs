@@ -165,6 +165,7 @@ import { BMW, pullBmw } from "./lib/oem/bmw.mjs";
 import { MERCEDES, pullMercedes } from "./lib/oem/mercedes.mjs";
 import { STELLANTIS_BRANDS, pullStellantisBrand } from "./lib/oem/stellantis.mjs";
 import { GENESIS, pullGenesis } from "./lib/oem/genesis.mjs";
+import { GENESIS_CPO, pullGenesisCpo } from "./lib/oem/genesis-cpo.mjs";
 import { FORD_BLUE_ADVANTAGE, pullFordBlueAdvantage } from "./lib/oem/ford-blue-advantage.mjs";
 import { HONDA, pullHonda } from "./lib/oem/honda.mjs";
 import { SUBARU, pullSubaru } from "./lib/oem/subaru.mjs";
@@ -197,6 +198,7 @@ const PULLERS = {
   [MERCEDES.key]: { domain: MERCEDES.domain, run: () => pullMercedes({ log }) },
   ...Object.fromEntries(STELLANTIS_BRANDS.map((b) => [b.key, { domain: b.domain, run: () => pullStellantisBrand(b, { log }) }])),
   [GENESIS.key]: { domain: GENESIS.domain, run: () => pullGenesis({ log }) },
+  [GENESIS_CPO.key]: { domain: GENESIS_CPO.domain, run: () => pullGenesisCpo({ log }) },
   [FORD_BLUE_ADVANTAGE.key]: { domain: FORD_BLUE_ADVANTAGE.domain, run: () => pullFordBlueAdvantage({ log }) },
   [HONDA.key]: { domain: HONDA.domain, run: () => pullHonda({ log }) },
   [SUBARU.key]: { domain: SUBARU.domain, run: () => pullSubaru({ log }) },
@@ -221,7 +223,7 @@ function flag(name, fallback) {
   return i >= 0 ? args[i + 1] : fallback;
 }
 const OUT_DIR = flag("--out", "out");
-const wanted = flag("--brands", "chevrolet,gmc,cadillac,carbravo,hyundai,hyundai-cpo,kia,nissan,nissan-cpo,bmw,mercedes,jeep,dodge,fiat,genesis,ford-blue-advantage,honda,honda-cpo,acura-cpo,stellantis-cpo,audi,vw,volvo,polestar,lexus,lucid,lucid-new,subaru,enterprise,driveway,echopark").split(",").map((s) => s.trim().toLowerCase());
+const wanted = flag("--brands", "chevrolet,gmc,cadillac,carbravo,hyundai,hyundai-cpo,kia,nissan,nissan-cpo,bmw,mercedes,jeep,dodge,fiat,genesis,genesis-cpo,ford-blue-advantage,honda,honda-cpo,acura-cpo,stellantis-cpo,audi,vw,volvo,polestar,lexus,lucid,lucid-new,subaru,enterprise,driveway,echopark").split(",").map((s) => s.trim().toLowerCase());
 const selected = wanted.filter((k) => PULLERS[k]);
 if (!selected.length) {
   console.error(`oem-locator: no known brands in "${wanted}" (have: ${Object.keys(PULLERS).join(",")})`);
