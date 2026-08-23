@@ -127,10 +127,17 @@ async function crawlDealer(domain) {
   const budget = pageBudget(domain);
   const domainCapAt = DOMAIN_CAP_MIN > 0 ? Date.now() + DOMAIN_CAP_MIN * 60_000 : 0;
   const report = { domain, budget, fetched: 0, vehiclePages: 0, itemListVdps: 0, evs: [], errors: [], notes: [] };
-  const origin = `https://${domain}`;
+  // The host to ASK is not always the row's identity. A registry domain that
+  // 200s by redirecting to another host has no sitemap and no inventory paths
+  // of its own — furymotors.net returns 0 sitemap URLs where
+  // saintpaul.furymotors.com returns 848 — so every path built on it misses.
+  // probe.mjs records where the homepage actually landed; use it here and keep
+  // `domain` as the row's identity and the listing's dealer_domain.
+  const canonicalHost = siteInfo.get(domain)?.probe?.canonicalHost;
+  const origin = `https://${canonicalHost ?? domain}`;
   const visited = new Set();
 
-  const sitemapUrls = await discoverSitemapUrls(domain, {
+  const sitemapUrls = await discoverSitemapUrls(canonicalHost ?? domain, {
     maxUrls: Math.max(3000, budget * 40),
     maxSitemaps: budget > 100 ? 120 : 25,
   });

@@ -57,23 +57,51 @@ const HAVE_LANE = [
   { re: /dealr\.cloud/i, lane: "dealrcloud", kind: "site" },
   { re: /overfuel/i, lane: "overfuel", kind: "site" },
   { re: /typesense|dealervenom/i, lane: "dealervenom", kind: "site" },
+  { re: /app\.ridemotive\.com/i, lane: "ridemotive", kind: "site" },
 ];
 
+// Hosts a rooftop names that are NOT its inventory, beyond the widget list
+// above — each one checked by reading what the page actually does with it, so
+// nobody spends a day building a lane for a login button.
+//
+//   websites.api.remora.inc — Remora's OAuth endpoint (/oauth/google,
+//   /oauth/apple). It ranked 6 rooftops here and looked like a platform API.
+//   Remora server-renders its whole SRP and its VDPs carry full schema.org
+//   Car JSON-LD; all 6 of those rooftops were parked for a different reason
+//   entirely (their registry domain redirects to another host, so the probe
+//   was asking the wrong origin) and all 6 promote without any new extractor.
+//
+//   api.connectcdk.com — CDK's service-appointment app. Every reference on
+//   both rooftops read (subaruyakima.com and tristatenissan.com, 2026-08-23)
+//   is the same "Schedule Service" link to
+//   /api/nc-cosa-consumer-ui/v1/?cid=…, in the nav, a button and a widget
+//   config. No inventory passes through it.
+NOT_INVENTORY.push("remora.inc", "remorainc.com", "connectcdk.com");
+
 const registry = JSON.parse(await readFile(new URL("./registry/registry.json", import.meta.url), "utf-8"));
+
+// The hosts one row names. probe.mjs writes them as a list on `probe.apiHosts`
+// (since 2026-08-23); older rows only ever had them inside the note's prose,
+// which is what this tool used to parse — finding #1 above. Read the field
+// when it is there and keep the prose reader for the rows written before it,
+// which is most of the pile until a full re-probe.
+function hostsOf(site) {
+  if (Array.isArray(site.probe?.apiHosts)) return site.probe.apiHosts;
+  const out = [];
+  for (const m of (site.notes ?? "").matchAll(/api-hosts?:\s*([^|)]+)/gi)) out.push(...m[1].split(/[+,]/));
+  return out;
+}
 
 // host -> Set(domains). One row can name several hosts; each is counted once.
 const byHost = new Map();
 for (const s of registry.sites) {
   if (!PARKED.test(s.status)) continue;
-  const notes = s.notes ?? "";
-  for (const m of notes.matchAll(/api-hosts?:\s*([^|)]+)/gi)) {
-    for (const raw of m[1].split(/[+,]/)) {
-      const host = raw.trim().toLowerCase().replace(/[.,;]+$/, "");
-      if (!host || !host.includes(".")) continue; // "nextjs"/"algolia" tokens
-      if (NOT_INVENTORY.some((n) => host.includes(n))) continue;
-      if (!byHost.has(host)) byHost.set(host, new Set());
-      byHost.get(host).add(s.domain);
-    }
+  for (const raw of hostsOf(s)) {
+    const host = raw.trim().toLowerCase().replace(/[.,;]+$/, "");
+    if (!host || !host.includes(".")) continue; // "nextjs"/"algolia" tokens
+    if (NOT_INVENTORY.some((n) => host.includes(n))) continue;
+    if (!byHost.has(host)) byHost.set(host, new Set());
+    byHost.get(host).add(s.domain);
   }
 }
 

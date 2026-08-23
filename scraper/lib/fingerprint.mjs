@@ -15,6 +15,13 @@ const SIGNATURES = [
   // whole lot was in Motive's Algolia index. The signal is the platform's own
   // app hosts, not the brand name.
   { platform: "ridemotive", res: [/(?:api|assets|images|echo|bronco)\.app\.ridemotive\.com/i] },
+  // Remora, also before dealer.com: their rooftops serve some images from
+  // pictures.dealer.com and bozard.com fingerprinted "dealer.com" because of
+  // it, which would send the crawl down the DDC inventory-API path on a site
+  // that has none. Remora server-renders full schema.org Car JSON-LD on every
+  // VDP, so the generic extractor handles it — this label only stops the
+  // wrong one being tried. Its own hosts are the signal.
+  { platform: "remora", res: [/(?:r|images)\.remorainc\.com|(?:vimg|s3|websites\.api)\.remora\.inc/i] },
   // DealerOn first: their sites often serve images from pictures.dealer.com,
   // which would false-positive the Dealer.com check (bit us on lehmers.com).
   { platform: "dealeron", res: [/dealeron-js\.aspx/i, /DealerOn/i, /searchused\.aspx/i, /sdDataLayer/] },
