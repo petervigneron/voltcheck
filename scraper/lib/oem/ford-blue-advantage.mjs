@@ -16,6 +16,20 @@
 // hit is a certified-used Ford BEV (Mustang Mach-E, F-150 Lightning, E-Transit)
 // with VIN, price, real mileage, a dealer VDP and full dealer address.
 //
+// PHEVs (2026-08-23): fuelTypeGroup=PIH is the marketplace's separate plug-in
+// facet (61 national on probe day: Escape PHEV, Fusion Energi, C-MAX Energi),
+// disjoint from HYB (2,359 conventional hybrids, all F-150 PowerBoost etc.).
+// Each PIH record restates fuelType.group "Plug-in Hybrid: Gas/Electric", and
+// toRecord requires that echo. The facet is not perfectly clean at the
+// source — one 2026 F-150 STX (a PowerBoost, no plug) sat in it, mis-grouped
+// by the marketplace — which is exactly what the downstream vpic-enrich hold
+// exists for: the Escape/Fusion/C-MAX names carry no EV_MODEL_RE match, so
+// every PIH VIN is held until vPIC answers, and a Strong-HEV decode refutes
+// the impostor before it can publish. No lane-side name gate is added on top:
+// the Escape PHEV's own trim strings ("SE", "Titanium") carry no plug-in word
+// to gate on, and inventing one would trade a measured 1-in-61 mislabel that
+// vPIC already catches for a systematic false-negative on the whole nameplate.
+//
 // Coverage quirk that shapes the code: searchRadius=0 is nationwide and reports
 // the true count (~1.2k), but the marketplace caps the browsable window at ~400
 // records (firstRecord past ~300 returns an empty page) — a single query can't
@@ -86,12 +100,18 @@ const httpsUrl = (u) => {
   return s.startsWith("https://") ? s : s.startsWith("http://") ? "https://" + s.slice(7) : undefined;
 };
 
-function toRecord(l) {
+function toRecord(l, sweep) {
   const vin = String(l.vin ?? "").toUpperCase();
   if (!VIN_RE.test(vin)) return null;
-  // Structured BEV guard: the query already filters fuelTypeGroup=ELE, and each
-  // record echoes fuelType.code "E". Anything else means the facet drifted.
-  if (String(l.fuelType?.code ?? "").toUpperCase() !== "E") return null;
+  // Structured guard: each record restates its fuel identity; it must echo
+  // the queried facet ("E" code for ELE; group "Plug-in Hybrid: Gas/Electric"
+  // for PIH — the code there is "B", shared with conventional hybrids, so the
+  // GROUP is the echo that matters). Anything else means the facet drifted.
+  if (sweep.evKind === "BEV") {
+    if (String(l.fuelType?.code ?? "").toUpperCase() !== "E") return null;
+  } else {
+    if (!/plug-?in/i.test(String(l.fuelType?.group ?? ""))) return null;
+  }
   const year = Number(l.year);
   if (!(year >= 1981 && year <= new Date().getFullYear() + 2)) return null;
   const model = MODEL_NAMES[l.modelCode] || String(l.model?.name ?? "").trim();
@@ -132,8 +152,10 @@ function toRecord(l) {
     // Real dealer VDP for click-through + recheck liveness; else the FBA search.
     sourceUrl: vdp || "https://www.fordblueadvantage.com/cars-for-sale",
     dealerDomain: FORD_BLUE_ADVANTAGE.domain,
-    evKind: "BEV",
-    evConfidence: "high", // server-side fuelTypeGroup=ELE facet, not a name match
+    evKind: sweep.evKind,
+    // The marketplace's own fuel grouping string, restated per record.
+    fuelType: l.fuelType?.group || l.fuelType?.name || undefined,
+    evConfidence: "high", // server-side fuelTypeGroup facet + per-record echo, not a name match
     platform: "ford-blue-advantage-locator",
     fromVdp: isVdp,
     scrapedAt: new Date().toISOString(),
@@ -157,19 +179,24 @@ async function apiGet(params, report) {
   }
 }
 
-const FIXED = "zip=66952&searchRadius=0&makeCode=FORD&fuelTypeGroup=ELE&listingType=CERTIFIED";
+const FIXED = "zip=66952&searchRadius=0&makeCode=FORD&listingType=CERTIFIED";
+// The two electrified facets of the marketplace's fuelTypeGroup filter.
+const FUEL_SWEEPS = [
+  { group: "ELE", evKind: "BEV" },
+  { group: "PIH", evKind: "PHEV" },
+];
 
 // Paginate one (driveGroup, year) slice to completion, folding into byVin.
 // Returns the slice's reported total (for the completeness accounting).
-async function pullSlice(dg, year, byVin, report) {
-  const q = `${FIXED}&driveGroup=${dg}&startYear=${year}&endYear=${year}&numRecords=${PAGE}`;
+async function pullSlice(sweep, dg, year, byVin, report) {
+  const q = `${FIXED}&fuelTypeGroup=${sweep.group}&driveGroup=${dg}&startYear=${year}&endYear=${year}&numRecords=${PAGE}`;
   const first = await apiGet(`${q}&firstRecord=0`, report);
   if (!first) return 0;
   const total = first.totalResultCount ?? 0;
   if (!total) return 0;
   const collect = (j) => {
     for (const l of j?.listings ?? []) {
-      const rec = toRecord(l);
+      const rec = toRecord(l, sweep);
       if (rec) byVin.set(rec.vin, rec);
     }
   };
@@ -196,19 +223,24 @@ export async function pullFordBlueAdvantage({ log = () => {} } = {}) {
   const byVin = new Map();
   const thisYear = new Date().getFullYear();
   const years = [];
-  for (let y = 2020; y <= thisYear + 1; y++) years.push(y);
+  // From 2016: the certified plug-in tail (C-MAX/Fusion Energi) reaches back
+  // further than any certified BEV; empty year-slices cost one request each.
+  for (let y = 2016; y <= thisYear + 1; y++) years.push(y);
 
   let reportedTotal = 0;
-  for (const dg of FORD_BLUE_ADVANTAGE.drives) {
-    let dgTotal = 0;
-    for (const y of years) dgTotal += await pullSlice(dg, y, byVin, report);
-    if (dgTotal) log(`ford-blue-advantage/${dg}: ${dgTotal} reported, ${byVin.size} cumulative VINs`);
-    reportedTotal += dgTotal;
+  for (const sweep of FUEL_SWEEPS) {
+    for (const dg of FORD_BLUE_ADVANTAGE.drives) {
+      let dgTotal = 0;
+      for (const y of years) dgTotal += await pullSlice(sweep, dg, y, byVin, report);
+      if (dgTotal) log(`ford-blue-advantage/${sweep.group}/${dg}: ${dgTotal} reported, ${byVin.size} cumulative VINs`);
+      reportedTotal += dgTotal;
+    }
   }
 
   report.evs = [...byVin.values()];
   report.vehiclePages = report.fetched;
-  report.notes.push(`national certified BEV count ${reportedTotal} across ${FORD_BLUE_ADVANTAGE.drives.length} drive groups x ${years.length} years, ${byVin.size} unique collected`);
+  const phevN = report.evs.filter((r) => r.evKind === "PHEV").length;
+  report.notes.push(`national certified count ${reportedTotal} (${byVin.size - phevN} BEV + ${phevN} PHEV unique collected) across 2 fuel groups x ${FORD_BLUE_ADVANTAGE.drives.length} drive groups x ${years.length} years`);
   // Never certify complete: marketplace snapshot with a browsable-window cap. A
   // hard failure (endpoint moved / Akamai now walls the proxy) shows as too few
   // collected — surface it so a dead lane doesn't pass silently.
