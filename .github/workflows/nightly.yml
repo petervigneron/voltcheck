@@ -1051,14 +1051,14 @@ jobs:
             read -r pcode ptime < <(curl -s -o /dev/null -w "%{http_code} %{time_total}" --max-time 20 "${auth[@]}" \
               "$SUPABASE_URL/rest/v1/live_listings_feed?select=$sel&order=vin.asc&limit=500&vin=gte.W" || echo "000 99")
             if [ "$pcode" != "200" ]; then
-              echo "::error::the database cannot serve a feed page (HTTP $pcode) — the count answered but the WALK cannot run, which is the query the warm-up depends on. Skipping revalidate; production keeps the complete cache it already has."
+              echo "::error::the database cannot serve a feed page (HTTP $pcode) — the WALK cannot run, which is the query the warm-up depends on (count was HTTP $code, advisory). Skipping revalidate; production keeps the complete cache it already has."
               exit 1
             fi
             if awk "BEGIN{exit !($ptime > 1.5)}"; then
               echo "::error::a feed page took ${ptime}s (ceiling 1.5s) — the walk is ~28 sequential pages per lane, so the warm-up would time out and cache nothing useful. Skipping revalidate; production keeps the complete cache it already has."
               exit 1
             fi
-            echo "database answered the count (HTTP $code) and a fat feed page in ${ptime}s; safe to expire and re-warm"
+            echo "database served a fat feed page in ${ptime}s (count: HTTP $code, advisory); safe to expire and re-warm"
           fi
           [ -z "$FEED_REVALIDATE_SECRET" ] && { echo "::warning::FEED_REVALIDATE_SECRET unset; site refreshes on the 24h cache backstop instead"; exit 0; }
           if ! curl -fsS --retry 3 --max-time 60 -X POST -H "x-revalidate-secret: $FEED_REVALIDATE_SECRET" https://voltcheck.net/api/revalidate; then
