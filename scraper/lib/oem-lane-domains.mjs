@@ -40,6 +40,7 @@ export const OEM_LOCATOR_DOMAINS = new Set([
   "polestar-preowned",
   "jeep.com",
   "dodge.com",
+  "chrysler.com",
   "fiatusa.com",
   "hyundaiusa.com",
   "hyundai-cpo",

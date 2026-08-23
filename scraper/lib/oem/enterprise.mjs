@@ -24,6 +24,19 @@
 //      fuelTypeDescription facet = "Electric" — a pure-BEV bucket ("Hybrid"
 //      is a separate value; verified against the whole 14.5k index).
 //
+// PHEVs (2026-08-23): the fuelTypeDescription vocabulary is Gasoline /
+// Hybrid / Electric / Diesel / Flex — a terms aggregation over the whole
+// index shows NO plug-in value, so Enterprise's own facet lumps plug-ins
+// into "Hybrid" alongside Priuses, RAV4 Hybrids and 48V Audis (first 200
+// Hybrid docs: 119 Jeep 4xe next to 12 Prius and 7 A3 mild hybrids). The
+// facet therefore cannot ship alone. The Hybrid bucket (1,706 on probe day)
+// IS swept, but each row must carry the maker's own plug-in designation in
+// its model/trim name (lib/oem/phev-designator.mjs — 4xe, Plug-In, PHEV,
+// Energi, Prime, E-Hybrid …), plus one special case: a Chrysler Pacifica
+// whose trim starts "Hybrid" is the Pacifica Hybrid, which has only ever
+// been a plug-in. Rows without a designation are dropped and counted;
+// vpic-enrich re-verifies every kept VIN before it can publish.
+//
 // Docs are richer than most dealer pages: VIN, no-haggle salePrice, real
 // odometer, branch ZIP + geo, list date, photos (~80%). All makes appear —
 // Enterprise retails what its fleet bought, so this is one of the few lanes
@@ -36,6 +49,7 @@
 // VINs; recheck skips the domain (same rule as GM/BMW: the sweep itself is
 // the liveness check).
 import { fetchPage, politePostJson } from "../http.mjs";
+import { isPhevDesignated } from "./phev-designator.mjs";
 import { stateFromZip } from "./zip-state.mjs";
 import { pickTaggedPrice } from "../price-provenance.mjs";
 
@@ -137,14 +151,33 @@ async function anonymousToken(cfg, report) {
   return tok;
 }
 
-function toRecord(src) {
+// The two swept facets. Enterprise's own vocabulary has no plug-in value, so
+// the Hybrid sweep's rows are additionally gated on the maker designation in
+// toRecord (see header).
+const FUEL_SWEEPS = [
+  { facet: "Electric", evKind: "BEV" },
+  { facet: "Hybrid", evKind: "PHEV" },
+];
+
+function toRecord(src, sweep, drops) {
   const v = src?.vehicle ?? {};
   const spec = v.specification ?? {};
   const vin = String(v.vin ?? "").toUpperCase();
   if (!VIN_RE.test(vin)) return null;
-  // Structured BEV guard: the query already filters the facet; a doc that
-  // arrives without it means the mapping drifted.
-  if (String(spec.fuelTypeDescription ?? "") !== "Electric") return null;
+  // Structured guard: the query already filters the facet; a doc that
+  // arrives without the queried value means the mapping drifted.
+  if (String(spec.fuelTypeDescription ?? "") !== sweep.facet) return null;
+  // The Hybrid bucket lumps plug-ins with conventional/mild hybrids (header):
+  // a plug-in row must wear its maker's own designation, or be a Pacifica
+  // whose trim leads "Hybrid" (that nameplate has only ever been a plug-in).
+  if (sweep.evKind === "PHEV") {
+    const nameText = `${spec.modelDescription ?? ""} ${spec.trimDescription ?? ""}`;
+    const pacificaHybrid = /pacifica/i.test(String(spec.modelDescription ?? "")) && /^hybrid\b/i.test(String(spec.trimDescription ?? "").trim());
+    if (!isPhevDesignated(nameText) && !pacificaHybrid) {
+      if (drops) drops.set(`${spec.makeDescription} ${spec.modelDescription}`, (drops.get(`${spec.makeDescription} ${spec.modelDescription}`) ?? 0) + 1);
+      return null;
+    }
+  }
   const year = Number(spec.year);
   if (!(year >= 1981 && year <= new Date().getFullYear() + 2)) return null;
   const make = String(spec.makeDescription ?? "").trim();
@@ -176,17 +209,20 @@ function toRecord(src) {
     images: imgs,
     sourceUrl: `https://www.enterprisecarsales.com/vehicle/${vin}`,
     dealerDomain: ENTERPRISE.domain,
-    evKind: "BEV",
-    evConfidence: "high", // server-side fuelTypeDescription facet, not a name match
+    evKind: sweep.evKind,
+    // Enterprise's own fuel string (facet value, restated per doc) — the
+    // PHEV rows' real identity is the maker designation in their name.
+    fuelType: spec.fuelTypeDescription || undefined,
+    evConfidence: "high", // facet + (for PHEV) the maker's own plug-in designation
     platform: "enterprise-locator",
     fromVdp: false,
     scrapedAt: new Date().toISOString(),
   };
 }
 
-async function searchPage(cfg, token, from, report) {
+async function searchPage(cfg, token, facet, from, report) {
   const body = {
-    query: { bool: { filter: [{ term: { "vehicle.specification.fuelTypeDescription.keyword": "Electric" } }] } },
+    query: { bool: { filter: [{ term: { "vehicle.specification.fuelTypeDescription.keyword": facet } }] } },
     size: PAGE_SIZE,
     from,
     track_total_hits: true,
@@ -221,9 +257,11 @@ async function searchPage(cfg, token, from, report) {
   }
 }
 
-// Pull Enterprise Car Sales' complete national used-BEV stock. crawl.mjs-shaped
-// report; see gm.mjs for the completeness contract (truncated:false certifies
-// enterprisecarsales.com fully covered, licensing nightly delisting).
+// Pull Enterprise Car Sales' complete national used BEV + PHEV stock (both
+// facets, one report — a half-pull must never certify the domain, kia.mjs's
+// rule). crawl.mjs-shaped report; see gm.mjs for the completeness contract
+// (truncated:false certifies enterprisecarsales.com fully covered, licensing
+// nightly delisting).
 export async function pullEnterprise({ log = () => {} } = {}) {
   const report = { domain: ENTERPRISE.domain, kind: "oem-locator", budget: null, fetched: 0, vehiclePages: 0, itemListVdps: 0, evs: [], errors: [], notes: [] };
 
@@ -235,24 +273,37 @@ export async function pullEnterprise({ log = () => {} } = {}) {
   }
 
   const byVin = new Map();
-  let total = 0;
-  for (let page = 0; page < MAX_PAGES; page++) {
-    const hits = await searchPage(cfg, token, page * PAGE_SIZE, report);
-    if (!hits) break; // error recorded; truncated follows
-    total = hits.total?.value ?? total;
-    for (const h of hits.hits ?? []) {
-      const rec = toRecord(h._source);
-      if (rec) byVin.set(rec.vin, rec);
+  const drops = new Map(); // Hybrid-bucket rows without a plug-in designation
+  let phevKept = 0;
+  for (const sweep of FUEL_SWEEPS) {
+    let total = 0;
+    let collected = 0;
+    for (let page = 0; page < MAX_PAGES; page++) {
+      const hits = await searchPage(cfg, token, sweep.facet, page * PAGE_SIZE, report);
+      if (!hits) break; // error recorded; truncated follows
+      total = hits.total?.value ?? total;
+      for (const h of hits.hits ?? []) {
+        collected++;
+        const rec = toRecord(h._source, sweep, drops);
+        if (rec) byVin.set(rec.vin, rec);
+      }
+      log(`enterprise/${sweep.evKind}: page ${page}, ${byVin.size}/${total} VINs`);
+      if ((page + 1) * PAGE_SIZE >= total || !(hits.hits ?? []).length) break;
     }
-    log(`enterprise: page ${page}, ${byVin.size}/${total} VINs`);
-    if ((page + 1) * PAGE_SIZE >= total || !(hits.hits ?? []).length) break;
+    // Completeness is judged on rows WALKED, not rows kept — the designation
+    // gate drops most of the Hybrid bucket on purpose.
+    if (total > 0 && collected < total * 0.9) report.errors.push(`${sweep.facet}: walked ${collected} of ${total} — paging shortfall`);
+    if (sweep.evKind === "PHEV") phevKept = [...byVin.values()].filter((r) => r.evKind === "PHEV").length;
   }
 
   report.evs = [...byVin.values()];
   report.vehiclePages = report.fetched;
-  report.notes.push(`national used-BEV count ${total}; ${report.evs.length} collected`);
-  const shortfall = total > 0 && byVin.size < total * 0.9;
-  if (shortfall) report.errors.push(`collected ${byVin.size} of ${total} — paging shortfall`);
+  const droppedN = [...drops.values()].reduce((a, b) => a + b, 0);
+  report.notes.push(`${report.evs.length - phevKept} used BEVs + ${phevKept} plug-ins kept; ${droppedN} Hybrid-bucket rows without a plug-in designation dropped`);
+  if (droppedN) {
+    const top = [...drops].sort((a, b) => b[1] - a[1]).slice(0, 5).map(([k, n]) => `${n} ${k}`).join(", ");
+    report.notes.push(`top dropped (conventional/mild hybrids, correct): ${top}`);
+  }
   report.truncated = report.errors.length > 0 || byVin.size < ENTERPRISE.minExpected;
   return report;
 }

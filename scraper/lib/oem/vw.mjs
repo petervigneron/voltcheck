@@ -5,6 +5,12 @@
 // a known gap rather than to add bulk: 513 used BEVs nationally, 405 of which
 // (79%) were absent from our listings table when it was built.
 //
+// PHEV check (2026-08-23): nothing to add. VW sells no plug-in hybrid in
+// the US market — the US lineup's only electrified cars are the ID.4 and
+// ID. Buzz, both BEVs; the Tiguan/Touareg eHybrid variants are Europe-only
+// and the GSL store is single-manufacturer VW (no trade-ins). A US VW PHEV
+// would have to appear in VW's own catalogue first; revisit if one ships.
+//
 // What this lane is NOT: every used VW EV on a dealer lot. All 513 rows come
 // back labelled "Certified Pre-Owned" and the t_cartype-U and t_preus-R facets
 // agree at 6,448 across all fuels, so vw.com's used search exposes only VW's

@@ -60,6 +60,7 @@
 // extra columns on one page rather than the 200 cars.
 import { politePostJson } from "../http.mjs";
 import { EV_MODEL_RE, EV_ONLY_WMIS } from "../ev.mjs";
+import { isPhevDesignated } from "./phev-designator.mjs";
 import { stateFromZip } from "./zip-state.mjs";
 import { pickTaggedPrice } from "../price-provenance.mjs";
 
@@ -82,7 +83,19 @@ export const OEM_LOCATOR_DOMAINS = new Set();
 const PAGE = 200; // server honours limit:200; the app itself asks for 48
 const MAX_PAGES = 60; // runaway guard; ~4.6k cars is ~24 pages
 const VIN_RE = /^[A-HJ-NPR-Z0-9]{17}$/;
-const FUEL_ELECTRIC = "E"; // BEV facet; PHEVs sit under their own code
+const FUEL_ELECTRIC = "E"; // BEV facet
+// The hybrid facet, which is the only place this network's PLUG-INS live:
+// probed 2026-08-23, fuel codes "X"/"PH"/"P" all return zero while "H"
+// returns 749 used rows mixing Audi's own 55 TFSI e plug-ins with mild
+// hybrids (A3/A4 40-45 TFSI), other makes' conventional hybrids (CR-V,
+// Accord, UX 300h) and petrol trade-ins mis-filed under H (a 911 Carrera
+// GTS). No structured electrification field exists on the record, so H rows
+// are kept only when the maker's own plug-in designation appears in the
+// title/subtitle/build string (lib/oem/phev-designator.mjs) — TFSI e, 4xe,
+// Plug-In, T8, E-Hybrid, 330e/50e… — and everything else is dropped and
+// counted. vpic-enrich re-verifies each kept VIN before it can publish, so
+// the designation gate is the first check, not the only one.
+const FUEL_HYBRID = "H";
 
 // Headers the router requires, plus the site identity every other OEM lane
 // sends. politePostJson supplies UA / X-Crawler / content-type.
@@ -229,16 +242,22 @@ function conditionOf(c, stockCarsType) {
 
 // `drops` tallies why rows were discarded, so a gate that starts eating the
 // feed shows up in the nightly report instead of looking like thin inventory.
-function toRecord(c, stockCarsType, drops) {
+function toRecord(c, stockCarsType, fuelCode, drops) {
   const bad = (reason) => {
     drops[reason] = (drops[reason] ?? 0) + 1;
     return null;
   };
   const vin = String(c.vin ?? "").toUpperCase();
   if (!VIN_RE.test(vin)) return bad("bad vin");
-  // Structural BEV gate. We query the electric facet, but each record also
-  // carries its own fuel code — trust the record, not just the filter.
-  if (c.engineInfo?.fuel?.code && c.engineInfo.fuel.code !== FUEL_ELECTRIC) return bad("non-electric fuel code");
+  // Structural gate. We query one fuel facet, but each record also carries
+  // its own fuel code — trust the record, not just the filter.
+  if (c.engineInfo?.fuel?.code && c.engineInfo.fuel.code !== fuelCode) return bad("fuel code != queried facet");
+  // The hybrid facet's rows must additionally wear a maker plug-in
+  // designation (see FUEL_HYBRID above) — a bare "hybrid" is not a claim
+  // this site can stand behind.
+  if (fuelCode === FUEL_HYBRID && !isPhevDesignated(`${c.titleText ?? ""} ${c.subtitleText ?? ""} ${c.model?.name ?? ""}`)) {
+    return bad("hybrid without a plug-in designation");
+  }
   const vdp = String(c.weblink ?? "");
   // No per-VIN dealer page means nothing recheck could ever verify, and this
   // lane certifies nothing on its own — such a row could never be retired.
@@ -275,7 +294,10 @@ function toRecord(c, stockCarsType, drops) {
     images,
     sourceUrl: vdp, // real dealer VDP — recheck verifies (404 when gone)
     dealerDomain: AUDI.domain,
-    ...evClaim(vin, make, model),
+    // The network's own fuel facet code, restated per record ("E"/"H");
+    // plug-ins additionally carry their maker designation in the name.
+    fuelType: fuelCode === FUEL_HYBRID ? "Hybrid (plug-in designated)" : "Electric",
+    ...(fuelCode === FUEL_HYBRID ? { evKind: "PHEV", evConfidence: "high" } : evClaim(vin, make, model)),
     platform: "audi-locator",
     fromVdp: false,
     scrapedAt: new Date().toISOString(),
@@ -285,10 +307,10 @@ function toRecord(c, stockCarsType, drops) {
 // One page. Retries once on a transient failure, then once more with the
 // reduced selection if the router reports a missing upstream field (which
 // nulls the whole page rather than the one bad car).
-async function fetchPage(stockCarsType, offset, report) {
+async function fetchPage(stockCarsType, fuelCode, offset, report) {
   const variables = {
     s: { marketIdentifier: { brand: "A", country: "us", language: "en" }, stockCarsType },
-    p: { paging: { limit: PAGE, offset }, criteria: [{ id: "fuel", items: [FUEL_ELECTRIC] }] },
+    p: { paging: { limit: PAGE, offset }, criteria: [{ id: "fuel", items: [fuelCode] }] },
   };
   for (const sel of [SELECTION, CORE_SELECTION]) {
     for (let attempt = 0; attempt < 2; attempt++) {
@@ -323,20 +345,20 @@ async function fetchPage(stockCarsType, offset, report) {
   return null;
 }
 
-// Walk one stock type to exhaustion, folding rows into byVin.
-async function sweep(stockCarsType, byVin, report, log) {
+// Walk one (stock type, fuel facet) to exhaustion, folding rows into byVin.
+async function sweep(stockCarsType, fuelCode, byVin, report, log) {
   let offset = 0;
   let total = null;
   let kept = 0;
   const drops = {};
   for (let page = 0; page < MAX_PAGES; page++) {
-    const data = await fetchPage(stockCarsType, offset, report);
+    const data = await fetchPage(stockCarsType, fuelCode, offset, report);
     if (!data) break;
     total ??= data.resultNumber;
     const cars = (data.results?.cars ?? []).map((c) => c.stockCar).filter(Boolean);
     if (!cars.length) break;
     for (const c of cars) {
-      const rec = toRecord(c, stockCarsType, drops);
+      const rec = toRecord(c, stockCarsType, fuelCode, drops);
       if (rec && !byVin.has(rec.vin)) {
         byVin.set(rec.vin, rec);
         kept++;
@@ -346,10 +368,10 @@ async function sweep(stockCarsType, byVin, report, log) {
     if (total != null && offset >= total) break;
   }
   const short = total != null && offset < total;
-  if (short) report.errors.push(`${stockCarsType}: stopped at ${offset} of ${total} advertised`);
+  if (short) report.errors.push(`${stockCarsType}/${fuelCode}: stopped at ${offset} of ${total} advertised`);
   const dropped = Object.entries(drops).map(([k, v]) => `${v} ${k}`).join(", ") || "none";
-  report.notes.push(`${stockCarsType}: ${offset}/${total ?? "?"} rows walked, ${kept} kept, dropped ${dropped}`);
-  log(`audi/${stockCarsType}: ${kept} EVs (${offset} of ${total ?? "?"} rows; dropped ${dropped})`);
+  report.notes.push(`${stockCarsType}/${fuelCode}: ${offset}/${total ?? "?"} rows walked, ${kept} kept, dropped ${dropped}`);
+  log(`audi/${stockCarsType}/${fuelCode}: ${kept} kept (${offset} of ${total ?? "?"} rows; dropped ${dropped})`);
   return kept;
 }
 
@@ -361,13 +383,16 @@ export async function pullAudi({ log = () => {} } = {}) {
   const byVin = new Map();
 
   // Used first: it is the half this site exists for, so if the run is going to
-  // die partway it should die having collected the used cars.
-  for (const type of ["USED", "NEW"]) await sweep(type, byVin, report, log);
+  // die partway it should die having collected the used cars. The electric
+  // facet first for the same reason, then the hybrid facet's plug-in subset.
+  for (const type of ["USED", "NEW"]) await sweep(type, FUEL_ELECTRIC, byVin, report, log);
+  for (const type of ["USED", "NEW"]) await sweep(type, FUEL_HYBRID, byVin, report, log);
 
   report.evs = [...byVin.values()];
   report.vehiclePages = report.fetched;
   const nonAudi = report.evs.filter((r) => !/^audi$/i.test(String(r.make ?? ""))).length;
-  report.notes.push(`${report.evs.length} BEVs (${nonAudi} non-Audi trade-ins) across ${new Set(report.evs.map((r) => r.dealerName)).size} dealers`);
+  const phevN = report.evs.filter((r) => r.evKind === "PHEV").length;
+  report.notes.push(`${report.evs.length - phevN} BEVs + ${phevN} PHEVs (${nonAudi} non-Audi trade-ins) across ${new Set(report.evs.map((r) => r.dealerName)).size} dealers`);
   if (byVin.size < AUDI.minExpected) {
     report.errors.push(`collected ${byVin.size} < floor ${AUDI.minExpected} — the fuel facet or market identifier may have moved`);
   }

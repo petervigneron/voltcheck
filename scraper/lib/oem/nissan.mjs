@@ -34,9 +34,23 @@
 // merge side rather than by per-VIN recheck.
 //
 // US EV lineup (2026-08): new BEV = LEAF only (~1.2k; Ariya is discontinued as
-// new, 0 units — its code is kept so a restock shows up). Rogue Plug-in Hybrid
-// is excluded (PHEV) so the per-cell cap tracks LEAF density, not hybrids.
-// Used/CPO BEV = LEAF + ARIYA (~530), the higher-value half for this site.
+// new, 0 units — its code is kept so a restock shows up). Used/CPO BEV =
+// LEAF + ARIYA (~530), the higher-value half for this site.
+//
+// The Rogue Plug-in Hybrid (model code 30348) is swept too, since 2026-08-23,
+// as its OWN grid pass rather than a fourth entry in modelCodes — mixing it
+// into the BEV sweep would raise per-cell density and change where the LEAF
+// grid subdivides. The model code is Nissan's own structural identity for the
+// nameplate (the gas Rogue is a different code), and every returned row's
+// modelName restates "Rogue Plug-in Hybrid" — toPhevRecord requires that
+// restatement, because the engine.fuelType field reads "Hybrid Regular
+// Unleaded" for it, a string that CANNOT separate plug-in from conventional
+// (Nissan files no conventional-hybrid Rogue today, but the field must never
+// be the gate). vpic-enrich re-verifies each VIN downstream (the car is a
+// Mitsubishi-built JA4 twin of the Outlander PHEV and decodes PHEV).
+// CPO has no plug-in facet worth querying yet — the nameplate is 2026-only,
+// so its used stock reaches us through the dealer crawl until Nissan's CPO
+// feed carries it; revisit when a used one exists to control-test against.
 import { politePostJson } from "../http.mjs";
 import { coveringGrid, subdivideZips } from "./grid.mjs";
 import { pickTaggedPrice } from "../price-provenance.mjs";
@@ -47,9 +61,12 @@ export const NISSAN = {
   make: "Nissan",
   api: "https://graphql.nissanusa.com/graphql",
   // BEV new model codes. 30274 = 2026 LEAF, 30002 = prior LEAF, 29852 = ARIYA
-  // (0 today). PHEV Rogue (30348) is deliberately absent. The per-record
-  // engine.fuelType === "Electric" guard backs this up regardless.
+  // (0 today). The per-record engine.fuelType === "Electric" guard backs this
+  // up regardless.
   modelCodes: ["30274", "30002", "29852"],
+  // The Rogue Plug-in Hybrid's own model code — swept as a separate grid pass
+  // (see header) with toPhevRecord gating each row on its modelName.
+  phevModelCodes: ["30348"],
 };
 
 export const NISSAN_CPO = {
@@ -205,6 +222,54 @@ function toRecord(m) {
   };
 }
 
+// getInventory model → normalized new PHEV listing. The model code scoped the
+// query to the plug-in nameplate; the row's own modelName must restate it
+// ("Rogue Plug-in Hybrid") because engine.fuelType ("Hybrid Regular Unleaded")
+// cannot separate plug-in from conventional and is therefore never the gate —
+// it is carried on the record verbatim for downstream verification instead.
+function toPhevRecord(m) {
+  const vin = String(m.vin ?? "").toUpperCase();
+  if (!VIN_RE.test(vin)) return null;
+  if (!/plug-?in\s+hybrid/i.test(String(m.modelName ?? ""))) return null;
+  const year = Number(m.modelYear);
+  if (!(year >= 1981 && year <= new Date().getFullYear() + 2)) return null;
+  const model = cleanModel(m.modelName);
+  if (!model) return null;
+  const img = httpsUrl(m.fallbackExteriorImage?.srcSet?.large || m.fallbackExteriorImage?.srcSet?.medium);
+  const { state, zip, city } = dealerLoc(m.dealer?.address);
+  return {
+    vin,
+    year,
+    make: NISSAN.make,
+    model,
+    trim: m.gradeName || undefined,
+    ...pickTaggedPrice("nissan", [
+      ["priceWithoutFeesLevies", num(m.priceWithoutFeesLevies)],
+      ["price", num(m.price)],
+    ]),
+    driveLine: drive(m.engine?.driveTrain),
+    exteriorColor: m.fullColour?.label || undefined,
+    interiorColor: m.upholstery?.label || undefined,
+    dealerName: m.dealer?.name || undefined,
+    city,
+    state,
+    zip,
+    condition: "new",
+    imageUrl: img,
+    images: img ? [img] : [],
+    sourceUrl: `https://www.nissanusa.com/shopping-tools/search-inventory/vehicle-details/${vin}`,
+    dealerDomain: NISSAN.domain,
+    evKind: "PHEV",
+    // Nissan's own engine string, verbatim — deliberately NOT the gate (see
+    // above); the model-code scope + modelName echo are.
+    fuelType: m.engine?.fuelType || undefined,
+    evConfidence: "high", // powertrain-specific model-code query + per-record modelName echo
+    platform: "nissan-locator",
+    fromVdp: false,
+    scrapedAt: new Date().toISOString(),
+  };
+}
+
 // getCpoInventory model → normalized used/certified BEV listing (fuelType "E").
 function toCpoRecord(m) {
   const vin = String(m.vin ?? "").toUpperCase();
@@ -309,8 +374,8 @@ async function fetchCell(cfg, loc, radius, report) {
 // instead of the 4^depth blow-up you get when every overlapping sub-centre still
 // sees the whole metro. The sub-centres are placed one radius apart so their
 // discs tile the parent's.
-async function gridCell(cfg, zip, zips, byVin, report, seen, depth, radius) {
-  if (seen.has(zip) || report.fetched >= REQUEST_BUDGET) return;
+async function gridCell(cfg, zip, zips, byVin, report, seen, depth, radius, budgetStart = 0) {
+  if (seen.has(zip) || report.fetched - budgetStart >= REQUEST_BUDGET) return;
   seen.add(zip);
   const c = zips[zip];
   if (!c) return;
@@ -320,7 +385,7 @@ async function gridCell(cfg, zip, zips, byVin, report, seen, depth, radius) {
   if (dense && depth < MAX_DEPTH) {
     const sub = Math.max(15, Math.round(radius / 2));
     for (const sz of subdivideZips(zips, c[0], c[1], sub)) {
-      if (!seen.has(sz)) await gridCell(cfg, sz, zips, byVin, report, seen, depth + 1, sub);
+      if (!seen.has(sz)) await gridCell(cfg, sz, zips, byVin, report, seen, depth + 1, sub, budgetStart);
     }
   } else if (dense) {
     report.notes.push(`UNRESOLVED dense cell ${zip} depth ${depth}`);
@@ -332,6 +397,10 @@ async function gridCell(cfg, zip, zips, byVin, report, seen, depth, radius) {
 // (metro centres + subdivided sub-centres); the metro list itself is METRO_ZIPS.
 async function sweep(cfg, report, log) {
   const byVin = new Map();
+  // The request budget is PER SWEEP (pullNissan now runs two — LEAF then
+  // Rogue PHEV — into one report), so measure from this sweep's first request
+  // rather than the report's lifetime count.
+  const budgetStart = report.fetched;
   const grid = coveringGrid();
   if (!grid) {
     report.errors.push("web/data/zips.json unavailable — cannot resolve metro coordinates");
@@ -359,15 +428,17 @@ async function sweep(cfg, report, log) {
   // Pass 2: subdivide the dense metros (radius halves each level) until the
   // per-lot budget is spent. gridCell recurses from depth 1.
   for (const zip of dense) {
-    if (report.fetched >= REQUEST_BUDGET) { report.notes.push(`request budget ${REQUEST_BUDGET} hit — ${dense.indexOf(zip)}/${dense.length} dense metros subdivided`); break; }
+    if (report.fetched - budgetStart >= REQUEST_BUDGET) { report.notes.push(`request budget ${REQUEST_BUDGET} hit — ${dense.indexOf(zip)}/${dense.length} dense metros subdivided`); break; }
     const c = zips[zip];
     for (const sz of subdivideZips(zips, c[0], c[1], CELL_RADIUS_MI / 2)) {
-      await gridCell(cfg, sz, zips, byVin, report, seen, 1, CELL_RADIUS_MI / 2);
+      await gridCell(cfg, sz, zips, byVin, report, seen, 1, CELL_RADIUS_MI / 2, budgetStart);
     }
   }
-  report.evs = [...byVin.values()];
+  // Merge rather than clobber: pullNissan runs a second sweep (Rogue PHEV)
+  // into the same report.
+  report.evs = [...report.evs, ...byVin.values()];
   report.vehiclePages = report.fetched;
-  report.notes.push(`metro grid r${CELL_RADIUS_MI}mi: ${anchors.length} anchors, ${dense.length} dense, ${byVin.size} BEVs, ${report.fetched} requests`);
+  report.notes.push(`metro grid r${CELL_RADIUS_MI}mi: ${anchors.length} anchors, ${dense.length} dense, ${byVin.size} vehicles, ${report.fetched} requests`);
   // Never certify complete: a distance-capped metro sample is not exhaustive, so
   // it must not drive delisting (see header).
   report.truncated = true;
@@ -394,7 +465,26 @@ export async function pullNissan({ log = () => {} } = {}) {
     }),
   };
   await sweep(cfg, report, log);
-  log(`nissan (new): ${report.evs.length} BEVs, ${report.fetched} requests`);
+  const bevN = report.evs.length;
+  log(`nissan (new): ${bevN} BEVs, ${report.fetched} requests`);
+
+  // Second pass: the Rogue Plug-in Hybrid, its own grid so LEAF density alone
+  // decides where the BEV sweep subdivides (header).
+  const phevCfg = {
+    ...cfg,
+    toRecord: toPhevRecord,
+    variables: (loc, offset) => ({
+      market: MARKET,
+      location: loc,
+      queryFilters: [],
+      modelCodes: NISSAN.phevModelCodes,
+      radius: null,
+      sortMode: "relevance",
+      pagination: { offset, limit: LIMIT },
+    }),
+  };
+  await sweep(phevCfg, report, log);
+  log(`nissan (new): ${report.evs.length - bevN} PHEVs, ${report.fetched} requests total`);
   return report;
 }
 

@@ -1,4 +1,4 @@
-// Stellantis national inventory locator (Jeep / Dodge / Fiat).
+// Stellantis national inventory locator (Jeep / Dodge / Chrysler / Fiat).
 //
 // Every Stellantis US brand site drives its "Search New Inventory" tool off one
 // shared public REST endpoint that needs no auth token (just a normal browser
@@ -16,7 +16,7 @@
 // from 90210, 66101, 10001, 30301 all return the same 174 Wagoneer S). One call
 // per configuration (paginated by pageNumber, pageSize 500) covers the country,
 // so this certifies COMPLETE on the real per-brand domain (jeep.com/dodge.com/
-// fiatusa.com) — nightly delisting retires sold VINs (see gm.mjs). Each brand is
+// chrysler.com/fiatusa.com) — nightly delisting retires sold VINs (see gm.mjs). Each brand is
 // its own domain/report so a Jeep pull can never delist a Dodge car.
 //
 // The BEV GATE is structural, never a nameplate match: the site's own vehicle
@@ -26,8 +26,34 @@
 // because a modelYearCode is coarse — the 2026 Charger code returns ~10k GAS
 // Charger Sixpacks alongside the electric Daytona — so we query the electric
 // CONFIGURATIONS (ccode+llp) directly and still gate every record on 1001.
-// PHEVs (Wrangler/Grand Cherokee 4xe, Pacifica Hybrid) read "Gas/Diesel" and
-// are dropped; the Ramcharger EREV likewise never reads All Electric.
+//
+// PHEVs (2026-08-23): the same Power Source attribute has a distinct
+// "Plug-In Hybrid" value — the vocabulary observed live is "All Electric" /
+// "Gas/Diesel" / "ICE (or Gas/Diesel)" / "Hybrid" (the 2026 Cherokee, a
+// conventional hybrid) / "Plug-In Hybrid" / sometimes absent — so the record
+// gate for a plug-in is the exact string "Plug-In Hybrid", never "Hybrid".
+// But DISCOVERY cannot come from the vehicleData catalog: Jeep's catalog
+// lists NO 4xe at all (the 4xe lines are out of production and off the
+// current-lineup file), while the inventory API still holds hundreds of new
+// ones under their own modelYearCode LINES — measured: Wrangler 4xe is line
+// 17 (IUJ202417: 26, IUJ202517: 59), Grand Cherokee 4xe line 19 (IUJ202419:
+// 289, IUJ202519: 10), Pacifica Plug-In Hybrid line 10 (IUC202510), and the
+// plain Wrangler/Grand Cherokee lines (10/20) contain ZERO 4xe across 2,373
+// sampled rows (the whole 1,216-row 2025 Wrangler line plus 500-row first
+// pages of the 2026 Wrangler/2025 Grand Cherokee lines and the full 2024
+// remainders), so the plug-in stock is invisible without sweeping the line
+// space. discoverPhevLines() therefore probes every modelYearCode
+// IU{B}{year}{00..39} over a rolling 4-year window (one 25-row page each;
+// every observed line is powertrain-pure, so page one settles it) and fully
+// pages the lines whose rows read Plug-In Hybrid, with the per-record 1001
+// gate still applied. Dodge was swept the same way and holds no PHEV at all
+// (the Hornet R/T is gone from the locator along with the nameplate), but
+// keeps phevSweep on so a returning plug-in shows up as yield, not silence.
+// The Ramcharger EREV, when it ships, will surface in a sweep of Ram's site
+// if one is added — ramtrucks.com codes were probed (IUR2024–2026 00-30, all
+// empty) and the Ram code prefix is evidently different; revisit then.
+// Alfa Romeo (Tonale PHEV) is NOT reachable: alfaromeousa.com's robots.txt
+// disallows /hostd/ with no Allow for the inventory paths — policy, respected.
 //
 // DISCOVERY differs by what robots allows on each host:
 //   jeep, dodge — /services/ is allowed, so we read the vehicleData catalog and
@@ -69,10 +95,22 @@ export const STELLANTIS_BRANDS = [
   {
     key: "jeep", host: "www.jeep.com", domain: "jeep.com", make: "Jeep", brandToken: "Jeep",
     discovery: "vehicleData", vehicleDataFile: "vehicleData.getVehicle.prod.jeep.js", minExpected: 100,
+    phevSweep: "IUJ", // Wrangler 4xe (line 17) + Grand Cherokee 4xe (line 19)
   },
   {
     key: "dodge", host: "www.dodge.com", domain: "dodge.com", make: "Dodge", brandToken: "Dodge",
     discovery: "vehicleData", vehicleDataFile: "vehicleData.getVehicle.prod.dodge.js", minExpected: 40,
+    phevSweep: "IUD", // 0 today (Hornet R/T left the locator with the nameplate); kept so a return shows up
+  },
+  {
+    // Chrysler sells no BEV at all — its catalog is all Gas/Diesel — so this
+    // entry exists purely for the Pacifica Plug-In Hybrid's inventory line
+    // (IUC…10). minExpected 0: the honest floor for a nameplate whose leftover
+    // stock was 2 cars on 2026-08-23; breakage protection comes from sweep
+    // errors flipping truncated, not from a count that small.
+    key: "chrysler", host: "www.chrysler.com", domain: "chrysler.com", make: "Chrysler", brandToken: "Chrysler",
+    discovery: "vehicleData", vehicleDataFile: "vehicleData.getVehicle.prod.chrysler.js", minExpected: 0,
+    phevSweep: "IUC",
   },
   {
     key: "fiat", host: "www.fiatusa.com", domain: "fiatusa.com", make: "Fiat", brandToken: "Fiat",
@@ -174,23 +212,63 @@ function vdpUrl(brand, v) {
   return `https://${brand.host}/new-inventory/vehicle-details${seg}${suffix}?${params.join("&")}`;
 }
 
-// One results row → normalized BEV listing, or null if it fails a gate. `cfg`
-// carries the model (and trim, for the vehicleData brands) plus, when known, the
-// exact inventory ccode this query targeted so a stray row can't be mislabeled.
+// A discovered plug-in line's rows name themselves: vehicleDesc "WRANGLER
+// 4-DOOR SAHARA 4xe" with Real Trim "Sahara 4xe" → model "Wrangler 4xe",
+// trim "Sahara"; "GRAND CHEROKEE OVERLAND 4xe"/"Overland 4xe" → "Grand
+// Cherokee 4xe"/"Overland"; "PACIFICA PLUG-IN HYBRID S APPEARANCE" with trim
+// "PLUG-IN HYBRID S APPEARANCE" → "Pacifica Plug-In Hybrid"/"S Appearance".
+// The powertrain word rides on the MODEL (that is both Stellantis's own
+// naming and how the enrichment corpus keys these cars); the trim keeps the
+// rest. There is no catalog row to read a clean name from — these lines are
+// exactly the ones the catalog dropped — so this is derived from the two
+// fields every inventory row carries.
+function phevModelAndTrim(v) {
+  const desc = decodeEntities(String(v.vehicleDesc ?? "")).replace(/\s+/g, " ").trim();
+  const rawTrim = decodeEntities(String(attrVal(v, TRIM_ID) ?? "")).replace(/\s+/g, " ").trim();
+  let base = desc;
+  if (rawTrim && base.toUpperCase().endsWith(rawTrim.toUpperCase())) base = base.slice(0, base.length - rawTrim.length).trim();
+  base = base.replace(/\b[24][- ]DOOR\b/gi, "").replace(/\s+/g, " ").trim();
+  base = titleCaseIfShouty(base);
+  const is4xe = /4xe/i.test(desc) || /4xe/i.test(rawTrim);
+  const isPih = /plug-?in\s+hybrid/i.test(desc) || /plug-?in\s+hybrid/i.test(rawTrim);
+  let model = base;
+  let trim = rawTrim;
+  if (is4xe) {
+    if (!/4xe$/i.test(model)) model = `${model} 4xe`;
+    trim = trim.replace(/\s*4xe\s*$/i, "").trim();
+  } else if (isPih) {
+    model = model.replace(/\s*plug-?in\s+hybrid\s*$/i, "").trim();
+    model = `${model} Plug-In Hybrid`;
+    trim = trim.replace(/^plug-?in\s+hybrid\s*/i, "").trim();
+  }
+  if (trim && trim === trim.toUpperCase()) trim = titleCaseIfShouty(trim);
+  return { model: model || undefined, trim: trim || undefined };
+}
+
+// One results row → normalized BEV/PHEV listing, or null if it fails a gate.
+// `cfg` carries the model (and trim, for the vehicleData brands) plus, when
+// known, the exact inventory ccode this query targeted so a stray row can't
+// be mislabeled; a PHEV line config carries `phev: true` instead, and its
+// rows are gated on the "Plug-In Hybrid" Power Source value and named from
+// their own fields (phevModelAndTrim above).
 function toRecord(v, cfg, brand) {
   const vin = String(v.vin ?? "").toUpperCase();
   if (!VIN_RE.test(vin)) return null;
-  // Structural BEV gate: the vehicle's own "Power Source" attribute.
-  if (String(attrVal(v, POWER_SOURCE_ID) ?? "").trim().toLowerCase() !== "all electric") return null;
+  // Structural powertrain gate: the vehicle's own "Power Source" attribute.
+  // "Plug-In Hybrid" exactly for a plug-in line — "Hybrid" (the conventional
+  // 2026 Cherokee) and every Gas/Diesel spelling fail it.
+  const powerSource = String(attrVal(v, POWER_SOURCE_ID) ?? "").trim().toLowerCase();
+  if (powerSource !== (cfg.phev ? "plug-in hybrid" : "all electric")) return null;
   // Drop 48V low-speed quadricycles (Fiat Topolino) — not highway BEVs.
   if (/\b48V\b/i.test(String(v.engineDesc ?? ""))) return null;
   // If we queried a specific configuration, the row must belong to it.
   if (cfg.expectedCcode && String(v.ccode ?? "").toUpperCase() !== cfg.expectedCcode) return null;
   const year = Number(v.modelYear);
   if (!(year >= 1981 && year <= new Date().getFullYear() + 2)) return null;
-  const model = cfg.model;
+  const phevNames = cfg.phev ? phevModelAndTrim(v) : null;
+  const model = cfg.phev ? phevNames.model : cfg.model;
   if (!model) return null;
-  const trim = cfg.trim ?? cleanTrim(attrVal(v, TRIM_ID), brand.brandToken, model);
+  const trim = cfg.phev ? phevNames.trim : cfg.trim ?? cleanTrim(attrVal(v, TRIM_ID), brand.brandToken, model);
   const zip = /^\d{5}/.test(String(v.dealerZipCode ?? "")) ? String(v.dealerZipCode).slice(0, 5) : undefined;
   // Honest ask: net advertised price (MSRP + destination + any dealer
   // adjustment), NOT the discountedPrice that bakes in conditional EV bonus cash.
@@ -220,7 +298,10 @@ function toRecord(v, cfg, brand) {
     images: [],
     sourceUrl: vdpUrl(brand, v),
     dealerDomain: brand.domain,
-    evKind: "BEV",
+    evKind: cfg.phev ? "PHEV" : "BEV",
+    // Stellantis's own Power Source attribute value, verbatim — what
+    // downstream verification reads alongside the model name.
+    fuelType: cfg.phev ? "Plug-In Hybrid" : "All Electric",
     evConfidence: "high", // structured Power Source attribute, not a name match
     platform: "stellantis-locator",
     fromVdp: false,
@@ -233,8 +314,15 @@ function toRecord(v, cfg, brand) {
 // unreachable (robots block / network) — a null forces the brand truncated.
 async function discoverVehicleData(brand, report) {
   const url = `https://${brand.host}/services/${brand.vehicleDataFile}`;
-  const res = await politeGetJson(url, { headers: { referer: `https://${brand.host}/new-inventory` } });
+  let res = await politeGetJson(url, { headers: { referer: `https://${brand.host}/new-inventory` } });
   report.fetched++;
+  if (String(res.status).startsWith("error:") || res.status === 429 || res.status >= 500) {
+    // One retry: a single connect blip here used to cost the whole brand's
+    // night (observed on chrysler.com 2026-08-23).
+    await new Promise((r) => setTimeout(r, 5000));
+    res = await politeGetJson(url, { headers: { referer: `https://${brand.host}/new-inventory` } });
+    report.fetched++;
+  }
   if (res.status === "robots_disallowed") { report.errors.push(`robots disallows the vehicleData catalog (${brand.key})`); return null; }
   const text = res.text ?? "";
   let data;
@@ -272,6 +360,54 @@ function fiatConfigs(brand) {
   for (let y = now - 2; y <= now + 1; y++) out.push({ modelYearCode: brand.mycTemplate(y), model: brand.fixedModel });
   return out;
 }
+
+// Discover the brand's plug-in hybrid inventory LINES by sweeping the
+// modelYearCode space — {prefix}{year}{00..39} over a rolling 4-year window —
+// because the vehicleData catalog omits out-of-production lines entirely (the
+// header's Jeep 4xe measurement). One 25-row page decides a line: every line
+// observed is powertrain-pure (2,373 rows sampled across the Wrangler/Grand
+// Cherokee gas lines held zero 4xe; the 4xe lines held nothing else), so a
+// first-page Plug-In Hybrid row marks the line and pullConfig then pages it
+// fully with the per-record gate still deciding each row. A probe FAILURE is
+// recorded as an error (flipping truncated) — an unswept line space cannot
+// certify the brand complete, exactly like an unreachable catalog.
+const PHEV_LINE_MAX = 39; // highest line code observed anywhere is 21
+async function discoverPhevLines(brand, report) {
+  const now = new Date().getFullYear();
+  const configs = [];
+  for (let y = now - 2; y <= now + 1; y++) {
+    for (let line = 0; line <= PHEV_LINE_MAX; line++) {
+      const myc = `${brand.phevSweep}${y}${String(line).padStart(2, "0")}`;
+      const url = `https://${brand.host}/hostd/inventory/getinventoryresults.json?modelYearCode=${myc}&zip=${NATIONAL_ZIP}&radius=${RADIUS}&expandRadius=N&pageSize=25&pageNumber=1`;
+      const res = await politeGetJson(url, { headers: { referer: `https://${brand.host}/new-inventory` } });
+      report.fetched++;
+      if (res.status === "robots_disallowed") {
+        report.errors.push(`robots disallows results (${brand.key} phev sweep)`);
+        return configs; // policy stop — no point probing 159 more paths
+      }
+      const data = res.json?.result?.data;
+      if (!data) {
+        // One retry for a transient blip; a repeat is an error (certification
+        // needs the whole line space swept).
+        const retry = await politeGetJson(url, { headers: { referer: `https://${brand.host}/new-inventory` } });
+        report.fetched++;
+        if (!retry.json?.result?.data) {
+          report.errors.push(`phev sweep ${myc}: ${res.status}/${retry.status}`);
+          continue;
+        }
+        if (hasPhevRow(retry.json.result.data)) configs.push({ modelYearCode: myc, phev: true });
+        continue;
+      }
+      if (hasPhevRow(data)) configs.push({ modelYearCode: myc, phev: true });
+    }
+  }
+  return configs;
+}
+
+const hasPhevRow = (data) =>
+  (data.vehicles ?? []).some(
+    (v) => String(attrVal(v, POWER_SOURCE_ID) ?? "").trim().toLowerCase() === "plug-in hybrid"
+  );
 
 // One results page with a single retry on transient failure (gm.mjs rationale).
 async function getResults(brand, qs, page, report) {
@@ -323,23 +459,40 @@ export async function pullStellantisBrand(brand, { log = () => {} } = {}) {
   let configs;
   if (brand.discovery === "vehicleData") {
     configs = await discoverVehicleData(brand, report);
-    if (!configs) { report.truncated = true; return report; } // catalog unreachable
+    if (!configs) {
+      // Catalog unreachable: the error is recorded, so the brand cannot
+      // certify tonight — but the PHEV line sweep below reads the inventory
+      // API directly and doesn't need the catalog, so a brand whose BEV
+      // discovery is down still reports its plug-ins (additive; delisting
+      // stays off because truncated ends up true either way).
+      if (!brand.phevSweep) { report.truncated = true; return report; }
+      configs = [];
+    }
   } else {
     configs = fiatConfigs(brand);
   }
   report.notes.push(`${configs.length} candidate BEV configs`);
-  log(`${brand.key}: ${configs.length} candidate configs`);
+
+  // Plug-in hybrid lines live outside the catalog (header) — discovered by
+  // sweeping the line-code space, then paged like any other config.
+  let phevConfigs = [];
+  if (brand.phevSweep) {
+    phevConfigs = await discoverPhevLines(brand, report);
+    report.notes.push(`phev line sweep: ${phevConfigs.map((c) => c.modelYearCode).join(", ") || "none"}`);
+  }
+  log(`${brand.key}: ${configs.length} candidate BEV configs + ${phevConfigs.length} PHEV lines`);
 
   const byVin = new Map();
-  for (const cfg of configs) {
+  for (const cfg of [...configs, ...phevConfigs]) {
     const ok = await pullConfig(brand, cfg, byVin, report);
     if (!ok) log(`${brand.key}: config ${cfg.expectedCcode ?? cfg.modelYearCode} failed`);
   }
 
   report.evs = [...byVin.values()];
   report.vehiclePages = report.fetched;
-  report.notes.push(`${byVin.size} BEVs across ${configs.length} configs, ${report.fetched} requests`);
-  log(`${brand.key}: ${byVin.size} BEVs, ${report.fetched} requests, ${report.errors.length} errors`);
+  const phevN = report.evs.filter((r) => r.evKind === "PHEV").length;
+  report.notes.push(`${byVin.size - phevN} BEVs + ${phevN} PHEVs across ${configs.length + phevConfigs.length} configs, ${report.fetched} requests`);
+  log(`${brand.key}: ${byVin.size - phevN} BEVs + ${phevN} PHEVs, ${report.fetched} requests, ${report.errors.length} errors`);
   // Completeness (see gm.mjs): every config fetched + fully paged AND yield over
   // the floor. The floor guards against the API returning empty (which must not
   // delist the whole brand); a clean, non-empty, fully-paged sweep certifies.

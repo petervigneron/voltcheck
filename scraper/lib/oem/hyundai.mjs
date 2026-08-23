@@ -7,11 +7,15 @@
 //   POST https://papp-bsi-api.hyundaiusa.com/inventory/item/v2/search
 //   body: { zipCode, distance:-1 (nationwide), page, pageSize, sort,
 //           filterTag:"fuelType", fuelType:["Electric"], ... }
-// The "Electric" fuel-type facet is pure BEV (PHEVs sit under a separate
-// "Plug-in Hybrid" facet), so every hit is a battery-electric car with VIN,
-// MSRP/dealer price, trim, drivetrain, colors, dealer name and a VDP link.
-// ~5.2k EVs nationwide (2026-08-15), which — like the GM lane — covers every
-// franchised Hyundai rooftop including any behind a dealer-site bot wall.
+// The "Electric" fuel-type facet is pure BEV, and the separate "Plug-in
+// Hybrid" facet is pure PHEV — both are swept (probed 2026-08-23: Electric
+// 2,923 / Plug-in Hybrid 907 nationwide, every Plug-in Hybrid hit a Tucson
+// Plug-in Hybrid whose own aem.fuelType restates ["Plug-in Hybrid"];
+// conventional hybrids sit under a third "Hybrid" facet, 36,016 strong, which
+// is not queried). Every hit is a car with VIN, MSRP/dealer price, trim,
+// drivetrain, colors, dealer name and a VDP link. Like the GM lane this
+// covers every franchised Hyundai rooftop including any behind a dealer-site
+// bot wall.
 //
 // Quirks that shape the code below:
 //   - pageSize is capped at 30 whatever you ask for; paginate to totalPages
@@ -36,6 +40,15 @@ export const HYUNDAI = {
 const PAGE_SIZE = 30; // server cap
 const NATIONAL_ZIP = "66952"; // ~geographic center of the US; distance:-1 = nationwide
 const VIN_RE = /^[A-HJ-NPR-Z0-9]{17}$/;
+
+// The two electrified facets of the new-inventory search, each swept fully.
+// `facet` is Hyundai's exact facet string (case-sensitive: "Plug-In" returns
+// zero); each record's aem.fuelType restates it, and toRecord() requires
+// that echo so a facet drift can't relabel cars.
+const FUEL_SWEEPS = [
+  { facet: "Electric", evKind: "BEV" },
+  { facet: "Plug-in Hybrid", evKind: "PHEV" },
+];
 
 // Hyundai Certified Used Vehicles (CPO) — a separate, simpler endpoint than
 // the new-inventory API: GET /var/hyundai/services/inventory/hcuvInventory
@@ -64,7 +77,23 @@ export const HYUNDAI_CPO = {
   // The current BEV nameplates. The discontinued "ioniq-electric" (2017–21)
   // is deliberately omitted — a full-grid sweep returned zero of it, so
   // querying it is pure wasted calls; re-add it if CPO stock ever appears.
-  models: ["ioniq-5", "ioniq-6", "kona-electric"],
+  //
+  // PHEV slugs added 2026-08-23. The endpoint's model param is the gate — a
+  // slug names exactly one nameplate — and the spelling is Hyundai's own,
+  // discovered by probing: "tucson-plugin-hybrid" answers (Model "Tucson
+  // Plugin Hybrid", 4 cars within 500mi of LA), while the display-name
+  // spelling "tucson-plug-in-hybrid" returns 200 with zero rows. The
+  // record's FuelType reads "Hybrid Fuel" for plug-in AND conventional
+  // hybrids alike, so it CANNOT be the gate — the slug plus the record's own
+  // Model string (toCpoRecord requires /plug/i for PHEV slugs) is what
+  // separates a Tucson Plugin Hybrid from a Tucson Hybrid.
+  models: [
+    { slug: "ioniq-5", evKind: "BEV" },
+    { slug: "ioniq-6", evKind: "BEV" },
+    { slug: "kona-electric", evKind: "BEV" },
+    { slug: "tucson-plugin-hybrid", evKind: "PHEV" },
+    { slug: "santa-fe-plugin-hybrid", evKind: "PHEV" },
+  ],
 };
 
 const CPO_RADIUS = 100; // keeps the densest metro (LA=99) under the 120 cap
@@ -132,9 +161,17 @@ const httpsUrl = (u) => {
   return s.startsWith("//") ? `https:${s}` : s.startsWith("http") ? s : undefined;
 };
 
-function toRecord(hit) {
+function toRecord(hit, sweep) {
   const vin = String(hit.vin ?? "").toUpperCase();
   if (!VIN_RE.test(vin)) return null;
+  // Per-record echo of the queried facet (aem.fuelType, e.g. ["Plug-in
+  // Hybrid"]). A row that names a DIFFERENT fuel than its facet is dropped;
+  // a row missing the aem block entirely is kept on the facet's word for the
+  // BEV sweep (the lane's original behavior) but dropped for the PHEV sweep —
+  // a plug-in claim needs the record's own agreement, not just the query's.
+  const aemFuel = Array.isArray(hit.aem?.fuelType) ? hit.aem.fuelType.map(String) : null;
+  if (aemFuel && !aemFuel.some((f) => f.toLowerCase() === sweep.facet.toLowerCase())) return null;
+  if (!aemFuel && sweep.evKind === "PHEV") return null;
   const year = Number(hit.modelYear);
   if (!(year >= 1981 && year <= new Date().getFullYear() + 2)) return null;
   const model = String(hit.modelDisplayName || hit.model || "").trim();
@@ -168,8 +205,11 @@ function toRecord(hit) {
     // Prefer the dealer's own VDP for click-through; else the brand search page.
     sourceUrl: vdp || `https://www.hyundaiusa.com/us/en/inventory-search`,
     dealerDomain: HYUNDAI.domain,
-    evKind: "BEV",
-    evConfidence: "high", // server-side fuelType=Electric facet, not a name match
+    evKind: sweep.evKind,
+    // Hyundai's own facet string, restated by the record's aem.fuelType —
+    // what downstream verification reads alongside the model name.
+    fuelType: sweep.facet,
+    evConfidence: "high", // server-side fuelType facet + per-record aem echo, not a name match
     platform: "hyundai-locator",
     fromVdp: false,
     scrapedAt: new Date().toISOString(),
@@ -180,7 +220,7 @@ function titleCase(s) {
   return String(s).toLowerCase().replace(/\b([a-z])/g, (m) => m.toUpperCase());
 }
 
-async function searchPage(page, report) {
+async function searchPage(facet, page, report) {
   const body = {
     zipCode: NATIONAL_ZIP,
     distance: -1,
@@ -190,7 +230,7 @@ async function searchPage(page, report) {
     atDealershipOnly: false,
     availableOnline: false,
     filterTag: "fuelType",
-    fuelType: ["Electric"],
+    fuelType: [facet],
     personalization: null,
   };
   // One retry on transient failures, same rationale as the GM lane: a ~174-page
@@ -219,50 +259,61 @@ async function searchPage(page, report) {
 export async function pullHyundai({ log = () => {} } = {}) {
   const report = { domain: HYUNDAI.domain, kind: "oem-locator", budget: null, fetched: 0, vehiclePages: 0, itemListVdps: 0, evs: [], errors: [], notes: [] };
 
-  const first = await searchPage(1, report);
-  if (!first) {
-    report.errors.push("first page failed — endpoint changed or down");
-    report.truncated = true;
-    return report;
-  }
-  const total = first.total ?? 0;
-  const totalPages = first.totalPages ?? 1;
-  report.notes.push(`national BEV count ${total} across ${totalPages} pages`);
-  log(`hyundai: ${total} EVs, ${totalPages} pages`);
-
   const byVin = new Map();
-  const collect = (items) => {
-    for (const hit of items ?? []) {
-      const rec = toRecord(hit);
-      if (rec) byVin.set(rec.vin, rec);
+  let grandTotal = 0;
+  // Both facets share one report on purpose: certifying hyundaiusa.com
+  // complete on the BEV sweep alone would delist every PHEV row (kia.mjs's
+  // half-pull rule).
+  for (const sweep of FUEL_SWEEPS) {
+    const first = await searchPage(sweep.facet, 1, report);
+    if (!first) {
+      report.errors.push(`first ${sweep.facet} page failed — endpoint changed or down`);
+      continue;
     }
-  };
-  collect(first.items);
+    const total = first.total ?? 0;
+    const totalPages = first.totalPages ?? 1;
+    grandTotal += total;
+    report.notes.push(`national ${sweep.evKind} count ${total} across ${totalPages} pages`);
+    log(`hyundai/${sweep.evKind}: ${total} vehicles, ${totalPages} pages`);
 
-  for (let page = 2; page <= totalPages; page++) {
-    const data = await searchPage(page, report);
-    if (!data) break; // error recorded; truncated follows
-    collect(data.items);
-    if (page % 25 === 0) log(`hyundai: page ${page}/${totalPages}, ${byVin.size} VINs`);
+    const collect = (items) => {
+      for (const hit of items ?? []) {
+        const rec = toRecord(hit, sweep);
+        if (rec) byVin.set(rec.vin, rec);
+      }
+    };
+    collect(first.items);
+
+    for (let page = 2; page <= totalPages; page++) {
+      const data = await searchPage(sweep.facet, page, report);
+      if (!data) break; // error recorded; truncated follows
+      collect(data.items);
+      if (page % 25 === 0) log(`hyundai/${sweep.evKind}: page ${page}/${totalPages}, ${byVin.size} VINs`);
+    }
   }
 
   report.evs = [...byVin.values()];
   report.vehiclePages = report.fetched;
-  // Completeness (see gm.mjs): every page fetched cleanly AND yield over floor.
-  const shortfall = total > 0 && byVin.size < total * 0.9;
-  if (shortfall) report.errors.push(`collected ${byVin.size} of ${total} — paging shortfall`);
+  // Completeness (see gm.mjs): every page of every sweep fetched cleanly AND
+  // yield over floor.
+  const shortfall = grandTotal > 0 && byVin.size < grandTotal * 0.9;
+  if (shortfall) report.errors.push(`collected ${byVin.size} of ${grandTotal} — paging shortfall`);
   report.truncated = report.errors.length > 0 || byVin.size < HYUNDAI.minExpected;
   return report;
 }
 
 // hcuvInventoryModels Veh record → normalized certified-used listing.
-function toCpoRecord(veh) {
+function toCpoRecord(veh, m) {
   const vin = String(veh.VIN ?? "").toUpperCase();
   if (!VIN_RE.test(vin)) return null;
   const year = Number(veh.ModelYear);
   if (!(year >= 1981 && year <= new Date().getFullYear() + 2)) return null;
   const model = String(veh.Model ?? "").trim();
   if (!model) return null;
+  // A PHEV slug's rows must say so themselves ("Tucson Plugin Hybrid") — the
+  // FuelType field can't separate plug-in from conventional (see HYUNDAI_CPO),
+  // so a row that lost the word is dropped rather than claimed.
+  if (m.evKind === "PHEV" && !/plug/i.test(model)) return null;
   const zip = /^\d{5}/.test(String(veh.DlrZipCode ?? "")) ? String(veh.DlrZipCode).slice(0, 5) : undefined;
   const imgs = [];
   if (veh.MainImage) imgs.push(String(veh.MainImage));
@@ -301,16 +352,19 @@ function toCpoRecord(veh) {
     // are NOT added to the locator recheck-skip set.
     sourceUrl: vdp || "https://www.hyundaiusa.com/us/en/find-certified-used-vehicles",
     dealerDomain: HYUNDAI_CPO.domain,
-    evKind: "BEV",
-    evConfidence: "high", // queried by EV model name, EngineDesc Electric
+    evKind: m.evKind,
+    // Hyundai's own strings: the record's fuel field plus its Model name (the
+    // Model is what actually distinguishes plug-in from conventional here).
+    fuelType: veh.FuelType || undefined,
+    evConfidence: "high", // queried by model slug; PHEV rows also restate "Plugin Hybrid" in Model
     platform: "hyundai-cpo-locator",
     fromVdp: Boolean(vdp),
     scrapedAt: new Date().toISOString(),
   };
 }
 
-async function cpoFetch(model, zip, radius, report) {
-  const url = `${HYUNDAI_CPO.api}?brand=hyundai&zip=${zip}&model=${model}&inspectionType=all&radius=${radius}`;
+async function cpoFetch(m, zip, radius, report) {
+  const url = `${HYUNDAI_CPO.api}?brand=hyundai&zip=${zip}&model=${m.slug}&inspectionType=all&radius=${radius}`;
   for (let attempt = 0; ; attempt++) {
     // The hcuv endpoint 403s without a Referer, so it needs politeGetJson
     // (custom headers) rather than the plain fetchPage wrapper.
@@ -319,7 +373,7 @@ async function cpoFetch(model, zip, radius, report) {
     if (res.status === 200 && res.json) return res.json.cpoInventory?.Vehicles ?? [];
     const transient = String(res.status).startsWith("error:") || res.status === 429 || res.status >= 500;
     if (attempt === 0 && transient) { await new Promise((r) => setTimeout(r, 5000)); continue; }
-    report.errors.push(`${res.status} cpo ${model}/${zip}`);
+    report.errors.push(`${res.status} cpo ${m.slug}/${zip}`);
     return [];
   }
 }
@@ -340,12 +394,12 @@ function nearestZip(zips, la, ln) {
 // recurse — guaranteeing the overflow is captured rather than trusting grid
 // overlap. Bottoms out at a small radius so a pathologically dense ZIP can't
 // loop forever. Returns the cell's own (pre-subdivision) count.
-async function cpoCell(model, zip, radius, zips, byVin, report, seen = new Set(), depth = 0) {
+async function cpoCell(m, zip, radius, zips, byVin, report, seen = new Set(), depth = 0) {
   if (seen.has(zip)) return 0;
   seen.add(zip);
-  const vehicles = await cpoFetch(model, zip, radius, report);
+  const vehicles = await cpoFetch(m, zip, radius, report);
   for (const v of vehicles) {
-    const rec = toCpoRecord(v?.Veh ?? v);
+    const rec = toCpoRecord(v?.Veh ?? v, m);
     if (rec) byVin.set(rec.vin, rec);
   }
   if (vehicles.length >= CPO_CAP && radius > 20 && depth < 4 && zips) {
@@ -355,14 +409,14 @@ async function cpoCell(model, zip, radius, zips, byVin, report, seen = new Set()
       const sub = Math.max(20, Math.round(radius / 2));
       for (const [dla, dln] of [[off, off], [off, -off], [-off, off], [-off, -off]]) {
         const sz = nearestZip(zips, la + dla, ln + dln);
-        if (sz && !seen.has(sz)) await cpoCell(model, sz, sub, zips, byVin, report, seen, depth + 1);
+        if (sz && !seen.has(sz)) await cpoCell(m, sz, sub, zips, byVin, report, seen, depth + 1);
       }
     }
   }
   // Only warn about a cap we could NOT subdivide away (min radius / max depth
   // reached) — that is the one case where cars could still be missed.
   if (vehicles.length >= CPO_CAP && (radius <= 20 || depth >= 4)) {
-    report.notes.push(`UNRESOLVED cap: ${model}@${zip} r${radius} (${vehicles.length})`);
+    report.notes.push(`UNRESOLVED cap: ${m.slug}@${zip} r${radius} (${vehicles.length})`);
   }
   return vehicles.length;
 }
@@ -386,7 +440,7 @@ export async function pullHyundaiCpo({ log = () => {} } = {}) {
     report.notes.push("zips.json unavailable — metro fallback grid");
     for (const model of HYUNDAI_CPO.models) {
       for (const zip of CPO_FALLBACK_ZIPS) await cpoCell(model, zip, 250, null, byVin, report);
-      log(`hyundai-cpo/${model}: ${byVin.size} cumulative VINs`);
+      log(`hyundai-cpo/${model.slug}: ${byVin.size} cumulative VINs`);
     }
   } else {
     const { cells, zips } = grid;
@@ -398,7 +452,7 @@ export async function pullHyundaiCpo({ log = () => {} } = {}) {
       if (n > 0) hot.add(key);
     }
     for (const zip of CPO_EXTRA_ZIPS) await cpoCell(lead, zip, R, zips, byVin, report);
-    log(`hyundai-cpo/${lead}: ${byVin.size} VINs across ${cells.size} cells (${hot.size} hot)`);
+    log(`hyundai-cpo/${lead.slug}: ${byVin.size} VINs across ${cells.size} cells (${hot.size} hot)`);
 
     // Expand hot cells to include 8-neighbours, so a secondary model sitting
     // in a cell whose lead-model count was zero is still swept.
@@ -416,7 +470,7 @@ export async function pullHyundaiCpo({ log = () => {} } = {}) {
       const before = byVin.size;
       for (const key of sweep) await cpoCell(model, cells.get(key).zip, R, zips, byVin, report);
       for (const zip of CPO_EXTRA_ZIPS) await cpoCell(model, zip, R, zips, byVin, report);
-      log(`hyundai-cpo/${model}: +${byVin.size - before} over ${sweep.size} cells, ${byVin.size} cumulative`);
+      log(`hyundai-cpo/${model.slug}: +${byVin.size - before} over ${sweep.size} cells, ${byVin.size} cumulative`);
     }
     report.notes.push(`covering grid r${R}: ${cells.size} cells, ${hot.size} hot, ${sweep.size} swept for secondary models`);
   }

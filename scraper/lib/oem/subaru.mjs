@@ -34,6 +34,14 @@
 // TSK (Trailseeker); Crosstrek and Forester read "Hybrid" and are dropped, so
 // the PHEV/HEV trap that caught the Audi lane cannot fire here.
 //
+// PHEV check (2026-08-23): deliberately NOT extended. Subaru's only US
+// plug-in ever was the 2019-2023 Crosstrek Hybrid — and the 2026 "Crosstrek
+// Hybrid" is a CONVENTIONAL hybrid wearing the same nameplate, so the
+// "Hybrid"-typed Crosstrek model file cannot be swept without a model-year
+// gate deciding plug-in vs not, exactly the mixed-nameplate shape the house
+// rule forbids shipping from a name. Leftover CPO 2019-23 units (a handful
+// nationally) reach the site through the dealer crawl's fuel fields instead.
+//
 // COVERAGE is complete, and the proof has two halves:
 //  1. The inventory query is scoped to an explicit dealerCode list — there is
 //     no "all dealers" mode — so completeness starts with the retailer roster.

@@ -138,15 +138,27 @@ const HEADERS = {
   "X-CW-Accept-Language": "en-US",
 };
 
+// The two electrified facets of the store's Fuel filter (its own vocabulary,
+// read from the FacetCategories block 2026-08-23: Petrol 1,967 / Electric 711 /
+// "Petrol Mild Hybrid" 4,005 / "Hybrid Petrol/Electric Plug-in" 1,400). The
+// plug-in facet is disjoint from the mild-hybrid one, and every sampled row
+// restates the same string in its own Specification.FuelType — toRecord gates
+// on that per-record echo, not the query. The plug-in rows are the T8/Recharge
+// XC90/XC60/S60/V60/S90 fleet, ~1.4k used cars no other lane reaches.
+const FUEL_SWEEPS = [
+  { facet: "Electric", evKind: "BEV" },
+  { facet: "Hybrid Petrol/Electric Plug-in", evKind: "PHEV" },
+];
+
 // Shape copied from the storefront's own buildSearchRequest(); every field it
 // sends that the validator insists on is here, and nothing it does not.
-const searchBody = (page) => ({
+const searchBody = (page, facet) => ({
   SortBy: "PriceAscending",
   Page: page,
   ResultsPerPage: PAGE,
   IncludeNoFinanceOption: true,
   Filters: {
-    Vehicle: { Query: null, IncludeReservedVehicles: true, SelectedFacets: { Fuel: ["Electric"] } },
+    Vehicle: { Query: null, IncludeReservedVehicles: true, SelectedFacets: { Fuel: [facet] } },
     DigitalRetailStore: { Page: { Slug: STORE_SLUG } },
   },
   OrganisationIdentifier: { Type: "CodeweaversReference", Value: ORG_REFERENCE },
@@ -192,7 +204,7 @@ function trimOf(variant, model) {
   return t || undefined;
 }
 
-function toRecord(row, drops) {
+function toRecord(row, drops, sweep) {
   const bad = (reason) => {
     drops[reason] = (drops[reason] ?? 0) + 1;
     return null;
@@ -203,11 +215,17 @@ function toRecord(row, drops) {
   const vin = String(phys.Vin ?? "").toUpperCase();
   if (!VIN_RE.test(vin)) return bad("bad vin");
 
-  // The structural gate. Fuel alone carried a mild hybrid, three plug-ins and
-  // a petrol wagon on the first sweep; EngineSize separates them cleanly.
+  // The structural gate, per sweep. The record must restate the queried facet
+  // in its own FuelType — the Electric facet alone carried a mild hybrid,
+  // three plug-ins and a petrol wagon on the first sweep — and EngineSize
+  // must agree with the powertrain: 0 on a BEV (the six impostors all read
+  // 1969/2000), NONZERO on a plug-in hybrid (a T8 carries its 2.0L petrol
+  // half; a 0 here would mean a BEV mis-filed under the plug-in facet, which
+  // must ship as a BEV claim or not at all — so it is dropped, not relabeled).
   const fuel = String(spec.FuelType ?? "");
-  if (!/^electric$/i.test(fuel)) return bad("non-electric fuel");
-  if (Number(spec.EngineSize) !== 0) return bad("combustion engine under an electric label");
+  if (fuel.toLowerCase() !== sweep.facet.toLowerCase()) return bad(`fuel "${fuel}" != queried facet`);
+  if (sweep.evKind === "BEV" && Number(spec.EngineSize) !== 0) return bad("combustion engine under an electric label");
+  if (sweep.evKind === "PHEV" && !(Number(spec.EngineSize) > 0)) return bad("no combustion engine under a plug-in hybrid label");
 
   const year = Number(spec.ModelYear);
   if (!(year >= 1981 && year <= new Date().getFullYear() + 2)) return bad("implausible year");
@@ -259,17 +277,25 @@ function toRecord(row, drops) {
     // recheck retires the row on (see header).
     sourceUrl: phys.ExternalVehicleLink || undefined,
     dealerDomain: VOLVO.domain,
-    ...evClaim(vin, make, model),
+    // Volvo's own facet string, restated by this record's FuelType — what
+    // downstream verification reads alongside the model name.
+    fuelType: fuel,
+    // BEV rows keep the two-signal rule (facet + WMI/nameplate, else
+    // name_match for vPIC to settle). A plug-in row's identity rests on the
+    // record's own FuelType + its petrol EngineSize agreeing — two structured
+    // fields — and ships high; ingest still holds it until vPIC has answered
+    // for the VIN (fuelTextOnly), where a mild hybrid gets refuted.
+    ...(sweep.evKind === "PHEV" ? { evKind: "PHEV", evConfidence: "high" } : evClaim(vin, make, model)),
     platform: "volvo-cpo-locator",
     fromVdp: false,
     scrapedAt: new Date().toISOString(),
   };
 }
 
-// One page, with a single retry on a transient failure.
-async function fetchPageOfCars(page, report) {
+// One page of one fuel facet, with a single retry on a transient failure.
+async function fetchPageOfCars(page, facet, report) {
   for (let attempt = 0; attempt < 2; attempt++) {
-    const res = await politePostJson(API, { headers: HEADERS, body: searchBody(page) });
+    const res = await politePostJson(API, { headers: HEADERS, body: searchBody(page, facet) });
     report.fetched++;
     if (res.status === "robots_disallowed") {
       report.errors.push("robots disallows the Codeweavers vehicle search endpoint");
@@ -298,31 +324,37 @@ export async function pullVolvo({ log = () => {} } = {}) {
   const drops = {};
   let seen = 0;
   let dupes = 0;
-  let advertised = null;
-  let walkedOut = false;
+  let advertised = 0;
+  let walkedOut = true;
 
-  for (let page = 1; page <= MAX_PAGES; page++) {
-    const data = await fetchPageOfCars(page, report);
-    if (!data) break;
-    // Stock churns under a multi-page walk, so the advertised total moves by
-    // a car or two between pages; keep the first as the yardstick.
-    advertised ??= Number(data.TotalResults) || null;
-    const rows = data.Results ?? [];
-    if (!rows.length) {
-      walkedOut = true;
-      break;
+  for (const sweep of FUEL_SWEEPS) {
+    let sweepAdvertised = null;
+    let sweepWalkedOut = false;
+    for (let page = 1; page <= MAX_PAGES; page++) {
+      const data = await fetchPageOfCars(page, sweep.facet, report);
+      if (!data) break;
+      // Stock churns under a multi-page walk, so the advertised total moves by
+      // a car or two between pages; keep the first as the yardstick.
+      sweepAdvertised ??= Number(data.TotalResults) || null;
+      const rows = data.Results ?? [];
+      if (!rows.length) {
+        sweepWalkedOut = true;
+        break;
+      }
+      seen += rows.length;
+      for (const row of rows) {
+        const rec = toRecord(row, drops, sweep);
+        if (!rec) continue;
+        if (byVin.has(rec.vin)) dupes++;
+        else byVin.set(rec.vin, rec);
+      }
+      if (page >= (Number(data.TotalPages) || MAX_PAGES)) {
+        sweepWalkedOut = true;
+        break;
+      }
     }
-    seen += rows.length;
-    for (const row of rows) {
-      const rec = toRecord(row, drops);
-      if (!rec) continue;
-      if (byVin.has(rec.vin)) dupes++;
-      else byVin.set(rec.vin, rec);
-    }
-    if (page >= (Number(data.TotalPages) || MAX_PAGES)) {
-      walkedOut = true;
-      break;
-    }
+    advertised += sweepAdvertised ?? 0;
+    if (!sweepWalkedOut) walkedOut = false;
   }
 
   report.evs = [...byVin.values()];
@@ -330,7 +362,8 @@ export async function pullVolvo({ log = () => {} } = {}) {
   const dropped = Object.entries(drops).map(([k, v]) => `${v} ${k}`).join(", ") || "none";
   report.notes.push(`walked ${seen} of ${advertised ?? "?"} advertised electric rows, ${byVin.size} kept, ${dupes} repeats, dropped ${dropped}`);
   const certified = report.evs.filter((r) => r.condition === "certified").length;
-  report.notes.push(`${report.evs.length} BEVs (${certified} franchise-approved) across ${new Set(report.evs.map((r) => r.dealerName)).size} retailers in ${new Set(report.evs.map((r) => r.state)).size} states`);
+  const phev = report.evs.filter((r) => r.evKind === "PHEV").length;
+  report.notes.push(`${report.evs.length - phev} BEVs + ${phev} PHEVs (${certified} franchise-approved) across ${new Set(report.evs.map((r) => r.dealerName)).size} retailers in ${new Set(report.evs.map((r) => r.state)).size} states`);
   const named = report.evs.filter((r) => r.evConfidence === "name_match").length;
   if (named) report.notes.push(`${named} rows ship as name_match (XC40/EX40/EC40 nameplates the shared classifier does not settle) — vpic-enrich promotes or refutes them`);
   if (!walkedOut) report.errors.push(`stopped after ${seen} rows without reaching the last page`);
