@@ -46,7 +46,7 @@
 // either way) and never fatal.
 import { readFile, writeFile } from "node:fs/promises";
 import { isKnownMake } from "./lib/makes.mjs";
-import { EV_MODEL_RE, EV_ONLY_WMIS, fuelTextOnly } from "./lib/ev.mjs";
+import { fuelTextOnly, vpicConfirmsBev, vpicConfirmsPhev, vpicRefutesEv } from "./lib/ev.mjs";
 import { fetchWithRetry } from "./lib/retry.mjs";
 
 const src = new URL("./out/listings.json", import.meta.url);
@@ -116,39 +116,15 @@ function normDrive(s) {
   return undefined;
 }
 
-// vPIC confirms BEV via ElectrificationLevel ("BEV (Battery Electric
-// Vehicle)") or, when that's blank, a bare "Electric" FuelTypePrimary with no
-// secondary fuel. PHEVs/HEVs report FuelTypePrimary "Electric" too (secondary
-// "Gasoline", ElectrificationLevel "PHEV (...)"), so both are checked and
-// excluded explicitly — this is the only path that promotes a name-match EV,
-// and it never fires on name text alone.
-// The reverse check, for demoting fuel-text-only classifications: demotion is
-// evidence-based only. A blank vPIC decode proves nothing and must not delist
-// a real EV — only an affirmative non-plug-in hybrid level or a pure
-// combustion fuel row refutes. (Control-tested 2026-08-15: Prius Two → Strong
-// HEV refuted; Cayenne "S" E-Hybrid, GLC 350e, AMG E 53 → PHEV kept; the GLC
-// reports FuelTypePrimary "Gasoline" WITH level PHEV, which is why the level
-// is consulted first.)
-function vpicRefutesEv(r) {
-  const level = String(r.ElectrificationLevel ?? "");
-  if (/phev|plug|bev|battery electric/i.test(level)) return false;
-  if (/hev|hybrid|mild/i.test(level)) return true;
-  const fuels = `${r.FuelTypePrimary ?? ""} ${r.FuelTypeSecondary ?? ""}`;
-  return /gasoline|diesel|flex|e85/i.test(fuels) && !/electric/i.test(fuels);
-}
-
-function vpicConfirmsBev(r) {
-  const level = String(r.ElectrificationLevel ?? "");
-  const fuelPrimary = String(r.FuelTypePrimary ?? "");
-  const fuelSecondary = String(r.FuelTypeSecondary ?? "");
-  if (/hev|phev|hybrid/i.test(level) || /hybrid/i.test(fuelPrimary) || fuelSecondary.trim()) return false;
-  if (/\bbev\b|battery electric/i.test(level)) return true;
-  return /electric/i.test(fuelPrimary);
-}
+// vpicRefutesEv / vpicConfirmsBev / vpicConfirmsPhev live in lib/ev.mjs: the
+// audit (audit-listings.mjs) must judge by exactly the rules ingest admits
+// under, and one definition is the only way to keep that true.
 
 let filledTrim = 0;
 let filledDrive = 0;
 let promoted = 0;
+let promotedPhev = 0;
+let unconfirmed = 0;
 let fixedMake = 0;
 let demoted = 0;
 let decoded = 0;
@@ -188,8 +164,10 @@ function applyDecode(l, r) {
     if (vpicRefutesEv(r)) {
       l.evConfidence = "vpic_refuted"; // ingest keeps only "high"
       demoted++;
-    } else if (/phev|plug/i.test(String(r.ElectrificationLevel ?? "")) && l.evKind === "BEV") {
+    } else if (vpicConfirmsPhev(r) && l.evKind === "BEV") {
       l.evKind = "PHEV"; // dealer said bare "Electric" on a plug-in hybrid
+    } else if (vpicConfirmsBev(r) && l.evKind === "PHEV") {
+      l.evKind = "BEV"; // dealer said "Plug-In Hybrid" on a battery-electric car
     }
   }
   const trim = vpicTrim(r, l);
@@ -206,11 +184,24 @@ function applyDecode(l, r) {
   }
   const kwh = Number(r.BatteryKWh);
   if (Number.isFinite(kwh) && kwh > 0) l.vpicBatteryKwh = kwh;
-  if (l.evConfidence === "name_match" && vpicConfirmsBev(r)) {
-    l.evConfidence = "high";
-    l.evKind = "BEV";
-    l.evConfidenceSource = "vpic";
-    promoted++;
+  // A name match only ever decided that vPIC should be ASKED; the decode
+  // decides what the car is. So a "BEV?" that decodes PHEV lands as a PHEV (the
+  // Audi A3 e-tron, caught by EV_MODEL_RE's "e-tron", is one) and a "PHEV?"
+  // that decodes BEV lands as a BEV (a 2025 Countryman SE, sharing its name
+  // with the 2018-23 plug-in). Neither direction relaxes anything: both still
+  // need vPIC's affirmative electrified level, and a car it calls a
+  // conventional hybrid or petrol is not promoted at all.
+  if (l.evConfidence === "name_match") {
+    const kind = vpicConfirmsBev(r) ? "BEV" : vpicConfirmsPhev(r) ? "PHEV" : null;
+    if (kind) {
+      l.evConfidence = "high";
+      l.evKind = kind;
+      l.evConfidenceSource = "vpic";
+      promoted++;
+      if (kind === "PHEV") promotedPhev++;
+    } else {
+      unconfirmed++;
+    }
   }
 }
 
@@ -328,7 +319,7 @@ await writeOutput();
 // so it has to be visible in the log whether it is 0 or 900.
 const unasked = listings.filter((l) => fuelTextOnly(l) && !l.evVpicAsked).length;
 console.error(
-  `decoded ${decoded}/${needs.length} (${fromCache.length} from cache, ${decoded - fromCache.length}/${toFetch.length} fetched), filled trim on ${filledTrim}, drive on ${filledDrive}, promoted ${promoted} name-match EVs to high confidence, repaired ${fixedMake} makes, refuted ${demoted} non-EVs → out/listings.json; cache now holds ${Object.keys(cache).length} VINs → registry/vpic-cache.json`
+  `decoded ${decoded}/${needs.length} (${fromCache.length} from cache, ${decoded - fromCache.length}/${toFetch.length} fetched), filled trim on ${filledTrim}, drive on ${filledDrive}, promoted ${promoted} name-match EVs to high confidence (${promotedPhev} of them plug-in hybrids; ${unconfirmed} name matches vPIC answered but did not confirm stay held), repaired ${fixedMake} makes, refuted ${demoted} non-EVs → out/listings.json; cache now holds ${Object.keys(cache).length} VINs → registry/vpic-cache.json`
 );
 console.error(
   unasked

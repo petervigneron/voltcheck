@@ -18,7 +18,7 @@
 // argument for auditing by rule rather than by anyone's ad-hoc WHERE clause.
 //
 // WHAT IT DOES: for each live listing, ask whether TODAY's rules can still
-// vouch for it — an EV-only WMI, or a nameplate matching EV_MODEL_RE. Those
+// vouch for it — an EV-only WMI, or a BEV/plug-in nameplate (nameplateVouches). Those
 // that neither vouches for were admitted through some path we cannot re-check
 // from stored data (a dealer's fuel-type text, an OEM facet), so they are put
 // to vPIC, the same free federal decoder the ingest lane already trusts.
@@ -29,7 +29,7 @@
 // deliberate act, and the report gives the exact VIN list to do it with.
 // Exit 0 = clean, 10 = refuted rows found (so the nightly can shout).
 import { readdir, readFile, writeFile } from "node:fs/promises";
-import { EV_MODEL_RE, EV_ONLY_WMIS } from "./lib/ev.mjs";
+import { EV_ONLY_WMIS, nameplateVouches, vpicRefutesEv } from "./lib/ev.mjs";
 import { recordRun } from "./lib/audit-status.mjs";
 
 const arg = (n, d) => { const i = process.argv.indexOf(n); return i >= 0 ? process.argv[i + 1] : d; };
@@ -95,11 +95,16 @@ for (let after = ""; ; ) {
 const live = LIMIT ? rows.slice(0, LIMIT) : rows;
 console.error(`audit: ${live.length} live listings`);
 
-// Which rows can today's rules still vouch for, without asking anyone?
+// Which rows can today's rules still vouch for, without asking anyone? The
+// nameplate test is the SAME predicate ingest's gate uses (lib/ev.mjs
+// nameplateVouches: EV_MODEL_RE plus the year-gated plug-in nameplates), on
+// purpose — an audit that vouched more narrowly than ingest would re-refute
+// every night the plug-ins vPIC is wrong about (XM, S 580e, Polestar 1) that
+// ingest admits on nameplate + fuel text.
 const vouched = (r) => {
   const vin = String(r.vin ?? "").toUpperCase();
   if (vin.length === 17 && EV_ONLY_WMIS.has(vin.slice(0, 3))) return "wmi";
-  if (EV_MODEL_RE.test([r.model, r.make, r.trim].filter(Boolean).join(" "))) return "nameplate";
+  if (nameplateVouches(r)) return "nameplate";
   return null;
 };
 const unvouched = live.filter((r) => !vouched(r) && String(r.vin ?? "").length === 17);
@@ -122,16 +127,10 @@ for (let i = 0; i < unvouched.length; i += 50) {
   await new Promise((r) => setTimeout(r, 400));
 }
 
-// Affirmative refutation only — identical logic to vpic-enrich's demotion
-// path, deliberately: an audit that judged more harshly than ingest would
-// retire cars ingest would happily admit tomorrow.
-const refutes = (r) => {
-  const level = String(r.ElectrificationLevel ?? "");
-  if (/phev|plug|bev|battery electric/i.test(level)) return false;
-  if (/hev|hybrid|mild/i.test(level)) return true;
-  const fuels = `${r.FuelTypePrimary ?? ""} ${r.FuelTypeSecondary ?? ""}`;
-  return /gasoline|diesel|flex|e85/i.test(fuels) && !/electric/i.test(fuels);
-};
+// Affirmative refutation only — and literally the same function vpic-enrich's
+// demotion path calls (lib/ev.mjs), deliberately: an audit that judged more
+// harshly than ingest would retire cars ingest would happily admit tomorrow.
+const refutes = vpicRefutesEv;
 
 // Cars a human has already looked at and kept. 26 live listings are refuted by
 // vPIC and belong here anyway — it decodes the BMW XM as plain "Gasoline" and
