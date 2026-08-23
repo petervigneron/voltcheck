@@ -2,9 +2,9 @@
   "_comment": "Written by scraper/lib/audit-status.mjs. Do not hand-edit — see that file's header.",
   "checks": {
     "feed-shard-health": {
-      "lastRunAt": "2026-08-23T13:16:08.595Z",
+      "lastRunAt": "2026-08-23T15:54:15.527Z",
       "result": "ok",
-      "detail": "total 100940; shards 16812/16762/16966/16653/16909/16838; sitemap URLs 100939",
+      "detail": "total 103527; shards 17205/17184/17353/17074/17430/17281; sitemap URLs 103526",
       "expectedEveryHours": 8
     },
     "ev-rules-audit": {
@@ -18,6 +18,18 @@
       "result": "fail",
       "detail": "fetch failed HTTP 500",
       "expectedEveryHours": 27
+    },
+    "sync-guard": {
+      "lastRunAt": "2026-08-23T15:54:03.796Z",
+      "result": "ok",
+      "detail": "total 103526, oem 53462, dealer 50064",
+      "expectedEveryHours": 27
     }
+  },
+  "lastGoodCounts": {
+    "total": 103526,
+    "oem": 53462,
+    "dealer": 50064,
+    "at": "2026-08-23T15:54:03.786Z"
   }
 }
