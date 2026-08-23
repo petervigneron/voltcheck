@@ -102,6 +102,14 @@ const STATUS = strFlag("--status", "discovered");
 // the whole written-off pile, which is both cheaper and higher-yield.
 const MATCH = strFlag("--match", null);
 const matchRe = MATCH ? new RegExp(MATCH, "i") : null;
+// --verdict transient: re-probe the rows a previous run could not get an
+// answer out of. This is the requeue the verdict split is for — a night's
+// transient rows are re-checked on a later night at low concurrency, rather
+// than sitting in needs-investigation looking exactly like a dead end.
+// `retried` rows are included: a row that failed twice on Tuesday can still
+// answer on Thursday, and the point of the field is that we know which rows
+// those are.
+const VERDICT = strFlag("--verdict", null);
 // --sample N --seed S: a REPRODUCIBLE random subset of the candidates instead
 // of the first N. The written-off pile is ordered by how it was discovered
 // (whole states arrive together), so `--limit 150` measures one corner of it
@@ -120,13 +128,16 @@ const regUrl = new URL("./registry/registry.json", import.meta.url);
 const registry = JSON.parse(await readFile(regUrl, "utf-8"));
 const matched = registry.sites
   .filter((s) => s.status === STATUS)
+  .filter((s) => !VERDICT || s.probe?.verdict === VERDICT)
   .filter((s) => !matchRe || matchRe.test(s.domain) || matchRe.test(s.notes ?? ""));
 const candidates = SAMPLE
   ? seededShuffle(matched, SEED).slice(0, SAMPLE)
   : matched.slice(0, LIMIT);
 if (SAMPLE) console.error(`probe: seeded sample of ${candidates.length} from ${matched.length} "${STATUS}" rows (seed ${SEED})`);
 if (!candidates.length) {
-  console.error(`probe: no "${STATUS}"${MATCH ? ` sites matching /${MATCH}/` : " sites"} awaiting validation`);
+  console.error(
+    `probe: no "${STATUS}"${VERDICT ? ` [${VERDICT}]` : ""}${MATCH ? ` sites matching /${MATCH}/` : " sites"} awaiting validation`,
+  );
   process.exit(0);
 }
 
@@ -393,6 +404,11 @@ async function probeSite(site) {
     vehicles: 0,
     itemList: itemListEntries,
     sitemapUrls: sitemapUrls.length,
+    // Which of the two transient shapes this was, so a later sweep can tell a
+    // row that timed out from one that answered and had nothing to walk —
+    // they are not equally likely to turn into a promotion, and the split is
+    // how anyone finds that out.
+    ...(verdict === "transient" ? { why: transientFailures.length ? "failed-fetch" : "nothing-to-walk" } : {}),
     ...(canonicalHost ? { canonicalHost } : {}),
     // The leads as data, not prose: api-leads.mjs ranks these hosts, and it
     // had to regex them back out of a sentence to do it (finding #1 in its

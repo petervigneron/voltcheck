@@ -134,7 +134,10 @@ async function crawlDealer(domain) {
   // probe.mjs records where the homepage actually landed; use it here and keep
   // `domain` as the row's identity and the listing's dealer_domain.
   const canonicalHost = siteInfo.get(domain)?.probe?.canonicalHost;
-  const origin = `https://${canonicalHost ?? domain}`;
+  let origin = `https://${canonicalHost ?? domain}`;
+  // Only adopt a redirect when the registry has not already told us one — see
+  // the first successful fetch below.
+  let originAdopted = Boolean(canonicalHost);
   const visited = new Set();
 
   const sitemapUrls = await discoverSitemapUrls(canonicalHost ?? domain, {
@@ -283,6 +286,28 @@ async function crawlDealer(domain) {
       if (dcs.srp.has(url)) dcs.failed = true;
       report.errors.push(`${res.status} ${url}`);
       continue;
+    }
+
+    // Where the site actually lives. A registry domain that redirects to
+    // another host serves its cars only from that host, and every URL built on
+    // the registry domain is dead: columbia-preowned.com/inventory/{slug}
+    // answers 404 while the identical path on rustydrewingpreowned.com (where
+    // its homepage lands) answers 200. That URL is what a shopper clicks, so
+    // it is not allowed to be a guess. probe.mjs records the canonical host,
+    // but rows probed before it did have none — this picks the redirect up
+    // from the first page that answers, whenever the probe's field is absent.
+    // Only the front door is allowed to move the origin: a redirect on some
+    // deep page could be a one-off (a retired VDP bouncing to a group site),
+    // and adopting that would rewrite every other URL on the strength of it.
+    if (!originAdopted && url === `${origin}/`) {
+      originAdopted = true;
+      try {
+        const landed = new URL(res.finalUrl).origin;
+        if (landed !== origin) {
+          origin = landed;
+          report.notes.push(`origin: ${domain} redirects to ${new URL(landed).host}`);
+        }
+      } catch {}
     }
 
     // DealerVenom renders no inventory in HTML — it lives in a Typesense index
