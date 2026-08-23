@@ -1073,8 +1073,11 @@ jobs:
             fi
             # Then the one that decides it: a real feed page from the fattest
             # bucket, same select list, order and limit db.ts walks with.
+            # The \n in -w is load-bearing: curl ends its -w output without one,
+            # so read hits EOF mid-line, returns 1, and bash -e kills the step
+            # with no output (refresh-fallback.yml's 2026-08-23 red run).
             sel="vin,payload,first_seen_at,last_seen_at,prev_price_usd,price_changed_at,buyback_disclosed,listed_on"
-            read -r pcode ptime < <(curl -s -o /dev/null -w "%{http_code} %{time_total}" --max-time 20 "${auth[@]}" \
+            read -r pcode ptime < <(curl -s -o /dev/null -w "%{http_code} %{time_total}\n" --max-time 20 "${auth[@]}" \
               "$SUPABASE_URL/rest/v1/live_listings_feed?select=$sel&order=vin.asc&limit=500&vin=gte.W" || echo "000 99")
             if [ "$pcode" != "200" ]; then
               echo "::error::the database cannot serve a feed page (HTTP $pcode) — the WALK cannot run, which is the query the warm-up depends on (count was HTTP $code, advisory). Skipping revalidate; production keeps the complete cache it already has."

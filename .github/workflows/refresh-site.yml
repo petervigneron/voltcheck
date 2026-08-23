@@ -167,7 +167,10 @@ jobs:
             echo "ok=false" >> "$GITHUB_OUTPUT"; exit 0
           fi
           sel="vin,payload,first_seen_at,last_seen_at,prev_price_usd,price_changed_at,buyback_disclosed,listed_on"
-          read -r pcode ptime < <(curl -s -o /dev/null -w "%{http_code} %{time_total}" --max-time 20 "${auth[@]}" \
+          # The \n in -w is load-bearing: curl ends its -w output without one, so
+          # read hits EOF mid-line, returns 1, and bash -e kills the step with no
+          # output (refresh-fallback.yml's 2026-08-23 red run).
+          read -r pcode ptime < <(curl -s -o /dev/null -w "%{http_code} %{time_total}\n" --max-time 20 "${auth[@]}" \
             "$SUPABASE_URL/rest/v1/live_listings_feed?select=$sel&order=vin.asc&limit=500&vin=gte.W" || echo "000 99")
           if [ "$pcode" != "200" ] || awk "BEGIN{exit !($ptime > 1.5)}"; then
             echo "::warning::a fat feed page returned $pcode in ${ptime}s (ceiling 1.5s); skipping this refresh"
