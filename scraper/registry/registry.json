@@ -216210,6 +216210,2036 @@
         "state": "MS",
         "zip": "39452"
       }
+    },
+    {
+      "domain": "pro-truck.com",
+      "name": "PRO TRUCK & EQUIPMENT",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "PACIFIC",
+        "state": "WA",
+        "zip": "98047"
+      }
+    },
+    {
+      "domain": "streamlinemotorswa.com",
+      "name": "STREAMLINE MOTORS LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "LYNNWOOD",
+        "state": "WA",
+        "zip": "98037"
+      }
+    },
+    {
+      "domain": "daylgravesinc.com",
+      "name": "DAYL GRAVES, INC.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "WALLA WALLA",
+        "state": "WA",
+        "zip": "99362"
+      }
+    },
+    {
+      "domain": "speedmotorsportsllc.com",
+      "name": "SPEED MOTORSPORTS, LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "UNION GAP",
+        "state": "WA",
+        "zip": "98903"
+      }
+    },
+    {
+      "domain": "interstatehondawa.com",
+      "name": "INTERSTATE HONDA",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, so class is inferred from the name carrying an OEM brand (honda) — franchise, inferred (2026-08-23)",
+      "location": {
+        "city": "CHEHALIS",
+        "state": "WA",
+        "zip": "98532"
+      }
+    },
+    {
+      "domain": "theimportguys.com",
+      "name": "THE IMPORT GUYS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "FERNDALE",
+        "state": "WA",
+        "zip": "98248"
+      }
+    },
+    {
+      "domain": "karznmoreinc.com",
+      "name": "KARZ N MORE INC.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "LONGVIEW",
+        "state": "WA",
+        "zip": "98632"
+      }
+    },
+    {
+      "domain": "cascade-fire.com",
+      "name": "CASCADE FIRE EQUIPMENT CORP",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "YAKIMA",
+        "state": "WA",
+        "zip": "98901"
+      }
+    },
+    {
+      "domain": "thepaddocknw.com",
+      "name": "THE PADDOCK NW",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "WENATCHEE",
+        "state": "WA",
+        "zip": "98801"
+      }
+    },
+    {
+      "domain": "sunsetfordinc.com",
+      "name": "SUNSET FORD",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, so class is inferred from the name carrying an OEM brand (ford) — franchise, inferred (2026-08-23)",
+      "location": {
+        "city": "SUMNER",
+        "state": "WA",
+        "zip": "98390"
+      }
+    },
+    {
+      "domain": "thetruckshop.com",
+      "name": "THE TRUCK SHOP",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "AUBURN",
+        "state": "WA",
+        "zip": "98002"
+      }
+    },
+    {
+      "domain": "pnwaffordableauto.com",
+      "name": "PNW AFFORDABLE AUTO",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "OLYMPIA",
+        "state": "WA",
+        "zip": "98501"
+      }
+    },
+    {
+      "domain": "summitautowa.com",
+      "name": "SUMMIT AUTO",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "TACOMA",
+        "state": "WA",
+        "zip": "98409"
+      }
+    },
+    {
+      "domain": "dark-motors.com",
+      "name": "DARK MOTORS LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "FEDERAL WAY",
+        "state": "WA",
+        "zip": "98003"
+      }
+    },
+    {
+      "domain": "norwestautollc.com",
+      "name": "NORWEST AUTO LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "ISSAQUAH",
+        "state": "WA",
+        "zip": "98027"
+      }
+    },
+    {
+      "domain": "soundautoandfinance.com",
+      "name": "SOUND AUTO AND FINANCE",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "TACOMA",
+        "state": "WA",
+        "zip": "98422"
+      }
+    },
+    {
+      "domain": "410motorsport.com",
+      "name": "410 MOTORSPORT INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "TACOMA",
+        "state": "WA",
+        "zip": "98444"
+      }
+    },
+    {
+      "domain": "legacycarsale.com",
+      "name": "LEGACY CAR SALES",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "MUKILTEO",
+        "state": "WA",
+        "zip": "98275"
+      }
+    },
+    {
+      "domain": "mktrustedcars.com",
+      "name": "MK TRUSTED CARS LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "KENNEWICK",
+        "state": "WA",
+        "zip": "99336"
+      }
+    },
+    {
+      "domain": "westmotorsportsinc.com",
+      "name": "WEST MOTOR SPORTS INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "EVERETT",
+        "state": "WA",
+        "zip": "98201"
+      }
+    },
+    {
+      "domain": "patriotautomotivellc.com",
+      "name": "PATRIOT AUTOMOTIVE",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "SPOKANE",
+        "state": "WA",
+        "zip": "99208"
+      }
+    },
+    {
+      "domain": "towinginwa.com",
+      "name": "TOWING-IN WALLA WALLA",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "WALLA WALLA",
+        "state": "WA",
+        "zip": "99362"
+      }
+    },
+    {
+      "domain": "lexusofbellevue.com",
+      "name": "LEXUS OF BELLEVUE",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, so class is inferred from the name carrying an OEM brand (lexus) — franchise, inferred (2026-08-23)",
+      "location": {
+        "city": "BELLEVUE",
+        "state": "WA",
+        "zip": "98004"
+      }
+    },
+    {
+      "domain": "parks-motors.com",
+      "name": "PARKS MOTORS, LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "TACOMA",
+        "state": "WA",
+        "zip": "98409"
+      }
+    },
+    {
+      "domain": "seattleautoinc.com",
+      "name": "SEATTLE AUTO",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "LYNNWOOD",
+        "state": "WA",
+        "zip": "98087"
+      }
+    },
+    {
+      "domain": "ironcladcompany.com",
+      "name": "IRONCLAD COMPANY",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "SEATAC",
+        "state": "WA",
+        "zip": "98148"
+      }
+    },
+    {
+      "domain": "jstoutauction.com",
+      "name": "J. STOUT AUCTIONS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "SPOKANE",
+        "state": "WA",
+        "zip": "99224"
+      }
+    },
+    {
+      "domain": "premiumspecauto.com",
+      "name": "PREMIUM SPEC AUTO",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "SEATTLE",
+        "state": "WA",
+        "zip": "98115"
+      }
+    },
+    {
+      "domain": "qualitytrucksalesinc.com",
+      "name": "QUALITY TRUCK SALES INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "KENT",
+        "state": "WA",
+        "zip": "98032"
+      }
+    },
+    {
+      "domain": "cornerstonemotorspasco.com",
+      "name": "CORNERSTONE MOTORS LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "PASCO",
+        "state": "WA",
+        "zip": "99301"
+      }
+    },
+    {
+      "domain": "palominosautos.com",
+      "name": "PALOMINO'S AUTO INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "TOPPENISH",
+        "state": "WA",
+        "zip": "98948"
+      }
+    },
+    {
+      "domain": "meautollc.com",
+      "name": "ME AUTO LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "AUBURN",
+        "state": "WA",
+        "zip": "98002"
+      }
+    },
+    {
+      "domain": "autobahnavenue.com",
+      "name": "AUTOBAHN AVENUE CAR SALES",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "LYNNWOOD",
+        "state": "WA",
+        "zip": "98036"
+      }
+    },
+    {
+      "domain": "provenmotors.com",
+      "name": "PROVEN MOTORS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "MARYSVILLE",
+        "state": "WA",
+        "zip": "98270"
+      }
+    },
+    {
+      "domain": "nwmotorway.com",
+      "name": "NW MOTORWAY LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "BELLINGHAM",
+        "state": "WA",
+        "zip": "98226"
+      }
+    },
+    {
+      "domain": "valley-enterprises.com",
+      "name": "VALLEY ENTERPRISES",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "SPOKANE VALLEY",
+        "state": "WA",
+        "zip": "99216"
+      }
+    },
+    {
+      "domain": "choicecarstruckswa.com",
+      "name": "CHOICE CARS & TRUCKS INC.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "FERNDALE",
+        "state": "WA",
+        "zip": "98248"
+      }
+    },
+    {
+      "domain": "sseqinc.com",
+      "name": "SS EQUIPMENT",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "QUINCY",
+        "state": "WA",
+        "zip": "98848"
+      }
+    },
+    {
+      "domain": "parrscarsllc.com",
+      "name": "NORTHWEST TRAILER AND RV",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "LONGVIEW",
+        "state": "WA",
+        "zip": "98632"
+      }
+    },
+    {
+      "domain": "jrsqualitycarsinc.com",
+      "name": "JR'S QUALITY CARS, INC.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "SPOKANE VALLEY",
+        "state": "WA",
+        "zip": "99212"
+      }
+    },
+    {
+      "domain": "nwfleetsale.com",
+      "name": "NW FLEET SALES",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "KENMORE",
+        "state": "WA",
+        "zip": "98028"
+      }
+    },
+    {
+      "domain": "autohavenwa.com",
+      "name": "AUTO HAVEN",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "AUBURN",
+        "state": "WA",
+        "zip": "98002"
+      }
+    },
+    {
+      "domain": "msp-imports.com",
+      "name": "MSP IMPORTS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "VANCOUVER",
+        "state": "WA",
+        "zip": "98685"
+      }
+    },
+    {
+      "domain": "mrtautosale.com",
+      "name": "MRT AUTO SALE LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "EVERETT",
+        "state": "WA",
+        "zip": "98203"
+      }
+    },
+    {
+      "domain": "nsamotorswa.com",
+      "name": "NSA MOTORS LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "BELLEVUE",
+        "state": "WA",
+        "zip": "98007"
+      }
+    },
+    {
+      "domain": "toyotaofpuyallup.com",
+      "name": "TOYOTA OF PUYALLUP",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, so class is inferred from the name carrying an OEM brand (toyota) — franchise, inferred (2026-08-23)",
+      "location": {
+        "city": "PUYALLUP",
+        "state": "WA",
+        "zip": "98371"
+      }
+    },
+    {
+      "domain": "shiftinnovationscarco.net",
+      "name": "SHIFT INNOVATIONS CAR CO",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "PUYALLUP",
+        "state": "WA",
+        "zip": "98371"
+      }
+    },
+    {
+      "domain": "dishmandodge.net",
+      "name": "DISHMAN DODGE RAM CHRYSLER JEEP",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, so class is inferred from the name carrying an OEM brand (chrysler) — franchise, inferred (2026-08-23)",
+      "location": {
+        "city": "SPOKANE VALLEY",
+        "state": "WA",
+        "zip": "99212"
+      }
+    },
+    {
+      "domain": "raysautosalewa.com",
+      "name": "RAY'S AUTO SALE",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's phone number, which the state published a digit short; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "LAKE STEVENS",
+        "state": "WA",
+        "zip": "98258"
+      }
+    },
+    {
+      "domain": "apxauto.com",
+      "name": "APX AUTO BROKERS LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "EDMONDS",
+        "state": "WA",
+        "zip": "98026"
+      }
+    },
+    {
+      "domain": "millersautomotivellc.com",
+      "name": "MILLER'S AUTOMOTIVE",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's phone number, which the state published a digit short; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23)",
+      "location": {
+        "city": "SPOKANE",
+        "state": "WA",
+        "zip": "99202"
+      }
+    },
+    {
+      "domain": "kingofjamaica.com",
+      "name": "KING OF JAMAICA AUTO INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "JAMAICA",
+        "state": "NY",
+        "zip": "11423"
+      }
+    },
+    {
+      "domain": "autosmartny.com",
+      "name": "AUTO SMART LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "BINGHAMTON",
+        "state": "NY",
+        "zip": "13905"
+      }
+    },
+    {
+      "domain": "luxuryofqueens.com",
+      "name": "LUXURY OF QUEENS INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "LONGISLANDCITY",
+        "state": "NY",
+        "zip": "11101"
+      }
+    },
+    {
+      "domain": "vepaautocare.com",
+      "name": "VEPA AUTO CARE LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "ALBANY",
+        "state": "NY",
+        "zip": "12203"
+      }
+    },
+    {
+      "domain": "freeportcollision.com",
+      "name": "FREEPORT COLLISION",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "FREEPORT",
+        "state": "NY",
+        "zip": "11520"
+      }
+    },
+    {
+      "domain": "autoaxisny.com",
+      "name": "AUTOAXIS CORP",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "HAPPAUGE",
+        "state": "NY",
+        "zip": "11788"
+      }
+    },
+    {
+      "domain": "cooleycommercialtrucksny.com",
+      "name": "COOLEY COMMERCIAL TRUCKS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "CLIFTON PARK",
+        "state": "NY",
+        "zip": "12065"
+      }
+    },
+    {
+      "domain": "cjgtrailers.com",
+      "name": "CJG TRAILERS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "SCHUYLERVILLE",
+        "state": "NY",
+        "zip": "12871"
+      }
+    },
+    {
+      "domain": "beverlyhillsautogroup.com",
+      "name": "BEVERLY HILLS AUTO GROUP CORP",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "ELMONT",
+        "state": "NY",
+        "zip": "11003"
+      }
+    },
+    {
+      "domain": "bidlemanpowersports.com",
+      "name": "BIDLEMAN POWERSPORTS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "ROCHESTER",
+        "state": "NY",
+        "zip": "14623"
+      }
+    },
+    {
+      "domain": "car2sellny.com",
+      "name": "CAR2SELL",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "SPRGFLD GDS",
+        "state": "NY",
+        "zip": "11413"
+      }
+    },
+    {
+      "domain": "bridgemarinesales.com",
+      "name": "BRIDGE MARINE SALES LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "BAYVILLE",
+        "state": "NY",
+        "zip": "11709"
+      }
+    },
+    {
+      "domain": "elegantmotorsny.com",
+      "name": "ELEGANT MOTORS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "WESTBURY",
+        "state": "NY",
+        "zip": "11590"
+      }
+    },
+    {
+      "domain": "parmenterinc.com",
+      "name": "PARMENTER INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "HORSEHEADS",
+        "state": "NY",
+        "zip": "14845"
+      }
+    },
+    {
+      "domain": "nimeysnewgenerationcars.com",
+      "name": "NIMEYS NEW GENERATION CARS INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "UTICA",
+        "state": "NY",
+        "zip": "13501"
+      }
+    },
+    {
+      "domain": "midnightautorepairs.com",
+      "name": "MIDNIGHT AUTO REPAIR INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "BRONX",
+        "state": "NY",
+        "zip": "10466"
+      }
+    },
+    {
+      "domain": "ataautogroups.com",
+      "name": "ATA AUTO GROUP INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "BALDWIN",
+        "state": "NY",
+        "zip": "11510"
+      }
+    },
+    {
+      "domain": "luposellos.com",
+      "name": "LUPOSELLOS INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "CROTON ON HDSN",
+        "state": "NY",
+        "zip": "10520"
+      }
+    },
+    {
+      "domain": "dieselhausllc.com",
+      "name": "DIESEL HAUS LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "ROCHESTER",
+        "state": "NY",
+        "zip": "14623"
+      }
+    },
+    {
+      "domain": "dudleysautorepair.com",
+      "name": "DUDLEYS AUTO REPAIR",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "QUEENS VILLAGE",
+        "state": "NY",
+        "zip": "11429"
+      }
+    },
+    {
+      "domain": "brooklyncampervans.com",
+      "name": "BROOKLYN CAMPERVANS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "BROOKLYN",
+        "state": "NY",
+        "zip": "11206"
+      }
+    },
+    {
+      "domain": "xenmotors.com",
+      "name": "XEN MOTORS INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "HICKSVILLE",
+        "state": "NY",
+        "zip": "11801"
+      }
+    },
+    {
+      "domain": "eberlironworks.com",
+      "name": "EBERL IRON WORKS INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "BUFFALO",
+        "state": "NY",
+        "zip": "14204"
+      }
+    },
+    {
+      "domain": "allstarimportsny.com",
+      "name": "ALLSTAR IMPORTS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "CANANDAIGUA",
+        "state": "NY",
+        "zip": "14424"
+      }
+    },
+    {
+      "domain": "fentonmobility.com",
+      "name": "FENTON MOBILITY PRODUCTS INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "RANDOLPH",
+        "state": "NY",
+        "zip": "14772"
+      }
+    },
+    {
+      "domain": "factorydirecttrailers.com",
+      "name": "BROOKS FACTORY DIRECT TRAILERS LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "OSWEGO",
+        "state": "NY",
+        "zip": "13126"
+      }
+    },
+    {
+      "domain": "auburnhyundainy.com",
+      "name": "AUBURN HYUNDAI",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "AUBURN",
+        "state": "NY",
+        "zip": "13021"
+      }
+    },
+    {
+      "domain": "ralphscollision.com",
+      "name": "RALPHS COLLISION INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "ONEIDA",
+        "state": "NY",
+        "zip": "13421"
+      }
+    },
+    {
+      "domain": "eautodiscount.com",
+      "name": "EAUTODISCOUNT INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "BUFFALO",
+        "state": "NY",
+        "zip": "14206"
+      }
+    },
+    {
+      "domain": "teamstrausmotorcycle.com",
+      "name": "TEAM STRAUS MOTORCYCLES INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "BROOKLYN",
+        "state": "NY",
+        "zip": "11234"
+      }
+    },
+    {
+      "domain": "clintoncollision.com",
+      "name": "CLINTON COLLISION INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "BUFFALO",
+        "state": "NY",
+        "zip": "14206"
+      }
+    },
+    {
+      "domain": "butchsauto.net",
+      "name": "BUTCHS AUTOMOTIVE",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "LIVERPOOL",
+        "state": "NY",
+        "zip": "13088"
+      }
+    },
+    {
+      "domain": "sarasotapowersports.com",
+      "name": "SARASOTA POWERSPORTS, INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23)",
+      "location": {
+        "city": "SARASOTA",
+        "state": "FL",
+        "zip": "34243"
+      }
+    },
+    {
+      "domain": "jaxprimeauto.com",
+      "name": "JAX PRIME AUTO SALE LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "ORANGE PARK",
+        "state": "FL",
+        "zip": "32073"
+      }
+    },
+    {
+      "domain": "naplesch.com",
+      "name": "NAPLES CH LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "NAPLES",
+        "state": "FL",
+        "zip": "34109"
+      }
+    },
+    {
+      "domain": "gulfcoasttruckinc.com",
+      "name": "GULF COAST TRUCK INC.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23)",
+      "location": {
+        "city": "PENSACOLA",
+        "state": "FL",
+        "zip": "32503"
+      }
+    },
+    {
+      "domain": "koolkarts.com",
+      "name": "KOOL KARTS INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23)",
+      "location": {
+        "city": "PENSACOLA",
+        "state": "FL",
+        "zip": "32507"
+      }
+    },
+    {
+      "domain": "purefloridafinancial.com",
+      "name": "PURE FLORIDA FINANCIAL LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "MIAMI",
+        "state": "FL",
+        "zip": "33161"
+      }
+    },
+    {
+      "domain": "srqscooters.com",
+      "name": "SRQ SCOOTERS LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23)",
+      "location": {
+        "city": "SARASOTA",
+        "state": "FL",
+        "zip": "34233"
+      }
+    },
+    {
+      "domain": "haulnationtrailers.com",
+      "name": "HAULNATION TRAILERS INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "MOUNT DORA",
+        "state": "FL",
+        "zip": "32757"
+      }
+    },
+    {
+      "domain": "southeastautobroker.com",
+      "name": "SOUTHEAST AUTO BROKERS INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "POMPANO BEACH",
+        "state": "FL",
+        "zip": "33069"
+      }
+    },
+    {
+      "domain": "hdocarsimport.com",
+      "name": "HDO CARS IMPORT LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "LONGWOOD",
+        "state": "FL",
+        "zip": "32750"
+      }
+    },
+    {
+      "domain": "greaseprousedcarsales.com",
+      "name": "GREASE PRO USED CAR SALES, LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "CHIPLEY",
+        "state": "FL",
+        "zip": "32428"
+      }
+    },
+    {
+      "domain": "adamesautocenter.com",
+      "name": "ADAMES AUTO CENTER LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23)",
+      "location": {
+        "city": "PLANT CITY",
+        "state": "FL",
+        "zip": "33566"
+      }
+    },
+    {
+      "domain": "yancarsusedcars.com",
+      "name": "YANCARS USED CARS INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "CLEARWATER",
+        "state": "FL",
+        "zip": "33756"
+      }
+    },
+    {
+      "domain": "starimport.com",
+      "name": "STAR IMPORT SERVICE INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23)",
+      "location": {
+        "city": "GAINESVILLE",
+        "state": "FL",
+        "zip": "32653"
+      }
+    },
+    {
+      "domain": "teamadaptive.com",
+      "name": "TEAM ADAPTIVE INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23)",
+      "location": {
+        "city": "PENSACOLA",
+        "state": "FL",
+        "zip": "32505"
+      }
+    },
+    {
+      "domain": "speedautomarket.com",
+      "name": "SPEED AUTO MARKET LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23)",
+      "location": {
+        "city": "OCALA",
+        "state": "FL",
+        "zip": "34475"
+      }
+    },
+    {
+      "domain": "inmotionmobility.com",
+      "name": "IN MOTION MOBILITY LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23)",
+      "location": {
+        "city": "SWEETWATER",
+        "state": "FL",
+        "zip": "33172"
+      }
+    },
+    {
+      "domain": "motorsmarketcorp.com",
+      "name": "MOTORS MARKET CORP",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "HOLLYWOOD",
+        "state": "FL",
+        "zip": "33023"
+      }
+    },
+    {
+      "domain": "nelivaninvestments.com",
+      "name": "NELIVAN INVESTMENTS LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23)",
+      "location": {
+        "city": "ALTAMONTE SPRINGS",
+        "state": "FL",
+        "zip": "32714"
+      }
+    },
+    {
+      "domain": "onemiamienterprises.com",
+      "name": "ONE MIAMI ENTERPRISES INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "MIAMI",
+        "state": "FL",
+        "zip": "33186"
+      }
+    },
+    {
+      "domain": "popsautoelectric.com",
+      "name": "POPS AUTO ELECTRIC AND A&C LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23)",
+      "location": {
+        "city": "FERN PARK",
+        "state": "FL",
+        "zip": "32730"
+      }
+    },
+    {
+      "domain": "navarremotors.com",
+      "name": "NAVARRE MOTORS INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23)",
+      "location": {
+        "city": "NAVARRE",
+        "state": "FL",
+        "zip": "32566"
+      }
+    },
+    {
+      "domain": "srainvestmentgroup.com",
+      "name": "SRA INVESTMENT GROUP LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "TALLAHASSEE",
+        "state": "FL",
+        "zip": "32303"
+      }
+    },
+    {
+      "domain": "tampahybrid.com",
+      "name": "TAMPA HYBRIDS INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23)",
+      "location": {
+        "city": "TAMPA",
+        "state": "FL",
+        "zip": "33613"
+      }
+    },
+    {
+      "domain": "carmastergaragellc.com",
+      "name": "CAR MASTER GARAGE LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "GAINESVILLE",
+        "state": "FL",
+        "zip": "32609"
+      }
+    },
+    {
+      "domain": "autogalleryhollywood.com",
+      "name": "AUTO GALLERY HOLLYWOOD INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "HOLLYWOOD",
+        "state": "FL",
+        "zip": "33020"
+      }
+    },
+    {
+      "domain": "usacapitalauto.com",
+      "name": "USA CAPITAL AUTO LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23)",
+      "location": {
+        "city": "ORLANDO",
+        "state": "FL",
+        "zip": "32808"
+      }
+    },
+    {
+      "domain": "carsofjax.com",
+      "name": "CARS OF JAX INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23)",
+      "location": {
+        "city": "JACKSONVILLE",
+        "state": "FL",
+        "zip": "32216"
+      }
+    },
+    {
+      "domain": "galaxymotorcycles.com",
+      "name": "GALAXY MOTORCYCLES INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23)",
+      "location": {
+        "city": "COCOA",
+        "state": "FL",
+        "zip": "32922"
+      }
+    },
+    {
+      "domain": "customcartconnection.com",
+      "name": "CUSTOM CART CONNECTION TRADITION LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23)",
+      "location": {
+        "city": "PORT ST LUCIE",
+        "state": "FL",
+        "zip": "34986"
+      }
+    },
+    {
+      "domain": "signatureautogallery.com",
+      "name": "SIGNATURE AUTO GALLERY, INC.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23)",
+      "location": {
+        "city": "HOLLYWOOD",
+        "state": "FL",
+        "zip": "33020"
+      }
+    },
+    {
+      "domain": "prestigemotorsofviera.com",
+      "name": "PRESTIGE MOTORS OF VIERA LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23)",
+      "location": {
+        "city": "COCOA",
+        "state": "FL",
+        "zip": "32926"
+      }
+    },
+    {
+      "domain": "importscollection.com",
+      "name": "IMPORTS COLLECTION INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "DORAL",
+        "state": "FL",
+        "zip": "33172"
+      }
+    },
+    {
+      "domain": "turbo-toys.com",
+      "name": "TURBO TOYS INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "TAMPA",
+        "state": "FL",
+        "zip": "33614"
+      }
+    },
+    {
+      "domain": "golfcar.com",
+      "name": "GOLF CAR DEPOT HOLDINGS, LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23)",
+      "location": {
+        "city": "MIAMI",
+        "state": "FL",
+        "zip": "33166"
+      }
+    },
+    {
+      "domain": "broward-motorsports.com",
+      "name": "BROWARD MOTORSPORTS OF TEQUESTA, LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23)",
+      "location": {
+        "city": "TEQUESTA",
+        "state": "FL",
+        "zip": "33469"
+      }
+    },
+    {
+      "domain": "branismotorsbradenton.com",
+      "name": "BRANIS MOTORS INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23)",
+      "location": {
+        "city": "BRADENTON",
+        "state": "FL",
+        "zip": "34203"
+      }
+    },
+    {
+      "domain": "autodepotnavarre.com",
+      "name": "AUTO DEPOT OF NAVARRE LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23)",
+      "location": {
+        "city": "MARY ESTHER",
+        "state": "FL",
+        "zip": "32569"
+      }
+    },
+    {
+      "domain": "landsusedtrucks.com",
+      "name": "LAND'S USED TRUCKS INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23)",
+      "location": {
+        "city": "PLANT CITY",
+        "state": "FL",
+        "zip": "33566"
+      }
+    },
+    {
+      "domain": "mildcollection.com",
+      "name": "M.I.L.D COLLECTION LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23)",
+      "location": {
+        "city": "NORTH MIAMI",
+        "state": "FL",
+        "zip": "33161"
+      }
+    },
+    {
+      "domain": "westwindcoachworks.com",
+      "name": "WESTWIND COACHWORKS LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23)",
+      "location": {
+        "city": "SARASOTA",
+        "state": "FL",
+        "zip": "34238"
+      }
+    },
+    {
+      "domain": "jnl-motors.com",
+      "name": "JNL MOTORS INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "MIAMI",
+        "state": "FL",
+        "zip": "33166"
+      }
+    },
+    {
+      "domain": "rowautos.com",
+      "name": "ROW AUTOS LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "MIAMI",
+        "state": "FL",
+        "zip": "33157"
+      }
+    },
+    {
+      "domain": "ro-lin.com",
+      "name": "RO-LIN RENTALS AND SALES INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23)",
+      "location": {
+        "city": "FORT MYERS",
+        "state": "FL",
+        "zip": "33912"
+      }
+    },
+    {
+      "domain": "spencersautogroup.com",
+      "name": "SPENCER''S AUTO GROUP LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23)",
+      "location": {
+        "city": "TAVARES",
+        "state": "FL",
+        "zip": "32778"
+      }
+    },
+    {
+      "domain": "atlantautollc.com",
+      "name": "ATLANT AUTO LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23)",
+      "location": {
+        "city": "ORLANDO",
+        "state": "FL",
+        "zip": "32808"
+      }
+    },
+    {
+      "domain": "813autogroup.com",
+      "name": "813 AUTO GROUP INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23)",
+      "location": {
+        "city": "TAMPA",
+        "state": "FL",
+        "zip": "33604"
+      }
+    },
+    {
+      "domain": "lincolnnorthmiami.com",
+      "name": "LINCOLN NORTH MIAMI, LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23)",
+      "location": {
+        "city": "NORTH MIAMI",
+        "state": "FL",
+        "zip": "33181"
+      }
+    },
+    {
+      "domain": "yoloautomotive.com",
+      "name": "YOLO AUTOMOTIVE GROUP INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23)",
+      "location": {
+        "city": "MARIANNA",
+        "state": "FL",
+        "zip": "32446"
+      }
+    },
+    {
+      "domain": "southshoremarinegroup.com",
+      "name": "SOUTH SHORE MARINE GROUP LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23)",
+      "location": {
+        "city": "RUSKIN",
+        "state": "FL",
+        "zip": "33570"
+      }
+    },
+    {
+      "domain": "familyautolongwood.com",
+      "name": "FAMILY AUTO BROKERS INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23)",
+      "location": {
+        "city": "LONGWOOD",
+        "state": "FL",
+        "zip": "32750"
+      }
+    },
+    {
+      "domain": "impressionautoservices.com",
+      "name": "IMPRESSION AUTO SERVICE LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23)",
+      "location": {
+        "city": "RIVIERA BEACH",
+        "state": "FL",
+        "zip": "33404"
+      }
+    },
+    {
+      "domain": "westcoastrvllc.com",
+      "name": "WESTCOAST RV LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23)",
+      "location": {
+        "city": "HUDSON",
+        "state": "FL",
+        "zip": "34669"
+      }
+    },
+    {
+      "domain": "orlandoautoauction.com",
+      "name": "ORLANDO AUTO AUCTION 55 LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23)",
+      "location": {
+        "city": "ORLANDO",
+        "state": "FL",
+        "zip": "32808"
+      }
+    },
+    {
+      "domain": "octanexauto.com",
+      "name": "OCTANE X AUTOMOTIVE INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23)",
+      "location": {
+        "city": "OSPREY",
+        "state": "FL",
+        "zip": "34229"
+      }
+    },
+    {
+      "domain": "mutualautogroup.com",
+      "name": "MUTUAL AUTO GROUP LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23)",
+      "location": {
+        "city": "TAMPA",
+        "state": "FL",
+        "zip": "33612"
+      }
+    },
+    {
+      "domain": "carlandoauto.com",
+      "name": "CARLANDO AUTO GROUP LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "LAKELAND",
+        "state": "FL",
+        "zip": "33801"
+      }
+    },
+    {
+      "domain": "westautollc.com",
+      "name": "WESTAUTO LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23)",
+      "location": {
+        "city": "LARGO",
+        "state": "FL",
+        "zip": "33773"
+      }
+    },
+    {
+      "domain": "apmotorsales.com",
+      "name": "AP MOTOR SALES LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23)",
+      "location": {
+        "city": "ANTHONY",
+        "state": "FL",
+        "zip": "32617"
+      }
+    },
+    {
+      "domain": "mclarencars.us",
+      "name": "MCLAREN CARS, LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23)",
+      "location": {
+        "city": "JACKSONVILLE",
+        "state": "FL",
+        "zip": "32277"
+      }
+    },
+    {
+      "domain": "foreignautospecialists.net",
+      "name": "FOREIGN AUTO SPECIALISTS SALES LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23)",
+      "location": {
+        "city": "WEST PALM BEACH",
+        "state": "FL",
+        "zip": "33411"
+      }
+    },
+    {
+      "domain": "ride-away.com",
+      "name": "RIDE-AWAY, INC.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23)",
+      "location": {
+        "city": "TAMPA",
+        "state": "FL",
+        "zip": "33619"
+      }
     }
   ],
   "_sources": [
