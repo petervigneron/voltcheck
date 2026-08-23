@@ -400,3 +400,49 @@ export async function fetchPage(url) {
     return first;
   }
 }
+
+// Polite GET that also hands back the response's Set-Cookie headers.
+//
+// Every other helper here throws the headers away, which is right for a page
+// fetch and wrong for exactly one shape of endpoint: a search that paginates
+// only through a CSRF-protected form POST. Stellantis's certified-pre-owned
+// search (jeepcertified.com and its sibling brand hosts) renders 12 cards
+// server-side and reaches the rest only via POST /sni_filter_request, which
+// Laravel answers with 419 "CSRF token mismatch" unless the request carries
+// BOTH the session cookie the search page set and the token that page printed
+// in its csrf-token meta. Neither can be reconstructed; they have to be
+// carried out of the GET. So this returns Set-Cookie alongside the body, and
+// the caller passes the cookie back in through politePostJson's `headers`.
+//
+// Same identity, same per-host interval, same robots check as every other
+// call — this is one more return value, not an exemption.
+export async function politeGetWithHeaders(url, { headers = {}, timeoutMs = 20000 } = {}) {
+  if (!(await robotsAllows(url))) return { status: "robots_disallowed", text: null, cookies: [] };
+  const u = new URL(url);
+  await politeDelay(u.host);
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), timeoutMs);
+  try {
+    const res = await fetch(url, {
+      headers: {
+        "user-agent": UA,
+        accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "accept-language": "en-US,en;q=0.9",
+        "x-crawler": `VoltcheckBot/0.1 (+${BOT_PAGE})`,
+        ...headers,
+      },
+      redirect: "follow",
+      signal: ctrl.signal,
+    });
+    const text = await readBody(res);
+    // getSetCookie() is the only accessor that keeps multiple Set-Cookie
+    // headers separate; the joined `get()` value cannot be split safely
+    // because cookie attributes contain commas (Expires=Wed, 21 Oct …).
+    const cookies = typeof res.headers.getSetCookie === "function" ? res.headers.getSetCookie() : [];
+    return { status: res.status, text, finalUrl: res.url, cookies };
+  } catch (e) {
+    return { status: `error:${e.name ?? "unknown"}`, text: null, cookies: [] };
+  } finally {
+    clearTimeout(t);
+  }
+}
