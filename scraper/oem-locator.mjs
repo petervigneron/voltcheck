@@ -144,6 +144,35 @@
 //   Lexus CPO — already built, and it is the LEXUS entry above: /rest/lexus/
 //            inventorySearch/cpo has no `new`/`used` sibling, so that lane is
 //            the L/Certified lot and nothing else. Nothing to add here.
+//   Porsche — NOT BUILDABLE TODAY, and the wall is the only thing stopping it.
+//            Porsche Finder (finder.porsche.com) is the US inventory tool for
+//            new, pre-owned and Porsche Approved stock, and it is behind
+//            Vercel's Attack Challenge Mode: every path answers HTTP 429 with
+//            `x-vercel-mitigated: challenge` to a plain client — the search
+//            page, its /api/us/en-US/hitcounts endpoint, a vehicle detail page,
+//            and /robots.txt itself, which is why we cannot even read the
+//            policy they would like us to follow. Control at the same moment
+//            from the same client: bmwusa.com/robots.txt and genesis.com/
+//            robots.txt both 200. Same verdict as Tesla and Ford — a JS
+//            proof-of-work challenge is bot detection and we do not work
+//            around it.
+//            What the recon found, so nobody re-does it if the wall lifts: the
+//            search results are SERVER-rendered and carry a complete
+//            schema.org ItemList, 15 cars per page, each with
+//            vehicleIdentificationNumber, offers.price, itemCondition,
+//            vehicleEngine.fuelType (the enum is PETROL / ELECTRIC /
+//            PLUG_IN_HYBRID / DIESEL), mileageFromOdometer,
+//            numberOfPreviousOwners and an AutoDealer seller block with the
+//            retailer's name and street address. So the whole lane would be
+//            fetch + parse JSON-LD, no API reverse-engineering at all. The URL
+//            is /us/en-US/search with ?position={label},{lat},{lng},{radiusMi}
+//            &engine-type=electric&page=N; engine-type is honoured server-side
+//            (every item on a filtered page came back fuelType ELECTRIC), the
+//            condition facet is new / used / porsche_approved / classic, and
+//            the fuel facet separates plug-in hybrids from the rest cleanly,
+//            so the Cayenne and Panamera E-Hybrids would be admissible rather
+//            than guessed at. Porsche BEVs reach us today only through dealer
+//            rooftops the crawl already covers.
 //   Enterprise Car Sales — not an OEM but the same lane shape: their AEM SPA
 //            queries an OpenSearch BFF on api.ehi.com via a page-published
 //            anonymous-token flow, open to plain Node. One query is their
