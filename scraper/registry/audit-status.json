@@ -2,21 +2,21 @@
   "_comment": "Written by scraper/lib/audit-status.mjs. Do not hand-edit — see that file's header.",
   "checks": {
     "feed-shard-health": {
-      "lastRunAt": "2026-08-22T21:57:42.339Z",
+      "lastRunAt": "2026-08-23T02:14:13.404Z",
       "result": "ok",
-      "detail": "total 100446; shards 16716/16680/16871/16580/16837/16762; sitemap URLs 100445",
+      "detail": "total 100940; shards 16812/16762/16966/16653/16909/16838; sitemap URLs 100939",
       "expectedEveryHours": 8
     },
     "ev-rules-audit": {
-      "lastRunAt": "2026-08-22T21:57:14.905Z",
+      "lastRunAt": "2026-08-23T02:13:45.460Z",
       "result": "ok",
-      "detail": "100591 live, 0 newly refuted by vPIC, 26 adjudicated-and-kept, 0 undecided",
+      "detail": "100929 live, 0 newly refuted by vPIC, 26 adjudicated-and-kept, 0 undecided",
       "expectedEveryHours": 27
     },
     "completeness-audit": {
-      "lastRunAt": "2026-08-22T21:57:37.621Z",
+      "lastRunAt": "2026-08-23T02:14:11.218Z",
       "result": "ok",
-      "detail": "35345 live, 2 broken-parser lots (baseline 202)",
+      "detail": "35399 live, 1 broken-parser lots (baseline 202)",
       "expectedEveryHours": 27
     }
   }
