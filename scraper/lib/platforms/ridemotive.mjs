@@ -37,6 +37,20 @@
 // /inventory/*/start-deal, window-sticker, brochure and friends); the Algolia
 // host is reached through politePostJson, which checks its robots.txt like any
 // other host.
+//
+// WHAT THIS LANE DOES NOT DO, and it is the bigger number. The index is
+// national: 322,961 active vehicles, of which 9,254 are electric by the
+// platform's own fuel roll-up, spread over more than 1,000 distinct
+// `dealership` values (the facet caps at 1,000, so that is a floor, not a
+// count). The 14 rooftops the registry knows account for 6,380 of those
+// vehicles and 56 of the EVs. Reaching the rest needs a dealer id → public
+// domain mapping, and the record does not carry one: it has `dealership` (a
+// name) and `dealer_ids`, and the config's `dealer.domain` is sometimes a
+// platform-internal host (rustydrewingmb.app.ridemotive.com). The platform's
+// own /dealers/{id} endpoint answers 401 to our declared identity, so that
+// door is closed and stays closed. The open path is the one the project
+// already has — resolve-dealers.mjs turns dealer NAMES into domains, and
+// probe.mjs validates them — which is a discovery-lane job, not this file's.
 import { politePostJson } from "../http.mjs";
 import { stabilizeImages } from "../images.mjs";
 import { conditionToken } from "../condition.mjs";

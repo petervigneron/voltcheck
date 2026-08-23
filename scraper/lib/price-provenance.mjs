@@ -94,8 +94,21 @@ export const OVERFUEL_PRICE = "overfuel-price";       // Overfuel `price` (never
 export const TV_SELLING = "tv-selling";               // Team Velocity sellingPrice/yourPrice
 // Motive/ridemotive's Algolia record `price` — the VDP's rendered Final Price
 // (fees included), NOT its `feed_price` rung, which is the same ladder's
-// pre-fee line. Its own tag: it has never been checked equal to any field
-// above, and this file's rule is to split when in doubt.
+// pre-fee line.
+//
+// This one is a deliberate near-miss of the JSONLD tag. The check WAS done and
+// it passed: 7 of 7 cars across two rooftops (columbia-preowned.com and
+// subaruoftwinfalls.com, 2026-08-23) have `price` byte-equal to the VDP's own
+// schema.org offers.price, including four where feed_price differs by the
+// admin fee, so the two are not accidentally equal. What stops it sharing the
+// tag is that Motive's per-rooftop config carries a
+// `uses_v2_canonical_pricing` flag — false on both rooftops checked — which
+// says on its face that pricing RENDERING varies by rooftop. A rooftop with
+// that flag set could render a different number than the record's, and a
+// shared tag would pair the two into a price cut nobody made. Splitting costs
+// a quiet chip; sharing on an untested config costs a shopper. If someone
+// later checks a v2-canonical rooftop and it matches too, this is the comment
+// to update.
 export const MOTIVE_PRICE = "motive-price";
 
 // OEM/aggregator inventory APIs. Each lane reads one documented field out of
