@@ -42,8 +42,11 @@
 // national: 322,961 active vehicles, of which 9,254 are electric by the
 // platform's own fuel roll-up, spread over more than 1,000 distinct
 // `dealership` values (the facet caps at 1,000, so that is a floor, not a
-// count). The 14 rooftops the registry knows account for 6,380 of those
-// vehicles and 56 of the EVs. Reaching the rest needs a dealer id → public
+// count). The 14 rooftops the registry knows account for 7,440 of those
+// vehicles and 65 of the EVs, walked one by one — the 6,380/56 quoted in this
+// lane's commit message was the first eleven, before the three rooftops that
+// needed a second, serial probe were measured. Reaching the rest needs a
+// dealer id → public
 // domain mapping, and the record does not carry one: it has `dealership` (a
 // name) and `dealer_ids`, and the config's `dealer.domain` is sometimes a
 // platform-internal host (rustydrewingmb.app.ridemotive.com). The platform's
