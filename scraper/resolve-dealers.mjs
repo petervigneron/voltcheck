@@ -6,9 +6,13 @@
 //
 // The pipeline is generate → DNS → fetch → verify, and each stage is honest
 // about what it proves. Candidate domains are deterministic transforms of the
-// dealer's licensed name (word subsets, brand abbreviations, city combos) —
-// measured 52% recovery against the 9,157 name→domain pairs the registry
-// already knows. DNS resolution is free and touches nobody's server. Only
+// dealer's licensed name (word subsets, brand abbreviations, city combos —
+// see lib/dealer-names.mjs, which owns them and is measured on its own).
+// Recovery against the name→domain pairs the registry already knows was 52%
+// when this shipped in 2026-08-17; re-measured 2026-08-23 on the 7,432 pairs
+// this generator did not itself create, it is 69%, and 83% on the subset
+// carrying a state, which every roll row does. DNS resolution is free and
+// touches nobody's server. Only
 // resolving candidates are fetched, politely, once per domain. And a match is
 // claimed ONLY when the page itself asserts the identity: it shows the roll's
 // phone number (digit-exact), or the dealer's squashed name together with its
@@ -28,72 +32,22 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { Resolver } from "node:dns/promises";
 import { fetchPage, setCacheTtl } from "./lib/http.mjs";
+import { squash, candidates, BRANDS } from "./lib/dealer-names.mjs";
 
 const args = process.argv.slice(2);
 const WRITE = args.includes("--write");
 const LIMIT = (() => { const i = args.indexOf("--limit"); return i >= 0 ? Number(args[i + 1]) : 0; })();
 const CONC = (() => { const i = args.indexOf("--concurrency"); return i >= 0 ? Number(args[i + 1]) : 24; })();
 const DUMP_UNRESOLVED = (() => { const i = args.indexOf("--dump-unresolved"); return i >= 0 ? args[i + 1] : null; })();
+// A deterministic random subset of the roll, so a bounded run measures the
+// whole roll rather than its alphabetical head (--limit takes the first N,
+// which on every roll here means the A's).
+const SAMPLE = (() => { const i = args.indexOf("--sample"); return i >= 0 ? Number(args[i + 1]) : 0; })();
+const SEED = (() => { const i = args.indexOf("--seed"); return i >= 0 ? Number(args[i + 1]) : 20260823; })();
+// Rolls that carry no state column (FL's HTML tables) get it from the flag.
+const STATE = (() => { const i = args.indexOf("--state"); return i >= 0 ? args[i + 1] : null; })();
 const csvPath = args.find((a) => !a.startsWith("--"));
 setCacheTtl(24 * 3600_000);
-
-// ── candidate generation ────────────────────────────────────────────────────
-const ABBREV = {
-  volkswagen: ["vw"], chevrolet: ["chevy", "chev"], mercedesbenz: ["mb", "mercedes", "benz"],
-  mercedes: ["mb", "benz"], harleydavidson: ["harley", "hd"], mitsubishi: ["mitsu"],
-  international: ["intl"], automotive: ["auto"], performance: ["perf"], enterprises: ["ent"],
-  chryslerdodgejeepram: ["cdjr"], chryslerjeepdodgeram: ["cjdr"], chryslerdodgejeep: ["cdj"], dodgechryslerjeep: ["dcj"],
-};
-const squash = (s) => String(s ?? "").toLowerCase()
-  .replace(/\([^)]*\)/g, " ")
-  .replace(/&/g, " and ")
-  .replace(/\b(llc|inc|ltd|corp|co|incorporated|corporation|company|limited|liability|lp|llp|pa|pllc|dba)\b\.?/g, "")
-  .replace(/[^a-z0-9 ]/g, " ")
-  .replace(/\s+/g, " ").trim();
-
-function candidates(name, city) {
-  const words = squash(name).split(" ").filter(Boolean).filter((w) => w !== "the");
-  if (!words.length) return [];
-  const out = new Set();
-  const add = (arr) => { const j = arr.join(""); if (j.length >= 4 && j.length <= 35) out.add(j); };
-  const subs = [];
-  for (let i = 0; i < words.length; i++)
-    for (let j = i + 1; j <= words.length; j++) {
-      const raw = words.slice(i, j);
-      const sub = raw.filter((w) => w !== "of" && w !== "and");
-      if (sub.length && !(sub.length === 1 && sub[0].length < 6)) subs.push(sub);
-      // "Brand of City" is the standard US franchise-dealer naming pattern
-      // (toyotaofbayridge.com, vwoforchardpark.com) and plenty of dealers'
-      // real domains keep the "of" rather than dropping it — but the sub
-      // above always drops it, so that whole naming convention was
-      // unreachable regardless of DNS budget. Keep "of" as its own variant
-      // (verified against a hand-checked sample of NY license-roll misses,
-      // 2026-08-20) without touching the drop-it default the rest of the
-      // corpus already resolves 52% of names against.
-      if (raw.length !== sub.length && raw.includes("of")) {
-        const withOf = raw.filter((w) => w !== "and");
-        if (withOf.length >= 2) subs.push(withOf);
-      }
-    }
-  const full = words.filter((w) => w !== "of" && w !== "and");
-  for (let k = 1; k < full.length - 1; k++) subs.push(full.filter((_, i) => i !== k));
-  for (const sub of subs) {
-    add(sub);
-    for (let k = 0; k < sub.length; k++)
-      for (const f of ABBREV[sub[k]] ?? []) { const v = [...sub]; v[k] = f; add(v); }
-  }
-  for (const c of [...out]) {
-    out.add(c.replace(/autosales$/, "auto")); out.add(c.replace(/autosales$/, "autos"));
-    out.add(c.replace(/motors$/, "motor")); out.add(c.replace(/motor$/, "motors"));
-    out.add(c.replace(/automotive$/, "auto"));
-  }
-  const cty = city ? squash(city).replace(/ /g, "") : null;
-  if (cty) {
-    const first = full.slice(0, 2);
-    for (const base of [first.join(""), ...(ABBREV[first[0]] ?? [])]) { out.add(base + cty); out.add(cty + base); }
-  }
-  return [...out].filter((c) => c.length >= 4 && c.length <= 35);
-}
 
 // ── roll parsing (WA DOL shape; header-driven so other rolls can follow) ────
 function parseCsv(text) {
@@ -118,20 +72,29 @@ function parseCsv(text) {
 
 const digits = (s) => String(s ?? "").replace(/\D/g, "");
 
-const raw = parseCsv(await readFile(csvPath, "utf-8"));
+const rollText = await readFile(csvPath, "utf-8");
+// A dumped --dump-unresolved file can be fed straight back in, so a rerun
+// after a resolver change only spends fetches on rows that failed before.
+const raw = csvPath.endsWith(".json") ? JSON.parse(rollText) : parseCsv(rollText);
 // NY: retail classes only (DLN franchise / DLU used) — wholesalers,
 // dismantlers and salvage pools hold licenses but sell nothing retail.
 const filtered = raw.filter((r) => !r.business_type || ["DLN", "DLU"].includes(r.business_type));
 const dealers = filtered.map((r) => ({
   // NY splits long names across an overflow column ("ACURA OF BEDFORD" + "HILLS").
-  name: r.location_name || r.business_name || [r.facility_name, r.facility_name_overflow].filter(Boolean).join(" ") || r["DEALER NAME"],
-  alt: r.business_name && r.business_name !== r.location_name ? r.business_name : null,
-  city: r.location_city || r.facility_city || r["LOCATION CITY"],
-  state: r.location_state || r.facility_state || "WA",
-  zip: (r.location_postal_code || r.facility_zip_code || r["LOCATION ZIP"] || "").slice(0, 5),
-  phone: digits(r.phone_number || r.PHONE).slice(-10),
+  name: r.name || r.location_name || r.business_name || [r.facility_name, r.facility_name_overflow].filter(Boolean).join(" ") || r["DEALER NAME"],
+  alt: r.alt ?? (r.business_name && r.business_name !== r.location_name ? r.business_name : null),
+  city: r.city || r.location_city || r.facility_city || r["LOCATION CITY"],
+  state: r.state || r.location_state || r.facility_state || STATE || "WA",
+  zip: (r.zip || r.location_postal_code || r.facility_zip_code || r["LOCATION ZIP"] || "").slice(0, 5),
+  phone: digits(r.phone || r.phone_number || r.PHONE).slice(-10),
 })).filter((d) => d.name);
-const work = LIMIT ? dealers.slice(0, LIMIT) : dealers;
+let work = LIMIT ? dealers.slice(0, LIMIT) : dealers;
+if (SAMPLE && SAMPLE < work.length) {
+  let x = SEED >>> 0;
+  const rnd = () => (x = (x * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff;
+  work = work.map((d) => [rnd(), d]).sort((a, b) => a[0] - b[0]).slice(0, SAMPLE).map((p) => p[1]);
+  console.error(`sampled ${work.length} of ${dealers.length} rows (seed ${SEED})`);
+}
 console.error(`${work.length} dealers from ${csvPath}`);
 
 // ── stage 1+2: candidates → DNS ─────────────────────────────────────────────
@@ -143,7 +106,7 @@ resolver.setServers(["1.1.1.1", "8.8.8.8"]);
 
 const wantDomains = new Map(); // domain -> [dealer indices]
 work.forEach((d, i) => {
-  const cands = new Set([...candidates(d.name, d.city), ...(d.alt ? candidates(d.alt, d.city) : [])]);
+  const cands = new Set([...candidates(d.name, d.city, d.state), ...(d.alt ? candidates(d.alt, d.city, d.state) : [])]);
   for (const c of cands) for (const tld of TLDS) {
     const dom = c + tld;
     if (!wantDomains.has(dom)) wantDomains.set(dom, []);
@@ -230,6 +193,24 @@ if (DUMP_UNRESOLVED) {
 
 // ── append to registry ──────────────────────────────────────────────────────
 const today = new Date().toISOString().slice(0, 10);
+const HOW_TEXT = {
+  phone: "the roll's phone number",
+  "name+zip": "licensed name + the roll's zip",
+  "name+city": "licensed name + city (the roll row carries no zip)",
+};
+// Washington licenses every dealer under one class — the roll cannot say
+// franchise or independent — so the only signal available is whether the
+// licensed name carries an OEM brand. That is an inference, not the state's
+// word, and the note says so; nothing downstream may read it as the license
+// class it is not.
+const classNote = (d) => {
+  if (!/^WA$/i.test(d.state ?? "")) return "";
+  const words = new Set(squash(d.name).split(" "));
+  const brand = [...BRANDS].find((b) => words.has(b));
+  return brand
+    ? `; WA licenses one dealer class only, so class is inferred from the name carrying an OEM brand (${brand}) — franchise, inferred`
+    : "; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred";
+};
 const additions = [];
 const taken = new Set();
 for (const [i, v] of verified) {
@@ -243,7 +224,7 @@ for (const [i, v] of verified) {
     platform: "unknown",
     robots: "unknown",
     status: "discovered",
-    notes: `Resolved from the ${d.state} license roll by name→domain candidate generation; identity verified on the page by ${v.how === "phone" ? "the roll's phone number" : "licensed name + city/zip"} (${today})`,
+    notes: `Resolved from the ${d.state} license roll by name→domain candidate generation; identity verified on the page by ${HOW_TEXT[v.how]}${classNote(d)} (${today})`,
     location: { city: d.city, state: d.state, zip: d.zip },
   });
 }
