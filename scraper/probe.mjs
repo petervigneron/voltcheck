@@ -142,6 +142,8 @@ if (!candidates.length) {
 }
 
 const today = new Date().toISOString().slice(0, 10);
+// What each row's note said before tonight — see the retry pass at the bottom.
+const notesBefore = new Map(candidates.map((s) => [s.domain, s.notes]));
 
 // One row's verdict, written where a later run (and api-leads.mjs) can read it
 // without parsing prose. Kept small on purpose: it rides in a hand-curated
@@ -454,6 +456,12 @@ const transient = candidates.filter((s) => s.probe?.verdict === "transient");
 if (transient.length && !NO_RETRY) {
   console.error(`probe: re-probing ${transient.length} transient row(s) at concurrency ${RETRY_CONCURRENCY}`);
   const before = new Map(transient.map((s) => [s.domain, s.probe.verdict]));
+  // Roll the note back to what it said before this run, so a retried row ends
+  // up with ONE note for tonight rather than two. The registry is a
+  // hand-curated file people read; the first attempt's note would say the same
+  // thing as the second's and only the second is the answer. The evidence for
+  // both is in the structured field.
+  for (const s of transient) s.notes = notesBefore.get(s.domain);
   await runPool(transient, RETRY_CONCURRENCY);
   for (const s of transient) if (s.probe) s.probe.retried = true;
   const rescued = transient.filter((s) => s.status === "working").length;
