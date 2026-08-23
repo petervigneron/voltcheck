@@ -179,3 +179,17 @@ test("nothing stated anywhere publishes nothing", () => {
   assert.equal(publishedCondition({}), undefined);
   assert.equal(publishedCondition(), undefined);
 });
+
+test("a stated condition beats a misleading path (the Honda certified/used lane)", () => {
+  // Honda's certified/used API hands out the SELLING DEALER's own VDP, and
+  // some of those sit under a /new/ path whatever the car is:
+  // princetonhonda.com/new/Honda/catcher.esl?vin=… is a 20,822-mile used
+  // Prologue. Merging the stated condition and the URL into one haystack let
+  // \bnew\b inside that path publish it as a new car.
+  const url = "https://www.princetonhonda.com/new/Honda/catcher.esl?vin=3GPKHVRJ4RS505084";
+  assert.equal(publishedCondition({ certified: false, condition: "used", sourceUrl: url }), "used");
+  // The CPO flag still outranks both.
+  assert.equal(publishedCondition({ certified: true, condition: "certified", sourceUrl: url }), "certified");
+  // A row that states nothing still reads the path, exactly as before.
+  assert.equal(publishedCondition({ sourceUrl: url }), "new");
+});

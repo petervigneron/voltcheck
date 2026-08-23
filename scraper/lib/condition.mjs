@@ -81,6 +81,19 @@ export function publishedCondition({ certified, condition, sourceUrl } = {}) {
   if (certified) return "certified";
   const c = `${condition ?? ""} ${sourceUrl ?? ""}`.toLowerCase();
   if (/certified/.test(c)) return "certified";
+  // A STATED condition outranks the URL. The URL is a fallback — the comment
+  // above says so — but merging both into one haystack made it an override,
+  // and the two only ever disagree when the URL is wrong. Found building the
+  // Honda certified/used lane: Honda hands out the selling dealer's own VDP,
+  // and several of those live under a /new/ path whatever the car is
+  // (princetonhonda.com/new/Honda/catcher.esl?vin=… is a 20,822-mile used
+  // Prologue). The old order matched \bnew\b inside that path and published
+  // it as a new car — a condition claim contradicting the record it came
+  // from. Nothing else moves: every case below states nothing, or states the
+  // same thing its slug does. Certification is still tested first, so a
+  // "Certified Pre-Owned" string cannot be demoted to plain used here.
+  const stated = conditionToken(condition);
+  if (stated) return stated;
   // Spanish-language rooftops slug their VDPs /nuevo- and /seminuevo-.
   // Measured on es.fordofkendall.com (2026-08-22): the 34 /nuevo- EVs are
   // exactly the 34 with no odometer and a 2026 model year, the 8 /seminuevo-
