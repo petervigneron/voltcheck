@@ -8,6 +8,13 @@ const SIGNATURES = [
   // API. `typesenseSearchAdapter` is the vendor's search-client init; the
   // `dealervenom` brand token is the second signal.
   { platform: "dealervenom", res: [/typesenseSearchAdapter/i, /dealervenom/i] },
+  // Motive (app.ridemotive.com) before the big three: its rooftops embed
+  // dealer.com pictures, Dealer Inspire widgets and DealerOn tags, and a loose
+  // match on any of those beats them to the answer — subaruoftwinfalls.com and
+  // mercedesbenzbrooklyn.com both fingerprinted "dealerinspire" while their
+  // whole lot was in Motive's Algolia index. The signal is the platform's own
+  // app hosts, not the brand name.
+  { platform: "ridemotive", res: [/(?:api|assets|images|echo|bronco)\.app\.ridemotive\.com/i] },
   // DealerOn first: their sites often serve images from pictures.dealer.com,
   // which would false-positive the Dealer.com check (bit us on lehmers.com).
   { platform: "dealeron", res: [/dealeron-js\.aspx/i, /DealerOn/i, /searchused\.aspx/i, /sdDataLayer/] },

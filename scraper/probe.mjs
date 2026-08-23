@@ -40,6 +40,7 @@ import { fingerprint } from "./lib/fingerprint.mjs";
 import { isDealerVenom, extractDealerVenomConfig, countDealerVenom } from "./lib/platforms/dealervenom.mjs";
 import { overfuelVehicles, overfuelSeeds, isOverfuel, overfuelApiConfig, countOverfuelApi } from "./lib/platforms/overfuel.mjs";
 import { dealrVehicles, DEALR_SRP_PATH } from "./lib/platforms/dealrcloud.mjs";
+import { isRideMotive, rideMotiveConfig, countRideMotiveApi } from "./lib/platforms/ridemotive.mjs";
 import { discoverSitemapUrls, rank, dedupe, SRP_PATHS } from "./lib/sitemap.mjs";
 import { spaSignals, countVinUrls } from "./lib/spa-signals.mjs";
 
@@ -123,6 +124,24 @@ async function probeSite(site) {
         site.status = "working";
         site.notes = `${site.notes ?? ""} | auto-promoted by probe ${today}: overfuel API, ${found} vehicles`.trim();
         console.error(`  ${site.domain} → working (overfuel, ${found})`);
+        return;
+      }
+    }
+  }
+
+  // Motive renders no inventory in HTML — its rooftops are the ones that kept
+  // coming back "0 VIN vehicles in 12 fetches" while their whole lot sat in a
+  // global Algolia index keyed by the dealer id on the page. One request
+  // settles it, the same way DealerVenom/Overfuel are settled above.
+  if (isRideMotive(home.body)) {
+    const cfg = rideMotiveConfig(home.body);
+    if (cfg) {
+      const { ok, found, hasVin } = await countRideMotiveApi(cfg);
+      if (ok && found > 0 && hasVin) {
+        site.platform = "ridemotive";
+        site.status = "working";
+        site.notes = `${site.notes ?? ""} | auto-promoted by probe ${today}: ridemotive Algolia index (dealer ${cfg.dealerId}), ${found} vehicles`.trim();
+        console.error(`  ${site.domain} → working (ridemotive, ${found})`);
         return;
       }
     }

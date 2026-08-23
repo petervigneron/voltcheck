@@ -92,6 +92,11 @@ export const DEALR_ENTRY = "dealr-entry";             // dealr.cloud inventory/e
 export const DCS_TILE = "dcs-tile";                   // Dealer Car Search tile/data-layer price
 export const OVERFUEL_PRICE = "overfuel-price";       // Overfuel `price` (never `specialprice`)
 export const TV_SELLING = "tv-selling";               // Team Velocity sellingPrice/yourPrice
+// Motive/ridemotive's Algolia record `price` — the VDP's rendered Final Price
+// (fees included), NOT its `feed_price` rung, which is the same ladder's
+// pre-fee line. Its own tag: it has never been checked equal to any field
+// above, and this file's rule is to split when in doubt.
+export const MOTIVE_PRICE = "motive-price";
 
 // OEM/aggregator inventory APIs. Each lane reads one documented field out of
 // one vendor's endpoint; none of them shares a code path with any other, so
@@ -145,6 +150,7 @@ const KNOWN = new Set([
   DDC_INTERNET, DDC_SALE, DDC_ASKING, DDC_MSRP,
   DEOL_INTERNET, DEOL_SELLING, DEOL_MSRP, DEOL_CARD_INTERNET, DEOL_DISPLAYED,
   DFIRE_ADVERTISED, DVENOM_FINAL, DEALR_ENTRY, DCS_TILE, OVERFUEL_PRICE, TV_SELLING,
+  MOTIVE_PRICE,
 ]);
 
 /** True for a tag this build knows how to emit. OEM lane tags are accepted by

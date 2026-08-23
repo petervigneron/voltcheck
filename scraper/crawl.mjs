@@ -38,6 +38,7 @@ import {
   pullOverfuelApi,
 } from "./lib/platforms/overfuel.mjs";
 import { dealrVehicles, dealrNextPageUrl, dealrSeeds, isDealrCloud } from "./lib/platforms/dealrcloud.mjs";
+import { isRideMotive, rideMotiveConfig, pullRideMotiveApi } from "./lib/platforms/ridemotive.mjs";
 
 const args = process.argv.slice(2);
 function flag(name, fallback) {
@@ -171,8 +172,14 @@ async function crawlDealer(domain) {
   const tv = { done: false };
   const ddcApi = { done: false };
   const deolApi = { done: false };
+  const rm = { done: false };
   const dvPlat = siteInfo.get(domain)?.platform;
-  if (!dvPlat || ["unknown", "dealervenom", "overfuel", "team-velocity"].includes(dvPlat)) queue.unshift(origin + "/");
+  // Motive joins that list for the same reason: it renders no inventory in
+  // HTML at all and publishes its Algolia config on the homepage, so a
+  // ridemotive rooftop whose queue starts at a sitemap VDP shell would spend
+  // its whole budget on pages with nothing in them.
+  if (!dvPlat || ["unknown", "dealervenom", "overfuel", "team-velocity", "ridemotive"].includes(dvPlat))
+    queue.unshift(origin + "/");
 
   // Overfuel hides its inventory behind a per-rooftop SRP slug
   // ("/used-cars-albuquerque-nm") that no path guess finds and that its own
@@ -335,6 +342,40 @@ async function crawlDealer(domain) {
         // A partial or failed pull must never certify a complete crawl, or
         // db-sync would delist cars we merely failed to finish fetching.
         if (!complete) report.stoppedEarly = "overfuel partial pull";
+        queue.length = 0;
+        break;
+      }
+    }
+
+    // Motive (app.ridemotive.com) renders no inventory in HTML — every car on
+    // the site comes from one global Algolia index, and the client config plus
+    // this rooftop's dealer id sit inline in every page. Pull the rooftop's
+    // slice of the index and finish; there is nothing for the HTML walk to
+    // find afterwards.
+    if (!rm.done && isRideMotive(res.body)) {
+      const cfg = rideMotiveConfig(res.body);
+      if (cfg) {
+        rm.done = true;
+        const before = report.evs.length;
+        const { vehicles, complete, found } = await pullRideMotiveApi(cfg, origin);
+        for (const v of vehicles) {
+          const cls = classifyEv(v);
+          if (!cls.isEv) continue;
+          let rec = normalize(v, { sourceUrl: v.offers?.url || origin, dealerDomain: domain });
+          if (rec.vdpUrl) rec.vdpUrl = abs(rec.vdpUrl, origin) ?? rec.vdpUrl;
+          rec.evKind = cls.kind;
+          rec.evConfidence = cls.confidence;
+          rec.fromVdp = true;
+          rec.platform = "ridemotive";
+          report.evs.push(rec);
+        }
+        if (report.evs.length > before) report.vehiclePages++;
+        report.notes.push(
+          `ridemotive: ${found} in index for dealer ${cfg.dealerId}, ${report.evs.length - before} EV(s) admitted (${complete ? "complete" : "partial"})`
+        );
+        // A partial or failed pull must never certify a complete crawl, or
+        // db-sync would delist cars we merely failed to finish fetching.
+        if (!complete) report.stoppedEarly = "ridemotive partial pull";
         queue.length = 0;
         break;
       }
