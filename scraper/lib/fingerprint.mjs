@@ -45,6 +45,17 @@ const SIGNATURES = [
   // AutoManager WebManager: its own CDN, photo blob and admin host. Pages carry
   // no JSON-LD at all, so lib/platforms/automanager.mjs reads the SRP tiles.
   { platform: "automanager", res: [/automanagerprodcdn\.azureedge\.net|automanager\.blob\.core\.windows\.net|wm\.automanager\.com/i] },
+  // AutoFunds / DealerWebsites.com — one product, two names: the pages load
+  // "DW_Common" stylesheets through HttpCombiner.ashx and the footer credits
+  // autofunds.com. NO EXTRACTOR YET; the label is here so the cohort is
+  // greppable, because the door into it is already found and unbuilt: every
+  // rooftop publishes its whole lot at /rss.aspx in an `addItem:` namespace
+  // carrying year, make, model, trim, VIN, engine, transmission, miles, the
+  // full image list and the VDP link (stsautos.com: 46 items, 46 VINs, one
+  // request). What the feed does NOT carry is price, fuel type or condition,
+  // so a lane built on it has to follow the VDP for those — which is why this
+  // is a note and not a lane.
+  { platform: "autofunds", res: [/\bautofunds\.com|images\.autofunds\.net|HttpCombiner\.ashx\?s=DW_/i] },
   { platform: "team-velocity", res: [/teamvelocityportal\.com/i, /vdpVehicleExteriorColor/] },
   // No JSON-LD anywhere and numeric-id VDP URLs, so nothing generic hooks it;
   // lib/platforms/dealercarsearch.mjs reads its Tealium product list instead.
