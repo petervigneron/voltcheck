@@ -101,8 +101,15 @@
 //            so the facet partitions the entire index and no BEV can be hiding
 //            in an unqueried bucket. Mitsubishi's own electrified-lineup page
 //            agrees: the 2027 Eclipse Sportback EV is "Coming Soon", with no
-//            price and no Build & Price. The Outlander PHEV is a PHEV and does
-//            not qualify. Revisit when the Eclipse Sportback ships.
+//            price and no Build & Price. The Outlander PHEV "does not
+//            qualify" was a BEV-era verdict: since 2026-08-23 the OEM lanes
+//            carry plug-ins, and that 572-car Hybrid bucket (mostly
+//            Outlander PHEV) is in-scope product for a NEW lane on this open
+//            AutoFi BFF. Same for Mazda above — the CX-70 PHEV (C7P) and
+//            CX-90 PHEV (C9P) model files are real on an open API. Neither
+//            was built in the PHEV extension pass (scope: extend existing
+//            lanes only); they are the two largest known PHEV piles still
+//            untapped in this file. Revisit when the Eclipse Sportback ships.
 //   Fiat   — has a lane already, inside the Stellantis family rather than its
 //            own file: STELLANTIS_BRANDS' fiat entry queries the 500e by
 //            modelYearCode because fiatusa.com's robots forbids the /services/
