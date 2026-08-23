@@ -24,6 +24,12 @@
       "result": "ok",
       "detail": "total 103526, oem 53462, dealer 50064",
       "expectedEveryHours": 27
+    },
+    "lane-flip-check": {
+      "lastRunAt": "2026-08-23T19:10:42.652Z",
+      "result": "warn",
+      "detail": "874 cross-lane flips (874 dealer→locator, 0 locator→dealer), 0 within-lane, 673 new VINs, 56508 unchanged",
+      "expectedEveryHours": 27
     }
   },
   "lastGoodCounts": {

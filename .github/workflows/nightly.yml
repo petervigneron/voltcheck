@@ -462,6 +462,20 @@ jobs:
           run-id: ${{ github.event.inputs.recover_run_id || github.run_id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
+      # Measure the lane churn BEFORE the ingest below causes it. This is the
+      # only moment the database still holds the previous owner of every VIN
+      # this run is about to claim, so it is the only moment the number can be
+      # taken. Read-only, never fails the run — see the script's header for
+      # what the number means and why dealer_domain is not a stable fact.
+      - name: Who owned these cars before tonight
+        if: ${{ github.event.inputs.skip_crawl != 'true' }}
+        continue-on-error: true
+        working-directory: scraper
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: node lane-flip-check.mjs
+
       - name: GM per-VIN warranty and ingest
         if: ${{ github.event.inputs.skip_crawl != 'true' }}
         working-directory: scraper
