@@ -28,6 +28,10 @@
 // returns. The API exposes a real dealer name + address per car but no VDP URL
 // (the site is a SPA with no per-VIN route), so sourceUrl is the brand
 // inventory page and dealer geo is populated from the record.
+// PHEV check (2026-08-23): nothing to add. Genesis sells no plug-in hybrid
+// in the US — its electrified range is the GV60 / Electrified GV70 /
+// Electrified G80, all BEVs, and this lane's discovery is per-model files,
+// so a future Genesis PHEV would need its own model entry to exist at all.
 import { politeGetJson } from "../http.mjs";
 import { pickTaggedPrice } from "../price-provenance.mjs";
 

@@ -167,6 +167,21 @@ export const LEXUS = {
   // the endpoint itself rather than from memory: every series it carries is
   // ES/ESh/GX/IS/LS/NX/NXh/RC/RX/RXh/UX/UXh/RZ, and of those only RZ is a BEV
   // (the "h" series are hybrids; the UX 300e was never sold in the US).
+  // PHEV check (2026-08-23): NOT extended, and here is what was measured so
+  // nobody re-probes blind. Lexus's plug-ins (NX 450h+, RX 450h+, TX 550h+)
+  // do not get their own series — the endpoint's hybrid series are NXh/RXh/
+  // TXh and candidate plug-in series names (NXp/RXp/TXp/NXph/RXph) all
+  // return numFound 0, indistinguishable from a valid empty answer. Inside
+  // the hybrid series, 500+ sampled L/Certified docs across LA and NY (NXh
+  // r1500 + RXh r1500 + TXh r1500 + NXh/RXh r800 NY) contained ZERO
+  // "450h+"/"550h+" modelnames — every row was a non-plug 300h/350h. So the
+  // only route to the plug-ins is sweeping all three hybrid series
+  // nationally and filtering modelname per record, and those series are big
+  // enough to overflow the 100-row window in dense cells, forcing per-dealer
+  // splits that would blow REQUEST_BUDGET and with it the RZ sweep's
+  // completeness certification. That trade needs its own budget decision;
+  // today's evidence says the L/Certified plug-in stock is at most a
+  // handful, reachable meanwhile through the dealer crawl.
   models: ["RZ"],
   // Floor. Observed ~70 nationally; this fires only if the model filter or the
   // endpoint itself moves, not on ordinary stock swings in a small CPO lot.
