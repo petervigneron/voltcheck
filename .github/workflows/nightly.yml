@@ -153,6 +153,18 @@ jobs:
       - name: Probe discovered dealers
         working-directory: scraper
         run: node probe.mjs --limit ${{ github.event.inputs.probe_limit || '300' }} --concurrency 12
+      # Re-check the rows a previous night could not get an answer out of. A
+      # "transient" verdict means something did not answer — a timeout, a 429,
+      # a 5xx — not that the lot is empty. Two rooftops promoted this way on
+      # 2026-08-23 with 319 and 528 vehicles, minutes after being scored as
+      # nothing at concurrency 3. Near-serial
+      # and capped so it costs minutes, not the probe budget; the rows it promotes
+      # are dealers we already had. --no-retry because this step IS the slow
+      # retry — letting it run its own second pass would double the slowest
+      # thing per row.
+      - name: Re-probe last night's unanswered dealers
+        working-directory: scraper
+        run: node probe.mjs --status needs-investigation --verdict transient --limit 40 --concurrency 2 --no-retry
       - uses: actions/upload-artifact@v4
         with:
           name: registry

@@ -38,6 +38,13 @@ import {
   pullOverfuelApi,
 } from "./lib/platforms/overfuel.mjs";
 import { dealrVehicles, dealrNextPageUrl, dealrSeeds, isDealrCloud } from "./lib/platforms/dealrcloud.mjs";
+import { isRideMotive, rideMotiveConfig, pullRideMotiveApi } from "./lib/platforms/ridemotive.mjs";
+import {
+  isAutoManager,
+  autoManagerSeeds,
+  autoManagerVehicles,
+  autoManagerNextPageUrl,
+} from "./lib/platforms/automanager.mjs";
 
 const args = process.argv.slice(2);
 function flag(name, fallback) {
@@ -126,10 +133,20 @@ async function crawlDealer(domain) {
   const budget = pageBudget(domain);
   const domainCapAt = DOMAIN_CAP_MIN > 0 ? Date.now() + DOMAIN_CAP_MIN * 60_000 : 0;
   const report = { domain, budget, fetched: 0, vehiclePages: 0, itemListVdps: 0, evs: [], errors: [], notes: [] };
-  const origin = `https://${domain}`;
+  // The host to ASK is not always the row's identity. A registry domain that
+  // 200s by redirecting to another host has no sitemap and no inventory paths
+  // of its own — furymotors.net returns 0 sitemap URLs where
+  // saintpaul.furymotors.com returns 848 — so every path built on it misses.
+  // probe.mjs records where the homepage actually landed; use it here and keep
+  // `domain` as the row's identity and the listing's dealer_domain.
+  const canonicalHost = siteInfo.get(domain)?.probe?.canonicalHost;
+  let origin = `https://${canonicalHost ?? domain}`;
+  // Only adopt a redirect when the registry has not already told us one — see
+  // the first successful fetch below.
+  let originAdopted = Boolean(canonicalHost);
   const visited = new Set();
 
-  const sitemapUrls = await discoverSitemapUrls(domain, {
+  const sitemapUrls = await discoverSitemapUrls(canonicalHost ?? domain, {
     maxUrls: Math.max(3000, budget * 40),
     maxSitemaps: budget > 100 ? 120 : 25,
   });
@@ -171,8 +188,14 @@ async function crawlDealer(domain) {
   const tv = { done: false };
   const ddcApi = { done: false };
   const deolApi = { done: false };
+  const rm = { done: false };
   const dvPlat = siteInfo.get(domain)?.platform;
-  if (!dvPlat || ["unknown", "dealervenom", "overfuel", "team-velocity"].includes(dvPlat)) queue.unshift(origin + "/");
+  // Motive joins that list for the same reason: it renders no inventory in
+  // HTML at all and publishes its Algolia config on the homepage, so a
+  // ridemotive rooftop whose queue starts at a sitemap VDP shell would spend
+  // its whole budget on pages with nothing in them.
+  if (!dvPlat || ["unknown", "dealervenom", "overfuel", "team-velocity", "ridemotive"].includes(dvPlat))
+    queue.unshift(origin + "/");
 
   // Overfuel hides its inventory behind a per-rooftop SRP slug
   // ("/used-cars-albuquerque-nm") that no path guess finds and that its own
@@ -201,6 +224,18 @@ async function crawlDealer(domain) {
     report.notes.push("dealrcloud: seeded SRP");
   }
   if (siteInfo.get(domain)?.platform === "dealrcloud") seedDealr();
+
+  // AutoManager WebManager: one /view-inventory SRP, ten cars a page, plain
+  // ?page=N. Nothing on the site is JSON-LD, so the SRP is the only door.
+  let amSeeded = false;
+  function seedAutoManager() {
+    if (amSeeded) return;
+    amSeeded = true;
+    const seeds = autoManagerSeeds(origin).filter((u) => !visited.has(u));
+    queue.unshift(...seeds);
+    report.notes.push("automanager: seeded SRP");
+  }
+  if (siteInfo.get(domain)?.platform === "automanager") seedAutoManager();
 
   // DealerFire's SRP slug is per-rooftop ("/cars-for-sale-hillsboro-or"), so
   // there is nothing to seed until a page of theirs tells us its own — which
@@ -271,6 +306,28 @@ async function crawlDealer(domain) {
       continue;
     }
 
+    // Where the site actually lives. A registry domain that redirects to
+    // another host serves its cars only from that host, and every URL built on
+    // the registry domain is dead: columbia-preowned.com/inventory/{slug}
+    // answers 404 while the identical path on rustydrewingpreowned.com (where
+    // its homepage lands) answers 200. That URL is what a shopper clicks, so
+    // it is not allowed to be a guess. probe.mjs records the canonical host,
+    // but rows probed before it did have none — this picks the redirect up
+    // from the first page that answers, whenever the probe's field is absent.
+    // Only the front door is allowed to move the origin: a redirect on some
+    // deep page could be a one-off (a retired VDP bouncing to a group site),
+    // and adopting that would rewrite every other URL on the strength of it.
+    if (!originAdopted && url === `${origin}/`) {
+      originAdopted = true;
+      try {
+        const landed = new URL(res.finalUrl).origin;
+        if (landed !== origin) {
+          origin = landed;
+          report.notes.push(`origin: ${domain} redirects to ${new URL(landed).host}`);
+        }
+      } catch {}
+    }
+
     // DealerVenom renders no inventory in HTML — it lives in a Typesense index
     // whose client config is inline on every page. On the first page that
     // reveals it, pull the whole collection through the search API and finish:
@@ -335,6 +392,40 @@ async function crawlDealer(domain) {
         // A partial or failed pull must never certify a complete crawl, or
         // db-sync would delist cars we merely failed to finish fetching.
         if (!complete) report.stoppedEarly = "overfuel partial pull";
+        queue.length = 0;
+        break;
+      }
+    }
+
+    // Motive (app.ridemotive.com) renders no inventory in HTML — every car on
+    // the site comes from one global Algolia index, and the client config plus
+    // this rooftop's dealer id sit inline in every page. Pull the rooftop's
+    // slice of the index and finish; there is nothing for the HTML walk to
+    // find afterwards.
+    if (!rm.done && isRideMotive(res.body)) {
+      const cfg = rideMotiveConfig(res.body);
+      if (cfg) {
+        rm.done = true;
+        const before = report.evs.length;
+        const { vehicles, complete, found } = await pullRideMotiveApi(cfg, origin);
+        for (const v of vehicles) {
+          const cls = classifyEv(v);
+          if (!cls.isEv) continue;
+          let rec = normalize(v, { sourceUrl: v.offers?.url || origin, dealerDomain: domain });
+          if (rec.vdpUrl) rec.vdpUrl = abs(rec.vdpUrl, origin) ?? rec.vdpUrl;
+          rec.evKind = cls.kind;
+          rec.evConfidence = cls.confidence;
+          rec.fromVdp = true;
+          rec.platform = "ridemotive";
+          report.evs.push(rec);
+        }
+        if (report.evs.length > before) report.vehiclePages++;
+        report.notes.push(
+          `ridemotive: ${found} in index for dealer ${cfg.dealerId}, ${report.evs.length - before} EV(s) admitted (${complete ? "complete" : "partial"})`
+        );
+        // A partial or failed pull must never certify a complete crawl, or
+        // db-sync would delist cars we merely failed to finish fetching.
+        if (!complete) report.stoppedEarly = "ridemotive partial pull";
         queue.length = 0;
         break;
       }
@@ -486,6 +577,7 @@ async function crawlDealer(domain) {
     if (isDealerFire(res.body)) seedDealerFire(res.body, res.finalUrl);
     if (isOverfuel(res.body)) seedOverfuel(res.body, res.finalUrl);
     if (!dealrSeeded && isDealrCloud(res.body)) seedDealr();
+    if (!amSeeded && isAutoManager(res.body)) seedAutoManager();
     const dealerFire = extractDealerFire(res.body);
     const dealerFireRooftops = dealerFire.size ? extractDealerFireDealers(res.body) : [];
     const overfuel = overfuelVehicles(res.body, res.finalUrl);
@@ -495,12 +587,14 @@ async function crawlDealer(domain) {
     // car twice — once VIN-keyed, once URL-keyed — and the VIN-less twin would
     // survive the byVin dedupe as a phantom listing.
     const dealrVs = dealrVehicles(res.body, res.finalUrl);
+    const autoManager = autoManagerVehicles(res.body, res.finalUrl);
     const vehicles = [
       ...(dealrVs.length ? dealrVs : extractVehicles(res.body)),
       ...extractDrivewayVehicles(res.body),
       ...dcsVehicles,
       ...dealerFireVehicles(res.body, res.finalUrl),
       ...overfuel,
+      ...autoManager,
     ];
     if (vehicles.length) report.vehiclePages++;
     const isSrp = vehicles.length > 1;
@@ -561,6 +655,13 @@ async function crawlDealer(domain) {
     if (overfuel.length) {
       const nextOf = overfuelNextPageUrl(res.body, res.finalUrl);
       if (nextOf && !visited.has(nextOf)) queue.unshift(nextOf);
+    }
+    // AutoManager's pager is a plain ?page=N link list; jump it ahead of the
+    // sitemap for the same reason as the others — ten cars a page means an EV
+    // is routinely on page 5.
+    if (autoManager.length) {
+      const nextAm = autoManagerNextPageUrl(res.body, res.finalUrl);
+      if (nextAm && !visited.has(nextAm)) queue.unshift(nextAm);
     }
 
     // Bridge: SRP ItemList → VDP urls, EV-filtered, jump the queue

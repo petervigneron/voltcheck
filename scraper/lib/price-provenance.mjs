@@ -92,6 +92,32 @@ export const DEALR_ENTRY = "dealr-entry";             // dealr.cloud inventory/e
 export const DCS_TILE = "dcs-tile";                   // Dealer Car Search tile/data-layer price
 export const OVERFUEL_PRICE = "overfuel-price";       // Overfuel `price` (never `specialprice`)
 export const TV_SELLING = "tv-selling";               // Team Velocity sellingPrice/yourPrice
+// Motive/ridemotive's Algolia record `price` — the VDP's rendered Final Price
+// (fees included), NOT its `feed_price` rung, which is the same ladder's
+// pre-fee line.
+//
+// This one is a deliberate near-miss of the JSONLD tag. The check WAS done and
+// it passed: 7 of 7 cars across two rooftops (columbia-preowned.com and
+// subaruoftwinfalls.com, 2026-08-23) have `price` byte-equal to the VDP's own
+// schema.org offers.price, including four where feed_price differs by the
+// admin fee, so the two are not accidentally equal. What stops it sharing the
+// tag is that Motive's per-rooftop config carries a
+// `uses_v2_canonical_pricing` flag — false on both rooftops checked — which
+// says on its face that pricing RENDERING varies by rooftop. A rooftop with
+// that flag set could render a different number than the record's, and a
+// shared tag would pair the two into a price cut nobody made. Splitting costs
+// a quiet chip; sharing on an untested config costs a shopper. If someone
+// later checks a v2-canonical rooftop and it matches too, this is the comment
+// to update.
+export const MOTIVE_PRICE = "motive-price";
+
+// AutoManager WebManager's rendered tile price — the number under the price
+// label the rooftop prints ("Internet Price" on every rooftop sampled).
+// Explicitly NOT the CarGurus badge's `data-cg-price` that sits in the same
+// tile: on crescentauto.net one tile renders $10,500 while its badge says
+// 10990.0000, and another tile in the same page has them equal, which is the
+// combination that would quietly publish a $490 price cut nobody made.
+export const AUTOMANAGER_PRICE = "automanager-price";
 
 // OEM/aggregator inventory APIs. Each lane reads one documented field out of
 // one vendor's endpoint; none of them shares a code path with any other, so
@@ -145,6 +171,7 @@ const KNOWN = new Set([
   DDC_INTERNET, DDC_SALE, DDC_ASKING, DDC_MSRP,
   DEOL_INTERNET, DEOL_SELLING, DEOL_MSRP, DEOL_CARD_INTERNET, DEOL_DISPLAYED,
   DFIRE_ADVERTISED, DVENOM_FINAL, DEALR_ENTRY, DCS_TILE, OVERFUEL_PRICE, TV_SELLING,
+  MOTIVE_PRICE, AUTOMANAGER_PRICE,
 ]);
 
 /** True for a tag this build knows how to emit. OEM lane tags are accepted by
