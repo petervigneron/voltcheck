@@ -10,7 +10,10 @@ export const VIN_RE = /[A-HJ-NPR-Z0-9]{17}/i;
 // Primes are PHEVs classifyEv keeps; spelled out (not bare "prime") so a
 // Prime-branded dealer group's every URL doesn't rank EV-ish. Ranking-only
 // cost either way: a false match here wastes a fetch, never makes a claim.
-export const EVISH_RE = /(tesla|bolt|leaf|ioniq|ev6|ev9|niro.?ev|kona.?el|id-?\.?4|mach-?e|lightning|ariya|lyriq|blazer.?ev|equinox.?ev|silverado.?ev|sierra.?ev|hummer|escalade.?iq|optiq|vistiq|taycan|e-?tron|polestar|rivian|lucid|solterra|bz4x|\bbz\b|rav4.?prime|prius.?prime|prologue|zdx|eqb|eqe|eqs|i[45x]\b|500e|cooper.?se|charger.?daytona|wagoneer.?s\b|electric)/i;
+// The plug-in tokens at the end (4xe, phev, plug-in, energi, e-hybrid,
+// pacifica-hybrid) follow lib/ev.mjs's PHEV_MODEL_RE (2026-08-23): on the
+// HTML-walk path a 4xe's VDP URL ranked no higher than a petrol Wrangler's.
+export const EVISH_RE = /(tesla|bolt|leaf|ioniq|ev6|ev9|niro.?ev|kona.?el|id-?\.?4|mach-?e|lightning|ariya|lyriq|blazer.?ev|equinox.?ev|silverado.?ev|sierra.?ev|hummer|escalade.?iq|optiq|vistiq|taycan|e-?tron|polestar|rivian|lucid|solterra|bz4x|\bbz\b|rav4.?prime|prius.?prime|prologue|zdx|eqb|eqe|eqs|i[45x]\b|500e|cooper.?se|charger.?daytona|wagoneer.?s\b|electric|4xe|phev|plug-?in|energi|e-hybrid|pacifica-?hybrid)/i;
 
 // SRP seeds that exist across major dealer platforms
 export const SRP_PATHS = [
