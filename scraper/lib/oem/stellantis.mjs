@@ -63,6 +63,7 @@
 // Chrysler has no BEV. Revisit if a consumer Ram BEV (Ram REV) ships.
 import { politeGetJson } from "../http.mjs";
 import { stateFromZip } from "./zip-state.mjs";
+import { pickTaggedPrice } from "../price-provenance.mjs";
 
 export const STELLANTIS_BRANDS = [
   {
@@ -193,7 +194,14 @@ function toRecord(v, cfg, brand) {
   const zip = /^\d{5}/.test(String(v.dealerZipCode ?? "")) ? String(v.dealerZipCode).slice(0, 5) : undefined;
   // Honest ask: net advertised price (MSRP + destination + any dealer
   // adjustment), NOT the discountedPrice that bakes in conditional EV bonus cash.
-  const priceUsd = num(v.price?.netPrice) ?? (num(v.price?.msrp) && num(v.price?.destination) ? num(v.price.msrp) + num(v.price.destination) : num(v.price?.msrp));
+  const { priceUsd, priceProvenance } = pickTaggedPrice("stellantis", [
+    ["netPrice", num(v.price?.netPrice)],
+    [
+      "msrpPlusDestination",
+      num(v.price?.msrp) && num(v.price?.destination) ? num(v.price.msrp) + num(v.price.destination) : undefined,
+    ],
+    ["msrp", num(v.price?.msrp)],
+  ]);
   return {
     vin,
     year,
@@ -201,6 +209,7 @@ function toRecord(v, cfg, brand) {
     model,
     trim,
     priceUsd,
+    priceProvenance,
     driveLine: driveLineOf(v),
     exteriorColor: cleanColor(v.exteriorColorDesc),
     interiorColor: cleanColor(v.interiorColorDesc),

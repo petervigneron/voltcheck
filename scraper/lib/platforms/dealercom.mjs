@@ -3,6 +3,7 @@
 // in `DDC.dataLayer['vehicles'] = [ {...} ]`, server-rendered in the HTML the
 // page serves to everyone. This is the same data the page's own widgets read.
 import { priceFloor } from "../price-floor.mjs";
+import { JSONLD, DDC_INTERNET, DDC_SALE, DDC_ASKING, DDC_MSRP } from "../price-provenance.mjs";
 
 const MARKER = /DDC\.dataLayer\[['"]vehicles['"]\]\s*=\s*\[/;
 
@@ -88,45 +89,78 @@ const JSONLD_JUNK_FRACTION = 0.5;
 //  - it carries junk far below MSRP (vanhyundai accessories total) — fall back
 //    to the lowest plausible DDC field, or abstain.
 export function resolveDdcPrice(rec, d) {
+  return resolveDdcPriceTagged(rec, d).priceUsd;
+}
+
+// The same resolve, also naming WHICH served field it took the number from
+// (migration 0041; lib/price-provenance.mjs explains why the field and not the
+// lane). Split out rather than changing resolveDdcPrice's return type because
+// that function's answer is what price-audit.mjs, verify-price-fix.mjs and
+// test/dealercom-price.test.mjs assert on, VIN by VIN — this had to add a fact
+// about the price without touching the price.
+//
+// Why the tag is computed here and not inferred later by comparing the result
+// against the served fields: the fields collide. On a rooftop where
+// internetPrice === salePrice === the JSON-LD offer (common — it is the same
+// advertised number published three ways), an after-the-fact match would have
+// to pick one arbitrarily, and picking differently on two nights is exactly
+// the phantom step this is meant to end. The resolver knows which branch it
+// took, so it says so.
+//
+// An abstain carries NO provenance: it never reaches listing_price_history
+// (0039 keeps zero-price rows out), and tagging a non-observation would be
+// claiming we read a field we could not read.
+export function resolveDdcPriceTagged(rec, d) {
   const jsonld = num(rec.priceUsd); // normalize() already read offers.price
   const msrp = num(d.msrp);
   const isNew = (d.newOrUsed ?? rec.condition) === "new";
   const floor = priceFloor({ isNew, year: rec.year ?? num(d.modelYear) });
 
-  // DDC selling-price fields that clear the junk floor, sorted low→high.
-  const ddcFields = [num(d.internetPrice), num(d.salePrice), num(d.askingPrice)]
-    .filter((p) => p != null && p >= floor)
-    .sort((a, b) => a - b);
+  // DDC selling-price fields that clear the junk floor, sorted low→high, each
+  // carrying the name of the field it came from so the winner can be tagged.
+  const ddcFields = [
+    { price: num(d.internetPrice), provenance: DDC_INTERNET },
+    { price: num(d.salePrice), provenance: DDC_SALE },
+    { price: num(d.askingPrice), provenance: DDC_ASKING },
+  ]
+    .filter((f) => f.price != null && f.price >= floor)
+    .sort((a, b) => a.price - b.price);
   // The lowest DDC field that is a real discount below MSRP (not a >MSRP
   // subtotal). With no MSRP anchor, the lowest plausible field stands in.
-  const ddcDiscount = msrp != null ? ddcFields.find((p) => p < msrp) : ddcFields[0];
+  const ddcDiscount = msrp != null ? ddcFields.find((f) => f.price < msrp) : ddcFields[0];
 
-  let price;
+  let picked;
   const jsonldUsable =
     jsonld != null && jsonld >= floor && !(msrp != null && jsonld < msrp * JSONLD_JUNK_FRACTION);
   if (jsonldUsable) {
     const echoesMsrp = msrp != null && Math.abs(jsonld - msrp) <= Math.max(50, msrp * 0.002);
     if (echoesMsrp && ddcDiscount != null) {
       // JSON-LD is only the sticker; a real advertised discount sits below it.
-      if (ddcDiscount < msrp * MIN_TRUSTED_PRICE_FRACTION) return PRICE_ABSTAIN;
-      price = ddcDiscount;
+      if (ddcDiscount.price < msrp * MIN_TRUSTED_PRICE_FRACTION) return ABSTAIN_RESULT;
+      picked = ddcDiscount;
     } else {
-      price = jsonld; // the dealer's declared price: discount, markup, or used ask
+      // the dealer's declared price: discount, markup, or used ask
+      picked = { price: jsonld, provenance: JSONLD };
     }
   } else {
     // No usable JSON-LD offer price (missing, junk-low, or sub-floor): the
     // lowest plausible DDC field is the best remaining served signal.
-    price = ddcFields[0] ?? msrp ?? null;
+    picked = ddcFields[0] ?? (msrp != null ? { price: msrp, provenance: DDC_MSRP } : null);
   }
 
-  return price != null && price >= floor ? price : PRICE_ABSTAIN;
+  return picked != null && picked.price >= floor
+    ? { priceUsd: picked.price, provenance: picked.provenance }
+    : ABSTAIN_RESULT;
 }
+
+const ABSTAIN_RESULT = { priceUsd: PRICE_ABSTAIN, provenance: undefined };
 
 // Merge DDC fields into a normalized record (DDC wins where present — it's
 // the platform's own structured data, richer than the JSON-LD summary).
 export function enrichFromDdc(rec, ddcVehicle) {
   if (!ddcVehicle || ddcVehicle.vin?.toUpperCase() !== rec.vin) return rec;
   const d = ddcVehicle;
+  const resolved = resolveDdcPriceTagged(rec, d);
   return {
     ...rec,
     mileage: num(d.odometer) ?? rec.mileage,
@@ -136,7 +170,12 @@ export function enrichFromDdc(rec, ddcVehicle) {
     interiorColor: d.interiorColor ?? undefined,
     // The advertised price a human reads off the VDP — see resolveDdcPrice.
     // 0 means "abstain": we could not name the price from the served fields.
-    priceUsd: resolveDdcPrice(rec, d),
+    priceUsd: resolved.priceUsd,
+    // …and which field that number came from. This OVERWRITES the JSONLD tag
+    // normalize() set from the offer node: on a dealer.com row the offer price
+    // is only the resolver's jsonld candidate, and the resolver may well have
+    // taken a DDC field over it. An abstain clears the tag with it.
+    priceProvenance: resolved.provenance,
     optionCodes: Array.isArray(d.optionCodes) && d.optionCodes.length ? d.optionCodes : undefined,
     certified: d.certified === "true" || d.certified === true || undefined,
     stockNumber: d.stockNumber ?? undefined,

@@ -32,6 +32,7 @@
 // straight from it rather than routed through classifyEv (whose fuel-string
 // path doesn't yet admit "Plug-in Hybrid" — a separate, cross-lane fix).
 import { politePostJson } from "../http.mjs";
+import { pickTaggedPrice } from "../price-provenance.mjs";
 
 export const DRIVEWAY = {
   key: "driveway",
@@ -105,7 +106,9 @@ function toRecord(v) {
     // Driveway's advertised price, in dollars. `price` is the no-haggle figure
     // the card shows; priceWithFees (doc fees added) is deliberately not used —
     // the higher, unconditional number is the honest one to print.
-    priceUsd: num(v.price),
+    ...pickTaggedPrice("driveway", [
+      ["price", num(v.price)],
+    ]),
     mileage: num(v.mileage),
     exteriorColor: v.exteriorColor?.name || undefined,
     dealerName: "Driveway",

@@ -1,4 +1,6 @@
 // schema.org Vehicle → one normalized listing record, VIN-keyed.
+import { JSONLD, offerProvenance } from "./price-provenance.mjs";
+
 const text = (v) => {
   if (v == null) return undefined;
   if (typeof v === "string") return v.trim() || undefined;
@@ -124,6 +126,14 @@ export function normalize(vehicle, { sourceUrl, dealerDomain }) {
     trim: text(vehicle.vehicleConfiguration ?? vehicle.trim),
     name: text(vehicle.name),
     priceUsd: num(pricedOffer?.price),
+    // Which field this price came from, for listing_price_history (0041). A
+    // node we parsed off a dealer's page really is the schema.org offer, so it
+    // is JSONLD; a node a platform extractor assembled from an API record only
+    // looks like one, and says what it actually read via offers.priceProvenance
+    // (see lib/price-provenance.mjs). No price read, no provenance to record:
+    // an absent price is not an observation of one.
+    priceProvenance:
+      num(pricedOffer?.price) != null ? (offerProvenance(pricedOffer) ?? JSONLD) : undefined,
     mileage: num(mileageObj?.value ?? mileageObj),
     exteriorColor: text(vehicle.color),
     interiorColor: text(vehicle.vehicleInteriorColor),

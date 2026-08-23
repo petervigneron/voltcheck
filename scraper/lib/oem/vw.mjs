@@ -74,6 +74,7 @@
 import { politeGetJson } from "../http.mjs";
 import { EV_MODEL_RE, EV_ONLY_WMIS } from "../ev.mjs";
 import { stateFromZip } from "./zip-state.mjs";
+import { pickTaggedPrice } from "../price-provenance.mjs";
 
 export const VW = {
   key: "vw",
@@ -211,7 +212,10 @@ function toRecord(car, drops) {
     make,
     model,
     trim: trimOf(title, model),
-    priceUsd: num(car.parsedPrice?.value) ?? num(car.configurationPrice),
+    ...pickTaggedPrice("vw", [
+      ["parsedPrice", num(car.parsedPrice?.value)],
+      ["configurationPrice", num(car.configurationPrice)],
+    ]),
     mileage: num(car.mileage?.raw_value),
     driveLine: drive(car.drive?.value),
     exteriorColor: car.color?.out?.value || undefined,

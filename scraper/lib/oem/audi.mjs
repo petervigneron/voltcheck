@@ -61,6 +61,7 @@
 import { politePostJson } from "../http.mjs";
 import { EV_MODEL_RE, EV_ONLY_WMIS } from "../ev.mjs";
 import { stateFromZip } from "./zip-state.mjs";
+import { pickTaggedPrice } from "../price-provenance.mjs";
 
 export const AUDI = {
   key: "audi",
@@ -190,9 +191,13 @@ function trimOf(c, make, model) {
 // "list" is the original sticker. Take the ask, and never the fee-inclusive
 // number — the site compares asks to sold prices, so an ask inflated by fees
 // would read as a car priced above its cohort.
-function priceOf(c) {
+// One named row out of the car's carPrices list. Split by type (was
+// `sale ?? final` inline) so the ladder in toRecord can name which of the two
+// actually supplied the number — a car moving between them is a field flip,
+// not a dealer repricing. See lib/price-provenance.mjs.
+function priceOf(c, type) {
   const by = new Map((c.carPrices ?? []).map((p) => [p.type, p.price?.value]));
-  return num(by.get("sale")) ?? num(by.get("final"));
+  return num(by.get(type));
 }
 
 // The electric facet is NOT purely battery-electric, which cost us a false
@@ -253,7 +258,10 @@ function toRecord(c, stockCarsType, drops) {
     make,
     model,
     trim: trimOf(c, make, model),
-    priceUsd: priceOf(c),
+    ...pickTaggedPrice("audi", [
+      ["sale", priceOf(c, "sale")],
+      ["final", priceOf(c, "final")],
+    ]),
     mileage: num(c.mileage?.value?.number),
     driveLine: drive(c.driveText ?? c.subtitleText),
     exteriorColor: c.colorInfo?.exteriorColor?.baseColorInfo?.text || undefined,

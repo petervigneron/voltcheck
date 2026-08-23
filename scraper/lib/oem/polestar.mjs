@@ -79,6 +79,7 @@
 import { politePostJson } from "../http.mjs";
 import { EV_MODEL_RE } from "../ev.mjs";
 import { stateFromZip } from "./zip-state.mjs";
+import { pickTaggedPrice } from "../price-provenance.mjs";
 
 export const POLESTAR = {
   key: "polestar",
@@ -208,7 +209,9 @@ function toRecord(ad, model, drops) {
     make: POLESTAR.make,
     model: name,
     trim: label(d.motorInfo?.labels) ?? d.modelDetails?.edition ?? undefined,
-    priceUsd: /^usd$/i.test(String(ad.price?.currency ?? "USD")) ? num(ad.price?.retail) : undefined,
+    ...pickTaggedPrice("polestar", [
+      ["retail", /^usd$/i.test(String(ad.price?.currency ?? "USD")) ? num(ad.price?.retail) : undefined],
+    ]),
     // The feed states its own unit; anything but miles is left blank rather
     // than silently treated as miles.
     mileage: /^mi$/i.test(String(ad.mileageInfo?.metric ?? "")) ? num(ad.mileageInfo?.distance) : undefined,

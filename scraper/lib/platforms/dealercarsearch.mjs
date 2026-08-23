@@ -31,6 +31,8 @@
 // imagescdn.dealercarsearch.com asset host, which a third-party inventory
 // widget on somebody else's site could also load: this answer decides whether
 // a crawl gets to certify that it saw a dealer's whole lot.
+import { DCS_TILE } from "../price-provenance.mjs";
+
 const DCS_MARK = /"site_platform":\s*"dcs"/;
 
 export function isDealerCarSearch(html) {
@@ -225,6 +227,9 @@ function buildOffer(price, url, site) {
   return {
     "@type": "Offer",
     price,
+    // DCS publishes no JSON-LD at all; this is its own tile/data-layer figure
+    // and is tagged as such. recheck.mjs reads the same field and matches.
+    priceProvenance: DCS_TILE,
     priceCurrency: "USD",
     url,
     seller: site

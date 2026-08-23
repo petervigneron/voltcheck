@@ -32,6 +32,7 @@
 // it make the call, exactly as every other lane does.
 import { classifyEv } from "../ev.mjs";
 import { politeGetJson } from "../http.mjs";
+import { TV_SELLING } from "../price-provenance.mjs";
 
 const API = "https://websites.api.teamvelocityportal.com/tvm-services/inventory/vehicles";
 const API_LIMIT = 200;
@@ -90,6 +91,9 @@ export function teamVelocityApiVehicle(r) {
     offers: {
       "@type": "Offer",
       price: posNum(r.sellingPrice) ?? posNum(r.yourPrice),
+      // Not the page's JSON-LD offer — this node is assembled from the API
+      // record, so it names its own field (lib/price-provenance.mjs).
+      priceProvenance: TV_SELLING,
       priceCurrency: "USD",
       url: vdp,
       seller: {

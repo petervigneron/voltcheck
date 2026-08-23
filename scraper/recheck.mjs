@@ -38,6 +38,7 @@ import { OEM_LOCATOR_DOMAINS as LEXUS_LOCATOR_DOMAINS } from "./lib/oem/toyota.m
 import { OEM_LOCATOR_DOMAINS as LUCID_LOCATOR_DOMAINS } from "./lib/oem/lucid.mjs";
 import { OEM_LOCATOR_DOMAINS as DRIVEWAY_LOCATOR_DOMAINS } from "./lib/oem/driveway.mjs";
 import { oemAliveVins, trustGoneVerdict } from "./lib/recheck-oem-crosscheck.mjs";
+import { JSONLD, DCS_TILE, DEALR_ENTRY, DDC_INTERNET } from "./lib/price-provenance.mjs";
 
 // Every OEM-locator source domain: recheck skips these (see the filter below).
 // (Ford Blue Advantage, Honda and Audi are intentionally NOT here — their rows
@@ -179,15 +180,26 @@ let crossChecked = 0;
 // that recovered days later, 2026-08-19) — a sub-floor reading here proves
 // nothing about the price, so it returns null (leave the stored price alone)
 // rather than writing a false cut into listing_price_history.
+//
+// Returns { price, provenance } — the number AND which served field gave it
+// (migration 0041). Naming the field is what makes this lane's readings
+// comparable with the crawl's instead of merely suspicious: 0040 had to
+// suppress every nightly↔recheck pair on principle (27,139 steps, most of them
+// real dealer moves) because a run source cannot distinguish "recheck saw a
+// genuine markdown first" from "recheck read a different field". Each leg
+// below tags itself with the SAME constant the crawl-side extractor uses for
+// that field, so the first pair matches and the second still does not.
 const priceOf = (body, vin, url, floor) => {
+  const none = { price: null, provenance: undefined };
   // Dealer Car Search publishes no JSON-LD, so without this its rows would
   // hold whatever price the last crawl saw and never move. The VDP's own data
   // layer is the same field lib/platforms/dealercarsearch.mjs reads into the
-  // offer, so the precedence above is preserved rather than bypassed.
+  // offer, so the precedence above is preserved rather than bypassed — and it
+  // carries that file's tag for the same reason.
   for (const v of extractDcsVehicles(body, url)) {
     if (String(v.vehicleIdentificationNumber ?? "").toUpperCase() !== vin) continue;
     const p = Number(v.offers?.price);
-    if (Number.isFinite(p) && p >= floor) return Math.round(p);
+    if (Number.isFinite(p) && p >= floor) return { price: Math.round(p), provenance: DCS_TILE };
   }
   // dealr.cloud's JSON-LD Car has no VIN (and on some templates doesn't
   // parse), so like DCS its price is read from the platform's own markup —
@@ -196,20 +208,32 @@ const priceOf = (body, vin, url, floor) => {
   for (const v of dealrVehicles(body, url)) {
     if (String(v.vehicleIdentificationNumber ?? "").toUpperCase() !== vin) continue;
     const p = Number(v.offers?.price);
-    if (Number.isFinite(p) && p >= floor) return Math.round(p);
+    if (Number.isFinite(p) && p >= floor) return { price: Math.round(p), provenance: DEALR_ENTRY };
   }
+  // The page's own schema.org offer — the same node lib/normalize.mjs reads,
+  // hence the same tag. This is the leg that carries most of the win: a car
+  // the nightly crawl priced from JSON-LD and recheck re-prices from JSON-LD
+  // now pairs, and a real cut between them is claimable for the first time.
   for (const v of extractVehicles(body)) {
     if (String(v.vehicleIdentificationNumber ?? "").toUpperCase() !== vin) continue;
     const offer = Array.isArray(v.offers) ? v.offers[0] : v.offers;
     const p = Number(String(offer?.price ?? "").replace(/[^0-9.]/g, ""));
-    if (Number.isFinite(p) && p >= floor) return Math.round(p);
+    if (Number.isFinite(p) && p >= floor) return { price: Math.round(p), provenance: JSONLD };
   }
   // askingPrice is NOT a price on these feeds — observed values of 595/695/999
   // are dealer fees. Only internetPrice is trustworthy, and a car under
   // $3,000 is a data error rather than a listing, so we decline to guess.
+  //
+  // This leg is the original incident in miniature and stays quarantined by
+  // its tag: the crawl's dealer.com resolver mostly publishes the JSON-LD
+  // offer, so a jsonld↔ddc-internet pair is the field flip that printed
+  // "$53,770→$29,495" on a car whose page showed both numbers at once. Tagged
+  // honestly, it simply never pairs with the resolver's — which is the point.
   const ddc = extractDdcVehicles(body).find((d) => String(d.vin).toUpperCase() === vin);
   const ddcPrice = Number(String(ddc?.internetPrice ?? "").replace(/[^0-9.]/g, ""));
-  return Number.isFinite(ddcPrice) && ddcPrice >= Math.max(3000, floor) ? Math.round(ddcPrice) : null;
+  return Number.isFinite(ddcPrice) && ddcPrice >= Math.max(3000, floor)
+    ? { price: Math.round(ddcPrice), provenance: DDC_INTERNET }
+    : none;
 };
 
 const alive = [], hardGone = [], softGone = [];
@@ -236,11 +260,15 @@ async function worker() {
       }
     } else if (res.status === 200 && res.body) {
       if (res.body.toUpperCase().includes(vin)) {
-        const price = priceOf(res.body, vin, res.finalUrl ?? l.payload.sourceUrl, priceFloor({
+        const { price, provenance } = priceOf(res.body, vin, res.finalUrl ?? l.payload.sourceUrl, priceFloor({
           isNew: l.payload.condition === "new",
           year: l.payload.year,
         }));
-        alive.push({ vin, priceUsd: price ?? undefined });
+        // recheck_listings reads `provenance` off each alive row and carries it
+        // into listing_price_history alongside the price (0041). No price read,
+        // no tag: a row that only confirms the car is still listed makes no
+        // claim about what it costs.
+        alive.push({ vin, priceUsd: price ?? undefined, provenance: price != null ? provenance : undefined });
       } else if (trustGoneVerdict(vin, domain, oemAlive)) {
         softGone.push(vin);
       } else {

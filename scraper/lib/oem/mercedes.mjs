@@ -22,6 +22,7 @@
 // which the per-vehicle record echoes — so unlike the BMW lane, dealer geo is
 // populated.
 import { politeGetJson } from "../http.mjs";
+import { pickTaggedPrice } from "../price-provenance.mjs";
 
 export const MERCEDES = {
   key: "mercedes",
@@ -92,7 +93,11 @@ function toRecord(v, used) {
     make: MERCEDES.make,
     model,
     trim: trimOf(v.modelName, model),
-    priceUsd: num(v.dealPrice) ?? num(v.inventoryPrice) ?? num(v.msrp),
+    ...pickTaggedPrice("mercedes", [
+      ["dealPrice", num(v.dealPrice)],
+      ["inventoryPrice", num(v.inventoryPrice)],
+      ["msrp", num(v.msrp)],
+    ]),
     mileage: used ? (Number.isFinite(ua.mileage) ? Math.round(ua.mileage) : num(ua.mileage)) : undefined,
     driveLine: drive(v.modelName),
     exteriorColor: v.paint?.name || undefined,

@@ -22,6 +22,8 @@
 //     distance is left to a future dealerCode→zip map
 import { readFileSync } from "node:fs";
 import { politePostJson, politeGetJson } from "../http.mjs";
+import { oemField } from "../price-provenance.mjs";
+import { pickTaggedPrice } from "../price-provenance.mjs";
 
 export const HYUNDAI = {
   key: "hyundai",
@@ -137,7 +139,11 @@ function toRecord(hit) {
   if (!(year >= 1981 && year <= new Date().getFullYear() + 2)) return null;
   const model = String(hit.modelDisplayName || hit.model || "").trim();
   if (!model) return null;
-  const priceUsd = num(hit.dealerInternetPrice) ?? num(hit.msrp) ?? num(hit.startingMsrp);
+  const { priceUsd, priceProvenance } = pickTaggedPrice("hyundai", [
+    ["dealerInternetPrice", num(hit.dealerInternetPrice)],
+    ["msrp", num(hit.msrp)],
+    ["startingMsrp", num(hit.startingMsrp)],
+  ]);
   const state = US_STATES.has(String(hit.dealerCode ?? "").slice(0, 2).toUpperCase())
     ? hit.dealerCode.slice(0, 2).toUpperCase()
     : undefined;
@@ -150,6 +156,7 @@ function toRecord(hit) {
     model,
     trim: hit.trimDisplayName || hit.trim || undefined,
     priceUsd,
+    priceProvenance,
     driveLine: drive(hit.drivetrainName || hit.drivetrain),
     exteriorColor: hit.exteriorColor ? titleCase(hit.exteriorColor) : undefined,
     interiorColor: hit.interiorColor ? titleCase(hit.interiorColor) : undefined,
@@ -270,7 +277,16 @@ function toCpoRecord(veh) {
     make: HYUNDAI.make,
     model,
     trim: veh.TrimDesc || undefined,
+    // Precedence lives inside num(a ?? b) here and must stay there — hoisting
+    // it into a ladder would change which value wins when SortablePrice is
+    // present but unparseable, and this change does not move prices. The tag
+    // names whichever operand num() was actually handed, and is omitted
+    // entirely when no price resolved (a non-observation has no provenance).
     priceUsd: num(veh.SortablePrice ?? veh.FormattedPrice),
+    priceProvenance:
+      num(veh.SortablePrice ?? veh.FormattedPrice) == null
+        ? undefined
+        : oemField("hyundai-cpo", veh.SortablePrice != null ? "SortablePrice" : "FormattedPrice"),
     mileage: Number.isFinite(veh.SortableMileage) ? Math.round(veh.SortableMileage) : num(veh.Mileage),
     driveLine: drive(veh.Drivetrain || veh.DrivetrainDesc),
     exteriorColor: veh.ExtColorDesc || undefined,

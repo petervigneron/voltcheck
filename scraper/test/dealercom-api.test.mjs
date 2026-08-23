@@ -1,7 +1,8 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { dealerComApiConfig, mapRecord } from "../lib/platforms/dealercom-api.mjs";
-import { enrichFromDdc } from "../lib/platforms/dealercom.mjs";
+import { enrichFromDdc, PRICE_ABSTAIN } from "../lib/platforms/dealercom.mjs";
+import { JSONLD } from "../lib/price-provenance.mjs";
 import { normalize } from "../lib/normalize.mjs";
 import { classifyEv } from "../lib/ev.mjs";
 
@@ -83,6 +84,30 @@ test("the resolved price is the rendered final price, not the advertised price",
   // reproduces it here from the mapped fields — no VDP fetch.
   const rec = pipeline(REC);
   assert.equal(rec.priceUsd, 35745);
+});
+
+test("the whole dealer.com path carries a provenance onto the record", () => {
+  // The end this change had to reach: normalize() tags the mapped offer jsonld,
+  // and enrichFromDdc REPLACES that with whatever resolveDdcPriceTagged
+  // actually took — here the rendered final price, which is the JSON-LD offer.
+  // Without this the record reaches ingest untagged and the whole column stays
+  // null, which is exactly the state 0041 shipped into (100% null, every day).
+  const rec = pipeline(REC);
+  assert.equal(rec.priceProvenance, JSONLD);
+});
+
+test("a dealer.com abstain reaches the record with no provenance at all", () => {
+  // A price stack with nothing plausible in it: the resolver abstains (0), and
+  // the tag must not survive the number it described. 0039 keeps zero-price
+  // rows out of listing_price_history, so a tag here would name a field for a
+  // price that never becomes an observation.
+  const rec = pipeline({
+    ...REC,
+    pricing: {},
+    trackingPricing: { internetPrice: "0", msrp: "0", askingPrice: "0", salePrice: "0" },
+  });
+  assert.equal(rec.priceUsd, PRICE_ABSTAIN);
+  assert.equal(rec.priceProvenance, undefined);
 });
 
 test("odometer, trim, drivetrain and colours survive the map", () => {

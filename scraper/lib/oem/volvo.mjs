@@ -100,6 +100,7 @@
 // negative VW returned.
 import { politePostJson } from "../http.mjs";
 import { EV_MODEL_RE, EV_ONLY_WMIS } from "../ev.mjs";
+import { pickTaggedPrice } from "../price-provenance.mjs";
 
 export const VOLVO = {
   key: "volvo",
@@ -240,7 +241,9 @@ function toRecord(row, drops) {
     trim: trimOf(spec.Variant, model),
     // Below the floor the number is a feed error; ship the car without a
     // price rather than with a fictional one (see header).
-    priceUsd: price != null && price >= PRICE_FLOOR ? Math.round(price) : undefined,
+    ...pickTaggedPrice("volvo", [
+      ["OnTheRoadPrice", price != null && price >= PRICE_FLOOR ? Math.round(price) : undefined],
+    ]),
     mileage: /^miles$/i.test(String(phys.MileageUnit ?? "Miles")) ? num(phys.Mileage) : undefined,
     driveLine: drive(spec.Drive),
     exteriorColor: phys.ExteriorColour?.Description || undefined,

@@ -38,6 +38,7 @@
 import { politeGetJson } from "../http.mjs";
 import { subdivideZips } from "./grid.mjs";
 import { readFileSync } from "node:fs";
+import { pickTaggedPrice } from "../price-provenance.mjs";
 
 export const HONDA = {
   key: "honda",
@@ -144,7 +145,7 @@ function toRecords(rec, dealer) {
       make: HONDA.make,
       model,
       trim: rec.ModelTrim || undefined,
-      priceUsd: num(rec.ModelMSRP),
+      ...pickTaggedPrice("honda", [["ModelMSRP", num(rec.ModelMSRP)]]),
       driveLine: drive(rec.ModelMarketingName, rec.ModelTrim),
       exteriorColor: rec.ExteriorColor || undefined,
       interiorColor: rec.InteriorColor || undefined,

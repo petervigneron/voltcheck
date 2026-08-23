@@ -153,6 +153,7 @@
 import { politeGetJson } from "../http.mjs";
 import { richness } from "../normalize.mjs";
 import { EV_MODEL_RE, EV_ONLY_WMIS } from "../ev.mjs";
+import { pickTaggedPrice } from "../price-provenance.mjs";
 
 export const LEXUS = {
   key: "lexus",
@@ -309,7 +310,9 @@ function toRecord(doc, drops, dealerById) {
     make: LEXUS.make,
     model,
     trim,
-    priceUsd: num(ov.lotPrice),
+    ...pickTaggedPrice("toyota", [
+      ["lotPrice", num(ov.lotPrice)],
+    ]),
     mileage: num(ov.miles),
     driveLine: driveOf(doc.spec?.drivetrain),
     exteriorColor: titleCase(doc.color?.exteriorcolorname),

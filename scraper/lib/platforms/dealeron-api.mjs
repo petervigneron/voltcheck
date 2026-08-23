@@ -29,6 +29,7 @@
 import { conditionToken } from "../condition.mjs";
 import { fetchPage, politeGetJson } from "../http.mjs";
 import { stabilizeImages } from "../images.mjs";
+import { JSONLD, DEOL_INTERNET, DEOL_SELLING, DEOL_MSRP, DEOL_CARD_INTERNET } from "../price-provenance.mjs";
 
 const API_VIN_RE = /^[A-HJ-NPR-Z0-9]{17}$/;
 
@@ -118,24 +119,39 @@ export async function dealerOnLots(html, pageUrl, origin) {
 // so a rooftop that omits the calc line still yields a number; undefined only
 // when the library is absent, which classifyEv/normalize treat as no price.
 export function priceFromLibrary(b64) {
-  if (typeof b64 !== "string" || !b64) return undefined;
+  return priceFromLibraryTagged(b64).price;
+}
+
+// The same fallback ladder, also naming the rung it stopped on, for
+// listing_price_history's provenance column (migration 0041). Only the
+// calc_INTERNET PRICE rung claims to be the page's JSON-LD offer — that is the
+// line this file's header verified byte-for-byte, and the ones below it are
+// different numbers that happen to share a ladder. See lib/price-provenance.mjs
+// on why an unverified match is worse than no match.
+export function priceFromLibraryTagged(b64) {
+  const none = { price: undefined, provenance: undefined };
+  if (typeof b64 !== "string" || !b64) return none;
   let txt;
   try {
     txt = Buffer.from(b64, "base64").toString("utf8");
   } catch {
-    return undefined;
+    return none;
   }
   const fields = new Map();
   for (const part of txt.split(";")) {
     const i = part.indexOf(":");
     if (i > 0) fields.set(part.slice(0, i).trim().toLowerCase(), part.slice(i + 1).trim());
   }
-  return (
-    numOrU(fields.get("calc_internet price")) ??
-    numOrU(fields.get("internet price")) ??
-    numOrU(fields.get("selling price")) ??
-    numOrU(fields.get("msrp"))
-  );
+  for (const [key, provenance] of [
+    ["calc_internet price", JSONLD],
+    ["internet price", DEOL_INTERNET],
+    ["selling price", DEOL_SELLING],
+    ["msrp", DEOL_MSRP],
+  ]) {
+    const price = numOrU(fields.get(key));
+    if (price != null) return { price, provenance };
+  }
+  return none;
 }
 
 const DRIVE_TOKENS = new Set(["FWD", "RWD", "AWD", "4WD"]);
@@ -155,7 +171,11 @@ export function vehicleNode(vc, origin) {
   const vin = String(vc?.VehicleVin ?? vc?.VehicleImageModel?.VehicleImageCarouselModel?.Vin ?? "").toUpperCase();
   if (!API_VIN_RE.test(vin)) return null;
 
-  const price = priceFromLibrary(vc.VehiclePriceLibrary) ?? numOrU(vc.VehicleInternetPrice);
+  const fromLibrary = priceFromLibraryTagged(vc.VehiclePriceLibrary);
+  const cardPrice = numOrU(vc.VehicleInternetPrice);
+  const price = fromLibrary.price ?? cardPrice;
+  const priceProvenance =
+    fromLibrary.price != null ? fromLibrary.provenance : cardPrice != null ? DEOL_CARD_INTERNET : undefined;
   // VehicleType is the machine token ("new"/"used"); VehicleCondition is the
   // localized string the storefront prints, and reading THAT first is what
   // published es.fordofkendall.com's whole Spanish new lot as used — "Nuevo"
@@ -223,6 +243,7 @@ export function vehicleNode(vc, origin) {
     offers: {
       "@type": "Offer",
       price,
+      priceProvenance,
       priceCurrency: "USD",
       url: vdpUrl,
       seller:

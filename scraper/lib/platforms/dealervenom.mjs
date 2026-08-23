@@ -30,6 +30,7 @@
 
 import { politeGetJson } from "../http.mjs";
 import { stabilizeImages } from "../images.mjs";
+import { DVENOM_FINAL } from "../price-provenance.mjs";
 
 // Page-level fingerprint. `typesenseSearchAdapter` is the vendor's search
 // client init and appears on every page it serves; the `dealervenom` brand
@@ -115,6 +116,9 @@ function vehicleNode(d, origin) {
     offers: {
       "@type": "Offer",
       price,
+      // Assembled from the API record, not read off the page's JSON-LD: this
+      // is finalPriceInt/price and says so (lib/price-provenance.mjs).
+      priceProvenance: DVENOM_FINAL,
       priceCurrency: "USD",
       url,
       seller: dealer

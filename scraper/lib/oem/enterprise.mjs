@@ -37,6 +37,7 @@
 // the liveness check).
 import { fetchPage, politePostJson } from "../http.mjs";
 import { stateFromZip } from "./zip-state.mjs";
+import { pickTaggedPrice } from "../price-provenance.mjs";
 
 export const ENTERPRISE = {
   key: "enterprise",
@@ -160,7 +161,9 @@ function toRecord(src) {
     make,
     model,
     trim: cleanTrim(spec.trimDescription, spec.bodyTypes?.[0]),
-    priceUsd: num(src.salePrice),
+    ...pickTaggedPrice("enterprise", [
+      ["salePrice", num(src.salePrice)],
+    ]),
     mileage,
     driveLine: drive(spec.drivetrainDescription),
     exteriorColor: v.mappedColor?.exteriorColor?.derivedExteriorColor || v.color?.exteriorColorDescription || undefined,

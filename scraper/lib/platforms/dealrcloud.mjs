@@ -14,6 +14,8 @@
 // VDPs add vin-/odo-/stock-containers and an entry-price heading, and tiles
 // carry a Mileage/Exterior/Interior key-value list.
 
+import { DEALR_ENTRY } from "../price-provenance.mjs";
+
 const INQUIRY_RE = /vehicle-inquiry="([A-HJ-NPR-Z0-9]{17})\|(\d{4})\|([^|"]*)\|([^"]*)"/;
 
 export function isDealrCloud(html) {
@@ -87,7 +89,12 @@ function record({ vin, year, make, model, name, price, mileage, vdpUrl, seller, 
     model: model || undefined,
     name: name || [year, make, model].filter(Boolean).join(" ") || undefined,
     mileageFromOdometer: mileage != null ? { value: mileage } : undefined,
-    offers: { "@type": "Offer", price, url: vdpUrl, seller },
+    // Read from the rooftop's own price markup, not from JSON-LD (dealr.cloud's
+    // JSON-LD Car has no VIN and on some templates does not parse at all), so
+    // the offer names that field — see lib/price-provenance.mjs. recheck.mjs
+    // reads the SAME markup and tags it the same, which is what lets a genuine
+    // cut on one of these rooftops survive being seen by the other lane.
+    offers: { "@type": "Offer", price, priceProvenance: DEALR_ENTRY, url: vdpUrl, seller },
     ...extras,
   };
 }

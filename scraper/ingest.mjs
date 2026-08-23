@@ -8,6 +8,7 @@ import { isKnownMake } from "./lib/makes.mjs";
 import { publishedCondition } from "./lib/condition.mjs";
 import { fuelTextOnly } from "./lib/ev.mjs";
 import { priceFloor } from "./lib/price-floor.mjs";
+import { isProvenance } from "./lib/price-provenance.mjs";
 
 const raw = JSON.parse(await readFile(new URL("./out/listings.json", import.meta.url), "utf-8"));
 // Single-rooftop dealers have exactly one address — listings inherit it from
@@ -165,51 +166,75 @@ const listings = raw
     unknownMakes.set(r.make, (unknownMakes.get(r.make) ?? 0) + 1);
     return false;
   })
-  .map((r) => ({
-    condition: condition(r),
-    id: r.vin.toLowerCase(),
-    vin: r.vin,
-    year: modelYear(r.year),
-    make: canonMake(r.make),
-    model: canonModel(r.model),
-    trim: r.trim ?? undefined,
-    drive: inferDrive(r) ?? ariyaVds(r).drive ?? toyotaVds(r).drive ?? vwBuzzVds(r).drive,
-    // Last plausibility gate before the database, covering every lane (the
-    // dealer.com resolver has its own, but DealerOn/DCS/OEM records land here
-    // straight from normalize). A sub-floor number is a payment or fee that
-    // slipped into the price slot (lib/price-floor.mjs names the live cases),
-    // so it becomes an abstain — the car stays, the claim goes quiet.
-    priceUsd: r.priceUsd >= priceFloor({ isNew: condition(r) === "new", year: modelYear(r.year) })
-      ? r.priceUsd
-      : 0,
-    // Platform-extracted odometers (r.platform set) are trusted as-is — 0 is
-    // real on a near-new car. JSON-LD-only mileage below 500 is
-    // indistinguishable from the junk some SRPs emit, so it renders as
-    // unknown rather than as a false claim.
-    mileage: r.platform ? r.mileage : r.mileage != null && r.mileage >= 500 ? r.mileage : undefined,
-    sellerType: "dealer",
-    city: r.city ?? domainLoc.get(r.dealerDomain)?.city ?? undefined,
-    state: r.state ?? domainLoc.get(r.dealerDomain)?.state ?? undefined,
-    zip: r.zip ?? domainLoc.get(r.dealerDomain)?.zip ?? undefined,
-    dealerName: r.dealerName ?? undefined,
-    optionCodes: r.optionCodes ?? undefined,
-    // Per-VIN battery coverage and pack-replacement history from the maker's
-    // own owner portal (gm-warranty.mjs). Both are stable per car — dates and
-    // mileages, never the portal's self-updating Active/Expired status — so
-    // they are safe in the payload under migration 0025's equality rule.
-    batteryCoverage: r.batteryCoverage ?? undefined,
-    campaignCheck: r.campaignCheck ?? undefined,
-    vpicBatteryKwh: r.vpicBatteryKwh ?? ariyaVds(r).kwh ?? undefined,
-    exteriorColor: r.exteriorColor ?? undefined,
-    imageUrl: r.imageUrl ?? r.images?.[0] ?? undefined,
-    images: r.images?.length > 1 ? r.images.slice(0, 8) : undefined,
-    interiorColor: r.interiorColor ?? undefined,
-    stockNumber: r.stockNumber ?? undefined,
-    previousOwners: r.previousOwners ?? undefined,
-    description: r.description ? r.description.replace(/<br\s*\/?>/gi, "\n").replace(/<[^>]+>/g, "").replace(/\n{3,}/g, "\n\n").trim() : undefined,
-    sourceUrl: r.sourceUrl,
-    dealerDomain: r.dealerDomain,
-  }));
+  .map((r) => {
+    // The plausibility gate below can turn a price into an abstain, and the
+    // provenance has to follow that decision rather than the raw reading —
+    // hence one binding, used twice, instead of the same test written twice.
+    const priceUsd =
+      r.priceUsd >= priceFloor({ isNew: condition(r) === "new", year: modelYear(r.year) })
+        ? r.priceUsd
+        : 0;
+    return {
+      condition: condition(r),
+      id: r.vin.toLowerCase(),
+      vin: r.vin,
+      year: modelYear(r.year),
+      make: canonMake(r.make),
+      model: canonModel(r.model),
+      trim: r.trim ?? undefined,
+      drive: inferDrive(r) ?? ariyaVds(r).drive ?? toyotaVds(r).drive ?? vwBuzzVds(r).drive,
+      // Last plausibility gate before the database, covering every lane (the
+      // dealer.com resolver has its own, but DealerOn/DCS/OEM records land here
+      // straight from normalize). A sub-floor number is a payment or fee that
+      // slipped into the price slot (lib/price-floor.mjs names the live cases),
+      // so it becomes an abstain — the car stays, the claim goes quiet.
+      priceUsd,
+      // Which served field produced that price (migration 0041). This is NOT a
+      // car attribute and must never become one: ingest_listings routes it to
+      // listing_price_history.provenance and stores `x - 'provenance'` as the
+      // payload, because payload-equality IS row-equality since 0025 — a car
+      // that hasn't changed has to compare equal night over night or the nightly
+      // rewrites every wide row and OOMs the instance. Sibling key, stripped on
+      // arrival; see supabase/migrations/0041_price_provenance_column.sql.
+      //
+      // Two reasons it can be absent, and both mean the same thing downstream —
+      // fall back to 0040's coarser same-lane guard rather than claim a match:
+      //   - the extractor that read this car has no tag yet;
+      //   - the price is an abstain (0), which never enters price history at
+      //     all (0039). Tagging one would assert we read a field we could not.
+      // isProvenance() is the last gate: a tag is only ever emitted by our own
+      // extractors, and a value that isn't one of theirs is dropped rather than
+      // written into a column that decides whether a price cut gets published.
+      provenance: priceUsd !== 0 && isProvenance(r.priceProvenance) ? r.priceProvenance : undefined,
+      // Platform-extracted odometers (r.platform set) are trusted as-is — 0 is
+      // real on a near-new car. JSON-LD-only mileage below 500 is
+      // indistinguishable from the junk some SRPs emit, so it renders as
+      // unknown rather than as a false claim.
+      mileage: r.platform ? r.mileage : r.mileage != null && r.mileage >= 500 ? r.mileage : undefined,
+      sellerType: "dealer",
+      city: r.city ?? domainLoc.get(r.dealerDomain)?.city ?? undefined,
+      state: r.state ?? domainLoc.get(r.dealerDomain)?.state ?? undefined,
+      zip: r.zip ?? domainLoc.get(r.dealerDomain)?.zip ?? undefined,
+      dealerName: r.dealerName ?? undefined,
+      optionCodes: r.optionCodes ?? undefined,
+      // Per-VIN battery coverage and pack-replacement history from the maker's
+      // own owner portal (gm-warranty.mjs). Both are stable per car — dates and
+      // mileages, never the portal's self-updating Active/Expired status — so
+      // they are safe in the payload under migration 0025's equality rule.
+      batteryCoverage: r.batteryCoverage ?? undefined,
+      campaignCheck: r.campaignCheck ?? undefined,
+      vpicBatteryKwh: r.vpicBatteryKwh ?? ariyaVds(r).kwh ?? undefined,
+      exteriorColor: r.exteriorColor ?? undefined,
+      imageUrl: r.imageUrl ?? r.images?.[0] ?? undefined,
+      images: r.images?.length > 1 ? r.images.slice(0, 8) : undefined,
+      interiorColor: r.interiorColor ?? undefined,
+      stockNumber: r.stockNumber ?? undefined,
+      previousOwners: r.previousOwners ?? undefined,
+      description: r.description ? r.description.replace(/<br\s*\/?>/gi, "\n").replace(/<[^>]+>/g, "").replace(/\n{3,}/g, "\n\n").trim() : undefined,
+      sourceUrl: r.sourceUrl,
+      dealerDomain: r.dealerDomain,
+    };
+  });
 
 for (const [m, n] of unknownMakes) console.error(`dropped ${n} listing(s) with unrecognized make ${JSON.stringify(m)} — real new brand? add it to lib/makes.mjs`);
 // Loud on purpose. A number here is not an error — it is enrichment having run

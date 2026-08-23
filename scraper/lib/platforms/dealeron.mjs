@@ -21,6 +21,8 @@
 // vehicles" rail — so blocks are keyed by VIN and matched to the record,
 // never taken positionally. Only the subject's block has data-odometer.
 
+import { DEOL_DISPLAYED } from "../price-provenance.mjs";
+
 function parseSdDataLayer(html) {
   const m = html.match(/sdDataLayer\s*=\s*\{/);
   if (!m) return null;
@@ -152,6 +154,16 @@ export function enrichFromDealerOn(rec, data) {
     exteriorColor: v.exteriorColor ?? (isSubject ? data.exteriorColor : undefined) ?? rec.exteriorColor,
     interiorColor: v.interiorColor ?? (isSubject ? data.interiorColor : undefined) ?? rec.interiorColor,
     priceUsd: rec.priceUsd ?? (Number(v.displayedPrice) > 0 ? Number(v.displayedPrice) : undefined),
+    // Same precedence as the line above: the JSON-LD offer keeps its own tag,
+    // and displayedPrice is only named when it is the number that survived.
+    // Not assumed equal to the API path's price library — that check has not
+    // been done, and lib/price-provenance.mjs says to split when in doubt.
+    priceProvenance:
+      rec.priceUsd != null
+        ? rec.priceProvenance
+        : Number(v.displayedPrice) > 0
+          ? DEOL_DISPLAYED
+          : undefined,
     condition: typeof sd?.status === "string" ? sd.status.toLowerCase() : rec.condition,
     city: data.dealer?.city ?? rec.city,
     state: data.dealer?.state ?? rec.state,

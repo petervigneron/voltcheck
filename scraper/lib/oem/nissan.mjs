@@ -39,6 +39,7 @@
 // Used/CPO BEV = LEAF + ARIYA (~530), the higher-value half for this site.
 import { politePostJson } from "../http.mjs";
 import { coveringGrid, subdivideZips } from "./grid.mjs";
+import { pickTaggedPrice } from "../price-provenance.mjs";
 
 export const NISSAN = {
   key: "nissan",
@@ -180,7 +181,10 @@ function toRecord(m) {
     make: NISSAN.make,
     model,
     trim: m.gradeName || undefined,
-    priceUsd: num(m.priceWithoutFeesLevies) ?? num(m.price),
+    ...pickTaggedPrice("nissan", [
+      ["priceWithoutFeesLevies", num(m.priceWithoutFeesLevies)],
+      ["price", num(m.price)],
+    ]),
     driveLine: drive(m.engine?.driveTrain),
     exteriorColor: m.fullColour?.label || undefined,
     interiorColor: m.upholstery?.label || undefined,
@@ -219,7 +223,9 @@ function toCpoRecord(m) {
     make: NISSAN.make,
     model,
     trim: m.gradeName || undefined,
-    priceUsd: num(m.price),
+    ...pickTaggedPrice("nissan-cpo", [
+      ["price", num(m.price)],
+    ]),
     mileage: Number.isFinite(m.mileage) ? Math.round(m.mileage) : num(m.mileage),
     exteriorColor: m.fullColour?.label || undefined,
     interiorColor: m.upholstery?.label || undefined,

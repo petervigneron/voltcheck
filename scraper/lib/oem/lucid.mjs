@@ -113,6 +113,7 @@
 import { readFileSync } from "node:fs";
 import { politeGetJson } from "../http.mjs";
 import { stateFromZip } from "./zip-state.mjs";
+import { oemField } from "../price-provenance.mjs";
 
 const HOST = "https://buynow.lucidmotors.com";
 const BASE = `${HOST}/api/v4/en_us/store/inventory/vehicles`;
@@ -256,6 +257,10 @@ function toRecord(v, { model, type }) {
   // Used/demo: the asking price and the odometer live in `listing`; the
   // top-level price is the car's original sticker (see the header note).
   const priceUsd = used ? num(v.listing?.currentSalePrice) : num(v.price?.afterDiscountPrice);
+  // Not a fallback ladder: which field applies is decided by the listing type,
+  // so a car cannot move between them without ceasing to be the same listing.
+  // Tagged separately all the same — the two numbers mean different things.
+  const priceProvenance = oemField("lucid", used ? "currentSalePrice" : "afterDiscountPrice");
   if (!priceUsd) return null; // the source did not state a price — say nothing
   const mileage = used ? num(v.listing?.odometer) ?? (v.listing?.odometer === 0 ? 0 : undefined) : undefined;
 
@@ -275,6 +280,7 @@ function toRecord(v, { model, type }) {
     model, // "Air" / "Gravity" — the API's model.technicalName folds the trim in
     trim: v.modelVariant?.technicalName || undefined,
     priceUsd,
+    priceProvenance,
     mileage,
     driveLine: driveOf(v.motorDrive),
     exteriorColor: v.color?.technicalName || undefined,

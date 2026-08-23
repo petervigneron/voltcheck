@@ -25,6 +25,8 @@
 // carrying vin, mileage, sellingPrice, trim, drivetrain, colours and the
 // certification flags.
 
+import { DFIRE_ADVERTISED } from "../price-provenance.mjs";
+
 const VEHICLE_OBJ_RE = /pushData\(\s*['"]VehicleObject_(\d+)['"]\s*,\s*\{/g;
 const DEALER_OBJ_RE_G = /pushData\(\s*['"]DealerObject_\d+['"]\s*,\s*\{/g;
 
@@ -220,6 +222,10 @@ export function enrichFromDealerFire(rec, cars, dealers = []) {
     mileage: v.mileage != null ? Number(v.mileage) : rec.mileage,
     trim: str(v.trim) ?? rec.trim,
     priceUsd: advertisedPrice(v) ?? rec.priceUsd,
+    // The tag follows whichever number actually won: DealerFire's own
+    // advertisedPrice when it supplied one, otherwise whatever normalize()
+    // already recorded for the JSON-LD offer it fell back to.
+    priceProvenance: advertisedPrice(v) != null ? DFIRE_ADVERTISED : rec.priceProvenance,
     driveLine: DRIVES[String(v.drivetrain ?? "").toUpperCase()] ?? rec.driveLine,
     exteriorColor: str(v.exteriorColor) ?? rec.exteriorColor,
     interiorColor: str(v.interiorColor) ?? rec.interiorColor,

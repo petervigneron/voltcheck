@@ -29,6 +29,7 @@
 // (the site is a SPA with no per-VIN route), so sourceUrl is the brand
 // inventory page and dealer geo is populated from the record.
 import { politeGetJson } from "../http.mjs";
+import { pickTaggedPrice } from "../price-provenance.mjs";
 
 export const GENESIS = {
   key: "genesis",
@@ -100,7 +101,10 @@ function toRecord(v, displayModel) {
     make: GENESIS.make,
     model: displayModel,
     trim: trimOf(v.TrimDesc),
-    priceUsd: num(v.SortablePrice) ?? num(v.FormattedPrice),
+    ...pickTaggedPrice("genesis", [
+      ["SortablePrice", num(v.SortablePrice)],
+      ["FormattedPrice", num(v.FormattedPrice)],
+    ]),
     driveLine: drive(v.Drivetrain || v.DrivetrainDesc),
     exteriorColor: v.ExtColorDesc ? titleCase(v.ExtColorDesc) : v.ExtColor ? titleCase(v.ExtColor) : undefined,
     interiorColor: v.IntColor ? titleCase(v.IntColor) : undefined,

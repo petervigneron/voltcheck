@@ -20,6 +20,7 @@
 import { extractNodes } from "../jsonld.mjs";
 import { politeGetJson } from "../http.mjs";
 import { stabilizeImages } from "../images.mjs";
+import { OVERFUEL_PRICE } from "../price-provenance.mjs";
 
 const ASSET_RE = /(?:static|api|www)\.overfuel\.com/i;
 
@@ -106,6 +107,10 @@ function apiVehicleNode(r, origin) {
     offers: {
       "@type": "Offer",
       price,
+      // The API record's `price` field. Kept distinct from the SRP ItemList's
+      // Offer price below, which IS the page's JSON-LD and is left untagged:
+      // the two have never been checked equal, and a split only goes quiet.
+      priceProvenance: OVERFUEL_PRICE,
       priceCurrency: "USD",
       url,
       seller: dealer

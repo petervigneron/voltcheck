@@ -22,6 +22,7 @@
 //     fixed center covers the country (66952 ≈ geographic center of the US)
 import { politePostJson } from "../http.mjs";
 import { stabilizeImages } from "../images.mjs";
+import { pickTaggedPrice } from "../price-provenance.mjs";
 
 export const GM_BRANDS = [
   { key: "chevrolet", host: "www.chevrolet.com", prefix: "chevrolet", programId: "CHEVROLET", domain: "chevrolet.com", make: "Chevrolet", minExpected: 2000 },
@@ -90,7 +91,10 @@ function toRecord(hit, brand) {
   const cash = hit.pricing?.cash ?? {};
   // dealerFeaturedPrice is the dealer's advertised price; msrp is the honest
   // fallback. netPrice bakes in conditional incentives — never shown.
-  const priceUsd = num(cash.dealerFeaturedPrice?.value) ?? num(cash.msrp?.value);
+  const { priceUsd, priceProvenance } = pickTaggedPrice("gm", [
+    ["dealerFeaturedPrice", num(cash.dealerFeaturedPrice?.value)],
+    ["msrp", num(cash.msrp?.value)],
+  ]);
   const zipRaw = String(hit.dealer?.postalCode ?? "");
   const zip = /^\d{5}/.test(zipRaw) ? zipRaw.slice(0, 5) : undefined;
   const condRaw = String(hit.stockDetails?.condition ?? "").toUpperCase();
@@ -107,6 +111,7 @@ function toRecord(hit, brand) {
     model,
     trim: hit.variant?.name || undefined,
     priceUsd,
+    priceProvenance,
     mileage: Number.isFinite(hit.mileage) ? Math.round(hit.mileage) : undefined,
     exteriorColor: hit.baseExteriorColor || undefined,
     driveLine: ["FWD", "AWD", "RWD", "4WD"].includes(hit.driveType) ? hit.driveType : undefined,
@@ -261,7 +266,11 @@ function toCarBravoRecord(hit) {
   const model = String(hit.model ?? "").trim();
   if (!model) return null;
   const cash = hit.pricing?.cash ?? {};
-  const priceUsd = num(cash.baseDealerFeaturedPrice?.value) ?? num(cash.netPrice?.value) ?? num(cash.dealerFeaturedPrice?.value);
+  const { priceUsd, priceProvenance } = pickTaggedPrice("gm-carbravo", [
+    ["baseDealerFeaturedPrice", num(cash.baseDealerFeaturedPrice?.value)],
+    ["netPrice", num(cash.netPrice?.value)],
+    ["dealerFeaturedPrice", num(cash.dealerFeaturedPrice?.value)],
+  ]);
   const zipRaw = String(hit.dealer?.postalCode ?? "");
   const zip = /^\d{5}/.test(zipRaw) ? zipRaw.slice(0, 5) : undefined;
   // CarBravo photos are real used-car images on gcb.evs.onl (https already) —
@@ -288,6 +297,7 @@ function toCarBravoRecord(hit) {
     model,
     trim: hit.variant?.name || undefined,
     priceUsd,
+    priceProvenance,
     mileage: Number.isFinite(hit.mileage) ? Math.round(hit.mileage) : undefined,
     exteriorColor: hit.baseExteriorColor || undefined,
     driveLine: ["FWD", "AWD", "RWD", "4WD"].includes(hit.driveType) ? hit.driveType : undefined,

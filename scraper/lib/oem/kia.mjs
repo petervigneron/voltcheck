@@ -26,6 +26,7 @@
 //     reaches both coasts. Alaska/Hawaii dealers fall outside it — a known,
 //     negligible gap (as with the GM lane)
 import { politePostJson } from "../http.mjs";
+import { pickTaggedPrice } from "../price-provenance.mjs";
 
 export const KIA = {
   key: "kia",
@@ -92,7 +93,10 @@ function toRecord(hit, seriesName) {
   if (!(year >= 1981 && year <= new Date().getFullYear() + 2)) return null;
   const model = seriesName || String(hit.model ?? "").trim();
   if (!model) return null;
-  const priceUsd = num(hit.dealerPrice) ?? num(hit.msrp);
+  const { priceUsd, priceProvenance } = pickTaggedPrice("kia", [
+    ["dealerPrice", num(hit.dealerPrice)],
+    ["msrp", num(hit.msrp)],
+  ]);
   const code = String(hit.dealer?.code ?? "");
   const state = US_STATES.has(code.slice(0, 2).toUpperCase()) ? code.slice(0, 2).toUpperCase() : undefined;
   const img = imageUrl(hit.exteriorImages);
@@ -104,6 +108,7 @@ function toRecord(hit, seriesName) {
     model,
     trim: hit.trim || undefined,
     priceUsd,
+    priceProvenance,
     driveLine: drive(hit.edwTrim || hit.trim),
     exteriorColor: hit.extColor || undefined,
     interiorColor: hit.intColor || undefined,
@@ -149,7 +154,9 @@ function toCpoRecord(entry) {
     make: KIA.make,
     model,
     trim: v.trim || v.cdmTrim || undefined,
-    priceUsd: num(v.internetPrice),
+    ...pickTaggedPrice("kia-cpo", [
+      ["internetPrice", num(v.internetPrice)],
+    ]),
     mileage: Number.isFinite(v.mileage) ? Math.round(v.mileage) : undefined,
     driveLine: drive(v.drivetrain || v.trim),
     exteriorColor: v.exteriorColor || undefined,

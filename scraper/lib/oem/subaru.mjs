@@ -94,6 +94,7 @@
 //    than a fabricated one.
 import { politeGetJson, politePostJson } from "../http.mjs";
 import { EV_MODEL_RE, EV_ONLY_WMIS } from "../ev.mjs";
+import { pickTaggedPrice } from "../price-provenance.mjs";
 
 const HOST = "https://www.subaru.com";
 
@@ -240,7 +241,11 @@ function toRecord(v, dealer, { certified, bevCodes }) {
     make: SUBARU.make,
     model,
     trim: clean(v.trimName),
-    priceUsd: num(v.internetPrice) ?? num(v.tsrp) ?? num(v.msrp),
+    ...pickTaggedPrice("subaru", [
+      ["internetPrice", num(v.internetPrice)],
+      ["tsrp", num(v.tsrp)],
+      ["msrp", num(v.msrp)],
+    ]),
     mileage,
     driveLine: undefined, // the API carries no drivetrain field — see header
     exteriorColor: clean(v.exteriorColor?.name),

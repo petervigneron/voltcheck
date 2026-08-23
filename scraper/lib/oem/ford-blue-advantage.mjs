@@ -32,6 +32,7 @@
 // dealer's real per-VIN VDP as sourceUrl, so recheck verifies liveness there and
 // these rows are NOT added to the recheck-skip set.
 import { politeGetJson } from "../http.mjs";
+import { pickTaggedPrice } from "../price-provenance.mjs";
 
 export const FORD_BLUE_ADVANTAGE = {
   key: "ford-blue-advantage",
@@ -112,7 +113,10 @@ function toRecord(l) {
     make: FORD_BLUE_ADVANTAGE.make,
     model,
     trim: l.trim?.name || undefined,
-    priceUsd: num(l.pricingDetail?.salePrice) ?? num(l.pricingDetail?.displayPrice),
+    ...pickTaggedPrice("ford-blue-advantage", [
+      ["salePrice", num(l.pricingDetail?.salePrice)],
+      ["displayPrice", num(l.pricingDetail?.displayPrice)],
+    ]),
     mileage: num(l.mileage?.value),
     driveLine: drive(l.driveType?.name),
     exteriorColor: l.color?.exteriorColor || undefined,

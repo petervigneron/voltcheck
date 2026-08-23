@@ -27,6 +27,7 @@
 // chevrolet.com), NOT the physical dealer — the API exposes only a coded
 // dealerId, no dealer name/city, so dealer geo is left blank (a known gap).
 import { politePostJson } from "../http.mjs";
+import { pickTaggedPrice } from "../price-provenance.mjs";
 
 export const BMW = {
   key: "bmw",
@@ -104,7 +105,10 @@ function toRecord(v) {
     make: BMW.make,
     model,
     trim,
-    priceUsd: num(v.totalMsrp) ?? num(v.baseMsrp),
+    ...pickTaggedPrice("bmw", [
+      ["totalMsrp", num(v.totalMsrp)],
+      ["baseMsrp", num(v.baseMsrp)],
+    ]),
     driveLine: drive(v.engineDriveType?.name),
     exteriorColor: v.exteriorGenericColor || undefined,
     interiorColor: v.interiorGenericColor || undefined,
