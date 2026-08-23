@@ -156,12 +156,14 @@ jobs:
       # Re-check the rows a previous night could not get an answer out of. A
       # "transient" verdict means something did not answer — a timeout, a 429,
       # a homepage served without its nav — not that the lot is empty, and the
-      # written-off pile is full of rows that were only ever hammered. Serial
-      # and capped at 60 so it costs minutes, not the probe budget; the rows it
-      # promotes are dealers we already had.
+      # written-off pile is full of rows that were only ever hammered. Near-serial
+      # and capped so it costs minutes, not the probe budget; the rows it promotes
+      # are dealers we already had. --no-retry because this step IS the slow
+      # retry — letting it run its own second pass would double the slowest
+      # thing per row.
       - name: Re-probe last night's unanswered dealers
         working-directory: scraper
-        run: node probe.mjs --status needs-investigation --verdict transient --limit 60 --concurrency 2
+        run: node probe.mjs --status needs-investigation --verdict transient --limit 40 --concurrency 2 --no-retry
       - uses: actions/upload-artifact@v4
         with:
           name: registry

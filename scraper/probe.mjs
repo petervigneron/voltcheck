@@ -395,10 +395,11 @@ async function probeSite(site) {
   const verdict = emptyOrTransient({ failures, sitemapUrls: sitemapUrls.length, itemListEntries });
 
   site.status = "needs-investigation";
-  site.notes =
+  site.notes = (
     `${site.notes ?? ""} | probe ${today}: ${verdict === "transient" ? "no answer" : "0 VIN vehicles"} in ${fetched} fetches ` +
     `(${itemListEntries} ItemList entries, ${sitemapUrls.length} sitemap urls, ${transientFailures.length} failed fetches, ` +
-    `platform ${site.platform}) — ${leads}`.trim();
+    `platform ${site.platform}) — ${leads}`
+  ).trim();
   setVerdict(site, verdict, {
     fetched,
     vehicles: 0,
@@ -413,7 +414,10 @@ async function probeSite(site) {
     // The leads as data, not prose: api-leads.mjs ranks these hosts, and it
     // had to regex them back out of a sentence to do it (finding #1 in its
     // own header). `signals` keeps the non-host ones (nextjs, algolia…).
-    ...(signals.length ? { apiHosts: apiHostsFrom(signals), signals: signals.filter((s) => !s.startsWith("api-hosts:")) } : {}),
+    ...(apiHostsFrom(signals).length ? { apiHosts: apiHostsFrom(signals) } : {}),
+    ...(signals.some((s) => !s.startsWith("api-hosts:"))
+      ? { signals: signals.filter((s) => !s.startsWith("api-hosts:")) }
+      : {}),
     ...(failures.length ? { failures: failures.slice(0, 4) } : {}),
   });
   console.error(`  ${site.domain} → ${site.status} [${verdict}] (${site.platform})`);
