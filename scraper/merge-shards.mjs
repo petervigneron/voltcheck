@@ -30,6 +30,7 @@
 // and verify-colisting.mjs is the test.
 import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import { richness } from "./lib/normalize.mjs";
+import { colistingAccumulator, colistedDomainCount } from "./lib/colisting.mjs";
 
 const shardsDir = new URL(`./${process.argv[2] ?? "out/shards"}/`, import.meta.url);
 
@@ -42,13 +43,10 @@ try {
 }
 
 const byVin = new Map();
-// vin -> Map(dealerDomain -> { r, priceUsd }). One entry per domain, not per
-// record: a VIN seen twice on the same site (SRP tile, then its own VDP) is
-// one rooftop offering one car, and counting it twice would invent an edge.
-// The richest record for that rooftop supplies the price, mirroring the
-// dedupe rule above so the price kept is the one that rooftop's best record
-// carried.
-const sightings = new Map();
+// Moved to lib/colisting.mjs on 2026-08-23 so the dealer crawl can use the
+// same counter — see that file for why having only one copy, in this lane,
+// meant vin_colisting never held a row.
+const colisted = colistingAccumulator();
 const reports = [];
 let shardsRead = 0;
 for (const d of dirs) {
@@ -68,16 +66,7 @@ for (const d of dirs) {
     const prev = byVin.get(key);
     if (!prev || richness(ev) > richness(prev)) byVin.set(key, ev);
 
-    // Only real VINs: the composite fallback key above is `domain:sourceUrl`,
-    // which cannot collide across domains by construction, so a record with no
-    // VIN can never be evidence of co-listing.
-    if (ev.vin && ev.dealerDomain) {
-      let byDomain = sightings.get(ev.vin);
-      if (!byDomain) sightings.set(ev.vin, (byDomain = new Map()));
-      const r = richness(ev);
-      const held = byDomain.get(ev.dealerDomain);
-      if (!held || r > held.r) byDomain.set(ev.dealerDomain, { r, priceUsd: ev.priceUsd ?? null });
-    }
+    colisted.add(ev);
   }
 }
 
@@ -96,21 +85,11 @@ await writeFile(new URL("./out/report.json", import.meta.url), JSON.stringify(re
 // shards produce byte-identical files and a diff means the inventory moved.
 // Written unindented on purpose — this file is transport, not something a
 // human reads, and the indentation was ~40% of its bytes.
-const colisting = [];
-for (const [vin, byDomain] of sightings) {
-  if (byDomain.size < 2) continue;
-  colisting.push({
-    vin,
-    sightings: [...byDomain.entries()]
-      .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
-      .map(([domain, s]) => ({ domain, priceUsd: s.priceUsd })),
-  });
-}
-colisting.sort((a, b) => (a.vin < b.vin ? -1 : a.vin > b.vin ? 1 : 0));
+const colisting = colisted.pairs();
 await writeFile(new URL("./out/colisting-pairs.json", import.meta.url), JSON.stringify(colisting));
 
 const complete = reports.filter((r) => r.truncated === false).length;
-const colistedDomains = new Set(colisting.flatMap((c) => c.sightings.map((s) => s.domain)));
+const colistedDomains = { size: colistedDomainCount(colisting) };
 console.error(
   `merge-shards: ${shardsRead} shards → ${byVin.size} unique listings, ${reports.length} domain reports (${complete} complete)`
 );

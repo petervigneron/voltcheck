@@ -10,6 +10,7 @@ import { fetchPage, setCacheTtl } from "./lib/http.mjs";
 import { extractVehicles, extractItemListEntries } from "./lib/jsonld.mjs";
 import { classifyEv, EV_ONLY_WMIS } from "./lib/ev.mjs";
 import { normalize, richness } from "./lib/normalize.mjs";
+import { colistingAccumulator, colistedDomainCount } from "./lib/colisting.mjs";
 import { discoverSitemapUrls, rank, dedupe, SRP_PATHS, VIN_RE, EVISH_RE } from "./lib/sitemap.mjs";
 import { extractDdcVehicles, enrichFromDdc } from "./lib/platforms/dealercom.mjs";
 import { dealerComApiConfig, pullDealerComApi } from "./lib/platforms/dealercom-api.mjs";
@@ -632,20 +633,34 @@ async function worker() {
 // crawledAt lets db-sync tell the DB when these rows were observed, so a
 // replayed snapshot can't masquerade as fresh evidence (migration 0013).
 let writing = false;
+let lastColisting = [];
 async function writeOutput() {
   if (writing) return undefined;
   writing = true;
   try {
     await mkdir(new URL("./out/", import.meta.url), { recursive: true });
     const byVin = new Map();
+    // Count the copies this dedupe is about to discard, before it discards
+    // them. This crawl is now the ONLY lane that can see one VIN on two
+    // rooftops — merge-shards' remaining producer is the OEM locator, one
+    // domain per lane — so without this, vin_colisting stays empty and every
+    // "this car moved between dealers" claim loses its guardrail. See
+    // lib/colisting.mjs. Rebuilt from allEvs on each checkpoint, exactly like
+    // byVin beside it, so a checkpoint and the final write agree.
+    const colisted = colistingAccumulator();
     for (const ev of allEvs) {
       const key = ev.vin ?? `${ev.dealerDomain}:${ev.sourceUrl}`;
       const prev = byVin.get(key);
       if (!prev || richness(ev) > richness(prev)) byVin.set(key, ev);
+      colisted.add(ev);
     }
     await writeFile(new URL("./out/listings.json", import.meta.url), JSON.stringify([...byVin.values()], null, 2));
     for (const r of reports) r.crawledAt ??= new Date().toISOString();
     await writeFile(new URL("./out/report.json", import.meta.url), JSON.stringify(reports, null, 2));
+    // Unindented on purpose, same as merge-shards: transport, not reading.
+    const colisting = colisted.pairs();
+    await writeFile(new URL("./out/colisting-pairs.json", import.meta.url), JSON.stringify(colisting));
+    lastColisting = colisting;
     return byVin.size;
   } finally {
     writing = false;
@@ -667,3 +682,10 @@ if (Number.isFinite(DEADLINE_AT) && reports.length < domains.length) {
   );
 }
 console.error(`\n${unique} unique EV listings → scraper/out/listings.json`);
+// Said out loud for the same reason merge-shards says it: on a slice of any
+// size this number is normally in the hundreds, and a zero is far more likely
+// to mean this counter broke than that no group syndicated a car tonight.
+console.error(
+  `crawl: ${lastColisting.length} VINs listed on more than one domain across ` +
+  `${colistedDomainCount(lastColisting)} domains → scraper/out/colisting-pairs.json`
+);

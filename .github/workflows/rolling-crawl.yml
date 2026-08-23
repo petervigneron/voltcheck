@@ -249,6 +249,31 @@ jobs:
           SUPABASE_INGEST_TOKEN: ${{ secrets.SUPABASE_INGEST_TOKEN }}
         run: node db-sync.mjs
 
+      # Ship the co-listings this slice saw. It lives HERE, and not in
+      # nightly.yml where it used to be the only caller, because this is the
+      # only lane left that crawls dealers: one VIN on two rooftops is a thing
+      # only a dealer crawl can witness, and the nightly's remaining producer
+      # is the OEM locator, one domain per lane. From 2026-08-22 (7972521,
+      # which moved the fleet crawl here) until 2026-08-23 that meant
+      # vin_colisting held zero rows and colisting-sync said so every night
+      # into a log nobody read. nightly.yml still runs it too and that is
+      # correct — it costs nothing on a night with nothing to send.
+      #
+      # Gated with the sync above rather than on ingest: this is a second push
+      # to the same instance, so it waits for the same reason, and a slice
+      # whose rows were not synced has no business claiming its graph was.
+      # Never fails the run — a lost night of graph is not worth a red slice
+      # when the inventory itself landed.
+      - name: Record this slice's co-listings
+        if: ${{ github.event.inputs.sync != 'false' && steps.nightly.outputs.busy == '0' }}
+        continue-on-error: true
+        working-directory: scraper
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_INGEST_TOKEN: ${{ secrets.SUPABASE_INGEST_TOKEN }}
+        run: node colisting-sync.mjs
+
       # DELIBERATELY NOT COMMITTED HERE: web/data/scraped-listings.json.
       # ingest.mjs rewrites that file with whatever it just processed, so a
       # slice run leaves it holding ~2,000 cars instead of ~100,000. It is the
