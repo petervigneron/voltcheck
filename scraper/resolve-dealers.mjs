@@ -12,19 +12,12 @@
 // when this shipped in 2026-08-17; re-measured 2026-08-23 on the 7,432 pairs
 // this generator did not itself create, it is 69%, and 83% on the subset
 // carrying a state, which every roll row does. DNS resolution is free and
-// touches nobody's server. Only
-// resolving candidates are fetched, politely, once per domain. And a match is
-// claimed ONLY when the page itself asserts the identity: it shows the roll's
-// phone number (digit-exact), or the dealer's squashed name together with its
-// zip (preferred — near-unique) or, only when the roll carries no zip, its
-// city alone. A parked domain, a different Eagle Auto Sales three states
+// touches nobody's server. Only resolving candidates are fetched, politely,
+// once per domain. And a match is claimed ONLY when the page itself asserts
+// the identity — lib/dealer-identity.mjs owns those rules and the reason each
+// one exists. A parked domain, a different Eagle Auto Sales three states
 // away, or a lot using its accountant's domain all fail that check and are
-// dropped — matching nothing is honest, matching the wrong thing is not.
-// City-alone used to be an equal fallback even when a zip was known and
-// disagreed; a 30-sample hand-check on 2026-08-20 caught the failure mode
-// this comment already warned about — hudsoncollision.com matched "Hudson
-// Collision Center" + "Hudson" to a same-named, same-city-named shop in
-// Hudson, OHIO, not the licensed one in Hudson, NY — so zip now gates first.
+// dropped: matching nothing is honest, matching the wrong thing is not.
 //
 // Verified dealers are appended to the registry as "discovered", the same
 // contract as every discovery source: probe.mjs validates extraction before
@@ -33,6 +26,7 @@ import { readFile, writeFile } from "node:fs/promises";
 import { Resolver } from "node:dns/promises";
 import { fetchPage, setCacheTtl } from "./lib/http.mjs";
 import { squash, candidates, BRANDS } from "./lib/dealer-names.mjs";
+import { pageEvidence, identityRule } from "./lib/dealer-identity.mjs";
 
 const args = process.argv.slice(2);
 const WRITE = args.includes("--write");
@@ -100,7 +94,17 @@ console.error(`${work.length} dealers from ${csvPath}`);
 // ── stage 1+2: candidates → DNS ─────────────────────────────────────────────
 const registry = JSON.parse(await readFile(new URL("./registry/registry.json", import.meta.url), "utf-8"));
 const knownDomains = new Set(registry.sites.map((s) => s.domain.replace(/^www\./, "")));
-const TLDS = [".com", ".net", ".biz", ".us"];
+// .com/.net/.biz/.us by default: those four cover 19,744 + 999 + 29 + 58 of
+// the registry's domains against 31 .org and 9 .co, so a fifth is not worth a
+// quarter more DNS. That measurement is circular, though — we can only count
+// TLDs among domains this same generator (and OSM) ever found — so --tlds
+// exists to test the ones it would never have seen (gilmotors.co is a real
+// WA licensee's real site).
+const TLDS = (() => {
+  const i = args.indexOf("--tlds");
+  if (i < 0) return [".com", ".net", ".biz", ".us"];
+  return args[i + 1].split(",").map((t) => (t.startsWith(".") ? t : `.${t}`));
+})();
 const resolver = new Resolver();
 resolver.setServers(["1.1.1.1", "8.8.8.8"]);
 
@@ -149,29 +153,9 @@ await Promise.all(Array.from({ length: CONC }, async () => {
     fetched++;
     if (fetched % 200 === 0) console.error(`  fetched ${fetched}/${fetchList.length} (${verified.size} verified)`);
     if (res.status !== 200 || !res.body) continue;
-    const body = res.body.slice(0, 500_000);
-    const pageDigits = body.replace(/\D+/g, "");
-    const pageSquash = squash(body.replace(/<[^>]+>/g, " ")).replace(/ /g, "");
+    const evidence = pageEvidence(res.body);
     for (const i of owners) {
-      const d = work[i];
-      let how = null;
-      if (d.phone?.length === 10 && pageDigits.includes(d.phone)) how = "phone";
-      else {
-        const nm = squash(d.name).replace(/ /g, "");
-        const cty = squash(d.city ?? "").replace(/ /g, "");
-        // Zip beats city when we have one: a hand-check of 30 verified NY
-        // matches (2026-08-20) found hudsoncollision.com — a real business,
-        // just the wrong one — matched on name + "hudson" because Hudson, OH
-        // has an unrelated same-named collision shop and the roll's own
-        // Hudson, NY zip was never required. City names collide across
-        // states constantly (Hudson, Springfield, Rome, Greenville…); a
-        // 5-digit zip essentially never does. So when the roll row carries a
-        // zip, require it — city alone no longer clears the gate on its own.
-        if (nm.length >= 8 && pageSquash.includes(nm)) {
-          if (d.zip && pageDigits.includes(d.zip)) how = "name+zip";
-          else if (!d.zip && cty && pageSquash.includes(cty)) how = "name+city";
-        }
-      }
+      const how = identityRule(work[i], evidence);
       if (how) verified.set(i, { domain: dom, how });
     }
   }
@@ -195,6 +179,7 @@ if (DUMP_UNRESOLVED) {
 const today = new Date().toISOString().slice(0, 10);
 const HOW_TEXT = {
   phone: "the roll's phone number",
+  "name+phone9": "licensed name + the roll's phone number, which the state published a digit short",
   "name+zip": "licensed name + the roll's zip",
   "name+city": "licensed name + city (the roll row carries no zip)",
 };
