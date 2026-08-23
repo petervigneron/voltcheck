@@ -14,9 +14,9 @@
       "expectedEveryHours": 27
     },
     "completeness-audit": {
-      "lastRunAt": "2026-08-23T13:16:06.490Z",
-      "result": "fail",
-      "detail": "fetch failed HTTP 500",
+      "lastRunAt": "2026-08-23T16:01:59.069Z",
+      "result": "warn",
+      "detail": "35842 live, 4 broken-parser lots (baseline 0)",
       "expectedEveryHours": 27
     },
     "sync-guard": {
