@@ -49,7 +49,8 @@ process.on("uncaughtException", (e) => {
 // stop us honouring dealers who blocked us by name, which is the opposite
 // of the intent.
 const CRAWLER_TOKEN = "voltcheckbot";
-const BOT_PAGE = "https://voltcheck.net/bot";
+export const BOT_PAGE = "https://voltcheck.net/bot";
+export const CRAWLER_DECLARATION = `VoltcheckBot/0.1 (+${BOT_PAGE})`;
 const lastHit = new Map(); // host → timestamp
 const robotsCache = new Map(); // host → {disallow: string[]}
 
@@ -161,7 +162,7 @@ export async function fetchRaw(url, { timeoutMs = 15000 } = {}) {
         "accept-language": "en-US,en;q=0.9",
         // We are not hiding: this names the crawler and links the page that
         // explains what it is and how to exclude it.
-        "x-crawler": `VoltcheckBot/0.1 (+${BOT_PAGE})`,
+        "x-crawler": CRAWLER_DECLARATION,
       },
       redirect: "follow",
       signal: ctrl.signal,
@@ -189,7 +190,7 @@ export async function politePostJson(url, { headers = {}, body, timeoutMs = 2000
         "user-agent": UA,
         accept: "application/json, text/plain, */*",
         "content-type": "application/json",
-        "x-crawler": `VoltcheckBot/0.1 (+${BOT_PAGE})`,
+        "x-crawler": CRAWLER_DECLARATION,
         ...headers,
       },
       body: JSON.stringify(body),
@@ -222,7 +223,7 @@ export async function politeGetJson(url, { headers = {}, timeoutMs = 20000 } = {
       headers: {
         "user-agent": UA,
         accept: "application/json, text/plain, */*",
-        "x-crawler": `VoltcheckBot/0.1 (+${BOT_PAGE})`,
+        "x-crawler": CRAWLER_DECLARATION,
         ...headers,
       },
       redirect: "follow",
@@ -241,7 +242,7 @@ export async function politeGetJson(url, { headers = {}, timeoutMs = 20000 } = {
   }
 }
 
-function parseRobots(txt) {
+export function parseRobots(txt) {
   // Collect Allow + Disallow + Crawl-delay rules that apply to * or to us.
   // Minimal parser: good enough to respect intent; unknown directives ignored.
   // Allow is collected (not just Disallow) because the standard lets a specific
@@ -304,6 +305,23 @@ function robotsPathMatch(path, rule) {
 // used for the longest-match tie-break below.
 const robotsRuleLen = (rule) => (rule.endsWith("$") ? rule.length - 1 : rule.length).valueOf();
 
+// Pure rule evaluation over an already-parsed robots group, exported so a
+// lane that fetches robots.txt through a different client (the Autotrader
+// discovery script reads it inside Chromium, because its edge blocks plain
+// Node fetch) still applies exactly the same matching rules as the crawl.
+// `target` is whatever the caller wants matched — pathname, or pathname plus
+// query string where the site's rules reach into the query (`*keyword=`).
+export function robotsRulesAllow({ allow = [], disallow = [] }, target) {
+  // Standard precedence: the longest matching rule wins; an Allow ties out a
+  // Disallow of equal length. If nothing disallows the path, it is allowed.
+  let bestAllow = -1;
+  let bestDisallow = -1;
+  for (const rule of allow) if (robotsPathMatch(target, rule)) bestAllow = Math.max(bestAllow, robotsRuleLen(rule));
+  for (const rule of disallow) if (robotsPathMatch(target, rule)) bestDisallow = Math.max(bestDisallow, robotsRuleLen(rule));
+  if (bestDisallow < 0) return true;
+  return bestAllow >= bestDisallow;
+}
+
 export async function robotsAllows(url) {
   const u = new URL(url);
   if (!robotsCache.has(u.host)) {
@@ -314,15 +332,7 @@ export async function robotsAllows(url) {
       robotsCache.set(u.host, { allow: [], disallow: [] });
     }
   }
-  const { allow = [], disallow = [] } = robotsCache.get(u.host);
-  // Standard precedence: the longest matching rule wins; an Allow ties out a
-  // Disallow of equal length. If nothing disallows the path, it is allowed.
-  let bestAllow = -1;
-  let bestDisallow = -1;
-  for (const rule of allow) if (robotsPathMatch(u.pathname, rule)) bestAllow = Math.max(bestAllow, robotsRuleLen(rule));
-  for (const rule of disallow) if (robotsPathMatch(u.pathname, rule)) bestDisallow = Math.max(bestDisallow, robotsRuleLen(rule));
-  if (bestDisallow < 0) return true;
-  return bestAllow >= bestDisallow;
+  return robotsRulesAllow(robotsCache.get(u.host), u.pathname);
 }
 
 // Plenty of dealers serve only on www and refuse the apex outright
