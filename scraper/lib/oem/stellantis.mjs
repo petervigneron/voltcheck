@@ -1,4 +1,4 @@
-// Stellantis national inventory locator (Jeep / Dodge / Fiat).
+// Stellantis national inventory locator (Jeep / Dodge / Chrysler / Fiat).
 //
 // Every Stellantis US brand site drives its "Search New Inventory" tool off one
 // shared public REST endpoint that needs no auth token (just a normal browser
@@ -16,7 +16,7 @@
 // from 90210, 66101, 10001, 30301 all return the same 174 Wagoneer S). One call
 // per configuration (paginated by pageNumber, pageSize 500) covers the country,
 // so this certifies COMPLETE on the real per-brand domain (jeep.com/dodge.com/
-// fiatusa.com) — nightly delisting retires sold VINs (see gm.mjs). Each brand is
+// chrysler.com/fiatusa.com) — nightly delisting retires sold VINs (see gm.mjs). Each brand is
 // its own domain/report so a Jeep pull can never delist a Dodge car.
 //
 // The BEV GATE is structural, never a nameplate match: the site's own vehicle
@@ -38,8 +38,10 @@
 // ones under their own modelYearCode LINES — measured: Wrangler 4xe is line
 // 17 (IUJ202417: 26, IUJ202517: 59), Grand Cherokee 4xe line 19 (IUJ202419:
 // 289, IUJ202519: 10), Pacifica Plug-In Hybrid line 10 (IUC202510), and the
-// plain Wrangler/Grand Cherokee lines (10/20) contain ZERO 4xe across 4,200+
-// sampled rows, so the plug-in stock is invisible without sweeping the line
+// plain Wrangler/Grand Cherokee lines (10/20) contain ZERO 4xe across 2,373
+// sampled rows (the whole 1,216-row 2025 Wrangler line plus 500-row first
+// pages of the 2026 Wrangler/2025 Grand Cherokee lines and the full 2024
+// remainders), so the plug-in stock is invisible without sweeping the line
 // space. discoverPhevLines() therefore probes every modelYearCode
 // IU{B}{year}{00..39} over a rolling 4-year window (one 25-row page each;
 // every observed line is powertrain-pure, so page one settles it) and fully
@@ -363,7 +365,7 @@ function fiatConfigs(brand) {
 // modelYearCode space — {prefix}{year}{00..39} over a rolling 4-year window —
 // because the vehicleData catalog omits out-of-production lines entirely (the
 // header's Jeep 4xe measurement). One 25-row page decides a line: every line
-// observed is powertrain-pure (4,200+ rows sampled across the Wrangler/Grand
+// observed is powertrain-pure (2,373 rows sampled across the Wrangler/Grand
 // Cherokee gas lines held zero 4xe; the 4xe lines held nothing else), so a
 // first-page Plug-In Hybrid row marks the line and pullConfig then pages it
 // fully with the per-record gate still deciding each row. A probe FAILURE is
