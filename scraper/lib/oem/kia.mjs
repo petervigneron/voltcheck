@@ -38,11 +38,24 @@ export const KIA = {
 
 // Kia series codes for battery-electric nameplates (from the allSeries facet,
 // 2026-08-15). Niro EV is the BEV; the gas/hybrid Niro is a different series.
+//
+// PHEV series added 2026-08-23, read off the inventory landing page's own
+// series links (kia.com/us/en/inventory/landing names every series id):
+// 4AP "Sportage Plug-in Hybrid" and 7AP "Sorento Plug-in Hybrid" are their
+// own series, disjoint from the conventional-hybrid series (4AH/7AH) and the
+// gas ones (4AC/7AC) — the series id IS the powertrain gate, same as GAE vs
+// GAH for the Niro. Probed: 4AP = 891 national, 7AP = 314, and every row's
+// model reads "… Plug-in Hybrid". There is no GAP series on the landing page
+// (the Niro Plug-in Hybrid is out of the new lineup); its leftover new stock,
+// if any, is unreachable by series query and its used stock comes via CPO
+// below.
 const EV_SERIES = [
-  { code: "NAE", name: "EV6" },
-  { code: "PAE", name: "EV9" },
-  { code: "9AE", name: "EV3" }, // 2027, just launching — may be zero for now
-  { code: "GAE", name: "Niro EV" },
+  { code: "NAE", name: "EV6", evKind: "BEV" },
+  { code: "PAE", name: "EV9", evKind: "BEV" },
+  { code: "9AE", name: "EV3", evKind: "BEV" }, // 2027, just launching — may be zero for now
+  { code: "GAE", name: "Niro EV", evKind: "BEV" },
+  { code: "4AP", name: "Sportage Plug-in Hybrid", evKind: "PHEV" },
+  { code: "7AP", name: "Sorento Plug-in Hybrid", evKind: "PHEV" },
 ];
 
 // Certified Pre-Owned BEV nameplates (kia.com/us/services/en/cpo/inventory/
@@ -50,7 +63,22 @@ const EV_SERIES = [
 // 2026-08-15). CPO is *used* inventory — the higher-value half for a used-EV
 // site — and its records are richer than the New feed (real mileage, trim,
 // interior color, drivetrain, a proper VDP url, full dealer address).
-const CPO_EV_MODELS = ["EV6", "EV9", "Niro EV"];
+//
+// PHEV model names added 2026-08-23. "exactmatch" means it: each query
+// returned only its own nameplate (Niro Plug-In Hybrid 28 / Sportage 81 /
+// Sorento 48 national, every row's model restating "… Plug-in Hybrid",
+// nearMatch false throughout), and the "Niro EV" control returned only
+// Niro EVs — the plug-in and the conventional hybrid are separate models
+// here, so the model name is the gate. toCpoRecord still requires the row's
+// own model to agree with the queried kind.
+const CPO_EV_MODELS = [
+  { name: "EV6", evKind: "BEV" },
+  { name: "EV9", evKind: "BEV" },
+  { name: "Niro EV", evKind: "BEV" },
+  { name: "Niro Plug-In Hybrid", evKind: "PHEV" },
+  { name: "Sportage Plug-In Hybrid", evKind: "PHEV" },
+  { name: "Sorento Plug-In Hybrid", evKind: "PHEV" },
+];
 const CPO_API = "https://www.kia.com/us/services/en/cpo/inventory/exactmatch";
 const CPO_PAGE = 10; // server returns 10 per call regardless of the end-start window
 
@@ -86,13 +114,17 @@ const imageUrl = (imgs) => {
   return s.startsWith("/") ? `https://www.kia.com${s}` : s.startsWith("http") ? s : undefined;
 };
 
-function toRecord(hit, seriesName) {
+function toRecord(hit, series) {
   const vin = String(hit.vin ?? "").toUpperCase();
   if (!VIN_RE.test(vin)) return null;
   const year = Number(hit.year);
   if (!(year >= 1981 && year <= new Date().getFullYear() + 2)) return null;
-  const model = seriesName || String(hit.model ?? "").trim();
+  const model = String(hit.model ?? "").trim() || series.name;
   if (!model) return null;
+  // Belt for the series gate: a PHEV-series row must say "Plug-in" itself,
+  // and its seriesId (when echoed) must be the one queried.
+  if (hit.seriesId && String(hit.seriesId).toUpperCase() !== series.code) return null;
+  if (series.evKind === "PHEV" && !/plug/i.test(model)) return null;
   const { priceUsd, priceProvenance } = pickTaggedPrice("kia", [
     ["dealerPrice", num(hit.dealerPrice)],
     ["msrp", num(hit.msrp)],
@@ -119,8 +151,11 @@ function toRecord(hit, seriesName) {
     images: img ? [img] : [],
     sourceUrl: vdp || `https://www.kia.com/us/en/inventory/result?seriesId=${hit.seriesId ?? ""}`,
     dealerDomain: KIA.domain,
-    evKind: "BEV",
-    evConfidence: "high", // BEV series list, not a name match
+    evKind: series.evKind,
+    // Kia's own engine facet string for the electrified series; the PHEV
+    // series' rows also restate "Plug-in Hybrid" in their model name.
+    fuelType: series.evKind === "BEV" ? "Electric Motor" : "Plug-in Hybrid",
+    evConfidence: "high", // powertrain-specific series query + per-record model echo
     platform: "kia-locator",
     fromVdp: false,
     scrapedAt: new Date().toISOString(),
@@ -130,7 +165,7 @@ function toRecord(hit, seriesName) {
 // CPO exactmatch record: {dealer:{name,city,state,postalCode,latLong,…},
 // vehicle:{vin,year,mileage,internetPrice,trim,drivetrain,exteriorColor,
 // interiorColor,images,vdpUrl,…}}.
-function toCpoRecord(entry) {
+function toCpoRecord(entry, m) {
   const v = entry.vehicle ?? {};
   const d = entry.dealer ?? {};
   const vin = String(v.vin ?? "").toUpperCase();
@@ -139,6 +174,11 @@ function toCpoRecord(entry) {
   if (!(year >= 1981 && year <= new Date().getFullYear() + 2)) return null;
   const model = String(v.model ?? "").trim();
   if (!model) return null;
+  // exactmatch has been exact in practice, but require the row's own model to
+  // agree with what was asked: a PHEV query's rows must say "Plug-in", a BEV
+  // query's must not (the near-match machinery exists server-side, and a
+  // drifted match must drop rather than relabel).
+  if (m.evKind === "PHEV" ? !/plug/i.test(model) : /plug/i.test(model)) return null;
   const state = US_STATES.has(String(d.state ?? "").toUpperCase()) ? String(d.state).toUpperCase() : undefined;
   const zip = /^\d{5}/.test(String(d.postalCode ?? "")) ? String(d.postalCode).slice(0, 5) : undefined;
   // Window-sticker photos are served over http; rewrite to https so they load
@@ -171,7 +211,10 @@ function toCpoRecord(entry) {
     images: imgs,
     sourceUrl: vdp || (d.url && String(d.url).startsWith("http") ? d.url : "https://www.kia.com/us/en/inventory/result?view=cpo"),
     dealerDomain: KIA.domain,
-    evKind: "BEV",
+    evKind: m.evKind,
+    // Kia's own strings: engineType when the feed carries one, else the
+    // model's own powertrain word is what downstream verification reads.
+    fuelType: v.engineType || undefined,
     evConfidence: "high",
     platform: "kia-locator-cpo",
     fromVdp: Boolean(vdp),
@@ -182,27 +225,27 @@ function toCpoRecord(entry) {
 // Page one CPO model to exhaustion (start += 10 until the reported total is
 // covered or a page comes back short). Adds records to byVin; returns the
 // server's totalMatches so the caller can tally national coverage.
-async function searchCpoModel(model, byVin, report) {
+async function searchCpoModel(m, byVin, report) {
   let total = null;
   for (let start = 0; total === null || start < total; start += CPO_PAGE) {
     let data = null;
     for (let attempt = 0; ; attempt++) {
       const res = await politePostJson(CPO_API, {
         headers: { referer: "https://www.kia.com/us/en/inventory/result" },
-        body: { radius: CENTER.range, zipCode: CENTER.zip, model, transmissions: [], trims: [], year: "", dealers: [], sortBy: "LOWEST_PRICE", start, end: start + CPO_PAGE },
+        body: { radius: CENTER.range, zipCode: CENTER.zip, model: m.name, transmissions: [], trims: [], year: "", dealers: [], sortBy: "LOWEST_PRICE", start, end: start + CPO_PAGE },
       });
       report.fetched++;
       if (res.status === 200 && res.json?.dealerVehicles) { data = res.json; break; }
       const transient = String(res.status).startsWith("error:") || res.status === 429 || res.status >= 500;
       if (attempt === 0 && transient) { await new Promise((r) => setTimeout(r, 5000)); continue; }
-      report.errors.push(`${res.status} cpo=${model} start=${start}`);
+      report.errors.push(`${res.status} cpo=${m.name} start=${start}`);
       return total ?? 0;
     }
     if (total === null) total = data.totalMatches ?? 0;
     const page = data.dealerVehicles ?? [];
     if (!page.length) break; // ran dry early (inventory shifted mid-pull)
     for (const entry of page) {
-      const rec = toCpoRecord(entry);
+      const rec = toCpoRecord(entry, m);
       if (rec) byVin.set(rec.vin, rec);
     }
   }
@@ -258,7 +301,7 @@ export async function pullKia({ log = () => {} } = {}) {
     if (!data) continue; // error recorded; contributes to truncated below
     totalReported += data.count;
     for (const hit of data.items) {
-      const rec = toRecord(hit, series.name);
+      const rec = toRecord(hit, series);
       if (rec) byVin.set(rec.vin, rec);
     }
     log(`kia/${series.name} (new): ${data.count} nationwide, ${byVin.size} cumulative VINs`);
@@ -269,10 +312,10 @@ export async function pullKia({ log = () => {} } = {}) {
   // kia.com, so they MUST be pulled together into one report — certifying the
   // domain complete on a half-pull would delist the other half. A CPO failure
   // records an error, which flips truncated:true below.
-  for (const model of CPO_EV_MODELS) {
-    const cpoTotal = await searchCpoModel(model, byVin, report);
+  for (const m of CPO_EV_MODELS) {
+    const cpoTotal = await searchCpoModel(m, byVin, report);
     totalReported += cpoTotal;
-    log(`kia/${model} (cpo): ${cpoTotal} nationwide, ${byVin.size} cumulative VINs`);
+    log(`kia/${m.name} (cpo): ${cpoTotal} nationwide, ${byVin.size} cumulative VINs`);
   }
 
   report.evs = [...byVin.values()];
