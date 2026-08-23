@@ -31,7 +31,12 @@ export const EV_MODEL_RE = new RegExp(
     "i3\\b", "i4\\b", "i5\\b", "i7\\b", "\\bix\\b",
     "eqb", "eqe", "eqs",
     "polestar [234]", "r1t", "r1s", "lucid air", "lucid gravity",
-    "bz4x", "solterra", "prologue", "zdx",
+    // Toyota renamed the bZ4X to plain "bZ" for MY2026 (and added the bZ
+    // Woodland). "bz4x" no longer matches those names, so EchoPark's seven
+    // 2026 Toyota bZ came back unclassified on 2026-08-23. Anchored on the
+    // make word because a bare \\bbz\\b is exactly the kind of two-letter
+    // token the iX/C40 lessons above warn about.
+    "toyota bz\\b", "bz4x", "solterra", "prologue", "zdx",
     // The Lexus RZ enumerated its variants and got the list wrong as Lexus
     // added them: "rz ?[34]50" covered the RZ 350e and RZ 450e but not the
     // RZ 300e or the RZ 550e, so half of Lexus's only BEV nameplate fell

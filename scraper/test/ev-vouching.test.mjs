@@ -57,6 +57,16 @@ test("a listing vPIC refuted never reaches ingest at all", () => {
   assert.equal(admits(refuted), false);
 });
 
+test("the MY2026 Toyota bZ (renamed bZ4X) name-matches as a BEV candidate", () => {
+  // EchoPark 2026-08-23: seven 2026 "Toyota bZ" fell through because only
+  // "bz4x" was known. The rename is Toyota's, not a new car.
+  assert.deepEqual(classifyEv({ name: "2026 Toyota bZ XLE" }), { isEv: true, kind: "BEV?", confidence: "name_match" });
+  assert.deepEqual(classifyEv({ name: "2026 Toyota bZ Woodland" }), { isEv: true, kind: "BEV?", confidence: "name_match" });
+  // The token needs the make word in front, so stray "BZ" letters elsewhere
+  // stay unmatched.
+  assert.equal(classifyEv({ name: "2021 Mercedes-Benz GLE 350 BZ Edition" }).isEv, false);
+});
+
 test("classifyEv still refuses a plain gas/electric hybrid and admits a plug-in", () => {
   assert.equal(classifyEv({ fuelType: "Gas/Electric Hybrid", vehicleIdentificationNumber: "1HGCV3F17KA015397" }).isEv, false);
   const phev = classifyEv({ fuelType: "Plug-in Gas/Electric Hybrid", vehicleIdentificationNumber: "5YM23CS01P9S34188" });
