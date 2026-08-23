@@ -42,16 +42,16 @@
 // CONTROL: the identical client still gets 403 from Tesla's inventory API,
 // so no wall is being bypassed here; this host has none.
 //
-// POLESTAR 1 IS EXCLUDED, and this is a claims decision, not an oversight.
-// modelCode 232 returns 4 cars and the Polestar 1 is a plug-in hybrid: a
-// petrol engine driving the front axle. It would be listed as a BEV by our
-// own shared classifier, because EV_ONLY_WMIS contains "LPS" and Polestar's
-// WMI block is shared between the PHEV 1 and the BEV 2 — a real defect in
-// ev.mjs that this lane sidesteps by never asking about a Polestar 1 rather
-// than by relying on a WMI it knows to be wrong here. EV_MODEL_RE gets it
-// right ("polestar [234]" deliberately omits 1), so the claim below rests on
-// the nameplate, and 232 is simply not queried. Flag the WMI to the owner
-// before any other lane leans on it.
+// POLESTAR 1 (modelCode 232) is queried since 2026-08-23 and ships as what
+// it is: a PHEV. It was excluded while this lane was BEV-only — a claims
+// decision, because the shared classifier of that era would have mislabeled
+// it (the LPS WMI is shared between the PHEV 1 and the BEV 2; LPS has since
+// been REMOVED from EV_ONLY_WMIS for exactly that reason, 2026-08-18, so the
+// defect the old exclusion sidestepped no longer exists). The claim now
+// rests on the model file itself: code 232 is the Polestar 1, a nameplate
+// that has only ever been a plug-in hybrid, and its rows carry evKind
+// "PHEV". EV_MODEL_RE still deliberately omits the 1, so every such VIN is
+// held by ingest until vPIC answers, which for a Polestar 1 is a PHEV level.
 //
 // Completeness: CERTIFIES, and the enumeration is provable on both axes.
 // Down each model code, paging walks to metadata.totalCount exactly with zero
@@ -98,12 +98,13 @@ export const POLESTAR = {
 export const OEM_LOCATOR_DOMAINS = new Set([POLESTAR.domain]);
 
 // modelCode → the URL slug the pre-owned app uses, which is also what the
-// per-car page needs. Polestar 1 (232) is deliberately absent: PHEV, see
-// header. The full 100-999 code sweep found no other US codes.
+// per-car page needs. The full 100-999 code sweep found no other US codes.
+// 232 is the PHEV Polestar 1 (see header).
 const MODELS = [
   { code: "534", slug: "polestar-2", name: "Polestar 2" },
   { code: "359", slug: "polestar-3", name: "Polestar 3" },
   { code: "814", slug: "polestar-4", name: "Polestar 4" },
+  { code: "232", slug: "polestar-1", name: "Polestar 1", phev: true },
 ];
 
 const MARKET = "us"; // lowercase — "US" is a silent zero (see header)
@@ -191,11 +192,14 @@ function toRecord(ad, model, drops) {
   const state = stateFromZip(zip);
   if (!state) return bad("no dealer state");
 
-  // The nameplate is the claim: EV_MODEL_RE knows Polestar 2/3/4 are BEVs and
-  // deliberately does not know the PHEV Polestar 1, which this lane never
-  // asks for anyway. The WMI is NOT consulted here — "LPS" covers both the
-  // BEV 2 and the PHEV 1 (see header).
-  const isBev = EV_MODEL_RE.test(`${POLESTAR.make} ${name}`);
+  // The nameplate is the claim: EV_MODEL_RE knows Polestar 2/3/4 are BEVs
+  // and deliberately does not know the PHEV Polestar 1, whose rows carry
+  // their model file's own identity instead (header). The WMI is NOT
+  // consulted here — "LPS" covers both the BEV 2 and the PHEV 1.
+  const isBev = !model.phev && EV_MODEL_RE.test(`${POLESTAR.make} ${name}`);
+  // A 232 row that stopped calling itself a 1 means the code moved models —
+  // drop rather than ship the wrong identity.
+  if (model.phev && !/^1$/.test(name.trim())) return bad("model code 232 row is not a Polestar 1");
 
   const images = (ad.media ?? [])
     .filter((m) => !m?.mediaType || /image/i.test(String(m.mediaType)))
@@ -227,8 +231,8 @@ function toRecord(ad, model, drops) {
     images,
     sourceUrl: vdpUrl(model.slug, ad.id),
     dealerDomain: POLESTAR.domain,
-    evKind: isBev ? "BEV" : "BEV?",
-    evConfidence: isBev ? "high" : "name_match",
+    evKind: model.phev ? "PHEV" : isBev ? "BEV" : "BEV?",
+    evConfidence: model.phev || isBev ? "high" : "name_match",
     platform: "polestar-preowned-locator",
     fromVdp: false,
     scrapedAt: new Date().toISOString(),
@@ -332,9 +336,9 @@ export async function pullPolestar({ log = () => {} } = {}) {
   }
   report.evs = [...byVin.values()];
   report.vehiclePages = report.fetched;
-  report.notes.push("Polestar 1 (modelCode 232) is not queried — it is a plug-in hybrid (see module header)");
   const certified = report.evs.filter((r) => r.condition === "certified").length;
-  report.notes.push(`${report.evs.length} BEVs (${certified} certified pre-owned) across ${new Set(report.evs.map((r) => r.dealerName)).size} locations in ${new Set(report.evs.map((r) => r.state)).size} states`);
+  const phevN = report.evs.filter((r) => r.evKind === "PHEV").length;
+  report.notes.push(`${report.evs.length - phevN} BEVs + ${phevN} PHEV Polestar 1s (${certified} certified pre-owned) across ${new Set(report.evs.map((r) => r.dealerName)).size} locations in ${new Set(report.evs.map((r) => r.state)).size} states`);
   if (byVin.size < POLESTAR.minExpected) {
     report.errors.push(`collected ${byVin.size} < floor ${POLESTAR.minExpected} — the market identifier or a model code may have moved`);
   }
