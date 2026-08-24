@@ -21,10 +21,22 @@ test("a nameplate that lives only in the trim is kept — Lexus files the RZ as 
   assert.equal(classifyItem(item("MINI", "Hardtop 2 Door", "Cooper SE")).isEv, true);
 });
 
-test("a match that only appears across the model/trim join is rejected and counted", () => {
-  // "Grand Wagoneer" + "Series II" reads as Jeep's BEV "Wagoneer S" once the
-  // two fields are concatenated. Four petrol Wagoneers on the live lot.
+test("a petrol Grand Wagoneer is rejected — since the wagoneer-s anchor, by the classifier itself", () => {
+  // "Grand Wagoneer" + "Series II" used to read as Jeep's BEV "Wagoneer S"
+  // only when the two fields were concatenated, and the seam guard caught it.
+  // The 2026-08-23 \\b anchor on "wagoneer s" rejects the joined string too,
+  // so this is no longer a seam case — just not an EV, with no seam counter.
   const c = classifyItem(item("Jeep", "Grand Wagoneer", "Series II"));
+  assert.equal(c.isEv, false);
+  assert.ok(!c.seamOnly);
+});
+
+test("a match that only appears across the model/trim join is rejected and counted", () => {
+  // A real seam construct: "IONIQ" + "5 SEL" reads as "IONIQ 5" only once the
+  // fields are concatenated. The lane refuses to believe a straddling match
+  // and counts it, so a split nameplate shows up as a number, not a vanished
+  // car.
+  const c = classifyItem(item("Hyundai", "IONIQ", "5 SEL"));
   assert.equal(c.isEv, false);
   assert.equal(c.seamOnly, true);
 });
