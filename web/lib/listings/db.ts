@@ -396,23 +396,9 @@ export async function fetchListingsFromDbUncached(): Promise<Listing[] | null> {
     const rows: FeedRow[] = [];
     let after: string | undefined;
     for (;;) {
-      // no-store, deliberately (2026-08-24). These page fetches used to carry
-      // the feed tag and a day TTL, and the comment in CLAUDE.md was right
-      // that a HEALTHY walk blows the Data Cache's allowance and evicts
-      // itself — so caching bought nothing when things worked. What nobody
-      // priced in: a SHORT walk fits. Four deploys landed mid-ingest, their
-      // first renders walked a half-written database (32,250 of 129,510
-      // rows), those small pages were stored, and every later render — on
-      // ANY deployment, because the Data Cache is shared across deployments
-      // — replayed them byte for byte. The keyset walk faithfully reproduced
-      // its own truncation from cache while the database sat healed, and
-      // /api/revalidate's tag expiry demonstrably did not clear it. A
-      // poisoned walk was a STABLE state precisely because it was small.
-      // The walk is once a day behind the route caches; it can afford to be
-      // real every time.
       const res = await fetchWithRetry(`${feedUrl}${range}${after ? `&vin=gt.${after}` : ""}`, {
         headers: headers(),
-        cache: "no-store",
+        next: { revalidate: FEED_REVALIDATE_SECONDS, tags: [FEED_CACHE_TAG] },
       });
       if (!res.ok) throw new Error(`PostgREST ${res.status}`);
       const body = await res.text();
@@ -459,10 +445,7 @@ export async function fetchListingsFromDbUncached(): Promise<Listing[] | null> {
     try {
       const countRes = await fetchWithRetry(`${base}/rest/v1/listings?select=vin&delisted_at=is.null`, {
         headers: { ...headers(), Range: "0-0", Prefer: "count=exact" },
-        // no-store like the pages above — it was never cached in practice
-        // anyway (PostgREST answers Range requests 206, Next only stores
-        // 200s), so this only makes the truth explicit.
-        cache: "no-store",
+        next: { revalidate: FEED_REVALIDATE_SECONDS, tags: [FEED_CACHE_TAG] },
       });
       if (!countRes.ok) throw new Error(`PostgREST ${countRes.status}`);
       const n = Number(countRes.headers.get("content-range")?.split("/")[1]);

@@ -29,14 +29,14 @@ import type { FeedOrigin } from "@/lib/listings/source";
 // buildCardIndex runs once per shard, but its Supabase reads are the same
 // fetches with the same cache entries, so Next serves them from the data cache
 // and the database is walked once per nightly however many shards there are.
-// A regeneration of this route is a full feed walk, and on 2026-08-24 that
-// walk got big enough to be killed by the platform's default function
-// ceiling: six shards cached a 32,250-row mid-ingest snapshot, and every
-// background regeneration against the healed 129k-row database died silently
-// — ISR serves the stale body forever when the regen never completes, which
-// is quieter than the fallback-throw this route uses for a sick database.
-// 300 s is deliberate headroom: the walk measures ~52 s from outside on a
-// healthy Nano and 249 s was observed under CPU starvation (2026-08-22).
+// A shard render can be a full feed walk when the data-cache entries have
+// expired, and at 129k cars that walk measures 90-177 s from inside a
+// function (2026-08-24) — over some platform defaults. 300 s is headroom:
+// ~52 s from outside on a healthy Nano, 249 s observed under the 08-22 CPU
+// starvation. (This constant was first added mid-incident with a comment
+// blaming killed regenerations for stale shards; the real story that day was
+// the 6→24 shard change and a checker still summing six — see the CLAUDE.md
+// deploy notes — but the ceiling itself is correct and stays.)
 export const maxDuration = 300;
 export const dynamic = "force-static";
 export const revalidate = 86400;
