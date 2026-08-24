@@ -937,17 +937,52 @@ jobs:
           # Only a whole-fleet view may write that file, and this job no longer
           # has one. refresh-fallback.yml owns it: it walks live_listings_feed
           # weekly and crawls nothing.
-          git add scraper/registry/registry.json scraper/registry/gm-warranty.json scraper/registry/vpic-cache.json
-          git diff --staged --quiet && { echo "nothing to commit"; exit 0; }
-          git commit -m "Nightly: registry refresh [skip ci]"
-          for i in 1 2 3 4 5; do
-            if git pull --rebase --autostash && git push; then
-              echo "data refresh pushed"; exit 0
-            fi
-            git rebase --abort 2>/dev/null || true
-            sleep $((i * 10))
+          # ONE FILE PER COMMIT, and that is the fix. These three used to share
+          # a commit, and sharing is what killed all of them: vpic-cache.json
+          # is 28 MB on ONE LINE, which git cannot merge at all — any change by
+          # two writers is a conflict on the same line, every time. It has
+          # rolling-crawl.yml writing it 48 times a day, so this job lost every
+          # overlap, aborted, retried into the identical conflict five times,
+          # and dropped the whole commit. Nothing from this step had landed
+          # since 2026-08-21 16:47, including gm-warranty.json, which was pure
+          # collateral: 1,400 per-VIN warranty records with no conflict of
+          # their own, unpublished for days because of a neighbour's.
+          #
+          # Each file now stands or falls alone, and the two per-VIN caches
+          # combine by KEY instead of by text (merge-vin-cache.mjs) so a
+          # concurrent writer composes with us instead of beating us. Same
+          # reset-then-merge order as the audit record below — merging before
+          # committing still conflicts; see that script's header.
+          for spec in "registry/registry.json:0:registry" \
+                      "registry/gm-warranty.json:1:GM warranty cache" \
+                      "registry/vpic-cache.json:0:vPIC cache"; do
+            file="${spec%%:*}"; rest="${spec#*:}"; indent="${rest%%:*}"; label="${rest#*:}"
+            mine="${RUNNER_TEMP:-/tmp}/$(basename "$file")"
+            cp "scraper/$file" "$mine" 2>/dev/null || continue
+            pushed=0
+            for i in 1 2 3 4 5; do
+              git checkout HEAD -- "scraper/$file" 2>/dev/null || true
+              git fetch origin main || true
+              if ! git pull --rebase --autostash; then
+                git rebase --abort 2>/dev/null || true
+                sleep $((i * 10)); continue
+              fi
+              # registry.json is hand-curated and NOT a per-VIN cache, so it is
+              # never key-merged — it keeps this run's copy and relies on its
+              # own commit no longer being hostage to the caches.
+              case "$file" in
+                registry/registry.json) cp "$mine" "scraper/$file" ;;
+                *) node scraper/merge-vin-cache.mjs --file "scraper/$file" --mine "$mine" --indent "$indent" ;;
+              esac
+              git add "scraper/$file"
+              git diff --staged --quiet && { echo "$label: nothing to commit"; pushed=1; break; }
+              git commit -m "Nightly: $label [skip ci]"
+              if git push; then echo "$label pushed"; pushed=1; break; fi
+              [ "$(git log -1 --format=%s)" = "Nightly: $label [skip ci]" ] && git reset --soft HEAD~1
+              sleep $((i * 10))
+            done
+            [ "$pushed" = "1" ] || echo "::warning::Could not push $label. Supabase already has tonight's listings; this file catches up next run."
           done
-          echo "::warning::Could not push the data refresh (likely raced the discovery sweep). Supabase already has tonight's listings; the repo snapshot will catch up on the next run."
 
       # The audit liveness record, alone, so no cache's conflict can take it
       # down. merge-audit-status.mjs folds in whatever landed while this run
