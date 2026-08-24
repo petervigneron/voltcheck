@@ -137,8 +137,38 @@ export function isAutoDealersDigital(html) {
 
 export const ADD_SRP_PATH = "/all-inventory/";
 
-export function autoDealersDigitalSeeds(origin) {
-  return [origin.replace(/\/$/, "") + ADD_SRP_PATH];
+// /all-inventory/ is the common path and NOT a universal one. Across the 30
+// rooftops the sweep found, four use something else — smartbuymalden.com and
+// mjlmotorcars.com "/active-inventory/", davidfamilyauto.com
+// "/used-inventory/", carsmartmn.com "/inventory" — and a seed hardcoded to
+// the one path reads them as empty lots. So the rooftop's OWN link is read off
+// the homepage we already have, the way overfuelSeeds does for a vendor whose
+// SRP slug is per-rooftop. Same-origin only: dfatampabay.com's inventory link
+// points at davidfamilyauto.com, and following a rooftop's link onto another
+// domain would file one dealer's cars under another's dealer_domain.
+const SRP_HREF_RE = /href="([^"?#]*\/(?:all-|active-|used-|new-)?inventory\/?)"/gi;
+
+export function autoDealersDigitalSeeds(origin, html) {
+  const base = origin.replace(/\/$/, "");
+  const seeds = [base + ADD_SRP_PATH];
+  if (typeof html === "string") {
+    SRP_HREF_RE.lastIndex = 0;
+    for (const m of html.matchAll(SRP_HREF_RE)) {
+      let u;
+      try {
+        u = new URL(m[1], base + "/");
+      } catch {
+        continue;
+      }
+      if (u.origin !== new URL(base).origin) continue;
+      // WordPress serves these with the trailing slash and builds /page/N/ on
+      // it; mjlmotorcars.com's own homepage links a slashless path that 404s.
+      const href = u.pathname.replace(/\/?$/, "/");
+      const abs = u.origin + href;
+      if (!seeds.includes(abs)) seeds.push(abs);
+    }
+  }
+  return seeds;
 }
 
 /** WordPress paging: /all-inventory/page/2/. The SRP prints no pager the two
@@ -155,7 +185,8 @@ export function autoDealersDigitalNextPageUrl(pageUrl, cardsOnPage) {
   } catch {
     return null;
   }
-  const m = u.pathname.match(/^(.*\/all-inventory\/)(?:page\/(\d+)\/?)?$/);
+  // Any of the rooftop SRP slugs, not just /all-inventory/ — see the seeds.
+  const m = u.pathname.match(/^(.*\/(?:all-|active-|used-|new-)?inventory\/)(?:page\/(\d+)\/?)?$/);
   if (!m) return null;
   const next = (Number(m[2]) || 1) + 1;
   if (next > 200) return null; // a lot this size is a bug, not a lot

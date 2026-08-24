@@ -292,16 +292,25 @@ async function crawlDealer(domain) {
   }
   if (siteInfo.get(domain)?.platform === "automanager") seedAutoManager();
 
-  // Auto Dealers Digital: one /all-inventory/ SRP, 25 cars a page, WordPress
+  // Auto Dealers Digital: one inventory SRP, 25 cars a page, WordPress
   // /page/N/. The homepage links it but the probe's own path list never did,
-  // which is the whole reason these rooftops read as "0 VIN vehicles".
-  let addSeeded = false;
-  function seedAutoDealersDigital() {
-    if (addSeeded) return;
-    addSeeded = true;
-    const seeds = autoDealersDigitalSeeds(origin).filter((u) => !visited.has(u));
+  // which is the whole reason these rooftops read as "0 VIN vehicles". The
+  // slug varies by rooftop (4 of 30 are not "/all-inventory/"), so the page
+  // is passed in when there is one to read — same as Overfuel above.
+  // Two passes, and both are needed: the blind one puts the common path in the
+  // queue before anything is fetched, and the page-read one adds the rooftop's
+  // own slug once a page is in hand. Collapsing them into a single latch would
+  // mean a rooftop labelled in the registry never gets its slug read.
+  let addSeededBlind = false;
+  let addSeededFromPage = false;
+  function seedAutoDealersDigital(html) {
+    if (html == null ? addSeededBlind : addSeededFromPage) return;
+    if (html == null) addSeededBlind = true;
+    else addSeededFromPage = true;
+    const seeds = autoDealersDigitalSeeds(origin, html).filter((u) => !visited.has(u) && !queue.includes(u));
+    if (!seeds.length) return;
     queue.unshift(...seeds);
-    report.notes.push("autodealersdigital: seeded SRP");
+    report.notes.push(`autodealersdigital: seeded ${seeds.length} SRP(s)`);
   }
   if (siteInfo.get(domain)?.platform === "autodealersdigital") seedAutoDealersDigital();
 
@@ -777,7 +786,7 @@ async function crawlDealer(domain) {
     if (isOverfuel(res.body)) seedOverfuel(res.body, res.finalUrl);
     if (!dealrSeeded && isDealrCloud(res.body)) seedDealr();
     if (!amSeeded && isAutoManager(res.body)) seedAutoManager();
-    if (!addSeeded && isAutoDealersDigital(res.body)) seedAutoDealersDigital();
+    if (!addSeededFromPage && isAutoDealersDigital(res.body)) seedAutoDealersDigital(res.body);
     if (!mcsSeeded && isMotorcarSites(res.body)) seedMotorcar();
     if (!oaSeeded && isOneAudi(res.body)) seedOneAudi();
     const dealerFire = extractDealerFire(res.body);

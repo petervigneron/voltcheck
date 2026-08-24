@@ -94,6 +94,8 @@ import { overfuelVehicles, overfuelSeeds, isOverfuel, overfuelApiConfig, countOv
 import { dealrVehicles, DEALR_SRP_PATH } from "./lib/platforms/dealrcloud.mjs";
 import { autoManagerVehicles, AUTOMANAGER_SRP_PATH } from "./lib/platforms/automanager.mjs";
 import {
+  isAutoDealersDigital,
+  autoDealersDigitalSeeds,
   autoDealersDigitalEntries,
   autoDealersDigitalVehicles,
   autoDealersDigitalCardCount,
@@ -451,6 +453,12 @@ async function probeSite(site) {
     // vendor's rooftops are subdomains of the vendor, so most of them enter
     // the registry with no platform on the row at all.
     ...(isMotorcarSites(home.body) && site.platform !== "motorcarsites" ? [origin + MOTORCAR_SRP_PATH] : []),
+    // Auto Dealers Digital, recognised from the homepage as well as from the
+    // label — most of these rooftops entered the registry with no platform on
+    // the row. Its SRP slug is per-rooftop (4 of 30 are not "/all-inventory/",
+    // and one of those four is the only page with the lot on it), so the
+    // rooftop's own link is read off the homepage the way Overfuel's is.
+    ...(isAutoDealersDigital(home.body) ? autoDealersDigitalSeeds(origin, home.body) : []),
   ];
 
   // Try SRP seeds + top-ranked sitemap inventory URLs until something

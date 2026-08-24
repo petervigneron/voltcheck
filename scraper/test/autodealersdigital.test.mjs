@@ -129,6 +129,40 @@ test("seeds the SRP path the probe's guess table never had", () => {
   ]);
 });
 
+// 4 of the 30 rooftops the sweep found do not use /all-inventory/, and on one
+// of them the other slug is the only page with the lot on it.
+test("seeds also read the rooftop's own inventory slug off its homepage", () => {
+  const home =
+    '<html><head><link href="/wp-content/themes/website-theme-wp-v2/x.css"></head><body>' +
+    '<a href="https://smartbuymalden.com/active-inventory/">Inventory</a>' +
+    '<a href="/active-inventory">Inventory</a>' + // slashless: mjlmotorcars links one, and it 404s
+    '<a href="/about-us">About</a></body></html>';
+  assert.deepEqual(autoDealersDigitalSeeds("https://smartbuymalden.com", home), [
+    "https://smartbuymalden.com/all-inventory/",
+    "https://smartbuymalden.com/active-inventory/",
+  ]);
+
+  // dfatampabay.com links its inventory on ANOTHER domain. Following it would
+  // file davidfamilyauto.com's cars under dfatampabay's dealer_domain.
+  const offSite =
+    '<html><head><link href="/wp-content/themes/website-theme-wp-v2/x.css"></head>' +
+    '<body><a href="https://davidfamilyauto.com/used-inventory/">Inventory</a></body></html>';
+  assert.deepEqual(autoDealersDigitalSeeds("https://dfatampabay.com", offSite), [
+    "https://dfatampabay.com/all-inventory/",
+  ]);
+});
+
+test("the pager follows whichever slug the rooftop uses", () => {
+  assert.equal(
+    autoDealersDigitalNextPageUrl("https://smartbuymalden.com/active-inventory/", ADD_PAGE_SIZE),
+    "https://smartbuymalden.com/active-inventory/page/2/",
+  );
+  assert.equal(
+    autoDealersDigitalNextPageUrl("https://davidfamilyauto.com/used-inventory/page/2/", ADD_PAGE_SIZE),
+    "https://davidfamilyauto.com/used-inventory/page/3/",
+  );
+});
+
 // The regression this module was rewritten for. A popup-delimited reader
 // returns the right COUNT on both templates and mislabels every card on one.
 test("entries keep each card's own title and price on both templates", () => {
