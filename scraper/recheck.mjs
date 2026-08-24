@@ -326,7 +326,12 @@ async function worker() {
         alive.push({ vin }); // tonight's own OEM-locator sweep still lists it
       }
     } else {
-      errors++; // 403, 5xx, redirect loop — proves nothing
+      // 403, 5xx, redirect loop, or fetchRaw's "challenge" (a bot wall served
+      // with a 200 that its own backed-off retries couldn't clear — Motive's
+      // rate challenge, lib/http.mjs). Proves nothing. The challenge case is
+      // load-bearing: as a raw body it would read "200 without the VIN" and
+      // hand a live car a soft-gone strike.
+      errors++;
     }
   }
 }

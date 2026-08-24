@@ -38,7 +38,7 @@ import {
   pullOverfuelApi,
 } from "./lib/platforms/overfuel.mjs";
 import { dealrVehicles, dealrNextPageUrl, dealrSeeds, isDealrCloud } from "./lib/platforms/dealrcloud.mjs";
-import { isRideMotive, rideMotiveConfig, pullRideMotiveApi, isMotiveChallenge } from "./lib/platforms/ridemotive.mjs";
+import { isRideMotive, rideMotiveConfig, pullRideMotiveApi } from "./lib/platforms/ridemotive.mjs";
 import {
   isAutoManager,
   autoManagerSeeds,
@@ -370,23 +370,18 @@ async function crawlDealer(domain) {
     const url = queue.shift();
     if (visited.has(url)) continue;
     visited.add(url);
-    let res = await fetchPage(url);
+    const res = await fetchPage(url);
     report.fetched++;
-    // Motive's edge challenge answers 200 on any of its rooftops' hostnames
-    // (see isMotiveChallenge in the platform file). Ask again, slower, twice;
-    // a page still challenged poisons the visit's completeness below rather
-    // than reading as a dealer with no cars.
-    for (const backoffMs of [3000, 8000]) {
-      if (!isMotiveChallenge(res.body)) break;
-      await new Promise((r) => setTimeout(r, backoffMs));
-      res = await fetchPage(url);
-      report.fetched++;
-    }
-    if (isMotiveChallenge(res.body)) {
-      report.errors.push(`motive-challenge ${url}`);
+    // A bot wall served with a 200 (Motive's rate challenge, the F5
+    // interstitial). fetchPage has already re-asked slower twice and given up
+    // (see isBotChallenge in lib/http.mjs), so a page still challenged
+    // poisons the visit's completeness rather than reading as a dealer with
+    // no cars.
+    if (res.status === "challenge") {
+      report.errors.push(`bot-challenge ${url}`);
       // Never let a challenged walk certify completeness — a complete 0-car
       // visit at a live Motive rooftop is a delisting instruction to db-sync.
-      report.stoppedEarly = "motive edge challenge";
+      report.stoppedEarly = "bot challenge";
       continue;
     }
     if (res.status === "robots_disallowed") {

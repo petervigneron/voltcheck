@@ -149,28 +149,41 @@ async function readBody(res) {
   return buf.toString("utf-8");
 }
 
-export async function fetchRaw(url, { timeoutMs = 15000 } = {}) {
+export async function fetchRaw(url, { timeoutMs = 15000, challengeBackoffMs = CHALLENGE_BACKOFF_MS } = {}) {
   const u = new URL(url);
-  await politeDelay(u.host);
-  const ctrl = new AbortController();
-  const t = setTimeout(() => ctrl.abort(), timeoutMs);
-  try {
-    const res = await fetch(url, {
-      headers: {
-        "user-agent": UA,
-        accept: "text/html,application/xhtml+xml,application/xml,application/json;q=0.9,*/*;q=0.8",
-        "accept-language": "en-US,en;q=0.9",
-        // We are not hiding: this names the crawler and links the page that
-        // explains what it is and how to exclude it.
-        "x-crawler": CRAWLER_DECLARATION,
-      },
-      redirect: "follow",
-      signal: ctrl.signal,
-    });
-    const body = await readBody(res);
-    return { status: res.status, body, finalUrl: res.url };
-  } finally {
-    clearTimeout(t);
+  // The challenge retry lives HERE, not in the lanes, because the wall shows
+  // up on whatever fetch happens to cross the rate meter: the crawl's page
+  // walk, recheck's VDP reads (where a 200-without-VIN challenge would count
+  // as a sold-car strike), the probe, the graph builders. Every one of them
+  // treats a non-200 status as "proves nothing", so answering "challenge"
+  // after the retries is the safe default everywhere at once.
+  for (let attempt = 0; ; attempt++) {
+    await politeDelay(u.host);
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), timeoutMs);
+    try {
+      const res = await fetch(url, {
+        headers: {
+          "user-agent": UA,
+          accept: "text/html,application/xhtml+xml,application/xml,application/json;q=0.9,*/*;q=0.8",
+          "accept-language": "en-US,en;q=0.9",
+          // We are not hiding: this names the crawler and links the page that
+          // explains what it is and how to exclude it.
+          "x-crawler": CRAWLER_DECLARATION,
+        },
+        redirect: "follow",
+        signal: ctrl.signal,
+      });
+      const body = await readBody(res);
+      if (res.status === 200 && isBotChallenge(body)) {
+        if (attempt >= challengeBackoffMs.length) return { status: "challenge", body: null, finalUrl: res.url };
+        await new Promise((r) => setTimeout(r, challengeBackoffMs[attempt]));
+        continue;
+      }
+      return { status: res.status, body, finalUrl: res.url };
+    } finally {
+      clearTimeout(t);
+    }
   }
 }
 
@@ -354,6 +367,37 @@ function altHost(url) {
 
 const TRANSPORT_FAIL = /^error:/;
 
+// A wall that answers 200. Two vendors do this to us, and both used to read
+// as "dealer with no inventory online":
+//
+//  - F5 Distributed Cloud: `<title>Client Challenge</title>` plus assets under
+//    `/_fs-ch-…/`, ~3 KB. Found 2026-08-23 in the probe's written-off pile
+//    (faithsford.com, hondaoflisle.com, lincolnofmansfield.com — all live
+//    franchise stores).
+//  - Motive's edge: `<title>Checking your browser - reCAPTCHA</title>` or the
+//    vendor's own `/recaptcha/challengepage` path, ~20 KB, HTTP 200, on ANY
+//    page of ANY of its hundreds of rooftop hostnames. It meters the AGGREGATE
+//    rate against the one origin behind them all — which the per-host limiter
+//    above cannot see — and the same URL answers in full seconds later
+//    (measured 2026-08-24: 83% of fetches challenged at concurrency 10, 29%
+//    at 2, against 342 working rooftops in the registry).
+//
+// Matched on the title tag or the vendor's own challenge path, never on prose
+// that merely mentions the phrase, and only on wall-sized bodies — the title
+// words are common enough that a dealer could legitimately publish them.
+//
+// It is a REFUSAL and it is handled as one, per the header: fetchRaw re-asks
+// the same URL with the same identity after 3 s and 8 s — a slower ask, not
+// evasion — and if the wall is still up it answers `status: "challenge"`
+// instead of handing the interstitial to an extractor that would read it as
+// an empty lot. No proxy, no UA change, no attempt to run the challenge.
+export function isBotChallenge(html) {
+  if (typeof html !== "string" || html.length > 200000) return false;
+  if (/<title>\s*Client Challenge\s*<\/title>/i.test(html) && /\/_fs-ch-[A-Za-z0-9]/.test(html)) return true;
+  return /<title>\s*Checking your browser - reCAPTCHA\s*<\/title>/i.test(html) || /recaptcha\/challengepage/i.test(html);
+}
+const CHALLENGE_BACKOFF_MS = [3000, 8000];
+
 export async function fetchPage(url) {
   // Garbage in (a relative href that escaped resolution, a malformed
   // sitemap entry) must come back as an answer, not an exception — an
@@ -363,8 +407,11 @@ export async function fetchPage(url) {
   } catch {
     return { status: "error:invalid-url", body: null, finalUrl: url };
   }
+  // A challenge interstitial cached before fetchRaw learned to refuse them
+  // would replay as a valid page for the whole TTL; treat it as a miss.
   const cached = await cacheGet(url);
-  if (cached) return { status: cached.status, body: cached.body, finalUrl: cached.finalUrl, fromCache: true };
+  if (cached && !isBotChallenge(cached.body))
+    return { status: cached.status, body: cached.body, finalUrl: cached.finalUrl, fromCache: true };
   if (!(await robotsAllows(url))) return { status: "robots_disallowed", body: null, finalUrl: url };
   let first;
   try {

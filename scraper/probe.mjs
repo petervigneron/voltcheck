@@ -229,6 +229,17 @@ async function probeSite(site) {
   const failures = [];
   const home = await fetchPage(`${origin}/`);
   fetched++;
+  // fetchPage answers "challenge" when a 200 turned out to be a bot wall and
+  // its own backed-off retries couldn't get past it (lib/http.mjs). Same
+  // verdict as the body-level check below — the interstitial just never
+  // reaches us as a body any more.
+  if (home.status === "challenge") {
+    site.status = "blocked";
+    site.notes = `${site.notes ?? ""} | probe ${today}: bot challenge served with a 200 at the front door`.trim();
+    setVerdict(site, "blocked", { fetched, why: "client-challenge" });
+    console.error(`  ${site.domain} → blocked [challenge]`);
+    return;
+  }
   if (home.status !== 200 || !home.body) {
     const kind = failureKind(home.status);
     site.status = typeof home.status === "number" ? `http-${home.status}` : "unreachable";

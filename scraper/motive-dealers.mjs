@@ -109,20 +109,14 @@ let REQUESTS = 0;
 // to answer the challenge, and a hard cap of two retries. A domain still
 // challenged after those is recorded as `challenge`, which is an honest
 // negative the next run can re-queue, rather than a silent "publishes
-// nothing".
-const CHALLENGE_RE = /recaptcha\/challengepage|Checking your browser - reCAPTCHA/i;
-const isChallenge = (body) => typeof body === "string" && body.length < 200000 && CHALLENGE_RE.test(body);
-const CHALLENGE_BACKOFF_MS = [3000, 8000];
-
+// nothing". The detection and the backed-off retries were first built here
+// and then moved down into lib/http.mjs's fetchRaw (isBotChallenge) so the
+// crawl, recheck and probe lanes get them too — fetchPage now answers
+// `status: "challenge"` itself, and this wrapper only keeps the request
+// count and turns transport throws into answers.
 async function fetchMotive(url) {
-  for (let attempt = 0; ; attempt++) {
-    let res;
-    try { res = await fetchPage(url); } catch (e) { res = { status: `error:${e.name}`, body: null }; }
-    REQUESTS++;
-    if (!isChallenge(res.body)) return res;
-    if (attempt >= CHALLENGE_BACKOFF_MS.length) return { ...res, status: "challenge", body: null };
-    await new Promise((r) => setTimeout(r, CHALLENGE_BACKOFF_MS[attempt]));
-  }
+  REQUESTS++;
+  try { return await fetchPage(url); } catch (e) { return { status: `error:${e.name}`, body: null }; }
 }
 
 async function algoliaConfig() {

@@ -73,13 +73,10 @@ const ASSET_RE = /(?:api|assets|images|echo|bronco)\.app\.ridemotive\.com/i;
 // concurrency 10, 29% at 2; the same URL answered in full seconds later). To
 // a crawl this page is indistinguishable from a rooftop that publishes
 // nothing: isRideMotive() never fires, the walk certifies a complete 0-car
-// visit, and db-sync would DELIST the rooftop's live cars. The crawl re-asks
-// with backoff (same identity, same URL — a slower ask is not evasion) and
-// refuses to certify the visit if the edge still won't answer.
-export const MOTIVE_CHALLENGE_RE = /recaptcha\/challengepage|Checking your browser - reCAPTCHA/i;
-export function isMotiveChallenge(html) {
-  return typeof html === "string" && html.length < 200000 && MOTIVE_CHALLENGE_RE.test(html);
-}
+// visit, and db-sync would DELIST the rooftop's live cars. The detection and
+// the backed-off retry live in lib/http.mjs (isBotChallenge / fetchRaw) so
+// every lane that touches these hostnames gets them; a fetch the edge still
+// won't answer comes back as `status: "challenge"`, never as this body.
 
 export function isRideMotive(html) {
   return typeof html === "string" && ASSET_RE.test(html);

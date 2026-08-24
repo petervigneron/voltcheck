@@ -112,7 +112,9 @@ test("a bot challenge served with a 200 is a wall, not an empty lot", () => {
   assert.equal(isBotChallenge('<html><title>Used Cars</title><a href="/_fs-ch-x">x</a></html>'), false);
   // A full dealer homepage is far bigger than any interstitial; the size cap
   // keeps this off the hot path for the 13,000 pages that are not walls.
-  assert.equal(isBotChallenge("<title>Client Challenge</title>/_fs-ch-a" + "x".repeat(20001)), false);
+  // (200 KB, not the F5 page's own 3 KB: Motive's interstitial is ~20 KB and
+  // has to fit under the same cap.)
+  assert.equal(isBotChallenge("<title>Client Challenge</title>/_fs-ch-a" + "x".repeat(200001)), false);
   assert.equal(isBotChallenge(null), false);
 });
 

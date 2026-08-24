@@ -22,39 +22,26 @@
  *  "other" is a 3xx/4xx that is neither — rare, and not evidence either way,
  *  so the caller treats it as an answer rather than a reason to retry. */
 export function failureKind(status) {
-  if (typeof status !== "number") return status === "robots_disallowed" ? "blocked" : "transient";
+  if (typeof status !== "number") {
+    // "challenge" is fetchRaw's answer AFTER its own backed-off retries — the
+    // wall held three times, so it repeats like a 403 does, not like a 429.
+    if (status === "robots_disallowed" || status === "challenge") return "blocked";
+    return "transient";
+  }
   if (status === 403 || status === 401 || status === 451) return "blocked";
   if (status === 404 || status === 410) return "gone";
   if (status === 429 || status >= 500) return "transient";
   return "other";
 }
 
-/** A wall that answers 200.
- *
- *  F5 Distributed Cloud's bot management serves its interstitial with a 200
- *  and a three-kilobyte body: `<title>Client Challenge</title>`, assets under
- *  a `/_fs-ch-…/` path, and a script that has to run before anything else is
- *  served. Nothing about the response is a status code, so failureKind never
- *  saw it and the row came back "0 VIN vehicles, 0 sitemap urls" —
- *  indistinguishable from a dealer with no inventory online, which is the
- *  exact confusion this module exists to end. Three rows in a seeded random
- *  400 of the written-off pile were this (faithsford.com, hondaoflisle.com,
- *  lincolnofmansfield.com, 2026-08-23), all of them live franchise stores.
- *
- *  It is a REFUSAL, so it is recorded as one and not worked around: the house
- *  rule is that a challenge is a wall (see lib/http.mjs's header — no
- *  challenge-solving, owner's decision).
- *
- *  Matched on the title plus the vendor's own path prefix together. The title
- *  alone is three common words and a dealer could legitimately publish it. */
-export function isBotChallenge(html) {
-  if (typeof html !== "string" || html.length > 20000) return false;
-  if (/<title>\s*Client Challenge\s*<\/title>/i.test(html) && /\/_fs-ch-[A-Za-z0-9]/.test(html)) return true;
-  // Motive's edge challenge: same contract (HTTP 200, page is a wall). The
-  // TITLE TAG or the vendor's own challenge path — prose merely mentioning
-  // the phrase stays a normal page, same reasoning as F5 above.
-  return /<title>\s*Checking your browser - reCAPTCHA\s*<\/title>/i.test(html) || /recaptcha\/challengepage/i.test(html);
-}
+/** A wall that answers 200 — the F5 "Client Challenge" interstitial and
+ *  Motive's reCAPTCHA rate challenge. The detector (and its history) moved to
+ *  lib/http.mjs, where fetchRaw now enforces it for every lane: a wall body is
+ *  retried with backoff and then answered as `status: "challenge"`, so callers
+ *  mostly meet it as a status (see failureKind above) rather than a body. The
+ *  re-export keeps the body-level check available for responses that reach a
+ *  lane through some other client. */
+export { isBotChallenge } from "./http.mjs";
 
 /** spaSignals packs its hosts into one "api-hosts:a+b+c" token. Unpack it so
  *  the registry row can carry a list and api-leads.mjs can stop regexing
