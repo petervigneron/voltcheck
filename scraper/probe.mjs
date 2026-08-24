@@ -151,8 +151,19 @@ const SEED = flag("--seed", 1);
 const RETRY_CONCURRENCY = flag("--retry-concurrency", 1);
 const NO_RETRY = process.argv.includes("--no-retry");
 
-const regUrl = new URL("./registry/registry.json", import.meta.url);
-const registry = JSON.parse(await readFile(regUrl, "utf-8"));
+// --sites-file <path>: probe rows from a JSON file instead of the registry,
+// and write the verdicts back to that file. A discovery lane that has produced
+// candidate rows needs to know whether the extractors work on them BEFORE
+// anyone hand-curates them into registry.json — and the registry is a shared,
+// hand-curated file that several sessions have open at once, so appending
+// hundreds of unvalidated rows to it just to measure them is exactly the kind
+// of write this project has been bitten by. The file may be a bare array of
+// rows or a `{sites:[…]}` object; it is rewritten in the shape it arrived in.
+const SITES_FILE = strFlag("--sites-file", null);
+const regUrl = SITES_FILE ? new URL(SITES_FILE, `file://${process.cwd()}/`) : new URL("./registry/registry.json", import.meta.url);
+const loaded = JSON.parse(await readFile(regUrl, "utf-8"));
+const bareArray = Array.isArray(loaded);
+const registry = bareArray ? { sites: loaded } : loaded;
 const matched = domainList
   ? registry.sites.filter((s) => domainList.has(s.domain.toLowerCase()))
   : registry.sites
@@ -538,7 +549,8 @@ if (transient.length && !NO_RETRY) {
 // registry is hand-curated), so rewriting the file from a registry loaded
 // hours ago would clobber any edit made meanwhile. Re-read at write time and
 // fold in only the fields this probe actually changes, keyed by domain.
-const fresh = JSON.parse(await readFile(regUrl, "utf-8"));
+const reread = JSON.parse(await readFile(regUrl, "utf-8"));
+const fresh = Array.isArray(reread) ? { sites: reread } : reread;
 const probed = new Map(candidates.map((s) => [s.domain, s]));
 for (const site of fresh.sites) {
   const p = probed.get(site.domain);
@@ -548,7 +560,7 @@ for (const site of fresh.sites) {
   site.platform = p.platform;
   if (p.probe) site.probe = p.probe;
 }
-await writeFile(regUrl, JSON.stringify(fresh, null, 2));
+await writeFile(regUrl, JSON.stringify(bareArray ? fresh.sites : fresh, null, 2));
 const counts = fresh.sites.reduce((a, s) => ((a[s.status] = (a[s.status] ?? 0) + 1), a), {});
 const verdicts = candidates.reduce((a, s) => ((a[s.probe?.verdict ?? "none"] = (a[s.probe?.verdict ?? "none"] ?? 0) + 1), a), {});
 console.error(`probe: this run's verdicts ${JSON.stringify(verdicts)}`);
