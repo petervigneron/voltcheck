@@ -21,7 +21,10 @@ import type { FeedOrigin } from "@/lib/listings/source";
 // Served in SHARDS files rather than one. Vercel refuses to store a prerendered
 // response over ~19 MB, so a single file made that cap a hard limit on how many
 // cars the site could carry; the packed form (lib/listings/pack.ts) bought room
-// but the ceiling would have come back with the next season of inventory.
+// but the ceiling would have come back with the next season of inventory — and
+// did, on 2026-08-24, through a different door: a COLD (MISS-path) render is
+// capped at ~4.5 MB, far below the store cap. The count lives on pack.ts's
+// SHARDS and its comment carries that incident.
 //
 // buildCardIndex runs once per shard, but its Supabase reads are the same
 // fetches with the same cache entries, so Next serves them from the data cache
@@ -108,7 +111,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ shard: 
   const { shard } = await params;
   // The seventh body under this route: the first-paint payload — the top page
   // of featured cards plus the band, suggestions, and counts, a couple dozen
-  // KB against the shards' 3.3 MB (lib/listings/firstPaint.ts). It lives here
+  // KB against the shards' megabytes (lib/listings/firstPaint.ts). It lives here
   // rather than in its own route so it inherits this file's exact caching
   // shape: render-on-first-request, never prerendered at build (the 2026-08-16
   // lesson above), CDN-cached for the same day as the shards it fronts. Same

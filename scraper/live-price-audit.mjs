@@ -63,7 +63,9 @@ const arg = (n, d) => { const i = process.argv.indexOf(n); return i >= 0 ? proce
 const BASE = arg("--base", "https://voltcheck.net");
 const JSON_OUT = arg("--json", null);
 const MIN_COHORT = Number(arg("--min-cohort", 8));
-const SHARDS = 6;
+// Keep in step with web/lib/listings/pack.ts SHARDS (this lane can't import
+// TS). 6 → 24 on 2026-08-24; pack.ts's comment has the incident.
+const SHARDS = 24;
 
 // Wide enough that an ordinary market spread never trips it — a loud check
 // nobody trusts gets muted, which is worse than no check. Every incident this

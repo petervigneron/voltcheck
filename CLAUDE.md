@@ -66,19 +66,26 @@ while the database is busy.
 After a deploy reports Ready: **verify the domain moved** (curl voltcheck.net
 for content only the new build has; one 2026-08-16 deploy stayed unaliased
 until `vercel promote <deployment-url>`), then **warm the browse index** —
-`curl voltcheck.net/api/index/first` and `/api/index/0` through `/5` — because
-the first-paint payload and the shards render on first request rather than at
-build time (deliberate: prerendering them put every deploy at the database's
-mercy). Warm `first` first: it is the one the next visitor's first card waits
-on. Then **warm the sitemaps** — `/sitemap/0.xml` through `/5.xml` — which
-render on first request for the same reason since 2026-08-22.
+`curl voltcheck.net/api/index/first` and `/api/index/0` through `/23` —
+because the first-paint payload and the shards render on first request rather
+than at build time (deliberate: prerendering them put every deploy at the
+database's mercy). Warm `first` first: it is the one the next visitor's first
+card waits on. **A shard answering 413 (CONTENT_TOO_LARGE) means the shard
+payload has outgrown Vercel's ~4.5 MB cold-render cap again** — that is the
+2026-08-24 incident (129k cars ÷ 6 shards = 7.1 MB; deployments with existing
+cache entries revalidated fine, fresh ones could not warm at all; recovered
+with `vercel promote <previous>`); the fix is raising SHARDS in
+web/lib/listings/pack.ts and its keep-in-step consumers, never trimming the
+feed. Then **warm the sitemaps** — `/sitemap/0.xml` through `/5.xml` (the
+sitemap shard count is separate and still 6) — which render on first request
+for the same reason since 2026-08-22.
 
 Then **check the shards' row counts, not their status codes.** A poisoned
 shard answers 200. On 2026-08-21 five of them served ~9,800 rows each where
 ~16,700 was right, hiding 34,000 cars for most of a day; ~9,788 is what the
 committed fallback snapshot divides into, so that is very likely what it was.
-The six counts must sum to the `total` in `/api/index/first` and sit within a
-few percent of each other. `scraper/feed-shard-check.mjs` is this check, and
+The shard counts must sum to the `total` in `/api/index/first` and sit within
+a few percent of each other. `scraper/feed-shard-check.mjs` is this check, and
 it runs every 6 hours in feed-audits.yml.
 
 **Do not deploy while Supabase is erroring.** Since 2026-08-22 this is a hard
@@ -117,7 +124,7 @@ is the GitHub Actions secret `FEED_REVALIDATE_SECRET` (plaintext in the local
 `docs/feed-revalidate-secret.txt`; the route pins its sha256). After any
 **out-of-cycle db-sync**, send that POST yourself — until the next nightly,
 shoppers are seeing yesterday's feed. And don't point full-feed scripts at
-Supabase when `voltcheck.net/api/index/0`–`5` already serve the same rows off
+Supabase when `voltcheck.net/api/index/0`–`23` already serve the same rows off
 Vercel's CDN for free.
 
 ## Database

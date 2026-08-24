@@ -70,7 +70,10 @@ const SUM_TOLERANCE = 0.03;
 // only fires when a shard is a different vintage from its siblings — the
 // 2026-08-21 shape exactly.
 const SHARD_BALANCE_TOLERANCE = 0.25;
-const SHARDS = [0, 1, 2, 3, 4, 5];
+// Keep in step with web/lib/listings/pack.ts SHARDS (this lane can't import
+// TS). 6 → 24 on 2026-08-24: a cold shard render is capped at ~4.5 MB and a
+// six-way split of 129k cars was 7.1 MB — pack.ts's comment has the incident.
+const SHARDS = Array.from({ length: 24 }, (_, i) => i);
 
 async function fetchText(path, timeoutMs = 60_000) {
   const ctrl = new AbortController();

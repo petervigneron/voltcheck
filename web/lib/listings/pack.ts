@@ -78,14 +78,30 @@ interface PackedRow {
  * How many files the index is served in. Vercel caps a single prerendered
  * response at ~19 MB; one file held every car, so the cap was a ceiling on the
  * whole inventory — 39k cars filled 31 MB of it and blocked every deploy until
- * the packing above. Six files make the cap ~114 MB of packed rows, which is
- * several times any inventory this site is likely to carry, and the browser
- * fetches them at once so a shopper waits for the slowest, not the sum.
+ * the packing above. Six files made that cap ~114 MB of packed rows, and the
+ * browser fetches them at once so a shopper waits for the slowest, not the sum.
  *
- * Read by both the route (which prerenders one response per shard) and the
- * browser (which asks for all of them), so the two can't disagree.
+ * 6 → 24 on 2026-08-24, because the store cap turned out not to be the
+ * binding one. A COLD render — the MISS path a fresh deployment's warming
+ * curls take, before any cache entry exists — is a plain function response,
+ * and Vercel caps those at ~4.5 MB (413, x-vercel-error: CONTENT_TOO_LARGE).
+ * At 129,499 cars a six-way shard was 7.1 MB, so a fresh deployment could
+ * not warm its own shards AT ALL: every numbered shard 413'd until
+ * `vercel promote <previous>` restored the prior deployment. The failure had
+ * been invisible because deployments with EXISTING entries revalidate
+ * through the cache-write path (store cap ~19 MB, so 7.1 MB fit) — the same
+ * data the cold path refuses. Deploys 9 hours apart straddled the cliff.
+ * Twenty-four shards are ~1.8 MB each today and stay under the cold cap
+ * past 250k cars, beyond any plausible US EV+PHEV inventory.
+ *
+ * Read by both the route (which renders one response per shard) and the
+ * browser (which asks for all of them), so the two can't disagree. The
+ * consumers that CANNOT read it — scraper/feed-shard-check.mjs,
+ * scraper/live-price-audit.mjs (the .mjs lane can't import TS), the warm
+ * loops in nightly.yml / refresh-site.yml, and CLAUDE.md's deploy steps —
+ * each carry the count with a keep-in-step note pointing here.
  */
-export const SHARDS = 6;
+export const SHARDS = 24;
 
 /** Which shard a row belongs to. Round-robin, so the shards stay within a row
  *  or two of each other however the inventory is distributed. */

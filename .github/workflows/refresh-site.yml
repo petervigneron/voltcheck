@@ -193,7 +193,9 @@ jobs:
           curl -fsS --retry 3 --max-time 60 -X POST \
             -H "x-revalidate-secret: $FEED_REVALIDATE_SECRET" https://voltcheck.net/api/revalidate \
             || { echo "::warning::/api/revalidate unreachable; 24h backstop applies"; exit 0; }
-          for s in first 0 1 2 3 4 5; do
+          # 24 index shards since 2026-08-24 — keep in step with
+          # web/lib/listings/pack.ts SHARDS, whose comment has the incident.
+          for s in first $(seq 0 23); do
             curl -fsS --retry 2 --max-time 300 -o /dev/null "https://voltcheck.net/api/index/$s" \
               || echo "::warning::shard $s warm failed; its first visitor pays the render"
           done

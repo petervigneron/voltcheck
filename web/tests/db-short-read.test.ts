@@ -22,6 +22,7 @@ import {
   SHORT_READ_FAIL_DROP,
   __setFeedCacheEscapeForTest,
 } from "../lib/listings/db";
+import { SHARDS } from "../lib/listings/pack";
 
 // ── classifyFeedRead: the pure calibration, no network involved ──────────
 
@@ -136,7 +137,7 @@ test("a truncated read is still served to the visitor, but escapes the day-long 
     const rows = await fetchListingsFromDbUncached();
     assert.ok(rows, "a short read must still be served, not turned into null/fallback");
     assert.equal(rows!.length, 600, "the visitor gets what was actually read, not a blocked/empty response");
-    assert.deepEqual(calls, [6], "a FAIL-level short read must trigger exactly one cache-escape call (SHARDS=6)");
+    assert.deepEqual(calls, [SHARDS], "a FAIL-level short read must trigger exactly one cache-escape call, told the real shard count");
   } finally {
     restoreFetch();
     restoreEscape();
