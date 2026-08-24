@@ -76,13 +76,15 @@ jobs:
           # up, cross-kind zero, every new group traced to a deliberate
           # coverage expansion (that day: AutoFunds + Mazda + Mitsubishi
           # crawls doubled the plug-in population, 111 -> 152 groups).
-          # Lowered 152 -> 77 on 2026-08-24 after the data6.ts research
-          # tranche took coverage from 44.5% to 94.4%; the remaining 77 are
-          # mostly exotics (Bentley/McLaren/Lamborghini/Ferrari), Land Rover
-          # P460e/P550e, and pre-2021 Ford Energi nameplates.
+          # Lowered 152 -> 77 -> 38 on 2026-08-24 as the two data6.ts research
+          # tranches took coverage from 44.5% to 99.1%. The remaining 38 are
+          # the honest tail: bare-model Volvo T8s (a 2-character trim token the
+          # matcher requires exact), Honda bare Clarity (needs a VIN
+          # discriminator), the unverified-model-year 2026 Artura, Audi Q5 55
+          # TFSI e, and single-listing spellings.
           rc=0
           node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs \
-            scripts/phev-enrichment-gap.mjs --max-groups 77 --top 40 || rc=$?
+            scripts/phev-enrichment-gap.mjs --max-groups 38 --top 40 || rc=$?
           if [ "$rc" -eq 10 ]; then
             echo "::error::PHEV enrichment gap check failed — a plug-in nameplate went live with no enrichment row, a row stopped matching, or a plug-in is showing a battery-electric car's facts. See the ranked list above."
             exit 1

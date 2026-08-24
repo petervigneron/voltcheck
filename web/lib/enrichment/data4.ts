@@ -3164,6 +3164,10 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     // bare-"X5" rows, which is where it is load-bearing: those must not match
     // a petrol xDrive40i.
     id: "x5-45e-2021-23", make: "BMW", model: "X5 PHEV", modelYears: [2021, 2023], packVariant: "PHEV",
+    // "X5 xDrive45e" as a MODEL string surfaced in the 2026-08-24 gap run (7
+    // live listings) — the badge in the model names the plug-in itself, so it
+    // aliases here the same way "X5 xDrive50e" already does on the 50e row.
+    modelAliases: ["X5 xDrive45e"],
     range: {
       epaRangeMi: f(31, "mfr", "high", "xDrive45e electric-only EPA range", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=42807"),
       epaRangeTotalMi: f(400, "mfr", "high", undefined, "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=42807"),
