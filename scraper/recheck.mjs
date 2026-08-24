@@ -39,6 +39,7 @@ import { OEM_LOCATOR_DOMAINS as LUCID_LOCATOR_DOMAINS } from "./lib/oem/lucid.mj
 import { OEM_LOCATOR_DOMAINS as DRIVEWAY_LOCATOR_DOMAINS } from "./lib/oem/driveway.mjs";
 import { OEM_LOCATOR_DOMAINS as ECHOPARK_LOCATOR_DOMAINS } from "./lib/oem/echopark.mjs";
 import { OEM_LOCATOR_DOMAINS as ACURA_CPO_LOCATOR_DOMAINS } from "./lib/oem/acura-cpo.mjs";
+import { OEM_LOCATOR_DOMAINS as MAZDA_LOCATOR_DOMAINS } from "./lib/oem/mazda.mjs";
 import { oemAliveVins, trustGoneVerdict } from "./lib/recheck-oem-crosscheck.mjs";
 import { JSONLD, DCS_TILE, DEALR_ENTRY, DDC_INTERNET } from "./lib/price-provenance.mjs";
 
@@ -71,7 +72,13 @@ import { JSONLD, DCS_TILE, DEALR_ENTRY, DDC_INTERNET } from "./lib/price-provena
 // session). A recheck of one could never say "alive" — only "gone" — so
 // letting recheck near this domain would delist the whole lane. echopark.mjs
 // certifies its own sweep complete instead.
-const OEM_LOCATOR_DOMAINS = new Set([...GM_LOCATOR_DOMAINS, HYUNDAI.domain, KIA.domain, ...NISSAN_LOCATOR_DOMAINS, ...BMW_LOCATOR_DOMAINS, ...MERCEDES_LOCATOR_DOMAINS, ...STELLANTIS_LOCATOR_DOMAINS, ...GENESIS_LOCATOR_DOMAINS, ...VW_LOCATOR_DOMAINS, ...POLESTAR_LOCATOR_DOMAINS, ...ENTERPRISE_LOCATOR_DOMAINS, ...LEXUS_LOCATOR_DOMAINS, ...LUCID_LOCATOR_DOMAINS, ...SUBARU_LOCATOR_DOMAINS, ...DRIVEWAY_LOCATOR_DOMAINS, ...ECHOPARK_LOCATOR_DOMAINS, ...ACURA_CPO_LOCATOR_DOMAINS]);
+//
+// mazdausa.com IS here, for the mirror image of the vw.com problem: its
+// per-VIN page answers 200 with the VIN echoed for a VIN that does not exist
+// (measured 2026-08-23 against JM3KKCHA8T1000000, alongside a real one), so a
+// VIN-present reading would call a sold car alive and the page can never say
+// "gone". mazda.mjs certifies its own national sweep complete instead.
+const OEM_LOCATOR_DOMAINS = new Set([...GM_LOCATOR_DOMAINS, HYUNDAI.domain, KIA.domain, ...NISSAN_LOCATOR_DOMAINS, ...BMW_LOCATOR_DOMAINS, ...MERCEDES_LOCATOR_DOMAINS, ...STELLANTIS_LOCATOR_DOMAINS, ...GENESIS_LOCATOR_DOMAINS, ...VW_LOCATOR_DOMAINS, ...POLESTAR_LOCATOR_DOMAINS, ...ENTERPRISE_LOCATOR_DOMAINS, ...LEXUS_LOCATOR_DOMAINS, ...LUCID_LOCATOR_DOMAINS, ...SUBARU_LOCATOR_DOMAINS, ...DRIVEWAY_LOCATOR_DOMAINS, ...ECHOPARK_LOCATOR_DOMAINS, ...ACURA_CPO_LOCATOR_DOMAINS, ...MAZDA_LOCATOR_DOMAINS]);
 
 function flag(name, fallback) {
   const i = process.argv.indexOf(name);

@@ -52,6 +52,7 @@ export const OEM_LOCATOR_DOMAINS = new Set([
   "honda-cpo",
   "acuracertified.com",
   "stellantis-cpo",
+  "mazdausa.com",
 ]);
 
 /** "oem" for a national locator pull, "dealer" for a crawled rooftop. */

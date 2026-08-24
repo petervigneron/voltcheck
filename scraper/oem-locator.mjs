@@ -69,47 +69,35 @@
 //            Model codes discovered from the catalogue's marketing `types`, so
 //            the lane picked up Trailseeker + Uncharted the day they shipped.
 //            ~1.4k new + ~100 certified BEVs → lib/oem/subaru.mjs
+//   Mazda  — mazdausa.com/api/inv/search, open to plain Node, and the pile the
+//            2026-08-15 probe wrote off because it was looking for BEVs.
+//            Mazda's plug-ins are their OWN CARLINES — C9P "MAZDA CX-90 PHEV"
+//            and C7P "MAZDA CX-70 PHEV", disjoint from the petrol C90/C70 and
+//            from the conventional-hybrid 50H — and `vc` is a server-side
+//            filter over that distinction, which is what makes the powertrain
+//            gate structural instead of a name guess. The search is
+//            DEALER-SCOPED (dlrId required, no zip/radius), but dlrId and yr
+//            both take comma lists, so 548 dealers become 3 chunks and the
+//            whole year window one query. New AND certified, in one puller
+//            because they share the domain: ~2,300 new + ~460 certified
+//            plug-ins, plus the last certified MX-30 EV — the only US Mazda
+//            BEV ever, still reachable through isEvModel → lib/oem/mazda.mjs
 //
 // Probed and found to have NO US BEV to sell — negatives, control-tested, so
 // nobody spends another day on them (the Acura ZDX note in the locator memory
-// is the model for this). Both APIs are OPEN and buildable; only the cars are
-// missing, so each entry says what to do when that changes.
-//   Mazda  — mazdausa.com/api/inv/search is open to plain Node and answers
-//            with `vc` (the CARLINE code, e.g. CX5 — not the year-prefixed
-//            26CX5 the page markup uses, which silently returns 0 and is how
-//            an hour went), `yr`, `dlrId` (from /handlers/dealer.ajax), `s=d`,
-//            `p`, `ps`, `cond=n|c`. Mazda's catalogue at /api/vehicles/model/
-//            {modelCodeWithYear} carries a structural BEV flag, isEvModel, and
-//            all twelve models the inventory tool offers for 2026 read false —
-//            the CX-70 PHEV (C7P) and CX-90 PHEV (C9P) included, correctly.
-//            The only US Mazda BEV ever was the MX-30 EV: /api/vehicles/model/
-//            23m30 still resolves it (title "Mazda MX-30 EV", isEvModel true,
-//            carlineCode M30), and vc=M30 returns 0 new AND 0 certified across
-//            2019-2027 over all 58 California-region dealers — California was
-//            its only market. Control on the same query shape at the same
-//            moment: 1,930 new CX-5, 151 certified CX-5, 156 certified CX-30.
-//            Build the lane on isEvModel when the 6e lands; it is a day's work.
+// is the model for this).
 //   Mitsubishi — clickshop.mitsubishicars.com/api/graphql (an AutoFi BFF) is
 //            open to plain Node; introspection is off, so the operations came
 //            out of the _next chunks (VehiclesSummary / SearchVehiclesTotal /
 //            SearchVehicles, all taking {filters}). With filters:{} — no geo
 //            scope, i.e. the whole national index — the fuel facet lists
-//            exactly Gasoline and Hybrid, and the model facet lists Outlander
-//            Sport, Eclipse Cross, Outlander, Outlander PHEV, Mirage G4,
-//            Mirage. Counted: 12,673 vehicles total, fuelType Electric 0,
-//            Gasoline 12,101, Hybrid 572 — and 12,101 + 572 = 12,673 exactly,
-//            so the facet partitions the entire index and no BEV can be hiding
-//            in an unqueried bucket. Mitsubishi's own electrified-lineup page
-//            agrees: the 2027 Eclipse Sportback EV is "Coming Soon", with no
-//            price and no Build & Price. The Outlander PHEV "does not
-//            qualify" was a BEV-era verdict: since 2026-08-23 the OEM lanes
-//            carry plug-ins, and that 572-car Hybrid bucket (mostly
-//            Outlander PHEV) is in-scope product for a NEW lane on this open
-//            AutoFi BFF. Same for Mazda above — the CX-70 PHEV (C7P) and
-//            CX-90 PHEV (C9P) model files are real on an open API. Neither
-//            was built in the PHEV extension pass (scope: extend existing
-//            lanes only); they are the two largest known PHEV piles still
-//            untapped in this file. Revisit when the Eclipse Sportback ships.
+//            exactly Gasoline and Hybrid, fuelType Electric returns 0, and the
+//            two buckets sum to the national total exactly, so no BEV can be
+//            hiding in an unqueried bucket. Mitsubishi's own electrified page
+//            agrees: the 2027 Eclipse Sportback EV is "Coming Soon". The
+//            Hybrid bucket is the Outlander PHEV, which IS in scope now the
+//            OEM lanes carry plug-ins — a lane on this open BFF is the next
+//            thing to build here.
 //   Fiat   — has a lane already, inside the Stellantis family rather than its
 //            own file: STELLANTIS_BRANDS' fiat entry queries the 500e by
 //            modelYearCode because fiatusa.com's robots forbids the /services/
@@ -218,6 +206,7 @@ import { LUCID, LUCID_NEW, pullLucid, pullLucidNew } from "./lib/oem/lucid.mjs";
 import { HONDA_CPO, pullHondaCpo } from "./lib/oem/honda-cpo.mjs";
 import { ACURA_CPO, pullAcuraCpo } from "./lib/oem/acura-cpo.mjs";
 import { STELLANTIS_CPO, pullStellantisCpo } from "./lib/oem/stellantis-cpo.mjs";
+import { MAZDA, pullMazda } from "./lib/oem/mazda.mjs";
 
 // One registry of pullers keyed by brand. Each entry is a thunk returning a
 // crawl.mjs-shaped report; new OEM families plug in here without touching the
@@ -253,6 +242,7 @@ const PULLERS = {
   [HONDA_CPO.key]: { domain: HONDA_CPO.domain, run: () => pullHondaCpo({ log }) },
   [ACURA_CPO.key]: { domain: ACURA_CPO.domain, run: () => pullAcuraCpo({ log }) },
   [STELLANTIS_CPO.key]: { domain: STELLANTIS_CPO.domain, run: () => pullStellantisCpo({ log }) },
+  [MAZDA.key]: { domain: MAZDA.domain, run: () => pullMazda({ log }) },
 };
 
 const args = process.argv.slice(2);
@@ -261,7 +251,7 @@ function flag(name, fallback) {
   return i >= 0 ? args[i + 1] : fallback;
 }
 const OUT_DIR = flag("--out", "out");
-const wanted = flag("--brands", "chevrolet,gmc,cadillac,carbravo,hyundai,hyundai-cpo,kia,nissan,nissan-cpo,bmw,bmw-cpo,mercedes,jeep,dodge,chrysler,fiat,genesis,genesis-cpo,ford-blue-advantage,honda,honda-cpo,acura-cpo,stellantis-cpo,audi,vw,volvo,polestar,lexus,lucid,lucid-new,subaru,enterprise,driveway,echopark").split(",").map((s) => s.trim().toLowerCase());
+const wanted = flag("--brands", "chevrolet,gmc,cadillac,carbravo,hyundai,hyundai-cpo,kia,nissan,nissan-cpo,bmw,bmw-cpo,mercedes,jeep,dodge,chrysler,fiat,genesis,genesis-cpo,ford-blue-advantage,honda,honda-cpo,acura-cpo,stellantis-cpo,audi,vw,volvo,polestar,lexus,lucid,lucid-new,subaru,mazda,enterprise,driveway,echopark").split(",").map((s) => s.trim().toLowerCase());
 const selected = wanted.filter((k) => PULLERS[k]);
 if (!selected.length) {
   console.error(`oem-locator: no known brands in "${wanted}" (have: ${Object.keys(PULLERS).join(",")})`);
