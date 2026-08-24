@@ -27,6 +27,12 @@ const SIGNATURES = [
   // signal, never the brand word: a dealer is free to be named "… Sync".
   // lib/platforms/dealersync.mjs reads /Inventory/Search instead.
   { platform: "dealersync", res: [/\b(?:dealer-cdn|images)\.dealersync\.com/i] },
+  // Vehica: a WordPress car-dealership theme. Its VDPs carry no JSON-LD at all
+  // — the car is an Elementor label/value table — so the whole lot comes out of
+  // WordPress's own REST API instead (lib/platforms/vehica.mjs). Anchored on
+  // the theme and plugin asset paths, not the bare word, which a dealer could
+  // put in its own copy.
+  { platform: "vehica", res: [/wp-content\/(?:themes|plugins)\/vehica/i] },
   // OneAudi before dealer.com: Audi's own platform loads a "labels-prod…
   // /dealer.com.js" tag on inventory pages and serves some assets through
   // dealer.com hosts, so 20 of the 21 Audi rooftops that reached "working"

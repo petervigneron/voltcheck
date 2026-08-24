@@ -200,6 +200,13 @@ export const RECHARGED_PRICE = "recharged-price";
 // AUTOFUNDS_INTERNET documents).
 export const EVERCARS_PRICE = "evercars-price";
 
+// The Vehica WordPress theme's price custom field — the single value inside
+// the record's `vehica_currency_*` object, which is the number the card and
+// the VDP print ($26,900 on 5YJYGDEE1MF087036, getusedtesla.com 2026-08-24).
+// There is no second price field on this platform to rank against it, so a
+// record carrying more than one currency field abstains rather than pick.
+export const VEHICA_PRICE = "vehica-price";
+
 // OEM/aggregator inventory APIs. Each lane reads one documented field out of
 // one vendor's endpoint; none of them shares a code path with any other, so
 // each gets its own tag rather than a single "oem" bucket that would let a
@@ -255,7 +262,7 @@ const KNOWN = new Set([
   MOTIVE_PRICE, AUTOMANAGER_PRICE, AUTOFUNDS_INTERNET, AUTOFUNDS_REDUCED,
   MOTORCARSITES_PRICE,
   ONEAUDI_SALE, WAYNEREAVES_PRICE,
-  DEALERSYNC_FINAL, RECHARGED_PRICE, EVERCARS_PRICE,
+  DEALERSYNC_FINAL, RECHARGED_PRICE, EVERCARS_PRICE, VEHICA_PRICE,
 ]);
 
 /** True for a tag this build knows how to emit. OEM lane tags are accepted by

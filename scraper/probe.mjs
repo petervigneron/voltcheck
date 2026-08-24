@@ -108,6 +108,7 @@ import { isWayneReaves, countWayneReaves } from "./lib/platforms/waynereaves.mjs
 import { isDealerSync, countDealerSync, DEALERSYNC_SRP_PATH } from "./lib/platforms/dealersync.mjs";
 import { isRecharged, isRechargedOrigin, countRecharged } from "./lib/platforms/recharged.mjs";
 import { isEverCars, isEverCarsOrigin, countEverCars, EVERCARS_SRP_PATH } from "./lib/platforms/evercars.mjs";
+import { isVehica, countVehica } from "./lib/platforms/vehica.mjs";
 import { discoverSitemapUrls, rank, dedupe, SRP_PATHS } from "./lib/sitemap.mjs";
 import { spaSignals, countVinUrls } from "./lib/spa-signals.mjs";
 import { failureKind, apiHostsFrom, seededShuffle, emptyOrTransient, blindEmpty, isBotChallenge } from "./lib/probe-verdict.mjs";
@@ -383,13 +384,16 @@ async function probeSite(site) {
     }
   }
 
-  // Feed lanes settle in one request, the way DealerVenom/Overfuel/Motive/
-  // AutoFunds/Wayne Reaves do above, and for the same reason: these rooftops
-  // render no car in HTML, so the 12-fetch walk below scores a live lot zero.
+  // The four used-EV-specialist lanes of 2026-08-24 settle the same way, and
+  // for the same reason every row above them does: none of these rooftops
+  // renders a car in HTML, so the 12-fetch walk below scores a live lot zero.
+  // evercars.com is the case that proves it — six probes in a row wrote it off
+  // with "0 VIN vehicles in 12 fetches … leads: nextjs" while 656 buyable EVs
+  // sat behind a query parameter on the page the probe had already fetched.
   //
-  // `found` is what the platform itself reports for the whole lot — the site's
-  // number, not a promise about how many of those cars are live. The crawl's
-  // own note reports that split.
+  // `found` is what the platform itself reports for the whole lot, so a note
+  // reading "1130 vehicles" is the site's number and not a promise about how
+  // many of them are live — the crawl's own note reports that split.
   for (const lane of [
     { name: "dealersync", detect: () => isDealerSync(home.body), count: () => countDealerSync(origin), label: "/Inventory/Search" },
     {
@@ -404,6 +408,8 @@ async function probeSite(site) {
       count: () => countEverCars(origin),
       label: "server-rendered /cars search",
     },
+    // Vehica's `found` is a first-page floor, not a lot size — see countVehica.
+    { name: "vehica", detect: () => isVehica(home.body), count: () => countVehica(origin), label: "WordPress REST feed, first page of" },
   ]) {
     if (!lane.detect()) continue;
     const { ok, found, hasVin } = await lane.count();

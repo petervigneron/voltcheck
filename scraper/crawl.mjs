@@ -69,6 +69,7 @@ import {
 import { isDealerSync, pullDealerSync } from "./lib/platforms/dealersync.mjs";
 import { isRecharged, isRechargedOrigin, pullRecharged } from "./lib/platforms/recharged.mjs";
 import { isEverCars, isEverCarsOrigin, pullEverCars } from "./lib/platforms/evercars.mjs";
+import { isVehica, pullVehica } from "./lib/platforms/vehica.mjs";
 
 const args = process.argv.slice(2);
 function flag(name, fallback) {
@@ -218,6 +219,7 @@ async function crawlDealer(domain) {
   const ds = { done: false };
   const rch = { done: false };
   const ec = { done: false };
+  const vh = { done: false };
   const dvPlat = siteInfo.get(domain)?.platform;
   // Motive joins that list for the same reason: it renders no inventory in
   // HTML at all and publishes its Algolia config on the homepage, so a
@@ -241,17 +243,17 @@ async function crawlDealer(domain) {
   // because Audi's platform loads a dealer.com tag) can only ever be rescued
   // by reading that page. One extra fetch, only for sites that otherwise have
   // literally nothing to walk.
-  // The feed lanes belong on this list for the Wayne Reaves reason: none of
-  // them renders its lot in HTML and each is recognised from a mark that IS on
-  // the homepage. evercars.com is the sharpest case — it publishes 3,913
-  // sitemap urls of which 71% are sold cars, so a queue that started there
-  // would spend its whole budget reading "(Sold)".
+  // The four lanes added 2026-08-24 all belong on this list for the Wayne
+  // Reaves reason: none of them renders its lot in HTML, all four are
+  // recognised from a mark that IS on the homepage, and evercars.com in
+  // particular publishes 3,913 sitemap urls of which 71% are sold cars — a
+  // queue that started there would spend its whole budget reading "(Sold)".
   if (
     !dvPlat ||
     !sitemapUrls.length ||
     [
       "unknown", "dealervenom", "overfuel", "team-velocity", "ridemotive", "autofunds", "waynereaves", "oneaudi",
-      "dealersync", "recharged", "evercars",
+      "dealersync", "recharged", "evercars", "vehica",
     ].includes(dvPlat)
   )
     queue.unshift(origin + "/");
@@ -621,10 +623,16 @@ async function crawlDealer(domain) {
       report.notes.push("waynereaves: feed did not answer, falling back to HTML");
     }
 
-    // Feed lanes whose one door returns the whole lot, so a successful pull
-    // ENDS the crawl for that domain the way the Motive and Wayne Reaves
-    // blocks above do. A pull that came back short leaves `stoppedEarly` set,
-    // because db-sync must never read an unfinished read as cars that sold.
+    // The four used-EV-specialist lanes of 2026-08-24. They share a shape:
+    // each rooftop renders no inventory in HTML, each has exactly one door,
+    // and each door returns the whole lot — so a successful pull ENDS the
+    // crawl for that domain, the way the Motive and Wayne Reaves blocks above
+    // do. A pull that came back short leaves `stoppedEarly` set, because
+    // db-sync must never read an unfinished read as cars that sold.
+    //
+    // Every one of them abstains on condition or reads a machine token; none
+    // of them claims certification, because on three of the four the only
+    // "certified" on the page is the retailer's own inspection badge.
     let laneFinished = false;
     for (const lane of [
       // DealerSync: /Inventory/Search, paged by absolute offset.
@@ -645,6 +653,9 @@ async function crawlDealer(domain) {
         detect: (html) => isEverCars(html) || isEverCarsOrigin(origin),
         pull: () => pullEverCars(origin),
       },
+      // Vehica (WordPress theme): the cars are a custom post type, so
+      // WordPress's own REST API is the feed.
+      { state: vh, name: "vehica", detect: isVehica, pull: () => pullVehica(origin) },
     ]) {
       if (lane.state.done || !lane.detect(res.body)) continue;
       lane.state.done = true;
