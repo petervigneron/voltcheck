@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { failureKind, apiHostsFrom, seededShuffle, emptyOrTransient, blindEmpty } from "../lib/probe-verdict.mjs";
+import { failureKind, apiHostsFrom, seededShuffle, emptyOrTransient, isBotChallenge } from "../lib/probe-verdict.mjs";
 import { spaSignals } from "../lib/spa-signals.mjs";
 
 test("failureKind separates the site's answer from our attempt", () => {
@@ -94,4 +95,24 @@ test("seededShuffle is reproducible from the seed and keeps every row", () => {
   assert.notDeepEqual(a, seededShuffle(list, 7));
   assert.deepEqual([...a].sort((x, y) => x - y), list);
   assert.deepEqual(list, Array.from({ length: 50 }, (_, i) => i)); // input untouched
+});
+
+test("a bot challenge served with a 200 is a wall, not an empty lot", () => {
+  // faithsford.com's front door, 2026-08-23: F5's interstitial, 3 KB, HTTP 200.
+  const challenge =
+    '<!DOCTYPE html><html lang="en"><head>' +
+    '<link href="/_fs-ch-1T1wmsGaOgGaSxcX/assets/inter-var.woff2" rel="preload" as="font"/>' +
+    "<title>Client Challenge</title></head><body>" +
+    "<noscript>JavaScript is disabled in your browser.</noscript>" +
+    "<script>loadScript('/_fs-ch-1T1wmsGaOgGaSxcX/errors.js')</script></body></html>";
+  assert.equal(isBotChallenge(challenge), true);
+  // The title alone is three ordinary words. A dealer page that happens to
+  // carry them, without the vendor's path, is not a wall.
+  assert.equal(isBotChallenge("<html><head><title>Client Challenge</title></head><body>Cars</body></html>"), false);
+  // Nor is a real page that merely mentions the path.
+  assert.equal(isBotChallenge('<html><title>Used Cars</title><a href="/_fs-ch-x">x</a></html>'), false);
+  // A full dealer homepage is far bigger than any interstitial; the size cap
+  // keeps this off the hot path for the 13,000 pages that are not walls.
+  assert.equal(isBotChallenge("<title>Client Challenge</title>/_fs-ch-a" + "x".repeat(20001)), false);
+  assert.equal(isBotChallenge(null), false);
 });

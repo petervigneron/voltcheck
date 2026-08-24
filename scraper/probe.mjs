@@ -108,6 +108,7 @@ import { isWayneReaves, countWayneReaves } from "./lib/platforms/waynereaves.mjs
 import { discoverSitemapUrls, rank, dedupe, SRP_PATHS } from "./lib/sitemap.mjs";
 import { spaSignals, countVinUrls } from "./lib/spa-signals.mjs";
 import { failureKind, apiHostsFrom, seededShuffle, emptyOrTransient, blindEmpty } from "./lib/probe-verdict.mjs";
+import { failureKind, apiHostsFrom, seededShuffle, emptyOrTransient, isBotChallenge } from "./lib/probe-verdict.mjs";
 
 function flag(name, fallback) {
   const i = process.argv.indexOf(name);
@@ -237,6 +238,17 @@ async function probeSite(site) {
     console.error(`  ${site.domain} → ${site.status} [${kind}]`);
     return;
   }
+  // A 200 that is a bot challenge is a refusal, not an empty lot. Recorded as
+  // "blocked" the same way a 403 is — the walk below would otherwise spend
+  // twelve fetches on the interstitial and write the row off as a dead end.
+  if (isBotChallenge(home.body)) {
+    site.status = "blocked";
+    site.notes = `${site.notes ?? ""} | probe ${today}: bot challenge served with a 200 at the front door`.trim();
+    setVerdict(site, "blocked", { fetched, why: "client-challenge" });
+    console.error(`  ${site.domain} → blocked [challenge]`);
+    return;
+  }
+
   // The registry's domain is not always the origin the site actually serves
   // from: furymotors.net, bozard.com and www.billcurrie.com each 200 by
   // redirecting to a different host, and every path built on the registry

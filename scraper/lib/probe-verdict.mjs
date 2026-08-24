@@ -29,6 +29,29 @@ export function failureKind(status) {
   return "other";
 }
 
+/** A wall that answers 200.
+ *
+ *  F5 Distributed Cloud's bot management serves its interstitial with a 200
+ *  and a three-kilobyte body: `<title>Client Challenge</title>`, assets under
+ *  a `/_fs-ch-…/` path, and a script that has to run before anything else is
+ *  served. Nothing about the response is a status code, so failureKind never
+ *  saw it and the row came back "0 VIN vehicles, 0 sitemap urls" —
+ *  indistinguishable from a dealer with no inventory online, which is the
+ *  exact confusion this module exists to end. Three rows in a seeded random
+ *  400 of the written-off pile were this (faithsford.com, hondaoflisle.com,
+ *  lincolnofmansfield.com, 2026-08-23), all of them live franchise stores.
+ *
+ *  It is a REFUSAL, so it is recorded as one and not worked around: the house
+ *  rule is that a challenge is a wall (see lib/http.mjs's header — no
+ *  challenge-solving, owner's decision).
+ *
+ *  Matched on the title plus the vendor's own path prefix together. The title
+ *  alone is three common words and a dealer could legitimately publish it. */
+export function isBotChallenge(html) {
+  if (typeof html !== "string" || html.length > 20000) return false;
+  return /<title>\s*Client Challenge\s*<\/title>/i.test(html) && /\/_fs-ch-[A-Za-z0-9]/.test(html);
+}
+
 /** spaSignals packs its hosts into one "api-hosts:a+b+c" token. Unpack it so
  *  the registry row can carry a list and api-leads.mjs can stop regexing
  *  hosts back out of an English sentence (finding #1 of its own header). */
