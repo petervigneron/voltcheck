@@ -227,6 +227,13 @@ export function classifyEv(vehicle) {
   // demanded both words and so threw every one of these away.
   if (PHEV_FUEL_RE.test(fuelFields)) return { isEv: true, kind: "PHEV", confidence: "high" };
 
+  // "BEV" as the fuel string is the same explicit claim "Electric" is — the
+  // motorcarsites platform prints exactly that, and a 2024 Cybertruck was
+  // saved only by its WMI (2026-08-24). \b-anchored: "bev" appears inside
+  // ordinary words ("beverage" on a page would never reach a fuel FIELD, but
+  // the anchor costs nothing and the two-letter-token lessons above earned it).
+  if (/\bbev\b/i.test(fuelFields)) return { isEv: true, kind: "BEV", confidence: "high" };
+
   // "electric" alone still admits hybrids ("Gas/Electric Hybrid"). A hybrid
   // fuel string without a plug is NOT a refutation, though — it is what
   // dealer.com prints on a Wrangler 4xe — so it falls through to the

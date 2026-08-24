@@ -223517,6 +223517,2680 @@
         "found": 2,
         "dealerId": 337
       }
+    },
+    {
+      "domain": "1autoexpert.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "1bamtransportation.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "1central1985.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "5starautosalesllc.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "5starautosla.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "760motors.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "911mycredit.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "a1motorcars.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "adamsautosales.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "aimpulsautoinc.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "ajumotors.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "akingdomautollc.motorcarsites.com",
+      "name": "A KINGDOM AUTO LLC",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "working",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, live on platform | auto-promoted by probe 2026-08-24: 1 VIN vehicles on 1 page(s), platform motorcarsites | REDIRECTS to www.akingdomautollc.com — this rooftop has its own domain now; consider keying the registry row there instead. Neither www.akingdomautollc.com nor its bare form is in registry.json as of 2026-08-24, so this is not a duplicate.",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 3,
+        "vehicles": 1,
+        "canonicalHost": "www.akingdomautollc.com"
+      },
+      "lot": {
+        "srpPagesWalked": 1,
+        "vehiclesTheRooftopClaims": null,
+        "vehiclesTheWalkFound": 0,
+        "markedSold": 0,
+        "evCandidatesFetched": 0,
+        "evsExtracted": 0
+      }
+    },
+    {
+      "domain": "allautospecialist.motorcarsites.com",
+      "name": "CARAGENTS",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "needs-investigation",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, live on platform | probe 2026-08-24: 0 VIN vehicles in 12 fetches (0 ItemList entries, 0 sitemap urls, 0 failed fetches, platform motorcarsites) — likely needs a platform extractor | probe 2026-08-24: 0 VIN vehicles in 12 fetches (0 ItemList entries, 0 sitemap urls, 0 failed fetches, platform motorcarsites) — likely needs a platform extractor",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 12,
+        "vehicles": 0,
+        "itemList": 0,
+        "sitemapUrls": 0,
+        "why": "nothing-to-walk",
+        "failures": [
+          {
+            "url": "https://allautospecialist.motorcarsites.com/searchused.aspx",
+            "status": "404",
+            "kind": "gone"
+          },
+          {
+            "url": "https://allautospecialist.motorcarsites.com/searchnew.aspx",
+            "status": "404",
+            "kind": "gone"
+          },
+          {
+            "url": "https://allautospecialist.motorcarsites.com/used-vehicles/",
+            "status": "404",
+            "kind": "gone"
+          },
+          {
+            "url": "https://allautospecialist.motorcarsites.com/new-vehicles/",
+            "status": "404",
+            "kind": "gone"
+          }
+        ],
+        "retried": true
+      },
+      "lot": {
+        "srpPagesWalked": 19,
+        "vehiclesTheRooftopClaims": 183,
+        "vehiclesTheWalkFound": 183,
+        "markedSold": 179,
+        "evCandidatesFetched": 0,
+        "evsExtracted": 0
+      }
+    },
+    {
+      "domain": "americanqualityusedcarsandtrucks.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "amgmotorsllc.motorcarsites.com",
+      "name": "AMG MOTORS, LLC",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "working",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, live on platform | auto-promoted by probe 2026-08-24: 1 VIN vehicles on 1 page(s), platform motorcarsites",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 3,
+        "vehicles": 1
+      },
+      "lot": {
+        "srpPagesWalked": 16,
+        "vehiclesTheRooftopClaims": 156,
+        "vehiclesTheWalkFound": 156,
+        "markedSold": 116,
+        "evCandidatesFetched": 0,
+        "evsExtracted": 0
+      }
+    },
+    {
+      "domain": "amherststreetauto.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "apacheautosales.motorcarsites.com",
+      "name": "APACHE AUTO SALES",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "working",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, live on platform | auto-promoted by probe 2026-08-24: 1 VIN vehicles on 1 page(s), platform motorcarsites",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 3,
+        "vehicles": 1
+      },
+      "lot": {
+        "srpPagesWalked": 2,
+        "vehiclesTheRooftopClaims": 15,
+        "vehiclesTheWalkFound": 15,
+        "markedSold": 0,
+        "evCandidatesFetched": 0,
+        "evsExtracted": 0
+      }
+    },
+    {
+      "domain": "apautosalessa.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "apcarshowroom.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "aquarius.motorcarsites.com",
+      "name": "Aquarius Auto Sales LLC",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "working",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, live on platform | auto-promoted by probe 2026-08-24: 1 VIN vehicles on 1 page(s), platform motorcarsites",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 3,
+        "vehicles": 1
+      },
+      "lot": {
+        "srpPagesWalked": 8,
+        "vehiclesTheRooftopClaims": 72,
+        "vehiclesTheWalkFound": 72,
+        "markedSold": 55,
+        "evCandidatesFetched": 0,
+        "evsExtracted": 0
+      }
+    },
+    {
+      "domain": "asphaltautogroupaag.motorcarsites.com",
+      "name": "hong kong motors inc",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "working",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, live on platform | auto-promoted by probe 2026-08-24: 1 VIN vehicles on 1 page(s), platform motorcarsites",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 4,
+        "vehicles": 1
+      },
+      "lot": {
+        "srpPagesWalked": 2,
+        "vehiclesTheRooftopClaims": 11,
+        "vehiclesTheWalkFound": 11,
+        "markedSold": 0,
+        "evCandidatesFetched": 0,
+        "evsExtracted": 0
+      }
+    },
+    {
+      "domain": "assistautobrokerage.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "assurancemotorgroupllc.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "auctiontradesusa.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "autoauctionsdirect.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "autofinancecenter.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "autofinder.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "automarket.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "autosdirect.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "autosoleil.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "autospeedinc.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "autowholesalersofamericainc.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "bandanacertifiedmotors.motorcarsites.com",
+      "name": "Bandana Certified Motors",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "working",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, live on platform | auto-promoted by probe 2026-08-24: 1 VIN vehicles on 1 page(s), platform motorcarsites",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 3,
+        "vehicles": 1
+      },
+      "lot": {
+        "srpPagesWalked": 5,
+        "vehiclesTheRooftopClaims": 46,
+        "vehiclesTheWalkFound": 46,
+        "markedSold": 6,
+        "evCandidatesFetched": 0,
+        "evsExtracted": 0
+      }
+    },
+    {
+      "domain": "bestcarsautosale.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "bestdealsonwheelsltd.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "bestforlessautosalesservicellc.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "bgtireauto.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "bmautosales.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "bvauto.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "californiaautobrokers.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "californiaelectriccars.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "candwauto.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "unreachable",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: error:TypeError, off-platform or unreachable | probe 2026-08-24: homepage error:TypeError | probe 2026-08-24: homepage error:TypeError",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "transient",
+        "fetched": 1,
+        "homeStatus": "error:TypeError",
+        "retried": true
+      },
+      "lot": {
+        "srpPagesWalked": 1,
+        "vehiclesTheRooftopClaims": null,
+        "vehiclesTheWalkFound": 0,
+        "markedSold": 0,
+        "evCandidatesFetched": 0,
+        "evsExtracted": 0
+      }
+    },
+    {
+      "domain": "carspot.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "carz4toyz.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "cbautogroup.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "ccautomotive.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "cccustomcoach.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "championautosalesrentals.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "charvinmotors.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "cjsautosalesllc.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "clearchoiceautosalesllc.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "corautogroup.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "creditnowusedcars.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "crounplaza.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "dannerautosales.motorcarsites.com",
+      "name": "DANNER Auto Sales",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "working",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, live on platform | auto-promoted by probe 2026-08-24: 1 VIN vehicles on 1 page(s), platform motorcarsites",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 3,
+        "vehicles": 1
+      },
+      "lot": {
+        "srpPagesWalked": 1,
+        "vehiclesTheRooftopClaims": 5,
+        "vehiclesTheWalkFound": 5,
+        "markedSold": 1,
+        "evCandidatesFetched": 0,
+        "evsExtracted": 0
+      }
+    },
+    {
+      "domain": "davisautosale.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "davisautosales.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "diversityautosales.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "drewstireandautocenter.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "dutchaeroautogroupllc.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "ecarllc.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "emansautosales.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "emauto.motorcarsites.com",
+      "name": "EM Auto",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "working",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, live on platform | auto-promoted by probe 2026-08-24: 1 VIN vehicles on 1 page(s), platform motorcarsites",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 3,
+        "vehicles": 1
+      },
+      "lot": {
+        "srpPagesWalked": 2,
+        "vehiclesTheRooftopClaims": 14,
+        "vehiclesTheWalkFound": 14,
+        "markedSold": 5,
+        "evCandidatesFetched": 0,
+        "evsExtracted": 0
+      }
+    },
+    {
+      "domain": "empiremotors2.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "ethio-auto.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "eurocode.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "exclusivemotorsports.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "expressauto4sale.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "ezcarbuyersleasingandsales.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "fabuloususedcar.motorcarsites.com",
+      "name": "Fabulous Used Car",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "working",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, live on platform | auto-promoted by probe 2026-08-24: 1 VIN vehicles on 1 page(s), platform motorcarsites",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 3,
+        "vehicles": 1
+      },
+      "lot": {
+        "srpPagesWalked": 1,
+        "vehiclesTheRooftopClaims": 9,
+        "vehiclesTheWalkFound": 9,
+        "markedSold": 0,
+        "evCandidatesFetched": 0,
+        "evsExtracted": 0
+      }
+    },
+    {
+      "domain": "familyfirstmotorsports.motorcarsites.com",
+      "name": "Family First Motorsports",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "working",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, live on platform | auto-promoted by probe 2026-08-24: 1 VIN vehicles on 1 page(s), platform motorcarsites",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 3,
+        "vehicles": 1
+      },
+      "lot": {
+        "srpPagesWalked": 3,
+        "vehiclesTheRooftopClaims": 28,
+        "vehiclesTheWalkFound": 28,
+        "markedSold": 0,
+        "evCandidatesFetched": 0,
+        "evsExtracted": 0
+      }
+    },
+    {
+      "domain": "fastauto.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "fastwayauto.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "gatewayauto.motorcarsites.com",
+      "name": "GATEWAY AUTO",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "working",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, live on platform | auto-promoted by probe 2026-08-24: 1 VIN vehicles on 1 page(s), platform motorcarsites",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 3,
+        "vehicles": 1
+      },
+      "lot": {
+        "srpPagesWalked": 1,
+        "vehiclesTheRooftopClaims": 10,
+        "vehiclesTheWalkFound": 10,
+        "markedSold": 8,
+        "evCandidatesFetched": 0,
+        "evsExtracted": 0
+      }
+    },
+    {
+      "domain": "gatewayperformanceinc.motorcarsites.com",
+      "name": "Gateway Performance, Inc.",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "needs-investigation",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, live on platform | probe 2026-08-24: 0 VIN vehicles in 12 fetches (2 ItemList entries, 0 sitemap urls, 0 failed fetches, platform motorcarsites) — likely needs a platform extractor | probe 2026-08-24: 0 VIN vehicles in 12 fetches (2 ItemList entries, 0 sitemap urls, 0 failed fetches, platform motorcarsites) — likely needs a platform extractor",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 12,
+        "vehicles": 0,
+        "itemList": 2,
+        "sitemapUrls": 0,
+        "failures": [
+          {
+            "url": "https://gatewayperformanceinc.motorcarsites.com/searchused.aspx",
+            "status": "404",
+            "kind": "gone"
+          },
+          {
+            "url": "https://gatewayperformanceinc.motorcarsites.com/searchnew.aspx",
+            "status": "404",
+            "kind": "gone"
+          },
+          {
+            "url": "https://gatewayperformanceinc.motorcarsites.com/used-vehicles/",
+            "status": "404",
+            "kind": "gone"
+          },
+          {
+            "url": "https://gatewayperformanceinc.motorcarsites.com/new-vehicles/",
+            "status": "404",
+            "kind": "gone"
+          }
+        ]
+      },
+      "lot": {
+        "srpPagesWalked": 1,
+        "vehiclesTheRooftopClaims": 4,
+        "vehiclesTheWalkFound": 4,
+        "markedSold": 2,
+        "evCandidatesFetched": 0,
+        "evsExtracted": 0
+      }
+    },
+    {
+      "domain": "getapprovedautos.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "globalimports.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "globalsolutionsgroupfl.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "goodcarsautosalellc.motorcarsites.com",
+      "name": "Good Cars Auto Sale LLC",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "working",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, live on platform | auto-promoted by probe 2026-08-24: 1 VIN vehicles on 1 page(s), platform motorcarsites",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 3,
+        "vehicles": 1
+      },
+      "lot": {
+        "srpPagesWalked": 3,
+        "vehiclesTheRooftopClaims": 26,
+        "vehiclesTheWalkFound": 26,
+        "markedSold": 0,
+        "evCandidatesFetched": 0,
+        "evsExtracted": 0
+      }
+    },
+    {
+      "domain": "grassosautosales.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "haltomautosales.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "highlinemotors.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "hillsideautosales.motorcarsites.com",
+      "name": "Hillside Auto Sales",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "working",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, live on platform | auto-promoted by probe 2026-08-24: 1 VIN vehicles on 1 page(s), platform motorcarsites",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 3,
+        "vehicles": 1
+      },
+      "lot": {
+        "srpPagesWalked": 9,
+        "vehiclesTheRooftopClaims": 81,
+        "vehiclesTheWalkFound": 81,
+        "markedSold": 78,
+        "evCandidatesFetched": 0,
+        "evsExtracted": 0
+      }
+    },
+    {
+      "domain": "independenceautosalesllc.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "jgtruckscars.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "jumpingjackcash.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "kcsautobory.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "kensmotorsportsllc.motorcarsites.com",
+      "name": "Kens Motorsports LLC",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "needs-investigation",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, live on platform | probe 2026-08-24: 0 VIN vehicles in 12 fetches (0 ItemList entries, 0 sitemap urls, 0 failed fetches, platform motorcarsites) — likely needs a platform extractor | probe 2026-08-24: 0 VIN vehicles in 12 fetches (0 ItemList entries, 0 sitemap urls, 0 failed fetches, platform motorcarsites) — likely needs a platform extractor",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 12,
+        "vehicles": 0,
+        "itemList": 0,
+        "sitemapUrls": 0,
+        "why": "nothing-to-walk",
+        "failures": [
+          {
+            "url": "https://kensmotorsportsllc.motorcarsites.com/searchused.aspx",
+            "status": "404",
+            "kind": "gone"
+          },
+          {
+            "url": "https://kensmotorsportsllc.motorcarsites.com/searchnew.aspx",
+            "status": "404",
+            "kind": "gone"
+          },
+          {
+            "url": "https://kensmotorsportsllc.motorcarsites.com/used-vehicles/",
+            "status": "404",
+            "kind": "gone"
+          },
+          {
+            "url": "https://kensmotorsportsllc.motorcarsites.com/new-vehicles/",
+            "status": "404",
+            "kind": "gone"
+          }
+        ]
+      },
+      "lot": {
+        "srpPagesWalked": 4,
+        "vehiclesTheRooftopClaims": 31,
+        "vehiclesTheWalkFound": 31,
+        "markedSold": 30,
+        "evCandidatesFetched": 0,
+        "evsExtracted": 0
+      }
+    },
+    {
+      "domain": "krebscjr.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "kzauto.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "lakemurraymotors.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "lmjautomotorssales.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "loansolutions.motorcarsites.com",
+      "name": "Loan Solutions",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "working",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, live on platform | auto-promoted by probe 2026-08-24: 1 VIN vehicles on 1 page(s), platform motorcarsites",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 3,
+        "vehicles": 1
+      },
+      "lot": {
+        "srpPagesWalked": 1,
+        "vehiclesTheRooftopClaims": 8,
+        "vehiclesTheWalkFound": 8,
+        "markedSold": 0,
+        "evCandidatesFetched": 0,
+        "evsExtracted": 0
+      }
+    },
+    {
+      "domain": "lowlowmiles.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "lucchettisautocenter.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "lupitasautosales.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "madagascar.motorcarsites.com",
+      "name": "Madagas-car",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "working",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, live on platform | auto-promoted by probe 2026-08-24: 1 VIN vehicles on 1 page(s), platform motorcarsites",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 3,
+        "vehicles": 1
+      },
+      "lot": {
+        "srpPagesWalked": 2,
+        "vehiclesTheRooftopClaims": 15,
+        "vehiclesTheWalkFound": 15,
+        "markedSold": 10,
+        "evCandidatesFetched": 0,
+        "evsExtracted": 0
+      }
+    },
+    {
+      "domain": "mainlineautollc.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "masterautogroupllc.motorcarsites.com",
+      "name": "Auto Wholesale",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "working",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, live on platform | auto-promoted by probe 2026-08-24: 1 VIN vehicles on 1 page(s), platform motorcarsites",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 3,
+        "vehicles": 1
+      },
+      "lot": {
+        "srpPagesWalked": 5,
+        "vehiclesTheRooftopClaims": 43,
+        "vehiclesTheWalkFound": 43,
+        "markedSold": 0,
+        "evCandidatesFetched": 1,
+        "evsExtracted": 1
+      },
+      "evs": [
+        {
+          "vin": "7G2CEHEE5RA042559",
+          "year": 2024,
+          "make": "Tesla",
+          "model": "Cybertruck",
+          "trim": "Cyberbeast",
+          "priceUsd": 76999,
+          "mileage": 16326,
+          "condition": "used",
+          "evKind": "BEV",
+          "evConfidence": "high",
+          "vdpUrl": "https://masterautogroupllc.motorcarsites.com/vehicle/529135/2024-tesla-cybertruck-for-sale-in-edgewood-md-21040"
+        }
+      ]
+    },
+    {
+      "domain": "mbmautosalesinc.motorcarsites.com",
+      "name": "MBM Auto Sales, Inc",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "working",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, live on platform | auto-promoted by probe 2026-08-24: 1 VIN vehicles on 1 page(s), platform motorcarsites",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 3,
+        "vehicles": 1
+      },
+      "lot": {
+        "srpPagesWalked": 4,
+        "vehiclesTheRooftopClaims": 40,
+        "vehiclesTheWalkFound": 40,
+        "markedSold": 10,
+        "evCandidatesFetched": 0,
+        "evsExtracted": 0
+      }
+    },
+    {
+      "domain": "megaauto.motorcarsites.com",
+      "name": "Mega Auto",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "working",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, live on platform | auto-promoted by probe 2026-08-24: 1 VIN vehicles on 1 page(s), platform motorcarsites",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 3,
+        "vehicles": 1
+      },
+      "lot": {
+        "srpPagesWalked": 4,
+        "vehiclesTheRooftopClaims": 39,
+        "vehiclesTheWalkFound": 39,
+        "markedSold": 18,
+        "evCandidatesFetched": 0,
+        "evsExtracted": 0
+      }
+    },
+    {
+      "domain": "metromotors.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "mikesautosales.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "mmmotors.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "modernautomotiverepairandsales.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "nelsonsautocompany.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "nextrig.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "northeastautogroup.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "nortonautosales.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "nyctireandautocare.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "ocautowerks.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "needs-investigation",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, off-platform or unreachable | probe 2026-08-24: 0 VIN vehicles in 12 fetches (0 ItemList entries, 0 sitemap urls, 0 failed fetches, platform motorcarsites) — likely needs a platform extractor | probe 2026-08-24: 0 VIN vehicles in 12 fetches (0 ItemList entries, 0 sitemap urls, 0 failed fetches, platform motorcarsites) — likely needs a platform extractor",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 12,
+        "vehicles": 0,
+        "itemList": 0,
+        "sitemapUrls": 0,
+        "why": "nothing-to-walk",
+        "failures": [
+          {
+            "url": "https://ocautowerks.motorcarsites.com/searchused.aspx",
+            "status": "404",
+            "kind": "gone"
+          },
+          {
+            "url": "https://ocautowerks.motorcarsites.com/searchnew.aspx",
+            "status": "404",
+            "kind": "gone"
+          },
+          {
+            "url": "https://ocautowerks.motorcarsites.com/used-vehicles/",
+            "status": "404",
+            "kind": "gone"
+          },
+          {
+            "url": "https://ocautowerks.motorcarsites.com/new-vehicles/",
+            "status": "404",
+            "kind": "gone"
+          }
+        ]
+      },
+      "lot": {
+        "srpPagesWalked": 1,
+        "vehiclesTheRooftopClaims": 0,
+        "vehiclesTheWalkFound": 0,
+        "markedSold": 0,
+        "evCandidatesFetched": 0,
+        "evsExtracted": 0
+      }
+    },
+    {
+      "domain": "oceansideautollc.motorcarsites.com",
+      "name": "Oceanside Auto LLC",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "working",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, live on platform | auto-promoted by probe 2026-08-24: 1 VIN vehicles on 1 page(s), platform motorcarsites | REDIRECTS to www.oceansideautollc.com — this rooftop has its own domain now; consider keying the registry row there instead. Neither www.oceansideautollc.com nor its bare form is in registry.json as of 2026-08-24, so this is not a duplicate.",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 3,
+        "vehicles": 1,
+        "canonicalHost": "www.oceansideautollc.com"
+      },
+      "lot": {
+        "srpPagesWalked": 1,
+        "vehiclesTheRooftopClaims": null,
+        "vehiclesTheWalkFound": 0,
+        "markedSold": 0,
+        "evCandidatesFetched": 0,
+        "evsExtracted": 0
+      }
+    },
+    {
+      "domain": "phoenixmotorsinc.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "premierautosales.motorcarsites.com",
+      "name": "Premier Auto Sales",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "working",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, live on platform | auto-promoted by probe 2026-08-24: 1 VIN vehicles on 1 page(s), platform motorcarsites",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 3,
+        "vehicles": 1
+      },
+      "lot": {
+        "srpPagesWalked": 2,
+        "vehiclesTheRooftopClaims": 18,
+        "vehiclesTheWalkFound": 18,
+        "markedSold": 0,
+        "evCandidatesFetched": 0,
+        "evsExtracted": 0
+      }
+    },
+    {
+      "domain": "prospectorautosales.motorcarsites.com",
+      "name": "Prospector Auto Sales",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "working",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, live on platform | auto-promoted by probe 2026-08-24: 1 VIN vehicles on 1 page(s), platform motorcarsites",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 3,
+        "vehicles": 1
+      },
+      "lot": {
+        "srpPagesWalked": 1,
+        "vehiclesTheRooftopClaims": 6,
+        "vehiclesTheWalkFound": 6,
+        "markedSold": 0,
+        "evCandidatesFetched": 0,
+        "evsExtracted": 0
+      }
+    },
+    {
+      "domain": "redstickexoticsllc.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "regencymotors.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "reliablecarstrucks.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "rmaautos.motorcarsites.com",
+      "name": "RM & Associates, LLC",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "working",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, live on platform | auto-promoted by probe 2026-08-24: 1 VIN vehicles on 1 page(s), platform motorcarsites",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 3,
+        "vehicles": 1
+      },
+      "lot": {
+        "srpPagesWalked": 1,
+        "vehiclesTheRooftopClaims": 9,
+        "vehiclesTheWalkFound": 9,
+        "markedSold": 0,
+        "evCandidatesFetched": 9,
+        "evsExtracted": 0
+      }
+    },
+    {
+      "domain": "robinsautosalesinc.motorcarsites.com",
+      "name": "ROBINS AUTO SALES INC",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "working",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, live on platform | auto-promoted by probe 2026-08-24: 1 VIN vehicles on 1 page(s), platform motorcarsites",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 3,
+        "vehicles": 1
+      },
+      "lot": {
+        "srpPagesWalked": 2,
+        "vehiclesTheRooftopClaims": 16,
+        "vehiclesTheWalkFound": 16,
+        "markedSold": 7,
+        "evCandidatesFetched": 0,
+        "evsExtracted": 0
+      }
+    },
+    {
+      "domain": "route6autosales.motorcarsites.com",
+      "name": "Route 6 Auto Sales",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "working",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, live on platform | auto-promoted by probe 2026-08-24: 1 VIN vehicles on 1 page(s), platform motorcarsites",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 3,
+        "vehicles": 1
+      },
+      "lot": {
+        "srpPagesWalked": 2,
+        "vehiclesTheRooftopClaims": 19,
+        "vehiclesTheWalkFound": 19,
+        "markedSold": 0,
+        "evCandidatesFetched": 1,
+        "evsExtracted": 0
+      }
+    },
+    {
+      "domain": "row73motorsports.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "royalautosalesllc.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "rprsalesllc.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "salceinc.motorcarsites.com",
+      "name": "Salce Auto Sales",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "working",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, live on platform | auto-promoted by probe 2026-08-24: 1 VIN vehicles on 1 page(s), platform motorcarsites",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 3,
+        "vehicles": 1
+      },
+      "lot": {
+        "srpPagesWalked": 1,
+        "vehiclesTheRooftopClaims": 7,
+        "vehiclesTheWalkFound": 7,
+        "markedSold": 3,
+        "evCandidatesFetched": 1,
+        "evsExtracted": 1
+      },
+      "evs": [
+        {
+          "vin": "WBAGV8C02LCD95277",
+          "year": 2020,
+          "make": "BMW",
+          "model": "M850 IX",
+          "trim": "M = AUTO / LEATHER",
+          "priceUsd": 46900,
+          "mileage": 100712,
+          "condition": "used",
+          "evKind": "BEV?",
+          "evConfidence": "name_match",
+          "vdpUrl": "https://salceinc.motorcarsites.com/vehicle/493228/2020-bmw-m850-ix-for-sale-in-river-grove-il-60171"
+        }
+      ]
+    },
+    {
+      "domain": "sanchezautosales.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "sansonecarsllc.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "schiavonimotors.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "silvertoneautomotive.motorcarsites.com",
+      "name": "Silverstone Automotive",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "working",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, live on platform | auto-promoted by probe 2026-08-24: 1 VIN vehicles on 1 page(s), platform motorcarsites",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 3,
+        "vehicles": 1
+      },
+      "lot": {
+        "srpPagesWalked": 4,
+        "vehiclesTheRooftopClaims": 39,
+        "vehiclesTheWalkFound": 39,
+        "markedSold": 31,
+        "evCandidatesFetched": 0,
+        "evsExtracted": 0
+      }
+    },
+    {
+      "domain": "southerntoughtrucks.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "specialopsautollc.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "speedworxllc.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "ssautopro.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "szautosales.motorcarsites.com",
+      "name": "S & Z Auto Sales",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "working",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, live on platform | auto-promoted by probe 2026-08-24: 1 VIN vehicles on 1 page(s), platform motorcarsites",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 3,
+        "vehicles": 1
+      },
+      "lot": {
+        "srpPagesWalked": 1,
+        "vehiclesTheRooftopClaims": 7,
+        "vehiclesTheWalkFound": 7,
+        "markedSold": 0,
+        "evCandidatesFetched": 0,
+        "evsExtracted": 0
+      }
+    },
+    {
+      "domain": "t2sservicesllc.motorcarsites.com",
+      "name": "T2S Services Used Autos",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "working",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, live on platform | auto-promoted by probe 2026-08-24: 1 VIN vehicles on 1 page(s), platform motorcarsites",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 3,
+        "vehicles": 1
+      },
+      "lot": {
+        "srpPagesWalked": 1,
+        "vehiclesTheRooftopClaims": 4,
+        "vehiclesTheWalkFound": 4,
+        "markedSold": 0,
+        "evCandidatesFetched": 0,
+        "evsExtracted": 0
+      }
+    },
+    {
+      "domain": "theclassiccargallery.motorcarsites.com",
+      "name": "The Classic Car Gallery",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "working",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, live on platform | auto-promoted by probe 2026-08-24: 1 VIN vehicles on 1 page(s), platform motorcarsites",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 4,
+        "vehicles": 1
+      },
+      "lot": {
+        "srpPagesWalked": 16,
+        "vehiclesTheRooftopClaims": 152,
+        "vehiclesTheWalkFound": 152,
+        "markedSold": 95,
+        "evCandidatesFetched": 0,
+        "evsExtracted": 0
+      }
+    },
+    {
+      "domain": "thetruckbarn.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "thompsontruckcenters.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "tiogaautosales.motorcarsites.com",
+      "name": "Tioga Auto Sales",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "working",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, live on platform | auto-promoted by probe 2026-08-24: 1 VIN vehicles on 1 page(s), platform motorcarsites",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 3,
+        "vehicles": 1
+      },
+      "lot": {
+        "srpPagesWalked": 3,
+        "vehiclesTheRooftopClaims": 27,
+        "vehiclesTheWalkFound": 27,
+        "markedSold": 0,
+        "evCandidatesFetched": 0,
+        "evsExtracted": 0
+      }
+    },
+    {
+      "domain": "tylerautosales.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "waltgracevintage.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "waltgracevintageoff.motorcarsites.com",
+      "name": "Walt Grace Vintage",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "needs-investigation",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, live on platform | probe 2026-08-24: 0 VIN vehicles in 12 fetches (0 ItemList entries, 0 sitemap urls, 0 failed fetches, platform motorcarsites) — likely needs a platform extractor | probe 2026-08-24: 0 VIN vehicles in 12 fetches (0 ItemList entries, 0 sitemap urls, 0 failed fetches, platform motorcarsites) — likely needs a platform extractor",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 12,
+        "vehicles": 0,
+        "itemList": 0,
+        "sitemapUrls": 0,
+        "why": "nothing-to-walk",
+        "failures": [
+          {
+            "url": "https://waltgracevintageoff.motorcarsites.com/searchused.aspx",
+            "status": "404",
+            "kind": "gone"
+          },
+          {
+            "url": "https://waltgracevintageoff.motorcarsites.com/searchnew.aspx",
+            "status": "404",
+            "kind": "gone"
+          },
+          {
+            "url": "https://waltgracevintageoff.motorcarsites.com/used-vehicles/",
+            "status": "404",
+            "kind": "gone"
+          },
+          {
+            "url": "https://waltgracevintageoff.motorcarsites.com/new-vehicles/",
+            "status": "404",
+            "kind": "gone"
+          }
+        ]
+      },
+      "lot": {
+        "srpPagesWalked": 1,
+        "vehiclesTheRooftopClaims": null,
+        "vehiclesTheWalkFound": 0,
+        "markedSold": 0,
+        "evCandidatesFetched": 0,
+        "evsExtracted": 0
+      }
+    },
+    {
+      "domain": "wattsautolot.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "willowautomotive.motorcarsites.com",
+      "name": "Willow Automotive",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "working",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, live on platform | auto-promoted by probe 2026-08-24: 1 VIN vehicles on 1 page(s), platform motorcarsites",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 4,
+        "vehicles": 1
+      },
+      "lot": {
+        "srpPagesWalked": 1,
+        "vehiclesTheRooftopClaims": 2,
+        "vehiclesTheWalkFound": 2,
+        "markedSold": 0,
+        "evCandidatesFetched": 0,
+        "evsExtracted": 0
+      }
+    },
+    {
+      "domain": "windwardcars.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "winolaautosalesllc.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "wjenningsco.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
+    },
+    {
+      "domain": "worldclassmotorcars.motorcarsites.com",
+      "name": "Dealership Website",
+      "kind": "dealer",
+      "platform": "motorcarsites",
+      "robots": "permissive",
+      "status": "site-retired",
+      "notes": "Discovered 2026-08-24 via vendor-subdomain enumeration (Wayback CDX + Common Crawl on *.motorcarsites.com) — Motorcar Marketing hosts every rooftop on its own apex, so no apex-domain discovery pass can see these. Homepage check 2026-08-24: 200, vendor \"Down For Maintenance\" placeholder | probe 2026-08-24: vendor placeholder (\"Down For Maintenance\"), rooftop no longer hosted",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 1,
+        "via": "motorcarsites-placeholder"
+      }
     }
   ],
   "_sources": [

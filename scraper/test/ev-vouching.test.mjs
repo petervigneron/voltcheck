@@ -75,6 +75,13 @@ test("a petrol Grand Wagoneer Series III is not the Wagoneer S", () => {
   assert.equal(classifyEv({ name: "2024 Jeep Wagoneer Series II" }).isEv, false);
 });
 
+test("a fuel field saying bare BEV is an explicit electric claim", () => {
+  // motorcarsites prints fuelType "BEV"; a Cybertruck needed its WMI to land.
+  assert.deepEqual(classifyEv({ fuelType: "BEV" }), { isEv: true, kind: "BEV", confidence: "high" });
+  // Fuel-text-only rows still go through the vPIC gate downstream, same as "Electric".
+  assert.equal(classifyEv({ fuelType: "Beverage" }).isEv, false);
+});
+
 test("classifyEv still refuses a plain gas/electric hybrid and admits a plug-in", () => {
   assert.equal(classifyEv({ fuelType: "Gas/Electric Hybrid", vehicleIdentificationNumber: "1HGCV3F17KA015397" }).isEv, false);
   const phev = classifyEv({ fuelType: "Plug-in Gas/Electric Hybrid", vehicleIdentificationNumber: "5YM23CS01P9S34188" });
