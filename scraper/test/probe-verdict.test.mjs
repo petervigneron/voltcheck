@@ -1,7 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { failureKind, apiHostsFrom, seededShuffle, emptyOrTransient, blindEmpty } from "../lib/probe-verdict.mjs";
-import { failureKind, apiHostsFrom, seededShuffle, emptyOrTransient, isBotChallenge } from "../lib/probe-verdict.mjs";
+import { failureKind, apiHostsFrom, seededShuffle, emptyOrTransient, blindEmpty, isBotChallenge } from "../lib/probe-verdict.mjs";
 import { spaSignals } from "../lib/spa-signals.mjs";
 
 test("failureKind separates the site's answer from our attempt", () => {

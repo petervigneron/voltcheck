@@ -226,9 +226,21 @@ async function crawlDealer(domain) {
   // its hosts serves the same client-rendered shell, so a queue that starts at
   // a sitemap URL would fetch that shell over and over and never reach the
   // footer credit that authorises the one feed request.
+  // And so does a site with NO SITEMAP AT ALL, whatever its label says. That
+  // queue holds nothing but path guesses, so if they all miss the crawl never
+  // fetches a single page of the site — audicoralsprings.com spent ten fetches
+  // on ten guessed SRPs that 404'd or timed out, and its homepage, which says
+  // in its <head> exactly which platform it runs, was never asked for. A row
+  // whose label is stale (273 OneAudi rooftops are labelled "dealer.com"
+  // because Audi's platform loads a dealer.com tag) can only ever be rescued
+  // by reading that page. One extra fetch, only for sites that otherwise have
+  // literally nothing to walk.
   if (
     !dvPlat ||
-    ["unknown", "dealervenom", "overfuel", "team-velocity", "ridemotive", "autofunds", "waynereaves"].includes(dvPlat)
+    !sitemapUrls.length ||
+    ["unknown", "dealervenom", "overfuel", "team-velocity", "ridemotive", "autofunds", "waynereaves", "oneaudi"].includes(
+      dvPlat,
+    )
   )
     queue.unshift(origin + "/");
 
