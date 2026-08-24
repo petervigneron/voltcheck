@@ -106,6 +106,7 @@ import {
 import { isOneAudi, oneAudiVehicles, ONEAUDI_SRP_PATHS } from "./lib/platforms/oneaudi.mjs";
 import { isWayneReaves, countWayneReaves } from "./lib/platforms/waynereaves.mjs";
 import { isDealerSync, countDealerSync, DEALERSYNC_SRP_PATH } from "./lib/platforms/dealersync.mjs";
+import { isRecharged, isRechargedOrigin, countRecharged } from "./lib/platforms/recharged.mjs";
 import { discoverSitemapUrls, rank, dedupe, SRP_PATHS } from "./lib/sitemap.mjs";
 import { spaSignals, countVinUrls } from "./lib/spa-signals.mjs";
 import { failureKind, apiHostsFrom, seededShuffle, emptyOrTransient, blindEmpty, isBotChallenge } from "./lib/probe-verdict.mjs";
@@ -390,6 +391,12 @@ async function probeSite(site) {
   // own note reports that split.
   for (const lane of [
     { name: "dealersync", detect: () => isDealerSync(home.body), count: () => countDealerSync(origin), label: "/Inventory/Search" },
+    {
+      name: "recharged",
+      detect: () => isRecharged(home.body) || isRechargedOrigin(origin),
+      count: () => countRecharged(origin),
+      label: "tRPC vehicle.search",
+    },
   ]) {
     if (!lane.detect()) continue;
     const { ok, found, hasVin } = await lane.count();

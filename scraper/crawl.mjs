@@ -67,6 +67,7 @@ import {
   motorcarNextPageUrl,
 } from "./lib/platforms/motorcarsites.mjs";
 import { isDealerSync, pullDealerSync } from "./lib/platforms/dealersync.mjs";
+import { isRecharged, isRechargedOrigin, pullRecharged } from "./lib/platforms/recharged.mjs";
 
 const args = process.argv.slice(2);
 function flag(name, fallback) {
@@ -214,6 +215,7 @@ async function crawlDealer(domain) {
   const af = { done: false };
   const wr = { done: false };
   const ds = { done: false };
+  const rch = { done: false };
   const dvPlat = siteInfo.get(domain)?.platform;
   // Motive joins that list for the same reason: it renders no inventory in
   // HTML at all and publishes its Algolia config on the homepage, so a
@@ -246,7 +248,7 @@ async function crawlDealer(domain) {
     !sitemapUrls.length ||
     [
       "unknown", "dealervenom", "overfuel", "team-velocity", "ridemotive", "autofunds", "waynereaves", "oneaudi",
-      "dealersync",
+      "dealersync", "recharged",
     ].includes(dvPlat)
   )
     queue.unshift(origin + "/");
@@ -624,6 +626,13 @@ async function crawlDealer(domain) {
     for (const lane of [
       // DealerSync: /Inventory/Search, paged by absolute offset.
       { state: ds, name: "dealersync", detect: isDealerSync, pull: () => pullDealerSync(origin) },
+      // Recharged: one tRPC search endpoint, cursor-paged.
+      {
+        state: rch,
+        name: "recharged",
+        detect: (html) => isRecharged(html) || isRechargedOrigin(origin),
+        pull: () => pullRecharged(origin),
+      },
     ]) {
       if (lane.state.done || !lane.detect(res.body)) continue;
       lane.state.done = true;

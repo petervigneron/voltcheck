@@ -8,6 +8,12 @@ const SIGNATURES = [
   // API. `typesenseSearchAdapter` is the vendor's search-client init; the
   // `dealervenom` brand token is the second signal.
   { platform: "dealervenom", res: [/typesenseSearchAdapter/i, /dealervenom/i] },
+  // Recharged, a single-rooftop lane: a used-EV specialist big enough to be
+  // worth its own module (412 electrified cars). Anchored on a string that
+  // CONTAINS its own host — its Organization JSON-LD names its logo — so it
+  // cannot fire on anyone else's page, which is the precision a per-site label
+  // needs. See lib/platforms/recharged.mjs.
+  { platform: "recharged", res: [/https:\/\/recharged\.com\/logo\.svg/i] },
   // DealerSync: an independents' website vendor whose rooftops serve on their
   // own apex and ship the vendor's Handlebars TEMPLATE inline — a VIN regex
   // over one of its pages finds `{{Vin}}`. Its own CDN and photo hosts are the

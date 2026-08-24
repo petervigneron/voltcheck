@@ -183,6 +183,16 @@ export const WAYNEREAVES_PRICE = "waynereaves-price";
 // struck-through former price) is never read.
 export const DEALERSYNC_FINAL = "dealersync-final";
 
+// Recharged's `price` field out of its own /api/trpc/vehicle.search — the
+// number its card and its VDP both print. Verified byte-equal to the VDP's own
+// schema.org offers.price on 2026-08-24 (7SAYGDEF8SA339578: record price
+// "39998.00", VDP offer "39998.00") — and deliberately still its own tag,
+// because the same record carries `jdpRetail`, `jdpTrade`, `bbRetail`,
+// `bbWholesale` and `actualCashValue`. Those are book values, not asks; none
+// of them is ever read, and a shared tag would be one careless edit away from
+// pairing an ask against a wholesale number.
+export const RECHARGED_PRICE = "recharged-price";
+
 // OEM/aggregator inventory APIs. Each lane reads one documented field out of
 // one vendor's endpoint; none of them shares a code path with any other, so
 // each gets its own tag rather than a single "oem" bucket that would let a
@@ -238,7 +248,7 @@ const KNOWN = new Set([
   MOTIVE_PRICE, AUTOMANAGER_PRICE, AUTOFUNDS_INTERNET, AUTOFUNDS_REDUCED,
   MOTORCARSITES_PRICE,
   ONEAUDI_SALE, WAYNEREAVES_PRICE,
-  DEALERSYNC_FINAL,
+  DEALERSYNC_FINAL, RECHARGED_PRICE,
 ]);
 
 /** True for a tag this build knows how to emit. OEM lane tags are accepted by
