@@ -559,6 +559,11 @@ async function crawlDealer(domain) {
           if (rec.vdpUrl) rec.vdpUrl = abs(rec.vdpUrl, origin) ?? rec.vdpUrl;
           rec.evKind = cls.kind;
           rec.evConfidence = cls.confidence;
+          // normalize() does not carry a CPO flag off the vehicle node — every
+          // platform sets it on the RECORD, the way dealercom.mjs and
+          // dealeron-api.mjs do. The feed's `certified` is a boolean, so it
+          // rides here rather than being lost between the two shapes.
+          if (v.certified) rec.certified = true;
           // The feed record IS the car — colours, engine, odometer, gallery,
           // description. There is no richer page behind it to fetch.
           rec.fromVdp = true;
