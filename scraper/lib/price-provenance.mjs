@@ -193,6 +193,13 @@ export const DEALERSYNC_FINAL = "dealersync-final";
 // pairing an ask against a wholesale number.
 export const RECHARGED_PRICE = "recharged-price";
 
+// Ever's `price` out of the server-rendered search payload on /cars — the
+// integer its card prints ($43,999 on 1FTVW1EL6PWG53923, 2026-08-24).
+// Explicitly NOT `monthly_payment`, which sits in the same record and is a
+// financing estimate, not a rung of a price ladder (the refusal
+// AUTOFUNDS_INTERNET documents).
+export const EVERCARS_PRICE = "evercars-price";
+
 // OEM/aggregator inventory APIs. Each lane reads one documented field out of
 // one vendor's endpoint; none of them shares a code path with any other, so
 // each gets its own tag rather than a single "oem" bucket that would let a
@@ -248,7 +255,7 @@ const KNOWN = new Set([
   MOTIVE_PRICE, AUTOMANAGER_PRICE, AUTOFUNDS_INTERNET, AUTOFUNDS_REDUCED,
   MOTORCARSITES_PRICE,
   ONEAUDI_SALE, WAYNEREAVES_PRICE,
-  DEALERSYNC_FINAL, RECHARGED_PRICE,
+  DEALERSYNC_FINAL, RECHARGED_PRICE, EVERCARS_PRICE,
 ]);
 
 /** True for a tag this build knows how to emit. OEM lane tags are accepted by

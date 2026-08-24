@@ -14,6 +14,13 @@ const SIGNATURES = [
   // cannot fire on anyone else's page, which is the precision a per-site label
   // needs. See lib/platforms/recharged.mjs.
   { platform: "recharged", res: [/https:\/\/recharged\.com\/logo\.svg/i] },
+  // Ever, the same shape and for the same reason (1,130 electrified cars):
+  // anchored on strings that contain its own host — its schema.org @ids and
+  // its asset host. See lib/platforms/evercars.mjs.
+  {
+    platform: "evercars",
+    res: [/evercars\.com\/#(?:organization|website|dealer-)|static\.production\.evercars\.live/i],
+  },
   // DealerSync: an independents' website vendor whose rooftops serve on their
   // own apex and ship the vendor's Handlebars TEMPLATE inline — a VIN regex
   // over one of its pages finds `{{Vin}}`. Its own CDN and photo hosts are the

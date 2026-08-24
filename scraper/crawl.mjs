@@ -68,6 +68,7 @@ import {
 } from "./lib/platforms/motorcarsites.mjs";
 import { isDealerSync, pullDealerSync } from "./lib/platforms/dealersync.mjs";
 import { isRecharged, isRechargedOrigin, pullRecharged } from "./lib/platforms/recharged.mjs";
+import { isEverCars, isEverCarsOrigin, pullEverCars } from "./lib/platforms/evercars.mjs";
 
 const args = process.argv.slice(2);
 function flag(name, fallback) {
@@ -216,6 +217,7 @@ async function crawlDealer(domain) {
   const wr = { done: false };
   const ds = { done: false };
   const rch = { done: false };
+  const ec = { done: false };
   const dvPlat = siteInfo.get(domain)?.platform;
   // Motive joins that list for the same reason: it renders no inventory in
   // HTML at all and publishes its Algolia config on the homepage, so a
@@ -239,16 +241,17 @@ async function crawlDealer(domain) {
   // because Audi's platform loads a dealer.com tag) can only ever be rescued
   // by reading that page. One extra fetch, only for sites that otherwise have
   // literally nothing to walk.
-  // DealerSync belongs on this list for the Wayne Reaves reason: its SRP ships
-  // the vendor's Handlebars template beside a screenful of cars, its sitemap
-  // lists hundreds of VDPs that would each cost a fetch, and the mark that
-  // authorises the one search request is on the homepage.
+  // The feed lanes belong on this list for the Wayne Reaves reason: none of
+  // them renders its lot in HTML and each is recognised from a mark that IS on
+  // the homepage. evercars.com is the sharpest case — it publishes 3,913
+  // sitemap urls of which 71% are sold cars, so a queue that started there
+  // would spend its whole budget reading "(Sold)".
   if (
     !dvPlat ||
     !sitemapUrls.length ||
     [
       "unknown", "dealervenom", "overfuel", "team-velocity", "ridemotive", "autofunds", "waynereaves", "oneaudi",
-      "dealersync", "recharged",
+      "dealersync", "recharged", "evercars",
     ].includes(dvPlat)
   )
     queue.unshift(origin + "/");
@@ -632,6 +635,15 @@ async function crawlDealer(domain) {
         name: "recharged",
         detect: (html) => isRecharged(html) || isRechargedOrigin(origin),
         pull: () => pullRecharged(origin),
+      },
+      // Ever: the /cars page server-renders its own search result; the page
+      // size rides in a JSON-encoded `f` parameter. Its /api is
+      // robots-disallowed and stays that way.
+      {
+        state: ec,
+        name: "evercars",
+        detect: (html) => isEverCars(html) || isEverCarsOrigin(origin),
+        pull: () => pullEverCars(origin),
       },
     ]) {
       if (lane.state.done || !lane.detect(res.body)) continue;

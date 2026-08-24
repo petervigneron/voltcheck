@@ -107,6 +107,7 @@ import { isOneAudi, oneAudiVehicles, ONEAUDI_SRP_PATHS } from "./lib/platforms/o
 import { isWayneReaves, countWayneReaves } from "./lib/platforms/waynereaves.mjs";
 import { isDealerSync, countDealerSync, DEALERSYNC_SRP_PATH } from "./lib/platforms/dealersync.mjs";
 import { isRecharged, isRechargedOrigin, countRecharged } from "./lib/platforms/recharged.mjs";
+import { isEverCars, isEverCarsOrigin, countEverCars, EVERCARS_SRP_PATH } from "./lib/platforms/evercars.mjs";
 import { discoverSitemapUrls, rank, dedupe, SRP_PATHS } from "./lib/sitemap.mjs";
 import { spaSignals, countVinUrls } from "./lib/spa-signals.mjs";
 import { failureKind, apiHostsFrom, seededShuffle, emptyOrTransient, blindEmpty, isBotChallenge } from "./lib/probe-verdict.mjs";
@@ -397,6 +398,12 @@ async function probeSite(site) {
       count: () => countRecharged(origin),
       label: "tRPC vehicle.search",
     },
+    {
+      name: "evercars",
+      detect: () => isEverCars(home.body) || isEverCarsOrigin(origin),
+      count: () => countEverCars(origin),
+      label: "server-rendered /cars search",
+    },
   ]) {
     if (!lane.detect()) continue;
     const { ok, found, hasVin } = await lane.count();
@@ -451,11 +458,12 @@ async function probeSite(site) {
     // the sitemap-ranked guesses spent the budget before reaching it on all 13
     // cohort rooftops (2026-08-16).
     "team-velocity": ["/inventory/used", "/inventory/new"],
-    // A fallback only: this lane settles above, off the homepage, and never
-    // reaches this table on a healthy rooftop. It is here for the row whose
+    // Fallbacks only: both lanes settle above, off the homepage, and never
+    // reach this table on a healthy rooftop. They are here for the row whose
     // homepage answered without its usual markers, so the walk at least asks
     // the one path that carries cars instead of guessing /inventory.
     dealersync: [DEALERSYNC_SRP_PATH],
+    evercars: [EVERCARS_SRP_PATH],
   };
   // Overfuel's SRP is a per-rooftop slug ("/used-cars-albuquerque-nm") with no
   // fixed path to guess — but the homepage links it, so read it off the page we
