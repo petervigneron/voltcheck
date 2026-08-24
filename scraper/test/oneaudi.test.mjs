@@ -8,6 +8,7 @@ import {
   oneAudiPrice,
   oneAudiTruncated,
   oneAudiSrpUrls,
+  oneAudiMake,
   isElectrifiedFamily,
 } from "../lib/platforms/oneaudi.mjs";
 import { classifyEv } from "../lib/ev.mjs";
@@ -292,4 +293,84 @@ test("the two inventory paths are built off the origin we were given", () => {
     "https://www.audiraleigh.com/en/inventory/new/",
     "https://www.audiraleigh.com/en/inventory/used/",
   ]);
+});
+
+// Half of an Audi rooftop's used lot can be other brands' trade-ins: 25 of the
+// 48 on audicoralsprings.com's first used page. Those records have model:null
+// and only the title to name the make from.
+const foreign = (over = {}) =>
+  car({
+    vin: "SALWR2SU2NA213182",
+    titleText: "2022 Land Rover Range Rover Sport",
+    model: null,
+    modelInfo: {
+      genericModel: { code: "BVAB", text: "Range Rover Sport" },
+      modelyear: 2022,
+    },
+    carline: null,
+    ...over,
+  });
+
+test("the make is subtracted from the title, never assumed to be Audi", () => {
+  assert.equal(oneAudiMake(foreign()), "Land Rover");
+  assert.equal(oneAudiMake(car()), "Audi");
+  const [v] = oneAudiVehicles(page(state([foreign()])));
+  assert.equal(v.brand, "Land Rover");
+  assert.equal(v.model, "Range Rover Sport");
+  // Nothing left over after the subtraction, and no Audi sales name to fall
+  // back on: no make rather than the wrong one.
+  assert.equal(oneAudiMake({ titleText: "2016 CT 200h", modelInfo: { genericModel: { text: "CT 200h" } } }), undefined);
+  // A title that does not end in the generic model is not a subtraction we can
+  // trust either.
+  assert.equal(
+    oneAudiMake({ titleText: "2016 Lexus CT 200h Premium", modelInfo: { genericModel: { text: "CT 200h" } } }),
+    undefined,
+  );
+  // Audi's own full sales name is the second reading of the same fact.
+  assert.equal(oneAudiMake({ titleText: "", model: { name: "Audi Q5 Sportback Premium Plus" } }), "Audi");
+});
+
+test("a plug-in claim about a car Audi did not build is not published", () => {
+  // The live case: audicoralsprings.com serves a 2016 Lexus CT 200h with
+  // engineInfo.fuel code H, "Plug-in Hybrid (Gas/Electric)". The CT 200h has
+  // never had a plug. Two of the four non-Audi H records across six rooftops
+  // are wrong this way, so the flag is dropped on a third party's car and the
+  // nameplate is left to classifyEv.
+  const lexus = foreign({
+    vin: "JTHKD5BH9G2270273",
+    titleText: "2016 Lexus CT 200h",
+    modelInfo: { genericModel: { code: "EDAM", text: "CT 200h" }, modelyear: 2016 },
+    subtitleText: "Hybrid",
+    engineInfo: { fuel: { code: "H", text: "Plug-in Hybrid (Gas/Electric)" } },
+  });
+  const [v] = oneAudiVehicles(page(state([lexus])));
+  assert.equal(v.brand, "Lexus");
+  assert.equal(v.fuelType, undefined);
+  assert.equal(v.vehicleEngine, undefined);
+  assert.equal(classifyEv(v).isEv, false, "a conventional hybrid must not publish as a plug-in");
+
+  // The same flag on a car Audi DID build is the manufacturer's own system and
+  // is kept — the Q5 TFSI e really is a plug-in.
+  const q5e = car({
+    titleText: "2023 Audi Q5 TFSI e",
+    modelInfo: { genericModel: { text: "Q5 TFSI e" }, modelyear: 2023 },
+    model: { name: "Audi Q5 TFSI e Premium Plus 55 quattro®" },
+    engineInfo: { fuel: { code: "H", text: "Plug-in Hybrid (Gas/Electric)" } },
+  });
+  const [p2] = oneAudiVehicles(page(state([q5e])));
+  assert.equal(p2.fuelType, "Plug-in Hybrid (Gas/Electric)");
+  assert.equal(classifyEv(p2).kind, "PHEV");
+
+  // "Electric" on a third party's car IS kept: all 19 non-Audi records
+  // carrying it across six rooftops are real BEVs.
+  const polestar = foreign({
+    vin: "LPSED3KA5PL034221",
+    titleText: "2023 Polestar 2",
+    modelInfo: { genericModel: { text: "2" }, modelyear: 2023 },
+    engineInfo: { fuel: { code: "E", text: "Electric" } },
+  });
+  const [p3] = oneAudiVehicles(page(state([polestar])));
+  assert.equal(p3.brand, "Polestar");
+  assert.equal(p3.fuelType, "Electric");
+  assert.equal(classifyEv(p3).isEv, true);
 });

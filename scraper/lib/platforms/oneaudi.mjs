@@ -285,6 +285,60 @@ export function oneAudiPrice(car) {
   return !hasLadder || reconciles ? sale : undefined;
 }
 
+/**
+ * The make, DERIVED — never assumed to be Audi.
+ *
+ * Half of a rooftop's used lot can be trade-ins of other brands: 25 of the 48
+ * on audicoralsprings.com's first used page, including a Land Rover Defender
+ * and a Lexus CT 200h. Those records have `model: null` and only `titleText`
+ * ("2022 Land Rover Range Rover Sport") plus the generic model ("Range Rover
+ * Sport") to go on. Hard-coding "Audi" published a Lexus as an Audi CT 200h.
+ *
+ * So the make is what is left of the title once the model year comes off the
+ * front and the generic model comes off the back — a subtraction that either
+ * lands exactly or does not, and returns undefined when it does not, rather
+ * than guessing. A make of Audi is only ever claimed when the record's own
+ * text says Audi.
+ */
+export function oneAudiMake(car) {
+  const title = String(car?.titleText ?? "").trim();
+  const model = String(car?.modelInfo?.genericModel?.text ?? "").trim();
+  const rest = title.replace(/^\d{4}\s+/, "");
+  if (model && rest.toLowerCase().endsWith(model.toLowerCase())) {
+    const make = rest.slice(0, rest.length - model.length).trim();
+    if (make) return make;
+  }
+  // Audi's own records also carry a full sales name that starts with the brand
+  // ("Audi Q5 Sportback Premium Plus 45 TFSI® quattro®"), which is a second
+  // reading of the same fact rather than a guess.
+  const named = /^(Audi)\b/.exec(String(car?.model?.name ?? "").trim());
+  return named ? named[1] : undefined;
+}
+
+// Audi's own inventory system is the manufacturer for a car Audi built. It is
+// a third-party feed for everything else on the lot, and its plug-in flag
+// there is wrong often enough to be unusable: of the four non-Audi records
+// flagged `H` "Plug-in Hybrid (Gas/Electric)" across six rooftops, one is a
+// 2016 Lexus CT 200h — a conventional hybrid that has never had a plug — and
+// another is a 2026 Volvo XC40, a model with no US plug-in variant that year.
+//
+// The `E` "Electric" flag on the same pool is a different story and is kept:
+// all 19 non-Audi records carrying it are real BEVs (Polestar 2 and 3, Blazer
+// EV, ID.4, EV9, Wagoneer S), which is what you would expect — "does it have a
+// tailpipe" is harder to get wrong than "does it plug in".
+//
+// So a non-Audi car's plug-in-hybrid claim is dropped and the nameplate is
+// left to classifyEv. Losing a genuine third-party PHEV is a miss; publishing
+// a Lexus CT 200h as a plug-in is a false claim on a listing surface, and the
+// house rule makes that trade for us.
+function trustedFuel(car, make) {
+  const fuel = car?.engineInfo?.fuel;
+  const text = fuel?.text || undefined;
+  if (!text) return undefined;
+  if (make === "Audi") return text;
+  return /plug-?in/i.test(text) ? undefined : text;
+}
+
 /** The rooftop that actually owns the car, not the host we asked. */
 export function oneAudiDealer(car) {
   const d = car?.dealer;
@@ -297,7 +351,8 @@ function oneCar(car) {
   if (!VIN_RE.test(vin)) return null;
 
   const price = oneAudiPrice(car);
-  const fuel = car?.engineInfo?.fuel?.text || undefined;
+  const make = oneAudiMake(car);
+  const fuel = trustedFuel(car, make);
   const mileage = Number(car?.mileage?.value?.number);
   const condition =
     ({ N: "new", U: "used" })[String(car?.cartypeText ?? "").toUpperCase()] ??
@@ -314,7 +369,7 @@ function oneCar(car) {
     "@type": "Vehicle",
     vehicleIdentificationNumber: vin,
     vehicleModelDate: car?.modelInfo?.modelyear ? String(car.modelInfo.modelyear) : undefined,
-    brand: "Audi",
+    brand: make,
     // The generic model ("Q4 e-tron"), not the full sales name — the trim text
     // rides in vehicleConfiguration where the rest of the crawl expects it.
     model: car?.modelInfo?.genericModel?.text || car?.carline?.name || undefined,
