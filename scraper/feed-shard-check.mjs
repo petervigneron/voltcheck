@@ -95,6 +95,26 @@ const SUM_TOLERANCE = 0.03;
 // only fires when a shard is a different vintage from its siblings — the
 // 2026-08-21 shape exactly.
 const SHARD_BALANCE_TOLERANCE = 0.25;
+// Vercel will not return a cold-rendered response bigger than this, and that
+// cap has now bitten twice with nothing warning first. 2026-08-24: six shards
+// of 21,585 rows answered 413 CONTENT_TOO_LARGE on a cold render — deployments
+// holding a cache entry revalidated fine, fresh ones could not warm at all, so
+// the site looked healthy right up until the next deploy. The first anyone
+// knew was live-price-audit failing with "shard 1 HTTP 413".
+//
+// The sitemap lane has warned about its own 50,000-URL cap since it was
+// written (web/lib/sitemap.ts). The index lane had no equivalent, so the only
+// detector was production. This is that equivalent, and it lives here because
+// this script already fetches all 24 bodies — the measurement is free.
+//
+// Measured, not estimated from the row count: the cap is on the serialised
+// response and rows are not uniform (2.65 MB across ~5,480 rows on
+// 2026-08-24, but that ratio moves with trim names and photo lists).
+const SHARD_BYTES_CAP = 4_500_000;
+// Warn with room to act. At 70% a 24-shard feed calls for attention around
+// 157,000 cars, against 131,671 live on 2026-08-24 — roughly 19% of growth of
+// notice, which is a deliberate raise of SHARDS rather than an incident.
+const SHARD_BYTES_WARN_AT = 0.7;
 // Keep in step with web/lib/listings/pack.ts SHARDS (this lane can't import
 // TS). 6 → 24 on 2026-08-24: a cold shard render is capped at ~4.5 MB and a
 // six-way split of 129k cars was 7.1 MB — pack.ts's comment has the incident.
@@ -118,13 +138,21 @@ async function fetchText(path, timeoutMs = 60_000) {
   }
 }
 
+/** Byte size of the body fetchJson last parsed — see SHARD_BYTES_CAP. */
+let lastBodyBytes = 0;
+
 async function fetchJson(path, timeoutMs = 30_000) {
   const ctrl = new AbortController();
   const t = setTimeout(() => ctrl.abort(), timeoutMs);
   try {
     const res = await fetch(`${BASE}${path}`, { signal: ctrl.signal });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return await res.json();
+    // Read as text and measure it, rather than trusting content-length, which
+    // is absent on a chunked response and wrong on a compressed one. The
+    // parse is what .json() would have done anyway.
+    const text = await res.text();
+    lastBodyBytes = Buffer.byteLength(text);
+    return JSON.parse(text);
   } finally {
     clearTimeout(t);
   }
@@ -154,13 +182,15 @@ function rowCount(body) {
 }
 
 const shardRows = new Map();
+const shardBytes = new Map();
 for (const shard of SHARDS) {
   try {
     const body = await fetchJson(`/api/index/${shard}`, 120_000);
     const n = rowCount(body);
     if (n === null) throw new Error("unexpected shape");
     shardRows.set(shard, n);
-    console.log(`feed-shard-check: /api/index/${shard} answered — ${n} rows`);
+    shardBytes.set(shard, lastBodyBytes);
+    console.log(`feed-shard-check: /api/index/${shard} answered — ${n} rows, ${(lastBodyBytes / 1e6).toFixed(2)} MB`);
   } catch (e) {
     problems.push(`/api/index/${shard}: ${e.message}`);
   }
@@ -305,6 +335,36 @@ if (firstTotal != null) {
   }
 }
 
+// Payload headroom. Ordered before the tail so a shard that is over the cap
+// joins `problems` and a shard merely approaching it does not.
+const warnings = [];
+if (shardBytes.size) {
+  const [biggest, bytes] = [...shardBytes.entries()].reduce((a, b) => (b[1] > a[1] ? b : a));
+  const pct = (100 * bytes) / SHARD_BYTES_CAP;
+  if (bytes > SHARD_BYTES_CAP) {
+    problems.push(
+      `shard ${biggest} is ${(bytes / 1e6).toFixed(2)} MB, past the ${(SHARD_BYTES_CAP / 1e6).toFixed(1)} MB ` +
+        "cold-render cap. It is still being SERVED because its cache entry already exists — but no fresh " +
+        "deployment can warm it, so the next deploy ships a browse grid that 413s. Raise SHARDS in " +
+        "web/lib/listings/pack.ts and every consumer that keeps step with it (this file, live-price-audit.mjs, " +
+        "the warm loops in nightly.yml and refresh-site.yml)."
+    );
+  } else if (bytes > SHARD_BYTES_CAP * SHARD_BYTES_WARN_AT) {
+    warnings.push(
+      `the largest shard (${biggest}) is ${(bytes / 1e6).toFixed(2)} MB — ${pct.toFixed(0)}% of the ` +
+        `${(SHARD_BYTES_CAP / 1e6).toFixed(1)} MB cold-render cap. Raise SHARDS in web/lib/listings/pack.ts ` +
+        "(and its keep-in-step consumers) before it gets there; past the cap, fresh deployments cannot warm " +
+        "the browse grid at all."
+    );
+  } else {
+    console.log(
+      `feed-shard-check: largest shard ${biggest} is ${(bytes / 1e6).toFixed(2)} MB, ${pct.toFixed(0)}% of the ` +
+        `${(SHARD_BYTES_CAP / 1e6).toFixed(1)} MB cold-render cap`
+    );
+  }
+}
+for (const w of warnings) console.error(`::warning::feed-shard-check: ${w}`);
+
 if (problems.length) {
   for (const p of problems) console.error(`::error::feed-shard-check: ${p}`);
   await clearPoisonedCache();
@@ -312,8 +372,13 @@ if (problems.length) {
   process.exit(1);
 }
 await recordRun("feed-shard-health", {
-  result: "ok",
-  detail: `total ${firstTotal}; shards ${SHARDS.map((s) => shardRows.get(s) ?? "?").join("/")}; sitemap URLs ${sitemapUrls}`,
+  // A warning is recorded as one. The job stays green — "raise SHARDS soon" is
+  // not an incident — but it must not read as an unqualified ok in the file a
+  // human checks to see whether anything needs doing.
+  result: warnings.length ? "warn" : "ok",
+  detail:
+    `total ${firstTotal}; shards ${SHARDS.map((s) => shardRows.get(s) ?? "?").join("/")}; sitemap URLs ${sitemapUrls}` +
+    (warnings.length ? `; ${warnings.join("; ")}` : ""),
   expectedEveryHours: 8,
 });
 process.exit(0);
