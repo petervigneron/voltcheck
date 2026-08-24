@@ -105,6 +105,7 @@ import {
 } from "./lib/platforms/motorcarsites.mjs";
 import { isOneAudi, oneAudiVehicles, ONEAUDI_SRP_PATHS } from "./lib/platforms/oneaudi.mjs";
 import { isWayneReaves, countWayneReaves } from "./lib/platforms/waynereaves.mjs";
+import { isDealerSync, countDealerSync, DEALERSYNC_SRP_PATH } from "./lib/platforms/dealersync.mjs";
 import { discoverSitemapUrls, rank, dedupe, SRP_PATHS } from "./lib/sitemap.mjs";
 import { spaSignals, countVinUrls } from "./lib/spa-signals.mjs";
 import { failureKind, apiHostsFrom, seededShuffle, emptyOrTransient, blindEmpty, isBotChallenge } from "./lib/probe-verdict.mjs";
@@ -380,6 +381,29 @@ async function probeSite(site) {
     }
   }
 
+  // Feed lanes settle in one request, the way DealerVenom/Overfuel/Motive/
+  // AutoFunds/Wayne Reaves do above, and for the same reason: these rooftops
+  // render no car in HTML, so the 12-fetch walk below scores a live lot zero.
+  //
+  // `found` is what the platform itself reports for the whole lot — the site's
+  // number, not a promise about how many of those cars are live. The crawl's
+  // own note reports that split.
+  for (const lane of [
+    { name: "dealersync", detect: () => isDealerSync(home.body), count: () => countDealerSync(origin), label: "/Inventory/Search" },
+  ]) {
+    if (!lane.detect()) continue;
+    const { ok, found, hasVin } = await lane.count();
+    fetched++;
+    if (ok && found > 0 && hasVin) {
+      site.platform = lane.name;
+      site.status = "working";
+      site.notes = `${site.notes ?? ""} | auto-promoted by probe ${today}: ${lane.name} ${lane.label}, ${found} vehicles`.trim();
+      setVerdict(site, "working", { fetched, via: lane.name, found });
+      console.error(`  ${site.domain} → working (${lane.name}, ${found})`);
+      return;
+    }
+  }
+
   // Team Velocity serves its lot from an open API keyed by ids inline in the
   // page — confirm it directly, like DealerVenom/Overfuel, rather than walking
   // the client-rendered HTML the crawl otherwise sees nothing in.
@@ -420,6 +444,11 @@ async function probeSite(site) {
     // the sitemap-ranked guesses spent the budget before reaching it on all 13
     // cohort rooftops (2026-08-16).
     "team-velocity": ["/inventory/used", "/inventory/new"],
+    // A fallback only: this lane settles above, off the homepage, and never
+    // reaches this table on a healthy rooftop. It is here for the row whose
+    // homepage answered without its usual markers, so the walk at least asks
+    // the one path that carries cars instead of guessing /inventory.
+    dealersync: [DEALERSYNC_SRP_PATH],
   };
   // Overfuel's SRP is a per-rooftop slug ("/used-cars-albuquerque-nm") with no
   // fixed path to guess — but the homepage links it, so read it off the page we

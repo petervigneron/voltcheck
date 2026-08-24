@@ -167,6 +167,22 @@ export const ONEAUDI_SALE = "oneaudi-sale";
 // there is nothing to justify treating them as one field.
 export const WAYNEREAVES_PRICE = "waynereaves-price";
 
+// DealerSync's `FinalPrice` — the number its SRP tile prints under the label
+// "Today's Price", and the same number its schema.org MICRODATA publishes as
+// offers.price (the tile template feeds `{{PriceDisplay}}` to the eye and
+// `{{FinalPrice}}` to the microdata).
+//
+// Its own tag, not JSONLD: these pages carry no JSON-LD at all, so this can
+// never be the same reading no matter how equal the numbers look — the rule
+// AUTOFUNDS_INTERNET is written out under. It is also NOT `InternetPrice`,
+// which sits beside it on every record: the two were equal on all 339 records
+// of pluginauto.com (2026-08-24), and that is exactly the coincidence the
+// "when in doubt, split" rule refuses to build on — a rooftop that charges an
+// add-on would move FinalPrice off InternetPrice and a shared tag would
+// publish the gap as a price cut nobody made. `DiscountDisplay` (the
+// struck-through former price) is never read.
+export const DEALERSYNC_FINAL = "dealersync-final";
+
 // OEM/aggregator inventory APIs. Each lane reads one documented field out of
 // one vendor's endpoint; none of them shares a code path with any other, so
 // each gets its own tag rather than a single "oem" bucket that would let a
@@ -222,6 +238,7 @@ const KNOWN = new Set([
   MOTIVE_PRICE, AUTOMANAGER_PRICE, AUTOFUNDS_INTERNET, AUTOFUNDS_REDUCED,
   MOTORCARSITES_PRICE,
   ONEAUDI_SALE, WAYNEREAVES_PRICE,
+  DEALERSYNC_FINAL,
 ]);
 
 /** True for a tag this build knows how to emit. OEM lane tags are accepted by

@@ -8,6 +8,12 @@ const SIGNATURES = [
   // API. `typesenseSearchAdapter` is the vendor's search-client init; the
   // `dealervenom` brand token is the second signal.
   { platform: "dealervenom", res: [/typesenseSearchAdapter/i, /dealervenom/i] },
+  // DealerSync: an independents' website vendor whose rooftops serve on their
+  // own apex and ship the vendor's Handlebars TEMPLATE inline — a VIN regex
+  // over one of its pages finds `{{Vin}}`. Its own CDN and photo hosts are the
+  // signal, never the brand word: a dealer is free to be named "… Sync".
+  // lib/platforms/dealersync.mjs reads /Inventory/Search instead.
+  { platform: "dealersync", res: [/\b(?:dealer-cdn|images)\.dealersync\.com/i] },
   // OneAudi before dealer.com: Audi's own platform loads a "labels-prod…
   // /dealer.com.js" tag on inventory pages and serves some assets through
   // dealer.com hosts, so 20 of the 21 Audi rooftops that reached "working"

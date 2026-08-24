@@ -66,6 +66,7 @@ import {
   motorcarVehicles,
   motorcarNextPageUrl,
 } from "./lib/platforms/motorcarsites.mjs";
+import { isDealerSync, pullDealerSync } from "./lib/platforms/dealersync.mjs";
 
 const args = process.argv.slice(2);
 function flag(name, fallback) {
@@ -212,6 +213,7 @@ async function crawlDealer(domain) {
   const rm = { done: false };
   const af = { done: false };
   const wr = { done: false };
+  const ds = { done: false };
   const dvPlat = siteInfo.get(domain)?.platform;
   // Motive joins that list for the same reason: it renders no inventory in
   // HTML at all and publishes its Algolia config on the homepage, so a
@@ -235,12 +237,17 @@ async function crawlDealer(domain) {
   // because Audi's platform loads a dealer.com tag) can only ever be rescued
   // by reading that page. One extra fetch, only for sites that otherwise have
   // literally nothing to walk.
+  // DealerSync belongs on this list for the Wayne Reaves reason: its SRP ships
+  // the vendor's Handlebars template beside a screenful of cars, its sitemap
+  // lists hundreds of VDPs that would each cost a fetch, and the mark that
+  // authorises the one search request is on the homepage.
   if (
     !dvPlat ||
     !sitemapUrls.length ||
-    ["unknown", "dealervenom", "overfuel", "team-velocity", "ridemotive", "autofunds", "waynereaves", "oneaudi"].includes(
-      dvPlat,
-    )
+    [
+      "unknown", "dealervenom", "overfuel", "team-velocity", "ridemotive", "autofunds", "waynereaves", "oneaudi",
+      "dealersync",
+    ].includes(dvPlat)
   )
     queue.unshift(origin + "/");
 
@@ -608,6 +615,52 @@ async function crawlDealer(domain) {
       }
       report.notes.push("waynereaves: feed did not answer, falling back to HTML");
     }
+
+    // Feed lanes whose one door returns the whole lot, so a successful pull
+    // ENDS the crawl for that domain the way the Motive and Wayne Reaves
+    // blocks above do. A pull that came back short leaves `stoppedEarly` set,
+    // because db-sync must never read an unfinished read as cars that sold.
+    let laneFinished = false;
+    for (const lane of [
+      // DealerSync: /Inventory/Search, paged by absolute offset.
+      { state: ds, name: "dealersync", detect: isDealerSync, pull: () => pullDealerSync(origin) },
+    ]) {
+      if (lane.state.done || !lane.detect(res.body)) continue;
+      lane.state.done = true;
+      const before = report.evs.length;
+      const { ok, vehicles, found, complete, requests } = await lane.pull();
+      // The feed requests are real requests against the dealer.
+      report.fetched += requests ?? 0;
+      if (!ok) {
+        report.notes.push(`${lane.name}: feed did not answer, falling back to HTML`);
+        continue;
+      }
+      for (const v of vehicles) {
+        const cls = classifyEv(v);
+        if (!cls.isEv) continue;
+        const rec = normalize(v, { sourceUrl: v.offers?.url || origin, dealerDomain: domain });
+        if (rec.vdpUrl) rec.vdpUrl = abs(rec.vdpUrl, origin) ?? rec.vdpUrl;
+        rec.evKind = cls.kind;
+        rec.evConfidence = cls.confidence;
+        // The feed record IS the car — colours, odometer, gallery, price.
+        // There is no richer page behind it that this lane fetches.
+        rec.fromVdp = true;
+        rec.platform = lane.name;
+        report.evs.push(rec);
+      }
+      if (report.evs.length > before) report.vehiclePages++;
+      report.notes.push(
+        `${lane.name}: ${found} in feed, ${vehicles.length} live, ${report.evs.length - before} EV(s) admitted (${complete ? "complete" : "partial"})`,
+      );
+      if (!complete) report.stoppedEarly = `${lane.name} partial pull`;
+      queue.length = 0;
+      laneFinished = true;
+      break;
+    }
+    // Only a lane that actually pulled ends the crawl here. Falling through on
+    // an empty queue would skip the rest of THIS iteration — the extraction of
+    // the page already in hand — on the last page of an ordinary HTML walk.
+    if (laneFinished) break;
 
     // Team Velocity serves its whole lot from an open API keyed by the account/
     // campaign ids inline in every page. Pull it and finish. Each car is
