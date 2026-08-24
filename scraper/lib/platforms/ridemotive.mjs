@@ -65,6 +65,22 @@ import { MOTIVE_PRICE } from "../price-provenance.mjs";
 // is that a cohort must be fingerprinted on the host that actually serves it.
 const ASSET_RE = /(?:api|assets|images|echo|bronco)\.app\.ridemotive\.com/i;
 
+// Motive's edge answers a rate challenge with HTTP 200 and a ~20 KB
+// "Checking your browser - reCAPTCHA" page in place of ANY page on ANY of its
+// hundreds of rooftop hostnames — it meters the aggregate rate against the one
+// origin behind them all, which a per-host limiter cannot see (measured
+// 2026-08-24 building the dealer-graph lane: 83% of fetches challenged at
+// concurrency 10, 29% at 2; the same URL answered in full seconds later). To
+// a crawl this page is indistinguishable from a rooftop that publishes
+// nothing: isRideMotive() never fires, the walk certifies a complete 0-car
+// visit, and db-sync would DELIST the rooftop's live cars. The crawl re-asks
+// with backoff (same identity, same URL — a slower ask is not evasion) and
+// refuses to certify the visit if the edge still won't answer.
+export const MOTIVE_CHALLENGE_RE = /recaptcha\/challengepage|Checking your browser - reCAPTCHA/i;
+export function isMotiveChallenge(html) {
+  return typeof html === "string" && html.length < 200000 && MOTIVE_CHALLENGE_RE.test(html);
+}
+
 export function isRideMotive(html) {
   return typeof html === "string" && ASSET_RE.test(html);
 }

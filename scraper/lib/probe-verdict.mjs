@@ -49,7 +49,11 @@ export function failureKind(status) {
  *  alone is three common words and a dealer could legitimately publish it. */
 export function isBotChallenge(html) {
   if (typeof html !== "string" || html.length > 20000) return false;
-  return /<title>\s*Client Challenge\s*<\/title>/i.test(html) && /\/_fs-ch-[A-Za-z0-9]/.test(html);
+  if (/<title>\s*Client Challenge\s*<\/title>/i.test(html) && /\/_fs-ch-[A-Za-z0-9]/.test(html)) return true;
+  // Motive's edge challenge: same contract (HTTP 200, page is a wall). The
+  // TITLE TAG or the vendor's own challenge path — prose merely mentioning
+  // the phrase stays a normal page, same reasoning as F5 above.
+  return /<title>\s*Checking your browser - reCAPTCHA\s*<\/title>/i.test(html) || /recaptcha\/challengepage/i.test(html);
 }
 
 /** spaSignals packs its hosts into one "api-hosts:a+b+c" token. Unpack it so

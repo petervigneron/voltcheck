@@ -38,7 +38,7 @@ import {
   pullOverfuelApi,
 } from "./lib/platforms/overfuel.mjs";
 import { dealrVehicles, dealrNextPageUrl, dealrSeeds, isDealrCloud } from "./lib/platforms/dealrcloud.mjs";
-import { isRideMotive, rideMotiveConfig, pullRideMotiveApi } from "./lib/platforms/ridemotive.mjs";
+import { isRideMotive, rideMotiveConfig, pullRideMotiveApi, isMotiveChallenge } from "./lib/platforms/ridemotive.mjs";
 import {
   isAutoManager,
   autoManagerSeeds,
@@ -370,8 +370,25 @@ async function crawlDealer(domain) {
     const url = queue.shift();
     if (visited.has(url)) continue;
     visited.add(url);
-    const res = await fetchPage(url);
+    let res = await fetchPage(url);
     report.fetched++;
+    // Motive's edge challenge answers 200 on any of its rooftops' hostnames
+    // (see isMotiveChallenge in the platform file). Ask again, slower, twice;
+    // a page still challenged poisons the visit's completeness below rather
+    // than reading as a dealer with no cars.
+    for (const backoffMs of [3000, 8000]) {
+      if (!isMotiveChallenge(res.body)) break;
+      await new Promise((r) => setTimeout(r, backoffMs));
+      res = await fetchPage(url);
+      report.fetched++;
+    }
+    if (isMotiveChallenge(res.body)) {
+      report.errors.push(`motive-challenge ${url}`);
+      // Never let a challenged walk certify completeness — a complete 0-car
+      // visit at a live Motive rooftop is a delisting instruction to db-sync.
+      report.stoppedEarly = "motive edge challenge";
+      continue;
+    }
     if (res.status === "robots_disallowed") {
       if (dcs.srp.has(url)) dcs.failed = true;
       continue;

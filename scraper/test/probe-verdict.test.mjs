@@ -115,3 +115,10 @@ test("a bot challenge served with a 200 is a wall, not an empty lot", () => {
   assert.equal(isBotChallenge("<title>Client Challenge</title>/_fs-ch-a" + "x".repeat(20001)), false);
   assert.equal(isBotChallenge(null), false);
 });
+
+test("Motive's reCAPTCHA interstitial is a wall, not an empty dealer", () => {
+  const page = `<html><head><title>Checking your browser - reCAPTCHA</title></head><body><script src="/recaptcha/challengepage.js"></script></body></html>`;
+  assert.equal(isBotChallenge(page), true);
+  // The title's words alone, without the vendor path, stay a normal page.
+  assert.equal(isBotChallenge("<p>Checking your browser - reCAPTCHA is annoying</p>"), false);
+});
