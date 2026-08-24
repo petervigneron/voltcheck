@@ -7,6 +7,10 @@
 //   node motive-dealers.mjs --stage sniff     # what dealers print about
 //                                             # themselves in their own copy
 //   node motive-dealers.mjs --stage resolve   # name → domain for what harvest missed
+//   node motive-dealers.mjs --stage osm       # OSM shop=car domains as candidates
+//   node motive-dealers.mjs --stage groups    # who reaches the rooftops with no site
+//   node motive-dealers.mjs --stage cover     # what a crawled group already pulls
+//   node motive-dealers.mjs --stage vins      # the EV ledger, counted in VINs
 //   node motive-dealers.mjs --stage emit      # → out/motive-new-sites.json
 //
 // harvest ⇄ resolve is a loop, not a pipeline: every domain resolve lands on
@@ -50,10 +54,10 @@
 // discovered row can say how much coverage it is worth.
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { Resolver } from "node:dns/promises";
-import { fetchPage, politePostJson } from "./lib/http.mjs";
+import { fetchPage, politePostJson, CRAWLER_DECLARATION } from "./lib/http.mjs";
 import { rideMotiveConfig } from "./lib/platforms/ridemotive.mjs";
 import { motiveDealerRecords, isPublicDealerDomain, apex } from "./lib/platforms/ridemotive-dealers.mjs";
-import { candidates } from "./lib/dealer-names.mjs";
+import { candidates, squash } from "./lib/dealer-names.mjs";
 
 const args = process.argv.slice(2);
 const flag = (n, d) => { const i = args.indexOf(n); return i >= 0 ? args[i + 1] : d; };
@@ -80,6 +84,46 @@ const knownWorking = new Set(registry.sites.filter((s) => s.status === "working"
 const seedDomains = registry.sites.filter((s) => s.platform === "ridemotive").map((s) => apex(s.domain));
 
 let REQUESTS = 0;
+
+// ── the answer that looks like an empty page and is not ─────────────────────
+// Motive's edge intermittently answers a reCAPTCHA interstitial — HTTP 200,
+// ~20 KB, `<title>Checking your browser - reCAPTCHA</title>` — in place of the
+// page. It carries no dealer record and no Algolia config, so to every check
+// in this lane it was indistinguishable from a rooftop that publishes nothing,
+// and it was recorded as one. That is how a dealership joins the "never
+// reached" pile without anyone deciding it should: measured 2026-08-24, 83% of
+// the first harvest's fetches at concurrency 10 and 29% at concurrency 2 were
+// this page, including 193 of the 231 Motive rooftops the registry ALREADY
+// crawls — sites we know publish their records, so those 193 are a control:
+// the empty answer was ours, not theirs.
+//
+// It is not a policy statement and it is not path-specific: the same URL, same
+// declared identity, seconds apart, answers the full page (gregoryinfiniti.com
+// / → challenge, then 810 KB with 7 records twice; subaruoftwinfalls.com
+// /privacy-policy → challenge while its own homepage answered). It tracks our
+// aggregate rate against the platform, which is one origin behind hundreds of
+// hostnames, so the per-host rate limit in http.mjs never sees it.
+//
+// The response is to slow down and ask again, with the same identity and the
+// same URL — not to work around anything: no proxy, no UA change, no attempt
+// to answer the challenge, and a hard cap of two retries. A domain still
+// challenged after those is recorded as `challenge`, which is an honest
+// negative the next run can re-queue, rather than a silent "publishes
+// nothing".
+const CHALLENGE_RE = /recaptcha\/challengepage|Checking your browser - reCAPTCHA/i;
+const isChallenge = (body) => typeof body === "string" && body.length < 200000 && CHALLENGE_RE.test(body);
+const CHALLENGE_BACKOFF_MS = [3000, 8000];
+
+async function fetchMotive(url) {
+  for (let attempt = 0; ; attempt++) {
+    let res;
+    try { res = await fetchPage(url); } catch (e) { res = { status: `error:${e.name}`, body: null }; }
+    REQUESTS++;
+    if (!isChallenge(res.body)) return res;
+    if (attempt >= CHALLENGE_BACKOFF_MS.length) return { ...res, status: "challenge", body: null };
+    await new Promise((r) => setTimeout(r, CHALLENGE_BACKOFF_MS[attempt]));
+  }
+}
 
 async function algoliaConfig() {
   const cached = await readJson("motive-config.json");
@@ -185,6 +229,16 @@ async function stageHarvest() {
   const state = (await readJson("motive-domains.json")) ?? { fetched: {}, records: {} };
   const records = new Map(Object.entries(state.records).map(([k, v]) => [Number(k), v]));
   const fetched = new Map(Object.entries(state.fetched));
+  // EVERY domain that published a record for this id, not just the winning
+  // one. A dealer with no public domain of its own still reaches shoppers if
+  // one of its siblings' public sites lists its cars, and the only way to know
+  // which sites those could be is to keep the whole publisher set: `records`
+  // holds one `via` and overwrites it whenever a better record arrives.
+  const publishers = new Map(Object.entries(state.publishers ?? {}).map(([k, v]) => [Number(k), new Set(v)]));
+  const publish = (id, domain) => {
+    if (!publishers.has(id)) publishers.set(id, new Set());
+    publishers.get(id).add(domain);
+  };
 
   // --refetch: try again on the domains that answered but published nothing,
   // and on the ones that never answered at all. This is not optimism — it is
@@ -200,7 +254,10 @@ async function stageHarvest() {
     const published = new Set([...records.values()].map((r) => apex(r.domain)));
     let dropped = 0;
     for (const [dom, f] of fetched) {
-      if (f.records === 0 && published.has(dom)) { fetched.delete(dom); dropped++; }
+      // A domain the platform's edge challenged is re-queued whatever named
+      // it: the challenge says nothing about whether the domain is a dealer's,
+      // so leaving it in `fetched` retires a question that was never asked.
+      if (f.status === "challenge" || (f.records === 0 && published.has(dom))) { fetched.delete(dom); dropped++; }
     }
     console.error(`harvest: re-queueing ${dropped} published dealer domains that answered with no dealer record`);
   }
@@ -223,9 +280,7 @@ async function stageHarvest() {
       Array.from({ length: CONC }, async () => {
         while (next < batch.length) {
           const [domain] = batch[next++];
-          let res;
-          try { res = await fetchPage(`https://${domain}/`); } catch (e) { res = { status: `error:${e.name}` }; }
-          REQUESTS++;
+          const res = await fetchMotive(`https://${domain}/`);
           done++;
           const recs = res.status === 200 && res.body ? motiveDealerRecords(res.body) : new Map();
           const cfg = res.status === 200 && res.body ? rideMotiveConfig(res.body) : null;
@@ -249,6 +304,7 @@ async function stageHarvest() {
               (self && !prev.self) ||
               (!prev.zip && rec.zip);
             if (better) records.set(id, { ...rec, self: self || Boolean(prev?.self), via: domain });
+            publish(id, domain);
             enqueue(rec.domain, evRank.get(id) ?? 0);
           }
         }
@@ -260,6 +316,7 @@ async function stageHarvest() {
     await writeJson("motive-domains.json", {
       fetched: Object.fromEntries(fetched),
       records: Object.fromEntries(records),
+      publishers: Object.fromEntries([...publishers].map(([k, v]) => [k, [...v]])),
     });
   }
   const pub = [...records.values()].filter((r) => isPublicDealerDomain(r.domain));
@@ -345,6 +402,253 @@ async function stageSniff(cfg) {
   );
 }
 
+// ── stage: osm ──────────────────────────────────────────────────────────────
+// A candidate source that owes NOTHING to the Motive graph.
+//
+// The dealerships the harvest never reached are unreachable by construction:
+// no sibling site published a record for them, so walking the graph harder
+// cannot find them, and the index gives only a name. resolve generates domains
+// by permuting that name, which is a good generator and still a generator —
+// it measures 69% recall from a name alone. OpenStreetMap's `shop=car` nodes
+// carry a `website` tag written by a human who stood in front of the store,
+// plus a `name`, usually an address and often a `phone`. That is a national
+// list of real dealer domains keyed on the same thing the index gives us.
+//
+// It is a CANDIDATE source and nothing else. A name match here never makes a
+// row: the domains it produces go through the same id gate resolve uses — the
+// page must publish the Motive dealer record for the id being resolved — and a
+// name that matches the wrong store costs one fetch and produces nothing. The
+// phone match is stronger evidence than the name (the number in the dealer's
+// own vehicle copy against the number on the OSM node), so it ranks first, but
+// it is not treated as proof either: the gate is the gate.
+//
+// Pulled per state rather than as one national query: `[shop=car][website]`
+// over the whole US times out on every mirror, and a per-state area query is
+// both reliable and resumable. ODbL — the registry already carries the
+// attribution discover.mjs added.
+const OVERPASS_MIRRORS = [
+  "https://overpass-api.de/api/interpreter",
+  "https://overpass.private.coffee/api/interpreter",
+  "https://overpass.kumi.systems/api/interpreter",
+];
+const US_STATES = [
+  "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "DC", "FL", "GA", "HI", "ID", "IL", "IN", "IA",
+  "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM",
+  "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA",
+  "WV", "WI", "WY",
+];
+
+async function overpassState(code) {
+  const query =
+    `[out:json][timeout:180];area["ISO3166-2"="US-${code}"][admin_level=4];` +
+    `nwr[shop=car]["website"](area);out tags;`;
+  for (const endpoint of OVERPASS_MIRRORS) {
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        const res = await fetch(endpoint, {
+          method: "POST",
+          headers: {
+            "content-type": "application/x-www-form-urlencoded",
+            // Overpass answers 406 to a request with no user-agent, and this
+            // lane declares itself everywhere else, so it declares itself here.
+            "user-agent": CRAWLER_DECLARATION,
+            accept: "application/json",
+          },
+          body: "data=" + encodeURIComponent(query),
+        });
+        REQUESTS++;
+        const text = await res.text();
+        if (res.status === 200 && text.trimStart().startsWith("{")) {
+          const parsed = JSON.parse(text);
+          // Zero elements from a US state is the signature of a regional or
+          // degraded mirror, not a state with no car dealers (discover.mjs
+          // learned this from overpass.osm.ch). Try the next mirror.
+          if (parsed.elements?.length) return parsed.elements;
+        }
+      } catch {}
+      await new Promise((r) => setTimeout(r, 15000 * 2 ** attempt));
+    }
+  }
+  return null;
+}
+
+async function osmPull() {
+  const cached = await readJson("motive-osm.json");
+  const out = cached ?? { measured: today, states: {}, nodes: [] };
+  const byState = new Map(Object.entries(out.states));
+  const nodes = out.nodes;
+  const todo = US_STATES.filter((s) => !byState.has(s));
+  if (!todo.length) return out;
+  console.error(`osm: pulling ${todo.length} states from Overpass`);
+  for (const code of todo) {
+    const els = await overpassState(code);
+    if (els == null) { console.error(`  osm: ${code} — every mirror refused, will retry on the next run`); continue; }
+    let kept = 0;
+    for (const el of els) {
+      const t = el.tags ?? {};
+      const site = t.website ?? t["contact:website"];
+      if (!site || !t.name) continue;
+      const domain = apex(String(site).replace(/^https?:\/\//i, "").split(/[/?#]/)[0]);
+      if (!isPublicDealerDomain(domain) || NOT_A_DEALER.test(domain)) continue;
+      nodes.push({
+        domain,
+        name: String(t.name),
+        brand: t.brand ? String(t.brand) : "",
+        city: t["addr:city"] ? String(t["addr:city"]) : "",
+        state: code,
+        phone: String(t.phone ?? t["contact:phone"] ?? "").replace(/\D/g, "").slice(-10),
+      });
+      kept++;
+    }
+    byState.set(code, kept);
+    out.states = Object.fromEntries(byState);
+    out.nodes = nodes;
+    await writeJson("motive-osm.json", out);
+    console.error(`  osm: ${code} → ${kept} dealers with a website (${nodes.length} so far)`);
+  }
+  return out;
+}
+
+// Token overlap, not string equality: OSM writes "Buena Park Honda" where the
+// index writes "Buena Park Honda Inc", and either may carry the brand as a
+// separate tag. Two shared significant tokens is the floor — one is how
+// "Toyota" matches every Toyota store in the country.
+const NAME_STOP = new Set([
+  "the", "of", "and", "inc", "llc", "ltd", "co", "company", "corp", "auto", "autos", "automotive",
+  "motor", "motors", "car", "cars", "sales", "sale", "group", "dealer", "dealership", "center",
+  "centre", "superstore", "outlet", "dealership website", "used", "new", "preowned", "pre",
+  "owned", "certified", "inventory",
+]);
+const nameTokens = (s) => new Set(squash(s).split(" ").filter((w) => w && !NAME_STOP.has(w)));
+function namesMatch(a, b) {
+  if (!a.size || !b.size) return false;
+  let shared = 0;
+  for (const t of a) if (b.has(t)) shared++;
+  if (shared < 2) return false;
+  const union = new Set([...a, ...b]).size;
+  return shared === a.size || shared === b.size || shared / union >= 0.5;
+}
+
+async function stageOsm() {
+  // The pull first, and on its own with `--pull`: it is 51 sequential
+  // Overpass queries against a public mirror and it touches none of this
+  // lane's state, so it can run while a harvest is still writing that state.
+  const osm = await osmPull();
+  if (args.includes("--pull")) {
+    console.error(`osm: ${osm.nodes.length} US dealer nodes with a website, ${Object.keys(osm.states).length}/51 states`);
+    return;
+  }
+  const idx = await readJson("motive-index.json");
+  const state = await readJson("motive-domains.json");
+  if (!idx || !state) throw new Error("run --stage index and --stage harvest first");
+  const records = new Map(Object.entries(state.records).map(([k, v]) => [Number(k), v]));
+  const fetched = new Map(Object.entries(state.fetched));
+  const sniff = (await readJson("motive-sniff.json")) ?? {};
+
+  // Only the dealerships nothing has mapped yet: an id whose record already
+  // names a public domain is done, and a domain already fetched is already
+  // answered.
+  const missing = idx.list.filter((d) => {
+    const r = records.get(d.id);
+    return !r || !isPublicDealerDomain(r.domain);
+  });
+
+  const byPhone = new Map();
+  const nodesByToken = new Map();
+  for (const n of osm.nodes) {
+    if (n.phone.length === 10) {
+      if (!byPhone.has(n.phone)) byPhone.set(n.phone, []);
+      byPhone.get(n.phone).push(n);
+    }
+    n.tokens = nameTokens(`${n.name} ${n.brand}`);
+    for (const t of n.tokens) {
+      if (!nodesByToken.has(t)) nodesByToken.set(t, []);
+      nodesByToken.get(t).push(n);
+    }
+  }
+
+  // Registry domains are KEPT as candidates, and that is the opposite of what
+  // the resolve stage does with a guessed name. Measured 2026-08-24: 5,353 of
+  // the 5,447 OSM dealer domains are already registry rows, so filtering them
+  // out would have thrown away almost the whole source. And a registry row is
+  // not the same as reached: the harvest seeds only from rows labelled
+  // `platform: ridemotive`, so a Motive rooftop sitting in the registry under
+  // another platform label — or under `discovered` / `needs-investigation`,
+  // which the nightly does not crawl — is invisible to this lane and its cars
+  // are not ours. Putting those domains through the id gate is what tells the
+  // two apart, and it costs one fetch each.
+  const cands = {}; // domain -> { ids: [], how: "phone" | "name", inRegistry }
+  const add = (dom, id, how) => {
+    const d = apex(dom);
+    if (!isPublicDealerDomain(d) || NOT_A_DEALER.test(d)) return;
+    if (fetched.has(d)) return;
+    if (!cands[d]) cands[d] = { ids: [], how, inRegistry: knownDomains.has(d) };
+    if (!cands[d].ids.includes(id)) cands[d].ids.push(id);
+    if (how === "phone") cands[d].how = "phone";
+  };
+  let phoneHits = 0, nameHits = 0;
+  for (const d of missing) {
+    const tok = nameTokens(d.name);
+    const seen = new Set();
+    for (const p of sniff[d.id]?.phones ?? []) {
+      for (const n of byPhone.get(p) ?? []) { add(n.domain, d.id, "phone"); seen.add(n.domain); phoneHits++; }
+    }
+    const pool = new Map();
+    for (const t of tok) for (const n of nodesByToken.get(t) ?? []) pool.set(n, true);
+    for (const n of pool.keys()) {
+      if (seen.has(n.domain)) continue;
+      if (!namesMatch(tok, n.tokens)) continue;
+      add(n.domain, d.id, "name");
+      nameHits++;
+    }
+  }
+  // The registry's own 21,000 named rows, matched the same way. This is the
+  // same idea as the OSM pull and a bigger corpus: rows the discovery lanes
+  // already wrote from license rolls and metro sweeps, most of which nobody
+  // has ever identified as Motive — a Motive rooftop renders no inventory in
+  // HTML, so a static probe scores it "0 VIN vehicles" and it lands in
+  // needs-investigation looking like a dead site. Fourteen of them sat there
+  // until this platform was understood. Matching by name and asking the site
+  // for its dealer id is how the rest are found, and a row that turns out to
+  // be Motive is worth more than a new one: the domain is already known, so
+  // the only thing standing between its cars and the feed is its status.
+  const REG_NAME_CAP = 3;
+  const regByToken = new Map();
+  for (const s of registry.sites) {
+    const dom = apex(s.domain);
+    if (!s.name || !isPublicDealerDomain(dom) || fetched.has(dom)) continue;
+    const tokens = nameTokens(s.name);
+    if (tokens.size < 2) continue; // a bare brand name matches the whole country
+    s._tokens = tokens;
+    for (const t of tokens) {
+      if (!regByToken.has(t)) regByToken.set(t, []);
+      regByToken.get(t).push(s);
+    }
+  }
+  let regHits = 0;
+  for (const d of missing) {
+    const tok = nameTokens(d.name);
+    const pool = new Set();
+    for (const t of tok) for (const s of regByToken.get(t) ?? []) pool.add(s);
+    let taken = 0;
+    for (const s of pool) {
+      if (taken >= REG_NAME_CAP) break;
+      if (!namesMatch(tok, s._tokens)) continue;
+      add(s.domain, d.id, "registry");
+      taken++;
+      regHits++;
+    }
+  }
+  await writeJson("motive-osm-candidates.json", cands);
+  const inReg = Object.values(cands).filter((c) => c.inRegistry).length;
+  console.error(
+    `osm: ${osm.nodes.length} US dealer nodes with a website; ${missing.length} unmapped dealerships ` +
+      `(${missing.filter((d) => d.ev > 0).length} with EVs) → ${Object.keys(cands).length} candidate domains ` +
+      `(${phoneHits} phone matches, ${nameHits} OSM name matches, ${regHits} registry name matches; ` +
+      `${inReg} of the domains are already registry rows) to put through the id gate`,
+  );
+}
+
 // ── stage: resolve ──────────────────────────────────────────────────────────
 // The dealers harvest never reached: no sibling published them. Guess domains
 // from the name with lib/dealer-names.mjs (the license-roll generator), DNS
@@ -356,6 +660,7 @@ async function stageResolve() {
   if (!idx || !state) throw new Error("run --stage index and --stage harvest first");
   const records = new Map(Object.entries(state.records).map(([k, v]) => [Number(k), v]));
   const fetched = new Map(Object.entries(state.fetched));
+  const publishers = new Map(Object.entries(state.publishers ?? {}).map(([k, v]) => [Number(k), new Set(v)]));
 
   const missing = idx.list.filter((d) => {
     const r = records.get(d.id);
@@ -386,6 +691,24 @@ async function stageResolve() {
       for (const tld of [".com", ".net"]) addDomain(c + tld, d.id);
     }
   }
+  // --from-osm: the domains the osm stage matched to these same dealerships.
+  // They enter as candidates and nothing more — the gate below is unchanged,
+  // so an OSM node that names the wrong store costs one fetch and produces no
+  // row. Kept separate from `sniffed` only for the priority order: a domain a
+  // dealer printed in its own copy and a domain a mapper wrote down in front
+  // of the store are both evidence, and both outrank a permutation of a name.
+  const osmCands = args.includes("--from-osm") ? ((await readJson("motive-osm-candidates.json")) ?? {}) : {};
+  const osmDomains = new Set();
+  for (const [dom, c] of Object.entries(osmCands)) {
+    // Deliberately past the knownDomains filter above: a registry domain is
+    // exactly the interesting case here (see the osm stage), and it can only
+    // be answered by asking the site. The gate is unchanged.
+    if (!isPublicDealerDomain(dom) || NOT_A_DEALER.test(dom) || fetched.has(dom)) continue;
+    if (!want.has(dom)) want.set(dom, new Set());
+    for (const id of c.ids) want.get(dom).add(id);
+    osmDomains.add(dom);
+  }
+  if (args.includes("--from-osm")) console.error(`resolve: ${osmDomains.size} of ${Object.keys(osmCands).length} OSM candidate domains are new and unfetched`);
   console.error(`resolve: ${want.size} candidate domains to DNS-check`);
 
   const resolver = new Resolver();
@@ -408,7 +731,12 @@ async function stageResolve() {
   // only candidate class that is evidence rather than a permutation.
   const sniffed = new Set(targets.flatMap((d) => sniff[d.id]?.hosts ?? []));
   const evOf = new Map(targets.map((d) => [d.id, d.ev]));
-  const prio = (dom) => Math.max(...[...want.get(dom)].map((id) => evOf.get(id) ?? 0)) + (sniffed.has(dom) ? 1e6 : 0);
+  const evAll = new Map(idx.list.map((d) => [d.id, d.ev]));
+  const prio = (dom) =>
+    Math.max(...[...want.get(dom)].map((id) => evOf.get(id) ?? evAll.get(id) ?? 0)) +
+    (sniffed.has(dom) ? 1e6 : 0) +
+    (osmDomains.has(dom) ? 1e6 : 0) +
+    (osmCands[dom]?.how === "phone" ? 1e6 : 0);
   live.sort((a, b) => prio(b) - prio(a) || (a.endsWith(".com") ? 0 : 1) - (b.endsWith(".com") ? 0 : 1));
   console.error(`resolve: ${live.length} of ${doms.length} candidates resolve in DNS`);
 
@@ -417,9 +745,7 @@ async function stageResolve() {
   await Promise.all(Array.from({ length: CONC }, async () => {
     while (next < budget) {
       const domain = live[next++];
-      let res;
-      try { res = await fetchPage(`https://${domain}/`); } catch (e) { res = { status: `error:${e.name}` }; }
-      REQUESTS++;
+      const res = await fetchMotive(`https://${domain}/`);
       done++;
       const recs = res.status === 200 && res.body ? motiveDealerRecords(res.body) : new Map();
       const cfg = res.status === 200 && res.body ? rideMotiveConfig(res.body) : null;
@@ -430,6 +756,8 @@ async function stageResolve() {
       let matched = false;
       for (const [id, rec] of recs) {
         if (wanted.has(id)) matched = true;
+        if (!publishers.has(id)) publishers.set(id, new Set());
+        publishers.get(id).add(domain);
         const prev = records.get(id);
         const self = cfg?.dealerId === id;
         if (!prev || (isPublicDealerDomain(rec.domain) && !isPublicDealerDomain(prev.domain)) || (self && !prev.self)) {
@@ -440,8 +768,431 @@ async function stageResolve() {
       if (done % 200 === 0) console.error(`  resolve: fetched ${done}/${budget}, ${hits} id matches`);
     }
   }));
-  await writeJson("motive-domains.json", { fetched: Object.fromEntries(fetched), records: Object.fromEntries(records) });
+  await writeJson("motive-domains.json", {
+    fetched: Object.fromEntries(fetched),
+    records: Object.fromEntries(records),
+    publishers: Object.fromEntries([...publishers].map(([k, v]) => [k, [...v]])),
+  });
   console.error(`resolve: ${done} fetches, ${hits} pages published a dealer id we asked for`);
+}
+
+// ── stage: groups ───────────────────────────────────────────────────────────
+// The dealerships that HAVE no public site, and what reaches their cars.
+//
+// Hundreds of Motive rooftops are addressed only as `something.app.ridemotive
+// .com`: the platform's own host for a dealer with no domain of its own. A
+// registry row for one of those would be a row pointing at Motive, not at a
+// dealer — the shopper's link would not be the seller's site — so this lane
+// refuses to write them (isPublicDealerDomain). That is not the same as the
+// cars being unreachable, and the difference is worth measuring rather than
+// assuming: those rooftops belong to GROUPS, and a group's public site lists
+// the cars its children share up to it. ridemotive.mjs crawls a domain by
+// filtering the national index on the dealer id that domain publishes about
+// itself, so the question "is this dark rooftop's inventory already ours?" has
+// an exact answer in the index:
+//
+//   is_active:true AND dealer_id:{child} AND dealer_ids:"{group}"
+//
+// — the child's OWN cars (dealer_id is the selling dealer, and it partitions
+// the index) that also carry the group's id in their dealer_ids array, which
+// is exactly the set a crawl of the group's domain pulls. Anything short of
+// the child's full count is reported short; nothing is rounded up to
+// "covered".
+//
+// Publishers, not the record's `via`: `records` keeps one publishing domain
+// and overwrites it whenever a better record arrives, so the group that
+// actually covers a child can be overwritten by a group that does not. The
+// harvest keeps the whole publisher set for this stage.
+async function stageGroups(cfg) {
+  const idx = await readJson("motive-index.json");
+  const state = await readJson("motive-domains.json");
+  if (!idx || !state) throw new Error("run --stage index and --stage harvest first");
+  const records = new Map(Object.entries(state.records).map(([k, v]) => [Number(k), v]));
+  const publishers = new Map(Object.entries(state.publishers ?? {}).map(([k, v]) => [Number(k), v]));
+  const fetched = new Map(Object.entries(state.fetched));
+  const byId = new Map(idx.list.map((d) => [d.id, d]));
+
+  // The bucket: an id the index has live inventory for, whose platform record
+  // exists and names a platform-internal host.
+  const dark = idx.list
+    .filter((d) => d.total > 0)
+    .map((d) => ({ d, rec: records.get(d.id) }))
+    .filter(({ rec }) => rec && !isPublicDealerDomain(rec.domain))
+    .sort((a, b) => b.d.ev - a.d.ev);
+  console.error(`groups: ${dark.length} dealerships with live inventory and no public domain (${dark.filter((x) => x.d.ev > 0).length} with EVs)`);
+
+  // Candidate covering sites: every public domain that published this child's
+  // record AND answered with a dealer id of its own (that id is the filter a
+  // crawl of it would use).
+  const rows = [];
+  const pairs = []; // [childId, groupId] to measure
+  for (const { d, rec } of dark) {
+    const cands = [];
+    for (const dom of publishers.get(d.id) ?? []) {
+      const f = fetched.get(apex(dom));
+      if (!f || !Number.isFinite(f.selfId)) continue;
+      if (!isPublicDealerDomain(dom)) continue;
+      cands.push({
+        domain: apex(dom),
+        groupId: f.selfId,
+        registry: knownWorking.has(apex(dom)) ? "working" : knownDomains.has(apex(dom)) ? "other" : "absent",
+      });
+    }
+    for (const c of cands) pairs.push([d.id, c.groupId]);
+    rows.push({ id: d.id, name: d.name, platformHost: rec.domain, ev: d.ev, total: d.total, candidates: cands });
+  }
+
+  // Measure every (child, group) pair once.
+  const cache = (await readJson("motive-group-cover.json")) ?? {};
+  const key = (c, g) => `${c}:${g}`;
+  const want = [...new Map(pairs.map((p) => [key(p[0], p[1]), p])).values()].filter((p) => !(key(p[0], p[1]) in cache));
+  const url =
+    `https://${cfg.appId.toLowerCase()}-dsn.algolia.net/1/indexes/*/queries` +
+    `?x-algolia-api-key=${encodeURIComponent(cfg.apiKey)}&x-algolia-application-id=${encodeURIComponent(cfg.appId)}`;
+  console.error(`groups: measuring ${want.length} child→group cover pairs`);
+  for (let i = 0; i < want.length; i += 10) {
+    const batch = want.slice(i, i + 10);
+    const requests = batch.flatMap(([c, g]) => [
+      { indexName: cfg.index, query: "", filters: `is_active:true AND dealer_id:${Number(c)} AND dealer_ids:"${Number(g)}"`, hitsPerPage: 0 },
+      {
+        indexName: cfg.index,
+        query: "",
+        filters: `is_active:true AND dealer_id:${Number(c)} AND dealer_ids:"${Number(g)}" AND standardized_fuel_type:Electric`,
+        hitsPerPage: 0,
+      },
+    ]);
+    const { status, json } = await politePostJson(url, { body: { requests } });
+    REQUESTS++;
+    if (status !== 200 || !Array.isArray(json?.results)) { console.error(`  groups: batch ${i} → ${status}`); continue; }
+    batch.forEach(([c, g], k) => {
+      const t = json.results[k * 2], e = json.results[k * 2 + 1];
+      cache[key(c, g)] = {
+        total: t?.nbHits ?? null,
+        ev: e?.nbHits ?? null,
+        exhaustive: t?.exhaustiveNbHits !== false && e?.exhaustiveNbHits !== false,
+      };
+    });
+    if ((i / 10) % 10 === 0) {
+      console.error(`  groups: ${Math.min(i + 10, want.length)}/${want.length}`);
+      await writeJson("motive-group-cover.json", cache);
+    }
+  }
+  await writeJson("motive-group-cover.json", cache);
+
+  // A child counts as reached only through a domain the registry actually
+  // crawls: a covering site we do not have a working row for reaches nobody
+  // today, and is reported as the row to add instead.
+  for (const r of rows) {
+    for (const c of r.candidates) {
+      const m = cache[key(r.id, c.groupId)] ?? {};
+      c.evCovered = m.ev ?? null;
+      c.totalCovered = m.total ?? null;
+      c.exhaustive = m.exhaustive ?? null;
+    }
+    r.candidates.sort((a, b) => (b.evCovered ?? -1) - (a.evCovered ?? -1) || (b.totalCovered ?? -1) - (a.totalCovered ?? -1));
+    const crawled = r.candidates.filter((c) => c.registry === "working");
+    const best = crawled[0] ?? null;
+    const anyBest = r.candidates[0] ?? null;
+    r.evReached = best?.evCovered ?? 0;
+    r.totalReached = best?.totalCovered ?? 0;
+    r.reachedVia = best ? best.domain : null;
+    r.bestUncrawled = !best && anyBest?.evCovered ? anyBest : null;
+    r.verdict = r.ev === 0
+      ? (r.totalReached >= r.total ? "reached (no EVs)" : r.totalReached > 0 ? "partial (no EVs)" : "dark (no EVs)")
+      : r.evReached >= r.ev ? "reached"
+      : r.evReached > 0 ? "partial"
+      : "dark";
+  }
+
+  const sum = (list, k) => list.reduce((a, r) => a + (r[k] ?? 0), 0);
+  const withEv = rows.filter((r) => r.ev > 0);
+  const out = {
+    measured: today,
+    index: idx.measured,
+    method:
+      "A dealership with no public domain is counted REACHED only where a domain the registry crawls as working " +
+      "publishes its record and the index answers that the child's own cars (dealer_id) carry that domain's " +
+      'dealer id in dealer_ids — the exact filter ridemotive.mjs crawls with. Nothing is inferred from group membership.',
+    dealerships: rows.length,
+    dealershipsWithEv: withEv.length,
+    evInBucket: sum(withEv, "ev"),
+    evReached: sum(withEv, "evReached"),
+    reached: withEv.filter((r) => r.verdict === "reached").length,
+    partial: withEv.filter((r) => r.verdict === "partial").length,
+    dark: withEv.filter((r) => r.verdict === "dark").length,
+    rows,
+  };
+  await writeJson("motive2-reached-via-group.json", out);
+  console.error(
+    `groups: ${out.dealershipsWithEv} EV-holding dealerships with no public site hold ${out.evInBucket} EVs — ` +
+      `${out.evReached} of them are already pulled by a working registry domain (${out.reached} fully, ${out.partial} partly, ${out.dark} not at all)`,
+  );
+}
+
+// ── stage: cover ────────────────────────────────────────────────────────────
+// The question the groups stage answers only for the rooftops we could map,
+// asked of every dealership in the index: is this dealer's inventory ALREADY
+// pulled by a domain the registry crawls?
+//
+// groups walks child→parent pairs the platform published, so it can say
+// nothing about the 936 dealerships no page ever published a record for — and
+// those hold 6,800 of the 11,318 EVs. Being unmapped does not mean being
+// unreached: a car carries every dealer id that lists it in `dealer_ids`, so
+// if a crawled group site lists it, ridemotive.mjs has already been pulling it
+// under that group's domain, unmapped or not. Counting those as missing would
+// overstate the hole, which is the same error in the opposite direction from
+// the one this project guards hardest against.
+//
+// Asked in two steps so the answer is exact rather than approximate:
+//   1. facet `dealer_ids` over this dealer's own EV slice — who else lists
+//      these cars. Small slices, and `exhaustiveFacetsCount` is checked rather
+//      than trusted (the lane already knows this index approximates facets on
+//      big sets).
+//   2. for the ids from step 1 that belong to a domain the registry crawls,
+//      one count with those ids OR-ed together — the exact size of the union,
+//      not the biggest of them, and not their sum (a car listed by two of them
+//      would be counted twice).
+async function stageCover(cfg) {
+  const idx = await readJson("motive-index.json");
+  const state = await readJson("motive-domains.json");
+  if (!idx || !state) throw new Error("run --stage index and --stage harvest first");
+  const records = new Map(Object.entries(state.records).map(([k, v]) => [Number(k), v]));
+  const fetched = new Map(Object.entries(state.fetched));
+
+  // The ids a nightly crawl actually filters on: the id each WORKING registry
+  // domain publishes about itself. Nothing else is crawled — a discovered row
+  // is not crawled, and a domain we mapped but never rowed is not either.
+  const crawledId = new Map(); // dealer id -> domain
+  for (const [dom, f] of fetched) {
+    if (!knownWorking.has(dom)) continue;
+    if (!Number.isFinite(f.selfId)) continue;
+    if (!crawledId.has(f.selfId)) crawledId.set(f.selfId, dom);
+  }
+  console.error(`cover: ${crawledId.size} dealer ids are crawled today (working registry domains that publish a Motive id)`);
+
+  const targets = idx.list.filter((d) => d.ev > 0 && !crawledId.has(d.id)).sort((a, b) => b.ev - a.ev);
+  const url =
+    `https://${cfg.appId.toLowerCase()}-dsn.algolia.net/1/indexes/*/queries` +
+    `?x-algolia-api-key=${encodeURIComponent(cfg.apiKey)}&x-algolia-application-id=${encodeURIComponent(cfg.appId)}`;
+  const out = (await readJson("motive-cover.json")) ?? {};
+  const want = targets.filter((d) => !(d.id in out));
+  console.error(`cover: ${targets.length} EV-holding dealerships are not themselves crawled; ${want.length} to measure`);
+
+  for (let i = 0; i < want.length; i += 10) {
+    const batch = want.slice(i, i + 10);
+    const { status, json } = await politePostJson(url, {
+      body: {
+        requests: batch.map((d) => ({
+          indexName: cfg.index,
+          query: "",
+          filters: `is_active:true AND dealer_id:${Number(d.id)} AND standardized_fuel_type:Electric`,
+          hitsPerPage: 0,
+          facets: ["dealer_ids"],
+          maxValuesPerFacet: 100,
+        })),
+      },
+    });
+    REQUESTS++;
+    if (status !== 200 || !Array.isArray(json?.results)) { console.error(`  cover: batch ${i} → ${status}`); continue; }
+    batch.forEach((d, k) => {
+      const r = json.results[k] ?? {};
+      const facet = r.facets?.dealer_ids ?? {};
+      const sharers = Object.entries(facet)
+        .map(([id, n]) => ({ id: Number(id), n }))
+        .filter((x) => x.id !== d.id && crawledId.has(x.id));
+      out[d.id] = {
+        ev: r.nbHits ?? null,
+        exhaustive: r.exhaustiveFacetsCount !== false && r.exhaustiveNbHits !== false,
+        sharers,
+      };
+    });
+    if ((i / 10) % 20 === 0) { console.error(`  cover: ${Math.min(i + 10, want.length)}/${want.length}`); await writeJson("motive-cover.json", out); }
+  }
+  await writeJson("motive-cover.json", out);
+
+  // Step 2: the exact union, for the dealers where a crawled id shares cars.
+  const needUnion = Object.entries(out).filter(([, v]) => v.sharers?.length && v.union == null);
+  console.error(`cover: ${needUnion.length} dealerships share EVs with a crawled id — measuring the exact union`);
+  for (let i = 0; i < needUnion.length; i += 10) {
+    const batch = needUnion.slice(i, i + 10);
+    const { status, json } = await politePostJson(url, {
+      body: {
+        requests: batch.map(([id, v]) => ({
+          indexName: cfg.index,
+          query: "",
+          filters:
+            `is_active:true AND dealer_id:${Number(id)} AND standardized_fuel_type:Electric AND (` +
+            v.sharers.map((s) => `dealer_ids:"${Number(s.id)}"`).join(" OR ") +
+            ")",
+          hitsPerPage: 0,
+        })),
+      },
+    });
+    REQUESTS++;
+    if (status !== 200 || !Array.isArray(json?.results)) { console.error(`  cover: union batch ${i} → ${status}`); continue; }
+    batch.forEach(([id], k) => {
+      const r = json.results[k] ?? {};
+      out[id].union = r.nbHits ?? null;
+      out[id].unionExhaustive = r.exhaustiveNbHits !== false;
+    });
+    if ((i / 10) % 20 === 0) await writeJson("motive-cover.json", out);
+  }
+  await writeJson("motive-cover.json", out);
+
+  const byId = new Map(idx.list.map((d) => [d.id, d]));
+  let reachedEv = 0, reachedDealers = 0, partial = 0;
+  const rows = [];
+  for (const [id, v] of Object.entries(out)) {
+    const u = v.union ?? 0;
+    if (u <= 0) continue;
+    const d = byId.get(Number(id));
+    reachedEv += Math.min(u, d?.ev ?? u);
+    reachedDealers++;
+    if (u < (d?.ev ?? 0)) partial++;
+    rows.push({
+      id: Number(id),
+      name: d?.name ?? "",
+      ev: d?.ev ?? null,
+      evReached: u,
+      full: u >= (d?.ev ?? 0),
+      via: v.sharers.map((s) => ({ groupId: s.id, domain: crawledId.get(s.id) ?? null, evShared: s.n })),
+    });
+  }
+  rows.sort((a, b) => b.evReached - a.evReached);
+  await writeJson("motive2-reached-via-crawl.json", {
+    measured: today,
+    index: idx.measured,
+    method:
+      "For every EV-holding dealership the registry does not crawl directly: facet dealer_ids over its own EV slice " +
+      "to find which other rooftops list those cars, keep only the ids a WORKING registry domain publishes about " +
+      "itself (the id ridemotive.mjs filters on), and count the exact union with those ids OR-ed together. " +
+      "Nothing is inferred from group membership and no count is a sum of overlapping filters.",
+    dealershipsMeasured: Object.keys(out).length,
+    dealershipsReached: reachedDealers,
+    evReached: reachedEv,
+    partiallyReached: partial,
+    rows,
+  });
+  console.error(
+    `cover: ${reachedEv} EVs at ${reachedDealers} un-crawled dealerships are already pulled by a crawled group domain ` +
+      `(${partial} of those dealerships only partly)`,
+  );
+}
+
+// ── stage: vins ─────────────────────────────────────────────────────────────
+// 11,318 EV rows in the index are not 11,318 cars, and a coverage number that
+// assumes they are overstates the hole.
+//
+// The dealership list carries "BMW Staging", "Chris BMW Test", "Motive BMW",
+// "Motive Hyundai", "Motive Mitsubishi" — the platform's own demo and staging
+// rooftops, each holding a copy of a real dealer's inventory (the lane already
+// found Schomp BMW appearing four times with the same 729 vehicles). Group
+// rooftops re-list their children's cars under their own dealer_id too. So the
+// only honest unit for "how many EVs are we missing" is the VIN.
+//
+// One browse of the EV slice answers it — ~12 pages for the whole thing,
+// retrieving nothing but vin and dealer_id — and the intersection is then
+// local: a VIN is REACHED if any row carrying it sits under a dealer id a
+// working registry domain crawls, whoever else also lists it.
+async function stageVins(cfg) {
+  const idx = await readJson("motive-index.json");
+  const state = await readJson("motive-domains.json");
+  if (!idx || !state) throw new Error("run --stage index and --stage harvest first");
+  const fetched = new Map(Object.entries(state.fetched));
+  const crawledId = new Map();
+  for (const [dom, f] of fetched) {
+    if (knownWorking.has(dom) && Number.isFinite(f.selfId) && !crawledId.has(f.selfId)) crawledId.set(f.selfId, dom);
+  }
+
+  const url =
+    `https://${cfg.appId.toLowerCase()}-dsn.algolia.net/1/indexes/${encodeURIComponent(cfg.index)}/browse` +
+    `?x-algolia-api-key=${encodeURIComponent(cfg.apiKey)}&x-algolia-application-id=${encodeURIComponent(cfg.appId)}`;
+  let cursor = null, pages = 0, rows = 0;
+  const byVin = new Map(); // vin -> Set(dealer_id)
+  const noVin = new Map(); // dealer id -> rows with no VIN
+  for (;;) {
+    const { status, json } = await politePostJson(url, {
+      body: {
+        query: "",
+        filters: "is_active:true AND standardized_fuel_type:Electric",
+        hitsPerPage: 1000,
+        attributesToRetrieve: ["vin", "dealer_id", "dealer_ids"],
+        ...(cursor ? { cursor } : {}),
+      },
+    });
+    REQUESTS++;
+    if (status !== 200 || !Array.isArray(json?.hits)) throw new Error(`browse failed at page ${pages}: ${status}`);
+    for (const h of json.hits) {
+      rows++;
+      const id = Number(h.dealer_id);
+      const vin = String(h.vin ?? "").trim().toUpperCase();
+      if (!/^[A-HJ-NPR-Z0-9]{17}$/.test(vin)) { noVin.set(id, (noVin.get(id) ?? 0) + 1); continue; }
+      if (!byVin.has(vin)) byVin.set(vin, { selling: new Set(), listed: new Set() });
+      const v = byVin.get(vin);
+      v.selling.add(id);
+      // `dealer_ids` is the array of every rooftop that LISTS this car, which
+      // is the filter a crawl runs; `dealer_id` is only the selling rooftop.
+      // Keying reachability on the selling dealer alone undercounted by 792
+      // VINs — every car a child shares up to a crawled group site.
+      for (const g of Array.isArray(h.dealer_ids) ? h.dealer_ids : []) {
+        const n = Number(g);
+        if (Number.isFinite(n)) v.listed.add(n);
+      }
+    }
+    pages++;
+    cursor = json.cursor ?? null;
+    if (!cursor) break;
+  }
+
+  let reached = 0, dark = 0;
+  const darkByDealer = new Map();
+  // Per dealer id, how many of the EV VINs it LISTS nothing we crawl already
+  // yields. This is what makes a discovered row's note a claim about cars the
+  // feed does not have, rather than about rows in someone else's index:
+  // espanol.bouldernissan.com is a Motive rooftop of its own with 37 EVs and
+  // its own dealer id, and all 66 of its VINs are the 66 VINs of
+  // bouldernissan.com, which the registry already crawls (measured
+  // 2026-08-24). A row for it would have added a second domain, a second
+  // crawl, a Spanish-language condition string — and no car.
+  const perDealer = new Map();
+  const bump = (id, key) => {
+    let r = perDealer.get(id);
+    if (!r) perDealer.set(id, (r = { evVins: 0, darkVins: 0 }));
+    r[key]++;
+  };
+  const byId = new Map(idx.list.map((d) => [d.id, d]));
+  for (const [vin, v] of byVin) {
+    const ids = new Set([...v.selling, ...v.listed]);
+    for (const id of ids) bump(id, "evVins");
+    if ([...ids].some((id) => crawledId.has(id))) { reached++; continue; }
+    dark++;
+    for (const id of ids) bump(id, "darkVins");
+    // Attribute a dark VIN to the dealership that would be rowed for it: the
+    // one holding the most inventory, so a group is named rather than one of
+    // its children.
+    const owner = [...ids].sort((a, b) => (byId.get(b)?.total ?? 0) - (byId.get(a)?.total ?? 0))[0];
+    darkByDealer.set(owner, (darkByDealer.get(owner) ?? 0) + 1);
+  }
+  const out = {
+    measured: today,
+    evRows: rows,
+    distinctVins: byVin.size,
+    rowsWithoutVin: [...noVin.values()].reduce((a, b) => a + b, 0),
+    duplicateRows: rows - byVin.size - [...noVin.values()].reduce((a, b) => a + b, 0),
+    crawledIds: crawledId.size,
+    vinsReached: reached,
+    vinsDark: dark,
+    darkTop: [...darkByDealer.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 60)
+      .map(([id, n]) => ({ id, name: byId.get(id)?.name ?? "", darkVins: n, evRows: byId.get(id)?.ev ?? 0, vehicles: byId.get(id)?.total ?? 0 })),
+    perDealer: Object.fromEntries(perDealer),
+  };
+  await writeJson("motive2-ev-vin-ledger.json", out);
+  console.error(
+    `vins: ${rows} EV rows → ${byVin.size} distinct VINs (${out.duplicateRows} duplicate rows, ${out.rowsWithoutVin} without a VIN); ` +
+      `${reached} VINs are already pulled by a crawled domain, ${dark} are not`,
+  );
 }
 
 // ── the count a discovered row should carry ─────────────────────────────────
@@ -560,8 +1311,21 @@ async function stageEmit(cfg) {
 
   const isKnown = (r) => knownDomains.has(r.domain) || r.ids.some((id) => trackedIds.has(id));
   const known = [...byDomain.values()].filter(isKnown);
-  const fresh = [...byDomain.values()]
-    .filter((r) => !isKnown(r) && r.total > 0)
+  // What a row would actually ADD, counted in VINs by the vins stage: EV VINs
+  // this domain lists that no domain the registry already crawls yields. A row
+  // whose every EV is already in the feed under someone else's domain is not
+  // coverage — it is a second crawl of the same cars, and its note would be a
+  // claim about cars we already have. espanol.bouldernissan.com is the case
+  // that found this: a Motive rooftop with its own dealer id and 37 EVs, whose
+  // 66 VINs are the 66 VINs of bouldernissan.com, a working registry row
+  // (measured 2026-08-24). Dropped, with the reason printed.
+  const ledger = await readJson("motive2-ev-vin-ledger.json");
+  const perDealer = ledger?.perDealer ?? null;
+  const novelty = (r) => (perDealer ? (perDealer[r.crawlId]?.darkVins ?? null) : null);
+  const all = [...byDomain.values()].filter((r) => !isKnown(r) && r.total > 0);
+  const duplicates = all.filter((r) => r.ev > 0 && novelty(r) === 0);
+  const fresh = all
+    .filter((r) => !(r.ev > 0 && novelty(r) === 0))
     .sort((a, b) => b.ev - a.ev || b.total - a.total);
 
   const rows = fresh.map((r) => ({
@@ -575,7 +1339,8 @@ async function stageEmit(cfg) {
       `Motive national index, ${r.total} vehicles / ${r.ev} EVs listed${r.exact ? "" : " (at least — the index would not count exhaustively)"} ` +
       `under the crawl's own dealer_ids:"${r.crawlId}" filter${r.plugin ? `, ${r.plugin} of them plug-in-stated` : ""} (${idx.measured}); ` +
       `domain from the platform's own dealer record, published by ${r.self ? "the site itself" : `https://${r.rec.via}`}` +
-      `${r.ids.length > 1 ? `; ${r.ids.length} dealer ids share this domain (${r.ids.join(", ")})` : ""} (${today})`,
+      `${r.ids.length > 1 ? `; ${r.ids.length} dealer ids share this domain (${r.ids.join(", ")})` : ""}` +
+      `${novelty(r) != null && r.ev > 0 ? `; ${novelty(r)} of its EV VINs are listed by no domain we already crawl` : ""} (${today})`,
     // Only what the dealer record actually carried: a location block of empty
     // strings reads like a location and is not one.
     ...(r.rec.city || r.rec.state || r.rec.zip
@@ -587,7 +1352,7 @@ async function stageEmit(cfg) {
       : {}),
   }));
 
-  await writeJson("motive-new-sites.json", rows);
+  await writeJson(flag("--out", "motive-new-sites.json"), rows);
   const sum = (list, k) => list.reduce((a, r) => a + r[k], 0);
   console.error(
     `emit: ${byDomain.size} domains mapped to live inventory — ${known.length} already in the registry (confirmations, ${sum(known, "ev")} EVs), ${rows.length} new rows`,
@@ -596,15 +1361,25 @@ async function stageEmit(cfg) {
     `emit: new rows carry ${sum(fresh, "total")} vehicles, ${sum(fresh, "ev")} EVs and ${sum(fresh, "plugin")} plug-in-stated; ` +
       `${fresh.filter((r) => r.ev > 0).length} rows list at least one EV`,
   );
+  if (duplicates.length) {
+    console.error(
+      `emit: dropped ${duplicates.length} row(s) whose EVs are all already crawled under another domain — ` +
+        duplicates.map((r) => `${r.domain} (${r.ev} EVs, dealer ${r.crawlId})`).join(", "),
+    );
+  }
   const conf = known.map((r) => ({ domain: r.domain, ids: r.ids, total: r.total, ev: r.ev, inRegistryAs: knownWorking.has(r.domain) ? "working" : "other" }));
-  await writeJson("motive-confirmations.json", conf);
+  await writeJson(flag("--confirmations", "motive-confirmations.json"), conf);
 }
 
-const cfg = ["index", "emit", "sniff"].includes(STAGE) ? await algoliaConfig() : null;
+const cfg = ["index", "emit", "sniff", "groups", "cover", "vins"].includes(STAGE) ? await algoliaConfig() : null;
 if (STAGE === "index") await stageIndex(cfg);
 else if (STAGE === "sniff") await stageSniff(cfg);
 else if (STAGE === "harvest") await stageHarvest();
+else if (STAGE === "osm") await stageOsm();
 else if (STAGE === "resolve") await stageResolve();
+else if (STAGE === "groups") await stageGroups(cfg);
+else if (STAGE === "cover") await stageCover(cfg);
+else if (STAGE === "vins") await stageVins(cfg);
 else if (STAGE === "emit") await stageEmit(cfg);
 else throw new Error(`unknown --stage ${STAGE}`);
 console.error(`requests this run: ${REQUESTS}`);
