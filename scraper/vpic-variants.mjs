@@ -128,11 +128,77 @@ function trimFrom(r) {
   return null;
 }
 
+// The pack tier, when vPIC's free-text battery field names one.
+//
+// BatteryKWh cannot answer this and reading it as though it could is the bug
+// this function was rewritten to fix. Ford files 98.00 against EVERY F-150
+// Lightning, standard-range and extended-range alike, so the number that
+// looks like the pack size is a constant: measured 2026-08-23, 1FT6W1EV and
+// 1FTVW1EL (2022 and 2023 both) return the same 98.00 and opposite packs. A
+// 2023 Lightning Pro ER was therefore filed as "98 kWh", identical to the SR
+// truck it is worth ~$7,400 more than at matched mileage (WA arms-length
+// sales, n=34 vs 23, medians $46,336 and $38,888).
+//
+// BatteryInfo is the field that does answer, and it is free text with no
+// schema. Across the 300 highest-volume cohorts in the feed, 83 carry it and
+// it returns things like "Extended Range Battery, Rear Primary Drive Unit"
+// but also "120.6Ah + FR 70kW + RR 160kW", "Onboard Charger: 11.5 kW",
+// "3 Phase A/C Induction" and "Sealed Lithium-ion (Li-ion)".
+//
+// So only an explicit "<tier> Range" is taken and everything else abstains.
+// The slot this eventually feeds is a VERSION NAME, and "Onboard Charger:
+// 11.5 kW" sitting in it is the same false precision as printing the cab
+// style, which is the mistake 0016 exists to prevent. Surveyed over those 300
+// cohorts: 17 name a tier and all 17 are correct — the Mach-E, which splits
+// Premium/Select/GT across four VIN codes and two tiers, and the Lightning.
+// The other 66 are ignored, and that is the intended answer, not a miss.
+// The tier must be an adjective on the word BATTERY. That is what separates a
+// consumer-facing pack tier from the same words appearing inside a parts
+// description, and the difference is not hypothetical — it is the 2022 Bolt
+// EUV, caught by this script's own dry run before any of it shipped:
+//
+//   "EFZ - PROPULSION ENERGY STORAGE PACK - PROPULSION BATTERY, LI, 5-MOD,
+//    LONG RANGE, UNDERBODY (Drive System & Battery)"
+//
+// "LONG RANGE" there is GM's internal descriptor for the ONLY pack a Bolt EUV
+// has. There is no short-range EUV to contrast it with, so printing "Premier
+// Long Range" would invent a version distinction that does not exist —
+// exactly the false precision the loader is supposed to refuse. Requiring
+// "<tier> Range Battery" keeps every one of the 17 true hits in the survey
+// (Ford files "Extended Range Battery" and "Standard Range Battery") and
+// drops this one.
+const RANGE_TIER = /\b(extended|standard|long|short|extra)[\s-]+range\s+battery\b/gi;
+
+// GM's entries are parts-catalog rows, opening with an RPO code and a dash.
+// Nothing in that format is a version name, whatever words it contains.
+const RPO_DESCRIPTION = /^[A-Z0-9]{3}\s*[\u2013\u2014-]\s/;
+
+function rangeFrom(r) {
+  const text = String(r.BatteryInfo ?? "");
+  if (!text || RPO_DESCRIPTION.test(text)) return null;
+  const tiers = new Set([...text.matchAll(RANGE_TIER)].map((m) => m[1].toLowerCase()));
+  // vPIC sometimes concatenates two filings into one string, and a few come
+  // back doubled ("...Rear Primary Drive UnitStandard Range Battery..."). One
+  // tier repeated is still one answer; two DIFFERENT tiers means the cohort
+  // does not have a single pack and neither name is safe to print.
+  if (tiers.size !== 1) return null;
+  const tier = [...tiers][0];
+  return `${tier[0].toUpperCase()}${tier.slice(1)} Range`;
+}
+
 // When the VIN doesn't encode the trim (Ford didn't stamp one on 2022-23
 // Lightnings; Tesla never has), it still encodes the powertrain — and that is
 // the split that moves the price. Report only what vPIC returned, never a
 // marketing name inferred from it.
+//
+// The pack tier goes first because it is the one a shopper can act on: it
+// names a version ("Extended Range"), where the kWh and hp figures only
+// describe one. Nothing read this column before 0047; the view added there
+// surfaces a tier as `range_tier` and leaves the numbers unrendered, so
+// preferring the tier here loses no fact that was reaching a page.
 function specFrom(r) {
+  const range = rangeFrom(r);
+  if (range) return range;
   const kwh = Number(r.BatteryKWh);
   if (Number.isFinite(kwh) && kwh > 0) return `${Math.round(kwh)} kWh`;
   const hp = Number(r.EngineHP);
@@ -200,14 +266,19 @@ for (let i = 0; i < cohorts.length; i += BATCH) {
   await new Promise((r) => setTimeout(r, 400));
 }
 
+const isTier = (v) => !!v.spec && /^(Extended|Standard|Long|Short|Extra) Range$/.test(v.spec);
 const withTrim = out.filter((v) => v.trim).length;
 const withSpec = out.filter((v) => !v.trim && v.spec).length;
+const withTier = out.filter(isTier).length;
 const salesWithTrim = out.filter((v) => v.trim).reduce((a, v) => a + v.salesN, 0);
+// What the page can actually label after 0047: a trim, a pack tier, or both.
+const salesLabelled = out.filter((v) => v.trim || isTier(v)).reduce((a, v) => a + v.salesN, 0);
 const salesTotal = out.reduce((a, v) => a + v.salesN, 0);
 console.error(
   `vpic-variants: ${out.length} cohorts — ${withTrim} named, ${withSpec} spec-only, ` +
-    `${out.length - withTrim - withSpec} unknown; ` +
-    `${((100 * salesWithTrim) / (salesTotal || 1)).toFixed(1)}% of sales rows get a trim name`
+    `${out.length - withTrim - withSpec} unknown; ${withTier} carry a pack tier; ` +
+    `${((100 * salesWithTrim) / (salesTotal || 1)).toFixed(1)}% of sales rows get a trim name, ` +
+    `${((100 * salesLabelled) / (salesTotal || 1)).toFixed(1)}% get a version label`
 );
 
 if (DRY) {
