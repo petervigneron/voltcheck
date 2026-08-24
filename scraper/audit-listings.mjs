@@ -31,6 +31,7 @@
 import { readdir, readFile, writeFile } from "node:fs/promises";
 import { EV_ONLY_WMIS, nameplateVouches, vpicRefutesEv } from "./lib/ev.mjs";
 import { recordRun } from "./lib/audit-status.mjs";
+import { fetchWithRetry } from "./lib/retry.mjs";
 
 const arg = (n, d) => { const i = process.argv.indexOf(n); return i >= 0 ? process.argv[i + 1] : d; };
 const LIMIT = Number(arg("--limit", 0));
@@ -77,13 +78,20 @@ const H = { apikey: ANON, Authorization: `Bearer ${ANON}` };
 // larger row count. recheck.mjs hit exactly that on 2026-08-23 at row 96,000
 // (18,538 ms for one page, against anon's 3s); see the note there for the
 // measurements. Keyset costs the same at row 96,000 as at row 0.
+// fetchWithRetry, not bare fetch — this walk is in lib/retry.mjs's documented
+// domino class (each Supabase-talking script fails in turn on the recovery
+// windows), and its own HTTP 500 on 2026-08-23 18:50 was one. Page size stays
+// 1000: measured 2026-08-24, steady-state pages run well under 1.5s; only the
+// cold first request spiked, and that is a transient the retry covers.
 const rows = [];
 for (let after = ""; ; ) {
-  const res = await fetch(
-    `${SUPABASE_URL}/rest/v1/listings?select=vin,year,make,model,payload->>trim&delisted_at=is.null` +
-      (after ? `&vin=gt.${encodeURIComponent(after)}` : "") +
-      `&order=vin.asc&limit=1000`,
-    { headers: H }
+  const res = await fetchWithRetry(`audit: listing page after ${after || "start"}`, () =>
+    fetch(
+      `${SUPABASE_URL}/rest/v1/listings?select=vin,year,make,model,payload->>trim&delisted_at=is.null` +
+        (after ? `&vin=gt.${encodeURIComponent(after)}` : "") +
+        `&order=vin.asc&limit=1000`,
+      { headers: H }
+    )
   );
   if (!res.ok) { console.error(`audit: listing fetch failed HTTP ${res.status}`); await finish(1, "fail", `listing fetch failed HTTP ${res.status}`); }
   const page = await res.json();

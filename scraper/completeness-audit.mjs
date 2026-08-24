@@ -42,6 +42,7 @@
 // Exit 0 = at or under baseline, 10 = over (so the nightly can shout).
 import { readFile } from "node:fs/promises";
 import { recordRun } from "./lib/audit-status.mjs";
+import { fetchWithRetry } from "./lib/retry.mjs";
 
 const arg = (n, d) => { const i = process.argv.indexOf(n); return i >= 0 ? process.argv[i + 1] : d; };
 const LIMIT = Number(arg("--limit", 0));
@@ -97,20 +98,31 @@ const H = { apikey: ANON, Authorization: `Bearer ${ANON}` };
 // here would mean silently auditing a subset and reporting it as the whole.
 // Nothing downstream reads these rows in order: they are aggregated into a
 // map keyed by dealer_domain below.
+// PAGE=500, not 1000: the `susp` computed column detoasts `payload` for every
+// row, and at 1000 rows the heavy-payload VIN regions (1G*/GM) measured
+// 2.0-2.8s a page on 2026-08-24 — brushing anon's 3s statement_timeout at
+// baseline, over it under any concurrent walk, and growing with inventory.
+// A retry cannot save a page that is chronically over the cap; a smaller
+// statement can. fetchWithRetry covers the other half — the transient
+// 500/503 recovery windows lib/retry.mjs documents — which is what actually
+// failed the 01:59 and 18:50 runs on 2026-08-23/24.
+const PAGE = 500;
 const rows = [];
 for (let after = ""; ; ) {
-  const res = await fetch(
-    `${SUPABASE_URL}/rest/v1/listings?select=vin,dealer_domain,mileage,state,condition,susp:payload->>trimSuspect` +
-      `&delisted_at=is.null&condition=in.(used,certified)` +
-      (after ? `&vin=gt.${encodeURIComponent(after)}` : "") +
-      `&order=vin.asc&limit=1000`,
-    { headers: H }
+  const res = await fetchWithRetry(`completeness-audit: page after ${after || "start"}`, () =>
+    fetch(
+      `${SUPABASE_URL}/rest/v1/listings?select=vin,dealer_domain,mileage,state,condition,susp:payload->>trimSuspect` +
+        `&delisted_at=is.null&condition=in.(used,certified)` +
+        (after ? `&vin=gt.${encodeURIComponent(after)}` : "") +
+        `&order=vin.asc&limit=${PAGE}`,
+      { headers: H }
+    )
   );
   if (!res.ok) { console.error(`completeness-audit: fetch failed HTTP ${res.status}`); await finish(1, "fail", `fetch failed HTTP ${res.status}`); }
   const page = await res.json();
   if (!Array.isArray(page) || !page.length) break;
   rows.push(...page);
-  if (page.length < 1000 || (LIMIT && rows.length >= LIMIT)) break;
+  if (page.length < PAGE || (LIMIT && rows.length >= LIMIT)) break;
   after = page[page.length - 1].vin;
 }
 const live = LIMIT ? rows.slice(0, LIMIT) : rows;
