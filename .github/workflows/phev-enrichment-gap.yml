@@ -70,9 +70,15 @@ jobs:
       - name: Measure PHEV enrichment coverage against the live feed
         working-directory: web
         run: |
+          # The baseline is the AUDITED known backlog, so red means "something
+          # new arrived", not "the backlog still exists". Raise it only after
+          # checking the delta the way 2026-08-24 was checked: matched count
+          # up, cross-kind zero, every new group traced to a deliberate
+          # coverage expansion (that day: AutoFunds + Mazda + Mitsubishi
+          # crawls doubled the plug-in population, 111 -> 152 groups).
           rc=0
           node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs \
-            scripts/phev-enrichment-gap.mjs --max-groups 111 --top 40 || rc=$?
+            scripts/phev-enrichment-gap.mjs --max-groups 152 --top 40 || rc=$?
           if [ "$rc" -eq 10 ]; then
             echo "::error::PHEV enrichment gap check failed — a plug-in nameplate went live with no enrichment row, a row stopped matching, or a plug-in is showing a battery-electric car's facts. See the ranked list above."
             exit 1
