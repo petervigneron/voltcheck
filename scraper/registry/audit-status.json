@@ -2,21 +2,21 @@
   "_comment": "Written by scraper/lib/audit-status.mjs. Do not hand-edit — see that file's header.",
   "checks": {
     "feed-shard-health": {
-      "lastRunAt": "2026-08-24T07:41:30.845Z",
-      "result": "ok",
-      "detail": "total 110011; shards 18333/18260/18407/18211/18503/18302; sitemap URLs 110015",
+      "lastRunAt": "2026-08-24T19:30:21.755Z",
+      "result": "fail",
+      "detail": "served total 130011 vs sync-guard's last known-good 103526 — 25.6% apart (tolerance 10%). This is the poisoned-cache shape: a shard rendered and cached a snapshot that disagrees with what the database was last confirmed to hold.",
       "expectedEveryHours": 8
     },
     "ev-rules-audit": {
-      "lastRunAt": "2026-08-24T13:32:48.719Z",
+      "lastRunAt": "2026-08-24T19:16:26.876Z",
       "result": "ok",
-      "detail": "129499 live, 0 newly refuted by vPIC, 1 adjudicated-and-kept, 0 undecided",
+      "detail": "131236 live, 0 newly refuted by vPIC, 1 adjudicated-and-kept, 0 undecided",
       "expectedEveryHours": 27
     },
     "completeness-audit": {
-      "lastRunAt": "2026-08-24T13:34:23.931Z",
+      "lastRunAt": "2026-08-24T19:17:46.297Z",
       "result": "ok",
-      "detail": "44667 live, 3 broken-parser lots (baseline 202)",
+      "detail": "45785 live, 2 broken-parser lots (baseline 202)",
       "expectedEveryHours": 27
     },
     "sync-guard": {
@@ -32,9 +32,9 @@
       "expectedEveryHours": 27
     },
     "live-price-audit": {
-      "lastRunAt": "2026-08-24T13:36:07.086Z",
-      "result": "fail",
-      "detail": "feed read failed: shard 1 HTTP 413",
+      "lastRunAt": "2026-08-24T19:17:48.051Z",
+      "result": "warn",
+      "detail": "129040 priced, 10 implausible (0 at or below the floor/cohort, 10 above)",
       "expectedEveryHours": 8
     },
     "price-audit": {
