@@ -33,8 +33,10 @@ import { ENRICHMENT_ROWS } from "../lib/enrichment/data.ts";
 import { RESEARCH_ROWS } from "../lib/enrichment/data2.ts";
 import { RESEARCH_ROWS_3 } from "../lib/enrichment/data3.ts";
 import { RESEARCH_ROWS_4 } from "../lib/enrichment/data4.ts";
+import { RESEARCH_ROWS_5 } from "../lib/enrichment/data5.ts";
+import { RESEARCH_ROWS_6 } from "../lib/enrichment/data6.ts";
 
-const ALL_ROWS = [...ENRICHMENT_ROWS, ...RESEARCH_ROWS, ...RESEARCH_ROWS_3, ...RESEARCH_ROWS_4];
+const ALL_ROWS = [...ENRICHMENT_ROWS, ...RESEARCH_ROWS, ...RESEARCH_ROWS_3, ...RESEARCH_ROWS_4, ...RESEARCH_ROWS_5, ...RESEARCH_ROWS_6];
 
 const argv = process.argv.slice(2);
 const has = (f) => argv.includes(f);

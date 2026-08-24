@@ -21,9 +21,11 @@ import { ENRICHMENT_ROWS } from "@/lib/enrichment/data";
 import { RESEARCH_ROWS } from "@/lib/enrichment/data2";
 import { RESEARCH_ROWS_3 } from "@/lib/enrichment/data3";
 import { RESEARCH_ROWS_4 } from "@/lib/enrichment/data4";
+import { RESEARCH_ROWS_5 } from "@/lib/enrichment/data5";
+import { RESEARCH_ROWS_6 } from "@/lib/enrichment/data6";
 import type { EnrichmentRow, AbstainableField } from "@/lib/types";
 
-const ALL: EnrichmentRow[] = [...ENRICHMENT_ROWS, ...RESEARCH_ROWS, ...RESEARCH_ROWS_3, ...RESEARCH_ROWS_4];
+const ALL: EnrichmentRow[] = [...ENRICHMENT_ROWS, ...RESEARCH_ROWS, ...RESEARCH_ROWS_3, ...RESEARCH_ROWS_4, ...RESEARCH_ROWS_5, ...RESEARCH_ROWS_6];
 const byId = (id: string) => {
   const r = ALL.find((x) => x.id === id);
   assert.ok(r, `no row with id ${id}`);

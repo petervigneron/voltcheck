@@ -106,3 +106,72 @@ test("an X5 that says PHEV in its model resolves without a trim; a bare X5 still
   assert.equal(matchEnrichment(decode({ make: "BMW", model: "X5", modelYear: 2026, trim: "xDrive40i" }), null).exact, undefined);
   assert.equal(matchEnrichment(decode({ make: "BMW", model: "X5", modelYear: 2026 }), null).exact, undefined);
 });
+
+// ── The 2026-08-23 tranche (data6.ts) repeated the contract across nine
+// makes. Same two halves as the Wrangler tests above: the feed's real
+// bare-model shapes must resolve, and the petrol car sharing the nameplate
+// must not — with trim strings taken verbatim from the live feed.
+test("bare-model shapes from the data6 tranche resolve through their trim guards", () => {
+  assert.equal(idOf(decode({ make: "MERCEDES-BENZ", model: "GLC", modelYear: 2025, trim: "350e 4MATIC®" })), "glc-350e-2025-27-alt");
+  assert.equal(idOf(decode({ make: "MERCEDES-BENZ", model: "GLE", modelYear: 2025, trim: "450e Plug-In Hybrid 4MATIC®" })), "gle-450e-2025-alt");
+  assert.equal(idOf(decode({ make: "BMW", model: "5 Series", modelYear: 2026, trim: "550e xDrive" })), "550e-2026-27-alt");
+  assert.equal(idOf(decode({ make: "BMW", model: "5-Series", modelYear: 2022, trim: "530e xDrive" })), "530e-xdrive-2021-23-alt");
+  assert.equal(idOf(decode({ make: "BMW", model: "3 Series", modelYear: 2023, trim: "330e xDrive" })), "330e-xdrive-2023-24-alt");
+  assert.equal(idOf(decode({ make: "BMW", model: "7 Series", modelYear: 2026, trim: "750e xDrive" })), "750e-2026-alt");
+  assert.equal(idOf(decode({ make: "MAZDA", model: "CX-90", modelYear: 2025, trim: "Premium Phev" })), "cx-90-phev-2024-25-alt");
+  assert.equal(idOf(decode({ make: "MAZDA", model: "Mazda CX-90 PHEV", modelYear: 2025, trim: "Premium Plus" })), "cx-90-phev-2024-25");
+  assert.equal(idOf(decode({ make: "KIA", model: "Sorento", modelYear: 2023, trim: "SX Prestige Phev" })), "sorento-phev-2022-24-alt");
+  assert.equal(idOf(decode({ make: "HYUNDAI", model: "Tucson", modelYear: 2023, trim: "SEL Phev" })), "tucson-phev-2022-24-alt");
+  assert.equal(idOf(decode({ make: "MITSUBISHI", model: "Outlander", modelYear: 2024, trim: "SE Phev" })), "outlander-phev-2023-25-alt");
+  assert.equal(idOf(decode({ make: "LEXUS", model: "NX", modelYear: 2024, trim: "450h+ Premium" })), "nx-450h-plus-2022-25-alt");
+  assert.equal(idOf(decode({ make: "PORSCHE", model: "Cayenne", modelYear: 2022, trim: "E-Hybrid" })), "cayenne-ehybrid-2021-22-alt");
+  // "Turbo" alone names a different E-Hybrid on either side of the facelift;
+  // the year windows are what disambiguate it.
+  assert.equal(idOf(decode({ make: "PORSCHE", model: "Cayenne", modelYear: 2022, trim: "Turbo" })), "cayenne-turbos-ehybrid-2021-23-alt");
+  assert.equal(idOf(decode({ make: "PORSCHE", model: "Cayenne", modelYear: 2025, trim: "Turbo" })), "cayenne-turbo-ehybrid-2025-alt");
+  // A "Cayenne E-Hybrid" whose trim names the S variant resolves to the S
+  // row via the guarded alias; without a trim it stays the base variant.
+  assert.equal(idOf(decode({ make: "PORSCHE", model: "Cayenne E-Hybrid", modelYear: 2025, trim: "S" })), "cayenne-s-ehybrid-2025-alt");
+  assert.equal(idOf(decode({ make: "PORSCHE", model: "Cayenne E-Hybrid", modelYear: 2025 })), "cayenne-ehybrid-2025");
+});
+
+test("the petrol cars sharing those nameplates match nothing", () => {
+  assert.equal(matchEnrichment(decode({ make: "MERCEDES-BENZ", model: "GLC", modelYear: 2025, trim: "300 4MATIC" }), null).exact, undefined);
+  assert.equal(matchEnrichment(decode({ make: "MERCEDES-BENZ", model: "GLE", modelYear: 2025, trim: "450 4MATIC" }), null).exact, undefined);
+  assert.equal(matchEnrichment(decode({ make: "BMW", model: "5 Series", modelYear: 2026, trim: "540i xDrive" }), null).exact, undefined);
+  assert.equal(matchEnrichment(decode({ make: "BMW", model: "3 Series", modelYear: 2023, trim: "330i" }), null).exact, undefined);
+  assert.equal(matchEnrichment(decode({ make: "MAZDA", model: "CX-90", modelYear: 2025, trim: "Premium Plus" }), null).exact, undefined);
+  assert.equal(matchEnrichment(decode({ make: "KIA", model: "Sorento", modelYear: 2023, trim: "SX Prestige" }), null).exact, undefined);
+  assert.equal(matchEnrichment(decode({ make: "HYUNDAI", model: "Tucson", modelYear: 2023, trim: "SEL" }), null).exact, undefined);
+  assert.equal(matchEnrichment(decode({ make: "MITSUBISHI", model: "Outlander", modelYear: 2024, trim: "SE" }), null).exact, undefined);
+  assert.equal(matchEnrichment(decode({ make: "LEXUS", model: "NX", modelYear: 2024, trim: "350h Premium" }), null).exact, undefined);
+  assert.equal(matchEnrichment(decode({ make: "PORSCHE", model: "Cayenne", modelYear: 2022, trim: "GTS" }), null).exact, undefined);
+  assert.equal(matchEnrichment(decode({ make: "PORSCHE", model: "Cayenne", modelYear: 2022, trim: "Platinum Edition" }), null).exact, undefined);
+  // And the no-trim decodes can't fall through into any guarded row.
+  for (const [make, model] of [
+    ["MERCEDES-BENZ", "GLC"], ["BMW", "5 Series"], ["MAZDA", "CX-90"], ["KIA", "Sorento"],
+    ["HYUNDAI", "Tucson"], ["MITSUBISHI", "Outlander"], ["LEXUS", "NX"], ["PORSCHE", "Cayenne"],
+  ] as const) {
+    assert.equal(matchEnrichment(decode({ make, model, modelYear: 2023 }), null).exact, undefined, `${make} ${model}`);
+  }
+});
+
+test("a split-year 2022 Volvo T8 resolves to candidates, one per pack, never a guess", () => {
+  const r = matchEnrichment(decode({ make: "VOLVO", model: "XC90 Recharge Plug-In Hybrid", modelYear: 2022, trim: "Inscription" }), null);
+  assert.equal(r.exact, undefined);
+  assert.deepEqual((r.candidates ?? []).map((c) => c.id).sort(), ["xc90-t8-2022-er", "xc90-t8-2022-std"]);
+  // Outside the split year the same shape resolves exactly.
+  assert.equal(idOf(decode({ make: "VOLVO", model: "XC90 Recharge Plug-In Hybrid", modelYear: 2023, trim: "Ultimate" })), "xc90-t8-2023-26");
+  assert.equal(idOf(decode({ make: "VOLVO", model: "XC90 plug-in hybrid", modelYear: 2026, trim: "T8 Plus 7-Seater" })), "xc90-t8-2023-26");
+});
+
+test("the Lincoln Grand Touring guard: PHEV trims resolve, gas Corsair/Aviator trims match nothing", () => {
+  assert.equal(idOf(decode({ make: "LINCOLN", model: "Corsair", modelYear: 2022, trim: "Grand Touring" })), "corsair-gt-2021-22-alt");
+  assert.equal(idOf(decode({ make: "LINCOLN", model: "Corsair", modelYear: 2026, trim: "Grand Touring Phev" })), "corsair-gt-2026-alt");
+  assert.equal(idOf(decode({ make: "LINCOLN", model: "Aviator", modelYear: 2021, trim: "Black Label Grand Touring" })), "aviator-gt-2020-23-alt");
+  for (const trim of ["Reserve", "Black Label", "Standard"]) {
+    assert.equal(matchEnrichment(decode({ make: "LINCOLN", model: "Corsair", modelYear: 2022, trim }), null).exact, undefined, trim);
+    assert.equal(matchEnrichment(decode({ make: "LINCOLN", model: "Aviator", modelYear: 2021, trim }), null).exact, undefined, trim);
+  }
+  assert.equal(matchEnrichment(decode({ make: "LINCOLN", model: "Corsair", modelYear: 2022 }), null).exact, undefined);
+});

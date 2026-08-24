@@ -23,9 +23,10 @@ import { RESEARCH_ROWS } from "../lib/enrichment/data2.ts";
 import { RESEARCH_ROWS_3 } from "../lib/enrichment/data3.ts";
 import { RESEARCH_ROWS_4 } from "../lib/enrichment/data4.ts";
 import { RESEARCH_ROWS_5 } from "../lib/enrichment/data5.ts";
+import { RESEARCH_ROWS_6 } from "../lib/enrichment/data6.ts";
 import { inlineNote, reason } from "../lib/enrichment/noteRule.ts";
 
-const ALL_ROWS = [...ENRICHMENT_ROWS, ...RESEARCH_ROWS, ...RESEARCH_ROWS_3, ...RESEARCH_ROWS_4, ...RESEARCH_ROWS_5];
+const ALL_ROWS = [...ENRICHMENT_ROWS, ...RESEARCH_ROWS, ...RESEARCH_ROWS_3, ...RESEARCH_ROWS_4, ...RESEARCH_ROWS_5, ...RESEARCH_ROWS_6];
 const LIST = process.argv.includes("--list");
 
 const facts = [];
