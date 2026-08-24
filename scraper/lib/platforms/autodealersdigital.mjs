@@ -34,14 +34,16 @@
 // "2009 Dodge Sprinter". The link is the one per-car token that both templates
 // put with the card it belongs to.
 //
-// ── HALF OF /all-inventory/ IS ALREADY SOLD ────────────────────────────────
-// It is not the live lot. Across the 87 cars on the three rooftops measured
-// (autogroupofplano, wildaboutcarsgarage, privilegeautobrokers, 2026-08-24),
-// 50 are sold — the platform ships a whole /sold-inventory/ page and its sort
-// menu offers "Sold Inventory First", so leaving them in /all-inventory/ is
-// the product working as designed. A sold car is not a listing, so it is
+// ── THE SRP IS NOT THE LIVE LOT ────────────────────────────────────────────
+// The platform ships a whole /sold-inventory/ page and its sort menu offers
+// "Sold Inventory First", so leaving sold cars in the main list is the product
+// working as designed. Across all 30 rooftops (1,070 cards, 2026-08-24) 162
+// are sold — 15% — but the rate is nothing like uniform, and that is the point:
+// on the three rooftops this module was written against it is 50 of 87, and
+// wildaboutcarsgarage.com's first page is 18 sold out of 25. A classics dealer
+// keeps its sold gallery forever. A sold car is not a listing, so it is
 // dropped: the same hard filter waynereaves.mjs applies to its `soldOn`
-// records, for the same reason, and at more than twice the rate.
+// records, for the same reason.
 //
 // TWO markers, and both are load-bearing:
 //
@@ -115,13 +117,20 @@
 // `mileageFromOdometer: {value: 0}`. A 2012 car with no miles on it is a field
 // the dealer never filled in, so a zero abstains rather than publishing.
 //
-// ── EV YIELD ───────────────────────────────────────────────────────────────
-// Not one of the 87 cars on the first three rooftops is electrified — they are
-// classics and used trucks — but the fourth, globalautomotorsco.com, carries a
-// 2012 Nissan LEAF (JN1AZ0CP6CT021069, $3,950), which classifyEv reads as BEV
-// at high confidence off the platform's own "Electric" fuel string. So the
-// vendor does carry EVs; four small lots is not a rate, and nothing here
-// should be read as one.
+// ── EV YIELD, AND THE "I4" TRAP IN READING IT ──────────────────────────────
+// Across the 30 rooftops: 908 live cars, of which FIVE are electrified — a
+// 2012 Nissan LEAF and a 2014 Chevrolet Volt, a 2014 Ford C-Max Energi, and
+// two 2024 Jeep Wrangler 4xe. That is the number.
+//
+// classifyEv flags eighteen. The other thirteen are Altimas, Versas, Camrys,
+// Sentras, Accords, Tacomas and an NV200 whose names carry the engine
+// designation "I4", which the BMW i4 anchor in lib/ev.mjs matches. Every one
+// comes back BEV?/name_match, which never publishes — ingest gates on
+// evConfidence === "high" and vPIC refutes them — so the cost is a decode
+// each, the same accepted trade the iX-versus-Matrix comment in that file
+// describes. It is written down here because 13 in 908 is a high enough rate
+// that anyone reading a raw classifyEv count off this platform would badly
+// overstate what it holds.
 import { stabilizeImages } from "../images.mjs";
 import { ADD_DISPLAY_PRICE } from "../price-provenance.mjs";
 
