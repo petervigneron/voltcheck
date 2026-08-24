@@ -42,6 +42,12 @@
       "result": "ok",
       "detail": "66 flagged, 3 corrected, 42 confirmed, 21 suppressed",
       "expectedEveryHours": 27
+    },
+    "colisting-sync": {
+      "lastRunAt": "2026-08-24T20:38:12.741Z",
+      "result": "ok",
+      "detail": "12 multi-domain VINs across 6 domains, 12 inserted",
+      "expectedEveryHours": 27
     }
   },
   "lastGoodCounts": {
