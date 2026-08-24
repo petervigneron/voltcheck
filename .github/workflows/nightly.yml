@@ -769,26 +769,25 @@ jobs:
       # — and pulling it in was actively harmful, which is why it is gone
       # rather than merely unused. See the commit step below.
 
-      # Which rooftops offered the same VIN tonight (migration 0036). The
-      # merge dedupes one VIN to one record, so this evidence exists only in
-      # out/colisting-pairs.json — carried here via the finalize-ingest-out
-      # artifact — and is gone when the runner is deleted; it cannot be
-      # recomputed from the database afterwards. Separate from db-sync
-      # because db-sync runs a second time when the price audit corrects a
-      # price, and a price correction says nothing new about who shares
-      # inventory. continue-on-error: this is archive, not the showroom. A
-      # failure here costs one night of the graph; it must not block the
-      # rest of this job, and a red X here would wrongly imply the crawl
-      # itself failed.
-      - name: Record dealer-group co-listings
-        if: ${{ needs.finalize-ingest.result == 'success' && github.event.inputs.skip_crawl != 'true' }}
-        continue-on-error: true
-        working-directory: scraper
-        env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-          SUPABASE_INGEST_TOKEN: ${{ secrets.SUPABASE_INGEST_TOKEN }}
-        run: node colisting-sync.mjs
+      # NO co-listing step here any more, and its absence is the fix. It used
+      # to read this run's out/colisting-pairs.json, which crawl.mjs wrote —
+      # and crawl.mjs has not run in this workflow since 2026-08-22, when the
+      # fleet crawl moved to rolling-crawl.yml. One VIN on two rooftops is a
+      # thing only a dealer crawl can witness; what is left here is the OEM
+      # locator, one domain per lane, which structurally cannot produce a pair.
+      #
+      # So the step could only ever report zero, and it did — every night, as
+      # "0 multi-domain VINs tonight (expected thousands; check merge-shards)".
+      # That reads like a broken collector. The collector is fine: rolling-crawl
+      # runs colisting-sync 48 times a day against real slice data and recorded
+      # ~1,150 co-listed VINs on 2026-08-24. What was missing was that lane
+      # committing the liveness record, which it now does.
+      #
+      # Leaving this here was not free. Once nightly.yml's commit step was
+      # unwedged (784f87e), this night's structural zero would have landed as
+      # colisting-sync's authoritative record and reported a healthy lane as
+      # failing — the check going from "never recorded" to "recorded, and
+      # wrong", which is worse.
 
       # Which live listings resolve to NO enrichment row at all — the check
       # that should have existed from the start. The enrichment corpus
