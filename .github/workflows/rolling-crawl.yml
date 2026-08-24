@@ -111,13 +111,35 @@ jobs:
           SLICES="${{ github.event.inputs.slices || '48' }}"
           SLICE="${{ github.event.inputs.slice }}"
           if [ -z "$SLICE" ]; then
-            # 10# forces base 10. Without it bash reads a zero-padded hour or
-            # minute as octal and dies — "09: value too great for base" — which
-            # would have failed every run in the 08:00 and 09:00 UTC hours and
-            # at :08 and :09 past every hour. Verified under bash, not zsh:
-            # zsh evaluates $((09 * 60)) happily and hides it.
-            MINS=$(( 10#$(date -u +%H) * 60 + 10#$(date -u +%M) ))
-            SLICE=$(( MINS / (1440 / SLICES) % SLICES ))
+            # A CURSOR, not a clock, and the difference is a quarter of the
+            # registry. This used to be derived from the wall clock —
+            # MINS / (1440 / SLICES) % SLICES — which silently assumed every
+            # scheduled tick fires. GitHub drops scheduled runs under load, and
+            # it drops a lot of them: 56 runs delivered in the 46 hours to
+            # 2026-08-24T19:34, 29.1 a day against the 48 this cron asks for,
+            # with gaps of 40 to 88 minutes and never the 30 it is set to.
+            #
+            # With a clock-derived slice, a dropped tick does not DELAY that
+            # slice, it SKIPS it: the next run reads the current time and picks
+            # a different one, and nothing ever comes back. Measured two ways
+            # over that window — from run timestamps, and from this lane's own
+            # "after slice N" commit subjects — 35 of 48 slices ran and 13 never
+            # did: 0, 1, 2, 4, 5, 9, 14, 16, 18, 20, 24, 36, 40. They cluster at
+            # 00:00–04:30 UTC, which is exactly where cron congestion is worst,
+            # so it is the same rooftops going stale night after night rather
+            # than a different quarter each time. The day-of-year rotation below
+            # does not cover this: it reorders domains WITHIN a slice to handle
+            # deadline truncation, and never gets the chance to run at all for a
+            # slice whose tick was dropped.
+            #
+            # run_number only ever increments, so a dropped tick now shifts the
+            # sequence by one instead of putting a hole in it, and every slice
+            # gets its turn. A full sweep takes 48/29 ≈ 1.6 days at the observed
+            # rate rather than the 1.0 the cron implies — slower than advertised,
+            # but complete, which the previous scheme was not at any speed.
+            # A manual `slice` input still overrides, and a workflow_dispatch
+            # simply advances the cursor like any other run.
+            SLICE=$(( ${{ github.run_number }} % SLICES ))
           fi
           echo "slices=$SLICES" >> "$GITHUB_OUTPUT"
           echo "slice=$SLICE" >> "$GITHUB_OUTPUT"
