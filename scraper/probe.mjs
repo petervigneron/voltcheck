@@ -6,6 +6,7 @@
 // no human in the loop.
 //
 //   node probe.mjs [--limit N] [--concurrency N] [--sample N --seed S]
+//                  [--domains-file cohort.txt]
 //
 // Politeness is enforced per host inside fetchPage, so probing different
 // dealers concurrently is free speed — the 1.1s spacing still applies to
@@ -85,6 +86,7 @@ import { overfuelVehicles, overfuelSeeds, isOverfuel, overfuelApiConfig, countOv
 import { dealrVehicles, DEALR_SRP_PATH } from "./lib/platforms/dealrcloud.mjs";
 import { autoManagerVehicles, AUTOMANAGER_SRP_PATH } from "./lib/platforms/automanager.mjs";
 import { isRideMotive, rideMotiveConfig, countRideMotiveApi } from "./lib/platforms/ridemotive.mjs";
+import { isAutoFunds, countAutoFunds } from "./lib/platforms/autofunds.mjs";
 import { discoverSitemapUrls, rank, dedupe, SRP_PATHS } from "./lib/sitemap.mjs";
 import { spaSignals, countVinUrls } from "./lib/spa-signals.mjs";
 import { failureKind, apiHostsFrom, seededShuffle, emptyOrTransient } from "./lib/probe-verdict.mjs";
@@ -111,6 +113,22 @@ const STATUS = strFlag("--status", "discovered");
 // the whole written-off pile, which is both cheaper and higher-yield.
 const MATCH = strFlag("--match", null);
 const matchRe = MATCH ? new RegExp(MATCH, "i") : null;
+// --domains-file <path>: probe exactly the domains listed in a file (one per
+// line, blank lines and #comments ignored), whatever their status. --match can
+// only reach rows whose own notes already name the platform, and a cohort
+// found by asking the sites themselves — the AutoFunds rooftops were found by
+// one request to /rss.aspx each — is named by a list, not by a regex over
+// prose written before anyone knew what they ran. An explicit list is a
+// deliberate target, so it overrides --status rather than intersecting it.
+const DOMAINS_FILE = strFlag("--domains-file", null);
+const domainList = DOMAINS_FILE
+  ? new Set(
+      (await readFile(DOMAINS_FILE, "utf-8"))
+        .split(/\r?\n/)
+        .map((l) => l.trim().replace(/^https?:\/\//, "").replace(/\/.*$/, "").toLowerCase())
+        .filter((l) => l && !l.startsWith("#")),
+    )
+  : null;
 // --verdict transient: re-probe the rows a previous run could not get an
 // answer out of. This is the requeue the verdict split is for — a night's
 // transient rows are re-checked on a later night at low concurrency, rather
@@ -135,17 +153,30 @@ const NO_RETRY = process.argv.includes("--no-retry");
 
 const regUrl = new URL("./registry/registry.json", import.meta.url);
 const registry = JSON.parse(await readFile(regUrl, "utf-8"));
-const matched = registry.sites
-  .filter((s) => s.status === STATUS)
-  .filter((s) => !VERDICT || s.probe?.verdict === VERDICT)
-  .filter((s) => !matchRe || matchRe.test(s.domain) || matchRe.test(s.notes ?? ""));
+const matched = domainList
+  ? registry.sites.filter((s) => domainList.has(s.domain.toLowerCase()))
+  : registry.sites
+      .filter((s) => s.status === STATUS)
+      .filter((s) => !VERDICT || s.probe?.verdict === VERDICT)
+      .filter((s) => !matchRe || matchRe.test(s.domain) || matchRe.test(s.notes ?? ""));
 const candidates = SAMPLE
   ? seededShuffle(matched, SEED).slice(0, SAMPLE)
-  : matched.slice(0, LIMIT);
+  : // An explicit domain list is already the limit; truncating it to --limit
+    // would silently skip the tail of a cohort someone named on purpose.
+    domainList
+    ? matched
+    : matched.slice(0, LIMIT);
 if (SAMPLE) console.error(`probe: seeded sample of ${candidates.length} from ${matched.length} "${STATUS}" rows (seed ${SEED})`);
+if (domainList) {
+  const missing = [...domainList].filter((d) => !matched.some((s) => s.domain.toLowerCase() === d));
+  console.error(`probe: ${candidates.length} of ${domainList.size} listed domain(s) found in the registry`);
+  if (missing.length) console.error(`probe: not in registry: ${missing.join(", ")}`);
+}
 if (!candidates.length) {
   console.error(
-    `probe: no "${STATUS}"${VERDICT ? ` [${VERDICT}]` : ""}${MATCH ? ` sites matching /${MATCH}/` : " sites"} awaiting validation`,
+    domainList
+      ? `probe: none of the domains in ${DOMAINS_FILE} are in the registry`
+      : `probe: no "${STATUS}"${VERDICT ? ` [${VERDICT}]` : ""}${MATCH ? ` sites matching /${MATCH}/` : " sites"} awaiting validation`,
   );
   process.exit(0);
 }
@@ -248,6 +279,23 @@ async function probeSite(site) {
         console.error(`  ${site.domain} → working (ridemotive, ${found})`);
         return;
       }
+    }
+  }
+
+  // AutoFunds / DealerWebsites: the walk below cannot reach this platform's
+  // inventory at all — /inventory.aspx is robots-disallowed on its rooftops and
+  // no page carries JSON-LD — which is exactly why they read "0 VIN vehicles in
+  // 12 fetches" every time they were probed. Their /rss.aspx feed is the whole
+  // lot in one request; settle it there, like DealerVenom/Overfuel/Motive above.
+  if (isAutoFunds(home.body)) {
+    const { ok, found, hasVin } = await countAutoFunds(origin);
+    if (ok && found > 0 && hasVin) {
+      site.platform = "autofunds";
+      site.status = "working";
+      site.notes = `${site.notes ?? ""} | auto-promoted by probe ${today}: autofunds /rss.aspx feed, ${found} vehicles`.trim();
+      setVerdict(site, "working", { fetched: fetched + 1, via: "autofunds", found });
+      console.error(`  ${site.domain} → working (autofunds, ${found})`);
+      return;
     }
   }
 

@@ -47,14 +47,10 @@ const SIGNATURES = [
   { platform: "automanager", res: [/automanagerprodcdn\.azureedge\.net|automanager\.blob\.core\.windows\.net|wm\.automanager\.com/i] },
   // AutoFunds / DealerWebsites.com — one product, two names: the pages load
   // "DW_Common" stylesheets through HttpCombiner.ashx and the footer credits
-  // autofunds.com. NO EXTRACTOR YET; the label is here so the cohort is
-  // greppable, because the door into it is already found and unbuilt: every
-  // rooftop publishes its whole lot at /rss.aspx in an `addItem:` namespace
-  // carrying year, make, model, trim, VIN, engine, transmission, miles, the
-  // full image list and the VDP link (stsautos.com: 46 items, 46 VINs, one
-  // request). What the feed does NOT carry is price, fuel type or condition,
-  // so a lane built on it has to follow the VDP for those — which is why this
-  // is a note and not a lane.
+  // autofunds.com. lib/platforms/autofunds.mjs reads the whole lot out of
+  // /rss.aspx (one request) and follows the VDP of the cars that could be
+  // electrified for the price, fuel and condition the feed omits. The SRP is
+  // robots-disallowed on these rooftops, so the feed is the only door.
   { platform: "autofunds", res: [/\bautofunds\.com|images\.autofunds\.net|HttpCombiner\.ashx\?s=DW_/i] },
   { platform: "team-velocity", res: [/teamvelocityportal\.com/i, /vdpVehicleExteriorColor/] },
   // No JSON-LD anywhere and numeric-id VDP URLs, so nothing generic hooks it;

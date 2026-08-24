@@ -45,6 +45,12 @@ import {
   autoManagerVehicles,
   autoManagerNextPageUrl,
 } from "./lib/platforms/automanager.mjs";
+import {
+  isAutoFunds,
+  autoFundsNeedsVdp,
+  pullAutoFunds,
+  enrichFromAutoFunds,
+} from "./lib/platforms/autofunds.mjs";
 
 const args = process.argv.slice(2);
 function flag(name, fallback) {
@@ -189,12 +195,18 @@ async function crawlDealer(domain) {
   const ddcApi = { done: false };
   const deolApi = { done: false };
   const rm = { done: false };
+  const af = { done: false };
   const dvPlat = siteInfo.get(domain)?.platform;
   // Motive joins that list for the same reason: it renders no inventory in
   // HTML at all and publishes its Algolia config on the homepage, so a
   // ridemotive rooftop whose queue starts at a sitemap VDP shell would spend
   // its whole budget on pages with nothing in them.
-  if (!dvPlat || ["unknown", "dealervenom", "overfuel", "team-velocity", "ridemotive"].includes(dvPlat))
+  // AutoFunds joins for the strongest version of the same reason: its SRP is
+  // robots-disallowed, its pages carry no JSON-LD, and its whole lot is one
+  // /rss.aspx request — but the fingerprint that authorises that request is on
+  // the homepage. Without this seed an AutoFunds rooftop spends its budget on
+  // sitemap VDPs it cannot read a price out of.
+  if (!dvPlat || ["unknown", "dealervenom", "overfuel", "team-velocity", "ridemotive", "autofunds"].includes(dvPlat))
     queue.unshift(origin + "/");
 
   // Overfuel hides its inventory behind a per-rooftop SRP slug
@@ -429,6 +441,51 @@ async function crawlDealer(domain) {
         queue.length = 0;
         break;
       }
+    }
+
+    // AutoFunds / DealerWebsites: the whole lot is one /rss.aspx request, and
+    // it is the ONLY door — these rooftops robots-disallow /inventory.aspx and
+    // publish no JSON-LD anywhere, which is why they sat in
+    // needs-investigation scoring "0 VIN vehicles in 12 fetches". The feed
+    // carries no price, fuel or condition, so the pull follows the VDP of each
+    // car that could be electrified (and only those: 3 of 41 on
+    // greenlightautocorona.com) before anything is classified.
+    if (!af.done && isAutoFunds(res.body)) {
+      af.done = true;
+      const before = report.evs.length;
+      const { ok, vehicles, factsByVin, found, requests, vdpFailures } = await pullAutoFunds(origin, {
+        keep: (v) => autoFundsNeedsVdp(v, classifyEv(v).isEv),
+      });
+      // The feed and the VDP follows are real requests against the dealer.
+      report.fetched += requests;
+      if (ok) {
+        for (const v of vehicles) {
+          const cls = classifyEv(v);
+          if (!cls.isEv) continue;
+          let rec = normalize(v, { sourceUrl: v.offers?.url || origin, dealerDomain: domain });
+          rec = enrichFromAutoFunds(rec, factsByVin.get(rec.vin));
+          if (rec.vdpUrl) rec.vdpUrl = abs(rec.vdpUrl, origin) ?? rec.vdpUrl;
+          rec.evKind = cls.kind;
+          rec.evConfidence = cls.confidence;
+          // Only a car whose VDP actually answered was read from its own page.
+          rec.fromVdp = factsByVin.has(rec.vin);
+          rec.platform = "autofunds";
+          report.evs.push(rec);
+        }
+        if (report.evs.length > before) report.vehiclePages++;
+        report.notes.push(
+          `autofunds: ${found} in feed, ${report.evs.length - before} EV(s) admitted in ${requests} request(s)`
+        );
+        // A car whose VDP did not answer has no price, and ingest drops a row
+        // with no price at all — so the VIN set this run can certify has a hole
+        // in it, and db-sync must not read that hole as "sold".
+        if (vdpFailures) report.stoppedEarly = `autofunds: ${vdpFailures} VDP(s) unread`;
+        queue.length = 0;
+        break;
+      }
+      // No feed (an older template, or the path moved). Leave the HTML walk to
+      // this domain rather than certifying an empty pull.
+      report.notes.push("autofunds: no feed at /rss.aspx, falling back to HTML");
     }
 
     // Team Velocity serves its whole lot from an open API keyed by the account/

@@ -119,6 +119,29 @@ export const MOTIVE_PRICE = "motive-price";
 // combination that would quietly publish a $490 price cut nobody made.
 export const AUTOMANAGER_PRICE = "automanager-price";
 
+// AutoFunds/DealerWebsites' rendered "Internet Price" — the number the VDP
+// prints, read off its schema.org MICRODATA (these pages carry no JSON-LD at
+// all, so this can never be the same reading as the JSONLD tag no matter how
+// equal the numbers look).
+//
+// Explicitly NOT the other itemprop='price' in the same Offer: that one is the
+// estimated monthly payment, $360 beside a $15,990 BMW 530e on
+// greenlightautocorona.com. The extractor refuses payment components outright
+// rather than tagging them, because a payment is not a rung of a price ladder.
+export const AUTOFUNDS_INTERNET = "autofunds-internet";
+
+// The same platform's markdown rung: the "Now Only" component (label "Reduced
+// Price") that replaces the struck-through Internet Price on a marked-down car
+// — 29,995 under a struck 32,995 on sunriseautosales.com's 2021 Model Y.
+//
+// A separate tag from AUTOFUNDS_INTERNET even though both are "the advertised
+// price", because a car that gets marked down MOVES between them: the two
+// readings are different fields on the page, and pairing them would publish
+// the markdown as a price cut computed from two different rungs. That is the
+// dealer.com internetPrice-vs-JSON-LD incident in miniature, inside one
+// extractor. Split costs a quiet chip until the next matching observation.
+export const AUTOFUNDS_REDUCED = "autofunds-reduced";
+
 // OEM/aggregator inventory APIs. Each lane reads one documented field out of
 // one vendor's endpoint; none of them shares a code path with any other, so
 // each gets its own tag rather than a single "oem" bucket that would let a
@@ -171,7 +194,7 @@ const KNOWN = new Set([
   DDC_INTERNET, DDC_SALE, DDC_ASKING, DDC_MSRP,
   DEOL_INTERNET, DEOL_SELLING, DEOL_MSRP, DEOL_CARD_INTERNET, DEOL_DISPLAYED,
   DFIRE_ADVERTISED, DVENOM_FINAL, DEALR_ENTRY, DCS_TILE, OVERFUEL_PRICE, TV_SELLING,
-  MOTIVE_PRICE, AUTOMANAGER_PRICE,
+  MOTIVE_PRICE, AUTOMANAGER_PRICE, AUTOFUNDS_INTERNET, AUTOFUNDS_REDUCED,
 ]);
 
 /** True for a tag this build knows how to emit. OEM lane tags are accepted by
