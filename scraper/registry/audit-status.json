@@ -2,9 +2,9 @@
   "_comment": "Written by scraper/lib/audit-status.mjs. Do not hand-edit — see that file's header.",
   "checks": {
     "feed-shard-health": {
-      "lastRunAt": "2026-08-24T19:30:21.755Z",
-      "result": "fail",
-      "detail": "served total 130011 vs sync-guard's last known-good 103526 — 25.6% apart (tolerance 10%). This is the poisoned-cache shape: a shard rendered and cached a snapshot that disagrees with what the database was last confirmed to hold.",
+      "lastRunAt": "2026-08-24T19:41:59.631Z",
+      "result": "ok",
+      "detail": "total 131671; shards 5523/5424/5608/5421/5454/5355/5481/5518/5444/5311/5509/5559/5499/5561/5544/5586/5504/5435/5388/5389/5478/5525/5632/5523; sitemap URLs 131670",
       "expectedEveryHours": 8
     },
     "ev-rules-audit": {
@@ -20,9 +20,9 @@
       "expectedEveryHours": 27
     },
     "sync-guard": {
-      "lastRunAt": "2026-08-23T15:54:03.796Z",
+      "lastRunAt": "2026-08-24T19:41:25.576Z",
       "result": "ok",
-      "detail": "total 103526, oem 53462, dealer 50064",
+      "detail": "total 131660, oem 73778, dealer 57882",
       "expectedEveryHours": 27
     },
     "lane-flip-check": {
@@ -45,9 +45,9 @@
     }
   },
   "lastGoodCounts": {
-    "total": 103526,
-    "oem": 53462,
-    "dealer": 50064,
-    "at": "2026-08-23T15:54:03.786Z"
+    "total": 131660,
+    "oem": 73778,
+    "dealer": 57882,
+    "at": "2026-08-24T19:41:25.566Z"
   }
 }
