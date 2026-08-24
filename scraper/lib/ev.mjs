@@ -8,7 +8,13 @@ export const EV_MODEL_RE = new RegExp(
     "model [3sxy]\\b", "cybertruck",
     "bolt e[uv]v?", "silverado ev", "blazer ev", "equinox ev", "lyriq", "hummer ev",
     "sierra ev", "escalade iq", "optiq", "vistiq", "celestiq",
-    "charger daytona", "wagoneer s", "500e", "cooper se", "countryman se",
+    "charger daytona",
+    // \b after the S: unanchored, "wagoneer s" matched inside "Grand
+    // Wagoneer Series III" — a petrol Jeep came back BEV?/name_match on
+    // thepalmmotors.com (2026-08-23, AutoFunds lane build). vPIC refuted it,
+    // so the cost was a decode, not a false listing; same class as the
+    // iX/C40/ID.4 anchors above.
+    "wagoneer s\\b", "500e", "cooper se", "countryman se",
     "leaf", "ariya",
     "ioniq 5", "ioniq 6", "ioniq5", "ioniq6", "kona electric",
     "ev6", "ev9", "niro ev", "soul ev",

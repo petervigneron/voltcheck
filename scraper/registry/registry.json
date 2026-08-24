@@ -18768,10 +18768,17 @@
       "domain": "carsbuckny.com",
       "name": "Carsbuck",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 67 vehicles",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 67
+      }
     },
     {
       "domain": "hartgmc.com",
@@ -20141,10 +20148,17 @@
       "domain": "elismotorscorp.com",
       "name": "Elis Motors",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 50 vehicles",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 50
+      }
     },
     {
       "domain": "route80motors.com",
@@ -21558,10 +21572,17 @@
       "domain": "roadmasters2.com",
       "name": "Roadmasters2.com",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 39 vehicles",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 39
+      }
     },
     {
       "domain": "medinaauto.com",
@@ -23209,10 +23230,17 @@
       "domain": "autocaremotors.com",
       "name": "Auto Care Motors",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 48 vehicles",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 48
+      }
     },
     {
       "domain": "weigmansauto.com",
@@ -30914,10 +30942,17 @@
       "domain": "dealertownct.com",
       "name": "Dealertown Auto Wholesalers",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 71 vehicles",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 71
+      }
     },
     {
       "domain": "napletondowntownhyundai.com",
@@ -31241,10 +31276,17 @@
       "domain": "advancedautocar.com",
       "name": "Advanced Auto Car",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 14 vehicles",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 14
+      }
     },
     {
       "domain": "danobrienkianorwood.com",
@@ -32711,10 +32753,17 @@
       "domain": "nyautoauction.com",
       "name": "NY Auto Auction",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: homepage error:TypeError | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: homepage error:TypeError | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 5 vehicles",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 5
+      }
     },
     {
       "domain": "mbofmidlothian.com",
@@ -43725,10 +43774,17 @@
       "domain": "carluxftl.com",
       "name": "CarLux Fort Lauderdale",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 114 vehicles",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 114
+      }
     },
     {
       "domain": "bmwhenderson.com",
@@ -49476,10 +49532,17 @@
       "domain": "newfieldauto.com",
       "name": "Newfield Auto Sales",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 53 vehicles",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 53
+      }
     },
     {
       "domain": "hoehnacuracarlsbad.com",
@@ -53224,10 +53287,17 @@
       "domain": "bradleymotorsct.com",
       "name": "Bradley Motors",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 8 vehicles",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 8
+      }
     },
     {
       "domain": "vwphilly.com",
@@ -55861,10 +55931,17 @@
       "domain": "mautogroup.com",
       "name": "M Auto Group Showroom",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 46 vehicles",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 46
+      }
     },
     {
       "domain": "fremontfordlander.com",
@@ -56465,35 +56542,16 @@
       "domain": "atlanticcarsale.com",
       "name": "Atlantic Car Sales",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-23: 0 VIN vehicles in 12 fetches (0 ItemList entries, 76 sitemap urls, 0 failed fetches, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-23: 0 VIN vehicles in 12 fetches (0 ItemList entries, 76 sitemap urls, 0 failed fetches, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 31 vehicles",
       "probe": {
-        "date": "2026-08-23",
-        "verdict": "empty",
-        "fetched": 12,
-        "vehicles": 0,
-        "itemList": 0,
-        "sitemapUrls": 76,
-        "canonicalHost": "www.atlanticcarsale.com",
-        "failures": [
-          {
-            "url": "https://www.atlanticcarsale.com/searchused.aspx",
-            "status": "404",
-            "kind": "gone"
-          },
-          {
-            "url": "https://www.atlanticcarsale.com/searchnew.aspx",
-            "status": "404",
-            "kind": "gone"
-          },
-          {
-            "url": "https://www.atlanticcarsale.com/new-vehicles/",
-            "status": "404",
-            "kind": "gone"
-          }
-        ]
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 31
       }
     },
     {
@@ -57031,10 +57089,17 @@
       "domain": "otmotorsales.com",
       "name": "Ossipee Trail Motor Sales",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 51 vehicles",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 51
+      }
     },
     {
       "domain": "motorcarstudio.com",
@@ -58822,10 +58887,17 @@
       "domain": "bushwickautosales.com",
       "name": "Bushwick Auto Sales",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 37 vehicles",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 37
+      }
     },
     {
       "domain": "conwayimports.com",
@@ -58840,10 +58912,17 @@
       "domain": "selectautodealers.com",
       "name": "Select Auto Dealers",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
+      "status": "working",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 28 vehicles",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 28
+      }
     },
     {
       "domain": "porschedenverwest.com",
@@ -101912,14 +101991,21 @@
       "domain": "thepalmmotors.com",
       "name": "THE PALM MOTORS LLC",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "FL license roll (FLHSMV, lic VI independent), email-domain signal — browser-context crawl of the published dealer lists 2026-08-16 | probe 2026-08-17: homepage error:AbortError | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "FL license roll (FLHSMV, lic VI independent), email-domain signal — browser-context crawl of the published dealer lists 2026-08-16 | probe 2026-08-17: homepage error:AbortError | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 40 vehicles",
       "location": {
         "city": "HIALEAH",
         "state": "FL",
         "zip": "33012"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 40
       }
     },
     {
@@ -108380,14 +108466,21 @@
       "domain": "ladaautosales.com",
       "name": "LADA AUTO SALES",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 69 vehicles",
       "location": {
         "city": "TACOMA",
         "state": "WA",
         "zip": "98409"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 69
       }
     },
     {
@@ -109532,14 +109625,21 @@
       "domain": "brookvilleautogroup.com",
       "name": "BROOKVILLE AUTO GROUP INC",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 8 vehicles",
       "location": {
         "city": "INWOOD",
         "state": "NY",
         "zip": "11516"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 8
       }
     },
     {
@@ -114258,14 +114358,21 @@
       "domain": "atlanticusedcarsales.com",
       "name": "ATLANTIC USED CAR SALES",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | crawl.mjs unknown-platform sample re-test 2026-08-20 (dealercom-api/dealeron-api-aware crawler, not just probe.mjs's page-scrape): 20 fetches, 0 vehicle page(s), 0 EV(s) — extractor-staleness hypothesis rejected for this domain",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | crawl.mjs unknown-platform sample re-test 2026-08-20 (dealercom-api/dealeron-api-aware crawler, not just probe.mjs's page-scrape): 20 fetches, 0 vehicle page(s), 0 EV(s) — extractor-staleness hypothesis rejected for this domain | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 92 vehicles",
       "location": {
         "city": "BROOKLYN",
         "state": "NY",
         "zip": "11207"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 92
       }
     },
     {
@@ -114688,54 +114795,42 @@
       "domain": "greatbuyautos.com",
       "name": "GREAT BUY AUTO SALES INC",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 10 vehicles",
       "location": {
         "city": "AMITYVILLE",
         "state": "NY",
         "zip": "11701"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 10
       }
     },
     {
       "domain": "greatdealmotor.com",
       "name": "GREAT DEAL MOTORS LLC",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | crawl.mjs unknown-platform sample re-test 2026-08-20 (dealercom-api/dealeron-api-aware crawler, not just probe.mjs's page-scrape): 20 fetches, 0 vehicle page(s), 0 EV(s) — extractor-staleness hypothesis rejected for this domain | probe 2026-08-23: 0 VIN vehicles in 12 fetches (0 ItemList entries, 25 sitemap urls, 0 failed fetches, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | crawl.mjs unknown-platform sample re-test 2026-08-20 (dealercom-api/dealeron-api-aware crawler, not just probe.mjs's page-scrape): 20 fetches, 0 vehicle page(s), 0 EV(s) — extractor-staleness hypothesis rejected for this domain | probe 2026-08-23: 0 VIN vehicles in 12 fetches (0 ItemList entries, 25 sitemap urls, 0 failed fetches, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 23 vehicles",
       "location": {
         "city": "COPIAGUE",
         "state": "NY",
         "zip": "11726"
       },
       "probe": {
-        "date": "2026-08-23",
-        "verdict": "empty",
-        "fetched": 12,
-        "vehicles": 0,
-        "itemList": 0,
-        "sitemapUrls": 25,
-        "canonicalHost": "www.greatdealmotor.com",
-        "failures": [
-          {
-            "url": "https://www.greatdealmotor.com/searchused.aspx",
-            "status": "404",
-            "kind": "gone"
-          },
-          {
-            "url": "https://www.greatdealmotor.com/searchnew.aspx",
-            "status": "404",
-            "kind": "gone"
-          },
-          {
-            "url": "https://www.greatdealmotor.com/new-vehicles/",
-            "status": "404",
-            "kind": "gone"
-          }
-        ]
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 23
       }
     },
     {
@@ -115433,14 +115528,21 @@
       "domain": "imperialautomall.com",
       "name": "IMPERIAL AUTO MALL LLC",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 75 vehicles",
       "location": {
         "city": "W BABYLON",
         "state": "NY",
         "zip": "11704"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 75
       }
     },
     {
@@ -115629,14 +115731,21 @@
       "domain": "jclopezautos.com",
       "name": "JC LOPEZ AUTO SALES CORP",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 49 vehicles",
       "location": {
         "city": "PORT CHESTER",
         "state": "NY",
         "zip": "10573"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 49
       }
     },
     {
@@ -115911,12 +116020,19 @@
       "kind": "rooftop",
       "platform": "unknown",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "unreachable",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-24: homepage error:TypeError",
       "location": {
         "city": "HUNTINGTON STA",
         "state": "NY",
         "zip": "11746"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "transient",
+        "fetched": 1,
+        "homeStatus": "error:TypeError",
+        "retried": true
       }
     },
     {
@@ -116187,14 +116303,21 @@
       "domain": "liautogallery.com",
       "name": "L I AUTO GALLERY",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 37 vehicles",
       "location": {
         "city": "ISLIP",
         "state": "NY",
         "zip": "11751"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 37
       }
     },
     {
@@ -116425,14 +116548,21 @@
       "domain": "lemanscars.com",
       "name": "LEMANS CARS LLC",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 68 vehicles",
       "location": {
         "city": "COMMACK",
         "state": "NY",
         "zip": "11725"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 68
       }
     },
     {
@@ -116691,14 +116821,21 @@
       "domain": "luxurymotorclub.com",
       "name": "LUXURY MOTOR CLUB",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 127 vehicles",
       "location": {
         "city": "FRANKLIN SQ",
         "state": "NY",
         "zip": "11010"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 127
       }
     },
     {
@@ -116733,14 +116870,21 @@
       "domain": "mamotors.com",
       "name": "M&A MOTORS INC",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 83 vehicles",
       "location": {
         "city": "HUNTINGTON STA",
         "state": "NY",
         "zip": "11746"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 83
       }
     },
     {
@@ -117265,14 +117409,21 @@
       "domain": "meccanicshop.com",
       "name": "MECCANIC SHOP NORTH INC",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 27 vehicles",
       "location": {
         "city": "NO SALEM",
         "state": "NY",
         "zip": "10560"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 27
       }
     },
     {
@@ -117938,14 +118089,21 @@
       "domain": "nissan112certified.com",
       "name": "NISSAN 112 CERTIFIED",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 71 vehicles",
       "location": {
         "city": "MEDFORD",
         "state": "NY",
         "zip": "11763"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 71
       }
     },
     {
@@ -118134,14 +118292,21 @@
       "domain": "nyautotraders.com",
       "name": "NY AUTO TRADERS",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 30 vehicles",
       "location": {
         "city": "VALLEY STREAM",
         "state": "NY",
         "zip": "11580"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 30
       }
     },
     {
@@ -118388,14 +118553,21 @@
       "domain": "parkaveautosales.com",
       "name": "PARK AVE AUTO SALES INC",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 2 vehicles",
       "location": {
         "city": "HUNTINGTON STA",
         "state": "NY",
         "zip": "11746"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 2
       }
     },
     {
@@ -118546,40 +118718,21 @@
       "domain": "pepmore.com",
       "name": "PEPMORE AUTO SALES INC",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-23: 0 VIN vehicles in 12 fetches (0 ItemList entries, 63 sitemap urls, 0 failed fetches, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-23: 0 VIN vehicles in 12 fetches (0 ItemList entries, 63 sitemap urls, 0 failed fetches, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 34 vehicles",
       "location": {
         "city": "WOODSIDE",
         "state": "NY",
         "zip": "11377"
       },
       "probe": {
-        "date": "2026-08-23",
-        "verdict": "empty",
-        "fetched": 12,
-        "vehicles": 0,
-        "itemList": 0,
-        "sitemapUrls": 63,
-        "canonicalHost": "www.pepmore.com",
-        "failures": [
-          {
-            "url": "https://www.pepmore.com/searchused.aspx",
-            "status": "404",
-            "kind": "gone"
-          },
-          {
-            "url": "https://www.pepmore.com/searchnew.aspx",
-            "status": "404",
-            "kind": "gone"
-          },
-          {
-            "url": "https://www.pepmore.com/new-vehicles/",
-            "status": "404",
-            "kind": "gone"
-          }
-        ]
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 34
       }
     },
     {
@@ -118835,14 +118988,21 @@
       "domain": "powermotorseast.com",
       "name": "POWER MOTORS EAST",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 186 vehicles",
       "location": {
         "city": "MASSAPEQUA",
         "state": "NY",
         "zip": "11762"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 186
       }
     },
     {
@@ -118989,14 +119149,21 @@
       "domain": "queensvans.com",
       "name": "QUEENS VANS LLC",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 87 vehicles",
       "location": {
         "city": "WOODSIDE",
         "state": "NY",
         "zip": "11377"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 87
       }
     },
     {
@@ -119087,14 +119254,21 @@
       "domain": "raymondscars.com",
       "name": "RAYMONDS CARS INC",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 8 vehicles",
       "location": {
         "city": "CORONA",
         "state": "NY",
         "zip": "11368"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 8
       }
     },
     {
@@ -119163,14 +119337,21 @@
       "domain": "regalautohaus.com",
       "name": "REGAL AUTOHAUS",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 155 vehicles",
       "location": {
         "city": "HICKSVILLE",
         "state": "NY",
         "zip": "11801"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 155
       }
     },
     {
@@ -119544,40 +119725,21 @@
       "domain": "rocklandmotorsport.com",
       "name": "ROCKLAND MOTORSPORT LLC",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-23: 0 VIN vehicles in 12 fetches (0 ItemList entries, 67 sitemap urls, 0 failed fetches, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-23: 0 VIN vehicles in 12 fetches (0 ItemList entries, 67 sitemap urls, 0 failed fetches, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 66 vehicles",
       "location": {
         "city": "SUFFERN",
         "state": "NY",
         "zip": "10901"
       },
       "probe": {
-        "date": "2026-08-23",
-        "verdict": "empty",
-        "fetched": 12,
-        "vehicles": 0,
-        "itemList": 0,
-        "sitemapUrls": 67,
-        "canonicalHost": "www.rocklandmotorsport.com",
-        "failures": [
-          {
-            "url": "https://www.rocklandmotorsport.com/searchused.aspx",
-            "status": "404",
-            "kind": "gone"
-          },
-          {
-            "url": "https://www.rocklandmotorsport.com/searchnew.aspx",
-            "status": "404",
-            "kind": "gone"
-          },
-          {
-            "url": "https://www.rocklandmotorsport.com/new-vehicles/",
-            "status": "404",
-            "kind": "gone"
-          }
-        ]
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 66
       }
     },
     {
@@ -119612,14 +119774,21 @@
       "domain": "romaxxtruxx.com",
       "name": "ROMAXX TRUXX",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | crawl.mjs unknown-platform sample re-test 2026-08-20 (dealercom-api/dealeron-api-aware crawler, not just probe.mjs's page-scrape): 20 fetches, 0 vehicle page(s), 0 EV(s) — extractor-staleness hypothesis rejected for this domain",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | crawl.mjs unknown-platform sample re-test 2026-08-20 (dealercom-api/dealeron-api-aware crawler, not just probe.mjs's page-scrape): 20 fetches, 0 vehicle page(s), 0 EV(s) — extractor-staleness hypothesis rejected for this domain | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 22 vehicles",
       "location": {
         "city": "PATCHOGUE",
         "state": "NY",
         "zip": "11772"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 22
       }
     },
     {
@@ -120215,14 +120384,21 @@
       "domain": "sgmauto.com",
       "name": "SGM AUTO SALES",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 19 vehicles",
       "location": {
         "city": "WEST BABYLON",
         "state": "NY",
         "zip": "11704"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 19
       }
     },
     {
@@ -120495,14 +120671,21 @@
       "domain": "112autosales.com",
       "name": "112 AUTO SALES",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 67 vehicles",
       "location": {
         "city": "PATCHOGUE",
         "state": "NY",
         "zip": "11772"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 67
       }
     },
     {
@@ -120749,14 +120932,21 @@
       "domain": "sportsimportsauto.com",
       "name": "SPORTS & IMPORTS AUTO INC",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 29 vehicles",
       "location": {
         "city": "BROOKLYN",
         "state": "NY",
         "zip": "11207"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 29
       }
     },
     {
@@ -121011,14 +121201,21 @@
       "domain": "sunriseautosales.com",
       "name": "SUNRISE AUTO SALES",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 115 vehicles",
       "location": {
         "city": "ELMONT",
         "state": "NY",
         "zip": "11003"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 115
       }
     },
     {
@@ -121137,14 +121334,21 @@
       "domain": "sylhetmotors.com",
       "name": "SYLHET MOTORS INC",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 56 vehicles",
       "location": {
         "city": "JAMAICA",
         "state": "NY",
         "zip": "11432"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 56
       }
     },
     {
@@ -121918,14 +122122,21 @@
       "domain": "usaautofind.com",
       "name": "USA AUTO FIND LLC",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 74 vehicles",
       "location": {
         "city": "ST JAMES",
         "state": "NY",
         "zip": "11780"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 74
       }
     },
     {
@@ -121960,14 +122171,21 @@
       "domain": "uticaautohub.com",
       "name": "UTICA AUTO HUB INC",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 33 vehicles",
       "location": {
         "city": "BROOKLYN",
         "state": "NY",
         "zip": "11234"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 33
       }
     },
     {
@@ -122366,14 +122584,21 @@
       "domain": "westchesternymotors.com",
       "name": "WESTCHESTER NY MOTORS CORP",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 2 vehicles",
       "location": {
         "city": "YONKERS",
         "state": "NY",
         "zip": "10710"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 2
       }
     },
     {
@@ -122660,14 +122885,21 @@
       "domain": "109certified.com",
       "name": "109 CERTIFIED",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 64 vehicles",
       "location": {
         "city": "LINDENHURST",
         "state": "NY",
         "zip": "11757"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 64
       }
     },
     {
@@ -122702,14 +122934,21 @@
       "domain": "112autoplaza.com",
       "name": "112 AUTO PLAZA",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 163 vehicles",
       "location": {
         "city": "PATCHOGUE",
         "state": "NY",
         "zip": "11772"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 163
       }
     },
     {
@@ -123087,14 +123326,21 @@
       "domain": "arservicecenter.net",
       "name": "A&R SERVICE CENTER INC",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 2 vehicles",
       "location": {
         "city": "BREWSTER",
         "state": "NY",
         "zip": "10509"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 2
       }
     },
     {
@@ -123372,40 +123618,21 @@
       "domain": "huntingtonautomall.net",
       "name": "HUNTINGTON AUTO MALL",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-23: 0 VIN vehicles in 12 fetches (0 ItemList entries, 47 sitemap urls, 0 failed fetches, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-23: 0 VIN vehicles in 12 fetches (0 ItemList entries, 47 sitemap urls, 0 failed fetches, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 45 vehicles",
       "location": {
         "city": "HUNTINGTON STA",
         "state": "NY",
         "zip": "11746"
       },
       "probe": {
-        "date": "2026-08-23",
-        "verdict": "empty",
-        "fetched": 12,
-        "vehicles": 0,
-        "itemList": 0,
-        "sitemapUrls": 47,
-        "canonicalHost": "www.huntingtonautomall.net",
-        "failures": [
-          {
-            "url": "https://www.huntingtonautomall.net/searchused.aspx",
-            "status": "404",
-            "kind": "gone"
-          },
-          {
-            "url": "https://www.huntingtonautomall.net/searchnew.aspx",
-            "status": "404",
-            "kind": "gone"
-          },
-          {
-            "url": "https://www.huntingtonautomall.net/new-vehicles/",
-            "status": "404",
-            "kind": "gone"
-          }
-        ]
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 45
       }
     },
     {
@@ -123468,14 +123695,21 @@
       "domain": "middlevillagemotors.net",
       "name": "MIDDLE VILLAGE MOTORS INC",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 38 vehicles",
       "location": {
         "city": "MIDDLE VILLAGE",
         "state": "NY",
         "zip": "11379"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 38
       }
     },
     {
@@ -123566,14 +123800,21 @@
       "domain": "precisionautoimports.net",
       "name": "PRECISION AUTO IMPORTS INC",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + city/zip (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 12 vehicles",
       "location": {
         "city": "WOODSIDE",
         "state": "NY",
         "zip": "11377"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 12
       }
     },
     {
@@ -124397,10 +124638,18 @@
       "domain": "acemotorsportsinc.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via Common Crawl dealer-platform URL fingerprint sweep (CC-MAIN-2026-30), 2026-08-17 — site serves inventory paths matching a platform we extract | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
+      "status": "working",
+      "notes": "Discovered via Common Crawl dealer-platform URL fingerprint sweep (CC-MAIN-2026-30), 2026-08-17 — site serves inventory paths matching a platform we extract | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 6 vehicles",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 6,
+        "retried": true
+      }
     },
     {
       "domain": "acergladecars.com",
@@ -148936,10 +149185,17 @@
       "domain": "faustosautosales.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via Common Crawl dealer-platform URL fingerprint sweep (CC-MAIN-2026-30), 2026-08-17 — site serves inventory paths matching a platform we extract | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
+      "status": "working",
+      "notes": "Discovered via Common Crawl dealer-platform URL fingerprint sweep (CC-MAIN-2026-30), 2026-08-17 — site serves inventory paths matching a platform we extract | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 15 vehicles",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 15
+      }
     },
     {
       "domain": "fayettevilleacura.com",
@@ -154921,35 +155177,16 @@
       "domain": "greenlightautocorona.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via Common Crawl dealer-platform URL fingerprint sweep (CC-MAIN-2026-30), 2026-08-17 — site serves inventory paths matching a platform we extract | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-23: 0 VIN vehicles in 12 fetches (0 ItemList entries, 44 sitemap urls, 0 failed fetches, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Discovered via Common Crawl dealer-platform URL fingerprint sweep (CC-MAIN-2026-30), 2026-08-17 — site serves inventory paths matching a platform we extract | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-23: 0 VIN vehicles in 12 fetches (0 ItemList entries, 44 sitemap urls, 0 failed fetches, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 41 vehicles",
       "probe": {
-        "date": "2026-08-23",
-        "verdict": "empty",
-        "fetched": 12,
-        "vehicles": 0,
-        "itemList": 0,
-        "sitemapUrls": 44,
-        "canonicalHost": "www.greenlightautocorona.com",
-        "failures": [
-          {
-            "url": "https://www.greenlightautocorona.com/searchused.aspx",
-            "status": "404",
-            "kind": "gone"
-          },
-          {
-            "url": "https://www.greenlightautocorona.com/searchnew.aspx",
-            "status": "404",
-            "kind": "gone"
-          },
-          {
-            "url": "https://www.greenlightautocorona.com/new-vehicles/",
-            "status": "404",
-            "kind": "gone"
-          }
-        ]
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 41
       }
     },
     {
@@ -163714,10 +163951,17 @@
       "domain": "kandgcars.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via Common Crawl dealer-platform URL fingerprint sweep (CC-MAIN-2026-30), 2026-08-17 — site serves inventory paths matching a platform we extract | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
+      "status": "working",
+      "notes": "Discovered via Common Crawl dealer-platform URL fingerprint sweep (CC-MAIN-2026-30), 2026-08-17 — site serves inventory paths matching a platform we extract | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 12 vehicles",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 12
+      }
     },
     {
       "domain": "kandjchryslerjeep.com",
@@ -178625,10 +178869,17 @@
       "domain": "nolimitautosales.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via Common Crawl dealer-platform URL fingerprint sweep (CC-MAIN-2026-30), 2026-08-17 — site serves inventory paths matching a platform we extract | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor"
+      "status": "working",
+      "notes": "Discovered via Common Crawl dealer-platform URL fingerprint sweep (CC-MAIN-2026-30), 2026-08-17 — site serves inventory paths matching a platform we extract | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 112 vehicles",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 112
+      }
     },
     {
       "domain": "norcalautogroup.com",
@@ -193132,35 +193383,16 @@
       "domain": "stsautos.com",
       "name": "Dealership Website",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "autofunds",
       "robots": "unknown",
-      "status": "needs-investigation",
-      "notes": "Discovered via Common Crawl dealer-platform URL fingerprint sweep (CC-MAIN-2026-30), 2026-08-17 — site serves inventory paths matching a platform we extract | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-23: 0 VIN vehicles in 12 fetches (0 ItemList entries, 48 sitemap urls, 0 failed fetches, platform unknown) — likely needs a platform extractor",
+      "status": "working",
+      "notes": "Discovered via Common Crawl dealer-platform URL fingerprint sweep (CC-MAIN-2026-30), 2026-08-17 — site serves inventory paths matching a platform we extract | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-23: 0 VIN vehicles in 12 fetches (0 ItemList entries, 48 sitemap urls, 0 failed fetches, platform unknown) — likely needs a platform extractor | auto-promoted by probe 2026-08-24: autofunds /rss.aspx feed, 46 vehicles",
       "probe": {
-        "date": "2026-08-23",
-        "verdict": "empty",
-        "fetched": 12,
-        "vehicles": 0,
-        "itemList": 0,
-        "sitemapUrls": 48,
-        "canonicalHost": "www.stsautos.com",
-        "failures": [
-          {
-            "url": "https://www.stsautos.com/searchused.aspx",
-            "status": "404",
-            "kind": "gone"
-          },
-          {
-            "url": "https://www.stsautos.com/searchnew.aspx",
-            "status": "404",
-            "kind": "gone"
-          },
-          {
-            "url": "https://www.stsautos.com/new-vehicles/",
-            "status": "404",
-            "kind": "gone"
-          }
-        ]
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "autofunds",
+        "found": 46
       }
     },
     {

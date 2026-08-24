@@ -67,6 +67,14 @@ test("the MY2026 Toyota bZ (renamed bZ4X) name-matches as a BEV candidate", () =
   assert.equal(classifyEv({ name: "2021 Mercedes-Benz GLE 350 BZ Edition" }).isEv, false);
 });
 
+test("a petrol Grand Wagoneer Series III is not the Wagoneer S", () => {
+  // AutoFunds lane build 2026-08-23: unanchored "wagoneer s" matched inside
+  // "Series III". The BEV keeps matching; the petrol trucks do not.
+  assert.deepEqual(classifyEv({ name: "2025 Jeep Wagoneer S Limited" }), { isEv: true, kind: "BEV?", confidence: "name_match" });
+  assert.equal(classifyEv({ name: "2023 Jeep Grand Wagoneer Series III" }).isEv, false);
+  assert.equal(classifyEv({ name: "2024 Jeep Wagoneer Series II" }).isEv, false);
+});
+
 test("classifyEv still refuses a plain gas/electric hybrid and admits a plug-in", () => {
   assert.equal(classifyEv({ fuelType: "Gas/Electric Hybrid", vehicleIdentificationNumber: "1HGCV3F17KA015397" }).isEv, false);
   const phev = classifyEv({ fuelType: "Plug-in Gas/Electric Hybrid", vehicleIdentificationNumber: "5YM23CS01P9S34188" });
