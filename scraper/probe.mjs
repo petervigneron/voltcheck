@@ -93,6 +93,13 @@ import { isDealerVenom, extractDealerVenomConfig, countDealerVenom } from "./lib
 import { overfuelVehicles, overfuelSeeds, isOverfuel, overfuelApiConfig, countOverfuelApi } from "./lib/platforms/overfuel.mjs";
 import { dealrVehicles, DEALR_SRP_PATH } from "./lib/platforms/dealrcloud.mjs";
 import { autoManagerVehicles, AUTOMANAGER_SRP_PATH } from "./lib/platforms/automanager.mjs";
+import {
+  autoDealersDigitalEntries,
+  autoDealersDigitalVehicles,
+  autoDealersDigitalCardCount,
+  autoDealersDigitalNextPageUrl,
+  ADD_SRP_PATH,
+} from "./lib/platforms/autodealersdigital.mjs";
 import { isRideMotive, rideMotiveConfig, countRideMotiveApi } from "./lib/platforms/ridemotive.mjs";
 import { isAutoFunds, countAutoFunds } from "./lib/platforms/autofunds.mjs";
 import {
@@ -412,6 +419,10 @@ async function probeSite(site) {
     dealrcloud: [DEALR_SRP_PATH],
     automanager: [AUTOMANAGER_SRP_PATH],
     motorcarsites: [MOTORCAR_SRP_PATH],
+    // The path nothing in the guess table had: /all-inventory/ with the
+    // trailing slash. Four rooftops read "0 VIN vehicles in 12 fetches" for
+    // want of it while server-rendering their whole lot behind it.
+    autodealersdigital: [ADD_SRP_PATH],
     // Audi's own platform publishes no sitemap and no ItemList, so these two
     // paths are the only door on the site — nothing in the guess table has
     // this shape, which is why 273 rooftops read "0 sitemap urls" forever.
@@ -475,6 +486,7 @@ async function probeSite(site) {
       ...dealrVehicles(res.body, res.finalUrl),
       ...autoManagerVehicles(res.body, res.finalUrl),
       ...motorcarVehicles(res.body, res.finalUrl),
+      ...autoDealersDigitalVehicles(res.body, res.finalUrl),
       ...oneAudiVehicles(res.body),
     ];
     const platformVins = [
@@ -504,13 +516,24 @@ async function probeSite(site) {
       const nextSrp = motorcarNextPageUrl(res.body, res.finalUrl);
       if (nextSrp && !tryUrls.includes(nextSrp)) tryUrls.push(nextSrp);
     }
-    itemListEntries += extractItemListEntries(res.body).length + mcsEntries.length;
+    // Auto Dealers Digital: same shape, and the same sold-first hazard, only
+    // worse — 50 of the 87 cars measured across three rooftops are sold and
+    // still on /all-inventory/. wildaboutcarsgarage.com's page one is 18 sold
+    // out of 25. A probe that stopped at a page whose live cars all happen to
+    // be sold would write off a rooftop with a lot behind it.
+    const addAll = autoDealersDigitalEntries(res.body, res.finalUrl);
+    const addEntries = addAll.filter((e) => !e.sold);
+    if (addAll.length && !addEntries.length) {
+      const nextSrp = autoDealersDigitalNextPageUrl(res.finalUrl, autoDealersDigitalCardCount(res.body));
+      if (nextSrp && !tryUrls.includes(nextSrp)) tryUrls.push(nextSrp);
+    }
+    itemListEntries += extractItemListEntries(res.body).length + mcsEntries.length + addEntries.length;
     if (vehiclesWithVin > 0) break; // bar met, stop spending requests
     // An SRP's ItemList is a list of this dealer's cars, one link each.
     // The crawler follows these to VDPs; the probe used to merely count
     // them and then declare the site a failure — which is how DealerOn
     // dealers with perfectly extractable inventory got written off.
-    for (const e of [...extractItemListEntries(res.body), ...mcsEntries].slice(0, 2)) {
+    for (const e of [...extractItemListEntries(res.body), ...mcsEntries, ...addEntries].slice(0, 2)) {
       if (fetched >= 12) break;
       const vdp = await fetchPage(e.url);
       fetched++;

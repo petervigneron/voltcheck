@@ -70,6 +70,23 @@ const SIGNATURES = [
   // page is the footer credit that links waynereaves.com/.net. The whole lot
   // comes out of /service/inventory/website — see lib/platforms/waynereaves.mjs.
   { platform: "waynereaves", res: [/waynereaves\.(?:com|net)/i] },
+  // Auto Dealers Digital: a WordPress product whose rooftops publish clean
+  // JSON-LD on every VDP and a hardcoded "NewCondition" inside it, on used
+  // lots. The label is what stops the generic reader taking that at face value
+  // — see lib/platforms/autodealersdigital.mjs. Its CDN hosts and its theme
+  // directory are the signal; never the brand words, since a dealer is free to
+  // be named "Auto Dealers Digital".
+  {
+    platform: "autodealersdigital",
+    // Kept byte-identical to VENDOR_RE in that module; test/autodealersdigital
+    // .test.mjs asserts the two agree, because a fingerprint that fires where
+    // the extractor does not would send the crawl down a path with no reader.
+    res: [
+      /\b(?:cdn-(?:thumbor|websites|chat)\.)?autodealersdigital\.com\//i,
+      /\/wp-content\/themes\/website-theme-wp-v2\b/i,
+      /\bwp-theme-website-theme-wp-v2\b/i,
+    ],
+  },
   // No JSON-LD anywhere and numeric-id VDP URLs, so nothing generic hooks it;
   // lib/platforms/dealercarsearch.mjs reads its Tealium product list instead.
   // Its data layer names the platform on every page, homepages included.

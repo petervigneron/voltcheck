@@ -45,6 +45,14 @@ import {
   autoManagerVehicles,
   autoManagerNextPageUrl,
 } from "./lib/platforms/automanager.mjs";
+import {
+  isAutoDealersDigital,
+  autoDealersDigitalSeeds,
+  autoDealersDigitalEntries,
+  autoDealersDigitalVehicles,
+  autoDealersDigitalCardCount,
+  autoDealersDigitalNextPageUrl,
+} from "./lib/platforms/autodealersdigital.mjs";
 import { isWayneReaves, pullWayneReaves } from "./lib/platforms/waynereaves.mjs";
 import {
   isOneAudi,
@@ -283,6 +291,19 @@ async function crawlDealer(domain) {
     report.notes.push("automanager: seeded SRP");
   }
   if (siteInfo.get(domain)?.platform === "automanager") seedAutoManager();
+
+  // Auto Dealers Digital: one /all-inventory/ SRP, 25 cars a page, WordPress
+  // /page/N/. The homepage links it but the probe's own path list never did,
+  // which is the whole reason these rooftops read as "0 VIN vehicles".
+  let addSeeded = false;
+  function seedAutoDealersDigital() {
+    if (addSeeded) return;
+    addSeeded = true;
+    const seeds = autoDealersDigitalSeeds(origin).filter((u) => !visited.has(u));
+    queue.unshift(...seeds);
+    report.notes.push("autodealersdigital: seeded SRP");
+  }
+  if (siteInfo.get(domain)?.platform === "autodealersdigital") seedAutoDealersDigital();
 
   // Motorcar Marketing: one /vehicle_listings/all/vehicles SRP, ten cars a
   // page, ?page_number=N. The rooftops are subdomains of the VENDOR
@@ -756,6 +777,7 @@ async function crawlDealer(domain) {
     if (isOverfuel(res.body)) seedOverfuel(res.body, res.finalUrl);
     if (!dealrSeeded && isDealrCloud(res.body)) seedDealr();
     if (!amSeeded && isAutoManager(res.body)) seedAutoManager();
+    if (!addSeeded && isAutoDealersDigital(res.body)) seedAutoDealersDigital();
     if (!mcsSeeded && isMotorcarSites(res.body)) seedMotorcar();
     if (!oaSeeded && isOneAudi(res.body)) seedOneAudi();
     const dealerFire = extractDealerFire(res.body);
@@ -772,6 +794,16 @@ async function crawlDealer(domain) {
     // per-rooftop theme and carries no VIN on half the themes, so the SRP
     // contributes LINKS and the VDP contributes the facts.
     const motorcarSites = motorcarVehicles(res.body, res.finalUrl);
+    // Auto Dealers Digital pages REPLACE the generic JSON-LD reading — and do
+    // so even when this returns nothing, which is why the gate is the page's
+    // platform and not the record count. The VDP's own schema.org node says
+    // `itemCondition: NewCondition` on 85 of the 87 used cars measured, and
+    // carries an offers.price for cars whose page prints "POR", so the
+    // generic reader is not a safe fallback here: it is the exact thing being
+    // guarded against. A car this returns nothing for is one that is SOLD or
+    // has no VIN, and neither may be picked up on the way past.
+    const addPage = isAutoDealersDigital(res.body);
+    const addVehicles = addPage ? autoDealersDigitalVehicles(res.body, res.finalUrl) : [];
     // Its SRP is an ItemList in everything but the markup: one link per car,
     // and enough of the tile beside it to say whether the car could be
     // electrified. Feeding those through the same bridge as a real ItemList
@@ -781,10 +813,14 @@ async function crawlDealer(domain) {
     // AMG Motors' 156, 179 of allautospecialist's 183), and a sold car is not
     // a listing.
     const mcsEntries = motorcarEntries(res.body, res.finalUrl).filter((e) => !e.sold);
+    // Auto Dealers Digital's SRP is the same shape of not-quite-ItemList, and
+    // the sold filter matters more here than anywhere: 50 of the 87 cars on
+    // the three rooftops measured are already sold and still on the page.
+    const addEntries = addPage ? autoDealersDigitalEntries(res.body, res.finalUrl).filter((e) => !e.sold) : [];
     const oneAudi = oneAudiVehicles(res.body);
     const oneAudiVins = new Set(oneAudi.map((v) => v.vehicleIdentificationNumber));
     const vehicles = [
-      ...(dealrVs.length ? dealrVs : extractVehicles(res.body)),
+      ...(dealrVs.length ? dealrVs : addPage ? addVehicles : extractVehicles(res.body)),
       ...extractDrivewayVehicles(res.body),
       ...dcsVehicles,
       ...dealerFireVehicles(res.body, res.finalUrl),
@@ -879,6 +915,16 @@ async function crawlDealer(domain) {
       const nextMcs = motorcarNextPageUrl(res.body, res.finalUrl);
       if (nextMcs && !visited.has(nextMcs)) queue.push(nextMcs);
     }
+    // Auto Dealers Digital pages with /page/N/. Gated on the CARD count, not
+    // on addEntries, because a page of nothing but sold cars filters to zero
+    // entries and is still a page one — stopping there would strand the live
+    // cars behind it. To the BACK, like Motorcar's, so the EV VDPs this page
+    // just queued are fetched before the walk enumerates further.
+    if (addPage) {
+      const cards = autoDealersDigitalCardCount(res.body);
+      const nextAdd = cards ? autoDealersDigitalNextPageUrl(res.finalUrl, cards) : null;
+      if (nextAdd && !visited.has(nextAdd)) queue.push(nextAdd);
+    }
 
     // OneAudi has no next page — the SSR renders offset 0 and nothing in the
     // URL moves it. The second wave is instead a per-model-family request
@@ -904,7 +950,7 @@ async function crawlDealer(domain) {
     }
 
     // Bridge: SRP ItemList → VDP urls, EV-filtered, jump the queue
-    const allEntries = [...extractItemListEntries(res.body), ...mcsEntries];
+    const allEntries = [...extractItemListEntries(res.body), ...mcsEntries, ...addEntries];
     const entries = allEntries.filter(evishEntry);
     if (entries.length) {
       report.itemListVdps += entries.length;

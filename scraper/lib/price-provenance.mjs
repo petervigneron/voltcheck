@@ -161,6 +161,16 @@ export const MOTORCARSITES_PRICE = "motorcarsites-price";
 // someone to read the other rung.
 export const ONEAUDI_SALE = "oneaudi-sale";
 
+// Auto Dealers Digital's VDP price — its JSON-LD `offers.price`, but only
+// where the page's own `display-price` renders the same number. Its own tag
+// because it is a GATED reading, not the page's JSON-LD taken at face value:
+// this platform publishes a price in the markup for cars whose page prints
+// "POR" or "Up for Auction on BringaTrailer" (11 of 87 measured), and on one
+// car renders "$1 Cash" against a JSON-LD 120000. Tagging it JSONLD would
+// claim a reading that was never made, and would let a later observation of
+// the ungated field pair against this one into a price cut nobody made.
+export const ADD_DISPLAY_PRICE = "autodealersdigital-display";
+
 // Wayne Reaves' `price` field, out of its /service/inventory/website feed —
 // the number the card prints. Its own tag: the same record carries
 // `specialPrice`, and no rooftop has yet been seen where the two disagree, so
@@ -221,7 +231,7 @@ const KNOWN = new Set([
   DFIRE_ADVERTISED, DVENOM_FINAL, DEALR_ENTRY, DCS_TILE, OVERFUEL_PRICE, TV_SELLING,
   MOTIVE_PRICE, AUTOMANAGER_PRICE, AUTOFUNDS_INTERNET, AUTOFUNDS_REDUCED,
   MOTORCARSITES_PRICE,
-  ONEAUDI_SALE, WAYNEREAVES_PRICE,
+  ONEAUDI_SALE, WAYNEREAVES_PRICE, ADD_DISPLAY_PRICE,
 ]);
 
 /** True for a tag this build knows how to emit. OEM lane tags are accepted by
