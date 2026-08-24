@@ -48,12 +48,54 @@ export function failureKind(status) {
  *  Matched on the title plus the vendor's own path prefix together. The title
  *  alone is three common words and a dealer could legitimately publish it. */
 export function isBotChallenge(html) {
-  if (typeof html !== "string" || html.length > 20000) return false;
-  if (/<title>\s*Client Challenge\s*<\/title>/i.test(html) && /\/_fs-ch-[A-Za-z0-9]/.test(html)) return true;
+  const wall = botWall(html);
+  return wall === "f5" || wall === "motive-recaptcha";
+}
+
+/** WHICH wall, by name, or undefined — for the ones that do NOT answer 200.
+ *
+ *  A 403 already reads as "blocked" through failureKind, but only per fetch.
+ *  The verdict above it does not distinguish "we walked this site and it has
+ *  no extractable inventory" from "every door we tried was a bot wall", and
+ *  those are opposite worklists: the first wants an extractor written, the
+ *  second cannot be crawled at all without evading a challenge, which this
+ *  house does not do.
+ *
+ *  DATADOME is why this exists. carsforsale.com's rooftops — 53 in the first
+ *  1,500 needs-investigation rows swept 2026-08-24, the largest single vendor
+ *  cohort in the pile — serve their HOMEPAGE at 200 and answer /cars-for-sale
+ *  with a 403 and a ~780-byte DataDome interstitial, the same deployment hash
+ *  on every rooftop. Their robots.txt allows us explicitly ("User-agent: *
+ *  / Disallow:") and publishes a sitemap, and that sitemap lists no VDP at all
+ *  — 46 URLs on acheronauto.com, exactly one of them inventory, and that one
+ *  403s. So there is no door, and no extractor would open one. Recording that
+ *  as "0 VIN vehicles, likely needs a platform extractor" sends the next
+ *  person to build something that cannot work.
+ *
+ *  Matched on the vendor's own script contract — the `dd={…}` config object
+ *  together with its captcha host — not on the visible sentence, which is
+ *  generic ("Please enable JS and disable any ad blocker"). Imperva/Incapsula
+ *  is here for the same reason: copart.com answers 200 with a 212-byte
+ *  `_Incapsula_Resource` stub. */
+export function botWall(html) {
+  if (typeof html !== "string" || html.length > 20000) return undefined;
+  if (/<title>\s*Client Challenge\s*<\/title>/i.test(html) && /\/_fs-ch-[A-Za-z0-9]/.test(html)) return "f5";
   // Motive's edge challenge: same contract (HTTP 200, page is a wall). The
   // TITLE TAG or the vendor's own challenge path — prose merely mentioning
   // the phrase stays a normal page, same reasoning as F5 above.
-  return /<title>\s*Checking your browser - reCAPTCHA\s*<\/title>/i.test(html) || /recaptcha\/challengepage/i.test(html);
+  if (/<title>\s*Checking your browser - reCAPTCHA\s*<\/title>/i.test(html) || /recaptcha\/challengepage/i.test(html))
+    return "motive-recaptcha";
+  if (/\bvar\s+dd\s*=\s*\{/.test(html) && /geo\.captcha-delivery\.com|datadome/i.test(html)) return "datadome";
+  if (/_Incapsula_Resource/.test(html)) return "imperva";
+  return undefined;
+}
+
+/** True when the walk did not fail to find inventory so much as never get to
+ *  look: something on the way named a wall. Kept separate from failureKind's
+ *  per-fetch "blocked" because one guessed path 403ing is routine, and a
+ *  NAMED wall is evidence rather than a status code. */
+export function walledOut(failures = []) {
+  return failures.some((f) => f.wall);
 }
 
 /** spaSignals packs its hosts into one "api-hosts:a+b+c" token. Unpack it so
@@ -145,7 +187,10 @@ export function emptyOrTransient({ failures = [] } = {}) {
  *    those are the site's own answer and repeat on a retry. */
 export function blindEmpty(site) {
   const p = site?.probe;
-  if (!p || p.verdict !== "empty" || p.why === "nothing-to-walk") return false;
+  // "walled" joins "nothing-to-walk" as a verdict a retry cannot move: the
+  // wall is the site's own answer and repeats, so requeueing it nightly buys
+  // nothing and costs a fetch per row forever. See botWall().
+  if (!p || p.verdict !== "empty" || p.why === "nothing-to-walk" || p.why === "walled") return false;
   if (p.sitemapUrls == null) return false;
   if ((p.signals?.length ?? 0) > 0 || (p.apiHosts?.length ?? 0) > 0 || (p.itemList ?? 0) > 0) return false;
   return !site.platform || site.platform === "unknown";

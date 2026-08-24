@@ -1,6 +1,15 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { failureKind, apiHostsFrom, seededShuffle, emptyOrTransient, blindEmpty, isBotChallenge } from "../lib/probe-verdict.mjs";
+import {
+  failureKind,
+  apiHostsFrom,
+  seededShuffle,
+  emptyOrTransient,
+  blindEmpty,
+  isBotChallenge,
+  botWall,
+  walledOut,
+} from "../lib/probe-verdict.mjs";
 import { spaSignals } from "../lib/spa-signals.mjs";
 
 test("failureKind separates the site's answer from our attempt", () => {
@@ -121,4 +130,63 @@ test("Motive's reCAPTCHA interstitial is a wall, not an empty dealer", () => {
   assert.equal(isBotChallenge(page), true);
   // The title's words alone, without the vendor path, stay a normal page.
   assert.equal(isBotChallenge("<p>Checking your browser - reCAPTCHA is annoying</p>"), false);
+});
+
+// The wall that hides the largest vendor cohort in the needs-investigation
+// pile. Unlike F5's and Motive's this one answers 403 — the homepage is fine
+// and only the inventory path is refused — so failureKind already calls it
+// "blocked", and the question this answers is a different one: whether the
+// verdict above it says "needs an extractor" or "there is no door".
+test("DataDome's 403 interstitial is named, so a walled row stops reading as unbuilt", () => {
+  // acheronauto.com/cars-for-sale, 2026-08-24: 778 bytes, HTTP 403.
+  const dd =
+    '<html lang="en"><head><title>acheronauto.com</title></head><body style="margin:0">' +
+    '<p id="cmsg">Please enable JS and disable any ad blocker</p>' +
+    "<script data-cfasync=\"false\">var dd={'rt':'i','cid':'AHrlqAAAAAMAvQ2FR-egaiEAzsCoFg=='," +
+    "'hsh':'78E75958F5D8D06268C14F1B1AAB5B','host':'geo.captcha-delivery.com'}</script></body></html>";
+  assert.equal(botWall(dd), "datadome");
+  // It answers 403, so it is NOT one of the walls that masquerade as a 200.
+  // isBotChallenge must keep its narrow meaning, or the front-door check would
+  // start marking rows blocked on a page that is not a challenge at all.
+  assert.equal(isBotChallenge(dd), false);
+  // The visible sentence is generic and appears on plenty of real pages; the
+  // vendor's own config object together with its captcha host is the signal.
+  assert.equal(botWall('<p id="cmsg">Please enable JS and disable any ad blocker</p>'), undefined);
+  assert.equal(botWall("<script>var dd = {rows: 3};</script>"), undefined);
+});
+
+test("Imperva's stub is a wall too", () => {
+  // copart.com's front door, 2026-08-24: 212 bytes, HTTP 200, noindex.
+  const inc =
+    '<html><head><META NAME="robots" CONTENT="noindex,nofollow">' +
+    '<script src="/_Incapsula_Resource?SWJIYLWA=5074a744e2e3d891814e9a2dace20bd4"></script>' +
+    "<body></body></html>";
+  assert.equal(botWall(inc), "imperva");
+});
+
+test("botWall names the 200-answering walls it always knew", () => {
+  const f5 =
+    '<html><link href="/_fs-ch-1T1wmsGaOgGaSxcX/assets/inter-var.woff2" rel="preload"/>' +
+    "<title>Client Challenge</title></html>";
+  assert.equal(botWall(f5), "f5");
+  assert.equal(botWall("<title>Checking your browser - reCAPTCHA</title>"), "motive-recaptcha");
+  assert.equal(botWall("<html>a normal dealer page</html>"), undefined);
+  assert.equal(botWall(null), undefined);
+});
+
+test("walledOut reads the failure list, and one plain 403 is not a wall", () => {
+  assert.equal(walledOut([{ status: "403", kind: "blocked" }]), false);
+  assert.equal(walledOut([{ status: "404", kind: "gone" }, { status: "403", kind: "blocked", wall: "datadome" }]), true);
+  assert.equal(walledOut([]), false);
+  assert.equal(walledOut(), false);
+});
+
+test("a walled row is not requeued, because the wall repeats", () => {
+  const probe = { verdict: "empty", why: "walled", wall: "datadome", sitemapUrls: 46 };
+  assert.equal(blindEmpty({ domain: "acheronauto.com", platform: "unknown", probe }), false);
+  // The same row WITHOUT the wall is exactly the shape blindEmpty rescues.
+  assert.equal(
+    blindEmpty({ domain: "acheronauto.com", platform: "unknown", probe: { verdict: "empty", sitemapUrls: 46 } }),
+    true,
+  );
 });

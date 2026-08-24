@@ -114,7 +114,16 @@ import { isOneAudi, oneAudiVehicles, ONEAUDI_SRP_PATHS } from "./lib/platforms/o
 import { isWayneReaves, countWayneReaves } from "./lib/platforms/waynereaves.mjs";
 import { discoverSitemapUrls, rank, dedupe, SRP_PATHS } from "./lib/sitemap.mjs";
 import { spaSignals, countVinUrls } from "./lib/spa-signals.mjs";
-import { failureKind, apiHostsFrom, seededShuffle, emptyOrTransient, blindEmpty, isBotChallenge } from "./lib/probe-verdict.mjs";
+import {
+  failureKind,
+  apiHostsFrom,
+  seededShuffle,
+  emptyOrTransient,
+  blindEmpty,
+  isBotChallenge,
+  botWall,
+  walledOut,
+} from "./lib/probe-verdict.mjs";
 
 function flag(name, fallback) {
   const i = process.argv.indexOf(name);
@@ -469,7 +478,11 @@ async function probeSite(site) {
     const res = await fetchPage(url);
     fetched++;
     if (res.status !== 200 || !res.body) {
-      failures.push({ url, status: String(res.status), kind: failureKind(res.status) });
+      // A refused fetch still has a body, and on the walled platforms it is
+      // the wall's own interstitial. Naming it here is what lets the verdict
+      // below say "we never got to look" instead of "this lot is empty".
+      const wall = botWall(res.body);
+      failures.push({ url, status: String(res.status), kind: failureKind(res.status), ...(wall ? { wall } : {}) });
       continue;
     }
     // Use the SAME extraction stack as crawl.mjs. Checking JSON-LD alone
@@ -538,7 +551,13 @@ async function probeSite(site) {
       const vdp = await fetchPage(e.url);
       fetched++;
       if (vdp.status !== 200 || !vdp.body) {
-        failures.push({ url: e.url, status: String(vdp.status), kind: failureKind(vdp.status) });
+        const vdpWall = botWall(vdp.body);
+        failures.push({
+          url: e.url,
+          status: String(vdp.status),
+          kind: failureKind(vdp.status),
+          ...(vdpWall ? { wall: vdpWall } : {}),
+        });
         continue;
       }
       const found = [
@@ -589,12 +608,18 @@ async function probeSite(site) {
   const transientFailures = failures.filter((f) => f.kind === "transient");
   const verdict = emptyOrTransient({ failures });
   const nothingToWalk = sitemapUrls.length === 0 && itemListEntries === 0;
+  // A named wall on the way in outranks both of the "empty" readings below.
+  // carsforsale.com's rooftops publish a sitemap (so not nothing-to-walk) that
+  // lists no VDP, and 403 their one inventory path with a DataDome
+  // interstitial — a row that says "likely needs a platform extractor" sends
+  // the next person to build something that cannot work. See botWall().
+  const wall = failures.find((f) => f.wall)?.wall;
 
   site.status = "needs-investigation";
   site.notes = (
     `${site.notes ?? ""} | probe ${today}: ${verdict === "transient" ? "no answer" : "0 VIN vehicles"} in ${fetched} fetches ` +
     `(${itemListEntries} ItemList entries, ${sitemapUrls.length} sitemap urls, ${transientFailures.length} failed fetches, ` +
-    `platform ${site.platform}) — ${leads}`
+    `platform ${site.platform}) — ${wall ? `walled by ${wall} on the inventory path` : leads}`
   ).trim();
   setVerdict(site, verdict, {
     fetched,
@@ -607,7 +632,8 @@ async function probeSite(site) {
     // ItemList, so there was never a page to read (needs a way IN). The
     // second is 73 of the 150 rows in the 2026-08-23 sample — the single
     // biggest bucket in the written-off pile, and a worklist of its own.
-    ...(verdict === "empty" && nothingToWalk ? { why: "nothing-to-walk" } : {}),
+    ...(verdict === "empty" && wall ? { why: "walled", wall } : {}),
+    ...(verdict === "empty" && !wall && nothingToWalk ? { why: "nothing-to-walk" } : {}),
     ...(verdict === "transient" ? { why: "failed-fetch" } : {}),
     ...(canonicalHost ? { canonicalHost } : {}),
     // The leads as data, not prose: api-leads.mjs ranks these hosts, and it
