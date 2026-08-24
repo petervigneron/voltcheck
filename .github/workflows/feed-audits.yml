@@ -164,14 +164,30 @@ jobs:
         run: |
           git config user.name "voltcheck-bot"
           git config user.email "noreply@github.com"
-          git add scraper/registry/audit-status.json
-          git diff --staged --quiet && { echo "nothing to commit"; exit 0; }
-          git commit -m "Feed audits: refresh audit-status.json [skip ci]"
+          # Merge before staging rather than rebasing a whole-file rewrite:
+          # nightly.yml now records its own checks into this same file, and two
+          # whole-file writers meeting in a text rebase is a conflict, which
+          # here means the record is DROPPED rather than delayed. mergeStatus
+          # composes them by check name. See merge-audit-status.mjs's header.
+          # Reset-then-merge, not merge-then-commit: nightly.yml now records its
+          # own checks into this same file, and merging the remote in before
+          # committing still leaves both sides' diffs overlapping, which is a
+          # conflict, which here means the record is DROPPED rather than
+          # delayed. See merge-audit-status.mjs.
+          cp scraper/registry/audit-status.json "${RUNNER_TEMP:-/tmp}/audit-status-mine.json"
           for i in 1 2 3 4 5; do
-            if git pull --rebase --autostash && git push; then
-              echo "audit status pushed"; exit 0
+            git checkout HEAD -- scraper/registry/audit-status.json 2>/dev/null || true
+            git fetch origin main || true
+            if ! git pull --rebase --autostash; then
+              git rebase --abort 2>/dev/null || true
+              sleep $((i * 10)); continue
             fi
-            git rebase --abort 2>/dev/null || true
+            node scraper/merge-audit-status.mjs --mine "${RUNNER_TEMP:-/tmp}/audit-status-mine.json"
+            git add scraper/registry/audit-status.json
+            git diff --staged --quiet && { echo "nothing to commit"; exit 0; }
+            git commit -m "Feed audits: refresh audit-status.json [skip ci]"
+            if git push; then echo "audit status pushed"; exit 0; fi
+            [ "$(git log -1 --format=%s)" = "Feed audits: refresh audit-status.json [skip ci]" ] && git reset --soft HEAD~1
             sleep $((i * 10))
           done
           echo "::warning::Could not push audit-status.json (raced another commit) — it will catch up next run."

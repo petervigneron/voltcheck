@@ -901,16 +901,26 @@ jobs:
           # is never asked again. Lose either file and the next run re-fetches
           # every car from scratch — vpic-cache.json losing this race is
           # exactly the six-night outage this cache was built to end.
-          # audit-status.json is different in kind: it's not a cache, it's the
-          # committed "did each check actually run" record (scraper/lib/
-          # audit-status.mjs) — sync-guard.mjs and price-audit.mjs already
-          # wrote tonight's entries into it earlier in finalize-ingest, carried
-          # here via the finalize-ingest-registry artifact (whole-directory,
-          # same handoff as the two caches); colisting-sync/the EV-rules and
-          # completeness audits below add theirs before this commit. Losing
-          # this file's commit doesn't lose data, only makes the NEXT run's
-          # "was this normal" comparison and feed-audits.yml's staleness check
-          # briefly blind — worth committing every night regardless.
+          # audit-status.json IS NOT STAGED HERE ANY MORE, and that is a fix,
+          # not an omission. It used to ride along, and riding along is what
+          # killed it: the two caches above are rewritten constantly by
+          # rolling-crawl.yml (32 commits on 2026-08-23) and discover.yml, so
+          # the rebase below hits a CONTENT conflict on them — and a content
+          # conflict is not a race a retry can win. It aborts, retries, and
+          # conflicts identically all five times. The last commit from this
+          # step to land was 2026-08-21 16:47.
+          #
+          # Losing a cache commit costs a re-fetch. Losing audit-status.json
+          # costs the answer to "did each check actually run?", and it cost
+          # exactly that: price-audit and colisting-sync had NEVER carried a
+          # recorded run, not because they weren't running but because their
+          # record was collateral in a commit that never landed. That is how
+          # 2026-08-23's price-audit result — the one that would have shown it
+          # was auditing 38,000 of ~100,000 cars — stayed invisible.
+          #
+          # It now has its own step below, staged alone. feed-audits.yml has
+          # always staged it alone and has always landed; that is the control
+          # test this follows.
           # web/data/scraped-listings.json IS NOT STAGED HERE, and its absence
           # is the point. When this workflow still ran the whole-fleet crawl,
           # ingest.mjs's output was a whole-fleet view and committing it was
@@ -927,7 +937,7 @@ jobs:
           # Only a whole-fleet view may write that file, and this job no longer
           # has one. refresh-fallback.yml owns it: it walks live_listings_feed
           # weekly and crawls nothing.
-          git add scraper/registry/registry.json scraper/registry/gm-warranty.json scraper/registry/vpic-cache.json scraper/registry/audit-status.json
+          git add scraper/registry/registry.json scraper/registry/gm-warranty.json scraper/registry/vpic-cache.json
           git diff --staged --quiet && { echo "nothing to commit"; exit 0; }
           git commit -m "Nightly: registry refresh [skip ci]"
           for i in 1 2 3 4 5; do
@@ -938,6 +948,42 @@ jobs:
             sleep $((i * 10))
           done
           echo "::warning::Could not push the data refresh (likely raced the discovery sweep). Supabase already has tonight's listings; the repo snapshot will catch up on the next run."
+
+      # The audit liveness record, alone, so no cache's conflict can take it
+      # down. merge-audit-status.mjs folds in whatever landed while this run
+      # was working (feed-audits.yml records four checks on its own 6-hourly
+      # schedule), so the two writers compose by check name instead of
+      # colliding as text — see that script's header. Re-merged before every
+      # retry, because the thing we raced may have landed since.
+      - name: Commit the audit liveness record
+        if: always()
+        working-directory: scraper
+        run: |
+          git config user.name "voltcheck-bot"
+          git config user.email "noreply@github.com"
+          # Save this run's records BEFORE touching git: each attempt resets the
+          # file to the remote tip and merges them back in. Reset-then-merge,
+          # not merge-then-commit — see merge-audit-status.mjs on why the other
+          # order still conflicts and still loses the record.
+          cp registry/audit-status.json "${RUNNER_TEMP:-/tmp}/audit-status-mine.json"
+          for i in 1 2 3 4 5; do
+            git checkout HEAD -- registry/audit-status.json 2>/dev/null || true
+            git fetch origin main || true
+            if ! git pull --rebase --autostash; then
+              git rebase --abort 2>/dev/null || true
+              sleep $((i * 10)); continue
+            fi
+            node merge-audit-status.mjs --mine "${RUNNER_TEMP:-/tmp}/audit-status-mine.json"
+            git add registry/audit-status.json
+            git diff --staged --quiet && { echo "nothing to commit"; exit 0; }
+            git commit -m "Nightly: audit liveness record [skip ci]"
+            if git push; then echo "audit status pushed"; exit 0; fi
+            # Unwind ONLY our own commit before retrying; the checkout at the
+            # top of the next attempt clears it from the index too.
+            [ "$(git log -1 --format=%s)" = "Nightly: audit liveness record [skip ci]" ] && git reset --soft HEAD~1
+            sleep $((i * 10))
+          done
+          echo "::error::Could not push audit-status.json — the liveness record for tonight is lost, which is the failure that hid price-audit for days. Check for a competing writer."
 
   # The authoritative sold-signal, split out of finalize (2026-08-19). Its own
   # job means its own clock. recheck fetches every live dealer listing's page

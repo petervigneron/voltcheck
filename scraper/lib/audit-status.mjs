@@ -61,3 +61,49 @@ export async function recordRun(name, { result, detail = "", expectedEveryHours 
   await writeFile(path, JSON.stringify(status, null, 2) + "\n");
   return status.checks[name];
 }
+
+/**
+ * Merge two readings of this file, newest-wins per check.
+ *
+ * WHY: this file has more than one writer — nightly.yml records price-audit
+ * and sync-guard, feed-audits.yml records four more on its own 6-hourly
+ * schedule — and each writes the WHOLE file from its own runner's checkout.
+ * Replayed as a git diff that is a conflict waiting to happen, and a rebase
+ * conflict here is not a delay, it is data loss: the commit step aborts,
+ * retries into the same conflict, and drops the record entirely.
+ *
+ * Merging by check name instead of by text makes concurrent writers safe by
+ * construction. Two runs that recorded different checks both keep theirs; two
+ * runs that recorded the SAME check keep the later reading, which is the one
+ * a staleness test wants. Nothing here is additive-only or lossy-by-timing,
+ * so it does not matter which side is "ours".
+ *
+ * An entry with no parseable lastRunAt loses to one that has it — a malformed
+ * record must never shadow a real run and make a live check look dead.
+ */
+export function mergeStatus(a, b) {
+  const at = (e) => {
+    const t = Date.parse(e?.lastRunAt ?? "");
+    return Number.isFinite(t) ? t : -Infinity;
+  };
+  const out = {
+    _comment: a?._comment ?? b?._comment,
+    checks: { ...(b?.checks ?? {}) },
+  };
+  for (const [name, entry] of Object.entries(a?.checks ?? {})) {
+    const rival = out.checks[name];
+    if (rival === undefined || at(entry) >= at(rival)) out.checks[name] = entry;
+  }
+  // lastGoodCounts is sync-guard's own single-writer record; it carries its
+  // own timestamp, so it merges on the same rule rather than by position.
+  const counts = [a?.lastGoodCounts, b?.lastGoodCounts].filter(Boolean);
+  if (counts.length) {
+    counts.sort((x, y) => Date.parse(y.at ?? "") - Date.parse(x.at ?? ""));
+    out.lastGoodCounts = counts[0];
+  }
+  return out;
+}
+
+export function serializeStatus(status) {
+  return JSON.stringify(status, null, 2) + "\n";
+}
