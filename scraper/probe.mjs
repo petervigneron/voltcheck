@@ -114,6 +114,10 @@ import {
 } from "./lib/platforms/motorcarsites.mjs";
 import { isOneAudi, oneAudiVehicles, ONEAUDI_SRP_PATHS } from "./lib/platforms/oneaudi.mjs";
 import { isWayneReaves, countWayneReaves } from "./lib/platforms/waynereaves.mjs";
+import { isDealerSync, countDealerSync, DEALERSYNC_SRP_PATH } from "./lib/platforms/dealersync.mjs";
+import { isRecharged, isRechargedOrigin, countRecharged } from "./lib/platforms/recharged.mjs";
+import { isEverCars, isEverCarsOrigin, countEverCars, EVERCARS_SRP_PATH } from "./lib/platforms/evercars.mjs";
+import { isVehica, countVehica } from "./lib/platforms/vehica.mjs";
 import { discoverSitemapUrls, rank, dedupe, SRP_PATHS } from "./lib/sitemap.mjs";
 import { spaSignals, countVinUrls } from "./lib/spa-signals.mjs";
 import {
@@ -398,6 +402,46 @@ async function probeSite(site) {
     }
   }
 
+  // The four used-EV-specialist lanes of 2026-08-24 settle the same way, and
+  // for the same reason every row above them does: none of these rooftops
+  // renders a car in HTML, so the 12-fetch walk below scores a live lot zero.
+  // evercars.com is the case that proves it — six probes in a row wrote it off
+  // with "0 VIN vehicles in 12 fetches … leads: nextjs" while 656 buyable EVs
+  // sat behind a query parameter on the page the probe had already fetched.
+  //
+  // `found` is what the platform itself reports for the whole lot, so a note
+  // reading "1130 vehicles" is the site's number and not a promise about how
+  // many of them are live — the crawl's own note reports that split.
+  for (const lane of [
+    { name: "dealersync", detect: () => isDealerSync(home.body), count: () => countDealerSync(origin), label: "/Inventory/Search" },
+    {
+      name: "recharged",
+      detect: () => isRecharged(home.body) || isRechargedOrigin(origin),
+      count: () => countRecharged(origin),
+      label: "tRPC vehicle.search",
+    },
+    {
+      name: "evercars",
+      detect: () => isEverCars(home.body) || isEverCarsOrigin(origin),
+      count: () => countEverCars(origin),
+      label: "server-rendered /cars search",
+    },
+    // Vehica's `found` is a first-page floor, not a lot size — see countVehica.
+    { name: "vehica", detect: () => isVehica(home.body), count: () => countVehica(origin), label: "WordPress REST feed, first page of" },
+  ]) {
+    if (!lane.detect()) continue;
+    const { ok, found, hasVin } = await lane.count();
+    fetched++;
+    if (ok && found > 0 && hasVin) {
+      site.platform = lane.name;
+      site.status = "working";
+      site.notes = `${site.notes ?? ""} | auto-promoted by probe ${today}: ${lane.name} ${lane.label}, ${found} vehicles`.trim();
+      setVerdict(site, "working", { fetched, via: lane.name, found });
+      console.error(`  ${site.domain} → working (${lane.name}, ${found})`);
+      return;
+    }
+  }
+
   // Team Velocity serves its lot from an open API keyed by ids inline in the
   // page — confirm it directly, like DealerVenom/Overfuel, rather than walking
   // the client-rendered HTML the crawl otherwise sees nothing in.
@@ -442,6 +486,12 @@ async function probeSite(site) {
     // the sitemap-ranked guesses spent the budget before reaching it on all 13
     // cohort rooftops (2026-08-16).
     "team-velocity": ["/inventory/used", "/inventory/new"],
+    // Fallbacks only: both lanes settle above, off the homepage, and never
+    // reach this table on a healthy rooftop. They are here for the row whose
+    // homepage answered without its usual markers, so the walk at least asks
+    // the one path that carries cars instead of guessing /inventory.
+    dealersync: [DEALERSYNC_SRP_PATH],
+    evercars: [EVERCARS_SRP_PATH],
   };
   // Overfuel's SRP is a per-rooftop slug ("/used-cars-albuquerque-nm") with no
   // fixed path to guess — but the homepage links it, so read it off the page we

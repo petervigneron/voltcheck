@@ -8,6 +8,31 @@ const SIGNATURES = [
   // API. `typesenseSearchAdapter` is the vendor's search-client init; the
   // `dealervenom` brand token is the second signal.
   { platform: "dealervenom", res: [/typesenseSearchAdapter/i, /dealervenom/i] },
+  // Recharged, a single-rooftop lane: a used-EV specialist big enough to be
+  // worth its own module (412 electrified cars). Anchored on a string that
+  // CONTAINS its own host — its Organization JSON-LD names its logo — so it
+  // cannot fire on anyone else's page, which is the precision a per-site label
+  // needs. See lib/platforms/recharged.mjs.
+  { platform: "recharged", res: [/https:\/\/recharged\.com\/logo\.svg/i] },
+  // Ever, the same shape and for the same reason (1,130 electrified cars):
+  // anchored on strings that contain its own host — its schema.org @ids and
+  // its asset host. See lib/platforms/evercars.mjs.
+  {
+    platform: "evercars",
+    res: [/evercars\.com\/#(?:organization|website|dealer-)|static\.production\.evercars\.live/i],
+  },
+  // DealerSync: an independents' website vendor whose rooftops serve on their
+  // own apex and ship the vendor's Handlebars TEMPLATE inline — a VIN regex
+  // over one of its pages finds `{{Vin}}`. Its own CDN and photo hosts are the
+  // signal, never the brand word: a dealer is free to be named "… Sync".
+  // lib/platforms/dealersync.mjs reads /Inventory/Search instead.
+  { platform: "dealersync", res: [/\b(?:dealer-cdn|images)\.dealersync\.com/i] },
+  // Vehica: a WordPress car-dealership theme. Its VDPs carry no JSON-LD at all
+  // — the car is an Elementor label/value table — so the whole lot comes out of
+  // WordPress's own REST API instead (lib/platforms/vehica.mjs). Anchored on
+  // the theme and plugin asset paths, not the bare word, which a dealer could
+  // put in its own copy.
+  { platform: "vehica", res: [/wp-content\/(?:themes|plugins)\/vehica/i] },
   // OneAudi before dealer.com: Audi's own platform loads a "labels-prod…
   // /dealer.com.js" tag on inventory pages and serves some assets through
   // dealer.com hosts, so 20 of the 21 Audi rooftops that reached "working"

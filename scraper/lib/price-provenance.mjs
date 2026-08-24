@@ -177,6 +177,46 @@ export const ADD_DISPLAY_PRICE = "autodealersdigital-display";
 // there is nothing to justify treating them as one field.
 export const WAYNEREAVES_PRICE = "waynereaves-price";
 
+// DealerSync's `FinalPrice` — the number its SRP tile prints under the label
+// "Today's Price", and the same number its schema.org MICRODATA publishes as
+// offers.price (the tile template feeds `{{PriceDisplay}}` to the eye and
+// `{{FinalPrice}}` to the microdata).
+//
+// Its own tag, not JSONLD: these pages carry no JSON-LD at all, so this can
+// never be the same reading no matter how equal the numbers look — the rule
+// AUTOFUNDS_INTERNET is written out under. It is also NOT `InternetPrice`,
+// which sits beside it on every record: the two were equal on all 339 records
+// of pluginauto.com (2026-08-24), and that is exactly the coincidence the
+// "when in doubt, split" rule refuses to build on — a rooftop that charges an
+// add-on would move FinalPrice off InternetPrice and a shared tag would
+// publish the gap as a price cut nobody made. `DiscountDisplay` (the
+// struck-through former price) is never read.
+export const DEALERSYNC_FINAL = "dealersync-final";
+
+// Recharged's `price` field out of its own /api/trpc/vehicle.search — the
+// number its card and its VDP both print. Verified byte-equal to the VDP's own
+// schema.org offers.price on 2026-08-24 (7SAYGDEF8SA339578: record price
+// "39998.00", VDP offer "39998.00") — and deliberately still its own tag,
+// because the same record carries `jdpRetail`, `jdpTrade`, `bbRetail`,
+// `bbWholesale` and `actualCashValue`. Those are book values, not asks; none
+// of them is ever read, and a shared tag would be one careless edit away from
+// pairing an ask against a wholesale number.
+export const RECHARGED_PRICE = "recharged-price";
+
+// Ever's `price` out of the server-rendered search payload on /cars — the
+// integer its card prints ($43,999 on 1FTVW1EL6PWG53923, 2026-08-24).
+// Explicitly NOT `monthly_payment`, which sits in the same record and is a
+// financing estimate, not a rung of a price ladder (the refusal
+// AUTOFUNDS_INTERNET documents).
+export const EVERCARS_PRICE = "evercars-price";
+
+// The Vehica WordPress theme's price custom field — the single value inside
+// the record's `vehica_currency_*` object, which is the number the card and
+// the VDP print ($26,900 on 5YJYGDEE1MF087036, getusedtesla.com 2026-08-24).
+// There is no second price field on this platform to rank against it, so a
+// record carrying more than one currency field abstains rather than pick.
+export const VEHICA_PRICE = "vehica-price";
+
 // OEM/aggregator inventory APIs. Each lane reads one documented field out of
 // one vendor's endpoint; none of them shares a code path with any other, so
 // each gets its own tag rather than a single "oem" bucket that would let a
@@ -232,6 +272,7 @@ const KNOWN = new Set([
   MOTIVE_PRICE, AUTOMANAGER_PRICE, AUTOFUNDS_INTERNET, AUTOFUNDS_REDUCED,
   MOTORCARSITES_PRICE,
   ONEAUDI_SALE, WAYNEREAVES_PRICE, ADD_DISPLAY_PRICE,
+  DEALERSYNC_FINAL, RECHARGED_PRICE, EVERCARS_PRICE, VEHICA_PRICE,
 ]);
 
 /** True for a tag this build knows how to emit. OEM lane tags are accepted by
