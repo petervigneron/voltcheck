@@ -1,0 +1,136 @@
+{
+  "_comment": "Used-EV specialist retailers surveyed 2026-08-24 — independents whose lot is (or was) all-electrified, none of them crawled before. Rows in registry.json's own shape so they can be folded in by hand; registry.json is hand-curated and is never written by this lane. `_registryChange` on each row says what the hand-edit is: `add` for a domain the registry has never held, `update` for one it already has. Probe verdicts below were written by `node probe.mjs --sites-file out/evspecialists-new-sites.json`.",
+  "sites": [
+    {
+      "domain": "recharged.com",
+      "name": "Recharged",
+      "kind": "rooftop",
+      "platform": "recharged",
+      "robots": "permissive",
+      "status": "working",
+      "notes": "Used-EV specialist, Richmond VA + reconditioning/experience centres in Charlotte, Jacksonville and Fairfax. All-electrified lot. Next.js: the SRP renders no cars and the VDP's schema.org rides in a <meta name=\"script:ld+json\"> rather than a <script>, so the generic stack extracts zero. Whole lot from /api/trpc/vehicle.search (robots allows /api). lib/platforms/recharged.mjs. | auto-promoted by probe 2026-08-24: recharged tRPC vehicle.search, 412 vehicles",
+      "_registryChange": "add",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "recharged",
+        "found": 412
+      },
+      "_crawl2026_08_24": {
+        "fetched": 6,
+        "inFeed": 412,
+        "live": 338,
+        "evs": 338,
+        "complete": true,
+        "note": "74 of 412 withheld: 73 isReserved (the site still counts them and their VDP has no buy path) + 1 sold/unknown status"
+      }
+    },
+    {
+      "domain": "evercars.com",
+      "name": "Ever",
+      "kind": "rooftop",
+      "platform": "evercars",
+      "robots": "permissive",
+      "status": "working",
+      "notes": "All-EV retailer, Costa Mesa + San Francisco CA. Largest unbuilt independent found so far. Already in registry.json as needs-investigation with six identical probe notes (\"0 VIN vehicles in 12 fetches ... leads: nextjs\"); this row REPLACES that one. Its /api is robots-disallowed and stays shut — the door is /cars itself, which server-renders its own search result with the page size in a JSON-encoded `f` parameter. lib/platforms/evercars.mjs. | auto-promoted by probe 2026-08-24: evercars server-rendered /cars search, 1130 vehicles",
+      "_registryChange": "update",
+      "_registryWas": {
+        "platform": "unknown",
+        "status": "needs-investigation",
+        "note": "probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — client-rendered or API-backed; leads: nextjs"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "evercars",
+        "found": 1130
+      },
+      "_crawl2026_08_24": {
+        "fetched": 6,
+        "inFeed": 1130,
+        "live": 659,
+        "evs": 643,
+        "complete": true,
+        "note": "471 of 1130 withheld as PURCHASE_IN_PROGRESS — rendered \"Reserved / Get notified if it becomes available\", no buy path. 16 of the 659 live cars are BEVs classifyEv did not admit: Genesis GV60 x13, Genesis Electrified GV70 x1, Jaguar I-Pace x1, and one whose model string is bare \"Porsche Macan\" on an all-EV lot. Over the full 1130 the same gap also covers VW e-Golf and a bare \"Lexus RZ\" with no trim number. EV_MODEL_RE nameplate gaps — not this lane's file to edit."
+      }
+    },
+    {
+      "domain": "pluginauto.com",
+      "name": "Plug In Auto",
+      "kind": "rooftop",
+      "platform": "dealersync",
+      "robots": "permissive",
+      "status": "working",
+      "notes": "West Covina + Costa Mesa CA. Founded as a plug-in specialist; the lot has since gone mixed (339 cars, 108 electrified + 4 hydrogen FCEVs, 207 petrol), which makes it this survey's petrol control. Runs DealerSync — a vendor no rooftop in the registry was on. lib/platforms/dealersync.mjs. | auto-promoted by probe 2026-08-24: dealersync /Inventory/Search, 339 vehicles",
+      "_registryChange": "add",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "dealersync",
+        "found": 339
+      },
+      "_crawl2026_08_24": {
+        "fetched": 24,
+        "inFeed": 339,
+        "live": 338,
+        "evs": 110,
+        "complete": true,
+        "note": "110 electrified of 338 live (100 BEV + 8 PHEV + 2 PHEV?); 7 of them abstain on price (FinalPrice 0). 228 not admitted: 207 petrol, 6 non-plug-in hybrids, 4 hydrogen Mirais, diesels — the petrol control"
+      }
+    },
+    {
+      "domain": "getusedtesla.com",
+      "name": "Get Used Tesla",
+      "kind": "rooftop",
+      "platform": "vehica",
+      "robots": "permissive",
+      "status": "working",
+      "notes": "Fresno CA, Tesla only. Runs the Vehica WordPress theme; its VDPs carry no JSON-LD at all. Whole catalogue from WordPress's own REST API. Small live lot (15 of 413 records) — the other 398 are SOLD by the theme's own Offer Type taxonomy, and the site still counts them in the \"413 Results\" it prints. lib/platforms/vehica.mjs. | auto-promoted by probe 2026-08-24: vehica WordPress REST feed, first page of, 100 vehicles",
+      "_registryChange": "add",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "vehica",
+        "found": 100
+      },
+      "_crawl2026_08_24": {
+        "fetched": 15,
+        "inFeed": 413,
+        "live": 15,
+        "evs": 15,
+        "complete": true,
+        "note": "398 of 413 are SOLD by the theme's own Offer Type taxonomy and the site counts every one of them in its \"413 Results\""
+      }
+    },
+    {
+      "domain": "ecarone.com",
+      "name": "eCarOne",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "permissive",
+      "status": "working",
+      "notes": "Plano TX (Sonic Automotive). Surveyed as a used-EV specialist; measured as a LUXURY pre-owned dealer with a mixed lot that includes EVs (a 2026 Cybertruck on page one of its SRP). Plain dealer.com with server-rendered Vehicle JSON-LD — no new code, it just was never in the registry. Its robots.txt names ClaudeBot/GPTBot/CCBot and friends but leaves the wildcard group open to /used-inventory/ and /all-inventory/. | auto-promoted by probe 2026-08-24: 12 VIN vehicles on 1 page(s), platform dealer.com",
+      "_registryChange": "add",
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "vehicles": 12,
+        "canonicalHost": "www.ecarone.com"
+      },
+      "_crawl2026_08_24": {
+        "fetched": 9,
+        "inFeed": 227,
+        "live": 227,
+        "evs": 98,
+        "complete": true,
+        "note": "Plain dealer.com — the existing dealercom-api lane read it with no new code. 98 EVs of a 227-car luxury pre-owned lot; the non-EVs are the petrol control"
+      }
+    }
+  ],
+  "_yield": "crawl.mjs on all five, 2026-08-24: 1,204 unique EV listings, every domain complete=true and none truncated. recharged 338 / evercars 643 / pluginauto 110 / ecarone 98 / getusedtesla 15."
+}
