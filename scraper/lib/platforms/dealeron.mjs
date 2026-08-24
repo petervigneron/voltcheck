@@ -21,7 +21,9 @@
 // vehicles" rail — so blocks are keyed by VIN and matched to the record,
 // never taken positionally. Only the subject's block has data-odometer.
 
-import { DEOL_DISPLAYED } from "../price-provenance.mjs";
+import { DEOL_DISPLAYED, DEOL_SELLING } from "../price-provenance.mjs";
+import { priceFromLibraryTagged } from "./dealeron-api.mjs";
+import { priceFloor } from "../price-floor.mjs";
 
 function parseSdDataLayer(html) {
   const m = html.match(/sdDataLayer\s*=\s*\{/);
@@ -96,6 +98,12 @@ function parseDotagging(html) {
       // claim about a warranty, so it comes from the feed's own condition or
       // not at all.
       stockNumber: attr("number"),
+      // The three price attributes that sit on this same element, none of them
+      // under the dotagging namespace. See resolveDealerOnPriceTagged on why
+      // displayedPrice above is NOT the advertised price when these disagree.
+      sellingPrice: num(tag.match(/data-price="([^"]*)"/)?.[1]),
+      msrp: num(tag.match(/data-msrp="([^"]*)"/)?.[1]),
+      priceLibrary: tag.match(/data-pricelib="([^"]*)"/)?.[1],
       odometer: num(tag.match(/data-odometer="([^"]*)"/)?.[1]),
     });
   }
@@ -127,6 +135,73 @@ export function extractDealerOn(html) {
   };
 }
 
+// Below this fraction of the page's own MSRP a JSON-LD offer price is not a
+// discount, it is a different number sitting in the price slot. Same threshold
+// and the same reasoning as dealercom.mjs's JSONLD_JUNK_FRACTION.
+const JSONLD_JUNK_FRACTION = 0.5;
+
+// Which served number is the price a human reads off a DealerOn VDP?
+//
+// The old answer was "whatever normalize() read out of JSON-LD offers.price,
+// and the dotagging price attribute only if that was missing". Both halves are
+// wrong on a rooftop that advertises a dealer discount, and one of them is
+// wrong in the expensive direction:
+//
+//   suntrupfordkirkwood.com, 2025 F-150 Lightning Flash 1FT6W3LU6SWG26144
+//   (2026-08-23). The VDP renders MSRP $72,965 / Suntrup Savings -$15,021 /
+//   Final Price $57,944. Its JSON-LD publishes "price": 15021.0 — the SAVINGS
+//   line, not the price — and the site printed a $15,021 asking price on a
+//   $57,944 truck, a false bargain of exactly the kind the house rule calls
+//   the most expensive error. $15,021 cleared the $15,000 new-car floor by
+//   $21, so lib/price-floor.mjs could not catch it; only the page's own MSRP
+//   can, which is what the junk fraction above is for.
+//
+//   The same page shows why the fallback could not have saved it either.
+//   data-dotagging-item-price is $72,965 there — the STICKER, byte-equal to
+//   data-msrp on all five cars the page carries — so publishing it would have
+//   overstated by the whole discount. It reads as the advertised price only on
+//   used cars, where sticker and ask are the same number (goosecreekmitsubishi
+//   Model Y and hartmotors Wrangler 4xe, both 2026-08-23: dot price == msrp ==
+//   the ask). It is kept as the last rung for exactly that case and no other.
+//
+// The rooftop's own price library is the number that survives all three pages:
+// calc_INTERNET PRICE is $57,944 on the Suntrup truck (the rendered Final
+// Price) and byte-equal to a healthy JSON-LD offer on both used cars ($23,888
+// and $27,647, the latter including the doc fee the offer also carries). That
+// is the same field, read the same way, as the DealerOn API lane — hence the
+// shared reader rather than a second copy of the ladder.
+//
+// A healthy JSON-LD offer still wins, so the overwhelming majority of DealerOn
+// rows keep the number and the provenance tag they already had; this only
+// changes what happens when the page contradicts itself.
+export function resolveDealerOnPriceTagged(rec, v) {
+  const floor = priceFloor({ isNew: rec.condition === "new", year: rec.year });
+  const msrp = v.msrp;
+  const jsonld = num(rec.priceUsd);
+  const jsonldJunk = jsonld != null && msrp != null && jsonld < msrp * JSONLD_JUNK_FRACTION;
+
+  if (jsonld != null && jsonld >= floor && !jsonldJunk) {
+    // Unchanged: the dealer's declared offer price, keeping normalize()'s tag.
+    return { priceUsd: jsonld, provenance: rec.priceProvenance };
+  }
+
+  const library = priceFromLibraryTagged(v.priceLibrary);
+  const ladder = [
+    { price: library.price, provenance: library.provenance },
+    { price: v.sellingPrice, provenance: DEOL_SELLING },
+    // Only where nothing above answered. Suppressed once the page has been
+    // caught contradicting itself: this rung is the sticker, and on a
+    // discounted car it is demonstrably not the ask, so the claim goes quiet
+    // rather than overstating by the discount.
+    { price: jsonldJunk ? undefined : num(v.displayedPrice), provenance: DEOL_DISPLAYED },
+  ];
+  const picked = ladder.find((c) => c.price != null && c.price >= floor);
+  // 0 is ingest.mjs's abstain: the car stays, the price claim goes quiet.
+  return picked
+    ? { priceUsd: picked.price, provenance: picked.provenance }
+    : { priceUsd: 0, provenance: undefined };
+}
+
 const DRIVES = new Set(["FWD", "RWD", "AWD", "4WD"]);
 
 export function enrichFromDealerOn(rec, data) {
@@ -142,6 +217,7 @@ export function enrichFromDealerOn(rec, data) {
   // dotagging template that is the block carrying data-odometer; on the old
   // one it is the single sdDataLayer car.
   const isSubject = Boolean(sd) || dot?.odometer != null;
+  const price = resolveDealerOnPriceTagged(rec, v);
   return {
     ...rec,
     // Dealer-stated mileage passes through verbatim, 0 included — it has the
@@ -153,17 +229,11 @@ export function enrichFromDealerOn(rec, data) {
     driveLine: DRIVES.has(v.drivetrain) ? v.drivetrain : rec.driveLine,
     exteriorColor: v.exteriorColor ?? (isSubject ? data.exteriorColor : undefined) ?? rec.exteriorColor,
     interiorColor: v.interiorColor ?? (isSubject ? data.interiorColor : undefined) ?? rec.interiorColor,
-    priceUsd: rec.priceUsd ?? (Number(v.displayedPrice) > 0 ? Number(v.displayedPrice) : undefined),
-    // Same precedence as the line above: the JSON-LD offer keeps its own tag,
-    // and displayedPrice is only named when it is the number that survived.
-    // Not assumed equal to the API path's price library — that check has not
-    // been done, and lib/price-provenance.mjs says to split when in doubt.
-    priceProvenance:
-      rec.priceUsd != null
-        ? rec.priceProvenance
-        : Number(v.displayedPrice) > 0
-          ? DEOL_DISPLAYED
-          : undefined,
+    // See resolveDealerOnPriceTagged: a healthy JSON-LD offer still wins and
+    // keeps its tag, but the page's own MSRP now gets a veto over one that is
+    // too far below sticker to be a price at all.
+    priceUsd: price.priceUsd,
+    priceProvenance: price.provenance,
     condition: typeof sd?.status === "string" ? sd.status.toLowerCase() : rec.condition,
     city: data.dealer?.city ?? rec.city,
     state: data.dealer?.state ?? rec.state,
