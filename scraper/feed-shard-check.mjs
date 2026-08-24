@@ -15,11 +15,13 @@
 // script is the check for exactly that: does what shoppers are actually
 // being served agree with what we know the database holds.
 //
-// A generous tolerance (TOLERANCE below) is deliberate: sync-guard's
+// A generous tolerance (SHORTFALL_TOLERANCE below) is deliberate: sync-guard's
 // lastGoodCounts is a snapshot from whenever the last sync ran, and
 // recheck's sold-signal (and ordinary organic churn) keeps moving the true
 // count in between — this is a sanity check for "is this the same order of
-// inventory", not a byte-exact reconciliation.
+// inventory", not a byte-exact reconciliation. It is also one-directional and
+// refuses to judge a baseline past its own shelf life; both of those are
+// 2026-08-24 and both are argued at the constants.
 //
 // 2026-08-22, the check that was missing: this script asked whether each
 // shard ANSWERED, never how many cars it answered with. On 2026-08-21 five
@@ -57,7 +59,30 @@ import { readStatus, recordRun } from "./lib/audit-status.mjs";
 
 const arg = (n, d) => { const i = process.argv.indexOf(n); return i >= 0 ? process.argv[i + 1] : d; };
 const BASE = (arg("--base", "https://voltcheck.net")).replace(/\/$/, "");
-const TOLERANCE = 0.1; // 10% either side of sync-guard's last stable read
+// How far BELOW sync-guard's last stable read the served total may sit. One
+// direction only, and that is the fix, not a loosening. Every incident this
+// comparison was built for serves FEWER cars than the database holds: 58,730
+// standing in for ~100,300 (2026-08-16 and 2026-08-21). Serving MORE than the
+// last known-good count is not that shape at all -- it is the database having
+// grown since the last sync, which on this project is fast and normal. On
+// 2026-08-24 a healthy 130,011-car feed was measured against a 27.8-hour-old
+// 103,526 and reported as "the poisoned-cache shape", 25.6% apart, because
+// the comparison used Math.abs and could not tell growth from loss.
+const SHORTFALL_TOLERANCE = 0.1;
+// The one failure shape that serves MORE than the baseline: the first live-DB
+// deploy doubled 8,133 cars when shard membership was positional rather than
+// keyed on the car's own id (web/app/api/index/[shard]/route.ts). Keyed
+// membership retired that, and the shard-balance check above would see a
+// lopsided version of it, so this is a backstop for a uniform doubling and is
+// set where only a doubling can reach it -- not where ordinary growth can.
+const OVERCOUNT_TOLERANCE = 0.9;
+// sync-guard's own expectedEveryHours. Past this the baseline is not a
+// yardstick any more: a disagreement cannot be told apart from a yardstick
+// that stopped moving, and guessing between them is what produced the false
+// alarm above. Nothing goes unreported by abstaining -- audit-status-check
+// alarms on a stale sync-guard BY NAME, and that is the check which owns the
+// question "did sync-guard run?". This one owns "is the served feed right?".
+const BASELINE_MAX_AGE_HOURS = 27;
 // How far the shards' summed row count may sit from the total /api/index/first
 // reports. These are seven bodies off the same walk, revalidated together and
 // warmed in one pass, so in the healthy case they agree exactly; the slack is
@@ -237,19 +262,40 @@ if (sitemapUrls > 0 && firstTotal != null && firstTotal > 0 && sitemapUrls < fir
 if (firstTotal != null) {
   const status = await readStatus();
   const known = status.lastGoodCounts?.total;
-  if (typeof known === "number" && known > 0) {
-    const diff = Math.abs(firstTotal - known) / known;
-    if (diff > TOLERANCE) {
-      problems.push(
-        `served total ${firstTotal} vs sync-guard's last known-good ${known} — ${(diff * 100).toFixed(1)}% apart ` +
-          `(tolerance ${(TOLERANCE * 100).toFixed(0)}%). This is the poisoned-cache shape: a shard rendered and cached ` +
-          "a snapshot that disagrees with what the database was last confirmed to hold."
-      );
-    } else {
-      console.log(`feed-shard-check: served total ${firstTotal} agrees with sync-guard's ${known} (${(diff * 100).toFixed(1)}% apart)`);
-    }
-  } else {
+  const at = Date.parse(status.lastGoodCounts?.at ?? "");
+  const ageHours = Number.isFinite(at) ? (Date.now() - at) / 3_600_000 : Infinity;
+  if (!(typeof known === "number" && known > 0)) {
     console.log("feed-shard-check: no prior sync-guard count to compare against yet (first run, or sync-guard hasn't recorded one)");
+  } else if (ageHours > BASELINE_MAX_AGE_HOURS) {
+    // Deliberately not a problem: see BASELINE_MAX_AGE_HOURS. Failing here
+    // would report a stopped pipeline as a bad feed, and -- because a problem
+    // calls clearPoisonedCache() -- would dump and re-render the whole browse
+    // cache every six hours to "repair" a feed that was never wrong.
+    console.log(
+      `feed-shard-check: NOT judging served total ${firstTotal} against sync-guard's ${known} — that baseline is ` +
+        `${ageHours.toFixed(0)}h old (max ${BASELINE_MAX_AGE_HOURS}h). A gap this could show would be indistinguishable ` +
+        "from a yardstick that stopped moving. audit-status-check owns whether sync-guard is still running."
+    );
+  } else if (firstTotal < known * (1 - SHORTFALL_TOLERANCE)) {
+    const short = (100 * (known - firstTotal)) / known;
+    problems.push(
+      `served total ${firstTotal} is ${short.toFixed(1)}% SHORT of sync-guard's last known-good ${known} ` +
+        `(tolerance ${(SHORTFALL_TOLERANCE * 100).toFixed(0)}%), measured ${ageHours.toFixed(0)}h ago. This is the ` +
+        "poisoned-cache shape: a shard rendered and cached a snapshot thinner than what the database was last " +
+        "confirmed to hold."
+    );
+  } else if (firstTotal > known * (1 + OVERCOUNT_TOLERANCE)) {
+    problems.push(
+      `served total ${firstTotal} is ${((100 * (firstTotal - known)) / known).toFixed(1)}% ABOVE sync-guard's last ` +
+        `known-good ${known} from ${ageHours.toFixed(0)}h ago — too far to be growth. The shape that does this is ` +
+        "cars served twice (see the shard route's note on positional membership)."
+    );
+  } else {
+    const d = (100 * (firstTotal - known)) / known;
+    console.log(
+      `feed-shard-check: served total ${firstTotal} sits ${d >= 0 ? "+" : ""}${d.toFixed(1)}% against sync-guard's ` +
+        `${known} from ${ageHours.toFixed(0)}h ago — within tolerance`
+    );
   }
 }
 
