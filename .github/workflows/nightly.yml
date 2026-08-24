@@ -664,11 +664,13 @@ jobs:
           # and cache for the same day as the index shards, so this pass is
           # now what keeps a crawler's copy current. Warmed immediately after
           # the shards on purpose: db.ts's ten-minute walk memo is still
-          # holding the walk the loop above just paid for, so these six cost
+          # holding the walk the loop above just paid for, so these cost
           # no extra database read. A failure here is a stale sitemap, never
           # a wrong one — the route refuses to publish anything but a live
           # feed — so it warns rather than failing the night.
-          for s in 0 1 2 3 4 5; do
+          # 12 sitemap shards since 2026-08-24 — keep in step with
+          # web/lib/sitemap.ts SITEMAP_SHARDS, whose comment has the incident.
+          for s in $(seq 0 11); do
             curl -fsS --retry 2 --max-time 300 -o /dev/null "https://voltcheck.net/sitemap/$s.xml" \
               || echo "::warning::sitemap shard $s warm-up failed; crawlers keep yesterday's copy until the next request renders it"
           done
@@ -1279,11 +1281,13 @@ jobs:
           # and cache for the same day as the index shards, so this pass is
           # now what keeps a crawler's copy current. Warmed immediately after
           # the shards on purpose: db.ts's ten-minute walk memo is still
-          # holding the walk the loop above just paid for, so these six cost
+          # holding the walk the loop above just paid for, so these cost
           # no extra database read. A failure here is a stale sitemap, never
           # a wrong one — the route refuses to publish anything but a live
           # feed — so it warns rather than failing the night.
-          for s in 0 1 2 3 4 5; do
+          # 12 sitemap shards since 2026-08-24 — keep in step with
+          # web/lib/sitemap.ts SITEMAP_SHARDS, whose comment has the incident.
+          for s in $(seq 0 11); do
             curl -fsS --retry 2 --max-time 300 -o /dev/null "https://voltcheck.net/sitemap/$s.xml" \
               || echo "::warning::sitemap shard $s warm-up failed; crawlers keep yesterday's copy until the next request renders it"
           done

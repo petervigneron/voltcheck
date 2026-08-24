@@ -99,6 +99,12 @@ const SHARD_BALANCE_TOLERANCE = 0.25;
 // TS). 6 → 24 on 2026-08-24: a cold shard render is capped at ~4.5 MB and a
 // six-way split of 129k cars was 7.1 MB — pack.ts's comment has the incident.
 const SHARDS = Array.from({ length: 24 }, (_, i) => i);
+// Keep in step with web/lib/sitemap.ts SITEMAP_SHARDS — a separate count from
+// the index shards. 6 → 12 on 2026-08-24, for the same ~4.5 MB cold-render
+// cap (each sitemap shard measured 3.6 MB at 129k cars). Only the
+// cache-clearing warm loop uses this; the sitemap AUDIT reads robots.txt
+// instead, deliberately (see the note above it).
+const SITEMAP_SHARD_PATHS = Array.from({ length: 12 }, (_, i) => `/sitemap/${i}.xml`);
 
 async function fetchText(path, timeoutMs = 60_000) {
   const ctrl = new AbortController();
@@ -169,7 +175,7 @@ if (shardRows.size === SHARDS.length) {
     const diff = Math.abs(summed - firstTotal) / firstTotal;
     if (diff > SUM_TOLERANCE) {
       problems.push(
-        `the six shards hold ${summed} rows between them but /api/index/first reports ${firstTotal} — ` +
+        `the ${SHARDS.length} shards hold ${summed} rows between them but /api/index/first reports ${firstTotal} — ` +
           `${(diff * 100).toFixed(1)}% apart (tolerance ${(SUM_TOLERANCE * 100).toFixed(0)}%). ` +
           `${Math.abs(firstTotal - summed)} cars are missing from what a shopper's browse grid can actually see, ` +
           "with every endpoint answering 200. Shard counts: " +
@@ -340,7 +346,7 @@ async function clearPoisonedCache() {
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     console.log("feed-shard-check: POSTed /api/revalidate to clear the bad cache entries; warming them now");
-    for (const path of ["/api/index/first", ...SHARDS.map((s) => `/api/index/${s}`), ...SHARDS.map((s) => `/sitemap/${s}.xml`)]) {
+    for (const path of ["/api/index/first", ...SHARDS.map((s) => `/api/index/${s}`), ...SITEMAP_SHARD_PATHS]) {
       try {
         await fetchText(path, 300_000);
       } catch (e) {

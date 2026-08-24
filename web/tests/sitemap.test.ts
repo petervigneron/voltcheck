@@ -64,10 +64,10 @@ test("splitting a feed across the shards neither drops nor duplicates a URL", ()
 });
 
 test("shards stay far enough under the 50,000-URL cap to be worth the split", () => {
-  // Six shards is a judgement about headroom, not an arbitrary number: at
-  // production's 100,297 cars each shard should sit near a sixth of that,
-  // two thirds under the sitemaps.org cap. A hash that clumped would quietly
-  // undo that, so measure it rather than assume it.
+  // The shard count is a judgement about headroom, not an arbitrary number
+  // (lib/sitemap.ts SITEMAP_SHARDS has the two caps that bind). Each shard
+  // should sit near an even split of the feed — a hash that clumped would
+  // quietly undo that headroom, so measure it rather than assume it.
   const feed = fakeIds(100_297);
   const counts = Array.from({ length: SITEMAP_SHARDS }, () => 0);
   for (const id of feed) counts[sitemapShardOf(id)]++;

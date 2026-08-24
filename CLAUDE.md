@@ -76,8 +76,9 @@ payload has outgrown Vercel's ~4.5 MB cold-render cap again** — that is the
 cache entries revalidated fine, fresh ones could not warm at all; recovered
 with `vercel promote <previous>`); the fix is raising SHARDS in
 web/lib/listings/pack.ts and its keep-in-step consumers, never trimming the
-feed. Then **warm the sitemaps** — `/sitemap/0.xml` through `/5.xml` (the
-sitemap shard count is separate and still 6) — which render on first request
+feed. Then **warm the sitemaps** — `/sitemap/0.xml` through `/11.xml` (the
+sitemap shard count is separate: web/lib/sitemap.ts SITEMAP_SHARDS, 12 since
+2026-08-24, raised for the same ~4.5 MB cap) — which render on first request
 for the same reason since 2026-08-22.
 
 Then **check the shards' row counts, not their status codes.** A poisoned

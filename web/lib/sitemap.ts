@@ -37,26 +37,38 @@ export const BASE = "https://voltcheck.net";
 /**
  * How many files the listing sitemap is split across.
  *
- * The sitemaps.org cap is 50,000 URLs (and 50 MB uncompressed) per file.
- * Live inventory is ~100,300 cars and growing, so one file has been
- * impossible for a while. Six puts ~16,700 URLs in each — two thirds under
- * the cap with room for inventory to triple before it matters, and it is the
- * same warm-up loop shape (`for s in 0 1 2 3 4 5`) the index shards already
- * use in nightly.yml.
+ * Two caps bind here, and the tighter one is not the famous one. The
+ * sitemaps.org cap is 50,000 URLs (and 50 MB uncompressed) per file. The
+ * tighter cap is Vercel's ~4.5 MB limit on a COLD function response
+ * (x-vercel-error: CONTENT_TOO_LARGE — the 2026-08-24 browse-index incident,
+ * see lib/listings/pack.ts SHARDS): a fresh deployment's first render of a
+ * shard 413s if the body exceeds it, and since these routes render on first
+ * request, that means no fresh deployment can warm them at all. At six
+ * shards the files measured 3.6 MB each at 129,499 cars on 2026-08-24 —
+ * about ~160k cars from breaching. Twelve puts them near 1.8 MB, with the
+ * 4.5 MB cap binding again beyond roughly 300k cars and Google's 50k-URL
+ * cap later still.
  *
  * This is deliberately a CONSTANT rather than a count derived from the feed.
  * Deriving it meant robots.txt had to walk the entire database just to learn
  * how many <sitemap> lines to print — the fourth of the four walks that were
  * failing builds, and the one with the least excuse.
  */
-export const SITEMAP_SHARDS = 6;
+export const SITEMAP_SHARDS = 12;
 
 /**
- * Warn well before the 50,000-URL cap. At six shards this fires around
- * 270,000 live listings — early enough to raise SITEMAP_SHARDS in a normal
+ * Warn well before the 50,000-URL cap. At twelve shards this fires around
+ * 540,000 live listings — early enough to raise SITEMAP_SHARDS in a normal
  * commit rather than after a crawler has started rejecting a file.
  */
 const SHARD_URL_WARN = 45_000;
+
+/**
+ * Warn well before Vercel's ~4.5 MB cold-response cap — the cap that fires
+ * first (see SITEMAP_SHARDS above), and the one whose failure mode is a
+ * deploy that can't warm rather than a crawler that rejects a file.
+ */
+const SHARD_BYTES_WARN = 3_500_000;
 
 /**
  * Which shard a URL belongs to — a property of the car, never of its position
@@ -133,7 +145,13 @@ export function renderUrlset(entries: SitemapEntry[], label: string): string {
         `</url>`
     )
     .join("");
-  return `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls}</urlset>`;
+  const xml = `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls}</urlset>`;
+  if (xml.length > SHARD_BYTES_WARN) {
+    console.warn(
+      `[sitemap] ${label} is ${xml.length} bytes — approaching Vercel's ~4.5 MB cold-response cap; raise SITEMAP_SHARDS (currently ${SITEMAP_SHARDS})`
+    );
+  }
+  return xml;
 }
 
 /** The `<sitemapindex>` at /sitemap.xml — the URL every crawler and audit

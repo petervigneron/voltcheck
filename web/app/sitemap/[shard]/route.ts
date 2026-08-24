@@ -3,7 +3,8 @@ import { allListingsWithOrigin } from "@/lib/listings/source";
 import { FACT_SHEETS } from "@/lib/facts/registry";
 import { BASE, SITEMAP_SHARDS, type SitemapEntry, renderUrlset, sitemapShardOf } from "@/lib/sitemap";
 
-// The listing sitemap, one shard per file at /sitemap/0.xml … /sitemap/5.xml.
+// The listing sitemap, one shard per file at /sitemap/0.xml … /sitemap/11.xml
+// (lib/sitemap.ts SITEMAP_SHARDS).
 //
 // This used to be Next's `app/sitemap.ts` metadata convention. It isn't any
 // more, and lib/sitemap.ts carries the full reason: that convention
@@ -74,9 +75,10 @@ export async function GET(_req: Request, { params }: { params: Promise<{ shard: 
   // because a throw is never cached, an unbounded version would re-walk on
   // every crawler request for the outage's whole duration.
   //
-  // Measured against a PostgREST that answers 500 to everything: one crawler
-  // pass over all six shards costs 27 database requests and ~18 seconds with
-  // this breaker, against 162 requests and ~108 seconds without it. (A failed
+  // Measured against a PostgREST that answers 500 to everything (at the
+  // then-current six shards): one crawler pass over all shards costs 27
+  // database requests and ~18 seconds with this breaker, against 162
+  // requests and ~108 seconds without it. (A failed
   // walk is cheaper than a successful one — 27 requests, not the 226 a full
   // 100,297-row walk takes — because the retry ladder gives up and the walk
   // aborts on its first bucket. The 18 seconds is that ladder, and it is

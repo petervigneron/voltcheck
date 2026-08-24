@@ -180,7 +180,7 @@ jobs:
           echo "ok=true" >> "$GITHUB_OUTPUT"
 
       # first FIRST: it is the payload the next visitor's first card waits on.
-      # Then the six shards, then the six sitemaps — the sitemaps ride the walk
+      # Then the index shards, then the sitemaps — the sitemaps ride the walk
       # memo the shard warm just paid for, so they cost no extra database read.
       - name: Expire and warm
         if: ${{ steps.gate.outputs.ok == 'true' }}
@@ -199,7 +199,9 @@ jobs:
             curl -fsS --retry 2 --max-time 300 -o /dev/null "https://voltcheck.net/api/index/$s" \
               || echo "::warning::shard $s warm failed; its first visitor pays the render"
           done
-          for s in 0 1 2 3 4 5; do
+          # 12 sitemap shards since 2026-08-24 — keep in step with
+          # web/lib/sitemap.ts SITEMAP_SHARDS, whose comment has the incident.
+          for s in $(seq 0 11); do
             curl -fsS --retry 2 --max-time 300 -o /dev/null "https://voltcheck.net/sitemap/$s.xml" \
               || echo "::warning::sitemap $s warm failed; crawlers keep the previous copy"
           done
