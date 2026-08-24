@@ -51,6 +51,13 @@ import {
   pullAutoFunds,
   enrichFromAutoFunds,
 } from "./lib/platforms/autofunds.mjs";
+import {
+  isMotorcarSites,
+  motorcarSeeds,
+  motorcarEntries,
+  motorcarVehicles,
+  motorcarNextPageUrl,
+} from "./lib/platforms/motorcarsites.mjs";
 
 const args = process.argv.slice(2);
 function flag(name, fallback) {
@@ -248,6 +255,21 @@ async function crawlDealer(domain) {
     report.notes.push("automanager: seeded SRP");
   }
   if (siteInfo.get(domain)?.platform === "automanager") seedAutoManager();
+
+  // Motorcar Marketing: one /vehicle_listings/all/vehicles SRP, ten cars a
+  // page, ?page_number=N. The rooftops are subdomains of the VENDOR
+  // (amgmotorsllc.motorcarsites.com), and the sitemap the walk would otherwise
+  // lean on does not exist — /sitemap.xml is empty on these hosts — so without
+  // this seed the crawl has no door at all.
+  let mcsSeeded = false;
+  function seedMotorcar() {
+    if (mcsSeeded) return;
+    mcsSeeded = true;
+    const seeds = motorcarSeeds(origin).filter((u) => !visited.has(u));
+    queue.unshift(...seeds);
+    report.notes.push("motorcarsites: seeded SRP");
+  }
+  if (siteInfo.get(domain)?.platform === "motorcarsites") seedMotorcar();
 
   // DealerFire's SRP slug is per-rooftop ("/cars-for-sale-hillsboro-or"), so
   // there is nothing to seed until a page of theirs tells us its own — which
@@ -635,6 +657,7 @@ async function crawlDealer(domain) {
     if (isOverfuel(res.body)) seedOverfuel(res.body, res.finalUrl);
     if (!dealrSeeded && isDealrCloud(res.body)) seedDealr();
     if (!amSeeded && isAutoManager(res.body)) seedAutoManager();
+    if (!mcsSeeded && isMotorcarSites(res.body)) seedMotorcar();
     const dealerFire = extractDealerFire(res.body);
     const dealerFireRooftops = dealerFire.size ? extractDealerFireDealers(res.body) : [];
     const overfuel = overfuelVehicles(res.body, res.finalUrl);
@@ -645,6 +668,19 @@ async function crawlDealer(domain) {
     // survive the byVin dedupe as a phantom listing.
     const dealrVs = dealrVehicles(res.body, res.finalUrl);
     const autoManager = autoManagerVehicles(res.body, res.finalUrl);
+    // Motorcar Marketing returns a car only on a VDP: its SRP markup is
+    // per-rooftop theme and carries no VIN on half the themes, so the SRP
+    // contributes LINKS and the VDP contributes the facts.
+    const motorcarSites = motorcarVehicles(res.body, res.finalUrl);
+    // Its SRP is an ItemList in everything but the markup: one link per car,
+    // and enough of the tile beside it to say whether the car could be
+    // electrified. Feeding those through the same bridge as a real ItemList
+    // (below) is what lets this platform reuse the EV filter and the VDP
+    // follow rather than grow its own. Cars the rooftop has already sold are
+    // dropped here — the platform leaves them in the lot for months (116 of
+    // AMG Motors' 156, 179 of allautospecialist's 183), and a sold car is not
+    // a listing.
+    const mcsEntries = motorcarEntries(res.body, res.finalUrl).filter((e) => !e.sold);
     const vehicles = [
       ...(dealrVs.length ? dealrVs : extractVehicles(res.body)),
       ...extractDrivewayVehicles(res.body),
@@ -652,6 +688,7 @@ async function crawlDealer(domain) {
       ...dealerFireVehicles(res.body, res.finalUrl),
       ...overfuel,
       ...autoManager,
+      ...motorcarSites,
     ];
     if (vehicles.length) report.vehiclePages++;
     const isSrp = vehicles.length > 1;
@@ -720,9 +757,19 @@ async function crawlDealer(domain) {
       const nextAm = autoManagerNextPageUrl(res.body, res.finalUrl);
       if (nextAm && !visited.has(nextAm)) queue.unshift(nextAm);
     }
+    // Motorcar Marketing pages with ?page_number=N. Gated on the page having
+    // linked cars rather than on having yielded a vehicle record, because its
+    // SRP never yields one — see motorcarVehicles above. Pushed to the BACK,
+    // behind the EV VDPs the same page just queued: ten cars a page over a
+    // 160-car lot is 16 pages, and jumping every one of them to the front
+    // would spend the budget enumerating before fetching a single car.
+    if (mcsEntries.length) {
+      const nextMcs = motorcarNextPageUrl(res.body, res.finalUrl);
+      if (nextMcs && !visited.has(nextMcs)) queue.push(nextMcs);
+    }
 
     // Bridge: SRP ItemList → VDP urls, EV-filtered, jump the queue
-    const allEntries = extractItemListEntries(res.body);
+    const allEntries = [...extractItemListEntries(res.body), ...mcsEntries];
     const entries = allEntries.filter(evishEntry);
     if (entries.length) {
       report.itemListVdps += entries.length;

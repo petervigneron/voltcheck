@@ -95,6 +95,14 @@ import { dealrVehicles, DEALR_SRP_PATH } from "./lib/platforms/dealrcloud.mjs";
 import { autoManagerVehicles, AUTOMANAGER_SRP_PATH } from "./lib/platforms/automanager.mjs";
 import { isRideMotive, rideMotiveConfig, countRideMotiveApi } from "./lib/platforms/ridemotive.mjs";
 import { isAutoFunds, countAutoFunds } from "./lib/platforms/autofunds.mjs";
+import {
+  isMotorcarSites,
+  isRetiredRooftop,
+  motorcarEntries,
+  motorcarVehicles,
+  motorcarNextPageUrl,
+  MOTORCAR_SRP_PATH,
+} from "./lib/platforms/motorcarsites.mjs";
 import { discoverSitemapUrls, rank, dedupe, SRP_PATHS } from "./lib/sitemap.mjs";
 import { spaSignals, countVinUrls } from "./lib/spa-signals.mjs";
 import { failureKind, apiHostsFrom, seededShuffle, emptyOrTransient, blindEmpty } from "./lib/probe-verdict.mjs";
@@ -244,6 +252,25 @@ async function probeSite(site) {
   } catch {}
   if (site.platform === "unknown" || !site.platform) site.platform = fingerprint(home.body);
 
+  // A rooftop that has left Motorcar Marketing does not 404 and does not
+  // redirect: the vendor keeps serving its own "Down For Maintenance"
+  // placeholder, with a 200 and the platform's markers still on it. 111 of the
+  // 149 hosts enumerated for this vendor answer that way (2026-08-24), so a
+  // probe that spent its budget guessing SRP paths on them would burn ~1,300
+  // requests on dealerships that no longer exist and file every one as
+  // needs-investigation. Say what it is instead.
+  if (isRetiredRooftop(home.body)) {
+    site.platform = "motorcarsites";
+    // "site-retired" joins the registry's existing site-moved / site-broken
+    // family rather than inventing a new shape. The crawl lane takes only
+    // status "working", so this row is simply never asked again.
+    site.status = "site-retired";
+    site.notes = `${site.notes ?? ""} | probe ${today}: vendor placeholder ("Down For Maintenance"), rooftop no longer hosted`.trim();
+    setVerdict(site, "empty", { fetched, via: "motorcarsites-placeholder" });
+    console.error(`  ${site.domain} → site-retired (motorcarsites placeholder)`);
+    return;
+  }
+
   // DealerVenom serves no inventory HTML, so the SRP-guess walk below would
   // score it a failure. Confirm its Typesense index directly instead: one
   // request, and a non-empty VIN'd result promotes it — the nightly crawl's
@@ -349,6 +376,7 @@ async function probeSite(site) {
     dealerinspire: ["/used-vehicles/"],
     dealrcloud: [DEALR_SRP_PATH],
     automanager: [AUTOMANAGER_SRP_PATH],
+    motorcarsites: [MOTORCAR_SRP_PATH],
     // Team Velocity SRPs server-render Vehicle JSON-LD, but only on this path —
     // the sitemap-ranked guesses spent the budget before reaching it on all 13
     // cohort rooftops (2026-08-16).
@@ -360,6 +388,10 @@ async function probeSite(site) {
   const platformFirst = [
     ...(PLATFORM_SRPS[site.platform] ?? []).map((p) => origin + p),
     ...(site.platform === "overfuel" ? overfuelSeeds(home.body, origin) : []),
+    // Recognised from the homepage as well as from the registry label: this
+    // vendor's rooftops are subdomains of the vendor, so most of them enter
+    // the registry with no platform on the row at all.
+    ...(isMotorcarSites(home.body) && site.platform !== "motorcarsites" ? [origin + MOTORCAR_SRP_PATH] : []),
   ];
 
   // Try SRP seeds + top-ranked sitemap inventory URLs until something
@@ -403,6 +435,7 @@ async function probeSite(site) {
       ...overfuelVehicles(res.body, res.finalUrl),
       ...dealrVehicles(res.body, res.finalUrl),
       ...autoManagerVehicles(res.body, res.finalUrl),
+      ...motorcarVehicles(res.body, res.finalUrl),
     ];
     const platformVins = [
       ...extractDdcVehicles(res.body).map((d) => d.vin),
@@ -413,13 +446,31 @@ async function probeSite(site) {
     if (vehicles.length || platformVins.length) pagesWithVehicles++;
     vehiclesWithVin +=
       vehicles.filter((v) => isVin(v.vehicleIdentificationNumber ?? v.vin)).length + platformVins.length;
-    itemListEntries += extractItemListEntries(res.body).length;
+    // Motorcar Marketing's SRP is a list of this rooftop's cars with no
+    // ItemList markup and, on half its themes, no VIN — so without this the
+    // probe would fetch the one page that holds the whole lot, extract
+    // nothing, and write the rooftop off. Sold cars are dropped: the platform
+    // keeps them listed, and a probe that promoted a rooftop on them would be
+    // certifying inventory that isn't for sale.
+    const mcsAll = motorcarEntries(res.body, res.finalUrl);
+    const mcsEntries = mcsAll.filter((e) => !e.sold);
+    // Rooftops on this platform leave sold cars in the lot, and the default
+    // sort puts them first: page one of allautospecialist (183 cars) and of
+    // kensmotorsportsllc (31) is TEN OUT OF TEN sold, on rooftops that plainly
+    // have live inventory. Stopping at page one would write both off as empty.
+    // So when a page yields cars but every one of them is sold, walk on — the
+    // 12-fetch budget is the bound.
+    if (mcsAll.length && !mcsEntries.length) {
+      const nextSrp = motorcarNextPageUrl(res.body, res.finalUrl);
+      if (nextSrp && !tryUrls.includes(nextSrp)) tryUrls.push(nextSrp);
+    }
+    itemListEntries += extractItemListEntries(res.body).length + mcsEntries.length;
     if (vehiclesWithVin > 0) break; // bar met, stop spending requests
     // An SRP's ItemList is a list of this dealer's cars, one link each.
     // The crawler follows these to VDPs; the probe used to merely count
     // them and then declare the site a failure — which is how DealerOn
     // dealers with perfectly extractable inventory got written off.
-    for (const e of extractItemListEntries(res.body).slice(0, 2)) {
+    for (const e of [...extractItemListEntries(res.body), ...mcsEntries].slice(0, 2)) {
       if (fetched >= 12) break;
       const vdp = await fetchPage(e.url);
       fetched++;
@@ -433,6 +484,7 @@ async function probeSite(site) {
         ...extractDcsVehicles(vdp.body, vdp.finalUrl),
         ...dealerFireVehicles(vdp.body, vdp.finalUrl),
         ...dealrVehicles(vdp.body, vdp.finalUrl),
+        ...motorcarVehicles(vdp.body, vdp.finalUrl),
       ]
         .filter((v) => isVin(v.vehicleIdentificationNumber ?? v.vin)).length +
         extractDdcVehicles(vdp.body).map((d) => d.vin).filter(isVin).length +

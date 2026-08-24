@@ -142,6 +142,14 @@ export const AUTOFUNDS_INTERNET = "autofunds-internet";
 // extractor. Split costs a quiet chip until the next matching observation.
 export const AUTOFUNDS_REDUCED = "autofunds-reduced";
 
+// Motorcar Marketing's rendered VDP price — the single dollar amount the car's
+// own block prints, once the similar-vehicles carousel underneath it has been
+// cut away. There is no labelled ladder on this platform to rank, so a block
+// printing two different amounts abstains outright instead of picking one.
+// Explicitly NOT the CarGurus badge's data-cg-price sitting in the same block,
+// for the reason written out at AUTOMANAGER_PRICE above.
+export const MOTORCARSITES_PRICE = "motorcarsites-price";
+
 // OEM/aggregator inventory APIs. Each lane reads one documented field out of
 // one vendor's endpoint; none of them shares a code path with any other, so
 // each gets its own tag rather than a single "oem" bucket that would let a
@@ -195,6 +203,7 @@ const KNOWN = new Set([
   DEOL_INTERNET, DEOL_SELLING, DEOL_MSRP, DEOL_CARD_INTERNET, DEOL_DISPLAYED,
   DFIRE_ADVERTISED, DVENOM_FINAL, DEALR_ENTRY, DCS_TILE, OVERFUEL_PRICE, TV_SELLING,
   MOTIVE_PRICE, AUTOMANAGER_PRICE, AUTOFUNDS_INTERNET, AUTOFUNDS_REDUCED,
+  MOTORCARSITES_PRICE,
 ]);
 
 /** True for a tag this build knows how to emit. OEM lane tags are accepted by

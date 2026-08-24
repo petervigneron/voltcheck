@@ -52,6 +52,13 @@ const SIGNATURES = [
   // electrified for the price, fuel and condition the feed omits. The SRP is
   // robots-disallowed on these rooftops, so the feed is the only door.
   { platform: "autofunds", res: [/\bautofunds\.com|images\.autofunds\.net|HttpCombiner\.ashx\?s=DW_/i] },
+  // Motorcar Marketing: a vendor that hosts its rooftops on its own apex
+  // (amgmotorsllc.motorcarsites.com), which is why nothing else in this list
+  // has ever seen one. No JSON-LD anywhere and the theme markup changes per
+  // rooftop, so lib/platforms/motorcarsites.mjs walks /vehicle_listings and
+  // reads the VDPs. Its own asset and CDN hosts are the signature — never the
+  // brand word, since a dealer is free to be named "Motorcar …".
+  { platform: "motorcarsites", res: [/\b(?:www\.)?motorcarsites\.com\/(?:dealers|template|img)\//i, /\bwww\.motorcarmarketing\.com\b/i] },
   { platform: "team-velocity", res: [/teamvelocityportal\.com/i, /vdpVehicleExteriorColor/] },
   // No JSON-LD anywhere and numeric-id VDP URLs, so nothing generic hooks it;
   // lib/platforms/dealercarsearch.mjs reads its Tealium product list instead.
