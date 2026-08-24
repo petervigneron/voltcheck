@@ -47,6 +47,14 @@
 // turns "we hammered them" back into an answer. Only the retry's verdict is
 // recorded. Pass --no-retry to skip it.
 //
+// One narrow shape of `empty` joins that retry: a walk that completed while
+// the homepage yielded no fingerprint, no signal and no ItemList — because on
+// platforms whose config rides inline in a big payload (Motive), a page
+// fetched under load can 200 with the payload missing, and the probe then
+// scores a perfectly working rooftop "answered, no VIN". Ten of ten such
+// rows promoted on a serial re-probe (2026-08-24); the rule and both sides of
+// its measurement are blindEmpty() in lib/probe-verdict.mjs.
+//
 // How wide "transient" should be was measured rather than argued, and the
 // first answer was wrong — see lib/probe-verdict.mjs. On a seeded random 150
 // of the pile (seed 20260823) the original rule produced 85 transient rows and
@@ -89,7 +97,7 @@ import { isRideMotive, rideMotiveConfig, countRideMotiveApi } from "./lib/platfo
 import { isAutoFunds, countAutoFunds } from "./lib/platforms/autofunds.mjs";
 import { discoverSitemapUrls, rank, dedupe, SRP_PATHS } from "./lib/sitemap.mjs";
 import { spaSignals, countVinUrls } from "./lib/spa-signals.mjs";
-import { failureKind, apiHostsFrom, seededShuffle, emptyOrTransient } from "./lib/probe-verdict.mjs";
+import { failureKind, apiHostsFrom, seededShuffle, emptyOrTransient, blindEmpty } from "./lib/probe-verdict.mjs";
 
 function flag(name, fallback) {
   const i = process.argv.indexOf(name);
@@ -526,22 +534,31 @@ await runPool(candidates, CONCURRENCY);
 // serial by default and the row keeps only what it says. Rows that were
 // already retried are not retried again: one slow pass is the point, an
 // unbounded ladder is not.
+//
+// Blind empties ride along: an `empty` from a homepage that told us nothing
+// (blindEmpty's shape) is the truncated-payload artifact until a serial pass
+// says otherwise. A row the retry re-confirms keeps its empty verdict and
+// gains `retried: true`, which is now the mark of an empty measured without
+// our own concurrency in the frame.
 const transient = candidates.filter((s) => s.probe?.verdict === "transient");
-if (transient.length && !NO_RETRY) {
-  console.error(`probe: re-probing ${transient.length} transient row(s) at concurrency ${RETRY_CONCURRENCY}`);
-  const before = new Map(transient.map((s) => [s.domain, s.probe.verdict]));
+const blind = candidates.filter((s) => blindEmpty(s));
+const requeue = [...transient, ...blind];
+if (requeue.length && !NO_RETRY) {
+  console.error(
+    `probe: re-probing ${transient.length} transient + ${blind.length} blind-empty row(s) at concurrency ${RETRY_CONCURRENCY}`,
+  );
   // Roll the note back to what it said before this run, so a retried row ends
   // up with ONE note for tonight rather than two. The registry is a
   // hand-curated file people read; the first attempt's note would say the same
   // thing as the second's and only the second is the answer. The evidence for
   // both is in the structured field.
-  for (const s of transient) s.notes = notesBefore.get(s.domain);
-  await runPool(transient, RETRY_CONCURRENCY);
-  for (const s of transient) if (s.probe) s.probe.retried = true;
-  const rescued = transient.filter((s) => s.status === "working").length;
-  const settled = transient.filter((s) => s.probe?.verdict === "empty").length;
+  for (const s of requeue) s.notes = notesBefore.get(s.domain);
+  await runPool(requeue, RETRY_CONCURRENCY);
+  for (const s of requeue) if (s.probe) s.probe.retried = true;
+  const rescued = requeue.filter((s) => s.status === "working").length;
+  const stillTransient = requeue.filter((s) => s.probe?.verdict === "transient").length;
   console.error(
-    `probe: retry rescued ${rescued} to working, settled ${settled} as empty, ${transient.length - rescued - settled} still transient (of ${before.size})`,
+    `probe: retry rescued ${rescued} to working, settled ${requeue.length - rescued - stillTransient} as a real verdict, ${stillTransient} still transient (of ${requeue.length})`,
   );
 }
 

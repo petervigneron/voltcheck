@@ -85,3 +85,41 @@ export function seededShuffle(list, seed) {
 export function emptyOrTransient({ failures = [] } = {}) {
   return failures.some((f) => f.kind === "transient") ? "transient" : "empty";
 }
+
+/** An "empty" verdict that should not be trusted without a serial second look:
+ *  the walk completed, yet the homepage told us NOTHING about the site — no
+ *  platform fingerprint, no client-rendered/API signal, no ItemList — while
+ *  the site is plainly alive (it published a sitemap to walk).
+ *
+ *  Why this narrow shape is retryable when "empty" in general is not: on
+ *  platforms whose inventory config rides inline in a large payload (Motive),
+ *  a page fetched under concurrent load can answer 200 with that payload
+ *  missing. The fingerprint and the config vanish with it, so the site scores
+ *  "answered, no VIN" — a verdict, where a failed fetch would have been a
+ *  retry. Measured 2026-08-24 on a 60-row seeded sample of newly discovered
+ *  Motive rooftops probed at concurrency 5 (out/motive-probe-sample.json): 10
+ *  came back empty with exactly this shape, and a serial re-probe promoted
+ *  ALL TEN via the ridemotive extractor (out/motive-probe-retry.json —
+ *  joecooperfordedmond.com alone held 1,519 vehicles). The same artifact is
+ *  why motive-dealers.mjs's harvest has a --refetch pass: kuneslakeschevy.com
+ *  read as "0 dealer records" under load and publishes 52 fetched alone.
+ *
+ *  The cost side, because widening the requeue was measured wrong once before
+ *  (see emptyOrTransient above — 57% of the pile for zero rescues): this rule
+ *  matches 16 of the 3,435 needs-investigation rows (0.5%, measured
+ *  2026-08-24), and a false positive costs one serial re-probe that
+ *  re-confirms the verdict. Each guard is load-bearing:
+ *  - `why: nothing-to-walk` stays out — measured stable (73 rows, 0 rescues).
+ *  - Any signal or apiHost means we READ the homepage's payload; a truncated
+ *    body yields none (the 10 false empties recorded zero signals).
+ *  - A known platform means the fingerprint survived, so the body was real.
+ *  - `sitemapUrls` must be present: it is only recorded when the walk ran, so
+ *    a homepage-level failure verdict (homeStatus, "other" kinds) stays out —
+ *    those are the site's own answer and repeat on a retry. */
+export function blindEmpty(site) {
+  const p = site?.probe;
+  if (!p || p.verdict !== "empty" || p.why === "nothing-to-walk") return false;
+  if (p.sitemapUrls == null) return false;
+  if ((p.signals?.length ?? 0) > 0 || (p.apiHosts?.length ?? 0) > 0 || (p.itemList ?? 0) > 0) return false;
+  return !site.platform || site.platform === "unknown";
+}
