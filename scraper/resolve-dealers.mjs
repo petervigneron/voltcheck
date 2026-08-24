@@ -81,6 +81,9 @@ const dealers = filtered.map((r) => ({
   state: r.state || r.location_state || r.facility_state || STATE || "WA",
   zip: (r.zip || r.location_postal_code || r.facility_zip_code || r["LOCATION ZIP"] || "").slice(0, 5),
   phone: digits(r.phone || r.phone_number || r.PHONE).slice(-10),
+  // FL's roll states its own license class (VF franchise / VI independent)
+  // per row — unlike WA below, this is the state's word, not an inference.
+  licClass: r.licClass ?? r["LIC TYPE"] ?? null,
 })).filter((d) => d.name);
 let work = LIMIT ? dealers.slice(0, LIMIT) : dealers;
 if (SAMPLE && SAMPLE < work.length) {
@@ -196,6 +199,14 @@ const classNote = (d) => {
     ? `; WA licenses one dealer class only, so class is inferred from the name carrying an OEM brand (${brand}) — franchise, inferred`
     : "; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred";
 };
+// FL publishes the class on the roll itself (VF franchise / VI independent),
+// so this is stated fact, not an inference like WA's classNote above.
+const FL_CLASS = { VF: "franchise (VF)", VI: "independent (VI)" };
+const flClassNote = (d) => {
+  if (!/^FL$/i.test(d.state ?? "") || !d.licClass) return "";
+  const label = FL_CLASS[d.licClass] ?? d.licClass;
+  return `; FL license roll class: ${label}`;
+};
 const additions = [];
 const taken = new Set();
 for (const [i, v] of verified) {
@@ -209,7 +220,7 @@ for (const [i, v] of verified) {
     platform: "unknown",
     robots: "unknown",
     status: "discovered",
-    notes: `Resolved from the ${d.state} license roll by name→domain candidate generation; identity verified on the page by ${HOW_TEXT[v.how]}${classNote(d)} (${today})`,
+    notes: `Resolved from the ${d.state} license roll by name→domain candidate generation; identity verified on the page by ${HOW_TEXT[v.how]}${classNote(d)}${flClassNote(d)} (${today})`,
     location: { city: d.city, state: d.state, zip: d.zip },
   });
 }
