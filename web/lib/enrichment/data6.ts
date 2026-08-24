@@ -993,7 +993,7 @@ const R: EnrichmentRow[] = [];
     packUsableKwh: f(9.09, "mfr", "high", undefined, BMW_5ER_2021_PR),
   };
 
-  const bmw = (row: EnrichmentRow): EnrichmentRow => ({
+  const bmw = (row: Omit<EnrichmentRow, "make">): EnrichmentRow => ({
     make: "BMW",
     packVariant: "PHEV",
     abstains: BMW_ABSTAINS,
