@@ -88,6 +88,61 @@ export const canonicalMake = (make: string | undefined, model: string | undefine
   return alias ? norm(alias.canonicalMake) : norm(make);
 };
 
+// Cohorts where vPIC's Trim field is a single-pattern filing artifact: the
+// maker filed ONE Part 565 pattern covering every grade, so vPIC answers the
+// same trim string for the whole cohort and the string identifies nothing.
+// Verified against live VINs whose selling dealers name the real grade:
+//
+//   2026 RAV4 PHEV — every VIN decodes Trim "GR Sport", Series "64 Series"
+//     (JTM7ERAV4TJ020569 sold as SE, JTM7ERAV4TD011420 as Woodland,
+//     JTM7ERAV6TJ021402 as XSE; checked 2026-08-24). The 2021–25 Prime
+//     ("50 Series") files real per-grade patterns — SE decodes SE — so the
+//     entry is year-scoped to the new generation.
+//   2026 Lexus NX 450h+ — the JTJHKCFZ pattern decodes "450h+ Luxury" on
+//     cars sold as Premium (JTJHKCFZ1T2104331) and Premium Plus
+//     (JTJHKCFZ1T2098854), grades 2026 added; 2022–25 had only Luxury and
+//     F Sport Handling, each its own pattern, so those years stay honoured.
+//     The F Sport pattern (JTJKKCFZ) still names its grade truly in 2026 and
+//     is deliberately NOT listed. (2026 RX 450h+ decodes bare "450h+" —
+//     grade-silent but true — and the 2026 Prius decodes no trim at all;
+//     neither needs an entry.)
+//
+// Keying on the artifact STRING, not the whole cohort, is what lets this fail
+// open in the right direction: if NHTSA's data is ever corrected and an XSE
+// VIN starts decoding "XSE", that decode never hits the table and is honoured.
+// An entry's series is the filing generation the artifact was verified on; a
+// decode with no series still matches (losing the field must not resurrect
+// the false exact), a different series does not.
+const VPIC_PATTERN_TRIM_ARTIFACTS: {
+  make: string;
+  models: string[]; // vPIC's own model strings, not a feed's
+  years: [number, number];
+  series: string;
+  trims: string[];
+}[] = [
+  { make: "TOYOTA", models: ["RAV4 Prime (PHEV)"], years: [2026, 2026], series: "64 Series", trims: ["GR Sport"] },
+  { make: "LEXUS", models: ["NX"], years: [2026, 2026], series: "26 Series", trims: ["450h+ Luxury"] },
+];
+
+// Only ever true for a decode built by lib/vpic.ts (trimFromVpic is pure
+// provenance) — a dealer feed writing "GR Sport" is a claim about a specific
+// car and keeps its full weight. Exported for app/vin/[vin]/page.tsx, which
+// must also not PRINT an artifact trim as the car's own.
+export function vpicTrimIsPatternArtifact(decode: VinDecode): boolean {
+  if (!decode.trimFromVpic || !decode.trim || !decode.modelYear) return false;
+  const trim = decode.trim;
+  const year = decode.modelYear;
+  return VPIC_PATTERN_TRIM_ARTIFACTS.some(
+    (a) =>
+      norm(a.make) === norm(decode.make) &&
+      a.models.some((m) => norm(m) === norm(decode.model)) &&
+      year >= a.years[0] &&
+      year <= a.years[1] &&
+      a.trims.some((t) => norm(t) === norm(trim)) &&
+      (!decode.series || norm(a.series) === norm(decode.series))
+  );
+}
+
 function normalizeDrive(d: string | undefined): "AWD" | "RWD" | "FWD" | undefined {
   if (!d) return undefined;
   const u = d.toUpperCase();
@@ -104,7 +159,22 @@ export function matchEnrichment(
   decode: VinDecode,
   tesla: TeslaVinFacts | null
 ): EnrichmentResult {
-  const r = decode.trimUntrusted ? matchWithoutTrustedTrim(decode, tesla) : matchEnrichmentRaw(decode, tesla);
+  // An artifact trim (see VPIC_PATTERN_TRIM_ARTIFACTS) carries zero
+  // information, so it must neither pick a row nor — the untrusted-trim
+  // lesson — be bare-withheld, which would land on whichever row lacks a trim
+  // key. Span the cohort's rows with row trims ignored instead: the result
+  // collapses to one row only when VIN evidence or the drivetrain actually
+  // collapses it (the 2026 NX 450h+, one row), and otherwise presents the
+  // grade rows as candidates under the existing "exact trim determines which
+  // row applies" discriminator (the 2026 RAV4 PHEV, four grades). Note this
+  // path may only bypass a bare-nameplate row's trim guard because the
+  // artifact string itself names the plug-in powertrain — only 450h+ VIN
+  // patterns decode "450h+ Luxury", so a petrol NX never reaches the table.
+  const r = vpicTrimIsPatternArtifact(decode)
+    ? matchIgnoringTrim(decode, tesla)
+    : decode.trimUntrusted
+      ? matchWithoutTrustedTrim(decode, tesla)
+      : matchEnrichmentRaw(decode, tesla);
   if (r.exact) return { ...r, exact: applyBackfill(r.exact) };
   if (r.candidates) return { ...r, candidates: r.candidates.map((c) => applyBackfill(c)!) };
   return r;
@@ -224,7 +294,10 @@ function matchEnrichmentRaw(
       [r.model, ...(r.modelAliases ?? [])].some((m) => modelKey(m) === modelKey(model)) &&
       modelYear >= r.modelYears[0] &&
       modelYear <= r.modelYears[1] &&
-      (opts?.ignoreRowTrims || trimMatches(r.trim, decode.trim))
+      // Spanning a cohort's versions is exactly when a feedLabelRow must NOT
+      // appear: its trim key catches a label ("64 Series"), not a grade, so
+      // it is not one of the versions the car could be.
+      (opts?.ignoreRowTrims ? !r.feedLabelRow : trimMatches(r.trim, decode.trim))
   );
 
   // VIN positions 1–3 name the body where showroom strings can't: dealers

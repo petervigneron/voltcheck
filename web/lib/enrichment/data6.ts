@@ -304,7 +304,16 @@ const R: EnrichmentRow[] = [];
     id,
     make: "TOYOTA",
     model: "RAV4 Plug-In Hybrid",
-    modelAliases: ["RAV4 PLUG-IN", "RAV4 PHEV"],
+    // "RAV4 Prime (PHEV)" is vPIC's model string for the NEW generation too
+    // (decoded live 2026-08-24, e.g. JTM7ERAV4TJ020569) — without it the
+    // /vin/ page finds nothing for these cars. It is only the vPIC LABEL that
+    // carries over from the Prime; the facts are this car's own, and the
+    // year gate keeps real 2021–25 Prime listings on their own row. NB the
+    // matcher refuses to let vPIC's Trim pick between these rows: every 2026
+    // VIN decodes Trim "GR Sport" regardless of grade — a single-pattern
+    // filing, see VPIC_PATTERN_TRIM_ARTIFACTS in match.ts — so a /vin/
+    // lookup answers with the grade rows as candidates.
+    modelAliases: ["RAV4 PLUG-IN", "RAV4 PHEV", "RAV4 Prime (PHEV)"],
     modelYears: [2026, 2026],
     trim,
     packVariant: "PHEV",
@@ -2130,9 +2139,11 @@ R.push({
 // live VINs whose selling dealers list SE, XSE and Woodland. The label spans
 // every grade, and range and charging genuinely differ by grade, so this row
 // carries only what is true of every 2026 RAV4 PHEV (the warranty) and
-// abstains on everything the label cannot identify. Related, unfixed here:
-// vPIC's Trim for every 2026 RAV4 PHEV pattern reads "GR Sport", so /vin/
-// needs a distrust mechanism for that cohort — flagged as its own task.
+// abstains on everything the label cannot identify. The related vPIC-side
+// artifact — every 2026 pattern decodes Trim "GR Sport" — is handled by
+// VPIC_PATTERN_TRIM_ARTIFACTS in match.ts, and `feedLabelRow` below keeps
+// this row out of the candidate list that mechanism presents: it is a label,
+// not one of the versions the car could be.
 R.push({
   id: "rav4-phev-2026-64-series",
   make: "TOYOTA",
@@ -2140,6 +2151,7 @@ R.push({
   modelAliases: ["RAV4 PLUG-IN", "RAV4 PHEV"],
   modelYears: [2026, 2026],
   trim: ["64 Series"],
+  feedLabelRow: true,
   packVariant: "PHEV",
   warranty: {
     batteryYears: f(10, "mfr", "high", undefined, "https://pressroom.toyota.com/the-next-adventure-begins-2026-rav4-arrives-this-winter/"),

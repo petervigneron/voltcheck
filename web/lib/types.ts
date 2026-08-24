@@ -40,8 +40,22 @@ export interface VinDecode {
   plantCountry?: string;
   electrificationLevel?: string;
   bodyClass?: string;
+  // vPIC's Series field — the maker's generation code on Toyotas ("64 Series"
+  // is the sixth-gen RAV4, "50 Series" the Prime). Part of the fingerprint
+  // match.ts's vPIC-artifact table keys on; never shown as a fact.
+  series?: string;
   // T2 hints
   trim?: string;
+  /**
+   * The trim above came from vPIC's Part 565 pattern decode, not a dealer
+   * feed. Set only by lib/vpic.ts — the /vin/ surface — and never by
+   * enrich.ts's decodeFromListing. Pure provenance, no judgement: the matcher
+   * uses it to consult its table of cohorts where the maker filed ONE pattern
+   * covering every grade (every 2026 RAV4 PHEV decodes Trim "GR Sport"), so a
+   * vPIC trim that is really a filing artifact stops picking rows while the
+   * same string in a dealer feed keeps its full weight.
+   */
+  trimFromVpic?: boolean;
   /**
    * Set when the listing's own description names a different version than
    * `trim` claims and the VIN can't settle it (lib/listings/trimTrust.ts).
@@ -108,6 +122,14 @@ export interface EnrichmentRow {
   // EV6 reads "58" — including AWD cars that never had that pack). The
   // matcher then ignores the vpicBatteryKwh hint for this row's cohort.
   ignoreKwhHint?: boolean;
+  // This row's trim key catches a LABEL, not a version: a string dealer feeds
+  // write into the trim field that names no single grade (the 2026 RAV4's
+  // "64 Series" is vPIC's generation code leaked into 26 live feeds). Such a
+  // row exists so a labeled listing gets the facts every grade shares, but it
+  // is not a car — so when the matcher spans a cohort's versions with row
+  // trims ignored (a distrusted or artifact trim), it must never appear as a
+  // "candidate version" beside the real grades.
+  feedLabelRow?: boolean;
   // Fields this row is deliberately silent on, and why. NOT a research
   // backlog — an entry here is a decision that saying nothing is the honest
   // answer, so scripts/enrichment-coverage.mjs stops counting it as a hole.

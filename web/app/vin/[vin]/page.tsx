@@ -4,7 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { decodeVin, isValidVin } from "@/lib/vpic";
 import { decodeTeslaVin, isTeslaVin } from "@/lib/tesla-vin";
-import { matchEnrichment } from "@/lib/enrichment/match";
+import { matchEnrichment, vpicTrimIsPatternArtifact } from "@/lib/enrichment/match";
 import { buildChecklist } from "@/lib/checklist";
 import { FactRow } from "@/components/FactRow";
 import { EnrichmentFacts, Section, NOTE_STYLE } from "@/components/EnrichmentReport";
@@ -26,7 +26,8 @@ export async function generateMetadata(props: PageProps<"/vin/[vin]">): Promise<
   if (!isValidVin(vin)) return { title: "VIN check | Voltcheck", ...noindex };
 
   const decode = await getDecode(vin);
-  const identity = [decode.modelYear, decode.make, decode.model, decode.trim].filter(Boolean).join(" ");
+  const trim = vpicTrimIsPatternArtifact(decode) ? undefined : decode.trim;
+  const identity = [decode.modelYear, decode.make, decode.model, trim].filter(Boolean).join(" ");
   const name = decode.usMarket ? identity || "Vehicle" : "Non-US-market vehicle";
 
   return {
@@ -47,7 +48,11 @@ export default async function VinPage(props: PageProps<"/vin/[vin]">) {
   const enrichment = matchEnrichment(decode, tesla);
   const checklist = buildChecklist(decode);
 
-  const identity = [decode.modelYear, decode.make, decode.model, decode.trim]
+  // A single-pattern filing artifact (every 2026 RAV4 PHEV decodes Trim
+  // "GR Sport") is not this car's trim and must not be shown as it — the
+  // matcher already refuses to let it pick a row.
+  const trimIsArtifact = vpicTrimIsPatternArtifact(decode);
+  const identity = [decode.modelYear, decode.make, decode.model, trimIsArtifact ? undefined : decode.trim]
     .filter(Boolean)
     .join(" ");
 
@@ -106,8 +111,14 @@ export default async function VinPage(props: PageProps<"/vin/[vin]">) {
               )}
             </div>
             <div>
-              {decode.trim && (
+              {decode.trim && !trimIsArtifact && (
                 <FactRow label="Trim (VIN hint, verify)" fact={{ value: decode.trim, source: "vpic", asOf: "—", confidence: "medium" }} />
+              )}
+              {trimIsArtifact && (
+                <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                  The maker filed one VIN pattern covering every trim of this model, so the VIN
+                  does not identify which trim this car is.
+                </p>
               )}
               {decode.driveType && (
                 <FactRow label="Drive type (VIN hint, verify)" fact={{ value: decode.driveType, source: "vpic", asOf: "—", confidence: "medium" }} />
@@ -136,7 +147,7 @@ export default async function VinPage(props: PageProps<"/vin/[vin]">) {
       )}
 
       {enrichment.candidates && (
-        <Section title="Two materially different cars wear this badge">
+        <Section title={`${enrichment.candidates.length === 2 ? "Two" : enrichment.candidates.length} materially different cars wear this badge`}>
           {enrichment.discriminator && (
             <p className="mb-4 rounded-lg border border-amber-300 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/40 p-3 text-sm">
               {enrichment.discriminator}
