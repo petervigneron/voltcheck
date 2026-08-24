@@ -82,22 +82,22 @@
 //            because they share the domain: ~2,300 new + ~460 certified
 //            plug-ins, plus the last certified MX-30 EV — the only US Mazda
 //            BEV ever, still reachable through isEvModel → lib/oem/mazda.mjs
+//   Mitsubishi — clickshop.mitsubishicars.com/api/graphql, an AutoFi BFF that
+//            is the OEM's own national store; introspection is off, so the
+//            operations came out of the _next chunks (VehiclesSummary /
+//            SearchVehiclesTotal / SearchVehicles). filters:{} means the whole
+//            country — no zip, no grid — and the fuel facet partitions the
+//            entire index (Gasoline 11,898 + Hybrid 611 = 12,509, Electric 0),
+//            which is both the BEV negative and the check that will notice the
+//            day the Eclipse Sportback EV ships. The Hybrid bucket IS the
+//            Outlander PHEV, exactly: model "Outlander PHEV" 611, fuelType
+//            Hybrid 611, their intersection 611, and "Outlander" + Hybrid 0.
+//            New only (the schema has no condition/certified field at all):
+//            ~600 plug-ins in 10 requests → lib/oem/mitsubishi.mjs
 //
 // Probed and found to have NO US BEV to sell — negatives, control-tested, so
 // nobody spends another day on them (the Acura ZDX note in the locator memory
 // is the model for this).
-//   Mitsubishi — clickshop.mitsubishicars.com/api/graphql (an AutoFi BFF) is
-//            open to plain Node; introspection is off, so the operations came
-//            out of the _next chunks (VehiclesSummary / SearchVehiclesTotal /
-//            SearchVehicles, all taking {filters}). With filters:{} — no geo
-//            scope, i.e. the whole national index — the fuel facet lists
-//            exactly Gasoline and Hybrid, fuelType Electric returns 0, and the
-//            two buckets sum to the national total exactly, so no BEV can be
-//            hiding in an unqueried bucket. Mitsubishi's own electrified page
-//            agrees: the 2027 Eclipse Sportback EV is "Coming Soon". The
-//            Hybrid bucket is the Outlander PHEV, which IS in scope now the
-//            OEM lanes carry plug-ins — a lane on this open BFF is the next
-//            thing to build here.
 //   Fiat   — has a lane already, inside the Stellantis family rather than its
 //            own file: STELLANTIS_BRANDS' fiat entry queries the 500e by
 //            modelYearCode because fiatusa.com's robots forbids the /services/
@@ -207,6 +207,7 @@ import { HONDA_CPO, pullHondaCpo } from "./lib/oem/honda-cpo.mjs";
 import { ACURA_CPO, pullAcuraCpo } from "./lib/oem/acura-cpo.mjs";
 import { STELLANTIS_CPO, pullStellantisCpo } from "./lib/oem/stellantis-cpo.mjs";
 import { MAZDA, pullMazda } from "./lib/oem/mazda.mjs";
+import { MITSUBISHI, pullMitsubishi } from "./lib/oem/mitsubishi.mjs";
 
 // One registry of pullers keyed by brand. Each entry is a thunk returning a
 // crawl.mjs-shaped report; new OEM families plug in here without touching the
@@ -243,6 +244,7 @@ const PULLERS = {
   [ACURA_CPO.key]: { domain: ACURA_CPO.domain, run: () => pullAcuraCpo({ log }) },
   [STELLANTIS_CPO.key]: { domain: STELLANTIS_CPO.domain, run: () => pullStellantisCpo({ log }) },
   [MAZDA.key]: { domain: MAZDA.domain, run: () => pullMazda({ log }) },
+  [MITSUBISHI.key]: { domain: MITSUBISHI.domain, run: () => pullMitsubishi({ log }) },
 };
 
 const args = process.argv.slice(2);
@@ -251,7 +253,7 @@ function flag(name, fallback) {
   return i >= 0 ? args[i + 1] : fallback;
 }
 const OUT_DIR = flag("--out", "out");
-const wanted = flag("--brands", "chevrolet,gmc,cadillac,carbravo,hyundai,hyundai-cpo,kia,nissan,nissan-cpo,bmw,bmw-cpo,mercedes,jeep,dodge,chrysler,fiat,genesis,genesis-cpo,ford-blue-advantage,honda,honda-cpo,acura-cpo,stellantis-cpo,audi,vw,volvo,polestar,lexus,lucid,lucid-new,subaru,mazda,enterprise,driveway,echopark").split(",").map((s) => s.trim().toLowerCase());
+const wanted = flag("--brands", "chevrolet,gmc,cadillac,carbravo,hyundai,hyundai-cpo,kia,nissan,nissan-cpo,bmw,bmw-cpo,mercedes,jeep,dodge,chrysler,fiat,genesis,genesis-cpo,ford-blue-advantage,honda,honda-cpo,acura-cpo,stellantis-cpo,audi,vw,volvo,polestar,lexus,lucid,lucid-new,subaru,mazda,mitsubishi,enterprise,driveway,echopark").split(",").map((s) => s.trim().toLowerCase());
 const selected = wanted.filter((k) => PULLERS[k]);
 if (!selected.length) {
   console.error(`oem-locator: no known brands in "${wanted}" (have: ${Object.keys(PULLERS).join(",")})`);
