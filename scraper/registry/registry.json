@@ -245323,6 +245323,300 @@
         "state": "NY",
         "zip": "11096"
       }
+    },
+    {
+      "domain": "berlincitykiavt.com",
+      "name": "Berlin City Kia of Burlington",
+      "kind": "rooftop",
+      "platform": "ridemotive",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Motive national index, 379 vehicles / 11 EVs listed under the crawl's own dealer_ids:\"2787\" filter (2026-08-24); domain from the platform's own dealer record, published by the site itself; 8 of its EV VINs are listed by no domain we already crawl (2026-08-24) | auto-promoted by probe 2026-08-24: ridemotive Algolia index (dealer 2787), 379 vehicles",
+      "location": {
+        "city": "Williston",
+        "state": "VT",
+        "zip": "05495"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "ridemotive",
+        "found": 379,
+        "dealerId": 2787
+      }
+    },
+    {
+      "domain": "berlincitynissanme.com",
+      "name": "Berlin City Nissan of Portland",
+      "kind": "rooftop",
+      "platform": "ridemotive",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Motive national index, 394 vehicles / 6 EVs listed under the crawl's own dealer_ids:\"2790\" filter (2026-08-24); domain from the platform's own dealer record, published by the site itself; 3 of its EV VINs are listed by no domain we already crawl (2026-08-24) | auto-promoted by probe 2026-08-24: ridemotive Algolia index (dealer 2790), 394 vehicles",
+      "location": {
+        "city": "South Portland",
+        "state": "ME",
+        "zip": "04106"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "ridemotive",
+        "found": 394,
+        "dealerId": 2790
+      }
+    },
+    {
+      "domain": "performancevolvocars.com",
+      "name": "Performance Volvo",
+      "kind": "rooftop",
+      "platform": "ridemotive",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Motive national index, 119 vehicles / 3 EVs listed under the crawl's own dealer_ids:\"1015\" filter (2026-08-24); domain from the platform's own dealer record, published by the site itself; 3 of its EV VINs are listed by no domain we already crawl (2026-08-24) | auto-promoted by probe 2026-08-24: ridemotive Algolia index (dealer 1015), 119 vehicles",
+      "location": {
+        "city": "Sinking Spring",
+        "state": "PA",
+        "zip": "19608"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "ridemotive",
+        "found": 119,
+        "dealerId": 1015
+      }
+    },
+    {
+      "domain": "nottinghamram.com",
+      "name": "Nottingham Chrysler Dodge Jeep Ram",
+      "kind": "rooftop",
+      "platform": "ridemotive",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Motive national index, 322 vehicles / 1 EVs listed under the crawl's own dealer_ids:\"2856\" filter, 2 of them plug-in-stated (2026-08-24); domain from the platform's own dealer record, published by the site itself; 1 of its EV VINs are listed by no domain we already crawl (2026-08-24) | auto-promoted by probe 2026-08-24: ridemotive Algolia index (dealer 2856), 322 vehicles",
+      "location": {
+        "city": "Sulphur Springs",
+        "state": "TX",
+        "zip": "75482"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "ridemotive",
+        "found": 322,
+        "dealerId": 2856
+      }
+    },
+    {
+      "domain": "woodyford.com",
+      "name": "Woody Ford",
+      "kind": "rooftop",
+      "platform": "ridemotive",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Motive national index, 310 vehicles / 1 EVs listed under the crawl's own dealer_ids:\"5\" filter (2026-08-24); domain from the platform's own dealer record, published by the site itself; 1 of its EV VINs are listed by no domain we already crawl (2026-08-24) | auto-promoted by probe 2026-08-24: ridemotive Algolia index (dealer 5), 312 vehicles",
+      "location": {
+        "city": "Madill",
+        "state": "OK",
+        "zip": "73446"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "ridemotive",
+        "found": 312,
+        "dealerId": 5
+      }
+    },
+    {
+      "domain": "sandy.johnsonrv.com",
+      "name": "Johnson RV Sandy",
+      "kind": "rooftop",
+      "platform": "ridemotive",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Motive national index, 219 vehicles / 0 EVs listed under the crawl's own dealer_ids:\"1227\" filter (2026-08-24); domain from the platform's own dealer record, published by the site itself (2026-08-24) | auto-promoted by probe 2026-08-24: ridemotive Algolia index (dealer 1227), 219 vehicles",
+      "location": {
+        "city": "Sandy",
+        "state": "OR",
+        "zip": "97055"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "ridemotive",
+        "found": 219,
+        "dealerId": 1227
+      }
+    },
+    {
+      "domain": "fife.johnsonrv.com",
+      "name": "Johnson RV Fife",
+      "kind": "rooftop",
+      "platform": "ridemotive",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Motive national index, 191 vehicles / 0 EVs listed under the crawl's own dealer_ids:\"1226\" filter (2026-08-24); domain from the platform's own dealer record, published by the site itself (2026-08-24) | auto-promoted by probe 2026-08-24: ridemotive Algolia index (dealer 1226), 191 vehicles",
+      "location": {
+        "city": "Fife",
+        "state": "WA",
+        "zip": "98424"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "ridemotive",
+        "found": 191,
+        "dealerId": 1226
+      }
+    },
+    {
+      "domain": "medford.johnsonrv.com",
+      "name": "Johnson RV Medford",
+      "kind": "rooftop",
+      "platform": "ridemotive",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Motive national index, 165 vehicles / 0 EVs listed under the crawl's own dealer_ids:\"1228\" filter (2026-08-24); domain from the platform's own dealer record, published by the site itself (2026-08-24) | auto-promoted by probe 2026-08-24: ridemotive Algolia index (dealer 1228), 165 vehicles",
+      "location": {
+        "city": "Medford",
+        "state": "OR",
+        "zip": "97504"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "ridemotive",
+        "found": 165,
+        "dealerId": 1228
+      }
+    },
+    {
+      "domain": "united-saluda.com",
+      "name": "United Auto Sales Saluda",
+      "kind": "rooftop",
+      "platform": "ridemotive",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Motive national index, 66 vehicles / 0 EVs listed under the crawl's own dealer_ids:\"276\" filter (2026-08-24); domain from the platform's own dealer record, published by the site itself (2026-08-24) | auto-promoted by probe 2026-08-24: ridemotive Algolia index (dealer 276), 66 vehicles",
+      "location": {
+        "city": "Saluda",
+        "state": "VA",
+        "zip": "23149"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "ridemotive",
+        "found": 66,
+        "dealerId": 276
+      }
+    },
+    {
+      "domain": "unitedasllc.com",
+      "name": "United Auto Sales New Kent",
+      "kind": "rooftop",
+      "platform": "ridemotive",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Motive national index, 66 vehicles / 0 EVs listed under the crawl's own dealer_ids:\"277\" filter (2026-08-24); domain from the platform's own dealer record, published by the site itself (2026-08-24) | auto-promoted by probe 2026-08-24: ridemotive Algolia index (dealer 277), 66 vehicles",
+      "location": {
+        "city": "Providence Forge",
+        "state": "VA",
+        "zip": "23140"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "ridemotive",
+        "found": 66,
+        "dealerId": 277
+      }
+    },
+    {
+      "domain": "legacyfordky.com",
+      "name": "Legacy Ford",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Motive national index, 62 vehicles / 0 EVs listed under the crawl's own dealer_ids:\"1376\" filter (2026-08-24); domain from the platform's own dealer record, published by https://legacynissan.com (2026-08-24) | auto-promoted by probe 2026-08-24: 10 VIN vehicles on 1 page(s), platform dealer.com",
+      "location": {
+        "city": "Corbin",
+        "state": "KY",
+        "zip": "40701"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "working",
+        "fetched": 2,
+        "vehicles": 10,
+        "canonicalHost": "www.legacyfordky.com"
+      }
+    },
+    {
+      "domain": "drivelegacygolf.com",
+      "name": "Legacy Golf Cars",
+      "kind": "rooftop",
+      "platform": "ridemotive",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Motive national index, 40 vehicles / 0 EVs listed under the crawl's own dealer_ids:\"1834\" filter (2026-08-24); domain from the platform's own dealer record, published by the site itself (2026-08-24) | probe 2026-08-24: 0 VIN vehicles in 12 fetches (0 ItemList entries, 48 sitemap urls, 0 failed fetches, platform ridemotive) — client-rendered or API-backed; leads: api-hosts:api.us-east.tinybird.co+api.connectcdk.com+api.app.ridemotive.com, algolia, nextjs",
+      "location": {
+        "city": "London",
+        "state": "KY",
+        "zip": "40741"
+      },
+      "probe": {
+        "date": "2026-08-24",
+        "verdict": "empty",
+        "fetched": 12,
+        "vehicles": 0,
+        "itemList": 0,
+        "sitemapUrls": 48,
+        "apiHosts": [
+          "api.us-east.tinybird.co",
+          "api.connectcdk.com",
+          "api.app.ridemotive.com"
+        ],
+        "signals": [
+          "algolia",
+          "nextjs"
+        ],
+        "failures": [
+          {
+            "url": "https://drivelegacygolf.com/searchused.aspx",
+            "status": "404",
+            "kind": "gone"
+          },
+          {
+            "url": "https://drivelegacygolf.com/searchnew.aspx",
+            "status": "404",
+            "kind": "gone"
+          },
+          {
+            "url": "https://drivelegacygolf.com/used-vehicles/",
+            "status": "404",
+            "kind": "gone"
+          },
+          {
+            "url": "https://drivelegacygolf.com/new-vehicles/",
+            "status": "404",
+            "kind": "gone"
+          }
+        ]
+      }
     }
   ],
   "_sources": [
