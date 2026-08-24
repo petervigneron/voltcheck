@@ -157,7 +157,10 @@ for (const { l, why } of flagged) {
     `price-audit: FLAG ${l.vin} ${l.year} ${l.make} ${l.model} $${l.priceUsd} — ${why} — ${l.sourceUrl ?? "no url"}`
   );
 }
-if (DRY) process.exit(0);
+// A dry run is still a run, and it used to exit here without recording one —
+// so the one mode a human reaches for when checking "is this thing working?"
+// was the one mode that left no trace in registry/audit-status.json.
+if (DRY) await finish(0, "ok", `${listings.length} listings, ${audited} audited against WA medians, ${flagged.length} flagged (dry run, nothing written)`);
 
 // ---- re-verify through the crawler's own extraction path ----------------
 // verify-price-fix.mjs pretty-prints one JSON record per vehicle on the

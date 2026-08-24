@@ -41,6 +41,7 @@ const rows = names.map((name) => {
 const EXPECTED = [
   "sync-guard",
   "price-audit",
+  "live-price-audit",
   "ev-rules-audit",
   "completeness-audit",
   "colisting-sync",

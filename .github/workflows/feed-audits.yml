@@ -113,6 +113,32 @@ jobs:
             echo "::warning::A dealer's used cars lost their mileage (broken platform parser) — see the step log for the lot list"
           elif [ "$rc" -ne 0 ]; then exit "$rc"; fi
 
+      # Price plausibility of the LIVE feed. nightly.yml's price-audit.mjs
+      # audits web/data/scraped-listings.json, and that file stopped being a
+      # whole-fleet view when nightly's crawl was cut back to the OEM locator
+      # lanes — it holds ~38,000 cars, not the ~100,000 that are live. So the
+      # dealer-crawled rooftops, which are most of the feed and where every
+      # false bargain found so far has been, were in no audited set at all.
+      # On 2026-08-23 that night's run reported "9 flagged" while the live
+      # feed carried 66 implausible prices, four Porsche Macans at $700 among
+      # them, live and wrong for six days with nothing alarming.
+      #
+      # This one reads /api/index/0..5 — the same six shards a shopper's
+      # browser fetches, off the CDN, so it costs the database nothing and can
+      # run on this workflow's schedule rather than behind the pipeline. It
+      # reports and writes nothing; exit 10 is a warning, not a failure, for
+      # the same reason the EV-rules audit is one: the list needs a human to
+      # act on, and a genuinely cheap car must not be suppressed automatically.
+      - name: Live feed price plausibility
+        id: live_prices
+        continue-on-error: true
+        working-directory: scraper
+        run: |
+          rc=0; node live-price-audit.mjs --json /tmp/implausible-prices.json || rc=$?
+          if [ "$rc" -eq 10 ]; then
+            echo "::warning::Live listings carry a price the feed itself contradicts — see the step log"
+          elif [ "$rc" -ne 0 ]; then exit "$rc"; fi
+
       # FEED_REVALIDATE_SECRET is here so a detected problem can be REPAIRED,
       # not only reported. A route cache cannot be expired from inside the
       # render that filled it — Next rejects revalidateTag during a
@@ -164,4 +190,5 @@ jobs:
           check "EV-rules audit"                 "${{ steps.ev_rules.outcome }}"
           check "listing completeness audit"     "${{ steps.completeness.outcome }}"
           check "feed shard health"              "${{ steps.feed_shards.outcome }}"
+          check "live feed price plausibility"   "${{ steps.live_prices.outcome }}"
           [ "$bad" -eq 0 ] || exit 1
