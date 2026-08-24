@@ -175,12 +175,35 @@ jobs:
           # conflict, which here means the record is DROPPED rather than
           # delayed. See merge-audit-status.mjs.
           cp scraper/registry/audit-status.json "${RUNNER_TEMP:-/tmp}/audit-status-mine.json"
+          # `git rebase --abort` recovers a conflicted REBASE. It does nothing
+          # at all for a conflicted autostash RE-APPLY, which leaves unmerged
+          # index entries with no rebase in progress to abort -- and every
+          # later `git pull` then fails with "Pulling is not possible because
+          # you have unmerged files" before it can even try. All five retries
+          # lose to it identically. This workflow has not hit it yet (it stages
+          # one small file), but nightly.yml writes that same file now, so the
+          # text conflict this heals is reachable from here too; nightly.yml
+          # 2026-08-24 13:17 is what it looks like when it happens.
+          unwedge() {
+            git rebase --abort 2>/dev/null || true
+            git merge --abort 2>/dev/null || true
+            git checkout -f HEAD -- scraper/registry 2>/dev/null || true
+            git stash list 2>/dev/null | grep -q . && git stash drop >/dev/null 2>&1
+            return 0 # never let this trip `bash -e` -- it is the recovery path
+          }
           for i in 1 2 3 4 5; do
             git checkout HEAD -- scraper/registry/audit-status.json 2>/dev/null || true
             git fetch origin main || true
             if ! git pull --rebase --autostash; then
-              git rebase --abort 2>/dev/null || true
+              unwedge
               sleep $((i * 10)); continue
+            fi
+            # The pull exits 0 when the rebase succeeded and only the autostash
+            # RE-APPLY conflicted, so the exit code cannot be trusted to report
+            # a wedged index -- ask the index. See nightly.yml's copy.
+            if [ -n "$(git diff --name-only --diff-filter=U)" ]; then
+              echo "autostash re-apply conflicted; clearing and retrying from the remote tip"
+              unwedge; continue
             fi
             node scraper/merge-audit-status.mjs --mine "${RUNNER_TEMP:-/tmp}/audit-status-mine.json"
             git add scraper/registry/audit-status.json

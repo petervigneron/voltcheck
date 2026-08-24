@@ -953,19 +953,82 @@ jobs:
           # concurrent writer composes with us instead of beating us. Same
           # reset-then-merge order as the audit record below — merging before
           # committing still conflicts; see that script's header.
-          for spec in "registry/registry.json:0:registry" \
-                      "registry/gm-warranty.json:1:GM warranty cache" \
-                      "registry/vpic-cache.json:0:vPIC cache"; do
+          # A failed `git pull --rebase --autostash` is TWO failures wearing one
+          # exit code, and only the first ever had a recovery. If the REBASE
+          # conflicts, `git rebase --abort` cleans up. If the autostash RE-APPLY
+          # conflicts there is no rebase in progress at all: `--abort` is a
+          # silent no-op, and the unmerged index entries the failed apply left
+          # behind outlive this step and wedge the whole JOB — every later
+          # `git pull` dies with "Pulling is not possible because you have
+          # unmerged files" before it can do anything.
+          #
+          # That is not a rare race here, it is the normal case: the pull
+          # fast-forwards over rolling-crawl.yml's vpic-cache.json commit (48 a
+          # day), and vpic-cache.json is 28 MB on ONE LINE, so re-applying our
+          # copy of it is always a conflict on that line. Measured 2026-08-24
+          # 13:17: registry.json's very first attempt wedged the index, all five
+          # of its retries failed identically, and so did all five of the
+          # audit-liveness step's below — which is how colisting-sync and
+          # sync-guard lost their records that night even after 5762d64 had
+          # given them a commit of their own precisely so a cache could not take
+          # them down. Giving the record its own commit was necessary and not
+          # sufficient: it also needs an index it can commit from.
+          unwedge() {
+            git rebase --abort 2>/dev/null || true
+            git merge --abort 2>/dev/null || true
+            # The only thing that actually clears unmerged entries: take the
+            # whole directory back to HEAD. Safe because every file this step
+            # writes was copied to RUNNER_TEMP before the first git command ran.
+            git checkout -f HEAD -- scraper/registry 2>/dev/null || true
+            git stash list 2>/dev/null | grep -q . && git stash drop >/dev/null 2>&1
+            return 0 # never let this trip `bash -e` -- it is the recovery path
+          }
+
+          specs=("registry/registry.json:0:registry"
+                 "registry/gm-warranty.json:1:GM warranty cache"
+                 "registry/vpic-cache.json:0:vPIC cache")
+          # Copy ALL of them up front, before any git command. unwedge() rewinds
+          # the whole registry directory, so a per-iteration `cp` would hand the
+          # later iterations HEAD's copy instead of tonight's: the vPIC cache
+          # would compare equal, report "nothing to commit", and every VIN in it
+          # would be silently re-fetched tomorrow. That is the outage this cache
+          # exists to prevent, arriving through the fix for it.
+          for spec in "${specs[@]}"; do
+            f="${spec%%:*}"
+            cp "scraper/$f" "${RUNNER_TEMP:-/tmp}/$(basename "$f")" 2>/dev/null || true
+          done
+          # audit-status.json is saved HERE, by the step that does not commit it,
+          # and that is the point. unwedge() rewinds the whole registry directory,
+          # this file included; the step below that owns it does not run until
+          # after that has already happened, so a copy taken there would be the
+          # rewound one -- tonight's records gone, the same loss this file is the
+          # record of. It is not written between here and there, so this copy is
+          # the last one that is still tonight's.
+          cp scraper/registry/audit-status.json "${RUNNER_TEMP:-/tmp}/audit-status-mine.json" 2>/dev/null || true
+
+          for spec in "${specs[@]}"; do
             file="${spec%%:*}"; rest="${spec#*:}"; indent="${rest%%:*}"; label="${rest#*:}"
             mine="${RUNNER_TEMP:-/tmp}/$(basename "$file")"
-            cp "scraper/$file" "$mine" 2>/dev/null || continue
+            [ -f "$mine" ] || continue
             pushed=0
             for i in 1 2 3 4 5; do
               git checkout HEAD -- "scraper/$file" 2>/dev/null || true
               git fetch origin main || true
               if ! git pull --rebase --autostash; then
-                git rebase --abort 2>/dev/null || true
+                unwedge
                 sleep $((i * 10)); continue
+              fi
+              # `git pull --rebase --autostash` EXITS 0 when the rebase itself
+              # succeeded and only the autostash RE-APPLY conflicted. That is
+              # this repo's normal case, and it is why the failure branch above
+              # never fired: the pull reports success, the unmerged entries are
+              # already there, and the `git commit` below dies on them ("Committing
+              # is not possible because you have unmerged files") -- taking the
+              # step down under `bash -e` and leaving the wedge for every step
+              # after it. Ask the index, not the exit code.
+              if [ -n "$(git diff --name-only --diff-filter=U)" ]; then
+                echo "$label: autostash re-apply conflicted; clearing and retrying from the remote tip"
+                unwedge; continue
               fi
               # registry.json is hand-curated and NOT a per-VIN cache, so it is
               # never key-merged — it keeps this run's copy and relies on its
@@ -1000,13 +1063,39 @@ jobs:
           # file to the remote tip and merges them back in. Reset-then-merge,
           # not merge-then-commit — see merge-audit-status.mjs on why the other
           # order still conflicts and still loses the record.
-          cp registry/audit-status.json "${RUNNER_TEMP:-/tmp}/audit-status-mine.json"
+          # Saved by the registry step above, before its first git command, for
+          # the reason spelled out there. Only copy here if that did not happen
+          # (that step gone or skipped) -- re-copying unconditionally would
+          # overwrite the good save with the rewound file.
+          [ -f "${RUNNER_TEMP:-/tmp}/audit-status-mine.json" ] \
+            || cp registry/audit-status.json "${RUNNER_TEMP:-/tmp}/audit-status-mine.json"
+          # Then unwedge: the step above can hand this one an index
+          # with unmerged entries (see its unwedge() comment), and in that state
+          # every `git pull` here fails before it starts. The wedge is inherited,
+          # not caused here, so clear it up front rather than only after a
+          # failure of our own.
+          unwedge() {
+            git rebase --abort 2>/dev/null || true
+            git merge --abort 2>/dev/null || true
+            git checkout -f HEAD -- registry 2>/dev/null || true
+            git stash list 2>/dev/null | grep -q . && git stash drop >/dev/null 2>&1
+            return 0 # never let this trip `bash -e` -- it is the recovery path
+          }
+          unwedge
           for i in 1 2 3 4 5; do
             git checkout HEAD -- registry/audit-status.json 2>/dev/null || true
             git fetch origin main || true
             if ! git pull --rebase --autostash; then
-              git rebase --abort 2>/dev/null || true
+              unwedge
               sleep $((i * 10)); continue
+            fi
+            # Same trap as the registry step above: the pull exits 0 when only
+            # the autostash re-apply conflicted, so the index has to be asked
+            # directly. Committing into a wedged index is what lost tonight's
+            # record on 2026-08-24.
+            if [ -n "$(git diff --name-only --diff-filter=U)" ]; then
+              echo "autostash re-apply conflicted; clearing and retrying from the remote tip"
+              unwedge; continue
             fi
             node merge-audit-status.mjs --mine "${RUNNER_TEMP:-/tmp}/audit-status-mine.json"
             git add registry/audit-status.json
