@@ -45,6 +45,14 @@ import {
   autoManagerVehicles,
   autoManagerNextPageUrl,
 } from "./lib/platforms/automanager.mjs";
+import { isWayneReaves, pullWayneReaves } from "./lib/platforms/waynereaves.mjs";
+import {
+  isOneAudi,
+  oneAudiSrpUrls,
+  oneAudiSeeds,
+  oneAudiVehicles,
+  oneAudiTruncated,
+} from "./lib/platforms/oneaudi.mjs";
 import {
   isAutoFunds,
   autoFundsNeedsVdp,
@@ -203,6 +211,7 @@ async function crawlDealer(domain) {
   const deolApi = { done: false };
   const rm = { done: false };
   const af = { done: false };
+  const wr = { done: false };
   const dvPlat = siteInfo.get(domain)?.platform;
   // Motive joins that list for the same reason: it renders no inventory in
   // HTML at all and publishes its Algolia config on the homepage, so a
@@ -213,7 +222,14 @@ async function crawlDealer(domain) {
   // /rss.aspx request — but the fingerprint that authorises that request is on
   // the homepage. Without this seed an AutoFunds rooftop spends its budget on
   // sitemap VDPs it cannot read a price out of.
-  if (!dvPlat || ["unknown", "dealervenom", "overfuel", "team-velocity", "ridemotive", "autofunds"].includes(dvPlat))
+  // Wayne Reaves joins for the strongest version of it: EVERY path on one of
+  // its hosts serves the same client-rendered shell, so a queue that starts at
+  // a sitemap URL would fetch that shell over and over and never reach the
+  // footer credit that authorises the one feed request.
+  if (
+    !dvPlat ||
+    ["unknown", "dealervenom", "overfuel", "team-velocity", "ridemotive", "autofunds", "waynereaves"].includes(dvPlat)
+  )
     queue.unshift(origin + "/");
 
   // Overfuel hides its inventory behind a per-rooftop SRP slug
@@ -270,6 +286,20 @@ async function crawlDealer(domain) {
     report.notes.push("motorcarsites: seeded SRP");
   }
   if (siteInfo.get(domain)?.platform === "motorcarsites") seedMotorcar();
+  // OneAudi: the two /en/inventory/{new,used}/ pages are the only door — no
+  // sitemap, no ItemList, no car in the markup — and each serves 48 cars in a
+  // serialized-state block. The electrified families are then asked for by
+  // name off the facet list the first page publishes (see the platform file);
+  // that second wave is seeded from the page itself, not guessed here.
+  let oaSeeded = false;
+  function seedOneAudi() {
+    if (oaSeeded) return;
+    oaSeeded = true;
+    const seeds = oneAudiSrpUrls(origin).filter((u) => !visited.has(u));
+    queue.unshift(...seeds);
+    report.notes.push(`oneaudi: seeded ${seeds.length} SRP(s)`);
+  }
+  if (siteInfo.get(domain)?.platform === "oneaudi") seedOneAudi();
 
   // DealerFire's SRP slug is per-rooftop ("/cars-for-sale-hillsboro-or"), so
   // there is nothing to seed until a page of theirs tells us its own — which
@@ -510,6 +540,41 @@ async function crawlDealer(domain) {
       report.notes.push("autofunds: no feed at /rss.aspx, falling back to HTML");
     }
 
+    // Wayne Reaves: one request is the whole lot, and it is the only door —
+    // every path on the host serves the same client-rendered shell, so an HTML
+    // walk here fetches the same 272 KB page twelve times. The feed carries
+    // the rooftop's SOLD gallery alongside its live cars (31 of 136 records
+    // across the six rooftops sampled); the extractor drops those, and the
+    // note reports both numbers so a shrinking lot is legible.
+    if (!wr.done && isWayneReaves(res.body)) {
+      wr.done = true;
+      const before = report.evs.length;
+      const { ok, vehicles, found, requests } = await pullWayneReaves(origin);
+      report.fetched += requests;
+      if (ok) {
+        for (const v of vehicles) {
+          const cls = classifyEv(v);
+          if (!cls.isEv) continue;
+          let rec = normalize(v, { sourceUrl: v.offers?.url || origin, dealerDomain: domain });
+          if (rec.vdpUrl) rec.vdpUrl = abs(rec.vdpUrl, origin) ?? rec.vdpUrl;
+          rec.evKind = cls.kind;
+          rec.evConfidence = cls.confidence;
+          // The feed record IS the car — colours, engine, odometer, gallery,
+          // description. There is no richer page behind it to fetch.
+          rec.fromVdp = true;
+          rec.platform = "waynereaves";
+          report.evs.push(rec);
+        }
+        if (report.evs.length > before) report.vehiclePages++;
+        report.notes.push(
+          `waynereaves: ${vehicles.length} live of ${found} records, ${report.evs.length - before} EV(s) admitted`,
+        );
+        queue.length = 0;
+        break;
+      }
+      report.notes.push("waynereaves: feed did not answer, falling back to HTML");
+    }
+
     // Team Velocity serves its whole lot from an open API keyed by the account/
     // campaign ids inline in every page. Pull it and finish. Each car is
     // attributed to its OWN vdp host, because one account can be a dealer group
@@ -658,6 +723,7 @@ async function crawlDealer(domain) {
     if (!dealrSeeded && isDealrCloud(res.body)) seedDealr();
     if (!amSeeded && isAutoManager(res.body)) seedAutoManager();
     if (!mcsSeeded && isMotorcarSites(res.body)) seedMotorcar();
+    if (!oaSeeded && isOneAudi(res.body)) seedOneAudi();
     const dealerFire = extractDealerFire(res.body);
     const dealerFireRooftops = dealerFire.size ? extractDealerFireDealers(res.body) : [];
     const overfuel = overfuelVehicles(res.body, res.finalUrl);
@@ -681,6 +747,8 @@ async function crawlDealer(domain) {
     // AMG Motors' 156, 179 of allautospecialist's 183), and a sold car is not
     // a listing.
     const mcsEntries = motorcarEntries(res.body, res.finalUrl).filter((e) => !e.sold);
+    const oneAudi = oneAudiVehicles(res.body);
+    const oneAudiVins = new Set(oneAudi.map((v) => v.vehicleIdentificationNumber));
     const vehicles = [
       ...(dealrVs.length ? dealrVs : extractVehicles(res.body)),
       ...extractDrivewayVehicles(res.body),
@@ -689,6 +757,7 @@ async function crawlDealer(domain) {
       ...overfuel,
       ...autoManager,
       ...motorcarSites,
+      ...oneAudi,
     ];
     if (vehicles.length) report.vehiclePages++;
     const isSrp = vehicles.length > 1;
@@ -709,9 +778,18 @@ async function crawlDealer(domain) {
       if (dealerOn) rec = enrichFromDealerOn(rec, dealerOn);
       if (teamVelocity) rec = enrichFromTeamVelocity(rec, teamVelocity);
       if (rec.vin && dcsVins.has(rec.vin)) rec.platform = "dealercarsearch";
+      if (rec.vin && oneAudiVins.has(rec.vin)) rec.platform = "oneaudi";
       if (rec.vin && overfuelVins.has(rec.vin)) rec.platform = "overfuel";
       if (dealerFire.size) rec = enrichFromDealerFire(rec, dealerFire, dealerFireRooftops);
       report.evs.push(rec);
+      // A OneAudi VDP is client-rendered per car and carries no state a
+      // parser can read — fetched live on audicary.com, the page 200s and
+      // oneAudiVehicles() finds nothing in it. The SRP record is already the
+      // whole car (odometer, trim, price, gallery), so following its link
+      // would spend the budget to learn nothing and could trip the crawl's
+      // own "no vehicle records in N pages" floor. The link is still what
+      // the listing points a shopper at; it is just not fetched.
+      if (rec.vin && oneAudiVins.has(rec.vin)) continue;
       // An SRP tile knows its car's own page — fetch the VDP for the full
       // record (odometer, trim, gallery, canonical URL).
       if (isSrp && rec.vdpUrl && rec.vdpUrl.startsWith("http") && !visited.has(rec.vdpUrl)) {
@@ -766,6 +844,27 @@ async function crawlDealer(domain) {
     if (mcsEntries.length) {
       const nextMcs = motorcarNextPageUrl(res.body, res.finalUrl);
       if (nextMcs && !visited.has(nextMcs)) queue.push(nextMcs);
+    // OneAudi has no next page — the SSR renders offset 0 and nothing in the
+    // URL moves it. The second wave is instead a per-model-family request
+    // built from the facet counts the page just published, which is the only
+    // slice of the query the URL can reach. Truncation is reported rather
+    // than implied: a family with more than 48 cars leaves the rest
+    // unreachable, and a crawl that says nothing about that reads as a
+    // complete walk.
+    if (oneAudi.length) {
+      const filtered = /[?&]modelFamily=/.test(res.finalUrl);
+      // Only an UNfiltered SRP seeds the family wave. A filtered page
+      // republishes a model-range facet of its own — the families it was
+      // asked for — so seeding off one would mint a fresh URL for the same
+      // cars every time the family order came back different, and `visited`
+      // would never catch it.
+      if (!filtered) {
+        const famSeeds = oneAudiSeeds(res.body, res.finalUrl).filter((u) => !visited.has(u));
+        if (famSeeds.length) queue.unshift(...famSeeds);
+      } else {
+        const missed = oneAudiTruncated(res.body);
+        if (missed > 0) report.notes.push(`oneaudi: ${missed} car(s) past page one of ${res.finalUrl}`);
+      }
     }
 
     // Bridge: SRP ItemList → VDP urls, EV-filtered, jump the queue

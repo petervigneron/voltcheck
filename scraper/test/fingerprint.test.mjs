@@ -29,8 +29,35 @@ test("AutoFunds and DealerWebsites are one product under two names", () => {
   assert.equal(fingerprint('<img src="https://images.autofunds.net/InventoryImages/2026/a.jpg"/>'), "autofunds");
 });
 
+test("OneAudi beats dealer.com, which its own inventory tag names", () => {
+  // Audi's platform loads "labels-prod…/dealer.com.js" on inventory pages and
+  // serves some assets from dealer.com hosts. 20 of the 21 Audi rooftops that
+  // ever reached "working" fingerprinted dealer.com because of it, which sends
+  // the crawl down the DDC inventory API on a site that has none.
+  const audi =
+    '<link rel="preload" as="script" href="https://oneaudi-falcon.prod.renderer.one.audi/static/client/client.js"/>' +
+    '<link rel="dns-prefetch" href="https://omnigraph.audi.com"/>' +
+    '<script src="https://labels-prod.s3.us-east-1.amazonaws.com/dealer.com.js"></script>';
+  assert.equal(fingerprint(audi), "oneaudi");
+  assert.equal(
+    fingerprint('<script src="https://fa-vin-stock-search.cdn.prod.collab.apps.one.audi/v1.0.11/fh/app.js"></script>'),
+    "oneaudi",
+  );
+  // An Audi rooftop that really is on dealer.com must still read dealer.com.
+  assert.equal(fingerprint("<html>Audi Raleigh<script>DDC.dataLayer={}</script></html>"), "dealer.com");
+});
+
+test("Wayne Reaves is recognised from the footer credit, its only mark", () => {
+  assert.equal(
+    fingerprint('<a href="https://waynereaves.com/"><img alt="Wayne Reaves Automotive Dealer Websites"/></a>'),
+    "waynereaves",
+  );
+  assert.equal(fingerprint('<a href="http://www.waynereaves.net">Dealer software</a>'), "waynereaves");
+});
+
 test("a page with none of these is still unknown", () => {
   assert.equal(fingerprint("<html><body>a plain wordpress site</body></html>"), "unknown");
   // …and the vendors' NAMES in prose are not signals — only their hosts are.
   assert.equal(fingerprint("<p>We are an auto manager and we ride motive daily.</p>"), "unknown");
+  assert.equal(fingerprint("<p>Ask for Wayne, or for Reaves in service.</p>"), "unknown");
 });

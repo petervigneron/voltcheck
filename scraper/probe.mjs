@@ -103,6 +103,8 @@ import {
   motorcarNextPageUrl,
   MOTORCAR_SRP_PATH,
 } from "./lib/platforms/motorcarsites.mjs";
+import { isOneAudi, oneAudiVehicles, ONEAUDI_SRP_PATHS } from "./lib/platforms/oneaudi.mjs";
+import { isWayneReaves, countWayneReaves } from "./lib/platforms/waynereaves.mjs";
 import { discoverSitemapUrls, rank, dedupe, SRP_PATHS } from "./lib/sitemap.mjs";
 import { spaSignals, countVinUrls } from "./lib/spa-signals.mjs";
 import { failureKind, apiHostsFrom, seededShuffle, emptyOrTransient, blindEmpty } from "./lib/probe-verdict.mjs";
@@ -251,6 +253,12 @@ async function probeSite(site) {
     }
   } catch {}
   if (site.platform === "unknown" || !site.platform) site.platform = fingerprint(home.body);
+  // OneAudi overrides a label already on the row, the way DealerCarSearch does
+  // below. 273 of these rooftops sit in needs-investigation and most of them
+  // were labelled "dealer.com" by an earlier fingerprint — Audi's platform
+  // loads a dealer.com-named tag and some dealer.com asset hosts — so a
+  // platform-first probe would go on trying /used-inventory/index.htm forever.
+  if (isOneAudi(home.body) && site.platform !== "oneaudi") site.platform = "oneaudi";
 
   // A rooftop that has left Motorcar Marketing does not 404 and does not
   // redirect: the vendor keeps serving its own "Down For Maintenance"
@@ -345,6 +353,22 @@ async function probeSite(site) {
     }
   }
 
+  // Wayne Reaves settles the same way, and needs to more than any of them:
+  // every path on one of its hosts returns the same client-rendered shell, so
+  // the walk below cannot tell /inventory from /robots.txt — 12 fetches of the
+  // identical 272 KB page. Its /service/inventory/website feed is the lot.
+  if (isWayneReaves(home.body)) {
+    const { ok, found, live, hasVin } = await countWayneReaves(origin);
+    if (ok && hasVin) {
+      site.platform = "waynereaves";
+      site.status = "working";
+      site.notes = `${site.notes ?? ""} | auto-promoted by probe ${today}: waynereaves feed, ${live} live of ${found} records`.trim();
+      setVerdict(site, "working", { fetched: fetched + 1, via: "waynereaves", found: live });
+      console.error(`  ${site.domain} → working (waynereaves, ${live})`);
+      return;
+    }
+  }
+
   // Team Velocity serves its lot from an open API keyed by ids inline in the
   // page — confirm it directly, like DealerVenom/Overfuel, rather than walking
   // the client-rendered HTML the crawl otherwise sees nothing in.
@@ -377,6 +401,10 @@ async function probeSite(site) {
     dealrcloud: [DEALR_SRP_PATH],
     automanager: [AUTOMANAGER_SRP_PATH],
     motorcarsites: [MOTORCAR_SRP_PATH],
+    // Audi's own platform publishes no sitemap and no ItemList, so these two
+    // paths are the only door on the site — nothing in the guess table has
+    // this shape, which is why 273 rooftops read "0 sitemap urls" forever.
+    oneaudi: ONEAUDI_SRP_PATHS,
     // Team Velocity SRPs server-render Vehicle JSON-LD, but only on this path —
     // the sitemap-ranked guesses spent the budget before reaching it on all 13
     // cohort rooftops (2026-08-16).
@@ -436,6 +464,7 @@ async function probeSite(site) {
       ...dealrVehicles(res.body, res.finalUrl),
       ...autoManagerVehicles(res.body, res.finalUrl),
       ...motorcarVehicles(res.body, res.finalUrl),
+      ...oneAudiVehicles(res.body),
     ];
     const platformVins = [
       ...extractDdcVehicles(res.body).map((d) => d.vin),

@@ -8,6 +8,12 @@ const SIGNATURES = [
   // API. `typesenseSearchAdapter` is the vendor's search-client init; the
   // `dealervenom` brand token is the second signal.
   { platform: "dealervenom", res: [/typesenseSearchAdapter/i, /dealervenom/i] },
+  // OneAudi before dealer.com: Audi's own platform loads a "labels-prod…
+  // /dealer.com.js" tag on inventory pages and serves some assets through
+  // dealer.com hosts, so 20 of the 21 Audi rooftops that reached "working"
+  // fingerprinted "dealer.com" — which sends the crawl down the DDC inventory
+  // API on a site that has none. Its renderer and graph hosts are the signal.
+  { platform: "oneaudi", res: [/renderer\.one\.audi|omnigraph\.audi\.com|apps\.one\.audi/i] },
   // Motive (app.ridemotive.com) before the big three: its rooftops embed
   // dealer.com pictures, Dealer Inspire widgets and DealerOn tags, and a loose
   // match on any of those beats them to the answer — subaruoftwinfalls.com and
@@ -60,6 +66,10 @@ const SIGNATURES = [
   // brand word, since a dealer is free to be named "Motorcar …".
   { platform: "motorcarsites", res: [/\b(?:www\.)?motorcarsites\.com\/(?:dealers|template|img)\//i, /\bwww\.motorcarmarketing\.com\b/i] },
   { platform: "team-velocity", res: [/teamvelocityportal\.com/i, /vdpVehicleExteriorColor/] },
+  // Wayne Reaves: every asset is same-origin, so the vendor's only mark on the
+  // page is the footer credit that links waynereaves.com/.net. The whole lot
+  // comes out of /service/inventory/website — see lib/platforms/waynereaves.mjs.
+  { platform: "waynereaves", res: [/waynereaves\.(?:com|net)/i] },
   // No JSON-LD anywhere and numeric-id VDP URLs, so nothing generic hooks it;
   // lib/platforms/dealercarsearch.mjs reads its Tealium product list instead.
   // Its data layer names the platform on every page, homepages included.

@@ -149,6 +149,23 @@ export const AUTOFUNDS_REDUCED = "autofunds-reduced";
 // Explicitly NOT the CarGurus badge's data-cg-price sitting in the same block,
 // for the reason written out at AUTOMANAGER_PRICE above.
 export const MOTORCARSITES_PRICE = "motorcarsites-price";
+// OneAudi's `sale` rung — the number its card prints under the word "Price",
+// verified against a rendered tile (39,990 on a used Q5 whose "Selling Price"
+// line read 40,688 and whose carPrices carried sale=39990, dealerDocFees=698,
+// final=40688).
+//
+// Its own tag, and it must stay that way: the same record carries `final`,
+// which on a NEW car is the ask minus conditional incentives (a 2026 A3 at
+// sale 43,919 / final 41,117). Those two are $3,500 apart on one car in one
+// response, so a shared tag would be a manufactured price cut waiting for
+// someone to read the other rung.
+export const ONEAUDI_SALE = "oneaudi-sale";
+
+// Wayne Reaves' `price` field, out of its /service/inventory/website feed —
+// the number the card prints. Its own tag: the same record carries
+// `specialPrice`, and no rooftop has yet been seen where the two disagree, so
+// there is nothing to justify treating them as one field.
+export const WAYNEREAVES_PRICE = "waynereaves-price";
 
 // OEM/aggregator inventory APIs. Each lane reads one documented field out of
 // one vendor's endpoint; none of them shares a code path with any other, so
@@ -204,6 +221,7 @@ const KNOWN = new Set([
   DFIRE_ADVERTISED, DVENOM_FINAL, DEALR_ENTRY, DCS_TILE, OVERFUEL_PRICE, TV_SELLING,
   MOTIVE_PRICE, AUTOMANAGER_PRICE, AUTOFUNDS_INTERNET, AUTOFUNDS_REDUCED,
   MOTORCARSITES_PRICE,
+  ONEAUDI_SALE, WAYNEREAVES_PRICE,
 ]);
 
 /** True for a tag this build knows how to emit. OEM lane tags are accepted by
