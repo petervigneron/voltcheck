@@ -58,6 +58,14 @@ export const EV_MODEL_RE = new RegExp(
     // gaautoworld.com, 2026-08-16). vPIC refuted them before ingest, so
     // nothing false reached the site — it just spent a decode on each.
     "ex30", "ex90", "\\bc40", "xc40 recharge",
+    // Measured on Ever Cars' all-BEV lot (2026-08-24): 16 live cars fell
+    // through for want of these. GV60 and the Electrified G80/GV70 are
+    // Genesis's only BEVs (the bare G80/GV70 are petrol — "electrified" is
+    // the load-bearing word). I-Pace and e-Golf were never anything but
+    // battery-electric. The bare "Lexus RZ" (no trim number) needs the make
+    // word for the same reason "toyota bz" does — two letters alone is the
+    // iX lesson again.
+    "\\bgv60\\b", "electrified gv70", "electrified g80", "\\bi-pace\\b", "\\be-golf\\b", "lexus rz\\b",
   ].join("|"),
   "i"
 );

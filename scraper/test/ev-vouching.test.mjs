@@ -82,6 +82,15 @@ test("a fuel field saying bare BEV is an explicit electric claim", () => {
   assert.equal(classifyEv({ fuelType: "Beverage" }).isEv, false);
 });
 
+test("the nameplates an all-BEV lot caught missing all match, their petrol siblings do not", () => {
+  for (const n of ["2023 Genesis GV60 Performance", "2024 Genesis Electrified GV70", "2023 Genesis Electrified G80", "2020 Jaguar I-Pace HSE", "2019 Volkswagen e-Golf SE", "2024 Lexus RZ Premium"]) {
+    assert.equal(classifyEv({ name: n }).isEv, true, n);
+  }
+  for (const n of ["2024 Genesis GV70 3.5T Sport", "2023 Genesis G80 2.5T", "2021 Jaguar F-Pace P250", "2019 Volkswagen Golf SE", "2023 Lexus RX 350"]) {
+    assert.equal(classifyEv({ name: n }).isEv, false, n);
+  }
+});
+
 test("classifyEv still refuses a plain gas/electric hybrid and admits a plug-in", () => {
   assert.equal(classifyEv({ fuelType: "Gas/Electric Hybrid", vehicleIdentificationNumber: "1HGCV3F17KA015397" }).isEv, false);
   const phev = classifyEv({ fuelType: "Plug-in Gas/Electric Hybrid", vehicleIdentificationNumber: "5YM23CS01P9S34188" });
