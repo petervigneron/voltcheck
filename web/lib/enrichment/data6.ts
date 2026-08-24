@@ -229,6 +229,34 @@ const R: EnrichmentRow[] = [];
       mpgeCombined: f(52, "mfr", "high", undefined, epa(45197)),
       mpgGasoline: f(31, "mfr", "high", undefined, epa(45197)),
     }),
+    volvo("s90-t8-2021", "S90 Plug-In Hybrid", ["S90 Recharge Plug-In Hybrid", "S90 Recharge"], [2021, 2021], VOLVO_SMALL, "PHEV", {
+      epaRangeMi: f(21, "mfr", "high", "Electric-only EPA range", epa(42984)),
+      epaRangeTotalMi: f(490, "mfr", "high", undefined, epa(42984)),
+      mpgeElectric: f(60, "mfr", "high", undefined, epa(42984)),
+      mpgeCombined: f(40, "mfr", "high", undefined, epa(42984)),
+      mpgGasoline: f(30, "mfr", "high", undefined, epa(42984)),
+    }),
+    volvo("s90-t8-2022-std", "S90 Plug-In Hybrid", ["S90 Recharge Plug-In Hybrid", "S90 Recharge"], [2022, 2022], VOLVO_SMALL, "Standard range pack", {
+      epaRangeMi: f(21, "mfr", "high", "Electric-only EPA range, pre-update 2022 cars", epa(44267)),
+      epaRangeTotalMi: f(490, "mfr", "high", undefined, epa(44267)),
+      mpgeElectric: f(63, "mfr", "high", undefined, epa(44267)),
+      mpgeCombined: f(40, "mfr", "high", undefined, epa(44267)),
+      mpgGasoline: f(30, "mfr", "high", undefined, epa(44267)),
+    }),
+    volvo("s90-t8-2022-er", "S90 Plug-In Hybrid", ["S90 Recharge Plug-In Hybrid", "S90 Recharge"], [2022, 2022], VOLVO_ER, "Extended Range", {
+      epaRangeMi: f(38, "mfr", "high", "Electric-only EPA range, Extended Range 2022 cars", epa(45198)),
+      epaRangeTotalMi: f(500, "mfr", "high", undefined, epa(45198)),
+      mpgeElectric: f(66, "mfr", "high", undefined, epa(45198)),
+      mpgeCombined: f(47, "mfr", "high", undefined, epa(45198)),
+      mpgGasoline: f(29, "mfr", "high", undefined, epa(45198)),
+    }),
+    volvo("s90-t8-2023-25", "S90 Plug-In Hybrid", ["S90 Recharge Plug-In Hybrid", "S90 Recharge"], [2023, 2025], VOLVO_ER, "PHEV", {
+      epaRangeMi: f(38, "mfr", "high", "Electric-only EPA range. Identical rating 2023–2025", epa(46261)),
+      epaRangeTotalMi: f(520, "mfr", "high", undefined, epa(46261)),
+      mpgeElectric: f(66, "mfr", "high", undefined, epa(46261)),
+      mpgeCombined: f(47, "mfr", "high", undefined, epa(46261)),
+      mpgGasoline: f(30, "mfr", "high", undefined, epa(46261)),
+    }),
     volvo("s60-t8-2023-25", "S60 Plug-In Hybrid", S60_ALIASES, [2023, 2025], VOLVO_ER, "PHEV", {
       epaRangeMi: f(40, "mfr", "high", "Electric-only EPA range. Identical rating 2023–2025", epa(47503)),
       epaRangeTotalMi: f(530, "mfr", "high", undefined, epa(47503)),
@@ -2143,7 +2171,7 @@ R.push({
     id,
     make: "LEXUS",
     model: "TX 550h+",
-    modelAliases: ["TX 550h Plus", "TX 550h"],
+    modelAliases: ["TX 550h Plus", "TX 550h", "TX PLUG-IN HYBRID ELECTRIC VEHICLE", "TX Plug-In Hybrid"],
     modelYears: years,
     packVariant: "PHEV",
     range,
@@ -2575,6 +2603,22 @@ R.push({
     ),
     ...withAlt(
       lr({
+        id: "range-rover-sport-p550e-2024",
+        model: "Range Rover Sport Plug-In Hybrid",
+        modelAliases: ["Range Rover Sport PHEV", "Range Rover Sport P550e", "Range Rover Sport P460e"],
+        modelYears: [2024, 2024],
+        charging: LR_L460_CHARGING,
+        abstains: {
+          epaRangeMi: "fueleconomy holds no 2024 record; neighbouring years rate 51 and 53 miles",
+          packUsableKwh: "Land Rover has not published this variant's battery capacity",
+          batteryWarranty: LR_WARRANTY_ABSTAIN,
+          heatPump: HP_ABSTAIN,
+        },
+      }),
+      { model: "Range Rover Sport", trim: ["P550e", "P460e", "P440e", "PHEV", "Plug-In Hybrid"] }
+    ),
+    ...withAlt(
+      lr({
         // EPA's page states 0-53 miles for the 2025 P550 record; the REST
         // API's rangeA field says 21 on the same record whose own
         // city/highway electric ranges read 50.9/55.9 — an internal
@@ -2925,21 +2969,48 @@ R.push({
     charging: { portStandard: J1772_EST, dcFastCharging: f<"none">("none", "mfr", "high", undefined, IONIQ_SPECS) },
     abstains: { batteryWarranty: HYUNDAI_LEGACY_WARRANTY_ABSTAIN, heatPump: HP_ABSTAIN },
   });
+  // The per-MY warranty handbooks (read as page images — Hyundai's 2020/21
+  // PDFs use a shifted font that breaks text extraction) settle the Ioniq
+  // term at 10yr/100,000 for the Plug-in Hybrid Battery, MY2019–2022; the
+  // MY2018 book is archived nowhere, so that year keeps its abstention.
+  // Hyundai's famous "Lifetime" term attaches to the HYBRID battery in its
+  // own handbook text — never the plug-in's.
+  const HYUNDAI_HANDBOOK_20 = "https://www.hyundaiusa.com/content/dam/hyundai/us/com/pdf/assurance/2020_Owners_Handbook_Warranty_r2.pdf";
+  const HYUNDAI_HANDBOOK_21 = "https://www.hyundaiusa.com/content/dam/hyundai/us/com/pdf/assurance/2021_Owners_Handbook_Warranty.pdf";
+  const IONIQ_WARRANTY = (src: string) => ({
+    batteryYears: f(10, "mfr", "high", "10 years/150,000 miles in CARB states", src),
+    batteryMiles: f(100_000, "mfr", "high", undefined, src),
+  });
   R.push(
-    ioniq("ioniq-phev-2018-20", [2018, 2020], {
-      epaRangeMi: f(29, "mfr", "high", "Electric-only EPA range. Identical rating 2018–2020", epa(39768)),
+    ioniq("ioniq-phev-2018", [2018, 2018], {
+      epaRangeMi: f(29, "mfr", "high", "Electric-only EPA range", epa(39768)),
       epaRangeTotalMi: f(630, "mfr", "high", undefined, epa(39768)),
       mpgeElectric: f(119, "mfr", "high", undefined, epa(39768)),
       mpgeCombined: f(76, "mfr", "high", undefined, epa(39768)),
       mpgGasoline: f(52, "mfr", "high", undefined, epa(39768)),
     }),
-    ioniq("ioniq-phev-2021-22", [2021, 2022], {
-      epaRangeMi: f(29, "mfr", "high", "Electric-only EPA range. Identical rating 2021–2022", epa(43725)),
-      epaRangeTotalMi: f(620, "mfr", "high", undefined, epa(43725)),
-      mpgeElectric: f(119, "mfr", "high", undefined, epa(43725)),
-      mpgeCombined: f(76, "mfr", "high", undefined, epa(43725)),
-      mpgGasoline: f(52, "mfr", "high", undefined, epa(43725)),
-    })
+    {
+      ...ioniq("ioniq-phev-2019-20", [2019, 2020], {
+        epaRangeMi: f(29, "mfr", "high", "Electric-only EPA range. Identical rating 2019–2020", epa(40810)),
+        epaRangeTotalMi: f(630, "mfr", "high", undefined, epa(40810)),
+        mpgeElectric: f(119, "mfr", "high", undefined, epa(40810)),
+        mpgeCombined: f(76, "mfr", "high", undefined, epa(40810)),
+        mpgGasoline: f(52, "mfr", "high", undefined, epa(40810)),
+      }),
+      warranty: IONIQ_WARRANTY(HYUNDAI_HANDBOOK_20),
+      abstains: { heatPump: HP_ABSTAIN },
+    },
+    {
+      ...ioniq("ioniq-phev-2021-22", [2021, 2022], {
+        epaRangeMi: f(29, "mfr", "high", "Electric-only EPA range. Identical rating 2021–2022", epa(43725)),
+        epaRangeTotalMi: f(620, "mfr", "high", undefined, epa(43725)),
+        mpgeElectric: f(119, "mfr", "high", undefined, epa(43725)),
+        mpgeCombined: f(76, "mfr", "high", undefined, epa(43725)),
+        mpgGasoline: f(52, "mfr", "high", undefined, epa(43725)),
+      }),
+      warranty: IONIQ_WARRANTY(HYUNDAI_HANDBOOK_21),
+      abstains: { heatPump: HP_ABSTAIN },
+    }
   );
   const sonata = (id: string, years: [number, number], range: EnrichmentRow["range"]): EnrichmentRow[] =>
     withAlt(
@@ -3016,6 +3087,10 @@ R.push({
   );
 
   const X3_30E_PR = "https://www.press.bmwgroup.com/usa/article/detail/T0302314EN_US/the-2020-bmw-x3-xdrive30e-phev-sports-activity-vehicle?language=en_US";
+  const BMW_X3_WARRANTY_BOOK = "https://www.bmwusa.com/content/dam/bmw/marketUS/common/warranty-books/2020/5A0BC06_20MY_BMW_X1_X2_X3_X4_X5_X6_Warranty_FINAL_Print_withCover_043020.pdf";
+  const BMW_I8_WARRANTY_2017 = "https://www.bmwusa.com/content/dam/bmw/marketUS/common/warranty-books/2017/2017-BMW-i3-i8-NewVehicle-Limited-Warranty%20(BF08-2149193).pdf";
+  const BMW_I8_WARRANTY_2019 = "https://www.bmwusa.com/content/dam/bmw/marketUS/common/warranty-books/2019/2019-BMW-i8-NewVehicle-Limited-Warranty.pdf";
+  const BMW_I8_WARRANTY_2020 = "https://www.bmwusa.com/content/dam/bmw/marketUS/common/warranty-books/2020/2469760_20MY_BMW_i3_i8_Warranty_FINAL_Print_withCover_050420.pdf";
   const I8_2019_PR = "https://www.press.bmwgroup.com/usa/article/detail/T0276421EN_US/the-first-ever-2019-bmw-i8-roadster-and-new-2019-bmw-i8-coupe?language=en_US";
   const BMW_LEGACY_ABSTAINS = {
     batteryWarranty: "BMW's own pages state both 8-year/80,000 and 8-year/100,000 for plug-in hybrids",
@@ -3042,22 +3117,29 @@ R.push({
           mpgGasoline: f(24, "mfr", "high", undefined, epa(42524)),
         },
         charging: { acOnboardKw: f(3.7, "mfr", "high", undefined, X3_30E_PR), portStandard: J1772_EST, dcFastCharging: NO_DCFC_EST },
-        abstains: BMW_LEGACY_ABSTAINS,
+        // BMW's own MY2020 and MY2021 warranty books name the X3 xDrive30e's
+        // high-voltage battery term explicitly — the general BMW-PHEV
+        // 80k-vs-100k ambiguity does not apply here.
+        warranty: {
+          batteryYears: f(8, "mfr", "high", "15 years/150,000 miles TZEV coverage in CARB states", BMW_X3_WARRANTY_BOOK),
+          batteryMiles: f(80_000, "mfr", "high", undefined, BMW_X3_WARRANTY_BOOK),
+        },
+        abstains: { heatPump: HP_ABSTAIN },
       },
       { model: "X3", trim: ["xDrive30e", "30e"] }
     ),
     {
-      id: "i8-2014-17",
+      id: "i8-2014",
       make: "BMW",
       model: "i8",
-      modelYears: [2014, 2017],
+      modelYears: [2014, 2014],
       packVariant: "PHEV",
       battery: {
         packGrossKwh: f(7.1, "mfr", "high", undefined, I8_2019_PR),
         packUsableKwh: f(5, "mfr", "high", undefined, I8_2019_PR),
       },
       range: {
-        epaRangeMi: f(15, "mfr", "high", "Electric-only EPA range. Identical rating 2014–2017", epa(35599)),
+        epaRangeMi: f(15, "mfr", "high", "Electric-only EPA range", epa(35599)),
         epaRangeTotalMi: f(330, "mfr", "high", undefined, epa(35599)),
         mpgeElectric: f(76, "mfr", "high", undefined, epa(35599)),
         mpgeCombined: f(37, "mfr", "high", undefined, epa(35599)),
@@ -3067,29 +3149,91 @@ R.push({
       abstains: BMW_LEGACY_ABSTAINS,
     },
     {
-      id: "i8-2019-20",
+      // BMW's own i8 warranty books: 8yr/100,000 through MY2019, then
+      // 8yr/80,000 for MY2020 — a real change, so the years split. The
+      // MY2014 book was not found and that row keeps the abstention.
+      id: "i8-2015-17",
+      make: "BMW",
+      model: "i8",
+      modelYears: [2015, 2017],
+      packVariant: "PHEV",
+      battery: {
+        packGrossKwh: f(7.1, "mfr", "high", undefined, I8_2019_PR),
+        packUsableKwh: f(5, "mfr", "high", undefined, I8_2019_PR),
+      },
+      range: {
+        epaRangeMi: f(15, "mfr", "high", "Electric-only EPA range. Identical rating 2015–2017", epa(37223)),
+        epaRangeTotalMi: f(330, "mfr", "high", undefined, epa(37223)),
+        mpgeElectric: f(76, "mfr", "high", undefined, epa(37223)),
+        mpgeCombined: f(37, "mfr", "high", undefined, epa(37223)),
+        mpgGasoline: f(28, "mfr", "high", undefined, epa(37223)),
+      },
+      charging: { portStandard: J1772_EST, dcFastCharging: NO_DCFC_EST },
+      warranty: {
+        batteryYears: f(8, "mfr", "high", undefined, BMW_I8_WARRANTY_2017),
+        batteryMiles: f(100_000, "mfr", "high", undefined, BMW_I8_WARRANTY_2017),
+      },
+      abstains: { heatPump: HP_ABSTAIN },
+    },
+    {
+      id: "i8-2019",
       make: "BMW",
       model: "i8",
       modelAliases: ["i8 Roadster", "i8 Coupe"],
-      modelYears: [2019, 2020],
+      modelYears: [2019, 2019],
       packVariant: "PHEV",
       battery: {
         packGrossKwh: f(11.6, "mfr", "high", undefined, I8_2019_PR),
         packUsableKwh: f(9.4, "mfr", "high", undefined, I8_2019_PR),
       },
       range: {
-        epaRangeMi: f(18, "mfr", "high", "Electric-only EPA range. Identical rating 2019–2020", epa(40079)),
+        epaRangeMi: f(18, "mfr", "high", "Electric-only EPA range", epa(40079)),
         epaRangeTotalMi: f(320, "mfr", "high", undefined, epa(40079)),
         mpgeElectric: f(69, "mfr", "high", undefined, epa(40079)),
         mpgeCombined: f(36, "mfr", "high", undefined, epa(40079)),
         mpgGasoline: f(27, "mfr", "high", undefined, epa(40079)),
       },
       charging: { portStandard: J1772_EST, dcFastCharging: NO_DCFC_EST },
-      abstains: BMW_LEGACY_ABSTAINS,
+      warranty: {
+        batteryYears: f(8, "mfr", "high", undefined, BMW_I8_WARRANTY_2019),
+        batteryMiles: f(100_000, "mfr", "high", undefined, BMW_I8_WARRANTY_2019),
+      },
+      abstains: { heatPump: HP_ABSTAIN },
+    },
+    {
+      id: "i8-2020",
+      make: "BMW",
+      model: "i8",
+      modelAliases: ["i8 Roadster", "i8 Coupe"],
+      modelYears: [2020, 2020],
+      packVariant: "PHEV",
+      battery: {
+        packGrossKwh: f(11.6, "mfr", "high", undefined, I8_2019_PR),
+        packUsableKwh: f(9.4, "mfr", "high", undefined, I8_2019_PR),
+      },
+      range: {
+        epaRangeMi: f(18, "mfr", "high", "Electric-only EPA range", epa(42369)),
+        epaRangeTotalMi: f(320, "mfr", "high", undefined, epa(42369)),
+        mpgeElectric: f(69, "mfr", "high", undefined, epa(42369)),
+        mpgeCombined: f(36, "mfr", "high", undefined, epa(42369)),
+        mpgGasoline: f(27, "mfr", "high", undefined, epa(42369)),
+      },
+      charging: { portStandard: J1772_EST, dcFastCharging: NO_DCFC_EST },
+      warranty: {
+        batteryYears: f(8, "mfr", "high", "Capacity loss separately covered to 8 years/100,000 miles", BMW_I8_WARRANTY_2020),
+        batteryMiles: f(80_000, "mfr", "high", undefined, BMW_I8_WARRANTY_2020),
+      },
+      abstains: { heatPump: HP_ABSTAIN },
     }
   );
 
   const MINI_2019_PR = "https://web.archive.org/web/20251106002645/https://www.miniusanews.com/newsrelease.do?mid=1&id=954";
+  const MINI_WARRANTY_BOOK_18 = "https://www.miniusa.com/content/dam/mini/PDF/warranties/2018_MINI_New_Passenger_Car_Limited_Warranty.pdf";
+  const MINI_WARRANTY_BOOK_20 = "https://www.miniusa.com/content/dam/mini/PDF/warranties/2020_MINI_Warranty.pdf";
+  const MINI_WARRANTY = (src: string) => ({
+    batteryYears: f(8, "mfr", "high", undefined, src),
+    batteryMiles: f(80_000, "mfr", "high", undefined, src),
+  });
   const MINI_2021_PR = "https://www.press.bmwgroup.com/usa/article/detail/T0309374EN_US/model-year-2021-mini-lineup-pricing-and-equipment-updates?language=en_US";
   const MINI_ALIASES = ["Cooper S E Countryman ALL4", "Cooper SE Countryman All4", "Countryman Plug-In Hybrid"];
   R.push(
@@ -3109,7 +3253,8 @@ R.push({
         mpgGasoline: f(27, "mfr", "high", undefined, epa(38863)),
       },
       charging: { portStandard: J1772_EST, dcFastCharging: NO_DCFC_EST },
-      abstains: BMW_LEGACY_ABSTAINS,
+      warranty: MINI_WARRANTY(MINI_WARRANTY_BOOK_18),
+      abstains: { heatPump: HP_ABSTAIN },
     },
     {
       id: "mini-countryman-phev-2020-23",
@@ -3127,7 +3272,8 @@ R.push({
         mpgGasoline: f(29, "mfr", "high", undefined, epa(42371)),
       },
       charging: { portStandard: J1772_EST, dcFastCharging: NO_DCFC_EST },
-      abstains: BMW_LEGACY_ABSTAINS,
+      warranty: MINI_WARRANTY(MINI_WARRANTY_BOOK_20),
+      abstains: { heatPump: HP_ABSTAIN },
     }
   );
 

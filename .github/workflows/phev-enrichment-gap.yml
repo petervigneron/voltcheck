@@ -84,7 +84,7 @@ jobs:
           # TFSI e, and single-listing spellings.
           rc=0
           node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs \
-            scripts/phev-enrichment-gap.mjs --max-groups 38 --top 40 || rc=$?
+            scripts/phev-enrichment-gap.mjs --max-groups 37 --top 40 || rc=$?
           if [ "$rc" -eq 10 ]; then
             echo "::error::PHEV enrichment gap check failed — a plug-in nameplate went live with no enrichment row, a row stopped matching, or a plug-in is showing a battery-electric car's facts. See the ranked list above."
             exit 1
