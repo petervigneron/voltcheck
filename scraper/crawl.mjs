@@ -861,6 +861,8 @@ async function crawlDealer(domain) {
     if (mcsEntries.length) {
       const nextMcs = motorcarNextPageUrl(res.body, res.finalUrl);
       if (nextMcs && !visited.has(nextMcs)) queue.push(nextMcs);
+    }
+
     // OneAudi has no next page — the SSR renders offset 0 and nothing in the
     // URL moves it. The second wave is instead a per-model-family request
     // built from the facet counts the page just published, which is the only

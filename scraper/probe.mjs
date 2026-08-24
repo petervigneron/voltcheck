@@ -107,8 +107,7 @@ import { isOneAudi, oneAudiVehicles, ONEAUDI_SRP_PATHS } from "./lib/platforms/o
 import { isWayneReaves, countWayneReaves } from "./lib/platforms/waynereaves.mjs";
 import { discoverSitemapUrls, rank, dedupe, SRP_PATHS } from "./lib/sitemap.mjs";
 import { spaSignals, countVinUrls } from "./lib/spa-signals.mjs";
-import { failureKind, apiHostsFrom, seededShuffle, emptyOrTransient, blindEmpty } from "./lib/probe-verdict.mjs";
-import { failureKind, apiHostsFrom, seededShuffle, emptyOrTransient, isBotChallenge } from "./lib/probe-verdict.mjs";
+import { failureKind, apiHostsFrom, seededShuffle, emptyOrTransient, blindEmpty, isBotChallenge } from "./lib/probe-verdict.mjs";
 
 function flag(name, fallback) {
   const i = process.argv.indexOf(name);
