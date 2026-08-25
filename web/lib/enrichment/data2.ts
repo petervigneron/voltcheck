@@ -20,6 +20,24 @@ function f<T>(
 // from, rather than the site's front door (same convention as data3/data4.ts).
 const epa = (id: number) => `https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=${id}`;
 
+// Shared by all six Nissan Ariya rows. The evidence and the control tests are
+// written out above those rows; this is the sentence a shopper's coverage
+// report prints.
+const ARIYA_HP_ABSTAIN =
+  "No US Nissan document states it: twelve were checked (2023-25 manuals, brochures, press kits and quick reference guides) and the press-kit tables are granular enough to list the battery heater but carry no heat-pump row; Nissan UK states it plainly for the European Ariya, which is a different specification, and that is what the aggregator claims trace to";
+
+// Every 2018-2025 Leaf trim that HAS the feature Nissan calls a "Hybrid heater
+// system" abstains on heatPump, because "does this trim have one" and "is that
+// thing a heat pump" are two different questions and Nissan only answers the
+// first. `stated` carries the answer Nissan does give — which trims, which
+// years, standard or packaged, and the brochure page it was read from — so the
+// abstention still tells a shopper everything Nissan actually published.
+//
+// The trims that DON'T have it (S, S PLUS) do not abstain; see the comment on
+// those rows.
+const leafHybridHeaterAbstain = (stated: string) =>
+  `${stated}. Whether that system is a heat pump is not stated: no 2018-2025 US Nissan document equates the two, and the one place Nissan glosses the term — "Hybrid heater system (heat pump)", in the 2026 LEAF press kit — describes the next-generation car, which Nissan does not say this hardware shares`;
+
 export const RESEARCH_ROWS: EnrichmentRow[] = [
   {
     id: "id4-2021-pro-rwd",
@@ -527,6 +545,24 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     ],
   },
 
+  // ---------------------------------------------------------------------
+  // leaf-s and leaf-s-plus keep heatPump "none" while every other 2018-2025
+  // Leaf trim abstains. DO NOT "fix" this for consistency — the asymmetry is
+  // the point, and it turns on which claims depend on an unstated equation.
+  //
+  // The other trims are ambiguous because Nissan names a "Hybrid heater
+  // system" and never says whether that system is a heat pump, so "does this
+  // trim have a heat pump" cannot be answered from what Nissan published.
+  //
+  // S and S PLUS are not ambiguous. Nissan's brochure grids leave their cells
+  // blank in all eight model years, so these trims have no Hybrid heater
+  // system at all — not standard, not packaged, not available. Whichever way
+  // the equation resolves, a car with no hybrid heater has no heat pump, so
+  // "none" holds under both readings and does not rest on the inference the
+  // sibling rows abstain over. Blank on every grid, read at the cell level
+  // from rendered page images: 2018 p.8, 2019-2023 p.10, 2024-2025 p.8.
+  // ---------------------------------------------------------------------
+
   {
     id: "leaf-s",
     make: "NISSAN",
@@ -544,7 +580,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       superchargerAccess: f("none", "mfr", "high", "No CHAdeMO→NACS adapter exists"),
       dcPeakKw: f(50, "agg", "medium"),
     },
-    thermal: { heatPump: f("none", "agg", "medium", "Base S uses a resistive heater; the hybrid-heater (heat pump) was not offered on S") },
+    thermal: { heatPump: f("none", "mfr", "medium", "Nissan's Hybrid heater system was never offered on S") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
@@ -560,24 +596,103 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     ],
   },
 
+  // ---------------------------------------------------------------------
+  // Leaf SV and SV PLUS are SPLIT by year on one fact: whether the Hybrid
+  // heater system was standard or a package option. It was a package option
+  // on the SV trims through 2020 and standard from 2021, and a single row
+  // spanning both eras published "standard" for years where a buyer had to
+  // tick a box. Read off Nissan's own brochure grids at the cell level, from
+  // rendered page images rather than extracted text — these grids float each
+  // mark a line above its row label, so a flattened read slides marks onto
+  // the wrong feature:
+  //
+  //   2018  SV = A2 (SV All-Weather Package)          SL = standard
+  //   2019  SV, SV PLUS = A2 (SV/SV PLUS All-Weather) SL, SL PLUS = standard
+  //   2020  SV, SV PLUS = A (SV/SV PLUS All-Weather)  SL PLUS = standard
+  //   2021  SV, SV PLUS, SL PLUS = standard  (no All-Weather Package exists
+  //         in the 2021 legend at all — that is the change)
+  //   2022  same as 2021
+  //
+  // The base S and S PLUS are blank in every one of those years.
+  //
+  // What these rows do NOT claim: that the Hybrid heater system is a heat
+  // pump. No 2018-2025 Nissan document says what that system contains, which
+  // is why every trim that HAS it abstains on heatPump rather than reporting
+  // a value. (Nissan does gloss it — "Hybrid heater system (heat pump)" — in
+  // the 2026 LEAF press kit, for the third-generation car. Nissan does not
+  // say the gloss reaches back, and reading it backward onto 2018-2025
+  // hardware would be our inference, not Nissan's statement.) The
+  // year-and-trim split is kept anyway, and is not wasted: it is what lets
+  // each abstention state which trims and years Nissan gives the Hybrid
+  // heater system to, and on what terms. See
+  // web/content/facts/leaf-heat-pump.md, which reaches the same conclusion
+  // from the same documents.
+  // ---------------------------------------------------------------------
+
   {
-    id: "leaf-sv",
+    id: "leaf-sv-2018",
     make: "NISSAN",
     model: "Leaf",
     // Same pack as its trim siblings; packVariant groups them for peer
     // pooling (lib/listings/enrich.ts packIdentity) - the value restates
     // this row's own battery fact.
     packVariant: "40 kWh",
-    modelYears: [2018, 2022],
+    modelYears: [2018, 2020],
     trim: "SV",
     battery: { packGrossKwh: f(40, "mfr", "medium", "40 kWh gross"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(149, "mfr", "high", "2018: 151; 2019: 150; 2020–22: 149, EPA", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(149, "mfr", "high", "2018: 151; 2019: 150; 2020: 149, EPA", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CHAdeMO", "mfr", "high", "AC charging is standard J1772"),
       superchargerAccess: f("none", "mfr", "high", "No CHAdeMO→NACS adapter exists"),
       dcPeakKw: f(50, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "Hybrid heater (heat pump + PTC) on SV/SL trims") },
+    abstains: {
+      heatPump: leafHybridHeaterAbstain(
+        "Nissan's brochure grids put the Hybrid heater system in the SV All-Weather Package on the 2018-2020 SV — an option a buyer had to tick, not standard equipment (2018 brochure PDF p.8, 2019-2020 p.10)"
+      ),
+    },
+    warranty: {
+      batteryYears: f(8, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      batteryTransfers: f(true, "mfr", "high", "“Original and subsequent owner(s)”, voided only if exported within 6 months of first sale"),
+      extendedCoverage: f("Capacity warranty: below 9 of 12 gauge bars (Nissan states no percentage)", "mfr", "high", "2018+ 62/40 kWh: 8yr/100k; 2014-era: 5yr/60k"),
+    },
+    buyerNotes: [
+      {
+        headline: "Air-cooled battery; CHAdeMO fast-charge port",
+        body: "The Leaf's battery is passively air-cooled (no liquid thermal management). Repeated DC fast-charge sessions trigger thermal throttling. The DC port is CHAdeMO, which no US network is expanding, and no CHAdeMO-to-NACS adapter exists. The in-car 12-bar gauge shows battery capacity; the capacity warranty triggers below 9 bars. Recalls 24V-700 (2019–20) and 25V-655 (2021–22): quick-charge fire risk, with owners instructed not to DC fast-charge until the software remedy is applied.",
+        severity: "warning",
+      },
+      {
+        headline: "Check the window sticker for the All-Weather Package",
+        body: "On a 2018–2020 SV, Nissan's brochure marks the Hybrid heater system as part of the SV All-Weather Package, not as standard equipment. Two otherwise identical SVs from these years can differ on it, and a dealer feed will not say which is which. From 2021 Nissan made it standard on SV. Nissan does not state anywhere what the Hybrid heater system contains.",
+        severity: "info",
+      },
+    ],
+  },
+
+  {
+    id: "leaf-sv-2021",
+    make: "NISSAN",
+    model: "Leaf",
+    // Same pack as its trim siblings; packVariant groups them for peer
+    // pooling (lib/listings/enrich.ts packIdentity) - the value restates
+    // this row's own battery fact.
+    packVariant: "40 kWh",
+    modelYears: [2021, 2022],
+    trim: "SV",
+    battery: { packGrossKwh: f(40, "mfr", "medium", "40 kWh gross"), chemistry: f("NMC", "agg", "medium") },
+    range: { epaRangeMi: f(149, "mfr", "high", "EPA figure, both years", "https://www.fueleconomy.gov") },
+    charging: {
+      portStandard: f("CHAdeMO", "mfr", "high", "AC charging is standard J1772"),
+      superchargerAccess: f("none", "mfr", "high", "No CHAdeMO→NACS adapter exists"),
+      dcPeakKw: f(50, "agg", "medium"),
+    },
+    abstains: {
+      heatPump: leafHybridHeaterAbstain(
+        "Nissan's brochure grids mark the Hybrid heater system standard on the 2021-2022 SV, the years Nissan stopped gating it behind the All-Weather Package (brochure PDF p.10)"
+      ),
+    },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
@@ -610,7 +725,11 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       superchargerAccess: f("none", "mfr", "high", "No CHAdeMO→NACS adapter exists"),
       dcPeakKw: f(50, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "Hybrid heater (heat pump + PTC) on SV/SL trims") },
+    abstains: {
+      heatPump: leafHybridHeaterAbstain(
+        "Nissan's brochure grids mark the Hybrid heater system standard on the 2018-2019 SL (2018 brochure PDF p.8, 2019 p.10)"
+      ),
+    },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
@@ -643,7 +762,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       superchargerAccess: f("none", "mfr", "high", "No CHAdeMO→NACS adapter exists"),
       dcPeakKw: f(100, "agg", "medium"),
     },
-    thermal: { heatPump: f("none", "agg", "medium", "Base S Plus uses a resistive heater") },
+    thermal: { heatPump: f("none", "mfr", "medium", "Nissan's Hybrid heater system was never offered on S PLUS") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
@@ -660,23 +779,69 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
   },
 
   {
-    id: "leaf-sv-plus",
+    id: "leaf-sv-plus-2019",
     make: "NISSAN",
     model: "Leaf",
     // Same pack as its trim siblings; packVariant groups them for peer
     // pooling (lib/listings/enrich.ts packIdentity) - the value restates
     // this row's own battery fact.
     packVariant: "62 kWh e+",
-    modelYears: [2019, 2025],
+    modelYears: [2019, 2020],
     trim: "SV Plus",
-    battery: { packGrossKwh: f(62, "est", "medium", "62 kWh gross (2023–25: ~60)"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(215, "mfr", "high", "2019–22: 215; 2023–25: 212, EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(190, "tested", "medium", "70-mph test of the same-pack 2020 SL Plus (InsideEVs): 190 mi") },
+    battery: { packGrossKwh: f(62, "mfr", "medium", "62 kWh gross"), chemistry: f("NMC", "agg", "medium") },
+    range: { epaRangeMi: f(215, "mfr", "high", "EPA figure, both years", "https://www.fueleconomy.gov"), testedRangeMi: f(190, "tested", "medium", "70-mph test of the same-pack 2020 SL Plus: 190 mi") },
     charging: {
       portStandard: f("CHAdeMO", "mfr", "high", "AC charging is standard J1772"),
       superchargerAccess: f("none", "mfr", "high", "No CHAdeMO→NACS adapter exists"),
       dcPeakKw: f(100, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "Hybrid heater on SV/SL Plus") },
+    abstains: {
+      heatPump: leafHybridHeaterAbstain(
+        "Nissan's brochure grids put the Hybrid heater system in the SV/SV PLUS All-Weather Package on the 2019-2020 SV PLUS — an option a buyer had to tick, not standard equipment (brochure PDF p.10)"
+      ),
+    },
+    warranty: {
+      batteryYears: f(8, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      batteryTransfers: f(true, "mfr", "high", "“Original and subsequent owner(s)”, voided only if exported within 6 months of first sale"),
+      extendedCoverage: f("Capacity warranty: below 9 of 12 gauge bars (Nissan states no percentage)", "mfr", "high", "2018+ 62/40 kWh: 8yr/100k; 2014-era: 5yr/60k"),
+    },
+    buyerNotes: [
+      {
+        headline: "Air-cooled battery; CHAdeMO fast-charge port",
+        body: "The Leaf's battery is passively air-cooled (no liquid thermal management). Repeated DC fast-charge sessions trigger thermal throttling. The DC port is CHAdeMO, which no US network is expanding, and no CHAdeMO-to-NACS adapter exists. The in-car 12-bar gauge shows battery capacity; the capacity warranty triggers below 9 bars. Recalls 24V-700 (2019–20) and 25V-655 (2021–22): quick-charge fire risk, with owners instructed not to DC fast-charge until the software remedy is applied.",
+        severity: "warning",
+      },
+      {
+        headline: "Check the window sticker for the All-Weather Package",
+        body: "On a 2019–2020 SV PLUS, Nissan's brochure marks the Hybrid heater system as part of the SV/SV PLUS All-Weather Package, not as standard equipment. Two otherwise identical cars from these years can differ on it, and a dealer feed will not say which is which. From 2021 Nissan made it standard on SV PLUS. Nissan does not state anywhere what the Hybrid heater system contains.",
+        severity: "info",
+      },
+    ],
+  },
+
+  {
+    id: "leaf-sv-plus-2021",
+    make: "NISSAN",
+    model: "Leaf",
+    // Same pack as its trim siblings; packVariant groups them for peer
+    // pooling (lib/listings/enrich.ts packIdentity) - the value restates
+    // this row's own battery fact.
+    packVariant: "62 kWh e+",
+    modelYears: [2021, 2025],
+    trim: "SV Plus",
+    battery: { packGrossKwh: f(62, "est", "medium", "62 kWh gross (2023–25: ~60)"), chemistry: f("NMC", "agg", "medium") },
+    range: { epaRangeMi: f(215, "mfr", "high", "2021–22: 215; 2023–25: 212, EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(190, "tested", "medium", "70-mph test of the same-pack 2020 SL Plus: 190 mi") },
+    charging: {
+      portStandard: f("CHAdeMO", "mfr", "high", "AC charging is standard J1772"),
+      superchargerAccess: f("none", "mfr", "high", "No CHAdeMO→NACS adapter exists"),
+      dcPeakKw: f(100, "agg", "medium"),
+    },
+    abstains: {
+      heatPump: leafHybridHeaterAbstain(
+        "Nissan's brochure grids mark the Hybrid heater system standard on the 2021-2025 SV PLUS, the years Nissan stopped gating it behind the All-Weather Package (2021-2023 brochure PDF p.10, 2024-2025 p.8)"
+      ),
+    },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
@@ -709,7 +874,11 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       superchargerAccess: f("none", "mfr", "high", "No CHAdeMO→NACS adapter exists"),
       dcPeakKw: f(100, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "Hybrid heater on SV/SL Plus") },
+    abstains: {
+      heatPump: leafHybridHeaterAbstain(
+        "Nissan's brochure grids mark the Hybrid heater system standard on the 2019-2022 SL PLUS (brochure PDF p.10)"
+      ),
+    },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
@@ -754,7 +923,42 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
   // Platinum+ is EPA-rated 267 on 19-inch wheels and 257 on 20s. Nissan's own
   // product page captions the car "with available 20-inch wheels", so 19s are
   // standard and 267 is the standard configuration's figure.
+  //
+  // Heat pump: every one of these six rows carried
+  // f("standard","agg","medium") until 2026-08-25, and it could not be
+  // supported for a US car. All six now abstain. See ARIYA_HP_ABSTAIN below
+  // for the reason and the control tests behind it; the short version is that
+  // the aggregators are describing the European Ariya, which is a different
+  // specification, and no US Nissan document says it at all.
   // ---------------------------------------------------------------------
+
+  // Twelve US Nissan documents for the Ariya were opened and searched on
+  // 2026-08-25 — the 2023, 2024 and 2025 owner's manuals, brochures,
+  // press-kit specification sets and Quick Reference Guides — and none of
+  // them states heat-pump hardware. That silence is load-bearing rather than
+  // incidental, because the same documents are granular enough to say it:
+  // the press kits run 519, 532 and 527 specification rows and each carries a
+  // "Battery heater" row marked standard, and the owner's manual enumerates
+  // the car's twelve high-voltage components by name. Controls confirm the
+  // searches were live ("PTC heater" is found in all three manuals, "Battery
+  // heater" in all three brochures) and that the term is in Nissan USA's own
+  // vocabulary when a Nissan has one (the 2026 LEAF press release says
+  // "energy-efficient heat pump", and the 2026 LEAF press kit heads a
+  // specification row "Hybrid heater system (heat pump)").
+  //
+  // Where the aggregators get it: Nissan UK does state it plainly, for the
+  // European car. nissan.co.uk's Ariya price-and-specifications page lists
+  // "Heat pump" as standard equipment in all seven grade-and-battery
+  // configurations it offers, and uk.nissannews.com's Ariya grade release
+  // names it in the Engage grade's feature list. That is a different
+  // specification — the same UK page lists a 22 kW onboard charger where the
+  // US car has 7.2 kW — so it cannot be carried across.
+  //
+  // NOT "none". Silence is not denial: Nissan nowhere says the US Ariya
+  // lacks one, and the manual's high-voltage list puts a PTC heater beside an
+  // air conditioner compressor, which is hardware a heat pump could also be
+  // built around. Abstaining is the honest answer in both directions. Same
+  // case, same treatment, as data6's Volvo rows.
 
   {
     id: "ariya-63-fwd",
@@ -778,7 +982,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       superchargerAccess: f("adapter", "mfr", "high", "Nissan OEM NACS adapter (part T99F9-5MP1B), early 2025"),
       dcPeakKw: f(130, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium") },
+    abstains: { heatPump: ARIYA_HP_ABSTAIN },
     warranty: { batteryYears: f(8, "agg", "medium"), batteryMiles: f(100_000, "agg", "medium") },
     buyerNotes: [
       {
@@ -811,7 +1015,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       superchargerAccess: f("adapter", "mfr", "high", "Nissan OEM NACS adapter (part T99F9-5MP1B), early 2025"),
       dcPeakKw: f(130, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium") },
+    abstains: { heatPump: ARIYA_HP_ABSTAIN },
     warranty: { batteryYears: f(8, "agg", "medium"), batteryMiles: f(100_000, "agg", "medium") },
     buyerNotes: [
       {
@@ -844,7 +1048,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       superchargerAccess: f("adapter", "mfr", "high", "Nissan OEM NACS adapter (part T99F9-5MP1B), early 2025"),
       dcPeakKw: f(130, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium") },
+    abstains: { heatPump: ARIYA_HP_ABSTAIN },
     warranty: { batteryYears: f(8, "agg", "medium"), batteryMiles: f(100_000, "agg", "medium") },
     buyerNotes: [
       {
@@ -877,7 +1081,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       superchargerAccess: f("adapter", "mfr", "high", "Nissan OEM NACS adapter (part T99F9-5MP1B), early 2025"),
       dcPeakKw: f(130, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium") },
+    abstains: { heatPump: ARIYA_HP_ABSTAIN },
     warranty: { batteryYears: f(8, "agg", "medium"), batteryMiles: f(100_000, "agg", "medium") },
     buyerNotes: [
       {
@@ -910,7 +1114,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       superchargerAccess: f("adapter", "mfr", "high", "Nissan OEM NACS adapter (part T99F9-5MP1B), early 2025"),
       dcPeakKw: f(130, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium") },
+    abstains: { heatPump: ARIYA_HP_ABSTAIN },
     warranty: { batteryYears: f(8, "agg", "medium"), batteryMiles: f(100_000, "agg", "medium") },
     buyerNotes: [
       {
@@ -943,7 +1147,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       superchargerAccess: f("adapter", "mfr", "high", "Nissan OEM NACS adapter (part T99F9-5MP1B), early 2025"),
       dcPeakKw: f(130, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium") },
+    abstains: { heatPump: ARIYA_HP_ABSTAIN },
     warranty: { batteryYears: f(8, "agg", "medium"), batteryMiles: f(100_000, "agg", "medium") },
     buyerNotes: [
       {
