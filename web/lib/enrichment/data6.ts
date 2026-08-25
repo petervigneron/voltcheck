@@ -222,11 +222,29 @@ const R: EnrichmentRow[] = [];
   // overlap is substring-tolerant in BOTH directions, so a key of "T8 Plus"
   // ("T8PLUS") swallows a petrol listing that says only "Plus" ("PLUS"). Every
   // grade-bearing key fails that way. Only tokens that name the electrified
-  // powertrain and nothing else survive it: "Recharge", "Plug-in hybrid" and
-  // "eAWD". Checked against Volvo's petrol grade strings in
+  // powertrain and nothing else survive it: "Recharge" and "Plug-in hybrid".
+  // Checked against Volvo's petrol grade strings in
   // tests/phev-bare-model-aliases.test.ts, including the near-miss that makes
   // this look luckier than it is — "PLUS" is not a substring of
   // "PLUGINHYBRID" only because Volvo spells it PLUG, not PLUS.
+  //
+  // "eAWD" WAS in this list and is the reason the paragraph above now says
+  // "and nothing else" so emphatically. It looks like a powertrain token —
+  // Volvo only ever writes it of a T8 — but it normalizes to "EAWD", four
+  // characters, and substring matching runs BOTH ways. "Ultimate AWD" norms
+  // to "ULTIMATEAWD", which ends in EAWD, so a petrol B6 Ultimate matched the
+  // T8 row and took its 33 electric miles and 18.8 kWh pack. So did "Core
+  // AWD", "Ultimate Dark Theme AWD" and a bare "AWD" (contained BY "EAWD"),
+  // and the glued forms "Ultimate/AWD" and "Core-AWD" survive even
+  // cleanTrim's drivetrain-token filter, which only drops "AWD" when it
+  // stands alone as a word. Live listings happen to carry grade-only trims
+  // today, so nothing had reached it — but /vin/ hands the matcher vPIC's raw
+  // trim, uncleaned, and that is where the strings above come from.
+  //
+  // The rule this leaves behind: a guard token must not contain a drivetrain
+  // substring. Dropping "eAWD" costs exactly one live listing (a 2021
+  // "T8 eAWD PHEV Inscription" that names no other electrified token);
+  // "Recharge" catches every other in-year listing that carried it.
   //
   // Deliberately NOT keyed on "T8 …" spellings: the ~90 bare listings whose
   // whole trim is a grade name ("Plus", "Ultimate Bright Theme") or a
@@ -244,7 +262,7 @@ const R: EnrichmentRow[] = [];
   // petrol XC90/XC60 wears it. "T8" is two characters, which means the matcher
   // demands an exact trim of "T8"; that catches the handful of listings whose
   // whole trim is that string and, by the same rule, nothing else.
-  const BARE_T8_TRIMS = ["Recharge", "Plug-in hybrid", "eAWD", "T8"];
+  const BARE_T8_TRIMS = ["Recharge", "Plug-in hybrid", "T8"];
   for (const r of R.filter((x) => /^xc(90|60)-t8-/.test(x.id))) {
     R.push({
       ...r,

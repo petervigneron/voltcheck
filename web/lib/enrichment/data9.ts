@@ -488,7 +488,19 @@ const R: EnrichmentRow[] = [];
   // of them would have the grid and the card disagreeing. A one-character key
   // is exact-match-only under trimStringsOverlap, so it can reach nothing
   // else: the petrol Hornet GT cuts to "GT", never to "R".
-  const HORNET_TRIMS = ["R/T", "R", "R/T Plus", "R/T EAWD", "R/T PHEV"];
+  //
+  // "R/T EAWD" was here and has been removed under the rule the Volvo T8 rows
+  // in data6 were re-cut on: a guard token must not contain a drivetrain
+  // substring. "RTEAWD" contains "AWD", and substring matching runs both
+  // ways, so any decode whose whole trim is "AWD" reached this row. The
+  // exposure was narrower than Volvo's — vPIC answers "GT" for a petrol
+  // Hornet, and cleanTrim deletes a standalone "AWD" on the listing path — but
+  // arguing the instance instead of removing the class is how the Volvo one
+  // shipped. It costs the ~14 listings whose whole trim is "R/T EAWD" their
+  // detail-page facts; they keep their browse card, because the shard cuts
+  // them to "R" like every other Hornet. A `vds` key on ZACPDFCW/ZACPDFDW
+  // would recover them for any car that has a VIN and is the right next step.
+  const HORNET_TRIMS = ["R/T", "R", "R/T Plus", "R/T PHEV"];
   R.push({
     id: "hornet-rt-2024-25",
     make: "DODGE",

@@ -220,6 +220,40 @@ test("a petrol XC90/XC60 wearing the same bare nameplate matches nothing", () =>
   }
 });
 
+test("a drivetrain word in a petrol Volvo's trim cannot reach the T8 rows", () => {
+  // This family is why "eAWD" is no longer a guard token. It reads as a
+  // powertrain word — Volvo writes it only of a T8 — but it normalizes to
+  // "EAWD", four characters, and trimStringsOverlap is substring-tolerant in
+  // BOTH directions. "Ultimate AWD" norms to "ULTIMATEAWD", which ENDS in
+  // EAWD, so a petrol B6 Ultimate matched the T8 row and took its 33 electric
+  // miles. A bare "AWD" is contained BY "EAWD" and matched from the other
+  // side. And the glued spellings get past cleanTrim, whose drivetrain filter
+  // only drops "AWD" when it stands alone as a whole word — so they arrive at
+  // the matcher intact.
+  //
+  // Nothing live had hit this: today's listings carry grade-only trims. But
+  // /vin/ hands the matcher vPIC's raw trim, and these are the shapes it
+  // produces. The rule that replaced the token: a guard token must not
+  // contain a drivetrain substring.
+  for (const trim of ["Core AWD", "Ultimate AWD", "Ultimate Dark Theme AWD", "AWD", "Ultimate/AWD", "Core-AWD"]) {
+    for (const model of ["XC90", "XC60"]) {
+      const r = matchEnrichment(decode({ make: "VOLVO", model, modelYear: 2024, trim }), null);
+      assert.equal(r.exact, undefined, `${model} ${trim} exact`);
+      assert.equal(r.candidates, undefined, `${model} ${trim} candidates`);
+    }
+  }
+  // The same shape on the Dodge Hornet, whose "R/T EAWD" key was cut for the
+  // same reason: "RTEAWD" contains "AWD".
+  for (const trim of ["AWD", "GT AWD", "GT Plus AWD"]) {
+    const r = matchEnrichment(decode({ make: "DODGE", model: "Hornet", modelYear: 2024, trim }), null);
+    assert.equal(r.exact, undefined, `Hornet ${trim} exact`);
+    assert.equal(r.candidates, undefined, `Hornet ${trim} candidates`);
+  }
+  // The tokens that survived still do their job.
+  assert.equal(idOf(decode({ make: "VOLVO", model: "XC90", modelYear: 2024, trim: "Recharge Ultimate" })), "xc90-t8-2023-26-alt");
+  assert.equal(idOf(decode({ make: "DODGE", model: "Hornet", modelYear: 2024, trim: "R/T Plus" })), "hornet-rt-2024-25");
+});
+
 test("the C40 needs no guard, and 'C40 Recharge' is the spelling the feed uses", () => {
   // The C40 was electric-only in the US, so there is no petrol car to poach —
   // and the matcher compares model strings by equality, so the row's full
