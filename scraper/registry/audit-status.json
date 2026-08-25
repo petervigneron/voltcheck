@@ -2,7 +2,7 @@
   "_comment": "Written by scraper/lib/audit-status.mjs. Do not hand-edit — see that file's header.",
   "checks": {
     "feed-shard-health": {
-      "lastRunAt": "2026-08-25T19:14:24.851Z",
+      "lastRunAt": "2026-08-25T19:16:30.707Z",
       "result": "ok",
       "detail": "total 136668; shards 5719/5628/5785/5600/5668/5564/5720/5705/5640/5502/5708/5751/5718/5736/5773/5791/5707/5666/5616/5595/5686/5755/5846/5789; sitemap URLs 136667",
       "expectedEveryHours": 8
