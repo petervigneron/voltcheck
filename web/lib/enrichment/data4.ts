@@ -536,6 +536,45 @@ const FORD_L22_SPECS = "https://www.fromtheroad.ford.com/content/dam/fordmediasi
 const MACHE_SPECS_23 = "https://media.ford.com/content/dam/fordmedia/North%20America/US/2023/05/02/2023%20Mustang%20Mach-E%20Tech%20Specs.pdf";
 const MACHE_SPECS_24 = "https://media.ford.com/content/dam/fordmedia/North%20America/US/2024/04/09/2024%20Mustang%20Mach-E%20Tech%20Specs.pdf";
 const ESCAPE_HP_ABSTAIN = "Ford has published no heat-pump claim for the Escape PHEV in either direction: six owner's manuals name none where the Transit's manual lists heat-pump fuses, but silence is all there is";
+// Tesla packs: Tesla publishes no capacity itself, but its EPA certification
+// filings declare Usable Battery Energy (SAE J1634 MCT) per carline — the
+// maker's own federally-filed figure, superseding the older teardown-consensus
+// estimates. Where EPA labels two carlines with different packs under one
+// name (-E/-I/-B variants a listing can't separate), the LOWER figure is
+// carried at medium with the spread in the note; where the spread is
+// material (2026 Premium RWD: 62.4 vs 80.4) the row abstains. UBE is
+// measured to shutdown, so it runs a little above the owner-visible figure.
+const TESLA_UBE = "EPA-certified usable battery energy (SAE J1634 multi-cycle test)";
+const epaCert = (docid: number) => `https://dis.epa.gov/otaqpub/display_file.jsp?docid=${docid}&flag=1`;
+const tUBE = (kwh: number, docid: number, extra?: string, conf: Fact<number>["confidence"] = "high") =>
+  fb(kwh, "mfr", conf, extra ? `${TESLA_UBE}; ${extra}` : TESLA_UBE, epaCert(docid));
+const tPack = (kwh: number, docid: number, extra?: string, conf: Fact<number>["confidence"] = "high") => ({
+  packUsableKwh: tUBE(kwh, docid, extra, conf),
+});
+// Volvo: nominal AND usable pairs live in its technical-specification
+// documents (293983/321762/321752 and the Sep-2020 XC40 sheet). The MY2024
+// Twin is a Volvo-vs-Volvo conflict: the launch announcement said it kept
+// the 78 kWh pack, both Nov-2023 engineering sheets say 82/79. Heat pump:
+// the support-page template names one for EX30/EX90 and none for XC40/C40
+// (a clean in-template control), and the MY2021 XC40 sold it as a $350
+// option — so EX30/EX90 are standard, MY2021 XC40 optional, and the other
+// XC40/C40 years abstain because fitment is per-car and undocumented.
+const VOLVO_WTY_RECHARGE = "https://www.volvocars.com/images/cs/v3/assets/bltccbab8edae0354cd/blt4f19a914b40839f4/68418a38c0bac2e8c68bb704/WTY572.04.23_Volvo_MY2024_Recharge_PE_Wty_Manual_CC_02-07-23.pdf";
+const VOLVO_WTY_FULLY = "https://www.volvocars.com/images/cs/v3/assets/bltccbab8edae0354cd/blt79f8a67d798c8d78/68befcffe94f786661a1f43a/MY2026_WTY572.06.25_Fully_Elec_Wty_Manual_Rev2_WEB_06-18-25.pdf";
+const volvoWty = (url: string) => ({
+  batteryYears: fb(8, "mfr", "high", undefined, url),
+  batteryMiles: fb(100_000, "mfr", "high", undefined, url),
+  sohFloorPct: fb(70, "mfr", "high", "Replaced free of charge if State of Health falls below 70% within the term", url),
+  batteryTransfers: fb(true, "mfr", "high", undefined, url),
+});
+const VOLVO_HP_ABSTAIN = "Volvo documented a heat pump only as a MY2021 XC40 option, and its support pages name none for the XC40/C40 while the EX30 and EX90 pages do, so per-car fitment cannot be stated";
+const EX30_HP = { heatPump: fb<"standard">("standard", "mfr", "high", "Works primarily as a range extender, heating the cabin and conditioning the battery", "https://www.volvocars.com/us/support/car/ex30/article/47d2c97fd33effd3c0a8cc3718c999b7-e30030ab6001809cc0a8cc5329b8a9a9-8664b2fa77a7e089c0a8296870d1a409/") };
+const EX90_HP = { heatPump: fb<"standard">("standard", "mfr", "high", "Works primarily as a range extender, heating the cabin and conditioning the battery", "https://www.volvocars.com/us/support/car/ex90/article/47d2c97fd33effd3c0a8cc3718c999b7-e30030ab6001809cc0a8cc5329b8a9a9-8664b2fa77a7e089c0a8296870d1a409/") };
+const NOTE_HP_OPTION = { headline: "Heat pump: factory option, on the window sticker", severity: "trap" as const, resolvedBy: "config_resolved" as const };
+const VOLVO_SPECS_23 = "https://media-downloads.volvocars.com/21edb0df-acb9-4519-9b4d-b33e001c8978/293983_1_5.xlsx";
+const VOLVO_SPECS_24_XC40 = "https://media-downloads.volvocars.com/0c21ae4a-05de-46a4-88ad-b33e001ce965/321762_1_5.pdf";
+const VOLVO_SPECS_24_C40 = "https://media-downloads.volvocars.com/f493003e-541b-4ba6-8dc5-b33e001ce7e1/321752_1_5.pdf";
+const PS2_PLUS_PACK = "https://web.archive.org/web/20220520094320/https://www.polestar.com/us/polestar-2/plus-pack/feature-comparison/";
 
   // ── Sixth research tranche (2026-08-21): Chevrolet Volt, Toyota RAV4
   // Prime, Toyota Prius Prime, Chrysler Pacifica Hybrid, Ford Escape PHEV,
@@ -1599,6 +1638,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "m3-2018-lr-rwd", ...T3, model: "Model 3", modelYears: [2018, 2018], vin8: ["A"], trim: "Long Range", 
     packVariant: "Long Range RWD",
+    battery: tPack(78.2, 42148),
     range: { epaRangeMi: f(310, "mfr", "high", "MY2018 Long Range RWD (single-motor VIN code A + Long Range trim), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=39836") },
     charging: TES_CHARGING,
     thermal: M3_NO_HP_EARLY,
@@ -1608,6 +1648,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "m3-2018-mid", ...T3, model: "Model 3", modelYears: [2018, 2018], vin8: ["A"], trim: "Mid Range", 
     packVariant: "Mid Range",
+    battery: tPack(63.8, 46966),
     range: { epaRangeMi: f(260, "mfr", "high", "MY2018 Mid Range (single-motor VIN code A + Mid Range trim), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=41056") },
     charging: TES_CHARGING,
     thermal: M3_NO_HP_EARLY,
@@ -1617,6 +1658,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "m3-2018-dual", ...T3, model: "Model 3", modelYears: [2018, 2018], vin8: ["B"], 
     packVariant: "Dual motor",
+    battery: tPack(79.2, 46275),
     range: { epaRangeMi: f(310, "mfr", "high", "MY2018 dual-motor (VIN code B): Long Range AWD and Performance are both EPA-rated 310", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=40385") },
     charging: TES_CHARGING,
     thermal: M3_NO_HP_EARLY,
@@ -1626,6 +1668,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "m3-2019-srplus", ...T3, model: "Model 3", modelYears: [2019, 2019], vin8: ["A"], trim: "Standard Range Plus", 
     packVariant: "Standard Range Plus",
+    battery: tPack(54.5, 46968),
     range: { epaRangeMi: f(240, "mfr", "high", "MY2019 Standard Range Plus (single-motor VIN code A + trim), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=41416") },
     charging: TES_CHARGING,
     thermal: M3_NO_HP_EARLY,
@@ -1635,6 +1678,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "m3-2019-lr-rwd", ...T3, model: "Model 3", modelYears: [2019, 2019], vin8: ["A"], trim: "Long Range", 
     packVariant: "Long Range RWD",
+    battery: tPack(78.2, 46966),
     range: { epaRangeMi: f(310, "mfr", "high", "MY2019 Long Range RWD (single-motor VIN code A + Long Range trim), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=41189") },
     charging: TES_CHARGING,
     thermal: M3_NO_HP_EARLY,
@@ -1644,6 +1688,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "m3-2019-mid", ...T3, model: "Model 3", modelYears: [2019, 2019], vin8: ["A"], trim: "Mid Range", 
     packVariant: "Mid Range",
+    battery: tPack(63.8, 46966),
     range: { epaRangeMi: f(264, "mfr", "high", "MY2019 Mid Range (single-motor VIN code A + Mid Range trim), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=41188") },
     charging: TES_CHARGING,
     thermal: M3_NO_HP_EARLY,
@@ -1653,6 +1698,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "m3-2019-dual", ...T3, model: "Model 3", modelYears: [2019, 2019], vin8: ["B"], 
     packVariant: "Dual motor",
+    battery: tPack(79.2, 46969),
     range: { epaRangeMi: f(310, "mfr", "high", "MY2019 dual-motor (VIN code B): Long Range AWD and Performance are both EPA-rated 310", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=41190") },
     charging: TES_CHARGING,
     thermal: M3_NO_HP_EARLY,
@@ -1662,6 +1708,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "m3-2020-srplus", ...T3, model: "Model 3", modelYears: [2020, 2020], vin8: ["A"], 
     packVariant: "Standard Range Plus",
+    battery: tPack(52.7, 49217),
     range: { epaRangeMi: f(250, "mfr", "high", "MY2020 single-motor (VIN code A), Standard Range Plus, the only single-motor Model 3 sold in the US that year, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=42278") },
     charging: TES_CHARGING,
     thermal: M3_NO_HP_2020,
@@ -1671,6 +1718,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "m3-2020-lr-awd", ...T3, model: "Model 3", modelYears: [2020, 2020], vin8: ["B"], 
     packVariant: "Long Range AWD",
+    battery: tPack(79.2, 49220, "certified 79.2-79.8 across tests"),
     range: { epaRangeMi: f(322, "mfr", "high", "MY2020 Long Range AWD (dual-motor VIN code B), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=42275") },
     charging: TES_CHARGING,
     thermal: M3_NO_HP_2020,
@@ -1680,6 +1728,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "m3-2020-perf", ...T3, model: "Model 3", modelYears: [2020, 2020], vin8: ["C"], 
     packVariant: "Performance",
+    battery: tPack(77.5, 49220, "certified 77.5-79.5 depending on wheels", "medium"),
     range: { epaRangeMi: f(299, "mfr", "high", "MY2020 Performance (VIN code C) on its standard 20-inch wheels, EPA; EPA also lists 18/19-inch configurations at 322/304", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=42281") },
     charging: TES_CHARGING,
     thermal: M3_NO_HP_2020,
@@ -1689,6 +1738,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "m3-2021-srplus", ...T3, model: "Model 3", modelYears: [2021, 2021], vin8: ["A"], 
     packVariant: "Standard Range Plus",
+    battery: tPack(54.7, 51590),
     range: { epaRangeMi: f(263, "mfr", "high", "MY2021 Standard Range Plus (single-motor VIN code A), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=43821") },
     charging: TES_CHARGING,
     thermal: TES_HP_STD,
@@ -1698,6 +1748,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "m3-2021-lr-awd", ...T3, model: "Model 3", modelYears: [2021, 2021], vin8: ["B"], 
     packVariant: "Long Range AWD",
+    battery: tPack(78.6, 51301),
     range: { epaRangeMi: f(353, "mfr", "high", "MY2021 Long Range AWD (dual-motor VIN code B), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=43401") },
     charging: TES_CHARGING,
     thermal: TES_HP_STD,
@@ -1707,6 +1758,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "m3-2021-perf", ...T3, model: "Model 3", modelYears: [2021, 2021], vin8: ["C"], 
     packVariant: "Performance",
+    battery: tPack(80.8, 51301),
     range: { epaRangeMi: f(315, "mfr", "high", "MY2021 Performance (VIN code C), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=43402") },
     charging: TES_CHARGING,
     thermal: TES_HP_STD,
@@ -1717,7 +1769,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     id: "m3-2022-23-rwd", ...T3, model: "Model 3", modelYears: [2022, 2023], vin8: ["A"], 
     packVariant: "RWD (LFP)",
     range: { epaRangeMi: f(272, "mfr", "high", "MY2022–23 Model 3 RWD (single-motor VIN code A), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=45013") },
-    battery: { chemistry: f("LFP", "agg", "high", "CATL LFP pack in every US 2022–23 Model 3 RWD") },
+    battery: { packUsableKwh: tUBE(62, 54389, "the 60 kWh often quoted is the nominal marketing figure"), chemistry: f("LFP", "agg", "high", "CATL LFP pack in every US 2022–23 Model 3 RWD") },
     charging: TES_CHARGING,
     thermal: TES_HP_STD,
     warranty: TES_W100,
@@ -1726,6 +1778,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "m3-2022-23-lr-awd", ...T3, model: "Model 3", modelYears: [2022, 2023], vin8: ["B"], 
     packVariant: "Long Range AWD",
+    battery: tPack(82.1, 54391),
     range: { epaRangeMi: f(358, "mfr", "high", "MY2022–23 Long Range AWD (dual-motor VIN code B), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=45011") },
     charging: TES_CHARGING,
     thermal: TES_HP_STD,
@@ -1735,6 +1788,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "m3-2022-23-perf", ...T3, model: "Model 3", modelYears: [2022, 2023], vin8: ["C"], 
     packVariant: "Performance",
+    battery: tPack(80.8, 54391),
     range: { epaRangeMi: f(315, "mfr", "high", "MY2022–23 Performance (VIN code C), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=45012") },
     charging: TES_CHARGING,
     thermal: TES_HP_STD,
@@ -1745,7 +1799,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     id: "m3-2024-rwd", ...T3, model: "Model 3", modelYears: [2024, 2024], vin8: ["A"], 
     packVariant: "RWD (LFP)",
     range: { epaRangeMi: f(272, "mfr", "high", "MY2024 Model 3 RWD (single-motor VIN code A, non-Long-Range), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47909") },
-    battery: { chemistry: f("LFP", "agg", "high", "CATL LFP pack in the US Model 3 RWD") },
+    battery: { packUsableKwh: tUBE(61, 59856), chemistry: f("LFP", "agg", "high", "CATL LFP pack in the US Model 3 RWD") },
     charging: TES_CHARGING,
     thermal: TES_HP_STD,
     warranty: TES_W100,
@@ -1754,6 +1808,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "m3-2024-lr-rwd", ...T3, model: "Model 3", modelYears: [2024, 2024], vin8: ["A"], trim: "Long Range", 
     packVariant: "Long Range RWD",
+    battery: tPack(80.4, 60741),
     range: { epaRangeMi: f(363, "mfr", "high", "MY2024 Long Range RWD (single-motor VIN code A + Long Range trim; new variant this year), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48795") },
     charging: TES_CHARGING,
     thermal: TES_HP_STD,
@@ -1763,6 +1818,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "m3-2024-lr-awd", ...T3, model: "Model 3", modelYears: [2024, 2024], vin8: ["B"], 
     packVariant: "Long Range AWD",
+    battery: tPack(78.6, 59857, "two certified carlines, 78.6 and 80.1, share the Long Range AWD label", "medium"),
     range: { epaRangeMi: f(341, "mfr", "high", "MY2024 Long Range AWD (dual-motor VIN code B), EPA lists 341/342 depending on motor variant", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48473") },
     charging: TES_CHARGING,
     thermal: TES_HP_STD,
@@ -1772,6 +1828,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "m3-2024-perf", ...T3, model: "Model 3", modelYears: [2024, 2024], vin8: ["T"], 
     packVariant: "Performance",
+    battery: tPack(80.1, 60490),
     range: { epaRangeMi: f(303, "mfr", "high", "MY2024 Performance, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48796") },
     charging: TES_CHARGING,
     thermal: TES_HP_STD,
@@ -1781,6 +1838,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "m3-2025-lr-rwd", ...T3, model: "Model 3", modelYears: [2025, 2025], vin8: ["A"], 
     packVariant: "Long Range RWD",
+    battery: tPack(78.9, 61694, "certified 78.9-80.4 across carlines", "medium"),
     range: { epaRangeMi: f(363, "mfr", "high", "MY2025 single-motor (VIN code A), Long Range RWD, the only single-motor Model 3 EPA-certified for 2025; a 19-inch-wheel configuration is listed at 346", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48765") },
     charging: TES_CHARGING,
     thermal: TES_HP_STD,
@@ -1790,6 +1848,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "m3-2025-lr-awd", ...T3, model: "Model 3", modelYears: [2025, 2025], vin8: ["B"], 
     packVariant: "Long Range AWD",
+    battery: tPack(78.6, 61696, "certified 78.6-80.1 across carlines", "medium"),
     range: { epaRangeMi: f(346, "mfr", "high", "MY2025 Long Range AWD (dual-motor VIN code B), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48764") },
     charging: TES_CHARGING,
     thermal: TES_HP_STD,
@@ -1799,6 +1858,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "m3-2025-perf", ...T3, model: "Model 3", modelYears: [2025, 2025], vin8: ["T"], 
     packVariant: "Performance",
+    battery: tPack(80.1, 62092),
     range: { epaRangeMi: f(298, "mfr", "high", "MY2025 Performance (VIN code T), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48996") },
     charging: TES_CHARGING,
     thermal: TES_HP_STD,
@@ -1807,6 +1867,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "m3-2026-premium-rwd", ...T3, model: "Model 3", modelYears: [2026, 2026], vin8: ["A"], trim: ["Premium", "Long Range"], 
+    abstains: { packUsableKwh: "Two certified 2026 Premium RWD carlines sit 18 kWh apart (62.4 and 80.4 usable) and nothing on a listing separates them" },
     packVariant: "Premium RWD",
     range: { epaRangeMi: f(363, "mfr", "high", "MY2026 Premium RWD (single-motor VIN code A + Premium trim, Tesla's new name for the Long Range), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50038") },
     charging: TES_CHARGING,
@@ -1817,6 +1878,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "m3-2026-standard", ...T3, model: "Model 3", modelYears: [2026, 2026], vin8: ["A"], trim: "Standard", 
     packVariant: "Standard RWD",
+    battery: tPack(68.7, 64151, "68.6-68.8 by wheel size"),
     range: { epaRangeMi: f(321, "mfr", "high", "MY2026 Standard RWD (single-motor VIN code A + Standard trim), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50251") },
     charging: TES_CHARGING,
     thermal: TES_HP_STD,
@@ -1826,6 +1888,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "m3-2026-premium-awd", ...T3, model: "Model 3", modelYears: [2026, 2026], vin8: ["B"], 
     packVariant: "Premium AWD",
+    battery: tPack(80.1, 65379, "certified 80.1-82.8 across carlines", "medium"),
     range: { epaRangeMi: f(346, "mfr", "high", "MY2026 Premium AWD (dual-motor VIN code B), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50037") },
     charging: TES_CHARGING,
     thermal: TES_HP_STD,
@@ -1835,6 +1898,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "m3-2026-perf", ...T3, model: "Model 3", modelYears: [2026, 2026], vin8: ["T"], 
     packVariant: "Performance",
+    battery: tPack(79.8, 64393, "certified 79.8-83.4 across carlines", "medium"),
     range: { epaRangeMi: f(314, "mfr", "high", "MY2026 Performance AWD (VIN code T), EPA; a second Performance certification is listed at 309", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50250") },
     charging: TES_CHARGING,
     thermal: TES_HP_STD,
@@ -1844,6 +1908,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "my-2020-lr-awd", ...T3, model: "Model Y", modelYears: [2020, 2020], vin8: ["E"], 
     packVariant: "Long Range AWD",
+    battery: tPack(78.5, 49397),
     range: { epaRangeMi: f(316, "mfr", "high", "MY2020 Long Range AWD (dual-motor VIN code E), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=42916") },
     charging: TES_CHARGING,
     thermal: TES_HP_STD,
@@ -1853,6 +1918,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "my-2020-perf", ...T3, model: "Model Y", modelYears: [2020, 2020], vin8: ["F"], 
     packVariant: "Performance",
+    battery: tPack(78.6, 49876, "certified 78.4-78.6; an EPA confirmatory run measured 74.4", "medium"),
     range: { epaRangeMi: f(315, "mfr", "high", "MY2020 Performance (VIN code F), EPA; the 21-inch-wheel configuration is listed at 291", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=42474") },
     charging: TES_CHARGING,
     thermal: TES_HP_STD,
@@ -1862,6 +1928,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "my-2021-sr-rwd", ...T3, model: "Model Y", modelYears: [2021, 2021], vin8: ["D"], 
     packVariant: "Standard Range RWD",
+    battery: tPack(54.8, 52125),
     range: { epaRangeMi: f(244, "mfr", "high", "MY2021 Standard Range RWD (single-motor VIN code D), sold January–February 2021 only, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=43880") },
     charging: TES_CHARGING,
     thermal: TES_HP_STD,
@@ -1871,6 +1938,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "my-2021-lr-awd", ...T3, model: "Model Y", modelYears: [2021, 2021], vin8: ["E"], 
     packVariant: "Long Range AWD",
+    battery: tPack(77.7, 51303),
     range: { epaRangeMi: f(326, "mfr", "high", "MY2021 Long Range AWD (dual-motor VIN code E), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=43406") },
     charging: TES_CHARGING,
     thermal: TES_HP_STD,
@@ -1880,6 +1948,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "my-2021-perf", ...T3, model: "Model Y", modelYears: [2021, 2021], vin8: ["F"], 
     packVariant: "Performance",
+    battery: tPack(81.1, 51303),
     range: { epaRangeMi: f(303, "mfr", "high", "MY2021 Performance (VIN code F), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=43407") },
     charging: TES_CHARGING,
     thermal: TES_HP_STD,
@@ -1889,6 +1958,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "my-2022-23-perf", ...T3, model: "Model Y", modelYears: [2022, 2023], vin8: ["F"], 
     packVariant: "Performance",
+    battery: tPack(81.1, 54394),
     range: { epaRangeMi: f(303, "mfr", "high", "MY2022–23 Performance (VIN code F), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=45019") },
     charging: TES_CHARGING,
     thermal: TES_HP_STD,
@@ -1898,6 +1968,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "my-2023-rwd", ...T3, model: "Model Y", modelYears: [2023, 2023], vin8: ["D"], 
     packVariant: "RWD",
+    battery: tPack(60.2, 58050),
     range: { epaRangeMi: f(260, "mfr", "medium", "Single-motor (VIN code D) MY2023, the Model Y RWD launched October 2023; fueleconomy.gov files its 260-mi certification under MY2024 with no separate MY2023 entry", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48476") },
     charging: TES_CHARGING,
     thermal: TES_HP_STD,
@@ -1907,6 +1978,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "my-2024-lr-rwd", ...T3, model: "Model Y", modelYears: [2024, 2024], vin8: ["D"], trim: "Long Range", 
     packVariant: "Long Range RWD",
+    battery: tPack(80.1, 60563),
     range: { epaRangeMi: f(320, "mfr", "high", "MY2024 Long Range RWD (single-motor VIN code D + Long Range trim), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48475") },
     charging: TES_CHARGING,
     thermal: TES_HP_STD,
@@ -1916,6 +1988,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "my-2024-rwd", ...T3, model: "Model Y", modelYears: [2024, 2024], vin8: ["D"], 
     packVariant: "RWD",
+    battery: tPack(66.5, 59784, "a second SR RWD carline certifies at 60.2", "medium"),
     range: { epaRangeMi: f(260, "mfr", "high", "MY2024 Model Y RWD (single-motor VIN code D, non-Long-Range), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48476") },
     charging: TES_CHARGING,
     thermal: TES_HP_STD,
@@ -1925,6 +1998,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "my-2024-perf", ...T3, model: "Model Y", modelYears: [2024, 2024], vin8: ["F"], 
     packVariant: "Performance",
+    battery: tPack(78.9, 60568),
     range: { epaRangeMi: f(279, "mfr", "high", "MY2024 Performance (VIN code F), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47914") },
     charging: TES_CHARGING,
     thermal: TES_HP_STD,
@@ -1934,6 +2008,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "my-2025-lr-rwd", ...T3, model: "Model Y", modelYears: [2025, 2025], vin8: ["D"], 
     packVariant: "Long Range RWD",
+    battery: tPack(79.5, 61695),
     range: { epaRangeMi: f(337, "mfr", "high", "MY2025 Long Range RWD (single-motor VIN code D), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48771") },
     charging: TES_CHARGING,
     thermal: TES_HP_STD,
@@ -1943,6 +2018,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "my-2025-lr-awd", ...T3, model: "Model Y", modelYears: [2025, 2025], vin8: ["E"], 
     packVariant: "Long Range AWD",
+    battery: tPack(78.7, 61697, "certified 78.7-80.0 across carlines", "medium"),
     range: { epaRangeMi: f(311, "mfr", "high", "MY2025 Long Range AWD (dual-motor VIN code E), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48770") },
     charging: TES_CHARGING,
     thermal: TES_HP_STD,
@@ -1952,6 +2028,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "my-2025-perf", ...T3, model: "Model Y", modelYears: [2025, 2025], vin8: ["F"], 
     packVariant: "Performance",
+    battery: tPack(78.9, 61697),
     range: { epaRangeMi: f(277, "mfr", "high", "MY2025 Performance (VIN code F), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48772") },
     charging: TES_CHARGING,
     thermal: TES_HP_STD,
@@ -1961,6 +2038,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "my-2026-lr-rwd", ...T3, model: "Model Y", modelYears: [2026, 2026], vin8: ["D"], trim: ["Premium", "Long Range"], 
     packVariant: "Long Range RWD",
+    battery: tPack(80, 64882),
     range: { epaRangeMi: f(357, "mfr", "high", "MY2026 Premium RWD, Tesla's 2026 consumer name; EPA files it as Long Range RWD (single-motor VIN code D)", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49743") },
     charging: TES_CHARGING,
     thermal: TES_HP_STD,
@@ -1970,6 +2048,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "my-2026-standard-rwd", ...T3, model: "Model Y", modelYears: [2026, 2026], vin8: ["D"], trim: "Standard", 
     packVariant: "Standard RWD",
+    battery: tPack(68.8, 63917, "68.5-69.2 by wheel size"),
     range: { epaRangeMi: f(321, "mfr", "high", "MY2026 Standard RWD (single-motor VIN code D + Standard trim) on 18-inch wheels, EPA; 19-inch configuration listed at 303", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50040") },
     charging: TES_CHARGING,
     thermal: TES_HP_STD,
@@ -1979,6 +2058,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "my-2026-lr-awd", ...T3, model: "Model Y", modelYears: [2026, 2026], vin8: ["E"], trim: ["Premium", "Long Range"], 
     packVariant: "Long Range AWD",
+    battery: tPack(79.2, 63813, "certified 79.2-82.1, two carlines share the label", "medium"),
     range: { epaRangeMi: f(327, "mfr", "high", "MY2026 Premium AWD, Tesla's 2026 consumer name; EPA files it as Long Range AWD (dual-motor VIN code E)", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49744") },
     charging: TES_CHARGING,
     thermal: TES_HP_STD,
@@ -1988,6 +2068,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "my-2026-standard-awd", ...T3, model: "Model Y", modelYears: [2026, 2026], vin8: ["E"], trim: "Standard", 
     packVariant: "Standard AWD",
+    battery: tPack(69, 64884),
     range: { epaRangeMi: f(294, "mfr", "high", "MY2026 Standard AWD (dual-motor VIN code E + Standard trim), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50304") },
     charging: TES_CHARGING,
     thermal: TES_HP_STD,
@@ -1997,6 +2078,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "my-2026-perf", ...T3, model: "Model Y", modelYears: [2026, 2026], vin8: ["F"], 
     packVariant: "Performance",
+    battery: tPack(81.5, 64884, "certified 81.5-82.5 across carlines", "medium"),
     range: { epaRangeMi: f(306, "mfr", "high", "MY2026 Performance (VIN code F), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50253") },
     charging: TES_CHARGING,
     thermal: TES_HP_STD,
@@ -2747,62 +2829,89 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "xc40-recharge-2021", make: "VOLVO", model: "XC40 Recharge Pure Electric", modelYears: [2021, 2021], drive: "AWD",
+    battery: { packUsableKwh: fb(75, "mfr", "high", "78 kWh nominal", "https://web.archive.org/web/20251017072816id_/https://www.media.volvocars.com/global/en-gb/download/271590/file/pdf") },
     range: { epaRangeMi: f(208, "mfr", "high", "MY2021 XC40 Recharge (twin motor, the only version), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=43295") },
     charging: { portStandard: f("CCS1", "mfr") },
+    thermal: { heatPump: fb("optional", "mfr", "high", "A $350 factory option this year - the window sticker is the authority", "https://web.archive.org/web/20201029205608/https://www.media.volvocars.com/us/en-us/media/pressreleases/272936/volvo-car-usa-announces-pricing-and-access-to-nationwide-charging-network-for-its-first-pure-electri") },
+    warranty: volvoWty(VOLVO_WTY_RECHARGE), buyerNotes: [NOTE_HP_OPTION],
   },
   {
     id: "xc40-recharge-2022-23", make: "VOLVO", model: "XC40 Recharge Pure Electric", modelYears: [2022, 2023], drive: "AWD",
+    abstains: { heatPump: VOLVO_HP_ABSTAIN },
+    battery: { packUsableKwh: fb(75, "mfr", "high", "78 kWh nominal", VOLVO_SPECS_23) },
     range: { epaRangeMi: f(223, "mfr", "high", "MY2022–23 XC40 Recharge Twin, EPA; every US 2022–23 car is the twin-motor", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=44450") },
     charging: { portStandard: f("CCS1", "mfr") },
+    warranty: volvoWty(VOLVO_WTY_RECHARGE),
   },
   {
     id: "xc40-recharge-2024-single", make: "VOLVO", model: "XC40 Recharge Pure Electric", modelYears: [2024, 2024], vin8: ["K"], drive: "RWD",
+    abstains: { heatPump: VOLVO_HP_ABSTAIN },
+    battery: { packUsableKwh: fb(79, "mfr", "high", "82 kWh nominal, the Single Motor Extended Range pack", VOLVO_SPECS_24_XC40) },
     range: { epaRangeMi: f(293, "mfr", "high", "MY2024 single-motor extended range (VIN code K, Volvo's Part 565 text names it eRWD Single Motor), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46981") },
     charging: { portStandard: f("CCS1", "mfr") },
+    warranty: volvoWty(VOLVO_WTY_RECHARGE),
   },
   {
     id: "xc40-recharge-2024-twin", make: "VOLVO", model: "XC40 Recharge Pure Electric", modelYears: [2024, 2024], vin8: ["M"], drive: "AWD",
+    abstains: { heatPump: VOLVO_HP_ABSTAIN },
+    battery: { packUsableKwh: fb(79, "mfr", "medium", "82 kWh nominal on the engineering sheets; Volvo's launch announcement said the Twin kept the 78 kWh pack, an unresolved conflict", VOLVO_SPECS_24_XC40) },
     range: { epaRangeMi: f(254, "mfr", "high", "MY2024 Twin Motor, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46983") },
     charging: { portStandard: f("CCS1", "mfr") },
+    warranty: volvoWty(VOLVO_WTY_RECHARGE),
   },
   {
     id: "c40-recharge-2022-23", make: "VOLVO", model: "C40 Recharge Pure Electric", modelYears: [2022, 2023], drive: "AWD",
+    abstains: { heatPump: VOLVO_HP_ABSTAIN },
     // vPIC decodes these as plain "C40"; the C40 was electric-only in the US.
     modelAliases: ["C40"],
+    battery: { packUsableKwh: fb(75, "mfr", "high", "78 kWh nominal", "https://media-downloads.volvocars.com/f42ad91a-f5c1-4e3a-9f20-b33e001c4cf3/277710_1_5.pdf") },
     range: { epaRangeMi: f(226, "mfr", "high", "MY2022–23 C40 Recharge Twin, EPA; every US 2022–23 car is the twin-motor", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=44929") },
     charging: { portStandard: f("CCS1", "mfr") },
+    warranty: volvoWty(VOLVO_WTY_RECHARGE),
   },
   {
     id: "c40-recharge-2024-single", make: "VOLVO", model: "C40 Recharge Pure Electric", modelYears: [2024, 2024], vin8: ["K"], drive: "RWD",
+    abstains: { heatPump: VOLVO_HP_ABSTAIN },
     // vPIC decodes these as plain "C40"; the C40 was electric-only in the US.
     modelAliases: ["C40"],
+    battery: { packUsableKwh: fb(79, "mfr", "high", "82 kWh nominal, the Single Motor Extended Range pack", VOLVO_SPECS_24_C40) },
     range: { epaRangeMi: f(297, "mfr", "high", "MY2024 single-motor extended range (VIN code K), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46980") },
     charging: { portStandard: f("CCS1", "mfr") },
+    warranty: volvoWty(VOLVO_WTY_RECHARGE),
   },
   {
     id: "c40-recharge-2024-twin", make: "VOLVO", model: "C40 Recharge Pure Electric", modelYears: [2024, 2024], vin8: ["M"], drive: "AWD",
+    abstains: { heatPump: VOLVO_HP_ABSTAIN },
     // vPIC decodes these as plain "C40"; the C40 was electric-only in the US.
     modelAliases: ["C40"],
+    battery: { packUsableKwh: fb(79, "mfr", "medium", "82 kWh nominal on the engineering sheets; Volvo's launch announcement said the Twin kept the 78 kWh pack, an unresolved conflict", VOLVO_SPECS_24_C40) },
     range: { epaRangeMi: f(257, "mfr", "high", "MY2024 Twin (VIN code M), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46982") },
     charging: { portStandard: f("CCS1", "mfr") },
+    warranty: volvoWty(VOLVO_WTY_RECHARGE),
   },
   {
     id: "ex30-2025-single", make: "VOLVO", model: "EX30", modelYears: [2025, 2025], trim: ["Single Motor"], drive: "RWD",
     battery: { packGrossKwh: f(69, "vin", "high"), chemistry: f("NMC", "vin", "high") },
     range: { epaRangeMi: f(257, "mfr", "high", "MY2025 EX30 Single Motor Extended Range on 18-inch wheels, EPA; 261 on 19/20s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48449") },
     charging: { portStandard: f("CCS1", "mfr") },
+    thermal: EX30_HP,
+    warranty: volvoWty(VOLVO_WTY_FULLY),
   },
   {
     id: "ex30-2026-single", make: "VOLVO", model: "EX30", modelYears: [2026, 2026], trim: ["Single Motor"], drive: "RWD",
     battery: { packGrossKwh: f(69, "vin", "high"), chemistry: f("NMC", "vin", "high") },
     range: { epaRangeMi: f(261, "mfr", "high", "MY2026 EX30 Single Motor Extended Range, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49989") },
     charging: { portStandard: f("CCS1", "mfr") },
+    thermal: EX30_HP,
+    warranty: volvoWty(VOLVO_WTY_FULLY),
   },
   {
     id: "ex30-2025-26-twin", make: "VOLVO", model: "EX30", modelYears: [2025, 2026], trim: ["Twin", "Ultra"], drive: "AWD",
     battery: { packGrossKwh: f(69, "vin", "high"), chemistry: f("NMC", "vin", "high") },
     range: { epaRangeMi: f(253, "mfr", "high", "19-inch wheels, standard", epa(48775)) },
     charging: { portStandard: f("CCS1", "mfr") },
+    thermal: EX30_HP,
+    warranty: volvoWty(VOLVO_WTY_FULLY),
   },
   {
     id: "ex30-cc-2026", make: "VOLVO", model: "EX30 Cross Country", modelYears: [2026, 2026], drive: "AWD",
@@ -2811,6 +2920,8 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packGrossKwh: f(69, "vin", "high"), chemistry: f("NMC", "vin", "high") },
     range: { epaRangeMi: f(227, "mfr", "high", "MY2026 EX30 Cross Country on its standard 19-inch wheels, EPA; 203 on 18s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49991") },
     charging: { portStandard: f("CCS1", "mfr") },
+    thermal: EX30_HP,
+    warranty: volvoWty(VOLVO_WTY_FULLY),
   },
   {
     id: "chr-bev-2026", make: "TOYOTA", model: "C-HR", modelYears: [2026, 2026], drive: "AWD",
@@ -3062,48 +3173,61 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packGrossKwh: f(78, "vin", "high") },
     range: { epaRangeMi: f(270, "mfr", "high", "MY2022 Single Motor (FWD), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=44928") },
     charging: { portStandard: f("CCS1", "mfr") },
+    thermal: { heatPump: fb("optional", "mfr", "high", "Inside the $4,200 Plus pack - the window sticker is the authority", PS2_PLUS_PACK) },
     warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
+    buyerNotes: [NOTE_HP_OPTION],
   },
   {
     id: "polestar2-2022-dual", make: "POLESTAR", model: "Polestar 2", modelYears: [2022, 2022], trim: ["Long Range Dual Motor", "Dual Motor", "Performance", "Plus", "e-AWD"], drive: "AWD",
     battery: { packGrossKwh: f(78, "vin", "high") },
     range: { epaRangeMi: f(249, "mfr", "high", "MY2022 Dual Motor (AWD), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=44449") },
     charging: { portStandard: f("CCS1", "mfr") },
+    thermal: { heatPump: fb("optional", "mfr", "high", "Inside the $4,200 Plus pack - the window sticker is the authority", PS2_PLUS_PACK) },
     warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
+    buyerNotes: [NOTE_HP_OPTION],
   },
   {
     id: "polestar2-2023-single", make: "POLESTAR", model: "Polestar 2", modelYears: [2023, 2023], trim: ["Long Range Single Motor", "Single Motor", "Plus"], drive: "FWD",
     battery: { packGrossKwh: f(78, "vin", "high") },
     range: { epaRangeMi: f(270, "mfr", "high", "MY2023 Single Motor (FWD), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=45755") },
     charging: { portStandard: f("CCS1", "mfr") },
+    thermal: { heatPump: fb("optional", "mfr", "high", "Inside the $4,200 Plus pack - the window sticker is the authority", PS2_PLUS_PACK) },
     warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
+    buyerNotes: [NOTE_HP_OPTION],
   },
   {
     id: "polestar2-2023-dual", make: "POLESTAR", model: "Polestar 2", modelYears: [2023, 2023], trim: ["Long Range Dual Motor", "Dual Motor", "Performance", "Plus"], drive: "AWD",
     battery: { packGrossKwh: f(78, "vin", "high") },
     range: { epaRangeMi: f(260, "mfr", "high", "MY2023 Dual Motor (AWD), EPA; the Performance Pack rates the same, the BST edition 247", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=45753") },
     charging: { portStandard: f("CCS1", "mfr") },
+    thermal: { heatPump: fb("optional", "mfr", "high", "Inside the $4,200 Plus pack - the window sticker is the authority", PS2_PLUS_PACK) },
     warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
+    buyerNotes: [NOTE_HP_OPTION],
   },
   {
     id: "polestar2-2024-25-single", make: "POLESTAR", model: "Polestar 2", modelYears: [2024, 2025], trim: ["Long Range Single Motor", "Single Motor", "Plus"], drive: "RWD",
     battery: { packGrossKwh: f(82, "agg", "medium", "The facelift's larger pack; RWD from MY2024") },
     range: { epaRangeMi: f(320, "mfr", "high", "MY2024 Single Motor (now RWD) on 19-inch wheels, EPA; 307 on 20s; MY2025: 314/300", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46978") },
     charging: { portStandard: f("CCS1", "mfr") },
+    thermal: { heatPump: fb("optional", "mfr", "high", "Inside the Plus pack for MY2024; the US lineup dropped the Single Motor for 2025 - the window sticker is the authority", PS2_PLUS_PACK) },
     warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
+    buyerNotes: [NOTE_HP_OPTION],
   },
   {
     id: "polestar2-2024-25-dual", make: "POLESTAR", model: "Polestar 2", modelYears: [2024, 2025], trim: ["Long Range Dual Motor", "Dual Motor", "Performance", "Plus"], drive: "AWD",
     battery: { packGrossKwh: f(82, "agg", "medium") },
     range: { epaRangeMi: f(276, "mfr", "high", "MY2024 Dual Motor on 19-inch wheels, EPA; 266 on 20s, 247 with the Performance Pack; MY2025: 278/268/254", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46975") },
     charging: { portStandard: f("CCS1", "mfr") },
+    thermal: { heatPump: fb("optional", "mfr", "high", "Inside the Plus pack for MY2024 and included with the Performance pack; the MY2025 car's Climate pack made it standard - the window sticker is the authority", PS2_PLUS_PACK) },
     warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
+    buyerNotes: [NOTE_HP_OPTION],
   },
   {
     id: "ex90-2025", make: "VOLVO", model: "EX90", modelYears: [2025, 2025], vin8: ["K", "L"], drive: "AWD",
     battery: { packGrossKwh: f(111, "vin", "high") },
     range: { epaRangeMi: f(300, "mfr", "high", "MY2025 EX90 Twin Motor, EPA; Twin and Twin Performance rate identically (310 on 21-inch wheels)", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48777") },
     charging: { portStandard: f("CCS1", "mfr") },
+    thermal: EX90_HP,
     warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
   },
   {
@@ -3111,6 +3235,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packGrossKwh: f(111, "vin", "high") },
     range: { epaRangeMi: f(298, "mfr", "high", "MY2026 EX90 Twin Motor, EPA; 305 on 21-inch wheels; Performance rates the same. Keyed on trim: Volvo\u2019s VIN code is the trim level (K=Plus/L=Ultra), not the motor", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50256") },
     charging: { portStandard: f("CCS1", "mfr") },
+    thermal: EX90_HP,
     warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
   },
   {
@@ -3118,6 +3243,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packGrossKwh: f(104, "agg", "medium", "The single-motor EX90 uses the smaller pack") },
     range: { epaRangeMi: f(276, "mfr", "high", "MY2026 EX90 Single Motor, EPA; 291 on 21-inch wheels", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50254") },
     charging: { portStandard: f("CCS1", "mfr") },
+    thermal: EX90_HP,
     warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
   },
 

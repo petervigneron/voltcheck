@@ -700,7 +700,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     // dealer's trim string is exactly what 6a6e4f3 stopped letting decide a
     // range. Every other pre-2021 S/X bucket already prints nothing; these
     // three were the anomaly, not the norm.
-    abstains: { epaRangeMi: "Nothing in the VIN, vPIC or the feed separates 60D from 100D on these cars, and the four are up to 111 miles apart" },
+    abstains: { packUsableKwh: "Seven EPA-labeled 2019 variants span 74 to 100 usable kWh across two pack generations, and nothing on a listing separates them", epaRangeMi: "Nothing in the VIN, vPIC or the feed separates 60D from 100D on these cars, and the four are up to 111 miles apart" },
     charging: {
       portStandard: f("NACS", "mfr", "high", "Tesla's proprietary connector"),
       superchargerAccess: f("native", "mfr", "high"),
@@ -750,7 +750,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     // dealer's trim string is exactly what 6a6e4f3 stopped letting decide a
     // range. Every other pre-2021 S/X bucket already prints nothing; these
     // three were the anomaly, not the norm.
-    abstains: { epaRangeMi: "Nothing in the VIN, vPIC or the feed separates 60D from 100D on these cars, and the four are up to 111 miles apart" },
+    abstains: { packUsableKwh: "Tesla certified 60 through 100 kWh packs for 2017 (60D/75D/90D/100D) and nothing on a listing separates them", epaRangeMi: "Nothing in the VIN, vPIC or the feed separates 60D from 100D on these cars, and the four are up to 111 miles apart" },
     charging: {
       portStandard: f("NACS", "mfr", "high", "Tesla's proprietary connector"),
       superchargerAccess: f("native", "mfr", "high"),
@@ -803,7 +803,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     // dealer's trim string is exactly what 6a6e4f3 stopped letting decide a
     // range. Every other pre-2021 S/X bucket already prints nothing; these
     // three were the anomaly, not the norm.
-    abstains: { epaRangeMi: "Nothing in the VIN, vPIC or the feed separates 60D from 100D on these cars, and the four are up to 111 miles apart" },
+    abstains: { packUsableKwh: "Tesla certified 75 and 100 kWh packs for 2018 and nothing on a listing separates them", epaRangeMi: "Nothing in the VIN, vPIC or the feed separates 60D from 100D on these cars, and the four are up to 111 miles apart" },
     charging: {
       portStandard: f("NACS", "mfr", "high", "Tesla's proprietary connector"),
       superchargerAccess: f("native", "mfr", "high"),

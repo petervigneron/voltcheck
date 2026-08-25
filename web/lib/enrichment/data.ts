@@ -58,7 +58,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     trim: "Long Range AWD",
     packVariant: "2170",
     battery: {
-      packUsableKwh: f(76.5, "est", "medium", "~75–78 kWh; Tesla publishes no usable figure, from BMS logs and teardowns"),
+      packUsableKwh: { value: 80.7, source: "mfr", asOf: "2026-08-24", confidence: "high", note: "EPA-certified usable battery energy (SAE J1634 multi-cycle test)" },
       chemistry: f("NCA", "mfr"),
     },
     range: { epaRangeMi: f(330, "mfr", "high", "Official EPA rating for 'Model Y Long Range AWD'", "https://www.fueleconomy.gov"), testedRangeMi: f(276, "tested", "high", "70-mph test (InsideEVs, 2020 LR AWD): 276 mi; 75-mph (Car and Driver): 220; Edmunds mixed loop (2021): 317. Test cars were EPA 316–326") },
@@ -124,7 +124,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     vin8: ["E"], // dual motor, non-Performance — Tesla's own Part 565 motor code
     trim: "Long Range AWD",
     battery: {
-      packUsableKwh: f(76.5, "est", "medium", "~75–78 kWh; Tesla publishes no usable figure, from BMS logs and teardowns"),
+      packUsableKwh: { value: 78.7, source: "mfr", asOf: "2026-08-24", confidence: "high", note: "EPA-certified usable battery energy (SAE J1634 multi-cycle test); two carlines certify 78.7 and 78.9" },
       chemistry: f("NCA", "mfr"),
     },
     range: { epaRangeMi: f(310, "mfr", "high", "Official 2024 EPA rating (308 for the AWD-I motor variant), note this is lower than the 330 often quoted from 2022–23", "https://www.fueleconomy.gov") },
@@ -670,16 +670,46 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
   },
   // Sparse on purpose: keyed by trim "N" so an Ioniq 5 N listed under the base
   // model name doesn't inherit the 290-mile AWD rating. Only facts verified in
-  // this pass are present.
+  // this pass are present. Split per model year 2026-08-24: the 2025 N kept
+  // the CCS1 combo port while the rest of the 2025 Ioniq 5 line moved to
+  // NACS; the 2026 N is native NACS. Both from Hyundai's own spec sheets,
+  // read as rendered page images — the two years genuinely disagree, this is
+  // not a data error.
   {
-    id: "ioniq5-n-2025-2026",
+    id: "ioniq5-n-2025",
     make: "HYUNDAI",
     model: "Ioniq 5",
-    modelYears: [2025, 2026],
+    modelYears: [2025, 2025],
     trim: "N",
     drive: "AWD",
     battery: { packGrossKwh: f6(84.0, "mfr", "high") },
-    range: { epaRangeMi: f6(221, "mfr", "high", "Official EPA rating, 'Ioniq 5 N', EPA vehicle ids 48360 (2025) / 49965 (2026)", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f6(221, "mfr", "high", "Official EPA rating, 'Ioniq 5 N', EPA vehicle id 48360", "https://www.fueleconomy.gov") },
+    charging: {
+      portStandard: { value: "CCS1", source: "mfr", asOf: "2026-08-24", confidence: "high", note: "AC J1772, DC CCS1 — the 2025 N kept the combo port while the rest of the 2025 line went NACS", sourceUrl: "https://www.hyundainews.com/assets/documents/original/59548-IONIQ5NSpecs040424.pdf" },
+    },
+    thermal: {
+      heatPump: f5("standard", "mfr", "high"),
+    },
+    warranty: {
+      batteryYears: f(10, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      sohFloorPct: f(70, "mfr"),
+      batteryTransfers: f(true, "mfr", "high"),
+      powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr", "high"),
+    },
+  },
+  {
+    id: "ioniq5-n-2026",
+    make: "HYUNDAI",
+    model: "Ioniq 5",
+    modelYears: [2026, 2026],
+    trim: "N",
+    drive: "AWD",
+    battery: { packGrossKwh: f6(84.0, "mfr", "high") },
+    range: { epaRangeMi: f6(221, "mfr", "high", "Official EPA rating, 'Ioniq 5 N', EPA vehicle id 49965", "https://www.fueleconomy.gov") },
+    charging: {
+      portStandard: { value: "NACS", source: "mfr", asOf: "2026-08-24", confidence: "high", note: "Native NACS port from MY2026", sourceUrl: "https://www.hyundainews.com/assets/documents/original/68164-2026IONIQ5NSpecsFeatures20250722A.pdf" },
+    },
     thermal: {
       heatPump: f5("standard", "mfr", "high"),
     },

@@ -37,10 +37,12 @@ test("the 91-mile worst case: an UNDISPUTED 'Long Range' trim still resolves the
   assert.equal(e.row?.id, "m3-2024-lr-rwd");
   assert.equal(e.realRangeMi, undefined, "272 vs 363 mi is not a guess this page prints");
   // Everything else on the row survives — this is not a blanket demotion to
-  // candidates. Port and pack chemistry don't depend on which of the two
-  // this car is.
+  // candidates. Port doesn't depend on which of the two this car is. The
+  // pack DOES since the 2026-08-24 backfill (61 kWh LFP vs 80.4 kWh Long
+  // Range on this bucket's two rows), so it must abstain with the range.
   assert.equal(e.port?.value, "NACS");
-  assert.equal(e.packKwh, undefined, "this row never published a pack size either way, unrelated to the abstention");
+  assert.equal(e.packKwh, undefined, "the colliding rows carry different packs, so the pack abstains with the range");
+  assert.equal(e.usableKwh, undefined, "same reason as packKwh");
 });
 
 test("the same bucket, no stated trim at all: the row still resolves by elimination (pre-existing behavior), but the range abstains too", () => {

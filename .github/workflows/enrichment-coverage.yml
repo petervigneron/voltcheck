@@ -11,9 +11,10 @@ name: Enrichment coverage
 #
 # This runs web/scripts/enrichment-coverage.mjs on every change to the
 # enrichment files. It ratchets against a baseline (251 the day it was born,
-# 241 once the Lightning charge port was filled, 248 today — see below): the
-# backlog is allowed, a NEW half-stocked cohort is not. Lower --max-core-fails
-# as backfill lands; never raise it to hide a regression.
+# 241 once the Lightning charge port was filled, 248 and 250 after two
+# documented raises, 0 since 2026-08-24 — see below): the backlog was
+# allowed while it existed, a NEW half-stocked cohort is not. The baseline
+# must never be raised to hide a regression.
 #
 # 241 -> 248, 2026-08-22, and this is the ONLY raise so far. It is not a
 # regression being papered over — no row lost a fact — so here is exactly what
@@ -74,6 +75,19 @@ name: Enrichment coverage
 # not 253. If a new row leaves a core field empty ON PURPOSE, annotate it;
 # the baseline is for gaps you intend to close.
 #
+# 250 -> 0, 2026-08-24. The whole backlog was researched to completion in
+# one pass: heat pumps, pack sizes and warranty terms filled from maker
+# documents (fetched, quoted verbatim, negatives control-tested), Tesla
+# packs from the usable-battery-energy figures Tesla itself declares in its
+# EPA certification filings, and every fact no primary document supports
+# converted to a written `abstains` entry — 315 deliberate silences, each
+# printed with its reason by the report. That resolves the 241-note above
+# too: the Volt, Escape PHEV and Clarity heat pumps became abstentions, not
+# facts, because the control tests FAIL — GM and Honda name heating
+# hardware in no document at all, so silence is the honest end state.
+# From here the baseline is 0 and stays 0: a new cohort either carries its
+# five core facts or writes down why silence is the honest answer.
+#
 # web/scripts/note-hygiene.mjs runs beside it, on the other half of the same
 # promise: not whether a fact is there, but whether what we wrote under it is
 # for the shopper or for us.
@@ -105,7 +119,7 @@ jobs:
           node-version: "22"
       - name: Report enrichment coverage
         working-directory: web
-        run: node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs scripts/enrichment-coverage.mjs --max-core-fails 69
+        run: node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs scripts/enrichment-coverage.mjs --max-core-fails 0
       # A note either cites a source, states a fact, or says nothing. Swept out
       # by hand on 2026-08-20 (VW ID. Buzz) and again on 2026-08-22 (Toyota
       # bZ), both times because the owner opened a listing and read it. No

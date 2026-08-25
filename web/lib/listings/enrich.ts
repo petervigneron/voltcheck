@@ -332,10 +332,18 @@ export function enrichListing(l: Listing): EnrichedListing {
   // beyond the dealer's own trim string says which one this is — see
   // lib/listings/teslaRangeAbstain.ts for the eight buckets and why 99.4% of
   // the ~1,301 affected listings have no corroboration at all. Port,
-  // chemistry, and warranty still come from this same row; only its range
-  // goes quiet.
+  // chemistry, and warranty still come from this same row; the range goes
+  // quiet, and since 2026-08-24 the pack size goes quiet with it: the
+  // backfill pass gave these rows EPA-certified packs that differ across the
+  // same colliding rows by up to 19 kWh (61 LFP vs 80.4 Long Range in the
+  // worst bucket), so printing one is the same unearned guess as printing
+  // its range.
   if (row?.range && (row.range.epaRangeMi || row.range.testedRangeMi) && abstainTeslaRange(l)) {
-    row = { ...row, range: { ...row.range, epaRangeMi: undefined, testedRangeMi: undefined } };
+    row = {
+      ...row,
+      range: { ...row.range, epaRangeMi: undefined, testedRangeMi: undefined },
+      battery: row.battery ? { ...row.battery, packUsableKwh: undefined, packGrossKwh: undefined } : undefined,
+    };
   }
 
   // Ambiguity between candidate rows doesn't extend to facts they agree on:
