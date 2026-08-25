@@ -187,6 +187,41 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       },
     ],
   },
+
+  // batch4
+  {
+    make: "volkswagen",
+    model: "id-4",
+    topic: "charging",
+    contentFile: "id4-charging",
+    pageTitle: "Volkswagen ID.4 charging by year: DC speed, CCS port, NACS adapter | Voltcheck",
+    description:
+      "How fast a Volkswagen ID.4 fast-charges, by model year and battery pack, from Volkswagen's own order guides — including the 2023 split between LG and SK On packs.",
+    breadcrumbLabel: "Volkswagen ID.4 charging",
+    dateModified: "2026-08-25",
+    faq: [
+      {
+        question: "How fast does the Volkswagen ID.4 charge on a DC fast charger?",
+        answer:
+          "It depends on the model year and the battery pack. Volkswagen's own order guides state 125 kW for 2021, 135 kW for 2022, and 170 kW for the 82 kWh pack in 2024 and 2025. The 62 kWh pack is rated 140 kW in 2023 and 2024. In 2023 the 82 kWh pack splits by cell supplier: 135 kW with LG Energy Solution components, 170 kW with SK On components. Volkswagen's 2025 press kit gives 175 kW rather than the order guide's 170 kW; both are Volkswagen's own figures.",
+      },
+      {
+        question: "How long does a Volkswagen ID.4 take to charge from 10% to 80%?",
+        answer:
+          "Around 30 minutes on all 2025 ID.4 trims, per Volkswagen's 2025 press kit.",
+      },
+      {
+        question: "What charging connector does the Volkswagen ID.4 use?",
+        answer:
+          "A CCS (Combined Charging System) socket. Volkswagen states all ID.4 models are equipped with it. Tesla Supercharger access opened to ID.4 owners on November 18, 2025, and requires a Volkswagen-approved NACS-to-CCS DC adapter, MSRP $200, sold through Volkswagen dealers and parts.vw.com. The adapter is for DC fast charging only, not Level 1 or Level 2 AC equipment or Tesla Destination Chargers.",
+      },
+      {
+        question: "How long does a Volkswagen ID.4 take to charge at home?",
+        answer:
+          "The onboard AC charger is 11 kW on every trim from 2021 through 2025. Volkswagen states that charges a 2025 ID.4 to full in approximately eight hours on a home or public Level 2 charger. For 2021, Volkswagen's figure was 33 miles of range in about 1 hour on 220V.",
+      },
+    ],
+  },
 ];
 
 export function findFactSheet(make: string, model: string, topic: string): FactSheetEntry | undefined {
