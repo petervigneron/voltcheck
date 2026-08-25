@@ -31,7 +31,7 @@ Hyundai's Ioniq 6 Owner's Manual gives the air conditioning system two refrigera
 
 - Hyundai publishes two documents per model year for 2023 and 2024, Specifications and Features, and only the Features document carries the HVAC grid. The word "pump" appears nowhere in the 2023 or 2024 IONIQ 6 **Specifications** documents — but those documents have no HVAC or interior section at all, so that silence is not evidence and is not used here. Control: each does carry a "Battery Heating System" row, which is a different system.[^4][^10]
 - Every Heat Pump row quoted above was read from the PDF page rendered as an image, not from extracted text, because these are grid tables and text extraction reorders columns.
-- Hyundai's press release for the car does not use the words: "pump" occurs zero times in Hyundai's November 2022 IONIQ 6 release, against 16 occurrences of "battery" in the same search.[^11]
+- Hyundai's press release for the car does not use the words: "pump" occurs zero times in Hyundai's November 2022 IONIQ 6 release, against 18 occurrences of "battery" in the same search — 18 matches across 16 lines.[^11]
 
 ## See it for yourself
 

@@ -904,7 +904,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       {
         question: "How can I tell whether a used Kia EV6 has a heat pump?",
         answer:
-          "Not from the model name or the trim, on a Wind or GT-Line of any year. Kia's own 2025 EV6 Owner's Manual confirms the car is built both ways: its air conditioning table gives two refrigerant charges, \"With heat pump\" 850±25 g and \"Without heat pump\" 750±25 g, both R-1234yf. Kia also says where the refrigerant label is — \"located on the underside of the hood\" — and its own illustration of that label shows a refrigerant type and a mass in grams. What Kia does not state anywhere is that the number printed on that label is the same number as in the specification table, so this page says where to look without promising the label settles it.",
+          "Not from the model name or the trim, on a Wind or GT-Line of any year. Kia's own 2025 EV6 Owner's Manual confirms the car is built both ways: its air conditioning table gives two refrigerant charges, \"With heat pump\" 850±25 g and \"Without heat pump\" 750±25 g, both R-1234yf. Kia also says where the refrigerant label is — \"located on the underside of the hood\" — and what it carries: Kia's own legend for the label names field 2 as \"Amount of refrigerant\", keyed in its illustration to a mass printed as \"XXX±XXg\". Two things stop that short of a guarantee. Kia prints a caveat under the illustration, \"The A/C refrigerant label in the vehicle may differ from the illustration,\" and no Kia document states that the number on the label is the same number as in the specification table.",
       },
     ],
   },

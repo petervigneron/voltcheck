@@ -30,11 +30,15 @@ The 2025 EV6 Owner's Manual gives the air conditioning system two refrigerant ch
 
 ## Where to look on the car
 
-Kia puts a refrigerant label on the car and says where: "The refrigerant label is located on the underside of the hood." Kia's own example illustration of that label shows two printed fields — a refrigerant type reading "R-1234yf" and a mass, printed in the illustration as the placeholder "XXX±XXg". So the label carries a charge weight in grams with a tolerance.[^13]
+Kia puts a refrigerant label on the car and says where: "The refrigerant label is located on the underside of the hood."[^13]
 
-Set against the specification table's 850±25 g and 750±25 g, those two builds are 100 g apart, far outside either tolerance. What Kia does not state, in any document opened for this page, is that the number printed on the hood label is the same number the specification table gives. So this page can say where to look and what the label's fields are, and stops short of promising that reading it settles the question.
+Kia also says what is printed on it. Its example illustration of the label carries six numbered callouts, and Kia's own legend reads: "1 Classification of refrigerant. 2 Amount of refrigerant. 3 Classification of Compressor lubricant. 4 Caution. 5 Flammable Refrigerant. 6 Requires a registered technician to service the A/C system." In the illustration, callout 1 keys to a refrigerant type reading "R-1234yf", callout 2 to a mass printed as the placeholder "XXX±XXg", and callout 3 to "POE". So the amount of refrigerant is a field Kia says the label carries, named by Kia in those words.[^14]
 
-Kia describes a second label, on the compressor itself: it "informs you of the type of compressor your vehicle is equipped with such as model, supplier part number, production number, refrigerant (1) and refrigerant oil (2)." Kia does not say what values it prints.[^13] Elsewhere the manual says only that you can find out "which air conditioning refrigerant is applied your vehicle on the label inside the motor room compartment" — the refrigerant type, not the amount.[^14]
+Set against the specification table's 850±25 g with a heat pump and 750±25 g without, those two builds are 100 g apart, far outside either tolerance.
+
+Two things Kia does not say, both of which stop this short of a guarantee. Kia prints its own caveat directly under the example: "* The A/C refrigerant label in the vehicle may differ from the illustration."[^14] And no Kia document opened for this page states that the number printed on the label is the same number the specification table gives. This page says where to look and what Kia says the label carries; it does not promise that reading it settles the question.
+
+Kia describes a second label, on the compressor itself: it "informs you of the type of compressor your vehicle is equipped with such as model, supplier part number, production number, refrigerant (1) and refrigerant oil (2)." Kia does not say what values it prints.[^13]
 
 ## What Kia's launch release says, and why this page does not lead with it
 
@@ -90,7 +94,7 @@ It is named here so a reader who finds it knows it was seen and set aside — an
 
 [^13]: Kia, *2025 EV6 Owner's Manual* (PDF, 593 pages; mirror — see Scope note), "Air conditioner compressor label" and "Refrigerant label," printed page 10-10 (PDF page 572). Both the wording and the label illustration (Kia figure OCV081007) were read from the page rendered as an image. https://cdn.dealereprocess.org/cdn/servicemanuals/kia/2025-ev6.pdf
 
-[^14]: Same manual, "Air conditioning refrigerant label (if equipped)," printed page 5-124 (PDF page 242).
+[^14]: Same manual, "Air conditioning refrigerant label (if equipped)," printed page 5-124 (PDF page 242) — the "Example" label illustration (Kia figure OCV041068L), the asterisked caveat beneath it, and the six-item legend introduced by "Each symbol and specification on the A/C refrigerant label is represented below:". Read from the page rendered as an image.
 
 ## Scope note
 
