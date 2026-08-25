@@ -774,6 +774,140 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       },
     ],
   },
+
+  // batch5
+  {
+    make: "tesla",
+    model: "model-3",
+    topic: "heat-pump",
+    contentFile: "model-3-heat-pump",
+    pageTitle: "Tesla Model 3 heat pump: which cars have one, by build date | Voltcheck",
+    description:
+      "Tesla says Model 3 cars built between about July 2017 and October 2020 do not have a heat pump, and cars built afterward do. Sourced to Tesla's own owner's manual.",
+    breadcrumbLabel: "Tesla Model 3 heat pump",
+    dateModified: "2026-08-25",
+    faq: [
+      {
+        question: "Does the Tesla Model 3 have a heat pump?",
+        answer:
+          "It depends on when the car was built, and Tesla states the boundary as a manufacture date rather than a model year. Tesla's own words in the Model 3 Owner's Manual: \"Vehicles manufactured between approximately July 2017 and October 2020 do not have a heat pump,\" and \"Vehicles manufactured afterward have a heat pump.\" The word \"approximately\" is Tesla's. No Tesla document behind this page maps that date to a model year, so a Model 3 built near October 2020 cannot be resolved from its model year alone.",
+      },
+      {
+        question: "How do I tell if a used Tesla Model 3 has a heat pump?",
+        answer:
+          "Tesla publishes a per-car check, in its own words: \"to determine if your vehicle has a heat pump, touch Controls > Software > Additional Vehicle Information.\" The instruction appears on four pages of the Model 3 Owner's Manual's 2017-2023 edition: Operating Climate Controls, Acceleration Modes, Charging Instructions, and Cold Weather Best Practices.",
+      },
+      {
+        question: "Tesla's manual lists a Heat Pump Assembly for the Model 3 — doesn't that settle it?",
+        answer:
+          "No. The Electric Vehicle Components page lists \"Heat Pump Assembly\" among the Model 3's High Voltage Components with no year, trim or \"if equipped\" qualifier, and it reads that way in both editions of the manual, the 2017-2023 edition and the current 2024+ edition. The 2017-2023 edition covers cars Tesla itself says do not have a heat pump, so that list cannot be read as a per-year answer for that span.",
+      },
+      {
+        question: "Which Model 3 trims have a heat pump?",
+        answer:
+          "This page makes no trim claim. Tesla's statement is by manufacture date only, and no Tesla document behind this page distinguishes Rear-Wheel Drive, Long Range or Performance on this point.",
+      },
+    ],
+  },
+  {
+    make: "hyundai",
+    model: "ioniq-5",
+    topic: "heat-pump",
+    contentFile: "ioniq5-heat-pump",
+    pageTitle: "Hyundai Ioniq 5 heat pump: AWD only, every model year | Voltcheck",
+    description:
+      "The Hyundai Ioniq 5's heat pump is AWD-only in every trim and every model year from 2022 through 2026, per Hyundai's own equipment grids. No rear-wheel-drive Ioniq 5 has one.",
+    breadcrumbLabel: "Hyundai Ioniq 5 heat pump",
+    dateModified: "2026-08-25",
+    faq: [
+      {
+        question: "Does the Hyundai Ioniq 5 have a heat pump?",
+        answer:
+          "Only if it is all-wheel drive. Hyundai's own Features grid gives the Heat Pump row the value \"AWD only\" in every trim column in 2022, 2023 and 2024 (SE, SEL, Limited) and \"AWD-only\" in every trim column in 2025 and 2026 (SE, SEL, XRT, Limited). Every rear-wheel-drive Ioniq 5 in those five model years is a car without a heat pump, including every SE Standard Range, which Hyundai builds only as RWD.",
+      },
+      {
+        question: "Which Hyundai Ioniq 5 trims have a heat pump?",
+        answer:
+          "The trim is not what decides it — the drivetrain is, and in each model year from 2022 through 2026 Hyundai gives every trim column the same cell value. The XRT, offered for 2025 and 2026, is the one trim that resolves on its own: Hyundai lists an XRT range figure only in the AWD column of the range table in both of those years, and XRT appears in neither the RWD column nor the RWD Standard Range column of either.",
+      },
+      {
+        question: "What does a rear-wheel-drive Hyundai Ioniq 5 use to heat the cabin?",
+        answer:
+          "A PTC heater. Hyundai's grid carries a separate PTC Heater row directly above the Heat Pump row and marks it standard in every trim column in 2022, 2023, 2024, 2025 and 2026.",
+      },
+      {
+        question: "Does the 2026 Hyundai Ioniq 5 have a heat pump?",
+        answer:
+          "Only if it is all-wheel drive, the same as every year before it. Hyundai's own 2026 IONIQ 5 Features and Specifications marks the Heat Pump row \"AWD-only\" in all four trim columns — SE, SEL, XRT and Limited — exactly as the 2025 document does. Hyundai's separate 2026 Model Year Changes document agrees by omission: it lists the car as a Carry-over Model and names only the included charging cable and three color items as changes from 2025.",
+      },
+    ],
+  },
+  {
+    make: "hyundai",
+    model: "ioniq-6",
+    topic: "heat-pump",
+    contentFile: "ioniq6-heat-pump",
+    pageTitle: "Hyundai Ioniq 6 heat pump: standard on every one but the Standard Range | Voltcheck",
+    description:
+      "Hyundai marks the Ioniq 6's heat pump standard on SE Long Range, SEL and Limited for 2023 through 2025, and absent on the 53 kWh SE Standard Range. From Hyundai's own equipment grids.",
+    breadcrumbLabel: "Hyundai Ioniq 6 heat pump",
+    dateModified: "2026-08-25",
+    faq: [
+      {
+        question: "Does the Hyundai Ioniq 6 have a heat pump?",
+        answer:
+          "Every Ioniq 6 for model years 2023, 2024 and 2025 does except the Standard Range car. Hyundai's own equipment grid says it two ways: for 2023 and 2024 the SE cell reads \"S (LR only)\" while SEL and Limited read \"S\"; for 2025 Hyundai splits the Standard Range into its own SE (SR) column and marks it \"-\", with SE, SEL and Limited reading \"S\". Both notations name the same car, because the 53.0 kWh Standard Range battery is sold only as an SE.",
+      },
+      {
+        question: "Do you need all-wheel drive to get a heat pump on a Hyundai Ioniq 6?",
+        answer:
+          "No. Hyundai marks the SEL and Limited cells with a plain \"S\" and attaches no drivetrain condition to them, in 2023, 2024 and 2025 alike. This is where the Ioniq 6 differs from the Ioniq 5: in Hyundai's 2025 IONIQ 5 grid the same row reads \"AWD-only\" in every trim column, so a rear-wheel-drive 2025 Ioniq 5 has none.",
+      },
+      {
+        question: "What does a Hyundai Ioniq 6 Standard Range heat the cabin with instead?",
+        answer:
+          "This page does not say, because Hyundai does not. Hyundai's Ioniq 6 HVAC table has no PTC Heater row to read — its rows are dual automatic temperature control, 2nd row air vents, external temperature, heat pump, cabin air filter, and rear window defroster with timer, and nothing else. The row is in Hyundai's vocabulary for this nameplate, which is what makes the absence a fact rather than a failed read: Hyundai's 2026 IONIQ 6 N grid prints a PTC Heater row and a Heat Pump row one above the other, both marked standard.",
+      },
+      {
+        question: "Does the 2026 Hyundai Ioniq 6 have a heat pump?",
+        answer:
+          "Not covered here. Hyundai's own 2026 Model Year Changes document lists the 2026 IONIQ 6 as a Product Enhancement Model and its page for the car reads, in full, \"Product Enhancement Model, details to come.\" No 2026 IONIQ 6 features grid was found on Hyundai's newsroom, so no 2026 claim is made.",
+      },
+    ],
+  },
+  {
+    make: "kia",
+    model: "ev6",
+    topic: "heat-pump",
+    contentFile: "ev6-heat-pump",
+    pageTitle: "Kia EV6 heat pump: optional on most trims, so check the car | Voltcheck",
+    description:
+      "Kia marks the EV6's heat pump Optional on Wind and GT-Line in every model year from 2022 to 2026, standard only on the GT, and not available on the Light. From Kia's own Features & Options files.",
+    breadcrumbLabel: "Kia EV6 heat pump",
+    dateModified: "2026-08-25",
+    faq: [
+      {
+        question: "Does the Kia EV6 have a heat pump?",
+        answer:
+          "It depends on the individual car, not just the trim. Kia's own Features & Options grid marks the heat pump Optional on the Wind and GT-Line in every model year from 2022 through 2026, Standard on the GT from 2023 on, and Not Available on the 2022 Light and on the Light Short Range from 2024 on. For 2024 through 2026 the Light Long Range is Optional too. Kia's legend, printed in each file: S = Standard, O = Optional, - = Not Available.",
+      },
+      {
+        question: "Which Kia EV6 trims always have a heat pump?",
+        answer:
+          "The GT, from its first model year 2023 onward — Kia marks it Standard there. No Light (2022) and no Light Short Range (2024 onward) has one; Kia marks those Not Available. Every Wind and GT-Line, in every model year, has to be checked individually.",
+      },
+      {
+        question: "Is the Kia EV6 heat pump tied to all-wheel drive?",
+        answer:
+          "Kia's documents do not state a rule, and this page does not claim one. What the documents show is that in each of the five model years the Heat Pump row and the All Wheel Drive (AWD) row carry identical marks, cell for cell, in every trim column. Kia also does not sell the heat pump as a named line item: its 2022 and 2025 EV6 pricing sheets list no factory-installed or port-installed option named for one.",
+      },
+      {
+        question: "How can I tell whether a used Kia EV6 has a heat pump?",
+        answer:
+          "Not from the model name or the trim, on a Wind or GT-Line of any year. Kia's own 2025 EV6 Owner's Manual confirms the car is built both ways: its air conditioning table gives two refrigerant charges, \"With heat pump\" 850±25 g and \"Without heat pump\" 750±25 g, both R-1234yf. Kia also says where the refrigerant label is — \"located on the underside of the hood\" — and what it carries: Kia's own legend for the label names field 2 as \"Amount of refrigerant\", keyed in its illustration to a mass printed as \"XXX±XXg\". Two things stop that short of a guarantee. Kia prints a caveat under the illustration, \"The A/C refrigerant label in the vehicle may differ from the illustration,\" and no Kia document states that the number on the label is the same number as in the specification table.",
+      },
+    ],
+  },
 ];
 
 export function findFactSheet(make: string, model: string, topic: string): FactSheetEntry | undefined {
