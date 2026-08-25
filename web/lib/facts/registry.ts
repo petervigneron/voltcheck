@@ -809,6 +809,39 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       },
     ],
   },
+  {
+    make: "hyundai",
+    model: "ioniq-5",
+    topic: "heat-pump",
+    contentFile: "ioniq5-heat-pump",
+    pageTitle: "Hyundai Ioniq 5 heat pump: AWD only, every model year | Voltcheck",
+    description:
+      "The Hyundai Ioniq 5's heat pump is AWD-only in every trim and every model year from 2022 through 2025, per Hyundai's own equipment grids. No rear-wheel-drive Ioniq 5 has one.",
+    breadcrumbLabel: "Hyundai Ioniq 5 heat pump",
+    dateModified: "2026-08-25",
+    faq: [
+      {
+        question: "Does the Hyundai Ioniq 5 have a heat pump?",
+        answer:
+          "Only if it is all-wheel drive. Hyundai's own Features grid gives the Heat Pump row the value \"AWD only\" in every trim column in 2022, 2023 and 2024 (SE, SEL, Limited) and \"AWD-only\" in every trim column in 2025 (SE, SEL, XRT, Limited). Every rear-wheel-drive Ioniq 5 in those model years is a car without a heat pump, including every SE Standard Range, which Hyundai builds only as RWD.",
+      },
+      {
+        question: "Which Hyundai Ioniq 5 trims have a heat pump?",
+        answer:
+          "The trim is not what decides it — the drivetrain is, and the answer is the same in all of them. For 2025, the XRT is the one trim that resolves on its own: Hyundai lists an XRT range figure only in the AWD column of its 2025 range table, and XRT appears in neither the RWD column nor the RWD Standard Range column.",
+      },
+      {
+        question: "What does a rear-wheel-drive Hyundai Ioniq 5 use to heat the cabin?",
+        answer:
+          "A PTC heater. Hyundai's grid carries a separate PTC Heater row directly above the Heat Pump row and marks it standard in every trim column in 2022, 2023, 2024 and 2025.",
+      },
+      {
+        question: "Does the 2026 Hyundai Ioniq 5 have a heat pump?",
+        answer:
+          "Hyundai's own 2026 Model Year Changes document lists the 2026 IONIQ 5 as a Carry-over Model, and its table of changes from the 2025 model year names only the included charging cable and three color items. No HVAC change is listed. No 2026 IONIQ 5 features grid was found on Hyundai's newsroom to confirm the Heat Pump row directly, so that carry-over statement is all this page carries for 2026.",
+      },
+    ],
+  },
 ];
 
 export function findFactSheet(make: string, model: string, topic: string): FactSheetEntry | undefined {
