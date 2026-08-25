@@ -28,6 +28,14 @@ That is what the documents say. Kia does not state a rule connecting the two, an
 
 The 2025 EV6 Owner's Manual gives the air conditioning system two refrigerant charges: "With heat pump" 850±25 g and "Without heat pump" 750±25 g, both R-1234yf. The compressor lubricant has one figure, 180±10 g, for both.[^8]
 
+## Where to look on the car
+
+Kia puts a refrigerant label on the car and says where: "The refrigerant label is located on the underside of the hood." Kia's own example illustration of that label shows two printed fields — a refrigerant type reading "R-1234yf" and a mass, printed in the illustration as the placeholder "XXX±XXg". So the label carries a charge weight in grams with a tolerance.[^13]
+
+Set against the specification table's 850±25 g and 750±25 g, those two builds are 100 g apart, far outside either tolerance. What Kia does not state, in any document opened for this page, is that the number printed on the hood label is the same number the specification table gives. So this page can say where to look and what the label's fields are, and stops short of promising that reading it settles the question.
+
+Kia describes a second label, on the compressor itself: it "informs you of the type of compressor your vehicle is equipped with such as model, supplier part number, production number, refrigerant (1) and refrigerant oil (2)." Kia does not say what values it prints.[^13] Elsewhere the manual says only that you can find out "which air conditioning refrigerant is applied your vehicle on the label inside the motor room compartment" — the refrigerant type, not the amount.[^14]
+
 ## What Kia's launch release says, and why this page does not lead with it
 
 Kia's EV6 world-premiere release, dated March 30, 2021, says: "The EV6 is fitted with energy-recuperation technologies to maximize driving range. This includes Kia's latest-generation energy-efficient heat pump, which scavenges waste heat from the car's coolant system. This ensures that at minus seven degrees Celsius the car can achieve 80% of the range that would be possible at 25 degrees Celsius."[^9]
@@ -37,13 +45,15 @@ Read as a US claim, "the EV6 is fitted with" would be wrong for a US Light and u
 ## How this was checked
 
 - Kia publishes Features & Options as spreadsheets with one cell per trim per row, so the marks above were read as cell values rather than from a flattened text layout, and no column can be reordered by extraction. Every one of the five model-year files was opened this pass.[^1][^2][^3][^4][^5]
-- Second rendering, as a check on the spreadsheet: kiamedia.com's own 2024 EV6 Features & Options web page, with its default three trims shown, prints the row as "Heat Pump HVAC system - O O" — the same values as the 2024 file.[^10]
+- Second rendering, as a check on the spreadsheet: kiamedia.com's own 2024 EV6 Features & Options web page prints the row across all five trim columns as "Heat Pump HVAC system | - | O | O | O | S", under a header row reading "Light | Light Long Range | Wind | GT-Line | GT" — the same values as the 2024 file.[^10]
 - The word "pump" appears in exactly one row of each of the five spreadsheets — the row quoted above — so no option package in any of them names a heat pump. The files run 173, 191, 192, 199 and 199 rows. Control: searching the same five files for "heated" returns six rows in the 2022 file and five in each of the others, so the search reads real cell text rather than returning nothing.
 - Kia's 2025 EV6 Vehicle Feature Tips does not mention a heat pump: zero occurrences of the phrase, against 33 occurrences of "charging" in the same search.[^11]
 
 ## Not used as a source
 
-A Kia America release of July 31, 2024 contains the words "a standard heat pump" — inside a quotation attributed to the president of the New England Motor Press Association, not in Kia's own voice.[^12] A third party's words printed in a manufacturer's release are not the manufacturer's claim, and that sentence is contradicted by Kia's own grid for the same model year. It is named here so a reader who finds it knows it was seen and set aside.
+A Kia America release of July 31, 2024 contains the words "a standard heat pump". The full sentence: "The accurate range estimates, along with a standard heat pump, make the available all-wheel drive EV6 a capable and trusted car throughout the winter season." It is a quotation attributed to Clifford Atiyeh, president of the New England Motor Press Association, not Kia's own voice, and a third party's words printed in a manufacturer's release are not the manufacturer's claim.[^12]
+
+It is named here so a reader who finds it knows it was seen and set aside — and set aside on that ground alone. The sentence is not offered as a contradiction of Kia's grid: it speaks of "the available all-wheel drive EV6", a scope Kia's per-trim grid says nothing about either way.
 
 ## See it for yourself
 
@@ -72,11 +82,15 @@ A Kia America release of July 31, 2024 contains the words "a standard heat pump"
 
 [^9]: Kia press release, "Kia EV6 redefines boundaries of electric mobility with inspiring design, exhilarating performance and innovative space," March 30, 2021 (ID 17267), "Energy recuperation" section. https://www.kiamedia.com/us/en/media/pressreleases/17267/kia-ev6-redefines-boundaries-of-electric-mobility-with-inspiring-design-exhilarating-performance-and. Read 2026-08-25 via a real browser session.
 
-[^10]: Kia, *2024 Kia EV6 Features & Options*, kiamedia's own web rendering, "EV-Specialized" section. https://www.kiamedia.com/us/en/models/ev6/2024/features. Read 2026-08-25 via a real browser session; the page shows three trims at a time and its default three are Light, Light Long Range and Wind.
+[^10]: Kia, *2024 Kia EV6 Features & Options*, kiamedia's own web rendering, "EV-Specialized" section. https://www.kiamedia.com/us/en/models/ev6/2024/features. Read 2026-08-25 via a real browser session, reading the table's cells directly. The page also carries a "Select up to 3 trims to compare with" control above the table; a plain text scrape of the page can return only three of the five columns, which is a rendering artefact and not what the table holds.
 
 [^11]: Kia, *2025 Kia EV6 Vehicle Feature Tips* (PDF). https://owners.kia.com/content/dam/kia/us/owners/pdf/2025/2025-Kia-EV6-Vehicle-Feature-Tips.pdf
 
-[^12]: Kia America press release, "ALL-ELECTRIC KIA EV6 AND TELLURIDE SUV NAMED 2024 CATEGORY WINNERS BY NEW ENGLAND MOTOR PRESS ASSOCIATION," July 31, 2024 (ID 22372). https://www.kiamedia.com/us/en/media/pressreleases/22372/all-electric-kia-ev6-and-telluride-suv-named-2024-category-winners-by-new-england-motor-press-associ. Named here only to record that it was read and not used.
+[^12]: Kia America press release, "ALL-ELECTRIC KIA EV6 AND TELLURIDE SUV NAMED 2024 CATEGORY WINNERS BY NEW ENGLAND MOTOR PRESS ASSOCIATION," July 31, 2024 (ID 22372). https://www.kiamedia.com/us/en/media/pressreleases/22372/all-electric-kia-ev6-and-telluride-suv-named-2024-category-winners-by-new-england-motor-press-associ. Read 2026-08-25 via a real browser session. Named here only to record that it was read and not used.
+
+[^13]: Kia, *2025 EV6 Owner's Manual* (PDF, 593 pages; mirror — see Scope note), "Air conditioner compressor label" and "Refrigerant label," printed page 10-10 (PDF page 572). Both the wording and the label illustration (Kia figure OCV081007) were read from the page rendered as an image. https://cdn.dealereprocess.org/cdn/servicemanuals/kia/2025-ev6.pdf
+
+[^14]: Same manual, "Air conditioning refrigerant label (if equipped)," printed page 5-124 (PDF page 242).
 
 ## Scope note
 
