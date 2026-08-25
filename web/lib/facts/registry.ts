@@ -340,14 +340,14 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     contentFile: "ariya-heat-pump",
     pageTitle: "Nissan Ariya heat pump: what Nissan's own documents say | Voltcheck",
     description:
-      "No Nissan document published for the US-market Ariya says it has a heat pump. Nissan's own high-voltage component list names a PTC heater. Eight Nissan documents checked.",
+      "No Nissan document published for the US-market Ariya, model years 2023 through 2025, says it has a heat pump. Nissan's own high-voltage component list names a PTC heater. Twelve Nissan documents checked.",
     breadcrumbLabel: "Nissan Ariya heat pump",
     dateModified: "2026-08-25",
     faq: [
       {
         question: "Does the Nissan Ariya have a heat pump?",
         answer:
-          "No Nissan document published for the US-market Ariya says it has one. Eight Nissan documents were checked for this page — the 2023, 2024, and 2025 owner's manuals and brochures, plus the 2023 and 2024 press-kit specification sets — and the word \"pump\" appears in none of them in connection with the Ariya's climate system. Nissan's own twelve-item list of the Ariya's high-voltage components names a PTC heater in the heating position, alongside the air conditioner compressor.",
+          "For the US-market Ariya, model years 2023 through 2025: no Nissan document published for it says it has one. Twelve Nissan documents were checked for this page — the 2023, 2024, and 2025 owner's manuals, brochures, press-kit specification sets, and Quick Reference Guides — and the word \"pump\" appears in none of them in connection with the Ariya's climate system, apart from one conditional line of shared Nissan-EV boilerplate that reads \"(heat pump, if so equipped)\" and appears identically in the Leaf guides. Nissan's own twelve-item list of the Ariya's high-voltage components names a PTC heater in the heating position, alongside the air conditioner compressor. Non-US Ariya builds are out of scope: Nissan UK does list a heat pump as standard on the European car, which is a different specification.",
       },
       {
         question: "What cold-weather equipment does the Nissan Ariya have?",
@@ -357,7 +357,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       {
         question: "How was the Nissan Ariya's heat pump claim checked?",
         answer:
-          "Nissan's 2023 Ariya press kit carries 519 specification table rows across 46 tables, and the word \"pump\" occurs zero times in its text; the 2024 press kit carries 532 rows, also zero. Three owner's manuals and three brochures were searched in full with the same result. As a control, Nissan's US newsroom does use the words plainly for a different Nissan: \"LEAF has a standard, energy-efficient heat pump to help warm the cabin.\"",
+          "Nissan's 2023 Ariya press kit carries 519 specification table rows across 46 tables, and the word \"pump\" occurs zero times in its text; the 2024 press kit carries 532 rows and the 2025 press kit 527, both also zero. All three carry a \"Battery heater\" row marked standard, so the tables are granular enough to have listed a heat pump had there been one. Three owner's manuals, three brochures, and three Quick Reference Guides were searched in full with the same result, with controls run alongside — \"PTC heater\" is found in every manual and \"Battery heater\" in every brochure — so the zero is a finding, not a failed search. As a control on wording, Nissan's US newsroom does use the words plainly for a different Nissan: \"LEAF has a standard, energy-efficient heat pump to help warm the cabin,\" and the 2026 LEAF press kit heads a specification row \"Hybrid heater system (heat pump).\"",
       },
     ],
   },
