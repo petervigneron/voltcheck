@@ -73,6 +73,15 @@ const R: EnrichmentRow[] = [];
   const Q4_2024_PR = "https://media.audiusa.com/releases/597";
   const Q4_2023_SPECS =
     "https://media.audiusa.com/assets/documents/original/10203-2023Q4etronTechnicalSpecifications.pdf";
+  // The MY2022 pack figure is cited to the sales-start release, not to the
+  // MY2022 technical-specification sheet, and the difference is one word. The
+  // spec sheet's row reads "Battery size (kWh)" — the MY2023 sheet's reads
+  // "Battery size (kWh gross)" — so filing 82 as a GROSS figure on the
+  // strength of the 2022 sheet would be reading a qualifier Audi did not
+  // print that year. The release's own table does print it: "Battery (gross
+  // capacity) / 82 kWh". The AC charging figure still comes from the spec
+  // sheet, which states it plainly.
+  const Q4_2022_PR = "https://media.audiusa.com/view/releases/547";
   const Q4_2022_SPECS =
     "https://media.audiusa.com/assets/documents/original/9397-2022Q4etronTechnicalSpecifications.pdf";
   const Q8_2024_SPECS =
@@ -359,7 +368,7 @@ const R: EnrichmentRow[] = [];
       model: "Q4 e-tron",
       years: [2022, 2022],
       drive: "AWD",
-      packUrl: Q4_2022_SPECS,
+      packUrl: Q4_2022_PR,
       dcPeakKw: 150,
       dcUrl: Q4_2024_PR,
       acUrl: Q4_2022_SPECS,
@@ -371,7 +380,7 @@ const R: EnrichmentRow[] = [];
       modelAliases: ["Q4 e-tron Sportback"],
       years: [2022, 2022],
       drive: "AWD",
-      packUrl: Q4_2022_SPECS,
+      packUrl: Q4_2022_PR,
       dcPeakKw: 150,
       dcUrl: Q4_2024_PR,
       acUrl: Q4_2022_SPECS,
@@ -418,7 +427,8 @@ const R: EnrichmentRow[] = [];
 
     // "All 2024 Q4 55 e-tron models feature an 82 kWh (gross) battery that
     // provides 77 kWh of net energy… The Q4 55 e-tron quattro now achieves a
-    // maximum DC charging power of 175 kW, up from 150 kW for the Q4 50."
+    // maximum DC charging power of 175 kW, up from 150 kW for the Q4 50
+    // e-tron."
     {
       id: "audi-q4-55-etron-2024-25",
       make: "AUDI",
@@ -435,7 +445,7 @@ const R: EnrichmentRow[] = [];
         portStandard: AUDI_CCS1,
         superchargerAccess: Q4_NO_NACS,
         dcPeakKw: f(175, "mfr", "high", undefined, Q4_2024_PR),
-        chargeTime1080Min: f(28, "mfr", "high", "10–80% at 175 kW", Q4_2024_PR),
+        chargeTime1080Min: f(28, "mfr", "high", "10–80% under normal conditions", Q4_2024_PR),
         acOnboardKw: f(9.6, "mfr", "high", "240V/40A; 11.5 kW on a third-party wall box", Q4_2023_SPECS),
         dcFastCharging: f<"standard">("standard", "mfr", "high", undefined, Q4_2024_PR),
       },
@@ -460,7 +470,7 @@ const R: EnrichmentRow[] = [];
         portStandard: AUDI_CCS1,
         superchargerAccess: Q4_NO_NACS,
         dcPeakKw: f(175, "mfr", "high", undefined, Q4_2024_PR),
-        chargeTime1080Min: f(28, "mfr", "high", "10–80% at 175 kW", Q4_2024_PR),
+        chargeTime1080Min: f(28, "mfr", "high", "10–80% under normal conditions", Q4_2024_PR),
         acOnboardKw: f(9.6, "mfr", "high", "240V/40A; 11.5 kW on a third-party wall box", Q4_2023_SPECS),
         dcFastCharging: f<"standard">("standard", "mfr", "high", undefined, Q4_2024_PR),
       },
@@ -610,16 +620,22 @@ const R: EnrichmentRow[] = [];
 //
 // HEAT PUMP ABSTAINS, and this one was control-tested rather than assumed.
 // Subaru's trim-comparison feature list has a whole "Climate Control" section
-// and no heat-pump line anywhere in it — but the same table for the 2026
-// Solterra, a car the corpus already records as having one, has no heat-pump
-// line either. Subaru's feature tables simply never use the term, so their
-// silence is not evidence of absence. Same shape as the Volvo control test in
-// data6.
+// and no heat-pump line anywhere in it — and neither does the same table for
+// the 2026 Solterra, a car built on the platform whose Toyota twin is widely
+// described as having one. The control test is about the DOCUMENT, not the
+// hardware: two Subaru feature tables of the same format, one for each of
+// Subaru's two current EVs, and neither uses the term at all. That is enough
+// to show the vocabulary is missing from the format, which is what makes the
+// silence uninformative. It is deliberately NOT a claim about what the
+// Solterra has — the corpus's own Solterra heat-pump value is `agg` with no
+// citation, exactly the tier the Volvo and Ariya findings in data6 taught us
+// not to lean on. Same shape as that Volvo control test, one rung more
+// careful.
 {
   const TSK_PR = "https://media.subaru.com/pressrelease/2397/all-new-2026-subaru-trailseeker-combines-375-horsepower";
   const TSK_TRIMS = "https://www.subaru.com/services/vehicles/pdf/trimComparison/2026/TSK?hideBuildMsrp=false";
   const TSK_HP_ABSTAIN =
-    "Subaru's feature tables never use the term — the 2026 Solterra's table omits it too, and that car has one — so silence says nothing either way";
+    "Subaru's feature tables never use the term: neither the Trailseeker's own trim-comparison table nor the 2026 Solterra's names a heat pump anywhere, so their silence says nothing either way";
 
   const trailseeker = (id: string, trim: string[] | undefined, range: Fact<number> | undefined, rangeAbstain?: string): EnrichmentRow => ({
     id,
@@ -684,15 +700,40 @@ const R: EnrichmentRow[] = [];
 // charging speeds of up to 150 kW". EPA's own records agree to the mile
 // (350e 19" 307 / 21" 292; 500e 19" 276 / 21" 272).
 //
-// TWO ABSTENTIONS, both following the MY2026 RZ rows in data9 exactly. Lexus
-// publishes no MY2026 warranty document for its BEVs — the RZ rows already
-// abstain for that reason and the ES is no different — and no Lexus document
-// consulted this pass names a heat pump on the ES.
+// ONE ABSTENTION: the heat pump, which no Lexus document consulted this pass
+// names on the electric ES.
+//
+// The warranty is NOT abstained, and the first draft of these rows was wrong
+// to. It copied the MY2026 RZ rows' reasoning in data9 — "Lexus publishes no
+// MY2026 BEV warranty document" — which is false for both cars. Lexus
+// publishes L-MMS-26ESBEV.pdf, the "2026 ES BEV Warranty and Services Guide"
+// (form 25-TCS-19206), on Toyota's own publications CDN, and its printed page
+// 18 states the term in the maker's own words: an Electric Vehicle Drive
+// Components Warranty covering the Traction Battery "Below 70% of original
+// capacity", "in effect for 8 years or 100,000 miles from the vehicle's in
+// service date". Printed page 16 adds the transfer clause and confirms the
+// scope: "These warranties apply to 2026 model-year Lexus ES BEV vehicles …
+// Warranty coverage is automatically transferred at no cost to subsequent
+// vehicle owners." The data9 RZ rows are corrected in the same commit.
+//
+// ROOT CAUSE: the negative came from a failed search rather than a control
+// test. These guides live at a completely regular address —
+// assets.sia.toyota.com/publications/en/omms-s/L-MMS-26<MODEL>/pdf/ — and one
+// fetch of a sibling guide that must exist (the RX or the LX, both of which
+// search engines do surface) would have handed over the scheme. Not finding a
+// document is not the same as a document not existing, and an abstention that
+// turns on the second must be tested that way.
 {
   const ES_PR = "https://pressroom.lexus.com/2026-lexus-es-launches-with-battery-electric-models-new-hybrid-coming-soon/";
+  const ES_WARRANTY_GUIDE =
+    "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-26ESBEV/pdf/L-MMS-26ESBEV.pdf";
   const ES_HP_ABSTAIN = "No Lexus document consulted this pass states heat-pump hardware for the electric ES";
-  const ES_WARRANTY_ABSTAIN =
-    "Lexus publishes no MY2026 BEV warranty document, the same gap the MY2026 RZ rows record, and no earlier term can be rolled forward";
+  const ES_WARRANTY = {
+    batteryYears: f(8, "mfr", "high", undefined, ES_WARRANTY_GUIDE),
+    batteryMiles: f(100_000, "mfr", "high", "From the in-service date", ES_WARRANTY_GUIDE),
+    sohFloorPct: f(70, "mfr", "high", undefined, ES_WARRANTY_GUIDE),
+    batteryTransfers: f(true, "mfr", "high", "At no cost to subsequent owners", ES_WARRANTY_GUIDE),
+  };
 
   const ES_CHARGING = {
     portStandard: f<"NACS">("NACS", "mfr", "high", "SAE J3400 inlet on the passenger-side front fender", ES_PR),
@@ -734,7 +775,8 @@ const R: EnrichmentRow[] = [];
     thermal: {
       batteryPreconditioning: f(true, "mfr", "high", "By touchscreen, or automatically when routing to a charger", ES_PR),
     },
-    abstains: { heatPump: ES_HP_ABSTAIN, batteryWarranty: ES_WARRANTY_ABSTAIN },
+    warranty: ES_WARRANTY,
+    abstains: { heatPump: ES_HP_ABSTAIN },
   });
 
   R.push(
@@ -774,9 +816,9 @@ const R: EnrichmentRow[] = [];
       thermal: {
         batteryPreconditioning: f(true, "mfr", "high", "By touchscreen, or automatically when routing to a charger", ES_PR),
       },
+      warranty: ES_WARRANTY,
       abstains: {
         heatPump: ES_HP_ABSTAIN,
-        batteryWarranty: ES_WARRANTY_ABSTAIN,
         epaRangeMi: "The 350e is rated 307 and the 500e 276, and a bare ESe listing names neither, so the grade-keyed rows carry the figure",
       },
     }
@@ -824,7 +866,16 @@ const R: EnrichmentRow[] = [];
   const GRAVITY_OM = "https://lucidmotors.com/media/document/OM_Gravity_enUS_v12_2.pdf";
   const GRAVITY_2027_PR =
     "https://ir.lucidmotors.com/news-releases/news-release-details/lucid-reveals-2027-gravity-lineup-expanded-standard-features";
-  const LUCID_WARRANTY_MY26 = "https://lucidmotors.com/s3fs-public/pdf/New-Vehicle-Limited-Warranty-en-US-MY26.pdf";
+  // NOT the MY26-titled booklet, which would be a roll-forward onto the
+  // MY2027 rows. Lucid also publishes a US New Vehicle Limited Warranty
+  // scoped by PURCHASE DATE rather than model year — "Effective for vehicles
+  // purchased on or after April 16, 2024" — which covers a 2026 and a 2027
+  // Gravity alike without anyone having to assume a term carries. Same terms,
+  // wider and better-defined scope, and it settles transferability too: the
+  // warranty is "provided to the original purchaser or lessor … and to
+  // subsequent owner(s) if the vehicle is within the applicable coverage
+  // period."
+  const LUCID_WARRANTY_US = "https://lucidmotors.com/s3fs-public/pdf/WAR_New-Vehicle-Limited-Warranty_enUS_2025.11.2.pdf";
 
   const GRAVITY_CHARGING = {
     portStandard: f<"NACS">("NACS", "mfr", "high", undefined, GRAVITY_CHARGING_PR),
@@ -841,9 +892,10 @@ const R: EnrichmentRow[] = [];
   // 100,000 miles… with a minimum 70% retention of battery capacity over the
   // warranty period."
   const LUCID_WARRANTY = {
-    batteryYears: f(8, "mfr", "high", undefined, LUCID_WARRANTY_MY26),
-    batteryMiles: f(100_000, "mfr", "high", undefined, LUCID_WARRANTY_MY26),
-    sohFloorPct: f(70, "mfr", "high", undefined, LUCID_WARRANTY_MY26),
+    batteryYears: f(8, "mfr", "high", undefined, LUCID_WARRANTY_US),
+    batteryMiles: f(100_000, "mfr", "high", undefined, LUCID_WARRANTY_US),
+    sohFloorPct: f(70, "mfr", "high", undefined, LUCID_WARRANTY_US),
+    batteryTransfers: f(true, "mfr", "high", "Subsequent owners, within the coverage period", LUCID_WARRANTY_US),
   };
   const GRAVITY_NOTE: EnrichmentRow["buyerNotes"] = [
     {
@@ -1031,18 +1083,36 @@ const R: EnrichmentRow[] = [];
     buyerNotes: o.buyerNotes,
   });
 
-  const RT_NOTE: EnrichmentRow["buyerNotes"] = [
+  // ONE CONSTANT PER YEAR-SPAN, not one for the nameplate. The first draft
+  // shared a single R/T note and a single Scat Pack note across every row,
+  // and each was false somewhere: the R/T note quoted a 258-to-308 spread that
+  // is the union of three model years, when MY2024-25's 20-inch entries run
+  // 268 to 308 and MY2026's run 258 to 295 — 13 miles of overstatement on the
+  // 2026 car, in the expensive direction. The Scat Pack note quoted a
+  // "40-plus mile" penalty that is true for MY2025 (38 to 63) and not for
+  // MY2026-27 (26 to 44), and it called the staggered setup "available, not
+  // standard" on the MY2024 rows, whose own comment says the opposite: the
+  // 2024 Scat Pack shipped WITH the Track Package. A note is a fact about the
+  // car it renders under, so each span states its own.
+  const rtNote = (spread: string): EnrichmentRow["buyerNotes"] => [
     {
-      headline: "The R/T's rating is for its standard 245/55R18 tires; the 20-inch options EPA also rates run from 258 to 308 miles",
+      headline: `The R/T's rating is for its standard 245/55R18 tires; the 20-inch options EPA also rates run from ${spread} miles`,
       severity: "info",
       learnMore: DAYTONA_PRICING_PR,
     },
   ];
-  const SP_NOTE: EnrichmentRow["buyerNotes"] = [
+  const spAvailableNote = (penalty: string): EnrichmentRow["buyerNotes"] => [
     {
-      headline: "Dodge calls the staggered 305-front/325-rear tire setup available, not standard, and EPA rates it 40-plus miles shorter",
+      headline: `Dodge calls the staggered 305-front/325-rear tire setup available, not standard, and EPA rates it ${penalty} miles shorter`,
       severity: "info",
       learnMore: DODGE_PERF_PAGE,
+    },
+  ];
+  const SP_2024_NOTE: EnrichmentRow["buyerNotes"] = [
+    {
+      headline: "The 2024 Scat Pack shipped with the Track Package, and EPA rates its staggered tires 216 miles on summer rubber against 241 on all-seasons",
+      severity: "info",
+      learnMore: DAYTONA_PRICING_PR,
     },
   ];
   const RT_TRIMS = ["R/T", "R"];
@@ -1060,7 +1130,7 @@ const R: EnrichmentRow[] = [];
       trim: RT_TRIMS,
       years: [2024, 2025],
       range: { epaRangeMi: f(274, "mfr", "high", "18-inch wheels, standard", epa(48782)) },
-      buyerNotes: RT_NOTE,
+      buyerNotes: rtNote("268 to 308"),
     }),
     daytona({
       id: "dodge-charger-daytona-sp-2024",
@@ -1068,7 +1138,7 @@ const R: EnrichmentRow[] = [];
       trim: SP_TRIMS,
       years: [2024, 2024],
       rangeAbstain: SP_2024_ABSTAIN,
-      buyerNotes: SP_NOTE,
+      buyerNotes: SP_2024_NOTE,
     }),
     daytona({
       id: "dodge-charger-daytona-sp-2025",
@@ -1078,7 +1148,7 @@ const R: EnrichmentRow[] = [];
       range: {
         epaRangeMi: f(279, "mfr", "high", "305/35ZR20 wheels, standard; 216–241 on the staggered option", epa(49075)),
       },
-      buyerNotes: SP_NOTE,
+      buyerNotes: spAvailableNote("38 to 63"),
     }),
     daytona({
       id: "dodge-charger-daytona-rt-2026",
@@ -1086,7 +1156,7 @@ const R: EnrichmentRow[] = [];
       trim: RT_TRIMS,
       years: [2026, 2026],
       range: { epaRangeMi: f(263, "mfr", "high", "18-inch wheels, standard", epa(49957)) },
-      buyerNotes: RT_NOTE,
+      buyerNotes: rtNote("258 to 295"),
     }),
     // MY2027 spans with MY2026 because EPA re-rated the identical standard
     // 305/35ZR20 fitment at the same 267 miles. No MY2027 R/T row exists here
@@ -1098,9 +1168,9 @@ const R: EnrichmentRow[] = [];
       trim: SP_TRIMS,
       years: [2026, 2027],
       range: {
-        epaRangeMi: f(267, "mfr", "high", "305/35ZR20 wheels, standard; 231–241 on the staggered option", epa(49648)),
+        epaRangeMi: f(267, "mfr", "high", "305/35ZR20 wheels, standard; 223–241 on the staggered option", epa(49648)),
       },
-      buyerNotes: SP_NOTE,
+      buyerNotes: spAvailableNote("26 to 44"),
     }),
     // Bare-nameplate rows, 2024-2025 only. See the block comment: the MY2026
     // petrol Charger wears the same R/T and Scat Pack badges, so widening
@@ -1111,7 +1181,7 @@ const R: EnrichmentRow[] = [];
       trim: RT_TRIMS,
       years: [2024, 2025],
       range: { epaRangeMi: f(274, "mfr", "high", "18-inch wheels, standard", epa(48782)) },
-      buyerNotes: RT_NOTE,
+      buyerNotes: rtNote("268 to 308"),
     }),
     daytona({
       id: "dodge-charger-daytona-sp-2024-25-alt",
@@ -1119,7 +1189,7 @@ const R: EnrichmentRow[] = [];
       trim: SP_TRIMS,
       years: [2024, 2025],
       rangeAbstain: SP_2024_ABSTAIN,
-      buyerNotes: SP_NOTE,
+      buyerNotes: SP_2024_NOTE,
     }),
     // Base row for the handful of Charger Daytona listings whose trim field
     // names neither badge. Only under the full "Charger Daytona" model string,
@@ -1169,13 +1239,41 @@ const R: EnrichmentRow[] = [];
   const I5_SPECS_2025 = "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf";
   const I5_NACS_2025 = "https://www.hyundainews.com/assets/documents/original/63444-2025IONIQ5XRTLimited8272024finalmjab.pdf";
   const I5_2027_CARRYOVER = "https://www.hyundainews.com/models/hyundai-ioniq_5-2027-ioniq_5";
+  const I5_HANDBOOK = "https://www.hyundaiusa.com/content/dam/hyundai/us/com/pdf/assurance/2026_owners_handbook_warranty.pdf";
 
+  // WARRANTY SOURCE, corrected. The first draft of these rows hung all five
+  // warranty facts off the specs-and-features sheet above, which contains no
+  // warranty text at all — a full-text search of that PDF for "warrant"
+  // returns zero hits. The real source is Hyundai's "Owner's Handbook &
+  // Warranty Information", whose Section 6 states the term in Hyundai's own
+  // words: "The Warranty period for the following HYBRID, PLUG-IN HYBRID, AND
+  // ELECTRIC VEHICLE Direct Energy components is limited to 10 years from the
+  // date of original retail delivery or date of first use, or 100,000 miles,
+  // whichever occurs first", with capacity "covered not to degrade more than
+  // 70% of the original battery capacity", and the summary table's footnote
+  // giving the powertrain split.
+  //
+  // The edition is MY2026 and these rows are MY2027, because Hyundai has not
+  // published a MY2027 handbook (the 2027 URL 404s on the same path the 2026
+  // one serves from — control-tested, not assumed). What licenses the read
+  // across that year line is the same document the rows themselves rest on:
+  // Hyundai's "2027 Hyundai IONIQ 5 (EV) – Carry-over Model" page, whose
+  // complete change list is roof rails, HomeLink, a cargo cover and two
+  // paints. When a MY2027 handbook appears, re-point these.
+  //
+  // batteryTransfers is deliberately GONE from this set. data.ts's MY2025-26
+  // rows carry it as true with no citation, and the handbook does not support
+  // it: its Warranty Transferability section names the New Vehicle Limited,
+  // Anti-Perforation, emissions and Replacement Parts warranties as
+  // transferable and says the 10-year Powertrain warranty is not, and leaves
+  // the Section 6 EV warranty out of both lists. An expected-tier field is
+  // cheap to leave empty; a transferability claim a buyer might pay for is
+  // not cheap to get wrong.
   const I5_WARRANTY = {
-    batteryYears: f(10, "mfr", "high", undefined, I5_SPECS_2025),
-    batteryMiles: f(100_000, "mfr", "high", undefined, I5_SPECS_2025),
-    sohFloorPct: f(70, "mfr", "high", undefined, I5_SPECS_2025),
-    batteryTransfers: f(true, "mfr", "high", undefined, I5_SPECS_2025),
-    powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr", "high", undefined, I5_SPECS_2025),
+    batteryYears: f(10, "mfr", "high", undefined, I5_HANDBOOK),
+    batteryMiles: f(100_000, "mfr", "high", "From first retail delivery or first use", I5_HANDBOOK),
+    sohFloorPct: f(70, "mfr", "high", undefined, I5_HANDBOOK),
+    powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr", "high", undefined, I5_HANDBOOK),
   };
   const I5_NOTES: EnrichmentRow["buyerNotes"] = [
     { headline: "HV battery bus-bar recall: NHTSA 25V482 / 26V068", severity: "warning", resolvedBy: "campaign_check" },
@@ -1219,7 +1317,7 @@ const R: EnrichmentRow[] = [];
               257,
               "tested",
               "medium",
-              "Hyundai publishes no vehicle peak; instrumented curves on the 84 kWh pack peak near 257 kW on 800V hardware"
+              "Hyundai publishes no vehicle peak. Instrumented curves on the 84 kWh pack peak at ~257–260 kW on 800V hardware, only reachable via the CCS adapter, not on today's 400V Superchargers"
             ),
           }
         : {}),
@@ -1239,7 +1337,7 @@ const R: EnrichmentRow[] = [];
       drive: "RWD",
       packKwh: 63.0,
       packNote: "Standard Range pack",
-      archNote: "523 V nominal, Standard Range pack",
+      archNote: "523V, Standard Range pack",
       rangeMi: 245,
       epaId: 50646,
       heatPump: "none",
@@ -1251,7 +1349,7 @@ const R: EnrichmentRow[] = [];
       drive: "RWD",
       packKwh: 84.0,
       packNote: "Long Range pack",
-      archNote: "697 V nominal, long-range pack",
+      archNote: "697V, long-range pack",
       rangeMi: 318,
       epaId: 50645,
       rangeNote: "One rating covers all long-range RWD trims",
@@ -1264,7 +1362,7 @@ const R: EnrichmentRow[] = [];
       drive: "AWD",
       packKwh: 84.0,
       packNote: "Long Range pack",
-      archNote: "697 V nominal, long-range pack",
+      archNote: "697V, long-range pack",
       rangeMi: 290,
       epaId: 50642,
       rangeNote: "19-inch wheels, SE and SEL",
@@ -1278,7 +1376,7 @@ const R: EnrichmentRow[] = [];
       drive: "AWD",
       packKwh: 84.0,
       packNote: "Long Range pack",
-      archNote: "697 V nominal, long-range pack",
+      archNote: "697V, long-range pack",
       rangeMi: 269,
       epaId: 50643,
       rangeNote: "20-inch wheels, the Limited AWD's fitment",
@@ -1292,7 +1390,7 @@ const R: EnrichmentRow[] = [];
       drive: "AWD",
       packKwh: 84.0,
       packNote: "Long Range pack",
-      archNote: "697 V nominal, long-range pack",
+      archNote: "697V, long-range pack",
       rangeMi: 259,
       epaId: 50644,
       heatPump: "standard",

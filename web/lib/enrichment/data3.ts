@@ -366,21 +366,31 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     // The Grand Touring needs its own row because "Touring" is a substring of
     // "Grand Touring", so trimStringsOverlap handed all 7 live MY2025 Grand
     // Tourings the Touring row's 406 mi — understating Lucid's flagship by 74.
-    // Its standard wheel is the 20-inch Aero Lite (Lucid's own per-trim spec
-    // data), not the 19 the Pure and Touring get, so the standard-config
-    // figure here is 480 rather than the 19-inch 512.
+    //
+    // Corrected 2026-08-25. This row printed 480 on the belief that the Grand
+    // Touring's standard wheel is the 20-inch Aero Lite while the Pure and
+    // Touring get 19s. The document this row already cites for its pack size
+    // says otherwise, in a table nobody had read to the bottom: its Tires
+    // section lists "19” wheel (standard)", with the 20 and the 21 both
+    // marked "(optional)" — the same standard-19 fitment the Pure and Touring
+    // spec sheets carry. So the standard-configuration figure is the 19-inch
+    // 512, not the 20-inch 480, and the row was understating Lucid's flagship
+    // by 32 miles. The EPA id moves with it (48371 is the 19-inch entry,
+    // 48372 the 20-inch one). Understating is the safe direction, which is
+    // why this survived a pass, but it is still the wrong number.
     id: "lucid-air-2025-grand-touring-awd",
     make: "LUCID",
     model: "Air",
     modelYears: [2025, 2025],
     trim: "Grand Touring",
     drive: "AWD",
-    // Pack read off the same Lucid document the 480-mile figure above was
-    // checked against — its range table prints 512/480/446 for 19/20/21-inch
-    // wheels, which is where this row's standard-config choice comes from.
-    // Same shape as the Pure (84, 16 module) and Touring (92, 18 module) rows.
+    // Pack read off the same Lucid document the range figure above was checked
+    // against — its range table prints 512/480/446 for 19/20/21-inch wheels
+    // and its tire table names the 19 as standard, which together are where
+    // this row's standard-config choice comes from. Same shape as the Pure
+    // (84, 16 module) and Touring (92, 18 module) rows.
     battery: { packGrossKwh: f(117, "mfr", "high", "Lucid's own 2025 Grand Touring technical-spec sheet: \u201c117 (22 module)\u201d; no usable/net split published by Lucid", "https://lucidmotors.com/media/document/lucid-air-grand-touring-technical-specs-2025.pdf") },
-    range: { epaRangeMi: f(480, "mfr", "high", "20-inch wheels, standard", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48372") },
+    range: { epaRangeMi: f(512, "mfr", "high", "19-inch wheels, standard; 480 on the 20s and 446 on the 21s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48371") },
     charging: {
       portStandard: f("CCS1", "mfr", "high", "Lucid's own site: “Your Lucid Air has a J1772 (CCS1) charge port”, confirmed current as of the most recent Lucid material found (July 2025); still no native NACS port"),
       superchargerAccess: f("adapter", "mfr", "high", "All Air owners gained Supercharger access July 31, 2025 via a Lucid-sold NACS-to-CCS1 adapter ($220); capped around 50 kW / up to 200 mi of range per hour on that adapter path, well below the car's native CCS1 DC peak"),

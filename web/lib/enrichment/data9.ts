@@ -222,15 +222,30 @@ const R: EnrichmentRow[] = [];
 // November 2025, while 2026 cars have a native NACS (SAE J3400) inlet, need
 // no adapter, ship with Plug & Charge, and take 11 kW AC instead of 7.
 //
-// Two abstentions. Heat pump: no Lexus document fetched this pass names one,
-// and the 2026 release is detailed enough about thermal management (it
-// describes an updated water-cooling system) that its silence is suggestive
-// but not evidence. Battery warranty on the 2026 rows: the MY25 RZ brochure
-// states the term for this car in its own words — "Electric vehicle drive
-// components (transaxle, traction battery, inverter with converter) covered
-// for 8 years or 100,000 miles" — and no MY26 equivalent is published, so the
-// 2023–25 rows carry it and the 2026 rows say nothing rather than roll it
-// forward.
+// One abstention now, not two. Heat pump: no Lexus document fetched this pass
+// names one, and the 2026 release is detailed enough about thermal management
+// (it describes an updated water-cooling system) that its silence is
+// suggestive but not evidence.
+//
+// The battery-warranty abstention on the 2026 rows was WRONG and is deleted.
+// It read "Lexus publishes no MY2026 RZ warranty document" — and Lexus does:
+// L-MMS-26RZ.pdf, the "2026 RZ 350e | RZ 450e | RZ 550e Warranty and Services
+// Guide", on Toyota's own publications CDN. Its printed page 18 carries the
+// Electric Vehicle Drive Components Warranty in the maker's own words —
+// Traction Battery "Below 70% of original capacity", "in effect for 8 years
+// or 100,000 miles from the vehicle's in service date" — and its printed page
+// 16 adds "Warranty coverage is automatically transferred at no cost to
+// subsequent vehicle owners", which is the transferability fact too.
+//
+// ROOT CAUSE, worth naming because the same mistake was made twice on the
+// same marque in two different files: the negative was asserted from a failed
+// search rather than a control test. Every Lexus warranty guide lives at
+// assets.sia.toyota.com/publications/en/omms-s/L-MMS-26<MODEL>/pdf/ — a
+// pattern a single sibling fetch (the RX or LX guide, which search engines do
+// surface) would have revealed. "I could not find it" was recorded as "it is
+// not published". Before writing an abstention that turns on a document not
+// existing, fetch a sibling document that must exist and confirm the address
+// scheme first.
 {
   const RZ_2026_PR = "https://pressroom.lexus.com/2026-lexus-rz-adds-more-power-and-performance-2/";
   const RZ_CHARGING_PR =
@@ -239,8 +254,16 @@ const R: EnrichmentRow[] = [];
     "https://www.lexus.com/content/dam/lexus/documents/brochures/models/2025/MY25-Lexus-RZ-Brochure.pdf";
 
   const RZ_HP_ABSTAIN = "No Lexus document consulted this pass states heat-pump hardware for the RZ";
-  const RZ_WARRANTY_2026_ABSTAIN =
-    "Lexus publishes no MY2026 RZ warranty document and the MY2025 term cannot be rolled forward";
+  // "2026 RZ 350e | RZ 450e | RZ 550e Warranty and Services Guide", printed
+  // p.18 for the term and p.16 for the transfer clause.
+  const RZ_MY26_WARRANTY_GUIDE =
+    "https://assets.sia.toyota.com/publications/en/omms-s/L-MMS-26RZ/pdf/L-MMS-26RZ.pdf";
+  const RZ_WARRANTY_2026 = {
+    batteryYears: f(8, "mfr", "high", undefined, RZ_MY26_WARRANTY_GUIDE),
+    batteryMiles: f(100_000, "mfr", "high", "From the in-service date", RZ_MY26_WARRANTY_GUIDE),
+    sohFloorPct: f(70, "mfr", "high", undefined, RZ_MY26_WARRANTY_GUIDE),
+    batteryTransfers: f(true, "mfr", "high", "At no cost to subsequent owners", RZ_MY26_WARRANTY_GUIDE),
+  };
 
   const RZ_CHARGING_PRE26 = {
     portStandard: f<"CCS1">("CCS1", "mfr", "high", undefined, RZ_CHARGING_PR),
@@ -288,10 +311,8 @@ const R: EnrichmentRow[] = [];
     battery: { packGrossKwh: f(o.packKwh, "mfr", "high", undefined, o.packUrl) },
     range: o.range,
     charging: o.pre26 ? RZ_CHARGING_PRE26 : RZ_CHARGING_2026,
-    warranty: o.pre26 ? RZ_WARRANTY_PRE26 : undefined,
-    abstains: o.pre26
-      ? { heatPump: RZ_HP_ABSTAIN }
-      : { heatPump: RZ_HP_ABSTAIN, batteryWarranty: RZ_WARRANTY_2026_ABSTAIN },
+    warranty: o.pre26 ? RZ_WARRANTY_PRE26 : RZ_WARRANTY_2026,
+    abstains: { heatPump: RZ_HP_ABSTAIN },
   });
 
   // GRADE-KEYED, not one row for both, because the brochure footnote does not
