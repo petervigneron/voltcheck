@@ -4,7 +4,7 @@
 
 - GM sold DC fast charging as an option on the Bolt EV, not as standard equipment. In GM's 2017 order guide the RPO code is CBT, "Provisions, fast charging accommodations," listed as available — not standard — on both the LT and the Premier.[^1] In the 2019 order guide the same code reads "DC fast charging," again available on both trims.[^2]
 - GM's own owner's manuals match. The 2017 and the 2020 Bolt EV manuals both title the section "DC Charging (If Equipped)."[^3][^4]
-- By 2022 it is standard. The 2022 Bolt EUV manual titles the same section "DC Charging," with no qualifier, and states plainly that "The vehicle can be charged using DC charging equipment."[^5] GM's 2023 order guide lists CBT, DC fast charging, as standard on the Bolt EV and the Bolt EUV.[^6]
+- By 2022 it is standard. The 2022 Bolt EUV manual titles the same section "DC Charging," with no qualifier, and states plainly that "The vehicle can be charged using DC charging equipment."[^5] GM's 2023 Bolt EV order guide lists CBT, DC fast charging, as standard equipment on both trims, 1LT and 2LT.[^6]
 - A used Bolt EV from 2017 through 2021 therefore has to be checked car by car. The option is not visible in the model name or the trim.
 
 ## DC fast charging
@@ -19,7 +19,7 @@
 
 ## AC (Level 2, home) charging
 
-- Onboard charger, from GM's RPO codes: 7.2 kW in 2017 and 2019, RPO K23, "Charger, 7.2 kW high-voltage," standard on both trims.[^1][^2] 11.5 kW in 2023, RPO K28, "Charging module, 11.5 kW high-voltage," standard on both the Bolt EV and the Bolt EUV.[^6]
+- Onboard charger, from GM's RPO codes for the Bolt EV: 7.2 kW in 2017 and 2019, RPO K23, "Charger, 7.2 kW high-voltage," standard on LT and Premier.[^1][^2] 11.5 kW in 2023, RPO K28, "Charging module, 11.5 kW high-voltage," standard on 1LT and 2LT.[^6]
 - 2017 Bolt EV: about 50 hours to charge from a fully depleted battery on a 120-volt outlet at the 12-amp setting, about 4 miles per hour of charging; about 9.5 hours on a 240-volt station at the 32-amp setting, about 25 miles per hour of charging.[^3]
 - 2020 Bolt EV: about 55 hours on 120 volts at 12 amps; about 10 hours on a 240-volt station at 32 amps, about 25 miles per hour of charging.[^4]
 - 2022 Bolt EUV, from GM's own table:
@@ -29,7 +29,7 @@
   - 240 volts, 48 amps: about 37 miles per hour of charge, about 7 hours to full.[^5]
 - 2023: about 55 hours to fully charge a depleted battery on a 120-volt outlet at the 12-amp setting; approximately 7 hours on a 240-volt charging station with a 48-amp charging unit.[^7]
 - GM's own advice on home equipment: "Level 2 charging equipment with at least a 240-volt/48-amp rating will provide the fastest charging time to recharge the propulsion battery at home."[^7]
-- The cord in the trunk is not the fast one. In 2023 the standard cord is RPO EJK, "Charge cord, 120-volt, portable, NEMA 5 plug with SAE J1772 vehicle connection." The 240-volt-capable cord is RPO EKT, "Charge cord, Dual Level, 120-volt and 240-volt capability," an option that replaces EJK.[^6] The 2019 order guide lists only the 120-volt portable cord as standard.[^2]
+- The cord in the trunk is not the fast one. In the 2023 Bolt EV order guide the standard cord is RPO EJK, "Charge cord, 120-volt, portable, NEMA 5 plug with SAE J1772 vehicle connection." The 240-volt-capable cord is RPO EKT, "Charge cord, Dual Level, 120-volt and 240-volt capability," an option that replaces EJK.[^6] The 2019 order guide lists only the 120-volt portable cord as standard.[^2]
 
 ## Tesla Superchargers
 
@@ -58,7 +58,7 @@
 
 [^5]: GM, *2022 Chevrolet Bolt EUV Owner's Manual* (PDF, CRC 2/26/21), "Driving and Operating," charging table on printed page 229 and the "DC Charging" section. GM's own host: https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/experience-chevrolet/supecruise-how-to/02-pdfs/2022-chevrolet-bolt-euv-owners-manual.pdf
 
-[^6]: GM, *2023 Chevrolet Bolt EV & Bolt EUV Order Guide* (PDF, 33 pages, dated May 26, 2022), RPO tables, pp. 5, 9 and 19. Mirror: https://www.autoevolution.com/pdf/news_attachements/gm-publishes-2023-chevrolet-bolt-ev-order-guide-illuminated-charge-port-confirmed-190201.pdf
+[^6]: GM, *2023 Chevrolet Bolt EV Order Guide* (PDF, 33 pages, dated May 26, 2022), RPO tables, pp. 5, 9 and 19. Its header reads "2023 Chevrolet Truck Bolt EV" and its columns are 1LT and 2LT; the Bolt EUV does not appear anywhere in this document, which is why no EUV claim on this page rests on it. Mirror: https://www.autoevolution.com/pdf/news_attachements/gm-publishes-2023-chevrolet-bolt-ev-order-guide-illuminated-charge-port-confirmed-190201.pdf
 
 [^7]: GM, *2023 Bolt EV & Bolt EUV "Get To Know" Guide* (PDF, 20 pages), "CHARGING — CHARGING TIME," p. 15, and "DC FAST CHARGING — CHARGING TIME," p. 18. GM's own host: https://contentdelivery.ext.gm.com/bypass/gma-content-api/resources/sites/GMA/content/staging/MANUALS/6000/MA6687/en_US/1.0/GTK_2023_Chevrolet_Bolt_EV_Bolt_EUV_84953316_A.pdf
 
@@ -67,6 +67,8 @@
 ## Scope note
 
 Model years actually opened for this sheet: 2017, 2019, 2020, 2022 and 2023. Model years 2018 and 2021 were not checked and are not claimed; neither is the 2021 Bolt EV's mid-generation refresh. The Bolt EUV existed only for 2022 and 2023, and every EUV figure above comes from one of those two years.
+
+The order guides opened here are Bolt EV documents. GM's 2017, 2019 and 2023 order guides each cover the Bolt EV only — the 2023 one is headed "2023 Chevrolet Truck Bolt EV" and contains no occurrence of "Bolt EUV" — so every RPO-code claim above is a Bolt EV claim. The two EUV statements on this page come from GM's own 2022 Bolt EUV owner's manual and from the 2023 "Get To Know" guide, which covers both nameplates and names each one separately in its charging figures.
 
 The Tesla Supercharger section comes from a Chevrolet support page that is not model-year specific, and Chevrolet's answer there names the Bolt EV. It does not name the Bolt EUV, so nothing here is claimed for the EUV.
 

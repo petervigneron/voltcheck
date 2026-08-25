@@ -312,7 +312,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       {
         question: "Do all Chevrolet Bolt EVs have DC fast charging?",
         answer:
-          "No. GM sold it as an option, RPO code CBT, listed as available rather than standard on both trims in GM's 2017 and 2019 order guides, and GM's 2017 and 2020 owner's manuals title the section \"DC Charging (If Equipped).\" It is standard by 2022: the 2022 Bolt EUV manual drops the qualifier, and GM's 2023 order guide lists CBT as standard on both the Bolt EV and the Bolt EUV. A used 2017-2021 Bolt EV has to be checked car by car.",
+          "No. GM sold it as an option, RPO code CBT, listed as available rather than standard on both trims in GM's 2017 and 2019 Bolt EV order guides, and GM's 2017 and 2020 owner's manuals title the section \"DC Charging (If Equipped).\" It is standard by 2022: the 2022 Bolt EUV manual drops the qualifier, and GM's 2023 Bolt EV order guide lists CBT as standard equipment on both trims. A used 2017-2021 Bolt EV has to be checked car by car.",
       },
       {
         question: "How fast does a Chevrolet Bolt EV or Bolt EUV DC fast charge?",
@@ -322,7 +322,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       {
         question: "How long does a Chevrolet Bolt EV take to charge at home?",
         answer:
-          "The onboard charger is 7.2 kW in 2017 and 2019 and 11.5 kW by 2023. A 2017 Bolt EV takes about 9.5 hours on a 240-volt station at 32 amps and about 50 hours on a 120-volt outlet at 12 amps. A 2022 Bolt EUV takes about 7 hours at 240 volts and 48 amps, about 10 hours at 32 amps, and about 55 hours at 120 volts and 12 amps. GM's 2023 figures are about 7 hours at 240 volts/48 amps and about 55 hours at 120 volts/12 amps.",
+          "The Bolt EV's onboard charger is 7.2 kW in 2017 and 2019 and 11.5 kW by 2023. A 2017 Bolt EV takes about 9.5 hours on a 240-volt station at 32 amps and about 50 hours on a 120-volt outlet at 12 amps. A 2022 Bolt EUV takes about 7 hours at 240 volts and 48 amps, about 10 hours at 32 amps, and about 55 hours at 120 volts and 12 amps. GM's 2023 figures are about 7 hours at 240 volts/48 amps and about 55 hours at 120 volts/12 amps.",
       },
       {
         question: "Can a Chevrolet Bolt EV charge at a Tesla Supercharger?",
