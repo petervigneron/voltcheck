@@ -63,12 +63,34 @@ const SPECS_25 = "https://www.fromtheroad.ford.com/content/dam/fordmediasite/us/
 const OG_24 = "https://www.fromtheroad.ford.com/content/dam/fordmediasite/us/en/library/2024/order-guides/2024_F-150_Lightning_Order_Guide.pdf";
 const epa = (id: number) => `https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=${id}`;
 
+// Ford battery-warranty transferability, shared by the Lightning and Mach-E
+// rows below. This one is not in the warranty guide: Ford's 2024 Battery
+// Electric Vehicle Warranty Guide — the booklet for these exact three cars,
+// E-Transit, Mach-E and F-150 Lightning — never uses the word "transfer" at
+// all. That is a real silence, not a text-extraction miss: the same grep finds
+// "Transit", "Corrosion" and "8/100,000" in the same file, and "transfer" and
+// "transferable" return zero. Ford's own US support page answers it instead:
+// "If you have purchased a previously owned vehicle, you are eligible for any
+// remaining New Vehicle Limited Warranty coverage and other warranties based
+// on the warranty start date and mileage of the vehicle."
+//
+// What links that sentence to the battery is the guide's own Quick Reference
+// chart, headed "Your New Vehicle Limited Warranty", which lists ELECTRIC
+// VEHICLE COMPONENT 8/100,000 as one of its coverages. So the battery term is
+// NVLW coverage, and remaining NVLW coverage is what the used buyer gets.
+//
+// The same answer is also served under a .../warranty-eu-specific/... path,
+// which is what a search turns up first and which would be exactly the wrong
+// thing to cite. The URL here is the US support tree; a nonsense path in the
+// same shape 404s, so the path is real and not a catch-all.
+const FORD_XFER = "https://www.ford.com/support/how-tos/warranty/used-vehicle-warranty/does-the-warranty-transfer-to-a-new-owner/";
+const FORD_XFER_NOTE = "\u201CYou are eligible for any remaining New Vehicle Limited Warranty coverage\u201D";
 // Ford EV warranty terms, printed identically on the Lightning spec sheets.
 const WARRANTY = {
   batteryYears: f(8, "mfr" as Source, "high", undefined, SPECS_23),
   batteryMiles: f(100_000, "mfr" as Source, "high", undefined, SPECS_23),
   sohFloorPct: f(70, "mfr" as Source, "high", undefined, SPECS_23),
-  batteryTransfers: f(true, "mfr" as Source, "high"),
+  batteryTransfers: f(true, "mfr" as Source, "high", FORD_XFER_NOTE, FORD_XFER),
 };
 
 const NO_HEAT_PUMP = f<"none">(
@@ -138,7 +160,7 @@ const ME_WARRANTY = {
   batteryYears: f(8, "mfr" as Source),
   batteryMiles: f(100_000, "mfr" as Source),
   sohFloorPct: f(70, "mfr" as Source, "high"),
-  batteryTransfers: f(true, "mfr" as Source, "high"),
+  batteryTransfers: f(true, "mfr" as Source, "high", FORD_XFER_NOTE, FORD_XFER),
   // powertrainTerms is filled centrally in backfill.ts (resolvePowertrain):
   // Ford's BEV Warranty Guide covers the electric drive unit WITH the battery
   // at 8yr/100k, so "Electric drive: 8 yr / 100,000 mi" is the honest figure —
