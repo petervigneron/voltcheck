@@ -15,7 +15,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { enrichListing } from "@/lib/listings/enrich";
-import { abstainTeslaRange } from "@/lib/listings/teslaRangeAbstain";
+import { abstainTeslaRange, withTeslaCollisionAbstention } from "@/lib/listings/teslaRangeAbstain";
+import { matchEnrichment } from "@/lib/enrichment/match";
+import { decodeTeslaVin } from "@/lib/tesla-vin";
 import type { Listing } from "@/lib/listings/types";
 
 const base: Listing = {
@@ -141,4 +143,85 @@ test("a Tesla outside the eight buckets is untouched", () => {
 test("a non-Tesla make sharing a VIN-8 letter is untouched", () => {
   const l: Listing = { ...base, make: "Ford", model: "F-150 Lightning", vin: "1FT6W1EV4PWG56454", year: 2023, trim: "Pro" };
   assert.equal(abstainTeslaRange(l), false);
+});
+
+// ── /vin/[vin] ───────────────────────────────────────────────────────────
+//
+// That page resolves its row from matchEnrichment and never calls
+// enrichListing, so until 2026-08-25 none of the above applied to it. A vPIC
+// decode of a Tesla carries no trim, no drivetrain and no battery size
+// (verified live against vPIC on 5YJ3E1EA2RF745143: all three empty), which
+// is the worst possible input for the trim-less by-elimination failure.
+// These pin the page's three outcomes.
+
+/** The page's decode: everything vPIC cannot tell us about a Tesla is blank. */
+const vinPage = (vin: string, model: string, year: number) => {
+  const decode = {
+    vin, usMarket: true, make: "TESLA", model, modelYear: year,
+    trim: undefined, driveType: undefined, batteryKwhHint: undefined,
+  };
+  return withTeslaCollisionAbstention(decode, matchEnrichment(decode, decodeTeslaVin(vin)));
+};
+
+test("/vin/: the 91-mile worst case shows both cars, not the one that happens to lack a trim key", () => {
+  // Real VIN from the crawl cache. Before this, the page printed
+  // "272 mi · 61 kWh · LFP" as a researched exact configuration — chosen by
+  // elimination, because m3-2024-lr-rwd is trim-keyed and the decode has no
+  // trim, not because anything about the car said RWD.
+  const r = vinPage("5YJ3E1EA2RF745143", "Model 3", 2024);
+  assert.equal(r.exact, undefined, "no unqualified answer where two cars fit the VIN");
+  assert.deepEqual(r.candidates?.map((c) => c.id), ["m3-2024-rwd", "m3-2024-lr-rwd"]);
+  assert.match(r.discriminator ?? "", /window sticker or the door-jamb label/);
+});
+
+test("/vin/: a bucket where EVERY row is trim-keyed stops claiming we have no row for the car", () => {
+  // Both 2018 Model 3 "A" rows carry a trim key, so the trim-less match
+  // dropped both and the page said "No researched row for this model yet"
+  // about a car we hold two researched rows for. The opposite failure from
+  // the test above, same cause.
+  const r = vinPage("5YJ3E1EA8JF000337", "Model 3", 2018);
+  assert.equal(r.exact, undefined);
+  assert.deepEqual(r.candidates?.map((c) => c.id), ["m3-2018-lr-rwd", "m3-2018-mid"]);
+});
+
+test("/vin/: a Fremont-built 2022-23 Model Y keeps its exact row, matching what the listing page already shows", () => {
+  // Austin built both the 4680 AWD (279 mi) and the Long Range AWD (330 mi);
+  // Fremont only ever built the 330-mile car, so plant code F resolves it
+  // with no trim involved. This is the abstention's corroboration branch, and
+  // the listing page has always honoured it — /vin/ said nothing at all.
+  const r = vinPage("5YJYGDEE1NF000000", "Model Y", 2022);
+  assert.equal(r.exact?.id, "model-y-lr-awd-2022-23");
+  assert.equal(r.exact?.range?.epaRangeMi?.value, 330);
+  assert.equal(r.candidates, undefined);
+});
+
+test("/vin/: the same car built in Austin gets candidates, because there the plant proves nothing", () => {
+  const r = vinPage("5YJYGDEE1NA000000", "Model Y", 2022);
+  assert.equal(r.exact, undefined);
+  assert.deepEqual(r.candidates?.map((c) => c.id), ["model-y-lr-awd-2022-23", "model-y-awd-4680-2022-23"]);
+});
+
+test("/vin/: a Tesla outside the eight buckets is untouched", () => {
+  const r = vinPage("5YJ3E1EB1MF000000", "Model 3", 2021);
+  assert.equal(r.exact?.id, "m3-2021-lr-awd");
+  assert.equal(r.exact?.range?.epaRangeMi?.value, 353);
+});
+
+test("VIN position 7 is not a chemistry code and no longer claims to be", () => {
+  // Measured against the 6,773 Teslas in scraper/registry/vpic-cache.json:
+  // position 7 is "E" on 99.3% and "F" never appears. The control that kills
+  // it outright is below — a cohort this corpus states is LFP and a cohort
+  // that is ternary are INDISTINGUISHABLE at position 7, so the page-level
+  // claim it used to source ("Cell type (VIN pos. 7)", confidence high, under
+  // a heading reading "What the VIN itself proves") was unearned on every car
+  // and flatly contradicted the row's own LFP on 719 of them.
+  const knownLfp = "5YJ3E1EA6PF672730";  // 2023 Model 3 RWD, vin8 A — CATL LFP
+  const knownTernary = "5YJ3E1EB0PF000001"; // 2023 Model 3 Long Range AWD, vin8 B
+  assert.equal(knownLfp[6], "E");
+  assert.equal(knownTernary[6], "E", "identical at position 7 — it cannot separate them");
+
+  assert.ok(!("chemistryHint" in decodeTeslaVin(knownLfp)!), "no chemistry is derived from the VIN");
+  // The row remains the only source of chemistry, and still says LFP here.
+  const l: Listing = { ...base, vin: knownLfp, year: 2023, model: "Model 3" };
+  assert.equal(enrichListing(l).row?.battery?.chemistry?.value, "LFP");
 });

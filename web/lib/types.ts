@@ -77,7 +77,6 @@ export interface VinDecode {
 export interface TeslaVinFacts {
   plant?: { code: string; name: string };
   modelYearFromVin?: number;
-  chemistryHint?: "ternary" | "LFP";
 }
 
 // T3 — one row of the enrichment table.

@@ -1,7 +1,21 @@
-import type { Listing } from "./types";
-import type { EnrichmentRow } from "../types";
+import type { EnrichmentResult, EnrichmentRow, VinDecode } from "../types";
 import { matchIgnoringTrim } from "../enrichment/match";
 import { decodeTeslaVin, isTeslaVin } from "../tesla-vin";
+
+/**
+ * The little that deciding this question actually needs. A `Listing`
+ * satisfies it structurally, and so does a bare vPIC decode once its field
+ * names are mapped across — which is the point: /vin/[vin] has no listing,
+ * only a VIN, and it needs the same answer.
+ */
+export interface TeslaCollisionSubject {
+  vin: string;
+  make: string;
+  model: string;
+  year: number;
+  drive?: string;
+  vpicBatteryKwh?: number;
+}
 
 /**
  * Eight (model, model-year, VIN-8) combinations where Tesla's own motor code
@@ -45,7 +59,7 @@ const TESLA_RANGE_COLLISIONS: readonly {
   { model: "Model Y", minYear: 2026, maxYear: 2026, vin8: "E" }, // Standard AWD 294 mi vs Premium/Long Range AWD 327 mi
 ];
 
-function inCollisionBucket(l: Listing): boolean {
+function inCollisionBucket(l: TeslaCollisionSubject): boolean {
   if (l.make.trim().toUpperCase() !== "TESLA") return false;
   const vin8 = l.vin?.[7]?.toUpperCase();
   if (!vin8) return false;
@@ -90,7 +104,7 @@ function inCollisionBucket(l: Listing): boolean {
  * the first place — matchEnrichmentRaw returns that one row directly and
  * there is nothing here to withhold from it.
  */
-export function abstainTeslaRange(l: Listing): boolean {
+export function abstainTeslaRange(l: TeslaCollisionSubject): boolean {
   return teslaCollisionRows(l) !== undefined;
 }
 
@@ -109,10 +123,22 @@ export function abstainTeslaRange(l: Listing): boolean {
  * hard-coding a second per-bucket list keeps the two from drifting apart
  * when a chemistry fact is added to a row that today carries none.
  */
-export function teslaCollisionRows(l: Listing): EnrichmentRow[] | undefined {
+export function teslaCollisionRows(l: TeslaCollisionSubject): EnrichmentRow[] | undefined {
+  const probe = collisionProbe(l);
+  if (!probe || probe.exact) return undefined;
+  return probe.candidates ?? [];
+}
+
+/**
+ * What the VIN alone narrows this car to, with the trim never in the room —
+ * `undefined` outside the eight buckets. An `exact` here means real VIN
+ * evidence (vin8, Tesla's plant code, the drivetrain or a battery-size hint)
+ * did the narrowing, never a trim string; `candidates` means nothing did.
+ */
+function collisionProbe(l: TeslaCollisionSubject): EnrichmentResult | undefined {
   if (!inCollisionBucket(l)) return undefined;
   const tesla = isTeslaVin(l.vin) ? decodeTeslaVin(l.vin) : null;
-  const corroborated = matchIgnoringTrim(
+  return matchIgnoringTrim(
     {
       vin: l.vin,
       usMarket: true,
@@ -125,6 +151,65 @@ export function teslaCollisionRows(l: Listing): EnrichmentRow[] | undefined {
     },
     tesla
   );
-  if (corroborated.exact) return undefined;
-  return corroborated.candidates ?? [];
+}
+
+/**
+ * Why we won't pick between the rows. States the mechanism rather than
+ * hedging, because the shopper can act on the mechanism: the VIN genuinely
+ * cannot answer this, and the two documents that can are in the car.
+ */
+export const TESLA_COLLISION_DISCRIMINATOR =
+  "Tesla's VIN does not encode which version this is: position 8 gives the motor layout, not the trim, and NHTSA's decoder returns a blank trim for every Tesla VIN. These versions share this car's VIN pattern and differ materially in range and pack size. The window sticker or the door-jamb label names the exact one.";
+
+/**
+ * The same abstention, for a bare VIN.
+ *
+ * /vin/[vin] resolves its row straight from `matchEnrichment` and never calls
+ * `enrichListing`, so until 2026-08-25 none of this applied there — and that
+ * page is where it bites hardest, because a vPIC decode of a Tesla carries no
+ * trim, no drivetrain and no battery size (verified against vPIC on
+ * 5YJ3E1EA2RF745143: Trim, DriveType and BatteryKWh all come back empty).
+ * With no trim, `trimMatches` refuses every trim-keyed row, so the match lands
+ * on whichever row happens to carry no trim key — the by-elimination failure
+ * lib/enrichment/match.ts documents at length — and prints it as a researched
+ * exact answer. Measured across the 6,773 Teslas in the crawl cache: 997 sit
+ * in a collision bucket, and 196 of those were served one unqualified EPA
+ * range, including the 272-vs-363 mi worst case.
+ *
+ * The remaining ~800 failed the opposite way and this fixes them too: where
+ * EVERY row in the bucket is trim-keyed (2018/2019 Model 3 "A" and both 2026
+ * buckets), the trim-less match dropped all of them and the page said "no
+ * researched row for this model yet" about cars we hold two researched rows
+ * for. `matchIgnoringTrim` keeps them in play, so they become candidates.
+ */
+export function withTeslaCollisionAbstention(
+  decode: VinDecode,
+  result: EnrichmentResult
+): EnrichmentResult {
+  if (!decode.vin || !decode.make || !decode.model || !decode.modelYear) return result;
+  const probe = collisionProbe({
+    vin: decode.vin,
+    make: decode.make,
+    model: decode.model,
+    year: decode.modelYear,
+    drive: decode.driveType,
+    vpicBatteryKwh: decode.batteryKwhHint,
+  });
+  if (!probe) return result; // not one of the eight buckets
+
+  // The VIN resolved it on its own — a Fremont-built 2022–23 Model Y, where
+  // plant code F can only be the 330-mile Long Range AWD because Austin built
+  // both. The trim-less ordinary match had already dropped both trim-keyed
+  // rows and left this page saying "no researched row for this model yet"
+  // about a car the listing page happily shows 330 mi for. Same evidence,
+  // same answer, both surfaces. An ordinary exact still wins: it was matched
+  // with more in hand than the probe had.
+  if (probe.exact) return result.exact ? result : { exact: probe.exact };
+
+  const rows = probe.candidates ?? [];
+  // Fewer than two rows in play can't happen while an exact exists — the
+  // ignoring-trim set is a superset of the ordinary one — so there is nothing
+  // better to say than what we already had.
+  if (rows.length < 2) return result;
+  return { candidates: rows, discriminator: TESLA_COLLISION_DISCRIMINATOR };
 }
