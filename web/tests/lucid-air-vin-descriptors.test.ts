@@ -133,19 +133,20 @@ test("the 2023 Air Pure is the AWD car, and 2024's is the rear-drive one", () =>
   assert.equal(range(rwd.exact!), 419);
 });
 
-test("a Grand Touring Performance matches nothing rather than the ordinary car's 516", () => {
+test("a Grand Touring Performance gets its own 446, not the ordinary car's 516", () => {
   // 50EA1GD: Grand Touring, position 7 = D (783 kW / 1,050 hp). EPA rates it
-  // at 446 mi on its only fitment, so the Grand Touring row's 516 would be 70
-  // miles wrong. No row is written for it, and the descriptor keeps it out.
-  const r = matchEnrichment(decode({ vin: "50EA1GDA1PA000001", modelYear: 2023, trim: "Grand Touring", driveType: "AWD" }), null);
-  assert.equal(r.exact, undefined);
-  assert.equal(r.candidates, undefined);
+  // at 446 mi on its only fitment (id 46306). data12 wrote no row for it;
+  // data4's trim-keyed air-2023-gtp survived the 2026-08-25 dedup precisely
+  // because it covers this cohort with the real certification.
+  const r = matchEnrichment(decode({ vin: "50EA1GDA1PA000001", modelYear: 2023, trim: "Grand Touring Performance", driveType: "AWD" }), null);
+  assert.equal(r.exact?.id, "air-2023-gtp");
+  assert.equal(r.exact?.range?.epaRangeMi?.value, 446);
 });
 
-test("a Sapphire matches nothing rather than a Grand Touring row", () => {
+test("a Sapphire gets the Sapphire row, never a Grand Touring row", () => {
   const r = matchEnrichment(decode({ vin: "50EA1STA1RA000001", modelYear: 2024, trim: "Sapphire", driveType: "AWD" }), null);
-  assert.equal(r.exact, undefined);
-  assert.equal(r.candidates, undefined);
+  assert.equal(r.exact?.id, "air-2024-26-sapphire");
+  assert.equal(r.exact?.range?.epaRangeMi?.value, 427);
 });
 
 // The heat pump is dated, not uniform, and the whole value of these rows is

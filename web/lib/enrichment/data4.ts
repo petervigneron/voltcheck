@@ -4511,33 +4511,15 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     };
     const PACK112 = { packGrossKwh: f(112, "vin", "high", "112 kWh gross, the MY2022 pack") };
     return [
-      air("air-2022-dream-r", [2022, 2022], ["Dream Edition", "Dream", "Dream Edition Range", "Dream R"], "AWD", "Dream Edition Range",
-        f(520, "mfr", "high", "MY2022 Dream Edition Range on 19-inch wheels — EPA; 481 on 21s. Feeds rarely say Range-vs-Performance: a bare “Dream Edition” presents both as candidates", epa(44493)), { battery: PACK112, thermal: LUCID_NO_HP }),
-      air("air-2022-dream-p", [2022, 2022], ["Dream Edition", "Dream", "Dream Edition Performance", "Dream P"], "AWD", "Dream Edition Performance",
-        f(471, "mfr", "high", "MY2022 Dream Edition Performance on 19-inch wheels — EPA; 451 on 21s", epa(44491)), { battery: PACK112, thermal: LUCID_NO_HP }),
-      air("air-2022-gt", [2022, 2022], ["Grand Touring", "GT"], "AWD", "Grand Touring",
-        f(516, "mfr", "high", "MY2022 Grand Touring on 19-inch wheels — EPA; 469 on 21s", epa(44495)), { battery: PACK112, thermal: LUCID_NO_HP }),
-      air("air-2023-gt", [2023, 2023], ["Grand Touring", "GT"], "AWD", "Grand Touring",
-        f(516, "mfr", "high", "MY2023 Grand Touring on 19-inch wheels — EPA; 469 on 20s/21s", epa(46303)), { thermal: LUCID_NO_HP }),
+      // The non-Sapphire, non-GTP Air rows this block used to carry (Dream
+      // R/P, GT, Touring, Pure across 2022-24 and 2026) were superseded on
+      // 2026-08-25 by data12's VIN-descriptor-keyed rows, which separate the
+      // two Dream Editions (identical feed trim, 49 EPA mi apart) and carry
+      // the twice-verified heat-pump timeline — this block's 2024 GT row
+      // wrongly asserted no heat pump against Lucid's own April 2024 release.
+      // Kept here: the two cohorts data12 doesn't cover.
       air("air-2023-gtp", [2023, 2023], ["Grand Touring Performance", "GT Performance", "GTP"], "AWD", "Grand Touring Performance",
         f(446, "mfr", "high", "MY2023 Grand Touring Performance (21-inch wheels, the only cert) — EPA", epa(46306)), { thermal: LUCID_NO_HP }),
-      air("air-2023-touring", [2023, 2023], ["Touring"], "AWD", "Touring",
-        f(425, "mfr", "high", "MY2023 Touring on 19-inch wheels — EPA; 384 on 20s/21s", epa(46309)), { thermal: LUCID_NO_HP }),
-      air("air-2023-pure", [2023, 2023], ["Pure"], "AWD", "Pure AWD",
-        f(410, "mfr", "high", "MY2023 Pure AWD on 19-inch wheels — EPA; 384 on 20s. (The RWD Pure arrived MY2024)", epa(46307)), { thermal: LUCID_NO_HP }),
-      air("air-2024-gt", [2024, 2024], ["Grand Touring", "GT"], "AWD", "Grand Touring",
-        f(516, "mfr", "high", "MY2024 Grand Touring (XR drive units) on 19-inch wheels — EPA; 485 on 20s, 450 on 21s", epa(47836)), { thermal: LUCID_NO_HP }),
-      air("air-2024-touring", [2024, 2024], ["Touring"], "AWD", "Touring",
-        f(411, "mfr", "high", "MY2024 Touring on 19-inch wheels — EPA; 382 on 20s, 365 on 21s", epa(47839)), { thermal: LUCID_NO_HP }),
-      air("air-2026-touring", [2026, 2026], ["Touring"], "AWD", "Touring",
-        f(431, "mfr", "high", "MY2026 Touring on 19-inch wheels — EPA; 396 on 20s", epa(49972)), { thermal: LUCID_HP }),
-      air("air-2024-pure", [2024, 2024], ["Pure"], "RWD", "Pure RWD",
-        f(419, "mfr", "high", "MY2024 Pure RWD on 19-inch wheels — EPA; 394 on 20s", epa(47454)), { thermal: LUCID_NO_HP, buyerNotes: [NOTE_WHEELS, NOTE_AIR_CAM, NOTE_AIR_RWD] }),
-      // (MY2025 Pure RWD and Touring live in data3 with fuller per-trim
-      // recall research; certs are identical.)
-      air("air-2026-pure", [2026, 2026], ["Pure"], "RWD", "Pure RWD",
-        f(420, "mfr", "high", "MY2026 Pure RWD on 19-inch wheels — EPA; 372 on 20s", epa(49969)),
-        { thermal: LUCID_HP, buyerNotes: [NOTE_WHEELS, NOTE_AIR_CAM, NOTE_AIR_RWD] }),
       air("air-2024-26-sapphire", [2024, 2026], ["Sapphire"], "AWD", "Sapphire",
         f(427, "mfr", "high", "MY2024–26 Sapphire — EPA (47456/48376/49971 all rate 427, no wheel split)", epa(47456)), { thermal: LUCID_HP, buyerNotes: [NOTE_AIR_CAM] }),
     ];
