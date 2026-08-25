@@ -58,10 +58,28 @@ const BZ_RECALL_NOTE = {
 // api.nhtsa.gov (both the per-campaign text and the vehicle-level index
 // that says which body and year each campaign actually reaches).
 // ---------------------------------------------------------------------
+// batteryTransfers here is Mercedes' own sentence, fetched rather than
+// remembered: "BATTERY COVERAGE: Mercedes-Benz USA, LLC (MBUSA) warrants the
+// certified lithium-ion battery in a Mercedes-Benz vehicle to the original
+// and each subsequent owner" — the grant clause of the Battery Limited
+// Warranty, which the booklet keeps separate from the New Vehicle Limited
+// Warranty, so the NVLW's own "original and each subsequent owner" line does
+// not answer for it and the battery section had to be read on its own.
+//
+// The same sentence was read in the MY23, MY25, MY26 and MY27 editions (MY23
+// says "Mercedes-EQ vehicle" where the later ones say "Mercedes-Benz"). MBUSA
+// publishes no separate EQ booklet for MY22 or MY24 — its 2022 and 2024
+// general booklets name no EQ model at all — so those two years are bracketed
+// by the clause rather than covered by their own edition. The URL is the
+// MY26 booklet, the edition quoted above.
+const MB_EQ_BOOKLET =
+  "https://www.mbusa.com/content/dam/mb-nafta/us/owners/manuals/2026/MY26%20EQ%20Warranty%20and%20Service%20Booklet_Web%20Eng_Sp.pdf";
+const MB_EQ_XFER_NOTE =
+  "\u201CWarrants the certified lithium-ion battery in a Mercedes-Benz vehicle to the original and each subsequent owner\u201D";
 const MB_EQ_W_BASE = {
   batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets"),
   batteryMiles: f(155_000, "mfr", "high"),
-  batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner”, verified MY25/MY26 EQ booklets"),
+  batteryTransfers: f(true, "mfr", "high", MB_EQ_XFER_NOTE, MB_EQ_BOOKLET),
 };
 const MB_EQE_W = {
   ...MB_EQ_W_BASE,
@@ -1000,7 +1018,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets"),
       batteryMiles: f(155_000, "mfr", "high"),
       extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQE: 204 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance, a skipped-service history can void it.", "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", MB_EQ_XFER_NOTE, MB_EQ_BOOKLET),
     },
     buyerNotes: [
       {
@@ -1053,7 +1071,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets"),
       batteryMiles: f(155_000, "mfr", "high"),
       extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQE: 204 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance, a skipped-service history can void it.", "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", MB_EQ_XFER_NOTE, MB_EQ_BOOKLET),
     },
     buyerNotes: [
       {
@@ -1124,7 +1142,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets"),
       batteryMiles: f(155_000, "mfr", "high"),
       extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQE: 204 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance, a skipped-service history can void it.", "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner”, verified MY25/MY26 EQ booklets"),
+      batteryTransfers: f(true, "mfr", "high", MB_EQ_XFER_NOTE, MB_EQ_BOOKLET),
     },
     buyerNotes: [
       {
@@ -1170,7 +1188,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets"),
       batteryMiles: f(155_000, "mfr", "high"),
       extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQE: 204 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance, a skipped-service history can void it.", "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner”, verified MY25/MY26 EQ booklets"),
+      batteryTransfers: f(true, "mfr", "high", MB_EQ_XFER_NOTE, MB_EQ_BOOKLET),
     },
     buyerNotes: [
       {
@@ -1216,7 +1234,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets"),
       batteryMiles: f(155_000, "mfr", "high"),
       extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQE: 204 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance, a skipped-service history can void it.", "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner”, verified MY25/MY26 EQ booklets"),
+      batteryTransfers: f(true, "mfr", "high", MB_EQ_XFER_NOTE, MB_EQ_BOOKLET),
     },
     buyerNotes: [
       {
@@ -1248,7 +1266,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets"),
       batteryMiles: f(155_000, "mfr", "high"),
       extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQE: 204 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance, a skipped-service history can void it.", "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner”, verified MY25/MY26 EQ booklets"),
+      batteryTransfers: f(true, "mfr", "high", MB_EQ_XFER_NOTE, MB_EQ_BOOKLET),
     },
     buyerNotes: [
       {
@@ -1297,7 +1315,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets"),
       batteryMiles: f(155_000, "mfr", "high"),
       extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQE: 204 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance, a skipped-service history can void it.", "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner”, verified MY25/MY26 EQ booklets"),
+      batteryTransfers: f(true, "mfr", "high", MB_EQ_XFER_NOTE, MB_EQ_BOOKLET),
     },
     buyerNotes: [
       {
@@ -1339,7 +1357,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets"),
       batteryMiles: f(155_000, "mfr", "high"),
       extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQE: 204 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance, a skipped-service history can void it.", "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner”, verified MY25/MY26 EQ booklets"),
+      batteryTransfers: f(true, "mfr", "high", MB_EQ_XFER_NOTE, MB_EQ_BOOKLET),
     },
     buyerNotes: [
       {
@@ -1375,7 +1393,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets"),
       batteryMiles: f(155_000, "mfr", "high"),
       extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQE: 204 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance, a skipped-service history can void it.", "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner”, verified MY25/MY26 EQ booklets"),
+      batteryTransfers: f(true, "mfr", "high", MB_EQ_XFER_NOTE, MB_EQ_BOOKLET),
     },
     buyerNotes: [
       {
@@ -1411,7 +1429,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets"),
       batteryMiles: f(155_000, "mfr", "high"),
       extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQE: 204 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance, a skipped-service history can void it.", "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner”, verified MY25/MY26 EQ booklets"),
+      batteryTransfers: f(true, "mfr", "high", MB_EQ_XFER_NOTE, MB_EQ_BOOKLET),
     },
     buyerNotes: [
       {
@@ -1447,7 +1465,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets"),
       batteryMiles: f(155_000, "mfr", "high"),
       extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQE: 204 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance, a skipped-service history can void it.", "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner”, verified MY25/MY26 EQ booklets"),
+      batteryTransfers: f(true, "mfr", "high", MB_EQ_XFER_NOTE, MB_EQ_BOOKLET),
     },
     buyerNotes: [
       {
@@ -1484,7 +1502,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets"),
       batteryMiles: f(155_000, "mfr", "high"),
       extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQE: 204 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance, a skipped-service history can void it.", "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner”, verified MY25/MY26 EQ booklets"),
+      batteryTransfers: f(true, "mfr", "high", MB_EQ_XFER_NOTE, MB_EQ_BOOKLET),
     },
     buyerNotes: [
       {
@@ -1525,7 +1543,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets"),
       batteryMiles: f(155_000, "mfr", "high"),
       extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQE: 204 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance, a skipped-service history can void it.", "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner”, verified MY25/MY26 EQ booklets"),
+      batteryTransfers: f(true, "mfr", "high", MB_EQ_XFER_NOTE, MB_EQ_BOOKLET),
     },
     buyerNotes: [
       {
@@ -1561,7 +1579,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets"),
       batteryMiles: f(155_000, "mfr", "high"),
       extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQE: 204 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance, a skipped-service history can void it.", "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner”, verified MY25/MY26 EQ booklets"),
+      batteryTransfers: f(true, "mfr", "high", MB_EQ_XFER_NOTE, MB_EQ_BOOKLET),
     },
     buyerNotes: [
       {
@@ -1601,7 +1619,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets"),
       batteryMiles: f(155_000, "mfr", "high"),
       extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQE: 204 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance.", "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", MB_EQ_XFER_NOTE, MB_EQ_BOOKLET),
     },
     buyerNotes: [
       {
@@ -1632,7 +1650,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets"),
       batteryMiles: f(155_000, "mfr", "high"),
       extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQE: 204 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance.", "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", MB_EQ_XFER_NOTE, MB_EQ_BOOKLET),
     },
     buyerNotes: [
       {
@@ -1674,7 +1692,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets; reasonably extends to the AMG performance variant of the same platform"),
       batteryMiles: f(155_000, "mfr", "high"),
       extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQE: 204 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance.", "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", MB_EQ_XFER_NOTE, MB_EQ_BOOKLET),
     },
     buyerNotes: [
       {
@@ -1716,7 +1734,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets"),
       batteryMiles: f(155_000, "mfr", "high"),
       extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQE: 204 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance.", "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", MB_EQ_XFER_NOTE, MB_EQ_BOOKLET),
     },
     buyerNotes: [
       {
@@ -1751,7 +1769,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets"),
       batteryMiles: f(155_000, "mfr", "high"),
       extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQS: 192 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance.", "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", MB_EQ_XFER_NOTE, MB_EQ_BOOKLET),
     },
     buyerNotes: [
       {
