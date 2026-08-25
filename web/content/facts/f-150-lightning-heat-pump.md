@@ -17,7 +17,7 @@ Ford lists it under MECHANICAL on the SuperCrew Pro Series "STANDARD EQUIPMENT" 
 ## How the year boundary was established
 
 - The same document, the same section, and the same series were compared across five model years. The line "Vapor Injection Heat Pump" is present in the 2025 and 2026 Pro Series MECHANICAL lists and absent from the 2022, 2023, and 2024 ones.[^1][^2][^3][^4][^5]
-- Two independently posted copies of the 2024 order guide were checked, both dated 10/04/23, in case a mid-year revision added the line. Neither contains the word "pump."[^3]
+- Two separately posted copies of the 2024 order guide were checked, both dated 10/04/23, in case a mid-year revision added the line. Neither contains the word "pump." They are two attachments on the same forum, not two independent hosts, so this is a check for a revised re-upload rather than corroboration by a second source.[^3]
 - One thing Ford does not do: the 2025 guide marks new-for-the-year content with a star, and explains at the foot of every page that "★ = New for this model year." The heat-pump line carries an ordinary bullet, not a star. The evidence that 2025 is the change year is the line's absence from the 2024 guide, not Ford's star.[^3][^4]
 
 ## See it for yourself
@@ -41,7 +41,11 @@ Ford lists it under MECHANICAL on the SuperCrew Pro Series "STANDARD EQUIPMENT" 
 
 ## Scope note
 
-Model years 2022 through 2026 checked, all five against Ford's own order guides for those years. Every guide was retrieved from a third-party mirror. Ford's own host for these documents, fromtheroad.ford.com, refuses a plain HTTP fetch; the same constraint applies to the sibling Mustang Mach-E sheet, which used the same mirror families. Each file's own header carries Ford's model-year title, its revision date, and the "PROPRIETARY" marking Ford prints on these guides.
+Model years 2022 through 2026 checked, all five against Ford's own order guides for those years. Every guide was retrieved from a third-party mirror. Ford's own host for these documents, fromtheroad.ford.com, refuses a plain HTTP fetch; the same constraint applies to the sibling Mustang Mach-E sheet, which used the same mirror families.
+
+What makes these mirrors readable as Ford's own files is the page header each one prints on every page: the revision date, Ford's model-year title, and the confidentiality marking. In the 2022, 2023, 2024 and 2026 guides that marking reads "PROPRIETARY" on every page. In the 2025 guide it reads **"PROPRIEATRY"** — Ford's own transposition — on all 22 pages, with the correct spelling appearing nowhere in the file. That misspelling is stronger provenance evidence than the correct one would be: a mirror reproducing a typo present in Ford's internal document is reproducing the document, not retyping it.
+
+The 2025 and 2026 files carry PDFium as both creator and producer, with no document title and no modification date; the 2022, 2023 and 2024 files carry Ford's own Microsoft Word or Ghostscript metadata and Ford's model-year title. So for the two newest guides the internal metadata was stripped by whatever tool re-saved them, and the printed page header — date, title and marking — is the only provenance the file itself carries. It is consistent across all 24 and 22 pages respectively.
 
 Every series page in all five guides is headed "SUPERCREW." No other cab configuration appears in any of them, so none was checked.
 
