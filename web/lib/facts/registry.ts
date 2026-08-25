@@ -421,7 +421,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       {
         question: "Does the Tesla Model 3 battery warranty cover normal degradation?",
         answer:
-          "No. Tesla writes that the battery \"will experience gradual energy or power loss with time and use\" and that loss of battery energy or power over time or resulting from battery usage is not covered, except as specified in the warranty. The 70% figure is a defect standard: Tesla warrants the battery free from defects that would cause capacity retention to fall below 70%. Tesla also states that range estimates are an imperfect measure of battery capacity, and that the measurement method is at Tesla's sole discretion.",
+          "No. Tesla writes that the battery \"will experience gradual energy or power loss with time and use\" and that loss of battery energy or power over time or resulting from battery usage is not covered, except as specified in the warranty. The Battery and Drive Unit Limited Warranty states the floor only as \"minimum 70% retention of Battery capacity over the warranty period,\" without defining how retention is measured. Tesla does phrase the 70% floor as a defect standard — free from defects that would cause capacity retention to fall below 70% — but that wording belongs to the separate Battery ZEV Limited Warranty, which Tesla limits to model year 2026 and later. Tesla also states that range estimates are an imperfect measure of battery capacity, and that the measurement method is at Tesla's sole discretion.",
       },
       {
         question: "Does the Tesla Model 3 battery warranty transfer to a second owner?",
@@ -429,9 +429,9 @@ export const FACT_SHEETS: FactSheetEntry[] = [
           "Yes. Tesla's warranty document states it \"is transferable at no cost to any person(s) who subsequently and lawfully assume(s) ownership of the vehicle after the first retail purchaser.\" Tesla's support page adds that it transfers when a vehicle ownership transfer is performed through Tesla.",
       },
       {
-        question: "What voids the Tesla Model 3 battery warranty?",
+        question: "What is excluded from the Tesla Model 3 battery warranty?",
         answer:
-          "Tesla excludes damage from intentional actions, including ignoring active vehicle warnings or service notifications, from a collision or accident, and from the servicing or opening of the battery or drive unit by non-Tesla or non-certified personnel. Also excluded: attempting to extend or reduce the battery's life by physical means or programming, exposing the battery to direct flame, and flooding it. Battery fires are the exception that runs the other way, covered even if the result of driver error.",
+          "Tesla excludes damage from intentional actions, including ignoring active vehicle warnings or service notifications, from a collision or accident, and from the servicing or opening of the battery or drive unit by non-Tesla or non-certified personnel. Also excluded: attempting to extend or reduce the battery's life by physical means or programming, exposing the battery to direct flame, and flooding it. Battery fires run the other way, covered even if the result of driver error, but with a carve-back: coverage does not extend to damage already sustained before the fire, or to any damage if the fire occurred after the vehicle had already been totaled. Separately from these exclusions, Tesla's Voided Warranty section lists circumstances in which the whole warranty can be voided for a car, including a defaced VIN, a tampered odometer, a branded title, or an insurer's total-loss determination.",
       },
     ],
   },
