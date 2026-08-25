@@ -1435,8 +1435,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "mache-2023-sr-rwd-lfp", ...ME, modelYears: [2023, 2023], vin8: ["4"], drive: "RWD",
     packVariant: "Standard Range (LFP)",
-    battery: { chemistry: ME_LFP },
-    battery: { packUsableKwh: fb(72, "mfr", "high", "The Standard Range pack's stated usable capacity", MACHE_SPECS_23) },
+    battery: { chemistry: ME_LFP, packUsableKwh: fb(72, "mfr", "high", "The Standard Range pack's stated usable capacity", MACHE_SPECS_23) },
     range: { epaRangeMi: f(250, "mfr", "high", "MY2023 Standard Range RWD, post-switch LFP build (VIN engine code 4), EPA's separate “RWD LFP” certification", epa(46985)) },
     charging: { ...ME_PORT_EARLY, dcPeakKw: ME_DC_SR },
     thermal: { heatPump: ME_NO_HP },
@@ -1446,8 +1445,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "mache-2023-sr-awd-lfp", ...ME, modelYears: [2023, 2023], vin8: ["5"], drive: "AWD",
     packVariant: "Standard Range (LFP)",
-    battery: { chemistry: ME_LFP },
-    battery: { packUsableKwh: fb(72, "mfr", "high", "The Standard Range pack's stated usable capacity", MACHE_SPECS_23) },
+    battery: { chemistry: ME_LFP, packUsableKwh: fb(72, "mfr", "high", "The Standard Range pack's stated usable capacity", MACHE_SPECS_23) },
     range: { epaRangeMi: f(224, "mfr", "medium", "MY2023 Standard Range AWD (VIN engine code 5, LFP), EPA published one SR AWD rating for 2023; unlike the RWD pack, no separate LFP AWD figure exists", epa(46512)) },
     charging: { ...ME_PORT_EARLY, dcPeakKw: ME_DC_SR },
     thermal: { heatPump: ME_NO_HP },
@@ -1515,8 +1513,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "mache-2024-sr-rwd", ...ME, modelYears: [2024, 2024], vin8: ["4"], drive: "RWD",
     packVariant: "Standard Range (LFP)",
-    battery: { chemistry: ME_LFP },
-    battery: { packUsableKwh: fb(72, "mfr", "high", "The Standard Range pack's stated usable capacity", MACHE_SPECS_24) },
+    battery: { chemistry: ME_LFP, packUsableKwh: fb(72, "mfr", "high", "The Standard Range pack's stated usable capacity", MACHE_SPECS_24) },
     range: { epaRangeMi: f(250, "mfr", "high", "MY2024 Standard Range RWD (VIN engine code 4), EPA", epa(47822)) },
     charging: { ...ME_PORT_EARLY, dcPeakKw: ME_DC_SR },
     thermal: { heatPump: ME_NO_HP },
@@ -1526,8 +1523,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "mache-2024-sr-awd", ...ME, modelYears: [2024, 2024], vin8: ["5"], drive: "AWD",
     packVariant: "Standard Range (LFP)",
-    battery: { chemistry: ME_LFP },
-    battery: { packUsableKwh: fb(72, "mfr", "high", "The Standard Range pack's stated usable capacity", MACHE_SPECS_24) },
+    battery: { chemistry: ME_LFP, packUsableKwh: fb(72, "mfr", "high", "The Standard Range pack's stated usable capacity", MACHE_SPECS_24) },
     range: { epaRangeMi: f(230, "mfr", "high", "MY2024 Standard Range AWD (VIN engine code 5), EPA", epa(47824)) },
     charging: { ...ME_PORT_EARLY, dcPeakKw: ME_DC_SR },
     thermal: { heatPump: ME_NO_HP },
