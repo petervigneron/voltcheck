@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { decodeVin, isValidVin } from "@/lib/vpic";
 import { decodeTeslaVin, isTeslaVin } from "@/lib/tesla-vin";
 import { matchEnrichment, vpicTrimIsPatternArtifact } from "@/lib/enrichment/match";
+import { withTeslaCollisionAbstention } from "@/lib/listings/teslaRangeAbstain";
 import { buildChecklist } from "@/lib/checklist";
 import { FactRow } from "@/components/FactRow";
 import { EnrichmentFacts, Section, NOTE_STYLE } from "@/components/EnrichmentReport";
@@ -45,7 +46,10 @@ export default async function VinPage(props: PageProps<"/vin/[vin]">) {
 
   const decode = await getDecode(vin);
   const tesla = isTeslaVin(vin) ? decodeTeslaVin(vin) : null;
-  const enrichment = matchEnrichment(decode, tesla);
+  // Tesla Model 3/Y VIN-8 buckets where several materially different cars
+  // share this VIN pattern: show them as the candidates they are rather than
+  // letting the trim-less match settle on one by elimination.
+  const enrichment = withTeslaCollisionAbstention(decode, matchEnrichment(decode, tesla));
   const checklist = buildChecklist(decode);
 
   // A single-pattern filing artifact (every 2026 RAV4 PHEV decodes Trim
@@ -98,17 +102,6 @@ export default async function VinPage(props: PageProps<"/vin/[vin]">) {
                       : undefined
                 }
               />
-              {tesla?.chemistryHint && (
-                <FactRow
-                  label="Cell type (VIN pos. 7)"
-                  fact={{
-                    value: tesla.chemistryHint === "LFP" ? "LFP" : "Ternary lithium-ion (NCA/NCM)",
-                    source: "vin",
-                    asOf: "—",
-                    confidence: "high",
-                  }}
-                />
-              )}
             </div>
             <div>
               {decode.trim && !trimIsArtifact && (
