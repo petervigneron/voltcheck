@@ -31,18 +31,45 @@
 // TWO KINDS OF GAP, because they cost different things to fix:
 //   total   — no enrichment row exists for this make+model+year at all. A
 //             research gap: nobody has looked this car up yet.
-//   partial — a row DOES exist for this make+model+year, but this listing's
-//             own trim/drivetrain string doesn't satisfy it (trimMatches or
-//             the drive filter in match.ts rejects every candidate). Either a
-//             matching bug (a spelling the row doesn't anticipate) or a
-//             narrower research gap (this specific trim was never added) —
-//             worth a human's five-second look, not a blind re-run of the
-//             same research.
+//   partial — a row DOES exist for this make+model+year, but this listing
+//             doesn't satisfy its trim key: match.ts's trimMatches() rejects
+//             every candidate, either because the listing's trim string is a
+//             spelling the row doesn't anticipate, or because the listing
+//             carries no trim at all and every row for the car is trim-keyed.
+//             (trimMatches is the only filter that can empty the set on this
+//             script's input — the drive and kWh-hint filters only narrow a
+//             non-empty set, and the VIN filters never fire because the
+//             packed shard carries no VIN, see the CAVEAT below.) Either a
+//             matching bug or a narrower research gap (this specific trim was
+//             never added) — worth a human's five-second look, not a blind
+//             re-run of the same research.
 // The split is measured directly: run the matcher once with this listing's
-// real trim/drive, and once with both stripped (which only asks "does ANY
-// row cover this make+model+year, ignoring trim/drive"). Total = the coarse
-// call already came back empty. Partial = the coarse call found rows but the
-// real one didn't.
+// real trim/drive, and once through match.ts's own matchIgnoringTrim (which
+// asks "does ANY row cover this make+model+year, with row trims ignored").
+// Total = the coarse call already came back empty. Partial = the coarse call
+// found rows but the real one didn't.
+//
+// The coarse call MUST be matchIgnoringTrim, not plain matchEnrichment with
+// the trim stripped. That was this script's original bug and it made the
+// split meaningless: match.ts's trimMatches() refuses a trim-keyed row when
+// the decode carries no trim (deliberately — a no-trim listing picking up
+// "any row for its make/model/year" is how a mild-hybrid CLA got an electric
+// CLA's battery facts), so stripping the trim asks "is there a TRIM-LESS row
+// for this car", not "is there a row at all". Every cohort covered only by
+// trim-keyed rows — Mercedes' EQE grades in lib/enrichment/data3.ts are the
+// canonical case, every row keyed to "350+"/"500 4MATIC"/etc. — came back
+// empty from the coarse call and was reported as a total miss, so partial was
+// structurally always 0. matchIgnoringTrim passes `ignoreRowTrims` down to
+// matchEnrichmentRaw, which keeps trim-keyed rows in the candidate set, which
+// is exactly the existence question this probe wants.
+//
+// One row kind matchIgnoringTrim still drops: `feedLabelRow` (a row keyed to
+// a feed label like "64 Series" that names no grade). That is right for
+// spanning a cohort's versions and it can only over-report "total", never
+// under-report it. Checked 2026-08-25: both such rows in the corpus (the 2026
+// RAV4 PHEV and the 2023–25 Lexus RZ 450e) sit alongside real grade rows for
+// the same make/model/year, so no cohort is covered by a label row alone and
+// the exclusion changes no verdict today.
 //
 // CAVEAT this script cannot avoid: the packed browse shard is not the raw
 // listing. Its `trim` field is already lib/listings/enrich.ts's specTrim()
@@ -110,7 +137,12 @@
 //              the build on its own (a wholly new model going live with
 //              zero coverage is worth catching even if the feed is tiny
 //              relative to a big cohort elsewhere) — it just no longer
-//              carries the audit by itself.
+//              carries the audit by itself. NB a group is keyed by kind as
+//              well as make+model, so one nameplate splits into two groups
+//              when some of its years are a total miss and others a partial
+//              one: the live Mercedes EQE is exactly that (2023–26 partial,
+//              2027 total). That is a reporting split, not new gap — the
+//              listing counts and gapSharePct above are unmoved by it.
 //
 // Both baselines were calibrated together 2026-08-25 against a live,
 // healthy CDN read (see the nightly.yml step comment for the exact figures
@@ -118,7 +150,7 @@
 // baseline has been calibrated for it, so it never affects the exit code.
 
 import { unpackIndex, SHARDS } from "../lib/listings/pack.ts";
-import { matchEnrichment } from "../lib/enrichment/match.ts";
+import { matchEnrichment, matchIgnoringTrim } from "../lib/enrichment/match.ts";
 import { writeFile, mkdir } from "node:fs/promises";
 import { dirname } from "node:path";
 
@@ -281,8 +313,14 @@ for (const l of listings) {
     continue;
   }
 
-  const decodeCoarse = { ...decodeFull, trim: undefined, driveType: undefined };
-  const coarse = matchEnrichment(decodeCoarse, null);
+  // matchIgnoringTrim drops the decode's own trim itself; driveType goes with
+  // it so the probe is unambiguously about make+model+year (the drive filter
+  // in match.ts is soft — it only narrows a non-empty set — so this cannot
+  // change the verdict either way, but it keeps the question honest). See the
+  // header comment for why this is matchIgnoringTrim and not matchEnrichment
+  // with the trim stripped.
+  const decodeCoarse = { ...decodeFull, driveType: undefined };
+  const coarse = matchIgnoringTrim(decodeCoarse, null);
   const kind = matched(coarse) ? "partial" : "total";
   if (kind === "total") totalMiss++;
   else partialMiss++;
