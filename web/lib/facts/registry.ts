@@ -260,6 +260,44 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       },
     ],
   },
+  {
+    make: "ford",
+    model: "f-150-lightning",
+    topic: "charging",
+    contentFile: "f150-lightning-charging",
+    pageTitle: "Ford F-150 Lightning charging: charge times, onboard charger by year | Voltcheck",
+    description:
+      "Ford's own charge times for the F-150 Lightning, 2023 through 2025, and the onboard-charger change that turns an 8-hour overnight into 13. Sourced to Ford's spec sheets and order guides.",
+    breadcrumbLabel: "Ford F-150 Lightning charging",
+    dateModified: "2026-08-25",
+    faq: [
+      {
+        question: "How long does a Ford F-150 Lightning take to DC fast charge?",
+        answer:
+          "Ford publishes a 15% to 80% time, not a 10% to 80% time. For 2023 on a 150 kW charger: 44 minutes on the 98 kWh Standard Range pack, 41 minutes on the 131 kWh Extended Range pack. For 2025 on a 150 kW+ charger: 32 minutes on the 98 kWh pack and 38 minutes on both the 123 kWh and 131 kWh Extended Range packs. Ford has no published 2024 charge-time table.",
+      },
+      {
+        question: "What is the F-150 Lightning's peak DC charging speed?",
+        answer:
+          "Ford does not publish one. Every Ford document behind this page states DC fast charging as a test condition — a 150 kW charger, or 150 kW+ — rather than a peak the truck can draw, and Ford's order guides state a Level 2 peak rate per configuration while stating no DC peak at all.",
+      },
+      {
+        question: "How fast does an F-150 Lightning charge at home?",
+        answer:
+          "It depends on the onboard charger, which changed. In 2023 the Extended Range pack came with a 19.2 kW / 17.6 kW dual onboard charger and the Standard Range pack with 11.3 kW / 10.5 kW. From 2024, Ford's order guides list 11.2 kW for the 98 kWh Standard Range battery, 11.5 kW for a 131 kWh Extended Range truck with single onboard charging, and 19.2 kW only with dual onboard charging — which Ford's 2025 spec sheet marks as a fleet-only configuration, not available for retail sale.",
+      },
+      {
+        question: "Does the F-150 Lightning come with the Ford Charge Station Pro?",
+        answer:
+          "In 2023 it was included with the Extended Range pack and optional with Standard Range. Ford's 2024 order guide lists the Ford Charge Station Pro under Deleted in its Major Product Changes. Ford's 2025 spec sheet lists it as an Available Ford Accessory. The Charge Station Pro is the unit that carries Ford Intelligent Backup Power capability.",
+      },
+      {
+        question: "Can an F-150 Lightning charge at a Tesla Supercharger?",
+        answer:
+          "Yes, with the Ford Fast Charging Adapter (NACS). Ford's January 31, 2024 announcement said the adapter gives F-150 Lightning and Mustang Mach-E owners access to Tesla's V3 and above Superchargers. The adapter is $200.00 on Ford's accessories site and works for DC fast charging only, not Level 1 or Level 2 AC chargers or Tesla Destination Chargers.",
+      },
+    ],
+  },
 ];
 
 export function findFactSheet(make: string, model: string, topic: string): FactSheetEntry | undefined {
