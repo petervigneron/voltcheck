@@ -31,6 +31,17 @@ import type { Chemistry, EnrichmentRow, Fact, Source } from "../types";
 // 2022–23 negative: same document lineage, feature explicitly introduced later.
 const AS_OF = "2026-08-14";
 
+// Lucid battery-warranty transferability — "Who May Use This Warranty?" in
+// Lucid's own New Vehicle Limited Warranty, the document that also holds the
+// High Voltage Battery Limited Warranty. The note here already quoted it and
+// had nothing to click; the quote also credited "Lucid's own warranty page"
+// when the words are the PDF's. Fuller comment in data3.ts.
+const LUCID_WARRANTY_US =
+  "https://lucidmotors.com/s3fs-public/pdf/New-Vehicle-Limited-Warranty-en-US-MY26.pdf";
+const LUCID_XFER_NOTE =
+  "\u201CProvided to the original purchaser ... and to subsequent owner(s) if the vehicle is within the applicable coverage period\u201D";
+
+
 // Volkswagen battery-warranty transferability — the sentence in the
 // High-Voltage System Limited Warranty section of VW's own USA Warranty and
 // Maintenance booklet for electric models. Fuller comment in data2.ts.
@@ -4661,7 +4672,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
       batteryYears: f(8, "mfr" as Source, "high", "\u201cHigh-voltage battery: 8 Years / 100,000 miles (whichever comes first) retaining 70% capacity\u201d — Lucid's own warranty page (verified in the data3 pass)"),
       batteryMiles: f(100_000, "mfr" as Source, "high"),
       sohFloorPct: f(70, "mfr" as Source, "high", "Capacity floor over the battery term"),
-      batteryTransfers: f(true, "mfr" as Source, "high", "\u201c\u2026and to subsequent owner(s) if the vehicle is within the applicable coverage period\u201d — Lucid's own warranty page"),
+      batteryTransfers: f(true, "mfr" as Source, "high", LUCID_XFER_NOTE, LUCID_WARRANTY_US),
     };
     const LUCID_CHG = {
       portStandard: f<"CCS1">("CCS1", "mfr", "high", "Lucid's own site: \u201cYour Lucid Air has a J1772 (CCS1) charge port\u201d — no native NACS port as of the latest material found"),

@@ -12,6 +12,31 @@ import type { EnrichmentRow, Fact, Source } from "../types";
 // documented as existing for that year).
 const AS_OF = "2026-08-10";
 
+// Lucid battery-warranty transferability. Its own New Vehicle Limited Warranty
+// answers it under the heading "Who May Use This Warranty?": the warranty is
+// "provided to the original purchaser or lessor ... and to subsequent owner(s)
+// if the vehicle is within the applicable coverage period. Any subsequent
+// owner must provide proof of ownership transfer to be eligible for benefits
+// under this Warranty." The High Voltage Battery Limited Warranty (8 years /
+// 100,000 miles, 70% retention) is a section of that same document, so the
+// grant covers it.
+//
+// The proof-of-transfer condition is procedure, not a hedge, and it is worth
+// keeping straight from Rivian's "may be transferable ... contact Rivian to
+// determine whether any warranty coverages have been voided", which is a hedge
+// and is why the Rivian rows abstain.
+//
+// The MY2026 edition is cited. Lucid's first edition, effective September 2021
+// and covering the MY2022 cars these rows start at, says the same thing in
+// different words: "This Lucid New Vehicle Limited Warranty is provided to the
+// original and subsequent owner(s) of a new Lucid Air ... can be transferred
+// from the original owner to a subsequent owner."
+const LUCID_WARRANTY_US =
+  "https://lucidmotors.com/s3fs-public/pdf/New-Vehicle-Limited-Warranty-en-US-MY26.pdf";
+const LUCID_XFER_NOTE =
+  "\u201CProvided to the original purchaser ... and to subsequent owner(s) if the vehicle is within the applicable coverage period\u201D";
+
+
 // Toyota battery-warranty transferability, for the bZ and bZ Woodland rows
 // below: "Warranty coverage is automatically transferred at no cost to
 // subsequent vehicle owners", from GENERAL WARRANTY PROVISIONS in Toyota's own
@@ -504,7 +529,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
       sohFloorPct: f(70, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", LUCID_XFER_NOTE, LUCID_WARRANTY_US),
     },
     buyerNotes: [
       {
@@ -539,7 +564,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
       sohFloorPct: f(70, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", LUCID_XFER_NOTE, LUCID_WARRANTY_US),
     },
     buyerNotes: [
       {
@@ -579,7 +604,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
       sohFloorPct: f(70, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", LUCID_XFER_NOTE, LUCID_WARRANTY_US),
     },
     buyerNotes: [
       {
