@@ -41,6 +41,21 @@ function f<T>(
   return { value, source, asOf: AS_OF, confidence, note, sourceUrl };
 }
 
+// Core-field backfill pass (2026-08-24): the coverage backlog this file's
+// rows dominated — heat pumps, pack sizes, warranties researched against
+// maker documents this pass. Facts added then carry their own asOf rather
+// than borrowing the tranche date above.
+const AS_OF_BACKFILL = "2026-08-24";
+function fb<T>(
+  value: T,
+  source: Source,
+  confidence: Fact<T>["confidence"] = "high",
+  note?: string,
+  sourceUrl?: string
+): Fact<T> {
+  return { value, source, asOf: AS_OF_BACKFILL, confidence, note, sourceUrl };
+}
+
 // (The 2025 order guide, …/2025/order-guides/2025_F-150_Lightning_Order_Guide.pdf,
 // documents the 99K/99U order codes and the heat pump as carried-over standard.)
 const SPECS_23 = "https://www.fromtheroad.ford.com/content/dam/fordmediasite/us/en/library/2023/specs/2023-Ford-F-150-Lightning-Technical-Specifications.pdf";
@@ -288,6 +303,27 @@ const K9 = { make: "KIA", model: "EV9" };
 const H6 = { make: "HYUNDAI", model: "Ioniq 6" };
 const H9 = { make: "HYUNDAI", model: "IONIQ 9" };
 const KONA = { make: "HYUNDAI", model: "Kona Electric" };
+
+// EV9 heat pump — Kia's per-year Features & Options tables (kiamedia.com,
+// HTML and XLSX cross-checked 2026-08-24) carry an explicit "Heat Pump
+// system" row: S on every AWD trim (Wind, Land, GT-Line) for 2024–26, Not
+// Available on the RWD Lights — except a lone "O" on the 2025 Light Long
+// Range that no Kia pricing sheet prices, so that one stays optional/medium.
+// The absence claims pass an in-table control: the PTC resistive-heater row
+// reads S on every trim, so a "–" under Heat Pump is a stated absence, not a
+// blank. (An InsideEVs-derived claim that the 2024 Light Long Range could
+// option the heat pump appears in no Kia document — checked and rejected.)
+const EV9_FEATURES = (yr: number) => `https://www.kiamedia.com/us/en/models/ev9/${yr}/features`;
+const EV9_HP_STD = {
+  heatPump: fb<"standard">("standard", "mfr", "high", "Standard on every AWD trim (Wind, Land, GT-Line), per Kia's Features & Options table", EV9_FEATURES(2024)),
+};
+const EV9_HP_NONE = (yr: number) => ({
+  heatPump: fb<"none">("none", "mfr", "high", "PTC resistive heater only on the RWD Light trims; Kia's Features & Options table marks the heat pump Not Available", EV9_FEATURES(yr)),
+});
+const EV9_HP_OPT_2025 = {
+  heatPump: fb<"optional">("optional", "mfr", "medium", "Kia's 2025 Features & Options table marks it optional on the Light Long Range, but no Kia pricing sheet prices the option — the window sticker is the authority", EV9_FEATURES(2025)),
+};
+const NOTE_EV9_HP = { headline: "Heat pump: factory option, on the window sticker", severity: "trap" as const, resolvedBy: "config_resolved" as const };
 
 
 // ── BMW i4 / i5 / i7 / iX (same pass) ───────────────────────────────────
@@ -1961,6 +1997,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packGrossKwh: f(99.8, "agg", "medium", "Long Range pack") },
     range: { epaRangeMi: f(304, "mfr", "high", "MY2024 Long Range RWD (VIN code 1), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47450") },
     charging: PORT_CCS,
+    thermal: EV9_HP_NONE(2024),
     warranty: HK_WARRANTY,
   },
   {
@@ -1968,13 +2005,15 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packGrossKwh: f(99.8, "agg", "medium", "Long Range pack") },
     range: { epaRangeMi: f(304, "mfr", "high", "MY2025 Long Range RWD (VIN code 1), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48366") },
     charging: { portStandard: f<"NACS">("NACS", "agg", "high", "Native NACS port from MY2025") },
-    warranty: HK_WARRANTY,
+    thermal: EV9_HP_OPT_2025,
+    warranty: HK_WARRANTY, buyerNotes: [NOTE_EV9_HP],
   },
   {
     id: "ev9-2026-lr-rwd", ...K9, modelYears: [2026, 2026], vin8: ["1"], drive: "RWD", packVariant: "Long Range",
     battery: { packGrossKwh: f(99.8, "agg", "medium", "Long Range pack") },
     range: { epaRangeMi: f(305, "mfr", "high", "MY2026 Long Range RWD (VIN code 1), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49666") },
     charging: { portStandard: f<"NACS">("NACS", "agg", "high", "Native NACS port from MY2025") },
+    thermal: EV9_HP_NONE(2026),
     warranty: HK_WARRANTY,
   },
   {
@@ -1982,6 +2021,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packGrossKwh: f(76.1, "agg", "medium", "Standard Range pack") },
     range: { epaRangeMi: f(230, "mfr", "high", "MY2024 Standard Range RWD (VIN code 2), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47451") },
     charging: PORT_CCS,
+    thermal: EV9_HP_NONE(2024),
     warranty: HK_WARRANTY,
   },
   {
@@ -1989,6 +2029,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packGrossKwh: f(76.1, "agg", "medium", "Standard Range pack") },
     range: { epaRangeMi: f(230, "mfr", "high", "MY2025–26 Standard Range RWD (VIN code 2), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48367") },
     charging: { portStandard: f<"NACS">("NACS", "agg", "high", "Native NACS port from MY2025") },
+    thermal: EV9_HP_NONE(2025),
     warranty: HK_WARRANTY,
   },
   {
@@ -1996,6 +2037,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packGrossKwh: f(99.8, "agg", "medium", "Long Range pack") },
     range: { epaRangeMi: f(280, "mfr", "high", "MY2024 Long Range AWD (VIN code 5), non-GT-Line, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47452") },
     charging: PORT_CCS,
+    thermal: EV9_HP_STD,
     warranty: HK_WARRANTY,
   },
   {
@@ -2003,6 +2045,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packGrossKwh: f(99.8, "agg", "medium", "Long Range pack") },
     range: { epaRangeMi: f(270, "mfr", "high", "MY2024 Long Range AWD on the GT-Line wheels, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47453") },
     charging: PORT_CCS,
+    thermal: EV9_HP_STD,
     warranty: HK_WARRANTY,
   },
   {
@@ -2010,6 +2053,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packGrossKwh: f(99.8, "agg", "medium", "Long Range pack") },
     range: { epaRangeMi: f(280, "mfr", "high", "MY2025 Long Range AWD (VIN code 5), non-GT-Line, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48368") },
     charging: { portStandard: f<"NACS">("NACS", "agg", "high", "Native NACS port from MY2025") },
+    thermal: EV9_HP_STD,
     warranty: HK_WARRANTY,
   },
   {
@@ -2017,6 +2061,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packGrossKwh: f(99.8, "agg", "medium", "Long Range pack") },
     range: { epaRangeMi: f(270, "mfr", "high", "MY2025 Long Range AWD, GT-Line, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48369") },
     charging: { portStandard: f<"NACS">("NACS", "agg", "high", "Native NACS port from MY2025") },
+    thermal: EV9_HP_STD,
     warranty: HK_WARRANTY,
   },
   {
@@ -2024,6 +2069,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packGrossKwh: f(99.8, "agg", "medium", "Long Range pack") },
     range: { epaRangeMi: f(283, "mfr", "high", "MY2026 Long Range AWD (VIN code 5), non-GT-Line, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49667") },
     charging: { portStandard: f<"NACS">("NACS", "agg", "high", "Native NACS port from MY2025") },
+    thermal: EV9_HP_STD,
     warranty: HK_WARRANTY,
   },
   {
@@ -2031,6 +2077,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packGrossKwh: f(99.8, "agg", "medium", "Long Range pack") },
     range: { epaRangeMi: f(280, "mfr", "high", "MY2026 Long Range AWD, GT-Line, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49668") },
     charging: { portStandard: f<"NACS">("NACS", "agg", "high", "Native NACS port from MY2025") },
+    thermal: EV9_HP_STD,
     warranty: HK_WARRANTY,
   },
   {
