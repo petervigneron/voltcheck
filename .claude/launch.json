@@ -4,15 +4,45 @@
     {
       "name": "voltcheck-dev",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev", "--prefix", "web"],
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--prefix",
+        "web"
+      ],
       "port": 3000,
       "autoPort": true
     },
     {
       "name": "voltcheck-prod-3100",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "start", "--prefix", "web", "--", "-p", "3100"],
+      "runtimeArgs": [
+        "run",
+        "start",
+        "--prefix",
+        "web",
+        "--",
+        "-p",
+        "3100"
+      ],
       "port": 3100
+    },
+    {
+      "name": "voltcheck-dev-offline",
+      "runtimeExecutable": "env",
+      "runtimeArgs": [
+        "SUPABASE_URL=",
+        "SUPABASE_ANON_KEY=",
+        "npm",
+        "run",
+        "dev",
+        "--prefix",
+        "web",
+        "--",
+        "-p",
+        "3200"
+      ],
+      "port": 3200
     }
   ]
 }

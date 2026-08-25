@@ -1,5 +1,6 @@
 import type { CardRow } from "./card";
 import { REMOVABLE, SPEC_FACETS, splitValues, type RemovableFilter, type SpecFacet } from "../filters";
+import { modelKey } from "./modelName";
 
 // The browse grid's filter semantics as one shared function. Extracted from
 // components/Browse.tsx when alert emails became a second consumer: an alert
@@ -76,7 +77,16 @@ export function buildTests(get: (k: string) => string, ctx: MatchContext = {}): 
   const maxMiles = num("maxMiles");
   const minRange = num("minRange");
   if (make) tests.make = (r) => r.make === make;
-  if (model) tests.model = (r) => r.model === model;
+  // Folded, not exact: the dropdown now offers one entry per model and the
+  // feed spells most of them several ways, so an exact test would answer
+  // "Tucson Plug-in Hybrid" with 695 of the 1,125 that exist. Folding also
+  // keeps every URL and saved alert that predates the dropdown working — an
+  // old ?model=TUCSON+PLUG-IN+HYBRID folds to the same key as the label that
+  // replaced it, which is why pruning the tail costs no car its own page.
+  if (model) {
+    const k = modelKey(model);
+    tests.model = (r) => modelKey(r.model) === k;
+  }
   if (cond === "new") tests.cond = (r) => r.condition === "new";
   else if (cond === "used") tests.cond = (r) => r.condition === "used" || r.condition === "certified" || !r.condition;
   if (drive) tests.drive = (r) => r.drive === drive;

@@ -744,6 +744,39 @@ interface ModelYearAskRow {
  * reason buildIndex.ts excludes them from the peer pool: one dealer lists
  * dozens and their asks price a branded history.
  *
+ * THE MODEL IS MATCHED EXACTLY, and that leaves something on the table. The
+ * feed spells most models several ways and lib/listings/tally.ts folds them
+ * into one dropdown entry, but the label it submits is a single spelling — the
+ * commonest — so this reads the plurality, not the whole fold. Measured over
+ * the 1,286 make/model/year cells a seller can actually pick: 97.4% of the
+ * comparable cars are visible to `eq`, and 24 cells (1.9%) hold four or more
+ * comparable cars while fewer than four share the label's spelling, so they
+ * abstain where they need not.
+ *
+ * The two obvious widenings were both tried and both rejected:
+ *
+ *   ilike   the exact case fold, no wildcards. Takes the model column out of
+ *           listings_live_idx and the make prefix alone does not carry it —
+ *           measured against production 2026-08-25, PostgREST 500, "canceling
+ *           statement due to statement timeout". This is the anon 3-second
+ *           class, and it is the one thing this endpoint cannot be, because a
+ *           stranger with a form controls how often it runs.
+ *   reading the spellings first, then `in.()`. PostgREST caps a response at
+ *           1,000 rows, so enumerating one make's model strings is ~6 paged
+ *           requests at ~1.3s each before the real query starts.
+ *
+ * The fix that would actually work is a stored `model_key` generated column
+ * with its own `(make, model_key)` partial index — an equality match the
+ * planner can serve — and it costs a full rewrite of the widest table on a
+ * free-plan instance that spent 2026-08-25 in IO starvation. Not worth a
+ * 1.9% cell recovery today; written down so the next person can price it.
+ *
+ * One property worth keeping if this is ever changed: the label comes from
+ * the feed, so `eq` is guaranteed to match SOMETHING. A prettier invented
+ * name — "Ioniq 5 Plug-In" for a model no dealer spells that way — would
+ * match nothing at all and read as "we can't value your car".
+
+ *
  * Null on failure, and the caller must render that as "we couldn't check",
  * never as "this car can't be valued" — an empty array means the honest
  * "nothing like it is listed", and the two must not collapse.

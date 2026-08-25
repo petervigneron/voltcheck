@@ -2,7 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { REMOVABLE, QUICK_TOGGLES, BODY_TYPES, describeFilter, dropSpecFilters, splitValues, toggleValue } from "@/lib/filters";
+import { REMOVABLE, QUICK_TOGGLES, BODY_TYPES, describeFilter, dropSpecFilters, splitValues, toggleValue, withCurrent } from "@/lib/filters";
 import { pushUrl } from "@/lib/pushUrl";
 import { SaveSearchToggle } from "./SaveSearchToggle";
 
@@ -464,8 +464,12 @@ export function FilterRail({
   );
 
   const make = get("make");
-  const models = make ? (makesModels[make] ?? []) : [];
   const makes = Object.keys(makesModels).sort();
+  // The offered models, plus whatever the URL already says even when that
+  // spelling is no longer offered (tally.ts prunes single-car feed typos, and
+  // a shared link or a back-navigation can still carry one). Without this the
+  // select would render blank over a filter that is demonstrably applied.
+  const models = withCurrent(make ? (makesModels[make] ?? []) : [], get("model"));
 
   // A toggle earns its place by dividing the cars it can actually judge — but
   // "enough" depends on what the toggle is asking about (lib/filters.ts axis).

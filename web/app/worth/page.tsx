@@ -78,15 +78,23 @@ export default async function WorthPage(props: Props) {
   const input = readInput(sp);
   const valuation = input ? await valueVehicle(input) : null;
 
+  // Same container and same construction as the browse grid
+  // (components/Browse.tsx): one wall of blocks under a max-w-[1400px], each
+  // cell drawing its right and bottom keyline so neighbours share an edge.
+  // This page used to be a narrow centred card on an empty field, which is a
+  // layout the rest of the site does not have anywhere.
   return (
-    <div className="mx-auto max-w-2xl px-4 py-10 sm:py-14">
-      <h1 className="text-2xl font-bold tracking-tight text-ink">What&rsquo;s my EV worth?</h1>
-      <p className="mt-2 text-sm leading-relaxed text-ink/70">
-        Tell us the car. We&rsquo;ll price it against what these are selling for and what they&rsquo;re
-        listed at right now.
-      </p>
+    <div className="mx-auto max-w-[1400px] px-0 sm:px-6 sm:py-6">
+      <div className="border-t-[3px] border-l-[3px] border-ink">
+        <div className="border-r-[3px] border-b-[3px] border-ink bg-ink px-5 py-9 text-paper sm:px-8 sm:py-12">
+          <h1 className="max-w-[16ch] text-[38px] leading-[0.92] font-extrabold tracking-[-0.04em] sm:text-[56px]">
+            What&rsquo;s my car worth?
+          </h1>
+          <p className="mt-3 text-[17px] font-bold tracking-[-0.01em] text-paper/60 sm:text-[21px]">
+            Let&rsquo;s take a look.
+          </p>
+        </div>
 
-      <div className="mt-6">
         <WorthForm
           defaults={{
             year: one(sp.year),
@@ -97,77 +105,99 @@ export default async function WorthPage(props: Props) {
             trim: one(sp.trim),
           }}
         />
-      </div>
 
-      {input && valuation && <Result input={input} v={valuation} />}
+        {input && valuation && <Result input={input} v={valuation} />}
+      </div>
     </div>
   );
 }
 
+const CELL = "border-r-[3px] border-b-[3px] border-ink";
+const CAPTION = "text-[10.5px] font-extrabold uppercase tracking-[0.14em] sm:text-[11px]";
+
 function Result({ input, v }: { input: WorthInput; v: Valuation }) {
   const miles = `${input.mileage.toLocaleString("en-US")} miles`;
+  const subject = (
+    <>
+      {vehicleLabel(input)} · {miles}
+      {v.tier === "estimate" && v.matchedTrim ? ` · ${v.matchedTrim}` : ""}
+    </>
+  );
 
+  // Two silences, two colours, because they are opposite statements. ABSTAIN
+  // is the tool working — too few comparable cars to put a number on, said
+  // plainly — so it is putty, the neutral the rest of the site is built on.
+  // UNAVAILABLE is a read that failed, and vermilion is this palette's word
+  // for something absent; it is the same block the browse grid raises when
+  // the inventory won't load.
   if (v.tier === "unavailable" || v.tier === "abstain") {
+    const failed = v.tier === "unavailable";
     return (
-      <section className="mt-8 border-[3px] border-ink bg-putty p-5">
-        <div className="text-[11px] font-extrabold uppercase tracking-[0.08em] text-ink/50">
-          {vehicleLabel(input)} · {miles}
+      <section className={`${CELL} ${failed ? "bg-vermilion text-paper" : "bg-putty text-ink"}`}>
+        <div className={`${CAPTION} px-5 pt-5 sm:px-8 sm:pt-7 ${failed ? "text-paper/60" : "text-ink/50"}`}>
+          {subject}
         </div>
-        <p className="mt-2 text-sm leading-relaxed text-ink">{v.source}</p>
+        <p className="max-w-[52ch] px-5 pt-2 pb-5 text-[19px] leading-[1.25] font-bold tracking-[-0.015em] sm:px-8 sm:pb-7 sm:text-[23px]">
+          {v.source}
+        </p>
         {v.tier === "abstain" && (
-          <Link
-            href={`/?make=${encodeURIComponent(input.make)}&model=${encodeURIComponent(input.model)}`}
-            className="mt-3 inline-block text-[12px] font-extrabold uppercase tracking-[0.08em] text-cobalt underline underline-offset-2"
-          >
-            Browse {input.make} {input.model} listings
-          </Link>
+          <div className="border-t-[3px] border-ink">
+            <Link
+              href={`/?make=${encodeURIComponent(input.make)}&model=${encodeURIComponent(input.model)}`}
+              className="flex items-center gap-2 bg-paper px-5 py-4 text-[12.5px] font-extrabold tracking-[0.06em] text-ink uppercase hover:bg-cobalt hover:text-paper focus:outline-none focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-cobalt sm:px-8"
+            >
+              Browse {input.make} {input.model} listings <span aria-hidden="true">→</span>
+            </Link>
+          </div>
         )}
       </section>
     );
   }
 
   return (
-    <section className="mt-8 border-[3px] border-ink bg-paper p-5">
-      <div className="text-[11px] font-extrabold uppercase tracking-[0.08em] text-ink/50">
-        {vehicleLabel(input)} · {miles}
-        {v.tier === "estimate" && v.matchedTrim ? ` · ${v.matchedTrim}` : ""}
+    <section className={`${CELL} bg-paper`}>
+      <div className={`${CAPTION} border-b-[3px] border-ink bg-putty px-5 py-2.5 text-ink/55 sm:px-8`}>
+        {subject}
       </div>
 
-      <div className="mt-2 flex items-baseline gap-2">
-        <span className="text-[34px] font-extrabold leading-none tracking-[-0.03em] text-ink sm:text-[42px]">
-          {v.headline}
+      <div className="px-5 py-7 sm:px-8 sm:py-9">
+        <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+          {/* The listing cards print a price at 32px; this page exists to
+              answer one question and prints its answer bigger. */}
+          <span className="text-[52px] leading-[0.9] font-extrabold tracking-[-0.045em] text-ink tabular-nums sm:text-[68px]">
+            {v.headline}
+          </span>
+          {/* The site's one visible provenance promise: anything that is not a
+              published figure is marked. Same word and same weight as
+              components/SourceBadge.tsx, which this cannot reuse directly — that
+              component reads a Fact, and this is a computation, not a fact. */}
+          {v.estimated && <span className={`${CAPTION} text-amber-700`}>est.</span>}
+        </div>
+
+        <p className="mt-4 max-w-[56ch] text-[16px] leading-[1.45] font-medium text-ink/70 sm:text-[17px]">
+          {v.source}
+        </p>
+      </div>
+
+      <div className="flex flex-wrap border-t-[3px] border-ink">
+        <span className={`${CAPTION} flex flex-1 items-center bg-putty px-5 py-3.5 text-ink/45 sm:px-8`}>
+          Track this car&rsquo;s value — coming with Pro
         </span>
-        {/* The site's one visible provenance promise: anything that is not a
-            published figure is marked. Same word and same weight as
-            components/SourceBadge.tsx, which this cannot reuse directly — that
-            component reads a Fact, and this is a computation, not a fact. */}
-        {v.estimated && (
-          <span className="text-[13px] font-medium text-amber-700 dark:text-amber-500">est.</span>
-        )}
-      </div>
-
-      <p className="mt-2 text-sm leading-relaxed text-ink/70">{v.source}</p>
-
-      <p className="mt-4 border-t-[3px] border-ink/10 pt-3 text-[12px] text-ink/50">
-        Track this car&rsquo;s value — coming with Pro.
-      </p>
-
-      {/* ODbL attribution: required wherever a figure derived from the
-          Washington title records renders, so this line is a licence term and
-          not a disclaimer. Kept to a bare credit, exactly as
-          components/RecentSales.tsx keeps it. */}
-      {v.waDerived && (
-        <p className="mt-2 text-[11px] text-ink/40">
+        {/* ODbL attribution: required wherever a figure derived from the
+            Washington title records renders, so this line is a licence term and
+            not a disclaimer. Kept to a bare credit, exactly as
+            components/RecentSales.tsx keeps it. */}
+        {v.waDerived && (
           <a
             href="https://data.wa.gov/Transportation/Electric-Vehicle-Title-and-Registration-Activity/rpr4-cgyd"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-cobalt"
+            className={`${CAPTION} flex items-center border-l-[3px] border-ink bg-putty px-5 py-3.5 text-ink/45 hover:text-cobalt sm:px-8`}
           >
             WA DOL (ODbL)
           </a>
-        </p>
-      )}
+        )}
+      </div>
     </section>
   );
 }

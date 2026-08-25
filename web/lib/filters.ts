@@ -103,6 +103,21 @@ export function dropSpecFilters(params: URLSearchParams): void {
 
 export const splitValues = (v: string) => v.split(",").filter(Boolean);
 
+/**
+ * A list of `<select>` options with `current` guaranteed present.
+ *
+ * A select whose value is not among its options renders EMPTY, which reads as
+ * "no filter" over a filter that is very much applied. Two ways that happens
+ * here, and both are ordinary: lib/listings/tally.ts prunes single-car feed
+ * spellings from the offered list while a shared link or a back-navigation can
+ * still carry one, and /worth is server-rendered with a make and model in the
+ * URL before the facets have landed in the browser at all.
+ */
+export function withCurrent(options: string[], current: string): string[] {
+  if (!current || options.includes(current)) return options;
+  return [...options, current].sort((a, b) => a.localeCompare(b, "en", { sensitivity: "base" }));
+}
+
 /** Toggle one value inside a facet's list, preserving the order it was picked. */
 export function toggleValue(current: string, value: string): string {
   const vs = splitValues(current);
