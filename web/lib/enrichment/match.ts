@@ -288,10 +288,18 @@ function matchEnrichmentRaw(
     const n = norm(s);
     return n.startsWith(mk) && n.length > mk.length ? n.slice(mk.length) : n;
   };
+  // The trailing "+" is identity at the MODEL level too, not just the trim
+  // level trimPlusMismatch was written for: dealers file the EQE 350+ under
+  // model "EQE 350+", which norm() collapses onto "EQE 350" — the 4MATIC's
+  // filing. Same rule as every trim comparison above: a one-sided plus is two
+  // different cars, not a spelling variant. Checked against the corpus's
+  // plus-bearing model strings (Lexus NX/RX 450h+, TX 550h+) before applying:
+  // each deliberately lists its plus-less spellings as aliases, and `.some()`
+  // still admits those pairs — parity only rejects the cross-matches.
   let rows = ALL_ROWS.filter(
     (r) =>
       canonicalMake(r.make, r.model) === mk &&
-      [r.model, ...(r.modelAliases ?? [])].some((m) => modelKey(m) === modelKey(model)) &&
+      [r.model, ...(r.modelAliases ?? [])].some((m) => modelKey(m) === modelKey(model) && !trimPlusMismatch(m, model)) &&
       modelYear >= r.modelYears[0] &&
       modelYear <= r.modelYears[1] &&
       // Spanning a cohort's versions is exactly when a feedLabelRow must NOT
