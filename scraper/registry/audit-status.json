@@ -2,9 +2,9 @@
   "_comment": "Written by scraper/lib/audit-status.mjs. Do not hand-edit — see that file's header.",
   "checks": {
     "feed-shard-health": {
-      "lastRunAt": "2026-08-25T02:09:59.555Z",
+      "lastRunAt": "2026-08-25T14:05:33.556Z",
       "result": "ok",
-      "detail": "total 132147; shards 5541/5445/5625/5440/5473/5379/5501/5538/5463/5331/5533/5577/5517/5581/5570/5609/5525/5449/5420/5415/5501/5545/5647/5539; sitemap URLs 132182",
+      "detail": "total 136677; shards 5719/5629/5785/5600/5668/5564/5720/5705/5642/5502/5710/5752/5718/5736/5773/5791/5707/5667/5617/5596/5686/5755/5846/5789; sitemap URLs 136676",
       "expectedEveryHours": 8
     },
     "ev-rules-audit": {
