@@ -2,21 +2,21 @@
   "_comment": "Written by scraper/lib/audit-status.mjs. Do not hand-edit — see that file's header.",
   "checks": {
     "feed-shard-health": {
-      "lastRunAt": "2026-08-24T19:41:59.631Z",
+      "lastRunAt": "2026-08-25T02:09:59.555Z",
       "result": "ok",
-      "detail": "total 131671; shards 5523/5424/5608/5421/5454/5355/5481/5518/5444/5311/5509/5559/5499/5561/5544/5586/5504/5435/5388/5389/5478/5525/5632/5523; sitemap URLs 131670",
+      "detail": "total 132147; shards 5541/5445/5625/5440/5473/5379/5501/5538/5463/5331/5533/5577/5517/5581/5570/5609/5525/5449/5420/5415/5501/5545/5647/5539; sitemap URLs 132182",
       "expectedEveryHours": 8
     },
     "ev-rules-audit": {
-      "lastRunAt": "2026-08-24T19:16:26.876Z",
+      "lastRunAt": "2026-08-25T02:09:09.925Z",
       "result": "ok",
-      "detail": "131236 live, 0 newly refuted by vPIC, 1 adjudicated-and-kept, 0 undecided",
+      "detail": "134442 live, 0 newly refuted by vPIC, 1 adjudicated-and-kept, 0 undecided",
       "expectedEveryHours": 27
     },
     "completeness-audit": {
-      "lastRunAt": "2026-08-24T19:17:46.297Z",
+      "lastRunAt": "2026-08-25T02:09:53.150Z",
       "result": "ok",
-      "detail": "45785 live, 2 broken-parser lots (baseline 202)",
+      "detail": "47151 live, 2 broken-parser lots (baseline 202)",
       "expectedEveryHours": 27
     },
     "sync-guard": {
@@ -32,9 +32,9 @@
       "expectedEveryHours": 27
     },
     "live-price-audit": {
-      "lastRunAt": "2026-08-24T19:17:48.051Z",
+      "lastRunAt": "2026-08-25T02:09:54.693Z",
       "result": "warn",
-      "detail": "129040 priced, 10 implausible (0 at or below the floor/cohort, 10 above)",
+      "detail": "131073 priced, 10 implausible (0 at or below the floor/cohort, 10 above)",
       "expectedEveryHours": 8
     },
     "price-audit": {
