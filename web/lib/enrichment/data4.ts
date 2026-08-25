@@ -1077,23 +1077,11 @@ const PS2_PLUS_PACK = "https://web.archive.org/web/20220520094320/https://www.po
     },
   };
 
-// Audi Q4 e-tron (see the row-block comment below for the method). Every Q4
-// row abstains on the heat pump: the MEB Q4's US spec sheets that this pass
-// read state the pack, the DC rate and the preconditioning behaviour and say
-// nothing about cabin-heating hardware, and the e-tron's own standard heat
-// pump belongs to a different platform.
-const Q4_HP_ABSTAIN = { heatPump: "No Audi USA document consulted this pass states heat-pump hardware for the MEB-platform Q4, and the older e-tron's standard heat pump is a different platform's fact" };
-const Q4 = { make: "AUDI", model: "Q4 e-tron", abstains: Q4_HP_ABSTAIN };
-const Q4SBA = { make: "AUDI", model: "Q4 e-tron Sportback", abstains: Q4_HP_ABSTAIN };
-const Q4SBB = { make: "AUDI", model: "Q4 Sportback e-tron", abstains: Q4_HP_ABSTAIN };
-const Q4_SPEC22 = "https://media.audiusa.com/assets/documents/original/9155-2022Q4etronTechnicalSpecifications.pdf";
-const Q4_R597 = "https://media.audiusa.com/releases/597";
-const Q4_TIERS = ["Premium", "Premium Plus", "Prestige"];
-const Q4_PACK82 = { packGrossKwh: f(82, "mfr", "high", "82 kWh gross, every US Q4 variant — Audi's 2022 Q4 e-tron technical specifications (pack unchanged through the MY2024 40/50)", Q4_SPEC22) };
-const Q4_PACK82_77 = {
-  packGrossKwh: f(82, "mfr", "high", "“82 kWh (gross) battery” — Audi USA, 2024 Q4 55 refresh release", Q4_R597),
-  packUsableKwh: f(77, "mfr", "high", "“provides 77 kWh of net energy” — Audi USA, 2024 Q4 55 refresh release", Q4_R597),
-};
+// The Audi Q4 constants went with the Q4 rows to data10 (2026-08-25); see
+// the moved-block note further down for what data10 carries that this file
+// did not. The MY2024 refresh release (media.audiusa.com/releases/597) and
+// the heat-pump abstention both live there now.
+
 // Same caveat as the e-tron GT row in data3: the 8yr/100k HV-battery term is
 // consistently reported but not confirmed in a readable Audi USA primary doc.
 const AUDI_W = {
@@ -4320,107 +4308,20 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
   },
 
-  // ── Audi Q4 e-tron / Q4 Sportback e-tron (same pass) ─────────────────
-  //
-  // VIN position 8 is no help here: every US Q4 in inventory decodes to a
-  // flat "Z" across 40/50/55, RWD and quattro alike (control run 2026-08-14),
-  // and vPIC carries no per-VIN battery figure — so these rows key on the
-  // number Audi puts in the trim ("40"/"45"/"50"/"55") plus drivetrain.
-  // The trim arrays deliberately include the bare tier names (Premium /
-  // Premium Plus / Prestige): a 2024 listing that omits the number genuinely
-  // can't be told apart (50 and 55 both sold that year, both quattro), and
-  // presenting 236-vs-258 candidates is honest where guessing is not.
-  //
-  // Variant history (EPA certs, fueleconomy.gov ids in sourceUrls):
-  //   2022: 50 quattro only — Audi's own 2022 spec sheet lists the 40 with
-  //         range "TBD"; it reached the US for MY2023.
-  //   2023: 40 (RWD, 265) · 50 quattro (SUV 236 / Sportback 242)
-  //   2024: 40 + 50 carry over; mid-year the 50 becomes the 55 quattro
-  //         (258, both bodies) — Audi USA release, March 2024
-  //   2025: 45 (RWD, 288) · 55 quattro (258)
-  // Pack: 82 kWh gross all years (2022 spec sheet); the MY2024.5 refresh
-  // states 77 kWh net and 175 kW DC (up from 150 kW on the 50).
-  {
-    id: "q4-2022-50", ...Q4, modelYears: [2022, 2022], packVariant: "50 quattro",
-    battery: Q4_PACK82,
-    range: { epaRangeMi: f(241, "mfr", "high", "MY2022 Q4 50 e-tron quattro — EPA; the only US Q4 variant in 2022 (Audi's 2022 spec sheet lists the 40 as range-TBD, and EPA carries no 2022 40 cert)", epa(44781)) },
-    charging: { portStandard: f("CCS1", "mfr"), architectureV: f(400, "mfr") },
-    warranty: AUDI_W,
-  },
-  {
-    id: "q4-2023-24-40", ...Q4, modelYears: [2023, 2024], drive: "RWD", packVariant: "40 (RWD)",
-    trim: ["40 Premium", "40 Premium Plus", "40 Prestige", ...Q4_TIERS],
-    battery: Q4_PACK82,
-    range: { epaRangeMi: f(265, "mfr", "high", "MY2023–24 Q4 40 e-tron (RWD) — EPA (ids 45983/46910 rate identically)", epa(45983)) },
-    charging: { portStandard: f("CCS1", "mfr"), architectureV: f(400, "mfr") },
-    warranty: AUDI_W,
-  },
-  {
-    id: "q4-2023-24-50", ...Q4, modelYears: [2023, 2024], drive: "AWD", packVariant: "50 quattro",
-    trim: ["50 Premium", "50 Preminum Plus", "50 Premium Plus", "50 Prestige", ...Q4_TIERS],
-    battery: Q4_PACK82,
-    range: { epaRangeMi: f(236, "mfr", "high", "MY2023–24 Q4 50 e-tron quattro — EPA (ids 45988/46911 rate identically); replaced mid-MY2024 by the 55", epa(45988)) },
-    charging: { portStandard: f("CCS1", "mfr"), architectureV: f(400, "mfr"), dcPeakKw: f(150, "mfr", "high", "“up from 150 kW for the Q4 50 e-tron” — Audi USA, 2024 Q4 55 refresh release", Q4_R597) },
-    warranty: AUDI_W,
-  },
-  {
-    id: "q4-2024-25-55", ...Q4, modelYears: [2024, 2025], drive: "AWD", packVariant: "55 quattro",
-    trim: ["55 Premium", "55 Premium Plus", "55 Prestige", ...Q4_TIERS],
-    battery: Q4_PACK82_77,
-    range: { epaRangeMi: f(258, "mfr", "high", "MY2024.5–25 Q4 55 e-tron quattro — EPA (ids 47810/48681 rate identically); the 55 replaced the 50 in spring 2024", epa(47810)) },
-    charging: { portStandard: f("CCS1", "mfr"), architectureV: f(400, "mfr"), dcPeakKw: f(175, "mfr", "high", "“a maximum DC charging power of 175 kW, up from 150 kW” — Audi USA, 2024 Q4 55 refresh release", Q4_R597) },
-    thermal: { batteryPreconditioning: f(true, "mfr", "high", "“will thermally precondition the battery to ensure it charges as quickly as possible” (route-planner triggered) — Audi USA, 2024 Q4 55 refresh release", Q4_R597) },
-    warranty: AUDI_W,
-  },
-  {
-    id: "q4-2025-45", ...Q4, modelYears: [2025, 2025], drive: "RWD", packVariant: "45 (RWD)",
-    trim: ["45 Premium", "45 Premium Plus", "45 Prestige", ...Q4_TIERS],
-    battery: {
-      packGrossKwh: f(82, "mfr", "high", "82 kWh gross — Audi Q4 e-tron line spec, unchanged since 2022", Q4_SPEC22),
-      packUsableKwh: f(77, "mfr", "medium", "The 45 uses the updated pack introduced with the MY2024 55 refresh (82 gross / 77 net); the net figure is not separately restated for the 45 in a US primary document", Q4_R597),
-    },
-    range: { epaRangeMi: f(288, "mfr", "high", "MY2025 Q4 45 e-tron (RWD) — EPA; the longest-range US Q4", epa(48296)) },
-    charging: { portStandard: f("CCS1", "mfr"), architectureV: f(400, "mfr") },
-    warranty: AUDI_W,
-  },
-  // Sportback — the feed spells the model both ways ("Q4 e-tron Sportback"
-  // and "Q4 Sportback e-tron"), so each row exists under both strings.
-  ...[Q4SBA, Q4SBB].flatMap((M, i): EnrichmentRow[] => {
-    const s = i === 0 ? "a" : "b";
-    return [
-      {
-        id: `q4sb-2022-50-${s}`, ...M, modelYears: [2022, 2022] as [number, number], packVariant: "50 quattro",
-        battery: Q4_PACK82,
-        range: { epaRangeMi: f(241, "mfr", "high", "MY2022 Q4 50 e-tron Sportback quattro — EPA; the only US Sportback variant in 2022", epa(44782)) },
-        charging: { portStandard: f("CCS1", "mfr"), architectureV: f(400, "mfr") },
-        warranty: AUDI_W,
-      },
-      {
-        id: `q4sb-2023-50-${s}`, ...M, modelYears: [2023, 2023] as [number, number], packVariant: "50 quattro",
-        battery: Q4_PACK82,
-        range: { epaRangeMi: f(242, "mfr", "high", "MY2023 Q4 Sportback 50 e-tron quattro — EPA; the only US Sportback variant that year", epa(45989)) },
-        charging: { portStandard: f("CCS1", "mfr"), architectureV: f(400, "mfr"), dcPeakKw: f(150, "mfr", "high", "“up from 150 kW for the Q4 50 e-tron” — Audi USA, 2024 Q4 55 refresh release", Q4_R597) },
-        warranty: AUDI_W,
-      },
-      {
-        id: `q4sb-2024-50-${s}`, ...M, modelYears: [2024, 2024] as [number, number], drive: "AWD" as const, packVariant: "50 quattro",
-        trim: ["50 Premium", "50 Preminum Plus", "50 Premium Plus", "50 Prestige", ...Q4_TIERS],
-        battery: Q4_PACK82,
-        range: { epaRangeMi: f(242, "mfr", "high", "MY2024 Q4 Sportback 50 e-tron quattro — EPA; replaced mid-year by the 55", epa(46912)) },
-        charging: { portStandard: f("CCS1", "mfr"), architectureV: f(400, "mfr"), dcPeakKw: f(150, "mfr", "high", "“up from 150 kW for the Q4 50 e-tron” — Audi USA, 2024 Q4 55 refresh release", Q4_R597) },
-        warranty: AUDI_W,
-      },
-      {
-        id: `q4sb-2024-25-55-${s}`, ...M, modelYears: [2024, 2025] as [number, number], drive: "AWD" as const, packVariant: "55 quattro",
-        trim: ["55 Premium", "55 Premium Plus", "55 Prestige", ...Q4_TIERS],
-        battery: Q4_PACK82_77,
-        range: { epaRangeMi: f(258, "mfr", "high", "MY2024.5–25 Q4 Sportback 55 e-tron quattro — EPA (ids 47811/48682 rate identically)", epa(47811)) },
-        charging: { portStandard: f("CCS1", "mfr"), architectureV: f(400, "mfr"), dcPeakKw: f(175, "mfr", "high", "“a maximum DC charging power of 175 kW” — Audi USA, 2024 Q4 55 refresh release", Q4_R597) },
-        thermal: { batteryPreconditioning: f(true, "mfr", "high", "Route-planner triggered thermal preconditioning — Audi USA, 2024 Q4 55 refresh release", Q4_R597) },
-        warranty: AUDI_W,
-      },
-    ];
-  }),
+  // ── Audi Q4 e-tron / Q4 Sportback e-tron — MOVED to data10 (2026-08-25) ──
+  // Both files had a full Q4 line and the figures agreed, so this is the
+  // duplicate coming out, not a disagreement being settled. data10's rows
+  // are the ones kept because they say more from the same evidence: a DC
+  // peak rate on every year, the 9.6 kW onboard AC figure, and Audi's own
+  // NACS FAQ sentence that the Q4 "is not currently able to utilize the Audi
+  // NACS DC adapter or any other NACS adapter" — superchargerAccess "none"
+  // with a citation, on the one Audi EV with no route onto the Supercharger
+  // network at all. They also key the grade rows on the number Audi puts in
+  // the trim and hand everything else to a trimless base row that abstains
+  // on range, where these rows keyed the bare tier names (Premium / Premium
+  // Plus / Prestige) as well and so answered a gradeless listing with
+  // 236-vs-258 candidates. MY2026 is covered there too, which this file
+  // never reached.
 
   // ── Hyundai Ioniq 5 N (same pass) ─────────────────────────────────────
   // Separate model string in the feed ("IONIQ 5 N"), VIN code 8 (dual
@@ -4766,13 +4667,11 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
         f(218, "mfr", "high", "MY2020–22 e-tron Sportback — EPA (see etronsb-2020-22; this row exists for a feed that puts the full trim in the model string)", epa(42674))),
       au("etron-s-2022-23", "e-tron S", [2022, 2023], ["E"], "S",
         f(208, "mfr", "high", "MY2022–23 e-tron S on 20-inch wheels — EPA; 181 on 21/22s (45985/46614)", epa(45985))),
-      // Q8 e-tron rename year (2024) + SQ8.
-      au("q8etron-2024", "Q8 e-tron", [2024, 2024], ["E"], "55 quattro",
-        f(285, "mfr", "high", "MY2024 Q8 e-tron quattro — EPA", epa(46913)), { battery: P114 }),
-      au("q8etronsb-2024-a", "Q8 Sportback e-tron", [2024, 2024], ["E"], "55 quattro Sportback",
-        f(296, "mfr", "high", "MY2024 Q8 Sportback e-tron quattro — EPA; 300 in the ultra (aero) configuration", epa(47440)), { battery: P114 }),
-      au("q8etronsb-2024-b", "Q8 e-tron Sportback", [2024, 2024], ["E"], "55 quattro Sportback",
-        f(296, "mfr", "high", "MY2024 Q8 Sportback e-tron quattro — EPA; 300 in the ultra (aero) configuration", epa(47440)), { battery: P114 }),
+      // Q8 e-tron rename year (2024) + SQ8. The Q8 and Q8 Sportback rows
+      // MOVED to data10 (2026-08-25): same 285 / 296 figures from the same
+      // EPA certs, and data10's carry the DC peak rate, the onboard AC rate,
+      // Audi's adapter answer and a wheel-split note the Sportback needs.
+      // The SQ8 stays — data10 has no SQ8 row, so this is the only one.
       au("sq8etron-2024", "SQ8 e-tron", [2024, 2024], ["E"], "SQ8",
         f(253, "mfr", "high", "MY2024 SQ8 e-tron on 20-inch wheels — EPA; 218 on 21/22s", epa(47441)), { battery: P114 }),
       // e-tron GT (J1 platform) 2022–23; the 2024 row lives in data3.
@@ -4782,16 +4681,13 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
       au("rs-etrongt-2022-23", "RS e-tron GT", [2022, 2023], ["W"], "RS e-tron GT",
         f(232, "mfr", "high", "MY2022–23 RS e-tron GT — EPA (44783/45982 rate identically)", epa(44783)),
         { battery: GT_PACK, charging: { ...AUDI_CHG_800, dcPeakKw: f(270, "mfr", "high", "Audi: “up to 270 kW”") }, thermal: { heatPump: f<"standard">("standard", "mfr", "high", "Audi: the e-tron GT's heat pump is standard") } }),
-      // Q6 e-tron (PPE) — quattro vs RWD splits on drive; SQ6 is its own
-      // model string.
-      au("q6etron-2025-quattro", "Q6 e-tron", [2025, 2025], ["F"], "quattro",
-        f(307, "mfr", "high", "MY2025 Q6 e-tron quattro on 19-inch wheels — EPA; 295 on 20s", epa(48297)), { battery: P100, charging: AUDI_CHG_800, thermal: undefined, abstains: { heatPump: PPE_HP_ABSTAIN } }),
-      au("q6etron-2025-rwd", "Q6 e-tron", [2025, 2025], ["F"], "RWD",
-        f(310, "mfr", "high", "MY2025 Q6 e-tron (RWD) on 19-inch wheels — EPA; 298 on 20s, 321 as the ultra", epa(48683)), { drive: "RWD", battery: P100, charging: AUDI_CHG_800, thermal: undefined, abstains: { heatPump: PPE_HP_ABSTAIN } }),
-      au("q6etron-2027-quattro", "Q6 e-tron", [2027, 2027], ["F"], "quattro",
-        f(325, "mfr", "high", "MY2027 Q6 e-tron quattro on 19-inch tires — EPA; 301 on 20s (EPA lists no 2027 RWD cert)", epa(50376)), { battery: P100, charging: AUDI_CHG_800, thermal: undefined, abstains: { heatPump: PPE_HP_ABSTAIN } }),
-      au("sq6etron-2025", "SQ6 e-tron", [2025, 2025], ["F"], "SQ6",
-        f(275, "mfr", "high", "MY2025 SQ6 e-tron — EPA", epa(48303)), { battery: P100, charging: AUDI_CHG_800, thermal: undefined, abstains: { heatPump: PPE_HP_ABSTAIN } }),
+      // Q6 e-tron / SQ6 e-tron MOVED to data10 (2026-08-25). Same EPA certs
+      // and the same 307 / 310 / 325 / 275, and data10 adds the 100 kWh
+      // gross / 94.4 net pair, the 8:1:1 chemistry, 270 kW (260 on RWD), the
+      // 21-minute 10→80 figure and the Sportback bodies — plus MY2026 rows
+      // that abstain on range, because EPA's 2026 Audi list has no Q6 at all
+      // and the neighbouring years differ by 18 miles. The A6/S6 rows below
+      // are the PPE cars data10 does not carry, so they stay here.
       // A6 e-tron family (2025) — certs absent from fueleconomy.gov until
       // MY2027; Audi's announced EPA estimates, achieved with the no-cost
       // "ultra" aero configuration on 19-inch wheels.
@@ -4809,35 +4705,52 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     ];
   })(),
 
-  // ── Lexus RZ + electric ES (2026-08-15) ───────────────────────────────
-  // VIN pos-8: B = RZ, 1 = the new electric ES — which safely fences the
-  // electric rows away from gas/hybrid ES listings that share the bare "ES"
-  // model string. Drive settles FWD-vs-AWD variants (300e/350e are FWD,
-  // 450e/500e AWD); the 2026 RZ 550e exists only as the F SPORT, so tier
-  // trims (Premium/Luxury) imply 450e. Feed model strings restate variants
-  // ("RZ 450e", "ES 500e", "ESe") — rows are emitted per string.
+  // ── Lexus electric ES under the BARE "ES" nameplate (2026-08-15) ──────
+  // VIN pos-8 1 = the new electric ES, which is what makes a row under the
+  // bare "ES" model string safe at all: it fences these off the gas and
+  // hybrid ES listings filed under the same word. Drive settles FWD-vs-AWD
+  // (350e FWD, 500e AWD).
+  //
+  // The "ESe", "ES 350e" and "ES 500e" spellings MOVED to data10
+  // (2026-08-25). Same 307 and 276 from the same EPA certs; data10's rows
+  // carry the pack figure from Lexus's own release rather than from Part 565,
+  // plus the 150 kW peak, the 28-minute 10→80, the 11 kW onboard charger,
+  // battery preconditioning, and an mfr-cited 8 yr / 100,000 mi / 70% /
+  // transferable warranty read out of the 2026 ES BEV Warranty and Services
+  // Guide. Only the bare "ES" spelling stays here, because it is the one
+  // that needs the pos-8 fence and data10 does not carry it.
+  //
+  // THE HEAT PUMP IS NOW AN ABSTENTION, and it was a claim (2026-08-25).
+  // These rows said "standard", sourced `agg` with no URL and the reason
+  // "consistently documented across the RZ/electric-ES line". The corpus
+  // already disagreed with itself about the RZ half of that sentence —
+  // data9's RZ rows abstain, "No Lexus document consulted this pass states
+  // heat-pump hardware for the RZ" — and the ES half does not survive a
+  // control test either: Lexus's own launch release for these cars uses the
+  // term zero times in 30,000 characters of text that says "battery" twelve
+  // times and describes the climate system and the battery preconditioning
+  // at length. A document that would have said so, and did not. That is the
+  // Volvo XC40/C40 and Nissan Ariya shape exactly (data6): an aggregator
+  // heat-pump claim with no manufacturer sentence under it, believed until
+  // someone control-tested the US corpus.
   ...(() => {
     const LEX_W = {
       batteryYears: f(8, "agg" as Source, "medium", "8 yr/100,000 mi EV-battery coverage (Toyota-group terms), consistently documented; not re-verified against a Lexus primary booklet this pass"),
       batteryMiles: f(100_000, "agg" as Source, "medium"),
     };
-    const LEX_HP = { heatPump: f<"standard">("standard", "agg", "medium", "Heat pump standard across the RZ/electric-ES line, consistently documented") };
-    const CCS = { portStandard: f<"CCS1">("CCS1", "mfr") };
+    const ES_HP_ABSTAIN = "No Lexus document consulted this pass states heat-pump hardware for the electric ES";
     const NACS26 = { portStandard: f<"NACS">("NACS", "mfr", "high", "MY2026 Lexus EVs adopted the native NACS (J3400) port"), superchargerAccess: f<"native">("native", "mfr") };
     const P747L = { packGrossKwh: f(74.7, "vin", "medium", "74.7 kWh in the Part 565 submissions for MY2026 VINs (RZ and electric ES share the pack family)") };
-    const lex = (id: string, model: string, years: [number, number], vin8: string[], trim: string[] | undefined, drv: "AWD" | "FWD", variant: string, rangeFact: Fact<number>, extra?: Partial<EnrichmentRow>): EnrichmentRow => ({
-      id, make: "LEXUS", model, modelYears: years, vin8, trim, drive: drv, packVariant: variant,
-      range: { epaRangeMi: rangeFact }, charging: CCS, thermal: LEX_HP, warranty: LEX_W, ...extra,
+    const lex = (id: string, trim: string[], drv: "AWD" | "FWD", variant: string, rangeFact: Fact<number>): EnrichmentRow => ({
+      id, make: "LEXUS", model: "ES", modelYears: [2026, 2026], vin8: ["1"], trim, drive: drv, packVariant: variant,
+      range: { epaRangeMi: rangeFact }, battery: P747L, charging: NACS26, warranty: LEX_W,
+      abstains: { heatPump: ES_HP_ABSTAIN },
     });
-    // Only the electric ES is ported from this batch: data6 already carries
-    // the RZ across every model string this pass added rows for, and a second
-    // set would have turned 236 exact RZ matches into candidates.
     return [
-      // Electric ES (2026) — code 1 fences these off the gas ES.
-      ...["ESe", "ES", "ES 350e"].map((m, i) => lex(`es350e-2026-${i}`, m, [2026, 2026], ["1"], ["350e", "Premium", "Luxury"], "FWD", "ES 350e",
-        f(307, "mfr", "high", "MY2026 ES 350e (FWD) on 19-inch wheels — EPA; 292 on 21s", epa(50450)), { battery: P747L, charging: NACS26 })),
-      ...["ESe", "ES", "ES 500e"].map((m, i) => lex(`es500e-2026-${i}`, m, [2026, 2026], ["1"], ["500e", "Premium", "Luxury"], "AWD", "ES 500e",
-        f(276, "mfr", "high", "MY2026 ES 500e AWD on 19-inch wheels — EPA; 272 on 21s", epa(50452)), { battery: P747L, charging: NACS26 })),
+      lex("es350e-2026-bare", ["350e", "Premium", "Luxury"], "FWD", "ES 350e",
+        f(307, "mfr", "high", "MY2026 ES 350e (FWD) on 19-inch wheels — EPA; 292 on 21s", epa(50450))),
+      lex("es500e-2026-bare", ["500e", "Premium", "Luxury"], "AWD", "ES 500e",
+        f(276, "mfr", "high", "MY2026 ES 500e AWD on 19-inch wheels — EPA; 272 on 21s", epa(50452))),
     ];
   })(),
 
@@ -4919,106 +4832,27 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     ];
   })(),
 
-  // ── Dodge Charger Daytona (2026-08-15) ────────────────────────────────
-  // Pos-8 K = the electric Daytona (Part 565: "Electric Drive", 370 kW =
-  // R/T, 500 kW = Scat Pack) — which fences these rows off the returning
-  // gas Chargers. Tire fitment swings the certs hugely (R/T 268–308,
-  // Scat Pack 216–279); rows carry the standard-fitment figure with the
-  // full spread noted. "R/T Scat Pack" is a Scat Pack.
+  // ── Dodge Charger Daytona — MOVED to data10 (2026-08-25) ──────────────
+  // These rows were the ported half of a pair. data10's Charger Daytona
+  // block covers the same cars from a fuller reading of the same Stellantis
+  // release: it adds the NCA chemistry and the dcFastCharging flag, splits
+  // the tire-spread buyer note per year-span instead of quoting one span's
+  // numbers under three, keys the R/T on the bare "R" spelling 220 live
+  // listings actually use, carries a trimless "Charger Daytona" base row and
+  // an MY2027 Scat Pack row, and states the same MY2026 bare-nameplate rule
+  // this file had to be corrected into. Two matching rows are not twice as
+  // good as one — they turn a settled EXACT into an ambiguous pair, which is
+  // what 336 live Daytona listings were reduced to while both sets stood.
   //
-  // BARE "Charger" STOPS AT MY2025 (2026-08-25). Through MY2025 the
-  // nameplate had one powertrain, so a listing filed model "Charger" trim
-  // "R/T" could only be the EV. MY2026 is the year that stopped being true:
-  // EPA's own 2026 Dodge model list carries "Charger R/T AWD" and "Charger
-  // Scat Pack AWD" alongside the four Daytona entries, and both decode
-  // "Auto 8-spd, 6 cyl, 3.0 L, Turbo" — Regular Gasoline on id 50283, Premium
-  // on 50068. The Sixpack wears the same two badges as the EV. Verified on
-  // the cars rather than the certificate: 2C3CDANP2TR258340 and
-  // 2C3CDAMP5TR275800 are live dealer VINs that vPIC decodes as model
-  // "Charger", trim "R/T" and "Scat Pack", FuelTypePrimary "Gasoline",
-  // 6 cylinders, 3.0 L — the exact model+trim+year shape the MY2026 rows
-  // below used to answer to. Nothing in that shape says which car it is, so
-  // MY2026 is emitted under the Daytona-spelled model strings only.
-  //
-  // The pos-8 fence is real and it is not enough. Sweeping VDS 2C3CDB across
-  // every position-7/8 pair, K is the only code vPIC calls "BEV (Battery
-  // Electric Vehicle)", and the petrol car is 2C3CDA?P — position 8 = P — so
-  // a decode that CARRIES a VIN is already turned away here. But the guard
-  // only fires when a VIN reached the matcher, and it lives on these rows and
-  // not on the Daytona rows in data10; a nameplate row whose only defence is
-  // a key its neighbours don't share is one edit from being wrong.
-  ...(() => {
-    const DODGE_W = {
-      batteryYears: f(8, "agg" as Source, "medium", "8 yr/100,000 mi, 70% capacity floor — Stellantis EV terms, consistently documented; not re-verified against a Dodge booklet this pass"),
-      batteryMiles: f(100_000, "agg" as Source, "medium"),
-      sohFloorPct: f(70, "agg" as Source, "medium"),
-    };
-    const DAY_BASE = {
-      // Same rule the Jeep Recon row already states: Stellantis' own
-      // documents never use the term, so their silence is not evidence.
-      abstains: { heatPump: "Stellantis documents never use the term, so their silence is not evidence of absence" },
-      battery: { packGrossKwh: f(100.5, "mfr", "medium", "100.5 kWh gross / 93.9 usable — both Daytona variants"), packUsableKwh: f(93.9, "mfr", "medium") },
-      charging: { portStandard: f<"CCS1">("CCS1", "mfr"), architectureV: f<400>(400, "mfr") },
-      warranty: DODGE_W,
-    };
-    const day = (id: string, model: string, years: [number, number], trim: string[], variant: string, rangeFact: Fact<number>): EnrichmentRow => ({
-      id, make: "DODGE", model, modelYears: years, vin8: ["K"], trim, drive: "AWD", packVariant: variant,
-      range: { epaRangeMi: rangeFact }, ...DAY_BASE,
-    });
-    const RT_TRIMS = ["R/T", "Daytona R/T", "2-DOOR DAYTONA R/T"];
-    const SCAT_TRIMS = ["Scat Pack", "R/T Scat Pack", "Daytona Scat Pack", "Scat Pack Plus"];
-    const rt2425 = f(274, "mfr", "high", "MY2024–25 Daytona R/T on the standard 18-inch fitment — EPA; 20-inch tires rate 268–308 by compound (ids 48782–84, 48994, 49073–74)", epa(48782));
-    const scat24 = f(241, "mfr", "high", "MY2024 Daytona Scat Pack (Track Pack, all-season tires) — EPA; 216 on the track compound", epa(48786));
-    const scat25 = f(279, "mfr", "high", "MY2025 Daytona Scat Pack on the standard 305-width fitment — EPA; Track Pack fitments rate 241 (A/S) / 216 (track compound)", epa(49075));
-    const rt26 = f(263, "mfr", "high", "MY2026 Daytona R/T on the standard 18-inch fitment — EPA; 20-inch tires rate 258–295", epa(49957));
-    const scat26 = f(267, "mfr", "high", "MY2026 Daytona Scat Pack on the standard 305-width fitment — EPA; Track Pack fitments rate 241 (A/S) / 223 (track compound)", epa(49648));
-    return ["Charger Daytona", "Charger", "Charger Daytona EV"].flatMap((m, i): EnrichmentRow[] => [
-      day(`daytona-2024-25-rt-${i}`, m, [2024, 2025], RT_TRIMS, "Daytona R/T", rt2425),
-      day(`daytona-2024-scat-${i}`, m, [2024, 2024], SCAT_TRIMS, "Daytona Scat Pack", scat24),
-      day(`daytona-2025-scat-${i}`, m, [2025, 2025], SCAT_TRIMS, "Daytona Scat Pack", scat25),
-      // MY2026 under the Daytona-spelled model strings only. See the block
-      // comment: in MY2026 bare "Charger" is a nameplate two powertrains
-      // answer to, and the badge does not separate them.
-      ...(m === "Charger"
-        ? []
-        : [
-            day(`daytona-2026-rt-${i}`, m, [2026, 2026], RT_TRIMS, "Daytona R/T", rt26),
-            day(`daytona-2026-scat-${i}`, m, [2026, 2026], SCAT_TRIMS, "Daytona Scat Pack", scat26),
-          ]),
-    ]);
-  })(),
+  // The one thing data4 carried that data10 did not is the "Charger Daytona
+  // EV" model spelling, now a modelAlias on data10's rows.
 
-  // ── Subaru Trailseeker + Uncharted (2026-08-15) ───────────────────────
-  // Subaru's own spec sheets settle the wheel-per-trim splits exactly:
-  // Trailseeker — "EPA-estimated 281 Premium, 274 Limited and Touring"
-  // (18-inch Premium / 20-inch Limited+Touring); Uncharted — Premium FWD
-  // and Sport ride 18s, GT rides 20s. Both: 74.7 kWh (104 cells, matching
-  // the per-VIN Part 565 figure), native NACS on the right fender, DC
-  // 10→80% "as quickly as 28 minutes". MY2027 certs are identical.
-  ...(() => {
-    const SUB_W = {
-      batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source),
-      sohFloorPct: f(70, "mfr" as Source, "high", "“Retention of 70% or more of the original battery capacity” (Subaru BEV booklet terms, as on Solterra)"),
-      batteryTransfers: f(true, "mfr" as Source, "high", "“Every owner of the vehicle during the warranty period shall be entitled to the benefits”"),
-    };
-    const SUB_SPEC_TS = "https://media.subaru.com/pressrelease/2399/1/2026-subaru-trailseeker-specifications";
-    const SUB_SPEC_UC = "https://s3.amazonaws.com/subarumedia.iconicweb.com/mediasite/specs/2026_Subaru_Uncharted_Specs.pdf";
-    const SUB_PACK = { packGrossKwh: f(74.7, "mfr", "high", "“Lithium-ion: 104 cells, 74.7 kWh” — Subaru spec sheet, matching the per-VIN Part 565 figure") };
-    const SUB_CHG = { portStandard: f<"NACS">("NACS", "mfr", "high", "“NACS charge inlet on right fender” — Subaru spec sheet"), superchargerAccess: f<"native">("native", "mfr") };
-    const sub = (id: string, model: string, vin8: string[], trim: string[] | undefined, drv: "AWD" | "FWD", variant: string, rangeFact: Fact<number>, specUrl: string): EnrichmentRow => ({
-      id, make: "SUBARU", model, modelYears: [2026, 2027], vin8, trim, drive: drv, packVariant: variant,
-      // The same silence the Uncharted rows already declare: Subaru's own
-      // release for these cars describes battery preconditioning and never
-      // mentions cabin heating hardware.
-      abstains: { heatPump: "Subaru's Trailseeker release describes battery preconditioning and never mentions cabin heating hardware" },
-      range: { epaRangeMi: rangeFact }, battery: SUB_PACK, charging: SUB_CHG, warranty: SUB_W,
-      buyerNotes: [{ headline: "Wheel size sets the rating — Subaru's spec sheet maps it per trim", body: `Subaru's own specifications document states the per-trim EPA split (see ${specUrl}). 18-inch trims carry the higher figure; 20-inch trims the lower.`, severity: "info" as const }],
-    });
-    return [
-      sub("trailseeker-2026-27-premium", "Trailseeker", ["C"], ["Premium"], "AWD", "Premium (18-inch)",
-        f(281, "mfr", "high", "“EPA-estimated 281 Premium” (18-inch wheels) — Subaru's own spec sheet; EPA ids 50300/50692 rate identically both years", epa(50300)), SUB_SPEC_TS),
-      sub("trailseeker-2026-27-limtour", "Trailseeker", ["C"], ["Limited", "Touring"], "AWD", "Limited/Touring (20-inch)",
-        f(274, "mfr", "high", "“274 Limited and Touring” (20-inch wheels) — Subaru's own spec sheet; EPA ids 50299/50691", epa(50299)), SUB_SPEC_TS),
-    ];
-  })(),
+  // ── Subaru Trailseeker — MOVED to data10 (2026-08-25) ─────────────────
+  // Same story and the same two figures (281 on 18-inch Premium, 274 on the
+  // 20-inch grades, EPA 50300/50299 and the identical MY2027 50692/50691).
+  // data10's rows add the DC peak rate, the onboard AC rate, battery
+  // preconditioning, the tow rating and a trimless base row that abstains on
+  // range rather than guessing a grade — and its heat-pump abstention is
+  // control-tested against two Subaru feature tables rather than resting on
+  // one release's silence. The MY2027 span is carried over to data10 here.
 ];

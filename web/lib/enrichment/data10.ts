@@ -73,15 +73,33 @@ const R: EnrichmentRow[] = [];
   const Q4_2024_PR = "https://media.audiusa.com/releases/597";
   const Q4_2023_SPECS =
     "https://media.audiusa.com/assets/documents/original/10203-2023Q4etronTechnicalSpecifications.pdf";
-  // The MY2022 pack figure is cited to the sales-start release, not to the
-  // MY2022 technical-specification sheet, and the difference is one word. The
-  // spec sheet's row reads "Battery size (kWh)" — the MY2023 sheet's reads
-  // "Battery size (kWh gross)" — so filing 82 as a GROSS figure on the
+  // The MY2022 pack figure is cited to a sales-start release rather than to
+  // the MY2022 technical-specification sheet, and the difference is one word.
+  // The 2022 spec sheet's row reads "Battery size (kWh)" — the 2023 sheet's
+  // reads "Battery size (kWh gross)" — so filing 82 as a GROSS figure on the
   // strength of the 2022 sheet would be reading a qualifier Audi did not
-  // print that year. The release's own table does print it: "Battery (gross
-  // capacity) / 82 kWh". The AC charging figure still comes from the spec
-  // sheet, which states it plainly.
-  const Q4_2022_PR = "https://media.audiusa.com/view/releases/547";
+  // print that year. A release table does print it: "Battery (gross
+  // capacity) / 82 kWh".
+  //
+  // AND THAT RELEASE IS THE MY2023 ONE, which the constant used to deny by
+  // its name (2026-08-25). media.audiusa.com/view/releases/547 is dated
+  // September 30, 2022, announces "the anticipated on sale date for the 2023
+  // Q4 e-tron portfolio has arrived", carries a "2023 Model Year Highlights"
+  // section, and its key-specifications table prints MY2023's EPA figures —
+  // 265 for the new 40, 236 for the 50, 242 for the Sportback 50 — not
+  // MY2022's 241. Calling it Q4_2022_PR made a MY2023 document look like a
+  // MY2022 one at the only place a reader would check.
+  //
+  // It still carries the MY2022 pack, and the row says why in its own note
+  // rather than in a constant's name: 82 kWh gross is one physical pack
+  // across the 40/45/50/55 and every model year in this block — the same
+  // reason the MY2023 spec sheet is cited for the MY2023-24 rows and the
+  // MY2024 refresh release for the 55. What is carried across is the word
+  // "gross", not a figure; the figure is 82 in the 2022 sheet too.
+  const Q4_2023_SALES_START_PR = "https://media.audiusa.com/view/releases/547";
+  const Q4_2022_PACK_NOTE =
+    "“Battery (gross capacity) / 82 kWh” — Audi's MY2023 sales-start release, filing the same physical pack; "
+    + "the MY2022 specification sheet prints the same 82 under a row reading only “Battery size (kWh)”";
   const Q4_2022_SPECS =
     "https://media.audiusa.com/assets/documents/original/9397-2022Q4etronTechnicalSpecifications.pdf";
   const Q8_2024_SPECS =
@@ -304,6 +322,40 @@ const R: EnrichmentRow[] = [];
   // label, so writing "19-inch wheels, standard" under the figure would be
   // decorating it with a condition EPA never attached. The Q8 e-tron quattro
   // is the same shape; the Q8 Sportback is not, and says so.
+  //
+  // THE GRADE KEYS HAVE TO SURVIVE cleanTrim, and the first draft's did not
+  // (fixed 2026-08-25, when data4's overlapping Q4 rows came out and took
+  // their own keys with them). The block comment below is right that Audi
+  // dealers put the number in the trim — "Premium Plus 50 e-tron® quattro®" —
+  // but that is the RAW feed string, and no matcher ever sees it:
+  // lib/listings/enrich.ts's cleanTrim strips e-tron and quattro as Audi
+  // noise (AUDI_NOISE) before matching, so the trim that arrives is "Premium
+  // Plus 50 ®". Against that, "50 e-tron" cannot overlap — the word is gone —
+  // and bare "50" norms to two characters, where trimStringsOverlap demands
+  // exact equality with the WHOLE trim and gets it only from the 3 listings
+  // that say just "50 ®". Every other grade-naming Q4 fell through to the
+  // base row and lost its EPA range: 604 live listings, measured.
+  //
+  // So the keys are the spellings the feed actually uses, counted across the
+  // 137,322 live listings rather than imagined. Tier-first is the common one
+  // (170 "Premium Plus 50 ®", 103 "Prestige 50 ®", 72 "Premium 50 ®") and
+  // number-first is the minority (11 "50 Premium", 2 "50 Premium Plus"), so
+  // both orders are keyed. Cross-grade collision is impossible because the
+  // number is the discriminator and "PREMIUMPLUS40" neither contains nor is
+  // contained by "PREMIUMPLUS50". Bare tier names are deliberately NOT keys:
+  // 101 live Q4s say only "Premium Plus" or "Prestige", and in 2024 that
+  // could be a 50 at 236 miles or a 55 at 258. Those go to the base row and
+  // are shown no range, which is the whole reason the base row exists.
+  const gradeTrims = (n: 40 | 45 | 50 | 55): string[] => [
+    `${n}`,
+    `${n} e-tron`,
+    `Premium ${n}`,
+    `Premium Plus ${n}`,
+    `Prestige ${n}`,
+    `${n} Premium`,
+    `${n} Premium Plus`,
+    `${n} Prestige`,
+  ];
   const Q4_HP_ABSTAIN = AUDI_HP_ABSTAIN;
   const Q4_NO_NACS = f<"none">(
     "none",
@@ -329,6 +381,7 @@ const R: EnrichmentRow[] = [];
     years: [number, number];
     drive?: "AWD" | "RWD";
     packUrl: string;
+    packNote?: string;
     dcPeakKw: number;
     dcUrl: string;
     acUrl: string;
@@ -342,7 +395,7 @@ const R: EnrichmentRow[] = [];
     trim: o.trim,
     modelYears: o.years,
     drive: o.drive,
-    battery: { packGrossKwh: f(82, "mfr", "high", undefined, o.packUrl) },
+    battery: { packGrossKwh: f(82, "mfr", "high", o.packNote, o.packUrl) },
     range: o.range,
     charging: {
       portStandard: AUDI_CCS1,
@@ -368,7 +421,8 @@ const R: EnrichmentRow[] = [];
       model: "Q4 e-tron",
       years: [2022, 2022],
       drive: "AWD",
-      packUrl: Q4_2022_PR,
+      packUrl: Q4_2023_SALES_START_PR,
+      packNote: Q4_2022_PACK_NOTE,
       dcPeakKw: 150,
       dcUrl: Q4_2024_PR,
       acUrl: Q4_2022_SPECS,
@@ -380,7 +434,8 @@ const R: EnrichmentRow[] = [];
       modelAliases: ["Q4 e-tron Sportback"],
       years: [2022, 2022],
       drive: "AWD",
-      packUrl: Q4_2022_PR,
+      packUrl: Q4_2023_SALES_START_PR,
+      packNote: Q4_2022_PACK_NOTE,
       dcPeakKw: 150,
       dcUrl: Q4_2024_PR,
       acUrl: Q4_2022_SPECS,
@@ -390,7 +445,7 @@ const R: EnrichmentRow[] = [];
     q4({
       id: "audi-q4-40-etron-2023-24",
       model: "Q4 e-tron",
-      trim: ["40 e-tron", "40"],
+      trim: gradeTrims(40),
       years: [2023, 2024],
       drive: "RWD",
       packUrl: Q4_2023_SPECS,
@@ -402,7 +457,7 @@ const R: EnrichmentRow[] = [];
     q4({
       id: "audi-q4-50-etron-2023-24",
       model: "Q4 e-tron",
-      trim: ["50 e-tron", "50"],
+      trim: gradeTrims(50),
       years: [2023, 2024],
       drive: "AWD",
       packUrl: Q4_2023_SPECS,
@@ -415,7 +470,7 @@ const R: EnrichmentRow[] = [];
       id: "audi-q4-sportback-50-etron-2023-24",
       model: "Q4 Sportback e-tron",
       modelAliases: ["Q4 e-tron Sportback"],
-      trim: ["50 e-tron", "50"],
+      trim: gradeTrims(50),
       years: [2023, 2024],
       drive: "AWD",
       packUrl: Q4_2023_SPECS,
@@ -433,7 +488,7 @@ const R: EnrichmentRow[] = [];
       id: "audi-q4-55-etron-2024-25",
       make: "AUDI",
       model: "Q4 e-tron",
-      trim: ["55 e-tron", "55"],
+      trim: gradeTrims(55),
       modelYears: [2024, 2025],
       drive: "AWD",
       battery: {
@@ -458,7 +513,7 @@ const R: EnrichmentRow[] = [];
       make: "AUDI",
       model: "Q4 Sportback e-tron",
       modelAliases: ["Q4 e-tron Sportback"],
-      trim: ["55 e-tron", "55"],
+      trim: gradeTrims(55),
       modelYears: [2024, 2025],
       drive: "AWD",
       battery: {
@@ -485,7 +540,7 @@ const R: EnrichmentRow[] = [];
     q4({
       id: "audi-q4-45-etron-2025-26",
       model: "Q4 e-tron",
-      trim: ["45 e-tron", "45"],
+      trim: gradeTrims(45),
       years: [2025, 2026],
       drive: "RWD",
       packUrl: Q4_2026_PAGE,
@@ -497,7 +552,7 @@ const R: EnrichmentRow[] = [];
     q4({
       id: "audi-q4-55-etron-2026",
       model: "Q4 e-tron",
-      trim: ["55 e-tron", "55"],
+      trim: gradeTrims(55),
       years: [2026, 2026],
       drive: "AWD",
       packUrl: Q4_2026_PAGE,
@@ -510,7 +565,7 @@ const R: EnrichmentRow[] = [];
       id: "audi-q4-sportback-55-etron-2026",
       model: "Q4 Sportback e-tron",
       modelAliases: ["Q4 e-tron Sportback"],
-      trim: ["55 e-tron", "55"],
+      trim: gradeTrims(55),
       years: [2026, 2026],
       drive: "AWD",
       packUrl: Q4_2026_PAGE,
@@ -598,7 +653,7 @@ const R: EnrichmentRow[] = [];
   );
 }
 
-// ═══════════════════════ SUBARU TRAILSEEKER (MY2026) ════════════════════
+// ═════════════════════ SUBARU TRAILSEEKER (MY2026-27) ═══════════════════
 // 464 live listings and Subaru's first NACS-native EV. Everything below is
 // Subaru's own words: "Powered by a 74.7-kWh lithium-ion battery, the 2026
 // Subaru Trailseeker includes a standard North American Charging Standard
@@ -631,6 +686,15 @@ const R: EnrichmentRow[] = [];
 // citation, exactly the tier the Volvo and Ariya findings in data6 taught us
 // not to lean on. Same shape as that Volvo control test, one rung more
 // careful.
+//
+// MY2027 SPANS WITH MY2026 (2026-08-25), carried over when data4's duplicate
+// Trailseeker rows were removed — they were keyed [2026, 2027] and these were
+// not, so deleting them without widening these would have opened a hole in a
+// model year that is already certified. EPA re-rates the identical two
+// configurations at the identical two figures: ids 50692 "Trailseeker AWD"
+// 281 mi and 50691 "Trailseeker 20 inch AWD" 274 mi, against MY2026's 50300
+// and 50299. Checked against the 2027 Subaru model list directly, so this is
+// a match, not a carry-forward over an absence.
 {
   const TSK_PR = "https://media.subaru.com/pressrelease/2397/all-new-2026-subaru-trailseeker-combines-375-horsepower";
   const TSK_TRIMS = "https://www.subaru.com/services/vehicles/pdf/trimComparison/2026/TSK?hideBuildMsrp=false";
@@ -641,7 +705,7 @@ const R: EnrichmentRow[] = [];
     id,
     make: "SUBARU",
     model: "Trailseeker",
-    modelYears: [2026, 2026],
+    modelYears: [2026, 2027],
     trim,
     drive: "AWD",
     battery: { packGrossKwh: f(74.7, "mfr", "high", undefined, TSK_PR) },
@@ -664,11 +728,11 @@ const R: EnrichmentRow[] = [];
   });
 
   R.push(
-    trailseeker("subaru-trailseeker-2026-premium", ["Premium"], f(281, "mfr", "high", "18-inch wheels, standard on Premium", epa(50300))),
+    trailseeker("subaru-trailseeker-2026-premium", ["Premium"], f(281, "mfr", "high", "18-inch wheels, standard on Premium; EPA ids 50300 and 50692 rate MY2026 and MY2027 identically", epa(50300))),
     trailseeker(
       "subaru-trailseeker-2026-20in",
       ["Limited", "Touring"],
-      f(274, "mfr", "high", "20-inch wheels, standard on Limited and Touring", epa(50299))
+      f(274, "mfr", "high", "20-inch wheels, standard on Limited and Touring; EPA ids 50299 and 50691 rate MY2026 and MY2027 identically", epa(50299))
     ),
     // Base row for listings whose trim field is empty or names something the
     // two rows above don't. 281 vs 274 is only seven miles, but printing
@@ -1041,6 +1105,12 @@ const R: EnrichmentRow[] = [];
   const DODGE_PERF_PAGE = "https://www.dodge.com/charger/performance.html";
   const STELLANTIS_HP_ABSTAIN =
     "Stellantis's US press kits and owner's manuals never use the term heat pump for any model, so neither presence nor absence can be stated";
+  // A third spelling some dealers file, carried over from data4's rows when
+  // they were removed as duplicates (2026-08-25). No live listing used it on
+  // the day it moved, but it cost nothing to keep and a spelling that goes
+  // dark goes dark silently. Safe on every row here, bare-nameplate rule
+  // included: the string contains "Daytona", so it cannot be a Sixpack.
+  const DAYTONA_ALIASES = ["Charger Daytona EV"];
 
   const DAYTONA_BATTERY = {
     packGrossKwh: f(100.5, "mfr", "high", "Installed capacity", DAYTONA_PR),
@@ -1110,12 +1180,24 @@ const R: EnrichmentRow[] = [];
   ];
   const SP_2024_NOTE: EnrichmentRow["buyerNotes"] = [
     {
-      headline: "The 2024 Scat Pack shipped with the Track Package, and EPA rates its staggered tires 216 miles on summer rubber against 241 on all-seasons",
+      // Not "its staggered tires": EPA's own MY2024 entries are "Charger
+      // 2-Dr Daytona Scat Pack Track Pack AWD" (216, id 48785) and the same
+      // name with " A/S" (241, id 48786). The word staggered is nowhere in
+      // either, and the split EPA actually certifies is the compound.
+      headline: "The 2024 Scat Pack shipped with the Track Package, and EPA rates it 216 miles on summer rubber against 241 on all-seasons",
       severity: "info",
       learnMore: DAYTONA_PRICING_PR,
     },
   ];
-  const RT_TRIMS = ["R/T", "R"];
+  // "Daytona R/T" earns its place by what OVERLAP does with it, not by being
+  // a spelling anyone files: 22 live listings carry trim "Daytona R", and
+  // neither "R/T" nor "R" can reach it — both norm to under three characters,
+  // where trimStringsOverlap demands exact equality rather than substring.
+  // "Daytona R/T" norms to DAYTONART, which contains DAYTONAR, so the one
+  // key covers "Daytona R", "Daytona R/T" and data4's "2-DOOR DAYTONA R/T".
+  // It cannot reach a Scat Pack: DAYTONASCATPACK neither contains nor is
+  // contained by DAYTONART, and "RT" is not a substring of it.
+  const RT_TRIMS = ["R/T", "R", "Daytona R/T"];
   const SP_TRIMS = ["Scat Pack"];
   const SP_2024_ABSTAIN =
     "The 2024 Scat Pack shipped with the Track Package and EPA rates it twice on that package alone, 216 miles on summer tires and 241 on all-seasons — a split no listing field can resolve";
@@ -1127,6 +1209,7 @@ const R: EnrichmentRow[] = [];
     daytona({
       id: "dodge-charger-daytona-rt-2024-25",
       model: "Charger Daytona",
+      modelAliases: DAYTONA_ALIASES,
       trim: RT_TRIMS,
       years: [2024, 2025],
       range: { epaRangeMi: f(274, "mfr", "high", "18-inch wheels, standard", epa(48782)) },
@@ -1135,6 +1218,7 @@ const R: EnrichmentRow[] = [];
     daytona({
       id: "dodge-charger-daytona-sp-2024",
       model: "Charger Daytona",
+      modelAliases: DAYTONA_ALIASES,
       trim: SP_TRIMS,
       years: [2024, 2024],
       rangeAbstain: SP_2024_ABSTAIN,
@@ -1143,6 +1227,7 @@ const R: EnrichmentRow[] = [];
     daytona({
       id: "dodge-charger-daytona-sp-2025",
       model: "Charger Daytona",
+      modelAliases: DAYTONA_ALIASES,
       trim: SP_TRIMS,
       years: [2025, 2025],
       range: {
@@ -1153,6 +1238,7 @@ const R: EnrichmentRow[] = [];
     daytona({
       id: "dodge-charger-daytona-rt-2026",
       model: "Charger Daytona",
+      modelAliases: DAYTONA_ALIASES,
       trim: RT_TRIMS,
       years: [2026, 2026],
       range: { epaRangeMi: f(263, "mfr", "high", "18-inch wheels, standard", epa(49957)) },
@@ -1165,6 +1251,7 @@ const R: EnrichmentRow[] = [];
     daytona({
       id: "dodge-charger-daytona-sp-2026-27",
       model: "Charger Daytona",
+      modelAliases: DAYTONA_ALIASES,
       trim: SP_TRIMS,
       years: [2026, 2027],
       range: {
@@ -1200,6 +1287,7 @@ const R: EnrichmentRow[] = [];
       id: "dodge-charger-daytona-base-2024-27",
       make: "DODGE",
       model: "Charger Daytona",
+      modelAliases: DAYTONA_ALIASES,
       modelYears: [2024, 2027],
       drive: "AWD",
       battery: DAYTONA_BATTERY,
