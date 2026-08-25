@@ -6,6 +6,29 @@ import type { EnrichmentRow, Fact, Source } from "../types";
 // → "mfr"; secondary-source facts → "agg" until a primary doc is read).
 const AS_OF = "2026-08-10";
 
+// batteryTransfers is deliberately absent from the I-PACE row. It carried an
+// uncited `true` whose note quoted "In favor of the original purchaser and
+// each subsequent owner" — words this pass could not find in any Jaguar
+// document. An uncited quotation attributed to a document nobody can open is
+// the exact shape of the problem this sweep exists to fix, so it goes.
+//
+// What Jaguar does say, on jaguarusa.com's own Transfer of Coverage section:
+// "Jaguar Limited Warranty Coverage is fully transferable to subsequent owners
+// and remains in effect during the new vehicle limited warranty coverage
+// period." That sentence is bounded by the new-vehicle limited warranty
+// period, 5 years/60,000 miles. The I-PACE's high-voltage battery warranty is
+// 8 years/100,000 miles and outlives it, and neither that page nor the
+// EliteCare page mentions the battery warranty at all — the only "batter" hits
+// on either are navigation links. Citing it here would stretch Jaguar's
+// sentence past the term it names.
+//
+// No I-PACE-era Passport to Service is reachable either: the one that answers
+// on topix.jaguar.jlrext.com is the 2014 edition, four years before this car
+// existed, with no high-voltage battery section in it. The 8yr/100k figure and
+// the transfer claim circulate on forums and aggregators; neither is a Jaguar
+// document.
+
+
 // batteryTransfers is deliberately absent from the Prologue rows. It stood as
 // an uncited `true`, and Honda's own Warranty Basebook — the booklet that
 // carries the High Voltage Battery Capacity Limited Warranty — does not say
@@ -3237,7 +3260,6 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high", "“In favor of the original purchaser and each subsequent owner”; EliteCare (incl. 5yr/60k maintenance) “fully transferable”"),
     },
     buyerNotes: [
       {
