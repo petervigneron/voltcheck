@@ -315,10 +315,18 @@ async function worker() {
           year: l.payload.year,
         }));
         // recheck_listings reads `provenance` off each alive row and carries it
-        // into listing_price_history alongside the price (0041). No price read,
-        // no tag: a row that only confirms the car is still listed makes no
-        // claim about what it costs.
-        alive.push({ vin, priceUsd: price ?? undefined, provenance: price != null ? provenance : undefined });
+        // into listing_price_history alongside the price (0041), and
+        // `dealerDomain` says whose page this reading came from (0048) — the
+        // domain of the payload whose sourceUrl was fetched, so a co-listed
+        // VIN's readings from two sites can never pair up as a price "step".
+        // No price read, no tags: a row that only confirms the car is still
+        // listed makes no claim about what it costs.
+        alive.push({
+          vin,
+          priceUsd: price ?? undefined,
+          provenance: price != null ? provenance : undefined,
+          dealerDomain: price != null ? domain : undefined,
+        });
       } else if (trustGoneVerdict(vin, domain, oemAlive)) {
         softGone.push(vin);
       } else {

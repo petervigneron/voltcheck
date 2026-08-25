@@ -33,8 +33,23 @@ await db.exec(`
   grant usage on schema public to anon, authenticated;
   alter default privileges in schema public grant select on tables to anon, authenticated;
 `);
-for (const f of (await readdir(MIGRATIONS_DIR)).filter((f) => f.endsWith(".sql")).sort()) {
-  await db.exec(await readFile(new URL(f, MIGRATIONS_DIR), "utf-8"));
+// Two files legitimately share the number 0041 (applied 2026-08-19 and
+// 2026-08-22 by different sessions; renumbering a pushed file is worse than
+// the wart). Alphabetical order runs feed_joins first, but it reads the
+// provenance column price_provenance adds — prod applied them
+// chronologically. Replay in prod's order; every other pair sorts correctly.
+const APPLY_BEFORE = { "0041_feed_joins_per_vin.sql": "0041_price_provenance_column.sql" };
+const files = (await readdir(MIGRATIONS_DIR)).filter((f) => f.endsWith(".sql")).sort((a, b) => {
+  if (APPLY_BEFORE[a] === b) return 1;
+  if (APPLY_BEFORE[b] === a) return -1;
+  return a < b ? -1 : 1;
+});
+for (const f of files) {
+  const sql = await readFile(new URL(f, MIGRATIONS_DIR), "utf-8");
+  // CONCURRENTLY (0046) refuses to run inside a transaction block, and this
+  // replay is transactional. Its only meaning is lock behavior on a live
+  // site — nothing an embedded single-client replay can exercise.
+  await db.exec(sql.replace(/create index concurrently/gi, "create index"));
   console.log(`migration applied: ${f}`);
 }
 
@@ -61,7 +76,9 @@ assert(`new=${sample.length}`, r1.new === sample.length, JSON.stringify(r1));
 assert("no price changes", r1.price_changed === 0);
 assert("no delists", r1.delisted === 0);
 const h1 = await db.query(`select count(*)::int as n from listing_price_history`);
-assert("first sighting logged for every row", h1.rows[0].n === sample.length);
+// Zero-priced rows are price abstains: seen and listed, never history-logged (0039).
+const priced = sample.filter((l) => Math.round(l.priceUsd ?? 0) !== 0).length;
+assert("first sighting logged for every priced row", h1.rows[0].n === priced);
 
 // ---- Setup for the delisting tests
 const byDomain = new Map();
@@ -254,17 +271,83 @@ assert("victim still live after stale batch", v9.rows[0].delisted_at === null);
 const r9d = await ingest(batch9, "test", [soldDomain]);
 assert("fresh absence still delists", r9d.delisted === 1, JSON.stringify(r9d));
 
+// ---- Run 10: the same-dealer guard (migration 0048). A co-listed VIN's
+// price alternating between two dealer sites must never read as a price
+// step; a genuine cut observed twice by one site must still claim.
+console.log("\nrun 10: price steps need one dealer");
+const feedPrev = async (vin) =>
+  (await db.query(`select prev_price_usd from live_listings_feed where vin=$1`, [vin])).rows[0]?.prev_price_usd ?? null;
+const sparkRows = async (vin) =>
+  (await db.query(`select count(*)::int as n from listing_price_display where vin=$1`, [vin])).rows[0].n;
+const mk = (vin, domain, price) => ({
+  ...sample[0], vin, id: vin.toLowerCase(), dealerDomain: domain,
+  priceUsd: price, provenance: "jsonld",
+});
+
+// (a) domain-tagged ping-pong: d1 @30000 -> d2 @32000 -> d1 @30000.
+const V1 = "TESTPINGPONG00001";
+await ingest([mk(V1, "d1.test", 30000)], "test");
+await ingest([mk(V1, "d2.test", 32000)], "test");
+await ingest([mk(V1, "d1.test", 30000)], "test");
+assert("cross-domain pair claims no step", (await feedPrev(V1)) === null);
+assert("sparkline goes quiet on the alternation", (await sparkRows(V1)) === 1);
+
+// (b) then a genuine same-domain cut on the same VIN claims normally.
+await ingest([mk(V1, "d1.test", 29000)], "test");
+assert("same-domain cut claims prev=30000", (await feedPrev(V1)) === 30000);
+assert("sparkline draws the genuine step", (await sparkRows(V1)) === 2);
+
+// (c) legacy null-domain rows: the A->B->A fingerprint suppresses...
+const V2 = "TESTPINGPONG00002";
+await ingest([mk(V2, "d1.test", 40000)], "test");
+await db.query(`insert into listing_price_history (vin, price_usd, observed_at) values ($1, 42000, now() + interval '1 ms')`, [V2]);
+await db.query(`insert into listing_price_history (vin, price_usd, observed_at) values ($1, 40000, now() + interval '2 ms')`, [V2]);
+assert("null-domain alternation claims no step", (await feedPrev(V2)) === null);
+
+// ...but a null-domain pair that does NOT return to the 2-back price claims
+// under the 0040/0041 fallbacks exactly as before this migration.
+const V3 = "TESTPINGPONG00003";
+await ingest([mk(V3, "d1.test", 40000)], "test");
+await db.query(`insert into listing_price_history (vin, price_usd, observed_at) values ($1, 42000, now() + interval '1 ms')`, [V3]);
+await db.query(`insert into listing_price_history (vin, price_usd, observed_at) values ($1, 41000, now() + interval '2 ms')`, [V3]);
+assert("null-domain non-alternating pair still claims", (await feedPrev(V3)) === 42000);
+
+// (d) a two-row history (no 2-back price to compare) claims as before.
+const V4 = "TESTPINGPONG00004";
+await ingest([mk(V4, "d1.test", 25000)], "test");
+await ingest([mk(V4, "d1.test", 24400)], "test");
+assert("two-row history claims prev=25000", (await feedPrev(V4)) === 25000);
+
+// (e) recheck carries the fetched page's domain into history.
+await recheck([{ vin: V4, priceUsd: 24000, provenance: "jsonld", dealerDomain: "d1.test" }], [], []);
+const rcDom = await db.query(
+  `select dealer_domain from listing_price_history where vin=$1 order by observed_at desc limit 1`, [V4]);
+assert("recheck row carries dealer_domain", rcDom.rows[0].dealer_domain === "d1.test");
+assert("recheck same-domain cut claims prev=24400", (await feedPrev(V4)) === 24400);
+
 // ---- Security posture (migration 0007): the anon role reads exactly what
 // the public site publishes — live listings and their price history — and
 // gets a hard permission error on every archive table.
 console.log("\nposture: anon sees the showroom, not the archive");
 const pol = await db.query(`select tablename, cmd from pg_policies where schemaname='public' order by tablename`);
+// The full deliberate posture, one line per decision: live listings + their
+// price history (0007), reference catalogs the site quotes (vin_variant_vpic
+// 0016, epa_vehicle_variants 0037), the guard table the price views consult
+// (price_methodology_transitions 0040), and write-only analytics events
+// (0027, INSERT — the one non-SELECT). Anything appearing here uninvited is
+// a posture change to justify, not a count to bump.
+const expectedPolicies = [
+  ["epa_vehicle_variants", "SELECT"],
+  ["events", "INSERT"],
+  ["listing_price_history", "SELECT"],
+  ["listings", "SELECT"],
+  ["price_methodology_transitions", "SELECT"],
+  ["vin_variant_vpic", "SELECT"],
+];
 assert(
-  `only live-read policies remain, all read-only (${pol.rows.length})`,
-  pol.rows.length === 2 &&
-    pol.rows.every((p) => p.cmd === "SELECT") &&
-    JSON.stringify(pol.rows.map((p) => p.tablename).sort()) ===
-      JSON.stringify(["listing_price_history", "listings"]),
+  `policies are exactly the deliberate posture (${pol.rows.length})`,
+  JSON.stringify(pol.rows.map((p) => [p.tablename, p.cmd]).sort()) ===
+    JSON.stringify(expectedPolicies),
   JSON.stringify(pol.rows)
 );
 
