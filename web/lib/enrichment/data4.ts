@@ -937,6 +937,24 @@ const PS2_PLUS_PACK = "https://web.archive.org/web/20220520094320/https://www.po
   // gas Pacifica's fuel-type text never does, so it never reaches this
   // database under any name, bare or not.
   const PACIFICA_2024_SPEC = "https://chryslermedia.iconicweb.com/mediasite/specs/2024_CH_Pacifica_Plug-in_Hybrid_SP.pdf";
+  // MY2026 carryover, checked 2026-08-25 before extending the second row's
+  // window from 2025 to 2026 (the row id keeps its launch-year name, the way
+  // data3's escalade-iq-2026 does, because tests and backfill.ts key on it):
+  //   - EPA published a MY2026 record, id 49762, and every figure on it is the
+  //     2020 record's figure to the digit — 32 electric miles, 520 total, 82
+  //     MPGe electric, 48 blended, 30 on gasoline, 2.0 hr at 240 V, the same
+  //     89 kW AC induction motor. Not "close": identical, and 2024 (47276) and
+  //     2025 (48656) are identical too, so the span is one rating throughout.
+  //   - Stellantis' own MY2026 spec sheet — media.stellantisnorthamerica.com/
+  //     view-spec.do?id=27042, read as a RENDERED PAGE rather than extracted
+  //     text, because the pack figure sits in a two-column table — repeats the
+  //     2024 sheet's pack wording verbatim: "High-voltage, 96 cell Li-ion,
+  //     16 kWh total energy, 360-volt nominal". It stays in this comment
+  //     rather than on the facts because the facts below are shared with the
+  //     2017-19 row, which that sheet says nothing about.
+  //   - That sheet has no charging section at all and never says "heat pump",
+  //     which is the same silence the DC-fast-charging and heat-pump facts
+  //     below were already written against, one model year further on.
   const PACIFICA_ALIASES = ["Pacifica Plug-In Hybrid", "Pacifica"];
   const PACIFICA_BATTERY = { packGrossKwh: fp(16, "mfr", "high", "96-cell Li-ion, 360V nominal", PACIFICA_2024_SPEC) };
   const PACIFICA_CHARGING = {
@@ -963,11 +981,11 @@ const PS2_PLUS_PACK = "https://web.archive.org/web/20220520094320/https://www.po
       warranty: PACIFICA_WARRANTY,
     },
     {
-      id: "pacifica-hybrid-2020-25", make: "CHRYSLER", model: "Pacifica Hybrid", modelYears: [2020, 2025],
+      id: "pacifica-hybrid-2020-25", make: "CHRYSLER", model: "Pacifica Hybrid", modelYears: [2020, 2026],
       modelAliases: PACIFICA_ALIASES,
       battery: PACIFICA_BATTERY,
       range: {
-        epaRangeMi: fp(32, "mfr", "high", "Electric-only EPA range. Identical rating 2020–2025", epa(41943)),
+        epaRangeMi: fp(32, "mfr", "high", "Electric-only EPA range. Identical rating 2020–2026", epa(41943)),
         epaRangeTotalMi: fp(520, "mfr", "high", undefined, epa(41943)),
         mpgeElectric: fp(82, "mfr", "high", undefined, epa(41943)),
         mpgeCombined: fp(48, "mfr", "high", undefined, epa(41943)),

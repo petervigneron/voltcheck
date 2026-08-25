@@ -24,10 +24,12 @@ import { RESEARCH_ROWS_4 } from "@/lib/enrichment/data4";
 import { RESEARCH_ROWS_5 } from "@/lib/enrichment/data5";
 import { RESEARCH_ROWS_6 } from "@/lib/enrichment/data6";
 import { RESEARCH_ROWS_9 } from "@/lib/enrichment/data9";
+import { RESEARCH_ROWS_10 } from "@/lib/enrichment/data10";
+import { RESEARCH_ROWS_11 } from "@/lib/enrichment/data11";
 import { RESEARCH_ROWS_12 } from "@/lib/enrichment/data12";
 import type { EnrichmentRow, AbstainableField } from "@/lib/types";
 
-const ALL: EnrichmentRow[] = [...ENRICHMENT_ROWS, ...RESEARCH_ROWS, ...RESEARCH_ROWS_3, ...RESEARCH_ROWS_4, ...RESEARCH_ROWS_5, ...RESEARCH_ROWS_6, ...RESEARCH_ROWS_9, ...RESEARCH_ROWS_12];
+const ALL: EnrichmentRow[] = [...ENRICHMENT_ROWS, ...RESEARCH_ROWS, ...RESEARCH_ROWS_3, ...RESEARCH_ROWS_4, ...RESEARCH_ROWS_5, ...RESEARCH_ROWS_6, ...RESEARCH_ROWS_9, ...RESEARCH_ROWS_10, ...RESEARCH_ROWS_11, ...RESEARCH_ROWS_12];
 const byId = (id: string) => {
   const r = ALL.find((x) => x.id === id);
   assert.ok(r, `no row with id ${id}`);
@@ -62,7 +64,11 @@ test("every abstention in the corpus is well-formed: known core field, real reas
 // honest while the second half exists.
 const DEFERS_TO_GRADES: Array<[string, string[]]> = [
   ["bz-2026", ["bz-2026-fwd-xle", "bz-2026-fwd-xle-plus", "bz-2026-fwd-limited", "bz-2026-awd-xle", "bz-2026-awd-limited"]],
-  ["bz-woodland-2026", ["bz-woodland-2026-base", "bz-woodland-2026-premium"]],
+  // bz-woodland-2026 was here until 2026-08-25. It abstained because its two
+  // EPA records were read as a base/Premium split, and Toyota's own release
+  // says they are one grade on two tires — see data3.ts. There is no grade
+  // split to defer to any more, so the row carries the standard tire's rating
+  // itself and the deleted grade rows are deliberately not replaced.
   ["bz4x-fwd", ["bz4x-xle-fwd", "bz4x-ltd-fwd-2023", "bz4x-ltd-fwd-2024"]],
   ["bz4x-awd", ["bz4x-xle-awd", "bz4x-xle-awd-2025", "bz4x-ltd-awd"]],
   ["subaru-solterra", ["subaru-solterra-premium-2023", "subaru-solterra-premium-2024", "subaru-solterra-ltd-touring"]],

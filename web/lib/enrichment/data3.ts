@@ -554,6 +554,56 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
   //   Woodland      74.7 kWh  281 mi  id 50305 (235/60R18)
   //   Woodland Prem 74.7 kWh  260 mi  id 50306 (235/65R18)
   //
+  // THE WOODLAND'S TWO RANGES ARE NOT TWO GRADES — corrected 2026-08-25.
+  // The table above reads EPA's two Woodland records as base-vs-Premium
+  // because that is the only split EPA's own model strings suggest, and the
+  // rows below were keyed that way: trim "Premium" got 260, everything else
+  // 281. Toyota's own launch release says otherwise, in one sentence —
+  // "281 Mile of EPA-Estimated Driving Range Rating (260 miles for bZ
+  // Woodland Models Equipped with Optional All-Terrain Tire)" — and its grade
+  // walk lists the all-terrain tire as AVAILABLE on both grades, not standard
+  // on the Premium (pressroom.toyota.com/toyotas-all-electric-lineup-gains-
+  // rugged-powerful-new-bz-woodland-suv/, fetched 2026-08-25). So the 21-mile
+  // spread is an option box, and a Premium on the standard tire is a 281-mile
+  // car that this corpus was telling its shopper was a 260-mile car. Under,
+  // not over, so it never sold anyone a false bargain — but it is still
+  // matching the wrong thing, and it was 374 live listings deep. (That count
+  // is the whole feed, re-measured 2026-08-25 by replaying the deleted row's
+  // trim keys against all 24 shards. An earlier note here said 176, which was
+  // a half-feed measurement taken while twelve shards were returning 500s —
+  // the kind of number that looks precise and is half the truth.)
+  //
+  // The fix follows the rule the wheel-size case already settled: state the
+  // STANDARD configuration's rating and LABEL it, rather than printing the
+  // lowest figure or going silent. One Woodland row now, carrying 281 with
+  // the tire named in the note, and the option's 260 in a buyer note. The two
+  // grade-keyed rows are deleted rather than both set to 281: identical rows
+  // whose only distinguishing key encodes a split that does not exist are how
+  // this defect gets re-derived by the next reader.
+  //
+  // MY2027 — both nameplates carry over, and Toyota says so in as many words.
+  // "Returning for its fifth year in the lineup, the 2027 bZ remains
+  // unchanged from the prior model year" (pressroom.toyota.com/everyday-
+  // electric-confidence-returns-for-2027-with-toyota-bz/) and "Overall,
+  // features and specifications remain unchanged from the 2026 model year"
+  // (pressroom.toyota.com/rugged-powerful-and-charged-up-for-adventure-2027-
+  // toyota-bz-woodland/), both fetched 2026-08-25, both restating every pack
+  // size and range figure in the table above to the digit — 57.7/74.7 kWh,
+  // 236/314/299/288/278, and the Woodland's 281 and 260. The rows' windows
+  // extend to 2027 rather than being copied into a new file, and their ids
+  // keep the launch-year name (tests and backfill.ts key on those ids), the
+  // same way data3's own escalade-iq-2026 carries a 2025 window.
+  //
+  // Two things about that extension a later reader should not have to guess.
+  // First, EPA has published NOTHING for MY2027 — its 2027 Toyota model list
+  // is Corolla Hatchback, Land Cruiser and Prius, checked 2026-08-25 — so the
+  // epa() links below cite the MY2026 record for a figure Toyota restates for
+  // MY2027 itself; when EPA files the 2027 records, re-point them. Second,
+  // Toyota's MY2027 wording for Limited FWD is 299 miles, where these rows
+  // print 296: that is the deliberate lower-of-two-suppliers choice made for
+  // MY2026 above, and it stays, because it errs in the direction that cannot
+  // cost a shopper money.
+  //
   // Limited FWD has two EPA records three miles apart. They are not two
   // grades: both are "bZ LIMITED" FWD, both draw 8.0 hr on 240V and ~80 kWh
   // at the wall (the 74.7 kWh pack; the 57.7 kWh XLE draws 6.0 hr and 61
@@ -567,7 +617,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     id: "bz-2026",
     make: "TOYOTA",
     model: "bZ",
-    modelYears: [2026, 2026],
+    modelYears: [2026, 2027],
     // Base row for the nameplate — see the block comment above. Both facts
     // that vary by grade live on the trim-keyed rows; this one carries only
     // what every 2026 bZ shares.
@@ -594,7 +644,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     id: "bz-2026-fwd-xle",
     make: "TOYOTA",
     model: "bZ",
-    modelYears: [2026, 2026],
+    modelYears: [2026, 2027],
     trim: ["XLE", "XLE FWD"],
     drive: "FWD",
     battery: { packGrossKwh: f(57.7, "mfr", "high") },
@@ -618,7 +668,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     id: "bz-2026-fwd-xle-plus",
     make: "TOYOTA",
     model: "bZ",
-    modelYears: [2026, 2026],
+    modelYears: [2026, 2027],
     trim: ["XLE Plus", "XLE FWD Plus"],
     drive: "FWD",
     battery: { packGrossKwh: f(74.7, "mfr", "high") },
@@ -642,7 +692,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     id: "bz-2026-fwd-limited",
     make: "TOYOTA",
     model: "bZ",
-    modelYears: [2026, 2026],
+    modelYears: [2026, 2027],
     trim: ["Limited", "Limited FWD"],
     drive: "FWD",
     battery: { packGrossKwh: f(74.7, "mfr", "high") },
@@ -666,7 +716,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     id: "bz-2026-awd-xle",
     make: "TOYOTA",
     model: "bZ",
-    modelYears: [2026, 2026],
+    modelYears: [2026, 2027],
     trim: ["XLE", "XLE AWD"],
     drive: "AWD",
     battery: { packGrossKwh: f(74.7, "mfr", "high") },
@@ -690,7 +740,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     id: "bz-2026-awd-limited",
     make: "TOYOTA",
     model: "bZ",
-    modelYears: [2026, 2026],
+    modelYears: [2026, 2027],
     trim: ["Limited", "Limited AWD"],
     drive: "AWD",
     battery: { packGrossKwh: f(74.7, "mfr", "high") },
@@ -714,12 +764,22 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     id: "bz-woodland-2026",
     make: "TOYOTA",
     model: "bZ Woodland",
-    modelYears: [2026, 2026],
+    modelYears: [2026, 2027],
     drive: "AWD",
-    // Base row; the pack is shared but the tyres are not, and they are worth
-    // 21 miles.
-    abstains: { epaRangeMi: "Varies by grade on tyre size alone (base 281 on 235/60R18, Premium 260 on 235/65R18); the trim-keyed rows below carry it" },
+    // One row for the nameplate: both grades take the same pack, and the two
+    // EPA records differ on the tire, not the grade (see the correction in the
+    // block comment above). 281 is the standard fitment and the note names it,
+    // rather than printing the option's lower figure as if it were the car's.
     battery: { packGrossKwh: f(74.7, "mfr", "high") },
+    range: {
+      epaRangeMi: f(
+        281,
+        "mfr",
+        "high",
+        "EPA rating on the standard tire; the optional all-terrain tire is rated 260 miles",
+        epa(50305)
+      ),
+    },
     charging: {
       portStandard: f("NACS", "mfr", "high"),
       dcPeakKw: f(150, "agg", "medium"),
@@ -732,52 +792,13 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       sohFloorPct: f(70, "mfr", "high"),
       batteryTransfers: f(true, "mfr", "high"),
     },
-  },
-
-  {
-    id: "bz-woodland-2026-base",
-    make: "TOYOTA",
-    model: "bZ Woodland",
-    modelYears: [2026, 2026],
-    trim: ["Woodland", "bZ Woodland"],
-    drive: "AWD",
-    battery: { packGrossKwh: f(74.7, "mfr", "high") },
-    range: { epaRangeMi: f(281, "mfr", "high", undefined, epa(50305)) },
-    charging: {
-      portStandard: f("NACS", "mfr", "high"),
-      dcPeakKw: f(150, "agg", "medium"),
-      chargeTime1080Min: f(30, "mfr", "medium"),
-    },
-    thermal: { heatPump: f("standard", "agg", "medium") },
-    warranty: {
-      batteryYears: f(8, "mfr", "high"),
-      batteryMiles: f(100_000, "mfr", "high"),
-      sohFloorPct: f(70, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
-    },
-  },
-
-  {
-    id: "bz-woodland-2026-premium",
-    make: "TOYOTA",
-    model: "bZ Woodland",
-    modelYears: [2026, 2026],
-    trim: ["Woodland Premium", "bZ Woodland Premium", "Premium", "Premium AWD"],
-    drive: "AWD",
-    battery: { packGrossKwh: f(74.7, "mfr", "high") },
-    range: { epaRangeMi: f(260, "mfr", "high", undefined, epa(50306)) },
-    charging: {
-      portStandard: f("NACS", "mfr", "high"),
-      dcPeakKw: f(150, "agg", "medium"),
-      chargeTime1080Min: f(30, "mfr", "medium"),
-    },
-    thermal: { heatPump: f("standard", "agg", "medium") },
-    warranty: {
-      batteryYears: f(8, "mfr", "high"),
-      batteryMiles: f(100_000, "mfr", "high"),
-      sohFloorPct: f(70, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
-    },
+    buyerNotes: [
+      {
+        headline: "The optional all-terrain tire costs 21 miles of range — 260 instead of 281",
+        severity: "info",
+        learnMore: epa(50306),
+      },
+    ],
   },
 
   // ---------------------------------------------------------------------
