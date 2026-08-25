@@ -325,6 +325,68 @@ const rcDom = await db.query(
 assert("recheck row carries dealer_domain", rcDom.rows[0].dealer_domain === "d1.test");
 assert("recheck same-domain cut claims prev=24400", (await feedPrev(V4)) === 24400);
 
+// ---- Run 11: recheck writes its night in chunks (scraper/recheck.mjs,
+// 2026-08-25). One POST carrying 58,192 alive rows made recheck_listings join
+// its temp table to the whole of `listings` — EXPLAIN on prod showed the plan
+// flip from per-row `Index Scan using listings_pkey` to a Merge Join over all
+// 154,905 rows somewhere between 30,000 and 58,192 driving rows — and the RPC
+// blew service_role's 60s statement_timeout, forfeiting the night's entire
+// sold-signal (run 32719571812). recheck.mjs now sends the alive set in
+// chunks. Nothing about the RPC changed, so what has to hold is that chunking
+// is SEMANTICALLY invisible: same end state, and replay-safe per chunk.
+console.log("\nrun 11: a chunked recheck write lands exactly what one write would");
+const chunkVins = ["TESTCHUNK00000001", "TESTCHUNK00000002", "TESTCHUNK00000003", "TESTCHUNK00000004"];
+await ingest(chunkVins.map((v) => mk(v, "d1.test", 50000)), "test");
+const aliveRows = chunkVins.map((v) => ({ vin: v, priceUsd: 49000, provenance: "jsonld", dealerDomain: "d1.test" }));
+const histFor = async (vin) =>
+  (await db.query(`select count(*)::int as n from listing_price_history where vin=$1`, [vin])).rows[0].n;
+const before11 = Object.fromEntries(await Promise.all(chunkVins.map(async (v) => [v, await histFor(v)])));
+
+// Two chunks of two, the way recheck.mjs slices --alive-chunk.
+let confirmed11 = 0, changed11 = 0;
+for (let i = 0; i < aliveRows.length; i += 2) {
+  const r = await recheck(aliveRows.slice(i, i + 2), [], []);
+  confirmed11 += r.confirmed;
+  changed11 += r.price_changed;
+}
+assert("chunks confirm every row exactly once", confirmed11 === chunkVins.length, String(confirmed11));
+assert("chunks log every price change exactly once", changed11 === chunkVins.length, String(changed11));
+for (const v of chunkVins) {
+  const row = await db.query(`select price_usd, payload->>'priceUsd' as pp from listings where vin=$1`, [v]);
+  assert(`${v} carries the chunked price on column and payload`,
+    row.rows[0].price_usd === 49000 && Number(row.rows[0].pp) === 49000, JSON.stringify(row.rows[0]));
+  assert(`${v} gained exactly one history row`, (await histFor(v)) === before11[v] + 1);
+}
+
+// A retried chunk must be a no-op, because fetchWithRetry will replay one on
+// any 5xx. It is: the price-history insert only fires where the incoming price
+// is distinct from the stored one, and the update in the same call has already
+// made that false.
+const replay = await recheck(aliveRows.slice(0, 2), [], []);
+assert("a replayed chunk still confirms", replay.confirmed === 2, JSON.stringify(replay));
+assert("a replayed chunk writes no second price step", replay.price_changed === 0, JSON.stringify(replay));
+for (const v of chunkVins.slice(0, 2)) {
+  assert(`${v} still has exactly one history row after replay`, (await histFor(v)) === before11[v] + 1);
+}
+const replayEv = await db.query(
+  `select count(*)::int as n from listing_events where vin=$1 and event='relisted'`, [chunkVins[0]]);
+assert("a replayed chunk invents no relisted event", replayEv.rows[0].n === 0, JSON.stringify(replayEv.rows[0]));
+
+// And the invariant that forces the gone verdicts into ONE request: the
+// soft-gone strike counts per CALL (0004), so the same VIN arriving in two
+// requests is two strikes and an early delisting. This is why recheck.mjs
+// chunks only the alive set and sends hardGone/softGone once.
+const SPLIT = "TESTCHUNK00000005";
+await ingest([mk(SPLIT, "d1.test", 50000)], "test");
+await recheck([], [], [SPLIT]);
+const split1 = await db.query(`select delisted_at, recheck_misses from listings where vin=$1`, [SPLIT]);
+assert("one soft-gone request is one strike, no delist",
+  split1.rows[0].delisted_at === null && split1.rows[0].recheck_misses === 1, JSON.stringify(split1.rows[0]));
+await recheck([], [], [SPLIT]);
+const split2 = await db.query(`select delisted_at from listings where vin=$1`, [SPLIT]);
+assert("the same VIN in a second request delists it — so gone verdicts must never be split",
+  split2.rows[0].delisted_at !== null, JSON.stringify(split2.rows[0]));
+
 // ---- Security posture (migration 0007): the anon role reads exactly what
 // the public site publishes — live listings and their price history — and
 // gets a hard permission error on every archive table.

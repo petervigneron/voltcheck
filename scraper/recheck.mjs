@@ -102,6 +102,16 @@ const DRY = process.argv.includes("--dry-run");
 // conservative direction. Anchored at process start (≈ job start). 0 = no cap.
 const DEADLINE_MIN = flag("--deadline-min", 0);
 const DEADLINE_AT = DEADLINE_MIN > 0 ? Date.now() + DEADLINE_MIN * 60_000 : Infinity;
+// How many alive rows go in one write request. See the long note above the
+// write itself for why this number is the whole fix. Parsed and validated HERE
+// rather than down there because the failure mode is silent — `i += NaN` makes
+// the write loop exit on its first test, so a typo would spend the night
+// fetching and then write nothing at all, exiting 0.
+const ALIVE_CHUNK = flag("--alive-chunk", 5000);
+if (!Number.isInteger(ALIVE_CHUNK) || ALIVE_CHUNK < 1) {
+  console.error(`recheck: --alive-chunk must be a positive integer, got ${JSON.stringify(process.argv[process.argv.indexOf("--alive-chunk") + 1])}`);
+  process.exit(1);
+}
 
 async function loadEnv(url) {
   try {
@@ -416,27 +426,114 @@ if (!TOKEN) {
   process.exit(0);
 }
 
-// Hours of polite per-listing fetches sit behind this one request; losing it
-// to a gateway blip would forfeit all of them. Replay caveat: alive, hard-gone
-// and price-history converge on replay, but soft-gone strikes count per call
-// (0004), so a request that committed and then lost its response would, when
-// retried, hand soft-gone cars their second strike a night early. That is a
-// rare, conservative-direction error (a car goes quiet one night sooner);
-// losing the whole night's sold-signal to a blip was the common one.
-const res = await fetchWithRetry("recheck: result write", () =>
-  fetch(`${SUPABASE_URL}/functions/v1/ingest`, {
-    method: "POST",
-    headers: {
-      apikey: ANON,
-      Authorization: `Bearer ${ANON}`,
-      "x-ingest-token": TOKEN,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ dataset: "recheck", alive, hardGone, softGone, rows: [] }),
-  })
-);
-if (!res.ok) {
-  console.error(`recheck: FAILED HTTP ${res.status}: ${(await res.text()).slice(0, 300)}`);
-  process.exit(1);
+// Hours of polite per-listing fetches sit behind these requests; losing them
+// to a gateway blip would forfeit all of them.
+//
+// WHY THIS IS CHUNKED, and why the chunk SIZE is the entire fix (2026-08-25).
+// It used to be one POST carrying the whole night. On 2026-08-24 (run
+// 32719571812) that was 58,192 alive rows, and all four attempts died the
+// same way after ~60s each:
+//
+//   recheck: result write: HTTP 500 — retrying in 30s
+//   recheck: result write: HTTP 500 — retrying in 120s
+//   recheck: result write: HTTP 500 — retrying in 240s
+//   recheck: FAILED HTTP 500: {"code":"57014", ...statement timeout}
+//
+// Note the budget it blew. This is NOT the anon 3s class it looks like: the
+// ingest gateway forwards with the SERVICE key, so recheck_listings runs as
+// service_role, whose statement_timeout is 60 SECONDS. The night's whole
+// sold-signal was forfeited to a query that needed more than a minute.
+//
+// And the cost is not the row count, it is the PLAN the row count provokes.
+// recheck_listings joins its _alive_rows temp table to `listings` in six
+// statements. Measured against prod with EXPLAIN, driving-set size vs plan:
+//
+//    2,000 rows  ->  Nested Loop, Index Scan using listings_pkey (rows=1)
+//    5,000 rows  ->  Nested Loop, Index Scan using listings_pkey (rows=1)
+//   10,000 rows  ->  Nested Loop, Index Scan using listings_pkey (rows=1)
+//   20,000 rows  ->  Nested Loop, Index Scan using listings_pkey (rows=1)
+//   30,000 rows  ->  Nested Loop, Index Scan using listings_pkey (rows=1)
+//   58,192 rows  ->  Merge Join,  Index Scan using listings_pkey rows=154,905
+//
+// Past some fraction of the table the planner stops looking rows up one at a
+// time and reads ALL of `listings` instead — 200 MB, and on this instance a
+// bare `select count(price_usd) from listings` was measured at 22.2s. Six of
+// those cannot fit in 60s. Under the flip it is index lookups and the cost is
+// proportional to the chunk, not the table. Measured on prod, the whole RPC
+// body against one 5,000-row chunk: 8.6s (price_history 1.8s, update 5.4s,
+// listing_seen upsert 1.0s, everything else under 200ms).
+//
+// So 5,000 is chosen to sit ~6x under the lowest size that still planned as
+// index lookups, and that margin GROWS as `listings` grows, because the flip
+// is about the driving set's size RELATIVE to the table.
+//
+// REJECTED: rewriting the RPC to take one narrow pass over `listings` and
+// feed the other five statements from a temp snapshot. Measured — the narrow
+// pass is still a full scan (9.7s), and the rewritten body still blew a 55s
+// bound at 58,192 rows. It treats the symptom (six scans) instead of the
+// cause (a driving set large enough to force a scan at all), and it would
+// have needed a migration to a function two ingest paths depend on.
+// REJECTED: a bigger statement_timeout. 0046 turned this down for the same
+// class of read, and the reasoning holds: a query that needs more than its
+// budget on a healthy box is not one to hand a bigger budget.
+//
+// ALIVE_CHUNK itself is parsed and validated at the top, with the other flags.
+async function write(label, payload) {
+  const res = await fetchWithRetry(label, () =>
+    fetch(`${SUPABASE_URL}/functions/v1/ingest`, {
+      method: "POST",
+      headers: {
+        apikey: ANON,
+        Authorization: `Bearer ${ANON}`,
+        "x-ingest-token": TOKEN,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ dataset: "recheck", rows: [], alive: [], hardGone: [], softGone: [], ...payload }),
+    })
+  );
+  if (!res.ok) {
+    console.error(`recheck: FAILED HTTP ${res.status}: ${(await res.text()).slice(0, 300)}`);
+    process.exit(1);
+  }
+  return res.json();
 }
-console.error(`recheck: ${JSON.stringify(await res.json())}`);
+
+// The gone verdicts go FIRST, and in exactly ONE request.
+//
+// First, because they are the night's scarce signal — the delistings are what
+// recheck exists to produce, they are the smallest and fastest request of the
+// set, and if a later alive chunk fails they are already banked. (Same
+// priority the --deadline-min logic above takes: land the delistings, leave
+// the rest for tomorrow.)
+//
+// One request, because the soft-gone strike is the one thing here that is NOT
+// replay-safe: 0004 counts misses PER CALL, so spreading soft-gone VINs over
+// several requests — or letting a chunk boundary re-send one — would hand a
+// car two strikes in a single night and delist it early. The pre-existing
+// caveat is unchanged and no worse: a request that commits and then loses its
+// response will, when retried, strike its soft-gone cars a night early. That
+// is rare and conservative (a car goes quiet one night sooner); losing the
+// whole night's sold-signal was the common failure.
+const goneResult = await write("recheck: result write (gone verdicts)", { hardGone, softGone });
+
+// The alive chunks, by contrast, are replay-safe by construction, so a retried
+// chunk is a no-op rather than a double-write: price history is only inserted
+// where the incoming price is distinct from the stored one and the update in
+// the same call makes that false; listing_seen is an upsert; and the 'relisted'
+// event is guarded on delisted_at being non-null, which that same update has
+// already cleared.
+let confirmed = 0, priceChanged = 0, chunks = 0;
+for (let i = 0; i < alive.length; i += ALIVE_CHUNK) {
+  const chunk = alive.slice(i, i + ALIVE_CHUNK);
+  const r = await write(
+    `recheck: result write (alive ${i + 1}-${i + chunk.length} of ${alive.length})`,
+    { alive: chunk }
+  );
+  confirmed += r.confirmed ?? 0;
+  priceChanged += r.price_changed ?? 0;
+  chunks++;
+}
+console.error(
+  `recheck: wrote ${confirmed} confirmations (${priceChanged} price changes) in ${chunks} chunk${chunks === 1 ? "" : "s"} of ${ALIVE_CHUNK}, ` +
+  `${goneResult.delisted ?? 0} delisted, ${goneResult.struck ?? 0} struck`
+);
