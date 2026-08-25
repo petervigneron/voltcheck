@@ -160,3 +160,29 @@ claim it has to be able to stand behind.
 - A false bargain is the most expensive error here — it costs a shopper money —
   so caution is deliberately asymmetric between "over" and "under".
 - Verify negatives with a control test before reporting something as absent.
+
+## The house rule on copy
+
+The other half of the same rule, and the one that keeps getting broken. The
+value is the answer. Nothing gets a second line explaining it.
+
+- **If there is nothing to say, print nothing.** Not a sentence reporting the
+  absence. "Asking price unchanged since first seen Aug 15", "No asking-price
+  history recorded for this listing" — both were deleted on 2026-08-25 for
+  this. A shopper does not need to be told a thing did not happen.
+- **Never restate the value in different words.** "84 kWh" does not need
+  "Long Range pack" under it. "800V" does not need "697 V nominal". "Standard"
+  does not need "Standard on AWD" on a row already keyed to AWD.
+- **No history lessons, no trade names, no campaign IDs.** "Native NACS from
+  the MY2025 facelift; 2025 cars shipped with a CCS adapter included" under a
+  row reading NACS is four facts the shopper did not ask for. "NHTSA 25V482 /
+  26V068" is our filing reference, not their answer.
+- **A `note` on a Fact is working, not copy**, and by rule it renders nowhere
+  on the page — only in the row's hover. `web/lib/enrichment/noteRule.ts` has
+  the full history; `web/scripts/note-hygiene.mjs` fails CI if a component
+  starts printing one. Write whatever note the research needs; no shopper
+  reads it.
+- Three earlier sweeps tried to keep the "good" notes and filter the rest.
+  All three were re-broken by the next research tranche, and every time the
+  detector was the owner opening a listing. **Do not propose a filter.** The
+  answer to "does this note earn its line?" is no.

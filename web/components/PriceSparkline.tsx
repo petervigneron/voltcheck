@@ -78,14 +78,15 @@ export function PriceSparkline({ history }: { history: { priceUsd: number; obser
   // caller (db.ts).
   const pts = history.filter((h) => h.priceUsd >= PRICE_FLOOR_USD);
 
-  // Nothing observed at all is not the same claim as nothing changed, and the
-  // two get different sentences. Neither gets silence.
-  if (pts.length === 0) {
-    return <Quiet>No asking-price history recorded for this listing.</Quiet>;
-  }
-  if (new Set(pts.map((p) => p.priceUsd)).size < 2) {
-    return <Quiet>Asking price unchanged since first seen {monthDay(pts[0].observedAt)}.</Quiet>;
-  }
+  // Both of these used to get a sentence — "No asking-price history recorded
+  // for this listing", "Asking price unchanged since first seen Aug 15" — on
+  // the reasoning that nothing-observed and nothing-changed are different
+  // claims and neither should be silent. The owner overruled that on
+  // 2026-08-25: a line that reports the absence of a price move is a line the
+  // shopper reads for nothing. A price chart appears when the price moved,
+  // and otherwise the price above it stands on its own.
+  if (pts.length === 0) return null;
+  if (new Set(pts.map((p) => p.priceUsd)).size < 2) return null;
 
   const first = pts[0];
   const last = pts[pts.length - 1];
@@ -226,6 +227,3 @@ export function PriceSparkline({ history }: { history: { priceUsd: number; obser
 
 /** The one-line answer for a car with nothing to plot. Never null: a vanished
  *  section reads as "we don't know", which is a different and worse claim. */
-function Quiet({ children }: { children: React.ReactNode }) {
-  return <p className="mt-3 text-[12px] leading-snug text-ink/55 dark:text-zinc-400">{children}</p>;
-}

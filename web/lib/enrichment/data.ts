@@ -512,7 +512,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     },
     buyerNotes: [
       {
-        headline: "HV battery bus-bar recall: NHTSA 25V482 / 26V068",
+        headline: "HV battery recall; confirm the fix was done on this car",
         severity: "warning",
         resolvedBy: "campaign_check",
       },
@@ -545,13 +545,9 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     },
     buyerNotes: [
       {
-        headline: "HV battery bus-bar recall: NHTSA 25V482 / 26V068",
+        headline: "HV battery recall; confirm the fix was done on this car",
         severity: "warning",
         resolvedBy: "campaign_check",
-      },
-      {
-        headline: "10–80%: 30 min on Superchargers (400V), 20 min on 350 kW CCS via adapter",
-        severity: "info",
       },
     ],
   },
@@ -582,13 +578,9 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     },
     buyerNotes: [
       {
-        headline: "HV battery bus-bar recall: NHTSA 25V482 / 26V068",
+        headline: "HV battery recall; confirm the fix was done on this car",
         severity: "warning",
         resolvedBy: "campaign_check",
-      },
-      {
-        headline: "10–80%: 30 min on Superchargers (400V), 20 min on 350 kW CCS via adapter",
-        severity: "info",
       },
     ],
   },
@@ -620,13 +612,9 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     },
     buyerNotes: [
       {
-        headline: "HV battery bus-bar recall: NHTSA 25V482 / 26V068",
+        headline: "HV battery recall; confirm the fix was done on this car",
         severity: "warning",
         resolvedBy: "campaign_check",
-      },
-      {
-        headline: "10–80%: 30 min on Superchargers (400V), 20 min on 350 kW CCS via adapter",
-        severity: "info",
       },
     ],
   },
@@ -658,13 +646,9 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     },
     buyerNotes: [
       {
-        headline: "HV battery bus-bar recall: NHTSA 25V482 / 26V068",
+        headline: "HV battery recall; confirm the fix was done on this car",
         severity: "warning",
         resolvedBy: "campaign_check",
-      },
-      {
-        headline: "10–80%: 30 min on Superchargers (400V), 20 min on 350 kW CCS via adapter",
-        severity: "info",
       },
     ],
   },

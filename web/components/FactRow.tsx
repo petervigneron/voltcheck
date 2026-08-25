@@ -1,8 +1,5 @@
 import type { Fact, Source } from "@/lib/types";
 import { SourceBadge } from "./SourceBadge";
-// The rule lives in one place so scripts/note-hygiene.mjs checks in CI exactly
-// what this renders (cite, state a fact, or say nothing).
-import { inlineNote } from "@/lib/enrichment/noteRule";
 
 // A citation, not a chip. The old provenance chip on every row named the
 // pipeline (see SourceBadge above); this names the document instead, and
@@ -115,11 +112,14 @@ export function FactRow({
   // absent-fact path.
   if (!fact) return null;
 
-  const note = inlineNote(fact.note);
   const valueText = format ? format(fact.value) : String(fact.value);
   return (
     <div
-      title={title ?? (fact.note && !note ? fact.note : undefined)}
+      // A Fact's `note` is the researcher's working — which pack, which trim,
+      // which document — and never page copy; lib/enrichment/noteRule.ts has
+      // the four sweeps that established that. It reaches the shopper only
+      // here, on hover, behind a deliberate act.
+      title={title ?? fact.note}
       className="flex items-baseline justify-between gap-4 py-2 border-b border-zinc-100 dark:border-zinc-800 last:border-0"
     >
       <div className="text-sm text-zinc-500 dark:text-zinc-400">{label}</div>
@@ -144,7 +144,6 @@ export function FactRow({
         )}{" "}
         <SourceBadge fact={fact} />
         {fact.sourceUrl && <Citation fact={fact} />}
-        {note && <div className="mt-0.5 max-w-xs text-xs text-zinc-500 dark:text-zinc-400">{note}</div>}
       </div>
     </div>
   );

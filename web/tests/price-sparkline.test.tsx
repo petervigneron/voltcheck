@@ -1,11 +1,18 @@
 // From web/:
 //   npx tsx --test tests/price-sparkline.test.tsx
 //
-// The chart's two failure modes are opposite, and both reached the site:
-// rendering NOTHING for the ~82% of cars that never moved (a vanished section
-// reads as "we don't know", not "no cuts"), and rendering a $500 trim with the
-// same amplitude as a $20,000 collapse. Most of these tests are about those
-// two, plus the junk floor that keeps a lease payment from drawing a cliff.
+// The chart's job is amplitude: a $500 trim must not draw with the same
+// height as a $20,000 collapse, and a $1,493 lease payment must not draw a
+// cliff at all. Those tests are below and unchanged.
+//
+// What DID change, on 2026-08-25: a car whose price never moved now renders
+// nothing. This file used to assert the opposite — that a vanished section
+// reads as "we don't know" rather than "no cuts", so silence had to be
+// replaced by a sentence ("Asking price unchanged since first seen Aug 12").
+// The owner read that sentence and ruled against it: a line reporting that
+// nothing happened is a line the shopper reads for nothing. See CLAUDE.md,
+// "The house rule on copy". The tests below now pin the silence, so the
+// sentence cannot come back by argument.
 import test from "node:test";
 import assert from "node:assert/strict";
 import { renderToStaticMarkup } from "react-dom/server";
@@ -31,15 +38,12 @@ function stepYs(html: string): number[] {
   return ys;
 }
 
-test("a car whose price never moved says so instead of rendering nothing", () => {
+test("a car whose price never moved renders nothing at all", () => {
   const html = renderToStaticMarkup(<PriceSparkline history={[{ priceUsd: 41_990, observedAt: AUG12 }]} />);
-  assert.notEqual(html, "");
-  assert.ok(html.includes("Asking price unchanged since first seen Aug 12"), html);
-  // No chart for a car with nothing to plot — one quiet line, no empty axes.
-  assert.ok(!html.includes("<svg"), html);
+  assert.equal(html, "");
 });
 
-test("two observations at the same price are also 'no change', not a flat line", () => {
+test("two observations at the same price are silent too, not a flat line", () => {
   const html = renderToStaticMarkup(
     <PriceSparkline
       history={[
@@ -48,24 +52,14 @@ test("two observations at the same price are also 'no change', not a flat line",
       ]}
     />
   );
-  assert.ok(html.includes("Asking price unchanged since first seen Aug 12"), html);
-  assert.ok(!html.includes("<svg"), html);
+  assert.equal(html, "");
 });
 
-test("the empty state never claims a listing date we do not have", () => {
-  // The first observation is when OUR tracking began. "Listed on" would be a
-  // claim about the seller that this data cannot support.
-  const html = renderToStaticMarkup(<PriceSparkline history={[{ priceUsd: 41_990, observedAt: AUG12 }]} />);
-  for (const word of ["listed", "Listed", "posted", "on the market"]) {
-    assert.ok(!html.includes(word), `${word} in ${html}`);
-  }
-});
-
-test("no observations at all is a different sentence from no change", () => {
-  const html = renderToStaticMarkup(<PriceSparkline history={[]} />);
-  assert.notEqual(html, "");
-  assert.ok(html.includes("No asking-price history recorded"), html);
-  assert.ok(!html.includes("unchanged"), html);
+test("no observations at all is silent as well", () => {
+  // This used to get its own sentence, on the reasoning that never-observed
+  // and never-moved are different claims. They are, and neither is one the
+  // shopper needs read aloud.
+  assert.equal(renderToStaticMarkup(<PriceSparkline history={[]} />), "");
 });
 
 test("the junk floor still holds: a payment figure cannot draw a cut", () => {
@@ -80,8 +74,9 @@ test("the junk floor still holds: a payment figure cannot draw a cut", () => {
       ]}
     />
   );
-  assert.ok(html.includes("unchanged"), html);
-  assert.ok(!html.includes("493"), html);
+  // Under the floor the $493 is not an observation at all, so this car has
+  // one price and draws nothing — not a $40k collapse.
+  assert.equal(html, "");
 });
 
 test("the common two-point history reads as one sentence, not a hover", () => {

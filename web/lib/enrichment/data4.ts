@@ -1311,7 +1311,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     },
     buyerNotes: [
       { headline: "DC fast charging: $750 factory option, not on every car", severity: "trap", resolvedBy: "photo_dcfc" },
-      { headline: "Most 2020–22 cars kept their original packs (21V560)", severity: "info", resolvedBy: "campaign_check" },
+      { headline: "Most 2020–22 cars kept their original packs", severity: "info", resolvedBy: "campaign_check" },
       { headline: "No capacity floor on the battery warranty", severity: "warning" },
     ],
   },
@@ -1332,7 +1332,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
       batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
-      { headline: "Most 2020–22 cars kept their original packs (21V560)", severity: "info", resolvedBy: "campaign_check" },
+      { headline: "Most 2020–22 cars kept their original packs", severity: "info", resolvedBy: "campaign_check" },
     ],
   },
   {
