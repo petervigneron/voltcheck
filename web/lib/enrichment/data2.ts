@@ -6,6 +6,27 @@ import type { EnrichmentRow, Fact, Source } from "../types";
 // → "mfr"; secondary-source facts → "agg" until a primary doc is read).
 const AS_OF = "2026-08-10";
 
+// batteryTransfers is deliberately absent from the Prologue rows. It stood as
+// an uncited `true`, and Honda's own Warranty Basebook — the booklet that
+// carries the High Voltage Battery Capacity Limited Warranty — does not say
+// it. Its General Warranty Provisions read: "The warranty coverages in this
+// booklet are offered only to the owner or lessee of a 2024 Honda automobile",
+// and no section anywhere in it addresses a second owner. Checked in the
+// MY2024 and MY2025 editions; neither names the Prologue specifically, both
+// cover it as a Honda automobile.
+//
+// Control: "transfer" does appear in the booklet, twice, and both times in the
+// Rust warranty — "Coverage cannot be transferred to any other person or
+// institution (such as an insurance company)" — which is about who may claim,
+// not about whether coverage follows the car. Same shape as the sentence that
+// nearly answered for Porsche in this sweep, and the same reason it does not.
+// The grep finds the word where the word is, so the silence is Honda's.
+//
+// The Prologue is a GM-built Ultium car and GM's own booklets say the battery
+// warranty is "transferable at no cost" — deliberately NOT read across. Honda
+// warrants this car, not GM, and Honda's booklet is the document that governs.
+
+
 // Subaru battery-warranty transferability. Its Warranty & Maintenance Booklet
 // answers it under "When These Warranties Apply": "Every owner of the vehicle
 // during the warranty period shall be entitled to the benefits of these
@@ -1753,7 +1774,6 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(75, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -1784,7 +1804,6 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(75, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -1815,7 +1834,6 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(75, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -1851,7 +1869,6 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(75, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -1885,7 +1902,6 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(75, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
