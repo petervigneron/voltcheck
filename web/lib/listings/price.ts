@@ -61,10 +61,21 @@ export function hasRealPrice(l: {
 
 /**
  * A price cut worth a card's attention: at least $500 off, within the last
- * 14 days, between two prices that both pass the junk-price floor. The $500
- * bar comes from live data (2026-08-14: any-cut = 7.3% of inventory, ≥$500 =
- * 3.6% — about two cards per page of sixty, an exception rather than a
- * pattern; ≥5% = 0.6%, too rare to teach the color's meaning).
+ * 14 days, between two prices that both pass the junk-price floor.
+ *
+ * The $500 bar was chosen from live data on 2026-08-14, when the price log
+ * held three days of history: any-cut = 7.3% of inventory, ≥$500 = 3.6% —
+ * about two cards per page of sixty, an exception rather than a pattern —
+ * and ≥5% = 0.6%, too rare to teach the color's meaning. It is the *spacing*
+ * of those three numbers that picked $500, and that spacing still holds.
+ *
+ * The incidence figures do not. Three days of log cannot see a 14-day window,
+ * and with fourteen days behind it the any-cut rate measures ~18% of live
+ * inventory, not 7.3%. The ≥$500 and ≥5% shares have not been re-measured
+ * against the fuller window, so do not quote 3.6% or 0.6% as today's rate —
+ * re-measure before any of these three numbers is used as a claim. (The
+ * 7.3% figure was also copied into components/PriceSparkline.tsx and read
+ * there as "this chart is near-useless"; corrected 2026-08-25.)
  */
 export const PRICE_CUT_MIN_USD = 500;
 export const PRICE_CUT_WINDOW_DAYS = 14;
