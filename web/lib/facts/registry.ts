@@ -236,7 +236,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       {
         question: "How fast does the Ford Mustang Mach-E charge on a DC fast charger?",
         answer:
-          "Ford's order guide states \"DC Charging: Up to 150kW capability\" in every model year from 2021 through 2025. Ford publishes no separate DC rate for the Standard Range pack in any of those guides, and no 10-80% charge time.",
+          "Ford's order guide states \"DC Charging: Up to 150kW capability\" in every model year from 2021 through 2025. That line is printed in the Select trim's standard-equipment list, and the higher trims inherit it — each of their pages opens \"ALL SELECT SERIES EQUIPMENT PLUS:\" and adds to that list — which holds in all five guides. Ford publishes no separate DC rate for the Standard Range pack in any of them, and no 10-80% charge time.",
       },
       {
         question: "What charging connector does the Ford Mustang Mach-E use?",
