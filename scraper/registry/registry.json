@@ -248336,6 +248336,2192 @@
         "vehicles": 12,
         "canonicalHost": "www.ecarone.com"
       }
+    },
+    {
+      "domain": "serrachevy.com",
+      "name": "Serra Chevrolet",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; node/13072850834); brand: Chevrolet; © OpenStreetMap contributors, ODbL | auto-promoted by probe 2026-08-25: 24 VIN vehicles on 1 page(s), platform dealeron",
+      "location": {
+        "city": "Birmingham",
+        "state": "AL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "working",
+        "fetched": 2,
+        "vehicles": 24,
+        "canonicalHost": "www.serrachevy.com"
+      }
+    },
+    {
+      "domain": "longlewischevroletbessemer.com",
+      "name": "Long-Lewis Chevrolet of Bessemer",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/124673314); brand: Chevrolet; © OpenStreetMap contributors, ODbL | auto-promoted by probe 2026-08-25: 24 VIN vehicles on 1 page(s), platform dealer.com",
+      "location": {
+        "city": "Bessemer",
+        "state": "AL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "working",
+        "fetched": 2,
+        "vehicles": 24,
+        "canonicalHost": "www.longlewischevroletbessemer.com"
+      }
+    },
+    {
+      "domain": "g-hautos.com",
+      "name": "G&H Auto",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/603133223); © OpenStreetMap contributors, ODbL | probe 2026-08-25: 0 VIN vehicles in 12 fetches (0 ItemList entries, 10 sitemap urls, 0 failed fetches, platform unknown) — client-rendered or API-backed; leads: wordpress",
+      "location": {
+        "city": "Tuscaloosa",
+        "state": "AL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "empty",
+        "fetched": 12,
+        "vehicles": 0,
+        "itemList": 0,
+        "sitemapUrls": 10,
+        "signals": [
+          "wordpress"
+        ],
+        "failures": [
+          {
+            "url": "https://g-hautos.com/searchused.aspx",
+            "status": "404",
+            "kind": "gone"
+          },
+          {
+            "url": "https://g-hautos.com/searchnew.aspx",
+            "status": "404",
+            "kind": "gone"
+          },
+          {
+            "url": "https://g-hautos.com/used-vehicles/",
+            "status": "404",
+            "kind": "gone"
+          },
+          {
+            "url": "https://g-hautos.com/new-vehicles/",
+            "status": "404",
+            "kind": "gone"
+          }
+        ]
+      }
+    },
+    {
+      "domain": "championchevrolet.net",
+      "name": "Champion Chevrolet",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/940807550); brand: Chevrolet; © OpenStreetMap contributors, ODbL | auto-promoted by probe 2026-08-25: 23 VIN vehicles on 1 page(s), platform dealer.com",
+      "location": {
+        "city": "Athens",
+        "state": "AL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "working",
+        "fetched": 2,
+        "vehicles": 23,
+        "canonicalHost": "www.championchevrolet.net"
+      }
+    },
+    {
+      "domain": "allenturnerchevroletofauburn.com",
+      "name": "Allen Turner Chevrolet Cadillac of Auburn",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/1363356621); brand: Cadillac; © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "city": "Auburn",
+        "state": "AL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "juneauauto.com",
+      "name": "Juneau Chevrolet",
+      "kind": "rooftop",
+      "platform": "dealervenom",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/398673113); brand: Chevrolet; © OpenStreetMap contributors, ODbL | auto-promoted by probe 2026-08-25: dealervenom Typesense index, 246 vehicles",
+      "location": {
+        "city": "Juneau",
+        "state": "AK"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "dealervenom",
+        "found": 246
+      }
+    },
+    {
+      "domain": "bmwinmelbourne.com",
+      "name": "Melbourne BMW",
+      "kind": "rooftop",
+      "platform": "team-velocity",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; node/1720780873); brand: BMW; © OpenStreetMap contributors, ODbL | auto-promoted by probe 2026-08-25: team-velocity API, 178 vehicles",
+      "location": {
+        "city": "Melbourne",
+        "state": "FL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "team-velocity",
+        "found": 178
+      }
+    },
+    {
+      "domain": "ronandersonchevy.com",
+      "name": "Ron Anderson Chevrolet Buick GMC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; node/3052271435); brand: Chevrolet; © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "city": "Yulee",
+        "state": "FL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "autonationchevroletairport.com",
+      "name": "Autonation Chevrolet Airport",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; node/8718795464); brand: Chevrolet; © OpenStreetMap contributors, ODbL | auto-promoted by probe 2026-08-25: 7 VIN vehicles on 1 page(s), platform dealeron",
+      "location": {
+        "city": "Orlando",
+        "state": "FL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "working",
+        "fetched": 3,
+        "vehicles": 7,
+        "canonicalHost": "www.autonationchevroletairport.com"
+      }
+    },
+    {
+      "domain": "rickhendrickchevynaples.com",
+      "name": "Rick Hendrick Chevrolet Naples",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; node/13634893781); brand: Chevrolet; © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "city": "Naples",
+        "state": "FL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "chevroletcenter.com",
+      "name": "Chevrolet Center",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; node/13659356801); brand: Chevrolet; © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "city": "Winter Haven",
+        "state": "FL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "dealguysjax.com",
+      "name": "Wholesale 360",
+      "kind": "rooftop",
+      "platform": "waynereaves",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; node/13791823391); © OpenStreetMap contributors, ODbL | auto-promoted by probe 2026-08-25: waynereaves feed, 129 live of 132 records",
+      "location": {
+        "city": "Jacksonville",
+        "state": "FL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "waynereaves",
+        "found": 129
+      }
+    },
+    {
+      "domain": "autonationchevroletpembrokepines.com",
+      "name": "Autonation Chevrolet Pembroke Pines",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; node/14101048518); brand: Chevrolet; © OpenStreetMap contributors, ODbL | auto-promoted by probe 2026-08-25: 7 VIN vehicles on 1 page(s), platform dealeron",
+      "location": {
+        "city": "Pembroke Pines",
+        "state": "FL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "working",
+        "fetched": 3,
+        "vehicles": 7,
+        "canonicalHost": "www.autonationchevroletpembrokepines.com"
+      }
+    },
+    {
+      "domain": "allenturnerchevrolet.com",
+      "name": "Allen Turner Chevrolet",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/170209571); brand: Chevrolet; © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "city": "Crestview",
+        "state": "FL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "sandysansingchevrolet.com",
+      "name": "Sandy Sansing Chevrolet",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/419991166); brand: Chevrolet; © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "city": "Pensacola",
+        "state": "FL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "miamilakeschevrolet.net",
+      "name": "Miami Lakes Chevrolet",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/435374799); brand: Chevrolet; © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "city": "Miami Lakes",
+        "state": "FL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "mazdaofnorthmiami.com",
+      "name": "Mazda of North Miami",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/435575542); brand: Mazda; © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "city": "Miami Gardens",
+        "state": "FL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "griecochevroletfortlauderdale.com",
+      "name": "Grieco Chevrolet of Fort Lauderdale",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/484794192); brand: Chevrolet; © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "city": "Fort Lauderdale",
+        "state": "FL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "mikemaroonechevrolet.com",
+      "name": "Mike Maroone Chevrolet",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/485986110); brand: Chevrolet; © OpenStreetMap contributors, ODbL | auto-promoted by probe 2026-08-25: 24 VIN vehicles on 1 page(s), platform dealer.com",
+      "location": {
+        "city": "West Palm Beach",
+        "state": "FL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "working",
+        "fetched": 2,
+        "vehicles": 24,
+        "canonicalHost": "www.mikemaroonechevrolet.com"
+      }
+    },
+    {
+      "domain": "coxchevy.com",
+      "name": "Cox Chevrolet",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/493968472); brand: Chevrolet; © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "city": "Bradenton",
+        "state": "FL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "beaverchevrolet.com",
+      "name": "Beaver Chevrolet",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "unreachable",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/519271083); brand: Chevrolet; © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage error:TypeError",
+      "location": {
+        "city": "Jacksonville",
+        "state": "FL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "transient",
+        "fetched": 1,
+        "homeStatus": "error:TypeError",
+        "retried": true
+      }
+    },
+    {
+      "domain": "morganchevrolet.com",
+      "name": "Morgan Chevrolet",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/523817241); brand: Chevrolet; © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "city": "Tampa",
+        "state": "FL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "fermanchevy.com",
+      "name": "Ferman Chevrolet",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/523886132); brand: Chevrolet; © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "city": "Tampa",
+        "state": "FL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "jenkinschevroletofvenice.com",
+      "name": "Jenkins Chevrolet of Venice",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/533667841); brand: Chevrolet; © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "city": "Venice",
+        "state": "FL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "nimnichtchevy.com",
+      "name": "Nimnicht Chevrolet",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/572702716); brand: Chevrolet; © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "city": "Jacksonville",
+        "state": "FL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "billcramergm.com",
+      "name": "Bill Cramer Chevrolet GMC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/637647112); brand: Chevrolet; © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "city": "Panama City",
+        "state": "FL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "gettelchevrolet.com",
+      "name": "Gettel Chevrolet Buick GMC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/675722705); brand: Chevrolet; © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "city": "Punta Gorda",
+        "state": "FL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "keychevyofperry.com",
+      "name": "Key Chevrolet of Perry",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/755287550); brand: Chevrolet; © OpenStreetMap contributors, ODbL | auto-promoted by probe 2026-08-25: 24 VIN vehicles on 1 page(s), platform dealer.com",
+      "location": {
+        "city": "Perry",
+        "state": "FL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "working",
+        "fetched": 2,
+        "vehicles": 24,
+        "canonicalHost": "www.keychevyofperry.com"
+      }
+    },
+    {
+      "domain": "miltonchevy.com",
+      "name": "Sandy Sansing Milton Chevrolet",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/805406400); brand: Chevrolet; © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "city": "Milton",
+        "state": "FL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "petemoorechevrolet.com",
+      "name": "Pete Moore Chevrolet",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/852520240); brand: Chevrolet; © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "city": "Pensacola",
+        "state": "FL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "rountreemoorechevrolet.com",
+      "name": "Rountree-Moore Chevrolet",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/918321619); brand: Chevrolet; © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "city": "Lake City",
+        "state": "FL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "gainesvillechevy.com",
+      "name": "Davis Gainesville Chevrolet",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/943486172); brand: Chevrolet; © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "city": "Gainesville",
+        "state": "FL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "bonifacehierschevrolet.com",
+      "name": "Boniface-Hiers Chevrolet",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/963321394); brand: Chevrolet; © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "city": "Melbourne",
+        "state": "FL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "jonhallchevrolet.com",
+      "name": "Jon Hall Chevrolet",
+      "kind": "rooftop",
+      "platform": "dealeron",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/995312047); brand: Chevrolet; © OpenStreetMap contributors, ODbL | auto-promoted by probe 2026-08-25: 24 VIN vehicles on 1 page(s), platform dealeron",
+      "location": {
+        "city": "Daytona Beach",
+        "state": "FL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "working",
+        "fetched": 2,
+        "vehicles": 24,
+        "canonicalHost": "www.jonhallchevrolet.com"
+      }
+    },
+    {
+      "domain": "checkbeckchevrolet.com",
+      "name": "Beck Chevrolet GMC",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/1029094493); brand: Chevrolet; © OpenStreetMap contributors, ODbL | auto-promoted by probe 2026-08-25: 24 VIN vehicles on 1 page(s), platform dealer.com",
+      "location": {
+        "city": "Palatka",
+        "state": "FL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "working",
+        "fetched": 2,
+        "vehicles": 24,
+        "canonicalHost": "www.checkbeckchevrolet.com"
+      }
+    },
+    {
+      "domain": "griecochevroletdelray.com",
+      "name": "Grieco Chevrolet of Delray Beach",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/1041341951); brand: Chevrolet; © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "city": "Delray Beach",
+        "state": "FL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "fermanchevroletnorthdalemabry.com",
+      "name": "Ferman Chevrolet on North Dale Mabry",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/1052828730); brand: Chevrolet; © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "city": "Tampa",
+        "state": "FL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "griecochevroletlauderhill.com",
+      "name": "Grieco Chevrolet of Lauderhill",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/1066261008); brand: Chevrolet; © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "city": "Lauderhill",
+        "state": "FL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "audiusa.com",
+      "name": "Audi Of Melbourne",
+      "kind": "rooftop",
+      "platform": "oneaudi",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/1158880569); brand: Audi; © OpenStreetMap contributors, ODbL | probe 2026-08-25: 0 VIN vehicles in 12 fetches (0 ItemList entries, 0 sitemap urls, 0 failed fetches, platform oneaudi) — client-rendered or API-backed; leads: api-hosts:omnigraph.audi.com+oneaudi-falcon-i18n-service.prod.renderer.one.audi+oneaudi-falcon-market-context-service.prod.renderer.one.audi, graphql",
+      "location": {
+        "city": "West Melbourne",
+        "state": "FL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "empty",
+        "fetched": 12,
+        "vehicles": 0,
+        "itemList": 0,
+        "sitemapUrls": 0,
+        "why": "nothing-to-walk",
+        "canonicalHost": "www.audiusa.com",
+        "apiHosts": [
+          "omnigraph.audi.com",
+          "oneaudi-falcon-i18n-service.prod.renderer.one.audi",
+          "oneaudi-falcon-market-context-service.prod.renderer.one.audi"
+        ],
+        "signals": [
+          "graphql"
+        ],
+        "failures": [
+          {
+            "url": "https://www.audiusa.com/en/inventory/new/",
+            "status": "404",
+            "kind": "gone"
+          },
+          {
+            "url": "https://www.audiusa.com/en/inventory/used/",
+            "status": "404",
+            "kind": "gone"
+          },
+          {
+            "url": "https://www.audiusa.com/searchused.aspx",
+            "status": "404",
+            "kind": "gone"
+          },
+          {
+            "url": "https://www.audiusa.com/searchnew.aspx",
+            "status": "404",
+            "kind": "gone"
+          }
+        ]
+      }
+    },
+    {
+      "domain": "veroapex.com",
+      "name": "Vero Apex",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "unreachable",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/1284849893); © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage error:TypeError",
+      "location": {
+        "city": "Vero Beach",
+        "state": "FL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "transient",
+        "fetched": 1,
+        "homeStatus": "error:TypeError",
+        "retried": true
+      }
+    },
+    {
+      "domain": "fermanchevytarpon.com",
+      "name": "Ferman Chevrolet of Tarpon Springs",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/1323959296); brand: Chevrolet; © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "city": "Tarpon Springs",
+        "state": "FL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "stingraybartow.com",
+      "name": "Stingray Chevrolet Bartow",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/1444771402); brand: Chevrolet; © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "city": "Bartow",
+        "state": "FL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "jimbrownechevygmc.com",
+      "name": "Jim Browne Chevrolet GMC of Dade City",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/1488879322); brand: Chevrolet; © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "city": "Dade City",
+        "state": "FL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "bobsteelechevy.com",
+      "name": "Bob Steele Chevrolet",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/1550345124); brand: Chevrolet; © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "city": "Cocoa",
+        "state": "FL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "jenkinschevroletofhomosassa.com",
+      "name": "Jenkins Chevrolet of Homosassa",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/1550369864); brand: Chevrolet; © OpenStreetMap contributors, ODbL | auto-promoted by probe 2026-08-25: 24 VIN vehicles on 1 page(s), platform dealer.com",
+      "location": {
+        "city": "Homosassa",
+        "state": "FL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "working",
+        "fetched": 2,
+        "vehicles": 24,
+        "canonicalHost": "www.jenkinschevroletofhomosassa.com"
+      }
+    },
+    {
+      "domain": "jimfalkgm.com",
+      "name": "Jim Falk Motors of Maui",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; node/5575062303); brand: Chevrolet; © OpenStreetMap contributors, ODbL | auto-promoted by probe 2026-08-25: 24 VIN vehicles on 1 page(s), platform dealer.com",
+      "location": {
+        "city": "Kahului",
+        "state": "HI"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "working",
+        "fetched": 2,
+        "vehicles": 24,
+        "canonicalHost": "www.jimfalkgm.com"
+      }
+    },
+    {
+      "domain": "jnchevrolet.com",
+      "name": "Jn Chevrolet",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/396515282); brand: Chevrolet; © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "city": "Honolulu",
+        "state": "HI"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "billkayhonda.com",
+      "name": "Bill Kay Honda",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/93413810); brand: Honda; © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "state": "IL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "cunninghammotorsales.com",
+      "name": "Cunningham Motor Sales",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/1334537948); © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "city": "Urbana",
+        "state": "IL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "kazakmotors.com",
+      "name": "Kazak Motors",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/1550126445); © OpenStreetMap contributors, ODbL | probe 2026-08-25: 0 VIN vehicles in 12 fetches (0 ItemList entries, 1 sitemap urls, 0 failed fetches, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "Champaign",
+        "state": "IL"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "empty",
+        "fetched": 12,
+        "vehicles": 0,
+        "itemList": 0,
+        "sitemapUrls": 1,
+        "canonicalHost": "www.kazakmotors.com",
+        "failures": [
+          {
+            "url": "https://www.kazakmotors.com/searchused.aspx",
+            "status": "robots_disallowed",
+            "kind": "blocked"
+          },
+          {
+            "url": "https://www.kazakmotors.com/searchnew.aspx",
+            "status": "robots_disallowed",
+            "kind": "blocked"
+          },
+          {
+            "url": "https://www.kazakmotors.com/used-vehicles/",
+            "status": "404",
+            "kind": "gone"
+          },
+          {
+            "url": "https://www.kazakmotors.com/new-vehicles/",
+            "status": "404",
+            "kind": "gone"
+          }
+        ],
+        "retried": true
+      }
+    },
+    {
+      "domain": "bestfordknox.com",
+      "name": "Best Ford Dealership",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "unreachable",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; node/2569080747); © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage error:TypeError",
+      "location": {
+        "city": "Knox",
+        "state": "IN"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "transient",
+        "fetched": 1,
+        "homeStatus": "error:TypeError",
+        "retried": true
+      }
+    },
+    {
+      "domain": "vinautoplex.com",
+      "name": "Vincennes Autoplex",
+      "kind": "rooftop",
+      "platform": "dealercarsearch",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/693285701); © OpenStreetMap contributors, ODbL | auto-promoted by probe 2026-08-25: 87 VIN vehicles on 1 page(s), platform dealercarsearch",
+      "location": {
+        "city": "Vincennes",
+        "state": "IN"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "working",
+        "fetched": 2,
+        "vehicles": 87
+      }
+    },
+    {
+      "domain": "logsdonmotorplex.com",
+      "name": "Logsdon Motorplex",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/1020320757); © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "city": "Brownsville",
+        "state": "KY"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "goautoplex.com",
+      "name": "Autoplex 2000",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/1462098719); © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "city": "Sulphur",
+        "state": "LA"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "mainstreetmotor.net",
+      "name": "Main Street Motors",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/453579940); © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "city": "Wheaton",
+        "state": "MN"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "midwestautoplex.com",
+      "name": "Midwest Autoplex",
+      "kind": "rooftop",
+      "platform": "dealercarsearch",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/855226454); © OpenStreetMap contributors, ODbL | auto-promoted by probe 2026-08-25: 30 VIN vehicles on 1 page(s), platform dealercarsearch",
+      "location": {
+        "city": "Saint Louis",
+        "state": "MO"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "working",
+        "fetched": 2,
+        "vehicles": 30
+      }
+    },
+    {
+      "domain": "4automax.com",
+      "name": "AutoMax Truck and Car Center",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/591115222); © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "city": "Farmington",
+        "state": "NM"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "bmwoflongislandcity.com",
+      "name": "BMW of Long Island City",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; node/13819329485); brand: BMW; © OpenStreetMap contributors, ODbL | auto-promoted by probe 2026-08-25: 24 VIN vehicles on 1 page(s), platform dealer.com",
+      "location": {
+        "state": "NY"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "working",
+        "fetched": 2,
+        "vehicles": 24,
+        "canonicalHost": "www.bmwlic.com"
+      }
+    },
+    {
+      "domain": "jandjauto.us",
+      "name": "J & J Affordable Auto",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; node/14106433628); © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "city": "Williamson",
+        "state": "NY"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "hendricktoyotaapex.com",
+      "name": "Hendrick Toyota Scion of Apex",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/259282315); © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "city": "Apex",
+        "state": "NC"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "teslamotors.com",
+      "name": "Tesla Cincinnati",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "unreachable",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/41935748); brand: Tesla; © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage error:TypeError",
+      "location": {
+        "state": "OH"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "transient",
+        "fetched": 1,
+        "homeStatus": "error:TypeError",
+        "retried": true
+      }
+    },
+    {
+      "domain": "jdmotorspdx.com",
+      "name": "JD Motors",
+      "kind": "rooftop",
+      "platform": "automanager",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; node/6334378718); © OpenStreetMap contributors, ODbL | auto-promoted by probe 2026-08-25: 10 VIN vehicles on 1 page(s), platform automanager",
+      "location": {
+        "city": "Portland",
+        "state": "OR"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "working",
+        "fetched": 2,
+        "vehicles": 10,
+        "canonicalHost": "www.jdmotorspdx.com"
+      }
+    },
+    {
+      "domain": "iaspdx.com",
+      "name": "International Auto Sales",
+      "kind": "rooftop",
+      "platform": "automanager",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; node/6348003442); © OpenStreetMap contributors, ODbL | auto-promoted by probe 2026-08-25: 12 VIN vehicles on 1 page(s), platform automanager",
+      "location": {
+        "city": "Portland",
+        "state": "OR"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "working",
+        "fetched": 2,
+        "vehicles": 12,
+        "canonicalHost": "www.iaspdx.com"
+      }
+    },
+    {
+      "domain": "epicdetailingpdx.com",
+      "name": "Epic Auto Detailing & Window Tint",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; node/10802745858); © OpenStreetMap contributors, ODbL | probe 2026-08-25: 0 VIN vehicles in 12 fetches (0 ItemList entries, 2 sitemap urls, 0 failed fetches, platform unknown) — client-rendered or API-backed; leads: algolia, wordpress",
+      "location": {
+        "city": "Gresham",
+        "state": "OR"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "empty",
+        "fetched": 12,
+        "vehicles": 0,
+        "itemList": 0,
+        "sitemapUrls": 2,
+        "signals": [
+          "algolia",
+          "wordpress"
+        ]
+      }
+    },
+    {
+      "domain": "carstogopdx.com",
+      "name": "Cars To Go",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/368544736); © OpenStreetMap contributors, ODbL | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — client-rendered or API-backed; leads: api-hosts:static.cargurus.com+www.cargurus.com",
+      "location": {
+        "city": "Portland",
+        "state": "OR"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "transient",
+        "fetched": 12,
+        "vehicles": 0,
+        "itemList": 0,
+        "sitemapUrls": 0,
+        "why": "failed-fetch",
+        "apiHosts": [
+          "static.cargurus.com",
+          "www.cargurus.com"
+        ],
+        "failures": [
+          {
+            "url": "https://carstogopdx.com/inventory/used",
+            "status": "500",
+            "kind": "transient"
+          },
+          {
+            "url": "https://carstogopdx.com/inventory/new",
+            "status": "500",
+            "kind": "transient"
+          },
+          {
+            "url": "https://carstogopdx.com/used-inventory/index.htm",
+            "status": "404",
+            "kind": "gone"
+          },
+          {
+            "url": "https://carstogopdx.com/new-inventory/index.htm",
+            "status": "404",
+            "kind": "gone"
+          }
+        ],
+        "retried": true
+      }
+    },
+    {
+      "domain": "northwestmotorspdx.com",
+      "name": "Northwest Motors",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "unreachable",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/368874779); © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage error:TypeError",
+      "location": {
+        "city": "Portland",
+        "state": "OR"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "transient",
+        "fetched": 1,
+        "homeStatus": "error:TypeError",
+        "retried": true
+      }
+    },
+    {
+      "domain": "lawautopdx.com",
+      "name": "Law Auto LLC",
+      "kind": "rooftop",
+      "platform": "dealercarsearch",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/369156667); © OpenStreetMap contributors, ODbL | auto-promoted by probe 2026-08-25: 9 VIN vehicles on 1 page(s), platform dealercarsearch",
+      "location": {
+        "city": "Portland",
+        "state": "OR"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "working",
+        "fetched": 2,
+        "vehicles": 9
+      }
+    },
+    {
+      "domain": "jzautosalespdx.com",
+      "name": "JZ Auto Sales",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "unreachable",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/370260363); © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage error:TypeError",
+      "location": {
+        "city": "Happy Valley",
+        "state": "OR"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "transient",
+        "fetched": 1,
+        "homeStatus": "error:TypeError",
+        "retried": true
+      }
+    },
+    {
+      "domain": "auto4salepa.com",
+      "name": "Auto4Sale",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; node/6423950923); © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "city": "Cresco",
+        "state": "PA"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "royalautocenter.net",
+      "name": "Royal Auto Center",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; node/6901410261); © OpenStreetMap contributors, ODbL | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "Allentown",
+        "state": "PA"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "transient",
+        "fetched": 12,
+        "vehicles": 0,
+        "itemList": 0,
+        "sitemapUrls": 0,
+        "why": "failed-fetch",
+        "failures": [
+          {
+            "url": "https://royalautocenter.net/inventory/used",
+            "status": "500",
+            "kind": "transient"
+          },
+          {
+            "url": "https://royalautocenter.net/inventory/new",
+            "status": "500",
+            "kind": "transient"
+          },
+          {
+            "url": "https://royalautocenter.net/used-inventory/index.htm",
+            "status": "404",
+            "kind": "gone"
+          },
+          {
+            "url": "https://royalautocenter.net/new-inventory/index.htm",
+            "status": "404",
+            "kind": "gone"
+          }
+        ],
+        "retried": true
+      }
+    },
+    {
+      "domain": "grandprixworx.com",
+      "name": "Grand Prix Worx",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/618324181); © OpenStreetMap contributors, ODbL | probe 2026-08-25: 0 VIN vehicles in 12 fetches (0 ItemList entries, 0 sitemap urls, 0 failed fetches, platform dealer.com) — client-rendered or API-backed; leads: api-hosts:panorama.wixapps.net",
+      "location": {
+        "city": "Philadelphia",
+        "state": "PA"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "empty",
+        "fetched": 12,
+        "vehicles": 0,
+        "itemList": 0,
+        "sitemapUrls": 0,
+        "why": "nothing-to-walk",
+        "canonicalHost": "www.grandprixworx.com",
+        "apiHosts": [
+          "panorama.wixapps.net"
+        ],
+        "failures": [
+          {
+            "url": "https://www.grandprixworx.com/used-inventory/index.htm",
+            "status": "404",
+            "kind": "gone"
+          },
+          {
+            "url": "https://www.grandprixworx.com/all-inventory/index.htm",
+            "status": "404",
+            "kind": "gone"
+          },
+          {
+            "url": "https://www.grandprixworx.com/searchused.aspx",
+            "status": "400",
+            "kind": "other"
+          },
+          {
+            "url": "https://www.grandprixworx.com/searchnew.aspx",
+            "status": "400",
+            "kind": "other"
+          }
+        ]
+      }
+    },
+    {
+      "domain": "keystoneautoworx.com",
+      "name": "Keystone Autoworkx LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/632509873); © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "state": "PA"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "exceltruckgroup.com",
+      "name": "Excel Truck Group",
+      "kind": "rooftop",
+      "platform": "dealer.com",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/1551903620); © OpenStreetMap contributors, ODbL | probe 2026-08-25: 0 VIN vehicles in 12 fetches (0 ItemList entries, 43 sitemap urls, 0 failed fetches, platform dealer.com) — client-rendered or API-backed; leads: algolia, page-published-api-key, wordpress",
+      "location": {
+        "city": "Rock Hill",
+        "state": "SC"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "empty",
+        "fetched": 12,
+        "vehicles": 0,
+        "itemList": 0,
+        "sitemapUrls": 43,
+        "canonicalHost": "www.exceltruckgroup.com",
+        "signals": [
+          "algolia",
+          "page-published-api-key",
+          "wordpress"
+        ],
+        "failures": [
+          {
+            "url": "https://www.exceltruckgroup.com/used-inventory/index.htm",
+            "status": "404",
+            "kind": "gone"
+          },
+          {
+            "url": "https://www.exceltruckgroup.com/all-inventory/index.htm",
+            "status": "404",
+            "kind": "gone"
+          },
+          {
+            "url": "https://www.exceltruckgroup.com/searchused.aspx",
+            "status": "robots_disallowed",
+            "kind": "blocked"
+          },
+          {
+            "url": "https://www.exceltruckgroup.com/searchnew.aspx",
+            "status": "robots_disallowed",
+            "kind": "blocked"
+          }
+        ]
+      }
+    },
+    {
+      "domain": "tkautoplex.com",
+      "name": "Tony Knight Autoplex",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; relation/6011826); © OpenStreetMap contributors, ODbL | probe 2026-08-25: 0 VIN vehicles in 12 fetches (0 ItemList entries, 0 sitemap urls, 0 failed fetches, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "Clarksville",
+        "state": "TN"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "empty",
+        "fetched": 12,
+        "vehicles": 0,
+        "itemList": 0,
+        "sitemapUrls": 0,
+        "why": "nothing-to-walk",
+        "canonicalHost": "www.hugedomains.com",
+        "failures": [
+          {
+            "url": "https://www.hugedomains.com/searchused.aspx",
+            "status": "404",
+            "kind": "gone"
+          },
+          {
+            "url": "https://www.hugedomains.com/searchnew.aspx",
+            "status": "404",
+            "kind": "gone"
+          },
+          {
+            "url": "https://www.hugedomains.com/used-vehicles/",
+            "status": "403",
+            "kind": "blocked"
+          },
+          {
+            "url": "https://www.hugedomains.com/new-vehicles/",
+            "status": "403",
+            "kind": "blocked"
+          }
+        ]
+      }
+    },
+    {
+      "domain": "autorowsalestx.com",
+      "name": "Auto Row Sales Center",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "unreachable",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; node/5835841140); © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage error:TypeError",
+      "location": {
+        "city": "Bay City",
+        "state": "TX"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "transient",
+        "fetched": 1,
+        "homeStatus": "error:TypeError",
+        "retried": true
+      }
+    },
+    {
+      "domain": "vaitx.com",
+      "name": "Vintage Autohaus and Imports",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/179079933); © OpenStreetMap contributors, ODbL | probe 2026-08-25: 0 VIN vehicles in 12 fetches (0 ItemList entries, 0 sitemap urls, 0 failed fetches, platform unknown) — client-rendered or API-backed; leads: wordpress",
+      "location": {
+        "city": "Amarillo",
+        "state": "TX"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "empty",
+        "fetched": 12,
+        "vehicles": 0,
+        "itemList": 0,
+        "sitemapUrls": 0,
+        "why": "nothing-to-walk",
+        "signals": [
+          "wordpress"
+        ],
+        "failures": [
+          {
+            "url": "https://vaitx.com/searchused.aspx",
+            "status": "404",
+            "kind": "gone"
+          },
+          {
+            "url": "https://vaitx.com/searchnew.aspx",
+            "status": "404",
+            "kind": "gone"
+          },
+          {
+            "url": "https://vaitx.com/used-vehicles/",
+            "status": "404",
+            "kind": "gone"
+          },
+          {
+            "url": "https://vaitx.com/new-vehicles/",
+            "status": "404",
+            "kind": "gone"
+          }
+        ]
+      }
+    },
+    {
+      "domain": "capitalcitytruckstx.com",
+      "name": "Capital City Trucks, LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/381901269); © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "city": "Round Rock",
+        "state": "TX"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "premierkiatx.com",
+      "name": "Perry-Ellis Kia",
+      "kind": "rooftop",
+      "platform": "team-velocity",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/409075465); © OpenStreetMap contributors, ODbL | auto-promoted by probe 2026-08-25: team-velocity API, 126 vehicles",
+      "location": {
+        "city": "Lufkin",
+        "state": "TX"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "working",
+        "fetched": 2,
+        "via": "team-velocity",
+        "found": 126
+      }
+    },
+    {
+      "domain": "autosfelix.com",
+      "name": "Autos Felix",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/468095524); © OpenStreetMap contributors, ODbL | probe 2026-08-25: 0 VIN vehicles in 12 fetches (0 ItemList entries, 0 sitemap urls, 0 failed fetches, platform unknown) — client-rendered or API-backed; leads: wordpress",
+      "location": {
+        "state": "TX"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "empty",
+        "fetched": 12,
+        "vehicles": 0,
+        "itemList": 0,
+        "sitemapUrls": 0,
+        "why": "nothing-to-walk",
+        "signals": [
+          "wordpress"
+        ]
+      }
+    },
+    {
+      "domain": "superadvantagetx.com",
+      "name": "Super Advantage Auto Sales",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "unreachable",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/639608157); © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage error:TypeError",
+      "location": {
+        "city": "Gladewater",
+        "state": "TX"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "transient",
+        "fetched": 1,
+        "homeStatus": "error:TypeError",
+        "retried": true
+      }
+    },
+    {
+      "domain": "baymotorstx.com",
+      "name": "Bay Motors",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/680204545); © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "city": "Tomball",
+        "state": "TX"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "greenvilleautosalestx.com",
+      "name": "Greenville Auto Sales",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/715964422); © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "city": "Greenville",
+        "state": "TX"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "odaautoplex.com",
+      "name": "ODA Autoplex",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "unreachable",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/1020658151); © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage error:TypeError",
+      "location": {
+        "city": "Katy",
+        "state": "TX"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "transient",
+        "fetched": 1,
+        "homeStatus": "error:TypeError",
+        "retried": true
+      }
+    },
+    {
+      "domain": "bentonmotorplex.com",
+      "name": "Benton Motorplex",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/1117798830); © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "city": "Cleburne",
+        "state": "TX"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "planetautosales.com",
+      "name": "Planet Auto Sales",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/1315718187); © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "city": "Lindon",
+        "state": "UT"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "supremeautomotives.com",
+      "name": "Supreme Automotive",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/1551134926); © OpenStreetMap contributors, ODbL | probe 2026-08-25: 0 VIN vehicles in 12 fetches (0 ItemList entries, 22 sitemap urls, 0 failed fetches, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "Lehi",
+        "state": "UT"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "empty",
+        "fetched": 12,
+        "vehicles": 0,
+        "itemList": 0,
+        "sitemapUrls": 22,
+        "canonicalHost": "www.supremeautomotives.com",
+        "failures": [
+          {
+            "url": "https://www.supremeautomotives.com/inventory/used",
+            "status": "404",
+            "kind": "gone"
+          }
+        ],
+        "retried": true
+      }
+    },
+    {
+      "domain": "stevenhyundai.com",
+      "name": "Steven Hyundai",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/1109880293); brand: Hyundai; © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "city": "Harrisonburg",
+        "state": "VA"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "realityautos.net",
+      "name": "Reality Auto Sales",
+      "kind": "rooftop",
+      "platform": "automanager",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; node/11363383240); © OpenStreetMap contributors, ODbL | auto-promoted by probe 2026-08-25: 10 VIN vehicles on 1 page(s), platform automanager",
+      "location": {
+        "state": "WA"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "working",
+        "fetched": 2,
+        "vehicles": 10,
+        "canonicalHost": "www.realityautos.net"
+      }
+    },
+    {
+      "domain": "seattleautowerx.com",
+      "name": "Seattle Auto Werx",
+      "kind": "rooftop",
+      "platform": "dealercarsearch",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; node/12720624801); © OpenStreetMap contributors, ODbL | auto-promoted by probe 2026-08-25: 44 VIN vehicles on 1 page(s), platform dealercarsearch",
+      "location": {
+        "state": "WA"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "working",
+        "fetched": 2,
+        "vehicles": 44
+      }
+    },
+    {
+      "domain": "outpostev.com",
+      "name": "Outpost EV",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/365146622); © OpenStreetMap contributors, ODbL | probe 2026-08-25: 0 VIN vehicles in 12 fetches (0 ItemList entries, 142 sitemap urls, 0 failed fetches, platform unknown) — client-rendered or API-backed; leads: api-hosts:api.fontshare.com, nextjs",
+      "location": {
+        "city": "Enumclaw",
+        "state": "WA"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "empty",
+        "fetched": 12,
+        "vehicles": 0,
+        "itemList": 0,
+        "sitemapUrls": 142,
+        "apiHosts": [
+          "api.fontshare.com"
+        ],
+        "signals": [
+          "nextjs"
+        ],
+        "failures": [
+          {
+            "url": "https://outpostev.com/searchused.aspx",
+            "status": "404",
+            "kind": "gone"
+          },
+          {
+            "url": "https://outpostev.com/searchnew.aspx",
+            "status": "404",
+            "kind": "gone"
+          },
+          {
+            "url": "https://outpostev.com/used-vehicles/",
+            "status": "404",
+            "kind": "gone"
+          },
+          {
+            "url": "https://outpostev.com/new-vehicles/",
+            "status": "404",
+            "kind": "gone"
+          }
+        ]
+      }
+    },
+    {
+      "domain": "washingtonusedcardealer.com",
+      "name": "Advantage Used Car and Truck Center",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/558079539); © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage 403",
+      "location": {
+        "city": "Bremerton",
+        "state": "WA"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "blocked",
+        "fetched": 1,
+        "homeStatus": "403"
+      }
+    },
+    {
+      "domain": "rhodestowingeasttroy.com",
+      "name": "Rhode's Towing -  Repair - Sales, Inc",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/1548517465); © OpenStreetMap contributors, ODbL | probe 2026-08-25: 0 VIN vehicles in 12 fetches (0 ItemList entries, 0 sitemap urls, 0 failed fetches, platform unknown) — client-rendered or API-backed; leads: api-hosts:www.istudiosg.com",
+      "location": {
+        "city": "East Troy",
+        "state": "WI"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "empty",
+        "fetched": 12,
+        "vehicles": 0,
+        "itemList": 0,
+        "sitemapUrls": 0,
+        "why": "nothing-to-walk",
+        "apiHosts": [
+          "www.istudiosg.com"
+        ],
+        "failures": [
+          {
+            "url": "https://rhodestowingeasttroy.com/searchused.aspx",
+            "status": "404",
+            "kind": "gone"
+          },
+          {
+            "url": "https://rhodestowingeasttroy.com/searchnew.aspx",
+            "status": "404",
+            "kind": "gone"
+          },
+          {
+            "url": "https://rhodestowingeasttroy.com/used-vehicles/",
+            "status": "404",
+            "kind": "gone"
+          },
+          {
+            "url": "https://rhodestowingeasttroy.com/new-vehicles/",
+            "status": "404",
+            "kind": "gone"
+          }
+        ]
+      }
+    },
+    {
+      "domain": "westrux.com",
+      "name": "Westrux",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/456772631); © OpenStreetMap contributors, ODbL | probe 2026-08-25: 0 VIN vehicles in 12 fetches (0 ItemList entries, 20 sitemap urls, 0 failed fetches, platform unknown) — likely needs a platform extractor",
+      "location": {
+        "city": "Santa Fe Springs",
+        "state": "CA"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "empty",
+        "fetched": 12,
+        "vehicles": 0,
+        "itemList": 0,
+        "sitemapUrls": 20,
+        "canonicalHost": "www.westrux.com",
+        "failures": [
+          {
+            "url": "https://www.westrux.com/searchused.aspx",
+            "status": "404",
+            "kind": "gone"
+          },
+          {
+            "url": "https://www.westrux.com/searchnew.aspx",
+            "status": "404",
+            "kind": "gone"
+          },
+          {
+            "url": "https://www.westrux.com/inventory/used",
+            "status": "404",
+            "kind": "gone"
+          }
+        ],
+        "retried": true
+      }
+    },
+    {
+      "domain": "qcautoplex.com",
+      "name": "QCAutoplex.com & QCjeeps.com",
+      "kind": "rooftop",
+      "platform": "dealerfire",
+      "robots": "unknown",
+      "status": "working",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/698977680); © OpenStreetMap contributors, ODbL | auto-promoted by probe 2026-08-25: 4 VIN vehicles on 1 page(s), platform dealerfire",
+      "location": {
+        "city": "Eldridge",
+        "state": "IA"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "working",
+        "fetched": 2,
+        "vehicles": 4,
+        "canonicalHost": "www.qcautoplex.com"
+      }
+    },
+    {
+      "domain": "windhamautosalesannex.com",
+      "name": "Windham Auto Sales Annex",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "unreachable",
+      "notes": "Discovered via OSM Overpass national shop=car sweep 2026-08-24 (website tag; way/35061268); © OpenStreetMap contributors, ODbL | probe 2026-08-25: homepage error:TypeError",
+      "location": {
+        "city": "Derry",
+        "state": "NH"
+      },
+      "probe": {
+        "date": "2026-08-25",
+        "verdict": "transient",
+        "fetched": 1,
+        "homeStatus": "error:TypeError",
+        "retried": true
+      }
     }
   ],
   "_sources": [
