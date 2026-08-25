@@ -217,7 +217,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       {
         question: "Does the Hyundai Ioniq 6 precondition its battery before fast charging?",
         answer:
-          "The battery heater is standard on every Ioniq 6, and battery conditioning is a driver-selected mode reached through EV Settings on the infotainment screen. Setting a DC charging station as the navigation destination optimizes battery temperature only while that mode is already switched on. The mode also engages on its own if the battery temperature is low during driving or when the scheduled air conditioner/heater is activated, and will not engage when the battery level is too low.",
+          "On the 2023 and 2024 Ioniq 6, whose owner's manuals are the only ones this answer rests on: the battery heater is standard on every trim, and battery conditioning is a driver-selected mode reached through EV Settings on the infotainment screen. Setting a DC charging station as the navigation destination optimizes battery temperature only while that mode is already switched on. The mode also engages on its own if the battery temperature is low during driving or when the scheduled air conditioner/heater is activated, and will not engage when the battery level is too low. No 2025 Ioniq 6 owner's manual could be retrieved from Hyundai's own host, so no 2025-specific preconditioning behavior is claimed.",
       },
     ],
   },

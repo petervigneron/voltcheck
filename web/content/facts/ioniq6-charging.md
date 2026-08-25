@@ -66,12 +66,14 @@
 
 [^8]: Hyundai, *2023 IONIQ 6 Owner's Manual* (PDF), pp. 1-42 to 1-43 (PDF pages 48-49). https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2023/ioniq-6/2023-Ioniq-6-OM.pdf
 
-[^9]: Hyundai, *2024 IONIQ 6 Owner's Manual* (PDF), p. 1-43 (PDF page 51). https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2024/ioniq-6/2024%20Ioniq%206%20OM.pdf
+[^9]: Hyundai, *2024 IONIQ 6 Owner's Manual* (PDF), pp. 1-42 to 1-43 (PDF pages 50-51). Page 1-42 carries "Setting battery conditioning mode" and its activation path; page 1-43 carries the Information bullets quoted above. https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2024/ioniq-6/2024%20Ioniq%206%20OM.pdf
+
+[^10]: Hyundai News, "Hyundai Announces 2026 Model Year Changes" (release 4513), model-list footnote. https://www.hyundainews.com/releases/4513. Read 2026-08-25; Hyundai states on the page that "This document will be updated regularly," so it carries no fixed publication date. Fetched via a real browser session; the release body is rendered client-side.
 
 ## Scope note
 
 Model years 2023, 2024, and 2025 verified against Hyundai's own US spec sheets. Preconditioning verified against Hyundai's own 2023 and 2024 US owner's manuals; a 2025 Ioniq 6 owner's manual could not be retrieved from Hyundai's own host (both the hyphenated and space-encoded filename patterns that work for other years returned HTTP 404), so no 2025-specific preconditioning wording is claimed here.
 
-Model year 2026 is not covered. No standard-trim 2026 IONIQ 6 specification sheet was found on hyundainews.com. Nothing on this page should be read as applying to a 2026 Ioniq 6, or to the IONIQ 6 N, whose charging hardware was not checked.
+Model year 2026 is not covered, and Hyundai says why: there is no 2026 Ioniq 6 sedan. Hyundai's own words, in the footnote to its 2026 model-year change list: "The IONIQ 6 has been discontinued. Going forward, our award-winning IONIQ 6 lineup will consist of the all-new IONIQ 6 N." Hyundai adds that "IONIQ 6 N arrives later this year" and that "In the meantime, 2025 IONIQ 6 sedans continue to be available at dealers." The IONIQ 6 N is a different car whose charging hardware was not checked for this page, so nothing above should be read as applying to it.[^10]
 
 The Supercharger figures under "Connector and NACS adapter" are Hyundai's specification for its CCS-to-NACS adapter, not for the Ioniq 6. A vehicle's own maximum rate can be lower than the adapter's. Hyundai publishes no Ioniq 6-specific Supercharger rate, so none is stated here.
