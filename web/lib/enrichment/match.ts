@@ -6,9 +6,10 @@ import { RESEARCH_ROWS_4 } from "./data4";
 import { RESEARCH_ROWS_5 } from "./data5";
 import { RESEARCH_ROWS_6 } from "./data6";
 import { RESEARCH_ROWS_9 } from "./data9";
+import { RESEARCH_ROWS_10 } from "./data10";
 import { applyBackfill } from "./backfill";
 
-const ALL_ROWS = [...ENRICHMENT_ROWS, ...RESEARCH_ROWS, ...RESEARCH_ROWS_3, ...RESEARCH_ROWS_4, ...RESEARCH_ROWS_5, ...RESEARCH_ROWS_6, ...RESEARCH_ROWS_9];
+const ALL_ROWS = [...ENRICHMENT_ROWS, ...RESEARCH_ROWS, ...RESEARCH_ROWS_3, ...RESEARCH_ROWS_4, ...RESEARCH_ROWS_5, ...RESEARCH_ROWS_6, ...RESEARCH_ROWS_9, ...RESEARCH_ROWS_10];
 
 const norm = (s?: string) => (s ?? "").toUpperCase().replace(/[^A-Z0-9]/g, "");
 
