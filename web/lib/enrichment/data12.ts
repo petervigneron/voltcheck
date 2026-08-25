@@ -258,34 +258,77 @@ const R: EnrichmentRow[] = [];
   // value, not a grade, and the descriptor is what actually picks the row.
   const GEN1 = "Generation 1";
 
-  // ── WHY EVERY ROW HERE IS SILENT ON THE HEAT PUMP ────────────────────────
-  // Control-tested rather than assumed. Every page in lucidmotors.com's own
-  // sitemap that could carry the fact was fetched this pass — 49 /stories/
-  // releases plus /air, /air-pure, /air-touring, /air-grand-touring,
-  // /air-sapphire, /air-vs-competition, /technologies, /tech-talks and the
-  // charging and knowledge-base pages — and the word "pump" appears on
-  // exactly none of the 58, for any Lucid. The control that makes that worth
-  // believing rather than a broken grep: over the same 58 files "range" hits
-  // 44 and "battery" hits 40. Neither MY2024 technical-spec sheet has a
-  // thermal section at all, and Lucid publishes no owner's manual outside its
-  // login-walled portal.
+  // ── THE HEAT PUMP, DATED OUT OF LUCID'S OWN TWO RELEASES ─────────────────
+  // An earlier pass left all twelve rows silent here, and its control test was
+  // sound enough to keep: every page in lucidmotors.com's own sitemap that
+  // could carry the fact was fetched — 49 /stories/ releases plus /air,
+  // /air-pure, /air-touring, /air-grand-touring, /air-sapphire,
+  // /air-vs-competition, /technologies, /tech-talks and the charging and
+  // knowledge-base pages — and "pump" appears on none of the 58, while over
+  // the same files "range" hits 44 and "battery" 40. Neither MY2024
+  // technical-spec sheet has a thermal section, and Lucid's owner's manuals
+  // are behind its login. The consumer site really does not answer this.
   //
-  // So the answer is not "we did not look": as Lucid's published record stands
-  // today, the company says nothing about heat-pump hardware on any Air of any
-  // year, and a row that filled this in would be guessing.
+  // Lucid's INVESTOR-RELATIONS newsroom does, and it is the same company
+  // speaking. The two releases the earlier pass wanted were fetched from
+  // ir.lucidmotors.com DIRECTLY this pass — HTTP 200, read in full, not from
+  // an archive mirror, which is what 503'd last time and left these rows
+  // empty. Both quotes below were read off the fetched pages, not repeated
+  // from a summary of them.
   //
-  // WHAT WOULD CLOSE THIS, for whoever picks it up: Lucid's April 2024 Grand
-  // Touring release and its July 2024 MY2025 lineup release are both reported
-  // to date the fitment (Sapphire first, then the 2024 Grand Touring, then the
-  // whole lineup), and data3's MY2025 rows already quote the second one. Both
-  // have been removed from lucidmotors.com, and web.archive.org answered 503
-  // to every attempt over the whole of this pass. Read them and four rows here
-  // — the 2024 Grand Touring and all three 2026 cars — become answerable, and
-  // the 2022/2023 rows get a dated "not yet" instead of a silence. Until then
-  // this file will not repeat a quotation it has not read; that is exactly the
-  // fabricated-citation failure the fact-sheet protocol exists to prevent.
-  const LUCID_HEAT_PUMP_SILENCE =
-    "No page now published on lucidmotors.com uses the term heat pump for any Lucid, and neither MY2024 technical-spec sheet has a thermal section";
+  // Between them the two releases date the fitment precisely, and the dating
+  // is what splits this file three ways rather than filling it in uniformly.
+
+  // 17 April 2024, "The 2024 Lucid Air Grand Touring: The Longest-Range EV
+  // Gets Even Better". The Grand Touring, and only it, gains the pump for
+  // MY2024: "Now equipped with the heat pump from the Air Sapphire, the GT is
+  // even more capable of delivering outstanding range even in extremely cold
+  // conditions." Rawlinson says the same in his quote ("including the Air
+  // Sapphire heat pump"), and the lineup rundown repeats it under the Grand
+  // Touring's own paragraph — "an energy-saving heat pump".
+  const HEAT_PUMP_APR_2024 =
+    "https://ir.lucidmotors.com/news-releases/news-release-details/2024-lucid-air-grand-touring-longest-range-ev-gets-even-better/";
+
+  // 16 July 2024, the MY2025 lineup release. "The heat pump first employed on
+  // Lucid Sapphire now becomes standard across the lineup," and, in full:
+  // "First introduced in the Air Sapphire and then added to the range-king Air
+  // Grand Touring for 2024, this ultra-compact, high-performance heat pump is
+  // now standard on every Lucid Air." data3's MY2025 rows already quote the
+  // first of those sentences.
+  const HEAT_PUMP_JUL_2024 =
+    "https://ir.lucidmotors.com/news-releases/news-release-details/lucid-raises-bar-worlds-most-efficient-car-achieving-landmark-50";
+
+  // WHY THE 2024 PURE AND TOURING SAY "none" RATHER THAN ABSTAINING, which is
+  // the one judgement call in this block. The July release does not merely
+  // omit them; it gives an ordered adoption history — Sapphire, then the Grand
+  // Touring "for 2024", then "every Lucid Air" — and announces that the pump
+  // "now becomes standard across the lineup" for MY2025. A car that already
+  // had one cannot be a car the feature "becomes standard" on. The April
+  // release is the second witness: it enumerates the whole MY2024 line (Pure,
+  // Touring, Grand Touring, Sapphire) in four consecutive paragraphs and
+  // attributes the pump to the Grand Touring's alone.
+  //
+  // That is a manufacturer stating an absence, so it is encoded the way this
+  // corpus already encodes one — data.ts's Ioniq 5 rows carry
+  // `heatPump: f("none", "mfr", ...)` off Hyundai's feature sheets rather than
+  // abstaining. The difference from Hyundai's case is real and is why these
+  // two facts are `medium` and not `high`: Hyundai's sheet tabulates fitment
+  // per trim, whereas Lucid's absence is entailed by a timeline. `confidence`
+  // is not rendered — only `source` puts the "est" marker on the page — so
+  // that grading is an auditor's record, not a hedge shown to a shopper.
+  //
+  // AND WHY 2022 AND 2023 STILL ABSTAIN, on evidence that looks similar. The
+  // same timeline arguably reaches them too, and it was tempting to sweep all
+  // eight pre-GT cars into "none" together. The line held here is documentary,
+  // not chronological: the April 2024 release ENUMERATES the 2024 Pure and
+  // Touring and withholds the pump from them, while no release found this pass
+  // enumerates a 2022 or 2023 lineup at all. One is a document listing a car
+  // without the feature; the other is inferring backwards from a document that
+  // never mentions those cars. The first is Lucid saying it, the second is us
+  // saying it. Their abstention reason now carries the timeline as context,
+  // which is what the earlier pass wanted and could not fetch.
+  const LUCID_HEAT_PUMP_PRE_2024 =
+    "Lucid dates the Air's heat pump to the Sapphire and then the Grand Touring “for 2024”, and no release found this pass enumerates a 2022 or 2023 Air's thermal equipment either way";
 
   // ───────────────────────────── MY2022 ──────────────────────────────────
   // 28 live: 26 listings that say "Grand Touring", one that says "Generation
@@ -325,7 +368,7 @@ const R: EnrichmentRow[] = [];
       packUsableKwh:
         "lucidmotors.com publishes no MY2022 technical-spec sheet, and vPIC's 112 kWh is one constant filed against every 2022 Lucid pattern, including a Touring Lucid never sold that year",
       heatPump:
-        LUCID_HEAT_PUMP_SILENCE,
+        LUCID_HEAT_PUMP_PRE_2024,
     },
   });
 
@@ -399,7 +442,7 @@ const R: EnrichmentRow[] = [];
       packUsableKwh:
         "lucidmotors.com publishes no MY2023 technical-spec sheet, and a neighbouring year is not a source: the Pure's own pack moved 88 to 84 kWh across one model year",
       heatPump:
-        LUCID_HEAT_PUMP_SILENCE,
+        LUCID_HEAT_PUMP_PRE_2024,
     },
   });
 
@@ -459,9 +502,14 @@ const R: EnrichmentRow[] = [];
       },
       charging: charging(),
       warranty: warranty(WARRANTY_MY2024_SPLIT),
-      abstains: {
-        heatPump:
-          LUCID_HEAT_PUMP_SILENCE,
+      thermal: {
+        heatPump: f<"none">(
+          "none",
+          "mfr",
+          "medium",
+          "Lucid adds the heat pump to the Grand Touring “for 2024” and makes it “standard on every Lucid Air” only for 2025",
+          HEAT_PUMP_JUL_2024
+        ),
       },
     },
     {
@@ -482,9 +530,14 @@ const R: EnrichmentRow[] = [];
         architectureV: f(700, "mfr", "high", "Platform stated as 700V+", TOURING_SPECS_2024),
       }),
       warranty: warranty(WARRANTY_MY2024_SPLIT),
-      abstains: {
-        heatPump:
-          LUCID_HEAT_PUMP_SILENCE,
+      thermal: {
+        heatPump: f<"none">(
+          "none",
+          "mfr",
+          "medium",
+          "Lucid adds the heat pump to the Grand Touring “for 2024” and makes it “standard on every Lucid Air” only for 2025",
+          HEAT_PUMP_JUL_2024
+        ),
       },
     },
     {
@@ -501,10 +554,18 @@ const R: EnrichmentRow[] = [];
       },
       charging: charging(),
       warranty: warranty(WARRANTY_MY2024_SPLIT),
+      thermal: {
+        heatPump: f<"standard">(
+          "standard",
+          "mfr",
+          "high",
+          "“Now equipped with the heat pump from the Air Sapphire, the GT is even more capable” — the MY2024 Grand Touring is the first Air outside the Sapphire to carry one",
+          HEAT_PUMP_APR_2024
+        ),
+      },
       abstains: {
         packUsableKwh:
           "lucidmotors.com publishes no US MY2024 Grand Touring sheet, and the Pure's pack moved 88 to 84 kWh between 2024 and 2025, so a neighbouring year is not a source",
-        heatPump: LUCID_HEAT_PUMP_SILENCE,
       },
     }
   );
@@ -518,6 +579,31 @@ const R: EnrichmentRow[] = [];
   // to 431 EPA miles — which is both why it gets its own row and why no pack
   // figure is carried over. The Pure and Grand Touring are unchanged on
   // paper: EPA's 2026 entries repeat the 2025 numbers to the decimal.
+  //
+  // On the heat pump these three rows rest on the July 2024 sentence rather
+  // than a MY2026 document, so the reach is worth stating. Lucid's 22 July
+  // 2025 MY2026 lineup release was fetched this pass and does not use the
+  // word — "pump" appears zero times, against 23 "range" and 3 "battery" in
+  // the same file, so that is the document being silent and not a broken
+  // grep. What the July 2024 wording has that a pack figure does not is the
+  // absence of a year bound: "now standard on EVERY Lucid Air", a statement
+  // about fitment across the line, where 84 kWh is a per-model-year
+  // measurement that demonstrably moved (88 to 84, and Lucid credits "new
+  // higher density battery cells" for the 2026 Touring). That is why this
+  // block carries one forward and refuses the other. data3's MY2025 rows
+  // already read the same sentence as "MY2025 onward", so a hedge here would
+  // put this file at odds with its sibling on the same car. And the MY2026
+  // release does revisit thermal hardware — "a new air conditioning
+  // compressor from Lucid Gravity" on every Air — while withdrawing nothing.
+  const heatPump2026 = () =>
+    f<"standard">(
+      "standard",
+      "mfr",
+      "high",
+      "“this ultra-compact, high-performance heat pump is now standard on every Lucid Air”, from MY2025 on",
+      HEAT_PUMP_JUL_2024
+    );
+
   R.push(
     {
       id: "lucid-air-2026-pure-rwd",
@@ -533,10 +619,10 @@ const R: EnrichmentRow[] = [];
       },
       charging: charging(),
       warranty: warranty(WARRANTY_MY2026),
+      thermal: { heatPump: heatPump2026() },
       abstains: {
         packUsableKwh:
           "lucidmotors.com publishes no MY2026 technical-spec sheet for any Air, and carrying MY2025's 84 kWh forward would be a guess rather than a figure",
-        heatPump: LUCID_HEAT_PUMP_SILENCE,
       },
     },
     {
@@ -553,10 +639,10 @@ const R: EnrichmentRow[] = [];
       },
       charging: charging({ dcPeakKw: f(250, "mfr", "high", undefined, RELEASE_2026) }),
       warranty: warranty(WARRANTY_MY2026),
+      thermal: { heatPump: heatPump2026() },
       abstains: {
         packUsableKwh:
           "Lucid credits the 2026 Touring's range gain to new higher density cells and publishes no capacity for it, so MY2025's 92 kWh is the wrong car's figure",
-        heatPump: LUCID_HEAT_PUMP_SILENCE,
       },
     },
     {
@@ -573,10 +659,10 @@ const R: EnrichmentRow[] = [];
       },
       charging: charging(),
       warranty: warranty(WARRANTY_MY2026),
+      thermal: { heatPump: heatPump2026() },
       abstains: {
         packUsableKwh:
           "lucidmotors.com publishes no MY2026 technical-spec sheet for any Air, and carrying MY2025's 117 kWh forward would be a guess rather than a figure",
-        heatPump: LUCID_HEAT_PUMP_SILENCE,
       },
     }
   );

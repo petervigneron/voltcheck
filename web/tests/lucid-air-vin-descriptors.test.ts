@@ -148,6 +148,67 @@ test("a Sapphire matches nothing rather than a Grand Touring row", () => {
   assert.equal(r.candidates, undefined);
 });
 
+// The heat pump is dated, not uniform, and the whole value of these rows is
+// the boundary: Lucid put the pump on the Sapphire, added it to the Grand
+// Touring for MY2024 (17 April 2024 release), and made it "standard on every
+// Lucid Air" for MY2025 (16 July 2024 release). So a 2024 Grand Touring has
+// one and a 2024 Touring — the more expensive-looking sibling on a dealer
+// lot, and the far more common car in this feed — does not. Nothing on the
+// page shows that boundary; it is one word on each of two cards.
+//
+// The failure this pins is the tempting one: somebody sees three 2026 rows
+// and a 2024 Grand Touring saying "standard", decides the model is simply
+// heat-pump-equipped, and levels the 2024 Pure and Touring up to match.
+test("MY2024 splits on the heat pump: Grand Touring yes, Pure and Touring no", () => {
+  const hp = (vin: string, year: number, trim: string, drive: string) =>
+    matchEnrichment(decode({ vin, modelYear: year, trim, driveType: drive }), null).exact?.thermal
+      ?.heatPump;
+
+  assert.equal(hp(GT_2024, 2024, "Grand Touring", "AWD")?.value, "standard");
+  assert.equal(hp(TOURING_2024, 2024, "Touring", "AWD")?.value, "none");
+  assert.equal(hp(PURE_2024, 2024, "Pure", "RWD")?.value, "none");
+
+  // Both are Lucid's own words, so neither carries the "est" marker.
+  for (const f of [
+    hp(GT_2024, 2024, "Grand Touring", "AWD"),
+    hp(TOURING_2024, 2024, "Touring", "AWD"),
+  ]) {
+    assert.equal(f?.source, "mfr");
+  }
+});
+
+test("every 2026 Air has the heat pump, which is what 'standard on every Lucid Air' bought", () => {
+  const y2026 = (vin: string, trim: string, drive: string) =>
+    matchEnrichment(decode({ vin, modelYear: 2026, trim, driveType: drive }), null).exact!;
+  const gt = y2026("50EA1GBA8TA015890", "Grand Touring", "AWD");
+  const touring = y2026("50EA1TEA8TA015890", "Touring", "AWD");
+  const pure = y2026("50EA1PGA8TA015890", "Pure", "RWD");
+  for (const r of [gt, touring, pure]) {
+    assert.equal(r.thermal?.heatPump?.value, "standard", `${r.id} should carry the pump`);
+    assert.equal(r.thermal?.heatPump?.source, "mfr");
+  }
+});
+
+// 2022 and 2023 are the years Lucid never wrote about either way. The rows
+// stay silent, and — this is the part worth pinning — silence here has to be
+// DECLARED, not merely absent, or it is indistinguishable from a row nobody
+// finished. A future pass that finds a MY2022/23 source should delete the
+// abstention and set the fact; what it must not do is quietly infer "none"
+// from the 2024 boundary above, which is why this asserts the field is empty
+// rather than asserting it is "none".
+test("2022 and 2023 declare their silence on the heat pump rather than guessing", () => {
+  const rows = [
+    matchEnrichment(decode({ vin: GT_2022, modelYear: 2022, trim: "Grand Touring", driveType: "AWD" }), null).exact!,
+    matchEnrichment(decode({ vin: DREAM_P_2022, modelYear: 2022, trim: "Dream Edition", driveType: "AWD" }), null).exact!,
+    matchEnrichment(decode({ vin: PURE_AWD_2023, modelYear: 2023, trim: "Pure", driveType: "AWD" }), null).exact!,
+    matchEnrichment(decode({ vin: GEN1_2023_GT, modelYear: 2023, trim: "Generation 1", driveType: "AWD" }), null).exact!,
+  ];
+  for (const r of rows) {
+    assert.equal(r.thermal?.heatPump, undefined, `${r.id} has no source for this`);
+    assert.ok(r.abstains?.heatPump, `${r.id} must say why it is silent`);
+  }
+});
+
 // data3 owns MY2025 and a separate workstream is adjudicating those rows, so
 // this asserts the SPANS stay disjoint rather than naming data3's row ids —
 // the failure worth catching is a 2024 or 2026 row growing into 2025, not a
