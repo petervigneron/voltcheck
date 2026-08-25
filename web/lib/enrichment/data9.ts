@@ -368,4 +368,119 @@ const R: EnrichmentRow[] = [];
   );
 }
 
+// ────────────────────────────── JEEP RECON ────────────────────────────────
+// 319 live listings on 2026-08-25, every one of them a MOAB, and no row. The
+// Recon is BEV-only and no petrol car has ever worn the nameplate, so the
+// model string needs no trim guard — vPIC decodes 3C4RJACK to make JEEP,
+// model "Recon", trim "Moab", ElectrificationLevel BEV.
+//
+// The row abstains on the charge port, which is the interesting part. Jeep's
+// own launch release and press kit describe the battery, the drive modules
+// and the underbody shields in detail and never name the connector; the
+// Stellantis Supercharger announcement puts the Recon in the 2026 access wave
+// and then says in its own words that "additional details on network
+// accessibility and adapter information … will be shared later". A 400-volt
+// Stellantis BEV is almost certainly CCS1, and "almost certainly" is exactly
+// what this field must not print. Heat pump abstains on the standing rule
+// that Stellantis documents never use the term, so silence proves nothing.
+{
+  const RECON_PR = "https://media.stellantisnorthamerica.com/newsrelease.do?id=27220&mid=";
+  const RECON_FAQ = "https://www.jeep.com/recon/faq.html";
+  R.push({
+    id: "recon-2026",
+    make: "JEEP",
+    model: "Recon",
+    modelYears: [2026, 2026],
+    drive: "AWD",
+    packVariant: "100 kWh",
+    battery: { packGrossKwh: f(100, "mfr", "high", undefined, RECON_PR) },
+    range: {
+      epaRangeMi: f(222, "mfr", "high", undefined, epa(50449)),
+      epaKwhPer100Mi: f(48, "mfr", "high", undefined, epa(50449)),
+    },
+    charging: { architectureV: f(400, "mfr", "high", undefined, RECON_PR) },
+    warranty: {
+      batteryYears: f(8, "mfr", "high", undefined, RECON_FAQ),
+      batteryMiles: f(100_000, "mfr", "high", undefined, RECON_FAQ),
+    },
+    abstains: {
+      portStandard: "No Jeep or Stellantis document consulted this pass names the Recon's charge connector",
+      heatPump: "Stellantis documents never use the term, so their silence is not evidence of absence",
+    },
+  });
+}
+
+// ───────────────────────────── DODGE HORNET R/T ───────────────────────────
+// 273 live listings, all of them the R/T plug-in hybrid, filed under the
+// nameplate the petrol Hornet GT shares. Guarded on the badge, and the guard
+// has a wrinkle: norm("R/T") is "RT", two characters, and the matcher demands
+// an exact match below three — so the bare "R/T" key catches only a listing
+// whose whole trim is "R/T" (123 of them) and the longer spellings need their
+// own keys. "R/T Plus" covers "R/T Plus EAWD" and "R/T Plus PHEV" by
+// substring, and does not reach the petrol "GT Plus" in either direction.
+//
+// One row, not two: R/T and R/T Plus are the same powertrain — 1.3-litre
+// turbo, 89 kW motor, 15.5 kWh pack — and EPA files one record for both.
+{
+  const HORNET_FACTS = "https://www.media.stellantisnorthamerica.com/newsrelease.do?id=25012&mid=5";
+  // "R" is not a typo. specTrim() cuts a trim at the first slash, so the
+  // browse shard files all 273 of these as trim "R" while the per-listing
+  // path sees "R/T" — one car, two spellings, and a row that matched only one
+  // of them would have the grid and the card disagreeing. A one-character key
+  // is exact-match-only under trimStringsOverlap, so it can reach nothing
+  // else: the petrol Hornet GT cuts to "GT", never to "R".
+  const HORNET_TRIMS = ["R/T", "R", "R/T Plus", "R/T EAWD", "R/T PHEV"];
+  R.push({
+    id: "hornet-rt-2024-25",
+    make: "DODGE",
+    model: "Hornet",
+    modelYears: [2024, 2025],
+    trim: HORNET_TRIMS,
+    drive: "AWD",
+    packVariant: "PHEV",
+    battery: { packGrossKwh: f(15.5, "mfr", "high", undefined, HORNET_FACTS) },
+    range: {
+      epaRangeMi: f(33, "mfr", "high", "Electric-only EPA range", epa(47275)),
+      epaRangeTotalMi: f(360, "mfr", "high", undefined, epa(47275)),
+      mpgeElectric: f(77, "mfr", "high", undefined, epa(47275)),
+      mpgeCombined: f(47, "mfr", "high", undefined, epa(47275)),
+      mpgGasoline: f(29, "mfr", "high", undefined, epa(47275)),
+    },
+    charging: {
+      acOnboardKw: f(7.4, "mfr", "high", "Full charge in about 2.5 hours on Level 2", HORNET_FACTS),
+      // Same treatment data4 and data6 give every plug-in hybrid whose maker
+      // never names the inlet: J1772 is the only AC connector a US PHEV
+      // ships, but the value stays `est` because no document said it.
+      portStandard: f<"J1772">("J1772", "est", "high", "AC charging only, no DC fast charge"),
+      dcFastCharging: f<"none">("none", "est", "high", "AC charging only"),
+    },
+    abstains: {
+      heatPump: "Stellantis documents never use the term, so their silence is not evidence of absence",
+      batteryWarranty: "No Dodge page states a Hornet high-voltage battery term and the model is discontinued",
+    },
+  });
+}
+
+// ── VOLVO XC40 — bare nameplate, ATTEMPTED AND HELD BACK ──────────────────
+// 286 live listings file the electric XC40 as bare "XC40" with the badge in
+// the trim ("Recharge Ultimate, Twin Motor, Electric"), the same shape as the
+// XC90/XC60 T8 rows in data6, and the guard is already worked out and safe:
+// ["Recharge", "Twin", "Single Motor", "Pure Elec", "P8"] resolves every live
+// spelling and matches no petrol grade name (probed 2026-08-25).
+//
+// It is not here because deriving the rows from data4's would take
+// enrichment-coverage from 250 core-field failures to 254. data4's four XC40
+// Recharge rows carry only EPA range and charge port — no pack size, no heat
+// pump, no battery warranty — so each derived row is a fifth, sixth, seventh
+// and eighth half-stocked cohort, and the ratchet is right to say so.
+//
+// Filling those three fields is the real fix and it is blocked, not skipped:
+// volvocars.com/us/media/press-releases/… now answers 403 to both curl and
+// the fetch tool, and the control that makes that worth writing down is that
+// data6 cites two pages on that exact host, so the block is new rather than a
+// bad URL. The three facts needed are the 2021–23 twin, 2024 twin and 2024
+// single pack sizes. Whoever unblocks that host should add them to data4's
+// rows and then bring these derived rows back — do NOT paper over it with
+// abstentions, which is what the ratchet exists to catch.
+
 export const RESEARCH_ROWS_9: EnrichmentRow[] = R;
