@@ -774,6 +774,41 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       },
     ],
   },
+
+  // batch5
+  {
+    make: "tesla",
+    model: "model-3",
+    topic: "heat-pump",
+    contentFile: "model-3-heat-pump",
+    pageTitle: "Tesla Model 3 heat pump: which cars have one, by build date | Voltcheck",
+    description:
+      "Tesla says Model 3 cars built between about July 2017 and October 2020 do not have a heat pump, and cars built afterward do. Sourced to Tesla's own owner's manual.",
+    breadcrumbLabel: "Tesla Model 3 heat pump",
+    dateModified: "2026-08-25",
+    faq: [
+      {
+        question: "Does the Tesla Model 3 have a heat pump?",
+        answer:
+          "It depends on when the car was built, and Tesla states the boundary as a manufacture date rather than a model year. Tesla's own words in the Model 3 Owner's Manual: \"Vehicles manufactured between approximately July 2017 and October 2020 do not have a heat pump,\" and \"Vehicles manufactured afterward have a heat pump.\" The word \"approximately\" is Tesla's. No Tesla document behind this page maps that date to a model year, so a Model 3 built near October 2020 cannot be resolved from its model year alone.",
+      },
+      {
+        question: "How do I tell if a used Tesla Model 3 has a heat pump?",
+        answer:
+          "Tesla publishes a per-car check, in its own words: \"to determine if your vehicle has a heat pump, touch Controls > Software > Additional Vehicle Information.\" The instruction appears on both the Operating Climate Controls page and the Cold Weather Best Practices page of the Model 3 Owner's Manual's 2017-2023 edition.",
+      },
+      {
+        question: "Tesla's manual lists a Heat Pump Assembly for the Model 3 — doesn't that settle it?",
+        answer:
+          "No. The Electric Vehicle Components page lists \"Heat Pump Assembly\" among the Model 3's High Voltage Components with no year, trim or \"if equipped\" qualifier, and it reads that way in both editions of the manual, the 2017-2023 edition and the current 2024+ edition. The 2017-2023 edition covers cars Tesla itself says do not have a heat pump, so that list cannot be read as a per-year answer for that span.",
+      },
+      {
+        question: "Which Model 3 trims have a heat pump?",
+        answer:
+          "This page makes no trim claim. Tesla's statement is by manufacture date only, and no Tesla document behind this page distinguishes Rear-Wheel Drive, Long Range or Performance on this point.",
+      },
+    ],
+  },
 ];
 
 export function findFactSheet(make: string, model: string, topic: string): FactSheetEntry | undefined {
