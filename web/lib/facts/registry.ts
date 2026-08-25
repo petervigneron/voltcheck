@@ -508,24 +508,29 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     contentFile: "ev6-battery-warranty",
     pageTitle: "Kia EV6 battery warranty: two coverages, and when the clock started | Voltcheck",
     description:
-      "Kia covers an EV6's electric drivetrain and its battery capacity separately, both for 10 years or 100,000 miles from the date of first service — a date that can precede the first sale.",
+      "Kia covers an EV6's electric drivetrain and its battery capacity separately, both for 10 years or 100,000 miles from the date of first service — a date that can precede the first sale. From Kia's own EV warranty manual.",
     breadcrumbLabel: "Kia EV6 battery warranty",
     dateModified: "2026-08-25",
     faq: [
       {
         question: "How long is the Kia EV6 battery warranty?",
         answer:
-          "Kia states two separate coverages, each 10 years or 100,000 miles from the date of first service, whichever comes first. The EV System Warranty covers the electric motor, high voltage battery, electric power control unit and on-board charger. EV Battery Coverage separately covers capacity loss below 70% of the original capacity, and Kia states that repairs or replacements restore the battery to at least 70% capacity.",
+          "Kia states two separate coverages, each 10 years or 100,000 miles from the Date of First Service, whichever comes first. The EV System Warranty covers the electric motor, high voltage battery, electric power control unit and on-board charger, and Kia's manual states it does not cover any other electrical components, such as the traditional 12 volt battery, alternator or starter components. Lithium-Ion Polymer Battery Capacity Coverage separately covers capacity loss below 70% of the original battery capacity, and covers repairs needed to return capacity to 70%.",
       },
       {
         question: "When does the Kia EV6 battery warranty start?",
         answer:
-          "At the date of first service, which Kia's warranty manual defines as the first date the vehicle is delivered to the first retail purchaser, is leased, or is placed into service as a company vehicle such as a demonstrator, rental or fleet vehicle, whichever is earliest. A demonstrator or rental EV6 started its ten years when it went into service, not when it was first sold to a customer.",
+          "At the Date of First Service, which Kia's warranty manual defines as the first date the vehicle is delivered to the first retail purchaser, is leased, or is placed into service as a company vehicle such as a demonstrator, rental or fleet vehicle, whichever is earliest. A demonstrator or rental EV6 started its ten years when it went into service, not when it was first sold to a customer.",
       },
       {
         question: "Does the Kia EV6 battery warranty transfer to a second owner?",
         answer:
-          "Kia's warranty manual states one general rule: any remaining portion of any warranty, except the 120-month/100,000-mile Power Train (Original Owner) warranty, is fully transferable to subsequent owners. Kia's current warranty page likewise restricts only the Powertrain Limited Warranty to the original purchaser and to buyers of a Certified Pre-Owned Kia, and attaches no such restriction to the EV System Warranty or EV Battery Coverage. The manual quoted is Kia's 2020 US manual, which predates the EV6; no EV6-model-year US manual is available without an owner login.",
+          "Yes. Kia's EV warranty manual states that any remaining portion of any warranty, except the 120-month/100,000-mile Power Train (Original Owner) warranty, is fully transferable to subsequent owners. Kia's coverage chart shows the same split: the Power Train row carries an Original Owner Only band and a footnote cutting subsequent owners to 60 months/60,000 miles, while the Electric Vehicle (EV) System row shows 120 months and 100,000 miles with neither. Kia's website restricts only the Powertrain Limited Warranty, to the original purchaser and to buyers of a Certified Pre-Owned Kia.",
+      },
+      {
+        question: "What is not covered by the Kia EV6 battery warranty?",
+        answer:
+          "Kia excludes EV System and Lithium-Ion Polymer Battery damage caused by ambient temperatures above 122F for over 24 hours; storage below -22F for over seven days; leaving the vehicle over 14 days at a zero or near zero state of charge; physically damaging or intentionally reducing the battery's life; direct flame; immersion in water or fluids; opening the battery enclosure or having it serviced by someone other than a Kia certified EV technician; neglecting correct charging procedures; use of incompatible charging devices; and damage to the charge port or vehicle components caused by a public charger, non-Kia supplied charge cord, or other third party EVSE.",
       },
     ],
   },
