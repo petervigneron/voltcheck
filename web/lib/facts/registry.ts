@@ -312,7 +312,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       {
         question: "Do all Chevrolet Bolt EVs have DC fast charging?",
         answer:
-          "No. GM sold it as an option, RPO code CBT, listed as available rather than standard on both trims in GM's 2017 and 2019 Bolt EV order guides, and GM's 2017 and 2020 owner's manuals title the section \"DC Charging (If Equipped).\" It is standard by 2022: the 2022 Bolt EUV manual drops the qualifier, and GM's 2023 Bolt EV order guide lists CBT as standard equipment on both trims. A used 2017-2021 Bolt EV has to be checked car by car.",
+          "No. GM sold it as an option, RPO code CBT, listed as available rather than standard on both trims in GM's 2017 and 2019 Bolt EV order guides, and GM's 2017 and 2020 owner's manuals title the section \"DC Charging (If Equipped).\" It is standard by 2022: the 2022 Bolt EUV manual drops the qualifier, and GM's 2023 Bolt EV order guide lists CBT as standard equipment on both trims. The years checked for this page and found optional are 2017, 2019 and 2020; 2018 and 2021 were not checked. In any of those years the option is invisible in the model name and the trim, so the car has to be checked individually.",
       },
       {
         question: "How fast does a Chevrolet Bolt EV or Bolt EUV DC fast charge?",

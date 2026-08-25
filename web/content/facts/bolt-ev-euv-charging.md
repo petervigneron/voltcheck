@@ -5,11 +5,11 @@
 - GM sold DC fast charging as an option on the Bolt EV, not as standard equipment. In GM's 2017 order guide the RPO code is CBT, "Provisions, fast charging accommodations," listed as available — not standard — on both the LT and the Premier.[^1] In the 2019 order guide the same code reads "DC fast charging," again available on both trims.[^2]
 - GM's own owner's manuals match. The 2017 and the 2020 Bolt EV manuals both title the section "DC Charging (If Equipped)."[^3][^4]
 - By 2022 it is standard. The 2022 Bolt EUV manual titles the same section "DC Charging," with no qualifier, and states plainly that "The vehicle can be charged using DC charging equipment."[^5] GM's 2023 Bolt EV order guide lists CBT, DC fast charging, as standard equipment on both trims, 1LT and 2LT.[^6]
-- A used Bolt EV from 2017 through 2021 therefore has to be checked car by car. The option is not visible in the model name or the trim.
+- The years this page actually opened and found the option optional are 2017, 2019 and 2020. Model years 2018 and 2021 were not checked; a Bolt EV from either could go the same way and this page does not say which. In any of those years the option is invisible in the model name and the trim, so the car has to be checked individually.
 
 ## DC fast charging
 
-- GM does not publish a peak kW figure for the Bolt EV or Bolt EUV. Its own documents specify the charger, not the car: "at least 80 kW of available power" in 2017 and 2020,[^3][^4] and "DC Charger must be capable of 150 amps" in 2022 and 2023.[^5][^7] No peak rate is claimed here.
+- GM does not publish a peak kW figure for the Bolt EV or Bolt EUV. Its own documents specify the charger, not the car: "at least 80 kW of available power" in 2017 and 2020,[^3][^4] then a current rather than a power from 2022 — "DC Charger must be capable of 150 amps" in the 2022 Bolt EUV manual,[^5] and "with at least 150 amps of available current" in the 2023 guide.[^7] No peak rate is claimed here.
 - Range added in about 30 minutes, from a depleted battery, in GM's own words:
   - 2017 and 2020 Bolt EV: "an estimated 145 km (90 mi) of driving range," on a station with at least 80 kW available.[^3][^4]
   - 2022 Bolt EUV: "Up to 153 km (95 mi) in about 30 minutes," charger capable of 150 amps.[^5]
@@ -52,17 +52,17 @@
 
 [^2]: GM, *2019 Chevrolet Bolt EV Order Guide* (PDF, 33 pages, dated May 4, 2018), RPO tables, pp. 5, 9 and 20. Mirror: https://gmauthority.com/blog/wp-content/uploads/2018/05/2019-Chevrolet-Bolt-EV-Order-Guide-May-4-2018.pdf
 
-[^3]: GM, *2017 Chevrolet Bolt EV Owner's Manual* (PDF), "Driving and Operating," printed page 232 (charging times) and the "DC Charging (If Equipped)" section. GM's own host: https://www.chevrolet.com/ownercenter/content/dam/gmownercenter/gmna/dynamic/manuals/2017/Chevrolet/BOLT%20EV/Owner's%20Manual.pdf
+[^3]: GM, *2017 Chevrolet Bolt EV Owner's Manual* (PDF), "Driving and Operating," printed page 231 (the 120-volt and 240-volt charging times), printed page 232 (the DC charging paragraph), and the "DC Charging (If Equipped)" section. GM's own host: https://www.chevrolet.com/ownercenter/content/dam/gmownercenter/gmna/dynamic/manuals/2017/Chevrolet/BOLT%20EV/Owner's%20Manual.pdf
 
 [^4]: GM, *2020 Chevrolet Bolt EV Owner's Manual* (PDF), "Driving and Operating," charging-times paragraphs and the "DC Charging (If Equipped)" section. Mirror: https://cdn.dealereprocess.org/cdn/servicemanuals/chevrolet/2020-boltev.pdf
 
 [^5]: GM, *2022 Chevrolet Bolt EUV Owner's Manual* (PDF, CRC 2/26/21), "Driving and Operating," charging table on printed page 229 and the "DC Charging" section. GM's own host: https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/experience-chevrolet/supecruise-how-to/02-pdfs/2022-chevrolet-bolt-euv-owners-manual.pdf
 
-[^6]: GM, *2023 Chevrolet Bolt EV Order Guide* (PDF, 33 pages, dated May 26, 2022), RPO tables, pp. 5, 9 and 19. Its header reads "2023 Chevrolet Truck Bolt EV" and its columns are 1LT and 2LT; the Bolt EUV does not appear anywhere in this document, which is why no EUV claim on this page rests on it. Mirror: https://www.autoevolution.com/pdf/news_attachements/gm-publishes-2023-chevrolet-bolt-ev-order-guide-illuminated-charge-port-confirmed-190201.pdf
+[^6]: GM, *2023 Chevrolet Bolt EV Order Guide* (PDF, 33 pages, "Published May 27, 2022" in its own page footer), RPO tables, pp. 5, 9 and 19. Its header reads "2023 Chevrolet Truck Bolt EV" and its columns are 1LT and 2LT; the Bolt EUV does not appear anywhere in this document, which is why no EUV claim on this page rests on it. Mirror: https://www.autoevolution.com/pdf/news_attachements/gm-publishes-2023-chevrolet-bolt-ev-order-guide-illuminated-charge-port-confirmed-190201.pdf
 
 [^7]: GM, *2023 Bolt EV & Bolt EUV "Get To Know" Guide* (PDF, 20 pages), "CHARGING — CHARGING TIME," p. 15, and "DC FAST CHARGING — CHARGING TIME," p. 18. GM's own host: https://contentdelivery.ext.gm.com/bypass/gma-content-api/resources/sites/GMA/content/staging/MANUALS/6000/MA6687/en_US/1.0/GTK_2023_Chevrolet_Bolt_EV_Bolt_EUV_84953316_A.pdf
 
-[^8]: Chevrolet, "How to charge on the Tesla Supercharger Network," Chevrolet Support, and its Q&A entries "Can Chevrolet Bolt EV customers charge at a Tesla Supercharger?", "Will the NACS DC adapter work with Level 2 Tesla chargers?", "Does the NACS DC adapter come with a warranty?" and "How much will the NACS DC Adapter cost?". https://www.chevrolet.com/support/vehicle/ev-charging/public-charging/tesla-supercharger. Chevrolet's host returns 403 to a plain HTTP fetch; this page was read in a browser session, with the Q&A entries expanded.
+[^8]: Chevrolet, "How to charge on the Tesla Supercharger Network," Chevrolet Support, and its Q&A entries "Can Chevrolet Bolt EV customers charge at a Tesla Supercharger?", "Will the NACS DC adapter work with Level 2 Tesla chargers?", "Does the NACS DC adapter come with a warranty?" and "How much will the NACS DC Adapter cost?". https://www.chevrolet.com/support/vehicle/ev-charging/public-charging/tesla-supercharger. Read in a browser session, with the Q&A entries expanded — the answers quoted here sit inside collapsed accordions.
 
 ## Scope note
 
