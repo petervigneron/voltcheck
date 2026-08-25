@@ -277,3 +277,51 @@ test("the Lincoln Grand Touring guard: PHEV trims resolve, gas Corsair/Aviator t
   }
   assert.equal(matchEnrichment(decode({ make: "LINCOLN", model: "Corsair", modelYear: 2022 }), null).exact, undefined);
 });
+
+// ── Lexus RZ 450e, 2023–25 (data9). Not a nameplate-sharing case at all — the
+// RZ has never been anything but electric — but it lives here because the
+// failure mode is the one this file exists to catch: a row reaching a car it
+// is not true of. The 450e Premium on 18-inch wheels is 220 miles and the
+// 450e Luxury is 196 on either fitment, and the first version of these rows
+// carried both grade spellings on the 220 row. That printed 24 miles too many
+// on every Luxury, 70 live listings deep, in the direction that costs a
+// shopper money.
+test("the RZ 450e's two grades resolve to their own ranges, not to one shared row", () => {
+  const rangeOf = (d: VinDecode) => matchEnrichment(d, null).exact?.range?.epaRangeMi?.value;
+  assert.equal(rangeOf(decode({ make: "LEXUS", model: "RZ 450e", modelYear: 2023, trim: "Premium" })), 220);
+  assert.equal(rangeOf(decode({ make: "LEXUS", model: "RZ 450e", modelYear: 2023, trim: "Luxury" })), 196);
+  assert.equal(rangeOf(decode({ make: "LEXUS", model: "RZ", modelYear: 2024, trim: "450e Premium" })), 220);
+  assert.equal(rangeOf(decode({ make: "LEXUS", model: "RZ", modelYear: 2024, trim: "450e Luxury" })), 196);
+  // A truncated dealer spelling still reaches the right grade.
+  assert.equal(rangeOf(decode({ make: "LEXUS", model: "RZ 450e", modelYear: 2023, trim: "LUXU" })), 196);
+});
+
+test("vPIC's one-pattern '450e Luxury/Premium' lands on the 196-mile row, never the 220", () => {
+  // Every MY2023 450e VIN decodes to this single string — Lexus filed one
+  // Part 565 pattern for both grades (JTJAAAAB0PA006258 and …0PA010276 both
+  // return it, checked 2026-08-25). It names no grade, so the only acceptable
+  // answers are the lower figure or silence. It resolves to the Luxury row
+  // for a structural reason worth pinning: norm() drops the slash, leaving
+  // "450ELUXURYPREMIUM", and only the Luxury key is a prefix of that — the
+  // Premium key "450EPREMIUM" is not a substring of it at all. Had Lexus
+  // written the pair the other way round this would land on 220, so this
+  // assertion is load-bearing rather than incidental.
+  const r = matchEnrichment(decode({ make: "LEXUS", model: "RZ", modelYear: 2023, trim: "450e Luxury/Premium" }), null);
+  assert.equal(r.exact?.id, "rz-450e-2023-25-luxury-alt");
+  assert.equal(r.exact?.range?.epaRangeMi?.value, 196);
+  // A bare "450e" names neither grade and must not pick one.
+  const bare = matchEnrichment(decode({ make: "LEXUS", model: "RZ", modelYear: 2024, trim: "450e" }), null);
+  assert.equal(bare.exact, undefined);
+  assert.deepEqual((bare.candidates ?? []).map((c) => c.id).sort(), [
+    "rz-450e-2023-25-luxury-alt",
+    "rz-450e-2023-25-premium-alt",
+  ]);
+});
+
+test("the RZ '15 Series' label row carries the shared facts and no range", () => {
+  const r = matchEnrichment(decode({ make: "LEXUS", model: "RZ 450e", modelYear: 2023, trim: "15 Series" }), null);
+  assert.equal(r.exact?.id, "rz-450e-2023-25-series-label");
+  assert.equal(r.exact?.range?.epaRangeMi, undefined);
+  assert.equal(r.exact?.battery?.packGrossKwh?.value, 71.4);
+  assert.equal(r.exact?.charging?.portStandard?.value, "CCS1");
+});

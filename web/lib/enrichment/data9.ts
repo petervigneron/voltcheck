@@ -187,13 +187,18 @@ const R: EnrichmentRow[] = [];
 // miles; with it they take nothing, which is the honest answer for a listing
 // whose model and trim contradict each other.
 //
-// RANGE VARIES BY WHEEL on every RZ, and EPA labels the wheel itself, so no
-// inference is needed: each row prints the 18-inch rating and names the
-// 20-inch one. Lexus's own MY25 brochure footnote confirms which grade gets
-// which — "220-mile total driving range for 2025 Lexus RZ 450e Premium
-// (18-inch wheels) … 196-mile range for RZ 450e Luxury or RZ 450e Premium
-// with 20-inch wheels" — so 18 inches is the standard fitment the house rule
-// asks for. The 550e F SPORT is the exception and is rated on 20s only.
+// RANGE VARIES BY WHEEL on most of the RZ line, and EPA labels the wheel in
+// its own model names, so no inference is needed about which figure is which.
+// Where a grade is sold on both fitments the row prints the 18-inch rating —
+// the standard one, per the house rule — and names the 20-inch figure.
+//
+// Read the brochure footnote carefully before copying that pattern onto the
+// 2023–25 450e, because it does not say what it looks like it says:
+// "220-mile total driving range for 2025 Lexus RZ 450e Premium (18-inch
+// wheels) … 196-mile range for RZ 450e Luxury OR RZ 450e Premium with 20-inch
+// wheels". The wheel caveat governs the PREMIUM only. The Luxury is 196 flat,
+// so it gets its own row with no wheel note, and the 550e F SPORT likewise is
+// rated on 20s only.
 //
 // The 2026 facelift changes the charging picture completely and the rows are
 // split on it: 2023–25 cars have a CCS1 inlet and reach Superchargers only
@@ -245,6 +250,7 @@ const R: EnrichmentRow[] = [];
       id: string;
       model: string;
       modelAliases?: string[];
+      trim?: string[];
       years: [number, number];
       drive: "AWD" | "FWD";
       vds: string[];
@@ -258,6 +264,7 @@ const R: EnrichmentRow[] = [];
     make: "LEXUS",
     model: o.model,
     modelAliases: o.modelAliases,
+    trim: o.trim,
     modelYears: o.years,
     drive: o.drive,
     vds: o.vds,
@@ -271,16 +278,38 @@ const R: EnrichmentRow[] = [];
       : { heatPump: RZ_HP_ABSTAIN, batteryWarranty: RZ_WARRANTY_2026_ABSTAIN },
   });
 
-  const rz450e = rz({
-    id: "rz-450e-2023-25",
+  // GRADE-KEYED, not one row for both, because the brochure footnote does not
+  // read the way it first looks. "220-mile … for RZ 450e Premium (18-inch
+  // wheels) … 196-mile range for RZ 450e Luxury OR RZ 450e Premium with
+  // 20-inch wheels" puts the Luxury at 196 unconditionally — the 18-inch
+  // caveat attaches only to the Premium. A single 220-mile row carrying both
+  // grade spellings as aliases was the first shape here and it overstated
+  // every Luxury by 24 miles, on 70 live listings.
+  const rz450ePremium = rz({
+    id: "rz-450e-2023-25-premium",
     model: "RZ 450e",
-    modelAliases: ["RZ 450e Premium", "RZ 450e Luxury"],
+    modelAliases: ["RZ 450e Premium"],
+    trim: ["Premium"],
     years: [2023, 2025],
     drive: "AWD",
     vds: ["AAAAB"],
     packKwh: 71.4,
     packUrl: RZ_MY25_BROCHURE,
     range: { epaRangeMi: f(220, "mfr", "high", "18-inch wheels; 196 mi on the 20-inch fitment", epa(49101)) },
+    pre26: true,
+  });
+  const rz450eLuxury = rz({
+    id: "rz-450e-2023-25-luxury",
+    model: "RZ 450e",
+    modelAliases: ["RZ 450e Luxury"],
+    trim: ["Luxury"],
+    years: [2023, 2025],
+    drive: "AWD",
+    vds: ["AAAAB"],
+    packKwh: 71.4,
+    packUrl: RZ_MY25_BROCHURE,
+    // No wheel caveat: the Luxury is 196 on either fitment.
+    range: { epaRangeMi: f(196, "mfr", "high", "20-inch wheels, the Luxury's only rating", epa(49102)) },
     pre26: true,
   });
   const rz300e = rz({
@@ -347,6 +376,13 @@ const R: EnrichmentRow[] = [];
   // (no two of 300e/350e/450e/550e contain each other). The `vds` key rides
   // along and settles the 2026 450e-versus-550e pair, which share a VIN
   // descriptor and differ only by badge.
+  //
+  // The 2023–25 450e is the exception and carries the grade in its badge key
+  // ("450e Premium", "450e Luxury") for the reason the grade-keyed rows above
+  // give: those two are 24 miles apart. A bare-RZ listing that says only
+  // "450e" overlaps BOTH keys and resolves to candidates rather than to
+  // whichever row is listed first, which is the honest answer — and it is
+  // also what vPIC's own 2023 decode produces, see below.
   const bare = (row: EnrichmentRow, badge: string): EnrichmentRow => ({
     ...row,
     id: `${row.id}-alt`,
@@ -354,13 +390,36 @@ const R: EnrichmentRow[] = [];
     modelAliases: undefined,
     trim: [badge],
   });
+  // Splitting the 450e by grade costs the ten 2023–25 listings whose whole
+  // trim is "15 Series" — vPIC's generation code leaked into a dealer feed,
+  // the same shape as the RAV4's "64 Series". They used to land on a
+  // trim-less row and take its range; now they name no grade, and the two
+  // grades are 24 miles apart, so no range can honestly be shown. This is the
+  // feedLabelRow case the schema already has: carry what both grades share —
+  // pack, charging, warranty — abstain on the range, and stay out of any
+  // candidate span, because "15 Series" is not a version of the car.
+  const rz450eLabel: EnrichmentRow = {
+    ...rz450ePremium,
+    id: "rz-450e-2023-25-series-label",
+    modelAliases: ["RZ"],
+    trim: ["15 Series"],
+    feedLabelRow: true,
+    range: undefined,
+    abstains: {
+      ...rz450ePremium.abstains,
+      epaRangeMi: "The trim names vPIC's generation code, not a grade, and Premium and Luxury differ by 24 miles",
+    },
+  };
   R.push(
-    rz450e,
+    rz450ePremium,
+    rz450eLuxury,
+    rz450eLabel,
     rz300e,
     rz350e26,
     rz450e26,
     rz550e26,
-    bare(rz450e, "450e"),
+    bare(rz450ePremium, "450e Premium"),
+    bare(rz450eLuxury, "450e Luxury"),
     bare(rz300e, "300e"),
     bare(rz350e26, "350e"),
     bare(rz450e26, "450e"),
