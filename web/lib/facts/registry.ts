@@ -454,7 +454,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       {
         question: "Does the Tesla Model Y battery warranty cover normal degradation?",
         answer:
-          "No. Tesla writes that the battery \"will experience gradual energy or power loss with time and use\" and that loss of battery energy or power over time or resulting from battery usage is not covered, except as specified in the warranty. The Battery and Drive Unit Limited Warranty states the floor only as \"minimum 70% retention of Battery capacity over the warranty period,\" without defining how retention is measured. Tesla does phrase the 70% floor as a defect standard, but that wording belongs to the separate Battery ZEV Limited Warranty, which Tesla limits to model year 2026 and later. Tesla also states that range estimates are an imperfect measure of battery capacity.",
+          "No. Tesla writes that the battery \"will experience gradual energy or power loss with time and use\" and that loss of battery energy or power over time or resulting from battery usage is not covered, except as specified in the warranty. The Battery and Drive Unit Limited Warranty states the floor only as \"minimum 70% retention of Battery capacity over the warranty period,\" without defining how retention is measured. Tesla does phrase the 70% floor as a defect standard, but that wording belongs to the separate Battery ZEV Limited Warranty, which Tesla limits to model year 2026 and later. Tesla also states that range estimates are an imperfect measure of battery capacity, and that the measurement method is at Tesla's sole discretion.",
       },
       {
         question: "Does the Tesla Model Y battery warranty transfer to a second owner?",
