@@ -388,12 +388,12 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       {
         question: "What charging connector does the Volkswagen ID. Buzz use?",
         answer:
-          "A CCS (Combined Charging System) port. Tesla Supercharger access opened to ID. Buzz owners on November 18, 2025, and requires a Volkswagen-approved NACS-to-CCS DC adapter, MSRP $200, sold through Volkswagen dealers and parts.vw.com. It is for DC fast charging only, not Level 1 or Level 2 AC equipment or Tesla Destination Chargers.",
+          "No Volkswagen document behind this page names the port outright. Volkswagen describes its adapter as a DC fast-charging adapter for North American Charging System (NACS) to Combined Charging System (CCS) port, in a release about ID.4 and ID. Buzz owners, which is where the CCS answer comes from. Tesla Supercharger access opened to ID. Buzz owners on November 18, 2025, and requires that Volkswagen-approved adapter, MSRP $200, sold through Volkswagen dealers and parts.vw.com. It is for DC fast charging only, not Level 1 or Level 2 AC equipment or Tesla Destination Chargers.",
       },
       {
         question: "Does the ID. Buzz charging plan transfer to a second owner?",
         answer:
-          "No. Volkswagen's own terms state that Plug&Charge is available upon purchase of a new, unused 2025 ID. Buzz and can only be used by the original purchaser or owner for the duration of the included charging plan, and is \"Not valid for subsequent owners.\" The plan is 500 kWh of Electrify America charging plus three years of Pass+ membership, beginning at vehicle purchase.",
+          "No. Volkswagen's disclosure for the 2025 ID. Buzz Charging Plan says so in one word — \"Non-transferable.\" — and adds that it is not available for commercial use such as ride-hailing and ridesharing. Volkswagen's Plug&Charge terms say the same thing at more length: the feature is available upon purchase of a new, unused 2025 ID. Buzz, can only be used by the original purchaser or owner for the duration of the included charging plan, and is \"Not valid for subsequent owners.\" The plan is 500 kWh of complimentary DC Fast and L2 charging plus thirty-six months of Pass+ membership, beginning at vehicle purchase.",
       },
       {
         question: "How fast does the Volkswagen ID. Buzz charge at home?",
