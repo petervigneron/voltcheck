@@ -198,6 +198,30 @@ const NOTE_RECALLS_2024 = {
   severity: "trap" as const,
 };
 // ── Tesla shared facts (Model 3 / Model Y rows below) ───────────────────
+// batteryTransfers used to sit on every Tesla row as an uncited `true`. It is
+// cited now, and the citation is Tesla's own: the North America New Vehicle
+// Limited Warranty carries an "Ownership Transfer" clause under General
+// Warranty Provisions, and the Battery and Drive Unit Limited Warranty is a
+// coverage inside that same booklet, so the clause governs it. Cybertruck has
+// its own booklet with the identical clause and gets its own URL — one make,
+// two documents, and neither stands in for the other.
+//
+// The booklets are the current ones (effective 2025/06/05) and the rows run
+// back to MY2017, which is the honest weak point: Tesla's older booklets live
+// under tesla.com/sites/default/files, which answers 403 to anything but a
+// browser, and the Internet Archive was offline when this pass ran. What
+// closes the gap is a second Tesla document that carries no vintage limit at
+// all — the Pre-Owned Vehicle Limited Warranty, which says of a used Tesla
+// that "The balance (if any) of the New Vehicle Limited Warranty, including
+// the original ... Battery and Drive Unit Limited Warranty ... applies to your
+// Tesla used vehicle". That is the second owner, in Tesla's words, and it is
+// the case a shopper here is actually in.
+const TESLA_NVLW =
+  "https://digitalassets.tesla.com/tesla-contents/image/upload/tesla-new-vehicle-limited-warranty-en-us.pdf";
+const TESLA_CT_NVLW =
+  "https://digitalassets.tesla.com/tesla-contents/image/upload/tesla-cybertruck-new-vehicle-limited-warranty-en-us.pdf";
+const TESLA_XFER_NOTE =
+  "“Transferable at no cost to any person(s) who subsequently and lawfully assume(s) ownership of the vehicle”";
 const T3 = { make: "TESLA" };
 const TES_CHARGING = {
   portStandard: f<"NACS">("NACS", "mfr"),
@@ -218,13 +242,13 @@ const TES_W120 = {
   batteryYears: f(8, "mfr" as Source),
   batteryMiles: f(120_000, "mfr" as Source),
   sohFloorPct: f(70, "mfr" as Source),
-  batteryTransfers: f(true, "mfr" as Source),
+  batteryTransfers: f(true, "mfr" as Source, "high", TESLA_XFER_NOTE, TESLA_NVLW),
 };
 const TES_W100 = {
   batteryYears: f(8, "mfr" as Source),
   batteryMiles: f(100_000, "mfr" as Source, "high", "Tesla's shorter battery-warranty tier for Standard/Mid Range and RWD cars"),
   sohFloorPct: f(70, "mfr" as Source),
-  batteryTransfers: f(true, "mfr" as Source),
+  batteryTransfers: f(true, "mfr" as Source, "high", TESLA_XFER_NOTE, TESLA_NVLW),
 };
 const NOTE_FSD = { headline: "FSD does not transfer with the car", severity: "warning" as const };
 const NOTE_HP_VIN10 = {
@@ -370,7 +394,7 @@ const TSX_W = {
   batteryYears: f(8, "mfr" as Source),
   batteryMiles: f(150_000, "mfr" as Source, "high", "Model S/X carry Tesla's longest battery warranty tier"),
   sohFloorPct: f(70, "mfr" as Source),
-  batteryTransfers: f(true, "mfr" as Source),
+  batteryTransfers: f(true, "mfr" as Source, "high", TESLA_XFER_NOTE, TESLA_NVLW),
 };
 const TSX_PACK = { packGrossKwh: f(100, "vin", "medium", "Tesla's Part 565 submission reports a 100 kWh pack, shared across Long Range and Plaid") };
 const MS = { make: "TESLA", model: "Model S" };
@@ -4867,7 +4891,10 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
       id, ...CT, modelYears: years, vin8, drive: drv, packVariant: variant,
       range: { epaRangeMi: rangeFact }, battery: CT_PACK, charging: CT_CHG,
       thermal: { heatPump: f("standard", "mfr"), batteryPreconditioning: f(true, "mfr") },
-      warranty: TSX_W, buyerNotes: [NOTE_FSD],
+      // Cybertruck's own booklet, not the Model S/X/3/Y one, though the
+      // Ownership Transfer clause reads the same in both.
+      warranty: { ...TSX_W, batteryTransfers: f(true, "mfr" as Source, "high", TESLA_XFER_NOTE, TESLA_CT_NVLW) },
+      buyerNotes: [NOTE_FSD],
     });
     return [
       ct("ct-2024-awd", [2024, 2024], ["D"], "AWD", "Dual Motor AWD",

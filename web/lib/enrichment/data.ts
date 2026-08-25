@@ -45,6 +45,19 @@ function f6<T>(
   return { value, source, asOf: AS_OF_I5_RANGE, confidence, note, sourceUrl };
 }
 
+// Tesla battery-warranty transferability: the North America New Vehicle
+// Limited Warranty's own "Ownership Transfer" clause, under the General
+// Warranty Provisions that govern the Battery and Drive Unit Limited Warranty
+// inside the same booklet. See the fuller note in data4.ts, which holds the
+// rest of the Tesla rows — including why a booklet effective 2025 is allowed
+// to answer for a MY2022 car (Tesla's Pre-Owned booklet says the balance of
+// the original Battery and Drive Unit warranty applies to a used Tesla, with
+// no vintage limit).
+const TESLA_NVLW =
+  "https://digitalassets.tesla.com/tesla-contents/image/upload/tesla-new-vehicle-limited-warranty-en-us.pdf";
+const TESLA_XFER_NOTE =
+  "\u201CTransferable at no cost to any person(s) who subsequently and lawfully assume(s) ownership of the vehicle\u201D";
+
 export const ENRICHMENT_ROWS: EnrichmentRow[] = [
   // ── Tesla Model Y — "AWD" (279 mi) is not "Long Range AWD" (330 mi), and
   // listings routinely blur the two. EPA figures verified against
@@ -71,7 +84,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(120_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
-      batteryTransfers: f(true, "mfr"),
+      batteryTransfers: f(true, "mfr", "high", TESLA_XFER_NOTE, TESLA_NVLW),
     },
     buyerNotes: [
       {
@@ -103,7 +116,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(120_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
-      batteryTransfers: f(true, "mfr"),
+      batteryTransfers: f(true, "mfr", "high", TESLA_XFER_NOTE, TESLA_NVLW),
     },
     buyerNotes: [
       {
@@ -137,7 +150,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(120_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
-      batteryTransfers: f(true, "mfr"),
+      batteryTransfers: f(true, "mfr", "high", TESLA_XFER_NOTE, TESLA_NVLW),
     },
     buyerNotes: [
       {

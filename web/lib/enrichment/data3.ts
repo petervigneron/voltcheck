@@ -11,6 +11,19 @@ import type { EnrichmentRow, Fact, Source } from "../types";
 // caught by running a 2021 control fetch, since 22V-412/23V-687 are already
 // documented as existing for that year).
 const AS_OF = "2026-08-10";
+// Tesla battery-warranty transferability, for the three Model S/X rows below:
+// the "Ownership Transfer" clause in Tesla's own North America New Vehicle
+// Limited Warranty, whose General Warranty Provisions govern the Battery and
+// Drive Unit Limited Warranty printed in the same booklet. These are MY2017-19
+// cars and the booklet is the current one; what licenses reading it back is
+// Tesla's Pre-Owned Vehicle Limited Warranty, which states with no vintage
+// limit that the balance of the original Battery and Drive Unit warranty
+// applies to a used Tesla. Fuller note in data4.ts.
+const TESLA_NVLW =
+  "https://digitalassets.tesla.com/tesla-contents/image/upload/tesla-new-vehicle-limited-warranty-en-us.pdf";
+const TESLA_XFER_NOTE =
+  "\u201CTransferable at no cost to any person(s) who subsequently and lawfully assume(s) ownership of the vehicle\u201D";
+
 
 function f<T>(
   value: T,
@@ -821,7 +834,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryYears: f(8, "mfr", "high", "“8 years or 150,000 miles, whichever comes first”, Tesla's own vehicle-warranty page (archived capture, live page blocked by bot-detection; dated 2025-04-16, ~16 months old relative to today but Tesla's S/X battery terms have historically been stable)"),
       batteryMiles: f(150_000, "mfr", "high", "Model S/X get a higher mileage cap than Model 3/Y, same source"),
       sohFloorPct: f(70, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", TESLA_XFER_NOTE, TESLA_NVLW),
     },
     buyerNotes: [
       {
@@ -871,7 +884,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryYears: f(8, "mfr", "high", "“8 years or 150,000 miles, whichever comes first”, Tesla's own vehicle-warranty page (archived capture, dated 2025-04-16)"),
       batteryMiles: f(150_000, "mfr", "high"),
       sohFloorPct: f(70, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", TESLA_XFER_NOTE, TESLA_NVLW),
     },
     buyerNotes: [
       {
@@ -924,7 +937,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryYears: f(8, "mfr", "high", "“8 years or 150,000 miles, whichever comes first”, Tesla's own vehicle-warranty page (archived capture, dated 2025-04-16)"),
       batteryMiles: f(150_000, "mfr", "high"),
       sohFloorPct: f(70, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", TESLA_XFER_NOTE, TESLA_NVLW),
     },
     buyerNotes: [
       {
