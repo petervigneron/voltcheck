@@ -3,9 +3,9 @@
 ## How long it lasts
 
 - Hyundai covers the High Voltage Battery under its Hybrid, Plug-in Hybrid, and Electric Vehicle Warranty for "10 years from the date of original retail delivery or date of first use, or 100,000 miles, whichever occurs first."[^1]
-- The same section covers the components attached to it: Battery Management System, Blower Assembly, Electronic Air Compressor, Power Relay Assembly, Hybrid Starter & Generator, Traction Motor including housing case, Hybrid Power Control Unit, OBC, and Electric Power Control unit.[^1]
+- The same section covers the components attached to it: Battery Management System, Blower Assembly, Electronic Air Compressor, Power Relay Assembly, Hybrid Starter & Generator, Traction Motor including housing case, Hybrid Power Control Unit, OBC, and Electric Power Control unit.[^3]
 - Towing to the nearest Hyundai dealership is covered on the same clock when the vehicle is inoperable due to a warrantable defect.[^1]
-- Hyundai's 2022 warranty handbook states the same 10 years or 100,000 miles for these components, so the term did not change across the Ioniq 5's US life to date.[^2]
+- Hyundai's 2022 warranty handbook states the same 10 years or 100,000 miles for these components. Those are the two handbooks opened here, three model years apart; the 2023, 2024 and 2026 handbooks were not checked, so no claim is made about every year in between.[^2]
 
 ## The 70% figure, and Hyundai's own two answers about it
 
@@ -22,12 +22,12 @@ This is the question a used-Ioniq 5 shopper actually has, and Hyundai's handbook
 
 - Hyundai's Summary of Warranty Coverage table lists "Hybrid, Plug-in Hybrid, and Electric Vehicle Direct Energy Components" at 10 years/100,000 miles, with no original-owner qualifier attached to that row.[^4]
 - The row immediately below it, Powertrain, carries footnote ①: "Original Owner 10 Years/100,000 Miles, Subsequent Owner(s) 5 Years/60,000 Miles."[^4] The EV row carries no footnote.
-- Hyundai's Warranty Transferability section names six coverages that transfer — New Vehicle Limited, Anti-Perforation Limited, Federal Emission Performance, Federal Emission Design and Defect, California Emission Control Systems, and Replacement Parts and Accessories — and names one that does not: "The 10 years/100,000 miles Powertrain Limited Warranty is not transferable and applies only to the original owner."[^5]
+- Hyundai's Warranty Transferability section names six coverages that transfer — New Vehicle Limited, Anti-Perforation Limited, Federal Emission Performance, Federal Emission Design and Defect, California Emission Control Systems, and Replacement Parts and Accessories — and names one that does not: "The 10 years/100,000 miles Powertrain Limited Warranty is not transferable and applies only to the original owner, as defined under 'Original Owner' included in the Powertrain Limited Warranty (Original Owner) section of this Owner's Handbook."[^5]
 - The Hybrid, Plug-in Hybrid, and Electric Vehicle Warranty appears in neither list. Hyundai's handbook, as written, neither grants nor denies its transfer in that section. This sheet reports that gap rather than filling it; the handbook that came with a specific car, and Hyundai, are the authority for that car.
 
 ## What is excluded
 
-- Hyundai: "damage resulting from intentional actions (including intentionally abusing or destroying your vehicle or ignoring active vehicle warnings), a collision or accident or the servicing or opening of the Battery by non-authorized personnel, is not covered."[^1]
+- Hyundai: "damage resulting from intentional actions (including intentionally abusing or destroying your vehicle or ignoring active vehicle warnings), a collision or accident or the servicing or opening of the Battery by non-authorized personnel, is not covered under this Battery Limited Warranty."[^1]
 - Also excluded: physical battery damage or intentional damage "by physical means, programming, or other methods, to extend (other than as specified in your owner documentation) or reduce the life of the Battery"; exposing the Battery to direct flame; flooding the Battery.[^1]
 
 ## The 150,000-mile California note is about a different car
