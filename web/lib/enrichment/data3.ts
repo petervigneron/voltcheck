@@ -351,7 +351,9 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     make: "AUDI",
     model: "e-tron GT",
     modelYears: [2024, 2024],
-    trim: "quattro Premium Plus",
+    // Trim key dropped 2026-08-14: every 2024 e-tron GT rates 249 (the RS
+    // too), so "Prestige"/"4D Sedan" listings were going unmatched for
+    // nothing. 2022–23 GT/RS rows live in data4.
     drive: "AWD",
     battery: {
       packGrossKwh: f(93, "mfr", "high", "Audi's own e-tron GT tech page (pre-2025-refresh model, matching MY2024): “93 kWh gross”", "https://www.audi.com"),
@@ -1260,7 +1262,15 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     model: "EQE",
     modelAliases: ["EQE 350"],
     modelYears: [2024, 2024],
-    trim: "EQE 350 4MATIC",
+    // Same composite trap the EQS 450 4MATIC rows carry, and the same fix:
+    // Mercedes' own Part 565 trim for the MY2024–25 EG1CB car reads
+    // "EQE350+ 4MATIC" — a plus on a 4MATIC — so trimMatches' one-sided-plus
+    // rule rejects it against the plus-less key, and a /vin/ decode would
+    // fall through to the 350+ row's 298 mi instead of this car's 280.
+    // Twenty-four MY2024 VINs in the vPIC cache spell it that way (three
+    // more in MY2025); MY2023's EG1CB reads "EQE 350 4MATIC" and needs no
+    // alias, which is why the 2023 row above does not carry one.
+    trim: ["EQE 350 4MATIC", "EQE350+ 4MATIC"],
     drive: "AWD",
     wmi: ["W1K"],
     battery: { packUsableKwh: f(90.6, "agg", "medium", "Carry-over of the pre-refresh EVA2 pack; the MY2025 refresh's larger 96 kWh pack went to the 350+ and 500, not the 350 4MATIC") },
@@ -1301,7 +1311,8 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     model: "EQE",
     modelAliases: ["EQE 350"],
     modelYears: [2025, 2025],
-    trim: "EQE 350 4MATIC",
+    trim: ["EQE 350 4MATIC", "EQE350+ 4MATIC"], // see the MY2024 row's note
+
     drive: "AWD",
     wmi: ["W1K"],
     battery: { packUsableKwh: f(90.5, "agg", "low", "The MY2026 EQE320 4MATIC — which carries this exact 267-mi certification forward — is a 90.5 kWh car on Mercedes' own spec page, and press reporting on the MY2025 refresh kept the smaller pack on the 350 4MATIC. Mercedes' per-VIN Part 565 filings on live MY2025 350 4MATICs read 96.00, contradicting both; the conflict is flagged here rather than resolved") },
@@ -1899,23 +1910,46 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     buyerNotes: [NOTE_MB_BMS_24V372, NOTE_MB_AVAS_25V366],
   },
 
+  // AMG EQE SUV, split by year rather than spanning 2025–26 on one row.
+  // Both years carry the same 230-mi certification (48393 and 49686), so the
+  // split buys nothing on the facts — it is the recalls. 24V372 stops at
+  // MY2025 and 25V366 at MY2025, and NHTSA does return MY2026 rows for other
+  // Mercedes campaigns, so the absence is real rather than a gap in the
+  // index. A spanning row would have rendered both headlines on the MY2026
+  // car — including a "trap"-severity battery recall — and the year caveat
+  // that would have corrected it lives in the note body, which the report
+  // never shows: EnrichmentReport renders the headline alone.
   {
-    id: "eqe-suv-2025-26-amg",
+    id: "eqe-suv-2025-amg",
     make: "MERCEDES-BENZ",
     model: "EQE AMG SUV",
     modelAliases: ["AMG EQE SUV", "EQE AMG", "AMG EQE", "EQE"],
-    modelYears: [2025, 2026],
+    modelYears: [2025, 2025],
     trim: ["AMG EQE", "AMG EQE 4MATIC", "AMG EQE 4MATIC+"],
     drive: "AWD",
     wmi: ["4JG"],
     battery: { packUsableKwh: f(90.6, "vin", "high", "Mercedes' per-VIN Part 565 submissions read 90.60 kWh for the MY2026 AMG EQE SUV — the pre-refresh pack, which the AMG kept when the 320+ moved to 96 kWh") },
-    range: { epaRangeMi: f(230, "mfr", "high", "MY2025 and MY2026 AMG EQE SUV, EPA — ids 48393 and 49686 rate identically", epa(48393)) },
+    range: { epaRangeMi: f(230, "mfr", "high", "MY2025 AMG EQE SUV, EPA — the MY2026 car (id 49686) rates identically", epa(48393)) },
     charging: MB_EQE_CHG,
     thermal: MB_HP_EQE_SUV,
     warranty: MB_EQE_W,
-    // 24V372 and 25V366 both stop at MY2025; NHTSA lists no campaign against
-    // the MY2026 car, so this row's note says which year it reaches.
     buyerNotes: [NOTE_MB_BMS_24V372, NOTE_MB_AVAS_25V366],
+  },
+
+  {
+    id: "eqe-suv-2026-amg",
+    make: "MERCEDES-BENZ",
+    model: "EQE AMG SUV",
+    modelAliases: ["AMG EQE SUV", "EQE AMG", "AMG EQE", "EQE"],
+    modelYears: [2026, 2026],
+    trim: ["AMG EQE", "AMG EQE 4MATIC", "AMG EQE 4MATIC+"],
+    drive: "AWD",
+    wmi: ["4JG"],
+    battery: { packUsableKwh: f(90.6, "vin", "high", "Mercedes' per-VIN Part 565 submissions read 90.60 kWh for the MY2026 AMG EQE SUV — the pre-refresh pack, which the AMG kept when the 320+ moved to 96 kWh") },
+    range: { epaRangeMi: f(230, "mfr", "high", "MY2026 AMG EQE SUV, EPA — unchanged from MY2025 (id 48393)", epa(49686)) },
+    charging: MB_EQE_CHG,
+    thermal: MB_HP_EQE_SUV,
+    warranty: MB_EQE_W,
   },
 
   // EQE 320+ SUV — the RWD half of the MY2026 rename. The MY2026 SUV row
@@ -1940,8 +1974,9 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
   // EQE 320 4MATIC SUV, MY2027. The MY2026 row above stops at 2026 on
   // purpose: EPA has certified no MY2027 EQE 320 4MATIC of either body (its
   // menu API lists exactly three MY2027 Mercedes EQ records, and this is not
-  // one of them), and the neighbouring years do not agree — the SUV rated
-  // 265 mi in 2024 and 253 in 2025/2026 — so there is no figure to carry.
+  // one of them). MY2025 and MY2026 agree at 253, but this cohort has already
+  // been re-rated once inside its own generation — 265 in 2024, then 253 —
+  // so carrying 253 forward would be a guess about whether it moved again.
   // The car is real (41 MY2027 4JG GM1CB VINs in the vPIC cache) and the rest
   // of what a shopper needs about it is not in doubt, so the row exists and
   // says nothing about range rather than not existing at all.
@@ -1949,7 +1984,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     id: "eqe-suv-2027-320-4matic",
     abstains: {
       epaRangeMi:
-        "EPA has published no MY2027 EQE 320 4MATIC certification of either body, and the two preceding model years rate differently (265 mi in 2024, 253 in 2025 and 2026), so neither can be carried forward as this car's figure",
+        "EPA has published no MY2027 EQE 320 4MATIC certification of either body, and this cohort has already been re-rated once inside its own generation (265 mi in 2024, then 253 in 2025 and 2026), so a carried-forward figure would be a guess about whether it moved again",
     },
     make: "MERCEDES-BENZ",
     model: "EQE SUV",
