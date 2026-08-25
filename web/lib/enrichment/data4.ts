@@ -315,7 +315,7 @@ const KONA = { make: "HYUNDAI", model: "Kona Electric" };
 // option the heat pump appears in no Kia document — checked and rejected.)
 const EV9_FEATURES = (yr: number) => `https://www.kiamedia.com/us/en/models/ev9/${yr}/features`;
 const EV9_HP_STD = {
-  heatPump: fb<"standard">("standard", "mfr", "high", "Standard on every AWD trim (Wind, Land, GT-Line), per Kia's Features & Options table", EV9_FEATURES(2024)),
+  heatPump: fb<"standard">("standard", "mfr", "high", "Standard on every AWD trim (Wind, Land, GT-Line)", EV9_FEATURES(2024)),
 };
 const EV9_HP_NONE = (yr: number) => ({
   heatPump: fb<"none">("none", "mfr", "high", "PTC resistive heater only on the RWD Light trims; Kia's Features & Options table marks the heat pump Not Available", EV9_FEATURES(yr)),
@@ -445,6 +445,98 @@ const TAY2_HP = { heatPump: fb<"standard">("standard", "mfr", "high", "On the ge
 const MACAN_HP = { heatPump: fb<"standard">("standard", "mfr", "medium", "Porsche's support pages attribute the heat pump to every Macan Electric from MY2024; no Porsche document carries an explicit standard/optional marker", "https://ask.porsche.com/gb/en-GB/charging-capacity-macan-electric/") };
 const NOTE_TAY_HP = { headline: "Heat pump: factory option, on the window sticker", severity: "trap" as const, resolvedBy: "config_resolved" as const };
 
+// ── 2026-08-24 backfill shared facts ─────────────────────────────────────
+// BMW packs: BMW's engineering spec sheets carry an explicitly-labelled
+// "Net" figure that BMW USA's own press copy contradicts with a higher
+// "net usable" number for the same car (i5: 81.2 vs 84.3; 2026 iX:
+// 94.8/109.1/108.9 vs 100.1/113.4/112.8). The EU-to-US ratios sit exactly in
+// BMW's own published gross-to-net band, so the US copy very likely relabels
+// gross — but no BMW document says so, and the conservative call is the
+// spec-sheet net figure at medium with the US number in the note.
+const I5_PACK = { packUsableKwh: fb(81.2, "mfr", "medium", "BMW's spec-sheet net figure; BMW USA press copy prints 84.3 kWh net usable for the same pack", "https://www.press.bmwgroup.com/global/article/attachment/T0439978EN/612522") };
+const I7_PACK = { packUsableKwh: fb(101.7, "mfr", "high", "105.7 kWh gross", "https://www.press.bmwgroup.com/usa/article/detail/T0382613EN_US/the-new-bmw-7-series") };
+const I7_PACK_E50 = { packUsableKwh: fb(101.7, "est", "medium", "BMW states 101.7 kWh net for the xDrive60 and M70 sharing the platform; no BMW document publishes a figure for the eDrive50 itself") };
+const IX26_SPECS = "https://www.press.bmwgroup.com/global/article/attachment/T0447642EN/630684";
+// X5 PHEV: one 8yr/100k HV-battery term for BEV and PHEV alike in BMW's own
+// MY2025-26 booklets (the 8/80k sometimes quoted is the federal
+// emissions-devices line two rows below in the same chart). MY2025 TZEV-state
+// cars got 10yr/150k; BMW withdrew that for MY2026. No booklet for the
+// 45e's years (2021-23) is published anywhere BMW-hosted, so the 45e
+// abstains rather than inheriting.
+const X5_50E_WARRANTY = {
+  batteryYears: fb(8, "mfr", "high", "8 years/100,000 miles in BMW's own booklets; MY2025 cars registered in California-TZEV states carry 10 years/150,000 miles, a term BMW withdrew for MY2026", "https://www.bmwusa.com/content/dam/bmw/marketUS/common/warranty-books/2026/BMW_MY26_NWLW%20Post_2025-09-11_ADA.pdf"),
+  batteryMiles: fb(100_000, "mfr", "high", undefined, "https://www.bmwusa.com/content/dam/bmw/marketUS/common/warranty-books/2026/BMW_MY26_NWLW%20Post_2025-09-11_ADA.pdf"),
+};
+const X5_45E_WARRANTY_ABSTAIN = "BMW's MY2021-23 warranty booklets are not published anywhere BMW-hosted and the MY2025-26 booklets do not list the xDrive45e, so its term is not stated";
+const X5_HP_ABSTAIN = "BMW attributes a heat pump to the battery-electric iX5 in the same release that describes the PHEV's climate system without one, but no BMW document states the PHEV's hardware either way";
+// Stellantis: 17 kWh for both 4xe packs in every press kit 2021-2025 — never
+// 17.3, which appears in no Stellantis document — and never qualified gross
+// or usable. Its US press kits and owner's manuals (15 checked, including
+// the Wagoneer S manuals) never use the term "heat pump" for any model, so
+// no heat-pump claim can be made in either direction for any Stellantis car.
+const JEEP_17KWH_NOTE = "Stellantis states 17 kWh with no gross or usable qualifier";
+const STELLANTIS_HP_ABSTAIN = "Stellantis's US press kits and owner's manuals never use the term heat pump for any model, so neither presence nor absence can be stated";
+const MOPAR_W_25 = "https://vehicleinfo.mopar.com/assets/publications/en-us/Jeep/2025/103465_25_J_GW_EN_US_DIGITAL_E1_V2.pdf";
+const WRANGLER_4XE_WARRANTY = {
+  batteryYears: fb(8, "mfr", "high", "8 years/100,000 miles in every located Mopar booklet (2022, 2024, 2025); the 2024-25 booklets add 10 years/150,000 miles in California-TZEV states", MOPAR_W_25),
+  batteryMiles: fb(100_000, "mfr", "high", undefined, MOPAR_W_25),
+};
+const GC_4XE_WARRANTY = {
+  batteryYears: fb(8, "mfr", "high", "10 years/150,000 miles in California-ZEV/TZEV states and 8 years/100,000 miles elsewhere, per the 2022-2025 Mopar booklets", MOPAR_W_25),
+  batteryMiles: fb(100_000, "mfr", "high", undefined, MOPAR_W_25),
+};
+const WAGONEER_S_WARRANTY = {
+  batteryYears: fb(8, "mfr", "high", "The Electric Vehicles Only clause of Stellantis's brand-wide booklet; the 10-year TZEV term is PHEV-only and does not apply", MOPAR_W_25),
+  batteryMiles: fb(100_000, "mfr", "high", undefined, MOPAR_W_25),
+};
+// Nissan Leaf warranty booklets, one per model year, all Nissan-hosted.
+const LEAF_WB = (yr: number) => `https://owners.nissanusa.com/content/techpub/ManualsAndGuides/LEAF/${yr}/${yr}-LEAF-warranty-booklet.pdf`;
+const LEAF_CAPACITY_LETTER = "https://static.nhtsa.gov/odi/tsbs/2013/CSC-10052321-8586.pdf";
+const LEAF_PK_2016 = "https://usa.nissannews.com/en-US/releases/us-2016-nissan-leaf-press-kit";
+const LEAF_PK_2017 = "https://usa.nissannews.com/en-US/releases/us-2017-nissan-leaf-press-kit";
+const LEAF_PK_2026 = "https://usa.nissannews.com/en-US/releases/2026-nissan-leaf-press-kit";
+const ROGUE_PHEV_KIT = "https://usa.nissannews.com/en-US/releases/2026-nissan-rogue-plug-in-hybrid-press-kit";
+const ROGUE_PHEV_WB = "https://www.nissanusa.com/content/dam/Nissan/us/manuals-and-guides/rogue-plug-in-hybrid/2026/2026-nissan-rogue-plug-in-hybrid-warranty-booklet.pdf";
+// Hyundai: spec sheets state "Battery System Capacity" with no gross/usable
+// qualifier anywhere; feature tables carry an explicit per-trim Heat Pump
+// row (the same table family that proves Kona absences — it lists the PTC
+// heater and, on Ioniq 5, a separate heat-pump row).
+const HY_UNQUAL = "Stated as Battery System Capacity, with no gross or usable split";
+const I6_SPECS_23 = "https://www.hyundainews.com/assets/documents/original/53942-2023IONIQ6ProductSpecs022223.pdf";
+const I6_FEAT_23 = "https://www.hyundainews.com/assets/documents/original/53941-2023IONIQ6ProductFeatures022223.pdf";
+const I6_SPECSFEAT_25 = "https://www.hyundainews.com/assets/documents/original/64772-2025IONIQ6SpecsFeatures011525.pdf";
+const I6_PACK_LR = { packGrossKwh: fb(77.4, "mfr", "high", HY_UNQUAL + "; same figure on the 2023-25 sheets", I6_SPECS_23) };
+const I6_PACK_SR = { packGrossKwh: fb(53, "mfr", "high", HY_UNQUAL + "; same figure on the 2023-25 sheets", I6_SPECS_23) };
+const I6_HP_STD = { heatPump: fb<"standard">("standard", "mfr", "high", "Standard on SE Long Range, SEL and Limited; only the SE Standard Range lacks it", I6_FEAT_23) };
+const I6_HP_NONE = { heatPump: fb<"none">("none", "mfr", "high", "Hyundai's feature tables mark the heat pump long-range-only; the SE Standard Range carries a PTC heater", I6_SPECSFEAT_25) };
+const I9_HP = { heatPump: fb<"standard">("standard", "mfr", "high", "Standard on every trim, S through Calligraphy", "https://www.hyundainews.com/assets/documents/original/65341-2026IONIQ9SpecsFeatures20250305.pdf") };
+const KONA24_SPECS = "https://www.hyundainews.com/assets/documents/original/57132-2024KonaElectricSpecs0505232.pdf";
+const KONA24_FEAT = "https://www.hyundainews.com/assets/documents/original/57131-2024KonaElectricFeatures0505232.pdf";
+const KONA25_PRICE = "https://www.hyundainews.com/assets/documents/original/64645-2025MYKonaEVPriceSheet20Dec2024.pdf";
+const KONA_CARRYOVER = "https://www.hyundainews.com/assets/documents/original/63005-Hyundai2025ModelYearChanges20240815v12.pdf";
+const KONA_HP_NONE_24 = { heatPump: fb<"none">("none", "mfr", "high", "Hyundai's 2024 feature table lists a PTC heater and no heat pump; the Ioniq 5's same-family table names one, so the absence is stated", KONA24_FEAT) };
+const KONA_HP_NONE_25 = { heatPump: fb<"none">("none", "mfr", "medium", "Hyundai declares MY2025 a carry-over of the 2024 car, whose feature table lists only a PTC heater", KONA_CARRYOVER) };
+// Honda: no Honda US document names climate-system technology for any model
+// — spec sheets, press kits, and 591-page owner's manuals are all silent,
+// and the Prologue manual calls its control "the automatic heater" — so no
+// control test is possible and no heat-pump claim can be made either way.
+const HONDA_HP_ABSTAIN = "Honda's US documentation never names climate-system technology for any model, so nothing can be stated either way";
+const PROLOGUE_SPECS = "https://hondanews.com/en-US/honda-automobiles/releases/release-28556cec8c60d45354dbdd1404019b30-2025-honda-prologue-specifications-features";
+const HONDA_BEV_WB = "https://owners.honda.com/Documentum/Warranty/Handbooks/2025_Honda_BEV_Warranty_Basebook.pdf";
+const CHR_PRESS = "https://pressroom.toyota.com/2026-toyota-c-hr-puts-sporty-stylish-spin-on-the-compact-electric-suv/";
+const ID4_HP_NONE = { heatPump: fb<"none">("none", "mfr", "high", "VW's ID.4 releases state an electric resistance heater as the cabin heater and the per-trim feature sheets list no heat pump; VW's e-Golf sheets carried one as a line item", "https://media.vw.com/assets/applications/original/19461-2025-id4-release-final.pdf") };
+// Rivian: the adapter guide splits the charge inlet at the model year —
+// native CCS1 through MY2025 (gen 2 included), native NACS from MY2026 —
+// so rows spanning 2025-26 abstain and carry the split as a buyer note.
+const RIV_USABLE = "https://rivian.com/support/article/what-is-the-usable-kwh-capacity-of-your-batteries";
+const RIV_ADAPTER = "https://rivian.com/support/article/do-i-need-an-adapter";
+const RIV_PORT_ABSTAIN = "Rivian's adapter guide gives MY2022-25 cars a native CCS1 inlet and MY2026 a native NACS port, and this row spans both years";
+const NOTE_RIV_PORT = { headline: "Charge port: CCS1 through 2025, native NACS from 2026", severity: "info" as const };
+const FORD_L22_SPECS = "https://www.fromtheroad.ford.com/content/dam/fordmediasite/us/en/library/2022/specs/F-150_Lightning_Tech_Specs.pdf";
+const MACHE_SPECS_23 = "https://media.ford.com/content/dam/fordmedia/North%20America/US/2023/05/02/2023%20Mustang%20Mach-E%20Tech%20Specs.pdf";
+const MACHE_SPECS_24 = "https://media.ford.com/content/dam/fordmedia/North%20America/US/2024/04/09/2024%20Mustang%20Mach-E%20Tech%20Specs.pdf";
+const ESCAPE_HP_ABSTAIN = "Ford has published no heat-pump claim for the Escape PHEV in either direction: six owner's manuals name none where the Transit's manual lists heat-pump fuses, but silence is all there is";
+
   // ── Sixth research tranche (2026-08-21): Chevrolet Volt, Toyota RAV4
   // Prime, Toyota Prius Prime, Chrysler Pacifica Hybrid, Ford Escape PHEV,
   // Honda Clarity Plug-In Hybrid — the fully-sourced models from
@@ -507,6 +599,7 @@ const NOTE_TAY_HP = { headline: "Heat pump: factory option, on the window sticke
   const VOLT_ROWS: EnrichmentRow[] = [
     {
       id: "volt-2011-12", make: "CHEVROLET", model: "Volt", modelYears: [2011, 2012],
+      abstains: { heatPump: "GM documents never name cabin-heating hardware - even the Blazer EV's manual, whose press release touts the Ultium heat pump, never says the words - so no control test is possible" },
       battery: {
         packGrossKwh: fp(16.0, "mfr", "medium", "GM's own PDF gives 16.0–17.1 kWh across Gen 1 (2011–15) without a clean per-era split", VOLT_BATTERY_PDF),
         packUsableKwh: fp(10.2, "mfr", "medium", undefined, VOLT_BATTERY_PDF),
@@ -528,6 +621,7 @@ const NOTE_TAY_HP = { headline: "Heat pump: factory option, on the window sticke
     {
       // The owner's own trigger case: 2014 is a Gen 1 Volt, in this bucket.
       id: "volt-2013-15", make: "CHEVROLET", model: "Volt", modelYears: [2013, 2015],
+      abstains: { heatPump: "GM documents never name cabin-heating hardware - even the Blazer EV's manual, whose press release touts the Ultium heat pump, never says the words - so no control test is possible" },
       battery: {
         packGrossKwh: fp(17.1, "mfr", "medium", "Same Gen-1 GM PDF; larger usable window vs. 2011–12 via a software update", VOLT_BATTERY_PDF),
         packUsableKwh: fp(11.2, "mfr", "medium", undefined, VOLT_BATTERY_PDF),
@@ -548,6 +642,7 @@ const NOTE_TAY_HP = { headline: "Heat pump: factory option, on the window sticke
     },
     {
       id: "volt-2016-19", make: "CHEVROLET", model: "Volt", modelYears: [2016, 2019],
+      abstains: { heatPump: "GM documents never name cabin-heating hardware - even the Blazer EV's manual, whose press release touts the Ultium heat pump, never says the words - so no control test is possible" },
       battery: {
         packGrossKwh: fp(18.4, "mfr", "high", "Gen 2", VOLT_BATTERY_PDF),
         packUsableKwh: fp(14.0, "mfr", "high", undefined, VOLT_BATTERY_PDF),
@@ -768,6 +863,7 @@ const NOTE_TAY_HP = { headline: "Heat pump: factory option, on the window sticke
   const ESCAPE_ROWS: EnrichmentRow[] = [
     {
       id: "escape-phev-2020-22", make: "FORD", model: "Escape PHEV", modelYears: [2020, 2022],
+      abstains: { heatPump: ESCAPE_HP_ABSTAIN },
       modelAliases: ESCAPE_ALIASES,
       battery: ESCAPE_BATTERY,
       range: {
@@ -782,6 +878,7 @@ const NOTE_TAY_HP = { headline: "Heat pump: factory option, on the window sticke
     },
     {
       id: "escape-phev-2023", make: "FORD", model: "Escape PHEV", modelYears: [2023, 2023],
+      abstains: { heatPump: ESCAPE_HP_ABSTAIN },
       modelAliases: ESCAPE_ALIASES,
       battery: ESCAPE_BATTERY,
       range: {
@@ -796,6 +893,7 @@ const NOTE_TAY_HP = { headline: "Heat pump: factory option, on the window sticke
     },
     {
       id: "escape-phev-2024-25", make: "FORD", model: "Escape PHEV", modelYears: [2024, 2025],
+      abstains: { heatPump: ESCAPE_HP_ABSTAIN },
       modelAliases: ESCAPE_ALIASES,
       battery: ESCAPE_BATTERY,
       range: {
@@ -825,6 +923,7 @@ const NOTE_TAY_HP = { headline: "Heat pump: factory option, on the window sticke
   // is fewer matches, not a wrong one.
   const CLARITY_PHEV_ROW: EnrichmentRow = {
     id: "clarity-phev-2018-21", make: "HONDA", model: "Clarity Plug-In Hybrid", modelYears: [2018, 2021],
+    abstains: { heatPump: "Honda documents it neither way: the Clarity materials list only dual-zone climate control and even Honda's BEV manuals never use the term heat pump, so no control test is possible" },
     battery: { packGrossKwh: fp(17, "est", "medium", "Secondary-sourced (Honda Owners site vehicle-specs pages, 2020/2021)") },
     range: {
       epaRangeMi: fp(48, "mfr", "high", "Electric-only EPA range. Identical rating 2018–2021", epa(39782)),
@@ -853,6 +952,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     modelYears: [2022, 2022],
     vin8: ["L"],
     packVariant: "Standard Range",
+    battery: { packUsableKwh: fb(98, "mfr", "high", "Stated as usable energy; a preproduction figure", FORD_L22_SPECS) },
     range: { epaRangeMi: f(230, "mfr", "high", "EPA rating for the Standard Range pack (VIN engine code L)", epa(45318)) },
     thermal: { heatPump: NO_HEAT_PUMP },
     warranty: WARRANTY,
@@ -865,6 +965,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     modelYears: [2022, 2022],
     vin8: ["V"],
     packVariant: "Extended Range",
+    battery: { packUsableKwh: fb(131, "mfr", "high", "Stated as usable energy; a preproduction figure", FORD_L22_SPECS) },
     range: { epaRangeMi: f(320, "mfr", "high", "EPA rating for the Extended Range pack (VIN engine code V), non-Platinum trims", epa(45317)) },
     thermal: { heatPump: NO_HEAT_PUMP },
     warranty: WARRANTY,
@@ -878,6 +979,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     vin8: ["V"],
     trim: "Platinum",
     packVariant: "Extended Range",
+    battery: { packUsableKwh: fb(131, "mfr", "high", "Stated as usable energy; a preproduction figure", FORD_L22_SPECS) },
     range: { epaRangeMi: f(300, "mfr", "high", "Platinum carries the same Extended Range pack but is EPA-rated 300 (heavier 22\" wheels)", epa(45316)) },
     thermal: { heatPump: NO_HEAT_PUMP },
     warranty: WARRANTY,
@@ -1034,6 +1136,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     make: "CHEVROLET",
     model: "Bolt EV",
     modelYears: [2020, 2020],
+    battery: { packGrossKwh: { value: 66, source: "mfr", asOf: "2026-08-24", confidence: "high", note: "GM states one unqualified kWh figure, never split gross and usable", sourceUrl: "https://web.archive.org/web/20220119021035id_/https://media.chevrolet.com/content/dam/Media/documents/US/PDF/fastfacts/chevrolet/2020/20_FF_Chevrolet%20Bolt%20EV.pdf" } },
     range: {
       epaRangeMi: f(259, "mfr", "high", "MY2020, the pack grew to 66 kWh and EPA range rose to 259", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=42191"),
       testedRangeMi: f(226, "tested", "high", "70-mph (InsideEVs, 2020): 226 mi; 75-mph (C&D): 220"),
@@ -1061,6 +1164,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     // Same vPIC stripping as the Bolt EV rows, same reason it is safe.
     modelAliases: ["Bolt"],
     modelYears: [2022, 2023],
+    battery: { packGrossKwh: { value: 65, source: "mfr", asOf: "2026-08-24", confidence: "high", note: "GM states one unqualified kWh figure, never split gross and usable", sourceUrl: "https://web.archive.org/web/20230126153221/https://media.chevrolet.com/content/media/us/en/chevrolet/2022-bolt-euv-bolt-ev.detail.print.html/content/Pages/news/us/en/2021/feb/0214-boltev-bolteuv-specifications.html" } },
     range: { epaRangeMi: f(247, "mfr", "high", "Bolt EUV, both years, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=45750") },
     charging: { dcFastCharging: f("standard", "mfr"), portStandard: f("CCS1", "mfr") },
     thermal: { heatPump: f("none", "mfr") },
@@ -1293,6 +1397,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     id: "mache-2023-sr-rwd-lfp", ...ME, modelYears: [2023, 2023], vin8: ["4"], drive: "RWD",
     packVariant: "Standard Range (LFP)",
     battery: { chemistry: ME_LFP },
+    battery: { packUsableKwh: fb(72, "mfr", "high", "The Standard Range pack's stated usable capacity", MACHE_SPECS_23) },
     range: { epaRangeMi: f(250, "mfr", "high", "MY2023 Standard Range RWD, post-switch LFP build (VIN engine code 4), EPA's separate “RWD LFP” certification", epa(46985)) },
     charging: { ...ME_PORT_EARLY, dcPeakKw: ME_DC_SR },
     thermal: { heatPump: ME_NO_HP },
@@ -1303,6 +1408,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     id: "mache-2023-sr-awd-lfp", ...ME, modelYears: [2023, 2023], vin8: ["5"], drive: "AWD",
     packVariant: "Standard Range (LFP)",
     battery: { chemistry: ME_LFP },
+    battery: { packUsableKwh: fb(72, "mfr", "high", "The Standard Range pack's stated usable capacity", MACHE_SPECS_23) },
     range: { epaRangeMi: f(224, "mfr", "medium", "MY2023 Standard Range AWD (VIN engine code 5, LFP), EPA published one SR AWD rating for 2023; unlike the RWD pack, no separate LFP AWD figure exists", epa(46512)) },
     charging: { ...ME_PORT_EARLY, dcPeakKw: ME_DC_SR },
     thermal: { heatPump: ME_NO_HP },
@@ -1371,6 +1477,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     id: "mache-2024-sr-rwd", ...ME, modelYears: [2024, 2024], vin8: ["4"], drive: "RWD",
     packVariant: "Standard Range (LFP)",
     battery: { chemistry: ME_LFP },
+    battery: { packUsableKwh: fb(72, "mfr", "high", "The Standard Range pack's stated usable capacity", MACHE_SPECS_24) },
     range: { epaRangeMi: f(250, "mfr", "high", "MY2024 Standard Range RWD (VIN engine code 4), EPA", epa(47822)) },
     charging: { ...ME_PORT_EARLY, dcPeakKw: ME_DC_SR },
     thermal: { heatPump: ME_NO_HP },
@@ -1381,6 +1488,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     id: "mache-2024-sr-awd", ...ME, modelYears: [2024, 2024], vin8: ["5"], drive: "AWD",
     packVariant: "Standard Range (LFP)",
     battery: { chemistry: ME_LFP },
+    battery: { packUsableKwh: fb(72, "mfr", "high", "The Standard Range pack's stated usable capacity", MACHE_SPECS_24) },
     range: { epaRangeMi: f(230, "mfr", "high", "MY2024 Standard Range AWD (VIN engine code 5), EPA", epa(47824)) },
     charging: { ...ME_PORT_EARLY, dcPeakKw: ME_DC_SR },
     thermal: { heatPump: ME_NO_HP },
@@ -2099,56 +2207,74 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "i6-2023-24-lr-rwd-18", ...H6, modelYears: [2023, 2024], vin8: ["A"], trim: "SE", drive: "RWD", packVariant: "Long Range",
+    battery: I6_PACK_LR,
     range: { epaRangeMi: f(361, "mfr", "high", "MY2023–24 Long Range RWD on the SE 18-inch wheels, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46622") },
     charging: PORT_CCS,
+    thermal: I6_HP_STD,
     warranty: HK_WARRANTY,
   },
   {
     id: "i6-2023-24-lr-rwd-20", ...H6, modelYears: [2023, 2024], vin8: ["A"], trim: ["SEL", "Limited"], drive: "RWD", packVariant: "Long Range",
+    battery: I6_PACK_LR,
     range: { epaRangeMi: f(305, "mfr", "high", "MY2023–24 Long Range RWD on 20-inch wheels (SEL, Limited), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46623") },
     charging: PORT_CCS,
+    thermal: I6_HP_STD,
     warranty: HK_WARRANTY,
   },
   {
     id: "i6-2023-24-lr-awd-18", ...H6, modelYears: [2023, 2024], vin8: ["C"], trim: "SE", drive: "AWD", packVariant: "Long Range",
+    battery: I6_PACK_LR,
     range: { epaRangeMi: f(316, "mfr", "high", "MY2023–24 Long Range AWD on the SE 18-inch wheels, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46620") },
     charging: PORT_CCS,
+    thermal: I6_HP_STD,
     warranty: HK_WARRANTY,
   },
   {
     id: "i6-2023-24-lr-awd-20", ...H6, modelYears: [2023, 2024], vin8: ["C"], trim: ["SEL", "Limited"], drive: "AWD", packVariant: "Long Range",
+    battery: I6_PACK_LR,
     range: { epaRangeMi: f(270, "mfr", "high", "MY2023–24 Long Range AWD on 20-inch wheels (SEL, Limited), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46621") },
     charging: PORT_CCS,
+    thermal: I6_HP_STD,
     warranty: HK_WARRANTY,
   },
   {
     id: "i6-2023-25-sr", ...H6, modelYears: [2023, 2025], vin8: ["B"], trim: "SE Standard Range", drive: "RWD", packVariant: "Standard Range",
+    battery: I6_PACK_SR,
     range: { epaRangeMi: f(240, "mfr", "high", "SE Standard Range RWD (VIN code B, the 111 kW motor in Hyundai Part 565 data), EPA, same 240-mi rating all three years", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46624") },
     charging: PORT_CCS,
+    thermal: I6_HP_NONE,
     warranty: HK_WARRANTY,
   },
   {
     id: "i6-2025-lr-rwd-18", ...H6, modelYears: [2025, 2025], vin8: ["A"], trim: "SE", drive: "RWD", packVariant: "Long Range",
+    battery: I6_PACK_LR,
     range: { epaRangeMi: f(342, "mfr", "high", "MY2025 Long Range RWD on the SE 18-inch wheels, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48362") },
     charging: PORT_CCS,
+    thermal: I6_HP_STD,
     warranty: HK_WARRANTY,
   },
   {
     id: "i6-2025-lr-rwd-20", ...H6, modelYears: [2025, 2025], vin8: ["A"], trim: ["SEL", "Limited"], drive: "RWD", packVariant: "Long Range",
+    battery: I6_PACK_LR,
     range: { epaRangeMi: f(291, "mfr", "high", "MY2025 Long Range RWD on 20-inch wheels (SEL, Limited), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48363") },
     charging: PORT_CCS,
+    thermal: I6_HP_STD,
     warranty: HK_WARRANTY,
   },
   {
     id: "i6-2025-lr-awd-18", ...H6, modelYears: [2025, 2025], vin8: ["C"], trim: "SE", drive: "AWD", packVariant: "Long Range",
+    battery: I6_PACK_LR,
     range: { epaRangeMi: f(316, "mfr", "high", "MY2025 Long Range AWD on the SE 18-inch wheels, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48361") },
     charging: PORT_CCS,
+    thermal: I6_HP_STD,
     warranty: HK_WARRANTY,
   },
   {
     id: "i6-2025-lr-awd-20", ...H6, modelYears: [2025, 2025], vin8: ["C"], trim: ["SEL", "Limited"], drive: "AWD", packVariant: "Long Range",
+    battery: I6_PACK_LR,
     range: { epaRangeMi: f(270, "mfr", "high", "MY2025 Long Range AWD on 20-inch wheels (SEL, Limited), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48365") },
     charging: PORT_CCS,
+    thermal: I6_HP_STD,
     warranty: HK_WARRANTY,
   },
   {
@@ -2156,6 +2282,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packGrossKwh: f(110.3, "mfr", "high", undefined, "https://www.hyundainews.com/assets/documents/original/65341-2026IONIQ9SpecsFeatures20250305.pdf") },
     range: { epaRangeMi: f(335, "mfr", "high", "MY2026 IONIQ 9 RWD (VIN code 1), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49661") },
     charging: { portStandard: f<"NACS">("NACS", "agg", "high", "Native NACS port from launch") },
+    thermal: I9_HP,
     warranty: HK_WARRANTY,
   },
   {
@@ -2163,6 +2290,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packGrossKwh: f(110.3, "mfr", "high", undefined, "https://www.hyundainews.com/assets/documents/original/65341-2026IONIQ9SpecsFeatures20250305.pdf") },
     range: { epaRangeMi: f(320, "mfr", "high", "MY2026 IONIQ 9 AWD (VIN code 3), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49662") },
     charging: { portStandard: f<"NACS">("NACS", "agg", "high", "Native NACS port from launch") },
+    thermal: I9_HP,
     warranty: HK_WARRANTY,
   },
   {
@@ -2170,6 +2298,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packGrossKwh: f(110.3, "mfr", "high", undefined, "https://www.hyundainews.com/assets/documents/original/65341-2026IONIQ9SpecsFeatures20250305.pdf") },
     range: { epaRangeMi: f(311, "mfr", "high", "MY2026 IONIQ 9 AWD Performance (VIN code 5, incl. Calligraphy), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49663") },
     charging: { portStandard: f<"NACS">("NACS", "agg", "high", "Native NACS port from launch") },
+    thermal: I9_HP,
     warranty: HK_WARRANTY,
   },
   {
@@ -2177,37 +2306,48 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packGrossKwh: f(64, "mfr", "high") },
     range: { epaRangeMi: f(258, "mfr", "high", "Gen-1 Kona Electric (VIN code G), one rating across 2019–23, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46000") },
     charging: PORT_CCS,
+    thermal: { heatPump: fb("none", "mfr", "medium", "No heat-pump line in Hyundai's 2020-23 US feature tables, which list a PTC heater (the Ioniq 5's same-family table carries a heat-pump row); the thinner 2019 sheet does not itemize HVAC", "https://www.hyundainews.com/assets/documents/original/50314-2023KonaElectricProductFeatures20220628.pdf") },
     warranty: HK_WARRANTY,
   },
   {
     id: "kona-2024-lr", ...KONA, modelYears: [2024, 2024], vin8: ["6"], drive: "FWD", packVariant: "Long Range",
+    battery: { packGrossKwh: fb(64.8, "mfr", "high", HY_UNQUAL, KONA24_SPECS) },
     range: { epaRangeMi: f(261, "mfr", "high", "MY2024 Long Range (VIN code 6), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47449") },
     charging: PORT_CCS,
+    thermal: KONA_HP_NONE_24,
     warranty: HK_WARRANTY,
   },
   {
     id: "kona-2025-lr", ...KONA, modelYears: [2025, 2025], vin8: ["6"], drive: "FWD", packVariant: "Long Range",
+    battery: { packGrossKwh: fb(64.8, "mfr", "high", "Hyundai's 2025 price sheet; MY2025 is a declared carry-over of the 2024 car", KONA25_PRICE) },
     range: { epaRangeMi: f(261, "mfr", "high", "MY2025 Long Range (VIN code 6) on 17-inch wheels, EPA; the N Line 19-inch wheels rate 230", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48357") },
     charging: PORT_CCS,
+    thermal: KONA_HP_NONE_25,
     warranty: HK_WARRANTY,
   },
   {
     id: "kona-2025-lr-nline", ...KONA, modelYears: [2025, 2025], vin8: ["6"], trim: "N Line", drive: "FWD", packVariant: "Long Range",
+    abstains: { heatPump: "The N Line is new for 2025 and appears in no Hyundai US feature table; the price sheet says nothing about HVAC either way" },
+    battery: { packGrossKwh: fb(64.8, "mfr", "high", "Hyundai's 2025 price sheet states the N Line's 64.8 kWh battery", KONA25_PRICE) },
     range: { epaRangeMi: f(230, "mfr", "high", "MY2025 Long Range, N Line (19-inch wheels), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48358") },
     charging: PORT_CCS,
     warranty: HK_WARRANTY,
   },
   {
     id: "kona-2024-25-sr", ...KONA, modelYears: [2024, 2025], vin8: ["7"], drive: "FWD", packVariant: "Standard Range",
-    battery: { packGrossKwh: f(48.6, "agg", "medium") },
+    battery: { packGrossKwh: fb(48.6, "mfr", "high", HY_UNQUAL, KONA24_SPECS) },
     range: { epaRangeMi: f(200, "mfr", "high", "Standard Range (VIN code 7, the 99 kW motor), EPA, same rating both years", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47831") },
     charging: PORT_CCS,
+    thermal: { heatPump: fb("none", "mfr", "medium", "Hyundai's 2024 feature table lists a PTC heater and no heat pump; MY2025 is a declared carry-over", KONA_CARRYOVER) },
     warranty: HK_WARRANTY,
   },
   {
     id: "prologue-2025-26-awd-elite", make: "HONDA", model: "Prologue", modelYears: [2025, 2026], trim: "Elite", drive: "AWD",
+    abstains: { heatPump: HONDA_HP_ABSTAIN },
+    battery: { packGrossKwh: fb(85, "mfr", "high", "Honda states 85 kWh without a gross or usable qualifier", PROLOGUE_SPECS) },
     range: { epaRangeMi: f(283, "mfr", "high", "AWD Elite, EPA certifies it separately from the other AWD trims (294 mi)", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49090") },
     charging: PORT_CCS,
+    warranty: { batteryYears: fb(8, "mfr", "high", "From the 2025 Honda BEV warranty basebook; no 2026 basebook is published yet", HONDA_BEV_WB), batteryMiles: fb(100_000, "mfr", "high", undefined, HONDA_BEV_WB), sohFloorPct: fb(75, "mfr", "high", "Replaced or repaired if capacity falls below 75% within the warranty period", HONDA_BEV_WB) },
   },
 
   {
@@ -2284,6 +2424,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "i5-2025-xdrive40", ...I5, modelYears: [2025, 2025], trim: "xDrive40", drive: "AWD",
+    battery: I5_PACK,
     range: { epaRangeMi: f(266, "mfr", "high", "MY2025 i5 xDrive40 on 19-inch wheels, EPA; 248–262 on 20/21s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48322") },
     charging: BMW_CHARGING,
     thermal: BMW_HP,
@@ -2291,6 +2432,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "i5-2024-m60", ...I5, modelYears: [2024, 2024], trim: "M60", drive: "AWD",
+    battery: I5_PACK,
     range: { epaRangeMi: f(256, "mfr", "high", "MY2024 i5 M60 xDrive on 19-inch wheels, EPA; 240–248 on 20/21s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46926") },
     charging: BMW_CHARGING,
     thermal: BMW_HP,
@@ -2298,6 +2440,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "i5-2025-m60", ...I5, modelYears: [2025, 2025], trim: "M60", drive: "AWD",
+    battery: I5_PACK,
     range: { epaRangeMi: f(253, "mfr", "high", "MY2025 i5 M60 xDrive on 19-inch wheels, EPA; 239–250 on 20/21s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48319") },
     charging: BMW_CHARGING,
     thermal: BMW_HP,
@@ -2305,7 +2448,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "i5-2026-edrive40", ...I5, modelYears: [2026, 2026], trim: "eDrive40", drive: "RWD",
-    battery: { packUsableKwh: f(81.5, "mfr", "high", "83.9 kWh gross") },
+    battery: I5_PACK,
     range: { epaRangeMi: f(310, "mfr", "high", "MY2026 i5 eDrive40 on 19-inch wheels, EPA; 278–300 on 20/21s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49613") },
     charging: BMW_CHARGING,
     thermal: BMW_HP,
@@ -2313,6 +2456,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "i5-2026-xdrive40", ...I5, modelYears: [2026, 2026], trim: "xDrive40", drive: "AWD",
+    battery: I5_PACK,
     range: { epaRangeMi: f(278, "mfr", "high", "MY2026 i5 xDrive40 on 19-inch wheels, EPA; 259–272 on 20/21s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49616") },
     charging: BMW_CHARGING,
     thermal: BMW_HP,
@@ -2320,6 +2464,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "i5-2026-m60", ...I5, modelYears: [2026, 2026], trim: "M60", drive: "AWD",
+    battery: I5_PACK,
     range: { epaRangeMi: f(277, "mfr", "high", "MY2026 i5 M60 xDrive on 19-inch wheels, EPA; 259–266 on 20/21s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50194") },
     charging: BMW_CHARGING,
     thermal: BMW_HP,
@@ -2327,6 +2472,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "i7-2023-xdrive60", ...I7, modelYears: [2023, 2023], trim: "xDrive60", drive: "AWD",
+    battery: I7_PACK,
     range: { epaRangeMi: f(318, "mfr", "high", "MY2023 i7 xDrive60 on 19-inch wheels, EPA; 296–308 on 20/21s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=45993") },
     charging: BMW_CHARGING,
     thermal: BMW_HP,
@@ -2334,6 +2480,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "i7-2024-edrive50", ...I7, modelYears: [2024, 2024], trim: "eDrive50", drive: "RWD",
+    battery: I7_PACK_E50,
     range: { epaRangeMi: f(321, "mfr", "high", "MY2024 i7 eDrive50 on 19-inch wheels, EPA; 301–311 on 20/21s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46929") },
     charging: BMW_CHARGING,
     thermal: BMW_HP,
@@ -2341,6 +2488,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "i7-2024-xdrive60", ...I7, modelYears: [2024, 2024], trim: "xDrive60", drive: "AWD",
+    battery: I7_PACK,
     range: { epaRangeMi: f(317, "mfr", "high", "MY2024 i7 xDrive60 on 19-inch wheels, EPA; 298–307 on 20/21s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46934") },
     charging: BMW_CHARGING,
     thermal: BMW_HP,
@@ -2348,6 +2496,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "i7-2024-m70", ...I7, modelYears: [2024, 2024], trim: "M70", drive: "AWD",
+    battery: I7_PACK,
     range: { epaRangeMi: f(274, "mfr", "high", "MY2024 i7 M70 xDrive on 20-inch wheels, EPA; 291 on 21s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46932") },
     charging: BMW_CHARGING,
     thermal: BMW_HP,
@@ -2355,6 +2504,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "i7-2025-26-edrive50", ...I7, modelYears: [2025, 2026], trim: "eDrive50", drive: "RWD",
+    battery: I7_PACK_E50,
     range: { epaRangeMi: f(314, "mfr", "high", "MY2025–26 i7 eDrive50 on 19-inch wheels, EPA; 301–307 on 20/21s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48325") },
     charging: BMW_CHARGING,
     thermal: BMW_HP,
@@ -2362,6 +2512,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "i7-2025-26-xdrive60", ...I7, modelYears: [2025, 2026], trim: "xDrive60", drive: "AWD",
+    battery: I7_PACK,
     range: { epaRangeMi: f(311, "mfr", "high", "MY2025–26 i7 xDrive60 on 19-inch wheels, EPA; 296–308 on 20/21s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48330") },
     charging: BMW_CHARGING,
     thermal: BMW_HP,
@@ -2369,6 +2520,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "i7-2025-26-m70", ...I7, modelYears: [2025, 2026], trim: "M70", drive: "AWD",
+    battery: I7_PACK,
     range: { epaRangeMi: f(268, "mfr", "high", "MY2025–26 i7 M70 xDrive on 20-inch wheels, EPA (267 for 2026); 285 on 21s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48328") },
     charging: BMW_CHARGING,
     thermal: BMW_HP,
@@ -2384,6 +2536,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "ix-2024-25-xdrive40", ...IX, modelYears: [2024, 2025], trim: "xDrive40", drive: "AWD",
+    battery: { packUsableKwh: fb(71, "mfr", "medium", "76.6 kWh gross, BMW's European spec sheet; BMW USA never marketed the xDrive40 though EPA carries a rating for it", "https://www.press.bmwgroup.com/global/article/attachment/T0327077EN/633486") },
     range: { epaRangeMi: f(217, "mfr", "high", "20-inch wheels, standard", epa(46939)) },
     charging: BMW_CHARGING,
     thermal: BMW_HP,
@@ -2407,6 +2560,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "ix-2026-xdrive45", ...IX, modelYears: [2026, 2026], trim: "xDrive45", drive: "AWD",
+    battery: { packUsableKwh: fb(94.8, "mfr", "medium", "BMW's spec-sheet net figure; BMW USA press copy prints 100.1 kWh net usable for the same variant", IX26_SPECS) },
     range: { epaRangeMi: f(312, "mfr", "high", "MY2026 iX xDrive45 (facelift) on 20-inch wheels, EPA; 279–297 on larger wheels", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49619") },
     charging: BMW_CHARGING,
     thermal: BMW_HP,
@@ -2414,6 +2568,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "ix-2026-xdrive60", ...IX, modelYears: [2026, 2026], trim: "xDrive60", drive: "AWD",
+    battery: { packUsableKwh: fb(109.1, "mfr", "medium", "BMW's spec-sheet net figure; BMW USA press copy prints 113.4 kWh net usable for the same variant", IX26_SPECS) },
     range: { epaRangeMi: f(364, "mfr", "high", "MY2026 iX xDrive60 (facelift) on 20-inch wheels, EPA; 318–341 on larger wheels", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49623") },
     charging: BMW_CHARGING,
     thermal: BMW_HP,
@@ -2422,7 +2577,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
 
   {
     id: "i5-2027-edrive40", ...I5, modelYears: [2027, 2027], trim: "eDrive40", drive: "RWD",
-    battery: { packUsableKwh: f(81.5, "mfr", "high", "83.9 kWh gross") },
+    battery: I5_PACK,
     range: { epaRangeMi: f(328, "mfr", "high", "MY2027 i5 eDrive40 on 19-inch wheels, EPA; 280–299 on 20/21s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50360") },
     charging: BMW_CHARGING,
     thermal: BMW_HP,
@@ -2430,6 +2585,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "i5-2027-xdrive40", ...I5, modelYears: [2027, 2027], trim: "xDrive40", drive: "AWD",
+    battery: I5_PACK,
     range: { epaRangeMi: f(283, "mfr", "high", "MY2027 i5 xDrive40 on 19-inch wheels, EPA; 262–273 on 20/21s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50603") },
     charging: BMW_CHARGING,
     thermal: BMW_HP,
@@ -2437,6 +2593,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "i7-2027-xdrive50", ...I7, modelYears: [2027, 2027], trim: ["xDrive50", "50 xDrive"], drive: "AWD",
+    abstains: { packUsableKwh: "BMW states only a lineup maximum of 112.5 kWh net for the 2027 7 Series and publishes no per-variant figure yet" },
     range: { epaRangeMi: f(354, "mfr", "high", "MY2027 i7 xDrive50, EPA; 364 on 21-inch summer tires", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50604") },
     charging: BMW_CHARGING,
     thermal: BMW_HP,
@@ -2444,6 +2601,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "i7-2027-xdrive60", ...I7, modelYears: [2027, 2027], trim: ["xDrive60", "60 xDrive"], drive: "AWD",
+    abstains: { packUsableKwh: "BMW states only a lineup maximum of 112.5 kWh net for the 2027 7 Series and publishes no per-variant figure yet" },
     range: { epaRangeMi: f(344, "mfr", "high", "MY2027 i7 xDrive60, EPA; 348–362 on summer tires", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50607") },
     charging: BMW_CHARGING,
     thermal: BMW_HP,
@@ -2459,14 +2617,16 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   // and 82 arbitrarily (a 2024 Pro S reads "62"), so these rows ignore it.
   {
     id: "cadillac-vistiq-2026-27", make: "CADILLAC", model: "Vistiq", modelYears: [2026, 2027], drive: "AWD",
-    battery: { packGrossKwh: f(102, "mfr", "medium") },
+    abstains: { heatPump: "GM's 2022 Ultium release calls its patented heat pump standard on Ultium EVs, but no Optiq, Vistiq or Lyriq-V document names it and GM has retired the Ultium branding, so the link would be an inference" },
+    battery: { packUsableKwh: fb(102, "mfr", "high", "Stated as 102 kWh Useable Battery Energy") },
     range: { epaRangeMi: f(305, "mfr", "high", "Vistiq (AWD-only), EPA, same rating 2026–27; 300 with the 19 kW onboard-charger option", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49636") },
     charging: { portStandard: f("CCS1", "mfr") },
     warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
   },
   {
     id: "cadillac-optiq-2025", make: "CADILLAC", model: "Optiq", modelYears: [2025, 2025], drive: "AWD",
-    battery: { packGrossKwh: f(85, "mfr", "high") },
+    abstains: { heatPump: "GM's 2022 Ultium release calls its patented heat pump standard on Ultium EVs, but no Optiq, Vistiq or Lyriq-V document names it and GM has retired the Ultium branding, so the link would be an inference" },
+    battery: { packUsableKwh: fb(85, "mfr", "high", "Stated as 85 kWh Useable Battery Energy") },
     range: { epaRangeMi: f(302, "mfr", "medium", "GM-estimated, fueleconomy.gov has no MY2025 Optiq entry under any spelling (control: the MY2026 records are present); every MY2025 Optiq is dual-motor AWD") },
     charging: { portStandard: f("CCS1", "mfr") },
     warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
@@ -2476,6 +2636,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packUsableKwh: f(77, "mfr", "high", "82 kWh gross / 77 usable, the Pro pack") },
     range: { epaRangeMi: f(291, "mfr", "high", "MY2025 ID.4 Pro / Pro S RWD, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49156") },
     charging: { portStandard: f("CCS1", "mfr") },
+    thermal: ID4_HP_NONE,
     warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
   },
   {
@@ -2483,6 +2644,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packUsableKwh: f(77, "mfr", "high", "82 kWh gross / 77 usable, the Pro pack") },
     range: { epaRangeMi: f(263, "mfr", "high", "MY2025 ID.4 AWD Pro / Pro S, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48773") },
     charging: { portStandard: f("CCS1", "mfr") },
+    thermal: ID4_HP_NONE,
     warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
   },
   {
@@ -2490,6 +2652,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packUsableKwh: f(58, "mfr", "high", "62 kWh gross / 58 usable, the Standard pack") },
     range: { epaRangeMi: f(206, "mfr", "high", "MY2025 ID.4 / ID.4 S (62 kWh Standard pack), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49155") },
     charging: { portStandard: f("CCS1", "mfr") },
+    thermal: ID4_HP_NONE,
     warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
   },
   {
@@ -2497,6 +2660,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packUsableKwh: f(77, "mfr", "high", "82 kWh gross / 77 usable, MY2026 dropped the Standard pack") },
     range: { epaRangeMi: f(291, "mfr", "high", "MY2026 ID.4 RWD, EPA (the Standard pack is gone; one RWD rating)", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49987") },
     charging: { portStandard: f("CCS1", "mfr") },
+    thermal: ID4_HP_NONE,
     warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
   },
   {
@@ -2504,6 +2668,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packUsableKwh: f(77, "mfr", "high", "82 kWh gross / 77 usable") },
     range: { epaRangeMi: f(263, "mfr", "high", "MY2026 ID.4 AWD, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49988") },
     charging: { portStandard: f("CCS1", "mfr") },
+    thermal: ID4_HP_NONE,
     warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
   },
 
@@ -2521,6 +2686,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(73, "mfr", "high", "MY2011–12 (24 kWh), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=30979") },
     charging: { portStandard: f("CHAdeMO", "mfr", "high", "DC fast charging was optional on early cars; the port is CHAdeMO where fitted") },
     thermal: { heatPump: f("none", "mfr") },
+    warranty: { batteryYears: fb(8, "mfr", "high", undefined, LEAF_WB(2011)), batteryMiles: fb(100_000, "mfr", "high", undefined, LEAF_WB(2011)), sohFloorPct: fb(70, "mfr", "high", "Capacity coverage below nine bars (about 70%) was added retroactively to 2011-12 cars in December 2012, for 60 months or 60,000 miles", LEAF_CAPACITY_LETTER) },
   },
   {
     id: "leaf-2013", make: "NISSAN", model: "Leaf", modelYears: [2013, 2013],
@@ -2528,30 +2694,39 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(75, "mfr", "high", "MY2013 (24 kWh), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=33558") },
     charging: { portStandard: f("CHAdeMO", "mfr", "high", "DC fast charging optional (standard on SV/SL); CHAdeMO where fitted") },
     thermal: { heatPump: f("standard", "mfr", "high", "Hybrid heat pump system from MY2013 (SV/SL)") },
+    warranty: { batteryYears: fb(8, "mfr", "high", undefined, LEAF_WB(2013)), batteryMiles: fb(100_000, "mfr", "high", undefined, LEAF_WB(2013)), sohFloorPct: fb(70, "mfr", "high", "Below nine bars, capacity coverage runs 60 months or 60,000 miles", LEAF_WB(2013)) },
   },
   {
     id: "leaf-2016-s", make: "NISSAN", model: "Leaf", modelYears: [2016, 2016], trim: "S",
     battery: { packGrossKwh: f(24, "mfr", "high", "The S kept the 24 kWh pack in 2016; SV/SL moved to 30 kWh") },
     range: { epaRangeMi: f(84, "mfr", "high", "MY2016 S (24 kWh), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=37066") },
     charging: { portStandard: f("CHAdeMO", "mfr") },
+    thermal: { heatPump: fb("none", "mfr", "high", "Nissan's 2016 spec table marks the hybrid heater system (heat pump) unavailable on the S; SV and SL carry it standard", LEAF_PK_2016) },
+    warranty: { batteryYears: fb(8, "mfr", "high", undefined, LEAF_WB(2016)), batteryMiles: fb(100_000, "mfr", "high", undefined, LEAF_WB(2016)), sohFloorPct: fb(70, "mfr", "high", "Capacity coverage on the S's 24 kWh pack runs 60 months or 60,000 miles", LEAF_WB(2016)) },
   },
   {
     id: "leaf-2016-sv-sl", make: "NISSAN", model: "Leaf", modelYears: [2016, 2016], trim: ["SV", "SL"],
     battery: { packGrossKwh: f(30, "mfr", "high") },
     range: { epaRangeMi: f(107, "mfr", "high", "MY2016 SV/SL (30 kWh), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=37067") },
     charging: { portStandard: f("CHAdeMO", "mfr") },
+    thermal: { heatPump: fb("standard", "mfr", "high", "Hybrid heater system (heat pump), standard on SV and SL", LEAF_PK_2016) },
+    warranty: { batteryYears: fb(8, "mfr", "high", undefined, LEAF_WB(2016)), batteryMiles: fb(100_000, "mfr", "high", undefined, LEAF_WB(2016)), sohFloorPct: fb(70, "mfr", "high", "Capacity coverage on the 30 kWh pack runs the full 96 months or 100,000 miles", LEAF_WB(2016)) },
   },
   {
     id: "leaf-2017", make: "NISSAN", model: "Leaf", modelYears: [2017, 2017],
+    abstains: { heatPump: "Varies by grade: Nissan's 2017 spec table gives SV and SL the hybrid heater system and the S none, and this row spans all grades" },
     battery: { packGrossKwh: f(30, "mfr", "high") },
     range: { epaRangeMi: f(107, "mfr", "high", "MY2017 (30 kWh standard), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=38428") },
     charging: { portStandard: f("CHAdeMO", "mfr") },
+    thermal: { heatPumpByTrim: { S: "none", SV: "standard", SL: "standard" } },
+    warranty: { batteryYears: fb(8, "mfr", "high", undefined, LEAF_WB(2017)), batteryMiles: fb(100_000, "mfr", "high", undefined, LEAF_WB(2017)), sohFloorPct: fb(70, "mfr", "high", "Capacity coverage on the 30 kWh pack runs the full 96 months or 100,000 miles", LEAF_WB(2017)) },
   },
   {
     id: "leaf-2026-splus", make: "NISSAN", model: "Leaf", modelYears: [2026, 2026], vin8: ["A"], trim: ["S+", "S"],
     battery: { packGrossKwh: f(75, "mfr", "high") },
     range: { epaRangeMi: f(303, "mfr", "high", "MY2026 LEAF S+ (75 kWh, 18-inch steel wheels), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49975") },
     charging: { portStandard: f("NACS", "mfr", "high", "First LEAF with a native NACS port") },
+    thermal: { heatPump: fb("none", "mfr", "medium", "Nissan's trim table marks the hybrid heater system unavailable on S+ while SV+ and Platinum+ carry it standard; the release's untrimmed prose says standard, so the trim-resolved table is followed", LEAF_PK_2026) },
     warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source) },
   },
   {
@@ -2559,6 +2734,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packGrossKwh: f(75, "mfr", "high") },
     range: { epaRangeMi: f(288, "mfr", "high", "MY2026 LEAF SV+ (75 kWh, 18-inch alloys), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49974") },
     charging: { portStandard: f("NACS", "mfr", "high", "First LEAF with a native NACS port") },
+    thermal: { heatPump: fb("standard", "mfr", "high", "Hybrid heater system (heat pump), standard on SV+", LEAF_PK_2026) },
     warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source) },
   },
   {
@@ -2566,6 +2742,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packGrossKwh: f(75, "mfr", "high") },
     range: { epaRangeMi: f(259, "mfr", "high", "MY2026 LEAF Platinum+ (VIN code B; 19-inch wheels), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49976") },
     charging: { portStandard: f("NACS", "mfr", "high", "First LEAF with a native NACS port") },
+    thermal: { heatPump: fb("standard", "mfr", "high", "Hybrid heater system (heat pump), standard on Platinum+", LEAF_PK_2026) },
     warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source) },
   },
   {
@@ -2640,9 +2817,12 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packGrossKwh: f(74.7, "agg", "medium") },
     range: { epaRangeMi: f(287, "mfr", "high", "MY2026 C-HR BEV (AWD-only) on 18-inch wheels, EPA; 273 on 20s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50307") },
     charging: { portStandard: f("NACS", "agg", "high", "Native NACS port from launch") },
+    thermal: { heatPump: fb("none", "mfr", "medium", "Toyota's 2026 bZ release names its heat pump in the cold-weather equipment list; the C-HR's release has no such item and its climate line is dual-zone automatic control", CHR_PRESS) },
+    warranty: { batteryYears: fb(8, "mfr", "high", undefined, CHR_PRESS), batteryMiles: fb(100_000, "mfr", "high", undefined, CHR_PRESS) },
   },
   {
     id: "wagoneer-s-2025-26", make: "JEEP", model: "Wagoneer S", modelYears: [2025, 2026], drive: "AWD",
+    abstains: { epaRangeMi: "EPA rates it twice per year, split only by tire supplier (294 miles on the Falken, 262-268 on the Pirelli) - a split no listing field can resolve, so the spread stays silent", heatPump: STELLANTIS_HP_ABSTAIN },
     battery: { packGrossKwh: f(100, "agg", "medium") },
     // No epaRangeMi. EPA certifies the Wagoneer S twice and separates the two
     // only by TIRE SUPPLIER — "Wagoneer S AWD (Falken tire)" against
@@ -2657,9 +2837,11 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     // browse filter's minRange. Same call as the bZ Woodland, where 21 miles
     // of unknowable spread also went silent.
     charging: { portStandard: f("CCS1", "mfr") },
+    warranty: WAGONEER_S_WARRANTY,
   },
   {
     id: "wagoneer-s-2024", make: "JEEP", model: "Wagoneer S", modelYears: [2024, 2024], drive: "AWD",
+    abstains: { epaRangeMi: "EPA rates it twice, split only by tire supplier (303 miles on the Falken, 270 on the Pirelli) - a split no listing field can resolve, so the spread stays silent like the bZ Woodland's", heatPump: STELLANTIS_HP_ABSTAIN },
     battery: { packGrossKwh: f(100, "agg", "medium") },
     // No epaRangeMi. EPA certifies the Wagoneer S twice and separates the two
     // only by TIRE SUPPLIER — "Wagoneer S AWD (Falken tire)" against
@@ -2674,6 +2856,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     // browse filter's minRange. Same call as the bZ Woodland, where 21 miles
     // of unknowable spread also went silent.
     charging: { portStandard: f("CCS1", "mfr") },
+    warranty: WAGONEER_S_WARRANTY,
   },
   {
     // Keyed on the V's own descriptor (1GYXP against an ordinary Lyriq's
@@ -2687,6 +2870,8 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     // refusing the 21 real V cars whose trim field reads "-V" or a bare "V",
     // both below trimStringsOverlap's three-character floor.
     id: "lyriq-v-2026-27", make: "CADILLAC", model: "Lyriq", modelYears: [2026, 2027], vin8: ["L"], vds: ["XP"], drive: "AWD",
+    abstains: { heatPump: "GM's 2022 Ultium release calls its patented heat pump standard on Ultium EVs, but no Optiq, Vistiq or Lyriq-V document names it and GM has retired the Ultium branding, so the link would be an inference" },
+    battery: { packUsableKwh: fb(102, "mfr", "high", "Stated as 102 kWh Useable Battery Energy", "https://web.archive.org/web/20250903021838/https://news.gm.com/home.detail.html/Pages/news/us/en/2025/jan/0123-lyriq-v.html") },
     range: { epaRangeMi: f(285, "mfr", "high", undefined, "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49633") },
     charging: { portStandard: f("CCS1", "mfr") },
     warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
@@ -3002,6 +3187,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "r1s-2024-std", ...R1S, modelYears: [2024, 2024], trim: ["Standard Pack", "Standard", "Dual Motor"], drive: "AWD", packVariant: "Dual · Standard pack",
+    battery: { packUsableKwh: fb(106, "mfr", "high", "Rivian's usable-capacity table, gen-1 Dual Standard", RIV_USABLE) },
     range: { epaRangeMi: f(270, "mfr", "high", "MY2024 R1S Dual Standard on 21-inch wheels, EPA; 255 on 22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47895") },
     charging: RIV_PORT1,
     thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
@@ -3009,6 +3195,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "r1t-2024-std", ...R1T, modelYears: [2024, 2024], trim: ["Standard Pack", "Standard", "Dual Motor"], drive: "AWD", packVariant: "Dual · Standard pack",
+    battery: { packUsableKwh: fb(106, "mfr", "high", "Rivian's usable-capacity table, gen-1 Dual Standard", RIV_USABLE) },
     range: { epaRangeMi: f(270, "mfr", "high", "MY2024 R1T Dual Standard on 21-inch wheels, EPA; 255 on 22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47872") },
     charging: RIV_PORT1,
     thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
@@ -3016,6 +3203,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "r1s-2024-stdplus", ...R1S, modelYears: [2024, 2024], trim: ["Standard Plus Pack", "Standard Plus"], drive: "AWD", packVariant: "Dual · Standard+ pack",
+    battery: { packUsableKwh: fb(121, "mfr", "high", "Rivian's usable-capacity table, gen-1 Dual Standard+", RIV_USABLE) },
     range: { epaRangeMi: f(315, "mfr", "high", "MY2024 R1S Dual Standard+ on 21-inch wheels, EPA; 277–300 on 20AT/22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47897") },
     charging: RIV_PORT1,
     thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
@@ -3023,6 +3211,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "r1t-2024-stdplus", ...R1T, modelYears: [2024, 2024], trim: ["Standard Plus Pack", "Standard Plus"], drive: "AWD", packVariant: "Dual · Standard+ pack",
+    battery: { packUsableKwh: fb(121, "mfr", "high", "Rivian's usable-capacity table, gen-1 Dual Standard+", RIV_USABLE) },
     range: { epaRangeMi: f(315, "mfr", "high", "MY2024 R1T Dual Standard+ on 21-inch wheels, EPA; 277–300 on 20AT/22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47874") },
     charging: RIV_PORT1,
     thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
@@ -3062,74 +3251,99 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "r1s-2025-26-std", ...R1S, modelYears: [2025, 2026], trim: ["Standard Pack", "Standard", "Dual Motor"], drive: "AWD", packVariant: "Dual · Standard pack",
+    abstains: { portStandard: RIV_PORT_ABSTAIN },
     battery: RIV_106,
     range: { epaRangeMi: f(258, "mfr", "high", "Gen-2 R1S Dual Standard on 20-inch wheels, EPA, 2025–26; 270 on 22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48435") },
     thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
     warranty: RIV_W,
+    buyerNotes: [NOTE_RIV_PORT],
   },
   {
     id: "r1t-2025-26-std", ...R1T, modelYears: [2025, 2026], trim: ["Standard Pack", "Standard", "Dual Motor"], drive: "AWD", packVariant: "Dual · Standard pack",
+    abstains: { portStandard: RIV_PORT_ABSTAIN },
     battery: RIV_106,
     range: { epaRangeMi: f(258, "mfr", "high", "Gen-2 R1T Dual Standard on 20-inch wheels, EPA, 2025–26; 270 on 22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48423") },
     thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
     warranty: RIV_W,
+    buyerNotes: [NOTE_RIV_PORT],
   },
   {
     id: "r1s-2025-26-large", ...R1S, modelYears: [2025, 2026], trim: ["Large Pack", "Large", "Dual Motor"], drive: "AWD", packVariant: "Dual · Large pack",
+    abstains: { portStandard: RIV_PORT_ABSTAIN },
+    battery: { packUsableKwh: fb(108, "mfr", "high", "Rivian's usable-capacity table, gen-2 Dual Large; rated 109.8 kWh", RIV_USABLE) },
     range: { epaRangeMi: f(300, "mfr", "high", "Gen-2 R1S Dual Large on 20-inch wheels, EPA, 2025–26; 289–329 on 20AT/22s. The Large Plus pack rates 317–330", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48745") },
     thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
     warranty: RIV_W,
+    buyerNotes: [NOTE_RIV_PORT],
   },
   {
     id: "r1t-2025-26-large", ...R1T, modelYears: [2025, 2026], trim: ["Large Pack", "Large", "Dual Motor"], drive: "AWD", packVariant: "Dual · Large pack",
+    abstains: { portStandard: RIV_PORT_ABSTAIN },
+    battery: { packUsableKwh: fb(108, "mfr", "high", "Rivian's usable-capacity table, gen-2 Dual Large; rated 109.8 kWh", RIV_USABLE) },
     range: { epaRangeMi: f(300, "mfr", "high", "Gen-2 R1T Dual Large on 20-inch wheels, EPA, 2025–26; 329 on 22s. The Large Plus pack rates 317–330", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48755") },
     thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
     warranty: RIV_W,
+    buyerNotes: [NOTE_RIV_PORT],
   },
   {
     id: "r1s-2025-26-largeplus", ...R1S, modelYears: [2025, 2026], trim: ["Large Plus Pack", "Large Plus"], drive: "AWD", packVariant: "Dual · Large Plus pack",
+    abstains: { portStandard: RIV_PORT_ABSTAIN },
+    battery: { packGrossKwh: fb(140, "mfr", "medium", "Rivian's battery-spec table rates the Dual Large+ at the Max-class 140 kWh; its usable-capacity table omits this pack", RIV_USABLE) },
     range: { epaRangeMi: f(317, "mfr", "high", "Gen-2 R1S Dual Large Plus on 20-inch wheels, EPA, 2025–26; 292–330 on 20AT/22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48747") },
     thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
     warranty: RIV_W,
+    buyerNotes: [NOTE_RIV_PORT],
   },
   {
     id: "r1t-2025-26-largeplus", ...R1T, modelYears: [2025, 2026], trim: ["Large Plus Pack", "Large Plus"], drive: "AWD", packVariant: "Dual · Large Plus pack",
+    abstains: { portStandard: RIV_PORT_ABSTAIN },
+    battery: { packGrossKwh: fb(140, "mfr", "medium", "Rivian's battery-spec table rates the Dual Large+ at the Max-class 140 kWh; its usable-capacity table omits this pack", RIV_USABLE) },
     range: { epaRangeMi: f(317, "mfr", "high", "Gen-2 R1T Dual Large Plus on 20-inch wheels, EPA, 2025–26; 330 on 22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48757") },
     thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
     warranty: RIV_W,
+    buyerNotes: [NOTE_RIV_PORT],
   },
   {
     id: "r1s-2025-26-max", ...R1S, modelYears: [2025, 2026], trim: ["Max Pack", "Max", "Dual Motor"], drive: "AWD", packVariant: "Dual · Max pack",
+    abstains: { portStandard: RIV_PORT_ABSTAIN },
     battery: RIV_141,
     range: { epaRangeMi: f(380, "mfr", "high", "Gen-2 R1S Dual Max on 20-inch wheels, EPA, 2025–26; 370–410 on 20AT/22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48433") },
     thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
     warranty: RIV_W,
+    buyerNotes: [NOTE_RIV_PORT],
   },
   {
     id: "r1t-2025-26-max", ...R1T, modelYears: [2025, 2026], trim: ["Max Pack", "Max", "Dual Motor"], drive: "AWD", packVariant: "Dual · Max pack",
+    abstains: { portStandard: RIV_PORT_ABSTAIN },
     battery: RIV_141,
     range: { epaRangeMi: f(380, "mfr", "high", "Gen-2 R1T Dual Max on 20-inch wheels, EPA, 2025–26; 420 on 22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48421") },
     thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
     warranty: RIV_W,
+    buyerNotes: [NOTE_RIV_PORT],
   },
   {
     id: "r1s-2025-26-tri", ...R1S, modelYears: [2025, 2026], trim: ["Tri Motor", "Tri", "Tri Motor Max Pack"], drive: "AWD", packVariant: "Tri · Max pack",
+    abstains: { portStandard: RIV_PORT_ABSTAIN },
     battery: RIV_141,
     range: { epaRangeMi: f(371, "mfr", "high", "Gen-2 R1S Tri Max on 22-inch wheels, EPA, 2025–26; 329 on 20AT", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48751") },
     thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
     warranty: RIV_W,
+    buyerNotes: [NOTE_RIV_PORT],
   },
   {
     id: "r1t-2025-26-tri", ...R1T, modelYears: [2025, 2026], trim: ["Tri Motor", "Tri", "Tri Motor Max Pack"], drive: "AWD", packVariant: "Tri · Max pack",
+    abstains: { portStandard: RIV_PORT_ABSTAIN },
     battery: RIV_141,
     range: { epaRangeMi: f(371, "mfr", "high", "Gen-2 R1T Tri Max on 22-inch wheels, EPA, 2025–26", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48761") },
     thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
     warranty: RIV_W,
+    buyerNotes: [NOTE_RIV_PORT],
   },
   {
     id: "r1s-2026-quad", ...R1S, modelYears: [2026, 2026], trim: ["Quad Motor", "Quad", "Quad Motor Large Pack"], drive: "AWD", packVariant: "Quad · Max pack",
     battery: RIV_141,
     range: { epaRangeMi: f(374, "mfr", "high", "MY2026 gen-2 R1S Quad Max on 22-inch wheels, EPA; 325–338 on AT/UHP tires", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49740") },
+    charging: { portStandard: fb<"NACS">("NACS", "mfr", "high", "Native NACS port from MY2026", RIV_ADAPTER) },
     thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
     warranty: RIV_W,
   },
@@ -3147,19 +3361,25 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   // the cards already show as the "No fast charging" tile.
   {
     id: "wrangler-4xe-2021-25", make: "JEEP", model: "Wrangler 4xe", modelYears: [2021, 2025], packVariant: "PHEV",
+    abstains: { heatPump: STELLANTIS_HP_ABSTAIN },
+    battery: { packGrossKwh: fb(17, "mfr", "high", JEEP_17KWH_NOTE, "https://media.stellantisnorthamerica.com/newsrelease.do?id=22673&mid=1") },
     range: {
       epaRangeMi: f(22, "mfr", "high", "Electric-only EPA range. Identical rating 2021–25", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47278"),
       epaRangeTotalMi: f(370, "mfr", "high", undefined, "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47278"),
     },
     charging: { portStandard: f("J1772", "mfr", "high", "AC charging only, no DC fast charge on any 4xe"), dcFastCharging: f("none", "mfr") },
+    warranty: WRANGLER_4XE_WARRANTY,
   },
   {
     id: "wrangler-unl-4xe-2021-25", make: "JEEP", model: "Wrangler Unlimited 4xe", modelYears: [2021, 2025], packVariant: "PHEV",
+    abstains: { heatPump: STELLANTIS_HP_ABSTAIN },
+    battery: { packGrossKwh: fb(17, "mfr", "high", JEEP_17KWH_NOTE, "https://media.stellantisnorthamerica.com/newsrelease.do?id=22673&mid=1") },
     range: {
       epaRangeMi: f(22, "mfr", "high", "Electric-only EPA range. Identical rating 2021–25", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47278"),
       epaRangeTotalMi: f(370, "mfr", "high", undefined, "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47278"),
     },
     charging: { portStandard: f("J1772", "mfr", "high", "AC charging only, no DC fast charge on any 4xe"), dcFastCharging: f("none", "mfr") },
+    warranty: WRANGLER_4XE_WARRANTY,
   },
   {
     // The bare model string ("Wrangler", "Wrangler Unlimited") carries the same
@@ -3182,23 +3402,29 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     // says so, and it will say so again if a feed ever starts sending the
     // model without the trim.
     id: "wrangler-4xe-2021-25-alt", make: "JEEP", model: "Wrangler", modelAliases: ["Wrangler Unlimited"],
+    abstains: { heatPump: STELLANTIS_HP_ABSTAIN },
     modelYears: [2021, 2025], trim: ["4xe"], packVariant: "PHEV",
+    battery: { packGrossKwh: fb(17, "mfr", "high", JEEP_17KWH_NOTE, "https://media.stellantisnorthamerica.com/newsrelease.do?id=22673&mid=1") },
     range: {
       epaRangeMi: f(22, "mfr", "high", "Electric-only EPA range. Identical rating 2021–25", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47278"),
       epaRangeTotalMi: f(370, "mfr", "high", undefined, "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47278"),
     },
     charging: { portStandard: f("J1772", "mfr", "high", "AC charging only, no DC fast charge on any 4xe"), dcFastCharging: f("none", "mfr") },
+    warranty: WRANGLER_4XE_WARRANTY,
   },
   {
     // "GR Cherokee 4XE" is one dealer's abbreviation, and the string names the
     // plug-in itself, so it needs no trim guard the way the bare name does.
     id: "gc-4xe-2022-25", make: "JEEP", model: "Grand Cherokee 4xe", modelAliases: ["GR Cherokee 4XE"],
+    abstains: { heatPump: STELLANTIS_HP_ABSTAIN },
     modelYears: [2022, 2025], packVariant: "PHEV",
+    battery: { packGrossKwh: fb(17, "mfr", "high", JEEP_17KWH_NOTE, "https://media.stellantisnorthamerica.com/newsrelease.do?id=23153&mid=") },
     range: {
       epaRangeMi: f(26, "mfr", "high", "Electric-only EPA range. Identical rating 2022–25", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47277"),
       epaRangeTotalMi: f(470, "mfr", "high", undefined, "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47277"),
     },
     charging: { portStandard: f("J1772", "mfr", "high", "AC charging only, no DC fast charge"), dcFastCharging: f("none", "mfr") },
+    warranty: GC_4XE_WARRANTY,
   },
   {
     // The bare "Grand Cherokee" bucket, split out of the row above 2026-08-23
@@ -3211,11 +3437,14 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     // bare-model listings on 2026-08-23 say 4XE in their trim and none is
     // trim-less, so the guard costs no coverage at all.
     id: "gc-4xe-2022-25-alt", make: "JEEP", model: "Grand Cherokee", modelYears: [2022, 2025], trim: ["4xe"], packVariant: "PHEV",
+    abstains: { heatPump: STELLANTIS_HP_ABSTAIN },
+    battery: { packGrossKwh: fb(17, "mfr", "high", JEEP_17KWH_NOTE, "https://media.stellantisnorthamerica.com/newsrelease.do?id=23153&mid=") },
     range: {
       epaRangeMi: f(26, "mfr", "high", "Electric-only EPA range. Identical rating 2022–25", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47277"),
       epaRangeTotalMi: f(470, "mfr", "high", undefined, "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47277"),
     },
     charging: { portStandard: f("J1772", "mfr", "high", "AC charging only, no DC fast charge"), dcFastCharging: f("none", "mfr") },
+    warranty: GC_4XE_WARRANTY,
   },
   {
     // No `trim` on the "X5 PHEV" rows, unlike their "X5" siblings below. The
@@ -3228,10 +3457,12 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     // bare-"X5" rows, which is where it is load-bearing: those must not match
     // a petrol xDrive40i.
     id: "x5-45e-2021-23", make: "BMW", model: "X5 PHEV", modelYears: [2021, 2023], packVariant: "PHEV",
+    abstains: { heatPump: X5_HP_ABSTAIN, batteryWarranty: X5_45E_WARRANTY_ABSTAIN },
     // "X5 xDrive45e" as a MODEL string surfaced in the 2026-08-24 gap run (7
     // live listings) — the badge in the model names the plug-in itself, so it
     // aliases here the same way "X5 xDrive50e" already does on the 50e row.
     modelAliases: ["X5 xDrive45e"],
+    battery: { packUsableKwh: fb(17.06, "mfr", "high", "24 kWh gross, BMW USA's spec row; BMW's European sheet nets 20.9 for the same car", "https://www.press.bmwgroup.com/usa/article/detail/T0309345EN_US/the-2021-bmw-x5-xdrive45e-phev-sports-activity-vehicle") },
     range: {
       epaRangeMi: f(31, "mfr", "high", "xDrive45e electric-only EPA range", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=42807"),
       epaRangeTotalMi: f(400, "mfr", "high", undefined, "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=42807"),
@@ -3240,14 +3471,19 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "x5-50e-2024-26", make: "BMW", model: "X5 PHEV", modelAliases: ["X5 xDrive50e"], modelYears: [2024, 2026], packVariant: "PHEV",
+    abstains: { heatPump: X5_HP_ABSTAIN },
+    battery: { packUsableKwh: fb(19.2, "mfr", "high", "29.5 kWh gross, BMW USA's spec row; BMW's European sheet nets 25.7", "https://www.press.bmwgroup.com/usa/article/detail/T0408460EN_US/the-2024-bmw-x5-and-x6") },
     range: {
       epaRangeMi: f(39, "mfr", "high", "xDrive50e electric-only EPA range (40 for 2026). MY2024 has no separate fueleconomy.gov entry (control: 2025–26 are present), same xDrive50e", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49009"),
       epaRangeTotalMi: f(440, "mfr", "high", undefined, "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49009"),
     },
     charging: { portStandard: f("J1772", "mfr", "high", "AC charging only"), dcFastCharging: f("none", "mfr") },
+    warranty: X5_50E_WARRANTY,
   },
   {
     id: "x5-45e-2021-23-alt", make: "BMW", model: "X5", modelYears: [2021, 2023], trim: ["xDrive45e", "45e"], packVariant: "PHEV",
+    abstains: { heatPump: X5_HP_ABSTAIN, batteryWarranty: X5_45E_WARRANTY_ABSTAIN },
+    battery: { packUsableKwh: fb(17.06, "mfr", "high", "24 kWh gross, BMW USA's spec row; BMW's European sheet nets 20.9 for the same car", "https://www.press.bmwgroup.com/usa/article/detail/T0309345EN_US/the-2021-bmw-x5-xdrive45e-phev-sports-activity-vehicle") },
     range: {
       epaRangeMi: f(31, "mfr", "high", "xDrive45e electric-only EPA range", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=42807"),
       epaRangeTotalMi: f(400, "mfr", "high", undefined, "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=42807"),
@@ -3256,19 +3492,25 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "x5-50e-2024-26-alt", make: "BMW", model: "X5", modelYears: [2024, 2026], trim: ["xDrive50e", "50e"], packVariant: "PHEV",
+    abstains: { heatPump: X5_HP_ABSTAIN },
+    battery: { packUsableKwh: fb(19.2, "mfr", "high", "29.5 kWh gross, BMW USA's spec row; BMW's European sheet nets 25.7", "https://www.press.bmwgroup.com/usa/article/detail/T0408460EN_US/the-2024-bmw-x5-and-x6") },
     range: {
       epaRangeMi: f(39, "mfr", "high", "xDrive50e electric-only EPA range (40 for 2026)", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49009"),
       epaRangeTotalMi: f(440, "mfr", "high", undefined, "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49009"),
     },
     charging: { portStandard: f("J1772", "mfr", "high", "AC charging only"), dcFastCharging: f("none", "mfr") },
+    warranty: X5_50E_WARRANTY,
   },
   {
     id: "rogue-phev-2025-26", make: "NISSAN", model: "Rogue Plug-In Hybrid", modelYears: [2025, 2026], packVariant: "PHEV",
+    battery: { packGrossKwh: fb(20, "mfr", "high", "Nissan states 20 kWh without a gross or usable qualifier", ROGUE_PHEV_KIT) },
     range: {
       epaRangeMi: f(38, "mfr", "medium", "Electric-only range, Nissan's EPA-estimate; fueleconomy.gov has no Rogue PHEV entry yet (control: gas Rogues are present)", "https://usa.nissannews.com/en-US/releases/2026-nissan-rogue-plug-in-hybrid-press-kit"),
       epaRangeTotalMi: f(420, "mfr", "medium", undefined, "https://usa.nissannews.com/en-US/releases/2026-nissan-rogue-plug-in-hybrid-press-kit"),
     },
     charging: { portStandard: f("J1772", "mfr", "high", "AC charging only"), dcFastCharging: f("none", "mfr") },
+    thermal: { heatPump: fb("standard", "mfr", "high", "Standard on both grades, SL and Platinum", ROGUE_PHEV_KIT) },
+    warranty: { batteryYears: fb(8, "mfr", "high", "Covered as a PHEV System component; unlike the Leaf and Ariya there is no capacity-retention warranty", ROGUE_PHEV_WB), batteryMiles: fb(100_000, "mfr", "high", undefined, ROGUE_PHEV_WB) },
   },
 
   ...VOLT_ROWS,

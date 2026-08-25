@@ -207,6 +207,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     modelYears: [2026, 2026],
     trim: "M70",
     drive: "AWD",
+    battery: { packUsableKwh: { value: 108.9, source: "mfr", asOf: "2026-08-24", confidence: "medium", note: "BMW's spec-sheet net figure; BMW USA press copy prints 112.8 kWh net usable for the same variant", sourceUrl: "https://www.press.bmwgroup.com/global/article/attachment/T0447642EN/630684" } },
     range: { epaRangeMi: f(303, "mfr", "high", "21-inch wheels, standard", epa(49627)) },
     charging: {
       portStandard: f("CCS1", "agg", "low", "Inferred by platform continuity from the outgoing xDrive50/M60 generation; not independently confirmed for the MY2026-refresh M70"),

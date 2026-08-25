@@ -178,6 +178,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     // deliberately NOT aliased. See scraper/vpic-model-alias-check.mjs.
     modelAliases: ["Bolt"],
     modelYears: [2017, 2019],
+    battery: { packGrossKwh: { value: 60, source: "mfr", asOf: "2026-08-24", confidence: "high", note: "GM states one unqualified kWh figure, never split gross and usable", sourceUrl: "https://web.archive.org/web/20181027221140id_/http://media.chevrolet.com/content/media/us/en/chevrolet/vehicles/bolt-ev/2017/_jcr_content/iconrow/textfile/file.res/2017-Chevrolet-Bolt-EV-Product-Facts-081717.pdf" } },
     range: { epaRangeMi: f(238, "mfr", "high", "MY2017–19, EPA", "https://www.fueleconomy.gov") },
     charging: {
       dcFastCharging: f("optional", "mfr", "high", "$750 factory option; fitted cars have two extra pins under the J1772 socket"),
@@ -214,9 +215,11 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     modelAliases: ["Bolt"],
     modelYears: [2021, 2021],
     trim: "LT",
+    battery: { packGrossKwh: { value: 66, source: "mfr", asOf: "2026-08-24", confidence: "high", note: "GM states one unqualified kWh figure, never split gross and usable", sourceUrl: "https://web.archive.org/web/20210618123733/https://media.chevrolet.com/media/us/en/chevrolet/vehicles/bolt-ev/2021.tab1.html" } },
     range: { epaRangeMi: f(259, "mfr", "high", undefined, "https://www.fueleconomy.gov") },
     charging: {
       dcFastCharging: f("optional", "mfr", "high", "A factory option on the LT this year; standard on the Premier"),
+      portStandard: { value: "CCS1", source: "mfr", asOf: "2026-08-24", confidence: "high", note: "Only on cars with the fast-charge option; without it, AC charging only", sourceUrl: "https://web.archive.org/web/20230306010102id_/https://media.chevrolet.com/content/media/us/en/chevrolet/vehicles/bolt-ev/2021/_jcr_content/iconrow/textfile/file.res/2021-Chevrolet-Bolt-EV-Product-Guide.pdf" },
     },
     thermal: { heatPump: f("none", "mfr") },
     warranty: { batteryYears: f(8, "mfr"), batteryMiles: f(100_000, "mfr"), batteryTransfers: f(true, "mfr", "high") },
@@ -241,8 +244,10 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     modelAliases: ["Bolt"],
     modelYears: [2021, 2021],
     trim: "Premier",
+    battery: { packGrossKwh: { value: 66, source: "mfr", asOf: "2026-08-24", confidence: "high", note: "GM states one unqualified kWh figure, never split gross and usable", sourceUrl: "https://web.archive.org/web/20210618123733/https://media.chevrolet.com/media/us/en/chevrolet/vehicles/bolt-ev/2021.tab1.html" } },
     range: { epaRangeMi: f(259, "mfr", "high", undefined, "https://www.fueleconomy.gov") },
-    charging: { dcFastCharging: f("standard", "mfr") },
+    charging: {
+      portStandard: { value: "CCS1", source: "mfr", asOf: "2026-08-24", confidence: "high", note: "DC fast charging became standard on the Premier for 2021", sourceUrl: "https://web.archive.org/web/20230306010102id_/https://media.chevrolet.com/content/media/us/en/chevrolet/vehicles/bolt-ev/2021/_jcr_content/iconrow/textfile/file.res/2021-Chevrolet-Bolt-EV-Product-Guide.pdf" }, dcFastCharging: f("standard", "mfr") },
     thermal: { heatPump: f("none", "mfr") },
     warranty: { batteryYears: f(8, "mfr"), batteryMiles: f(100_000, "mfr"), batteryTransfers: f(true, "mfr", "high") },
   },
@@ -258,6 +263,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     // deliberately NOT aliased. See scraper/vpic-model-alias-check.mjs.
     modelAliases: ["Bolt"],
     modelYears: [2022, 2023],
+    battery: { packGrossKwh: { value: 65, source: "mfr", asOf: "2026-08-24", confidence: "high", note: "GM states one unqualified kWh figure, never split gross and usable", sourceUrl: "https://web.archive.org/web/20230126153221/https://media.chevrolet.com/content/media/us/en/chevrolet/2022-bolt-euv-bolt-ev.detail.print.html/content/Pages/news/us/en/2021/feb/0214-boltev-bolteuv-specifications.html" } },
     range: { epaRangeMi: f(259, "mfr", "high", undefined, "https://www.fueleconomy.gov"), testedRangeMi: f(260, "tested", "high", "70-mph (InsideEVs, 2022): 260 mi; Edmunds mixed loop: 278") },
     charging: { dcFastCharging: f("standard", "mfr"), portStandard: f("CCS1", "mfr") },
     thermal: { heatPump: f("none", "mfr") },
