@@ -222,6 +222,44 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       },
     ],
   },
+  {
+    make: "ford",
+    model: "mustang-mach-e",
+    topic: "charging",
+    contentFile: "mach-e-charging",
+    pageTitle: "Ford Mustang Mach-E charging: DC speed, CCS port, Supercharger adapter | Voltcheck",
+    description:
+      "What Ford's own order guides say about Mustang Mach-E charging, 2021 through 2025: 150 kW DC, the onboard AC charger by year, and what the Fast Charging Adapter does and does not do.",
+    breadcrumbLabel: "Ford Mustang Mach-E charging",
+    dateModified: "2026-08-25",
+    faq: [
+      {
+        question: "How fast does the Ford Mustang Mach-E charge on a DC fast charger?",
+        answer:
+          "Ford's order guide states \"DC Charging: Up to 150kW capability\" in every model year from 2021 through 2025. Ford publishes no separate DC rate for the Standard Range pack in any of those guides, and no 10-80% charge time.",
+      },
+      {
+        question: "What charging connector does the Ford Mustang Mach-E use?",
+        answer:
+          "An SAE J1772 CCS (Combo Connector System) charge port, on every model year from 2021 through 2025, capable of charging on 120V, 240V and DC fast charge. Ford said in January 2024 it would start transitioning to a NACS port from 2025, but Ford's own 2025 Mach-E order guide still lists the CCS port.",
+      },
+      {
+        question: "Can a Ford Mustang Mach-E charge at a Tesla Supercharger?",
+        answer:
+          "Yes, at designated Tesla Superchargers in the United States and Canada, using the Ford Fast Charging Adapter (NACS). Ford's January 2024 announcement described access to Tesla's V3 and above Superchargers. The adapter is $200.00 on Ford's accessories site, rated for up to 500 amps and 1,000 volts. It does not work with Level 1 or Level 2 AC chargers, including Tesla Destination Chargers. Ford states that not all Tesla Superchargers are compatible with non-Tesla EVs, and directs owners to check in the Ford app.",
+      },
+      {
+        question: "How long does a Ford Mustang Mach-E take to charge at home?",
+        answer:
+          "The onboard AC charger is up to 10.5 kW with 48 amps for model years 2021 through 2023, and up to 11 kW with 48 amps for 2024 and 2025. Ford estimates a 2025 Mach-E charges 0% to 100% in 11.7 hours with the Ford Mobile Power Cord, or 7.8 hours with the Ford Charge Station Pro.",
+      },
+      {
+        question: "Does the Ford Mustang Mach-E precondition its battery before fast charging?",
+        answer:
+          "Ford states that with available Connected Navigation you can precondition the battery on the way to the charger. Ford's wording is \"available,\" not standard.",
+      },
+    ],
+  },
 ];
 
 export function findFactSheet(make: string, model: string, topic: string): FactSheetEntry | undefined {
