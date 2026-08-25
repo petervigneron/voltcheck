@@ -828,7 +828,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       {
         question: "Which Hyundai Ioniq 5 trims have a heat pump?",
         answer:
-          "The trim is not what decides it — the drivetrain is, and in each model year from 2022 through 2026 Hyundai gives every trim column the same cell value. The XRT, offered for 2025 and 2026, is the one trim that resolves on its own: Hyundai lists an XRT range figure only in the AWD column of the range table in both of those years, and XRT appears in neither the RWD column nor the RWD Standard Range column of either.",
+          "The trim is not what decides it — the drivetrain is, and in each model year from 2022 through 2026 Hyundai gives every trim column the same cell value. The XRT, offered for 2025 and 2026, is the one trim that resolves on its own: Hyundai lists an XRT range figure only in the AWD column of the range table in both of those years — though every range figure in the 2026 table is still a TBD placeholder — and XRT appears in neither the RWD column nor the RWD Standard Range column of either.",
       },
       {
         question: "What does a rear-wheel-drive Hyundai Ioniq 5 use to heat the cabin?",
