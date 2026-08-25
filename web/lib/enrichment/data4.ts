@@ -1,4 +1,4 @@
-import type { EnrichmentRow, Fact, Source } from "../types";
+import type { Chemistry, EnrichmentRow, Fact, Source } from "../types";
 
 // Fourth research tranche (2026-08-14): Ford F-150 Lightning — zero coverage
 // before this pass despite ~50 in inventory.
@@ -404,6 +404,11 @@ const MX = { make: "TESLA", model: "Model X" };
 // So gen-2 rows carry Rivian's own published figures and cite them, and the
 // kWh hint is left to do only what it can still do honestly — see below.
 //
+// The gen-1 rows carry the same table for the same reason, corrected in a
+// second pass the same day: their 128.9 was below the maker's own published
+// usable, which a gross figure cannot be. The four gen-1 packs and their
+// chemistry are settled at RIV_G1_LARGE / RIV_G1_MAX below.
+//
 // The hint filter (match.ts) is unharmed by this and gets better: its
 // tolerance is 20%, so a 106 hint still admits the 92.5 Standard row (12.7%
 // off) alongside Large, exactly as it admitted the old 106 row. What changes
@@ -418,8 +423,6 @@ const RIV_W = {
   batteryTransfers: f(true, "mfr" as Source),
 };
 const RIV_PORT1 = { portStandard: f<"CCS1">("CCS1", "mfr") };
-const RIV_128 = { packGrossKwh: f(128.9, "vin", "high", "Large pack") };
-const RIV_141 = { packGrossKwh: f(141, "vin", "high", "Max pack") };
 
 
 // ── Porsche Taycan / Macan Electric (same pass) ─────────────────────────
@@ -563,11 +566,63 @@ const RIV_SPECS = "https://rivian.com/support/article/what-are-the-battery-speci
 // naming the document — the sourceUrl citation already names Rivian. The Max
 // note omits the rated figure on purpose: rated and usable are both 140, so
 // saying "140 rated" under a 140 would imply a distinction that isn't there.
+//
+// Chemistry (2026-08-25): the spec table publishes it per configuration, and
+// it is the one column vPIC corroborates rather than contradicts — the MY2026
+// Standard VIN 7PDSGGBA0TN077423 decodes to "Lithium iron phosphate (LFP)" in
+// both Battery Type and Other Engine Info, against a table that had already
+// said "Li Fe (LFP)". Two independent sources, same answer, so the LFP row is
+// a fact and not a reading of one document. Everything else on that table is
+// NCA ("Li MM (NCA)"), including the Large Plus, which shares the Max's part
+// number PT00668219-H. NCA is carried as NCA, never folded into the NMC entry
+// in chemistry-info.ts: that tooltip makes cold-weather and daily-charge-
+// ceiling claims, and the two chemistries do not behave the same way.
 const RIV_G2_STD = {
   packUsableKwh: fb(92.5, "mfr", "high", "Gen-2 Dual Standard pack, LFP; 95.6 kWh rated", RIV_USABLE),
+  chemistry: fb<Chemistry>("LFP", "mfr", "high", "Gen-2 Dual Standard pack", RIV_SPECS),
+};
+const RIV_G2_LARGE = {
+  packUsableKwh: fb(108, "mfr", "high", "Gen-2 Dual Large pack; 109.8 kWh rated", RIV_USABLE),
+  chemistry: fb<Chemistry>("NCA", "mfr", "high", "Gen-2 Dual Large pack", RIV_SPECS),
+};
+const RIV_G2_LARGEPLUS = {
+  packGrossKwh: fb(140, "mfr", "medium", "Rivian's battery-spec table rates the Dual Large+ at the Max-class 140 kWh; its usable-capacity table omits this pack", RIV_SPECS),
+  chemistry: fb<Chemistry>("NCA", "mfr", "high", "Gen-2 Large Plus pack, the same pack as Max", RIV_SPECS),
 };
 const RIV_G2_MAX = {
   packUsableKwh: fb(140, "mfr", "high", "Gen-2 Max pack, shared by Dual, Tri and Quad", RIV_USABLE),
+  chemistry: fb<Chemistry>("NCA", "mfr", "high", "Gen-2 Max pack, shared by Dual, Tri and Quad", RIV_SPECS),
+};
+
+// Gen-1 (2022-2024) kWh, corrected 2026-08-25. These rows carried
+// packGrossKwh 128.9 (Large) and 141 (Max) sourced "vin", and both labels
+// were wrong:
+//
+//   * 128.9 is below Rivian's PUBLISHED USABLE 131 for the same gen-1 Large
+//     pack, and a gross figure cannot sit under the usable one it contains.
+//     It is also a MY2022-only number — vPIC files 128.90 for the 110 cached
+//     'N' VINs and nothing at all for MY2023 ('P') or MY2024 ('R') — so on
+//     two of the three years it was labelled "vin" while no VIN said it.
+//   * 141 IS Rivian's gen-1 Dual Max usable figure, carried under the gross
+//     label. No gen-1 VIN in the cache returns it; the only 141s are MY2026
+//     'T' VINs, which is the stale-generation filing documented above.
+//
+// So the maker's own usable table wins on both, which is also what the
+// neighbouring gen-1 Standard (106) and Standard+ (121) rows already cite —
+// the four gen-1 packs now come from one table instead of two sources. The
+// kWh hint is unaffected: it reads packUsableKwh ?? packGrossKwh at 20%
+// tolerance (match.ts), and 131 is 1.6% off the 128.9 a MY2022 VIN hints.
+//
+// Gen-1 chemistry is NOT set. The spec table above is gen-2 only — it lists
+// no 2022-2024 configuration at all — and no other Rivian document was found
+// stating it, so these rows stay silent rather than assume the gen-2 answer
+// carries back. No `abstains` entry: that mechanism is scoped to the five
+// core fields (types.ts AbstainableField), and chemistry is not one.
+const RIV_G1_LARGE = {
+  packUsableKwh: fb(131, "mfr", "high", "Gen-1 Large pack, shared by Dual and Quad", RIV_USABLE),
+};
+const RIV_G1_MAX = {
+  packUsableKwh: fb(141, "mfr", "high", "Gen-1 Dual Max pack", RIV_USABLE),
 };
 const RIV_ADAPTER = "https://rivian.com/support/article/do-i-need-an-adapter";
 const RIV_PORT_ABSTAIN = "Rivian's adapter guide gives MY2022-25 cars a native CCS1 inlet and MY2026 a native NACS port, and this row spans both years";
@@ -3285,7 +3340,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
 
   {
     id: "r1s-2022", ...R1S, modelYears: [2022, 2022], drive: "AWD", packVariant: "Quad · Large pack",
-    battery: RIV_128,
+    battery: RIV_G1_LARGE,
     range: { epaRangeMi: f(316, "mfr", "high", "MY2022 R1S, every 2022 build is the quad-motor Large pack, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=44461") },
     charging: RIV_PORT1,
     thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
@@ -3293,7 +3348,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "r1t-2022", ...R1T, modelYears: [2022, 2022], drive: "AWD", packVariant: "Quad · Large pack",
-    battery: RIV_128,
+    battery: RIV_G1_LARGE,
     range: { epaRangeMi: f(314, "mfr", "high", "MY2022 R1T, every 2022 build is the quad-motor Large pack, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=44462") },
     charging: RIV_PORT1,
     thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
@@ -3301,7 +3356,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "r1s-2023-quad", ...R1S, modelYears: [2023, 2023], trim: ["Quad Motor", "Quad", "Quad Motor Large Pack"], drive: "AWD", packVariant: "Quad · Large pack",
-    battery: RIV_128,
+    battery: RIV_G1_LARGE,
     range: { epaRangeMi: f(321, "mfr", "high", "MY2023 R1S quad-motor on 21-inch wheels, EPA; 274–303 on 20AT/22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46316") },
     charging: RIV_PORT1,
     thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
@@ -3309,7 +3364,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "r1t-2023-quad", ...R1T, modelYears: [2023, 2023], trim: ["Quad Motor", "Quad", "Quad Motor Large Pack"], drive: "AWD", packVariant: "Quad · Large pack",
-    battery: RIV_128,
+    battery: RIV_G1_LARGE,
     range: { epaRangeMi: f(328, "mfr", "high", "MY2023 R1T quad-motor on 21-inch wheels, EPA; 289–303 on 20/22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46313") },
     charging: RIV_PORT1,
     thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
@@ -3317,7 +3372,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "r1s-2023-dual", ...R1S, modelYears: [2023, 2023], trim: ["Dual Motor", "Large Pack", "Large", "Performance"], drive: "AWD", packVariant: "Dual · Large pack",
-    battery: RIV_128,
+    battery: RIV_G1_LARGE,
     range: { epaRangeMi: f(352, "mfr", "high", "MY2023 R1S Dual (Large pack, the only 2023 dual config) on 21-inch wheels, EPA; 307–341 on 20AT/22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46996") },
     charging: RIV_PORT1,
     thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
@@ -3325,7 +3380,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "r1t-2023-dual", ...R1T, modelYears: [2023, 2023], trim: ["Dual Motor", "Large Pack", "Large", "Performance"], drive: "AWD", packVariant: "Dual · Large pack",
-    battery: RIV_128,
+    battery: RIV_G1_LARGE,
     range: { epaRangeMi: f(352, "mfr", "high", "MY2023 R1T Dual (Large pack) on 21-inch wheels, EPA; 341 on 22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47000") },
     charging: RIV_PORT1,
     thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
@@ -3333,7 +3388,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "r1s-2024-quad", ...R1S, modelYears: [2024, 2024], trim: ["Quad Motor", "Quad", "Quad Motor Large Pack"], drive: "AWD", packVariant: "Quad · Large pack",
-    battery: RIV_128,
+    battery: RIV_G1_LARGE,
     range: { epaRangeMi: f(321, "mfr", "high", "MY2024 R1S quad on 21-inch wheels, EPA; 274–303 on 20AT/22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47906") },
     charging: RIV_PORT1,
     thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
@@ -3341,7 +3396,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "r1t-2024-quad", ...R1T, modelYears: [2024, 2024], trim: ["Quad Motor", "Quad", "Quad Motor Large Pack"], drive: "AWD", packVariant: "Quad · Large pack",
-    battery: RIV_128,
+    battery: RIV_G1_LARGE,
     range: { epaRangeMi: f(328, "mfr", "high", "MY2024 R1T quad on 21-inch wheels, EPA; 289–303 on 20/22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47883") },
     charging: RIV_PORT1,
     thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
@@ -3349,7 +3404,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "r1s-2024-std", ...R1S, modelYears: [2024, 2024], trim: ["Standard Pack", "Standard", "Dual Motor"], drive: "AWD", packVariant: "Dual · Standard pack",
-    battery: { packUsableKwh: fb(106, "mfr", "high", "Rivian's usable-capacity table, gen-1 Dual Standard", RIV_USABLE) },
+    battery: { packUsableKwh: fb(106, "mfr", "high", "Gen-1 Dual Standard pack", RIV_USABLE) },
     range: { epaRangeMi: f(270, "mfr", "high", "MY2024 R1S Dual Standard on 21-inch wheels, EPA; 255 on 22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47895") },
     charging: RIV_PORT1,
     thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
@@ -3357,7 +3412,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "r1t-2024-std", ...R1T, modelYears: [2024, 2024], trim: ["Standard Pack", "Standard", "Dual Motor"], drive: "AWD", packVariant: "Dual · Standard pack",
-    battery: { packUsableKwh: fb(106, "mfr", "high", "Rivian's usable-capacity table, gen-1 Dual Standard", RIV_USABLE) },
+    battery: { packUsableKwh: fb(106, "mfr", "high", "Gen-1 Dual Standard pack", RIV_USABLE) },
     range: { epaRangeMi: f(270, "mfr", "high", "MY2024 R1T Dual Standard on 21-inch wheels, EPA; 255 on 22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47872") },
     charging: RIV_PORT1,
     thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
@@ -3365,7 +3420,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "r1s-2024-stdplus", ...R1S, modelYears: [2024, 2024], trim: ["Standard Plus Pack", "Standard Plus"], drive: "AWD", packVariant: "Dual · Standard+ pack",
-    battery: { packUsableKwh: fb(121, "mfr", "high", "Rivian's usable-capacity table, gen-1 Dual Standard+", RIV_USABLE) },
+    battery: { packUsableKwh: fb(121, "mfr", "high", "Gen-1 Dual Standard+ pack", RIV_USABLE) },
     range: { epaRangeMi: f(315, "mfr", "high", "MY2024 R1S Dual Standard+ on 21-inch wheels, EPA; 277–300 on 20AT/22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47897") },
     charging: RIV_PORT1,
     thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
@@ -3373,7 +3428,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "r1t-2024-stdplus", ...R1T, modelYears: [2024, 2024], trim: ["Standard Plus Pack", "Standard Plus"], drive: "AWD", packVariant: "Dual · Standard+ pack",
-    battery: { packUsableKwh: fb(121, "mfr", "high", "Rivian's usable-capacity table, gen-1 Dual Standard+", RIV_USABLE) },
+    battery: { packUsableKwh: fb(121, "mfr", "high", "Gen-1 Dual Standard+ pack", RIV_USABLE) },
     range: { epaRangeMi: f(315, "mfr", "high", "MY2024 R1T Dual Standard+ on 21-inch wheels, EPA; 277–300 on 20AT/22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47874") },
     charging: RIV_PORT1,
     thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
@@ -3381,7 +3436,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "r1s-2024-large", ...R1S, modelYears: [2024, 2024], trim: ["Large Pack", "Large", "Dual Motor"], drive: "AWD", packVariant: "Dual · Large pack",
-    battery: RIV_128,
+    battery: RIV_G1_LARGE,
     range: { epaRangeMi: f(352, "mfr", "high", "MY2024 R1S Dual Large on 21-inch wheels, EPA; 307–341 on 20AT/22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47891") },
     charging: RIV_PORT1,
     thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
@@ -3389,7 +3444,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "r1t-2024-large", ...R1T, modelYears: [2024, 2024], trim: ["Large Pack", "Large", "Dual Motor"], drive: "AWD", packVariant: "Dual · Large pack",
-    battery: RIV_128,
+    battery: RIV_G1_LARGE,
     range: { epaRangeMi: f(352, "mfr", "high", "MY2024 R1T Dual Large on 21-inch wheels, EPA; 307–341 on 20AT/22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47868") },
     charging: RIV_PORT1,
     thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
@@ -3397,7 +3452,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "r1s-2024-max", ...R1S, modelYears: [2024, 2024], trim: ["Max Pack", "Max", "Dual Motor"], drive: "AWD", packVariant: "Dual · Max pack",
-    battery: RIV_141,
+    battery: RIV_G1_MAX,
     range: { epaRangeMi: f(400, "mfr", "high", "MY2024 R1S Dual Max on 21-inch wheels, EPA; 355–380 on 20AT/22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47893") },
     charging: RIV_PORT1,
     thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
@@ -3405,7 +3460,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "r1t-2024-max", ...R1T, modelYears: [2024, 2024], trim: ["Max Pack", "Max", "Dual Motor"], drive: "AWD", packVariant: "Dual · Max pack",
-    battery: RIV_141,
+    battery: RIV_G1_MAX,
     range: { epaRangeMi: f(410, "mfr", "high", "MY2024 R1T Dual Max on 21-inch wheels, EPA; 355–380 on 20AT/22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47870") },
     charging: RIV_PORT1,
     thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
@@ -3432,7 +3487,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "r1s-2025-26-large", ...R1S, modelYears: [2025, 2026], trim: ["Large Pack", "Large", "Dual Motor"], drive: "AWD", packVariant: "Dual · Large pack",
     abstains: { portStandard: RIV_PORT_ABSTAIN },
-    battery: { packUsableKwh: fb(108, "mfr", "high", "Rivian's usable-capacity table, gen-2 Dual Large; rated 109.8 kWh", RIV_USABLE) },
+    battery: RIV_G2_LARGE,
     range: { epaRangeMi: f(300, "mfr", "high", "Gen-2 R1S Dual Large on 20-inch wheels, EPA, 2025–26; 289–329 on 20AT/22s. The Large Plus pack rates 317–330", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48745") },
     thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
     warranty: RIV_W,
@@ -3441,7 +3496,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "r1t-2025-26-large", ...R1T, modelYears: [2025, 2026], trim: ["Large Pack", "Large", "Dual Motor"], drive: "AWD", packVariant: "Dual · Large pack",
     abstains: { portStandard: RIV_PORT_ABSTAIN },
-    battery: { packUsableKwh: fb(108, "mfr", "high", "Rivian's usable-capacity table, gen-2 Dual Large; rated 109.8 kWh", RIV_USABLE) },
+    battery: RIV_G2_LARGE,
     range: { epaRangeMi: f(300, "mfr", "high", "Gen-2 R1T Dual Large on 20-inch wheels, EPA, 2025–26; 329 on 22s. The Large Plus pack rates 317–330", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48755") },
     thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
     warranty: RIV_W,
@@ -3450,7 +3505,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "r1s-2025-26-largeplus", ...R1S, modelYears: [2025, 2026], trim: ["Large Plus Pack", "Large Plus"], drive: "AWD", packVariant: "Dual · Large Plus pack",
     abstains: { portStandard: RIV_PORT_ABSTAIN },
-    battery: { packGrossKwh: fb(140, "mfr", "medium", "Rivian's battery-spec table rates the Dual Large+ at the Max-class 140 kWh; its usable-capacity table omits this pack", RIV_SPECS) },
+    battery: RIV_G2_LARGEPLUS,
     range: { epaRangeMi: f(317, "mfr", "high", "Gen-2 R1S Dual Large Plus on 20-inch wheels, EPA, 2025–26; 292–330 on 20AT/22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48747") },
     thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
     warranty: RIV_W,
@@ -3459,7 +3514,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "r1t-2025-26-largeplus", ...R1T, modelYears: [2025, 2026], trim: ["Large Plus Pack", "Large Plus"], drive: "AWD", packVariant: "Dual · Large Plus pack",
     abstains: { portStandard: RIV_PORT_ABSTAIN },
-    battery: { packGrossKwh: fb(140, "mfr", "medium", "Rivian's battery-spec table rates the Dual Large+ at the Max-class 140 kWh; its usable-capacity table omits this pack", RIV_SPECS) },
+    battery: RIV_G2_LARGEPLUS,
     range: { epaRangeMi: f(317, "mfr", "high", "Gen-2 R1T Dual Large Plus on 20-inch wheels, EPA, 2025–26; 330 on 22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48757") },
     thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
     warranty: RIV_W,
