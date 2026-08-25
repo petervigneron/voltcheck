@@ -6,6 +6,15 @@ import type { EnrichmentRow, Fact, Source } from "../types";
 // → "mfr"; secondary-source facts → "agg" until a primary doc is read).
 const AS_OF = "2026-08-10";
 
+// Chevrolet battery-warranty transferability — the sentence inside GM's own
+// Electric Vehicle Propulsion Battery Warranty section. Fuller comment in
+// data.ts.
+const CHEV_EV_BOOKLET =
+  "https://contentdelivery.ext.gm.com/bypass/gma-content-api/resources/sites/GMA/content/staging/MANUALS/8000/MA8815/en_US/7.0/24_CHEV_Electric_Vehicle_WM_en_US_U_17267650C_2025JAN06_3P.pdf";
+const CHEV_XFER_NOTE =
+  "\u201CTransferable at no cost to any subsequent person(s) who assumes ownership of the vehicle within the 8 years or 100,000 miles term\u201D";
+
+
 // Kia battery-warranty transferability — Kia's own Warranty and Consumer
 // Information Manual: every warranty transfers except the Power Train
 // (Original Owner) one, and the EV System Warranty covering the battery pack
@@ -1780,7 +1789,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(75, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", CHEV_XFER_NOTE, CHEV_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -1809,7 +1818,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(75, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", CHEV_XFER_NOTE, CHEV_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -1843,7 +1852,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(75, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", CHEV_XFER_NOTE, CHEV_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -1874,7 +1883,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(75, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", CHEV_XFER_NOTE, CHEV_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -1905,7 +1914,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(75, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", CHEV_XFER_NOTE, CHEV_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -1936,7 +1945,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(75, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", CHEV_XFER_NOTE, CHEV_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -1967,7 +1976,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(75, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", CHEV_XFER_NOTE, CHEV_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -1997,7 +2006,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(75, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", CHEV_XFER_NOTE, CHEV_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -2027,7 +2036,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(75, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", CHEV_XFER_NOTE, CHEV_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -2677,7 +2686,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(75, "mfr", "high", "\u201cBelow 75% of its original value\u201d \u2014 GM EV booklets (extracted text)"),
-      batteryTransfers: f(true, "mfr", "high", "\u201cTransferable at no cost\u201d \u2014 GM EV booklets"),
+      batteryTransfers: f(true, "mfr", "high", CHEV_XFER_NOTE, CHEV_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -2706,7 +2715,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(75, "mfr", "high", "\u201cBelow 75% of its original value\u201d \u2014 GM EV booklets (extracted text)"),
-      batteryTransfers: f(true, "mfr", "high", "\u201cTransferable at no cost\u201d \u2014 GM EV booklets"),
+      batteryTransfers: f(true, "mfr", "high", CHEV_XFER_NOTE, CHEV_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -2735,7 +2744,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(75, "mfr", "high", "\u201cBelow 75% of its original value\u201d \u2014 GM EV booklets (extracted text)"),
-      batteryTransfers: f(true, "mfr", "high", "\u201cTransferable at no cost\u201d \u2014 GM EV booklets"),
+      batteryTransfers: f(true, "mfr", "high", CHEV_XFER_NOTE, CHEV_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -2764,7 +2773,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(75, "mfr", "high", "\u201cBelow 75% of its original value\u201d \u2014 GM EV booklets (extracted text)"),
-      batteryTransfers: f(true, "mfr", "high", "\u201cTransferable at no cost\u201d \u2014 GM EV booklets"),
+      batteryTransfers: f(true, "mfr", "high", CHEV_XFER_NOTE, CHEV_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -2793,7 +2802,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(75, "mfr", "high", "\u201cBelow 75% of its original value\u201d \u2014 GM EV booklets (extracted text)"),
-      batteryTransfers: f(true, "mfr", "high", "\u201cTransferable at no cost\u201d \u2014 GM EV booklets"),
+      batteryTransfers: f(true, "mfr", "high", CHEV_XFER_NOTE, CHEV_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -2822,7 +2831,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(75, "mfr", "high", "\u201cBelow 75% of its original value\u201d \u2014 GM EV booklets (extracted text)"),
-      batteryTransfers: f(true, "mfr", "high", "\u201cTransferable at no cost\u201d \u2014 GM EV booklets"),
+      batteryTransfers: f(true, "mfr", "high", CHEV_XFER_NOTE, CHEV_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -2851,7 +2860,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(75, "mfr", "high", "\u201cBelow 75% of its original value\u201d \u2014 GM EV booklets (extracted text)"),
-      batteryTransfers: f(true, "mfr", "high", "\u201cTransferable at no cost\u201d \u2014 GM EV booklets"),
+      batteryTransfers: f(true, "mfr", "high", CHEV_XFER_NOTE, CHEV_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -2880,7 +2889,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(75, "mfr", "high", "\u201cBelow 75% of its original value\u201d \u2014 GM EV booklets (extracted text)"),
-      batteryTransfers: f(true, "mfr", "high", "\u201cTransferable at no cost\u201d \u2014 GM EV booklets"),
+      batteryTransfers: f(true, "mfr", "high", CHEV_XFER_NOTE, CHEV_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -2909,7 +2918,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(75, "mfr", "high", "\u201cBelow 75% of its original value\u201d \u2014 GM EV booklets (extracted text)"),
-      batteryTransfers: f(true, "mfr", "high", "\u201cTransferable at no cost\u201d \u2014 GM EV booklets"),
+      batteryTransfers: f(true, "mfr", "high", CHEV_XFER_NOTE, CHEV_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -2938,7 +2947,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(75, "mfr", "high", "\u201cBelow 75% of its original value\u201d \u2014 GM EV booklets (extracted text)"),
-      batteryTransfers: f(true, "mfr", "high", "\u201cTransferable at no cost\u201d \u2014 GM EV booklets"),
+      batteryTransfers: f(true, "mfr", "high", CHEV_XFER_NOTE, CHEV_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -2967,7 +2976,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(75, "mfr", "high", "\u201cBelow 75% of its original value\u201d \u2014 GM EV booklets (extracted text)"),
-      batteryTransfers: f(true, "mfr", "high", "\u201cTransferable at no cost\u201d \u2014 GM EV booklets"),
+      batteryTransfers: f(true, "mfr", "high", CHEV_XFER_NOTE, CHEV_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -2999,7 +3008,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(75, "mfr", "high", "\u201cBelow 75% of its original value\u201d \u2014 GM EV booklets (extracted text)"),
-      batteryTransfers: f(true, "mfr", "high", "\u201cTransferable at no cost\u201d \u2014 GM EV booklets"),
+      batteryTransfers: f(true, "mfr", "high", CHEV_XFER_NOTE, CHEV_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -3029,7 +3038,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(75, "mfr", "high", "\u201cBelow 75% of its original value\u201d \u2014 GM EV booklets (extracted text)"),
-      batteryTransfers: f(true, "mfr", "high", "\u201cTransferable at no cost\u201d \u2014 GM EV booklets"),
+      batteryTransfers: f(true, "mfr", "high", CHEV_XFER_NOTE, CHEV_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -3059,7 +3068,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(75, "mfr", "high", "\u201cBelow 75% of its original value\u201d \u2014 GM EV booklets (extracted text)"),
-      batteryTransfers: f(true, "mfr", "high", "\u201cTransferable at no cost\u201d \u2014 GM EV booklets"),
+      batteryTransfers: f(true, "mfr", "high", CHEV_XFER_NOTE, CHEV_EV_BOOKLET),
     },
     buyerNotes: [
       {

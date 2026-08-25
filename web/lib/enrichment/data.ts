@@ -78,6 +78,26 @@ const TESLA_XFER_NOTE =
 // statement. Silence is not "no", so the field abstains rather than flipping
 // to false; an expected-tier field left empty costs a shopper nothing, and a
 // transferability claim they might pay for is not cheap to get wrong.
+// Chevrolet battery-warranty transferability. GM writes it into the battery
+// section itself, so no inference is needed: "In addition to the initial owner
+// of the vehicle, the coverage described in this Electric Vehicle Propulsion
+// Battery Warranty is transferable at no cost to any subsequent person(s) who
+// assumes ownership of the vehicle within the 8 years or 100,000 miles term.
+// No deductibles are associated with this warranty." That is the MY2024
+// Chevrolet Electric Vehicle Limited Warranty booklet, GM-hosted. The MY2025
+// edition reaches the same place through the general grant instead — "provided
+// to the original owner and any subsequent owners of the vehicle during the
+// warranty period" — with the Electric Vehicle Propulsion Battery Coverage
+// listed among its coverages. MY2024 is cited because it says it about the
+// battery specifically.
+//
+// GM's EV booklets live only under contentdelivery.ext.gm.com's
+// /bypass/gma-content-api/ path; the tidier /content/dam/cope/ path that
+// serves the petrol manuals 404s for every EV filename tried.
+const CHEV_EV_BOOKLET =
+  "https://contentdelivery.ext.gm.com/bypass/gma-content-api/resources/sites/GMA/content/staging/MANUALS/8000/MA8815/en_US/7.0/24_CHEV_Electric_Vehicle_WM_en_US_U_17267650C_2025JAN06_3P.pdf";
+const CHEV_XFER_NOTE =
+  "\u201CTransferable at no cost to any subsequent person(s) who assumes ownership of the vehicle within the 8 years or 100,000 miles term\u201D";
 export const ENRICHMENT_ROWS: EnrichmentRow[] = [
   // ── Tesla Model Y — "AWD" (279 mi) is not "Long Range AWD" (330 mi), and
   // listings routinely blur the two. EPA figures verified against
@@ -221,7 +241,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", CHEV_XFER_NOTE, CHEV_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -255,7 +275,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       portStandard: { value: "CCS1", source: "mfr", asOf: "2026-08-24", confidence: "high", note: "Only on cars with the fast-charge option; without it, AC charging only", sourceUrl: "https://web.archive.org/web/20230306010102id_/https://media.chevrolet.com/content/media/us/en/chevrolet/vehicles/bolt-ev/2021/_jcr_content/iconrow/textfile/file.res/2021-Chevrolet-Bolt-EV-Product-Guide.pdf" },
     },
     thermal: { heatPump: f("none", "mfr") },
-    warranty: { batteryYears: f(8, "mfr"), batteryMiles: f(100_000, "mfr"), batteryTransfers: f(true, "mfr", "high") },
+    warranty: { batteryYears: f(8, "mfr"), batteryMiles: f(100_000, "mfr"), batteryTransfers: f(true, "mfr", "high", CHEV_XFER_NOTE, CHEV_EV_BOOKLET) },
     buyerNotes: [
       {
         headline: "DC fast charging: optional on LT this year",
@@ -282,7 +302,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     charging: {
       portStandard: { value: "CCS1", source: "mfr", asOf: "2026-08-24", confidence: "high", note: "DC fast charging became standard on the Premier for 2021", sourceUrl: "https://web.archive.org/web/20230306010102id_/https://media.chevrolet.com/content/media/us/en/chevrolet/vehicles/bolt-ev/2021/_jcr_content/iconrow/textfile/file.res/2021-Chevrolet-Bolt-EV-Product-Guide.pdf" }, dcFastCharging: f("standard", "mfr") },
     thermal: { heatPump: f("none", "mfr") },
-    warranty: { batteryYears: f(8, "mfr"), batteryMiles: f(100_000, "mfr"), batteryTransfers: f(true, "mfr", "high") },
+    warranty: { batteryYears: f(8, "mfr"), batteryMiles: f(100_000, "mfr"), batteryTransfers: f(true, "mfr", "high", CHEV_XFER_NOTE, CHEV_EV_BOOKLET) },
   },
   {
     id: "bolt-2022-plus",
@@ -300,7 +320,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     range: { epaRangeMi: f(259, "mfr", "high", undefined, "https://www.fueleconomy.gov"), testedRangeMi: f(260, "tested", "high", "70-mph (InsideEVs, 2022): 260 mi; Edmunds mixed loop: 278") },
     charging: { dcFastCharging: f("standard", "mfr"), portStandard: f("CCS1", "mfr") },
     thermal: { heatPump: f("none", "mfr") },
-    warranty: { batteryYears: f(8, "mfr"), batteryMiles: f(100_000, "mfr"), batteryTransfers: f(true, "mfr", "high") },
+    warranty: { batteryYears: f(8, "mfr"), batteryMiles: f(100_000, "mfr"), batteryTransfers: f(true, "mfr", "high", CHEV_XFER_NOTE, CHEV_EV_BOOKLET) },
     buyerNotes: [
     ],
   },

@@ -31,6 +31,15 @@ import type { Chemistry, EnrichmentRow, Fact, Source } from "../types";
 // 2022–23 negative: same document lineage, feature explicitly introduced later.
 const AS_OF = "2026-08-14";
 
+// Chevrolet battery-warranty transferability — the sentence inside GM's own
+// Electric Vehicle Propulsion Battery Warranty section. Fuller comment in
+// data.ts.
+const CHEV_EV_BOOKLET =
+  "https://contentdelivery.ext.gm.com/bypass/gma-content-api/resources/sites/GMA/content/staging/MANUALS/8000/MA8815/en_US/7.0/24_CHEV_Electric_Vehicle_WM_en_US_U_17267650C_2025JAN06_3P.pdf";
+const CHEV_XFER_NOTE =
+  "\u201CTransferable at no cost to any subsequent person(s) who assumes ownership of the vehicle within the 8 years or 100,000 miles term\u201D";
+
+
 function f<T>(
   value: T,
   source: Source,
@@ -1448,7 +1457,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", CHEV_XFER_NOTE, CHEV_EV_BOOKLET),
     },
     buyerNotes: [
       { headline: "DC fast charging: $750 factory option, not on every car", severity: "trap", resolvedBy: "photo_dcfc" },
@@ -1470,7 +1479,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", CHEV_XFER_NOTE, CHEV_EV_BOOKLET),
     },
     buyerNotes: [
       { headline: "Most 2020–22 cars kept their original packs (21V560)", severity: "info", resolvedBy: "campaign_check" },
@@ -1501,7 +1510,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr", "high", undefined, BOLT27_PRESS),
       batteryMiles: f(100_000, "mfr", "high", undefined, BOLT27_PRESS),
-      batteryTransfers: f(true, "mfr"),
+      batteryTransfers: f(true, "mfr", "high", CHEV_XFER_NOTE, CHEV_EV_BOOKLET),
     },
   },
 
