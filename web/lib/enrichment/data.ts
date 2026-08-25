@@ -58,6 +58,26 @@ const TESLA_NVLW =
 const TESLA_XFER_NOTE =
   "\u201CTransferable at no cost to any person(s) who subsequently and lawfully assume(s) ownership of the vehicle\u201D";
 
+// batteryTransfers is deliberately absent from the Hyundai rows. Hyundai's
+// Owner's Handbook & Warranty Information has a WARRANTY TRANSFERABILITY
+// section, and it is an enumeration: "The New Vehicle Limited,
+// Anti-Perforation Limited, Federal Emission Performance, Federal Emission
+// Design and Defect, California Emission Control Systems, and Replacement
+// Parts and Accessories Limited warranty coverage described in this handbook
+// apply to the vehicle regardless of a change in ownership, and are
+// transferable to subsequent owners", followed by the one exception, the
+// 10-year Powertrain warranty. Section 6 — HYUNDAI HYBRID, PLUG-IN HYBRID,
+// AND ELECTRIC VEHICLE WARRANTY, which is where the High Voltage Battery
+// lives — is in neither list, and Section 6 itself never mentions ownership.
+// Identical in the MY2022, MY2025 and MY2026 handbooks.
+//
+// Control: the same grep finds "transferable"/"subsequent owner" a dozen
+// times in each handbook, so the omission is Hyundai's and not the
+// extractor's. What is NOT evidence either way: the summary chart gives the
+// EV row no owner footnote where Powertrain gets one — suggestive, and not a
+// statement. Silence is not "no", so the field abstains rather than flipping
+// to false; an expected-tier field left empty costs a shopper nothing, and a
+// transferability claim they might pay for is not cheap to get wrong.
 export const ENRICHMENT_ROWS: EnrichmentRow[] = [
   // ── Tesla Model Y — "AWD" (279 mi) is not "Long Range AWD" (330 mi), and
   // listings routinely blur the two. EPA figures verified against
@@ -312,7 +332,6 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       batteryYears: f(10, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
-      batteryTransfers: f(true, "mfr", "high"),
       powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr", "high"),
       extendedCoverage: f("ICCU: 15 years / 180,000 miles", "mfr"),
     },
@@ -340,7 +359,6 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       batteryYears: f(10, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
-      batteryTransfers: f(true, "mfr", "high"),
       powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr", "high"),
       extendedCoverage: f("ICCU: 15 years / 180,000 miles", "mfr"),
     },
@@ -368,7 +386,6 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       batteryYears: f(10, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
-      batteryTransfers: f(true, "mfr", "high"),
       powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr", "high"),
       extendedCoverage: f("ICCU: 15 years / 180,000 miles", "mfr"),
     },
@@ -400,7 +417,6 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       batteryYears: f(10, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
-      batteryTransfers: f(true, "mfr", "high"),
       powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr", "high"),
       extendedCoverage: f("ICCU: 15 years / 180,000 miles", "mfr"),
     },
@@ -428,7 +444,6 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       batteryYears: f(10, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
-      batteryTransfers: f(true, "mfr", "high"),
       powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr", "high"),
       extendedCoverage: f("ICCU: 15 years / 180,000 miles", "mfr"),
     },
@@ -456,7 +471,6 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       batteryYears: f(10, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
-      batteryTransfers: f(true, "mfr", "high"),
       powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr", "high"),
       extendedCoverage: f("ICCU: 15 years / 180,000 miles", "mfr"),
     },
@@ -484,7 +498,6 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       batteryYears: f(10, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
-      batteryTransfers: f(true, "mfr", "high"),
       powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr", "high"),
       extendedCoverage: f("ICCU: 15 years / 180,000 miles", "mfr"),
     },
@@ -518,7 +531,6 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       batteryYears: f(10, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
-      batteryTransfers: f(true, "mfr", "high"),
       powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr", "high"),
       // Deliberately NO ICCU extendedCoverage on facelift rows: the recalls and
       // the April 2026 15yr/180k extension are documented for 2022–24 cars only.
@@ -553,7 +565,6 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       batteryYears: f(10, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
-      batteryTransfers: f(true, "mfr", "high"),
       powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr", "high"),
     },
     buyerNotes: [
@@ -590,7 +601,6 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       batteryYears: f(10, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
-      batteryTransfers: f(true, "mfr", "high"),
       powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr", "high"),
     },
     buyerNotes: [
@@ -628,7 +638,6 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       batteryYears: f(10, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
-      batteryTransfers: f(true, "mfr", "high"),
       powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr", "high"),
     },
     buyerNotes: [
@@ -666,7 +675,6 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       batteryYears: f(10, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
-      batteryTransfers: f(true, "mfr", "high"),
       powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr", "high"),
     },
     buyerNotes: [
@@ -707,7 +715,6 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       batteryYears: f(10, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
-      batteryTransfers: f(true, "mfr", "high"),
       powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr", "high"),
     },
   },
@@ -730,7 +737,6 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
       batteryYears: f(10, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
-      batteryTransfers: f(true, "mfr", "high"),
       powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr", "high"),
     },
   },

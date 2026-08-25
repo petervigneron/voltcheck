@@ -344,6 +344,36 @@ const HK_WARRANTY = {
   batteryTransfers: f(true, "mfr" as Source),
   powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr" as Source, "high"),
 };
+// batteryTransfers is deliberately absent from the Hyundai rows. Hyundai's
+// Owner's Handbook & Warranty Information has a WARRANTY TRANSFERABILITY
+// section, and it is an enumeration: "The New Vehicle Limited,
+// Anti-Perforation Limited, Federal Emission Performance, Federal Emission
+// Design and Defect, California Emission Control Systems, and Replacement
+// Parts and Accessories Limited warranty coverage described in this handbook
+// apply to the vehicle regardless of a change in ownership, and are
+// transferable to subsequent owners", followed by the one exception, the
+// 10-year Powertrain warranty. Section 6 — HYUNDAI HYBRID, PLUG-IN HYBRID,
+// AND ELECTRIC VEHICLE WARRANTY, which is where the High Voltage Battery
+// lives — is in neither list, and Section 6 itself never mentions ownership.
+// Identical in the MY2022, MY2025 and MY2026 handbooks.
+//
+// Control: the same grep finds "transferable"/"subsequent owner" a dozen
+// times in each handbook, so the omission is Hyundai's and not the
+// extractor's. What is NOT evidence either way: the summary chart gives the
+// EV row no owner footnote where Powertrain gets one — suggestive, and not a
+// statement. Silence is not "no", so the field abstains rather than flipping
+// to false; an expected-tier field left empty costs a shopper nothing, and a
+// transferability claim they might pay for is not cheap to get wrong.
+// Hyundai and Kia shared one warranty object until this pass; they can't any
+// more, because their handbooks answer this field differently — Kia's says
+// every warranty but Powertrain transfers, Hyundai's leaves the EV warranty
+// out of the list. HK_WARRANTY now serves the Kia EV9 rows only.
+const HYU_WARRANTY = {
+  batteryYears: f(10, "mfr" as Source),
+  batteryMiles: f(100_000, "mfr" as Source),
+  sohFloorPct: f(70, "mfr" as Source),
+  powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr" as Source, "high"),
+};
 const PORT_CCS = { portStandard: f<"CCS1">("CCS1", "mfr") };
 const K9 = { make: "KIA", model: "EV9" };
 const H6 = { make: "HYUNDAI", model: "Ioniq 6" };
@@ -2488,7 +2518,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(361, "mfr", "high", "MY2023–24 Long Range RWD on the SE 18-inch wheels, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46622") },
     charging: PORT_CCS,
     thermal: I6_HP_STD,
-    warranty: HK_WARRANTY,
+    warranty: HYU_WARRANTY,
   },
   {
     id: "i6-2023-24-lr-rwd-20", ...H6, modelYears: [2023, 2024], vin8: ["A"], trim: ["SEL", "Limited"], drive: "RWD", packVariant: "Long Range",
@@ -2496,7 +2526,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(305, "mfr", "high", "MY2023–24 Long Range RWD on 20-inch wheels (SEL, Limited), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46623") },
     charging: PORT_CCS,
     thermal: I6_HP_STD,
-    warranty: HK_WARRANTY,
+    warranty: HYU_WARRANTY,
   },
   {
     id: "i6-2023-24-lr-awd-18", ...H6, modelYears: [2023, 2024], vin8: ["C"], trim: "SE", drive: "AWD", packVariant: "Long Range",
@@ -2504,7 +2534,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(316, "mfr", "high", "MY2023–24 Long Range AWD on the SE 18-inch wheels, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46620") },
     charging: PORT_CCS,
     thermal: I6_HP_STD,
-    warranty: HK_WARRANTY,
+    warranty: HYU_WARRANTY,
   },
   {
     id: "i6-2023-24-lr-awd-20", ...H6, modelYears: [2023, 2024], vin8: ["C"], trim: ["SEL", "Limited"], drive: "AWD", packVariant: "Long Range",
@@ -2512,7 +2542,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(270, "mfr", "high", "MY2023–24 Long Range AWD on 20-inch wheels (SEL, Limited), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46621") },
     charging: PORT_CCS,
     thermal: I6_HP_STD,
-    warranty: HK_WARRANTY,
+    warranty: HYU_WARRANTY,
   },
   {
     id: "i6-2023-25-sr", ...H6, modelYears: [2023, 2025], vin8: ["B"], trim: "SE Standard Range", drive: "RWD", packVariant: "Standard Range",
@@ -2520,7 +2550,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(240, "mfr", "high", "SE Standard Range RWD (VIN code B, the 111 kW motor in Hyundai Part 565 data), EPA, same 240-mi rating all three years", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46624") },
     charging: PORT_CCS,
     thermal: I6_HP_NONE,
-    warranty: HK_WARRANTY,
+    warranty: HYU_WARRANTY,
   },
   {
     id: "i6-2025-lr-rwd-18", ...H6, modelYears: [2025, 2025], vin8: ["A"], trim: "SE", drive: "RWD", packVariant: "Long Range",
@@ -2528,7 +2558,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(342, "mfr", "high", "MY2025 Long Range RWD on the SE 18-inch wheels, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48362") },
     charging: PORT_CCS,
     thermal: I6_HP_STD,
-    warranty: HK_WARRANTY,
+    warranty: HYU_WARRANTY,
   },
   {
     id: "i6-2025-lr-rwd-20", ...H6, modelYears: [2025, 2025], vin8: ["A"], trim: ["SEL", "Limited"], drive: "RWD", packVariant: "Long Range",
@@ -2536,7 +2566,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(291, "mfr", "high", "MY2025 Long Range RWD on 20-inch wheels (SEL, Limited), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48363") },
     charging: PORT_CCS,
     thermal: I6_HP_STD,
-    warranty: HK_WARRANTY,
+    warranty: HYU_WARRANTY,
   },
   {
     id: "i6-2025-lr-awd-18", ...H6, modelYears: [2025, 2025], vin8: ["C"], trim: "SE", drive: "AWD", packVariant: "Long Range",
@@ -2544,7 +2574,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(316, "mfr", "high", "MY2025 Long Range AWD on the SE 18-inch wheels, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48361") },
     charging: PORT_CCS,
     thermal: I6_HP_STD,
-    warranty: HK_WARRANTY,
+    warranty: HYU_WARRANTY,
   },
   {
     id: "i6-2025-lr-awd-20", ...H6, modelYears: [2025, 2025], vin8: ["C"], trim: ["SEL", "Limited"], drive: "AWD", packVariant: "Long Range",
@@ -2552,7 +2582,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(270, "mfr", "high", "MY2025 Long Range AWD on 20-inch wheels (SEL, Limited), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48365") },
     charging: PORT_CCS,
     thermal: I6_HP_STD,
-    warranty: HK_WARRANTY,
+    warranty: HYU_WARRANTY,
   },
   {
     id: "i9-2026-rwd", ...H9, modelYears: [2026, 2026], vin8: ["1"], drive: "RWD", packVariant: "Long Range",
@@ -2560,7 +2590,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(335, "mfr", "high", "MY2026 IONIQ 9 RWD (VIN code 1), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49661") },
     charging: { portStandard: f<"NACS">("NACS", "agg", "high", "Native NACS port from launch") },
     thermal: I9_HP,
-    warranty: HK_WARRANTY,
+    warranty: HYU_WARRANTY,
   },
   {
     id: "i9-2026-awd", ...H9, modelYears: [2026, 2026], vin8: ["3"], drive: "AWD", packVariant: "Long Range",
@@ -2568,7 +2598,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(320, "mfr", "high", "MY2026 IONIQ 9 AWD (VIN code 3), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49662") },
     charging: { portStandard: f<"NACS">("NACS", "agg", "high", "Native NACS port from launch") },
     thermal: I9_HP,
-    warranty: HK_WARRANTY,
+    warranty: HYU_WARRANTY,
   },
   {
     id: "i9-2026-awd-perf", ...H9, modelYears: [2026, 2026], vin8: ["5"], drive: "AWD", packVariant: "Long Range",
@@ -2576,7 +2606,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(311, "mfr", "high", "MY2026 IONIQ 9 AWD Performance (VIN code 5, incl. Calligraphy), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49663") },
     charging: { portStandard: f<"NACS">("NACS", "agg", "high", "Native NACS port from launch") },
     thermal: I9_HP,
-    warranty: HK_WARRANTY,
+    warranty: HYU_WARRANTY,
   },
   {
     id: "kona-2019-23", ...KONA, modelYears: [2019, 2023], vin8: ["G"], drive: "FWD", packVariant: "64 kWh",
@@ -2584,7 +2614,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(258, "mfr", "high", "Gen-1 Kona Electric (VIN code G), one rating across 2019–23, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46000") },
     charging: PORT_CCS,
     thermal: { heatPump: fb("none", "mfr", "medium", "No heat-pump line in Hyundai's 2020-23 US feature tables, which list a PTC heater (the Ioniq 5's same-family table carries a heat-pump row); the thinner 2019 sheet does not itemize HVAC", "https://www.hyundainews.com/assets/documents/original/50314-2023KonaElectricProductFeatures20220628.pdf") },
-    warranty: HK_WARRANTY,
+    warranty: HYU_WARRANTY,
   },
   {
     id: "kona-2024-lr", ...KONA, modelYears: [2024, 2024], vin8: ["6"], drive: "FWD", packVariant: "Long Range",
@@ -2592,7 +2622,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(261, "mfr", "high", "MY2024 Long Range (VIN code 6), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47449") },
     charging: PORT_CCS,
     thermal: KONA_HP_NONE_24,
-    warranty: HK_WARRANTY,
+    warranty: HYU_WARRANTY,
   },
   {
     id: "kona-2025-lr", ...KONA, modelYears: [2025, 2025], vin8: ["6"], drive: "FWD", packVariant: "Long Range",
@@ -2600,7 +2630,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(261, "mfr", "high", "MY2025 Long Range (VIN code 6) on 17-inch wheels, EPA; the N Line 19-inch wheels rate 230", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48357") },
     charging: PORT_CCS,
     thermal: KONA_HP_NONE_25,
-    warranty: HK_WARRANTY,
+    warranty: HYU_WARRANTY,
   },
   {
     id: "kona-2025-lr-nline", ...KONA, modelYears: [2025, 2025], vin8: ["6"], trim: "N Line", drive: "FWD", packVariant: "Long Range",
@@ -2608,7 +2638,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packGrossKwh: fb(64.8, "mfr", "high", "Hyundai's 2025 price sheet states the N Line's 64.8 kWh battery", KONA25_PRICE) },
     range: { epaRangeMi: f(230, "mfr", "high", "MY2025 Long Range, N Line (19-inch wheels), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48358") },
     charging: PORT_CCS,
-    warranty: HK_WARRANTY,
+    warranty: HYU_WARRANTY,
   },
   {
     id: "kona-2024-25-sr", ...KONA, modelYears: [2024, 2025], vin8: ["7"], drive: "FWD", packVariant: "Standard Range",
@@ -2616,7 +2646,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(200, "mfr", "high", "Standard Range (VIN code 7, the 99 kW motor), EPA, same rating both years", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47831") },
     charging: PORT_CCS,
     thermal: { heatPump: fb("none", "mfr", "medium", "Hyundai's 2024 feature table lists a PTC heater and no heat pump; MY2025 is a declared carry-over", KONA_CARRYOVER) },
-    warranty: HK_WARRANTY,
+    warranty: HYU_WARRANTY,
   },
   {
     id: "prologue-2025-26-awd-elite", make: "HONDA", model: "Prologue", modelYears: [2025, 2026], trim: "Elite", drive: "AWD",
@@ -4519,7 +4549,6 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     thermal: { heatPump: f("standard", "mfr", "high", "Standard on the N"), batteryPreconditioning: f(true, "mfr", "high", "N Race/drag-strip preconditioning modes are a headline N feature") },
     warranty: {
       batteryYears: f(10, "mfr"), batteryMiles: f(100_000, "mfr"), sohFloorPct: f(70, "mfr"),
-      batteryTransfers: f(true, "mfr", "high", "HV battery & EV system coverage transfers in full — Hyundai Owner's Handbook"),
       powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr", "high"),
     },
   },
@@ -4535,7 +4564,6 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     thermal: { heatPump: f("standard", "mfr", "high", "Standard on the N"), batteryPreconditioning: f(true, "mfr", "high", "N Race/drag-strip preconditioning modes are a headline N feature") },
     warranty: {
       batteryYears: f(10, "mfr"), batteryMiles: f(100_000, "mfr"), sohFloorPct: f(70, "mfr"),
-      batteryTransfers: f(true, "mfr", "high", "HV battery & EV system coverage transfers in full — Hyundai Owner's Handbook"),
       powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr", "high"),
     },
   },
