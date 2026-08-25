@@ -6,6 +6,31 @@ import type { EnrichmentRow, Fact, Source } from "../types";
 // → "mfr"; secondary-source facts → "agg" until a primary doc is read).
 const AS_OF = "2026-08-10";
 
+// BMW battery-warranty transferability. The booklet's WARRANTOR clause is the
+// grant for everything in it: "BMW of North America, LLC ('BMW NA') warrants
+// new U.S.-specification BMW vehicle models ... against defects in materials
+// and/or workmanship to the first retail purchaser, and each subsequent
+// purchaser." The HV battery is warranted in the same booklet on the same
+// subject ("separately warranted against defects in materials and/or
+// workmanship for a period of 96 months (8 years)/100,000 miles"), and the
+// Quick Reference chart lists it as one of the booklet's coverages.
+//
+// The trap here is the booklet's other transfer sentence — "The remaining BMW
+// Maintenance Program coverage described in this booklet is transferable to
+// any subsequent owners" — which is about maintenance, not warranty, and is
+// the one a keyword search lands on first.
+//
+// The booklet is MY26 and the rows run to MY2022; BMW publishes no earlier
+// booklet anywhere BMW-hosted (checked). BMW's own Certified Pre-Owned
+// all-electric warranty page covers that span from the used-buyer's side: it
+// tells the buyer of a Certified 2022-2025 BMW EV that the HV battery carries
+// 8 years/100,000 miles "from vehicle in-service date".
+const BMW_WTY_BOOKLET =
+  "https://www.bmwusa.com/content/dam/bmw/marketUS/common/warranty-books/2026/BMW_MY26_NWLW%20Post_2025-09-11_ADA.pdf";
+const BMW_XFER_NOTE =
+  "\u201CTo the first retail purchaser, and each subsequent purchaser\u201D";
+
+
 function f<T>(
   value: T,
   source: Source,
@@ -2326,7 +2351,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", BMW_XFER_NOTE, BMW_WTY_BOOKLET),
       extendedCoverage: f("MY2022 has NO capacity floor (defects-only, verified). BMW Certified MY22\u201325 cars delivered after Mar 2026 get an 8yr/100k, 75%-SoH CPO battery coverage", "mfr", "high"),
     },
     buyerNotes: [
@@ -2369,7 +2394,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", BMW_XFER_NOTE, BMW_WTY_BOOKLET),
       extendedCoverage: f("MY2022 has NO capacity floor (defects-only, verified). BMW Certified MY22\u201325 cars delivered after Mar 2026 get an 8yr/100k, 75%-SoH CPO battery coverage", "mfr", "high"),
     },
     buyerNotes: [
@@ -2408,7 +2433,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", BMW_XFER_NOTE, BMW_WTY_BOOKLET),
       extendedCoverage: f("MY2022 has NO capacity floor (defects-only, verified). BMW Certified MY22\u201325 cars delivered after Mar 2026 get an 8yr/100k, 75%-SoH CPO battery coverage", "mfr", "high"),
     },
     buyerNotes: [
@@ -2451,7 +2476,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", BMW_XFER_NOTE, BMW_WTY_BOOKLET),
       extendedCoverage: f("MY2022 has NO capacity floor (defects-only, verified). BMW Certified MY22\u201325 cars delivered after Mar 2026 get an 8yr/100k, 75%-SoH CPO battery coverage", "mfr", "high"),
     },
     buyerNotes: [
@@ -2494,7 +2519,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", BMW_XFER_NOTE, BMW_WTY_BOOKLET),
       extendedCoverage: f("MY2022 has NO capacity floor (defects-only, verified). BMW Certified MY22\u201325 cars delivered after Mar 2026 get an 8yr/100k, 75%-SoH CPO battery coverage", "mfr", "high"),
     },
     buyerNotes: [
@@ -2537,7 +2562,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", BMW_XFER_NOTE, BMW_WTY_BOOKLET),
       extendedCoverage: f("MY2022 has NO capacity floor (defects-only, verified). BMW Certified MY22\u201325 cars delivered after Mar 2026 get an 8yr/100k, 75%-SoH CPO battery coverage", "mfr", "high"),
     },
     buyerNotes: [
@@ -2580,7 +2605,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", BMW_XFER_NOTE, BMW_WTY_BOOKLET),
       extendedCoverage: f("MY2022 has NO capacity floor (defects-only, verified). BMW Certified MY22\u201325 cars delivered after Mar 2026 get an 8yr/100k, 75%-SoH CPO battery coverage", "mfr", "high"),
     },
     buyerNotes: [

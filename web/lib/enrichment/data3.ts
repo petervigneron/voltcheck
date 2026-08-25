@@ -11,6 +11,17 @@ import type { EnrichmentRow, Fact, Source } from "../types";
 // caught by running a 2021 control fetch, since 22V-412/23V-687 are already
 // documented as existing for that year).
 const AS_OF = "2026-08-10";
+
+// BMW battery-warranty transferability — the WARRANTOR clause of BMW's own
+// MY26 New Vehicle Limited Warranty booklet, which grants the booklet's
+// coverages (the HV battery's 8-year term among them) "to the first retail
+// purchaser, and each subsequent purchaser". Fuller note in data4.ts,
+// including the maintenance-program sentence that is NOT this one.
+const BMW_WTY_BOOKLET =
+  "https://www.bmwusa.com/content/dam/bmw/marketUS/common/warranty-books/2026/BMW_MY26_NWLW%20Post_2025-09-11_ADA.pdf";
+const BMW_XFER_NOTE =
+  "\u201CTo the first retail purchaser, and each subsequent purchaser\u201D";
+
 // Tesla battery-warranty transferability, for the three Model S/X rows below:
 // the "Ownership Transfer" clause in Tesla's own North America New Vehicle
 // Limited Warranty, whose General Warranty Provisions govern the Battery and
@@ -273,7 +284,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", BMW_XFER_NOTE, BMW_WTY_BOOKLET),
       extendedCoverage: f("MY2023 capacity-floor status is unresolved (MY2022 verified as no floor; MY2026 verified at 70% SoH; MY2023–25 booklets unobtainable). BMW Certified MY22–25 EVs delivered certified after 2026-03-01 get an 8yr/100k, 75%-SoH CPO battery coverage, verified.", "mfr", "high"),
     },
     buyerNotes: [
@@ -318,7 +329,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", BMW_XFER_NOTE, BMW_WTY_BOOKLET),
       extendedCoverage: f("MY2024–25 capacity-floor status is unresolved (MY2022 verified as no floor; MY2026 verified at 70% SoH; MY2023–25 booklets unobtainable). BMW Certified MY22–25 EVs delivered certified after 2026-03-01 get an 8yr/100k, 75%-SoH CPO battery coverage, verified.", "mfr", "high"),
     },
     buyerNotes: [
@@ -358,7 +369,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
       sohFloorPct: f(70, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", BMW_XFER_NOTE, BMW_WTY_BOOKLET),
     },
     buyerNotes: [
       {

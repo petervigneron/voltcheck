@@ -386,11 +386,34 @@ const BMW_CHARGING = {
   superchargerAccess: f<"adapter">("adapter", "agg", "high", "Opened Dec 2025 via BMW-approved adapter; requires a Remote Software Upgrade first"),
 };
 const BMW_HP = { heatPump: f<"standard">("standard", "mfr", "high", "Cabin, battery and drive") };
+// BMW battery-warranty transferability. The booklet's WARRANTOR clause is the
+// grant for everything in it: "BMW of North America, LLC ('BMW NA') warrants
+// new U.S.-specification BMW vehicle models ... against defects in materials
+// and/or workmanship to the first retail purchaser, and each subsequent
+// purchaser." The HV battery is warranted in the same booklet on the same
+// subject ("separately warranted against defects in materials and/or
+// workmanship for a period of 96 months (8 years)/100,000 miles"), and the
+// Quick Reference chart lists it as one of the booklet's coverages.
+//
+// The trap here is the booklet's other transfer sentence — "The remaining BMW
+// Maintenance Program coverage described in this booklet is transferable to
+// any subsequent owners" — which is about maintenance, not warranty, and is
+// the one a keyword search lands on first.
+//
+// The booklet is MY26 and the rows run to MY2022; BMW publishes no earlier
+// booklet anywhere BMW-hosted (checked). BMW's own Certified Pre-Owned
+// all-electric warranty page covers that span from the used-buyer's side: it
+// tells the buyer of a Certified 2022-2025 BMW EV that the HV battery carries
+// 8 years/100,000 miles "from vehicle in-service date".
+const BMW_WTY_BOOKLET =
+  "https://www.bmwusa.com/content/dam/bmw/marketUS/common/warranty-books/2026/BMW_MY26_NWLW%20Post_2025-09-11_ADA.pdf";
+const BMW_XFER_NOTE =
+  "\u201CTo the first retail purchaser, and each subsequent purchaser\u201D";
 const BMW_WARRANTY = {
   batteryYears: f(8, "mfr" as Source),
   batteryMiles: f(100_000, "mfr" as Source),
   sohFloorPct: f(70, "mfr" as Source),
-  batteryTransfers: f(true, "mfr" as Source, "high"),
+  batteryTransfers: f(true, "mfr" as Source, "high", BMW_XFER_NOTE, BMW_WTY_BOOKLET),
 };
 const I4 = { make: "BMW", model: "i4" };
 const I5 = { make: "BMW", model: "i5" };
