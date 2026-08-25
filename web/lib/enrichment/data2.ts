@@ -20,6 +20,12 @@ function f<T>(
 // from, rather than the site's front door (same convention as data3/data4.ts).
 const epa = (id: number) => `https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=${id}`;
 
+// Shared by all six Nissan Ariya rows. The evidence and the control tests are
+// written out above those rows; this is the sentence a shopper's coverage
+// report prints.
+const ARIYA_HP_ABSTAIN =
+  "No US Nissan document states it: twelve were checked (2023-25 manuals, brochures, press kits and quick reference guides) and the press-kit tables are granular enough to list the battery heater but carry no heat-pump row; Nissan UK states it plainly for the European Ariya, which is a different specification, and that is what the aggregator claims trace to";
+
 export const RESEARCH_ROWS: EnrichmentRow[] = [
   {
     id: "id4-2021-pro-rwd",
@@ -754,7 +760,42 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
   // Platinum+ is EPA-rated 267 on 19-inch wheels and 257 on 20s. Nissan's own
   // product page captions the car "with available 20-inch wheels", so 19s are
   // standard and 267 is the standard configuration's figure.
+  //
+  // Heat pump: every one of these six rows carried
+  // f("standard","agg","medium") until 2026-08-25, and it could not be
+  // supported for a US car. All six now abstain. See ARIYA_HP_ABSTAIN below
+  // for the reason and the control tests behind it; the short version is that
+  // the aggregators are describing the European Ariya, which is a different
+  // specification, and no US Nissan document says it at all.
   // ---------------------------------------------------------------------
+
+  // Twelve US Nissan documents for the Ariya were opened and searched on
+  // 2026-08-25 — the 2023, 2024 and 2025 owner's manuals, brochures,
+  // press-kit specification sets and Quick Reference Guides — and none of
+  // them states heat-pump hardware. That silence is load-bearing rather than
+  // incidental, because the same documents are granular enough to say it:
+  // the press kits run 519, 532 and 527 specification rows and each carries a
+  // "Battery heater" row marked standard, and the owner's manual enumerates
+  // the car's twelve high-voltage components by name. Controls confirm the
+  // searches were live ("PTC heater" is found in all three manuals, "Battery
+  // heater" in all three brochures) and that the term is in Nissan USA's own
+  // vocabulary when a Nissan has one (the 2026 LEAF press release says
+  // "energy-efficient heat pump", and the 2026 LEAF press kit heads a
+  // specification row "Hybrid heater system (heat pump)").
+  //
+  // Where the aggregators get it: Nissan UK does state it plainly, for the
+  // European car. nissan.co.uk's Ariya price-and-specifications page lists
+  // "Heat pump" as standard equipment in all seven grade-and-battery
+  // configurations it offers, and uk.nissannews.com's Ariya grade release
+  // names it in the Engage grade's feature list. That is a different
+  // specification — the same UK page lists a 22 kW onboard charger where the
+  // US car has 7.2 kW — so it cannot be carried across.
+  //
+  // NOT "none". Silence is not denial: Nissan nowhere says the US Ariya
+  // lacks one, and the manual's high-voltage list puts a PTC heater beside an
+  // air conditioner compressor, which is hardware a heat pump could also be
+  // built around. Abstaining is the honest answer in both directions. Same
+  // case, same treatment, as data6's Volvo rows.
 
   {
     id: "ariya-63-fwd",
@@ -778,7 +819,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       superchargerAccess: f("adapter", "mfr", "high", "Nissan OEM NACS adapter (part T99F9-5MP1B), early 2025"),
       dcPeakKw: f(130, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium") },
+    abstains: { heatPump: ARIYA_HP_ABSTAIN },
     warranty: { batteryYears: f(8, "agg", "medium"), batteryMiles: f(100_000, "agg", "medium") },
     buyerNotes: [
       {
@@ -811,7 +852,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       superchargerAccess: f("adapter", "mfr", "high", "Nissan OEM NACS adapter (part T99F9-5MP1B), early 2025"),
       dcPeakKw: f(130, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium") },
+    abstains: { heatPump: ARIYA_HP_ABSTAIN },
     warranty: { batteryYears: f(8, "agg", "medium"), batteryMiles: f(100_000, "agg", "medium") },
     buyerNotes: [
       {
@@ -844,7 +885,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       superchargerAccess: f("adapter", "mfr", "high", "Nissan OEM NACS adapter (part T99F9-5MP1B), early 2025"),
       dcPeakKw: f(130, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium") },
+    abstains: { heatPump: ARIYA_HP_ABSTAIN },
     warranty: { batteryYears: f(8, "agg", "medium"), batteryMiles: f(100_000, "agg", "medium") },
     buyerNotes: [
       {
@@ -877,7 +918,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       superchargerAccess: f("adapter", "mfr", "high", "Nissan OEM NACS adapter (part T99F9-5MP1B), early 2025"),
       dcPeakKw: f(130, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium") },
+    abstains: { heatPump: ARIYA_HP_ABSTAIN },
     warranty: { batteryYears: f(8, "agg", "medium"), batteryMiles: f(100_000, "agg", "medium") },
     buyerNotes: [
       {
@@ -910,7 +951,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       superchargerAccess: f("adapter", "mfr", "high", "Nissan OEM NACS adapter (part T99F9-5MP1B), early 2025"),
       dcPeakKw: f(130, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium") },
+    abstains: { heatPump: ARIYA_HP_ABSTAIN },
     warranty: { batteryYears: f(8, "agg", "medium"), batteryMiles: f(100_000, "agg", "medium") },
     buyerNotes: [
       {
@@ -943,7 +984,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       superchargerAccess: f("adapter", "mfr", "high", "Nissan OEM NACS adapter (part T99F9-5MP1B), early 2025"),
       dcPeakKw: f(130, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium") },
+    abstains: { heatPump: ARIYA_HP_ABSTAIN },
     warranty: { batteryYears: f(8, "agg", "medium"), batteryMiles: f(100_000, "agg", "medium") },
     buyerNotes: [
       {
