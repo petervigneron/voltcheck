@@ -6,6 +6,26 @@ import type { EnrichmentRow, Fact, Source } from "../types";
 // → "mfr"; secondary-source facts → "agg" until a primary doc is read).
 const AS_OF = "2026-08-10";
 
+// Volkswagen battery-warranty transferability. VW writes it into the
+// high-voltage section itself, so nothing has to be inferred from the general
+// grant: "The High-Voltage System Limited Warranty is automatically
+// transferred without cost if the ownership of the vehicle changes within the
+// warranty period." That is VW's own USA Warranty and Maintenance booklet for
+// electric models, MY2025 — the same booklet says the identical thing three
+// times over, once each for the New Vehicle Limited Warranty, the Corrosion
+// Perforation warranty and the High-Voltage System warranty, which is why the
+// high-voltage one had to be read on its own rather than assumed.
+//
+// The rows run back to MY2021 and the cited edition is MY2025, which is the
+// electric-models edition VW publishes at a resolvable URL —
+// ownersliterature.vw.com addresses documents by opaque UUID, so earlier
+// editions cannot be enumerated or guessed.
+const VW_EV_BOOKLET =
+  "https://ownersliterature.vw.com/owners-literature-service/v1/document/511662d8-903a-4c14-9434-0958f5f3a036";
+const VW_XFER_NOTE =
+  "\u201CAutomatically transferred without cost if the ownership of the vehicle changes within the warranty period\u201D";
+
+
 // GMC battery-warranty transferability. GM's MY2025 GMC Electric Vehicle
 // Limited Warranty booklet grants the warranty "to the original owner and any
 // subsequent owners of the vehicle during the warranty period", and the
@@ -152,7 +172,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", VW_XFER_NOTE, VW_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -182,7 +202,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", VW_XFER_NOTE, VW_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -212,7 +232,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", VW_XFER_NOTE, VW_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -242,7 +262,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", VW_XFER_NOTE, VW_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -272,7 +292,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", VW_XFER_NOTE, VW_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -302,7 +322,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", VW_XFER_NOTE, VW_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -332,7 +352,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", VW_XFER_NOTE, VW_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -362,7 +382,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", VW_XFER_NOTE, VW_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -392,7 +412,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", VW_XFER_NOTE, VW_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -422,7 +442,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", VW_XFER_NOTE, VW_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -452,7 +472,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", VW_XFER_NOTE, VW_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -482,7 +502,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", VW_XFER_NOTE, VW_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -512,7 +532,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", VW_XFER_NOTE, VW_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -541,7 +561,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", VW_XFER_NOTE, VW_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -570,7 +590,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", VW_XFER_NOTE, VW_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -599,7 +619,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", VW_XFER_NOTE, VW_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -628,7 +648,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "Repairs restore to ≥70%, not to as-new"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", VW_XFER_NOTE, VW_EV_BOOKLET),
     },
     buyerNotes: [
       {

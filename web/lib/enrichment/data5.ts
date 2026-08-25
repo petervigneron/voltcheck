@@ -25,6 +25,15 @@ import type { EnrichmentRow, Fact, Source } from "../types";
 // towRatingLb's unbraked figure, which has no field of its own).
 const AS_OF = "2026-08-20";
 
+// Volkswagen battery-warranty transferability — the sentence in the
+// High-Voltage System Limited Warranty section of VW's own USA Warranty and
+// Maintenance booklet for electric models. Fuller comment in data2.ts.
+const VW_EV_BOOKLET =
+  "https://ownersliterature.vw.com/owners-literature-service/v1/document/511662d8-903a-4c14-9434-0958f5f3a036";
+const VW_XFER_NOTE =
+  "\u201CAutomatically transferred without cost if the ownership of the vehicle changes within the warranty period\u201D";
+
+
 function f<T>(
   value: T,
   source: Source,
@@ -57,7 +66,7 @@ const WARRANTY = {
   batteryYears: f(8, "mfr" as Source, "high"),
   batteryMiles: f(100_000, "mfr" as Source, "high"),
   sohFloorPct: f(70, "mfr" as Source, "high"),
-  batteryTransfers: f(true, "mfr" as Source, "high"),
+  batteryTransfers: f(true, "mfr" as Source, "high", VW_XFER_NOTE, VW_EV_BOOKLET),
 };
 
 // architectureV (pack voltage) deliberately has no row: checked four

@@ -31,6 +31,15 @@ import type { Chemistry, EnrichmentRow, Fact, Source } from "../types";
 // 2022–23 negative: same document lineage, feature explicitly introduced later.
 const AS_OF = "2026-08-14";
 
+// Volkswagen battery-warranty transferability — the sentence in the
+// High-Voltage System Limited Warranty section of VW's own USA Warranty and
+// Maintenance booklet for electric models. Fuller comment in data2.ts.
+const VW_EV_BOOKLET =
+  "https://ownersliterature.vw.com/owners-literature-service/v1/document/511662d8-903a-4c14-9434-0958f5f3a036";
+const VW_XFER_NOTE =
+  "\u201CAutomatically transferred without cost if the ownership of the vehicle changes within the warranty period\u201D";
+
+
 // GMC battery-warranty transferability — GM's MY2025 GMC Electric Vehicle
 // Limited Warranty booklet, which grants its coverages, the propulsion battery
 // among them, to "the original owner and any subsequent owners". The note here
@@ -3017,7 +3026,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(291, "mfr", "high", "MY2025 ID.4 Pro / Pro S RWD, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49156") },
     charging: { portStandard: f("CCS1", "mfr") },
     thermal: ID4_HP_NONE,
-    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
+    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr", "high", VW_XFER_NOTE, VW_EV_BOOKLET) },
   },
   {
     id: "id4-2025-awd-pro", make: "VOLKSWAGEN", model: "ID.4", modelYears: [2025, 2025], trim: ["Pro", "Pro S", "Pro S Plus", "1st Edition"], drive: "AWD", ignoreKwhHint: true,
@@ -3025,7 +3034,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(263, "mfr", "high", "MY2025 ID.4 AWD Pro / Pro S, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48773") },
     charging: { portStandard: f("CCS1", "mfr") },
     thermal: ID4_HP_NONE,
-    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
+    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr", "high", VW_XFER_NOTE, VW_EV_BOOKLET) },
   },
   {
     id: "id4-2025-standard", make: "VOLKSWAGEN", model: "ID.4", modelYears: [2025, 2025], trim: ["Standard", "S"], drive: "RWD", ignoreKwhHint: true,
@@ -3033,7 +3042,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(206, "mfr", "high", "MY2025 ID.4 / ID.4 S (62 kWh Standard pack), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49155") },
     charging: { portStandard: f("CCS1", "mfr") },
     thermal: ID4_HP_NONE,
-    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
+    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr", "high", VW_XFER_NOTE, VW_EV_BOOKLET) },
   },
   {
     id: "id4-2026-rwd", make: "VOLKSWAGEN", model: "ID.4", modelYears: [2026, 2026], drive: "RWD", ignoreKwhHint: true,
@@ -3041,7 +3050,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(291, "mfr", "high", "MY2026 ID.4 RWD, EPA (the Standard pack is gone; one RWD rating)", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49987") },
     charging: { portStandard: f("CCS1", "mfr") },
     thermal: ID4_HP_NONE,
-    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
+    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr", "high", VW_XFER_NOTE, VW_EV_BOOKLET) },
   },
   {
     id: "id4-2026-awd", make: "VOLKSWAGEN", model: "ID.4", modelYears: [2026, 2026], drive: "AWD", ignoreKwhHint: true,
@@ -3049,7 +3058,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(263, "mfr", "high", "MY2026 ID.4 AWD, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49988") },
     charging: { portStandard: f("CCS1", "mfr") },
     thermal: ID4_HP_NONE,
-    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
+    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr", "high", VW_XFER_NOTE, VW_EV_BOOKLET) },
   },
 
   // ── Nissan LEAF fill-ins + gen-3 2026 / Volvo XC40-C40-EX30 / Toyota C-HR
