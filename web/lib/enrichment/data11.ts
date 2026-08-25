@@ -48,12 +48,30 @@ import type { Chemistry, EnrichmentRow, Fact, PortStandard, Source } from "../ty
 // asserting absence, because none of those documents states the cabin heating
 // MECHANISM at all.
 //
-// SOURCING, same bar as data6 and data9: every battery, charging, thermal and
-// warranty fact below comes from a manufacturer document fetched during this
-// pass and read in its own words. Where a figure lives in a PDF table it was
-// read from a RENDERED page, not from extracted text. Nothing here came from
-// a search snippet or from memory, and where a document does not state a
-// thing the row abstains and says why.
+// SOURCING, same bar as data6 and data9, with two honest qualifications.
+// Every battery, charging, thermal and warranty fact below comes from a
+// manufacturer document read in its own words, and nothing came from a search
+// snippet or from memory; where a document does not state a thing, the row
+// abstains and says why.
+//
+// The qualifications. First, "fetched" is not uniformly true of the FORD
+// citations: fromtheroad.ford.com, the CDN holding Ford's order guides and
+// spec sheets, refuses connections from this environment entirely — the host
+// root 301s and every /content/dam/ path hangs — which is the same refusal
+// data4.ts recorded in 2026-08. The Ford documents cited below were read from
+// copies fetched into a shared cache by a session that could reach that host,
+// and their identity was checked against the PDFs' own titles and running
+// headers. Treat a Ford URL here as "this document says it, and this is where
+// it lives", not as "this URL resolved for the author". Ford's other hosts —
+// media.ford.com, ford.com, fordservicecontent.com — do resolve, and the
+// warranty guides and the NACS page were fetched directly.
+//
+// Second, the render rule applies where it matters rather than everywhere:
+// figures that live in multi-column PDF tables were read from RENDERED pages
+// (GM's two range grids, GM's warranty page 5, the Chrysler pack row), because
+// extracted text interleaves columns. Figures that sit in running prose or in
+// a plain two-column key/value list were read from extracted text, which is
+// what that layout can be trusted for.
 const AS_OF = "2026-08-25";
 
 function f<T>(
@@ -117,6 +135,24 @@ const R: EnrichmentRow[] = [];
 // MY2027 have no published range at all: the 2026 Transit spec sheet is
 // gasoline-only.
 //
+// NO batteryTransfers ON ANY FORD ROW, and that is a finding rather than an
+// omission. Both of Ford's BEV warranty guides — the MY2023 one and the
+// E-Transit-specific MY2026 one — were fetched and searched: the string
+// "transfer" appears zero times in either. Ford states the 8-year/100,000-mile
+// term and the 70% capacity floor (65% on cutaway and chassis cab) and says
+// nothing at all about what happens to that coverage on resale. An earlier
+// draft of this file asserted the coverage transfers, cited to those guides;
+// it does not say so, so the field is gone rather than downgraded.
+//
+// THE PACK FIGURE COMES FROM THE SPEC SHEET, NOT THE ORDER GUIDE, and the
+// difference is one word. Ford's MY2026 order guide sells an "89kWH
+// High-Voltage Battery" without saying whether that is usable or gross, and
+// its MY2024 guide calls what appears to be the same pack "89.9 kWH". The
+// MY2025 technical specification sheet is the one document that disambiguates
+// it — "Usable energy: 89 kWh" — so that is what the 2025 and 2026-27 rows
+// cite, and this corpus's packUsableKwh means what it says. The MY2022 guide
+// does the same job for the earlier pack: "68kWh Useable Energy".
+//
 // HEAT PUMP — three answers, not one, and the middle one is an abstention.
 // Ford's 2026 order guide lists "Vapor Injection Heat pump becomes standard on
 // E-Transit" under MECHANICAL New/Changed, which is the same New/Changed
@@ -133,6 +169,8 @@ const R: EnrichmentRow[] = [];
 // arrives. So MY2024-2025 abstains rather than printing a "none" that Ford's
 // service documentation contradicts.
 {
+  const OG_22 =
+    "https://www.fromtheroad.ford.com/content/dam/fordmediasite/us/en/library/2022/order-guides/2022_Ford_Transit_Order_Guide.pdf";
   const OG_24 =
     "https://www.fromtheroad.ford.com/content/dam/fordmediasite/us/en/library/2024/order-guides/2024_Ford_Transit_Order_Guide.pdf";
   const OG_25 =
@@ -171,7 +209,6 @@ const R: EnrichmentRow[] = [];
     batteryYears: f(8, "mfr", "high", undefined, src),
     batteryMiles: f(100_000, "mfr", "high", undefined, src),
     sohFloorPct: f(70, "mfr", "high", "65% on cutaway and chassis cab configurations", src),
-    batteryTransfers: f(true, "mfr", "high", undefined, src),
   });
   const HALFSHAFT_NOTE = {
     headline: "Recall 25V860000 covers every 2022-2025 E-Transit — a half shaft that can disengage",
@@ -203,7 +240,7 @@ const R: EnrichmentRow[] = [];
     modelYears: [2022, 2023],
     vin8: ["K", "M"],
     abstains: { epaRangeMi: ET_RANGE_ABSTAIN },
-    battery: { packUsableKwh: f(68, "mfr", "high", "Ford's only pack for these years", ERG_22) },
+    battery: { packUsableKwh: f(68, "mfr", "high", "Ford calls it useable energy; the only pack for these years", OG_22) },
     charging: {
       portStandard: f<PortStandard>("CCS1", "est", "medium", "SAE J1772 CCS combo inlet", OG_26),
       dcFastCharging: f<"standard">("standard", "mfr", "high", undefined, OG_26),
@@ -246,7 +283,7 @@ const R: EnrichmentRow[] = [];
     charging: {
       portStandard: f<PortStandard>("CCS1", "est", "medium", "SAE J1772 CCS combo inlet", OG_26),
       dcFastCharging: f<"standard">("standard", "mfr", "high", undefined, OG_26),
-      acOnboardKw: f(19.2, "mfr", "high", "Dual onboard chargers, new for 2024", ENHANCED_RANGE_NEWS),
+      acOnboardKw: f(19.2, "mfr", "high", "Dual onboard chargers, new for 2024", SPECS_25),
     },
     warranty: ET_WARRANTY(BEV_WARRANTY_23),
     buyerNotes: [
@@ -285,7 +322,7 @@ const R: EnrichmentRow[] = [];
       dcPeakKw: f(176, "mfr", "high", undefined, SPECS_25),
       chargeTime1080Min: f(28, "mfr", "medium", "10–80% on a 180 kW or faster DC station, from Ford's simulation", SPECS_25),
       acOnboardKw: f(19.2, "mfr", "high", "Dual onboard chargers, standard this year", SPECS_25),
-      superchargerAccess: f<"adapter">("adapter", "mfr", "medium", "Through Ford's NACS adapter, which a dealer must enable on this van", NACS_HOWTO),
+      superchargerAccess: f<"adapter">("adapter", "mfr", "medium", "Updates are not required; E-Transit owners get optional updates from a dealer", NACS_HOWTO),
     },
     warranty: ET_WARRANTY(BEV_WARRANTY_26),
     buyerNotes: [
@@ -309,12 +346,12 @@ const R: EnrichmentRow[] = [];
     // deleted. See the block comment above.
     vin8: ["M"],
     abstains: { epaRangeMi: ET_RANGE_ABSTAIN },
-    battery: { packUsableKwh: f(89, "mfr", "high", undefined, OG_26) },
+    battery: { packUsableKwh: f(89, "mfr", "high", "Ford calls it usable energy", SPECS_25) },
     charging: {
       portStandard: f<PortStandard>("CCS1", "mfr", "high", "SAE J1772 CCS, charging on 120V, 240V and DC fast", OG_26),
       dcFastCharging: f<"standard">("standard", "mfr", "high", undefined, OG_26),
       acOnboardKw: f(11.2, "mfr", "high", "A single onboard charger is standard for 2026; dual chargers are optional", OG_26),
-      superchargerAccess: f<"adapter">("adapter", "mfr", "medium", "Through Ford's NACS adapter, which a dealer must enable on this van", NACS_HOWTO),
+      superchargerAccess: f<"adapter">("adapter", "mfr", "medium", "Updates are not required; E-Transit owners get optional updates from a dealer", NACS_HOWTO),
     },
     thermal: { heatPump: f<"standard">("standard", "mfr", "high", "Vapor injection heat pump", OG_26) },
     warranty: ET_WARRANTY(BEV_WARRANTY_26),
@@ -428,10 +465,18 @@ const R: EnrichmentRow[] = [];
       packGrossKwh: f(110, "mfr", "high", "Ram does not label the figure gross or usable", FBG_25),
     },
     charging: {
+      // est/medium, not mfr/high: Ram never writes "CCS1". It describes one
+      // "industry standard SAE J1772 charge inlet" used "for both AC Level 1
+      // (120 V), AC Level 2 (240 V), and Level 3 DC Fast (400 V) charging" —
+      // and an inlet carrying J1772 AC pins AND DC fast pins is a CCS1 port.
+      // That is our inference from Ram's description, not Ram's word, so it
+      // takes the same tier as the E-Transit's, the Zevo's and the eSprinter's
+      // inferred ports rather than the manufacturer tier the prior research
+      // doc assigned it.
       portStandard: f<PortStandard>(
         "CCS1",
-        "mfr",
-        "high",
+        "est",
+        "medium",
         "One inlet takes AC Level 1, AC Level 2 and DC fast charging",
         HANDBOOK_26
       ),
@@ -474,9 +519,9 @@ const R: EnrichmentRow[] = [];
         learnMore: HANDBOOK_26,
       },
       {
-        headline: "Using the van as a power source voids the high-voltage battery warranty",
+        headline: "Damage from using the van as a power source is excluded from the warranty",
         body:
-          "The MY2024 booklet lists “using your Ram ProMaster EV as a power source” among the misuse exclusions from battery coverage; the MY2025 and MY2026 booklets carry the same exclusion generalised to the whole Ram Heavy Duty line. There is no vehicle-to-load feature to use safely — no Ram document for this van mentions V2L or power export at all.",
+          "Ram’s warranty booklets list “using your vehicle as a power source” among the misuse examples under “What Is Not Covered”, alongside driving over curbs and overloading. Read it precisely: it does not void the warranty, it excludes the cost of repairing damage caused that way — narrower, and worth knowing before wiring equipment in. Ram does fit a 115-volt auxiliary power outlet (sales code JKV) as a factory option, which is the sanctioned way to draw power; no Ram document for this van describes vehicle-to-load or high-power export through the charge port.",
         severity: "trap",
         learnMore: WARRANTY_26,
       },
@@ -518,14 +563,23 @@ const R: EnrichmentRow[] = [];
 // sources agreeing on the module count is what makes this a per-VIN fact
 // rather than an inference.
 //
-// PACK, MY2023-2024 AND MY2026 — abstained, for two different reasons.
-// GM published no kWh figure at all in the Zevo years; its MY2024 fleet sheet
-// gives range and charge rate and never a capacity, so 2023-24 has nothing to
-// cite even though vPIC files the same 12/20-module codes. And MY2026 added a
-// THIRD pack (RPO EWU, 121 kWh, "Extended Range", flagged NEW in GM's 26MY
-// guide) while vPIC has filed no MY2026 pattern at all — so the position-8
-// map above cannot be assumed to still hold, and guessing which of three
-// packs a 2026 van carries is exactly the coin flip this corpus refuses.
+// PACK, MY2023-2024 AND MY2026 — abstained, for two different reasons, and
+// the first one is stronger than "we could not find it".
+// GM published no kWh figure at all in the Zevo years — zero occurrences of
+// "kWh" or "kilowatt hour" across the MY2023 and MY2024 order guides, the
+// MY2024 fleet sheet and the archived gobrightdrop product page, with the
+// control that "120kW DC Fast Charging or AC Level 2 11.5kW" greps out of the
+// same page fine, so the extraction is not the problem. Worse, GM and NHTSA
+// disagree about what is in the van: vPIC files MY2024 position 8 as 12 and
+// 20 MODULES, while GM's own MY2024 order guide sells "(EW2) Battery, Ultium,
+// 14 module pack" and "(ETJ) Battery, Ultium, 20 module pack". A 14-module
+// pack and a 12-module pack cannot both be the standard MY2024 battery, so
+// the position-8 map that works for MY2025 must NOT be carried backwards, and
+// converting either count into a capacity would be arithmetic, not a source.
+// MY2026 abstains for the opposite reason: it added a THIRD pack (RPO EWU,
+// "Extended Range", 204 GM-estimated miles, flagged NEW in the 26MY guide)
+// while vPIC has filed no MY2026 pattern at all, so nothing can say which of
+// three a given van carries.
 //
 // DRIVETRAIN — deliberately NOT keyed, except on the Max Range rows. Both FWD
 // and AWD are real (GM's order guide has four model codes, CJ32705/CJ32905
@@ -539,31 +593,59 @@ const R: EnrichmentRow[] = [];
 // RANGE — abstained on every row. GM's footnote, identical in the 25MY and
 // 26MY body-builder guides, is unusually explicit: "GM-estimated range based
 // on current capability of analytical projection consistent with SAE J1634
-// revision 2017-MCT… EPA estimates not yet available." GM also contradicts
-// itself twice — the MY2025 Standard Range is 166 miles in the October 2024
-// order guide and 174-179 in the July 2025 guide, and the MY2026 Max Range is
-// "up to 285 miles" in the 26MY guide and 295/296 in GM Fleet's own
-// comparison tool. The buyer notes give GM's per-model figures and name the
-// disagreement rather than picking a side.
+// revision 2017-MCT… EPA estimates not yet available." So the buyer notes
+// carry GM's numbers and the field stays empty.
+//
+// Those numbers are per MODEL and per DRIVETRAIN and this file got them wrong
+// once, which is worth recording: the 25MY guide's two tables give the 400
+// 177 combined miles on front-wheel drive and 175 on all-wheel drive, and the
+// 600 174 and 179 — the two vans do not even rank the same way round, so the
+// single shared sentence this file used to print for both was wrong on three
+// of the four figures. The tables were re-read as RENDERED pages, because
+// they are four-column grids and extracted text interleaves them.
+//
+// One earlier claim here has been withdrawn rather than corrected: that GM
+// contradicted itself with a "166 miles" figure in an October 2024 order
+// guide. That document is not publicly retrievable — a control-tested sweep
+// of GM's media API, the Wayback CDX index and several hundred candidate
+// filenames finds the earliest public 25MY revision dated 11/26/24, carrying
+// 177/179 and no 166 anywhere — and GM's real dealer order guides sit behind
+// an SSO wall. An accusation of self-contradiction that rests on a document
+// nobody can open is not a finding, so it is gone.
 {
   const BBG_25 =
     "https://www.gmupfitter.com/wp-content/uploads/2024/12/25MY-Chevrolet-BrightDrop-400-600-V071725.pdf";
   const BBG_26 =
     "https://www.gmupfitter.com/wp-content/uploads/2025/09/26MY-Chevrolet-BrightDrop-400-600-V090425-CLEAN-FINAL.pdf";
-  // The MY2025 owner manual: GM's own URL for it 404s today, so the citation
-  // points at GM's live commercial page and the manual's own words are quoted
-  // in the port note. The copy read this pass carried GM part number 85814496 B
-  // and the header "Chevrolet BrightDrop 400/BrightDrop 600 Owner Manual
-  // (GMNA-Localizing-U.S./Canada/Mexico-19507133) - 2025", and states
-  // "This vehicle is compatible with a CCS1 connector."
+  // The port citation. GM's public manual index (gmfleet.com/resources/
+  // guides-and-manuals, enumerated 2026-08-25) carries exactly two BrightDrop
+  // owner manuals - MY2023 and MY2024 - and the MY2024 one is live and says it
+  // in one sentence: "This vehicle is compatible with a CCS1 connector." That
+  // is what every row below cites. The MY2025 manual is not on that index and
+  // no public URL for it could be found, but a copy was read this pass (GM
+  // part 85814496 B, running header "Chevrolet BrightDrop 400/BrightDrop 600
+  // Owner Manual (GMNA-Localizing-U.S./Canada/Mexico-19507133) - 2025", 282
+  // PDF sheets in GM's 2-up layout, so about 599 printed pages) and it repeats
+  // that sentence verbatim. It stays in this comment rather than on a fact,
+  // the same way data9.ts keeps Mercedes' draft MY2027 booklet in a comment:
+  // a citation a reader cannot open is not a citation.
+  const OM_24 =
+    "https://www.gmfleet.com/content/dam/gmfleet/na/us/en/index/pdfs/guides-and-manuals/02-pdfs/24-brightdrop-zevo-400-600-om-en-08-03-23.pdf";
+  // MY2024 BrightDrop Electric Vehicle Limited Warranty and Owner Assistance
+  // Information (GMNA-Localizing-U.S.-17931329). GM's own gmenvolve.com URL
+  // 404s today, so the citation is the Internet Archive's raw capture of that
+  // GM URL - verified live this pass, and read from a RENDERED page 5 rather
+  // than from extracted text, because both facts it carries sit in a
+  // three-column layout: "the coverage described in this Electric Vehicle
+  // Propulsion Battery Warranty is transferable at no cost to any subsequent
+  // person(s) who assumes ownership of the vehicle within the 8 years or
+  // 100,000 miles term", and "The battery will be replaced/repaired if the
+  // capacity falls below 75% of its original value during the warranty
+  // period".
+  const WARRANTY_24 =
+    "https://web.archive.org/web/20250623125919id_/https://www.gmenvolve.com/content/dam/gmenvolve/na/us/en/index/pdfs/24-warranty/02-pdfs/brightdrop-zevo-my24-warrantyguide-052423.pdf";
   const CHEV_COMMERCIAL = "https://www.chevrolet.com/commercial/brightdrop";
   const GM_FLEET = "https://www.gmfleet.com/vehicles/electric-vehicles/chevrolet-brightdrop";
-  // MY2024 BrightDrop EV Limited Warranty & Owner Assistance
-  // (GMNA-Localizing-U.S.-17931329). GM's own gmenvolve.com URL now 301s to
-  // gmfleet.com and 404s; the copy read this pass came from the Internet
-  // Archive's capture of that GM URL, which is why the facts it alone
-  // supports — the 75% floor and transferability — sit only on the Zevo-era
-  // rows and cite the live MY2026 guide's warranty page for the term itself.
   const RECALL_STEERING = "https://www.nhtsa.gov/recalls?nhtsaId=25V156000";
   const RECALL_AIRBAG = "https://www.nhtsa.gov/recalls?nhtsaId=23V683000";
 
@@ -576,6 +658,8 @@ const R: EnrichmentRow[] = [];
   const PACK_ABSTAIN_2026 =
     "MY2026 offers three packs where MY2025 offered two, the Extended Range pack being new, and vPIC has filed no MY2026 pattern, so nothing in a VIN or a listing says which of the three this van carries";
 
+  // MY2026 term only; the MY2025 rows and the Zevo-era rows cite their own
+  // model year's document rather than this one.
   const BD_WARRANTY_TERM = {
     batteryYears: f(8, "mfr", "high", undefined, BBG_26),
     batteryMiles: f(100_000, "mfr", "high", undefined, BBG_26),
@@ -614,15 +698,19 @@ const R: EnrichmentRow[] = [];
     vds,
     abstains: { epaRangeMi: RANGE_ABSTAIN, heatPump: HP_ABSTAIN, packUsableKwh: PACK_ABSTAIN_ZEVO },
     charging: {
-      portStandard: f<PortStandard>("CCS1", "est", "medium", "Same DC inlet as the 2025 van, whose manual states CCS1", CHEV_COMMERCIAL),
-      dcFastCharging: f<"standard">("standard", "mfr", "high", undefined, GM_FLEET),
-      dcPeakKw: f(120, "mfr", "high", undefined, GM_FLEET),
-      architectureV: f(400, "mfr", "high", undefined, GM_FLEET),
+      portStandard: f<PortStandard>("CCS1", "mfr", "high", "One DC inlet, CCS1", OM_24),
+      dcFastCharging: f<"standard">("standard", "mfr", "high", undefined, OM_24),
+      // No dcPeakKw and no architectureV on these rows. GM published both for
+      // the MY2025 van (BBG_25: "DC FAST CHARGING - 400 volt, up to 120 kW")
+      // and this file used to carry them here too, cited to gmfleet.com's
+      // landing page, which states neither. Rather than forward-cite a MY2025
+      // guide onto a MY2023-24 van, the rows say nothing.
     },
     warranty: {
-      ...BD_WARRANTY_TERM,
-      sohFloorPct: f(75, "mfr", "high", undefined, CHEV_COMMERCIAL),
-      batteryTransfers: f(true, "mfr", "high", undefined, CHEV_COMMERCIAL),
+      batteryYears: f(8, "mfr", "high", undefined, WARRANTY_24),
+      batteryMiles: f(100_000, "mfr", "high", undefined, WARRANTY_24),
+      sohFloorPct: f(75, "mfr", "high", undefined, WARRANTY_24),
+      batteryTransfers: f(true, "mfr", "high", "Transfers at no cost to any subsequent owner", WARRANTY_24),
     },
     buyerNotes: notes,
   });
@@ -630,7 +718,7 @@ const R: EnrichmentRow[] = [];
   R.push(
     zevo("zevo-400-2023-24", "Zevo 400", ALIASES_400, VDS_400, [
       noEpaNote(
-        "GM's fleet material rates the Zevo 400 at up to 200 miles front-wheel drive and up to 250 miles all-wheel drive, and every GM range figure for this nameplate is footnoted “GM-estimated range based on current capability of analytical projection consistent with SAE J1634 revision 2017-MCT”, followed by “EPA estimates not yet available”. fueleconomy.gov has never carried a BrightDrop or Zevo under any make or model year, which is consistent with the van's GVWR putting it above EPA's labelling threshold.",
+        "GM's MY2024 order guide splits the range by PACK, not by drivetrain: “(EW2) Battery, Ultium, 14 module pack (GM-estimated range 200 miles)”, standard on all four configurations, and “(ETJ) Battery, Ultium, 20 module pack (GM-estimated range 250 miles)”, available on the all-wheel-drive versions only. So an AWD van on the standard pack is a 200-mile van, not a 250-mile one. Every GM range figure for this nameplate carries the same footnote — “On a full charge based on development testing and/or analytical projection consistent with SAE J1634 revision 2017 – MCT”, ending “EPA estimates not yet available”. fueleconomy.gov has never carried a BrightDrop or Zevo under any make or model year, which is consistent with the van's GVWR putting it above EPA's labelling threshold.",
       ),
       {
         headline: "Steering-shaft recall 25V156000 covers 2024 Zevo 400 vans",
@@ -644,7 +732,7 @@ const R: EnrichmentRow[] = [];
     ]),
     zevo("zevo-600-2023-24", "Zevo 600", ALIASES_600, VDS_600, [
       noEpaNote(
-        "GM's fleet material rates the Zevo 600 at up to 200 miles front-wheel drive and up to 250 miles all-wheel drive, and every GM range figure for this nameplate is footnoted “GM-estimated range based on current capability of analytical projection consistent with SAE J1634 revision 2017-MCT”, followed by “EPA estimates not yet available”. fueleconomy.gov has never carried a BrightDrop or Zevo under any make or model year, which is consistent with the van's GVWR putting it above EPA's labelling threshold.",
+        "GM's MY2024 order guide splits the range by PACK, not by drivetrain: “(EW2) Battery, Ultium, 14 module pack (GM-estimated range 200 miles)”, standard on all four configurations, and “(ETJ) Battery, Ultium, 20 module pack (GM-estimated range 250 miles)”, available on the all-wheel-drive versions only. So an AWD van on the standard pack is a 200-mile van, not a 250-mile one. Every GM range figure for this nameplate carries the same footnote — “On a full charge based on development testing and/or analytical projection consistent with SAE J1634 revision 2017 – MCT”, ending “EPA estimates not yet available”. fueleconomy.gov has never carried a BrightDrop or Zevo under any make or model year, which is consistent with the van's GVWR putting it above EPA's labelling threshold.",
       ),
       {
         headline: "Two open recalls on the 2023-24 Zevo 600: steering shaft and roof-rail airbag",
@@ -685,25 +773,35 @@ const R: EnrichmentRow[] = [];
       packUsableKwh: f(packKwh, "mfr", "high", `Useful energy, ${packVariant} pack`, BBG_25),
     },
     charging: {
-      portStandard: f<PortStandard>("CCS1", "mfr", "high", "One DC inlet, CCS1", CHEV_COMMERCIAL),
+      portStandard: f<PortStandard>("CCS1", "mfr", "high", "One DC inlet, CCS1", OM_24),
       dcFastCharging: f<"standard">("standard", "mfr", "high", undefined, BBG_25),
       dcPeakKw: f(120, "mfr", "high", undefined, BBG_25),
       acOnboardKw: f(11.5, "mfr", "high", "Standard; a 19.2 kW onboard charger is optional", BBG_25),
       architectureV: f(400, "mfr", "high", undefined, BBG_25),
     },
-    warranty: BD_WARRANTY_TERM,
+    warranty: {
+      batteryYears: f(8, "mfr", "high", undefined, BBG_25),
+      batteryMiles: f(100_000, "mfr", "high", undefined, BBG_25),
+    },
     buyerNotes: [noEpaNote(rangeBody), TOW_NOTE],
   });
 
-  const RANGE_2025_STD =
-    "GM's 25MY body-builder guide rates the Standard Range van at 177 miles combined front-wheel drive and 174-179 combined all-wheel drive, footnoted “GM-estimated range based on current capability of analytical projection consistent with SAE J1634 revision 2017-MCT… EPA estimates not yet available”. GM's own October 2024 order guide gives a different number for the same pack and year — “up-to 166 miles” — and this site does not pick between two of a maker's own figures. fueleconomy.gov has never carried a BrightDrop or Zevo under any make or model year.";
+  // Per model AND per drivetrain, read off the 25MY guide's own two tables
+  // (rendered, not extracted — they are four-column grids): the 400 is 177
+  // combined FWD and 175 AWD, the 600 is 174 FWD and 179 AWD. The two vans do
+  // not rank the same way round, which is exactly why one shared sentence for
+  // both was wrong.
+  const range2025Std = (model: string, fwd: number, awd: number, city: string) =>
+    `GM's 25MY body-builder guide rates the Standard Range ${model} at ${fwd} miles combined with front-wheel drive and ${awd} with all-wheel drive (${city}). Its footnote reads “GM-estimated range based on current capability of analytical projection consistent with SAE J1634 revision 2017-MCT” and ends “EPA estimates not yet available”, so this is GM's own simulation rather than a rating. fueleconomy.gov has never carried a BrightDrop or Zevo under any make or model year, which is consistent with the van's GVWR putting it above EPA's labelling threshold.`;
   const RANGE_2025_MAX =
     "GM's 25MY body-builder guide rates the Max Range van at 272 miles combined, 303 city and 234 highway, footnoted “GM-estimated range based on current capability of analytical projection consistent with SAE J1634 revision 2017-MCT… EPA estimates not yet available”. fueleconomy.gov has never carried a BrightDrop or Zevo under any make or model year, which is consistent with the van's GVWR putting it above EPA's labelling threshold.";
 
   R.push(
-    bd25("brightdrop-400-2025-std", "BrightDrop 400", ALIASES_400, VDS_400, ["Y", "6"], 102.4, "Standard Range", undefined, RANGE_2025_STD),
+    bd25("brightdrop-400-2025-std", "BrightDrop 400", ALIASES_400, VDS_400, ["Y", "6"], 102.4, "Standard Range", undefined,
+      range2025Std("400", 177, 175, "197 city either way; 152 highway FWD, 147 AWD")),
     bd25("brightdrop-400-2025-max", "BrightDrop 400", ALIASES_400, VDS_400, ["Z"], 173.3, "Max Range", "AWD", RANGE_2025_MAX),
-    bd25("brightdrop-600-2025-std", "BrightDrop 600", ALIASES_600, VDS_600, ["Y", "6"], 102.4, "Standard Range", undefined, RANGE_2025_STD),
+    bd25("brightdrop-600-2025-std", "BrightDrop 600", ALIASES_600, VDS_600, ["Y", "6"], 102.4, "Standard Range", undefined,
+      range2025Std("600", 174, 179, "193 city FWD and 200 AWD; 151 highway FWD, 152 AWD")),
     bd25("brightdrop-600-2025-max", "BrightDrop 600", ALIASES_600, VDS_600, ["Z"], 173.3, "Max Range", "AWD", RANGE_2025_MAX)
   );
 
@@ -717,7 +815,7 @@ const R: EnrichmentRow[] = [];
     vds,
     abstains: { epaRangeMi: RANGE_ABSTAIN, heatPump: HP_ABSTAIN, packUsableKwh: PACK_ABSTAIN_2026 },
     charging: {
-      portStandard: f<PortStandard>("CCS1", "est", "medium", "Carried over from the 2025 van; GM has not announced a NACS change", CHEV_COMMERCIAL),
+      portStandard: f<PortStandard>("CCS1", "est", "medium", "Carried over from the 2025 van; GM has not announced a NACS change", OM_24),
       dcFastCharging: f<"standard">("standard", "mfr", "high", undefined, BBG_26),
       acOnboardKw: f(19.2, "mfr", "high", "Standard for 2026; the 11.5 kW charger becomes the option", BBG_26),
       architectureV: f(400, "mfr", "high", undefined, BBG_26),
@@ -725,7 +823,7 @@ const R: EnrichmentRow[] = [];
     warranty: BD_WARRANTY_TERM,
     buyerNotes: [
       noEpaNote(
-        "GM's 26MY body-builder guide rates the three packs at 178-204 miles combined (Standard and Extended Range) and “up to 285 miles” (Max Range), footnoted “GM-estimated range based on current capability of analytical projection consistent with SAE J1634 revision 2017-MCT… EPA estimates not yet available”. GM's own fleet comparison tool gives the Max Range van 295-296 miles instead, and this site does not pick between two of a maker's own figures. fueleconomy.gov has never carried a BrightDrop or Zevo under any make or model year.",
+        "GM's 26MY body-builder guide gives each of the three packs its own figure: Standard Range “up to 176 miles”, “(EWU) BATTERY PACK - Extended Range (GM-estimated city/highway combined range up-to 204 miles)”, and “(ETJ) BATTERY PACK - Maximum Range (GM-estimated city/highway combined range up-to 285 miles)”, the last raised from the MY2025 van's 272. All three carry the footnote “GM estimated range based on current capability of analytical projection consistent with SAE J1634 revision 2017-MCT”, and GM adds “Performance targets”. fueleconomy.gov has never carried a BrightDrop or Zevo under any make or model year, so none of the three is an EPA rating — and since nothing in the VIN or the listing says which pack this van has, this page prints no range at all.",
       ),
       TOW_NOTE,
     ],
@@ -754,7 +852,8 @@ const R: EnrichmentRow[] = [];
 // in 2024, both footnoted "The values given refer to the German market" — are
 // discarded rather than converted. The US Operator's Manual does contain the
 // string "Vehicles with 56 kWh high-voltage battery", but ONLY in the
-// windscreen-washer filling-quantity table; its high-voltage-battery technical
+// windshield-washer-fluid filling-quantities table, once, against "around
+// 5.6 gal"; its high-voltage-battery technical
 // data section has exactly two tables, 81 and 113 kWh. That is multi-market
 // document residue, not a US pack.
 //
@@ -797,6 +896,7 @@ const R: EnrichmentRow[] = [];
   const MB_VANS = "https://www.mbvans.com/en/esprinter";
   const MB_MANUAL =
     "https://www.mbvans.com/content/dam/mb-vans/us/manuals/2025/esprinter/Operators%20Manual.pdf";
+  const MB_SELL_SHEET = "https://www.mbvans.com/content/dam/mb-vans/us/esprinter/eSprinter_Sell-SheetV2.pdf";
   const MB_VAN_WARRANTY =
     "https://www.mbvans.com/content/dam/mb-vans/us/generic/MY25_eSprinter_Warranty_and_Service%20Booklet_Web_Eng_Sp.pdf";
 
@@ -824,7 +924,21 @@ const R: EnrichmentRow[] = [];
       MB_PRICING_2024
     ),
   };
-  const ESPRINTER_ALIASES = ["eSprinter 2500", "eSprinter Cargo Van", "eSprinter H.O. Cargo Van", "Sprinter 2500 Electric"];
+  // Including the bare diesel-shared names. That was unsafe until this pass —
+  // the row had no VIN guard and "Sprinter 2500" is what Mercedes calls the
+  // diesel — and it is safe now for exactly the reason the Ford row can alias
+  // "Transit": ESPRINTER_VDS below is a hard filter that no diesel VIN passes.
+  const ESPRINTER_ALIASES = ["eSprinter 2500", "eSprinter Cargo Van", "eSprinter H.O. Cargo Van", "Sprinter 2500 Electric", "Sprinter 2500", "Sprinter"];
+  // VIN position 5, the one field that says electric. Swept through vPIC's
+  // partial decoder on 2026-08-25, every character, MY2024 and MY2025 alike:
+  //   U -> eSprinter, Electric, 100 kW      V -> eSprinter, Electric, 150 kW
+  //   D, E, K, N -> Sprinter, Diesel        0 -> Sprinter, Gasoline
+  // Without this guard a diesel Sprinter filed by a dealer under model
+  // "eSprinter 2500" — the feed already carries the mislabel in the other
+  // direction, an electric van typed as "Sprinter 2500" — would take this
+  // row's battery and warranty. Every other row in this file refuses to trust
+  // the model string; this one had been the exception.
+  const ESPRINTER_VDS = ["4U", "4V"];
   const ESPRINTER_RANGE_NOTE = {
     headline: "No EPA range exists, and Mercedes' own figures are footnoted two contradictory ways",
     body:
@@ -839,6 +953,7 @@ const R: EnrichmentRow[] = [];
     model: "eSprinter",
     modelAliases: ESPRINTER_ALIASES,
     modelYears: [2024, 2024],
+    vds: ESPRINTER_VDS,
     abstains: { epaRangeMi: ESPRINTER_RANGE_ABSTAIN, heatPump: ESPRINTER_HP_ABSTAIN },
     battery: {
       packUsableKwh: f(113, "mfr", "high", "The only pack the US launched with", MB_PRICING_2024),
@@ -849,7 +964,7 @@ const R: EnrichmentRow[] = [];
       chargeTime1080Min: f(42, "mfr", "high", "10–80% on the 113 kWh pack at a 115 kW DC station", MB_MANUAL),
     },
     warranty: ESPRINTER_WARRANTY,
-    specs: { towRatingLb: f(4100, "mfr", "high", undefined, MB_VANS) },
+    specs: { towRatingLb: f(4100, "mfr", "high", undefined, MB_SELL_SHEET) },
     buyerNotes: [ESPRINTER_RANGE_NOTE],
   });
 
@@ -859,6 +974,7 @@ const R: EnrichmentRow[] = [];
     model: "eSprinter",
     modelAliases: ESPRINTER_ALIASES,
     modelYears: [2025, 2026],
+    vds: ESPRINTER_VDS,
     abstains: {
       epaRangeMi: ESPRINTER_RANGE_ABSTAIN,
       heatPump: ESPRINTER_HP_ABSTAIN,
@@ -870,7 +986,7 @@ const R: EnrichmentRow[] = [];
     },
     charging: ESPRINTER_CHARGING,
     warranty: ESPRINTER_WARRANTY,
-    specs: { towRatingLb: f(4100, "mfr", "high", undefined, MB_VANS) },
+    specs: { towRatingLb: f(4100, "mfr", "high", undefined, MB_SELL_SHEET) },
     buyerNotes: [
       ESPRINTER_RANGE_NOTE,
       {
@@ -933,10 +1049,33 @@ const R: EnrichmentRow[] = [];
 // S 550e/S 560e rows abstain on it outright rather than assume a 2026 term
 // applies to a 2015 car.
 {
-  const MB_PC_WARRANTY_26 =
-    "https://www.mbusa.com/content/dam/mb-nafta/us/owners/manuals/2026/MY26PCWarrantyBooklet.pdf";
+  // One booklet per model year, because MBUSA publishes one per model year.
+  // An earlier draft of this file claimed it published only MY2026 and
+  // abstained on that basis; enumerating mbusa.com/en/owners/
+  // service-warranty-manuals on 2026-08-25 lists warranty booklets for MY2021,
+  // MY2022, MY2023, MY2024, MY2025 and MY2026 plus a MY2027 draft, and all
+  // four of the years these rows need were fetched and read. Every one of them
+  // states the same line — "HIGH VOLTAGE BATTERY LIMITED WARRANTY Plug-in
+  // Hybrid Electric ... 6 Years/62,000 Miles" — so the rows below no longer
+  // hedge at medium confidence; each cites its own year.
+  const MB_PC_WARRANTY = {
+    2023: "https://www.mbusa.com/content/dam/mb-nafta/us/owners/manuals/2023/2023-warranty-booklet.pdf",
+    2024: "https://www.mbusa.com/content/dam/mb-nafta/us/owners/manuals/2024/2024-warranty-booklet.pdf",
+    2025: "https://www.mbusa.com/content/dam/mb-nafta/us/owners/manuals/2025/MY25%20PC%20Warranty%20and%20Service%20Booklet_Web%20Eng_Sp.pdf",
+    2026: "https://www.mbusa.com/content/dam/mb-nafta/us/owners/manuals/2026/MY26PCWarrantyBooklet.pdf",
+  } as const;
+  const MB_PC_WARRANTY_26 = MB_PC_WARRANTY[2026];
   const S550E_SPEC =
     "https://media.mbusa.com/releases/release-9fab9430c9e44132bdcfdaee10252728-2017-mercedes-benz-s550e-sedan-specifications";
+  // MBUSA's launch release for the car (US naming throughout — "S550 PLUG-IN
+  // HYBRID"). It is the only Mercedes document that states either of this
+  // row's two electrical figures: "The new high-voltage lithium-ion battery
+  // with an energy content of 8.7 kWh", and "can be charged via external
+  // electricity mains using a 3.6 kW on-board charger". The MY2017
+  // specifications release above carries neither, which is why both facts
+  // moved here.
+  const S550E_LAUNCH =
+    "https://media.mbusa.com/releases/release-00c3e3f3f92248998c60ea10fef9d6a6-first-plug-in-hybrid-with-a-star-s550-plug-in-hybrid";
   const S560E_RELEASE =
     "https://media.mbusa.com/releases/release-084a1d95d4de74bc8ef3d0a30a0197a5-eq-power-new-plug-in-hybrid-mercedes-benz-s560e";
   const S580E_PRICING =
@@ -946,19 +1085,27 @@ const R: EnrichmentRow[] = [];
 
   const S_HP_ABSTAIN =
     "Six Mercedes documents covering all four of these cars never use the words heat pump, and a positive control on the MMA press material shows MBUSA does say it where one exists — but none of these documents states the cabin heating mechanism, so the silence is not an assertion of absence";
+  // Re-scoped 2026-08-25 after the original reason turned out to be false:
+  // it said MBUSA published only MY2026. It publishes one booklet per model
+  // year and its own index goes back to MY2021 — four model years after this
+  // car and one after the S 560e ended. That is still a real gap, but it is
+  // now a tested one, and the test is the index rather than a guessed URL.
   const S_OLD_WARRANTY_ABSTAIN =
-    "MBUSA publishes only its MY2026 warranty booklet, and the MY2015 through MY2020 paths all return 404, so the current 6 year term cannot be assumed backwards onto a car this old";
+    "MBUSA's published warranty archive begins at model year 2021, after this car was discontinued, so no booklet covering it exists to read and the current 6-year term must not be assumed backwards";
 
-  const S_PHEV_WARRANTY = (confidence: "high" | "medium") => ({
-    batteryYears: f(6, "mfr", confidence, "10 years / 150,000 miles in California and other ZEV-adopting states", MB_PC_WARRANTY_26),
-    batteryMiles: f(62_000, "mfr", confidence, undefined, MB_PC_WARRANTY_26),
-    batteryTransfers: f(true, "mfr", confidence, undefined, MB_PC_WARRANTY_26),
-  });
+  const S_PHEV_WARRANTY = (year: keyof typeof MB_PC_WARRANTY) => {
+    const src = MB_PC_WARRANTY[year];
+    return {
+      batteryYears: f(6, "mfr", "high", "10 years / 150,000 miles in California and other ZEV-adopting states", src),
+      batteryMiles: f(62_000, "mfr", "high", undefined, src),
+      batteryTransfers: f(true, "mfr", "high", "Transfers to each subsequent owner", src),
+    };
+  };
   const S_ALIASES = ["S-Class Sedan", "S Class"];
   const NO_SOH_NOTE = {
     headline: "The battery warranty is 6 years / 62,000 miles with no capacity floor — shorter than any EQ model's",
     body:
-      "Mercedes' EQ warranty booklet does not cover plug-in hybrids at all; these cars fall under the ordinary passenger-car booklet, whose High-Voltage Battery Limited Warranty runs “up to 6 years or 62,000 miles, whichever occurs first” against 8 or 10 years for the battery-electric EQ cars. It is transferable “to the original and each subsequent owner”, but unlike the EQ terms it guarantees no percentage of original capacity, and states that “loss of Capacity due to or resulting from gradual Capacity loss is not covered”. Cars registered in California and fourteen other states get 10 years / 150,000 miles instead.",
+      "Mercedes' EQ warranty booklet does not cover plug-in hybrids at all; these cars fall under the ordinary passenger-car booklet, whose High-Voltage Battery Limited Warranty runs “up to 6 years or 62,000 miles, whichever occurs first” against 8 or 10 years for the battery-electric EQ cars. It is transferable “to the original and each subsequent owner”. What it does not do is name a capacity floor: where several makers guarantee a percentage of original capacity, this booklet says only that a replacement battery will be “in a condition appropriate to the age and mileage of the vehicle”, and that “Loss of Capacity due to or resulting from gradual Capacity loss is not covered beyond the terms and limits specified in this Battery Limited Warranty” — covered inside the six years, on Mercedes' own measurement, and not after. Cars registered in California and fourteen other states get 10 years / 150,000 miles instead.",
     severity: "trap" as const,
     learnMore: MB_PC_WARRANTY_26,
   };
@@ -973,7 +1120,7 @@ const R: EnrichmentRow[] = [];
     drive: "RWD",
     abstains: { heatPump: S_HP_ABSTAIN, batteryWarranty: S_OLD_WARRANTY_ABSTAIN },
     battery: {
-      packGrossKwh: f(8, "mfr", "high", "Mercedes does not label the figure gross or usable", S550E_SPEC),
+      packGrossKwh: f(8.7, "mfr", "high", "Mercedes calls it the battery's energy content, neither gross nor usable", S550E_LAUNCH),
       chemistry: f<Chemistry>("LFP", "mfr", "medium", "Lithium iron phosphate, replaced by NMC on the S 560e", S560E_RELEASE),
     },
     range: {
@@ -986,7 +1133,7 @@ const R: EnrichmentRow[] = [];
     charging: {
       portStandard: f<PortStandard>("J1772", "est", "medium", "AC only, the US plug-in inlet of its era", S550E_SPEC),
       dcFastCharging: f<"none">("none", "est", "high", undefined, S550E_SPEC),
-      acOnboardKw: f(3.6, "mfr", "medium", undefined, S550E_SPEC),
+      acOnboardKw: f(3.6, "mfr", "high", "Single-phase, up to 16 amps", S550E_LAUNCH),
     },
   });
 
@@ -1027,7 +1174,7 @@ const R: EnrichmentRow[] = [];
     chargeTime1080Min: f(20, "mfr", "high", "10–80% on the optional 60 kW DC charger", S580E_PRICING),
     acOnboardKw: f(9.6, "mfr", "high", undefined, S580E_PRICING),
   };
-  const s580e = (id: string, years: [number, number], confidence: "high" | "medium", range: EnrichmentRow["range"], abstainRange?: string, extraNote?: NonNullable<EnrichmentRow["buyerNotes"]>[number]): EnrichmentRow => ({
+  const s580e = (id: string, years: [number, number], year: keyof typeof MB_PC_WARRANTY, range: EnrichmentRow["range"], abstainRange?: string, extraNote?: NonNullable<EnrichmentRow["buyerNotes"]>[number]): EnrichmentRow => ({
     id,
     make: "MERCEDES-BENZ",
     model: "S-Class",
@@ -1043,7 +1190,7 @@ const R: EnrichmentRow[] = [];
     battery: S580E_BATTERY,
     range,
     charging: S580E_CHARGING,
-    warranty: S_PHEV_WARRANTY(confidence),
+    warranty: S_PHEV_WARRANTY(year),
     buyerNotes: extraNote ? [NO_SOH_NOTE, extraNote] : [NO_SOH_NOTE],
   });
 
@@ -1055,7 +1202,7 @@ const R: EnrichmentRow[] = [];
   });
 
   R.push(
-    s580e("s580e-2023", [2023, 2023], "medium", {
+    s580e("s580e-2023", [2023, 2023], 2023, {
       epaRangeMi: f(56, "mfr", "high", "Electric-only EPA range", epa(47279)),
       epaRangeTotalMi: f(470, "mfr", "high", undefined, epa(47279)),
       mpgeElectric: f(49, "mfr", "high", undefined, epa(47279)),
@@ -1065,7 +1212,7 @@ const R: EnrichmentRow[] = [];
     s580e(
       "s580e-2024",
       [2024, 2024],
-      "medium",
+      2024,
       undefined,
       "EPA filed no MY2024 record for this car, and its rating moved between the two years that bracket it — 56 electric miles in 2023, 48 in 2025 — so neither figure can be carried across the gap",
       S580E_YEAR_HOLE(
@@ -1073,7 +1220,7 @@ const R: EnrichmentRow[] = [];
         "fueleconomy.gov holds S580e 4matic records for 2023 and 2025 but none for 2024, which is a filing gap rather than a change of car — EPA has the same hole on the AMG S 63 E Performance. The two ratings that bracket 2024 disagree: 56 electric miles in 2023 and 48 in 2025. Rather than pick one for a car neither of them describes, this page prints no electric range. Mercedes publishes no US figure of its own for MY2024 either."
       )
     ),
-    s580e("s580e-2025", [2025, 2025], "medium", {
+    s580e("s580e-2025", [2025, 2025], 2025, {
       epaRangeMi: f(48, "mfr", "high", "Electric-only EPA range", epa(49021)),
       epaRangeTotalMi: f(470, "mfr", "high", undefined, epa(49021)),
       mpgeElectric: f(63, "mfr", "high", undefined, epa(49021)),
@@ -1083,12 +1230,12 @@ const R: EnrichmentRow[] = [];
     s580e(
       "s580e-2026",
       [2026, 2026],
-      "high",
+      2026,
       undefined,
       "EPA filed no MY2026 record for this car, and its rating has already moved once inside this generation — 56 electric miles in 2023, 48 in 2025 — so the 2025 figure cannot be assumed to carry forward",
       S580E_YEAR_HOLE(
         2026,
-        "fueleconomy.gov holds S580e 4matic records for 2023 and 2025 and none for 2026, and Mercedes publishes no US electric-range figure of its own for MY2026 — its MY2026 owner's manual leaves the usable-energy row blank, marked “Missing values were not yet available by the copy deadline”. The rating already moved once inside this generation, from 56 miles to 48, so carrying 48 forward would be a guess. The 2025 car's rating is linked below for comparison, not as this car's number."
+        "fueleconomy.gov holds S580e 4matic records for 2023 and 2025 and none for 2026, and no Mercedes document found this pass publishes a US electric-range figure of its own for the MY2026 car. The rating already moved once inside this generation, from 56 miles in 2023 to 48 in 2025, so carrying 48 forward would be a guess rather than a carry-over. The 2025 car's rating is linked below for comparison, not as this car's number."
       )
     )
   );
@@ -1121,7 +1268,7 @@ const R: EnrichmentRow[] = [];
       acOnboardKw: f(3.7, "mfr", "high", undefined, AMG_S63E_RELEASE),
       architectureV: f(400, "mfr", "high", undefined, AMG_S63E_RELEASE),
     },
-    warranty: S_PHEV_WARRANTY("medium"),
+    warranty: S_PHEV_WARRANTY(2024),
     buyerNotes: [
       NO_SOH_NOTE,
       {

@@ -206,6 +206,37 @@ test("folding BrightDrop onto its own make does not swallow a real Chevrolet EV"
   }
 });
 
+// ── Mercedes-Benz eSprinter ────────────────────────────────────────────────
+
+test("an eSprinter reaches its row under every spelling, including the one a dealer typos", () => {
+  for (const model of ["eSprinter", "eSprinter 2500", "Esprinter 2500", "eSprinter Cargo Van", "Esprinter Cargo Van", "eSprinter H.O. Cargo Van", "Sprinter 2500", "Sprinter"]) {
+    assert.equal(
+      idOf(decode({ make: "MERCEDES-BENZ", model, modelYear: 2025, vin: "W1Y4UCHY4ST221230" })),
+      "esprinter-2025-26",
+      model
+    );
+  }
+});
+
+test("a diesel or gasoline Sprinter filed under the eSprinter's name matches nothing", () => {
+  // VIN position 5 is the powertrain on this WMI, swept through vPIC on
+  // 2026-08-25 for MY2024 and MY2025 alike: U and V decode "eSprinter,
+  // Electric" (100 kW and 150 kW), while D/E/K/N decode "Sprinter, Diesel"
+  // and 0 decodes "Sprinter, Gasoline". The feed already mislabels these vans
+  // in the other direction — an electric one typed as "Sprinter 2500" — so
+  // the reverse is not hypothetical.
+  for (const p5 of ["D", "E", "K", "N", "0"]) {
+    const vin = `W1Y4${p5}CHY4ST221230`;
+    for (const model of ["eSprinter", "eSprinter 2500", "Esprinter Cargo Van", "Sprinter 2500", "Sprinter"]) {
+      assert.equal(
+        matchEnrichment(decode({ make: "MERCEDES-BENZ", model, modelYear: 2025, vin }), null).exact,
+        undefined,
+        `${model} / ${vin}`
+      );
+    }
+  }
+});
+
 // ── Mercedes-Benz S-Class plug-in hybrids ──────────────────────────────────
 
 test("the S-Class descriptor splits the S 580e from the AMG S 63 E Performance", () => {
