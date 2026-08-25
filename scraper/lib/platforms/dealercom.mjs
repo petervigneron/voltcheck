@@ -4,6 +4,7 @@
 // page serves to everyone. This is the same data the page's own widgets read.
 import { priceFloor } from "../price-floor.mjs";
 import { JSONLD, DDC_INTERNET, DDC_SALE, DDC_ASKING, DDC_MSRP } from "../price-provenance.mjs";
+import { text } from "../normalize.mjs";
 
 const MARKER = /DDC\.dataLayer\[['"]vehicles['"]\]\s*=\s*\[/;
 
@@ -157,6 +158,9 @@ const ABSTAIN_RESULT = { priceUsd: PRICE_ABSTAIN, provenance: undefined };
 
 // Merge DDC fields into a normalized record (DDC wins where present — it's
 // the platform's own structured data, richer than the JSON-LD summary).
+// String fields go through text(): DDC serializes missing values as literal
+// placeholder strings ("null", "N/A", "-"), which must not beat the JSON-LD
+// value or render.
 export function enrichFromDdc(rec, ddcVehicle) {
   if (!ddcVehicle || ddcVehicle.vin?.toUpperCase() !== rec.vin) return rec;
   const d = ddcVehicle;
@@ -164,10 +168,10 @@ export function enrichFromDdc(rec, ddcVehicle) {
   return {
     ...rec,
     mileage: num(d.odometer) ?? rec.mileage,
-    trim: d.trim && d.trim !== "null" ? d.trim : rec.trim,
+    trim: text(d.trim) ?? rec.trim,
     driveLine: ["FWD", "RWD", "AWD", "4WD"].includes(d.driveLine) ? d.driveLine : undefined,
-    exteriorColor: d.exteriorColor ?? rec.exteriorColor,
-    interiorColor: d.interiorColor ?? undefined,
+    exteriorColor: text(d.exteriorColor) ?? rec.exteriorColor,
+    interiorColor: text(d.interiorColor),
     // The advertised price a human reads off the VDP — see resolveDdcPrice.
     // 0 means "abstain": we could not name the price from the served fields.
     priceUsd: resolved.priceUsd,
@@ -178,14 +182,14 @@ export function enrichFromDdc(rec, ddcVehicle) {
     priceProvenance: resolved.provenance,
     optionCodes: Array.isArray(d.optionCodes) && d.optionCodes.length ? d.optionCodes : undefined,
     certified: d.certified === "true" || d.certified === true || undefined,
-    stockNumber: d.stockNumber ?? undefined,
-    city: d.address?.city ?? rec.city,
-    state: d.address?.state ?? rec.state,
-    zip: d.address?.postalCode ?? rec.zip,
+    stockNumber: text(d.stockNumber),
+    city: text(d.address?.city) ?? rec.city,
+    state: text(d.address?.state) ?? rec.state,
+    zip: text(d.address?.postalCode) ?? rec.zip,
     // On group sites the accountName is the actual rooftop (e.g. "Hendrick
     // Kia of Cary"), which beats attributing every car to the group domain.
-    dealerName: d.accountName ?? rec.dealerName,
-    condition: d.newOrUsed ?? rec.condition,
+    dealerName: text(d.accountName) ?? rec.dealerName,
+    condition: text(d.newOrUsed) ?? rec.condition,
     platform: "dealer.com",
   };
 }

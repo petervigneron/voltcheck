@@ -45,6 +45,37 @@ function absolutizeImages(l: Listing): Listing {
   return { ...l, imageUrl, images };
 }
 
+// Dealer feeds serialize missing fields as literal placeholder strings —
+// "null", "N/A", "-" (all observed in stored rows) — which then render
+// verbatim ("Exterior null"). The scraper drops them at extraction
+// (scraper/lib/normalize.mjs's text()), but rows already in the DB and the
+// bundled snapshot still carry them, so every listing is scrubbed here
+// before any surface (detail specs, search haystack) sees it.
+const JUNK_STRINGS = new Set(["", "null", "n/a", "-", "undefined"]);
+const SCRUBBED_FIELDS = [
+  "trim",
+  "exteriorColor",
+  "interiorColor",
+  "stockNumber",
+  "description",
+  "dealerName",
+  "city",
+  "state",
+  "zip",
+] as const;
+
+function scrubJunkStrings(l: Listing): Listing {
+  let out = l;
+  for (const k of SCRUBBED_FIELDS) {
+    const v = out[k];
+    if (typeof v === "string" && JUNK_STRINGS.has(v.trim().toLowerCase())) {
+      if (out === l) out = { ...l };
+      out[k] = undefined;
+    }
+  }
+  return out;
+}
+
 /**
  * Where the rows a caller is holding actually came from.
  *
@@ -72,7 +103,7 @@ export async function allListingsWithOrigin(): Promise<{ listings: Listing[]; or
   const origin: FeedOrigin = db ? "db" : dbConfigured() ? "fallback" : "unconfigured";
   const byVin = new Map<string, Listing>();
   for (const l of [...(db ?? (await fallbackListings())), ...SAMPLE_LISTINGS]) {
-    if (!byVin.has(l.vin)) byVin.set(l.vin, absolutizeImages(l));
+    if (!byVin.has(l.vin)) byVin.set(l.vin, scrubJunkStrings(absolutizeImages(l)));
   }
   return { listings: [...byVin.values()], origin };
 }
@@ -161,7 +192,7 @@ export async function findListing(id: string): Promise<Listing | undefined> {
   // won't return. Both used to make that call whenever they had no
   // description of their own (most rows have none), which doubled the cost
   // of exactly the outage this file was being fixed for.
-  if (!live || listing.description !== undefined) return listing;
+  if (!live || listing.description !== undefined) return scrubJunkStrings(listing);
   const detail = await fetchListingDetailFromDb(listing.vin);
-  return detail ? { ...listing, ...detail } : listing;
+  return scrubJunkStrings(detail ? { ...listing, ...detail } : listing);
 }

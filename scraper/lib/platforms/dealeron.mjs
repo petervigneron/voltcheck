@@ -24,6 +24,7 @@
 import { DEOL_DISPLAYED, DEOL_SELLING } from "../price-provenance.mjs";
 import { priceFromLibraryTagged } from "./dealeron-api.mjs";
 import { priceFloor } from "../price-floor.mjs";
+import { text } from "../normalize.mjs";
 
 function parseSdDataLayer(html) {
   const m = html.match(/sdDataLayer\s*=\s*\{/);
@@ -204,6 +205,8 @@ export function resolveDealerOnPriceTagged(rec, v) {
 
 const DRIVES = new Set(["FWD", "RWD", "AWD", "4WD"]);
 
+// String fields go through text(), which drops the placeholder literals
+// ("null", "N/A", "-") both templates carry when a field is missing.
 export function enrichFromDealerOn(rec, data) {
   // sdDataLayer describes exactly one car; dotagging describes several, so it
   // is looked up by VIN. Either way the record only takes facts stamped with
@@ -218,6 +221,7 @@ export function enrichFromDealerOn(rec, data) {
   // one it is the single sdDataLayer car.
   const isSubject = Boolean(sd) || dot?.odometer != null;
   const price = resolveDealerOnPriceTagged(rec, v);
+  const trim = text(v.trim);
   return {
     ...rec,
     // Dealer-stated mileage passes through verbatim, 0 included — it has the
@@ -225,21 +229,23 @@ export function enrichFromDealerOn(rec, data) {
     // shows "Mileage: 0" to shoppers on these cars.) Implausible values get
     // flagged at display, not suppressed.
     mileage: (isSubject ? data.mileage : undefined) ?? dot?.odometer ?? rec.mileage,
-    trim: v.trim && v.trim !== "Base" ? v.trim : rec.trim ?? v.trim,
+    trim: trim && trim !== "Base" ? trim : rec.trim ?? trim,
     driveLine: DRIVES.has(v.drivetrain) ? v.drivetrain : rec.driveLine,
-    exteriorColor: v.exteriorColor ?? (isSubject ? data.exteriorColor : undefined) ?? rec.exteriorColor,
-    interiorColor: v.interiorColor ?? (isSubject ? data.interiorColor : undefined) ?? rec.interiorColor,
+    exteriorColor:
+      text(v.exteriorColor) ?? (isSubject ? text(data.exteriorColor) : undefined) ?? rec.exteriorColor,
+    interiorColor:
+      text(v.interiorColor) ?? (isSubject ? text(data.interiorColor) : undefined) ?? rec.interiorColor,
     // See resolveDealerOnPriceTagged: a healthy JSON-LD offer still wins and
     // keeps its tag, but the page's own MSRP now gets a veto over one that is
     // too far below sticker to be a price at all.
     priceUsd: price.priceUsd,
     priceProvenance: price.provenance,
     condition: typeof sd?.status === "string" ? sd.status.toLowerCase() : rec.condition,
-    city: data.dealer?.city ?? rec.city,
-    state: data.dealer?.state ?? rec.state,
-    zip: data.dealer?.zip ?? rec.zip,
-    dealerName: data.dealer?.name ?? rec.dealerName,
-    stockNumber: v.stockNumber ?? rec.stockNumber,
+    city: text(data.dealer?.city) ?? rec.city,
+    state: text(data.dealer?.state) ?? rec.state,
+    zip: text(data.dealer?.zip) ?? rec.zip,
+    dealerName: text(data.dealer?.name) ?? rec.dealerName,
+    stockNumber: text(v.stockNumber) ?? rec.stockNumber,
     platform: "dealeron",
   };
 }
