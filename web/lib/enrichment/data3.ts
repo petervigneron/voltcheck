@@ -557,7 +557,11 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
   // spread is an option box, and a Premium on the standard tire is a 281-mile
   // car that this corpus was telling its shopper was a 260-mile car. Under,
   // not over, so it never sold anyone a false bargain — but it is still
-  // matching the wrong thing, and it was 176 live listings deep.
+  // matching the wrong thing, and it was 374 live listings deep. (That count
+  // is the whole feed, re-measured 2026-08-25 by replaying the deleted row's
+  // trim keys against all 24 shards. An earlier note here said 176, which was
+  // a half-feed measurement taken while twelve shards were returning 500s —
+  // the kind of number that looks precise and is half the truth.)
   //
   // The fix follows the rule the wheel-size case already settled: state the
   // STANDARD configuration's rating and LABEL it, rather than printing the

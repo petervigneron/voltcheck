@@ -38,7 +38,7 @@ test("each MY2026 bZ grade gets its own EPA range, not the drivetrain's first ro
 // everything else to 281 — because EPA's two Woodland records were read as a
 // base/Premium split. Toyota's own launch release says the all-terrain tire
 // that costs those 21 miles is AVAILABLE on both grades, so the split was a
-// grade the car does not have, and 176 live Premium listings were shown a
+// grade the car does not have, and 374 live Premium listings were shown a
 // rating that belongs to an option box. Both grades now get the standard
 // tire's 281 with the tire named in the note; inverting this test back is how
 // the wrong claim returns.
