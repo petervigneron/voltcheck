@@ -574,11 +574,25 @@ const MX = { make: "TESLA", model: "Model X" };
 // at 19.1% and now correctly drops it at 29.4%. No ignoreKwhHint needed.
 const R1S = { make: "RIVIAN", model: "R1S" };
 const R1T = { make: "RIVIAN", model: "R1T" };
+// batteryTransfers is deliberately absent. It stood here as an uncited `true`
+// on all 27 Rivian rows, and Rivian's own R1T + R1S New Vehicle Limited
+// Warranty Guide will not say that. Its "Warranty Transfer" section reads, in
+// full: "The warranties described in this Warranty Guide MAY BE transferable
+// to subsequent lawful purchasers of the vehicle after the first retail
+// purchaser. Subsequent purchasers should contact Rivian, before purchase, to
+// determine whether any warranty coverages have been voided." (emphasis ours).
+//
+// Every other maker in this corpus that answers this field answers it flatly —
+// "is transferable at no cost", "to the original and each subsequent owner".
+// Rivian is the one that declines to, and sends the second buyer to ask first.
+// A row reading "Yes" would tell a shopper the coverage is theirs when Rivian
+// has specifically refused to promise it, and that is the expensive direction
+// to be wrong in. Word-for-word identical in the June 2023 and December 2024
+// editions, so this is Rivian's settled wording, not a drafting slip.
 const RIV_W = {
   batteryYears: f(8, "mfr" as Source),
   batteryMiles: f(175_000, "mfr" as Source, "high", "Rivian's battery warranty runs to 175,000 miles, the longest mileage term in the segment"),
   sohFloorPct: f(70, "mfr" as Source),
-  batteryTransfers: f(true, "mfr" as Source),
 };
 const RIV_PORT1 = { portStandard: f<"CCS1">("CCS1", "mfr") };
 
