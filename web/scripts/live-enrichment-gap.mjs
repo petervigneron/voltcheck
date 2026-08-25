@@ -3,8 +3,8 @@
 // web/:
 //
 //   node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs \
-//     scripts/live-enrichment-gap.mjs [--json] [--max-groups N] [--top N] \
-//     [--completeness-top N]
+//     scripts/live-enrichment-gap.mjs [--json] [--max-gap-share PCT] \
+//     [--max-groups N] [--top N] [--completeness-top N]
 //
 // WHY THIS EXISTS: the enrichment corpus (lib/enrichment/data*.ts, ~440 rows)
 // is filled in by hand, one model as someone thought of it, at a time.
@@ -86,26 +86,36 @@
 //
 // It reports; it does not edit. Filling a row or fixing a trim string is a
 // research/code act with a primary source, never something this script
-// guesses. Exit 0 = no more distinct gap groups than the baseline measured
-// the day this check was born; 10 = a NEW group appeared (a new model went
-// live with no enrichment, or an existing row stopped matching) — same
-// ratchet shape as enrichment-coverage.mjs and completeness-audit.mjs, so the
-// nightly can shout without failing the build. Completeness is reporting
-// only so far — no baseline has been calibrated for it (see the BASELINE
-// note below), so it never affects the exit code.
+// guesses.
 //
-// BASELINE NOT YET CALIBRATED. This was first run 2026-08-21 while a db-sync
-// was mid-write against the same database: successive fetches of the same
-// shards returned 58,741, then 63,945 listings — the feed was in a partial,
-// half-written state, not measuring the site, against a true figure the
-// database was reporting nearer 87,000+. That run's numbers are NOT used as
-// the ratchet below on purpose; shipping a baseline measured against a
-// corrupted read would make the ratchet either blind to real gaps or noisy
-// with fake ones. --max-groups defaults to a value high enough to never fail
-// until someone runs this for real against a healthy, settled feed and
-// commits the true count here (same one-time calibration step
-// enrichment-coverage.mjs and completeness-audit.mjs both went through) —
-// until then this check reports faithfully but never trips the ratchet.
+// TWO RATCHETS, one primary and one secondary, because the group-count
+// ratchet alone has a blind spot: a "new group" only appears when a
+// make+model that had ZERO listings gains its first one, or an existing row
+// stops matching entirely. Filling a 1,653-listing cohort and a 38-listing
+// cohort each move the group count by exactly 1 — the count can't see that
+// one of those fixes was 43x more shoppers than the other, so a big,
+// well-covered feed and a feed that's 90% covered but has one huge
+// uncovered segment can report the identical group count. gapSharePct (the
+// share of live listings with no enrichment row at all) doesn't have that
+// blind spot: it's weighted by exactly what a shopper feels, listings, not
+// distinct models.
+//
+//   PRIMARY  — gapSharePct vs --max-gap-share (one decimal place). Exit 10
+//              if the live share of no-enrichment-row listings exceeds the
+//              committed ceiling. This is the number that actually reflects
+//              shopper-facing coverage; ratchet it DOWN as rows land, never
+//              raise it to launder a regression.
+//   SECONDARY — distinct make+model gap groups vs --max-groups, unchanged
+//              from the original ratchet. Still asserted and still fails
+//              the build on its own (a wholly new model going live with
+//              zero coverage is worth catching even if the feed is tiny
+//              relative to a big cohort elsewhere) — it just no longer
+//              carries the audit by itself.
+//
+// Both baselines were calibrated together 2026-08-25 against a live,
+// healthy CDN read (see the nightly.yml step comment for the exact figures
+// and the run that produced them). Completeness is reporting only — no
+// baseline has been calibrated for it, so it never affects the exit code.
 
 import { unpackIndex, SHARDS } from "../lib/listings/pack.ts";
 import { matchEnrichment } from "../lib/enrichment/match.ts";
@@ -121,14 +131,19 @@ const val = (f, d) => {
 const AS_JSON = has("--json");
 const TOP = Number(val("--top", "40"));
 const REPORT_PATH = val("--out", "/tmp/live-enrichment-gap.json");
-// The ratchet. NOT YET CALIBRATED — see the header comment: the one run this
-// script has had so far was against a mid-db-sync, half-written feed, so its
-// numbers are not trustworthy as a baseline. 999999 effectively disables the
-// ratchet (never fails) until someone runs this against a healthy feed and
-// replaces this default with that run's real group count. Lower it as gaps
-// get filled from there; never raise it to launder a new one — a group
-// appearing above baseline means a model shipped live with no enrichment, or
-// a previously-matching row broke.
+// PRIMARY ratchet — see the header comment for why this, not the group
+// count below, is the one that actually reflects shopper-facing coverage.
+// 100 is the disabling sentinel (gapSharePct can never exceed 100) for
+// anyone running this ad hoc without passing the flag; nightly.yml pins the
+// real ceiling. Lower it as gaps get filled; never raise it to launder a
+// regression.
+const MAX_GAP_SHARE = Number(val("--max-gap-share", "100"));
+// SECONDARY ratchet, unchanged in mechanism from the original. 999999
+// effectively disables it (never fails) for anyone running this ad hoc
+// without passing the flag; nightly.yml pins the calibrated group count.
+// Lower it as gaps get filled from there; never raise it to launder a new
+// one — a group appearing above baseline means a model shipped live with no
+// enrichment, or a previously-matching row broke.
 const BASELINE = Number(val("--max-groups", "999999"));
 const FEED_BASE = val("--feed-base", "https://voltcheck.net");
 const COMPLETENESS_TOP = Number(val("--completeness-top", "20"));
@@ -340,6 +355,7 @@ const report = {
   partialMissListings: partialMiss,
   groupCount: ranked.length,
   baseline: BASELINE,
+  maxGapSharePct: MAX_GAP_SHARE,
   groups: ranked,
   completeness: {
     methodology:
@@ -360,13 +376,21 @@ const report = {
 await mkdir(dirname(REPORT_PATH), { recursive: true }).catch(() => {});
 await writeFile(REPORT_PATH, JSON.stringify(report, null, 2));
 
+// PRIMARY: gapSharePct vs --max-gap-share. SECONDARY: distinct gap groups vs
+// --max-groups, unchanged in mechanism from the original ratchet. Either one
+// tripping fails the build — see the header comment for why the group count
+// alone has a blind spot the share doesn't.
+const shareFailed = report.gapSharePct > MAX_GAP_SHARE;
+const groupFailed = ranked.length > BASELINE;
+const failed = shareFailed || groupFailed;
+
 if (AS_JSON) {
   console.log(JSON.stringify(report, null, 2));
-  process.exit(ranked.length > BASELINE ? 10 : 0);
+  process.exit(failed ? 10 : 0);
 }
 
 console.log(`Live enrichment gap — ${totalListings} live listings across ${SHARDS} shards\n`);
-console.log(`  no enrichment row matched: ${totalGapListings} (${report.gapSharePct}%)`);
+console.log(`  no enrichment row matched: ${totalGapListings} (${report.gapSharePct}%, ceiling ${MAX_GAP_SHARE}%)`);
 console.log(`    total miss (no row for this make+model+year at all): ${totalMiss}`);
 console.log(`    partial miss (a row exists but doesn't match this trim/drive): ${partialMiss}`);
 console.log(`  distinct make+model gap groups: ${ranked.length} (baseline ${BASELINE})\n`);
@@ -402,10 +426,26 @@ if (rankedCompleteness.length > COMPLETENESS_TOP) {
 
 console.log(`\nFull report written to ${REPORT_PATH}`);
 
-const failed = ranked.length > BASELINE;
+// The primary assert (gapSharePct) failing means the ratchet's headline
+// number moved backward — print the groups actually driving that, ranked by
+// how many shoppers they cost, regardless of whether they were already
+// visible in the --top list above.
+if (shareFailed) {
+  console.log(`\nTop 10 gap groups by listing count (driving the ${report.gapSharePct}% gap share):`);
+  for (const g of ranked.slice(0, 10)) {
+    const label = `${g.make} ${g.model} (${g.years})`;
+    console.log(`  ${label.padEnd(46)} ${String(g.count).padStart(5)} listings  [${g.kind}]`);
+  }
+}
+
 console.log(
-  `\n${failed ? "FAIL" : "OK"} — ${ranked.length} gap groups (baseline ${BASELINE}); ` +
-    `${totalGapListings} of ${totalListings} live listings (${report.gapSharePct}%) have no enrichment row`
+  `\n${failed ? "FAIL" : "OK"} — ${report.gapSharePct}% of live listings have no enrichment row (ceiling ${MAX_GAP_SHARE}%); ` +
+    `${ranked.length} distinct gap groups (baseline ${BASELINE})`
 );
-if (failed) console.log(`  ${ranked.length - BASELINE} more gap groups than the committed baseline — a model went live with no enrichment, or a row stopped matching.`);
+if (shareFailed) {
+  console.log(`  gap share ${report.gapSharePct}% exceeds the committed ${MAX_GAP_SHARE}% ceiling — live coverage regressed since the baseline was pinned.`);
+}
+if (groupFailed) {
+  console.log(`  ${ranked.length - BASELINE} more gap groups than the committed baseline — a model went live with no enrichment, or a row stopped matching.`);
+}
 process.exit(failed ? 10 : 0);

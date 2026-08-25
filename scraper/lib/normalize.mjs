@@ -1,13 +1,102 @@
 // schema.org Vehicle → one normalized listing record, VIN-keyed.
 import { JSONLD, offerProvenance } from "./price-provenance.mjs";
 
+// Feeds hand us HTML-encoded text, and an undecoded entity is not a cosmetic
+// problem — it changes what the string IS. web/lib/enrichment/match.ts keys on
+// norm(), which strips everything that isn't [A-Z0-9], so the entity's own
+// letters survive and become part of the key: dealer.com publishes the
+// Mercedes trim as "4MATIC &reg;", which norms to "4MATICREG" and matches no
+// registry trim at all.
+//
+// Measured on the live feed 2026-08-25, all 24 shards, 136,915 listings: 130
+// carried an entity in `trim` — 129 Mercedes (EQE / EQS / EQB / CLA 350
+// Electric / GLC 350e 4MATIC, plus AMG's "&#x2B;" for the + in 4MATIC+) and
+// one Ford "Platinum&reg;" Lightning. 125 came off dealer.com rooftops and one
+// off cdn-ds.com, both of which read trim through this function.
+//
+// What that costs today is narrower than "no enrichment", and worth writing
+// down so the fix isn't over-claimed later: most Mercedes rows in the corpus
+// carry no trim, and a row with no trim matches every listing, so it lands on
+// a broken one anyway. Of the 11 cohorts where a broken listing and a clean
+// twin sit side by side in the feed, 9 have identical trim-derived badges and
+// 2 do not — the 2023 EQE 350 and EQE 500 4MATIC, which lose exactly the
+// trim-keyed facts: EPA range (260 mi) and pack capacity (91 kWh est). A
+// further 92 broken listings have no clean twin to measure against. So: a
+// small measured loss now, on a key that is wrong for all 130, in a corpus
+// that cannot grow a trim-specific Mercedes row without it getting worse.
+//
+// This is deliberately a decode, not a strip. "4MATIC ®" norms to "4MATIC" —
+// the same key the registry already holds — so the trim both matches and still
+// reads on the card the way the dealer's own page renders it. Stripping would
+// have worked for &reg; and quietly mangled &amp; and &#x2B;.
+//
+// Case-insensitive only for the names with no case-distinct twin. &Eacute; is
+// É, not é, so an accented name matches exactly or not at all.
+const NAMED_ENTITIES = {
+  amp: "&", lt: "<", gt: ">", quot: '"', apos: "'",
+  nbsp: " ", ensp: " ", emsp: " ", thinsp: " ", shy: "",
+  reg: "®", trade: "™", copy: "©", deg: "°", plusmn: "±", times: "×",
+  hellip: "…", mdash: "—", ndash: "–", minus: "−", bull: "•", middot: "·",
+  lsquo: "‘", rsquo: "’", ldquo: "“", rdquo: "”", sbquo: "‚",
+  frac12: "½", frac14: "¼", frac34: "¾", euro: "€", pound: "£", yen: "¥", cent: "¢",
+  aacute: "á", eacute: "é", iacute: "í", oacute: "ó", uacute: "ú",
+  agrave: "à", egrave: "è", ntilde: "ñ", ccedil: "ç",
+  auml: "ä", ouml: "ö", uuml: "ü", szlig: "ß", oslash: "ø", aring: "å",
+};
+const CASELESS = new Set([
+  "amp", "lt", "gt", "quot", "apos", "nbsp", "reg", "trade", "copy",
+  "deg", "hellip", "mdash", "ndash", "times", "bull", "middot",
+]);
+const ENTITY = /&(?:#(\d{1,7})|#[xX]([0-9a-fA-F]{1,6})|([a-zA-Z][a-zA-Z0-9]{1,9}));/g;
+
+// Reject anything String.fromCodePoint would throw on, plus the surrogate
+// range and NUL. An unrecognized entity is left verbatim rather than guessed
+// at — a mangled string that still looks like an entity is at least legible as
+// one in the data.
+const fromCodePoint = (cp) =>
+  Number.isInteger(cp) && cp > 0 && cp <= 0x10ffff && !(cp >= 0xd800 && cp <= 0xdfff)
+    ? String.fromCodePoint(cp)
+    : undefined;
+
+export function decodeEntities(s) {
+  if (typeof s !== "string" || !s.includes("&")) return s;
+  let out = s;
+  // Double-encoding is real in these feeds — Dealer Car Search serves
+  // `170&amp;quot; RWD` inside an onchange attribute, where one pass leaves
+  // `170&quot; RWD` behind (see lib/platforms/dealercarsearch.mjs). Repeat
+  // until the string stops changing, bounded at three passes so a literal
+  // "&amp;amp;" someone actually typed can't be unwound past its own meaning.
+  for (let i = 0; i < 3; i++) {
+    const next = out.replace(ENTITY, (m, dec, hex, name) => {
+      if (dec != null) return fromCodePoint(Number(dec)) ?? m;
+      if (hex != null) return fromCodePoint(parseInt(hex, 16)) ?? m;
+      // hasOwn, not a bare lookup: "&toString;" and "&valueOf;" both fit the
+      // name pattern and would otherwise resolve up the prototype chain and
+      // splice a function's own source text into the trim.
+      const lower = name.toLowerCase();
+      const named = Object.hasOwn(NAMED_ENTITIES, name)
+        ? NAMED_ENTITIES[name]
+        : CASELESS.has(lower) && Object.hasOwn(NAMED_ENTITIES, lower)
+          ? NAMED_ENTITIES[lower]
+          : undefined;
+      return named ?? m;
+    });
+    if (next === out) break;
+    out = next;
+  }
+  return out;
+}
+
 // Dealer feeds render missing fields as literal placeholder strings —
 // "null", "N/A", "-" (observed in production data) — treat them as absent.
 const JUNK = new Set(["", "null", "n/a", "-", "undefined"]);
 export const text = (v) => {
   if (v == null) return undefined;
   if (typeof v === "string") {
-    const s = v.trim();
+    // Decode before the JUNK test and before trimming: "&#45;" is the same
+    // absent-field placeholder as "-", and a value that is nothing but
+    // "&nbsp;" is whitespace once decoded, not a one-character string.
+    const s = decodeEntities(v).trim();
     return JUNK.has(s.toLowerCase()) ? undefined : s;
   }
   if (typeof v === "number") return String(v);
