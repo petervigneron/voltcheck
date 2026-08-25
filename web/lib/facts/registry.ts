@@ -213,7 +213,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       {
         question: "What charging connector does the Volkswagen ID.4 use?",
         answer:
-          "A CCS (Combined Charging System) socket. Volkswagen's 2025 press kit states all ID.4 models are equipped with one; no year-specific port statement was found for 2021 through 2024. Tesla Supercharger access opened to ID.4 owners on November 18, 2025, and requires a Volkswagen-approved NACS-to-CCS DC adapter, MSRP $200, sold through Volkswagen dealers and parts.vw.com. The adapter is for DC fast charging only, not Level 1 or Level 2 AC equipment or Tesla Destination Chargers.",
+          "A CCS (Combined Charging System) socket. Volkswagen states that all ID.4 models are equipped with one, in the same sentence in its 2021, 2023, 2024 and 2025 ID.4 press kits; model year 2022 is the one gap, because Volkswagen published no 2022 ID.4 press kit and no year's order guide names a port type. Tesla Supercharger access opened to ID.4 owners on November 18, 2025, and requires a Volkswagen-approved NACS-to-CCS DC adapter, MSRP $200, sold through Volkswagen dealers and parts.vw.com. The adapter is for DC fast charging only, not Level 1 or Level 2 AC equipment or Tesla Destination Chargers.",
       },
       {
         question: "How long does a Volkswagen ID.4 take to charge at home?",

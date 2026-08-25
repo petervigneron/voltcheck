@@ -19,7 +19,7 @@ Volkswagen's 2025 order guide states a DC rate only for the 82 kWh battery. Volk
 
 ## Connector
 
-- Volkswagen's 2025 press kit states: "All ID.4 models are equipped with a CCS (Combined Charging System) socket, which allows for both home and public charging."[^6] That sentence is from the 2025 document; no year-specific port statement was found for 2021 through 2024, and none of those years' order guides names a port type, so this page carries Volkswagen's 2025 wording rather than a claim about every model year.
+- CCS, and Volkswagen has said so in the same words every year it published a kit: "All ID.4 models are equipped with a CCS (Combined Charging System) socket, which allows for both home and public charging." That sentence is verbatim identical in Volkswagen's 2021, 2023, 2024 and 2025 ID.4 press kits.[^8][^9][^10][^6] Model year 2022 is the one gap — Volkswagen published no 2022 ID.4 press kit, and no year's order guide names a port type — so 2022 rests on the years bracketing it rather than on a 2022 document of its own.
 - Tesla Supercharger access opened to ID.4 owners on November 18, 2025, and requires a Volkswagen-approved NACS-to-CCS DC adapter.[^7]
 - Adapter MSRP is $200, sold by Volkswagen dealers and at parts.vw.com. Original owners of model year 2025 ID.4s are eligible for a $100 rebate, claimed within 90 days of purchase and no later than July 15, 2026. An adapter comes standard with every model year 2026 Volkswagen EV.[^7]
 - The adapter is for DC fast charging only. Volkswagen states it is not designed for Level 1 or Level 2 AC equipment, including home chargers and Tesla Destination Chargers.[^7]
@@ -34,7 +34,7 @@ Volkswagen's 2025 order guide states a DC rate only for the 82 kWh battery. Volk
 
 ## Battery preconditioning
 
-Not covered. None of the Volkswagen documents opened for this sheet — five model-year order guides, the 2025 press kit, and the November 2025 Supercharger-access release — describes battery preconditioning behavior on the ID.4, automatic or driver-activated.
+Not covered. None of the Volkswagen documents opened for this sheet — five model-year order guides, the 2021, 2023, 2024 and 2025 press kits, and the November 2025 Supercharger-access release — describes battery preconditioning behavior on the ID.4, automatic or driver-activated. The four press kits were searched for the word and none contains it; the same search of Volkswagen's 2025 ID. Buzz press kit returns four mentions, which is what tells you the search works rather than the pages being empty.
 
 ## See it for yourself
 
@@ -59,8 +59,14 @@ Not covered. None of the Volkswagen documents opened for this sheet — five mod
 
 [^7]: Volkswagen of America, "Volkswagen announces access to Tesla Supercharger network and availability of NACS DC adapter," Nov 12, 2025. https://media.vw.com/releases/1891. Read in a browser session for the same reason.
 
+[^8]: Volkswagen, *2021 ID.4 Press Kit*, battery and charging section. https://media.vw.com/press-kits/2021-id4-press-kit. Read in a browser session; a plain HTTP fetch of this address returns a 2,586-byte empty shell with no article text in it.
+
+[^9]: Volkswagen, *2023 ID.4 Press Kit*, battery and charging section. https://media.vw.com/press-kits/2023-id4-press-kit. Read in a browser session for the same reason.
+
+[^10]: Volkswagen, *2024 ID.4 Press Kit*, battery and charging section. https://media.vw.com/press-kits/2024-id4-press-kit. Read in a browser session for the same reason. No 2022 ID.4 press kit exists at the matching address: where the 2021, 2023, 2024 and 2025 slugs each return a full article, both /press-kits/2022-id4-press-kit and /press-kits/2022-volkswagen-id4-press-kit return the site's not-found shell.
+
 ## Scope note
 
-Model years 2021 through 2025, US market, checked directly against Volkswagen's own order guide for each of those five years, plus Volkswagen's 2025 press kit and its November 2025 Supercharger release. Model year 2026 was not checked and is not claimed; the only 2026 fact on this page is Volkswagen's own statement that an adapter ships with every 2026 Volkswagen EV.
+Model years 2021 through 2025, US market, checked directly against Volkswagen's own order guide for each of those five years, plus Volkswagen's 2021, 2023, 2024 and 2025 ID.4 press kits and its November 2025 Supercharger release. Model year 2026 was not checked and is not claimed; the only 2026 fact on this page is Volkswagen's own statement that an adapter ships with every 2026 Volkswagen EV.
 
 The 62 kWh pack was not offered every year. It appears in the 2023 and 2024 order guides as ID.4 Standard and ID.4 S, and in 2025 only as the Limited and S Limited cars described in the press kit, for which Volkswagen publishes no DC rate. Where a year's guide states no rate for a pack, this sheet states none.
