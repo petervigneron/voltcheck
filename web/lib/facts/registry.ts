@@ -875,6 +875,39 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       },
     ],
   },
+  {
+    make: "kia",
+    model: "ev6",
+    topic: "heat-pump",
+    contentFile: "ev6-heat-pump",
+    pageTitle: "Kia EV6 heat pump: optional on most trims, so check the car | Voltcheck",
+    description:
+      "Kia marks the EV6's heat pump Optional on Wind and GT-Line in every model year from 2022 to 2026, standard only on the GT, and not available on the Light. From Kia's own Features & Options files.",
+    breadcrumbLabel: "Kia EV6 heat pump",
+    dateModified: "2026-08-25",
+    faq: [
+      {
+        question: "Does the Kia EV6 have a heat pump?",
+        answer:
+          "It depends on the individual car, not just the trim. Kia's own Features & Options grid marks the heat pump Optional on the Wind and GT-Line in every model year from 2022 through 2026, Standard on the GT from 2023 on, and Not Available on the 2022 Light and on the Light Short Range from 2024 on. For 2024 through 2026 the Light Long Range is Optional too. Kia's legend, printed in each file: S = Standard, O = Optional, - = Not Available.",
+      },
+      {
+        question: "Which Kia EV6 trims always have a heat pump?",
+        answer:
+          "The GT, from its first model year 2023 onward — Kia marks it Standard there. No Light (2022) and no Light Short Range (2024 onward) has one; Kia marks those Not Available. Every Wind and GT-Line, in every model year, has to be checked individually.",
+      },
+      {
+        question: "Is the Kia EV6 heat pump tied to all-wheel drive?",
+        answer:
+          "Kia's documents do not state a rule, and this page does not claim one. What the documents show is that in each of the five model years the Heat Pump row and the All Wheel Drive (AWD) row carry identical marks, cell for cell, in every trim column. Kia also does not sell the heat pump as a named line item: its 2022 and 2025 EV6 pricing sheets list no factory-installed or port-installed option named for one.",
+      },
+      {
+        question: "How can I tell whether a used Kia EV6 has a heat pump?",
+        answer:
+          "Not from the model name or the trim, on a Wind or GT-Line of any year. Kia's own 2025 EV6 Owner's Manual confirms the car is built both ways: its air conditioning table gives two refrigerant charges, \"With heat pump\" 850±25 g and \"Without heat pump\" 750±25 g, both R-1234yf.",
+      },
+    ],
+  },
 ];
 
 export function findFactSheet(make: string, model: string, topic: string): FactSheetEntry | undefined {
