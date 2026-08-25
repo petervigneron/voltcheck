@@ -442,19 +442,19 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     contentFile: "model-y-battery-warranty",
     pageTitle: "Tesla Model Y battery warranty: 100,000 or 120,000 miles, by trim | Voltcheck",
     description:
-      "Tesla's two published lists disagree about an all-wheel-drive Model Y's mileage cap. Both are quoted here, with what the 70% capacity floor actually promises.",
+      "Tesla publishes the Model Y's battery coverage twice, in two different sets of trim names. Both lists are quoted here, with what the 70% capacity floor actually promises.",
     breadcrumbLabel: "Tesla Model Y battery warranty",
     dateModified: "2026-08-25",
     faq: [
       {
         question: "How long is the Tesla Model Y battery warranty?",
         answer:
-          "Eight years, with the mileage cap set by trim, and Tesla's two published sources do not line up on all-wheel drive. Tesla's warranty document states 8 years or 100,000 miles for Model Y Standard or Standard Range Plus and 8 years or 120,000 miles for Model Y Long Range or Performance. Tesla's support page lists Model Y RWD and Model Y AWD at 100,000 miles, and Model Y Premium RWD, Premium AWD, Performance AWD and Y L Premium Launch Series at 120,000 miles. Both carry a minimum 70% retention of battery capacity. The warranty booklet delivered with a specific car is the authority for that car.",
+          "Eight years, with the mileage cap set by trim, and Tesla publishes the trims under two different sets of names. Tesla's warranty document states 8 years or 100,000 miles for Model Y Standard or Standard Range Plus and 8 years or 120,000 miles for Model Y Long Range or Performance. Tesla's support page instead lists Model Y RWD and Model Y AWD at 100,000 miles, and Model Y Premium RWD, Premium AWD, Performance AWD and Y L Premium Launch Series at 120,000 miles. Both carry a minimum 70% retention of battery capacity. If your car's name is in neither list, matching on drivetrain letters alone is not safe — AWD appears in both rows of the support table — and the warranty booklet delivered with that car is the authority for it.",
       },
       {
         question: "Does the Tesla Model Y battery warranty cover normal degradation?",
         answer:
-          "No. Tesla writes that the battery \"will experience gradual energy or power loss with time and use\" and that loss of battery energy or power over time or resulting from battery usage is not covered, except as specified in the warranty. The 70% figure is a defect standard: Tesla warrants the battery free from defects that would cause capacity retention to fall below 70%. Tesla also states that range estimates are an imperfect measure of battery capacity.",
+          "No. Tesla writes that the battery \"will experience gradual energy or power loss with time and use\" and that loss of battery energy or power over time or resulting from battery usage is not covered, except as specified in the warranty. The Battery and Drive Unit Limited Warranty states the floor only as \"minimum 70% retention of Battery capacity over the warranty period,\" without defining how retention is measured. Tesla does phrase the 70% floor as a defect standard, but that wording belongs to the separate Battery ZEV Limited Warranty, which Tesla limits to model year 2026 and later. Tesla also states that range estimates are an imperfect measure of battery capacity.",
       },
       {
         question: "Does the Tesla Model Y battery warranty transfer to a second owner?",
@@ -464,7 +464,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       {
         question: "Do the ZEV warranties apply to my Tesla Model Y?",
         answer:
-          "Only if it is a 2026 or later model year. Tesla's own note reads: \"The ZEV Limited Warranties apply only to vehicles of Model Year 2026 and later.\" Where they apply, the Battery ZEV Limited Warranty runs 8 years or 100,000 miles and the High-Priced Propulsion-Related Parts ZEV Limited Warranty runs 7 years or 70,000 miles.",
+          "Two conditions gate them. Model year: Tesla's own note reads \"The ZEV Limited Warranties apply only to vehicles of Model Year 2026 and later.\" Warranty Region: Tesla states the four ZEV Limited Warranties apply to vehicles with a Warranty Region of the United States and Canada, except as its document specifically notes. Where they apply, the Battery ZEV Limited Warranty runs 8 years or 100,000 miles and the High-Priced Propulsion-Related Parts ZEV Limited Warranty runs 7 years or 70,000 miles.",
       },
     ],
   },
