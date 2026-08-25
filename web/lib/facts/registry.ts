@@ -208,12 +208,12 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       {
         question: "How long does a Volkswagen ID.4 take to charge from 10% to 80%?",
         answer:
-          "Around 30 minutes on all 2025 ID.4 trims, per Volkswagen's 2025 press kit.",
+          "Around 30 minutes, per Volkswagen's 2025 press kit, whose sentence generalises to all ID.4 trims from a paragraph naming the Pro, Pro S and Pro S Plus. Volkswagen publishes no separate figure for the 62 kWh Limited and S Limited cars built early in the 2025 model year.",
       },
       {
         question: "What charging connector does the Volkswagen ID.4 use?",
         answer:
-          "A CCS (Combined Charging System) socket. Volkswagen states all ID.4 models are equipped with it. Tesla Supercharger access opened to ID.4 owners on November 18, 2025, and requires a Volkswagen-approved NACS-to-CCS DC adapter, MSRP $200, sold through Volkswagen dealers and parts.vw.com. The adapter is for DC fast charging only, not Level 1 or Level 2 AC equipment or Tesla Destination Chargers.",
+          "A CCS (Combined Charging System) socket. Volkswagen's 2025 press kit states all ID.4 models are equipped with one; no year-specific port statement was found for 2021 through 2024. Tesla Supercharger access opened to ID.4 owners on November 18, 2025, and requires a Volkswagen-approved NACS-to-CCS DC adapter, MSRP $200, sold through Volkswagen dealers and parts.vw.com. The adapter is for DC fast charging only, not Level 1 or Level 2 AC equipment or Tesla Destination Chargers.",
       },
       {
         question: "How long does a Volkswagen ID.4 take to charge at home?",

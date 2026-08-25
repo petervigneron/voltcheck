@@ -15,11 +15,11 @@ Volkswagen's two 2025 documents do not agree on the 2025 peak. The order guide s
 
 Volkswagen's 2025 order guide states a DC rate only for the 82 kWh battery. Volkswagen's 2025 press kit says a small number of 62 kWh cars were built early in the model year and sold as ID.4 Limited and ID.4 S Limited, and that they "mirror the 2024 ID.4 Standard and ID.4 S respectively."[^6] No 2025 Volkswagen document opened for this sheet states a DC rate for those two trims, so none is claimed here.
 
-- Time to charge 10% to 80% on a DC fast charger: around 30 minutes, on all 2025 ID.4 trims.[^6]
+- Time to charge 10% to 80% on a DC fast charger: around 30 minutes. Volkswagen's sentence attaches that to the 175 kW figure and then generalises — "This allows all ID.4 trims to DC fast charge from 10-80% SOC in around 30 minutes" — in a paragraph naming only the Pro, Pro S and Pro S Plus. It does not carve out the 62 kWh Limited and S Limited cars described elsewhere in the same press kit, and no separate figure is published for them.[^6]
 
 ## Connector
 
-- Every ID.4 has a CCS (Combined Charging System) socket. Volkswagen's words: "All ID.4 models are equipped with a CCS (Combined Charging System) socket, which allows for both home and public charging."[^6]
+- Volkswagen's 2025 press kit states: "All ID.4 models are equipped with a CCS (Combined Charging System) socket, which allows for both home and public charging."[^6] That sentence is from the 2025 document; no year-specific port statement was found for 2021 through 2024, and none of those years' order guides names a port type, so this page carries Volkswagen's 2025 wording rather than a claim about every model year.
 - Tesla Supercharger access opened to ID.4 owners on November 18, 2025, and requires a Volkswagen-approved NACS-to-CCS DC adapter.[^7]
 - Adapter MSRP is $200, sold by Volkswagen dealers and at parts.vw.com. Original owners of model year 2025 ID.4s are eligible for a $100 rebate, claimed within 90 days of purchase and no later than July 15, 2026. An adapter comes standard with every model year 2026 Volkswagen EV.[^7]
 - The adapter is for DC fast charging only. Volkswagen states it is not designed for Level 1 or Level 2 AC equipment, including home chargers and Tesla Destination Chargers.[^7]
