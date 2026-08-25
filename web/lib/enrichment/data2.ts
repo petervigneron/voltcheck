@@ -1230,7 +1230,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Lyriq",
     modelYears: [2023, 2024],
     drive: "RWD",
-    battery: { packGrossKwh: f(102, "mfr", "medium"), chemistry: f("NMC", "agg", "medium") },
+    battery: { packGrossKwh: f(102, "mfr", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(312, "mfr", "high", "2023: 312; 2024: 314, EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(330, "tested", "high", "70-mph (InsideEVs, 2023 RWD): 330 mi; 75-mph (C&D): 270; Edmunds loop (2024): 319") },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
@@ -1266,7 +1266,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     // three-character floor.
     vds: ["KP"],
     drive: "RWD",
-    battery: { packGrossKwh: f(102, "mfr", "medium"), chemistry: f("NMC", "agg", "medium") },
+    battery: { packGrossKwh: f(102, "mfr", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(326, "mfr", "high", "EPA figure (11 kW and 19.2 kW chargers)", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
@@ -1295,7 +1295,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Lyriq",
     modelYears: [2023, 2024],
     drive: "AWD",
-    battery: { packGrossKwh: f(102, "mfr", "medium"), chemistry: f("NMC", "agg", "medium") },
+    battery: { packGrossKwh: f(102, "mfr", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(307, "mfr", "high", "EPA figure", "https://www.fueleconomy.gov"), testedRangeMi: f(220, "tested", "medium", "75-mph (Car and Driver): 220 mi") },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
@@ -1336,7 +1336,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     vin8: ["L"], // GM Part 565: L = RWD + PAWD (dual motor)
     vds: ["KP"], // ordinary Lyriq; the V-Series is 1GYXP — see lyriq-2025-rwd
     drive: "AWD",
-    battery: { packGrossKwh: f(102, "mfr", "medium"), chemistry: f("NMC", "agg", "medium") },
+    battery: { packGrossKwh: f(102, "mfr", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(319, "mfr", "high", "11.5 kW onboard charger, standard", epa(48692)) },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
@@ -1365,7 +1365,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Prologue",
     modelYears: [2024, 2024],
     drive: "FWD",
-    battery: { packGrossKwh: f(85, "mfr", "medium", "GM Ultium pack"), chemistry: f("NMC", "agg", "medium") },
+    battery: { packGrossKwh: f(85, "mfr", "medium", "GM Ultium pack"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(296, "mfr", "high", "EPA figure", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "mfr"),
@@ -1396,7 +1396,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     // in the 2026-08-14 pass.
     modelYears: [2025, 2026],
     drive: "FWD",
-    battery: { packGrossKwh: f(85, "mfr", "medium", "GM Ultium pack"), chemistry: f("NMC", "agg", "medium") },
+    battery: { packGrossKwh: f(85, "mfr", "medium", "GM Ultium pack"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(308, "mfr", "high", "EPA figure", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "mfr"),
@@ -1427,7 +1427,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     trim: ["EX", "Touring"],
     vds: ["KHV", "KHX"],
     drive: "AWD",
-    battery: { packGrossKwh: f(85, "mfr", "medium", "GM Ultium pack"), chemistry: f("NMC", "agg", "medium") },
+    battery: { packGrossKwh: f(85, "mfr", "medium", "GM Ultium pack"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(281, "mfr", "high", undefined, epa(47830)), testedRangeMi: f(240, "tested", "medium", "75-mph (Car and Driver, Elite AWD): 240 mi; Edmunds mixed loop: 320") },
     charging: {
       portStandard: f("CCS1", "mfr"),
@@ -1463,7 +1463,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     trim: "Elite",
     vds: ["KHZ"],
     drive: "AWD",
-    battery: { packGrossKwh: f(85, "mfr", "medium", "GM Ultium pack"), chemistry: f("NMC", "agg", "medium") },
+    battery: { packGrossKwh: f(85, "mfr", "medium", "GM Ultium pack"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(273, "mfr", "high", undefined, epa(47829)), testedRangeMi: f(240, "tested", "medium", "75-mph (Car and Driver, Elite AWD): 240 mi; Edmunds mixed loop: 320") },
     charging: {
       portStandard: f("CCS1", "mfr"),
@@ -1497,7 +1497,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     trim: ["EX", "Touring"],
     vds: ["KHV", "KHX"],
     drive: "AWD",
-    battery: { packGrossKwh: f(85, "mfr", "medium", "GM Ultium pack"), chemistry: f("NMC", "agg", "medium") },
+    battery: { packGrossKwh: f(85, "mfr", "medium", "GM Ultium pack"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(294, "mfr", "high", undefined, epa(49089)) },
     charging: {
       portStandard: f("CCS1", "mfr"),
@@ -1526,7 +1526,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Equinox EV",
     modelYears: [2024, 2026],
     drive: "FWD",
-    battery: { packGrossKwh: f(85, "mfr", "medium"), chemistry: f("NMC", "agg", "medium") },
+    battery: { packGrossKwh: f(85, "mfr", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(319, "mfr", "high", "All years, EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(303, "tested", "high", "70-mph (InsideEVs, 2024 2RS FWD): 303 mi; 75-mph (C&D): 260; Edmunds loop (2025): 356") },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
@@ -1555,7 +1555,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Equinox EV",
     modelYears: [2024, 2026],
     drive: "AWD",
-    battery: { packGrossKwh: f(85, "mfr", "medium"), chemistry: f("NMC", "agg", "medium") },
+    battery: { packGrossKwh: f(85, "mfr", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(297, "mfr", "high", "2024: 285; 2025–26: 307 (288 with 19.2 kW charger), EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(260, "tested", "low", "75 mph (Car and Driver)") },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
@@ -1589,7 +1589,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Blazer EV",
     modelYears: [2025, 2026],
     drive: "FWD",
-    battery: { packGrossKwh: f(85, "mfr", "medium", "FWD/AWD"), chemistry: f("NMC", "agg", "medium") },
+    battery: { packGrossKwh: f(85, "mfr", "medium", "FWD/AWD"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(312, "mfr", "high", undefined, epa(49069)) },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
@@ -1620,7 +1620,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Blazer EV",
     modelYears: [2024, 2024],
     drive: "AWD",
-    battery: { packGrossKwh: f(85, "mfr", "medium", "FWD/AWD"), chemistry: f("NMC", "agg", "medium") },
+    battery: { packGrossKwh: f(85, "mfr", "medium", "FWD/AWD"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(279, "mfr", "high", undefined, epa(47445)), testedRangeMi: f(200, "tested", "high", "75-mph (Car and Driver, 2024 RS AWD): 200 mi vs 279 EPA; Edmunds mixed loop: 320") },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
@@ -1651,7 +1651,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Blazer EV",
     modelYears: [2025, 2026],
     drive: "AWD",
-    battery: { packGrossKwh: f(85, "mfr", "medium", "FWD/AWD"), chemistry: f("NMC", "agg", "medium") },
+    battery: { packGrossKwh: f(85, "mfr", "medium", "FWD/AWD"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(283, "mfr", "high", undefined, epa(48342)), testedRangeMi: f(200, "tested", "high", "75-mph (Car and Driver, 2024 RS AWD): 200 mi vs 279 EPA; Edmunds mixed loop: 320") },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
@@ -1682,7 +1682,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Blazer EV",
     modelYears: [2024, 2024],
     drive: "RWD",
-    battery: { packGrossKwh: f(102, "mfr", "medium", "RWD/SS"), chemistry: f("NMC", "agg", "medium") },
+    battery: { packGrossKwh: f(102, "mfr", "medium", "RWD/SS"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(324, "mfr", "high", undefined, epa(47813)) },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
@@ -1713,7 +1713,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Blazer EV",
     modelYears: [2025, 2025],
     drive: "RWD",
-    battery: { packGrossKwh: f(102, "mfr", "medium", "RWD/SS"), chemistry: f("NMC", "agg", "medium") },
+    battery: { packGrossKwh: f(102, "mfr", "medium", "RWD/SS"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(334, "mfr", "high", undefined, epa(48694)) },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
@@ -1743,7 +1743,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     modelYears: [2025, 2025],
     trim: "SS",
     drive: "AWD",
-    battery: { packGrossKwh: f(102, "mfr", "medium", "RWD/SS"), chemistry: f("NMC", "agg", "medium") },
+    battery: { packGrossKwh: f(102, "mfr", "medium", "RWD/SS"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(303, "mfr", "high", undefined, epa(49068)), testedRangeMi: f(250, "tested", "high", "75-mph (Car and Driver, 2025 SS): 250 mi") },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
@@ -1773,7 +1773,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     modelYears: [2026, 2026],
     trim: "SS",
     drive: "AWD",
-    battery: { packGrossKwh: f(102, "mfr", "medium", "RWD/SS"), chemistry: f("NMC", "agg", "medium") },
+    battery: { packGrossKwh: f(102, "mfr", "medium", "RWD/SS"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(302, "mfr", "high", undefined, epa(49954)), testedRangeMi: f(250, "tested", "high", "75-mph (Car and Driver, 2025 SS): 250 mi") },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
@@ -1806,7 +1806,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     // no combustion car of that name for it to poach.
     modelAliases: ["Hummer EV Pickup"],
     modelYears: [2022, 2025],
-    battery: { packUsableKwh: f(205, "est", "medium", "213.7 kWh gross; 2024+ 2M20 variants are smaller"), chemistry: f("NMC", "agg", "medium") },
+    battery: { packUsableKwh: f(205, "est", "medium", "213.7 kWh gross; 2024+ 2M20 variants are smaller"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(314, "mfr", "high", "2024–25: 298–318 by config/tires, EPA. 2022–23: no EPA rating exists (GM est. 329)", "https://www.fueleconomy.gov"), testedRangeMi: f(343, "tested", "high", "70-mph (InsideEVs, 2022 Edition 1): 343 mi, beat its 329 GM estimate; 75-mph (C&D): 290") },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
@@ -1840,7 +1840,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     make: "GMC",
     model: "Hummer EV SUV",
     modelYears: [2024, 2024],
-    battery: { packUsableKwh: f(205, "est", "medium"), chemistry: f("NMC", "agg", "medium") },
+    battery: { packUsableKwh: f(205, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(314, "mfr", "high", "All-terrain tires, standard", epa(46953)) },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
@@ -1874,7 +1874,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     make: "GMC",
     model: "Hummer EV SUV",
     modelYears: [2025, 2025],
-    battery: { packUsableKwh: f(205, "est", "medium"), chemistry: f("NMC", "agg", "medium") },
+    battery: { packUsableKwh: f(205, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(312, "mfr", "high", "All-terrain tires, standard", epa(48348)) },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
@@ -2418,7 +2418,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Silverado EV",
     modelYears: [2024, 2024],
     vds: ["10UED"],
-    battery: { packUsableKwh: f(170, "est", "medium"), chemistry: f("NCM", "agg", "medium") },
+    battery: { packUsableKwh: f(170, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(393, "mfr", "high", undefined, epa(47446)) },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
@@ -2447,7 +2447,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Silverado EV",
     modelYears: [2024, 2024],
     vds: ["10VEL"],
-    battery: { packUsableKwh: f(205, "est", "medium"), chemistry: f("NCM", "agg", "medium") },
+    battery: { packUsableKwh: f(205, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(450, "mfr", "high", undefined, epa(46946)) },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
@@ -2476,7 +2476,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Silverado EV",
     modelYears: [2025, 2025],
     vds: ["10TEF"],
-    battery: { packUsableKwh: f(119, "est", "medium"), chemistry: f("NCM", "agg", "medium") },
+    battery: { packUsableKwh: f(119, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(282, "mfr", "high", undefined, epa(49071)) },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
@@ -2505,7 +2505,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Silverado EV",
     modelYears: [2025, 2025],
     vds: ["10ZED"],
-    battery: { packUsableKwh: f(170, "est", "medium"), chemistry: f("NCM", "agg", "medium") },
+    battery: { packUsableKwh: f(170, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(408, "mfr", "high", undefined, epa(48700)) },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
@@ -2534,7 +2534,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Silverado EV",
     modelYears: [2025, 2025],
     vds: ["101ED"],
-    battery: { packUsableKwh: f(170, "est", "medium"), chemistry: f("NCM", "agg", "medium") },
+    battery: { packUsableKwh: f(170, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(390, "mfr", "high", undefined, epa(48701)) },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
@@ -2563,7 +2563,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Silverado EV",
     modelYears: [2025, 2025],
     vds: ["10VED"],
-    battery: { packUsableKwh: f(170, "est", "medium"), chemistry: f("NCM", "agg", "medium") },
+    battery: { packUsableKwh: f(170, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(422, "mfr", "high", undefined, epa(48702)) },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
@@ -2592,7 +2592,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Silverado EV",
     modelYears: [2025, 2025],
     vds: ["10WEL"],
-    battery: { packUsableKwh: f(205, "est", "medium"), chemistry: f("NCM", "agg", "medium") },
+    battery: { packUsableKwh: f(205, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(492, "mfr", "high", undefined, epa(48698)) },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
@@ -2621,7 +2621,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Silverado EV",
     modelYears: [2026, 2026],
     vds: ["10UEH", "10YEH"],
-    battery: { packUsableKwh: f(119, "est", "medium"), chemistry: f("NCM", "agg", "medium") },
+    battery: { packUsableKwh: f(119, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(283, "mfr", "high", undefined, epa(49643)) },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
@@ -2650,7 +2650,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Silverado EV",
     modelYears: [2026, 2026],
     vds: ["10ZED", "103ED"],
-    battery: { packUsableKwh: f(170, "est", "medium"), chemistry: f("NCM", "agg", "medium") },
+    battery: { packUsableKwh: f(170, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(410, "mfr", "high", undefined, epa(49640)) },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
@@ -2679,7 +2679,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Silverado EV",
     modelYears: [2026, 2026],
     vds: ["10VED"],
-    battery: { packUsableKwh: f(170, "est", "medium"), chemistry: f("NCM", "agg", "medium") },
+    battery: { packUsableKwh: f(170, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(424, "mfr", "high", undefined, epa(49638)) },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
@@ -2708,7 +2708,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Silverado EV",
     modelYears: [2026, 2026],
     vds: ["10WEL"],
-    battery: { packUsableKwh: f(205, "est", "medium"), chemistry: f("NCM", "agg", "medium") },
+    battery: { packUsableKwh: f(205, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(493, "mfr", "high", undefined, epa(49639)) },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
@@ -2741,7 +2741,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     modelYears: [2024, 2026],
     vds: ["4"],
     vin8: ["H", "F"],
-    battery: { packUsableKwh: f(119, "est", "medium"), chemistry: f("NCM", "agg", "medium") },
+    battery: { packUsableKwh: f(119, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
       superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
@@ -2771,7 +2771,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     modelYears: [2024, 2026],
     vds: ["4"],
     vin8: ["D"],
-    battery: { packUsableKwh: f(170, "est", "medium"), chemistry: f("NCM", "agg", "medium") },
+    battery: { packUsableKwh: f(170, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
       superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
@@ -2801,7 +2801,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     modelYears: [2024, 2026],
     vds: ["4"],
     vin8: ["L"],
-    battery: { packUsableKwh: f(205, "est", "medium"), chemistry: f("NCM", "agg", "medium") },
+    battery: { packUsableKwh: f(205, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
     charging: {
       portStandard: f("CCS1", "agg", "high"),
       superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),

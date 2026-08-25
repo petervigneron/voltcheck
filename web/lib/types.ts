@@ -26,7 +26,7 @@ export type AbstainableField =
   | "batteryWarranty"
   | "portStandard";
 export type SuperchargerAccess = "native" | "adapter" | "none";
-export type Chemistry = "LFP" | "NMC" | "NCA" | "NCM";
+export type Chemistry = "LFP" | "NMC" | "NCA" | "NCM" | "NCMA";
 
 // T1/T2 — what the VIN gives us via vPIC. T2 values are hints, never facts.
 export interface VinDecode {
