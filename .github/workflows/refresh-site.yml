@@ -39,7 +39,10 @@ name: Refresh site cache
 # over and the nightly's role changes.
 #
 # So both slots are scheduled here, and each reads the CDN's `age` on
-# /api/index/first and skips if the cache is younger than ~11h. The cadence
+# /api/index/first and skips if the cache is younger than ~11h — unless any
+# numbered shard is serving 5xx, in which case it refreshes regardless of age
+# (2026-08-25: a young `first` from a half-finished deploy warm made this
+# slot stand down while shards 12–23 served 500s). The cadence
 # then holds itself at 2/day in every branch:
 #
 #   nightly revalidated ~16:00  ->  04:00 sees ~12h, refreshes
@@ -105,12 +108,27 @@ jobs:
       # it a direct reading of "has something already refreshed recently"
       # rather than an assumption about who was supposed to.
       #
+      # BUT freshness is judged on the whole grid, not on /api/index/first
+      # alone. 2026-08-25: a session deployed at 16:36 (fresh deployment,
+      # empty cache) and its post-deploy warm died partway — first and shards
+      # 0–11 rendered, then the database went down mid-warm and 12–23 cached
+      # nothing. This slot fired at 16:42, read a six-minute-old `first`,
+      # said "something already refreshed it", and went green — while half
+      # the browse grid served 500s for the next two hours. A young `first`
+      # only proves a warm STARTED recently; the status sweep below is what
+      # checks it FINISHED. All 25 reads are CDN status checks (HEAD-shaped,
+      # no bodies), so the sweep costs no database work and negligible egress.
+      #
+      # Any shard 5xx => REFRESH regardless of age (the re-warm is the
+      # repair), and `broken` is recorded so the no-go path below can turn
+      # "could not repair" into a red run instead of a quiet skip.
+      #
       # Unreadable age => REFRESH, not skip. Failing to read the header is not
       # evidence of freshness, and the costs are asymmetric: a redundant
       # refresh is ~27 MB, while a wrongly-skipped one leaves the site a day
-      # stale. A non-200 is different and does skip — if the site itself is
-      # unwell, expiring its cache is the last thing to do.
-      - name: Is the cache still fresh?
+      # stale. `first` not answering at all is different and does skip — if
+      # the site itself is unwell, expiring its cache is the last thing to do.
+      - name: Is the cache still fresh — and the whole grid actually serving?
         id: age
         if: ${{ steps.nightly.outputs.busy == '0' }}
         run: |
@@ -120,8 +138,24 @@ jobs:
           AGE=$(printf '%s' "$H" | grep -i '^age:' | tr -d '\r' | awk '{print $2}' | head -1)
           if [ "$CODE" != "200" ]; then
             echo "::warning::/api/index/first returned '${CODE:-no response}' — skipping this refresh rather than expiring the cache of a site that is not answering"
-            echo "stale=false" >> "$GITHUB_OUTPUT"; exit 0
+            echo "stale=false" >> "$GITHUB_OUTPUT"; echo "broken=false" >> "$GITHUB_OUTPUT"; exit 0
           fi
+          # The sweep. 24 shards since 2026-08-24 — keep in step with
+          # web/lib/listings/pack.ts SHARDS. A 5xx is a shard shoppers cannot
+          # load; anything else (200 from cache, however stale) is "serving".
+          # --max-time 90 because a MISS here re-renders at the origin: a
+          # healthy render finishes under that, a sick one is indistinguishable
+          # from down — either way it is not "serving" right now.
+          BROKEN=""
+          for s in $(seq 0 23); do
+            C=$(curl -s -o /dev/null -w "%{http_code}" --max-time 90 "https://voltcheck.net/api/index/$s" || echo 000)
+            case "$C" in 5*|000) BROKEN="$BROKEN $s";; esac
+          done
+          if [ -n "$BROKEN" ]; then
+            echo "::warning::shards$BROKEN are not serving (5xx/timeout) while first answers 200 — a half-finished warm. Refreshing regardless of cache age; the re-warm is the repair."
+            echo "stale=true" >> "$GITHUB_OUTPUT"; echo "broken=true" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          echo "broken=false" >> "$GITHUB_OUTPUT"
           if [ -z "$AGE" ]; then
             echo "no age header (CDN MISS or header stripped) — refreshing, because an unreadable age is not evidence of freshness"
             echo "stale=true" >> "$GITHUB_OUTPUT"; exit 0
@@ -216,3 +250,18 @@ jobs:
         env:
           FEED_REVALIDATE_SECRET: ${{ secrets.FEED_REVALIDATE_SECRET }}
         run: node feed-shard-check.mjs
+
+      # Shards were serving 5xx and this run could not repair them — the
+      # database gate refused the warm (or the credentials were missing), so
+      # the grid is STILL broken and somebody has to know. Refusing to warm
+      # into a sick database stays correct; refusing QUIETLY is what let
+      # 2026-08-25's half-dead grid ride for two hours between human checks.
+      # A red run here is the difference between "the site is degraded and
+      # the pipeline knows" and "the site is degraded and only a shopper
+      # knows". (When the warm DID run, the verify step above already owns
+      # pass/fail, so this only fires on the refused path.)
+      - name: A broken grid must not exit green
+        if: ${{ steps.age.outputs.broken == 'true' && steps.gate.outputs.ok != 'true' }}
+        run: |
+          echo "::error::shards are serving 5xx and the refresh was refused (database gate not ok) — the browse grid is degraded and this run could not repair it. It stays red until a warm succeeds; recovery options are in CLAUDE.md's deploy notes (vercel promote to a deployment with a good cache)."
+          exit 1
