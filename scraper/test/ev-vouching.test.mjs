@@ -91,6 +91,49 @@ test("the nameplates an all-BEV lot caught missing all match, their petrol sibli
   }
 });
 
+test("an inline-four engine label is not the BMW i4", () => {
+  // Measured 2026-08-24 on the 2026-08-23 crawl (110k rows): bare "i4\b" /
+  // "i3\b" / "i5\b" matched 3,677 engine designations — 53% of the entire
+  // name_match pile vpic-enrich has to decode inside its nightly time cap.
+  // Every name here is a real row from that corpus.
+  for (const n of [
+    "2012 Nissan Altima 4dr Sdn I4 CVT 2.5 S",
+    "2008 Honda Accord Sedan 4-Door I4 Automatic LX",
+    "2025 Chevrolet Trailblazer LT SUV I3 Turbocharged DOHC 12V",
+    "2013 Volkswagen Passat S 4dr Sdn 2.5L Manual S PZEV Gas I5 2.5L/151",
+    "2024 BMW X3 sDrive30i SUV I4", // BMW-branded petrol: the make word alone must not admit it
+    "2022 JAC SEI4 ACTIVE CVT", // tail of a word, the iX/Matrix class
+  ]) {
+    assert.equal(classifyEv({ name: n }).isEv, false, n);
+  }
+});
+
+test("real BMW i3/i4/i5/i7 still name-match, with ® and trim-only designators", () => {
+  for (const n of [
+    "2023 BMW i4 eDrive40",
+    "2024 BMW i4 M50",
+    "2015 BMW i3",
+    "2014 BMW i3 with Range Extender",
+    "2026 BMW i5 xDrive40",
+    "2025 BMW i7 xDrive60",
+    "2024 BMW® i4 eDrive35", // the trademark glyph breaks plain make adjacency
+    "i4 xDrive40", // OEM-lane shape: model text with no make word at all
+  ]) {
+    assert.deepEqual(classifyEv({ name: n }), { isEv: true, kind: "BEV?", confidence: "name_match" }, n);
+  }
+});
+
+test("an engine-label trim no longer vouches a dealer's fuel-text 'Electric'", () => {
+  // The sharp edge of the same bug: nameplateVouches() tests make+model+name+
+  // TRIM, so "I4" in an Altima's trim let a dealer's mistaken fuelType
+  // "Electric" skip the vPIC gate entirely — the ID.4/Sequoia hole again.
+  const altima = { vin: "1N4AL3AP0FC000000", make: "Nissan", model: "Altima", trim: "4dr Sdn I4 CVT 2.5 S", evConfidence: "high" };
+  assert.equal(fuelTextOnly(altima), true);
+  // A real i4 keeps its vouch: make and model sit adjacent in the haystack.
+  const i4 = { vin: "WBY73AW00P7000000", make: "BMW", model: "i4", trim: "eDrive40", evConfidence: "high" };
+  assert.equal(fuelTextOnly(i4), false);
+});
+
 test("classifyEv still refuses a plain gas/electric hybrid and admits a plug-in", () => {
   assert.equal(classifyEv({ fuelType: "Gas/Electric Hybrid", vehicleIdentificationNumber: "1HGCV3F17KA015397" }).isEv, false);
   const phev = classifyEv({ fuelType: "Plug-in Gas/Electric Hybrid", vehicleIdentificationNumber: "5YM23CS01P9S34188" });

@@ -34,7 +34,25 @@ export const EV_MODEL_RE = new RegExp(
     // Toyota Matrix and a Pontiac Grand Prix both came back name-matched EVs
     // (2026-08-16). vPIC declined to confirm them and ingest held them, as
     // designed — the cost was the decode, not a false listing.
-    "i3\\b", "i4\\b", "i5\\b", "i7\\b", "\\bix\\b",
+    //
+    // The i3/i4/i5/i7 need more than \b: "I4" is how dealers write an
+    // inline-four, so the bare tokens matched "4dr Sdn I4 CVT" Altimas,
+    // "I3 Turbocharged" Trailblazers and "Gas I5" Passats — 3,677 rows of
+    // the 2026-08-23 crawl (replayed 2026-08-24, autodealersdigital build),
+    // 53% of the entire name_match pile vpic-enrich must decode inside its
+    // nightly time cap. Worse than the decode cost: an engine-label "I4" in
+    // a TRIM made nameplateVouches() vouch a dealer's fuel-text "Electric"
+    // past the vPIC gate, the ID.4/Sequoia hole again. So: the make word in
+    // front (\W{0,2} because dealers print "BMW® i4"), or one of BMW's own
+    // i-car designators after. The designator digits must END the word —
+    // every i-car is eDrive35/40, xDrive40/60 or M50/M60/M70, while the
+    // petrol X3 is "xDrive30i" and the plug-in X5 "xDrive45e", and the
+    // vouch haystack's name+trim join really did manufacture "I4 xDrive30i"
+    // from a petrol X3. Replayed over the same 110k-row crawl: 0 of 3,685
+    // real i3/i4/i5/i7 lost from either haystack, 0 engine labels kept.
+    "bmw\\W{0,2}i[3457]s?\\b",
+    "\\bi[3457]s? ?((e|x)drive ?\\d{2}\\b|m[567]0\\b|gran coupe|with range extender)",
+    "\\bix\\b",
     "eqb", "eqe", "eqs",
     "polestar [234]", "r1t", "r1s", "lucid air", "lucid gravity",
     // Toyota renamed the bZ4X to plain "bZ" for MY2026 (and added the bZ
