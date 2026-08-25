@@ -6,6 +6,27 @@ import type { EnrichmentRow, Fact, Source } from "../types";
 // → "mfr"; secondary-source facts → "agg" until a primary doc is read).
 const AS_OF = "2026-08-10";
 
+// Nissan battery-warranty transferability. The LEAF's warranty booklet answers
+// it inside the 2024 NEW ELECTRIC VEHICLE LIMITED WARRANTY, under
+// APPLICABILITY: the warranty is "provided to the original and subsequent
+// owner(s) of a Nissan vehicle", and "is generally transferable from the
+// original 'owner other than a Nissan dealer' (OWNER) to subsequent owners of
+// the vehicle at any time ownership of the vehicle is transferred, without any
+// action on your part". The Lithium-ion Battery Coverage (96 months/100,000
+// miles) is a coverage inside that same warranty.
+//
+// The one exception Nissan names cannot reach a car listed here: the warranty
+// voids only if, in the first six months, ownership transfers AND "the vehicle
+// is registered outside of the United States" — both conditions, and the
+// second one takes the car out of this feed. So it is not a caveat a US used
+// LEAF shopper needs on the page. Same wording in the MY2020 booklet, which
+// brackets the 2018-2025 rows.
+const NISSAN_LEAF_BOOKLET =
+  "https://www.nissanusa.com/content/dam/Nissan/us/manuals-and-guides/leaf/2024/2024-nissan-leaf-warranty-booklet.pdf";
+const NISSAN_XFER_NOTE =
+  "\u201CGenerally transferable ... to subsequent owners of the vehicle at any time ownership of the vehicle is transferred, without any action on your part\u201D";
+
+
 // Toyota battery-warranty transferability, for the bZ4X rows below. Toyota's
 // own Warranty & Maintenance Guide says it under GENERAL WARRANTY PROVISIONS,
 // "Which Vehicles Are Covered": "Warranty coverage is automatically
@@ -713,7 +734,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      batteryTransfers: f(true, "mfr", "high", "“Original and subsequent owner(s)”, voided only if exported within 6 months of first sale"),
+      batteryTransfers: f(true, "mfr", "high", NISSAN_XFER_NOTE, NISSAN_LEAF_BOOKLET),
       extendedCoverage: f("Capacity warranty: below 9 of 12 gauge bars (Nissan states no percentage)", "mfr", "high", "2018+ 62/40 kWh: 8yr/100k; 2014-era: 5yr/60k"),
     },
     buyerNotes: [
@@ -783,7 +804,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      batteryTransfers: f(true, "mfr", "high", "“Original and subsequent owner(s)”, voided only if exported within 6 months of first sale"),
+      batteryTransfers: f(true, "mfr", "high", NISSAN_XFER_NOTE, NISSAN_LEAF_BOOKLET),
       extendedCoverage: f("Capacity warranty: below 9 of 12 gauge bars (Nissan states no percentage)", "mfr", "high", "2018+ 62/40 kWh: 8yr/100k; 2014-era: 5yr/60k"),
     },
     buyerNotes: [
@@ -825,7 +846,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      batteryTransfers: f(true, "mfr", "high", "“Original and subsequent owner(s)”, voided only if exported within 6 months of first sale"),
+      batteryTransfers: f(true, "mfr", "high", NISSAN_XFER_NOTE, NISSAN_LEAF_BOOKLET),
       extendedCoverage: f("Capacity warranty: below 9 of 12 gauge bars (Nissan states no percentage)", "mfr", "high", "2018+ 62/40 kWh: 8yr/100k; 2014-era: 5yr/60k"),
     },
     buyerNotes: [
@@ -862,7 +883,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      batteryTransfers: f(true, "mfr", "high", "“Original and subsequent owner(s)”, voided only if exported within 6 months of first sale"),
+      batteryTransfers: f(true, "mfr", "high", NISSAN_XFER_NOTE, NISSAN_LEAF_BOOKLET),
       extendedCoverage: f("Capacity warranty: below 9 of 12 gauge bars (Nissan states no percentage)", "mfr", "high", "2018+ 62/40 kWh: 8yr/100k; 2014-era: 5yr/60k"),
     },
     buyerNotes: [
@@ -895,7 +916,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      batteryTransfers: f(true, "mfr", "high", "“Original and subsequent owner(s)”, voided only if exported within 6 months of first sale"),
+      batteryTransfers: f(true, "mfr", "high", NISSAN_XFER_NOTE, NISSAN_LEAF_BOOKLET),
       extendedCoverage: f("Capacity warranty: below 9 of 12 gauge bars (Nissan states no percentage)", "mfr", "high", "2018+ 62/40 kWh: 8yr/100k; 2014-era: 5yr/60k"),
     },
     buyerNotes: [
@@ -932,7 +953,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      batteryTransfers: f(true, "mfr", "high", "“Original and subsequent owner(s)”, voided only if exported within 6 months of first sale"),
+      batteryTransfers: f(true, "mfr", "high", NISSAN_XFER_NOTE, NISSAN_LEAF_BOOKLET),
       extendedCoverage: f("Capacity warranty: below 9 of 12 gauge bars (Nissan states no percentage)", "mfr", "high", "2018+ 62/40 kWh: 8yr/100k; 2014-era: 5yr/60k"),
     },
     buyerNotes: [
@@ -974,7 +995,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      batteryTransfers: f(true, "mfr", "high", "“Original and subsequent owner(s)”, voided only if exported within 6 months of first sale"),
+      batteryTransfers: f(true, "mfr", "high", NISSAN_XFER_NOTE, NISSAN_LEAF_BOOKLET),
       extendedCoverage: f("Capacity warranty: below 9 of 12 gauge bars (Nissan states no percentage)", "mfr", "high", "2018+ 62/40 kWh: 8yr/100k; 2014-era: 5yr/60k"),
     },
     buyerNotes: [
@@ -1011,7 +1032,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
-      batteryTransfers: f(true, "mfr", "high", "“Original and subsequent owner(s)”, voided only if exported within 6 months of first sale"),
+      batteryTransfers: f(true, "mfr", "high", NISSAN_XFER_NOTE, NISSAN_LEAF_BOOKLET),
       extendedCoverage: f("Capacity warranty: below 9 of 12 gauge bars (Nissan states no percentage)", "mfr", "high", "2018+ 62/40 kWh: 8yr/100k; 2014-era: 5yr/60k"),
     },
     buyerNotes: [
