@@ -858,6 +858,20 @@ const tPack = (kwh: number, docid: number, extra?: string, conf: Fact<number>["c
 // option — so EX30/EX90 are standard, MY2021 XC40 optional, and the other
 // XC40/C40 years abstain because fitment is per-car and undocumented.
 const VOLVO_WTY_RECHARGE = "https://www.volvocars.com/images/cs/v3/assets/bltccbab8edae0354cd/blt4f19a914b40839f4/68418a38c0bac2e8c68bb704/WTY572.04.23_Volvo_MY2024_Recharge_PE_Wty_Manual_CC_02-07-23.pdf";
+// The EX90 rows below carry batteryTransfers with this booklet behind it:
+// "Any remaining portion of the warranties is fully transferable to subsequent
+// owners free-of-charge", plus a "Previously Owned Volvos" paragraph telling
+// the second buyer they are "entitled to the remaining portion of that
+// warranty". The clause is not model-scoped — the booklet's own "Where Volvo
+// Warranties Apply" says its warranties "apply to new 2026 model year Volvo
+// passenger vehicles", and the model-named sections (C40/EX40, EX30) exist
+// only where a coverage TERM differs by model. Worth writing down because the
+// string "EX90" does not appear in this booklet at all, and Volvo publishes no
+// EX90-specific one; the MY2024 Recharge manual the XC40/C40 rows cite is a
+// different document for different cars. The ex90-2025 row sits one model year
+// before this edition.
+const VOLVO_XFER_NOTE =
+  "\u201CAny remaining portion of the warranties is fully transferable to subsequent owners free-of-charge\u201D";
 const VOLVO_WTY_FULLY = "https://www.volvocars.com/images/cs/v3/assets/bltccbab8edae0354cd/blt79f8a67d798c8d78/68befcffe94f786661a1f43a/MY2026_WTY572.06.25_Fully_Elec_Wty_Manual_Rev2_WEB_06-18-25.pdf";
 const volvoWty = (url: string) => ({
   batteryYears: fb(8, "mfr", "high", undefined, url),
@@ -3552,7 +3566,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(300, "mfr", "high", "MY2025 EX90 Twin Motor, EPA; Twin and Twin Performance rate identically (310 on 21-inch wheels)", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48777") },
     charging: { portStandard: f("CCS1", "mfr") },
     thermal: EX90_HP,
-    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
+    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: fb(true, "mfr", "high", VOLVO_XFER_NOTE, VOLVO_WTY_FULLY) },
   },
   {
     id: "ex90-2026-twin", make: "VOLVO", model: "EX90", modelYears: [2026, 2026], trim: ["Twin Motor", "Twin", "Ultra"], drive: "AWD",
@@ -3560,7 +3574,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(298, "mfr", "high", "MY2026 EX90 Twin Motor, EPA; 305 on 21-inch wheels; Performance rates the same. Keyed on trim: Volvo\u2019s VIN code is the trim level (K=Plus/L=Ultra), not the motor", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50256") },
     charging: { portStandard: f("CCS1", "mfr") },
     thermal: EX90_HP,
-    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
+    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: fb(true, "mfr", "high", VOLVO_XFER_NOTE, VOLVO_WTY_FULLY) },
   },
   {
     id: "ex90-2026-single", make: "VOLVO", model: "EX90", modelYears: [2026, 2026], trim: ["Single Motor"], drive: "RWD",
@@ -3568,7 +3582,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(276, "mfr", "high", "MY2026 EX90 Single Motor, EPA; 291 on 21-inch wheels", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50254") },
     charging: { portStandard: f("CCS1", "mfr") },
     thermal: EX90_HP,
-    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
+    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: fb(true, "mfr", "high", VOLVO_XFER_NOTE, VOLVO_WTY_FULLY) },
   },
 
   {
