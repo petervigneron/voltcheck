@@ -686,6 +686,124 @@ export async function fetchCohortFromDb(vinPattern8: string, year: number): Prom
   }
 }
 
+/** One live listing, as the valuation tool needs it: no payload at all.
+ *  See fetchModelYearAsksFromDb for why. */
+export interface ModelYearAsk {
+  vin: string;
+  year: number;
+  priceUsd: number;
+  mileage?: number;
+  trim?: string;
+  condition?: string;
+}
+
+interface ModelYearAskRow {
+  vin: string;
+  year: number | null;
+  price_usd: number;
+  mileage: number | null;
+  vehicle_trim: string | null;
+  condition: string | null;
+}
+
+/**
+ * Every live listing of one make/model/model-year within a mileage window —
+ * the ask pool behind /worth's ESTIMATE tier, for a car whose VIN we do not
+ * have (lib/listings/value.ts).
+ *
+ * WHY NOT fetchCohortFromDb. That read is keyed on VIN positions 1-8, and the
+ * picker deliberately does not require a VIN — the whole point of the tool is
+ * that a seller who cannot find their VIN still gets a number. make/model/year
+ * is the only key available, and it is the one `listings_live_idx` (migration
+ * 0001, `on listings (make, model) where delisted_at is null`) already
+ * indexes. The base table, not live_listings_feed: the view projects only
+ * vin/payload/timestamps, so filtering it on a make would mean
+ * `payload->>make`, which is a sequential scan of the widest table in the
+ * database — the same mistake fetchListingByIdFromDb's comment records
+ * finding on `payload->>id`.
+ *
+ * WHY TYPED COLUMNS AND NO PAYLOAD. A payload row averages ~800 bytes and this
+ * endpoint is driven by a form, so it is the one read on the site whose volume
+ * a stranger controls. Six typed columns are ~60 bytes a row, so a 500-row
+ * pool costs ~30 kB instead of ~400 kB — the difference between a tool that
+ * fits the free plan's 5 GB/month and the 2026-08-14 egress incident again.
+ *
+ * WHAT THAT COSTS, stated rather than hidden: without `payload` there is no
+ * enrichment match, so the caller cannot compute pack identity, and no
+ * `trimSuspect`, so trimClaim runs with two of its three gates rather than
+ * three. value.ts names both where it consumes them, and neither is load
+ * bearing for the claim this pool is allowed to make — see its header.
+ *
+ * The mileage window is applied HERE rather than after the fetch, because the
+ * 500-row cap has to fall on rows that could actually be comparable: a
+ * Model Y's live cohort runs into the thousands, and a truncated read of
+ * arbitrary rows would spend the whole budget on cars 90,000 miles away from
+ * the subject. lo/hi are the caller's own MAX_PEER_MILE_GAP window.
+ *
+ * Disclosed manufacturer repurchases are excluded in the query for the same
+ * reason buildIndex.ts excludes them from the peer pool: one dealer lists
+ * dozens and their asks price a branded history.
+ *
+ * Null on failure, and the caller must render that as "we couldn't check",
+ * never as "this car can't be valued" — an empty array means the honest
+ * "nothing like it is listed", and the two must not collapse.
+ */
+export async function fetchModelYearAsksFromDb(
+  make: string,
+  model: string,
+  year: number,
+  mileageLo: number,
+  mileageHi: number
+): Promise<ModelYearAsk[] | null> {
+  if (!dbConfigured()) return null;
+  const base = process.env.SUPABASE_URL!.replace(/\/$/, "");
+  const q = (s: string) => encodeURIComponent(s);
+  try {
+    // Retried on 5xx as fetchCohortFromDb is, but ON A CLOCK, which is the one
+    // place this read has to behave differently from every other read in this
+    // file. Those all run inside cached renders: a slow answer costs the first
+    // visitor and then serves everyone for a day, so patience is free. This
+    // one runs force-dynamic behind a form, with somebody watching a spinner —
+    // and the failure it has to survive is the free-plan instance answering
+    // PostgREST 503 slowly rather than quickly. Measured against exactly that
+    // on 2026-08-25 with no bound: 28.2 seconds to reach "we couldn't check",
+    // holding a function the whole time, on a database that was already
+    // struggling. Two attempts on a 5-second leash bounds the wait at ~10s and
+    // stops a sick database from being amplified by everyone who retries.
+    const budgetMs = 5_000;
+    let res: Response;
+    for (let attempt = 0; ; attempt++) {
+      res = await fetch(
+        `${base}/rest/v1/listings?select=vin,year,price_usd,mileage,vehicle_trim,condition` +
+          `&make=eq.${q(make)}&model=eq.${q(model)}&year=eq.${year}` +
+          `&delisted_at=is.null&buyback_disclosed=is.false` +
+          `&mileage=gte.${Math.round(mileageLo)}&mileage=lte.${Math.round(mileageHi)}` +
+          `&limit=${PAGE}`,
+        {
+          headers: headers(),
+          signal: AbortSignal.timeout(budgetMs),
+          next: { revalidate: REVALIDATE_SECONDS, tags: [FEED_CACHE_TAG] },
+        }
+      );
+      if (res.status < 500 || attempt >= 1) break;
+      await new Promise((r) => setTimeout(r, 300));
+    }
+    if (!res.ok) throw new Error(`PostgREST ${res.status}`);
+    const rows = (await res.json()) as ModelYearAskRow[];
+    return rows.map((r) => ({
+      vin: r.vin,
+      year: r.year ?? year,
+      priceUsd: r.price_usd,
+      mileage: r.mileage ?? undefined,
+      trim: r.vehicle_trim ?? undefined,
+      condition: r.condition ?? undefined,
+    }));
+  } catch (err) {
+    console.error("[listings] Supabase model-year ask read failed:", err);
+    return null;
+  }
+}
+
 /** The detail-page extras for one listing: the dealer's description and the
  *  price history. Null when the DB is unconfigured, unreachable, or has no
  *  such row — the caller just renders without the extras. */

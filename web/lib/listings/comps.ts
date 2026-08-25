@@ -40,6 +40,16 @@ const REVALIDATE_SECONDS = 86_400; // the underlying title data refreshes monthl
 
 const key = (vin8: string, year: number) => `${vin8.toUpperCase()}|${year}`;
 
+/** This car's fitted sold-price cohort, or undefined. The index is keyed on
+ *  the RAW vin8 (see askCohortVin8 below for why the ask side differs), and
+ *  the key shape is private to this module — value.ts needs the same lookup
+ *  for a car that has no listing at all, so it goes through here rather than
+ *  rebuilding the key. */
+export function compCohort(comps: CompIndex, vin: string | undefined, year: number): CompCohort | undefined {
+  if (!vin || vin.length < 8) return undefined;
+  return comps.get(key(vin.slice(0, 8), year));
+}
+
 export async function fetchCompIndex(): Promise<CompIndex> {
   const index: CompIndex = new Map();
   if (!dbConfigured()) return index;
@@ -107,7 +117,7 @@ export interface AskVsSold {
 // Median absolute error is $2,196 across the model and varies a lot by
 // cohort, so the bar is the cohort's own residual — never a global guess —
 // with a floor that keeps thin, suspiciously-tight cohorts honest.
-const MIN_ABS_USD = 1500;
+export const MIN_ABS_USD = 1500;
 
 // The far side of the same caution, and deliberately asymmetric.
 //
@@ -122,7 +132,7 @@ const MIN_ABS_USD = 1500;
 // No matching ceiling on the over side: "asks more than these sell for" is
 // checkable against the sales list right below it, and a dealer asking
 // $52,995 for a 32k-mile Model Y is exactly the fact a shopper wants.
-const MAX_UNDER_FRACTION = 0.3;
+export const MAX_UNDER_FRACTION = 0.3;
 
 // ── Is this cohort one car, or several? ────────────────────────────────────
 //
@@ -142,7 +152,7 @@ const MAX_UNDER_FRACTION = 0.3;
 // Held against the cohort's own bar rather than a fixed figure, for the same
 // reason the show-threshold is: a $3,000 spread is decisive in a cohort that
 // predicts itself to $1,500 and is noise in one that predicts itself to $5,000.
-const cohortIsMixed = (c: CompCohort): boolean =>
+export const cohortIsMixed = (c: CompCohort): boolean =>
   c.trimSpanUsd >= Math.max(c.residMedaeUsd, MIN_ABS_USD);
 
 export function askVsSold(
@@ -345,6 +355,17 @@ export function buildAskIndex(
   return index;
 }
 
+/** This car's whole live ask cohort out of an index built by buildAskIndex —
+ *  the same members askVsMarket starts from, before its own mileage window.
+ *  Exported so a second consumer (lib/listings/value.ts, which prices a car
+ *  that may have no listing of its own) cannot drift from buildAskIndex's
+ *  admission rules — real price, driven mileage, masked VIN digits — by
+ *  rebuilding the key itself. */
+export function askCohortPeers(asks: AskIndex, vin: string | undefined, year: number): AskPeer[] {
+  if (!vin || vin.length < 8) return [];
+  return asks.wide.get(askKey(vin.slice(0, 8), year)) ?? [];
+}
+
 /** Does this car's whole VIN cohort mix pack identities? The sold-side twin
  *  of the peer-pool guard in askVsMarket, for a mixture the trim-span gate
  *  (cohortIsMixed above) is structurally blind to: Tesla stamps single-motor
@@ -385,14 +406,22 @@ export interface AskVsMarket {
 
 // Four peers is the floor. Below that the median is one or two dealers'
 // opinions, and a single aspirational asking price moves it thousands.
-const MIN_PEERS = 4;
+export const MIN_PEERS = 4;
 // A peer 40,000 miles away from this car needs a $4,000+ adjustment before it
 // can be compared, which is more correction than signal. Drop it instead.
-const MAX_PEER_MILE_GAP = 40_000;
+export const MAX_PEER_MILE_GAP = 40_000;
 // Without a fitted cohort slope, fall back to the dataset-wide used-EV rate.
 // Deliberately gentle: under-correcting a high-mileage car makes it look
 // EXPENSIVE, which is the safe direction to be wrong in.
-const FALLBACK_USD_PER_MILE = -0.09;
+export const FALLBACK_USD_PER_MILE = -0.09;
+// How far the ASK side sits above the SOLD side across this dataset, measured
+// over the Washington title records ev_price_model is fitted on. Named here
+// because the AskVsMarket header above states it in prose and value.ts needs
+// the figure itself to turn a live-ask median into a transaction estimate.
+// The same header's second point — live inventory is survivorship-biased
+// toward the cars that aren't selling — says this correction is if anything
+// too small, so it is a floor on the gap, not a calibration.
+export const ASK_OVER_SOLD_USD = 1100;
 // Same asymmetric caution as the sold side, same reason: a car asking 30%
 // under everything else listed differs from its cohort in a way the listing
 // doesn't say, and we will not guess at it with a shopper's money.
@@ -401,7 +430,7 @@ const ASK_MAX_UNDER_FRACTION = 0.3;
 // higher than the sold side's $1,500 floor.
 const ASK_MIN_ABS_USD = 2000;
 
-const median = (xs: number[]): number => {
+export const median = (xs: number[]): number => {
   const s = [...xs].sort((a, b) => a - b);
   const m = s.length >> 1;
   return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;

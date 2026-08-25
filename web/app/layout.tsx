@@ -51,6 +51,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
                 Browse
               </Link>
               <Link
+                href="/worth"
+                className="flex items-center px-3 hover:bg-cobalt sm:px-5 focus:outline-none focus:ring-[3px] focus:ring-inset focus:ring-cobalt"
+              >
+                What&rsquo;s it worth
+              </Link>
+              <Link
                 href="/saved"
                 className="flex items-center px-3 hover:bg-cobalt sm:px-5 focus:outline-none focus:ring-[3px] focus:ring-inset focus:ring-cobalt"
               >
