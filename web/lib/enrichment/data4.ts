@@ -31,6 +31,16 @@ import type { Chemistry, EnrichmentRow, Fact, Source } from "../types";
 // 2022–23 negative: same document lineage, feature explicitly introduced later.
 const AS_OF = "2026-08-14";
 
+// GMC battery-warranty transferability — GM's MY2025 GMC Electric Vehicle
+// Limited Warranty booklet, which grants its coverages, the propulsion battery
+// among them, to "the original owner and any subsequent owners". The note here
+// used to name that booklet without linking it. Fuller comment in data2.ts.
+const GMC_EV_BOOKLET =
+  "https://contentdelivery.ext.gm.com/bypass/gma-content-api/resources/sites/GMA/content/staging/MANUALS/9000/MA9222/en_US/4.0/25_GMC_Electric_Vehicle_WM_en_US_U_18455115A_2024MAY22.pdf";
+const GMC_XFER_NOTE =
+  "\u201CProvided to the original owner and any subsequent owners of the vehicle during the warranty period\u201D";
+
+
 // Cadillac battery-warranty transferability — the sentence inside GM's own
 // Electric Vehicle Propulsion Battery Warranty section. Fuller comment in
 // data2.ts.
@@ -4780,7 +4790,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     const GM_W = {
       batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source),
       sohFloorPct: f(75, "mfr" as Source, "high", "GMC's current EV warranty booklet (read directly for the data3 Ultium rows) states the 75% floor"),
-      batteryTransfers: f(true, "mfr" as Source, "high", "“Transferable at no cost” — GMC EV warranty booklet"),
+      batteryTransfers: f(true, "mfr" as Source, "high", GMC_XFER_NOTE, GMC_EV_BOOKLET),
     };
     const SEV_CHG = { portStandard: f<"CCS1">("CCS1", "mfr", "high", "CCS1-native like Silverado EV/Escalade IQ (a GM NACS adapter covers Superchargers) — the opposite of the NACS-native Optiq") };
     const sev = (id: string, years: [number, number], trim: string[], variant: string, rangeFact: Fact<number>): EnrichmentRow => ({

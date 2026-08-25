@@ -6,6 +6,31 @@ import type { EnrichmentRow, Fact, Source } from "../types";
 // → "mfr"; secondary-source facts → "agg" until a primary doc is read).
 const AS_OF = "2026-08-10";
 
+// GMC battery-warranty transferability. GM's MY2025 GMC Electric Vehicle
+// Limited Warranty booklet grants the warranty "to the original owner and any
+// subsequent owners of the vehicle during the warranty period", and the
+// Electric Vehicle Propulsion Battery Warranty (8 years/100,000 miles) is one
+// of the coverages it grants. Its Cadillac and Chevrolet siblings say the same
+// thing inside the battery section itself: "transferable at no cost to any
+// subsequent person(s) who assumes ownership of the vehicle within the 8 years
+// or 100,000 miles term".
+//
+// One thing GM prints for GMC and for no other brand, immediately under
+// "Warranty Applies": "For Hummer EV only: Coverage will be voided if
+// ownership of the vehicle is transferred from the original owner within the
+// first 6 months after delivery." A very early flip kills the coverage
+// outright. It cannot live in a quoted note — a note containing a quotation
+// renders as a tooltip rather than under the value — so the Hummer rows carry
+// it as plain inline text, which is where a shopper will actually see it. The
+// Sierra EV rows do not: the booklet says Hummer EV only.
+const GMC_EV_BOOKLET =
+  "https://contentdelivery.ext.gm.com/bypass/gma-content-api/resources/sites/GMA/content/staging/MANUALS/9000/MA9222/en_US/4.0/25_GMC_Electric_Vehicle_WM_en_US_U_18455115A_2024MAY22.pdf";
+const GMC_XFER_NOTE =
+  "\u201CProvided to the original owner and any subsequent owners of the vehicle during the warranty period\u201D";
+const GMC_HUMMER_XFER_NOTE =
+  "Voided if a Hummer EV changed hands within 6 months of its delivery";
+
+
 // Cadillac battery-warranty transferability. GM puts it inside the battery
 // section, in the same words it uses for Chevrolet and GMC: "In addition to
 // the initial owner of the vehicle, the coverage described in this Electric
@@ -2091,7 +2116,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(75, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", GMC_HUMMER_XFER_NOTE, GMC_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -2125,7 +2150,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(75, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", GMC_HUMMER_XFER_NOTE, GMC_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -2159,7 +2184,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(75, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", GMC_HUMMER_XFER_NOTE, GMC_EV_BOOKLET),
     },
     buyerNotes: [
       {

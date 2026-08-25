@@ -12,6 +12,17 @@ import type { EnrichmentRow, Fact, Source } from "../types";
 // documented as existing for that year).
 const AS_OF = "2026-08-10";
 
+// GMC battery-warranty transferability — GM's MY2025 GMC Electric Vehicle
+// Limited Warranty booklet, which grants its coverages, the propulsion battery
+// among them, to "the original owner and any subsequent owners". Fuller
+// comment in data2.ts, including the Hummer-EV-only 6-month clause that does
+// not apply to these trucks.
+const GMC_EV_BOOKLET =
+  "https://contentdelivery.ext.gm.com/bypass/gma-content-api/resources/sites/GMA/content/staging/MANUALS/9000/MA9222/en_US/4.0/25_GMC_Electric_Vehicle_WM_en_US_U_18455115A_2024MAY22.pdf";
+const GMC_XFER_NOTE =
+  "\u201CProvided to the original owner and any subsequent owners of the vehicle during the warranty period\u201D";
+
+
 // Cadillac battery-warranty transferability — the sentence inside GM's own
 // Electric Vehicle Propulsion Battery Warranty section. Fuller comment in
 // data2.ts.
@@ -2724,7 +2735,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
       sohFloorPct: f(75, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", GMC_XFER_NOTE, GMC_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -2762,7 +2773,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
       sohFloorPct: f(75, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", GMC_XFER_NOTE, GMC_EV_BOOKLET),
     },
     buyerNotes: [
       {
