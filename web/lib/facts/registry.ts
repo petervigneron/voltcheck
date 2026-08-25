@@ -305,6 +305,34 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       },
     ],
   },
+  {
+    make: "nissan",
+    model: "leaf",
+    topic: "heat-pump",
+    contentFile: "leaf-heat-pump",
+    pageTitle: "Nissan Leaf heat pump by year: hybrid heater system, trim by trim | Voltcheck",
+    description:
+      "Which Nissan Leaf model years and trims get the Hybrid heater system, and which year Nissan actually says \"heat pump.\" Sourced to Nissan's own brochures and press release.",
+    breadcrumbLabel: "Nissan Leaf heat pump",
+    dateModified: "2026-08-25",
+    faq: [
+      {
+        question: "Does the Nissan Leaf have a heat pump?",
+        answer:
+          "Nissan's US brochures for the 2018 through 2025 Leaf never use the words \"heat pump.\" They list a row called \"Hybrid heater system\" instead, given per trim, and no Nissan document cited here says what that system contains. The 2026 Leaf is different: Nissan's own words are \"LEAF has a standard, energy-efficient heat pump to help warm the cabin.\"",
+      },
+      {
+        question: "Which Nissan Leaf trims have the Hybrid heater system?",
+        answer:
+          "For 2018 it is not offered on S, is part of the SV All-Weather Package on SV, and is standard on SL. For 2019 and 2020 it is not offered on S or S PLUS, is part of the SV/SV PLUS All-Weather Package on the SV trims, and is standard on the SL trims. For 2021 and 2022 it is standard on SV, SV PLUS, and SL PLUS, and still not offered on S or S PLUS. For 2023, 2024, and 2025 the lineup is two trims: not offered on S, standard on SV PLUS. In all eight model years a Leaf S has none.",
+      },
+      {
+        question: "Does the 2026 Nissan Leaf have a heat pump?",
+        answer:
+          "Yes, standard on every trim. Nissan also describes a separate optional battery heater on that car, which the driver can engage to warm the battery before charging in cold weather, and says the 2026 Leaf captures waste heat from the drive motor and the on-board charger and re-purposes it to warm the battery.",
+      },
+    ],
+  },
 ];
 
 export function findFactSheet(make: string, model: string, topic: string): FactSheetEntry | undefined {
