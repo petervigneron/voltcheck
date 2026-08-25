@@ -4925,6 +4925,28 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   // gas Chargers. Tire fitment swings the certs hugely (R/T 268–308,
   // Scat Pack 216–279); rows carry the standard-fitment figure with the
   // full spread noted. "R/T Scat Pack" is a Scat Pack.
+  //
+  // BARE "Charger" STOPS AT MY2025 (2026-08-25). Through MY2025 the
+  // nameplate had one powertrain, so a listing filed model "Charger" trim
+  // "R/T" could only be the EV. MY2026 is the year that stopped being true:
+  // EPA's own 2026 Dodge model list carries "Charger R/T AWD" and "Charger
+  // Scat Pack AWD" alongside the four Daytona entries, and both decode
+  // "Auto 8-spd, 6 cyl, 3.0 L, Turbo" — Regular Gasoline on id 50283, Premium
+  // on 50068. The Sixpack wears the same two badges as the EV. Verified on
+  // the cars rather than the certificate: 2C3CDANP2TR258340 and
+  // 2C3CDAMP5TR275800 are live dealer VINs that vPIC decodes as model
+  // "Charger", trim "R/T" and "Scat Pack", FuelTypePrimary "Gasoline",
+  // 6 cylinders, 3.0 L — the exact model+trim+year shape the MY2026 rows
+  // below used to answer to. Nothing in that shape says which car it is, so
+  // MY2026 is emitted under the Daytona-spelled model strings only.
+  //
+  // The pos-8 fence is real and it is not enough. Sweeping VDS 2C3CDB across
+  // every position-7/8 pair, K is the only code vPIC calls "BEV (Battery
+  // Electric Vehicle)", and the petrol car is 2C3CDA?P — position 8 = P — so
+  // a decode that CARRIES a VIN is already turned away here. But the guard
+  // only fires when a VIN reached the matcher, and it lives on these rows and
+  // not on the Daytona rows in data10; a nameplate row whose only defence is
+  // a key its neighbours don't share is one edit from being wrong.
   ...(() => {
     const DODGE_W = {
       batteryYears: f(8, "agg" as Source, "medium", "8 yr/100,000 mi, 70% capacity floor — Stellantis EV terms, consistently documented; not re-verified against a Dodge booklet this pass"),
@@ -4954,8 +4976,15 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
       day(`daytona-2024-25-rt-${i}`, m, [2024, 2025], RT_TRIMS, "Daytona R/T", rt2425),
       day(`daytona-2024-scat-${i}`, m, [2024, 2024], SCAT_TRIMS, "Daytona Scat Pack", scat24),
       day(`daytona-2025-scat-${i}`, m, [2025, 2025], SCAT_TRIMS, "Daytona Scat Pack", scat25),
-      day(`daytona-2026-rt-${i}`, m, [2026, 2026], RT_TRIMS, "Daytona R/T", rt26),
-      day(`daytona-2026-scat-${i}`, m, [2026, 2026], SCAT_TRIMS, "Daytona Scat Pack", scat26),
+      // MY2026 under the Daytona-spelled model strings only. See the block
+      // comment: in MY2026 bare "Charger" is a nameplate two powertrains
+      // answer to, and the badge does not separate them.
+      ...(m === "Charger"
+        ? []
+        : [
+            day(`daytona-2026-rt-${i}`, m, [2026, 2026], RT_TRIMS, "Daytona R/T", rt26),
+            day(`daytona-2026-scat-${i}`, m, [2026, 2026], SCAT_TRIMS, "Daytona Scat Pack", scat26),
+          ]),
     ]);
   })(),
 
