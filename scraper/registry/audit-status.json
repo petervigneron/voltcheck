@@ -2,9 +2,9 @@
   "_comment": "Written by scraper/lib/audit-status.mjs. Do not hand-edit — see that file's header.",
   "checks": {
     "feed-shard-health": {
-      "lastRunAt": "2026-08-25T18:14:16.885Z",
-      "result": "fail",
-      "detail": "/api/index/12: HTTP 500; /api/index/13: HTTP 500; /api/index/14: HTTP 500; /api/index/15: HTTP 500; /api/index/16: HTTP 500; /api/index/17: HTTP 500; /api/index/18: HTTP 500; /api/index/19: HTTP 500; /api/index/20: HTTP 500; /api/index/21: HTTP 500; /api/index/22: HTTP 500; /api/index/23: HTTP 500; ",
+      "lastRunAt": "2026-08-25T19:14:24.851Z",
+      "result": "ok",
+      "detail": "total 136668; shards 5719/5628/5785/5600/5668/5564/5720/5705/5640/5502/5708/5751/5718/5736/5773/5791/5707/5666/5616/5595/5686/5755/5846/5789; sitemap URLs 136667",
       "expectedEveryHours": 8
     },
     "ev-rules-audit": {
