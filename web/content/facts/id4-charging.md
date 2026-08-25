@@ -2,7 +2,7 @@
 
 ## DC fast charging, by model year
 
-- 2021: 125 kW, on every trim — Pro, AWD Pro, Pro S, AWD Pro S, 1st Edition. All carry the 82 kWh (gross) pack. Volkswagen's own figure for what that buys: "charge time: 60 miles of range in about 10 minutes."[^1]
+- 2021: 125 kW, on every trim — Pro, AWD Pro, Pro S, AWD Pro S, 1st Edition. All carry the 82 kWh (gross) pack. Volkswagen's own figure for what that buys: "charge time: 60 miles of range in about 10 minutes."[^1] The 2021 press kit states the same rate and adds a duration: "At a public DC fast-charging station, with 125 kW charging, the ID.4 can go from five to 80 percent charged in about 38 minutes."[^8]
 - 2022: 135 kW, on every trim — Pro, AWD Pro, Pro S, AWD Pro S.[^2]
 - 2023: the rate depends on the pack, and on which supplier's cells are inside the 82 kWh pack.[^3]
   - 140 kW on the 62 kWh pack: ID.4 Standard, ID.4 S.
@@ -11,11 +11,17 @@
 - 2024: 140 kW on the 62 kWh pack (ID.4 Standard, ID.4 S); 170 kW on the 82 kWh pack (Pro, AWD Pro, Pro S, AWD Pro S, Pro S Plus, AWD Pro S Plus).[^4]
 - 2025: 170 kW on the 82 kWh pack, on all five 82 kWh trims — Pro, AWD Pro, Pro S, AWD Pro S, AWD Pro S Plus.[^5]
 
-Volkswagen's two 2025 documents do not agree on the 2025 peak. The order guide says 170 kW.[^5] The 2025 press kit says "The ID.4 Pro, Pro S and Pro S Plus models offer a 175-kW DC fast-charging speed."[^6] Both are Volkswagen's own; this sheet states both rather than picking one.
+Volkswagen's order guides and its press kits do not always agree on the 82 kWh pack's peak rate. Where they differ, this sheet states both figures rather than picking one; every figure below is Volkswagen's own.
+
+- 2023: the order guide splits the 82 kWh pack by cell supplier — 135 kW on the LG pack, 170 kW on the SK On pack.[^3] The 2023 press kit draws no supplier line: "The ID.4 Standard and S offer a 140-kW DC fast-charging rate, while Pro models equipped with the larger 82 kWh battery offer a 170-kW DC fast-charging speed, up from 2022."[^9] Read literally, that sentence claims 170 kW for the LG-pack rear-drive cars the order guide holds to 135 kW. On 140 kW for the 62 kWh cars, the two documents agree.
+- 2024: the order guide says 170 kW.[^4] The 2024 press kit says "The ID.4 Standard and S offer a 140-kW DC fast-charging rate, while Pro models equipped with the larger 82 kWh battery offer a 175-kW DC fast-charging speed."[^10] Again the two documents agree on the 62 kWh cars' 140 kW and part ways on the 82 kWh pack, 170 against 175.
+- 2025: the order guide says 170 kW.[^5] The 2025 press kit says "The ID.4 Pro, Pro S and Pro S Plus models offer a 175-kW DC fast-charging speed."[^6]
+
+The one year where both documents exist and agree in full is 2021: the press kit's 125 kW matches the order guide's.[^1][^8] The 2022 order guide's 135 kW has no press kit to check against, because Volkswagen published none for 2022.[^10]
 
 Volkswagen's 2025 order guide states a DC rate only for the 82 kWh battery. Volkswagen's 2025 press kit says a small number of 62 kWh cars were built early in the model year and sold as ID.4 Limited and ID.4 S Limited, and that they "mirror the 2024 ID.4 Standard and ID.4 S respectively."[^6] No 2025 Volkswagen document opened for this sheet states a DC rate for those two trims, so none is claimed here.
 
-- Time to charge 10% to 80% on a DC fast charger: around 30 minutes. Volkswagen's sentence attaches that to the 175 kW figure and then generalises — "This allows all ID.4 trims to DC fast charge from 10-80% SOC in around 30 minutes" — in a paragraph naming only the Pro, Pro S and Pro S Plus. It does not carve out the 62 kWh Limited and S Limited cars described elsewhere in the same press kit, and no separate figure is published for them.[^6]
+- Time to charge 10% to 80% on a DC fast charger: around 30 minutes. Volkswagen's sentence attaches that to the 175 kW figure and then generalises — "This allows all ID.4 trims to DC fast charge from 10-80% SOC in around 30 minutes" — in a paragraph naming only the Pro, Pro S and Pro S Plus. It does not carve out the 62 kWh Limited and S Limited cars described elsewhere in the same press kit, and no separate figure is published for them.[^6] The 2023 and 2024 press kits make the same around-30-minutes claim in nearly the same sentence — 2023's is scoped to "all ID.4 Pro trims", 2024's to "all ID.4 trims".[^9][^10]
 
 ## Connector
 

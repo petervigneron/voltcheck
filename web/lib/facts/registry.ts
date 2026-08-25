@@ -203,12 +203,12 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       {
         question: "How fast does the Volkswagen ID.4 charge on a DC fast charger?",
         answer:
-          "It depends on the model year and the battery pack. Volkswagen's own order guides state 125 kW for 2021, 135 kW for 2022, and 170 kW for the 82 kWh pack in 2024 and 2025. The 62 kWh pack is rated 140 kW in 2023 and 2024. In 2023 the 82 kWh pack splits by cell supplier: 135 kW with LG Energy Solution components, 170 kW with SK On components. Volkswagen's 2025 press kit gives 175 kW rather than the order guide's 170 kW; both are Volkswagen's own figures.",
+          "It depends on the model year and the battery pack. Volkswagen's own order guides state 125 kW for 2021, 135 kW for 2022, and 170 kW for the 82 kWh pack in 2024 and 2025. The 62 kWh pack is rated 140 kW in 2023 and 2024. In 2023 the 82 kWh pack splits by cell supplier: 135 kW with LG Energy Solution components, 170 kW with SK On components. Volkswagen's press kits state different 82 kWh figures for three of those years: 175 kW for 2024 and 2025 where the order guides say 170 kW, and a flat 170 kW for every 2023 Pro model where the order guide gives the LG-pack cars 135 kW. Both documents are Volkswagen's own, so both figures are stated here.",
       },
       {
         question: "How long does a Volkswagen ID.4 take to charge from 10% to 80%?",
         answer:
-          "Around 30 minutes, per Volkswagen's 2025 press kit, whose sentence generalises to all ID.4 trims from a paragraph naming the Pro, Pro S and Pro S Plus. Volkswagen publishes no separate figure for the 62 kWh Limited and S Limited cars built early in the 2025 model year.",
+          "Around 30 minutes, per Volkswagen's 2023, 2024 and 2025 press kits — the 2025 sentence generalises to all ID.4 trims from a paragraph naming the Pro, Pro S and Pro S Plus, and Volkswagen publishes no separate figure for the 62 kWh Limited and S Limited cars built early in the 2025 model year. For 2021, Volkswagen's own figure is five to 80 percent charged in about 38 minutes, at that year's 125 kW rate.",
       },
       {
         question: "What charging connector does the Volkswagen ID.4 use?",
