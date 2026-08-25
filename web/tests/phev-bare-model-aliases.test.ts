@@ -165,6 +165,72 @@ test("a split-year 2022 Volvo T8 resolves to candidates, one per pack, never a g
   assert.equal(idOf(decode({ make: "VOLVO", model: "XC90 plug-in hybrid", modelYear: 2026, trim: "T8 Plus 7-Seater" })), "xc90-t8-2023-26");
 });
 
+// ── Bare "XC90"/"XC60" (data6, 2026-08-25). 1,356 live listings file the T8
+// under the nameplate its petrol B5/B6 sibling shares, with the plug-in badge
+// buried in a comma-separated trim. The guard is narrower than the Wrangler's
+// on purpose: every T8 GRADE name is also a petrol grade name, and
+// trimStringsOverlap is substring-tolerant in both directions, so only the two
+// tokens that name the powertrain and nothing else can be keyed.
+const VOLVO_BARE_T8_TRIMS = [
+  "Plus, T8 AWD Plug-in hybrid, Electric/Gasoline, Bright, 7 Seats",
+  "Recharge Plus, T8 AWD Plug-in hybrid, Electric/Gasoline, Bright, 6 Seats",
+  "Recharge Ultimate, T8 eAWD, Electric/Gasoline, Dark, 7 Seats",
+  "Core, T8 AWD Plug-in hybrid, Electric/Gasoline, Bright, 7 Seats",
+  "Recharge Inscription, T8 eAWD , 7 Seats",
+  // The same listings as the browse shard carries them: specTrim() cuts the
+  // trim at the first comma, so the T8 tokens are gone and only "Recharge"
+  // survives. Both spellings have to resolve or the card and the grid disagree
+  // about the same car.
+  "Recharge Plus",
+  "Recharge Ultimate",
+  "Recharge Core",
+  "Recharge Black Edition Ultimate",
+  "T8",
+];
+
+test("a bare-model Volvo whose trim names the plug-in powertrain resolves to the T8 row", () => {
+  for (const trim of VOLVO_BARE_T8_TRIMS) {
+    assert.equal(idOf(decode({ make: "VOLVO", model: "XC90", modelYear: 2024, trim })), "xc90-t8-2023-26-alt", trim);
+    assert.equal(idOf(decode({ make: "VOLVO", model: "XC60", modelYear: 2025, trim })), "xc60-t8-2023-26-alt", trim);
+  }
+  // The split year still refuses to pick a pack, exactly as the full model
+  // string does above.
+  const r = matchEnrichment(decode({ make: "VOLVO", model: "XC90", modelYear: 2022, trim: "Recharge Inscription" }), null);
+  assert.equal(r.exact, undefined);
+  assert.deepEqual((r.candidates ?? []).map((c) => c.id).sort(), ["xc90-t8-2022-er-alt", "xc90-t8-2022-std-alt"]);
+});
+
+test("a petrol XC90/XC60 wearing the same bare nameplate matches nothing", () => {
+  // Volvo's petrol and mild-hybrid grade names, which the T8 shares verbatim.
+  // "Plus" is the one worth staring at: it is not a substring of
+  // "PLUGINHYBRID" only because Volvo spells the fourth letter G, not S. A key
+  // of "T8 Plus" WOULD swallow it, which is why no grade-bearing key is used.
+  for (const trim of [
+    "Core", "Plus", "Ultra", "Ultimate", "Momentum", "Inscription", "R-Design",
+    "B5 Core", "B6 Plus", "Plus Bright Theme", "Ultimate Dark Theme", "Ultra Black Edition",
+  ]) {
+    for (const model of ["XC90", "XC60"]) {
+      assert.equal(matchEnrichment(decode({ make: "VOLVO", model, modelYear: 2024, trim }), null).exact, undefined, `${model} ${trim}`);
+      assert.equal(matchEnrichment(decode({ make: "VOLVO", model, modelYear: 2024, trim }), null).candidates, undefined, `${model} ${trim}`);
+    }
+  }
+  // And a bare nameplate with no trim at all can't fall into the T8 rows.
+  for (const model of ["XC90", "XC60"]) {
+    assert.equal(matchEnrichment(decode({ make: "VOLVO", model, modelYear: 2024 }), null).exact, undefined, model);
+  }
+});
+
+test("the C40 needs no guard, and 'C40 Recharge' is the spelling the feed uses", () => {
+  // The C40 was electric-only in the US, so there is no petrol car to poach —
+  // and the matcher compares model strings by equality, so the row's full
+  // "C40 Recharge Pure Electric" name never reached the 320 listings filed as
+  // "C40 Recharge".
+  assert.equal(idOf(decode({ make: "VOLVO", model: "C40 Recharge", modelYear: 2023, trim: "Ultimate, Twin Motor, Electric" })), "c40-recharge-2022-23");
+  assert.equal(idOf(decode({ make: "VOLVO", model: "C40 Recharge", modelYear: 2023 })), "c40-recharge-2022-23");
+  assert.equal(idOf(decode({ make: "VOLVO", model: "C40 Recharge Pure Electric", modelYear: 2023 })), "c40-recharge-2022-23");
+  assert.equal(idOf(decode({ make: "VOLVO", model: "C40", modelYear: 2023 })), "c40-recharge-2022-23");
+});
+
 test("the Lincoln Grand Touring guard: PHEV trims resolve, gas Corsair/Aviator trims match nothing", () => {
   assert.equal(idOf(decode({ make: "LINCOLN", model: "Corsair", modelYear: 2022, trim: "Grand Touring" })), "corsair-gt-2021-22-alt");
   assert.equal(idOf(decode({ make: "LINCOLN", model: "Corsair", modelYear: 2026, trim: "Grand Touring Phev" })), "corsair-gt-2026-alt");

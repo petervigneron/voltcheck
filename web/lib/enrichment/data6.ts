@@ -83,10 +83,11 @@ const R: EnrichmentRow[] = [];
 // packVariant labels are what a shopper sees to tell them apart. 2023+ is
 // uniformly extended-range. Naming history: "Recharge" through MY2024,
 // plain "plug-in hybrid" from the MY2025 facelift — both spellings alias to
-// the same rows. Bare "XC90"/"XC60" (a handful of listings) stay unmatched:
-// their T8 trims ("T8 Plus 7-Seater") can't be keyed with the 2-character
-// "T8" token the trim matcher requires exact, and a mild-hybrid B5/B6 wears
-// the same bare nameplate.
+// the same rows. Bare "XC90"/"XC60" turned out to be neither a handful nor
+// unmatchable — 1,356 live listings on 2026-08-25 — and the guarded `-alt`
+// rows that catch them are built below the XC60 block, where the comment
+// explains which trim tokens are safe against the petrol B5/B6 and why the
+// obvious ones are not.
 {
   const VOLVO_ER_PR = "https://www.volvocars.com/us/media/press-releases/11C10482DFEF2BC9/";
   const VOLVO_CHARGE_XC90 =
@@ -205,6 +206,54 @@ const R: EnrichmentRow[] = [];
       mpgGasoline: f(28, "mfr", "high", undefined, epa(46629)),
     })
   );
+
+  // Bare "XC90"/"XC60" — 1,356 live listings on 2026-08-25 that file the T8
+  // under the nameplate a petrol B5/B6 shares, with the plug-in badge in the
+  // trim instead ("Plus, T8 AWD Plug-in hybrid, Electric/Gasoline, Bright,
+  // 7 Seats"). The comment above this block used to say those could not be
+  // matched, and the reason it gave was right about the token it tried: "T8"
+  // is two characters, and trimStringsOverlap requires trims shorter than
+  // three to match EXACTLY, so a "T8" key only ever catches a listing whose
+  // whole trim is the string "T8" — of which there are none.
+  //
+  // What is unsafe is bigger than that, and worth writing down because the
+  // obvious fix walks straight into it. Every T8 grade name is ALSO a petrol
+  // grade name — Core, Plus, Ultra, Ultimate, Inscription, R-Design — and
+  // overlap is substring-tolerant in BOTH directions, so a key of "T8 Plus"
+  // ("T8PLUS") swallows a petrol listing that says only "Plus" ("PLUS"). Every
+  // grade-bearing key fails that way. Only tokens that name the electrified
+  // powertrain and nothing else survive it: "Recharge", "Plug-in hybrid" and
+  // "eAWD". Checked against Volvo's petrol grade strings in
+  // tests/phev-bare-model-aliases.test.ts, including the near-miss that makes
+  // this look luckier than it is — "PLUS" is not a substring of
+  // "PLUGINHYBRID" only because Volvo spells it PLUG, not PLUS.
+  //
+  // Deliberately NOT keyed on "T8 …" spellings: the ~90 bare listings whose
+  // whole trim is a grade name ("Plus", "Ultimate Bright Theme") or a
+  // grade-bearing "T8 Plus" stay unmatched, because nothing separates them
+  // from a petrol XC90 wearing the same string. A `vds` key would separate
+  // them for any car that HAS a VIN, but the bare-nameplate contract in
+  // tests/phev-bare-model-aliases.test.ts is that the trim guard alone must
+  // hold, so silence on 90 cars is the price of it.
+  //
+  // "Recharge" is here for a second reason worth naming: the browse shard
+  // carries specTrim()'s cut-at-the-comma version of the trim ("Recharge
+  // Plus"), not the raw one the per-listing enrichment path sees, so it is the
+  // only one of these tokens that survives on both. It is safe on the same
+  // test as the others — Recharge is Volvo's electrified sub-brand and no
+  // petrol XC90/XC60 wears it. "T8" is two characters, which means the matcher
+  // demands an exact trim of "T8"; that catches the handful of listings whose
+  // whole trim is that string and, by the same rule, nothing else.
+  const BARE_T8_TRIMS = ["Recharge", "Plug-in hybrid", "eAWD", "T8"];
+  for (const r of R.filter((x) => /^xc(90|60)-t8-/.test(x.id))) {
+    R.push({
+      ...r,
+      id: `${r.id}-alt`,
+      model: r.id.startsWith("xc90") ? "XC90" : "XC60",
+      modelAliases: undefined,
+      trim: BARE_T8_TRIMS,
+    });
+  }
 
   const S60_ALIASES = ["S60 Recharge Plug-In Hybrid", "S60 Recharge Plug-In Hybr", "S60 Recharge", "S60 T8 Recharge"];
   R.push(

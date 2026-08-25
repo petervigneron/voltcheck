@@ -2527,21 +2527,27 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "c40-recharge-2022-23", make: "VOLVO", model: "C40 Recharge Pure Electric", modelYears: [2022, 2023], drive: "AWD",
     // vPIC decodes these as plain "C40"; the C40 was electric-only in the US.
-    modelAliases: ["C40"],
+    // "C40 Recharge" is how dealers actually file it — 320 live listings on
+    // 2026-08-25 against 64 under the full "…Pure Electric" spelling — and the
+    // matcher compares model strings by EQUALITY, not substring, so the longer
+    // row name could never reach them. No trim guard is needed on any C40
+    // spelling for the reason the line above gives: unlike the XC90/XC60 T8,
+    // no petrol or mild-hybrid C40 was ever sold here to poach.
+    modelAliases: ["C40", "C40 Recharge"],
     range: { epaRangeMi: f(226, "mfr", "high", "MY2022–23 C40 Recharge Twin, EPA; every US 2022–23 car is the twin-motor", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=44929") },
     charging: { portStandard: f("CCS1", "mfr") },
   },
   {
     id: "c40-recharge-2024-single", make: "VOLVO", model: "C40 Recharge Pure Electric", modelYears: [2024, 2024], vin8: ["K"], drive: "RWD",
     // vPIC decodes these as plain "C40"; the C40 was electric-only in the US.
-    modelAliases: ["C40"],
+    modelAliases: ["C40", "C40 Recharge"],
     range: { epaRangeMi: f(297, "mfr", "high", "MY2024 single-motor extended range (VIN code K), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46980") },
     charging: { portStandard: f("CCS1", "mfr") },
   },
   {
     id: "c40-recharge-2024-twin", make: "VOLVO", model: "C40 Recharge Pure Electric", modelYears: [2024, 2024], vin8: ["M"], drive: "AWD",
     // vPIC decodes these as plain "C40"; the C40 was electric-only in the US.
-    modelAliases: ["C40"],
+    modelAliases: ["C40", "C40 Recharge"],
     range: { epaRangeMi: f(257, "mfr", "high", "MY2024 Twin (VIN code M), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46982") },
     charging: { portStandard: f("CCS1", "mfr") },
   },
