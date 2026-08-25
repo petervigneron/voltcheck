@@ -497,6 +497,11 @@ async function osmPull() {
         city: t["addr:city"] ? String(t["addr:city"]) : "",
         state: code,
         phone: String(t.phone ?? t["contact:phone"] ?? "").replace(/\D/g, "").slice(-10),
+        // el.type/el.id: the OSM element's own type+id (node/way/relation), so a
+        // downstream row can cite exactly which mapped feature it came from
+        // (osm.org/{type}/{id}) rather than just "some Overpass query".
+        osmType: el.type ? String(el.type) : "node",
+        osmId: Number.isFinite(el.id) ? el.id : null,
       });
       kept++;
     }
