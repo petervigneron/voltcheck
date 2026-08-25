@@ -403,6 +403,30 @@ async function clearPoisonedCache() {
     console.log("feed-shard-check: FEED_REVALIDATE_SECRET unset — not clearing the cache; it heals on its 24h TTL");
     return;
   }
+  // Repair only against a database that can actually serve the re-render.
+  // 2026-08-25: this function used to fire unconditionally, which meant a
+  // problem CAUSED by a sick database (dead shards from a half-finished warm)
+  // triggered a global expiry plus a 36-path re-warm against that same sick
+  // database — a repair that cannot succeed, and whose cost is not zero: the
+  // warm loop is ~8 full feed walks' worth of renders (measured that day,
+  // when exactly such a burst re-drained the instance's disk IO budget
+  // minutes after it had recovered). Expiring is also not free for GOOD
+  // entries: they survive as stale-while-revalidate (the throw-retains
+  // semantics in web/app/api/index/[shard]/route.ts), but every later request
+  // then queues another doomed render behind them. So: same gate the warm
+  // paths in refresh-site.yml and nightly.yml apply — the count answers and a
+  // fat feed page clears 1.5 s — and if the database is not up to it, skip
+  // the repair and say so. Nothing goes unreported by skipping: this
+  // function's caller still exits 1, so the run is red either way, and the
+  // cache heals on its TTL or the next healthy run's repair.
+  const gate = await dbCanServeAWalk();
+  if (!gate.ok) {
+    console.log(
+      `feed-shard-check: NOT clearing the cache — the database cannot serve the re-render (${gate.why}). ` +
+        "Expiring now would convert bad shards into a repair that cannot succeed; the alarm above still fires."
+    );
+    return;
+  }
   try {
     const res = await fetch(`${BASE}/api/revalidate`, {
       method: "POST",
@@ -420,5 +444,41 @@ async function clearPoisonedCache() {
     }
   } catch (e) {
     console.log(`feed-shard-check: could not clear the cache (${e.message}); it heals on its 24h TTL`);
+  }
+}
+
+/** The same two readings refresh-site.yml's "Can the database serve a walk?"
+ *  step takes, because they earn their keep the same way: the count proves
+ *  PostgREST is answering at all, and a FAT feed page (db.ts's own column
+ *  list — a thin select can be served from an index on a box the real walk
+ *  dies on) under the nightly's 1.5 s ceiling proves it can move real pages.
+ *  Credentials absent counts as "cannot": an unverifiable database is not a
+ *  safe target for a 36-path re-render, and the no-repair path already
+ *  reports loudly. */
+async function dbCanServeAWalk() {
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_ANON_KEY;
+  if (!url || !key) return { ok: false, why: "no SUPABASE_URL/SUPABASE_ANON_KEY in the environment" };
+  const headers = { apikey: key, Authorization: `Bearer ${key}` };
+  try {
+    const count = await fetch(`${url}/rest/v1/listings?select=vin&delisted_at=is.null`, {
+      headers: { ...headers, Range: "0-0", Prefer: "count=exact" },
+      signal: AbortSignal.timeout(20_000),
+    });
+    if (count.status !== 200 && count.status !== 206) return { ok: false, why: `count answered HTTP ${count.status}` };
+    const sel = "vin,payload,first_seen_at,last_seen_at,prev_price_usd,price_changed_at,buyback_disclosed,listed_on";
+    const t0 = Date.now();
+    const page = await fetch(
+      `${url}/rest/v1/live_listings_feed?select=${sel}&order=vin.asc&limit=500&vin=gte.W`,
+      { headers, signal: AbortSignal.timeout(20_000) }
+    );
+    await page.arrayBuffer();
+    const secs = (Date.now() - t0) / 1000;
+    if (page.status !== 200 || secs > 1.5) {
+      return { ok: false, why: `fat feed page answered HTTP ${page.status} in ${secs.toFixed(2)}s (ceiling 1.5s)` };
+    }
+    return { ok: true, why: `count ok, fat page ${secs.toFixed(2)}s` };
+  } catch (e) {
+    return { ok: false, why: e.message };
   }
 }

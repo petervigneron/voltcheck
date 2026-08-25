@@ -34,6 +34,115 @@ const BZ_RECALL_NOTE = {
   severity: "warning" as const,
 };
 
+// ---------------------------------------------------------------------
+// Mercedes-Benz EQE / EQS shared facts. The EQE rows below this file's
+// original Mercedes block spell every one of these out inline, one row at a
+// time; the EQS block added 2026-08-25 shares them instead, because it is
+// 33 rows and the warranty, charging and recall text is identical across
+// all of them. Nothing here is new research: the warranty terms are the
+// ones already verified against the MY25/MY26 EQ booklets, and the recall
+// wording is NHTSA's own campaign summary, re-read 2026-08-25 through
+// api.nhtsa.gov (both the per-campaign text and the vehicle-level index
+// that says which body and year each campaign actually reaches).
+// ---------------------------------------------------------------------
+const MB_EQ_W_BASE = {
+  batteryYears: f(10, "mfr", "high", "10 yr/155,000 mi applies to the whole EQE/EQS family including SUVs, verified against MY25/MY26 EQ booklets"),
+  batteryMiles: f(155_000, "mfr", "high"),
+  batteryTransfers: f(true, "mfr", "high", "“To the original and each subsequent owner”, verified MY25/MY26 EQ booklets"),
+};
+const MB_EQE_W = {
+  ...MB_EQ_W_BASE,
+  extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQE: 204 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance, a skipped-service history can void it.", "mfr", "high"),
+};
+const MB_EQS_W = {
+  ...MB_EQ_W_BASE,
+  extendedCoverage: f("Floor is stated as a per-pack amp-hour number in Mercedes' own booklet (EQS: 192 Ah), not a percentage. Battery coverage is conditioned on completed scheduled maintenance, a skipped-service history can void it.", "mfr", "high"),
+};
+const MB_EQE_CHG = {
+  portStandard: f<"CCS1">("CCS1", "agg", "medium"),
+  dcPeakKw: f(170, "agg", "low", "170 kW peak across the EQE family; Mercedes-Benz USA's MY2026 EQE320 spec pages state it, and no year of this family has been reported at a different peak"),
+};
+const MB_EQS_CHG = {
+  portStandard: f<"CCS1">("CCS1", "agg", "medium"),
+  dcPeakKw: f(200, "agg", "low", "200 kW peak across the EQS family; Mercedes-Benz USA's MY2026 EQS spec pages state it, and no year of this family has been reported at a different peak"),
+  architectureV: f(400, "agg", "low", "The CCS 500A/400V ceiling matches the 200 kW peak; Mercedes does not state the pack voltage on its own US spec pages"),
+};
+// The EQE SUV's heat pump is the only one in this family Mercedes states in
+// its own words, and it is stated about that SUV — not about the EQS SUV, not
+// about any sedan. The other three entries say what they rest on instead.
+const MB_REL_EQE_SUV = "https://media.mbusa.com/releases/release-aba56cd1404245f552982a75a0042334-mercedes-benz-usa-announces-pricing-and-packaging-structures-for-alabama-built-eqe-suv";
+const MB_HP_EQE_SUV = {
+  heatPump: f<"standard">("standard", "mfr", "high", "“Two all-new standard innovations launch with the EQE SUV to further improve range: a heat pump and an intelligent powertrain management system” — MBUSA EQE SUV launch release, read directly", MB_REL_EQE_SUV),
+};
+const MB_HP_EQS_SUV = {
+  heatPump: f<"standard">("standard", "agg", "medium", "Standard on the Alabama-built EQ SUVs from launch; Mercedes states it in its own words for the EQE SUV this car shares a platform and plant with, not for the EQS SUV specifically"),
+};
+const MB_HP_SED_EARLY = {
+  heatPump: f<"optional">("optional", "agg", "medium", "Mercedes made the heat pump standard on EQE/EQS sedans starting MY2024, the earlier sedan likely lacks it unless optioned. (It was already standard on the EQ SUVs.)"),
+};
+const MB_HP_SED = {
+  heatPump: f<"standard">("standard", "agg", "medium", "Standard on EQE/EQS sedans from MY2024 (read directly on the MY2026 MBUSA spec pages)"),
+};
+const MB_EQE_PACK_906 = {
+  packUsableKwh: f(90.6, "agg", "medium", "The pre-refresh EVA2 pack Mercedes quotes for the MY2023 EQE (“Fitted standard with a 90.6 kWh battery”); the AMG kept it after the MY2025 refresh moved the 350+ to 96 kWh"),
+};
+const MB_EQS_PACK_1078 = {
+  packUsableKwh: f(107.8, "agg", "medium", "107.8 kWh usable — the pre-MY2025 EQS pack, consistently documented across Mercedes materials and press; Mercedes' own US pages state a figure only for the current car"),
+};
+const MB_EQS_PACK_118 = {
+  packUsableKwh: f(118, "vin", "high", "Mercedes' per-VIN Part 565 submissions read 118.00 kWh on MY2025–26 EQS sedans and SUVs alike, matching the figure MBUSA's own MY2026 spec page states"),
+};
+const NOTE_MB_FUSE_TWO_ROUNDS = {
+  headline: "Fuse-box fire/power-loss recall, two rounds, check which repair this VIN got",
+  body: "24V115 (80-Amp fuses manufactured incorrectly, which can cause a sudden loss of drive power or a fire risk): free replacement fuse box. 25V255: some vehicles repaired under 24V115 received an INCORRECT fuse box that was not designed for the vehicle, which itself carries a fire and power-loss risk, a second free repair. Confirm this VIN got the correct part, not just “a” repair.",
+  severity: "trap" as const,
+};
+const NOTE_MB_FUSE_24V115 = {
+  headline: "Fuse-box fire/power-loss recall, check remedy status",
+  body: "24V115 (2023–2024 Mercedes models including EQS450, EQS580 and AMG EQS): the 80-Amp fuses may have been manufactured incorrectly, which can cause a sudden loss of drive power or a fire risk. Free dealer replacement of the fuse box; owner notices mailed April 2024.",
+  severity: "trap" as const,
+};
+const NOTE_MB_BMS_24V372 = {
+  headline: "Battery-management software recall, check remedy status",
+  body: "24V372: the battery management system software may cause the high-voltage battery to shut down, which can result in a sudden loss of drive power. Free dealer software update; owner notices mailed July 2024. NHTSA's campaign names the 2024 EQE and EQS sedans, the 2023–2025 EQE and EQS SUVs, and the 2024–2025 EQS SUV 680 4MATIC.",
+  severity: "trap" as const,
+};
+const NOTE_MB_AVAS_25V366 = {
+  headline: "Pedestrian-alert sound software recall",
+  body: "25V366 (2022–2025 EQE, EQE SUV, EQS, EQS SUV and S-Class): the Acoustic Vehicle Alerting System software may play an incorrect external warning sound while reversing. Free dealer software update; owner notices mailed August 2025.",
+  severity: "info" as const,
+};
+const NOTE_EQE_STEER_25V533 = {
+  headline: "Steering coupling bolt recall",
+  body: "25V533 (2023–2026 EQE and GLC): the steering coupling bolt may be improperly tightened, allowing the coupling to loosen from the steering rack and risking a loss of steering control. Owner notices mailed October 2025.",
+  severity: "warning" as const,
+};
+const NOTE_EQE_ROOF_23V555 = {
+  headline: "Roof-frame absorbers may not be secured, check remedy status",
+  body: "23V555 (2023 AMG EQE, EQE 500 and EQE 350): the absorbers in the roof frame may not be secured properly and can detach during window air bag deployment. Free dealer replacement; owner notices mailed September 2023.",
+  severity: "warning" as const,
+};
+const NOTE_EQS_DRIVE_23V405 = {
+  headline: "Drivetrain software recall, a loss of drive power, check remedy status",
+  body: "23V405 (2022–2023 EQS 450, AMG EQS and EQS 580, plus the 2023 AMG EQE): a software error in the electric drivetrain may cause a loss of drive power. Free dealer software update; owner notices mailed July 2023.",
+  severity: "trap" as const,
+};
+const NOTE_EQS_BMS_23V309 = {
+  headline: "Battery-monitoring software recall, check remedy status",
+  body: "23V309 (2022–2023 EQS 450 and EQS 580, 2022 AMG EQS 53, EQS 450+, plus the 2023 EQE 350): the high-voltage battery monitoring software may not alert the driver to a battery malfunction, an FMVSS 305 non-compliance. Free dealer software update; owner notices mailed August 2023.",
+  severity: "warning" as const,
+};
+const NOTE_EQS_STEERWHEEL_22V189 = {
+  headline: "Heated-steering-wheel hands-off detection recall",
+  body: "22V189 (2021–2022 Mercedes models including the EQS, when fitted with a heated leather steering wheel): a software error in the hand-detection control unit can stop Active Distance Assist DISTRONIC from noticing that the driver's hands are off the wheel. Free dealer software update; owner notices mailed May 2022.",
+  severity: "warning" as const,
+};
+const NOTE_EQS_NEXTGEN = {
+  headline: "This is the current 400V EQS, not the newly-announced next-generation car",
+  body: "Mercedes announced an upgraded EQS on an 800V architecture with up to 350 kW DC charging in April 2026, as of this research it was orderable in Germany only, with no confirmed US on-sale date. This listing's EPA record predates that announcement and matches the existing 400V-architecture car's specs exactly (118 kWh, 200 kW). Don't assume this car has the newer, faster-charging hardware.",
+  severity: "info" as const,
+};
+
 export const RESEARCH_ROWS_3: EnrichmentRow[] = [
   // ---------------------------------------------------------------------
   // Ford Mustang Mach-E — moved to data4.ts (2026-08-14 pass), re-keyed on
@@ -242,7 +351,9 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     make: "AUDI",
     model: "e-tron GT",
     modelYears: [2024, 2024],
-    trim: "quattro Premium Plus",
+    // Trim key dropped 2026-08-14: every 2024 e-tron GT rates 249 (the RS
+    // too), so "Prestige"/"4D Sedan" listings were going unmatched for
+    // nothing. 2022–23 GT/RS rows live in data4.
     drive: "AWD",
     battery: {
       packGrossKwh: f(93, "mfr", "high", "Audi's own e-tron GT tech page (pre-2025-refresh model, matching MY2024): “93 kWh gross”", "https://www.audi.com"),
@@ -1168,7 +1279,15 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     model: "EQE",
     modelAliases: ["EQE 350"],
     modelYears: [2024, 2024],
-    trim: "EQE 350 4MATIC",
+    // Same composite trap the EQS 450 4MATIC rows carry, and the same fix:
+    // Mercedes' own Part 565 trim for the MY2024–25 EG1CB car reads
+    // "EQE350+ 4MATIC" — a plus on a 4MATIC — so trimMatches' one-sided-plus
+    // rule rejects it against the plus-less key, and a /vin/ decode would
+    // fall through to the 350+ row's 298 mi instead of this car's 280.
+    // Twenty-four MY2024 VINs in the vPIC cache spell it that way (three
+    // more in MY2025); MY2023's EG1CB reads "EQE 350 4MATIC" and needs no
+    // alias, which is why the 2023 row above does not carry one.
+    trim: ["EQE 350 4MATIC", "EQE350+ 4MATIC"],
     drive: "AWD",
     wmi: ["W1K"],
     battery: { packUsableKwh: f(90.6, "agg", "medium", "Carry-over of the pre-refresh EVA2 pack; the MY2025 refresh's larger 96 kWh pack went to the 350+ and 500, not the 350 4MATIC") },
@@ -1209,7 +1328,8 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     model: "EQE",
     modelAliases: ["EQE 350"],
     modelYears: [2025, 2025],
-    trim: "EQE 350 4MATIC",
+    trim: ["EQE 350 4MATIC", "EQE350+ 4MATIC"], // see the MY2024 row's note
+
     drive: "AWD",
     wmi: ["W1K"],
     battery: { packUsableKwh: f(90.5, "agg", "low", "The MY2026 EQE320 4MATIC — which carries this exact 267-mi certification forward — is a 90.5 kWh car on Mercedes' own spec page, and press reporting on the MY2025 refresh kept the smaller pack on the 350 4MATIC. Mercedes' per-VIN Part 565 filings on live MY2025 350 4MATICs read 96.00, contradicting both; the conflict is flagged here rather than resolved") },
@@ -1531,12 +1651,20 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     id: "eqe-amg-2024-4matic",
     make: "MERCEDES-BENZ",
     model: "EQE AMG",
-    // Only unambiguous AMG spellings — never bare "EQE": a trim-less "EQE"
-    // listing must not resolve to AMG figures. The MY2024 AMG EQE SUV (4JG)
-    // files the same trim strings; the wmi key keeps it out.
-    modelAliases: ["AMG EQE", "AMG EQE Sedan"],
+    // Bare "EQE" was kept off this row so a trim-less "EQE" listing could not
+    // resolve to AMG figures. trimMatches now refuses a trim-keyed row an
+    // absent trim outright, so that guard is doing nothing the matcher isn't
+    // already doing — and it was costing every live AMG listing filed as
+    // model "EQE" with the AMG named in the trim instead, which is how the
+    // MY2023 cars all arrive. The MY2024 AMG EQE SUV (4JG) files the same
+    // model and trim strings; the wmi key is what keeps it out.
+    modelAliases: ["AMG EQE", "AMG EQE Sedan", "EQE"],
     modelYears: [2024, 2024],
-    trim: "AMG EQE 4MATIC",
+    // "AMG EQE 4MATIC+" is Mercedes' own full name for this car and the
+    // spelling 12 live MY2024 listings use. It has to be listed explicitly:
+    // trimMatches refuses a one-sided plus, so the plus-less key alone
+    // rejected every one of them.
+    trim: ["AMG EQE 4MATIC", "AMG EQE 4MATIC+", "AMG EQE"],
     drive: "AWD",
     wmi: ["W1K"],
     battery: { packUsableKwh: f(90.6, "agg", "low", "Widely reported by aggregators; corroborated indirectly via Mercedes-Benz USA's current AMG EQE Sedan spec page (same powertrain generation, no evidence of a mid-cycle battery change), but no MY2024-specific primary document was located") },
@@ -1641,6 +1769,742 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
         severity: "info",
       },
     ],
+  },
+
+  // ---------------------------------------------------------------------
+  // The rest of the Mercedes EQ line-up (added 2026-08-25). The block above
+  // covered the EQE's volume trims and three MY2026 cars; on the live feed
+  // that left 631 of 1,187 Mercedes EQ listings resolving to nothing at all —
+  // every EQS of either body except the MY2026 450 4MATIC sedan, both AMG
+  // bodies outside MY2024, and the 500 4MATIC in its second year.
+  //
+  // Keyed the same way as the rows above: trim + WMI. W1K is the
+  // Sindelfingen/Bremen sedan, 4JG the Tuscaloosa SUV, and dealers file both
+  // bodies under the same model and trim strings, so the WMI is the only
+  // thing that separates an EQS 450 4MATIC sedan (367 mi) from an EQS SUV
+  // wearing the same badge (312 mi). Control test, 2,700 Mercedes BEV VINs in
+  // the vPIC cache: every W1K decodes to a sedan Baumuster (CG/EG/FJ) and
+  // every 4JG to an SUV one (DM/DX/GM), with no crossing. (The EQB is neither
+  // — it is W1N, Kecskemét — which is why no row here claims it.)
+  //
+  // Three things the trim keys have to survive, all read off the live feed
+  // and the VIN filings rather than guessed at:
+  //
+  //  1. The MY2026 SUV rename. EPA certifies the 2026 EQS SUV as "EQS 400
+  //     4matic" and "EQS 550 4matic"; Mercedes' own Part 565 filings for the
+  //     same MY2026 VINs still read EQS450 4MATIC and EQS580 4MATIC, and so
+  //     do the dealers. Those rows carry both names, and the EPA figure is
+  //     identical across the rename anyway (312 and 317 in 2025, 2026 and
+  //     2027 alike), so nothing rests on which name a listing uses.
+  //  2. The "+" is identity, not punctuation — EQS 450+ is the RWD car,
+  //     EQS 450 4MATIC the AWD one, ~10 mi apart. trimMatches already refuses
+  //     a one-sided plus, so a plus-less "450" cannot reach a 450+ row; it
+  //     falls to the 4MATIC row, which understates by 10 mi rather than
+  //     overstating. Deliberate: a plus-less "450" is genuinely ambiguous and
+  //     the cheap error is the low one. What is NOT safe is adding a
+  //     plus-less spelling to a 450+ row to catch those — the exact-trim pass
+  //     runs before the drivetrain filter, so it would hand every AWD "450"
+  //     listing the RWD car's range.
+  //  3. vPIC writes the sedan's own composite, "EQS450+ 4MATIC", for MY2024–25
+  //     CG2EB cars, which are 4MATICs. Those rows list that spelling too, or
+  //     the plus rule would reject the /vin/ page's own decode.
+  //
+  // EPA: every figure below was re-read from fueleconomy.gov's REST records
+  // on 2026-08-25, id by id. Two holes it has, both verified against its own
+  // menu API rather than assumed: it carries NO MY2023 EQE record of either
+  // body, and of the MY2023 EQS only the 450 4MATIC sedan and the three SUVs
+  // — so the MY2023 450+, 580 and AMG sedans below carry the unchanged MY2022
+  // certification forward, marked agg, and the MY2023 AMG EQE carries no
+  // range at all.
+  //
+  // Recalls: NHTSA's per-campaign text and its vehicle-level index, both read
+  // 2026-08-25. A campaign appears on a row only where the index lists that
+  // body and year, or where the campaign's own summary names it outright.
+  // ---------------------------------------------------------------------
+
+  // EQE sedan — the 500 4MATIC's second year. The 2023 row above stops at
+  // 2023 because MY2024 re-rated 260 → 298.
+  {
+    id: "eqe-2024-500-4matic",
+    make: "MERCEDES-BENZ",
+    model: "EQE",
+    modelAliases: ["EQE 500", "EQE Sedan"],
+    modelYears: [2024, 2024],
+    trim: ["EQE 500 4MATIC", "EQE 500"],
+    drive: "AWD",
+    wmi: ["W1K"],
+    battery: MB_EQE_PACK_906,
+    range: { epaRangeMi: f(298, "mfr", "high", "MY2024 EQE 500 4MATIC, EPA", epa(47460)) },
+    charging: MB_EQE_CHG,
+    thermal: MB_HP_SED,
+    warranty: MB_EQE_W,
+    buyerNotes: [NOTE_EQE_STEER_25V533, NOTE_MB_AVAS_25V366],
+  },
+
+  // AMG EQE sedan, MY2023 — the launch year. No range: fueleconomy.gov has
+  // no MY2023 EQE certification of any trim, and unlike the 350/500 rows
+  // above there is no Mercedes-sourced announced figure to put in its place.
+  {
+    id: "eqe-2023-amg",
+    abstains: {
+      epaRangeMi:
+        "EPA published no MY2023 AMG EQE certification (verified against fueleconomy.gov's own menu API, which carries no MY2023 EQE record of any trim), and no Mercedes document stating an announced figure for this car could be read — the MY2024 car's 230 mi belongs to the MY2024 car",
+    },
+    make: "MERCEDES-BENZ",
+    model: "EQE AMG",
+    // Bare "EQE" is admitted here, unlike on the MY2024 AMG row, because
+    // every live MY2023 AMG listing files that way and names AMG in the trim
+    // instead — and a trim-less "EQE" listing still cannot land here, since
+    // trimMatches refuses a trim-keyed row an absent trim.
+    modelAliases: ["AMG EQE", "AMG EQE Sedan", "EQE"],
+    modelYears: [2023, 2023],
+    // "AMG EQE 4MATIC+" is Mercedes' own full name and the spelling 12 live
+    // listings use; without it the one-sided-plus rule rejects them outright.
+    trim: ["AMG EQE", "AMG EQE 4MATIC", "AMG EQE 4MATIC+"],
+    drive: "AWD",
+    wmi: ["W1K"],
+    battery: MB_EQE_PACK_906,
+    charging: MB_EQE_CHG,
+    thermal: MB_HP_SED_EARLY,
+    warranty: MB_EQE_W,
+    buyerNotes: [NOTE_EQS_DRIVE_23V405, NOTE_EQE_ROOF_23V555, NOTE_MB_FUSE_24V115],
+  },
+
+  // AMG EQE sedan, MY2025–26. One certification, carried by both years
+  // (48382 and 49678 rate identically at 220 mi).
+  {
+    id: "eqe-2025-26-amg",
+    make: "MERCEDES-BENZ",
+    model: "EQE AMG",
+    modelAliases: ["AMG EQE", "AMG EQE Sedan", "EQE"],
+    modelYears: [2025, 2026],
+    trim: ["AMG EQE", "AMG EQE 4MATIC", "AMG EQE 4MATIC+"],
+    drive: "AWD",
+    wmi: ["W1K"],
+    battery: {
+      packUsableKwh: f(90.6, "agg", "low", "The AMG kept the pre-refresh 90.6 kWh pack while the MY2025 refresh moved the 350+ to 96 kWh; Mercedes' per-VIN Part 565 filings read 90.60 for the MY2026 AMG EQE SUV, and no MY2025–26 AMG sedan VIN filing was available to read"),
+    },
+    range: { epaRangeMi: f(220, "mfr", "high", "MY2025 and MY2026 AMG EQE (EPA model string “AMG EQE 4matic Plus”), EPA — ids 48382 and 49678 rate identically", epa(48382)) },
+    charging: MB_EQE_CHG,
+    thermal: MB_HP_SED,
+    warranty: MB_EQE_W,
+  },
+
+  // EQE SUV — the 500 4MATIC's second and final year.
+  {
+    id: "eqe-suv-2024-500-4matic",
+    make: "MERCEDES-BENZ",
+    model: "EQE SUV",
+    modelAliases: ["EQE", "EQE 500"],
+    modelYears: [2024, 2024],
+    trim: ["EQE 500 4MATIC", "500 SUV", "EQE 500"],
+    drive: "AWD",
+    wmi: ["4JG"],
+    battery: MB_EQE_PACK_906,
+    range: { epaRangeMi: f(282, "mfr", "high", "MY2024 EQE 500 4MATIC SUV, EPA", epa(47849)) },
+    charging: MB_EQE_CHG,
+    thermal: MB_HP_EQE_SUV,
+    warranty: MB_EQE_W,
+    buyerNotes: [NOTE_MB_BMS_24V372, NOTE_MB_AVAS_25V366],
+  },
+
+  // AMG EQE SUV. The sedan AMG rows file the same trim strings; the wmi key
+  // is the whole of what separates them.
+  {
+    id: "eqe-suv-2024-amg",
+    make: "MERCEDES-BENZ",
+    model: "EQE AMG SUV",
+    modelAliases: ["AMG EQE SUV", "EQE AMG", "AMG EQE", "EQE"],
+    modelYears: [2024, 2024],
+    trim: ["AMG EQE", "AMG EQE 4MATIC", "AMG EQE 4MATIC+"],
+    drive: "AWD",
+    wmi: ["4JG"],
+    battery: MB_EQE_PACK_906,
+    range: { epaRangeMi: f(235, "mfr", "high", "MY2024 AMG EQE SUV (EPA model string “AMG EQE 4matic Plus (SUV)”), EPA", epa(46971)) },
+    charging: MB_EQE_CHG,
+    thermal: MB_HP_EQE_SUV,
+    warranty: MB_EQE_W,
+    buyerNotes: [NOTE_MB_BMS_24V372, NOTE_MB_AVAS_25V366],
+  },
+
+  // AMG EQE SUV, split by year rather than spanning 2025–26 on one row.
+  // Both years carry the same 230-mi certification (48393 and 49686), so the
+  // split buys nothing on the facts — it is the recalls. 24V372 stops at
+  // MY2025 and 25V366 at MY2025, and NHTSA does return MY2026 rows for other
+  // Mercedes campaigns, so the absence is real rather than a gap in the
+  // index. A spanning row would have rendered both headlines on the MY2026
+  // car — including a "trap"-severity battery recall — and the year caveat
+  // that would have corrected it lives in the note body, which the report
+  // never shows: EnrichmentReport renders the headline alone.
+  {
+    id: "eqe-suv-2025-amg",
+    make: "MERCEDES-BENZ",
+    model: "EQE AMG SUV",
+    modelAliases: ["AMG EQE SUV", "EQE AMG", "AMG EQE", "EQE"],
+    modelYears: [2025, 2025],
+    trim: ["AMG EQE", "AMG EQE 4MATIC", "AMG EQE 4MATIC+"],
+    drive: "AWD",
+    wmi: ["4JG"],
+    battery: { packUsableKwh: f(90.6, "vin", "high", "Mercedes' per-VIN Part 565 submissions read 90.60 kWh for the MY2026 AMG EQE SUV — the pre-refresh pack, which the AMG kept when the 320+ moved to 96 kWh") },
+    range: { epaRangeMi: f(230, "mfr", "high", "MY2025 AMG EQE SUV, EPA — the MY2026 car (id 49686) rates identically", epa(48393)) },
+    charging: MB_EQE_CHG,
+    thermal: MB_HP_EQE_SUV,
+    warranty: MB_EQE_W,
+    buyerNotes: [NOTE_MB_BMS_24V372, NOTE_MB_AVAS_25V366],
+  },
+
+  {
+    id: "eqe-suv-2026-amg",
+    make: "MERCEDES-BENZ",
+    model: "EQE AMG SUV",
+    modelAliases: ["AMG EQE SUV", "EQE AMG", "AMG EQE", "EQE"],
+    modelYears: [2026, 2026],
+    trim: ["AMG EQE", "AMG EQE 4MATIC", "AMG EQE 4MATIC+"],
+    drive: "AWD",
+    wmi: ["4JG"],
+    battery: { packUsableKwh: f(90.6, "vin", "high", "Mercedes' per-VIN Part 565 submissions read 90.60 kWh for the MY2026 AMG EQE SUV — the pre-refresh pack, which the AMG kept when the 320+ moved to 96 kWh") },
+    range: { epaRangeMi: f(230, "mfr", "high", "MY2026 AMG EQE SUV, EPA — unchanged from MY2025 (id 48393)", epa(49686)) },
+    charging: MB_EQE_CHG,
+    thermal: MB_HP_EQE_SUV,
+    warranty: MB_EQE_W,
+  },
+
+  // EQE 320+ SUV — the RWD half of the MY2026 rename. The MY2026 SUV row
+  // above is the 4MATIC only, and MY2027 carries the same certification
+  // (50661, also 302 mi), so the window runs to 2027.
+  {
+    id: "eqe-suv-2026-27-320-plus",
+    make: "MERCEDES-BENZ",
+    model: "EQE SUV",
+    modelAliases: ["EQE", "EQE 320+", "EQE 320+ SUV"],
+    modelYears: [2026, 2027],
+    trim: "EQE320+",
+    drive: "RWD",
+    wmi: ["4JG"],
+    battery: { packUsableKwh: f(96, "vin", "high", "Mercedes' per-VIN Part 565 submissions read 96.00 kWh for the MY2026 EQE320+ SUV — the larger pack the RWD cars took at the refresh, against 90.5 on the 4MATIC") },
+    range: { epaRangeMi: f(302, "mfr", "high", "MY2026 and MY2027 EQE 320+ SUV, EPA — ids 49684 and 50661 rate identically", epa(49684)) },
+    charging: MB_EQE_CHG,
+    thermal: MB_HP_EQE_SUV,
+    warranty: MB_EQE_W,
+  },
+
+  // EQE 320 4MATIC SUV, MY2027. The MY2026 row above stops at 2026 on
+  // purpose: EPA has certified no MY2027 EQE 320 4MATIC of either body (its
+  // menu API lists exactly three MY2027 Mercedes EQ records, and this is not
+  // one of them). MY2025 and MY2026 agree at 253, but this cohort has already
+  // been re-rated once inside its own generation — 265 in 2024, then 253 —
+  // so carrying 253 forward would be a guess about whether it moved again.
+  // The car is real (41 MY2027 4JG GM1CB VINs in the vPIC cache) and the rest
+  // of what a shopper needs about it is not in doubt, so the row exists and
+  // says nothing about range rather than not existing at all.
+  {
+    id: "eqe-suv-2027-320-4matic",
+    abstains: {
+      epaRangeMi:
+        "EPA has published no MY2027 EQE 320 4MATIC certification of either body, and this cohort has already been re-rated once inside its own generation (265 mi in 2024, then 253 in 2025 and 2026), so a carried-forward figure would be a guess about whether it moved again",
+    },
+    make: "MERCEDES-BENZ",
+    model: "EQE SUV",
+    modelAliases: ["EQE", "EQE 320"],
+    modelYears: [2027, 2027],
+    trim: ["EQE320 4MATIC", "EQE 320 4MATIC"],
+    drive: "AWD",
+    wmi: ["4JG"],
+    battery: { packUsableKwh: f(90.5, "agg", "low", "The MY2026 EQE320 4MATIC SUV files 90.5 kWh per VIN under Part 565 and MBUSA's spec page states the same; the MY2027 filings carry no pack figure to check it against") },
+    charging: MB_EQE_CHG,
+    thermal: MB_HP_EQE_SUV,
+    warranty: MB_EQE_W,
+  },
+
+  // -------------------------------------------------------------------
+  // EQS sedan (W1K). MY2022 is 450+ and 580 4MATIC only; the 450 4MATIC
+  // arrives for MY2023, and the MY2025 refresh replaces the 107.8 kWh pack
+  // with 118 kWh — worth 38 miles on the 450+, which is why no figure is
+  // carried across that year.
+  // -------------------------------------------------------------------
+  {
+    id: "eqs-2022-450-plus",
+    make: "MERCEDES-BENZ",
+    model: "EQS",
+    modelAliases: ["EQS Sedan", "EQS 450+", "EQS 450+ Sedan"],
+    modelYears: [2022, 2022],
+    // The plus-less "EQS 450" spelling is safe on THIS row and only this row:
+    // MY2022 had no EQS 450 4MATIC at all (EPA certified two EQS sedans that
+    // year, the 450+ and the 580, and no 4MATIC 450 VIN exists in the vPIC
+    // cache), so there is no sibling for the exact-trim pass to take a "450"
+    // listing away from. Never copy it onto a year where both exist.
+    trim: ["EQS 450+", "EQS 450"],
+    drive: "RWD",
+    wmi: ["W1K"],
+    battery: MB_EQS_PACK_1078,
+    range: { epaRangeMi: f(350, "mfr", "high", "MY2022 EQS 450+, EPA", epa(44785)) },
+    charging: MB_EQS_CHG,
+    thermal: MB_HP_SED_EARLY,
+    warranty: MB_EQS_W,
+    buyerNotes: [NOTE_EQS_BMS_23V309, NOTE_MB_AVAS_25V366, NOTE_EQS_STEERWHEEL_22V189],
+  },
+
+  {
+    id: "eqs-2023-450-plus",
+    make: "MERCEDES-BENZ",
+    model: "EQS",
+    modelAliases: ["EQS Sedan", "EQS 450+", "EQS 450+ Sedan"],
+    modelYears: [2023, 2023],
+    trim: "EQS 450+",
+    drive: "RWD",
+    wmi: ["W1K"],
+    battery: MB_EQS_PACK_1078,
+    range: { epaRangeMi: f(350, "agg", "medium", "MY2023 carries the unchanged MY2022 certification (350 mi, id 44785); fueleconomy.gov's own menu API lists no MY2023 EQS 450+ record, and the MY2024 car re-rated to 352", epa(44785)) },
+    charging: MB_EQS_CHG,
+    thermal: MB_HP_SED_EARLY,
+    warranty: MB_EQS_W,
+    buyerNotes: [NOTE_MB_FUSE_TWO_ROUNDS, NOTE_MB_AVAS_25V366],
+  },
+
+  {
+    id: "eqs-2024-450-plus",
+    make: "MERCEDES-BENZ",
+    model: "EQS",
+    modelAliases: ["EQS Sedan", "EQS 450+", "EQS 450+ Sedan"],
+    modelYears: [2024, 2024],
+    trim: "EQS 450+",
+    drive: "RWD",
+    wmi: ["W1K"],
+    battery: MB_EQS_PACK_1078,
+    range: { epaRangeMi: f(352, "mfr", "high", "MY2024 EQS 450+, EPA", epa(47463)) },
+    charging: MB_EQS_CHG,
+    thermal: MB_HP_SED,
+    warranty: MB_EQS_W,
+    buyerNotes: [NOTE_MB_BMS_24V372, NOTE_MB_AVAS_25V366],
+  },
+
+  {
+    id: "eqs-2025-26-450-plus",
+    make: "MERCEDES-BENZ",
+    model: "EQS",
+    modelAliases: ["EQS Sedan", "EQS 450+", "EQS 450+ Sedan"],
+    modelYears: [2025, 2026],
+    trim: "EQS 450+",
+    drive: "RWD",
+    wmi: ["W1K"],
+    battery: MB_EQS_PACK_118,
+    range: { epaRangeMi: f(390, "mfr", "high", "MY2025 and MY2026 EQS 450+ on the 118 kWh pack, EPA — ids 48388 and 49681 rate identically", epa(48388)) },
+    charging: MB_EQS_CHG,
+    thermal: MB_HP_SED,
+    warranty: MB_EQS_W,
+    buyerNotes: [NOTE_EQS_NEXTGEN],
+  },
+
+  {
+    id: "eqs-2023-450-4matic",
+    make: "MERCEDES-BENZ",
+    model: "EQS",
+    modelAliases: ["EQS Sedan", "EQS 450", "EQS 450 Sedan"],
+    modelYears: [2023, 2023],
+    trim: ["EQS 450 4MATIC", "EQS450+ 4MATIC"],
+    drive: "AWD",
+    wmi: ["W1K"],
+    battery: MB_EQS_PACK_1078,
+    range: { epaRangeMi: f(340, "mfr", "high", "MY2023 EQS 450 4MATIC, EPA", epa(46009)) },
+    charging: MB_EQS_CHG,
+    thermal: MB_HP_SED_EARLY,
+    warranty: MB_EQS_W,
+    buyerNotes: [NOTE_MB_FUSE_TWO_ROUNDS, NOTE_MB_AVAS_25V366],
+  },
+
+  {
+    id: "eqs-2024-450-4matic",
+    make: "MERCEDES-BENZ",
+    model: "EQS",
+    modelAliases: ["EQS Sedan", "EQS 450", "EQS 450 Sedan"],
+    modelYears: [2024, 2024],
+    trim: ["EQS 450 4MATIC", "EQS450+ 4MATIC"],
+    drive: "AWD",
+    wmi: ["W1K"],
+    battery: MB_EQS_PACK_1078,
+    range: { epaRangeMi: f(345, "mfr", "high", "MY2024 EQS 450 4MATIC, EPA", epa(47462)) },
+    charging: MB_EQS_CHG,
+    thermal: MB_HP_SED,
+    warranty: MB_EQS_W,
+    buyerNotes: [NOTE_MB_BMS_24V372, NOTE_MB_AVAS_25V366],
+  },
+
+  // MY2026 is already covered by eqs-2026-450-4matic above (the same 367-mi
+  // certification, id 49683), so this row stops at 2025 rather than
+  // duplicating it.
+  {
+    id: "eqs-2025-450-4matic",
+    make: "MERCEDES-BENZ",
+    model: "EQS",
+    modelAliases: ["EQS Sedan", "EQS 450", "EQS 450 Sedan"],
+    modelYears: [2025, 2025],
+    trim: ["EQS 450 4MATIC", "EQS450+ 4MATIC"],
+    drive: "AWD",
+    wmi: ["W1K"],
+    battery: MB_EQS_PACK_118,
+    range: { epaRangeMi: f(367, "mfr", "high", "MY2025 EQS 450 4MATIC on the 118 kWh pack, EPA", epa(48387)) },
+    charging: MB_EQS_CHG,
+    thermal: MB_HP_SED,
+    warranty: MB_EQS_W,
+    buyerNotes: [NOTE_EQS_NEXTGEN],
+  },
+
+  {
+    id: "eqs-2022-580-4matic",
+    make: "MERCEDES-BENZ",
+    model: "EQS",
+    modelAliases: ["EQS Sedan", "EQS 580", "EQS 580 Sedan"],
+    modelYears: [2022, 2022],
+    trim: "EQS 580 4MATIC",
+    drive: "AWD",
+    wmi: ["W1K"],
+    battery: MB_EQS_PACK_1078,
+    range: { epaRangeMi: f(340, "mfr", "high", "MY2022 EQS 580 4MATIC, EPA", epa(45023)) },
+    charging: MB_EQS_CHG,
+    thermal: MB_HP_SED_EARLY,
+    warranty: MB_EQS_W,
+    buyerNotes: [NOTE_MB_AVAS_25V366],
+  },
+
+  {
+    id: "eqs-2023-580-4matic",
+    make: "MERCEDES-BENZ",
+    model: "EQS",
+    modelAliases: ["EQS Sedan", "EQS 580", "EQS 580 Sedan"],
+    modelYears: [2023, 2023],
+    trim: "EQS 580 4MATIC",
+    drive: "AWD",
+    wmi: ["W1K"],
+    battery: MB_EQS_PACK_1078,
+    range: { epaRangeMi: f(340, "agg", "medium", "MY2023 carries the unchanged MY2022 certification (340 mi, id 45023); fueleconomy.gov's own menu API lists no MY2023 EQS 580 record, and the MY2024 car re-rated to 345", epa(45023)) },
+    charging: MB_EQS_CHG,
+    thermal: MB_HP_SED_EARLY,
+    warranty: MB_EQS_W,
+    buyerNotes: [NOTE_MB_FUSE_TWO_ROUNDS, NOTE_MB_AVAS_25V366],
+  },
+
+  {
+    id: "eqs-2024-580-4matic",
+    make: "MERCEDES-BENZ",
+    model: "EQS",
+    modelAliases: ["EQS Sedan", "EQS 580", "EQS 580 Sedan"],
+    modelYears: [2024, 2024],
+    trim: "EQS 580 4MATIC",
+    drive: "AWD",
+    wmi: ["W1K"],
+    battery: MB_EQS_PACK_1078,
+    range: { epaRangeMi: f(345, "mfr", "high", "MY2024 EQS 580 4MATIC, EPA", epa(47464)) },
+    charging: MB_EQS_CHG,
+    thermal: MB_HP_SED,
+    warranty: MB_EQS_W,
+    buyerNotes: [NOTE_MB_BMS_24V372],
+  },
+
+  {
+    id: "eqs-2025-26-580-4matic",
+    make: "MERCEDES-BENZ",
+    model: "EQS",
+    modelAliases: ["EQS Sedan", "EQS 580", "EQS 580 Sedan"],
+    modelYears: [2025, 2026],
+    trim: "EQS 580 4MATIC",
+    drive: "AWD",
+    wmi: ["W1K"],
+    battery: MB_EQS_PACK_118,
+    range: { epaRangeMi: f(371, "mfr", "high", "MY2025 and MY2026 EQS 580 4MATIC on the 118 kWh pack, EPA — ids 48389 and 49682 rate identically", epa(48389)) },
+    charging: MB_EQS_CHG,
+    thermal: MB_HP_SED,
+    warranty: MB_EQS_W,
+    buyerNotes: [NOTE_EQS_NEXTGEN],
+  },
+
+  // AMG EQS sedan. Mercedes' own name is AMG EQS 53 4MATIC+, and dealers
+  // spell it a dozen ways; the plus-bearing spellings are listed explicitly
+  // because trimMatches refuses a one-sided plus.
+  {
+    id: "eqs-2022-amg",
+    make: "MERCEDES-BENZ",
+    model: "EQS AMG",
+    modelAliases: ["AMG EQS", "AMG EQS Sedan", "EQS"],
+    modelYears: [2022, 2022],
+    trim: ["AMG EQS", "AMG EQS 4MATIC+", "AMG EQS 53 4MATIC+"],
+    drive: "AWD",
+    wmi: ["W1K"],
+    battery: MB_EQS_PACK_1078,
+    range: { epaRangeMi: f(277, "mfr", "high", "MY2022 AMG EQS (EPA model string “AMG EQS 4matic Plus”), EPA", epa(46330)) },
+    charging: MB_EQS_CHG,
+    thermal: MB_HP_SED_EARLY,
+    warranty: MB_EQS_W,
+    buyerNotes: [NOTE_EQS_DRIVE_23V405, NOTE_EQS_STEERWHEEL_22V189],
+  },
+
+  {
+    id: "eqs-2023-amg",
+    make: "MERCEDES-BENZ",
+    model: "EQS AMG",
+    modelAliases: ["AMG EQS", "AMG EQS Sedan", "EQS"],
+    modelYears: [2023, 2023],
+    trim: ["AMG EQS", "AMG EQS 4MATIC+", "AMG EQS 53 4MATIC+"],
+    drive: "AWD",
+    wmi: ["W1K"],
+    battery: MB_EQS_PACK_1078,
+    range: { epaRangeMi: f(277, "agg", "medium", "MY2023 carries the unchanged MY2022 certification (277 mi, id 46330); fueleconomy.gov's own menu API lists no MY2023 AMG EQS record, and the MY2024 car re-rated to 305", epa(46330)) },
+    charging: MB_EQS_CHG,
+    thermal: MB_HP_SED_EARLY,
+    warranty: MB_EQS_W,
+    buyerNotes: [NOTE_EQS_DRIVE_23V405, NOTE_MB_FUSE_24V115],
+  },
+
+  {
+    id: "eqs-2024-amg",
+    make: "MERCEDES-BENZ",
+    model: "EQS AMG",
+    modelAliases: ["AMG EQS", "AMG EQS Sedan", "EQS"],
+    modelYears: [2024, 2024],
+    trim: ["AMG EQS", "AMG EQS 4MATIC+", "AMG EQS 53 4MATIC+"],
+    drive: "AWD",
+    wmi: ["W1K"],
+    battery: MB_EQS_PACK_1078,
+    range: { epaRangeMi: f(305, "mfr", "high", "MY2024 AMG EQS (EPA model string “AMG EQS 4matic Plus”), EPA", epa(47461)) },
+    charging: MB_EQS_CHG,
+    thermal: MB_HP_SED,
+    warranty: MB_EQS_W,
+    buyerNotes: [NOTE_MB_FUSE_24V115, NOTE_MB_BMS_24V372],
+  },
+
+  {
+    id: "eqs-2025-amg",
+    make: "MERCEDES-BENZ",
+    model: "EQS AMG",
+    modelAliases: ["AMG EQS", "AMG EQS Sedan", "EQS"],
+    modelYears: [2025, 2025],
+    trim: ["AMG EQS", "AMG EQS 4MATIC+", "AMG EQS 53 4MATIC+"],
+    drive: "AWD",
+    wmi: ["W1K"],
+    battery: MB_EQS_PACK_118,
+    range: { epaRangeMi: f(315, "mfr", "high", "MY2025 AMG EQS on the 118 kWh pack, EPA", epa(48386)) },
+    charging: MB_EQS_CHG,
+    thermal: MB_HP_SED,
+    warranty: MB_EQS_W,
+    buyerNotes: [NOTE_EQS_NEXTGEN],
+  },
+
+  // -------------------------------------------------------------------
+  // EQS SUV (4JG). Same badges as the sedan, different car: the MY2023 450+
+  // SUV is 305 mi against the sedan's 350, and the MY2026 450 4MATIC badge
+  // means 312 mi on this body against 367 on the sedan. Only the WMI tells
+  // them apart, which is why every row here carries it.
+  // -------------------------------------------------------------------
+  {
+    id: "eqs-suv-2023-450-plus",
+    make: "MERCEDES-BENZ",
+    model: "EQS SUV",
+    modelAliases: ["EQS", "EQS 450+", "EQS 450+ SUV"],
+    modelYears: [2023, 2023],
+    trim: "EQS 450+",
+    drive: "RWD",
+    wmi: ["4JG"],
+    battery: MB_EQS_PACK_1078,
+    range: { epaRangeMi: f(305, "mfr", "high", "MY2023 EQS 450+ SUV, EPA", epa(46011)) },
+    charging: MB_EQS_CHG,
+    thermal: MB_HP_EQS_SUV,
+    warranty: MB_EQS_W,
+    buyerNotes: [NOTE_MB_BMS_24V372, NOTE_MB_AVAS_25V366],
+  },
+
+  {
+    id: "eqs-suv-2024-450-plus",
+    make: "MERCEDES-BENZ",
+    model: "EQS SUV",
+    modelAliases: ["EQS", "EQS 450+", "EQS 450+ SUV"],
+    modelYears: [2024, 2024],
+    trim: "EQS 450+",
+    drive: "RWD",
+    wmi: ["4JG"],
+    battery: MB_EQS_PACK_1078,
+    range: { epaRangeMi: f(339, "mfr", "high", "MY2024 EQS 450+ SUV, EPA", epa(47847)) },
+    charging: MB_EQS_CHG,
+    thermal: MB_HP_EQS_SUV,
+    warranty: MB_EQS_W,
+    buyerNotes: [NOTE_MB_BMS_24V372, NOTE_MB_AVAS_25V366],
+  },
+
+  // The 450+ SUV's last year — EPA certifies no RWD EQS SUV for MY2026 or
+  // MY2027, so this row does not run past 2025.
+  {
+    id: "eqs-suv-2025-450-plus",
+    make: "MERCEDES-BENZ",
+    model: "EQS SUV",
+    modelAliases: ["EQS", "EQS 450+", "EQS 450+ SUV"],
+    modelYears: [2025, 2025],
+    trim: "EQS 450+",
+    drive: "RWD",
+    wmi: ["4JG"],
+    battery: MB_EQS_PACK_118,
+    range: { epaRangeMi: f(323, "mfr", "high", "MY2025 EQS 450+ SUV on the 118 kWh pack, EPA", epa(48392)) },
+    charging: MB_EQS_CHG,
+    thermal: MB_HP_EQS_SUV,
+    warranty: MB_EQS_W,
+    buyerNotes: [NOTE_MB_BMS_24V372, NOTE_MB_AVAS_25V366, NOTE_EQS_NEXTGEN],
+  },
+
+  {
+    id: "eqs-suv-2023-450-4matic",
+    make: "MERCEDES-BENZ",
+    model: "EQS SUV",
+    modelAliases: ["EQS", "EQS 450", "EQS 450 SUV"],
+    modelYears: [2023, 2023],
+    trim: ["EQS 450 4MATIC", "EQS450+ 4MATIC"],
+    drive: "AWD",
+    wmi: ["4JG"],
+    battery: MB_EQS_PACK_1078,
+    range: { epaRangeMi: f(285, "mfr", "high", "MY2023 EQS 450 4MATIC SUV, EPA", epa(46010)) },
+    charging: MB_EQS_CHG,
+    thermal: MB_HP_EQS_SUV,
+    warranty: MB_EQS_W,
+    buyerNotes: [NOTE_MB_BMS_24V372, NOTE_MB_AVAS_25V366],
+  },
+
+  {
+    id: "eqs-suv-2024-450-4matic",
+    make: "MERCEDES-BENZ",
+    model: "EQS SUV",
+    modelAliases: ["EQS", "EQS 450", "EQS 450 SUV"],
+    modelYears: [2024, 2024],
+    trim: ["EQS 450 4MATIC", "EQS450+ 4MATIC"],
+    drive: "AWD",
+    wmi: ["4JG"],
+    battery: MB_EQS_PACK_1078,
+    range: { epaRangeMi: f(330, "mfr", "high", "MY2024 EQS 450 4MATIC SUV, EPA", epa(47850)) },
+    charging: MB_EQS_CHG,
+    thermal: MB_HP_EQS_SUV,
+    warranty: MB_EQS_W,
+    buyerNotes: [NOTE_MB_BMS_24V372, NOTE_MB_AVAS_25V366],
+  },
+
+  // The rename row: sold as EQS 450 4MATIC SUV in MY2025, certified as
+  // EQS 400 4matic (SUV) from MY2026 — and Mercedes' own MY2026 VIN filings
+  // still read EQS450 4MATIC, so dealers write both. All three years carry
+  // the same 312-mi certification (48395 / 49688 / 50662).
+  {
+    id: "eqs-suv-2025-27-400-4matic",
+    make: "MERCEDES-BENZ",
+    model: "EQS SUV",
+    modelAliases: ["EQS", "EQS 400 SUV", "EQS 450 SUV", "EQS 400", "EQS 450"],
+    modelYears: [2025, 2027],
+    trim: ["EQS 450 4MATIC", "EQS 400 4MATIC", "EQS450+ 4MATIC"],
+    drive: "AWD",
+    wmi: ["4JG"],
+    battery: MB_EQS_PACK_118,
+    range: { epaRangeMi: f(312, "mfr", "high", "MY2025–2027 EQS 400 4MATIC SUV (sold as EQS 450 4MATIC SUV in MY2025) on the 118 kWh pack, EPA — ids 48395, 49688 and 50662 rate identically", epa(49688)) },
+    charging: MB_EQS_CHG,
+    thermal: MB_HP_EQS_SUV,
+    warranty: MB_EQS_W,
+    buyerNotes: [NOTE_EQS_NEXTGEN],
+  },
+
+  {
+    id: "eqs-suv-2023-580-4matic",
+    make: "MERCEDES-BENZ",
+    model: "EQS SUV",
+    modelAliases: ["EQS", "EQS 580", "EQS 580 SUV"],
+    modelYears: [2023, 2023],
+    trim: "EQS 580 4MATIC",
+    drive: "AWD",
+    wmi: ["4JG"],
+    battery: MB_EQS_PACK_1078,
+    range: { epaRangeMi: f(285, "mfr", "high", "MY2023 EQS 580 4MATIC SUV, EPA", epa(46012)) },
+    charging: MB_EQS_CHG,
+    thermal: MB_HP_EQS_SUV,
+    warranty: MB_EQS_W,
+    buyerNotes: [NOTE_MB_BMS_24V372, NOTE_MB_FUSE_TWO_ROUNDS, NOTE_MB_AVAS_25V366],
+  },
+
+  {
+    id: "eqs-suv-2024-580-4matic",
+    make: "MERCEDES-BENZ",
+    model: "EQS SUV",
+    modelAliases: ["EQS", "EQS 580", "EQS 580 SUV"],
+    modelYears: [2024, 2024],
+    trim: "EQS 580 4MATIC",
+    drive: "AWD",
+    wmi: ["4JG"],
+    battery: MB_EQS_PACK_1078,
+    range: { epaRangeMi: f(330, "mfr", "high", "MY2024 EQS 580 4MATIC SUV, EPA", epa(47851)) },
+    charging: MB_EQS_CHG,
+    thermal: MB_HP_EQS_SUV,
+    warranty: MB_EQS_W,
+    buyerNotes: [NOTE_MB_BMS_24V372, NOTE_MB_AVAS_25V366],
+  },
+
+  // The other half of the rename: EQS 580 4MATIC SUV in MY2025, certified as
+  // EQS 550 4matic (SUV) from MY2026, one 317-mi figure across all three
+  // years (48396 / 49689 / 50663). Bare "EQS 580" is deliberately NOT an
+  // alias here — the sedan wears that model string in the same years.
+  {
+    id: "eqs-suv-2025-27-550-4matic",
+    make: "MERCEDES-BENZ",
+    model: "EQS SUV",
+    modelAliases: ["EQS", "EQS 550 SUV", "EQS 580 SUV", "EQS 550"],
+    modelYears: [2025, 2027],
+    trim: ["EQS 580 4MATIC", "EQS 550 4MATIC"],
+    drive: "AWD",
+    wmi: ["4JG"],
+    battery: MB_EQS_PACK_118,
+    range: { epaRangeMi: f(317, "mfr", "high", "MY2025–2027 EQS 550 4MATIC SUV (sold as EQS 580 4MATIC SUV in MY2025) on the 118 kWh pack, EPA — ids 48396, 49689 and 50663 rate identically", epa(49689)) },
+    charging: MB_EQS_CHG,
+    thermal: MB_HP_EQS_SUV,
+    warranty: MB_EQS_W,
+    buyerNotes: [NOTE_EQS_NEXTGEN],
+  },
+
+  // Mercedes-Maybach EQS 680 SUV. MY2024 carries TWO certifications, 280 mi
+  // and 321 mi (ids 47465 and 47852), and nothing in the VIN, the listing or
+  // EPA's own record says which configuration a given car is. Printing
+  // either would be picking one; printing the lower would be the "quote the
+  // lowest" rule this project ratified and then reversed the same day. The
+  // buyer note names both and says what settles it.
+  {
+    id: "eqs-suv-2024-maybach-680",
+    abstains: {
+      epaRangeMi:
+        "EPA carries two MY2024 certifications for this vehicle, 280 mi and 321 mi (ids 47465 and 47852), and no VIN position, listing field or EPA record distinguishes the two configurations — both figures are in the buyer note instead",
+    },
+    make: "MERCEDES-BENZ",
+    model: "EQS SUV",
+    modelAliases: ["EQS", "Maybach EQS SUV", "Mercedes-Maybach EQS", "Mercedes-Maybach EQS SUV"],
+    modelYears: [2024, 2024],
+    trim: ["Mercedes-Maybach EQS 680", "Maybach EQS680 4MATIC", "EQS680 4MATIC"],
+    drive: "AWD",
+    wmi: ["4JG"],
+    battery: MB_EQS_PACK_1078,
+    charging: MB_EQS_CHG,
+    thermal: MB_HP_EQS_SUV,
+    warranty: MB_EQS_W,
+    buyerNotes: [
+      {
+        headline: "Two different EPA ratings exist for this model year, 280 mi and 321 mi",
+        body: "EPA holds two MY2024 Maybach EQS 680 SUV certifications, 280 mi (id 47465) and 321 mi (id 47852). Nothing in the VIN or a dealer listing says which one a given car is; the window sticker or the door-jamb EPA label names the figure this car was actually rated at.",
+        severity: "warning",
+      },
+      NOTE_MB_BMS_24V372,
+    ],
+  },
+
+  {
+    id: "eqs-suv-2025-maybach-680",
+    make: "MERCEDES-BENZ",
+    model: "EQS SUV",
+    modelAliases: ["EQS", "Maybach EQS SUV", "Mercedes-Maybach EQS", "Mercedes-Maybach EQS SUV"],
+    modelYears: [2025, 2025],
+    trim: ["Mercedes-Maybach EQS 680", "Maybach EQS680 4MATIC", "EQS680 4MATIC"],
+    drive: "AWD",
+    wmi: ["4JG"],
+    battery: MB_EQS_PACK_118,
+    range: { epaRangeMi: f(302, "mfr", "high", "MY2025 Maybach EQS 680 SUV, EPA — one certification this year, unlike MY2024's two", epa(48397)) },
+    charging: MB_EQS_CHG,
+    thermal: MB_HP_EQS_SUV,
+    warranty: MB_EQS_W,
+    buyerNotes: [NOTE_MB_BMS_24V372, NOTE_EQS_NEXTGEN],
   },
 
   // ---------------------------------------------------------------------

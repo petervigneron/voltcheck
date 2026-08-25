@@ -808,34 +808,65 @@ jobs:
       # matching row stopped matching) and the ratchet baseline needs
       # attention, not that tonight's data refresh is bad.
       #
-      # --max-groups was deliberately UNSET until 2026-08-22: the script's own
-      # baseline had never been calibrated against a healthy feed, because its
-      # first run landed mid-db-sync and read a half-written database, so it
-      # defaulted to a number high enough to never fail rather than ship a
-      # baseline measured against corrupted data. Calibrated now, against a
-      # feed verified healthy the honest way — a full 232-page walk returning
-      # 100,717 rows in 30.8s with zero failed pages, run from outside the
-      # site, plus six shards summing to the same total as /api/index/first.
+      # THE RATCHET CONTRACT (rewritten 2026-08-25 — see
+      # web/scripts/live-enrichment-gap.mjs's header for the full reasoning):
+      # TWO asserts, PRIMARY and SECONDARY, because the group-count assert
+      # alone has a blind spot a shopper would notice and this check
+      # wouldn't. A "new gap group" only appears when a make+model with ZERO
+      # prior listings gets its first one, or a row stops matching — so
+      # filling a 1,653-listing cohort and filling a 38-listing cohort each
+      # move the group count by exactly 1. A feed that's 90% covered but has
+      # one huge uncovered segment can report the SAME group count as a
+      # well-covered one; the count can't see which fix mattered more.
       #
-      # 491 groups, 19,531 of 100,728 live listings (19.4%) with no enrichment
-      # row at all. That is a large backlog and pinning it is not an
-      # endorsement of it: the point is that a NEW uncovered model now fails
-      # instead of adding one more line to a warning nobody reads. Ratchet it
-      # DOWN as rows land; never up to hide a regression. The biggest groups
-      # today are Lucid Gravity (1,592 across MY2026-27), Audi Q6/SQ6 e-tron,
-      # Mercedes CLA, Subaru Trailseeker and Jeep Recon — EPA has published
-      # records for all of those, so they are research gaps, not data gaps.
-      # The genuine data gaps are MY2027 Toyota bZ (not yet certified) and the
-      # GVWR-exempt trucks, which have no EPA rating to find.
+      #   PRIMARY   --max-gap-share: the share of live listings with NO
+      #             enrichment row at all, weighted by listings (what a
+      #             shopper actually hits), not by distinct models. This is
+      #             the number that fails the job on its own.
+      #   SECONDARY --max-groups: the original ratchet, unchanged in
+      #             mechanism, kept as a second tripwire for a wholly new
+      #             model going live with zero coverage even when the feed's
+      #             overall share barely moves.
+      # Either one tripping fails the build; the step log names which.
+      #
+      # BOTH baselines calibrated together 2026-08-25, replacing the
+      # 2026-08-22 group-only baseline (491 groups, 19,531 of 100,728 live
+      # listings (19.4%) with no row, from a verified-healthy full walk).
+      # Coverage work since then grew the enrichment corpus faster than the
+      # feed grew: today's measurement is 12.4% of live listings (16,802 of
+      # them) with no enrichment row, 311 distinct gap groups — down from
+      # 19.4% despite the feed growing ~35%. --max-groups stays at 491
+      # (unchanged, still comfortably above today's 311 — recalibrating it is
+      # a separate exercise from today's share-ratchet fix).
+      #
+      # HOW today's number was measured, because it wasn't a clean single
+      # run: shards 12-23 of /api/index/* (half the CDN-cached browse feed)
+      # were serving cached 500s for the ~2h this was being measured — a live
+      # incident discovered while doing this work, matching the exact
+      # "sick database, no previous cache entry to fall back on" failure mode
+      # this file's Supabase-health section describes; shards 0-11 stayed
+      # healthy throughout. 12.4% is a direct measurement from those 12
+      # healthy shards (a random ~50% hash sample per the shard-assignment
+      # scheme in app/api/index/[shard]/route.ts, 67,990 listings, tight
+      # enough that sampling noise is well under 0.5 points) — then verified
+      # by replaying those same real shard bytes through the unmodified,
+      # committed script end-to-end (doubled across all 24 slots via
+      # --feed-base) and confirming it reproduces the identical 12.4%. The
+      # live incident itself is a separate, outstanding problem — flagged
+      # for the owner, not fixed here — and doesn't call this number's
+      # accuracy into question, only its completeness margin (a clean
+      # 24-shard read would tighten, not overturn, ±0.5 points either way).
+      # Ratchet DOWN as rows land; never up to hide a regression.
       - name: Audit live listings against the enrichment corpus
         if: always()
         working-directory: web
         run: |
           rc=0
           node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs \
-            scripts/live-enrichment-gap.mjs --out /tmp/live-enrichment-gap.json --top 60 --max-groups 491 || rc=$?
+            scripts/live-enrichment-gap.mjs --out /tmp/live-enrichment-gap.json --top 60 \
+            --max-gap-share 12.4 --max-groups 491 || rc=$?
           if [ "$rc" -eq 10 ]; then
-            echo "::error::Live inventory grew a make/model the enrichment corpus doesn't cover (or a row stopped matching) — above the 491-group baseline pinned 2026-08-22. See the step log's ranked list and /tmp/live-enrichment-gap.json."
+            echo "::error::Live enrichment coverage regressed — either the no-enrichment-row share exceeded the 12.4% ceiling pinned 2026-08-25, or a new make/model gap group pushed past the 491-group baseline (a model went live with no enrichment, or a row stopped matching). See the step log's ranked list, its top-10-by-listing-count on a share failure, and /tmp/live-enrichment-gap.json."
             exit 10
           elif [ "$rc" -ne 0 ]; then exit "$rc"; fi
       - uses: actions/upload-artifact@v4

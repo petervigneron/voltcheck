@@ -2,9 +2,12 @@ import type { MetadataRoute } from "next";
 import { BASE, shardUrls } from "@/lib/sitemap";
 
 // Tells crawlers what to index and where the sitemaps are. Everything public is
-// crawlable; the two disallowed paths are per-user or token surfaces with no
+// crawlable; the disallowed paths are per-user or token surfaces with no
 // index value — /saved is a client-only local list, /alerts/* are one-shot
-// email-token pages. /api is left crawlable on purpose: Googlebot fetches
+// email-token pages, /pro/access carries a pass token and /pro/thanks is a
+// purchase dead end that would read as a confirmation to anyone who found it
+// in search results. /pro itself IS crawlable: it is where the free-forever
+// promise is published. /api is left crawlable on purpose: Googlebot fetches
 // /api/index/* when it renders the client browse grid.
 //
 // The listing sitemap is sharded (50k-URL cap), so this lists the index plus
@@ -22,7 +25,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/saved", "/alerts/"],
+      disallow: ["/saved", "/alerts/", "/pro/access", "/pro/thanks"],
     },
     sitemap: [`${BASE}/sitemap.xml`, ...shardUrls()],
     host: BASE,

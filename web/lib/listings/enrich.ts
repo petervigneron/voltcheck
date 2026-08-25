@@ -57,7 +57,7 @@ export function displayTrim(l: Listing): string | undefined {
 // Body-style noise appended to real trims ("Long Range Sport Utility 4D",
 // "Performance Sedan 4D") — stripped, not treated as identity. Whole phrases
 // only: "Sport S" and the like must survive.
-const BODY_NOISE = /\b(sports?\s*activity\s*vehicle|sport\s*utility|sedan|sdn|hatchback|gran\s*coupe|coupe|gc|4dr|4d|2d)\b/gi;
+const BODY_NOISE = /\b(sports?\s*activity\s*vehicle|sport\s*utility|sedan|sdn|hatchback|gran\s*coupe|coupe|gc|4dr|4d|2d|[24]-door|mid-?size\s*passenger(\s*car)?|small\s*wagon|passenger\s*car)\b/gi;
 
 // Dealer trim strings restate things that aren't the trim: the model name,
 // the drivetrain spelled out, "Dual Motor". Canonicalize before matching so
@@ -67,9 +67,24 @@ function cleanTrim(l: Listing): string | undefined {
   const rawTrim = renamedTrim(l);
   if (!rawTrim) return undefined;
   const mk = l.make.trim().toUpperCase();
-  const makerNoise = mk === "RIVIAN" ? RIVIAN_TIERS : mk === "PORSCHE" ? PORSCHE_NOISE : null;
+  const makerNoise =
+    mk === "RIVIAN" ? RIVIAN_TIERS
+    : mk === "PORSCHE" ? PORSCHE_NOISE
+    : mk === "AUDI" ? AUDI_NOISE
+    : mk === "SUBARU" || mk === "LEXUS" ? SERIES_NOISE
+    : mk === "LUCID" ? LUCID_NOISE
+    : null;
   // Feeds leak HTML entities ("S&#x2B;" for "S+").
   let t = rawTrim.replace(/&#x2b;|&#43;|&plus;/gi, "+").replace(/[()]/g, " ").replace(/\s+/g, " ").trim();
+  // Pipes separate feed fields, not trim words ("50 PREMIUM PLUS QUATTRO AWD
+  // | CONV", "Model 3 | Long range | RWD"). The trim is the first segment
+  // that isn't just the model name restated; later segments are options.
+  if (t.includes("|")) {
+    const modelLc = l.model.trim().toLowerCase();
+    const segs = t.split("|").map((s) => s.trim()).filter(Boolean);
+    t = segs.find((s) => s.toLowerCase() !== modelLc) ?? "";
+    if (!t) return undefined;
+  }
   // "S/S+"-style compounds whose halves normalize identically are one trim.
   const parts = t.split("/").map((p) => p.trim());
   if (parts.length > 1 && parts.every((p) => p.replace(/[^A-Za-z0-9]/g, "").toUpperCase() === parts[0].replace(/[^A-Za-z0-9]/g, "").toUpperCase())) {
@@ -108,6 +123,18 @@ const RIVIAN_TIERS = /\b(adventure package|adventure|launch edition|ascend|premi
 // Porsche feeds leak the internal type code ("Type Y1A") and package suffixes
 // where the trim belongs.
 const PORSCHE_NOISE = /\b(type\s*y1a|y1a|w\/?\s*premium\s*(&\s*tech\s*)?package)\b/gi;
+// Audi restates the sub-brand and drivetrain inside the trim ("50 e-tron
+// quattro Premium Plus") — neither token is trim identity; the number and
+// tier are. quattro-the-drivetrain is already carried by the drive field.
+const AUDI_NOISE = /\b(e-?tron|quattro)\b/gi;
+// Toyota-group feeds label cars "15 Series"/"21 Series" (option-package
+// coding, seen on Solterra and the Lexus ES/RZ) — not trim names. Stripped
+// so those cars resolve on drive/other keys or present honest candidates.
+const SERIES_NOISE = /\b\d{2}\s*series\b/gi;
+// Lucid feeds append option packages to the trim ("Grand Touring AWD Dream
+// Drive Pro") — DreamDrive is ADAS, Glass Canopy a roof; neither is trim
+// identity, and left in place they break the Grand-Touring exact match.
+const LUCID_NOISE = /\b(dream\s*drive(\s*pro)?|glass\s*canopy)\b/gi;
 
 // Feed placeholders and non-trims: the fuel type, a bare door count, "NA".
 const TRIM_JUNK = /^(n\/?a|none|other|unknown|electric|ev|4dr|2dr)$/i;
