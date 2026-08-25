@@ -187,6 +187,40 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       },
     ],
   },
+  // batch3
+  {
+    make: "hyundai",
+    model: "ioniq-6",
+    topic: "charging",
+    contentFile: "ioniq6-charging",
+    pageTitle: "Hyundai Ioniq 6 charging: DC speed, CCS port, NACS adapter, preconditioning | Voltcheck",
+    description:
+      "How fast the Hyundai Ioniq 6 charges, why it needs a NACS adapter for a Supercharger, and how its battery conditioning mode works. Sourced to Hyundai's own spec sheets and owner's manuals.",
+    breadcrumbLabel: "Hyundai Ioniq 6 charging",
+    dateModified: "2026-08-25",
+    faq: [
+      {
+        question: "How fast does the Hyundai Ioniq 6 charge on a DC fast charger?",
+        answer:
+          "Hyundai's spec sheets for model years 2023, 2024, and 2025 carry identical figures. The RWD Standard Range (53.0 kWh) reaches up to 80% charge in 58 minutes on a 50 kW charger and 18 minutes on the charger Hyundai labels \"Rapid Charging: 350kw.\" The RWD and AWD (77.4 kWh) take 73 minutes and 18 minutes respectively. Every Ioniq 6 is standard-equipped with what Hyundai calls \"Ultra-Fast Charger (up to 800V / 350 kW).\"",
+      },
+      {
+        question: "Does the Hyundai Ioniq 6 have a native NACS port?",
+        answer:
+          "No. Model years 2023 through 2025 ship with a Combined Charging System (CCS) port. Hyundai names the Ioniq 6 among the models \"equipped with a Combined Charging System (CCS) port\" that reach Tesla Superchargers using an adapter, and lists only \"the 2025 IONIQ 5, upcoming 2026 IONIQ 9, and future EVs\" as getting native NACS ports. A Hyundai CCS-to-NACS adapter was free to owners who bought on or before January 31, 2025; after that, MSRP is $250 with the dealer setting the selling price.",
+      },
+      {
+        question: "How long does the Hyundai Ioniq 6 take to charge at home?",
+        answer:
+          "The onboard AC charger is 10.9 kW, standard on every trim. AC Level II charge time to 80% is 5 hours 20 minutes on the 53.0 kWh Standard Range pack and 6 hours 55 minutes on the 77.4 kWh pack, identical for model years 2023 through 2025.",
+      },
+      {
+        question: "Does the Hyundai Ioniq 6 precondition its battery before fast charging?",
+        answer:
+          "The battery heater is standard on every Ioniq 6, and battery conditioning is a driver-selected mode reached through EV Settings on the infotainment screen. Setting a DC charging station as the navigation destination optimizes battery temperature only while that mode is already switched on. The mode also engages on its own if the battery temperature is low during driving or when the scheduled air conditioner/heater is activated, and will not engage when the battery level is too low.",
+      },
+    ],
+  },
 ];
 
 export function findFactSheet(make: string, model: string, topic: string): FactSheetEntry | undefined {
