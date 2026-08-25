@@ -4,6 +4,7 @@
 
 - Ford's order guide states the same DC figure in every model year from 2021 through 2025: "DC Charging: Up to 150kW capability."[^1][^2][^3][^4][^5]
 - Ford does not publish a separate DC rate for the Standard Range pack in any of those five order guides. One figure covers the car. No Standard Range figure is claimed here, because no Ford document opened for this sheet states one.
+- That line sits in the Select trim's standard-equipment list, and the higher trims inherit it: Ford's Premium page opens "ALL SELECT SERIES EQUIPMENT PLUS:" and adds to it rather than restating it.[^4]
 - Battery, in Ford's own usable-capacity wording, by model year:
   - 2021: 68 kWh Standard Range, 88 kWh Extended Range.[^1]
   - 2022: 70 kWh Standard Range, 91 kWh Extended Range.[^2]
@@ -46,7 +47,7 @@
 
 [^3]: Ford, *2023 Mustang Mach-E Order Guide* (PDF, dated 01/02/23, 18 pages), p. 4, "SELECT / STANDARD EQUIPMENT," Charge Capability and Power Cord blocks. Mirror: https://dealerimages.dealereprocess.com/image/upload/v1680045275/1/ford/PDFs/2023_Mustang_Mach-E_Order_Guide.pdf
 
-[^4]: Ford, *2024 Mustang Mach-E Order Guide* (PDF, dated 11/02/23, 12 pages), p. 3, "SELECT / STANDARD EQUIPMENT," Charge Capability block; battery capacities from p. 1. Mirror: https://dealerimages.dealereprocess.com/image/upload/v1700240772/2024_Mustang_Mach-E_r5kzox.pdf
+[^4]: Ford, *2024 Mustang Mach-E Order Guide* (PDF, dated 11/02/23, 12 pages), p. 3, "SELECT / STANDARD EQUIPMENT," Charge Capability block; battery capacities from p. 1; the "ALL SELECT SERIES EQUIPMENT PLUS:" line on p. 6, "PREMIUM / STANDARD EQUIPMENT." Mirror: https://dealerimages.dealereprocess.com/image/upload/v1700240772/2024_Mustang_Mach-E_r5kzox.pdf
 
 [^5]: Ford, *2025 Mustang Mach-E Order Guide* (PDF, dated 10/22/24, 18 pages), p. 4, "SELECT / STANDARD EQUIPMENT," Charge Capability block. Mirror: https://mustangattitude.com/25MustangMachEOrderGuide.pdf. A later 04/28/25 revision of the same guide exists on Ford's own host and is cited on Voltcheck's Mach-E heat-pump sheet; the charging lines quoted here are from the 10/22/24 revision.
 
