@@ -44,9 +44,9 @@
 
 [^1]: Ford, *2021 Mustang Mach-E Order Guide* (PDF, dated 04/26/21, 19 pages), p. 4, "SELECT / STANDARD EQUIPMENT," Charge Capability and Charge Cord blocks; battery capacities from p. 1; the "ALL SELECT SERIES EQUIPMENT PLUS:" lines on pp. 7, 9 and 12. Mirror: https://mustangattitude.com/21MustangMachEOrderGuide.pdf — downloaded and read as rendered pages.
 
-[^2]: Ford, *2022 Mustang Mach-E Order Guide* (PDF, dated 09/29/21, 18 pages), p. 4, "SELECT / STANDARD EQUIPMENT," Charge Capability block. Mirror: https://cdn.motor1.com/pdf-files/2022-mustang-mach-e-order-guide.pdf
+[^2]: Ford, *2022 Mustang Mach-E Order Guide* (PDF, dated 09/29/21, 18 pages), p. 4, "SELECT / STANDARD EQUIPMENT," Charge Capability block; battery capacities from p. 1; the "ALL SELECT SERIES EQUIPMENT PLUS:" lines on pp. 6, 8 and 11. Every page of this guide carries the same 09/29/21 header date. Mirror: https://cdn.motor1.com/pdf-files/2022-mustang-mach-e-order-guide.pdf
 
-[^3]: Ford, *2023 Mustang Mach-E Order Guide* (PDF, dated 01/02/23, 18 pages), p. 4, "SELECT / STANDARD EQUIPMENT," Charge Capability and Power Cord blocks. Mirror: https://dealerimages.dealereprocess.com/image/upload/v1680045275/1/ford/PDFs/2023_Mustang_Mach-E_Order_Guide.pdf
+[^3]: Ford, *2023 Mustang Mach-E Order Guide* (PDF, dated 01/02/23, 18 pages), p. 4, "SELECT / STANDARD EQUIPMENT," Charge Capability and Power Cord blocks; battery capacities from p. 1; the "ALL SELECT SERIES EQUIPMENT PLUS:" lines on pp. 6, 8 and 11. Ford revised this guide in place and its pages do not all carry the same header date: pp. 1 and 4 are headed 01/02/23, while pp. 6, 8 and 11 are headed 08/25/22. Both belong to the 2023 guide; a reader landing on a series page should not read the older date as the wrong document. Mirror: https://dealerimages.dealereprocess.com/image/upload/v1680045275/1/ford/PDFs/2023_Mustang_Mach-E_Order_Guide.pdf
 
 [^4]: Ford, *2024 Mustang Mach-E Order Guide* (PDF, dated 11/02/23, 12 pages), p. 3, "SELECT / STANDARD EQUIPMENT," Charge Capability block; battery capacities from p. 1; the "ALL SELECT SERIES EQUIPMENT PLUS:" line on p. 6, "PREMIUM / STANDARD EQUIPMENT." Mirror: https://dealerimages.dealereprocess.com/image/upload/v1700240772/2024_Mustang_Mach-E_r5kzox.pdf
 
@@ -62,7 +62,7 @@
 
 [^10]: Ford, "Mastering the Mustang Mach-E Charge: Maximize Range & Minimize Charging Time," Ford EV News, September 23, 2025. https://www.ford.com/electric/ev-news/ev-expertise/mme-charge/. Ford labels both home-charging figures estimates.
 
-[^11]: Ford, *2025 Mustang Mach-E Order Guide*, 04/28/25 revision (PDF, 19 pages), p. 1, "MAJOR PRODUCT CHANGES — SERIES/EQUIPMENT GROUP AVAILABILITY / Series Line Up." Ford's own host, fromtheroad.ford.com, timed out for this file; retrieved from the Internet Archive's capture of Ford's URL, https://web.archive.org/web/20251206151250if_/https://www.fromtheroad.ford.com/content/dam/fordmediasite/us/en/library/2025/order-guides/2025_Mustang_Mach-E_Order_Guide.pdf, and read as a rendered page.
+[^11]: Ford, *2025 Mustang Mach-E Order Guide*, 04/28/25 revision (PDF, 19 pages), p. 1, "MAJOR PRODUCT CHANGES — SERIES/EQUIPMENT GROUP AVAILABILITY / Series Line Up." Ford's own host, fromtheroad.ford.com, timed out for this file; retrieved from the Internet Archive's capture of Ford's URL, https://web.archive.org/web/20251206151250if_/https://www.fromtheroad.ford.com/content/dam/fordmediasite/us/en/library/2025/order-guides/2025_Mustang_Mach-E_Order_Guide.pdf, and read as a rendered page. Every page of this revision is headed 04/28/25. Its pagination differs from the 10/22/24 revision cited as footnote 5: the "ALL SELECT SERIES EQUIPMENT PLUS:" lines sit on pp. 7 and 11 here, against pp. 7 and 10 there. The page numbers quoted for 2025 in the body are the 10/22/24 revision's, which is the revision that citation is anchored to.
 
 ## Scope note
 
