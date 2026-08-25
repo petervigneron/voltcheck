@@ -312,14 +312,14 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     contentFile: "leaf-heat-pump",
     pageTitle: "Nissan Leaf heat pump by year: hybrid heater system, trim by trim | Voltcheck",
     description:
-      "Which Nissan Leaf model years and trims get the Hybrid heater system, and which year Nissan actually says \"heat pump.\" Sourced to Nissan's own brochures and press release.",
+      "Which Nissan Leaf model years and trims get the Hybrid heater system, and which year Nissan actually says \"heat pump.\" On the 2026 Leaf it is standard on SV+ and Platinum+ and not offered on S+. Sourced to Nissan's own brochures and press kit.",
     breadcrumbLabel: "Nissan Leaf heat pump",
     dateModified: "2026-08-25",
     faq: [
       {
         question: "Does the Nissan Leaf have a heat pump?",
         answer:
-          "Nissan's US brochures for the 2018 through 2025 Leaf never use the words \"heat pump.\" They list a row called \"Hybrid heater system\" instead, given per trim, and no Nissan document cited here says what that system contains. The 2026 Leaf is different: Nissan's own words are \"LEAF has a standard, energy-efficient heat pump to help warm the cabin.\"",
+          "Nissan's US brochures for the 2018 through 2025 Leaf never use the words \"heat pump.\" They list a row called \"Hybrid heater system\" instead, given per trim, and no Nissan document from those years says what that system contains. The 2026 Leaf is a new generation and Nissan treats it differently: its press release says \"LEAF has a standard, energy-efficient heat pump to help warm the cabin,\" and its press-kit specification grid heads the row \"Hybrid heater system (heat pump),\" glossing the term. That gloss is Nissan's, for the 2026 car. Nissan does not say whether it also describes the 2018-2025 hardware, so this page does not carry it back.",
       },
       {
         question: "Which Nissan Leaf trims have the Hybrid heater system?",
@@ -329,7 +329,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       {
         question: "Does the 2026 Nissan Leaf have a heat pump?",
         answer:
-          "Yes, standard on every trim. Nissan also describes a separate optional battery heater on that car, which the driver can engage to warm the battery before charging in cold weather, and says the 2026 Leaf captures waste heat from the drive motor and the on-board charger and re-purposes it to warm the battery.",
+          "On two of its three trims. Nissan's own 2026 LEAF Press Kit specification grid gives the row \"Hybrid heater system (heat pump)\" an \"S\" for standard on SV+ and PLATINUM+, and a dash on the base S+ — and Nissan's legend for that grid defines only \"S – Standard\" and \"O – Optional,\" so a dash is neither. It is not in the press kit's factory-installed options either, so an S+ buyer cannot add it. Nissan's press release separately calls the heat pump \"standard\" without naming a trim; the per-trim grid is what this answer follows. The battery heater is separate: the grid marks it optional on SV+ and PLATINUM+ and not offered on S+, and the press kit prices it at $300. Nissan also says the 2026 Leaf captures waste heat from the drive motor and the on-board charger and re-purposes it to warm the battery.",
       },
     ],
   },
