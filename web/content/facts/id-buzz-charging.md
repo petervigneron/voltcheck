@@ -4,7 +4,7 @@
 
 - Peak DC rate: 200 kW, standard on every trim — Pro S, Pro S Plus RWD, Pro S Plus 4Motion, 1st Edition RWD, 1st Edition 4Motion. Volkswagen's order-guide line: "200 kW DC fast charging capability - requires compatible public charging station."[^1]
 - Time to charge 10% to 80%: about 26 minutes. Volkswagen's words: "The 91-kWh battery can be charged at a rate of up to 200 kW at DC fast-charging stations, allowing for 10 to 80 percent charging in about 26 minutes."[^2]
-- Battery: 91 kWh, standard on every trim, with 13 cell modules. Volkswagen's order guide calls it "91 kWh Lithium-Ion" and its press kit "a 91-kWh battery"; neither says whether that figure is gross or usable, so this page does not either.[^1][^2]
+- Battery: 91 kWh gross, standard on every trim, with 13 cell modules. Volkswagen prints the qualifier itself on the order guide's equipment chart: "91 kWh (gross) lithium-ion battery pack w/ Performance Drive Unit." The press kit's "a 91-kWh battery" is the same pack with the word left off.[^1][^2]
 
 ## Preconditioning
 
@@ -42,7 +42,7 @@
 
 ## Footnotes
 
-[^1]: Volkswagen, *2025 Volkswagen ID. Buzz Order Guide* (PDF, Volkswagen of America letterhead, created 08/22/2024, 5 pages), p. 5, "Available Features part 2 of 2"; trim list on p. 1; the accessory charging cable on p. 3. Mirror: https://volkswagenorderguides.com/wp-content/uploads/2024/09/2025_Volkswagen_ID.Buzz_Order_Guide.pdf
+[^1]: Volkswagen, *2025 Volkswagen ID. Buzz Order Guide* (PDF, Volkswagen of America letterhead, created 08/22/2024, 5 pages), p. 5, "Available Features part 2 of 2", for the 200 kW DC and 11 kW AC rows; the battery row, "91 kWh (gross) lithium-ion battery pack w/ Performance Drive Unit," is on p. 4, "Available Features part 1 of 2," under Performance, marked standard on all five trims; trim list on p. 1; the accessory charging cable on p. 3. Mirror: https://volkswagenorderguides.com/wp-content/uploads/2024/09/2025_Volkswagen_ID.Buzz_Order_Guide.pdf
 
 [^2]: Volkswagen, *2025 ID. Buzz Press Kit*, headline specifications, the battery and charging section, the charging-plan section, and the plan's own disclosure text. https://media.vw.com/press-kits/2025-id-buzz-press-kit. media.vw.com renders its text in the browser only; this page was read in a browser session, not by a plain HTTP fetch.
 
