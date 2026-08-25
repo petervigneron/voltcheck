@@ -33,6 +33,7 @@
 import { classifyEv } from "../ev.mjs";
 import { politeGetJson } from "../http.mjs";
 import { TV_SELLING } from "../price-provenance.mjs";
+import { text } from "../normalize.mjs";
 
 const API = "https://websites.api.teamvelocityportal.com/tvm-services/inventory/vehicles";
 const API_LIMIT = 200;
@@ -151,7 +152,9 @@ export async function countTeamVelocityApi(ids) {
 
 function grabVar(html, name) {
   const m = html.match(new RegExp(`var\\s+${name}\\s*=\\s*["']([^"']*)["']`));
-  return m && m[1] !== "" ? m[1] : undefined;
+  // text() also drops placeholder literals ("null", "N/A", "-") the
+  // server renders into these vars when a field is missing.
+  return m ? text(m[1]) : undefined;
 }
 
 export function extractTeamVelocity(html) {

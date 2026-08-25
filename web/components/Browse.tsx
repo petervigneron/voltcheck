@@ -21,15 +21,6 @@ const CELL = "border-r-[3px] border-b-[3px] border-ink";
 // one-click search. Deep inventory is the popularity signal we actually have.
 const BAND_GROUNDS = ["bg-saffron", "bg-putty", "bg-putty", "bg-teal text-paper"];
 
-// Some feeds repeat the make inside the model ("Ford" / "Ford F-150
-// Lightning"), which would read as two models and cost those cars their spec
-// rail. Only the grouping is normalized here — the stored model is untouched.
-const modelKey = (r: CardRow) => {
-  const make = r.make.toLowerCase();
-  const model = r.model.toLowerCase();
-  return `${make} ${model.startsWith(`${make} `) ? model.slice(make.length + 1) : model}`;
-};
-
 // The inventory index hook lives in lib/listings/useCardIndex.ts — /saved
 // reads the same module-level cache, so the two pages share one download.
 
@@ -324,7 +315,9 @@ export function Browse() {
 
     const byModel = new Map<string, CardRow[]>();
     for (const r of base) {
-      const k = modelKey(r);
+      // Case-insensitive, same as the tally above: feeds disagree on casing
+      // ("MODEL 3" / "Model 3") and one model's cars belong in one group.
+      const k = `${r.make} ${r.model}`.toLowerCase();
       const group = byModel.get(k);
       if (group) group.push(r);
       else byModel.set(k, [r]);

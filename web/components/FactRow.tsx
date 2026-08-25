@@ -86,6 +86,7 @@ export function FactRow({
   fact,
   format,
   title,
+  hint,
 }: {
   label: string;
   fact?: Fact<unknown>;
@@ -93,6 +94,13 @@ export function FactRow({
   /** Working shown only on hover. For rows whose value is already the whole
    *  answer, where a note underneath would restate it in more words. */
   title?: string;
+  // Richer explanatory content revealed when the shopper hovers or focuses the
+  // value — unlike `title` above (plain text, the browser's native tooltip),
+  // this can carry structured markup (a heading, a pros/cons list). When set,
+  // the value gets a dotted underline to signal there's more to read; a
+  // CSS-only popover keeps this a server component and works from the
+  // keyboard (focus) and touch (tap) as well as the mouse.
+  hint?: React.ReactNode;
 }) {
   // No fact means no research has settled this for this car — that is
   // silence, not a value, so the row itself doesn't exist. This is distinct
@@ -108,6 +116,7 @@ export function FactRow({
   if (!fact) return null;
 
   const note = inlineNote(fact.note);
+  const valueText = format ? format(fact.value) : String(fact.value);
   return (
     <div
       title={title ?? (fact.note && !note ? fact.note : undefined)}
@@ -115,9 +124,24 @@ export function FactRow({
     >
       <div className="text-sm text-zinc-500 dark:text-zinc-400">{label}</div>
       <div className="text-right">
-        <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
-          {format ? format(fact.value) : String(fact.value)}
-        </span>{" "}
+        {hint ? (
+          <span className="group relative inline-block">
+            <span
+              tabIndex={0}
+              className="cursor-help border-b border-dotted border-zinc-400 text-sm font-medium text-zinc-900 outline-none focus-visible:border-solid focus-visible:border-zinc-600 dark:border-zinc-500 dark:text-zinc-100"
+            >
+              {valueText}
+            </span>
+            <span
+              role="tooltip"
+              className="pointer-events-none absolute right-0 top-full z-20 mt-2 w-64 rounded-lg border border-zinc-200 bg-white p-3 text-left text-xs leading-relaxed text-zinc-600 opacity-0 shadow-lg transition-opacity duration-150 group-hover:opacity-100 group-focus-within:opacity-100 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300"
+            >
+              {hint}
+            </span>
+          </span>
+        ) : (
+          <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100">{valueText}</span>
+        )}{" "}
         <SourceBadge fact={fact} />
         {fact.sourceUrl && <Citation fact={fact} />}
         {note && <div className="mt-0.5 max-w-xs text-xs text-zinc-500 dark:text-zinc-400">{note}</div>}
