@@ -6,9 +6,10 @@ import { RESEARCH_ROWS_4 } from "./data4";
 import { RESEARCH_ROWS_5 } from "./data5";
 import { RESEARCH_ROWS_6 } from "./data6";
 import { RESEARCH_ROWS_9 } from "./data9";
+import { RESEARCH_ROWS_11 } from "./data11";
 import { applyBackfill } from "./backfill";
 
-const ALL_ROWS = [...ENRICHMENT_ROWS, ...RESEARCH_ROWS, ...RESEARCH_ROWS_3, ...RESEARCH_ROWS_4, ...RESEARCH_ROWS_5, ...RESEARCH_ROWS_6, ...RESEARCH_ROWS_9];
+const ALL_ROWS = [...ENRICHMENT_ROWS, ...RESEARCH_ROWS, ...RESEARCH_ROWS_3, ...RESEARCH_ROWS_4, ...RESEARCH_ROWS_5, ...RESEARCH_ROWS_6, ...RESEARCH_ROWS_9, ...RESEARCH_ROWS_11];
 
 const norm = (s?: string) => (s ?? "").toUpperCase().replace(/[^A-Z0-9]/g, "");
 
@@ -83,7 +84,20 @@ export function trimMatches(rowTrim: string | string[] | undefined, decodedTrim:
 // REPORT_MODEL_MAKE_FOLD (which only relabels a chart bucket after every
 // match verdict is already decided); add another row here only when a
 // specific vehicle is confirmed to arrive under two make strings.
-const MAKE_ALIASES: { modelRe: RegExp; canonicalMake: string }[] = [{ modelRe: /^zevo\b/i, canonicalMake: "BRIGHTDROP" }];
+// The /^brightdrop\b/ entry joined it on 2026-08-25, and it is the same van
+// seen from the other end of the rebadge. GM renamed the Zevo to the Chevrolet
+// BrightDrop for MY2025, and vPIC files both: a MY2024 VIN decodes make
+// BRIGHTDROP model "Zevo" Series "400", a MY2025 VIN decodes make CHEVROLET
+// model "BrightDrop" Series "400" — same plant, same WMI (2G5), same vehicle.
+// The dealer feed mixes them freely in both directions. Keyed by MODEL for the
+// same reason the Zevo entry is: no petrol car is called a BrightDrop, and
+// folding make "Chevrolet" wholesale would swallow the Bolt, Equinox EV,
+// Blazer EV and Silverado EV. Both entries only fire on a model string, so a
+// real Chevrolet is untouched.
+const MAKE_ALIASES: { modelRe: RegExp; canonicalMake: string }[] = [
+  { modelRe: /^zevo\b/i, canonicalMake: "BRIGHTDROP" },
+  { modelRe: /^brightdrop\b/i, canonicalMake: "BRIGHTDROP" },
+];
 export const canonicalMake = (make: string | undefined, model: string | undefined): string => {
   const alias = MAKE_ALIASES.find((a) => a.modelRe.test(model ?? ""));
   return alias ? norm(alias.canonicalMake) : norm(make);

@@ -34,10 +34,26 @@ test("each MY2026 bZ grade gets its own EPA range, not the drivetrain's first ro
   assert.equal(range("bZ", "Limited", "AWD"), 278);
 });
 
-test("bZ Woodland separates Premium from base — 21 miles apart on tire size alone", () => {
-  for (const t of ["Woodland", "bZ Woodland"]) assert.equal(range("bZ Woodland", t, "AWD"), 281);
-  for (const t of ["Premium", "Premium AWD", "bZ Woodland Premium", "WOODLAND Premium"])
-    assert.equal(range("bZ Woodland", t, "AWD"), 260, t);
+// This test used to assert the opposite — that "Premium" resolved to 260 and
+// everything else to 281 — because EPA's two Woodland records were read as a
+// base/Premium split. Toyota's own launch release says the all-terrain tire
+// that costs those 21 miles is AVAILABLE on both grades, so the split was a
+// grade the car does not have, and 176 live Premium listings were shown a
+// rating that belongs to an option box. Both grades now get the standard
+// tire's 281 with the tire named in the note; inverting this test back is how
+// the wrong claim returns.
+test("every bZ Woodland grade gets the standard tire's rating, not the all-terrain option's", () => {
+  for (const t of ["Woodland", "bZ Woodland", "Premium", "Premium AWD", "bZ Woodland Premium", "WOODLAND Premium", "17 Series", undefined])
+    assert.equal(range("bZ Woodland", t, "AWD"), 281, String(t));
+});
+
+test("the bZ Woodland's all-terrain option is stated, not hidden, on the row that prints 281", () => {
+  const r = matchEnrichment(bz("bZ Woodland", "Premium", "AWD"), null).exact;
+  assert.match(r?.range?.epaRangeMi?.note ?? "", /standard tire/);
+  assert.ok(
+    (r?.buyerNotes ?? []).some((n) => /all-terrain tire/.test(n.headline)),
+    "the 260-mile option must reach the shopper somewhere"
+  );
 });
 
 test("an unreadable trim resolves to the shared row and states no range at all", () => {
