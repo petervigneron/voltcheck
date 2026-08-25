@@ -483,4 +483,216 @@ const R: EnrichmentRow[] = [];
 // rows and then bring these derived rows back — do NOT paper over it with
 // abstentions, which is what the ratchet exists to catch.
 
+// ───────────────────────────── SUBARU UNCHARTED ───────────────────────────
+// 177 live listings on 2026-08-25 for a car that only reached retailers this
+// year. One pack (74.7 kWh) across all three trims, and the trims differ only
+// in drivetrain and wheel: Premium FWD, Sport (AWD), GT (AWD on 20s). EPA
+// rates all three separately and its own model names carry the wheel — 308,
+// 287 and 273 miles — and Subaru's release orders them the same way ("more
+// than 300", "more than 285", "more than 270"), which is the cross-check that
+// says the mapping is right rather than assumed.
+//
+// The pack figure has a second, independent source worth noting: vPIC returns
+// BatteryKWh 74.70 and "Onboard Charger: 11 kW" for both VIN patterns
+// (JTMAAAAE 15 Series AWD, JTMABABE 10 Series FWD, decoded 2026-08-25), which
+// agrees with Subaru's own press release to the decimal.
+//
+// Battery warranty is the Subaru BEV booklet's standing term — "The Battery
+// and Electric Drive Units are covered for 8 years, or 100,000 miles,
+// whichever comes first, with retention of 70% or more of the original"
+// capacity — the same document data2's Solterra rows have used since 2023.
+// Subaru publishes no 2026-specific booklet, so the confidence is medium
+// rather than high; the term itself is stated for Subaru BEVs, not inferred.
+// Heat pump abstains: the release describes battery preconditioning in detail
+// and never mentions cabin heating hardware.
+{
+  const UNCH_PR = "https://media.subaru.com/pressrelease/2403/1/all-new-2026-subaru-uncharted-ev-arrives-more";
+  const SUBARU_BEV_WARRANTY =
+    "https://techinfo.subaru.com/stis/doc/warrantyBooklet/5125115-Subaru_MSA5M2301M-text.PDF";
+  const UNCH_CHARGING = {
+    portStandard: f<"NACS">("NACS", "mfr", "high", undefined, UNCH_PR),
+    dcPeakKw: f(150, "mfr", "high", undefined, UNCH_PR),
+    chargeTime1080Min: f(28, "mfr", "high", "10–80% at up to 150 kW", UNCH_PR),
+    acOnboardKw: f(11, "mfr", "high", undefined, UNCH_PR),
+    dcFastCharging: f<"standard">("standard", "mfr", "high", undefined, UNCH_PR),
+  };
+  const UNCH_WARRANTY = {
+    batteryYears: f(8, "mfr", "medium", undefined, SUBARU_BEV_WARRANTY),
+    batteryMiles: f(100_000, "mfr", "medium", undefined, SUBARU_BEV_WARRANTY),
+    sohFloorPct: f(70, "mfr", "medium", undefined, SUBARU_BEV_WARRANTY),
+  };
+  const uncharted = (
+    id: string,
+    trim: string[],
+    drive: "FWD" | "AWD",
+    rangeMi: number,
+    epaId: number,
+    kwh100: number,
+    rangeNote?: string
+  ): EnrichmentRow => ({
+    id,
+    make: "SUBARU",
+    model: "Uncharted",
+    modelYears: [2026, 2026],
+    trim,
+    drive,
+    packVariant: "74.7 kWh",
+    battery: { packGrossKwh: f(74.7, "mfr", "high", undefined, UNCH_PR) },
+    range: {
+      epaRangeMi: f(rangeMi, "mfr", "high", rangeNote, epa(epaId)),
+      epaKwhPer100Mi: f(kwh100, "mfr", "high", undefined, epa(epaId)),
+    },
+    charging: UNCH_CHARGING,
+    thermal: { batteryPreconditioning: f(true, "mfr", "high", "Prepares the pack for fast charging in cold weather", UNCH_PR) },
+    warranty: UNCH_WARRANTY,
+    abstains: {
+      heatPump: "Subaru's Uncharted release describes battery preconditioning and never mentions cabin heating hardware",
+    },
+  });
+  R.push(
+    uncharted("uncharted-2026-premium-fwd", ["Premium"], "FWD", 308, 50301, 26),
+    uncharted("uncharted-2026-sport", ["Sport"], "AWD", 287, 50303, 29),
+    uncharted("uncharted-2026-gt", ["GT"], "AWD", 273, 50302, 30, "20-inch wheels")
+  );
+}
+
+// ───────────────────────────── ACURA ZDX (2024) ───────────────────────────
+// 115 live listings, all MY2024, and three different cars behind them: the
+// A-Spec rear-drive (313 mi), the A-Spec AWD (304) and the Type S (278). The
+// feed's trim strings do not reliably separate the first two — "A-Spec" is
+// written for both, and 21 listings say things like "1SA" or "w/A-Spec Pkg
+// Factory Certified" — so the rows key on the VIN descriptor, which does:
+// 4W5|KHMRK decodes RWD, KHNRL decodes AWD and XHPRL decodes Type-S, checked
+// against vPIC on a live VIN of each. Three patterns, 115 listings, no
+// remainder.
+//
+// The Type S row also carries its trim, which is what keeps it out of the way
+// of an ordinary A-Spec: a listing that says "A-Spec" never reaches it, and a
+// listing with no trim at all reaches only the two drivetrain rows.
+//
+// Two abstentions. Heat pump: the ZDX is a GM-built Ultium car wearing a
+// Honda badge, and neither maker's documents use the term. Battery warranty:
+// Acura's spec sheet has no warranty section and its consumer pages describe
+// an "8- to 10-year" high-voltage battery warranty whose length depends on
+// the state of registration, which is not a number this field can print.
+{
+  const ZDX_SPECS =
+    "https://acuranews.com/en-US/releases/release-50763955e7ef98f595b7e8fb0e005c30-2024-acura-zdx-zdx-type-s-specifications-features";
+  const ZDX_PRICING =
+    "https://acuranews.com/en-US/releases/release-a463299e9046a088b84018a75814e97e-2024-acura-zdx-zdx-type-s-deliver-electrified-performance-starting-at-64500";
+  const ZDX_CHARGING = {
+    portStandard: f<"CCS1">("CCS1", "mfr", "high", "CCS1 port, NACS-compatible", ZDX_PRICING),
+    superchargerAccess: f<"adapter">("adapter", "mfr", "high", "Tesla Superchargers through the CCS1 port", ZDX_PRICING),
+    dcPeakKw: f(190, "mfr", "high", undefined, ZDX_PRICING),
+    dcFastCharging: f<"standard">("standard", "mfr", "high", undefined, ZDX_SPECS),
+  };
+  const zdx = (
+    id: string,
+    vds: string[],
+    drive: "RWD" | "AWD",
+    rangeMi: number,
+    epaId: number,
+    kwh100: number,
+    trim?: string[]
+  ): EnrichmentRow => ({
+    id,
+    make: "ACURA",
+    model: "ZDX",
+    modelYears: [2024, 2024],
+    trim,
+    drive,
+    vds,
+    packVariant: "102 kWh",
+    battery: { packGrossKwh: f(102, "mfr", "high", undefined, ZDX_SPECS) },
+    range: {
+      epaRangeMi: f(rangeMi, "mfr", "high", undefined, epa(epaId)),
+      epaKwhPer100Mi: f(kwh100, "mfr", "high", undefined, epa(epaId)),
+    },
+    charging: ZDX_CHARGING,
+    abstains: {
+      heatPump: "Neither Acura nor GM, which builds this Ultium car, uses the term in any document consulted",
+      batteryWarranty: "Acura states an 8-to-10-year battery term that varies by state of registration, not one figure",
+    },
+  });
+  R.push(
+    zdx("zdx-2024-rwd", ["KHMRK"], "RWD", 313, 47809, 37),
+    zdx("zdx-2024-awd", ["KHNRL"], "AWD", 304, 47808, 39),
+    zdx("zdx-2024-type-s", ["XHPRL"], "AWD", 278, 48781, 43, ["Type S", "Type-S"])
+  );
+}
+
+// ────────────────────────────── POLESTAR 4 ────────────────────────────────
+// 136 live listings and no row. Three versions, separated by the trim string
+// the feed already writes in full ("Long Range Single Motor", "Long Range
+// Dual Motor", and the Performance pack), so no VIN key is needed — and no
+// model alias either: 105 of these are filed under the bare model "4", which
+// match.ts already reaches because it strips a redundant make prefix from
+// both sides before comparing ("Polestar 4" and "4" both key to "4").
+//
+// The trim keys look wrong until you know what the matcher is actually handed.
+// cleanTrim() deletes the words "dual motor" from any non-Rivian trim — they
+// are packaging on a Tesla, identity on a Rivian — so every one of these
+// arrives as "Long Range", "Long Range Plus" or "Long Range Pilot Plus" with
+// the thing that names the version already gone. Keying the rows on the feed's
+// printed strings resolved NOTHING when it was probed; the keys below are the
+// post-cleaning strings, and the drivetrain plus the VIN descriptor (YSR|PA3A4
+// dual, PB3A4 single) do the work the trim can no longer do. The Plus and
+// Pilot packages are options, not versions, and land on the plain Dual Motor
+// row; "Long Range Performance" is spelled in full so the matcher's exact-name
+// pass can prefer it over the plain row it contains.
+//
+// Polestar's US site states every fact here in its own words, including the
+// heat pump ("Energy saving heat pump, using surplus heat from the powertrain
+// and the air") — worth noting because Polestar is the one maker in the
+// backfill table left blank for want of a drive-unit figure, so its
+// documentation is not uniformly generous. Battery warranty is 8 years; the
+// mileage half is deliberately absent because the US page states the cap in
+// kilometres (160,000 km) and converting it would be our arithmetic printed
+// as the maker's figure.
+{
+  const PS4_SPECS = "https://www.polestar.com/us/polestar-4/specifications/";
+  const PS4_CHARGING_PAGE = "https://www.polestar.com/us/polestar-4/range-and-charging/";
+  const PS4_CHARGING = {
+    portStandard: f<"CCS1">("CCS1", "mfr", "high", "CCS1 port; NACS access needs an adapter", PS4_CHARGING_PAGE),
+    superchargerAccess: f<"adapter">("adapter", "mfr", "high", "NACS adapters sold at Polestar Service Points", PS4_CHARGING_PAGE),
+    dcPeakKw: f(200, "mfr", "high", undefined, PS4_SPECS),
+    chargeTime1080Min: f(30, "mfr", "high", "10–80% on a 200 kW DC charger", PS4_SPECS),
+    acOnboardKw: f(11, "mfr", "high", undefined, PS4_SPECS),
+    architectureV: f(400, "mfr", "high", undefined, PS4_SPECS),
+    dcFastCharging: f<"standard">("standard", "mfr", "high", undefined, PS4_SPECS),
+  };
+  const ps4 = (
+    id: string,
+    trim: string[],
+    vds: string[],
+    drive: "RWD" | "AWD",
+    rangeMi: number,
+    epaId: number,
+    kwh100: number,
+    rangeNote?: string
+  ): EnrichmentRow => ({
+    id,
+    make: "POLESTAR",
+    model: "Polestar 4",
+    modelYears: [2026, 2026],
+    trim,
+    vds,
+    drive,
+    packVariant: "100 kWh",
+    battery: { packGrossKwh: f(100, "mfr", "high", "Cell-to-pack, 110 cells", PS4_SPECS) },
+    range: {
+      epaRangeMi: f(rangeMi, "mfr", "high", rangeNote, epa(epaId)),
+      epaKwhPer100Mi: f(kwh100, "mfr", "high", undefined, epa(epaId)),
+    },
+    charging: PS4_CHARGING,
+    thermal: { heatPump: f<"standard">("standard", "mfr", "high", "Draws surplus heat from the powertrain and the air", PS4_SPECS) },
+    warranty: { batteryYears: f(8, "mfr", "high", undefined, PS4_SPECS) },
+  });
+  R.push(
+    ps4("polestar-4-2026-single", ["Long Range"], ["PB3A4"], "RWD", 310, 50033, 35),
+    ps4("polestar-4-2026-dual", ["Long Range"], ["PA3A4"], "AWD", 280, 50034, 40),
+    ps4("polestar-4-2026-perf", ["Long Range Performance"], ["PA3A4"], "AWD", 255, 50035, 44, "22-inch Performance wheels")
+  );
+}
+
 export const RESEARCH_ROWS_9: EnrichmentRow[] = R;
