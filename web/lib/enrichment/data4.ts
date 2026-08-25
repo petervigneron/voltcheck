@@ -31,6 +31,25 @@ import type { Chemistry, EnrichmentRow, Fact, Source } from "../types";
 // 2022–23 negative: same document lineage, feature explicitly introduced later.
 const AS_OF = "2026-08-14";
 
+// batteryTransfers is deliberately absent from the Polestar rows. It stood as
+// an uncited `true`, and nothing Polestar publishes for the United States
+// says it. Its warranty FAQ gives the terms and no more ("The battery and
+// electric motors are covered for 8 years or 100,000 miles"); its warranty
+// landing page lists what is covered and never mentions a second owner; there
+// is no US warranty booklet at any polestar.com URL that search or probing
+// surfaces (the "Status and Warranty" PDF that turns up is the GB edition).
+//
+// Control: "transfer" DOES appear on Polestar's US pages, so the silence is
+// real and not a search artifact — and where it appears it is about a
+// different product and contradicts itself. The Certified by Polestar page
+// says the two-year CPO warranty "is connected to the vehicle and is valid
+// even if there is a change of ownership", while the footnote on that same
+// page says its coverage "remains in effect until either (i) the earlier of
+// two years or (ii) the date on which the vehicle is transferred to a
+// subsequent owner". A page that disagrees with its own footnote about the
+// CPO warranty is not a source for a claim about the battery warranty.
+
+
 // Subaru battery-warranty transferability — "When These Warranties Apply" in
 // Subaru's own EV Warranty & Maintenance Booklet, the edition that carries the
 // Battery and Electric Drive Unit Limited Warranty. The note here already
@@ -3522,7 +3541,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(270, "mfr", "high", "MY2022 Single Motor (FWD), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=44928") },
     charging: { portStandard: f("CCS1", "mfr") },
     thermal: { heatPump: fb("optional", "mfr", "high", "Inside the $4,200 Plus pack - the window sticker is the authority", PS2_PLUS_PACK) },
-    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
+    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source) },
     buyerNotes: [NOTE_HP_OPTION],
   },
   {
@@ -3531,7 +3550,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(249, "mfr", "high", "MY2022 Dual Motor (AWD), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=44449") },
     charging: { portStandard: f("CCS1", "mfr") },
     thermal: { heatPump: fb("optional", "mfr", "high", "Inside the $4,200 Plus pack - the window sticker is the authority", PS2_PLUS_PACK) },
-    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
+    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source) },
     buyerNotes: [NOTE_HP_OPTION],
   },
   {
@@ -3540,7 +3559,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(270, "mfr", "high", "MY2023 Single Motor (FWD), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=45755") },
     charging: { portStandard: f("CCS1", "mfr") },
     thermal: { heatPump: fb("optional", "mfr", "high", "Inside the $4,200 Plus pack - the window sticker is the authority", PS2_PLUS_PACK) },
-    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
+    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source) },
     buyerNotes: [NOTE_HP_OPTION],
   },
   {
@@ -3549,7 +3568,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(260, "mfr", "high", "MY2023 Dual Motor (AWD), EPA; the Performance Pack rates the same, the BST edition 247", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=45753") },
     charging: { portStandard: f("CCS1", "mfr") },
     thermal: { heatPump: fb("optional", "mfr", "high", "Inside the $4,200 Plus pack - the window sticker is the authority", PS2_PLUS_PACK) },
-    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
+    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source) },
     buyerNotes: [NOTE_HP_OPTION],
   },
   {
@@ -3558,7 +3577,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(320, "mfr", "high", "MY2024 Single Motor (now RWD) on 19-inch wheels, EPA; 307 on 20s; MY2025: 314/300", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46978") },
     charging: { portStandard: f("CCS1", "mfr") },
     thermal: { heatPump: fb("optional", "mfr", "high", "Inside the Plus pack for MY2024; the US lineup dropped the Single Motor for 2025 - the window sticker is the authority", PS2_PLUS_PACK) },
-    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
+    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source) },
     buyerNotes: [NOTE_HP_OPTION],
   },
   {
@@ -3567,7 +3586,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     range: { epaRangeMi: f(276, "mfr", "high", "MY2024 Dual Motor on 19-inch wheels, EPA; 266 on 20s, 247 with the Performance Pack; MY2025: 278/268/254", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46975") },
     charging: { portStandard: f("CCS1", "mfr") },
     thermal: { heatPump: fb("optional", "mfr", "high", "Inside the Plus pack for MY2024 and included with the Performance pack; the MY2025 car's Climate pack made it standard - the window sticker is the authority", PS2_PLUS_PACK) },
-    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
+    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source) },
     buyerNotes: [NOTE_HP_OPTION],
   },
   {

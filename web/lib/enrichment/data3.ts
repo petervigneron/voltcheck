@@ -12,6 +12,25 @@ import type { EnrichmentRow, Fact, Source } from "../types";
 // documented as existing for that year).
 const AS_OF = "2026-08-10";
 
+// batteryTransfers is deliberately absent from the Polestar rows. It stood as
+// an uncited `true`, and nothing Polestar publishes for the United States
+// says it. Its warranty FAQ gives the terms and no more ("The battery and
+// electric motors are covered for 8 years or 100,000 miles"); its warranty
+// landing page lists what is covered and never mentions a second owner; there
+// is no US warranty booklet at any polestar.com URL that search or probing
+// surfaces (the "Status and Warranty" PDF that turns up is the GB edition).
+//
+// Control: "transfer" DOES appear on Polestar's US pages, so the silence is
+// real and not a search artifact — and where it appears it is about a
+// different product and contradicts itself. The Certified by Polestar page
+// says the two-year CPO warranty "is connected to the vehicle and is valid
+// even if there is a change of ownership", while the footnote on that same
+// page says its coverage "remains in effect until either (i) the earlier of
+// two years or (ii) the date on which the vehicle is transferred to a
+// subsequent owner". A page that disagrees with its own footnote about the
+// CPO warranty is not a source for a claim about the battery warranty.
+
+
 // Lucid battery-warranty transferability. Its own New Vehicle Limited Warranty
 // answers it under the heading "Who May Use This Warranty?": the warranty is
 // "provided to the original purchaser or lessor ... and to subsequent owner(s)
@@ -291,7 +310,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     warranty: {
       batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+
     },
     buyerNotes: [
       {
