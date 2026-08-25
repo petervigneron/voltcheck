@@ -38,6 +38,18 @@ await db.exec(`
 // the wart). Alphabetical order runs feed_joins first, but it reads the
 // provenance column price_provenance adds — prod applied them
 // chronologically. Replay in prod's order; every other pair sorts correctly.
+// 0049/0050 configure a scheduler, not a schema: they create pg_cron and
+// register the hourly VACUUM / daily ANALYZE that keep the live-row count an
+// index-only scan (without which it blows anon's 3s timeout and the feed
+// falls back). PGlite has no pg_cron to create, and there is nothing in
+// either file for a replay to assert — no table, view, function or grant. So
+// they are skipped by name rather than half-applied. If a later migration
+// ever puts real schema in the same file as a cron.schedule call, split the
+// file rather than adding it here.
+const SKIP_NEEDS_PG_CRON = new Set([
+  "0049_keep_the_live_count_countable.sql",
+  "0050_split_the_hourly_vacuum_from_the_daily_analyze.sql",
+]);
 const APPLY_BEFORE = { "0041_feed_joins_per_vin.sql": "0041_price_provenance_column.sql" };
 const files = (await readdir(MIGRATIONS_DIR)).filter((f) => f.endsWith(".sql")).sort((a, b) => {
   if (APPLY_BEFORE[a] === b) return 1;
@@ -45,6 +57,10 @@ const files = (await readdir(MIGRATIONS_DIR)).filter((f) => f.endsWith(".sql")).
   return a < b ? -1 : 1;
 });
 for (const f of files) {
+  if (SKIP_NEEDS_PG_CRON.has(f)) {
+    console.log(`migration skipped (needs pg_cron, not schema): ${f}`);
+    continue;
+  }
   const sql = await readFile(new URL(f, MIGRATIONS_DIR), "utf-8");
   // CONCURRENTLY (0046) refuses to run inside a transaction block, and this
   // replay is transactional. Its only meaning is lock behavior on a live
