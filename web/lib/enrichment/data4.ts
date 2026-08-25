@@ -302,11 +302,42 @@ const NOTE_CONNECTED_2526 = {
 // rise, and the port becomes native NACS. Heat pump fitment, warranty, and
 // the ICCU extension carry over from the retired data3-era EV6 row.
 const K6 = { make: "KIA", model: "EV6" };
+// Kia battery-warranty transferability. Kia's own Warranty and Consumer
+// Information Manual states the rule as a general one with a single carve-out:
+// "Any remaining portion of any warranty, except the 120 months/100,000 miles
+// Power Train (Original Owner) warranty, is fully transferable to subsequent
+// owners." What makes that reach the battery is the same manual's structure:
+// the "Electric Vehicle (EV) System Warranty" is its own coverage — "Electric
+// Motor, Gear Drive Unit, Battery pack ('EV Battery'), Electric Power Control
+// Unit (EPCU), On Board Charger (OBC)" — separate from Power Train, so the
+// carve-out does not touch it.
+//
+// This is the opposite answer to Hyundai's on the same platform, which is why
+// the two makes no longer share a warranty object. Hyundai enumerates what
+// transfers and omits the EV warranty; Kia says everything transfers and names
+// the one thing that does not.
+//
+// The cited edition is MY2018 (Soul EV), which is the most recent US EV
+// edition Kia publishes at a stable URL: kia.com hosts 2016-2020 manuals under
+// /warranty/manual/, and everything newer is behind the owners.kia.com
+// model/year lookup, which renders tiles with no href and no linkable asset
+// path (checked; the newer editions found by search are dealer-hosted copies,
+// not Kia's). The wording is identical in the 2016 and 2018 editions.
+//
+// Corroboration for the current cars, from Kia's live US warranty page: the
+// Powertrain warranty is described as "applicable to the original purchaser
+// and purchaser of a Certified Pre-Owned Kia", while the EV System Warranty
+// and EV Battery Coverage are described with no owner limitation at all — the
+// same asymmetry the manual spells out.
+const KIA_WTY_MANUAL =
+  "https://www.kia.com/us/content/dam/kia/us/en/images/warranty/manual/warranty-manual/2018_warranty_soul_ev.pdf";
+const KIA_XFER_NOTE =
+  "\u201CAny remaining portion of any warranty, except the ... Power Train (Original Owner) warranty, is fully transferable to subsequent owners\u201D";
 const EV6_WARRANTY = {
   batteryYears: f(10, "mfr" as Source),
   batteryMiles: f(100_000, "mfr" as Source),
   sohFloorPct: f(70, "mfr" as Source),
-  batteryTransfers: f(true, "mfr" as Source, "high"),
+  batteryTransfers: f(true, "mfr" as Source, "high", KIA_XFER_NOTE, KIA_WTY_MANUAL),
   powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr" as Source, "high"),
   extendedCoverage: f("ICCU: 15 years / 180,000 miles", "mfr" as Source),
 };
@@ -341,7 +372,7 @@ const HK_WARRANTY = {
   batteryYears: f(10, "mfr" as Source),
   batteryMiles: f(100_000, "mfr" as Source),
   sohFloorPct: f(70, "mfr" as Source),
-  batteryTransfers: f(true, "mfr" as Source),
+  batteryTransfers: f(true, "mfr" as Source, "high", KIA_XFER_NOTE, KIA_WTY_MANUAL),
   powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr" as Source, "high"),
 };
 // batteryTransfers is deliberately absent from the Hyundai rows. Hyundai's

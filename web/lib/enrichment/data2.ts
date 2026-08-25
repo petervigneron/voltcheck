@@ -6,6 +6,19 @@ import type { EnrichmentRow, Fact, Source } from "../types";
 // → "mfr"; secondary-source facts → "agg" until a primary doc is read).
 const AS_OF = "2026-08-10";
 
+// Kia battery-warranty transferability — Kia's own Warranty and Consumer
+// Information Manual: every warranty transfers except the Power Train
+// (Original Owner) one, and the EV System Warranty covering the battery pack
+// is a separate coverage from Power Train. One of the two Niro EV rows below
+// paraphrased that in a note with nothing to click; both now quote and cite.
+// Fuller comment in data4.ts, including why the cited edition is MY2018 and
+// what corroborates the newer cars.
+const KIA_WTY_MANUAL =
+  "https://www.kia.com/us/content/dam/kia/us/en/images/warranty/manual/warranty-manual/2018_warranty_soul_ev.pdf";
+const KIA_XFER_NOTE =
+  "\u201CAny remaining portion of any warranty, except the ... Power Train (Original Owner) warranty, is fully transferable to subsequent owners\u201D";
+
+
 // BMW battery-warranty transferability. The booklet's WARRANTOR clause is the
 // grant for everything in it: "BMW of North America, LLC ('BMW NA') warrants
 // new U.S.-specification BMW vehicle models ... against defects in materials
@@ -2289,7 +2302,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(10, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
-      batteryTransfers: f(true, "mfr", "high", "Kia: everything except the original-owner powertrain warranty transfers in full"),
+      batteryTransfers: f(true, "mfr", "high", KIA_XFER_NOTE, KIA_WTY_MANUAL),
       powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr", "high"),
     },
     buyerNotes: [
@@ -2317,7 +2330,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(10, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr"),
-      batteryTransfers: f(true, "mfr"),
+      batteryTransfers: f(true, "mfr", "high", KIA_XFER_NOTE, KIA_WTY_MANUAL),
       powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr", "high"),
     },
     buyerNotes: [
