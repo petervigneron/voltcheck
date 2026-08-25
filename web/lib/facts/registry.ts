@@ -331,6 +331,39 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       },
     ],
   },
+  {
+    make: "nissan",
+    model: "leaf",
+    topic: "charging",
+    contentFile: "leaf-charging",
+    pageTitle: "Nissan Leaf charging: CHAdeMO, the optional fast-charge port, and 2026's NACS | Voltcheck",
+    description:
+      "Nissan sold the Leaf's fast-charge port as an option, and it is CHAdeMO, not CCS or NACS. What Nissan's own manuals say about charging a Leaf, and what changes for 2026.",
+    breadcrumbLabel: "Nissan Leaf charging",
+    dateModified: "2026-08-25",
+    faq: [
+      {
+        question: "What charging connector does the Nissan Leaf use?",
+        answer:
+          "CHAdeMO for DC fast charging, and SAE J1772 for AC. Nissan's own manual says a quick-charge-equipped Leaf \"is compatible with most CHAdeMO (Japanese industry standard) connectors on charging stations,\" and adds that \"While supported by NISSAN, this connector may not become the US SAE standard.\" The all-new 2026 Leaf changes this: a J1772 port on the driver's-side fender and a NACS fast-charge port on the passenger's-side fender, which Nissan says unlocks over 20,000 Tesla Superchargers.",
+      },
+      {
+        question: "Do all Nissan Leafs have DC fast charging?",
+        answer:
+          "No. Nissan's own words, unchanged from the 2019 manual to the 2024 one: \"Quick charge capability is only available on vehicles manufactured with the quick charge option, which includes the quick charge port. If your vehicle does not have such a port, quick charging cannot be used.\" It is a per-car check, not a per-trim one.",
+      },
+      {
+        question: "How fast does a Nissan Leaf fast charge?",
+        answer:
+          "Nissan states the station's power rather than the car's peak: quick charge uses public stations up to 50 kW for 40 kWh battery models and up to 100 kW for the larger pack. Nissan publishes no time-to-80% figure for the 2019 or 2024 Leaf, saying only that it depends on battery temperature and the charger used. The 2026 Leaf charges at up to 150 kW and, per Nissan, goes 10% to 80% in 35 minutes.",
+      },
+      {
+        question: "Does fast charging hurt a Nissan Leaf's battery?",
+        answer:
+          "Nissan's own manual asks owners to limit it: \"NISSAN recommends using normal charging for usual charging of the vehicle. Use of quick charge should be minimized in order to help prolong Li-ion battery life.\" Nissan also lists avoiding sustained high battery temperatures, including from extended highway driving with multiple quick charges, among the ways to extend battery life, and states that quick-charging power is limited when the battery temperature is near the red zone.",
+      },
+    ],
+  },
 ];
 
 export function findFactSheet(make: string, model: string, topic: string): FactSheetEntry | undefined {
