@@ -842,6 +842,39 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       },
     ],
   },
+  {
+    make: "hyundai",
+    model: "ioniq-6",
+    topic: "heat-pump",
+    contentFile: "ioniq6-heat-pump",
+    pageTitle: "Hyundai Ioniq 6 heat pump: standard on every one but the Standard Range | Voltcheck",
+    description:
+      "Hyundai marks the Ioniq 6's heat pump standard on SE Long Range, SEL and Limited for 2023 through 2025, and absent on the 53 kWh SE Standard Range. From Hyundai's own equipment grids.",
+    breadcrumbLabel: "Hyundai Ioniq 6 heat pump",
+    dateModified: "2026-08-25",
+    faq: [
+      {
+        question: "Does the Hyundai Ioniq 6 have a heat pump?",
+        answer:
+          "Every Ioniq 6 for model years 2023, 2024 and 2025 does except the Standard Range car. Hyundai's own equipment grid says it two ways: for 2023 and 2024 the SE cell reads \"S (LR only)\" while SEL and Limited read \"S\"; for 2025 Hyundai splits the Standard Range into its own SE (SR) column and marks it \"-\", with SE, SEL and Limited reading \"S\". Both notations name the same car, because the 53.0 kWh Standard Range battery is sold only as an SE.",
+      },
+      {
+        question: "Do you need all-wheel drive to get a heat pump on a Hyundai Ioniq 6?",
+        answer:
+          "No. Hyundai marks the SEL and Limited cells with a plain \"S\" and attaches no drivetrain condition to them, in 2023, 2024 and 2025 alike. This is where the Ioniq 6 differs from the Ioniq 5, whose grid gives the same row the value \"AWD only\" in every trim column.",
+      },
+      {
+        question: "What does a Hyundai Ioniq 6 Standard Range heat the cabin with instead?",
+        answer:
+          "This page does not say, because Hyundai does not. Hyundai's Ioniq 6 HVAC table has no PTC Heater row to read — its rows are dual automatic temperature control, 2nd row air vents, external temperature, heat pump, cabin air filter, and rear window defroster with timer, and nothing else. Hyundai does print a PTC Heater row in the Ioniq 5's version of the same table, so the row exists in its vocabulary; it is simply not in the Ioniq 6's grid.",
+      },
+      {
+        question: "Does the 2026 Hyundai Ioniq 6 have a heat pump?",
+        answer:
+          "Not covered here. Hyundai's own 2026 Model Year Changes document lists the 2026 IONIQ 6 as a Product Enhancement Model and its page for the car reads, in full, \"Product Enhancement Model, details to come.\" No 2026 IONIQ 6 features grid was found on Hyundai's newsroom, so no 2026 claim is made.",
+      },
+    ],
+  },
 ];
 
 export function findFactSheet(make: string, model: string, topic: string): FactSheetEntry | undefined {

@@ -53,11 +53,11 @@ Nothing about trims. Tesla's statement is by manufacture date only, and no docum
 
 [^5]: Tesla, *Model 3 Owner's Manual*, current "2024+" edition, same page. https://www.tesla.com/ownersmanual/model3/en_us/GUID-8FA15856-1720-440F-838B-ACFBA8D7D608.html
 
-[^6]: Tesla, *Model 3 Emergency Response Guide* (PDF, 32 pages), covering 2017-2023, "Cable Cut," printed page 9 (PDF page 11). https://digitalassets.tesla.com/tesla-contents/image/upload/2017-2023-Model-3-Emergency-Response-Guide_en.pdf
+[^6]: Tesla, *Model 3 Emergency Response Guide* (PDF, 31 pages), covering 2017-2023, "Cable Cut," printed page 9 (PDF page 11). https://digitalassets.tesla.com/tesla-contents/image/upload/2017-2023-Model-3-Emergency-Response-Guide_en.pdf
 
 [^7]: Same guide, "High Voltage Components" diagram, printed page 20 (PDF page 22). The page was rendered as an image and read from the image, not from extracted text.
 
-[^8]: Tesla, *Model 3 2024+ Emergency Response Guide* (PDF, 36 pages), "High Voltage Components" diagram, printed page 22 (PDF page 24). https://digitalassets.tesla.com/tesla-contents/image/upload/2024-Model-3-Emergency-Response-Guide_en.pdf
+[^8]: Tesla, *Model 3 2024+ Emergency Response Guide* (PDF, 35 pages), "High Voltage Components" diagram, printed page 22 (PDF page 24). https://digitalassets.tesla.com/tesla-contents/image/upload/2024-Model-3-Emergency-Response-Guide_en.pdf
 
 [^9]: Same 2024+ guide, contactor prose: "those high voltage components include the rear drive unit, the front drive unit, the air conditioning compressor, and potentially the charge port."
 

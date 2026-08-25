@@ -46,19 +46,19 @@ The Ioniq 5 N is a different model and is not covered by any figure above. For w
 
 ## Footnotes
 
-[^1]: Hyundai, *2022 IONIQ 5 Features* (PDF, 14 pages), "INTERIOR (cont'd)" section, HVAC/Defogger table, PDF page 7. The document carries no printed page numbers. https://www.hyundainews.com/assets/documents/original/49212-2022Ioniq5ProductGuidefeaturesV3010622.pdf. A second 2022 IONIQ 5 Features document is still served at https://www.hyundainews.com/assets/documents/original/48174-2022Ioniq5ProductGuidefeatures090821.pdf; its Heat Pump row is identical, "AWD only" in all three columns, also on PDF page 7.
+[^1]: Hyundai, *2022 IONIQ 5 Features* (PDF, 13 pages), "INTERIOR (cont'd)" section, HVAC/Defogger table, PDF page 7. The document carries no printed page numbers. https://www.hyundainews.com/assets/documents/original/49212-2022Ioniq5ProductGuidefeaturesV3010622.pdf. A second 2022 IONIQ 5 Features document is still served at https://www.hyundainews.com/assets/documents/original/48174-2022Ioniq5ProductGuidefeatures090821.pdf; its Heat Pump row is identical, "AWD only" in all three columns, also on PDF page 7.
 
-[^2]: Hyundai, *2023 IONIQ 5 Features* (PDF, 14 pages), same table, PDF page 7. No printed page numbers. https://www.hyundainews.com/assets/documents/original/50312-2023IONIQ5ProductFeatures20220630.pdf
+[^2]: Hyundai, *2023 IONIQ 5 Features* (PDF, 13 pages), same table, PDF page 7. No printed page numbers. https://www.hyundainews.com/assets/documents/original/50312-2023IONIQ5ProductFeatures20220630.pdf
 
-[^3]: Hyundai, *2024 IONIQ 5 Features* (PDF, 15 pages), same table, PDF page 8. No printed page numbers. https://www.hyundainews.com/assets/documents/original/56232-2024IONIQ5Features062623.pdf
+[^3]: Hyundai, *2024 IONIQ 5 Features* (PDF, 14 pages), same table, PDF page 8. No printed page numbers. https://www.hyundainews.com/assets/documents/original/56232-2024IONIQ5Features062623.pdf
 
 [^4]: Hyundai, *2025 IONIQ 5 Features and Specifications* (PDF, 23 pages), HVAC/Defogger table on PDF page 14; MECHANICAL "All Electric Range" row and its RWD (Standard Range) / RWD / AWD columns on PDF page 1. No printed page numbers. https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf
 
 [^5]: Hyundai, *Hyundai 2026 Model Year Changes* (PDF), "2026 Hyundai IONIQ 5 (EV) – Carry-over Model" page and the model-list page that names it. https://www.hyundainews.com/assets/documents/original/67291-2026HyundaiModelYearChangesV6.pdf. Hyundai states on the document that it "will be updated regularly," so it carries no fixed publication date; read 2026-08-25.
 
-[^6]: Hyundai, *2022 Ioniq 5 Owner's Manual* (PDF, 664 pages), "AIR CONDITIONING SYSTEM" table, printed page 2-11 (PDF page 81). Read from the page rendered as an image. https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2022/ioniq5/2022-Ioniq-5-Owners-Manual.pdf
+[^6]: Hyundai, *2022 Ioniq 5 Owner's Manual* (PDF, 663 pages), "AIR CONDITIONING SYSTEM" table, printed page 2-11 (PDF page 81). Read from the page rendered as an image. https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2022/ioniq5/2022-Ioniq-5-Owners-Manual.pdf
 
-[^7]: Hyundai, *2025 IONIQ 5 Owner's Manual* (PDF, 640 pages; mirror, Hyundai-branded — see Scope note), "Air Conditioning System" table, printed page 10-5 (PDF page 615). https://cdn.dealereprocess.org/cdn/servicemanuals/hyundai/2025-ioniq5.pdf
+[^7]: Hyundai, *2025 IONIQ 5 Owner's Manual* (PDF, 639 pages; mirror, Hyundai-branded — see Scope note), "Air Conditioning System" table, printed page 10-5 (PDF page 615). https://cdn.dealereprocess.org/cdn/servicemanuals/hyundai/2025-ioniq5.pdf
 
 [^8]: Hyundai, *2022 IONIQ 5 Specifications*, *2023 IONIQ 5 Specifications* and *2024 IONIQ 5 Specifications* (PDFs). https://www.hyundainews.com/assets/documents/original/48175-2022Ioniq5ProductGuidespecs090821.pdf, https://www.hyundainews.com/assets/documents/original/50313-2023IONIQ5ProductSpecifications20220630.pdf and https://www.hyundainews.com/assets/documents/original/56233-2024IONIQ5Specs062623.pdf
 
@@ -66,7 +66,7 @@ The Ioniq 5 N is a different model and is not covered by any figure above. For w
 
 [^10]: Hyundai News, "Hyundai Debuts U.S.-Built 2025 IONIQ 5 Range, Including New Adventure-Ready XRT," Sept. 3, 2024 (PDF). https://www.hyundainews.com/assets/documents/original/63444-2025IONIQ5XRTLimited8272024finalmjab.pdf
 
-[^11]: Hyundai, *2026 IONIQ 5 N Specs and Features* (PDF, 26 pages), HVAC/Defogger table, PDF page 17, single column headed "N AWD". https://www.hyundainews.com/assets/documents/original/68164-2026IONIQ5NSpecsFeatures20250722A.pdf. Cited only as a boundary marker for a different model.
+[^11]: Hyundai, *2026 IONIQ 5 N Specs and Features* (PDF, 25 pages), HVAC/Defogger table, PDF page 17, single column headed "N AWD". https://www.hyundainews.com/assets/documents/original/68164-2026IONIQ5NSpecsFeatures20250722A.pdf. Cited only as a boundary marker for a different model.
 
 ## Scope note
 
