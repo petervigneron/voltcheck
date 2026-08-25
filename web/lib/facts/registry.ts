@@ -375,12 +375,12 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       {
         question: "How fast does the Tesla Model 3 charge at a Supercharger?",
         answer:
-          "Tesla publishes a distance rather than a time to 80%: \"Model 3 Up to 175 miles in 15 minutes.\" V3 Superchargers peak at up to 250 kW, and a V4 Supercharger does not make a Model 3 faster — Tesla's own words are that in North America V4 Superchargers charge up to 250 kW for Model S, Model 3, Model X and Model Y, with only Cybertruck able to take 325 kW. Tesla also says not every car reaches 250 kW, because rates vary with pack size and age, state of charge, ambient temperature, and vehicle configuration.",
+          "Tesla publishes a distance rather than a time to 80%, and publishes two of them at different scopes. Its support site gives the nameplate figure, \"Model 3 Up to 175 miles in 15 minutes.\" Its compare page gives a per-trim figure for the Model 3 Rear-Wheel Drive, \"Up to 170 mi\" in 15 minutes, measured at a constant 65 mph. Tesla does not reconcile the two. V3 Superchargers peak at up to 250 kW, and a V4 Supercharger does not make a Model 3 faster — Tesla's own words are that in North America V4 Superchargers charge up to 250 kW for Model S, Model 3, Model X and Model Y, with only Cybertruck able to take 325 kW. Tesla also says not every car reaches 250 kW, because rates vary with pack size and age, state of charge, ambient temperature, and vehicle configuration.",
       },
       {
         question: "How fast does a Tesla Model 3 charge at home?",
         answer:
-          "Tesla's Wall Connector provides up to 11.5 kW / 48 amps. On Tesla's own table the Model 3 gains 44 miles of range per hour at 48 A, 37 at 40 A, 30 at 32 A, 22 at 24 A, 15 at 16 A, and 11 at 12 A, all approximate. Tesla's footnote caps the Model 3 Rear-Wheel Drive at 32 A (7.7 kW), up to 30 miles per hour, so a bigger circuit buys that trim nothing.",
+          "Tesla's Wall Connector provides up to 11.5 kW / 48 amps. Tesla's table is keyed to the circuit breaker, which is not the amperage delivered: a 60 A breaker gives 48 A output, 50 A gives 40 A, 40 A gives 32 A, and so on down. On that table the Model 3 gains 44 miles of range per hour on a 60 A breaker, 37 on 50 A, 30 on 40 A, 22 on 30 A, 15 on 20 A, and 11 on 15 A, all approximate. Tesla's footnote caps the Model 3 Rear-Wheel Drive at 32 A (7.7 kW), up to 30 miles per hour — the 40 A breaker row — so a bigger breaker buys that trim nothing.",
       },
       {
         question: "What adapter does a Tesla Model 3 need at a CCS charger?",
