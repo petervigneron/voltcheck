@@ -480,8 +480,25 @@ const R: EnrichmentRow[] = [];
 //
 // One row, not two: R/T and R/T Plus are the same powertrain — 1.3-litre
 // turbo, 89 kW motor, 15.5 kWh pack — and EPA files one record for both.
+//
+// The battery warranty was an abstention here and it was wrong. I checked
+// Dodge's FAQ page, found the model discontinued and the question no longer
+// answered, and stopped — without checking the window sticker, which
+// Stellantis hosts per VIN and which states the term outright. "No page states
+// it" was a claim about where I had looked, not about what exists, which is
+// the thing an abstention is never allowed to be.
 {
   const HORNET_FACTS = "https://www.media.stellantisnorthamerica.com/newsrelease.do?id=25012&mid=5";
+  // The battery term is on Dodge's own hosted window sticker, which is
+  // VIN-keyed and may stop resolving once that car sells — so the sentence is
+  // quoted here as well as linked. (A quoted span is also what keeps this out
+  // of the inline note and in the tooltip, per noteRule.ts.) The row spans
+  // 2024–25 and this is a MY2025 R/T Plus eAWD sticker; the Hornet R/T had one
+  // powertrain across both years.
+  const HORNET_STICKER =
+    "https://www.dodge.com/hostd/windowsticker/getWindowStickerPdf.do?vin=ZACPDFCW6S3A44871";
+  const HORNET_WARRANTY_QUOTE =
+    "“8–year or 100,000–mile High Voltage Battery Warranty.” — window sticker, VIN ZACPDFCW6S3A44871";
   // "R" is not a typo. specTrim() cuts a trim at the first slash, so the
   // browse shard files all 273 of these as trim "R" while the per-listing
   // path sees "R/T" — one car, two spellings, and a row that matched only one
@@ -525,9 +542,12 @@ const R: EnrichmentRow[] = [];
       portStandard: f<"J1772">("J1772", "est", "high", "AC charging only, no DC fast charge"),
       dcFastCharging: f<"none">("none", "est", "high", "AC charging only"),
     },
+    warranty: {
+      batteryYears: f(8, "mfr", "high", HORNET_WARRANTY_QUOTE, HORNET_STICKER),
+      batteryMiles: f(100_000, "mfr", "high", HORNET_WARRANTY_QUOTE, HORNET_STICKER),
+    },
     abstains: {
       heatPump: "Stellantis documents never use the term, so their silence is not evidence of absence",
-      batteryWarranty: "No Dodge page states a Hornet high-voltage battery term and the model is discontinued",
     },
   });
 }
@@ -716,10 +736,19 @@ const R: EnrichmentRow[] = [];
 // heat pump ("Energy saving heat pump, using surplus heat from the powertrain
 // and the air") — worth noting because Polestar is the one maker in the
 // backfill table left blank for want of a drive-unit figure, so its
-// documentation is not uniformly generous. Battery warranty is 8 years; the
-// mileage half is deliberately absent because the US page states the cap in
-// kilometres (160,000 km) and converting it would be our arithmetic printed
-// as the maker's figure.
+// documentation is not uniformly generous.
+//
+// The battery warranty first shipped as 8 years with no mileage cap, on the
+// stated grounds that Polestar's US site gives the cap only in kilometres
+// (160,000 km) and converting it would be our arithmetic printed as the
+// maker's. The kilometre figure is real but it is on the specifications page,
+// which carries Polestar's global warranty text; the range-and-charging page —
+// already cited on this row for the charge port — states the US terms in
+// miles: "within 8 years or 100,000 miles" and a replacement "If the
+// battery's State-of-Health (SoH) drops below 70% of its original capacity".
+// Both are filled now and cited to that page. The lesson is narrower than the
+// mistake: I had that file open and read one warranty paragraph on the wrong
+// page of the same site.
 {
   const PS4_SPECS = "https://www.polestar.com/us/polestar-4/specifications/";
   const PS4_CHARGING_PAGE = "https://www.polestar.com/us/polestar-4/range-and-charging/";
@@ -757,7 +786,11 @@ const R: EnrichmentRow[] = [];
     },
     charging: PS4_CHARGING,
     thermal: { heatPump: f<"standard">("standard", "mfr", "high", "Draws surplus heat from the powertrain and the air", PS4_SPECS) },
-    warranty: { batteryYears: f(8, "mfr", "high", undefined, PS4_SPECS) },
+    warranty: {
+      batteryYears: f(8, "mfr", "high", undefined, PS4_CHARGING_PAGE),
+      batteryMiles: f(100_000, "mfr", "high", undefined, PS4_CHARGING_PAGE),
+      sohFloorPct: f(70, "mfr", "high", undefined, PS4_CHARGING_PAGE),
+    },
   });
   R.push(
     ps4("polestar-4-2026-single", ["Long Range"], ["PB3A4"], "RWD", 310, 50033, 35),
