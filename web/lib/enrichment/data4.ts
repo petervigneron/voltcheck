@@ -440,11 +440,22 @@ const TAY = { make: "PORSCHE", model: "Taycan" };
 const TAYCT = { make: "PORSCHE", model: "Taycan Cross Turismo" };
 const MAC = { make: "PORSCHE", model: "Macan Electric" };
 const MACALT = { make: "PORSCHE", model: "Macan" };
+// batteryTransfers is deliberately absent. It stood here as `true` with no
+// citation across all 69 Porsche rows, and Porsche's own US booklets do not
+// say it: the MY2020–2025 New Car Limited Warranty manuals and the MY2025
+// BEV Warranty and Customer Information booklet (PCNA, "U.S. model vehicles
+// only") all describe the New Car and High-Voltage Battery warranties without
+// a word about a second owner. The word "transferred" does appear in every
+// one of them — "this right cannot be transferred to anyone else (such as an
+// insurance company)" — but it sits in the Corrosion Perforation section and
+// governs who may claim reimbursement, not whether coverage follows the car.
+// That hit is the control: the grep works, so the silence is Porsche's, not
+// the text extractor's. Silence is not "no", so the field abstains rather
+// than flipping to false.
 const POR_W = {
   batteryYears: f(8, "mfr" as Source),
   batteryMiles: f(100_000, "mfr" as Source),
   sohFloorPct: f(70, "mfr" as Source),
-  batteryTransfers: f(true, "mfr" as Source),
 };
 const PB1 = { packGrossKwh: f(79.2, "vin", "high", "Performance Battery") };
 const PB1P = { packGrossKwh: f(93.4, "vin", "high", "Performance Battery Plus") };
