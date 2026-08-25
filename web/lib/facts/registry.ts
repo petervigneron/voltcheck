@@ -402,6 +402,39 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       },
     ],
   },
+  {
+    make: "tesla",
+    model: "model-3",
+    topic: "battery-warranty",
+    contentFile: "model-3-battery-warranty",
+    pageTitle: "Tesla Model 3 battery warranty: years, miles, and the 70% floor | Voltcheck",
+    description:
+      "What Tesla's own Battery and Drive Unit Limited Warranty covers on a Model 3 — 8 years and 100,000 or 120,000 miles by trim, a 70% capacity floor, and what Tesla excludes.",
+    breadcrumbLabel: "Tesla Model 3 battery warranty",
+    dateModified: "2026-08-25",
+    faq: [
+      {
+        question: "How long is the Tesla Model 3 battery warranty?",
+        answer:
+          "Eight years, with the mileage cap set by trim. Tesla's warranty document states 8 years or 100,000 miles for Model 3 Standard or Standard Range Plus, and 8 years or 120,000 miles for Model 3 Long Range or Performance, whichever comes first, each with minimum 70% retention of battery capacity over the warranty period. Tesla's support page states the same two tiers in current trim names: Model 3 RWD at 100,000 miles, and Model 3 Premium RWD, Premium AWD and Performance AWD at 120,000 miles.",
+      },
+      {
+        question: "Does the Tesla Model 3 battery warranty cover normal degradation?",
+        answer:
+          "No. Tesla writes that the battery \"will experience gradual energy or power loss with time and use\" and that loss of battery energy or power over time or resulting from battery usage is not covered, except as specified in the warranty. The 70% figure is a defect standard: Tesla warrants the battery free from defects that would cause capacity retention to fall below 70%. Tesla also states that range estimates are an imperfect measure of battery capacity, and that the measurement method is at Tesla's sole discretion.",
+      },
+      {
+        question: "Does the Tesla Model 3 battery warranty transfer to a second owner?",
+        answer:
+          "Yes. Tesla's warranty document states it \"is transferable at no cost to any person(s) who subsequently and lawfully assume(s) ownership of the vehicle after the first retail purchaser.\" Tesla's support page adds that it transfers when a vehicle ownership transfer is performed through Tesla.",
+      },
+      {
+        question: "What voids the Tesla Model 3 battery warranty?",
+        answer:
+          "Tesla excludes damage from intentional actions, including ignoring active vehicle warnings or service notifications, from a collision or accident, and from the servicing or opening of the battery or drive unit by non-Tesla or non-certified personnel. Also excluded: attempting to extend or reduce the battery's life by physical means or programming, exposing the battery to direct flame, and flooding it. Battery fires are the exception that runs the other way, covered even if the result of driver error.",
+      },
+    ],
+  },
 ];
 
 export function findFactSheet(make: string, model: string, topic: string): FactSheetEntry | undefined {
