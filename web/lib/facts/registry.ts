@@ -861,12 +861,12 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       {
         question: "Do you need all-wheel drive to get a heat pump on a Hyundai Ioniq 6?",
         answer:
-          "No. Hyundai marks the SEL and Limited cells with a plain \"S\" and attaches no drivetrain condition to them, in 2023, 2024 and 2025 alike. This is where the Ioniq 6 differs from the Ioniq 5, whose grid gives the same row the value \"AWD only\" in every trim column.",
+          "No. Hyundai marks the SEL and Limited cells with a plain \"S\" and attaches no drivetrain condition to them, in 2023, 2024 and 2025 alike. This is where the Ioniq 6 differs from the Ioniq 5: in Hyundai's 2025 IONIQ 5 grid the same row reads \"AWD-only\" in every trim column, so a rear-wheel-drive 2025 Ioniq 5 has none.",
       },
       {
         question: "What does a Hyundai Ioniq 6 Standard Range heat the cabin with instead?",
         answer:
-          "This page does not say, because Hyundai does not. Hyundai's Ioniq 6 HVAC table has no PTC Heater row to read — its rows are dual automatic temperature control, 2nd row air vents, external temperature, heat pump, cabin air filter, and rear window defroster with timer, and nothing else. Hyundai does print a PTC Heater row in the Ioniq 5's version of the same table, so the row exists in its vocabulary; it is simply not in the Ioniq 6's grid.",
+          "This page does not say, because Hyundai does not. Hyundai's Ioniq 6 HVAC table has no PTC Heater row to read — its rows are dual automatic temperature control, 2nd row air vents, external temperature, heat pump, cabin air filter, and rear window defroster with timer, and nothing else. The row is in Hyundai's vocabulary for this nameplate, which is what makes the absence a fact rather than a failed read: Hyundai's 2026 IONIQ 6 N grid prints a PTC Heater row and a Heat Pump row one above the other, both marked standard.",
       },
       {
         question: "Does the 2026 Hyundai Ioniq 6 have a heat pump?",

@@ -11,11 +11,13 @@ Both notations name the same car. The 53.0 kWh Standard Range battery is sold on
 
 ## The drivetrain does not gate it
 
-Hyundai marks the SEL and Limited cells with a plain "S" and attaches no drivetrain condition to them, in 2023, 2024 and 2025 alike.[^1][^2][^3] That is worth stating because the Ioniq 6's platform sibling is written differently: the Ioniq 5's grid gives the same row the value "AWD only" in every trim column, so a rear-wheel-drive Ioniq 5 has none. Same maker, same grid format, two different answers.[^6]
+Hyundai marks the SEL and Limited cells with a plain "S" and attaches no drivetrain condition to them, in 2023, 2024 and 2025 alike.[^1][^2][^3] That is worth stating because the Ioniq 6's platform sibling is written differently: in Hyundai's 2025 IONIQ 5 grid, the same row reads "AWD-only" in every trim column, so a rear-wheel-drive 2025 Ioniq 5 has none. Same maker, same grid format, same model year, two different answers.[^6]
 
 ## What this page does not say
 
-What a 2023-2025 Ioniq 6 Standard Range heats its cabin with. Hyundai's Ioniq 6 HVAC table has no PTC Heater row to read — its rows are dual automatic temperature control, 2nd row air vents, external temperature, heat pump, cabin air filter, and rear window defroster with timer, and nothing else.[^1][^2][^3] Hyundai does print a PTC Heater row in the Ioniq 5's version of the same table, so the row is in Hyundai's vocabulary; it is simply not in the Ioniq 6's grid.[^6]
+What a 2023-2025 Ioniq 6 Standard Range heats its cabin with. Hyundai's Ioniq 6 HVAC table has no PTC Heater row to read — its rows are dual automatic temperature control, 2nd row air vents, external temperature, heat pump, cabin air filter, and rear window defroster with timer, and nothing else.[^1][^2][^3]
+
+The row is in Hyundai's vocabulary for this nameplate, which is what makes its absence a fact rather than a failed read: Hyundai's 2026 IONIQ 6 N grid prints a PTC Heater row and a Heat Pump row, one above the other, both marked "S". Hyundai prints both rows in the Ioniq 5's grids too.[^6][^12]
 
 ## Model year 2026
 
@@ -23,7 +25,7 @@ Not covered. Hyundai's own 2026 Model Year Changes document lists the "2026 IONI
 
 ## Hyundai's manuals confirm the car is built both ways
 
-Hyundai's Ioniq 6 Owner's Manual gives the air conditioning system two refrigerant charges, one for each build: "With heat pump" 32±0.9 oz. (900±25 g) and "Without heat pump" 25±0.9 oz. (700±25 g), both R-1234yf. The compressor lubricant splits the same way, 6.11±0.35 oz. against 5.29±0.35 oz. The table reads that way in the 2023 manual and again in the 2024 manual.[^8][^9]
+Hyundai's Ioniq 6 Owner's Manual gives the air conditioning system two refrigerant charges, one for each build: 32±0.9 oz. (900±25 g) and 25±0.9 oz. (700±25 g), both R-1234yf. The compressor lubricant splits the same way, 6.11±0.35 oz. against 5.29±0.35 oz. Both figures are identical in the 2023 and 2024 manuals; the row labels are not. The 2024 manual writes "With heat pump" and "Without heat pump"; the 2023 manual writes "Heat pump" and "Without heat pump".[^8][^9]
 
 ## How this was checked
 
@@ -62,12 +64,14 @@ Hyundai's Ioniq 6 Owner's Manual gives the air conditioning system two refrigera
 
 [^11]: Hyundai News, "Hyundai 2023 IONIQ 6 Leads New Era of Electrification at 2022 Los Angeles Auto Show," Nov. 15, 2022 (PDF). https://www.hyundainews.com/assets/documents/original/53096-LosAngelesIONIQ6pressrelease11152022final.pdf
 
+[^12]: Hyundai, *2026 IONIQ 6 N Specs and Features* (PDF, 25 pages), "INTERIOR (continued)" section, HVAC/Defogger table, PDF page 17, single column headed "N AWD"; the PTC Heater row sits directly above the Heat Pump row and both read "S". Read from the page rendered as an image. https://www.hyundainews.com/assets/applications/original/69649-2026-ioniq-6-n-specs-features-120825.pdf. Cited only as a control on Hyundai's row vocabulary for this nameplate, not as an Ioniq 6 fact.
+
 ## Scope note
 
 Model years 2023, 2024 and 2025, US market, each checked against Hyundai's own Features grid for that year, all opened and read this pass. Model year 2026 is not covered at all: Hyundai calls it a Product Enhancement Model with details to come, and published no grid for it that this pass could find. That the search method finds a 2026-model-year grid when Hyundai has published one is shown by the two it did find, for the 2026 IONIQ 5 N and the 2026 IONIQ 6 N.
 
 "S (LR only)", "S" and "-" are Hyundai's exact cell values. Hyundai's grids print no legend defining them, so the reading of "S" as standard follows the grid's own use of it — every car in a column carries every "S" row — rather than a printed key. "LR" is read as Long Range because the same document set uses Standard Range and Long Range as the two battery names for this car, and because the 2025 grid restates the same split by giving the Standard Range its own column with a dash.
 
-The Ioniq 6 N is a different model and is out of scope; no figure above applies to it. Non-US Ioniq 6 builds are out of scope entirely; no non-US document was opened.
+The Ioniq 6 N is a different model and is out of scope; no figure above applies to it. Its 2026 grid is cited once, as a control on which rows Hyundai prints for this nameplate, and for nothing else. Non-US Ioniq 6 builds are out of scope entirely; no non-US document was opened.
 
 Nothing here claims what the Standard Range car heats with. Hyundai's Ioniq 6 HVAC grid has no heater row of any kind other than the heat-pump row, and no other Hyundai document opened for this page names the Ioniq 6's alternative.
