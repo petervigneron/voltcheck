@@ -45,6 +45,26 @@ test("the 91-mile worst case: an UNDISPUTED 'Long Range' trim still resolves the
   assert.equal(e.usableKwh, undefined, "same reason as packKwh");
 });
 
+test("the 2024 Model 3 'A' bucket is the ONE bucket whose colliding rows disagree on chemistry, so chemistry abstains with the range", () => {
+  // m3-2024-rwd carries chemistry LFP; m3-2024-lr-rwd carries no chemistry
+  // fact at all, and an absent fact is not agreement — the Long Range RWD is
+  // a 2170 car, not an LFP one. The dangerous path is the listing with NO
+  // trim: it resolves by elimination to the LFP row and would print "LFP" on
+  // a car that may be the Long Range. Chemistry drives charge-to-100%
+  // guidance and battery-risk scoring, so the wrong one is bad advice, not
+  // just a wrong spec line.
+  const untrimmed = enrichListing({ ...base, vin: M3_2024_A_VIN });
+  assert.equal(untrimmed.row?.id, "m3-2024-rwd", "still resolves by elimination, unchanged");
+  assert.equal(untrimmed.row?.battery?.chemistry, undefined, "the LFP claim is not earned on this car");
+
+  // The stated-trim path resolves to the row that never had a chemistry fact,
+  // so it was already quiet; pinned so a later backfill of that row's
+  // chemistry can't start printing it here.
+  const trimmed = enrichListing({ ...base, vin: M3_2024_A_VIN, trim: "Long Range" });
+  assert.equal(trimmed.row?.id, "m3-2024-lr-rwd");
+  assert.equal(trimmed.row?.battery?.chemistry, undefined);
+});
+
 test("the same bucket, no stated trim at all: the row still resolves by elimination (pre-existing behavior), but the range abstains too", () => {
   // m3-2024-rwd carries no trim key, so an absent trim satisfies it alone
   // and the ordinary matcher returns it as a confident exact row — the
@@ -92,6 +112,20 @@ test("Model Y 2022-23, VIN-8 E: the identical trim on an Austin-built car is NOT
   const e = enrichListing(l);
   assert.equal(e.row?.id, "model-y-lr-awd-2022-23");
   assert.equal(e.realRangeMi, undefined);
+});
+
+test("2022-23 Model Y 'E': the colliding rows AGREE on NCA, so chemistry is still served even though range and pack abstain", () => {
+  // The counterweight to the 2024 Model 3 chemistry case above, and the
+  // reason the guard asks the ROWS rather than a second list of buckets:
+  // these two rows differ by 51 miles and 13 kWh — a real collision, and
+  // both range and pack abstain on it — yet they agree on NCA. Withholding a
+  // fact every candidate agrees on would be silence the data doesn't ask for.
+  const l: Listing = { ...base, model: "Model Y", vin: MY_2022_E_AUSTIN_VIN, year: 2022, trim: "Long Range AWD" };
+  const e = enrichListing(l);
+  assert.equal(e.row?.id, "model-y-lr-awd-2022-23");
+  assert.equal(e.realRangeMi, undefined, "range still abstains");
+  assert.equal(e.packKwh, undefined, "pack still abstains");
+  assert.equal(e.row?.battery?.chemistry?.value, "NCA", "both colliding rows are NCA, so this one is earned");
 });
 
 test("a Tesla outside the eight buckets is untouched", () => {

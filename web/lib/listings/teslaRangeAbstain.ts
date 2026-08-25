@@ -1,4 +1,5 @@
 import type { Listing } from "./types";
+import type { EnrichmentRow } from "../types";
 import { matchIgnoringTrim } from "../enrichment/match";
 import { decodeTeslaVin, isTeslaVin } from "../tesla-vin";
 
@@ -90,7 +91,26 @@ function inCollisionBucket(l: Listing): boolean {
  * there is nothing here to withhold from it.
  */
 export function abstainTeslaRange(l: Listing): boolean {
-  if (!inCollisionBucket(l)) return false;
+  return teslaCollisionRows(l) !== undefined;
+}
+
+/**
+ * The rows this listing could still be once the trim is out of the room —
+ * i.e. the cars whose facts the resolved row is standing in for — or
+ * `undefined` when there is nothing to withhold (outside the eight buckets,
+ * or the VIN narrowed it to one row on its own).
+ *
+ * `abstainTeslaRange` is the boolean form of exactly this question, and
+ * callers that need to know WHICH rows collided want this. Fields differ
+ * across the colliding rows by field, not by listing: range and pack differ
+ * in all eight buckets, which is why those are withheld unconditionally,
+ * while battery chemistry differs in only one of them (see the note on the
+ * clone in lib/listings/enrich.ts). Asking the rows directly rather than
+ * hard-coding a second per-bucket list keeps the two from drifting apart
+ * when a chemistry fact is added to a row that today carries none.
+ */
+export function teslaCollisionRows(l: Listing): EnrichmentRow[] | undefined {
+  if (!inCollisionBucket(l)) return undefined;
   const tesla = isTeslaVin(l.vin) ? decodeTeslaVin(l.vin) : null;
   const corroborated = matchIgnoringTrim(
     {
@@ -104,6 +124,7 @@ export function abstainTeslaRange(l: Listing): boolean {
       batteryKwhHint: l.vpicBatteryKwh,
     },
     tesla
-  ).exact;
-  return corroborated === undefined;
+  );
+  if (corroborated.exact) return undefined;
+  return corroborated.candidates ?? [];
 }
