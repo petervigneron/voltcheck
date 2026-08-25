@@ -231,6 +231,42 @@ test("the C40 needs no guard, and 'C40 Recharge' is the spelling the feed uses",
   assert.equal(idOf(decode({ make: "VOLVO", model: "C40", modelYear: 2023 })), "c40-recharge-2022-23");
 });
 
+// ── The electric Mercedes CLA (data9, 2026-08-25). Not a plug-in hybrid, but
+// the same nameplate-sharing problem: the feed files it as bare model "CLA"
+// and vPIC decodes it to "CLA-Class", both of which the petrol CLA 250 / CLA
+// 220 / AMG CLA 35 also wear. The plus sign does the work on the 250+ — see
+// trimPlusMismatch in match.ts — and the absence of any petrol CLA 350 does it
+// on the 4MATIC.
+test("the electric CLA resolves from the bare nameplate the petrol CLA also wears", () => {
+  for (const [trim, id] of [
+    ["250+ Electric", "cla-250plus-2026-27-alt"],
+    ["250+ with EQ Technology", "cla-250plus-2026-27-alt"],
+    ["350 4MATIC Electric", "cla-350-4matic-2026-27-alt"],
+    ["350 4MATIC with EQ Technology", "cla-350-4matic-2026-27-alt"],
+    ["CLA 350", "cla-350-4matic-2026-27-alt"],
+  ] as const) {
+    assert.equal(idOf(decode({ make: "MERCEDES-BENZ", model: "CLA", modelYear: 2027, trim })), id, trim);
+  }
+  // vPIC's own decode of the same two cars.
+  assert.equal(idOf(decode({ make: "MERCEDES-BENZ", model: "CLA-Class", modelYear: 2027, trim: "CLA250+" })), "cla-250plus-2026-27-alt");
+  assert.equal(idOf(decode({ make: "MERCEDES-BENZ", model: "CLA-Class", modelYear: 2026, trim: "CLA350 4MATIC" })), "cla-350-4matic-2026-27-alt");
+  // And the spellings that name the car outright.
+  assert.equal(idOf(decode({ make: "MERCEDES-BENZ", model: "CLA 250+", modelYear: 2027 })), "cla-250plus-2026-27");
+  assert.equal(idOf(decode({ make: "MERCEDES-BENZ", model: "CLA 350", modelYear: 2027, trim: "4MATIC" })), "cla-350-4matic-2026-27");
+});
+
+test("a petrol CLA matches nothing, and the plus sign is what keeps it out", () => {
+  for (const trim of ["CLA250", "CLA250 4MATIC", "CLA220", "AMG CLA35 4MATIC", "AMG CLA45 S 4MATIC", "250", "250 4MATIC"]) {
+    for (const model of ["CLA", "CLA-Class"]) {
+      assert.equal(matchEnrichment(decode({ make: "MERCEDES-BENZ", model, modelYear: 2027, trim }), null).exact, undefined, `${model} ${trim}`);
+      assert.equal(matchEnrichment(decode({ make: "MERCEDES-BENZ", model, modelYear: 2027, trim }), null).candidates, undefined, `${model} ${trim}`);
+    }
+  }
+  for (const model of ["CLA", "CLA-Class"]) {
+    assert.equal(matchEnrichment(decode({ make: "MERCEDES-BENZ", model, modelYear: 2027 }), null).exact, undefined, model);
+  }
+});
+
 test("the Lincoln Grand Touring guard: PHEV trims resolve, gas Corsair/Aviator trims match nothing", () => {
   assert.equal(idOf(decode({ make: "LINCOLN", model: "Corsair", modelYear: 2022, trim: "Grand Touring" })), "corsair-gt-2021-22-alt");
   assert.equal(idOf(decode({ make: "LINCOLN", model: "Corsair", modelYear: 2026, trim: "Grand Touring Phev" })), "corsair-gt-2026-alt");
