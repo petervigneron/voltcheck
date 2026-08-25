@@ -31,6 +31,16 @@ import type { Chemistry, EnrichmentRow, Fact, Source } from "../types";
 // 2022–23 negative: same document lineage, feature explicitly introduced later.
 const AS_OF = "2026-08-14";
 
+// Subaru battery-warranty transferability — "When These Warranties Apply" in
+// Subaru's own EV Warranty & Maintenance Booklet, the edition that carries the
+// Battery and Electric Drive Unit Limited Warranty. The note here already
+// quoted it with nothing to click. Fuller comment in data2.ts.
+const SUBARU_EV_BOOKLET =
+  "https://techinfo.subaru.com/stis/doc/warrantyBooklet/5125115-Subaru_MSA5M2301M-text.PDF";
+const SUBARU_XFER_NOTE =
+  "\u201CEvery owner of the vehicle during the warranty period shall be entitled to the benefits of these warranties\u201D";
+
+
 // Lucid battery-warranty transferability — "Who May Use This Warranty?" in
 // Lucid's own New Vehicle Limited Warranty, the document that also holds the
 // High Voltage Battery Limited Warranty. The note here already quoted it and
@@ -4887,7 +4897,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     const SOL_W = {
       batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source),
       sohFloorPct: f(70, "mfr" as Source, "high", "\u201cRetention of 70% or more of the original battery capacity\u201d (MY2023 BEV booklet; later years reported same)"),
-      batteryTransfers: f(true, "mfr" as Source, "high", "\u201cEvery owner of the vehicle during the warranty period shall be entitled to the benefits\u201d"),
+      batteryTransfers: f(true, "mfr" as Source, "high", SUBARU_XFER_NOTE, SUBARU_EV_BOOKLET),
     };
     const P728 = { packGrossKwh: f(72.8, "vin", "high", "72.8 kWh in Subaru's Part 565 submissions for gen-1 VINs (CATL pack shared with bZ4X AWD)"), chemistry: f<"NMC">("NMC", "agg", "medium") };
     const P747 = { packGrossKwh: f(74.7, "vin", "high", "74.7 kWh gross, the MY2026 refresh pack") };
@@ -5188,7 +5198,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     const SUB_W = {
       batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source),
       sohFloorPct: f(70, "mfr" as Source, "high", "“Retention of 70% or more of the original battery capacity” (Subaru BEV booklet terms, as on Solterra)"),
-      batteryTransfers: f(true, "mfr" as Source, "high", "“Every owner of the vehicle during the warranty period shall be entitled to the benefits”"),
+      batteryTransfers: f(true, "mfr" as Source, "high", SUBARU_XFER_NOTE, SUBARU_EV_BOOKLET),
     };
     const SUB_SPEC_TS = "https://media.subaru.com/pressrelease/2399/1/2026-subaru-trailseeker-specifications";
     const SUB_SPEC_UC = "https://s3.amazonaws.com/subarumedia.iconicweb.com/mediasite/specs/2026_Subaru_Uncharted_Specs.pdf";

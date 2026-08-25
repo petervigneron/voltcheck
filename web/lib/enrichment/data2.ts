@@ -6,6 +6,28 @@ import type { EnrichmentRow, Fact, Source } from "../types";
 // → "mfr"; secondary-source facts → "agg" until a primary doc is read).
 const AS_OF = "2026-08-10";
 
+// Subaru battery-warranty transferability. Its Warranty & Maintenance Booklet
+// answers it under "When These Warranties Apply": "Every owner of the vehicle
+// during the warranty period shall be entitled to the benefits of these
+// warranties. If the vehicle is sold or otherwise transferred, it is
+// recommended and requested that the new owner promptly send written notice of
+// the transfer of ownership to SOA."
+//
+// The edition matters more than usual here. Subaru publishes a separate EV
+// booklet, and only that one carries the Battery and Electric Drive Unit
+// Limited Warranty (8 years/100,000 miles, 70% retention, "High voltage
+// battery pack") that this field is about — the general 2024 booklet contains
+// no EV coverage and never says "Solterra". Cited is the EV edition. And the
+// same booklet prints that sentence twice: once for the vehicle warranties and
+// once, further on, for the Limited Warranty for Genuine Subaru Replacement
+// Parts and Accessories. The second one is the one a keyword search finds
+// first, and it is about parts you buy over the counter, not the car.
+const SUBARU_EV_BOOKLET =
+  "https://techinfo.subaru.com/stis/doc/warrantyBooklet/5125115-Subaru_MSA5M2301M-text.PDF";
+const SUBARU_XFER_NOTE =
+  "\u201CEvery owner of the vehicle during the warranty period shall be entitled to the benefits of these warranties\u201D";
+
+
 // Nissan battery-warranty transferability. The LEAF's warranty booklet answers
 // it inside the 2024 NEW ELECTRIC VEHICLE LIMITED WARRANTY, under
 // APPLICABILITY: the warranty is "provided to the original and subsequent
@@ -2290,7 +2312,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "“Retention of 70% or more of the original battery capacity” (MY2023 BEV booklet; later years reported same)"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", SUBARU_XFER_NOTE, SUBARU_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -2322,7 +2344,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "“Retention of 70% or more of the original battery capacity” (MY2023 BEV booklet; later years reported same)"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", SUBARU_XFER_NOTE, SUBARU_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -2354,7 +2376,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "“Retention of 70% or more of the original battery capacity” (MY2023 BEV booklet; later years reported same)"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", SUBARU_XFER_NOTE, SUBARU_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -2386,7 +2408,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high", "“Retention of 70% or more of the original battery capacity” (MY2023 BEV booklet; later years reported same)"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", SUBARU_XFER_NOTE, SUBARU_EV_BOOKLET),
     },
     buyerNotes: [
       {
