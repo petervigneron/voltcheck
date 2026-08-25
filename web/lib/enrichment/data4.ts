@@ -384,9 +384,31 @@ const MX = { make: "TESLA", model: "Model X" };
 // 2022 needs nothing: every truck is a quad-motor Large pack. 2023 adds
 // Dual (Large-only), 2024 multiplies packs (Standard/Standard+/Large/Max),
 // gen2 2025+ adds Large Plus/Tri/Quad. Bare tier-only listings present the
-// year's honest candidate set. Rivian's Part 565 kWh figures are real
-// per-config data (128.9 Large gen1, 106/141 gen2) and help the hint filter.
-// Ranges carry the standard-wheel figure with the spread noted.
+// year's honest candidate set. Ranges carry the standard-wheel figure with
+// the spread noted.
+//
+// Rivian's Part 565 kWh figures are NOT usable as gen-2 pack facts, corrected
+// 2026-08-25. vPIC files no kWh at all for MY2025, and for MY2026 it files
+// exactly Rivian's GEN-1 usable column against gen-2 pack names:
+//
+//   vPIC MY2026 "Standard Pack" 106  = gen-1 Dual Standard usable (real: 92.5)
+//   vPIC MY2026 "Large Pack"    131  = gen-1 Dual Large    usable (real: 108)
+//   vPIC MY2026 "Max Pack"      141  = gen-1 Dual Max      usable (real: 140)
+//
+// All three land on the gen-1 row of the same support table, which is what a
+// carried-over spec sheet looks like, not three independent measurements. The
+// control test is EPA: if MY2026 packs had really grown ~14%, range would have
+// moved, and it did not — R1S Dual Standard (20in) is 258 mi in both MY2025
+// (id 48435) and MY2026 (id 49717), same 277/235 city/highway, same 208 kW
+// motor. Large is 300 mi in both. The packs did not change; the filing did.
+// So gen-2 rows carry Rivian's own published figures and cite them, and the
+// kWh hint is left to do only what it can still do honestly — see below.
+//
+// The hint filter (match.ts) is unharmed by this and gets better: its
+// tolerance is 20%, so a 106 hint still admits the 92.5 Standard row (12.7%
+// off) alongside Large, exactly as it admitted the old 106 row. What changes
+// is the 131 hint, which used to keep the Standard row as a false candidate
+// at 19.1% and now correctly drops it at 29.4%. No ignoreKwhHint needed.
 const R1S = { make: "RIVIAN", model: "R1S" };
 const R1T = { make: "RIVIAN", model: "R1T" };
 const RIV_W = {
@@ -397,7 +419,6 @@ const RIV_W = {
 };
 const RIV_PORT1 = { portStandard: f<"CCS1">("CCS1", "mfr") };
 const RIV_128 = { packGrossKwh: f(128.9, "vin", "high", "Large pack") };
-const RIV_106 = { packGrossKwh: f(106, "vin", "high", "Gen-2 Standard pack") };
 const RIV_141 = { packGrossKwh: f(141, "vin", "high", "Max pack") };
 
 
@@ -529,6 +550,25 @@ const ID4_HP_NONE = { heatPump: fb<"none">("none", "mfr", "high", "VW's ID.4 rel
 // native CCS1 through MY2025 (gen 2 included), native NACS from MY2026 —
 // so rows spanning 2025-26 abstain and carry the split as a buyer note.
 const RIV_USABLE = "https://rivian.com/support/article/what-is-the-usable-kwh-capacity-of-your-batteries";
+// The spec table is the second Rivian article, and it is a different document
+// from the usable-capacity one: it publishes rated capacity, chemistry, part
+// number and cell count per configuration. Facts that quote a RATED figure
+// must cite this one — the usable table never states a rated number.
+const RIV_SPECS = "https://rivian.com/support/article/what-are-the-battery-specifications-on-rivian-vehicles";
+// Gen-2 (MY2025+) packs, from those two tables rather than from Part 565.
+// Standard is the LFP pack (95.6 kWh rated, 252 cells) — vPIC agrees on the
+// chemistry for MY2026 and only its kWh is stale. Max/Tri/Quad share one pack
+// (part PT00668219-H), rated and usable both 140.
+// Notes stay inside inlineNote()'s 14 words and state the fact rather than
+// naming the document — the sourceUrl citation already names Rivian. The Max
+// note omits the rated figure on purpose: rated and usable are both 140, so
+// saying "140 rated" under a 140 would imply a distinction that isn't there.
+const RIV_G2_STD = {
+  packUsableKwh: fb(92.5, "mfr", "high", "Gen-2 Dual Standard pack, LFP; 95.6 kWh rated", RIV_USABLE),
+};
+const RIV_G2_MAX = {
+  packUsableKwh: fb(140, "mfr", "high", "Gen-2 Max pack, shared by Dual, Tri and Quad", RIV_USABLE),
+};
 const RIV_ADAPTER = "https://rivian.com/support/article/do-i-need-an-adapter";
 const RIV_PORT_ABSTAIN = "Rivian's adapter guide gives MY2022-25 cars a native CCS1 inlet and MY2026 a native NACS port, and this row spans both years";
 const NOTE_RIV_PORT = { headline: "Charge port: CCS1 through 2025, native NACS from 2026", severity: "info" as const };
@@ -3374,7 +3414,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "r1s-2025-26-std", ...R1S, modelYears: [2025, 2026], trim: ["Standard Pack", "Standard", "Dual Motor"], drive: "AWD", packVariant: "Dual · Standard pack",
     abstains: { portStandard: RIV_PORT_ABSTAIN },
-    battery: RIV_106,
+    battery: RIV_G2_STD,
     range: { epaRangeMi: f(258, "mfr", "high", "Gen-2 R1S Dual Standard on 20-inch wheels, EPA, 2025–26; 270 on 22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48435") },
     thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
     warranty: RIV_W,
@@ -3383,7 +3423,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "r1t-2025-26-std", ...R1T, modelYears: [2025, 2026], trim: ["Standard Pack", "Standard", "Dual Motor"], drive: "AWD", packVariant: "Dual · Standard pack",
     abstains: { portStandard: RIV_PORT_ABSTAIN },
-    battery: RIV_106,
+    battery: RIV_G2_STD,
     range: { epaRangeMi: f(258, "mfr", "high", "Gen-2 R1T Dual Standard on 20-inch wheels, EPA, 2025–26; 270 on 22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48423") },
     thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
     warranty: RIV_W,
@@ -3410,7 +3450,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "r1s-2025-26-largeplus", ...R1S, modelYears: [2025, 2026], trim: ["Large Plus Pack", "Large Plus"], drive: "AWD", packVariant: "Dual · Large Plus pack",
     abstains: { portStandard: RIV_PORT_ABSTAIN },
-    battery: { packGrossKwh: fb(140, "mfr", "medium", "Rivian's battery-spec table rates the Dual Large+ at the Max-class 140 kWh; its usable-capacity table omits this pack", RIV_USABLE) },
+    battery: { packGrossKwh: fb(140, "mfr", "medium", "Rivian's battery-spec table rates the Dual Large+ at the Max-class 140 kWh; its usable-capacity table omits this pack", RIV_SPECS) },
     range: { epaRangeMi: f(317, "mfr", "high", "Gen-2 R1S Dual Large Plus on 20-inch wheels, EPA, 2025–26; 292–330 on 20AT/22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48747") },
     thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
     warranty: RIV_W,
@@ -3419,7 +3459,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "r1t-2025-26-largeplus", ...R1T, modelYears: [2025, 2026], trim: ["Large Plus Pack", "Large Plus"], drive: "AWD", packVariant: "Dual · Large Plus pack",
     abstains: { portStandard: RIV_PORT_ABSTAIN },
-    battery: { packGrossKwh: fb(140, "mfr", "medium", "Rivian's battery-spec table rates the Dual Large+ at the Max-class 140 kWh; its usable-capacity table omits this pack", RIV_USABLE) },
+    battery: { packGrossKwh: fb(140, "mfr", "medium", "Rivian's battery-spec table rates the Dual Large+ at the Max-class 140 kWh; its usable-capacity table omits this pack", RIV_SPECS) },
     range: { epaRangeMi: f(317, "mfr", "high", "Gen-2 R1T Dual Large Plus on 20-inch wheels, EPA, 2025–26; 330 on 22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48757") },
     thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
     warranty: RIV_W,
@@ -3428,7 +3468,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "r1s-2025-26-max", ...R1S, modelYears: [2025, 2026], trim: ["Max Pack", "Max", "Dual Motor"], drive: "AWD", packVariant: "Dual · Max pack",
     abstains: { portStandard: RIV_PORT_ABSTAIN },
-    battery: RIV_141,
+    battery: RIV_G2_MAX,
     range: { epaRangeMi: f(380, "mfr", "high", "Gen-2 R1S Dual Max on 20-inch wheels, EPA, 2025–26; 370–410 on 20AT/22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48433") },
     thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
     warranty: RIV_W,
@@ -3437,7 +3477,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "r1t-2025-26-max", ...R1T, modelYears: [2025, 2026], trim: ["Max Pack", "Max", "Dual Motor"], drive: "AWD", packVariant: "Dual · Max pack",
     abstains: { portStandard: RIV_PORT_ABSTAIN },
-    battery: RIV_141,
+    battery: RIV_G2_MAX,
     range: { epaRangeMi: f(380, "mfr", "high", "Gen-2 R1T Dual Max on 20-inch wheels, EPA, 2025–26; 420 on 22s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48421") },
     thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
     warranty: RIV_W,
@@ -3446,7 +3486,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "r1s-2025-26-tri", ...R1S, modelYears: [2025, 2026], trim: ["Tri Motor", "Tri", "Tri Motor Max Pack"], drive: "AWD", packVariant: "Tri · Max pack",
     abstains: { portStandard: RIV_PORT_ABSTAIN },
-    battery: RIV_141,
+    battery: RIV_G2_MAX,
     range: { epaRangeMi: f(371, "mfr", "high", "Gen-2 R1S Tri Max on 22-inch wheels, EPA, 2025–26; 329 on 20AT", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48751") },
     thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
     warranty: RIV_W,
@@ -3455,7 +3495,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "r1t-2025-26-tri", ...R1T, modelYears: [2025, 2026], trim: ["Tri Motor", "Tri", "Tri Motor Max Pack"], drive: "AWD", packVariant: "Tri · Max pack",
     abstains: { portStandard: RIV_PORT_ABSTAIN },
-    battery: RIV_141,
+    battery: RIV_G2_MAX,
     range: { epaRangeMi: f(371, "mfr", "high", "Gen-2 R1T Tri Max on 22-inch wheels, EPA, 2025–26", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48761") },
     thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
     warranty: RIV_W,
@@ -3463,7 +3503,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
   {
     id: "r1s-2026-quad", ...R1S, modelYears: [2026, 2026], trim: ["Quad Motor", "Quad", "Quad Motor Large Pack"], drive: "AWD", packVariant: "Quad · Max pack",
-    battery: RIV_141,
+    battery: RIV_G2_MAX,
     range: { epaRangeMi: f(374, "mfr", "high", "MY2026 gen-2 R1S Quad Max on 22-inch wheels, EPA; 325–338 on AT/UHP tires", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49740") },
     charging: { portStandard: fb<"NACS">("NACS", "mfr", "high", "Native NACS port from MY2026", RIV_ADAPTER) },
     thermal: { heatPump: f("standard", "agg", "medium", "R1 platform heat pump") },
