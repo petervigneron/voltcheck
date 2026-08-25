@@ -12,6 +12,21 @@ import type { EnrichmentRow, Fact, Source } from "../types";
 // documented as existing for that year).
 const AS_OF = "2026-08-10";
 
+// Toyota battery-warranty transferability, for the bZ and bZ Woodland rows
+// below: "Warranty coverage is automatically transferred at no cost to
+// subsequent vehicle owners", from GENERAL WARRANTY PROVISIONS in Toyota's own
+// Warranty & Maintenance Guide, whose Electric Vehicle Drive Components
+// Warranty covers the Traction Battery. Toyota writes one guide per nameplate
+// and the bZ guide never says "Woodland", so the Woodland rows cite the
+// Woodland guide rather than borrowing the bZ one; both carry the sentence.
+const TOY_BZ_GUIDE =
+  "https://assets.sia.toyota.com/publications/en/omms-s/T-MMS-26bZ/pdf/T-MMS-26bZ.pdf";
+const TOY_BZW_GUIDE =
+  "https://assets.sia.toyota.com/publications/en/omms-s/T-MMS-26bZWoodland/pdf/T-MMS-26bZWoodland.pdf";
+const TOY_XFER_NOTE =
+  "\u201CWarranty coverage is automatically transferred at no cost to subsequent vehicle owners\u201D";
+
+
 // GMC battery-warranty transferability — GM's MY2025 GMC Electric Vehicle
 // Limited Warranty booklet, which grants its coverages, the propulsion battery
 // among them, to "the original owner and any subsequent owners". Fuller
@@ -637,7 +652,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
       sohFloorPct: f(70, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", TOY_XFER_NOTE, TOY_BZ_GUIDE),
     },
     buyerNotes: [BZ_RECALL_NOTE],
   },
@@ -661,7 +676,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
       sohFloorPct: f(70, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", TOY_XFER_NOTE, TOY_BZ_GUIDE),
     },
     buyerNotes: [BZ_RECALL_NOTE],
   },
@@ -685,7 +700,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
       sohFloorPct: f(70, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", TOY_XFER_NOTE, TOY_BZ_GUIDE),
     },
     buyerNotes: [BZ_RECALL_NOTE],
   },
@@ -709,7 +724,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
       sohFloorPct: f(70, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", TOY_XFER_NOTE, TOY_BZ_GUIDE),
     },
     buyerNotes: [BZ_RECALL_NOTE],
   },
@@ -733,7 +748,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
       sohFloorPct: f(70, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", TOY_XFER_NOTE, TOY_BZ_GUIDE),
     },
     buyerNotes: [BZ_RECALL_NOTE],
   },
@@ -757,7 +772,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
       sohFloorPct: f(70, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", TOY_XFER_NOTE, TOY_BZ_GUIDE),
     },
     buyerNotes: [BZ_RECALL_NOTE],
   },
@@ -782,7 +797,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
       sohFloorPct: f(70, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", TOY_XFER_NOTE, TOY_BZW_GUIDE),
     },
   },
 
@@ -805,7 +820,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
       sohFloorPct: f(70, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", TOY_XFER_NOTE, TOY_BZW_GUIDE),
     },
   },
 
@@ -828,7 +843,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
       sohFloorPct: f(70, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", TOY_XFER_NOTE, TOY_BZW_GUIDE),
     },
   },
 

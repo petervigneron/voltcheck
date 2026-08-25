@@ -6,6 +6,21 @@ import type { EnrichmentRow, Fact, Source } from "../types";
 // → "mfr"; secondary-source facts → "agg" until a primary doc is read).
 const AS_OF = "2026-08-10";
 
+// Toyota battery-warranty transferability, for the bZ4X rows below. Toyota's
+// own Warranty & Maintenance Guide says it under GENERAL WARRANTY PROVISIONS,
+// "Which Vehicles Are Covered": "Warranty coverage is automatically
+// transferred at no cost to subsequent vehicle owners." The battery is one of
+// the coverages that sentence governs — the same guide's Electric Vehicle
+// Drive Components Warranty lists "Traction Battery - Below 70% of original
+// capacity" among the parts it covers, for 8 years or 100,000 miles from the
+// in-service date. The cited guide is the MY2024 bZ4X edition, the earliest
+// bZ4X guide Toyota publishes (a MY2023 filename 403s at the same path).
+const TOY_BZ4X_GUIDE =
+  "https://assets.sia.toyota.com/publications/en/omms-s/T-MMS-24bZ4X/pdf/T-MMS-24bZ4X.pdf";
+const TOY_XFER_NOTE =
+  "\u201CWarranty coverage is automatically transferred at no cost to subsequent vehicle owners\u201D";
+
+
 // Volkswagen battery-warranty transferability. VW writes it into the
 // high-voltage section itself, so nothing has to be inferred from the general
 // grant: "The High-Voltage System Limited Warranty is automatically
@@ -1319,7 +1334,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", TOY_XFER_NOTE, TOY_BZ4X_GUIDE),
     },
     buyerNotes: [
       {
@@ -1349,7 +1364,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", TOY_XFER_NOTE, TOY_BZ4X_GUIDE),
     },
     buyerNotes: [
       {
@@ -1379,7 +1394,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", TOY_XFER_NOTE, TOY_BZ4X_GUIDE),
     },
     buyerNotes: [
       {
@@ -1409,7 +1424,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", TOY_XFER_NOTE, TOY_BZ4X_GUIDE),
     },
     buyerNotes: [
       {
@@ -1441,7 +1456,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", TOY_XFER_NOTE, TOY_BZ4X_GUIDE),
     },
     buyerNotes: [
       {
@@ -1471,7 +1486,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", TOY_XFER_NOTE, TOY_BZ4X_GUIDE),
     },
     buyerNotes: [
       {
@@ -1501,7 +1516,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", TOY_XFER_NOTE, TOY_BZ4X_GUIDE),
     },
     buyerNotes: [
       {
@@ -1531,7 +1546,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(70, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", TOY_XFER_NOTE, TOY_BZ4X_GUIDE),
     },
     buyerNotes: [
       {
