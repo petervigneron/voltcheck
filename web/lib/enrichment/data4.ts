@@ -31,6 +31,15 @@ import type { Chemistry, EnrichmentRow, Fact, Source } from "../types";
 // 2022–23 negative: same document lineage, feature explicitly introduced later.
 const AS_OF = "2026-08-14";
 
+// Cadillac battery-warranty transferability — the sentence inside GM's own
+// Electric Vehicle Propulsion Battery Warranty section. Fuller comment in
+// data2.ts.
+const CAD_EV_BOOKLET =
+  "https://contentdelivery.ext.gm.com/bypass/gma-content-api/resources/sites/GMA/content/staging/MANUALS/5000/MA5693/en_US/5.0/23_CAD_Electric_Vehicle_WM_en_US_U_16451725A_2022MAR10.pdf";
+const CAD_XFER_NOTE =
+  "\u201CTransferable at no cost to any subsequent person(s) who assumes ownership of the vehicle within the 8 years or 100,000 miles term\u201D";
+
+
 // Chevrolet battery-warranty transferability — the sentence inside GM's own
 // Electric Vehicle Propulsion Battery Warranty section. Fuller comment in
 // data.ts.
@@ -2968,7 +2977,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packUsableKwh: fb(102, "mfr", "high", "Stated as 102 kWh Useable Battery Energy") },
     range: { epaRangeMi: f(305, "mfr", "high", "Vistiq (AWD-only), EPA, same rating 2026–27; 300 with the 19 kW onboard-charger option", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49636") },
     charging: { portStandard: f("CCS1", "mfr") },
-    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
+    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr", "high", CAD_XFER_NOTE, CAD_EV_BOOKLET) },
   },
   {
     id: "cadillac-optiq-2025", make: "CADILLAC", model: "Optiq", modelYears: [2025, 2025], drive: "AWD",
@@ -2976,7 +2985,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packUsableKwh: fb(85, "mfr", "high", "Stated as 85 kWh Useable Battery Energy") },
     range: { epaRangeMi: f(302, "mfr", "medium", "GM-estimated, fueleconomy.gov has no MY2025 Optiq entry under any spelling (control: the MY2026 records are present); every MY2025 Optiq is dual-motor AWD") },
     charging: { portStandard: f("CCS1", "mfr") },
-    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
+    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr", "high", CAD_XFER_NOTE, CAD_EV_BOOKLET) },
   },
   {
     id: "id4-2025-rwd-pro", make: "VOLKSWAGEN", model: "ID.4", modelYears: [2025, 2025], trim: ["Pro", "Pro S", "Pro S Plus"], drive: "RWD", ignoreKwhHint: true,
@@ -3256,7 +3265,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packUsableKwh: fb(102, "mfr", "high", "Stated as 102 kWh Useable Battery Energy", "https://web.archive.org/web/20250903021838/https://news.gm.com/home.detail.html/Pages/news/us/en/2025/jan/0123-lyriq-v.html") },
     range: { epaRangeMi: f(285, "mfr", "high", undefined, "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49633") },
     charging: { portStandard: f("CCS1", "mfr") },
-    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
+    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr", "high", CAD_XFER_NOTE, CAD_EV_BOOKLET) },
   },
 
   {

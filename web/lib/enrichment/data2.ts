@@ -6,6 +6,28 @@ import type { EnrichmentRow, Fact, Source } from "../types";
 // → "mfr"; secondary-source facts → "agg" until a primary doc is read).
 const AS_OF = "2026-08-10";
 
+// Cadillac battery-warranty transferability. GM puts it inside the battery
+// section, in the same words it uses for Chevrolet and GMC: "In addition to
+// the initial owner of the vehicle, the coverage described in this Electric
+// Vehicle Propulsion Battery Warranty is transferable at no cost to any
+// subsequent person(s) who assumes ownership of the vehicle within the 8 years
+// or 100,000 miles term. No deductibles are associated with this warranty."
+//
+// The cited edition is MY2023 — the newest Cadillac EV booklet reachable:
+// GM's EV booklets only answer on contentdelivery.ext.gm.com's
+// /bypass/gma-content-api/ path, and the MY2025 Cadillac filename that search
+// returns 404s there and on the /content/dam/cope/ path both. The rows run to
+// MY2027, and what supports reading the clause forward is GM's own newer
+// booklets for its other brands: the MY2025 Chevrolet and GMC EV booklets
+// carry the same grant ("provided to the original owner and any subsequent
+// owners of the vehicle during the warranty period") with Electric Vehicle
+// Propulsion Battery Coverage listed among the coverages granted.
+const CAD_EV_BOOKLET =
+  "https://contentdelivery.ext.gm.com/bypass/gma-content-api/resources/sites/GMA/content/staging/MANUALS/5000/MA5693/en_US/5.0/23_CAD_Electric_Vehicle_WM_en_US_U_16451725A_2022MAR10.pdf";
+const CAD_XFER_NOTE =
+  "\u201CTransferable at no cost to any subsequent person(s) who assumes ownership of the vehicle within the 8 years or 100,000 miles term\u201D";
+
+
 // Chevrolet battery-warranty transferability — the sentence inside GM's own
 // Electric Vehicle Propulsion Battery Warranty section. Fuller comment in
 // data.ts.
@@ -1493,7 +1515,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(75, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", CAD_XFER_NOTE, CAD_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -1529,7 +1551,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(75, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", CAD_XFER_NOTE, CAD_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -1558,7 +1580,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(75, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", CAD_XFER_NOTE, CAD_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -1599,7 +1621,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(75, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", CAD_XFER_NOTE, CAD_EV_BOOKLET),
     },
     buyerNotes: [
       {

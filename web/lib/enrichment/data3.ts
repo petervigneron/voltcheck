@@ -12,6 +12,15 @@ import type { EnrichmentRow, Fact, Source } from "../types";
 // documented as existing for that year).
 const AS_OF = "2026-08-10";
 
+// Cadillac battery-warranty transferability — the sentence inside GM's own
+// Electric Vehicle Propulsion Battery Warranty section. Fuller comment in
+// data2.ts.
+const CAD_EV_BOOKLET =
+  "https://contentdelivery.ext.gm.com/bypass/gma-content-api/resources/sites/GMA/content/staging/MANUALS/5000/MA5693/en_US/5.0/23_CAD_Electric_Vehicle_WM_en_US_U_16451725A_2022MAR10.pdf";
+const CAD_XFER_NOTE =
+  "\u201CTransferable at no cost to any subsequent person(s) who assumes ownership of the vehicle within the 8 years or 100,000 miles term\u201D";
+
+
 // BMW battery-warranty transferability — the WARRANTOR clause of BMW's own
 // MY26 New Vehicle Limited Warranty booklet, which grants the booklet's
 // coverages (the HV battery's 8-year term among them) "to the first retail
@@ -2564,7 +2573,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
       sohFloorPct: f(75, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", CAD_XFER_NOTE, CAD_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -2603,7 +2612,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
       sohFloorPct: f(75, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", CAD_XFER_NOTE, CAD_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -2641,7 +2650,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
       sohFloorPct: f(75, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", CAD_XFER_NOTE, CAD_EV_BOOKLET),
     },
     buyerNotes: [
       {
@@ -2682,7 +2691,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
       sohFloorPct: f(75, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high", CAD_XFER_NOTE, CAD_EV_BOOKLET),
     },
     buyerNotes: [
       {
