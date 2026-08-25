@@ -333,6 +333,34 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       },
     ],
   },
+  {
+    make: "nissan",
+    model: "ariya",
+    topic: "heat-pump",
+    contentFile: "ariya-heat-pump",
+    pageTitle: "Nissan Ariya heat pump: what Nissan's own documents say | Voltcheck",
+    description:
+      "No Nissan document published for the US-market Ariya says it has a heat pump. Nissan's own high-voltage component list names a PTC heater. Eight Nissan documents checked.",
+    breadcrumbLabel: "Nissan Ariya heat pump",
+    dateModified: "2026-08-25",
+    faq: [
+      {
+        question: "Does the Nissan Ariya have a heat pump?",
+        answer:
+          "No Nissan document published for the US-market Ariya says it has one. Eight Nissan documents were checked for this page — the 2023, 2024, and 2025 owner's manuals and brochures, plus the 2023 and 2024 press-kit specification sets — and the word \"pump\" appears in none of them in connection with the Ariya's climate system. Nissan's own twelve-item list of the Ariya's high-voltage components names a PTC heater in the heating position, alongside the air conditioner compressor.",
+      },
+      {
+        question: "What cold-weather equipment does the Nissan Ariya have?",
+        answer:
+          "A battery heater, standard on every trim for 2023 and 2024 per Nissan's own press-kit specification tables and the 2024 brochure grid. Dual-zone Automatic Temperature Control is standard across the trim span. Heated front seats, a heated steering wheel, heated outboard rear seats, and climate-controlled heated-and-cooled front seats are each broken out by trim.",
+      },
+      {
+        question: "How was the Nissan Ariya's heat pump claim checked?",
+        answer:
+          "Nissan's 2023 Ariya press kit carries 519 specification table rows across 46 tables, and the word \"pump\" occurs zero times in its text; the 2024 press kit carries 532 rows, also zero. Three owner's manuals and three brochures were searched in full with the same result. As a control, Nissan's US newsroom does use the words plainly for a different Nissan: \"LEAF has a standard, energy-efficient heat pump to help warm the cabin.\"",
+      },
+    ],
+  },
 ];
 
 export function findFactSheet(make: string, model: string, topic: string): FactSheetEntry | undefined {
