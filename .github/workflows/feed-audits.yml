@@ -152,6 +152,14 @@ jobs:
         working-directory: scraper
         env:
           FEED_REVALIDATE_SECRET: ${{ secrets.FEED_REVALIDATE_SECRET }}
+          # For the repair path only: clearPoisonedCache gates its
+          # expire-and-rewarm on the database being able to serve the
+          # re-render (2026-08-25 — repairing dead shards against the sick
+          # database that caused them burns ~8 walks to cache nothing and
+          # re-drains the disk IO budget). The CHECKS above it read only the
+          # production CDN and still run without these.
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: node feed-shard-check.mjs
 
       # audit-status.json only — never registry.json/gm-warranty.json/
