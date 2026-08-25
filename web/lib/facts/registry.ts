@@ -795,7 +795,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       {
         question: "How do I tell if a used Tesla Model 3 has a heat pump?",
         answer:
-          "Tesla publishes a per-car check, in its own words: \"to determine if your vehicle has a heat pump, touch Controls > Software > Additional Vehicle Information.\" The instruction appears on both the Operating Climate Controls page and the Cold Weather Best Practices page of the Model 3 Owner's Manual's 2017-2023 edition.",
+          "Tesla publishes a per-car check, in its own words: \"to determine if your vehicle has a heat pump, touch Controls > Software > Additional Vehicle Information.\" The instruction appears on four pages of the Model 3 Owner's Manual's 2017-2023 edition: Operating Climate Controls, Acceleration Modes, Charging Instructions, and Cold Weather Best Practices.",
       },
       {
         question: "Tesla's manual lists a Heat Pump Assembly for the Model 3 — doesn't that settle it?",

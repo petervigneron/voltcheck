@@ -8,7 +8,7 @@ That sentence is a manufacture date. It is not a model year, and no Tesla docume
 
 ## How to check one specific car
 
-Tesla publishes a per-car check, in its own words: "to determine if your vehicle has a heat pump, touch Controls > Software > Additional Vehicle Information." The instruction appears twice in the same manual edition — on the Operating Climate Controls page and on the Cold Weather Best Practices page.[^2][^3]
+Tesla publishes a per-car check, in its own words: "to determine if your vehicle has a heat pump, touch Controls > Software > Additional Vehicle Information." The instruction appears on four pages of the same manual edition — Operating Climate Controls, Acceleration Modes, Charging Instructions, and Cold Weather Best Practices.[^2][^3]
 
 ## Why Tesla's component list is not the answer
 
@@ -21,7 +21,7 @@ The 2017-2023 edition covers cars Tesla itself says do not have a heat pump. So 
 Tesla's Model 3 Emergency Response Guide for 2017-2023 describes the car two ways, in one document:
 
 - Its prose names resistive heaters. Tesla's list of what the high voltage contactors connect: "the rear drive unit, the front drive unit, the air conditioning compressor, the coolant heater, the cabin postive temperature coefficient (PTC) heater, and the rear PTC heater." The misspelling of "positive" is Tesla's.[^6]
-- Its High Voltage Components diagram, twelve pages later in the same guide, labels callout 2 "Heat Pump."[^7]
+- Its High Voltage Components diagram, eleven pages later in the same guide, labels callout 2 "Heat Pump."[^7]
 
 The 2024+ guide, covering only cars that all have a heat pump, labels the same callout position "Air Conditioning Compressor" and drops the heaters from its prose entirely.[^8][^9] Tesla's diagram labels therefore do not track whether a car has a heat pump, and none of these three documents can date the change on its own. The dated NOTE above is the only Tesla statement here that does.
 
@@ -43,11 +43,11 @@ Nothing about trims. Tesla's statement is by manufacture date only, and no docum
 
 ## Footnotes
 
-[^1]: Tesla, *Model 3 Owner's Manual*, "2017-2023" edition, "Replacing the Low Voltage Lead-Acid Battery" page, second NOTE. https://www.tesla.com/ownersmanual/2017_2023_model3/en_us/GUID-2588F809-41E3-43F1-84E5-6745C7C18DBE.html. Read 2026-08-25; Tesla's page carries a modified date of 2026.06.30 and is revised in place. Fetched via a real browser session; tesla.com blocks a direct plain-HTTP fetch.
+[^1]: Tesla, *Model 3 Owner's Manual*, "2017-2023" edition, "Replacing the Low Voltage Lead-Acid Battery" page, the first of the page's two NOTEs. The page's blocks run CAUTION, CAUTION, this NOTE, a second NOTE about Gigafactory Shanghai and Fremont low-voltage battery chemistry, then a WARNING. https://www.tesla.com/ownersmanual/2017_2023_model3/en_us/GUID-2588F809-41E3-43F1-84E5-6745C7C18DBE.html. Read 2026-08-25; Tesla's page carries a modified date of 2026.06.30 and is revised in place. Fetched via a real browser session; tesla.com blocks a direct plain-HTTP fetch.
 
 [^2]: Tesla, *Model 3 Owner's Manual*, "2017-2023" edition, "Operating Climate Controls" page, "Climate Control Operating Tips." https://www.tesla.com/ownersmanual/2017_2023_model3/en_us/GUID-4F3599A1-20D9-4A49-B4A0-5261F957C096.html
 
-[^3]: Tesla, *Model 3 Owner's Manual*, "2017-2023" edition, "Cold Weather Best Practices" page. https://www.tesla.com/ownersmanual/2017_2023_model3/en_us/GUID-F907200E-A619-4A95-A0CF-94E0D03BEBEF.html
+[^3]: The other three pages of the same edition carrying that instruction: "Cold Weather Best Practices," https://www.tesla.com/ownersmanual/2017_2023_model3/en_us/GUID-F907200E-A619-4A95-A0CF-94E0D03BEBEF.html; "Acceleration Modes," https://www.tesla.com/ownersmanual/2017_2023_model3/en_us/GUID-8EAFF5D8-7209-45ED-A7E0-508FFA60C530.html; and "Charging Instructions," https://www.tesla.com/ownersmanual/2017_2023_model3/en_us/GUID-BEE08D47-0CE0-4BDD-83F2-9854FB3D578F.html
 
 [^4]: Tesla, *Model 3 Owner's Manual*, "2017-2023" edition, "Electric Vehicle Components" page, "High Voltage Components." https://www.tesla.com/ownersmanual/2017_2023_model3/en_us/GUID-8FA15856-1720-440F-838B-ACFBA8D7D608.html
 
