@@ -361,6 +361,39 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       },
     ],
   },
+  {
+    make: "tesla",
+    model: "model-3",
+    topic: "charging",
+    contentFile: "model-3-charging",
+    pageTitle: "Tesla Model 3 charging: Supercharger speed, home rate by circuit, adapters | Voltcheck",
+    description:
+      "How fast a Tesla Model 3 charges at a Supercharger and at home by circuit size, which trims cap at 32 amps, and which adapters it needs. Sourced to Tesla's own manual and support pages.",
+    breadcrumbLabel: "Tesla Model 3 charging",
+    dateModified: "2026-08-25",
+    faq: [
+      {
+        question: "How fast does the Tesla Model 3 charge at a Supercharger?",
+        answer:
+          "Tesla publishes a distance rather than a time to 80%: \"Model 3 Up to 175 miles in 15 minutes.\" V3 Superchargers peak at up to 250 kW, and a V4 Supercharger does not make a Model 3 faster — Tesla's own words are that in North America V4 Superchargers charge up to 250 kW for Model S, Model 3, Model X and Model Y, with only Cybertruck able to take 325 kW. Tesla also says not every car reaches 250 kW, because rates vary with pack size and age, state of charge, ambient temperature, and vehicle configuration.",
+      },
+      {
+        question: "How fast does a Tesla Model 3 charge at home?",
+        answer:
+          "Tesla's Wall Connector provides up to 11.5 kW / 48 amps. On Tesla's own table the Model 3 gains 44 miles of range per hour at 48 A, 37 at 40 A, 30 at 32 A, 22 at 24 A, 15 at 16 A, and 11 at 12 A, all approximate. Tesla's footnote caps the Model 3 Rear-Wheel Drive at 32 A (7.7 kW), up to 30 miles per hour, so a bigger circuit buys that trim nothing.",
+      },
+      {
+        question: "What adapter does a Tesla Model 3 need at a CCS charger?",
+        answer:
+          "Tesla's CCS Combo 1 Adapter, rated 500V DC. Tesla's own words: \"Use only to connect the charge cable on a CCS Combo 1 charging station to a Tesla vehicle that is capable of Combo 1 DC charging,\" and \"Not all Tesla vehicles are equipped with CCS charging capability. To determine if your vehicle is compatible, touch Controls > Software > Additional Vehicle Information on the touchscreen, or contact Tesla.\" A separate SAE J1772 adapter is needed for J1772 AC stations.",
+      },
+      {
+        question: "Does the Tesla Model 3 precondition its battery before fast charging?",
+        answer:
+          "Yes, automatically, when the car is navigating to one. Tesla's own words: \"Your vehicle preconditions its high voltage Battery when navigating to Supercharger.\" The same works for non-Tesla fast chargers if the charger is entered as the navigation destination, though third-party stations are hidden on the map until enabled under Controls > Navigation > Third-Party Charging Stations. At home it is not automatic: without a scheduled Precondition, the car only warms the battery if it is too cold to charge.",
+      },
+    ],
+  },
 ];
 
 export function findFactSheet(make: string, model: string, topic: string): FactSheetEntry | undefined {
