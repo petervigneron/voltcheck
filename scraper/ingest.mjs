@@ -9,6 +9,7 @@ import { publishedCondition } from "./lib/condition.mjs";
 import { fuelTextOnly } from "./lib/ev.mjs";
 import { priceFloor } from "./lib/price-floor.mjs";
 import { isProvenance } from "./lib/price-provenance.mjs";
+import { decodeEntities } from "./lib/normalize.mjs";
 
 const raw = JSON.parse(await readFile(new URL("./out/listings.json", import.meta.url), "utf-8"));
 // Single-rooftop dealers have exactly one address — listings inherit it from
@@ -17,12 +18,27 @@ const raw = JSON.parse(await readFile(new URL("./out/listings.json", import.meta
 const registry = JSON.parse(await readFile(new URL("./registry/registry.json", import.meta.url), "utf-8"));
 const domainLoc = new Map(registry.sites.filter((x) => x.location).map((x) => [x.domain, x.location]));
 
+// Every lane lands here — crawl's shards and oem-locator's both, via
+// merge-shards — so this is the one place that sees a string from all of them.
+// lib/normalize.mjs's text() already decodes entities for anything that came
+// through a schema.org node or a platform extractor, which is where all 130 of
+// the entity-bearing trims on the 2026-08-25 feed came from. The OEM readers
+// are the exposure it does not cover: 31 files in lib/oem/, exactly one of
+// which imports text(), and 5 of which carry an entity decoder of their own —
+// so 25 assemble `trim` straight off their maker's API with nothing at all,
+// on APIs known to serve marketing HTML (acura's "A-Spec<sup>&reg;</sup>",
+// subaru's "Gray StarTex<sup>&reg;</sup>"; both of those five, but the makers
+// beside them are not). Decoding again here is a no-op on an already-decoded
+// string, and it means the 26th cannot reintroduce the "4MATICREG" class of
+// unmatchable trim by forgetting to call text().
+const clean = (s) => (typeof s === "string" ? decodeEntities(s) : s);
+
 // Canonical make/model names — dealer sites disagree on casing and naming
 // ("Bolt" vs "Bolt EV", "CADILLAC", "BZ"/"bZ"/"bZ4X"). The UI depends on one
 // spelling per vehicle.
 const MAKE_ALLCAPS = new Set(["BMW", "GMC", "MINI"]);
 function canonMake(m) {
-  const t = (m ?? "").trim();
+  const t = clean(m ?? "").trim();
   const u = t.toUpperCase();
   if (MAKE_ALLCAPS.has(u)) return u;
   if (u === "MERCEDES-BENZ") return "Mercedes-Benz";
@@ -48,7 +64,7 @@ const MODEL_ALIASES = {
   "POLESTAR 2": "Polestar 2", "POLESTAR 3": "Polestar 3",
 };
 function canonModel(m) {
-  const t = (m ?? "").trim().replace(/\s+/g, " ");
+  const t = clean(m ?? "").trim().replace(/\s+/g, " ");
   const hit = MODEL_ALIASES[t.toUpperCase()];
   if (hit) return hit;
   return t; // unknown models pass through untouched rather than guessed
@@ -181,7 +197,7 @@ const listings = raw
       year: modelYear(r.year),
       make: canonMake(r.make),
       model: canonModel(r.model),
-      trim: r.trim ?? undefined,
+      trim: clean(r.trim) ?? undefined,
       drive: inferDrive(r) ?? ariyaVds(r).drive ?? toyotaVds(r).drive ?? vwBuzzVds(r).drive,
       // Last plausibility gate before the database, covering every lane (the
       // dealer.com resolver has its own, but DealerOn/DCS/OEM records land here
@@ -215,7 +231,7 @@ const listings = raw
       city: r.city ?? domainLoc.get(r.dealerDomain)?.city ?? undefined,
       state: r.state ?? domainLoc.get(r.dealerDomain)?.state ?? undefined,
       zip: r.zip ?? domainLoc.get(r.dealerDomain)?.zip ?? undefined,
-      dealerName: r.dealerName ?? undefined,
+      dealerName: clean(r.dealerName) ?? undefined,
       optionCodes: r.optionCodes ?? undefined,
       // Per-VIN battery coverage and pack-replacement history from the maker's
       // own owner portal (gm-warranty.mjs). Both are stable per car — dates and
@@ -224,13 +240,16 @@ const listings = raw
       batteryCoverage: r.batteryCoverage ?? undefined,
       campaignCheck: r.campaignCheck ?? undefined,
       vpicBatteryKwh: r.vpicBatteryKwh ?? ariyaVds(r).kwh ?? undefined,
-      exteriorColor: r.exteriorColor ?? undefined,
+      exteriorColor: clean(r.exteriorColor) ?? undefined,
       imageUrl: r.imageUrl ?? r.images?.[0] ?? undefined,
       images: r.images?.length > 1 ? r.images.slice(0, 8) : undefined,
-      interiorColor: r.interiorColor ?? undefined,
+      interiorColor: clean(r.interiorColor) ?? undefined,
       stockNumber: r.stockNumber ?? undefined,
       previousOwners: r.previousOwners ?? undefined,
-      description: r.description ? r.description.replace(/<br\s*\/?>/gi, "\n").replace(/<[^>]+>/g, "").replace(/\n{3,}/g, "\n\n").trim() : undefined,
+      // Decoded BEFORE the tags come out, not after: a dealer blurb that
+      // arrives entity-escaped ("&lt;br&gt;") only becomes a tag once decoded,
+      // and stripping first would leave the markup standing as visible text.
+      description: r.description ? clean(r.description).replace(/<br\s*\/?>/gi, "\n").replace(/<[^>]+>/g, "").replace(/\n{3,}/g, "\n\n").trim() : undefined,
       sourceUrl: r.sourceUrl,
       dealerDomain: r.dealerDomain,
     };
