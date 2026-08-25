@@ -501,6 +501,34 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       },
     ],
   },
+  {
+    make: "kia",
+    model: "ev6",
+    topic: "battery-warranty",
+    contentFile: "ev6-battery-warranty",
+    pageTitle: "Kia EV6 battery warranty: two coverages, and when the clock started | Voltcheck",
+    description:
+      "Kia covers an EV6's electric drivetrain and its battery capacity separately, both for 10 years or 100,000 miles from the date of first service — a date that can precede the first sale.",
+    breadcrumbLabel: "Kia EV6 battery warranty",
+    dateModified: "2026-08-25",
+    faq: [
+      {
+        question: "How long is the Kia EV6 battery warranty?",
+        answer:
+          "Kia states two separate coverages, each 10 years or 100,000 miles from the date of first service, whichever comes first. The EV System Warranty covers the electric motor, high voltage battery, electric power control unit and on-board charger. EV Battery Coverage separately covers capacity loss below 70% of the original capacity, and Kia states that repairs or replacements restore the battery to at least 70% capacity.",
+      },
+      {
+        question: "When does the Kia EV6 battery warranty start?",
+        answer:
+          "At the date of first service, which Kia's warranty manual defines as the first date the vehicle is delivered to the first retail purchaser, is leased, or is placed into service as a company vehicle such as a demonstrator, rental or fleet vehicle, whichever is earliest. A demonstrator or rental EV6 started its ten years when it went into service, not when it was first sold to a customer.",
+      },
+      {
+        question: "Does the Kia EV6 battery warranty transfer to a second owner?",
+        answer:
+          "Kia's warranty manual states one general rule: any remaining portion of any warranty, except the 120-month/100,000-mile Power Train (Original Owner) warranty, is fully transferable to subsequent owners. Kia's current warranty page likewise restricts only the Powertrain Limited Warranty to the original purchaser and to buyers of a Certified Pre-Owned Kia, and attaches no such restriction to the EV System Warranty or EV Battery Coverage. The manual quoted is Kia's 2020 US manual, which predates the EV6; no EV6-model-year US manual is available without an owner login.",
+      },
+    ],
+  },
 ];
 
 export function findFactSheet(make: string, model: string, topic: string): FactSheetEntry | undefined {
