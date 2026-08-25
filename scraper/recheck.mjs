@@ -155,14 +155,59 @@ if (!SUPABASE_URL || !ANON) {
 //
 // This is the shape web/lib/listings/db.ts has walked the feed with all
 // along (`vin=gt.`), for the same reason. The two lanes now agree.
+//
+// NARROW, not `payload` — a separate fix to the same read. Keyset above fixed
+// what the database has to COMPUTE; this fixes what crosses the WIRE, which is
+// what Supabase actually bills. Selecting the whole payload dragged every
+// listing's description, image list and enrichment across the network nightly
+// when the only fields anything downstream of this read touches are the four
+// named below.
+//
+// Measured on one 1000-row page, wire bytes, 2026-08-24:
+//
+//   select=…narrow…  + Accept-Encoding      46,777
+//   select=…,payload + Accept-Encoding     265,922   (5.7x)
+//   select=…,payload, no Accept-Encoding 1,183,148  (25.3x)
+//
+// At 132,147 live rows that is ~6 MB a night instead of ~35, or ~157 —
+// the last of which is ~4.7 GB/month, essentially the entire 5 GB quota on
+// this one read. (Egress hit 661% of quota on 2026-08-17, which is what sent
+// anyone looking at this line.)
+//
+// The Accept-Encoding header is deliberate but no longer load-bearing on its
+// own: when this fix was first written Node's fetch sent no Accept-Encoding
+// at all and Supabase answered uncompressed, which was the bigger half of the
+// 25x. On Node 24 undici sends it by default — the middle row above is already
+// gzipped without us asking — so today's realized win is the 5.7x from the
+// narrowing. Setting it explicitly keeps the other 4.4x from silently
+// re-opening if the runtime's default changes again, and matches what
+// web/lib/listings/db.ts does for the same reason. undici decompresses
+// transparently either way, so res.json() below is unchanged.
+//
+// All four aliases read `payload`, deliberately: `listings` also has its own
+// `year`, `condition` and `dealer_domain` columns, but those are written by a
+// different path (dealer_domain is last-writer-wins across lanes), and the
+// point of this change is to shrink the wire without changing which value any
+// line below reads. Verified field-by-field against the wide select on live
+// rows before the swap. Adding a field to this script means adding it here
+// too — a missing alias reads `undefined`, which is silent.
 const listings = [];
 for (let after = ""; ; ) {
   const res = await fetchWithRetry(`recheck: listing fetch after ${after || "start"}`, () =>
     fetch(
-      `${SUPABASE_URL}/rest/v1/listings?select=vin,price_usd,payload&delisted_at=is.null` +
+      `${SUPABASE_URL}/rest/v1/listings?select=vin,price_usd` +
+        `,sourceUrl:payload->>sourceUrl,dealerDomain:payload->>dealerDomain` +
+        `,condition:payload->>condition,year:payload->>year` +
+        `&delisted_at=is.null` +
         (after ? `&vin=gt.${encodeURIComponent(after)}` : "") +
         `&order=vin.asc&limit=1000`,
-      { headers: { apikey: ANON, Authorization: `Bearer ${ANON}` } }
+      {
+        headers: {
+          apikey: ANON,
+          Authorization: `Bearer ${ANON}`,
+          "Accept-Encoding": "gzip",
+        },
+      }
     )
   );
   if (!res.ok) {
@@ -181,9 +226,9 @@ for (let after = ""; ; ) {
 // the VIN from the URL, which would read as "alive" forever. They would also
 // be tens of thousands of same-host fetches at the polite rate.
 const targets = listings.filter(
-  (l) => l.payload?.sourceUrl && !OEM_LOCATOR_DOMAINS.has(l.payload.dealerDomain)
+  (l) => l.sourceUrl && !OEM_LOCATOR_DOMAINS.has(l.dealerDomain)
 );
-const skippedOem = listings.filter((l) => OEM_LOCATOR_DOMAINS.has(l.payload?.dealerDomain)).length;
+const skippedOem = listings.filter((l) => OEM_LOCATOR_DOMAINS.has(l.dealerDomain)).length;
 const work = LIMIT ? targets.slice(0, LIMIT) : targets;
 console.error(
   `recheck: ${work.length} live listings with a source URL ` +
@@ -295,12 +340,12 @@ async function worker() {
     const vin = l.vin.toUpperCase();
     let res;
     try {
-      res = await fetchRaw(l.payload.sourceUrl, { timeoutMs: 20000 });
+      res = await fetchRaw(l.sourceUrl, { timeoutMs: 20000 });
     } catch {
       errors++;
       continue;
     }
-    const domain = l.payload.dealerDomain;
+    const domain = l.dealerDomain;
     if (res.status === 404 || res.status === 410) {
       if (trustGoneVerdict(vin, domain, oemAlive)) {
         hardGone.push(vin);
@@ -310,9 +355,14 @@ async function worker() {
       }
     } else if (res.status === 200 && res.body) {
       if (res.body.toUpperCase().includes(vin)) {
-        const { price, provenance } = priceOf(res.body, vin, res.finalUrl ?? l.payload.sourceUrl, priceFloor({
-          isNew: l.payload.condition === "new",
-          year: l.payload.year,
+        // `l.year` is text, not a number: `payload->>year` in the select above
+        // extracts the JSON value as text. priceFloor() coerces with Number()
+        // and treats an unparseable year the same as a missing one (the low
+        // used floor), so the tiering is unchanged — but do not compare it to
+        // a number here without coercing.
+        const { price, provenance } = priceOf(res.body, vin, res.finalUrl ?? l.sourceUrl, priceFloor({
+          isNew: l.condition === "new",
+          year: l.year,
         }));
         // recheck_listings reads `provenance` off each alive row and carries it
         // into listing_price_history alongside the price (0041). No price read,
