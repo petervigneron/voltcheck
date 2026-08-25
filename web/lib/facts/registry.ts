@@ -254,6 +254,34 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       },
     ],
   },
+  {
+    make: "volkswagen",
+    model: "id-buzz",
+    topic: "heat-pump",
+    contentFile: "id-buzz-heat-pump",
+    pageTitle: "Volkswagen ID. Buzz heat pump: does it have one | Voltcheck",
+    description:
+      "No US-market 2025 Volkswagen ID. Buzz has a heat pump. Volkswagen's own press release names an electric resistance heater instead. Sourced to Volkswagen's own documents.",
+    breadcrumbLabel: "Volkswagen ID. Buzz heat pump",
+    dateModified: "2026-08-25",
+    faq: [
+      {
+        question: "Does the Volkswagen ID. Buzz have a heat pump?",
+        answer:
+          "No. No US-market 2025 Volkswagen ID. Buzz has a heat pump, on any of its five trims. Volkswagen's own press release names the heating hardware instead: \"the ID. Buzz also has an electric resistance heater as part of the Climatronic system.\" The word \"pump\" does not appear in Volkswagen's US order guide, press release, At a Glance sheet, or Tech Specs sheet for the 2025 ID. Buzz.",
+      },
+      {
+        question: "How does the Volkswagen ID. Buzz warm its battery before fast charging?",
+        answer:
+          "With the same electric resistance heater. Volkswagen's own words: \"This heater can also precondition the battery for DC fast charging—either automatically, when a charger is input as a destination in navigation, or manually triggered by the driver.\"",
+      },
+      {
+        question: "What cold-weather equipment does the Volkswagen ID. Buzz have instead?",
+        answer:
+          "Three-zone Climatronic automatic climate control, a heated steering wheel, and heated windshield washer nozzles are standard. Heated and actively ventilated front seats and heated second-row outboard seats are standard on all five trims. A heated windshield is standard on Pro S Plus 4MOTION and not available on the other four trims.",
+      },
+    ],
+  },
 ];
 
 export function findFactSheet(make: string, model: string, topic: string): FactSheetEntry | undefined {
