@@ -16,7 +16,20 @@
 ## DC fast charging (Nissan calls it quick charge)
 
 - Nissan states the station's power, not the car's peak: "Quick charge uses public charging stations (up to 50 kW of power [for 40 kWh battery models] / 100 kW of power [for 62 kWh battery models])."[^1] The 2024 manual prints the same sentence with "60 kWh" in place of "62 kWh."[^2]
-- Time to 80%: not covered. Nissan publishes no figure for the 2019 or 2024 Leaf. Its manual says only that the time "depends on many factors including the Li-ion battery temperature and the type of quick charger used."[^1][^2]
+- Nissan does publish a time to 80%, but as a range keyed to how hot or cold the pack is, not as a single number. Its manual sets up the tables below by saying the time from discharged to 80% "depends on many factors including the Li-ion battery temperature and the type of quick charger used," and that "The Li-ion battery temperature gauge can be used to estimate the approximate time needed to charge the Li-ion battery to 80%."[^1][^2]
+- 40 kWh models, on a 50 kW charger. Nissan's table, read down from the gauge's lowest reading to its highest:[^1][^2]
+  - more than 90 minutes
+  - approximately 40-90 minutes
+  - approximately 40 minutes
+  - approximately 40-80 minutes
+  - more than 80 minutes
+- 62 kWh models (2019) and 60 kWh models (2024), same five gauge readings, in two columns — a 50 kW charger and a 100 kW charger. Nissan's caption carries an asterisk: "Subject to charging equipment capability to output 100kW."[^1][^2]
+  - more than 150 minutes / more than 150 minutes
+  - approximately 60-150 minutes / approximately 45-150 minutes
+  - approximately 60 minutes / approximately 45 minutes
+  - approximately 60-100 minutes / approximately 45-100 minutes
+  - more than 100 minutes / more than 100 minutes
+- Read the middle row first: it is the best case, and both a cold pack and a hot one cost time in Nissan's own figures. On the larger pack a 100 kW charger buys nothing at all at the two extremes — the top and bottom rows are identical in both columns.
 - Quick charging slows down when the pack is hot. Nissan: "If the battery temperature is near the red zone, in order to protect the battery, power of the quick charging will be limited."[^1][^2]
 - 2026 Leaf: a 75 kWh liquid-cooled pack, "LEAF can charge at up to 150 kW," and "LEAF can be recharged at compatible Level 3 chargers from 10% to 80% in just 35 minutes."[^3]
 
@@ -27,6 +40,7 @@ These are Nissan's own instructions in the owner's manual, not third-party advic
 - "NISSAN recommends using normal charging for usual charging of the vehicle. Use of quick charge should be minimized in order to help prolong Li-ion battery life."[^2]
 - Among Nissan's listed ways to extend battery life: "Use the normal charging or trickle charging methods to charge the Li-ion battery and minimize the use of public Fast Charge or Quick Charger," and avoid "sustained high battery temperatures (caused, for example, by exposure to very high ambient temperatures or extending highway driving with multiple quick charges."[^4]
 - Nissan repeats it in its energy-saving driving tips: "Avoid extending highway driving with multiple quick charges."[^4]
+- The car can end a session on its own. Nissan's "Power limitation mode" section: "Charging may be automatically terminated, especially with repeated quick charging in extreme hot weather."[^2]
 
 ## AC (Level 2, home) charging
 
@@ -36,13 +50,14 @@ These are Nissan's own instructions in the owner's manual, not third-party advic
 
 ## Battery temperature
 
-- The Leaf has no fast-charge preconditioning feature in either manual. What it has is a Li-ion battery warmer, which is freeze protection, and its behavior differs by pack:
+- Neither Nissan manual opened for this sheet describes a feature that warms the pack before a fast charge, automatic or driver-activated. What both describe is a Li-ion battery warmer, which is freeze protection, and its behavior differs by pack:
   - 40 kWh models: the warmer turns on when the battery is approximately -1°F (-17°C) or colder and off at approximately 14°F (-10°C). It draws from the battery itself when the car is not plugged in, and Nissan warns it "does not operate if the available Li-ion battery charge is less than approximately 15% and the charger is not connected to the vehicle."[^5]
   - 60 kWh models: the warmer turns on when the battery is approximately -4°F (-20°C) or colder and the outside temperature is approximately -11°F (-24°C) or colder, and off at approximately 0°F (-18°C) battery or -8°F (-22°C) outside. Nissan's caution: "The Li-ion battery warmer does not operate if the normal charger is not connected to the vehicle."[^6]
 
 ## Plug & Charge
 
 - The 2026 Leaf is the first Nissan with it. Nissan: "LEAF is the first Nissan vehicle with Plug & Charge."[^3] No Plug & Charge capability is claimed for any earlier Leaf.
+- It is not simply switched on with the car. Nissan's own disclosure on that release, for its charging features: "Subscription and activation required. See Nissan Store in the MyNISSAN app for Terms and Conditions."[^3]
 
 ## See it for yourself
 
@@ -53,9 +68,9 @@ These are Nissan's own instructions in the owner's manual, not third-party advic
 
 ## Footnotes
 
-[^1]: Nissan, *2019 LEAF Owner's Manual* (PDF), "Charging," printed pages CH-6 and CH-7. Nissan's own host: https://www.nissanusa.com/content/dam/Nissan/us/manuals-and-guides/leaf/2019/2019-Nissan-LEAF-owner-manual.pdf
+[^1]: Nissan, *2019 LEAF Owner's Manual* (PDF), "Charging," printed pages CH-6 through CH-9: the quick-charge and connector text on CH-6–CH-7, the 40 kWh charge-time table (figure LHA5087) on CH-8, and the 62 kWh charge-time table on CH-9. Nissan's own host: https://www.nissanusa.com/content/dam/Nissan/us/manuals-and-guides/leaf/2019/2019-Nissan-LEAF-owner-manual.pdf. Both charge-time tables are images, not text; they were transcribed from the pages rendered at 400 dpi, not from extracted text.
 
-[^2]: Nissan, *2024 LEAF Owner's Manual* (PDF), "Charging," printed pages CH-6 through CH-8. Nissan's own host: https://www.nissanusa.com/content/dam/Nissan/us/manuals-and-guides/leaf/2024/2024-nissan-leaf-owner-manual.pdf
+[^2]: Nissan, *2024 LEAF Owner's Manual* (PDF), "Charging," printed pages CH-6 through CH-10: the quick-charge, connector and normal-charge text on CH-6–CH-8, the 40 kWh charge-time table (figure LHA5087) on CH-8, and the 60 kWh charge-time table (figure LHA5635) and "Power limitation mode" on CH-9. Nissan's own host: https://www.nissanusa.com/content/dam/Nissan/us/manuals-and-guides/leaf/2024/2024-nissan-leaf-owner-manual.pdf. Both charge-time tables are images, not text; they were transcribed from the pages rendered at 400 dpi, not from extracted text.
 
 [^3]: Nissan, "Effortlessly electric: All-new 2026 Nissan LEAF is the EV for everyone," June 17, 2025. https://usa.nissannews.com/en-US/releases/effortlessly-electric-all-new-2026-nissan-leaf-is-the-ev-for-everyone. Nissan's newsroom renders the release body in the browser only; this page was read in a browser session, not by a plain HTTP fetch.
 

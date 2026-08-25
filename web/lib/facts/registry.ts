@@ -355,7 +355,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       {
         question: "How fast does a Nissan Leaf fast charge?",
         answer:
-          "Nissan states the station's power rather than the car's peak: quick charge uses public stations up to 50 kW for 40 kWh battery models and up to 100 kW for the larger pack. Nissan publishes no time-to-80% figure for the 2019 or 2024 Leaf, saying only that it depends on battery temperature and the charger used. The 2026 Leaf charges at up to 150 kW and, per Nissan, goes 10% to 80% in 35 minutes.",
+          "Nissan states the station's power rather than the car's peak: quick charge uses public stations up to 50 kW for 40 kWh battery models and up to 100 kW for the larger pack. Its time to 80% is published as a table keyed to the battery temperature gauge rather than a single figure. On a 50 kW charger a 40 kWh Leaf takes approximately 40 minutes at the gauge's middle reading, approximately 40-90 or 40-80 minutes either side of it, and more than 90 minutes cold or more than 80 minutes hot. The 60 kWh and 62 kWh packs take approximately 60 minutes at the middle reading on a 50 kW charger, or approximately 45 minutes on a 100 kW charger, rising to more than 150 minutes cold and more than 100 minutes hot in both columns. The 2026 Leaf charges at up to 150 kW and, per Nissan, goes 10% to 80% in 35 minutes.",
       },
       {
         question: "Does fast charging hurt a Nissan Leaf's battery?",
