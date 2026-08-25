@@ -20,12 +20,13 @@ import { RESEARCH_ROWS_4 } from "@/lib/enrichment/data4";
 import { RESEARCH_ROWS_5 } from "@/lib/enrichment/data5";
 import { RESEARCH_ROWS_6 } from "@/lib/enrichment/data6";
 import { RESEARCH_ROWS_9 } from "@/lib/enrichment/data9";
+import { RESEARCH_ROWS_12 } from "@/lib/enrichment/data12";
 
 // The same union match.ts builds — a new data file must be added both there
 // and here, and a key pointing only at a file this list misses should fail.
 const ALL_IDS = new Set(
   [...ENRICHMENT_ROWS, ...RESEARCH_ROWS, ...RESEARCH_ROWS_3, ...RESEARCH_ROWS_4,
-   ...RESEARCH_ROWS_5, ...RESEARCH_ROWS_6, ...RESEARCH_ROWS_9].map((r) => r.id),
+   ...RESEARCH_ROWS_5, ...RESEARCH_ROWS_6, ...RESEARCH_ROWS_9, ...RESEARCH_ROWS_12].map((r) => r.id),
 );
 
 test("every tested-range backfill key resolves to a real enrichment row", () => {
