@@ -468,6 +468,39 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       },
     ],
   },
+  {
+    make: "hyundai",
+    model: "ioniq-5",
+    topic: "battery-warranty",
+    contentFile: "ioniq5-battery-warranty",
+    pageTitle: "Hyundai Ioniq 5 battery warranty: 10 years, 100,000 miles, and the transfer question | Voltcheck",
+    description:
+      "What Hyundai's own warranty handbook covers on an Ioniq 5 battery, what its two paragraphs about the 70% figure actually say, and what it does not say about a second owner.",
+    breadcrumbLabel: "Hyundai Ioniq 5 battery warranty",
+    dateModified: "2026-08-25",
+    faq: [
+      {
+        question: "How long is the Hyundai Ioniq 5 battery warranty?",
+        answer:
+          "Hyundai covers the High Voltage Battery under its Hybrid, Plug-in Hybrid, and Electric Vehicle Warranty for 10 years from the date of original retail delivery or date of first use, or 100,000 miles, whichever occurs first. The same coverage extends to the Battery Management System, traction motor and housing, power control units and other components attached to the battery. Hyundai's 2022 handbook states the same term as its 2025 one.",
+      },
+      {
+        question: "Does the Hyundai Ioniq 5 battery warranty transfer to a second owner?",
+        answer:
+          "Hyundai's handbook does not say either way. Its Warranty Transferability section names six coverages that transfer and names the 10-year/100,000-mile Powertrain Limited Warranty as one that does not; the Hybrid, Plug-in Hybrid, and Electric Vehicle Warranty appears in neither list. In Hyundai's summary table, the electric-vehicle Direct Energy Components row shows 10 years/100,000 miles with no original-owner footnote, while the Powertrain row directly below carries a footnote reading \"Original Owner 10 Years/100,000 Miles, Subsequent Owner(s) 5 Years/60,000 Miles.\"",
+      },
+      {
+        question: "Does Hyundai guarantee the Ioniq 5 battery keeps 70% capacity?",
+        answer:
+          "Hyundai's handbook says two different things in the same section. One paragraph states that loss of battery capacity over time is \"covered not to degrade more than 70% of the original battery capacity.\" The What is Not Covered paragraph states that loss of battery energy or power over time or resulting from battery usage \"is NOT covered.\" What Hyundai states unambiguously is the repair standard: a repair or replacement will maintain at least equal energy capacity to the original battery before the failure, but no less than 70% of the original battery capacity, and a replacement may be new or refurbished.",
+      },
+      {
+        question: "Does the 150,000-mile California battery warranty apply to an Ioniq 5?",
+        answer:
+          "Hyundai's 150,000-mile note names the Plug-in Hybrid Battery on a vehicle certified for sale in California as a transitional zero-emission vehicle (TZEV). The Ioniq 5 is battery-electric, not a plug-in hybrid.",
+      },
+    ],
+  },
 ];
 
 export function findFactSheet(make: string, model: string, topic: string): FactSheetEntry | undefined {
