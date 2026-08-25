@@ -169,7 +169,7 @@ export const TESTED_BY_ROWID: Record<string, Fact<number>> = {
   "ioniq5-2022-awd": f(270, "tested", "high", "Edmunds real-world mixed-loop range test (Edmunds)", "https://www.edmunds.com/car-news/tested-2022-hyundai-ioniq-5-dual-motor-goes-270-miles-on-a-charge.html"),
   "ioniq5-2025-2026-awd-limited": f(282, "tested", "high", "Edmunds real-world mixed-loop range test (Edmunds)", "https://www.edmunds.com/car-news/hyundai-ioniq-5-revisited-review.html"),
   "ioniq5-2025-2026-xrt": f(290, "tested", "high", "Edmunds real-world mixed-loop range test (Edmunds)", "https://www.edmunds.com/car-news/hyundai-ioniq-5-revisited-review.html"),
-  "ioniq5-n-2025-2026": f(226, "tested", "high", "70-mph steady-state highway range test (InsideEVs)", "https://insideevs.com/reviews/744265/hyundai-ioniq5n-70mph-range-test/"),
+  "ioniq5-n-2025": f(226, "tested", "high", "70-mph steady-state highway range test (InsideEVs)", "https://insideevs.com/reviews/744265/hyundai-ioniq5n-70mph-range-test/"),
   "ix-2022-23-xdrive50": f(345, "tested", "high", "70-mph steady-state highway range test (InsideEVs)", "https://insideevs.com/reviews/593029/bmw-ix-70mph-range-test/"),
   "ix-2024-2025-xdrive50": f(345, "tested", "medium", "70-mph steady-state highway range test (InsideEVs)", "https://insideevs.com/reviews/593029/bmw-ix-70mph-range-test/"),
   "kona-2019-23": f(308, "tested", "high", "Edmunds real-world mixed-loop range test (Edmunds)", "https://www.edmunds.com/car-news/electric-cars-ev-range-test-roundup-june-2022.html"),

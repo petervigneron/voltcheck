@@ -35,21 +35,60 @@ if (!SUPABASE_URL || !TOKEN || !ANON) {
 // unconditionally — so after the 08-14→08-17 red streak was traced to bare
 // unretried fetches in db-sync and recheck, this bare fetch was the next
 // domino waiting. Replay is safe: it only refreshes materialized views.
-const res = await fetchWithRetry("refresh-variants", () =>
-  fetch(`${SUPABASE_URL}/functions/v1/ingest`, {
-    method: "POST",
-    headers: {
-      apikey: ANON,
-      Authorization: `Bearer ${ANON}`,
-      "x-ingest-token": TOKEN,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ dataset: "refresh_variants" }),
-  })
-);
-const text = await res.text();
-if (!res.ok) {
-  console.error(`refresh-variants: FAILED HTTP ${res.status} — ${text.slice(0, 300)}`);
+//
+// ONE VIEW PER CALL (0051). This used to be a single request that refreshed
+// all four views inside one statement_timeout, and on 2026-08-25 the sum
+// stopped fitting: 500/57014 after three retries, ~67s burned before the
+// cancel. Measured individually that night — observed 29.3s, freshness 17.7s,
+// trim_spread 16.4s, velocity 5.3s, total 68.7s against a 60s ceiling — so
+// nothing here is individually in trouble; the call was. Split, each view has
+// the whole budget and better than 2x headroom on the worst.
+//
+// Order matters only in that vin_variant_observed goes first: it is the one
+// the listing page's sold-price box reads, so if the night is going to run
+// out of road, that is the view to have refreshed.
+//
+// Every view is attempted even after one fails, and the failures are
+// collected rather than thrown on. All-or-nothing is what made the old
+// version expensive — one slow view left all four stale — and a view that
+// refreshed fine should not be held stale by a neighbour that didn't.
+const VIEWS = [
+  "vin_variant_observed",
+  "listing_freshness",
+  "ev_cohort_trim_spread",
+  "ev_cohort_velocity",
+];
+
+const failed = [];
+for (const view of VIEWS) {
+  const t0 = Date.now();
+  // x-ingest-rpc streams the body straight through to the RPC, so this needs
+  // no gateway change: refresh_vin_variants is already on its allowlist.
+  const res = await fetchWithRetry(`refresh-variants ${view}`, () =>
+    fetch(`${SUPABASE_URL}/functions/v1/ingest`, {
+      method: "POST",
+      headers: {
+        apikey: ANON,
+        Authorization: `Bearer ${ANON}`,
+        "x-ingest-token": TOKEN,
+        "x-ingest-rpc": "refresh_vin_variants",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ target: view }),
+    })
+  );
+  const text = await res.text();
+  const secs = ((Date.now() - t0) / 1000).toFixed(1);
+  if (!res.ok) {
+    console.error(`refresh-variants: ${view} FAILED HTTP ${res.status} after ${secs}s — ${text.slice(0, 300)}`);
+    failed.push(view);
+    continue;
+  }
+  console.error(`refresh-variants: ${view} ${text.trim()} in ${secs}s`);
+}
+
+if (failed.length) {
+  console.error(`refresh-variants: FAILED — ${failed.join(", ")} left stale (${VIEWS.length - failed.length}/${VIEWS.length} refreshed)`);
   process.exit(1);
 }
-console.error(`refresh-variants: ${text.trim()}`);
+console.error(`refresh-variants: all ${VIEWS.length} views refreshed`);

@@ -5,7 +5,7 @@ import { decodeTeslaVin, isTeslaVin } from "../tesla-vin";
 import type { TeslaVinFacts } from "../types";
 import { renamedTrim } from "./trimRename";
 import { trimTrust } from "./trimTrust";
-import { abstainTeslaRange } from "./teslaRangeAbstain";
+import { teslaCollisionRows } from "./teslaRangeAbstain";
 
 // What a listing card can honestly say. Every field is either a provenanced
 // fact, an explicit "verify" flag, or absent — never a model-level guess
@@ -331,11 +331,47 @@ export function enrichListing(l: Listing): EnrichedListing {
   // (2024 Model 3, VIN-8 "A": 272 mi RWD vs 363 mi Long Range) and nothing
   // beyond the dealer's own trim string says which one this is — see
   // lib/listings/teslaRangeAbstain.ts for the eight buckets and why 99.4% of
-  // the ~1,301 affected listings have no corroboration at all. Port,
-  // chemistry, and warranty still come from this same row; only its range
-  // goes quiet.
-  if (row?.range && (row.range.epaRangeMi || row.range.testedRangeMi) && abstainTeslaRange(l)) {
-    row = { ...row, range: { ...row.range, epaRangeMi: undefined, testedRangeMi: undefined } };
+  // the ~1,301 affected listings have no corroboration at all. Port and
+  // warranty still come from this same row; the range goes
+  // quiet, and since 2026-08-24 the pack size goes quiet with it: the
+  // backfill pass gave these rows EPA-certified packs that differ across the
+  // same colliding rows by up to 19 kWh (61 LFP vs 80.4 Long Range in the
+  // worst bucket), so printing one is the same unearned guess as printing
+  // its range.
+  //
+  // Chemistry is asked separately, and of the rows rather than of a second
+  // hand-kept bucket list, because it does NOT collide the way range and pack
+  // do. Surveyed across all eight buckets on 2026-08-25: six carry no
+  // chemistry fact on any row (nothing is served, so there is nothing to
+  // withhold), and 2022–23 Model Y "E" has both colliding rows on NCA — the
+  // 4680 AWD and the 2170 Long Range AWD differ by 51 miles and 13 kWh and
+  // still agree here, so withholding it would be silence the data doesn't ask
+  // for. Exactly one bucket disagrees, 2024 Model 3 "A", and it bites on the
+  // path that looks safest: a listing with NO trim resolves by elimination to
+  // m3-2024-rwd and prints its LFP, while the car may equally be the Long
+  // Range RWD, whose row (m3-2024-lr-rwd) carries no chemistry at all. An
+  // absent fact is not agreement, so that counts as a disagreement and the
+  // claim goes quiet. It has to: chemistry is what drives charge-to-100%
+  // guidance and battery-risk scoring (tests/battery-risk.test.tsx), so
+  // "LFP — charge to 100% routinely" on a 2170 Long Range is advice the site
+  // would be giving about a car it has just admitted it cannot identify.
+  const collision =
+    row?.range && (row.range.epaRangeMi || row.range.testedRangeMi) ? teslaCollisionRows(l) : undefined;
+  if (row?.range && collision) {
+    const chemistries = new Set([row, ...collision].map((r) => r.battery?.chemistry?.value));
+    const chemistryAgreed = collision.length > 0 && chemistries.size === 1 && !chemistries.has(undefined);
+    row = {
+      ...row,
+      range: { ...row.range, epaRangeMi: undefined, testedRangeMi: undefined },
+      battery: row.battery
+        ? {
+            ...row.battery,
+            packUsableKwh: undefined,
+            packGrossKwh: undefined,
+            chemistry: chemistryAgreed ? row.battery.chemistry : undefined,
+          }
+        : undefined,
+    };
   }
 
   // Ambiguity between candidate rows doesn't extend to facts they agree on:
