@@ -17,7 +17,7 @@ That same electric-resistance heater is what warms the battery before a fast cha
 ## How this was checked
 
 - The word "pump" does not appear anywhere in any of the four Volkswagen documents opened for this sheet: the MY2025 US retail order guide, the 2025 ID. Buzz press release, the 2025 ID. Buzz "At a Glance" sheet, or the 2025 ID. Buzz Tech Specs sheet.[^1][^2][^3][^4]
-- Silence alone is not the finding here. The order guide's climate rows are granular enough to break out heated washer nozzles from a heated windshield and to gate the heated windshield to a single trim, and Volkswagen's press release states positively what the heater is. A heat pump is not omitted from these documents; a different heating system is named in its place.[^1][^2]
+- Silence alone is not the finding here. The order guide's climate rows are granular enough to break out heated washer nozzles from a heated windshield and to gate the heated windshield to a single trim — a document at that resolution would be expected to carry a heat-pump row if there were one, and it carries none. Volkswagen's press release separately states, positively, what the heater is. Naming the resistance heater does not by itself rule a heat pump out, since cars with heat pumps commonly carry a resistance heater too; the order guide's absence is what carries the claim, and the press release is what says what the truck heats with instead.[^1][^2]
 
 ## See it for yourself
 

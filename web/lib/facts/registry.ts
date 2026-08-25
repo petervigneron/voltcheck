@@ -271,14 +271,14 @@ export const FACT_SHEETS: FactSheetEntry[] = [
           "No. No US-market 2025 Volkswagen ID. Buzz has a heat pump, on any of its five trims. Volkswagen's own press release names the heating hardware instead: \"the ID. Buzz also has an electric resistance heater as part of the Climatronic system.\" The word \"pump\" does not appear in Volkswagen's US order guide, press release, At a Glance sheet, or Tech Specs sheet for the 2025 ID. Buzz.",
       },
       {
-        question: "How does the Volkswagen ID. Buzz warm its battery before fast charging?",
+        question: "How does the 2025 Volkswagen ID. Buzz warm its battery before fast charging?",
         answer:
-          "With the same electric resistance heater. Volkswagen's own words: \"This heater can also precondition the battery for DC fast charging—either automatically, when a charger is input as a destination in navigation, or manually triggered by the driver.\"",
+          "On the 2025 ID. Buzz, with the same electric resistance heater. Volkswagen's own words: \"This heater can also precondition the battery for DC fast charging—either automatically, when a charger is input as a destination in navigation, or manually triggered by the driver.\" Model year 2025 is the ID. Buzz's first US model year and the only one this page covers.",
       },
       {
-        question: "What cold-weather equipment does the Volkswagen ID. Buzz have instead?",
+        question: "What cold-weather equipment does the 2025 Volkswagen ID. Buzz have instead?",
         answer:
-          "Three-zone Climatronic automatic climate control, a heated steering wheel, and heated windshield washer nozzles are standard. Heated and actively ventilated front seats and heated second-row outboard seats are standard on all five trims. A heated windshield is standard on Pro S Plus 4MOTION and not available on the other four trims.",
+          "On the 2025 ID. Buzz, the only US model year covered here: three-zone Climatronic automatic climate control, a heated steering wheel, and heated windshield washer nozzles are standard. Heated and actively ventilated front seats and heated second-row outboard seats are standard on all five trims. A heated windshield is standard on Pro S Plus 4MOTION and not available on the other four trims.",
       },
     ],
   },
