@@ -68,6 +68,13 @@ const R: EnrichmentRow[] = [];
 // physical connectors, DC on the NACS one — and it is the first Mercedes that
 // needs no adapter at a Tesla Supercharger, while every other Mercedes EV
 // (EQB/EQE/EQS/G580) is CCS1 plus a NACS adapter.
+//
+// WHAT STAYS UNMATCHED, counted rather than estimated: four listings whose
+// whole trim is "Base", where nothing in the string says which of the two
+// cars it is. It was five until "CLA 350 Electric" joined the 4MATIC row's
+// aliases — a spelling one dealer uses that the original alias list missed,
+// and safe for the same reason the rest of that list is: no petrol CLA 350
+// exists in the US in either model year.
 {
   const CLA_PRICING =
     "https://media.mbusa.com/releases/release-38c9543bcb6142f7d20a68c4cc02c2b3-mercedes-benz-usa-announces-pricing-for-all-new-electric-cla";
@@ -83,9 +90,18 @@ const R: EnrichmentRow[] = [];
   // 10 yr/155,000 mi for EQE and EQS. Read as a rendered page, not only as
   // extracted text, because the booklet sets that list in two columns. The
   // MY2027 booklet repeats it word for word, which is what lets one row span
-  // both years. Worth flagging for the EQE/EQS rows in data6, which abstain on
-  // Mercedes battery warranty because "Mercedes' US warranty booklets are
-  // PDF-walled" — they are not; this one fetched and parsed on the first try.
+  // both years — its URL is below rather than only in this sentence, so the
+  // 2027 half of the span has a citation someone can open rather than a claim
+  // that one exists. Worth flagging for the EQE/EQS rows in data6, which
+  // abstain on Mercedes battery warranty because "Mercedes' US warranty
+  // booklets are PDF-walled" — they are not; this one fetched and parsed on
+  // the first try.
+  // The MY2027 booklet is at
+  // mbusa.com/content/dam/mb-nafta/us/my27-content-request/
+  //   MY27_EQ_Warranty_and_Service_Booklet_Web_Eng_Sp_DRAFT.pdf
+  // — same wording, same grades. It stays in this comment rather than on the
+  // facts because Mercedes' own filename says DRAFT; the settled MY2026
+  // booklet is what the facts cite, and this backs the 2027 half of the span.
   const MB_EQ_WARRANTY =
     "https://www.mbusa.com/content/dam/mb-nafta/us/owners/manuals/2026/MY26%20EQ%20Warranty%20and%20Service%20Booklet_Web%20Eng_Sp.pdf";
 
@@ -153,7 +169,7 @@ const R: EnrichmentRow[] = [];
   const cla350 = cla(
     "cla-350-4matic-2026-27",
     "CLA 350",
-    ["CLA 350 4MATIC with EQ Technology", "CLA350 4matic with EQ Tech", "CLA 350 4MATIC"],
+    ["CLA 350 4MATIC with EQ Technology", "CLA350 4matic with EQ Tech", "CLA 350 4MATIC", "CLA 350 Electric"],
     "AWD",
     {
       epaRangeMi: f(312, "mfr", "high", undefined, epa(50032)),
@@ -428,10 +444,25 @@ const R: EnrichmentRow[] = [];
 }
 
 // ────────────────────────────── JEEP RECON ────────────────────────────────
-// 319 live listings on 2026-08-25, every one of them a MOAB, and no row. The
-// Recon is BEV-only and no petrol car has ever worn the nameplate, so the
-// model string needs no trim guard — vPIC decodes 3C4RJACK to make JEEP,
-// model "Recon", trim "Moab", ElectrificationLevel BEV.
+// 319 live listings and no row. The Recon is BEV-only and no petrol car has
+// ever worn the nameplate, so the model string needs no trim guard — vPIC
+// decodes 3C4RJACK to make JEEP, model "Recon", trim "Moab", BEV.
+//
+// The row carries no trim key, and the reason is a SNAPSHOT, not a property:
+// on 2026-08-25 every live Recon was a MOAB and EPA published exactly one
+// Recon entry ("Recon MOAB 4WD"), so there was one figure and one grade to
+// attach it to. Jeep's own launch release says the range is "up to 240 miles
+// (based on trim)", which is Jeep telling us other grades exist and will not
+// share the Moab's 222. When EPA rates one, this row must become grade-keyed
+// the way the Lexus RZ 450e above had to — a trim-less row would hand the
+// Moab's off-road-tyre figure to a road-biased grade.
+//
+// A caution about how NOT to check that, because it caught this pass: the
+// vPIC cache holds 652 VINs beginning 3C4RJ, of which only 324 are Recons.
+// The other 328 — "Launch Edition" and "Limited" — are Jeep WAGONEER S cars
+// (3C4RJN…, against the Recon's 3C4RJA…), confirmed against both vPIC and the
+// dealer feed. They are a different model, they cannot reach this row, and
+// they are not evidence of Recon grades.
 //
 // The row abstains on the charge port, which is the interesting part. Jeep's
 // own launch release and press kit describe the battery, the drive modules
