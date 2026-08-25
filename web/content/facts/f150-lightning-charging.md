@@ -6,26 +6,31 @@
 - Ford's own tested window is 15% to 80%, not 10% to 80%. Ford's estimated times:
   - 2023, 150 kW charger: 44 minutes on the 98 kWh Standard Range pack, 41 minutes on the 131 kWh Extended Range pack.[^1]
   - 2023, 50 kW charger: 91 minutes Standard Range, 122 minutes Extended Range.[^1]
+  - 2024, 150 kW+ charger: 32 minutes on the 98 kWh Standard Range pack, 38 minutes on the 131 kWh Extended Range pack.[^10]
   - 2025, 150 kW+ charger: 32 minutes on the 98 kWh Standard Range pack, 38 minutes on the 123 kWh Extended Range pack, 38 minutes on the 131 kWh Extended Range pack.[^3]
 - Miles added in 10 minutes on a 150 kW DC fast charger, Ford's estimate:
   - 2023: 41 miles Standard Range, 54 miles Extended Range. Ford's footnote on this table reads "Excludes Platinum models."[^1]
+  - 2024: 62 miles Standard Range, 65 miles Extended Range.[^10]
   - 2025: 62 miles on the 98 kWh pack, 65 miles on the 123 kWh pack, 65 miles on the 131 kWh pack.[^3]
-- 2024: not covered. No Ford charge-time or miles-per-charge table for model year 2024 was found. The 2024 order guide states onboard AC rates but no DC figures.[^2]
-- Battery, in Ford's own usable-energy wording: 98 kWh Standard Range and 131 kWh Extended Range for 2023 and 2024; 98 kWh, 123 kWh and 131 kWh for 2025.[^1][^2][^3]
+- The 2024 truck charges markedly faster than the 2023 one on the same pack: 44 minutes to 32 on Standard Range, 41 to 38 on Extended Range, and 41 miles in ten minutes to 62. Same figures, same tested window, Ford's own two spec sheets.[^1][^10]
+- Battery, in Ford's own usable-energy wording: 98 kWh Standard Range and 131 kWh Extended Range for 2023 and 2024; 98 kWh, 123 kWh and 131 kWh for 2025.[^1][^10][^3]
 
 ## AC (Level 2, home) charging
 
 The onboard charger is where this truck changed most between model years, and it is the difference between an 8-hour and a 13-hour overnight.
 
 - 2023, onboard charger power (input/output): 11.3 kW / 10.5 kW on the Standard Range pack; 19.2 kW / 17.6 kW on the Extended Range pack. The dual onboard charger was standard with the Extended Range pack that year.[^1]
-- 2024 and 2025, Level 2 peak charging rate, from Ford's order guides, by configuration: 11.2 kW with the 98 kWh Standard Range battery; 11.5 kW with the 131 kWh Extended Range battery and single onboard charging; 19.2 kW with the 131 kWh Extended Range battery and dual onboard charging.[^2][^4]
-- 2025, from Ford's spec sheet: onboard charger power is 11.3 kW / 10.5 kW (48A) on all three packs, and 19.2 kW / 17.6 kW appears only as a "Fleet only option" on the 131 kWh pack. Ford's footnote: "Fleet configuration only, not available for retail sale."[^3]
+- 2024 and 2025, Level 2 peak charging rate, from Ford's order guides, by configuration: 11.2 kW with the 98 kWh Standard Range battery; 11.5 kW with an Extended Range battery and single onboard charging — the 131 kWh pack in both years, and from 2025 the 123 kWh pack as well; 19.2 kW with the 131 kWh Extended Range battery and dual onboard charging.[^2][^4]
+- The 19.2 kW dual charger is a fleet configuration in both 2024 and 2025, not a retail option. Ford's 2024 order guide marks its order code, 99M, with an "F", which that guide's own legend defines as "Fleet Only Option."[^2] Ford's 2024 spec sheet labels the same row "Fleet Only," and its 2025 spec sheet labels it "Fleet only option" with the footnote "Fleet configuration only, not available for retail sale."[^10][^3] In the 2025 order guide the code appears as an ordinary option, but on the Pro series page — the fleet-facing series, whose battery row is itself annotated "Standard for Fleet only."[^4] A retail 2024 or 2025 Extended Range truck should be assumed to have the 11.5 kW single charger.
+- 2025, from Ford's spec sheet: onboard charger power is 11.3 kW / 10.5 kW (48A) on all three packs, with the 19.2 kW / 17.6 kW figure appearing only as that fleet option on the 131 kWh pack.[^3]
 - 2023 charge times, 15% to 100%: 80A Ford Charge Station Pro, 10 hours Standard Range and 8 hours Extended Range; 48A Connected Charge Station, 10 hours Standard Range and 13 hours Extended Range; 32A/240V Mobile Charger, 13 hours Standard Range and 19 hours Extended Range.[^1]
+- 2024 charge times, 15% to 100%. Ford merges the 80A Charge Station Pro and 48A Connected Charge Station into one row: 10 hours Standard Range, 13 hours Extended Range. The 30A/240V Mobile Charger takes 15 hours Standard Range, 20 hours Extended Range.[^10]
+- 2025 charge times, 15% to 100%, same merged 48A/80A row: 10 hours on the 98 kWh pack, 12 hours on the 123 kWh pack, and on the 131 kWh pack "13 hours/ 8 hours at 80A" — the 8-hour figure carrying Ford's fleet-only footnote. The 30A/240V Mobile Charger takes 15, 18 and 20 hours.[^3]
 - What came with the truck:
   - 2023: the 30A Ford Mobile Charger (120V/240V) was included with both packs. The 48A Ford Connected Charge Station was optional. The 80A Ford Charge Station Pro, the unit that carries Ford Intelligent Backup Power capability, was optional with the Standard Range pack and included with the Extended Range pack.[^1]
   - 2024: Ford's order guide lists "Ford Charge Station Pro" under Deleted in its Major Product Changes.[^2]
   - 2025: Ford's spec sheet lists the 30A Mobile Charger, the 48A Connected Charge Station and the Charge Station Pro all as "Available Ford Accessory."[^3]
-- Ford's own estimates for charging an F-150 Lightning at home, without naming a model year or pack: 22.2 hours with the Ford Mobile Power Cord, an average of 13-14 miles per charging hour; 9 hours with the Ford Charge Station Pro, an average of 30 miles per charging hour.[^9]
+- Ford's figures for charging an F-150 Lightning at home, on a page that names no model year or pack: "an estimated 22.2 hours" with the Ford Mobile Power Cord, an average of 13-14 miles per charging hour; 9 hours with the Ford Charge Station Pro, an average of 30 miles per charging hour. Ford hedges the first figure as estimated and states the second without that word.[^9]
 
 ## Connector
 
@@ -38,7 +43,9 @@ The onboard charger is where this truck changed most between model years, and it
 
 ## Preconditioning
 
-- Ford states that battery preconditioning runs off navigation: "with available Connected Navigation you can precondition your vehicle's battery on the way to the charger."[^9] Ford's wording is "available," not standard.
+Not covered for this truck. None of the Ford documents opened for this sheet — the 2023, 2024 and 2025 technical-specification sheets and the 2024 and 2025 order guides — describes battery preconditioning on the F-150 Lightning.
+
+The nearest Ford statement is on a page written about a different vehicle: Ford's Mustang Mach-E charging article says "with available Connected Navigation you can precondition your vehicle's battery on the way to the charger."[^9] That sentence never names the Lightning, and this page does not extend it to one.
 
 ## See it for yourself
 
@@ -49,13 +56,13 @@ The onboard charger is where this truck changed most between model years, and it
 
 ## Footnotes
 
-[^1]: Ford, *2023 Ford F-150 Lightning Technical Specifications* (PDF), sections "BATTERY/ENERGY STORAGE," "ESTIMATED CHARGE TIMES," "ESTIMATED MILES/CHARGE" and "CHARGING UNIT." https://www.fromtheroad.ford.com/content/dam/fordmediasite/us/en/library/2023/specs/2023-Ford-F-150-Lightning-Technical-Specifications.pdf — read through the r.jina.ai reader proxy, which fetched Ford's own file; Ford's host resets a direct plain-HTTP connection for this PDF.
+[^1]: Ford, *2023 Ford F-150 Lightning Technical Specifications* (PDF), sections "BATTERY/ENERGY STORAGE," "ESTIMATED CHARGE TIMES," "ESTIMATED MILES/CHARGE" and "CHARGING UNIT." https://www.fromtheroad.ford.com/content/dam/fordmediasite/us/en/library/2023/specs/2023-Ford-F-150-Lightning-Technical-Specifications.pdf — read through the r.jina.ai reader proxy, which fetched Ford's own file.
 
-[^2]: Ford, *2024 Ford F-150 Lightning Order Guide* (PDF), "MAJOR PRODUCT CHANGES" and the per-trim standard-equipment "Vehicle Charge Capability" blocks. https://www.fromtheroad.ford.com/content/dam/fordmediasite/us/en/library/2024/order-guides/2024_F-150_Lightning_Order_Guide.pdf — read through the same reader proxy, same reason.
+[^2]: Ford, *2024 Ford F-150 Lightning Order Guide* (PDF), "MAJOR PRODUCT CHANGES," the per-trim standard-equipment "Vehicle Charge Capability" blocks, and the "Fleet Only Options (req. Valid FIN Code)" tables carrying order code 99M with its "F" marking, against the guide's own legend "F = Fleet Only Option." https://www.fromtheroad.ford.com/content/dam/fordmediasite/us/en/library/2024/order-guides/2024_F-150_Lightning_Order_Guide.pdf — read through the r.jina.ai reader proxy. This is the one document behind this page with no Internet Archive capture at Ford's URL, so it could not be rendered and read as pages the way the others were.
 
-[^3]: Ford, *2025 Ford F-150 Lightning Technical Specifications* (PDF), sections "BATTERY/ENERGY STORAGE," "ESTIMATED CHARGE TIMES," "APPROXIMATE MILES/CHARGE" and "CHARGING UNIT." https://www.fromtheroad.ford.com/content/dam/fordmediasite/us/en/library/2025/specs/2025-Ford-F-150-Lightning-Technical-Specifications.pdf — read through the same reader proxy, same reason.
+[^3]: Ford, *2025 Ford F-150 Lightning Technical Specifications* (PDF, 5 pages), p. 1: "BATTERY/ENERGY STORAGE," "ESTIMATED CHARGE TIMES," "APPROXIMATE MILES/CHARGE" and "CHARGING UNIT." Ford's own host timed out for this file from here; retrieved from the Internet Archive's capture of Ford's URL, https://web.archive.org/web/20260220204317if_/https://www.fromtheroad.ford.com/content/dam/fordmediasite/us/en/library/2025/specs/2025-Ford-F-150-Lightning-Technical-Specifications.pdf, and read as a rendered page.
 
-[^4]: Ford, *2025 Ford F-150 Lightning Order Guide* (PDF), per-trim standard-equipment "Vehicle Charge Capability" blocks. https://www.fromtheroad.ford.com/content/dam/fordmediasite/us/en/library/2025/order-guides/2025_F-150_Lightning_Order_Guide.pdf — read through the same reader proxy, same reason.
+[^4]: Ford, *2025 Ford F-150 Lightning Order Guide* (PDF, 22 pages, dated 07/01/25), p. 3 (Pro standard equipment, charge port and 11.2 kW), p. 4 (Pro series equipment group: order codes 99U and 99M with their Level 2 rates) and p. 10 (99U standard on Flash). Retrieved from the Internet Archive's capture of Ford's URL, https://web.archive.org/web/20260104133839if_/https://www.fromtheroad.ford.com/content/dam/fordmediasite/us/en/library/2025/order-guides/2025_F-150_Lightning_Order_Guide.pdf, and read as rendered pages.
 
 [^5]: Ford Motor Company, "Eligible Electric Vehicle Customers Get Complimentary Tesla Supercharger Adapter," Ford HQ, 01.31.24. https://www.fromtheroad.ford.com/us/en/articles/2024/ford-to-offer-complimentary-tesla-supercharger-adapter-to-eligib
 
@@ -65,10 +72,12 @@ The onboard charger is where this truck changed most between model years, and it
 
 [^8]: Ford, "Can I charge my Ford electric vehicle at a Tesla Supercharger?", Ford Support. https://www.ford.com/support/how-tos/electric-vehicles/public-charging/can-i-charge-my-ford-electric-vehicle-at-a-tesla-supercharger/
 
-[^9]: Ford, "Mastering the Mustang Mach-E Charge: Maximize Range & Minimize Charging Time," Ford EV News, September 23, 2025. https://www.ford.com/electric/ev-news/ev-expertise/mme-charge/. The page is written about the Mustang Mach-E but states its home-charging figures for the F-150 Lightning alongside. Ford labels both figures estimates.
+[^9]: Ford, "Mastering the Mustang Mach-E Charge: Maximize Range & Minimize Charging Time," Ford EV News, September 23, 2025. https://www.ford.com/electric/ev-news/ev-expertise/mme-charge/. The page is written about the Mustang Mach-E but states its home-charging figures for the F-150 Lightning alongside. Ford calls the Mobile Power Cord figure "an estimated 22.2 hours" and states the Charge Station Pro figure without that hedge; this page repeats each as Ford wrote it.
+
+[^10]: Ford, *2024 Ford F-150 Lightning Technical Specifications* (PDF, 5 pages), p. 1: "BATTERY/ENERGY STORAGE," "ESTIMATED CHARGE TIMES," "APPROXIMATE MILES/CHARGE" and "EPA-ESTIMATED RANGE." Ford publishes this file under a different path from the 2023 and 2025 sheets; its live URL now redirects, and it was retrieved from the Internet Archive's capture, https://web.archive.org/web/20250609163234if_/https://media.ford.com/content/dam/fordmedia/North%20America/US/2024/04/16/2024_Lightning_Tech_Specs.pdf, and read as a rendered page. Its hero image is captioned "2024 F-150 Lightning Flash" and its EPA range row reads 320 (Flash, Lariat) / 300 (Platinum), which is how the model year was confirmed.
 
 ## Scope note
 
-Model years 2023, 2024 and 2025 checked, against Ford's technical-specification sheets for 2023 and 2025 and Ford's order guides for 2024 and 2025. Model year 2022 was not checked and is not claimed. Ford publishes no 2024 technical-specification sheet at the path its 2023 and 2025 sheets use, and no 2024 charge-time table was found anywhere else, so 2024 charge times are stated as not covered rather than carried over from 2023.
+Model years 2023, 2024 and 2025 checked, against Ford's technical-specification sheet for each of those three years and Ford's order guides for 2024 and 2025. Model year 2022 was not checked and is not claimed.
 
-Ford's host refuses a direct fetch of these PDFs, so they were read through a reader proxy that flattens tables into lines. Where a row's values could not be matched to their column with certainty — the 2025 sheet's Level 2 charge-time rows — the figures are left off this page rather than guessed. The 2023 sheet's Level 2 table has two columns and read unambiguously, which is why 2023's times are here and 2025's are not.
+Ford does not publish a 2024 technical-specification sheet at the path its 2023 and 2025 sheets use — that path 404s — but the document exists under a different Ford path, and this sheet's 2024 figures come from it. Every table quoted here except the 2023 sheet's and the 2024 order guide's was read as a rendered page image rather than extracted text, which is why the 2025 Level 2 rows an earlier version of this page withheld as unreadable are now stated in full.
