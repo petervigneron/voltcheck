@@ -1403,6 +1403,15 @@ const R: EnrichmentRow[] = [];
       superchargerAccess: f<"native">("native", "mfr", "high", undefined, I5_NACS_2025),
       architectureV: f(800, "mfr", "high", o.archNote, I5_SPECS_2025),
       dcFastCharging: f<"standard">("standard", "mfr", "high", undefined, I5_SPECS_2025),
+      // Hyundai's 2025 sheet, which these MY2027 rows already carry for pack,
+      // architecture and heat pump as a documented carryover. Its charge-time
+      // block is the reason the note names two numbers: the facelift ships a
+      // NACS port, but the car's quickest DC session is still on an 800V CCS
+      // station through the adapter (20 min), while its own NACS plug on a
+      // 150 kW Supercharger takes 24-30. A shopper reading "NACS" would
+      // otherwise assume the Supercharger is the fast one.
+      acOnboardKw: f(10.9, "mfr", "high", undefined, I5_SPECS_2025),
+      chargeTime1080Min: f(20, "mfr", "high", "10-80% on a >250 kW 800V charger via the CCS adapter; 24-30 min on a 150 kW NACS Supercharger", I5_SPECS_2025),
       ...(o.dcPeak
         ? {
             dcPeakKw: f(

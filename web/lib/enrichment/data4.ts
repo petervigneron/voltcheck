@@ -4633,6 +4633,9 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     charging: {
       portStandard: f("CCS1", "mfr", "high", "The Korea-built 2025 N kept the CCS port while the US-built 2025 Ioniq 5 switched to native NACS; the N moved to NACS for MY2026"),
       architectureV: f(800, "mfr"),
+    
+      acOnboardKw: fb(10.9, "mfr" as Source, "high", undefined, "https://www.hyundainews.com/assets/documents/original/59548-IONIQ5NSpecs040424.pdf"),
+      chargeTime1080Min: fb(18, "mfr" as Source, "high", "With a >250 kW 800V charger, Hyundai's own condition", "https://www.hyundainews.com/assets/documents/original/59548-IONIQ5NSpecs040424.pdf"),
     },
     thermal: { heatPump: f("standard", "mfr", "high", "Standard on the N"), batteryPreconditioning: f(true, "mfr", "high", "N Race/drag-strip preconditioning modes are a headline N feature") },
     warranty: {
@@ -4649,6 +4652,8 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
       portStandard: f("NACS", "mfr", "high", "MY2026 N adopted the native NACS (J3400) port; a CCS1 adapter is standard equipment"),
       superchargerAccess: f("native", "mfr"),
       architectureV: f(800, "mfr"),
+    
+      acOnboardKw: fb(10.9, "mfr" as Source, "high", undefined, "https://www.hyundainews.com/assets/documents/original/68164-2026IONIQ5NSpecsFeatures20250722A.pdf"),
     },
     thermal: { heatPump: f("standard", "mfr", "high", "Standard on the N"), batteryPreconditioning: f(true, "mfr", "high", "N Race/drag-strip preconditioning modes are a headline N feature") },
     warranty: {
