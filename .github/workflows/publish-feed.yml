@@ -1,0 +1,60 @@
+# Publish the browse feed as static artifacts (web/scripts/publish-feed.mjs):
+# one gentle walk on a runner with time to spare, 27 files in the public
+# `feed` storage bucket, and serving never walks the database again. The
+# route (app/api/index/[shard]/route.ts) serves these artifact-first since
+# 2026-08-26; its 36h freshness gate means this must run at least daily —
+# nightly.yml calls it after ingest, and it can be dispatched by hand after
+# any out-of-cycle db-sync.
+name: Publish feed artifacts
+
+on:
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Publish even if the total shrank >10% vs the published manifest (deliberate contraction only)"
+        required: false
+        default: "false"
+  workflow_call: {}
+
+concurrency: publish-feed
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm ci
+        working-directory: web
+      - name: Walk once and publish
+        working-directory: web
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          # 2 lanes, deliberately: this walk has a runner's whole hour, and
+          # gentleness is the point — 8 lanes at request time is what drained
+          # the burstable instance's CPU credits all week. Publishing slower
+          # costs nothing anyone can see.
+          FEED_LANES: "2"
+        run: |
+          node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs \
+            scripts/publish-feed.mjs ${{ github.event.inputs.force == 'true' && '--force' || '' }}
+      - name: Refresh the site onto the new artifacts
+        env:
+          FEED_REVALIDATE_SECRET: ${{ secrets.FEED_REVALIDATE_SECRET }}
+        run: |
+          if [ -z "$FEED_REVALIDATE_SECRET" ]; then
+            echo "no FEED_REVALIDATE_SECRET — site refreshes on its 24h TTL"; exit 0
+          fi
+          curl -sf -X POST -H "x-revalidate-secret: $FEED_REVALIDATE_SECRET" https://voltcheck.net/api/revalidate \
+            || { echo "::warning::revalidate POST failed; site refreshes on its 24h TTL"; exit 0; }
+          # Artifact-backed re-renders are one CDN fetch each — warming all 38
+          # paths is now cheap enough to just do.
+          for p in first trims $(seq 0 23); do
+            curl -sf -o /dev/null --max-time 120 "https://voltcheck.net/api/index/$p" \
+              || echo "::warning::warm of /api/index/$p failed; its first visitor pays the (artifact) render"
+          done

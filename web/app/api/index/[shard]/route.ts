@@ -1,6 +1,7 @@
 import { buildCardIndex } from "@/lib/listings/buildIndex";
+import { FEED_CACHE_TAG } from "@/lib/listings/db";
 import { buildFirstPaint } from "@/lib/listings/firstPaint";
-import { SHARDS, packIndex } from "@/lib/listings/pack";
+import { SHARDS, packIndex, shardOfId } from "@/lib/listings/pack";
 import type { FeedOrigin } from "@/lib/listings/source";
 import { worthTrimTally } from "@/lib/listings/tally";
 
@@ -62,22 +63,65 @@ export function generateStaticParams(): { shard: string }[] {
   return [];
 }
 
-// A car's shard is a property of the car, never of its position in the build.
-// The six responses revalidate independently, so a browser can hold shards
-// from two different hours' builds at once; when membership was positional
-// (round-robin on index), any insertion between those builds shifted every
-// position after it — the same car served from two shards, its neighbor from
-// none. First live-DB deploy: 8,133 cars doubled, ~7,300 invisible. Keyed on
-// the car's own id, a mixed-vintage shard set can serve a stale row, but
-// never a doubled or dropped one. (FNV-1a, same recipe as card.ts's hash01,
-// which isn't exported.)
-function shardOf(id: string): number {
-  let h = 2166136261;
-  for (let i = 0; i < id.length; i++) {
-    h ^= id.charCodeAt(i);
-    h = Math.imul(h, 16777619);
+// A car's shard is a property of the car, never of its position in the build
+// — shardOfId in pack.ts, moved there 2026-08-26 so the feed publisher and
+// this route cannot drift; its comment carries the positional-membership
+// incident (8,133 cars doubled).
+
+// ------------------------------------------------------------- artifacts
+// The way OUT of the walk (2026-08-26). scripts/publish-feed.mjs walks the
+// database ONCE — off-peak, retryable, on a runner with time to spare — and
+// publishes the exact bodies this route serves (built by the same functions)
+// to the public `feed` storage bucket. This route serves those files first
+// and only falls back to walking when the artifact is missing or stale. What
+// that buys, mechanically: a cold render stops costing a 140k-row walk at
+// 8-lane concurrency (the thing that drains a burstable instance's CPU
+// credits and produced the 08-21→08-26 incident class) and starts costing
+// one CDN file fetch. Deploys stop depending on database weather entirely.
+//
+// The freshness gate is the artifact-lane version of refuseFallback below:
+// an artifact older than ARTIFACT_MAX_AGE_MS is treated as absent, not
+// served — quietly serving week-old inventory because a publisher died is
+// the bundled-snapshot incident with extra steps. 36h = one missed nightly
+// publish plus slack; two missed publishes fall through to the walk path,
+// which either serves live data or fails loudly. The manifest is fetched
+// with the `feed` cache tag, so /api/revalidate expires route bodies and
+// manifest together — a republish becomes visible at the next revalidation
+// exactly like a walk would have.
+const ARTIFACT_MAX_AGE_MS = 36 * 60 * 60 * 1000;
+
+interface FeedManifest {
+  v: 1;
+  publishedAt: string;
+  total: number;
+}
+
+async function artifactResponse(name: string): Promise<Response | null> {
+  const base = process.env.SUPABASE_URL;
+  if (!base) return null;
+  try {
+    const mRes = await fetch(`${base}/storage/v1/object/public/feed/manifest.json`, {
+      next: { revalidate: 86400, tags: [FEED_CACHE_TAG] },
+    });
+    if (!mRes.ok) return null;
+    const m = (await mRes.json()) as FeedManifest;
+    if (m.v !== 1 || !Number.isFinite(Date.parse(m.publishedAt))) return null;
+    if (Date.now() - Date.parse(m.publishedAt) > ARTIFACT_MAX_AGE_MS) return null;
+    // Declared cacheable (a no-store fetch is refused inside a force-static
+    // render — the same trap escapeFeedCache documents), but a shard body is
+    // ~2.7 MB, over the data cache's item cap, so Next skips storing it and
+    // the route-level cache is the layer that actually carries it — same as
+    // it carries the walk-rendered bodies today.
+    const bRes = await fetch(`${base}/storage/v1/object/public/feed/${name}.json`, {
+      next: { revalidate: 86400, tags: [FEED_CACHE_TAG] },
+    });
+    if (!bRes.ok) return null;
+    const text = await bRes.text();
+    if (!text.startsWith("{")) return null;
+    return new Response(text, { headers: { "content-type": "application/json" } });
+  } catch {
+    return null;
   }
-  return (h >>> 0) % SHARDS;
 }
 
 // The browse grid's version of the sitemap route's refusal, and it exists
@@ -132,6 +176,8 @@ export async function GET(_req: Request, { params }: { params: Promise<{ shard: 
   // lesson above), CDN-cached for the same day as the shards it fronts. Same
   // walk memo, so it adds no database load — one more render per nightly.
   if (shard === "first") {
+    const art = await artifactResponse("first");
+    if (art) return art;
     const { rows, origin } = await buildCardIndex();
     // "first" gets the same refusal as the numbered shards, and needs it just
     // as much: it carries the grid's total car count and its featured cards,
@@ -147,6 +193,8 @@ export async function GET(_req: Request, { params }: { params: Promise<{ shard: 
   // someone opens the valuation form. Same caching shape, same walk memo,
   // same refusal, for the same reasons as `first`.
   if (shard === "trims") {
+    const art = await artifactResponse("trims");
+    if (art) return art;
     const { rows, origin } = await buildCardIndex();
     refuseFallback(origin, "the trim facets");
     return Response.json(worthTrimTally(rows));
@@ -155,7 +203,9 @@ export async function GET(_req: Request, { params }: { params: Promise<{ shard: 
   if (!Number.isInteger(n) || n < 0 || n >= SHARDS) {
     return Response.json({ error: "no such shard" }, { status: 404 });
   }
+  const art = await artifactResponse(`shard-${n}`);
+  if (art) return art;
   const { rows, origin } = await buildCardIndex();
   refuseFallback(origin, `shard ${n}`);
-  return Response.json(packIndex(rows.filter((r) => shardOf(r.id) === n)));
+  return Response.json(packIndex(rows.filter((r) => shardOfId(r.id) === n)));
 }

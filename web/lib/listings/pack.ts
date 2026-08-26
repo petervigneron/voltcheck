@@ -107,6 +107,22 @@ export const SHARDS = 24;
  *  or two of each other however the inventory is distributed. */
 export const shardOf = (i: number) => i % SHARDS;
 
+/** Keyed shard membership — a car's shard is a property of the car, never of
+ *  its position in the build (positional membership doubled 8,133 cars on the
+ *  first live-DB deploy; the route's comment carries the incident). FNV-1a,
+ *  same recipe as card.ts's hash01. Lived as a private copy in
+ *  app/api/index/[shard]/route.ts until 2026-08-26, when the feed publisher
+ *  (scripts/publish-feed.mjs) needed the identical function — two copies of
+ *  shard membership is how a car gets served twice or not at all. */
+export function shardOfId(id: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < id.length; i++) {
+    h ^= id.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return (h >>> 0) % SHARDS;
+}
+
 export interface PackedIndex {
   /** Bumped whenever the shape below changes, so a stale cached body is
    *  recognizable rather than silently misread as the current one. */
