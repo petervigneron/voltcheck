@@ -32,13 +32,18 @@ import { worthTrimTally } from "@/lib/listings/tally";
 // and the database is walked once per nightly however many shards there are.
 // A shard render can be a full feed walk when the data-cache entries have
 // expired, and at 129k cars that walk measures 90-177 s from inside a
-// function (2026-08-24) — over some platform defaults. 300 s is headroom:
-// ~52 s from outside on a healthy Nano, 249 s observed under the 08-22 CPU
-// starvation. (This constant was first added mid-incident with a comment
-// blaming killed regenerations for stale shards; the real story that day was
-// the 6→24 shard change and a checker still summing six — see the CLAUDE.md
-// deploy notes — but the ceiling itself is correct and stays.)
-export const maxDuration = 300;
+// function (2026-08-24) — over some platform defaults. (This constant was
+// first added mid-incident with a comment blaming killed regenerations for
+// stale shards; the real story that day was the 6→24 shard change and a
+// checker still summing six — see the CLAUDE.md deploy notes.)
+//
+// 800 s (the Pro-plan ceiling; was 300, the Hobby cap): on a drained IO
+// budget the walk alone runs 250-300s+, and on 2026-08-26 the /api/index/
+// first render died at ~280s all night with its walk still alive underneath
+// — the ceiling, not the database, was the binding constraint on warming a
+// fresh deployment. ~52 s from outside on a healthy Nano; the headroom is
+// for the sick nights.
+export const maxDuration = 800;
 export const dynamic = "force-static";
 export const revalidate = 86400;
 

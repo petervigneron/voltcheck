@@ -28,9 +28,12 @@ import { BASE, SITEMAP_SHARDS, type SitemapEntry, renderUrlset, sitemapShardOf }
 // background regeneration against the healed 129k-row database died silently
 // — ISR serves the stale body forever when the regen never completes, which
 // is quieter than the fallback-throw this route uses for a sick database.
-// 300 s is deliberate headroom: the walk measures ~52 s from outside on a
-// healthy Nano and 249 s was observed under CPU starvation (2026-08-22).
-export const maxDuration = 300;
+// 800 s (the Pro-plan ceiling; was 300, the Hobby cap): on a drained IO
+// budget the walk alone runs 250-300s+ and renders died at ~280s all night
+// on 2026-08-26 while their walks were still alive underneath — the ceiling,
+// not the database, was the binding constraint. The walk still measures
+// ~52 s from outside on a healthy Nano; the headroom is for the sick nights.
+export const maxDuration = 800;
 export const dynamic = "force-static";
 // The same day as the feed itself (FEED_REVALIDATE_SECONDS) and the index
 // routes, expired early by /api/revalidate when the nightly actually changes
