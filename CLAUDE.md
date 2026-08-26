@@ -136,10 +136,13 @@ Vercel's CDN for free.
 - They are applied to production directly (Supabase MCP or CLI). There is no
   staging database, so read what a migration replaces before you replace it —
   dry-run a `create view` as a temp view and diff it against the live one.
-- Two materialized views are refreshed nightly by `refresh_vin_variants()`:
-  `vin_variant_observed` and `ev_cohort_trim_spread`. Anything scanning
-  `listings` per request will blow anon's 8-second statement timeout at
-  current inventory size — materialize it and refresh it there.
+- Four materialized views are refreshed nightly by `refresh_vin_variants(target)`,
+  one call per view (0051): `vin_variant_observed`, `listing_freshness`,
+  `ev_cohort_trim_spread`, `ev_cohort_velocity`. Anything scanning `listings`
+  per request will blow anon's statement timeout — which is **3 seconds**
+  (verified in pg_roles 2026-08-26; authenticated is 8s, service_role 60s; an
+  earlier version of this line said 8s for anon and was wrong) — at current
+  inventory size: materialize it and refresh it there.
 - `scraper/registry/registry.json` is hand-curated. Never regenerate or
   clobber it.
 - Grep **both** `web/` and `scraper/` before dropping a database function.

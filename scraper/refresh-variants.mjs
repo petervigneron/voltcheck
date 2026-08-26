@@ -3,11 +3,18 @@
 //
 // vin_variant_observed reads which trim a VIN cohort's own listings agree on.
 // It used to be a plain view, which meant a full scan of every live listing
-// on every page render — 3.8s once the feed reached 50k, past anon's 8s
-// statement timeout, so the listing page's sold-price box silently vanished.
-// It is a materialized view now, and this is what keeps it current.
+// on every page render — 3.8s once the feed reached 50k, past anon's 3s
+// statement timeout (an earlier version of this comment said 8s; that is
+// authenticated's ceiling, not anon's — pg_roles, 2026-08-26), so the
+// listing page's sold-price box silently vanished. It is a materialized
+// view now, and this is what keeps it current.
 //
-// Runs after recheck, which is the last step that changes what's live.
+// Runs FIRST in nightly's finalize-audits job, right after finalize-ingest
+// settles the night's listings — not "after recheck" as this header once
+// claimed (it never ran there; recheck is a later job). recheck's removals
+// therefore reach these views a night late, which has been the status quo
+// all along; moving the refresh after recheck is a job-topology change
+// nobody has needed yet.
 // REFRESH ... CONCURRENTLY, so readers are never blocked.
 import { readFile } from "node:fs/promises";
 import { fetchWithRetry } from "./lib/retry.mjs";
