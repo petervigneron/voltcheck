@@ -325,6 +325,117 @@ const EV9_HP_OPT_2025 = {
 };
 const NOTE_EV9_HP = { headline: "Heat pump: factory option, on the window sticker", severity: "trap" as const, resolvedBy: "config_resolved" as const };
 
+// EV9 charging, rebuilt 2026-08-26 from Kia's own material after the owner
+// opened a 2026 EV9 and found a card reading "NACS est · 100 kWh est" with no
+// architecture and no 10-80% time. Every figure below is off Kia's per-year
+// specifications table (kiamedia.com/us/en/models/ev9/<year>/specifications),
+// which is identical across 2024, 2025 and 2026:
+//
+//   Battery Energy      76.1 kWh (SR)   99.8 kWh (LR)
+//   Battery Voltage     632 V (SR)      552 V (LR)
+//   Battery Capacity    120.6 Ah        180.9 Ah      (632x120.6 and 552x180.9
+//                                                      reproduce both kWh figures)
+//   DC Fast Charge, 350 kW EVSE (max 310 A)   20 min (SR)   24 min (LR)
+//   Peak Power          235 kW (SR)     210 kW (LR)   (last row of the charging
+//                                                      block, before "Dynamic
+//                                                      Performance" begins)
+//   On-board charger    10.9 kW
+//
+// Those 99.8/76.1 figures were already in these rows, tagged `agg`/medium,
+// which is what printed "est" on the card. They are Kia's own published
+// numbers and are now `mfr` with the table cited — the badge was a mis-tag,
+// not a real uncertainty.
+//
+// THE SPEC TABLE DOES NOT STATE A STATE-OF-CHARGE WINDOW for its 20/24
+// minutes — no footnote on any of the three years gives one, so the table
+// alone could not fill chargeTime1080Min without inventing the window (the
+// context-free "18 minutes!" claim the schema comment warns about). Kia's
+// own launch release supplies it: "The EV9's standard 800V electrical
+// architecture enables ultrafast charging on high-speed DC chargers,
+// designed to go from a 10 to 80 percent state of charge in under 25
+// minutes" — which is the table's 24 min, same condition. Both are cited.
+//
+// architectureV carries 800, not the 552/632 V the table reports, because
+// that is this field's established convention: the Ioniq 5 rows read 800
+// with "697V, long-range pack" in the note, and CLAUDE.md's copy rule names
+// this exact pair ("800V does not need 697 V nominal"). The nominal figure
+// rides in the note, where the rule puts it.
+const EV9_SPECS = (yr: number) => `https://www.kiamedia.com/us/en/models/ev9/${yr}/specifications`;
+// "The EV9's standard 800V electrical architecture ... 10 to 80 percent state
+// of charge in under 25 minutes" — 2024 launch release, powertrain section.
+const EV9_PR_LAUNCH = "https://www.kiamedia.com/us/en/media/pressreleases/21059/the-2024-kia-ev9-modern-refinement-and-all-electric-capability";
+// PORT BY YEAR, corrected 2026-08-26. These rows previously carried native
+// NACS on every MY2025 EV9, sourced to nothing ("Native NACS port from
+// MY2025", tagged agg). Kia says otherwise, twice and unambiguously:
+//
+//   "2025 model year Kia EV6 and 2026 model year EV9 come standard with NACS
+//    charging ports" (2026-04-24 Supercharger-access release)
+//   "Customers who take delivery of a new 2024 or 2025 Kia EV9 or 2024 Kia
+//    EV6 from September 4, 2024, and later, will receive an adapter free of
+//    charge" (NACS adapter release)
+//
+// A MY2025 EV9 is a CCS1 car that Kia hands an adapter to. The EV6 rows above
+// are unaffected and stay NACS from MY2025 — the first release says so
+// explicitly, and the two models genuinely differ by a year. Publishing the
+// wrong socket is worse than publishing nothing (CLAUDE.md: matching the
+// wrong thing is not honest), and it is the kind of error a shopper only
+// finds in a parking lot.
+const EV9_PR_NACS = "https://www.kiamedia.com/us/en/media/pressreleases/23210/kia-ev6-ev9-and-niro-owners-gain-access-to-over-21500-tesla-superchargers";
+const EV9_PR_ADAPTER = "https://www.kiamedia.com/us/en/media/pressreleases/22573/kia-america-to-offer-north-american-charging-standard-nacs-in-early-2025";
+
+// TRIMS, corrected 2026-08-26 from the same tables' "Compare Trims" header and
+// their Drivetrain row, which agree across 2024, 2025 and 2026:
+//
+//   Light | Light Long Range | Wind | Land | GT-Line
+//   RWD   | RWD              | AWD  | AWD  | AWD
+//
+// The AWD rows carried trim: ["Wind", "Land", "Light"]. "Light" is an RWD-only
+// trim in every year, and match.ts resolves an exact trim name BEFORE it
+// filters on drivetrain (deliberately — an exact name is the strongest
+// listing-side signal, and that ordering is what stops a junk kWh hint
+// vetoing it). So a 2026 EV9 listed "Light, RWD" matched the AWD row and
+// would have shown its 283-mile AWD rating instead of the RWD car's. Removing
+// "Light" fixes it in the data, where the error actually is; match.ts is
+// behaving as designed and is not touched.
+//
+// The dealer feed's own spellings are keyed alongside Kia's names, because
+// overlap is substring-tolerant and the abbreviations resolve the WRONG WAY
+// without them: "Light LR" (4 live cars) and "Light Long" (1) contain "Light"
+// but not "Light Long Range", so they overlapped only the Standard Range row
+// and would have shown 76.1 kWh / 230 mi on a 99.8 kWh / 305 mi car. That is
+// understating a pack, the expensive direction. Live trim strings on this
+// nameplate, measured 2026-08-26: GT-Line 1361, Land 846, Wind 818, Light
+// Long Range 519, Light 76, Light Short Range 22, Light LR 4, GT-Line Long
+// Range 3, Light Long 1, Wind Long Range 1.
+// The RWD rows in turn had no trim key at all, so "Light" and "Light Long
+// Range" — which ARE the Standard Range and Long Range cars, per the header
+// above — could only ever come back as candidates. They are keyed now, and
+// the substring hazard the matcher warns about (a longer grade swallowing a
+// shorter one) does not bite: the early pass matches on exact trim strings,
+// so "Light" takes the Standard Range row and "Light Long Range" the Long
+// Range row, each alone.
+const EV9_PACK_LR = (yr: number) => ({ packGrossKwh: fb(99.8, "mfr" as Source, "high", "Long Range pack", EV9_SPECS(yr)) });
+const EV9_PACK_SR = (yr: number) => ({ packGrossKwh: fb(76.1, "mfr" as Source, "high", "Standard Range pack", EV9_SPECS(yr)) });
+
+// `sr` picks the Standard Range column of the same table; `nacs` is MY2026+,
+// where the car has the socket rather than an adapter for it.
+const EV9_CHARGING = (yr: number, opts: { sr?: boolean; nacs?: boolean } = {}) => {
+  const { sr = false, nacs = false } = opts;
+  return {
+    portStandard: nacs
+      ? fb<"NACS">("NACS", "mfr", "high", undefined, EV9_PR_NACS)
+      : fb<"CCS1">("CCS1", "mfr", "high", undefined, EV9_PR_ADAPTER),
+    superchargerAccess: nacs
+      ? fb<"native">("native", "mfr", "high", undefined, EV9_PR_NACS)
+      : fb<"adapter">("adapter", "mfr", "high", "Kia supplied a NACS adapter free to 2024-25 EV9 buyers who took delivery from September 4, 2024", EV9_PR_ADAPTER),
+    architectureV: fb(800, "mfr" as Source, "high", sr ? "632V nominal, Standard Range pack" : "552V nominal, Long Range pack", EV9_PR_LAUNCH),
+    dcPeakKw: fb(sr ? 235 : 210, "mfr" as Source, "high", "On a 350 kW EVSE (max 310 A), Kia's specifications table", EV9_SPECS(yr)),
+    chargeTime1080Min: fb(sr ? 20 : 24, "mfr" as Source, "high", "10-80% on a 350 kW EVSE (max 310 A)", EV9_SPECS(yr)),
+    acOnboardKw: fb(10.9, "mfr" as Source, "high", undefined, EV9_SPECS(yr)),
+    dcFastCharging: fb<"standard">("standard", "mfr", "high", undefined, EV9_SPECS(yr)),
+  };
+};
+
 
 // ── BMW i4 / i5 / i7 / iX (same pass) ───────────────────────────────────
 // BMW certifies each trim per wheel size and the wheels aren't knowable from
@@ -2321,90 +2432,101 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   },
 
   {
-    id: "ev9-2024-lr-rwd", ...K9, modelYears: [2024, 2024], vin8: ["1"], drive: "RWD", packVariant: "Long Range",
-    battery: { packGrossKwh: f(99.8, "agg", "medium", "Long Range pack") },
+    id: "ev9-2024-lr-rwd", ...K9, modelYears: [2024, 2024], vin8: ["1"], trim: ["Light Long Range", "Light LR", "Light Long"], drive: "RWD", packVariant: "Long Range",
+    battery: EV9_PACK_LR(2024),
     range: { epaRangeMi: f(304, "mfr", "high", "MY2024 Long Range RWD (VIN code 1), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47450") },
-    charging: PORT_CCS,
+    charging: EV9_CHARGING(2024),
     thermal: EV9_HP_NONE(2024),
     warranty: HK_WARRANTY,
   },
   {
-    id: "ev9-2025-lr-rwd", ...K9, modelYears: [2025, 2025], vin8: ["1"], drive: "RWD", packVariant: "Long Range",
-    battery: { packGrossKwh: f(99.8, "agg", "medium", "Long Range pack") },
+    id: "ev9-2025-lr-rwd", ...K9, modelYears: [2025, 2025], vin8: ["1"], trim: ["Light Long Range", "Light LR", "Light Long"], drive: "RWD", packVariant: "Long Range",
+    battery: EV9_PACK_LR(2025),
     range: { epaRangeMi: f(304, "mfr", "high", "MY2025 Long Range RWD (VIN code 1), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48366") },
-    charging: { portStandard: f<"NACS">("NACS", "agg", "high", "Native NACS port from MY2025") },
+    charging: EV9_CHARGING(2025),
     thermal: EV9_HP_OPT_2025,
     warranty: HK_WARRANTY, buyerNotes: [NOTE_EV9_HP],
   },
   {
-    id: "ev9-2026-lr-rwd", ...K9, modelYears: [2026, 2026], vin8: ["1"], drive: "RWD", packVariant: "Long Range",
-    battery: { packGrossKwh: f(99.8, "agg", "medium", "Long Range pack") },
+    id: "ev9-2026-lr-rwd", ...K9, modelYears: [2026, 2026], vin8: ["1"], trim: ["Light Long Range", "Light LR", "Light Long"], drive: "RWD", packVariant: "Long Range",
+    battery: EV9_PACK_LR(2026),
     range: { epaRangeMi: f(305, "mfr", "high", "MY2026 Long Range RWD (VIN code 1), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49666") },
-    charging: { portStandard: f<"NACS">("NACS", "agg", "high", "Native NACS port from MY2025") },
+    charging: EV9_CHARGING(2026, { nacs: true }),
     thermal: EV9_HP_NONE(2026),
     warranty: HK_WARRANTY,
   },
   {
-    id: "ev9-2024-sr-rwd", ...K9, modelYears: [2024, 2024], vin8: ["2"], drive: "RWD", packVariant: "Standard Range",
-    battery: { packGrossKwh: f(76.1, "agg", "medium", "Standard Range pack") },
+    id: "ev9-2024-sr-rwd", ...K9, modelYears: [2024, 2024], vin8: ["2"], trim: ["Light", "Light Short Range"], drive: "RWD", packVariant: "Standard Range",
+    battery: EV9_PACK_SR(2024),
     range: { epaRangeMi: f(230, "mfr", "high", "MY2024 Standard Range RWD (VIN code 2), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47451") },
-    charging: PORT_CCS,
+    charging: EV9_CHARGING(2024, { sr: true }),
     thermal: EV9_HP_NONE(2024),
     warranty: HK_WARRANTY,
   },
   {
-    id: "ev9-2025-26-sr-rwd", ...K9, modelYears: [2025, 2026], vin8: ["2"], drive: "RWD", packVariant: "Standard Range",
-    battery: { packGrossKwh: f(76.1, "agg", "medium", "Standard Range pack") },
+    // Split from one 2025–26 row 2026-08-26: the port differs by year (CCS1
+    // in 2025, native NACS in 2026), so one row could only ever have been
+    // right for one of them. Everything else about the two is identical.
+    id: "ev9-2025-sr-rwd", ...K9, modelYears: [2025, 2025], vin8: ["2"], trim: ["Light", "Light Short Range"], drive: "RWD", packVariant: "Standard Range",
+    battery: EV9_PACK_SR(2025),
     range: { epaRangeMi: f(230, "mfr", "high", "MY2025–26 Standard Range RWD (VIN code 2), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48367") },
-    charging: { portStandard: f<"NACS">("NACS", "agg", "high", "Native NACS port from MY2025") },
+    charging: EV9_CHARGING(2025, { sr: true }),
     thermal: EV9_HP_NONE(2025),
     warranty: HK_WARRANTY,
   },
   {
-    id: "ev9-2024-awd", ...K9, modelYears: [2024, 2024], vin8: ["5"], trim: ["Wind", "Land", "Light"], drive: "AWD", packVariant: "Long Range",
-    battery: { packGrossKwh: f(99.8, "agg", "medium", "Long Range pack") },
+    id: "ev9-2026-sr-rwd", ...K9, modelYears: [2026, 2026], vin8: ["2"], trim: ["Light", "Light Short Range"], drive: "RWD", packVariant: "Standard Range",
+    battery: EV9_PACK_SR(2026),
+    range: { epaRangeMi: f(230, "mfr", "high", "MY2025–26 Standard Range RWD (VIN code 2), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48367") },
+    charging: EV9_CHARGING(2026, { sr: true, nacs: true }),
+    thermal: EV9_HP_NONE(2025),
+    warranty: HK_WARRANTY,
+  },
+  {
+    id: "ev9-2024-awd", ...K9, modelYears: [2024, 2024], vin8: ["5"], trim: ["Wind", "Land"], drive: "AWD", packVariant: "Long Range",
+    battery: EV9_PACK_LR(2024),
     range: { epaRangeMi: f(280, "mfr", "high", "MY2024 Long Range AWD (VIN code 5), non-GT-Line, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47452") },
-    charging: PORT_CCS,
+    charging: EV9_CHARGING(2024),
     thermal: EV9_HP_STD,
     warranty: HK_WARRANTY,
   },
   {
     id: "ev9-2024-awd-gtline", ...K9, modelYears: [2024, 2024], vin8: ["5"], trim: "GT-Line", drive: "AWD", packVariant: "Long Range",
-    battery: { packGrossKwh: f(99.8, "agg", "medium", "Long Range pack") },
+    battery: EV9_PACK_LR(2024),
     range: { epaRangeMi: f(270, "mfr", "high", "MY2024 Long Range AWD on the GT-Line wheels, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47453") },
-    charging: PORT_CCS,
+    charging: EV9_CHARGING(2024),
     thermal: EV9_HP_STD,
     warranty: HK_WARRANTY,
   },
   {
-    id: "ev9-2025-awd", ...K9, modelYears: [2025, 2025], vin8: ["5"], trim: ["Wind", "Land", "Light"], drive: "AWD", packVariant: "Long Range",
-    battery: { packGrossKwh: f(99.8, "agg", "medium", "Long Range pack") },
+    id: "ev9-2025-awd", ...K9, modelYears: [2025, 2025], vin8: ["5"], trim: ["Wind", "Land"], drive: "AWD", packVariant: "Long Range",
+    battery: EV9_PACK_LR(2025),
     range: { epaRangeMi: f(280, "mfr", "high", "MY2025 Long Range AWD (VIN code 5), non-GT-Line, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48368") },
-    charging: { portStandard: f<"NACS">("NACS", "agg", "high", "Native NACS port from MY2025") },
+    charging: EV9_CHARGING(2025),
     thermal: EV9_HP_STD,
     warranty: HK_WARRANTY,
   },
   {
     id: "ev9-2025-awd-gtline", ...K9, modelYears: [2025, 2025], vin8: ["5"], trim: "GT-Line", drive: "AWD", packVariant: "Long Range",
-    battery: { packGrossKwh: f(99.8, "agg", "medium", "Long Range pack") },
+    battery: EV9_PACK_LR(2025),
     range: { epaRangeMi: f(270, "mfr", "high", "MY2025 Long Range AWD, GT-Line, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48369") },
-    charging: { portStandard: f<"NACS">("NACS", "agg", "high", "Native NACS port from MY2025") },
+    charging: EV9_CHARGING(2025),
     thermal: EV9_HP_STD,
     warranty: HK_WARRANTY,
   },
   {
-    id: "ev9-2026-awd", ...K9, modelYears: [2026, 2026], vin8: ["5"], trim: ["Wind", "Land", "Light"], drive: "AWD", packVariant: "Long Range",
-    battery: { packGrossKwh: f(99.8, "agg", "medium", "Long Range pack") },
+    id: "ev9-2026-awd", ...K9, modelYears: [2026, 2026], vin8: ["5"], trim: ["Wind", "Land"], drive: "AWD", packVariant: "Long Range",
+    battery: EV9_PACK_LR(2026),
     range: { epaRangeMi: f(283, "mfr", "high", "MY2026 Long Range AWD (VIN code 5), non-GT-Line, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49667") },
-    charging: { portStandard: f<"NACS">("NACS", "agg", "high", "Native NACS port from MY2025") },
+    charging: EV9_CHARGING(2026, { nacs: true }),
     thermal: EV9_HP_STD,
     warranty: HK_WARRANTY,
   },
   {
     id: "ev9-2026-awd-gtline", ...K9, modelYears: [2026, 2026], vin8: ["5"], trim: "GT-Line", drive: "AWD", packVariant: "Long Range",
-    battery: { packGrossKwh: f(99.8, "agg", "medium", "Long Range pack") },
+    battery: EV9_PACK_LR(2026),
     range: { epaRangeMi: f(280, "mfr", "high", "MY2026 Long Range AWD, GT-Line, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49668") },
-    charging: { portStandard: f<"NACS">("NACS", "agg", "high", "Native NACS port from MY2025") },
+    charging: EV9_CHARGING(2026, { nacs: true }),
     thermal: EV9_HP_STD,
     warranty: HK_WARRANTY,
   },
