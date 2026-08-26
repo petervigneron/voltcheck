@@ -358,6 +358,69 @@ const NOTE_EV6_HP = { headline: "Heat pump: factory option, on the window sticke
 // Ports: Hyundai/Kia E-GMP cars are CCS1 until each model's NACS refresh —
 // EV6 and EV9 got NACS for MY2025 (EV6 rows above), IONIQ 9 launched
 // native-NACS; Ioniq 6 and Kona stay CCS1 through the years covered here.
+// Ioniq 6 and IONIQ 9 charging, filled 2026-08-26 from Hyundai's own spec
+// sheets (hyundainews.com) read as rendered pages, not as extracted text —
+// these are tables, and the note-to-self in the earlier tranches about
+// pdftotext mangling tables applies here too.
+//
+// IONIQ 6, identical figures on the 2024 and 2025 sheets:
+//   Battery Type   Lithium-ion        Voltage  480V (SR) / 697V (RWD, AWD)
+//   Capacity       53.0 / 77.4 kWh    OBC max capacity 10.9 kW
+//   Rapid Charging: 350kW             18 min      Battery preconditioning: S
+//   On-Board Charger row: "Ultra-Fast Charger (up to 800V / 350 kW)  S"
+//
+// IONIQ 9, 2026 sheet:
+//   Voltage 610        Capacity 110.3 kWh      Battery preconditioning: S
+//   DC Fast Charging (10-80%):  NACS V3 Supercharger 38 min
+//                               w/ CCS Adapter 350 kW 24 min
+//                               w/ CCS Adapter 50 kW  109 min
+//   AC Level 2 (10-80%): 240V / 48A (11 kW), 9 hr 40 min
+//   Charge Port: NACS - Rear Quarter / Passenger Side
+//
+// TWO THINGS THESE SHEETS DO NOT SAY, and which therefore stay absent:
+//
+// dcPeakKw. "Rapid Charging: 350kW" and "w/ CCS Adapter 350 kW" name the
+// CHARGER, not what the car will draw. Reading either as the vehicle's peak
+// rate would put a 350 kW acceptance figure on a car that takes roughly two
+// thirds of that. Hyundai publishes no vehicle peak for either model.
+//
+// The IONIQ 6 sheet's own window. Its charge-time rows read "(Up to 80%
+// charge)" with no starting point, unlike the IONIQ 9 sheet, which says
+// "DC Fast Charging (10-80%)" in the row header. So the 6's 18 minutes comes
+// from Hyundai's launch release instead, which states both the window and the
+// condition: "With a 350-kW charger, IONIQ 6's charge can go from 10 percent
+// to 80 percent in just 18 minutes" and "When the battery pack is at the
+// optimal temperature, IONIQ 6 can be charged from 10 percent to 80 percent
+// in 18 minutes."
+//
+// architectureV carries 800 with the nominal voltage in the note, the
+// convention the Ioniq 5 rows set. For the 6 that is the sheet's own
+// "up to 800V" line; for the 9 the sheet never says 800 anywhere (only
+// "Voltage 610"), so it is sourced instead to Hyundai's MY2026 IONIQ 9
+// equipment document, which lists "800V DC Ultra-Fast Charging" as standard.
+const I6_SPECS_2024 = "https://www.hyundainews.com/assets/documents/original/56235-2024IONIQ6Specs20230502.pdf";
+const I6_SPECS_2025 = "https://www.hyundainews.com/assets/documents/original/64772-2025IONIQ6SpecsFeatures011525.pdf";
+const I6_PR_LAUNCH = "https://www.hyundainews.com/assets/documents/original/53096-LosAngelesIONIQ6pressrelease11152022final.pdf";
+const I9_SPECS = "https://www.hyundainews.com/assets/documents/original/65341-2026IONIQ9SpecsFeatures20250305.pdf";
+const I9_MY2026 = "https://www.hyundainews.com/assets/documents/original/65977-2026MYIONIQ930APR20251.pdf";
+
+const I6_CHARGING = (specs: string, nominalV: number) => ({
+  portStandard: fb<"CCS1">("CCS1", "mfr", "high", undefined, specs),
+  architectureV: fb(800, "mfr" as Source, "high", `${nominalV}V nominal`, specs),
+  chargeTime1080Min: fb(18, "mfr" as Source, "high", "10-80% on a 350 kW charger, with the pack at its optimal temperature", I6_PR_LAUNCH),
+  acOnboardKw: fb(10.9, "mfr" as Source, "high", undefined, specs),
+  dcFastCharging: fb<"standard">("standard", "mfr", "high", undefined, specs),
+});
+const I6_THERMAL_PRECON = { batteryPreconditioning: fb(true, "mfr" as Source, "high", undefined, I6_SPECS_2025) };
+
+const I9_CHARGING = {
+  portStandard: fb<"NACS">("NACS", "mfr", "high", undefined, I9_SPECS),
+  superchargerAccess: fb<"native">("native", "mfr", "high", undefined, I9_SPECS),
+  architectureV: fb(800, "mfr" as Source, "high", "610V nominal", I9_MY2026),
+  chargeTime1080Min: fb(24, "mfr" as Source, "high", "10-80% on a 350 kW DC charger via the CCS adapter; 38 minutes on a NACS V3 Supercharger", I9_SPECS),
+  acOnboardKw: fb(11, "mfr" as Source, "high", "240V / 48A", I9_SPECS),
+  dcFastCharging: fb<"standard">("standard", "mfr", "high", undefined, I9_SPECS),
+};
 const HK_WARRANTY = {
   batteryYears: f(10, "mfr" as Source),
   batteryMiles: f(100_000, "mfr" as Source),
@@ -2602,7 +2665,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     id: "i6-2023-24-lr-rwd-18", ...H6, modelYears: [2023, 2024], vin8: ["A"], trim: "SE", drive: "RWD", packVariant: "Long Range",
     battery: I6_PACK_LR,
     range: { epaRangeMi: f(361, "mfr", "high", "MY2023–24 Long Range RWD on the SE 18-inch wheels, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46622") },
-    charging: PORT_CCS,
+    charging: I6_CHARGING(I6_SPECS_2024, 697),
     thermal: I6_HP_STD,
     warranty: HK_WARRANTY,
   },
@@ -2610,7 +2673,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     id: "i6-2023-24-lr-rwd-20", ...H6, modelYears: [2023, 2024], vin8: ["A"], trim: ["SEL", "Limited"], drive: "RWD", packVariant: "Long Range",
     battery: I6_PACK_LR,
     range: { epaRangeMi: f(305, "mfr", "high", "MY2023–24 Long Range RWD on 20-inch wheels (SEL, Limited), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46623") },
-    charging: PORT_CCS,
+    charging: I6_CHARGING(I6_SPECS_2024, 697),
     thermal: I6_HP_STD,
     warranty: HK_WARRANTY,
   },
@@ -2618,7 +2681,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     id: "i6-2023-24-lr-awd-18", ...H6, modelYears: [2023, 2024], vin8: ["C"], trim: "SE", drive: "AWD", packVariant: "Long Range",
     battery: I6_PACK_LR,
     range: { epaRangeMi: f(316, "mfr", "high", "MY2023–24 Long Range AWD on the SE 18-inch wheels, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46620") },
-    charging: PORT_CCS,
+    charging: I6_CHARGING(I6_SPECS_2024, 697),
     thermal: I6_HP_STD,
     warranty: HK_WARRANTY,
   },
@@ -2626,7 +2689,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     id: "i6-2023-24-lr-awd-20", ...H6, modelYears: [2023, 2024], vin8: ["C"], trim: ["SEL", "Limited"], drive: "AWD", packVariant: "Long Range",
     battery: I6_PACK_LR,
     range: { epaRangeMi: f(270, "mfr", "high", "MY2023–24 Long Range AWD on 20-inch wheels (SEL, Limited), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46621") },
-    charging: PORT_CCS,
+    charging: I6_CHARGING(I6_SPECS_2024, 697),
     thermal: I6_HP_STD,
     warranty: HK_WARRANTY,
   },
@@ -2634,7 +2697,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     id: "i6-2023-25-sr", ...H6, modelYears: [2023, 2025], vin8: ["B"], trim: "SE Standard Range", drive: "RWD", packVariant: "Standard Range",
     battery: I6_PACK_SR,
     range: { epaRangeMi: f(240, "mfr", "high", "SE Standard Range RWD (VIN code B, the 111 kW motor in Hyundai Part 565 data), EPA, same 240-mi rating all three years", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46624") },
-    charging: PORT_CCS,
+    charging: I6_CHARGING(I6_SPECS_2025, 480),
     thermal: I6_HP_NONE,
     warranty: HK_WARRANTY,
   },
@@ -2642,7 +2705,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     id: "i6-2025-lr-rwd-18", ...H6, modelYears: [2025, 2025], vin8: ["A"], trim: "SE", drive: "RWD", packVariant: "Long Range",
     battery: I6_PACK_LR,
     range: { epaRangeMi: f(342, "mfr", "high", "MY2025 Long Range RWD on the SE 18-inch wheels, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48362") },
-    charging: PORT_CCS,
+    charging: I6_CHARGING(I6_SPECS_2025, 697),
     thermal: I6_HP_STD,
     warranty: HK_WARRANTY,
   },
@@ -2650,7 +2713,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     id: "i6-2025-lr-rwd-20", ...H6, modelYears: [2025, 2025], vin8: ["A"], trim: ["SEL", "Limited"], drive: "RWD", packVariant: "Long Range",
     battery: I6_PACK_LR,
     range: { epaRangeMi: f(291, "mfr", "high", "MY2025 Long Range RWD on 20-inch wheels (SEL, Limited), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48363") },
-    charging: PORT_CCS,
+    charging: I6_CHARGING(I6_SPECS_2025, 697),
     thermal: I6_HP_STD,
     warranty: HK_WARRANTY,
   },
@@ -2658,7 +2721,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     id: "i6-2025-lr-awd-18", ...H6, modelYears: [2025, 2025], vin8: ["C"], trim: "SE", drive: "AWD", packVariant: "Long Range",
     battery: I6_PACK_LR,
     range: { epaRangeMi: f(316, "mfr", "high", "MY2025 Long Range AWD on the SE 18-inch wheels, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48361") },
-    charging: PORT_CCS,
+    charging: I6_CHARGING(I6_SPECS_2025, 697),
     thermal: I6_HP_STD,
     warranty: HK_WARRANTY,
   },
@@ -2666,7 +2729,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     id: "i6-2025-lr-awd-20", ...H6, modelYears: [2025, 2025], vin8: ["C"], trim: ["SEL", "Limited"], drive: "AWD", packVariant: "Long Range",
     battery: I6_PACK_LR,
     range: { epaRangeMi: f(270, "mfr", "high", "MY2025 Long Range AWD on 20-inch wheels (SEL, Limited), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48365") },
-    charging: PORT_CCS,
+    charging: I6_CHARGING(I6_SPECS_2025, 697),
     thermal: I6_HP_STD,
     warranty: HK_WARRANTY,
   },
@@ -2674,7 +2737,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     id: "i9-2026-rwd", ...H9, modelYears: [2026, 2026], vin8: ["1"], drive: "RWD", packVariant: "Long Range",
     battery: { packGrossKwh: f(110.3, "mfr", "high", undefined, "https://www.hyundainews.com/assets/documents/original/65341-2026IONIQ9SpecsFeatures20250305.pdf") },
     range: { epaRangeMi: f(335, "mfr", "high", "MY2026 IONIQ 9 RWD (VIN code 1), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49661") },
-    charging: { portStandard: f<"NACS">("NACS", "agg", "high", "Native NACS port from launch") },
+    charging: I9_CHARGING,
     thermal: I9_HP,
     warranty: HK_WARRANTY,
   },
@@ -2682,7 +2745,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     id: "i9-2026-awd", ...H9, modelYears: [2026, 2026], vin8: ["3"], drive: "AWD", packVariant: "Long Range",
     battery: { packGrossKwh: f(110.3, "mfr", "high", undefined, "https://www.hyundainews.com/assets/documents/original/65341-2026IONIQ9SpecsFeatures20250305.pdf") },
     range: { epaRangeMi: f(320, "mfr", "high", "MY2026 IONIQ 9 AWD (VIN code 3), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49662") },
-    charging: { portStandard: f<"NACS">("NACS", "agg", "high", "Native NACS port from launch") },
+    charging: I9_CHARGING,
     thermal: I9_HP,
     warranty: HK_WARRANTY,
   },
@@ -2690,7 +2753,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     id: "i9-2026-awd-perf", ...H9, modelYears: [2026, 2026], vin8: ["5"], drive: "AWD", packVariant: "Long Range",
     battery: { packGrossKwh: f(110.3, "mfr", "high", undefined, "https://www.hyundainews.com/assets/documents/original/65341-2026IONIQ9SpecsFeatures20250305.pdf") },
     range: { epaRangeMi: f(311, "mfr", "high", "MY2026 IONIQ 9 AWD Performance (VIN code 5, incl. Calligraphy), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49663") },
-    charging: { portStandard: f<"NACS">("NACS", "agg", "high", "Native NACS port from launch") },
+    charging: I9_CHARGING,
     thermal: I9_HP,
     warranty: HK_WARRANTY,
   },
