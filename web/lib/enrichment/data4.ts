@@ -4739,7 +4739,53 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
       batteryYears: f(10, "agg" as Source, "medium", "10 yr/100,000 mi EV-battery coverage (Hyundai-group terms), consistently documented; not re-verified against a Genesis primary booklet this pass"),
       batteryMiles: f(100_000, "agg" as Source, "medium"),
     };
-    const GEN_CHG = { portStandard: f<"CCS1">("CCS1", "mfr"), architectureV: f<800>(800, "mfr", "high", "E-GMP 800-volt platform") };
+    // PORT BY MODEL YEAR, corrected 2026-08-26. Every Genesis row here read
+    // CCS1, including the MY2026 and MY2027 cars. Genesis says otherwise on
+    // its own US site: "Beginning with 2026 models, every Genesis Electrified
+    // vehicle will feature a North American Charging Standard (NACS) port,
+    // providing seamless access to 36,000 Tesla Superchargers"
+    // (genesis.com/us/en/genesis-electric), and its US newsroom says it again
+    // per car: the 2026 GV60 "is equipped with a native North American
+    // Charging Standard (NACS) port". 169 live cars (97 MY2026 GV60, 72
+    // MY2027) were being shown the wrong socket. Fourth model this week with
+    // the same fault, after the EV9, the Lyriq and the Vistiq.
+    //
+    // The pre-2026 cars really are CCS1, and Genesis' owner site names them:
+    // "If you own a Genesis EV with a CCS port, you can request a
+    // complimentary NACS adapter... GV60 EV, GV70 EV, GV80 Electrified".
+    // That is also the source for superchargerAccess on those rows, which
+    // they did not carry at all. Genesis states the rate a shopper actually
+    // gets there, so it rides in the note.
+    const GEN_NACS_US = "https://www.genesis.com/us/en/genesis-electric";
+    const GEN_ADAPTER = "https://owners.genesis.com/us/en/resources/general-information/genesis-nacs-information.html";
+    const GEN_GV60_2026_PR = "https://newsroom.genesis.com/genesis-gv60-named-best-compact-electric-suv-by-us-news--world-report-in-2026-best-hybrid-and-electric-car-awards/";
+    const GEN_ARCH = f<800>(800, "mfr", "high", "E-GMP 800-volt platform");
+    const GEN_CHG = {
+      portStandard: f<"CCS1">("CCS1", "mfr"),
+      superchargerAccess: f<"adapter">("adapter", "mfr", "high", "Genesis supplied a complimentary NACS adapter to CCS-port owners from March 2025; Genesis states these cars draw 95-125 kW at a V3 Supercharger", GEN_ADAPTER),
+      architectureV: GEN_ARCH,
+    };
+    // MY2026+ GV60. Genesis' newsroom gives the pack, the architecture and the
+    // charge window in one sentence each: "an upgraded 84.0 kWh long-range
+    // battery paired with an advanced 800 volt architecture" and "GV60 can
+    // charge from 10% to 80% in approximately 18 minutes using a 350 kW DC
+    // fast charger". The pack was tagged `vin` off Genesis' Part 565 Ah
+    // figure, which printed "84 kWh est"; Genesis publishes 84.0 itself.
+    const GEN_CHG_NACS = {
+      portStandard: f<"NACS">("NACS", "mfr", "high", undefined, GEN_NACS_US),
+      superchargerAccess: f<"native">("native", "mfr", "high", "Genesis states these cars draw 95-125 kW at a V3 Supercharger", GEN_ADAPTER),
+      architectureV: GEN_ARCH,
+      chargeTime1080Min: f(18, "mfr", "high", "10-80% on a 350 kW DC fast charger", GEN_GV60_2026_PR),
+    };
+    const EGV70_US = "https://www.genesis.com/us/en/electrified-gv70";
+    const EGV70_PACK = { packGrossKwh: f(84, "mfr", "high", "Refreshed long-range pack", EGV70_US) };
+    const EGV70_CHG = {
+      portStandard: f<"NACS">("NACS", "mfr", "high", undefined, EGV70_US),
+      superchargerAccess: f<"native">("native", "mfr", "high", "Genesis states these cars draw 95-125 kW at a V3 Supercharger", GEN_ADAPTER),
+      architectureV: GEN_ARCH,
+      chargeTime1080Min: f(19, "mfr", "high", "10-80% on an 800V DC ultra-fast charger", EGV70_US),
+    };
+    const P84_MFR = { packGrossKwh: f(84, "mfr", "high", "Refreshed long-range pack", GEN_GV60_2026_PR) };
     const P774 = { packGrossKwh: f(77.4, "agg", "medium", "77.4 kWh E-GMP pack, 111.2 Ah") };
     const P84 = { packGrossKwh: f(84, "vin", "medium", "Genesis' Part 565 submissions read 120.6 Ah (~84 kWh refreshed E-GMP pack) for these VINs") };
     // Genesis' US materials describe the E-GMP battery conditioning system
@@ -4763,19 +4809,45 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
       gen("gv60-2025-adv", "GV60", [2025, 2025], ["C"], ["Advanced"], "Advanced",
         f(248, "mfr", "high", "MY2025 GV60 Advanced (20-inch wheels) — EPA", epa(48354))),
       gen("gv60-2026-std", "GV60", [2026, 2026], ["C"], ["Standard"], "Standard AWD",
-        f(282, "mfr", "high", "MY2026 GV60 Standard AWD (19-inch wheels, refreshed pack) — EPA", epa(49653)), { battery: P84 }),
+        f(282, "mfr", "high", "MY2026 GV60 Standard AWD (19-inch wheels, refreshed pack) — EPA", epa(49653)), { battery: P84_MFR, charging: GEN_CHG_NACS }),
       gen("gv60-2026-adv", "GV60", [2026, 2026], ["C"], ["Advanced"], "Advanced",
-        f(267, "mfr", "high", "MY2026 GV60 Advanced (20-inch wheels, refreshed pack) — EPA", epa(49654)), { battery: P84 }),
+        f(267, "mfr", "high", "MY2026 GV60 Advanced (20-inch wheels, refreshed pack) — EPA", epa(49654)), { battery: P84_MFR, charging: GEN_CHG_NACS }),
       gen("gv60-2026-perf", "GV60", [2026, 2026], ["B"], undefined, "Performance",
-        f(252, "mfr", "high", "MY2026 GV60 Performance — EPA", epa(49655)), { battery: P84 }),
+        f(252, "mfr", "high", "MY2026 GV60 Performance — EPA", epa(49655)), { battery: P84_MFR, charging: GEN_CHG_NACS }),
       gen("gv60-2027-std", "GV60", [2027, 2027], ["C"], ["Standard"], "Standard AWD",
-        f(282, "mfr", "high", "MY2027 GV60 AWD (19-inch wheels) — EPA", epa(50636)), { battery: P84 }),
+        f(282, "mfr", "high", "MY2027 GV60 AWD (19-inch wheels) — EPA", epa(50636)), { battery: P84_MFR, charging: GEN_CHG_NACS }),
       gen("gv60-2027-prestige", "GV60", [2027, 2027], ["C"], ["Prestige"], "Prestige",
-        f(267, "mfr", "high", "MY2027 GV60 Prestige (20-inch wheels) — EPA", epa(50635)), { battery: P84 }),
+        f(267, "mfr", "high", "MY2027 GV60 Prestige (20-inch wheels) — EPA", epa(50635)), { battery: P84_MFR, charging: GEN_CHG_NACS }),
       gen("eg80-2023-25", "Electrified G80", [2023, 2025], ["1"], undefined, "Electrified G80",
         f(282, "mfr", "high", "MY2023–25 Electrified G80 — EPA (45999/47447/48351 all rate 282)", epa(45999)), { battery: { packGrossKwh: f(87.2, "agg", "medium", "87.2 kWh pack (pre-2026 Electrified G80)") } }),
       gen("egv70-2023-25", "Electrified GV70", [2023, 2025], ["1"], undefined, "Electrified GV70",
         f(236, "mfr", "high", "MY2024–25 Electrified GV70 — EPA (46947/48353 rate identically); fueleconomy.gov carries no MY2023 entry, but the 2023 car is hardware-identical", epa(46947))),
+
+      // MY2026–27 Electrified GV70, new rows 2026-08-26. The block above
+      // stopped at 2025, so 159 live cars (28 MY2026, 131 MY2027) matched no
+      // row at all and showed an empty card. The refreshed car is a different
+      // vehicle on three counts, which is why it could not simply extend the
+      // 2023–25 row: the NACS port (Genesis, "beginning with 2026 models"),
+      // the bigger pack, and a different EPA rating.
+      //
+      // Genesis' own US page carries the pack and the charge window: "The
+      // Electrified GV70's 84-kWh battery", "Power up from 10% to 80% in as
+      // few as 19 minutes, using an 800V DC Ultra-Fast Charger", and "The
+      // North American Charging Standard (NACS) port is heated against
+      // cold-weather frost". Note 19 minutes here against the GV60's 18 —
+      // Genesis publishes them separately and they are not interchangeable.
+      //
+      // MY2026 is EPA-certified twice, by wheel: 263 mi on 19-inch (49656)
+      // and 243 on 20-inch (49657), and nothing in a listing states the wheel.
+      // The row carries the standard 19-inch figure with the 20-inch one in
+      // the note, the convention these rows already use for the GV60. MY2027
+      // is certified once, at 250 (50634) — the same number Genesis prints.
+      gen("egv70-2026", "Electrified GV70", [2026, 2026], ["1"], undefined, "Electrified GV70",
+        f(263, "mfr", "high", "MY2026 Electrified GV70 on the standard 19-inch wheels — EPA; 243 mi on the 20-inch package", epa(49656)),
+        { battery: EGV70_PACK, charging: EGV70_CHG }),
+      gen("egv70-2027", "Electrified GV70", [2027, 2027], ["1"], undefined, "Electrified GV70",
+        f(250, "mfr", "high", "MY2027 Electrified GV70 — EPA, one rating for the model year", epa(50634)),
+        { battery: EGV70_PACK, charging: EGV70_CHG }),
     ];
   })(),
 
