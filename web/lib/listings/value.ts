@@ -1,6 +1,5 @@
 import type { Listing } from "./types";
 import {
-  ASK_OVER_SOLD_USD,
   FALLBACK_USD_PER_MILE,
   MAX_PEER_MILE_GAP,
   MAX_UNDER_FRACTION,
@@ -39,17 +38,18 @@ import { trimClaim } from "./trimClaim";
  * SOLD needs a VIN, because ev_price_model (migration 0014) is keyed on VIN
  * positions 1-8 plus model year and nothing else addresses it. It quotes the
  * cohort's fitted line at this odometer, plus and minus the cohort's OWN
- * median absolute residual — which is what makes "half the cars like yours
- * sold between X and Y" a statement of fact rather than a figure of speech:
- * half of a cohort's residuals fall inside its median absolute residual by
- * the definition of the statistic. These are Washington title records: money
- * that changed hands.
+ * median absolute residual — half of a cohort's residuals fall inside its
+ * median absolute residual by the definition of the statistic. The records
+ * behind it are Washington title sales: money that changed hands. Since the
+ * 2026-08-26 calibration the band is deflated to the NATIONAL price level
+ * (WA asks run measured +5.7% over national), so it renders est-marked: an
+ * adjusted figure standing on real sales, no longer the raw record.
  *
  * ESTIMATE is the default, and it is what the picker path gets. It is the
  * median live ask of comparable cars, moved to this car's odometer on the
  * cohort's own depreciation slope where there is one, then converted from an
- * ask to a transaction by the $1,100 the two sides of this dataset sit apart
- * (comps.ts ASK_OVER_SOLD_USD). It is marked est everywhere it renders.
+ * ask to a transaction by the measured, proportional ASK_TO_SOLD_DISCOUNT
+ * (the calibration block below). It is marked est everywhere it renders.
  *
  * ABSTAIN is under four comparable live listings, and it is one sentence and a
  * link — no number, no hedge. Four is comps.ts's MIN_PEERS, and its reasoning
@@ -156,6 +156,31 @@ const MIN_SOLD_N = 8;
  *  print a DIFFERENCE between two known numbers; this prints a level. */
 const round100 = (n: number): number => Math.round(n / 100) * 100;
 
+// ── The 2026-08-26 calibration (docs/tools/worth-calibration.mts) ──────────
+//
+// Measured against WA title sales with a real train/test split (fit Mar-May
+// 2026, judged on Jun-Jul): the two constants below halved the baseline's
+// holdout error (5.9%→3.0% June, 4.6%→2.9% July, median absolute error over
+// cohort × mileage-band cells). Re-run the script when WA publishes a new
+// month — the drift extrapolation to "today" is the least-identified piece
+// and each month of data firms it up.
+
+/** Cars clear about this fraction UNDER their asking price, contemporaneously.
+ *  Replaces the flat $1,100 (comps.ts ASK_OVER_SOLD_USD, which the comparison
+ *  surfaces still use for their own delta claims): the flat figure was
+ *  measured in a different market and is directionally wrong above $25k —
+ *  it over-penalized a $12k Bolt by ~$750 and under-penalized a $60k car.
+ *  Proportional, small, and est-marked, per the calibration. */
+const ASK_TO_SOLD_DISCOUNT = 0.013;
+
+/** Washington asking prices run this fraction ABOVE national asks for
+ *  identical cohort/mileage cells (83 cells, 957 WA listings). Any WA-anchored
+ *  price LEVEL shown to a national audience is deflated by it — which turns
+ *  the sold band from a raw record into an estimate, and it is marked est
+ *  accordingly. Slopes (usdPerMile) are untouched: a premium on the level
+ *  cancels out of a per-mile difference. */
+const WA_OVER_NATIONAL = 0.057;
+
 // ── The SOLD tier ──────────────────────────────────────────────────────────
 
 export interface SoldBand {
@@ -230,10 +255,15 @@ export function soldBand(
   const half = Math.max(c.residMedaeUsd, MIN_ABS_USD);
   if (!Number.isFinite(half) || half > MAX_UNDER_FRACTION * mid) return undefined;
 
-  const lowUsd = round100(Math.max(mid - half, c.saleLo));
-  const highUsd = round100(Math.min(mid + half, c.saleHi));
+  // Everything above runs in the WASHINGTON price frame the cohort was fitted
+  // in — including the clamp into observed sales. The band is deflated to the
+  // national level last (WA_OVER_NATIONAL above), which is also the moment it
+  // stops being a raw record and becomes an estimate: the caller marks it est.
+  const nat = 1 / (1 + WA_OVER_NATIONAL);
+  const lowUsd = round100(Math.max(mid - half, c.saleLo) * nat);
+  const highUsd = round100(Math.min(mid + half, c.saleHi) * nat);
   if (!(highUsd > lowUsd)) return undefined;
-  return { lowUsd, highUsd, midUsd: round100(mid), salesN: c.salesN };
+  return { lowUsd, highUsd, midUsd: round100(mid * nat), salesN: c.salesN };
 }
 
 // ── The ESTIMATE tier ──────────────────────────────────────────────────────
@@ -301,10 +331,10 @@ export interface AskEstimate {
  * while a seller told too high a number fails to sell and finds out. The
  * asymmetry points the same way on both surfaces.
  *
- * ASK_OVER_SOLD_USD is then subtracted, because a median of asking prices is
- * not what a car is worth and printing it as one would be the site's own
- * "asks run about $1,100 above sale prices" measurement ignored on the page
- * that most needs it.
+ * ASK_TO_SOLD_DISCOUNT then converts the ask median to a transaction figure,
+ * because a median of asking prices is not what a car is worth — see the
+ * calibration block above for why the conversion is proportional and small
+ * rather than the flat $1,100 it replaced.
  */
 export function askEstimate(
   pool: AskPool,
@@ -320,7 +350,7 @@ export function askEstimate(
   const askMedian = median(comparable.map((p) => p.askUsd + perMile * (mileage - p.mileage)));
   if (!Number.isFinite(askMedian) || askMedian <= 0) return undefined;
 
-  const value = askMedian - ASK_OVER_SOLD_USD;
+  const value = askMedian * (1 - ASK_TO_SOLD_DISCOUNT);
   // A figure under the junk-price floor is the floor's own argument turned
   // around: at that level we do not believe a listed number is a price, so we
   // will not publish one as a valuation either.
@@ -487,7 +517,10 @@ export function modelYearPool(rows: ModelYearAsk[], input: WorthInput): AskPool 
 export type WaDerived = { waDerived: boolean };
 
 export type Valuation =
-  | ({ tier: "sold"; estimated: false; salesN: number; headline: string } & SoldBand & WaDerived)
+  // estimated: true since the 2026-08-26 calibration — the band is the WA fit
+  // deflated to the national level, an adjusted figure rather than a raw
+  // record, and the est mark is the page's provenance promise.
+  | ({ tier: "sold"; estimated: true; salesN: number; headline: string } & SoldBand & WaDerived)
   | ({
       tier: "estimate";
       estimated: true;
@@ -550,7 +583,7 @@ export function decideValue(
     if (band)
       return {
         tier: "sold",
-        estimated: false,
+        estimated: true,
         waDerived: true,
         ...band,
         headline: `${usd(band.lowUsd)} – ${usd(band.highUsd)}`,

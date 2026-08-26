@@ -93,9 +93,11 @@ const FOUR = peers([
 test("a clean cohort quotes the fit plus and minus its own median residual", () => {
   const b = soldBand(healthy(), MILES, { identityMixed: false });
   assert.ok(b);
-  assert.equal(b.midUsd, 34_000);
-  assert.equal(b.lowUsd, 31_800);
-  assert.equal(b.highUsd, 36_200);
+  // The WA-frame band (31,800-36,200 around 34,000) deflated to the national
+  // level by the measured +5.7% WA ask premium.
+  assert.equal(b.midUsd, 32_200);
+  assert.equal(b.lowUsd, 30_100);
+  assert.equal(b.highUsd, 34_200);
   assert.equal(b.salesN, 26);
 });
 
@@ -104,7 +106,8 @@ test("the band is clamped into the prices the cohort actually reached", () => {
   // for $36,200 — no car in it ever did.
   const b = soldBand(healthy({ saleHi: 34_500 }), MILES, { identityMixed: false });
   assert.ok(b);
-  assert.equal(b.highUsd, 34_500);
+  // Clamped to the $34,500 dearest WA sale, then deflated to national.
+  assert.equal(b.highUsd, 32_600);
 });
 
 // ── The guardrails: each one must fall through, never quote ────────────────
@@ -154,8 +157,8 @@ test("an error bar as wide as the site's own bargain ceiling says nothing", () =
 test("a suspiciously tight cohort still gets the $1,500 floor, not false precision", () => {
   const b = soldBand(healthy({ residMedaeUsd: 200 }), MILES, { identityMixed: false });
   assert.ok(b);
-  assert.equal(b.lowUsd, 32_500);
-  assert.equal(b.highUsd, 35_500);
+  assert.equal(b.lowUsd, 30_700);
+  assert.equal(b.highUsd, 33_600);
 });
 
 test("delivery mileage and 200k+ are outside what the model was fitted on", () => {
@@ -179,8 +182,10 @@ test("a VIN whose cohort read never answered cannot clear the identity gate", ()
 test("VIN plus a clean cohort is the SOLD tier: the range, and nothing else", () => {
   const v = decideValue(withVin, index(healthy()), pool(FOUR, { identityChecked: true }));
   assert.equal(v.tier, "sold");
-  assert.equal(v.tier === "sold" && v.estimated, false);
-  assert.equal(v.tier === "sold" && v.headline, "$31,800 – $36,200");
+  // est since the calibration: a WA fit deflated to national is an adjusted
+  // figure, and the est mark is the provenance promise.
+  assert.equal(v.tier === "sold" && v.estimated, true);
+  assert.equal(v.tier === "sold" && v.headline, "$30,100 – $34,200");
   // No sentence under a numeric answer — owner decision 2026-08-26; the
   // value is the answer (see value.ts "The verdict").
   assert.ok(!("source" in v));
@@ -197,9 +202,8 @@ test("the picker path is the ESTIMATE tier: the number, marked est, no sentence"
   const v = decideValue(picker, empty, pool(FOUR));
   assert.equal(v.tier, "estimate");
   assert.equal(v.tier === "estimate" && v.estimated, true);
-  // Median ask $36,500 less the measured $1,100 the ask side runs above the
-  // sold side.
-  assert.equal(v.tier === "estimate" && v.headline, "$35,400");
+  // Median ask $36,500 through the measured 1.3% ask-to-sold conversion.
+  assert.equal(v.tier === "estimate" && v.headline, "$36,000");
   assert.ok(!("source" in v));
 });
 
@@ -353,7 +357,7 @@ test("the make/model pool can never answer the identity question", () => {
 
 test("peers are moved to this car's odometer on the cohort's own slope", () => {
   // Four peers 20,000 miles fresher than the subject, at $40,000 each. On the
-  // cohort's -$0.15/mi that is -$3,000, then -$1,100 ask-over-sold.
+  // cohort's -$0.15/mi that is -$3,000, then the 1.3% conversion.
   const fresher = peers([
     [MILES - 20_000, 40_000],
     [MILES - 20_000, 40_000],
@@ -362,7 +366,7 @@ test("peers are moved to this car's odometer on the cohort's own slope", () => {
   ]);
   const e = askEstimate(pool(fresher), MILES, healthy());
   assert.ok(e);
-  assert.equal(e.valueUsd, 35_900);
+  assert.equal(e.valueUsd, 36_500);
   assert.equal(e.slopeFromSales, true);
 });
 
@@ -375,8 +379,8 @@ test("without a fitted slope the fallback is used, and is not called a sale figu
   ]);
   const e = askEstimate(pool(fresher), MILES, undefined);
   assert.ok(e);
-  // -$0.09/mi over 20,000 miles, then -$1,100.
-  assert.equal(e.valueUsd, 37_100);
+  // -$0.09/mi over 20,000 miles, then the 1.3% conversion.
+  assert.equal(e.valueUsd, 37_700);
   assert.equal(e.slopeFromSales, false);
 });
 
@@ -399,7 +403,7 @@ test("accident history is collected but not priced — no unmeasured haircut", (
   // never measured the discount; the estimate and its claim stay as they are.
   const v = decideValue({ ...picker, condition: "issues" }, empty, pool(FOUR));
   assert.equal(v.tier, "estimate");
-  assert.equal(v.tier === "estimate" && v.headline, "$35,400");
+  assert.equal(v.tier === "estimate" && v.headline, "$36,000");
 });
 
 test("URLs minted before the question existed still answer", () => {
@@ -416,8 +420,9 @@ test("a drivetrain pick narrows the pool when enough of it is for sale", () => {
   ];
   const v = decideValue({ ...picker, drive: "AWD" }, empty, pool(ps));
   assert.equal(v.tier, "estimate");
-  // The AWD median $34,000 less $1,100 — not the mixed pool's $32,000 line.
-  assert.equal(v.tier === "estimate" && v.headline, "$32,900");
+  // The AWD median $34,000 through the conversion — not the mixed pool's
+  // $32,000 line.
+  assert.equal(v.tier === "estimate" && v.headline, "$33,600");
   assert.equal(v.tier === "estimate" && v.matchedDrive, "AWD");
 });
 
@@ -441,5 +446,5 @@ test("trim and drivetrain narrow together, trim first", () => {
   const v = decideValue({ ...picker, trim: "Long Range", drive: "AWD" }, empty, pool(ps));
   assert.equal(v.tier === "estimate" && v.matchedTrim, "Long Range");
   assert.equal(v.tier === "estimate" && v.matchedDrive, "AWD");
-  assert.equal(v.tier === "estimate" && v.headline, "$38,900");
+  assert.equal(v.tier === "estimate" && v.headline, "$39,500");
 });
