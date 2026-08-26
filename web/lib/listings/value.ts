@@ -113,6 +113,11 @@ export interface WorthInput {
   /** Optional. Narrows the ask pool, but only to a trim the live cohort
    *  asserts — see the header. */
   trim?: string;
+  /** Optional. Narrows the ask pool to one drivetrain, under the same rule as
+   *  the trim: only to a value the live pool actually carries, only when
+   *  enough of it is for sale, silently ignored otherwise. A "SEL" pool mixes
+   *  RWD and AWD, and they are different money. */
+  drive?: "RWD" | "AWD" | "FWD";
   /**
    * Optional; absent on every URL minted before the question existed, and
    * absence behaves as "good". What the seller said about condition and title:
@@ -249,6 +254,7 @@ export interface WorthPeer {
    *  Tesla Model Y long range listings" — the trim is the maker's name for a
    *  version of the car, not a search term the reader supplied. */
   trimLabel?: string;
+  drive?: "RWD" | "AWD" | "FWD";
 }
 
 export type PoolBasis = "vin-cohort" | "model-year";
@@ -260,6 +266,8 @@ export interface AskPool {
    *  no trim was given, or when the one given matched nothing the live cohort
    *  asserts — the two are indistinguishable to the reader on purpose. */
   matchedTrim?: string;
+  /** The drivetrain the pool was narrowed to, under the same absence rule. */
+  matchedDrive?: "RWD" | "AWD" | "FWD";
   /** cohortIdentityMixed's verdict. Only ever meaningful on a vin-cohort
    *  pool: the model-year read carries no payload and therefore cannot match
    *  enrichment rows, so it cannot answer this question at all. */
@@ -352,6 +360,20 @@ export function narrowByTrim(pool: AskPool, input: WorthInput): AskPool {
   return { ...pool, peers: hits, matchedTrim: label ?? want };
 }
 
+/**
+ * Narrow a pool to one drivetrain — narrowByTrim's rule on a cleaner axis:
+ * the values are already a three-way enum, so there is no spelling to settle,
+ * and the same MIN_PEERS floor keeps the wide pool when the narrowed one is
+ * too thin to price from. Runs AFTER the trim narrowing on its result, so
+ * "SEL AWD" prices against SEL AWDs when enough exist, SELs when not.
+ */
+export function narrowByDrive(pool: AskPool, input: WorthInput): AskPool {
+  if (!input.drive) return pool;
+  const hits = pool.peers.filter((p) => p.drive === input.drive);
+  if (hits.length < MIN_PEERS) return pool;
+  return { ...pool, peers: hits, matchedDrive: input.drive };
+}
+
 // ── Building a pool ────────────────────────────────────────────────────────
 
 /** The VIN 1-8 cohort, out of the same fetch and the same derivations
@@ -369,8 +391,10 @@ export function vinCohortPool(rows: Listing[], input: WorthInput): AskPool {
     });
   const asks = buildAskIndex(members);
   // buildAskIndex carries the uppercased key and not the spelling, so the
-  // spelling comes back off the members it was built from.
+  // spelling — and the drivetrain — come back off the members it was built
+  // from.
   const labels = new Map(members.map((m) => [m.vin.toUpperCase(), specTrim(m)]));
+  const drives = new Map(members.map((m) => [m.vin.toUpperCase(), m.drive]));
   return {
     peers: askCohortPeers(asks, input.vin, input.year)
       .filter((p) => p.vin !== self)
@@ -380,6 +404,7 @@ export function vinCohortPool(rows: Listing[], input: WorthInput): AskPool {
         askUsd: p.askUsd,
         trimKey: p.trimKey,
         trimLabel: p.trimKey ? labels.get(p.vin) : undefined,
+        drive: drives.get(p.vin),
       })),
     basis: "vin-cohort",
     identityMixed: cohortIdentityMixed(asks, input.vin, input.year),
@@ -421,12 +446,17 @@ export function modelYearPool(rows: ModelYearAsk[], input: WorthInput): AskPool 
       trim: r.trim,
     } as Listing;
     const t = trimClaim(as).assert ? specTrim(as) : undefined;
+    // The payload's drive field, admitted only on exact enum match — a feed
+    // that wrote "4x4" or "e-AWD" there abstains rather than seeding a
+    // narrowed pool with a spelling the filter can never select.
+    const d = r.drive === "RWD" || r.drive === "AWD" || r.drive === "FWD" ? r.drive : undefined;
     peers.push({
       vin,
       mileage: r.mileage,
       askUsd: r.priceUsd,
       trimKey: t ? t.toUpperCase() : undefined,
       trimLabel: t,
+      drive: d,
     });
   }
   return { peers, basis: "model-year", identityMixed: false, identityChecked: false };
@@ -465,6 +495,7 @@ export type Valuation =
       peerN: number;
       basis: PoolBasis;
       matchedTrim?: string;
+      matchedDrive?: "RWD" | "AWD" | "FWD";
       headline: string;
     } & WaDerived)
   | { tier: "abstain"; source: string }
@@ -509,7 +540,7 @@ export function decideValue(
   if (!pool) return { tier: opts.dbFailed ? "unavailable" : "abstain", source: opts.dbFailed ? UNAVAILABLE_COPY : abstainCopy(input) };
 
   const c = compCohort(comps, input.vin, input.year);
-  const narrowed = narrowByTrim(pool, input);
+  const narrowed = narrowByDrive(narrowByTrim(pool, input), input);
 
   // SOLD only where the VIN gave us a cohort AND the live cohort was actually
   // consulted about the identity mixture. A VIN with an unanswered cohort read
@@ -535,6 +566,7 @@ export function decideValue(
       peerN: est.peerN,
       basis: narrowed.basis,
       matchedTrim: narrowed.matchedTrim,
+      matchedDrive: narrowed.matchedDrive,
       waDerived: est.slopeFromSales,
       headline: usd(est.valueUsd),
     };

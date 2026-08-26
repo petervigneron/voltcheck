@@ -68,6 +68,7 @@ export function WorthForm({
     miles?: string;
     vin?: string;
     trim?: string;
+    drive?: string;
     cond?: string;
   };
 }) {
@@ -80,6 +81,7 @@ export function WorthForm({
   const [make, setMake] = useState(defaults?.make ?? "");
   const [model, setModel] = useState(defaults?.model ?? "");
   const [trim, setTrim] = useState(defaults?.trim ?? "");
+  const [drive, setDrive] = useState(defaults?.drive ?? "");
   const [miles, setMiles] = useState(digits(defaults?.miles ?? ""));
   const [vin, setVin] = useState(defaults?.vin ?? "");
   const [more, setMore] = useState(Boolean(defaults?.vin));
@@ -87,12 +89,16 @@ export function WorthForm({
   // A make and model already in the URL stay selectable even before the facets
   // land, and even when tally.ts no longer offers that spelling — otherwise a
   // server-rendered result page shows two empty boxes above its own answer.
-  // Same rule for the trim, for the same reason.
+  // Same rule for the trim and drivetrain, for the same reason.
   const makes = withCurrent(Object.keys(makesModels).sort(), make);
   const models = withCurrent(make ? (makesModels[make] ?? []) : [], model);
   const trims = withCurrent(
     (year && make && model && worthTrims?.trims[make]?.[model]?.[year]) || [],
     trim
+  );
+  const driveOptions = withCurrent(
+    (year && make && model && worthTrims?.drives?.[make]?.[model]?.[year]) || [],
+    drive
   );
   const thisYear = new Date().getFullYear();
   const years: number[] = [];
@@ -108,7 +114,7 @@ export function WorthForm({
 
   return (
     <form method="get" action="/worth">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <div className={`${CELL} relative bg-paper`}>
           <label className={LABEL} htmlFor="worth-year">
             Year
@@ -121,6 +127,7 @@ export function WorthForm({
             onChange={(e) => {
               setYear(e.target.value);
               setTrim("");
+              setDrive("");
             }}
             className={SELECT}
           >
@@ -152,6 +159,7 @@ export function WorthForm({
               setMake(e.target.value);
               setModel("");
               setTrim("");
+              setDrive("");
             }}
             className={SELECT}
           >
@@ -182,6 +190,7 @@ export function WorthForm({
             onChange={(e) => {
               setModel(e.target.value);
               setTrim("");
+              setDrive("");
             }}
             className={SELECT}
           >
@@ -225,6 +234,38 @@ export function WorthForm({
             {trims.map((t) => (
               <option key={t} value={t}>
                 {t}
+              </option>
+            ))}
+          </select>
+          <span aria-hidden="true" className={CHEVRON}>
+            ▼
+          </span>
+        </div>
+
+        {/* Same contract as the trim: offered only where the cell actually
+            splits (tally.ts builds the facet with the same four-car floor and
+            requires two ways for the question to exist), never blocks a
+            submit, silently ignored when too few same-drivetrain cars are
+            for sale (value.ts narrowByDrive). */}
+        <div className={`${CELL} relative bg-paper`}>
+          <label className={LABEL} htmlFor="worth-drive">
+            Drivetrain{" "}
+            <span className="font-semibold normal-case tracking-normal text-ink/40">optional</span>
+          </label>
+          <select
+            id="worth-drive"
+            name="drive"
+            value={drive}
+            disabled={driveOptions.length === 0}
+            onChange={(e) => setDrive(e.target.value)}
+            className={SELECT}
+          >
+            <option value="">
+              {driveOptions.length > 0 ? "Not sure" : !model ? "Pick a model" : worthTrims ? "\u2014" : "Loading\u2026"}
+            </option>
+            {driveOptions.map((d) => (
+              <option key={d} value={d}>
+                {d}
               </option>
             ))}
           </select>
@@ -290,6 +331,11 @@ export function WorthForm({
             ▼
           </span>
         </div>
+
+        {/* Seven fields in a grid of eight: the last slot draws its keylines
+            like every other cell so the wall stays a wall — same device as
+            the submit row's spacer below. */}
+        <div className={`${CELL} hidden bg-putty sm:block`} aria-hidden="true" />
       </div>
 
       {more && (

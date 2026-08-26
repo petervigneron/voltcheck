@@ -115,3 +115,29 @@ test("a drivetrain tail is spelling, not identity, when folding", () => {
   const rows = [...n(600, "Tesla", "Model Y", 2023, "Long Range"), ...n(5, "Tesla", "Model Y Long Range AWD", 2023)];
   assert.deepEqual(modelTally(rows).makesModels["Tesla"], ["Model Y"]);
 });
+
+// ── The drivetrain facet ───────────────────────────────────────────────────
+
+const carD = (make: string, model: string, year: number, trim: string | undefined, drive: "RWD" | "AWD" | "FWD"): CardRow =>
+  ({ ...car(make, model, year, trim), drive }) as CardRow;
+
+test("a cell that splits by drivetrain offers its ways, deepest first", () => {
+  const rows = [
+    ...Array.from({ length: 6 }, () => carD("Hyundai", "Ioniq 5", 2023, "SEL", "AWD")),
+    ...Array.from({ length: 4 }, () => carD("Hyundai", "Ioniq 5", 2023, "SEL", "RWD")),
+  ];
+  assert.deepEqual(worthTrimTally(rows).drives?.["Hyundai"]?.["Ioniq 5"]?.["2023"], ["AWD", "RWD"]);
+});
+
+test("a cell that only comes one way carries no drivetrain question", () => {
+  const rows = Array.from({ length: 8 }, () => carD("Hyundai", "Ioniq 5", 2023, "SEL", "AWD"));
+  assert.equal(worthTrimTally(rows).drives?.["Hyundai"], undefined);
+});
+
+test("under four cars a drivetrain is not offered as a way the cell splits", () => {
+  const rows = [
+    ...Array.from({ length: 6 }, () => carD("Hyundai", "Ioniq 5", 2023, "SEL", "AWD")),
+    ...Array.from({ length: 3 }, () => carD("Hyundai", "Ioniq 5", 2023, "SEL", "RWD")),
+  ];
+  assert.equal(worthTrimTally(rows).drives?.["Hyundai"], undefined);
+});

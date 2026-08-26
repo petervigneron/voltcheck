@@ -49,6 +49,8 @@ function readInput(sp: Params): WorthInput | null {
   // to show. value.ts says what each value does.
   const rawCond = one(sp.cond);
   const condition = rawCond === "good" || rawCond === "issues" || rawCond === "branded" ? rawCond : undefined;
+  const rawDrive = one(sp.drive);
+  const drive = rawDrive === "RWD" || rawDrive === "AWD" || rawDrive === "FWD" ? rawDrive : undefined;
   return {
     year,
     make,
@@ -56,6 +58,7 @@ function readInput(sp: Params): WorthInput | null {
     mileage: Math.round(mileage),
     vin: VIN_RE.test(rawVin) ? rawVin : undefined,
     trim: trim || undefined,
+    drive,
     condition,
   };
 }
@@ -109,6 +112,7 @@ export default async function WorthPage(props: Props) {
             miles: one(sp.miles),
             vin: one(sp.vin),
             trim: one(sp.trim),
+            drive: one(sp.drive),
             cond: one(sp.cond),
           }}
         />
@@ -128,6 +132,7 @@ function Result({ input, v }: { input: WorthInput; v: Valuation }) {
     <>
       {vehicleLabel(input)} · {miles}
       {v.tier === "estimate" && v.matchedTrim ? ` · ${v.matchedTrim}` : ""}
+      {v.tier === "estimate" && v.matchedDrive ? ` · ${v.matchedDrive}` : ""}
     </>
   );
 

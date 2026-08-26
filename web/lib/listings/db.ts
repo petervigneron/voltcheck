@@ -695,6 +695,7 @@ export interface ModelYearAsk {
   mileage?: number;
   trim?: string;
   condition?: string;
+  drive?: string;
 }
 
 interface ModelYearAskRow {
@@ -704,6 +705,7 @@ interface ModelYearAskRow {
   mileage: number | null;
   vehicle_trim: string | null;
   condition: string | null;
+  drive: string | null;
 }
 
 /**
@@ -806,8 +808,14 @@ export async function fetchModelYearAsksFromDb(
     const budgetMs = 5_000;
     let res: Response;
     for (let attempt = 0; ; attempt++) {
+      // `drive:payload->>drive` extracts ONE key from the payload server-side
+      // — a few bytes a row, nothing like fetching the ~800-byte payload this
+      // read exists to avoid. And unlike the `payload->>make` mistake this
+      // file's other comments record, it appears only in the SELECT: the rows
+      // are already found by listings_live_idx on the typed columns, so the
+      // extraction runs per returned row, never as a scan predicate.
       res = await fetch(
-        `${base}/rest/v1/listings?select=vin,year,price_usd,mileage,vehicle_trim,condition` +
+        `${base}/rest/v1/listings?select=vin,year,price_usd,mileage,vehicle_trim,condition,drive:payload->>drive` +
           `&make=eq.${q(make)}&model=eq.${q(model)}&year=eq.${year}` +
           `&delisted_at=is.null&buyback_disclosed=is.false` +
           `&mileage=gte.${Math.round(mileageLo)}&mileage=lte.${Math.round(mileageHi)}` +
@@ -830,6 +838,7 @@ export async function fetchModelYearAsksFromDb(
       mileage: r.mileage ?? undefined,
       trim: r.vehicle_trim ?? undefined,
       condition: r.condition ?? undefined,
+      drive: r.drive ?? undefined,
     }));
   } catch (err) {
     console.error("[listings] Supabase model-year ask read failed:", err);

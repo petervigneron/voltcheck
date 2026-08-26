@@ -406,3 +406,40 @@ test("URLs minted before the question existed still answer", () => {
   const v = decideValue({ ...picker, condition: undefined }, empty, pool(FOUR));
   assert.equal(v.tier, "estimate");
 });
+
+// ── Drivetrain narrowing ───────────────────────────────────────────────────
+
+test("a drivetrain pick narrows the pool when enough of it is for sale", () => {
+  const ps = [
+    ...peers([[MILES, 30_000], [MILES, 30_000], [MILES, 30_000], [MILES, 30_000]]).map((p) => ({ ...p, vin: p.vin + "R", drive: "RWD" as const })),
+    ...peers([[MILES, 34_000], [MILES, 34_000], [MILES, 34_000], [MILES, 34_000]]).map((p) => ({ ...p, vin: p.vin + "A", drive: "AWD" as const })),
+  ];
+  const v = decideValue({ ...picker, drive: "AWD" }, empty, pool(ps));
+  assert.equal(v.tier, "estimate");
+  // The AWD median $34,000 less $1,100 — not the mixed pool's $32,000 line.
+  assert.equal(v.tier === "estimate" && v.headline, "$32,900");
+  assert.equal(v.tier === "estimate" && v.matchedDrive, "AWD");
+});
+
+test("a drivetrain pick with too few same-drive cars keeps the wide pool", () => {
+  const ps = [
+    ...FOUR.map((p) => ({ ...p, drive: "RWD" as const })),
+    { ...FOUR[0], vin: "TESTVINX00000000", drive: "AWD" as const },
+  ];
+  const v = decideValue({ ...picker, drive: "AWD" }, empty, pool(ps));
+  assert.equal(v.tier, "estimate");
+  assert.equal(v.tier === "estimate" && v.matchedDrive, undefined);
+  assert.equal(v.tier === "estimate" && v.peerN, 5);
+});
+
+test("trim and drivetrain narrow together, trim first", () => {
+  const ps = [
+    ...peers([[MILES, 40_000], [MILES, 40_000], [MILES, 40_000], [MILES, 40_000]], "LONG RANGE", "Long Range").map((p, i) => ({ ...p, vin: `LRA${i}`, drive: "AWD" as const })),
+    ...peers([[MILES, 36_000], [MILES, 36_000], [MILES, 36_000], [MILES, 36_000]], "LONG RANGE", "Long Range").map((p, i) => ({ ...p, vin: `LRR${i}`, drive: "RWD" as const })),
+    ...peers([[MILES, 30_000], [MILES, 30_000], [MILES, 30_000], [MILES, 30_000]]).map((p, i) => ({ ...p, vin: `BAS${i}`, drive: "AWD" as const })),
+  ];
+  const v = decideValue({ ...picker, trim: "Long Range", drive: "AWD" }, empty, pool(ps));
+  assert.equal(v.tier === "estimate" && v.matchedTrim, "Long Range");
+  assert.equal(v.tier === "estimate" && v.matchedDrive, "AWD");
+  assert.equal(v.tier === "estimate" && v.headline, "$38,900");
+});

@@ -217,6 +217,12 @@ export interface WorthTrims {
   /** make → model label (exactly as makesModels offers it) → model year →
    *  trims, deepest first. */
   trims: Record<string, Record<string, Record<string, string[]>>>;
+  /** Same shape for drivetrains — present only where the cell actually
+   *  SPLITS: at least two of RWD/AWD/FWD each on four or more live cars. A
+   *  model that only comes one way needs no question. Additive on v1 so a
+   *  cached client that predates it keeps working (it validates v and
+   *  ignores fields it does not know). */
+  drives?: Record<string, Record<string, Record<string, string[]>>>;
 }
 
 /**
@@ -241,34 +247,58 @@ export function worthTrimTally(rows: CardRow[]): WorthTrims {
     for (const [k, e] of byModel) if (e.n >= MIN_LISTINGS_TO_OFFER) m.set(k, preferredForm(e.forms));
     labels.set(make, m);
   }
-  // make → label → year → trim → live cars carrying it.
+  // make → label → year → trim (or drivetrain) → live cars carrying it.
   const acc = new Map<string, Map<string, Map<number, Map<string, number>>>>();
+  const dacc = new Map<string, Map<string, Map<number, Map<string, number>>>>();
+  const bump = (
+    m: Map<string, Map<string, Map<number, Map<string, number>>>>,
+    make: string,
+    label: string,
+    year: number,
+    value: string
+  ) => {
+    const byLabel = m.get(make) ?? new Map();
+    const byYear = byLabel.get(label) ?? new Map();
+    const byValue = byYear.get(year) ?? new Map();
+    byValue.set(value, (byValue.get(value) ?? 0) + 1);
+    byYear.set(year, byValue);
+    byLabel.set(label, byYear);
+    m.set(make, byLabel);
+  };
   for (const r of rows) {
-    if (!r.trim || !r.year) continue;
+    if (!r.year) continue;
     const label = labels.get(r.make)?.get(modelKey(r.model));
     if (!label) continue;
-    const byLabel = acc.get(r.make) ?? new Map();
-    const byYear = byLabel.get(label) ?? new Map();
-    const byTrim = byYear.get(r.year) ?? new Map();
-    byTrim.set(r.trim, (byTrim.get(r.trim) ?? 0) + 1);
-    byYear.set(r.year, byTrim);
-    byLabel.set(label, byYear);
-    acc.set(r.make, byLabel);
+    if (r.trim) bump(acc, r.make, label, r.year, r.trim);
+    if (r.drive) bump(dacc, r.make, label, r.year, r.drive);
   }
+  // Deepest first: a seller's version is far more often the common one, and
+  // a five-entry list has no type-ahead to serve alphabetically.
+  const offerFrom = (byValue: Map<string, number>): string[] =>
+    [...byValue.entries()]
+      .filter(([, n]) => n >= MIN_TRIM_LISTINGS)
+      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+      .map(([t]) => t);
   const trims: WorthTrims["trims"] = {};
   for (const [make, byLabel] of acc) {
     for (const [label, byYear] of byLabel) {
       for (const [year, byTrim] of byYear) {
-        // Deepest first: a seller's trim is far more often the common one, and
-        // a five-entry list has no type-ahead to serve alphabetically.
-        const offer = [...byTrim.entries()]
-          .filter(([, n]) => n >= MIN_TRIM_LISTINGS)
-          .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
-          .map(([t]) => t);
+        const offer = offerFrom(byTrim);
         if (offer.length === 0) continue;
         ((trims[make] ??= {})[label] ??= {})[String(year)] = offer;
       }
     }
   }
-  return { v: 1, trims };
+  const drives: WorthTrims["trims"] = {};
+  for (const [make, byLabel] of dacc) {
+    for (const [label, byYear] of byLabel) {
+      for (const [year, byDrive] of byYear) {
+        const offer = offerFrom(byDrive);
+        // A cell that does not split carries no question.
+        if (offer.length < 2) continue;
+        ((drives[make] ??= {})[label] ??= {})[String(year)] = offer;
+      }
+    }
+  }
+  return { v: 1, trims, drives };
 }
