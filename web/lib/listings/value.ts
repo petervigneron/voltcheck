@@ -63,10 +63,9 @@ import { trimClaim } from "./trimClaim";
  * refusing to quote a number off a mixture. The difference is the CLAIM, not
  * the data: askVsMarket says "THIS car is $18,408 above the market", which is
  * only true if the peers are the same car, and it was a 2023 Lightning
- * Platinum priced against Pros that taught us so. This says "about what a
- * 2023 Tesla Model Y sells for at a dealership right now, from 47 live
- * listings", which names the mixture — and the channel — in the same breath
- * as the number. A shopper who wants the mixture
+ * Platinum priced against Pros that taught us so. This says "estimated from 47
+ * 2023 Tesla Model Ys for sale right now", which names the mixture it came
+ * from in the same breath as the number. A shopper who wants the mixture
  * narrowed has two levers, and both are optional by owner decision: a VIN,
  * which swaps the pool for the VIN 1-8 cohort, and a trim, which narrows to
  * the trims the live cohort actually asserts.
@@ -468,6 +467,12 @@ export type Valuation =
 /** "2023 Tesla Model Y" — what the reader picked, in their own words. */
 export const vehicleLabel = (i: WorthInput): string => `${i.year} ${i.make} ${i.model}`.replace(/\s+/g, " ").trim();
 
+/** "47 2023 Tesla Model Ys", but "47 2023 Tesla Model S listings" — a
+ *  nameplate that already ends in a sibilant cannot take the plural s, and
+ *  "Model Ss" is the kind of detail that makes a page read as generated. */
+const cohortNoun = (label: string, n: number): string =>
+  /[sxz]$/i.test(label) ? `${n} ${label} listings` : `${n} ${label}${n === 1 ? "" : "s"}`;
+
 const soldCopy = (b: SoldBand): Copy => ({
   headline: `${usd(b.lowUsd)} – ${usd(b.highUsd)}`,
   source: `Half the cars like yours sold between ${usd(b.lowUsd)} and ${usd(
@@ -475,32 +480,14 @@ const soldCopy = (b: SoldBand): Copy => ({
   )} — based on ${b.salesN} Washington sales of this configuration.`,
 });
 
-/**
- * The estimate's one line names the CHANNEL, because the number is a
- * dealer-retail figure and the reader is a seller (owner, 2026-08-25: "the
- * question they're asking is, what price will someone buy my car for?" — and
- * his own Bolt made the point: WA person-to-person sales of it ran $2-3k
- * under the dealer line for most of his ownership window). Until the
- * matched-pairs model can print the seller-received number, the honest
- * interim is to say which side of the counter this one sits on — and the
- * closing clause states the one channel fact that is certain in direction
- * without a measurement: a dealer's buy price sits under its sell price by
- * construction. Direction only, no invented magnitude.
- *
- * Singular on purpose ("what a 2023 Model S sells for"), which also retires
- * the plural-of-a-sibilant problem the old cohortNoun existed to dodge. The
- * article is always "a": every label starts with a spoken-as-"twenty…" year.
- */
 const estimateCopy = (e: AskEstimate, pool: AskPool, i: WorthInput): Copy => {
-  const what = pool.matchedTrim ? `${vehicleLabel(i)} ${pool.matchedTrim}` : vehicleLabel(i);
-  const basis =
-    pool.basis === "vin-cohort"
-      ? `${e.peerN} live listings built to this VIN's configuration`
-      : `${e.peerN} live listings`;
-  return {
-    headline: usd(e.valueUsd),
-    source: `About what a ${what} sells for at a dealership right now, from ${basis} — a dealer buying yours will offer less.`,
-  };
+  const label = vehicleLabel(i);
+  const source = pool.matchedTrim
+    ? `Estimated from ${e.peerN} ${label} ${pool.matchedTrim} listings for sale right now.`
+    : pool.basis === "vin-cohort"
+      ? `Estimated from ${cohortNoun(label, e.peerN)} built to this VIN's configuration, for sale right now.`
+      : `Estimated from ${cohortNoun(label, e.peerN)} for sale right now.`;
+  return { headline: usd(e.valueUsd), source };
 };
 
 /** The abstention. One sentence, no number, and the page puts a link to the

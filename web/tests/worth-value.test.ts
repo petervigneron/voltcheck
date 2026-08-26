@@ -201,29 +201,20 @@ test("the picker path is the ESTIMATE tier, marked est and sourced in one line",
   // Median ask $36,500 less the measured $1,100 the ask side runs above the
   // sold side.
   assert.equal(v.tier === "estimate" && v.headline, "$35,400");
-  assert.equal(
-    v.source,
-    "About what a 2023 Tesla Model Y sells for at a dealership right now, from 4 live listings — a dealer buying yours will offer less."
-  );
+  assert.equal(v.source, "Estimated from 4 2023 Tesla Model Ys for sale right now.");
 });
 
 test("a VIN-cohort pool says which pool it was", () => {
   const v = decideValue(withVin, empty, pool(FOUR, { basis: "vin-cohort", identityChecked: true }));
   assert.equal(
     v.source,
-    "About what a 2023 Tesla Model Y sells for at a dealership right now, from 4 live listings built to this VIN's configuration — a dealer buying yours will offer less."
+    "Estimated from 4 2023 Tesla Model Ys built to this VIN's configuration, for sale right now."
   );
 });
 
-test("the claim names the channel, singular, whatever the nameplate ends in", () => {
-  // The seller's question is what someone will pay THEM; the line says which
-  // side of the counter this number sits on. Singular phrasing also retires
-  // the plural-of-a-sibilant problem ("Model Ss").
+test("a nameplate ending in a sibilant is not pluralised into nonsense", () => {
   const v = decideValue({ ...picker, model: "Model S" }, empty, pool(FOUR));
-  assert.equal(
-    v.source,
-    "About what a 2023 Tesla Model S sells for at a dealership right now, from 4 live listings — a dealer buying yours will offer less."
-  );
+  assert.equal(v.source, "Estimated from 4 2023 Tesla Model S listings for sale right now.");
 });
 
 test("under four comparable listings the tool abstains, with no number", () => {
@@ -291,10 +282,7 @@ test("the market's spelling of the trim wins over the visitor's typing", () => {
   // search box back would read as generated, and the trim is the maker's name
   // for a version of the car, not a term the reader supplied.
   const v = decideValue({ ...picker, trim: "long range" }, empty, pool(MIXED));
-  assert.equal(
-    v.source,
-    "About what a 2023 Tesla Model Y Long Range sells for at a dealership right now, from 4 live listings — a dealer buying yours will offer less."
-  );
+  assert.equal(v.source, "Estimated from 4 2023 Tesla Model Y Long Range listings for sale right now.");
 });
 
 test("a trim nothing in the cohort asserts is ignored, not reported", () => {
@@ -303,10 +291,7 @@ test("a trim nothing in the cohort asserts is ignored, not reported", () => {
   assert.equal(p.matchedTrim, undefined);
   const v = decideValue({ ...picker, trim: "Plaid" }, empty, pool(MIXED));
   assert.equal(v.tier, "estimate");
-  assert.equal(
-    v.source,
-    "About what a 2023 Tesla Model Y sells for at a dealership right now, from 8 live listings — a dealer buying yours will offer less."
-  );
+  assert.equal(v.source, "Estimated from 8 2023 Tesla Model Ys for sale right now.");
 });
 
 test("trim matching is equality, never containment", () => {
