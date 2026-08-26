@@ -1218,6 +1218,7 @@ const AUDI_W = {
   batteryMiles: f(100_000, "agg" as Source, "low", "Same caveat as batteryYears"),
 };
 
+const GM_NACS_TABLE_2026 = "https://news.gm.com/home.detail.html/Pages/topic/us/en/2026/aug/0813-electric-vehicle-nacs-charging.html";
 export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   // ── MY2022 ─────────────────────────────────────────────────────────────
   {
@@ -2941,11 +2942,24 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   // "S"/Standard at 206 in 2025); VW's Part 565 kWh figure flips between 62
   // and 82 arbitrarily (a 2024 Pro S reads "62"), so these rows ignore it.
   {
-    id: "cadillac-vistiq-2026-27", make: "CADILLAC", model: "Vistiq", modelYears: [2026, 2027], drive: "AWD",
+// Split at the 2027 boundary 2026-08-26 — GM's own table (news.gm.com
+// 2026-08-13, "GM vehicles with NACS-native charging for the 2026 and 2027
+// model years") marks every GM EV NACS-native for MY2027 and says 2026 cars
+// other than the Optiq "still require an adapter as they come from the factory
+// with a CCS port". One row cannot hold two plugs.
+    id: "cadillac-vistiq-2026", make: "CADILLAC", model: "Vistiq", modelYears: [2026, 2026], drive: "AWD",
     abstains: { heatPump: "GM's 2022 Ultium release calls its patented heat pump standard on Ultium EVs, but no Optiq, Vistiq or Lyriq-V document names it and GM has retired the Ultium branding, so the link would be an inference" },
     battery: { packUsableKwh: fb(102, "mfr", "high", "Stated as 102 kWh Useable Battery Energy") },
     range: { epaRangeMi: f(305, "mfr", "high", "Vistiq (AWD-only), EPA, same rating 2026–27; 300 with the 19 kW onboard-charger option", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49636") },
-    charging: { portStandard: f("CCS1", "mfr") },
+    charging: { portStandard: f<"CCS1">("CCS1", "mfr", "high", undefined, GM_NACS_TABLE_2026), superchargerAccess: f<"adapter">("adapter", "mfr", "high", "GM NACS DC adapter", GM_NACS_TABLE_2026) },
+    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
+  },
+  {
+    id: "cadillac-vistiq-2027", make: "CADILLAC", model: "Vistiq", modelYears: [2027, 2027], drive: "AWD",
+    abstains: { heatPump: "GM's 2022 Ultium release calls its patented heat pump standard on Ultium EVs, but no Optiq, Vistiq or Lyriq-V document names it and GM has retired the Ultium branding, so the link would be an inference" },
+    battery: { packUsableKwh: fb(102, "mfr", "high", "Stated as 102 kWh Useable Battery Energy") },
+    range: { epaRangeMi: f(305, "mfr", "high", "Vistiq (AWD-only), EPA, same rating 2026–27; 300 with the 19 kW onboard-charger option", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49636") },
+    charging: { portStandard: f<"NACS">("NACS", "mfr", "high", undefined, GM_NACS_TABLE_2026), superchargerAccess: f<"native">("native", "mfr", "high", "A GM-approved adapter is needed for CCS/J1772 stations instead", GM_NACS_TABLE_2026) },
     warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
   },
   {
@@ -3229,11 +3243,24 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     // descriptor settles it outright — and a trim key would have gone on
     // refusing the 21 real V cars whose trim field reads "-V" or a bare "V",
     // both below trimStringsOverlap's three-character floor.
-    id: "lyriq-v-2026-27", make: "CADILLAC", model: "Lyriq", modelYears: [2026, 2027], vin8: ["L"], vds: ["XP"], drive: "AWD",
+// Split at the 2027 boundary 2026-08-26 — GM's own table (news.gm.com
+// 2026-08-13, "GM vehicles with NACS-native charging for the 2026 and 2027
+// model years") marks every GM EV NACS-native for MY2027 and says 2026 cars
+// other than the Optiq "still require an adapter as they come from the factory
+// with a CCS port". One row cannot hold two plugs.
+    id: "lyriq-v-2026", make: "CADILLAC", model: "Lyriq", modelYears: [2026, 2026], vin8: ["L"], vds: ["XP"], drive: "AWD",
     abstains: { heatPump: "GM's 2022 Ultium release calls its patented heat pump standard on Ultium EVs, but no Optiq, Vistiq or Lyriq-V document names it and GM has retired the Ultium branding, so the link would be an inference" },
     battery: { packUsableKwh: fb(102, "mfr", "high", "Stated as 102 kWh Useable Battery Energy", "https://web.archive.org/web/20250903021838/https://news.gm.com/home.detail.html/Pages/news/us/en/2025/jan/0123-lyriq-v.html") },
     range: { epaRangeMi: f(285, "mfr", "high", undefined, "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49633") },
-    charging: { portStandard: f("CCS1", "mfr") },
+    charging: { portStandard: f<"CCS1">("CCS1", "mfr", "high", undefined, GM_NACS_TABLE_2026), superchargerAccess: f<"adapter">("adapter", "mfr", "high", "GM NACS DC adapter", GM_NACS_TABLE_2026) },
+    warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
+  },
+  {
+    id: "lyriq-v-2027", make: "CADILLAC", model: "Lyriq", modelYears: [2027, 2027], vin8: ["L"], vds: ["XP"], drive: "AWD",
+    abstains: { heatPump: "GM's 2022 Ultium release calls its patented heat pump standard on Ultium EVs, but no Optiq, Vistiq or Lyriq-V document names it and GM has retired the Ultium branding, so the link would be an inference" },
+    battery: { packUsableKwh: fb(102, "mfr", "high", "Stated as 102 kWh Useable Battery Energy", "https://web.archive.org/web/20250903021838/https://news.gm.com/home.detail.html/Pages/news/us/en/2025/jan/0123-lyriq-v.html") },
+    range: { epaRangeMi: f(285, "mfr", "high", undefined, "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49633") },
+    charging: { portStandard: f<"NACS">("NACS", "mfr", "high", undefined, GM_NACS_TABLE_2026), superchargerAccess: f<"native">("native", "mfr", "high", "A GM-approved adapter is needed for CCS/J1772 stations instead", GM_NACS_TABLE_2026) },
     warranty: { batteryYears: f(8, "mfr" as Source), batteryMiles: f(100_000, "mfr" as Source), batteryTransfers: f(true, "mfr" as Source) },
   },
 

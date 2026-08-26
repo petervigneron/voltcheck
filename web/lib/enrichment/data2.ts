@@ -38,6 +38,30 @@ const ARIYA_HP_ABSTAIN =
 const leafHybridHeaterAbstain = (stated: string) =>
   `${stated}. Whether that system is a heat pump is not stated: no 2018-2025 US Nissan document equates the two, and the one place Nissan glosses the term — "Hybrid heater system (heat pump)", in the 2026 LEAF press kit — describes the next-generation car, which Nissan does not say this hardware shares`;
 
+// GM's port by model year, from GM's own table "GM vehicles with NACS-native
+// charging for the 2026 and 2027 model years" (news.gm.com, 2026-08-13). Every
+// GM EV is NACS-native for MY2027; for MY2026 only the Cadillac Optiq is, and
+// GM lists Escalade IQ/IQL, Lyriq, Vistiq, Blazer EV, Equinox EV, Silverado
+// EV, Hummer EV Pickup/SUV and Sierra EV as 2026 models that "still require an
+// adapter as they come from the factory with a CCS port".
+//
+// Four rows here and in data4.ts spanned into 2027 carrying CCS1, which put
+// the wrong socket on 4,178 live cars (2,132 MY2027 Lyriq, 2,046 MY2027
+// Vistiq, measured 2026-08-26). One row cannot hold two different plugs, so
+// each is split at the 2027 boundary. Same failure the MY2025 EV9 had; found
+// by checking the rest of the corpus for it rather than waiting for the next
+// car someone happened to open.
+const EQX_RELEASE = "https://media.chevrolet.com/media/us/en/chevrolet/news.detail.html/content/Pages/news/us/en/2024/may/0514-equinoxev.html";
+const GM_NACS_TABLE = "https://news.gm.com/home.detail.html/Pages/topic/us/en/2026/aug/0813-electric-vehicle-nacs-charging.html";
+const GM_PORT_CCS_ADAPTER = {
+  portStandard: f<"CCS1">("CCS1", "mfr", "high", undefined, GM_NACS_TABLE),
+  superchargerAccess: f<"adapter">("adapter", "mfr", "high", "GM NACS DC adapter", GM_NACS_TABLE),
+};
+const GM_PORT_NACS_NATIVE = {
+  portStandard: f<"NACS">("NACS", "mfr", "high", undefined, GM_NACS_TABLE),
+  superchargerAccess: f<"native">("native", "mfr", "high", "A GM-approved adapter is needed for CCS/J1772 stations instead", GM_NACS_TABLE),
+};
+
 export const RESEARCH_ROWS: EnrichmentRow[] = [
   {
     id: "id4-2021-pro-rwd",
@@ -1437,8 +1461,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     battery: { packGrossKwh: f(102, "mfr", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(312, "mfr", "high", "2023: 312; 2024: 314, EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(330, "tested", "high", "70-mph (InsideEVs, 2023 RWD): 330 mi; 75-mph (C&D): 270; Edmunds loop (2024): 319") },
     charging: {
-      portStandard: f("CCS1", "agg", "high"),
-      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
+      ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(190, "agg", "medium"),
     },
     thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
@@ -1458,10 +1481,10 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
   },
 
   {
-    id: "lyriq-2025-rwd", // vin8 + 2027 extension (same 326 rating) added 2026-08-14
+    id: "lyriq-2025-rwd", // vin8 added 2026-08-14; 2027 split off 2026-08-26 (NACS)
     make: "CADILLAC",
     model: "Lyriq",
-    modelYears: [2025, 2027],
+    modelYears: [2025, 2026],
     vin8: ["K"], // GM Part 565: K = RWD, L = PAWD
     // The V-Series is 1GYXP where an ordinary Lyriq is 1GYKP, and those two
     // are the only descriptors in 5,610 live listings. Keying both sides of
@@ -1472,11 +1495,39 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     drive: "RWD",
     battery: { packGrossKwh: f(102, "mfr", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(326, "mfr", "high", "EPA figure (11 kW and 19.2 kW chargers)", "https://www.fueleconomy.gov") },
-    charging: {
-      portStandard: f("CCS1", "agg", "high"),
-      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
-      dcPeakKw: f(190, "agg", "medium"),
+    charging: { ...GM_PORT_CCS_ADAPTER, dcPeakKw: f(190, "agg", "medium") },
+    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
+    warranty: {
+      batteryYears: f(8, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      sohFloorPct: f(75, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
+    buyerNotes: [
+      {
+        headline: "Early cars: blank-display recalls and infotainment growing pains",
+        body: "2023–24: driver display can go blank while driving (22V-710, 25V-356, software fixes), plus 23V-367 (HV battery pack connections, 2023) and 24V-589 (AWD ABS activation). All free fixes, check completion on this VIN. Early 2023 software was rough; later updates substantially improved it.",
+        severity: "warning",
+      },
+    ],
+  },
+
+  {
+    id: "lyriq-2027-rwd", // split from lyriq-2025-rwd 2026-08-26: MY2027 is NACS-native
+    make: "CADILLAC",
+    model: "Lyriq",
+    modelYears: [2027, 2027],
+    vin8: ["K"], // GM Part 565: K = RWD, L = PAWD
+    // The V-Series is 1GYXP where an ordinary Lyriq is 1GYKP, and those two
+    // are the only descriptors in 5,610 live listings. Keying both sides of
+    // the split means a real V is never served an ordinary car's range just
+    // because its trim field reads "-V", which is below the trim matcher's
+    // three-character floor.
+    vds: ["KP"],
+    drive: "RWD",
+    battery: { packGrossKwh: f(102, "mfr", "medium"), chemistry: f("NCMA", "agg", "medium") },
+    range: { epaRangeMi: f(326, "mfr", "high", "EPA figure (11 kW and 19.2 kW chargers)", "https://www.fueleconomy.gov") },
+    charging: { ...GM_PORT_NACS_NATIVE, dcPeakKw: f(190, "agg", "medium") },
     thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
     warranty: {
       batteryYears: f(8, "mfr"),
@@ -1502,8 +1553,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     battery: { packGrossKwh: f(102, "mfr", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(307, "mfr", "high", "EPA figure", "https://www.fueleconomy.gov"), testedRangeMi: f(220, "tested", "medium", "75-mph (Car and Driver): 220 mi") },
     charging: {
-      portStandard: f("CCS1", "agg", "high"),
-      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
+      ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(190, "agg", "medium"),
     },
     thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
@@ -1536,17 +1586,40 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     id: "lyriq-2025-awd",
     make: "CADILLAC",
     model: "Lyriq",
-    modelYears: [2025, 2027],
+    modelYears: [2025, 2026],
     vin8: ["L"], // GM Part 565: L = RWD + PAWD (dual motor)
     vds: ["KP"], // ordinary Lyriq; the V-Series is 1GYXP — see lyriq-2025-rwd
     drive: "AWD",
     battery: { packGrossKwh: f(102, "mfr", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(319, "mfr", "high", "11.5 kW onboard charger, standard", epa(48692)) },
-    charging: {
-      portStandard: f("CCS1", "agg", "high"),
-      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
-      dcPeakKw: f(190, "agg", "medium"),
+    charging: { ...GM_PORT_CCS_ADAPTER, dcPeakKw: f(190, "agg", "medium") },
+    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
+    warranty: {
+      batteryYears: f(8, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      sohFloorPct: f(75, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
     },
+    buyerNotes: [
+      {
+        headline: "Early cars: blank-display recalls and infotainment growing pains",
+        body: "2023–24: driver display can go blank while driving (22V-710, 25V-356, software fixes), plus 23V-367 (HV battery pack connections, 2023) and 24V-589 (AWD ABS activation). All free fixes, check completion on this VIN. Early 2023 software was rough; later updates substantially improved it.",
+        severity: "warning",
+      },
+    ],
+  },
+
+  {
+    id: "lyriq-2027-awd",
+    make: "CADILLAC",
+    model: "Lyriq",
+    modelYears: [2027, 2027],
+    vin8: ["L"], // GM Part 565: L = RWD + PAWD (dual motor)
+    vds: ["KP"], // ordinary Lyriq; the V-Series is 1GYXP — see lyriq-2025-rwd
+    drive: "AWD",
+    battery: { packGrossKwh: f(102, "mfr", "medium"), chemistry: f("NCMA", "agg", "medium") },
+    range: { epaRangeMi: f(319, "mfr", "high", "11.5 kW onboard charger, standard", epa(48692)) },
+    charging: { ...GM_PORT_NACS_NATIVE, dcPeakKw: f(190, "agg", "medium") },
     thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
     warranty: {
       batteryYears: f(8, "mfr"),
@@ -1733,9 +1806,22 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     battery: { packGrossKwh: f(85, "mfr", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(319, "mfr", "high", "All years, EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(303, "tested", "high", "70-mph (InsideEVs, 2024 2RS FWD): 303 mi; 75-mph (C&D): 260; Edmunds loop (2025): 356") },
     charging: {
-      portStandard: f("CCS1", "agg", "high"),
-      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
-      dcPeakKw: f(150, "agg", "medium"),
+      ...GM_PORT_CCS_ADAPTER,
+      // "Standard DC fast-charging capability of up to 150 kW" and "Standard
+      // 11.5 kW Level 2 (AC) charging", Chevrolet's own Equinox EV release.
+      // These are Equinox figures and are NOT copied to the other Ultium rows:
+      // the Blazer's 150 and the Silverado's 350 have no GM document in this
+      // file and stay as they were.
+      //
+      // The same release gives NO 10-80% time and NO pack voltage. GM states
+      // fast charging as "approximately 77 miles of range in 10 minutes"
+      // instead, and GM's own EV architecture fact sheet carries no voltage
+      // figure anywhere. So chargeTime1080Min and architectureV stay absent on
+      // every GM row here: GM does not publish them, which is a reason to be
+      // silent, not a gap to fill from a secondary source.
+      dcFastCharging: f<"standard">("standard", "mfr", "high", undefined, EQX_RELEASE),
+      dcPeakKw: f(150, "mfr", "high", undefined, EQX_RELEASE),
+      acOnboardKw: f(11.5, "mfr", "high", undefined, EQX_RELEASE),
     },
     thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
     warranty: {
@@ -1762,9 +1848,22 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     battery: { packGrossKwh: f(85, "mfr", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(297, "mfr", "high", "2024: 285; 2025–26: 307 (288 with 19.2 kW charger), EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(260, "tested", "low", "75 mph (Car and Driver)") },
     charging: {
-      portStandard: f("CCS1", "agg", "high"),
-      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
-      dcPeakKw: f(150, "agg", "medium"),
+      ...GM_PORT_CCS_ADAPTER,
+      // "Standard DC fast-charging capability of up to 150 kW" and "Standard
+      // 11.5 kW Level 2 (AC) charging", Chevrolet's own Equinox EV release.
+      // These are Equinox figures and are NOT copied to the other Ultium rows:
+      // the Blazer's 150 and the Silverado's 350 have no GM document in this
+      // file and stay as they were.
+      //
+      // The same release gives NO 10-80% time and NO pack voltage. GM states
+      // fast charging as "approximately 77 miles of range in 10 minutes"
+      // instead, and GM's own EV architecture fact sheet carries no voltage
+      // figure anywhere. So chargeTime1080Min and architectureV stay absent on
+      // every GM row here: GM does not publish them, which is a reason to be
+      // silent, not a gap to fill from a secondary source.
+      dcFastCharging: f<"standard">("standard", "mfr", "high", undefined, EQX_RELEASE),
+      dcPeakKw: f(150, "mfr", "high", undefined, EQX_RELEASE),
+      acOnboardKw: f(11.5, "mfr", "high", undefined, EQX_RELEASE),
     },
     thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
     warranty: {
@@ -1796,8 +1895,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     battery: { packGrossKwh: f(85, "mfr", "medium", "FWD/AWD"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(312, "mfr", "high", undefined, epa(49069)) },
     charging: {
-      portStandard: f("CCS1", "agg", "high"),
-      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
+      ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(150, "agg", "medium"),
     },
     thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
@@ -1827,8 +1925,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     battery: { packGrossKwh: f(85, "mfr", "medium", "FWD/AWD"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(279, "mfr", "high", undefined, epa(47445)), testedRangeMi: f(200, "tested", "high", "75-mph (Car and Driver, 2024 RS AWD): 200 mi vs 279 EPA; Edmunds mixed loop: 320") },
     charging: {
-      portStandard: f("CCS1", "agg", "high"),
-      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
+      ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(150, "agg", "medium"),
     },
     thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
@@ -1858,8 +1955,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     battery: { packGrossKwh: f(85, "mfr", "medium", "FWD/AWD"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(283, "mfr", "high", undefined, epa(48342)), testedRangeMi: f(200, "tested", "high", "75-mph (Car and Driver, 2024 RS AWD): 200 mi vs 279 EPA; Edmunds mixed loop: 320") },
     charging: {
-      portStandard: f("CCS1", "agg", "high"),
-      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
+      ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(150, "agg", "medium"),
     },
     thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
@@ -1889,8 +1985,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     battery: { packGrossKwh: f(102, "mfr", "medium", "RWD/SS"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(324, "mfr", "high", undefined, epa(47813)) },
     charging: {
-      portStandard: f("CCS1", "agg", "high"),
-      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
+      ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(190, "agg", "medium"),
     },
     thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
@@ -1920,8 +2015,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     battery: { packGrossKwh: f(102, "mfr", "medium", "RWD/SS"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(334, "mfr", "high", undefined, epa(48694)) },
     charging: {
-      portStandard: f("CCS1", "agg", "high"),
-      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
+      ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(190, "agg", "medium"),
     },
     thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
@@ -1950,8 +2044,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     battery: { packGrossKwh: f(102, "mfr", "medium", "RWD/SS"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(303, "mfr", "high", undefined, epa(49068)), testedRangeMi: f(250, "tested", "high", "75-mph (Car and Driver, 2025 SS): 250 mi") },
     charging: {
-      portStandard: f("CCS1", "agg", "high"),
-      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
+      ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(190, "agg", "medium"),
     },
     thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
@@ -1980,8 +2073,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     battery: { packGrossKwh: f(102, "mfr", "medium", "RWD/SS"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(302, "mfr", "high", undefined, epa(49954)), testedRangeMi: f(250, "tested", "high", "75-mph (Car and Driver, 2025 SS): 250 mi") },
     charging: {
-      portStandard: f("CCS1", "agg", "high"),
-      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
+      ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(190, "agg", "medium"),
     },
     thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
@@ -2013,8 +2105,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     battery: { packUsableKwh: f(205, "est", "medium", "213.7 kWh gross; 2024+ 2M20 variants are smaller"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(314, "mfr", "high", "2024–25: 298–318 by config/tires, EPA. 2022–23: no EPA rating exists (GM est. 329)", "https://www.fueleconomy.gov"), testedRangeMi: f(343, "tested", "high", "70-mph (InsideEVs, 2022 Edition 1): 343 mi, beat its 329 GM estimate; 75-mph (C&D): 290") },
     charging: {
-      portStandard: f("CCS1", "agg", "high"),
-      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
+      ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(350, "agg", "medium"),
     },
     thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
@@ -2047,8 +2138,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     battery: { packUsableKwh: f(205, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(314, "mfr", "high", "All-terrain tires, standard", epa(46953)) },
     charging: {
-      portStandard: f("CCS1", "agg", "high"),
-      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
+      ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(350, "agg", "medium"),
     },
     thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
@@ -2081,8 +2171,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     battery: { packUsableKwh: f(205, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(312, "mfr", "high", "All-terrain tires, standard", epa(48348)) },
     charging: {
-      portStandard: f("CCS1", "agg", "high"),
-      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
+      ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(350, "agg", "medium"),
     },
     thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
@@ -2630,8 +2719,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     battery: { packUsableKwh: f(170, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(393, "mfr", "high", undefined, epa(47446)) },
     charging: {
-      portStandard: f("CCS1", "agg", "high"),
-      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
+      ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(350, "agg", "medium"),
     },
     thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
@@ -2659,8 +2747,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     battery: { packUsableKwh: f(205, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(450, "mfr", "high", undefined, epa(46946)) },
     charging: {
-      portStandard: f("CCS1", "agg", "high"),
-      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
+      ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(350, "agg", "medium"),
     },
     thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
@@ -2688,8 +2775,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     battery: { packUsableKwh: f(119, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(282, "mfr", "high", undefined, epa(49071)) },
     charging: {
-      portStandard: f("CCS1", "agg", "high"),
-      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
+      ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(350, "agg", "medium"),
     },
     thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
@@ -2717,8 +2803,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     battery: { packUsableKwh: f(170, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(408, "mfr", "high", undefined, epa(48700)) },
     charging: {
-      portStandard: f("CCS1", "agg", "high"),
-      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
+      ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(350, "agg", "medium"),
     },
     thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
@@ -2746,8 +2831,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     battery: { packUsableKwh: f(170, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(390, "mfr", "high", undefined, epa(48701)) },
     charging: {
-      portStandard: f("CCS1", "agg", "high"),
-      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
+      ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(350, "agg", "medium"),
     },
     thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
@@ -2775,8 +2859,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     battery: { packUsableKwh: f(170, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(422, "mfr", "high", undefined, epa(48702)) },
     charging: {
-      portStandard: f("CCS1", "agg", "high"),
-      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
+      ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(350, "agg", "medium"),
     },
     thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
@@ -2804,8 +2887,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     battery: { packUsableKwh: f(205, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(492, "mfr", "high", undefined, epa(48698)) },
     charging: {
-      portStandard: f("CCS1", "agg", "high"),
-      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
+      ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(350, "agg", "medium"),
     },
     thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
@@ -2833,8 +2915,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     battery: { packUsableKwh: f(119, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(283, "mfr", "high", undefined, epa(49643)) },
     charging: {
-      portStandard: f("CCS1", "agg", "high"),
-      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
+      ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(350, "agg", "medium"),
     },
     thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
@@ -2862,8 +2943,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     battery: { packUsableKwh: f(170, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(410, "mfr", "high", undefined, epa(49640)) },
     charging: {
-      portStandard: f("CCS1", "agg", "high"),
-      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
+      ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(350, "agg", "medium"),
     },
     thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
@@ -2891,8 +2971,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     battery: { packUsableKwh: f(170, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(424, "mfr", "high", undefined, epa(49638)) },
     charging: {
-      portStandard: f("CCS1", "agg", "high"),
-      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
+      ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(350, "agg", "medium"),
     },
     thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
@@ -2920,8 +2999,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     battery: { packUsableKwh: f(205, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(493, "mfr", "high", undefined, epa(49639)) },
     charging: {
-      portStandard: f("CCS1", "agg", "high"),
-      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
+      ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(350, "agg", "medium"),
     },
     thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
@@ -2952,8 +3030,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     vin8: ["H", "F"],
     battery: { packUsableKwh: f(119, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
     charging: {
-      portStandard: f("CCS1", "agg", "high"),
-      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
+      ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(350, "agg", "medium"),
     },
     thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
@@ -2982,8 +3059,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     vin8: ["D"],
     battery: { packUsableKwh: f(170, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
     charging: {
-      portStandard: f("CCS1", "agg", "high"),
-      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
+      ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(350, "agg", "medium"),
     },
     thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
@@ -3012,8 +3088,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     vin8: ["L"],
     battery: { packUsableKwh: f(205, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
     charging: {
-      portStandard: f("CCS1", "agg", "high"),
-      superchargerAccess: f("adapter", "agg", "high", "GM $225 NACS adapter"),
+      ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(350, "agg", "medium"),
     },
     thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
