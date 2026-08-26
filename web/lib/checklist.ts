@@ -43,10 +43,19 @@ export function buildChecklist(decode: VinDecode, condition?: string): Checklist
     });
   }
 
+  // Phrased as a question because every other item here is one, and because
+  // the old wording ("ICCU extended-coverage terms in writing, including
+  // transfer") was an instruction to the shopper, not something to ask the
+  // seller. Its `why` also restated the two numbers a second time — the
+  // Ioniq 5 rows already print "ICCU: 15 years / 180,000 miles" as an
+  // extendedCoverage fact on the same page, so the shopper was reading
+  // 15yr/180k three times on one screen. The why now carries only what the
+  // question does not: that the transfer terms are unpublished, which is the
+  // reason to get an answer in writing rather than take the dealer's word.
   if (make === "HYUNDAI" || make === "KIA" || make === "GENESIS") {
     items.push({
-      question: "ICCU extended-coverage terms in writing, including transfer",
-      why: "The April 2026 extension to 15yr/180k has no published transfer terms yet.",
+      question: "Does the April 2026 15yr/180k ICCU extension apply to this vehicle?",
+      why: "Hyundai and Kia have published no transfer terms for it, so get the answer in writing.",
     });
   }
 
