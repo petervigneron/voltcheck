@@ -2,7 +2,7 @@
   "_comment": "Written by scraper/lib/audit-status.mjs. Do not hand-edit — see that file's header.",
   "checks": {
     "feed-shard-health": {
-      "lastRunAt": "2026-08-26T02:24:29.262Z",
+      "lastRunAt": "2026-08-26T13:24:38.632Z",
       "result": "ok",
       "detail": "total 137322; shards 5753/5659/5821/5627/5699/5590/5742/5735/5668/5516/5731/5777/5736/5764/5801/5815/5735/5697/5648/5627/5711/5784/5874/5812; sitemap URLs 137343",
       "expectedEveryHours": 8
@@ -20,15 +20,15 @@
       "expectedEveryHours": 27
     },
     "sync-guard": {
-      "lastRunAt": "2026-08-24T19:41:25.576Z",
-      "result": "ok",
-      "detail": "total 131660, oem 73778, dealer 57882",
+      "lastRunAt": "2026-08-26T13:24:31.554Z",
+      "result": "inconclusive",
+      "detail": "read failed: HTTP 500",
       "expectedEveryHours": 27
     },
     "lane-flip-check": {
-      "lastRunAt": "2026-08-23T19:10:42.652Z",
+      "lastRunAt": "2026-08-26T12:23:03.388Z",
       "result": "warn",
-      "detail": "874 cross-lane flips (874 dealer→locator, 0 locator→dealer), 0 within-lane, 673 new VINs, 56508 unchanged",
+      "detail": "10412 cross-lane flips (10412 dealer→locator, 0 locator→dealer), 14 within-lane, 3420 new VINs, 59293 unchanged",
       "expectedEveryHours": 27
     },
     "live-price-audit": {
@@ -38,9 +38,9 @@
       "expectedEveryHours": 8
     },
     "price-audit": {
-      "lastRunAt": "2026-08-24T01:50:38.217Z",
+      "lastRunAt": "2026-08-26T13:01:15.468Z",
       "result": "ok",
-      "detail": "66 flagged, 3 corrected, 42 confirmed, 21 suppressed",
+      "detail": "4 flagged, 0 corrected, 0 confirmed, 4 suppressed",
       "expectedEveryHours": 27
     },
     "colisting-sync": {
