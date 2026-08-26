@@ -272,5 +272,9 @@ export interface EnrichmentResult {
 // T4 — cannot be derived; rendered as a compact, de-emphasized reference list.
 export interface ChecklistItem {
   question: string;
-  why: string;
+  // Optional. A question that already carries its own reason does not get a
+  // second clause telling the shopper why to ask it — that is the copy rule
+  // (CLAUDE.md: the value is the answer, nothing gets a second line) applied
+  // to this list. AskSeller renders nothing when it is absent.
+  why?: string;
 }
