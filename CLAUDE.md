@@ -66,7 +66,8 @@ while the database is busy.
 After a deploy reports Ready: **verify the domain moved** (curl voltcheck.net
 for content only the new build has; one 2026-08-16 deploy stayed unaliased
 until `vercel promote <deployment-url>`), then **warm the browse index** —
-`curl voltcheck.net/api/index/first` and `/api/index/0` through `/23` —
+`curl voltcheck.net/api/index/first`, `/api/index/trims` (the /worth trim
+facets, since 2026-08-25), and `/api/index/0` through `/23` —
 because the first-paint payload and the shards render on first request rather
 than at build time (deliberate: prerendering them put every deploy at the
 database's mercy). Warm `first` first: it is the one the next visitor's first

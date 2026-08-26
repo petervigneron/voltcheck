@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import type { CardRow } from "./card";
 import { unpackFirstPaint, type FirstPaintData } from "./firstPaint";
 import { SHARDS, unpackIndex, type PackedIndex } from "./pack";
+import type { WorthTrims } from "./tally";
 
 // The whole inventory arrives once per visitor (CDN-cached JSON, hourly
 // revalidate) and every filter, sort, and page flip after that is a pure
@@ -75,6 +76,34 @@ let firstWon = false;
  *  resolved — the near-universal case (it is 1% of the index's bytes, fetched
  *  in the same breath). Session-stable by construction. */
 export const firstPaintWonRace = () => firstWon;
+
+// The trim facets (/api/index/trims, lib/listings/tally.ts worthTrimTally):
+// what /worth's trim dropdown offers per make/model/year cell. Fetched only
+// by the valuation form, module-cached like the payloads above, and a failure
+// is silent for the same reason theirs is: the trim was optional before the
+// dropdown existed, and a form without trim options is exactly the form we
+// had — never a blocked estimate.
+let trimsCache: WorthTrims | null | undefined;
+let trimsPromise: Promise<WorthTrims | null> | null = null;
+
+export function useWorthTrims(): WorthTrims | null {
+  const [trims, setTrims] = useState<WorthTrims | null>(trimsCache ?? null);
+  useEffect(() => {
+    if (trimsCache !== undefined) return;
+    trimsPromise ??= fetch("/api/index/trims")
+      .then(async (res) => {
+        if (!res.ok) return null;
+        const j = (await res.json()) as WorthTrims;
+        return j && j.v === 1 && j.trims ? j : null;
+      })
+      .catch(() => null);
+    trimsPromise.then((d) => {
+      trimsCache = d;
+      if (d) setTrims(d);
+    });
+  }, []);
+  return trims;
+}
 
 export function useFirstPaint(): FirstPaintData | null {
   const [first, setFirst] = useState<FirstPaintData | null>(firstCache ?? null);

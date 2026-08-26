@@ -17,6 +17,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
+  BRANDED_TITLE_COPY,
   UNAVAILABLE_COPY,
   askEstimate,
   decideValue,
@@ -384,4 +385,31 @@ test("without a fitted slope the fallback is used, and is not called a sale figu
   // -$0.09/mi over 20,000 miles, then -$1,100.
   assert.equal(e.valueUsd, 37_100);
   assert.equal(e.slopeFromSales, false);
+});
+
+// ── Condition and title ────────────────────────────────────────────────────
+
+test("a branded title is refused a number, however healthy the pool", () => {
+  // Every pool this tool can build is priced against clean titles; handing a
+  // rebuilt car the clean-title number is the false-bargain error inverted.
+  const v = decideValue(
+    { ...withVin, condition: "branded" },
+    index(healthy()),
+    pool(FOUR, { identityChecked: true })
+  );
+  assert.equal(v.tier, "abstain");
+  assert.equal(v.tier === "abstain" && v.source, BRANDED_TITLE_COPY);
+});
+
+test("accident history is collected but not priced — no unmeasured haircut", () => {
+  // The pools are a market mixture that includes such cars, and this site has
+  // never measured the discount; the estimate and its claim stay as they are.
+  const v = decideValue({ ...picker, condition: "issues" }, empty, pool(FOUR));
+  assert.equal(v.tier, "estimate");
+  assert.equal(v.tier === "estimate" && v.headline, "$35,400");
+});
+
+test("URLs minted before the question existed still answer", () => {
+  const v = decideValue({ ...picker, condition: undefined }, empty, pool(FOUR));
+  assert.equal(v.tier, "estimate");
 });

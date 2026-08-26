@@ -44,6 +44,11 @@ function readInput(sp: Params): WorthInput | null {
   if (!Number.isFinite(mileage) || mileage < 0 || mileage > 300_000) return null;
   const rawVin = (one(sp.vin) ?? "").trim().toUpperCase();
   const trim = (one(sp.trim) ?? "").trim();
+  // Anything else — including absence, which every URL minted before the
+  // question existed has — reads as "good": the answer those URLs were built
+  // to show. value.ts says what each value does.
+  const rawCond = one(sp.cond);
+  const condition = rawCond === "good" || rawCond === "issues" || rawCond === "branded" ? rawCond : undefined;
   return {
     year,
     make,
@@ -51,6 +56,7 @@ function readInput(sp: Params): WorthInput | null {
     mileage: Math.round(mileage),
     vin: VIN_RE.test(rawVin) ? rawVin : undefined,
     trim: trim || undefined,
+    condition,
   };
 }
 
@@ -103,6 +109,7 @@ export default async function WorthPage(props: Props) {
             miles: one(sp.miles),
             vin: one(sp.vin),
             trim: one(sp.trim),
+            cond: one(sp.cond),
           }}
         />
 

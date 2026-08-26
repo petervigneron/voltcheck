@@ -2,6 +2,7 @@ import { buildCardIndex } from "@/lib/listings/buildIndex";
 import { buildFirstPaint } from "@/lib/listings/firstPaint";
 import { SHARDS, packIndex } from "@/lib/listings/pack";
 import type { FeedOrigin } from "@/lib/listings/source";
+import { worthTrimTally } from "@/lib/listings/tally";
 
 // The browse grid's dataset: CDN-cached JSON the client filters locally.
 // Visitors hit the edge cache, and every filter click after first load is
@@ -133,6 +134,17 @@ export async function GET(_req: Request, { params }: { params: Promise<{ shard: 
     // of every visit.
     refuseFallback(origin, "the first-paint payload");
     return Response.json(buildFirstPaint(rows));
+  }
+  // The eighth body: the trim facets behind /worth's trim dropdown
+  // (lib/listings/tally.ts worthTrimTally). Its own body rather than a field
+  // on `first` because the browse landing page never needs it — `first` is
+  // sized for the first paint of every visit, and this is fetched only when
+  // someone opens the valuation form. Same caching shape, same walk memo,
+  // same refusal, for the same reasons as `first`.
+  if (shard === "trims") {
+    const { rows, origin } = await buildCardIndex();
+    refuseFallback(origin, "the trim facets");
+    return Response.json(worthTrimTally(rows));
   }
   const n = Number(shard);
   if (!Number.isInteger(n) || n < 0 || n >= SHARDS) {

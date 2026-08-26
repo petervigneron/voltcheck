@@ -46,9 +46,12 @@ export interface ModelTally {
  */
 const MIN_LISTINGS_TO_OFFER = 2;
 
-export function modelTally(rows: CardRow[]): ModelTally {
-  const tally = new Map<string, { count: number; forms: Map<string, { make: string; model: string; n: number }> }>();
-  // Per make, per folded model: how many cars, and how each spelling was typed.
+/** Per make, per folded model: how many cars, and how each spelling was
+ *  typed. The one fold behind both the model dropdowns and the trim facets —
+ *  extracted so the two can never disagree about which spelling a cell is
+ *  filed under, because worthTrimTally keys its map by the exact label
+ *  makesModels offers. */
+function offeredFold(rows: CardRow[]): Map<string, Map<string, { n: number; forms: Map<string, number> }>> {
   const offered = new Map<string, Map<string, { n: number; forms: Map<string, number> }>>();
   for (const r of rows) {
     const byModel = offered.get(r.make) ?? new Map();
@@ -59,6 +62,14 @@ export function modelTally(rows: CardRow[]): ModelTally {
     e.forms.set(shown, (e.forms.get(shown) ?? 0) + 1);
     byModel.set(k, e);
     offered.set(r.make, byModel);
+  }
+  return offered;
+}
+
+export function modelTally(rows: CardRow[]): ModelTally {
+  const tally = new Map<string, { count: number; forms: Map<string, { make: string; model: string; n: number }> }>();
+  const offered = offeredFold(rows);
+  for (const r of rows) {
     // `tally` below keys on the RAW lowercased string and stays that way. It
     // feeds the featured sort's depth term, which components/Browse.tsx and
     // firstPaint.ts both recompute — the two have to agree on the key, and a
@@ -94,4 +105,79 @@ export function modelTally(rows: CardRow[]): ModelTally {
     .filter((c) => c.count >= 2)
     .map((c) => ({ label: `${c.make} ${c.model}`, count: c.count }));
   return { counts, suggestions, popular: canon.slice(0, 4), makesModels };
+}
+
+// ── The trim facets behind /worth's trim picker ────────────────────────────
+
+/**
+ * How many live cars a trim needs before it is offered as an option.
+ *
+ * comps.ts MIN_PEERS restated (not imported: comps.ts drags the enrichment
+ * layer into whatever bundle imports it, and this file rides in the browse
+ * client). value.ts narrowByTrim keeps the wide pool when a trim selects
+ * fewer than four peers, so a trim under this floor could never narrow
+ * anything — offering it would invite a pick the answer then silently
+ * ignores.
+ */
+const MIN_TRIM_LISTINGS = 4;
+
+export interface WorthTrims {
+  v: 1;
+  /** make → model label (exactly as makesModels offers it) → model year →
+   *  trims, deepest first. */
+  trims: Record<string, Record<string, Record<string, string[]>>>;
+}
+
+/**
+ * The trims on offer per make/model/model-year cell — /api/index/trims, the
+ * day-cached payload behind /worth's trim dropdown.
+ *
+ * Built from CardRow.trim, which is already the honest subset: buildIndex.ts
+ * sets it only where trimClaim asserts, spells it through specTrim, and folds
+ * casing per model — the same normalization value.ts narrowByTrim runs on
+ * whatever the form submits, so an option offered here round-trips to the key
+ * the ask pool actually carries.
+ *
+ * Keyed by the same labels as makesModels, via the same fold, so the client
+ * can look a cell up with the strings its own dropdowns hold. A model the
+ * dropdown prunes gets no trim entry either — its cell is unreachable.
+ */
+export function worthTrimTally(rows: CardRow[]): WorthTrims {
+  const offered = offeredFold(rows);
+  const labels = new Map<string, Map<string, string>>();
+  for (const [make, byModel] of offered) {
+    const m = new Map<string, string>();
+    for (const [k, e] of byModel) if (e.n >= MIN_LISTINGS_TO_OFFER) m.set(k, preferredForm(e.forms));
+    labels.set(make, m);
+  }
+  // make → label → year → trim → live cars carrying it.
+  const acc = new Map<string, Map<string, Map<number, Map<string, number>>>>();
+  for (const r of rows) {
+    if (!r.trim || !r.year) continue;
+    const label = labels.get(r.make)?.get(modelKey(r.model));
+    if (!label) continue;
+    const byLabel = acc.get(r.make) ?? new Map();
+    const byYear = byLabel.get(label) ?? new Map();
+    const byTrim = byYear.get(r.year) ?? new Map();
+    byTrim.set(r.trim, (byTrim.get(r.trim) ?? 0) + 1);
+    byYear.set(r.year, byTrim);
+    byLabel.set(label, byYear);
+    acc.set(r.make, byLabel);
+  }
+  const trims: WorthTrims["trims"] = {};
+  for (const [make, byLabel] of acc) {
+    for (const [label, byYear] of byLabel) {
+      for (const [year, byTrim] of byYear) {
+        // Deepest first: a seller's trim is far more often the common one, and
+        // a five-entry list has no type-ahead to serve alphabetically.
+        const offer = [...byTrim.entries()]
+          .filter(([, n]) => n >= MIN_TRIM_LISTINGS)
+          .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+          .map(([t]) => t);
+        if (offer.length === 0) continue;
+        ((trims[make] ??= {})[label] ??= {})[String(year)] = offer;
+      }
+    }
+  }
+  return { v: 1, trims };
 }

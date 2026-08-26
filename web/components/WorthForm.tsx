@@ -2,13 +2,17 @@
 
 import { useState } from "react";
 import { withCurrent } from "@/lib/filters";
-import { useFirstPaint } from "@/lib/listings/useCardIndex";
+import { useFirstPaint, useWorthTrims } from "@/lib/listings/useCardIndex";
 
-// The picker. Year, make, model, mileage — and that is the whole required
-// form, by owner decision: a seller who cannot find their VIN still gets a
-// number, so a VIN is never a gate. VIN and trim sit below as refinements
-// that narrow the comparison when they can and are ignored when they cannot
-// (lib/listings/value.ts).
+// The picker. Year, make, model, trim, mileage, condition — and only the trim
+// is optional, by owner decision (2026-08-25): a seller who cannot find their
+// VIN still gets a number, so a VIN is never a gate, and a trim is offered as
+// a dropdown of versions the live market actually carries rather than typed
+// free-hand — free-typed trims matching the wrong cohort is what VIN-only was
+// protecting against. The options come from /api/index/trims (useWorthTrims),
+// keyed by the same labels as the model dropdown, so a pick here round-trips
+// to a key value.ts narrowByTrim can actually match. VIN sits below as the
+// refinement that unlocks the sold tier (lib/listings/value.ts).
 //
 // WHERE THE MAKES AND MODELS COME FROM. The same place the browse filter rail
 // gets them: /api/index/first, the day-cached first-paint payload, fetched in
@@ -57,23 +61,39 @@ const withCommas = (s: string) => (s ? Number(s).toLocaleString("en-US") : "");
 export function WorthForm({
   defaults,
 }: {
-  defaults?: { year?: string; make?: string; model?: string; miles?: string; vin?: string; trim?: string };
+  defaults?: {
+    year?: string;
+    make?: string;
+    model?: string;
+    miles?: string;
+    vin?: string;
+    trim?: string;
+    cond?: string;
+  };
 }) {
   const first = useFirstPaint();
+  const worthTrims = useWorthTrims();
   const makesModels = first?.makesModels ?? {};
   const loading = !first;
 
+  const [year, setYear] = useState(defaults?.year ?? "");
   const [make, setMake] = useState(defaults?.make ?? "");
   const [model, setModel] = useState(defaults?.model ?? "");
+  const [trim, setTrim] = useState(defaults?.trim ?? "");
   const [miles, setMiles] = useState(digits(defaults?.miles ?? ""));
   const [vin, setVin] = useState(defaults?.vin ?? "");
-  const [more, setMore] = useState(Boolean(defaults?.vin || defaults?.trim));
+  const [more, setMore] = useState(Boolean(defaults?.vin));
 
   // A make and model already in the URL stay selectable even before the facets
   // land, and even when tally.ts no longer offers that spelling — otherwise a
   // server-rendered result page shows two empty boxes above its own answer.
+  // Same rule for the trim, for the same reason.
   const makes = withCurrent(Object.keys(makesModels).sort(), make);
   const models = withCurrent(make ? (makesModels[make] ?? []) : [], model);
+  const trims = withCurrent(
+    (year && make && model && worthTrims?.trims[make]?.[model]?.[year]) || [],
+    trim
+  );
   const thisYear = new Date().getFullYear();
   const years: number[] = [];
   for (let y = thisYear + 1; y >= FIRST_MODEL_YEAR; y--) years.push(y);
@@ -88,12 +108,22 @@ export function WorthForm({
 
   return (
     <form method="get" action="/worth">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         <div className={`${CELL} relative bg-paper`}>
           <label className={LABEL} htmlFor="worth-year">
             Year
           </label>
-          <select id="worth-year" name="year" defaultValue={defaults?.year ?? ""} required className={SELECT}>
+          <select
+            id="worth-year"
+            name="year"
+            required
+            value={year}
+            onChange={(e) => {
+              setYear(e.target.value);
+              setTrim("");
+            }}
+            className={SELECT}
+          >
             <option value="" disabled>
               Choose
             </option>
@@ -121,6 +151,7 @@ export function WorthForm({
             onChange={(e) => {
               setMake(e.target.value);
               setModel("");
+              setTrim("");
             }}
             className={SELECT}
           >
@@ -148,7 +179,10 @@ export function WorthForm({
             required
             value={model}
             disabled={models.length === 0}
-            onChange={(e) => setModel(e.target.value)}
+            onChange={(e) => {
+              setModel(e.target.value);
+              setTrim("");
+            }}
             className={SELECT}
           >
             <option value="" disabled>
@@ -157,6 +191,40 @@ export function WorthForm({
             {models.map((m) => (
               <option key={m} value={m}>
                 {m}
+              </option>
+            ))}
+          </select>
+          <span aria-hidden="true" className={CHEVRON}>
+            ▼
+          </span>
+        </div>
+
+        {/* Optional, and the one field whose options depend on the other
+            three: the versions of this exact model-year the live market
+            carries, deepest first. Left on "Not sure", the wide pool answers —
+            picking nothing costs nothing but sharpness, so the field never
+            blocks a submit. Disabled with an em dash when the cell has no
+            offerable versions (one-trim models, mostly), because a dropdown
+            with only "Not sure" in it is a question with no answers. */}
+        <div className={`${CELL} relative bg-paper`}>
+          <label className={LABEL} htmlFor="worth-trim">
+            Trim{" "}
+            <span className="font-semibold normal-case tracking-normal text-ink/40">optional</span>
+          </label>
+          <select
+            id="worth-trim"
+            name="trim"
+            value={trim}
+            disabled={trims.length === 0}
+            onChange={(e) => setTrim(e.target.value)}
+            className={SELECT}
+          >
+            <option value="">
+              {trims.length > 0 ? "Not sure" : !model ? "Pick a model" : worthTrims ? "—" : "Loading…"}
+            </option>
+            {trims.map((t) => (
+              <option key={t} value={t}>
+                {t}
               </option>
             ))}
           </select>
@@ -190,11 +258,43 @@ export function WorthForm({
             mi
           </span>
         </div>
+
+        {/* Condition and title, in one question, because they gate the same
+            thing: whether the comp pools describe this car at all. value.ts
+            WorthInput.condition says what each answer does — the short
+            version is that a branded title is refused a number rather than
+            handed a clean-title one. */}
+        <div className={`${CELL} relative bg-paper`}>
+          <label className={LABEL} htmlFor="worth-cond">
+            Condition &amp; title
+          </label>
+          <select
+            id="worth-cond"
+            name="cond"
+            required
+            defaultValue={
+              defaults?.cond === "good" || defaults?.cond === "issues" || defaults?.cond === "branded"
+                ? defaults.cond
+                : ""
+            }
+            className={SELECT}
+          >
+            <option value="" disabled>
+              Choose
+            </option>
+            <option value="good">No accidents, clean title</option>
+            <option value="issues">Accident or repair history</option>
+            <option value="branded">Rebuilt, salvage, or branded title</option>
+          </select>
+          <span aria-hidden="true" className={CHEVRON}>
+            ▼
+          </span>
+        </div>
       </div>
 
       {more && (
-        <div className={`${CELL} grid grid-cols-1 gap-4 border-l-0 bg-putty p-4 sm:grid-cols-2 sm:p-5`}>
-          <div>
+        <div className={`${CELL} border-l-0 bg-putty p-4 sm:p-5`}>
+          <div className="sm:max-w-[50%]">
             <label className={extraLabel} htmlFor="worth-vin">
               VIN <span className="font-semibold normal-case tracking-normal text-ink/40">optional</span>
             </label>
@@ -216,19 +316,6 @@ export function WorthForm({
               </p>
             )}
           </div>
-          <div>
-            <label className={extraLabel} htmlFor="worth-trim">
-              Trim <span className="font-semibold normal-case tracking-normal text-ink/40">optional</span>
-            </label>
-            <input
-              id="worth-trim"
-              name="trim"
-              defaultValue={defaults?.trim ?? ""}
-              autoComplete="off"
-              placeholder="e.g. Long Range"
-              className={`${extraField} mt-1`}
-            />
-          </div>
         </div>
       )}
 
@@ -243,7 +330,7 @@ export function WorthForm({
             onClick={() => setMore(true)}
             className={`${CELL} flex items-center bg-putty px-4 py-4 text-left sm:flex-1 text-[12px] font-extrabold tracking-[0.06em] text-ink/70 uppercase hover:bg-paper hover:text-cobalt focus:outline-none focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-cobalt sm:px-5 sm:text-[12.5px]`}
           >
-            + Add a VIN or trim to sharpen it
+            + Add a VIN to sharpen it
           </button>
         )}
         {more && <div className={`${CELL} hidden bg-putty sm:block sm:flex-1`} aria-hidden="true" />}

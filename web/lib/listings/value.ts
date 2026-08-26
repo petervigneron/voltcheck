@@ -111,6 +111,23 @@ export interface WorthInput {
   /** Optional. Narrows the ask pool, but only to a trim the live cohort
    *  asserts — see the header. */
   trim?: string;
+  /**
+   * Optional; absent on every URL minted before the question existed, and
+   * absence behaves as "good". What the seller said about condition and title:
+   *
+   *   good     no accidents, clean title — the car the comp pools describe.
+   *   issues   accident or repair history. Collected and deliberately NOT
+   *            priced: the discount is real but this site has never measured
+   *            it, and an unmeasured haircut is a guess wearing a number
+   *            (the house rule on claims). The pools themselves are a market
+   *            mixture that includes such cars, so the estimate's own claim —
+   *            "estimated from N listings for sale right now" — stays true.
+   *   branded  rebuilt / salvage / branded title. Refused a number outright,
+   *            below — every pool this tool can build is priced against clean
+   *            titles, and a branded car sells so far outside that market
+   *            that quoting it would be the false-bargain error inverted.
+   */
+  condition?: "good" | "issues" | "branded";
 }
 
 // The window askVsSold and buildAskIndex both draw around a DRIVEN car: below
@@ -483,6 +500,10 @@ export const abstainCopy = (i: WorthInput): string =>
 export const UNAVAILABLE_COPY =
   "We couldn't check right now — try again shortly.";
 
+/** A branded title. One sentence, no number — see WorthInput.condition. */
+export const BRANDED_TITLE_COPY =
+  "Rebuilt, salvage, and branded titles sell outside the market these listings describe, so we won't put a number on one.";
+
 /**
  * Tier selection, with every fetch already done. Pure, so the guardrail cases
  * are unit-testable without a database.
@@ -498,6 +519,10 @@ export function decideValue(
   pool: AskPool | null,
   opts: { dbFailed: boolean } = { dbFailed: false }
 ): Valuation {
+  // Before any pool is consulted: no pool this tool can build makes a number
+  // for a branded title honest, so the refusal cannot depend on what was
+  // fetched.
+  if (input.condition === "branded") return { tier: "abstain", source: BRANDED_TITLE_COPY };
   if (!pool) return { tier: opts.dbFailed ? "unavailable" : "abstain", source: opts.dbFailed ? UNAVAILABLE_COPY : abstainCopy(input) };
 
   const c = compCohort(comps, input.vin, input.year);
@@ -539,6 +564,11 @@ export async function valueVehicle(input: WorthInput): Promise<Valuation> {
   if (!Number.isFinite(i.year) || !Number.isFinite(i.mileage) || !i.make || !i.model) {
     return { tier: "abstain", source: abstainCopy(i) };
   }
+
+  // decideValue holds the branded-title refusal so it is unit-tested with the
+  // other gates; short-circuiting here as well just spares the database two
+  // reads whose answer could not change it.
+  if (i.condition === "branded") return decideValue(i, new Map(), null);
 
   // A few hundred coefficient rows, day-cached, shared with every other
   // surface on the site that prices anything.

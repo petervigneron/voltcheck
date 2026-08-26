@@ -653,7 +653,9 @@ jobs:
           fi
           # 24 index shards since 2026-08-24 — keep in step with
           # web/lib/listings/pack.ts SHARDS, whose comment has the incident.
-          for s in first $(seq 0 23); do
+          # "trims" is /worth's trim-facet body (2026-08-25), same route, same
+          # walk memo, so it rides this loop for free.
+          for s in first trims $(seq 0 23); do
             curl -fsS --retry 2 --max-time 300 -o /dev/null "https://voltcheck.net/api/index/$s" \
               || echo "::warning::shard $s warm-up failed; its first visitor pays the render"
           done
@@ -1300,7 +1302,9 @@ jobs:
           fi
           # 24 index shards since 2026-08-24 — keep in step with
           # web/lib/listings/pack.ts SHARDS, whose comment has the incident.
-          for s in first $(seq 0 23); do
+          # "trims" is /worth's trim-facet body (2026-08-25), same route, same
+          # walk memo, so it rides this loop for free.
+          for s in first trims $(seq 0 23); do
             curl -fsS --retry 2 --max-time 300 -o /dev/null "https://voltcheck.net/api/index/$s" \
               || echo "::warning::shard $s warm-up failed; its first visitor pays the render"
           done

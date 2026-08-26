@@ -30,9 +30,10 @@ export async function POST(req: Request) {
   }
   revalidateTag(FEED_CACHE_TAG, { expire: 0 });
   for (let s = 0; s < SHARDS; s++) revalidatePath(`/api/index/${s}`);
-  // The seventh body under the shard route: the first-paint payload. Same
-  // data, same staleness rules.
+  // The seventh and eighth bodies under the shard route: the first-paint
+  // payload and /worth's trim facets. Same data, same staleness rules.
   revalidatePath("/api/index/first");
+  revalidatePath("/api/index/trims");
   // The sitemap shards render off the same feed walk and cache for the same
   // day (app/sitemap/[shard]/route.ts). They stopped being build artifacts on
   // 2026-08-22 — which means this route, and the caller's warming curls after
