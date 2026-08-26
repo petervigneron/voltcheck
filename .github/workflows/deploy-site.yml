@@ -1,0 +1,83 @@
+# Warm-then-promote a production candidate from a GitHub runner, so a deploy
+# survives the laptop that started it going to sleep (2026-08-26: the owner
+# closed their machine mid-deploy-window and every local waiter died with it).
+# This is scraper/deploy-site.mjs, unchanged, on neutral ground: the candidate
+# is warmed on its own URL behind Protection Bypass, validated, and promoted —
+# voltcheck.net is untouched until every check passes. See the script's header
+# for the whole story.
+#
+# Dispatch-only, deliberately. A deploy is a decision, not a schedule.
+name: Deploy site (warm-then-promote)
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: "Candidate deployment URL (already built, un-promoted)"
+        required: true
+      wait_for_nightly:
+        description: "Wait for today's nightly to complete, then settle 45 min, before warming"
+        required: false
+        default: "true"
+
+# One deploy at a time — two concurrent warms against the one database is the
+# 2026-08-16 crash-loop with extra steps.
+concurrency: deploy-site
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    # actions:write is for the re-enable step (and covers the run-list polls).
+    permissions:
+      contents: read
+      actions: write
+    # The wait can be hours (nightly runs ~5.5h and this may start mid-run);
+    # the ceiling leaves headroom under the runner's 6h hard cap.
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm install -g vercel
+
+      # Same sequencing the local flow used: the warm's walks want the
+      # database AFTER the night's ingest and recheck are done with it, plus
+      # settle time for the IO budget. Poll rather than trust the clock —
+      # nightly's duration moves.
+      - name: Wait for nightly to finish, then settle
+        if: ${{ github.event.inputs.wait_for_nightly == 'true' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          while true; do
+            s=$(gh run list --workflow nightly.yml --limit 1 --json status -q '.[0].status // "none"')
+            [ "$s" != "in_progress" ] && [ "$s" != "queued" ] && break
+            echo "nightly is $s — waiting"
+            sleep 300
+          done
+          echo "nightly done — settling 45 min"
+          sleep 2700
+
+      - name: Warm the candidate and promote
+        working-directory: scraper
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+          VERCEL_ORG_ID: team_8RiMoU4yuMtGM1YLDVCN89Nj
+          VERCEL_PROJECT_ID: prj_SsG72w0Hr1xIlOPQJn4oXc5oVGnq
+          VERCEL_SCOPE: petervignerons-projects
+        run: node deploy-site.mjs --url "${{ github.event.inputs.url }}"
+
+      # The deploy window ran with these schedules off (see the 08-26 deploy
+      # notes); a promote from CI must not leave them dark.
+      - name: Re-enable paused workflow schedules
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for wf in rolling-crawl.yml refresh-site.yml feed-audits.yml; do
+            gh workflow enable "$wf" && echo "enabled $wf" || echo "::warning::could not enable $wf"
+          done

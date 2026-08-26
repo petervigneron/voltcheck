@@ -161,8 +161,15 @@ function bypassSecret() {
   process.exit(1);
 }
 
+// On a laptop the CLI is already logged in and linked (web/.vercel). In CI
+// (deploy-site.yml) there is no login and no .vercel directory, so auth and
+// project identity ride in as env: VERCEL_TOKEN/VERCEL_SCOPE here, and the
+// CLI's own VERCEL_ORG_ID/VERCEL_PROJECT_ID pass through untouched.
+const CLI_AUTH = process.env.VERCEL_TOKEN
+  ? ["--token", process.env.VERCEL_TOKEN, ...(process.env.VERCEL_SCOPE ? ["--scope", process.env.VERCEL_SCOPE] : [])]
+  : [];
 const vercel = (args, opts = {}) =>
-  execFileSync("vercel", args, { encoding: "utf8", maxBuffer: 16 * 1024 * 1024, ...opts });
+  execFileSync("vercel", [...args, ...CLI_AUTH], { encoding: "utf8", maxBuffer: 16 * 1024 * 1024, ...opts });
 
 // ---------------------------------------------------------------- build
 function buildCandidate(ref) {
