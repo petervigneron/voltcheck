@@ -264,14 +264,81 @@ const EV6_WARRANTY = {
   powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr" as Source, "high"),
   extendedCoverage: f("ICCU: 15 years / 180,000 miles", "mfr" as Source),
 };
+// TRIMS, corrected 2026-08-26. The two Long Range AWD rows keyed "Light"
+// alongside "Wind"/"Light Long Range", but Kia's Drive type row marks Light
+// RWD-only in all five years while Light Long Range, Wind and GT-Line offer
+// AWD. Because match.ts resolves an exact trim name before it filters
+// drivetrain, all 276 live cars listed plainly as "Light" took a Long Range
+// AWD row and were shown its bigger pack and longer range — overstating the
+// car, the direction that costs a shopper money. "Light L" (2 live cars) is
+// the feed truncating "Light Long Range"; no other EV6 trim begins that way,
+// and without keying it the string overlaps bare "Light" and lands on the
+// Standard Range row instead. Same pair of faults found on the EV9.
 const EV6_HP_NONE = { heatPump: f<"none">("none", "mfr", "high", "Heat pump unavailable on the Light trim") };
 const EV6_HP_OPT = { heatPump: f<"optional">("optional", "mfr", "high", "Factory option on Wind/GT-Line, window sticker is the authority") };
 const EV6_PORT_CCS = { portStandard: f<"CCS1">("CCS1", "mfr") };
 const EV6_PORT_NACS = { portStandard: f<"NACS">("NACS", "agg", "high", "Native NACS port from the MY2025 refresh") };
-const EV6_58 = { packGrossKwh: f(58, "vin", "high", "“Light (58.0 kWh)”, Kia's own Part 565 submission") };
-const EV6_774 = { packGrossKwh: f(77.4, "vin", "high", "“Wind (77.4 kWh)”, Kia's own Part 565 submission") };
-const EV6_63 = { packGrossKwh: f(63, "agg", "medium", "MY2025-refresh Standard Range pack") };
-const EV6_84 = { packGrossKwh: f(84, "agg", "medium", "MY2025-refresh Long Range pack") };
+const EV6_PR_NACS = "https://www.kiamedia.com/us/en/media/pressreleases/23210/kia-ev6-ev9-and-niro-owners-gain-access-to-over-21500-tesla-superchargers";
+const EV6_PR_ADAPTER = "https://www.kiamedia.com/us/en/media/pressreleases/22573/kia-america-to-offer-north-american-charging-standard-nacs-in-early-2025";
+const EV6_SPECS = (yr: number) => `https://www.kiamedia.com/us/en/models/ev6/${yr}/specifications`;
+const EV6_PR_2021 = "https://www.kiamedia.com/us/en/media/pressreleases/17267/kia-ev6-redefines-boundaries-of-electric-mobility-with-inspiring-design-exhilarating-performance-and";
+const EV6_PAGE = "https://www.kia.com/us/en/ev6";
+const EV6_58 = { packGrossKwh: fb(58, "mfr" as Source, "high", "Standard Range pack", EV6_SPECS(2024)) };
+const EV6_774 = { packGrossKwh: fb(77.4, "mfr" as Source, "high", "Long Range pack", EV6_SPECS(2024)) };
+const EV6_63 = { packGrossKwh: fb(63, "mfr" as Source, "high", "Standard Range pack", EV6_SPECS(2026)) };
+const EV6_84 = { packGrossKwh: fb(84, "mfr" as Source, "high", "Long Range pack", EV6_SPECS(2026)) };
+// EV6 charging, filled 2026-08-26 from Kia's per-year specifications tables
+// (kiamedia.com/us/en/models/ev6/<year>/specifications), same document series
+// the EV9 rows above use. Kia's own figures, all five years:
+//
+//          Battery Voltage      Battery Energy    350 kW EVSE   OBC
+//   2022   522.7 V / 697 V      58 / 77.4 kWh     18 min        10.9 kW
+//   2023   697 V                77.4 kWh          18 min        10.9 kW
+//   2024   522.7 V / 697 V      58 / 77.4 kWh     18 min        10.9 kW
+//   2025   523 V / 697 V        63 / 84 kWh       20 min (GT 18) 10.9 kW
+//   2026   523 V / 697 V        63 / 84 kWh       20 min        10.9 kW
+//
+// As on the EV9, the tables never state a state-of-charge window, so they
+// cannot fill chargeTime1080Min alone. Kia states it in two places, one per
+// era, and each is cited on the rows it actually covers:
+//
+//   pre-refresh: "The EV6 offers 800V and 400V charging capabilities, without
+//   the need for additional components or adapters. The car is capable of a
+//   high-speed charge from 10 to 80 percent in just 18 minutes on all
+//   variations" (2021 launch release) — matches the table's 18 min.
+//
+//   refresh: "Can charge from 10%-80% w/ DC Fast Chargers in 20 min."
+//   (kia.com/us/en/ev6, the current car) — matches the table's 20 min. The
+//   MY2025 LA-show release says only "ultra-fast 800-volt DC charging system"
+//   with no time, so the 18-minute sentence is NOT carried across the refresh;
+//   the pack changed (77.4 -> 84 kWh) and so did the figure.
+//
+// dcPeakKw stays absent on every EV6 row: unlike the EV9 tables, these carry
+// no "Peak Power (kW)" line, and neither release states a peak rate. Kia does
+// not publish it, so neither do we.
+//
+// architectureV carries 800 with the nominal voltage in the note, the
+// convention set by the Ioniq 5 rows and named in CLAUDE.md's copy rule.
+
+// `v` is the pack's nominal voltage from the table; `min` the 10-80% figure.
+const EV6_CHG = (yr: number, v: number, min: number, nacs: boolean) => ({
+  ...(nacs
+    ? {
+        // "Standard NACS charging port located on driver's side rear corner",
+        // Kia's own EV6 page — this was an uncited `agg` guess, which is what
+        // printed "NACS est" on an EV6 card.
+        portStandard: fb<"NACS">("NACS", "mfr", "high", undefined, EV6_PAGE),
+        superchargerAccess: fb<"native">("native", "mfr", "high", undefined, EV6_PR_NACS),
+      }
+    : {
+        portStandard: fb<"CCS1">("CCS1", "mfr", "high", undefined, EV6_SPECS(yr)),
+        superchargerAccess: fb<"adapter">("adapter", "mfr", "high", "Kia supplied a NACS adapter free to 2024 EV6 buyers who took delivery from September 4, 2024", EV6_PR_ADAPTER),
+      }),
+  architectureV: fb(800, "mfr" as Source, "high", `${v}V nominal`, EV6_PR_2021),
+  chargeTime1080Min: fb(min, "mfr" as Source, "high", "10-80% on a 350 kW EVSE", nacs ? EV6_PAGE : EV6_PR_2021),
+  acOnboardKw: fb(10.9, "mfr" as Source, "high", undefined, EV6_SPECS(yr)),
+  dcFastCharging: fb<"standard">("standard", "mfr", "high", undefined, EV6_SPECS(yr)),
+});
 const NOTE_EV6_HP = { headline: "Heat pump: factory option, on the window sticker", severity: "trap" as const, resolvedBy: "config_resolved" as const };
 
 
@@ -2323,7 +2390,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     id: "ev6-2022-sr-rwd", ...K6, modelYears: [2022, 2022], vin8: ["A", "B"], trim: "Light", packVariant: "Standard Range",
     battery: EV6_58,
     range: { epaRangeMi: f(232, "mfr", "high", "MY2022 Standard Range RWD (Light trim), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=44927") },
-    charging: EV6_PORT_CCS,
+    charging: EV6_CHG(2022, 522.7, 18, false),
     thermal: EV6_HP_NONE,
     warranty: EV6_WARRANTY,
   },
@@ -2331,7 +2398,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     id: "ev6-2022-lr-rwd", ...K6, modelYears: [2022, 2022], vin8: ["A", "B"], trim: ["Wind", "GT-Line"], packVariant: "Long Range",
     battery: EV6_774,
     range: { epaRangeMi: f(310, "mfr", "high", "MY2022 Long Range RWD (Wind/GT-Line), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=44926") },
-    charging: EV6_PORT_CCS,
+    charging: EV6_CHG(2022, 697, 18, false),
     thermal: EV6_HP_OPT,
     warranty: EV6_WARRANTY, buyerNotes: [NOTE_EV6_HP],
   },
@@ -2339,7 +2406,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     id: "ev6-2022-lr-awd", ...K6, modelYears: [2022, 2022], vin8: ["C"], packVariant: "Long Range",
     battery: EV6_774,
     range: { epaRangeMi: f(274, "mfr", "high", "MY2022 Long Range AWD (dual-motor VIN code C), EPA, one rating for both trims this year", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=44925") },
-    charging: EV6_PORT_CCS,
+    charging: EV6_CHG(2022, 697, 18, false),
     thermal: EV6_HP_OPT,
     warranty: EV6_WARRANTY, buyerNotes: [NOTE_EV6_HP],
   },
@@ -2347,23 +2414,23 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     id: "ev6-2023-24-sr-rwd", ...K6, modelYears: [2023, 2024], vin8: ["A", "B"], trim: "Light", ignoreKwhHint: true, packVariant: "Standard Range",
     battery: EV6_58,
     range: { epaRangeMi: f(232, "mfr", "high", "MY2023–24 Standard Range RWD (Light trim), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46007") },
-    charging: EV6_PORT_CCS,
+    charging: EV6_CHG(2024, 522.7, 18, false),
     thermal: EV6_HP_NONE,
     warranty: EV6_WARRANTY,
   },
   {
-    id: "ev6-2023-24-lr-rwd", ...K6, modelYears: [2023, 2024], vin8: ["A", "B"], trim: ["Wind", "GT-Line", "Light Long Range"], ignoreKwhHint: true, packVariant: "Long Range",
+    id: "ev6-2023-24-lr-rwd", ...K6, modelYears: [2023, 2024], vin8: ["A", "B"], trim: ["Wind", "GT-Line", "Light Long Range", "Light L"], ignoreKwhHint: true, packVariant: "Long Range",
     battery: EV6_774,
     range: { epaRangeMi: f(310, "mfr", "high", "MY2023–24 Long Range RWD, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46006") },
-    charging: EV6_PORT_CCS,
+    charging: EV6_CHG(2024, 697, 18, false),
     thermal: EV6_HP_OPT,
     warranty: EV6_WARRANTY, buyerNotes: [NOTE_EV6_HP],
   },
   {
-    id: "ev6-2023-24-lr-awd-19", ...K6, modelYears: [2023, 2024], vin8: ["C"], trim: ["Wind", "Light Long Range", "Light"], packVariant: "Long Range",
+    id: "ev6-2023-24-lr-awd-19", ...K6, modelYears: [2023, 2024], vin8: ["C"], trim: ["Wind", "Light Long Range", "Light L"], packVariant: "Long Range",
     battery: EV6_774,
     range: { epaRangeMi: f(282, "mfr", "high", "MY2023–24 Long Range AWD on 19-inch wheels (Wind, Light Long Range), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46004") },
-    charging: EV6_PORT_CCS,
+    charging: EV6_CHG(2024, 697, 18, false),
     thermal: EV6_HP_OPT,
     warranty: EV6_WARRANTY, buyerNotes: [NOTE_EV6_HP],
   },
@@ -2371,7 +2438,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     id: "ev6-2023-24-lr-awd-20", ...K6, modelYears: [2023, 2024], vin8: ["C"], trim: "GT-Line", packVariant: "Long Range",
     battery: EV6_774,
     range: { epaRangeMi: f(252, "mfr", "high", "MY2023–24 Long Range AWD on the GT-Line's 20-inch wheels, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46005") },
-    charging: EV6_PORT_CCS,
+    charging: EV6_CHG(2024, 697, 18, false),
     thermal: EV6_HP_OPT,
     warranty: EV6_WARRANTY, buyerNotes: [NOTE_EV6_HP],
   },
@@ -2379,7 +2446,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     id: "ev6-2023-gt", ...K6, modelYears: [2023, 2023], vin8: ["E"], packVariant: "GT",
     battery: EV6_774,
     range: { epaRangeMi: f(206, "mfr", "high", "MY2023 EV6 GT (VIN code E), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46003") },
-    charging: EV6_PORT_CCS,
+    charging: EV6_CHG(2023, 697, 18, false),
     thermal: { heatPump: f<"standard">("standard", "mfr") },
     warranty: EV6_WARRANTY,
   },
@@ -2387,7 +2454,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     id: "ev6-2024-gt", ...K6, modelYears: [2024, 2024], vin8: ["E"], packVariant: "GT",
     battery: EV6_774,
     range: { epaRangeMi: f(218, "mfr", "high", "MY2024 EV6 GT (VIN code E), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46968") },
-    charging: EV6_PORT_CCS,
+    charging: EV6_CHG(2024, 697, 18, false),
     thermal: { heatPump: f<"standard">("standard", "mfr") },
     warranty: EV6_WARRANTY,
   },
@@ -2395,23 +2462,23 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     id: "ev6-2025-26-sr-rwd", ...K6, modelYears: [2025, 2026], vin8: ["A", "B"], trim: "Light", packVariant: "Standard Range",
     battery: EV6_63,
     range: { epaRangeMi: f(237, "mfr", "high", "MY2025–26 Standard Range RWD (Light trim, refreshed 63 kWh pack), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49098") },
-    charging: EV6_PORT_NACS,
+    charging: EV6_CHG(2026, 523, 20, true),
     thermal: EV6_HP_NONE,
     warranty: EV6_WARRANTY,
   },
   {
-    id: "ev6-2025-26-lr-rwd", ...K6, modelYears: [2025, 2026], vin8: ["A", "B"], trim: ["Wind", "GT-Line", "Light Long Range"], packVariant: "Long Range",
+    id: "ev6-2025-26-lr-rwd", ...K6, modelYears: [2025, 2026], vin8: ["A", "B"], trim: ["Wind", "GT-Line", "Light Long Range", "Light L"], packVariant: "Long Range",
     battery: EV6_84,
     range: { epaRangeMi: f(319, "mfr", "high", "MY2025–26 Long Range RWD (refreshed 84 kWh pack), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49097") },
-    charging: EV6_PORT_NACS,
+    charging: EV6_CHG(2026, 697, 20, true),
     thermal: EV6_HP_OPT,
     warranty: EV6_WARRANTY, buyerNotes: [NOTE_EV6_HP],
   },
   {
-    id: "ev6-2025-26-lr-awd-19", ...K6, modelYears: [2025, 2026], vin8: ["C"], trim: ["Wind", "Light Long Range", "Light"], packVariant: "Long Range",
+    id: "ev6-2025-26-lr-awd-19", ...K6, modelYears: [2025, 2026], vin8: ["C"], trim: ["Wind", "Light Long Range", "Light L"], packVariant: "Long Range",
     battery: EV6_84,
     range: { epaRangeMi: f(295, "mfr", "high", "MY2025–26 Long Range AWD on 19-inch wheels, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49095") },
-    charging: EV6_PORT_NACS,
+    charging: EV6_CHG(2026, 697, 20, true),
     thermal: EV6_HP_OPT,
     warranty: EV6_WARRANTY, buyerNotes: [NOTE_EV6_HP],
   },
@@ -2419,7 +2486,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     id: "ev6-2025-26-lr-awd-20", ...K6, modelYears: [2025, 2026], vin8: ["C"], trim: "GT-Line", packVariant: "Long Range",
     battery: EV6_84,
     range: { epaRangeMi: f(270, "mfr", "high", "MY2025–26 Long Range AWD on the GT-Line's 20-inch wheels, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49096") },
-    charging: EV6_PORT_NACS,
+    charging: EV6_CHG(2026, 697, 20, true),
     thermal: EV6_HP_OPT,
     warranty: EV6_WARRANTY, buyerNotes: [NOTE_EV6_HP],
   },
@@ -2427,7 +2494,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     id: "ev6-2025-26-gt", ...K6, modelYears: [2025, 2026], vin8: ["E"], packVariant: "GT",
     battery: EV6_84,
     range: { epaRangeMi: f(231, "mfr", "high", "MY2025–26 EV6 GT (VIN code E), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49094") },
-    charging: EV6_PORT_NACS,
+    charging: EV6_CHG(2026, 697, 18, true),
     thermal: { heatPump: f<"standard">("standard", "mfr") },
     warranty: EV6_WARRANTY,
   },
