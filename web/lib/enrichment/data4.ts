@@ -3320,7 +3320,22 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     id: "chr-bev-2026", make: "TOYOTA", model: "C-HR", modelYears: [2026, 2026], drive: "AWD",
     battery: { packGrossKwh: f(74.7, "agg", "medium") },
     range: { epaRangeMi: f(287, "mfr", "high", "MY2026 C-HR BEV (AWD-only) on 18-inch wheels, EPA; 273 on 20s", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50307") },
-    charging: { portStandard: f("NACS", "agg", "high", "Native NACS port from launch") },
+    // Was NACS tagged `agg` with an uncited "Native NACS port from launch" —
+    // the same uncited shape that turned out WRONG on the MY2025 EV9. Here it
+    // is right, and Toyota says so itself: "It will come equipped with a North
+    // American Charging System (NACS) port". Toyota's vehicle page for this
+    // car names no connector at all, so the release is the citation. The same
+    // release carries the other two figures, both new: "recharging from 10% to
+    // 80% battery capacity in around 30 minutes under ideal conditions" (that
+    // condition is Toyota's own wording and rides in the note), and an "11-kW
+    // onboard AC charger".
+    charging: {
+      portStandard: fb<"NACS">("NACS", "mfr", "high", undefined, CHR_PRESS),
+      superchargerAccess: fb<"native">("native", "mfr", "high", undefined, CHR_PRESS),
+      chargeTime1080Min: fb(30, "mfr" as Source, "high", "10-80% under ideal conditions, Toyota's own qualifier", CHR_PRESS),
+      acOnboardKw: fb(11, "mfr" as Source, "high", undefined, CHR_PRESS),
+      dcFastCharging: fb<"standard">("standard", "mfr", "high", undefined, CHR_PRESS),
+    },
     thermal: { heatPump: fb("none", "mfr", "medium", "Toyota's 2026 bZ release names its heat pump in the cold-weather equipment list; the C-HR's release has no such item and its climate line is dual-zone automatic control", CHR_PRESS) },
     warranty: { batteryYears: fb(8, "mfr", "high", undefined, CHR_PRESS), batteryMiles: fb(100_000, "mfr", "high", undefined, CHR_PRESS) },
   },
