@@ -1349,3 +1349,19 @@ jobs:
         env:
           FEED_REVALIDATE_SECRET: ${{ secrets.FEED_REVALIDATE_SECRET }}
         run: node feed-shard-check.mjs
+
+  # The night's last word (2026-08-26): re-walk once and republish the browse
+  # feed artifacts the routes serve first (publish-feed.yml has the whole
+  # story). This is what makes the artifacts' 36h freshness ceiling a
+  # formality — every night that lands data republishes; two consecutive
+  # missed nights and the routes fall back to walking on demand, loudly.
+  # `always()` + the ingest gate rather than `needs.recheck.result ==
+  # 'success'`: recheck failing its post-run revalidate gate (a 52 ms miss on
+  # 2026-08-26) must not leave shoppers on yesterday's artifacts when the
+  # data underneath is fine — the publisher carries its own refusals
+  # (fallback-origin, >10% shrink) and they are the ones that matter.
+  publish-feed:
+    needs: [finalize-ingest, recheck]
+    if: ${{ always() && needs.finalize-ingest.result == 'success' && github.event.inputs.recover_run_id == '' }}
+    uses: ./.github/workflows/publish-feed.yml
+    secrets: inherit
