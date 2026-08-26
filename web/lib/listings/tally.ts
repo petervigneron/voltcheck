@@ -63,7 +63,98 @@ function offeredFold(rows: CardRow[]): Map<string, Map<string, { n: number; form
     byModel.set(k, e);
     offered.set(r.make, byModel);
   }
+  foldTrimContaminated(rows, offered);
   return offered;
+}
+
+// A drivetrain word on the end of a trim-shaped suffix is spelling, not
+// identity — buildIndex's specTrim strips the same tokens from trims for the
+// same reason. Applied to FOLDED keys there are no word boundaries to lean
+// on, and the tokens overlap each other ("longrangeawd" ends in both "awd"
+// and "eawd", and only one strip leaves a word) — so every candidate strip
+// is tried against the asserted-trim set rather than one greedy regex.
+const DRIVETRAIN_TAILS = ["awd", "rwd", "fwd", "4wd", "2wd", "eawd"];
+function suffixCandidates(suffix: string): string[] {
+  const out = [suffix];
+  for (const t of DRIVETRAIN_TAILS) if (suffix.endsWith(t)) out.push(suffix.slice(0, -t.length));
+  return out.filter((s) => s.length > 0);
+}
+
+/**
+ * Fold "IONIQ 5 SEL" into "Ioniq 5" — the model entries that are really
+ * MODEL + TRIM typed into one field.
+ *
+ * modelName.ts deliberately refuses a bare prefix rule: "Ioniq 5 N" is a
+ * $67k different car that must NOT collapse onto the $44k Ioniq 5, and no
+ * ratio test separates it from the ad-slot strings. What that file did not
+ * have when it made the call is the trim corpus this file now carries: an
+ * entry folds into a shorter entry of the same make ONLY when its leftover
+ * suffix (drivetrain tail stripped) is a trim the base model's own live
+ * cohort asserts. "SEL" is an asserted Ioniq 5 trim, so "IONIQ 5 SEL"
+ * folds. And because assertion alone is NOT enough — dry-run against the
+ * full corpus, the bare rule folded away "Ioniq 5 N", "RZ 450e", "EQS 450+"
+ * and "i4 M50", every one a distinct car whose version name some dealers
+ * also file as a trim — two more conditions bound the fold to the noise
+ * class this exists for:
+ *
+ *   the suffix must be asserted by at least MIN_TRIM_LISTINGS base cars
+ *   (one mislabeled listing must not license a fold), and
+ *
+ *   the entry must be MARGINAL — at most ~1% of its base (floor 6). A
+ *   dead-end entry is by definition a handful of mislabeled cars; an entry
+ *   with real depth is either a real car (stays) or at worst a fragmented
+ *   spelling that can still answer for the sellers who pick it (stays,
+ *   status quo). modelName.ts records that no ratio test alone separates
+ *   the N from the ad-slot strings — 73 of 4,948 is 1.5%, right in the
+ *   noise band — which is why the ratio here is the LAST gate, not the
+ *   only one, and why it sits at 1%, below the N, not at 2%, above it.
+ *
+ * Why this is a bug worth this much machinery: on 2026-08-26 the owner put
+ * his own 2023 Ioniq 5 SEL into /worth, picked the entry that names his car,
+ * and was told fewer than four comparable cars exist — while "Ioniq 5"
+ * answered $24,000 from hundreds. A dropdown entry that eats the exact
+ * seller who reads it most literally is worse than the 4 mislabeled cars it
+ * kept reachable.
+ */
+function foldTrimContaminated(
+  rows: CardRow[],
+  offered: Map<string, Map<string, { n: number; forms: Map<string, number> }>>
+): void {
+  // How many cars of each make+model assert each trim key, all years pooled —
+  // CardRow.trim is already trimClaim-gated and specTrim-spelled.
+  const asserted = new Map<string, Map<string, Map<string, number>>>();
+  for (const r of rows) {
+    if (!r.trim) continue;
+    const byModel = asserted.get(r.make) ?? new Map<string, Map<string, number>>();
+    const counts = byModel.get(modelKey(r.model)) ?? new Map<string, number>();
+    counts.set(modelKey(r.trim), (counts.get(modelKey(r.trim)) ?? 0) + 1);
+    byModel.set(modelKey(r.model), counts);
+    asserted.set(r.make, byModel);
+  }
+  for (const [make, byModel] of offered) {
+    // Longest base first, so "Ioniq 5 N Line" folds onto "Ioniq 5 N" before
+    // "Ioniq 5" gets a look at it.
+    const keys = [...byModel.keys()].sort((a, b) => b.length - a.length);
+    for (const k of keys) {
+      const entry = byModel.get(k);
+      if (!entry) continue;
+      const base = keys.find((b) => {
+        if (b === k || !k.startsWith(b)) return false;
+        const baseEntry = byModel.get(b);
+        if (!baseEntry || baseEntry.n < entry.n) return false;
+        // Marginal only: a dead-end is a handful of mislabeled cars.
+        if (entry.n > Math.max(6, Math.ceil(baseEntry.n * 0.01))) return false;
+        const counts = asserted.get(make)?.get(b);
+        if (!counts) return false;
+        return suffixCandidates(k.slice(b.length)).some((s) => (counts.get(s) ?? 0) >= MIN_TRIM_LISTINGS);
+      });
+      if (!base) continue;
+      const b = byModel.get(base)!;
+      b.n += entry.n;
+      for (const [form, n] of entry.forms) b.forms.set(form, (b.forms.get(form) ?? 0) + n);
+      byModel.delete(k);
+    }
+  }
 }
 
 export function modelTally(rows: CardRow[]): ModelTally {

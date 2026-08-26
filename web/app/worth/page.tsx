@@ -181,9 +181,6 @@ function Result({ input, v }: { input: WorthInput; v: Valuation }) {
           {v.estimated && <span className={`${CAPTION} text-amber-700`}>est.</span>}
         </div>
 
-        <p className="mt-4 max-w-[56ch] text-[16px] leading-[1.45] font-medium text-ink/70 sm:text-[17px]">
-          {v.source}
-        </p>
       </div>
 
       <div className="flex flex-wrap border-t-[3px] border-ink">

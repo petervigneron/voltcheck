@@ -63,9 +63,11 @@ import { trimClaim } from "./trimClaim";
  * refusing to quote a number off a mixture. The difference is the CLAIM, not
  * the data: askVsMarket says "THIS car is $18,408 above the market", which is
  * only true if the peers are the same car, and it was a 2023 Lightning
- * Platinum priced against Pros that taught us so. This says "estimated from 47
- * 2023 Tesla Model Ys for sale right now", which names the mixture it came
- * from in the same breath as the number. A shopper who wants the mixture
+ * Platinum priced against Pros that taught us so. This tier's claim is a
+ * MARKET estimate marked `est` — a level, never a per-car delta — which is
+ * what a mixture can honestly support. (It used to also print a sentence
+ * naming the pool; owner decision 2026-08-26 removed every sentence from a
+ * numeric answer — see "The verdict" below.) A seller who wants the mixture
  * narrowed has two levers, and both are optional by owner decision: a VIN,
  * which swaps the pool for the VIN 1-8 cohort, and a trim, which narrows to
  * the trims the live cohort actually asserts.
@@ -120,8 +122,8 @@ export interface WorthInput {
    *            priced: the discount is real but this site has never measured
    *            it, and an unmeasured haircut is a guess wearing a number
    *            (the house rule on claims). The pools themselves are a market
-   *            mixture that includes such cars, so the estimate's own claim —
-   *            "estimated from N listings for sale right now" — stays true.
+   *            mixture that includes such cars, so the market estimate the
+   *            tier claims stays honest.
    *   branded  rebuilt / salvage / branded title. Refused a number outright,
    *            below — every pool this tool can build is priced against clean
    *            titles, and a branded car sells so far outside that market
@@ -140,9 +142,8 @@ const DRIVEN_MILES_HI = 200_000;
 
 // ev_price_model itself refuses to fit a cohort under 8 arms-length sales
 // (migration 0015, `having count(*) >= 8`). Repeated here as a tripwire, not
-// as a second opinion: if that floor is ever lowered, the sentence this tool
-// prints — "based on N Washington sales" — should not quietly start saying
-// "based on 3".
+// as a second opinion: if that floor is ever lowered, this surface's sold
+// band should not quietly start standing on 3 sales.
 const MIN_SOLD_N = 8;
 
 /** A valuation quoted to the dollar claims a precision no fit on a few dozen
@@ -431,16 +432,21 @@ export function modelYearPool(rows: ModelYearAsk[], input: WorthInput): AskPool 
   return { peers, basis: "model-year", identityMixed: false, identityChecked: false };
 }
 
-// ── The verdict, and the exact words it renders as ─────────────────────────
-
-interface Copy {
-  /** The number, as the page prints it big. */
-  headline: string;
-  /** THE one line of sourcing under it. Owner decision: one line, not a stack
-   *  of disclaimers. Everything this tool is unwilling to claim it handles by
-   *  changing tier, not by qualifying the number. */
-  source: string;
-}
+// ── The verdict ────────────────────────────────────────────────────────────
+//
+// A NUMERIC verdict carries no sentence, by owner decision (2026-08-26, his
+// words: "I don't want any spurious line at all. I want people to be able to
+// enter information about their car, and learn what its value is"). This is
+// the house rule on copy applied to this page's own answer: the value IS the
+// answer, the `est` mark carries the provenance promise, and the methodology
+// is deliberately not described on the site (it is the model, and the model
+// is the IP). Two earlier lines died for this — "Estimated from N listings
+// for sale right now" (the launch copy) and a channel-naming line with a
+// "a dealer buying yours will offer less" clause (shipped un-approved
+// 2026-08-25, on the site for a day, exactly the disclaimer the rule
+// forbids). Do not add a third. Everything this tool is unwilling to claim
+// it handles by changing TIER, not by qualifying the number — the sentence
+// tiers below are the cases where a sentence is the whole answer.
 
 /** Did a Washington title figure go into this number? The sold band IS one,
  *  and an estimate is one whenever the cohort's fitted slope moved the peers
@@ -451,7 +457,7 @@ interface Copy {
 export type WaDerived = { waDerived: boolean };
 
 export type Valuation =
-  | ({ tier: "sold"; estimated: false; salesN: number } & SoldBand & Copy & WaDerived)
+  | ({ tier: "sold"; estimated: false; salesN: number; headline: string } & SoldBand & WaDerived)
   | ({
       tier: "estimate";
       estimated: true;
@@ -459,36 +465,13 @@ export type Valuation =
       peerN: number;
       basis: PoolBasis;
       matchedTrim?: string;
-    } & Copy &
-      WaDerived)
+      headline: string;
+    } & WaDerived)
   | { tier: "abstain"; source: string }
   | { tier: "unavailable"; source: string };
 
 /** "2023 Tesla Model Y" — what the reader picked, in their own words. */
 export const vehicleLabel = (i: WorthInput): string => `${i.year} ${i.make} ${i.model}`.replace(/\s+/g, " ").trim();
-
-/** "47 2023 Tesla Model Ys", but "47 2023 Tesla Model S listings" — a
- *  nameplate that already ends in a sibilant cannot take the plural s, and
- *  "Model Ss" is the kind of detail that makes a page read as generated. */
-const cohortNoun = (label: string, n: number): string =>
-  /[sxz]$/i.test(label) ? `${n} ${label} listings` : `${n} ${label}${n === 1 ? "" : "s"}`;
-
-const soldCopy = (b: SoldBand): Copy => ({
-  headline: `${usd(b.lowUsd)} – ${usd(b.highUsd)}`,
-  source: `Half the cars like yours sold between ${usd(b.lowUsd)} and ${usd(
-    b.highUsd
-  )} — based on ${b.salesN} Washington sales of this configuration.`,
-});
-
-const estimateCopy = (e: AskEstimate, pool: AskPool, i: WorthInput): Copy => {
-  const label = vehicleLabel(i);
-  const source = pool.matchedTrim
-    ? `Estimated from ${e.peerN} ${label} ${pool.matchedTrim} listings for sale right now.`
-    : pool.basis === "vin-cohort"
-      ? `Estimated from ${cohortNoun(label, e.peerN)} built to this VIN's configuration, for sale right now.`
-      : `Estimated from ${cohortNoun(label, e.peerN)} for sale right now.`;
-  return { headline: usd(e.valueUsd), source };
-};
 
 /** The abstention. One sentence, no number, and the page puts a link to the
  *  model's listings beside it — the useful thing we can still do. */
@@ -533,7 +516,14 @@ export function decideValue(
   // is a VIN we cannot run every gate for, and a gate we skipped is not a gate.
   if (input.vin && pool.identityChecked) {
     const band = soldBand(c, input.mileage, { identityMixed: pool.identityMixed });
-    if (band) return { tier: "sold", estimated: false, waDerived: true, ...band, ...soldCopy(band) };
+    if (band)
+      return {
+        tier: "sold",
+        estimated: false,
+        waDerived: true,
+        ...band,
+        headline: `${usd(band.lowUsd)} – ${usd(band.highUsd)}`,
+      };
   }
 
   const est = askEstimate(narrowed, input.mileage, c);
@@ -546,7 +536,7 @@ export function decideValue(
       basis: narrowed.basis,
       matchedTrim: narrowed.matchedTrim,
       waDerived: est.slopeFromSales,
-      ...estimateCopy(est, narrowed, input),
+      headline: usd(est.valueUsd),
     };
   }
 

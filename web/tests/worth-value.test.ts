@@ -176,15 +176,14 @@ test("a VIN whose cohort read never answered cannot clear the identity gate", ()
 
 // ── Tier selection ─────────────────────────────────────────────────────────
 
-test("VIN plus a clean cohort is the SOLD tier, and says so in one line", () => {
+test("VIN plus a clean cohort is the SOLD tier: the range, and nothing else", () => {
   const v = decideValue(withVin, index(healthy()), pool(FOUR, { identityChecked: true }));
   assert.equal(v.tier, "sold");
   assert.equal(v.tier === "sold" && v.estimated, false);
-  assert.equal(
-    v.source,
-    "Half the cars like yours sold between $31,800 and $36,200 — based on 26 Washington sales of this configuration."
-  );
   assert.equal(v.tier === "sold" && v.headline, "$31,800 – $36,200");
+  // No sentence under a numeric answer — owner decision 2026-08-26; the
+  // value is the answer (see value.ts "The verdict").
+  assert.ok(!("source" in v));
   assert.equal(v.tier === "sold" && v.waDerived, true);
 });
 
@@ -194,27 +193,20 @@ test("the picker path never reaches SOLD, however clean the cohort", () => {
   assert.equal(v.tier, "estimate");
 });
 
-test("the picker path is the ESTIMATE tier, marked est and sourced in one line", () => {
+test("the picker path is the ESTIMATE tier: the number, marked est, no sentence", () => {
   const v = decideValue(picker, empty, pool(FOUR));
   assert.equal(v.tier, "estimate");
   assert.equal(v.tier === "estimate" && v.estimated, true);
   // Median ask $36,500 less the measured $1,100 the ask side runs above the
   // sold side.
   assert.equal(v.tier === "estimate" && v.headline, "$35,400");
-  assert.equal(v.source, "Estimated from 4 2023 Tesla Model Ys for sale right now.");
+  assert.ok(!("source" in v));
 });
 
-test("a VIN-cohort pool says which pool it was", () => {
+test("a VIN-cohort pool is recorded on the verdict, not narrated", () => {
   const v = decideValue(withVin, empty, pool(FOUR, { basis: "vin-cohort", identityChecked: true }));
-  assert.equal(
-    v.source,
-    "Estimated from 4 2023 Tesla Model Ys built to this VIN's configuration, for sale right now."
-  );
-});
-
-test("a nameplate ending in a sibilant is not pluralised into nonsense", () => {
-  const v = decideValue({ ...picker, model: "Model S" }, empty, pool(FOUR));
-  assert.equal(v.source, "Estimated from 4 2023 Tesla Model S listings for sale right now.");
+  assert.equal(v.tier === "estimate" && v.basis, "vin-cohort");
+  assert.ok(!("source" in v));
 });
 
 test("under four comparable listings the tool abstains, with no number", () => {
@@ -282,7 +274,7 @@ test("the market's spelling of the trim wins over the visitor's typing", () => {
   // search box back would read as generated, and the trim is the maker's name
   // for a version of the car, not a term the reader supplied.
   const v = decideValue({ ...picker, trim: "long range" }, empty, pool(MIXED));
-  assert.equal(v.source, "Estimated from 4 2023 Tesla Model Y Long Range listings for sale right now.");
+  assert.equal(v.tier === "estimate" && v.matchedTrim, "Long Range");
 });
 
 test("a trim nothing in the cohort asserts is ignored, not reported", () => {
@@ -291,7 +283,8 @@ test("a trim nothing in the cohort asserts is ignored, not reported", () => {
   assert.equal(p.matchedTrim, undefined);
   const v = decideValue({ ...picker, trim: "Plaid" }, empty, pool(MIXED));
   assert.equal(v.tier, "estimate");
-  assert.equal(v.source, "Estimated from 8 2023 Tesla Model Ys for sale right now.");
+  assert.equal(v.tier === "estimate" && v.peerN, 8);
+  assert.equal(v.tier === "estimate" && v.matchedTrim, undefined);
 });
 
 test("trim matching is equality, never containment", () => {

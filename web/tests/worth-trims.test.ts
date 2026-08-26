@@ -79,3 +79,39 @@ test("a cell with no offerable trims is absent, not an empty list", () => {
   const { trims } = worthTrimTally(rows);
   assert.equal(trims["Chevrolet"], undefined);
 });
+
+// ── The trim-contaminated model fold ───────────────────────────────────────
+
+test("a marginal MODEL+TRIM spelling folds into the base model", () => {
+  // 4 cars filed as model "IONIQ 5 SEL" against a deep base that asserts SEL:
+  // the dead-end entry that ate the owner's own car on 2026-08-26.
+  const rows = [...n(500, "Hyundai", "Ioniq 5", 2023, "SEL"), ...n(4, "Hyundai", "IONIQ 5 SEL", 2023)];
+  assert.deepEqual(modelTally(rows).makesModels["Hyundai"], ["Ioniq 5"]);
+});
+
+test("a deep entry never folds, even when its suffix is an asserted trim", () => {
+  // 73 Ioniq 5 Ns against 500 Ioniq 5s, four of which assert trim "N": the
+  // $67k car must not collapse onto the $44k pool on a ratio no rule can
+  // separate (modelName.ts) — the marginality gate is what stops it.
+  const rows = [
+    ...n(496, "Hyundai", "Ioniq 5", 2023, "SEL"),
+    ...n(4, "Hyundai", "Ioniq 5", 2023, "N"),
+    ...n(73, "Hyundai", "Ioniq 5 N", 2023),
+  ];
+  assert.deepEqual(modelTally(rows).makesModels["Hyundai"], ["Ioniq 5", "Ioniq 5 N"]);
+});
+
+test("a suffix under four assertions never licenses a fold", () => {
+  // One mislabeled listing filing "N" as a trim must not fold the N away.
+  const rows = [
+    ...n(499, "Hyundai", "Ioniq 5", 2023, "SEL"),
+    ...n(1, "Hyundai", "Ioniq 5", 2023, "N"),
+    ...n(5, "Hyundai", "Ioniq 5 N", 2023),
+  ];
+  assert.deepEqual(modelTally(rows).makesModels["Hyundai"], ["Ioniq 5", "Ioniq 5 N"]);
+});
+
+test("a drivetrain tail is spelling, not identity, when folding", () => {
+  const rows = [...n(600, "Tesla", "Model Y", 2023, "Long Range"), ...n(5, "Tesla", "Model Y Long Range AWD", 2023)];
+  assert.deepEqual(modelTally(rows).makesModels["Tesla"], ["Model Y"]);
+});
