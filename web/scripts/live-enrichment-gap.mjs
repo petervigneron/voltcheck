@@ -209,11 +209,55 @@ const foldMake = (make, model) => {
   return fold ? fold.canonicalMake : make;
 };
 
+// One un-retried fetch per shard is what took this audit down on 2026-08-24:
+// a single shard answered with a TimeoutError, the script died at exit 1
+// (NOT the ratchet's exit 10), and because it never reached the write, the
+// upload-artifact step that follows had no /tmp/live-enrichment-gap.json to
+// keep — so the night's evidence was lost too, and the failure read like a
+// coverage regression when nothing about coverage had changed. The odds got
+// worse the same day for a reason that had nothing to do with this script:
+// pack.ts went from 6 shards to 24, so this loop went from 6 sequential
+// cold renders to 24 chances to draw one slow one.
+//
+// Retries are bounded and only cover the transient cases, because some
+// answers here are real findings this audit must not paper over:
+//   retry     — network/timeout errors, and 5xx. A cold shard rendering for
+//               the first time is the common one.
+//   no retry  — any other non-OK status. 413 (CONTENT_TOO_LARGE) especially:
+//               that is the shard payload outgrowing Vercel's ~4.5 MB
+//               cold-render cap (the 2026-08-24 incident in the root
+//               CLAUDE.md), a standing condition that re-asking cannot
+//               change.
+// After the attempts are spent it still throws. A genuinely sick feed —
+// the 2026-08-25 shards-12-23 outage — must still fail this audit loudly
+// rather than let it report a partial read as a complete one.
+const RETRY_DELAYS_MS = [5_000, 15_000];
+
 async function fetchShard(n) {
   const url = n === "first" ? `${FEED_BASE}/api/index/first` : `${FEED_BASE}/api/index/${n}`;
-  const res = await fetch(url, { signal: AbortSignal.timeout(60_000) });
-  if (!res.ok) throw new Error(`shard ${n}: HTTP ${res.status}`);
-  return res.json();
+  for (let attempt = 0; ; attempt++) {
+    try {
+      const res = await fetch(url, { signal: AbortSignal.timeout(60_000) });
+      if (!res.ok) {
+        const err = new Error(`shard ${n}: HTTP ${res.status}`);
+        if (res.status < 500) throw err;
+        err.retryable = true;
+        throw err;
+      }
+      return await res.json();
+    } catch (e) {
+      // Anything that isn't an explicit non-retryable status is a transport
+      // failure (timeout, reset, DNS) — those are the ones worth re-asking.
+      const retryable = e.retryable ?? !/^shard \d+: HTTP/.test(e.message ?? "");
+      if (!retryable || attempt >= RETRY_DELAYS_MS.length) throw e;
+      const wait = RETRY_DELAYS_MS[attempt];
+      // A status error already names the shard; a transport error doesn't.
+      const detail = String(e.message ?? e);
+      const label = detail.startsWith(`shard ${n}:`) ? detail : `shard ${n}: ${detail}`;
+      console.error(`${label} — retrying in ${wait / 1000}s (attempt ${attempt + 2}/${RETRY_DELAYS_MS.length + 1})`);
+      await new Promise((r) => setTimeout(r, wait));
+    }
+  }
 }
 
 // Shards 0..SHARDS-1 partition every live listing exactly once (shardOf in
