@@ -136,3 +136,43 @@ test("a card with no valid VIN anywhere maps to null", () => {
   const blank = { ...CARD, VehicleVin: null, VehicleImageModel: {} };
   assert.equal(vehicleNode(blank, ORIGIN), null);
 });
+
+// The dealer's own writeup. This lane dropped it until 2026-08-27, and
+// migration 0024's buyback_disclosed is computed from payload->>'description'
+// — so on every DealerOn rooftop that column was testing a field nothing
+// filled. Dennis Sneed Ford (sneedford.com) resells Ford's Manufacturer
+// Buy-Back programme: all 25 of its F-150 Lightnings disclose it in these
+// comments, and 21 of them were live here as ordinary used trucks.
+const SNEED_COMMENTS =
+  "2023 FORD F-150 LIGHTNING LARIAT EXTENDED-RANGE POWER BUILT FOR THE ROAD! " +
+  "EQUIPMENT GROUP 511A, LARIAT LIGHTNING SERIES. ORIGINAL MSRP $88,224. WE SHIP " +
+  "NATIONWIDE. PART OF FORDS REACQUIRED VEHICLE BRANDED PROGRAM AND COMES WITH A " +
+  "12 MONTH 12,000 MILE SPECIAL FORD MOTOR COMPANY FACTORY LIMITED BUMPER TO " +
+  "BUMPER WARRANTY.";
+
+test("vehicleNode carries the card's dealer comments as the description", () => {
+  const node = vehicleNode({ ...CARD, VehicleComments: SNEED_COMMENTS }, ORIGIN);
+  assert.equal(node.description, SNEED_COMMENTS);
+  // And it survives into the normalized record, which is what reaches the
+  // payload the generated column reads.
+  const rec = normalize(node, { sourceUrl: node.offers.url, dealerDomain: "sneedford.com" });
+  assert.match(rec.description, /reacquired vehicle/i);
+});
+
+test("no comments is no description, not an empty string", () => {
+  // An empty description in the payload would be a claim that the dealer
+  // wrote nothing; absent is the honest shape, and it is what payload_public
+  // (migration 0042) keys its NULL on.
+  for (const v of [undefined, null, "", "   "]) {
+    assert.equal(vehicleNode({ ...CARD, VehicleComments: v }, ORIGIN).description, undefined);
+  }
+});
+
+test("ShowComments false does not hide a disclosure", () => {
+  // ShowComments toggles the SRP card's comments block, not whether the
+  // dealer published the text: the VDP renders it either way and its own
+  // JSON-LD carries the identical string. Gating on it would have kept the
+  // Sneed buybacks invisible on a display preference.
+  const node = vehicleNode({ ...CARD, ShowComments: false, VehicleComments: SNEED_COMMENTS }, ORIGIN);
+  assert.match(node.description, /reacquired vehicle/i);
+});

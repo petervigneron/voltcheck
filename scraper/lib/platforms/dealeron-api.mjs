@@ -216,6 +216,34 @@ export function vehicleNode(vc, origin) {
   }
 
   const trim = vc.VehicleTrim || vc.VehicleRuleAdjustedTrim || undefined;
+  // The dealer's own writeup, which this lane dropped on the floor until
+  // 2026-08-27. It costs nothing — VehicleComments is already on the card we
+  // fetch — and the cars it was hiding are the expensive kind.
+  //
+  // Dennis Sneed Ford (sneedford.com, Gower MO) resells Ford's Manufacturer
+  // Buy-Back programme: 210 of the 260 cars on its used lot, and ALL 25 of its
+  // F-150 Lightnings, end their comments with "PART OF FORDS REACQUIRED
+  // VEHICLE BRANDED PROGRAM AND COMES WITH A 12 MONTH 12,000 MILE SPECIAL FORD
+  // MOTOR COMPANY FACTORY LIMITED BUMPER TO BUMPER WARRANTY". We were showing
+  // 21 of them as ordinary used trucks — one at $45,499 against an original
+  // MSRP of $88,224 the same comment states. `buyback_disclosed` (migration
+  // 0024) is computed from `payload->>'description'`, so with no description
+  // stored it could never fire: the guard was reading a field this lane never
+  // filled. A buyback priced under its clean-title cohort is exactly the false
+  // bargain the comps guardrails exist to prevent.
+  //
+  // Taken whatever ShowComments says: that flag toggles the SRP card's
+  // comments block, not whether the dealer published the text — the VDP
+  // renders it either way, and its JSON-LD carries the identical string (the
+  // 1,057-character Sneed Lariat comment, byte-for-byte, 2026-08-27). The
+  // HTML VDP path already read it there via normalize.mjs; this is the same
+  // fact through the API door, which is the door ~94% of the crawl uses.
+  //
+  // Plain text on every card sampled (24/24, no markup, no entities, 268-1,103
+  // chars), so it needs no unescaping. normalize.mjs caps it at 2,000.
+  const description = typeof vc.VehicleComments === "string" && vc.VehicleComments.trim()
+    ? vc.VehicleComments.trim()
+    : undefined;
   const city = vc.DealerLocatedAtCity || undefined;
   const state = vc.DealerLocatedAtState || undefined;
   const dealerName = vc.VehicleLocationName || vc.DealerName || undefined;
@@ -227,6 +255,7 @@ export function vehicleNode(vc, origin) {
     brand: vc.VehicleMake || undefined,
     model: vc.VehicleModel || undefined,
     vehicleConfiguration: trim,
+    description,
     name: vc.VehicleName || [vc.VehicleYear, vc.VehicleMake, vc.VehicleModel, trim].filter(Boolean).join(" ") || undefined,
     mileageFromOdometer: mileage != null ? { "@type": "QuantitativeValue", value: mileage } : undefined,
     color: vc.ExteriorColorLabel || vc.VehicleGenericColor || undefined,
