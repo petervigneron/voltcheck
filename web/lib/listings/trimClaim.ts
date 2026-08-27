@@ -49,7 +49,11 @@ const PLACEHOLDER =
 export type TrimClaim =
   | { assert: true; trim: string }
   | { assert: false; reason: "no-trim" | "cab-style" | "placeholder" }
-  | { assert: false; reason: "contradicted"; feedTrim: string; proseTrim: string };
+  | { assert: false; reason: "contradicted"; feedTrim: string; proseTrim: string }
+  /** The maker's own document for this VIN says otherwise. Nothing is printed:
+   *  there is no description to quote, and the house copy rule is that a line
+   *  with nothing to say does not get written. See trimTrust's "refuted". */
+  | { assert: false; reason: "refuted" };
 
 export function trimClaim(l: Listing): TrimClaim {
   // Read the trim the maker names for this model year, not the feed's stale
@@ -67,7 +71,9 @@ export function trimClaim(l: Listing): TrimClaim {
   // the range and pack size printed in its place.
   const trust = trimTrust(l, raw);
   if (!trust.trusted) {
-    return { assert: false, reason: "contradicted", feedTrim: raw, proseTrim: trust.proseTrim };
+    return trust.reason === "refuted"
+      ? { assert: false, reason: "refuted" }
+      : { assert: false, reason: "contradicted", feedTrim: raw, proseTrim: trust.proseTrim };
   }
   return { assert: true, trim: raw };
 }

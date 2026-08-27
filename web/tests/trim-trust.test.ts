@@ -196,3 +196,52 @@ test("display and enrichment reach the same verdict on the same listing", () => 
     assert.equal(rowTrim, undefined, `${l.vin} matched a trim-keyed row on a trim we won't print`);
   }
 });
+
+// ── The manufacturer's own document ─────────────────────────────────────────
+//
+// `trimRefuted` is Ford's window sticker for one VIN saying the feed named the
+// wrong version (scraper/lib/ford-sticker-trim.mjs). It is a separate field
+// from trimSuspect because the two have different provenance and the detail
+// page's trimSuspect copy names the dealer's description as the source — see
+// that file. Both surfaces still have to reach the same verdict.
+
+test("a Monroney label the feed contradicts suppresses the trim on both surfaces", () => {
+  // The reported truck. Ford's sticker for this VIN: EQUIPMENT GROUP 110A /
+  // PRO SERIES. Ford Blue Advantage published it as an XLT.
+  const l = listing({
+    vin: "1FT6W1EV8NWG06203", year: 2022, make: "Ford", model: "F-150 Lightning",
+    trim: "XLT", trimRefuted: true, condition: "certified", mileage: 87161,
+  });
+  const claim = trimClaim(l);
+  assert.equal(claim.assert, false);
+  // Not "contradicted": there is no description to quote, so the page prints
+  // nothing rather than a sentence crediting a source we did not read.
+  assert.equal(claim.assert === false && claim.reason, "refuted");
+  // The enrichment matcher must reach the same verdict, or the trim we refuse
+  // to print still picks the range printed beside it.
+  assert.equal(trimTrust(l, "XLT").trusted, false);
+  // Position 8 is V — Extended Range — and that is what was right all along.
+  assert.equal(enrichListing(l).realRangeMi?.value, 320);
+});
+
+test("the label outranks a VIN that would otherwise corroborate the feed", () => {
+  // versionNamedByVinAlone reads the same vPIC decode that answers "SuperCrew"
+  // for every 2022-23 Lightning, so on this family it can never settle the
+  // question. The flag must not be appealable to it.
+  const l = listing({
+    vin: "3FMTK4SE2PMA38629", year: 2023, make: "Ford", model: "Mustang Mach-E",
+    trim: "GT", trimRefuted: true,
+  });
+  assert.equal(trimTrust(l, "GT").trusted, false);
+  assert.equal(trimTrust(l, "GT").reason, "refuted");
+  // Without the flag the VIN corroborates the feed, as it did before.
+  assert.equal(trimTrust(listing({ ...l, trimRefuted: undefined }), "GT").trusted, true);
+});
+
+test("an unrefuted Ford is untouched", () => {
+  const l = listing({
+    vin: "1FT6W3LU6SWG26144", year: 2025, make: "Ford", model: "F-150 Lightning", trim: "Flash",
+  });
+  assert.equal(trimTrust(l, "Flash").reason, "uncontested");
+  assert.equal(trimClaim(l).assert, true);
+});

@@ -30,6 +30,11 @@ print(' '.join(s['domain'] for s in r['sites'] if s.get('status') == 'working'))
   # no reason to hold the pipeline for it, since cached VINs are never asked
   # again and the backlog drains over a few nights.
   node gm-warranty.mjs --limit 600
+  # Ask Ford for each Ford EV's own window sticker, so a dealer-fed trim has
+  # something to be checked against. Same shape as gm-warranty above: cached
+  # per VIN forever, bounded per night, backlog drains over a few nights.
+  # db-sync applies the cache (lib/ford-sticker-trim.mjs); this only fills it.
+  node ford-sticker.mjs --limit 600
   node ingest.mjs
   node db-sync.mjs
   # Sanity-check every price against WA sale medians (the vanhyundai

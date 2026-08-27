@@ -488,7 +488,17 @@ jobs:
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: node lane-flip-check.mjs
 
-      - name: GM per-VIN warranty and ingest
+      # Ford's window sticker is a PDF whose fonts carry a custom encoding, so
+      # its text cannot be read by inflating the file's own streams (tried:
+      # "EQUIPMENT" appears in none of the 157 of them). pdftotext does it.
+      # ford-sticker.mjs exits 0 with a message if this is missing rather than
+      # reporting "no contradictions found", but then it also caches nothing,
+      # so install it rather than rely on that.
+      - name: pdftotext, for Ford window stickers
+        if: ${{ github.event.inputs.skip_crawl != 'true' }}
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils
+
+      - name: GM per-VIN warranty, Ford window stickers, and ingest
         if: ${{ github.event.inputs.skip_crawl != 'true' }}
         working-directory: scraper
         run: |
@@ -521,6 +531,16 @@ jobs:
           # registry/gm-warranty.json, so nothing already answered is re-asked
           # tomorrow.
           timeout 30m node gm-warranty.mjs --limit 600 || echo "gm-warranty hit its 30m cap — continuing so ingest and db-sync still run; VINs already answered are cached in registry/gm-warranty.json and won't be re-fetched"
+          # Ford's own window sticker per VIN, the only source that can check a
+          # dealer-fed Ford trim (see scraper/lib/ford-sticker-trim.mjs). Same
+          # shape and the same cap as gm-warranty above and for the same
+          # reason: a per-VIN OEM lookup must never be able to spend this
+          # job's clock. 600 VINs at its ~1.2s pace need ~12m; answers are
+          # cached in registry/ford-sticker.json (committed by finalize-audits
+          # with the other per-VIN caches), so a cut-short run costs nothing.
+          # db-sync applies the cache; this step only fills it, which is why
+          # a skip here degrades to "no new labels", not "wrong trims".
+          timeout 30m node ford-sticker.mjs --limit 600 || echo "ford-sticker hit its 30m cap — continuing; VINs already answered are cached in registry/ford-sticker.json and won't be re-fetched"
           node ingest.mjs
 
       - name: Sync to Supabase
@@ -943,11 +963,11 @@ jobs:
         run: |
           git config user.name "voltcheck-bot"
           git config user.email "noreply@github.com"
-          # gm-warranty.json and vpic-cache.json are per-VIN caches: committing
-          # them is what makes each lane cheap, because a VIN already in one
-          # is never asked again. Lose either file and the next run re-fetches
-          # every car from scratch — vpic-cache.json losing this race is
-          # exactly the six-night outage this cache was built to end.
+          # gm-warranty.json, ford-sticker.json and vpic-cache.json are per-VIN
+          # caches: committing them is what makes each lane cheap, because a
+          # VIN already in one is never asked again. Lose one and the next run
+          # re-fetches every car from scratch — vpic-cache.json losing this
+          # race is exactly the six-night outage that cache was built to end.
           # audit-status.json IS NOT STAGED HERE ANY MORE, and that is a fix,
           # not an omission. It used to ride along, and riding along is what
           # killed it: the two caches above are rewritten constantly by
@@ -1033,6 +1053,7 @@ jobs:
 
           specs=("registry/registry.json:0:registry"
                  "registry/gm-warranty.json:1:GM warranty cache"
+                 "registry/ford-sticker.json:1:Ford window-sticker cache"
                  "registry/vpic-cache.json:0:vPIC cache")
           # Copy ALL of them up front, before any git command. unwedge() rewinds
           # the whole registry directory, so a per-iteration `cp` would hand the

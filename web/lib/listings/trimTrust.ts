@@ -31,7 +31,10 @@ export type TrimTrust =
    *  speaks. */
   | { trusted: true; reason: "vin-corroborated"; namedByVin: string }
   /** The description named a different version and the VIN can't settle it. */
-  | { trusted: false; reason: "contradicted"; proseTrim: string };
+  | { trusted: false; reason: "contradicted"; proseTrim: string }
+  /** The manufacturer's own per-VIN document names a different version. No
+   *  prose to quote and no VIN appeal: a Monroney label outranks both. */
+  | { trusted: false; reason: "refuted" };
 
 /**
  * The version the VIN names on its own, or undefined.
@@ -96,6 +99,12 @@ const namesVersion = (haystack: string, name: string): boolean =>
  * part that lives here.
  */
 export function trimTrust(l: Listing, claimedTrim: string | undefined): TrimTrust {
+  // Ford's own window sticker for this VIN, and no argument from the VIN can
+  // beat it: versionNamedByVinAlone reads the same vPIC decode that returns
+  // "SuperCrew" for every 2022-23 Lightning, which is exactly the family this
+  // check exists for. Placed above the prose test because it is the stronger
+  // evidence, not merely another opinion.
+  if (l.trimRefuted) return { trusted: false, reason: "refuted" };
   const prose = (l.trimSuspect ?? "").trim();
   // The overwhelmingly common path, and deliberately the cheap one: without a
   // contradiction on file there is nothing to weigh, and no matcher run. Ten

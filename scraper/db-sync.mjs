@@ -16,6 +16,7 @@
 import { readFile, stat, writeFile } from "node:fs/promises";
 import { markTrimSuspects } from "./lib/trim-suspect.mjs";
 import { loadTrimOverrides, applyTrimOverrides } from "./lib/trim-overrides.mjs";
+import { loadFordStickers, applyFordStickerTrims } from "./lib/ford-sticker-trim.mjs";
 import { fetchWithRetry } from "./lib/retry.mjs";
 import { laneOf, OEM_LOCATOR_DOMAINS } from "./lib/oem-lane-domains.mjs";
 import { readSnapshot } from "./lib/snapshot.mjs";
@@ -73,6 +74,21 @@ const overrides = await loadTrimOverrides();
 const overridden = applyTrimOverrides(listings, overrides);
 if (overridden) {
   console.error(`db-sync: ${overridden} listing(s) flagged by hand-verified trim overrides`);
+}
+
+// And Ford's own window sticker, per VIN, for the same blind spot on a
+// nameplate the hand list could not keep up with: a marketplace's trim field
+// is the selling dealer's, and on a 2022 Lightning neither the description nor
+// vPIC can check it (see lib/ford-sticker-trim.mjs). Fetched by
+// ford-sticker.mjs into registry/ford-sticker.json; applied here, AFTER
+// markTrimSuspects, for the same reason applyTrimOverrides is — that function
+// deletes any trimSuspect its own vocabulary does not re-derive.
+const stickers = await loadFordStickers();
+const stickerFlagged = applyFordStickerTrims(listings, stickers);
+if (stickerFlagged) {
+  console.error(
+    `db-sync: ${stickerFlagged} listing(s) have a trim Ford's own window sticker contradicts`
+  );
 }
 
 const source = process.env.DB_SYNC_SOURCE ?? "nightly";

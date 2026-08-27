@@ -27,6 +27,17 @@ export interface Listing {
    * Consumed by lib/listings/trimClaim.ts.
    */
   trimSuspect?: string;
+  /**
+   * Set when the MANUFACTURER'S own per-VIN document contradicts `trim` —
+   * today Ford's window sticker (scraper/lib/ford-sticker-trim.mjs). A flag,
+   * not a name, and deliberately separate from `trimSuspect`: that field's
+   * render says "the dealer's own description says X", which would be a false
+   * statement about where the evidence came from, and the sticker's own word
+   * is not promoted to a trim we print (see that file on why). This one only
+   * means: do not stand behind the trim, and do not let it pick an enrichment
+   * row either. The document's reading stays in registry/ford-sticker.json.
+   */
+  trimRefuted?: boolean;
   imageUrl?: string;
   images?: string[]; // gallery, when the source provided more than one
   interiorColor?: string;
