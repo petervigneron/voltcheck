@@ -42,7 +42,7 @@ print(' '.join(s['domain'] for s in r['sites'] if s.get('status') == 'working'))
   # Read the dealer's own notes off used/CPO VDPs whose inventory API carries
   # none — the only way to see a disclosed manufacturer buyback on those lanes
   # (lib/dealer-notes.mjs). Bounded per night; advertised buyback lots first.
-  node vdp-notes.mjs --limit 900 --concurrency 6
+  node vdp-notes.mjs --limit 4000 --concurrency 12
   node ingest.mjs
   node db-sync.mjs
   # Sanity-check every price against WA sale medians (the vanhyundai

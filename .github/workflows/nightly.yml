@@ -549,15 +549,24 @@ jobs:
           timeout 20m node buyback-dealers.mjs --limit 1500 --concurrency 8 || echo "buyback-dealers hit its 20m cap — continuing; it only orders the next step's work"
           # The dealer's own notes off used/CPO VDPs, for the lanes whose
           # inventory API carries none (scraper/lib/dealer-notes.mjs). This is
-          # the only door to a disclosed manufacturer buyback on ~24k used cars
-          # on dealer lots. Capped like the two lanes above and for the same
-          # reason — a per-target fetch must never spend this job's clock.
-          # 900 pages at 6-way concurrency is well inside 30m; whatever is not
-          # reached is cached-miss and simply comes up tomorrow, and cars
-          # already read are in registry/vdp-notes.json. Must run before
-          # ingest: it writes `description` onto out/listings.json records,
-          # which is what buyback_disclosed (0024) is computed from.
-          timeout 30m node vdp-notes.mjs --limit 900 --concurrency 6 || echo "vdp-notes hit its 30m cap — continuing; cars already read are cached in registry/vdp-notes.json"
+          # the only door to a disclosed manufacturer buyback on the ~10.4k
+          # used cars sitting on dealer.com rooftops (the DealerOn half of that
+          # exposure now arrives free with the crawl).
+          #
+          # 20m, NOT 30m, and that is deliberate: gm-warranty and ford-sticker
+          # already hold 30m caps each in this job, and the job's own history
+          # is that a per-target lane running long is what starves db-sync —
+          # the only step a shopper's browser depends on. Three 30m caps would
+          # spend 90m of a 150m budget in the worst case and put the margin
+          # back where it was on 2026-08-21.
+          #
+          # 4,000 pages at 12-way concurrency measures ~12 minutes (5.45
+          # pages/sec, 2026-08-27), so 20m is the cap and not the plan. The
+          # backlog clears in about three nights and then this step costs a
+          # minute. Must run before ingest: it writes `description` onto
+          # out/listings.json records, which is what buyback_disclosed (0024)
+          # is computed from.
+          timeout 20m node vdp-notes.mjs --limit 4000 --concurrency 12 || echo "vdp-notes hit its 20m cap — continuing; cars already read are cached in registry/vdp-notes.json"
           node ingest.mjs
 
       - name: Sync to Supabase

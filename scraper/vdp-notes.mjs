@@ -14,7 +14,17 @@
 // carry a description, so 42,038 cannot be checked for a disclosed
 // manufacturer buyback at all. 17,894 of those are OEM CPO lanes, where the
 // programmes exclude branded titles; the real exposure is the 24,144 on dealer
-// lots. This lane is how those get read.
+// lots. Roughly half of those are DealerOn and arrive free with the ordinary
+// crawl now that dealeron-api.mjs carries VehicleComments; the ~10.4k on
+// dealer.com are what this lane exists for, because that API has no free text
+// at all.
+//
+// Sized from measurement, not analogy (2026-08-27): 5.45 pages/sec at
+// concurrency 12, so 4,000 cars costs ~12 minutes and the whole 10,357-car
+// backlog clears in three nights. The first cut of this lane was --limit 900,
+// picked by analogy with gm-warranty.mjs's serial 600 — that would not have
+// converged at all, since ~1,600 used/CPO cars a day fall due for refresh
+// before any backlog is touched.
 //
 // ── Scope, and why it is not "every car" ───────────────────────────────────
 //
@@ -24,6 +34,24 @@
 //
 // OEM LOCATOR LANES ARE SKIPPED. Their `sourceUrl` is a maker's search page,
 // not a dealer's VDP, and the maker's CPO programme excludes branded titles.
+//
+// AND ONLY dealer.com ROOFTOPS ARE READ. ws-dealernotes is dealer.com's
+// widget; lib/dealer-notes.mjs knows that one and no other. Measured on the
+// first 337 pages this lane fetched (2026-08-27) the split was total:
+//
+//     dealer.com VDPs   64 fetched, 64 with notes   (100%)
+//     DealerOn VDPs    273 fetched,  0 with notes   (0%)
+//
+// which is not a defect in either — DealerOn simply has no such widget, and
+// its cars do not need one: their notes ride in the SRP card's
+// VehicleComments and arrive with the ordinary crawl. Fetching them here spent
+// 80% of a night's budget to learn nothing and would have gone on doing it
+// every RETRY_EMPTY_DAYS. Restricting to the platform whose widget we can read
+// shrinks the backlog from 28,978 cars to the ~8.5k that actually need it.
+//
+// A rooftop on any other platform is skipped rather than guessed at: if one of
+// them turns out to publish notes too, that is a new extractor in
+// lib/dealer-notes.mjs and a line here, not a silent widening.
 //
 // ── Order of work ──────────────────────────────────────────────────────────
 //
@@ -39,6 +67,7 @@ import { fetchPage } from "./lib/http.mjs";
 import { extractDealerNotes } from "./lib/dealer-notes.mjs";
 
 const LISTINGS = new URL("./out/listings.json", import.meta.url);
+const REGISTRY = new URL("./registry/registry.json", import.meta.url);
 const CACHE = new URL("./registry/vdp-notes.json", import.meta.url);
 const BUYBACK_DEALERS = new URL("./registry/buyback-dealers.json", import.meta.url);
 
@@ -65,6 +94,12 @@ try {
 } catch {
   /* first run */
 }
+// Platform per rooftop, from the hand-curated registry rather than guessed
+// from the URL shape.
+const platformOf = new Map(
+  JSON.parse(await readFile(REGISTRY, "utf-8")).sites.map((x) => [x.domain, x.platform]),
+);
+
 let priority = new Set();
 try {
   const bb = JSON.parse(await readFile(BUYBACK_DEALERS, "utf-8"));
@@ -91,6 +126,7 @@ for (const l of listings) {
   if (typeof l.description === "string" && l.description.trim()) continue;
   const vin = String(l.vin ?? "").toUpperCase();
   if (vin.length !== 17 || !isVdp(l)) continue;
+  if (platformOf.get(l.dealerDomain) !== "dealer.com") continue;
   const hit = cache[vin];
   if (hit) {
     const cutoff = hit.notes ? dayStr(REFRESH_DAYS) : dayStr(RETRY_EMPTY_DAYS);
@@ -98,8 +134,47 @@ for (const l of listings) {
   }
   targets.push(l);
 }
-// Advertised buyback lots first; the rest in feed order.
-targets.sort((a, b) => (priority.has(b.dealerDomain) ? 1 : 0) - (priority.has(a.dealerDomain) ? 1 : 0));
+// Advertised buyback lots first — then ROUND-ROBIN ACROSS ROOFTOPS inside
+// each tier, which is what makes the concurrency real.
+//
+// lib/http.mjs rate-limits per host. A straight priority sort is stable, so it
+// preserves feed order, and feed order is grouped by domain — which hands all
+// N workers cars from the same rooftop and lets the per-host limiter serialise
+// every one of them. The lane would run at one rooftop's pace no matter how
+// many workers it had, and the worst case is exactly the case we care about:
+// an advertised buyback lot is one domain with hundreds of used cars.
+// Interleaving means N workers are almost always on N different hosts.
+//
+// The two tiers are drained in order, not interleaved with each other: an
+// advertised lot is where the piles are, and reading those first is the whole
+// reason buyback-dealers.mjs exists.
+function interleaveByDomain(rows) {
+  const byDomain = new Map();
+  for (const l of rows) {
+    const d = l.dealerDomain ?? "";
+    if (!byDomain.has(d)) byDomain.set(d, []);
+    byDomain.get(d).push(l);
+  }
+  const queues = [...byDomain.values()];
+  const out = [];
+  for (let round = 0; out.length < rows.length; round++) {
+    let moved = false;
+    for (const q of queues) {
+      if (round < q.length) {
+        out.push(q[round]);
+        moved = true;
+      }
+    }
+    if (!moved) break;
+  }
+  return out;
+}
+const ordered = [
+  ...interleaveByDomain(targets.filter((l) => priority.has(l.dealerDomain))),
+  ...interleaveByDomain(targets.filter((l) => !priority.has(l.dealerDomain))),
+];
+targets.length = 0;
+targets.push(...ordered);
 
 const work = targets.slice(0, LIMIT);
 const prioritised = work.filter((l) => priority.has(l.dealerDomain)).length;
@@ -162,12 +237,18 @@ await writeFile(CACHE, JSON.stringify(cache, null, 1));
 // net for review, and its false positives are the point. The narrow, audited
 // patterns that actually set buyback_disclosed live in the migrations, where a
 // false positive would be a false claim about a real car.
-const BUYBACK_WORDS = /\b(buy[\s-]?back|lemon[\s-]?law|rea?c?quired|repurchase[ds]?|branded title)\b/i;
+// `reac?quired`, NOT `rea?c?quired`: making the a optional too also matches
+// "required", and dealer notes are full of "required taxes", "subscription
+// required", "as required by manufacturer specifications". The first cut of
+// this net did that and returned 101 cars of which ~99 were fee boilerplate.
+// The migrations' clauses never had the bug — they require the a — which is
+// why nothing was ever wrongly flagged; only this queue was unreadable.
+const BUYBACK_WORDS = /\b(buy[\s-]?back|lemon[\s-]?law|reac?quired|repurchase[ds]?|branded title)\b/i;
 const flagged = [];
 for (const l of listings) {
   const hit = cache[String(l.vin ?? "").toUpperCase()];
   if (!hit?.notes || !BUYBACK_WORDS.test(hit.notes)) continue;
-  const m = hit.notes.match(/[^.!]{0,70}(buy[\s-]?back|lemon[\s-]?law|rea?c?quired|repurchase|branded title)[^.!]{0,90}/i);
+  const m = hit.notes.match(/[^.!]{0,70}(buy[\s-]?back|lemon[\s-]?law|reac?quired|repurchase|branded title)[^.!]{0,90}/i);
   flagged.push({ vin: l.vin, domain: l.dealerDomain, quote: m ? m[0].trim() : "" });
 }
 if (flagged.length) {
