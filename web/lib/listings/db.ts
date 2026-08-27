@@ -93,9 +93,9 @@ const FEED_REVALIDATE_SECONDS = 86400;
 // runs on.
 const REVALIDATE_SECONDS = 86400;
 // Every fetch that reads listings data carries this tag; one
-// updateTag(FEED_CACHE_TAG) in /api/revalidate expires them all (it was
-// revalidateTag(tag, {expire:0}), which in Next 16 is a cacheLife profile and
-// purged nothing — see that route).
+// revalidateTag(FEED_CACHE_TAG) in /api/revalidate expires them all — with
+// ONE argument: a second one is a cacheLife profile in Next 16 and purges
+// nothing (see that route).
 export const FEED_CACHE_TAG = "feed";
 
 // The VIN space, split so the pages can be walked in parallel. Buckets that hold
@@ -349,11 +349,11 @@ export function classifyFeedRead(rowCount: number, total: number | null): FeedRe
 // Next's own bundler resolution.
 let escapeFeedCache: (shardCount: number) => void | Promise<void> = async (shardCount) => {
   try {
-    // updateTag, for the same reason /api/revalidate uses it: in Next 16
-    // revalidateTag's second argument is a cacheLife profile, so
-    // `{ expire: 0 }` never purged the feed's fetch entries. See that route.
-    const { updateTag, revalidatePath } = await import("next/cache");
-    updateTag(FEED_CACHE_TAG);
+    // One argument, for the reason /api/revalidate spells out: in Next 16 a
+    // second argument is a cacheLife profile, so `{ expire: 0 }` never purged
+    // the feed's fetch entries, and updateTag throws outside a Server Action.
+    const { revalidateTag, revalidatePath } = await import("next/cache");
+    (revalidateTag as unknown as (tag: string) => void)(FEED_CACHE_TAG);
     revalidatePath("/api/index/first");
     for (let s = 0; s < shardCount; s++) revalidatePath(`/api/index/${s}`);
     // The sitemap shards render off this same walk and cache for the same
