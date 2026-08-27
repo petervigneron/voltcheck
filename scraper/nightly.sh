@@ -16,6 +16,10 @@ mkdir -p logs
 # per-host, so concurrency across distinct dealers costs them nothing.
 node probe.mjs --limit 300 --concurrency 12 >> "$LOG" 2>&1
 
+# Which rooftops advertise a buyback programme. Pure discovery, no listing
+# changes: it only tells vdp-notes.mjs which lots to read first.
+node buyback-dealers.mjs --limit 1500 --concurrency 8 >> "$LOG" 2>&1
+
 DOMAINS=$(python3 -c "
 import json
 r = json.load(open('registry/registry.json'))
@@ -35,6 +39,10 @@ print(' '.join(s['domain'] for s in r['sites'] if s.get('status') == 'working'))
   # per VIN forever, bounded per night, backlog drains over a few nights.
   # db-sync applies the cache (lib/ford-sticker-trim.mjs); this only fills it.
   node ford-sticker.mjs --limit 600
+  # Read the dealer's own notes off used/CPO VDPs whose inventory API carries
+  # none — the only way to see a disclosed manufacturer buyback on those lanes
+  # (lib/dealer-notes.mjs). Bounded per night; advertised buyback lots first.
+  node vdp-notes.mjs --limit 900 --concurrency 6
   node ingest.mjs
   node db-sync.mjs
   # Sanity-check every price against WA sale medians (the vanhyundai

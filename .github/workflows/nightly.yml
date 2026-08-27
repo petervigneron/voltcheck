@@ -541,6 +541,23 @@ jobs:
           # db-sync applies the cache; this step only fills it, which is why
           # a skip here degrades to "no new labels", not "wrong trims".
           timeout 30m node ford-sticker.mjs --limit 600 || echo "ford-sticker hit its 30m cap — continuing; VINs already answered are cached in registry/ford-sticker.json and won't be re-fetched"
+          # Which rooftops advertise a buyback programme. Pure discovery — it
+          # changes no listing and flags no car; it only decides which lots
+          # vdp-notes reads first, so it runs immediately before it. Lives in
+          # this job rather than beside probe.mjs because this is the job whose
+          # whole registry/ directory is uploaded and committed.
+          timeout 20m node buyback-dealers.mjs --limit 1500 --concurrency 8 || echo "buyback-dealers hit its 20m cap — continuing; it only orders the next step's work"
+          # The dealer's own notes off used/CPO VDPs, for the lanes whose
+          # inventory API carries none (scraper/lib/dealer-notes.mjs). This is
+          # the only door to a disclosed manufacturer buyback on ~24k used cars
+          # on dealer lots. Capped like the two lanes above and for the same
+          # reason — a per-target fetch must never spend this job's clock.
+          # 900 pages at 6-way concurrency is well inside 30m; whatever is not
+          # reached is cached-miss and simply comes up tomorrow, and cars
+          # already read are in registry/vdp-notes.json. Must run before
+          # ingest: it writes `description` onto out/listings.json records,
+          # which is what buyback_disclosed (0024) is computed from.
+          timeout 30m node vdp-notes.mjs --limit 900 --concurrency 6 || echo "vdp-notes hit its 30m cap — continuing; cars already read are cached in registry/vdp-notes.json"
           node ingest.mjs
 
       - name: Sync to Supabase
@@ -1054,6 +1071,8 @@ jobs:
           specs=("registry/registry.json:0:registry"
                  "registry/gm-warranty.json:1:GM warranty cache"
                  "registry/ford-sticker.json:1:Ford window-sticker cache"
+                 "registry/vdp-notes.json:1:dealer-notes cache"
+                 "registry/buyback-dealers.json:1:buyback-dealer list"
                  "registry/vpic-cache.json:0:vPIC cache")
           # Copy ALL of them up front, before any git command. unwedge() rewinds
           # the whole registry directory, so a per-iteration `cp` would hand the
