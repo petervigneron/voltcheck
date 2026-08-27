@@ -104,6 +104,12 @@ export default async function WorthPage(props: Props) {
           </p>
         </div>
 
+        {/* The answer above the form, by owner request (2026-08-26): once
+            someone has searched, the number is what the page is FOR — the
+            picker becomes the way to adjust, not the way in, so it moves
+            below what it produced. The bare form keeps the old order. */}
+        {input && valuation && <Result input={input} v={valuation} />}
+
         <WorthForm
           defaults={{
             year: one(sp.year),
@@ -116,8 +122,6 @@ export default async function WorthPage(props: Props) {
             cond: one(sp.cond),
           }}
         />
-
-        {input && valuation && <Result input={input} v={valuation} />}
       </div>
     </div>
   );
@@ -186,6 +190,18 @@ function Result({ input, v }: { input: WorthInput; v: Valuation }) {
           {v.estimated && <span className={`${CAPTION} text-amber-700`}>est.</span>}
         </div>
 
+      </div>
+
+      {/* The same browse link the abstention carries, same words, by owner
+          request (2026-08-26): a seller who just learned the number's next
+          question is what cars like theirs are listed at. */}
+      <div className="border-t-[3px] border-ink">
+        <Link
+          href={`/?make=${encodeURIComponent(input.make)}&model=${encodeURIComponent(input.model)}`}
+          className="flex items-center gap-2 bg-paper px-5 py-4 text-[12.5px] font-extrabold tracking-[0.06em] text-ink uppercase hover:bg-cobalt hover:text-paper focus:outline-none focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-cobalt sm:px-8"
+        >
+          Browse {input.make} {input.model} listings <span aria-hidden="true">→</span>
+        </Link>
       </div>
 
       <div className="flex flex-wrap border-t-[3px] border-ink">
