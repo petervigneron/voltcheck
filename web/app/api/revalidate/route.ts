@@ -1,5 +1,5 @@
 import { createHash, timingSafeEqual } from "node:crypto";
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { FEED_CACHE_TAG } from "@/lib/listings/db";
 import { SHARDS } from "@/lib/listings/pack";
 import { SITEMAP_SHARDS } from "@/lib/sitemap";
@@ -28,7 +28,25 @@ export async function POST(req: Request) {
   if (!timingSafeEqual(digest, want)) {
     return Response.json({ error: "unauthorized" }, { status: 401 });
   }
-  revalidateTag(FEED_CACHE_TAG, { expire: 0 });
+  // updateTag, NOT revalidateTag(tag, { expire: 0 }).
+  //
+  // Measured on production 2026-08-27, and this route has been a no-op for the
+  // feed since the Next 16 upgrade: POST it, then request a shard, and the
+  // route DOES re-render (x-vercel-cache: REVALIDATED, age 0) — but in 2.0
+  // seconds, when a real feed walk is 90-300s. The render was reading fetch
+  // entries the tag call had not purged. The visible symptom was
+  // /api/index/first frozen at total 136,597 for 19+ hours while the database
+  // moved past 137,300, and a corrected price sitting right on the detail page
+  // (which reads per-VIN) while the browse card beside it stayed wrong.
+  //
+  // In Next 16.3.0 revalidateTag's second argument is a cacheLife PROFILE, not
+  // a purge instruction: `revalidateTag(tag, profile)` normalises an object
+  // through validateAndNormalizeCacheLifeProfile, so `{ expire: 0 }` asks for
+  // a cache lifetime, not "drop this now". Next's own deprecation warning in
+  // that file names the alternatives — a named profile like "max", or
+  // updateTag. updateTag is the one that means what this route means: the data
+  // just changed, expire it.
+  updateTag(FEED_CACHE_TAG);
   for (let s = 0; s < SHARDS; s++) revalidatePath(`/api/index/${s}`);
   // The seventh and eighth bodies under the shard route: the first-paint
   // payload and /worth's trim facets. Same data, same staleness rules.
