@@ -1458,13 +1458,13 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Lyriq",
     modelYears: [2023, 2024],
     drive: "RWD",
+    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
     battery: { packGrossKwh: f(102, "mfr", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(312, "mfr", "high", "2023: 312; 2024: 314, EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(330, "tested", "high", "70-mph (InsideEVs, 2023 RWD): 330 mi; 75-mph (C&D): 270; Edmunds loop (2024): 319") },
     charging: {
       ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(190, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
@@ -1493,10 +1493,10 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     // three-character floor.
     vds: ["KP"],
     drive: "RWD",
+    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
     battery: { packGrossKwh: f(102, "mfr", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(326, "mfr", "high", "EPA figure (11 kW and 19.2 kW chargers)", "https://www.fueleconomy.gov") },
     charging: { ...GM_PORT_CCS_ADAPTER, dcPeakKw: f(190, "agg", "medium") },
-    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
@@ -1525,10 +1525,10 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     // three-character floor.
     vds: ["KP"],
     drive: "RWD",
+    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
     battery: { packGrossKwh: f(102, "mfr", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(326, "mfr", "high", "EPA figure (11 kW and 19.2 kW chargers)", "https://www.fueleconomy.gov") },
     charging: { ...GM_PORT_NACS_NATIVE, dcPeakKw: f(190, "agg", "medium") },
-    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
@@ -1550,13 +1550,13 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Lyriq",
     modelYears: [2023, 2024],
     drive: "AWD",
+    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
     battery: { packGrossKwh: f(102, "mfr", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(307, "mfr", "high", "EPA figure", "https://www.fueleconomy.gov"), testedRangeMi: f(220, "tested", "medium", "75-mph (Car and Driver): 220 mi") },
     charging: {
       ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(190, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
@@ -1590,10 +1590,10 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     vin8: ["L"], // GM Part 565: L = RWD + PAWD (dual motor)
     vds: ["KP"], // ordinary Lyriq; the V-Series is 1GYXP — see lyriq-2025-rwd
     drive: "AWD",
+    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
     battery: { packGrossKwh: f(102, "mfr", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(319, "mfr", "high", "11.5 kW onboard charger, standard", epa(48692)) },
     charging: { ...GM_PORT_CCS_ADAPTER, dcPeakKw: f(190, "agg", "medium") },
-    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
@@ -1617,10 +1617,10 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     vin8: ["L"], // GM Part 565: L = RWD + PAWD (dual motor)
     vds: ["KP"], // ordinary Lyriq; the V-Series is 1GYXP — see lyriq-2025-rwd
     drive: "AWD",
+    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
     battery: { packGrossKwh: f(102, "mfr", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(319, "mfr", "high", "11.5 kW onboard charger, standard", epa(48692)) },
     charging: { ...GM_PORT_NACS_NATIVE, dcPeakKw: f(190, "agg", "medium") },
-    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
@@ -1642,6 +1642,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Prologue",
     modelYears: [2024, 2024],
     drive: "FWD",
+    abstains: { heatPump: "Honda does not name it. Honda's own 2026 Prologue Specifications & Features grid is trim-by-trim and granular enough to list ventilated seats and illuminated footwells; its climate rows read only \"Air Conditioning with Air-Filtration System\" and \"Dual Zone Climate Control\", with no heat-pump line anywhere - that grid is the control test. These rows previously asserted `standard` on GM's platform-wide Ultium claim, which is a GM marketing statement about a Honda-badged car, and which the GM rows themselves stopped asserting on 2026-08-26. The Acura ZDX, this car's Ultium twin, already abstained for the same reason." },
     battery: { packGrossKwh: f(85, "mfr", "medium", "GM Ultium pack"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(296, "mfr", "high", "EPA figure", "https://www.fueleconomy.gov") },
     charging: {
@@ -1649,7 +1650,6 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       superchargerAccess: f("adapter", "mfr", "high", "Honda-approved NACS adapter, mid-2025"),
       dcPeakKw: f(155, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
@@ -1673,6 +1673,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     // in the 2026-08-14 pass.
     modelYears: [2025, 2026],
     drive: "FWD",
+    abstains: { heatPump: "Honda does not name it. Honda's own 2026 Prologue Specifications & Features grid is trim-by-trim and granular enough to list ventilated seats and illuminated footwells; its climate rows read only \"Air Conditioning with Air-Filtration System\" and \"Dual Zone Climate Control\", with no heat-pump line anywhere - that grid is the control test. These rows previously asserted `standard` on GM's platform-wide Ultium claim, which is a GM marketing statement about a Honda-badged car, and which the GM rows themselves stopped asserting on 2026-08-26. The Acura ZDX, this car's Ultium twin, already abstained for the same reason." },
     battery: { packGrossKwh: f(85, "mfr", "medium", "GM Ultium pack"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(308, "mfr", "high", "EPA figure", "https://www.fueleconomy.gov") },
     charging: {
@@ -1680,7 +1681,6 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       superchargerAccess: f("adapter", "mfr", "high", "Honda-approved NACS adapter, mid-2025"),
       dcPeakKw: f(155, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
@@ -1704,6 +1704,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     trim: ["EX", "Touring"],
     vds: ["KHV", "KHX"],
     drive: "AWD",
+    abstains: { heatPump: "Honda does not name it. Honda's own 2026 Prologue Specifications & Features grid is trim-by-trim and granular enough to list ventilated seats and illuminated footwells; its climate rows read only \"Air Conditioning with Air-Filtration System\" and \"Dual Zone Climate Control\", with no heat-pump line anywhere - that grid is the control test. These rows previously asserted `standard` on GM's platform-wide Ultium claim, which is a GM marketing statement about a Honda-badged car, and which the GM rows themselves stopped asserting on 2026-08-26. The Acura ZDX, this car's Ultium twin, already abstained for the same reason." },
     battery: { packGrossKwh: f(85, "mfr", "medium", "GM Ultium pack"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(281, "mfr", "high", undefined, epa(47830)), testedRangeMi: f(240, "tested", "medium", "75-mph (Car and Driver, Elite AWD): 240 mi; Edmunds mixed loop: 320") },
     charging: {
@@ -1711,7 +1712,6 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       superchargerAccess: f("adapter", "mfr", "high", "Honda-approved NACS adapter, mid-2025"),
       dcPeakKw: f(155, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
@@ -1740,6 +1740,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     trim: "Elite",
     vds: ["KHZ"],
     drive: "AWD",
+    abstains: { heatPump: "Honda does not name it. Honda's own 2026 Prologue Specifications & Features grid is trim-by-trim and granular enough to list ventilated seats and illuminated footwells; its climate rows read only \"Air Conditioning with Air-Filtration System\" and \"Dual Zone Climate Control\", with no heat-pump line anywhere - that grid is the control test. These rows previously asserted `standard` on GM's platform-wide Ultium claim, which is a GM marketing statement about a Honda-badged car, and which the GM rows themselves stopped asserting on 2026-08-26. The Acura ZDX, this car's Ultium twin, already abstained for the same reason." },
     battery: { packGrossKwh: f(85, "mfr", "medium", "GM Ultium pack"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(273, "mfr", "high", undefined, epa(47829)), testedRangeMi: f(240, "tested", "medium", "75-mph (Car and Driver, Elite AWD): 240 mi; Edmunds mixed loop: 320") },
     charging: {
@@ -1747,7 +1748,6 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       superchargerAccess: f("adapter", "mfr", "high", "Honda-approved NACS adapter, mid-2025"),
       dcPeakKw: f(155, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
@@ -1774,6 +1774,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     trim: ["EX", "Touring"],
     vds: ["KHV", "KHX"],
     drive: "AWD",
+    abstains: { heatPump: "Honda does not name it. Honda's own 2026 Prologue Specifications & Features grid is trim-by-trim and granular enough to list ventilated seats and illuminated footwells; its climate rows read only \"Air Conditioning with Air-Filtration System\" and \"Dual Zone Climate Control\", with no heat-pump line anywhere - that grid is the control test. These rows previously asserted `standard` on GM's platform-wide Ultium claim, which is a GM marketing statement about a Honda-badged car, and which the GM rows themselves stopped asserting on 2026-08-26. The Acura ZDX, this car's Ultium twin, already abstained for the same reason." },
     battery: { packGrossKwh: f(85, "mfr", "medium", "GM Ultium pack"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(294, "mfr", "high", undefined, epa(49089)) },
     charging: {
@@ -1781,7 +1782,6 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       superchargerAccess: f("adapter", "mfr", "high", "Honda-approved NACS adapter, mid-2025"),
       dcPeakKw: f(155, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
@@ -1803,6 +1803,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Equinox EV",
     modelYears: [2024, 2026],
     drive: "FWD",
+    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
     battery: { packGrossKwh: f(85, "mfr", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(319, "mfr", "high", "All years, EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(303, "tested", "high", "70-mph (InsideEVs, 2024 2RS FWD): 303 mi; 75-mph (C&D): 260; Edmunds loop (2025): 356") },
     charging: {
@@ -1823,7 +1824,6 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       dcPeakKw: f(150, "mfr", "high", undefined, EQX_RELEASE),
       acOnboardKw: f(11.5, "mfr", "high", undefined, EQX_RELEASE),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
@@ -1845,6 +1845,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Equinox EV",
     modelYears: [2024, 2026],
     drive: "AWD",
+    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
     battery: { packGrossKwh: f(85, "mfr", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(297, "mfr", "high", "2024: 285; 2025–26: 307 (288 with 19.2 kW charger), EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(260, "tested", "low", "75 mph (Car and Driver)") },
     charging: {
@@ -1865,7 +1866,6 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       dcPeakKw: f(150, "mfr", "high", undefined, EQX_RELEASE),
       acOnboardKw: f(11.5, "mfr", "high", undefined, EQX_RELEASE),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
@@ -1892,13 +1892,13 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Blazer EV",
     modelYears: [2025, 2026],
     drive: "FWD",
+    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
     battery: { packGrossKwh: f(85, "mfr", "medium", "FWD/AWD"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(312, "mfr", "high", undefined, epa(49069)) },
     charging: {
       ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(150, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
@@ -1922,13 +1922,13 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Blazer EV",
     modelYears: [2024, 2024],
     drive: "AWD",
+    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
     battery: { packGrossKwh: f(85, "mfr", "medium", "FWD/AWD"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(279, "mfr", "high", undefined, epa(47445)), testedRangeMi: f(200, "tested", "high", "75-mph (Car and Driver, 2024 RS AWD): 200 mi vs 279 EPA; Edmunds mixed loop: 320") },
     charging: {
       ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(150, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
@@ -1952,13 +1952,13 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Blazer EV",
     modelYears: [2025, 2026],
     drive: "AWD",
+    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
     battery: { packGrossKwh: f(85, "mfr", "medium", "FWD/AWD"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(283, "mfr", "high", undefined, epa(48342)), testedRangeMi: f(200, "tested", "high", "75-mph (Car and Driver, 2024 RS AWD): 200 mi vs 279 EPA; Edmunds mixed loop: 320") },
     charging: {
       ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(150, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
@@ -1982,13 +1982,13 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Blazer EV",
     modelYears: [2024, 2024],
     drive: "RWD",
+    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
     battery: { packGrossKwh: f(102, "mfr", "medium", "RWD/SS"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(324, "mfr", "high", undefined, epa(47813)) },
     charging: {
       ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(190, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
@@ -2012,13 +2012,13 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Blazer EV",
     modelYears: [2025, 2025],
     drive: "RWD",
+    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
     battery: { packGrossKwh: f(102, "mfr", "medium", "RWD/SS"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(334, "mfr", "high", undefined, epa(48694)) },
     charging: {
       ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(190, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
@@ -2041,13 +2041,13 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     modelYears: [2025, 2025],
     trim: "SS",
     drive: "AWD",
+    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
     battery: { packGrossKwh: f(102, "mfr", "medium", "RWD/SS"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(303, "mfr", "high", undefined, epa(49068)), testedRangeMi: f(250, "tested", "high", "75-mph (Car and Driver, 2025 SS): 250 mi") },
     charging: {
       ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(190, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
@@ -2070,13 +2070,13 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     modelYears: [2026, 2026],
     trim: "SS",
     drive: "AWD",
+    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
     battery: { packGrossKwh: f(102, "mfr", "medium", "RWD/SS"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(302, "mfr", "high", undefined, epa(49954)), testedRangeMi: f(250, "tested", "high", "75-mph (Car and Driver, 2025 SS): 250 mi") },
     charging: {
       ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(190, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
@@ -2102,13 +2102,13 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     // no combustion car of that name for it to poach.
     modelAliases: ["Hummer EV Pickup"],
     modelYears: [2022, 2025],
+    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
     battery: { packUsableKwh: f(205, "est", "medium", "213.7 kWh gross; 2024+ 2M20 variants are smaller"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(314, "mfr", "high", "2024–25: 298–318 by config/tires, EPA. 2022–23: no EPA rating exists (GM est. 329)", "https://www.fueleconomy.gov"), testedRangeMi: f(343, "tested", "high", "70-mph (InsideEVs, 2022 Edition 1): 343 mi, beat its 329 GM estimate; 75-mph (C&D): 290") },
     charging: {
       ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(350, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
@@ -2135,13 +2135,13 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     make: "GMC",
     model: "Hummer EV SUV",
     modelYears: [2024, 2024],
+    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
     battery: { packUsableKwh: f(205, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(314, "mfr", "high", "All-terrain tires, standard", epa(46953)) },
     charging: {
       ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(350, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
@@ -2168,13 +2168,13 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     make: "GMC",
     model: "Hummer EV SUV",
     modelYears: [2025, 2025],
+    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
     battery: { packUsableKwh: f(205, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(312, "mfr", "high", "All-terrain tires, standard", epa(48348)) },
     charging: {
       ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(350, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
@@ -2716,13 +2716,13 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Silverado EV",
     modelYears: [2024, 2024],
     vds: ["10UED"],
+    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
     battery: { packUsableKwh: f(170, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(393, "mfr", "high", undefined, epa(47446)) },
     charging: {
       ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(350, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
@@ -2744,13 +2744,13 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Silverado EV",
     modelYears: [2024, 2024],
     vds: ["10VEL"],
+    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
     battery: { packUsableKwh: f(205, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(450, "mfr", "high", undefined, epa(46946)) },
     charging: {
       ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(350, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
@@ -2772,13 +2772,13 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Silverado EV",
     modelYears: [2025, 2025],
     vds: ["10TEF"],
+    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
     battery: { packUsableKwh: f(119, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(282, "mfr", "high", undefined, epa(49071)) },
     charging: {
       ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(350, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
@@ -2800,13 +2800,13 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Silverado EV",
     modelYears: [2025, 2025],
     vds: ["10ZED"],
+    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
     battery: { packUsableKwh: f(170, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(408, "mfr", "high", undefined, epa(48700)) },
     charging: {
       ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(350, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
@@ -2828,13 +2828,13 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Silverado EV",
     modelYears: [2025, 2025],
     vds: ["101ED"],
+    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
     battery: { packUsableKwh: f(170, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(390, "mfr", "high", undefined, epa(48701)) },
     charging: {
       ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(350, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
@@ -2856,13 +2856,13 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Silverado EV",
     modelYears: [2025, 2025],
     vds: ["10VED"],
+    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
     battery: { packUsableKwh: f(170, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(422, "mfr", "high", undefined, epa(48702)) },
     charging: {
       ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(350, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
@@ -2884,13 +2884,13 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Silverado EV",
     modelYears: [2025, 2025],
     vds: ["10WEL"],
+    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
     battery: { packUsableKwh: f(205, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(492, "mfr", "high", undefined, epa(48698)) },
     charging: {
       ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(350, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
@@ -2912,13 +2912,13 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Silverado EV",
     modelYears: [2026, 2026],
     vds: ["10UEH", "10YEH"],
+    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
     battery: { packUsableKwh: f(119, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(283, "mfr", "high", undefined, epa(49643)) },
     charging: {
       ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(350, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
@@ -2940,13 +2940,13 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Silverado EV",
     modelYears: [2026, 2026],
     vds: ["10ZED", "103ED"],
+    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
     battery: { packUsableKwh: f(170, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(410, "mfr", "high", undefined, epa(49640)) },
     charging: {
       ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(350, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
@@ -2968,13 +2968,13 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Silverado EV",
     modelYears: [2026, 2026],
     vds: ["10VED"],
+    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
     battery: { packUsableKwh: f(170, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(424, "mfr", "high", undefined, epa(49638)) },
     charging: {
       ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(350, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
@@ -2996,13 +2996,13 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Silverado EV",
     modelYears: [2026, 2026],
     vds: ["10WEL"],
+    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
     battery: { packUsableKwh: f(205, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(493, "mfr", "high", undefined, epa(49639)) },
     charging: {
       ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(350, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
@@ -3022,7 +3022,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     // Class 3 (VIN position 4 = 4, over 10,000 lb GVWR): above EPA's
     // light-duty labelling threshold, so no rating exists to print.
     id: "silverado-class3-standard",
-    abstains: { epaRangeMi: "No EPA rating exists: at over 10,000 lb GVWR these are above EPA's light-duty labelling threshold, confirmed by a blank Monroney range panel and no fueleconomy.gov record" },
+    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain.",  epaRangeMi: "No EPA rating exists: at over 10,000 lb GVWR these are above EPA's light-duty labelling threshold, confirmed by a blank Monroney range panel and no fueleconomy.gov record" },
     make: "CHEVROLET",
     model: "Silverado EV",
     modelYears: [2024, 2026],
@@ -3033,7 +3033,6 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(350, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
@@ -3051,7 +3050,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
 
   {
     id: "silverado-class3-extended",
-    abstains: { epaRangeMi: "No EPA rating exists: at over 10,000 lb GVWR these are above EPA's light-duty labelling threshold, confirmed by a blank Monroney range panel and no fueleconomy.gov record" },
+    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain.",  epaRangeMi: "No EPA rating exists: at over 10,000 lb GVWR these are above EPA's light-duty labelling threshold, confirmed by a blank Monroney range panel and no fueleconomy.gov record" },
     make: "CHEVROLET",
     model: "Silverado EV",
     modelYears: [2024, 2026],
@@ -3062,7 +3061,6 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(350, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
@@ -3080,7 +3078,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
 
   {
     id: "silverado-class3-max",
-    abstains: { epaRangeMi: "No EPA rating exists: at over 10,000 lb GVWR these are above EPA's light-duty labelling threshold, confirmed by a blank Monroney range panel and no fueleconomy.gov record" },
+    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain.",  epaRangeMi: "No EPA rating exists: at over 10,000 lb GVWR these are above EPA's light-duty labelling threshold, confirmed by a blank Monroney range panel and no fueleconomy.gov record" },
     make: "CHEVROLET",
     model: "Silverado EV",
     modelYears: [2024, 2026],
@@ -3091,7 +3089,6 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       ...GM_PORT_CCS_ADAPTER,
       dcPeakKw: f(350, "agg", "medium"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "Ultium Energy Recovery") },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),

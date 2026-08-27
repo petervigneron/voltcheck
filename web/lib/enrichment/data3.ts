@@ -2541,6 +2541,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     model: "Optiq",
     modelYears: [2026, 2027],
     drive: "RWD",
+    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
     battery: { packGrossKwh: f(85, "mfr", "high") },
     range: { epaRangeMi: f(317, "mfr", "high", "2026 and 2027 Optiq RWD, EPA (identical both years)", "https://www.fueleconomy.gov") },
     charging: {
@@ -2548,7 +2549,6 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       superchargerAccess: f("native", "mfr", "high", "Charge port is NACS natively, no adapter needed for Superchargers; a GM-approved adapter is instead needed for CCS/J1772 chargers"),
       dcPeakKw: f(150, "mfr", "high", "Cadillac's own Optiq specs page: 150 kW peak, up to 81 mi added in ~10 min"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "GM's Ultium Energy Recovery heat pump is platform-wide standard; independently corroborated for the Optiq specifically by a trade-press writeup") },
     warranty: {
       batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
@@ -2580,6 +2580,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     model: "Optiq",
     modelYears: [2026, 2027],
     drive: "AWD",
+    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
     battery: { packGrossKwh: f(85, "mfr", "high", "Cadillac's own Optiq specs page (cadillac.com); AWD adds a second motor, not a different pack, per the RWD/AWD EPA records sharing the same platform family") },
     range: { epaRangeMi: f(303, "mfr", "high", "2027 Optiq AWD, EPA", "https://www.fueleconomy.gov") },
     charging: {
@@ -2587,7 +2588,6 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       superchargerAccess: f("native", "mfr", "high", "Charge port is NACS natively, no adapter needed for Superchargers; a GM-approved adapter is instead needed for CCS/J1772 chargers"),
       dcPeakKw: f(150, "mfr", "high", "Cadillac's own Optiq specs page: 150 kW peak, up to 81 mi added in ~10 min"),
     },
-    thermal: { heatPump: f("standard", "agg", "medium", "GM's Ultium Energy Recovery heat pump is platform-wide standard; independently corroborated for the Optiq specifically by a trade-press writeup") },
     warranty: {
       batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
@@ -2610,7 +2610,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
 
   {
     id: "cadillac-escalade-iq-2026",
-    abstains: { epaRangeMi: "No EPA rating exists: NHTSA's VIN decode puts this in GVWR Class 3, above EPA's labelling threshold, and fueleconomy.gov has no record under either nameplate; Cadillac's own figure is an estimate and stays in the buyer note" },
+    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain.",  epaRangeMi: "No EPA rating exists: NHTSA's VIN decode puts this in GVWR Class 3, above EPA's labelling threshold, and fueleconomy.gov has no record under either nameplate; Cadillac's own figure is an estimate and stays in the buyer note" },
     make: "CADILLAC",
     model: "Escalade IQ",
     modelYears: [2025, 2026], // window extended to the MY2025 launch year (2026-08-14)
@@ -2625,7 +2625,6 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       dcPeakKw: f(350, "mfr", "high", "Cadillac's own Escalade IQ specs page: 350 kW peak, up to 117 mi in ~10 min"),
       architectureV: f(800, "mfr", "high"),
     },
-    thermal: { heatPump: f("standard", "agg", "low", "GM's Ultium Energy Recovery heat pump is platform-wide standard; not independently re-confirmed for Escalade IQ specifically") },
     warranty: {
       batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
@@ -2648,7 +2647,7 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
 
   {
     id: "cadillac-escalade-iql-2026",
-    abstains: { epaRangeMi: "No EPA rating exists: NHTSA's VIN decode puts this in GVWR Class 3, above EPA's labelling threshold, and fueleconomy.gov has no record under either nameplate; Cadillac's own figure is an estimate and stays in the buyer note" },
+    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain.",  epaRangeMi: "No EPA rating exists: NHTSA's VIN decode puts this in GVWR Class 3, above EPA's labelling threshold, and fueleconomy.gov has no record under either nameplate; Cadillac's own figure is an estimate and stays in the buyer note" },
     make: "CADILLAC",
     model: "Escalade IQL",
     modelYears: [2026, 2026],
@@ -2666,7 +2665,6 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
       dcPeakKw: f(350, "mfr", "high"),
       architectureV: f(800, "mfr", "high"),
     },
-    thermal: { heatPump: f("standard", "agg", "low", "GM's Ultium Energy Recovery heat pump is platform-wide standard; not independently re-confirmed for Escalade IQL specifically") },
     warranty: {
       batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
@@ -2693,13 +2691,13 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     model: "Sierra EV",
     modelYears: [2026, 2026],
     drive: "AWD",
+    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
     battery: { packGrossKwh: f(120, "agg", "low", "Reported by a GM-focused trade outlet, corroborated by a second aggregator; not confirmed on any gmc.com page, GMC's own /specs and /charging pages for Sierra EV both 404") },
     range: { epaRangeMi: f(283, "mfr", "high", "2026 Sierra EV Elevation, Standard Range (the pack this trim ships with by default), EPA, cross-corroborated by GMC's own site FAQ", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "agg", "low", "Not stated on any GMC page found for Sierra EV specifically; inferred by platform-family analogy to Silverado EV, which shares this Ultium truck platform"),
       dcPeakKw: f(220, "agg", "low"),
     },
-    thermal: { heatPump: f("standard", "agg", "low", "GM's Ultium Energy Recovery heat pump is platform-wide standard; not independently confirmed on any GMC page for Sierra EV") },
     warranty: {
       batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
@@ -2731,13 +2729,13 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     model: "Sierra EV",
     modelYears: [2026, 2026],
     drive: "AWD",
+    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
     battery: { packGrossKwh: f(170, "agg", "low", "Reported by a GM-focused trade outlet, corroborated by a second aggregator; not confirmed on any gmc.com page, GMC's own /specs and /charging pages for Sierra EV both 404") },
     range: { epaRangeMi: f(410, "mfr", "high", "2026 Sierra EV Elevation with the optional Extended Range pack, EPA, cross-corroborated by GMC's own site FAQ", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "agg", "low", "Not stated on any GMC page found for Sierra EV specifically; inferred by platform-family analogy to Silverado EV, which shares this Ultium truck platform"),
       dcPeakKw: f(300, "agg", "low"),
     },
-    thermal: { heatPump: f("standard", "agg", "low", "GM's Ultium Energy Recovery heat pump is platform-wide standard; not independently confirmed on any GMC page for Sierra EV") },
     warranty: {
       batteryYears: f(8, "mfr", "high"),
       batteryMiles: f(100_000, "mfr", "high"),
