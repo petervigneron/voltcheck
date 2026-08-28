@@ -4866,30 +4866,50 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     ];
   })(),
 
-  // ── GMC Sierra EV (same pass; re-keyed onto the trim 2026-08-25) ──────
+  // ── GMC Sierra EV, MY2024-2025 ────────────────────────────────────────
   //
-  // These rows arrived keyed on VIN position 8, on the claim that L = Max
-  // Range, D = Extended Range, H = Standard Range. That claim does not hold
-  // and the rows no longer make it. Control test, every GMC BEV VIN in the
-  // vPIC cache: MY2024 Denali reads L, but MY2025 Denali reads **D** — the
-  // same code the row called Extended Range — and MY2026 splits D/H across
-  // trims named "Elevation 20" and "Elevation 14" rather than by range tier.
-  // Position 8 also collides with the Hummer (D is the Hummer 2X), and the
-  // per-VIN kWh that might have settled it is the flat 205 constant this
-  // block already refuses to read. Left as written, the MY2025 key would have
-  // printed the 390-mile Extended Range figure on a Max Range Denali.
+  // The MY2026 rows are in data3.ts, keyed on VIN positions 4-8; its block
+  // comment carries the nameplate's full VIN map. These two model years stay
+  // here, and they now carry the same kind of key.
   //
-  // The dealer's trim string, on the other hand, names the pack outright on
-  // 502 of 507 live Sierra EV listings: "Extended Range Denali", "Denali Max
-  // Range", "Elevation Standard Range". So these rows key on that, and the
-  // five listings whose trim says only "Denali" or nothing match no row,
-  // which is the honest answer for a truck whose pack nobody stated.
+  // A CORRECTION TO THIS BLOCK'S OWN CONTROL TEST (2026-08-28). It used to
+  // say position 8 could not be trusted, on this evidence: "MY2024 Denali
+  // reads L, but MY2025 Denali reads D — the same code the row called
+  // Extended Range." Both observations are true and they are not a
+  // contradiction: "Denali" is a TRIM, and it ships with more than one pack.
+  // Re-decoded this pass, one real VIN per descriptor —
   //
-  // fueleconomy.gov (model menu re-read 2026-08-25) has no 2024 Sierra EV
-  // record at all, exactly one 2025 record (the 390-mi Extended Range), and
-  // 2026 certs for Extended and Standard Range only — no Max Range in any
-  // year. The three Max/Edition-1 figures below are GM's own announced
-  // ratings and are marked agg accordingly.
+  //   1GT401EL1RU401931  MY2024 Denali  pos8=L  XRJ + ETN  24-MOD
+  //   1GT10MED2SU412715  MY2025 Denali  pos8=D  XRJ + ETI  20-MOD
+  //   1GT40LEL3SU408686  MY2025 Denali  pos8=L  XRJ + ETN  24-MOD
+  //
+  // — position 8 is perfectly stable across all three model years: H is the
+  // 14-module pack, D the 20-module, L the 24-module, each carrying GM's own
+  // pack RPO (EWX / ETI / ETN) alongside it. What varies is the trim name, so
+  // the old test was measuring the trim rather than the code. The MY2025
+  // Denali really does come as both an Extended Range and a Max Range truck,
+  // which is exactly why the trim string "Denali" cannot settle it.
+  //
+  // The block's other two objections still stand and are why these rows key
+  // on a FIVE-character `vds` (positions 4-8) rather than on `vin8`: position
+  // 8 alone collides with the Hummer, and vPIC's per-VIN kWh is the flat 205
+  // constant this block already refuses to read. A vds prefix pins the
+  // nameplate, the trim family and the pack in one field.
+  //
+  // The trim keys are GONE rather than kept alongside, which is the opposite
+  // of what it looks like it should be. A trim key on a vds-keyed row is a
+  // veto: trimMatches() refuses a listing whose own trim field is blank, and
+  // it runs before the vds filter, so the row becomes unreachable for exactly
+  // the trucks the VIN was added to rescue — the ones whose trim says only
+  // "Denali" or says nothing. The data3 block carries the measurement.
+  //
+  // fueleconomy.gov (model menu re-read 2026-08-28) has no 2024 Sierra EV
+  // record at all and exactly one 2025 record, the 390-mi Extended Range. The
+  // two Max/Edition-1 figures below are GM's own announced ratings and are
+  // marked agg accordingly. GMC's live site now quotes 478 miles for the
+  // MY2026 Max Range truck where this block had 460 for 2025-26; the MY2026
+  // rows in data3 carry 478 with a gmc.com citation, and the MY2025 figure is
+  // left at 460 because nothing found this pass restates it for that year.
   ...(() => {
     const SEV = { make: "GMC", model: "Sierra EV" };
     const GM_W = {
@@ -4898,8 +4918,11 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
       batteryTransfers: f(true, "mfr" as Source, "high", "“Transferable at no cost” — GMC EV warranty booklet"),
     };
     const SEV_CHG = { portStandard: f<"CCS1">("CCS1", "mfr", "high", "CCS1-native like Silverado EV/Escalade IQ (a GM NACS adapter covers Superchargers) — the opposite of the NACS-native Optiq") };
-    const sev = (id: string, years: [number, number], trim: string[], variant: string, rangeFact: Fact<number>): EnrichmentRow => ({
-      id, ...SEV, modelYears: years, trim, drive: "AWD", packVariant: variant,
+    // No `trim` key: on a vds-keyed row it is a veto rather than a second
+    // opinion, because trimMatches() refuses a listing with no trim at all
+    // and runs before the vds filter. See the data3 block for the measurement.
+    const sev = (id: string, years: [number, number], _trim: string[], variant: string, rangeFact: Fact<number>, vds?: string[]): EnrichmentRow => ({
+      id, ...SEV, modelYears: years, vds, drive: "AWD", packVariant: variant,
       // Two deliberate silences, both for the reason the block comment gives.
       // The pack: vPIC reads a flat 205 kWh on Extended and Max Range trucks
       // alike, which is the model-level-constant failure this corpus has been
@@ -4915,19 +4938,21 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     });
     return [
       sev("sierraev-2024-denali-e1", [2024, 2024], ["Denali Edition 1", "Edition 1"], "Denali Edition 1 (Max Range)",
-        f(440, "agg", "medium", "MY2024 Denali Edition 1, the only 2024 config — GM's announced EPA rating; absent from fueleconomy.gov's dataset")),
+        f(440, "agg", "medium", "MY2024 Denali Edition 1, the only 2024 config — GM's announced EPA rating; absent from fueleconomy.gov's dataset"),
+        ["401EL"]),
       sev("sierraev-2025-max", [2025, 2025], ["Max Range"], "Max Range",
-        f(460, "agg", "medium", "MY2025 Max Range pack — GM's announced EPA rating; fueleconomy.gov carries only the Extended Range 2025 cert")),
+        f(460, "agg", "medium", "MY2025 Max Range pack — GM's announced EPA rating; fueleconomy.gov carries only the Extended Range 2025 cert"),
+        ["40LEL"]),
       sev("sierraev-2025-er", [2025, 2025], ["Extended Range"], "Extended Range",
-        f(390, "mfr", "high", "MY2025 Extended Range, EPA", epa(48709))),
-      sev("sierraev-2026-max", [2026, 2026], ["Max Range"], "Max Range",
-        f(460, "agg", "medium", "MY2026 Max Range pack — GM quotes the same 460-mi rating as 2025; fueleconomy.gov has no 2026 Max Range cert in any year")),
-      // The 2026 Standard and Extended Range rows live in data3, with richer
-      // facts and the 26V494 battery-recall note. They carry no trim key, so
-      // a 2026 Max Range truck used to sit as a candidate between the two of
-      // them; the row above now takes it. Those two rows would resolve their
-      // own 348 live listings the same way if they were trim-keyed — left
-      // alone here because they are not this branch's rows to re-key.
+        f(390, "mfr", "high", "MY2025 Extended Range, EPA", epa(48709)),
+        ["10MED"]),
+      // `sierraev-2026-max` used to sit here, carrying every MY2026 Max Range
+      // truck on the trim string. It is gone: data3 now holds SEVEN MY2026
+      // rows keyed on positions 4-8, and two of them are Max Range trucks —
+      // the AT4 and the Denali, which this row could not tell apart and which
+      // GMC rates identically at 478 miles but equips differently. Keeping
+      // both would have made every Max Range truck an ambiguous two-candidate
+      // match, which is what it was doing when this was written.
     ];
   })(),
 

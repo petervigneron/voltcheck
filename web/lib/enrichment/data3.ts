@@ -143,6 +143,59 @@ const NOTE_EQS_NEXTGEN = {
   severity: "info" as const,
 };
 
+// ── GMC Sierra EV shared facts ─────────────────────────────────────────────
+// Seven configurations share everything except pack, range and DC rate; these
+// exist so a change to the warranty or a recall is made once rather than seven
+// times. The full story of the nameplate is in the block comment on the rows.
+const GMC_SIERRA = "https://www.gmc.com/electric/sierra-ev";
+const SIERRA_HP_ABSTAIN =
+  "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain.";
+const SIERRA_PACK_NOTE =
+  "Reported by a GM-focused trade outlet, corroborated by a second aggregator; not confirmed on any gmc.com page, GMC's own /specs and /charging pages for Sierra EV both 404";
+// Deliberately no packGrossKwh on the Max Range rows below. The trade figures
+// above cover the 14- and 20-module packs only, and gmc.com states no capacity
+// for any Sierra EV pack — a grep of its whole Sierra EV page for "kWh"
+// returns nothing at all. Scaling 170 kWh by 24/20 would be arithmetic, not a
+// source, so those two rows carry range and no capacity.
+// The one unresolved thing on this nameplate; see the block comment. It rides
+// as a row note (hover only, never page copy) rather than a buyer note.
+const CHARGER_NOTE =
+  "EPA rated the Extended Range truck twice — 410 miles with the 11 kW onboard charger and 385 with the 19 kW — and no VIN field says which one a given truck has. GMC's own FAQ publishes 410 for the Elevation and the Denali with no charger qualifier, so this is the standard configuration's figure.";
+const SIERRA_MAX_PACK_ABSTAIN =
+  "GMC publishes no battery capacity for any Sierra EV pack — a search of its whole Sierra EV page for \u201ckWh\u201d returns nothing — and the trade figures the smaller packs rest on cover the 14- and 20-module packs only, so scaling one of them by 24/20 would be arithmetic rather than a source";
+const MAX_RANGE_NOTE =
+  "24-module Max Range pack. EPA holds no record for it — its 2026 Sierra EV list is one Std Range and two Ext Range entries — so this is GMC's own estimate, not a rating.";
+const SIERRA_WARRANTY = {
+  batteryYears: f(8, "mfr", "high"),
+  batteryMiles: f(100_000, "mfr", "high"),
+  sohFloorPct: f(75, "mfr", "high"),
+  batteryTransfers: f(true, "mfr", "high"),
+};
+const SIERRA_PORT = f<"CCS1">(
+  "CCS1",
+  "agg",
+  "low",
+  "Not stated on any GMC page found for Sierra EV specifically; inferred by platform-family analogy to Silverado EV, which shares this Ultium truck platform"
+);
+const SIERRA_CHARGING_STD = { portStandard: SIERRA_PORT, dcPeakKw: f(220, "agg", "low") };
+const SIERRA_CHARGING_EXT = { portStandard: SIERRA_PORT, dcPeakKw: f(300, "agg", "low") };
+// The Max Range pack is the one GMC makes a public DC claim about: "up to 120
+// miles in approximately 10 minutes" on 800V, which is a rate claim rather
+// than a peak-kW figure, so it stays in the note and no dcPeakKw is asserted.
+const SIERRA_CHARGING_MAX = { portStandard: SIERRA_PORT };
+const SIERRA_RECALLS = [
+  {
+    headline: "HV battery module recall, remedy not yet available",
+    body: "26V494 (2026 Sierra EV, Silverado EV, Escalade IQ, Escalade IQL): an improperly secured internal module component in the HV battery may move and damage the battery, increasing fire risk. Dealers will replace the entire HV battery free of charge, but owner notification letters were not expected to be mailed until September 14, 2026.",
+    severity: "trap" as const,
+  },
+  {
+    headline: "Spare-wheel cracking and ESC-warning-light recalls",
+    body: "26V496 (2026 Sierra EV/Silverado EV built Oct 2025\u2013Mar 2026, ~513 units): the spare steel wheel may crack at the disc vent holes. Remedy pending, letters expected September 2026. 25V594 (2026 Sierra EV/Silverado EV): after an ESC malfunction, the warning light may not re-illuminate on the next key cycle. Free OTA or dealer software update, already available.",
+    severity: "warning" as const,
+  },
+];
+
 export const RESEARCH_ROWS_3: EnrichmentRow[] = [
   // ---------------------------------------------------------------------
   // Ford Mustang Mach-E — moved to data4.ts (2026-08-14 pass), re-keyed on
@@ -2685,79 +2738,210 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     ],
   },
 
+
+  // ─────────────────────────── GMC SIERRA EV ───────────────────────────────
+  //
+  // 969 live listings, 773 of which showed NO RANGE until 2026-08-28, and the
+  // cause was not research: both rows below already carried the right EPA
+  // figures. They carried no VIN key and no trim key, so every Sierra EV
+  // matched BOTH of them, came back as `candidates`, and rendered as a
+  // 283-410 spread instead of a number — while the listing's own trim string
+  // said "Elevation Standard Range" in 373 cases and "Elevation Extended
+  // Range" in 338. The site was declining to answer a question the feed had
+  // already answered. Worse, each row carried a note reading "This listing
+  // doesn't say which battery pack this Elevation trim has", which was false
+  // for 629 of the 773 and is deleted below.
+  //
+  // THE VIN, NOT THE TRIM STRING, and here it matters more than usual. The
+  // trim strings are a mess — "Elevation Standard Range", "Standard Range
+  // Elevation", "Elevation STD Range", "Elevation 14", "e4wd Elevation
+  // Extended Range", "Elevation Premium Extended Range", 35 bare "Elevation"
+  // and 10 with no trim at all — and a substring rule over that set is how
+  // the Lyriq V-Series row once swallowed 878 ordinary Lyriqs. Positions 4-8
+  // say it exactly, on every VIN, whatever the dealer typed.
+  //
+  // THE POSITION-6 TRAP, which cost a wrong cohort and is why these rows are
+  // keyed on a FIVE-character descriptor rather than on `vin8` alone. Swept
+  // across positions 4, 6 and 8 on 2026-08-28, every character:
+  //
+  //   position 4  1 or 4, GVWR code; no effect on trim, pack or motor
+  //   position 6  S/T Elevation, U/V AT4, W/X/Y Denali — and vPIC reports its
+  //               `Trim` field from THIS POSITION ALONE
+  //   position 8  H = EWX / 14-MOD, D = ETI / 20-MOD, L = ETN / 24-MOD
+  //
+  // vPIC's Trim string embeds a module count ("Elevation 14", "Denali 20",
+  // "AT4 24") and that count is a property of position 6, not of the pack the
+  // van actually has: feed position 6 = S with position 8 = L and vPIC still
+  // answers "Elevation 14" while its own OtherEngineInfo reads 24-MOD. It
+  // decodes each position independently and never cross-checks them, so the
+  // sweep manufactures combinations no real truck has. Every one of the ten
+  // descriptors actually present in the live feed IS self-consistent — pos 6's
+  // nominal pack always equals pos 8's — so the honest key is the PAIR, which
+  // a five-character `vds` prefix pins in one field. A row keyed on vPIC's
+  // Trim string, or on position 8 alone, would be keyed on half the evidence.
+  // (Same class as the vPIC constant-field trap that put "98 kWh" on every
+  // Lightning: control-test two cohorts that must differ before cohorting.)
+  //
+  // RANGE IS PER TRIM AS WELL AS PER PACK, which one row per pack could not
+  // have expressed. GMC's own FAQ enumerates all seven configurations:
+  //
+  //   Elevation Standard  283  EPA-estimated      Denali Standard  283  EPA
+  //   Elevation Extended  410  EPA-estimated      Denali Extended  410  EPA
+  //   AT4       Extended  390  GM-estimated       Denali Max       478  GM-est
+  //   AT4       Max       478  GM-estimated
+  //
+  // The AT4 is the one that makes the point: same 20-module pack as the
+  // Elevation, 20 fewer miles, because it is the off-road trim. A single
+  // "extended range = 410" row would have overclaimed by 20 miles on all 29
+  // of them. THREE of the seven have no EPA rating at all — EPA's own record
+  // list for the 2026 Sierra EV holds Std Range and two Ext Range entries and
+  // nothing for Max Range — so those three carry `mfrRangeMi` (lib/types.ts),
+  // the field added the same day for the BrightDrop vans, and render as "478
+  // mi est" rather than as nothing.
+  //
+  // NO `trim` KEY ON ANY OF THESE, and the reason is a trap worth naming: on
+  // a VIN-keyed row a trim key is not belt-and-braces, it is a VETO.
+  // `trimMatches` (match.ts) returns false when the LISTING carries no trim —
+  // deliberately, so a blank-trim listing cannot pick up an arbitrary row —
+  // and it runs in the row filter BEFORE the vds filter. So a row carrying
+  // both keys is unreachable for exactly the listings the VIN was added to
+  // rescue. Measured: with `trim` set alongside `vds`, 19 Sierra EVs whose
+  // descriptor named their pack exactly still matched nothing, every one of
+  // them a listing whose trim field was blank or said only "Denali". The vds
+  // already pins the trim family — that is what position 6 is — so the trim
+  // key bought nothing and cost those 19.
+  //
+  // THE 19 kW CHARGER, recorded here because it is the one thing on this
+  // nameplate that is not fully resolved. EPA lists the Extended Range twice —
+  // "SIERRA EV Ext Range (11kW Charger)" at 410 miles and "(19kW Charger)" at
+  // 385 — and nothing in the VIN says which onboard charger a truck has
+  // (checked: vPIC's full decode for these VINs carries no charging-module
+  // field, unlike its pack RPO). GMC's own consumer FAQ publishes 410 for the
+  // Elevation and the Denali with no charger qualifier, so 410 is the figure
+  // for the standard configuration and that is what these rows print — the
+  // rule this file already settled for range-varies-by-wheel-size. It stays a
+  // row `note`, which renders only on hover, rather than a buyer note: a
+  // shopper cannot act on "one of two EPA records may apply to your truck".
+  //
+  // MY2024 AND MY2025 LIVE IN data4.ts, under ids spelled `sierraev-` rather
+  // than `sierra-ev-`, which is why a grep for this file's ids does not find
+  // them — worth knowing before adding a row here for either year. That block
+  // was keyed on the dealer's trim string because it had concluded position 8
+  // was unreliable; its control test turns out to have compared a TRIM across
+  // model years rather than a pack, and the correction (with the three VINs
+  // that settle it) is written up there. Those rows now carry `vds` keys of
+  // the same shape as these — 401EL, 10MED, 40LEL.
   {
-    id: "sierra-ev-2026-standard-range",
+    id: "sierra-ev-2026-elevation-standard",
     make: "GMC",
     model: "Sierra EV",
     modelYears: [2026, 2026],
+    vds: ["1ESEH", "4ESEH"],
     drive: "AWD",
-    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
-    battery: { packGrossKwh: f(120, "agg", "low", "Reported by a GM-focused trade outlet, corroborated by a second aggregator; not confirmed on any gmc.com page, GMC's own /specs and /charging pages for Sierra EV both 404") },
-    range: { epaRangeMi: f(283, "mfr", "high", "2026 Sierra EV Elevation, Standard Range (the pack this trim ships with by default), EPA, cross-corroborated by GMC's own site FAQ", "https://www.fueleconomy.gov") },
-    charging: {
-      portStandard: f("CCS1", "agg", "low", "Not stated on any GMC page found for Sierra EV specifically; inferred by platform-family analogy to Silverado EV, which shares this Ultium truck platform"),
-      dcPeakKw: f(220, "agg", "low"),
-    },
-    warranty: {
-      batteryYears: f(8, "mfr", "high"),
-      batteryMiles: f(100_000, "mfr", "high"),
-      sohFloorPct: f(75, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
-    },
-    buyerNotes: [
-      {
-        headline: "This listing doesn't say which battery pack this Elevation trim has",
-        body: "GMC's own site confirms the Elevation trim ships standard with the Standard Range pack (283 mi EPA) but offers an Extended Range pack (410 mi EPA) as an upgrade on the same trim. This row assumes Standard Range; check the window sticker or door-jamb label to confirm.",
-        severity: "warning",
-      },
-      {
-        headline: "HV battery module recall, remedy not yet available",
-        body: "26V494 (2026 Sierra EV, Silverado EV, Escalade IQ, Escalade IQL): an improperly secured internal module component in the HV battery may move and damage the battery, increasing fire risk. Dealers will replace the entire HV battery free of charge, but owner notification letters were not expected to be mailed until September 14, 2026.",
-        severity: "trap",
-      },
-      {
-        headline: "Spare-wheel cracking and ESC-warning-light recalls",
-        body: "26V496 (2026 Sierra EV/Silverado EV built Oct 2025–Mar 2026, ~513 units): the spare steel wheel may crack at the disc vent holes. Remedy pending, letters expected September 2026. 25V594 (2026 Sierra EV/Silverado EV): after an ESC malfunction, the warning light may not re-illuminate on the next key cycle. Free OTA or dealer software update, already available.",
-        severity: "warning",
-      },
-    ],
+    packVariant: "Standard Range",
+    abstains: { heatPump: SIERRA_HP_ABSTAIN },
+    battery: { packGrossKwh: f(120, "agg", "low", SIERRA_PACK_NOTE) },
+    range: { epaRangeMi: f(283, "mfr", "high", "Elevation, Standard Range (14-module) pack", epa(49660)) },
+    charging: SIERRA_CHARGING_STD,
+    warranty: SIERRA_WARRANTY,
+    buyerNotes: SIERRA_RECALLS,
   },
 
   {
-    id: "sierra-ev-2026-extended-range",
+    id: "sierra-ev-2026-elevation-extended",
     make: "GMC",
     model: "Sierra EV",
     modelYears: [2026, 2026],
+    vds: ["1ETED", "4ETED"],
     drive: "AWD",
-    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
-    battery: { packGrossKwh: f(170, "agg", "low", "Reported by a GM-focused trade outlet, corroborated by a second aggregator; not confirmed on any gmc.com page, GMC's own /specs and /charging pages for Sierra EV both 404") },
-    range: { epaRangeMi: f(410, "mfr", "high", "2026 Sierra EV Elevation with the optional Extended Range pack, EPA, cross-corroborated by GMC's own site FAQ", "https://www.fueleconomy.gov") },
-    charging: {
-      portStandard: f("CCS1", "agg", "low", "Not stated on any GMC page found for Sierra EV specifically; inferred by platform-family analogy to Silverado EV, which shares this Ultium truck platform"),
-      dcPeakKw: f(300, "agg", "low"),
+    packVariant: "Extended Range",
+    abstains: { heatPump: SIERRA_HP_ABSTAIN },
+    battery: { packGrossKwh: f(170, "agg", "low", SIERRA_PACK_NOTE) },
+    range: { epaRangeMi: f(410, "mfr", "high", CHARGER_NOTE, epa(49658)) },
+    charging: SIERRA_CHARGING_EXT,
+    warranty: SIERRA_WARRANTY,
+    buyerNotes: SIERRA_RECALLS,
+  },
+
+  {
+    id: "sierra-ev-2026-denali-standard",
+    make: "GMC",
+    model: "Sierra EV",
+    modelYears: [2026, 2026],
+    vds: ["1EWEH", "4EWEH"],
+    drive: "AWD",
+    packVariant: "Standard Range",
+    abstains: { heatPump: SIERRA_HP_ABSTAIN },
+    battery: { packGrossKwh: f(120, "agg", "low", SIERRA_PACK_NOTE) },
+    range: { epaRangeMi: f(283, "mfr", "high", "Denali, Standard Range (14-module) pack", epa(49660)) },
+    charging: SIERRA_CHARGING_STD,
+    warranty: SIERRA_WARRANTY,
+    buyerNotes: SIERRA_RECALLS,
+  },
+
+  {
+    id: "sierra-ev-2026-denali-extended",
+    make: "GMC",
+    model: "Sierra EV",
+    modelYears: [2026, 2026],
+    vds: ["1EXED", "4EXED"],
+    drive: "AWD",
+    packVariant: "Extended Range",
+    abstains: { heatPump: SIERRA_HP_ABSTAIN },
+    battery: { packGrossKwh: f(170, "agg", "low", SIERRA_PACK_NOTE) },
+    range: { epaRangeMi: f(410, "mfr", "high", CHARGER_NOTE, epa(49658)) },
+    charging: SIERRA_CHARGING_EXT,
+    warranty: SIERRA_WARRANTY,
+    buyerNotes: SIERRA_RECALLS,
+  },
+
+  // The three GM-estimated configurations. EPA rated none of them, so these
+  // are the rows that would have printed nothing at all before mfrRangeMi.
+  {
+    id: "sierra-ev-2026-at4-extended",
+    make: "GMC",
+    model: "Sierra EV",
+    modelYears: [2026, 2026],
+    vds: ["1EUED", "4EUED"],
+    drive: "AWD",
+    packVariant: "Extended Range",
+    abstains: { heatPump: SIERRA_HP_ABSTAIN },
+    battery: { packGrossKwh: f(170, "agg", "low", SIERRA_PACK_NOTE) },
+    range: {
+      mfrRangeMi: f(390, "mfr", "high", "AT4 Extended Range — the same 20-module pack as the Elevation's 410-mile EPA rating, 20 miles shorter on the off-road trim, and GMC publishes it as its own estimate rather than an EPA figure", GMC_SIERRA),
     },
-    warranty: {
-      batteryYears: f(8, "mfr", "high"),
-      batteryMiles: f(100_000, "mfr", "high"),
-      sohFloorPct: f(75, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
-    },
-    buyerNotes: [
-      {
-        headline: "This listing doesn't say which battery pack this Elevation trim has",
-        body: "GMC's own site confirms the Elevation trim ships standard with the Standard Range pack (283 mi EPA) but offers this Extended Range pack (410 mi EPA) as an upgrade on the same trim. This row assumes Extended Range; check the window sticker or door-jamb label to confirm.",
-        severity: "warning",
-      },
-      {
-        headline: "HV battery module recall, remedy not yet available",
-        body: "26V494 (2026 Sierra EV, Silverado EV, Escalade IQ, Escalade IQL): an improperly secured internal module component in the HV battery may move and damage the battery, increasing fire risk. Dealers will replace the entire HV battery free of charge, but owner notification letters were not expected to be mailed until September 14, 2026.",
-        severity: "trap",
-      },
-      {
-        headline: "Spare-wheel cracking and ESC-warning-light recalls",
-        body: "26V496 (2026 Sierra EV/Silverado EV built Oct 2025–Mar 2026, ~513 units): the spare steel wheel may crack at the disc vent holes. Remedy pending, letters expected September 2026. 25V594 (2026 Sierra EV/Silverado EV): after an ESC malfunction, the warning light may not re-illuminate on the next key cycle. Free OTA or dealer software update, already available.",
-        severity: "warning",
-      },
-    ],
+    charging: SIERRA_CHARGING_EXT,
+    warranty: SIERRA_WARRANTY,
+    buyerNotes: SIERRA_RECALLS,
+  },
+
+  {
+    id: "sierra-ev-2026-at4-max",
+    make: "GMC",
+    model: "Sierra EV",
+    modelYears: [2026, 2026],
+    vds: ["1EVEL", "4EVEL"],
+    drive: "AWD",
+    packVariant: "Max Range",
+    abstains: { heatPump: SIERRA_HP_ABSTAIN, packUsableKwh: SIERRA_MAX_PACK_ABSTAIN },
+    range: { mfrRangeMi: f(478, "mfr", "high", MAX_RANGE_NOTE, GMC_SIERRA) },
+    charging: SIERRA_CHARGING_MAX,
+    warranty: SIERRA_WARRANTY,
+    buyerNotes: SIERRA_RECALLS,
+  },
+
+  {
+    id: "sierra-ev-2026-denali-max",
+    make: "GMC",
+    model: "Sierra EV",
+    modelYears: [2026, 2026],
+    vds: ["1EYEL", "4EYEL"],
+    drive: "AWD",
+    packVariant: "Max Range",
+    abstains: { heatPump: SIERRA_HP_ABSTAIN, packUsableKwh: SIERRA_MAX_PACK_ABSTAIN },
+    range: { mfrRangeMi: f(478, "mfr", "high", MAX_RANGE_NOTE, GMC_SIERRA) },
+    charging: SIERRA_CHARGING_MAX,
+    warranty: SIERRA_WARRANTY,
+    buyerNotes: SIERRA_RECALLS,
   },
 ];
