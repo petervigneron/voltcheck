@@ -2,9 +2,9 @@
   "_comment": "Written by scraper/lib/audit-status.mjs. Do not hand-edit — see that file's header.",
   "checks": {
     "feed-shard-health": {
-      "lastRunAt": "2026-08-28T22:35:15.758Z",
+      "lastRunAt": "2026-08-28T23:31:24.818Z",
       "result": "ok",
-      "detail": "total 147610; shards 6171/6069/6271/6099/6108/6033/6168/6181/6115/5918/6183/6206/6157/6273/6218/6188/6201/6052/6058/6103/6160/6234/6243/6201; sitemap URLs 147631",
+      "detail": "total 147610; shards 6171/6069/6271/6099/6108/6033/6168/6181/6115/5918/6183/6206/6157/6273/6218/6188/6201/6052/6058/6103/6160/6234/6243/6201; sitemap URLs 148158",
       "expectedEveryHours": 8
     },
     "ev-rules-audit": {
@@ -20,15 +20,15 @@
       "expectedEveryHours": 27
     },
     "sync-guard": {
-      "lastRunAt": "2026-08-26T13:24:31.554Z",
-      "result": "inconclusive",
-      "detail": "read failed: HTTP 500",
+      "lastRunAt": "2026-08-28T23:28:48.446Z",
+      "result": "ok",
+      "detail": "total 148126, oem 77875, dealer 70251 | tonight's sync: 71847 seen, 0 delisted (0.0%)",
       "expectedEveryHours": 27
     },
     "lane-flip-check": {
-      "lastRunAt": "2026-08-26T12:23:03.388Z",
+      "lastRunAt": "2026-08-28T22:20:48.655Z",
       "result": "warn",
-      "detail": "10412 cross-lane flips (10412 dealer→locator, 0 locator→dealer), 14 within-lane, 3420 new VINs, 59293 unchanged",
+      "detail": "37185 cross-lane flips (37185 dealer→locator, 0 locator→dealer), 12 within-lane, 2415 new VINs, 33024 unchanged",
       "expectedEveryHours": 27
     },
     "live-price-audit": {
@@ -38,7 +38,7 @@
       "expectedEveryHours": 8
     },
     "price-audit": {
-      "lastRunAt": "2026-08-26T13:01:15.468Z",
+      "lastRunAt": "2026-08-28T23:17:28.636Z",
       "result": "ok",
       "detail": "4 flagged, 0 corrected, 0 confirmed, 4 suppressed",
       "expectedEveryHours": 27
@@ -51,9 +51,9 @@
     }
   },
   "lastGoodCounts": {
-    "total": 131660,
-    "oem": 73778,
-    "dealer": 57882,
-    "at": "2026-08-24T19:41:25.566Z"
+    "total": 148126,
+    "oem": 77875,
+    "dealer": 70251,
+    "at": "2026-08-28T23:28:48.444Z"
   }
 }
