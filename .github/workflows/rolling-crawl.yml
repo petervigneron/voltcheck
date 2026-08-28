@@ -505,25 +505,113 @@ jobs:
       # already lags it by up to a day. Refreshing the site stays a scheduled
       # act on its own cadence, decoupled from how often data lands.
       #
-      # Half of that reasoning expired on 2026-08-26 and the conclusion has
-      # not been re-decided, so read it carefully before acting on it. Since
-      # the artifact lane landed, a warm is NOT a walk — it is 26 CDN file
-      # fetches, and it costs the database nothing. What a refresh now costs
-      # is the PUBLISH that has to precede it (publish-feed.yml: one walk at
-      # FEED_LANES=2, ~4 min, ~117 MB), because /api/revalidate alone re-reads
-      # the same artifact and changes no number on the grid.
-      #
-      # So the lag this comment accepts is now larger and less visible than it
-      # reads. Measured 2026-08-28: a dispatched 2h20m slice landed ~13,500
-      # cars after the night's publish and none of them appeared on the browse
-      # grid — the grid showed 134,080 against a database holding 147,581 —
-      # until publish-feed.yml was dispatched by hand. Whether this lane
-      # should call publish-feed.yml (3 gentle walks/day, ~350 MB, against a
-      # Pro plan rather than the 5 GB/month free quota this comment was
-      # written for) is an OPEN decision for the owner, not an oversight.
+      # Half of that reasoning expired on 2026-08-26, and the conclusion is
+      # now the opposite — see the publish-feed job at the bottom of this
+      # file, which is where the refresh moved to. The step-level rule stands
+      # (this lane still does not POST /api/revalidate from inside a slice);
+      # what changed is that a revalidate was never the thing that refreshes
+      # the grid in the first place.
       - name: What this slice did
         if: always()
         run: |
           echo "slice ${{ steps.pick.outputs.slice }} of ${{ steps.pick.outputs.slices }}"
           echo "domains: $(cat /tmp/domains.txt | wc -w)"
           echo "sync: ${{ github.event.inputs.sync || 'true' }}"
+
+  # ------------------------------------------------------------ publish
+  # REPUBLISH THE BROWSE FEED, once, after the whole registry has been
+  # crawled and pushed. This is the step whose absence made a run's cars
+  # invisible.
+  #
+  # The bug it closes, measured 2026-08-28: a dispatched 2h20m run landed
+  # ~13,500 cars, and none of them appeared on the browse grid. The grid
+  # showed 134,080 against a database holding 147,581 for twelve hours, and
+  # it took a hand-dispatched publish to end it. Nothing was broken — the
+  # site simply has no path from "cars landed" to "cars visible" except this
+  # workflow, because since 2026-08-26 /api/index/* serves published
+  # artifacts from the Supabase `feed` bucket rather than rendering from a
+  # walk. Expiring a cache re-renders the route and the route re-reads the
+  # same file. CLAUDE.md carries the full model.
+  #
+  # WHY THIS DOES NOT REBUILD THE 2026-08-17 EGRESS INCIDENT, which is the
+  # objection the step-level comment above raises and which was right when it
+  # was written. That incident was hourly re-walks, ~1.2 GB/day, against a
+  # 5 GB/month free quota. Three things are now different, and all three were
+  # measured on 2026-08-28 rather than assumed:
+  #
+  #   - A walk is 3x a day here, not 24, because a run covers the whole
+  #     registry and this job runs once per run, not once per slice.
+  #   - A walk costs ~37 MB on the wire, not the ~117 MB walk-gate.mjs
+  #     quotes: every request asks for gzip, and a 500-row feed page measured
+  #     108-156 KB compressed across the thin and fat VIN buckets. ~296 pages
+  #     puts three runs a day at ~3.3 GB/month.
+  #   - The quota is Supabase PRO's 250 GB, not the free plan's 5 GB. So this
+  #     is ~1.3% of egress, against the 24% the old arithmetic implied.
+  #
+  # And the load, which on a burstable Micro matters more than the bytes: the
+  # walk runs at FEED_LANES=2 and took 142 s for 147,592 cars. Two minutes of
+  # gentle two-lane reading, appended to a run that just spent two hours
+  # crawling and pushing. It is not the peak this lane exists to avoid.
+  #
+  # Gated, not unconditional — but NOT on `needs.slice.result`. fail-fast is
+  # false precisely so one rooftop's bad night does not cancel the other 47,
+  # and making a successful matrix the condition for publishing would hand
+  # that one rooftop a veto over every other slice's cars. `always()` plus
+  # the publisher's own refusals is the same shape nightly.yml's publish-feed
+  # job settled on, and for the same reason: publish-feed.mjs will not
+  # publish a walk that fell back to the bundled snapshot, and will not
+  # publish a total that shrank more than 10% against the live manifest.
+  # Those are the refusals that matter; a red slice is not one of them.
+  #
+  # The `slice.result` test is an enablement guard, not a quality gate, and
+  # the distinction is the whole reason it is written this way. `always()`
+  # alone would publish on runs where the crawl never happened: the plan and
+  # slice jobs are both conditioned on ROLLING_CRAWL_ENABLED, so turning that
+  # variable off to stop this lane would skip every slice and leave three
+  # walks a day still running against the database — the opposite of what
+  # switching the lane off is for. Naming the two results that mean "the
+  # matrix ran" admits a night with failed slices (which is the point above)
+  # and excludes 'skipped' and 'cancelled' (which mean there is nothing new
+  # to publish).
+  should-publish:
+    needs: slice
+    if: >-
+      ${{ always()
+          && (needs.slice.result == 'success' || needs.slice.result == 'failure')
+          && github.event.inputs.sync != 'false' }}
+    runs-on: ubuntu-latest
+    outputs:
+      go: ${{ steps.gate.outputs.go }}
+    steps:
+      # The same question the slice job asks before its own push, asked once
+      # more at the end and for a second reason. A slice skips its push while
+      # the nightly is writing; this skips the WALK, because a walk taken
+      # through a half-applied db-sync reads a feed that is briefly missing
+      # cars the sync is about to re-add, and publishing that is the house
+      # rule on claims failing quietly. Skipping costs nothing: the nightly
+      # runs publish-feed.yml as its own last job, so this run's cars are
+      # picked up minutes later by the lane that is already writing them.
+      - name: Is the nightly mid-sync?
+        id: gate
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          BUSY=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow nightly.yml \
+                   --status in_progress --limit 1 --json databaseId --jq 'length' 2>/dev/null || echo 0)
+          if [ "$BUSY" != "0" ]; then
+            echo "go=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::nightly.yml is running — not republishing the feed. Walking through a half-applied sync would publish a feed missing cars the sync is about to re-add; the nightly's own publish-feed job covers this run's cars."
+          else
+            echo "go=true" >> "$GITHUB_OUTPUT"
+          fi
+          echo "nightly in progress: $BUSY"
+
+  # publish-feed.yml walks once, writes the 27 artifacts, POSTs
+  # /api/revalidate and warms all 26 index paths. Its `concurrency:
+  # publish-feed` group is what keeps this from ever overlapping the
+  # nightly's call to the same workflow.
+  publish-feed:
+    needs: should-publish
+    if: ${{ always() && needs.should-publish.outputs.go == 'true' }}
+    uses: ./.github/workflows/publish-feed.yml
+    secrets: inherit
