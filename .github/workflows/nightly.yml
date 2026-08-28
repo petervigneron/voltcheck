@@ -655,8 +655,21 @@ jobs:
       # Tell the site its data changed. The browse feed is cached a full day
       # (web/lib/listings/db.ts) because it changes exactly when this
       # pipeline runs — this step is the "it just ran" signal. It expires the
-      # feed cache tag, then warms the six index shards so the one nightly
-      # database walk happens here instead of on a shopper. always(): even a
+      # feed cache tag, then warms the index bodies and the sitemaps.
+      #
+      # Two things this comment used to claim that stopped being true on
+      # 2026-08-26, left corrected rather than deleted because the guards
+      # below were written against them. (1) The index warm is NOT "the one
+      # nightly database walk" any more: /api/index/* serves published
+      # artifacts from the public `feed` bucket and only walks when the
+      # manifest is missing or past its 36h gate, so a warm is normally 26
+      # CDN fetches. The sitemaps are the surface still on the walk path.
+      # (2) This warm cannot publish tonight's crawl either — the artifact it
+      # re-renders from is the one publish-feed wrote LAST night; publish-feed
+      # is the last job in this workflow and republishing is what makes the
+      # night's data visible. Unlike recheck's copy of this step, there is no
+      # latency gate here to rescope; the guards below are about whether
+      # tonight's data LANDED, which is still a real question worth a red. always(): even a
       # night whose price audit errored above should still reveal what
       # db-sync wrote. A missing secret or an old deploy without the route
       # degrades to the 24-hour cache backstop — stale by at most a day, and
@@ -1241,56 +1254,69 @@ jobs:
       # tomorrow's revalidate — finalize-ingest's earlier revalidate carried the
       # crawl's data, this one carries recheck's removals.
       #
-      # This step used to be `if: always()` with no refusal, and its comment
-      # claimed it was the same as finalize-ingest's copy. It was not.
-      # finalize-ingest's copy refuses outright when db-sync or sync-guard
-      # didn't pass — "skipping revalidate rather than warming the cache with a
-      # snapshot nobody has confirmed is right" — and that refusal is the part
-      # that matters. Without it this step would expire an intact cache and
-      # re-warm seven routes against whatever the database happened to be
-      # doing, which on a bad night means caching the 58,730-row bundled
-      # snapshot for a full day behind HTTP 200s. Caught 2026-08-22 while the
-      # database was mid-incident and production was serving a complete,
-      # correct 100,297-row cache: this step was ~6 hours from cron and would
-      # have thrown that away with nobody pressing anything.
+      # That is the reason this step was written, and it is worth being blunt
+      # that it is NO LONGER TRUE of the index routes. Since 2026-08-26
+      # app/api/index/[shard]/route.ts serves PUBLISHED ARTIFACTS out of the
+      # public `feed` storage bucket and only falls back to walking when the
+      # manifest is missing or past its 36h gate. So expiring the cache here
+      # re-renders those routes against the artifact that publish-feed wrote
+      # LAST night — recheck's removals are not in it and cannot be, because
+      # publish-feed is the job after this one. The removals reach the grid
+      # when the publisher republishes, minutes from now, and at no other
+      # moment. This step cannot publish them; it never could, after 08-26.
       #
-      # Three guards, in the order they can fail:
-      #   1. recheck's own outcome. This revalidate exists to publish recheck's
-      #      removals; if recheck didn't finish there are none, so expiring a
-      #      good cache buys nothing and risks everything.
-      #   2. a live database probe. recheck can succeed against a database that
-      #      still cannot complete the FEED WALK — they are different queries,
-      #      and the walk is the one the warm-up depends on. Never expire a
-      #      cache you cannot refill.
+      # What that costs, and why the gate below moved. The step used to refuse
+      # to run at all unless a fat live_listings_feed page came back 200 under
+      # 1.5s, because warming /api/index/* meant paying a ~226-page feed walk
+      # and "the warm-up would time out and cache nothing useful". An
+      # artifact-backed warm is 26 CDN file fetches and costs the database
+      # nothing, so that ceiling now gates a walk that does not happen —
+      # while running, BY CONSTRUCTION, in the post-write vacuum window this
+      # job's own comments call out as where slow samples are expected. It
+      # failed the whole nightly on 1.598s (2026-08-28) and 1.552s
+      # (2026-08-26): two red nights, both false, on a 6% and a 3% miss
+      # against a threshold that was protecting nothing. A nightly that is red
+      # every morning for a reason nobody has to act on is a nightly nobody
+      # reads, which is the actual damage.
       #
-      #      The probe is a real FEED PAGE, not the count, and the distinction
-      #      is load-bearing. The count is an index-only scan over
-      #      listings_live_idx; once the visibility map is fresh it touches
-      #      almost no heap and collapses to milliseconds. The walk selects
-      #      payload, so it reads the heap (and toast) for every row and runs
-      #      the view's LATERAL price-history lookup, no matter how fresh the
-      #      visibility map is. There is a real window — wide open the night
-      #      this was written, with an autovacuum running — where the count
-      #      answers in 20ms and the walk still cannot finish. A count-based
-      #      gate reads that window as "healthy, go warm", and warming in that
-      #      window is exactly what poisons the cache. Same argument as guard
-      #      1, one level up.
+      # So the revalidate POST and the index warm now run unconditionally,
+      # with ONE exception kept honest by a check rather than an assumption:
+      # if the manifest is absent or stale the routes really are back on the
+      # walk path, and the old argument applies again in full. That case is a
+      # single CDN fetch to detect, so it is detected rather than assumed.
       #
-      #      Probed on the W bucket specifically: BMW/Mercedes/Audi/VW, whose
-      #      payloads db.ts measured as the fattest at ~1.07 kB a row. A
-      #      cheap bucket answering fast proves nothing about the expensive
-      #      ones; the worst page is the one the walk waits on.
-      #
-      #      And it is gated on LATENCY, not just on a 200. 3 seconds is
-      #      PostgREST's anon statement timeout, not a health bar — a page
-      #      that takes 2.9s is a page that will not finish a walk. The walk
-      #      is ~226 requests across 8 lanes, so ~28 pages sequentially per
-      #      lane; at 1.5s a page that is ~42s, inside the render budget with
-      #      margin. Above it, the warm-up times out and caches nothing (or
-      #      caches the snapshot), which is the whole failure.
-      #   3. feed-shard-check.mjs afterwards, which counts the ROWS in what we
-      #      just warmed instead of trusting seven 200s. If we poisoned the
-      #      cache anyway, the night goes red and says so.
+      # The guards that remain, and what each is actually for:
+      #   1. recheck's own outcome — DOWNGRADED to a warning. It used to fail
+      #      the step, and did on 2026-08-24 and 08-25, both nights where
+      #      "Recheck live listings" had already gone red on its own: a second
+      #      error annotation for a failure the job was already reporting. It
+      #      also no longer carries its original risk. The refusal existed so
+      #      a bad night could not "expire an intact cache and re-warm seven
+      #      routes against whatever the database happened to be doing"; the
+      #      re-warm is now a file fetch, and publish-feed already ratifies
+      #      exactly this reasoning in its own `always()` gate — "recheck
+      #      failing its post-run revalidate gate must not leave shoppers on
+      #      yesterday's artifacts when the data underneath is fine".
+      #   2. the artifact-freshness check — the walk-path detector described
+      #      above. Fresh manifest: warm freely. Stale or missing: fall back
+      #      to the latency probe, because a walk is what we would be asking
+      #      for.
+      #   3. the latency probe — kept, retried, and WARNING-ONLY, scoped to
+      #      the two things that can still cost a walk: an artifact-less index
+      #      warm, and the sitemap shards, which are still on
+      #      allListingsWithOrigin() (app/sitemap/[shard]/route.ts) and are
+      #      the one surface here that genuinely needs a database that can
+      #      walk. A skipped sitemap warm is a stale sitemap, never a wrong
+      #      one — the route throws on anything but a live feed — so it warns.
+      #      The retry (6 tries, 20s apart, proceed on the first healthy one)
+      #      landed in f52b61d and has never actually run: it was committed
+      #      2026-08-28 01:18 UTC, four hours after the last nightly started.
+      #      Kept because bimodal latency still makes one sample a coin flip.
+      #   4. feed-shard-check.mjs afterwards, which counts the ROWS in what we
+      #      just warmed instead of trusting a row of 200s. If we poisoned the
+      #      cache anyway, the night goes red and says so. This is the check
+      #      that has teeth now, and it is the right one to have them: it
+      #      judges the result, not the weather.
       - name: Revalidate the site's feed cache
         if: always()
         env:
@@ -1299,72 +1325,60 @@ jobs:
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: |
           if [ "${{ steps.recheck.outcome }}" != "success" ]; then
-            echo "::error::recheck did not complete (step outcome: '${{ steps.recheck.outcome }}') — it has no removals to publish. Skipping revalidate rather than expiring a good cache and re-warming it against an unknown database; the site keeps what it has and refreshes on the 24h backstop."
-            exit 1
+            echo "::warning::recheck did not complete (step outcome: '${{ steps.recheck.outcome }}') — it has no removals to publish, and that step has already reported its own failure. Revalidating anyway: the index routes serve published artifacts, so this warm neither expires anything refillable nor asks the database for a walk."
           fi
+
+          # Is the browse feed on the artifact path or the walk path? One CDN
+          # fetch settles it. Anything but a v1 manifest inside the route's own
+          # 36h ARTIFACT_MAX_AGE_MS window is treated as walk-path, including a
+          # manifest we could not read — unknown is not fresh.
+          artifact_fresh=0
+          if [ -n "$SUPABASE_URL" ]; then
+            man=$(curl -sS --max-time 30 "$SUPABASE_URL/storage/v1/object/public/feed/manifest.json" || echo '')
+            published=$(printf '%s' "$man" | sed -n 's/.*"publishedAt"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p')
+            if [ -n "$published" ]; then
+              # Normalised before it reaches date(1): the manifest stamps
+              # "2026-08-28T13:24:43.724Z" and the fractional seconds are the
+              # part not every date accepts. "2026-08-28 13:24:43 UTC" is
+              # unambiguous. A parse failure still falls through to 0, which
+              # reads as ancient and routes to the probe — unknown is not fresh.
+              pnorm=$(printf '%s' "$published" | sed 's/\.[0-9]*Z$/Z/; s/T/ /; s/Z$/ UTC/')
+              age_h=$(( ( $(date -u +%s) - $(date -u -d "$pnorm" +%s 2>/dev/null || echo 0) ) / 3600 ))
+              if [ "$age_h" -ge 0 ] && [ "$age_h" -lt 36 ]; then
+                artifact_fresh=1
+                echo "feed artifact published ${published} (${age_h}h old, gate 36h) — the index warm is CDN fetches, not a walk"
+              else
+                echo "::warning::feed artifact is ${age_h}h old (gate 36h) — /api/index/* is back on the WALK path, so the database probe below decides whether to warm it"
+              fi
+            else
+              echo "::warning::could not read the feed manifest — assuming the walk path, so the database probe below decides whether to warm the index"
+            fi
+          fi
+
+          # The probe. It no longer decides whether the night is red; it
+          # decides whether we ask the database for a walk. Skipped entirely
+          # when nothing here needs one — but the sitemaps always do, so in
+          # practice it runs and only its CONSEQUENCE changed.
+          #
+          # A real feed page from the fattest bucket (W: BMW/Mercedes/Audi/VW,
+          # ~1.07 kB a row per db.ts), with the same select list, order and
+          # limit db.ts walks with. Latency, not just a 200: 3s is PostgREST's
+          # anon statement timeout, not a health bar, and a page that takes
+          # 2.9s will not finish a walk. ~28 pages sequentially per lane, so
+          # 1.5s a page is ~42s — inside the render budget with margin.
+          #
+          # The \n in -w is load-bearing: curl ends its -w output without one,
+          # so read hits EOF mid-line, returns 1, and bash -e kills the step
+          # with no output (refresh-fallback.yml's 2026-08-23 red run).
+          db_can_walk=0
           if [ -n "$SUPABASE_URL" ] && [ -n "$SUPABASE_ANON_KEY" ]; then
             auth=(-H "apikey: $SUPABASE_ANON_KEY" -H "Authorization: Bearer $SUPABASE_ANON_KEY")
-            # Cheap first: the count guard db.ts uses. ADVISORY ONLY — it does
-            # not get a veto, and 2026-08-23 is why. recheck had just written
-            # its night's work (2,455 delistings, 1,131 struck, 12,134 price
-            # changes), this count returned HTTP 500 at 18:36:59, and the job
-            # exited without publishing any of it. Autovacuum ran at 18:37:39.
-            # Forty seconds. The same query, unchanged, answered in 0.17-0.64 s
-            # once it had.
-            #
-            # That is the whole failure: a count over ~100k live rows is an
-            # index-only scan on listings_live_idx and costs ~277 ms, but only
-            # while the visibility map is current. A write burst leaves it
-            # stale, the scan starts visiting the heap instead, and it blows
-            # anon's 3 s timeout — for the few minutes between the pipeline's
-            # own writes and the vacuum that cleans up after them. This gate
-            # runs inside that window BY CONSTRUCTION: it is the step right
-            # after the writes. So the guard reliably failed at the one moment
-            # it was guaranteed to be wrong, and cost the site a day of showing
-            # cars that had sold.
-            #
-            # It is also the check CLAUDE.md already lists as a FALSE GATE
-            # ("the cheap COUNT is a false gate — vacuum fixes it but NOT the
-            # walk"). It was only ever here to fail fast and save ~20 s; the
-            # feed page below is what actually decides, it is one of the very
-            # pages the warm-up walks, and it does not depend on the visibility
-            # map. A real outage still fails it. Nothing weaker is being
-            # trusted — the veto simply moves to the stronger of the two
-            # checks that were always both here.
-            code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 20 "${auth[@]}" \
-              -H "Range: 0-0" -H "Prefer: count=exact" \
-              "$SUPABASE_URL/rest/v1/listings?select=vin&delisted_at=is.null") || code=000
-            if [ "$code" != "200" ] && [ "$code" != "206" ]; then
-              echo "::warning::the listing count did not answer (HTTP $code) — most likely the post-write vacuum window, which is where this step always runs. Not skipping on this alone; the feed-page check below decides."
-            fi
-            # Then the one that decides it: a real feed page from the fattest
-            # bucket, same select list, order and limit db.ts walks with.
-            # The \n in -w is load-bearing: curl ends its -w output without one,
-            # so read hits EOF mid-line, returns 1, and bash -e kills the step
-            # with no output (refresh-fallback.yml's 2026-08-23 red run).
             sel="vin,payload,first_seen_at,last_seen_at,prev_price_usd,price_changed_at,buyback_disclosed,listed_on"
-            # RETRIED, not one-shot. This gate is right to exist and its
-            # ceiling is not the problem — the sampling was. On 2026-08-27 a
-            # single probe came back at 1.597s, 6% over, and the night's whole
-            # refresh was abandoned on that one reading; the feed then sat on a
-            # day-old walk while a corrected price showed on the car's own page
-            # and not on the browse grid. The database's latency here is
-            # bimodal by design (see the CPU/IO findings in CLAUDE.md), so one
-            # sample is a coin flip, and this step runs in the post-write
-            # vacuum window where slow samples are expected.
-            #
-            # deploy-site.mjs already had the answer and this step did not:
-            # it probes repeatedly and waits for a healthy streak rather than
-            # judging on the first reading. Same idea here — up to 6 tries, 20s
-            # apart, proceed on the first healthy one. Worst case ~2 minutes in
-            # a job that runs an hour and a half. If every try is slow the
-            # database really is unwell, and skipping is then the right call
-            # for the reason the original comment gives.
             pcode=000; ptime=99
             for attempt in 1 2 3 4 5 6; do
               read -r pcode ptime < <(curl -s -o /dev/null -w "%{http_code} %{time_total}\n" --max-time 20 "${auth[@]}" \
                 "$SUPABASE_URL/rest/v1/live_listings_feed?select=$sel&order=vin.asc&limit=500&vin=gte.W" || echo "000 99")
-              if [ "$pcode" = "200" ] && awk "BEGIN{exit !($ptime <= 1.5)}"; then break; fi
+              if [ "$pcode" = "200" ] && awk "BEGIN{exit !($ptime <= 1.5)}"; then db_can_walk=1; break; fi
               echo "probe $attempt/6: HTTP $pcode in ${ptime}s (want 200 under 1.5s)"
               # if/then, not `[ ... ] && sleep`: on the last pass the test is
               # false, the && short-circuits to exit status 1, and this step
@@ -1372,46 +1386,60 @@ jobs:
               # refresh-fallback.yml on 2026-08-23.
               if [ "$attempt" -lt 6 ]; then sleep 20; fi
             done
-            if [ "$pcode" != "200" ]; then
-              echo "::error::the database cannot serve a feed page (HTTP $pcode) after 6 tries — the WALK cannot run, which is the query the warm-up depends on (count was HTTP $code, advisory). Skipping revalidate; production keeps the complete cache it already has."
-              exit 1
+            if [ "$db_can_walk" = "1" ]; then
+              echo "database served a fat feed page in ${ptime}s; walk-path warms are safe"
+            else
+              echo "::warning::the database could not serve a fat feed page under 1.5s in 6 tries (last: HTTP $pcode in ${ptime}s) — this step runs inside the post-write vacuum window, so this is expected some nights. Walk-path warms are skipped; artifact-backed ones are not."
             fi
-            if awk "BEGIN{exit !($ptime > 1.5)}"; then
-              echo "::error::a feed page took ${ptime}s (ceiling 1.5s) on all 6 tries — the walk is ~28 sequential pages per lane, so the warm-up would time out and cache nothing useful. Skipping revalidate; production keeps the complete cache it already has."
-              exit 1
-            fi
-            echo "database served a fat feed page in ${ptime}s (count: HTTP $code, advisory); safe to expire and re-warm"
           fi
+
           [ -z "$FEED_REVALIDATE_SECRET" ] && { echo "::warning::FEED_REVALIDATE_SECRET unset; site refreshes on the 24h cache backstop instead"; exit 0; }
           if ! curl -fsS --retry 3 --max-time 60 -X POST -H "x-revalidate-secret: $FEED_REVALIDATE_SECRET" https://voltcheck.net/api/revalidate; then
             echo "::warning::/api/revalidate unreachable; site refreshes on the 24h cache backstop instead"
             exit 0
           fi
+
           # 24 index shards since 2026-08-24 — keep in step with
           # web/lib/listings/pack.ts SHARDS, whose comment has the incident.
           # "trims" is /worth's trim-facet body (2026-08-25), same route, same
-          # walk memo, so it rides this loop for free.
-          for s in first trims $(seq 0 23); do
-            curl -fsS --retry 2 --max-time 300 -o /dev/null "https://voltcheck.net/api/index/$s" \
-              || echo "::warning::shard $s warm-up failed; its first visitor pays the render"
-          done
+          # artifact set, so it rides this loop for free.
+          if [ "$artifact_fresh" = "1" ] || [ "$db_can_walk" = "1" ]; then
+            for s in first trims $(seq 0 23); do
+              curl -fsS --retry 2 --max-time 300 -o /dev/null "https://voltcheck.net/api/index/$s" \
+                || echo "::warning::shard $s warm-up failed; its first visitor pays the render"
+            done
+          else
+            echo "::warning::skipping the index warm: no fresh artifact to serve AND the database cannot walk, which is the one combination where warming would ask a sick database for ~226 pages. Production keeps the cache it has; publish-feed republishes and re-warms later in this run."
+          fi
+
           # And the sitemaps, which stopped being build artifacts on
           # 2026-08-22 (web/app/sitemap/[shard]/route.ts: prerendering them
           # walked the whole feed inside Next's 60-second budget and killed
-          # four production builds in a row). They render on first request
-          # and cache for the same day as the index shards, so this pass is
-          # now what keeps a crawler's copy current. Warmed immediately after
-          # the shards on purpose: db.ts's ten-minute walk memo is still
-          # holding the walk the loop above just paid for, so these cost
-          # no extra database read. A failure here is a stale sitemap, never
-          # a wrong one — the route refuses to publish anything but a live
-          # feed — so it warns rather than failing the night.
+          # four production builds in a row). These are the one surface here
+          # still on the WALK path — allListingsWithOrigin(), no artifact
+          # lane — so unlike the index loop above they need db_can_walk
+          # outright, whatever the manifest says. A failure or a skip here is
+          # a stale sitemap, never a wrong one (the route throws on anything
+          # but a live feed), so it warns rather than failing the night.
+          #
+          # Known and deliberately not fixed here: /api/revalidate expires
+          # these 12 paths too, and publish-feed POSTs it again later in this
+          # run while warming only the 26 index paths — so whatever this loop
+          # warms is invalidated before the night ends and the next crawler
+          # pays the render (measured 2026-08-28: age ~18 min, HIT, 0.6s).
+          # Moving the sitemap warm into publish-feed is the real fix and is
+          # its own change; noted here so the next reader does not have to
+          # rediscover it.
           # 12 sitemap shards since 2026-08-24 — keep in step with
           # web/lib/sitemap.ts SITEMAP_SHARDS, whose comment has the incident.
-          for s in $(seq 0 11); do
-            curl -fsS --retry 2 --max-time 300 -o /dev/null "https://voltcheck.net/sitemap/$s.xml" \
-              || echo "::warning::sitemap shard $s warm-up failed; crawlers keep yesterday's copy until the next request renders it"
-          done
+          if [ "$db_can_walk" = "1" ]; then
+            for s in $(seq 0 11); do
+              curl -fsS --retry 2 --max-time 300 -o /dev/null "https://voltcheck.net/sitemap/$s.xml" \
+                || echo "::warning::sitemap shard $s warm-up failed; crawlers keep yesterday's copy until the next request renders it"
+            done
+          else
+            echo "::warning::skipping the sitemap warm: they render off a full feed walk and the database could not serve one. Crawlers keep yesterday's copy until a request renders it — stale, never wrong."
+          fi
 
       # Seven 200s do not mean seven correct bodies. This counts the rows in
       # what the step above just cached and fails the night if the shards
