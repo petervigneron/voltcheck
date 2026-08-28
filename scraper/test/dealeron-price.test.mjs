@@ -108,3 +108,64 @@ test("a sub-floor offer with no other signal abstains", () => {
   const got = run({ jsonld: 750, condition: "new", year: 2026 });
   assert.deepEqual(got, { priceUsd: 0, provenance: undefined });
 });
+
+// ---------------------------------------------------------------- 2026-08-28
+// Both cases below are the exact base64 libraries and element attributes those
+// rooftops served on 2026-08-28, found by scraper/live-price-audit.mjs against
+// the production feed and confirmed against each dealer's rendered page.
+
+test("a repeated library label does not weld its counter onto the price (greenvilletoyota bZ)", () => {
+  // Served: "Internet Price:40094.0" AND "Internet Price: 2:40094.0". Splitting
+  // on the first colon let the second line overwrite the first with
+  // " 2:40094.0", and stripping non-digits welded it into 240094 — which is
+  // what the site published against the page's own $40,094.
+  const got = run({
+    jsonld: undefined,
+    msrp: 40807,
+    sellingPrice: undefined,
+    displayedPrice: "40094",
+    priceLibrary: lib(
+      "MSRP:40807.00;Internet Price:40094.0;Invoice Price:39994.0;Feed - MSRP:40807.0;" +
+        "Internet Price: 2:40094.0;Transparent price:40094.0;Conditional:1000.0;MSRP: 2:40807.0;" +
+        "YOU SAVE*::713.00;Doc Fee:898.0;Calc_FinalPrice_with_DocFee:40992.0"
+    ),
+    condition: "new",
+    year: 2026,
+  });
+  assert.equal(got.priceUsd, 40094);
+});
+
+test("a library value that is not a number is refused, never welded", () => {
+  // The backstop for the next malformed field: no leading digit may be glued
+  // on by deleting the separator. Nothing answers, so the claim goes quiet.
+  const got = run({
+    jsonld: undefined,
+    msrp: 40807,
+    priceLibrary: lib("Internet Price:2:40094.0"),
+    condition: "new",
+    year: 2026,
+  });
+  assert.notEqual(got.priceUsd, 240094);
+});
+
+test("the MSRP anchor guards the library rung too, not only JSON-LD (glassmankia EV9)", () => {
+  // Served: data-msrp 65875, data-price 15875, and a library stacking a
+  // $50,000 "Dealer Discount" onto a $65,875 car. The JSON-LD offer of $15,875
+  // was already caught as junk; the identical number then came off the library
+  // rung, which nothing tested, and the site showed a $15,875 EV9.
+  const got = run({
+    jsonld: 15875,
+    msrp: 65875,
+    sellingPrice: 15875,
+    displayedPrice: "15875",
+    priceLibrary: lib(
+      "MSRP:65875.0;Internet Price:15875.0;Selling Price:15875.0;calc_MSRP:65875.0;" +
+        "calc_Dealer Discount:50000.0;calc_INTERNET PRICE:15875.0;calc_FINAL PRICE:5875.0"
+    ),
+    condition: "new",
+    year: 2026,
+  });
+  // 0 is ingest.mjs's abstain: the car stays listed, the price claim goes
+  // quiet. Matching nothing is honest; a $15,875 EV9 is not.
+  assert.equal(got.priceUsd, 0);
+});

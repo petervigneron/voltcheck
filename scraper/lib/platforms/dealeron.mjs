@@ -179,7 +179,18 @@ export function resolveDealerOnPriceTagged(rec, v) {
   const floor = priceFloor({ isNew: rec.condition === "new", year: rec.year });
   const msrp = v.msrp;
   const jsonld = num(rec.priceUsd);
-  const jsonldJunk = jsonld != null && msrp != null && jsonld < msrp * JSONLD_JUNK_FRACTION;
+  // ONE test, asked of every rung — not just of JSON-LD, which is how it was
+  // written and how a false bargain got through. glassmankia.com, 2026-08-28:
+  // a 2026 Kia EV9 Wind, data-msrp 65875, whose library stacks
+  // "calc_Dealer Discount:50000.0" onto a $65,875 car and lands at
+  // calc_INTERNET PRICE 15875. The JSON-LD offer of $15,875 WAS caught here —
+  // it is a quarter of MSRP — and then the very same number was picked up off
+  // the library rung one line down, which nothing tested, and published. The
+  // site showed a $15,875 EV9. A false bargain is the most expensive error
+  // this project can make, and the guard that would have stopped it was
+  // already present and simply not asked.
+  const isJunk = (p) => p != null && msrp != null && p < msrp * JSONLD_JUNK_FRACTION;
+  const jsonldJunk = isJunk(jsonld);
 
   if (jsonld != null && jsonld >= floor && !jsonldJunk) {
     // Unchanged: the dealer's declared offer price, keeping normalize()'s tag.
@@ -196,7 +207,9 @@ export function resolveDealerOnPriceTagged(rec, v) {
     // rather than overstating by the discount.
     { price: jsonldJunk ? undefined : num(v.displayedPrice), provenance: DEOL_DISPLAYED },
   ];
-  const picked = ladder.find((c) => c.price != null && c.price >= floor);
+  // Both bars, on every rung: the absolute floor, and the page's own MSRP.
+  // A rung that fails either is a different number sitting in the price slot.
+  const picked = ladder.find((c) => c.price != null && c.price >= floor && !isJunk(c.price));
   // 0 is ingest.mjs's abstain: the car stays, the price claim goes quiet.
   return picked
     ? { priceUsd: picked.price, provenance: picked.provenance }

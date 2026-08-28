@@ -122,6 +122,18 @@ export function priceFromLibrary(b64) {
   return priceFromLibraryTagged(b64).price;
 }
 
+// numOrU deletes every character that is not a digit or a dot, which is right
+// for "$40,992.00" and catastrophic for anything malformed: the deleted
+// character does not separate the digits around it, it welds them. "2:40094.0"
+// becomes 240094 — a plausible-looking price that no page ever published. The
+// split above is the fix for the case that actually happened; this is the
+// backstop for the next one, because a silently-welded number is precisely the
+// shape of claim this project must not make. A price is digits, separators and
+// currency punctuation; anything else in the string means we misread the field
+// and the honest answer is to return nothing.
+const PRICE_CHARS = /^[\s$0-9.,]+$/;
+const libraryPrice = (v) => (typeof v === "string" && !PRICE_CHARS.test(v) ? undefined : numOrU(v));
+
 // The same fallback ladder, also naming the rung it stopped on, for
 // listing_price_history's provenance column (migration 0041). Only the
 // calc_INTERNET PRICE rung claims to be the page's JSON-LD offer — that is the
@@ -139,7 +151,30 @@ export function priceFromLibraryTagged(b64) {
   }
   const fields = new Map();
   for (const part of txt.split(";")) {
-    const i = part.indexOf(":");
+    // The LAST colon, not the first, and the difference published 24 wrong
+    // prices. DealerOn distinguishes a repeated label by appending a counter
+    // to the LABEL, so a library reads:
+    //
+    //   MSRP:40807.00;Internet Price:40094.0;...;Internet Price: 2:40094.0;...
+    //
+    // Splitting on the FIRST colon turned that last pair into the key
+    // "internet price" with the value " 2:40094.0" — the same key the real
+    // line set moments earlier, so Map.set overwrote a correct number with a
+    // malformed one. numOrU then stripped the colon along with every other
+    // non-digit and WELDED the counter onto the price: 2 + 40094 = 240094.
+    //
+    // That is not a hypothesis. greenvilletoyota.com was live with a $240,094
+    // Toyota bZ against its own page's $40,094 Internet Price, and
+    // beechmontford.com a $253,144 Mach-E against $53,144; the live-feed audit
+    // caught 24 of them on 2026-08-28, every one a rooftop whose library
+    // carries a "Label: N" duplicate, every one wrong by exactly one welded
+    // leading digit. Reproduced from the served base64 and confirmed against
+    // each dealer's rendered page.
+    //
+    // Splitting on the last colon keeps the counter where it belongs — in the
+    // key — so the duplicate lands under "internet price: 2" and no longer
+    // collides. Prices never contain a colon, so nothing legitimate moves.
+    const i = part.lastIndexOf(":");
     if (i > 0) fields.set(part.slice(0, i).trim().toLowerCase(), part.slice(i + 1).trim());
   }
   for (const [key, provenance] of [
@@ -148,7 +183,7 @@ export function priceFromLibraryTagged(b64) {
     ["selling price", DEOL_SELLING],
     ["msrp", DEOL_MSRP],
   ]) {
-    const price = numOrU(fields.get(key));
+    const price = libraryPrice(fields.get(key));
     if (price != null) return { price, provenance };
   }
   return none;
