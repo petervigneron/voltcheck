@@ -17,7 +17,7 @@ export function listingTiles(
 
   if (e.enrichment.candidates) {
     const ranges = e.enrichment.candidates
-      .map((r) => r.range?.epaRangeMi?.value)
+      .map((r) => r.range?.epaRangeMi?.value ?? r.range?.mfrRangeMi?.value)
       .filter((v): v is number => v !== undefined)
       .sort((a, b) => a - b);
     if (ranges.length >= 2) {
@@ -28,7 +28,16 @@ export function listingTiles(
       });
     }
   } else if (e.realRangeMi) {
-    t.push({ kind: "range", text: `${e.realRangeMi.value} mi`, title: e.realRangeMi.note ?? undefined });
+    // A maker's own figure where EPA never rated the vehicle carries "est" —
+    // not because we doubt it, but because "272 mi" beside a rated car's
+    // "272 mi" is a false equivalence, and these are simulations the maker
+    // itself footnotes "EPA estimates not yet available". Same suffix
+    // convention as the port and heat-pump tiles below.
+    t.push({
+      kind: "range",
+      text: `${e.realRangeMi.value} mi${e.rangeIsMfrEstimate ? " est" : ""}`,
+      title: e.realRangeMi.note ?? undefined,
+    });
   }
 
   // "est" whenever the underlying fact isn't the maker's own figure (ID.4,
@@ -64,6 +73,18 @@ export function listingTiles(
     t.push({
       kind: "spec",
       text: `${value} min 10–80%${source !== "mfr" ? " est" : ""}`,
+      title: note ?? undefined,
+    });
+  }
+
+  // The maker's own "low"-to-80% figure, for makers who state a looser start
+  // than 10% (lib/types.ts). Its own label, because 45 minutes from GM's "low"
+  // and 45 minutes from 10% are not the same claim.
+  if (e.chargeTimeTo80Min) {
+    const { value, source, note } = e.chargeTimeTo80Min;
+    t.push({
+      kind: "spec",
+      text: `${value} min to 80%${source !== "mfr" ? " est" : ""}`,
       title: note ?? undefined,
     });
   }

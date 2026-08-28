@@ -105,6 +105,7 @@ export function EnrichmentFacts({
     row.battery?.packGrossKwh ||
     row.battery?.chemistry ||
     row.range?.epaRangeMi ||
+    row.range?.mfrRangeMi ||
     row.range?.epaRangeTotalMi ||
     row.range?.testedRangeMi ||
     row.range?.mpgeElectric ||
@@ -129,6 +130,7 @@ export function EnrichmentFacts({
     row.charging?.dcPeakKw ||
     row.charging?.architectureV ||
     row.charging?.chargeTime1080Min ||
+    row.charging?.chargeTimeTo80Min ||
     row.charging?.acOnboardKw ||
     row.charging?.plugAndCharge ||
     row.charging?.portStandard ||
@@ -163,6 +165,17 @@ export function EnrichmentFacts({
               <FactRow
                 label={isPhevRange ? "Electric-only range" : "EPA range"}
                 fact={row.range?.epaRangeMi}
+                format={(v) => `${v} mi`}
+              />
+              {/* Vehicles EPA never rated at all — over the labelling
+                  threshold — where the maker publishes its own simulation.
+                  A separate row with its own label, never merged into the
+                  one above: "EPA range" and "manufacturer estimate" are
+                  different claims and the label is the only place that
+                  difference can live. */}
+              <FactRow
+                label="Range (manufacturer estimate)"
+                fact={row.range?.mfrRangeMi}
                 format={(v) => `${v} mi`}
               />
               {/* PHEV-only: the total, gas-assisted figure, always a separate
@@ -240,6 +253,17 @@ export function EnrichmentFacts({
                 <FactRow
                   label="10–80% charge time"
                   fact={row.charging.chargeTime1080Min}
+                  format={(v) => `${v} min`}
+                />
+              )}
+              {/* Makers who state a looser starting point than 10% get their
+                  own label rather than borrowing the row above; GM defines
+                  its "low" as 15-20 miles of range remaining, which is not
+                  10%. See lib/types.ts. */}
+              {row.charging?.chargeTimeTo80Min && (
+                <FactRow
+                  label="Charge time to 80%"
+                  fact={row.charging.chargeTimeTo80Min}
                   format={(v) => `${v} min`}
                 />
               )}

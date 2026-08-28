@@ -69,7 +69,12 @@ const BASELINE = val("--max-core-fails") != null ? Number(val("--max-core-fails"
 // a gross figure the maker never split out), reported but never a failure.
 const FIELDS = [
   { key: "packUsableKwh", tier: "core", get: (r) => r.battery?.packUsableKwh ?? r.battery?.packGrossKwh, label: "pack kWh" },
-  { key: "epaRangeMi", tier: "core", get: (r) => r.range?.epaRangeMi, label: "EPA range" },
+  // `mfrRangeMi` answers this field too. It is not a softer version of an EPA
+  // rating — it exists only for vehicles EPA never rated at all (see
+  // lib/types.ts), and a row carrying it has resolved the shopper's question,
+  // so it must not be counted as a hole and must not need an abstention to
+  // escape one. A row with neither still fails.
+  { key: "epaRangeMi", tier: "core", get: (r) => r.range?.epaRangeMi ?? r.range?.mfrRangeMi, label: "range (EPA, or the maker's own where EPA never rated it)" },
   { key: "heatPump", tier: "core", get: (r) => r.thermal?.heatPump, label: "heat pump" },
   { key: "batteryWarranty", tier: "core", get: (r) => r.warranty?.batteryYears, label: "battery warranty" },
   { key: "portStandard", tier: "core", get: (r) => r.charging?.portStandard, label: "port" },

@@ -136,7 +136,7 @@ test("a BrightDrop van reaches its row under either make string", () => {
   // strings for MY2024) and make CHEVROLET model "BrightDrop" (MY2025).
   assert.equal(
     idOf(decode({ make: "BRIGHTDROP", model: "Zevo", modelYear: 2024, vin: "2G5ZJ2TY8R9103436" })),
-    "zevo-400-2023-24"
+    "zevo-400-2024-std"
   );
   assert.equal(
     idOf(decode({ make: "CHEVROLET", model: "BrightDrop", modelYear: 2025, vin: "2G58J2TZ8S9102927" })),
@@ -144,11 +144,18 @@ test("a BrightDrop van reaches its row under either make string", () => {
   );
   assert.equal(
     idOf(decode({ make: "Brightdrop", model: "Zevo 600", modelYear: 2023, vin: "2G5ZJ3HG6P9101641" })),
-    "zevo-600-2023-24"
+    "zevo-600-2023"
   );
   assert.equal(
     idOf(decode({ make: "Chevrolet", model: "BrightDrop 600", modelYear: 2025, vin: "2G5ZJ3T67S9102725" })),
-    "brightdrop-600-2025-std"
+    "brightdrop-600-2025-fwd"
+  );
+  // MY2026 moves the WMI from 2G5 to 2GC while leaving positions 4-6 alone,
+  // so the `vds` key still reaches the row. If this stops passing, the rows
+  // were keyed on the WMI by mistake.
+  assert.equal(
+    idOf(decode({ make: "Chevrolet", model: "BrightDrop 400", modelYear: 2026, vin: "2GCZJ2TZXT9100028" })),
+    "brightdrop-400-2026-max"
   );
 });
 
@@ -157,7 +164,7 @@ test("the VIN, not the model string, decides whether a BrightDrop is a 400 or a 
   // nothing in the name says so — position 6 is the model digit.
   assert.equal(
     idOf(decode({ make: "BRIGHTDROP", model: "Zevo", modelYear: 2024, vin: "2G5ZJ3TY1R9103218" })),
-    "zevo-600-2023-24"
+    "zevo-600-2024-std"
   );
   // And a model string that says 400 cannot override a 600's VIN — it matches
   // nothing rather than the wrong van.
@@ -167,33 +174,84 @@ test("the VIN, not the model string, decides whether a BrightDrop is a 400 or a 
   );
 });
 
-test("position 8 separates the BrightDrop's two 2025 packs, and the Max Range row is AWD only", () => {
-  // Y = 2 motors + 12 modules, Z = 2 motors + 20 modules, 6 = 1 motor + 12
-  // modules, straight out of vPIC's OtherEngineInfo for each pattern.
-  const packOf = (vin8: string) =>
-    matchEnrichment(
-      decode({ make: "CHEVROLET", model: "BrightDrop 400", modelYear: 2025, vin: `2G5ZJ2T${vin8}9S9104258` }),
-      null
-    ).exact?.battery?.packUsableKwh?.value;
-  assert.equal(packOf("Y"), 102.4);
-  assert.equal(packOf("6"), 102.4);
-  assert.equal(packOf("Z"), 173.3);
-
-  const max = matchEnrichment(
-    decode({ make: "CHEVROLET", model: "BrightDrop 400", modelYear: 2025, vin: "2G5ZJ2TZ9S9104258" }),
-    null
-  ).exact;
-  assert.equal(max?.drive, "AWD", "GM sells the Max Range pack on AWD versions only");
+test("position 8 carries the BrightDrop's pack AND its drivetrain, in every model year", () => {
+  // The full vPIC map, re-swept character by character on 2026-08-28 (see the
+  // block comment in data11.ts). Each entry is the pack capacity GM publishes
+  // for that position-8 code and the drivetrain vPIC decodes for it. A null
+  // capacity is a deliberate abstention, not a hole: the Zevo-era guides
+  // publish no kWh figure at all and vPIC's module count contradicts GM's.
+  const cases: Array<[number, string, string, number | null, string]> = [
+    // year, vds prefix + vin8, label, packUsableKwh, drive
+    [2023, "2G5ZJ3H" + "G" + "6P9101641", "MY2023 600 ETJ", null, "AWD"],
+    [2024, "2G5ZJ2T" + "Y" + "8R9103436", "MY2024 400 std", null, "AWD"],
+    [2024, "2G5ZJ2T" + "Z" + "8R9103436", "MY2024 400 max", null, "AWD"],
+    [2025, "2G5ZJ2T" + "6" + "9S9104258", "MY2025 400 FWD std", 102.4, "FWD"],
+    [2025, "2G5ZJ2T" + "Y" + "9S9104258", "MY2025 400 AWD std", 102.4, "AWD"],
+    [2025, "2G5ZJ2T" + "Z" + "9S9104258", "MY2025 400 max", 173.3, "AWD"],
+    [2026, "2GCZJ3T" + "6" + "7T9100176", "MY2026 600 FWD std", 102.4, "FWD"],
+    [2026, "2GCZJ3T" + "Y" + "7T9100176", "MY2026 600 AWD std", 102.4, "AWD"],
+    [2026, "2GCZJ3T" + "X" + "7T9100176", "MY2026 600 FWD ext", 121, "FWD"],
+    [2026, "2GCZJ3T" + "7" + "7T9100176", "MY2026 600 AWD ext", 121, "AWD"],
+    [2026, "2GCZJ3T" + "Z" + "7T9100176", "MY2026 600 max", 173.3, "AWD"],
+  ];
+  for (const [year, vin, label, kwh, drive] of cases) {
+    const row = matchEnrichment(decode({ make: "CHEVROLET", model: "BrightDrop", modelYear: year, vin }), null).exact;
+    assert.ok(row, `${label}: no row matched`);
+    assert.equal(row?.battery?.packUsableKwh?.value ?? null, kwh, `${label}: pack`);
+    assert.equal(row?.drive, drive, `${label}: drivetrain`);
+    if (kwh === null) assert.ok(row?.abstains?.packUsableKwh, `${label}: silence on the pack must be declared`);
+  }
 });
 
-test("a 2026 BrightDrop states no pack size, because a third pack arrived and vPIC filed no pattern", () => {
-  const r = matchEnrichment(
-    decode({ make: "CHEVROLET", model: "BrightDrop 600", modelYear: 2026, vin: "2G5ZJ3TY1T9103218" }),
-    null
-  );
-  assert.equal(r.exact?.id, "brightdrop-600-2026");
-  assert.equal(r.exact?.battery?.packUsableKwh, undefined);
-  assert.ok(r.exact?.abstains?.packUsableKwh);
+test("every BrightDrop row that can name a version prints GM's own range figure", () => {
+  // The regression this pins is not a wrong number, it is an empty field. For
+  // months every one of these rows printed no range at all and a paragraph
+  // explaining why, because the only range field in the schema was named
+  // epaRangeMi and no EPA rating exists for this van. GM publishes a figure
+  // for every configuration below; `mfrRangeMi` is where it goes.
+  const cases: Array<[number, string, number, string]> = [
+    [2023, "2G5ZJ3H" + "G" + "6P9101641", 250, "MY2023 600, ETJ standard that year"],
+    [2024, "2G5ZJ2T" + "Y" + "8R9103436", 200, "MY2024 400, EW2 standard pack"],
+    [2024, "2G5ZJ2T" + "Z" + "8R9103436", 250, "MY2024 400, ETJ 20-module pack"],
+    [2025, "2G5ZJ2T" + "6" + "9S9104258", 177, "MY2025 400 FWD"],
+    [2025, "2G5ZJ2T" + "Y" + "9S9104258", 175, "MY2025 400 AWD — lower than FWD"],
+    [2025, "2G5ZJ3T" + "6" + "7S9102725", 174, "MY2025 600 FWD"],
+    [2025, "2G5ZJ3T" + "Y" + "7S9102725", 179, "MY2025 600 AWD — higher than FWD"],
+    [2025, "2G5ZJ2T" + "Z" + "9S9104258", 272, "MY2025 max"],
+    [2026, "2GCZJ3T" + "Y" + "7T9100176", 176, "MY2026 standard"],
+    [2026, "2GCZJ3T" + "X" + "7T9100176", 204, "MY2026 extended"],
+    [2026, "2GCZJ3T" + "Z" + "7T9100176", 285, "MY2026 max"],
+  ];
+  for (const [year, vin, miles, label] of cases) {
+    const row = matchEnrichment(decode({ make: "CHEVROLET", model: "BrightDrop", modelYear: year, vin }), null).exact;
+    assert.equal(row?.range?.mfrRangeMi?.value, miles, label);
+    assert.equal(row?.range?.mfrRangeMi?.source, "mfr", `${label}: must be GM's own figure, never ours`);
+    assert.equal(row?.range?.epaRangeMi, undefined, `${label}: there is no EPA rating to print`);
+  }
+  // The 400 and the 600 do not rank the same way round on drivetrain — 400 FWD
+  // beats 400 AWD, 600 AWD beats 600 FWD. One shared figure for both models
+  // was wrong on three of the four numbers, which is why this is asserted.
+  const r = (year: number, vin: string) =>
+    matchEnrichment(decode({ make: "CHEVROLET", model: "BrightDrop", modelYear: year, vin }), null).exact?.range
+      ?.mfrRangeMi?.value ?? 0;
+  assert.ok(r(2025, "2G5ZJ2T69S9104258") > r(2025, "2G5ZJ2TY9S9104258"), "400: FWD out-ranges AWD");
+  assert.ok(r(2025, "2G5ZJ3TY7S9102725") > r(2025, "2G5ZJ3T67S9102725"), "600: AWD out-ranges FWD");
+});
+
+test("the 2026 BrightDrop states no DC charge time, because GM's own guide states two", () => {
+  // GM's 26MY body-builder guide prints two rows with the identical label
+  // "Low-80% Time to Charge", one reading 36/33/70 minutes and the next
+  // 90/85/110, with no condition separating them. Picking the friendlier row
+  // would be choosing a number because it flatters the van. The MY2025 guide
+  // has one unambiguous row and that year does print a figure.
+  const at = (year: number, vin: string) =>
+    matchEnrichment(decode({ make: "CHEVROLET", model: "BrightDrop", modelYear: year, vin }), null).exact?.charging;
+  assert.equal(at(2026, "2GCZJ3TY7T9100176")?.chargeTimeTo80Min, undefined);
+  assert.equal(at(2025, "2G5ZJ2T69S9104258")?.chargeTimeTo80Min?.value, 45);
+  assert.equal(at(2025, "2G5ZJ2TZ9S9104258")?.chargeTimeTo80Min?.value, 70);
+  // GM defines its "low" as 15-20 miles of range remaining, which is not 10%,
+  // so it must never land in the 10-80% field.
+  assert.equal(at(2025, "2G5ZJ2T69S9104258")?.chargeTime1080Min, undefined);
 });
 
 test("folding BrightDrop onto its own make does not swallow a real Chevrolet EV", () => {
@@ -270,16 +328,42 @@ test("vPIC's 22.7 kWh pattern constant cannot veto the AMG's own 13.1 kWh row", 
   assert.equal(r.exact?.battery?.packGrossKwh?.value, 13.1);
 });
 
-// ── The vans' shared contract: no EPA range is printed under an EPA label ──
+// ── The vans' shared contract ──────────────────────────────────────────────
+//
+// These vehicles sit above EPA's light-duty labelling threshold, so none of
+// them has an EPA range rating and none of them ever will until EPA rates it.
+// Three things follow, and the third one is new as of 2026-08-28:
+//
+//   1. No van row may print a figure in `epaRangeMi`. That field means "EPA
+//      rated this car at N miles" and saying it about a van EPA never touched
+//      is a false claim, whatever the number.
+//   2. Each row must still answer the shopper: either it carries the maker's
+//      own published figure in `mfrRangeMi`, or it declares in `abstains` why
+//      silence is the honest answer. Doing neither is the hole.
+//   3. A row carrying `mfrRangeMi` must NOT also carry a note explaining that
+//      no EPA range exists. That pairing is what this file used to require,
+//      and it was the wrong shape: a paragraph reporting an absence, printed
+//      where a number belonged. Once the number is on the page the paragraph
+//      is dead weight, and the site's copy rule (CLAUDE.md, "If there is
+//      nothing to say, print nothing") forbids it.
+//
+// The three rows still abstaining do so for reasons that survive scrutiny and
+// are not the BrightDrop's old reason. Ford's figures are per roof height and
+// nothing resolves a listing's roof; Ram publishes 162, 164 and 180 across its
+// own surfaces with inconsistent footnotes; Mercedes footnotes one pair of
+// numbers as both EPA-MCT-consistent and as a European procedure whose
+// "U.S.-specific figures will be announced closer to launch". Each needs its
+// own research pass, not a guess.
 
 test("no commercial-van row prints a figure in the field labelled EPA range", () => {
   const vanIds = [
     "e-transit-2022-23", "e-transit-2024", "e-transit-2025", "e-transit-2026-27",
     "ram-promaster-ev-2024-26",
-    "zevo-400-2023-24", "zevo-600-2023-24",
-    "brightdrop-400-2025-std", "brightdrop-400-2025-max",
-    "brightdrop-600-2025-std", "brightdrop-600-2025-max",
-    "brightdrop-400-2026", "brightdrop-600-2026",
+    "zevo-600-2023", "zevo-400-2024-std", "zevo-400-2024-max", "zevo-600-2024-std", "zevo-600-2024-max",
+    "brightdrop-400-2025-fwd", "brightdrop-400-2025-awd", "brightdrop-400-2025-max",
+    "brightdrop-600-2025-fwd", "brightdrop-600-2025-awd", "brightdrop-600-2025-max",
+    "brightdrop-400-2026-std-awd", "brightdrop-400-2026-ext-awd", "brightdrop-400-2026-max",
+    "brightdrop-600-2026-std-awd", "brightdrop-600-2026-ext-awd", "brightdrop-600-2026-max",
     "esprinter-2024", "esprinter-2025-26",
   ];
   const rows = new Map<string, boolean>();
@@ -292,14 +376,23 @@ test("no commercial-van row prints a figure in the field labelled EPA range", ()
     ["e-transit-2025", decode({ make: "FORD", model: "Transit", modelYear: 2025, vin: "1FTBW9CM6SKA68479" })],
     ["e-transit-2026-27", decode({ make: "FORD", model: "Transit", modelYear: 2026, vin: "1FTBW1YM6SKA76625" })],
     ["ram-promaster-ev-2024-26", decode({ make: "RAM", model: "ProMaster", modelYear: 2025, vin: "3C6MRWAZ4SE530447" })],
-    ["zevo-400-2023-24", decode({ make: "BRIGHTDROP", model: "Zevo", modelYear: 2024, vin: "2G5ZJ2TY8R9103436" })],
-    ["zevo-600-2023-24", decode({ make: "BRIGHTDROP", model: "Zevo", modelYear: 2023, vin: "2G5ZJ3HG6P9101641" })],
-    ["brightdrop-400-2025-std", decode({ make: "CHEVROLET", model: "BrightDrop", modelYear: 2025, vin: "2G5ZJ2T69S9104258" })],
+    ["zevo-600-2023", decode({ make: "BRIGHTDROP", model: "Zevo", modelYear: 2023, vin: "2G5ZJ3HG6P9101641" })],
+    ["zevo-400-2024-std", decode({ make: "BRIGHTDROP", model: "Zevo", modelYear: 2024, vin: "2G5ZJ2TY8R9103436" })],
+    ["zevo-400-2024-max", decode({ make: "BRIGHTDROP", model: "Zevo", modelYear: 2024, vin: "2G5ZJ2TZ8R9103436" })],
+    ["zevo-600-2024-std", decode({ make: "BRIGHTDROP", model: "Zevo", modelYear: 2024, vin: "2G5ZJ3TY1R9103218" })],
+    ["zevo-600-2024-max", decode({ make: "BRIGHTDROP", model: "Zevo", modelYear: 2024, vin: "2G5ZJ3TZ1R9103218" })],
+    ["brightdrop-400-2025-fwd", decode({ make: "CHEVROLET", model: "BrightDrop", modelYear: 2025, vin: "2G5ZJ2T69S9104258" })],
+    ["brightdrop-400-2025-awd", decode({ make: "CHEVROLET", model: "BrightDrop", modelYear: 2025, vin: "2G5ZJ2TY9S9104258" })],
     ["brightdrop-400-2025-max", decode({ make: "CHEVROLET", model: "BrightDrop", modelYear: 2025, vin: "2G58J2TZ8S9102927" })],
-    ["brightdrop-600-2025-std", decode({ make: "CHEVROLET", model: "BrightDrop", modelYear: 2025, vin: "2G5ZJ3T67S9102725" })],
+    ["brightdrop-600-2025-fwd", decode({ make: "CHEVROLET", model: "BrightDrop", modelYear: 2025, vin: "2G5ZJ3T67S9102725" })],
+    ["brightdrop-600-2025-awd", decode({ make: "CHEVROLET", model: "BrightDrop", modelYear: 2025, vin: "2G5ZJ3TY7S9102725" })],
     ["brightdrop-600-2025-max", decode({ make: "CHEVROLET", model: "BrightDrop", modelYear: 2025, vin: "2G5ZJ3TZ5S9100935" })],
-    ["brightdrop-400-2026", decode({ make: "CHEVROLET", model: "BrightDrop", modelYear: 2026, vin: "2G5ZJ2TY8T9103436" })],
-    ["brightdrop-600-2026", decode({ make: "CHEVROLET", model: "BrightDrop", modelYear: 2026, vin: "2G5ZJ3TY1T9103218" })],
+    ["brightdrop-400-2026-std-awd", decode({ make: "CHEVROLET", model: "BrightDrop", modelYear: 2026, vin: "2GCZJ2TY4T9100033" })],
+    ["brightdrop-400-2026-ext-awd", decode({ make: "CHEVROLET", model: "BrightDrop", modelYear: 2026, vin: "2GCZJ2T74T9100033" })],
+    ["brightdrop-400-2026-max", decode({ make: "CHEVROLET", model: "BrightDrop", modelYear: 2026, vin: "2GCZJ2TZXT9100028" })],
+    ["brightdrop-600-2026-std-awd", decode({ make: "CHEVROLET", model: "BrightDrop", modelYear: 2026, vin: "2GCZJ3TY7T9100176" })],
+    ["brightdrop-600-2026-ext-awd", decode({ make: "CHEVROLET", model: "BrightDrop", modelYear: 2026, vin: "2GCZJ3T77T9100176" })],
+    ["brightdrop-600-2026-max", decode({ make: "CHEVROLET", model: "BrightDrop", modelYear: 2026, vin: "2GCZJ3TZ7T9100176" })],
     ["esprinter-2024", decode({ make: "MERCEDES-BENZ", model: "eSprinter 2500", modelYear: 2024, vin: "W1Y4UCHY4RT176896" })],
     ["esprinter-2025-26", decode({ make: "MERCEDES-BENZ", model: "Esprinter Cargo Van", modelYear: 2025, vin: "W1Y4UCHY4ST221230" })],
   ];
@@ -307,11 +400,27 @@ test("no commercial-van row prints a figure in the field labelled EPA range", ()
     const row = matchEnrichment(d, null).exact;
     assert.equal(row?.id, expectId, `${expectId} must still be reachable`);
     assert.equal(row?.range?.epaRangeMi, undefined, `${expectId}: no EPA rating exists for this vehicle to print`);
-    assert.ok(row?.abstains?.epaRangeMi, `${expectId} must declare why it is silent`);
-    assert.ok(
-      (row?.buyerNotes ?? []).some((n) => /No EPA range exists/.test(n.headline)),
-      `${expectId} must tell the shopper the maker's figure is not an EPA rating`
-    );
+
+    const mfr = row?.range?.mfrRangeMi;
+    const absenceNote = (row?.buyerNotes ?? []).filter((n) => /No EPA range/i.test(n.headline));
+    if (mfr) {
+      assert.equal(mfr.source, "mfr", `${expectId}: mfrRangeMi must be the maker's own figure, never ours`);
+      assert.ok(mfr.sourceUrl, `${expectId}: an unsourced range claim is the thing this field exists to prevent`);
+      assert.ok(
+        !row?.abstains?.epaRangeMi,
+        `${expectId} both prints a range and declares itself silent on range — one of the two is stale`
+      );
+      assert.equal(
+        absenceNote.length,
+        0,
+        `${expectId} prints ${mfr.value} miles AND a paragraph saying no range exists — see the contract above`
+      );
+    } else {
+      assert.ok(
+        row?.abstains?.epaRangeMi,
+        `${expectId} shows no range and does not say why — that is the hole, not a decision`
+      );
+    }
     rows.set(expectId, true);
   }
   for (const [id, seen] of rows) assert.ok(seen, `${id} was never probed`);
