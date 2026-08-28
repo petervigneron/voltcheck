@@ -40,7 +40,25 @@ name: Rolling crawl
 on:
   schedule:
     # Every 30 minutes: 48 runs a day, one full sweep of the registry.
-    - cron: "*/30 * * * *"
+    # THREE a day, not 48. A run now covers the WHOLE registry (see the
+    # matrix below), so the schedule no longer has to be the thing that
+    # achieves coverage — it only has to land once.
+    #
+    # Asking for 48 was worse than asking for 3. Measured over the delivery
+    # record 2026-08-23..28: at its best this cron delivered ~24 runs a day,
+    # never the 48 it asked for (a496f35 measured 29.1 on 2026-08-24), and from
+    # 2026-08-26 01:45 GitHub essentially stopped honouring it — gaps of 17.7h,
+    # 11.1h, 9.7h, about two runs a day. Nothing failed; the runs were simply
+    # never created. GitHub sheds high-frequency schedules first and guarantees
+    # none of them, so a design whose coverage rate EQUALS its delivery rate
+    # was always going to end up here.
+    #
+    # The three slots avoid 10:30-15:30 UTC, where nightly.yml runs: the sync
+    # guard below skips a slice's push while the nightly is writing, so a run
+    # that straddles it crawls fine and pushes nothing.
+    - cron: "0 2 * * *"
+    - cron: "0 18 * * *"
+    - cron: "0 22 * * *"
   workflow_dispatch:
     inputs:
       slice:
@@ -78,7 +96,38 @@ permissions:
   # time while looking like it worked.
 
 jobs:
+  # WHICH SLICES THIS RUN WILL COVER. Normally all of them; a manual dispatch
+  # naming one slice gets just that slice, which is how a single rooftop's
+  # lot can still be re-crawled on demand in 20 minutes.
+  #
+  # It is a job rather than an expression because a matrix has to be a real
+  # list, and the list is "0..slices-1" — GitHub has no range operator.
+  plan:
+    if: ${{ vars.ROLLING_CRAWL_ENABLED == 'true' || github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      matrix: ${{ steps.build.outputs.matrix }}
+      slices: ${{ steps.build.outputs.slices }}
+    steps:
+      - id: build
+        run: |
+          SLICES="${{ github.event.inputs.slices || '48' }}"
+          ONE="${{ github.event.inputs.slice }}"
+          if [ -n "$ONE" ]; then
+            echo "matrix=[$ONE]" >> "$GITHUB_OUTPUT"
+          else
+            # awk, not `seq -s,`: BSD seq appends the separator after the
+            # last element ("[0,1,2,3,4,5,]") while GNU seq does not, so the
+            # JSON is valid on the runner and invalid on a laptop — a
+            # difference that would only ever show up as a matrix that failed
+            # to parse in CI. Built explicitly instead.
+            echo "matrix=$(awk -v n="$SLICES" 'BEGIN{printf "["; for(i=0;i<n;i++) printf "%s%d", (i?",":""), i; printf "]"}')" >> "$GITHUB_OUTPUT"
+          fi
+          echo "slices=$SLICES" >> "$GITHUB_OUTPUT"
+
   slice:
+    needs: plan
     # Inert until someone sets the repository variable ROLLING_CRAWL_ENABLED to
     # "true" (Settings -> Secrets and variables -> Actions -> Variables). It
     # ships switched OFF on purpose: merging a workflow that immediately starts
@@ -87,9 +136,35 @@ jobs:
     # end to end before the schedule is ever turned on.
     if: ${{ vars.ROLLING_CRAWL_ENABLED == 'true' || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
-    # 25 minutes against a 30-minute cadence. The steps below are individually
-    # capped to finish inside it; the job cap is the backstop that guarantees a
-    # slow slice cannot still be running when the next one starts.
+    # EVERY SLICE, SIX AT A TIME. The whole registry in one delivered run,
+    # which is the point: coverage no longer equals GitHub's schedule-delivery
+    # rate (see the cron above for what that rate actually is).
+    #
+    # Nothing about an individual slice changes — same 294 domains, same
+    # 28-minute cap, same crawl flags, all of it already tuned against measured
+    # runs. Only the number of them per run does. 48 slices six at a time is
+    # eight waves of ~22 minutes, near three hours of wall clock, and a
+    # workflow run has no overall time limit (only the 6h per JOB, which one
+    # 28-minute slice is nowhere near).
+    #
+    # max-parallel: 6 is set by the DATABASE, not the runners. This workflow
+    # exists because the instance falls over when writes arrive together — the
+    # "Is the nightly mid-sync?" guard below is the same concern — so running
+    # 48 slices at once would rebuild exactly the pile-up it was built to
+    # prevent. A slice spends ~18 of its ~22 minutes crawling and about a
+    # minute pushing, so six in flight is well under one concurrent push on
+    # average; the crawl half is what actually overlaps, and that is polite by
+    # host and already proven at concurrency 32 within a slice.
+    #
+    # fail-fast: false because a slice is independent. One rooftop's bad night
+    # must not cancel the other 47 — that is the same reasoning nightly.yml's
+    # shards were given, and the reason a missing shard certifies nothing to
+    # db-sync rather than delisting anything.
+    strategy:
+      fail-fast: false
+      max-parallel: 6
+      matrix:
+        slice: ${{ fromJson(needs.plan.outputs.matrix) }}
     timeout-minutes: 28
     steps:
       - uses: actions/checkout@v4
@@ -97,50 +172,36 @@ jobs:
         with:
           node-version: "22"
 
-      # The slice index comes from the CLOCK, not from stored state. 48
-      # half-hours is exactly one day, so minutes-since-midnight / 30 walks
-      # 0..47 once per day and repeats — no cursor to persist, no cursor to
-      # corrupt, and a missed run costs that one slice a day rather than
-      # shifting every slice after it. Domains are sorted before slicing (the
+      # The slice index comes from the MATRIX. Every slice runs in the same
+      # run, so there is nothing left to schedule, no cursor to persist and no
+      # dropped tick to lose one: the run either happens and covers the whole
+      # registry, or it does not happen. Domains are sorted before slicing (the
       # same `sorted()` nightly.yml uses) so membership is stable between runs
       # and a rooftop stays in the same slice as long as the registry does.
+      #
+      # The two schemes this replaces are both worth keeping in view, because
+      # each was right about the previous one and neither fixed the real
+      # problem — that coverage was pinned to GitHub's delivery rate:
+      #
+      #   CLOCK (minutes-since-midnight / 30). A dropped tick did not delay a
+      #   slice, it SKIPPED it: the next run read the current time and picked a
+      #   different one. Measured to 2026-08-24: 35 of 48 slices ran and 13
+      #   never did — 0, 1, 2, 4, 5, 9, 14, 16, 18, 20, 24, 36, 40 — clustered
+      #   at 00:00-04:30 UTC where cron congestion is worst, so it was the same
+      #   rooftops going stale every night rather than a different quarter.
+      #
+      #   CURSOR (run_number % slices, a496f35). Fixed the skipping — every
+      #   slice runs in turn — but made the cycle time 48/(runs per day). At
+      #   the ~24 runs a day GitHub was then delivering that was two days; when
+      #   delivery collapsed to ~2 a day on 2026-08-26 it became 24 days, and
+      #   sneedford.com sat uncrawled from 2026-08-21 while its 21 disclosed
+      #   buybacks showed here as ordinary used trucks.
       - name: Choose this run's slice
         id: pick
         working-directory: scraper
         run: |
-          SLICES="${{ github.event.inputs.slices || '48' }}"
-          SLICE="${{ github.event.inputs.slice }}"
-          if [ -z "$SLICE" ]; then
-            # A CURSOR, not a clock, and the difference is a quarter of the
-            # registry. This used to be derived from the wall clock —
-            # MINS / (1440 / SLICES) % SLICES — which silently assumed every
-            # scheduled tick fires. GitHub drops scheduled runs under load, and
-            # it drops a lot of them: 56 runs delivered in the 46 hours to
-            # 2026-08-24T19:34, 29.1 a day against the 48 this cron asks for,
-            # with gaps of 40 to 88 minutes and never the 30 it is set to.
-            #
-            # With a clock-derived slice, a dropped tick does not DELAY that
-            # slice, it SKIPS it: the next run reads the current time and picks
-            # a different one, and nothing ever comes back. Measured two ways
-            # over that window — from run timestamps, and from this lane's own
-            # "after slice N" commit subjects — 35 of 48 slices ran and 13 never
-            # did: 0, 1, 2, 4, 5, 9, 14, 16, 18, 20, 24, 36, 40. They cluster at
-            # 00:00–04:30 UTC, which is exactly where cron congestion is worst,
-            # so it is the same rooftops going stale night after night rather
-            # than a different quarter each time. The day-of-year rotation below
-            # does not cover this: it reorders domains WITHIN a slice to handle
-            # deadline truncation, and never gets the chance to run at all for a
-            # slice whose tick was dropped.
-            #
-            # run_number only ever increments, so a dropped tick now shifts the
-            # sequence by one instead of putting a hole in it, and every slice
-            # gets its turn. A full sweep takes 48/29 ≈ 1.6 days at the observed
-            # rate rather than the 1.0 the cron implies — slower than advertised,
-            # but complete, which the previous scheme was not at any speed.
-            # A manual `slice` input still overrides, and a workflow_dispatch
-            # simply advances the cursor like any other run.
-            SLICE=$(( ${{ github.run_number }} % SLICES ))
-          fi
+          SLICES="${{ needs.plan.outputs.slices }}"
+          SLICE="${{ matrix.slice }}"
           echo "slices=$SLICES" >> "$GITHUB_OUTPUT"
           echo "slice=$SLICE" >> "$GITHUB_OUTPUT"
           # ROTATED BY DAY, and this is not a nicety. The first test slice
