@@ -127,21 +127,47 @@ test("Model 3: a contradicted trim can no longer pick between two rows one VIN c
   assert.equal(rowIds(listing({ ...l, trimSuspect: undefined })), "EXACT:m3-2018-lr-rwd");
 });
 
-test("Ioniq 5: withholding a disputed trim must not promote the trim-less row's longer range", () => {
-  // The regression the first cut of this change introduced and the sweep
-  // caught. `ioniq5-2022-sr` is 220 mi; drop the trim and `ioniq5-2022-rwd`
-  // (303 mi, no trim key, RWD like the SR) wins instead. 303 is not a safer
-  // answer than 220, it is a different car's answer — and the expensive
+test("Ioniq 5: withholding a disputed trim must not promote a longer-range row", () => {
+  // The regression the first cut of trimTrust introduced and the sweep caught:
+  // drop a disputed trim and whichever row happens to carry no trim key wins,
+  // which is a different car's answer rather than a safer one — the expensive
   // direction to be wrong in.
+  //
+  // This used to be posed on a 2022 car, where `ioniq5-2022-sr` (220 mi) and
+  // `ioniq5-2022-rwd` (303 mi) were separated only by a trim string. It is
+  // posed on a 2025 AWD car now, because the 2022 case can no longer happen:
+  // since 2026-08-28 every Ioniq 5 row carries a `vin8` key (B Standard
+  // Range, E/A long-range RWD, F/C AWD), so the VIN settles the SR-vs-RWD
+  // question before any trim is consulted. Three rows still share code C —
+  // the plain AWD, the AWD Limited and the XRT, at 290, 269 and 259 miles —
+  // and that is where the hazard now lives.
   const l = listing({
-    vin: "KM8KRDAF4NU000001", year: 2022, make: "Hyundai", model: "Ioniq 5",
-    trim: "Standard Range", drive: "RWD", trimSuspect: "Limited",
+    vin: "7YAKMDDC4SY018488", year: 2025, make: "Hyundai", model: "Ioniq 5",
+    trim: "Limited", drive: "AWD", trimSuspect: "XRT",
   });
   const e = enrichListing(l);
-  assert.equal(e.row?.id, undefined);
-  assert.notEqual(e.realRangeMi?.value, 303);
-  assert.equal(e.realRangeMi, undefined);
+  assert.equal(e.row?.id, undefined, "must not assert either version");
+  assert.equal(e.realRangeMi, undefined, "and must not print a range");
+  assert.notEqual(e.realRangeMi?.value, 290, "least of all the trim-less row's longest figure");
   assert.ok((e.enrichment.candidates?.length ?? 0) >= 2);
+  // The undisputed listing is untouched: this is not a blanket demotion.
+  assert.equal(rowIds(listing({ ...l, trimSuspect: undefined })), "EXACT:ioniq5-2025-2026-awd-limited");
+});
+
+test("the VIN settles Standard Range against Long Range without consulting the trim", () => {
+  // What made the case above unposeable on a 2022 car, and the reason the
+  // Standard Range rows carry no trim key: position 8 says which pack it is.
+  // B is the Standard Range car in both plant eras — Korea-built KM8 through
+  // MY2024 and US-built 7YA from MY2025 — and a dealer typing "SE" on one
+  // cannot turn it into a 303-mile car.
+  const at = (vin: string, year: number, trim?: string) =>
+    enrichListing(listing({ vin, year, make: "Hyundai", model: "Ioniq 5", trim }));
+  assert.equal(at("KM8KM4AB4PU177217", 2023).row?.id, "ioniq5-2023-2024-sr");
+  assert.equal(at("KM8KM4AB4PU177217", 2023).realRangeMi?.value, 220);
+  assert.equal(at("KM8KM4AB4PU177217", 2023, "SE").realRangeMi?.value, 220, "a bare SE trim cannot promote it");
+  assert.equal(at("KM8KM4DE7RU251819", 2024, "SE").realRangeMi?.value, 303, "the same SE string on an E-coded car IS long range");
+  assert.equal(at("7YAKM4DB5SY033055", 2025).realRangeMi?.value, 245);
+  assert.equal(at("7YAKM4DA9SY022244", 2025).realRangeMi?.value, 318);
 });
 
 test("a lone researched row is not handed to a car whose version we can't name", () => {

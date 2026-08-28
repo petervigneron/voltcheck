@@ -1379,6 +1379,9 @@ const R: EnrichmentRow[] = [];
   const i5 = (o: {
     id: string;
     trim?: string;
+    /** VIN position 8 — A long-range RWD, B Standard Range, C AWD on the
+     *  US-built MY2025+ car. See the data.ts block comment for the sweep. */
+    vin8: string[];
     drive: "AWD" | "RWD";
     packKwh: number;
     packNote: string;
@@ -1394,6 +1397,7 @@ const R: EnrichmentRow[] = [];
     make: "HYUNDAI",
     model: "Ioniq 5",
     trim: o.trim,
+    vin8: o.vin8,
     modelYears: [2027, 2027],
     drive: o.drive,
     battery: { packGrossKwh: f(o.packKwh, "mfr", "high", o.packNote, I5_SPECS_2025) },
@@ -1434,7 +1438,7 @@ const R: EnrichmentRow[] = [];
   R.push(
     i5({
       id: "ioniq5-2027-sr",
-      trim: "Standard Range",
+      vin8: ["B"],
       drive: "RWD",
       packKwh: 63.0,
       packNote: "Standard Range pack",
@@ -1447,6 +1451,7 @@ const R: EnrichmentRow[] = [];
     }),
     i5({
       id: "ioniq5-2027-rwd",
+      vin8: ["A"],
       drive: "RWD",
       packKwh: 84.0,
       packNote: "Long Range pack",
@@ -1460,6 +1465,7 @@ const R: EnrichmentRow[] = [];
     }),
     i5({
       id: "ioniq5-2027-awd",
+      vin8: ["C"],
       drive: "AWD",
       packKwh: 84.0,
       packNote: "Long Range pack",
@@ -1473,6 +1479,7 @@ const R: EnrichmentRow[] = [];
     }),
     i5({
       id: "ioniq5-2027-awd-limited",
+      vin8: ["C"],
       trim: "Limited",
       drive: "AWD",
       packKwh: 84.0,
@@ -1487,6 +1494,7 @@ const R: EnrichmentRow[] = [];
     }),
     i5({
       id: "ioniq5-2027-xrt",
+      vin8: ["C"],
       trim: "XRT",
       drive: "AWD",
       packKwh: 84.0,

@@ -351,7 +351,12 @@ export const TESTED_EST_BY_ROWID: Record<string, Fact<number>> = {
   "r1t-2024-quad": f(289, "est", "medium", "70 mph highway range test (Out of Spec Reviews (via InsideEVs))", "https://insideevs.com/news/574637/rivian-r1t-70mph-range-test/"),
   "r1t-2025-26-max": f(266, "est", "medium", "70 mph highway range test (Out of Spec Reviews)", "https://www.rivianforums.com/forum/threads/out-of-spec-highway-range-test-of-gen2-r1t-dual-max-nowhere-near-epa.36760/"),
   "r1t-2025-26-tri": f(298, "est", "medium", "70 mph highway range test (Out of Spec Reviews)", "https://www.youtube.com/watch?v=Zy0mdwSt8yc"),
-  "sierra-ev-2026-extended-range": f(428, "est", "medium", "Edmunds EV Range Test (mixed city/highway loop) (Edmunds)", "https://www.edmunds.com/car-news/electric-car-range-and-consumption-epa-vs-edmunds.html"),
+  // Edmunds tested an Extended Range Sierra EV. That row split into an
+  // Elevation and a Denali on 2026-08-28 (the AT4 Extended is deliberately
+  // NOT here: GMC rates it 20 miles lower on the same pack, so a test of the
+  // other two trims is not a measurement of it).
+  "sierra-ev-2026-elevation-extended": f(428, "est", "medium", "Edmunds EV Range Test (mixed city/highway loop) (Edmunds)", "https://www.edmunds.com/car-news/electric-car-range-and-consumption-epa-vs-edmunds.html"),
+  "sierra-ev-2026-denali-extended": f(428, "est", "medium", "Edmunds EV Range Test (mixed city/highway loop) (Edmunds)", "https://www.edmunds.com/car-news/electric-car-range-and-consumption-epa-vs-edmunds.html"),
   "silverado-2024-4wt": f(442, "est", "medium", "70-mph highway range test (2024 RST Max-pack parity) (InsideEVs)", "https://insideevs.com/reviews/736604/chevrolet-silverado-ev-range-test/"),
   "taycan-2021-22-4s-pbp": f(278, "est", "medium", "70-mph constant-speed highway range test (InsideEVs)", "https://insideevs.com/reviews/455628/video-porsche-taycan-4s-range-test/"),
   "taycan-2023-24-4-pbp": f(278, "est", "medium", "70-mph constant-speed highway range test (InsideEVs)", "https://insideevs.com/reviews/455628/video-porsche-taycan-4s-range-test/"),
