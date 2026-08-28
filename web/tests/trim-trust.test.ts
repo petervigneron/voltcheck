@@ -147,8 +147,10 @@ test("Ioniq 5: withholding a disputed trim must not promote a longer-range row",
   });
   const e = enrichListing(l);
   assert.equal(e.row?.id, undefined, "must not assert either version");
-  assert.equal(e.realRangeMi, undefined, "and must not print a range");
+  // Order matters: asserting `undefined` first narrows the type to `never`
+  // and the specific check below stops compiling.
   assert.notEqual(e.realRangeMi?.value, 290, "least of all the trim-less row's longest figure");
+  assert.equal(e.realRangeMi, undefined, "and must not print a range");
   assert.ok((e.enrichment.candidates?.length ?? 0) >= 2);
   // The undisputed listing is untouched: this is not a blanket demotion.
   assert.equal(rowIds(listing({ ...l, trimSuspect: undefined })), "EXACT:ioniq5-2025-2026-awd-limited");
