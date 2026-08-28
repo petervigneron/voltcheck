@@ -276,6 +276,43 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
   // rating differs per variant and listings often omit which one they are.
   // Shared facts (warranty, ICCU, charging hardware) repeat per row on purpose:
   // each row must stand alone when matched.
+  //
+  // VIN POSITION 8 IS THE KEY (added 2026-08-28). "Listings often omit which
+  // one they are" was costing 893 live cards their range: 1,157 Ioniq 5
+  // listings state no drivetrain at all, so the RWD and AWD rows both survived
+  // and the card rendered a "303-318 mi" spread instead of a number.
+  //
+  // The map was measured, not guessed. Taking the 4,528 listings whose feed
+  // record DOES state a drivetrain as ground truth and correlating every VIN
+  // position against it, position 8 separates them with zero exceptions, and
+  // position 6 agrees with it on all 4,528:
+  //
+  //   Korea-built KM8, MY2022-2024    B = Standard Range
+  //                                   E = long-range RWD      F = AWD
+  //   US-built 7YA, MY2025-2027       B = Standard Range
+  //                                   A = long-range RWD      C = AWD
+  //
+  // B IS THE ONE TO BE CAREFUL WITH, and it is why this is a pack key rather
+  // than a drivetrain key. B is the Standard Range car — 220 miles through
+  // MY2024, 245 from MY2025 — not a 303/318-mile one, and it is RWD like the
+  // long-range RWD car, so a key that only separated RWD from AWD would have
+  // handed ~105 Standard Range cars the long-range figure. Two control tests
+  // before trusting it: 96% of the 105 B-coded listings say "Standard Range"
+  // in their own trim or title against 0% of every other code, and the letter
+  // means the same thing in both plant eras despite A/E and C/F swapping.
+  //
+  // The Standard Range rows carry NO trim key any more, which looks backwards.
+  // On a VIN-keyed row a trim key is a veto rather than a second opinion:
+  // trimMatches() refuses a listing whose own trim field is blank and runs
+  // before the vin8 filter, so a row carrying both is unreachable for exactly
+  // the listings the VIN was added to rescue — 59 blank-trim B-coded cars.
+  // web/tests/gm-truck-vin-keys.test.ts pins the same rule for GM's trucks.
+  //
+  // NOT COVERED: two MY2025 cars built in Korea (KM8) whose position 8 is the
+  // digit 8, a transitional pattern with no equivalent in the US-built line.
+  // The feed calls them AWD and so does vPIC, but MY2025 spans the facelift —
+  // the Korea-built car may be the old 260-mile spec rather than the 290-mile
+  // one — and nothing found establishes which. They match no row.
   {
     id: "ioniq5-2022-sr",
     make: "HYUNDAI",
