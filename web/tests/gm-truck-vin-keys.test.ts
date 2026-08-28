@@ -2,10 +2,10 @@
 //   node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs \
 //        --test tests/gm-truck-vin-keys.test.ts
 //
-// GM's electric trucks — the Sierra EV and both Hummer bodies — which between
-// them were 1,641 of the live listings showing no range on 2026-08-28, for
-// two different reasons that both come down to one row standing in for
-// several configurations.
+// GM's electric trucks and the Blazer EV — the Sierra EV, both Hummer bodies
+// and the Blazer — which between them were 2,136 of the live listings showing
+// no range on 2026-08-28, for two different reasons that both come down to
+// one row standing in for several configurations.
 //
 // The GMC Sierra EV, which on 2026-08-28 was the single largest matching
 // failure in the live feed: 773 of 969 listings showed no range, not because
@@ -156,4 +156,61 @@ test("a Hummer filed under the feed's short model string still reaches its row",
     matchEnrichment(decode({ make: "GMC", model: "Hummer SUV", modelYear: 2024, vin: "1GKB0RDC9RU100285", trim: "3X" }), null).exact,
     "the short spelling must resolve"
   );
+});
+
+
+// ── Chevrolet Blazer EV ────────────────────────────────────────────────────
+//
+// 495 showed no range, and the reason was the third variety: the rows split
+// FWD / AWD / RWD / SS, 569 listings state no drivetrain, so several rows
+// survived and the card rendered a spread. Position 8 carries the drivetrain
+// AND the pack — vPIC's engine RPO says which, EC5 on the 10-module 85 kWh
+// cars and EC6 on the 12-module 102 kWh ones — which is what makes it safe to
+// key on: it agrees with the pack figure each row already carried.
+
+test("VIN position 8 gives a Blazer EV its drivetrain and its pack together", () => {
+  const at = (vin: string, year: number, trim?: string) =>
+    matchEnrichment(decode({ make: "CHEVROLET", model: "Blazer EV", modelYear: year, vin, trim }), null).exact;
+  const cases: Array<[string, number, string, number, number]> = [
+    // vin, year, id, EPA range, pack kWh
+    ["3GNKDBRM0SS254972", 2025, "blazer-fwd", 312, 85],
+    ["3GNKD1RJ3SS153232", 2025, "blazer-awd-2025", 283, 85],
+    ["3GNKDHRK7SS178250", 2025, "blazer-rwd-2025", 334, 102],
+    ["3GNKDERL7SS254220", 2025, "blazer-ss-2025", 303, 102],
+    ["3GNKDBRJ0RS212608", 2024, "blazer-awd-2024", 279, 85],
+    ["3GNKDHRK5RS245647", 2024, "blazer-rwd-2024", 324, 102],
+    ["3GNKDERL3TS112724", 2026, "blazer-ss-2026", 302, 102],
+  ];
+  for (const [vin, year, id, miles, kwh] of cases) {
+    const r = at(vin, year);
+    assert.equal(r?.id, id, vin);
+    assert.equal(r?.range?.epaRangeMi?.value, miles, `${id} range`);
+    assert.equal(r?.battery?.packGrossKwh?.value, kwh, `${id} pack — must agree with the VIN's own EC5/EC6 RPO`);
+  }
+});
+
+test("a Blazer EV with no drivetrain and no trim still resolves", () => {
+  // The 569 listings that caused this. Both fields blank; the VIN is enough.
+  const r = matchEnrichment(decode({ make: "CHEVROLET", model: "Blazer EV", modelYear: 2026, vin: "3GNKDARM0TS102282" }), null);
+  assert.equal(r.exact?.id, "blazer-fwd");
+  assert.equal(r.candidates, undefined, "and it is one answer, not a spread");
+});
+
+test("the 2024 police Blazer takes no row rather than the AWD row's smaller pack", () => {
+  // MY2024 position 8 = L decodes "PPV", not SS: X0E+EC6, a 12-module car. No
+  // row covers it. Before the vin8 keys it matched blazer-awd-2024 and printed
+  // that row's 85 kWh and 279 miles onto a 102 kWh vehicle.
+  const r = matchEnrichment(decode({ make: "CHEVROLET", model: "Blazer EV", modelYear: 2024, vin: "3GNKDFRL0RS281873", trim: "Police" }), null);
+  assert.equal(r.exact, undefined);
+  assert.equal(r.candidates, undefined);
+});
+
+test("MY2027 Blazers resolve, because EPA and vPIC both say nothing changed", () => {
+  // Widened rather than duplicated: EPA's 2027 figures are identical to 2026
+  // and vPIC files the same engine RPOs on 2027 VINs. EPA lists no 2027 RWD
+  // and the feed carries none.
+  const at = (vin: string) =>
+    matchEnrichment(decode({ make: "CHEVROLET", model: "Blazer EV", modelYear: 2027, vin }), null).exact;
+  assert.equal(at("3GNKDDRM2VS105432")?.range?.epaRangeMi?.value, 312, "2027 FWD");
+  assert.equal(at("3GNKDJRJ7VS107097")?.range?.epaRangeMi?.value, 283, "2027 AWD");
 });
