@@ -2134,6 +2134,10 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     id: "hummer-ev-suv-2024",
     make: "GMC",
     model: "Hummer EV SUV",
+    // The feed also files this SUV as plain "Hummer SUV". Safe as an alias:
+    // GM's petrol Hummers were the H1/H2/H3 and carry those model strings, so
+    // nothing non-electric answers to it.
+    modelAliases: ["Hummer SUV"],
     modelYears: [2024, 2024],
     abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
     battery: { packUsableKwh: f(205, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },
@@ -2167,6 +2171,10 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     id: "hummer-ev-suv-2025",
     make: "GMC",
     model: "Hummer EV SUV",
+    // The feed also files this SUV as plain "Hummer SUV". Safe as an alias:
+    // GM's petrol Hummers were the H1/H2/H3 and carry those model strings, so
+    // nothing non-electric answers to it.
+    modelAliases: ["Hummer SUV"],
     modelYears: [2025, 2025],
     abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
     battery: { packUsableKwh: f(205, "est", "medium"), chemistry: f("NCMA", "agg", "medium") },

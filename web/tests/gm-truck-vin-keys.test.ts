@@ -1,6 +1,11 @@
 // From web/:
 //   node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs \
-//        --test tests/sierra-ev-vin-keys.test.ts
+//        --test tests/gm-truck-vin-keys.test.ts
+//
+// GM's electric trucks — the Sierra EV and both Hummer bodies — which between
+// them were 1,641 of the live listings showing no range on 2026-08-28, for
+// two different reasons that both come down to one row standing in for
+// several configurations.
 //
 // The GMC Sierra EV, which on 2026-08-28 was the single largest matching
 // failure in the live feed: 773 of 969 listings showed no range, not because
@@ -103,4 +108,52 @@ test("vPIC's own Trim string is not a pack fact, and no row is keyed on it", () 
   const impossible = sierra("1GT1ESEL0TU407216", 2026); // pos6 = S (Elevation 14), pos8 = L (24-MOD)
   assert.equal(impossible.exact, undefined, "a position-6/8 mismatch is not a real configuration");
   assert.equal(impossible.candidates, undefined);
+});
+
+// ── GMC Hummer EV, MY2026 ──────────────────────────────────────────────────
+//
+// Same file because it is the same failure and the same fix. 868 of these
+// showed no range: EPA has not rated a MY2026 Hummer of either body, so the
+// two rows that existed abstained and put GM's figure in a note headline
+// reading "GM's own estimate is up to 363 miles on the 24-module pack" — the
+// best of six figures, on a row that also covered the 316-mile 2X.
+
+test("every 2026 Hummer configuration carries its own GM-estimated range", () => {
+  const cases: Array<[string, string, number, string]> = [
+    ["1GT4EADD4TU602693", "Hummer EV", 316, "pickup 2X (3VL-labelled), 20-module"],
+    ["1GT4EBDD0TU605693", "Hummer EV", 316, "pickup 2X, 20-module"],
+    ["1GT4EDDB0TU605204", "Hummer EV", 312, "pickup 3X, 20-module"],
+    ["1GT4EEDB2TU602536", "Hummer EV", 312, "pickup 3X Carbon Fiber, 20-module"],
+    ["1GT4EDDA2TU600125", "Hummer EV", 363, "pickup 3X, 24-module — the only 363"],
+    ["1GKTEHDE0TU603275", "Hummer EV SUV", 319, "SUV 2X"],
+    ["1GKTENDE0TU604988", "Hummer EV SUV", 319, "SUV 2X"],
+    ["1GKTERDC3TU604974", "Hummer EV SUV", 310, "SUV 3X"],
+    ["1GKTESDC8TU604699", "Hummer EV SUV", 310, "SUV 3X Carbon Fiber"],
+  ];
+  for (const [vin, model, miles, label] of cases) {
+    const r = matchEnrichment(decode({ make: "GMC", model, modelYear: 2026, vin, trim: "2X" }), null).exact;
+    assert.equal(r?.range?.mfrRangeMi?.value, miles, label);
+    assert.equal(r?.range?.epaRangeMi, undefined, `${label}: EPA has not rated a 2026 Hummer`);
+    assert.ok(r?.range?.mfrRangeMi?.sourceUrl?.includes("gmc.com"), `${label}: cited to GM's own page`);
+  }
+});
+
+test("the 363-mile figure reaches only the 24-module pickup that earns it", () => {
+  // The regression the old single row WAS: one headline quoting the best of
+  // six figures, on a row that covered all of them.
+  const at = (vin: string, model: string) =>
+    matchEnrichment(decode({ make: "GMC", model, modelYear: 2026, vin }), null).exact?.range?.mfrRangeMi?.value;
+  assert.equal(at("1GT4EDDA2TU600125", "Hummer EV"), 363);
+  for (const vin of ["1GT4EADD4TU602693", "1GT4EBDD0TU605693", "1GT4EDDB0TU605204", "1GT4EEDB2TU602536"])
+    assert.notEqual(at(vin, "Hummer EV"), 363, `${vin} is not a 24-module truck`);
+});
+
+test("a Hummer filed under the feed's short model string still reaches its row", () => {
+  // One live 2024 listing spells the model "Hummer SUV". No petrol Hummer
+  // answers to that — the H1/H2/H3 carry their own model strings — so it is
+  // an alias rather than a guess.
+  assert.ok(
+    matchEnrichment(decode({ make: "GMC", model: "Hummer SUV", modelYear: 2024, vin: "1GKB0RDC9RU100285", trim: "3X" }), null).exact,
+    "the short spelling must resolve"
+  );
 });

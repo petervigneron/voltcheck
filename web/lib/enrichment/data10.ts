@@ -1573,14 +1573,67 @@ const R: EnrichmentRow[] = [];
   const HUMMER_PICKUP_2026 = "https://www.gmc.com/electric/hummer-ev/pickup-truck";
   const HUMMER_SUV_2026 = "https://www.gmc.com/electric/hummer-ev/suv";
 
+  // No epaRangeMi abstention any more: EPA still has not rated a MY2026 Hummer
+  // of either body — its 2026 GMC list is the Sierra EV and nothing else,
+  // re-read 2026-08-28 — but GM publishes a figure for every configuration and
+  // `range.mfrRangeMi` (lib/types.ts) is where a maker's own figure goes. The
+  // rows below carry it. The other two silences stand.
   const HUMMER_ABSTAINS = {
-    epaRangeMi:
-      "No EPA rating exists for MY2026: fueleconomy.gov's 2026 GMC records cover the Sierra EV and no Hummer of either body, and GM's own figure is labelled GM-estimated, not EPA",
     packUsableKwh:
       "GM states pack size only as a module count — 20-module or 24-module — on its model pages, in its configurators and in its own spec sheets, which carry no kWh figure anywhere",
     heatPump:
       "GM's MY2026 Hummer pages and spec sheets never use the term, describing thermal hardware only as Ultium and energy recovery, so neither presence nor absence can be stated",
   };
+  // ── MY2026 Hummer: one row per configuration, keyed on VIN positions 4-8 ──
+  //
+  // 868 of these showed no range at all, and the shape of the failure is the
+  // one this corpus keeps repeating: EPA never rated the truck, the schema's
+  // only range field was named epaRangeMi, so the row abstained — and then put
+  // GM's number in a NOTE HEADLINE reading "No EPA range rating exists for the
+  // 2026 truck; GM's own estimate is up to 363 miles on the 24-module pack".
+  // That headline is the best of SIX pickup figures. A 2X pickup is a 316-mile
+  // truck, so the one row was quietly 47 miles optimistic for the 244 of them
+  // in the feed, in the sentence it used instead of a number.
+  //
+  // GMC's own FAQ tables, read 2026-08-28:
+  //   Pickup 2X                       316   (Extreme Off-Road Package: 300)
+  //   Pickup 3X, 20-module            312   (EOR: 297)
+  //   Pickup 3X, 24-module            363   (EOR: 345)
+  //   SUV    2X                       319   (EOR: 298)
+  //   SUV    3X                       310   (EOR: 294)
+  //
+  // The VIN carries trim and pack, and the sweep is what says so rather than
+  // the dealer's trim string. One real live VIN per descriptor in the feed:
+  //   4EADD  2X,  2-MOTOR, 20-MOD (ETI)      4EDDA  3X, 3-MOTOR, 24-MOD (ETN)
+  //   4EBDD  2X,  2-MOTOR, 20-MOD (ETI)      4EDDB  3X, 3-MOTOR, 20-MOD (ETI)
+  //   4EEDB  3X Carbon Fiber, 20-MOD (ETI)
+  //   TEHDE  2X,  2-MOTOR, 20-MOD (ETJ)      TERDC  3X, 3-MOTOR, 20-MOD (ETJ)
+  //   TENDE  2X,  2-MOTOR, 20-MOD (ETJ)      TESDC  3X Carbon Fiber, 20-MOD
+  //
+  // Note position 8 is D/A/B on the pickup and E/C on the SUV for the same
+  // packs — which is exactly why these are five-character `vds` keys and not
+  // `vin8` (data4.ts's Sierra EV block flagged the Hummer as the collision
+  // that makes position 8 unsafe on its own, and it was right).
+  //
+  // TWO THINGS DELIBERATELY NOT CLAIMED.
+  // The Extreme Off-Road Package moves every figure by 15-21 miles and is not
+  // in the VIN: vPIC's full decode carries no option-package field, and GMC
+  // sells it as a package rather than a model. So these rows print the
+  // standard configuration's figure and name the package's figure in the row
+  // `note` — the rule this corpus settled for range-varies-by-wheel-size,
+  // where a "always quote the lowest" rule was ratified and reversed the same
+  // day. Every figure here already renders with the "est" mark.
+  // And `3VL`: two pickup descriptors, 4EADD and 4EBDD, decode as 2X trucks
+  // that differ in NOTHING vPIC reports except the trim label, which reads
+  // "3VL 2X" on the first and "2X" on the second — same motor count, same
+  // module count, same everything else on a full field-by-field diff. Nothing
+  // found this pass connects 3VL to the Extreme Off-Road Package, and guessing
+  // that it does would move 130 trucks to 300 miles on a hunch. Both are 2X
+  // rows at 316. If 3VL is ever identified, this is the note to revisit.
+  const HUMMER_RANGE_SRC_PICKUP = HUMMER_PICKUP_2026;
+  const HUMMER_RANGE_SRC_SUV = HUMMER_SUV_2026;
+  const eorNote = (standard: number, eor: number, what: string) =>
+    `GM-estimated, ${what}. GMC quotes ${eor} miles for the same truck with the Extreme Off-Road Package, which is an option package and is not encoded in the VIN, so this is the standard configuration's figure. GM has no EPA rating for any MY2026 Hummer.`;
   const HUMMER_CHARGING = {
     portStandard: f<"CCS1">("CCS1", "mfr", "high", undefined, GM_NACS_ADAPTER),
     superchargerAccess: f<"adapter">("adapter", "mfr", "high", "GM NACS DC adapter, DC stations only", GM_SUPERCHARGER),
@@ -1591,50 +1644,50 @@ const R: EnrichmentRow[] = [];
     sohFloorPct: f(75, "mfr", "high", undefined, GM_BATTERY_LIFE),
   };
 
+  const NACS_NOTE = {
+    headline: "Still a CCS1 port: Tesla Superchargers need GM's NACS DC adapter, which does not work on Level 2 chargers",
+    severity: "info" as const,
+    learnMore: GM_NACS_ADAPTER,
+  };
+  // No `trim` key on any of these. On a vds-keyed row a trim key is a veto —
+  // trimMatches() refuses a listing whose own trim field is blank and runs
+  // before the vds filter — and three live Hummers carry no trim string at
+  // all. tests/sierra-ev-vin-keys.test.ts pins the same rule for the Sierra.
+  const hummer2026 = (
+    id: string,
+    model: string,
+    modelAliases: string[] | undefined,
+    vds: string[],
+    packVariant: string,
+    rangeMi: number,
+    note: string,
+    src: string
+  ): EnrichmentRow => ({
+    id,
+    make: "GMC",
+    model,
+    modelAliases,
+    modelYears: [2026, 2026],
+    vds,
+    packVariant,
+    range: { mfrRangeMi: f(rangeMi, "mfr", "high", note, src) },
+    charging: HUMMER_CHARGING,
+    warranty: HUMMER_WARRANTY,
+    abstains: HUMMER_ABSTAINS,
+    buyerNotes: [NACS_NOTE],
+  });
+
   R.push(
-    {
-      id: "hummer-ev-pickup-2026",
-      make: "GMC",
-      model: "Hummer EV",
-      modelAliases: ["Hummer EV Pickup"],
-      modelYears: [2026, 2026],
-      charging: HUMMER_CHARGING,
-      warranty: HUMMER_WARRANTY,
-      abstains: HUMMER_ABSTAINS,
-      buyerNotes: [
-        {
-          headline: "No EPA range rating exists for the 2026 truck; GM's own estimate is up to 363 miles on the 24-module pack",
-          severity: "info",
-          learnMore: HUMMER_PICKUP_2026,
-        },
-        {
-          headline: "Still a CCS1 port: Tesla Superchargers need GM's NACS DC adapter, which does not work on Level 2 chargers",
-          severity: "info",
-          learnMore: GM_NACS_ADAPTER,
-        },
-      ],
-    },
-    {
-      id: "hummer-ev-suv-2026",
-      make: "GMC",
-      model: "Hummer EV SUV",
-      modelYears: [2026, 2026],
-      charging: HUMMER_CHARGING,
-      warranty: HUMMER_WARRANTY,
-      abstains: HUMMER_ABSTAINS,
-      buyerNotes: [
-        {
-          headline: "No EPA range rating exists for the 2026 SUV; GM's own estimate is up to 319 miles",
-          severity: "info",
-          learnMore: HUMMER_SUV_2026,
-        },
-        {
-          headline: "Still a CCS1 port: Tesla Superchargers need GM's NACS DC adapter, which does not work on Level 2 chargers",
-          severity: "info",
-          learnMore: GM_NACS_ADAPTER,
-        },
-      ],
-    }
+    hummer2026("hummer-ev-pickup-2026-2x", "Hummer EV", ["Hummer EV Pickup"], ["4EADD", "4EBDD"],
+      "2X (20-module)", 316, eorNote(316, 300, "2X pickup, 20-module pack"), HUMMER_RANGE_SRC_PICKUP),
+    hummer2026("hummer-ev-pickup-2026-3x-20", "Hummer EV", ["Hummer EV Pickup"], ["4EDDB", "4EEDB"],
+      "3X (20-module)", 312, eorNote(312, 297, "3X pickup, 20-module pack"), HUMMER_RANGE_SRC_PICKUP),
+    hummer2026("hummer-ev-pickup-2026-3x-24", "Hummer EV", ["Hummer EV Pickup"], ["4EDDA"],
+      "3X (24-module)", 363, eorNote(363, 345, "3X pickup, 24-module pack — the longest-range Hummer GM sells"), HUMMER_RANGE_SRC_PICKUP),
+    hummer2026("hummer-ev-suv-2026-2x", "Hummer EV SUV", ["Hummer SUV"], ["TEHDE", "TENDE"],
+      "2X", 319, eorNote(319, 298, "2X SUV"), HUMMER_RANGE_SRC_SUV),
+    hummer2026("hummer-ev-suv-2026-3x", "Hummer EV SUV", ["Hummer SUV"], ["TERDC", "TESDC"],
+      "3X", 310, eorNote(310, 294, "3X SUV"), HUMMER_RANGE_SRC_SUV)
   );
 }
 
