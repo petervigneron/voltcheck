@@ -58,3 +58,30 @@ jobs:
             curl -sf -o /dev/null --max-time 120 "https://voltcheck.net/api/index/$p" \
               || echo "::warning::warm of /api/index/$p failed; its first visitor pays the (artifact) render"
           done
+          # The other 12 of those 38, which this loop was missing (2026-08-28).
+          # The sitemap shards are the one surface that never got an artifact
+          # lane — app/sitemap/[shard]/route.ts still renders off a full feed
+          # walk — and the revalidate POST four lines up expires all 12 of
+          # them. nightly.yml warmed them twice, in finalize-ingest and again
+          # in recheck, and BOTH passes ran before this job did: each paid a
+          # real walk, and this POST then threw both away. Measured on
+          # production 2026-08-28, hours after a nightly: age ~18 min, so the
+          # warm standing was a crawler's, not ours. Two wasted walks a night
+          # against a burstable instance whose CPU credits are the actual
+          # budget, for a cache that was gone before anyone read it.
+          #
+          # Here is the only place a warmed sitemap survives the night, so
+          # here is where it belongs — and the precondition is already proved
+          # rather than probed: the publish step above completed a full walk
+          # minutes ago. That is the real signal nightly.yml's 1.5s latency
+          # probe was reaching for. A failure is a stale sitemap, never a
+          # wrong one (the route throws on anything but a live feed), so it
+          # warns. 12 shards — keep in step with web/lib/sitemap.ts
+          # SITEMAP_SHARDS.
+          #
+          # Sequential and unhurried on purpose: each is a walk-path render,
+          # and db.ts's ten-minute memo means the first one pays for the rest.
+          for s in $(seq 0 11); do
+            curl -sf -o /dev/null --max-time 300 "https://voltcheck.net/sitemap/$s.xml" \
+              || echo "::warning::warm of /sitemap/$s.xml failed; crawlers keep yesterday's copy until a request renders it"
+          done
