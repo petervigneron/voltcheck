@@ -117,17 +117,55 @@ it on a schedule: it moves ~117 MB a run. If a deploy does poison the cache,
 `vercel promote <previous-deployment-url>` restores it in seconds: the ISR
 cache is per deployment, so the previous one still holds its warm entries.
 
-The browse feed is cached a **day**, not an hour (the 2026-08-17 egress
-incident: hourly re-walks were ~1.2 GB/day against a 5 GB/month quota).
-nightly.yml's last step POSTs `voltcheck.net/api/revalidate`, which expires
-the `feed` cache tag and warms the shards — the site refreshes when the data
-actually changes, and at most a day later if that signal is lost. The secret
-is the GitHub Actions secret `FEED_REVALIDATE_SECRET` (plaintext in the local
-`docs/feed-revalidate-secret.txt`; the route pins its sha256). After any
-**out-of-cycle db-sync**, send that POST yourself — until the next nightly,
-shoppers are seeing yesterday's feed. And don't point full-feed scripts at
-Supabase when `voltcheck.net/api/index/0`–`23` already serve the same rows off
-Vercel's CDN for free.
+**The browse feed is not rendered from a walk any more, so no cache lever
+refreshes it.** Since 2026-08-26 `/api/index/first`, `/trims` and `/0`–`23`
+serve *published artifacts* — 27 files in the public `feed` storage bucket,
+written by `web/scripts/publish-feed.mjs` via `publish-feed.yml`, which
+nightly.yml calls as its last job. The route falls back to walking only when
+the artifact is missing or older than its 36h gate. So the grid's freshness is
+the **publish cadence**, and nothing else: expiring caches re-renders the
+routes, and the re-render re-reads the same artifact and serves the same
+numbers.
+
+This is worth being blunt about because it cost a day of debugging on
+2026-08-28, when the grid sat at 134,080 cars against a database holding
+147,581 and it read exactly like a cache that would not purge. Three fixes
+were tried at the cache-tag layer and all three were beside the point:
+`revalidateTag(tag, { expire: 0 })` (the 2nd arg is a cacheLife *profile* in
+Next 16, not a purge), `updateTag` (500s — Next forbids it outside a Server
+Action), and single-arg `revalidateTag` (the documented immediate-expiration
+path). The last one *works*: the route genuinely re-renders,
+`x-vercel-cache: REVALIDATED`, `age: 0`. It just re-renders the artifact. The
+tells were all there and all misread — the re-render took 0.8–2.1 s where a
+walk is 90–300 s, a brand-new deployment with an empty route cache showed the
+same stale total, and the number only ever moved once a night. What settled it
+in one command was diffing the served body against the bucket:
+`curl $SUPABASE_URL/storage/v1/object/public/feed/first.json` came back
+byte-identical to `curl voltcheck.net/api/index/first`. Do that first.
+
+**After any out-of-cycle db-sync, or any crawl that lands cars outside the
+nightly, dispatch the publisher — `gh workflow run publish-feed.yml`.** That
+is the whole remedy: it walks once at `FEED_LANES=2` (gentle by design, ~4
+min), publishes the 27 files, POSTs `/api/revalidate` and warms all 26 index
+paths. A bare revalidate POST does not do it. On 2026-08-28 a manually
+dispatched 2h20m rolling crawl added ~13,500 cars after the night's publish,
+and they stayed invisible on the grid until the publisher was re-run.
+`refresh-site.yml` (04:00/16:00 UTC) was built for the walk era and its age
+gate now guards a refresh that cannot change anything; leave it, but do not
+reach for it as a freshness fix.
+
+The route cache is still a **day**, not an hour (the 2026-08-17 egress
+incident: hourly re-walks were ~1.2 GB/day against a 5 GB/month quota), and
+the revalidate secret is still the GitHub Actions secret
+`FEED_REVALIDATE_SECRET` (plaintext in the local
+`docs/feed-revalidate-secret.txt`; the route pins its sha256) — that POST is
+what *warms* a republish onto the site, it is just not what *makes* one. The
+**sitemaps** are the one surface still on the walk path, so they re-walk after
+every revalidate and can time out on a first render (`/sitemap/0.xml` aborted
+mid-warm on 2026-08-28 and answered 12,360 URLs in 0.9 s a minute later —
+re-request before believing a sitemap shard is short). And don't point
+full-feed scripts at Supabase when `voltcheck.net/api/index/0`–`23` already
+serve the same rows off Vercel's CDN for free.
 
 ## Database
 

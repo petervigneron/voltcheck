@@ -504,6 +504,23 @@ jobs:
       # site's cache therefore lags the database by design here, exactly as it
       # already lags it by up to a day. Refreshing the site stays a scheduled
       # act on its own cadence, decoupled from how often data lands.
+      #
+      # Half of that reasoning expired on 2026-08-26 and the conclusion has
+      # not been re-decided, so read it carefully before acting on it. Since
+      # the artifact lane landed, a warm is NOT a walk — it is 26 CDN file
+      # fetches, and it costs the database nothing. What a refresh now costs
+      # is the PUBLISH that has to precede it (publish-feed.yml: one walk at
+      # FEED_LANES=2, ~4 min, ~117 MB), because /api/revalidate alone re-reads
+      # the same artifact and changes no number on the grid.
+      #
+      # So the lag this comment accepts is now larger and less visible than it
+      # reads. Measured 2026-08-28: a dispatched 2h20m slice landed ~13,500
+      # cars after the night's publish and none of them appeared on the browse
+      # grid — the grid showed 134,080 against a database holding 147,581 —
+      # until publish-feed.yml was dispatched by hand. Whether this lane
+      # should call publish-feed.yml (3 gentle walks/day, ~350 MB, against a
+      # Pro plan rather than the 5 GB/month free quota this comment was
+      # written for) is an OPEN decision for the owner, not an oversight.
       - name: What this slice did
         if: always()
         run: |
