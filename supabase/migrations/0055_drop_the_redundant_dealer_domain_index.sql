@@ -31,7 +31,18 @@
 -- Dropping it would turn a 277 ms index-only scan into a seq scan of a 232 MB
 -- heap on an instance already exhausting its Disk IO budget. Leave it.
 --
--- CONCURRENTLY: this ran while the rolling crawl was writing. A plain DROP
--- INDEX takes ACCESS EXCLUSIVE and would have blocked every ingest for its
--- duration.
+-- CONCURRENTLY: this ran while the rolling crawl was writing, and that was a
+-- deliberate change of plan. The intent was to wait for a quiet window, but
+-- the crawl runs 49 jobs for ~2 hours and the next scheduled run had already
+-- stacked up behind it, so "quiet" was not arriving. DROP is cheap where
+-- CREATE is not — it unlinks a file rather than rebuilding anything — and
+-- CONCURRENTLY takes SHARE UPDATE EXCLUSIVE, which does not block insert,
+-- update or delete. A plain DROP INDEX would have taken ACCESS EXCLUSIVE and
+-- stalled every ingest for its duration.
+--
+-- Applied 2026-08-29 03:30 UTC. Verified after, with the crawl still running:
+--   select ... where delisted_at is null and dealer_domain in (...)
+--     -> Index Scan using listings_live_domain          (the partial absorbs it)
+--   select count(*) from listings where delisted_at is null
+--     -> Index Only Scan using listings_live_idx        (unchanged)
 drop index concurrently if exists listings_domain_idx;
