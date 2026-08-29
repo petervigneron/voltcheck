@@ -1,0 +1,64 @@
+-- Applied 2026-08-29. 63 rows deleted from listing_price_history across the
+-- 37 VINs scraper/live-price-audit.mjs had flagged, whose recorded prices came
+-- from two extraction bugs fixed the same day in fb28f49:
+--
+--   the weld          DealerOn's price library distinguishes a repeated label
+--                     by a counter on the LABEL ("Internet Price: 2:40094.0").
+--                     Splitting on the first colon let it overwrite the real
+--                     entry, and stripping non-digits welded the counter onto
+--                     the number: 2 + 40094 = 240094.
+--   the unasked guard JSONLD_JUNK_FRACTION was computed for the JSON-LD rung
+--                     only, so the same rejected number arrived via the price
+--                     library and published a $15,875 Kia EV9 (MSRP $65,875).
+--
+-- Rule: within those 37 VINs only, delete history rows more than 2.5x or less
+-- than 0.4x the car's CURRENT price. Inside this set the observed ratios were
+-- 4.8x-14.7x and 0.2x-0.4x — nowhere near a real markdown — so the crude
+-- ratio test is safe HERE in a way it is not in general. The wider population
+-- (~585 VINs, ~2,239 rows) is deliberately NOT touched: it needs a detector
+-- that can tell an extraction artifact from a genuine markdown, which is its
+-- own piece of work.
+--
+-- Effect, read off listing_price_display (the view the sparkline draws):
+--   JTMBCAEB5TJ028634  240094              -> 40992, 40992, 40992
+--   3FMTK4SX3TMA05330  48042               -> 48042, 48042
+--   5XYAFFS56TG027278  64533, 64533, 15875 -> 64533, 64533
+--   JTJBCACB6TA008473  846160              -> 56724, 57524, 57524
+--
+-- WHAT WENT WRONG, recorded because the next person needs to know the data is
+-- imperfect rather than trust it blindly.
+--
+-- The rule was PREVIEWED as "> 2.5x current" (plus a hand-written clause for
+-- the EV9) and EXECUTED as "> 2.5x OR < 0.4x current" for every flagged VIN.
+-- Three rows were therefore deleted that no one had reviewed, and on three
+-- cars the reference price was itself still wrong — they are dealer.com and
+-- other platforms, so fb28f49 never corrected them:
+--
+--   1C4RJXN62SW579857  Jeep Wrangler 4xe  listings.price_usd 359999 (wrong)
+--                      deleted 39999  <- almost certainly the real ask
+--   1GYKPNRKXSZ306301  Cadillac Lyriq     listings.price_usd 414811 (wrong)
+--                      deleted 38490  <- almost certainly the real ask
+--   7YAKNDDC3VY073869  Hyundai Ioniq 5    listings.price_usd 746186 (wrong)
+--                      deleted 23     <- junk under any rule, no loss
+--
+-- So two plausibly-good price points were lost. They are NOT being re-inserted:
+-- the DELETE returned only vin and price, so the original observed_at, run_id
+-- and provenance are gone, and writing a row with an invented timestamp would
+-- manufacture exactly the kind of history this project refuses to manufacture.
+-- Point-in-time recovery is disabled on this project, so there is no cheap
+-- restore. The next crawl of those rooftops re-records a price honestly, which
+-- is the right repair.
+--
+-- Damage is bounded: `listings` was not touched, so no displayed price moved,
+-- and those three cars' charts went from a wrong-to-right ping-pong to a flat
+-- wrong line. They still show wrong prices to shoppers — a SEPARATE, still-open
+-- bug on non-DealerOn platforms, and the reason their reference price lied.
+--
+-- The lesson worth keeping: a cleanup rule anchored on "the current price" is
+-- only as good as the current price, and these were the rows where it was
+-- least trustworthy. Preview and execute the SAME predicate, and on a set
+-- where the anchor is itself suspect, anchor on something else.
+--
+-- No-op on a fresh database: the rows this removed only ever existed because
+-- of the bugs above.
+select 1;
