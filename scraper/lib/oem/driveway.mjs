@@ -82,7 +82,7 @@ function evKindFromFuel(fuel) {
   return null;
 }
 
-function toRecord(v) {
+export function toRecord(v) {
   const vin = String(v?.vin ?? "").toUpperCase();
   if (!VIN_RE.test(vin)) return null;
   const evKind = evKindFromFuel(v.fuel);
@@ -97,6 +97,14 @@ function toRecord(v) {
   const hero = typeof v.image?.heroUrl === "string" && v.image.heroUrl.startsWith("https://") ? v.image.heroUrl : undefined;
   // condition is "USED" or "CPO"; a CPO car is dealer-certified used.
   const condition = String(v.condition ?? "").toUpperCase() === "CPO" ? "certified" : "used";
+// Below half of the manufacturer's sticker a served "price" is not this car's
+// asking price. Same fraction, same reasoning, as the dealer.com and DealerOn
+// resolvers — kept as a literal here rather than imported so the OEM lane does
+// not take a dependency on a platform module.
+const MSRP_JUNK_FRACTION = 0.5;
+const junkBelowMsrp = (price, msrp) =>
+  price != null && msrp != null && msrp > 0 && price < msrp * MSRP_JUNK_FRACTION;
+
   return {
     vin,
     year,
@@ -106,8 +114,22 @@ function toRecord(v) {
     // Driveway's advertised price, in dollars. `price` is the no-haggle figure
     // the card shows; priceWithFees (doc fees added) is deliberately not used —
     // the higher, unconditional number is the honest one to print.
+    //
+    // Anchored on the msrp this query already asks for and used to ignore. A
+    // 2026 BMW M5 Touring with 971 miles was live at $18,998 on 2026-08-29,
+    // about a seventh of what that car costs, and nothing here could see it:
+    // the global price floor only asks whether a number is too small to be any
+    // car's price, and $18,998 clears it easily. Half of MSRP is the same
+    // JSONLD_JUNK_FRACTION test dealercom.mjs and dealeron.mjs already apply
+    // for the same reason — below it the figure is not a discount, it is a
+    // different number in the price slot (a deposit, a payment, a trade
+    // allowance). Abstaining prints no price instead of a false bargain, which
+    // is the asymmetry the house rule asks for.
+    //
+    // Only fires where Driveway serves an msrp; with none, the advertised
+    // price stands as before.
     ...pickTaggedPrice("driveway", [
-      ["price", num(v.price)],
+      ["price", junkBelowMsrp(num(v.price), num(v.msrp)) ? undefined : num(v.price)],
     ]),
     mileage: num(v.mileage),
     exteriorColor: v.exteriorColor?.name || undefined,
