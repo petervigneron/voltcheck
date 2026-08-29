@@ -7,7 +7,7 @@
 // under us, these are what should fail first.
 import test from "node:test";
 import assert from "node:assert/strict";
-import { resolveDdcPrice, PRICE_ABSTAIN } from "../lib/platforms/dealercom.mjs";
+import { resolveDdcPrice, resolveDdcPriceTagged, PRICE_ABSTAIN } from "../lib/platforms/dealercom.mjs";
 
 // jsonld arrives on rec.priceUsd (normalize() read offers.price); the rest are
 // DDC.dataLayer fields. Only the fields the page actually served are set.
@@ -115,4 +115,52 @@ test("a real recent used ask is untouched by the recent-used floor", () => {
 
 test("a no-discount new car at MSRP does not get lowered or abstained", () => {
   assert.equal(run({ jsonld: 50000, msrp: 50000, internet: 50000, sale: 50000, newOrUsed: "new" }), 50000);
+});
+
+// ---------------------------------------------------------------- 2026-08-29
+// The third way JSON-LD misleads: it parrots retailValue on a rooftop that
+// serves msrp 0, so neither MSRP-anchored guard can fire. All three cases below
+// are the exact DDC data layers those rooftops served on 2026-08-29.
+
+test("an offer parroting retailValue is a sticker, not the ask (buddychevy Lyriq)", () => {
+  // Rendered: Suggested Retail Price $414,811 / Discount -$376,330 /
+  // Today's Price $38,481. We published $414,811 on a $38,481 car.
+  const got = resolveDdcPriceTagged(
+    { priceUsd: 414811, condition: "used", year: 2025 },
+    { msrp: "0", retailValue: "414811", internetPrice: "38481", askingPrice: "38481", salePrice: "0", newOrUsed: "used" }
+  );
+  assert.equal(got.priceUsd, 38481);
+});
+
+test("a real MSRP still governs the discount-depth abstain", () => {
+  // Unchanged behaviour: against a TRUE sticker, a discount past
+  // MIN_TRUSTED_PRICE_FRACTION is a conditional-rebate stack and we abstain
+  // rather than print a bargain we cannot stand behind.
+  const got = resolveDdcPriceTagged(
+    { priceUsd: 89530, condition: "new", year: 2025 },
+    { msrp: "89530", retailValue: "0", internetPrice: "30399", askingPrice: "0", salePrice: "0", newOrUsed: "new" }
+  );
+  assert.equal(got.priceUsd, 0);
+});
+
+test("a genuine ask below a real MSRP is untouched (westerlyjeepram Grand Cherokee 4xe)", () => {
+  // Every served field agrees at $71,490 under a $75,870 MSRP. The live-price
+  // audit flags this car as an outlier against its cohort, and it is right to
+  // — but the number is what the dealer asks, so the resolver must not move it.
+  const got = resolveDdcPriceTagged(
+    { priceUsd: 71490, condition: "used", year: 2024 },
+    { msrp: "75870", retailValue: "0", internetPrice: "71490", askingPrice: "71490", salePrice: "71490", newOrUsed: "used" }
+  );
+  assert.equal(got.priceUsd, 71490);
+});
+
+test("no sticker of either kind leaves the offer standing (astonmartinchicago Model X)", () => {
+  // msrp 0 AND retailValue 0. $95,800 for a 2016 Model X is far above its
+  // cohort, but three DDC fields and the rendered page all say $95,800: that is
+  // the dealer's ask, faithfully reported, and not this resolver's to correct.
+  const got = resolveDdcPriceTagged(
+    { priceUsd: 95800, condition: "used", year: 2016 },
+    { msrp: "0", retailValue: "0", internetPrice: "95800", askingPrice: "95800", salePrice: "95800", newOrUsed: "used" }
+  );
+  assert.equal(got.priceUsd, 95800);
 });

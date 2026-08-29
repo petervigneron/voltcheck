@@ -114,6 +114,21 @@ export function resolveDdcPrice(rec, d) {
 export function resolveDdcPriceTagged(rec, d) {
   const jsonld = num(rec.priceUsd); // normalize() already read offers.price
   const msrp = num(d.msrp);
+  // DDC's OTHER sticker field, and the third way JSON-LD misleads. The two
+  // failure modes above are both anchored on `msrp`, so when a rooftop serves
+  // msrp 0 neither guard can fire and the offer price is taken at face value
+  // as "the dealer's declared price" — which is how buddychevy.com published a
+  // $414,811 Cadillac Lyriq (2026-08-29). Read off its own data layer:
+  //
+  //   askingPrice 38481   internetPrice 38481   salePrice 0
+  //   msrp 0              retailValue 414811    JSON-LD offer 414811
+  //
+  // and the page itself renders "Suggested Retail Price $414,811 / Your Buddy
+  // Chevrolet Discount -$376,330 / Today's Price $38,481". The offer parrots
+  // retailValue, exactly the MSRP-echo case, just anchored on the field that
+  // was actually populated. The correct answer was sitting in two agreeing DDC
+  // fields the whole time.
+  const sticker = msrp ?? num(d.retailValue);
   const isNew = (d.newOrUsed ?? rec.condition) === "new";
   const floor = priceFloor({ isNew, year: rec.year ?? num(d.modelYear) });
 
@@ -128,16 +143,27 @@ export function resolveDdcPriceTagged(rec, d) {
     .sort((a, b) => a.price - b.price);
   // The lowest DDC field that is a real discount below MSRP (not a >MSRP
   // subtotal). With no MSRP anchor, the lowest plausible field stands in.
-  const ddcDiscount = msrp != null ? ddcFields.find((f) => f.price < msrp) : ddcFields[0];
+  const ddcDiscount = sticker != null ? ddcFields.find((f) => f.price < sticker) : ddcFields[0];
 
   let picked;
   const jsonldUsable =
     jsonld != null && jsonld >= floor && !(msrp != null && jsonld < msrp * JSONLD_JUNK_FRACTION);
   if (jsonldUsable) {
-    const echoesMsrp = msrp != null && Math.abs(jsonld - msrp) <= Math.max(50, msrp * 0.002);
-    if (echoesMsrp && ddcDiscount != null) {
+    const echoesSticker =
+      sticker != null && Math.abs(jsonld - sticker) <= Math.max(50, sticker * 0.002);
+    if (echoesSticker && ddcDiscount != null) {
       // JSON-LD is only the sticker; a real advertised discount sits below it.
-      if (ddcDiscount.price < msrp * MIN_TRUSTED_PRICE_FRACTION) return ABSTAIN_RESULT;
+      //
+      // The depth guard stays keyed on a REAL msrp, deliberately. It abstains
+      // because a discount too deep off sticker is usually a stack of
+      // conditional rebates — reasoning that needs the sticker to be true. A
+      // retailValue of $414,811 on a car that stickered near $60k new is not
+      // true, so measuring a discount against it is meaningless, and abstaining
+      // on that basis would hide the $38,481 the dealer plainly advertises.
+      // Against a retailValue anchor the echo test alone does its job: it
+      // disqualifies the offer as a sticker parrot and lets the agreeing DDC
+      // selling fields answer.
+      if (msrp != null && ddcDiscount.price < msrp * MIN_TRUSTED_PRICE_FRACTION) return ABSTAIN_RESULT;
       picked = ddcDiscount;
     } else {
       // the dealer's declared price: discount, markup, or used ask
