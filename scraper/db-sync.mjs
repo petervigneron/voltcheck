@@ -15,6 +15,7 @@
 // way — this script adds persistence, it replaces nothing.
 import { readFile, stat, writeFile } from "node:fs/promises";
 import { markTrimSuspects } from "./lib/trim-suspect.mjs";
+import { repairTruncatedModels } from "./lib/model-truncation.mjs";
 import { loadTrimOverrides, applyTrimOverrides } from "./lib/trim-overrides.mjs";
 import { loadFordStickers, applyFordStickerTrims } from "./lib/ford-sticker-trim.mjs";
 import { fetchWithRetry } from "./lib/retry.mjs";
@@ -53,6 +54,33 @@ const MIN_ROWS = Number(process.env.DB_SYNC_MIN_ROWS ?? 50);
 if (listings.length < MIN_ROWS) {
   console.error(`db-sync: only ${listings.length} listings (< ${MIN_ROWS}) — refusing to sync a broken crawl.`);
   process.exit(1);
+}
+
+// Model strings a dealer's upstream feed cut off at a fixed column ("XC90
+// Recharge Plug-In Hyb"), repaired before anything downstream reads them.
+// Same placement rule as markTrimSuspects below and for the same reason: the
+// completion is learned from the make's other rows, so it must see the whole
+// corpus, not a per-domain chunk — the rooftops publishing the cut string are
+// never the ones publishing the real name. Repairing here rather than in the
+// web app puts the fix ahead of every surface at once: the browse feed's
+// enrichment match, the make/model facet, the detail page and the sitemap all
+// read the stored model. See lib/model-truncation.mjs for why the obvious
+// prefix rule rewrites 5,778 cars wrongly and what stops it.
+const truncated = repairTruncatedModels(listings);
+if (truncated.repaired) {
+  console.error(
+    `db-sync: repaired ${truncated.repaired} listing(s) whose feed cut the model at a fixed column — ` +
+      truncated.changes.map((c) => `${c.count}x "${c.from}" -> "${c.into}"`).join(", ")
+  );
+}
+// Printed even when nothing was repaired: a cut nobody can see is how this
+// class of defect stayed hidden until the owner read the feed by eye.
+for (const d of truncated.declined) {
+  console.error(
+    `db-sync: possible truncated model left alone (${d.reason}): ${d.make} "${d.model}" x${d.count}` +
+      (d.into ? ` — looks like "${d.into}"` : "") +
+      (d.candidates ? ` — candidates ${d.candidates.map((c) => `"${c}"`).join(", ")}` : "")
+  );
 }
 
 // Whether a listing's own description contradicts its trim field — decided

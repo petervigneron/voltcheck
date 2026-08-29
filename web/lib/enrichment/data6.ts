@@ -133,9 +133,19 @@ const R: EnrichmentRow[] = [];
     abstains: VOLVO_ABSTAIN,
   });
 
+  // "…Plug-In Hyb" and "…Plug-In Hybr" below are NOT spellings — they are one
+  // upstream dealer feed's model column cut at exactly 25 characters, and
+  // pasting them here wrote a data defect into a curated authority, where it
+  // stopped being findable. It is repaired at the source now
+  // (scraper/lib/model-truncation.mjs, applied in db-sync), which also caught
+  // the two BEV names nobody had pasted in — "XC40 Recharge Pure Electr" and
+  // "C40 Recharge Pure Electri", 6 cars that were carrying no battery or range
+  // at all. DELETE these three entries once a nightly has re-synced the
+  // rooftops publishing them; removing them first would cost 12 live cars
+  // their enrichment in the meantime.
   const XC90_ALIASES = [
     "XC90 Recharge Plug-In Hybrid",
-    "XC90 Recharge Plug-In Hyb",
+    "XC90 Recharge Plug-In Hyb", // upstream 25-char cut; see note above
     "XC90 Recharge",
     "XC90 T8 Recharge",
   ];
@@ -172,7 +182,7 @@ const R: EnrichmentRow[] = [];
 
   const XC60_ALIASES = [
     "XC60 Recharge Plug-In Hybrid",
-    "XC60 Recharge Plug-In Hyb",
+    "XC60 Recharge Plug-In Hyb", // upstream 25-char cut; see the XC90 note above
     "XC60 Recharge",
     "XC60 T8 Recharge",
   ];
@@ -273,6 +283,7 @@ const R: EnrichmentRow[] = [];
     });
   }
 
+  // "S60 Recharge Plug-In Hybr" is the same upstream 25-char cut; see the XC90 note.
   const S60_ALIASES = ["S60 Recharge Plug-In Hybrid", "S60 Recharge Plug-In Hybr", "S60 Recharge", "S60 T8 Recharge"];
   R.push(
     volvo("s60-t8-2021", "S60 Plug-In Hybrid", S60_ALIASES, [2021, 2021], VOLVO_SMALL, "PHEV", {
