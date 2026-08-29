@@ -142586,8 +142586,8 @@
       "kind": "rooftop",
       "platform": "dealer.com",
       "robots": "unknown",
-      "status": "working",
-      "notes": "Discovered via Common Crawl dealer-platform URL fingerprint sweep (CC-MAIN-2026-30), 2026-08-17 — site serves inventory paths matching a platform we extract | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | auto-promoted by probe 2026-08-23: 1 VIN vehicles on 1 page(s), platform dealer.com",
+      "status": "excluded-non-us",
+      "notes": "Discovered via Common Crawl dealer-platform URL fingerprint sweep (CC-MAIN-2026-30), 2026-08-17 — site serves inventory paths matching a platform we extract | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform dealer.com) — likely needs a platform extractor | auto-promoted by probe 2026-08-23: 1 VIN vehicles on 1 page(s), platform dealer.com | EXCLUDED 2026-08-29: not US inventory — Canada (British Columbia); prices in CAD. This site lists EVs for sale in the United States, and a foreign rooftop also publishes in its own currency, so its cars were both unbuyable and mispriced. Reached 'working' through the Common Crawl dealer-platform fingerprint sweep, which matches URL shape and never checked country. Do not re-promote without a country test; ingest.mjs now drops non-US rows via lib/us-states.mjs as the backstop.",
       "probe": {
         "date": "2026-08-23",
         "verdict": "working",
@@ -144996,8 +144996,8 @@
       "kind": "rooftop",
       "platform": "dealeron",
       "robots": "unknown",
-      "status": "working",
-      "notes": "Discovered via Common Crawl dealer-platform URL fingerprint sweep (CC-MAIN-2026-30), 2026-08-17 — site serves inventory paths matching a platform we extract | auto-promoted by probe 2026-08-17: 1 VIN vehicles on 1 page(s), platform dealeron"
+      "status": "excluded-non-us",
+      "notes": "Discovered via Common Crawl dealer-platform URL fingerprint sweep (CC-MAIN-2026-30), 2026-08-17 — site serves inventory paths matching a platform we extract | auto-promoted by probe 2026-08-17: 1 VIN vehicles on 1 page(s), platform dealeron | EXCLUDED 2026-08-29: not US inventory — Mexico (Querétaro / Michoacán / CDMX); 18 live cars priced in PESOS. This site lists EVs for sale in the United States, and a foreign rooftop also publishes in its own currency, so its cars were both unbuyable and mispriced. Reached 'working' through the Common Crawl dealer-platform fingerprint sweep, which matches URL shape and never checked country. Do not re-promote without a country test; ingest.mjs now drops non-US rows via lib/us-states.mjs as the backstop."
     },
     {
       "domain": "clinkchevy.com",
@@ -156260,8 +156260,8 @@
       "kind": "rooftop",
       "platform": "dealerfire",
       "robots": "unknown",
-      "status": "working",
-      "notes": "Discovered via Common Crawl dealer-platform URL fingerprint sweep (CC-MAIN-2026-30), 2026-08-17 — site serves inventory paths matching a platform we extract | auto-promoted by probe 2026-08-17: 2 VIN vehicles on 1 page(s), platform dealerfire"
+      "status": "excluded-non-us",
+      "notes": "Discovered via Common Crawl dealer-platform URL fingerprint sweep (CC-MAIN-2026-30), 2026-08-17 — site serves inventory paths matching a platform we extract | auto-promoted by probe 2026-08-17: 2 VIN vehicles on 1 page(s), platform dealerfire | EXCLUDED 2026-08-29: not US inventory — Canada (AB); prices in CAD. This site lists EVs for sale in the United States, and a foreign rooftop also publishes in its own currency, so its cars were both unbuyable and mispriced. Reached 'working' through the Common Crawl dealer-platform fingerprint sweep, which matches URL shape and never checked country. Do not re-promote without a country test; ingest.mjs now drops non-US rows via lib/us-states.mjs as the backstop."
     },
     {
       "domain": "frontroyalbuickgmc.com",
@@ -184121,8 +184121,8 @@
       "kind": "rooftop",
       "platform": "unknown",
       "robots": "unknown",
-      "status": "working",
-      "notes": "Discovered via Common Crawl dealer-platform URL fingerprint sweep (CC-MAIN-2026-30), 2026-08-17 — site serves inventory paths matching a platform we extract | auto-promoted by probe 2026-08-17: 1 VIN vehicles on 1 page(s), platform unknown"
+      "status": "excluded-non-us",
+      "notes": "Discovered via Common Crawl dealer-platform URL fingerprint sweep (CC-MAIN-2026-30), 2026-08-17 — site serves inventory paths matching a platform we extract | auto-promoted by probe 2026-08-17: 1 VIN vehicles on 1 page(s), platform unknown | EXCLUDED 2026-08-29: not US inventory — Canada (BC); prices in CAD. This site lists EVs for sale in the United States, and a foreign rooftop also publishes in its own currency, so its cars were both unbuyable and mispriced. Reached 'working' through the Common Crawl dealer-platform fingerprint sweep, which matches URL shape and never checked country. Do not re-promote without a country test; ingest.mjs now drops non-US rows via lib/us-states.mjs as the backstop."
     },
     {
       "domain": "oconnorbuickgmc.com",
@@ -196961,8 +196961,8 @@
       "kind": "rooftop",
       "platform": "unknown",
       "robots": "unknown",
-      "status": "working",
-      "notes": "Discovered via Common Crawl dealer-platform URL fingerprint sweep (CC-MAIN-2026-30), 2026-08-17 — site serves inventory paths matching a platform we extract | auto-promoted by probe 2026-08-17: 1 VIN vehicles on 1 page(s), platform unknown"
+      "status": "excluded-non-us",
+      "notes": "Discovered via Common Crawl dealer-platform URL fingerprint sweep (CC-MAIN-2026-30), 2026-08-17 — site serves inventory paths matching a platform we extract | auto-promoted by probe 2026-08-17: 1 VIN vehicles on 1 page(s), platform unknown | EXCLUDED 2026-08-29: not US inventory — Canada (AB); prices in CAD. This site lists EVs for sale in the United States, and a foreign rooftop also publishes in its own currency, so its cars were both unbuyable and mispriced. Reached 'working' through the Common Crawl dealer-platform fingerprint sweep, which matches URL shape and never checked country. Do not re-promote without a country test; ingest.mjs now drops non-US rows via lib/us-states.mjs as the backstop."
     },
     {
       "domain": "stanking-gmc.com",
@@ -204286,8 +204286,8 @@
       "kind": "rooftop",
       "platform": "dealer.com",
       "robots": "unknown",
-      "status": "working",
-      "notes": "Discovered via Common Crawl dealer-platform URL fingerprint sweep (CC-MAIN-2026-30), 2026-08-17 — site serves inventory paths matching a platform we extract | auto-promoted by probe 2026-08-17: 1 VIN vehicles on 1 page(s), platform dealer.com"
+      "status": "excluded-non-us",
+      "notes": "Discovered via Common Crawl dealer-platform URL fingerprint sweep (CC-MAIN-2026-30), 2026-08-17 — site serves inventory paths matching a platform we extract | auto-promoted by probe 2026-08-17: 1 VIN vehicles on 1 page(s), platform dealer.com | EXCLUDED 2026-08-29: not US inventory — Canada (British Columbia); prices in CAD. This site lists EVs for sale in the United States, and a foreign rooftop also publishes in its own currency, so its cars were both unbuyable and mispriced. Reached 'working' through the Common Crawl dealer-platform fingerprint sweep, which matches URL shape and never checked country. Do not re-promote without a country test; ingest.mjs now drops non-US rows via lib/us-states.mjs as the backstop."
     },
     {
       "domain": "vestalchryslerjeepdodgeram.com",

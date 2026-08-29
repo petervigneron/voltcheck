@@ -3,6 +3,7 @@
 // Keeps only records complete enough to display honestly; name-match-only EV
 // classifications are dropped until vPIC verification exists.
 import { readFile } from "node:fs/promises";
+import { isOutsideUs } from "./lib/us-states.mjs";
 import { writeSnapshot } from "./lib/snapshot.mjs";
 import { isKnownMake } from "./lib/makes.mjs";
 import { publishedCondition } from "./lib/condition.mjs";
@@ -140,6 +141,7 @@ function modelYear(y) {
 // vpic-enrich already had its chance to repair it from the VIN. Dropped
 // makes are logged because a genuinely new brand would land here too.
 const unknownMakes = new Map();
+const foreign = new Map();
 const unverified = [];
 const listings = raw
   // priceUsd == null means no price signal at all — drop it. priceUsd === 0 is
@@ -180,6 +182,22 @@ const listings = raw
   .filter((r) => {
     if (isKnownMake(r.make)) return true;
     unknownMakes.set(r.make, (unknownMakes.get(r.make) ?? 0) + 1);
+    return false;
+  })
+  // A car outside the United States is not this site's inventory, and until
+  // 2026-08-29 nothing said so: normalize.mjs copies JSON-LD's addressRegion
+  // through verbatim, so 82 foreign listings were live. 18 from a Mexican
+  // rooftop priced in pesos ($440,000-$962,900, caught by the price audit only
+  // because a peso reads as absurd) and 64 from five Canadian ones priced in
+  // Canadian dollars — and those were never going to be caught by any price
+  // check, because 1.37 CAD to the dollar makes $51,300 look like an ordinary
+  // US ask. Wrong currency, wrong country, plausible number.
+  //
+  // Dropped rather than repaired: converting the currency would still leave a
+  // car nobody here can buy, and the registry entries go with it.
+  .filter((r) => {
+    if (!isOutsideUs(r.state)) return true;
+    foreign.set(r.state, (foreign.get(r.state) ?? 0) + 1);
     return false;
   })
   .map((r) => {
@@ -256,6 +274,7 @@ const listings = raw
   });
 
 for (const [m, n] of unknownMakes) console.error(`dropped ${n} listing(s) with unrecognized make ${JSON.stringify(m)} — real new brand? add it to lib/makes.mjs`);
+for (const [st, n] of foreign) console.error(`dropped ${n} listing(s) outside the US (state ${JSON.stringify(st)}) — this site lists US inventory, and a foreign rooftop also prices in its own currency; drop the domain from registry/registry.json too`);
 // Loud on purpose. A number here is not an error — it is enrichment having run
 // out of clock — but it IS a night where some real EVs are missing from the
 // feed, and coverage is the whole point of this site. Silence would let that
