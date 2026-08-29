@@ -161,7 +161,7 @@ const EXPECTED_FIELDS = [
   // so requiring packUsableKwh specifically would count their published fact
   // as a gap it isn't.
   { key: "packKwh", tier: "core", label: "pack kWh (usable or gross)", present: (r) => !!(r.battery?.packUsableKwh || r.battery?.packGrossKwh) },
-  { key: "epaRangeMi", tier: "core", label: "EPA range", present: (r) => !!r.range?.epaRangeMi },
+  { key: "epaRangeMi", tier: "core", label: "range (EPA, or the maker's own where EPA never rated it)", present: (r) => !!(r.range?.epaRangeMi || r.range?.mfrRangeMi) },
   { key: "heatPump", tier: "core", label: "heat pump", present: (r) => !!r.thermal?.heatPump },
   { key: "batteryYears", tier: "core", label: "battery warranty term", present: (r) => !!r.warranty?.batteryYears },
   { key: "portStandard", tier: "core", label: "charge port", present: (r) => !!r.charging?.portStandard },

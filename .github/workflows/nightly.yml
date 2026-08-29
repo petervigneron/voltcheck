@@ -963,6 +963,49 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
 
+      # The third question, and the one nothing asked until 2026-08-28. The
+      # audit above asks whether a row EXISTS for what is live;
+      # enrichment-coverage.mjs asks whether a row that exists is COMPLETE.
+      # Neither asks whether the row that matched is answering about THIS car
+      # or about a family it belongs to — and a listing can pass both while
+      # still showing a shopper a range spread instead of a number, or a
+      # figure belonging to a different version of the car.
+      #
+      # WHY IT EXISTS: the owner opened a BrightDrop page and found no range,
+      # no battery size and no charge time, and asked why a human eye was the
+      # thing that found it. Four more nameplates had the same defect that
+      # day — Sierra EV, both Hummer bodies, Ioniq 5, Blazer EV, ~3,300 cars —
+      # and no check flagged any of them, because every row involved was real
+      # and most were well-researched. See the script header for the three
+      # symptoms it looks for.
+      #
+      # RATCHET: --max-conflated-share, a share for the same reason the audit
+      # above uses one. Calibrated 2026-08-28 by running it against the code
+      # as it stood at the START of that day (commit 36dc64d, same live feed):
+      # 8,450 listings, 5.72%, and the top of its lists was exactly the
+      # nameplates fixed that day, in order. After those fixes: 5,147
+      # listings, 3.49%. Pinned at 3.6 to leave a little room for feed churn.
+      # Ratchet DOWN as nameplates get keyed; never up to hide a regression.
+      - name: Audit rows that stand in for several configurations
+        if: always()
+        working-directory: web
+        run: |
+          rc=0
+          node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs \
+            scripts/config-conflation-check.mjs --json --out /tmp/config-conflation.json \
+            --top 40 --max-conflated-share 3.6 || rc=$?
+          if [ "$rc" -eq 11 ]; then
+            echo "::error::More live listings are answered by a row covering several configurations than the 3.6% ceiling pinned 2026-08-28. Either a nameplate shipped with one row for several packs/drivetrains, or a row that used to resolve stopped. The step log ranks them; /tmp/config-conflation.json has the detail."
+            exit 11
+          elif [ "$rc" -ne 0 ]; then exit "$rc"; fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: config-conflation
+          path: /tmp/config-conflation.json
+          if-no-files-found: warn
+          retention-days: 14
+
       # Washington transaction prices refresh monthly upstream.
       - name: Refresh Washington price comps (5th of the month)
         if: ${{ needs.finalize-ingest.result == 'success' && github.event_name == 'schedule' }}

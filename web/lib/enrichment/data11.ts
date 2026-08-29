@@ -541,6 +541,20 @@ const R: EnrichmentRow[] = [];
 // BRIGHTDROP model "Zevo" Series "400", a 2025 VIN decodes make CHEVROLET
 // model "BrightDrop" Series "400" — so match.ts's MAKE_ALIASES table now folds
 // /^brightdrop\b/ to BRIGHTDROP alongside the /^zevo\b/ entry it already had.
+// MY2026 also changes WMI, 2G5 → 2GC; positions 4-6 are unchanged, so the
+// `vds` prefixes below still key it.
+//
+// WHAT THIS BLOCK LOOKED LIKE BEFORE 2026-08-28, because the failure is worth
+// more than the fix. Every row abstained on range. GM does publish a range
+// for every one of these vans, but it is a GM simulation rather than an EPA
+// rating, and the schema's only range field was `epaRangeMi` — so the choice
+// on offer was "print GM's number under the label EPA" (a false claim) or
+// "print nothing". It printed nothing, and then printed a 90-word warning
+// note explaining that it was printing nothing. The result on the site: 745
+// vans showing no range at all, unfilterable by range on a site whose whole
+// premise is filtering by range, each one carrying a paragraph about the
+// absence. `range.mfrRangeMi` (lib/types.ts) is the third option, and every
+// row below that can resolve a version now carries it.
 //
 // THE 400/600 SPLIT LIVES IN THE VIN, NOT IN THE MODEL STRING, and it has to,
 // because both surfaces hand the matcher a bare nameplate: the feed sends
@@ -555,58 +569,101 @@ const R: EnrichmentRow[] = [];
 // So `vds` prefixes ZJ2/8J2 name the 400 and ZJ3/8J3 the 600, on any VIN,
 // under either badge, whatever the dealer typed.
 //
-// PACK, MY2025 — position 8 carries it, and vPIC states it in GM's own RPO
-// codes rather than as a capacity:
-//   Y = "EAWD - 2-MOTOR SYSTEM + 12 MOD", EngineModel "XRJ + ETC"
-//   Z = "EAWD - 2-MOTOR SYSTEM + 20 MOD", EngineModel "XRJ + ETJ"
-//   6 = "EFWD - 1-MOTOR SYSTEM + 12 MOD", EngineModel "XRM + ETC"
-// GM's 25MY body-builder guide gives those same RPOs their capacities, and
-// its wording is what the rows print: "Rechargeable energy storage system
-// with 20-module pack / Useful Energy: 173.3 kWh" (ETJ, Max Range) and the
-// same line at 12 modules / 102.4 kWh (ETC, Standard Range). Two independent
-// sources agreeing on the module count is what makes this a per-VIN fact
-// rather than an inference.
+// POSITION 8 IS THE PACK AND THE DRIVETRAIN, and vPIC has filed a pattern for
+// every model year in the feed. Re-swept exhaustively on 2026-08-28 — all 36
+// characters against a real VIN of each model year, discarding decodes that
+// come back with vPIC's "VIN corrected" error codes 4/14, which is what makes
+// this an enumeration rather than a sample:
 //
-// PACK, MY2023-2024 AND MY2026 — abstained, for two different reasons, and
-// the first one is stronger than "we could not find it".
-// GM published no kWh figure at all in the Zevo years — zero occurrences of
-// "kWh" or "kilowatt hour" across the MY2023 and MY2024 order guides, the
-// MY2024 fleet sheet and the archived gobrightdrop product page, with the
-// control that "120kW DC Fast Charging or AC Level 2 11.5kW" greps out of the
-// same page fine, so the extraction is not the problem. Worse, GM and NHTSA
-// disagree about what is in the van: vPIC files MY2024 position 8 as 12 and
-// 20 MODULES, while GM's own MY2024 order guide sells "(EW2) Battery, Ultium,
+//   MY2023   G  XRJ + ETJ   AWD, "EAWD"                      (the only one)
+//   MY2024   Y  XRJ + ETC   AWD, 2-MOTOR SYSTEM + 12 MOD
+//            Z  XRJ + ETJ   AWD, 2-MOTOR SYSTEM + 20 MOD
+//   MY2025   6  XRM + ETC   FWD, 1-MOTOR SYSTEM + 12 MOD
+//            Y  XRJ + ETC   AWD, 2-MOTOR SYSTEM + 12 MOD
+//            Z  XRJ + ETJ   AWD, 2-MOTOR SYSTEM + 20 MOD
+//   MY2026   6  XRM + ETC   FWD, 1-MOTOR SYSTEM, 12-MOD
+//            Y  XRJ + ETC   AWD, 2-MOTOR SYSTEM, 12-MOD
+//            X  XRM + EWU   FWD, 1-MOTOR SYSTEM, 14-MOD
+//            7  XRJ + EWU   AWD, 2-MOTOR SYSTEM, 14 MOD
+//            Z  XRJ + ETJ   AWD, 2-MOTOR SYSTEM, 20-MOD
+//
+// The second half of each line is GM's own RPO code, which is what lets a
+// vPIC decode be joined to a GM document instead of interpreted: ETC, EWU and
+// ETJ are the pack RPOs the body-builder guides price and rate. So the rows
+// below are keyed on `vin8`, and the drivetrain comes with the pack rather
+// than being guessed from a dealer's label.
+//
+// This corrects TWO claims this file used to make, both now falsified:
+//   - "vPIC has filed no MY2026 pattern at all, so nothing can say which of
+//     three packs this van carries." It has filed five, covering all three
+//     packs including the new Extended Range one, and they decode cleanly.
+//   - "drivetrain deliberately NOT keyed, because vPIC's own DriveType splits
+//     with position 8." That was an argument against a BLANKET drive key on a
+//     row spanning several position-8 values, and it is still right; keying
+//     each position-8 value to its own row is the thing it was arguing for.
+//
+// PACK CAPACITY, MY2025 AND MY2026 — published, and by two agreeing sources.
+// GM's 25MY guide states "Rechargeable energy storage system with 20-module
+// pack / Useful Energy: 173.3 kWh" and the same line at 12 modules /
+// 102.4 kWh. GM's 26MY guide restates both and adds the new middle pack, as a
+// row it labels "Useable Battery Energy (UBE)": 102.4 / 121 / 173.3 kWh
+// against 12 / 14 / 20 modules. vPIC's module counts match GM's on all three,
+// and the implied per-module energy (8.53, 8.64, 8.67 kWh) is consistent
+// across them — which is what makes this a per-VIN fact rather than an
+// inference. Read from the RENDERED page 16 (25MY) and page 19 (26MY), not
+// from extracted text: they are multi-column grids.
+//
+// PACK CAPACITY, MY2023-2024 — still abstained, and the reason is stronger
+// than "we could not find it". GM published no capacity at all in the Zevo
+// years: zero occurrences of "kWh" or "kilowatt-hour" across the MY2023 and
+// MY2024 order guides (re-run 2026-08-28 against both documents, with the
+// control that "11.5 kW", "120 kW" and "225 kW" all extract out of the same
+// files, so the extraction is not the problem). Worse, GM and NHTSA disagree
+// about what is in the van: vPIC files MY2024 position 8 as 12 and 20
+// MODULES, while GM's own MY2024 order guide sells "(EW2) Battery, Ultium,
 // 14 module pack" and "(ETJ) Battery, Ultium, 20 module pack". A 14-module
 // pack and a 12-module pack cannot both be the standard MY2024 battery, so
-// the position-8 map that works for MY2025 must NOT be carried backwards, and
-// converting either count into a capacity would be arithmetic, not a source.
-// MY2026 abstains for the opposite reason: it added a THIRD pack (RPO EWU,
-// "Extended Range", 204 GM-estimated miles, flagged NEW in the 26MY guide)
-// while vPIC has filed no MY2026 pattern at all, so nothing can say which of
-// three a given van carries.
+// the MY2025 position-8 capacity map must NOT be carried backwards, and
+// converting either module count into a capacity would be arithmetic, not a
+// source.
 //
-// DRIVETRAIN — deliberately NOT keyed, except on the Max Range rows. Both FWD
-// and AWD are real (GM's order guide has four model codes, CJ32705/CJ32905
-// FWD and CM32705/CM32905 AWD, and its propulsion table gives them 233 hp on
-// one motor and 300 hp on two). The feed labels the same van both ways and
-// vPIC's own DriveType splits with position 8, so a blanket drive key would be
-// wrong in one direction or the other. The one hard constraint GM does state
-// is that the Max Range pack is "Available only on AWD versions", and the
-// Max rows carry that.
+// RANGE, MY2023-2024 — resolvable even though the capacity is not, and the
+// distinction matters. Capacity needs the module count, which is exactly what
+// the two sources disagree about. Range needs only standard-versus-max, and
+// there GM's document and vPIC's decode agree on the RPO itself: GM's MY2024
+// order guide offers precisely two batteries, "(EW2) … 14 module pack
+// (GM-estimated range 200 miles)", standard on all four configurations, and
+// "(ETJ) … 20 module pack (GM-estimated range 250 miles)", available on the
+// all-wheel-drive versions only. vPIC's position 8 = Z decodes as ETJ AND as
+// 20 modules — an exact match on both halves — so a Z van is GM's 250-mile
+// van. Position 8 = Y is the only alternative GM sells, so it is the 200-mile
+// van, whatever the standard pack's module count turns out to be. The MY2023
+// figure comes from the MY2023 order guide's own line rather than the MY2024
+// one: "(ETJ) Battery, Ultium, 20 module pack (GM-estimated range 250 miles)",
+// standard on that year's 600.
 //
-// RANGE — abstained on every row. GM's footnote, identical in the 25MY and
-// 26MY body-builder guides, is unusually explicit: "GM-estimated range based
-// on current capability of analytical projection consistent with SAE J1634
-// revision 2017-MCT… EPA estimates not yet available." So the buyer notes
-// carry GM's numbers and the field stays empty.
-//
-// Those numbers are per MODEL and per DRIVETRAIN and this file got them wrong
+// RANGE, MY2025 — per MODEL and per DRIVETRAIN, and this file got them wrong
 // once, which is worth recording: the 25MY guide's two tables give the 400
 // 177 combined miles on front-wheel drive and 175 on all-wheel drive, and the
 // 600 174 and 179 — the two vans do not even rank the same way round, so the
 // single shared sentence this file used to print for both was wrong on three
 // of the four figures. The tables were re-read as RENDERED pages, because
 // they are four-column grids and extracted text interleaves them.
+//
+// RANGE, MY2026 — per pack only; the 26MY guide's RANGE table has one row,
+// "GM-estimated City/Highway combined", against the three pack columns:
+// 176 / 204 / 285 miles. No drivetrain split.
+//
+// None of these is an EPA rating and none of them is presented as one. Every
+// GM range figure for this nameplate carries the same footnote — "GM-estimated
+// range based on current capability of analytical projection consistent with
+// SAE J1634 revision 2017-MCT", ending "EPA estimates not yet available" — and
+// fueleconomy.gov has never carried a BrightDrop or Zevo under any make or
+// model year, which is consistent with the van's GVWR putting it above EPA's
+// labelling threshold. That is what `mfrRangeMi` is for: the number renders
+// with the "est" mark on the card and under the label "Range (manufacturer
+// estimate)" on the detail page, so it can be compared and filtered without
+// ever reading as a rating.
 //
 // One earlier claim here has been withdrawn rather than corrected: that GM
 // contradicted itself with a "166 miles" figure in an October 2024 order
@@ -616,11 +673,45 @@ const R: EnrichmentRow[] = [];
 // 177/179 and no 166 anywhere — and GM's real dealer order guides sit behind
 // an SSO wall. An accusation of self-contradiction that rests on a document
 // nobody can open is not a finding, so it is gone.
+//
+// CHARGE TIME — the 25MY guide publishes a DC figure and the 26MY guide
+// publishes two contradictory ones, so only the 25MY van gets one.
+// The 25MY table (rendered page 16) is unambiguous: "Low-80% time to charge",
+// 45 minutes on the Standard pack and 70 on the Max. The 26MY table (rendered
+// page 19) has TWO rows with the identical label "Low³-80% Time to Charge⁵",
+// one reading 36 / 33 / 70 minutes and the next 90 / 85 / 110, with no
+// condition distinguishing them and the same footnote on both. That is a
+// defect in GM's document, not an extraction artifact — it is visible in the
+// rendered page. Picking the friendlier row would be choosing a number
+// because it flatters the van, so MY2026 states no DC charge time at all.
+// Do not "fix" this by taking the first row.
+//
+// GM's "low" is not 10%: its own footnote defines low state of charge as
+// "between 15-20 miles of range remaining". So these land in
+// `chargeTimeTo80Min`, not `chargeTime1080Min` — see lib/types.ts. The
+// MY2023-24 order guides publish no charge time of any kind (no "time to
+// charge" row exists in either), so those rows carry none.
+//
+// DC PEAK AND AC ONBOARD — every model year states them in its own guide, so
+// no row forward-cites another year's document. MY2023-24: "DC fast charging,
+// 400 volt, up to 120 kW" with the K28 11.5 kW charging module standard
+// (MY2024 adds K2O, 19.2 kW, as an option). MY2025: the same 120 kW.
+// MY2026 changes it, and per pack: 180 kW on Standard, 210 kW on Extended,
+// 150 kW on Max, with the 19.2 kW AC module now standard.
 {
   const BBG_25 =
     "https://www.gmupfitter.com/wp-content/uploads/2024/12/25MY-Chevrolet-BrightDrop-400-600-V071725.pdf";
   const BBG_26 =
     "https://www.gmupfitter.com/wp-content/uploads/2025/09/26MY-Chevrolet-BrightDrop-400-600-V090425-CLEAN-FINAL.pdf";
+  // The Zevo-era order guides. BrightDrop's own gobrightdrop.com is gone, so
+  // both citations are the Internet Archive's raw captures of the original
+  // BrightDrop URLs, verified live 2026-08-28. These are what the MY2023-24
+  // range, DC peak and AC charging-module facts below rest on — each year
+  // citing its own guide rather than a neighbouring year's.
+  const OG_23 =
+    "https://web.archive.org/web/20230515113757id_/https://www.gobrightdrop.com/_assets/files/zevo/2023-brightdrop-zevo-600-order-guide-01-20-23.pdf";
+  const OG_24 =
+    "https://web.archive.org/web/20230515125408id_/https://www.gobrightdrop.com/_assets/files/zevo/2024-brightdrop-zevo-400-and-zevo-600-order-guide-05-05-23.pdf";
   // The port citation. GM's public manual index (gmfleet.com/resources/
   // guides-and-manuals, enumerated 2026-08-25) carries exactly two BrightDrop
   // owner manuals - MY2023 and MY2024 - and the MY2024 one is live and says it
@@ -649,25 +740,14 @@ const R: EnrichmentRow[] = [];
   const WARRANTY_24 =
     "https://web.archive.org/web/20250623125919id_/https://www.gmenvolve.com/content/dam/gmenvolve/na/us/en/index/pdfs/24-warranty/02-pdfs/brightdrop-zevo-my24-warrantyguide-052423.pdf";
   const CHEV_COMMERCIAL = "https://www.chevrolet.com/commercial/brightdrop";
-  const GM_FLEET = "https://www.gmfleet.com/vehicles/electric-vehicles/chevrolet-brightdrop";
   const RECALL_STEERING = "https://www.nhtsa.gov/recalls?nhtsaId=25V156000";
   const RECALL_AIRBAG = "https://www.nhtsa.gov/recalls?nhtsaId=23V683000";
 
   const HP_ABSTAIN =
     "Four GM documents including a 599-page owner manual never use the words heat pump, and their option lists reach RPO granularity on heated seats, heated mirrors and a heated steering wheel — but none of them states what heats the cabin, so the silence cannot be read as an absence";
-  const RANGE_ABSTAIN =
-    "GM's own footnote on every range figure it publishes for this van reads “EPA estimates not yet available”, and fueleconomy.gov holds no BrightDrop or Zevo under any make or year; its GM-estimated figures stay in the buyer note";
   const PACK_ABSTAIN_ZEVO =
-    "GM published no battery capacity at all in the Zevo years — its fleet sheets give range and charge rate and never a kWh figure — and the module count vPIC files is not a capacity";
-  const PACK_ABSTAIN_2026 =
-    "MY2026 offers three packs where MY2025 offered two, the Extended Range pack being new, and vPIC has filed no MY2026 pattern, so nothing in a VIN or a listing says which of the three this van carries";
+    "GM published no battery capacity at all in the Zevo years — its order guides give range, charge rate and module counts and never a kWh figure — and vPIC's module count disagrees with GM's, so neither could be converted into one";
 
-  // MY2026 term only; the MY2025 rows and the Zevo-era rows cite their own
-  // model year's document rather than this one.
-  const BD_WARRANTY_TERM = {
-    batteryYears: f(8, "mfr", "high", undefined, BBG_26),
-    batteryMiles: f(100_000, "mfr", "high", undefined, BBG_26),
-  };
   const ALIASES_400 = ["Zevo", "Zevo 400", "Zevo 400 Short Range", "BrightDrop", "BrightDrop 400"];
   const ALIASES_600 = ["Zevo", "Zevo 600", "BrightDrop", "BrightDrop 600"];
   const VDS_400 = ["ZJ2", "8J2"];
@@ -676,39 +756,58 @@ const R: EnrichmentRow[] = [];
   const TOW_NOTE = {
     headline: "GM says never tow a trailer with this van",
     body:
-      "The owner manual's trailer-towing section carries a boxed warning — “Never tow a trailer with your vehicle. It was not designed or intended to tow a trailer” — and its vehicle-load-limits section repeats that the van is “neither designed nor intended to tow a trailer”. There is no tow rating to quote.",
+      "The owner manual's boxed warning reads “Never tow a trailer with your vehicle. It was not designed or intended to tow a trailer”, so there is no tow rating to quote.",
     severity: "warning" as const,
     learnMore: CHEV_COMMERCIAL,
   };
-  const noEpaNote = (body: string) => ({
-    headline: "No EPA range exists for this van — GM's own figure is a GM estimate",
-    body,
-    severity: "warning" as const,
-    learnMore: GM_FLEET,
-  });
 
-  // MY2023-2024, BrightDrop badge. MY2022 is deliberately outside the window:
-  // that year was sold as the "EV600", not the Zevo, it is not in the live
-  // feed, and it carries a high-voltage battery recall (22V771000, battery
-  // enclosure sealing, remedy under development) that the later vans do not —
-  // spanning it would attach the wrong facts to the wrong car in both
-  // directions.
-  const zevo = (id: string, model: string, aliases: string[], vds: string[], notes: NonNullable<EnrichmentRow["buyerNotes"]>): EnrichmentRow => ({
+  // ── MY2023-2024, BrightDrop badge ────────────────────────────────────────
+  //
+  // MY2022 is deliberately outside the window: that year was sold as the
+  // "EV600", not the Zevo, it is not in the live feed, and it carries a
+  // high-voltage battery recall (22V771000, battery enclosure sealing, remedy
+  // under development) that the later vans do not — spanning it would attach
+  // the wrong facts to the wrong car in both directions.
+  //
+  // There is no MY2023 Zevo 400 row because there was no MY2023 Zevo 400: the
+  // 400 arrives in the MY2024 order guide, and every 2023 VIN in the feed
+  // decodes position 6 = 3, the 600.
+  const zevo = (
+    id: string,
+    model: string,
+    aliases: string[],
+    vds: string[],
+    year: 2023 | 2024,
+    vin8: string[],
+    rangeMi: number,
+    packVariant: string,
+    guide: string,
+    notes: NonNullable<EnrichmentRow["buyerNotes"]>
+  ): EnrichmentRow => ({
     id,
     make: "BRIGHTDROP",
     model,
     modelAliases: aliases,
-    modelYears: [2023, 2024],
+    modelYears: [year, year],
     vds,
-    abstains: { epaRangeMi: RANGE_ABSTAIN, heatPump: HP_ABSTAIN, packUsableKwh: PACK_ABSTAIN_ZEVO },
+    vin8,
+    // Every Zevo-era position-8 value vPIC files decodes AWD; the front-drive
+    // van arrives with the MY2025 facelift.
+    drive: "AWD",
+    packVariant,
+    abstains: { heatPump: HP_ABSTAIN, packUsableKwh: PACK_ABSTAIN_ZEVO },
+    range: {
+      mfrRangeMi: f(rangeMi, "mfr", "high", `GM-estimated, ${packVariant}`, guide),
+    },
     charging: {
       portStandard: f<PortStandard>("CCS1", "mfr", "high", "One DC inlet, CCS1", OM_24),
-      dcFastCharging: f<"standard">("standard", "mfr", "high", undefined, OM_24),
-      // No dcPeakKw and no architectureV on these rows. GM published both for
-      // the MY2025 van (BBG_25: "DC FAST CHARGING - 400 volt, up to 120 kW")
-      // and this file used to carry them here too, cited to gmfleet.com's
-      // landing page, which states neither. Rather than forward-cite a MY2025
-      // guide onto a MY2023-24 van, the rows say nothing.
+      dcFastCharging: f<"standard">("standard", "mfr", "high", undefined, guide),
+      dcPeakKw: f(120, "mfr", "high", undefined, guide),
+      architectureV: f(400, "mfr", "high", undefined, guide),
+      acOnboardKw:
+        year === 2024
+          ? f(11.5, "mfr", "high", "K28, standard; K2O at 19.2 kW is the option", OG_24)
+          : f(11.5, "mfr", "high", "K28, standard", OG_23),
     },
     warranty: {
       batteryYears: f(8, "mfr", "high", undefined, WARRANTY_24),
@@ -719,39 +818,48 @@ const R: EnrichmentRow[] = [];
     buyerNotes: notes,
   });
 
+  const STEERING_NOTE_400 = {
+    headline: "Steering-shaft recall 25V156000 covers 2024 Zevo 400 vans",
+    body:
+      "NHTSA campaign 25V156000: “The steering shaft may have been damaged during vehicle assembly and cause the steering to lock up.” Check the VIN against NHTSA's recall lookup before buying, and ask the seller for proof the remedy was performed.",
+    severity: "trap" as const,
+    resolvedBy: "campaign_check" as const,
+    learnMore: RECALL_STEERING,
+  };
+  const RECALL_NOTE_600 = {
+    headline: "Two open recalls on the 2023-24 Zevo 600: steering shaft and roof-rail airbag",
+    body:
+      "25V156000 — “The steering shaft may have been damaged during vehicle assembly and cause the steering to lock up.” 23V683000 — on vans built with the optional jump seat, the wrong B-pillar trim can interfere with right-side roof-rail airbag deployment. Check the VIN against NHTSA's recall lookup and ask for proof both remedies were performed.",
+    severity: "trap" as const,
+    resolvedBy: "campaign_check" as const,
+    learnMore: RECALL_AIRBAG,
+  };
+
   R.push(
-    zevo("zevo-400-2023-24", "Zevo 400", ALIASES_400, VDS_400, [
-      noEpaNote(
-        "GM's MY2024 order guide splits the range by PACK, not by drivetrain: “(EW2) Battery, Ultium, 14 module pack (GM-estimated range 200 miles)”, standard on all four configurations, and “(ETJ) Battery, Ultium, 20 module pack (GM-estimated range 250 miles)”, available on the all-wheel-drive versions only. So an AWD van on the standard pack is a 200-mile van, not a 250-mile one. Every GM range figure for this nameplate carries the same footnote — “On a full charge based on development testing and/or analytical projection consistent with SAE J1634 revision 2017 – MCT”, ending “EPA estimates not yet available”. fueleconomy.gov has never carried a BrightDrop or Zevo under any make or model year, which is consistent with the van's GVWR putting it above EPA's labelling threshold.",
-      ),
-      {
-        headline: "Steering-shaft recall 25V156000 covers 2024 Zevo 400 vans",
-        body:
-          "NHTSA campaign 25V156000: “The steering shaft may have been damaged during vehicle assembly and cause the steering to lock up.” Check the VIN against NHTSA's recall lookup before buying, and ask the seller for proof the remedy was performed.",
-        severity: "trap",
-        resolvedBy: "campaign_check",
-        learnMore: RECALL_STEERING,
-      },
+    // MY2023: the 600 only, and the 20-module ETJ pack was standard on it.
+    zevo("zevo-600-2023", "Zevo 600", ALIASES_600, VDS_600, 2023, ["G"], 250, "Max Range", OG_23, [
+      RECALL_NOTE_600,
       TOW_NOTE,
     ]),
-    zevo("zevo-600-2023-24", "Zevo 600", ALIASES_600, VDS_600, [
-      noEpaNote(
-        "GM's MY2024 order guide splits the range by PACK, not by drivetrain: “(EW2) Battery, Ultium, 14 module pack (GM-estimated range 200 miles)”, standard on all four configurations, and “(ETJ) Battery, Ultium, 20 module pack (GM-estimated range 250 miles)”, available on the all-wheel-drive versions only. So an AWD van on the standard pack is a 200-mile van, not a 250-mile one. Every GM range figure for this nameplate carries the same footnote — “On a full charge based on development testing and/or analytical projection consistent with SAE J1634 revision 2017 – MCT”, ending “EPA estimates not yet available”. fueleconomy.gov has never carried a BrightDrop or Zevo under any make or model year, which is consistent with the van's GVWR putting it above EPA's labelling threshold.",
-      ),
-      {
-        headline: "Two open recalls on the 2023-24 Zevo 600: steering shaft and roof-rail airbag",
-        body:
-          "25V156000 — “The steering shaft may have been damaged during vehicle assembly and cause the steering to lock up.” 23V683000 — on vans built with the optional jump seat, the wrong B-pillar trim can interfere with right-side roof-rail airbag deployment. Check the VIN against NHTSA's recall lookup and ask for proof both remedies were performed.",
-        severity: "trap",
-        resolvedBy: "campaign_check",
-        learnMore: RECALL_AIRBAG,
-      },
+    zevo("zevo-400-2024-std", "Zevo 400", ALIASES_400, VDS_400, 2024, ["Y"], 200, "Standard Range", OG_24, [
+      STEERING_NOTE_400,
+      TOW_NOTE,
+    ]),
+    zevo("zevo-400-2024-max", "Zevo 400", ALIASES_400, VDS_400, 2024, ["Z"], 250, "Max Range", OG_24, [
+      STEERING_NOTE_400,
+      TOW_NOTE,
+    ]),
+    zevo("zevo-600-2024-std", "Zevo 600", ALIASES_600, VDS_600, 2024, ["Y"], 200, "Standard Range", OG_24, [
+      RECALL_NOTE_600,
+      TOW_NOTE,
+    ]),
+    zevo("zevo-600-2024-max", "Zevo 600", ALIASES_600, VDS_600, 2024, ["Z"], 250, "Max Range", OG_24, [
+      RECALL_NOTE_600,
       TOW_NOTE,
     ])
   );
 
-  // MY2025, Chevrolet badge — the year vPIC files a per-VIN pack code and GM
-  // publishes the capacity for it.
+  // ── MY2025, Chevrolet badge ──────────────────────────────────────────────
   const bd25 = (
     id: string,
     model: string,
@@ -761,7 +869,8 @@ const R: EnrichmentRow[] = [];
     packKwh: number,
     packVariant: string,
     drive: EnrichmentRow["drive"],
-    rangeBody: string
+    rangeMi: number,
+    to80Min: number
   ): EnrichmentRow => ({
     id,
     make: "BRIGHTDROP",
@@ -772,14 +881,18 @@ const R: EnrichmentRow[] = [];
     vin8,
     drive,
     packVariant,
-    abstains: { epaRangeMi: RANGE_ABSTAIN, heatPump: HP_ABSTAIN },
+    abstains: { heatPump: HP_ABSTAIN },
     battery: {
       packUsableKwh: f(packKwh, "mfr", "high", `Useful energy, ${packVariant} pack`, BBG_25),
+    },
+    range: {
+      mfrRangeMi: f(rangeMi, "mfr", "high", `GM-estimated combined, ${packVariant} ${drive ?? ""}`.trim(), BBG_25),
     },
     charging: {
       portStandard: f<PortStandard>("CCS1", "mfr", "high", "One DC inlet, CCS1", OM_24),
       dcFastCharging: f<"standard">("standard", "mfr", "high", undefined, BBG_25),
       dcPeakKw: f(120, "mfr", "high", undefined, BBG_25),
+      chargeTimeTo80Min: f(to80Min, "mfr", "high", "GM's own figure, from a low state of charge on a 120 kW DC charger", BBG_25),
       acOnboardKw: f(11.5, "mfr", "high", "Standard; a 19.2 kW onboard charger is optional", BBG_25),
       architectureV: f(400, "mfr", "high", undefined, BBG_25),
     },
@@ -787,58 +900,78 @@ const R: EnrichmentRow[] = [];
       batteryYears: f(8, "mfr", "high", undefined, BBG_25),
       batteryMiles: f(100_000, "mfr", "high", undefined, BBG_25),
     },
-    buyerNotes: [noEpaNote(rangeBody), TOW_NOTE],
+    buyerNotes: [TOW_NOTE],
   });
 
-  // Per model AND per drivetrain, read off the 25MY guide's own two tables
-  // (rendered, not extracted — they are four-column grids): the 400 is 177
-  // combined FWD and 175 AWD, the 600 is 174 FWD and 179 AWD. The two vans do
-  // not rank the same way round, which is exactly why one shared sentence for
-  // both was wrong.
-  const range2025Std = (model: string, fwd: number, awd: number, city: string) =>
-    `GM's 25MY body-builder guide rates the Standard Range ${model} at ${fwd} miles combined with front-wheel drive and ${awd} with all-wheel drive (${city}). Its footnote reads “GM-estimated range based on current capability of analytical projection consistent with SAE J1634 revision 2017-MCT” and ends “EPA estimates not yet available”, so this is GM's own simulation rather than a rating. fueleconomy.gov has never carried a BrightDrop or Zevo under any make or model year, which is consistent with the van's GVWR putting it above EPA's labelling threshold.`;
-  const RANGE_2025_MAX =
-    "GM's 25MY body-builder guide rates the Max Range van at 272 miles combined, 303 city and 234 highway, footnoted “GM-estimated range based on current capability of analytical projection consistent with SAE J1634 revision 2017-MCT… EPA estimates not yet available”. fueleconomy.gov has never carried a BrightDrop or Zevo under any make or model year, which is consistent with the van's GVWR putting it above EPA's labelling threshold.";
-
   R.push(
-    bd25("brightdrop-400-2025-std", "BrightDrop 400", ALIASES_400, VDS_400, ["Y", "6"], 102.4, "Standard Range", undefined,
-      range2025Std("400", 177, 175, "197 city either way; 152 highway FWD, 147 AWD")),
-    bd25("brightdrop-400-2025-max", "BrightDrop 400", ALIASES_400, VDS_400, ["Z"], 173.3, "Max Range", "AWD", RANGE_2025_MAX),
-    bd25("brightdrop-600-2025-std", "BrightDrop 600", ALIASES_600, VDS_600, ["Y", "6"], 102.4, "Standard Range", undefined,
-      range2025Std("600", 174, 179, "193 city FWD and 200 AWD; 151 highway FWD, 152 AWD")),
-    bd25("brightdrop-600-2025-max", "BrightDrop 600", ALIASES_600, VDS_600, ["Z"], 173.3, "Max Range", "AWD", RANGE_2025_MAX)
+    bd25("brightdrop-400-2025-fwd", "BrightDrop 400", ALIASES_400, VDS_400, ["6"], 102.4, "Standard Range", "FWD", 177, 45),
+    bd25("brightdrop-400-2025-awd", "BrightDrop 400", ALIASES_400, VDS_400, ["Y"], 102.4, "Standard Range", "AWD", 175, 45),
+    bd25("brightdrop-400-2025-max", "BrightDrop 400", ALIASES_400, VDS_400, ["Z"], 173.3, "Max Range", "AWD", 272, 70),
+    bd25("brightdrop-600-2025-fwd", "BrightDrop 600", ALIASES_600, VDS_600, ["6"], 102.4, "Standard Range", "FWD", 174, 45),
+    bd25("brightdrop-600-2025-awd", "BrightDrop 600", ALIASES_600, VDS_600, ["Y"], 102.4, "Standard Range", "AWD", 179, 45),
+    bd25("brightdrop-600-2025-max", "BrightDrop 600", ALIASES_600, VDS_600, ["Z"], 173.3, "Max Range", "AWD", 272, 70)
   );
 
-  // MY2026 — three packs, no vPIC pattern, so no pack figure.
-  const bd26 = (id: string, model: string, aliases: string[], vds: string[]): EnrichmentRow => ({
+  // ── MY2026 — three packs, all three filed by vPIC, all three rated by GM ──
+  //
+  // No `chargeTimeTo80Min` on any of these: see the CHARGE TIME note above.
+  // GM's 26MY guide prints two different DC times under one identical label.
+  const bd26 = (
+    id: string,
+    model: string,
+    aliases: string[],
+    vds: string[],
+    vin8: string[],
+    packKwh: number,
+    packVariant: string,
+    drive: EnrichmentRow["drive"],
+    rangeMi: number,
+    peakKw: number
+  ): EnrichmentRow => ({
     id,
     make: "BRIGHTDROP",
     model,
     modelAliases: aliases,
     modelYears: [2026, 2026],
     vds,
-    abstains: { epaRangeMi: RANGE_ABSTAIN, heatPump: HP_ABSTAIN, packUsableKwh: PACK_ABSTAIN_2026 },
+    vin8,
+    drive,
+    packVariant,
+    abstains: { heatPump: HP_ABSTAIN },
+    battery: {
+      packUsableKwh: f(packKwh, "mfr", "high", `Useable battery energy, ${packVariant} pack`, BBG_26),
+    },
+    range: {
+      mfrRangeMi: f(rangeMi, "mfr", "high", `GM-estimated city/highway combined, ${packVariant} pack`, BBG_26),
+    },
     charging: {
       portStandard: f<PortStandard>("CCS1", "est", "medium", "Carried over from the 2025 van; GM has not announced a NACS change", OM_24),
       dcFastCharging: f<"standard">("standard", "mfr", "high", undefined, BBG_26),
+      dcPeakKw: f(peakKw, "mfr", "high", `400V peak, ${packVariant} pack`, BBG_26),
       acOnboardKw: f(19.2, "mfr", "high", "Standard for 2026; the 11.5 kW charger becomes the option", BBG_26),
       architectureV: f(400, "mfr", "high", undefined, BBG_26),
     },
-    warranty: BD_WARRANTY_TERM,
-    buyerNotes: [
-      noEpaNote(
-        "GM's 26MY body-builder guide gives each of the three packs its own figure: Standard Range “up to 176 miles”, “(EWU) BATTERY PACK - Extended Range (GM-estimated city/highway combined range up-to 204 miles)”, and “(ETJ) BATTERY PACK - Maximum Range (GM-estimated city/highway combined range up-to 285 miles)”, the last raised from the MY2025 van's 272. All three carry the footnote “GM estimated range based on current capability of analytical projection consistent with SAE J1634 revision 2017-MCT”, and GM adds “Performance targets”. fueleconomy.gov has never carried a BrightDrop or Zevo under any make or model year, so none of the three is an EPA rating — and since nothing in the VIN or the listing says which pack this van has, this page prints no range at all.",
-      ),
-      TOW_NOTE,
-    ],
+    warranty: {
+      batteryYears: f(8, "mfr", "high", undefined, BBG_26),
+      batteryMiles: f(100_000, "mfr", "high", undefined, BBG_26),
+    },
+    buyerNotes: [TOW_NOTE],
   });
 
-  R.push(
-    bd26("brightdrop-400-2026", "BrightDrop 400", ALIASES_400, VDS_400),
-    bd26("brightdrop-600-2026", "BrightDrop 600", ALIASES_600, VDS_600)
-  );
+  for (const [model, aliases, vds] of [
+    ["BrightDrop 400", ALIASES_400, VDS_400],
+    ["BrightDrop 600", ALIASES_600, VDS_600],
+  ] as const) {
+    const slug = model === "BrightDrop 400" ? "400" : "600";
+    R.push(
+      bd26(`brightdrop-${slug}-2026-std-fwd`, model, [...aliases], [...vds], ["6"], 102.4, "Standard Range", "FWD", 176, 180),
+      bd26(`brightdrop-${slug}-2026-std-awd`, model, [...aliases], [...vds], ["Y"], 102.4, "Standard Range", "AWD", 176, 180),
+      bd26(`brightdrop-${slug}-2026-ext-fwd`, model, [...aliases], [...vds], ["X"], 121, "Extended Range", "FWD", 204, 210),
+      bd26(`brightdrop-${slug}-2026-ext-awd`, model, [...aliases], [...vds], ["7"], 121, "Extended Range", "AWD", 204, 210),
+      bd26(`brightdrop-${slug}-2026-max`, model, [...aliases], [...vds], ["Z"], 173.3, "Max Range", "AWD", 285, 150)
+    );
+  }
 }
-
 // ─────────────────────── MERCEDES-BENZ eSPRINTER ───────────────────────────
 //
 // vPIC decodes this van as make MERCEDES-BENZ, model "eSprinter" — a clean

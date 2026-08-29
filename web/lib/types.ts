@@ -167,6 +167,24 @@ export interface EnrichmentRow {
     // epaRangeTotalMi below. A PHEV row with both fields set is how a shopper
     // tells them apart on the card; see EnrichmentReport.tsx's label swap.
     epaRangeMi?: Fact<number>;
+    // The maker's OWN published range where no EPA rating exists at all —
+    // never a substitute for epaRangeMi, and never merged into it.
+    //
+    // Vehicles over EPA's labelling threshold are simply not rated: the
+    // BrightDrop/Zevo vans, and every GM guide for them footnotes "EPA
+    // estimates not yet available". Before this field the schema had only two
+    // moves for such a van — publish the maker's simulation under the label
+    // "EPA range" (a false claim) or publish nothing. It published nothing,
+    // and then printed a paragraph explaining the nothing, which is how 745
+    // vans came to show no range at all AND be unfilterable by range while
+    // GM's own figure sat in a note. The third move is this field: print the
+    // number, attribute it, and let it be filtered on.
+    //
+    // The value MUST be the maker's own published figure (source "mfr"),
+    // never our arithmetic off a pack size, and it renders with the "est"
+    // mark everywhere so it can never read as a rating. A car with an EPA
+    // rating must use epaRangeMi; carrying both is a contradiction.
+    mfrRangeMi?: Fact<number>;
     // PHEV only. Total range with the gas engine running after the battery
     // depletes (fueleconomy.gov's plain `range`, fuelType1+fuelType2
     // combined). Absent for BEVs — there is no second number to hold.
@@ -200,6 +218,14 @@ export interface EnrichmentRow {
     // the way dcPeakKw's own notes do, or this becomes exactly the
     // context-free "18 minutes!" claim docs/ENRICHMENT-SCHEMA.md warns about.
     chargeTime1080Min?: Fact<number>;
+    // The same headline claim where the maker states a LOOSER starting point
+    // than 10%. GM's body-builder guides publish "Low-80% time to charge" and
+    // define "low" in their own footnote as "between 15-20 miles of range
+    // remaining" — a state of charge, not a percentage, and not 10%. Printing
+    // GM's 45 minutes as a 10-80% figure would claim a precision GM did not,
+    // so it gets its own field and its own label ("to 80%") rather than
+    // borrowing the one above. The condition still rides in the note.
+    chargeTimeTo80Min?: Fact<number>;
     // "fitted"/"not_fitted" are per-car resolutions (photo or window sticker),
     // vs the model-level "standard"/"optional"/"none".
     dcFastCharging?: Fact<"standard" | "optional" | "none" | "fitted" | "not_fitted">;

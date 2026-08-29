@@ -34,6 +34,13 @@ export interface EnrichedListing {
   packVariant?: string;
   port?: Fact<PortStandard>;
   chargeTime1080Min?: Fact<number>;
+  /** The maker's own "low"-to-80% DC figure, for vehicles whose maker states
+   *  a looser starting point than 10% (see types.ts). Separate from
+   *  chargeTime1080Min so the two never render under one label. */
+  chargeTimeTo80Min?: Fact<number>;
+  /** True when realRangeMi came from range.mfrRangeMi rather than an EPA
+   *  rating — the tile and the detail row both have to say so. */
+  rangeIsMfrEstimate?: boolean;
   heatPump: { status: "yes" | "no" | "verify"; detail: string; source: Source } | null;
   fastCharge: { status: "yes" | "no" | "verify"; detail: string };
   batteryWarrantyTransfers?: Fact<boolean>;
@@ -383,13 +390,15 @@ export function enrichListing(l: Listing): EnrichedListing {
   // "LFP — charge to 100% routinely" on a 2170 Long Range is advice the site
   // would be giving about a car it has just admitted it cannot identify.
   const collision =
-    row?.range && (row.range.epaRangeMi || row.range.testedRangeMi) ? teslaCollisionRows(l) : undefined;
+    row?.range && (row.range.epaRangeMi || row.range.mfrRangeMi || row.range.testedRangeMi)
+      ? teslaCollisionRows(l)
+      : undefined;
   if (row?.range && collision) {
     const chemistries = new Set([row, ...collision].map((r) => r.battery?.chemistry?.value));
     const chemistryAgreed = collision.length > 0 && chemistries.size === 1 && !chemistries.has(undefined);
     row = {
       ...row,
-      range: { ...row.range, epaRangeMi: undefined, testedRangeMi: undefined },
+      range: { ...row.range, epaRangeMi: undefined, mfrRangeMi: undefined, testedRangeMi: undefined },
       battery: row.battery
         ? {
             ...row.battery,
@@ -470,12 +479,17 @@ export function enrichListing(l: Listing): EnrichedListing {
     tesla,
     enrichment,
     row,
-    realRangeMi: row?.range?.epaRangeMi,
+    // EPA first and always. `mfrRangeMi` only reaches a card where no EPA
+    // rating exists at all (lib/types.ts) — over-threshold commercial vans,
+    // mostly — and it is marked "est" wherever it lands.
+    realRangeMi: row?.range?.epaRangeMi ?? row?.range?.mfrRangeMi,
+    rangeIsMfrEstimate: !row?.range?.epaRangeMi && !!row?.range?.mfrRangeMi,
     usableKwh: row?.battery?.packUsableKwh,
     packKwh: packSize(row),
     packVariant: row?.packVariant,
     port: agreed((r) => r.charging?.portStandard),
     chargeTime1080Min: agreed((r) => r.charging?.chargeTime1080Min),
+    chargeTimeTo80Min: agreed((r) => r.charging?.chargeTimeTo80Min),
     heatPump,
     fastCharge,
     batteryWarrantyTransfers: row?.warranty?.batteryTransfers,

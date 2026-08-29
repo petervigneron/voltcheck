@@ -325,12 +325,23 @@ function matchEnrichmentRaw(
       (opts?.ignoreRowTrims ? !r.feedLabelRow : trimMatches(r.trim, decode.trim))
   );
 
+  // Every VIN-position filter below reads a fixed offset, so it is only
+  // meaningful on something that is actually a VIN. The feed carries a
+  // handful of listings whose id is a placeholder rather than a VIN
+  // ("IONIQ5-22-AWD", 13 characters) — slicing one of those yields wmi "ION",
+  // a vds of "Q5-22-AWD" and a position 8 of "2", which silently excludes
+  // every correctly-keyed row and, worse, could match a row keyed on "2" for
+  // some other cohort of the same nameplate. A VIN is 17 characters and
+  // excludes I, O and Q by standard; anything else falls through to the trim
+  // and drivetrain evidence, which is what these listings used to resolve on.
+  const vin = decode.vin && /^[A-HJ-NPR-Z0-9]{17}$/i.test(decode.vin) ? decode.vin : undefined;
+
   // VIN positions 1–3 name the body where showroom strings can't: dealers
   // file Mercedes' sedan and SUV under the same model and trim ("EQE",
   // "500 4MATIC"), and only the WMI separates W1K (Bremen sedan) from 4JG
   // (Tuscaloosa SUV) — different EPA ranges, different prices. Hard, like
   // vin8 below: a row keyed to WMIs must never match a VIN outside them.
-  const wmi = decode.vin?.slice(0, 3).toUpperCase();
+  const wmi = vin?.slice(0, 3).toUpperCase();
   if (wmi) {
     rows = rows.filter((r) => !r.wmi || r.wmi.includes(wmi));
   }
@@ -341,7 +352,7 @@ function matchEnrichmentRaw(
   // ordinary Lyriq listing that said only "Sport", and 878 of them printed
   // the V's 285 mi. The V is a different VIN — 1GYXP against 1GYKP — and no
   // amount of trim-string curation fixes a feed that writes "Sport" for both.
-  const vds = decode.vin?.slice(3).toUpperCase();
+  const vds = vin?.slice(3).toUpperCase();
   if (vds) {
     rows = rows.filter((r) => !r.vds || r.vds.some((p) => vds.startsWith(p.toUpperCase())));
   }
@@ -353,7 +364,7 @@ function matchEnrichmentRaw(
   // Extended Range row. A hard filter, unlike the soft hints below: a row
   // keyed to specific codes must never match a car with a different code —
   // matching nothing is honest, matching the wrong pack is not.
-  const vin8 = decode.vin?.[7]?.toUpperCase();
+  const vin8 = vin?.[7]?.toUpperCase();
   if (vin8) {
     rows = rows.filter((r) => !r.vin8 || r.vin8.includes(vin8));
   }

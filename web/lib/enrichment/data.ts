@@ -276,12 +276,49 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
   // rating differs per variant and listings often omit which one they are.
   // Shared facts (warranty, ICCU, charging hardware) repeat per row on purpose:
   // each row must stand alone when matched.
+  //
+  // VIN POSITION 8 IS THE KEY (added 2026-08-28). "Listings often omit which
+  // one they are" was costing 893 live cards their range: 1,157 Ioniq 5
+  // listings state no drivetrain at all, so the RWD and AWD rows both survived
+  // and the card rendered a "303-318 mi" spread instead of a number.
+  //
+  // The map was measured, not guessed. Taking the 4,528 listings whose feed
+  // record DOES state a drivetrain as ground truth and correlating every VIN
+  // position against it, position 8 separates them with zero exceptions, and
+  // position 6 agrees with it on all 4,528:
+  //
+  //   Korea-built KM8, MY2022-2024    B = Standard Range
+  //                                   E = long-range RWD      F = AWD
+  //   US-built 7YA, MY2025-2027       B = Standard Range
+  //                                   A = long-range RWD      C = AWD
+  //
+  // B IS THE ONE TO BE CAREFUL WITH, and it is why this is a pack key rather
+  // than a drivetrain key. B is the Standard Range car — 220 miles through
+  // MY2024, 245 from MY2025 — not a 303/318-mile one, and it is RWD like the
+  // long-range RWD car, so a key that only separated RWD from AWD would have
+  // handed ~105 Standard Range cars the long-range figure. Two control tests
+  // before trusting it: 96% of the 105 B-coded listings say "Standard Range"
+  // in their own trim or title against 0% of every other code, and the letter
+  // means the same thing in both plant eras despite A/E and C/F swapping.
+  //
+  // The Standard Range rows carry NO trim key any more, which looks backwards.
+  // On a VIN-keyed row a trim key is a veto rather than a second opinion:
+  // trimMatches() refuses a listing whose own trim field is blank and runs
+  // before the vin8 filter, so a row carrying both is unreachable for exactly
+  // the listings the VIN was added to rescue — 59 blank-trim B-coded cars.
+  // web/tests/gm-truck-vin-keys.test.ts pins the same rule for GM's trucks.
+  //
+  // NOT COVERED: two MY2025 cars built in Korea (KM8) whose position 8 is the
+  // digit 8, a transitional pattern with no equivalent in the US-built line.
+  // The feed calls them AWD and so does vPIC, but MY2025 spans the facelift —
+  // the Korea-built car may be the old 260-mile spec rather than the 290-mile
+  // one — and nothing found establishes which. They match no row.
   {
     id: "ioniq5-2022-sr",
     make: "HYUNDAI",
     model: "Ioniq 5",
     modelYears: [2022, 2022],
-    trim: "Standard Range",
+    vin8: ["B"],
     drive: "RWD",
     battery: { packGrossKwh: f(58.0, "mfr", "high") },
     range: { epaRangeMi: f6(220, "mfr", "high", "Official EPA rating, 'Ioniq 5 RWD (Standard Range)', EPA vehicle id 44924", "https://www.fueleconomy.gov") },
@@ -312,6 +349,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     make: "HYUNDAI",
     model: "Ioniq 5",
     modelYears: [2022, 2022],
+    vin8: ["E"],
     drive: "RWD",
     battery: { packGrossKwh: f(77.4, "mfr", "high", "Long Range pack") },
     range: { epaRangeMi: f6(303, "mfr", "high", "Official EPA rating, 'Ioniq 5 RWD (Long Range)', EPA vehicle id 44923", "https://www.fueleconomy.gov") },
@@ -342,6 +380,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     make: "HYUNDAI",
     model: "Ioniq 5",
     modelYears: [2022, 2022],
+    vin8: ["F"],
     drive: "AWD",
     battery: { packGrossKwh: f(77.4, "mfr", "high", "Long Range pack") },
     range: { epaRangeMi: f6(256, "mfr", "high", "Official EPA rating, 'Ioniq 5 AWD (Long Range)', EPA vehicle id 44922", "https://www.fueleconomy.gov") },
@@ -376,7 +415,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     make: "HYUNDAI",
     model: "Ioniq 5",
     modelYears: [2023, 2024],
-    trim: "Standard Range",
+    vin8: ["B"],
     drive: "RWD",
     battery: { packGrossKwh: f(58.0, "mfr", "high") },
     range: { epaRangeMi: f6(220, "mfr", "high", "MY2024 EPA rating, 'Ioniq 5 Standard range RWD' (EPA vehicle id 46961); the 2023 spec sheet prints the same 220-mile EPA figure", "https://www.fueleconomy.gov") },
@@ -407,6 +446,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     make: "HYUNDAI",
     model: "Ioniq 5",
     modelYears: [2023, 2024],
+    vin8: ["E"],
     drive: "RWD",
     battery: { packGrossKwh: f(77.4, "mfr", "high", "Long Range pack") },
     range: { epaRangeMi: f6(303, "mfr", "high", "MY2024 EPA rating, 'Ioniq 5 Long range RWD' (EPA vehicle id 46960); the 2023 spec sheet prints the same 303-mile EPA figure for SE/SEL/Limited RWD", "https://www.fueleconomy.gov") },
@@ -437,6 +477,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     make: "HYUNDAI",
     model: "Ioniq 5",
     modelYears: [2023, 2023],
+    vin8: ["F"],
     drive: "AWD",
     battery: { packGrossKwh: f(77.4, "mfr", "high", "Long Range pack") },
     range: { epaRangeMi: f6(266, "mfr", "high", "Hyundai's 2023 spec sheet: 266 miles EPA for SE/SEL/Limited AWD (printed in both the powertrain and EPA-ratings tables). The EPA's public dataset has no MY2023 Ioniq 5 records (verified by control test 2026-08-14), so the manufacturer sheet is the citable source", "https://www.hyundainews.com/assets/documents/original/50313-2023IONIQ5ProductSpecifications20220630.pdf") },
@@ -467,6 +508,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     make: "HYUNDAI",
     model: "Ioniq 5",
     modelYears: [2024, 2024],
+    vin8: ["F"],
     drive: "AWD",
     battery: { packGrossKwh: f(77.4, "mfr", "high", "Long Range pack") },
     range: { epaRangeMi: f6(260, "mfr", "high", "Official EPA rating, 'Ioniq 5 Long range AWD', EPA vehicle id 46962 (down from 266 in 2023)", "https://www.fueleconomy.gov") },
@@ -504,7 +546,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     make: "HYUNDAI",
     model: "Ioniq 5",
     modelYears: [2025, 2026],
-    trim: "Standard Range",
+    vin8: ["B"],
     drive: "RWD",
     battery: { packGrossKwh: f6(63.0, "mfr", "high", "Standard Range pack", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf") },
     range: { epaRangeMi: f6(245, "mfr", "high", "Official EPA rating, 'Ioniq 5 Standard range', EPA vehicle ids 48714 (2025) / 49961 (2026)", "https://www.fueleconomy.gov") },
@@ -542,6 +584,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     make: "HYUNDAI",
     model: "Ioniq 5",
     modelYears: [2025, 2026],
+    vin8: ["A"],
     drive: "RWD",
     battery: { packGrossKwh: f5(84.0, "mfr", "high", "Long Range pack", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf") },
     range: { epaRangeMi: f6(318, "mfr", "high", "Official EPA rating, 'Ioniq 5 RWD', EPA vehicle ids 48713 (2025) / 49960 (2026); one rating covers all long-range RWD trims", "https://www.fueleconomy.gov") },
@@ -578,6 +621,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     make: "HYUNDAI",
     model: "Ioniq 5",
     modelYears: [2025, 2026],
+    vin8: ["C"],
     drive: "AWD",
     battery: { packGrossKwh: f5(84.0, "mfr", "high", "Long Range pack", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf") },
     range: { epaRangeMi: f6(290, "mfr", "high", "Official EPA rating, 'Ioniq 5 AWD (19 inch Wheels)' (SE/SEL), EPA vehicle ids 48710 (2025) / 49962 (2026). Limited (20\") is rated 269 and XRT 259, separate rows", "https://www.fueleconomy.gov") },
@@ -614,6 +658,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     make: "HYUNDAI",
     model: "Ioniq 5",
     modelYears: [2025, 2026],
+    vin8: ["C"],
     trim: "Limited",
     drive: "AWD",
     battery: { packGrossKwh: f5(84.0, "mfr", "high", "Long Range pack", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf") },
@@ -651,6 +696,7 @@ export const ENRICHMENT_ROWS: EnrichmentRow[] = [
     make: "HYUNDAI",
     model: "Ioniq 5",
     modelYears: [2025, 2026],
+    vin8: ["C"],
     trim: "XRT",
     drive: "AWD",
     battery: { packGrossKwh: f5(84.0, "mfr", "high", "Long Range pack", "https://www.hyundainews.com/assets/documents/original/64493-2025IONIQ5SpecsFeatures121124.pdf") },
