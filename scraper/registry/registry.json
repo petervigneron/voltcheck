@@ -405,7 +405,7 @@
       "platform": "custom",
       "robots": "restrictive",
       "status": "blocked",
-      "notes": "Probed 2026-08-11 (control-tested): robots 200 but disallows /search/*, /inventory/, /browse/*; sitemap.xml 403 Cloudflare challenge. Posture: closed to polite crawl. | 2026-08-16: Cloudflare challenge on every path. Off-limits under the no-evasion rule."
+      "notes": "Probed 2026-08-11 (control-tested): robots 200 but disallows /search/*, /inventory/, /browse/*; sitemap.xml 403 Cloudflare challenge. Posture: closed to polite crawl. | 2026-08-16: Cloudflare challenge on every path. Off-limits under the no-evasion rule. | 2026-08-29: re-verified a THIRD time; recording why it keeps re-opening. robots.txt answers 200 (Cloudflare always lets robots.txt through) and its Allow-by-omission of /cars/<make>-<model> reads like an open door. It is not one. Every content path answers 403 with `cf-mitigated: challenge` — /, /cars/tesla-model-y, /cars/tesla-model-3, a VDP path, /buy/sitemap.xml, /sitemap.xml, /api/vehicles — under both lib/http.mjs fetchPage and curl with a real browser UA. Control test in the same session: evercars.com /cars 200 (1.5 MB), recharged.com 200, so the wall is Carvana edge, not our network or stack. api.carvana.com resolves but 404s on every path tried. A model-SEO-page crawl lane was scoped and deliberately NOT built: reaching the inventory needs the CF challenge solved, which is the no-evasion rule. Do not re-open on a robots.txt 200 alone."
     },
     {
       "domain": "carmax.com",
