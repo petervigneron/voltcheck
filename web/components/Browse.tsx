@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useReducer } from "react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { ListingCard, type GroundsMode } from "./ListingCard";
 import { SearchBar, FilterRail, SpecFacets, type FacetGroup } from "./Filters";
@@ -10,6 +11,7 @@ import { featuredScore, type CardRow } from "@/lib/listings/card";
 import { FIRST_PAGE_SIZE } from "@/lib/listings/firstPaint";
 import { FACET_OF, QUICK_KNOWS, activeFilterKeys, buildTests, rowMatches } from "@/lib/listings/match";
 import { modelTally } from "@/lib/listings/tally";
+import { factLinksFor, type FactLink } from "@/lib/facts/links";
 import { firstPaintWonRace, useCardIndex, useFirstPaint } from "@/lib/listings/useCardIndex";
 import { milesBetween } from "@/lib/geo";
 import { pushUrl } from "@/lib/pushUrl";
@@ -164,7 +166,7 @@ export function Browse() {
     rememberBrowseQuery(sp.toString());
   }, [sp]);
 
-  const { results, dist, relief, activeCount, facets, quickCounts } = useMemo(() => {
+  const { results, dist, relief, activeCount, facets, quickCounts, factLinks } = useMemo(() => {
     const all = rows ?? [];
 
     const dist = new Map<string, number>();
@@ -370,7 +372,11 @@ export function Browse() {
       facets.push({ key: f.key, label: f.label, values });
     }
 
-    return { results, dist, relief, activeCount: activeKeys.length, facets, quickCounts };
+    // Fact-sheet links ride the same gate as the spec rail: the results are
+    // one model, so the sheets that answer for that model belong on the page.
+    const factLinks: FactLink[] = specPool.length ? factLinksFor(specPool[0].make, specPool[0].model) : [];
+
+    return { results, dist, relief, activeCount: activeKeys.length, facets, quickCounts, factLinks };
     // `first` is read but deliberately not a dependency: it can only change
     // once (null -> loaded), and if that happens after the index already
     // painted, re-sorting a grid the shopper is looking at is exactly the
@@ -418,6 +424,19 @@ export function Browse() {
       />
 
       <SpecFacets facets={facets} />
+
+      {factLinks.length > 0 && (
+        <nav
+          aria-label="Fact sheets"
+          className="flex flex-wrap gap-x-6 gap-y-1.5 border-l-[3px] border-r-[3px] border-b-[3px] border-ink bg-paper px-5 py-3"
+        >
+          {factLinks.map((l) => (
+            <Link key={l.path} href={l.path} className="text-[13px] font-bold text-cobalt hover:underline">
+              {l.label} →
+            </Link>
+          ))}
+        </nav>
+      )}
 
       {firstView ? (
         // The first-paint grid: the same 60 cards, in the same order, that the

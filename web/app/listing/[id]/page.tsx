@@ -1,5 +1,6 @@
 import { cache } from "react";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BackToResults } from "@/components/BackToResults";
 import { findListing } from "@/lib/listings/source";
@@ -23,6 +24,7 @@ import { BatteryRisk } from "@/components/BatteryRisk";
 import { Gallery } from "@/components/Gallery";
 import { batteryRisk } from "@/lib/nhtsa/battery";
 import { batteryWarranty } from "@/lib/listings/warranty";
+import { factLinksFor } from "@/lib/facts/links";
 
 // ISR: each listing page renders once, then serves from the CDN for a day —
 // the true cadence of the data underneath it (nightly sync, recheck, price
@@ -156,6 +158,7 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
   // page repeats and can defend; a claim that vanishes here reads as
   // retracted.
   const { vsSold, vsMarket, peerAsks } = await listingPriceSignals(listing);
+  const factLinks = factLinksFor(listing.make, listing.model);
   const marketTile = vsMarket ? askVsMarketTile(vsMarket) : undefined;
   // The price-vs-mileage picture, only when this car itself can be plotted —
   // a chart that can't locate its subject is decoration. PriceScatter adds
@@ -350,6 +353,30 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
               the shopper. See components/BatteryRisk.tsx for why it can't
               say more than "NHTSA has one on file" for most makes. */}
           <BatteryRisk data={battery} vin={listing.vin} packReplaced={listing.campaignCheck?.packReplaced} />
+
+          {/* Cohort answers with their own pages (/facts). The questions are
+              the link text — each is one the sheet's own FAQ asks — so the
+              block needs no heading and no sentence introducing it. */}
+          {factLinks.length > 0 && (
+            <nav
+              aria-label="Fact sheets"
+              className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-5 py-2"
+            >
+              <ul className="divide-y divide-zinc-100 dark:divide-zinc-800">
+                {factLinks.map((l) => (
+                  <li key={l.path}>
+                    <Link
+                      href={l.path}
+                      className="flex items-center justify-between gap-4 py-2.5 text-sm font-medium hover:text-emerald-600"
+                    >
+                      {l.label}
+                      <span aria-hidden>→</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )}
 
           {e.enrichment.candidates && (
             <Section title="Two versions wear this badge">
