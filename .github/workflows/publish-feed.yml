@@ -29,7 +29,57 @@ jobs:
           node-version: "22"
       - run: npm ci
         working-directory: web
+
+      # A publish is ONE FULL WALK of listings, and the walk is the single
+      # biggest thing this database does. Measured 2026-08-29 from
+      # pg_stat_statements: the feed-page query had run 1,356 times for 1,326
+      # seconds and had pulled 95 GB through the buffer cache — about six full
+      # walks — against an instance whose whole cache is a fraction of that.
+      # Each walk reads the entire 232 MB heap plus its toast, so it evicts
+      # everything else on the way through; `listings` sits at a 78.7% cache
+      # hit rate where every other table in the database is 93-100%, and
+      # Supabase sent a Disk IO Budget depletion warning the same day.
+      #
+      # In the 24 hours before this guard there were SEVEN publishes, every one
+      # a manual dispatch, FIVE of them inside a single hour — several Claude
+      # sessions work this repo at once and each reached for the publisher as
+      # the way to make its own change visible. Nothing was wrong with any one
+      # of those; together they were six redundant walks.
+      #
+      # So a manual publish now declines when the artifact it would replace is
+      # younger than MIN_AGE_MIN. Deliberately narrow:
+      #   - workflow_call is EXEMPT. nightly.yml is the publish that carries
+      #     the night's crawl, and a nightly landing 80 minutes after someone's
+      #     manual publish must never be the one that gets skipped.
+      #   - force=true overrides it, which is what to use after a rolling crawl
+      #     lands cars out of cycle.
+      #   - 90 minutes, against the route's 36h freshness gate: far too short
+      #     to risk staleness, long enough that a session iterating on one
+      #     change walks once instead of five times.
+      - name: Decline a redundant walk
+        id: gate
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.force != 'true' }}
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        run: |
+          MIN_AGE_MIN=90
+          [ -z "$SUPABASE_URL" ] && { echo "no SUPABASE_URL — cannot check, publishing"; exit 0; }
+          man=$(curl -sS --max-time 30 "$SUPABASE_URL/storage/v1/object/public/feed/manifest.json" || echo '')
+          published=$(printf '%s' "$man" | sed -n 's/.*"publishedAt"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p')
+          # No readable manifest means the routes are on the walk path already;
+          # that is the case that most needs a publish, so proceed.
+          [ -z "$published" ] && { echo "no readable manifest — publishing"; exit 0; }
+          pnorm=$(printf '%s' "$published" | sed 's/\.[0-9]*Z$/Z/; s/T/ /; s/Z$/ UTC/')
+          age_min=$(( ( $(date -u +%s) - $(date -u -d "$pnorm" +%s 2>/dev/null || echo 0) ) / 60 ))
+          if [ "$age_min" -ge 0 ] && [ "$age_min" -lt "$MIN_AGE_MIN" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "::notice::Feed artifact is only ${age_min} min old (minimum ${MIN_AGE_MIN}). Declining to walk the database again — a publish is a full read of the listings table and that is what is draining the Disk IO budget. Re-run with force=true if you have landed cars out of cycle (a rolling crawl), or wait $(( MIN_AGE_MIN - age_min )) min."
+          else
+            echo "artifact is ${age_min} min old (minimum ${MIN_AGE_MIN}) — publishing"
+          fi
+
       - name: Walk once and publish
+        if: ${{ steps.gate.outputs.skip != 'true' }}
         working-directory: web
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
@@ -44,6 +94,7 @@ jobs:
           node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs \
             scripts/publish-feed.mjs ${{ github.event.inputs.force == 'true' && '--force' || '' }}
       - name: Refresh the site onto the new artifacts
+        if: ${{ steps.gate.outputs.skip != 'true' }}
         env:
           FEED_REVALIDATE_SECRET: ${{ secrets.FEED_REVALIDATE_SECRET }}
         run: |
@@ -98,7 +149,7 @@ jobs:
       # failing the job would not un-publish anything. The annotation is the
       # output.
       - name: Verify what we just published
-        if: always()
+        if: ${{ always() && steps.gate.outputs.skip != 'true' }}
         continue-on-error: true
         working-directory: scraper
         run: node feed-shard-check.mjs

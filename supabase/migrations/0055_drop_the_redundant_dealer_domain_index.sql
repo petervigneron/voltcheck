@@ -1,0 +1,37 @@
+-- listings_domain_idx is redundant with listings_live_domain, and on a table
+-- whose updates are 87% non-HOT every redundant index is a write paid on
+-- every single one of them.
+--
+-- The two indexes:
+--   listings_domain_idx   (dealer_domain)                              0001
+--   listings_live_domain  (dealer_domain) where delisted_at is null
+--
+-- Every path that filters dealer_domain also filters delisted_at is null, so
+-- the partial index answers all of them and the full one answers nothing:
+--
+--   ingest_listings' delist statement — "where l.delisted_at is null and
+--     l.dealer_domain in (...)", read from pg_get_functiondef on the LIVE
+--     function rather than from a migration, since 0002 supersedes 0001 here
+--   scraper/db-sync.mjs and scraper/sync-guard.mjs — both build
+--     "&dealer_domain=in.(...)" onto a live-only filter
+--   scraper/lane-flip-check.mjs — "dealer_domain&delisted_at=is.null"
+--   supabase/verify.mjs — "dealer_domain=$1 and delisted_at is null" (x3)
+--
+-- Grepped across web/, scraper/ and supabase/ per the CLAUDE.md rule, which
+-- exists because dropping something that merely looked unused once killed the
+-- price-audit lane. The counter agrees with the grep: 1 scan against
+-- listings_live_domain's 5,398.
+--
+-- NOT dropped, and this is the point of writing it down: listings_live_idx
+-- (make, model) where delisted_at is null shows only 12 scans and looks like
+-- the same kind of dead weight. It is not. It is what the live-count guard
+-- runs on — "explain select count(*) from listings where delisted_at is null"
+-- returns "Index Only Scan using listings_live_idx", and that count is the
+-- cheap gate db.ts, sync-guard and the nightly's revalidate steps all lean on.
+-- Dropping it would turn a 277 ms index-only scan into a seq scan of a 232 MB
+-- heap on an instance already exhausting its Disk IO budget. Leave it.
+--
+-- CONCURRENTLY: this ran while the rolling crawl was writing. A plain DROP
+-- INDEX takes ACCESS EXCLUSIVE and would have blocked every ingest for its
+-- duration.
+drop index concurrently if exists listings_domain_idx;
