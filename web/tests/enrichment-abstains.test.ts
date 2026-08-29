@@ -131,3 +131,30 @@ test("every PHEV row states its AC inlet, so none of them render an unknown port
     assert.equal(r.charging?.dcFastCharging?.value, "none", `${id} is the no-DC-port case this pins`);
   }
 });
+
+// An abstention must not read as a change of KIND. The 2024 and 2026 S 580e
+// rows publish no range at all — EPA filed no record for either year and the
+// two years bracketing them disagree, 56 electric miles against 48 — and their
+// packVariant is the car's own badge rather than the bare word "PHEV". So
+// nothing they carry says "plug-in", and on 2026-08-29 the cross-kind guard in
+// scripts/phev-enrichment-gap.mjs read 31 live S 580e listings as plug-ins
+// wearing a battery-electric row: a false alarm on a false-claim detector,
+// raised by two rows that were right to stay quiet.
+//
+// The predicate below is that guard's, copied deliberately. If someone deletes
+// `plugIn` as redundant on the two years that do print a range, this fails
+// here rather than in a nightly workflow against whatever inventory happens to
+// be live that day.
+test("a row that abstains on range can still say it is a plug-in", () => {
+  const isPhevRow = (r: EnrichmentRow) =>
+    r.plugIn === true || r.packVariant === "PHEV" || !!r.range?.epaRangeTotalMi;
+  for (const id of ["s580e-2023", "s580e-2024", "s580e-2025", "s580e-2026"]) {
+    assert.ok(isPhevRow(byId(id)), `${id} is a plug-in and nothing on the page may treat it as battery-electric`);
+  }
+  // The two that carry no range are the ones the marker is load-bearing for.
+  for (const id of ["s580e-2024", "s580e-2026"]) {
+    const r = byId(id);
+    assert.equal(r.range, undefined, `${id} publishes no range — that is the abstention this pins`);
+    assert.equal(r.plugIn, true, `${id} has nothing else to say its kind with`);
+  }
+});

@@ -320,3 +320,28 @@ test("a conventional hybrid that carried a plug-in string is demoted by vPIC", (
   // A blank decode proves nothing either way.
   assert.equal(vpicRefutesEv(BLANK_ROW), false);
 });
+
+test("a Lexus RZ 550e stays a BEV however many times the badge repeats", () => {
+  // PHEV_MODEL_RE's `(?<!\brz ?)` reads exactly one character of context in
+  // front of the badge, and the feed does not send the badge once. Dealers
+  // file this car as model "RZ 550e" with trim "550e F Sport", so a name
+  // joined from make+model+trim carries "550e" twice and the second copy has
+  // "550e " in front of it. One live 2026 car reached web/'s cross-kind guard
+  // that way on 2026-08-29, reported as a plug-in wearing a battery-electric
+  // row. It is a BEV wearing its own correct row; phevNameplate vetoes the
+  // whole string, so this holds wherever the badge lands.
+  for (const n of [
+    "Lexus RZ 550e 550e F Sport",
+    "LEXUS RZ 550e 550e F SPORT",
+    "2026 Lexus RZ 550e Premium 550e",
+    "Lexus RZ 550e F Sport",
+    "Lexus RZ550e",
+  ]) {
+    assert.equal(phevNameplate(n, 2026), false, `must not be a plug-in: ${n}`);
+  }
+  // And the badge it collides with still fires. Dropping BMW's number pattern
+  // to settle this would have cost all four of these.
+  for (const n of ["BMW 550e xDrive", "BMW 530e", "BMW 330e xDrive", "BMW 750e xDrive"]) {
+    assert.equal(phevNameplate(n, 2026), true, `must be a plug-in: ${n}`);
+  }
+});

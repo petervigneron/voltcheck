@@ -89,9 +89,17 @@
 // a Wrangler 4xe printing an EV's 200-plus miles instead of its own 22 is a
 // false claim in the direction that costs a shopper money, and it would look
 // completely normal on the page. So this also counts PHEV listings that
-// matched a row carrying neither packVariant "PHEV" nor an epaRangeTotalMi
-// (the gas-assisted total only a plug-in row has). That count is NOT
-// ratcheted and NOT a backlog — any occurrence fails.
+// matched a row nothing marks as a plug-in — no `plugIn`, no packVariant
+// "PHEV", no epaRangeTotalMi (the gas-assisted total only a plug-in row has).
+// That count is NOT ratcheted and NOT a backlog — any occurrence fails.
+//
+// Both halves of it are classifiers, and a classifier that misreads an honest
+// row costs the same thing a missed cross-kind match does: the first time this
+// fired for real, on 2026-08-29, all 33 listings were false positives, and a
+// guard that cries wolf gets its number raised. Neither side is allowed to
+// guess. The row side asks the row (isPhevRow, below); the listing side asks
+// scraper/lib/ev.mjs, which knows the Lexus RZ 550e is battery-electric
+// despite wearing BMW's plug-in badge.
 //
 // And because "we found none" is a negative, the script control-tests it in
 // the same run rather than asking to be believed: it runs the identical
@@ -179,12 +187,23 @@ const isPhevListing = (l) => {
   return phevNameplate(name, l.year) || PHEV_NAME_CLAIM_RE.test(name);
 };
 
-// A row that describes a plug-in: either tagged as one, or carrying the
-// gas-assisted total range no battery-electric row has (lib/types.ts —
-// epaRangeTotalMi is "PHEV only" by definition). Two tests rather than one
-// because packVariant is a display string, free-form and easy to spell
-// differently in a new tranche, while epaRangeTotalMi is structural.
-const isPhevRow = (r) => r.packVariant === "PHEV" || !!r.range?.epaRangeTotalMi;
+// A row that describes a plug-in: one that SAYS so, or one tagged by
+// packVariant, or one carrying the gas-assisted total range no battery-electric
+// row has (lib/types.ts — epaRangeTotalMi is "PHEV only" by definition).
+//
+// The last two are inferences from what a row happens to carry, and the first
+// exists because an inference read an honest abstention as a change of kind.
+// The 2024 and 2026 Mercedes S 580e rows (data11.ts) publish no range at all —
+// EPA filed no record for either model year and the two years bracketing them
+// disagree, so the rows refuse to pick one — and their packVariant is the car's
+// own badge, "S 580e 4MATIC". Neither marker, so 31 live S 580e listings were
+// reported here on 2026-08-29 as plug-ins wearing a battery-electric row. They
+// were plug-ins wearing their own correct row; this predicate was the thing
+// that was wrong. Widening the inference instead was rejected — the shapes that
+// would have caught these (mpgGasoline, an "e"-suffixed packVariant) catch
+// nothing on a row that published nothing, which is the whole problem. A row
+// that cannot show its kind has to be able to state it.
+const isPhevRow = (r) => r.plugIn === true || r.packVariant === "PHEV" || !!r.range?.epaRangeTotalMi;
 
 const matched = (r) => !!(r.exact || (r.candidates && r.candidates.length));
 const rowsOf = (r) => (r.exact ? [r.exact] : (r.candidates ?? []));

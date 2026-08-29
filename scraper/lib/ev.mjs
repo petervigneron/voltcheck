@@ -172,7 +172,11 @@ export const PHEV_MODEL_RE = new RegExp(
     // X3 xDrive30e, X5 xDrive40e/45e/50e). XM and i8 were only ever plug-ins.
     // The lookbehind keeps "550e" off the Lexus RZ 550e, a BEV that shares
     // the number (found in the 2026-08-23 sweep of out/listings.json; it was
-    // the only non-plug-in the list matched across 110k names).
+    // the only non-plug-in the list matched across 110k names). It only reads
+    // the character in front of the badge, so it does not survive a name that
+    // repeats the badge ("RZ 550e" + trim "550e F Sport") — that is what
+    // BEV_BADGE_COLLISION_RE below catches, and phevNameplate() is where a
+    // caller gets both.
     "(?<!\\brz ?)\\b(330e|530e|550e|740e|740le|745e|750e)\\b", "\\bxdrive ?(30|40|45|50)e\\b", "\\bxm\\b", "\\bi8\\b",
     // Mercedes: the "e" suffix again (C350e, S550e/S560e/S580e, GLC350e,
     // GLE450e/GLE550e), plus AMG's "E Performance" plug-in designation.
@@ -228,10 +232,37 @@ export const PHEV_NAME_CLAIM_RE = /\bphev\b|plug[\s-]?in/i;
 // Hybrid). "Hybrid" alone is still not an EV.
 const PHEV_FUEL_RE = /plug[\s-]?in|\bphev\b/i;
 
+// Battery-electric nameplates that wear a badge PHEV_MODEL_RE reads as a
+// plug-in, vetoed across the WHOLE string rather than by what sits directly in
+// front of the badge.
+//
+// PHEV_MODEL_RE's BMW branch already guards the one collision there is — the
+// Lexus RZ 550e against BMW's 550e — with a `(?<!\brz ?)` lookbehind, and that
+// lookbehind is exactly one character of context wide. It holds for "Lexus RZ
+// 550e F Sport" and fails for the shape the feed actually sends: dealers file
+// this car as model "RZ 550e" with trim "550e F Sport", so the joined name
+// repeats the badge and the second copy has "550e " in front of it, not "RZ ".
+// One live 2026 RZ 550e reached web/scripts/phev-enrichment-gap.mjs's
+// cross-kind guard that way on 2026-08-29 and was reported as a plug-in
+// wearing a battery-electric row — it is a BEV wearing its own correct row.
+//
+// Keyed on the nameplate, not on the badge: dropping "550e" from
+// PHEV_MODEL_RE would take the BMW 550e with it, and the BMW 330e/530e/750e
+// pattern that catches it. A veto that names the one car whose nameplate
+// settles the question costs those nothing — a BMW listing never says "RZ".
+// The measured alternative, letting EV_MODEL_RE win outright the way
+// classifyEv orders the two lists, was rejected: over the 42,260
+// plug-in-shaped listings live on 2026-08-29 it also swallowed a genuine 2019
+// MINI Cooper S E Countryman ALL4, whose name matches EV_MODEL_RE's 2025
+// Countryman SE. Losing a real plug-in from the watched population is the
+// direction this lane cannot afford.
+const BEV_BADGE_COLLISION_RE = /\brz ?[3-5][05]0e\b/i;
+
 // Does the nameplate settle that this car plugs in? `year` gates the names
 // that are only plug-ins in some model years.
 export function phevNameplate(name, year) {
   if (!name) return false;
+  if (BEV_BADGE_COLLISION_RE.test(name)) return false;
   if (PHEV_MODEL_RE.test(name)) return true;
   const y = Number(year);
   if (!Number.isFinite(y)) return false;

@@ -1320,6 +1320,15 @@ const R: EnrichmentRow[] = [];
     vds: ["6G6KB"],
     drive: "AWD",
     packVariant: "S 580e 4MATIC",
+    // Stated, not inferred. The 2024 and 2026 rows publish no range at all
+    // (EPA filed no record for either year), so the only two things that
+    // otherwise mark a row as a plug-in — packVariant "PHEV", an
+    // epaRangeTotalMi — are both absent, and the cross-kind guard in
+    // scripts/phev-enrichment-gap.mjs read their 31 live listings as
+    // battery-electric rows serving plug-ins. Set on all four years rather
+    // than the two that need it: the kind of the car does not depend on which
+    // model years EPA got around to filing.
+    plugIn: true,
     ignoreKwhHint: true,
     abstains: abstainRange
       ? { heatPump: S_HP_ABSTAIN, epaRangeMi: abstainRange }

@@ -129,6 +129,25 @@ export interface EnrichmentRow {
   // trims ignored (a distrusted or artifact trim), it must never appear as a
   // "candidate version" beside the real grades.
   feedLabelRow?: boolean;
+  // This row describes a plug-in hybrid. Set it only where the row's own
+  // facts cannot say so on their own.
+  //
+  // Nothing renders it. It exists for the cross-kind guard in
+  // scripts/phev-enrichment-gap.mjs, which fails the build when a plug-in
+  // listing matches a battery-electric row — a Wrangler 4xe printing an EV's
+  // 200-odd miles instead of its own 22. That guard reads a row's kind off the
+  // row: packVariant "PHEV", or an epaRangeTotalMi, which by definition only a
+  // plug-in has. Both are inferences from what the row happens to carry, and a
+  // row can be a plug-in and carry neither — the 2024 and 2026 Mercedes S 580e
+  // (data11.ts) abstain on range entirely because EPA filed no record for
+  // either year, and their packVariant is the car's own badge rather than the
+  // bare word. Thirty-one live S 580e listings were reported as false claims
+  // on 2026-08-29 for that, and the rows were right both times.
+  //
+  // So: an abstention must not be readable as a change of kind. A row states
+  // its kind here instead of having it guessed from the facts it was able to
+  // publish.
+  plugIn?: boolean;
   // Fields this row is deliberately silent on, and why. NOT a research
   // backlog — an entry here is a decision that saying nothing is the honest
   // answer, so scripts/enrichment-coverage.mjs stops counting it as a hole.
