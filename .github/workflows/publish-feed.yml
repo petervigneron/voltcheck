@@ -85,3 +85,20 @@ jobs:
             curl -sf -o /dev/null --max-time 300 "https://voltcheck.net/sitemap/$s.xml" \
               || echo "::warning::warm of /sitemap/$s.xml failed; crawlers keep yesterday's copy until a request renders it"
           done
+
+      # A row of 200s is not a row of correct bodies — the 2026-08-21 incident
+      # was five shards serving ~9,800 rows each behind five 200s. nightly.yml
+      # runs this too, but with --skip-sitemaps, because it runs BEFORE this
+      # job warms them. Here everything is fresh at once, so this is the one
+      # place the sitemap half of the check can ask a fair question: are the
+      # URLs we hand crawlers as many as the cars we say we have?
+      #
+      # continue-on-error, matching nightly.yml's copies: the artifacts are
+      # already published and the site is already refreshed by this point, so
+      # failing the job would not un-publish anything. The annotation is the
+      # output.
+      - name: Verify what we just published
+        if: always()
+        continue-on-error: true
+        working-directory: scraper
+        run: node feed-shard-check.mjs

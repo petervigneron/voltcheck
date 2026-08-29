@@ -41,7 +41,7 @@
 // database's hands and put the sitemaps into the same
 // "what got cached, and was it right?" question the index shards live in.
 //
-//   node feed-shard-check.mjs [--base https://voltcheck.net]
+//   node feed-shard-check.mjs [--base https://voltcheck.net] [--skip-sitemaps]
 //
 // Exit 0 = every shard answered, with a plausible number of rows in it, and
 //          the reported total is plausible.
@@ -248,12 +248,35 @@ if (shardRows.size === SHARDS.length) {
 // something. robots.txt is served by whatever build is live and is the list we
 // actually hand crawlers, so checking exactly it is both deploy-agnostic and a
 // better question: are the URLs we are advertising real?
+// --skip-sitemaps: check the INDEX lane only. For the callers that run before
+// the sitemaps have been warmed, which since 2026-08-28 is every caller inside
+// nightly.yml except publish-feed's own.
+//
+// The sitemaps are the one surface with no artifact lane — they still render
+// off a full feed walk — and publish-feed is now what warms them, as the last
+// job in the night. nightly.yml's earlier checks therefore meet sitemaps from
+// the PREVIOUS publish while `first` already answers from the new artifact,
+// and comparing the two generations is not a health question, it is a clock
+// question. Measured on the 2026-08-28 nightly: 135,753 sitemap URLs against
+// 147,610 live listings, reported as "a crawler is being told about 11,857
+// fewer cars than the site has". Nothing was wrong — an hour later, once
+// publish-feed had warmed them, the same twelve shards held 144,232 URLs
+// against 144,211 live listings. A check that fires every night on a
+// generation gap is the same false alarm this file exists to prevent, so the
+// sitemap half now runs where the sitemaps are actually fresh.
+const SKIP_SITEMAPS = process.argv.includes("--skip-sitemaps");
+
 let sitemapUrls = 0;
 let robots = "";
+if (SKIP_SITEMAPS) {
+  console.log("feed-shard-check: --skip-sitemaps — index lane only (publish-feed checks the sitemaps once it has warmed them)");
+}
 try {
-  robots = await fetchText("/robots.txt", 30_000);
-  if (!robots.trim()) throw new Error("empty body");
-  console.log("feed-shard-check: /robots.txt answered");
+  if (!SKIP_SITEMAPS) {
+    robots = await fetchText("/robots.txt", 30_000);
+    if (!robots.trim()) throw new Error("empty body");
+    console.log("feed-shard-check: /robots.txt answered");
+  }
 } catch (e) {
   problems.push(`/robots.txt: ${e.message}`);
 }

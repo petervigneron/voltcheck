@@ -740,7 +740,13 @@ jobs:
         working-directory: scraper
         env:
           FEED_REVALIDATE_SECRET: ${{ secrets.FEED_REVALIDATE_SECRET }}
-        run: node feed-shard-check.mjs
+        # --skip-sitemaps: publish-feed warms the sitemaps as the night's last
+        # act, so every check before it meets the PREVIOUS publish's copy while
+        # /api/index/first already answers from the new artifact. That gap is a
+        # clock, not a fault — see the flag's comment in feed-shard-check.mjs for
+        # the 2026-08-28 numbers. The index lane, which is what these two steps
+        # exist to verify, is checked in full.
+        run: node feed-shard-check.mjs --skip-sitemaps
 
       # Hand the ingest/sync results forward to finalize-audits: the
       # gm-warranty cache and registry (unchanged pass-through) together so
@@ -1400,7 +1406,13 @@ jobs:
         working-directory: scraper
         env:
           FEED_REVALIDATE_SECRET: ${{ secrets.FEED_REVALIDATE_SECRET }}
-        run: node feed-shard-check.mjs
+        # --skip-sitemaps: publish-feed warms the sitemaps as the night's last
+        # act, so every check before it meets the PREVIOUS publish's copy while
+        # /api/index/first already answers from the new artifact. That gap is a
+        # clock, not a fault — see the flag's comment in feed-shard-check.mjs for
+        # the 2026-08-28 numbers. The index lane, which is what these two steps
+        # exist to verify, is checked in full.
+        run: node feed-shard-check.mjs --skip-sitemaps
 
   # The night's last word (2026-08-26): re-walk once and republish the browse
   # feed artifacts the routes serve first (publish-feed.yml has the whole
