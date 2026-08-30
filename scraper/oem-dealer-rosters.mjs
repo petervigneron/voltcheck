@@ -73,7 +73,7 @@ const UA_HEADERS = { accept: "application/json, text/plain, */*" };
 // the brand storefronts themselves, and the marketplaces that have their own
 // lanes. Same intent as harvest-dealers.mjs's NOT_A_ROOFTOP.
 const NOT_A_ROOFTOP =
-  /(^|\.)(lexus|toyota|honda|acura|nissanusa|infinitiusa|subaru|mazdausa|vw|volkswagen|chevrolet|gmc|cadillac|buick|hyundaiusa|kia|genesis|bmwusa|miniusa|mbusa|volvocars|audiusa|porsche|mitsubishicars|jeep|dodge|chrysler|ramtrucks|ford|driveway|carvana|carmax|autotrader|cargurus|cars|edmunds|kbb|truecar|dealeron|dealer)\.(com|net|us|org)$/i;
+  /(^|\.)(lexus|toyota|honda|acura|nissanusa|infinitiusa|subaru|mazdausa|vw|volkswagen|chevrolet|gmc|cadillac|buick|hyundaiusa|kia|genesis|bmwusa|miniusa|mbusa|volvocars|audiusa|porsche|mitsubishicars|jaguar|jaguarusa|landrover|landroverusa|jeep|dodge|chrysler|ramtrucks|ford|driveway|carvana|carmax|autotrader|cargurus|cars|edmunds|kbb|truecar|dealeron|dealer)\.(com|net|us|org)$/i;
 
 export const normalizeDomain = (site) => {
   const s = String(site ?? "").trim();
@@ -389,20 +389,25 @@ async function genesis() {
  *  means that cell may be hiding rooftops behind the ceiling, so the number is
  *  a floor on what was missed, not a certificate. Nobody downstream may read a
  *  swept count as a brand's rooftop count. */
-async function sweepGrid({ cellUrl, parse, cap, note, label, headers = {} }) {
+async function sweepGrid({ cellUrl, parse, cap, note, label, headers = {}, extraZips = [] }) {
   const { coveringGrid } = await import("./lib/oem/grid.mjs");
   const g = coveringGrid();
   if (!g) { console.error(`${label}: no ZCTA table (web/data/zips.json) — cannot sweep`); return null; }
+  // The grid's bbox stops at the lower 48; a national roster should not. A
+  // locator whose reach comfortably exceeds a metro area can cover Hawaii and
+  // Alaska from one anchor each (the ZCTA table itself is national).
+  const anchors = [...g.cells.values()].map((c) => c.zip);
+  for (const z of extraZips) if (g.zips[z]) anchors.push(z);
   const byCode = new Map();
   let cells = 0, capped = 0, failed = 0;
-  for (const cell of g.cells.values()) {
-    const [lat, lng] = g.zips[cell.zip];
-    const rows = await parse(await politeGetJson(cellUrl({ zip: cell.zip, lat, lng }), { headers: { ...UA_HEADERS, ...headers }, timeoutMs: 45000 }));
+  for (const zip of anchors) {
+    const [lat, lng] = g.zips[zip];
+    const rows = await parse(await politeGetJson(cellUrl({ zip, lat, lng }), { headers: { ...UA_HEADERS, ...headers }, timeoutMs: 45000 }));
     cells++;
     if (rows === null) { failed++; continue; }
     if (cap && rows.length >= cap) capped++;
     for (const d of rows) if (d.code && !byCode.has(d.code)) byCode.set(d.code, d);
-    if (cells % 50 === 0) console.error(`  ${label}: ${cells}/${g.cells.size} cells, ${byCode.size} rooftops`);
+    if (cells % 50 === 0) console.error(`  ${label}: ${cells}/${anchors.length} cells, ${byCode.size} rooftops`);
   }
   if (!byCode.size) return null;
   console.error(`  ${label}: swept ${cells} cells (${failed} failed, ${capped} hit the ${cap}-row cap), ${byCode.size} distinct rooftops`);
@@ -499,6 +504,137 @@ const hyundai = () =>
     },
     note: "Listed by Hyundai in its own dealer locator (hyundaiusa.com dealerByZipV2), whose `dealerUrl` states this rooftop's website — the domain is the manufacturer's, not generated from the name",
   });
+
+/** Honda and Acura: one platform locator shape on two hosts, and the HOST is
+ *  the brand — `productDivisionCode` is decorative (division B asked of the
+ *  Honda host still answers Honda rooftops; acura.com needs no division at
+ *  all). Everything below is measured 2026-08-30, written down so the next
+ *  pass does not re-derive it:
+ *
+ *  - The bare endpoint is 10-NEAREST, not a radius. A first pass read it as
+ *    "ZIP-local, ~27 mi" because ten dealers span ~27 mi in a metro — but the
+ *    same ten span 300 mi around Miles City, MT. k-nearest, k=10.
+ *  - Of every count parameter the obvious names suggest (maxDealers,
+ *    numberOfDealers, count, limit, top, pageSize, rows, take…), exactly one
+ *    is real: `maxResults`. And it has a silent cliff: 500 works, 501 and up
+ *    returns an EMPTY ARRAY — a 200 that reads as "no dealers anywhere near
+ *    this ZIP". Never raise it.
+ *  - At maxResults=500 the response is every dealer within a ~300 mi server
+ *    radius (298 mi max measured at LA; sparse Kansas returns 25 rows —
+ *    radius-bound, not count-bound). The shared grid's ~100 mi cells sit
+ *    comfortably inside that, so the sweep is a covering, not a sample; 500
+ *    coming back exactly would mean a cell hid rooftops, and is counted as
+ *    capped. Honolulu and Anchorage anchors cover the two off-grid states.
+ *  - The v3 inventoryAndDealers endpoint (the honda.mjs inventory lane) is the
+ *    wider-radius cousin, but it REQUIRES modelGroup+modelYear and scopes its
+ *    dealer list to that model's availability — a roster built from it would
+ *    be a union of model availability, not the franchise. Unnecessary once
+ *    maxResults surfaced.
+ *  - `webAddress` is Honda's own statement of the rooftop's site (~100% fill
+ *    in every probe). Rows flagged isServiceCenter are not selling rooftops
+ *    and are dropped.
+ *  - robots: automobiles.honda.com disallows /platform/admin/ but not
+ *    /platform/api/; acura.com's robots does not touch /platform/ at all.
+ *    Both hosts TLS-fingerprint-block curl (Akamai, like bmwusa.com); Node's
+ *    fetch is not blocked. */
+function hondaish(host, division, label, note) {
+  return () =>
+    sweepGrid({
+      label,
+      cap: 500,
+      extraZips: ["96813", "99501"], // Honolulu, Anchorage
+      cellUrl: ({ zip }) => `https://${host}/platform/api/v1/dealers?${division ? `productDivisionCode=${division}&` : ""}zipCode=${zip}&maxResults=500`,
+      parse: (res) => {
+        if (res.status !== 200 || !Array.isArray(res.json)) return null;
+        return res.json
+          .filter((d) => d?.isServiceCenter !== true)
+          .map((d) => {
+            const state = String(d?.state ?? "").toUpperCase();
+            return {
+              domain: normalizeDomain(d?.webAddress),
+              name: String(d?.name ?? "").replace(/\s+/g, " ").trim(),
+              city: d?.city || undefined,
+              state: US_STATE.test(state) ? state : undefined,
+              zip: /^\d{5}/.test(String(d?.zipCode ?? "")) ? String(d.zipCode).slice(0, 5) : undefined,
+              code: d?.dealerNumber ? String(d.dealerNumber) : undefined,
+            };
+          });
+      },
+      note,
+    });
+}
+
+/** Jaguar and Land Rover: one lambda serves every JLR market
+ *  (retailerlocator.jaguarlandrover.com — the stack traces name it
+ *  NationalDealerSearchLambda), brand chosen by query param. Measured
+ *  2026-08-30:
+ *
+ *  - The brand values are "Jaguar" and "Land Rover", verbatim, space and all.
+ *    The locator page's own data-brand="jdx" is a UI skin name and the API
+ *    answers it "No results found" — as it does lowercase region codes'
+ *    uppercase twins' brands ldx/landrover/LandRover.
+ *  - The NATIONAL call is silently capped. A latitude/longitude search at any
+ *    radius (tested to 10,000 mi) answers exactly 72 rows for Jaguar and 71
+ *    for Land Rover — while California alone holds 28 Land Rover rooftops and
+ *    six states sum to 63 of Jaguar's 72. (The 2026-08-30 discovery sweep saw
+ *    184 on another national variant; the number varies, the silence doesn't.)
+ *    No error, no truncation flag. Never trust an uncapped-looking JLR total.
+ *  - `region=` (lowercase state abbr) enumerates a state completely and
+ *    ignores `radius`. A region with no rooftops answers 200 whose body is a
+ *    WRAPPED error — {"errorMessage":"…\"httpStatus\":404… No results
+ *    found"} — which is a zero, not a failure (Wyoming really has no Jaguar
+ *    rooftop). Any other failure aborts the brand: the state list is a closed
+ *    enumeration, so one missing state would silently drop its rooftops in a
+ *    way a spatial sweep's `failed` counter at least confesses.
+ *  - Required params: requestMarketLocale=en_us, unitOfMeasure, radius, brand,
+ *    country=us, plus filter — filter=dealer,approvedPreOwned is the site's
+ *    own default (selling rooftops and approved-pre-owned stores).
+ *  - Fields: `ciCode` is the dealer code, `homePage` the rooftop's own site
+ *    (17/17 and 28/28 fill in the CA probes), address is town/county/postCode
+ *    with the STATE in `county`.
+ *  - robots: jaguarusa.com disallows /search.html and /resources/ (not the
+ *    locator), landroverusa.com disallows nothing, and the API host publishes
+ *    no robots.txt (403 JSON) — nothing declines this read. */
+const JLR_REGIONS = (
+  "al ak az ar ca co ct de fl ga hi id il in ia ks ky la me md ma mi mn ms mo " +
+  "mt ne nv nh nj nm ny nc nd oh ok or pa ri sc sd tn tx ut vt va wa wv wi wy " +
+  "dc pr vi gu"
+).split(" ");
+function jlrBrand(brand, site, label, note) {
+  return async () => {
+    const byCode = new Map();
+    let empty = 0;
+    for (const region of JLR_REGIONS) {
+      const url =
+        `https://retailerlocator.jaguarlandrover.com/dealers?brand=${encodeURIComponent(brand)}&region=${region}` +
+        `&requestMarketLocale=en_us&unitOfMeasure=Miles&country=us&radius=50&filter=${encodeURIComponent("dealer,approvedPreOwned")}&fetchOpeningTimes=false`;
+      const res = await politeGetJson(url, { headers: { ...UA_HEADERS, origin: `https://${site}`, referer: `https://${site}/` }, timeoutMs: 45000 });
+      const rows = res.json?.dealers;
+      if (!Array.isArray(rows)) {
+        if (res.status === 200 && String(res.json?.errorMessage ?? "").includes("No results found")) { empty++; continue; }
+        console.error(`${label}: region=${region} failed (${res.status}) — aborting, a missing state is a silent hole`);
+        return null;
+      }
+      for (const d of rows) {
+        const code = String(d?.ciCode ?? "");
+        if (!code || byCode.has(code)) continue;
+        const a = d?.address ?? {};
+        const st = String(a.county ?? "").toUpperCase();
+        byCode.set(code, {
+          domain: normalizeDomain(d?.homePage),
+          name: String(d?.name ?? "").replace(/\s+/g, " ").trim(),
+          city: a.town || undefined,
+          state: US_STATE.test(st) ? st : undefined,
+          zip: /^\d{5}/.test(String(a.postCode ?? "")) ? String(a.postCode).slice(0, 5) : undefined,
+          code,
+        });
+      }
+    }
+    if (!byCode.size) return null;
+    console.error(`  ${label}: swept ${JLR_REGIONS.length} regions (${empty} with no rooftops), ${byCode.size} rooftops`);
+    return { rooftops: [...byCode.values()], total: byCode.size, totalSource: "swept", note };
+  };
+}
 
 /** Cadillac and Buick only, and that restriction is the point — see the
  *  RECORDED NEGATIVES at the top of this file. All four GM brands share this
@@ -693,6 +829,30 @@ const ADAPTERS = {
   volkswagen,
   genesis,
   hyundai,
+  honda: hondaish(
+    "automobiles.honda.com",
+    "A",
+    "honda",
+    "Listed by Honda in its own dealer locator (automobiles.honda.com/platform/api/v1/dealers), whose `webAddress` states this rooftop's website — the domain is the manufacturer's, not generated from the name",
+  ),
+  acura: hondaish(
+    "www.acura.com",
+    null,
+    "acura",
+    "Listed by Acura in its own dealer locator (www.acura.com/platform/api/v1/dealers), whose `webAddress` states this rooftop's website — the domain is the manufacturer's, not generated from the name",
+  ),
+  jaguar: jlrBrand(
+    "Jaguar",
+    "www.jaguarusa.com",
+    "jaguar",
+    "Listed by Jaguar in JLR's own retailer locator (retailerlocator.jaguarlandrover.com, per-state region sweep), whose `homePage` states this rooftop's website — the domain is the manufacturer's, not generated from the name",
+  ),
+  landrover: jlrBrand(
+    "Land Rover",
+    "www.landroverusa.com",
+    "landrover",
+    "Listed by Land Rover in JLR's own retailer locator (retailerlocator.jaguarlandrover.com, per-state region sweep), whose `homePage` states this rooftop's website — the domain is the manufacturer's, not generated from the name",
+  ),
   nissan: nissanish("nissan", "nissan", "Listed by Nissan in its own dealer locator (graphql.nissanusa.com), whose `websiteURL` states this rooftop's website — the domain is the manufacturer's, not generated from the name"),
   infiniti: nissanish("infiniti", "infiniti", "Listed by Infiniti in its own dealer locator (graphql.nissanusa.com, brand:infiniti), whose `websiteURL` states this rooftop's website — the domain is the manufacturer's, not generated from the name"),
   cadillac: gmBrand("www.cadillac.com", "006", "cadillac"),
