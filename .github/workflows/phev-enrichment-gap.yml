@@ -77,14 +77,41 @@ jobs:
           # coverage expansion (that day: AutoFunds + Mazda + Mitsubishi
           # crawls doubled the plug-in population, 111 -> 152 groups).
           # Lowered 152 -> 77 -> 38 on 2026-08-24 as the two data6.ts research
-          # tranches took coverage from 44.5% to 99.1%. The remaining 38 are
-          # the honest tail: bare-model Volvo T8s (a 2-character trim token the
-          # matcher requires exact), Honda bare Clarity (needs a VIN
-          # discriminator), the unverified-model-year 2026 Artura, Audi Q5 55
-          # TFSI e, and single-listing spellings.
+          # tranches took coverage from 44.5% to 99.1%.
+          #
+          # Then 37 -> 80 without a line of code changing, over the following
+          # week, as the feed grew 100,900 -> 143,584 listings and its plug-in
+          # half 4,500 -> 41,890. The 43 new groups were nine model years of
+          # used plug-ins arriving at once, almost none of them pre-2021
+          # nameplates anyone had researched. Lowered to 8 on 2026-08-30 by
+          # data13.ts and the rows it extended in data4/data6 — the first-
+          # generation Volvo T8s and the V60, the Audi Q5/A7/A8 TFSI e, the
+          # F15 X5 xDrive40e and G11 740e, the 958-era Cayenne and 970-era
+          # Panamera, the Mercedes C 350e / GLE 550e / AMG GT 63 S E
+          # Performance, the Kia Optima PHEV, the police-fleet Fusion, and
+          # every MY2024/2026/2027 car EPA has not rated. 99.8% coverage.
+          #
+          # The 8 that remain are not a backlog, they are the shapes where
+          # silence is the answer, and each is written up where it lives:
+          #   3  bare Volvo XC90/XC60/S60 whose trim is a GRADE name ("T8
+          #      Plus"). data6.ts's BARE_T8_TRIMS comment has the argument:
+          #      trim overlap is substring-tolerant both ways, so "T8PLUS"
+          #      would swallow a petrol listing that says only "Plus".
+          #   1  bare Honda Clarity — Honda sold a Clarity BEV and a Clarity
+          #      FCV under the same name and nothing in a listing separates
+          #      them (data4.ts).
+          #   1  MINI "Cooper S" + "E Countryman": the guard would have to be
+          #      "E Countryman", which contains "Countryman", which is what a
+          #      petrol Cooper S Countryman says.
+          #   1  Toyota RAV4 PHEV 2026 with no trim — the 2026 rows are
+          #      grade-keyed on purpose and a grade-less listing matches
+          #      nothing rather than one grade's range.
+          #   2  feed junk: model "ACZZ", and model "BMW 5" with trim "30e
+          #      xDrive Plug-In Hybrid". Mangled strings, not nameplates.
+          # Closing any of those means changing what is safe, not adding rows.
           rc=0
           node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs \
-            scripts/phev-enrichment-gap.mjs --max-groups 37 --top 40 || rc=$?
+            scripts/phev-enrichment-gap.mjs --max-groups 8 --top 40 || rc=$?
           if [ "$rc" -eq 10 ]; then
             echo "::error::PHEV enrichment gap check failed — a plug-in nameplate went live with no enrichment row, a row stopped matching, or a plug-in is showing a battery-electric car's facts. See the ranked list above."
             exit 1

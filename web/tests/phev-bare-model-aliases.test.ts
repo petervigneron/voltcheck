@@ -359,3 +359,250 @@ test("the RZ '15 Series' label row carries the shared facts and no range", () =>
   assert.equal(r.exact?.battery?.packGrossKwh?.value, 71.4);
   assert.equal(r.exact?.charging?.portStandard?.value, "CCS1");
 });
+
+// ── The 2026-08-30 tranche (data13.ts, plus the rows it extended in data4
+// and data6). Fifteen more nameplates learned the bare-model shape at once,
+// and every one of them needs its petrol half pinned here, because the guard
+// token is the only thing standing between a plug-in's row and a car that
+// shares its nameplate. Each block below asserts the same two things: the
+// listing shapes the live feed sends on 2026-08-30 DO match, and the petrol
+// or conventional-hybrid grades of the same nameplate DO NOT. ────────────────
+
+test("the first-generation Volvo T8s reach their own year's row, not 2021's", () => {
+  // The whole point of researching 2016-2020 separately: EPA re-rated this car
+  // almost every year, so a row that spanned them would print one year's
+  // number on five model years. 14, 14, 19, 17, 18 for the XC90.
+  const rangeOf = (year: number, model = "XC90") =>
+    matchEnrichment(decode({ make: "VOLVO", model: `${model} Plug-In Hybrid`, modelYear: year }), null).exact?.range?.epaRangeMi?.value;
+  assert.deepEqual([2016, 2017, 2018, 2019, 2020].map((y) => rangeOf(y)), [14, 14, 19, 17, 18]);
+  assert.deepEqual([2018, 2019, 2020].map((y) => rangeOf(y, "XC60")), [18, 17, 19]);
+  // The V60 is a nameplate the corpus held no row for at any year until now.
+  assert.equal(rangeOf(2020, "V60"), 22);
+  assert.equal(rangeOf(2025, "V60"), 40);
+  // 2024 is a genuine hole in fueleconomy.gov, so the row abstains rather
+  // than borrowing the 40 miles its neighbours on both sides carry.
+  const v24 = matchEnrichment(decode({ make: "VOLVO", model: "V60 Plug-In Hybrid", modelYear: 2024 }), null).exact;
+  assert.equal(v24?.id, "v60-t8-2024");
+  assert.equal(v24?.range?.epaRangeMi, undefined);
+  assert.ok(v24?.abstains?.epaRangeMi);
+  // …and it still says it is a plug-in, so the cross-kind guard cannot read
+  // the abstention as a change of kind. That is the S 580e lesson.
+  assert.equal(v24?.plugIn, true);
+});
+
+test("bare Volvo S60/S90/V60 need an electrified token; a petrol grade gets nothing", () => {
+  for (const [model, trim] of [
+    ["S60", "Recharge Plus"],
+    ["S60", "Recharge Black Edition Ultimate"],
+    ["S90", "Recharge Ultimate"],
+    ["V60", "Recharge Polestar Engineered"],
+    ["V60", "Polestar Engineered"],
+    ["V60", "T8 Polestar"],
+  ] as Array<[string, string]>) {
+    const r = matchEnrichment(decode({ make: "VOLVO", model, modelYear: 2022, trim }), null);
+    assert.ok(r.exact || r.candidates?.length, `${model} ${trim}`);
+  }
+  // Every one of these is a petrol B5/B6 grade string, and the near-misses are
+  // deliberate: "Ultimate AWD" ends in the "EAWD" that got the eAWD token
+  // removed, and "Plus" is one letter from "PLUG".
+  for (const trim of ["Plus", "Ultimate", "Momentum", "R-Design", "Inscription", "Ultimate AWD", "Core AWD", "Plus Bright", "B5 Momentum", "Hybrid", "B6 Hybrid"]) {
+    for (const model of ["S60", "S90", "V60", "XC60", "XC90"]) {
+      const r = matchEnrichment(decode({ make: "VOLVO", model, modelYear: 2022, trim }), null);
+      assert.equal(r.exact, undefined, `${model} / ${trim}`);
+      assert.equal(r.candidates, undefined, `${model} / ${trim}`);
+    }
+  }
+  // "Hybrid" above is the one that nearly got through. The guard used to read
+  // "Plug-in hybrid", which normalizes to "PLUGINHYBRID" and CONTAINS
+  // "HYBRID" — and Volvo's petrol B5 and B6 are 48-volt mild hybrids that a
+  // dealer can and does describe as a hybrid. The token is "Plug-in" now.
+  //
+  // "Polestar" is deliberately NOT in that list: it is caught, and correctly.
+  // On the S60, V60 and XC60 the Polestar Engineered IS the T8 in every year
+  // any of these rows covers. The car that would break it is the 2013-2016
+  // petrol S60/V60 Polestar, and the year gate is what keeps it out — so
+  // assert the gate rather than trusting it.
+  assert.ok(matchEnrichment(decode({ make: "VOLVO", model: "S60", modelYear: 2022, trim: "Polestar" }), null).candidates?.length);
+  for (const year of [2013, 2015, 2016, 2017, 2018]) {
+    for (const model of ["S60", "V60"]) {
+      const r = matchEnrichment(decode({ make: "VOLVO", model, modelYear: year, trim: "Polestar" }), null);
+      assert.equal(r.exact, undefined, `${model} ${year}`);
+      assert.equal(r.candidates, undefined, `${model} ${year}`);
+    }
+  }
+});
+
+test("the Audi TFSI e rows match the badge and never a numbered petrol Q5", () => {
+  assert.equal(idOf(decode({ make: "AUDI", model: "Q5 TFSI e", modelYear: 2021 })), "q5-tfsie-2021");
+  assert.equal(idOf(decode({ make: "AUDI", model: "Q5 e", modelYear: 2020, trim: "Premium Plus" })), "q5-tfsie-2020");
+  assert.equal(idOf(decode({ make: "AUDI", model: "Q5", modelYear: 2021, trim: "Prestige 55 Tfsi e" })), "q5-tfsie-2021-alt");
+  assert.equal(idOf(decode({ make: "AUDI", model: "A7 Sportback TFSI e", modelYear: 2021 })), "a7-tfsie-2021");
+  assert.equal(idOf(decode({ make: "AUDI", model: "A8 L TFSI e", modelYear: 2020 })), "a8-tfsie-2020");
+  // The petrol Q5's grades are numbered the same way — "45 TFSI" against
+  // "TFSI e" — so the two are one character apart once normalized and neither
+  // contains the other. This is the assertion that says so.
+  for (const trim of ["45 TFSI Premium", "40 TFSI Premium Plus", "Premium", "Prestige", "S line Prestige", "45 TFSI quattro"]) {
+    assert.equal(matchEnrichment(decode({ make: "AUDI", model: "Q5", modelYear: 2021, trim }), null).exact, undefined, trim);
+  }
+  // The one heat-pump fact in the tranche, and it is Audi's own words in two
+  // US releases rather than an aggregator's EU spec sheet.
+  const q5 = matchEnrichment(decode({ make: "AUDI", model: "Q5 TFSI e", modelYear: 2021 }), null).exact;
+  assert.equal(q5?.thermal?.heatPump?.value, "standard");
+  assert.equal(q5?.thermal?.heatPump?.source, "mfr");
+  assert.equal(q5?.battery?.packGrossKwh?.value, 14.1);
+  // MY2022 moved to a pack only Audi's European site states, so it abstains.
+  const q22 = matchEnrichment(decode({ make: "AUDI", model: "Q5 TFSI e", modelYear: 2022 }), null).exact;
+  assert.equal(q22?.battery, undefined);
+  assert.ok(q22?.abstains?.packUsableKwh);
+  assert.ok(q22?.abstains?.heatPump);
+});
+
+test("the old BMW plug-ins are guarded off their petrol twins", () => {
+  assert.equal(idOf(decode({ make: "BMW", model: "X5 xDrive40e", modelYear: 2016 })), "x5-40e-2016-18");
+  assert.equal(idOf(decode({ make: "BMW", model: "X5 eDrive", modelYear: 2018, trim: "xDrive40e iPerformance" })), "x5-40e-2016-18");
+  assert.equal(idOf(decode({ make: "BMW", model: "X5", modelYear: 2017, trim: "xDrive40e" })), "x5-40e-2016-18-alt");
+  assert.equal(idOf(decode({ make: "BMW", model: "7 Series", modelYear: 2018, trim: "740e xDrive iPerformance" })), "740e-2017-19-alt");
+  for (const trim of ["xDrive35i", "xDrive50i", "sDrive35i", "xDrive35d", "xDrive40i"]) {
+    assert.equal(matchEnrichment(decode({ make: "BMW", model: "X5", modelYear: 2017, trim }), null).exact, undefined, trim);
+  }
+  for (const trim of ["740i", "750i xDrive", "740i xDrive", "760i"]) {
+    assert.equal(matchEnrichment(decode({ make: "BMW", model: "7 Series", modelYear: 2018, trim }), null).exact, undefined, trim);
+  }
+  // "M5" on a bare 5 Series is two characters, so it must match exactly and
+  // cannot be swallowed by the petrol M550i.
+  assert.ok(matchEnrichment(decode({ make: "BMW", model: "5 Series", modelYear: 2027, trim: "M5" }), null).candidates?.length);
+  assert.equal(matchEnrichment(decode({ make: "BMW", model: "5 Series", modelYear: 2027, trim: "M550i xDrive" }), null).exact, undefined);
+  assert.equal(idOf(decode({ make: "BMW", model: "M5 AWD", modelYear: 2025, trim: "Touring" })), "m5-touring-2025-27");
+});
+
+test("the AMG GT 63 plug-in never answers for the petrol AMG GT 63", () => {
+  // The C192 AMG GT 63 4MATIC+ is a petrol V8 sold under the same badge in
+  // the same years. Only "S E Performance" separates them, so no untrimmed
+  // row may carry the bare model string.
+  const withPerf = matchEnrichment(decode({ make: "MERCEDES-BENZ", model: "AMG GT 63", modelYear: 2025, trim: "S E Performance" }), null);
+  assert.ok(withPerf.candidates?.length, "the body is unstated, so both bodies are candidates");
+  assert.deepEqual((withPerf.candidates ?? []).map((c) => c.range?.epaRangeMi?.value).sort(), [10, 11]);
+  for (const trim of ["4MATIC+", "Coupe", "Premium", "AMG GT 63", "4MATIC"]) {
+    const r = matchEnrichment(decode({ make: "MERCEDES-BENZ", model: "AMG GT 63", modelYear: 2025, trim }), null);
+    assert.equal(r.exact, undefined, trim);
+    assert.equal(r.candidates, undefined, trim);
+  }
+  assert.equal(matchEnrichment(decode({ make: "MERCEDES-BENZ", model: "AMG GT 63", modelYear: 2025 }), null).exact, undefined);
+});
+
+test("the Mercedes C 350e and GLE 550e reach their year's rating, and no petrol sibling", () => {
+  assert.equal(matchEnrichment(decode({ make: "MERCEDES-BENZ", model: "C-Class", modelYear: 2016, trim: "C 350e" }), null).exact?.range?.epaRangeMi?.value, 11);
+  assert.equal(matchEnrichment(decode({ make: "MERCEDES-BENZ", model: "C-Class", modelYear: 2018, trim: "C 350e" }), null).exact?.range?.epaRangeMi?.value, 9);
+  assert.equal(matchEnrichment(decode({ make: "MERCEDES-BENZ", model: "GLE", modelYear: 2016, trim: "550e" }), null).exact?.range?.epaRangeMi?.value, 12);
+  for (const trim of ["C 300", "C 300 4MATIC", "C 43 AMG", "C 63 S"]) {
+    assert.equal(matchEnrichment(decode({ make: "MERCEDES-BENZ", model: "C-Class", modelYear: 2017, trim }), null).exact, undefined, trim);
+  }
+  // "GLE 550" without the "e" is a petrol V8 sold in the same year.
+  for (const trim of ["350", "400 4MATIC", "550 4MATIC", "63 AMG S"]) {
+    assert.equal(matchEnrichment(decode({ make: "MERCEDES-BENZ", model: "GLE", modelYear: 2016, trim }), null).exact, undefined, trim);
+  }
+});
+
+test("bare Optima needs a plug-in token; the Optima Hybrid sold beside it must not match", () => {
+  // The sharpest case in the tranche: Kia sold the Optima Hybrid and the
+  // Optima Plug-In Hybrid in the same years under the same nameplate, so
+  // "Hybrid" is the one token that looks right and is not.
+  assert.equal(idOf(decode({ make: "KIA", model: "Optima", modelYear: 2018, trim: "Plug-In Hybrid EX" })), "optima-phev-2017-19-alt");
+  assert.equal(idOf(decode({ make: "KIA", model: "Optima Plug-In Hybrid", modelYear: 2018, trim: "EX" })), "optima-phev-2017-19");
+  for (const trim of ["Hybrid", "Hybrid EX", "EX", "LX", "SX Turbo", "S"]) {
+    assert.equal(matchEnrichment(decode({ make: "KIA", model: "Optima", modelYear: 2018, trim }), null).exact, undefined, trim);
+  }
+});
+
+test("the 958-era Porsches drop the bare 'S' guard a petrol Cayenne S would take", () => {
+  // data6's later Cayenne rows guard on ["S E-Hybrid", "S"], and the bare "S"
+  // is not repeated for 2014-2016: a petrol Cayenne S and Panamera S are the
+  // volume cars of those years, and on /vin/ they would take the hybrid's
+  // rating. The model string carries the claim instead — in these years no
+  // other Cayenne or Panamera plug-in existed to be confused with.
+  assert.equal(idOf(decode({ make: "PORSCHE", model: "Cayenne E-Hybrid", modelYear: 2016, trim: "S" })), "cayenne-s-ehybrid-2016");
+  assert.equal(idOf(decode({ make: "PORSCHE", model: "Cayenne E-Hybrid Coupe", modelYear: 2016, trim: "S" })), "cayenne-s-ehybrid-2016");
+  assert.equal(idOf(decode({ make: "PORSCHE", model: "Panamera E-Hybrid", modelYear: 2016, trim: "S" })), "panamera-s-ehybrid-2016");
+  assert.equal(idOf(decode({ make: "PORSCHE", model: "Panamera", modelYear: 2014, trim: "S E-Hybrid" })), "panamera-s-ehybrid-2014-15-alt");
+  for (const [model, year] of [["Cayenne", 2016], ["Panamera", 2014], ["Panamera", 2016]] as Array<[string, number]>) {
+    const r = matchEnrichment(decode({ make: "PORSCHE", model, modelYear: year, trim: "S" }), null);
+    assert.equal(r.exact, undefined, `${model} ${year}`);
+    assert.equal(r.candidates, undefined, `${model} ${year}`);
+  }
+  // The MY2023 Cayenne E-Hybrid EPA never rated: facts yes, rating no.
+  const c23 = matchEnrichment(decode({ make: "PORSCHE", model: "Cayenne E-Hybrid", modelYear: 2023, trim: "Platinum Edition" }), null).exact;
+  assert.equal(c23?.id, "cayenne-ehybrid-2023");
+  assert.equal(c23?.battery?.packGrossKwh?.value, 17.9);
+  assert.equal(c23?.range?.epaRangeMi, undefined);
+  assert.ok(c23?.plugIn === true || c23?.packVariant === "PHEV");
+});
+
+test("the Ford, Cadillac, Bentley and Lexus bare rows keep their non-plug-in twins out", () => {
+  assert.equal(idOf(decode({ make: "FORD", model: "Fusion", modelYear: 2018, trim: "Titanium Energi" })), "fusion-energi-2018-alt");
+  assert.equal(idOf(decode({ make: "FORD", model: "C-Max", modelYear: 2017, trim: "SEL Energi" })), "cmax-energi-2017-alt");
+  assert.equal(idOf(decode({ make: "CADILLAC", model: "CT6", modelYear: 2017, trim: "Hybrid Plug-In" })), "ct6-plugin-2017-alt");
+  assert.equal(idOf(decode({ make: "BENTLEY", model: "Bentayga", modelYear: 2022, trim: "Hybrid V6" })), "bentayga-hybrid-2021-23-alt");
+  assert.equal(idOf(decode({ make: "LEXUS", model: "TX", modelYear: 2026, trim: "550h+ Luxury" })), "tx-550h-plus-2026-alt");
+  assert.equal(idOf(decode({ make: "FORD", model: "Escape Hybrid", modelYear: 2023, trim: "Phev" })), "escape-phev-2023-hybrid-alt");
+  // The conventional twins. The Fusion Hybrid, C-Max Hybrid and Escape Hybrid
+  // are real cars sold in the same years under the same nameplates, and the
+  // petrol Bentayga is why the Bentley block gates on the token rather than
+  // the year.
+  for (const [make, model, year, trims] of [
+    ["FORD", "Fusion", 2018, ["SE", "SEL", "Titanium", "Sport", "S Hybrid", "Titanium Hybrid"]],
+    ["FORD", "C-Max", 2017, ["SE", "SEL", "Hybrid SE", "Titanium"]],
+    ["FORD", "Escape Hybrid", 2023, ["SE", "SEL", "Titanium", "Platinum"]],
+    ["CADILLAC", "CT6", 2017, ["Luxury", "Premium Luxury", "Platinum", "Sport"]],
+    ["BENTLEY", "Bentayga", 2022, ["V8", "Speed", "Azure", "EWB Azure"]],
+    ["LEXUS", "TX", 2026, ["350 Premium", "500h F SPORT", "350 Luxury", "500h Luxury"]],
+  ] as Array<[string, string, number, string[]]>) {
+    for (const trim of trims) {
+      const r = matchEnrichment(decode({ make, model, modelYear: year, trim }), null);
+      assert.equal(r.exact, undefined, `${make} ${model} ${trim}`);
+      assert.equal(r.candidates, undefined, `${make} ${model} ${trim}`);
+    }
+  }
+});
+
+test("the police-fleet Fusion resolves to its own EPA vehicle, not the retail row", () => {
+  // EPA files the Special Service Vehicle separately (records 41226, 41900).
+  // Until 2026-08-30 its model string was an alias on the retail Fusion Energi
+  // rows and it had no row of its own.
+  //
+  // Note what this did NOT fix, because the first version of this test assumed
+  // it: for 2019 and 2020 the two cars carry the SAME 26-mile electric and
+  // 610-mile total range, and differ only in MPGe. The old alias was not
+  // printing a wrong headline figure — it was answering for a vehicle that had
+  // none, on rows whose numbers happen to agree in exactly these two years.
+  const ssv = matchEnrichment(decode({ make: "FORD", model: "Special Service Plug-In Hybrid", modelYear: 2020, trim: "SSV" }), null).exact;
+  assert.equal(ssv?.id, "fusion-ssv-phev-2019-20");
+  assert.equal(ssv?.range?.epaRangeMi?.value, 26);
+  assert.equal(ssv?.range?.mpgeElectric?.value, 102);
+  // The retail car, still its own row, with its own MPGe.
+  const retail = matchEnrichment(decode({ make: "FORD", model: "Fusion Energi", modelYear: 2020 }), null).exact;
+  assert.equal(retail?.id, "fusion-energi-2019-20");
+  assert.equal(retail?.range?.mpgeElectric?.value, 103);
+});
+
+test("the MY2027 cars EPA has not rated carry their hardware and abstain on range", () => {
+  // fueleconomy.gov's 2027 menu holds five plug-in records in total, and none
+  // of these is one of them. A row that borrowed 2026's rating would be
+  // printing a number EPA never issued for the car being sold.
+  for (const [make, model, year, id] of [
+    ["VOLVO", "XC90 Plug-In Hybrid", 2027, "xc90-t8-2027"],
+    ["VOLVO", "XC60 Plug-In Hybrid", 2027, "xc60-t8-2027"],
+    ["BMW", "XM", 2027, "xm-2027"],
+    ["LAND ROVER", "Range Rover Plug-In Hybrid", 2027, "range-rover-p550e-2027"],
+    ["LAND ROVER", "Range Rover Sport Plug-in Hybrid", 2027, "range-rover-sport-p550e-2027"],
+    ["MCLAREN", "Artura", 2026, "artura-2026"],
+    ["BENTLEY", "Bentayga Hybrid", 2024, "bentayga-hybrid-2024"],
+    ["BMW", "750e", 2024, "750e-2024"],
+  ] as Array<[string, string, number, string]>) {
+    const r = matchEnrichment(decode({ make, model, modelYear: year }), null).exact;
+    assert.equal(r?.id, id, `${make} ${model} ${year}`);
+    assert.equal(r?.range?.epaRangeMi, undefined, `${id} must not publish a rating`);
+    assert.ok(r?.abstains?.epaRangeMi, `${id} must say why it is silent`);
+    // The abstention must not read as a change of kind — see lib/types.ts.
+    assert.ok(r?.plugIn === true || r?.packVariant === "PHEV", `${id} must still declare itself a plug-in`);
+  }
+});

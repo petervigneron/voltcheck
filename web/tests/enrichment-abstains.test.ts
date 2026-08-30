@@ -27,9 +27,10 @@ import { RESEARCH_ROWS_9 } from "@/lib/enrichment/data9";
 import { RESEARCH_ROWS_10 } from "@/lib/enrichment/data10";
 import { RESEARCH_ROWS_11 } from "@/lib/enrichment/data11";
 import { RESEARCH_ROWS_12 } from "@/lib/enrichment/data12";
+import { RESEARCH_ROWS_13 } from "@/lib/enrichment/data13";
 import type { EnrichmentRow, AbstainableField } from "@/lib/types";
 
-const ALL: EnrichmentRow[] = [...ENRICHMENT_ROWS, ...RESEARCH_ROWS, ...RESEARCH_ROWS_3, ...RESEARCH_ROWS_4, ...RESEARCH_ROWS_5, ...RESEARCH_ROWS_6, ...RESEARCH_ROWS_9, ...RESEARCH_ROWS_10, ...RESEARCH_ROWS_11, ...RESEARCH_ROWS_12];
+const ALL: EnrichmentRow[] = [...ENRICHMENT_ROWS, ...RESEARCH_ROWS, ...RESEARCH_ROWS_3, ...RESEARCH_ROWS_4, ...RESEARCH_ROWS_5, ...RESEARCH_ROWS_6, ...RESEARCH_ROWS_9, ...RESEARCH_ROWS_10, ...RESEARCH_ROWS_11, ...RESEARCH_ROWS_12, ...RESEARCH_ROWS_13];
 const byId = (id: string) => {
   const r = ALL.find((x) => x.id === id);
   assert.ok(r, `no row with id ${id}`);

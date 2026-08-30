@@ -1238,7 +1238,12 @@ const R: EnrichmentRow[] = [];
       batteryTransfers: f(true, "mfr", "high", "Transfers to each subsequent owner", src),
     };
   };
-  const S_ALIASES = ["S-Class Sedan", "S Class"];
+  // "S 580e" and "S 580 e" are the badge used as a model string, which is how
+  // two live listings arrive (one of them with a trim field of "."). Safe on
+  // these trim-less rows because no petrol S-Class wears the "e": the ones
+  // that share this shell are the S 500 and S 580, and neither normalizes
+  // into or out of "S580E".
+  const S_ALIASES = ["S-Class Sedan", "S Class", "S 580e", "S 580 e", "S580e"];
   const NO_SOH_NOTE = {
     headline: "The battery warranty is 6 years / 62,000 miles with no capacity floor — shorter than any EQ model's",
     body:

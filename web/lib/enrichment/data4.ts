@@ -1270,6 +1270,12 @@ const PS2_PLUS_PACK = "https://web.archive.org/web/20220520094320/https://www.po
       warranty: ESCAPE_WARRANTY,
     },
     {
+      // "Escape Hybrid" is deliberately NOT in ESCAPE_ALIASES: it is a real,
+      // different, non-plug-in car sold in the same years, so a trim-less row
+      // carrying it would hand a conventional Escape Hybrid this car's 37
+      // electric miles. The one live listing that files the plug-in that way
+      // says "Phev" in its trim, and the guarded row built at the end of this
+      // block is what reaches it.
       id: "escape-phev-2023", make: "FORD", model: "Escape PHEV", modelYears: [2023, 2023],
       abstains: { heatPump: ESCAPE_HP_ABSTAIN },
       modelAliases: ESCAPE_ALIASES,
@@ -1300,6 +1306,27 @@ const PS2_PLUS_PACK = "https://web.archive.org/web/20220520094320/https://www.po
       warranty: ESCAPE_WARRANTY,
     },
   ];
+  // One live listing files the plug-in as model "Escape Hybrid" with trim
+  // "Phev". "Escape Hybrid" cannot join ESCAPE_ALIASES above, because it is
+  // the name of a real and different car — the conventional Escape Hybrid,
+  // sold in every one of these years — and those rows carry no trim key, so
+  // the alias would hand a conventional hybrid this car's 37 electric miles
+  // and 14.4 kWh pack. A guarded twin costs nothing and cannot do that: the
+  // conventional hybrid's grades are S, SE, SEL, Titanium and Platinum, none
+  // of which contains "PHEV" or "PLUGIN" in either direction.
+  ESCAPE_ROWS.push(
+    ...ESCAPE_ROWS.map((r) => ({
+      ...r,
+      id: `${r.id}-hybrid-alt`,
+      model: "Escape Hybrid",
+      modelAliases: undefined,
+      // "Plug-In", not "Plug-In Hybrid": the longer phrase normalizes to
+      // "PLUGINHYBRID", which CONTAINS "HYBRID", and overlap runs both ways —
+      // so it would match a conventional Escape Hybrid whose trim says only
+      // "Hybrid". Same flaw, same fix, as the Kia Optima guard in data13.ts.
+      trim: ["PHEV", "Plug-In"],
+    }))
+  );
 
   // Honda Clarity Plug-In Hybrid — single generation, ratings never changed.
   // No modelAliases, deliberately: 13 of 14 live Clarity listings are bare-
@@ -3907,7 +3934,16 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   // rather than guessed. None of these DC-fast-charge (J1772 AC only), which
   // the cards already show as the "No fast charging" tile.
   {
-    id: "wrangler-4xe-2021-25", make: "JEEP", model: "Wrangler 4xe", modelYears: [2021, 2025], packVariant: "PHEV",
+    id: "wrangler-4xe-2021-25", make: "JEEP", model: "Wrangler 4xe",
+    // Grade-bearing spellings the live feed sends. They name 4xe in the model
+    // itself, which is why they can sit on a trim-less row — no petrol
+    // Wrangler is called any of them — and they have to, because the listings
+    // that use them carry no trim at all, so the guarded row below cannot
+    // reach them. "Wrangler Unlimited 4xe" is deliberately NOT here: it is
+    // already the model string of its own row further down, and a second row
+    // answering to it would turn an exact match into two candidates.
+    modelAliases: ["Wrangler Sahara 4xe", "Wrangler Rubicon 4xe"],
+    modelYears: [2021, 2025], packVariant: "PHEV",
     abstains: { heatPump: STELLANTIS_HP_ABSTAIN },
     battery: { packGrossKwh: fb(17, "mfr", "high", JEEP_17KWH_NOTE, "https://media.stellantisnorthamerica.com/newsrelease.do?id=22673&mid=1") },
     range: {
@@ -3918,7 +3954,9 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: WRANGLER_4XE_WARRANTY,
   },
   {
-    id: "wrangler-unl-4xe-2021-25", make: "JEEP", model: "Wrangler Unlimited 4xe", modelYears: [2021, 2025], packVariant: "PHEV",
+    id: "wrangler-unl-4xe-2021-25", make: "JEEP", model: "Wrangler Unlimited 4xe",
+    modelAliases: ["Wrangler Unlimited Rubicon 4xe", "Wrangler Unlimited Sahara 4xe"],
+    modelYears: [2021, 2025], packVariant: "PHEV",
     abstains: { heatPump: STELLANTIS_HP_ABSTAIN },
     battery: { packGrossKwh: fb(17, "mfr", "high", JEEP_17KWH_NOTE, "https://media.stellantisnorthamerica.com/newsrelease.do?id=22673&mid=1") },
     range: {
@@ -3948,7 +3986,12 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     // them is trim-less. scripts/phev-enrichment-gap.mjs is the check that
     // says so, and it will say so again if a feed ever starts sending the
     // model without the trim.
-    id: "wrangler-4xe-2021-25-alt", make: "JEEP", model: "Wrangler", modelAliases: ["Wrangler Unlimited"],
+    // "Wrangler 4-Door" and "Wrangler 2-Door" are body-count spellings that say
+    // nothing about the powertrain, so they belong here behind the trim guard —
+    // the grade spellings that DO name 4xe are on the named row above, where a
+    // listing carrying no trim at all can still reach them.
+    id: "wrangler-4xe-2021-25-alt", make: "JEEP", model: "Wrangler",
+    modelAliases: ["Wrangler Unlimited", "Wrangler 4-Door", "Wrangler 2-Door"],
     abstains: { heatPump: STELLANTIS_HP_ABSTAIN },
     modelYears: [2021, 2025], trim: ["4xe"], packVariant: "PHEV",
     battery: { packGrossKwh: fb(17, "mfr", "high", JEEP_17KWH_NOTE, "https://media.stellantisnorthamerica.com/newsrelease.do?id=22673&mid=1") },
@@ -3962,7 +4005,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     // "GR Cherokee 4XE" is one dealer's abbreviation, and the string names the
     // plug-in itself, so it needs no trim guard the way the bare name does.
-    id: "gc-4xe-2022-25", make: "JEEP", model: "Grand Cherokee 4xe", modelAliases: ["GR Cherokee 4XE"],
+    id: "gc-4xe-2022-25", make: "JEEP", model: "Grand Cherokee 4xe", modelAliases: ["GR Cherokee 4XE", "Grand Cherokee 4xe Summit Reserve", "Grand Cherokee 4xe Trailhawk", "Grand Cherokee 4xe Overland"],
     abstains: { heatPump: STELLANTIS_HP_ABSTAIN },
     modelYears: [2022, 2025], packVariant: "PHEV",
     battery: { packGrossKwh: fb(17, "mfr", "high", JEEP_17KWH_NOTE, "https://media.stellantisnorthamerica.com/newsrelease.do?id=23153&mid=") },
@@ -4049,7 +4092,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: X5_50E_WARRANTY,
   },
   {
-    id: "rogue-phev-2025-26", make: "NISSAN", model: "Rogue Plug-In Hybrid", modelYears: [2025, 2026], packVariant: "PHEV",
+    id: "rogue-phev-2025-26", make: "NISSAN", model: "Rogue Plug-In Hybrid", modelAliases: ["Rogue PHEV"], modelYears: [2025, 2026], packVariant: "PHEV",
     battery: { packGrossKwh: fb(20, "mfr", "high", "Nissan states 20 kWh without a gross or usable qualifier", ROGUE_PHEV_KIT) },
     range: {
       epaRangeMi: f(38, "mfr", "medium", "Electric-only range, Nissan's EPA-estimate; fueleconomy.gov has no Rogue PHEV entry yet (control: gas Rogues are present)", "https://usa.nissannews.com/en-US/releases/2026-nissan-rogue-plug-in-hybrid-press-kit"),

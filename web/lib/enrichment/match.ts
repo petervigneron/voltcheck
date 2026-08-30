@@ -9,10 +9,11 @@ import { RESEARCH_ROWS_9 } from "./data9";
 import { RESEARCH_ROWS_10 } from "./data10";
 import { RESEARCH_ROWS_11 } from "./data11";
 import { RESEARCH_ROWS_12 } from "./data12";
+import { RESEARCH_ROWS_13 } from "./data13";
 import { applyBackfill } from "./backfill";
 import { vpicEvModelAliases } from "./vpicEvAlias";
 
-const ALL_ROWS = [...ENRICHMENT_ROWS, ...RESEARCH_ROWS, ...RESEARCH_ROWS_3, ...RESEARCH_ROWS_4, ...RESEARCH_ROWS_5, ...RESEARCH_ROWS_6, ...RESEARCH_ROWS_9, ...RESEARCH_ROWS_10, ...RESEARCH_ROWS_11, ...RESEARCH_ROWS_12];
+const ALL_ROWS = [...ENRICHMENT_ROWS, ...RESEARCH_ROWS, ...RESEARCH_ROWS_3, ...RESEARCH_ROWS_4, ...RESEARCH_ROWS_5, ...RESEARCH_ROWS_6, ...RESEARCH_ROWS_9, ...RESEARCH_ROWS_10, ...RESEARCH_ROWS_11, ...RESEARCH_ROWS_12, ...RESEARCH_ROWS_13];
 
 const norm = (s?: string) => (s ?? "").toUpperCase().replace(/[^A-Z0-9]/g, "");
 

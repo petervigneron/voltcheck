@@ -27,6 +27,7 @@ import { RESEARCH_ROWS_9 } from "@/lib/enrichment/data9";
 import { RESEARCH_ROWS_10 } from "@/lib/enrichment/data10";
 import { RESEARCH_ROWS_11 } from "@/lib/enrichment/data11";
 import { RESEARCH_ROWS_12 } from "@/lib/enrichment/data12";
+import { RESEARCH_ROWS_13 } from "@/lib/enrichment/data13";
 import type { VinDecode } from "@/lib/types";
 
 const BEV = "BEV (Battery Electric Vehicle)";
@@ -101,7 +102,7 @@ for (const [label, d] of MUST_NOT) {
 const ALL_ROWS = [
   ...ENRICHMENT_ROWS, ...RESEARCH_ROWS, ...RESEARCH_ROWS_3, ...RESEARCH_ROWS_4,
   ...RESEARCH_ROWS_5, ...RESEARCH_ROWS_6, ...RESEARCH_ROWS_9, ...RESEARCH_ROWS_10,
-  ...RESEARCH_ROWS_11, ...RESEARCH_ROWS_12,
+  ...RESEARCH_ROWS_11, ...RESEARCH_ROWS_12, ...RESEARCH_ROWS_13,
 ];
 const norm = (s: string) => s.toUpperCase().replace(/[^A-Z0-9]/g, "");
 const knownByMake = new Map<string, Set<string>>();

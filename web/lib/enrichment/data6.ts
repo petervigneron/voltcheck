@@ -74,6 +74,14 @@ function withAlt(
 
 const R: EnrichmentRow[] = [];
 
+// The trim tokens that let a bare "XC90"/"XC60"/"S60"/"S90"/"V60" listing
+// reach its T8 row without also handing that row to a petrol car wearing the
+// same nameplate. The long argument for each token — and for the ones that
+// were tried and removed — is at the loop that uses them, below. Exported
+// because data13.ts's 2016-2020 T8 rows key on the same list, and two copies
+// of it would drift apart from that argument.
+export const VOLVO_BARE_T8_TRIMS = ["Recharge", "Plug-in", "T8", "Polestar Engineered", "T8 Polestar"];
+
 // ───────────────────────── VOLVO XC90 / XC60 / S60 T8 ─────────────────────
 // The battery story is one Volvo press release: the long-range pack grew
 // nominal energy 11.6 → 18.8 kWh, announced mid-MY2022 — so 2022 is a SPLIT
@@ -136,6 +144,7 @@ const R: EnrichmentRow[] = [];
   const XC90_ALIASES = [
     "XC90 Recharge Plug-In Hybrid",
     "XC90 Recharge Plug-In Hyb",
+    "XC90 Recharge Plug-I",
     "XC90 Recharge",
     "XC90 T8 Recharge",
   ];
@@ -173,6 +182,7 @@ const R: EnrichmentRow[] = [];
   const XC60_ALIASES = [
     "XC60 Recharge Plug-In Hybrid",
     "XC60 Recharge Plug-In Hyb",
+    "XC60 Recharge Plug-I",
     "XC60 Recharge",
     "XC60 T8 Recharge",
   ];
@@ -262,7 +272,22 @@ const R: EnrichmentRow[] = [];
   // petrol XC90/XC60 wears it. "T8" is two characters, which means the matcher
   // demands an exact trim of "T8"; that catches the handful of listings whose
   // whole trim is that string and, by the same rule, nothing else.
-  const BARE_T8_TRIMS = ["Recharge", "Plug-in hybrid", "T8"];
+  // "Polestar Engineered" and "T8 Polestar" joined this list on 2026-08-30,
+  // when the first-generation T8 rows landed in data13.ts and brought the
+  // MY2019-2020 XC60 Polestar Engineered with them. They pass the same test
+  // the tokens above pass, and the reason is about the cars rather than the
+  // strings: on the S60, V60 and XC60 the Polestar Engineered IS the T8, in
+  // every model year any of these rows covers. So the substring credit they
+  // give — "POLESTARENGINEERED" also claims a listing whose whole trim is
+  // "Polestar" — lands on a plug-in every time. Neither contains a drivetrain
+  // substring, which is the trap that removed "eAWD". The car that would have
+  // broken this is the 2013-2016 petrol S60/V60 Polestar, and no row keyed on
+  // these tokens starts before 2018.
+  //
+  // The list itself lives at the top of this file and is exported, because
+  // data13.ts's 2016-2020 rows key their bare-nameplate rows on it too and a
+  // second copy would drift away from every word written above it.
+  const BARE_T8_TRIMS = VOLVO_BARE_T8_TRIMS;
   for (const r of R.filter((x) => /^xc(90|60)-t8-/.test(x.id))) {
     R.push({
       ...r,
@@ -273,7 +298,8 @@ const R: EnrichmentRow[] = [];
     });
   }
 
-  const S60_ALIASES = ["S60 Recharge Plug-In Hybrid", "S60 Recharge Plug-In Hybr", "S60 Recharge", "S60 T8 Recharge"];
+  const S90_ALIASES = ["S90 Recharge Plug-In Hybrid", "S90 Recharge Plug-In Hybr", "S90 Recharge Plug-I", "S90 Recharge", "S90 T8 Recharge"];
+  const S60_ALIASES = ["S60 Recharge Plug-In Hybrid", "S60 Recharge Plug-In Hybr", "S60 Recharge Plug-I", "S60 Recharge", "S60 T8 Recharge"];
   R.push(
     volvo("s60-t8-2021", "S60 Plug-In Hybrid", S60_ALIASES, [2021, 2021], VOLVO_SMALL, "PHEV", {
       epaRangeMi: f(22, "mfr", "high", "Electric-only EPA range", epa(43408)),
@@ -296,28 +322,28 @@ const R: EnrichmentRow[] = [];
       mpgeCombined: f(52, "mfr", "high", undefined, epa(45197)),
       mpgGasoline: f(31, "mfr", "high", undefined, epa(45197)),
     }),
-    volvo("s90-t8-2021", "S90 Plug-In Hybrid", ["S90 Recharge Plug-In Hybrid", "S90 Recharge"], [2021, 2021], VOLVO_SMALL, "PHEV", {
+    volvo("s90-t8-2021", "S90 Plug-In Hybrid", S90_ALIASES, [2021, 2021], VOLVO_SMALL, "PHEV", {
       epaRangeMi: f(21, "mfr", "high", "Electric-only EPA range", epa(42984)),
       epaRangeTotalMi: f(490, "mfr", "high", undefined, epa(42984)),
       mpgeElectric: f(60, "mfr", "high", undefined, epa(42984)),
       mpgeCombined: f(40, "mfr", "high", undefined, epa(42984)),
       mpgGasoline: f(30, "mfr", "high", undefined, epa(42984)),
     }),
-    volvo("s90-t8-2022-std", "S90 Plug-In Hybrid", ["S90 Recharge Plug-In Hybrid", "S90 Recharge"], [2022, 2022], VOLVO_SMALL, "Standard range pack", {
+    volvo("s90-t8-2022-std", "S90 Plug-In Hybrid", S90_ALIASES, [2022, 2022], VOLVO_SMALL, "Standard range pack", {
       epaRangeMi: f(21, "mfr", "high", "Electric-only EPA range, pre-update 2022 cars", epa(44267)),
       epaRangeTotalMi: f(490, "mfr", "high", undefined, epa(44267)),
       mpgeElectric: f(63, "mfr", "high", undefined, epa(44267)),
       mpgeCombined: f(40, "mfr", "high", undefined, epa(44267)),
       mpgGasoline: f(30, "mfr", "high", undefined, epa(44267)),
     }),
-    volvo("s90-t8-2022-er", "S90 Plug-In Hybrid", ["S90 Recharge Plug-In Hybrid", "S90 Recharge"], [2022, 2022], VOLVO_ER, "Extended Range", {
+    volvo("s90-t8-2022-er", "S90 Plug-In Hybrid", S90_ALIASES, [2022, 2022], VOLVO_ER, "Extended Range", {
       epaRangeMi: f(38, "mfr", "high", "Electric-only EPA range, Extended Range 2022 cars", epa(45198)),
       epaRangeTotalMi: f(500, "mfr", "high", undefined, epa(45198)),
       mpgeElectric: f(66, "mfr", "high", undefined, epa(45198)),
       mpgeCombined: f(47, "mfr", "high", undefined, epa(45198)),
       mpgGasoline: f(29, "mfr", "high", undefined, epa(45198)),
     }),
-    volvo("s90-t8-2023-25", "S90 Plug-In Hybrid", ["S90 Recharge Plug-In Hybrid", "S90 Recharge"], [2023, 2025], VOLVO_ER, "PHEV", {
+    volvo("s90-t8-2023-25", "S90 Plug-In Hybrid", S90_ALIASES, [2023, 2025], VOLVO_ER, "PHEV", {
       epaRangeMi: f(38, "mfr", "high", "Electric-only EPA range. Identical rating 2023–2025", epa(46261)),
       epaRangeTotalMi: f(520, "mfr", "high", undefined, epa(46261)),
       mpgeElectric: f(66, "mfr", "high", undefined, epa(46261)),
@@ -332,6 +358,23 @@ const R: EnrichmentRow[] = [];
       mpgGasoline: f(31, "mfr", "high", undefined, epa(47503)),
     })
   );
+
+  // The S60 and S90 need the same bare-nameplate rows the XC90 and XC60 got
+  // above, and for the same reason — they just were not built in the pass
+  // that built those. Measured 2026-08-30: 69 live S60 listings and 7 S90s
+  // arrive as model "S60"/"S90" with the plug-in badge only in the trim
+  // ("Recharge Plus", "Recharge Ultimate", "Recharge Black Edition Plus"),
+  // and reached no enrichment row at all. Same guard list, same contract, and
+  // tests/phev-bare-model-aliases.test.ts pins the petrol half of it.
+  for (const r of R.filter((x) => /^s(60|90)-t8-/.test(x.id) && !x.trim)) {
+    R.push({
+      ...r,
+      id: `${r.id}-alt`,
+      model: r.id.startsWith("s60") ? "S60" : "S90",
+      modelAliases: [r.id.startsWith("s60") ? "S60 Polestar" : "S90 Polestar"],
+      trim: BARE_T8_TRIMS,
+    });
+  }
 }
 
 // ───────────────── TOYOTA RAV4 PLUG-IN HYBRID (2026, new generation) ───────
@@ -509,13 +552,19 @@ const R: EnrichmentRow[] = [];
     )
   );
 
-  const RX_ALIASES = ["RX 450h", "RX 450h Plus", "RX PLUG-IN HYBRID ELECTRIC VEHICLE", "RX Plug-In Hybrid", "RX 450h+ Luxury", "RX 450h+ LUXURY AWD"];
+  const RX_ALIASES = ["RX 450h", "RX 450h Plus", "RX PLUG-IN HYBRID ELECTRIC VEHICLE", "RX Plug-In Hybrid", "RX 450h+ Luxury", "RX 450h+ LUXURY AWD", "RX 450h+ PREMIUM AWD", "RX450H PHEV LUX"];
   const RX_BATTERY = { packGrossKwh: f(18.1, "mfr", "high", undefined, RX_2023) };
   const RX_CHARGING = {
     acOnboardKw: f(6.6, "mfr", "high", undefined, RX_2026),
     portStandard: f<"J1772">("J1772", "mfr", "high", "AC charging only, no DC fast charge", RX_2026),
     dcFastCharging: f<"none">("none", "est", "high", "AC charging only"),
   };
+  // "RX 450h+ PREMIUM AWD" and "RX450H PHEV LUX" are single dealers' model
+  // strings — grade and drivetrain glued onto the nameplate. Both name the
+  // 450h+ powertrain in the model itself, so they go in RX_ALIASES on the
+  // named row rather than on the trim-guarded bare row: their listings carry
+  // trims like "Premium", which the guard would refuse, and they need no
+  // guard because no petrol RX is called either of them.
   const rx = (id: string, years: [number, number], range: EnrichmentRow["range"]): EnrichmentRow[] =>
     withAlt(
       {
@@ -1445,6 +1494,22 @@ const R: EnrichmentRow[] = [];
       }),
       { model: "7 Series", modelAliases: ["7-Series"], trim: ["745e"] }
     ),
+    // MY2024: BMW sold the 750e xDrive and fueleconomy.gov rated it in neither
+    // 2023 nor 2024 — its 7 Series plug-in records jump from the 2022 745e to
+    // the 2025 750e. The pack is BMW's global figure, carried at the same
+    // `medium` confidence and from the same release as the 2025 row below.
+    ...withAlt(
+      bmw({
+        id: "750e-2024",
+        model: "750e",
+        modelAliases: ["750e xDrive", "750e xDrive Sedan"],
+        modelYears: [2024, 2024],
+        battery: { packUsableKwh: f(18.7, "mfr", "medium", undefined, BMW_750E_GLOBAL) },
+        charging: BMW_CHARGING_EST,
+        abstains: { ...BMW_ABSTAINS, epaRangeMi: "fueleconomy.gov holds no 2023 or 2024 750e rating; the 2025 car rates 34 miles" },
+      }),
+      { model: "7 Series", modelAliases: ["7-Series"], trim: ["750e"] }
+    ),
     ...withAlt(
       bmw({
         id: "750e-2025",
@@ -1520,9 +1585,22 @@ const R: EnrichmentRow[] = [];
       },
       charging: { acOnboardKw: f(7.4, "mfr", "high", undefined, BMW_XM_PR), ...BMW_CHARGING_EST },
     }),
+    // MY2027 XM, 12 of them wearing the "Label" trim. EPA's 2025 and 2026
+    // records are themselves Label cars (49010, 49761) and there is no 2027
+    // BMW SUV record at all, so the pack and charger stand — unchanged
+    // hardware, BMW's own release — and the rating abstains.
+    bmw({
+      id: "xm-2027",
+      model: "XM",
+      modelYears: [2027, 2027],
+      battery: XM_PACK,
+      charging: { acOnboardKw: f(7.4, "mfr", "high", undefined, BMW_XM_PR), ...BMW_CHARGING_EST },
+      abstains: { ...BMW_ABSTAINS, epaRangeMi: "fueleconomy.gov has published no 2027 BMW XM rating yet; the 2026 Label rates 30 miles" },
+    }),
     bmw({
       id: "m5-2025",
       model: "M5",
+      modelAliases: ["M5 AWD"],
       modelYears: [2025, 2025],
       battery: M5_PACK,
       range: {
@@ -1537,6 +1615,7 @@ const R: EnrichmentRow[] = [];
     bmw({
       id: "m5-2026-27",
       model: "M5",
+      modelAliases: ["M5 AWD"],
       modelYears: [2026, 2027],
       battery: M5_PACK,
       range: {
@@ -1551,7 +1630,7 @@ const R: EnrichmentRow[] = [];
     bmw({
       id: "m5-touring-2025-27",
       model: "M5",
-      modelAliases: ["M5 Touring"],
+      modelAliases: ["M5 Touring", "M5 AWD"],
       modelYears: [2025, 2027],
       trim: ["Touring"],
       battery: { packUsableKwh: f(14.8, "mfr", "high", undefined, BMW_M5T_PR) },
@@ -1565,6 +1644,20 @@ const R: EnrichmentRow[] = [];
       charging: { acOnboardKw: f(11, "mfr", "high", undefined, BMW_M5T_PR), ...BMW_CHARGING_EST },
     })
   );
+
+  // Bare "5 Series" with the badge in the trim. "M5" is two characters, so
+  // trimStringsOverlap demands an exact trim of "M5" and can catch nothing
+  // else — a petrol M550i's "M550I" is not it. Year-gated to 2025+, where the
+  // M5 is PHEV-only; the F90 M5 that shares the name is a petrol V8 and ends
+  // in 2023.
+  //
+  // Sedan and Touring both carry the key rather than one of them winning. EPA
+  // rates them apart (27 and 25 miles for 2025, 29 and 25 after), and a
+  // listing that says "5 Series" + "M5" has not said which body it is, so two
+  // candidates and the existing trim discriminator is the honest answer.
+  for (const r of R.filter((x) => /^m5-/.test(x.id))) {
+    R.push({ ...r, id: `${r.id}-5series-alt`, model: "5 Series", modelAliases: ["5-Series"], trim: ["M5"] });
+  }
 }
 
 // ───────────────── MERCEDES-BENZ GLC 350e / GLE 450e ───────────────────────
@@ -1598,7 +1691,7 @@ const R: EnrichmentRow[] = [];
         id: "glc-350e-2018-19",
         make: "MERCEDES-BENZ",
         model: "GLC 350e",
-        modelAliases: ["GLC350e", "GLC 350e 4MATIC"],
+        modelAliases: ["GLC350e", "GLC 350e 4MATIC", "GLC350E 4matic SUV", "GLC 350e SUV"],
         modelYears: [2018, 2019],
         packVariant: "PHEV",
         battery: { packGrossKwh: f(8.7, "mfr", "high", "Mercedes does not label the figure gross or usable", GLC_2019_PR) },
@@ -1619,7 +1712,7 @@ const R: EnrichmentRow[] = [];
         id: "glc-350e-2020",
         make: "MERCEDES-BENZ",
         model: "GLC 350e",
-        modelAliases: ["GLC350e", "GLC 350e 4MATIC"],
+        modelAliases: ["GLC350e", "GLC 350e 4MATIC", "GLC350E 4matic SUV", "GLC 350e SUV"],
         modelYears: [2020, 2020],
         packVariant: "PHEV",
         battery: { packGrossKwh: f(13.5, "mfr", "high", "Mercedes does not label the figure gross or usable", GLC_2020_PR) },
@@ -1640,7 +1733,7 @@ const R: EnrichmentRow[] = [];
         id: "glc-350e-2025-27",
         make: "MERCEDES-BENZ",
         model: "GLC 350e",
-        modelAliases: ["GLC350e", "GLC 350e 4MATIC"],
+        modelAliases: ["GLC350e", "GLC 350e 4MATIC", "GLC350E 4matic SUV", "GLC 350e SUV"],
         modelYears: [2025, 2027],
         packVariant: "PHEV",
         battery: MB_PACK_233(GLC_X254_PR),
@@ -1661,7 +1754,7 @@ const R: EnrichmentRow[] = [];
         id: "gle-450e-2024",
         make: "MERCEDES-BENZ",
         model: "GLE 450e",
-        modelAliases: ["GLE450e", "GLE 450e 4MATIC"],
+        modelAliases: ["GLE450e", "GLE 450e 4MATIC", "GLE 450e Plug-In Hybrid", "GLE 450 Plug-In Hybrid"],
         modelYears: [2024, 2024],
         packVariant: "PHEV",
         battery: MB_PACK_233(GLE_2024_PR),
@@ -1678,7 +1771,7 @@ const R: EnrichmentRow[] = [];
         id: "gle-450e-2025",
         make: "MERCEDES-BENZ",
         model: "GLE 450e",
-        modelAliases: ["GLE450e", "GLE 450e 4MATIC"],
+        modelAliases: ["GLE450e", "GLE 450e 4MATIC", "GLE 450e Plug-In Hybrid", "GLE 450 Plug-In Hybrid"],
         modelYears: [2025, 2025],
         packVariant: "PHEV",
         battery: MB_PACK_233(GLE_2024_PR),
@@ -1699,7 +1792,7 @@ const R: EnrichmentRow[] = [];
         id: "gle-450e-2026",
         make: "MERCEDES-BENZ",
         model: "GLE 450e",
-        modelAliases: ["GLE450e", "GLE 450e 4MATIC"],
+        modelAliases: ["GLE450e", "GLE 450e 4MATIC", "GLE 450e Plug-In Hybrid", "GLE 450 Plug-In Hybrid"],
         modelYears: [2026, 2026],
         packVariant: "PHEV",
         battery: MB_PACK_233(GLE_2024_PR),
@@ -1765,7 +1858,15 @@ const R: EnrichmentRow[] = [];
 
   R.push(
     // 958-era Cayenne S E-Hybrid: EPA-only rows, pack unresearched.
+    // 2017 and 2018 predate the plain Cayenne E-Hybrid (2019), so a listing
+    // whose model reads "Cayenne E-Hybrid" in those years can only be the S.
+    // The alias goes on the NAMED row deliberately, and it is the one case
+    // the helper comment above allows: the ambiguity it warns about — a plain
+    // E-Hybrid listing dragged onto the S row — needs a plain E-Hybrid to
+    // exist, and in these two model years none does. It also reaches the trims
+    // the bare guard cannot ("S Platinum Edition").
     ...cayenne("cayenne-s-ehybrid-2017", "Cayenne S E-Hybrid", [2017, 2017], ["S E-Hybrid", "S"], {
+      modelAliases: ["Cayenne E-Hybrid", "Cayenne E-Hybrid Coupe", "Cayenne S E-Hybrid Coupe"],
       range: {
         epaRangeMi: f(14, "mfr", "high", "Electric-only EPA range", epa(37799)),
         epaRangeTotalMi: f(480, "mfr", "high", undefined, epa(37799)),
@@ -1777,6 +1878,7 @@ const R: EnrichmentRow[] = [];
       abstains: { ...PORSCHE_ABSTAINS, packUsableKwh: "The 958-era pack size was not confirmed from a Porsche document this pass" },
     }),
     ...cayenne("cayenne-s-ehybrid-2018", "Cayenne S E-Hybrid", [2018, 2018], ["S E-Hybrid", "S"], {
+      modelAliases: ["Cayenne E-Hybrid", "Cayenne E-Hybrid Coupe", "Cayenne S E-Hybrid Coupe"],
       range: {
         epaRangeMi: f(14, "mfr", "high", "Electric-only EPA range", epa(39928)),
         epaRangeTotalMi: f(490, "mfr", "high", undefined, epa(39928)),
@@ -1810,6 +1912,17 @@ const R: EnrichmentRow[] = [];
         mpgGasoline: f(21, "mfr", "high", undefined, epa(42580)),
       },
       charging: P_AC(3.6, CAY_2019_PR, "7.2 kW optional"),
+    }),
+    // MY2023: EPA rated the Turbo S E-Hybrid (its record runs 2021-2023) and
+    // not the plain E-Hybrid, though Porsche sold both and 16 are live. Same
+    // pre-facelift hardware as 2021-2022 — the 25.9 kWh pack arrives with the
+    // 2024 facelift — so the pack and charger are stated from the same Porsche
+    // release the 2021-2022 row cites, and only the rating abstains.
+    ...cayenne("cayenne-ehybrid-2023", "Cayenne E-Hybrid", [2023, 2023], ["E-Hybrid"], {
+      modelAliases: CAYENNE_ALIASES,
+      battery: P_PACK_179(CAY_2021_PR),
+      charging: P_AC(7.2, CAY_2021_PR),
+      abstains: { ...PORSCHE_ABSTAINS, epaRangeMi: "fueleconomy.gov holds no 2023 Cayenne E-Hybrid rating; it rated only the Turbo S that year" },
     }),
     ...cayenne("cayenne-ehybrid-2021-22", "Cayenne E-Hybrid", [2021, 2022], ["E-Hybrid"], {
       modelAliases: CAYENNE_ALIASES,
@@ -1930,9 +2043,15 @@ const R: EnrichmentRow[] = [];
         abstains: PORSCHE_ABSTAINS,
         ...over,
       } as EnrichmentRow,
-      { model: "Panamera", modelAliases: ["Panamera E-Hybrid"], trim }
+      { model: "Panamera", modelAliases: PAN_BARE_ALIASES, trim }
     );
   const PAN4_ALIASES = ["Panamera E-Hybrid", "Panamera 4 E-Hybrid Executive", "Panamera 4 E-Hybrid Sport Turismo", "Panamera 4 E-Hybrid ST"];
+  // The Sport Turismo body reaches the feed under a model string that drops
+  // the variant number ("Panamera E-Hybrid Sport Turismo", trim "4S"). These
+  // ride on the trim-guarded bare rows and never on a named variant row: the
+  // string does not say WHICH E-Hybrid it is, so only the trim can decide,
+  // which is precisely the job the guard already does.
+  const PAN_BARE_ALIASES = ["Panamera E-Hybrid", "Panamera E-Hybrid Sport Turismo", "Panamera Sport Turismo", "Panamera E-Hybrid Executive"];
   R.push(
     ...panamera("panamera-4-ehybrid-2018", "Panamera 4 E-Hybrid", [2018, 2018], ["4 E-Hybrid"], {
       modelAliases: PAN4_ALIASES,
@@ -2151,7 +2270,7 @@ const R: EnrichmentRow[] = [];
         id: "aviator-gt-2020-23",
         make: "LINCOLN",
         model: "Aviator Plug-In Hybrid",
-        modelAliases: ["Aviator PHEV", "Aviator Grand Touring"],
+        modelAliases: ["Aviator PHEV", "Aviator Grand Touring", "Aviator Grand Touring Plug-In Hybrid"],
         modelYears: [2020, 2023],
         packVariant: "PHEV",
         battery: { packGrossKwh: f(13.6, "mfr", "high", undefined, AVIATOR_FACTS) },
@@ -2246,7 +2365,15 @@ R.push({
     batteryWarranty: "Lexus's 10-year hybrid battery policy statement never names the plug-ins",
     heatPump: HP_ABSTAIN,
   };
-  const tx = (id: string, years: [number, number], range: EnrichmentRow["range"], src: string): EnrichmentRow => ({
+  // The TX needs the bare-nameplate row the RX above already has: four live
+  // listings arrive as model "TX" with the badge in the trim ("550h+
+  // Luxury"). Same guard shape and the same safety argument — the petrol TX
+  // is the 350 and the 500h, and "550H" neither contains nor is contained by
+  // either. The plus-less "550h" spelling is kept for the reason the RX keeps
+  // "450h": a listing that drops the "+" is otherwise refused outright by the
+  // plus-parity check, which treats a one-sided "+" as a different car.
+  const tx = (id: string, years: [number, number], range: EnrichmentRow["range"], src: string): EnrichmentRow[] =>
+    withAlt({
     id,
     make: "LEXUS",
     model: "TX 550h+",
@@ -2260,10 +2387,10 @@ R.push({
       dcFastCharging: NO_DCFC_EST,
     },
     abstains: TX_ABSTAINS,
-  });
+  }, { model: "TX", trim: ["550h+", "550h"] });
   R.push(
-    tx("tx-550h-plus-2024", [2024, 2024], { epaRangeMi: f(33, "mfr", "medium", "Lexus projected estimate", TX_2024) }, TX_2024),
-    tx(
+    ...tx("tx-550h-plus-2024", [2024, 2024], { epaRangeMi: f(33, "mfr", "medium", "Lexus projected estimate", TX_2024) }, TX_2024),
+    ...tx(
       "tx-550h-plus-2025",
       [2025, 2025],
       {
@@ -2275,7 +2402,7 @@ R.push({
       },
       TX_2026
     ),
-    tx("tx-550h-plus-2026", [2026, 2026], { epaRangeMi: f(33, "mfr", "medium", "Lexus projected estimate", TX_2026) }, TX_2026)
+    ...tx("tx-550h-plus-2026", [2026, 2026], { epaRangeMi: f(33, "mfr", "medium", "Lexus projected estimate", TX_2026) }, TX_2026)
   );
 }
 
@@ -2382,6 +2509,24 @@ R.push({
         heatPump: HP_ABSTAIN,
       },
     },
+    // MY2024 sits between two rated generations and is rated by neither:
+    // fueleconomy.gov jumps 2023 to 2025, and those two rate 18 and 20 miles,
+    // so there is nothing to borrow even if borrowing were allowed. The
+    // pre-facelift 17.3 kWh pack is Bentley's own figure for this generation.
+    {
+      id: "bentayga-hybrid-2024",
+      make: "BENTLEY",
+      model: "Bentayga Hybrid",
+      modelYears: [2024, 2024],
+      packVariant: "PHEV",
+      battery: { packGrossKwh: f(17.3, "mfr", "high", undefined, BENTAYGA_PR) },
+      charging: { acOnboardKw: f(7.2, "mfr", "high", undefined, BENTAYGA_PR), portStandard: J1772_EST },
+      abstains: {
+        epaRangeMi: "fueleconomy.gov holds no 2024 Bentayga Hybrid rating; the 2023 and 2025 cars rate 18 and 20 miles",
+        batteryWarranty: BENTLEY_WARRANTY_ABSTAIN,
+        heatPump: HP_ABSTAIN,
+      },
+    },
     {
       id: "bentayga-hybrid-2021-23",
       make: "BENTLEY",
@@ -2428,10 +2573,13 @@ R.push({
 // section that lists DC for the E 53 and only AC rows for these), and their
 // EPA electric range really is ~1 mile — printed as rated, because telling a
 // shopper this is not an EV-mode car is the point. C 63 and GLC 63 are
-// PHEV-only nameplates in these years; GT 63 and SL 63 are NOT covered —
-// petrol cars share those exact model strings in overlapping years, and the
-// S 580e's EPA record conflicts with MBUSA's own figure, so those stay
-// honestly silent this pass.
+// PHEV-only nameplates in these years; SL 63 is still NOT covered — a petrol
+// car shares that exact model string in overlapping years — and the S 580e's
+// EPA record conflicts with MBUSA's own figure, so those stay honestly silent.
+// GT 63 was on that list until 2026-08-30 and is now researched in data13.ts,
+// which answers the objection rather than ignoring it: the petrol AMG GT 63
+// 4MATIC+ does share the model string, so the plug-in's bare-nameplate row is
+// keyed on the "S E Performance" trim and no untrimmed row carries the badge.
 {
   const E53_PR = "https://media.mbusa.com/releases/release-c510507a2b04ee68bb1eaf8344e88f1e-performance-and-efficiency-in-a-new-combination-the-mercedes-amg-e-53-hybrid";
   const E53_WAGON_PR = "https://media.mbusa.com/releases/release-0aacd0cfec6ffa3ea5c65bd4c210f737-2026-mercedes-amg-e-53-hybrid-wagon";
@@ -2455,7 +2603,7 @@ R.push({
       id: "amg-e53-hybrid-2025",
       make: "MERCEDES-BENZ",
       model: "AMG E 53 Hybrid",
-      modelAliases: ["AMG E 53", "E 53 Hybrid", "E53 Hybrid"],
+      modelAliases: ["AMG E 53", "E 53 Hybrid", "E53 Hybrid", "AMG E 53e Plug-In Hybrid", "AMG E 53e", "E 53e"],
       modelYears: [2025, 2025],
       packVariant: "PHEV",
       battery: E53_BATTERY,
@@ -2492,7 +2640,7 @@ R.push({
       id: "amg-e53-hybrid-2026-27",
       make: "MERCEDES-BENZ",
       model: "AMG E 53 Hybrid",
-      modelAliases: ["AMG E 53", "E 53 Hybrid", "E53 Hybrid"],
+      modelAliases: ["AMG E 53", "E 53 Hybrid", "E53 Hybrid", "AMG E 53e Plug-In Hybrid", "AMG E 53e", "E 53e"],
       modelYears: [2026, 2027],
       packVariant: "PHEV",
       battery: E53_BATTERY,
@@ -2743,6 +2891,45 @@ R.push({
         },
       }),
       { model: "Range Rover Sport", trim: ["P460e", "P550e", "PHEV", "Plug-In Hybrid"] }
+    ),
+    // MY2027, on dealer lots since August 2026. fueleconomy.gov's 2027 menu
+    // holds five plug-in records in total — two BMWs, a Kia and a Bentley —
+    // and no Land Rover, so the rating abstains exactly as the MY2024 rows
+    // above do. The L460 charging hardware is unchanged current-car fact from
+    // Land Rover's own pages, and the "Battersea Edition" and "Dynamic SE"
+    // trims the feed sends are grades, not powertrains, so the trim-guarded
+    // bare rows key on the P-numbers as every other Land Rover year does.
+    ...withAlt(
+      lr({
+        id: "range-rover-p550e-2027",
+        model: "Range Rover Plug-In Hybrid",
+        modelAliases: ["Range Rover PHEV", "Range Rover P550e"],
+        modelYears: [2027, 2027],
+        charging: LR_L460_CHARGING,
+        abstains: {
+          epaRangeMi: "fueleconomy.gov has published no 2027 Land Rover rating yet; the 2025-2026 cars rate 53 miles",
+          packUsableKwh: "Land Rover has not published this variant's battery capacity",
+          batteryWarranty: LR_WARRANTY_ABSTAIN,
+          heatPump: HP_ABSTAIN,
+        },
+      }),
+      { model: "Range Rover", trim: ["P550e", "P460e", "PHEV", "Plug-In Hybrid"] }
+    ),
+    ...withAlt(
+      lr({
+        id: "range-rover-sport-p550e-2027",
+        model: "Range Rover Sport Plug-In Hybrid",
+        modelAliases: ["Range Rover Sport PHEV", "Range Rover Sport P550e", "Range Rover Sport P460e", "Range Rover Sport Plug-in Hybrid"],
+        modelYears: [2027, 2027],
+        charging: LR_L460_CHARGING,
+        abstains: {
+          epaRangeMi: "fueleconomy.gov has published no 2027 Land Rover rating yet; the 2025-2026 cars rate 53 miles",
+          packUsableKwh: "Land Rover has not published this variant's battery capacity",
+          batteryWarranty: LR_WARRANTY_ABSTAIN,
+          heatPump: HP_ABSTAIN,
+        },
+      }),
+      { model: "Range Rover Sport", trim: ["P550e", "P460e", "PHEV", "Plug-In Hybrid"] }
     )
   );
 }
@@ -2778,7 +2965,7 @@ R.push({
     range,
     charging: { portStandard: J1772_EST, dcFastCharging: NO_DCFC_EST },
     warranty: ARTURA_WARRANTY,
-    abstains: { heatPump: HP_ABSTAIN },
+    abstains: range ? { heatPump: HP_ABSTAIN } : { heatPump: HP_ABSTAIN, epaRangeMi: "Neither fueleconomy.gov nor McLaren's press kits carry a 2026 Artura rating" },
   });
   R.push(
     artura("artura-2023", [2023, 2023], {
@@ -2794,6 +2981,13 @@ R.push({
       epaRangeMi: f(11, "mfr", "high", undefined, ARTURA_KIT_23),
       mpgeCombined: f(39, "mfr", "high", undefined, ARTURA_KIT_23),
     }),
+    // MY2026: 31 live cars and no rating anywhere. fueleconomy.gov lists only
+    // the 2023 Artura, and McLaren's press kits — which is where the MY24 and
+    // MY25 figures above come from — carry nothing for 2026. Pack and warranty
+    // are unchanged across the nameplate and stated from the same kits; the
+    // range abstains rather than repeating the 2025 car's 11 miles, which is a
+    // figure McLaren published about a different model year.
+    artura("artura-2026", [2026, 2026], undefined),
     artura("artura-2025", [2025, 2025], {
       epaRangeMi: f(11, "mfr", "high", undefined, ARTURA_KIT_25),
       epaRangeTotalMi: f(340, "mfr", "high", undefined, ARTURA_KIT_25),
@@ -2946,11 +3140,22 @@ R.push({
     batteryYears: f(8, "mfr", "high", undefined, FORD_ENERGI_WARRANTY_PR),
     batteryMiles: f(100_000, "mfr", "high", undefined, FORD_ENERGI_WARRANTY_PR),
   };
+  // "Fusion Special Service PHEV" was in this alias list until 2026-08-30.
+  // EPA files the police-fleet car as its own vehicle (records 41226 and
+  // 41900), so it gets its own rows in data13.ts rather than borrowing these.
+  //
+  // Worth being precise about what that did and did not fix, because the
+  // first draft of this comment claimed more than the records support: for
+  // 2019 and 2020 the two cars carry the SAME electric and total range, 26
+  // and 610, and differ only in MPGe (102/60 against 103/61). So the old
+  // alias was not printing a wrong headline number. What it was doing was
+  // answering for a vehicle that had no row, on rows whose figures are only
+  // equal by coincidence of those two model years.
   const fusion = (id: string, years: [number, number], battery: EnrichmentRow["battery"], range: EnrichmentRow["range"]): EnrichmentRow => ({
     id,
     make: "FORD",
     model: "Fusion Energi",
-    modelAliases: ["Fusion Energi Plug-in Hybrid", "Fusion Special Service PHEV"],
+    modelAliases: ["Fusion Energi Plug-in Hybrid", "Fusion Plug-In Hybrid", "Fusion Energi Plug-In Hybrid"],
     modelYears: years,
     packVariant: "PHEV",
     battery,
@@ -2960,6 +3165,12 @@ R.push({
     abstains: { heatPump: HP_ABSTAIN },
   });
   const FUSION_76 = { packGrossKwh: f(7.6, "mfr", "high", undefined, FUSION_2017_PR) };
+  // "Energi" is Ford's plug-in sub-brand and the only safe guard token on
+  // these two nameplates: a bare "Fusion" or "C-Max" listing puts the badge in
+  // the trim ("Titanium Energi", "SEL Energi"), and every petrol and
+  // conventional-hybrid grade — S, SE, SEL, Titanium, Platinum, Sport — is
+  // free of it in both directions.
+  const FORD_ENERGI_TRIMS = ["Energi"];
   R.push(
     fusion("fusion-energi-2013-16", [2013, 2016], FUSION_76, {
       epaRangeMi: f(20, "mfr", "high", "Electric-only EPA range. Identical rating 2013–2016", epa(36248)),
@@ -3040,7 +3251,7 @@ R.push({
     id,
     make: "HYUNDAI",
     model: "Ioniq Plug-In Hybrid",
-    modelAliases: ["Ioniq PHEV"],
+    modelAliases: ["Ioniq PHEV", "IONIQ PLUG-IN H", "Ioniq Plug-In H"],
     modelYears: years,
     packVariant: "PHEV",
     battery: { packGrossKwh: f(8.9, "mfr", "high", undefined, IONIQ_PR) },
@@ -3568,7 +3779,7 @@ R.push({
       id: "ct6-plugin-2017",
       make: "CADILLAC",
       model: "CT6 Plug-In",
-      modelAliases: ["CT6 PLUG-IN", "CT6 Plug-In Hybrid"],
+      modelAliases: ["CT6 PLUG-IN", "CT6 Plug-In Hybrid", "CT6 Hybrid Plug-In"],
       modelYears: [2017, 2017],
       packVariant: "PHEV",
       battery: { packGrossKwh: f(18.4, "mfr", "high", "GM says about 75 percent is usable", CT6_2017_PAGE) },
@@ -3633,6 +3844,41 @@ R.push({
       abstains: { heatPump: HP_ABSTAIN },
     }
   );
+}
+
+// ─────────────── BARE-NAMEPLATE ROWS FOR FOUR MORE PLUG-INS ───────────────
+// Added 2026-08-30, when scripts/phev-enrichment-gap.mjs found live listings
+// filing each of these under the nameplate a non-plug-in shares, with the
+// badge only in the trim. Built here rather than beside each row because they
+// are one idea applied four times, and one place is easier to audit than four.
+//
+// Every guard below has to survive the test data4's Wrangler comment sets
+// out — the token must name the electrified powertrain and nothing a petrol
+// or conventional-hybrid version of the same car could wear, in EITHER
+// direction, because trimStringsOverlap is substring-tolerant both ways:
+//
+//   Fusion / C-Max → "Energi", Ford's plug-in sub-brand. The conventional
+//     Fusion Hybrid and C-Max Hybrid grades are S, SE, SEL and Titanium, and
+//     the petrol Fusion adds Sport and Platinum. None contains "ENERGI" and
+//     "ENERGI" contains none of them.
+//   CT6 → "Plug-In". The petrol CT6's grades are Luxury, Premium Luxury,
+//     Platinum and Sport.
+//   Bentayga → "Hybrid". This one needs the check most, because the Bentayga
+//     is the ONE Bentley whose bare nameplate is genuinely ambiguous — the
+//     block above notes that gasoline Bentaygas still appear in EPA's
+//     certification lists while gasoline Continentals do not. Its petrol
+//     grades are V8, Speed, Azure and EWB, so "HYBRID" separates them
+//     cleanly, which is exactly why the guard is the token and not the year.
+const BARE_PHEV_GUARDS: Array<[RegExp, string, string[], string[]]> = [
+  [/^fusion-energi-/, "Fusion", ["Energi"], []],
+  [/^cmax-energi-/, "C-Max", ["Energi"], ["C-MAX", "CMax"]],
+  [/^ct6-plugin-/, "CT6", ["Plug-In", "PLUG-IN"], []],
+  [/^bentayga-hybrid-/, "Bentayga", ["Hybrid"], ["Bentayga EWB"]],
+];
+for (const [idRe, model, trim, modelAliases] of BARE_PHEV_GUARDS) {
+  for (const r of R.filter((x) => idRe.test(x.id) && !x.trim)) {
+    R.push({ ...r, id: `${r.id}-alt`, model, modelAliases: modelAliases.length ? modelAliases : undefined, trim });
+  }
 }
 
 export const RESEARCH_ROWS_6: EnrichmentRow[] = R;

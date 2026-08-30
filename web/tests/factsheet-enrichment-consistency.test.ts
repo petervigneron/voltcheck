@@ -33,6 +33,7 @@ import { RESEARCH_ROWS_9 } from "@/lib/enrichment/data9";
 import { RESEARCH_ROWS_10 } from "@/lib/enrichment/data10";
 import { RESEARCH_ROWS_11 } from "@/lib/enrichment/data11";
 import { RESEARCH_ROWS_12 } from "@/lib/enrichment/data12";
+import { RESEARCH_ROWS_13 } from "@/lib/enrichment/data13";
 
 const ALL_ROWS = [
   ...ENRICHMENT_ROWS,
@@ -45,6 +46,7 @@ const ALL_ROWS = [
   ...RESEARCH_ROWS_10,
   ...RESEARCH_ROWS_11,
   ...RESEARCH_ROWS_12,
+  ...RESEARCH_ROWS_13,
 ];
 
 // Sheet URL identity → the enrichment lane's exact make/model strings.
