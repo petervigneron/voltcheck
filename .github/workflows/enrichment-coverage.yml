@@ -98,11 +98,17 @@ on:
     paths:
       - "web/lib/enrichment/**"
       - "web/scripts/enrichment-coverage.mjs"
+      - "web/content/facts/**"
+      - "web/lib/facts/**"
+      - "web/tests/factsheet-*.test.ts"
       - ".github/workflows/enrichment-coverage.yml"
   pull_request:
     paths:
       - "web/lib/enrichment/**"
       - "web/scripts/enrichment-coverage.mjs"
+      - "web/content/facts/**"
+      - "web/lib/facts/**"
+      - "web/tests/factsheet-*.test.ts"
   workflow_dispatch:
 
 permissions:
@@ -132,3 +138,13 @@ jobs:
         if: always()
         working-directory: web
         run: node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs scripts/note-hygiene.mjs
+      # The fact-sheet lane and the enrichment lane research the same cars
+      # independently, and on 2026-08-30 they were caught contradicting each
+      # other for five days (the Lightning sheet's 2024 heat-pump "None"
+      # against every 2024 enrichment row's "standard" — the enrichment lane
+      # was right). These two tests are the cross-lane reader and the format
+      # pin; `if: always()` for the same reason as note hygiene above.
+      - name: Check fact sheets (structure + cross-lane consistency)
+        if: always()
+        working-directory: web
+        run: node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs --test tests/factsheet-structure.test.ts tests/factsheet-enrichment-consistency.test.ts
