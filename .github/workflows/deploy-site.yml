@@ -41,6 +41,16 @@ jobs:
           node-version: "22"
       - run: npm install -g vercel
 
+      # With a pre-built --url candidate, the promote at the very end is the
+      # token's first use — run 33280497979 (2026-08-30) waited out the
+      # nightly and warmed all 26 paths before an expired VERCEL_TOKEN killed
+      # the promote. Spend the token once up front so a dead one fails here,
+      # in seconds.
+      - name: Fail fast if VERCEL_TOKEN cannot see the account
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: vercel ls --token "$VERCEL_TOKEN" --scope petervignerons-projects > /dev/null
+
       # Same sequencing the local flow used: the warm's walks want the
       # database AFTER the night's ingest and recheck are done with it, plus
       # settle time for the IO budget. Poll rather than trust the clock —
