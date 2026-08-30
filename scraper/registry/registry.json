@@ -343468,6 +343468,580 @@
         "state": "TN",
         "zip": "38133"
       }
+    },
+    {
+      "domain": "angleofattackmarine.com",
+      "name": "ANGLE OF ATTACK MARINE, LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; FL license roll class: independent (VI) (2026-08-30)",
+      "location": {
+        "city": "DORAL",
+        "state": "FL",
+        "zip": "33126"
+      }
+    },
+    {
+      "domain": "autocollectionofsouthmiami.com",
+      "name": "AUTO COLLECTION OF SOUTH MIAMI, INC.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; FL license roll class: independent (VI) (2026-08-30)",
+      "location": {
+        "city": "MIAMI",
+        "state": "FL",
+        "zip": "33170"
+      }
+    },
+    {
+      "domain": "automaxoftampa.com",
+      "name": "AUTOMAX OF TAMPA INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; FL license roll class: independent (VI) (2026-08-30)",
+      "location": {
+        "city": "TAMPA",
+        "state": "FL",
+        "zip": "33613"
+      }
+    },
+    {
+      "domain": "galahadmarine.com",
+      "name": "GALAHAD MARINE SALES OF FL, LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; FL license roll class: independent (VI) (2026-08-30)",
+      "location": {
+        "city": "CAPE CORAL",
+        "state": "FL",
+        "zip": "33909"
+      }
+    },
+    {
+      "domain": "prestigiouseurocars.com",
+      "name": "PRESTIGIOUS EURO CARS OF FLORIDA, INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; FL license roll class: independent (VI) (2026-08-30)",
+      "location": {
+        "city": "FORT LAUDERDALE",
+        "state": "FL",
+        "zip": "33311"
+      }
+    },
+    {
+      "domain": "9999autocenter.com",
+      "name": "9999 AUTO CENTER, INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-30)",
+      "location": {
+        "city": "LAKEWOOD",
+        "state": "WA",
+        "zip": "98499"
+      }
+    },
+    {
+      "domain": "scarffisuzu.com",
+      "name": "SCARFF ISUZU",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-30)",
+      "location": {
+        "city": "AUBURN",
+        "state": "WA",
+        "zip": "98002"
+      }
+    },
+    {
+      "domain": "wilderaffordablehomes.com",
+      "name": "WILDER AFFORDABLE HOMES",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-30)",
+      "location": {
+        "city": "PORT ANGELES",
+        "state": "WA",
+        "zip": "98362"
+      }
+    },
+    {
+      "domain": "wilder-rv.com",
+      "name": "WILDER RV",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-30)",
+      "location": {
+        "city": "PORT ANGELES",
+        "state": "WA",
+        "zip": "98362"
+      }
+    },
+    {
+      "domain": "eastlakeautobrokers.com",
+      "name": "EASTLAKE AUTO BROKERS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-30)",
+      "location": {
+        "city": "KIRKLAND",
+        "state": "WA",
+        "zip": "98034"
+      }
+    },
+    {
+      "domain": "mcgregor.com",
+      "name": "THE MCGREGOR COMPANY",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-30)",
+      "location": {
+        "city": "COLFAX",
+        "state": "WA",
+        "zip": "99111"
+      }
+    },
+    {
+      "domain": "gordontruckcenters.com",
+      "name": "FREIGHTLINER NORTHWEST",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-30)",
+      "location": {
+        "city": "PACIFIC",
+        "state": "WA",
+        "zip": "98047"
+      }
+    },
+    {
+      "domain": "amuautomotive.com",
+      "name": "AMU AUTOMOTIVE",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-30)",
+      "location": {
+        "city": "PASCO",
+        "state": "WA",
+        "zip": "99301"
+      }
+    },
+    {
+      "domain": "auditricities.com",
+      "name": "AUDI TRI-CITIES",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, so class is inferred from the name carrying an OEM brand (audi) — franchise, inferred (2026-08-30)",
+      "location": {
+        "city": "RICHLAND",
+        "state": "WA",
+        "zip": "99352"
+      }
+    },
+    {
+      "domain": "anniesrvs.com",
+      "name": "ANNIE'S RVS LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-30)",
+      "location": {
+        "city": "VANCOUVER",
+        "state": "WA",
+        "zip": "98665"
+      }
+    },
+    {
+      "domain": "musserbros.com",
+      "name": "MUSSER BROS, INC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-30)",
+      "location": {
+        "city": "PASCO",
+        "state": "WA",
+        "zip": "99301"
+      }
+    },
+    {
+      "domain": "maseratiseattle.com",
+      "name": "MASERATI OF SEATTLE",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-30)",
+      "location": {
+        "city": "SEATTLE",
+        "state": "WA",
+        "zip": "98122"
+      }
+    },
+    {
+      "domain": "daanorthwest.com",
+      "name": "DAA NORTHWEST",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-30)",
+      "location": {
+        "city": "SPOKANE",
+        "state": "WA",
+        "zip": "99224"
+      }
+    },
+    {
+      "domain": "daaseattle.com",
+      "name": "DAA SEATTLE",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-30)",
+      "location": {
+        "city": "AUBURN",
+        "state": "WA",
+        "zip": "98002"
+      }
+    },
+    {
+      "domain": "cartersubaru.com",
+      "name": "CARTER SUBARU",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, so class is inferred from the name carrying an OEM brand (subaru) — franchise, inferred (2026-08-30)",
+      "location": {
+        "city": "SEATTLE",
+        "state": "WA",
+        "zip": "98107"
+      }
+    },
+    {
+      "domain": "sumnerrv.com",
+      "name": "SUMNER R.V. CENTER",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-30)",
+      "location": {
+        "city": "SUMNER",
+        "state": "WA",
+        "zip": "98390"
+      }
+    },
+    {
+      "domain": "eaglecars.com",
+      "name": "EAGLE CARS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-30)",
+      "location": {
+        "city": "SPOKANE VALLEY",
+        "state": "WA",
+        "zip": "99016"
+      }
+    },
+    {
+      "domain": "lexusoftacoma.com",
+      "name": "LEXUS OF TACOMA AT FIFE",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, so class is inferred from the name carrying an OEM brand (lexus) — franchise, inferred (2026-08-30)",
+      "location": {
+        "city": "FIFE",
+        "state": "WA",
+        "zip": "98424"
+      }
+    },
+    {
+      "domain": "brucecoximports.com",
+      "name": "BRUCE COX IMPORTS, INC.",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-30)",
+      "location": {
+        "city": "BELLINGHAM",
+        "state": "WA",
+        "zip": "98225"
+      }
+    },
+    {
+      "domain": "i5rvs.com",
+      "name": "BLAIR'S I-5 RVS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-30)",
+      "location": {
+        "city": "ROCHESTER",
+        "state": "WA",
+        "zip": "98579"
+      }
+    },
+    {
+      "domain": "clickitrv.com",
+      "name": "CLICKIT RV",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-30)",
+      "location": {
+        "city": "MOSES LAKE",
+        "state": "WA",
+        "zip": "98837"
+      }
+    },
+    {
+      "domain": "clickitrvuniongap.com",
+      "name": "CLICKIT RV UNION GAP",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-30)",
+      "location": {
+        "city": "UNION GAP",
+        "state": "WA",
+        "zip": "98903"
+      }
+    },
+    {
+      "domain": "spokaneautomuseum.com",
+      "name": "SPOKANE AUTO MUSEUM AND SALES",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-30)",
+      "location": {
+        "city": "AIRWAY HEIGHTS",
+        "state": "WA",
+        "zip": "99001"
+      }
+    },
+    {
+      "domain": "swiftautodeals.com",
+      "name": "SWIFT AUTO DEALS LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-30)",
+      "location": {
+        "city": "KIRKLAND",
+        "state": "WA",
+        "zip": "98034"
+      }
+    },
+    {
+      "domain": "checkeredflagmotors.com",
+      "name": "CHECKERED FLAG MOTORS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-30)",
+      "location": {
+        "city": "EVERETT",
+        "state": "WA",
+        "zip": "98201"
+      }
+    },
+    {
+      "domain": "northwesteuropean.com",
+      "name": "NORTHWEST EUROPEAN, LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-30)",
+      "location": {
+        "city": "ISSAQUAH",
+        "state": "WA",
+        "zip": "98027"
+      }
+    },
+    {
+      "domain": "seattleautohaus.com",
+      "name": "SEATTLE AUTO HAUS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-30)",
+      "location": {
+        "city": "FEDERAL WAY",
+        "state": "WA",
+        "zip": "98003"
+      }
+    },
+    {
+      "domain": "4seasonmotor.com",
+      "name": "4 SEASON MOTORS LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-30)",
+      "location": {
+        "city": "SUNNYSIDE",
+        "state": "WA",
+        "zip": "98944"
+      }
+    },
+    {
+      "domain": "summitautoexchange.com",
+      "name": "SUMMIT AUTO EXCHANGE",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-30)",
+      "location": {
+        "city": "SPOKANE",
+        "state": "WA",
+        "zip": "99224"
+      }
+    },
+    {
+      "domain": "airstreamadventures.com",
+      "name": "SEATTLE AIRSTREAM ADVENTURES",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-30)",
+      "location": {
+        "city": "MILTON",
+        "state": "WA",
+        "zip": "98354"
+      }
+    },
+    {
+      "domain": "inlinemotorswa.com",
+      "name": "INLINE MOTORS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-30)",
+      "location": {
+        "city": "MARYSVILLE",
+        "state": "WA",
+        "zip": "98271"
+      }
+    },
+    {
+      "domain": "chehalisvalleymotors.com",
+      "name": "CHEHALIS VALLEY MOTORS LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-30)",
+      "location": {
+        "city": "CHEHALIS",
+        "state": "WA",
+        "zip": "98532"
+      }
+    },
+    {
+      "domain": "heritagecarsinc.com",
+      "name": "HERITAGE CARS",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-30)",
+      "location": {
+        "city": "RENTON",
+        "state": "WA",
+        "zip": "98057"
+      }
+    },
+    {
+      "domain": "sportdrivingmotors.com",
+      "name": "SPORT DRIVING MOTORS LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's phone number, which the state published a digit short; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-30)",
+      "location": {
+        "city": "KENT",
+        "state": "WA",
+        "zip": "98042"
+      }
+    },
+    {
+      "domain": "carbuu.com",
+      "name": "CARBUU AUTO LLC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's phone number, which the state published a digit short; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-30)",
+      "location": {
+        "city": "TACOMA",
+        "state": "WA",
+        "zip": "98444"
+      }
+    },
+    {
+      "domain": "maseratiofseattle.com",
+      "name": "MASERATI OF SEATTLE",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-30)",
+      "location": {
+        "city": "SEATTLE",
+        "state": "WA",
+        "zip": "98122"
+      }
     }
   ],
   "_sources": [
