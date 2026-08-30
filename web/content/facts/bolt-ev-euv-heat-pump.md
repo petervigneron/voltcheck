@@ -1,28 +1,24 @@
-# Chevrolet Bolt EV / Bolt EUV (Bolt EV 2017–2023, Bolt EUV 2022–2023): Heat Pump by Year
+# Chevrolet Bolt EV and Bolt EUV: Heat Pump by Model Year
 
-## Bolt EV 2017–2019
+## Heat pump by model year
 
-No Chevrolet Bolt EV built for model years 2017 through 2019 has a heat pump.[^1][^2][^3]
+| Model | Model year | Heat pump |
+|---|---|---|
+| Bolt EV | 2017 | None[^1] |
+| Bolt EV | 2018 | None[^2] |
+| Bolt EV | 2019 | None[^3] |
+| Bolt EV | 2020 | None[^4] |
+| Bolt EV | 2021 | Est. None[^5] |
+| Bolt EV | 2022 | Est. None[^5] |
+| Bolt EUV | 2022 | Est. None[^5] |
+| Bolt EV | 2023 | None[^6] |
+| Bolt EUV | 2023 | None[^6] |
 
-## Bolt EV 2020
+## What it heats with instead
 
-The 2020 Chevrolet Bolt EV does not have a heat pump.[^4]
-
-## Bolt EV 2021–2022, Bolt EUV 2022
-
-Est. No Chevrolet Bolt EV or Bolt EUV built for model years 2021 through 2022 has a heat pump.[^5]
-
-## Bolt EV 2023, Bolt EUV 2023
-
-Neither the 2023 Chevrolet Bolt EV nor the 2023 Chevrolet Bolt EUV has a heat pump.[^6]
-
-## What the Bolt EV/EUV uses instead
-
-GM's own documentation names the Bolt EV's cabin heater an "HVAC electric heater," in every model year checked from 2017 through 2020.[^1][^2][^4]
-
-## Scope boundary: 2027 Bolt
-
-Not covered. The 2027 Chevrolet Bolt is a different generation on a different platform, launching after the Bolt EUV ended production. It is outside this sheet's Bolt EV/EUV scope and is not a subject of any claim above.[^7]
+| Model years | Cabin heater |
+|---|---|
+| Bolt EV 2017–2020 | HVAC electric heater, GM's own name for it[^1][^2][^4] |
 
 ## See it for yourself
 
@@ -50,4 +46,4 @@ Not covered. The 2027 Chevrolet Bolt is a different generation on a different pl
 
 ## Scope note
 
-MY2017–2020 and MY2023 checked directly against GM's own documents. MY2021 and MY2022 rely on a single dated secondary source, not a primary document, and are marked Est. accordingly. The 2027 Bolt (different platform) is out of scope and mentioned only as a boundary.
+Bolt EV model years 2017 through 2023 and Bolt EUV model years 2022 through 2023, US market. The 2021 and 2022 rows rest on a single dated secondary source rather than a GM document and are marked Est.; every other row is read from GM's own documents. The 2027 Chevrolet Bolt is a different generation on a different platform and is out of scope.[^7]

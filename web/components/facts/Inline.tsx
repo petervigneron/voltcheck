@@ -12,6 +12,7 @@ export function renderInline(text: string, nextFootnoteId: (n: number) => string
   const out: ReactNode[] = [];
   let last = 0;
   let key = 0;
+  let fnEnd = -1; // where the previous footnote ref ended, for the separator below
   INLINE_RE.lastIndex = 0;
   let m: RegExpExecArray | null;
   while ((m = INLINE_RE.exec(text))) {
@@ -20,6 +21,10 @@ export function renderInline(text: string, nextFootnoteId: (n: number) => string
     if (fnNum) {
       const n = Number(fnNum);
       const id = nextFootnoteId(n);
+      // Back-to-back refs ([^3][^4]) would render as "34", which reads as
+      // footnote 34 — separate them.
+      if (m.index === fnEnd) out.push(<sup key={`fs${key++}`}>,</sup>);
+      fnEnd = m.index + whole.length;
       out.push(
         <sup key={`fn${key++}`}>
           <a id={id} href={`#fn-${n}`} className="text-cobalt no-underline hover:underline">

@@ -20,6 +20,34 @@ function renderBlock(block: FactBlock, i: number, nextFootnoteId: (n: number) =>
       </h3>
     );
   }
+  if (block.type === "table") {
+    return (
+      <div key={i} className="mt-3 overflow-x-auto">
+        <table className="w-full border-collapse text-[14px] leading-relaxed">
+          <thead>
+            <tr className="border-b-2 border-ink text-left">
+              {block.header.map((h, j) => (
+                <th key={j} className="py-1.5 pr-4 text-[11px] font-extrabold uppercase tracking-[0.06em] text-ink/60">
+                  {renderTextWithEst(h, nextFootnoteId)}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {block.rows.map((row, j) => (
+              <tr key={j} className="border-b border-ink/15 align-top">
+                {row.map((cell, k) => (
+                  <td key={k} className={`py-2 pr-4 text-ink/85 ${k === 0 ? "font-bold whitespace-nowrap" : ""}`}>
+                    {renderTextWithEst(cell, nextFootnoteId)}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  }
   if (block.type === "p") {
     return (
       <p key={i} className="mt-3 text-[15px] leading-relaxed text-ink/85">

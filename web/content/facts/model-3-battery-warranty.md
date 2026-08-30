@@ -1,44 +1,43 @@
-# Tesla Model 3: Battery and Drive Unit Limited Warranty
+# Tesla Model 3: Battery Warranty
 
-## How long it lasts
+## Coverage at a glance
 
-Tesla publishes two tiers for the Model 3, and which one a car gets depends on its trim.
+| Item | Answer |
+|---|---|
+| Term | 8 years, both tiers[^1] |
+| Mileage cap | 100,000 or 120,000 miles depending on trim; see the two tiers below[^1][^2] |
+| Capacity floor | Minimum 70% retention of battery capacity over the warranty period[^1] |
+| Normal degradation | Not covered; the floor is minimum 70% retention[^1][^3] |
+| How capacity is measured | Not defined. The measurement method is "at the sole discretion of Tesla," and the vehicle's range estimate is not the measure[^1] |
+| Replacement pack | Not necessarily new: a condition appropriate to the vehicle's age and mileage, sufficient to meet the minimum capacity for the rest of the original warranty period[^1] |
+| Transfers to a second owner | Yes, at no cost. Tesla's support page attaches the condition that the ownership transfer is performed through Tesla[^4][^2] |
+| Whole warranty voided by | A defaced VIN, a tampered odometer, a branded or unclean title, or a vehicle an insurer has declared a total loss[^5] |
 
-- Tesla's warranty document, effective June 5, 2025, states them by battery family:[^1]
-  - "Model 3 and Model Y Standard or Standard Range Plus - 8 years or 100,000 miles (160,000 km), whichever comes first, with minimum 70% retention of Battery capacity over the warranty period."
-  - "Model 3 and Model Y Long Range or Performance - 8 years or 120,000 miles (192,000 km), whichever comes first, with minimum 70% retention of Battery capacity over the warranty period."
-- Tesla's support page states the same two tiers using the trim names it publishes today:[^2]
-  - Model 3 RWD: 8 years or 100,000 miles, minimum 70% retention.
-  - Model 3 Premium RWD, Model 3 Premium AWD, Model 3 Performance AWD: 8 years or 120,000 miles, minimum 70% retention.
+## The two mileage tiers
 
-## What Tesla means by 70% retention
+| Coverage | Warranty document names[^1] | Support page names[^2] |
+|---|---|---|
+| 8 years or 100,000 miles (160,000 km), minimum 70% retention | Model 3 Standard or Standard Range Plus | Model 3 RWD |
+| 8 years or 120,000 miles (192,000 km), minimum 70% retention | Model 3 Long Range or Performance | Model 3 Premium RWD, Model 3 Premium AWD, Model 3 Performance AWD |
 
-- The Battery and Drive Unit Limited Warranty states the floor in one phrase and no more: "minimum 70% retention of Battery capacity over the warranty period."[^1] It does not define how that retention is measured or what evidence establishes a claim.
-- Ordinary degradation is excluded, in the same section. Tesla: "The Battery, like all lithium-ion batteries, will experience gradual energy or power loss with time and use. Loss of Battery energy or power over time or due to or resulting from Battery usage is NOT covered under this Battery and Drive Unit Limited Warranty, except to the extent specified in this Battery and Drive Unit Limited Warranty."[^4]
-- The number on your dash is not the measurement. Tesla: "Note that the vehicle's range estimates are an imperfect measure of Battery capacity because they are affected by additional factors separate from Battery capacity. The measurement method used to determine Battery capacity ... [is] at the sole discretion of Tesla."[^1]
-- A replacement is not necessarily a new pack. Tesla: "the replacement Battery will be in a condition appropriate to the age and mileage of the vehicle sufficient to achieve or exceed the minimum Battery capacity for the remainder of the warranty period of the original Battery."[^1]
-- Changes from software updates are excluded: "Any noticeable changes to the performance of the Battery due to these software updates are NOT covered under this Battery and Drive Unit Limited Warranty."[^4]
-- Tesla does state the 70% floor as a defect standard — but in a different warranty, and only for newer cars. The wording "free from defects in material and workmanship that would cause the retention of Battery capacity to fall below 70%" belongs to the Battery ZEV Limited Warranty,[^3] which Tesla limits to model year 2026 and later (see below). It is not the Battery and Drive Unit Limited Warranty's wording, and it does not describe the coverage on a pre-2026 Model 3.
+## ZEV warranties
 
-## It transfers to you
+| Coverage | Term | Gated by |
+|---|---|---|
+| Battery ZEV Limited Warranty | 8 years or 100,000 miles (160,000 km)[^6] | Model Year 2026 and later, and a Warranty Region of the United States or Canada[^6][^2] |
+| High-Priced Propulsion-Related Parts ZEV Limited Warranty | 7 years or 70,000 miles (110,000 km)[^6] | Model Year 2026 and later, and a Warranty Region of the United States or Canada[^6][^2] |
 
-- Tesla: "This New Vehicle Limited Warranty is transferable at no cost to any person(s) who subsequently and lawfully assume(s) ownership of the vehicle after the first retail purchaser within the described limitations of this New Vehicle Limited Warranty."[^5]
-- On Tesla's support page, the same answer with a condition attached: "Your New Vehicle Limited Warranty will follow your vehicle and be transferred to the new owner when a vehicle ownership transfer is performed through Tesla."[^2]
-
-## The ZEV warranties, and the two conditions that gate them
-
-- These are separate coverages, not part of the Battery and Drive Unit Limited Warranty.
-- Model year: "NOTE: The ZEV Limited Warranties apply only to vehicles of Model Year 2026 and later."[^3]
-- Warranty Region: Tesla "provides four ZEV Limited Warranties, which apply to all vehicles with a Warranty Region of the United States and Canada, except as specifically noted below."[^3] Tesla's support page puts the same condition as "If your New Vehicle Limited Warranty is valid in the United States or Canada, your vehicle may be covered by the ZEV Limited Warranties."[^2]
-- Battery ZEV Limited Warranty: 8 years or 100,000 miles (160,000 km), whichever comes first.[^3]
-- High-Priced Propulsion-Related Parts ZEV Limited Warranty: 7 years or 70,000 miles (110,000 km), whichever comes first.[^3]
+- These are separate coverages, not part of the Battery and Drive Unit Limited Warranty.[^6]
+- The 70% defect standard — battery capacity not falling below 70% through defects in material and workmanship — is the Battery ZEV Limited Warranty's wording, so it does not describe coverage on a pre-2026 Model 3.[^6]
 
 ## What is excluded
 
-- Tesla: damage from "intentional actions (including intentionally abusing or destroying your vehicle or ignoring active vehicle warnings or service notifications), a collision or accident (excluding from Battery fires as specified above), or the servicing or opening of the Battery or Drive Unit by non-Tesla or non-certified personnel, is not covered."[^4]
-- Also excluded: damaging the Battery or intentionally attempting to extend or reduce its life by physical means or programming; exposing the Battery to direct flame; flooding the Battery.[^4]
-- Battery fire runs the other way, with a carve-back. Tesla: this warranty "will also cover damage to your vehicle from a Battery fire even if it is the result of driver error." Tesla's next sentence limits that: "(Coverage will not extend to damage that had already been sustained before a Battery fire occurred, or to any damage if the Battery fire occurred after your vehicle had already been totaled.)"[^1]
-- Being excluded is not the same as the warranty being void. Tesla has a separate "Voided Warranty" section listing the circumstances in which the whole New Vehicle Limited Warranty can be voided for a car — among them a defaced VIN, a tampered odometer, a branded or unclean title, and a vehicle an insurer has declared a total loss.[^6] Everything else on this page is coverage that does not apply to a particular kind of damage, not coverage that has been cancelled.
+- Intentional actions, including abusing or destroying the vehicle or ignoring active vehicle warnings or service notifications.[^3]
+- A collision or accident, other than damage from a battery fire.[^3]
+- Servicing or opening the Battery or Drive Unit by non-Tesla or non-certified personnel.[^3]
+- Damaging the battery, or extending or reducing its life by physical means or programming; direct flame; flooding.[^3]
+- Noticeable performance changes caused by software updates.[^3]
+- Battery fire damage is covered even from driver error, except damage sustained before the fire and any damage if the fire occurred after the vehicle had already been totaled.[^1]
 
 ## See it for yourself
 
@@ -49,20 +48,18 @@ Tesla publishes two tiers for the Model 3, and which one a car gets depends on i
 
 ## Footnotes
 
-[^1]: Tesla, *New Vehicle Limited Warranty* (PDF, 18 pages, EFFECTIVE DATE: 2025/06/05), "Battery and Drive Unit Limited Warranty," printed pp. 4–5: the Battery-fire sentence and its parenthetical on printed p. 4, the Model 3 and Model Y coverage bullets and the Battery-capacity footnote on printed p. 5. https://digitalassets.tesla.com/tesla-contents/image/upload/tesla-new-vehicle-limited-warranty-en-us.pdf. Page numbers throughout these footnotes are the document's own printed page numbers; the PDF's page index runs one ahead of them.
+[^1]: Tesla, *New Vehicle Limited Warranty* (PDF, 18 pages, EFFECTIVE DATE: 2025/06/05), "Battery and Drive Unit Limited Warranty," printed pp. 4–5. https://digitalassets.tesla.com/tesla-contents/image/upload/tesla-new-vehicle-limited-warranty-en-us.pdf
 
-[^2]: Tesla, "Vehicle Warranty," Tesla Support: the "Battery and Drive Unit Limited Warranty" table, the "Zero-Emissions Vehicle (ZEV) Limited Warranties" paragraph, and the Frequently Asked Questions entries "Does the New Vehicle Limited Warranty transfer to the new owner if I sell my vehicle?" and "Where can I find the warranty coverage that comes with my vehicle?". https://www.tesla.com/support/vehicle-warranty. Read in a browser session; tesla.com blocks a plain HTTP fetch.
+[^2]: Tesla, "Vehicle Warranty," Tesla Support: the "Battery and Drive Unit Limited Warranty" table, the "Zero-Emissions Vehicle (ZEV) Limited Warranties" paragraph, and the FAQ entries on transferring the warranty and finding a vehicle's coverage. https://www.tesla.com/support/vehicle-warranty
 
-[^3]: Tesla, *New Vehicle Limited Warranty* (PDF), "Zero-Emissions Vehicle Limited Warranties," printed pp. 5–6. Same file as footnote 1.
+[^3]: Same document as footnote 1, "Battery and Drive Unit Limited Warranty," exclusions, printed p. 5.
 
-[^4]: Tesla, *New Vehicle Limited Warranty* (PDF), "Battery and Drive Unit Limited Warranty," exclusions, printed p. 5. Same file as footnote 1.
+[^4]: Same document as footnote 1, "Ownership Transfer," printed p. 3.
 
-[^5]: Tesla, *New Vehicle Limited Warranty* (PDF), "Ownership Transfer," printed p. 3. Same file as footnote 1.
+[^5]: Same document as footnote 1, "Exclusions and Limitations — Voided Warranty," printed p. 10.
 
-[^6]: Tesla, *New Vehicle Limited Warranty* (PDF), "Exclusions and Limitations — Voided Warranty," printed p. 10. Same file as footnote 1.
+[^6]: Same document as footnote 1, "Zero-Emissions Vehicle Limited Warranties," printed pp. 5–6.
 
 ## Scope note
 
-Everything above is from the New Vehicle Limited Warranty Tesla publishes today, whose own cover page gives an effective date of 2025/06/05, and from Tesla's currently published support page. No model year is named in the sentences that state the two coverage tiers.
-
-An older Model 3 may be covered by an older document, and that rule is Tesla's own, stated for every model rather than inferred here: "The limited warranties above apply only to vehicles purchased directly from Tesla on or after the date listed on the limited warranty; any Tesla vehicles purchased prior to that date are subject to the applicable limited warranty effective as of the date of purchase of such vehicle directly from Tesla."[^2] Tesla adds: "This warranty should only be used for general knowledge. For the authoritative information of your vehicle, view the warranty provided with your vehicle."[^2] The booklet delivered with a specific car is the authority for that car, and this sheet does not claim what an older Model 3's booklet says.
+Everything above is from the New Vehicle Limited Warranty Tesla publishes today, effective 2025/06/05, and Tesla's current support page; no model year is named in the sentences that state the two coverage tiers. Tesla's own rule is that a vehicle purchased before a warranty's effective date is covered by the warranty in effect on its purchase date.[^2] The booklet delivered with a specific car is the authority for that car, and this sheet does not claim what an older Model 3's booklet says.

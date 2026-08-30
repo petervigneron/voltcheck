@@ -1,45 +1,76 @@
-# Hyundai Ioniq 6 (2023–2025 model years verified): Charging
+# Hyundai Ioniq 6: Charging
 
 ## DC fast charging
 
-- Hyundai's spec sheets for model years 2023, 2024, and 2025 carry identical charge-time figures. Nothing about Ioniq 6 charging changed across those three years in Hyundai's own numbers.[^1][^2][^3]
-- RWD Standard Range (53.0 kWh, 480V): up to 80% charge takes 58 minutes on a 50 kW charger, and 18 minutes on the charger Hyundai labels "Rapid Charging: 350kw."[^1][^2][^3]
-- RWD and AWD (77.4 kWh, 697V): up to 80% charge takes 73 minutes on a 50 kW charger, and 18 minutes on the "Rapid Charging: 350kw" charger.[^1][^2][^3]
-- Every Ioniq 6 is standard-equipped with what Hyundai's On-Board Charger table calls "Ultra-Fast Charger (up to 800V / 350 kW)," marked "S" for All Models in each of the three years.[^1][^2][^3]
-- Hyundai states these charge times as "Up to 80% charge." It does not publish the starting state of charge they assume.
+| Model year | Pack | Up to 80% on a 50 kW charger | Up to 80% at 350 kW |
+|---|---|---|---|
+| 2023 | 53.0 kWh RWD Standard Range | 58 min[^1] | 18 min[^1] |
+| 2023 | 77.4 kWh RWD and AWD | 73 min[^1] | 18 min[^1] |
+| 2024 | 53.0 kWh RWD Standard Range | 58 min[^2] | 18 min[^2] |
+| 2024 | 77.4 kWh RWD and AWD | 73 min[^2] | 18 min[^2] |
+| 2025 | 53.0 kWh RWD Standard Range | 58 min[^3] | 18 min[^3] |
+| 2025 | 77.4 kWh RWD and AWD | 73 min[^3] | 18 min[^3] |
 
-## AC (Level 2, home) charging
+- Every Ioniq 6 is standard-equipped with what Hyundai's On-Board Charger table calls an Ultra-Fast Charger, up to 800V and 350 kW, marked "S" for All Models in all three years.[^1][^2][^3]
+- Hyundai states these times as up to 80% charge and does not publish the starting state of charge they assume.[^1][^2][^3]
 
-- Onboard AC charger maximum capacity: 10.9 kW. Standard on every trim, all three model years.[^1][^2][^3]
-- AC Level II charge time, up to 80% charge: 5 hours 20 minutes on the 53.0 kWh Standard Range pack, 6 hours 55 minutes on the 77.4 kWh pack. Identical in all three model years.[^1][^2][^3]
-- The 2023 spec sheet labels that row "AC Level II, Standard 120V." The 2024 and 2025 sheets label the same row, with the same times, "AC Level II, Standard 240V." The times did not change; only Hyundai's label did.[^1][^2][^3]
+## Home charging (Level 2)
 
-## Connector and NACS adapter
+| Model year | Onboard AC charger | Pack | Up to 80% on AC Level II |
+|---|---|---|---|
+| 2023 | 10.9 kW, standard on every trim[^1] | 53.0 kWh Standard Range | 5 hr 20 min[^1] |
+| 2023 | 10.9 kW, standard on every trim[^1] | 77.4 kWh | 6 hr 55 min[^1] |
+| 2024 | 10.9 kW, standard on every trim[^2] | 53.0 kWh Standard Range | 5 hr 20 min[^2] |
+| 2024 | 10.9 kW, standard on every trim[^2] | 77.4 kWh | 6 hr 55 min[^2] |
+| 2025 | 10.9 kW, standard on every trim[^3] | 53.0 kWh Standard Range | 5 hr 20 min[^3] |
+| 2025 | 10.9 kW, standard on every trim[^3] | 77.4 kWh | 6 hr 55 min[^3] |
 
-- Model years 2023 through 2025 ship with a Combined Charging System (CCS) port, not a native NACS port. Hyundai's own words, naming the models whose owners gained Supercharger access by adapter: "U.S. owners of the current Hyundai KONA Electric, IONIQ Electric hatchback, IONIQ 5, and IONIQ 6 models equipped with a Combined Charging System (CCS) port gain access to 20,000 Tesla Superchargers in the United States using a North American Charging Standard (NACS) adapter."[^4]
-- Hyundai's adapter-giveaway eligibility list states the Ioniq 6 model-year span covered by that CCS-port adapter program in its own words: "22MY-25MY IONIQ 6."[^5]
-- The Ioniq 6 is not among the models Hyundai names as getting a built-in NACS port. Hyundai's own list of that group: "Including native NACS ports on the 2025 IONIQ 5, upcoming 2026 IONIQ 9, and future EVs."[^4]
-- Reaching a Tesla Supercharger therefore requires a Hyundai CCS-to-NACS adapter. Hyundai's own words: this adapter "is essential for reliable charging at V3 Tesla Superchargers and other NACS DC fast charging stations."[^4]
-- The adapter was free to owners and lessees who bought or leased on or before January 31, 2025, redeemed through a MyHyundai account.[^4][^5]
-- For anyone who bought after that date, adapters went on sale at Hyundai dealers on March 17, 2025. Hyundai's own words: "Even though MSRP is $250, the dealer's selling price and final cost of the NACS adapter is completely up to the dealer as they have 100% discretion."[^5]
-- Hyundai's own comparison table gives the NACS adapter's charging speed as "V3 stations (Tesla Superchargers) up to 250kW" and "V4 stations (Tesla Superchargers) up to 350kW." That is Hyundai's figure for the adapter, not for the Ioniq 6. Hyundai does not publish an Ioniq 6-specific maximum rate at a Supercharger.[^6]
-- Using a non-Hyundai adapter is not described as prohibited, but Hyundai's warranty will not cover the result. Hyundai's own words: "HMA warranty will not cover damage caused by non-Hyundai accessories. Only use adapters with CSA or UL Certification."[^7]
-- Charge port location: rear quarter, passenger side.[^1][^2][^3]
+- Hyundai labels that row "AC Level II, Standard 120V" on the 2023 sheet and "AC Level II, Standard 240V" on the 2024 and 2025 sheets; the times are identical.[^1][^2][^3]
+
+## Connector and adapters
+
+| Model year | Port | Charge port location |
+|---|---|---|
+| 2023 | Combined Charging System (CCS), not a native NACS port[^4] | Rear quarter, passenger side[^1] |
+| 2024 | Combined Charging System (CCS), not a native NACS port[^4] | Rear quarter, passenger side[^2] |
+| 2025 | Combined Charging System (CCS), not a native NACS port[^4] | Rear quarter, passenger side[^3] |
+
+- Hyundai's adapter-giveaway eligibility list states the covered span in its own words: "22MY-25MY IONIQ 6."[^5]
+- The Ioniq 6 is not among the models Hyundai names as getting a built-in NACS port; that group is the 2025 IONIQ 5, the upcoming 2026 IONIQ 9, and future EVs.[^4]
+- Reaching a Tesla Supercharger requires a Hyundai CCS-to-NACS adapter, which Hyundai says is essential for reliable charging at V3 Tesla Superchargers and other NACS DC fast charging stations.[^4]
+
+| Item | Detail |
+|---|---|
+| Free adapter | Owners and lessees who bought or leased on or before January 31, 2025, redeemed through a MyHyundai account[^4][^5] |
+| Bought after that date | On sale at Hyundai dealers from March 17, 2025; MSRP $250, with the dealer setting the selling price at 100% discretion[^5] |
+| Adapter charging speed | Up to 250 kW at V3 Tesla Supercharger stations, up to 350 kW at V4 stations — Hyundai's figure for the adapter, not for the Ioniq 6[^6] |
+| Ioniq 6 maximum rate at a Supercharger | Not published[^6] |
+| Non-Hyundai adapters | Not described as prohibited, but Hyundai's warranty will not cover damage caused by non-Hyundai accessories; use only adapters with CSA or UL certification[^7] |
 
 ## Preconditioning
 
-- The battery heater is standard on every Ioniq 6. Hyundai's spec sheets mark the "Battery Heating System / Battery preconditioning function" row "S" across every trim column, all three model years.[^1][^2][^3]
-- Battery conditioning is a driver-selected mode, not an always-on behavior. The 2023 and 2024 owner's manuals both describe one activation path: on the infotainment system, All menus, then EV, then EV Settings, then Battery Conditioning Mode.[^8][^9]
-- What the mode does, in Hyundai's own words: "You can raise the battery temperature to maintain optimal driving performance and DC charging performance at conditions when the low temperature of the high voltage battery temperature may degrade the battery performance."[^8]
-- Setting a charger as the navigation destination optimizes the battery only while the mode is already switched on. Hyundai's own words: "If you set the DC charging station as your destination while using the battery conditioning mode, the battery temperature is optimized for charging and you can shorten the charging time after you arrive and start charging."[^8][^9]
-- The mode also engages on its own in two stated conditions. Hyundai's own words: "If the battery temperature is low during driving or when the scheduled air conditioner/heater is activated, the battery conditioning mode is operated to improve driving performance."[^8][^9]
-- It will not engage at a low state of charge. Hyundai's own words: "To ensure driving distance the battery conditioning mode will not be operated when the battery level is too low."[^8][^9]
-- Running it costs range. Hyundai's own words: "The driving distance may be reduced as energy is required to increase the battery temperature."[^8][^9]
-- Hyundai gates the mode on hardware: "Battery conditioning mode is available for vehicles equipped with the battery heater."[^8][^9]
+| Model year | Battery heater | Battery Conditioning Mode | Activation path |
+|---|---|---|---|
+| 2023 | Standard on every trim; Hyundai gates the mode on it[^1][^8] | Driver-selected, not always-on[^8] | Infotainment, All menus, EV, EV Settings, Battery Conditioning Mode[^8] |
+| 2024 | Standard on every trim; Hyundai gates the mode on it[^2][^9] | Driver-selected, not always-on[^9] | Infotainment, All menus, EV, EV Settings, Battery Conditioning Mode[^9] |
+| 2025 | Standard on every trim[^3] | Not verified — Hyundai's 2025 owner's manual could not be retrieved | Not verified |
+
+- What it does: raises battery temperature to maintain optimal driving and DC charging performance when a low high-voltage battery temperature would degrade performance.[^8][^9]
+- Setting a DC charging station as the navigation destination optimizes the battery for charging only while the mode is already switched on.[^8][^9]
+- It also engages on its own when the battery temperature is low during driving, or when the scheduled air conditioner or heater is activated.[^8][^9]
+- It will not operate when the battery level is too low.[^8][^9]
+- Running it reduces driving distance, since energy goes to raising battery temperature.[^8][^9]
 
 ## Battery packs
 
-- 2023, 2024, and 2025: RWD Standard Range at 53.0 kWh, 480V. RWD and AWD at 77.4 kWh, 697V. Lithium-ion in every case. Unchanged across all three years in Hyundai's own spec sheets.[^1][^2][^3]
+| Model year | Pack | Voltage | Drivetrains |
+|---|---|---|---|
+| 2023 | 53.0 kWh Standard Range, lithium-ion[^1] | 480V | RWD |
+| 2023 | 77.4 kWh, lithium-ion[^1] | 697V | RWD and AWD |
+| 2024 | 53.0 kWh Standard Range, lithium-ion[^2] | 480V | RWD |
+| 2024 | 77.4 kWh, lithium-ion[^2] | 697V | RWD and AWD |
+| 2025 | 53.0 kWh Standard Range, lithium-ion[^3] | 480V | RWD |
+| 2025 | 77.4 kWh, lithium-ion[^3] | 697V | RWD and AWD |
 
 ## See it for yourself
 
@@ -58,22 +89,18 @@
 
 [^4]: Hyundai News, "Hyundai Owners Gain Access to U.S. Tesla Superchargers With Complimentary NACS Adapters," Mar. 25, 2025. https://www.hyundainews.com/releases/4406
 
-[^5]: Hyundai, *NACS Giveaway FAQs*, "Eligibility & Participation" list and Q on adapter cost. https://owners.hyundaiusa.com/us/en/resources/general-information/hyundai-nacs-giveaway-faqs
+[^5]: Hyundai, *NACS Giveaway FAQs*, "Eligibility & Participation" list and the Q on adapter cost. https://owners.hyundaiusa.com/us/en/resources/general-information/hyundai-nacs-giveaway-faqs
 
 [^6]: Hyundai, *NACS Adapter FAQs*, "Adapter Qs - NACS," Q1 comparison table, "Charging Speed" row. https://owners.hyundaiusa.com/us/en/resources/general-information/hyundai-nacs-adapter-faqs
 
 [^7]: Hyundai, *NACS Adapter FAQs*, "Adapter Qs - NACS," Q4. https://owners.hyundaiusa.com/us/en/resources/general-information/hyundai-nacs-adapter-faqs
 
-[^8]: Hyundai, *2023 IONIQ 6 Owner's Manual* (PDF), pp. 1-42 to 1-43 (PDF pages 48-49). https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2023/ioniq-6/2023-Ioniq-6-OM.pdf
+[^8]: Hyundai, *2023 IONIQ 6 Owner's Manual* (PDF), pp. 1-42 to 1-43. https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2023/ioniq-6/2023-Ioniq-6-OM.pdf
 
-[^9]: Hyundai, *2024 IONIQ 6 Owner's Manual* (PDF), pp. 1-42 to 1-43 (PDF pages 50-51). Page 1-42 carries "Setting battery conditioning mode" and its activation path; page 1-43 carries the Information bullets quoted above. https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2024/ioniq-6/2024%20Ioniq%206%20OM.pdf
+[^9]: Hyundai, *2024 IONIQ 6 Owner's Manual* (PDF), pp. 1-42 to 1-43. https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2024/ioniq-6/2024%20Ioniq%206%20OM.pdf
 
-[^10]: Hyundai News, "Hyundai Announces 2026 Model Year Changes" (release 4513), model-list footnote. https://www.hyundainews.com/releases/4513. Read 2026-08-25; Hyundai states on the page that "This document will be updated regularly," so it carries no fixed publication date. Fetched via a real browser session; the release body is rendered client-side.
+[^10]: Hyundai News, "Hyundai Announces 2026 Model Year Changes" (release 4513), model-list footnote. https://www.hyundainews.com/releases/4513
 
 ## Scope note
 
-Model years 2023, 2024, and 2025 verified against Hyundai's own US spec sheets. Preconditioning verified against Hyundai's own 2023 and 2024 US owner's manuals; a 2025 Ioniq 6 owner's manual could not be retrieved from Hyundai's own host (both the hyphenated and space-encoded filename patterns that work for other years returned HTTP 404), so no 2025-specific preconditioning wording is claimed here.
-
-Model year 2026 is not covered, and Hyundai says why: there is no 2026 Ioniq 6 sedan. Hyundai's own words, in the footnote to its 2026 model-year change list: "The IONIQ 6 has been discontinued. Going forward, our award-winning IONIQ 6 lineup will consist of the all-new IONIQ 6 N." Hyundai adds that "IONIQ 6 N arrives later this year" and that "In the meantime, 2025 IONIQ 6 sedans continue to be available at dealers." The IONIQ 6 N is a different car whose charging hardware was not checked for this page, so nothing above should be read as applying to it.[^10]
-
-The Supercharger figures under "Connector and NACS adapter" are Hyundai's specification for its CCS-to-NACS adapter, not for the Ioniq 6. A vehicle's own maximum rate can be lower than the adapter's. Hyundai publishes no Ioniq 6-specific Supercharger rate, so none is stated here.
+Model years 2023, 2024 and 2025, verified against Hyundai's own US spec sheets; preconditioning against Hyundai's own 2023 and 2024 US owner's manuals, as a 2025 Ioniq 6 manual could not be retrieved from Hyundai's host. Model year 2026 is not covered: Hyundai says the IONIQ 6 sedan has been discontinued and the lineup will consist of the all-new IONIQ 6 N, a different car whose charging hardware was not checked here.[^10] The Supercharger speeds above are Hyundai's specification for its CCS-to-NACS adapter, not for the Ioniq 6, for which Hyundai publishes no Supercharger rate.

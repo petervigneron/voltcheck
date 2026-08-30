@@ -15,7 +15,8 @@ export type ListItem = { text: string; sub?: string[] };
 export type FactBlock =
   | { type: "p"; text: string }
   | { type: "ul"; items: ListItem[] }
-  | { type: "h3"; text: string };
+  | { type: "h3"; text: string }
+  | { type: "table"; header: string[]; rows: string[][] };
 
 export type FactSection = {
   heading: string;
@@ -59,6 +60,32 @@ function parseBlocks(raw: string): FactBlock[] {
       flushPara();
       blocks.push({ type: "h3", text: line.slice(4).trim() });
       i++;
+      continue;
+    }
+    if (line.startsWith("|")) {
+      flushPara();
+      // GitHub-style table: header row, |---| separator row, body rows.
+      // A row's leading/trailing pipes are shed before splitting; escaped
+      // pipes are not supported because no sheet needs a literal "|".
+      const splitRow = (l: string) =>
+        l
+          .trim()
+          .replace(/^\|/, "")
+          .replace(/\|$/, "")
+          .split("|")
+          .map((c) => c.trim());
+      const tableLines: string[] = [];
+      while (i < lines.length && lines[i].trim().startsWith("|")) {
+        tableLines.push(lines[i]);
+        i++;
+      }
+      const isSeparator = (l: string) => /^\|?[\s:|-]+\|?$/.test(l.trim()) && l.includes("-");
+      const header = splitRow(tableLines[0]);
+      const rows = tableLines
+        .slice(1)
+        .filter((l) => !isSeparator(l))
+        .map(splitRow);
+      blocks.push({ type: "table", header, rows });
       continue;
     }
     if (/^-\s+/.test(line)) {

@@ -1,46 +1,53 @@
-# Volkswagen ID.4 (model years 2021–2025, US market): Charging
+# Volkswagen ID.4: Charging
 
-## DC fast charging, by model year
+## DC fast charging
 
-- 2021: 125 kW, on every trim — Pro, AWD Pro, Pro S, AWD Pro S, 1st Edition. All carry the 82 kWh (gross) pack. Volkswagen's own figure for what that buys: "charge time: 60 miles of range in about 10 minutes."[^1] The 2021 press kit states the same rate and adds a duration: "At a public DC fast-charging station, with 125 kW charging, the ID.4 can go from five to 80 percent charged in about 38 minutes."[^8]
-- 2022: 135 kW, on every trim — Pro, AWD Pro, Pro S, AWD Pro S.[^2]
-- 2023: the rate depends on the pack, and on which supplier's cells are inside the 82 kWh pack.[^3]
-  - 140 kW on the 62 kWh pack: ID.4 Standard, ID.4 S.
-  - 135 kW on the 82 kWh pack built with LG Energy Solution components. Volkswagen sold that pack only in the rear-drive Pro, Pro S and Pro S Plus, sales codes E813ML, E814ML and E816ML.
-  - 170 kW on the 82 kWh pack built with SK On components: Pro (E813MN), AWD Pro (E813SN), Pro S (E814MN), AWD Pro S (E814SN), Pro S Plus (E816MN), AWD Pro S Plus (E816SN). Every 2023 all-wheel-drive ID.4 uses the SK On pack.
-- 2024: 140 kW on the 62 kWh pack (ID.4 Standard, ID.4 S); 170 kW on the 82 kWh pack (Pro, AWD Pro, Pro S, AWD Pro S, Pro S Plus, AWD Pro S Plus).[^4]
-- 2025: 170 kW on the 82 kWh pack, on all five 82 kWh trims — Pro, AWD Pro, Pro S, AWD Pro S, AWD Pro S Plus.[^5]
+| Model year | Battery and trims | Peak DC rate | 10% to 80% |
+|---|---|---|---|
+| 2021 | 82 kWh gross — Pro, AWD Pro, Pro S, AWD Pro S, 1st Edition | 125 kW[^1][^2] | About 38 min, measured from 5%, at 125 kW[^2] |
+| 2022 | Pro, AWD Pro, Pro S, AWD Pro S | 135 kW[^3] | Not published[^3] |
+| 2023 | 62 kWh — ID.4 Standard, ID.4 S | 140 kW[^4][^5] | Not published for the 62 kWh trims[^5] |
+| 2023 | 82 kWh with LG Energy Solution cells — Pro E813ML, Pro S E814ML, Pro S Plus E816ML, all rear-drive | 135 kW[^4] / 170 kW[^5] | Around 30 min[^5] |
+| 2023 | 82 kWh with SK On cells — Pro E813MN, AWD Pro E813SN, Pro S E814MN, AWD Pro S E814SN, Pro S Plus E816MN, AWD Pro S Plus E816SN | 170 kW[^4][^5] | Around 30 min[^5] |
+| 2024 | 62 kWh — ID.4 Standard, ID.4 S | 140 kW[^6][^7] | Around 30 min[^7] |
+| 2024 | 82 kWh — Pro, AWD Pro, Pro S, AWD Pro S, Pro S Plus, AWD Pro S Plus | 170 kW[^6] / 175 kW[^7] | Around 30 min[^7] |
+| 2025 | 82 kWh — Pro, AWD Pro, Pro S, AWD Pro S, AWD Pro S Plus | 170 kW[^8] / 175 kW[^9] | Around 30 min[^9] |
+| 2025 | 62 kWh — ID.4 Limited, ID.4 S Limited, built early in the model year and mirroring the 2024 Standard and S | Not published[^8][^9] | Around 30 min[^9] |
 
-Volkswagen's order guides and its press kits do not always agree on the 82 kWh pack's peak rate. Where they differ, this sheet states both figures rather than picking one; every figure below is Volkswagen's own.
+- Every 2023 all-wheel-drive ID.4 uses the SK On pack.[^4]
+- Volkswagen's other published 2021 DC figure: 60 miles of range in about 10 minutes.[^1]
 
-- 2023: the order guide splits the 82 kWh pack by cell supplier — 135 kW on the LG pack, 170 kW on the SK On pack.[^3] The 2023 press kit draws no supplier line: "The ID.4 Standard and S offer a 140-kW DC fast-charging rate, while Pro models equipped with the larger 82 kWh battery offer a 170-kW DC fast-charging speed, up from 2022."[^9] Read literally, that sentence claims 170 kW for the LG-pack rear-drive cars the order guide holds to 135 kW. On 140 kW for the 62 kWh cars, the two documents agree.
-- 2024: the order guide says 170 kW.[^4] The 2024 press kit says "The ID.4 Standard and S offer a 140-kW DC fast-charging rate, while Pro models equipped with the larger 82 kWh battery offer a 175-kW DC fast-charging speed."[^10] Again the two documents agree on the 62 kWh cars' 140 kW and part ways on the 82 kWh pack, 170 against 175.
-- 2025: the order guide says 170 kW.[^5] The 2025 press kit says "The ID.4 Pro, Pro S and Pro S Plus models offer a 175-kW DC fast-charging speed."[^6]
+## Home charging (Level 2)
 
-The one year where both documents exist and agree in full is 2021: the press kit's 125 kW matches the order guide's.[^1][^8] The 2022 order guide's 135 kW has no press kit to check against, because Volkswagen published none for 2022.[^10]
+| Model year | Onboard AC charger | Charging cable | Volkswagen's published AC figure |
+|---|---|---|---|
+| 2021 | 11 kW, every trim[^1] | L1 charging cable standard[^1] | 33 miles of range in about 1 hour at 220V[^1] |
+| 2022 | 11 kW, every trim[^3] | L1 charging cable standard[^3] | Not published[^3] |
+| 2023 | 11 kW, every trim[^4] | Sold separately[^4] | Not published[^4] |
+| 2024 | 11 kW, every trim[^6] | Sold separately[^6] | Not published[^6] |
+| 2025 | 11 kW, every trim[^8] | Sold separately[^8] | Full in approximately 8 hours on a home or public Level 2 charger[^9] |
 
-Volkswagen's 2025 order guide states a DC rate only for the 82 kWh battery. Volkswagen's 2025 press kit says a small number of 62 kWh cars were built early in the model year and sold as ID.4 Limited and ID.4 S Limited, and that they "mirror the 2024 ID.4 Standard and ID.4 S respectively."[^6] No 2025 Volkswagen document opened for this sheet states a DC rate for those two trims, so none is claimed here.
+## Connector and adapters
 
-- Time to charge 10% to 80% on a DC fast charger: around 30 minutes. Volkswagen's sentence attaches that to the 175 kW figure and then generalises — "This allows all ID.4 trims to DC fast charge from 10-80% SOC in around 30 minutes" — in a paragraph naming only the Pro, Pro S and Pro S Plus. It does not carve out the 62 kWh Limited and S Limited cars described elsewhere in the same press kit, and no separate figure is published for them.[^6] The 2023 and 2024 press kits make the same around-30-minutes claim in nearly the same sentence — 2023's is scoped to "all ID.4 Pro trims", 2024's to "all ID.4 trims".[^9][^10]
+| Model year | Port |
+|---|---|
+| 2021 | CCS socket, all models[^2] |
+| 2022 | Not stated — Volkswagen published no 2022 ID.4 press kit, and no order guide names a port type[^3] |
+| 2023 | CCS socket, all models[^5] |
+| 2024 | CCS socket, all models[^7] |
+| 2025 | CCS socket, all models[^9] |
 
-## Connector
-
-- CCS, and Volkswagen has said so in the same words every year it published a kit: "All ID.4 models are equipped with a CCS (Combined Charging System) socket, which allows for both home and public charging." That sentence is verbatim identical in Volkswagen's 2021, 2023, 2024 and 2025 ID.4 press kits.[^8][^9][^10][^6] Model year 2022 is the one gap — Volkswagen published no 2022 ID.4 press kit, and no year's order guide names a port type — so 2022 rests on the years bracketing it rather than on a 2022 document of its own.
-- Tesla Supercharger access opened to ID.4 owners on November 18, 2025, and requires a Volkswagen-approved NACS-to-CCS DC adapter.[^7]
-- Adapter MSRP is $200, sold by Volkswagen dealers and at parts.vw.com. Original owners of model year 2025 ID.4s are eligible for a $100 rebate, claimed within 90 days of purchase and no later than July 15, 2026. An adapter comes standard with every model year 2026 Volkswagen EV.[^7]
-- The adapter is for DC fast charging only. Volkswagen states it is not designed for Level 1 or Level 2 AC equipment, including home chargers and Tesla Destination Chargers.[^7]
-- Volkswagen states that owners of certain 2024 and 2025 ID.4s "will receive information about a recommended software update to support optimal charging behavior," and strongly recommends updating the vehicle's software before using the adapter.[^7]
-
-## AC (Level 2, home) charging
-
-- Onboard AC charger: 11 kW, on every trim, model years 2021 through 2025.[^1][^2][^3][^4][^5]
-- 2021: Volkswagen's own figure for a 220V charge is "33 miles of range in about 1 hour."[^1]
-- 2025: Volkswagen states the 11 kW onboard charger "allows the ID.4 to charge to full in approximately eight hours" at a home or public Level 2 charger.[^6]
-- Model years 2021 and 2022 include an L1 charging cable as standard equipment.[^1][^2] Model years 2023, 2024 and 2025 do not: those guides state "11 kW AC charging capability (charging cable sold separately)."[^3][^4][^5]
+- Tesla Supercharger access opened to ID.4 owners on November 18, 2025, and requires a Volkswagen-approved NACS-to-CCS DC adapter.[^10]
+- Adapter MSRP is $200, at Volkswagen dealers and parts.vw.com; original owners of model year 2025 ID.4s are eligible for a $100 rebate, claimed within 90 days of purchase and no later than July 15, 2026.[^10]
+- An adapter comes standard with every model year 2026 Volkswagen EV.[^10]
+- The adapter is for DC fast charging only — not designed for Level 1 or Level 2 AC equipment, including home chargers and Tesla Destination Chargers.[^10]
+- Volkswagen strongly recommends a software update before using the adapter on certain 2024 and 2025 ID.4s.[^10]
 
 ## Battery preconditioning
 
-Not covered. None of the Volkswagen documents opened for this sheet — five model-year order guides, the 2021, 2023, 2024 and 2025 press kits, and the November 2025 Supercharger-access release — describes battery preconditioning behavior on the ID.4, automatic or driver-activated. The four press kits were searched for the word and none contains it; the same search of Volkswagen's 2025 ID. Buzz press kit returns four mentions, which is what tells you the search works rather than the pages being empty.
+| Model years | Battery preconditioning |
+|---|---|
+| 2021–2025 | Not documented — no Volkswagen order guide or press kit opened for this sheet describes automatic or driver-activated battery preconditioning on the ID.4[^1][^2][^3][^4][^5][^6][^7][^8][^9] |
 
 ## See it for yourself
 
@@ -51,28 +58,26 @@ Not covered. None of the Volkswagen documents opened for this sheet — five mod
 
 ## Footnotes
 
-[^1]: Volkswagen, *2021 ID.4 Order Guide* (PDF, Volkswagen of America letterhead, created 09/25/2020), p. 5, "Available Features part 2 of 2." Mirror: https://volkswagenorderguides.com/wp-content/uploads/2023/10/2021_Volkswagen_ID4_EV_Order_Guide.pdf
+[^1]: Volkswagen, *2021 ID.4 Order Guide* (PDF), p. 5, "Available Features part 2 of 2." Mirror: https://volkswagenorderguides.com/wp-content/uploads/2023/10/2021_Volkswagen_ID4_EV_Order_Guide.pdf
 
-[^2]: Volkswagen, *2022 Retail Order Guide US ID.4* (PDF, created 02/04/2022), p. 5, "Available Features part 2 of 2"; trim list on p. 1. Mirror: https://www.streetvw.com/static/dealer-12576/custom-pages/brochures/2022_Retail_Order_Guide_US_ID.4.pdf
+[^2]: Volkswagen, *2021 ID.4 Press Kit*, battery and charging section. https://media.vw.com/press-kits/2021-id4-press-kit
 
-[^3]: Volkswagen, *2023 ID.4 Order Guide* (PDF, created 12/19/2022), p. 5, "Available Features part 2 of 2"; the per-trim battery-supplier split and sales codes are on p. 1, "Trim Descriptions." Mirror: https://volkswagenorderguides.com/wp-content/uploads/2023/10/2023_Volkswagen_ID4_EV_Order_Guide.pdf
+[^3]: Volkswagen, *2022 Retail Order Guide US ID.4* (PDF), p. 5, "Available Features part 2 of 2"; trim list on p. 1. Mirror: https://www.streetvw.com/static/dealer-12576/custom-pages/brochures/2022_Retail_Order_Guide_US_ID.4.pdf
 
-[^4]: Volkswagen, *MY2024 Retail Order Guide US ID.4* (PDF, created 01/19/2024), p. 5, "Available Features part 2 of 2"; trim list on p. 1. Mirror: https://di-uploads-pod16.s3.us-east-1.amazonaws.com/emichvw/uploads/2024/02/MY2024_Retail_Order_Guide_US_ID.4.pdf
+[^4]: Volkswagen, *2023 ID.4 Order Guide* (PDF), p. 5, "Available Features part 2 of 2"; per-trim battery-supplier split and sales codes on p. 1, "Trim Descriptions." Mirror: https://volkswagenorderguides.com/wp-content/uploads/2023/10/2023_Volkswagen_ID4_EV_Order_Guide.pdf
 
-[^5]: Volkswagen, *2025 Volkswagen ID.4 Order Guide* (PDF, created 02/04/2025), p. 4, "Available Features part 2 of 2"; trim list on p. 1. https://volkswagenorderguides.com/wp-content/uploads/2025/02/2025_Volkswagen_ID.4_Order_Guide.pdf
+[^5]: Volkswagen, *2023 ID.4 Press Kit*, battery and charging section. https://media.vw.com/press-kits/2023-id4-press-kit
 
-[^6]: Volkswagen, *2025 ID.4 Press Kit*, "Charging" and "New for 2025" sections. https://media.vw.com/press-kits/2025-id4-press-kit. media.vw.com renders its text in the browser only; this page was read in a browser session, not by a plain HTTP fetch.
+[^6]: Volkswagen, *MY2024 Retail Order Guide US ID.4* (PDF), p. 5, "Available Features part 2 of 2"; trim list on p. 1. Mirror: https://di-uploads-pod16.s3.us-east-1.amazonaws.com/emichvw/uploads/2024/02/MY2024_Retail_Order_Guide_US_ID.4.pdf
 
-[^7]: Volkswagen of America, "Volkswagen announces access to Tesla Supercharger network and availability of NACS DC adapter," Nov 12, 2025. https://media.vw.com/releases/1891. Read in a browser session for the same reason.
+[^7]: Volkswagen, *2024 ID.4 Press Kit*, battery and charging section. https://media.vw.com/press-kits/2024-id4-press-kit
 
-[^8]: Volkswagen, *2021 ID.4 Press Kit*, battery and charging section. https://media.vw.com/press-kits/2021-id4-press-kit. Read in a browser session; a plain HTTP fetch of this address returns a 2,586-byte empty shell with no article text in it.
+[^8]: Volkswagen, *2025 Volkswagen ID.4 Order Guide* (PDF), p. 4, "Available Features part 2 of 2"; trim list on p. 1. https://volkswagenorderguides.com/wp-content/uploads/2025/02/2025_Volkswagen_ID.4_Order_Guide.pdf
 
-[^9]: Volkswagen, *2023 ID.4 Press Kit*, battery and charging section. https://media.vw.com/press-kits/2023-id4-press-kit. Read in a browser session for the same reason.
+[^9]: Volkswagen, *2025 ID.4 Press Kit*, "Charging" and "New for 2025" sections. https://media.vw.com/press-kits/2025-id4-press-kit
 
-[^10]: Volkswagen, *2024 ID.4 Press Kit*, battery and charging section. https://media.vw.com/press-kits/2024-id4-press-kit. Read in a browser session for the same reason. No 2022 ID.4 press kit exists at the matching address: where the 2021, 2023, 2024 and 2025 slugs each return a full article, both /press-kits/2022-id4-press-kit and /press-kits/2022-volkswagen-id4-press-kit return the site's not-found shell.
+[^10]: Volkswagen of America, "Volkswagen announces access to Tesla Supercharger network and availability of NACS DC adapter," Nov 12, 2025. https://media.vw.com/releases/1891
 
 ## Scope note
 
-Model years 2021 through 2025, US market, checked directly against Volkswagen's own order guide for each of those five years, plus Volkswagen's 2021, 2023, 2024 and 2025 ID.4 press kits and its November 2025 Supercharger release. Model year 2026 was not checked and is not claimed; the only 2026 fact on this page is Volkswagen's own statement that an adapter ships with every 2026 Volkswagen EV.
-
-The 62 kWh pack was not offered every year. It appears in the 2023 and 2024 order guides as ID.4 Standard and ID.4 S, and in 2025 only as the Limited and S Limited cars described in the press kit, for which Volkswagen publishes no DC rate. Where a year's guide states no rate for a pack, this sheet states none.
+Model years 2021 through 2025, US market, from Volkswagen's own order guide for each of those years plus its 2021, 2023, 2024 and 2025 ID.4 press kits and its November 2025 Supercharger release. Volkswagen published no 2022 ID.4 press kit, so model year 2022 rests on the order guide alone. Where the order guide and the press kit differ on a peak DC rate, both figures are shown; model year 2026 was not checked and is not claimed, beyond Volkswagen's own statement that an adapter ships with every 2026 Volkswagen EV.

@@ -636,19 +636,19 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     contentFile: "f-150-lightning-heat-pump",
     pageTitle: "Ford F-150 Lightning heat pump by year: which model years have one | Voltcheck",
     description:
-      "Whether the Ford F-150 Lightning has a heat pump, by model year, sourced to Ford's own order guides. No 2022-2024 Lightning has one; every 2025 and 2026 does.",
+      "Whether the Ford F-150 Lightning has a heat pump, by model year. Standard on all trims from 2024 on; no 2022 or 2023 Lightning has one. Sourced to Ford's own support site and order guides.",
     breadcrumbLabel: "Ford F-150 Lightning heat pump",
-    dateModified: "2026-08-25",
+    dateModified: "2026-08-30",
     faq: [
       {
-        question: "Does the 2022-2024 Ford F-150 Lightning have a heat pump?",
+        question: "Does the Ford F-150 Lightning have a heat pump?",
         answer:
-          "No. No F-150 Lightning built for model years 2022, 2023, or 2024 has a heat pump, on any series or battery, per Ford's own order guides for each of those years. The word \"pump\" does not appear anywhere in any of the three guides. Ford's order guides for those years do not name the truck's cabin heating system at all.",
+          "Model years 2024 and newer do, on every trim. Ford's own words: \"The Ford Vapor Injection Heat Pump is standard on all trims of the 2024 and newer F-150 Lightning.\" Model years 2022 and 2023 do not — Ford's 2024 order guide introduces the Vapor Injection Heat Pump as New/Changed for MY2024, and the 2022 and 2023 order guides carry no heat-pump line.",
       },
       {
-        question: "Does the 2025 or 2026 Ford F-150 Lightning have a heat pump?",
+        question: "Does the 2024 Ford F-150 Lightning have a heat pump?",
         answer:
-          "Yes. Every F-150 Lightning built for model years 2025 and 2026 has a Vapor Injection Heat Pump. Ford lists it under MECHANICAL on the SuperCrew Pro Series standard-equipment page — the base series — in both years, and Ford's guides state that each series includes the standard equipment of the previous series except where an exception is noted. No later series page notes an exception to it.",
+          "Yes. Every 2024 F-150 Lightning has the Vapor Injection Heat Pump as standard equipment, on all trims, per Ford's own support site and Ford's 2024 order guide, which lists it as New/Changed for MY2024.",
       },
     ],
   },
