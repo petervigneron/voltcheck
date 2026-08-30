@@ -147,7 +147,7 @@ test("vds: the V-Series row takes 1GYXP and refuses 1GYKP, whatever the trim say
   // A real V-Series resolves even when its trim field is "-V", which is below
   // trimStringsOverlap's three-character floor and used to match nothing.
   for (const t of ["-V", "V", "V-Series", undefined]) {
-    assert.equal(v("1GYXPNRL3SZ307993", t).exact?.id, "lyriq-v-2026-27", `trim ${t}`);
+    assert.equal(v("1GYXPNRL3SZ307993", t).exact?.id, "lyriq-v-2026", `trim ${t}`);
   }
 });
 

@@ -1,0 +1,67 @@
+name: Tests
+
+# web/tests/ ran on no schedule and in no workflow. Twenty-six test files,
+# 296 assertions, every one of them written because a wrong fact reached a
+# real listing — and nothing executed them between a commit and a deploy. The
+# only thing standing between a red test and production was whether someone
+# happened to run it by hand.
+#
+# Two were red on main when this workflow was written (2026-08-30), and the
+# way they got there is the whole argument for this file. Commit 8424dde
+# (2026-08-26) split the Cadillac Lyriq-V and Vistiq rows at the 2027
+# charge-port boundary, because GM's own table makes MY2027 NACS-native while
+# MY2026 still ships CCS1 — one row cannot hold two plugs. Correct change.
+# It renamed four row ids and left the old "lyriq-v-2026-27" and
+# "cadillac-vistiq-2026-27" behind in match.test.ts and in backfill's
+# TESTED_EST_BY_ROWID, so both cars' tested highway range — 260 mi and 334 mi,
+# keyed to ids that no longer existed — rendered nowhere for four days.
+#
+# backfill-rowids.test.ts is the check written for exactly that failure, after
+# five keys were orphaned the same way in August. It caught this one too. It
+# had simply been failing, unread, the entire time. The test was never the
+# gap; running it was.
+#
+# Cheap enough that there is no reason to scope it: no install, no secrets, no
+# database, ~8 seconds. Node's type stripping runs the TypeScript directly.
+
+on:
+  push:
+    paths:
+      - "web/**"
+      - ".github/workflows/tests.yml"
+  pull_request:
+    paths:
+      - "web/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      # Everything in tests/ EXCEPT a named exclusion list, rather than a list
+      # of what to include. That direction matters: an include-list is the same
+      # hand-maintained-index bug as the orphaned row ids above, and it fails
+      # silently — a new test simply never runs and nobody finds out. This way
+      # a new test is picked up the moment it lands, and the only thing needing
+      # a hand edit is the rare test that pulls in a dependency, which fails
+      # loudly with a module-not-found rather than quietly not running.
+      #
+      # pro-funnel.test.ts imports lib/pro.ts, which imports `next`. The .tsx
+      # tests (battery-risk, price-sparkline, pro-page) need react-testing-
+      # library and a DOM, and are not matched by the *.test.ts glob. Running
+      # those means an npm install and a DOM runner; worth doing, not worth
+      # blocking the other 296 assertions on.
+      - name: Run tests
+        working-directory: web
+        run: |
+          files=$(ls tests/*.test.ts | grep -v 'tests/pro-funnel.test.ts')
+          echo "$files"
+          node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs --test $files
