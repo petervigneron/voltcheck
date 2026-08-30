@@ -10,6 +10,7 @@ import { RESEARCH_ROWS_10 } from "./data10";
 import { RESEARCH_ROWS_11 } from "./data11";
 import { RESEARCH_ROWS_12 } from "./data12";
 import { applyBackfill } from "./backfill";
+import { vpicEvModelAliases } from "./vpicEvAlias";
 
 const ALL_ROWS = [...ENRICHMENT_ROWS, ...RESEARCH_ROWS, ...RESEARCH_ROWS_3, ...RESEARCH_ROWS_4, ...RESEARCH_ROWS_5, ...RESEARCH_ROWS_6, ...RESEARCH_ROWS_9, ...RESEARCH_ROWS_10, ...RESEARCH_ROWS_11, ...RESEARCH_ROWS_12];
 
@@ -313,10 +314,23 @@ function matchEnrichmentRaw(
   // plus-bearing model strings (Lexus NX/RX 450h+, TX 550h+) before applying:
   // each deliberately lists its plus-less spellings as aliases, and `.some()`
   // still admits those pairs — parity only rejects the cross-matches.
+  // vPIC strips the electric badge off nameplates a combustion car shares
+  // ("Equinox EV" → "Equinox", "XC90 Recharge" → "XC90"). vpicEvAlias.ts maps
+  // those back to their corpus names, gated on the decode's OWN
+  // electrificationLevel — so this set only ever grows for a car the VIN
+  // itself proves is a BEV/PHEV, and never on the listing path, where
+  // decodeFromListing doesn't set the field.
+  // The plus-parity check runs against whichever decode-side string matched:
+  // an alias target like "TX 550h+" carries the "+" the vPIC model lacks, and
+  // comparing it against the bare "TX" would veto the very match the alias
+  // exists to make.
+  const decodeModels = [model, ...vpicEvModelAliases(decode)];
   let rows = ALL_ROWS.filter(
     (r) =>
       canonicalMake(r.make, r.model) === mk &&
-      [r.model, ...(r.modelAliases ?? [])].some((m) => modelKey(m) === modelKey(model) && !trimPlusMismatch(m, model)) &&
+      [r.model, ...(r.modelAliases ?? [])].some((m) =>
+        decodeModels.some((dm) => modelKey(m) === modelKey(dm) && !trimPlusMismatch(m, dm))
+      ) &&
       modelYear >= r.modelYears[0] &&
       modelYear <= r.modelYears[1] &&
       // Spanning a cohort's versions is exactly when a feedLabelRow must NOT

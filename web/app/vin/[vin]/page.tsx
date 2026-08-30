@@ -5,7 +5,9 @@ import { notFound } from "next/navigation";
 import { decodeVin, isValidVin } from "@/lib/vpic";
 import { decodeTeslaVin, isTeslaVin } from "@/lib/tesla-vin";
 import { matchEnrichment, vpicTrimIsPatternArtifact } from "@/lib/enrichment/match";
+import { vpicEvModelAliases } from "@/lib/enrichment/vpicEvAlias";
 import { withTeslaCollisionAbstention } from "@/lib/listings/teslaRangeAbstain";
+import type { EnrichmentResult, VinDecode } from "@/lib/types";
 import { buildChecklist } from "@/lib/checklist";
 import { FactRow } from "@/components/FactRow";
 import { EnrichmentFacts, Section, NOTE_STYLE } from "@/components/EnrichmentReport";
@@ -15,6 +17,19 @@ export const dynamic = "force-dynamic";
 
 // Shared between generateMetadata and the page so a request decodes the VIN once.
 const getDecode = cache(decodeVin);
+
+// vPIC names some electrified cars after their combustion sibling ("Equinox"
+// for an Equinox EV, "XC90" for the T8). When the electrification-gated alias
+// (lib/enrichment/vpicEvAlias.ts) is what resolved the match and every matched
+// row agrees on the showroom name, the heading should carry that name — the
+// VIN itself proved the car is the electric one. Anywhere the rows disagree,
+// or no alias was in play, vPIC's own string stands.
+function resolvedModel(decode: VinDecode, enrichment: EnrichmentResult): string | undefined {
+  if (vpicEvModelAliases(decode).length === 0) return decode.model;
+  const rows = enrichment.exact ? [enrichment.exact] : enrichment.candidates ?? [];
+  const models = new Set(rows.map((r) => r.model));
+  return models.size === 1 ? [...models][0] : decode.model;
+}
 
 // VIN reports are a tool, not indexable content: the VIN space is effectively
 // infinite and near-duplicate across cars, so these are marked noindex,follow
@@ -27,8 +42,12 @@ export async function generateMetadata(props: PageProps<"/vin/[vin]">): Promise<
   if (!isValidVin(vin)) return { title: "VIN check | Voltcheck", ...noindex };
 
   const decode = await getDecode(vin);
+  const tesla = isTeslaVin(vin) ? decodeTeslaVin(vin) : null;
+  const enrichment = withTeslaCollisionAbstention(decode, matchEnrichment(decode, tesla));
   const trim = vpicTrimIsPatternArtifact(decode) ? undefined : decode.trim;
-  const identity = [decode.modelYear, decode.make, decode.model, trim].filter(Boolean).join(" ");
+  const identity = [decode.modelYear, decode.make, resolvedModel(decode, enrichment), trim]
+    .filter(Boolean)
+    .join(" ");
   const name = decode.usMarket ? identity || "Vehicle" : "Non-US-market vehicle";
 
   return {
@@ -56,7 +75,7 @@ export default async function VinPage(props: PageProps<"/vin/[vin]">) {
   // "GR Sport") is not this car's trim and must not be shown as it — the
   // matcher already refuses to let it pick a row.
   const trimIsArtifact = vpicTrimIsPatternArtifact(decode);
-  const identity = [decode.modelYear, decode.make, decode.model, trimIsArtifact ? undefined : decode.trim]
+  const identity = [decode.modelYear, decode.make, resolvedModel(decode, enrichment), trimIsArtifact ? undefined : decode.trim]
     .filter(Boolean)
     .join(" ");
 

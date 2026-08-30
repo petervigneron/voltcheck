@@ -38,11 +38,14 @@ const argv = process.argv.slice(2);
 const AS_JSON = argv.includes("--json");
 const LIMIT = argv.includes("--limit") ? Number(argv[argv.indexOf("--limit") + 1]) : Infinity;
 
-const { ENRICHMENT_ROWS } = await import(`${ROOT}/web/lib/enrichment/data.ts`);
-const { RESEARCH_ROWS } = await import(`${ROOT}/web/lib/enrichment/data2.ts`);
-const { RESEARCH_ROWS_3 } = await import(`${ROOT}/web/lib/enrichment/data3.ts`);
-const { RESEARCH_ROWS_4 } = await import(`${ROOT}/web/lib/enrichment/data4.ts`);
-const ROWS = [...ENRICHMENT_ROWS, ...RESEARCH_ROWS, ...RESEARCH_ROWS_3, ...RESEARCH_ROWS_4];
+// Every data file match.ts itself reads — an earlier version stopped at
+// data4 and reported rows added in data5+ as unreachable when they weren't.
+const ROWS = [];
+for (const f of ["data", "data2", "data3", "data4", "data5", "data6", "data9", "data10", "data11", "data12"]) {
+  const mod = await import(`${ROOT}/web/lib/enrichment/${f}.ts`);
+  for (const k of Object.keys(mod)) if (Array.isArray(mod[k])) ROWS.push(...mod[k]);
+}
+const { vpicEvModelAliases } = await import(`${ROOT}/web/lib/enrichment/vpicEvAlias.ts`);
 
 // Same normalisation the matcher uses for model comparison, kept deliberately
 // simple: this asks "is this string reachable at all", not "which row wins".
@@ -105,7 +108,7 @@ for (let i = 0; i < samples.length; i += 50) {
   const j = await res.json();
   for (const d of j.Results ?? []) {
     const src = chunk.find((c) => c.vin === d.VIN);
-    if (src) decoded.push({ ...src, vpicMake: d.Make, vpicModel: d.Model });
+    if (src) decoded.push({ ...src, vpicMake: d.Make, vpicModel: d.Model, elec: d.ElectrificationLevel });
   }
 }
 
@@ -117,6 +120,11 @@ for (const d of decoded) {
   if (!d.vpicModel) continue;
   const known = knownByMake.get(norm(d.vpicMake)) ?? knownByMake.get(norm(d.make));
   if (known?.has(norm(d.vpicModel))) continue;
+  // The electrification-gated aliases (web/lib/enrichment/vpicEvAlias.ts)
+  // reach rows a bare model-string comparison can't — count a nameplate
+  // reachable when any gated target answers.
+  const gated = vpicEvModelAliases({ make: d.vpicMake, model: d.vpicModel, electrificationLevel: d.elec });
+  if (gated.some((g) => known?.has(norm(g)))) continue;
   const k = `${d.vpicMake}|${d.vpicModel}`;
   if (!misses.has(k)) misses.set(k, { vpicMake: d.vpicMake, vpicModel: d.vpicModel, feedModel: d.model, corpusMake: d.make, years: [], vin: d.vin });
   misses.get(k).years.push(d.year);
