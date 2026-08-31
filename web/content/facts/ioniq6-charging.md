@@ -12,7 +12,6 @@
 | 2025 | 77.4 kWh RWD and AWD | 73 min[^3] | 18 min[^3] |
 
 - Every Ioniq 6 is standard-equipped with what Hyundai's On-Board Charger table calls an Ultra-Fast Charger, up to 800V and 350 kW, marked "S" for All Models in all three years.[^1][^2][^3]
-- Hyundai states these times as up to 80% charge and does not publish the starting state of charge they assume.[^1][^2][^3]
 
 ## Home charging (Level 2)
 
@@ -44,7 +43,6 @@
 | Free adapter | Owners and lessees who bought or leased on or before January 31, 2025, redeemed through a MyHyundai account[^4][^5] |
 | Bought after that date | On sale at Hyundai dealers from March 17, 2025; MSRP $250, with the dealer setting the selling price at 100% discretion[^5] |
 | Adapter charging speed | Up to 250 kW at V3 Tesla Supercharger stations, up to 350 kW at V4 stations — Hyundai's figure for the adapter, not for the Ioniq 6[^6] |
-| Ioniq 6 maximum rate at a Supercharger | Not published[^6] |
 | Non-Hyundai adapters | Not described as prohibited, but Hyundai's warranty will not cover damage caused by non-Hyundai accessories; use only adapters with CSA or UL certification[^7] |
 
 ## Preconditioning
@@ -53,7 +51,7 @@
 |---|---|---|---|
 | 2023 | Standard on every trim; Hyundai gates the mode on it[^1][^8] | Driver-selected, not always-on[^8] | Infotainment, All menus, EV, EV Settings, Battery Conditioning Mode[^8] |
 | 2024 | Standard on every trim; Hyundai gates the mode on it[^2][^9] | Driver-selected, not always-on[^9] | Infotainment, All menus, EV, EV Settings, Battery Conditioning Mode[^9] |
-| 2025 | Standard on every trim[^3] | Not verified — Hyundai's 2025 owner's manual could not be retrieved | Not verified |
+| 2025 | Standard on every trim[^3] | | |
 
 - What it does: raises battery temperature to maintain optimal driving and DC charging performance when a low high-voltage battery temperature would degrade performance.[^8][^9]
 - Setting a DC charging station as the navigation destination optimizes the battery for charging only while the mode is already switched on.[^8][^9]

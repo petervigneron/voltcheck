@@ -267,14 +267,14 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     contentFile: "f150-lightning-charging",
     pageTitle: "Ford F-150 Lightning charging: charge times, onboard charger by year | Voltcheck",
     description:
-      "Ford's own charge times for the F-150 Lightning, 2023 through 2025, and the onboard-charger change that turns an 8-hour overnight into 13. Sourced to Ford's spec sheets and order guides.",
+      "Ford's own charge times for the F-150 Lightning, 2022 through 2025, and the onboard-charger change that turns an 8-hour overnight into 13. Sourced to Ford's spec sheets and order guides.",
     breadcrumbLabel: "Ford F-150 Lightning charging",
-    dateModified: "2026-08-25",
+    dateModified: "2026-08-30",
     faq: [
       {
         question: "How long does a Ford F-150 Lightning take to DC fast charge?",
         answer:
-          "Ford publishes a 15% to 80% time, not a 10% to 80% time. For 2023 on a 150 kW charger: 44 minutes on the 98 kWh Standard Range pack, 41 minutes on the 131 kWh Extended Range pack. For 2024 on a 150 kW+ charger: 32 minutes Standard Range, 38 minutes Extended Range. For 2025 on a 150 kW+ charger: 32 minutes on the 98 kWh pack and 38 minutes on both the 123 kWh and 131 kWh Extended Range packs. The 2024 truck is markedly quicker than the 2023 one on the same pack.",
+          "Ford publishes a 15% to 80% time, not a 10% to 80% time. For 2022 and 2023 on a 150 kW charger: 44 minutes on the 98 kWh Standard Range pack, 41 minutes on the 131 kWh Extended Range pack. For 2024 on a 150 kW+ charger: 32 minutes Standard Range, 38 minutes Extended Range. For 2025 on a 150 kW+ charger: 32 minutes on the 98 kWh pack and 38 minutes on both the 123 kWh and 131 kWh Extended Range packs. The 2024 truck is markedly quicker than the 2023 one on the same pack.",
       },
       {
         question: "What is the F-150 Lightning's peak DC charging speed?",
@@ -284,7 +284,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       {
         question: "How fast does an F-150 Lightning charge at home?",
         answer:
-          "It depends on the onboard charger, which changed. In 2023 the Extended Range pack came with a 19.2 kW / 17.6 kW dual onboard charger and the Standard Range pack with 11.3 kW / 10.5 kW. From 2024, Ford's order guides list 11.2 kW for the 98 kWh Standard Range battery and 11.5 kW for an Extended Range truck with single onboard charging — the 131 kWh pack, and from 2025 the 123 kWh pack too. The 19.2 kW dual charger is a fleet configuration in both 2024 and 2025, not a retail one: Ford's 2024 order guide marks its order code 99M \"F\" for Fleet Only Option, its 2024 spec sheet labels the row Fleet Only, and its 2025 spec sheet adds \"Fleet configuration only, not available for retail sale.\" Ford's 2025 order guide is not consistent with itself on this: on the Flash series page 99M sits under \"Fleet Only Options\" marked \"F\", but on the Pro series page the same code is marked \"O\", an ordinary option. The Pro page's marking is the only Ford source pointing the other way. A retail 2024 or 2025 Extended Range truck should be assumed to have the 11.5 kW single charger. Ford's 15-100% times: for 2024, 10 hours Standard Range and 13 hours Extended Range on a 48A or 80A station; for 2025, 10, 12 and 13 hours on the 98, 123 and 131 kWh packs.",
+          "It depends on the onboard charger, which changed. In 2022 and 2023 the Extended Range pack came with a 19.2 kW / 17.6 kW dual onboard charger and the Standard Range pack with 11.3 kW / 10.5 kW. From 2024, Ford's order guides list 11.2 kW for the 98 kWh Standard Range battery and 11.5 kW for an Extended Range truck with single onboard charging — the 131 kWh pack, and from 2025 the 123 kWh pack too. The 19.2 kW dual charger is a fleet configuration in both 2024 and 2025, not a retail one: Ford's 2024 order guide marks its order code 99M \"F\" for Fleet Only Option, its 2024 spec sheet labels the row Fleet Only, and its 2025 spec sheet adds \"Fleet configuration only, not available for retail sale.\" Ford's 2025 order guide is not consistent with itself on this: on the Flash series page 99M sits under \"Fleet Only Options\" marked \"F\", but on the Pro series page the same code is marked \"O\", an ordinary option. The Pro page's marking is the only Ford source pointing the other way. A retail 2024 or 2025 Extended Range truck should be assumed to have the 11.5 kW single charger. Ford's 15-100% times: for 2024, 10 hours Standard Range and 13 hours Extended Range on a 48A or 80A station; for 2025, 10, 12 and 13 hours on the 98, 123 and 131 kWh packs.",
       },
       {
         question: "Does the F-150 Lightning come with the Ford Charge Station Pro?",

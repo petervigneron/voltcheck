@@ -53,10 +53,9 @@
 |---|---|
 | 2022–2024 | CCS1. Kia dates the native NACS port to model year 2025[^7] and puts the 2024 and earlier EV6 in the group that needs an adapter to reach one[^8] |
 | 2025 | Native NACS, standard. Kia's 2025 owner's manual documents a CCS1 adapter, if equipped, which is what a NACS-port car needs[^7][^9] |
-| 2026 | Not stated in any Kia document opened for this sheet |
 
 - Kia sells three adapters: NACS to CCS1, which lets an existing CCS1 Kia DC fast charge on NACS; CCS1 to NACS, which lets a NACS-equipped Kia charge on existing CCS DC chargers; and J1772 to NACS, which lets a NACS-equipped Kia AC-charge on existing Level 2 chargers.[^8]
-- Buyers who took delivery of a 2024 EV6 from September 4, 2024 onward received an adapter free of charge. Buyers who took delivery before that date may purchase one from an authorized Kia dealer; Kia publishes no price for it.[^8]
+- Buyers who took delivery of a 2024 EV6 from September 4, 2024 onward received an adapter free of charge; earlier buyers may purchase one from an authorized Kia dealer.[^8]
 - Charge port door location, 2025: rear, left side, standard on every trim.[^4]
 
 ## Preconditioning
@@ -70,7 +69,6 @@
 | Remote start | Can be activated from the smartphone app while parked; ends when the battery reaches the right range or after 30 minutes[^9] |
 | Cost | Uses battery energy to optimize temperature, which may reduce driving range[^9] |
 | Limits | May need sufficient time to work, and may not work to secure range if the charge is low[^9] |
-| Which trims are equipped | Not stated. Kia's 2025 Features & Options sheet has no battery-conditioning row[^10] |
 
 ## See it for yourself
 
@@ -99,7 +97,6 @@
 
 [^9]: Kia, *2025 EV6 Owner's Manual* (PDF, 593 pages; mirror), pp. 1-15 to 1-16 for battery conditioning mode, p. 1-30 for the CCS1 adapter. https://cdn.dealereprocess.org/cdn/servicemanuals/kia/2025-ev6.pdf
 
-[^10]: Kia, *2025 Kia EV6 Features & Options* (spreadsheet, kiamedia.com document ID 23182, dated 04/21/25). https://www.kiamedia.com/us/en/download/23182/file/xlsx
 
 ## Scope note
 

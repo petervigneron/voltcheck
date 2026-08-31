@@ -7,9 +7,9 @@
 | Model year | Pack | 10% to 80% on a 150 kW (400V)-class charger | 10% to 80% on a greater-than-250 kW (800V)-class charger |
 |---|---|---|---|
 | 2022 | 77.4 kWh, the only pack in Hyundai's 2022 spec sheet | 25 min ("est.")[^1] | 18 min[^1] |
-| 2023 | 58.0 kWh RWD Standard Range | Not specified — Hyundai prints "TBD"[^2] | 18 min[^2] |
+| 2023 | 58.0 kWh RWD Standard Range | | 18 min[^2] |
 | 2023 | 77.4 kWh RWD and AWD | 25 min ("est.")[^2] | 18 min[^2] |
-| 2024 | 58.0 kWh RWD Standard Range | Not specified — Hyundai prints "TBD"[^2] | 18 min[^2] |
+| 2024 | 58.0 kWh RWD Standard Range | | 18 min[^2] |
 | 2024 | 77.4 kWh RWD and AWD | 25 min ("est.")[^2] | 18 min[^2] |
 
 ### 2025 (native NACS port)
@@ -21,7 +21,7 @@
 
 | Item | Detail |
 |---|---|
-| Rate at a Tesla Supercharger through the native NACS port | Up to 125 kW — Hyundai's wording: "125kW at this time"[^4] |
+| Rate at a Tesla Supercharger through the native NACS port | Up to 125 kW at this time[^4] |
 | Supercharger stalls supported | V3 (250 kW) and V4 (350 kW, currently 250 kW); not compatible with V1 (100 kW) or V2 (125 and 150 kW)[^5] |
 
 ## Home charging (Level 2)
@@ -60,10 +60,10 @@
 
 | Model year | Feature | How it activates | Hardware requirement |
 |---|---|---|---|
-| 2022 | High Voltage Battery Warmer System | Automatically once the charging connector is plugged in, according to battery temperature; not proactively while driving toward a charger[^20] | Not stated[^20] |
+| 2022 | High Voltage Battery Warmer System | Automatically once the charging connector is plugged in, according to battery temperature; not proactively while driving toward a charger[^20] | |
 | 2022 | Winter Mode | Manual only — selected or deselected in EV Settings; no navigation-linked path[^21] | Vehicles equipped with the battery heater[^21] |
 | 2023 | Battery conditioning mode (if equipped) | Manual only — selected or deselected in EV Settings; no navigation-linked path[^22] | Vehicles equipped with the battery heater[^22] |
-| 2024 | Battery conditioning mode | Manual EV Settings toggle, plus a navigation-linked behavior — setting a DC charging station as the destination while using the mode optimizes battery temperature for charging[^23] | Not stated in the 2024 manual's own words[^23] |
+| 2024 | Battery conditioning mode | Manual EV Settings toggle, plus a navigation-linked behavior — setting a DC charging station as the destination while using the mode optimizes battery temperature for charging[^23] | |
 | 2025 | Battery Conditioning | Manual — Home screen, Electric Vehicle, settings icon, Battery Conditioning, Active — or automatic, by setting a DC charging station as destination or waypoint[^24] | Vehicles equipped with a battery heater[^24] |
 
 | Model year | Battery heater standard on |

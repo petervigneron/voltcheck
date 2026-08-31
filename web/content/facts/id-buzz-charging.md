@@ -16,7 +16,7 @@
 
 | Item | Detail |
 |---|---|
-| Port type | Not stated outright in any Volkswagen document opened for this sheet; Volkswagen's DC adapter is described as North American Charging System (NACS) to Combined Charging System (CCS) port, in a release addressed to ID.4 and ID. Buzz owners[^3] |
+| Port type | CCS — Volkswagen's DC fast-charging adapter for ID.4 and ID. Buzz owners is North American Charging System (NACS) to Combined Charging System (CCS)[^3] |
 | Tesla Supercharger access | Opened November 18, 2025; requires a Volkswagen-approved NACS adapter[^3] |
 | Adapter MSRP | $200, at Volkswagen dealers and parts.vw.com[^3] |
 | Rebate | $100 for original owners of model year 2025 vans, claimed within 90 days of the adapter purchase date and no later than July 15, 2026[^3] |

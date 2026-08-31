@@ -20,6 +20,17 @@ function blockTexts(b: FactBlock): string[] {
   return [...b.header, ...b.rows.flat()];
 }
 
+// The copy rule, enforced (owner, 2026-08-30, after "Peak DC charging rate:
+// not published. Ford states DC fast charging as a test condition…" shipped):
+// a page body states values, never the absence of values and never the
+// research that produced them. If we don't have the number, the row doesn't
+// exist. Sourcing lives in footnotes; scope limits live in the scope note
+// (which this list deliberately does not police); methodology lives in
+// docs/. "Not offered" / "Not available" stay legal — a maker saying a
+// feature can't be had IS a product fact.
+const ABSENCE_NARRATION =
+  /not published|not documented|not stated|not specified|not verified|not defined|not claimed|no claim|this sheet|this page|publishes no|does not publish|do not publish|was checked|were checked|not checked|wording|no \w+ document|document opened|documents? behind/i;
+
 for (const entry of FACT_SHEETS) {
   test(`${entry.contentFile} parses into the fact-sheet shape`, () => {
     const parsed = loadFactSheet(entry.contentFile);
@@ -36,6 +47,13 @@ for (const entry of FACT_SHEETS) {
       if (t.type !== "table") continue;
       for (const row of t.rows) {
         assert.equal(row.length, t.header.length, `ragged table row: [${row.join(" · ")}]`);
+      }
+    }
+
+    for (const section of parsed.sections) {
+      for (const text of [section.heading, ...section.blocks.flatMap(blockTexts)]) {
+        const hit = ABSENCE_NARRATION.exec(text);
+        assert.equal(hit, null, `absence-narration on the page: "${text.slice(0, 120)}" (matched "${hit?.[0]}")`);
       }
     }
 

@@ -9,7 +9,7 @@
 | Capacity floor | A warranty repair or replacement must restore at least the energy capacity the battery had before the failure, and no less than 70% of original capacity[^1] |
 | Normal degradation | Hyundai's handbook states it both ways; see the bullet below[^3] |
 | Replacement pack | May be new or refurbished[^1] |
-| Transfers to a second owner | Not stated by Hyundai[^4][^5] |
+| Transfers to a second owner | Hyundai's transfer section names six coverages that transfer and cuts the Powertrain warranty to 5 years/60,000 miles for later owners; the electric-vehicle battery warranty is in neither list[^4][^5] |
 | Also covered | Battery Management System, Blower Assembly, Electronic Air Compressor, Power Relay Assembly, Hybrid Starter and Generator, Traction Motor including housing case, Hybrid Power Control Unit, OBC, Electric Power Control unit[^3] |
 | Towing | Covered on the same clock when the vehicle is inoperable due to a warrantable defect[^1] |
 | California 150,000-mile note | Does not apply. It covers the Plug-in Hybrid Battery on a TZEV-certified vehicle; the Ioniq 5 is battery-electric[^3] |

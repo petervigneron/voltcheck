@@ -16,7 +16,7 @@
 
 - The refrigerant label is on the underside of the hood, and Kia says it carries the amount of refrigerant.[^6][^7]
 - With a heat pump the air conditioning charge is 850±25 g of R-1234yf; without one, 750±25 g.[^8]
-- Kia prints its own caveat under the label illustration — the label in the vehicle may differ from it — and no Kia document says the label's figure is the specification table's figure.[^7]
+- Kia's caveat: the label in the vehicle may differ from the illustration.[^7]
 
 ## See it for yourself
 

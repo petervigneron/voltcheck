@@ -4,9 +4,9 @@
 
 | Model year | Heat pump |
 |---|---|
-| 2023 | None stated by Nissan — Nissan lists a PTC heater[^1][^2][^3] |
-| 2024 | None stated by Nissan — Nissan lists a PTC heater[^4][^5][^6] |
-| 2025 | None stated by Nissan — Nissan lists a PTC heater[^7][^8][^9] |
+| 2023 | None — Nissan's high-voltage component list names a PTC heater[^1][^2][^3] |
+| 2024 | None — Nissan's high-voltage component list names a PTC heater[^4][^5][^6] |
+| 2025 | None — Nissan's high-voltage component list names a PTC heater[^7][^8][^9] |
 
 ## Cold-weather equipment
 

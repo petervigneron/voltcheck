@@ -11,7 +11,6 @@
 | 2023 Bolt EV | Standard — RPO CBT listed as standard equipment on 1LT and 2LT[^6] |
 
 - The option is invisible in the model name and the trim, so a 2017–2021 car has to be checked individually.
-- GM does not publish a peak kW figure for either car. Its documents specify the charger, not the car: at least 80 kW available in 2017 and 2020[^2][^4], then a current instead of a power from 2022 — 150 amps[^5][^7].
 - Charging does not stop at the 30-minute mark: it continues to 100% at a gradually slower rate.[^7]
 - Charging speed varies significantly with outside temperature.[^7]
 

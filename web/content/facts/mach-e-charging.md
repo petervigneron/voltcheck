@@ -10,8 +10,6 @@
 | 2024 | Up to 150 kW[^4] | 72 kWh Standard Range, 91 kWh Extended Range[^4] |
 | 2025 | Up to 150 kW[^5] | 73 kWh Standard Range or 88 kWh Extended Range on Select and Premium, 91 kWh Extended Range on GT[^6] |
 
-- One DC figure covers the car: Ford publishes no separate rate for the Standard Range pack in any of the 2021 to 2025 order guides.[^1][^2][^3][^4][^5]
-- Time from 10% to 80%: not published for any trim or model year in the Ford documents opened for this sheet.[^1][^2][^3][^4][^5]
 
 ## Connector and adapters
 
@@ -53,7 +51,7 @@ Ford's figures for a 2025 Mustang Mach-E, 0% to 100%:
 
 | Feature | Mustang Mach-E |
 |---|---|
-| Battery preconditioning | Runs off navigation, and Ford's wording is available Connected Navigation rather than standard[^11] |
+| Battery preconditioning | Runs off navigation; Connected Navigation is available equipment, not standard[^11] |
 
 ## See it for yourself
 

@@ -18,7 +18,7 @@
 
 | Model years | Cabin heater |
 |---|---|
-| Bolt EV 2017–2020 | HVAC electric heater, GM's own name for it[^1][^2][^4] |
+| Bolt EV 2017–2020 | HVAC electric heater[^1][^2][^4] |
 
 ## See it for yourself
 

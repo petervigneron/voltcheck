@@ -32,7 +32,6 @@ Nissan's own words: "Quick charge capability is only available on vehicles manuf
 |---|---|
 | Normal charge (Level 2) | AC 220-240 volt, 16 A or 32 A[^2] |
 | Trickle charge (Level 1) | AC 110-120 volt, 15 A dedicated outlet[^2] |
-| Onboard charger power in kW | Not published[^1][^2] |
 
 - Nissan does not recommend trickle charging for regular use, because it takes more time than normal charging.[^2]
 

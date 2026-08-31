@@ -8,8 +8,6 @@
 | Supercharge, Model 3 Rear-Wheel Drive | Up to 170 miles in 15 minutes[^2] |
 | Peak rate, V3 Supercharger | Up to 250 kW[^1] |
 | Peak rate, V4 Supercharger | Up to 250 kW, the same as V3, for Model S, Model 3, Model X and Model Y; only Cybertruck charges up to 325 kW[^1] |
-| 10% to 80% charge time | Not published[^1][^2] |
-| Per-trim DC peak in kilowatts | Not published[^1][^2] |
 
 - Tesla's basis for the 15-minute figure: vehicle efficiency at a constant highway speed of 65 mph, with actual range and charging performance varying by Supercharger type, vehicle configuration, state of charge, battery temperature, speed, weather and elevation change.[^2]
 - Not every car reaches 250 kW: Tesla says rates vary with the size and age of the battery pack, state of charge, ambient temperature and vehicle configuration.[^1]

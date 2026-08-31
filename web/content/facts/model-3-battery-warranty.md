@@ -8,7 +8,7 @@
 | Mileage cap | 100,000 or 120,000 miles depending on trim; see the two tiers below[^1][^2] |
 | Capacity floor | Minimum 70% retention of battery capacity over the warranty period[^1] |
 | Normal degradation | Not covered; the floor is minimum 70% retention[^1][^3] |
-| How capacity is measured | Not defined. The measurement method is "at the sole discretion of Tesla," and the vehicle's range estimate is not the measure[^1] |
+| How capacity is measured | At "the sole discretion of Tesla"; the vehicle's range estimate is not the measure[^1] |
 | Replacement pack | Not necessarily new: a condition appropriate to the vehicle's age and mileage, sufficient to meet the minimum capacity for the rest of the original warranty period[^1] |
 | Transfers to a second owner | Yes, at no cost. Tesla's support page attaches the condition that the ownership transfer is performed through Tesla[^4][^2] |
 | Whole warranty voided by | A defaced VIN, a tampered odometer, a branded or unclean title, or a vehicle an insurer has declared a total loss[^5] |
@@ -28,7 +28,7 @@
 | High-Priced Propulsion-Related Parts ZEV Limited Warranty | 7 years or 70,000 miles (110,000 km)[^6] | Model Year 2026 and later, and a Warranty Region of the United States or Canada[^6][^2] |
 
 - These are separate coverages, not part of the Battery and Drive Unit Limited Warranty.[^6]
-- The 70% defect standard — battery capacity not falling below 70% through defects in material and workmanship — is the Battery ZEV Limited Warranty's wording, so it does not describe coverage on a pre-2026 Model 3.[^6]
+- The 70% defect standard — battery capacity not falling below 70% through defects in material and workmanship — belongs to the Battery ZEV Limited Warranty, not to coverage on a pre-2026 Model 3.[^6]
 
 ## What is excluded
 
