@@ -282,7 +282,7 @@ function matchWithoutTrustedTrim(
   return {
     candidates: rows,
     discriminator:
-      "This listing's trim field is contradicted by its own description, and the VIN doesn't name the version on its own — so we won't pick between these. The window sticker or the door-jamb label settles it.",
+      "The listing's trim and its own description disagree. The window sticker or the door-jamb label settles which version this is.",
   };
 }
 
@@ -450,9 +450,9 @@ function matchEnrichmentRaw(
   // Still ambiguous: say so, and say what question resolves it. That honesty
   // is the product, not a failure state.
   const discriminator = rows.some((r) => r.plant)
-    ? "Two different Model Ys match this listing — 279 mi (~68 kWh) vs 330 mi (~77 kWh) — and listings often blur the trim names. A Fremont-built VIN (11th character F) can only be the 330-mile car; Austin (A) built both, so for an Austin VIN ask for the window sticker or the door-jamb EPA label, which names the exact trim."
+    ? "Two different Model Ys match this listing — 279 mi (~68 kWh) vs 330 mi (~77 kWh). A Fremont-built VIN (11th character F) can only be the 330-mile car; Austin (A) built both — for an Austin VIN the window sticker or the door-jamb EPA label names the exact trim."
     : rows.some((r) => r.trim)
-      ? "Exact trim determines which row applies — the VIN does not reliably encode it. Check the window sticker."
+      ? "The trim decides which of these applies, and the VIN does not encode it. The window sticker names it."
       : rows.some((r) => r.drive)
         ? "The listing doesn't state the drivetrain; AWD and RWD versions carry different EPA ranges."
         : undefined;

@@ -36,7 +36,7 @@ export function isTeslaVin(vin: string): boolean {
 // RWD") and 295 known-ternary cars (vin8 B) read IDENTICALLY at position 7.
 // A field that cannot separate two cohorts that must differ cannot source a
 // chemistry claim, and /vin/ was printing one at high confidence under a
-// heading reading "What the VIN itself proves" - contradicting the LFP the
+// heading claiming VIN-proven certainty - contradicting the LFP the
 // enrichment row printed on the same page for 719 of these cars. Same shape
 // as vPIC's BatteryKWh reading 98.00 for every F-150 Lightning. Chemistry
 // now comes from the enrichment rows alone.

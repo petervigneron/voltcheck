@@ -159,7 +159,7 @@ function collisionProbe(l: TeslaCollisionSubject): EnrichmentResult | undefined 
  * cannot answer this, and the two documents that can are in the car.
  */
 export const TESLA_COLLISION_DISCRIMINATOR =
-  "Tesla's VIN does not encode which version this is: position 8 gives the motor layout, not the trim, and NHTSA's decoder returns a blank trim for every Tesla VIN. These versions share this car's VIN pattern and differ materially in range and pack size. The window sticker or the door-jamb label names the exact one.";
+  "The VIN does not say which of these versions this car is. The window sticker or the door-jamb label names the exact one.";
 
 /**
  * The same abstention, for a bare VIN.

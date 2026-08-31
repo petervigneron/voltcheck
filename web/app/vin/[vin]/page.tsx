@@ -52,7 +52,7 @@ export async function generateMetadata(props: PageProps<"/vin/[vin]">): Promise<
 
   return {
     title: `${name} — VIN ${vin} | Voltcheck`,
-    description: `What VIN ${vin} decodes to: ${name}. Voltcheck shows the battery pack, EPA range, and warranty for this exact configuration where it has one researched.`,
+    description: `What VIN ${vin} decodes to: ${name}. Battery pack, EPA range, and warranty for this configuration.`,
     openGraph: { title: `${name} — VIN check`, description: `The battery, range, and warranty behind VIN ${vin}.`, type: "website", url: `/vin/${vin}` },
     ...noindex,
   };
@@ -97,7 +97,7 @@ export default async function VinPage(props: PageProps<"/vin/[vin]">) {
       {!decode.usMarket && (
         <div className={`rounded-lg border p-4 ${NOTE_STYLE}`}>
           <div className="text-sm font-semibold">
-            NHTSA has no record of this manufacturer; likely a grey import
+            Likely a grey import
           </div>
           <p className="mt-1 text-sm text-zinc-700 dark:text-zinc-300">
             This VIN pattern (e.g. Shanghai-built LRW… or Berlin-built XP7… Teslas) is not a
@@ -108,7 +108,7 @@ export default async function VinPage(props: PageProps<"/vin/[vin]">) {
       )}
 
       {decode.usMarket && (
-        <Section title="What the VIN itself proves">
+        <Section title="From the VIN">
           <div className="grid gap-x-10 sm:grid-cols-2">
             <div>
               <FactRow
@@ -124,28 +124,10 @@ export default async function VinPage(props: PageProps<"/vin/[vin]">) {
             </div>
             <div>
               {decode.trim && !trimIsArtifact && (
-                <FactRow label="Trim (VIN hint, verify)" fact={{ value: decode.trim, source: "vpic", asOf: "—", confidence: "medium" }} />
-              )}
-              {trimIsArtifact && (
-                <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                  The maker filed one VIN pattern covering every trim of this model, so the VIN
-                  does not identify which trim this car is.
-                </p>
+                <FactRow label="Trim" fact={{ value: decode.trim, source: "vpic", asOf: "—", confidence: "medium" }} />
               )}
               {decode.driveType && (
-                <FactRow label="Drive type (VIN hint, verify)" fact={{ value: decode.driveType, source: "vpic", asOf: "—", confidence: "medium" }} />
-              )}
-              {decode.batteryKwhHint !== undefined && (
-                <FactRow
-                  label="Battery kWh (VIN hint, unreliable)"
-                  fact={{
-                    value: decode.batteryKwhHint,
-                    source: "vpic",
-                    asOf: "—",
-                    confidence: "low",
-                    note: "vPIC battery figures are pattern-level, not per-car; a single- and dual-motor car can return the same number. Superseded by the research row below when present.",
-                  }}
-                />
+                <FactRow label="Drive type" fact={{ value: decode.driveType, source: "vpic", asOf: "—", confidence: "medium" }} />
               )}
             </div>
           </div>
@@ -153,13 +135,13 @@ export default async function VinPage(props: PageProps<"/vin/[vin]">) {
       )}
 
       {enrichment.exact && (
-        <Section title="This exact configuration, researched">
+        <Section title="Specifications">
           <EnrichmentFacts row={enrichment.exact} />
         </Section>
       )}
 
       {enrichment.candidates && (
-        <Section title={`${enrichment.candidates.length === 2 ? "Two" : enrichment.candidates.length} materially different cars wear this badge`}>
+        <Section title="Possible configurations">
           {enrichment.discriminator && (
             <p className="mb-4 rounded-lg border border-amber-300 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/40 p-3 text-sm">
               {enrichment.discriminator}
@@ -177,16 +159,6 @@ export default async function VinPage(props: PageProps<"/vin/[vin]">) {
               </div>
             ))}
           </div>
-        </Section>
-      )}
-
-      {decode.usMarket && !enrichment.exact && !enrichment.candidates && (
-        <Section title="This exact configuration, researched">
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
-            No researched row for this model yet. The seed corpus currently covers Tesla Model Y
-            and Model 3, Chevrolet Bolt EV, Hyundai Ioniq 5, and Kia EV6; coverage grows model
-            by model, and nothing here is ever auto-filled from aggregators.
-          </p>
         </Section>
       )}
 
