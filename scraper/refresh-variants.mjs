@@ -64,6 +64,10 @@ const VIEWS = [
   "listing_freshness",
   "ev_cohort_trim_spread",
   "ev_cohort_velocity",
+  // Last on purpose: it ships dark (0057), so it is the one to leave stale
+  // if the night runs out of road. Its cost grows with the archive — 0057's
+  // header says what to do the night it crowds its 60s budget.
+  "ev_cohort_ask_weekly",
 ];
 
 const failed = [];
