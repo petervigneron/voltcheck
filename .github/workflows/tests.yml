@@ -28,10 +28,12 @@ on:
   push:
     paths:
       - "web/**"
+      - "scraper/**"
       - ".github/workflows/tests.yml"
   pull_request:
     paths:
       - "web/**"
+      - "scraper/**"
   workflow_dispatch:
 
 permissions:
@@ -65,3 +67,32 @@ jobs:
           files=$(ls tests/*.test.ts | grep -v 'tests/pro-funnel.test.ts')
           echo "$files"
           node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs --test $files
+
+  # scraper/test/ was the same failure class this workflow exists for: 48
+  # files, 481 assertions, plain node:test, and no workflow ran any of them
+  # until 2026-09-01. Same everything-except-exclusions direction as the web
+  # job — a bare `node --test` uses the runner's default discovery (every
+  # *.test.{js,mjs,cjs} under the working directory, node_modules excluded),
+  # so a new test file runs the moment it lands with no list to maintain.
+  # The bare form rather than `node --test test/` because a directory
+  # positional gets executed as an entry file on current Node ("Cannot find
+  # module .../scraper/test", reproduced on 24.14 even in a clean directory);
+  # discovery resolves to the identical set, since test/ holds every test
+  # file in the lane.
+  #
+  # Nothing here is excluded, because nothing needs to be: the suite imports
+  # only node: builtins and repo files (there is no scraper/package.json at
+  # all, so a green run *proves* zero external deps — no install step), and
+  # the one child_process use is parses.test.mjs running `node --check` on
+  # repo files. No network, no secrets, no database; ~6 seconds locally.
+  scraper:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Run tests
+        working-directory: scraper
+        run: node --test
