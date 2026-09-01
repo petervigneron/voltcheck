@@ -217,7 +217,39 @@ export const EVERCARS_PRICE = "evercars-price";
 // record carrying more than one currency field abstains rather than pick.
 export const VEHICA_PRICE = "vehica-price";
 
-// OEM/aggregator inventory APIs. Each lane reads one documented field out of
+// The 2026-08-31 dark-tail wave. One tag per platform, each naming the one
+// field its extractor reads; none has been verified byte-equal to a JSON-LD
+// offer on live rooftops, so none claims the JSONLD tag (the rule written out
+// at AUTOFUNDS_INTERNET).
+//
+// Dealer Spike's SRP tile price — the ItemList offer the platform's own
+// server-rendered JSON-LD publishes for the tile. Powersports rooftops print
+// ladders (MSRP / "Sale Price") in the tile markup; only the ItemList offer
+// price is read, and a tile whose rendered price disagrees with it abstains.
+export const DEALERSPIKE_PRICE = "dealerspike-price";
+// The same vendor's OLDER generation stores its lot as a cached JS file
+// (imglib/Inventory/cache/{id}/VehInv.js) whose `price` field is what its
+// client template renders. A separate tag from the V7 tile's on the
+// when-in-doubt-split rule: the two fields have never been observed on the
+// same rooftop, let alone verified equal.
+export const DEALERSPIKE_CACHE_PRICE = "dealerspike-cache-price";
+// AutoCorner's VDP details-table "Price" row — the number the page prints in
+// its own labelled table. The SRP's JSON (vehicle_price/vehicle_sale_price)
+// sits behind a robots-disallowed /cgi-bin/ path and is never read.
+export const AUTOCORNER_PRICE = "autocorner-price";
+// AutoRevo's rendered "Our Price" tile value (h3.website_price). Other price
+// labels this platform's themes print (Retail Value, Sale Price ladders)
+// abstain rather than rank — no ladder has been characterised.
+export const AUTOREVO_PRICE = "autorevo-price";
+// ProMax publishes real per-tile Vehicle JSON-LD, so its price rides the
+// generic JSONLD path — no tag here on purpose. (An offers.price of "0" is
+// the platform's no-price state; normalize already treats 0 as no claim.)
+//
+// DealerFront's tile price — the amount beside the platform's own
+// "Asking Price" label, on either of its two templates. Explicitly NOT the
+// CarStory widget's data (identity only, never a number — the AutoManager
+// data-cg-price rule).
+export const DEALERFRONT_ASKING = "dealerfront-asking";
 // one vendor's endpoint; none of them shares a code path with any other, so
 // each gets its own tag rather than a single "oem" bucket that would let a
 // Hyundai field pair against a Kia one on a co-listed VIN.
@@ -273,6 +305,7 @@ const KNOWN = new Set([
   MOTORCARSITES_PRICE,
   ONEAUDI_SALE, WAYNEREAVES_PRICE, ADD_DISPLAY_PRICE,
   DEALERSYNC_FINAL, RECHARGED_PRICE, EVERCARS_PRICE, VEHICA_PRICE,
+  DEALERSPIKE_PRICE, DEALERSPIKE_CACHE_PRICE, AUTOCORNER_PRICE, AUTOREVO_PRICE, DEALERFRONT_ASKING,
 ]);
 
 /** True for a tag this build knows how to emit. OEM lane tags are accepted by

@@ -118,6 +118,20 @@ import { isDealerSync, countDealerSync, DEALERSYNC_SRP_PATH } from "./lib/platfo
 import { isRecharged, isRechargedOrigin, countRecharged } from "./lib/platforms/recharged.mjs";
 import { isEverCars, isEverCarsOrigin, countEverCars, EVERCARS_SRP_PATH } from "./lib/platforms/evercars.mjs";
 import { isVehica, countVehica } from "./lib/platforms/vehica.mjs";
+import {
+  isDealerSpike,
+  dealerSpikeVehicles,
+  countDealerSpikeCache,
+  DEALERSPIKE_SRP_PATH,
+  DEALERSPIKE_OLD_SRP_PATH,
+} from "./lib/platforms/dealerspike.mjs";
+import { isAutoRevo, autoRevoVehicles, autoRevoEntries, AUTOREVO_SRP_PATH } from "./lib/platforms/autorevo.mjs";
+import { isProMax, proMaxSeeds, proMaxVehicles } from "./lib/platforms/promax.mjs";
+import { isAutoCorner, countAutoCorner } from "./lib/platforms/autocorner.mjs";
+import { isDealerAccelerate, dealerAccelerateEntries, DEALERACCELERATE_SRP_PATH } from "./lib/platforms/dealeraccelerate.mjs";
+import { isEBizAutos, ebizAutosOrigins, countEBizAutos } from "./lib/platforms/ebizautos.mjs";
+import { isDealerFront, dealerFrontVehicles, DEALERFRONT_SRP_PATH } from "./lib/platforms/dealerfront.mjs";
+import { isDealerClick, dealerClickVehicles, DEALERCLICK_SRP_PATH } from "./lib/platforms/dealerclick.mjs";
 import { discoverSitemapUrls, rank, dedupe, SRP_PATHS } from "./lib/sitemap.mjs";
 import { spaSignals, countVinUrls } from "./lib/spa-signals.mjs";
 import {
@@ -428,6 +442,27 @@ async function probeSite(site) {
     },
     // Vehica's `found` is a first-page floor, not a lot size — see countVehica.
     { name: "vehica", detect: () => isVehica(home.body), count: () => countVehica(origin), label: "WordPress REST feed, first page of" },
+    // AutoCorner settles off its sitemap — the whole lot with VINs in the
+    // slugs; its JSON endpoint is robots-disallowed and never asked.
+    { name: "autocorner", detect: () => isAutoCorner(home.body), count: () => countAutoCorner(origin), label: "sitemap" },
+    // eBizAutos settles off the inventory HOST the shell homepage references
+    // ({slug}.ebizautos.com or a second custom domain) — the registry domain
+    // itself never renders a car, which is why this cohort read as empty.
+    {
+      name: "ebizautos",
+      detect: () => isEBizAutos(home.body),
+      count: () => countEBizAutos(ebizAutosOrigins(home.body, origin)),
+      label: "vendor-host sitemap",
+    },
+    // Dealer Spike's older generation: the lot is one cached JS file the
+    // /--xAllInventory shell names. Declines cleanly on a V7 rooftop, whose
+    // /--inventory walk below still promotes it.
+    {
+      name: "dealerspike",
+      detect: () => isDealerSpike(home.body),
+      count: () => countDealerSpikeCache(origin),
+      label: "VehInv cache",
+    },
   ]) {
     if (!lane.detect()) continue;
     const { ok, found, hasVin } = await lane.count();
@@ -492,6 +527,14 @@ async function probeSite(site) {
     // the one path that carries cars instead of guessing /inventory.
     dealersync: [DEALERSYNC_SRP_PATH],
     evercars: [EVERCARS_SRP_PATH],
+    // The 2026-08-31 tile lanes: each has one fixed door nothing in the guess
+    // table covers (Dealer Spike's bare /--inventory clears the per-rooftop
+    // SRP slug problem the same way OneAudi's paths do).
+    dealerspike: [DEALERSPIKE_SRP_PATH, DEALERSPIKE_OLD_SRP_PATH],
+    dealerfront: [DEALERFRONT_SRP_PATH],
+    dealerclick: [DEALERCLICK_SRP_PATH],
+    dealeraccelerate: [DEALERACCELERATE_SRP_PATH],
+    autorevo: [AUTOREVO_SRP_PATH],
   };
   // Overfuel's SRP is a per-rooftop slug ("/used-cars-albuquerque-nm") with no
   // fixed path to guess — but the homepage links it, so read it off the page we
@@ -499,6 +542,9 @@ async function probeSite(site) {
   const platformFirst = [
     ...(PLATFORM_SRPS[site.platform] ?? []).map((p) => origin + p),
     ...(site.platform === "overfuel" ? overfuelSeeds(home.body, origin) : []),
+    // ProMax's SRP slug is per-rooftop and sometimes on a sister host, read
+    // off the homepage the way Overfuel's is.
+    ...(isProMax(home.body) ? proMaxSeeds(home.body, origin) : []),
     // Recognised from the homepage as well as from the registry label: this
     // vendor's rooftops are subdomains of the vendor, so most of them enter
     // the registry with no platform on the row at all.
@@ -559,6 +605,11 @@ async function probeSite(site) {
       ...motorcarVehicles(res.body, res.finalUrl),
       ...autoDealersDigitalVehicles(res.body, res.finalUrl),
       ...oneAudiVehicles(res.body),
+      ...dealerSpikeVehicles(res.body, res.finalUrl),
+      ...dealerFrontVehicles(res.body, res.finalUrl),
+      ...dealerClickVehicles(res.body, res.finalUrl),
+      ...(isAutoRevo(res.body) ? autoRevoVehicles(res.body, res.finalUrl) : []),
+      ...(isProMax(res.body) ? proMaxVehicles(res.body, res.finalUrl) : []),
     ];
     const platformVins = [
       ...extractDdcVehicles(res.body).map((d) => d.vin),
@@ -598,13 +649,27 @@ async function probeSite(site) {
       const nextSrp = autoDealersDigitalNextPageUrl(res.finalUrl, autoDealersDigitalCardCount(res.body));
       if (nextSrp && !tryUrls.includes(nextSrp)) tryUrls.push(nextSrp);
     }
-    itemListEntries += extractItemListEntries(res.body).length + mcsEntries.length + addEntries.length;
+    // DealerAccelerate: its ItemList is unreadable to the generic bridge (url
+    // sits on item.url) and its SRP JSON-LD is VIN-less, so without its own
+    // entries the probe fetches the one page that lists the lot, extracts
+    // nothing, and writes the rooftop off. Sold entries are dropped — the
+    // live SRP legitimately shows sold cars still printing their price.
+    const daEntries = isDealerAccelerate(res.body)
+      ? dealerAccelerateEntries(res.body, res.finalUrl).filter((e) => !e.sold)
+      : [];
+    // AutoRevo: some templates print no VIN on the SRP tile (johnbrothersauto
+    // shows 5 of 15) — the VDP has it, so the tile links are followable.
+    const arEntries = isAutoRevo(res.body)
+      ? autoRevoEntries(res.body, res.finalUrl).filter((e) => !e.sold)
+      : [];
+    itemListEntries +=
+      extractItemListEntries(res.body).length + mcsEntries.length + addEntries.length + daEntries.length + arEntries.length;
     if (vehiclesWithVin > 0) break; // bar met, stop spending requests
     // An SRP's ItemList is a list of this dealer's cars, one link each.
     // The crawler follows these to VDPs; the probe used to merely count
     // them and then declare the site a failure — which is how DealerOn
     // dealers with perfectly extractable inventory got written off.
-    for (const e of [...extractItemListEntries(res.body), ...mcsEntries, ...addEntries].slice(0, 2)) {
+    for (const e of [...extractItemListEntries(res.body), ...mcsEntries, ...addEntries, ...daEntries, ...arEntries].slice(0, 2)) {
       if (fetched >= 12) break;
       const vdp = await fetchPage(e.url);
       fetched++;

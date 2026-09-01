@@ -65,6 +65,44 @@ const SIGNATURES = [
   // dealr.cloud: server-rendered SaaS for independents; its JSON-LD carries
   // no VIN, so lib/platforms/dealrcloud.mjs reads the tile markup instead.
   { platform: "dealrcloud", res: [/cdn\.dealrcloud\.com|dealr-dealer-id/i] },
+  // The 2026-08-31 dark-tail wave, all before the loose dealer.com check for
+  // the Overfuel reason above: several of these vendors' rooftops load a
+  // stray dealer.com-hosted image or a "DDC-" prefixed class from a widget.
+  // Every signature is the vendor's own asset/app host, never a brand word.
+  //
+  // Dealer Spike (powersports/RV/truck rooftops). Its pages load the vendor's
+  // CDN and widget hosts on every template seen.
+  { platform: "dealerspike", res: [/\b(?:cdn|www)\.dealerspike\.com|\.dealerspike\.net|dealerspikeparts\.com/i] },
+  // AutoCorner (small independents; ASP-era CGI backend). The one mark every
+  // template shares is the vendor's script include host.
+  { platform: "autocorner", res: [/js-include\.autocorner\.com/i] },
+  // DealerAccelerate (classic/specialty consignment houses). Its image CDN is
+  // on every tile of every rooftop seen.
+  { platform: "dealeraccelerate", res: [/\bcdn(?:-dev)?\.dealeraccelerate\.(?:com|net)/i] },
+  // AutoRevo. Its rooftops serve the vendor's asset host and image CDNs; the
+  // bare word must NOT be the signal — Wix serializes an internal
+  // "excludeFromAutoRevoke" flag on every Wix page, which is how 136 Wix
+  // sites once fingerprinted as this vendor (2026-08-31 scan).
+  { platform: "autorevo", res: [/autorevo-powersites\.com|(?:x-img|cf-img|vms)\.autorevo\.com/i] },
+  // eBizAutos (Miami/Fort Lauderdale exotic lots). The rooftop's registry
+  // domain is usually a shell that links its inventory on the vendor's host;
+  // the photo CDN and the {slug}.ebizautos.com reference are the marks. Kept
+  // byte-identical to ASSET_RE in lib/platforms/ebizautos.mjs (test-asserted).
+  { platform: "ebizautos", res: [/\b(?:cdn|images|stockphotos)\.ebizautos\.media\b|\b[a-z0-9-]+\.ebizautos\.com\b/i] },
+  // DealerFront: a WordPress-plugin template and a hosted-portal template,
+  // marked by the plugin's asset path and the portal's footer credit. Never
+  // data-carstory-* (CarStory is Vroom's widget, not this vendor's). Kept
+  // byte-identical to MARK_RE in lib/platforms/dealerfront.mjs.
+  { platform: "dealerfront", res: [/wp-content\/plugins\/dealerfront\/|powered by dealerfront\.com/i] },
+  // DealerClick's Next.js product ("DealerNetwork"): the vendor's own app
+  // host, its Cloudinary folder, and its image server. The page's JSON-LD is
+  // escaped inside the RSC flight stream, which is why these rooftops read as
+  // empty — lib/platforms/dealerclick.mjs unescapes it. Kept byte-identical
+  // to MARK_RE there.
+  { platform: "dealerclick", res: [/goroutes\.dealerclick\.com|dealerclick\/image\/upload|www\.dealernetwork\.com\/images\/inventory/i] },
+  // ProMax (CX5 product). Its stylesheet library and inventory image server
+  // are the marks; rooftops publish real per-tile Vehicle JSON-LD.
+  { platform: "promax", res: [/CX5_Front_Inventory|promaxinventory\.com|www\.promaxunlimited\.com/i] },
   { platform: "dealer.com", res: [/DDC\.dataLayer/, /ddc-/i, /Dealer\.com/i] },
   { platform: "dealerinspire", res: [/dealerinspire/i, /window\.DI_/i, /di-widget/i] },
   { platform: "sincro", res: [/sincro/i, /cdk_?global/i] },

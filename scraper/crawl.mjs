@@ -78,6 +78,45 @@ import { isDealerSync, pullDealerSync } from "./lib/platforms/dealersync.mjs";
 import { isRecharged, isRechargedOrigin, pullRecharged } from "./lib/platforms/recharged.mjs";
 import { isEverCars, isEverCarsOrigin, pullEverCars } from "./lib/platforms/evercars.mjs";
 import { isVehica, pullVehica } from "./lib/platforms/vehica.mjs";
+import {
+  isDealerSpike,
+  dealerSpikeSeeds,
+  dealerSpikeVehicles,
+  dealerSpikeNextPageUrl,
+} from "./lib/platforms/dealerspike.mjs";
+import { isAutoCorner, pullAutoCorner, autoCornerNeedsVdp, enrichFromAutoCorner } from "./lib/platforms/autocorner.mjs";
+import {
+  isDealerAccelerate,
+  dealerAccelerateSeeds,
+  dealerAccelerateEntries,
+  dealerAccelerateNextPageUrl,
+  isDealerAccelerateSold,
+} from "./lib/platforms/dealeraccelerate.mjs";
+import { isEBizAutos, ebizAutosOrigins, pullEBizAutos } from "./lib/platforms/ebizautos.mjs";
+import {
+  isDealerFront,
+  dealerFrontSeeds,
+  dealerFrontVehicles,
+  dealerFrontNextPageUrl,
+} from "./lib/platforms/dealerfront.mjs";
+import { isDealerClick, dealerClickSeeds, dealerClickVehicles } from "./lib/platforms/dealerclick.mjs";
+import {
+  isAutoRevo,
+  autoRevoSeeds,
+  autoRevoEntries,
+  autoRevoVehicles,
+  autoRevoNextPageUrl,
+  autoRevoTruncated,
+} from "./lib/platforms/autorevo.mjs";
+import {
+  isProMax,
+  proMaxSeeds,
+  proMaxVehicles,
+  proMaxEntries,
+  proMaxFacetSeeds,
+  proMaxLotCount,
+} from "./lib/platforms/promax.mjs";
+import { pullDealerSpikeCache, dealerSpikeVehInvUrl } from "./lib/platforms/dealerspike.mjs";
 
 const args = process.argv.slice(2);
 function flag(name, fallback) {
@@ -228,6 +267,9 @@ async function crawlDealer(domain) {
   const rch = { done: false };
   const ec = { done: false };
   const vh = { done: false };
+  const ac = { done: false };
+  const eb = { done: false };
+  const dsc = { done: false };
   const dvPlat = siteInfo.get(domain)?.platform;
   // Motive joins that list for the same reason: it renders no inventory in
   // HTML at all and publishes its Algolia config on the homepage, so a
@@ -262,6 +304,12 @@ async function crawlDealer(domain) {
     [
       "unknown", "dealervenom", "overfuel", "team-velocity", "ridemotive", "autofunds", "waynereaves", "oneaudi",
       "dealersync", "recharged", "evercars", "vehica",
+      // The 2026-08-31 dark-tail wave: autocorner and ebizautos settle off the
+      // homepage (their doors are sitemaps the homepage authorises or names a
+      // host for), and the tile lanes' unlabelled rooftops are only ever
+      // recognised from a page that carries the vendor's asset host.
+      "autocorner", "ebizautos", "dealerclick", "dealerfront", "dealerspike", "dealeraccelerate",
+      "autorevo", "promax",
     ].includes(dvPlat)
   )
     queue.unshift(origin + "/");
@@ -305,6 +353,51 @@ async function crawlDealer(domain) {
     report.notes.push("automanager: seeded SRP");
   }
   if (siteInfo.get(domain)?.platform === "automanager") seedAutoManager();
+
+  // The 2026-08-31 dark-tail tile lanes, each with one fixed SRP door:
+  // Dealer Spike's generic /--inventory (?pg=N), DealerFront's /inventory/
+  // (path- or query-paged by template), DealerClick's /inventory (the whole
+  // lot in one page's flight payload), and DealerAccelerate's /vehicles
+  // (?page=N — the one query its rooftops' robots allow).
+  const tileSeeds = [
+    { name: "dealerspike", seeds: () => dealerSpikeSeeds(origin) },
+    { name: "dealerfront", seeds: () => dealerFrontSeeds(origin) },
+    { name: "dealerclick", seeds: () => dealerClickSeeds(origin) },
+    { name: "dealeraccelerate", seeds: () => dealerAccelerateSeeds(origin) },
+    // AutoRevo seeds /vehicles ONLY — /new-vehicles and /certified-vehicles
+    // are merchandising buckets whose "new" flag was measured false on 7 of 7
+    // odometer-carrying cars (see the platform file), and a conditioned SRP
+    // path would leak into publishedCondition's URL fallback.
+    { name: "autorevo", seeds: () => autoRevoSeeds(origin) },
+  ];
+  const tileSeeded = new Set();
+  function seedTileLane(name) {
+    if (tileSeeded.has(name)) return;
+    tileSeeded.add(name);
+    const lane = tileSeeds.find((l) => l.name === name);
+    const seeds = lane.seeds().filter((u) => !visited.has(u));
+    if (!seeds.length) return;
+    queue.unshift(...seeds);
+    report.notes.push(`${name}: seeded SRP`);
+  }
+  for (const lane of tileSeeds) if (siteInfo.get(domain)?.platform === lane.name) seedTileLane(lane.name);
+
+  // ProMax's SRP slug is per-rooftop and sometimes on a sister host, so it is
+  // read off the homepage the way Overfuel's is. The facet fan-out (?year=N,
+  // the platform's own pushState urls and its ONLY way past the 10-car render
+  // cap — no pager exists, measured across every query key) is gated to the
+  // first SRP that shows a bigger lot than it renders, so tecforce's 47 cars
+  // cost 12 fetches, not 66.
+  let pmSeeded = false;
+  let pmFacetsSeeded = false;
+  function seedProMax(html, pageUrl) {
+    if (pmSeeded) return;
+    const seeds = proMaxSeeds(html, pageUrl).filter((u) => !visited.has(u));
+    if (!seeds.length) return;
+    pmSeeded = true;
+    queue.unshift(...seeds);
+    report.notes.push(`promax: seeded ${seeds.length} SRP(s)`);
+  }
 
   // Auto Dealers Digital: one inventory SRP, 25 cars a page, WordPress
   // /page/N/. The homepage links it but the probe's own path list never did,
@@ -435,6 +528,13 @@ async function crawlDealer(domain) {
     }
     if (res.status === "robots_disallowed") {
       if (dcs.srp.has(url)) dcs.failed = true;
+      // A page robots refuses is a page this crawl did not see — and since
+      // the URL is already shifted off the queue, continuing silently lets
+      // the queue drain and the walk read as complete. That is a delisting
+      // instruction for every car behind the refused page (an AutoRevo
+      // rooftop whose robots close its own pager holds 480 of 530 cars past
+      // page one). Refusal costs coverage; it must never cost honesty.
+      report.stoppedEarly = `robots disallows ${url}`;
       continue;
     }
     if (res.status !== 200 || !res.body) {
@@ -611,6 +711,120 @@ async function crawlDealer(domain) {
       // No feed (an older template, or the path moved). Leave the HTML walk to
       // this domain rather than certifying an empty pull.
       report.notes.push("autofunds: no feed at /rss.aspx, falling back to HTML");
+    }
+
+    // AutoCorner: the same shape as AutoFunds with the sitemap for a feed. Its
+    // JSON endpoint is robots-disallowed (/cgi-bin/) and never asked; the
+    // sitemap lists every VDP with the VIN leading the slug, and only cars
+    // that could be electrified earn a VDP fetch for price and details.
+    if (!ac.done && isAutoCorner(res.body)) {
+      ac.done = true;
+      const before = report.evs.length;
+      const { ok, vehicles, factsByVin, found, requests, vdpFailures } = await pullAutoCorner(origin, {
+        keep: (v) => autoCornerNeedsVdp(v, classifyEv(v).isEv),
+      });
+      report.fetched += requests;
+      if (ok) {
+        for (const v of vehicles) {
+          const cls = classifyEv(v);
+          if (!cls.isEv) continue;
+          let rec = normalize(v, { sourceUrl: v.offers?.url || origin, dealerDomain: domain });
+          rec = enrichFromAutoCorner(rec, factsByVin.get(rec.vin));
+          if (rec.vdpUrl) rec.vdpUrl = abs(rec.vdpUrl, origin) ?? rec.vdpUrl;
+          rec.evKind = cls.kind;
+          rec.evConfidence = cls.confidence;
+          rec.fromVdp = factsByVin.has(rec.vin);
+          rec.platform = "autocorner";
+          report.evs.push(rec);
+        }
+        if (report.evs.length > before) report.vehiclePages++;
+        report.notes.push(
+          `autocorner: ${found} in sitemap, ${report.evs.length - before} EV(s) admitted in ${requests} request(s)`,
+        );
+        // The autofunds rule: an unread VDP leaves a priceless car ingest
+        // drops, so the VIN set has a hole db-sync must not read as "sold".
+        if (vdpFailures) report.stoppedEarly = `autocorner: ${vdpFailures} VDP(s) unread`;
+        queue.length = 0;
+        break;
+      }
+      report.notes.push("autocorner: sitemap did not answer, falling back to HTML");
+    }
+
+    // eBizAutos: the registry domain is a shell — the inventory lives on a
+    // host the shell references (usually {slug}.ebizautos.com, sometimes a
+    // second custom domain), whose sitemap enumerates every VDP with the VIN
+    // and the platform's new/used token in the slug. The pull walks that
+    // sitemap and fetches candidate VDPs, whose complete Vehicle JSON-LD the
+    // generic extractor reads. Cars stay attributed to the registry domain;
+    // their sourceUrl is the vendor-host VDP, which is what recheck asks.
+    if (!eb.done && isEBizAutos(res.body)) {
+      const ebOrigins = ebizAutosOrigins(res.body, origin);
+      if (ebOrigins.length) {
+        eb.done = true;
+        const before = report.evs.length;
+        const { ok, vehicles, found, requests, vdpFailures } = await pullEBizAutos(ebOrigins);
+        report.fetched += requests;
+        if (ok) {
+          for (const v of vehicles) {
+            const cls = classifyEv(v);
+            if (!cls.isEv) continue;
+            const offer = Array.isArray(v.offers) ? v.offers[0] : v.offers;
+            let rec = normalize(v, { sourceUrl: offer?.url || v.url || origin, dealerDomain: domain });
+            if (rec.vdpUrl) rec.vdpUrl = abs(rec.vdpUrl, origin) ?? rec.vdpUrl;
+            rec.evKind = cls.kind;
+            rec.evConfidence = cls.confidence;
+            // Only candidates were read from their own page; a slug-only node
+            // never classifies as an EV without also being a candidate.
+            rec.fromVdp = true;
+            rec.platform = "ebizautos";
+            report.evs.push(rec);
+          }
+          if (report.evs.length > before) report.vehiclePages++;
+          report.notes.push(
+            `ebizautos: ${found} in sitemap, ${report.evs.length - before} EV(s) admitted in ${requests} request(s)`,
+          );
+          if (vdpFailures) report.stoppedEarly = `ebizautos: ${vdpFailures} VDP(s) unread`;
+          queue.length = 0;
+          break;
+        }
+        report.notes.push("ebizautos: no inventory host answered, falling back to HTML");
+      }
+    }
+
+    // Dealer Spike's older generation: the SRP shell names a cached JS file
+    // that IS the whole lot (/imglib/Inventory/cache/{id}/VehInv.js — 120
+    // records, 120 VINs on robertstruck.com). One request, then done.
+    if (!dsc.done) {
+      const vehInv = dealerSpikeVehInvUrl(res.body, res.finalUrl);
+      if (vehInv) {
+        dsc.done = true;
+        const before = report.evs.length;
+        const { ok, vehicles, found, complete, requests } = await pullDealerSpikeCache(origin, res.body, res.finalUrl);
+        report.fetched += requests;
+        if (ok) {
+          for (const v of vehicles) {
+            const cls = classifyEv(v);
+            if (!cls.isEv) continue;
+            const rec = normalize(v, { sourceUrl: v.offers?.url || origin, dealerDomain: domain });
+            if (rec.vdpUrl) rec.vdpUrl = abs(rec.vdpUrl, origin) ?? rec.vdpUrl;
+            rec.evKind = cls.kind;
+            rec.evConfidence = cls.confidence;
+            // The cache record IS the platform's whole card; there is no
+            // richer server-rendered page behind it to fetch.
+            rec.fromVdp = true;
+            rec.platform = "dealerspike";
+            report.evs.push(rec);
+          }
+          if (report.evs.length > before) report.vehiclePages++;
+          report.notes.push(
+            `dealerspike-cache: ${found} in feed, ${report.evs.length - before} EV(s) admitted (${complete ? "complete" : "partial"})`,
+          );
+          if (!complete) report.stoppedEarly = "dealerspike-cache partial pull";
+          queue.length = 0;
+          break;
+        }
+        report.notes.push("dealerspike-cache: feed did not answer, falling back to HTML");
+      }
     }
 
     // Wayne Reaves: one request is the whole lot, and it is the only door —
@@ -871,6 +1085,12 @@ async function crawlDealer(domain) {
     if (isOverfuel(res.body)) seedOverfuel(res.body, res.finalUrl);
     if (!dealrSeeded && isDealrCloud(res.body)) seedDealr();
     if (!amSeeded && isAutoManager(res.body)) seedAutoManager();
+    if (isDealerSpike(res.body)) seedTileLane("dealerspike");
+    if (isDealerFront(res.body)) seedTileLane("dealerfront");
+    if (isDealerClick(res.body)) seedTileLane("dealerclick");
+    if (isDealerAccelerate(res.body)) seedTileLane("dealeraccelerate");
+    if (isAutoRevo(res.body)) seedTileLane("autorevo");
+    if (!pmSeeded && isProMax(res.body)) seedProMax(res.body, res.finalUrl);
     if (!addSeededFromPage && isAutoDealersDigital(res.body)) seedAutoDealersDigital(res.body);
     if (!mcsSeeded && isMotorcarSites(res.body)) seedMotorcar();
     if (!oaSeeded && isOneAudi(res.body)) seedOneAudi();
@@ -913,8 +1133,59 @@ async function crawlDealer(domain) {
     const addEntries = addPage ? autoDealersDigitalEntries(res.body, res.finalUrl).filter((e) => !e.sold) : [];
     const oneAudi = oneAudiVehicles(res.body);
     const oneAudiVins = new Set(oneAudi.map((v) => v.vehicleIdentificationNumber));
+    // The 2026-08-31 tile lanes. Dealer Spike and DealerFront pages carry no
+    // JSON-LD, so their tile readers are additive; DealerClick's reader IS the
+    // page's JSON-LD, one unescape away.
+    const dealerSpike = dealerSpikeVehicles(res.body, res.finalUrl);
+    const dealerSpikeVins = new Set(dealerSpike.map((v) => v.vehicleIdentificationNumber));
+    const dealerFrontVs = dealerFrontVehicles(res.body, res.finalUrl);
+    const dealerFrontVins = new Set(dealerFrontVs.map((v) => v.vehicleIdentificationNumber));
+    const dealerClickVs = dealerClickVehicles(res.body, res.finalUrl);
+    const dealerClickVins = new Set(dealerClickVs.map((v) => v.vehicleIdentificationNumber));
+    // DealerAccelerate needs two gates on the GENERIC reading, both measured
+    // (2026-08-31): its SRP JSON-LD yields VIN-less, url-less nodes that all
+    // collapse to one dealerDomain:sourceUrl key (the automanager phantom),
+    // and a SOLD car's VDP keeps its Vehicle node with the price it sold at —
+    // on the rooftops that don't delete the node outright, availability is
+    // the only tell. So on this platform's pages the generic extraction is
+    // suppressed on SRPs (entries drive the walk) and on sold VDPs.
+    const daPage = isDealerAccelerate(res.body);
+    const daEntriesAll = daPage ? dealerAccelerateEntries(res.body, res.finalUrl) : [];
+    const daEntries = daEntriesAll.filter((e) => !e.sold);
+    // A VDP on this platform is /vehicles/{id}/{slug} (craftsportsjdm mounts
+    // at /inventory/); SRPs never carry the numeric segment. The distinction
+    // is load-bearing: every VDP also shows a related-vehicles rail, so
+    // "the page has entries" reads every VDP as an SRP and suppressed the one
+    // page that holds the car — showdownauto's Model 3 came back 0 that way
+    // on the first smoke crawl. A VDP is suppressed only when the platform
+    // itself marks the car sold; an SRP always is (its JSON-LD is VIN-less
+    // and collapses to one phantom record — see the platform file).
+    const daVdp = daPage && /\/\d+\/[^/]+\/?$/.test(new URL(res.finalUrl).pathname);
+    const daSuppressed = daPage && (daVdp ? isDealerAccelerateSold(res.body, res.finalUrl) : daEntriesAll.length > 0 || isDealerAccelerateSold(res.body, res.finalUrl));
+    // AutoRevo and ProMax REPLACE the generic reading on their pages, both
+    // measured (2026-08-31): an AutoRevo VDP's makesOffer.itemOffered Car
+    // parses generically but price-less (and with the falsified per-car "new"
+    // flag), so it would compete with the priced tile record for the same
+    // VIN; a ProMax page's nodes parse generically but url-less, so every car
+    // on the page keys to the search page itself.
+    const arPage = isAutoRevo(res.body);
+    const arVehicles = arPage ? autoRevoVehicles(res.body, res.finalUrl) : [];
+    const arEntries = arPage ? autoRevoEntries(res.body, res.finalUrl).filter((e) => !e.sold) : [];
+    const pmPage = isProMax(res.body);
+    const pmVehicles = pmPage ? proMaxVehicles(res.body, res.finalUrl) : [];
+    const pmEntries = pmPage ? proMaxEntries(res.body, res.finalUrl) : [];
     const vehicles = [
-      ...(dealrVs.length ? dealrVs : addPage ? addVehicles : extractVehicles(res.body)),
+      ...(dealrVs.length
+        ? dealrVs
+        : addPage
+          ? addVehicles
+          : arPage
+            ? arVehicles
+            : pmPage
+              ? pmVehicles
+              : daSuppressed
+                ? []
+                : extractVehicles(res.body)),
       ...extractDrivewayVehicles(res.body),
       ...dcsVehicles,
       ...dealerFireVehicles(res.body, res.finalUrl),
@@ -922,6 +1193,9 @@ async function crawlDealer(domain) {
       ...autoManager,
       ...motorcarSites,
       ...oneAudi,
+      ...dealerSpike,
+      ...dealerFrontVs,
+      ...dealerClickVs,
     ];
     if (vehicles.length) report.vehiclePages++;
     const isSrp = vehicles.length > 1;
@@ -944,6 +1218,12 @@ async function crawlDealer(domain) {
       if (rec.vin && dcsVins.has(rec.vin)) rec.platform = "dealercarsearch";
       if (rec.vin && oneAudiVins.has(rec.vin)) rec.platform = "oneaudi";
       if (rec.vin && overfuelVins.has(rec.vin)) rec.platform = "overfuel";
+      if (rec.vin && dealerSpikeVins.has(rec.vin)) rec.platform = "dealerspike";
+      if (rec.vin && dealerFrontVins.has(rec.vin)) rec.platform = "dealerfront";
+      if (rec.vin && dealerClickVins.has(rec.vin)) rec.platform = "dealerclick";
+      if (daPage) rec.platform = "dealeraccelerate";
+      if (arPage) rec.platform = "autorevo";
+      if (pmPage) rec.platform = "promax";
       if (dealerFire.size) rec = enrichFromDealerFire(rec, dealerFire, dealerFireRooftops);
       report.evs.push(rec);
       // A OneAudi VDP is client-rendered per car and carries no state a
@@ -999,6 +1279,55 @@ async function crawlDealer(domain) {
       const nextAm = autoManagerNextPageUrl(res.body, res.finalUrl);
       if (nextAm && !visited.has(nextAm)) queue.unshift(nextAm);
     }
+    // Dealer Spike pages with ?pg=N on its fixed /--inventory door. To the
+    // FRONT like AutoManager's: 20 units a page, and the pager must be read
+    // from the real <ol> — the page ships a commented-out twin that always
+    // claims 100 pages, and an overshot ?pg= clamps to the last page with a
+    // 200 (both in the platform file's header).
+    if (dealerSpike.length) {
+      const nextDs = dealerSpikeNextPageUrl(res.body, res.finalUrl);
+      if (nextDs && !visited.has(nextDs)) queue.unshift(nextDs);
+    }
+    // DealerFront pages path-style (/inventory/page/N/) on its WordPress
+    // template — invisible to the generic ?page= href scan — and ?&page=N on
+    // its portal template.
+    if (dealerFrontVs.length) {
+      const nextDf2 = dealerFrontNextPageUrl(res.body, res.finalUrl);
+      if (nextDf2 && !visited.has(nextDf2)) queue.unshift(nextDf2);
+    }
+    // DealerAccelerate pages with ?page=N — the one query key its rooftops'
+    // robots allow. To the BACK, the Motorcar reason: gateway is 68 pages of
+    // enumeration, and the EV VDPs this page just queued come first.
+    if (daEntriesAll.length) {
+      const nextDa = dealerAccelerateNextPageUrl(res.body, res.finalUrl);
+      if (nextDa && !visited.has(nextDa)) queue.push(nextDa);
+    }
+    // AutoRevo pages with ?page=N. To the BACK (25 a page over a 530-car lot,
+    // the Motorcar reason). Two honesty notes ride with it: the platform's own
+    // "N matches out of M" line reports the cars a robots-closed or
+    // budget-expired pager leaves unseen, and a page-one-only visit must
+    // surface as truncation, not a clean walk.
+    if (arPage && (arVehicles.length || arEntries.length)) {
+      const missed = autoRevoTruncated(res.body);
+      if (missed > 0) report.notes.push(`autorevo: ${missed} car(s) past ${res.finalUrl}`);
+      const nextAr = autoRevoNextPageUrl(res.body, res.finalUrl);
+      if (nextAr && !visited.has(nextAr)) queue.push(nextAr);
+    }
+    // ProMax has NO pager — its "next page" is a session cursor, and every
+    // page-shaped query key re-serves page one (measured). The platform's own
+    // ?year= filter urls are the only whole-lot enumeration; fan them out once
+    // per rooftop, from the first SRP whose lot count exceeds what it renders.
+    if (pmPage && pmVehicles.length && !pmFacetsSeeded) {
+      const lot = proMaxLotCount(res.body);
+      if (lot != null && lot > pmVehicles.length) {
+        const facets = proMaxFacetSeeds(res.body, res.finalUrl).filter((u) => !visited.has(u));
+        if (facets.length) {
+          pmFacetsSeeded = true;
+          queue.push(...facets);
+          report.notes.push(`promax: lot ${lot} > ${pmVehicles.length} rendered, seeded ${facets.length} year facet(s)`);
+        }
+      }
+    }
     // Motorcar Marketing pages with ?page_number=N. Gated on the page having
     // linked cars rather than on having yielded a vehicle record, because its
     // SRP never yields one — see motorcarVehicles above. Pushed to the BACK,
@@ -1043,8 +1372,12 @@ async function crawlDealer(domain) {
       }
     }
 
-    // Bridge: SRP ItemList → VDP urls, EV-filtered, jump the queue
-    const allEntries = [...extractItemListEntries(res.body), ...mcsEntries, ...addEntries];
+    // Bridge: SRP ItemList → VDP urls, EV-filtered, jump the queue.
+    // DealerAccelerate's entries join because its own ItemList is unreadable
+    // to the generic bridge (the url is one level down, on item.url) and
+    // under-lists the page (20 of gateway's 26 rendered cars); the per-entry
+    // sold flag was applied above — the live SRP legitimately shows sold cars.
+    const allEntries = [...extractItemListEntries(res.body), ...mcsEntries, ...addEntries, ...daEntries, ...arEntries, ...pmEntries];
     const entries = allEntries.filter(evishEntry);
     if (entries.length) {
       report.itemListVdps += entries.length;
