@@ -18,6 +18,53 @@ const BLOCK = `${CELL} flex grow items-center gap-2 px-4 py-2.5 text-[13px] font
 const FIELD =
   "w-full border-[3px] border-ink bg-paper px-2.5 py-1.5 text-[13px] font-semibold text-ink focus:outline-none focus:ring-[3px] focus:ring-cobalt";
 const FIELD_LABEL = "text-[10px] font-extrabold uppercase tracking-[0.14em] text-ink/55";
+// The panel's version of the rail's pressed toggle: full borders because these
+// stand alone on the putty ground instead of tiling a rail.
+const PANEL_BTN =
+  "border-[3px] border-ink px-3 py-1.5 text-[12px] font-bold uppercase tracking-[0.04em]";
+
+/**
+ * One filter key as a row of pressed buttons — the same on/off language as the
+ * rail's quick toggles, in place of a `<select>` whose closed state hides what
+ * the choices even are. Picking the pressed value again clears the key.
+ */
+function PanelToggles({
+  label,
+  hint,
+  options,
+  current,
+  pick,
+}: {
+  label: string;
+  hint?: string;
+  options: { value: string; label: string }[];
+  current: string;
+  pick: (value: string) => void;
+}) {
+  return (
+    <div className="flex flex-col gap-1">
+      <span className={FIELD_LABEL} title={hint}>
+        {label}
+      </span>
+      <div className="flex flex-wrap gap-1.5">
+        {options.map((o) => {
+          const on = current === o.value;
+          return (
+            <button
+              key={o.value}
+              type="button"
+              aria-pressed={on}
+              onClick={() => pick(on ? "" : o.value)}
+              className={`${PANEL_BTN} ${HOVER} ${on ? "bg-cobalt text-paper" : "bg-paper text-ink"}`}
+            >
+              {o.label}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 export type Suggestion = { label: string; count: number };
 
@@ -535,6 +582,7 @@ export function FilterRail({
   });
 
   const heatPumpOn = get("heatPump") === "1";
+  const cutOn = get("cut") === "1";
 
   // A radius chosen against the inferred origin has no ZIP chip to represent
   // it; without one of its own the filter would be invisible.
@@ -752,40 +800,41 @@ export function FilterRail({
             />
           </label>
 
-          <label className="flex flex-col gap-1">
-            <span className={FIELD_LABEL} title="Only cars whose drivetrain we know are included when this is set">
-              Drivetrain
-            </span>
-            <select className={FIELD} value={get("drive")} onChange={(e) => apply({ drive: e.target.value })}>
-              <option value="">Any</option>
-              <option>AWD</option>
-              <option>RWD</option>
-              <option>FWD</option>
-            </select>
-          </label>
+          <div className="col-span-2 md:col-span-1">
+            <PanelToggles
+              label="Drivetrain"
+              hint="Only cars whose drivetrain we know are included when this is set"
+              options={[
+                { value: "AWD", label: "AWD" },
+                { value: "RWD", label: "RWD" },
+                { value: "FWD", label: "FWD" },
+              ]}
+              current={get("drive")}
+              pick={(v) => apply({ drive: v })}
+            />
+          </div>
 
-          <label className="flex flex-col gap-1">
-            <span className={FIELD_LABEL} title="Only cars whose body style we know are included when this is set">
-              Car type
-            </span>
-            <select className={FIELD} value={get("body")} onChange={(e) => apply({ body: e.target.value })}>
-              <option value="">Any</option>
-              {BODY_TYPES.map((b) => (
-                <option key={b.value} value={b.value}>
-                  {b.label}
-                </option>
-              ))}
-            </select>
-          </label>
+          <div className="col-span-2">
+            <PanelToggles
+              label="Car type"
+              hint="Only cars whose body style we know are included when this is set"
+              options={BODY_TYPES.map((b) => ({ value: b.value, label: b.label }))}
+              current={get("body")}
+              pick={(v) => apply({ body: v })}
+            />
+          </div>
 
-          <label className="flex flex-col gap-1">
-            <span className={FIELD_LABEL}>Condition</span>
-            <select className={FIELD} value={get("cond")} onChange={(e) => apply({ cond: e.target.value })}>
-              <option value="">New &amp; used</option>
-              <option value="new">New</option>
-              <option value="used">Used &amp; certified</option>
-            </select>
-          </label>
+          <div className="col-span-2 md:col-span-1">
+            <PanelToggles
+              label="Condition"
+              options={[
+                { value: "new", label: "New" },
+                { value: "used", label: "Used & certified" },
+              ]}
+              current={get("cond")}
+              pick={(v) => apply({ cond: v })}
+            />
+          </div>
 
           <label className="flex flex-col gap-1">
             <span className={FIELD_LABEL}>Min range for this version</span>
@@ -798,15 +847,27 @@ export function FilterRail({
             />
           </label>
 
-          <label className="col-span-2 flex items-center gap-2.5 md:col-span-4">
-            <input
-              type="checkbox"
-              className="size-4 accent-cobalt"
-              checked={heatPumpOn}
-              onChange={(e) => apply({ heatPump: e.target.checked ? "1" : "" })}
-            />
-            <span className="text-[13px] font-bold uppercase tracking-[0.04em]">Heat pump</span>
-          </label>
+          <div className="col-span-2 md:col-span-3">
+            <span className={FIELD_LABEL}>Only show</span>
+            <div className="mt-1 flex flex-wrap gap-1.5">
+              <button
+                type="button"
+                aria-pressed={heatPumpOn}
+                onClick={() => apply({ heatPump: heatPumpOn ? "" : "1" })}
+                className={`${PANEL_BTN} ${HOVER} ${heatPumpOn ? "bg-cobalt text-paper" : "bg-paper text-ink"}`}
+              >
+                Heat pump
+              </button>
+              <button
+                type="button"
+                aria-pressed={cutOn}
+                onClick={() => apply({ cut: cutOn ? "" : "1" })}
+                className={`${PANEL_BTN} ${HOVER} ${cutOn ? "bg-cobalt text-paper" : "bg-paper text-ink"}`}
+              >
+                Price cut
+              </button>
+            </div>
+          </div>
 
           {sp.size > 0 && (
             <div className="col-span-2 md:col-span-4">

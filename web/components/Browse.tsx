@@ -19,9 +19,12 @@ import { rememberBrowseQuery } from "@/lib/browseState";
 
 const CELL = "border-r-[3px] border-b-[3px] border-ink";
 
-// The band under the search box: the four deepest models in inventory, each a
-// one-click search. Deep inventory is the popularity signal we actually have.
+// The band under the search box: four of the twelve deepest models in
+// inventory, each a one-click search, rotating daily so the front door doesn't
+// read the same forever. Deep inventory is the popularity signal we actually
+// have.
 const BAND_GROUNDS = ["bg-saffron", "bg-putty", "bg-putty", "bg-teal text-paper"];
+const BAND_SIZE = 4;
 
 // The inventory index hook lives in lib/listings/useCardIndex.ts — /saved
 // reads the same module-level cache, so the two pages share one download.
@@ -112,6 +115,63 @@ function PopularBand({ popular, q }: { popular: { make: string; model: string; c
   );
 }
 
+// How many models get their fact-sheet links per session before the nav goes
+// quiet. The links repeat two of the same questions on every narrowed search,
+// and by the fourth model they read as ads, not answers (owner, 2026-08-31).
+// A model that already showed its links keeps them, so returning to a search
+// never retracts what it said.
+const FACT_LINK_MODELS_PER_SESSION = 3;
+const FACT_LINK_SEEN_KEY = "vc-fact-links-models";
+
+// Module cache over sessionStorage, so the render-time read stays pure and
+// repeatable; writes go through recordFactLinkModel from an effect, only for
+// renders that committed. sessionStorage can throw (private windows, storage
+// off) — the links showing every time is the pre-cap behavior, not a failure.
+let factLinkSeen: Set<string> | null = null;
+function factLinkModelsSeen(): Set<string> {
+  if (factLinkSeen === null) {
+    try {
+      factLinkSeen = new Set(JSON.parse(sessionStorage.getItem(FACT_LINK_SEEN_KEY) ?? "[]"));
+    } catch {
+      factLinkSeen = new Set();
+    }
+  }
+  return factLinkSeen;
+}
+function recordFactLinkModel(model: string): void {
+  const seen = factLinkModelsSeen();
+  if (seen.has(model)) return;
+  seen.add(model);
+  try {
+    sessionStorage.setItem(FACT_LINK_SEEN_KEY, JSON.stringify([...seen]));
+  } catch {
+    // The module cache still holds it for this page's lifetime.
+  }
+}
+
+function FactLinksNav({ links, model }: { links: FactLink[]; model: string }) {
+  // Short-circuits keep the storage read off the server render, where links
+  // are always empty (the index only lands client-side).
+  const seen = links.length > 0 && model ? factLinkModelsSeen() : null;
+  const show = seen !== null && (seen.has(model) || seen.size < FACT_LINK_MODELS_PER_SESSION);
+  useEffect(() => {
+    if (show) recordFactLinkModel(model);
+  }, [show, model]);
+  if (!show || links.length === 0) return null;
+  return (
+    <nav
+      aria-label="Fact sheets"
+      className="flex flex-wrap gap-x-6 gap-y-1.5 border-l-[3px] border-r-[3px] border-b-[3px] border-ink bg-paper px-5 py-3"
+    >
+      {links.map((l) => (
+        <Link key={l.path} href={l.path} className="text-[13px] font-bold text-cobalt hover:underline">
+          {l.label} →
+        </Link>
+      ))}
+    </nav>
+  );
+}
+
 export function Browse() {
   const sp = useSearchParams();
   const s = (k: string) => sp.get(k) ?? "";
@@ -149,6 +209,21 @@ export function Browse() {
   const counts = own.counts;
   const { suggestions, popular, makesModels } = rows === null && first ? first : own;
 
+  // The band's daily window into the popular pool. Keyed on the same day term
+  // as the featured sort — the payload's day when we have one — so the server
+  // artifact and the client's recompute pick the same four. An old payload
+  // still carrying only four models rotates as a no-op.
+  const band = useMemo(() => {
+    if (popular.length <= BAND_SIZE) return popular;
+    // eslint-disable-next-line react-hooks/purity -- the once-a-day rotation is the point
+    const day = first?.day ?? Math.floor(Date.now() / 86400000);
+    const start = (day * BAND_SIZE) % popular.length;
+    return Array.from({ length: BAND_SIZE }, (_, i) => popular[(start + i) % popular.length]);
+    // `first` can only change null -> loaded; see the results memo on why that
+    // must not reshuffle a band the shopper is looking at.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [popular]);
+
   // The pristine landing state — no filters, featured order, page 1 — is the
   // one state the first-paint payload can answer for, because it's exactly
   // what the server rendered. The dummy distance context makes a zip/radius
@@ -166,7 +241,7 @@ export function Browse() {
     rememberBrowseQuery(sp.toString());
   }, [sp]);
 
-  const { results, dist, relief, activeCount, facets, quickCounts, factLinks } = useMemo(() => {
+  const { results, dist, relief, activeCount, facets, quickCounts, factLinks, factModel } = useMemo(() => {
     const all = rows ?? [];
 
     const dist = new Map<string, number>();
@@ -375,8 +450,9 @@ export function Browse() {
     // Fact-sheet links ride the same gate as the spec rail: the results are
     // one model, so the sheets that answer for that model belong on the page.
     const factLinks: FactLink[] = specPool.length ? factLinksFor(specPool[0].make, specPool[0].model) : [];
+    const factModel = specPool.length ? `${specPool[0].make} ${specPool[0].model}`.toLowerCase() : "";
 
-    return { results, dist, relief, activeCount: activeKeys.length, facets, quickCounts, factLinks };
+    return { results, dist, relief, activeCount: activeKeys.length, facets, quickCounts, factLinks, factModel };
     // `first` is read but deliberately not a dependency: it can only change
     // once (null -> loaded), and if that happens after the index already
     // painted, re-sorting a grid the shopper is looking at is exactly the
@@ -408,7 +484,7 @@ export function Browse() {
         <div className="border-r-[3px] border-ink">
           <SearchBar suggestions={suggestions} />
         </div>
-        <PopularBand popular={popular} q={q} />
+        <PopularBand popular={band} q={q} />
       </div>
 
       {/* Both counts wait on an answer: "0 cars" and a rail stripped of every
@@ -425,18 +501,7 @@ export function Browse() {
 
       <SpecFacets facets={facets} />
 
-      {factLinks.length > 0 && (
-        <nav
-          aria-label="Fact sheets"
-          className="flex flex-wrap gap-x-6 gap-y-1.5 border-l-[3px] border-r-[3px] border-b-[3px] border-ink bg-paper px-5 py-3"
-        >
-          {factLinks.map((l) => (
-            <Link key={l.path} href={l.path} className="text-[13px] font-bold text-cobalt hover:underline">
-              {l.label} →
-            </Link>
-          ))}
-        </nav>
-      )}
+      <FactLinksNav links={factLinks} model={factModel} />
 
       {firstView ? (
         // The first-paint grid: the same 60 cards, in the same order, that the

@@ -23,8 +23,9 @@ export interface ModelTally {
   /** Every model listed at least twice, deepest first, for the search box.
    *  A model listed once is as likely a feed typo as a car. */
   suggestions: { label: string; count: number }[];
-  /** The four deepest models — the band under the search box. Deep inventory
-   *  is the popularity signal we actually have. */
+  /** The twelve deepest models — the pool behind the band under the search
+   *  box, which shows a day-rotated window of four (components/Browse.tsx).
+   *  Deep inventory is the popularity signal we actually have. */
   popular: ModelCount[];
   /** The models on offer under each make, for the filter panel's and /worth's
    *  dropdowns — folded and pruned, not the raw distinct strings. */
@@ -195,7 +196,7 @@ export function modelTally(rows: CardRow[]): ModelTally {
   const suggestions = canon
     .filter((c) => c.count >= 2)
     .map((c) => ({ label: `${c.make} ${c.model}`, count: c.count }));
-  return { counts, suggestions, popular: canon.slice(0, 4), makesModels };
+  return { counts, suggestions, popular: canon.slice(0, 12), makesModels };
 }
 
 // ── The trim facets behind /worth's trim picker ────────────────────────────

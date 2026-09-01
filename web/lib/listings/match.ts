@@ -101,6 +101,10 @@ export function buildTests(get: (k: string) => string, ctx: MatchContext = {}): 
   if (maxMiles) tests.maxMiles = (r) => r.mileage != null && r.mileage <= maxMiles;
   if (minRange) tests.minRange = (r) => !!r.rangeMi && r.rangeMi >= minRange;
   if (get("heatPump") === "1") tests.heatPump = (r) => r.heatPump === "yes";
+  // Only cuts the card itself claims (≥$500, ≤14 days, both prices real —
+  // card.ts `cut`), so the toggle can never surface a cheaper extraction
+  // methodology as a discount.
+  if (get("cut") === "1") tests.cut = (r) => r.cut !== undefined;
   // Values OR within a spec facet ("Lariat or XLT"), facets AND with each
   // other. A car whose version we can't pin down has no value to match on and
   // sits the facet out, the same way the drivetrain and body filters work.
@@ -141,6 +145,11 @@ export const QUICK_KNOWS: Partial<Record<RemovableFilter, (r: CardRow) => boolea
   // A lease payment where a price should be isn't a cheap car, it's no price.
   maxPrice: (r) => r.realPrice,
   minPrice: (r) => r.realPrice,
+  // "verify" is an unresolved claim, not an answer.
+  heatPump: (r) => r.heatPump === "yes" || r.heatPump === "no",
+  // A cut is a price event, so only cars with a believable price can be
+  // judged for one.
+  cut: (r) => r.realPrice,
 };
 
 /** The filters that are actually on, in the order they read. */

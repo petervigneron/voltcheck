@@ -20,6 +20,7 @@ export const REMOVABLE = [
   "maxMiles",
   "minRange",
   "heatPump",
+  "cut",
   "zip",
 ] as const;
 
@@ -58,6 +59,8 @@ export const QUICK_TOGGLES: {
   { key: "maxMiles", value: "60000", label: "Under 60k miles", axis: "market" },
   { key: "maxPrice", value: "30000", label: "Under $30,000", axis: "market" },
   { key: "drive", value: "AWD", label: "AWD", axis: "variant" },
+  { key: "heatPump", value: "1", label: "Heat pump", axis: "variant" },
+  { key: "cut", value: "1", label: "Price cut", axis: "market" },
 ];
 
 /**
@@ -161,6 +164,8 @@ export function describeFilter(key: string, value: string): string | null {
       return `${value}+ mi range`;
     case "heatPump":
       return value === "1" ? "Heat pump" : null;
+    case "cut":
+      return value === "1" ? "Price cut" : null;
     case "zip":
       return `Near ${value}`;
     default:
