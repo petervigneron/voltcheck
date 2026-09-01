@@ -26,7 +26,12 @@ const PANEL_BTN =
 /**
  * One filter key as a row of pressed buttons — the same on/off language as the
  * rail's quick toggles, in place of a `<select>` whose closed state hides what
- * the choices even are. Picking the pressed value again clears the key.
+ * the choices even are. Picking the pressed value again clears it.
+ *
+ * `multi` is for keys whose values OR together in one comma-list (drivetrain,
+ * since the Ioniq 5 spec rail made it a facet): each button toggles its own
+ * value in the list, so the panel and a facet row can never fight over the
+ * same URL param.
  */
 function PanelToggles({
   label,
@@ -34,33 +39,33 @@ function PanelToggles({
   options,
   current,
   pick,
+  multi,
 }: {
   label: string;
   hint?: string;
   options: { value: string; label: string }[];
   current: string;
   pick: (value: string) => void;
+  multi?: boolean;
 }) {
+  const on = (v: string) => (multi ? splitValues(current).includes(v) : current === v);
   return (
     <div className="flex flex-col gap-1">
       <span className={FIELD_LABEL} title={hint}>
         {label}
       </span>
       <div className="flex flex-wrap gap-1.5">
-        {options.map((o) => {
-          const on = current === o.value;
-          return (
-            <button
-              key={o.value}
-              type="button"
-              aria-pressed={on}
-              onClick={() => pick(on ? "" : o.value)}
-              className={`${PANEL_BTN} ${HOVER} ${on ? "bg-cobalt text-paper" : "bg-paper text-ink"}`}
-            >
-              {o.label}
-            </button>
-          );
-        })}
+        {options.map((o) => (
+          <button
+            key={o.value}
+            type="button"
+            aria-pressed={on(o.value)}
+            onClick={() => pick(multi ? toggleValue(current, o.value) : on(o.value) ? "" : o.value)}
+            className={`${PANEL_BTN} ${HOVER} ${on(o.value) ? "bg-cobalt text-paper" : "bg-paper text-ink"}`}
+          >
+            {o.label}
+          </button>
+        ))}
       </div>
     </div>
   );
@@ -811,6 +816,7 @@ export function FilterRail({
               ]}
               current={get("drive")}
               pick={(v) => apply({ drive: v })}
+              multi
             />
           </div>
 

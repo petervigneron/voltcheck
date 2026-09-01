@@ -92,6 +92,18 @@ export const SPEC_FACETS = [
 
 export type SpecFacet = (typeof SPEC_FACETS)[number]["key"];
 
+/**
+ * Drivetrain as a spec-facet row — offered only where a model's curated spec
+ * (lib/listings/facetSpec.ts) asks for it. Deliberately NOT in SPEC_FACETS:
+ * those keys are dropped when the model changes (dropSpecFilters), and AWD
+ * means the same thing under every model, so a drivetrain choice survives the
+ * next search the way a trim never could.
+ */
+export const DRIVE_FACET = { key: "drive", label: "Drivetrain", unit: "" } as const;
+
+/** Every axis the spec rail can offer: the model-scoped three plus drivetrain. */
+export type FacetKey = SpecFacet | typeof DRIVE_FACET.key;
+
 // Twelve chips is already two rows on a laptop; past that a model's versions
 // stop being scannable, which is the only thing the rail is for. Which twelve
 // is decided by depth of stock, never by position — slicing a range row sorted
@@ -147,7 +159,8 @@ export function describeFilter(key: string, value: string): string | null {
     case "cond":
       return value === "new" ? "New" : "Used & certified";
     case "drive":
-      return value;
+      // The drivetrain facet ORs values like the other spec facets do.
+      return orList(value, "");
     case "body":
       return BODY_TYPES.find((b) => b.value === value)?.label ?? null;
     case "minPrice":

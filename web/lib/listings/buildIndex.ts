@@ -102,7 +102,12 @@ export async function buildCardIndex(): Promise<{ rows: CardRow[]; origin: FeedO
       cut: cut ? { amountUsd: cut.amountUsd, at: cut.at, prevUsd: l.prevPriceUsd! } : undefined,
       mileage: l.mileage,
       condition: l.condition,
-      drive: l.drive,
+      // The feed's own word wins; where it says nothing, the exact-matched
+      // enrichment row's drive fills in. That row is the same one whose kwh
+      // and range already print on this card — on VIN-keyed models (Ioniq 5's
+      // position-8 map, the GM trucks) its drive is the maker's own encoding,
+      // and 19% of live Ioniq 5s state no drivetrain at all (2026-09-01).
+      drive: l.drive ?? e.row?.drive,
       body: bodyTypeOf(l),
       city: l.city,
       state: l.state,

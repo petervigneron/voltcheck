@@ -1,5 +1,5 @@
 import type { CardRow } from "./card";
-import { REMOVABLE, SPEC_FACETS, splitValues, type RemovableFilter, type SpecFacet } from "../filters";
+import { REMOVABLE, SPEC_FACETS, splitValues, type FacetKey, type RemovableFilter } from "../filters";
 import { modelKey } from "./modelName";
 
 // The browse grid's filter semantics as one shared function. Extracted from
@@ -14,10 +14,11 @@ import { modelKey } from "./modelName";
 
 // Which field on a row each spec facet groups by. Values are strings because
 // that's what a URL carries; the numeric facets sort back to numbers.
-export const FACET_OF: Record<SpecFacet, (r: CardRow) => string | undefined> = {
+export const FACET_OF: Record<FacetKey, (r: CardRow) => string | undefined> = {
   trim: (r) => r.trim,
   kwh: (r) => (r.kwh != null ? String(r.kwh) : undefined),
   epa: (r) => (r.rangeMi != null ? String(r.rangeMi) : undefined),
+  drive: (r) => r.drive,
 };
 
 export interface MatchContext {
@@ -89,7 +90,13 @@ export function buildTests(get: (k: string) => string, ctx: MatchContext = {}): 
   }
   if (cond === "new") tests.cond = (r) => r.condition === "new";
   else if (cond === "used") tests.cond = (r) => r.condition === "used" || r.condition === "certified" || !r.condition;
-  if (drive) tests.drive = (r) => r.drive === drive;
+  // Values OR, same as the spec facets below: the drivetrain facet writes
+  // "RWD,AWD" into the one key the panel and the quick toggle already use,
+  // and a single value is the one-element case of the same test.
+  if (drive) {
+    const on = new Set(splitValues(drive));
+    tests.drive = (r) => r.drive !== undefined && on.has(r.drive);
+  }
   // Curated model→body map; cars we can't verifiably classify sit this one out.
   if (body) tests.body = (r) => r.body === body;
   // A price filter is about price, so a car whose feed gave us a lease

@@ -11,6 +11,7 @@ import { featuredScore, type CardRow } from "@/lib/listings/card";
 import { FIRST_PAGE_SIZE } from "@/lib/listings/firstPaint";
 import { FACET_OF, QUICK_KNOWS, activeFilterKeys, buildTests, rowMatches } from "@/lib/listings/match";
 import { modelTally } from "@/lib/listings/tally";
+import { facetsFor } from "@/lib/listings/facetSpec";
 import { factLinksFor, type FactLink } from "@/lib/facts/links";
 import { firstPaintWonRace, useCardIndex, useFirstPaint } from "@/lib/listings/useCardIndex";
 import { milesBetween } from "@/lib/geo";
@@ -387,7 +388,10 @@ export function Browse() {
     // narrowed — being a single model. The pool it describes is everything the
     // other filters allow, with the spec facets themselves lifted: the rail has
     // to keep offering the versions you didn't pick, not just the one you did.
-    const specKeys = new Set<string>(SPEC_FACETS.map((f) => f.key));
+    // `drive` is lifted alongside the model-scoped facet keys: on a model
+    // whose curated rail offers a drivetrain row (lib/listings/facetSpec.ts),
+    // picking AWD must not empty the row of the RWD it still has to offer.
+    const specKeys = new Set<string>([...SPEC_FACETS.map((f) => f.key), "drive"]);
     const base = all.filter((r) => activeKeys.every((k) => specKeys.has(k) || tests[k]!(r)));
 
     const byModel = new Map<string, CardRow[]>();
@@ -408,7 +412,11 @@ export function Browse() {
     const specPool = pool.length >= 2 && pool.length / base.length >= 0.9 ? pool : [];
 
     const facets: FacetGroup[] = [];
-    for (const f of SPEC_FACETS) {
+    // Which axes, in what order, is the model's call (facetSpec.ts curates,
+    // SPEC_FACETS is the standing default); whether each row renders is still
+    // the data's call, via the two-distinct-values gate below.
+    const facetDefs = specPool.length ? facetsFor(specPool[0].make, specPool[0].model) : [];
+    for (const f of facetDefs) {
       const get = FACET_OF[f.key];
       const seen = new Set<string>();
       for (const r of specPool) {
@@ -420,7 +428,7 @@ export function Browse() {
       // Counts hold the *other* facets fixed. Counting against the filtered
       // results instead would zero every unpicked chip in a facet the moment
       // you picked one, which reads as "no such car".
-      const others = SPEC_FACETS.filter((o) => o.key !== f.key && tests[o.key]);
+      const others = facetDefs.filter((o) => o.key !== f.key && tests[o.key]);
       const counts = new Map<string, number>();
       for (const r of specPool) {
         const v = get(r);
@@ -432,9 +440,9 @@ export function Browse() {
         label: `${v}${f.unit}`,
         n: counts.get(v) ?? 0,
       }));
-      // Numbers read in their own order; trims have none, so the deepest stock
-      // leads and anything ruled out falls to the end.
-      if (f.key === "trim") values.sort((a, b) => b.n - a.n || a.v.localeCompare(b.v));
+      // Numbers read in their own order; trims and drivetrains have none, so
+      // the deepest stock leads and anything ruled out falls to the end.
+      if (f.key === "trim" || f.key === "drive") values.sort((a, b) => b.n - a.n || a.v.localeCompare(b.v));
       else values.sort((a, b) => Number(a.v) - Number(b.v));
       // Which values survive the cap is a question of stock, not of order.
       const keep = new Set(
