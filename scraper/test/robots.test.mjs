@@ -89,3 +89,19 @@ test("longest-match precedence and the $ anchor", () => {
   // A prefix rule is a prefix rule: it does not float to mid-path.
   assert.equal(allows("/cars-for-sale/partial/x"), true);
 });
+
+// Query rules bind, and the target is pathname + search — until 2026-08-31
+// only the pathname was tested, so `Disallow: /*?*` (AutoRevo's default
+// robots, verbatim on 14 of its 16 cohort rooftops) and Gateway Classic
+// Cars' `Disallow: /*?` / `Allow: /*?page=` pair were silently ignored on
+// every host that used them. Found on the AutoRevo lane build; fetchPage's
+// callers see the refusal as robots_disallowed, and crawl.mjs records it as
+// truncation rather than certifying a walk it did not make.
+test("query rules bind: /*?* closes the pager, and Allow /*?page= re-opens exactly one key", () => {
+  const autorevo = { allow: [], disallow: ["/paymentcalculator/", "/map/show/", "/*?*"] };
+  assert.equal(robotsRulesAllow(autorevo, "/vehicles"), true);
+  assert.equal(robotsRulesAllow(autorevo, "/vehicles?page=2"), false);
+  const gateway = { allow: ["/*?page=", "/*&page="], disallow: ["/*?"] };
+  assert.equal(robotsRulesAllow(gateway, "/vehicles?page=2"), true);
+  assert.equal(robotsRulesAllow(gateway, "/vehicles?make=ford"), false);
+});

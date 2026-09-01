@@ -332,7 +332,16 @@ export async function robotsAllows(url) {
       robotsCache.set(u.host, { allow: [], disallow: [] });
     }
   }
-  return robotsRulesAllow(robotsCache.get(u.host), u.pathname);
+  // The QUERY is part of what robots rules match — `Disallow: /*?*` and
+  // `Allow: /*?page=` are how AutoRevo's and DealerAccelerate's rooftops
+  // state their whole crawling policy — and until 2026-08-31 only the
+  // pathname was tested, so every query rule on every host was silently
+  // ignored (found on the AutoRevo lane build: /vehicles?page=2 fetched on
+  // 14 rooftops whose robots disallow /*?*). Obeying robots is this
+  // fetcher's founding rule; the pages a query rule now refuses were never
+  // ours to fetch, and crawl.mjs records the refusal as truncation rather
+  // than certifying a walk it did not make.
+  return robotsRulesAllow(robotsCache.get(u.host), u.pathname + u.search);
 }
 
 // Plenty of dealers serve only on www and refuse the apex outright

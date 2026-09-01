@@ -79,7 +79,19 @@ export function conditionToken(raw) {
  */
 export function publishedCondition({ certified, condition, sourceUrl } = {}) {
   if (certified) return "certified";
-  const c = `${condition ?? ""} ${sourceUrl ?? ""}`.toLowerCase();
+  // Only the URL's PATH joins the haystack, never its host. The host is the
+  // dealer's name, and a dealer named for the word is not a claim about every
+  // car it sells: certifiedautoplaza.com published its whole used lot as
+  // certified through this line (found 2026-08-31, AutoRevo lane build — 25
+  // registry domains carry "certified", and \bnew\b matches inside hyphenated
+  // hosts too). A sourceUrl that does not parse as a URL is kept whole, which
+  // is what it was before.
+  let urlPart = String(sourceUrl ?? "");
+  try {
+    const u = new URL(urlPart);
+    urlPart = u.pathname + u.search;
+  } catch {}
+  const c = `${condition ?? ""} ${urlPart}`.toLowerCase();
   if (/certified/.test(c)) return "certified";
   // A STATED condition outranks the URL. The URL is a fallback — the comment
   // above says so — but merging both into one haystack made it an override,
