@@ -248449,20 +248449,21 @@
       "domain": "gtmotorcars.com",
       "name": "GT MOTOR CARS INVESTMENTS LLC",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealeraccelerate",
       "robots": "unknown",
-      "status": "http-202",
-      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; FL license roll class: independent (VI) (2026-08-24) | probe 2026-08-26: homepage 202",
+      "status": "working",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; FL license roll class: independent (VI) (2026-08-24) | probe 2026-08-26: homepage 202 | auto-promoted by probe 2026-09-01: 1 VIN vehicles on 1 page(s), platform dealeraccelerate",
       "location": {
         "city": "WEST PALM BEACH",
         "state": "FL",
         "zip": "33415"
       },
       "probe": {
-        "date": "2026-08-26",
-        "verdict": "empty",
-        "fetched": 1,
-        "homeStatus": "202"
+        "date": "2026-09-01",
+        "verdict": "working",
+        "fetched": 2,
+        "vehicles": 1,
+        "canonicalHost": "www.gtmotorcars.com"
       }
     },
     {
@@ -255470,20 +255471,21 @@
       "domain": "pinnaclemotorcars.com",
       "name": "PINNACLE MOTORCARS INC",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealeraccelerate",
       "robots": "unknown",
-      "status": "http-202",
-      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; FL license roll class: independent (VI) (2026-08-24) | probe 2026-08-28: homepage 202",
+      "status": "working",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; FL license roll class: independent (VI) (2026-08-24) | probe 2026-08-28: homepage 202 | auto-promoted by probe 2026-09-01: 2 VIN vehicles on 1 page(s), platform dealeraccelerate",
       "location": {
         "city": "WEST PALM BEACH",
         "state": "FL",
         "zip": "33411"
       },
       "probe": {
-        "date": "2026-08-28",
-        "verdict": "empty",
-        "fetched": 1,
-        "homeStatus": "202"
+        "date": "2026-09-01",
+        "verdict": "working",
+        "fetched": 2,
+        "vehicles": 2,
+        "canonicalHost": "www.pinnaclemotorcars.com"
       }
     },
     {
@@ -361406,6 +361408,24 @@
         "city": "Lexington",
         "state": "KY",
         "zip": "40509"
+      }
+    },
+    {
+      "domain": "hillbankusa.com",
+      "name": "Hillbank Motorsports",
+      "kind": "dealer",
+      "platform": "dealeraccelerate",
+      "robots": "unknown",
+      "status": "needs-investigation",
+      "notes": "Successor domain of a stale dealeraccelerate cohort row (pinnaclemotorcarsonline/hillbankmotorsport/gtmotorcarsllc redirect or 404; live hosts found on the 2026-08-31 dark-tail lane build) | probe 2026-09-01: 0 VIN vehicles in 12 fetches (26 ItemList entries, 712 sitemap urls, 0 failed fetches, platform dealeraccelerate) — likely needs a platform extractor",
+      "probe": {
+        "date": "2026-09-01",
+        "verdict": "empty",
+        "fetched": 12,
+        "vehicles": 0,
+        "itemList": 26,
+        "sitemapUrls": 712,
+        "canonicalHost": "www.hillbankusa.com"
       }
     }
   ],
