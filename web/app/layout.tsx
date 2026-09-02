@@ -86,6 +86,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <Link href="/methodology" className="underline decoration-paper/40 underline-offset-2 hover:text-paper hover:decoration-paper">
               How we source this data
             </Link>
+            {/* The footer is the only server-rendered nav on the site, so it
+                is where a crawler picks up /ev — and /ev is the only route
+                into the listing corpus. The browse grid's links are built in
+                the browser, which is why 18 of 18 sampled listing pages were
+                unknown to Google on 2026-09-02. */}
+            <Link href="/ev" className="underline decoration-paper/40 underline-offset-2 hover:text-paper hover:decoration-paper">
+              Models
+            </Link>
             <Link href="/facts" className="underline decoration-paper/40 underline-offset-2 hover:text-paper hover:decoration-paper">
               Fact sheets
             </Link>

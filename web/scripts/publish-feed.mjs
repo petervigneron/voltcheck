@@ -31,6 +31,7 @@ import { buildCardIndex } from "../lib/listings/buildIndex.ts";
 import { buildFirstPaint } from "../lib/listings/firstPaint.ts";
 import { SHARDS, packIndex, shardOfId } from "../lib/listings/pack.ts";
 import { worthTrimTally } from "../lib/listings/tally.ts";
+import { buildHubIndex } from "../lib/listings/hubIndex.ts";
 
 const FORCE = process.argv.includes("--force");
 const { SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY } = process.env;
@@ -91,6 +92,10 @@ for (let n = 0; n < SHARDS; n++) {
 }
 await upload("first", JSON.stringify(buildFirstPaint(rows)));
 await upload("trims", JSON.stringify(worthTrimTally(rows)));
+// The model hubs (/ev/<make>/<model>). One file for all 246 of them: a hub's
+// cars are spread across every shard, so serving them from the packed feed
+// would cost ~50 MB per hub render. See lib/listings/hubIndex.ts.
+await upload("hubs", JSON.stringify(buildHubIndex(rows)));
 await upload(
   "manifest",
   JSON.stringify({ v: 1, publishedAt: new Date().toISOString(), total: rows.length, shardCounts })

@@ -1,6 +1,7 @@
 import { feedWalkFailedRecently } from "@/lib/listings/db";
 import { allListingsWithOrigin } from "@/lib/listings/source";
 import { FACT_SHEETS } from "@/lib/facts/registry";
+import { MODEL_HUBS, hubPath } from "@/lib/listings/modelHubs";
 import { BASE, SITEMAP_SHARDS, type SitemapEntry, renderUrlset, sitemapShardOf } from "@/lib/sitemap";
 
 // The listing sitemap, one shard per file at /sitemap/0.xml … /sitemap/11.xml
@@ -60,6 +61,18 @@ function staticRoutes(now: Date): SitemapEntry[] {
       lastModified: new Date(s.dateModified),
       changeFrequency: "monthly" as const,
       priority: 0.5,
+    })),
+    // The model hubs (lib/listings/modelHubs.ts). Ranked above the fact
+    // sheets and below the home page: a hub is the page a model search should
+    // land on, and it is the only crawlable route into the listing corpus —
+    // every one of which was an orphan until these existed. Daily, because a
+    // hub's cars turn over with the feed.
+    { url: `${BASE}/ev`, lastModified: now, changeFrequency: "daily", priority: 0.7 },
+    ...MODEL_HUBS.map((h) => ({
+      url: `${BASE}${hubPath(h)}`,
+      lastModified: now,
+      changeFrequency: "daily" as const,
+      priority: 0.7,
     })),
   ];
 }
@@ -139,8 +152,10 @@ export async function GET(_req: Request, { params }: { params: Promise<{ shard: 
       priority: 0.7,
     }));
 
-  // The static routes — home, /vin, /bot, /facts and the fact sheets — ride
-  // in shard 0 so they are always in a file a crawler is being pointed at.
+  // The static routes — home, /vin, /bot, /facts and the fact sheets, /ev and
+  // the 246 model hubs — ride in shard 0 so they are always in a file a
+  // crawler is being pointed at, and so they appear once rather than twelve
+  // times.
   const entries = n === 0 ? [...staticRoutes(now), ...listingRoutes] : listingRoutes;
   return new Response(renderUrlset(entries, `sitemap/${n}.xml`), {
     headers: { "Content-Type": "application/xml" },
