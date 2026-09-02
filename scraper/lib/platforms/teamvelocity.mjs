@@ -67,16 +67,28 @@
 // yourPrice is the live figure whichever way it moved, and 45,420 appears
 // nowhere on that page.
 //
-// NEW cars are deliberately left on `sellingPrice` pending a separate sweep.
-// Their divergence is far higher (44% past 90 days) and the direction flips —
-// 28.5% of new rows have yourPrice BELOW sellingPrice — because `yourPrice`
-// there also carries conditional/incentive rungs, and some rooftops gate the
-// real number behind a form (markleyhonda's new-car inventorysetup returns
+// NEW cars keep `sellingPrice`, and that is now a positive finding rather than
+// just caution. Their divergence is a DIFFERENT MECHANISM from the used-car
+// staleness above: it is conditional rebates. Of the divergent new rows
+// carrying a non-zero `cashRebates`, 70.3% (187 of 266) have
+// `sellingPrice - yourPrice` equal to `cashRebates` to the dollar — e.g.
+// cityworldhyundai Elantra 23,585 - 21,585 = 2,000 = cashRebates, dallasdodge
+// Compass 29,777 - 27,277 = 2,500 = cashRebates. The mirror control holds too:
+// 0 of the 26 divergent USED rows carry any rebate at all.
+//
+// So on new cars `yourPrice` is rebate-loaded — money a given shopper may well
+// not qualify for. Publishing it would manufacture exactly the false bargain
+// this commit removes from the used lane. Some rooftops go further and gate the
+// number behind a form (markleyhonda's new-car inventorysetup returns
 // enableOverleyOnVDP:true, priceDiscount:50, specialFieldValue "Below
-// Invoice"). Two new-car control tests each rendered the LOWER of the pair but
-// from different fields (markleyhonda sellingPrice 36,100; toyotaofgladstone
-// yourPrice 24,648). Two tests is not a rule. Until that sweep lands, changing
-// new-car pricing here would be a guess.
+// Invoice"), and several render MSRP as the headline with the discount broken
+// out separately (lindsaychryslerdodgejeepram, dallasdodge).
+//
+// About 30% of new-car divergence is still unexplained by rebates, and two
+// control tests each rendered the LOWER of the pair but from different fields
+// (markleyhonda sellingPrice 36,100; toyotaofgladstone yourPrice 24,648).
+// docs/tools/tv-newcar-price-sweep.mjs measures that residual. Until it lands,
+// moving new-car pricing would be a guess in the expensive direction.
 //
 // Never use `yourPriceSort` or the page's JSON-LD offer: both bake in the doc
 // fee (42,339 + 225 = 42,564). Our convention is the pre-fee asking price.

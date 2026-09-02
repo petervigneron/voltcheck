@@ -88,9 +88,15 @@ test("new cars stay on sellingPrice pending the sweep", () => {
   assert.equal(provOf(crv), "tv-selling");
 });
 
-test("new: a discounted yourPrice never displaces sellingPrice", () => {
-  // toyotaofgladstone: yourPrice sits BELOW sellingPrice on 28.5% of new rows.
-  assert.equal(priceOf({ type: "New", sellingPrice: 24898, yourPrice: 24648 }), 24898);
+test("new: a rebate-loaded yourPrice never displaces sellingPrice", () => {
+  // cityworldhyundai kmhlm4dg8tu239336 — the gap IS the conditional rebate:
+  // 23,585 - 21,585 = 2,000 = cashRebates, to the dollar. That holds for 70% of
+  // divergent new rows carrying a rebate, and for 0 of 26 divergent used rows,
+  // which is what makes new-car divergence a different mechanism from staleness.
+  // Publishing the rebated figure would invent a bargain a shopper may not get.
+  const elantra = { type: "New", sellingPrice: 23585, yourPrice: 21585, cashRebates: 2000 };
+  assert.equal(priceOf(elantra), 23585);
+  assert.equal(provOf(elantra), "tv-selling");
 });
 
 test("a used car with no yourPrice falls back to sellingPrice", () => {
