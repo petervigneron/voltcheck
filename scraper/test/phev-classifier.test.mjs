@@ -345,3 +345,29 @@ test("a Lexus RZ 550e stays a BEV however many times the badge repeats", () => {
     assert.equal(phevNameplate(n, 2026), true, `must be a plug-in: ${n}`);
   }
 });
+
+// The Jeep Recon is battery-electric; "4xe" is Jeep's plug-in badge, and two
+// live rooftops stamped it into the Recon's trim (schickerchrysler.com,
+// kingsautomall.com, 2026-09-01) — the badge was the only signal the
+// classifier had, so both cars came back PHEV? against a BEV enrichment row.
+test("a dealer-written 4xe badge cannot turn the battery-electric Recon into a plug-in", () => {
+  // 4xe in the trim: the BEV nameplate outranks the badge.
+  const badged = classifyEv({
+    name: "2026 Jeep Recon Moab",
+    vehicleConfiguration: "Moab 4xe",
+    vehicleModelDate: "2026",
+  });
+  assert.equal(badged.isEv, true);
+  assert.equal(badged.kind, "BEV?");
+  // 4xe inside the name itself: same answer.
+  assert.equal(classifyEv({ name: "2026 Jeep Recon Moab 4xe" }).kind, "BEV?");
+  // The collision veto, for callers that ask phevNameplate directly.
+  assert.equal(phevNameplate("2026 Jeep Recon Moab 4xe", 2026), false);
+  // A real 4xe is untouched.
+  const wrangler = classifyEv({ name: "2024 Jeep Wrangler", vehicleConfiguration: "Rubicon 4xe" });
+  assert.equal(wrangler.kind, "PHEV?");
+  assert.equal(phevNameplate("2024 Jeep Wrangler Rubicon 4xe", 2024), true);
+  // The make anchor: Honda's FourTrax Recon is a petrol ATV the powersports
+  // lanes carry, and it must not become a name-matched BEV.
+  assert.equal(classifyEv({ name: "2024 Honda FourTrax Recon", fuelType: "Gas" }).isEv, false);
+});

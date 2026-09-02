@@ -61,6 +61,15 @@ export const EV_MODEL_RE = new RegExp(
     // make word because a bare \\bbz\\b is exactly the kind of two-letter
     // token the iX/C40 lessons above warn about.
     "toyota bz\\b", "bz4x", "solterra", "prologue", "zdx",
+    // The Jeep Recon (new for MY2026) is battery-electric — 100 kWh, EPA 222
+    // mi, Stellantis's own spec — but dealers write "4xe", Jeep's PLUG-IN
+    // badge, into its trim ("Moab 4xe" live on two rooftops, 2026-09-01), and
+    // with no entry here the trim badge was the only signal, so 2 of 322 live
+    // Recons classified PHEV?. The make word in front is load-bearing: bare
+    // \brecon\b is also the Honda FourTrax Recon, a petrol ATV the
+    // powersports lanes now carry, and a nameplate match VOUCHES a dealer's
+    // fuel text past the vPIC gate (the ID.4/Sequoia lesson above).
+    "jeep\\W{0,2}recon\\b",
     // The Lexus RZ enumerated its variants and got the list wrong as Lexus
     // added them: "rz ?[34]50" covered the RZ 350e and RZ 450e but not the
     // RZ 300e or the RZ 550e, so half of Lexus's only BEV nameplate fell
@@ -256,7 +265,14 @@ const PHEV_FUEL_RE = /plug[\s-]?in|\bphev\b/i;
 // MINI Cooper S E Countryman ALL4, whose name matches EV_MODEL_RE's 2025
 // Countryman SE. Losing a real plug-in from the watched population is the
 // direction this lane cannot afford.
-const BEV_BADGE_COLLISION_RE = /\brz ?[3-5][05]0e\b/i;
+// The Jeep Recon joins for the same shape of reason: it is battery-electric
+// (see its EV_MODEL_RE entry), but dealers stamp "4xe" — Jeep's plug-in badge
+// — into its trim, and a name that says both "Recon" and "4xe" must not let
+// the badge settle plug-in. classifyEv's ordering already prefers the BEV
+// nameplate on such names; this veto is for every caller that asks
+// phevNameplate directly. If Jeep ever ships a real Recon plug-in variant,
+// this entry is the one to revisit.
+const BEV_BADGE_COLLISION_RE = /\brz ?[3-5][05]0e\b|\bjeep\W{0,2}recon\b/i;
 
 // Does the nameplate settle that this car plugs in? `year` gates the names
 // that are only plug-ins in some model years.
