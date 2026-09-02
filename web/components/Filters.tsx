@@ -605,7 +605,19 @@ export function FilterRail({
 
   return (
     <div className="border-t-[3px] border-l-[3px] border-ink">
+      {/* Two groups, not one row of cells. A search chip is ~225px, and with
+          it the rail outgrows a laptop-width viewport; as one wrapping row the
+          overflow was whatever cells came last — Save search alone on a second
+          line, Sort with it a little narrower — ending ragged against the page,
+          because the count was the only cell allowed to grow and it had stayed
+          on the first line (2026-09-02). Grouped, the count/sort/save trio
+          moves down as a unit and its count fills the line it lands on. The
+          chip group grows 999:1 against the trio, so while both share a line
+          the slack goes to the chip group's filler and the trio stays
+          content-sized; alone on a line, a ratio has nothing to split and the
+          trio takes the whole width. */}
       <div className="flex flex-wrap items-stretch">
+      <div className="flex grow-[999] flex-wrap items-stretch">
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
@@ -655,10 +667,16 @@ export function FilterRail({
           </button>
         ))}
 
-        {/* The count also does the old spacer's job: it takes the slack between
-            the chips and sort on a wide rail. Until the index lands there's no
-            number to give, and an empty stretched cell only reads as a gap on a
-            phone, so that state keeps the desktop-only spacer it always was. */}
+        {/* Closes the chip group against the trio (or the right edge, once the
+            trio has wrapped below). Phones let the cells themselves grow. */}
+        <div className={`${CELL} hidden flex-1 min-w-[40px] bg-paper sm:block`} aria-hidden="true" />
+      </div>
+
+      <div className="flex grow flex-wrap items-stretch">
+        {/* The count takes the slack of whichever line the trio lands on. Until
+            the index lands there's no number to give, and an empty stretched
+            cell only reads as a gap on a phone, so that state keeps the
+            desktop-only spacer it always was. */}
         {count === undefined ? (
           <div className={`${CELL} hidden flex-1 min-w-[40px] bg-paper sm:block`} aria-hidden="true" />
         ) : (
@@ -710,6 +728,7 @@ export function FilterRail({
         {/* Keep this search: snapshots the current filters to the Searches tab
             under Saved (components/SaveSearchToggle.tsx). */}
         <SaveSearchToggle />
+      </div>
       </div>
 
       {open && (
