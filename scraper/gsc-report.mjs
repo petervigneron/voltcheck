@@ -123,9 +123,19 @@ async function sitemapStatus(token) {
     return json.sitemap ?? [];
   };
   const submitted = await get(base);
+  // Only an INDEX has children, and asking a plain sitemap for its children
+  // is a 400 that would take the whole section down with it — which is
+  // exactly what happened on 2026-09-02 the moment the 12 shards were
+  // submitted individually alongside the index. Ask only the index, and
+  // treat a refusal as "no children" rather than an error, because the
+  // per-sitemap rows below are the real signal now.
   const children = [];
-  for (const s of submitted) {
-    children.push(...(await get(`${base}?sitemapIndex=${encodeURIComponent(s.path)}`)));
+  for (const s of submitted.filter((m) => /\/sitemap\.xml$/.test(m.path))) {
+    try {
+      children.push(...(await get(`${base}?sitemapIndex=${encodeURIComponent(s.path)}`)));
+    } catch {
+      // A sitemap Google has not processed as an index yet.
+    }
   }
   return { submitted, children };
 }

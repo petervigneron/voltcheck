@@ -4,8 +4,11 @@
 # numbers. Read-only: the service account is a Restricted user on the
 # property, so this workflow cannot change anything about the site.
 #
-# The report lands in the job summary. Set the `email` input (or flip the
-# schedule's env) to also send it to alerts@'s owner address via Resend.
+# The report is EMAILED on every scheduled run, and lands in the job summary
+# either way. Emailing is the point: a weekly report nobody is told about is
+# a page someone has to remember to go and open, which is not "keeping tabs"
+# — the owner asked how it would reach him, and the honest first answer was
+# that it would not.
 name: SEO report
 
 on:
@@ -17,9 +20,9 @@ on:
         description: "Window length in days"
         default: "28"
       email:
-        description: "Also email the report"
+        description: "Email the report (scheduled runs always do)"
         type: boolean
-        default: false
+        default: true
 
 concurrency:
   group: seo-report
@@ -57,13 +60,22 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Email the report
-        if: ${{ inputs.email == true }}
+        # A scheduled run has no inputs, so it must not depend on one.
+        if: ${{ github.event_name == 'schedule' || inputs.email == true }}
         env:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
         run: |
+          if [ -z "${RESEND_API_KEY:-}" ]; then
+            echo "::warning::RESEND_API_KEY is not set — report not emailed"
+            exit 0
+          fi
           node -e '
             const fs = require("fs");
             const body = fs.readFileSync("report.txt", "utf8");
+            // The headline numbers ride in the subject so the week can be
+            // read without opening anything.
+            const num = (label) => (body.match(new RegExp(`^${label}\\s+(\\d+)`, "m")) || [])[1] ?? "?";
+            const subject = `Voltcheck search: ${num("clicks")} clicks, ${num("impressions")} impressions this week`;
             fetch("https://api.resend.com/emails", {
               method: "POST",
               headers: {
@@ -73,10 +85,15 @@ jobs:
               body: JSON.stringify({
                 from: "alerts@voltcheck.net",
                 to: "peter.vigneron@gmail.com",
-                subject: "Voltcheck — weekly search report",
+                subject,
                 text: body,
               }),
             })
-              .then((r) => r.text())
-              .then((t) => console.log(t));
+              .then(async (r) => {
+                const t = await r.text();
+                console.log(r.status, t);
+                // A send that silently failed would look exactly like a quiet
+                // week, which is the one thing this report must never do.
+                if (!r.ok) process.exit(1);
+              });
           '
