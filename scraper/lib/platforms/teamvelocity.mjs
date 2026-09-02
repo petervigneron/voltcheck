@@ -30,9 +30,59 @@
 // System". So fuel_Type is the reliable marker: /electric/ → BEV; isElectric +
 // /hybrid/ → PHEV. We hand classifyEv a fuelType string built from those and let
 // it make the call, exactly as every other lane does.
+//
+// PRICE: `sellingPrice` is a SNAPSHOT, `yourPrice` is the live asking price.
+// This lane published stale prices until 2026-09-01, always low, which is the
+// false-bargain direction the house rule is asymmetric about. Caught on
+// parkwayfamilykia.com VIN 1FT6W1EV7PWG15378: we printed $39,784 and
+// "$7,901 below similar listings" on a truck the dealer lists at $42,339.
+//
+// The record carries both numbers. The per-VIN endpoint the VDP itself calls
+// (/api/Inventory/vehicle?source=websites&vin=&accountid=) shows the two
+// layers plainly: the vehicle record holds sellingPrice = msrp =
+// internet_Price = 39784, while the offer layer holds payments[].retail =
+// purchasePrice = buyFors[].buyForPrice = 42339 and a top-level finalPrice of
+// 42564. The platform's own name for the asking price is `retail`; in this
+// bulk API that is `yourPrice`, and `yourPriceSort` is the fees-inclusive
+// finalPrice.
+//
+// `sellingPrice` is a snapshot written at feed import that then goes stale —
+// MEASURED, not assumed. Divergence tracks days in stock, and fresh cars agree
+// exactly (used cars, 1,037 rows across 11 rooftops):
+//   0-7d: 0 of 220 divergent (0.0%) | 8-30d: 2.5% | 31-90d: 3.6% | 90d+: 4.4%
+// 0 of 220 on fresh inventory is the control. That rules out a pricing-rules
+// markup (which would apply from day one, not accumulate with age) and a
+// separate syndication-channel price (which would not track days in stock).
+// The dealer's own Facebook and GA4 pixels do fire the stale number, but both
+// read the same vehicle record, so they are not independent evidence.
+//
+// USED cars therefore take `yourPrice`. Verified against what the VDP actually
+// renders, 5 of 5, in BOTH directions — do not "simplify" this to a max():
+//   parkwayfamilykia F-150 Lightning  selling 39,784 → renders 42,339
+//   parkwayfamilykia Telluride        selling 31,269 → renders 34,843
+//   parkwayfamilykia Odyssey          selling 35,485 → renders 35,750
+//   livermoreford    Patriot          selling  6,900 → renders  8,500
+//   livermoreford    Explorer demo    selling 45,420 → renders 43,920  ← LOWER
+// That last one is why the rule is "use yourPrice", not "use the higher one":
+// yourPrice is the live figure whichever way it moved, and 45,420 appears
+// nowhere on that page.
+//
+// NEW cars are deliberately left on `sellingPrice` pending a separate sweep.
+// Their divergence is far higher (44% past 90 days) and the direction flips —
+// 28.5% of new rows have yourPrice BELOW sellingPrice — because `yourPrice`
+// there also carries conditional/incentive rungs, and some rooftops gate the
+// real number behind a form (markleyhonda's new-car inventorysetup returns
+// enableOverleyOnVDP:true, priceDiscount:50, specialFieldValue "Below
+// Invoice"). Two new-car control tests each rendered the LOWER of the pair but
+// from different fields (markleyhonda sellingPrice 36,100; toyotaofgladstone
+// yourPrice 24,648). Two tests is not a rule. Until that sweep lands, changing
+// new-car pricing here would be a guess.
+//
+// Never use `yourPriceSort` or the page's JSON-LD offer: both bake in the doc
+// fee (42,339 + 225 = 42,564). Our convention is the pre-fee asking price.
 import { classifyEv } from "../ev.mjs";
 import { politeGetJson } from "../http.mjs";
-import { TV_SELLING } from "../price-provenance.mjs";
+import { TV_RETAIL, TV_SELLING } from "../price-provenance.mjs";
 import { text } from "../normalize.mjs";
 
 const API = "https://websites.api.teamvelocityportal.com/tvm-services/inventory/vehicles";
@@ -63,15 +113,28 @@ function fuelTypeFor(r) {
   return f || undefined;
 }
 
+// Used cars take the live `yourPrice` (the platform's `retail`, == purchasePrice);
+// new cars stay on `sellingPrice` pending the sweep. See the PRICE note up top —
+// both halves of this are measured, and the new-car half deliberately is not.
+// `internetPrice` is never read: it is 0 on real cars, and where it is non-zero
+// it just mirrors the stale sellingPrice.
+function teamVelocityPrice(r) {
+  const used = String(r?.type ?? "").toLowerCase() !== "new";
+  const live = posNum(r?.yourPrice) ?? posNum(r?.purchasePrice);
+  if (used && live != null) return { price: live, provenance: TV_RETAIL };
+  const snapshot = posNum(r?.sellingPrice);
+  if (snapshot != null) return { price: snapshot, provenance: TV_SELLING };
+  return { price: live, provenance: live != null ? TV_RETAIL : TV_SELLING };
+}
+
 // One API record → schema.org Vehicle node, shaped like the other producers.
-// The price is `sellingPrice` (the dealer-shown asking price); internetPrice is
-// 0 on real cars, so it is never used — the false-bargain guardrail, same as the
-// dealer.com resolver. Exported for the classification test.
+// Exported for the classification and price tests.
 export function teamVelocityApiVehicle(r) {
   const vin = String(r?.vin ?? "").toUpperCase();
   if (!TV_VIN_RE.test(vin)) return null;
   const vdp = typeof r.vdpUrl === "string" && /^https?:\/\//.test(r.vdpUrl) ? r.vdpUrl : undefined;
   const cond = String(r.type ?? "").toLowerCase();
+  const { price, provenance } = teamVelocityPrice(r);
   return {
     "@type": "Vehicle",
     vehicleIdentificationNumber: vin,
@@ -91,10 +154,10 @@ export function teamVelocityApiVehicle(r) {
     vehicleEngine: { "@type": "EngineSpecification", fuelType: fuelTypeFor(r) },
     offers: {
       "@type": "Offer",
-      price: posNum(r.sellingPrice) ?? posNum(r.yourPrice),
+      price,
       // Not the page's JSON-LD offer — this node is assembled from the API
       // record, so it names its own field (lib/price-provenance.mjs).
-      priceProvenance: TV_SELLING,
+      priceProvenance: provenance,
       priceCurrency: "USD",
       url: vdp,
       seller: {

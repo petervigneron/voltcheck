@@ -91,7 +91,15 @@ export const DVENOM_FINAL = "dvenom-final";           // DealerVenom finalPriceI
 export const DEALR_ENTRY = "dealr-entry";             // dealr.cloud inventory/entry-price markup
 export const DCS_TILE = "dcs-tile";                   // Dealer Car Search tile/data-layer price
 export const OVERFUEL_PRICE = "overfuel-price";       // Overfuel `price` (never `specialprice`)
-export const TV_SELLING = "tv-selling";               // Team Velocity sellingPrice/yourPrice
+// Team Velocity carries two prices per record and they are NOT interchangeable,
+// so they get two tags. `sellingPrice` is a snapshot written at feed import that
+// goes stale with days in stock (0 of 220 fresh used cars diverge; 4.4% past
+// 90 days), and it reads LOW — the false-bargain direction. `yourPrice` is the
+// live asking price, which the platform's own per-VIN endpoint calls `retail`.
+// Used cars read tv-retail, new cars still read tv-selling pending a sweep;
+// teamvelocity.mjs has the measurements and the 5 rendered-page control tests.
+export const TV_SELLING = "tv-selling";               // Team Velocity sellingPrice (snapshot; new only)
+export const TV_RETAIL = "tv-retail";                 // Team Velocity yourPrice/purchasePrice (live retail)
 // Motive/ridemotive's Algolia record `price` — the VDP's rendered Final Price
 // (fees included), NOT its `feed_price` rung, which is the same ladder's
 // pre-fee line.
@@ -300,7 +308,7 @@ const KNOWN = new Set([
   JSONLD,
   DDC_INTERNET, DDC_SALE, DDC_ASKING, DDC_MSRP,
   DEOL_INTERNET, DEOL_SELLING, DEOL_MSRP, DEOL_CARD_INTERNET, DEOL_DISPLAYED,
-  DFIRE_ADVERTISED, DVENOM_FINAL, DEALR_ENTRY, DCS_TILE, OVERFUEL_PRICE, TV_SELLING,
+  DFIRE_ADVERTISED, DVENOM_FINAL, DEALR_ENTRY, DCS_TILE, OVERFUEL_PRICE, TV_SELLING, TV_RETAIL,
   MOTIVE_PRICE, AUTOMANAGER_PRICE, AUTOFUNDS_INTERNET, AUTOFUNDS_REDUCED,
   MOTORCARSITES_PRICE,
   ONEAUDI_SALE, WAYNEREAVES_PRICE, ADD_DISPLAY_PRICE,
