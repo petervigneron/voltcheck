@@ -54,6 +54,21 @@ export const FACT_LINK_MODELS: {
   { make: "chevrolet", model: "bolt-ev-euv", topics: ["charging", "heat-pump"], name: "Chevrolet Bolt EV or EUV", keys: ["boltev", "bolteuv"] },
   { make: "tesla", model: "model-3", topics: ["charging", "heat-pump", "battery-warranty"], name: "Tesla Model 3", keys: ["model3"] },
   { make: "tesla", model: "model-y", topics: ["charging", "heat-pump", "battery-warranty"], name: "Tesla Model Y", keys: ["modely"] },
+  // batch6 (2026-09-01). Heat-pump rows deliberately absent for the GM-platform
+  // cars, the Prologue and the Wrangler 4xe — see registry.ts.
+  { make: "honda", model: "prologue", topics: ["charging", "battery-warranty"], name: "Honda Prologue", keys: ["prologue"] },
+  // Every Wrangler 4xe is the four-door body, so the feed's "Wrangler 4xe" and
+  // "Wrangler Unlimited 4xe" spellings are one vehicle and share the row (the
+  // Bolt EV/EUV precedent). Petrol "Wrangler" stays unmatched.
+  { make: "jeep", model: "wrangler-4xe", topics: ["charging", "battery-warranty"], name: "Jeep Wrangler 4xe", keys: ["wrangler4xe", "wranglerunlimited4xe"] },
+  { make: "kia", model: "ev9", topics: ["charging", "heat-pump", "battery-warranty"], name: "Kia EV9", keys: ["ev9"] },
+  // The Lyriq-V and Optiq-V are separate feed models (like the Ioniq 5 N) and get no link.
+  { make: "cadillac", model: "lyriq", topics: ["charging", "battery-warranty"], name: "Cadillac Lyriq", keys: ["lyriq"] },
+  { make: "cadillac", model: "optiq", topics: ["charging", "battery-warranty"], name: "Cadillac Optiq", keys: ["optiq"] },
+  // "Blazer EV Police Package" is a separate fleet spelling and gets no link;
+  // petrol "BLAZER" and "Equinox" stay unmatched.
+  { make: "chevrolet", model: "blazer-ev", topics: ["charging", "battery-warranty"], name: "Chevrolet Blazer EV", keys: ["blazerev"] },
+  { make: "chevrolet", model: "equinox-ev", topics: ["charging", "battery-warranty"], name: "Chevrolet Equinox EV", keys: ["equinoxev"] },
 ];
 
 /** The fact-sheet links for one car, given the feed's own make/model strings. Empty when no sheet is exactly this model. */

@@ -908,6 +908,581 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       },
     ],
   },
+  // batch6 — the high-inventory models that had no sheets (2026-09-01).
+  // Heat-pump sheets deliberately absent for the GM-platform cars, the
+  // Prologue and the Wrangler 4xe: the enrichment lane holds owner-decided
+  // abstentions (GM/Honda/Stellantis never name the hardware), and a sheet
+  // body may not state absences. The EV9 is the one model in this batch with
+  // a maker-published per-trim heat-pump table.
+  {
+    make: "cadillac",
+    model: "optiq",
+    topic: "charging",
+    contentFile: "optiq-charging",
+    pageTitle: "Cadillac Optiq charging: the 2026 NACS port, the 2025 CCS1 port, 150 kW | Voltcheck",
+    description:
+      "The Optiq's charge port changed with the model year: 2025 cars are CCS1, 2026 cars are NACS from the factory. Peak 150 kW, 11.5 kW or 19.2 kW at home.",
+    breadcrumbLabel: "Cadillac Optiq charging",
+    dateModified: "2026-09-01",
+    faq: [
+      {
+        question: "Does the Cadillac Optiq have a NACS charge port?",
+        answer:
+          "It depends on the model year. A 2025 Optiq has a Combined Charging System Type 1 port, which combines the J1772 Type 1 plug with two high-speed DC fast-charging pins. A 2026 Optiq has a J3400 North American Charging Standard port as standard equipment.",
+      },
+      {
+        question: "Does a Cadillac Optiq need an adapter to use a Tesla Supercharger?",
+        answer:
+          "A 2025 Optiq does. Cadillac sells a GM NACS DC adapter that plugs into the car's CCS charge port and opens select generation 3 and later Superchargers, with public charging set up in the myCadillac mobile app. That adapter is for DC charging only and does not work on Tesla Level 2 chargers. A 2026 Optiq plugs into a Supercharger directly, and instead needs a NACS-to-CCS adapter at a CCS fast charger and a J-1772 cable with the appropriate adapter for Level 1 and Level 2 stations.",
+      },
+      {
+        question: "How fast does the Cadillac Optiq charge on a DC fast charger?",
+        answer:
+          "Cadillac gives a maximum charge speed of 150 kW for both model years. On a 2025 Optiq, which is dual-motor all-wheel drive, Cadillac says DC fast charging adds up to 79 miles of range in about 10 minutes. On a 2026 Optiq with rear-wheel drive, Cadillac says up to 81 miles in about 10 minutes.",
+      },
+      {
+        question: "How long does the Cadillac Optiq take to charge at home?",
+        answer:
+          "The Optiq comes with 11.5 kW onboard AC charging as standard and a 19.2 kW charging module as an option. At 11.5 kW Cadillac quotes 33 miles of range per hour on a 2025 Optiq, from a professionally installed 60A dedicated charge station, and 36 miles per hour on a 2026 rear-wheel-drive Optiq. At 19.2 kW the figures are 55 and 59 miles per hour, and the 19.2 kW rate requires a professionally installed 100A dedicated charge station.",
+      },
+      {
+        question: "What charging cord comes with a Cadillac Optiq?",
+        answer:
+          "Every Optiq arrives with a 20-foot, 7.7 kW dual-level charging cord. On a 2025 Optiq, Cadillac says it adds up to 24 miles of range per hour of charge from an appliance-style four-prong outlet and up to 4 miles per hour from a standard three-prong household outlet; for 2026, Cadillac states the same two figures with rear-wheel drive. The cord is rated for 85 to 265 volts AC, 45 to 66 Hz, in a NEMA 4X enclosure, at a maximum of 32 amps.",
+      },
+    ],
+  },
+  {
+    make: "cadillac",
+    model: "optiq",
+    topic: "battery-warranty",
+    contentFile: "optiq-battery-warranty",
+    pageTitle: "Cadillac Optiq battery warranty: 8 years, 100,000 miles, 75% floor | Voltcheck",
+    description:
+      "Cadillac covers the Optiq propulsion battery for 8 years or 100,000 miles and replaces it below 75% capacity. It transfers to every subsequent owner.",
+    breadcrumbLabel: "Cadillac Optiq battery warranty",
+    dateModified: "2026-09-01",
+    faq: [
+      {
+        question: "How long is the Cadillac Optiq battery warranty?",
+        answer:
+          "Cadillac covers the propulsion battery pack and its internal components for 8 years or 100,000 miles, whichever comes first, in both the 2025 and the 2026 Electric Vehicle warranty booklets. The rest of the vehicle carries bumper-to-bumper coverage for 4 years or 50,000 miles, whichever comes first.",
+      },
+      {
+        question: "Does the Cadillac Optiq battery warranty transfer to a second owner?",
+        answer:
+          "Yes. Cadillac states that the warranty is provided to the original owner and any subsequent owners of the vehicle during the warranty period. The warranty period itself starts on the date the vehicle was first delivered or put in use, not on the date a second owner buys it.",
+      },
+      {
+        question: "At what point does Cadillac replace an Optiq battery for degradation?",
+        answer:
+          "The battery is replaced or repaired if its capacity falls below 75% of its original value during the warranty period, as determined by a certified dealer, with a battery appropriate for the age and mileage of the vehicle. Cadillac repairs or replaces the propulsion battery with new or refurbished components at its discretion.",
+      },
+      {
+        question: "Is a Cadillac Optiq bought in California covered differently?",
+        answer:
+          "The 2026 warranty booklet adds California Zero-Emissions Vehicle coverage, under which General Motors warrants that the battery is free from defects causing its state of health to deteriorate to less than 70% for 8 years or 100,000 miles, and covers propulsion-related parts for 7 years or 70,000 miles against long-term defects and 3 years or 50,000 miles against short-term defects. It applies only if the vehicle is certified for sale in California and is serviced by an authorized GMC or GM dealership in California or in Colorado, Delaware, Maryland, Massachusetts, New Jersey, New York, Oregon, Rhode Island, Vermont, Washington or Washington D.C.",
+      },
+      {
+        question: "What can void a Cadillac Optiq battery warranty?",
+        answer:
+          "Cadillac excludes battery damage caused by incompatible charging methods or by an adapter it has not sold or approved, damage from failing to install Cadillac over-the-air software updates within 45 days of their availability, and excessive use of the main battery for non-propulsion purposes. The warranty is void entirely on a vehicle currently or previously titled as salvaged, scrapped, junked, or otherwise considered a total loss.",
+      },
+    ],
+  },
+  {
+    make: "cadillac",
+    model: "lyriq",
+    topic: "charging",
+    contentFile: "lyriq-charging",
+    pageTitle: "Cadillac Lyriq charging: the model year the plug changes | Voltcheck",
+    description:
+      "The Lyriq takes CCS1 through 2026 and a native NACS port for 2027, at 190 kW either way. Cadillac's own charge times per year, drive and onboard charger.",
+    breadcrumbLabel: "Cadillac Lyriq charging",
+    dateModified: "2026-09-01",
+    faq: [
+      {
+        question: "Does the Cadillac Lyriq have a NACS charge port?",
+        answer:
+          "It depends on the model year. Model years 2023 through 2026 have a Combined Charging System 1 (CCS1) port, and the 2027 Lyriq has a J3400 North American Charging System port. A 2025 or 2026 Lyriq reaches a Tesla Supercharger with a GM-approved NACS adapter, or without one at a Supercharger fitted with the Tesla Magic Dock. A 2027 Lyriq needs a GM-approved adapter for non-NACS home and public chargers instead.",
+      },
+      {
+        question: "How fast does a Cadillac Lyriq DC fast charge?",
+        answer:
+          "Cadillac states a maximum DC charge rate of 190 kW for every model year from 2023 through 2027. In about ten minutes of charging that adds 76 miles on a 2023, 77 miles on a 2024, and on a 2025 or 2026 it adds 86 miles rear-wheel drive, 84 miles all-wheel drive with the 11.5 kW onboard charging module, and 79 miles all-wheel drive with the 19.2 kW module. The 2025 car goes from a low state of charge to 80% in about 45 minutes, and the 2026 car goes from 10% to 80% in about 40 minutes.",
+      },
+      {
+        question: "How big is the Cadillac Lyriq battery?",
+        answer:
+          "102 kWh. Cadillac calls it rated energy rather than usable energy, and the 2023 press material adds that the pack has 12 modules. The figure is the same for every model year from 2023 through 2027.",
+      },
+      {
+        question: "What is the difference between the 11.5 kW and 19.2 kW Lyriq?",
+        answer:
+          "It is the onboard charging module, and it changes how fast the car takes AC power at home. On a 2026 Lyriq the 11.5 kW module is standard on Luxury and Sport and adds up to 31 miles of range per hour of charge on rear-wheel drive; the 19.2 kW module is available on Premium Luxury, Signature Luxury, Premium Sport and Signature Sport and adds up to 50 miles per hour. A 19.2 kW module needs a professionally installed 100A dedicated charge station, against 60A for the 11.5 kW rate. On a 2023 Lyriq the 19.2 kW rate was rear-wheel drive only; on a 2024 it was available on Luxury and Sport.",
+      },
+      {
+        question: "Can a Cadillac Lyriq power a house?",
+        answer:
+          "A 2026 Lyriq is Vehicle-to-Home compatible as standard, and supplying the house needs the GM Energy PowerShift charger and the GM Energy V2H Enablement Kit.",
+      },
+    ],
+  },
+  {
+    make: "cadillac",
+    model: "lyriq",
+    topic: "battery-warranty",
+    contentFile: "lyriq-battery-warranty",
+    pageTitle: "Cadillac Lyriq battery warranty: 75% floor, and it transfers | Voltcheck",
+    description:
+      "Cadillac covers the Lyriq propulsion battery for 8 years or 100,000 miles and replaces it below 75% capacity. It runs from first delivery and follows the car.",
+    breadcrumbLabel: "Cadillac Lyriq battery warranty",
+    dateModified: "2026-09-01",
+    faq: [
+      {
+        question: "How long is the Cadillac Lyriq battery warranty?",
+        answer:
+          "Eight years or 100,000 miles, whichever comes first, on the propulsion battery pack and its internal components against defects in materials or workmanship. That term is the same in the Cadillac electric-vehicle warranty booklets for model years 2023, 2024, 2025 and 2026.",
+      },
+      {
+        question: "Does the Lyriq battery warranty cover capacity loss?",
+        answer:
+          "Yes. Cadillac replaces or repairs the battery if its capacity falls below 75% of its original value during the warranty period, as determined by a certified dealer, with a battery appropriate for the age and mileage of the vehicle. Repairs use new or refurbished components at Cadillac's discretion.",
+      },
+      {
+        question: "Does the Cadillac Lyriq battery warranty transfer to a second owner?",
+        answer:
+          "Yes. The 2023 and 2024 booklets state the coverage is transferable at no cost to any subsequent person who assumes ownership within the eight years or 100,000 miles term, with no deductibles. The 2025 and 2026 booklets state the warranty is provided to the original owner and any subsequent owners of the vehicle during the warranty period.",
+      },
+      {
+        question: "When does the Lyriq battery warranty clock start?",
+        answer:
+          "On the date the vehicle is first delivered or put in use. That is the start date for all coverages in the booklet, including the eight years or 100,000 miles on the propulsion battery.",
+      },
+      {
+        question: "What voids the Cadillac Lyriq battery warranty?",
+        answer:
+          "The warranty is void on a vehicle currently or previously titled as salvaged, scrapped, junked or otherwise considered a total loss, and coverage does not apply where the odometer has been disconnected, its reading altered, or mileage cannot be determined. On 2025 and 2026 cars, Cadillac also excludes damage from incompatible charging methods or from a charging adapter that General Motors does not sell or approve, and damage from failing to install an Over-the-Air software update within 45 days of it becoming available.",
+      },
+    ],
+  },
+  {
+    make: "chevrolet",
+    model: "equinox-ev",
+    topic: "charging",
+    contentFile: "equinox-ev-charging",
+    pageTitle: "Chevrolet Equinox EV charging: 150 kW DC, CCS1 through 2026, NACS in 2027 | Voltcheck",
+    description:
+      "Chevrolet's own charging figures for the Equinox EV: 150 kW DC fast charging, 85 kWh in 2026, CCS1 through 2026 and a native NACS port for 2027.",
+    breadcrumbLabel: "Chevrolet Equinox EV charging",
+    dateModified: "2026-09-01",
+    faq: [
+      {
+        question: "What charging connector does the Chevrolet Equinox EV use?",
+        answer:
+          "It depends on the model year. The 2024, 2025 and 2026 Equinox EV owner's manuals each say the vehicle is compatible with a Combined Charging System 1 connector, the port usually written CCS1. The 2027 Equinox EV owner's manual instead says the vehicle is compatible with a North American Charging Standard connector, and GM's own August 2026 NACS release marks the Equinox EV as NACS-native for the 2027 model year only.",
+      },
+      {
+        question: "How fast does the Chevrolet Equinox EV charge on a DC fast charger?",
+        answer:
+          "Chevrolet gives the 2024 Equinox EV a standard DC fast-charging capability of up to 150 kW, and describes the 2026 car's 85 kWh battery pack as capable of 150 kW public DC fast charging. Chevrolet says the 2026 Equinox EV can charge from 10 percent to 80 percent in approximately 42 minutes.",
+      },
+      {
+        question: "How many miles does the Chevrolet Equinox EV add in 10 minutes of fast charging?",
+        answer:
+          "For the 2026 Equinox EV, Chevrolet gives 84 miles in 10 minutes for front-wheel drive, 81 miles for all-wheel drive, and 76 miles for all-wheel drive with 19 kW. For the 2024 car, Chevrolet published approximately 70 miles in its September 2022 release and approximately 77 miles in its May 2024 release. For the 2027 car, Chevrolet says up to 80 miles in 10 minutes.",
+      },
+      {
+        question: "Can a Chevrolet Equinox EV charge at a Tesla Supercharger?",
+        answer:
+          "Yes, with a GM-approved NACS DC adapter and public charging set up in the myChevrolet app. Chevrolet says select generation 3 and later Superchargers are open to GM drivers. The adapter has an MSRP of $225 and a 12-month limited warranty from the date of purchase, and it does not work with Tesla Level 2 chargers. A 2027 Equinox EV, which has a native NACS port, instead needs a NACS-to-CCS adapter to use a CCS station.",
+      },
+      {
+        question: "How fast does the Chevrolet Equinox EV charge at home?",
+        answer:
+          "The onboard AC charger is 11.5 kW as standard. Chevrolet says that adds up to 34 miles of range per hour of charging in the body of its 2024 releases and up to 36 miles per hour in the specification table of the May 2024 release. A faster onboard charger is available on some cars. Chevrolet's September 2022 reveal, which shows a preproduction model, gives 19.2 kW on the 2024 3RS eAWD, adding up to 51 miles per hour and requiring a professionally installed 19.2 kW AC 100-amp dedicated charge station bought separately; its May 2024 release lists 11.5 kW alone. For 2025 the 19 kW charger is order code K20, RS only, inside the ZL5 package. For 2026 Chevrolet describes an all-wheel-drive configuration with 19 kW.",
+      },
+    ],
+  },
+  {
+    make: "chevrolet",
+    model: "equinox-ev",
+    topic: "battery-warranty",
+    contentFile: "equinox-ev-battery-warranty",
+    pageTitle: "Chevrolet Equinox EV battery warranty: 8 years, 100,000 miles, 75% floor | Voltcheck",
+    description:
+      "Chevrolet covers the Equinox EV propulsion battery for 8 years or 100,000 miles and replaces it below 75% capacity, for the first owner and every later one.",
+    breadcrumbLabel: "Chevrolet Equinox EV battery warranty",
+    dateModified: "2026-09-01",
+    faq: [
+      {
+        question: "How long is the Chevrolet Equinox EV battery warranty?",
+        answer:
+          "Chevrolet covers the propulsion battery pack and its internal components for 8 years or 100,000 miles, whichever comes first. The warranty period begins on the date the vehicle is first delivered or put in use. The same booklets cover the complete vehicle bumper to bumper for 3 years or 36,000 miles.",
+      },
+      {
+        question: "At what point does Chevrolet replace the Equinox EV battery under warranty?",
+        answer:
+          "The battery is replaced or repaired if its capacity falls below 75 percent of its original value during the warranty period, as determined by a certified dealer. The replacement is a battery appropriate for the age and mileage of the vehicle, and Chevrolet repairs or replaces the propulsion battery with new or refurbished components at its own discretion.",
+      },
+      {
+        question: "Does the Chevrolet Equinox EV battery warranty transfer to a second owner?",
+        answer:
+          "Yes. The 2024 Chevrolet electric-vehicle warranty booklet says the propulsion battery coverage is transferable at no cost to any subsequent person who assumes ownership within the 8 years or 100,000 miles term, with no deductible. The 2025, 2026 and 2027 booklets say the warranty is provided to the original owner and any subsequent owners of the vehicle during the warranty period.",
+      },
+      {
+        question: "Is the Equinox EV battery warranty different in California?",
+        answer:
+          "For the 2026 model year, Chevrolet's booklet adds California Zero-Emissions Vehicle coverage: a High Voltage Battery Warranty of 8 years or 100,000 miles, a propulsion-related part short-term defects warranty of 3 years or 50,000 miles, and a long-term defects warranty of 7 years or 70,000 miles on the propulsion-related parts GM marks as exceeding the cost threshold for high priced warranted parts at the time of certification. Under it, General Motors warrants to the ultimate purchaser and each subsequent purchaser that the battery is free from defects that cause its state of health to deteriorate to less than 70 percent for 8 years or 100,000 miles. It applies to a vehicle certified for sale in California that is serviced by an authorized Chevrolet or GM dealership in California or in a state that has adopted California's emission warranty requirements, presently Massachusetts, New York, Oregon, Vermont and Washington.",
+      },
+      {
+        question: "What can void the Chevrolet Equinox EV battery warranty?",
+        answer:
+          "Chevrolet's booklets exclude damage from collision, fire, theft, freezing, vandalism, riot, explosion or objects striking the vehicle; misuse such as driving over curbs, overloading or racing; installation of non-GM parts and alteration or tampering after final assembly; water or fluid contamination; and damage from failing to follow the recommended maintenance schedule. The warranty is void on a vehicle currently or previously titled as salvaged, scrapped, junked or otherwise a total loss. The 2025, 2026 and 2027 booklets add three exclusions: incompatible charging methods or an adapter that General Motors does not sell or approve, which the 2027 booklet widens to an adapter or charger; damage from failing to install a Chevrolet over-the-air software update within 45 days of its availability; and excessive use of the main battery for non-propulsion purposes.",
+      },
+    ],
+  },
+  {
+    make: "chevrolet",
+    model: "blazer-ev",
+    topic: "charging",
+    contentFile: "blazer-ev-charging",
+    pageTitle: "Chevrolet Blazer EV charging: 85 vs 102 kWh packs, and the 2027 NACS switch | Voltcheck",
+    description:
+      "Blazer EV DC rates by pack: 150 kW on 85 kWh, 190 kW on 102 kWh. CCS1 through 2026, NACS from 2027. Sourced to Chevrolet's own specs and owner manuals.",
+    breadcrumbLabel: "Chevrolet Blazer EV charging",
+    dateModified: "2026-09-01",
+    faq: [
+      {
+        question: "How fast does the Chevrolet Blazer EV charge on a DC fast charger?",
+        answer:
+          "It depends on the pack. Chevrolet rates the 85 kWh Blazer EV — the front-wheel-drive and all-wheel-drive cars — at 150 kW, and the 102 kWh Blazer EV — rear-wheel drive and the SS — at 190 kW. For the 2025 model year Chevrolet publishes miles added in 10 minutes of public DC fast charging as up to 87 miles rear-wheel drive, up to 81 miles front-wheel drive, up to 79 miles SS and up to 68 miles all-wheel drive.",
+      },
+      {
+        question: "What size battery does the Chevrolet Blazer EV have?",
+        answer:
+          "Chevrolet gives the Battery Rated Energy as 85 kWh on front-wheel-drive and all-wheel-drive cars and 102 kWh on rear-wheel-drive cars and the SS, for the 2025 and 2026 model years. For 2024, Chevrolet lists 85 kWh on all-wheel drive and 102 kWh on rear-wheel drive. On its 2026 consumer page Chevrolet gives the same figures by trim: 85 kWh on LT and RS, 102 kWh on SS.",
+      },
+      {
+        question: "Does the Chevrolet Blazer EV have a NACS charge port?",
+        answer:
+          "From the 2027 model year, yes. The 2027 Blazer EV owner manual states the vehicle is compatible with a North American Charging Standard connector, and GM's own per-model table marks the Blazer EV NACS-native for 2027. Model years 2024, 2025 and 2026 have a Combined Charging System 1 port, and GM lists the 2026 Blazer EV among the models that need an adapter to use Tesla Superchargers.",
+      },
+      {
+        question: "Can a Chevrolet Blazer EV use Tesla Superchargers?",
+        answer:
+          "Yes, with a GM-approved NACS DC adapter and public charging set up in the myChevrolet app. The adapter is $225 MSRP with a 12-month limited warranty from the date of purchase, and it reaches select generation 3 and later Superchargers. It is a DC adapter only and does not work on Tesla Level 2 chargers.",
+      },
+      {
+        question: "How long does a Chevrolet Blazer EV take to charge at home?",
+        answer:
+          "The onboard AC charger is 11.5 kW capable. On a 240-volt 11.5 kW connection Chevrolet's 2026 figures are about 35 miles of range per hour of charge for front-wheel drive, about 31 for all-wheel drive and rear-wheel drive, and about 29 for the SS; for 2025 and 2026 that rate needs a professionally installed 60-amp dedicated charge station, sold separately. On the standard Dual Level Charge Cord at 240 volts and 7.7 kW the same cars add about 25, 22 and 20 miles per hour, and on a 120-volt outlet about 4 miles per hour.",
+      },
+    ],
+  },
+  {
+    make: "chevrolet",
+    model: "blazer-ev",
+    topic: "battery-warranty",
+    contentFile: "blazer-ev-battery-warranty",
+    pageTitle: "Chevrolet Blazer EV battery warranty: 8 years, and the 75% floor | Voltcheck",
+    description:
+      "Blazer EV battery coverage is 8 years or 100,000 miles, replaced below 75% capacity, and it transfers to you. Sourced to Chevrolet's own warranty booklets.",
+    breadcrumbLabel: "Chevrolet Blazer EV battery warranty",
+    dateModified: "2026-09-01",
+    faq: [
+      {
+        question: "How long is the Chevrolet Blazer EV battery warranty?",
+        answer:
+          "The propulsion battery pack and its internal components are covered for 8 years or 100,000 miles, whichever comes first. Chevrolet states the same term on its own Blazer EV specification pages for the 2024, 2025 and 2026 model years. The clock starts on the date the vehicle is first delivered or put in use.",
+      },
+      {
+        question: "Does the Chevrolet Blazer EV battery warranty transfer to a second owner?",
+        answer:
+          "Yes. Chevrolet's electric-vehicle warranty is provided to the original owner and any subsequent owners of the vehicle during the warranty period. On 2024 cars the booklet is explicit that the battery coverage transfers at no cost to any subsequent person who assumes ownership within the term, with no deductibles.",
+      },
+      {
+        question: "At what point does Chevrolet replace a degraded Blazer EV battery?",
+        answer:
+          "The battery is replaced or repaired if its capacity falls below 75% of its original value during the warranty period, as determined by a certified dealer. What you get back is a battery appropriate for the age and mileage of the vehicle, repaired or replaced with new or refurbished components at Chevrolet's discretion.",
+      },
+      {
+        question: "Is the Blazer EV battery warranty different in California?",
+        answer:
+          "The 2026 booklet carries a California Zero-Emissions Vehicle warranty that runs alongside it. Its High Voltage Battery Warranty is 8 years or 100,000 miles, and under it GM warrants the battery against defects that cause its state of health to deteriorate to less than 70% over that period. It reaches vehicles certified for sale in California that are serviced by an authorized Chevrolet or GM dealership in California, Massachusetts, New York, Oregon, Vermont or Washington.",
+      },
+      {
+        question: "What voids the Chevrolet Blazer EV battery warranty?",
+        answer:
+          "On 2025 and later cars Chevrolet excludes damage from incompatible charging methods or from an adapter General Motors does not sell or approve, and excessive use of the main battery for non-propulsion purposes such as semi-permanent or permanent daily power provisions. Also excluded are alteration or modification of the vehicle after final assembly including its software, installation of non-GM parts, and damage from failing to follow the recommended maintenance intervals. The warranty is void on any vehicle whose odometer has been disconnected or altered, or that is currently or previously titled as salvaged, scrapped, junked or a total loss.",
+      },
+    ],
+  },
+  {
+    make: "kia",
+    model: "ev9",
+    topic: "charging",
+    contentFile: "ev9-charging",
+    pageTitle: "Kia EV9 charging: 235 kW peak, and NACS only from 2026 | Voltcheck",
+    description:
+      "10-80% in 20-24 min on a 350 kW charger for 2024 and 2026, peak 235 or 210 kW by pack, CCS1 through 2025 and NACS from 2026. Kia's own tables.",
+    breadcrumbLabel: "Kia EV9 charging",
+    dateModified: "2026-09-01",
+    faq: [
+      {
+        question: "How fast does a Kia EV9 charge on a DC fast charger?",
+        answer:
+          "On a 350 kW charger a 2024 EV9 goes from 10% to 80% in about 20 minutes with the 76.1 kWh pack and about 24 minutes with the 99.8 kWh pack. Kia's 2026 owner's manual gives the same two figures, and adds 27 and 34 minutes on a 250 kW Tesla Supercharger V3. For 2025 Kia publishes two different sets of numbers for the 350 kW case: 27 and 34 minutes in the owner's manual, 20 and 24 minutes on the specification sheet.",
+      },
+      {
+        question: "What is the Kia EV9's peak charging power?",
+        answer:
+          "Kia's specification tables give 235 kW for the 76.1 kWh Standard Range pack and 210 kW for the 99.8 kWh Long Range pack, and the figures are the same for 2024, 2025 and 2026.",
+      },
+      {
+        question: "Does the Kia EV9 have a NACS charge port?",
+        answer:
+          "The 2026 EV9 does. Kia states that the 2026 model year EV9 comes standard with a NACS charging port, and lists it on the features table as an illuminated NACS charge port with a powered door. The 2024 and 2025 cars have a CCS1 port, and Kia gave a NACS adapter free of charge to customers who took delivery of a new 2024 or 2025 EV9 from September 4, 2024.",
+      },
+      {
+        question: "How long does a Kia EV9 take to charge at home?",
+        answer:
+          "On an 11 kW Level 2 charger at 240 volts and 48 amps, Kia gives 6 hours 45 minutes for the 76.1 kWh pack and 8 hours 45 minutes for the 99.8 kWh pack, both from 10% to 100%. The onboard charger is rated 10.9 kW on every trim in all three model years.",
+      },
+      {
+        question: "Does a 2026 Kia EV9 come with a CCS adapter?",
+        answer:
+          "An AC adapter is standard on every 2026 trim. The DC adapter is a $0 option on every trim and is standard in ZEV states; ordered from the factory it is available on the Light Long Range with the Light Long Range Battery Package. Kia's manual says to use only Kia Genuine DC adapters.",
+      },
+    ],
+  },
+  {
+    make: "kia",
+    model: "ev9",
+    topic: "heat-pump",
+    contentFile: "ev9-heat-pump",
+    pageTitle: "Kia EV9 heat pump: standard on AWD, absent on the RWD Light | Voltcheck",
+    description:
+      "Kia's own tables: the EV9 heat pump is standard on Wind, Land and GT-Line for 2024-2026 and not available on the RWD Light. Optional on the 2025 Light LR.",
+    breadcrumbLabel: "Kia EV9 heat pump",
+    dateModified: "2026-09-01",
+    faq: [
+      {
+        question: "Which Kia EV9 trims have a heat pump?",
+        answer:
+          "Kia's Features & Options tables mark the heat pump standard on the Wind, Land and GT-Line for 2024, 2025 and 2026, and not available on the rear-wheel-drive Light for all three years.",
+      },
+      {
+        question: "Does the Kia EV9 Light Long Range have a heat pump?",
+        answer:
+          "For 2024 and 2026 Kia marks it not available on the Light Long Range. For 2025 Kia marks it optional on that trim, so a 2025 Light Long Range has to be checked car by car.",
+      },
+      {
+        question: "How can I tell whether a used Kia EV9 has a heat pump?",
+        answer:
+          "Read the air conditioning refrigerant label, which Kia puts inside the motor compartment. Item 2 on that label is the amount of refrigerant: a car with a heat pump takes 1,300 plus or minus 25 grams of R-1234yf, and a car without one takes 1,125 plus or minus 25 grams. Kia notes that the actual label in the vehicle may differ from the illustration in the manual.",
+      },
+      {
+        question: "Did the 2026 Kia EV9 add a heat pump to the Light trims?",
+        answer:
+          "No. Kia's 2026 Features & Options table marks the heat pump not available on both the Light and the Light Long Range, and standard on the Wind, Land and GT-Line.",
+      },
+    ],
+  },
+  {
+    make: "kia",
+    model: "ev9",
+    topic: "battery-warranty",
+    contentFile: "ev9-battery-warranty",
+    pageTitle: "Kia EV9 battery warranty: 10 years, 100,000 miles, 70% floor | Voltcheck",
+    description:
+      "Kia covers the EV9 battery for 120 months or 100,000 miles, repairs capacity loss below 70% back to at least 70%, and transfers the coverage to a second owner.",
+    breadcrumbLabel: "Kia EV9 battery warranty",
+    dateModified: "2026-09-01",
+    faq: [
+      {
+        question: "How long is the Kia EV9 battery warranty?",
+        answer:
+          "120 months or 100,000 miles, whichever comes first, for both the EV System Warranty and the Lithium-Ion Polymer Battery Capacity Coverage.",
+      },
+      {
+        question: "What battery capacity does Kia guarantee on the EV9?",
+        answer:
+          "Kia covers capacity loss below 70% of the original battery capacity. A repair or replacement returns the pack to an EV Battery capacity of at least 70% of original rather than to an as-new 100%, and the replacement pack may be a new or a remanufactured Lithium-Ion Polymer battery.",
+      },
+      {
+        question: "Does the Kia EV9 battery warranty transfer to a second owner?",
+        answer:
+          "Yes. Kia states that any remaining portion of any warranty is fully transferable to subsequent owners except the 120 months/100,000 miles Power Train warranty, which is the original-owner-only one.",
+      },
+      {
+        question: "When does the Kia EV9 battery warranty clock start?",
+        answer:
+          "At the Date of First Service, which is the earliest of the date the vehicle is delivered to its first retail purchaser, the date it is leased, or the date it is placed into service as a company vehicle such as a demonstrator, rental or fleet vehicle.",
+      },
+      {
+        question: "What is not covered by the Kia EV9 battery warranty?",
+        answer:
+          "Kia excludes damage or failure caused by ambient temperatures above 122F for over 24 hours or storage below -22F for over seven days, by leaving the vehicle over 14 days at or near a zero state of charge, by physical damage, direct flame or immersion, by opening the battery enclosure or having it serviced by anyone other than a Kia certified EV technician, by incorrect charging procedures or incompatible charging devices, and by a public charger, a non-Kia charge cord or other third-party EVSE.",
+      },
+    ],
+  },
+  {
+    make: "jeep",
+    model: "wrangler-4xe",
+    topic: "charging",
+    contentFile: "wrangler-4xe-charging",
+    pageTitle: "Jeep Wrangler 4xe charging: 12 hours on Level 1, about 2 on Level 2 | Voltcheck",
+    description:
+      "Jeep's own figures: a 17.3 kWh gross pack, a 7.2 kW max charge rate, J1772 AC only, and about 2 hours on Level 2 from under 1% charge.",
+    breadcrumbLabel: "Jeep Wrangler 4xe charging",
+    dateModified: "2026-09-01",
+    faq: [
+      {
+        question: "How long does a Jeep Wrangler 4xe take to charge?",
+        answer:
+          "Jeep publishes two estimates, both measured from a state of charge below 1 percent: approximately 12 hours on a Level 1 cordset at 120 volts and 15 amps, and approximately 2 hours on a Level 2 charger at 240 volts and 30 or 32 amps. The same two figures appear in Jeep's 2021 and 2022 hybrid supplements and in the 2024, 2025 and 2026 owner's manuals.",
+      },
+      {
+        question: "Can a Jeep Wrangler 4xe DC fast charge?",
+        answer:
+          "No. Jeep's specification sheets list the Wrangler 4xe's charging modes as Level 1 at 120 volts AC and Level 2 at 240 volts AC, and the owner's manual describes the vehicle's SAE J1772 inlet as being for AC Level 1 and AC Level 2 charging. DC fast charging is not offered on this vehicle.",
+      },
+      {
+        question: "How big is the Jeep Wrangler 4xe battery?",
+        answer:
+          "Jeep's specification sheets for 2021, 2023, 2024 and 2025 give a gross capacity of 17.3 kWh, lithium ion Li-NMC chemistry and an operating voltage of 260 to 400 VDC. Jeep's press kits for 2021, 2024 and 2025 describe the same pack as a 400-volt, 17 kWh, 96-cell unit, and the 2021 press kit places it under the second-row seat.",
+      },
+      {
+        question: "What charger comes with a Jeep Wrangler 4xe?",
+        answer:
+          "A 120 volt AC, SAE J1772 Level 1 portable charging cordset comes with the vehicle, stored in the rear cargo area below the load floor, and it needs a conventional NEMA 5-15R grounded wall outlet. For a home Level 2 installation Jeep recommends a 40 amp EVSE on 2021, 2022 and 2024 trucks and an EVSE of up to 48 amps on 2025 and 2026 trucks.",
+      },
+      {
+        question: "How far does a Jeep Wrangler 4xe go on electricity alone?",
+        answer:
+          "Jeep states 21 miles of all-electric range for the 2022 through 2025 Wrangler 4xe, and up to 21 miles for the 2021. Its specification sheets for 2023, 2024 and 2025 print an EPA fuel economy row of 49/20, MPGe over combined.",
+      },
+    ],
+  },
+  {
+    make: "jeep",
+    model: "wrangler-4xe",
+    topic: "battery-warranty",
+    contentFile: "wrangler-4xe-battery-warranty",
+    pageTitle: "Jeep Wrangler 4xe battery warranty: the term changed three times | Voltcheck",
+    description:
+      "A 2021 Wrangler 4xe carries 10 years or 100,000 miles. A 2022 or 2023 carries 8 years or 100,000. 2024 and 2025 add 10 years or 150,000 in TZEV states.",
+    breadcrumbLabel: "Jeep Wrangler 4xe battery warranty",
+    dateModified: "2026-09-01",
+    faq: [
+      {
+        question: "How long is the Jeep Wrangler 4xe battery warranty?",
+        answer:
+          "It depends on the model year and on where the truck is registered. A 2021 Wrangler 4xe is covered for 10 years or 150,000 miles in California and states that adopt California ZEV regulations, and 10 years or 100,000 miles in states that do not. A 2022 or 2023 is covered for 8 years or 100,000 miles, with no geographic split. A 2024 or 2025 is covered for 10 years or 150,000 miles in TZEV states and 8 years or 100,000 miles elsewhere.",
+      },
+      {
+        question: "When does the Jeep Wrangler 4xe battery warranty clock start?",
+        answer:
+          "It runs from the start date of the Basic Limited Warranty, which Jeep defines as the earlier of the date the buyer takes delivery and the date the vehicle was first put into use, for example as a dealer demonstrator or an FCA US LLC company vehicle. A truck that spent its first months as a demonstrator started its battery clock then, not when a customer first bought it.",
+      },
+      {
+        question: "Which states get the longer Wrangler 4xe battery warranty?",
+        answer:
+          "On a 2025 truck the longer term applies in California, Colorado, Connecticut, Maine, Maryland, Massachusetts, Minnesota, Nevada, New Jersey, New York, Oregon, Rhode Island, Vermont, Virginia and Washington. On a 2021 truck Jeep points to the California Emission Warranty booklet for the list of states that adopt California ZEV regulations.",
+      },
+      {
+        question: "Does the Jeep Wrangler 4xe battery warranty cover capacity loss?",
+        answer:
+          "No. Jeep's 2024 and 2025 booklets state that the high voltage battery will experience gradual capacity loss with time and use, and place that loss outside the High Voltage Battery Limited Warranty. Those booklets also exclude damage caused by physically damaging the battery, leaving the vehicle for over 30 days at a zero or near zero state of charge, neglecting the charging procedures in the owner's manual, using incompatible charging devices, opening the battery enclosure or having it serviced by someone other than a certified technician at an authorized repair facility, contact with a direct flame, and ambient temperatures above 140 degrees Fahrenheit for over 24 hours.",
+      },
+      {
+        question: "Is the rest of the hybrid hardware covered separately?",
+        answer:
+          "Yes. Jeep's FCA US LLC Limited Emission Warranty covers the hybrid electronics for 10 years or 100,000 miles on a 2021 Wrangler 4xe and for 8 years or 100,000 miles on 2022 through 2025 trucks. On a 2025 truck that list includes the Battery Pack Control Module, the Hybrid Control Processor, the Auxiliary Hybrid Control Processor, the Belt Driven Hybrid Starter Generator, the Integrated DC/DC Charging Module and the PHEV Brake System Module.",
+      },
+    ],
+  },
+  {
+    make: "honda",
+    model: "prologue",
+    topic: "charging",
+    contentFile: "prologue-charging",
+    pageTitle: "Honda Prologue charging: 85 kWh pack, 150 kW DC, 20-80% in 35 minutes | Voltcheck",
+    description:
+      "Every Honda Prologue carries an 85 kWh pack, DC fast charges at up to 150 kW, and goes 20% to 80% in 35 minutes. Honda's own figures, 2024 to 2026.",
+    breadcrumbLabel: "Honda Prologue charging",
+    dateModified: "2026-09-01",
+    faq: [
+      {
+        question: "How big is the Honda Prologue's battery?",
+        answer:
+          "Honda states 85 kWh for every Prologue — EX, Touring and Elite, front-wheel drive and all-wheel drive — in the 2024, 2025 and 2026 model years.",
+      },
+      {
+        question: "How fast does a Honda Prologue DC fast charge?",
+        answer:
+          "Honda states DC fast charging at rates up to 150 kW. Going from 20% to 80% state of charge takes 35 minutes, and ten minutes of DC fast charging adds 65 miles of range on the EX front-wheel-drive and 62 miles on the Elite. Honda bases its ten-minute range figure on available public information about charging station capability along a selected route.",
+      },
+      {
+        question: "How long does a Honda Prologue take to charge at home?",
+        answer:
+          "On 240-volt Level 2 the Prologue adds 34.1 miles of range per hour, a figure Honda bases on a professionally installed 48-amp charge station on a 60-amp dedicated circuit, sold separately. On a standard household outlet it adds up to 4.2 miles per hour.",
+      },
+      {
+        question: "What kind of charge port does the Honda Prologue have?",
+        answer: "The Prologue has a CCS charge port.",
+      },
+      {
+        question: "Can a Honda Prologue charge at a Tesla Supercharger?",
+        answer:
+          "Yes, with the Honda-approved NACS-CCS DC fast-charging adapter, available since July 22, 2025 for $225 from authorized Honda dealers and the Honda DreamShop website. It reaches more than 23,500 selected Tesla Superchargers in the United States, and the Tesla app is required to start a session.",
+      },
+      {
+        question: "Does a Honda Prologue come with a home charger?",
+        answer:
+          "When bought new, yes. For 2026 the Portable Charging Kit is standard equipment, and the buyer then takes either a complimentary Home Charging Station with a $1,250 installation credit or a $500 credit toward the purchase or lease. For 2024 and 2025 the buyer chose one of three packages included in the MSRP: a Level 2 Home Charging Station, a Level 1 and Level 2 Portable Charging Kit, or $750 in EVgo charging credit. All three of those packages carried 60 kWh of Electrify America introductory charging, which Honda offers to first-time Honda EV owners.",
+      },
+    ],
+  },
+  {
+    make: "honda",
+    model: "prologue",
+    topic: "battery-warranty",
+    contentFile: "prologue-battery-warranty",
+    pageTitle: "Honda Prologue battery warranty: 8 years, 100,000 miles, 75% floor | Voltcheck",
+    description:
+      "Honda's 2025 warranty booklet covers the Prologue's high voltage battery for 8 years or 100,000 miles, and replaces it below 75% of its original capacity.",
+    breadcrumbLabel: "Honda Prologue battery warranty",
+    dateModified: "2026-09-01",
+    faq: [
+      {
+        question: "How long is the Honda Prologue's battery warranty?",
+        answer:
+          "Honda's High Voltage Battery Warranty runs 8 years or 100,000 miles, whichever comes first. Honda writes one warranty booklet per model year for its battery-electric vehicles, and these are the terms in the 2025 edition.",
+      },
+      {
+        question: "What battery capacity does Honda guarantee on the Prologue?",
+        answer:
+          "Honda will repair or replace the battery if its capacity falls below 75% of its original value during the warranty period, as determined by a certified dealer. Honda sets the replacement battery's energy capacity at least equal to the original's before the failure occurred, taking into consideration other factors including the age and mileage of the vehicle, and states that the replacement may not restore the vehicle to a like-new condition.",
+      },
+      {
+        question: "When does the Honda Prologue's battery warranty clock start?",
+        answer:
+          "On the date the vehicle is put into use — delivered to the first purchaser by an authorized Honda dealer, leased, or put into service as a demonstrator or company vehicle. A Prologue that began as a dealer demonstrator started its eight years then, not when it was first sold to a customer.",
+      },
+      {
+        question: "Who can claim on the Honda Prologue's battery warranty?",
+        answer:
+          "Honda offers the coverages in its warranty booklet to the owner or lessee of a 2025 Honda automobile.",
+      },
+      {
+        question: "What voids the Honda Prologue's battery warranty?",
+        answer:
+          "Failure to follow Honda's recommended battery maintenance and charging procedures voids the High Voltage Battery Warranty. Honda also excludes damage from flooding the battery, exposing it to direct flame, and damaging it or intentionally attempting to extend its life by means other than those its own documentation specifies, or to reduce it. Gradual energy and power loss with time and use falls outside the warranty except to the extent the High Voltage Battery Warranty itself specifies.",
+      },
+    ],
+  },
 ];
 
 export function findFactSheet(make: string, model: string, topic: string): FactSheetEntry | undefined {

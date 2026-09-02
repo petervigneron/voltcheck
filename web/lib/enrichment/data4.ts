@@ -734,12 +734,20 @@ const X5_50E_WARRANTY = {
 };
 const X5_45E_WARRANTY_ABSTAIN = "BMW's MY2021-23 warranty booklets are not published anywhere BMW-hosted and the MY2025-26 booklets do not list the xDrive45e, so its term is not stated";
 const X5_HP_ABSTAIN = "BMW attributes a heat pump to the battery-electric iX5 in the same release that describes the PHEV's climate system without one, but no BMW document states the PHEV's hardware either way";
-// Stellantis: 17 kWh for both 4xe packs in every press kit 2021-2025 — never
-// 17.3, which appears in no Stellantis document — and never qualified gross
-// or usable. Its US press kits and owner's manuals (15 checked, including
-// the Wagoneer S manuals) never use the term "heat pump" for any model, so
-// no heat-pump claim can be made in either direction for any Stellantis car.
-const JEEP_17KWH_NOTE = "Stellantis states 17 kWh with no gross or usable qualifier";
+// Stellantis: the press kits say 17 kWh unqualified, but the Wrangler 4xe
+// SPECIFICATION sheets (2021, 2023, 2023 Rubicon 20th, 2024, 2025 — all on
+// media.stellantisnorthamerica.com view-spec.do) print "Gross Capacity
+// 17.3 kWh" in their HIGH VOLTAGE BATTERY table. An earlier version of this
+// comment said 17.3 "appears in no Stellantis document" — that was
+// generalized from press kits without opening a spec sheet, and was
+// falsified 2026-09-01 by two independent 250-dpi page reads with matching
+// md5s. The Grand Cherokee 4xe keeps the press-kit 17 because its spec
+// sheets have not been re-verified the same way. Stellantis's US press kits
+// and owner's manuals (15 checked, including the Wagoneer S manuals) never
+// use the term "heat pump" for any model, so no heat-pump claim can be made
+// in either direction for any Stellantis car.
+const WRANGLER_4XE_KWH_NOTE = "Stellantis's specification sheets print Gross Capacity 17.3 kWh; its press kits state 17 kWh unqualified";
+const JEEP_17KWH_NOTE = "Stellantis's press kits state 17 kWh with no gross or usable qualifier";
 const STELLANTIS_HP_ABSTAIN = "Stellantis's US press kits and owner's manuals never use the term heat pump for any model, so neither presence nor absence can be stated";
 const MOPAR_W_25 = "https://vehicleinfo.mopar.com/assets/publications/en-us/Jeep/2025/103465_25_J_GW_EN_US_DIGITAL_E1_V2.pdf";
 const WRANGLER_4XE_WARRANTY = {
@@ -3909,7 +3917,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "wrangler-4xe-2021-25", make: "JEEP", model: "Wrangler 4xe", modelYears: [2021, 2025], packVariant: "PHEV",
     abstains: { heatPump: STELLANTIS_HP_ABSTAIN },
-    battery: { packGrossKwh: fb(17, "mfr", "high", JEEP_17KWH_NOTE, "https://media.stellantisnorthamerica.com/newsrelease.do?id=22673&mid=1") },
+    battery: { packGrossKwh: fb(17.3, "mfr", "high", WRANGLER_4XE_KWH_NOTE, "https://media.stellantisnorthamerica.com/view-spec.do?id=26156") },
     range: {
       epaRangeMi: f(22, "mfr", "high", "Electric-only EPA range. Identical rating 2021–25", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47278"),
       epaRangeTotalMi: f(370, "mfr", "high", undefined, "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47278"),
@@ -3920,7 +3928,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "wrangler-unl-4xe-2021-25", make: "JEEP", model: "Wrangler Unlimited 4xe", modelYears: [2021, 2025], packVariant: "PHEV",
     abstains: { heatPump: STELLANTIS_HP_ABSTAIN },
-    battery: { packGrossKwh: fb(17, "mfr", "high", JEEP_17KWH_NOTE, "https://media.stellantisnorthamerica.com/newsrelease.do?id=22673&mid=1") },
+    battery: { packGrossKwh: fb(17.3, "mfr", "high", WRANGLER_4XE_KWH_NOTE, "https://media.stellantisnorthamerica.com/view-spec.do?id=26156") },
     range: {
       epaRangeMi: f(22, "mfr", "high", "Electric-only EPA range. Identical rating 2021–25", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47278"),
       epaRangeTotalMi: f(370, "mfr", "high", undefined, "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47278"),
@@ -3951,7 +3959,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     id: "wrangler-4xe-2021-25-alt", make: "JEEP", model: "Wrangler", modelAliases: ["Wrangler Unlimited"],
     abstains: { heatPump: STELLANTIS_HP_ABSTAIN },
     modelYears: [2021, 2025], trim: ["4xe"], packVariant: "PHEV",
-    battery: { packGrossKwh: fb(17, "mfr", "high", JEEP_17KWH_NOTE, "https://media.stellantisnorthamerica.com/newsrelease.do?id=22673&mid=1") },
+    battery: { packGrossKwh: fb(17.3, "mfr", "high", WRANGLER_4XE_KWH_NOTE, "https://media.stellantisnorthamerica.com/view-spec.do?id=26156") },
     range: {
       epaRangeMi: f(22, "mfr", "high", "Electric-only EPA range. Identical rating 2021–25", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47278"),
       epaRangeTotalMi: f(370, "mfr", "high", undefined, "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47278"),
