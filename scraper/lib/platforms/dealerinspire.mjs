@@ -135,8 +135,17 @@ async function readSrp(origin, path, { maxPages = DEALERINSPIRE_MAX_PAGES } = {}
   let pages = 0;
   let status = null;
   while (url && pages < maxPages) {
-    const res = await browserFetch(url);
+    let res = await browserFetch(url);
     requests++;
+    // One more try on a failed page. Measured 2026-09-02: faricykia.com's 24
+    // used pages walk clean one at a time, and the same walk under six
+    // concurrent Chrome pages lost a page to a timeout and stopped at 116 of
+    // 472 cars. A page that fails twice ends the walk honestly (partial).
+    if (res.status !== 200 || !res.body) {
+      await new Promise((r) => setTimeout(r, 4000));
+      res = await browserFetch(url);
+      requests++;
+    }
     status = res.status;
     if (res.status !== 200 || !res.body) break;
     pages++;
@@ -203,9 +212,14 @@ export async function pullDealerInspire(origin, { srps = DEALERINSPIRE_SRPS } = 
       vdpFailures++;
       continue;
     }
-    const res = await browserFetch(c.url);
+    let res = await browserFetch(c.url);
     requests++;
     if (res.status === "browser_unavailable") return { ok: false, complete: false, found: cards.length, candidates: cands.length, vehicles, requests, vdpFailures, why: "browser_unavailable" };
+    if (res.status !== 200 || !res.body) {
+      await new Promise((r) => setTimeout(r, 4000));
+      res = await browserFetch(c.url);
+      requests++;
+    }
     const v = res.status === 200 && res.body ? dealerInspireVdpVehicle(res.body, c.vin) : null;
     if (!v) {
       vdpFailures++;
