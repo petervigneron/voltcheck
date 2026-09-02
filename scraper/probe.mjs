@@ -130,6 +130,10 @@ import { isProMax, proMaxSeeds, proMaxVehicles } from "./lib/platforms/promax.mj
 import { isAutoCorner, countAutoCorner } from "./lib/platforms/autocorner.mjs";
 import { isDealerAccelerate, dealerAccelerateEntries, DEALERACCELERATE_SRP_PATH } from "./lib/platforms/dealeraccelerate.mjs";
 import { isEBizAutos, ebizAutosOrigins, countEBizAutos } from "./lib/platforms/ebizautos.mjs";
+import { countDealerInspire } from "./lib/platforms/dealerinspire.mjs";
+import { countDealerCenter } from "./lib/platforms/dealercenter.mjs";
+import { vendorByDns } from "./lib/vendor-dns.mjs";
+import { closeBrowser } from "./lib/browser.mjs";
 import { isDealerFront, dealerFrontVehicles, DEALERFRONT_SRP_PATH } from "./lib/platforms/dealerfront.mjs";
 import { isDealerClick, dealerClickVehicles, DEALERCLICK_SRP_PATH } from "./lib/platforms/dealerclick.mjs";
 import { discoverSitemapUrls, rank, dedupe, SRP_PATHS } from "./lib/sitemap.mjs";
@@ -277,6 +281,31 @@ async function settleWalledTeamVelocity(site, fetched) {
   return true;
 }
 
+// A rooftop whose front door is a firewall page, served by one of the three
+// vendors a real Chrome can read (lib/browser.mjs). The vendor is read from
+// DNS — the page cannot be fingerprinted, it is the wall — and the lane's own
+// count settles the row: platform = the vendor, so crawl.mjs takes the
+// browser lane and never walks the firewall. A vendor whose lane declines
+// (browser missing on this machine, no cars, no VINs) falls through to the
+// ordinary "homepage 403" verdict, unchanged.
+// dealereprocess is parked — see the note on BROWSER_LANES in crawl.mjs.
+const BROWSER_COUNTS = { dealerinspire: countDealerInspire, dealercenter: countDealerCenter };
+async function settleWalledBrowserVendor(site, fetched) {
+  const vendor = await vendorByDns(site.domain);
+  if (!vendor || !BROWSER_COUNTS[vendor]) return false;
+  const { ok, found, hasVin, why } = await BROWSER_COUNTS[vendor](`https://www.${site.domain}`);
+  if (!(ok && found > 0 && hasVin)) {
+    if (why) site.notes = `${site.notes ?? ""} | probe ${today}: ${vendor} by DNS, browser lane declined (${why})`.trim();
+    return false;
+  }
+  site.platform = vendor;
+  site.status = "working";
+  site.notes = `${site.notes ?? ""} | auto-promoted by probe ${today}: ${vendor} by DNS, browser lane, ${found} vehicles`.trim();
+  setVerdict(site, "working", { fetched: fetched + 1, via: vendor, found, browser: true });
+  console.error(`  ${site.domain} → working (${vendor} via browser, ${found})`);
+  return true;
+}
+
 async function probeSite(site) {
   let origin = `https://${site.domain}`;
   let fetched = 0;
@@ -287,6 +316,7 @@ async function probeSite(site) {
   fetched++;
   if (home.status !== 200 || !home.body) {
     if (await settleWalledTeamVelocity(site, fetched)) return;
+    if (await settleWalledBrowserVendor(site, fetched)) return;
     const kind = failureKind(home.status);
     site.status = typeof home.status === "number" ? `http-${home.status}` : "unreachable";
     site.notes = `${site.notes ?? ""} | probe ${today}: homepage ${home.status}`.trim();
@@ -299,6 +329,7 @@ async function probeSite(site) {
   // twelve fetches on the interstitial and write the row off as a dead end.
   if (isBotChallenge(home.body)) {
     if (await settleWalledTeamVelocity(site, fetched)) return;
+    if (await settleWalledBrowserVendor(site, fetched)) return;
     site.status = "blocked";
     site.notes = `${site.notes ?? ""} | probe ${today}: bot challenge served with a 200 at the front door`.trim();
     setVerdict(site, "blocked", { fetched, why: "client-challenge" });
@@ -866,5 +897,6 @@ for (const site of fresh.sites) {
 await writeFile(regUrl, JSON.stringify(bareArray ? fresh.sites : fresh, null, 2));
 const counts = fresh.sites.reduce((a, s) => ((a[s.status] = (a[s.status] ?? 0) + 1), a), {});
 const verdicts = candidates.reduce((a, s) => ((a[s.probe?.verdict ?? "none"] = (a[s.probe?.verdict ?? "none"] ?? 0) + 1), a), {});
+await closeBrowser();
 console.error(`probe: this run's verdicts ${JSON.stringify(verdicts)}`);
 console.error(`probe: done — registry now ${JSON.stringify(counts)}`);

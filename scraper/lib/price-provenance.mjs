@@ -258,6 +258,12 @@ export const AUTOREVO_PRICE = "autorevo-price";
 // CarStory widget's data (identity only, never a number — the AutoManager
 // data-cg-price rule).
 export const DEALERFRONT_ASKING = "dealerfront-asking";
+// DealerCenter Web Sites (Nowcom): the inventory JSONP's `VehiclePrice`
+// (= `AskingPrice` on every record read 2026-09-02), which is the number the
+// tile prints. Never `TotalPrice` — that one folds the dealer's own doc fee in
+// ("Doc /Dealer Prep 499": 50,995 → 51,494) and would publish a phantom
+// markup against every other lane's pre-fee ask.
+export const DEALERCENTER_ASKING = "dealercenter-asking";
 // one vendor's endpoint; none of them shares a code path with any other, so
 // each gets its own tag rather than a single "oem" bucket that would let a
 // Hyundai field pair against a Kia one on a co-listed VIN.
@@ -314,6 +320,7 @@ const KNOWN = new Set([
   ONEAUDI_SALE, WAYNEREAVES_PRICE, ADD_DISPLAY_PRICE,
   DEALERSYNC_FINAL, RECHARGED_PRICE, EVERCARS_PRICE, VEHICA_PRICE,
   DEALERSPIKE_PRICE, DEALERSPIKE_CACHE_PRICE, AUTOCORNER_PRICE, AUTOREVO_PRICE, DEALERFRONT_ASKING,
+  DEALERCENTER_ASKING,
 ]);
 
 /** True for a tag this build knows how to emit. OEM lane tags are accepted by

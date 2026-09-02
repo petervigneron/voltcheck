@@ -108,7 +108,7 @@ const MIN_INTERVAL_MS = 1100;
 // auto-generated robots line stop us from covering a lot.
 const MAX_CRAWL_DELAY_MS = 2500;
 
-async function politeDelay(host) {
+export async function politeDelay(host) {
   const robotsDelay = Math.min(robotsCache.get(host)?.crawlDelayMs ?? 0, MAX_CRAWL_DELAY_MS);
   const interval = Math.max(MIN_INTERVAL_MS, robotsDelay);
   const prev = lastHit.get(host) ?? 0;

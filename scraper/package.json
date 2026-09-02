@@ -1,0 +1,13 @@
+{
+  "name": "voltcheck-scraper",
+  "private": true,
+  "type": "module",
+  "description": "Dealer crawl lanes. Plain Node except for the browser lanes (lib/browser.mjs), which need Playwright's Chromium headless shell: npm ci && npx playwright install --with-deps chromium-headless-shell.",
+  "scripts": {
+    "test": "node --test",
+    "browser:install": "playwright install --with-deps chromium-headless-shell"
+  },
+  "dependencies": {
+    "playwright": "1.62.1"
+  }
+}

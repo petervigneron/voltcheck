@@ -171,6 +171,15 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
+      # The browser lanes (scraper/lib/browser.mjs) need Playwright's Chromium
+      # headless shell; everything else in scraper/ is plain Node. ~90 MB,
+      # cached on the lockfile.
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('scraper/package-lock.json') }}
+      - working-directory: scraper
+        run: npm ci --no-audit --no-fund && npx playwright install --with-deps chromium-headless-shell
 
       # The slice index comes from the MATRIX. Every slice runs in the same
       # run, so there is nothing left to schedule, no cursor to persist and no
@@ -281,6 +290,7 @@ jobs:
       - name: Crawl the slice
         working-directory: scraper
         run: |
+          BROWSER_CONCURRENCY=6 \
           node crawl.mjs $(cat /tmp/domains.txt) \
             --max-pages 80 --cache-hours 0 --concurrency 32 --deadline-min 18 \
             --domain-cap-min 8

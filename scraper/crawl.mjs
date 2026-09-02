@@ -93,6 +93,9 @@ import {
   isDealerAccelerateSold,
 } from "./lib/platforms/dealeraccelerate.mjs";
 import { isEBizAutos, ebizAutosOrigins, pullEBizAutos } from "./lib/platforms/ebizautos.mjs";
+import { pullDealerInspire } from "./lib/platforms/dealerinspire.mjs";
+import { pullDealerCenter } from "./lib/platforms/dealercenter.mjs";
+import { closeBrowser } from "./lib/browser.mjs";
 import {
   isDealerFront,
   dealerFrontSeeds,
@@ -505,6 +508,46 @@ async function crawlDealer(domain) {
     // Complete only for a true single rooftop; a group spans domains, so its
     // absence-from-this-query can't license db-sync to delist anyone.
     if (!complete || offDomain) report.stoppedEarly = "team-velocity api (group or partial)";
+    queue.length = 0;
+  }
+
+  // THE BROWSER LANES. Dealer Inspire, DealerEProcess and DealerCenter reject
+  // lib/http.mjs's client on every path and let a real Chrome in; their
+  // robots files allow us (see lib/browser.mjs for the policy line). The
+  // platform label is set by probe.mjs from the rooftop's DNS (lib/vendor-dns
+  // .mjs), because the homepage the fingerprint would read is a firewall
+  // page. Each lane returns raw JSON-LD-shaped nodes, classified and
+  // normalized here exactly like a page's own JSON-LD; the walk below is
+  // skipped — every page it would fetch is the same firewall page. A lane
+  // that could not finish (browser missing, a VDP unread) leaves the report
+  // truncated so db-sync never reads its silence as a delisting.
+  // DealerEProcess is deliberately NOT in this table: its VDPs answer the
+  // Cloudflare JS challenge to plain headless Chrome on 9 of 10 loads
+  // (measured 2026-09-02, themountainhyundai.com), and passing that means
+  // disguising the browser, which is the line lib/browser.mjs draws. The lane
+  // file stays, parked, with the measurement in its header.
+  const BROWSER_LANES = { dealerinspire: pullDealerInspire, dealercenter: pullDealerCenter };
+  if (BROWSER_LANES[dvPlat]) {
+    const before = report.evs.length;
+    const r = await BROWSER_LANES[dvPlat](origin);
+    report.fetched += r.requests ?? 0;
+    for (const v of r.vehicles ?? []) {
+      const cls = classifyEv(v);
+      if (!cls.isEv) continue;
+      const offer = Array.isArray(v.offers) ? v.offers[0] : v.offers;
+      let rec = normalize(v, { sourceUrl: offer?.url || v.url || origin, dealerDomain: domain });
+      if (rec.vdpUrl) rec.vdpUrl = abs(rec.vdpUrl, origin) ?? rec.vdpUrl;
+      rec.evKind = cls.kind;
+      rec.evConfidence = cls.confidence;
+      rec.fromVdp = dvPlat !== "dealercenter"; // DI/DEP nodes are the VDP's own; DealerCenter's is the lot record
+      rec.platform = dvPlat;
+      report.evs.push(rec);
+    }
+    if (report.evs.length > before) report.vehiclePages++;
+    report.notes.push(
+      `${dvPlat} (browser): ${r.found ?? 0} in lot, ${r.candidates != null ? `${r.candidates} candidate(s), ` : ""}${report.evs.length - before} EV(s) admitted in ${r.requests ?? 0} browser load(s)${r.why ? ` — ${r.why}` : ""}`,
+    );
+    if (!r.ok || !r.complete) report.stoppedEarly = `${dvPlat} browser lane ${r.why ?? (r.ok ? "partial" : "failed")}`;
     queue.length = 0;
   }
 
@@ -1516,6 +1559,7 @@ if (Number.isFinite(DEADLINE_AT) && reports.length < domains.length) {
     `wrote what's crawled; the rest are picked up next run`
   );
 }
+await closeBrowser();
 console.error(`\n${unique} unique EV listings → scraper/out/listings.json`);
 // Said out loud for the same reason merge-shards says it: on a slice of any
 // size this number is normally in the hundreds, and a zero is far more likely
