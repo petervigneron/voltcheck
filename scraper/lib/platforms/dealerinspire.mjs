@@ -24,6 +24,20 @@
 // the expensive error). It carries the JSONLD provenance like any other
 // dealer page's own offer.
 //
+// TWO TEMPLATES BEHIND ONE CNAME (measured on the first 58 promoted rooftops,
+// 2026-09-02): the classic WordPress theme above, and Cars Commerce's newer
+// Motive template (mentornissan.com, lexusofeaston.com, platinumvw.com,
+// genesiscfl.com …) — no /used-vehicles/ cards, sometimes no /used-vehicles/
+// at all (404), the lot in Algolia behind api.app.ridemotive.com. That is
+// the platform lib/platforms/ridemotive.mjs already reads: its config
+// (Algolia app id, key, index, dealer id) sits on the homepage, and the
+// Algolia host is open to a plain fetch. The only thing the wall costs a
+// Motive rooftop is the homepage read, so this lane reads it with the
+// browser and hands the config to the Motive lane. One browser load, then
+// the ordinary API pull; the row keeps platform "dealerinspire" because the
+// crawl's own Motive block reads the homepage with http.mjs and would hit
+// the wall.
+//
 // COST SHAPE
 //
 // Browser loads are ~30x a fetch, so the lane spends them where the cars are:
@@ -32,6 +46,7 @@
 // the HTML crawl throws — and never on the rest of the lot. A typical
 // franchise rooftop is 2–8 SRP pages and 5–30 candidates.
 import { browserFetch } from "../browser.mjs";
+import { isRideMotive, rideMotiveConfig, pullRideMotiveApi, countRideMotiveApi } from "./ridemotive.mjs";
 import { extractVehicles } from "../jsonld.mjs";
 import { EVISH_RE } from "../sitemap.mjs";
 import { EV_ONLY_WMIS } from "../ev.mjs";
@@ -141,7 +156,22 @@ async function readSrp(origin, path, { maxPages = DEALERINSPIRE_MAX_PAGES } = {}
 
 /** Whole lot across both SRPs, candidate VDPs by browser. Raw JSON-LD nodes
  *  out; crawl.mjs classifies and normalizes. */
+/** The homepage by browser: a Motive config when the rooftop is on Cars
+ *  Commerce's Motive template, else null (classic theme, or unreadable). */
+async function motiveConfigByBrowser(origin) {
+  const home = await browserFetch(`${origin.replace(/\/$/, "")}/`);
+  if (home.status === "browser_unavailable") return { unavailable: true };
+  if (home.status !== 200 || !home.body || !isRideMotive(home.body)) return { config: null };
+  return { config: rideMotiveConfig(home.body), requests: 1 };
+}
+
 export async function pullDealerInspire(origin, { srps = DEALERINSPIRE_SRPS } = {}) {
+  const motive = await motiveConfigByBrowser(origin);
+  if (motive.unavailable) return { ok: false, complete: false, found: 0, candidates: 0, vehicles: [], requests: 1, vdpFailures: 0, why: "browser_unavailable" };
+  if (motive.config) {
+    const r = await pullRideMotiveApi(motive.config, origin);
+    return { ok: Boolean(r.ok), complete: Boolean(r.ok && r.complete), found: r.found ?? 0, vehicles: r.vehicles ?? [], requests: 1 + (r.requests ?? 0), vdpFailures: 0, template: "motive" };
+  }
   const cards = [];
   const seen = new Set();
   let requests = 0;
@@ -189,6 +219,12 @@ export async function pullDealerInspire(origin, { srps = DEALERINSPIRE_SRPS } = 
 /** For probe: the first used SRP page by browser. `found` is that page's
  *  card count (a floor, not the lot), hasVin is what the cards carry. */
 export async function countDealerInspire(origin) {
+  const motive = await motiveConfigByBrowser(origin);
+  if (motive.unavailable) return { ok: false, found: 0, hasVin: false, why: "browser_unavailable" };
+  if (motive.config) {
+    const c = await countRideMotiveApi(motive.config);
+    return { ...c, template: "motive" };
+  }
   const res = await browserFetch(dealerInspireSrpUrl(origin, DEALERINSPIRE_SRPS[0]));
   if (res.status === "browser_unavailable") return { ok: false, found: 0, hasVin: false, why: "browser_unavailable" };
   if (res.status !== 200 || !res.body) return { ok: false, found: 0, hasVin: false, status: res.status };
