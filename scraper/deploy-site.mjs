@@ -168,8 +168,18 @@ function bypassSecret() {
 const CLI_AUTH = process.env.VERCEL_TOKEN
   ? ["--token", process.env.VERCEL_TOKEN, ...(process.env.VERCEL_SCOPE ? ["--scope", process.env.VERCEL_SCOPE] : [])]
   : [];
+// stdin is "ignore" by default, not execFileSync's piped default: with a pipe
+// that nothing writes to, `vercel ls` sat for 3.5 minutes on 2026-09-02 and
+// never printed (the deploy call below had already learned this and passes
+// its own stdio). Same fix for every CLI call, so a hang cannot come back
+// through the pre-check that guards against stacked builds.
 const vercel = (args, opts = {}) =>
-  execFileSync("vercel", [...args, ...CLI_AUTH], { encoding: "utf8", maxBuffer: 16 * 1024 * 1024, ...opts });
+  execFileSync("vercel", [...args, ...CLI_AUTH], {
+    encoding: "utf8",
+    maxBuffer: 16 * 1024 * 1024,
+    stdio: ["ignore", "pipe", "inherit"],
+    ...opts,
+  });
 
 // ---------------------------------------------------------------- build
 function buildCandidate(ref) {
