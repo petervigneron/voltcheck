@@ -54,14 +54,16 @@ const WRANGLER_TRIMS = [
 
 test("a bare-model Wrangler whose trim names 4xe resolves to the 4xe row", () => {
   for (const trim of WRANGLER_TRIMS) {
-    assert.equal(idOf(decode({ make: "JEEP", model: "Wrangler", modelYear: 2024, trim })), "wrangler-4xe-2021-25-alt", trim);
+    assert.equal(idOf(decode({ make: "JEEP", model: "Wrangler", modelYear: 2024, trim })), "wrangler-4xe-2022-25-alt", trim);
   }
   // The feed sends the four-door under both names; the 4xe was four-door only
   // and the two 4xe rows print identical facts, so one alt row covers both.
   assert.equal(
     idOf(decode({ make: "JEEP", model: "Wrangler Unlimited", modelYear: 2022, trim: "Sahara 4xe" })),
-    "wrangler-4xe-2021-25-alt"
+    "wrangler-4xe-2022-25-alt"
   );
+  // The alt row splits at the same warranty boundary as the full-name rows.
+  assert.equal(idOf(decode({ make: "JEEP", model: "Wrangler", modelYear: 2021, trim: "Sahara 4XE" })), "wrangler-4xe-2021-alt");
 });
 
 test("a petrol Wrangler under the same bare model matches nothing", () => {
@@ -86,10 +88,49 @@ test("the same contract holds for the bare-model Grand Cherokee", () => {
 test("the model strings that name the plug-in themselves keep matching without a trim", () => {
   // These need no guard — the model has already said which car it is — and
   // they must not have picked one up by accident from the rows above.
-  assert.equal(idOf(decode({ make: "JEEP", model: "Wrangler 4xe", modelYear: 2023 })), "wrangler-4xe-2021-25");
-  assert.equal(idOf(decode({ make: "JEEP", model: "Wrangler Unlimited 4xe", modelYear: 2022 })), "wrangler-unl-4xe-2021-25");
+  assert.equal(idOf(decode({ make: "JEEP", model: "Wrangler 4xe", modelYear: 2023 })), "wrangler-4xe-2022-25");
+  assert.equal(idOf(decode({ make: "JEEP", model: "Wrangler Unlimited 4xe", modelYear: 2022 })), "wrangler-unl-4xe-2022-25");
   assert.equal(idOf(decode({ make: "JEEP", model: "Grand Cherokee 4xe", modelYear: 2024 })), "gc-4xe-2022-25");
   assert.equal(idOf(decode({ make: "JEEP", model: "GR Cherokee 4XE", modelYear: 2024 })), "gc-4xe-2022-25");
+});
+
+// ── The battery term is not one term (2026-09-01). Until this split, all six
+// Wrangler 4xe rows carried 8 years/100,000 miles across 2021-2025. The 2021
+// booklet has no 8-year figure in it at all: 10 years/100,000 miles outside
+// ZEV states, 10 years/150,000 miles inside them. That understated every 2021
+// truck by two years, and warranty.ts reads exactly these two values to tell a
+// shopper whether the coverage on the car in front of them is still alive.
+//
+// The years are pinned per model year rather than per row id because the id is
+// bookkeeping and the number is the claim — a future re-split that keeps the
+// terms right may rename every row here, and should not have to touch this.
+test("the Wrangler 4xe battery term splits at the 2021/2022 boundary", () => {
+  const term = (modelYear: number, model: string, trim?: string) => {
+    const w = matchEnrichment(decode({ make: "JEEP", model, modelYear, trim }), null).exact?.warranty;
+    return [w?.batteryYears?.value, w?.batteryMiles?.value];
+  };
+  // All three spellings the feed and vPIC produce, since a shopper reaching
+  // the same truck by a different name must not get a different answer.
+  const spellings: [string, string | undefined][] = [
+    ["Wrangler 4xe", undefined],
+    ["Wrangler Unlimited 4xe", undefined],
+    ["Wrangler", "Sahara 4XE"],
+  ];
+  for (const [model, trim] of spellings) {
+    assert.deepEqual(term(2021, model, trim), [10, 100_000], `2021 ${model}`);
+    for (const y of [2022, 2023, 2024, 2025]) {
+      assert.deepEqual(term(y, model, trim), [8, 100_000], `${y} ${model}`);
+    }
+  }
+  // 100,000 is the non-ZEV mileage limit, and it is the one every truck has
+  // wherever it is registered. The longer 150,000-mile term is conditional on
+  // the state of registration, which this site does not know — claiming it
+  // would tell a 120,000-mile truck outside a ZEV state that it is covered.
+  for (const [model, trim] of spellings) {
+    for (const y of [2021, 2022, 2023, 2024, 2025]) {
+      assert.notEqual(term(y, model, trim)[1], 150_000, `${y} ${model}`);
+    }
+  }
 });
 
 test("an X5 that says PHEV in its model resolves without a trim; a bare X5 still needs one", () => {

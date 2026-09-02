@@ -750,9 +750,58 @@ const WRANGLER_4XE_KWH_NOTE = "Stellantis's specification sheets print Gross Cap
 const JEEP_17KWH_NOTE = "Stellantis's press kits state 17 kWh with no gross or usable qualifier";
 const STELLANTIS_HP_ABSTAIN = "Stellantis's US press kits and owner's manuals never use the term heat pump for any model, so neither presence nor absence can be stated";
 const MOPAR_W_25 = "https://vehicleinfo.mopar.com/assets/publications/en-us/Jeep/2025/103465_25_J_GW_EN_US_DIGITAL_E1_V2.pdf";
-const WRANGLER_4XE_WARRANTY = {
-  batteryYears: fb(8, "mfr", "high", "8 years/100,000 miles in every located Mopar booklet (2022, 2024, 2025); the 2024-25 booklets add 10 years/150,000 miles in California-TZEV states", MOPAR_W_25),
-  batteryMiles: fb(100_000, "mfr", "high", undefined, MOPAR_W_25),
+const MOPAR_W_21 = "https://vehicleinfo.mopar.com/assets/publications/en-us/Jeep/2021/Wrangler_4xe/P140475_21_JL_H_GW_EN_US_DIGITAL.pdf";
+// Facts verified against Mopar's own booklets on 2026-09-01, after the
+// 2026-08-24 backfill pass they correct.
+const AS_OF_W4XE = "2026-09-01";
+function fw<T>(value: T, source: Source, confidence: Fact<T>["confidence"], note: string | undefined, sourceUrl: string): Fact<T> {
+  return { value, source, asOf: AS_OF_W4XE, confidence, note, sourceUrl };
+}
+// The 4xe's battery term is not one term across its years, and the single
+// 2021-2025 row that used to sit here understated a 2021 truck by two full
+// years. The 2021 booklet has no 8-year figure anywhere in it: its coverage
+// chart runs the high voltage battery bar to 10 years/150,000 miles in ZEV
+// states and 10 years/100,000 miles in non-ZEV states. The 8/100k term starts
+// with MY2022. Split at that boundary 2026-09-01 on two independent reads of
+// all five Mopar booklets, with matching md5s and 220-dpi page renders of the
+// chart — pdftotext flattens that bar matrix to a list of row labels with the
+// bars lost, so the image is the only honest read of it.
+// docs/agents/factsheet-wrangler-4xe-battery-warranty-AUDIT.md is the record.
+//
+// The trap that audit names, and the reason 2023 is inside the 8/100k span
+// rather than getting a ZEV split of its own: the 10/150k line on the 2023
+// chart belongs to the GRAND CHEROKEE 4xe, printed in a physically separate
+// cell from the Wrangler 4xe's flat 8/100k. Reading the neighbouring cell is
+// the obvious way to get this year wrong.
+//
+// batteryMiles stays the non-ZEV figure in both spans — the term every truck
+// carries wherever it is registered — and the longer state-conditional term
+// rides in the note. warranty.ts reads these values to decide whether THIS
+// car's coverage has run out, and a 150,000-mile ceiling would call a
+// 120,000-mile truck outside a ZEV state covered when it is not.
+const WRANGLER_4XE_WARRANTY_21 = {
+  batteryYears: fw(10, "mfr", "high", "10 years/150,000 miles in California-ZEV states and 10 years/100,000 miles elsewhere, per the 2021 Mopar booklet, which carries no 8-year term", MOPAR_W_21),
+  batteryMiles: fw(100_000, "mfr", "high", undefined, MOPAR_W_21),
+};
+const WRANGLER_4XE_WARRANTY_22_25 = {
+  batteryYears: fw(8, "mfr", "high", "8 years/100,000 miles in the 2022, 2023, 2024 and 2025 Mopar booklets; the 2024-25 booklets add 10 years/150,000 miles in California-TZEV states", MOPAR_W_25),
+  batteryMiles: fw(100_000, "mfr", "high", undefined, MOPAR_W_25),
+};
+// Everything all six Wrangler 4xe rows share. Extracted when the warranty
+// split doubled the three: the pack, the EPA pair and the inlet are one set
+// of facts, and six copies of a figure is six places for the next correction
+// to miss one.
+const WRANGLER_4XE_FACTS = {
+  abstains: { heatPump: STELLANTIS_HP_ABSTAIN },
+  battery: { packGrossKwh: fb(17.3, "mfr" as Source, "high", WRANGLER_4XE_KWH_NOTE, "https://media.stellantisnorthamerica.com/view-spec.do?id=26156") },
+  range: {
+    epaRangeMi: f(22, "mfr" as Source, "high", "Electric-only EPA range. Identical rating 2021–25", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47278"),
+    epaRangeTotalMi: f(370, "mfr" as Source, "high", undefined, "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47278"),
+  },
+  charging: {
+    portStandard: f<"J1772">("J1772", "mfr", "high", "AC charging only, no DC fast charge on any 4xe"),
+    dcFastCharging: f<"none">("none", "mfr"),
+  },
 };
 const GC_4XE_WARRANTY = {
   batteryYears: fb(8, "mfr", "high", "10 years/150,000 miles in California-ZEV/TZEV states and 8 years/100,000 miles elsewhere, per the 2022-2025 Mopar booklets", MOPAR_W_25),
@@ -3914,27 +3963,31 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   // sourced for these six rows in the original pass, so they stay absent
   // rather than guessed. None of these DC-fast-charge (J1772 AC only), which
   // the cards already show as the "No fast charging" tile.
+  //
+  // The three Wrangler 4xe rows became six on 2026-09-01: every fact but the
+  // warranty is identical across 2021-2025, so each pair shares
+  // WRANGLER_4XE_FACTS and differs only in which warranty constant it carries.
+  // Splitting rows rather than the field is what the schema allows — a Fact
+  // holds one value, and 2021's term is a different number.
   {
-    id: "wrangler-4xe-2021-25", make: "JEEP", model: "Wrangler 4xe", modelYears: [2021, 2025], packVariant: "PHEV",
-    abstains: { heatPump: STELLANTIS_HP_ABSTAIN },
-    battery: { packGrossKwh: fb(17.3, "mfr", "high", WRANGLER_4XE_KWH_NOTE, "https://media.stellantisnorthamerica.com/view-spec.do?id=26156") },
-    range: {
-      epaRangeMi: f(22, "mfr", "high", "Electric-only EPA range. Identical rating 2021–25", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47278"),
-      epaRangeTotalMi: f(370, "mfr", "high", undefined, "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47278"),
-    },
-    charging: { portStandard: f("J1772", "mfr", "high", "AC charging only, no DC fast charge on any 4xe"), dcFastCharging: f("none", "mfr") },
-    warranty: WRANGLER_4XE_WARRANTY,
+    id: "wrangler-4xe-2021", make: "JEEP", model: "Wrangler 4xe", modelYears: [2021, 2021], packVariant: "PHEV",
+    ...WRANGLER_4XE_FACTS,
+    warranty: WRANGLER_4XE_WARRANTY_21,
   },
   {
-    id: "wrangler-unl-4xe-2021-25", make: "JEEP", model: "Wrangler Unlimited 4xe", modelYears: [2021, 2025], packVariant: "PHEV",
-    abstains: { heatPump: STELLANTIS_HP_ABSTAIN },
-    battery: { packGrossKwh: fb(17.3, "mfr", "high", WRANGLER_4XE_KWH_NOTE, "https://media.stellantisnorthamerica.com/view-spec.do?id=26156") },
-    range: {
-      epaRangeMi: f(22, "mfr", "high", "Electric-only EPA range. Identical rating 2021–25", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47278"),
-      epaRangeTotalMi: f(370, "mfr", "high", undefined, "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47278"),
-    },
-    charging: { portStandard: f("J1772", "mfr", "high", "AC charging only, no DC fast charge on any 4xe"), dcFastCharging: f("none", "mfr") },
-    warranty: WRANGLER_4XE_WARRANTY,
+    id: "wrangler-4xe-2022-25", make: "JEEP", model: "Wrangler 4xe", modelYears: [2022, 2025], packVariant: "PHEV",
+    ...WRANGLER_4XE_FACTS,
+    warranty: WRANGLER_4XE_WARRANTY_22_25,
+  },
+  {
+    id: "wrangler-unl-4xe-2021", make: "JEEP", model: "Wrangler Unlimited 4xe", modelYears: [2021, 2021], packVariant: "PHEV",
+    ...WRANGLER_4XE_FACTS,
+    warranty: WRANGLER_4XE_WARRANTY_21,
+  },
+  {
+    id: "wrangler-unl-4xe-2022-25", make: "JEEP", model: "Wrangler Unlimited 4xe", modelYears: [2022, 2025], packVariant: "PHEV",
+    ...WRANGLER_4XE_FACTS,
+    warranty: WRANGLER_4XE_WARRANTY_22_25,
   },
   {
     // The bare model string ("Wrangler", "Wrangler Unlimited") carries the same
@@ -3956,16 +4009,20 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     // them is trim-less. scripts/phev-enrichment-gap.mjs is the check that
     // says so, and it will say so again if a feed ever starts sending the
     // model without the trim.
-    id: "wrangler-4xe-2021-25-alt", make: "JEEP", model: "Wrangler", modelAliases: ["Wrangler Unlimited"],
-    abstains: { heatPump: STELLANTIS_HP_ABSTAIN },
-    modelYears: [2021, 2025], trim: ["4xe"], packVariant: "PHEV",
-    battery: { packGrossKwh: fb(17.3, "mfr", "high", WRANGLER_4XE_KWH_NOTE, "https://media.stellantisnorthamerica.com/view-spec.do?id=26156") },
-    range: {
-      epaRangeMi: f(22, "mfr", "high", "Electric-only EPA range. Identical rating 2021–25", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47278"),
-      epaRangeTotalMi: f(370, "mfr", "high", undefined, "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=47278"),
-    },
-    charging: { portStandard: f("J1772", "mfr", "high", "AC charging only, no DC fast charge on any 4xe"), dcFastCharging: f("none", "mfr") },
-    warranty: WRANGLER_4XE_WARRANTY,
+    id: "wrangler-4xe-2021-alt", make: "JEEP", model: "Wrangler", modelAliases: ["Wrangler Unlimited"],
+    modelYears: [2021, 2021], trim: ["4xe"], packVariant: "PHEV",
+    ...WRANGLER_4XE_FACTS,
+    warranty: WRANGLER_4XE_WARRANTY_21,
+  },
+  {
+    // The 2022-25 half of the row above, split for the warranty the same way
+    // the full-name rows are. The trim guard is the whole point of both, so
+    // it has to be repeated here rather than shared: a bare "Wrangler" row
+    // without it hands a petrol Wrangler the 4xe's 22 electric miles.
+    id: "wrangler-4xe-2022-25-alt", make: "JEEP", model: "Wrangler", modelAliases: ["Wrangler Unlimited"],
+    modelYears: [2022, 2025], trim: ["4xe"], packVariant: "PHEV",
+    ...WRANGLER_4XE_FACTS,
+    warranty: WRANGLER_4XE_WARRANTY_22_25,
   },
   {
     // "GR Cherokee 4XE" is one dealer's abbreviation, and the string names the

@@ -377,8 +377,13 @@ export const TESTED_EST_BY_ROWID: Record<string, Fact<number>> = {
   "tayct-2023-24-4s": f(246, "est", "medium", "70-mph constant-speed highway range test (InsideEVs)", "https://insideevs.com/reviews/511077/taycan-cross-turismo-range-test/"),
   "tayct-2023-24-turbo": f(246, "est", "medium", "70-mph constant-speed highway range test (InsideEVs)", "https://insideevs.com/reviews/511077/taycan-cross-turismo-range-test/"),
   "tayct-2025-26-4": f(302, "est", "medium", "70-mph constant-speed highway range test (InsideEVs)", "https://insideevs.com/news/754893/2025-porsche-taycan-cross-turismo-range-test/"),
-  "wrangler-4xe-2021-25": f(22, "est", "medium", "70-mph highway electric-only range test (InsideEVs)", "https://insideevs.com/reviews/521236/jeep-4xe-highway-range-test/"),
-  "wrangler-unl-4xe-2021-25": f(22, "est", "medium", "70-mph highway electric-only range test (InsideEVs)", "https://insideevs.com/reviews/521236/jeep-4xe-highway-range-test/"),
+  // Four keys for one test: the 4xe rows split at the 2021/2022 boundary for
+  // their battery warranty (data4.ts), and the highway figure is unchanged by
+  // that — same pack, same EPA rating, every year.
+  "wrangler-4xe-2021": f(22, "est", "medium", "70-mph highway electric-only range test (InsideEVs)", "https://insideevs.com/reviews/521236/jeep-4xe-highway-range-test/"),
+  "wrangler-4xe-2022-25": f(22, "est", "medium", "70-mph highway electric-only range test (InsideEVs)", "https://insideevs.com/reviews/521236/jeep-4xe-highway-range-test/"),
+  "wrangler-unl-4xe-2021": f(22, "est", "medium", "70-mph highway electric-only range test (InsideEVs)", "https://insideevs.com/reviews/521236/jeep-4xe-highway-range-test/"),
+  "wrangler-unl-4xe-2022-25": f(22, "est", "medium", "70-mph highway electric-only range test (InsideEVs)", "https://insideevs.com/reviews/521236/jeep-4xe-highway-range-test/"),
   "x5-45e-2021-23": f(34, "est", "medium", "Real-world EV-only city range test (electric range to depletion) (Out of Spec (via InsideEVs))", "https://insideevs.com/reviews/556394/bmw-x5-54e-range-test/"),
   "x5-45e-2021-23-alt": f(34, "est", "medium", "Real-world EV-only city range test (electric range to depletion) (Out of Spec (via InsideEVs))", "https://insideevs.com/reviews/556394/bmw-x5-54e-range-test/"),
   "x5-50e-2024-26": f(45, "est", "medium", "Real-world EV-only range test (electric range to depletion, mixed roads) (BMWBlog)", "https://www.bmwblog.com/2026/05/03/2026-bmw-x5-xdrive50e-ev-range-test/"),
