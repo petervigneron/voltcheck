@@ -67,28 +67,42 @@
 // yourPrice is the live figure whichever way it moved, and 45,420 appears
 // nowhere on that page.
 //
-// NEW cars keep `sellingPrice`, and that is now a positive finding rather than
-// just caution. Their divergence is a DIFFERENT MECHANISM from the used-car
-// staleness above: it is conditional rebates. Of the divergent new rows
-// carrying a non-zero `cashRebates`, 70.3% (187 of 266) have
-// `sellingPrice - yourPrice` equal to `cashRebates` to the dollar — e.g.
-// cityworldhyundai Elantra 23,585 - 21,585 = 2,000 = cashRebates, dallasdodge
-// Compass 29,777 - 27,277 = 2,500 = cashRebates. The mirror control holds too:
-// 0 of the 26 divergent USED rows carry any rebate at all.
+// NEW cars take `max(sellingPrice, yourPrice)`, and the asymmetry with the used
+// rule above is deliberate — do NOT unify them. Two mechanisms move these
+// fields, and they move them in different directions:
 //
-// So on new cars `yourPrice` is rebate-loaded — money a given shopper may well
-// not qualify for. Publishing it would manufacture exactly the false bargain
-// this commit removes from the used lane. Some rooftops go further and gate the
+//   - Rebates pull `yourPrice` DOWN. Of divergent new rows with a non-zero
+//     `cashRebates`, 70.3% (187 of 266) have sellingPrice - yourPrice equal to
+//     cashRebates to the dollar (cityworldhyundai Elantra 23,585 - 21,585 =
+//     2,000; dallasdodge Compass 29,777 - 27,277 = 2,500). Mirror control: 0 of
+//     26 divergent USED rows carry any rebate. That money is conditional, so
+//     publishing the rebated figure would invent a bargain a shopper may not
+//     get — when yourPrice is lower, keep sellingPrice.
+//   - The same import staleness as the used lane pushes `yourPrice` UP. When
+//     yourPrice is higher, the record is stale and the live figure wins.
+//
+// max() is therefore the semantics, not a hedge: rebates only ever subtract, so
+// the higher of the two is the pre-rebate live price either way. Measured on 78
+// divergent new cars across 120 rooftops (docs/tools/tv-newcar-price-sweep.mjs)
+// against the stack's own bottom line — `sellingPrice` alone published BELOW
+// what the shopper pays on 12 of them, median $1,050 short and worst $2,931
+// (markleyhonda 36,100 against a real 37,199). max() takes that to 0 of 78
+// while leaving the 66 conservative pre-rebate reads untouched. Plain
+// `yourPrice` was measured too and still shorts 3.
+//
+// For USED cars max() would be WRONG, which is the trap here: with no rebates
+// in play a lower yourPrice is a genuine price cut to follow down, not a rebate
+// to ignore. livermoreford's Explorer demo is that case (see above).
+//
+// One more thing the sweep settled: on a new car `payments[].retail` is the
+// MSRP top line, NOT the asking price. The stack runs retail → dealer discount
+// → rebates → total, so a sellingPrice below retail is expected and correct,
+// and 4 rows even carry a purchasePrice ABOVE retail because the record went
+// stale. Do not "fix" new cars toward retail. Some rooftops also gate the real
 // number behind a form (markleyhonda's new-car inventorysetup returns
 // enableOverleyOnVDP:true, priceDiscount:50, specialFieldValue "Below
-// Invoice"), and several render MSRP as the headline with the discount broken
-// out separately (lindsaychryslerdodgejeepram, dallasdodge).
-//
-// About 30% of new-car divergence is still unexplained by rebates, and two
-// control tests each rendered the LOWER of the pair but from different fields
-// (markleyhonda sellingPrice 36,100; toyotaofgladstone yourPrice 24,648).
-// docs/tools/tv-newcar-price-sweep.mjs measures that residual. Until it lands,
-// moving new-car pricing would be a guess in the expensive direction.
+// Invoice"); 4 such cars were in the sample and none needed special handling,
+// but a rooftop that publishes no price at all should abstain, not guess.
 //
 // Never use `yourPriceSort` or the page's JSON-LD offer: both bake in the doc
 // fee (42,339 + 225 = 42,564). Our convention is the pre-fee asking price.
@@ -125,18 +139,20 @@ function fuelTypeFor(r) {
   return f || undefined;
 }
 
-// Used cars take the live `yourPrice` (the platform's `retail`, == purchasePrice);
-// new cars stay on `sellingPrice` pending the sweep. See the PRICE note up top —
-// both halves of this are measured, and the new-car half deliberately is not.
+// Used: the live `yourPrice` wins outright, in both directions.
+// New: the HIGHER of the two, because a lower yourPrice there is a conditional
+// rebate rather than a price cut. See the PRICE note up top — the asymmetry is
+// the measured part, not an oversight.
 // `internetPrice` is never read: it is 0 on real cars, and where it is non-zero
 // it just mirrors the stale sellingPrice.
 function teamVelocityPrice(r) {
-  const used = String(r?.type ?? "").toLowerCase() !== "new";
-  const live = posNum(r?.yourPrice) ?? posNum(r?.purchasePrice);
-  if (used && live != null) return { price: live, provenance: TV_RETAIL };
   const snapshot = posNum(r?.sellingPrice);
-  if (snapshot != null) return { price: snapshot, provenance: TV_SELLING };
-  return { price: live, provenance: live != null ? TV_RETAIL : TV_SELLING };
+  const live = posNum(r?.yourPrice) ?? posNum(r?.purchasePrice);
+  const isNew = String(r?.type ?? "").toLowerCase() === "new";
+  if (snapshot == null) return { price: live, provenance: live != null ? TV_RETAIL : TV_SELLING };
+  if (live == null) return { price: snapshot, provenance: TV_SELLING };
+  if (isNew && live <= snapshot) return { price: snapshot, provenance: TV_SELLING };
+  return { price: live, provenance: TV_RETAIL };
 }
 
 // One API record → schema.org Vehicle node, shaped like the other producers.

@@ -79,13 +79,14 @@ test("used: the two agree on fresh inventory, which is the common case", () => {
   assert.equal(priceOf({ type: "Used", sellingPrice: 28500, yourPrice: 28500 }), 28500);
 });
 
-test("new cars stay on sellingPrice pending the sweep", () => {
-  // markleyhonda 5J6RS4H45TL015753 — renders 36,100, the sellingPrice. New-car
-  // yourPrice carries conditional/incentive rungs and flips direction, so this
-  // half is deliberately unchanged until it is measured.
+test("new: a stale-low record loses to the live higher price", () => {
+  // markleyhonda 5J6RS4H45TL015753. Publishing sellingPrice here showed 36,100
+  // against a stack whose bottom line is 37,199 — $1,099 BELOW what the shopper
+  // pays. This is the same import staleness as the used lane, and it was the
+  // worst class the new-car sweep found (12 of 78, worst $2,931 short).
   const crv = { type: "New", sellingPrice: 36100, yourPrice: 37199, purchasePrice: 37199 };
-  assert.equal(priceOf(crv), 36100);
-  assert.equal(provOf(crv), "tv-selling");
+  assert.equal(priceOf(crv), 37199);
+  assert.equal(provOf(crv), "tv-retail");
 });
 
 test("new: a rebate-loaded yourPrice never displaces sellingPrice", () => {
@@ -97,6 +98,15 @@ test("new: a rebate-loaded yourPrice never displaces sellingPrice", () => {
   const elantra = { type: "New", sellingPrice: 23585, yourPrice: 21585, cashRebates: 2000 };
   assert.equal(priceOf(elantra), 23585);
   assert.equal(provOf(elantra), "tv-selling");
+});
+
+test("used and new diverge on purpose when yourPrice is LOWER", () => {
+  // The same input, read two ways, because two different things cause it.
+  // Used: no rebates exist, so a lower yourPrice is a real cut — follow it.
+  // New: a lower yourPrice is a conditional rebate — ignore it.
+  const shape = { sellingPrice: 30000, yourPrice: 28000, purchasePrice: 28000 };
+  assert.equal(priceOf({ ...shape, type: "Used" }), 28000);
+  assert.equal(priceOf({ ...shape, type: "New" }), 30000);
 });
 
 test("a used car with no yourPrice falls back to sellingPrice", () => {
