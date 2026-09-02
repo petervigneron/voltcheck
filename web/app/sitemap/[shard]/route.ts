@@ -129,17 +129,24 @@ export async function GET(_req: Request, { params }: { params: Promise<{ shard: 
 
   const now = new Date();
   // Real inventory only: a live listing's id is its 17-character lowercase
-  // VIN. Demo/sample rows are excluded so the sitemap never points a crawler
-  // at a URL that vanishes as coverage grows.
+  // VIN, so the sitemap never points a crawler at a URL that vanishes as
+  // coverage grows.
   //
   // Matched on the SHAPE of a VIN, not just its length. The old test was
-  // `id.length === 17`, and lib/listings/sample.ts's "bolt18-premier-dc" is
-  // 17 characters — so a demo listing has been in the published sitemap the
-  // whole time. Alphanumeric rather than the 33 characters a VIN may legally
-  // use, for the same reason the feed walk buckets over the full 36
-  // (lib/listings/db.ts): a feed that ignores the standard should still be
-  // read. What it does exclude is every sample id, all of which are
-  // hyphenated slugs.
+  // `id.length === 17`, and the demo row "bolt18-premier-dc" is 17 characters
+  // — so a hand-written listing was in the published sitemap the whole time.
+  // (Those rows are gone as of 2026-09-02: lib/listings/sample.ts is deleted
+  // and source.ts no longer merges anything hand-written into the feed.)
+  // Alphanumeric rather than the 33 characters a VIN may legally use, for the
+  // same reason the feed walk buckets over the full 36 (lib/listings/db.ts):
+  // a feed that ignores the standard should still be read.
+  //
+  // A shape test is all this can be, and it is not enough on its own — which
+  // is the 2026-09-02 lesson from the other direction: a dealer's "ON ORDER"
+  // placeholder, written 0N0RDER3333333857, is 17 alphanumerics and passed
+  // every check in the repo. That one is caught upstream now, at intake
+  // (scraper/lib/vin-placeholder.mjs), because by the time a row reaches a
+  // sitemap it is already in the database and on the browse grid.
   const listingRoutes: SitemapEntry[] = listings
     .filter((l) => /^[a-z0-9]{17}$/.test(l.id) && sitemapShardOf(l.id) === n)
     // Sorted so a shard's body depends only on which cars are in it, not on

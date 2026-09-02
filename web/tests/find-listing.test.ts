@@ -19,7 +19,6 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { findListing } from "../lib/listings/source";
-import { SAMPLE_LISTINGS } from "../lib/listings/sample";
 import { __resetWalkFailureForTest } from "../lib/listings/db";
 import { decodeSnapshot } from "../lib/listings/snapshot";
 
@@ -97,26 +96,22 @@ function feedRow(id: string) {
 
 // ── the id shape decides whether the database is asked at all ────────────
 
-test("a demo id costs no database request and still resolves", async () => {
+test("an id that is not VIN-shaped 404s without any request", async () => {
+  // Both halves matter and they used to be separate tests, because a slug id
+  // used to resolve: eleven demo cars (lib/listings/sample.ts) were merged
+  // into the live feed and answered on their own slugs. They were deleted on
+  // 2026-09-02 — a site holding 149,213 real cars has no business printing a
+  // price for a hand-written one — so the only honest answer to a slug is
+  // nothing, and the request-count assertion is the part that still has teeth:
+  // this branch exists so a crawler working through junk URLs cannot turn
+  // itself into a load generator (see resolveListing's header).
   const mock = mockSupabase(() => {
     throw new Error("the database must not be asked for a slug id");
   });
   try {
-    const sample = SAMPLE_LISTINGS[0];
-    const found = await findListing(sample.id);
-    assert.equal(found?.id, sample.id);
-    assert.deepEqual(mock.urls, []);
-  } finally {
-    mock.restore();
-  }
-});
-
-test("an id that is neither a VIN nor a demo row 404s without any request", async () => {
-  const mock = mockSupabase(() => {
-    throw new Error("the database must not be asked for a slug id");
-  });
-  try {
-    assert.equal(await findListing("not-a-real-listing"), undefined);
+    for (const id of ["not-a-real-listing", "bolt18-lt-nodc", "my23-lr-fremont"]) {
+      assert.equal(await findListing(id), undefined, `${id} must not resolve`);
+    }
     assert.deepEqual(mock.urls, []);
   } finally {
     mock.restore();
@@ -217,8 +212,13 @@ test("every bundled snapshot row is keyed by its own lowercase VIN", async () =>
   assert.deepEqual(offenders.slice(0, 5), []);
 });
 
-test("no demo id can be mistaken for a VIN", async () => {
-  // The other half of the same invariant, from the other side.
-  const vinShaped = SAMPLE_LISTINGS.filter((l) => /^[a-zA-Z0-9]{17}$/.test(l.id));
-  assert.deepEqual(vinShaped, []);
+test("nothing hand-written is merged into the feed", async () => {
+  // The check that keeps the demo rows from coming back. source.ts built the
+  // feed as `[...db, ...SAMPLE_LISTINGS]` for months and nothing failed when
+  // eleven invented cars went out with 149,213 real ones; only a person
+  // reading the sitemap found them. Asserted against the source, because the
+  // failure is an import, not a value.
+  const src = readFileSync("lib/listings/source.ts", "utf8");
+  assert.doesNotMatch(src, /SAMPLE_LISTINGS/, "source.ts must not merge hand-written listings into the feed");
+  assert.doesNotMatch(src, /from "\.\/sample"/, "lib/listings/sample.ts is deleted; do not reintroduce it");
 });

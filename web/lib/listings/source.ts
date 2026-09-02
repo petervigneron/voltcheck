@@ -1,5 +1,4 @@
 import type { Listing } from "./types";
-import { SAMPLE_LISTINGS } from "./sample";
 import { decodeSnapshot } from "./snapshot";
 import { dbConfigured, fetchListingByIdFromDb, fetchListingDetailFromDb, fetchListingsFromDb } from "./db";
 
@@ -124,7 +123,15 @@ export async function allListingsWithOrigin(): Promise<{ listings: Listing[]; or
   const db = await fetchListingsFromDb();
   const origin: FeedOrigin = db ? "db" : dbConfigured() ? "fallback" : "unconfigured";
   const byVin = new Map<string, Listing>();
-  for (const l of [...(db ?? (await fallbackListings())), ...SAMPLE_LISTINGS]) {
+  // Real rows only. Until 2026-09-02 eleven hand-written demo cars
+  // (lib/listings/sample.ts, "DEMO INVENTORY … stands in for a real feed
+  // while the UX is built") were appended here unconditionally, so they were
+  // in the browse grid of a site holding 149,213 real ones — priced, placed
+  // in a city, and indistinguishable from inventory. The sitemap already
+  // refused to publish them (app/sitemap/[shard]/route.ts gates on
+  // `id.length === 17`); the grid never did. The scaffolding outlived the
+  // scaffold, and the file is gone.
+  for (const l of db ?? (await fallbackListings())) {
     if (!byVin.has(l.vin)) byVin.set(l.vin, scrubJunkStrings(absolutizeImages(stripRepeatedMake(l))));
   }
   return { listings: [...byVin.values()], origin };
@@ -136,9 +143,9 @@ export async function allListings(): Promise<Listing[]> {
 
 // A real listing's id is its VIN — id === vin.toLowerCase() for every row the
 // scraper writes (scraper/ingest.mjs), and for all 58,730 rows of the bundled
-// snapshot (checked 2026-08-22: zero exceptions, zero non-VIN-shaped ids).
-// Demo rows are the other kind: all eleven SAMPLE_LISTINGS ids are hyphenated
-// slugs, so no id can be both.
+// snapshot (checked 2026-08-22: zero exceptions, zero non-VIN-shaped ids). So
+// an id that is not VIN-shaped names no car this site has, and the only thing
+// left to do with one is 404 it without spending a request.
 //
 // Same shape test the sitemap uses (app/sitemap/[shard]/route.ts) except for
 // case, and deliberately: that route is deciding what to publish, so it wants
@@ -175,10 +182,11 @@ async function findInSnapshot(id: string): Promise<Listing | undefined> {
  * The walk was never buying what its comment claimed. It read the same view
  * the per-VIN read does (live_listings_feed, `WHERE delisted_at IS NULL`), so
  * on a healthy database it can only ever return rows that read already
- * covered — plus the eleven demo rows. A just-delisted car is invisible to
- * both. So each branch below returns exactly what the walk would have:
+ * covered. A just-delisted car is invisible to both. So each branch below
+ * returns exactly what the walk would have:
  *
- *   not VIN-shaped   only a demo row can have that id. No request.
+ *   not VIN-shaped   no row this site holds can have that id. 404, no
+ *                    request.
  *   database has it  the row. One request, as before.
  *   database says no this VIN is not for sale. 404 — the same answer the
  *                    walk gave, since the walk reads the same view. It is
@@ -188,10 +196,7 @@ async function findInSnapshot(id: string): Promise<Listing | undefined> {
  *                    226 requests spent failing.
  */
 async function resolveListing(id: string): Promise<{ listing?: Listing; live: boolean }> {
-  if (!VIN_SHAPED.test(id)) {
-    const sample = SAMPLE_LISTINGS.find((l) => l.id === id);
-    return { listing: sample && absolutizeImages(sample), live: false };
-  }
+  if (!VIN_SHAPED.test(id)) return { live: false };
   if (!dbConfigured()) return { listing: await findInSnapshot(id), live: false };
   const { answered, listing } = await fetchListingByIdFromDb(id);
   if (listing) return { listing: absolutizeImages(listing), live: true };
