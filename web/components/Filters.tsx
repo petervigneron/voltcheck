@@ -673,7 +673,9 @@ export function FilterRail({
       </div>
 
       <div className="flex grow flex-wrap items-stretch">
-        {/* The count takes the slack of whichever line the trio lands on. Until
+        {/* The count takes the slack of whichever line the trio lands on — on
+            a desktop. On a phone it and the star hold their width and the sort
+            takes the slack, so its closed label has room to read. Until
             the index lands there's no number to give, and an empty stretched
             cell only reads as a gap on a phone, so that state keeps the
             desktop-only spacer it always was. */}
@@ -682,7 +684,7 @@ export function FilterRail({
         ) : (
           <div
             aria-live="polite"
-            className={`${CELL} flex grow items-center bg-paper px-4 py-2.5 text-[13px] font-bold tracking-[0.04em] whitespace-nowrap text-ink/60 uppercase tabular-nums sm:min-w-fit sm:flex-1 sm:justify-end`}
+            className={`${CELL} flex shrink-0 items-center bg-paper px-4 py-2.5 text-[13px] font-bold tracking-[0.04em] whitespace-nowrap text-ink/60 uppercase tabular-nums sm:min-w-fit sm:flex-1 sm:justify-end`}
           >
             {count.toLocaleString()} {count === 1 ? "car" : "cars"}
           </div>
@@ -690,18 +692,30 @@ export function FilterRail({
 
         {/* The select owns the whole cell so label and chevron stay clickable;
             without the ▼ an appearance-none select reads as a static label. */}
-        <div className={`${CELL} relative flex grow items-center bg-paper sm:grow-0`}>
+        {/* On a phone this cell has no intrinsic width of its own (basis-0):
+            a wrapping row breaks lines on intrinsic widths before it shrinks
+            anything, and a select's is its longest option's, so at 375px the
+            trio split two-and-one however small the star got. With basis-0
+            the cell takes what count and star leave; the closed label is
+            never as long as the longest option. The SORT heading is dropped
+            there too, as Trim and Range drop theirs (SpecFacets): a value
+            with a ▼ in a row of controls reads as a control, and the
+            select's aria-label still names it. */}
+        <div
+          className={`${CELL} relative flex min-w-0 grow basis-0 items-center bg-paper sm:min-w-fit sm:grow-0 sm:basis-auto`}
+        >
           <label
             htmlFor="sort"
-            className="pointer-events-none absolute left-4 text-[10px] font-extrabold uppercase tracking-[0.14em] text-ink/55"
+            className="pointer-events-none absolute left-4 hidden text-[10px] font-extrabold uppercase tracking-[0.14em] text-ink/55 sm:block"
           >
             Sort
           </label>
           <select
             id="sort"
+            aria-label="Sort"
             value={get("sort") || "featured"}
             onChange={(e) => apply({ sort: e.target.value === "featured" ? "" : e.target.value })}
-            className="h-full w-full cursor-pointer appearance-none bg-transparent py-2.5 pr-9 pl-14 text-[13px] font-bold tracking-[0.04em] uppercase hover:ring-[3px] hover:ring-inset hover:ring-cobalt focus:outline-none focus:ring-[3px] focus:ring-inset focus:ring-cobalt"
+            className="h-full w-full cursor-pointer appearance-none bg-transparent py-2.5 pr-9 pl-4 sm:pl-14 text-[13px] font-bold tracking-[0.04em] uppercase hover:ring-[3px] hover:ring-inset hover:ring-cobalt focus:outline-none focus:ring-[3px] focus:ring-inset focus:ring-cobalt"
           >
             <option value="featured">Featured</option>
             <option value="price">Price: lowest</option>
