@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { REMOVABLE, QUICK_TOGGLES, BODY_TYPES, describeFilter, dropSpecFilters, splitValues, toggleValue, withCurrent } from "@/lib/filters";
 import { pushUrl } from "@/lib/pushUrl";
+import { track } from "@/lib/events";
 import { SaveSearchToggle } from "./SaveSearchToggle";
 
 const CELL = "border-r-[3px] border-b-[3px] border-ink";
@@ -40,6 +41,8 @@ function PanelToggles({
   current,
   pick,
   multi,
+  filterKey,
+  scoped,
 }: {
   label: string;
   hint?: string;
@@ -47,6 +50,10 @@ function PanelToggles({
   current: string;
   pick: (value: string) => void;
   multi?: boolean;
+  /** The filter key this row sets, when a press should be counted as a
+   *  filter_toggled event (lib/events.ts) — the panel twin of a rail press. */
+  filterKey?: string;
+  scoped?: boolean;
 }) {
   const on = (v: string) => (multi ? splitValues(current).includes(v) : current === v);
   return (
@@ -60,7 +67,17 @@ function PanelToggles({
             key={o.value}
             type="button"
             aria-pressed={on(o.value)}
-            onClick={() => pick(multi ? toggleValue(current, o.value) : on(o.value) ? "" : o.value)}
+            onClick={() => {
+              if (filterKey)
+                track("filter_toggled", undefined, {
+                  key: filterKey,
+                  value: o.value,
+                  on: !on(o.value),
+                  surface: "panel",
+                  scoped: !!scoped,
+                });
+              pick(multi ? toggleValue(current, o.value) : on(o.value) ? "" : o.value);
+            }}
             className={`${PANEL_BTN} ${HOVER} ${on(o.value) ? "bg-cobalt text-paper" : "bg-paper text-ink"}`}
           >
             {o.label}
@@ -602,6 +619,9 @@ export function FilterRail({
       : null;
 
   const hasOrigin = inferred !== undefined || !!get("zip");
+  // For the filter_toggled event: a press inside one model or search is a
+  // different question from a press on the whole market.
+  const scoped = !!(get("q") || get("make") || get("model"));
 
   return (
     <div className="border-t-[3px] border-l-[3px] border-ink">
@@ -659,7 +679,20 @@ export function FilterRail({
             type="button"
             aria-pressed={t.on}
             title={t.on ? `Remove: ${t.label}` : `Only ${t.label.toLowerCase()}`}
-            onClick={() => apply({ [t.key]: t.on ? "" : t.value })}
+            onClick={() => {
+              // The press is the measurement the toggle set has never had
+              // (supabase/migrations/0058_events_filter_toggled.sql).
+              const c = quickCounts?.[`${t.key}=${t.value}`];
+              track("filter_toggled", undefined, {
+                key: t.key,
+                value: t.value,
+                on: !t.on,
+                surface: "rail",
+                scoped,
+                ...(c ? { n: c.n, of: c.of } : {}),
+              });
+              apply({ [t.key]: t.on ? "" : t.value });
+            }}
             className={`${BLOCK} ${HOVER} ${t.on ? "bg-cobalt text-paper" : "bg-paper text-ink"}`}
           >
             <span aria-hidden="true">{t.on ? "✓" : "+"}</span>
@@ -862,6 +895,8 @@ export function FilterRail({
               current={get("drive")}
               pick={(v) => apply({ drive: v })}
               multi
+              filterKey="drive"
+              scoped={scoped}
             />
           </div>
 
@@ -872,6 +907,8 @@ export function FilterRail({
               options={BODY_TYPES.map((b) => ({ value: b.value, label: b.label }))}
               current={get("body")}
               pick={(v) => apply({ body: v })}
+              filterKey="body"
+              scoped={scoped}
             />
           </div>
 
@@ -884,6 +921,8 @@ export function FilterRail({
               ]}
               current={get("cond")}
               pick={(v) => apply({ cond: v })}
+              filterKey="cond"
+              scoped={scoped}
             />
           </div>
 
@@ -904,7 +943,10 @@ export function FilterRail({
               <button
                 type="button"
                 aria-pressed={heatPumpOn}
-                onClick={() => apply({ heatPump: heatPumpOn ? "" : "1" })}
+                onClick={() => {
+                  track("filter_toggled", undefined, { key: "heatPump", value: "1", on: !heatPumpOn, surface: "panel", scoped });
+                  apply({ heatPump: heatPumpOn ? "" : "1" });
+                }}
                 className={`${PANEL_BTN} ${HOVER} ${heatPumpOn ? "bg-cobalt text-paper" : "bg-paper text-ink"}`}
               >
                 Heat pump
@@ -912,7 +954,10 @@ export function FilterRail({
               <button
                 type="button"
                 aria-pressed={cutOn}
-                onClick={() => apply({ cut: cutOn ? "" : "1" })}
+                onClick={() => {
+                  track("filter_toggled", undefined, { key: "cut", value: "1", on: !cutOn, surface: "panel", scoped });
+                  apply({ cut: cutOn ? "" : "1" });
+                }}
                 className={`${PANEL_BTN} ${HOVER} ${cutOn ? "bg-cobalt text-paper" : "bg-paper text-ink"}`}
               >
                 Price cut

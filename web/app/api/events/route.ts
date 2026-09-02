@@ -10,7 +10,7 @@
 // read paths; nothing here touches the feed, the index, or any per-listing
 // query.
 
-const ALLOWED = new Set(["listing_saved", "listing_unsaved", "dealer_click"]);
+const ALLOWED = new Set(["listing_saved", "listing_unsaved", "dealer_click", "filter_toggled"]);
 const MAX_BODY = 4096;
 const MAX_CLIENT_ID = 64;
 const MAX_LISTING = 32; // listing id = lowercase VIN, 17 chars in practice

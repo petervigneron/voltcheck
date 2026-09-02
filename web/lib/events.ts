@@ -1,4 +1,4 @@
-// Fire-and-forget event instrumentation. Three events exist; the shape
+// Fire-and-forget event instrumentation. Four events exist; the shape
 // (name + optional listing ref + optional flat props) is deliberately
 // generic so a fourth is one union member here and one allowlist entry in
 // app/api/events/route.ts and supabase/migrations/0027_events.sql.
@@ -12,7 +12,7 @@
 // away; fetch keepalive is the fallback for browsers without it. Both paths
 // swallow every failure — instrumentation must never break the page.
 
-export type EventName = "listing_saved" | "listing_unsaved" | "dealer_click";
+export type EventName = "listing_saved" | "listing_unsaved" | "dealer_click" | "filter_toggled";
 
 const CID_KEY = "voltcheck.cid.v1";
 
