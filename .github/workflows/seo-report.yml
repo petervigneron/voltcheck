@@ -1,0 +1,82 @@
+# Weekly Search Console reading for voltcheck.net.
+#
+# Answers "is anyone arriving from search, and for what" with Google's own
+# numbers. Read-only: the service account is a Restricted user on the
+# property, so this workflow cannot change anything about the site.
+#
+# The report lands in the job summary. Set the `email` input (or flip the
+# schedule's env) to also send it to alerts@'s owner address via Resend.
+name: SEO report
+
+on:
+  schedule:
+    - cron: "0 13 * * 1" # Mondays 13:00 UTC — Google has finalised the prior week
+  workflow_dispatch:
+    inputs:
+      days:
+        description: "Window length in days"
+        default: "28"
+      email:
+        description: "Also email the report"
+        type: boolean
+        default: false
+
+concurrency:
+  group: seo-report
+  cancel-in-progress: false
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Search Console report
+        id: gsc
+        env:
+          GSC_SERVICE_ACCOUNT_JSON: ${{ secrets.GSC_SERVICE_ACCOUNT_JSON }}
+        run: |
+          if [ -z "$GSC_SERVICE_ACCOUNT_JSON" ]; then
+            echo "::error::GSC_SERVICE_ACCOUNT_JSON secret is not set. Add the contents of docs/gsc-service-account.json as a repository secret."
+            exit 1
+          fi
+          node scraper/gsc-report.mjs --days "${{ inputs.days || 28 }}" | tee report.txt
+
+      - name: Publish to job summary
+        if: always()
+        run: |
+          {
+            echo '## Search Console — voltcheck.net'
+            echo '```'
+            cat report.txt 2>/dev/null || echo 'report failed'
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Email the report
+        if: ${{ inputs.email == true }}
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+        run: |
+          node -e '
+            const fs = require("fs");
+            const body = fs.readFileSync("report.txt", "utf8");
+            fetch("https://api.resend.com/emails", {
+              method: "POST",
+              headers: {
+                authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+                "content-type": "application/json",
+              },
+              body: JSON.stringify({
+                from: "alerts@voltcheck.net",
+                to: "peter.vigneron@gmail.com",
+                subject: "Voltcheck — weekly search report",
+                text: body,
+              }),
+            })
+              .then((r) => r.text())
+              .then((t) => console.log(t));
+          '
