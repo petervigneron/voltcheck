@@ -1643,18 +1643,17 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     modelYears: [2024, 2024],
     drive: "FWD",
     abstains: { heatPump: "Honda does not name it. Honda's own 2026 Prologue Specifications & Features grid is trim-by-trim and granular enough to list ventilated seats and illuminated footwells; its climate rows read only \"Air Conditioning with Air-Filtration System\" and \"Dual Zone Climate Control\", with no heat-pump line anywhere - that grid is the control test. These rows previously asserted `standard` on GM's platform-wide Ultium claim, which is a GM marketing statement about a Honda-badged car, and which the GM rows themselves stopped asserting on 2026-08-26. The Acura ZDX, this car's Ultium twin, already abstained for the same reason." },
-    battery: { packGrossKwh: f(85, "mfr", "medium", "GM Ultium pack"), chemistry: f("NCMA", "agg", "medium") },
+    battery: { packGrossKwh: f(85, "mfr", "medium", "Honda states 85 kWh with no gross or usable qualifier; GM Ultium hardware"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(296, "mfr", "high", "EPA figure", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "mfr"),
       superchargerAccess: f("adapter", "mfr", "high", "Honda-approved NACS adapter, mid-2025"),
-      dcPeakKw: f(155, "agg", "medium"),
+      dcPeakKw: f(150, "mfr", "high", "Honda's 2024, 2025 and 2026 Prologue launch releases each state DC fast charging at rates up to 150 kW", "https://hondanews.com/en-US/honda-automobiles/releases/release-28556cec8c60d45354dbdd1404014728-building-on-success-2025-honda-prologue-goes-farther"),
     },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(75, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -1674,18 +1673,17 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     modelYears: [2025, 2026],
     drive: "FWD",
     abstains: { heatPump: "Honda does not name it. Honda's own 2026 Prologue Specifications & Features grid is trim-by-trim and granular enough to list ventilated seats and illuminated footwells; its climate rows read only \"Air Conditioning with Air-Filtration System\" and \"Dual Zone Climate Control\", with no heat-pump line anywhere - that grid is the control test. These rows previously asserted `standard` on GM's platform-wide Ultium claim, which is a GM marketing statement about a Honda-badged car, and which the GM rows themselves stopped asserting on 2026-08-26. The Acura ZDX, this car's Ultium twin, already abstained for the same reason." },
-    battery: { packGrossKwh: f(85, "mfr", "medium", "GM Ultium pack"), chemistry: f("NCMA", "agg", "medium") },
+    battery: { packGrossKwh: f(85, "mfr", "medium", "Honda states 85 kWh with no gross or usable qualifier; GM Ultium hardware"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(308, "mfr", "high", "EPA figure", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CCS1", "mfr"),
       superchargerAccess: f("adapter", "mfr", "high", "Honda-approved NACS adapter, mid-2025"),
-      dcPeakKw: f(155, "agg", "medium"),
+      dcPeakKw: f(150, "mfr", "high", "Honda's 2024, 2025 and 2026 Prologue launch releases each state DC fast charging at rates up to 150 kW", "https://hondanews.com/en-US/honda-automobiles/releases/release-28556cec8c60d45354dbdd1404014728-building-on-success-2025-honda-prologue-goes-farther"),
     },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(75, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -1705,18 +1703,17 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     vds: ["KHV", "KHX"],
     drive: "AWD",
     abstains: { heatPump: "Honda does not name it. Honda's own 2026 Prologue Specifications & Features grid is trim-by-trim and granular enough to list ventilated seats and illuminated footwells; its climate rows read only \"Air Conditioning with Air-Filtration System\" and \"Dual Zone Climate Control\", with no heat-pump line anywhere - that grid is the control test. These rows previously asserted `standard` on GM's platform-wide Ultium claim, which is a GM marketing statement about a Honda-badged car, and which the GM rows themselves stopped asserting on 2026-08-26. The Acura ZDX, this car's Ultium twin, already abstained for the same reason." },
-    battery: { packGrossKwh: f(85, "mfr", "medium", "GM Ultium pack"), chemistry: f("NCMA", "agg", "medium") },
+    battery: { packGrossKwh: f(85, "mfr", "medium", "Honda states 85 kWh with no gross or usable qualifier; GM Ultium hardware"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(281, "mfr", "high", undefined, epa(47830)), testedRangeMi: f(240, "tested", "medium", "75-mph (Car and Driver, Elite AWD): 240 mi; Edmunds mixed loop: 320") },
     charging: {
       portStandard: f("CCS1", "mfr"),
       superchargerAccess: f("adapter", "mfr", "high", "Honda-approved NACS adapter, mid-2025"),
-      dcPeakKw: f(155, "agg", "medium"),
+      dcPeakKw: f(150, "mfr", "high", "Honda's 2024, 2025 and 2026 Prologue launch releases each state DC fast charging at rates up to 150 kW", "https://hondanews.com/en-US/honda-automobiles/releases/release-28556cec8c60d45354dbdd1404014728-building-on-success-2025-honda-prologue-goes-farther"),
     },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(75, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -1741,18 +1738,17 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     vds: ["KHZ"],
     drive: "AWD",
     abstains: { heatPump: "Honda does not name it. Honda's own 2026 Prologue Specifications & Features grid is trim-by-trim and granular enough to list ventilated seats and illuminated footwells; its climate rows read only \"Air Conditioning with Air-Filtration System\" and \"Dual Zone Climate Control\", with no heat-pump line anywhere - that grid is the control test. These rows previously asserted `standard` on GM's platform-wide Ultium claim, which is a GM marketing statement about a Honda-badged car, and which the GM rows themselves stopped asserting on 2026-08-26. The Acura ZDX, this car's Ultium twin, already abstained for the same reason." },
-    battery: { packGrossKwh: f(85, "mfr", "medium", "GM Ultium pack"), chemistry: f("NCMA", "agg", "medium") },
+    battery: { packGrossKwh: f(85, "mfr", "medium", "Honda states 85 kWh with no gross or usable qualifier; GM Ultium hardware"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(273, "mfr", "high", undefined, epa(47829)), testedRangeMi: f(240, "tested", "medium", "75-mph (Car and Driver, Elite AWD): 240 mi; Edmunds mixed loop: 320") },
     charging: {
       portStandard: f("CCS1", "mfr"),
       superchargerAccess: f("adapter", "mfr", "high", "Honda-approved NACS adapter, mid-2025"),
-      dcPeakKw: f(155, "agg", "medium"),
+      dcPeakKw: f(150, "mfr", "high", "Honda's 2024, 2025 and 2026 Prologue launch releases each state DC fast charging at rates up to 150 kW", "https://hondanews.com/en-US/honda-automobiles/releases/release-28556cec8c60d45354dbdd1404014728-building-on-success-2025-honda-prologue-goes-farther"),
     },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(75, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -1775,18 +1771,17 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     vds: ["KHV", "KHX"],
     drive: "AWD",
     abstains: { heatPump: "Honda does not name it. Honda's own 2026 Prologue Specifications & Features grid is trim-by-trim and granular enough to list ventilated seats and illuminated footwells; its climate rows read only \"Air Conditioning with Air-Filtration System\" and \"Dual Zone Climate Control\", with no heat-pump line anywhere - that grid is the control test. These rows previously asserted `standard` on GM's platform-wide Ultium claim, which is a GM marketing statement about a Honda-badged car, and which the GM rows themselves stopped asserting on 2026-08-26. The Acura ZDX, this car's Ultium twin, already abstained for the same reason." },
-    battery: { packGrossKwh: f(85, "mfr", "medium", "GM Ultium pack"), chemistry: f("NCMA", "agg", "medium") },
+    battery: { packGrossKwh: f(85, "mfr", "medium", "Honda states 85 kWh with no gross or usable qualifier; GM Ultium hardware"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(294, "mfr", "high", undefined, epa(49089)) },
     charging: {
       portStandard: f("CCS1", "mfr"),
       superchargerAccess: f("adapter", "mfr", "high", "Honda-approved NACS adapter, mid-2025"),
-      dcPeakKw: f(155, "agg", "medium"),
+      dcPeakKw: f(150, "mfr", "high", "Honda's 2024, 2025 and 2026 Prologue launch releases each state DC fast charging at rates up to 150 kW", "https://hondanews.com/en-US/honda-automobiles/releases/release-28556cec8c60d45354dbdd1404014728-building-on-success-2025-honda-prologue-goes-farther"),
     },
     warranty: {
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(75, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -1922,7 +1917,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     id: "blazer-fwd",
     make: "CHEVROLET",
     model: "Blazer EV",
-    modelYears: [2025, 2027],
+    modelYears: [2025, 2026],
     vin8: ["M"],
     drive: "FWD",
     abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
@@ -1930,7 +1925,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     range: { epaRangeMi: f(312, "mfr", "high", "EPA vehicle ids 49069 (2025-26) / 50628 (2027) — the same 312 in all three years", epa(49069)) },
     charging: {
       ...GM_PORT_CCS_ADAPTER,
-      dcPeakKw: f(150, "agg", "medium"),
+      dcPeakKw: f(150, "mfr", "high", "150 kW capable (85 kWh batteries), Chevrolet's own 2025 and 2026 specification pages", "https://pressroom.chevrolet.com/gmbx/us/en/chevrolet/pressroom/vehicles.detail.html/content/Pages/vehicle/us/en/chevrolet/blazer-ev/2025.html"),
     },
     warranty: {
       batteryYears: f(8, "mfr"),
@@ -1984,7 +1979,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     id: "blazer-awd-2025",
     make: "CHEVROLET",
     model: "Blazer EV",
-    modelYears: [2025, 2027],
+    modelYears: [2025, 2026],
     vin8: ["J"],
     drive: "AWD",
     abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
@@ -1992,7 +1987,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     range: { epaRangeMi: f(283, "mfr", "high", undefined, epa(48342)), testedRangeMi: f(200, "tested", "high", "75-mph (Car and Driver, 2024 RS AWD): 200 mi vs 279 EPA; Edmunds mixed loop: 320") },
     charging: {
       ...GM_PORT_CCS_ADAPTER,
-      dcPeakKw: f(150, "agg", "medium"),
+      dcPeakKw: f(150, "mfr", "high", "150 kW capable (85 kWh batteries), Chevrolet's own 2025 and 2026 specification pages", "https://pressroom.chevrolet.com/gmbx/us/en/chevrolet/pressroom/vehicles.detail.html/content/Pages/vehicle/us/en/chevrolet/blazer-ev/2025.html"),
     },
     warranty: {
       batteryYears: f(8, "mfr"),
@@ -2054,7 +2049,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     range: { epaRangeMi: f(334, "mfr", "high", undefined, epa(48694)) },
     charging: {
       ...GM_PORT_CCS_ADAPTER,
-      dcPeakKw: f(190, "agg", "medium"),
+      dcPeakKw: f(190, "mfr", "high", "190 kW capable (102 kWh batteries), Chevrolet's own 2025 and 2026 specification pages", "https://pressroom.chevrolet.com/gmbx/us/en/chevrolet/pressroom/vehicles.detail.html/content/Pages/vehicle/us/en/chevrolet/blazer-ev/2025.html"),
     },
     warranty: {
       batteryYears: f(8, "mfr"),
@@ -2083,7 +2078,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     range: { epaRangeMi: f(303, "mfr", "high", undefined, epa(49068)), testedRangeMi: f(250, "tested", "high", "75-mph (Car and Driver, 2025 SS): 250 mi") },
     charging: {
       ...GM_PORT_CCS_ADAPTER,
-      dcPeakKw: f(190, "agg", "medium"),
+      dcPeakKw: f(190, "mfr", "high", "190 kW capable (102 kWh batteries), Chevrolet's own 2025 and 2026 specification pages", "https://pressroom.chevrolet.com/gmbx/us/en/chevrolet/pressroom/vehicles.detail.html/content/Pages/vehicle/us/en/chevrolet/blazer-ev/2025.html"),
     },
     warranty: {
       batteryYears: f(8, "mfr"),
@@ -2104,7 +2099,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     id: "blazer-ss-2026",
     make: "CHEVROLET",
     model: "Blazer EV",
-    modelYears: [2026, 2027],
+    modelYears: [2026, 2026],
     vin8: ["L"],
     drive: "AWD",
     abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
@@ -2112,7 +2107,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     range: { epaRangeMi: f(302, "mfr", "high", undefined, epa(49954)), testedRangeMi: f(250, "tested", "high", "75-mph (Car and Driver, 2025 SS): 250 mi") },
     charging: {
       ...GM_PORT_CCS_ADAPTER,
-      dcPeakKw: f(190, "agg", "medium"),
+      dcPeakKw: f(190, "mfr", "high", "190 kW capable (102 kWh batteries), Chevrolet's own 2025 and 2026 specification pages", "https://pressroom.chevrolet.com/gmbx/us/en/chevrolet/pressroom/vehicles.detail.html/content/Pages/vehicle/us/en/chevrolet/blazer-ev/2025.html"),
     },
     warranty: {
       batteryYears: f(8, "mfr"),
@@ -2127,6 +2122,71 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
         severity: "warning",
       },
     ],
+  },
+  // MY2027 split, 2026-09-02: GM's 2026-08-13 NACS table marks the Blazer EV
+  // NACS-native for the 2027 model year (the 2027 owner manual, printed
+  // p. 238, says the same), and the rows above wrongly carried CCS1 into
+  // 2027 — the port-by-model-year class. GM publishes no 2027 DC rate or
+  // charge time yet, so those fields stay silent here. Range figures carry
+  // over from the pre-split rows: EPA's 2027 numbers are identical to 2026
+  // (the 2026-08 verification recorded in gm-truck-vin-keys.test.ts), and
+  // the FWD car's own 2027 certification is id 50628.
+  {
+    id: "blazer-fwd-2027",
+    make: "CHEVROLET",
+    model: "Blazer EV",
+    modelYears: [2027, 2027],
+    vin8: ["M"],
+    drive: "FWD",
+    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
+    battery: { packGrossKwh: f(85, "mfr", "medium", "FWD/AWD"), chemistry: f("NCMA", "agg", "medium") },
+    range: { epaRangeMi: f(312, "mfr", "high", "EPA vehicle id 50628 — the same 312 as 2025-26", epa(50628)) },
+    charging: { ...GM_PORT_NACS_NATIVE },
+    warranty: {
+      batteryYears: f(8, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      sohFloorPct: f(75, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
+    },
+  },
+  {
+    id: "blazer-awd-2027",
+    make: "CHEVROLET",
+    model: "Blazer EV",
+    modelYears: [2027, 2027],
+    vin8: ["J"],
+    drive: "AWD",
+    // Range carried from the pre-split row: gm-truck-vin-keys.test.ts records
+    // the 2026-08 verification that EPA's 2027 figures are identical to 2026.
+    range: { epaRangeMi: f(283, "mfr", "high", undefined, epa(48342)) },
+    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
+    battery: { packGrossKwh: f(85, "mfr", "medium", "FWD/AWD"), chemistry: f("NCMA", "agg", "medium") },
+    charging: { ...GM_PORT_NACS_NATIVE },
+    warranty: {
+      batteryYears: f(8, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      sohFloorPct: f(75, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
+    },
+  },
+  {
+    id: "blazer-ss-2027",
+    make: "CHEVROLET",
+    model: "Blazer EV",
+    modelYears: [2027, 2027],
+    vin8: ["L"],
+    drive: "AWD",
+    // Range carried from the pre-split row (same 2026-08 EPA verification).
+    range: { epaRangeMi: f(302, "mfr", "high", undefined, epa(49954)) },
+    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
+    battery: { packGrossKwh: f(102, "mfr", "medium", "RWD/SS"), chemistry: f("NCMA", "agg", "medium") },
+    charging: { ...GM_PORT_NACS_NATIVE },
+    warranty: {
+      batteryYears: f(8, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      sohFloorPct: f(75, "mfr", "high"),
+      batteryTransfers: f(true, "mfr", "high"),
+    },
   },
 
   {

@@ -560,7 +560,16 @@ const EV9_CHARGING = (yr: number, opts: { sr?: boolean; nacs?: boolean } = {}) =
       : fb<"adapter">("adapter", "mfr", "high", "Kia supplied a NACS adapter free to 2024-25 EV9 buyers who took delivery from September 4, 2024", EV9_PR_ADAPTER),
     architectureV: fb(800, "mfr" as Source, "high", sr ? "632V nominal, Standard Range pack" : "552V nominal, Long Range pack", EV9_PR_LAUNCH),
     dcPeakKw: fb(sr ? 235 : 210, "mfr" as Source, "high", "On a 350 kW EVSE (max 310 A), Kia's specifications table", EV9_SPECS(yr)),
-    chargeTime1080Min: fb(sr ? 20 : 24, "mfr" as Source, "high", "10-80% on a 350 kW EVSE (max 310 A)", EV9_SPECS(yr)),
+    // MY2025 splits from the other years (2026-09-01 fact-sheet audit): Kia's
+    // own 2025 owner's manual states 27/34 min at 10-80% on a 350 kW charger
+    // (printed p. 1-19, read as a page render) where the 2025 spec table says
+    // 20/24 — both Kia's, and the 2024 and 2026 manuals agree with their spec
+    // tables at 20/24. The slower figure is carried for 2025 (a faster-than-
+    // real charge time is the false-bargain direction).
+    chargeTime1080Min:
+      yr === 2025
+        ? fb(sr ? 27 : 34, "mfr" as Source, "high", "10-80% on a 350 kW charger, Kia's 2025 owner's manual; Kia's 2025 specification table states 20/24 min for the same cars", "https://cdn.dealereprocess.org/cdn/servicemanuals/kia/2025-ev9.pdf")
+        : fb(sr ? 20 : 24, "mfr" as Source, "high", "10-80% on a 350 kW EVSE (max 310 A)", EV9_SPECS(yr)),
     acOnboardKw: fb(10.9, "mfr" as Source, "high", undefined, EV9_SPECS(yr)),
     dcFastCharging: fb<"standard">("standard", "mfr", "high", undefined, EV9_SPECS(yr)),
   };
