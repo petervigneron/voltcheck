@@ -13,8 +13,8 @@ on:
   workflow_dispatch:
     inputs:
       url:
-        description: "Candidate deployment URL (already built, un-promoted)"
-        required: true
+        description: "Candidate deployment URL (already built, un-promoted). Leave empty to build one here."
+        required: false
       wait_for_nightly:
         description: "Wait for today's nightly to complete, then settle 45 min, before warming"
         required: false
@@ -79,7 +79,17 @@ jobs:
           VERCEL_ORG_ID: team_8RiMoU4yuMtGM1YLDVCN89Nj
           VERCEL_PROJECT_ID: prj_SsG72w0Hr1xIlOPQJn4oXc5oVGnq
           VERCEL_SCOPE: petervignerons-projects
-        run: node deploy-site.mjs --url "${{ github.event.inputs.url }}"
+        run: |
+          # No url input means build one here. deploy-site.mjs has always been
+          # able to do that (its --ref/no-arg mode); what stopped it in CI was
+          # copying web/.vercel, which only exists on a laptop. It now falls
+          # back to VERCEL_ORG_ID/VERCEL_PROJECT_ID, so this workflow can ship
+          # on its own instead of waiting for a URL built somewhere else.
+          if [ -n "${{ github.event.inputs.url }}" ]; then
+            node deploy-site.mjs --url "${{ github.event.inputs.url }}"
+          else
+            node deploy-site.mjs
+          fi
 
       # The deploy window ran with these schedules off (see the 08-26 deploy
       # notes); a promote from CI must not leave them dark.

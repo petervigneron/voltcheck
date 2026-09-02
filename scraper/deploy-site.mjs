@@ -199,7 +199,25 @@ function buildCandidate(ref) {
   console.log(`deploy-site: building ${sha.slice(0, 8)} from a clean worktree (${wt})`);
   try {
     execFileSync("git", ["worktree", "add", "--detach", wt, sha], { cwd: ROOT, stdio: "inherit" });
-    cpSync(join(ROOT, "web", ".vercel"), join(wt, "web", ".vercel"), { recursive: true });
+    // On a laptop web/.vercel carries the project link and the throwaway
+    // worktree needs its own copy. In CI that directory does not exist —
+    // the link rides in as VERCEL_ORG_ID/VERCEL_PROJECT_ID, exactly as the
+    // CLI_AUTH comment above describes. Copying it unconditionally is what
+    // made this function laptop-only, and why deploy-site.yml had to be
+    // handed a URL built somewhere else; on 2026-09-02 the local token
+    // expired and there was no way to ship at all, with VERCEL_TOKEN sitting
+    // in repo secrets the whole time.
+    const link = join(ROOT, "web", ".vercel");
+    if (existsSync(link)) {
+      cpSync(link, join(wt, "web", ".vercel"), { recursive: true });
+    } else if (!process.env.VERCEL_ORG_ID || !process.env.VERCEL_PROJECT_ID) {
+      // Better to stop here than to let the CLI prompt for a project and
+      // deploy this tree somewhere nobody is looking.
+      throw new Error(
+        "no web/.vercel to copy and no VERCEL_ORG_ID/VERCEL_PROJECT_ID — " +
+          "the CLI would have nothing to link the build to",
+      );
+    }
     const out = vercel(["deploy", "--prod", "--skip-domain", "--yes"], { cwd: join(wt, "web"), stdio: ["ignore", "pipe", "inherit"] });
     // Two stdout shapes in the wild: classic CLI prints the bare deployment
     // URL; the CLI under the claude-plugins wrapper prints a JSON status
