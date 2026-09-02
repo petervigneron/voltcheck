@@ -108,6 +108,66 @@ async function query(token, body) {
   return json.rows ?? [];
 }
 
+// Sitemap registration. Submitting a sitemap INDEX is not the same as Google
+// registering the shards it points at, and the difference is invisible from
+// the site's own side: on 2026-09-02 the index had been downloaded (0 errors)
+// while Google had registered ZERO of its 12 children, so none of the
+// ~149,000 listing URLs had ever entered its sitemap registry. Checking the
+// index alone would have reported that as healthy.
+async function sitemapStatus(token) {
+  const base = `${API}/sites/${encodeURIComponent(SITE)}/sitemaps`;
+  const get = async (url) => {
+    const res = await fetchRetry(url, { headers: { authorization: `Bearer ${token}` } });
+    const json = await res.json();
+    if (json.error) throw new Error(`${res.status} ${json.error.message}`);
+    return json.sitemap ?? [];
+  };
+  const submitted = await get(base);
+  const children = [];
+  for (const s of submitted) {
+    children.push(...(await get(`${base}?sitemapIndex=${encodeURIComponent(s.path)}`)));
+  }
+  return { submitted, children };
+}
+
+// Index status for a handful of URLs. URL Inspection works from the
+// gsc-reader service account even though it is only a Restricted user on the
+// property, which is not obvious from the permission level.
+async function inspect(token, urls) {
+  const out = [];
+  for (const url of urls) {
+    const res = await fetchRetry(
+      "https://searchconsole.googleapis.com/v1/urlInspection/index:inspect",
+      {
+        method: "POST",
+        headers: { authorization: `Bearer ${token}`, "content-type": "application/json" },
+        body: JSON.stringify({ inspectionUrl: url, siteUrl: SITE }),
+      },
+    );
+    const json = await res.json();
+    const r = json.inspectionResult?.indexStatusResult;
+    out.push({
+      url,
+      state: json.error ? `error: ${json.error.message.slice(0, 40)}` : (r?.coverageState ?? "unknown"),
+      lastCrawled: r?.lastCrawlTime?.slice(0, 10) ?? null,
+    });
+    await sleep(300);
+  }
+  return out;
+}
+
+// A fixed probe set, not a random sample: the same URLs every week, so a
+// change in the report is a change at Google rather than a change of sample.
+// One of each kind the site actually publishes.
+const PROBE_URLS = [
+  "https://voltcheck.net/",
+  "https://voltcheck.net/facts",
+  "https://voltcheck.net/worth",
+  "https://voltcheck.net/vin",
+  "https://voltcheck.net/facts/nissan/ariya/charging",
+  "https://voltcheck.net/facts/hyundai/ioniq-5/charging",
+];
+
 const ZERO = { clicks: 0, impressions: 0, ctr: 0, position: 0 };
 
 async function main() {
@@ -137,6 +197,25 @@ async function main() {
   // total. Pages Google holds but never shows are invisible here.
   const pagesWithImpressions = pages.filter((r) => r.impressions > 0).length;
 
+  // Listing pages are the bulk of the site and churn constantly, so one is
+  // sampled fresh each run rather than pinned: the question is whether the
+  // corpus is reachable at all, not whether one VIN survived the week.
+  let sampledListing = null;
+  try {
+    const xml = await fetchRetry("https://voltcheck.net/sitemap/0.xml").then((r) => r.text());
+    const first = xml.match(/<loc>(https:\/\/voltcheck\.net\/listing\/[^<]+)<\/loc>/);
+    if (first) sampledListing = first[1];
+  } catch {
+    // A sitemap that will not answer is itself worth not crashing over.
+  }
+
+  const [sitemaps, probes] = await Promise.all([
+    sitemapStatus(token).catch((e) => ({ error: e.message })),
+    inspect(token, sampledListing ? [...PROBE_URLS, sampledListing] : PROBE_URLS).catch((e) => ({
+      error: e.message,
+    })),
+  ]);
+
   const report = {
     site: SITE,
     window: cur,
@@ -152,6 +231,8 @@ async function main() {
       impressions: prevTot.impressions,
     },
     pagesWithImpressionsFloor: pagesWithImpressions,
+    sitemaps,
+    probes,
     queries,
     pages,
     countries,
@@ -198,6 +279,41 @@ async function main() {
 
   const active = days.filter((d) => d.impressions > 0).length;
   console.log(`\nDays with any impression: ${active} of ${days.length}`);
+
+  console.log("\nSitemaps");
+  if (sitemaps.error) {
+    console.log(`  could not read: ${sitemaps.error}`);
+  } else if (!sitemaps.submitted.length) {
+    console.log("  none submitted");
+  } else {
+    for (const m of sitemaps.submitted) {
+      console.log(
+        `  ${m.path}\n    downloaded ${m.lastDownloaded?.slice(0, 10) ?? "never"}, ` +
+          `${m.errors ?? 0} errors, ${m.warnings ?? 0} warnings`,
+      );
+    }
+    // The line that matters: an index whose children Google has not
+    // registered is an index pointing at nothing, and it reports as healthy.
+    console.log(`  child sitemaps registered by Google: ${sitemaps.children.length}`);
+    for (const c of sitemaps.children) {
+      console.log(
+        `    ${c.path.replace("https://voltcheck.net", "")} ` +
+          `downloaded ${c.lastDownloaded?.slice(0, 10) ?? "never"}, ${c.errors ?? 0} errors`,
+      );
+    }
+  }
+
+  console.log("\nIndex status");
+  if (probes.error) {
+    console.log(`  could not read: ${probes.error}`);
+  } else {
+    for (const p of probes) {
+      console.log(
+        `  ${p.url.replace("https://voltcheck.net", "").padEnd(46) || "/".padEnd(46)}` +
+          ` ${p.state}${p.lastCrawled ? `, crawled ${p.lastCrawled}` : ""}`,
+      );
+    }
+  }
 }
 
 main().catch((err) => {
