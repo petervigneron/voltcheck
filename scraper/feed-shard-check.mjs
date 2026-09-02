@@ -56,6 +56,7 @@
 // TTL is the only other way out. It still exits 1 — repairing it is not the
 // same as it not having happened.
 import { readStatus, recordRun } from "./lib/audit-status.mjs";
+import { isPlaceholderVin } from "./lib/vin-placeholder.mjs";
 
 const arg = (n, d) => { const i = process.argv.indexOf(n); return i >= 0 ? process.argv[i + 1] : d; };
 const BASE = (arg("--base", "https://voltcheck.net")).replace(/\/$/, "");
@@ -181,8 +182,23 @@ function rowCount(body) {
   return null;
 }
 
+// The rows' own ids, for the placeholder scan below. Same three accepted
+// shapes as rowCount, and the same reason: this check must not be the thing
+// that breaks on a wire-format change.
+function shardIds(body) {
+  const rows = Array.isArray(body) ? body : body?.r ?? body?.rows;
+  return Array.isArray(rows) ? rows.map((r) => r?.i ?? r?.id).filter(Boolean) : [];
+}
+
 const shardRows = new Map();
 const shardBytes = new Map();
+// A "VIN" that is a dealer's inventory-system placeholder — 0N0RDER3333333857
+// and four like it were live on 2026-09-02, each with its own listing page and
+// sitemap entry, for cars that have not been built. ingest.mjs drops them now
+// (lib/vin-placeholder.mjs), so this is the standing check that the next DMS
+// with a spelling nobody has seen doesn't quietly repeat it. The shard bodies
+// are already downloaded and parsed here, so it costs nothing.
+const placeholders = [];
 for (const shard of SHARDS) {
   try {
     const body = await fetchJson(`/api/index/${shard}`, 120_000);
@@ -190,6 +206,7 @@ for (const shard of SHARDS) {
     if (n === null) throw new Error("unexpected shape");
     shardRows.set(shard, n);
     shardBytes.set(shard, lastBodyBytes);
+    for (const id of shardIds(body)) if (isPlaceholderVin(id)) placeholders.push(id);
     console.log(`feed-shard-check: /api/index/${shard} answered — ${n} rows, ${(lastBodyBytes / 1e6).toFixed(2)} MB`);
   } catch (e) {
     problems.push(`/api/index/${shard}: ${e.message}`);
@@ -385,6 +402,22 @@ if (shardBytes.size) {
         `${(SHARD_BYTES_CAP / 1e6).toFixed(1)} MB cold-render cap`
     );
   }
+}
+// Deliberately a warning and not a problem, despite being a false claim on a
+// live page: the `problems` path calls clearPoisonedCache(), and re-rendering
+// the route would serve the same row back. The cache is not what is wrong. The
+// fix is upstream and by hand — decide the VINs are placeholders, then
+// retire-listings.mjs (migration 0043) takes them out.
+if (placeholders.length) {
+  warnings.push(
+    `${placeholders.length} listing(s) in the browse feed carry a VIN that is an inventory-system ` +
+      "placeholder rather than a VIN, so the site is describing a specific car, at a specific dealer, " +
+      "for a specific price, that does not exist: " +
+      placeholders.slice(0, 10).join(", ") +
+      (placeholders.length > 10 ? ` (+${placeholders.length - 10} more)` : "") +
+      ". ingest.mjs already refuses these, so a row here is either older than that filter or a spelling " +
+      "lib/vin-placeholder.mjs does not know. Retire them with retire-listings.mjs, and add the spelling."
+  );
 }
 for (const w of warnings) console.error(`::warning::feed-shard-check: ${w}`);
 

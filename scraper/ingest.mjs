@@ -4,6 +4,7 @@
 // classifications are dropped until vPIC verification exists.
 import { readFile } from "node:fs/promises";
 import { isOutsideUs } from "./lib/us-states.mjs";
+import { isPlaceholderVin } from "./lib/vin-placeholder.mjs";
 import { writeSnapshot } from "./lib/snapshot.mjs";
 import { isKnownMake } from "./lib/makes.mjs";
 import { publishedCondition } from "./lib/condition.mjs";
@@ -143,6 +144,7 @@ function modelYear(y) {
 const unknownMakes = new Map();
 const foreign = new Map();
 const unverified = [];
+const placeholderVins = new Map();
 const listings = raw
   // priceUsd == null means no price signal at all — drop it. priceUsd === 0 is
   // a deliberate abstain (resolveDdcPrice could not name the advertised price
@@ -198,6 +200,23 @@ const listings = raw
   .filter((r) => {
     if (!isOutsideUs(r.state)) return true;
     foreign.set(r.state, (foreign.get(r.state) ?? 0) + 1);
+    return false;
+  })
+  // A VIN that is not a VIN. Every VIN check upstream of here is a shape test,
+  // and a dealer DMS's "ON ORDER" placeholder — written 0N0RDER3333333857,
+  // because O is illegal in a VIN and a zero is not — is 17 characters with no
+  // I/O/Q and passes all of them. Four of those and one zero-padded record id
+  // were live on 2026-09-02, each with its own /listing/ page, sitemap entry
+  // and price, for cars that do not exist. See lib/vin-placeholder.mjs for the
+  // two rules and the control test behind them.
+  //
+  // Dropped here rather than at render for the same reason the foreign rows
+  // above are: the page is the last surface, not the only one. A render filter
+  // leaves the row in the database, in the browse feed, in the shard counts
+  // and in the sitemap.
+  .filter((r) => {
+    if (!isPlaceholderVin(r.vin)) return true;
+    placeholderVins.set(r.dealerDomain, (placeholderVins.get(r.dealerDomain) ?? 0) + 1);
     return false;
   })
   .map((r) => {
@@ -274,6 +293,7 @@ const listings = raw
   });
 
 for (const [m, n] of unknownMakes) console.error(`dropped ${n} listing(s) with unrecognized make ${JSON.stringify(m)} — real new brand? add it to lib/makes.mjs`);
+for (const [d, n] of placeholderVins) console.error(`dropped ${n} listing(s) from ${d} whose VIN is an inventory-system placeholder, not a VIN — a car that is on order or in transit and has no VIN yet`);
 for (const [st, n] of foreign) console.error(`dropped ${n} listing(s) outside the US (state ${JSON.stringify(st)}) — this site lists US inventory, and a foreign rooftop also prices in its own currency; drop the domain from registry/registry.json too`);
 // Loud on purpose. A number here is not an error — it is enrichment having run
 // out of clock — but it IS a night where some real EVs are missing from the
