@@ -207,39 +207,71 @@ test("something live but no processor is 'no-processor', not 'open'", () => {
   });
 });
 
-test("something live plus a configured processor is the only way to 'open'", () => {
-  withEnv("STRIPE_SECRET_KEY", "sk_test_configured", () => {
-    assert.equal(checkoutConfigured(), true);
-    assert.equal(offerState(live(1)), "open");
+test("a test-mode key is 'no-processor': it cannot take a real card", () => {
+  // Production held sk_test_ keys from 2026-08-27. The day a benefit went
+  // live, this is what kept the page from showing a button whose checkout
+  // fails every real shopper.
+  withEnv("STRIPE_ALLOW_TEST_CHECKOUT", undefined, () => {
+    withEnv("STRIPE_SECRET_KEY", "sk_test_configured", () => {
+      assert.equal(checkoutConfigured(), false);
+      assert.equal(offerState(live(1)), "no-processor");
+    });
+    // …unless a local/preview run says so explicitly, which is how the funnel
+    // is exercised end to end with Stripe's test cards.
+    withEnv("STRIPE_ALLOW_TEST_CHECKOUT", "1", () => {
+      withEnv("STRIPE_SECRET_KEY", "sk_test_configured", () => {
+        assert.equal(offerState(live(1)), "open");
+      });
+    });
   });
 });
 
-// A tripwire, not a preference. It is expected to be changed by the same
-// commit that ships the first Pro feature — and if it ever fails without one
-// having shipped, /pro is offering to sell something that does not exist.
-test("as shipped today, /pro will not offer to sell anything", () => {
-  assert.equal(
-    PRO_BENEFITS.some((b) => b.live),
-    false,
-    "a benefit is marked live — is it really, and does /pro now sell passes?",
-  );
-  assert.equal(offerState(), "nothing-to-sell");
+test("something live plus a LIVE key is the only way to 'open'", () => {
+  for (const key of ["sk_live_configured", "rk_live_restricted"]) {
+    withEnv("STRIPE_SECRET_KEY", key, () => {
+      assert.equal(checkoutConfigured(), true, key);
+      assert.equal(offerState(live(1)), "open", key);
+    });
+  }
 });
 
-test("/api/checkout refuses in exactly the case the page hides the button", async () => {
-  const had = Object.hasOwn(process.env, "STRIPE_SECRET_KEY");
-  const prev = process.env.STRIPE_SECRET_KEY;
-  delete process.env.STRIPE_SECRET_KEY;
-  try {
-    const res = await checkoutPOST(
+// The tripwire that used to sit here ("as shipped today, /pro will not offer
+// to sell anything") was retired by the commit that shipped the first three
+// benefits (2026-09-02). Its successor: the page must not offer to sell on a
+// key that cannot charge, however many benefits are live.
+test("as shipped today, /pro sells only on a live-mode key", () => {
+  assert.equal(PRO_BENEFITS.some((b) => b.live), true, "the built benefits must be marked live");
+  withEnv("STRIPE_ALLOW_TEST_CHECKOUT", undefined, () => {
+    withEnv("STRIPE_SECRET_KEY", "sk_test_configured", () => assert.equal(offerState(), "no-processor"));
+    withEnv("STRIPE_SECRET_KEY", undefined, () => assert.equal(offerState(), "no-processor"));
+    withEnv("STRIPE_SECRET_KEY", "sk_live_configured", () => assert.equal(offerState(), "open"));
+  });
+});
+
+test("/api/checkout refuses in exactly the cases the page hides the button", async () => {
+  const post = () =>
+    checkoutPOST(
       new Request("https://voltcheck.net/api/checkout", {
         method: "POST",
         body: JSON.stringify({ tier: "quarter" }),
       }),
     );
-    assert.equal(res.status, 503);
-    assert.deepEqual(await res.json(), { ok: false, reason: "disabled" });
+  const hadAllow = Object.hasOwn(process.env, "STRIPE_ALLOW_TEST_CHECKOUT");
+  const prevAllow = process.env.STRIPE_ALLOW_TEST_CHECKOUT;
+  delete process.env.STRIPE_ALLOW_TEST_CHECKOUT;
+  const had = Object.hasOwn(process.env, "STRIPE_SECRET_KEY");
+  const prev = process.env.STRIPE_SECRET_KEY;
+  try {
+    for (const key of [undefined, "sk_test_configured"]) {
+      if (key === undefined) delete process.env.STRIPE_SECRET_KEY;
+      else process.env.STRIPE_SECRET_KEY = key;
+      const res = await post();
+      assert.equal(res.status, 503, `key=${key}`);
+      assert.deepEqual(await res.json(), { ok: false, reason: "disabled" });
+    }
   } finally {
     if (had) process.env.STRIPE_SECRET_KEY = prev;
+    else delete process.env.STRIPE_SECRET_KEY;
+    if (hadAllow) process.env.STRIPE_ALLOW_TEST_CHECKOUT = prevAllow;
   }
 });

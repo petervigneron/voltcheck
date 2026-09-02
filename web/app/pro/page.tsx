@@ -20,9 +20,11 @@ import { ProRecover } from "@/components/ProRecover";
 //     because /pro/access sent them rather than 404ing at them.
 //
 // Whether the buy buttons appear at all is lib/proOffer.ts's decision, not
-// this file's — and as of 2026-08-25 the answer is no, because none of the
-// four Pro features is finished. The page says so in as many words instead of
-// showing a button that would take $9 for nothing.
+// this file's. From 2026-08-25 the answer was no because nothing was built;
+// from 2026-09-02 three benefits are live and the remaining gate is a LIVE
+// Stripe key (a test key keeps the page at "opens soon" — see
+// checkoutConfigured). Either way the page says so in as many words instead
+// of showing a button that would take $9 for nothing.
 
 export const dynamic = "force-dynamic";
 
@@ -179,7 +181,7 @@ export default async function ProPage(props: {
             <span className={EYEBROW}>Purchasing opens soon</span>
             <p className="mt-1 max-w-[62ch] text-[14px] leading-relaxed font-bold">
               {offer === "nothing-to-sell"
-                ? "None of the four is finished yet, so there is nothing here worth your money. The prices below are settled and will not move; the passes go on sale the day the first one lands."
+                ? "None of these is finished yet, so there is nothing here worth your money. The prices below are settled and will not move; the passes go on sale the day the first one lands."
                 : "Checkout isn't switched on yet. The prices below are settled and will not move."}
             </p>
           </div>

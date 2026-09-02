@@ -1,28 +1,52 @@
 name: Alert emails
 
-# Daily digest for saved-search alerts (web/scripts/send-alerts.mjs): new
-# listings and price cuts per confirmed subscription. Scheduled after the
-# nightly pipeline has synced and refreshed the freshness matview, so today's
-# arrivals carry today's dates. The script needs no npm install — it imports
-# only dependency-free lib modules under Node's type stripping — and exits 0
-# when RESEND_API_KEY / SUPABASE_SERVICE_ROLE_KEY aren't configured yet, so
-# this workflow is green-but-inert until those secrets exist.
+# Saved-search alert emails (web/scripts/send-alerts.mjs): new listings and
+# price cuts per confirmed subscription. Two cadences, one script:
+#
+#   * The free digest — the schedule below, once a day after the nightly
+#     pipeline has synced and refreshed the freshness matview, so today's
+#     arrivals carry today's dates.
+#   * The Pro cadence — `workflow_call` with pro_only=true, which
+#     publish-feed.yml invokes after every feed publish (nightly and each
+#     rolling crawl). Same subscriptions, filtered to addresses holding a live
+#     pass (migration 0045), so a pass-holder's match is mailed the crawl it
+#     lands in rather than the next morning. lib/proOffer.ts states the
+#     promise this cadence keeps; the script's header says why the two runs
+#     cannot double-mail (last_sent_at advances per send).
+#
+# The script needs no npm install — it imports only dependency-free lib
+# modules under Node's type stripping — and exits 0 when RESEND_API_KEY /
+# SUPABASE_SERVICE_ROLE_KEY aren't configured yet, so this workflow is
+# green-but-inert until those secrets exist.
 on:
   schedule:
     - cron: "30 18 * * *" # 11:30 America/Los_Angeles — nightly finalize is long done
   workflow_dispatch:
+    inputs:
+      pro_only:
+        description: "Only subscriptions held by a live Pro pass (the after-every-publish run)"
+        required: false
+        default: "false"
+  workflow_call:
+    inputs:
+      pro_only:
+        type: boolean
+        required: false
+        default: false
 
 permissions:
   contents: read
-
-concurrency:
-  group: alerts
-  cancel-in-progress: false
 
 jobs:
   send:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    # Job-level rather than workflow-level so the group also holds when this
+    # runs as a called workflow inside publish-feed's run. Two senders reading
+    # the same last_sent_at at once is the one way to mail a digest twice.
+    concurrency:
+      group: alerts
+      cancel-in-progress: false
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -34,4 +58,10 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
-        run: node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs scripts/send-alerts.mjs
+          # A dispatch input arrives as the string "true"; a workflow_call
+          # input as the boolean. Compared in the shell so both spellings land.
+          PRO_ONLY: ${{ inputs.pro_only }}
+        run: |
+          FLAG=""
+          [ "$PRO_ONLY" = "true" ] && FLAG="--pro"
+          node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs scripts/send-alerts.mjs $FLAG

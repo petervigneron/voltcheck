@@ -16,6 +16,13 @@
 //            fallback in lib/listings/source.ts is untestable — and that is
 //            the path the site takes during an outage, the one most worth a
 //            test. Measured at 677 ms for the real 50 MB snapshot.
+//   next     "next/link" and "next/headers" are bare subpaths that next's
+//            package.json does not map in an exports field, and the files on
+//            disk are link.js / headers.js — so plain Node ESM cannot resolve
+//            what the bundler resolves without a thought. Retry a failed bare
+//            subpath with ".js" appended (2026-09-02: this is what kept
+//            pro-page.test.tsx and pro-funnel.test.ts from running anywhere,
+//            and tests.yml's exclusion of the latter names exactly this).
 //
 //   node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs <script>
 import { createRequire, registerHooks } from "node:module";
@@ -55,6 +62,14 @@ registerHooks({
           } catch {
             // try the next extension
           }
+        }
+      }
+      // A bare package subpath with no extension (next/link, next/headers).
+      if (/^[a-z@][^:]*\/[^.]*$/.test(specifier) && err?.code === "ERR_MODULE_NOT_FOUND") {
+        try {
+          return nextResolve(`${specifier}.js`, context);
+        } catch {
+          // fall through to the original error
         }
       }
       throw err;

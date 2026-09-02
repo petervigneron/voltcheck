@@ -16,6 +16,8 @@ import { factLinksFor, type FactLink } from "@/lib/facts/links";
 import { firstPaintWonRace, useCardIndex, useFirstPaint } from "@/lib/listings/useCardIndex";
 import { milesBetween } from "@/lib/geo";
 import { pushUrl } from "@/lib/pushUrl";
+import { useProState } from "@/lib/useProState";
+import { DEAL_SORT, compareDeal } from "@/lib/listings/dealSort";
 import { rememberBrowseQuery } from "@/lib/browseState";
 
 const CELL = "border-r-[3px] border-b-[3px] border-ink";
@@ -183,6 +185,12 @@ export function Browse() {
   const radiusParam = s("radius");
   const radius = radiusParam || "50";
   const sort = s("sort") || "featured";
+  // The deal sort is the one order a pass buys (lib/proOffer.ts). Without a
+  // pass, ?sort=deal keeps the featured order and the band below the rail
+  // says why — a URL someone was sent must still show cars, and the honest
+  // answer to "why isn't this sorted" is one line, not an empty grid.
+  const pro = useProState();
+  const dealLocked = sort === DEAL_SORT && pro !== true;
   // Prototype flag: ?grounds=fact makes card colors mean something (teal =
   // new battery, cobalt = recent price cut) instead of the one-in-five rhythm.
   const grounds: GroundsMode = s("grounds") === "fact" ? "fact" : "rhythm";
@@ -271,7 +279,11 @@ export function Browse() {
 
     // Anything that isn't an explicit sort falls back to the featured order;
     // the day term reshuffles it once a day, not on every render.
-    const explicitSorts = new Set(["price", "price-desc", "year-desc", "miles", "range-desc", ...(origin ? ["distance"] : [])]);
+    const explicitSorts = new Set([
+      "price", "price-desc", "year-desc", "miles", "range-desc",
+      ...(origin ? ["distance"] : []),
+      ...(pro === true ? [DEAL_SORT] : []),
+    ]);
     // The server's first paint and this recompute must score with the same day
     // term, or a payload rendered before UTC midnight and a sort after it
     // would reorder the grid under the shopper. So the payload's day wins for
@@ -303,6 +315,8 @@ export function Browse() {
             return b.year - a.year || a.priceUsd - b.priceUsd;
           case "miles":
             return (a.mileage ?? Infinity) - (b.mileage ?? Infinity);
+          case DEAL_SORT:
+            return compareDeal(a, b);
           default:
             return (b.rangeMi ?? -1) - (a.rangeMi ?? -1);
         }
@@ -467,7 +481,7 @@ export function Browse() {
     // reshuffle this file works to prevent. The next interaction re-runs the
     // memo and picks it up.
     // eslint-disable-next-line react-hooks/exhaustive-deps -- s() reads sp, listed
-  }, [rows, sp, origin, counts]);
+  }, [rows, sp, origin, counts, pro]);
 
   // 5,000 cards in one document is not a page anyone can use, and the cards
   // are photo-first. One screenful of grid at a time, paged through the URL.
@@ -505,7 +519,22 @@ export function Browse() {
         inferred={inferred}
         count={rows !== null ? results.length : firstView ? firstView.total : undefined}
         quickCounts={rows !== null ? quickCounts : firstView ? firstView.quick : undefined}
+        pro={pro}
       />
+
+      {/* Only once the pass state has answered "no": while it is on its way the
+          grid holds the featured order silently rather than flashing a band
+          that a pass-holder would see vanish a moment later. */}
+      {dealLocked && pro === false && (
+        <div className="border-l-[3px] border-ink">
+          <div className={`${CELL} bg-saffron px-5 py-3 text-[13px] font-bold`}>
+            Sorting by how far a car sits under similar listings comes with a Pro pass.{" "}
+            <Link href="/pro" className="text-cobalt underline underline-offset-2">
+              Voltcheck Pro
+            </Link>
+          </div>
+        </div>
+      )}
 
       <SpecFacets facets={facets} />
 

@@ -25,6 +25,14 @@
 //     is newer than the last digest. Same bar the card colour uses.
 // Both windows are additionally capped at 7 days back, so a subscription
 // that predates a sender outage gets a bounded catch-up, not an archive.
+//
+// --pro: the Pro cadence. Same subscriptions, same predicates, same windows —
+// only the set of addresses changes: those holding a live pass (pro_passes,
+// migration 0045; expires_at in the future). alerts.yml runs the free digest
+// once a day; publish-feed.yml runs this flavour after EVERY feed publish, so
+// a pass-holder's match is mailed the crawl it lands in. Because last_sent_at
+// advances per send, the daily run then finds nothing new for them — the two
+// cadences cannot double-mail. lib/proOffer.ts states the promise this keeps.
 
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -41,6 +49,7 @@ const FROM = process.env.ALERTS_FROM || "Voltcheck <alerts@voltcheck.net>";
 
 const CATCHUP_MS = 7 * 86_400_000;
 const MAX_PER_SECTION = 12;
+const PRO_ONLY = process.argv.includes("--pro");
 
 if (!SUPABASE_URL || !SERVICE_KEY || !RESEND_KEY) {
   console.log("[alerts] not configured (need SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, RESEND_API_KEY) — nothing to do");
@@ -62,10 +71,28 @@ if (!subsRes.ok) {
   console.error(`[alerts] subscription read failed: ${subsRes.status}`);
   process.exit(1);
 }
-const subs = await subsRes.json();
+let subs = await subsRes.json();
 if (!subs.length) {
   console.log("[alerts] no confirmed subscriptions");
   process.exit(0);
+}
+
+if (PRO_ONLY) {
+  // service_role bypasses 0045's zero-policy RLS; this is the same key the
+  // subscription read above uses, and it is the one place either table is
+  // read outside its RPCs. Emails only — the token column is never selected.
+  const passRes = await fetch(
+    `${SUPABASE_URL}/rest/v1/pro_passes?select=email&expires_at=gt.${encodeURIComponent(new Date().toISOString())}`,
+    { headers: svc }
+  );
+  if (!passRes.ok) {
+    console.error(`[alerts] pro_passes read failed: ${passRes.status}`);
+    process.exit(1);
+  }
+  const proEmails = new Set((await passRes.json()).map((p) => String(p.email).toLowerCase()));
+  subs = subs.filter((s) => proEmails.has(String(s.email).toLowerCase()));
+  console.log(`[alerts] pro run: ${proEmails.size} live pass${proEmails.size === 1 ? "" : "es"}, ${subs.length} of their subscriptions confirmed`);
+  if (!subs.length) process.exit(0);
 }
 
 // The same shard fan-out and same-id dedupe as lib/listings/useCardIndex.ts.

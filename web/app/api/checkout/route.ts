@@ -1,12 +1,19 @@
 import { createCheckout, isTierId } from "@/lib/pro";
+import { offerState } from "@/lib/proOffer";
 
 // Start a purchase: body {tier}. Returns the Stripe-hosted Checkout URL for
 // the client to send the shopper to. Nothing is granted here — a session is
 // an intent to pay, not a payment, and only the signed webhook is allowed to
 // turn one into access.
+//
+// Refuses in exactly the cases /pro hides the button (lib/proOffer.ts
+// offerState): nothing live to sell, or no live-mode key. Until 2026-09-02
+// this checked only for a key's presence, so a POST could mint a test-mode
+// session on production while the page showed no button — harmless, but a
+// drift the page's test claims cannot happen.
 
 export async function POST(req: Request): Promise<Response> {
-  if (!process.env.STRIPE_SECRET_KEY) {
+  if (offerState() !== "open") {
     return Response.json({ ok: false, reason: "disabled" }, { status: 503 });
   }
   try {

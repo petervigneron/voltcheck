@@ -489,11 +489,16 @@ export function FilterRail({
   inferred,
   count,
   quickCounts,
+  pro,
 }: {
   makesModels: Record<string, string[]>;
   inferred?: string;
   count?: number;
   quickCounts?: Record<string, { n: number; of: number }>;
+  /** Whether this browser holds a Pro pass (lib/useProState.ts): null while
+   *  unknown. Decides only how the deal sort is LABELLED here; whether it
+   *  applies is components/Browse.tsx's decision, from the same answer. */
+  pro?: boolean | null;
 }) {
   const sp = useSearchParams();
   const [open, setOpen] = useState(false);
@@ -689,6 +694,13 @@ export function FilterRail({
             {/* Without any origin the option would silently sort by nothing;
                 it still renders if a back-navigated URL already carries it. */}
             {(hasOrigin || get("sort") === "distance") && <option value="distance">Distance: nearest</option>}
+            {/* The deal-ranked screener (lib/listings/dealSort.ts). Offered to
+                everyone so the thing a pass buys is visible where it would be
+                used; without a pass the label says so, and Browse keeps the
+                featured order and points at /pro instead of sorting. Held
+                unlabelled while the pass state is still on its way, so the
+                option never flashes from Pro to plain under the pointer. */}
+            <option value="deal">{pro === false ? "Under market: most · Pro" : "Under market: most"}</option>
           </select>
           <span aria-hidden="true" className="pointer-events-none absolute right-4 text-[10px]">
             ▼
