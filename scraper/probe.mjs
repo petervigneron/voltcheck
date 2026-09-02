@@ -84,7 +84,7 @@ function dealerOnVins(html) {
   if (!d) return [];
   return [d.vehicle?.vin, ...d.dotagging.keys()].filter(Boolean);
 }
-import { extractTeamVelocity, teamVelocityApiIds, countTeamVelocityApi } from "./lib/platforms/teamvelocity.mjs";
+import { extractTeamVelocity, teamVelocityApiIds, teamVelocityRegistryIds, countTeamVelocityApi } from "./lib/platforms/teamvelocity.mjs";
 import { extractDrivewayVehicles } from "./lib/platforms/driveway.mjs";
 import { extractDcsVehicles, isDealerCarSearch, DCS_SRP_PATH } from "./lib/platforms/dealercarsearch.mjs";
 import { dealerFireVehicles } from "./lib/platforms/dealerfire.mjs";
@@ -257,6 +257,26 @@ function setVerdict(site, verdict, evidence) {
   site.probe = { date: today, verdict, ...evidence };
 }
 
+// A Team Velocity rooftop whose front door is walled (Akamai "Access Denied"
+// on every path, robots.txt included). The wall costs the page, not the lot:
+// the vendor's API host is open and the ids the page would have carried are
+// pinned in registry/team-velocity-ids.json. Settle it there, exactly as the
+// in-page ids branch below does, so the row stops reading "homepage 403"
+// forever. Measured before wiring (2026-09-02): 15 walled accounts, 183 EVs,
+// 94 VINs not in the database.
+async function settleWalledTeamVelocity(site, fetched) {
+  const ids = teamVelocityRegistryIds(site.domain);
+  if (!ids) return false;
+  const { ok, found, hasVin } = await countTeamVelocityApi(ids);
+  if (!(ok && found > 0 && hasVin)) return false;
+  site.platform = "team-velocity";
+  site.status = "working";
+  site.notes = `${site.notes ?? ""} | auto-promoted by probe ${today}: team-velocity API via registry ids (homepage walled), ${found} vehicles`.trim();
+  setVerdict(site, "working", { fetched: fetched + 1, via: "team-velocity", found, idsFrom: "registry" });
+  console.error(`  ${site.domain} → working (team-velocity via registry ids, ${found})`);
+  return true;
+}
+
 async function probeSite(site) {
   let origin = `https://${site.domain}`;
   let fetched = 0;
@@ -266,6 +286,7 @@ async function probeSite(site) {
   const home = await fetchPage(`${origin}/`);
   fetched++;
   if (home.status !== 200 || !home.body) {
+    if (await settleWalledTeamVelocity(site, fetched)) return;
     const kind = failureKind(home.status);
     site.status = typeof home.status === "number" ? `http-${home.status}` : "unreachable";
     site.notes = `${site.notes ?? ""} | probe ${today}: homepage ${home.status}`.trim();
@@ -277,6 +298,7 @@ async function probeSite(site) {
   // "blocked" the same way a 403 is — the walk below would otherwise spend
   // twelve fetches on the interstitial and write the row off as a dead end.
   if (isBotChallenge(home.body)) {
+    if (await settleWalledTeamVelocity(site, fetched)) return;
     site.status = "blocked";
     site.notes = `${site.notes ?? ""} | probe ${today}: bot challenge served with a 200 at the front door`.trim();
     setVerdict(site, "blocked", { fetched, why: "client-challenge" });

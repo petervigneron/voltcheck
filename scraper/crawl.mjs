@@ -16,7 +16,7 @@ import { extractDdcVehicles, enrichFromDdc } from "./lib/platforms/dealercom.mjs
 import { dealerComApiConfig, pullDealerComApi } from "./lib/platforms/dealercom-api.mjs";
 import { extractDealerOn, enrichFromDealerOn } from "./lib/platforms/dealeron.mjs";
 import { isDealerOnApi, dealerOnLots, pullDealerOnApi } from "./lib/platforms/dealeron-api.mjs";
-import { extractTeamVelocity, enrichFromTeamVelocity, teamVelocityApiIds, pullTeamVelocityApi } from "./lib/platforms/teamvelocity.mjs";
+import { extractTeamVelocity, enrichFromTeamVelocity, teamVelocityApiIds, teamVelocityRegistryIds, pullTeamVelocityApi } from "./lib/platforms/teamvelocity.mjs";
 import { extractDrivewayVehicles } from "./lib/platforms/driveway.mjs";
 import { extractDcsVehicles, dcsNextPageUrl, dcsSeeds, isDealerCarSearch } from "./lib/platforms/dealercarsearch.mjs";
 import {
@@ -462,6 +462,59 @@ async function crawlDealer(domain) {
     dfSeeded = true;
     queue.unshift(...seeds);
     report.notes.push(`dealerfire: seeded ${seeds.length} SRP(s)`);
+  }
+
+  // Team Velocity serves its whole lot from an open API keyed by the account/
+  // campaign ids inline in every page. Pull it and finish. Each car is
+  // attributed to its OWN vdp host, because one account can be a dealer group
+  // (dublinacura's account 80283 serves cars under dublinhonda.com); the crawl
+  // certifies complete only when every car sits on the crawled domain — a
+  // group spans rooftops, so it stays truncated and recheck retires per VIN.
+  // `via` names where the ids came from: the page, or the registry pin for a
+  // rooftop whose page is walled (see the header of lib/platforms/teamvelocity.mjs).
+  async function pullTeamVelocity(ids, via) {
+    tv.done = true;
+    const before = report.evs.length;
+    const { vehicles: tvVehicles, complete, found } = await pullTeamVelocityApi(ids);
+    report.fetched++;
+    let offDomain = false;
+    for (const v of tvVehicles) {
+      const cls = classifyEv(v);
+      if (!cls.isEv) continue;
+      const vdp = v.offers?.url;
+      if (!vdp) continue; // no per-VIN page → nothing recheck could retire
+      let host;
+      try {
+        host = new URL(vdp).host.replace(/^www\./, "");
+      } catch {
+        continue;
+      }
+      if (host !== domain.replace(/^www\./, "")) offDomain = true;
+      let rec = normalize(v, { sourceUrl: vdp, dealerDomain: host });
+      rec.vdpUrl = abs(rec.vdpUrl, origin) ?? rec.vdpUrl;
+      rec.evKind = cls.kind;
+      rec.evConfidence = cls.confidence;
+      rec.fromVdp = true;
+      rec.platform = "team-velocity";
+      report.evs.push(rec);
+    }
+    if (report.evs.length > before) report.vehiclePages++;
+    report.notes.push(
+      `team-velocity-api (${via} ids): ${found} used, ${report.evs.length - before} EV(s) admitted (${complete ? "complete" : "partial"}${offDomain ? ", group" : ""})`
+    );
+    // Complete only for a true single rooftop; a group spans domains, so its
+    // absence-from-this-query can't license db-sync to delist anyone.
+    if (!complete || offDomain) report.stoppedEarly = "team-velocity api (group or partial)";
+    queue.length = 0;
+  }
+
+  // A walled Team Velocity rooftop never serves the page the ids sit on, so
+  // the walk below would spend its budget on Akamai's "Access Denied". Its
+  // ids are pinned in registry/team-velocity-ids.json; ask the API and skip
+  // the walk. The walled host is never fetched.
+  {
+    const pinned = teamVelocityRegistryIds(domain);
+    if (pinned) await pullTeamVelocity(pinned, "registry");
   }
 
   while (queue.length && report.fetched < budget) {
@@ -947,38 +1000,7 @@ async function crawlDealer(domain) {
     if (!tv.done) {
       const ids = teamVelocityApiIds(res.body);
       if (ids) {
-        tv.done = true;
-        const before = report.evs.length;
-        const { vehicles: tvVehicles, complete, found } = await pullTeamVelocityApi(ids);
-        let offDomain = false;
-        for (const v of tvVehicles) {
-          const cls = classifyEv(v);
-          if (!cls.isEv) continue;
-          const vdp = v.offers?.url;
-          if (!vdp) continue; // no per-VIN page → nothing recheck could retire
-          let host;
-          try {
-            host = new URL(vdp).host.replace(/^www\./, "");
-          } catch {
-            continue;
-          }
-          if (host !== domain.replace(/^www\./, "")) offDomain = true;
-          let rec = normalize(v, { sourceUrl: vdp, dealerDomain: host });
-          rec.vdpUrl = abs(rec.vdpUrl, origin) ?? rec.vdpUrl;
-          rec.evKind = cls.kind;
-          rec.evConfidence = cls.confidence;
-          rec.fromVdp = true;
-          rec.platform = "team-velocity";
-          report.evs.push(rec);
-        }
-        if (report.evs.length > before) report.vehiclePages++;
-        report.notes.push(
-          `team-velocity-api: ${found} used, ${report.evs.length - before} EV(s) admitted (${complete ? "complete" : "partial"}${offDomain ? ", group" : ""})`
-        );
-        // Complete only for a true single rooftop; a group spans domains, so its
-        // absence-from-this-query can't license db-sync to delist anyone.
-        if (!complete || offDomain) report.stoppedEarly = "team-velocity api (group or partial)";
-        queue.length = 0;
+        await pullTeamVelocity(ids, "page");
         break;
       }
     }

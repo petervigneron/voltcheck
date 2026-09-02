@@ -106,6 +106,7 @@
 //
 // Never use `yourPriceSort` or the page's JSON-LD offer: both bake in the doc
 // fee (42,339 + 225 = 42,564). Our convention is the pre-fee asking price.
+import { readFileSync } from "node:fs";
 import { classifyEv } from "../ev.mjs";
 import { politeGetJson } from "../http.mjs";
 import { TV_RETAIL, TV_SELLING } from "../price-provenance.mjs";
@@ -119,6 +120,61 @@ const posNum = (v) => {
   const n = Number(v);
   return Number.isFinite(n) && n > 0 ? n : undefined;
 };
+
+// WALLED ROOFTOPS: IDS THE PAGE CANNOT GIVE US
+//
+// Seventeen Team Velocity rooftops answer our fetcher with an Akamai "Access
+// Denied" on every path, robots.txt included (georgehartenissan.com,
+// volvocarsfredericksburg.com, planetchryslerjeepdodge.net …). The API host
+// above is not behind that wall — it answered 590 cars for George Harte
+// Nissan's account with a plain GET on 2026-09-02, no robots file on the
+// host (404) — so the only thing the wall costs us is the two ids that the
+// homepage would have carried. registry/team-velocity-ids.json carries them
+// instead, read once from the rooftop's own page in a browser and pinned by
+// date. The crawl never asks the walled host for anything; it asks the API,
+// exactly as it does for every other Team Velocity rooftop.
+//
+// This is recorded as a judgment call, not a rule. The house line is "no
+// challenge-solving, no reaching around a Disallow": a 403 on robots.txt is
+// not a Disallow (lib/http.mjs treats an unreadable robots as no rules, as
+// RFC 9309 does), and the API host publishes none. What was measured before
+// building it (2026-09-02, 15 accounts): 183 EVs, 94 VINs not yet in the
+// database, 40 of those with a VDP the lane keeps, 31 of them on the crawled
+// domain — the rest are group cars that already reach us through the
+// group's other rooftops (hartehyundai.com holds George Harte Nissan's
+// Ariyas), which is the same group-account behaviour the crawl block below
+// already handles.
+const REGISTRY_IDS = new URL("../../registry/team-velocity-ids.json", import.meta.url);
+let registryIdsCache;
+function registryIds() {
+  if (registryIdsCache) return registryIdsCache;
+  try {
+    registryIdsCache = JSON.parse(readFileSync(REGISTRY_IDS, "utf8"));
+  } catch {
+    registryIdsCache = {};
+  }
+  return registryIdsCache;
+}
+
+// Ids pinned for a domain in registry/team-velocity-ids.json, or null. Both
+// ids must be plain digit strings: the API builds a URL out of them.
+export function teamVelocityRegistryIds(domain, table = registryIds()) {
+  const row = table?.[String(domain ?? "").toLowerCase().replace(/^www\./, "")];
+  return validIds(row);
+}
+
+// The page's own ids win when the page answered; the registry's are for the
+// rooftop whose page never will. Null when neither has both.
+export function pickTeamVelocityIds(html, domain, table) {
+  return teamVelocityApiIds(html) ?? teamVelocityRegistryIds(domain, table);
+}
+
+function validIds(row) {
+  const accountId = String(row?.accountId ?? "");
+  const campaignId = String(row?.campaignId ?? "");
+  if (!/^\d+$/.test(accountId) || !/^\d+$/.test(campaignId)) return null;
+  return { accountId, campaignId };
+}
 
 // The rooftop's ids, read from any Team Velocity page's inline globals.
 export function teamVelocityApiIds(html) {

@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { teamVelocityApiIds, teamVelocityApiVehicle } from "../lib/platforms/teamvelocity.mjs";
+import { teamVelocityApiIds, teamVelocityApiVehicle, teamVelocityRegistryIds, pickTeamVelocityIds } from "../lib/platforms/teamvelocity.mjs";
 import { classifyEv } from "../lib/ev.mjs";
 
 test("teamVelocityApiIds reads accountId/campaignId from inline globals", () => {
@@ -118,4 +118,29 @@ test("a used car with no yourPrice falls back to sellingPrice", () => {
 test("fees are never baked in: yourPriceSort is ignored", () => {
   // yourPriceSort is list + doc fee (42,339 + 225). Our convention is pre-fee.
   assert.equal(priceOf({ type: "Used", sellingPrice: 39784, yourPrice: 42339, yourPriceSort: 42564 }), 42339);
+});
+
+// Walled rooftops: the ids come from registry/team-velocity-ids.json, never
+// from a page the wall will not serve. The page still wins when it answers,
+// and a malformed pinned row is a null, not a URL with garbage in it.
+test("teamVelocityRegistryIds: pinned ids for a walled rooftop, null otherwise", () => {
+  const table = { "volvocarsfredericksburg.com": { accountId: "23519", campaignId: "11037" } };
+  assert.deepEqual(teamVelocityRegistryIds("volvocarsfredericksburg.com", table), { accountId: "23519", campaignId: "11037" });
+  assert.deepEqual(teamVelocityRegistryIds("WWW.VolvoCarsFredericksburg.com", table), { accountId: "23519", campaignId: "11037" });
+  assert.equal(teamVelocityRegistryIds("hartehyundai.com", table), null);
+  assert.equal(teamVelocityRegistryIds("x.com", { "x.com": { accountId: "23519;drop", campaignId: "1" } }), null);
+  assert.equal(teamVelocityRegistryIds("x.com", { "x.com": { accountId: "23519" } }), null); // needs both
+});
+
+test("pickTeamVelocityIds: the page's ids win; the registry's fill a walled page", () => {
+  const table = { "d.com": { accountId: "1", campaignId: "2" } };
+  const page = `<script>var accountId = '71000'; var campaignId = '7226';</script>`;
+  assert.deepEqual(pickTeamVelocityIds(page, "d.com", table), { accountId: "71000", campaignId: "7226" });
+  assert.deepEqual(pickTeamVelocityIds("<title>Access Denied</title>", "d.com", table), { accountId: "1", campaignId: "2" });
+  assert.equal(pickTeamVelocityIds("<title>Access Denied</title>", "other.com", table), null);
+});
+
+test("the committed team-velocity-ids.json parses and every row validates", () => {
+  const ids = teamVelocityRegistryIds("georgehartenissan.com");
+  assert.deepEqual(ids, { accountId: "31371", campaignId: "10479" });
 });
