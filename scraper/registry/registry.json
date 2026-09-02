@@ -22587,9 +22587,9 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: TypeError | requeued 2026-08-16: unreachable verdict predates the www/apex bare-404 retry and gzip fix in lib/http.mjs | probe 2026-08-17: homepage error:TypeError | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-23: no answer in 12 fetches (0 ItemList entries, 7 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-23: no answer in 12 fetches (0 ItemList entries, 7 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 7 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 7 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 7 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 7 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 7 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 7 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 7 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: TypeError | requeued 2026-08-16: unreachable verdict predates the www/apex bare-404 retry and gzip fix in lib/http.mjs | probe 2026-08-17: homepage error:TypeError | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-23: no answer in 12 fetches (0 ItemList entries, 7 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-23: no answer in 12 fetches (0 ItemList entries, 7 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 7 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 7 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 7 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 7 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 7 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 7 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 7 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-02: no answer in 12 fetches (0 ItemList entries, 7 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor",
       "probe": {
-        "date": "2026-09-01",
+        "date": "2026-09-02",
         "verdict": "transient",
         "fetched": 12,
         "vehicles": 0,
@@ -26010,9 +26010,9 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: homepage 503 | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-23: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-23: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor",
+      "notes": "Discovered via OSM Overpass (nationwide US sweep 2026-08-13) | probe 2026-08-14: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | requeued 2026-08-16: verdict predates the DCS/DealerFire extractors, platform-first probe ordering, and the bare-404 retry | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-16: homepage 503 | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-23: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-23: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-02: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor",
       "probe": {
-        "date": "2026-09-01",
+        "date": "2026-09-02",
         "verdict": "transient",
         "fetched": 12,
         "vehicles": 0,
@@ -93843,14 +93843,14 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "FL license roll (FLHSMV, lic VI independent), email-domain signal — browser-context crawl of the published dealer lists 2026-08-16 | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-23: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor",
+      "notes": "FL license roll (FLHSMV, lic VI independent), email-domain signal — browser-context crawl of the published dealer lists 2026-08-16 | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-23: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-02: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor",
       "location": {
         "city": "DAYTONA BCH",
         "state": "FL",
         "zip": "32119"
       },
       "probe": {
-        "date": "2026-09-01",
+        "date": "2026-09-02",
         "verdict": "transient",
         "fetched": 12,
         "vehicles": 0,
@@ -109261,14 +109261,14 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-23: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-17) | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-23: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-02: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor",
       "location": {
         "city": "SPOKANE VALLEY",
         "state": "WA",
         "zip": "99206"
       },
       "probe": {
-        "date": "2026-09-01",
+        "date": "2026-09-02",
         "verdict": "transient",
         "fetched": 12,
         "vehicles": 0,
@@ -215115,9 +215115,9 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Discovered via Common Crawl dealer-platform URL fingerprint sweep (CC-MAIN-2026-30), 2026-08-17 — site serves inventory paths matching a platform we extract | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-23: no answer in 12 fetches (0 ItemList entries, 2 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-23: no answer in 12 fetches (0 ItemList entries, 2 sitemap urls, 8 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 2 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 2 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 2 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 2 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 2 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 2 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 2 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor",
+      "notes": "Discovered via Common Crawl dealer-platform URL fingerprint sweep (CC-MAIN-2026-30), 2026-08-17 — site serves inventory paths matching a platform we extract | probe 2026-08-17: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-18: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-19: 0 VIN vehicles in 12 fetches (0 ItemList entries, platform unknown) — likely needs a platform extractor | probe 2026-08-23: no answer in 12 fetches (0 ItemList entries, 2 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-23: no answer in 12 fetches (0 ItemList entries, 2 sitemap urls, 8 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 2 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 2 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 2 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 2 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 2 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 2 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 2 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-02: no answer in 12 fetches (0 ItemList entries, 2 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor",
       "probe": {
-        "date": "2026-09-01",
+        "date": "2026-09-02",
         "verdict": "transient",
         "fetched": 12,
         "vehicles": 0,
@@ -215133,18 +215133,18 @@
           },
           {
             "url": "https://app.urlgeni.us/searchnew.aspx",
-            "status": "404",
-            "kind": "gone"
-          },
-          {
-            "url": "https://app.urlgeni.us/used-vehicles/",
             "status": "error:AbortError",
             "kind": "transient"
           },
           {
+            "url": "https://app.urlgeni.us/used-vehicles/",
+            "status": "404",
+            "kind": "gone"
+          },
+          {
             "url": "https://app.urlgeni.us/new-vehicles/",
-            "status": "error:TypeError",
-            "kind": "transient"
+            "status": "404",
+            "kind": "gone"
           }
         ]
       }
@@ -223084,14 +223084,14 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23) | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23) | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-02: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor",
       "location": {
         "city": "OLYMPIA",
         "state": "WA",
         "zip": "98501"
       },
       "probe": {
-        "date": "2026-09-01",
+        "date": "2026-09-02",
         "verdict": "transient",
         "fetched": 12,
         "vehicles": 0,
@@ -223263,14 +223263,14 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23) | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23) | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-02: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor",
       "location": {
         "city": "TACOMA",
         "state": "WA",
         "zip": "98444"
       },
       "probe": {
-        "date": "2026-09-01",
+        "date": "2026-09-02",
         "verdict": "transient",
         "fetched": 12,
         "vehicles": 0,
@@ -223354,14 +223354,14 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23) | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23) | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-02: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor",
       "location": {
         "city": "KENNEWICK",
         "state": "WA",
         "zip": "99336"
       },
       "probe": {
-        "date": "2026-09-01",
+        "date": "2026-09-02",
         "verdict": "transient",
         "fetched": 12,
         "vehicles": 0,
@@ -223651,14 +223651,14 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23) | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 8 sitemap urls, 6 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 8 sitemap urls, 6 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 8 sitemap urls, 6 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 8 sitemap urls, 6 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 8 sitemap urls, 6 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 8 sitemap urls, 6 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 8 sitemap urls, 6 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 8 sitemap urls, 6 failed fetches, platform unknown) — likely needs a platform extractor",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23) | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 8 sitemap urls, 6 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 8 sitemap urls, 6 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 8 sitemap urls, 6 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 8 sitemap urls, 6 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 8 sitemap urls, 6 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 8 sitemap urls, 6 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 8 sitemap urls, 6 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 8 sitemap urls, 6 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-02: no answer in 12 fetches (0 ItemList entries, 8 sitemap urls, 6 failed fetches, platform unknown) — likely needs a platform extractor",
       "location": {
         "city": "SEATAC",
         "state": "WA",
         "zip": "98148"
       },
       "probe": {
-        "date": "2026-09-01",
+        "date": "2026-09-02",
         "verdict": "transient",
         "fetched": 12,
         "vehicles": 0,
@@ -223745,14 +223745,14 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23) | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23) | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-02: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor",
       "location": {
         "city": "SEATTLE",
         "state": "WA",
         "zip": "98115"
       },
       "probe": {
-        "date": "2026-09-01",
+        "date": "2026-09-02",
         "verdict": "transient",
         "fetched": 12,
         "vehicles": 0,
@@ -223839,14 +223839,14 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23) | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23) | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-02: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor",
       "location": {
         "city": "PASCO",
         "state": "WA",
         "zip": "99301"
       },
       "probe": {
-        "date": "2026-09-01",
+        "date": "2026-09-02",
         "verdict": "transient",
         "fetched": 12,
         "vehicles": 0,
@@ -223926,14 +223926,14 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23) | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23) | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-02: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor",
       "location": {
         "city": "LYNNWOOD",
         "state": "WA",
         "zip": "98036"
       },
       "probe": {
-        "date": "2026-09-01",
+        "date": "2026-09-02",
         "verdict": "transient",
         "fetched": 12,
         "vehicles": 0,
@@ -223972,14 +223972,14 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23) | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23) | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-02: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor",
       "location": {
         "city": "MARYSVILLE",
         "state": "WA",
         "zip": "98270"
       },
       "probe": {
-        "date": "2026-09-01",
+        "date": "2026-09-02",
         "verdict": "transient",
         "fetched": 12,
         "vehicles": 0,
@@ -224311,14 +224311,14 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23) | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23) | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-02: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor",
       "location": {
         "city": "EVERETT",
         "state": "WA",
         "zip": "98203"
       },
       "probe": {
-        "date": "2026-09-01",
+        "date": "2026-09-02",
         "verdict": "transient",
         "fetched": 12,
         "vehicles": 0,
@@ -224357,14 +224357,14 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23) | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23) | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-02: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor",
       "location": {
         "city": "BELLEVUE",
         "state": "WA",
         "zip": "98007"
       },
       "probe": {
-        "date": "2026-09-01",
+        "date": "2026-09-02",
         "verdict": "transient",
         "fetched": 12,
         "vehicles": 0,
@@ -224501,14 +224501,14 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23) | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor",
+      "notes": "Resolved from the WA license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; WA licenses one dealer class only, and the licensed name carries no OEM brand — independent, inferred (2026-08-23) | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-02: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor",
       "location": {
         "city": "EDMONDS",
         "state": "WA",
         "zip": "98026"
       },
       "probe": {
-        "date": "2026-09-01",
+        "date": "2026-09-02",
         "verdict": "transient",
         "fetched": 12,
         "vehicles": 0,
@@ -225323,14 +225323,14 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23) | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor",
+      "notes": "Resolved from the NY license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip (2026-08-23) | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-02: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor",
       "location": {
         "city": "HICKSVILLE",
         "state": "NY",
         "zip": "11801"
       },
       "probe": {
-        "date": "2026-09-01",
+        "date": "2026-09-02",
         "verdict": "transient",
         "fetched": 12,
         "vehicles": 0,
@@ -226553,14 +226553,14 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23) | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23) | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-02: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor",
       "location": {
         "city": "JACKSONVILLE",
         "state": "FL",
         "zip": "32216"
       },
       "probe": {
-        "date": "2026-09-01",
+        "date": "2026-09-02",
         "verdict": "transient",
         "fetched": 12,
         "vehicles": 0,
@@ -227217,14 +227217,14 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23) | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number (2026-08-23) | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-02: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor",
       "location": {
         "city": "MARIANNA",
         "state": "FL",
         "zip": "32446"
       },
       "probe": {
-        "date": "2026-09-01",
+        "date": "2026-09-02",
         "verdict": "transient",
         "fetched": 12,
         "vehicles": 0,
@@ -236408,14 +236408,14 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; FL license roll class: franchise (VF) (2026-08-24) | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 3 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 3 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 3 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 3 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 3 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 3 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 3 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 3 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; FL license roll class: franchise (VF) (2026-08-24) | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 3 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-25: no answer in 12 fetches (0 ItemList entries, 3 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 3 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 3 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 3 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 3 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 3 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 3 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-02: no answer in 12 fetches (0 ItemList entries, 3 sitemap urls, 1 failed fetches, platform unknown) — likely needs a platform extractor",
       "location": {
         "city": "PENSACOLA",
         "state": "FL",
         "zip": "32534"
       },
       "probe": {
-        "date": "2026-09-01",
+        "date": "2026-09-02",
         "verdict": "transient",
         "fetched": 12,
         "vehicles": 0,
@@ -239816,14 +239816,14 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; FL license roll class: independent (VI) (2026-08-24) | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; FL license roll class: independent (VI) (2026-08-24) | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-02: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor",
       "location": {
         "city": "ORLANDO",
         "state": "FL",
         "zip": "32824"
       },
       "probe": {
-        "date": "2026-09-01",
+        "date": "2026-09-02",
         "verdict": "transient",
         "fetched": 12,
         "vehicles": 0,
@@ -240586,14 +240586,14 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; FL license roll class: independent (VI) (2026-08-24) | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; FL license roll class: independent (VI) (2026-08-24) | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-02: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor",
       "location": {
         "city": "MELBOURNE",
         "state": "FL",
         "zip": "32935"
       },
       "probe": {
-        "date": "2026-09-01",
+        "date": "2026-09-02",
         "verdict": "transient",
         "fetched": 12,
         "vehicles": 0,
@@ -240698,14 +240698,14 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; FL license roll class: independent (VI) (2026-08-24) | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; FL license roll class: independent (VI) (2026-08-24) | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-02: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor",
       "location": {
         "city": "ORMOND BEACH",
         "state": "FL",
         "zip": "32174"
       },
       "probe": {
-        "date": "2026-09-01",
+        "date": "2026-09-02",
         "verdict": "transient",
         "fetched": 12,
         "vehicles": 0,
@@ -241473,14 +241473,14 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; FL license roll class: independent (VI) (2026-08-24) | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; FL license roll class: independent (VI) (2026-08-24) | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-02: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor",
       "location": {
         "city": "HOLLYWOOD",
         "state": "FL",
         "zip": "33023"
       },
       "probe": {
-        "date": "2026-09-01",
+        "date": "2026-09-02",
         "verdict": "transient",
         "fetched": 12,
         "vehicles": 0,
@@ -242491,14 +242491,14 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; FL license roll class: independent (VI) (2026-08-24) | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; FL license roll class: independent (VI) (2026-08-24) | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-02: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor",
       "location": {
         "city": "TAMPA",
         "state": "FL",
         "zip": "33610"
       },
       "probe": {
-        "date": "2026-09-01",
+        "date": "2026-09-02",
         "verdict": "transient",
         "fetched": 12,
         "vehicles": 0,
@@ -243425,14 +243425,14 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; FL license roll class: independent (VI) (2026-08-24) | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; FL license roll class: independent (VI) (2026-08-24) | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-02: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor",
       "location": {
         "city": "CLEARWATER",
         "state": "FL",
         "zip": "33762"
       },
       "probe": {
-        "date": "2026-09-01",
+        "date": "2026-09-02",
         "verdict": "transient",
         "fetched": 12,
         "vehicles": 0,
@@ -243532,14 +243532,14 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; FL license roll class: independent (VI) (2026-08-24) | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; FL license roll class: independent (VI) (2026-08-24) | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-02: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor",
       "location": {
         "city": "DAVIE",
         "state": "FL",
         "zip": "33314"
       },
       "probe": {
-        "date": "2026-09-01",
+        "date": "2026-09-02",
         "verdict": "transient",
         "fetched": 12,
         "vehicles": 0,
@@ -245562,14 +245562,14 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; FL license roll class: independent (VI) (2026-08-24) | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 3 sitemap urls, 1 failed fetches, platform unknown) — client-rendered or API-backed; leads: api-hosts:static.cargurus.com+www.cargurus.com | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 3 sitemap urls, 1 failed fetches, platform unknown) — client-rendered or API-backed; leads: api-hosts:static.cargurus.com+www.cargurus.com | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 3 sitemap urls, 1 failed fetches, platform unknown) — client-rendered or API-backed; leads: api-hosts:static.cargurus.com+www.cargurus.com | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 3 sitemap urls, 1 failed fetches, platform unknown) — client-rendered or API-backed; leads: api-hosts:static.cargurus.com+www.cargurus.com | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 3 sitemap urls, 1 failed fetches, platform unknown) — client-rendered or API-backed; leads: api-hosts:static.cargurus.com+www.cargurus.com | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 3 sitemap urls, 1 failed fetches, platform unknown) — client-rendered or API-backed; leads: api-hosts:static.cargurus.com+www.cargurus.com | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 3 sitemap urls, 1 failed fetches, platform unknown) — client-rendered or API-backed; leads: api-hosts:static.cargurus.com+www.cargurus.com",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; FL license roll class: independent (VI) (2026-08-24) | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 3 sitemap urls, 1 failed fetches, platform unknown) — client-rendered or API-backed; leads: api-hosts:static.cargurus.com+www.cargurus.com | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 3 sitemap urls, 1 failed fetches, platform unknown) — client-rendered or API-backed; leads: api-hosts:static.cargurus.com+www.cargurus.com | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 3 sitemap urls, 1 failed fetches, platform unknown) — client-rendered or API-backed; leads: api-hosts:static.cargurus.com+www.cargurus.com | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 3 sitemap urls, 1 failed fetches, platform unknown) — client-rendered or API-backed; leads: api-hosts:static.cargurus.com+www.cargurus.com | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 3 sitemap urls, 1 failed fetches, platform unknown) — client-rendered or API-backed; leads: api-hosts:static.cargurus.com+www.cargurus.com | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 3 sitemap urls, 1 failed fetches, platform unknown) — client-rendered or API-backed; leads: api-hosts:static.cargurus.com+www.cargurus.com | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 3 sitemap urls, 1 failed fetches, platform unknown) — client-rendered or API-backed; leads: api-hosts:static.cargurus.com+www.cargurus.com | probe 2026-09-02: no answer in 12 fetches (0 ItemList entries, 3 sitemap urls, 1 failed fetches, platform unknown) — client-rendered or API-backed; leads: api-hosts:static.cargurus.com+www.cargurus.com",
       "location": {
         "city": "BRADENTON",
         "state": "FL",
         "zip": "34205"
       },
       "probe": {
-        "date": "2026-09-01",
+        "date": "2026-09-02",
         "verdict": "transient",
         "fetched": 12,
         "vehicles": 0,
@@ -245952,14 +245952,14 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; FL license roll class: independent (VI) (2026-08-24) | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; FL license roll class: independent (VI) (2026-08-24) | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-02: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor",
       "location": {
         "city": "DELAND",
         "state": "FL",
         "zip": "32724"
       },
       "probe": {
-        "date": "2026-09-01",
+        "date": "2026-09-02",
         "verdict": "transient",
         "fetched": 12,
         "vehicles": 0,
@@ -246929,14 +246929,14 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; FL license roll class: independent (VI) (2026-08-24) | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; FL license roll class: independent (VI) (2026-08-24) | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-02: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor",
       "location": {
         "city": "WEST PALM BEACH",
         "state": "FL",
         "zip": "33409"
       },
       "probe": {
-        "date": "2026-09-01",
+        "date": "2026-09-02",
         "verdict": "transient",
         "fetched": 12,
         "vehicles": 0,
@@ -247660,14 +247660,14 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; FL license roll class: independent (VI) (2026-08-24) | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; FL license roll class: independent (VI) (2026-08-24) | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-02: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor",
       "location": {
         "city": "STARKE",
         "state": "FL",
         "zip": "32091"
       },
       "probe": {
-        "date": "2026-09-01",
+        "date": "2026-09-02",
         "verdict": "transient",
         "fetched": 12,
         "vehicles": 0,
@@ -248194,14 +248194,14 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; FL license roll class: independent (VI) (2026-08-24) | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; FL license roll class: independent (VI) (2026-08-24) | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-26: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-02: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor",
       "location": {
         "city": "MELBOURNE",
         "state": "FL",
         "zip": "32901"
       },
       "probe": {
-        "date": "2026-09-01",
+        "date": "2026-09-02",
         "verdict": "transient",
         "fetched": 12,
         "vehicles": 0,
@@ -249229,14 +249229,14 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; FL license roll class: independent (VI) (2026-08-24) | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; FL license roll class: independent (VI) (2026-08-24) | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-02: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor",
       "location": {
         "city": "JACKSONVILLE",
         "state": "FL",
         "zip": "32209"
       },
       "probe": {
-        "date": "2026-09-01",
+        "date": "2026-09-02",
         "verdict": "transient",
         "fetched": 12,
         "vehicles": 0,
@@ -250107,14 +250107,14 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; FL license roll class: independent (VI) (2026-08-24) | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 11 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 11 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 11 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 11 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 11 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 11 failed fetches, platform unknown) — likely needs a platform extractor",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; FL license roll class: independent (VI) (2026-08-24) | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 11 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 11 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 11 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 11 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 11 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 11 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-02: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 11 failed fetches, platform unknown) — likely needs a platform extractor",
       "location": {
         "city": "LAKE WORTH",
         "state": "FL",
         "zip": "33460"
       },
       "probe": {
-        "date": "2026-09-01",
+        "date": "2026-09-02",
         "verdict": "transient",
         "fetched": 12,
         "vehicles": 0,
@@ -251873,14 +251873,14 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; FL license roll class: independent (VI) (2026-08-24) | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; FL license roll class: independent (VI) (2026-08-24) | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-02: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor",
       "location": {
         "city": "DAVIE",
         "state": "FL",
         "zip": "33314"
       },
       "probe": {
-        "date": "2026-09-01",
+        "date": "2026-09-02",
         "verdict": "transient",
         "fetched": 12,
         "vehicles": 0,
@@ -253251,14 +253251,14 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; FL license roll class: independent (VI) (2026-08-24) | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; FL license roll class: independent (VI) (2026-08-24) | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-02: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor",
       "location": {
         "city": "BROOKSVILLE",
         "state": "FL",
         "zip": "34601"
       },
       "probe": {
-        "date": "2026-09-01",
+        "date": "2026-09-02",
         "verdict": "transient",
         "fetched": 12,
         "vehicles": 0,
@@ -253564,14 +253564,14 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; FL license roll class: independent (VI) (2026-08-24) | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; FL license roll class: independent (VI) (2026-08-24) | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-02: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor",
       "location": {
         "city": "JACKSONVILLE",
         "state": "FL",
         "zip": "32244"
       },
       "probe": {
-        "date": "2026-09-01",
+        "date": "2026-09-02",
         "verdict": "transient",
         "fetched": 12,
         "vehicles": 0,
@@ -254332,14 +254332,14 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; FL license roll class: independent (VI) (2026-08-24) | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by the roll's phone number; FL license roll class: independent (VI) (2026-08-24) | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-02: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 2 failed fetches, platform unknown) — likely needs a platform extractor",
       "location": {
         "city": "MELBOURNE",
         "state": "FL",
         "zip": "32901"
       },
       "probe": {
-        "date": "2026-09-01",
+        "date": "2026-09-02",
         "verdict": "transient",
         "fetched": 12,
         "vehicles": 0,
@@ -254539,14 +254539,14 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; FL license roll class: independent (VI) (2026-08-24) | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; FL license roll class: independent (VI) (2026-08-24) | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-02: no answer in 12 fetches (0 ItemList entries, 1 sitemap urls, 3 failed fetches, platform unknown) — likely needs a platform extractor",
       "location": {
         "city": "ORLANDO",
         "state": "FL",
         "zip": "32820"
       },
       "probe": {
-        "date": "2026-09-01",
+        "date": "2026-09-02",
         "verdict": "transient",
         "fetched": 12,
         "vehicles": 0,
@@ -255663,14 +255663,14 @@
       "platform": "unknown",
       "robots": "unknown",
       "status": "needs-investigation",
-      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; FL license roll class: independent (VI) (2026-08-24) | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor",
+      "notes": "Resolved from the FL license roll by name→domain candidate generation; identity verified on the page by licensed name + the roll's zip; FL license roll class: independent (VI) (2026-08-24) | probe 2026-08-28: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-29: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-30: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-08-31: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-01: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor | probe 2026-09-02: no answer in 12 fetches (0 ItemList entries, 0 sitemap urls, 4 failed fetches, platform unknown) — likely needs a platform extractor",
       "location": {
         "city": "OCOEE",
         "state": "FL",
         "zip": "34761"
       },
       "probe": {
-        "date": "2026-09-01",
+        "date": "2026-09-02",
         "verdict": "transient",
         "fetched": 12,
         "vehicles": 0,
@@ -398035,26 +398035,40 @@
       "domain": "fredbeansautoauction.com",
       "name": "Fred Beans Ford Lincoln of West Chester",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OEM locator VDP host (lane ford-blue-advantage, 1 listing(s), West Chester, PA) 2026-09-01",
+      "status": "working",
+      "notes": "Discovered via OEM locator VDP host (lane ford-blue-advantage, 1 listing(s), West Chester, PA) 2026-09-01 | auto-promoted by probe 2026-09-02: 24 VIN vehicles on 1 page(s), platform dealer.com",
       "location": {
         "city": "West Chester",
         "state": "PA",
         "zip": "19382"
+      },
+      "probe": {
+        "date": "2026-09-02",
+        "verdict": "working",
+        "fetched": 2,
+        "vehicles": 24,
+        "canonicalHost": "www.fredbeansautoauction.com"
       }
     },
     {
       "domain": "jimfalkhyundaiofmaui.com",
       "name": "Maui Hyundai",
       "kind": "rooftop",
-      "platform": "unknown",
+      "platform": "dealer.com",
       "robots": "unknown",
-      "status": "discovered",
-      "notes": "Discovered via OEM locator VDP host (lane hyundaiusa.com, 2 listing(s), HI) 2026-09-01",
+      "status": "working",
+      "notes": "Discovered via OEM locator VDP host (lane hyundaiusa.com, 2 listing(s), HI) 2026-09-01 | auto-promoted by probe 2026-09-02: 24 VIN vehicles on 1 page(s), platform dealer.com",
       "location": {
         "state": "HI"
+      },
+      "probe": {
+        "date": "2026-09-02",
+        "verdict": "working",
+        "fetched": 2,
+        "vehicles": 24,
+        "canonicalHost": "www.jimfalkhyundaiofmaui.com"
       }
     },
     {
@@ -404917,6 +404931,32 @@
         "fetched": 3,
         "vehicles": 6,
         "canonicalHost": "www.zeiglerofkalamazoo.com"
+      }
+    },
+    {
+      "domain": "dobbshyundaicolumbus.com",
+      "name": "Dobbs Hyundai Of Columbus",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane hyundaiusa.com, 2 listing(s), OH) 2026-09-02",
+      "location": {
+        "state": "OH"
+      }
+    },
+    {
+      "domain": "fioreaudi.com",
+      "name": "Fiore Audi",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OEM locator VDP host (lane audi-network, 1 listing(s), Hollidaysburg, PA) 2026-09-02",
+      "location": {
+        "city": "Hollidaysburg",
+        "state": "PA",
+        "zip": "16648"
       }
     }
   ],
