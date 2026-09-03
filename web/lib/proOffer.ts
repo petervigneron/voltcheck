@@ -27,7 +27,12 @@
 // the deals filter (lib/listings/deal.ts, ≥DEAL_MIN_PCT under similar
 // listings, on the grid and in a pass-holder's emails) and the standing
 // order (lib/watch.ts). Market trends and rebates are research lanes not yet
-// built, and say so.
+// built. 2026-09-03: the owner rewrote all four lines and dropped the
+// live/coming chips from the page ("with no visitors, it's not necessary to
+// tell people what's live versus what's coming"), so `live` is now only what
+// offerState() reads to decide whether a pass may be sold — it renders
+// nowhere. The free-forever list left the page the same day: what everyone
+// gets is not the Pro page's subject.
 
 import { DEAL_MIN_PCT } from "./listings/deal";
 
@@ -40,42 +45,32 @@ export interface ProBenefit {
   live: boolean;
 }
 
-/** The Pro column, in the owner's words (2026-09-02, verbatim — copy on this
+/** The Pro column, in the owner's words (2026-09-03, verbatim — copy on this
  *  site is the owner's, not ours; see docs/MONETIZATION.md §1). The deals
  *  threshold is read from lib/listings/deal.ts so the page and the filter
  *  cannot disagree about the number. */
 export const PRO_BENEFITS: ProBenefit[] = [
   {
     title: "Market trends",
-    detail: "Watch how prices move, and make informed decisions about when to buy, or when to sell",
+    detail: "Track prices over time, and make informed decisions about when to buy or when to sell",
     live: false,
   },
   {
     title: "Filter by deals",
-    detail: `Pro members get an extra search filter that shows vehicles priced ${DEAL_MIN_PCT}% or more under the average in the vehicle's category`,
+    detail: `An extra search filter for vehicles priced ${DEAL_MIN_PCT}% or more below average`,
     live: true,
   },
   {
     title: "Rebate eligibility",
-    detail: "We've researched with vehicles may qualify for state or local tax credits or utility rebates.",
+    detail: "Many EVs still qualify for local tax credits or utility rebates",
     live: false,
   },
   {
-    // The standing order (lib/watch.ts, components/WatchForm.tsx). The
-    // owner's sentence is the heading over the form; no separate line yet.
-    title: "Describe your ideal car and at your ideal price, and be notified when it becomes available",
-    detail: "",
+    // The standing order (lib/watch.ts, components/WatchForm.tsx).
+    title: "Deal alert",
+    detail: "Email notification when a car you want appears on the site or drops into your price range",
     live: true,
   },
-];
-
-/** The free-forever line of docs/MONETIZATION.md §1, printed so it is a
- *  public promise rather than an internal note. Every item here is live. */
-export const FREE_FOREVER: string[] = [
-  "Every listing, every battery and range fact, every price history",
-  "The ask-vs-sold delta, on the card and on the car's page",
-  "The VIN check, on any EV, whether or not it is listed here",
-  "Price drop alerts on saved cars",
 ];
 
 export type OfferState =

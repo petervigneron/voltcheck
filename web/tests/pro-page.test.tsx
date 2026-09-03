@@ -32,8 +32,9 @@ async function render(searchParams: Record<string, string> = {}): Promise<string
 
 test("renders the logged-out page when the pass lookup cannot run at all", async () => {
   const html = await render();
-  assert.match(html, /Pay for the push/);
-  assert.match(html, /Free forever, for everyone|free forever/i);
+  assert.match(html, /Pro member benefits/);
+  // The free-forever list left the page 2026-09-03; it must not creep back.
+  assert.doesNotMatch(html, /free forever/i);
   // No claim about a pass it could not look up.
   assert.doesNotMatch(html, /active\s*through/i);
 });
@@ -72,8 +73,8 @@ test("without a live-mode key, both passes are priced but neither can be bought"
   for (const key of [undefined, "sk_test_configured"]) {
     await withKey(key, async () => {
       const html = await render();
-      assert.match(html, /\$2\.99/);
-      assert.match(html, /\$9/);
+      assert.match(html, /\$3</);
+      assert.match(html, /\$9</);
       assert.match(html, /Purchasing opens soon/i);
       assert.match(html, /Opens soon/);
       // Not "no <button> anywhere" — the recovery form has one, and it works.
@@ -87,24 +88,25 @@ test("the button appears exactly when there is something to sell and a live key 
   await withKey("sk_live_configured", async () => {
     const open = await render();
     assert.match(open, /Get the 7-day pass/);
-    assert.match(open, /Get the 90-day pass/);
+    assert.match(open, /Get the 60-day pass/);
     assert.doesNotMatch(open, /Purchasing opens soon/i);
-    // Every unbuilt benefit keeps its "coming" mark; every built one loses it.
-    const coming = PRO_BENEFITS.filter((b) => !b.live).length;
-    assert.equal((open.match(/Coming</g) ?? []).length, coming);
-    assert.equal((open.match(/Live</g) ?? []).length, PRO_BENEFITS.length - coming);
+    // No live/coming chips on the page (owner, 2026-09-03); every benefit
+    // is listed regardless of its state.
+    assert.doesNotMatch(open, /Coming<|Live</);
+    for (const b of PRO_BENEFITS) assert.match(open, new RegExp(b.title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
   });
 });
 
-test("the lineup is the owner's (2026-09-02): deals filter live, trends and rebates coming, no alert tier", () => {
-  const titles = PRO_BENEFITS.map((b) => b.title.toLowerCase());
-  // Alerts are untiered (owner): no alert benefit may sit in the Pro column,
-  // and "unlimited alerts" stays cut.
-  assert.equal(titles.some((t) => t.includes("alert") || t.includes("unlimited")), false);
+test("the lineup is the owner's (2026-09-03): four lines, deals filter and deal alert live, trends and rebates not yet", () => {
+  const titles = PRO_BENEFITS.map((b) => b.title);
+  assert.deepEqual(titles, ["Market trends", "Filter by deals", "Rebate eligibility", "Deal alert"]);
+  // "Unlimited alerts" stays cut (2026-08-26): free price-drop alerts are
+  // effectively unlimited and shrinking them would be a retraction.
+  assert.equal(titles.some((t) => t.toLowerCase().includes("unlimited")), false);
   assert.equal(PRO_BENEFITS.find((b) => b.title === "Filter by deals")?.live, true);
-  assert.equal(PRO_BENEFITS.find((b) => b.title.startsWith("Describe your ideal car"))?.live, true);
+  assert.equal(PRO_BENEFITS.find((b) => b.title === "Deal alert")?.live, true);
   assert.equal(PRO_BENEFITS.find((b) => b.title === "Market trends")?.live, false);
   assert.equal(PRO_BENEFITS.find((b) => b.title === "Rebate eligibility")?.live, false);
   // The page prints the same threshold the filter applies.
-  assert.match(PRO_BENEFITS.find((b) => b.title === "Filter by deals")!.detail, /\b\d+% or more under\b/);
+  assert.match(PRO_BENEFITS.find((b) => b.title === "Filter by deals")!.detail, /\b\d+% or more below\b/);
 });

@@ -17,10 +17,18 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 
 export const PRO_COOKIE = "vc_pro";
 
-/** The two passes from docs/MONETIZATION.md §2. Non-recurring, both. */
+/** The two passes from docs/MONETIZATION.md §2. Non-recurring, both.
+ *
+ *  Owner, 2026-09-03: $3 for the week, and the $9 pass runs 60 days rather
+ *  than 90. The `quarter` key is kept as-is — it is the value stored in
+ *  pro_passes.tier (0045's check constraint) and in every Stripe session's
+ *  metadata, so renaming it would orphan sold passes for a nicer name. The
+ *  blurb is Stripe's line-item description only; the page no longer prints
+ *  it, and the week pass has none (Stripe rejects an empty description, so
+ *  createCheckout omits the field when it is blank). */
 export const TIERS = {
-  week:    { label: "7-day pass",  days: 7,  amountCents: 299, blurb: "Try it while you shop this week." },
-  quarter: { label: "90-day pass", days: 90, amountCents: 900, blurb: "Covers the whole search, in one decision." },
+  week:    { label: "7-day pass",  days: 7,  amountCents: 300, blurb: "" },
+  quarter: { label: "60-day pass", days: 60, amountCents: 900, blurb: "Covers the whole search, in one decision." },
 } as const;
 
 export type TierId = keyof typeof TIERS;
@@ -133,7 +141,7 @@ export async function createCheckout(tier: TierId, origin: string): Promise<stri
       "line_items[0][price_data][currency]": "usd",
       "line_items[0][price_data][unit_amount]": t.amountCents,
       "line_items[0][price_data][product_data][name]": `Voltcheck Pro — ${t.label}`,
-      "line_items[0][price_data][product_data][description]": t.blurb,
+      ...(t.blurb ? { "line_items[0][price_data][product_data][description]": t.blurb } : {}),
       // The tier has to survive the round trip to Stripe and back, and the
       // webhook must not infer it from the amount — a future price change
       // would silently re-map old sessions to the wrong tier.

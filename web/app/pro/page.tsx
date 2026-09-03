@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { currentPass, currentPassEmail, TIERS, type PassState, type TierId } from "@/lib/pro";
-import { FREE_FOREVER, PRO_BENEFITS, offerState } from "@/lib/proOffer";
+import { PRO_BENEFITS, offerState } from "@/lib/proOffer";
 import { ProBuyButton } from "@/components/ProBuyButton";
 import { ProRecover } from "@/components/ProRecover";
 import { WatchForm } from "@/components/WatchForm";
 
-// The Pro landing page: the promise, the two passes, and the way back in.
+// The Pro landing page: the benefits, the two passes, and the way back in.
 //
 // Dynamic because it reads the vc_pro cookie. It reads nothing else — no
 // feed, no shard, no listing walk — so it renders in milliseconds and cannot
@@ -142,7 +142,7 @@ export default async function ProPage(props: {
         <div className={`${CELL} bg-ink px-5 py-8 text-paper sm:px-8 sm:py-10`}>
           <span className={EYEBROW}>Voltcheck Pro</span>
           <h1 className="mt-2 max-w-[22ch] text-[30px] leading-[1.05] font-extrabold tracking-[-0.03em] sm:text-[40px]">
-            Pay for the push, never for the facts.
+            Pro member benefits
           </h1>
           {/* Owner's copy, verbatim (2026-09-02). Not ours to edit. */}
           <p className="mt-4 max-w-[62ch] text-[15px] leading-relaxed text-paper/85">
@@ -159,45 +159,15 @@ export default async function ProPage(props: {
         </div>
       </div>
 
-      {/* ── Free forever ─────────────────────────────────────────────── */}
-      <div className="border-l-[3px] border-ink">
-        <div className={`${CELL} bg-paper px-5 py-6 sm:px-8`}>
-          <span className={`${EYEBROW} text-ink/55`}>Free forever, for everyone</span>
-          <ul className="mt-3 grid gap-x-8 gap-y-2 sm:grid-cols-2">
-            {FREE_FOREVER.map((item) => (
-              <li key={item} className="flex gap-2 text-[14px] leading-snug font-bold">
-                <span aria-hidden="true" className="text-teal">
-                  ▸
-                </span>
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-
       {/* ── What Pro adds ────────────────────────────────────────────── */}
       <div className="border-l-[3px] border-ink">
         <div className={`${CELL} bg-putty px-5 py-6 sm:px-8`}>
-          <span className={`${EYEBROW} text-ink/55`}>What a pass adds</span>
-          <ul className="mt-3 space-y-4">
+          {/* No live/coming chip per line (owner, 2026-09-03): `live` still
+              decides whether a pass can be sold, it just is not printed. */}
+          <ul className="space-y-4">
             {PRO_BENEFITS.map((b) => (
               <li key={b.title}>
-                {/* The status chip rides the title's baseline; the detail is
-                    its own block underneath. Keeping the detail out of the
-                    flex row is deliberate — as a flex item its max-width made
-                    it small enough to fit beside the chip, and it read as a
-                    caption of the badge rather than of the feature. */}
-                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                  <span className="text-[15px] font-extrabold tracking-[-0.01em]">{b.title}</span>
-                  <span
-                    className={`px-2 py-0.5 text-[9.5px] font-extrabold tracking-[0.14em] uppercase ${
-                      b.live ? "bg-teal text-paper" : "bg-saffron text-ink"
-                    }`}
-                  >
-                    {b.live ? "Live" : "Coming"}
-                  </span>
-                </div>
+                <span className="text-[15px] font-extrabold tracking-[-0.01em]">{b.title}</span>
                 {b.detail && (
                   <p className="mt-1 max-w-[62ch] text-[13.5px] leading-relaxed text-ink/75">
                     {b.detail}
@@ -231,11 +201,6 @@ export default async function ProPage(props: {
               <p className="mt-1 text-[38px] leading-none font-extrabold tracking-[-0.04em]">
                 {money(t.amountCents)}
               </p>
-              <p className="mt-3 text-[14px] leading-relaxed font-bold">{t.blurb}</p>
-              <p className="mt-2 text-[12.5px] leading-relaxed text-ink/65">
-                {t.days} days, once. No account, no renewal, nothing to cancel — the pass simply
-                ends.
-              </p>
             </div>
             {offer === "open" ? (
               <ProBuyButton tier={id} label={`Get the ${t.label}`} />
@@ -250,29 +215,13 @@ export default async function ProPage(props: {
         ))}
       </div>
 
-      {/* ── How the pass works ───────────────────────────────────────── */}
-      <div className="border-l-[3px] border-ink">
-        <div className={`${CELL} bg-paper px-5 py-6 sm:px-8`}>
-          <span className={`${EYEBROW} text-ink/55`}>How a pass works</span>
-          <p className="mt-3 max-w-[68ch] text-[13.5px] leading-relaxed text-ink/80">
-            There are no accounts and no passwords here, so there is nothing of yours to leak. A
-            pass is a link, emailed to the address you pay with; opening it on a device is what
-            signs that device in. Card details go to Stripe and never touch this site. A pass
-            expires on the day it says and cannot renew itself, because the thing that would have
-            to remember to charge you again does not exist.
-          </p>
-        </div>
-      </div>
-
       {/* ── Recovery ─────────────────────────────────────────────────── */}
       <div className="border-l-[3px] border-ink">
         <div className={`${CELL} bg-putty px-5 py-6 sm:px-8`}>
-          <span className={`${EYEBROW} text-ink/55`}>Lost the email?</span>
-          <p className="mt-2 max-w-[62ch] text-[13.5px] leading-relaxed text-ink/80">
-            Enter the address you paid with and we&rsquo;ll send the link again. We won&rsquo;t say
-            whether that address has a pass — the same answer comes back either way, so this form
-            can&rsquo;t be used to find out who bought one.
-          </p>
+          {/* Owner's heading (2026-09-03). The form still answers the same
+              way whether or not the address has a pass — lib/proRecover.ts —
+              the page just no longer explains that. */}
+          <span className={`${EYEBROW} text-ink/55`}>Forgot your email?</span>
           <div className="mt-4 max-w-[560px]">
             <ProRecover />
           </div>
