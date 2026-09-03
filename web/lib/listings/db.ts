@@ -1,5 +1,6 @@
 import type { Listing } from "./types";
 import { hasRealPrice } from "./price";
+import { seriesEndingAt } from "./priceSeries";
 import { SHARDS } from "./pack";
 import { SITEMAP_SHARDS } from "../sitemap";
 
@@ -122,6 +123,7 @@ interface FeedRow {
 
 interface DetailRow {
   payload: Listing;
+  price_usd: number | null;
 }
 
 export function dbConfigured(): boolean {
@@ -856,21 +858,22 @@ export async function fetchModelYearAsksFromDb(
  *  such row — the caller just renders without the extras. */
 export async function fetchListingDetailFromDb(
   vin: string
-): Promise<{ description?: string; priceHistory: Listing["priceHistory"] } | null> {
+): Promise<{ description?: string; priceHistory: Listing["priceHistory"]; priorSite?: Listing["priorSite"] } | null> {
   if (!dbConfigured()) return null;
   const base = process.env.SUPABASE_URL!.replace(/\/$/, "");
   const vinKey = encodeURIComponent(vin.toUpperCase());
   try {
-    // History comes from listing_price_display (0040), not the raw table:
-    // the raw log carries steps our own lanes manufactured by reading
-    // different price fields off the same page (crawl internetPrice vs
-    // recheck JSON-LD — the 08-17 recheck alone wrote 7,734 such "changes").
-    // The view keeps only same-lane steps with no methodology transition
-    // between them, so the sparkline can't draw a cut the dealer never made.
-    // It's a windowed view PostgREST can't embed through listings, hence the
-    // second request.
-    const [res, histRes] = await Promise.all([
-      fetch(`${base}/rest/v1/listings?select=payload&vin=eq.${vinKey}&limit=1`, {
+    // History comes from listing_price_display (0040, redefined 0061), not
+    // the raw table: the raw log carries steps our own lanes manufactured by
+    // reading different price fields off the same page (crawl internetPrice
+    // vs recheck JSON-LD — the 08-17 recheck alone wrote 7,734 such
+    // "changes"), and since 0061 it is the CURRENT seller's chain, so a car
+    // that moved between dealers does not draw the previous seller's cuts
+    // under the new seller's price. It's a windowed view PostgREST can't
+    // embed through listings, hence the second request. The third is the
+    // site the car was listed on before this one (listing_prior_site, 0061).
+    const [res, histRes, priorRes] = await Promise.all([
+      fetch(`${base}/rest/v1/listings?select=payload,price_usd&vin=eq.${vinKey}&limit=1`, {
         headers: headers(),
         next: { revalidate: REVALIDATE_SECONDS, tags: [FEED_CACHE_TAG] },
       }),
@@ -878,28 +881,51 @@ export async function fetchListingDetailFromDb(
         `${base}/rest/v1/listing_price_display?select=price_usd,observed_at&vin=eq.${vinKey}&order=observed_at.asc`,
         { headers: headers(), next: { revalidate: REVALIDATE_SECONDS, tags: [FEED_CACHE_TAG] } }
       ),
+      fetch(
+        `${base}/rest/v1/listing_prior_site?select=prior_domain,prior_price_usd,prior_last_seen_at,delisted_at&vin=eq.${vinKey}&limit=1`,
+        { headers: headers(), next: { revalidate: REVALIDATE_SECONDS, tags: [FEED_CACHE_TAG] } }
+      ),
     ]);
     if (!res.ok) throw new Error(`PostgREST ${res.status}`);
     if (!histRes.ok) throw new Error(`PostgREST history ${histRes.status}`);
+    if (!priorRes.ok) throw new Error(`PostgREST prior site ${priorRes.status}`);
     const [row] = (await res.json()) as DetailRow[];
     if (!row) return null;
     const hist = (await histRes.json()) as { price_usd: number; observed_at: string }[];
+    const [prior] = (await priorRes.json()) as {
+      prior_domain: string;
+      prior_price_usd: number;
+      prior_last_seen_at: string;
+      delisted_at: string;
+    }[];
+    const realPrice = (priceUsd: number) =>
+      hasRealPrice({ priceUsd, condition: row.payload.condition, year: row.payload.year });
     return {
       description: row.payload.description,
       // Points that aren't prices stay out of the sparkline: $0 abstains, and
       // the payment-figure artifacts that reached history before the
       // extractor guard existed ($1,996 dips on hyundaioflasvegas.com VINs,
       // 2026-08-19) would otherwise draw a price cut that never happened.
-      priceHistory: hist
-        .filter((h) =>
-          hasRealPrice({
-            priceUsd: h.price_usd,
-            condition: row.payload.condition,
-            year: row.payload.year,
-          })
-        )
-        .map((h) => ({ priceUsd: h.price_usd, observedAt: h.observed_at }))
-        .sort((a, b) => a.observedAt.localeCompare(b.observedAt)),
+      // And the series must end at the price on the page (priceSeries.ts):
+      // the chart's last point is labelled as what a shopper pays today.
+      priceHistory: seriesEndingAt(
+        hist
+          .filter((h) => realPrice(h.price_usd))
+          .map((h) => ({ priceUsd: h.price_usd, observedAt: h.observed_at }))
+          .sort((a, b) => a.observedAt.localeCompare(b.observedAt)),
+        row.price_usd ?? undefined
+      ),
+      // The same junk floor applies to the previous site's price: a lease
+      // payment observed on another site is not a prior asking price.
+      priorSite:
+        prior && realPrice(prior.prior_price_usd)
+          ? {
+              domain: prior.prior_domain,
+              priceUsd: prior.prior_price_usd,
+              lastSeenAt: prior.prior_last_seen_at,
+              delistedAt: prior.delisted_at,
+            }
+          : undefined,
     };
   } catch (err) {
     console.error("[listings] Supabase detail read failed:", err);

@@ -66,6 +66,13 @@ export interface Listing {
    */
   listedOn?: string;
   priceHistory?: { priceUsd: number; observedAt: string }[];
+  /**
+   * The most recent other site this car was listed on before its current one,
+   * when that site's page went away and the car came back under a different
+   * domain at a different price (view listing_prior_site, migration 0061). A
+   * fact about a site, not a seller: same-owner rooftop pairs qualify.
+   */
+  priorSite?: { domain: string; priceUsd: number; lastSeenAt: string; delistedAt: string };
   prevPriceUsd?: number; // the asking price before the current one
   priceChangedAt?: string; // when the current price took effect
   /**

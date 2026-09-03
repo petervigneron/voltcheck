@@ -20,6 +20,7 @@ import { listingPriceSignals } from "@/lib/listings/peers";
 import { askVsMarketTile } from "@/lib/listings/card";
 import { PriceScatter } from "@/components/PriceScatter";
 import { PriceSparkline } from "@/components/PriceSparkline";
+import { PriorSiteLine } from "@/components/PriorSiteLine";
 import { BatteryRisk } from "@/components/BatteryRisk";
 import { Gallery } from "@/components/Gallery";
 import { batteryRisk } from "@/lib/nhtsa/battery";
@@ -214,6 +215,7 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
             )}
 
             {listing.priceHistory && <PriceSparkline history={listing.priceHistory} />}
+            {listing.priorSite && <PriorSiteLine site={listing.priorSite} />}
 
             {(tiles.length > 0 || marketTile) && (
               <div className="mt-3 flex flex-wrap gap-1.5">
