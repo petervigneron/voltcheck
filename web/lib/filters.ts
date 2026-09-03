@@ -54,11 +54,23 @@ export const QUICK_TOGGLES: {
   label: string;
   axis: "variant" | "market";
 }[] = [
+  // The set and its order are the owner's call of 2026-09-02, made on
+  // measured evidence (docs/TOGGLE-EVIDENCE-2026-09-02.md: Google autocomplete
+  // over 78 seeds, 21 buyer threads, and the feed's own shares). In brief:
+  // a price cap is the most-typed modifier by far and the market types 10k,
+  // 20k, 15k before 30k — $20,000 is the lowest figure the feed can serve
+  // (~2%; $10k is 300 cars), and it doubles as a daily gauge of that
+  // coverage hole. SUV and AWD lead the body and drivetrain demand. 300 is
+  // the range figure typed first; 200+ passed 99.4% of BEVs, a BEV/PHEV
+  // switch in disguise. Under 60k miles was dropped: no figure was typed in
+  // 1,103 suggestions and it kept 88% of used cars (the panel still has the
+  // field). Heat pump and price cut stay on forum and "deals" demand.
+  // filter_toggled events (0058) now count every press, so the next revision
+  // can be made on the site's own numbers.
+  { key: "maxPrice", value: "20000", label: "Under $20,000", axis: "market" },
   { key: "body", value: "suv", label: "SUVs", axis: "variant" },
-  { key: "minRange", value: "200", label: "200+ mi range", axis: "variant" },
-  { key: "maxMiles", value: "60000", label: "Under 60k miles", axis: "market" },
-  { key: "maxPrice", value: "30000", label: "Under $30,000", axis: "market" },
   { key: "drive", value: "AWD", label: "AWD", axis: "variant" },
+  { key: "minRange", value: "300", label: "300+ mi range", axis: "variant" },
   { key: "heatPump", value: "1", label: "Heat pump", axis: "variant" },
   { key: "cut", value: "1", label: "Price cut", axis: "market" },
 ];
