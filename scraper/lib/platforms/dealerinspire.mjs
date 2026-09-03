@@ -135,7 +135,22 @@ export function dealerInspireVdpVehicle(html, vin) {
   return null;
 }
 
-async function readSrp(origin, path, { maxPages = DEALERINSPIRE_MAX_PAGES } = {}) {
+// The crawl's own limits, honoured between browser loads: the per-domain
+// clock (crawl.mjs --domain-cap-min) and the row's page budget. Measured
+// 2026-09-03: the first rolling-crawl run after 1,458 Dealer Inspire rooftops
+// were promoted lost ALL 48 slices to the 28-minute job timeout before their
+// sync step — this lane ran 60–160 Chrome loads per rooftop and nothing
+// inside it looked at the clock. A lane that stops here returns what it has
+// with complete=false, which db-sync reads as "do not delist", and the next
+// slice picks the rooftop up again.
+export function dealerInspireLimitsExhausted(limits, loads) {
+  if (!limits) return false;
+  if (limits.deadlineAt && Date.now() > limits.deadlineAt) return true;
+  if (limits.maxLoads && loads >= limits.maxLoads) return true;
+  return false;
+}
+
+async function readSrp(origin, path, { maxPages = DEALERINSPIRE_MAX_PAGES, limits = null, loadsSoFar = 0 } = {}) {
   const cards = [];
   const seen = new Set();
   let url = dealerInspireSrpUrl(origin, path);
@@ -143,6 +158,7 @@ async function readSrp(origin, path, { maxPages = DEALERINSPIRE_MAX_PAGES } = {}
   let pages = 0;
   let status = null;
   while (url && pages < maxPages) {
+    if (dealerInspireLimitsExhausted(limits, loadsSoFar + requests)) return { cards, requests, pages, status, complete: false, exhausted: true };
     let res = await browserFetch(url);
     requests++;
     // One more try on a failed page. Measured 2026-09-02: faricykia.com's 24
@@ -188,7 +204,8 @@ async function motiveConfigByBrowser(origin) {
   return { config: rideMotiveConfig(home.body), requests: 1 };
 }
 
-export async function pullDealerInspire(origin, { srps = DEALERINSPIRE_SRPS } = {}) {
+export async function pullDealerInspire(origin, { srps = DEALERINSPIRE_SRPS, deadlineAt = 0, maxLoads = 0 } = {}) {
+  const limits = deadlineAt || maxLoads ? { deadlineAt, maxLoads } : null;
   const motive = await motiveConfigByBrowser(origin);
   if (motive.unavailable) return { ok: false, complete: false, found: 0, candidates: 0, vehicles: [], requests: 1, vdpFailures: 0, why: "browser_unavailable" };
   if (motive.config) {
@@ -197,12 +214,14 @@ export async function pullDealerInspire(origin, { srps = DEALERINSPIRE_SRPS } = 
   }
   const cards = [];
   const seen = new Set();
-  let requests = 0;
+  let requests = 1; // the homepage read above
   let complete = true;
   let anySrp = false;
+  let stopped = false;
   for (const path of srps) {
-    const r = await readSrp(origin, path);
+    const r = await readSrp(origin, path, { limits, loadsSoFar: requests });
     requests += r.requests;
+    if (r.exhausted) stopped = true;
     if (r.status === "browser_unavailable") return { ok: false, complete: false, found: 0, candidates: 0, vehicles: [], requests, vdpFailures: 0, why: "browser_unavailable" };
     if (r.pages === 0) {
       // A rooftop with no /new-vehicles/ (independents on DI exist) is not a
@@ -226,6 +245,11 @@ export async function pullDealerInspire(origin, { srps = DEALERINSPIRE_SRPS } = 
       vdpFailures++;
       continue;
     }
+    if (dealerInspireLimitsExhausted(limits, requests)) {
+      stopped = true;
+      vdpFailures++;
+      continue;
+    }
     let res = await browserFetch(c.url);
     requests++;
     if (res.status === "browser_unavailable") return { ok: false, complete: false, found: cards.length, candidates: cands.length, vehicles, requests, vdpFailures, why: "browser_unavailable" };
@@ -241,7 +265,16 @@ export async function pullDealerInspire(origin, { srps = DEALERINSPIRE_SRPS } = 
     }
     vehicles.push(v);
   }
-  return { ok: true, complete: complete && vdpFailures === 0, found: cards.length, candidates: cands.length, vehicles, requests, vdpFailures };
+  return {
+    ok: true,
+    complete: complete && vdpFailures === 0 && !stopped,
+    found: cards.length,
+    candidates: cands.length,
+    vehicles,
+    requests,
+    vdpFailures,
+    ...(stopped ? { why: "stopped at the crawl's time cap or page budget" } : {}),
+  };
 }
 
 /** For probe: the first used SRP page by browser. `found` is that page's

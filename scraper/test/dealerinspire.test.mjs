@@ -77,3 +77,14 @@ test("cards without data-vin are read off the VDP hrefs (the second classic mark
   assert.equal(dealerInspireIsCandidate(cards[0]), true);
   assert.equal(dealerInspireIsCandidate(cards[1]), false);
 });
+
+// The crawl's limits are honoured between loads: a deadline already past or
+// a spent page budget stops the lane before its next load; no limits, no stop.
+test("dealerInspireLimitsExhausted: deadline and page budget, pure", async () => {
+  const { dealerInspireLimitsExhausted } = await import("../lib/platforms/dealerinspire.mjs");
+  assert.equal(dealerInspireLimitsExhausted(null, 500), false);
+  assert.equal(dealerInspireLimitsExhausted({ deadlineAt: Date.now() - 1, maxLoads: 0 }, 0), true);
+  assert.equal(dealerInspireLimitsExhausted({ deadlineAt: Date.now() + 60000, maxLoads: 0 }, 999), false);
+  assert.equal(dealerInspireLimitsExhausted({ deadlineAt: 0, maxLoads: 25 }, 24), false);
+  assert.equal(dealerInspireLimitsExhausted({ deadlineAt: 0, maxLoads: 25 }, 25), true);
+});

@@ -531,7 +531,10 @@ async function crawlDealer(domain) {
   const BROWSER_LANES = { dealerinspire: pullDealerInspire, dealercenter: pullDealerCenter };
   if (BROWSER_LANES[dvPlat]) {
     const before = report.evs.length;
-    const r = await BROWSER_LANES[dvPlat](origin);
+    // The lane gets the same clock and budget the walk below would have had;
+    // without them a Dealer Inspire rooftop ran 60–160 Chrome loads and the
+    // 2026-09-03 06:52 rolling run lost every slice to its job timeout.
+    const r = await BROWSER_LANES[dvPlat](origin, { deadlineAt: domainCapAt || 0, maxLoads: budget });
     report.fetched += r.requests ?? 0;
     for (const v of r.vehicles ?? []) {
       const cls = classifyEv(v);
