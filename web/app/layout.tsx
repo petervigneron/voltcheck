@@ -46,13 +46,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             >
               VOLTCHECK
             </Link>
+            {/* No "Browse" link: the wordmark is the way home, and a fifth
+                item wrapped the phone header onto two lines (owner,
+                2026-09-03: "on mobile the header is really squished"). */}
             <nav className="ml-auto flex items-stretch text-[11.5px] font-extrabold tracking-[0.04em] uppercase sm:text-[12.5px] sm:tracking-[0.06em]">
-              <Link
-                href="/"
-                className="flex items-center px-3 hover:bg-cobalt sm:px-5 focus:outline-none focus:ring-[3px] focus:ring-inset focus:ring-cobalt"
-              >
-                Browse
-              </Link>
               <Link
                 href="/worth"
                 className="flex items-center px-3 hover:bg-cobalt sm:px-5 focus:outline-none focus:ring-[3px] focus:ring-inset focus:ring-cobalt"

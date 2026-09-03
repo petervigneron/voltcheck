@@ -753,9 +753,14 @@ export function FilterRail({
       </div>
 
       <div className="flex grow flex-wrap items-stretch">
-        {/* The count takes the slack of whichever line the trio lands on — on
-            a desktop. On a phone it and the star hold their width and the sort
-            takes the slack, so its closed label has room to read. Until
+        {/* The count holds its width and sits at the left of the trio's line;
+            a putty spacer takes the slack between it and Sort. With seven
+            toggles the trio is on its own line at every desktop width, and
+            when the count itself was the filler that line read as 900px of
+            white with a number at the far right (owner, 2026-09-03: "too
+            much white space"). Putty is the label-cell ground, so the spacer
+            reads as a bar, not a hole. On a phone the sort takes the slack
+            instead, so its closed label has room to read. Until
             the index lands there's no number to give, and an empty stretched
             cell only reads as a gap on a phone, so that state keeps the
             desktop-only spacer it always was. */}
@@ -764,11 +769,12 @@ export function FilterRail({
         ) : (
           <div
             aria-live="polite"
-            className={`${CELL} flex shrink-0 items-center bg-paper px-4 py-2.5 text-[13px] font-bold tracking-[0.04em] whitespace-nowrap text-ink/60 uppercase tabular-nums sm:min-w-fit sm:flex-1 sm:justify-end`}
+            className={`${CELL} flex shrink-0 items-center bg-paper px-4 py-2.5 text-[13px] font-bold tracking-[0.04em] whitespace-nowrap text-ink/60 uppercase tabular-nums`}
           >
             {count.toLocaleString()} {count === 1 ? "car" : "cars"}
           </div>
         )}
+        <div className="hidden min-w-0 flex-1 border-b-[3px] border-ink bg-putty sm:block" aria-hidden="true" />
 
         {/* The select owns the whole cell so label and chevron stay clickable;
             without the ▼ an appearance-none select reads as a static label. */}

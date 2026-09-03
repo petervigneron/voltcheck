@@ -65,7 +65,12 @@ export function buildFirstPaint(rows: CardRow[]): FirstPaint {
   scored.sort((a, b) => b.k - a.k);
   const quick: Record<string, { n: number; of: number }> = {};
   for (const t of QUICK_TOGGLES) {
-    const test = buildTests((k) => (k === t.key ? t.value : ""))[t.key]!;
+    // No pass at publish time, so a Pro-only toggle (rebate) has no test
+    // here and gets no first-paint count; the client recomputes with the
+    // pass once the index lands. Calling the missing test would have failed
+    // every publish after 01ad0a8.
+    const test = buildTests((k) => (k === t.key ? t.value : ""))[t.key];
+    if (!test) continue;
     const knows = QUICK_KNOWS[t.key];
     let n = 0;
     let of = 0;

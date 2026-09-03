@@ -375,7 +375,14 @@ export function Browse() {
     // the show-or-hide call (components/Filters.tsx).
     const quickCounts: Record<string, { n: number; of: number }> = {};
     for (const t of QUICK_TOGGLES) {
-      const test = buildTests((k) => (k === t.key ? t.value : ""))[t.key]!;
+      // Built with the same context as the grid's own tests, so a Pro-only
+      // toggle (rebate, since 01ad0a8) gets a count for a pass-holder. For
+      // anyone else the builder returns no test for it, and the toggle gets
+      // no count — which is how the rail hides it. Calling the missing test
+      // crashed the whole browse page ("test is not a function") for every
+      // visitor on main between 01ad0a8 and this commit.
+      const test = buildTests((k) => (k === t.key ? t.value : ""), matchCtx)[t.key];
+      if (!test) continue;
       const knows = QUICK_KNOWS[t.key];
       const pool = activeKeys.includes(t.key)
         ? all.filter((r) => activeKeys.every((k) => k === t.key || tests[k]!(r)))
