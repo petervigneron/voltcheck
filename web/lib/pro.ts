@@ -92,6 +92,19 @@ export async function currentPass(): Promise<PassState> {
 
 export const isPro = async () => (await currentPass()).active;
 
+/** The address that bought the pass behind this token, or null (0059
+ *  pro_email). Used to subscribe the Pro standing order under the address the
+ *  sender will recognise as Pro — see the migration header for why this is a
+ *  separate function from pro_check. */
+export const passEmail = (token: string) => proRpc<string | null>("pro_email", { _token: token });
+
+export async function currentPassEmail(): Promise<string | null> {
+  const token = (await cookies()).get(PRO_COOKIE)?.value;
+  if (!token || !/^[0-9a-f-]{36}$/i.test(token)) return null;
+  const email = await passEmail(token);
+  return typeof email === "string" && email.includes("@") ? email : null;
+}
+
 // ── Stripe ─────────────────────────────────────────────────────────────────
 
 const STRIPE_API = "https://api.stripe.com/v1";

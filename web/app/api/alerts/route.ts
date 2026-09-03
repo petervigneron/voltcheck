@@ -50,10 +50,10 @@ export async function POST(req: Request): Promise<Response> {
         to: email,
         subject: "Confirm your Voltcheck alert",
         text:
-          `Confirm to get an email when new cars match ${what}:\n\n${confirmUrl}\n\n` +
+          `Confirm to turn on this alert for ${what}:\n\n${confirmUrl}\n\n` +
           `If you didn't ask for this, ignore it — nothing will be sent.`,
         html:
-          `<p>Confirm to get an email when new cars match ${escapeHtml(what)}:</p>` +
+          `<p>Confirm to turn on this alert for ${escapeHtml(what)}:</p>` +
           `<p><a href="${confirmUrl}">Turn on this alert</a></p>` +
           `<p style="color:#666">If you didn't ask for this, ignore it — nothing will be sent.</p>`,
       });

@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { currentPass, TIERS, type PassState, type TierId } from "@/lib/pro";
+import { currentPass, currentPassEmail, TIERS, type PassState, type TierId } from "@/lib/pro";
 import { FREE_FOREVER, PRO_BENEFITS, offerState } from "@/lib/proOffer";
 import { ProBuyButton } from "@/components/ProBuyButton";
 import { ProRecover } from "@/components/ProRecover";
+import { WatchForm } from "@/components/WatchForm";
 
 // The Pro landing page: the promise, the two passes, and the way back in.
 //
@@ -61,6 +62,17 @@ export default async function ProPage(props: {
     pass = { active: false };
   }
 
+  // The address behind the pass, for the standing order below (0059). Null on
+  // any failure: the form then asks for the address instead of pre-filling it.
+  let passEmail: string | null = null;
+  if (pass.active) {
+    try {
+      passEmail = await currentPassEmail();
+    } catch {
+      passEmail = null;
+    }
+  }
+
   const offer = offerState();
   const tiers = Object.entries(TIERS) as [TierId, (typeof TIERS)[TierId]][];
 
@@ -108,6 +120,22 @@ export default async function ProPage(props: {
           </div>
         </div>
       ) : null}
+
+      {/* ── The standing order (pass-holders) ─────────────────────────── */}
+      {pass.active && (
+        <div className="border-l-[3px] border-ink">
+          <div className={`${CELL} bg-paper px-5 py-6 sm:px-8`}>
+            {/* Owner's copy, verbatim (2026-09-02). */}
+            <p className="max-w-[40ch] text-[19px] leading-tight font-extrabold tracking-[-0.01em]">
+              Describe your ideal car and at your ideal price, and be notified when it becomes
+              available
+            </p>
+            <div className="mt-4">
+              <WatchForm email={passEmail} />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── The promise ──────────────────────────────────────────────── */}
       <div className="border-t-[3px] border-l-[3px] border-ink">
@@ -170,9 +198,11 @@ export default async function ProPage(props: {
                     {b.live ? "Live" : "Coming"}
                   </span>
                 </div>
-                <p className="mt-1 max-w-[62ch] text-[13.5px] leading-relaxed text-ink/75">
-                  {b.detail}
-                </p>
+                {b.detail && (
+                  <p className="mt-1 max-w-[62ch] text-[13.5px] leading-relaxed text-ink/75">
+                    {b.detail}
+                  </p>
+                )}
               </li>
             ))}
           </ul>

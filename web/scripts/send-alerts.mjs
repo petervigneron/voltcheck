@@ -26,14 +26,18 @@
 // Both windows are additionally capped at 7 days back, so a subscription
 // that predates a sender outage gets a bounded catch-up, not an archive.
 //
-// Pro is not a cadence here (owner, 2026-09-02: price-drop alerts are for
-// everyone, untiered) — every confirmed subscription is matched on every run,
-// and publish-feed.yml runs this after every feed publish as well as the
-// daily schedule in alerts.yml. A pass changes ONE thing: a subscription whose
-// address holds a live pass (pro_passes, migration 0045) may use the deals
-// filter (?deal=1, lib/listings/deal.ts), which match.ts applies only when
-// MatchContext.pro is true — the same rule the grid follows. Because
-// last_sent_at advances per send, the two schedules cannot double-mail.
+// Free and Pro (owner, 2026-09-02, both decisions the same evening):
+//   * Price-drop alerts are for everyone, at the same cadence — every
+//     confirmed subscription is matched on every run, and publish-feed.yml
+//     runs this after every feed publish as well as the daily schedule in
+//     alerts.yml. last_sent_at advances per send, so the two cannot
+//     double-mail.
+//   * NEW-CAR emails are Pro. A subscription whose address holds a live pass
+//     (pro_passes, migration 0045) gets the "New listings" section — that is
+//     the standing order, lib/watch.ts — and may use the deals filter
+//     (?deal=1, lib/listings/deal.ts, applied by match.ts only when
+//     MatchContext.pro is true, the same rule the grid follows). A free
+//     subscription gets the "Price cuts" section only.
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
@@ -123,14 +127,17 @@ for (const sub of subs) {
   const params = new URLSearchParams(sub.params ?? "");
   const zip = (params.get("zip") ?? "").trim().slice(0, 5);
   const origin = /^\d{5}$/.test(zip) ? zips[zip] : undefined;
+  const isPro = proEmails.has(String(sub.email).toLowerCase());
   const tests = buildTests((k) => params.get(k) ?? "", {
     distanceMi: origin ? (r) => (r.loc ? milesBetween(origin, r.loc) : undefined) : undefined,
-    pro: proEmails.has(String(sub.email).toLowerCase()),
+    pro: isPro,
   });
   const matches = rows.filter((r) => rowMatches(tests, r));
 
   const since = Math.max(Date.parse(sub.last_sent_at ?? sub.created_at ?? 0) || 0, now - CATCHUP_MS);
-  const fresh = matches.filter((r) => r.listedOn && Date.parse(r.listedOn) > since);
+  // New-car emails are the Pro half (header). A free subscription's fresh
+  // list is empty by rule, not by absence of cars.
+  const fresh = isPro ? matches.filter((r) => r.listedOn && Date.parse(r.listedOn) > since) : [];
   const freshIds = new Set(fresh.map((r) => r.id));
   const cuts = matches.filter((r) => r.cut && Date.parse(r.cut.at) > since && !freshIds.has(r.id));
   if (!fresh.length && !cuts.length) continue;

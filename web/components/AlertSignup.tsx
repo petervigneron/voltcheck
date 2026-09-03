@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { REMOVABLE, describeFilter } from "@/lib/filters";
+import { useProState } from "@/lib/useProState";
 
 // Email capture for saved-search alerts, rendered as a band under the browse
 // grid. Ships dark until NEXT_PUBLIC_ALERTS_ENABLED=1 (Vercel env): the form
@@ -17,6 +18,10 @@ export function AlertSignup() {
   const sp = useSearchParams();
   const [email, setEmail] = useState("");
   const [state, setState] = useState<"idle" | "sending" | "done" | "error">("idle");
+  // Free alerts are price cuts only (owner, 2026-09-02); new-car emails go to
+  // a pass-holder's address (scripts/send-alerts.mjs). The line under the
+  // grid says which one this visitor is signing up for.
+  const pro = useProState();
   if (!ENABLED) return null;
 
   // The subscription is the search: same params the URL carries, minus the
@@ -53,7 +58,9 @@ export function AlertSignup() {
       <div className={`${CELL} flex min-w-[240px] flex-1 flex-col justify-center bg-saffron px-5 py-4`}>
         <span className="text-[10.5px] font-extrabold tracking-[0.14em] uppercase">Alerts · {label}</span>
         <span className="text-[15px] leading-tight font-extrabold tracking-[-0.01em]">
-          Email me when cars matching this search are listed or cut in price
+          {pro === true
+            ? "Email me when cars matching this search are listed or cut in price"
+            : "Email me when a car matching this search is cut in price"}
         </span>
       </div>
       {state === "done" ? (

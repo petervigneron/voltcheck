@@ -20,10 +20,14 @@
 // 2026-09-02 evening the owner replaced that with the three below, in his own
 // words, and ruled that price-drop alerts are for everyone — untiered — so
 // the cadence distinction was removed (publish-feed.yml now runs the sender
-// for every subscriber after every publish). What a pass buys today is one
-// thing: the deals filter (lib/listings/deal.ts, ≥DEAL_MIN_PCT under similar
-// listings), applied on the grid and honoured in a pass-holder's saved-search
-// emails. The other two are research lanes not yet built, and say so.
+// for every subscriber after every publish). Later the same evening the owner
+// added the standing order — "describe your ideal car ... be notified when it
+// becomes available" — and ruled that FREE alerts are price-cut only, so
+// new-car emails are the Pro half (send-alerts.mjs). What a pass buys today:
+// the deals filter (lib/listings/deal.ts, ≥DEAL_MIN_PCT under similar
+// listings, on the grid and in a pass-holder's emails) and the standing
+// order (lib/watch.ts). Market trends and rebates are research lanes not yet
+// built, and say so.
 
 import { DEAL_MIN_PCT } from "./listings/deal";
 
@@ -55,6 +59,13 @@ export const PRO_BENEFITS: ProBenefit[] = [
     title: "Rebate eligibility",
     detail: "We've researched with vehicles may qualify for state or local tax credits or utility rebates.",
     live: false,
+  },
+  {
+    // The standing order (lib/watch.ts, components/WatchForm.tsx). The
+    // owner's sentence is the heading over the form; no separate line yet.
+    title: "Describe your ideal car and at your ideal price, and be notified when it becomes available",
+    detail: "",
+    live: true,
   },
 ];
 

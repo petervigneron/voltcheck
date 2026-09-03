@@ -102,6 +102,7 @@ test("the lineup is the owner's (2026-09-02): deals filter live, trends and reba
   // and "unlimited alerts" stays cut.
   assert.equal(titles.some((t) => t.includes("alert") || t.includes("unlimited")), false);
   assert.equal(PRO_BENEFITS.find((b) => b.title === "Filter by deals")?.live, true);
+  assert.equal(PRO_BENEFITS.find((b) => b.title.startsWith("Describe your ideal car"))?.live, true);
   assert.equal(PRO_BENEFITS.find((b) => b.title === "Market trends")?.live, false);
   assert.equal(PRO_BENEFITS.find((b) => b.title === "Rebate eligibility")?.live, false);
   // The page prints the same threshold the filter applies.
