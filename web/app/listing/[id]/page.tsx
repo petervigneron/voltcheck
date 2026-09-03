@@ -20,6 +20,9 @@ import { listingPriceSignals } from "@/lib/listings/peers";
 import { askVsMarketTile } from "@/lib/listings/card";
 import { PriceScatter } from "@/components/PriceScatter";
 import { PriceSparkline } from "@/components/PriceSparkline";
+import { PriceTrendCharts } from "@/components/PriceTrend";
+import { ProBlur } from "@/components/ProBlur";
+import { fetchPriceTrend } from "@/lib/trend";
 import { BatteryRisk } from "@/components/BatteryRisk";
 import { Gallery } from "@/components/Gallery";
 import { batteryRisk } from "@/lib/nhtsa/battery";
@@ -150,6 +153,11 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
   // something two cards should be compared on. Silent for any cohort whose
   // name we could not place in NHTSA's own vocabulary.
   const battery = await batteryRisk(listing.make, listing.model, listing.year);
+  // Market trends (0061/0062): what a standard car of this cohort fetched by
+  // quarter and is asked by week. Rendered for everyone, blurred until the
+  // browser holds a pass (components/ProBlur.tsx) — owner, 2026-09-03. The
+  // VIN narrows it to this car's own cohort when that clears the floor.
+  const trend = await fetchPriceTrend({ make: listing.make, model: listing.model, year: listing.year, vin: listing.vin });
   // Both price signals, decided by the same gates as the browse grid
   // (lib/listings/peers.ts). vsSold (the Washington-title-fit) is computed
   // but, since 2026-08-20 (docs/agents/pricing-model-2026-08-20.md), never
@@ -343,6 +351,24 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
               {scatter}
             </div>
           ) : null}
+
+          {trend && (trend.sales || trend.asks) && (
+            <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5">
+              <ProBlur>
+                <PriceTrendCharts trend={trend} />
+                {trend.sales && (
+                  <a
+                    href="https://data.wa.gov/Transportation/Electric-Vehicle-Title-and-Registration-Activity/rpr4-cgyd"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 inline-block text-[10.5px] font-extrabold uppercase tracking-[0.14em] text-zinc-400 hover:text-cobalt"
+                  >
+                    WA DOL (ODbL)
+                  </a>
+                )}
+              </ProBlur>
+            </div>
+          )}
 
           {e.row && (
             <Section title={`${listing.model}${claim.assert && displayTrim(listing) ? ` ${claim.trim}` : ""}`}>
