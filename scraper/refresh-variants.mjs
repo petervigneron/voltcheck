@@ -68,6 +68,11 @@ const VIEWS = [
   // if the night runs out of road. Its cost grows with the archive — 0057's
   // header says what to do the night it crowds its 60s budget.
   "ev_cohort_ask_weekly",
+  // The market-trend views (0061). Sales is cheap (0.2s, quarterly over WA
+  // sales since 2019); asks walks the same weekly snapshots as 0057 (11.4s
+  // at four weeks, 2026-09-03) and grows with the archive the same way.
+  "ev_price_trend_sales",
+  "ev_price_trend_asks",
 ];
 
 const failed = [];
