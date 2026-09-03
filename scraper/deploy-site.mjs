@@ -514,6 +514,20 @@ async function smoke(base, extraHeaders) {
     const href = await page.evaluate(() => document.querySelector('a[href^="/listing/"]')?.getAttribute("href") ?? null);
     if (href) await visit(href, [["the car's heading", "h1", 1]]);
     else problems.push("/: no card links to a listing page");
+    // The model hubs, for the same reason the browse page is here: /ev is the
+    // only crawlable route into the listing corpus (the grid builds its links
+    // in the browser), so a hub that renders no cars is a dead crawl path
+    // while every route still answers 200 — the exact shape of the failure
+    // this check was written for. A hub reads the published hubs.json
+    // artifact, so a missing or malformed one empties EVERY hub at once, and
+    // that is what the car-link assertion catches.
+    await visit("/ev", [["the model list", 'a[href^="/ev/"]', 1]]);
+    // Followed rather than named: /ev orders makes and models by live count,
+    // so its first link is the biggest model on the site, and naming a model
+    // here would make this check fail the day that nameplate sells out.
+    const hub = await page.evaluate(() => document.querySelector('a[href^="/ev/"]')?.getAttribute("href") ?? null);
+    if (hub) await visit(hub, [["the model's cars", 'a[href^="/listing/"]', 1]]);
+    else problems.push("/ev: no link to a model page");
   } finally {
     await browser.close().catch(() => {});
   }
