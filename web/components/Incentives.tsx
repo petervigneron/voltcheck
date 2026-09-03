@@ -1,5 +1,6 @@
 import type { IncentiveMatch } from "@/lib/incentives/match";
-import { INCENTIVE_COPY, INCENTIVES_COPY_READY } from "@/lib/incentives/copy";
+import { INCENTIVE_COPY } from "@/lib/incentives/copy";
+import { incentivesToRender } from "@/lib/incentives/visible";
 
 // Incentive programs this car meets the car-side conditions of.
 //
@@ -26,8 +27,10 @@ import { INCENTIVE_COPY, INCENTIVES_COPY_READY } from "@/lib/incentives/copy";
 
 const usd = (n: number) => `$${n.toLocaleString("en-US")}`;
 
-export function Incentives({ matches }: { matches: IncentiveMatch[] }) {
-  if (!INCENTIVES_COPY_READY) return null;
+export function Incentives({ matches: all }: { matches: IncentiveMatch[] }) {
+  // Empty while the copy is unwritten (lib/incentives/visible.ts), and empty
+  // when nothing matched: either way, no block and no sentence.
+  const matches = incentivesToRender(all);
   if (matches.length === 0) return null;
   // State and regional programs first, then utility programs under their own
   // label: a utility program is only ever for that utility's own customers,

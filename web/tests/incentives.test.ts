@@ -18,7 +18,10 @@ import type { Listing } from "@/lib/listings/types";
 import { INCENTIVE_PROGRAMS, programById } from "@/lib/incentives/registry";
 import { matchIncentives, dealerState, vehicleKind, cardIncentive, STRICT_POLICY, SITE_POLICY, type MatchPolicy } from "@/lib/incentives/match";
 import { INCENTIVES_COPY_READY } from "@/lib/incentives/copy";
-import { Incentives } from "@/components/Incentives";
+// No .tsx import here: the CI test job runs Node's type stripping without
+// node_modules, and the hook transpiles .tsx by requiring typescript. The
+// gate lives in a .ts module for exactly this reason (lib/incentives/visible.ts).
+import { incentivesToRender } from "@/lib/incentives/visible";
 import { packIndex, unpackIndex } from "@/lib/listings/pack";
 import type { CardRow } from "@/lib/listings/card";
 
@@ -101,7 +104,7 @@ test("the block renders NOTHING while any placeholder string is still a placehol
     STRICT_POLICY
   );
   assert.ok(m.length > 0, "a match exists, so the gate is what keeps it dark");
-  assert.equal(Incentives({ matches: m }), null);
+  assert.deepEqual(incentivesToRender(m), [], "the component renders exactly what this returns: nothing");
 });
 
 const RELAXED: MatchPolicy = SITE_POLICY;
