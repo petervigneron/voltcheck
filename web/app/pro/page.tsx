@@ -3,12 +3,15 @@ import Link from "next/link";
 import { currentPass, currentPassEmail, TIERS, type PassState, type TierId } from "@/lib/pro";
 import { PRO_BENEFITS, offerState } from "@/lib/proOffer";
 import { ProBuyButton } from "@/components/ProBuyButton";
-import { ProRecover } from "@/components/ProRecover";
 import { WatchForm } from "@/components/WatchForm";
+import { currentUser } from "@/lib/auth";
 
-// The Pro landing page: the benefits, the two passes, and the way back in.
+// The Pro landing page: the benefits and the two passes. Since 0063 a pass
+// belongs to an account (currentPass asks pro_mine for the signed-in
+// address), so buying needs sign-in and the way back in on another device is
+// signing in — the "send my link again" form left with it.
 //
-// Dynamic because it reads the vc_pro cookie. It reads nothing else — no
+// Dynamic because it reads the session cookies. It reads nothing else — no
 // feed, no shard, no listing walk — so it renders in milliseconds and cannot
 // be taken down by whatever the database is doing. That is deliberate: the
 // page a paying shopper lands on from their email is the last one that should
@@ -73,6 +76,13 @@ export default async function ProPage(props: {
     }
   }
 
+  let user: Awaited<ReturnType<typeof currentUser>> = null;
+  try {
+    user = await currentUser();
+  } catch {
+    user = null;
+  }
+
   const offer = offerState();
   const tiers = Object.entries(TIERS) as [TierId, (typeof TIERS)[TierId]][];
 
@@ -88,9 +98,8 @@ export default async function ProPage(props: {
               {pass.expires_at ? ` through ${day(pass.expires_at)}` : ""}.
             </p>
             <p className="mt-2 text-[13px] leading-relaxed text-paper/85">
-              It does not renew and you will not be charged again. This browser will remember it
-              until then; on another device, open the link from your purchase email, or have it
-              sent again below.
+              It does not renew and you will not be charged again.
+              {user ? " Sign in on any device and it is there." : " Sign in on any device with the address you paid with and it is there."}
             </p>
           </div>
         </div>
@@ -115,7 +124,7 @@ export default async function ProPage(props: {
               Mail apps sometimes trim a long link in half.
             </p>
             <p className="mt-2 text-[13px] leading-relaxed text-ink/80">
-              Have a fresh one sent to the address you paid with, at the bottom of this page.
+              <Link href="/account?next=%2Fpro" className="text-cobalt underline underline-offset-2">Sign in</Link> with the address you paid with and your pass is there.
             </p>
           </div>
         </div>
@@ -202,8 +211,15 @@ export default async function ProPage(props: {
                 {money(t.amountCents)}
               </p>
             </div>
-            {offer === "open" ? (
+            {offer === "open" && user ? (
               <ProBuyButton tier={id} label={`Get the ${t.label}`} />
+            ) : offer === "open" ? (
+              <Link
+                href="/account?next=%2Fpro"
+                className={`${CELL} block w-full bg-ink px-5 py-4 text-left text-[13px] font-extrabold tracking-[0.06em] text-paper uppercase hover:bg-cobalt focus:outline-none focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-cobalt`}
+              >
+                Sign in to get the {t.label}
+              </Link>
             ) : (
               <div className={`${CELL} bg-putty px-5 py-4`}>
                 <span className="text-[13px] font-extrabold tracking-[0.06em] text-ink/55 uppercase">
@@ -213,19 +229,6 @@ export default async function ProPage(props: {
             )}
           </div>
         ))}
-      </div>
-
-      {/* ── Recovery ─────────────────────────────────────────────────── */}
-      <div className="border-l-[3px] border-ink">
-        <div className={`${CELL} bg-putty px-5 py-6 sm:px-8`}>
-          {/* Owner's heading (2026-09-03). The form still answers the same
-              way whether or not the address has a pass — lib/proRecover.ts —
-              the page just no longer explains that. */}
-          <span className={`${EYEBROW} text-ink/55`}>Forgot your email?</span>
-          <div className="mt-4 max-w-[560px]">
-            <ProRecover />
-          </div>
-        </div>
       </div>
 
       <div className="border-l-[3px] border-ink">

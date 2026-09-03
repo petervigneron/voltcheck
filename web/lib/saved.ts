@@ -1,5 +1,7 @@
-// Saved cars, browser-side. No accounts exist, so localStorage is the only
-// shelf there is — one versioned key, an array of entries, newest first.
+// Saved cars, browser-side: one versioned localStorage key, an array of
+// entries, newest first. This is the shelf everything reads, signed in or
+// not; for a signed-in shopper components/ShelfSync.tsx mirrors it to the
+// account (migration 0063) and back, so the same list is on every device.
 //
 // The identifier is the listing id, which is the lowercase VIN
 // (scraper/ingest.mjs): the VIN is the listings table's primary key, it
@@ -53,6 +55,12 @@ function write(entries: SavedEntry[]): void {
 
 export function isSaved(id: string): boolean {
   return readSaved().some((e) => e.id === id);
+}
+
+/** Replace the whole shelf — the account sync's write (components/ShelfSync.tsx).
+ *  Fires the same change event a toggle does, so every star updates. */
+export function replaceSaved(entries: SavedEntry[]): void {
+  write(entries);
 }
 
 /** Save if absent, remove if present. Returns the new state: true = saved. */

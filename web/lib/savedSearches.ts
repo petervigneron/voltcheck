@@ -4,7 +4,8 @@
 // without rebuilding it. Same shelf mechanics: one versioned localStorage key,
 // newest first, a change event both tabs and this tab listen on.
 //
-// No accounts exist, so this is a bookmark, not a subscription. The optional
+// A bookmark, not a subscription — mirrored to the account for a signed-in
+// shopper by components/ShelfSync.tsx, like the cars. The optional
 // "also email me" on each saved search hands its params to the existing alerts
 // lane (components/AlertSignup.tsx, /api/alerts) — that half only appears when
 // alerts are switched on; the local shelf works regardless.
@@ -102,6 +103,11 @@ export function toggleSavedSearch(entry: Omit<SavedSearch, "savedAt">): boolean 
   }
   write([{ ...entry, savedAt: new Date().toISOString() }, ...cur]);
   return true;
+}
+
+/** Replace the whole shelf — the account sync's write (components/ShelfSync.tsx). */
+export function replaceSavedSearches(entries: SavedSearch[]): void {
+  write(entries);
 }
 
 export function removeSavedSearch(qs: string): void {

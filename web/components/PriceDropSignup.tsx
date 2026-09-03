@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { readSaved } from "@/lib/saved";
 import { postWatchlist, readWatchlistEmail, writeWatchlistEmail } from "@/lib/watchlist";
+import { useUser } from "@/lib/useUser";
 
 // The free alert's one control, on the saved-cars tab of /saved: an address
 // for "tell me when one of these drops in price". Ships dark until
@@ -17,11 +18,78 @@ import { postWatchlist, readWatchlistEmail, writeWatchlistEmail } from "@/lib/wa
 //
 // Copy is the owner's ("price drop alerts on saved cars", 2026-09-02); the
 // button words are the alerts lane's existing ones.
+//
+// Signed in (0063) there is no address to give: the alert is a switch on
+// the account, on at once (the address was confirmed at sign-up), and the
+// shelf sync keeps its list current from every device. This component asks
+// /api/alerts/watchlist which way the switch is and flips it.
 
 const ENABLED = process.env.NEXT_PUBLIC_ALERTS_ENABLED === "1";
 const CELL = "border-r-[3px] border-b-[3px] border-ink";
 
 export function PriceDropSignup() {
+  const user = useUser();
+  if (!ENABLED) return null;
+  if (user) return <AccountSwitch />;
+  if (user === undefined) return null;
+  return <AddressForm />;
+}
+
+function AccountSwitch() {
+  const [on, setOn] = useState<boolean | null>(null);
+  const [busy, setBusy] = useState(false);
+  useEffect(() => {
+    let alive = true;
+    fetch("/api/alerts/watchlist", { cache: "no-store" })
+      .then(async (r) => (r.ok ? ((await r.json()) as { on?: boolean }).on === true : false))
+      .catch(() => false)
+      .then((v) => {
+        if (alive) setOn(v);
+      });
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  const flip = async () => {
+    if (busy || on === null) return;
+    setBusy(true);
+    try {
+      const res = await fetch("/api/alerts/watchlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ on: !on }),
+      });
+      if (res.ok) setOn(!on);
+    } catch {
+      // the switch stays where it was
+    }
+    setBusy(false);
+  };
+
+  return (
+    <div className="flex flex-wrap items-stretch border-l-[3px] border-ink">
+      <div className={`${CELL} flex min-w-[240px] flex-1 flex-col justify-center bg-saffron px-5 py-4`}>
+        <span className="text-[15px] leading-tight font-extrabold tracking-[-0.01em]">
+          Price drop alerts on saved cars
+        </span>
+      </div>
+      <button
+        type="button"
+        onClick={flip}
+        disabled={busy || on === null}
+        aria-pressed={on === true}
+        className={`${CELL} px-6 py-4 text-[13px] font-extrabold tracking-[0.06em] uppercase focus:outline-none focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-cobalt disabled:opacity-60 ${
+          on ? "bg-teal text-paper hover:bg-vermilion" : "bg-ink text-paper hover:bg-cobalt"
+        }`}
+      >
+        {on === null ? "…" : on ? "On — turn off" : "Get alerts"}
+      </button>
+    </div>
+  );
+}
+
+function AddressForm() {
   const [known, setKnown] = useState<string | null>(null);
   const [email, setEmail] = useState("");
   const [state, setState] = useState<"idle" | "sending" | "done" | "kept" | "error">("idle");
@@ -31,7 +99,6 @@ export function PriceDropSignup() {
     const sync = () => setKnown(readWatchlistEmail());
     sync();
   }, []);
-  if (!ENABLED) return null;
 
   const shelfIds = () => [...readSaved()].sort((a, b) => b.savedAt.localeCompare(a.savedAt)).map((e) => e.id);
 

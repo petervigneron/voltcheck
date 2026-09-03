@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { REMOVABLE, describeFilter } from "@/lib/filters";
 import { useProState } from "@/lib/useProState";
+import { useUser } from "@/lib/useUser";
 
 // Email capture for saved-search alerts, rendered as a band under the browse
 // grid. Ships dark until NEXT_PUBLIC_ALERTS_ENABLED=1 (Vercel env): the form
@@ -17,7 +18,9 @@ const CELL = "border-r-[3px] border-b-[3px] border-ink";
 export function AlertSignup() {
   const sp = useSearchParams();
   const [email, setEmail] = useState("");
-  const [state, setState] = useState<"idle" | "sending" | "done" | "error">("idle");
+  // "done": a confirm mail went out. "on": signed in, live at once (0063).
+  const [state, setState] = useState<"idle" | "sending" | "done" | "on" | "error">("idle");
+  const user = useUser();
   // Search-based alerts are Pro only (owner, 2026-09-02): the free alert is
   // price drops on SAVED cars (components/PriceDropSignup.tsx). A visitor
   // without a pass sees no band here at all; null (pass state still on its
@@ -46,9 +49,10 @@ export function AlertSignup() {
       const res = await fetch("/api/alerts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim(), params: params.toString(), label }),
+        body: JSON.stringify({ email: user ?? email.trim(), params: params.toString(), label }),
       });
-      setState(res.ok ? "done" : "error");
+      const body = (await res.json().catch(() => ({}))) as { status?: string };
+      setState(res.ok ? (body.status === "confirmed" ? "on" : "done") : "error");
     } catch {
       setState("error");
     }
@@ -62,23 +66,27 @@ export function AlertSignup() {
           Email me when cars matching this search are listed or cut in price
         </span>
       </div>
-      {state === "done" ? (
+      {state === "done" || state === "on" ? (
         <div className={`${CELL} flex flex-1 items-center bg-teal px-5 py-4 text-paper`}>
           <span className="text-[13px] font-extrabold tracking-[0.06em] uppercase">
-            Check your inbox to confirm
+            {state === "on" ? "Alerts on" : "Check your inbox to confirm"}
           </span>
         </div>
       ) : (
         <form onSubmit={submit} className="flex flex-1 flex-wrap items-stretch">
-          <input
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@example.com"
-            aria-label="Email address for alerts"
-            className={`${CELL} min-w-[200px] flex-1 bg-paper px-5 py-4 text-[14px] font-bold focus:outline-none focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-cobalt`}
-          />
+          {user ? (
+            <div className={`${CELL} flex min-w-[200px] flex-1 items-center bg-paper px-5 py-4 text-[14px] font-bold`}>{user}</div>
+          ) : (
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+              aria-label="Email address for alerts"
+              className={`${CELL} min-w-[200px] flex-1 bg-paper px-5 py-4 text-[14px] font-bold focus:outline-none focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-cobalt`}
+            />
+          )}
           <button
             type="submit"
             disabled={state === "sending"}

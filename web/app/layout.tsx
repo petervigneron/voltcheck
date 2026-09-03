@@ -3,6 +3,8 @@ import Link from "next/link";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { WatchlistSync } from "@/components/WatchlistSync";
+import { ShelfSync } from "@/components/ShelfSync";
+import { AccountLink } from "@/components/AccountLink";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -69,6 +71,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               >
                 VIN check
               </Link>
+              <AccountLink />
             </nav>
           </div>
         </header>
@@ -111,6 +114,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         {/* Keeps the free price-drop alert's list in step with the ☆ on any
             page (components/WatchlistSync.tsx). Renders nothing. */}
         <WatchlistSync />
+        {/* Mirrors the shelves to the account for a signed-in shopper
+            (components/ShelfSync.tsx). Renders nothing. */}
+        <ShelfSync />
       </body>
     </html>
   );

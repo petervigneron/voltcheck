@@ -97,13 +97,14 @@ export async function POST(req: Request): Promise<Response> {
     subject: `Your Voltcheck Pro ${label}`,
     text:
       `Your ${label} is active${until ? ` through ${until}` : ""}.\n\n` +
-      `Open it here — this link is your access, so keep the email:\n${link}\n\n` +
+      `Sign in at ${siteOrigin()}/account with this address on any device and it is there.\n` +
+      `Or open this link on a device without signing in:\n${link}\n\n` +
       `It does not renew and you will not be charged again.\n`,
     html:
       `<p>Your <strong>${label}</strong> is active${until ? ` through ${until}` : ""}.</p>` +
-      `<p><a href="${link}">Open Voltcheck Pro</a></p>` +
-      `<p style="color:#555">This link is your access — keep the email. ` +
-      `The pass does not renew and you will not be charged again.</p>`,
+      `<p>Sign in at <a href="${siteOrigin()}/account">${siteOrigin().replace(/^https?:\/\//, "")}/account</a> with this address on any device and it is there. ` +
+      `Or <a href="${link}">open this link</a> on a device without signing in.</p>` +
+      `<p style="color:#555">The pass does not renew and you will not be charged again.</p>`,
   });
 
   // The pass exists either way; only the delivery failed, and /pro has a

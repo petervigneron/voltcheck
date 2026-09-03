@@ -48,11 +48,15 @@ test("a failed access link is explained rather than 404'd", async () => {
   assert.doesNotMatch(odd, /run out|trim a long link/);
 });
 
-test("the recovery form is on the page in every one of those states", async () => {
+test("a visitor who is not signed in is pointed at sign-in from every state", async () => {
+  // The way back in on another device is the account (0063); the old
+  // "send my link again" form is gone and must not come back.
   const states: Record<string, string>[] = [{}, { access: "expired" }, { access: "invalid" }];
   for (const sp of states) {
-    assert.match(await render(sp), /Send my link/i);
+    const html = await render(sp);
+    assert.doesNotMatch(html, /Send my link/i);
   }
+  assert.match(await render({ access: "invalid" }), /href="\/account\?next=%2Fpro"/);
 });
 
 function withKey(value: string | undefined, fn: () => Promise<void>): Promise<void> {
@@ -84,11 +88,16 @@ test("without a live-mode key, both passes are priced but neither can be bought"
   }
 });
 
-test("the button appears exactly when there is something to sell and a live key to charge with", async () => {
+test("with a live key, a visitor who is not signed in is offered sign-in, not a button", async () => {
+  // Buying needs an account (0063: the pass is granted to the account's
+  // address). This render has no request context, so nobody is signed in,
+  // and the tier cell must carry a sign-in link rather than a checkout
+  // button — a button here would 401 at /api/checkout.
   await withKey("sk_live_configured", async () => {
     const open = await render();
-    assert.match(open, /Get the 7-day pass/);
-    assert.match(open, /Get the 60-day pass/);
+    assert.match(open, /Sign in to get the 7-day pass/);
+    assert.match(open, /Sign in to get the 60-day pass/);
+    assert.doesNotMatch(open, /Get the [0-9]/);
     assert.doesNotMatch(open, /Purchasing opens soon/i);
     // No live/coming chips on the page (owner, 2026-09-03); every benefit
     // is listed regardless of its state.

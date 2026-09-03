@@ -1,10 +1,13 @@
 import { cookies } from "next/headers";
 import { createHmac, timingSafeEqual } from "node:crypto";
+import { currentUser, userRpc } from "./auth";
 
-// Voltcheck Pro: the paid side. Backed by migration 0045 (pro_passes), which
-// holds the whole design rationale — no accounts, no passwords, no recurring
-// billing; the access token IS the credential and expires_at is fixed at
-// purchase.
+// Voltcheck Pro: the paid side. Backed by migration 0045 (pro_passes) —
+// no recurring billing, expires_at fixed at purchase — and, since 0063, by
+// the account: a pass is keyed to the buyer's email, checkout requires
+// sign-in and pins that email onto the Stripe session, and currentPass asks
+// pro_mine() for the signed-in address first. The emailed access link and
+// its vc_pro cookie remain as the way in for a device that is not signed in.
 //
 // Stripe is spoken to over plain fetch, the same way lib/alerts.ts speaks to
 // Resend. The SDK would be a large dependency in web/ for two endpoints and a
@@ -88,11 +91,17 @@ export const recoverPass = (email: string) =>
 
 // ── Entitlement ────────────────────────────────────────────────────────────
 
-/** Is the current visitor Pro? Reads the cookie set by /pro/access and asks
- *  the database, which is the only thing that knows the expiry. Deliberately
- *  NOT trusted from the cookie's own contents: the cookie carries the token,
- *  never the entitlement, so a hand-edited cookie buys nothing. */
+/** Is the current visitor Pro? A signed-in account is asked about first
+ *  (pro_mine, 0063: does the account's address hold a pass), then the cookie
+ *  set by /pro/access. Both ask the database, which is the only thing that
+ *  knows the expiry. Deliberately NOT trusted from a cookie's own contents:
+ *  the cookies carry a token, never the entitlement. */
 export async function currentPass(): Promise<PassState> {
+  const user = await currentUser();
+  if (user) {
+    const mine = await userRpc<PassState>(user.jwt, "pro_mine");
+    if (mine?.active) return mine;
+  }
   const token = (await cookies()).get(PRO_COOKIE)?.value;
   if (!token || !/^[0-9a-f-]{36}$/i.test(token)) return { active: false };
   return (await checkPass(token)) ?? { active: false };
@@ -107,6 +116,8 @@ export const isPro = async () => (await currentPass()).active;
 export const passEmail = (token: string) => proRpc<string | null>("pro_email", { _token: token });
 
 export async function currentPassEmail(): Promise<string | null> {
+  const user = await currentUser();
+  if (user) return user.email;
   const token = (await cookies()).get(PRO_COOKIE)?.value;
   if (!token || !/^[0-9a-f-]{36}$/i.test(token)) return null;
   const email = await passEmail(token);
@@ -128,7 +139,7 @@ function form(obj: Record<string, string | number | undefined>): string {
  *  Prices are inlined via price_data rather than referencing pre-made Price
  *  objects, so the ladder in TIERS is the single source of truth and changing
  *  a price is a code change, not a code change plus dashboard surgery. */
-export async function createCheckout(tier: TierId, origin: string): Promise<string | null> {
+export async function createCheckout(tier: TierId, origin: string, email: string): Promise<string | null> {
   const key = process.env.STRIPE_SECRET_KEY;
   if (!key) return null;
   const t = TIERS[tier];
@@ -146,6 +157,10 @@ export async function createCheckout(tier: TierId, origin: string): Promise<stri
       // webhook must not infer it from the amount — a future price change
       // would silently re-map old sessions to the wrong tier.
       "metadata[tier]": tier,
+      // The account's address, fixed on the session: the webhook grants to
+      // customer_details.email, and this is what makes the pass land on the
+      // account that is paying rather than on whatever was typed at Stripe.
+      customer_email: email,
       // Stripe collects the address itself; we only ever want the email.
       billing_address_collection: "auto",
       success_url: `${origin}/pro/thanks?session={CHECKOUT_SESSION_ID}`,

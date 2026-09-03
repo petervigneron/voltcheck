@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useProState } from "@/lib/useProState";
+import { useUser } from "@/lib/useUser";
 import {
   alertParamsOf,
   readSavedSearches,
@@ -24,7 +25,9 @@ const SAVED_DATE_FMT = new Intl.DateTimeFormat("en-US", { month: "short", day: "
 function AlsoEmailMe({ search }: { search: SavedSearch }) {
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");
-  const [state, setState] = useState<"idle" | "sending" | "done" | "error">("idle");
+  // "done": a confirm mail went out. "on": signed in, live at once (0063).
+  const [state, setState] = useState<"idle" | "sending" | "done" | "on" | "error">("idle");
+  const user = useUser();
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,22 +38,37 @@ function AlsoEmailMe({ search }: { search: SavedSearch }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email: email.trim(),
+          email: user ?? email.trim(),
           params: alertParamsOf(search.qs),
           label: search.label,
         }),
       });
-      setState(res.ok ? "done" : "error");
+      const body = (await res.json().catch(() => ({}))) as { status?: string };
+      setState(res.ok ? (body.status === "confirmed" ? "on" : "done") : "error");
     } catch {
       setState("error");
     }
   };
 
-  if (state === "done") {
+  if (state === "done" || state === "on") {
     return (
       <span className="text-[11px] font-extrabold tracking-[0.08em] text-teal uppercase">
-        Check your inbox to confirm
+        {state === "on" ? "Alerts on" : "Check your inbox to confirm"}
       </span>
+    );
+  }
+
+  // Signed in, the address is the account's: one click, no field.
+  if (!open && user) {
+    return (
+      <button
+        type="button"
+        disabled={state === "sending"}
+        onClick={(e) => void submit(e as unknown as React.FormEvent)}
+        className="text-[11px] font-extrabold tracking-[0.08em] text-ink/60 uppercase hover:text-cobalt disabled:opacity-60"
+      >
+        {state === "sending" ? "…" : "✉ Also email me ▸"}
+      </button>
     );
   }
 

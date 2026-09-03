@@ -56,7 +56,8 @@ export function WatchForm({ email: passEmail }: { email: string | null }) {
   const [zip, setZip] = useState("");
   const [radius, setRadius] = useState("any");
   const [email, setEmail] = useState(passEmail ?? "");
-  const [state, setState] = useState<"idle" | "sending" | "done" | "error">("idle");
+  // "done": a confirm mail went out. "on": signed in, live at once (0063).
+  const [state, setState] = useState<"idle" | "sending" | "done" | "on" | "error">("idle");
 
   const makes = withCurrent(Object.keys(makesModels).sort(), make);
   const models = withCurrent(make ? (makesModels[make] ?? []) : [], model);
@@ -78,7 +79,8 @@ export function WatchForm({ email: passEmail }: { email: string | null }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email.trim(), params, label: describeSearch(params) }),
       });
-      setState(res.ok ? "done" : "error");
+      const body = (await res.json().catch(() => ({}))) as { status?: string };
+      setState(res.ok ? (body.status === "confirmed" ? "on" : "done") : "error");
     } catch {
       setState("error");
     }
@@ -208,9 +210,9 @@ export function WatchForm({ email: passEmail }: { email: string | null }) {
               className="w-full bg-transparent text-[15px] font-bold focus:outline-none placeholder:font-medium placeholder:text-ink/35" />
           )}
         </div>
-        {state === "done" ? (
+        {state === "done" || state === "on" ? (
           <div className={`${CELL} flex items-center bg-teal px-5 py-4 text-paper`}>
-            <span className="text-[13px] font-extrabold tracking-[0.06em] uppercase">Check your inbox to confirm</span>
+            <span className="text-[13px] font-extrabold tracking-[0.06em] uppercase">{state === "on" ? "Alerts on" : "Check your inbox to confirm"}</span>
           </div>
         ) : (
           <button type="submit" disabled={state === "sending" || !params}
