@@ -25,6 +25,8 @@ import { Gallery } from "@/components/Gallery";
 import { batteryRisk } from "@/lib/nhtsa/battery";
 import { batteryWarranty } from "@/lib/listings/warranty";
 import { factLinksFor } from "@/lib/facts/links";
+import { matchIncentives } from "@/lib/incentives/match";
+import { Incentives } from "@/components/Incentives";
 
 // ISR: each listing page renders once, then serves from the CDN for a day —
 // the true cadence of the data underneath it (nightly sync, recheck, price
@@ -353,6 +355,13 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
               the shopper. See components/BatteryRisk.tsx for why it can't
               say more than "NHTSA has one on file" for most makes. */}
           <BatteryRisk data={battery} vin={listing.vin} packReplaced={listing.campaignCheck?.packReplaced} />
+
+          {/* State and utility purchase programs whose car-side conditions
+              this listing meets (lib/incentives/match.ts, strict policy).
+              Renders nothing when none does. The block says which program
+              and states the buyer's conditions; it never says a shopper
+              qualifies. */}
+          <Incentives matches={matchIncentives(e)} />
 
           {/* Cohort answers with their own pages (/facts). The questions are
               the link text — each is one the sheet's own FAQ asks — so the

@@ -1,0 +1,214 @@
+// From web/:
+//   node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs \
+//        --test tests/incentives.test.ts
+//
+// The incentive matcher may only ever say a car meets the CAR-SIDE conditions
+// of a named program, and only where the listing carries the fact each
+// condition is about. Every case below is a way that claim could go wrong on
+// a real listing: a used car named beside a new-only rebate, a plug-in hybrid
+// beside a BEV-only one, a car with no dealer state beside anything, a
+// Silverado EV beside a light-duty cap it does not meet, an asking price
+// passed off as an MSRP. The registry itself is checked too — a live program
+// with no dated source, or an ended one still carrying a figure, fails here
+// rather than rendering.
+import test from "node:test";
+import assert from "node:assert/strict";
+import { enrichListing } from "@/lib/listings/enrich";
+import type { Listing } from "@/lib/listings/types";
+import { INCENTIVE_PROGRAMS, programById } from "@/lib/incentives/registry";
+import { matchIncentives, dealerState, vehicleKind, STRICT_POLICY, type MatchPolicy } from "@/lib/incentives/match";
+
+const RELAXED: MatchPolicy = { askingPriceStandsForMsrp: true, unsettledCarConditionsAreStated: true };
+const TODAY = new Date("2026-09-02T12:00:00Z");
+
+// A 2023 Bolt EUV: the enrichment holds a row for it (EPA 247 mi, so the kind
+// settles as BEV), and it is cheap enough to sit under every price cap.
+const base: Listing = {
+  id: "t",
+  vin: "1G1FY6S04P4100001",
+  year: 2023,
+  make: "Chevrolet",
+  model: "Bolt EUV",
+  trim: "LT",
+  priceUsd: 21500,
+  mileage: 24000,
+  state: "IL",
+  sellerType: "dealer",
+  condition: "used",
+};
+// The same car as leftover new stock: the matcher reads condition, not year.
+const asNew: Listing = { ...base, condition: "new", mileage: 12, priceUsd: 27_500 };
+
+function ids(l: Listing, policy = STRICT_POLICY) {
+  return matchIncentives(enrichListing(l), policy, INCENTIVE_PROGRAMS, TODAY).map((m) => m.program.id);
+}
+function match(l: Listing, id: string, policy = STRICT_POLICY) {
+  return matchIncentives(enrichListing(l), policy, INCENTIVE_PROGRAMS, TODAY).find((m) => m.program.id === id);
+}
+
+test("registry: every program is dated, sourced, and an ended one carries no figure", () => {
+  assert.ok(INCENTIVE_PROGRAMS.length >= 20);
+  for (const p of INCENTIVE_PROGRAMS) {
+    assert.ok(p.sources.length > 0, `${p.id} has a source`);
+    assert.match(p.statusAsOf, /^\d{4}-\d{2}-\d{2}$/, `${p.id} statusAsOf is a date`);
+    if (p.status === "ended") assert.equal(p.amounts.length, 0, `${p.id} is ended and prints no figure`);
+    if (p.status === "live") assert.ok(p.amounts.length > 0, `${p.id} is live and carries the program's figures`);
+  }
+});
+
+test("dealer state: codes and spelled-out names map, territories and blanks do not", () => {
+  assert.equal(dealerState({ state: "IL" }), "IL");
+  assert.equal(dealerState({ state: "il" }), "IL");
+  assert.equal(dealerState({ state: "Pennsylvania" }), "PA");
+  assert.equal(dealerState({ state: "PR" }), undefined);
+  assert.equal(dealerState({ state: "" }), undefined);
+  assert.equal(dealerState({}), undefined);
+});
+
+test("the fixture settles as a BEV from its enrichment row", () => {
+  assert.equal(vehicleKind(enrichListing(base)), "BEV");
+});
+
+test("a used BEV at an Illinois dealer under the price cap meets the Illinois rebate, and nothing else", () => {
+  const m = matchIncentives(enrichListing(base), STRICT_POLICY, INCENTIVE_PROGRAMS, TODAY);
+  assert.deepEqual(
+    m.map((x) => x.program.id),
+    ["il-ev-rebate"]
+  );
+  assert.equal(m[0].amountUsd, 2000, "the program's own standard figure");
+  assert.ok(m[0].purchaserSideAmounts.some((a) => a.usd === 4000), "the low-income figure is stated, not asserted");
+  assert.ok(m[0].purchaserConditions.some((c) => /Illinois resident/.test(c)));
+  assert.deepEqual(m[0].toCheckOnTheCar, [], "strict policy states no unsettled car conditions");
+});
+
+test("no dealer state, no condition, or a private seller: no program at all", () => {
+  assert.deepEqual(ids({ ...base, state: undefined }), []);
+  assert.deepEqual(ids({ ...base, condition: undefined }), []);
+  assert.deepEqual(ids({ ...base, sellerType: "private" }), []);
+});
+
+test("a price over the cap fails a price-paid cap; a placeholder price never passes one", () => {
+  assert.deepEqual(ids({ ...base, priceUsd: 80_001 }), []);
+  assert.deepEqual(ids({ ...base, priceUsd: 0 }), []);
+});
+
+test("a plug-in hybrid never meets a BEV-only program, and an unmatched car has no kind", () => {
+  // 2024 Jeep Wrangler 4xe — a plug-in; the row is what settles it.
+  const phev: Listing = {
+    ...base,
+    vin: "1C4JJXP68RW100001",
+    year: 2024,
+    make: "Jeep",
+    model: "Wrangler 4xe",
+    trim: "Sahara",
+    priceUsd: 39_000,
+  };
+  assert.notEqual(vehicleKind(enrichListing(phev)), "BEV");
+  assert.deepEqual(ids(phev), [], "Illinois pays on all-electric cars only");
+  const unknown: Listing = { ...base, vin: "ZZZ00000000000001", make: "Nobody", model: "Nothing", trim: undefined };
+  assert.equal(vehicleKind(enrichListing(unknown)), undefined);
+  assert.deepEqual(ids(unknown), [], "an unknown kind is not a BEV");
+});
+
+test("new cars: MSRP-capped state programs are unsettled under strict policy; price-paid caps (IL, RI) are not", () => {
+  for (const st of ["CO", "CT", "DE", "MA", "ME", "NJ", "NM", "NY", "OR"]) {
+    // Utility programs are a separate question (their own caps, own tests below).
+    assert.deepEqual(
+      ids({ ...asNew, state: st }).filter((id) => programById(id)?.jurisdiction.kind !== "utility"),
+      [],
+      `${st}: MSRP cap is unsettled from an asking price`
+    );
+  }
+  assert.deepEqual(ids({ ...asNew, state: "IL" }), ["il-ev-rebate"]);
+  assert.ok(ids({ ...asNew, state: "RI" }).includes("ri-drive-ev"), "Rhode Island caps the price paid, which the asking price settles");
+});
+
+test("relaxed policy: an asking price under the cap names the program AND states the sticker check", () => {
+  const ma = match({ ...asNew, state: "MA" }, "ma-mor-ev", RELAXED);
+  assert.ok(ma, "MOR-EV named under the relaxed policy");
+  assert.ok(ma!.toCheckOnTheCar.some((c) => /MSRP at or under \$55,000/.test(c)), "the MSRP cap is stated as a check, not asserted");
+  assert.equal(ma!.amountUsd, 3500);
+  // Still never above the cap, under either policy.
+  assert.equal(match({ ...asNew, state: "MA", priceUsd: 56_000 }, "ma-mor-ev", RELAXED), undefined);
+});
+
+test("ended, waitlisted and out-of-state programs are never named", () => {
+  assert.equal(programById("md-excise-tax-credit")?.status, "waitlist");
+  assert.deepEqual(ids({ ...asNew, state: "MD" }, RELAXED), [], "Maryland's fund is depleted; a waiting list is not money on this car");
+  assert.equal(programById("pa-afv-rebate")?.status, "ended");
+  assert.ok(!ids({ ...base, state: "PA" }, RELAXED).includes("pa-afv-rebate"));
+  assert.deepEqual(ids({ ...base, state: "TX" }, RELAXED), []);
+});
+
+test("utility programs: settled from the car alone, customer status stated; a list or a participating dealer is unsettled", () => {
+  const ca: Listing = { ...base, state: "CA", priceUsd: 19_500 };
+  const strict = ids(ca);
+  assert.ok(strict.includes("ca-pge-pre-owned-ev"), "PG&E: used, 8 kWh or more (the Bolt EUV row holds 65 kWh), any dealer");
+  assert.ok(strict.includes("ca-sdge-pre-owned-ev"));
+  assert.ok(strict.includes("ca-riverside-used-ev"), "a California dealer is a California-licensed dealer");
+  assert.ok(!strict.includes("ca-sce-pre-owned-ev"), "SCE gates on an Eligible Vehicle List the registry does not hold");
+  assert.ok(!strict.includes("ca-ladwp-used-ev"), "LADWP gates on an approved-vehicle list");
+  assert.ok(!strict.includes("ca-mce-ev-instant-rebate"), "MCE requires a participating dealer at point of sale");
+  assert.ok(!strict.includes("ca-burbank-water-power-used-ev"), "Burbank is paused");
+  const pge = match(ca, "ca-pge-pre-owned-ev")!;
+  assert.equal(pge.amountUsd, 1000);
+  assert.ok(pge.purchaserConditions.some((c) => /PG&E residential electric customer/.test(c)));
+  // No pack size on the car → an 8 kWh floor is unmet, not assumed.
+  const noRow: Listing = { ...ca, vin: "ZZZ00000000000001", make: "Nobody", model: "Nothing", trim: undefined };
+  assert.ok(!ids(noRow).includes("ca-pge-pre-owned-ev"));
+  // Every match on a utility program is a utility program, and the
+  // component groups them: check the registry marks them so.
+  for (const id of strict.filter((x) => x.startsWith("ca-"))) {
+    assert.equal(programById(id)?.jurisdiction.kind === "utility" || id === "ca-clean-cars-4-all", true);
+  }
+});
+
+test("used-car age and odometer rules read against the current year", () => {
+  // Maine: used BEV, model year within 6 years, 72,000 mi or under, price paid ≤ $50,000.
+  const me: Listing = { ...base, state: "ME", year: 2020, mileage: 60_000, priceUsd: 15_000, vin: "1G1FY6S06L4100003", model: "Bolt EV" };
+  assert.ok(ids(me, RELAXED).includes("me-efficiency-maine-ev-rebate"));
+  assert.ok(!ids({ ...me, year: 2019 }, RELAXED).includes("me-efficiency-maine-ev-rebate"), "2019 is seven years old in 2026");
+  assert.ok(!ids({ ...me, mileage: 72_001 }, RELAXED).includes("me-efficiency-maine-ev-rebate"));
+  assert.ok(!ids({ ...me, mileage: undefined }, RELAXED).includes("me-efficiency-maine-ev-rebate"), "no odometer is not under the odometer cap");
+});
+
+test("a KBB or market-value cap is not an asking price: strict drops it, relaxed states it", () => {
+  const de: Listing = { ...base, state: "DE", priceUsd: 18_000 };
+  assert.deepEqual(ids(de), []);
+  const m = match(de, "de-clean-vehicle-rebate", RELAXED);
+  assert.ok(m);
+  assert.ok(m!.toCheckOnTheCar.some((c) => /Kelley Blue Book/.test(c)));
+  assert.equal(m!.amountUsd, 2500);
+});
+
+test("a GVWR cap is never settled for a truck, and Colorado's credit stays silent without an MSRP", () => {
+  const silverado: Listing = {
+    ...asNew,
+    vin: "1GC10YED0RU100005",
+    year: 2024,
+    make: "Chevrolet",
+    model: "Silverado EV",
+    trim: "RST",
+    priceUsd: 45_000,
+    state: "CO",
+  };
+  assert.equal(match(silverado, "co-innovative-motor-vehicle-credit", RELAXED), undefined, "9,900 lb GVWR truck cannot meet an 8,500 lb cap");
+  assert.deepEqual(ids({ ...asNew, state: "CO" }), [], "strict: the MSRP cap is unsettled");
+  const relaxed = match({ ...asNew, state: "CO" }, "co-innovative-motor-vehicle-credit", RELAXED);
+  assert.ok(relaxed, "relaxed: a crossover under 8,500 lb with a battery over 4 kWh");
+  assert.equal(relaxed!.amountUsd, 750, "the base credit; the under-$35,000 additional credit is an adder, stated beside it");
+  assert.ok(relaxed!.purchaserSideAmounts.some((a) => a.usd === 2500));
+});
+
+test("New York: the range tier settles from the row and the over-$42,000 tier does not fire under it", () => {
+  const ny = match({ ...asNew, state: "NY" }, "ny-drive-clean-rebate", RELAXED);
+  assert.ok(ny, "named under the relaxed policy (participating dealer stated)");
+  assert.ok(ny!.toCheckOnTheCar.some((c) => /eligible-vehicle list/.test(c)));
+  assert.equal(ny!.amountUsd, 2000, "247 mi EPA range, asking under $42,000");
+  // A car whose kind and range the enrichment cannot settle gets no figure —
+  // never the $500 flat tier by default.
+  const unknown: Listing = { ...asNew, state: "NY", vin: "ZZZ00000000000001", make: "Nobody", model: "Nothing", trim: undefined };
+  const m = match(unknown, "ny-drive-clean-rebate", RELAXED);
+  assert.ok(m, "both kinds qualify, so an unknown kind still meets the checked conditions");
+  assert.equal(m!.amountUsd, undefined);
+});
