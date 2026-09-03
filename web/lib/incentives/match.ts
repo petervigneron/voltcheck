@@ -13,42 +13,56 @@ import { INCENTIVE_PROGRAMS, type Program, type ProgramAmount, type VehicleKind 
 // purchaser-side condition (residency, income, utility account) — those are
 // prose from the registry, passed through to be stated.
 //
-// The other half of the rule is what counts as settled. A condition is met
-// only when the listing (or the enrichment matched to it) carries the fact
-// the condition is about. A fact the listing does not carry is not met — it
-// is not "probably fine", and it is not softened into a hedge. Matching
-// nothing is honest; matching the wrong thing is not.
-//
-// Two conditions are common enough, and unsettleable enough, that whether to
-// treat them as "stated, not checked" is an owner decision rather than a
-// coding one. They sit behind POLICY below, default strict, and
-// scripts/incentive-counts.mjs reports the car counts under both settings so
-// the decision can be made on numbers. Everything else is strict without a
-// switch.
+// What counts as settled is decided per condition, and a condition the
+// listing cannot settle is either FAILED or STATED, never assumed. The owner
+// chose (2026-09-02) which of those two the site does for the conditions no
+// listing can carry, and that choice is SITE_POLICY below; STRICT_POLICY is
+// kept for the count script so the difference stays measurable.
 
 export interface MatchPolicy {
   /**
-   * New-car MSRP caps compared against the ASKING price. Off by default: the
-   * listing carries no MSRP, and an asking price sits below MSRP on a
-   * discounted car and above it on a marked-up one, so neither direction of
-   * the comparison proves anything about the sticker. Measured 2026-09-02:
-   * every live new-car state program (CO, CT, DE, MA, ME, NJ, NM, NY, OR, RI)
-   * caps on MSRP, so with this off no new car matches a state program except
-   * Illinois, whose cap is on the price paid.
+   * New-car MSRP caps compared against the ASKING price. The listing carries
+   * no MSRP, and an asking price sits below MSRP on a discounted car and
+   * above it on a marked-up one, so the comparison settles nothing either
+   * way — which is exactly why, when this is on, the cap is always STATED
+   * beside the figure ("MSRP at or under $55,000 on the window sticker") and
+   * never reported as met. Measured 2026-09-02: every live new-car state
+   * program except Illinois and Rhode Island caps on MSRP, so with this off
+   * no new car in those states is ever named.
    */
   askingPriceStandsForMsrp: boolean;
   /**
-   * Car-side conditions the listing cannot settle — membership of a program's
-   * eligible-vehicle list, a "participating dealer" requirement with no list
-   * loaded, a used-price cap set on Kelley Blue Book or "market value" rather
-   * than the price paid — are surfaced as conditions to check instead of
-   * failing the match. Off by default: with it off, a program carrying any
-   * such condition simply does not match.
+   * Car-side conditions the listing cannot settle — membership of a
+   * program's eligible-vehicle list, a "participating dealer" requirement
+   * with no list loaded, a used-price cap set on Kelley Blue Book or "market
+   * value" rather than the price paid — are surfaced as conditions to check
+   * instead of failing the match.
    */
   unsettledCarConditionsAreStated: boolean;
+  /**
+   * How far OVER a price cap an asking price may sit and still have the
+   * program named, as a fraction of the cap. Owner's call (2026-09-02): a
+   * car listed at $52,000 against a $50,000 cap is exactly the information a
+   * shopper needs — the cap is printed beside the price and the shopper
+   * negotiates — while a $52,000 car against a $25,000 cap is not. At 0.10,
+   * the first is named and the second is not. A match over the cap carries
+   * `cap.askOverByUsd` so every surface prints the cap, never "meets".
+   */
+  capMarginPct: number;
 }
 
-export const STRICT_POLICY: MatchPolicy = { askingPriceStandsForMsrp: false, unsettledCarConditionsAreStated: false };
+export const STRICT_POLICY: MatchPolicy = {
+  askingPriceStandsForMsrp: false,
+  unsettledCarConditionsAreStated: false,
+  capMarginPct: 0,
+};
+
+/** What the site runs. */
+export const SITE_POLICY: MatchPolicy = {
+  askingPriceStandsForMsrp: true,
+  unsettledCarConditionsAreStated: true,
+  capMarginPct: 0.1,
+};
 
 export interface IncentiveMatch {
   program: Program;
@@ -58,8 +72,14 @@ export interface IncentiveMatch {
   amountUsd?: number;
   amountLabel?: string;
   /** Further program figures that depend on who the buyer is (income-qualified
-   *  tiers, adders). Stated one by one with their labels; never summed. */
+   *  tiers, adders, "up to" ceilings). Stated one by one with their labels;
+   *  never summed. */
   purchaserSideAmounts: { usd: number; label: string }[];
+  /** The price cap this car was measured against, when the program has one.
+   *  `askOverByUsd` is set when the asking price sits above it within the
+   *  policy margin — the program is named for the shopper's information and
+   *  the cap must print beside the price. */
+  cap?: { usd: number; basis: string; askOverByUsd?: number };
   /** Car-side conditions the listing could not settle, only ever non-empty
    *  under `unsettledCarConditionsAreStated`. */
   toCheckOnTheCar: string[];
@@ -207,9 +227,6 @@ function settleAmount(
     if (ap.batteryKwhMin !== undefined || ap.batteryKwhMaxExclusive !== undefined) {
       const kwh = e.packKwh?.value;
       if (kwh === undefined) continue;
-      // A usable figure under the boundary says nothing about the nameplate
-      // figure the program reads (Oregon's 10 kWh): only a usable figure AT
-      // OR ABOVE the boundary, or a total figure on either side, settles it.
       // Below the boundary: a total figure says the tier does not apply, a
       // usable figure says nothing about the nameplate. Unsettled either way.
       if (ap.batteryKwhMin !== undefined && kwh < ap.batteryKwhMin) continue;
@@ -230,9 +247,25 @@ function settleAmount(
   return { usd: settled[0].usd, label: settled[0].label };
 }
 
+/** An asking price against a cap on the price paid: under the cap it is
+ *  met; over it by less than the policy margin it is named with the gap
+ *  recorded; further over, or with no real price, it fails. */
+function priceAgainstCap(
+  l: Listing,
+  capUsd: number,
+  policy: MatchPolicy
+): { ok: false } | { ok: true; overByUsd?: number } {
+  if (!hasRealPrice(l)) return { ok: false };
+  if (l.priceUsd <= capUsd) return { ok: true };
+  if (l.priceUsd <= capUsd * (1 + policy.capMarginPct)) return { ok: true, overByUsd: l.priceUsd - capUsd };
+  return { ok: false };
+}
+
+const usd = (n: number) => `$${n.toLocaleString("en-US")}`;
+
 export function matchIncentives(
   e: EnrichedListing,
-  policy: MatchPolicy = STRICT_POLICY,
+  policy: MatchPolicy = SITE_POLICY,
   programs: Program[] = INCENTIVE_PROGRAMS,
   today: Date = new Date()
 ): IncentiveMatch[] {
@@ -260,6 +293,7 @@ export function matchIncentives(
 
     const checked: string[] = [`dealer in ${state}`, cond === "new" ? "new" : "used"];
     const toCheck: string[] = [];
+    let cap: IncentiveMatch["cap"];
 
     // Kind: a program limited to one kind needs the car's kind settled.
     if (p.vehicle.kinds.length === 1) {
@@ -281,9 +315,7 @@ export function matchIncentives(
         break;
       case "participating": {
         if (!policy.unsettledCarConditionsAreStated) continue;
-        toCheck.push(
-          p.transaction.dealerNote ?? "Bought or leased from a dealer enrolled with the program."
-        );
+        toCheck.push(p.transaction.dealerNote ?? "Bought or leased from a dealer enrolled with the program.");
         break;
       }
     }
@@ -291,40 +323,46 @@ export function matchIncentives(
       checked.push("dealer in state");
     }
 
-    // Price caps.
-    if (p.vehicle.purchasePriceCapUsd !== undefined) {
+    // Price caps. Three shapes, in decreasing order of what an asking price
+    // can say about them.
+    const pricePaidCap =
+      p.vehicle.purchasePriceCapUsd ??
+      (cond === "new" ? p.vehicle.newPurchasePriceCapUsd : undefined);
+    if (pricePaidCap !== undefined) {
       // A cap on the price paid: the asking price is the dealer's own figure
-      // for exactly that, and a car asking more than the cap does not meet it.
-      if (!hasRealPrice(l) || l.priceUsd > p.vehicle.purchasePriceCapUsd) continue;
-      checked.push(`asking price at or under $${p.vehicle.purchasePriceCapUsd.toLocaleString()}`);
-    }
-    if (cond === "new" && p.vehicle.newPurchasePriceCapUsd !== undefined) {
-      if (!hasRealPrice(l) || l.priceUsd > p.vehicle.newPurchasePriceCapUsd) continue;
-      checked.push(`asking price at or under $${p.vehicle.newPurchasePriceCapUsd.toLocaleString()}`);
+      // for exactly that.
+      const r = priceAgainstCap(l, pricePaidCap, policy);
+      if (!r.ok) continue;
+      cap = { usd: pricePaidCap, basis: p.vehicle.purchasePriceCapBasis ?? "Price paid.", askOverByUsd: r.overByUsd };
+      checked.push(r.overByUsd ? `asking price ${usd(r.overByUsd)} over the ${usd(pricePaidCap)} cap` : `asking price at or under ${usd(pricePaidCap)}`);
     }
     if (cond === "used" && p.vehicle.usedPriceCapUsd !== undefined) {
       const basis = p.vehicle.usedPriceCapBasis ?? "";
-      const onPricePaid = /purchase price|price paid|final purchase/i.test(basis) && !/kelley|kbb|market value/i.test(basis);
+      const onPricePaid = /purchase price|price paid|final purchase|sale price/i.test(basis) && !/kelley|kbb|market value/i.test(basis);
       if (onPricePaid) {
-        if (!hasRealPrice(l) || l.priceUsd > p.vehicle.usedPriceCapUsd) continue;
-        checked.push(`asking price at or under $${p.vehicle.usedPriceCapUsd.toLocaleString()}`);
+        const r = priceAgainstCap(l, p.vehicle.usedPriceCapUsd, policy);
+        if (!r.ok) continue;
+        cap = { usd: p.vehicle.usedPriceCapUsd, basis, askOverByUsd: r.overByUsd };
+        checked.push(r.overByUsd ? `asking price ${usd(r.overByUsd)} over the ${usd(p.vehicle.usedPriceCapUsd)} cap` : `asking price at or under ${usd(p.vehicle.usedPriceCapUsd)}`);
       } else {
         // Delaware reads Kelley Blue Book, New Mexico "market value": neither
-        // is the asking price, in either direction.
+        // is the asking price, in either direction. Named only under the
+        // stated policy, and even then only when the ask is within the
+        // margin — a $60,000 car is not "market value $25,000 or less".
         if (!policy.unsettledCarConditionsAreStated) continue;
-        toCheck.push(`${basis || "Program price basis"} at or under $${p.vehicle.usedPriceCapUsd.toLocaleString()}.`);
+        const r = priceAgainstCap(l, p.vehicle.usedPriceCapUsd, policy);
+        if (!r.ok) continue;
+        cap = { usd: p.vehicle.usedPriceCapUsd, basis: basis || "Program price basis", askOverByUsd: r.overByUsd };
+        toCheck.push(`${basis || "Program price basis"} at or under ${usd(p.vehicle.usedPriceCapUsd)}.`);
       }
     }
     if (cond === "new" && p.vehicle.newMsrpCapUsd !== undefined) {
-      if (policy.askingPriceStandsForMsrp) {
-        if (!hasRealPrice(l) || l.priceUsd > p.vehicle.newMsrpCapUsd) continue;
-        checked.push(`asking price at or under $${p.vehicle.newMsrpCapUsd.toLocaleString()} (MSRP cap)`);
-        toCheck.push(`MSRP at or under $${p.vehicle.newMsrpCapUsd.toLocaleString()} on the window sticker.`);
-      } else if (policy.unsettledCarConditionsAreStated) {
-        toCheck.push(`MSRP at or under $${p.vehicle.newMsrpCapUsd.toLocaleString()} on the window sticker.`);
-      } else {
-        continue;
-      }
+      if (!policy.askingPriceStandsForMsrp) continue;
+      const r = priceAgainstCap(l, p.vehicle.newMsrpCapUsd, policy);
+      if (!r.ok) continue;
+      cap = { usd: p.vehicle.newMsrpCapUsd, basis: p.vehicle.newMsrpCapBasis ?? "MSRP.", askOverByUsd: r.overByUsd };
+      checked.push(`asking price against the ${usd(p.vehicle.newMsrpCapUsd)} MSRP cap`);
+      toCheck.push(`MSRP at or under ${usd(p.vehicle.newMsrpCapUsd)} on the window sticker.`);
     }
 
     // Used-car age and odometer rules, against the current calendar year the
@@ -349,8 +387,8 @@ export function matchIncentives(
         // floor settles it as unmet, and an ask over it does not settle it as
         // met — the shopper may pay less. Stated, not checked, in that case.
         if (!hasRealPrice(l) || l.priceUsd < p.vehicle.usedPriceMinUsd) continue;
-        toCheck.push(`Price paid at least $${p.vehicle.usedPriceMinUsd.toLocaleString()}.`);
         if (!policy.unsettledCarConditionsAreStated) continue;
+        toCheck.push(`Price paid at least ${usd(p.vehicle.usedPriceMinUsd)}.`);
       }
     }
     if (p.vehicle.minModelYear !== undefined) {
@@ -399,10 +437,44 @@ export function matchIncentives(
       amountUsd: amount?.usd,
       amountLabel: amount?.label,
       purchaserSideAmounts,
+      cap,
       toCheckOnTheCar: toCheck,
       purchaserConditions: p.purchaserConditions,
       checked,
     });
   }
   return out;
+}
+
+// ---- the card's one-line summary --------------------------------------
+
+/** What the browse card carries: the one program worth leading with, its
+ *  figure when one is settled, and how many programs the car meets in all.
+ *  State and regional programs outrank utility ones (a utility program is
+ *  for that utility's customers only); within a rank the largest settled
+ *  figure leads, and a program with a settled figure outranks one without.
+ *  `overCapUsd` is set when the leading program's cap sits under the asking
+ *  price, so the card can print the cap rather than the figure. */
+export interface CardIncentive {
+  programId: string;
+  name: string;
+  usd?: number;
+  overCapUsd?: number;
+  count: number;
+}
+
+export function cardIncentive(matches: IncentiveMatch[]): CardIncentive | undefined {
+  if (!matches.length) return undefined;
+  const rank = (m: IncentiveMatch) =>
+    (m.program.jurisdiction.kind === "utility" ? 0 : 1_000_000) +
+    (m.cap?.askOverByUsd ? 0 : 100_000) +
+    (m.amountUsd ?? Math.max(0, ...m.purchaserSideAmounts.map((a) => a.usd)) / 2);
+  const lead = [...matches].sort((a, b) => rank(b) - rank(a))[0];
+  return {
+    programId: lead.program.id,
+    name: lead.program.name,
+    usd: lead.amountUsd,
+    overCapUsd: lead.cap?.askOverByUsd ? lead.cap.usd : undefined,
+    count: matches.length,
+  };
 }

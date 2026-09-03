@@ -3,6 +3,7 @@
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { REMOVABLE, QUICK_TOGGLES, BODY_TYPES, describeFilter, dropSpecFilters, splitValues, toggleValue, withCurrent } from "@/lib/filters";
+import { INCENTIVES_COPY_READY } from "@/lib/incentives/copy";
 import { pushUrl } from "@/lib/pushUrl";
 import { track } from "@/lib/events";
 import { SaveSearchToggle } from "./SaveSearchToggle";
@@ -591,6 +592,9 @@ export function FilterRail({
   // way to switch it off is for it to be there.
   const MARKET_SHARE = 0.95;
   const quick = QUICK_TOGGLES.map((t) => ({ ...t, on: get(t.key) === t.value })).filter((t) => {
+    // The rebate toggle stays off the rail until the owner has written its
+    // label (lib/incentives/copy.ts): a "[OWNER COPY]" button is not copy.
+    if (t.key === "rebate" && !INCENTIVES_COPY_READY) return false;
     if (t.on || !quickCounts) return true;
     const c = quickCounts[`${t.key}=${t.value}`];
     if (!c || c.n === 0) return false;

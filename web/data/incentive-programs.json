@@ -1283,6 +1283,26 @@
       ]
     },
     {
+      "id": "nm-pnm-income-qualified-ev-rebate",
+      "name": "PNM income-qualified EV purchase rebate",
+      "jurisdiction": { "kind": "utility", "state": "NM", "utility": "PNM (Public Service Company of New Mexico)" },
+      "administrator": "PNM Transportation Electrification Program",
+      "kind": "rebate",
+      "status": "live",
+      "statusAsOf": "2026-09-02",
+      "statusNote": "2024-2026 Transportation Electrification Program; $900,000 budget, about 225 rebates, so it can run out. AFDC filed PNM under Indiana with no vehicle rebate; found on the owner's prompt.",
+      "sources": [
+        { "url": "https://www.pnmdriveelectric.com/ev-purchase-rebates", "capturedAt": "2026-09-02", "what": "Up to $4,000 off new, used or leased electric vehicles less than $55,000; income-qualified; participating dealerships; one rebate per PNM account" },
+        { "url": "https://www.pnmdriveelectric.com/assets/uploads/PDF-Resources/2024-2026-PNM-Transportation-Electrification-Program_vf.pdf", "capturedAt": "2026-09-02", "what": "Section 3.1.5: total invoiced purchase price of no more than $55,000; private sales not eligible; point of sale through PNM's dealer network; $900,000 budget" },
+        { "url": "https://ev.pnm.com/income-qualified/", "capturedAt": "2026-09-02", "what": "Income at or below 200% of the federal poverty guidelines (per PNM's income-qualified page)" }
+      ],
+      "covers": { "new": true, "used": true, "lease": true },
+      "vehicle": { "kinds": ["BEV", "PHEV"], "purchasePriceCapUsd": 55000, "purchasePriceCapBasis": "Total invoiced purchase price." },
+      "transaction": { "dealer": "participating", "dealerInState": true, "pointOfSale": true, "postPurchase": false, "dealerNote": "A participating dealership in PNM's service area; the rebate comes off at the point of sale. Private sales are not eligible." },
+      "purchaserConditions": ["PNM residential customer; one rebate per PNM account.", "Household income at or below 200% of the federal poverty guidelines, self-certified.", "Paid from a fixed program budget (about 225 rebates over 2024 to 2026) while it lasts."],
+      "amounts": [{ "usd": 4000, "applies": { "condition": "any" }, "label": "up to, income-qualified", "incomeQualified": true, "upTo": true }]
+    },
+    {
       "id": "wa-clark-public-utilities-used-ev",
       "name": "Clark Public Utilities used EV rebate",
       "jurisdiction": { "kind": "utility", "state": "WA", "utility": "Clark Public Utilities" },

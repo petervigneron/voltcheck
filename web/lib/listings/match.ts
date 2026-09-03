@@ -117,6 +117,10 @@ export function buildTests(get: (k: string) => string, ctx: MatchContext = {}): 
   // card.ts `cut`), so the toggle can never surface a cheaper extraction
   // methodology as a discount.
   if (get("cut") === "1") tests.cut = (r) => r.cut !== undefined;
+  // The card's own incentive summary (buildIndex → lib/incentives/match.ts):
+  // set only where the car meets a program's car-side conditions under the
+  // site policy, so the toggle can never keep a car on a guess.
+  if (get("rebate") === "1") tests.rebate = (r) => r.incentive !== undefined;
   // Pro only. The predicate is the card's own ask-vs-market figure at the
   // threshold in lib/listings/deal.ts; a car with no figure is unjudged and
   // sits the filter out.
@@ -166,6 +170,10 @@ export const QUICK_KNOWS: Partial<Record<RemovableFilter, (r: CardRow) => boolea
   // A cut is a price event, so only cars with a believable price can be
   // judged for one.
   cut: (r) => r.realPrice,
+  // A program needs a dealer state, a condition and a real price to be
+  // judged at all; a row missing any of those never passes or fails on its
+  // merits.
+  rebate: (r) => r.state !== undefined && r.condition !== undefined && r.realPrice,
 };
 
 /** The filters that are actually on, in the order they read. */

@@ -1,6 +1,7 @@
 // Shared between the rail (client) and the results page (server) so a filter is
 // described the same way wherever it appears — on its chip, and in the count of
 // what dropping it would give back.
+import { INCENTIVE_COPY } from "@/lib/incentives/copy";
 
 /** Every filter that can be switched off individually, in the order it reads. */
 export const REMOVABLE = [
@@ -21,6 +22,9 @@ export const REMOVABLE = [
   "minRange",
   "heatPump",
   "cut",
+  // Cars that meet at least one rebate program's car-side conditions under
+  // the site policy (lib/incentives/match.ts) — the card's `incentive` field.
+  "rebate",
   // The Pro deals filter (lib/listings/deal.ts). In REMOVABLE so it types as a
   // FilterTest and describes as a chip; applied only for a pass-holder
   // (match.ts reads MatchContext.pro), so ?deal=1 in a stranger's URL is inert.
@@ -77,6 +81,12 @@ export const QUICK_TOGGLES: {
   { key: "minRange", value: "300", label: "300+ mi range", axis: "variant" },
   { key: "heatPump", value: "1", label: "Heat pump", axis: "variant" },
   { key: "cut", value: "1", label: "Price cut", axis: "market" },
+  // Owner's call, 2026-09-02: a toggle for cars that might qualify for a
+  // rebate. Market axis: which programs pay is a property of this week's
+  // listings (their state, price and condition), not of the model. The label
+  // comes from lib/incentives/copy.ts and the rail hides the toggle until the
+  // owner has written it (components/Filters.tsx).
+  { key: "rebate", value: "1", label: INCENTIVE_COPY.toggleLabel, axis: "market" },
 ];
 
 /**
@@ -195,6 +205,8 @@ export function describeFilter(key: string, value: string): string | null {
       return value === "1" ? "Heat pump" : null;
     case "cut":
       return value === "1" ? "Price cut" : null;
+    case "rebate":
+      return value === "1" ? INCENTIVE_COPY.chipLabel : null;
     case "deal":
       return value === "1" ? "Deals" : null;
     case "zip":

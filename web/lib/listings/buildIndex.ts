@@ -8,6 +8,7 @@ import { askVsMarket, askVsSold, buildAskIndex, cohortIdentityMixed, fetchCompIn
 import { trimClaim } from "./trimClaim";
 import { zipCoords } from "@/lib/zips";
 import type { CardRow } from "./card";
+import { cardIncentive, matchIncentives } from "@/lib/incentives/match";
 
 // Everything the browse grid needs, computed once per revalidation instead of
 // once per request: enrichment, tiles, body type, zip centroid, price-cut
@@ -124,6 +125,9 @@ export async function buildCardIndex(): Promise<{ rows: CardRow[]; origin: FeedO
       askVsMarket: vsMarket
         ? { deltaUsd: vsMarket.deltaUsd, peerN: vsMarket.peerN, trimMatched: vsMarket.trimMatched }
         : undefined,
+      // Programs whose car-side conditions this car meets under the site
+      // policy (lib/incentives/match.ts). Absent = meets none.
+      incentive: cardIncentive(matchIncentives(e)),
       tiles: listingTiles(e, 5).map((t) => ({ k: t.kind, t: t.text, ti: t.title })),
     });
   }

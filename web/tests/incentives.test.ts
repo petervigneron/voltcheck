@@ -16,8 +16,77 @@ import assert from "node:assert/strict";
 import { enrichListing } from "@/lib/listings/enrich";
 import type { Listing } from "@/lib/listings/types";
 import { INCENTIVE_PROGRAMS, programById } from "@/lib/incentives/registry";
-import { matchIncentives, dealerState, vehicleKind, STRICT_POLICY, type MatchPolicy } from "@/lib/incentives/match";
-import { Incentives, INCENTIVES_COPY_READY } from "@/components/Incentives";
+import { matchIncentives, dealerState, vehicleKind, cardIncentive, STRICT_POLICY, SITE_POLICY, type MatchPolicy } from "@/lib/incentives/match";
+import { INCENTIVES_COPY_READY } from "@/lib/incentives/copy";
+import { Incentives } from "@/components/Incentives";
+import { packIndex, unpackIndex } from "@/lib/listings/pack";
+import type { CardRow } from "@/lib/listings/card";
+
+test("site policy: an ask up to 10% over a price cap names the program WITH the cap; further over does not", () => {
+  const il: Listing = {
+    id: "t", vin: "1G1FY6S04P4100001", year: 2023, make: "Chevrolet", model: "Bolt EUV", trim: "LT",
+    priceUsd: 21500, mileage: 24000, state: "IL", sellerType: "dealer", condition: "used",
+  };
+  // Massachusetts MOR-EV Used caps the price paid at $40,000.
+  const at = (priceUsd: number) =>
+    matchIncentives(enrichListing({ ...il, state: "MA", priceUsd }), SITE_POLICY, INCENTIVE_PROGRAMS, new Date("2026-09-02T12:00:00Z")).find(
+      (m) => m.program.id === "ma-mor-ev"
+    );
+  assert.equal(at(39_000)?.cap?.askOverByUsd, undefined, "under the cap: met, no gap");
+  const over = at(43_000);
+  assert.ok(over, "$3,000 over a $40,000 cap is within 10%: named");
+  assert.equal(over!.cap?.askOverByUsd, 3000, "the gap rides with the match so every surface prints the cap");
+  assert.equal(at(45_000), undefined, "12.5% over: not named");
+  // The card leads with the cap, not the figure, when the ask is over it.
+  const card = cardIncentive(matchIncentives(enrichListing({ ...il, state: "MA", priceUsd: 43_000 }), SITE_POLICY, INCENTIVE_PROGRAMS, new Date("2026-09-02T12:00:00Z")));
+  assert.equal(card?.overCapUsd, 40_000);
+  assert.ok(card!.count >= 1);
+});
+
+test("the card leads with a state program over a utility one, and a settled figure over none", () => {
+  const ca: Listing = {
+    id: "t", vin: "1G1FY6S04P4100001", year: 2023, make: "Chevrolet", model: "Bolt EUV", trim: "LT",
+    priceUsd: 19500, mileage: 24000, state: "CA", sellerType: "dealer", condition: "used",
+  };
+  const ms = matchIncentives(enrichListing(ca), SITE_POLICY, INCENTIVE_PROGRAMS, new Date("2026-09-02T12:00:00Z"));
+  const card = cardIncentive(ms)!;
+  assert.equal(card.programId, "ca-clean-cars-4-all", "the statewide program leads");
+  assert.equal(card.count, ms.length);
+  const ilCard = cardIncentive(
+    matchIncentives(
+      enrichListing({ ...ca, state: "IL" }),
+      SITE_POLICY, INCENTIVE_PROGRAMS, new Date("2026-09-02T12:00:00Z")
+    )
+  )!;
+  assert.equal(ilCard.usd, 2000);
+});
+
+test("the incentive summary survives the packed feed byte for byte", () => {
+  const row: CardRow = {
+    id: "1g1fy6s04p4100001", hay: "2023 chevrolet bolt euv lt", year: 2023, make: "Chevrolet", model: "Bolt EUV",
+    title: "2023 Chevrolet Bolt EUV LT", priceUsd: 21500, realPrice: true, condition: "used", state: "IL",
+    incentive: { name: "Illinois EV Rebate", usd: 2000, count: 1 }, tiles: [],
+  };
+  const bare: CardRow = { ...row, id: "x", incentive: undefined };
+  const overCap: CardRow = { ...row, id: "y", incentive: { name: "Massachusetts MOR-EV", overCapUsd: 40000, count: 3 } };
+  const back = unpackIndex(packIndex([row, bare, overCap]));
+  assert.deepEqual(back[0].incentive, { name: "Illinois EV Rebate", usd: 2000, overCapUsd: undefined, count: 1 });
+  assert.equal(back[1].incentive, undefined);
+  assert.deepEqual(back[2].incentive, { name: "Massachusetts MOR-EV", usd: undefined, overCapUsd: 40000, count: 3 });
+});
+
+test("PNM: a New Mexico car under the $55,000 invoiced-price cap meets the car-side conditions; the $4,000 is stated, never the figure", () => {
+  const nm: Listing = {
+    id: "t", vin: "1G1FY6S04P4100001", year: 2023, make: "Chevrolet", model: "Bolt EUV", trim: "LT",
+    priceUsd: 21500, mileage: 24000, state: "NM", sellerType: "dealer", condition: "used",
+  };
+  const m = matchIncentives(enrichListing(nm), SITE_POLICY, INCENTIVE_PROGRAMS, new Date("2026-09-02T12:00:00Z")).find((x) => x.program.id === "nm-pnm-income-qualified-ev-rebate");
+  assert.ok(m, "named under the site policy (participating dealer stated)");
+  assert.equal(m!.amountUsd, undefined, "an 'up to' figure is never the settled figure");
+  assert.ok(m!.purchaserSideAmounts.some((a) => a.usd === 4000));
+  assert.ok(m!.toCheckOnTheCar.some((c) => /participating dealership/.test(c)));
+  assert.equal(matchIncentives(enrichListing({ ...nm, priceUsd: 61_000 }), SITE_POLICY, INCENTIVE_PROGRAMS).find((x) => x.program.id === "nm-pnm-income-qualified-ev-rebate"), undefined);
+});
 
 test("the block renders NOTHING while any placeholder string is still a placeholder", () => {
   // Owner writes all shopper-facing copy; a "[OWNER COPY]" heading is not
@@ -35,7 +104,7 @@ test("the block renders NOTHING while any placeholder string is still a placehol
   assert.equal(Incentives({ matches: m }), null);
 });
 
-const RELAXED: MatchPolicy = { askingPriceStandsForMsrp: true, unsettledCarConditionsAreStated: true };
+const RELAXED: MatchPolicy = SITE_POLICY;
 const TODAY = new Date("2026-09-02T12:00:00Z");
 
 // A 2023 Bolt EUV: the enrichment holds a row for it (EPA 247 mi, so the kind
@@ -145,8 +214,11 @@ test("relaxed policy: an asking price under the cap names the program AND states
   assert.ok(ma, "MOR-EV named under the relaxed policy");
   assert.ok(ma!.toCheckOnTheCar.some((c) => /MSRP at or under \$55,000/.test(c)), "the MSRP cap is stated as a check, not asserted");
   assert.equal(ma!.amountUsd, 3500);
-  // Still never above the cap, under either policy.
-  assert.equal(match({ ...asNew, state: "MA", priceUsd: 56_000 }, "ma-mor-ev", RELAXED), undefined);
+  // Within 10% over the cap: named, carrying the gap so the cap prints beside
+  // the price. Further over: not named, under either policy.
+  assert.equal(match({ ...asNew, state: "MA", priceUsd: 56_000 }, "ma-mor-ev", RELAXED)?.cap?.askOverByUsd, 1000);
+  assert.equal(match({ ...asNew, state: "MA", priceUsd: 61_000 }, "ma-mor-ev", RELAXED), undefined);
+  assert.equal(match({ ...asNew, state: "MA", priceUsd: 56_000 }, "ma-mor-ev", STRICT_POLICY), undefined);
 });
 
 test("ended, waitlisted and out-of-state programs are never named", () => {

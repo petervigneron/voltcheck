@@ -91,6 +91,14 @@ export interface CardRow {
    * where askVsSold is silent (see that field's comment).
    */
   askVsMarket?: { deltaUsd: number; peerN: number; trimMatched: boolean };
+  /**
+   * The incentive program this car leads with (lib/incentives/match.ts
+   * cardIncentive): its name, the program's own figure when one is settled,
+   * the cap when the ask sits over it, and how many programs the car meets.
+   * Absent means the car meets none under the site policy — never "no data".
+   * Powers the rebate toggle and the card tile.
+   */
+  incentive?: { name: string; usd?: number; overCapUsd?: number; count: number };
   tiles: CardTile[];
 }
 

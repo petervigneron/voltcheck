@@ -72,6 +72,10 @@ interface PackedRow {
   am?: [number, number, 0 | 1];
   /** Indices into PackedIndex.t. */
   ts?: number[];
+  /** [index into PackedIndex.pn, settled figure or 0, cap when over it or 0,
+   *  count of programs met]. The program names repeat per state, so they
+   *  live in a dictionary like the tiles do. */
+  ic?: [number, number, number, number];
 }
 
 /**
@@ -131,6 +135,9 @@ export interface PackedIndex {
   t: CardTile[];
   /** Every distinct image origin ("https://cgi.cadillac.com"), once. */
   h: string[];
+  /** Every distinct incentive program name a row leads with, once. Optional
+   *  so a body packed before the field existed still unpacks. */
+  pn?: string[];
   r: PackedRow[];
 }
 
@@ -139,6 +146,7 @@ export function packIndex(rows: CardRow[]): PackedIndex {
   const tileList: CardTile[] = [];
   const hosts = new Map<string, number>();
   const hostList: string[] = [];
+  const programNames: string[] = [];
 
   const tileId = (t: CardTile) => {
     // Keyed on the tile's own JSON: two chips are the same chip when kind,
@@ -201,10 +209,15 @@ export function packIndex(rows: CardRow[]): PackedIndex {
     if (row.askVsMarket)
       p.am = [row.askVsMarket.deltaUsd, row.askVsMarket.peerN, row.askVsMarket.trimMatched ? 1 : 0];
     if (row.tiles.length) p.ts = row.tiles.map(tileId);
+    if (row.incentive) {
+      let idx = programNames.indexOf(row.incentive.name);
+      if (idx === -1) idx = programNames.push(row.incentive.name) - 1;
+      p.ic = [idx, row.incentive.usd ?? 0, row.incentive.overCapUsd ?? 0, row.incentive.count];
+    }
     return p;
   });
 
-  return { v: 1, t: tileList, h: hostList, r };
+  return { v: 1, t: tileList, h: hostList, pn: programNames, r };
 }
 
 /**
@@ -241,6 +254,15 @@ export function unpackIndex(x: PackedIndex): CardRow[] {
     askVsMarket: p.am
       ? { deltaUsd: p.am[0], peerN: p.am[1], trimMatched: p.am[2] === 1 }
       : undefined,
+    incentive:
+      p.ic && x.pn
+        ? {
+            name: x.pn[p.ic[0]],
+            usd: p.ic[1] || undefined,
+            overCapUsd: p.ic[2] || undefined,
+            count: p.ic[3],
+          }
+        : undefined,
     // The dictionary hands back the same tile object to every row that cites
     // it. Nothing mutates a tile, and sharing is what the format is for.
     tiles: (p.ts ?? []).map((id) => x.t[id]),

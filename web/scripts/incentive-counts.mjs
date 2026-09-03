@@ -19,12 +19,12 @@
 
 import { unpackIndex } from "../lib/listings/pack.ts";
 import { enrichListing } from "../lib/listings/enrich.ts";
-import { matchIncentives, STRICT_POLICY } from "../lib/incentives/match.ts";
+import { matchIncentives, STRICT_POLICY, SITE_POLICY } from "../lib/incentives/match.ts";
 import { INCENTIVE_PROGRAMS } from "../lib/incentives/registry.ts";
 
 const args = process.argv.slice(2);
 const host = args.includes("--host") ? args[args.indexOf("--host") + 1] : "https://voltcheck.net";
-const RELAXED = { askingPriceStandsForMsrp: true, unsettledCarConditionsAreStated: true };
+const RELAXED = SITE_POLICY;
 
 async function fetchJson(path) {
   const res = await fetch(`${host}${path}`, { headers: { "Accept-Encoding": "gzip" } });
@@ -91,7 +91,7 @@ for (const [st, s] of [...strict.byState].sort((a, b) => b[1].cars - a[1].cars))
 console.log("  by program:");
 for (const [id, n] of [...strict.byProgram].sort((a, b) => b[1] - a[1])) console.log(`    ${id}  ${n}`);
 
-console.log(`\nRELAXED policy (asking price stands for MSRP; unsettled car conditions stated): ${relaxed.matched} cars`);
+console.log(`\nSITE policy (asking price stands for MSRP; unsettled car conditions stated; asks up to ${Math.round(SITE_POLICY.capMarginPct * 100)}% over a cap named with the cap): ${relaxed.matched} cars`);
 for (const [st, s] of [...relaxed.byState].sort((a, b) => b[1].cars - a[1].cars)) console.log(`  ${st}  ${s.cars} (new ${s.new}, used ${s.used})`);
 console.log("  by program:");
 for (const [id, n] of [...relaxed.byProgram].sort((a, b) => b[1] - a[1])) console.log(`    ${id}  ${n}`);
