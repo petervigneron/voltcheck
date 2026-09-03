@@ -131,6 +131,7 @@ import { isAutoCorner, countAutoCorner } from "./lib/platforms/autocorner.mjs";
 import { isDealerAccelerate, dealerAccelerateEntries, DEALERACCELERATE_SRP_PATH } from "./lib/platforms/dealeraccelerate.mjs";
 import { isEBizAutos, ebizAutosOrigins, countEBizAutos } from "./lib/platforms/ebizautos.mjs";
 import { countDealerInspire } from "./lib/platforms/dealerinspire.mjs";
+import { isChapmanChoice, isChapmanChoiceOrigin, countChapmanChoice } from "./lib/platforms/chapmanchoice.mjs";
 import { countDealerCenter } from "./lib/platforms/dealercenter.mjs";
 import { vendorByDns } from "./lib/vendor-dns.mjs";
 import { closeBrowser } from "./lib/browser.mjs";
@@ -501,6 +502,9 @@ async function probeSite(site) {
     // eBizAutos settles off the inventory HOST the shell homepage references
     // ({slug}.ebizautos.com or a second custom domain) — the registry domain
     // itself never renders a car, which is why this cohort read as empty.
+    // Chapman Automotive's group site — sitemap of every vehicle page, Car
+    // JSON-LD on each; fingerprinted on its chapmanchoice.com asset host.
+    { name: "chapmanchoice", detect: () => isChapmanChoice(home.body) || isChapmanChoiceOrigin(origin), count: () => countChapmanChoice(origin), label: "sitemap" },
     {
       name: "ebizautos",
       detect: () => isEBizAutos(home.body),

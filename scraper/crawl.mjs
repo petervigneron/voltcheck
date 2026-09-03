@@ -94,6 +94,7 @@ import {
 } from "./lib/platforms/dealeraccelerate.mjs";
 import { isEBizAutos, ebizAutosOrigins, pullEBizAutos } from "./lib/platforms/ebizautos.mjs";
 import { pullDealerInspire } from "./lib/platforms/dealerinspire.mjs";
+import { isChapmanChoice, isChapmanChoiceOrigin, pullChapmanChoice } from "./lib/platforms/chapmanchoice.mjs";
 import { pullDealerCenter } from "./lib/platforms/dealercenter.mjs";
 import { closeBrowser } from "./lib/browser.mjs";
 import {
@@ -272,6 +273,7 @@ async function crawlDealer(domain) {
   const vh = { done: false };
   const ac = { done: false };
   const eb = { done: false };
+  const cc = { done: false };
   const dsc = { done: false };
   const dvPlat = siteInfo.get(domain)?.platform;
   // Motive joins that list for the same reason: it renders no inventory in
@@ -312,7 +314,7 @@ async function crawlDealer(domain) {
       // host for), and the tile lanes' unlabelled rooftops are only ever
       // recognised from a page that carries the vendor's asset host.
       "autocorner", "ebizautos", "dealerclick", "dealerfront", "dealerspike", "dealeraccelerate",
-      "autorevo", "promax",
+      "autorevo", "promax", "chapmanchoice",
     ].includes(dvPlat)
   )
     queue.unshift(origin + "/");
@@ -844,6 +846,36 @@ async function crawlDealer(domain) {
         break;
       }
       report.notes.push("autocorner: sitemap did not answer, falling back to HTML");
+    }
+
+    // Chapman Automotive's group site: the sitemap lists every vehicle page
+    // across its 17 stores and each page carries a Car node (see the lane's
+    // header). Sitemap + candidate VDPs, the AutoCorner shape.
+    if (!cc.done && (isChapmanChoice(res.body) || isChapmanChoiceOrigin(origin))) {
+      cc.done = true;
+      const before = report.evs.length;
+      const { ok, vehicles, found, candidates, requests, vdpFailures } = await pullChapmanChoice(origin);
+      report.fetched += requests;
+      if (ok) {
+        for (const v of vehicles) {
+          const cls = classifyEv(v);
+          if (!cls.isEv) continue;
+          const offer = Array.isArray(v.offers) ? v.offers[0] : v.offers;
+          let rec = normalize(v, { sourceUrl: offer?.url || v.url || origin, dealerDomain: domain });
+          if (rec.vdpUrl) rec.vdpUrl = abs(rec.vdpUrl, origin) ?? rec.vdpUrl;
+          rec.evKind = cls.kind;
+          rec.evConfidence = cls.confidence;
+          rec.fromVdp = true;
+          rec.platform = "chapmanchoice";
+          report.evs.push(rec);
+        }
+        if (report.evs.length > before) report.vehiclePages++;
+        report.notes.push(`chapmanchoice: ${found} in sitemap, ${candidates} candidate(s), ${report.evs.length - before} EV(s) admitted in ${requests} request(s)`);
+        if (vdpFailures) report.stoppedEarly = `chapmanchoice: ${vdpFailures} VDP(s) unread`;
+        queue.length = 0;
+        break;
+      }
+      report.notes.push("chapmanchoice: sitemap did not answer, falling back to HTML");
     }
 
     // eBizAutos: the registry domain is a shell — the inventory lives on a
