@@ -17,6 +17,23 @@ import { enrichListing } from "@/lib/listings/enrich";
 import type { Listing } from "@/lib/listings/types";
 import { INCENTIVE_PROGRAMS, programById } from "@/lib/incentives/registry";
 import { matchIncentives, dealerState, vehicleKind, STRICT_POLICY, type MatchPolicy } from "@/lib/incentives/match";
+import { Incentives, INCENTIVES_COPY_READY } from "@/components/Incentives";
+
+test("the block renders NOTHING while any placeholder string is still a placeholder", () => {
+  // Owner writes all shopper-facing copy; a "[OWNER COPY]" heading is not
+  // that. While the marker is present the component is dark even with a
+  // match in hand. Flip this test's expectation when the copy lands.
+  assert.equal(INCENTIVES_COPY_READY, false);
+  const m = matchIncentives(
+    enrichListing({
+      id: "t", vin: "1G1FY6S04P4100001", year: 2023, make: "Chevrolet", model: "Bolt EUV", trim: "LT",
+      priceUsd: 21500, mileage: 24000, state: "IL", sellerType: "dealer", condition: "used",
+    }),
+    STRICT_POLICY
+  );
+  assert.ok(m.length > 0, "a match exists, so the gate is what keeps it dark");
+  assert.equal(Incentives({ matches: m }), null);
+});
 
 const RELAXED: MatchPolicy = { askingPriceStandsForMsrp: true, unsettledCarConditionsAreStated: true };
 const TODAY = new Date("2026-09-02T12:00:00Z");

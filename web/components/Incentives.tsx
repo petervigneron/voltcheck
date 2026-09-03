@@ -45,7 +45,16 @@ function usd(n: number): string {
   return `$${n.toLocaleString("en-US")}`;
 }
 
+// The block is DARK until the owner has replaced every placeholder. A heading
+// reading "[OWNER COPY] …" is not copy the owner signed off, and none ships
+// without that (2026-09-02: a deploy carrying these literals was cancelled
+// minutes before it promoted). tests/incentives.test.ts asserts this gate.
+// To turn the block on, replace the strings above; do not touch this check.
+const PLACEHOLDER_MARKER = "[OWNER COPY]";
+export const INCENTIVES_COPY_READY: boolean = Object.values(PLACEHOLDER).every((s) => !s.includes(PLACEHOLDER_MARKER));
+
 export function Incentives({ matches }: { matches: IncentiveMatch[] }) {
+  if (!INCENTIVES_COPY_READY) return null;
   if (matches.length === 0) return null;
   // State and regional programs first, then utility programs under their own
   // label: a utility program is only ever for that utility's own customers,
