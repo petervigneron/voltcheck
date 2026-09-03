@@ -358,10 +358,13 @@ export function matchIncentives(
     }
     if (cond === "new" && p.vehicle.newMsrpCapUsd !== undefined) {
       if (!policy.askingPriceStandsForMsrp) continue;
-      const r = priceAgainstCap(l, p.vehicle.newMsrpCapUsd, policy);
-      if (!r.ok) continue;
-      cap = { usd: p.vehicle.newMsrpCapUsd, basis: p.vehicle.newMsrpCapBasis ?? "MSRP.", askOverByUsd: r.overByUsd };
-      checked.push(`asking price against the ${usd(p.vehicle.newMsrpCapUsd)} MSRP cap`);
+      // No margin on an MSRP cap (owner, 2026-09-03): a car asking above the
+      // MSRP cap is not labelled eligible. The margin is for price-paid caps,
+      // where the shopper can negotiate under the number; a sticker cannot be
+      // negotiated. Under the cap the sticker is still unsettled and is stated.
+      if (!hasRealPrice(l) || l.priceUsd > p.vehicle.newMsrpCapUsd) continue;
+      cap = { usd: p.vehicle.newMsrpCapUsd, basis: p.vehicle.newMsrpCapBasis ?? "MSRP." };
+      checked.push(`asking price at or under the ${usd(p.vehicle.newMsrpCapUsd)} MSRP cap`);
       toCheck.push(`MSRP at or under ${usd(p.vehicle.newMsrpCapUsd)} on the window sticker.`);
     }
 

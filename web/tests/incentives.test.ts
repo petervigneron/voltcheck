@@ -91,11 +91,12 @@ test("PNM: a New Mexico car under the $55,000 invoiced-price cap meets the car-s
   assert.equal(matchIncentives(enrichListing({ ...nm, priceUsd: 61_000 }), SITE_POLICY, INCENTIVE_PROGRAMS).find((x) => x.program.id === "nm-pnm-income-qualified-ev-rebate"), undefined);
 });
 
-test("the block renders NOTHING while any placeholder string is still a placeholder", () => {
-  // Owner writes all shopper-facing copy; a "[OWNER COPY]" heading is not
-  // that. While the marker is present the component is dark even with a
-  // match in hand. Flip this test's expectation when the copy lands.
-  assert.equal(INCENTIVES_COPY_READY, false);
+test("the copy gate: open now that the owner's two strings are in, and shut again the moment a placeholder returns", () => {
+  // Owner wrote the toggle label and the confirm line on 2026-09-03, so the
+  // feature renders. The gate itself is what this asserts: any string carrying
+  // the "[OWNER COPY]" marker would put INCENTIVES_COPY_READY back to false and
+  // incentivesToRender back to [].
+  assert.equal(INCENTIVES_COPY_READY, true);
   const m = matchIncentives(
     enrichListing({
       id: "t", vin: "1G1FY6S04P4100001", year: 2023, make: "Chevrolet", model: "Bolt EUV", trim: "LT",
@@ -103,8 +104,8 @@ test("the block renders NOTHING while any placeholder string is still a placehol
     }),
     STRICT_POLICY
   );
-  assert.ok(m.length > 0, "a match exists, so the gate is what keeps it dark");
-  assert.deepEqual(incentivesToRender(m), [], "the component renders exactly what this returns: nothing");
+  assert.ok(m.length > 0);
+  assert.deepEqual(incentivesToRender(m), m, "with the copy written, what matched is what renders");
 });
 
 const RELAXED: MatchPolicy = SITE_POLICY;
@@ -217,11 +218,12 @@ test("relaxed policy: an asking price under the cap names the program AND states
   assert.ok(ma, "MOR-EV named under the relaxed policy");
   assert.ok(ma!.toCheckOnTheCar.some((c) => /MSRP at or under \$55,000/.test(c)), "the MSRP cap is stated as a check, not asserted");
   assert.equal(ma!.amountUsd, 3500);
-  // Within 10% over the cap: named, carrying the gap so the cap prints beside
-  // the price. Further over: not named, under either policy.
-  assert.equal(match({ ...asNew, state: "MA", priceUsd: 56_000 }, "ma-mor-ev", RELAXED)?.cap?.askOverByUsd, 1000);
-  assert.equal(match({ ...asNew, state: "MA", priceUsd: 61_000 }, "ma-mor-ev", RELAXED), undefined);
+  // An MSRP cap gets no margin (owner, 2026-09-03): a car asking above the
+  // cap is not labelled eligible, under either policy. The 10% margin is for
+  // price-paid caps only (see the site-policy test below).
+  assert.equal(match({ ...asNew, state: "MA", priceUsd: 56_000 }, "ma-mor-ev", RELAXED), undefined);
   assert.equal(match({ ...asNew, state: "MA", priceUsd: 56_000 }, "ma-mor-ev", STRICT_POLICY), undefined);
+  assert.equal(match({ ...asNew, state: "MA", priceUsd: 55_000 }, "ma-mor-ev", RELAXED)?.cap?.askOverByUsd, undefined, "at the cap: named, no gap");
 });
 
 test("ended, waitlisted and out-of-state programs are never named", () => {

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Tile, type TileGround, type TileKind } from "./Tile";
 import { SaveToggle } from "./SaveToggle";
 import { askVsMarketTile, type CardRow, type CardTile } from "@/lib/listings/card";
-import { INCENTIVE_COPY, INCENTIVES_COPY_READY, fillCopy } from "@/lib/incentives/copy";
+import { INCENTIVES_COPY_READY } from "@/lib/incentives/copy";
 
 // Renders one precomputed card-index row (lib/listings/card.ts). Everything a
 // card says was decided server-side at index build; this component only lays
@@ -111,25 +111,16 @@ export function ListingCard({
     lead.push(askVsMarketTile(r.askVsMarket));
   }
   // The rebate program this car leads with (buildIndex → cardIncentive). The
-  // tile prints the program's own figure and name, or the cap when the ask
-  // sits over it; the hover is the owner's wording from lib/incentives/copy.ts
-  // and the whole tile stays off until that wording exists. Never "qualifies".
+  // tile is data only: the program's own figure and name, or the program's
+  // cap when the ask sits over it. No hover restating it (owner, 2026-09-03:
+  // the value is the answer). Off while the copy gate is shut.
   if (r.incentive && INCENTIVES_COPY_READY) {
     const inc = r.incentive;
     const usd = (n: number) => `$${n.toLocaleString("en-US")}`;
-    lead.push(
-      inc.overCapUsd
-        ? {
-            k: "spec" as TileKind,
-            t: `${inc.name}: ${usd(inc.overCapUsd)} cap`,
-            ti: fillCopy(INCENTIVE_COPY.tileTitleOverCap, { program: inc.name, cap: usd(inc.overCapUsd) }),
-          }
-        : {
-            k: "spec" as TileKind,
-            t: inc.usd ? `${usd(inc.usd)} ${inc.name}` : inc.name,
-            ti: fillCopy(INCENTIVE_COPY.tileTitle, { program: inc.name, usd: inc.usd ? usd(inc.usd) : "" }),
-          }
-    );
+    lead.push({
+      k: "spec" as TileKind,
+      t: inc.overCapUsd ? `${inc.name}: ${usd(inc.overCapUsd)} cap` : inc.usd ? `${usd(inc.usd)} ${inc.name}` : inc.name,
+    });
   }
   const tiles: CardTile[] = lead.length ? [...lead, ...r.tiles.slice(0, Math.max(0, 5 - lead.length))] : r.tiles;
 

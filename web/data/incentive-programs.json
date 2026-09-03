@@ -5,20 +5,38 @@
     {
       "id": "co-innovative-motor-vehicle-credit",
       "name": "Colorado innovative motor vehicle credit",
-      "jurisdiction": { "kind": "state", "state": "CO" },
+      "jurisdiction": {
+        "kind": "state",
+        "state": "CO"
+      },
       "administrator": "Colorado Department of Revenue",
       "kind": "tax_credit",
       "status": "live",
       "statusAsOf": "2026-09-02",
       "statusNote": "TY2026 amounts; HB26-1289 (signed 2026-06-03) sets 2027-28 and remains subject to the revenue-forecast mechanism.",
       "sources": [
-        { "url": "https://tax.colorado.gov/sites/tax/files/documents/ITT_Innovative_Motor_Vehicle_Credit_Nov_2025.pdf", "capturedAt": "2026-09-02", "what": "Income Tax Topics: Innovative Motor Vehicle Credit, revised November 2025" },
-        { "url": "https://leg.colorado.gov/bills/hb26-1289", "capturedAt": "2026-09-02", "what": "HB26-1289 summary: 2027 base $2,000, 2028 $1,000, additional credit for MSRP under $40,000 from 2027-01-01" }
+        {
+          "url": "https://tax.colorado.gov/sites/tax/files/documents/ITT_Innovative_Motor_Vehicle_Credit_Nov_2025.pdf",
+          "capturedAt": "2026-09-02",
+          "what": "Income Tax Topics: Innovative Motor Vehicle Credit, revised November 2025"
+        },
+        {
+          "url": "https://leg.colorado.gov/bills/hb26-1289",
+          "capturedAt": "2026-09-02",
+          "what": "HB26-1289 summary: 2027 base $2,000, 2028 $1,000, additional credit for MSRP under $40,000 from 2027-01-01"
+        }
       ],
-      "covers": { "new": true, "used": false, "lease": true },
+      "covers": {
+        "new": true,
+        "used": false,
+        "lease": true
+      },
       "leaseMinMonths": 24,
       "vehicle": {
-        "kinds": ["BEV", "PHEV"],
+        "kinds": [
+          "BEV",
+          "PHEV"
+        ],
         "newMsrpCapUsd": 80000,
         "newMsrpCapBasis": "Label MSRP including factory-fitted options; excludes destination, dealer-added items, taxes and fees.",
         "batteryKwhMin": 4,
@@ -32,31 +50,59 @@
         "pointOfSaleNote": "The credit may be assigned to the dealer or financing entity at purchase (form DR 0618); the assignee may deduct a fee of up to $250."
       },
       "purchaserConditions": [
-        "Titled and registered in Colorado by the purchaser or lessee (a dealer temporary permit does not count).",
-        "Lease term of at least two years; the credit goes to the lessee.",
+        "Vehicle must be titled and registered in Colorado (a dealer temporary permit does not count).",
+        "Leases must run at least two years; the credit goes to the lessee.",
         "Claimed on a Colorado income tax return unless assigned to the dealer at purchase."
       ],
       "amounts": [
-        { "usd": 750, "applies": { "condition": "new" }, "label": "tax year 2026" },
-        { "usd": 2500, "applies": { "condition": "new", "msrpUnderUsd": 35000 }, "label": "additional credit, MSRP under $35,000 (through 2028)", "adder": true }
+        {
+          "usd": 750,
+          "applies": {
+            "condition": "new"
+          },
+          "label": "tax year 2026"
+        },
+        {
+          "usd": 2500,
+          "applies": {
+            "condition": "new",
+            "msrpUnderUsd": 35000
+          },
+          "label": "additional credit, MSRP under $35,000 (through 2028)",
+          "adder": true
+        }
       ]
     },
     {
       "id": "ct-cheapr",
       "name": "Connecticut CHEAPR",
-      "jurisdiction": { "kind": "state", "state": "CT" },
+      "jurisdiction": {
+        "kind": "state",
+        "state": "CT"
+      },
       "administrator": "Connecticut DEEP",
       "kind": "rebate",
       "status": "live",
       "statusAsOf": "2026-09-02",
       "statusNote": "Program page content dated 2025-10-01; no funding pause stated.",
       "sources": [
-        { "url": "https://portal.ct.gov/deep/air/mobile-sources/cheapr/cheapr---home", "capturedAt": "2026-09-02", "what": "CHEAPR home: amounts, $50,000 MSRP cap, licensed CT dealership or OEM, Rebate+ criteria" }
+        {
+          "url": "https://portal.ct.gov/deep/air/mobile-sources/cheapr/cheapr---home",
+          "capturedAt": "2026-09-02",
+          "what": "CHEAPR home: amounts, $50,000 MSRP cap, licensed CT dealership or OEM, Rebate+ criteria"
+        }
       ],
-      "covers": { "new": true, "used": true, "lease": true },
+      "covers": {
+        "new": true,
+        "used": true,
+        "lease": true
+      },
       "usedNote": "Used vehicles qualify only under Rebate+ Used (income-qualified).",
       "vehicle": {
-        "kinds": ["BEV", "PHEV"],
+        "kinds": [
+          "BEV",
+          "PHEV"
+        ],
         "newMsrpCapUsd": 50000,
         "newMsrpCapBasis": "Base-model MSRP.",
         "mustBeOnList": true
@@ -68,37 +114,105 @@
         "pointOfSaleNote": "Standard rebate is applied by the dealer at purchase; Rebate+ New needs an approved application before purchase."
       },
       "purchaserConditions": [
-        "Connecticut resident.",
-        "Rebate+ (and any used-vehicle rebate): household income at or below 300% of the federal poverty level, or enrolment in a qualifying assistance program, or residence in an Environmental Justice community or Distressed Municipality.",
+        "Purchaser must be a Connecticut resident.",
+        "Rebate+ and any used-car rebate: income at or below 300% of the federal poverty level, a qualifying assistance program, or residence in an Environmental Justice community or Distressed Municipality.",
         "Vehicle must be on the CHEAPR eligible-vehicle list."
       ],
       "amounts": [
-        { "usd": 1000, "applies": { "condition": "new", "kind": "BEV" }, "label": "standard" },
-        { "usd": 500, "applies": { "condition": "new", "kind": "PHEV" }, "label": "standard" },
-        { "usd": 4000, "applies": { "condition": "new", "kind": "BEV" }, "label": "Rebate+ (income-qualified)", "incomeQualified": true },
-        { "usd": 2000, "applies": { "condition": "new", "kind": "PHEV" }, "label": "Rebate+ (income-qualified)", "incomeQualified": true },
-        { "usd": 5000, "applies": { "condition": "used", "kind": "BEV" }, "label": "Rebate+ Used (income-qualified)", "incomeQualified": true },
-        { "usd": 3000, "applies": { "condition": "used", "kind": "PHEV" }, "label": "Rebate+ Used (income-qualified)", "incomeQualified": true }
+        {
+          "usd": 1000,
+          "applies": {
+            "condition": "new",
+            "kind": "BEV"
+          },
+          "label": "standard"
+        },
+        {
+          "usd": 500,
+          "applies": {
+            "condition": "new",
+            "kind": "PHEV"
+          },
+          "label": "standard"
+        },
+        {
+          "usd": 4000,
+          "applies": {
+            "condition": "new",
+            "kind": "BEV"
+          },
+          "label": "Rebate+ (income-qualified)",
+          "incomeQualified": true
+        },
+        {
+          "usd": 2000,
+          "applies": {
+            "condition": "new",
+            "kind": "PHEV"
+          },
+          "label": "Rebate+ (income-qualified)",
+          "incomeQualified": true
+        },
+        {
+          "usd": 5000,
+          "applies": {
+            "condition": "used",
+            "kind": "BEV"
+          },
+          "label": "Rebate+ Used (income-qualified)",
+          "incomeQualified": true
+        },
+        {
+          "usd": 3000,
+          "applies": {
+            "condition": "used",
+            "kind": "PHEV"
+          },
+          "label": "Rebate+ Used (income-qualified)",
+          "incomeQualified": true
+        }
       ]
     },
     {
       "id": "de-clean-vehicle-rebate",
       "name": "Delaware Clean Vehicle Rebate",
-      "jurisdiction": { "kind": "state", "state": "DE" },
+      "jurisdiction": {
+        "kind": "state",
+        "state": "DE"
+      },
       "administrator": "Delaware DNREC",
       "kind": "rebate",
       "status": "live",
       "statusAsOf": "2026-09-02",
       "statusNote": "New rebate period began 2026-05-01; amounts fixed until the 2027 re-evaluation.",
       "sources": [
-        { "url": "https://driveelectricdelaware.org/", "capturedAt": "2026-09-02", "what": "Amounts by base MSRP tier, used amounts, 90-day application window" },
-        { "url": "https://driveelectricdelaware.org/faqs", "capturedAt": "2026-09-02", "what": "Used: licensed dealership (online dealers OK, no private sales), model year no older than 8 years, registered in Delaware, lease 36 months, two rebates per person lifetime" },
-        { "url": "https://dnrec.delaware.gov/climate-coastal-energy/clean-transportation/vehicle-rebates/", "capturedAt": "2026-09-02", "what": "Program page; rebate may be taxable income" }
+        {
+          "url": "https://driveelectricdelaware.org/",
+          "capturedAt": "2026-09-02",
+          "what": "Amounts by base MSRP tier, used amounts, 90-day application window"
+        },
+        {
+          "url": "https://driveelectricdelaware.org/faqs",
+          "capturedAt": "2026-09-02",
+          "what": "Used: licensed dealership (online dealers OK, no private sales), model year no older than 8 years, registered in Delaware, lease 36 months, two rebates per person lifetime"
+        },
+        {
+          "url": "https://dnrec.delaware.gov/climate-coastal-energy/clean-transportation/vehicle-rebates/",
+          "capturedAt": "2026-09-02",
+          "what": "Program page; rebate may be taxable income"
+        }
       ],
-      "covers": { "new": true, "used": true, "lease": true },
+      "covers": {
+        "new": true,
+        "used": true,
+        "lease": true
+      },
       "leaseMinMonths": 36,
       "vehicle": {
-        "kinds": ["BEV", "PHEV"],
+        "kinds": [
+          "BEV",
+          "PHEV"
+        ],
         "newMsrpCapUsd": 50000,
         "newMsrpCapBasis": "Base MSRP.",
         "usedPriceCapUsd": 40000,
@@ -112,35 +226,84 @@
         "applyWithinDays": 90
       },
       "purchaserConditions": [
-        "Delaware resident; the used-vehicle rebate is for individuals only.",
-        "Vehicle registered in Delaware.",
-        "Lease of at least 36 months.",
-        "Apply within 90 days of purchase or lease; at most two rebates per person over the program's life.",
-        "The rebate may be treated as taxable income."
+        "Purchaser must be a Delaware resident; used-car rebates go to individuals only.",
+        "Vehicle must be registered in Delaware.",
+        "Leases must run at least 36 months.",
+        "Apply within 90 days; at most two rebates per person over the program's life.",
+        "The rebate may be taxable income."
       ],
       "amounts": [
-        { "usd": 2500, "applies": { "condition": "new", "kind": "BEV", "msrpUnderUsd": 40000 }, "label": "new BEV, base MSRP below $40,000" },
-        { "usd": 1500, "applies": { "condition": "new", "kind": "BEV" }, "label": "new BEV, base MSRP $40,000 to $50,000" },
-        { "usd": 1000, "applies": { "condition": "new", "kind": "PHEV" }, "label": "new PHEV" },
-        { "usd": 2500, "applies": { "condition": "used", "kind": "BEV" }, "label": "used BEV" },
-        { "usd": 1000, "applies": { "condition": "used", "kind": "PHEV" }, "label": "used PHEV" }
+        {
+          "usd": 2500,
+          "applies": {
+            "condition": "new",
+            "kind": "BEV",
+            "msrpUnderUsd": 40000
+          },
+          "label": "new BEV, base MSRP below $40,000"
+        },
+        {
+          "usd": 1500,
+          "applies": {
+            "condition": "new",
+            "kind": "BEV"
+          },
+          "label": "new BEV, base MSRP $40,000 to $50,000"
+        },
+        {
+          "usd": 1000,
+          "applies": {
+            "condition": "new",
+            "kind": "PHEV"
+          },
+          "label": "new PHEV"
+        },
+        {
+          "usd": 2500,
+          "applies": {
+            "condition": "used",
+            "kind": "BEV"
+          },
+          "label": "used BEV"
+        },
+        {
+          "usd": 1000,
+          "applies": {
+            "condition": "used",
+            "kind": "PHEV"
+          },
+          "label": "used PHEV"
+        }
       ]
     },
     {
       "id": "il-ev-rebate",
       "name": "Illinois EV Rebate",
-      "jurisdiction": { "kind": "state", "state": "IL" },
+      "jurisdiction": {
+        "kind": "state",
+        "state": "IL"
+      },
       "administrator": "Illinois EPA",
       "kind": "rebate",
       "status": "live",
       "statusAsOf": "2026-09-02",
       "statusNote": "Application cycle open 2026-08-01 to 2026-12-31; $14M appropriated this fiscal year.",
       "sources": [
-        { "url": "https://epa.illinois.gov/topics/ceja/electric-vehicle-rebates.html", "capturedAt": "2026-09-02", "what": "Cycle dates, amounts, $80,000 price cap, Illinois-licensed dealership, 180-day window, residency, 500% FPL, 10-year rule" }
+        {
+          "url": "https://epa.illinois.gov/topics/ceja/electric-vehicle-rebates.html",
+          "capturedAt": "2026-09-02",
+          "what": "Cycle dates, amounts, $80,000 price cap, Illinois-licensed dealership, 180-day window, residency, 500% FPL, 10-year rule"
+        }
       ],
-      "covers": { "new": true, "used": true, "lease": false },
+      "covers": {
+        "new": true,
+        "used": true,
+        "lease": false
+      },
       "vehicle": {
-        "kinds": ["BEV"],
+        "kinds": [
+          "BEV"
+        ],
         "purchasePriceCapUsd": 80000,
         "purchasePriceCapBasis": "Purchase price excluding state and local taxes; applies to new and used."
       },
@@ -151,33 +314,65 @@
         "applyWithinDays": 180
       },
       "purchaserConditions": [
-        "Illinois resident when the car is bought and when the rebate is paid.",
+        "Purchaser must be an Illinois resident.",
         "Household income at or below 500% of the federal poverty level.",
-        "No Illinois EV rebate received in the previous 10 years; individuals only.",
-        "Apply within 180 days of purchase, postmarked during an open cycle (2026-08-01 to 2026-12-31)."
+        "No Illinois EV rebate in the previous 10 years; individuals only.",
+        "Apply within 180 days, during an open cycle (2026-08-01 to 2026-12-31)."
       ],
       "amounts": [
-        { "usd": 2000, "applies": { "condition": "any", "kind": "BEV" }, "label": "standard" },
-        { "usd": 4000, "applies": { "condition": "any", "kind": "BEV" }, "label": "low-income applicant", "incomeQualified": true }
+        {
+          "usd": 2000,
+          "applies": {
+            "condition": "any",
+            "kind": "BEV"
+          },
+          "label": "standard"
+        },
+        {
+          "usd": 4000,
+          "applies": {
+            "condition": "any",
+            "kind": "BEV"
+          },
+          "label": "low-income applicant",
+          "incomeQualified": true
+        }
       ]
     },
     {
       "id": "ma-mor-ev",
       "name": "Massachusetts MOR-EV",
-      "jurisdiction": { "kind": "state", "state": "MA" },
+      "jurisdiction": {
+        "kind": "state",
+        "state": "MA"
+      },
       "administrator": "Massachusetts DOER (Center for Sustainable Energy administers)",
       "kind": "rebate",
       "status": "live",
       "statusAsOf": "2026-09-02",
       "statusNote": "Rule changes filed 2026-07-17 (lower price caps, income threshold for MOR-EV+); public comment through 2026-09-04. Figures below are the rules in force on 2026-09-02.",
       "sources": [
-        { "url": "https://mor-ev.org/eligibility", "capturedAt": "2026-09-02", "what": "$3,500 standard and used, $55,000 total MSRP cap, $40,000 used price cap, MOR-EV+ $1,500, trade-in $1,000, 36-month lease and retention, 90-day window, income thresholds" },
-        { "url": "https://mor-ev.org/faqs", "capturedAt": "2026-09-02", "what": "PHEVs purchased after 2023-06-30 no longer eligible; licensed dealership, no private sales" }
+        {
+          "url": "https://mor-ev.org/eligibility",
+          "capturedAt": "2026-09-02",
+          "what": "$3,500 standard and used, $55,000 total MSRP cap, $40,000 used price cap, MOR-EV+ $1,500, trade-in $1,000, 36-month lease and retention, 90-day window, income thresholds"
+        },
+        {
+          "url": "https://mor-ev.org/faqs",
+          "capturedAt": "2026-09-02",
+          "what": "PHEVs purchased after 2023-06-30 no longer eligible; licensed dealership, no private sales"
+        }
       ],
-      "covers": { "new": true, "used": true, "lease": true },
+      "covers": {
+        "new": true,
+        "used": true,
+        "lease": true
+      },
       "leaseMinMonths": 36,
       "vehicle": {
-        "kinds": ["BEV"],
+        "kinds": [
+          "BEV"
+        ],
         "newMsrpCapUsd": 55000,
         "newMsrpCapBasis": "Total MSRP.",
         "usedPriceCapUsd": 40000,
@@ -191,64 +386,137 @@
         "pointOfSaleNote": "Applied at purchase at participating MOR-EV dealerships; otherwise apply online within 90 days."
       },
       "purchaserConditions": [
-        "Massachusetts resident (or a Massachusetts business, or active-duty military stationed in Massachusetts).",
-        "MOR-EV Used and MOR-EV+: modified adjusted gross income at or below $150,000 (married filing jointly), $112,500 (head of household) or $75,000 (other filers).",
-        "Keep the vehicle for 36 consecutive months; leases must run at least 36 months.",
-        "Trade-in adder: the traded vehicle must be at least 12 model years old and registered in Massachusetts to the applicant or immediate family for at least two years."
+        "Purchaser must be a Massachusetts resident, a Massachusetts business, or military stationed in Massachusetts.",
+        "MOR-EV Used and MOR-EV+: income at or below $150,000 (joint), $112,500 (head of household) or $75,000 (other filers).",
+        "Keep the vehicle 36 months; leases must run at least 36 months.",
+        "Trade-in adder: the traded vehicle must be at least 12 model years old and registered in Massachusetts to the applicant or immediate family for two years."
       ],
       "amounts": [
-        { "usd": 3500, "applies": { "condition": "new", "kind": "BEV" }, "label": "MOR-EV Standard" },
-        { "usd": 3500, "applies": { "condition": "used", "kind": "BEV" }, "label": "MOR-EV Used (income-qualified)", "incomeQualified": true },
-        { "usd": 1500, "applies": { "condition": "any", "kind": "BEV" }, "label": "MOR-EV+ adder (income-qualified)", "incomeQualified": true, "adder": true },
-        { "usd": 1000, "applies": { "condition": "any", "kind": "BEV" }, "label": "trade-in adder", "adder": true }
+        {
+          "usd": 3500,
+          "applies": {
+            "condition": "new",
+            "kind": "BEV"
+          },
+          "label": "MOR-EV Standard"
+        },
+        {
+          "usd": 3500,
+          "applies": {
+            "condition": "used",
+            "kind": "BEV"
+          },
+          "label": "MOR-EV Used (income-qualified)",
+          "incomeQualified": true
+        },
+        {
+          "usd": 1500,
+          "applies": {
+            "condition": "any",
+            "kind": "BEV"
+          },
+          "label": "MOR-EV+ adder (income-qualified)",
+          "incomeQualified": true,
+          "adder": true
+        },
+        {
+          "usd": 1000,
+          "applies": {
+            "condition": "any",
+            "kind": "BEV"
+          },
+          "label": "trade-in adder",
+          "adder": true
+        }
       ]
     },
     {
       "id": "md-excise-tax-credit",
       "name": "Maryland excise tax credit for plug-in electric vehicles",
-      "jurisdiction": { "kind": "state", "state": "MD" },
+      "jurisdiction": {
+        "kind": "state",
+        "state": "MD"
+      },
       "administrator": "Maryland MVA",
       "kind": "tax_credit",
       "status": "waitlist",
       "statusAsOf": "2026-09-02",
       "statusNote": "MVA bulletin 2025-08-12: fiscal year 2026 funds are depleted; applications are placed on a waiting list for possible FY2027 funding.",
       "sources": [
-        { "url": "https://mva.maryland.gov/your-mva-guide/businesses/bulletins-businesses/excise-tax-credit-plug-electric-or-fuel-cell-vehicles-no-more-fiscal-year-2026-funding", "capturedAt": "2026-09-02", "what": "Bulletin dated 2025-08-12: FY2026 funds depleted, FY2027 waiting list, $3,000" },
-        { "url": "https://regs.maryland.gov/us/md/exec/comar/11.15.40.04", "capturedAt": "2026-09-02", "what": "COMAR 11.15.40.04: base purchase price not exceeding $50,000, battery at least 5.0 kWh, purchased new and titled first 2023-07-01 to 2027-06-30, one credit per individual" }
+        {
+          "url": "https://mva.maryland.gov/your-mva-guide/businesses/bulletins-businesses/excise-tax-credit-plug-electric-or-fuel-cell-vehicles-no-more-fiscal-year-2026-funding",
+          "capturedAt": "2026-09-02",
+          "what": "Bulletin dated 2025-08-12: FY2026 funds depleted, FY2027 waiting list, $3,000"
+        },
+        {
+          "url": "https://regs.maryland.gov/us/md/exec/comar/11.15.40.04",
+          "capturedAt": "2026-09-02",
+          "what": "COMAR 11.15.40.04: base purchase price not exceeding $50,000, battery at least 5.0 kWh, purchased new and titled first 2023-07-01 to 2027-06-30, one credit per individual"
+        }
       ],
-      "covers": { "new": true, "used": false, "lease": true },
+      "covers": {
+        "new": true,
+        "used": false,
+        "lease": true
+      },
       "vehicle": {
-        "kinds": ["BEV", "PHEV"],
+        "kinds": [
+          "BEV",
+          "PHEV"
+        ],
         "newMsrpCapUsd": 50000,
         "newMsrpCapBasis": "Base purchase price (Monroney standard vehicle price, excluding options, freight, taxes, fees).",
         "batteryKwhMin": 5,
         "mustBeNew": "Purchased new and titled for the first time in Maryland between 2023-07-01 and 2027-06-30."
       },
-      "transaction": { "dealer": "any", "pointOfSale": false, "postPurchase": true },
+      "transaction": {
+        "dealer": "any",
+        "pointOfSale": false,
+        "postPurchase": true
+      },
       "purchaserConditions": [
-        "Titled in Maryland.",
-        "One credit per individual (business entities up to 10 vehicles).",
-        "Fiscal year 2026 funds are depleted; applications go on a waiting list and are paid only if FY2027 funding is appropriated."
+        "Vehicle must be titled in Maryland.",
+        "One credit per individual.",
+        "Fiscal year 2026 funds are depleted; applications wait for FY2027 funding."
       ],
       "amounts": [
-        { "usd": 3000, "applies": { "condition": "new" }, "label": "credit against Maryland excise tax, if funded" }
+        {
+          "usd": 3000,
+          "applies": {
+            "condition": "new"
+          },
+          "label": "credit against Maryland excise tax, if funded"
+        }
       ]
     },
     {
       "id": "me-efficiency-maine-ev-rebate",
       "name": "Efficiency Maine EV rebate (income-qualified)",
-      "jurisdiction": { "kind": "state", "state": "ME" },
+      "jurisdiction": {
+        "kind": "state",
+        "state": "ME"
+      },
       "administrator": "Efficiency Maine Trust",
       "kind": "rebate",
       "status": "live",
       "statusAsOf": "2026-09-02",
       "statusNote": "Income-qualified applicants only; the $1,000 bonus inside the figures below expires 2026-09-30.",
       "sources": [
-        { "url": "https://www.efficiencymaine.com/electric-vehicle-incentives-for-low-and-moderate-income/", "capturedAt": "2026-09-02", "what": "Amounts by income tier, all-electric only, purchased not leased, participating dealers or direct makers, $55,000 new MSRP cap ($80,000 pickups and vans), $50,000 used price cap, used model year within 6 years and 72,000 miles, prior income verification, off-peak charger requirement, one per person and two per household in 36 months" }
+        {
+          "url": "https://www.efficiencymaine.com/electric-vehicle-incentives-for-low-and-moderate-income/",
+          "capturedAt": "2026-09-02",
+          "what": "Amounts by income tier, all-electric only, purchased not leased, participating dealers or direct makers, $55,000 new MSRP cap ($80,000 pickups and vans), $50,000 used price cap, used model year within 6 years and 72,000 miles, prior income verification, off-peak charger requirement, one per person and two per household in 36 months"
+        }
       ],
-      "covers": { "new": true, "used": true, "lease": false },
+      "covers": {
+        "new": true,
+        "used": true,
+        "lease": false
+      },
       "vehicle": {
-        "kinds": ["BEV"],
+        "kinds": [
+          "BEV"
+        ],
         "newMsrpCapUsd": 55000,
         "newMsrpCapBasis": "MSRP; $80,000 for pickup trucks and vans.",
         "usedPriceCapUsd": 50000,
@@ -263,36 +531,85 @@
         "pointOfSaleNote": "Participating dealers, or direct from Tesla, Rivian, Polestar or Slate."
       },
       "purchaserConditions": [
-        "Maine resident, age 18 or over, with a valid driver's license.",
-        "Low- or moderate-income as verified by Efficiency Maine BEFORE the purchase (allow 5 business days).",
-        "An off-peak charger bought through Efficiency Maine and installed at home within 90 days.",
+        "Purchaser must be a Maine resident aged 18 or over with a driver's license.",
+        "Income verified as low or moderate by Efficiency Maine before the purchase.",
+        "An off-peak charger bought through Efficiency Maine and installed within 90 days.",
         "Purchased, not leased.",
-        "One rebate per person; at most two per household within 36 months."
+        "One rebate per person; two per household in 36 months."
       ],
       "amounts": [
-        { "usd": 8000, "applies": { "condition": "new", "kind": "BEV" }, "label": "low income (includes $1,000 bonus through 2026-09-30)", "incomeQualified": true },
-        { "usd": 6000, "applies": { "condition": "new", "kind": "BEV" }, "label": "moderate income (includes $1,000 bonus through 2026-09-30)", "incomeQualified": true },
-        { "usd": 4000, "applies": { "condition": "used", "kind": "BEV" }, "label": "low income (includes $1,000 bonus through 2026-09-30)", "incomeQualified": true },
-        { "usd": 3000, "applies": { "condition": "used", "kind": "BEV" }, "label": "moderate income (includes $1,000 bonus through 2026-09-30)", "incomeQualified": true }
+        {
+          "usd": 8000,
+          "applies": {
+            "condition": "new",
+            "kind": "BEV"
+          },
+          "label": "low income (includes $1,000 bonus through 2026-09-30)",
+          "incomeQualified": true
+        },
+        {
+          "usd": 6000,
+          "applies": {
+            "condition": "new",
+            "kind": "BEV"
+          },
+          "label": "moderate income (includes $1,000 bonus through 2026-09-30)",
+          "incomeQualified": true
+        },
+        {
+          "usd": 4000,
+          "applies": {
+            "condition": "used",
+            "kind": "BEV"
+          },
+          "label": "low income (includes $1,000 bonus through 2026-09-30)",
+          "incomeQualified": true
+        },
+        {
+          "usd": 3000,
+          "applies": {
+            "condition": "used",
+            "kind": "BEV"
+          },
+          "label": "moderate income (includes $1,000 bonus through 2026-09-30)",
+          "incomeQualified": true
+        }
       ]
     },
     {
       "id": "nj-charge-up",
       "name": "Charge Up New Jersey",
-      "jurisdiction": { "kind": "state", "state": "NJ" },
+      "jurisdiction": {
+        "kind": "state",
+        "state": "NJ"
+      },
       "administrator": "New Jersey Board of Public Utilities",
       "kind": "rebate",
       "status": "live",
       "statusAsOf": "2026-09-02",
       "statusNote": "FY27 program, 2026-07-01 to 2027-06-30, point of sale only.",
       "sources": [
-        { "url": "https://chargeup.njcleanenergy.com/sites/default/files/docs/Charge_Up_New_Jersey_Terms_and_Conditions.pdf", "capturedAt": "2026-09-02", "what": "FY27 Terms and Conditions v1 (2026-07-01): new light-duty BEV with MSRP below $55,000; PHEVs, used and out-of-state purchases ineligible; Eligible Dealership in NJ; 36-month lease and ownership; three incentives per person in 10 years; $1,500 plus $2,500 Charge Up+" },
-        { "url": "https://chargeup.njcleanenergy.com/eligibility-guidelines", "capturedAt": "2026-09-02", "what": "Residency at purchase and two years after; point of sale" }
+        {
+          "url": "https://chargeup.njcleanenergy.com/sites/default/files/docs/Charge_Up_New_Jersey_Terms_and_Conditions.pdf",
+          "capturedAt": "2026-09-02",
+          "what": "FY27 Terms and Conditions v1 (2026-07-01): new light-duty BEV with MSRP below $55,000; PHEVs, used and out-of-state purchases ineligible; Eligible Dealership in NJ; 36-month lease and ownership; three incentives per person in 10 years; $1,500 plus $2,500 Charge Up+"
+        },
+        {
+          "url": "https://chargeup.njcleanenergy.com/eligibility-guidelines",
+          "capturedAt": "2026-09-02",
+          "what": "Residency at purchase and two years after; point of sale"
+        }
       ],
-      "covers": { "new": true, "used": false, "lease": true },
+      "covers": {
+        "new": true,
+        "used": false,
+        "lease": true
+      },
       "leaseMinMonths": 36,
       "vehicle": {
-        "kinds": ["BEV"],
+        "kinds": [
+          "BEV"
+        ],
         "newMsrpCapUsd": 55000,
         "newMsrpCapBasis": "MSRP below $55,000, counting every purchase-contract line that relates to the vehicle itself (battery, wheel, audio upgrades); excluding destination, tax, registration, title and documentation fees and accessories.",
         "mustBeOnList": true,
@@ -305,34 +622,68 @@
         "postPurchase": false
       },
       "purchaserConditions": [
-        "New Jersey resident at the time of order, purchase or lease (or active-duty military stationed in New Jersey), and for two years after.",
-        "Vehicle registered in New Jersey and kept for 36 consecutive months; leases must run at least 36 months.",
-        "Purchased or leased in New Jersey at a participating Eligible Dealership; the incentive is taken off the price at the point of sale.",
-        "At most three vehicle incentives per person over the program's 10 years.",
-        "Charge Up+ ($2,500 more) requires pre-qualification as income-qualified."
+        "Purchaser must be a New Jersey resident (or military stationed in New Jersey) and stay one for two years.",
+        "Vehicle must be registered in New Jersey and kept 36 months; leases must run at least 36 months.",
+        "Bought or leased in New Jersey at a participating dealership; the incentive comes off the price at sale.",
+        "At most three incentives per person over 10 years.",
+        "Charge Up+ ($2,500 more) requires income pre-qualification."
       ],
       "amounts": [
-        { "usd": 1500, "applies": { "condition": "new", "kind": "BEV" }, "label": "Charge Up" },
-        { "usd": 2500, "applies": { "condition": "new", "kind": "BEV" }, "label": "Charge Up+ adder (income-qualified, pre-qualification required)", "incomeQualified": true, "adder": true }
+        {
+          "usd": 1500,
+          "applies": {
+            "condition": "new",
+            "kind": "BEV"
+          },
+          "label": "Charge Up"
+        },
+        {
+          "usd": 2500,
+          "applies": {
+            "condition": "new",
+            "kind": "BEV"
+          },
+          "label": "Charge Up+ adder (income-qualified, pre-qualification required)",
+          "incomeQualified": true,
+          "adder": true
+        }
       ]
     },
     {
       "id": "nm-clean-car-income-tax-credit",
       "name": "New Mexico clean car income tax credit",
-      "jurisdiction": { "kind": "state", "state": "NM" },
+      "jurisdiction": {
+        "kind": "state",
+        "state": "NM"
+      },
       "administrator": "New Mexico EMNRD (certification) and Taxation and Revenue Department",
       "kind": "tax_credit",
       "status": "live",
       "statusAsOf": "2026-09-02",
       "statusNote": "Purchases and new leases 2024-05-15 through 2029-12-31; amounts step down from 2027.",
       "sources": [
-        { "url": "https://www.emnrd.nm.gov/ecmd/faq/clean-car-tax-credits/", "capturedAt": "2026-09-02", "what": "Amounts by year and vehicle type, $55,000 new base MSRP cap, $25,000 used market-value cap, used model year at least two years prior, dealer-certified with one-year warranty, twice per car, 3-year lease minimum, NM-licensed dealer or tribal-land dealer, refundable, apply within one year" },
-        { "url": "https://www.emnrd.nm.gov/ecmd/clean-car-charging-unit-tax-credit/", "capturedAt": "2026-09-02", "what": "Program page" }
+        {
+          "url": "https://www.emnrd.nm.gov/ecmd/faq/clean-car-tax-credits/",
+          "capturedAt": "2026-09-02",
+          "what": "Amounts by year and vehicle type, $55,000 new base MSRP cap, $25,000 used market-value cap, used model year at least two years prior, dealer-certified with one-year warranty, twice per car, 3-year lease minimum, NM-licensed dealer or tribal-land dealer, refundable, apply within one year"
+        },
+        {
+          "url": "https://www.emnrd.nm.gov/ecmd/clean-car-charging-unit-tax-credit/",
+          "capturedAt": "2026-09-02",
+          "what": "Program page"
+        }
       ],
-      "covers": { "new": true, "used": true, "lease": true },
+      "covers": {
+        "new": true,
+        "used": true,
+        "lease": true
+      },
       "leaseMinMonths": 36,
       "vehicle": {
-        "kinds": ["BEV", "PHEV"],
+        "kinds": [
+          "BEV",
+          "PHEV"
+        ],
         "newMsrpCapUsd": 55000,
         "newMsrpCapBasis": "Base MSRP.",
         "usedPriceCapUsd": 25000,
@@ -341,41 +692,91 @@
       },
       "transaction": {
         "dealer": "licensed_in_state",
-        "dealerNote": "A dealer licensed in New Mexico by the Motor Vehicle Division, or a registered dealer on tribal land.",
+        "dealerNote": "Bought or leased from a New Mexico-licensed dealer or a dealer on tribal land.",
         "pointOfSale": false,
         "postPurchase": true,
         "applyWithinDays": 365
       },
       "purchaserConditions": [
-        "Claimed on a New Mexico income tax return after EMNRD certification; apply within one year of purchase or lease.",
-        "Used cars must be dealer-certified with at least a one-year warranty against defects, and a car can earn the credit at most twice in its life.",
+        "Claimed on a New Mexico income tax return after EMNRD certification; apply within one year.",
+        "Used cars must be dealer-certified with at least a one-year warranty; a car earns the credit at most twice.",
         "Leases must run at least three years.",
-        "Refundable: the excess over tax liability is paid out."
+        "Refundable."
       ],
       "amounts": [
-        { "usd": 3000, "applies": { "condition": "new", "kind": "BEV" }, "label": "2024 to 2026 ($2,200 in 2027)" },
-        { "usd": 2500, "applies": { "condition": "new", "kind": "PHEV" }, "label": "2024 to 2026 ($1,850 in 2027)" },
-        { "usd": 2500, "applies": { "condition": "used", "kind": "BEV" }, "label": "2024 to 2026 ($1,850 in 2027)" },
-        { "usd": 2000, "applies": { "condition": "used", "kind": "PHEV" }, "label": "2024 to 2026 ($1,480 in 2027)" }
+        {
+          "usd": 3000,
+          "applies": {
+            "condition": "new",
+            "kind": "BEV"
+          },
+          "label": "2024 to 2026 ($2,200 in 2027)"
+        },
+        {
+          "usd": 2500,
+          "applies": {
+            "condition": "new",
+            "kind": "PHEV"
+          },
+          "label": "2024 to 2026 ($1,850 in 2027)"
+        },
+        {
+          "usd": 2500,
+          "applies": {
+            "condition": "used",
+            "kind": "BEV"
+          },
+          "label": "2024 to 2026 ($1,850 in 2027)"
+        },
+        {
+          "usd": 2000,
+          "applies": {
+            "condition": "used",
+            "kind": "PHEV"
+          },
+          "label": "2024 to 2026 ($1,480 in 2027)"
+        }
       ]
     },
     {
       "id": "ny-drive-clean-rebate",
       "name": "New York Drive Clean Rebate",
-      "jurisdiction": { "kind": "state", "state": "NY" },
+      "jurisdiction": {
+        "kind": "state",
+        "state": "NY"
+      },
       "administrator": "NYSERDA",
       "kind": "rebate",
       "status": "live",
       "statusAsOf": "2026-09-02",
       "sources": [
-        { "url": "https://www.nyserda.ny.gov/All-Programs/Drive-Clean-Rebate-For-Electric-Cars-Program", "capturedAt": "2026-09-02", "what": "Tiers by electric range, $500 flat above $42,000 MSRP, point of sale at participating dealers, NYS residents" },
-        { "url": "https://www.nyserda.ny.gov/All-Programs/Drive-Clean-Rebate-For-Electric-Cars-Program/Dealers/Frequently-Asked-Questions", "capturedAt": "2026-09-02", "what": "Lease 36 months or longer, registered in NYS, invoiced to a NYS dealer, 36-month ownership" },
-        { "url": "https://www.nyserda.ny.gov/All-Programs/Drive-Clean-Rebate-For-Electric-Cars-Program/Eligible-Models", "capturedAt": "2026-09-02", "what": "Eligible models list; new at time of purchase or lease" }
+        {
+          "url": "https://www.nyserda.ny.gov/All-Programs/Drive-Clean-Rebate-For-Electric-Cars-Program",
+          "capturedAt": "2026-09-02",
+          "what": "Tiers by electric range, $500 flat above $42,000 MSRP, point of sale at participating dealers, NYS residents"
+        },
+        {
+          "url": "https://www.nyserda.ny.gov/All-Programs/Drive-Clean-Rebate-For-Electric-Cars-Program/Dealers/Frequently-Asked-Questions",
+          "capturedAt": "2026-09-02",
+          "what": "Lease 36 months or longer, registered in NYS, invoiced to a NYS dealer, 36-month ownership"
+        },
+        {
+          "url": "https://www.nyserda.ny.gov/All-Programs/Drive-Clean-Rebate-For-Electric-Cars-Program/Eligible-Models",
+          "capturedAt": "2026-09-02",
+          "what": "Eligible models list; new at time of purchase or lease"
+        }
       ],
-      "covers": { "new": true, "used": false, "lease": true },
+      "covers": {
+        "new": true,
+        "used": false,
+        "lease": true
+      },
       "leaseMinMonths": 36,
       "vehicle": {
-        "kinds": ["BEV", "PHEV"],
+        "kinds": [
+          "BEV",
+          "PHEV"
+        ],
         "mustBeOnList": true,
         "newMsrpTierUsd": 42000,
         "newMsrpCapBasis": "No cap: MSRP over $42,000 pays the $500 flat tier."
@@ -387,74 +788,190 @@
         "postPurchase": false
       },
       "purchaserConditions": [
-        "New York State resident, business or government entity.",
-        "Bought or leased through a participating New York dealership; the dealer takes the rebate off the price.",
-        "Registered in New York State and kept for 36 months; leases must run at least 36 months."
+        "Purchaser must be a New York State resident, business or government entity.",
+        "Bought or leased through a participating New York dealer; the rebate comes off the price at sale.",
+        "Vehicle must be registered in New York and kept 36 months; leases must run at least 36 months."
       ],
       "amounts": [
-        { "usd": 2000, "applies": { "condition": "new", "epaElectricRangeMinMi": 200, "msrpUnderUsd": 42000 }, "label": "electric range over 200 miles, MSRP $42,000 or under" },
-        { "usd": 1000, "applies": { "condition": "new", "epaElectricRangeMinMi": 40, "epaElectricRangeMaxMi": 199, "msrpUnderUsd": 42000 }, "label": "electric range 40 to 199 miles, MSRP $42,000 or under" },
-        { "usd": 500, "applies": { "condition": "new", "epaElectricRangeMaxMi": 39, "msrpUnderUsd": 42000 }, "label": "electric range under 40 miles" },
-        { "usd": 500, "applies": { "condition": "new", "msrpOverUsd": 42000 }, "label": "MSRP over $42,000" }
+        {
+          "usd": 2000,
+          "applies": {
+            "condition": "new",
+            "epaElectricRangeMinMi": 200,
+            "msrpUnderUsd": 42000
+          },
+          "label": "electric range over 200 miles, MSRP $42,000 or under"
+        },
+        {
+          "usd": 1000,
+          "applies": {
+            "condition": "new",
+            "epaElectricRangeMinMi": 40,
+            "epaElectricRangeMaxMi": 199,
+            "msrpUnderUsd": 42000
+          },
+          "label": "electric range 40 to 199 miles, MSRP $42,000 or under"
+        },
+        {
+          "usd": 500,
+          "applies": {
+            "condition": "new",
+            "epaElectricRangeMaxMi": 39,
+            "msrpUnderUsd": 42000
+          },
+          "label": "electric range under 40 miles"
+        },
+        {
+          "usd": 500,
+          "applies": {
+            "condition": "new",
+            "msrpOverUsd": 42000
+          },
+          "label": "MSRP over $42,000"
+        }
       ]
     },
     {
       "id": "or-clean-vehicle-rebate",
       "name": "Oregon Clean Vehicle Rebate Program",
-      "jurisdiction": { "kind": "state", "state": "OR" },
+      "jurisdiction": {
+        "kind": "state",
+        "state": "OR"
+      },
       "administrator": "Oregon DEQ",
       "kind": "rebate",
       "status": "live",
       "statusAsOf": "2026-09-02",
       "statusNote": "2026 open period 2026-08-25 to 2026-11-04; rebates depend on funding at the time of purchase or lease.",
       "sources": [
-        { "url": "https://www.oregon.gov/deq/aq/programs/pages/applying-for-ev-rebate.aspx", "capturedAt": "2026-09-02", "what": "Open period, Standard amounts by battery size, Charge Ahead amounts and 400% FPL rule, base MSRP under $50,000, certified dealer or OEM, six-month window, 24-month registration, two rebates per individual" }
+        {
+          "url": "https://www.oregon.gov/deq/aq/programs/pages/applying-for-ev-rebate.aspx",
+          "capturedAt": "2026-09-02",
+          "what": "Open period, Standard amounts by battery size, Charge Ahead amounts and 400% FPL rule, base MSRP under $50,000, certified dealer or OEM, six-month window, 24-month registration, two rebates per individual"
+        }
       ],
-      "covers": { "new": true, "used": true, "lease": true },
+      "covers": {
+        "new": true,
+        "used": true,
+        "lease": true
+      },
       "usedNote": "Used vehicles qualify only under Charge Ahead (income-qualified).",
       "vehicle": {
-        "kinds": ["BEV", "PHEV"],
+        "kinds": [
+          "BEV",
+          "PHEV"
+        ],
         "newMsrpCapUsd": 50000,
         "newMsrpCapBasis": "Base MSRP under $50,000."
       },
       "transaction": {
         "dealer": "participating",
-        "dealerNote": "A certified vehicle dealer or an original equipment manufacturer.",
+        "dealerNote": "Bought or leased from a certified dealer or the manufacturer.",
         "pointOfSale": false,
         "postPurchase": true,
         "applyWithinDays": 183
       },
       "purchaserConditions": [
-        "Oregon resident; register the vehicle in Oregon and keep it registered for at least 24 months.",
-        "Apply within six months of purchase or lease, during an open period (2026-08-25 to 2026-11-04).",
-        "Charge Ahead (and any used-vehicle rebate): household income at or below 400% of the federal poverty guideline.",
-        "At most two rebates per individual."
+        "Purchaser must be an Oregon resident; register the vehicle in Oregon and keep it registered 24 months.",
+        "Apply within six months, during an open period (2026-08-25 to 2026-11-04).",
+        "Charge Ahead and any used-car rebate: household income at or below 400% of the federal poverty guideline.",
+        "At most two rebates per person."
       ],
       "amounts": [
-        { "usd": 2000, "applies": { "condition": "new", "kind": "BEV", "batteryKwhMin": 10 }, "label": "Standard, battery 10 kWh or more" },
-        { "usd": 1500, "applies": { "condition": "new", "kind": "PHEV", "batteryKwhMin": 10 }, "label": "Standard, battery 10 kWh or more" },
-        { "usd": 750, "applies": { "condition": "new", "batteryKwhMaxExclusive": 10 }, "label": "Standard, battery under 10 kWh" },
-        { "usd": 7500, "applies": { "condition": "new", "kind": "BEV" }, "label": "Charge Ahead (income-qualified)", "incomeQualified": true },
-        { "usd": 5000, "applies": { "condition": "new", "kind": "PHEV" }, "label": "Charge Ahead (income-qualified)", "incomeQualified": true },
-        { "usd": 4000, "applies": { "condition": "used", "kind": "BEV" }, "label": "Charge Ahead used, up to $4,000 and no more than 30% of the price (income-qualified)", "incomeQualified": true, "upTo": true },
-        { "usd": 2500, "applies": { "condition": "used", "kind": "PHEV" }, "label": "Charge Ahead used (income-qualified)", "incomeQualified": true }
+        {
+          "usd": 2000,
+          "applies": {
+            "condition": "new",
+            "kind": "BEV",
+            "batteryKwhMin": 10
+          },
+          "label": "Standard, battery 10 kWh or more"
+        },
+        {
+          "usd": 1500,
+          "applies": {
+            "condition": "new",
+            "kind": "PHEV",
+            "batteryKwhMin": 10
+          },
+          "label": "Standard, battery 10 kWh or more"
+        },
+        {
+          "usd": 750,
+          "applies": {
+            "condition": "new",
+            "batteryKwhMaxExclusive": 10
+          },
+          "label": "Standard, battery under 10 kWh"
+        },
+        {
+          "usd": 7500,
+          "applies": {
+            "condition": "new",
+            "kind": "BEV"
+          },
+          "label": "Charge Ahead (income-qualified)",
+          "incomeQualified": true
+        },
+        {
+          "usd": 5000,
+          "applies": {
+            "condition": "new",
+            "kind": "PHEV"
+          },
+          "label": "Charge Ahead (income-qualified)",
+          "incomeQualified": true
+        },
+        {
+          "usd": 4000,
+          "applies": {
+            "condition": "used",
+            "kind": "BEV"
+          },
+          "label": "Charge Ahead used, up to $4,000 and no more than 30% of the price (income-qualified)",
+          "incomeQualified": true,
+          "upTo": true
+        },
+        {
+          "usd": 2500,
+          "applies": {
+            "condition": "used",
+            "kind": "PHEV"
+          },
+          "label": "Charge Ahead used (income-qualified)",
+          "incomeQualified": true
+        }
       ]
     },
     {
       "id": "ri-drive-ev",
       "name": "Rhode Island DRIVE EV",
-      "jurisdiction": { "kind": "state", "state": "RI" },
+      "jurisdiction": {
+        "kind": "state",
+        "state": "RI"
+      },
       "administrator": "Rhode Island Office of Energy Resources",
       "kind": "rebate",
       "status": "live",
       "statusAsOf": "2026-09-02",
       "statusNote": "First-come, first-served while funds last; amounts below apply to purchases on or after 2026-01-05 (page dated 2026-05-20).",
       "sources": [
-        { "url": "https://drive.ri.gov/drive-ev-project/drive-ev", "capturedAt": "2026-09-02", "what": "Amounts, $75,000 new and $55,000 used price caps, licensed RI dealership, 120-day window, 24-month used lease minimum" }
+        {
+          "url": "https://drive.ri.gov/drive-ev-project/drive-ev",
+          "capturedAt": "2026-09-02",
+          "what": "Amounts, $75,000 new and $55,000 used price caps, licensed RI dealership, 120-day window, 24-month used lease minimum"
+        }
       ],
-      "covers": { "new": true, "used": true, "lease": true },
+      "covers": {
+        "new": true,
+        "used": true,
+        "lease": true
+      },
       "vehicle": {
-        "kinds": ["BEV", "PHEV"],
+        "kinds": [
+          "BEV",
+          "PHEV"
+        ],
         "newPurchasePriceCapUsd": 75000,
         "newMsrpCapBasis": "Purchase price excluding taxes, fees and capitalized cost reductions (a price-paid cap, not an MSRP cap).",
         "usedPriceCapUsd": 55000,
@@ -462,861 +979,2679 @@
       },
       "transaction": {
         "dealer": "licensed_in_state",
-        "dealerNote": "Licensed Rhode Island dealership; an out-of-state purchase needs prior contact with the program.",
+        "dealerNote": "Bought at a licensed Rhode Island dealership.",
         "pointOfSale": false,
         "postPurchase": true,
         "applyWithinDays": 120
       },
       "purchaserConditions": [
-        "Rhode Island resident.",
-        "Apply within 120 days of purchase or lease.",
-        "Used-vehicle leases must run at least 24 months.",
-        "Paid first-come, first-served while funding lasts; DRIVE+ pays more to income-qualified applicants (terms not captured)."
+        "Purchaser must be a Rhode Island resident.",
+        "Apply within 120 days.",
+        "Used-car leases must run at least 24 months.",
+        "Paid first-come while funding lasts; DRIVE+ pays more to income-qualified buyers."
       ],
       "amounts": [
-        { "usd": 3000, "applies": { "condition": "new", "kind": "BEV" } },
-        { "usd": 2000, "applies": { "condition": "new", "kind": "PHEV" } },
-        { "usd": 2500, "applies": { "condition": "used", "kind": "BEV" } },
-        { "usd": 1750, "applies": { "condition": "used", "kind": "PHEV" } }
+        {
+          "usd": 3000,
+          "applies": {
+            "condition": "new",
+            "kind": "BEV"
+          }
+        },
+        {
+          "usd": 2000,
+          "applies": {
+            "condition": "new",
+            "kind": "PHEV"
+          }
+        },
+        {
+          "usd": 2500,
+          "applies": {
+            "condition": "used",
+            "kind": "BEV"
+          }
+        },
+        {
+          "usd": 1750,
+          "applies": {
+            "condition": "used",
+            "kind": "PHEV"
+          }
+        }
       ]
     },
     {
       "id": "ca-clean-cars-4-all",
       "name": "California Clean Cars 4 All",
-      "jurisdiction": { "kind": "regional", "state": "CA", "regionNote": "South Coast AQMD, San Joaquin Valley APCD, Bay Area AQMD, Sacramento Metropolitan AQMD, San Diego APCD; outside those districts the statewide DCAP scrap-and-replace pathway (drivingcleanca.org) applies." },
+      "jurisdiction": {
+        "kind": "regional",
+        "state": "CA",
+        "regionNote": "South Coast AQMD, San Joaquin Valley APCD, Bay Area AQMD, Sacramento Metropolitan AQMD, San Diego APCD; outside those districts the statewide DCAP scrap-and-replace pathway (drivingcleanca.org) applies."
+      },
       "administrator": "California Air Resources Board via five air districts",
       "kind": "rebate",
       "status": "live",
       "statusAsOf": "2026-09-02",
       "statusNote": "Income-qualified scrap-and-replace only; each district runs its own funding. DCAP's financing pathway closed 2026-08-21.",
       "sources": [
-        { "url": "https://ww2.arb.ca.gov/our-work/programs/clean-cars-4-all/about", "capturedAt": "2026-09-02", "what": "Districts, 300% FPL, scrap requirement, new or used PHEV/ZEV 8 model years or newer, amounts (FY2024-25), one incentive per person" },
-        { "url": "https://www.drivingcleanca.org/", "capturedAt": "2026-09-02", "what": "DCAP statewide: financing pathway closed 2026-08-21; scrap-and-replace open" }
+        {
+          "url": "https://ww2.arb.ca.gov/our-work/programs/clean-cars-4-all/about",
+          "capturedAt": "2026-09-02",
+          "what": "Districts, 300% FPL, scrap requirement, new or used PHEV/ZEV 8 model years or newer, amounts (FY2024-25), one incentive per person"
+        },
+        {
+          "url": "https://www.drivingcleanca.org/",
+          "capturedAt": "2026-09-02",
+          "what": "DCAP statewide: financing pathway closed 2026-08-21; scrap-and-replace open"
+        }
       ],
-      "covers": { "new": true, "used": true, "lease": true },
+      "covers": {
+        "new": true,
+        "used": true,
+        "lease": true
+      },
       "vehicle": {
-        "kinds": ["BEV", "PHEV"],
+        "kinds": [
+          "BEV",
+          "PHEV"
+        ],
         "usedMaxModelYearsOld": 8
       },
       "transaction": {
         "dealer": "participating",
-        "dealerNote": "Each district approves the dealers it pays; CARB's page states no dealer rule, so this is recorded as participating until each district page is read.",
+        "dealerNote": "Bought through a dealer approved by the air district.",
         "pointOfSale": true,
         "postPurchase": false
       },
       "purchaserConditions": [
         "Household income at or below 300% of the federal poverty level.",
-        "Live in a participating air district (or apply through the statewide DCAP pathway).",
-        "Scrap a functional older vehicle as part of the purchase.",
+        "Purchaser must live in a participating air district, or apply through the statewide DCAP pathway.",
+        "A working older vehicle must be scrapped as part of the purchase.",
         "One Clean Cars 4 All incentive per person."
       ],
       "amounts": [
-        { "usd": 10000, "applies": { "condition": "any", "kind": "BEV" }, "label": "income at or below 300% FPL ($12,000 in a disadvantaged community)", "incomeQualified": true },
-        { "usd": 9500, "applies": { "condition": "any", "kind": "PHEV" }, "label": "income at or below 300% FPL ($11,500 in a disadvantaged community)", "incomeQualified": true }
+        {
+          "usd": 10000,
+          "applies": {
+            "condition": "any",
+            "kind": "BEV"
+          },
+          "label": "income at or below 300% FPL ($12,000 in a disadvantaged community)",
+          "incomeQualified": true
+        },
+        {
+          "usd": 9500,
+          "applies": {
+            "condition": "any",
+            "kind": "PHEV"
+          },
+          "label": "income at or below 300% FPL ($11,500 in a disadvantaged community)",
+          "incomeQualified": true
+        }
       ]
     },
     {
       "id": "pa-afv-rebate",
       "name": "Pennsylvania Alternative Fuel Vehicle Rebate",
-      "jurisdiction": { "kind": "state", "state": "PA" },
+      "jurisdiction": {
+        "kind": "state",
+        "state": "PA"
+      },
       "administrator": "Pennsylvania DEP",
       "kind": "rebate",
       "status": "ended",
       "statusAsOf": "2026-09-02",
       "statusNote": "Page reads: \"The Alternative Fuel Vehicle Rebate Program is closed.\" Kept so a reopening is a status flip, not a new entry.",
       "sources": [
-        { "url": "https://www.pa.gov/agencies/dep/programs-and-services/grants-loans-rebates/alternative-fuel-vehicle-rebates-for-consumers", "capturedAt": "2026-09-02", "what": "Closed; last terms $3,000 BEV / $1,500 PHEV, $45,000 price cap, 300% FPL, pre-owned within 75,000 mi and 7 years" }
+        {
+          "url": "https://www.pa.gov/agencies/dep/programs-and-services/grants-loans-rebates/alternative-fuel-vehicle-rebates-for-consumers",
+          "capturedAt": "2026-09-02",
+          "what": "Closed; last terms $3,000 BEV / $1,500 PHEV, $45,000 price cap, 300% FPL, pre-owned within 75,000 mi and 7 years"
+        }
       ],
-      "covers": { "new": true, "used": true, "lease": true },
-      "vehicle": { "kinds": ["BEV", "PHEV"], "purchasePriceCapUsd": 45000, "usedOdometerMaxMi": 75000, "usedMaxModelYearsOld": 7 },
-      "transaction": { "dealer": "licensed_any_state", "pointOfSale": false, "postPurchase": true, "applyWithinDays": 183 },
-      "purchaserConditions": ["Pennsylvania resident.", "Household income at or below 300% of the federal poverty level."],
+      "covers": {
+        "new": true,
+        "used": true,
+        "lease": true
+      },
+      "vehicle": {
+        "kinds": [
+          "BEV",
+          "PHEV"
+        ],
+        "purchasePriceCapUsd": 45000,
+        "usedOdometerMaxMi": 75000,
+        "usedMaxModelYearsOld": 7
+      },
+      "transaction": {
+        "dealer": "licensed_any_state",
+        "pointOfSale": false,
+        "postPurchase": true,
+        "applyWithinDays": 183
+      },
+      "purchaserConditions": [
+        "Purchaser must be a Pennsylvania resident.",
+        "Household income at or below 300% of the federal poverty level."
+      ],
       "amounts": []
     },
     {
       "id": "tx-ldplip",
       "name": "Texas Light-Duty Motor Vehicle Purchase or Lease Incentive",
-      "jurisdiction": { "kind": "state", "state": "TX" },
+      "jurisdiction": {
+        "kind": "state",
+        "state": "TX"
+      },
       "administrator": "TCEQ",
       "kind": "rebate",
       "status": "ended",
       "statusAsOf": "2026-09-02",
       "statusNote": "TCEQ page heading: \"Currently Closed\".",
       "sources": [
-        { "url": "https://www.tceq.texas.gov/airquality/terp/ldplip", "capturedAt": "2026-09-02", "what": "Currently Closed; new purchases or leases on/after 2025-09-01 were the last eligible" }
+        {
+          "url": "https://www.tceq.texas.gov/airquality/terp/ldplip",
+          "capturedAt": "2026-09-02",
+          "what": "Currently Closed; new purchases or leases on/after 2025-09-01 were the last eligible"
+        }
       ],
-      "covers": { "new": true, "used": false, "lease": true },
-      "vehicle": { "kinds": ["BEV", "PHEV"], "batteryKwhMin": 4, "mustBeOnList": true },
-      "transaction": { "dealer": "any", "pointOfSale": false, "postPurchase": true },
+      "covers": {
+        "new": true,
+        "used": false,
+        "lease": true
+      },
+      "vehicle": {
+        "kinds": [
+          "BEV",
+          "PHEV"
+        ],
+        "batteryKwhMin": 4,
+        "mustBeOnList": true
+      },
+      "transaction": {
+        "dealer": "any",
+        "pointOfSale": false,
+        "postPurchase": true
+      },
       "purchaserConditions": [],
       "amounts": []
     },
     {
       "id": "vt-state-ev-incentives",
       "name": "Vermont state EV incentives (new PEV incentive, MileageSmart, Replace Your Ride)",
-      "jurisdiction": { "kind": "state", "state": "VT" },
+      "jurisdiction": {
+        "kind": "state",
+        "state": "VT"
+      },
       "administrator": "Vermont Agency of Transportation",
       "kind": "rebate",
       "status": "ended",
       "statusAsOf": "2026-09-02",
       "statusNote": "VTrans: \"From 2020 to 2025, the Vermont Agency of Transportation offered five clean transportation incentive programs\"; MileageSmart funds exhausted, no new applications.",
       "sources": [
-        { "url": "https://vtrans.vermont.gov/climate/incentives", "capturedAt": "2026-09-02", "what": "Programs described in the past tense; no current program" }
+        {
+          "url": "https://vtrans.vermont.gov/climate/incentives",
+          "capturedAt": "2026-09-02",
+          "what": "Programs described in the past tense; no current program"
+        }
       ],
-      "covers": { "new": true, "used": true, "lease": true },
-      "vehicle": { "kinds": ["BEV", "PHEV"] },
-      "transaction": { "dealer": "any", "pointOfSale": false, "postPurchase": true },
+      "covers": {
+        "new": true,
+        "used": true,
+        "lease": true
+      },
+      "vehicle": {
+        "kinds": [
+          "BEV",
+          "PHEV"
+        ]
+      },
+      "transaction": {
+        "dealer": "any",
+        "pointOfSale": false,
+        "postPurchase": true
+      },
       "purchaserConditions": [],
       "amounts": []
     },
     {
       "id": "wa-ev-instant-rebate",
       "name": "Washington EV Instant Rebate",
-      "jurisdiction": { "kind": "state", "state": "WA" },
+      "jurisdiction": {
+        "kind": "state",
+        "state": "WA"
+      },
       "administrator": "Washington State Department of Commerce",
       "kind": "rebate",
       "status": "ended",
       "statusAsOf": "2026-09-02",
       "statusNote": "\"The Washington State Department of Commerce's EV Instant Rebates Program is now closed. All 2024 funds have been claimed.\"",
       "sources": [
-        { "url": "https://www.commerce.wa.gov/clean-transportation/ev-instant-rebate/", "capturedAt": "2026-09-02", "what": "Closed" }
+        {
+          "url": "https://www.commerce.wa.gov/clean-transportation/ev-instant-rebate/",
+          "capturedAt": "2026-09-02",
+          "what": "Closed"
+        }
       ],
-      "covers": { "new": true, "used": true, "lease": true },
-      "vehicle": { "kinds": ["BEV"] },
-      "transaction": { "dealer": "participating", "pointOfSale": true, "postPurchase": false },
+      "covers": {
+        "new": true,
+        "used": true,
+        "lease": true
+      },
+      "vehicle": {
+        "kinds": [
+          "BEV"
+        ]
+      },
+      "transaction": {
+        "dealer": "participating",
+        "pointOfSale": true,
+        "postPurchase": false
+      },
       "purchaserConditions": [],
       "amounts": []
     },
     {
       "id": "wa-sales-tax-exemption",
       "name": "Washington clean alternative fuel vehicle sales and use tax exemption",
-      "jurisdiction": { "kind": "state", "state": "WA" },
+      "jurisdiction": {
+        "kind": "state",
+        "state": "WA"
+      },
       "administrator": "Washington Department of Revenue",
       "kind": "tax_exemption",
       "status": "ended",
       "statusAsOf": "2026-09-02",
       "statusNote": "\"These tax exemptions expired on July 31, 2025\" (DOL).",
       "sources": [
-        { "url": "https://dol.wa.gov/vehicles-and-boats/vehicles/taxes-and-fees/tax-exemptions-alternative-fuel-vehicles-and-plug-hybrids", "capturedAt": "2026-09-02", "what": "Expired 2025-07-31; had $45,000 new / $30,000 used caps" }
+        {
+          "url": "https://dol.wa.gov/vehicles-and-boats/vehicles/taxes-and-fees/tax-exemptions-alternative-fuel-vehicles-and-plug-hybrids",
+          "capturedAt": "2026-09-02",
+          "what": "Expired 2025-07-31; had $45,000 new / $30,000 used caps"
+        }
       ],
-      "covers": { "new": true, "used": true, "lease": true },
-      "vehicle": { "kinds": ["BEV", "PHEV"], "newMsrpCapUsd": 45000, "usedPriceCapUsd": 30000 },
-      "transaction": { "dealer": "any", "pointOfSale": true, "postPurchase": false },
+      "covers": {
+        "new": true,
+        "used": true,
+        "lease": true
+      },
+      "vehicle": {
+        "kinds": [
+          "BEV",
+          "PHEV"
+        ],
+        "newMsrpCapUsd": 45000,
+        "usedPriceCapUsd": 30000
+      },
+      "transaction": {
+        "dealer": "any",
+        "pointOfSale": true,
+        "postPurchase": false
+      },
       "purchaserConditions": [],
       "amounts": []
     },
     {
       "id": "mn-state-ev-rebate",
       "name": "Minnesota state EV rebate",
-      "jurisdiction": { "kind": "state", "state": "MN" },
+      "jurisdiction": {
+        "kind": "state",
+        "state": "MN"
+      },
       "administrator": "Minnesota Department of Commerce",
       "kind": "rebate",
       "status": "ended",
       "statusAsOf": "2026-09-02",
       "statusNote": "\"All funds for the State of Minnesota EV rebate program have been claimed. We are no longer taking new applications.\" Ran 2024-02-07 to 2025-01-03.",
       "sources": [
-        { "url": "https://mn.gov/commerce/energy/consumer/energy-programs/ev-rebates.jsp", "capturedAt": "2026-09-02", "what": "Closed" }
+        {
+          "url": "https://mn.gov/commerce/energy/consumer/energy-programs/ev-rebates.jsp",
+          "capturedAt": "2026-09-02",
+          "what": "Closed"
+        }
       ],
-      "covers": { "new": true, "used": true, "lease": true },
-      "vehicle": { "kinds": ["BEV", "PHEV"] },
-      "transaction": { "dealer": "any", "pointOfSale": false, "postPurchase": true },
+      "covers": {
+        "new": true,
+        "used": true,
+        "lease": true
+      },
+      "vehicle": {
+        "kinds": [
+          "BEV",
+          "PHEV"
+        ]
+      },
+      "transaction": {
+        "dealer": "any",
+        "pointOfSale": false,
+        "postPurchase": true
+      },
       "purchaserConditions": [],
       "amounts": []
     },
     {
       "id": "nj-zev-sales-tax-exemption",
       "name": "New Jersey zero emission vehicle sales tax exemption",
-      "jurisdiction": { "kind": "state", "state": "NJ" },
+      "jurisdiction": {
+        "kind": "state",
+        "state": "NJ"
+      },
       "administrator": "New Jersey Division of Taxation",
       "kind": "tax_exemption",
       "status": "ended",
       "statusAsOf": "2026-09-02",
       "statusNote": "Phased out from 2024-10-01; full 6.625% sales tax applies to ZEVs sold on or after 2025-07-01.",
       "sources": [
-        { "url": "https://www.nj.gov/treasury/taxation/zevnotice.shtml", "capturedAt": "2026-09-02", "what": "Repeal notice and phase-out schedule (via search capture 2026-09-02)" }
+        {
+          "url": "https://www.nj.gov/treasury/taxation/zevnotice.shtml",
+          "capturedAt": "2026-09-02",
+          "what": "Repeal notice and phase-out schedule (via search capture 2026-09-02)"
+        }
       ],
-      "covers": { "new": true, "used": true, "lease": true },
-      "vehicle": { "kinds": ["BEV"] },
-      "transaction": { "dealer": "any", "pointOfSale": true, "postPurchase": false },
+      "covers": {
+        "new": true,
+        "used": true,
+        "lease": true
+      },
+      "vehicle": {
+        "kinds": [
+          "BEV"
+        ]
+      },
+      "transaction": {
+        "dealer": "any",
+        "pointOfSale": true,
+        "postPurchase": false
+      },
       "purchaserConditions": [],
       "amounts": []
     },
     {
       "id": "ca-cvrp",
       "name": "California Clean Vehicle Rebate Project",
-      "jurisdiction": { "kind": "state", "state": "CA" },
+      "jurisdiction": {
+        "kind": "state",
+        "state": "CA"
+      },
       "administrator": "CARB (Center for Sustainable Energy administered)",
       "kind": "rebate",
       "status": "ended",
       "statusAsOf": "2026-09-02",
       "statusNote": "\"Effective November 8, 2023, CVRP is closed to new applications.\"",
       "sources": [
-        { "url": "https://cleanvehiclerebate.org/en", "capturedAt": "2026-09-02", "what": "Closed since 2023-11-08" }
+        {
+          "url": "https://cleanvehiclerebate.org/en",
+          "capturedAt": "2026-09-02",
+          "what": "Closed since 2023-11-08"
+        }
       ],
-      "covers": { "new": true, "used": false, "lease": true },
-      "vehicle": { "kinds": ["BEV", "PHEV"] },
-      "transaction": { "dealer": "any", "pointOfSale": false, "postPurchase": true },
+      "covers": {
+        "new": true,
+        "used": false,
+        "lease": true
+      },
+      "vehicle": {
+        "kinds": [
+          "BEV",
+          "PHEV"
+        ]
+      },
+      "transaction": {
+        "dealer": "any",
+        "pointOfSale": false,
+        "postPurchase": true
+      },
       "purchaserConditions": [],
       "amounts": []
     },
     {
       "id": "dc-ev-excise-tax-exemption",
       "name": "District of Columbia excise tax exemption for electric vehicles",
-      "jurisdiction": { "kind": "state", "state": "DC" },
+      "jurisdiction": {
+        "kind": "state",
+        "state": "DC"
+      },
       "administrator": "DC DMV",
       "kind": "tax_exemption",
       "status": "ended",
       "statusAsOf": "2026-09-02",
       "statusNote": "Motor Excise Tax Amendment Act of 2024, effective 2025-02-17: \"Electric vehicles will no longer be exempt from vehicle excise tax.\"",
       "sources": [
-        { "url": "https://dmv.dc.gov/book/dmv-fees/vehicle-title-and-excise-tax-fees", "capturedAt": "2026-09-02", "what": "Repealed; EVs now taxed 1.0% to 3.0% by weight" }
+        {
+          "url": "https://dmv.dc.gov/book/dmv-fees/vehicle-title-and-excise-tax-fees",
+          "capturedAt": "2026-09-02",
+          "what": "Repealed; EVs now taxed 1.0% to 3.0% by weight"
+        }
       ],
-      "covers": { "new": true, "used": true, "lease": false },
-      "vehicle": { "kinds": ["BEV"] },
-      "transaction": { "dealer": "any", "pointOfSale": true, "postPurchase": false },
+      "covers": {
+        "new": true,
+        "used": true,
+        "lease": false
+      },
+      "vehicle": {
+        "kinds": [
+          "BEV"
+        ]
+      },
+      "transaction": {
+        "dealer": "any",
+        "pointOfSale": true,
+        "postPurchase": false
+      },
       "purchaserConditions": [],
       "amounts": []
     },
     {
       "id": "va-ev-rebate-program",
       "name": "Virginia Electric Vehicle Rebate Program",
-      "jurisdiction": { "kind": "state", "state": "VA" },
+      "jurisdiction": {
+        "kind": "state",
+        "state": "VA"
+      },
       "administrator": "Virginia Department of Mines, Minerals and Energy (statute)",
       "kind": "rebate",
       "status": "ended",
       "statusAsOf": "2026-09-02",
       "statusNote": "Enacted in statute (Va. Code 45.2 ch.17 art.8, expires 2027-01-01) but never funded; no rebate is payable.",
       "sources": [
-        { "url": "https://law.lis.virginia.gov/vacodefull/title45.2/chapter17/article8/", "capturedAt": "2026-09-02", "what": "Statute text; program dormant per 2026-09-02 search" }
+        {
+          "url": "https://law.lis.virginia.gov/vacodefull/title45.2/chapter17/article8/",
+          "capturedAt": "2026-09-02",
+          "what": "Statute text; program dormant per 2026-09-02 search"
+        }
       ],
-      "covers": { "new": true, "used": true, "lease": false },
-      "vehicle": { "kinds": ["BEV"], "newMsrpCapUsd": 55000, "usedPriceCapUsd": 25000 },
-      "transaction": { "dealer": "participating", "pointOfSale": true, "postPurchase": false },
+      "covers": {
+        "new": true,
+        "used": true,
+        "lease": false
+      },
+      "vehicle": {
+        "kinds": [
+          "BEV"
+        ],
+        "newMsrpCapUsd": 55000,
+        "usedPriceCapUsd": 25000
+      },
+      "transaction": {
+        "dealer": "participating",
+        "pointOfSale": true,
+        "postPurchase": false
+      },
       "purchaserConditions": [],
       "amounts": []
     },
-
     {
       "id": "ca-alameda-municipal-power-used-ev",
       "name": "Alameda Municipal Power used EV rebate",
-      "jurisdiction": { "kind": "utility", "state": "CA", "utility": "Alameda Municipal Power" },
+      "jurisdiction": {
+        "kind": "utility",
+        "state": "CA",
+        "utility": "Alameda Municipal Power"
+      },
       "administrator": "Alameda Municipal Power",
       "kind": "rebate",
       "status": "live",
       "statusAsOf": "2026-09-02",
-      "sources": [{ "url": "https://www.alamedamp.com/349/Electric-Vehicles", "capturedAt": "2026-09-02", "what": "Content served by the embedded alameda.upgrade.guide widget: pre-owned BEV, $1,500 standard, up to $6,000 for Energy Assistance Program enrollees" }],
-      "covers": { "new": false, "used": true, "lease": false },
-      "vehicle": { "kinds": ["BEV"] },
-      "transaction": { "dealer": "any", "pointOfSale": false, "postPurchase": true },
-      "purchaserConditions": ["Residential electric customer of Alameda Municipal Power.", "The higher figure requires enrolment in AMP's Energy Assistance Program."],
+      "sources": [
+        {
+          "url": "https://www.alamedamp.com/349/Electric-Vehicles",
+          "capturedAt": "2026-09-02",
+          "what": "Content served by the embedded alameda.upgrade.guide widget: pre-owned BEV, $1,500 standard, up to $6,000 for Energy Assistance Program enrollees"
+        }
+      ],
+      "covers": {
+        "new": false,
+        "used": true,
+        "lease": false
+      },
+      "vehicle": {
+        "kinds": [
+          "BEV"
+        ]
+      },
+      "transaction": {
+        "dealer": "any",
+        "pointOfSale": false,
+        "postPurchase": true
+      },
+      "purchaserConditions": [
+        "Purchaser must be an Alameda Municipal Power residential customer.",
+        "The higher figure requires enrolment in AMP's Energy Assistance Program."
+      ],
       "amounts": [
-        { "usd": 1500, "applies": { "condition": "used", "kind": "BEV" }, "label": "standard" },
-        { "usd": 6000, "applies": { "condition": "used", "kind": "BEV" }, "label": "up to, Energy Assistance Program enrollees", "incomeQualified": true, "upTo": true }
+        {
+          "usd": 1500,
+          "applies": {
+            "condition": "used",
+            "kind": "BEV"
+          },
+          "label": "standard"
+        },
+        {
+          "usd": 6000,
+          "applies": {
+            "condition": "used",
+            "kind": "BEV"
+          },
+          "label": "up to, Energy Assistance Program enrollees",
+          "incomeQualified": true,
+          "upTo": true
+        }
       ]
     },
     {
       "id": "ca-burbank-water-power-used-ev",
       "name": "Burbank Water & Power used EV rebate",
-      "jurisdiction": { "kind": "utility", "state": "CA", "utility": "Burbank Water & Power" },
+      "jurisdiction": {
+        "kind": "utility",
+        "state": "CA",
+        "utility": "Burbank Water & Power"
+      },
       "administrator": "Burbank Water & Power",
       "kind": "rebate",
       "status": "paused",
       "statusAsOf": "2026-09-02",
       "statusNote": "Page read 2026-09-02: \"The Used EV rebate program is on hold as the program budget is fully subscribed. Newly submitted applications will not be processed. Additional funding will be available starting July 1, 2026.\" The page still carried that text two months after the date it names.",
-      "sources": [{ "url": "https://www.burbankwaterandpower.com/conservation/used-ev-rebate", "capturedAt": "2026-09-02", "what": "On hold; up to $1,000, up to $4,000 for BUSS/Lifeline enrollees on cars priced $25,000 or less; pre-owned at least two model years old" }],
-      "covers": { "new": false, "used": true, "lease": false },
-      "vehicle": { "kinds": ["BEV", "PHEV"], "usedMinModelYearsOld": 2 },
-      "transaction": { "dealer": "any", "pointOfSale": false, "postPurchase": true },
-      "purchaserConditions": ["Burbank Water & Power customer."],
+      "sources": [
+        {
+          "url": "https://www.burbankwaterandpower.com/conservation/used-ev-rebate",
+          "capturedAt": "2026-09-02",
+          "what": "On hold; up to $1,000, up to $4,000 for BUSS/Lifeline enrollees on cars priced $25,000 or less; pre-owned at least two model years old"
+        }
+      ],
+      "covers": {
+        "new": false,
+        "used": true,
+        "lease": false
+      },
+      "vehicle": {
+        "kinds": [
+          "BEV",
+          "PHEV"
+        ],
+        "usedMinModelYearsOld": 2
+      },
+      "transaction": {
+        "dealer": "any",
+        "pointOfSale": false,
+        "postPurchase": true
+      },
+      "purchaserConditions": [
+        "Purchaser must be a Burbank Water & Power customer."
+      ],
       "amounts": [
-        { "usd": 1000, "applies": { "condition": "used" }, "label": "up to", "upTo": true },
-        { "usd": 4000, "applies": { "condition": "used" }, "label": "up to, BUSS or Lifeline enrollees, purchase price $25,000 or less", "incomeQualified": true, "upTo": true }
+        {
+          "usd": 1000,
+          "applies": {
+            "condition": "used"
+          },
+          "label": "up to",
+          "upTo": true
+        },
+        {
+          "usd": 4000,
+          "applies": {
+            "condition": "used"
+          },
+          "label": "up to, BUSS or Lifeline enrollees, purchase price $25,000 or less",
+          "incomeQualified": true,
+          "upTo": true
+        }
       ]
     },
     {
       "id": "ca-3ce-electrify-your-ride",
       "name": "Central Coast Community Energy Electrify Your Ride",
-      "jurisdiction": { "kind": "utility", "state": "CA", "utility": "Central Coast Community Energy (3CE)" },
+      "jurisdiction": {
+        "kind": "utility",
+        "state": "CA",
+        "utility": "Central Coast Community Energy (3CE)"
+      },
       "administrator": "Central Coast Community Energy",
       "kind": "rebate",
       "status": "live",
       "statusAsOf": "2026-09-02",
       "statusNote": "Purchases 2025-08-01 to 2026-07-31 apply by 2026-09-30; from 2026-10-01 the window is 2026-08-01 to 2027-09-30.",
       "sources": [
-        { "url": "https://3cenergy.org/rebates/electrify-your-ride-residential/", "capturedAt": "2026-09-02", "what": "Program page: windows, one EV rebate per household per fiscal year, used BEV under 8 years, PHEV rebates income-qualified only" },
-        { "url": "https://3cenergy.org/wp-content/uploads/2026/02/3CE-EYR-Flyer-_Residential-1.10.26.pdf", "capturedAt": "2026-09-02", "what": "Amount table by tier" }
+        {
+          "url": "https://3cenergy.org/rebates/electrify-your-ride-residential/",
+          "capturedAt": "2026-09-02",
+          "what": "Program page: windows, one EV rebate per household per fiscal year, used BEV under 8 years, PHEV rebates income-qualified only"
+        },
+        {
+          "url": "https://3cenergy.org/wp-content/uploads/2026/02/3CE-EYR-Flyer-_Residential-1.10.26.pdf",
+          "capturedAt": "2026-09-02",
+          "what": "Amount table by tier"
+        }
       ],
-      "covers": { "new": true, "used": true, "lease": true },
-      "vehicle": { "kinds": ["BEV", "PHEV"], "usedMaxModelYearsOld": 8 },
-      "transaction": { "dealer": "any", "pointOfSale": false, "postPurchase": true },
-      "purchaserConditions": ["Residential customer of Central Coast Community Energy.", "One EV rebate per household per fiscal year.", "Plug-in hybrids are rebated only for income-qualified applicants; Tier 1 is 201% to 400% of the federal poverty level, Tier 2 under 200%."],
+      "covers": {
+        "new": true,
+        "used": true,
+        "lease": true
+      },
+      "vehicle": {
+        "kinds": [
+          "BEV",
+          "PHEV"
+        ],
+        "usedMaxModelYearsOld": 8
+      },
+      "transaction": {
+        "dealer": "any",
+        "pointOfSale": false,
+        "postPurchase": true
+      },
+      "purchaserConditions": [
+        "Purchaser must be a Central Coast Community Energy residential customer.",
+        "One EV rebate per household per fiscal year.",
+        "Plug-in hybrids are rebated for income-qualified buyers only; Tier 1 is 201% to 400% of the federal poverty level, Tier 2 under 200%."
+      ],
       "amounts": [
-        { "usd": 1500, "applies": { "condition": "new", "kind": "BEV" }, "label": "standard" },
-        { "usd": 1000, "applies": { "condition": "used", "kind": "BEV" }, "label": "standard" },
-        { "usd": 2500, "applies": { "condition": "new", "kind": "BEV" }, "label": "Tier 1 income", "incomeQualified": true },
-        { "usd": 3500, "applies": { "condition": "new", "kind": "BEV" }, "label": "Tier 2 income", "incomeQualified": true },
-        { "usd": 1500, "applies": { "condition": "new", "kind": "PHEV" }, "label": "Tier 1 income", "incomeQualified": true },
-        { "usd": 2500, "applies": { "condition": "new", "kind": "PHEV" }, "label": "Tier 2 income", "incomeQualified": true },
-        { "usd": 1500, "applies": { "condition": "used", "kind": "BEV" }, "label": "Tier 1 income", "incomeQualified": true },
-        { "usd": 2500, "applies": { "condition": "used", "kind": "BEV" }, "label": "Tier 2 income", "incomeQualified": true },
-        { "usd": 500, "applies": { "condition": "used", "kind": "PHEV" }, "label": "Tier 1 income", "incomeQualified": true },
-        { "usd": 1500, "applies": { "condition": "used", "kind": "PHEV" }, "label": "Tier 2 income", "incomeQualified": true }
+        {
+          "usd": 1500,
+          "applies": {
+            "condition": "new",
+            "kind": "BEV"
+          },
+          "label": "standard"
+        },
+        {
+          "usd": 1000,
+          "applies": {
+            "condition": "used",
+            "kind": "BEV"
+          },
+          "label": "standard"
+        },
+        {
+          "usd": 2500,
+          "applies": {
+            "condition": "new",
+            "kind": "BEV"
+          },
+          "label": "Tier 1 income",
+          "incomeQualified": true
+        },
+        {
+          "usd": 3500,
+          "applies": {
+            "condition": "new",
+            "kind": "BEV"
+          },
+          "label": "Tier 2 income",
+          "incomeQualified": true
+        },
+        {
+          "usd": 1500,
+          "applies": {
+            "condition": "new",
+            "kind": "PHEV"
+          },
+          "label": "Tier 1 income",
+          "incomeQualified": true
+        },
+        {
+          "usd": 2500,
+          "applies": {
+            "condition": "new",
+            "kind": "PHEV"
+          },
+          "label": "Tier 2 income",
+          "incomeQualified": true
+        },
+        {
+          "usd": 1500,
+          "applies": {
+            "condition": "used",
+            "kind": "BEV"
+          },
+          "label": "Tier 1 income",
+          "incomeQualified": true
+        },
+        {
+          "usd": 2500,
+          "applies": {
+            "condition": "used",
+            "kind": "BEV"
+          },
+          "label": "Tier 2 income",
+          "incomeQualified": true
+        },
+        {
+          "usd": 500,
+          "applies": {
+            "condition": "used",
+            "kind": "PHEV"
+          },
+          "label": "Tier 1 income",
+          "incomeQualified": true
+        },
+        {
+          "usd": 1500,
+          "applies": {
+            "condition": "used",
+            "kind": "PHEV"
+          },
+          "label": "Tier 2 income",
+          "incomeQualified": true
+        }
       ]
     },
     {
       "id": "ca-colton-used-ev",
       "name": "Colton Electric used EV rebate",
-      "jurisdiction": { "kind": "utility", "state": "CA", "utility": "Colton Public Utilities" },
+      "jurisdiction": {
+        "kind": "utility",
+        "state": "CA",
+        "utility": "Colton Public Utilities"
+      },
       "administrator": "Colton Public Utilities",
       "kind": "rebate",
       "status": "live",
       "statusAsOf": "2026-09-02",
-      "sources": [{ "url": "https://www.coltonca.gov/895/Used-Electric-Vehicle-Rebate", "capturedAt": "2026-09-02", "what": "$1,000; $1,500 for low-income program enrollees; one per household; first-come until funds are spent" }],
-      "covers": { "new": false, "used": true, "lease": true },
-      "vehicle": { "kinds": ["BEV", "PHEV"] },
-      "transaction": { "dealer": "any", "pointOfSale": false, "postPurchase": true },
-      "purchaserConditions": ["Customer in Colton Electric's service territory.", "One EV rebate per household.", "Paid first-come, first-served until funding is spent."],
+      "sources": [
+        {
+          "url": "https://www.coltonca.gov/895/Used-Electric-Vehicle-Rebate",
+          "capturedAt": "2026-09-02",
+          "what": "$1,000; $1,500 for low-income program enrollees; one per household; first-come until funds are spent"
+        }
+      ],
+      "covers": {
+        "new": false,
+        "used": true,
+        "lease": true
+      },
+      "vehicle": {
+        "kinds": [
+          "BEV",
+          "PHEV"
+        ]
+      },
+      "transaction": {
+        "dealer": "any",
+        "pointOfSale": false,
+        "postPurchase": true
+      },
+      "purchaserConditions": [
+        "Purchaser must be a Colton Electric customer.",
+        "One EV rebate per household.",
+        "Paid first-come until funding is spent."
+      ],
       "amounts": [
-        { "usd": 1000, "applies": { "condition": "used" } },
-        { "usd": 1500, "applies": { "condition": "used" }, "label": "low-income program enrollees", "incomeQualified": true }
+        {
+          "usd": 1000,
+          "applies": {
+            "condition": "used"
+          }
+        },
+        {
+          "usd": 1500,
+          "applies": {
+            "condition": "used"
+          },
+          "label": "low-income program enrollees",
+          "incomeQualified": true
+        }
       ]
     },
     {
       "id": "ca-ladwp-used-ev",
       "name": "LADWP Used EV Rebate",
-      "jurisdiction": { "kind": "utility", "state": "CA", "utility": "Los Angeles Department of Water and Power" },
+      "jurisdiction": {
+        "kind": "utility",
+        "state": "CA",
+        "utility": "Los Angeles Department of Water and Power"
+      },
       "administrator": "Los Angeles Department of Water and Power",
       "kind": "rebate",
       "status": "live",
       "statusAsOf": "2026-09-02",
-      "sources": [{ "url": "https://www.ladwp.com/residential-services/programs-and-rebates-residential/electric-vehicles/used-electric-vehicle-rebate-program", "capturedAt": "2026-09-02", "what": "$1,500; up to $4,000 for EZ-SAVE or Lifeline; model year two to eight years old; approved-vehicle list; apply within 12 months; one rebate per applicant; two per VIN" }],
-      "covers": { "new": false, "used": true, "lease": false },
-      "vehicle": { "kinds": ["BEV", "PHEV"], "usedMinModelYearsOld": 2, "usedMaxModelYearsOld": 8, "mustBeOnList": true },
-      "transaction": { "dealer": "any", "pointOfSale": false, "postPurchase": true, "applyWithinDays": 365 },
-      "purchaserConditions": ["LADWP residential customer.", "One rebate per applicant; LADWP pays at most two rebates on the same car over its life.", "The higher figure requires EZ-SAVE or Lifeline enrolment."],
+      "sources": [
+        {
+          "url": "https://www.ladwp.com/residential-services/programs-and-rebates-residential/electric-vehicles/used-electric-vehicle-rebate-program",
+          "capturedAt": "2026-09-02",
+          "what": "$1,500; up to $4,000 for EZ-SAVE or Lifeline; model year two to eight years old; approved-vehicle list; apply within 12 months; one rebate per applicant; two per VIN"
+        }
+      ],
+      "covers": {
+        "new": false,
+        "used": true,
+        "lease": false
+      },
+      "vehicle": {
+        "kinds": [
+          "BEV",
+          "PHEV"
+        ],
+        "usedMinModelYearsOld": 2,
+        "usedMaxModelYearsOld": 8,
+        "mustBeOnList": true
+      },
+      "transaction": {
+        "dealer": "any",
+        "pointOfSale": false,
+        "postPurchase": true,
+        "applyWithinDays": 365
+      },
+      "purchaserConditions": [
+        "Purchaser must be an LADWP residential customer.",
+        "One rebate per applicant; at most two rebates on the same car.",
+        "The higher figure requires EZ-SAVE or Lifeline enrolment."
+      ],
       "amounts": [
-        { "usd": 1500, "applies": { "condition": "used" }, "label": "standard" },
-        { "usd": 4000, "applies": { "condition": "used" }, "label": "up to, EZ-SAVE or Lifeline", "incomeQualified": true, "upTo": true }
+        {
+          "usd": 1500,
+          "applies": {
+            "condition": "used"
+          },
+          "label": "standard"
+        },
+        {
+          "usd": 4000,
+          "applies": {
+            "condition": "used"
+          },
+          "label": "up to, EZ-SAVE or Lifeline",
+          "incomeQualified": true,
+          "upTo": true
+        }
       ]
     },
     {
       "id": "ca-mce-ev-instant-rebate",
       "name": "MCE EV Instant Rebate",
-      "jurisdiction": { "kind": "utility", "state": "CA", "utility": "MCE" },
+      "jurisdiction": {
+        "kind": "utility",
+        "state": "CA",
+        "utility": "MCE"
+      },
       "administrator": "MCE",
       "kind": "rebate",
       "status": "live",
       "statusAsOf": "2026-09-02",
-      "sources": [{ "url": "https://mcecleanenergy.org/ev-rebate/", "capturedAt": "2026-09-02", "what": "$3,500 new, $2,000 pre-owned, EV or plug-in hybrid; Vehicle Cash Price $55,000 or less; participating dealership at point of sale; income requirement; keep two years; not within 24 months of a prior MCE rebate" }],
-      "covers": { "new": true, "used": true, "lease": true },
-      "vehicle": { "kinds": ["BEV", "PHEV"], "purchasePriceCapUsd": 55000, "purchasePriceCapBasis": "Vehicle Cash Price: price plus dealer or maker options, before taxes, fees, warranties and rebates." },
-      "transaction": { "dealer": "participating", "pointOfSale": true, "postPurchase": false, "dealerNote": "Bought or leased at a participating dealership; the rebate cannot be applied after the sale." },
-      "purchaserConditions": ["MCE customer.", "Meets one of MCE's income requirements (program enrolment or tax-return based).", "No MCE EV Instant Rebate in the previous 24 months.", "Keep the car at least two years."],
+      "sources": [
+        {
+          "url": "https://mcecleanenergy.org/ev-rebate/",
+          "capturedAt": "2026-09-02",
+          "what": "$3,500 new, $2,000 pre-owned, EV or plug-in hybrid; Vehicle Cash Price $55,000 or less; participating dealership at point of sale; income requirement; keep two years; not within 24 months of a prior MCE rebate"
+        }
+      ],
+      "covers": {
+        "new": true,
+        "used": true,
+        "lease": true
+      },
+      "vehicle": {
+        "kinds": [
+          "BEV",
+          "PHEV"
+        ],
+        "purchasePriceCapUsd": 55000,
+        "purchasePriceCapBasis": "Vehicle Cash Price: price plus dealer or maker options, before taxes, fees, warranties and rebates."
+      },
+      "transaction": {
+        "dealer": "participating",
+        "pointOfSale": true,
+        "postPurchase": false,
+        "dealerNote": "Bought or leased at a participating dealership; the rebate comes off at sale."
+      },
+      "purchaserConditions": [
+        "Purchaser must be an MCE customer.",
+        "Meets one of MCE's income requirements.",
+        "No MCE EV Instant Rebate in the previous 24 months.",
+        "Keep the car at least two years."
+      ],
       "amounts": [
-        { "usd": 3500, "applies": { "condition": "new" } },
-        { "usd": 2000, "applies": { "condition": "used" } }
+        {
+          "usd": 3500,
+          "applies": {
+            "condition": "new"
+          }
+        },
+        {
+          "usd": 2000,
+          "applies": {
+            "condition": "used"
+          }
+        }
       ]
     },
     {
       "id": "ca-pge-pre-owned-ev",
       "name": "PG&E Pre-Owned EV Rebate",
-      "jurisdiction": { "kind": "utility", "state": "CA", "utility": "Pacific Gas and Electric" },
+      "jurisdiction": {
+        "kind": "utility",
+        "state": "CA",
+        "utility": "Pacific Gas and Electric"
+      },
       "administrator": "Center for Sustainable Energy for PG&E (Low Carbon Fuel Standard funds)",
       "kind": "rebate",
       "status": "live",
       "statusAsOf": "2026-09-02",
       "statusNote": "Standard $1,000 applications must be complete by 2026-09-30; from 2026-10-01 only income-qualified applicants are eligible.",
-      "sources": [{ "url": "https://evrebates.pge.com/program-requirements", "capturedAt": "2026-09-02", "what": "Pre-owned BEV or PHEV with at least 8 kWh; $1,000 standard (deadline 2026-09-30) or $4,000 Rebate Plus; apply within 90 days; registered in California 20 months; one per individual, three per household" }],
-      "covers": { "new": false, "used": true, "lease": true },
-      "vehicle": { "kinds": ["BEV", "PHEV"], "batteryKwhMin": 8 },
-      "transaction": { "dealer": "any", "pointOfSale": false, "postPurchase": true, "applyWithinDays": 90 },
-      "purchaserConditions": ["PG&E residential electric customer.", "Keep the car registered to you in California for at least 20 months.", "One rebate per individual and at most three per household over the program; not on a car already rebated by SCE, SDG&E or the Clean Fuel Reward.", "After 2026-09-30, income-qualified applicants only."],
+      "sources": [
+        {
+          "url": "https://evrebates.pge.com/program-requirements",
+          "capturedAt": "2026-09-02",
+          "what": "Pre-owned BEV or PHEV with at least 8 kWh; $1,000 standard (deadline 2026-09-30) or $4,000 Rebate Plus; apply within 90 days; registered in California 20 months; one per individual, three per household"
+        }
+      ],
+      "covers": {
+        "new": false,
+        "used": true,
+        "lease": true
+      },
+      "vehicle": {
+        "kinds": [
+          "BEV",
+          "PHEV"
+        ],
+        "batteryKwhMin": 8
+      },
+      "transaction": {
+        "dealer": "any",
+        "pointOfSale": false,
+        "postPurchase": true,
+        "applyWithinDays": 90
+      },
+      "purchaserConditions": [
+        "Purchaser must be a PG&E residential electric customer.",
+        "Keep the car registered in California 20 months.",
+        "One rebate per person, three per household; not on a car already rebated by SCE, SDG&E or the Clean Fuel Reward.",
+        "After 2026-09-30, income-qualified buyers only."
+      ],
       "amounts": [
-        { "usd": 1000, "applies": { "condition": "used" }, "label": "standard, applications by 2026-09-30" },
-        { "usd": 4000, "applies": { "condition": "used" }, "label": "Rebate Plus (income-qualified)", "incomeQualified": true }
+        {
+          "usd": 1000,
+          "applies": {
+            "condition": "used"
+          },
+          "label": "standard, applications by 2026-09-30"
+        },
+        {
+          "usd": 4000,
+          "applies": {
+            "condition": "used"
+          },
+          "label": "Rebate Plus (income-qualified)",
+          "incomeQualified": true
+        }
       ]
     },
     {
       "id": "ca-pasadena-used-ev",
       "name": "Pasadena Water & Power used EV rebate",
-      "jurisdiction": { "kind": "utility", "state": "CA", "utility": "Pasadena Water & Power" },
+      "jurisdiction": {
+        "kind": "utility",
+        "state": "CA",
+        "utility": "Pasadena Water & Power"
+      },
       "administrator": "Pasadena Water & Power",
       "kind": "rebate",
       "status": "live",
       "statusAsOf": "2026-09-02",
-      "sources": [{ "url": "https://pwp.cityofpasadena.net/residentialevrebate/", "capturedAt": "2026-09-02", "what": "$250; +$250 from a Pasadena dealer; +$1,000 income-qualifying programs; purchased, not leased; at least two model years old; apply within 180 days; two per account" }],
-      "covers": { "new": false, "used": true, "lease": false },
-      "vehicle": { "kinds": ["BEV", "PHEV"], "usedMinModelYearsOld": 2 },
-      "transaction": { "dealer": "any", "pointOfSale": false, "postPurchase": true, "applyWithinDays": 180 },
-      "purchaserConditions": ["Pasadena Water & Power residential electric customer.", "Purchased, not leased.", "At most two EV rebates per residential electric account."],
+      "sources": [
+        {
+          "url": "https://pwp.cityofpasadena.net/residentialevrebate/",
+          "capturedAt": "2026-09-02",
+          "what": "$250; +$250 from a Pasadena dealer; +$1,000 income-qualifying programs; purchased, not leased; at least two model years old; apply within 180 days; two per account"
+        }
+      ],
+      "covers": {
+        "new": false,
+        "used": true,
+        "lease": false
+      },
+      "vehicle": {
+        "kinds": [
+          "BEV",
+          "PHEV"
+        ],
+        "usedMinModelYearsOld": 2
+      },
+      "transaction": {
+        "dealer": "any",
+        "pointOfSale": false,
+        "postPurchase": true,
+        "applyWithinDays": 180
+      },
+      "purchaserConditions": [
+        "Purchaser must be a Pasadena Water & Power residential electric customer.",
+        "Purchased, not leased.",
+        "At most two EV rebates per account."
+      ],
       "amounts": [
-        { "usd": 250, "applies": { "condition": "used" } },
-        { "usd": 250, "applies": { "condition": "used" }, "label": "bought from a Pasadena auto dealer", "adder": true },
-        { "usd": 1000, "applies": { "condition": "used" }, "label": "income-qualifying program enrollees", "incomeQualified": true, "adder": true }
+        {
+          "usd": 250,
+          "applies": {
+            "condition": "used"
+          }
+        },
+        {
+          "usd": 250,
+          "applies": {
+            "condition": "used"
+          },
+          "label": "bought from a Pasadena auto dealer",
+          "adder": true
+        },
+        {
+          "usd": 1000,
+          "applies": {
+            "condition": "used"
+          },
+          "label": "income-qualifying program enrollees",
+          "incomeQualified": true,
+          "adder": true
+        }
       ]
     },
     {
       "id": "ca-westlight-used-ev",
       "name": "WestLight Energy (Peninsula Clean Energy) used EV rebate",
-      "jurisdiction": { "kind": "utility", "state": "CA", "utility": "WestLight Energy (formerly Peninsula Clean Energy)" },
+      "jurisdiction": {
+        "kind": "utility",
+        "state": "CA",
+        "utility": "WestLight Energy (formerly Peninsula Clean Energy)"
+      },
       "administrator": "WestLight Energy",
       "kind": "rebate",
       "status": "live",
       "statusAsOf": "2026-09-02",
-      "sources": [{ "url": "https://www.peninsulacleanenergy.com/residential/rebates-offers/ev-rebate-program/", "capturedAt": "2026-09-02", "what": "$2,000 for income-qualifying residents of San Mateo County or Los Banos; used, at least two model years old; participating dealerships only; one per lifetime; no price cap" }],
-      "covers": { "new": false, "used": true, "lease": false },
-      "vehicle": { "kinds": ["BEV", "PHEV"], "usedMinModelYearsOld": 2 },
-      "transaction": { "dealer": "participating", "pointOfSale": true, "postPurchase": false },
-      "purchaserConditions": ["Resident of San Mateo County or the City of Los Banos.", "Income-qualifying (income table or enrolment in a listed assistance program).", "One rebate per lifetime."],
+      "sources": [
+        {
+          "url": "https://www.peninsulacleanenergy.com/residential/rebates-offers/ev-rebate-program/",
+          "capturedAt": "2026-09-02",
+          "what": "$2,000 for income-qualifying residents of San Mateo County or Los Banos; used, at least two model years old; participating dealerships only; one per lifetime; no price cap"
+        }
+      ],
+      "covers": {
+        "new": false,
+        "used": true,
+        "lease": false
+      },
+      "vehicle": {
+        "kinds": [
+          "BEV",
+          "PHEV"
+        ],
+        "usedMinModelYearsOld": 2
+      },
+      "transaction": {
+        "dealer": "participating",
+        "pointOfSale": true,
+        "postPurchase": false
+      },
+      "purchaserConditions": [
+        "Purchaser must live in San Mateo County or Los Banos.",
+        "Income-qualified (income table or a listed assistance program).",
+        "One rebate per lifetime."
+      ],
       "amounts": [
-        { "usd": 2000, "applies": { "condition": "used" }, "label": "income-qualified", "incomeQualified": true }
+        {
+          "usd": 2000,
+          "applies": {
+            "condition": "used"
+          },
+          "label": "income-qualified",
+          "incomeQualified": true
+        }
       ]
     },
     {
       "id": "ca-riverside-used-ev",
       "name": "Riverside Public Utilities used EV rebate",
-      "jurisdiction": { "kind": "utility", "state": "CA", "utility": "Riverside Public Utilities" },
+      "jurisdiction": {
+        "kind": "utility",
+        "state": "CA",
+        "utility": "Riverside Public Utilities"
+      },
       "administrator": "Riverside Public Utilities",
       "kind": "rebate",
       "status": "live",
       "statusAsOf": "2026-09-02",
       "statusNote": "The separate new-vehicle program AFDC lists exists only inside an HTML comment on the live page; only the used rebate renders.",
-      "sources": [{ "url": "https://riversideca.gov/utilities/residents/rebates/electrify-riverside", "capturedAt": "2026-09-02", "what": "Up to $1,000 used BEV or PHEV bought or leased after 2023-01-01; up to $4,000 for SHARE enrollees; California-licensed commercial dealer; apply within 180 days; one per household every three years" }],
-      "covers": { "new": false, "used": true, "lease": true },
-      "vehicle": { "kinds": ["BEV", "PHEV"] },
-      "transaction": { "dealer": "licensed_in_state", "pointOfSale": false, "postPurchase": true, "applyWithinDays": 180 },
-      "purchaserConditions": ["Riverside Public Utilities customer.", "One EV rebate per household every three years.", "The higher figure requires SHARE program enrolment (250% of federal poverty guidelines)."],
+      "sources": [
+        {
+          "url": "https://riversideca.gov/utilities/residents/rebates/electrify-riverside",
+          "capturedAt": "2026-09-02",
+          "what": "Up to $1,000 used BEV or PHEV bought or leased after 2023-01-01; up to $4,000 for SHARE enrollees; California-licensed commercial dealer; apply within 180 days; one per household every three years"
+        }
+      ],
+      "covers": {
+        "new": false,
+        "used": true,
+        "lease": true
+      },
+      "vehicle": {
+        "kinds": [
+          "BEV",
+          "PHEV"
+        ]
+      },
+      "transaction": {
+        "dealer": "licensed_in_state",
+        "pointOfSale": false,
+        "postPurchase": true,
+        "applyWithinDays": 180
+      },
+      "purchaserConditions": [
+        "Purchaser must be a Riverside Public Utilities customer.",
+        "One EV rebate per household every three years.",
+        "The higher figure requires SHARE enrolment (250% of federal poverty guidelines)."
+      ],
       "amounts": [
-        { "usd": 1000, "applies": { "condition": "used" }, "label": "up to", "upTo": true },
-        { "usd": 4000, "applies": { "condition": "used" }, "label": "up to, SHARE enrollees", "incomeQualified": true, "upTo": true }
+        {
+          "usd": 1000,
+          "applies": {
+            "condition": "used"
+          },
+          "label": "up to",
+          "upTo": true
+        },
+        {
+          "usd": 4000,
+          "applies": {
+            "condition": "used"
+          },
+          "label": "up to, SHARE enrollees",
+          "incomeQualified": true,
+          "upTo": true
+        }
       ]
     },
     {
       "id": "ca-sdge-pre-owned-ev",
       "name": "SDG&E Pre-Owned EV Rebate",
-      "jurisdiction": { "kind": "utility", "state": "CA", "utility": "San Diego Gas & Electric" },
+      "jurisdiction": {
+        "kind": "utility",
+        "state": "CA",
+        "utility": "San Diego Gas & Electric"
+      },
       "administrator": "Center for Sustainable Energy for SDG&E (Low Carbon Fuel Standard funds)",
       "kind": "rebate",
       "status": "live",
       "statusAsOf": "2026-09-02",
-      "sources": [{ "url": "https://evrebates.sdge.com/program-requirements", "capturedAt": "2026-09-02", "what": "Pre-owned BEV or PHEV with at least 8 kWh (applications from 2026-04-16); $1,000 or $4,000 Rebate Plus; apply within 180 days; registered in California 20 months; one per household" }],
-      "covers": { "new": false, "used": true, "lease": true },
-      "vehicle": { "kinds": ["BEV", "PHEV"], "batteryKwhMin": 8 },
-      "transaction": { "dealer": "any", "pointOfSale": false, "postPurchase": true, "applyWithinDays": 180 },
-      "purchaserConditions": ["SDG&E residential electric customer.", "Keep the car registered to you in California for at least 20 months.", "One rebate application per household over the program; not on a car already rebated by SCE, PG&E or the Clean Fuel Reward."],
+      "sources": [
+        {
+          "url": "https://evrebates.sdge.com/program-requirements",
+          "capturedAt": "2026-09-02",
+          "what": "Pre-owned BEV or PHEV with at least 8 kWh (applications from 2026-04-16); $1,000 or $4,000 Rebate Plus; apply within 180 days; registered in California 20 months; one per household"
+        }
+      ],
+      "covers": {
+        "new": false,
+        "used": true,
+        "lease": true
+      },
+      "vehicle": {
+        "kinds": [
+          "BEV",
+          "PHEV"
+        ],
+        "batteryKwhMin": 8
+      },
+      "transaction": {
+        "dealer": "any",
+        "pointOfSale": false,
+        "postPurchase": true,
+        "applyWithinDays": 180
+      },
+      "purchaserConditions": [
+        "Purchaser must be an SDG&E residential electric customer.",
+        "Keep the car registered in California 20 months.",
+        "One rebate per household; not on a car already rebated by SCE, PG&E or the Clean Fuel Reward."
+      ],
       "amounts": [
-        { "usd": 1000, "applies": { "condition": "used" }, "label": "standard" },
-        { "usd": 4000, "applies": { "condition": "used" }, "label": "Rebate Plus (income-qualified)", "incomeQualified": true }
+        {
+          "usd": 1000,
+          "applies": {
+            "condition": "used"
+          },
+          "label": "standard"
+        },
+        {
+          "usd": 4000,
+          "applies": {
+            "condition": "used"
+          },
+          "label": "Rebate Plus (income-qualified)",
+          "incomeQualified": true
+        }
       ]
     },
     {
       "id": "ca-silicon-valley-power-pre-owned-ev",
       "name": "Silicon Valley Power income-qualified pre-owned EV rebate",
-      "jurisdiction": { "kind": "utility", "state": "CA", "utility": "Silicon Valley Power (Santa Clara)" },
+      "jurisdiction": {
+        "kind": "utility",
+        "state": "CA",
+        "utility": "Silicon Valley Power (Santa Clara)"
+      },
       "administrator": "Silicon Valley Power",
       "kind": "rebate",
       "status": "live",
       "statusAsOf": "2026-09-02",
-      "sources": [{ "url": "https://www.siliconvalleypower.com/residents/rebates/electric-vehicles-ebikes", "capturedAt": "2026-09-02", "what": "Used BEV $1,500, used PHEV $1,000, +$1,000 LIHEAP, +$1,000 for 117 MPGe or better; sale price $25,000 or less; at least two model years old; at least 7 kWh; licensed dealership; Financial Rate Assistance enrolment before purchase" }],
-      "covers": { "new": false, "used": true, "lease": false },
-      "vehicle": { "kinds": ["BEV", "PHEV"], "usedPriceCapUsd": 25000, "usedPriceCapBasis": "Sale price.", "usedMinModelYearsOld": 2, "batteryKwhMin": 7 },
-      "transaction": { "dealer": "licensed_any_state", "pointOfSale": false, "postPurchase": true },
-      "purchaserConditions": ["Silicon Valley Power customer enrolled in the Financial Rate Assistance Program before the purchase, with income verified in the prior 12 months."],
+      "sources": [
+        {
+          "url": "https://www.siliconvalleypower.com/residents/rebates/electric-vehicles-ebikes",
+          "capturedAt": "2026-09-02",
+          "what": "Used BEV $1,500, used PHEV $1,000, +$1,000 LIHEAP, +$1,000 for 117 MPGe or better; sale price $25,000 or less; at least two model years old; at least 7 kWh; licensed dealership; Financial Rate Assistance enrolment before purchase"
+        }
+      ],
+      "covers": {
+        "new": false,
+        "used": true,
+        "lease": false
+      },
+      "vehicle": {
+        "kinds": [
+          "BEV",
+          "PHEV"
+        ],
+        "usedPriceCapUsd": 25000,
+        "usedPriceCapBasis": "Sale price.",
+        "usedMinModelYearsOld": 2,
+        "batteryKwhMin": 7
+      },
+      "transaction": {
+        "dealer": "licensed_any_state",
+        "pointOfSale": false,
+        "postPurchase": true
+      },
+      "purchaserConditions": [
+        "Purchaser must be a Silicon Valley Power customer enrolled in the Financial Rate Assistance Program before the purchase."
+      ],
       "amounts": [
-        { "usd": 1500, "applies": { "condition": "used", "kind": "BEV" }, "label": "income-qualified", "incomeQualified": true },
-        { "usd": 1000, "applies": { "condition": "used", "kind": "PHEV" }, "label": "income-qualified", "incomeQualified": true },
-        { "usd": 1000, "applies": { "condition": "used" }, "label": "LIHEAP enrollees", "incomeQualified": true, "adder": true },
-        { "usd": 1000, "applies": { "condition": "used" }, "label": "rated 117 MPGe or better", "adder": true }
+        {
+          "usd": 1500,
+          "applies": {
+            "condition": "used",
+            "kind": "BEV"
+          },
+          "label": "income-qualified",
+          "incomeQualified": true
+        },
+        {
+          "usd": 1000,
+          "applies": {
+            "condition": "used",
+            "kind": "PHEV"
+          },
+          "label": "income-qualified",
+          "incomeQualified": true
+        },
+        {
+          "usd": 1000,
+          "applies": {
+            "condition": "used"
+          },
+          "label": "LIHEAP enrollees",
+          "incomeQualified": true,
+          "adder": true
+        },
+        {
+          "usd": 1000,
+          "applies": {
+            "condition": "used"
+          },
+          "label": "rated 117 MPGe or better",
+          "adder": true
+        }
       ]
     },
     {
       "id": "ca-sce-pre-owned-ev",
       "name": "SCE Pre-Owned EV Rebate",
-      "jurisdiction": { "kind": "utility", "state": "CA", "utility": "Southern California Edison" },
+      "jurisdiction": {
+        "kind": "utility",
+        "state": "CA",
+        "utility": "Southern California Edison"
+      },
       "administrator": "Center for Sustainable Energy for SCE (Low Carbon Fuel Standard funds)",
       "kind": "rebate",
       "status": "live",
       "statusAsOf": "2026-09-02",
-      "sources": [{ "url": "https://evrebates.sce.com/program-requirements", "capturedAt": "2026-09-02", "what": "$1,000 or $4,000 Rebate Plus on an eligible pre-owned EV (Eligible Vehicle List); apply within 180 days; registered in California 20 months; one per 24 months, three per program" }],
-      "covers": { "new": false, "used": true, "lease": true },
-      "vehicle": { "kinds": ["BEV", "PHEV"], "mustBeOnList": true },
-      "transaction": { "dealer": "any", "pointOfSale": false, "postPurchase": true, "applyWithinDays": 180 },
-      "purchaserConditions": ["SCE residential electric customer (not a commercial account at the registration address).", "Keep the car registered to you in California for at least 20 months.", "One rebate per 24 months and at most three pre-owned EVs over the program."],
+      "sources": [
+        {
+          "url": "https://evrebates.sce.com/program-requirements",
+          "capturedAt": "2026-09-02",
+          "what": "$1,000 or $4,000 Rebate Plus on an eligible pre-owned EV (Eligible Vehicle List); apply within 180 days; registered in California 20 months; one per 24 months, three per program"
+        }
+      ],
+      "covers": {
+        "new": false,
+        "used": true,
+        "lease": true
+      },
+      "vehicle": {
+        "kinds": [
+          "BEV",
+          "PHEV"
+        ],
+        "mustBeOnList": true
+      },
+      "transaction": {
+        "dealer": "any",
+        "pointOfSale": false,
+        "postPurchase": true,
+        "applyWithinDays": 180
+      },
+      "purchaserConditions": [
+        "Purchaser must be an SCE residential electric customer.",
+        "Keep the car registered in California 20 months.",
+        "One rebate per 24 months; at most three over the program."
+      ],
       "amounts": [
-        { "usd": 1000, "applies": { "condition": "used" }, "label": "standard" },
-        { "usd": 4000, "applies": { "condition": "used" }, "label": "Rebate Plus (income-qualified)", "incomeQualified": true }
+        {
+          "usd": 1000,
+          "applies": {
+            "condition": "used"
+          },
+          "label": "standard"
+        },
+        {
+          "usd": 4000,
+          "applies": {
+            "condition": "used"
+          },
+          "label": "Rebate Plus (income-qualified)",
+          "incomeQualified": true
+        }
       ]
     },
     {
       "id": "ca-svce-ev-rebate",
       "name": "Silicon Valley Clean Energy EV rebate",
-      "jurisdiction": { "kind": "utility", "state": "CA", "utility": "Silicon Valley Clean Energy" },
+      "jurisdiction": {
+        "kind": "utility",
+        "state": "CA",
+        "utility": "Silicon Valley Clean Energy"
+      },
       "administrator": "Silicon Valley Clean Energy",
       "kind": "rebate",
       "status": "live",
       "statusAsOf": "2026-09-02",
-      "sources": [{ "url": "https://www.svcleanenergy.org/ev-rebate/", "capturedAt": "2026-09-02", "what": "$2,000 for income-qualified SVCE customers; new or used, purchase or lease; cash price $55,000 or less; 2010 model year or newer; licensed dealer or online retailer (private party excluded); apply within 120 days; one per individual in three years" }],
-      "covers": { "new": true, "used": true, "lease": true },
-      "vehicle": { "kinds": ["BEV", "PHEV"], "purchasePriceCapUsd": 55000, "purchasePriceCapBasis": "Vehicle cash price including dealer or maker options, before taxes and fees.", "minModelYear": 2010 },
-      "transaction": { "dealer": "licensed_any_state", "pointOfSale": true, "postPurchase": true, "applyWithinDays": 120 },
-      "purchaserConditions": ["Silicon Valley Clean Energy customer at the service address.", "Income at or below 80% of Area Median Income, or enrolled in a listed assistance program.", "One rebate per individual in a three-year period; personal use, not for resale."],
+      "sources": [
+        {
+          "url": "https://www.svcleanenergy.org/ev-rebate/",
+          "capturedAt": "2026-09-02",
+          "what": "$2,000 for income-qualified SVCE customers; new or used, purchase or lease; cash price $55,000 or less; 2010 model year or newer; licensed dealer or online retailer (private party excluded); apply within 120 days; one per individual in three years"
+        }
+      ],
+      "covers": {
+        "new": true,
+        "used": true,
+        "lease": true
+      },
+      "vehicle": {
+        "kinds": [
+          "BEV",
+          "PHEV"
+        ],
+        "purchasePriceCapUsd": 55000,
+        "purchasePriceCapBasis": "Vehicle cash price including dealer or maker options, before taxes and fees.",
+        "minModelYear": 2010
+      },
+      "transaction": {
+        "dealer": "licensed_any_state",
+        "pointOfSale": true,
+        "postPurchase": true,
+        "applyWithinDays": 120
+      },
+      "purchaserConditions": [
+        "Purchaser must be a Silicon Valley Clean Energy customer.",
+        "Income at or below 80% of Area Median Income, or enrolled in a listed assistance program.",
+        "One rebate per person in three years; personal use only."
+      ],
       "amounts": [
-        { "usd": 2000, "applies": { "condition": "any" }, "label": "income-qualified", "incomeQualified": true }
+        {
+          "usd": 2000,
+          "applies": {
+            "condition": "any"
+          },
+          "label": "income-qualified",
+          "incomeQualified": true
+        }
       ]
     },
-
     {
       "id": "vt-burlington-electric-ev-rebate",
       "name": "Burlington Electric Department EV rebate",
-      "jurisdiction": { "kind": "utility", "state": "VT", "utility": "Burlington Electric Department" },
+      "jurisdiction": {
+        "kind": "utility",
+        "state": "VT",
+        "utility": "Burlington Electric Department"
+      },
       "administrator": "Burlington Electric Department",
       "kind": "rebate",
       "status": "live",
       "statusAsOf": "2026-09-02",
       "statusNote": "Offer valid through 2026-12-31.",
-      "sources": [{ "url": "https://www.burlingtonelectric.com/evrebates", "capturedAt": "2026-09-02", "what": "New AEV $5,000 ($5,700 income-qualified), new PHEV $2,000 ($2,300); pre-owned AEV or PHEV $1,300 ($2,000 / $1,500); MSRP or amount paid $60,000 or less; pre-owned model year 2019 or later; apply within 90 days; four per household" }],
-      "covers": { "new": true, "used": true, "lease": true },
-      "vehicle": { "kinds": ["BEV", "PHEV"], "newMsrpCapUsd": 60000, "newMsrpCapBasis": "MSRP.", "usedPriceCapUsd": 60000, "usedPriceCapBasis": "Purchase price paid.", "minModelYear": 2019 },
-      "transaction": { "dealer": "any", "pointOfSale": false, "postPurchase": true, "applyWithinDays": 90 },
-      "purchaserConditions": ["Burlington Electric Department customer with an active account; car registered in Burlington.", "At most four rebates per household, new and pre-owned combined.", "Leases qualify for new cars only."],
+      "sources": [
+        {
+          "url": "https://www.burlingtonelectric.com/evrebates",
+          "capturedAt": "2026-09-02",
+          "what": "New AEV $5,000 ($5,700 income-qualified), new PHEV $2,000 ($2,300); pre-owned AEV or PHEV $1,300 ($2,000 / $1,500); MSRP or amount paid $60,000 or less; pre-owned model year 2019 or later; apply within 90 days; four per household"
+        }
+      ],
+      "covers": {
+        "new": true,
+        "used": true,
+        "lease": true
+      },
+      "vehicle": {
+        "kinds": [
+          "BEV",
+          "PHEV"
+        ],
+        "newMsrpCapUsd": 60000,
+        "newMsrpCapBasis": "MSRP.",
+        "usedPriceCapUsd": 60000,
+        "usedPriceCapBasis": "Purchase price paid.",
+        "minModelYear": 2019
+      },
+      "transaction": {
+        "dealer": "any",
+        "pointOfSale": false,
+        "postPurchase": true,
+        "applyWithinDays": 90
+      },
+      "purchaserConditions": [
+        "Purchaser must be a Burlington Electric customer; car registered in Burlington.",
+        "At most four rebates per household.",
+        "Leases qualify for new cars only."
+      ],
       "amounts": [
-        { "usd": 5000, "applies": { "condition": "new", "kind": "BEV" } },
-        { "usd": 2000, "applies": { "condition": "new", "kind": "PHEV" } },
-        { "usd": 1300, "applies": { "condition": "used" } },
-        { "usd": 5700, "applies": { "condition": "new", "kind": "BEV" }, "label": "income-qualified", "incomeQualified": true },
-        { "usd": 2300, "applies": { "condition": "new", "kind": "PHEV" }, "label": "income-qualified", "incomeQualified": true },
-        { "usd": 2000, "applies": { "condition": "used", "kind": "BEV" }, "label": "income-qualified", "incomeQualified": true },
-        { "usd": 1500, "applies": { "condition": "used", "kind": "PHEV" }, "label": "income-qualified", "incomeQualified": true }
+        {
+          "usd": 5000,
+          "applies": {
+            "condition": "new",
+            "kind": "BEV"
+          }
+        },
+        {
+          "usd": 2000,
+          "applies": {
+            "condition": "new",
+            "kind": "PHEV"
+          }
+        },
+        {
+          "usd": 1300,
+          "applies": {
+            "condition": "used"
+          }
+        },
+        {
+          "usd": 5700,
+          "applies": {
+            "condition": "new",
+            "kind": "BEV"
+          },
+          "label": "income-qualified",
+          "incomeQualified": true
+        },
+        {
+          "usd": 2300,
+          "applies": {
+            "condition": "new",
+            "kind": "PHEV"
+          },
+          "label": "income-qualified",
+          "incomeQualified": true
+        },
+        {
+          "usd": 2000,
+          "applies": {
+            "condition": "used",
+            "kind": "BEV"
+          },
+          "label": "income-qualified",
+          "incomeQualified": true
+        },
+        {
+          "usd": 1500,
+          "applies": {
+            "condition": "used",
+            "kind": "PHEV"
+          },
+          "label": "income-qualified",
+          "incomeQualified": true
+        }
       ]
     },
     {
       "id": "vt-green-mountain-power-ev-rebate",
       "name": "Green Mountain Power EV rebate",
-      "jurisdiction": { "kind": "utility", "state": "VT", "utility": "Green Mountain Power" },
+      "jurisdiction": {
+        "kind": "utility",
+        "state": "VT",
+        "utility": "Green Mountain Power"
+      },
       "administrator": "Green Mountain Power",
       "kind": "rebate",
       "status": "live",
       "statusAsOf": "2026-09-02",
       "statusNote": "Valid for cars purchased or leased through 2026-12-31.",
-      "sources": [{ "url": "https://greenmountainpower.com/rebates-programs/electric-vehicles/ev-rebate/", "capturedAt": "2026-09-02", "what": "AEV new purchase $1,500 (lease $1,000), used $1,000; PHEV new purchase $1,000 (lease $750), used $750; extra $1,000 on AEVs for income-eligible customers; participating dealers can apply it at purchase" }],
-      "covers": { "new": true, "used": true, "lease": true },
-      "vehicle": { "kinds": ["BEV", "PHEV"] },
-      "transaction": { "dealer": "any", "pointOfSale": true, "postPurchase": true },
-      "purchaserConditions": ["Green Mountain Power customer.", "New-car leases pay $1,000 (AEV) or $750 (PHEV) rather than the purchase figure.", "The extra $1,000 requires income at or below 80% of the Vermont median."],
+      "sources": [
+        {
+          "url": "https://greenmountainpower.com/rebates-programs/electric-vehicles/ev-rebate/",
+          "capturedAt": "2026-09-02",
+          "what": "AEV new purchase $1,500 (lease $1,000), used $1,000; PHEV new purchase $1,000 (lease $750), used $750; extra $1,000 on AEVs for income-eligible customers; participating dealers can apply it at purchase"
+        }
+      ],
+      "covers": {
+        "new": true,
+        "used": true,
+        "lease": true
+      },
+      "vehicle": {
+        "kinds": [
+          "BEV",
+          "PHEV"
+        ]
+      },
+      "transaction": {
+        "dealer": "any",
+        "pointOfSale": true,
+        "postPurchase": true
+      },
+      "purchaserConditions": [
+        "Purchaser must be a Green Mountain Power customer.",
+        "New-car leases pay $1,000 (all-electric) or $750 (plug-in hybrid).",
+        "The extra $1,000 requires income at or below 80% of the Vermont median."
+      ],
       "amounts": [
-        { "usd": 1500, "applies": { "condition": "new", "kind": "BEV" }, "label": "purchase" },
-        { "usd": 1000, "applies": { "condition": "new", "kind": "PHEV" }, "label": "purchase" },
-        { "usd": 1000, "applies": { "condition": "used", "kind": "BEV" } },
-        { "usd": 750, "applies": { "condition": "used", "kind": "PHEV" } },
-        { "usd": 1000, "applies": { "condition": "any", "kind": "BEV" }, "label": "income-eligible", "incomeQualified": true, "adder": true }
+        {
+          "usd": 1500,
+          "applies": {
+            "condition": "new",
+            "kind": "BEV"
+          },
+          "label": "purchase"
+        },
+        {
+          "usd": 1000,
+          "applies": {
+            "condition": "new",
+            "kind": "PHEV"
+          },
+          "label": "purchase"
+        },
+        {
+          "usd": 1000,
+          "applies": {
+            "condition": "used",
+            "kind": "BEV"
+          }
+        },
+        {
+          "usd": 750,
+          "applies": {
+            "condition": "used",
+            "kind": "PHEV"
+          }
+        },
+        {
+          "usd": 1000,
+          "applies": {
+            "condition": "any",
+            "kind": "BEV"
+          },
+          "label": "income-eligible",
+          "incomeQualified": true,
+          "adder": true
+        }
       ]
     },
     {
       "id": "vt-stowe-electric-ev-incentive",
       "name": "Stowe Electric EV incentive",
-      "jurisdiction": { "kind": "utility", "state": "VT", "utility": "Stowe Electric Department" },
+      "jurisdiction": {
+        "kind": "utility",
+        "state": "VT",
+        "utility": "Stowe Electric Department"
+      },
       "administrator": "Stowe Electric Department",
       "kind": "rebate",
       "status": "live",
       "statusAsOf": "2026-09-02",
       "statusNote": "\"funds to provide payment are limited\"; requests encouraged within 30 days.",
-      "sources": [{ "url": "https://www.stoweelectric.com/rebates/electric-vehicles", "capturedAt": "2026-09-02", "what": "$350 base for new or used AEV or PHEV; $500 to $700 for Connected Homes-eligible vehicles; $1,500 income-eligible; registered in Lamoille County" }],
-      "covers": { "new": true, "used": true, "lease": true },
-      "vehicle": { "kinds": ["BEV", "PHEV"] },
-      "transaction": { "dealer": "any", "pointOfSale": false, "postPurchase": true },
-      "purchaserConditions": ["Stowe Electric account holder; car registered in Lamoille County.", "Income-eligible tier: household income at or below 150% of the federal poverty level or a listed benefit.", "Funds are limited."],
+      "sources": [
+        {
+          "url": "https://www.stoweelectric.com/rebates/electric-vehicles",
+          "capturedAt": "2026-09-02",
+          "what": "$350 base for new or used AEV or PHEV; $500 to $700 for Connected Homes-eligible vehicles; $1,500 income-eligible; registered in Lamoille County"
+        }
+      ],
+      "covers": {
+        "new": true,
+        "used": true,
+        "lease": true
+      },
+      "vehicle": {
+        "kinds": [
+          "BEV",
+          "PHEV"
+        ]
+      },
+      "transaction": {
+        "dealer": "any",
+        "pointOfSale": false,
+        "postPurchase": true
+      },
+      "purchaserConditions": [
+        "Purchaser must be a Stowe Electric account holder; car registered in Lamoille County.",
+        "Income-eligible tier: income at or below 150% of the federal poverty level or a listed benefit.",
+        "Funds are limited."
+      ],
       "amounts": [
-        { "usd": 350, "applies": { "condition": "any" }, "label": "base" },
-        { "usd": 1500, "applies": { "condition": "any" }, "label": "income-eligible", "incomeQualified": true }
+        {
+          "usd": 350,
+          "applies": {
+            "condition": "any"
+          },
+          "label": "base"
+        },
+        {
+          "usd": 1500,
+          "applies": {
+            "condition": "any"
+          },
+          "label": "income-eligible",
+          "incomeQualified": true
+        }
       ]
     },
     {
       "id": "vt-vermont-electric-coop-ev-credit",
       "name": "Vermont Electric Co-op EV bill credit",
-      "jurisdiction": { "kind": "utility", "state": "VT", "utility": "Vermont Electric Co-op" },
+      "jurisdiction": {
+        "kind": "utility",
+        "state": "VT",
+        "utility": "Vermont Electric Co-op"
+      },
       "administrator": "Vermont Electric Co-op",
       "kind": "rebate",
       "status": "live",
       "statusAsOf": "2026-09-02",
-      "sources": [{ "url": "https://vermontelectric.coop/energy-transformation-programs", "capturedAt": "2026-09-02", "what": "One-time bill credit: AEV $500, PHEV $250, new or used, purchased or leased; additional $500 below a county income threshold" }],
-      "covers": { "new": true, "used": true, "lease": true },
-      "vehicle": { "kinds": ["BEV", "PHEV"] },
-      "transaction": { "dealer": "any", "pointOfSale": false, "postPurchase": true },
-      "purchaserConditions": ["Vermont Electric Co-op member.", "The additional $500 requires income at or below the county threshold on VEC's table."],
+      "sources": [
+        {
+          "url": "https://vermontelectric.coop/energy-transformation-programs",
+          "capturedAt": "2026-09-02",
+          "what": "One-time bill credit: AEV $500, PHEV $250, new or used, purchased or leased; additional $500 below a county income threshold"
+        }
+      ],
+      "covers": {
+        "new": true,
+        "used": true,
+        "lease": true
+      },
+      "vehicle": {
+        "kinds": [
+          "BEV",
+          "PHEV"
+        ]
+      },
+      "transaction": {
+        "dealer": "any",
+        "pointOfSale": false,
+        "postPurchase": true
+      },
+      "purchaserConditions": [
+        "Purchaser must be a Vermont Electric Co-op member.",
+        "The additional $500 requires income at or below the county threshold."
+      ],
       "amounts": [
-        { "usd": 500, "applies": { "condition": "any", "kind": "BEV" }, "label": "bill credit" },
-        { "usd": 250, "applies": { "condition": "any", "kind": "PHEV" }, "label": "bill credit" },
-        { "usd": 500, "applies": { "condition": "any" }, "label": "income-qualified", "incomeQualified": true, "adder": true }
+        {
+          "usd": 500,
+          "applies": {
+            "condition": "any",
+            "kind": "BEV"
+          },
+          "label": "bill credit"
+        },
+        {
+          "usd": 250,
+          "applies": {
+            "condition": "any",
+            "kind": "PHEV"
+          },
+          "label": "bill credit"
+        },
+        {
+          "usd": 500,
+          "applies": {
+            "condition": "any"
+          },
+          "label": "income-qualified",
+          "incomeQualified": true,
+          "adder": true
+        }
       ]
     },
     {
       "id": "vt-vppsa-ev-rebate",
       "name": "VPPSA member utilities EV rebate",
-      "jurisdiction": { "kind": "utility", "state": "VT", "utility": "VPPSA (Barton, Enosburg Falls, Hardwick, Johnson, Jacksonville, Ludlow, Lyndonville, Morrisville, Northfield, Orleans, Swanton)" },
+      "jurisdiction": {
+        "kind": "utility",
+        "state": "VT",
+        "utility": "VPPSA (Barton, Enosburg Falls, Hardwick, Johnson, Jacksonville, Ludlow, Lyndonville, Morrisville, Northfield, Orleans, Swanton)"
+      },
       "administrator": "Vermont Public Power Supply Authority",
       "kind": "rebate",
       "status": "live",
       "statusAsOf": "2026-09-02",
       "statusNote": "Purchases 2026-01-01 to 2026-12-31; applications by 2027-01-08.",
-      "sources": [{ "url": "https://vppsa.com/resources/rebate-forms/", "capturedAt": "2026-09-02", "what": "$1,250 new AEV, $500 new PHEV, $500 pre-owned AEV, $250 pre-owned PHEV; +$400 income-qualifying; new or used, purchase or lease; participating dealers can apply at point of sale; registration address must match the account" }],
-      "covers": { "new": true, "used": true, "lease": true },
-      "vehicle": { "kinds": ["BEV", "PHEV"] },
-      "transaction": { "dealer": "any", "pointOfSale": true, "postPurchase": true },
-      "purchaserConditions": ["Active account with one of the eleven VPPSA member utilities; the car's registration address must match the account's premise address.", "Not on a used car that already earned a VPPSA incentive.", "Personal use, not for resale."],
+      "sources": [
+        {
+          "url": "https://vppsa.com/resources/rebate-forms/",
+          "capturedAt": "2026-09-02",
+          "what": "$1,250 new AEV, $500 new PHEV, $500 pre-owned AEV, $250 pre-owned PHEV; +$400 income-qualifying; new or used, purchase or lease; participating dealers can apply at point of sale; registration address must match the account"
+        }
+      ],
+      "covers": {
+        "new": true,
+        "used": true,
+        "lease": true
+      },
+      "vehicle": {
+        "kinds": [
+          "BEV",
+          "PHEV"
+        ]
+      },
+      "transaction": {
+        "dealer": "any",
+        "pointOfSale": true,
+        "postPurchase": true
+      },
+      "purchaserConditions": [
+        "Purchaser must have an account with a VPPSA member utility; the car's registration address must match.",
+        "Not on a used car that already earned a VPPSA incentive.",
+        "Personal use only."
+      ],
       "amounts": [
-        { "usd": 1250, "applies": { "condition": "new", "kind": "BEV" } },
-        { "usd": 500, "applies": { "condition": "new", "kind": "PHEV" } },
-        { "usd": 500, "applies": { "condition": "used", "kind": "BEV" } },
-        { "usd": 250, "applies": { "condition": "used", "kind": "PHEV" } },
-        { "usd": 400, "applies": { "condition": "any" }, "label": "income-qualifying", "incomeQualified": true, "adder": true }
+        {
+          "usd": 1250,
+          "applies": {
+            "condition": "new",
+            "kind": "BEV"
+          }
+        },
+        {
+          "usd": 500,
+          "applies": {
+            "condition": "new",
+            "kind": "PHEV"
+          }
+        },
+        {
+          "usd": 500,
+          "applies": {
+            "condition": "used",
+            "kind": "BEV"
+          }
+        },
+        {
+          "usd": 250,
+          "applies": {
+            "condition": "used",
+            "kind": "PHEV"
+          }
+        },
+        {
+          "usd": 400,
+          "applies": {
+            "condition": "any"
+          },
+          "label": "income-qualifying",
+          "incomeQualified": true,
+          "adder": true
+        }
       ]
     },
     {
       "id": "vt-washington-electric-coop-ev-incentive",
       "name": "Washington Electric Co-op EV incentive",
-      "jurisdiction": { "kind": "utility", "state": "VT", "utility": "Washington Electric Co-op" },
+      "jurisdiction": {
+        "kind": "utility",
+        "state": "VT",
+        "utility": "Washington Electric Co-op"
+      },
       "administrator": "Washington Electric Co-op",
       "kind": "rebate",
       "status": "live",
       "statusAsOf": "2026-09-02",
-      "sources": [{ "url": "https://www.washingtonelectric.coop/incentives/", "capturedAt": "2026-09-02", "what": "EV $500, plug-in hybrid $250, new or used, purchase or lease; additional $500 for income-qualifying members (not on AFDC's list)" }],
-      "covers": { "new": true, "used": true, "lease": true },
-      "vehicle": { "kinds": ["BEV", "PHEV"] },
-      "transaction": { "dealer": "any", "pointOfSale": false, "postPurchase": true },
-      "purchaserConditions": ["Washington Electric Co-op member."],
+      "sources": [
+        {
+          "url": "https://www.washingtonelectric.coop/incentives/",
+          "capturedAt": "2026-09-02",
+          "what": "EV $500, plug-in hybrid $250, new or used, purchase or lease; additional $500 for income-qualifying members (not on AFDC's list)"
+        }
+      ],
+      "covers": {
+        "new": true,
+        "used": true,
+        "lease": true
+      },
+      "vehicle": {
+        "kinds": [
+          "BEV",
+          "PHEV"
+        ]
+      },
+      "transaction": {
+        "dealer": "any",
+        "pointOfSale": false,
+        "postPurchase": true
+      },
+      "purchaserConditions": [
+        "Purchaser must be a Washington Electric Co-op member."
+      ],
       "amounts": [
-        { "usd": 500, "applies": { "condition": "any", "kind": "BEV" } },
-        { "usd": 250, "applies": { "condition": "any", "kind": "PHEV" } },
-        { "usd": 500, "applies": { "condition": "any" }, "label": "income-qualifying", "incomeQualified": true, "adder": true }
+        {
+          "usd": 500,
+          "applies": {
+            "condition": "any",
+            "kind": "BEV"
+          }
+        },
+        {
+          "usd": 250,
+          "applies": {
+            "condition": "any",
+            "kind": "PHEV"
+          }
+        },
+        {
+          "usd": 500,
+          "applies": {
+            "condition": "any"
+          },
+          "label": "income-qualifying",
+          "incomeQualified": true,
+          "adder": true
+        }
       ]
     },
-
     {
       "id": "ak-apt-amp-up",
       "name": "Alaska Power & Telephone AMP-UP EV incentive",
-      "jurisdiction": { "kind": "utility", "state": "AK", "utility": "Alaska Power & Telephone" },
+      "jurisdiction": {
+        "kind": "utility",
+        "state": "AK",
+        "utility": "Alaska Power & Telephone"
+      },
       "administrator": "Alaska Power & Telephone",
       "kind": "rebate",
       "status": "live",
       "statusAsOf": "2026-09-02",
-      "sources": [{ "url": "https://www.aptalaska.com/amp-up/", "capturedAt": "2026-09-02", "what": "$500 per vehicle; 100% EV only, at least 14 kWh; new or used; apply within six months; one per VIN; vehicle physically in the service area" }],
-      "covers": { "new": true, "used": true, "lease": false },
-      "vehicle": { "kinds": ["BEV"], "batteryKwhMin": 14 },
-      "transaction": { "dealer": "any", "pointOfSale": false, "postPurchase": true, "applyWithinDays": 183 },
-      "purchaserConditions": ["AP&T electric customer; the car must be in AP&T's service area and the incentive goes to the person on the title.", "One incentive per VIN."],
-      "amounts": [{ "usd": 500, "applies": { "condition": "any", "kind": "BEV" } }]
+      "sources": [
+        {
+          "url": "https://www.aptalaska.com/amp-up/",
+          "capturedAt": "2026-09-02",
+          "what": "$500 per vehicle; 100% EV only, at least 14 kWh; new or used; apply within six months; one per VIN; vehicle physically in the service area"
+        }
+      ],
+      "covers": {
+        "new": true,
+        "used": true,
+        "lease": false
+      },
+      "vehicle": {
+        "kinds": [
+          "BEV"
+        ],
+        "batteryKwhMin": 14
+      },
+      "transaction": {
+        "dealer": "any",
+        "pointOfSale": false,
+        "postPurchase": true,
+        "applyWithinDays": 183
+      },
+      "purchaserConditions": [
+        "Purchaser must be an AP&T electric customer; the car must be in AP&T's service area.",
+        "One incentive per VIN."
+      ],
+      "amounts": [
+        {
+          "usd": 500,
+          "applies": {
+            "condition": "any",
+            "kind": "BEV"
+          }
+        }
+      ]
     },
     {
       "id": "ct-norwich-public-utilities-ev-rebate",
       "name": "Norwich Public Utilities EV rebate",
-      "jurisdiction": { "kind": "utility", "state": "CT", "utility": "Norwich Public Utilities" },
+      "jurisdiction": {
+        "kind": "utility",
+        "state": "CT",
+        "utility": "Norwich Public Utilities"
+      },
       "administrator": "Norwich Public Utilities",
       "kind": "rebate",
       "status": "live",
       "statusAsOf": "2026-09-02",
       "statusNote": "FY27: purchases or leases 2026-07-01 to 2027-06-30; requests by 2027-07-15.",
-      "sources": [{ "url": "https://norwichpublicutilities.com/DocumentCenter/View/709/FY-27--EV-Rebate", "capturedAt": "2026-09-02", "what": "New EV $1,500, new PHEV $1,000, used EV $1,000, used PHEV $500; used model year 2022 or newer; licensed dealer; apply within 60 days; registered with Tax Town Norwich" }],
-      "covers": { "new": true, "used": true, "lease": true },
-      "vehicle": { "kinds": ["BEV", "PHEV"], "minModelYear": 2022 },
-      "transaction": { "dealer": "licensed_any_state", "pointOfSale": false, "postPurchase": true, "applyWithinDays": 60 },
-      "purchaserConditions": ["NPU electric customer living in Norwich Public Utilities' territory; the registration's Tax Town must be Norwich.", "Pre-approval required above $10,000 in total rebates."],
+      "sources": [
+        {
+          "url": "https://norwichpublicutilities.com/DocumentCenter/View/709/FY-27--EV-Rebate",
+          "capturedAt": "2026-09-02",
+          "what": "New EV $1,500, new PHEV $1,000, used EV $1,000, used PHEV $500; used model year 2022 or newer; licensed dealer; apply within 60 days; registered with Tax Town Norwich"
+        }
+      ],
+      "covers": {
+        "new": true,
+        "used": true,
+        "lease": true
+      },
+      "vehicle": {
+        "kinds": [
+          "BEV",
+          "PHEV"
+        ],
+        "minModelYear": 2022
+      },
+      "transaction": {
+        "dealer": "licensed_any_state",
+        "pointOfSale": false,
+        "postPurchase": true,
+        "applyWithinDays": 60
+      },
+      "purchaserConditions": [
+        "Purchaser must be a Norwich Public Utilities electric customer; the registration's Tax Town must be Norwich.",
+        "Pre-approval required above $10,000 in total rebates."
+      ],
       "amounts": [
-        { "usd": 1500, "applies": { "condition": "new", "kind": "BEV" } },
-        { "usd": 1000, "applies": { "condition": "new", "kind": "PHEV" } },
-        { "usd": 1000, "applies": { "condition": "used", "kind": "BEV" } },
-        { "usd": 500, "applies": { "condition": "used", "kind": "PHEV" } }
+        {
+          "usd": 1500,
+          "applies": {
+            "condition": "new",
+            "kind": "BEV"
+          }
+        },
+        {
+          "usd": 1000,
+          "applies": {
+            "condition": "new",
+            "kind": "PHEV"
+          }
+        },
+        {
+          "usd": 1000,
+          "applies": {
+            "condition": "used",
+            "kind": "BEV"
+          }
+        },
+        {
+          "usd": 500,
+          "applies": {
+            "condition": "used",
+            "kind": "PHEV"
+          }
+        }
       ]
     },
     {
       "id": "ma-concord-cmlp-driveev",
       "name": "Concord Municipal Light Plant DriveEV rebate",
-      "jurisdiction": { "kind": "utility", "state": "MA", "utility": "Concord Municipal Light Plant" },
+      "jurisdiction": {
+        "kind": "utility",
+        "state": "MA",
+        "utility": "Concord Municipal Light Plant"
+      },
       "administrator": "Concord Municipal Light Plant",
       "kind": "rebate",
       "status": "live",
       "statusAsOf": "2026-09-02",
-      "sources": [{ "url": "https://concordma.gov/2907/DriveEV-Rebate-Program", "capturedAt": "2026-09-02", "what": "BEV $650 / PHEV $350 standard; $850 / $450 at or under 120% AMI; $1,000 / $550 at or under 80% AMI; new BEV $55,000 and new PHEV $50,000 caps, used $40,000; used 2013 or newer; PHEV electric range at least 25 miles; licensed dealer; lease 3 years or longer; apply within a year; one per service address every five years" }],
-      "covers": { "new": true, "used": true, "lease": true },
+      "sources": [
+        {
+          "url": "https://concordma.gov/2907/DriveEV-Rebate-Program",
+          "capturedAt": "2026-09-02",
+          "what": "BEV $650 / PHEV $350 standard; $850 / $450 at or under 120% AMI; $1,000 / $550 at or under 80% AMI; new BEV $55,000 and new PHEV $50,000 caps, used $40,000; used 2013 or newer; PHEV electric range at least 25 miles; licensed dealer; lease 3 years or longer; apply within a year; one per service address every five years"
+        }
+      ],
+      "covers": {
+        "new": true,
+        "used": true,
+        "lease": true
+      },
       "leaseMinMonths": 36,
-      "vehicle": { "kinds": ["BEV", "PHEV"], "newMsrpCapUsd": 55000, "newMsrpCapBasis": "Price cap by category: new BEV $55,000, new PHEV $50,000 (basis not stated on the page).", "usedPriceCapUsd": 40000, "usedPriceCapBasis": "Price cap (basis not stated on the page).", "minModelYear": 2013, "phevEpaElectricRangeMinMi": 25 },
-      "transaction": { "dealer": "licensed_any_state", "pointOfSale": false, "postPurchase": true, "applyWithinDays": 365 },
-      "purchaserConditions": ["Active residential electricity account with CMLP; car registered to an individual and garaged in Concord.", "One rebate per CMLP service address every five years.", "Leases must run three years or longer."],
+      "vehicle": {
+        "kinds": [
+          "BEV",
+          "PHEV"
+        ],
+        "newMsrpCapUsd": 55000,
+        "newMsrpCapBasis": "Price cap by category: new BEV $55,000, new PHEV $50,000 (basis not stated on the page).",
+        "usedPriceCapUsd": 40000,
+        "usedPriceCapBasis": "Price cap (basis not stated on the page).",
+        "minModelYear": 2013,
+        "phevEpaElectricRangeMinMi": 25
+      },
+      "transaction": {
+        "dealer": "licensed_any_state",
+        "pointOfSale": false,
+        "postPurchase": true,
+        "applyWithinDays": 365
+      },
+      "purchaserConditions": [
+        "Purchaser must have a CMLP residential account; car registered to an individual and garaged in Concord.",
+        "One rebate per service address every five years.",
+        "Leases must run at least three years."
+      ],
       "amounts": [
-        { "usd": 650, "applies": { "condition": "any", "kind": "BEV" }, "label": "standard" },
-        { "usd": 350, "applies": { "condition": "any", "kind": "PHEV" }, "label": "standard" },
-        { "usd": 850, "applies": { "condition": "any", "kind": "BEV" }, "label": "at or under 120% of area median income", "incomeQualified": true },
-        { "usd": 450, "applies": { "condition": "any", "kind": "PHEV" }, "label": "at or under 120% of area median income", "incomeQualified": true },
-        { "usd": 1000, "applies": { "condition": "any", "kind": "BEV" }, "label": "at or under 80% of area median income", "incomeQualified": true },
-        { "usd": 550, "applies": { "condition": "any", "kind": "PHEV" }, "label": "at or under 80% of area median income", "incomeQualified": true }
+        {
+          "usd": 650,
+          "applies": {
+            "condition": "any",
+            "kind": "BEV"
+          },
+          "label": "standard"
+        },
+        {
+          "usd": 350,
+          "applies": {
+            "condition": "any",
+            "kind": "PHEV"
+          },
+          "label": "standard"
+        },
+        {
+          "usd": 850,
+          "applies": {
+            "condition": "any",
+            "kind": "BEV"
+          },
+          "label": "at or under 120% of area median income",
+          "incomeQualified": true
+        },
+        {
+          "usd": 450,
+          "applies": {
+            "condition": "any",
+            "kind": "PHEV"
+          },
+          "label": "at or under 120% of area median income",
+          "incomeQualified": true
+        },
+        {
+          "usd": 1000,
+          "applies": {
+            "condition": "any",
+            "kind": "BEV"
+          },
+          "label": "at or under 80% of area median income",
+          "incomeQualified": true
+        },
+        {
+          "usd": 550,
+          "applies": {
+            "condition": "any",
+            "kind": "PHEV"
+          },
+          "label": "at or under 80% of area median income",
+          "incomeQualified": true
+        }
       ]
     },
     {
       "id": "ma-taunton-tmlp-ev-rebate",
       "name": "Taunton Municipal Light Plant EV rebate",
-      "jurisdiction": { "kind": "utility", "state": "MA", "utility": "Taunton Municipal Light Plant" },
+      "jurisdiction": {
+        "kind": "utility",
+        "state": "MA",
+        "utility": "Taunton Municipal Light Plant"
+      },
       "administrator": "Taunton Municipal Light Plant",
       "kind": "rebate",
       "status": "live",
       "statusAsOf": "2026-09-02",
       "statusNote": "\"until the funding has ended\".",
-      "sources": [{ "url": "https://www.tmlp.com/178/EV-Program", "capturedAt": "2026-09-02", "what": "$450 for a new or used electric vehicle; active residential account for six months with a zero balance; two per household" }],
-      "covers": { "new": true, "used": true, "lease": false },
-      "vehicle": { "kinds": ["BEV", "PHEV"] },
-      "transaction": { "dealer": "any", "pointOfSale": false, "postPurchase": true },
-      "purchaserConditions": ["Active TMLP residential electric account for at least six months, with no arrears.", "At most two vehicle rebates per household."],
-      "amounts": [{ "usd": 450, "applies": { "condition": "any" } }]
+      "sources": [
+        {
+          "url": "https://www.tmlp.com/178/EV-Program",
+          "capturedAt": "2026-09-02",
+          "what": "$450 for a new or used electric vehicle; active residential account for six months with a zero balance; two per household"
+        }
+      ],
+      "covers": {
+        "new": true,
+        "used": true,
+        "lease": false
+      },
+      "vehicle": {
+        "kinds": [
+          "BEV",
+          "PHEV"
+        ]
+      },
+      "transaction": {
+        "dealer": "any",
+        "pointOfSale": false,
+        "postPurchase": true
+      },
+      "purchaserConditions": [
+        "Purchaser must have a TMLP residential account for six months with no arrears.",
+        "At most two vehicle rebates per household."
+      ],
+      "amounts": [
+        {
+          "usd": 450,
+          "applies": {
+            "condition": "any"
+          }
+        }
+      ]
     },
     {
       "id": "mi-homeworks-tri-county-ev-rebate",
       "name": "HomeWorks Tri-County Electric EV rebate",
-      "jurisdiction": { "kind": "utility", "state": "MI", "utility": "HomeWorks Tri-County Electric Cooperative" },
+      "jurisdiction": {
+        "kind": "utility",
+        "state": "MI",
+        "utility": "HomeWorks Tri-County Electric Cooperative"
+      },
       "administrator": "HomeWorks Tri-County Electric Cooperative",
       "kind": "rebate",
       "status": "live",
       "statusAsOf": "2026-09-02",
-      "sources": [{ "url": "https://www.homeworks.org/210-2/electric-home/member-services/eo/evprogram/", "capturedAt": "2026-09-02", "what": "New BEV $1,500, used BEV $750; plug-in hybrids and leases not eligible; registration address must match the service address" }],
-      "covers": { "new": true, "used": true, "lease": false },
-      "vehicle": { "kinds": ["BEV"] },
-      "transaction": { "dealer": "any", "pointOfSale": false, "postPurchase": true },
-      "purchaserConditions": ["HomeWorks member; the car's registration address must match the member's service address.", "Purchased, not leased."],
+      "sources": [
+        {
+          "url": "https://www.homeworks.org/210-2/electric-home/member-services/eo/evprogram/",
+          "capturedAt": "2026-09-02",
+          "what": "New BEV $1,500, used BEV $750; plug-in hybrids and leases not eligible; registration address must match the service address"
+        }
+      ],
+      "covers": {
+        "new": true,
+        "used": true,
+        "lease": false
+      },
+      "vehicle": {
+        "kinds": [
+          "BEV"
+        ]
+      },
+      "transaction": {
+        "dealer": "any",
+        "pointOfSale": false,
+        "postPurchase": true
+      },
+      "purchaserConditions": [
+        "Purchaser must be a HomeWorks member; the car's registration address must match the service address.",
+        "Purchased, not leased."
+      ],
       "amounts": [
-        { "usd": 1500, "applies": { "condition": "new", "kind": "BEV" } },
-        { "usd": 750, "applies": { "condition": "used", "kind": "BEV" } }
+        {
+          "usd": 1500,
+          "applies": {
+            "condition": "new",
+            "kind": "BEV"
+          }
+        },
+        {
+          "usd": 750,
+          "applies": {
+            "condition": "used",
+            "kind": "BEV"
+          }
+        }
       ]
     },
     {
       "id": "pa-peco-smart-driver",
       "name": "PECO Smart Driver rebate",
-      "jurisdiction": { "kind": "utility", "state": "PA", "utility": "PECO" },
+      "jurisdiction": {
+        "kind": "utility",
+        "state": "PA",
+        "utility": "PECO"
+      },
       "administrator": "PECO",
       "kind": "rebate",
       "status": "live",
       "statusAsOf": "2026-09-02",
-      "sources": [{ "url": "https://secure.peco.com/WaystoSave/ForYourHome/Pages/PECOSmartDriverRebate.aspx", "capturedAt": "2026-09-02", "what": "$50 per car for telling PECO about an electric vehicle purchase" }],
-      "covers": { "new": true, "used": true, "lease": false },
-      "vehicle": { "kinds": ["BEV", "PHEV"] },
-      "transaction": { "dealer": "any", "pointOfSale": false, "postPurchase": true },
-      "purchaserConditions": ["PECO customer."],
-      "amounts": [{ "usd": 50, "applies": { "condition": "any" }, "label": "per car" }]
+      "sources": [
+        {
+          "url": "https://secure.peco.com/WaystoSave/ForYourHome/Pages/PECOSmartDriverRebate.aspx",
+          "capturedAt": "2026-09-02",
+          "what": "$50 per car for telling PECO about an electric vehicle purchase"
+        }
+      ],
+      "covers": {
+        "new": true,
+        "used": true,
+        "lease": false
+      },
+      "vehicle": {
+        "kinds": [
+          "BEV",
+          "PHEV"
+        ]
+      },
+      "transaction": {
+        "dealer": "any",
+        "pointOfSale": false,
+        "postPurchase": true
+      },
+      "purchaserConditions": [
+        "Purchaser must be a PECO customer."
+      ],
+      "amounts": [
+        {
+          "usd": 50,
+          "applies": {
+            "condition": "any"
+          },
+          "label": "per car"
+        }
+      ]
     },
     {
       "id": "nc-pee-dee-emc-ev-credit",
       "name": "Pee Dee Electric EV bill credit",
-      "jurisdiction": { "kind": "utility", "state": "NC", "utility": "Pee Dee Electric Membership Corporation" },
+      "jurisdiction": {
+        "kind": "utility",
+        "state": "NC",
+        "utility": "Pee Dee Electric Membership Corporation"
+      },
       "administrator": "Pee Dee Electric Membership Corporation",
       "kind": "rebate",
       "status": "live",
       "statusAsOf": "2026-09-02",
-      "sources": [{ "url": "https://www.pdemc.com/energy-efficiency/rebates-forms/ev-rebates/", "capturedAt": "2026-09-02", "what": "One-time $150 bill credit for the purchase of an EV" }],
-      "covers": { "new": true, "used": true, "lease": false },
-      "vehicle": { "kinds": ["BEV", "PHEV"] },
-      "transaction": { "dealer": "any", "pointOfSale": false, "postPurchase": true },
-      "purchaserConditions": ["Pee Dee Electric member."],
-      "amounts": [{ "usd": 150, "applies": { "condition": "any" }, "label": "one-time bill credit" }]
+      "sources": [
+        {
+          "url": "https://www.pdemc.com/energy-efficiency/rebates-forms/ev-rebates/",
+          "capturedAt": "2026-09-02",
+          "what": "One-time $150 bill credit for the purchase of an EV"
+        }
+      ],
+      "covers": {
+        "new": true,
+        "used": true,
+        "lease": false
+      },
+      "vehicle": {
+        "kinds": [
+          "BEV",
+          "PHEV"
+        ]
+      },
+      "transaction": {
+        "dealer": "any",
+        "pointOfSale": false,
+        "postPurchase": true
+      },
+      "purchaserConditions": [
+        "Purchaser must be a Pee Dee Electric member."
+      ],
+      "amounts": [
+        {
+          "usd": 150,
+          "applies": {
+            "condition": "any"
+          },
+          "label": "one-time bill credit"
+        }
+      ]
     },
     {
       "id": "nc-piedmont-emc-ev-credit",
       "name": "Piedmont Electric EV registration bill credit",
-      "jurisdiction": { "kind": "utility", "state": "NC", "utility": "Piedmont Electric Membership Corporation" },
+      "jurisdiction": {
+        "kind": "utility",
+        "state": "NC",
+        "utility": "Piedmont Electric Membership Corporation"
+      },
       "administrator": "Piedmont Electric Membership Corporation",
       "kind": "rebate",
       "status": "live",
       "statusAsOf": "2026-09-02",
-      "sources": [{ "url": "https://pemc.coop/smart_energy/electric-vehicles/", "capturedAt": "2026-09-02", "what": "$50 bill credit for registering a purchased or leased plug-in EV, plus $50 for enrolling in the EV time-of-day rate; registration address must match the service address" }],
-      "covers": { "new": true, "used": true, "lease": true },
-      "vehicle": { "kinds": ["BEV", "PHEV"] },
-      "transaction": { "dealer": "any", "pointOfSale": false, "postPurchase": true },
-      "purchaserConditions": ["Piedmont Electric member; the car's registration address must match the address receiving electric service."],
+      "sources": [
+        {
+          "url": "https://pemc.coop/smart_energy/electric-vehicles/",
+          "capturedAt": "2026-09-02",
+          "what": "$50 bill credit for registering a purchased or leased plug-in EV, plus $50 for enrolling in the EV time-of-day rate; registration address must match the service address"
+        }
+      ],
+      "covers": {
+        "new": true,
+        "used": true,
+        "lease": true
+      },
+      "vehicle": {
+        "kinds": [
+          "BEV",
+          "PHEV"
+        ]
+      },
+      "transaction": {
+        "dealer": "any",
+        "pointOfSale": false,
+        "postPurchase": true
+      },
+      "purchaserConditions": [
+        "Purchaser must be a Piedmont Electric member; the car's registration address must match the service address."
+      ],
       "amounts": [
-        { "usd": 50, "applies": { "condition": "any" }, "label": "bill credit" },
-        { "usd": 50, "applies": { "condition": "any" }, "label": "enrolling in the EV time-of-day rate", "adder": true }
+        {
+          "usd": 50,
+          "applies": {
+            "condition": "any"
+          },
+          "label": "bill credit"
+        },
+        {
+          "usd": 50,
+          "applies": {
+            "condition": "any"
+          },
+          "label": "enrolling in the EV time-of-day rate",
+          "adder": true
+        }
       ]
     },
     {
       "id": "ga-snapping-shoals-emc-ev-credit",
       "name": "Snapping Shoals EMC EV fuel credit",
-      "jurisdiction": { "kind": "utility", "state": "GA", "utility": "Snapping Shoals EMC" },
+      "jurisdiction": {
+        "kind": "utility",
+        "state": "GA",
+        "utility": "Snapping Shoals EMC"
+      },
       "administrator": "Snapping Shoals EMC",
       "kind": "rebate",
       "status": "live",
       "statusAsOf": "2026-09-02",
-      "sources": [{ "url": "https://www.ssemc.com/electric-vehicles", "capturedAt": "2026-09-02", "what": "$30 monthly bill credit for 12 months on an EV purchased or leased after 2021-02-01; one per member; invoice required" }],
-      "covers": { "new": true, "used": true, "lease": true },
-      "vehicle": { "kinds": ["BEV", "PHEV"] },
-      "transaction": { "dealer": "any", "pointOfSale": false, "postPurchase": true },
-      "purchaserConditions": ["Snapping Shoals EMC member.", "One fuel credit per member."],
-      "amounts": [{ "usd": 360, "applies": { "condition": "any" }, "label": "$30 a month for 12 months" }]
+      "sources": [
+        {
+          "url": "https://www.ssemc.com/electric-vehicles",
+          "capturedAt": "2026-09-02",
+          "what": "$30 monthly bill credit for 12 months on an EV purchased or leased after 2021-02-01; one per member; invoice required"
+        }
+      ],
+      "covers": {
+        "new": true,
+        "used": true,
+        "lease": true
+      },
+      "vehicle": {
+        "kinds": [
+          "BEV",
+          "PHEV"
+        ]
+      },
+      "transaction": {
+        "dealer": "any",
+        "pointOfSale": false,
+        "postPurchase": true
+      },
+      "purchaserConditions": [
+        "Purchaser must be a Snapping Shoals EMC member.",
+        "One fuel credit per member."
+      ],
+      "amounts": [
+        {
+          "usd": 360,
+          "applies": {
+            "condition": "any"
+          },
+          "label": "$30 a month for 12 months"
+        }
+      ]
     },
     {
       "id": "fl-ouc-ev-rebate",
       "name": "Orlando Utilities Commission EV rebate",
-      "jurisdiction": { "kind": "utility", "state": "FL", "utility": "Orlando Utilities Commission" },
+      "jurisdiction": {
+        "kind": "utility",
+        "state": "FL",
+        "utility": "Orlando Utilities Commission"
+      },
       "administrator": "Orlando Utilities Commission",
       "kind": "rebate",
       "status": "live",
       "statusAsOf": "2026-09-02",
-      "sources": [{ "url": "https://www.ouc.com/residential/save-energy-water-money/rebates", "capturedAt": "2026-09-02", "what": "$200 for buying or leasing an EV, new or used; OUC electric customers; apply within six months through myOUC" }],
-      "covers": { "new": true, "used": true, "lease": true },
-      "vehicle": { "kinds": ["BEV", "PHEV"] },
-      "transaction": { "dealer": "any", "pointOfSale": false, "postPurchase": true, "applyWithinDays": 183 },
-      "purchaserConditions": ["OUC electric customer."],
-      "amounts": [{ "usd": 200, "applies": { "condition": "any" } }]
+      "sources": [
+        {
+          "url": "https://www.ouc.com/residential/save-energy-water-money/rebates",
+          "capturedAt": "2026-09-02",
+          "what": "$200 for buying or leasing an EV, new or used; OUC electric customers; apply within six months through myOUC"
+        }
+      ],
+      "covers": {
+        "new": true,
+        "used": true,
+        "lease": true
+      },
+      "vehicle": {
+        "kinds": [
+          "BEV",
+          "PHEV"
+        ]
+      },
+      "transaction": {
+        "dealer": "any",
+        "pointOfSale": false,
+        "postPurchase": true,
+        "applyWithinDays": 183
+      },
+      "purchaserConditions": [
+        "Purchaser must be an OUC electric customer."
+      ],
+      "amounts": [
+        {
+          "usd": 200,
+          "applies": {
+            "condition": "any"
+          }
+        }
+      ]
     },
     {
       "id": "ms-mississippi-power-ev-rebate",
       "name": "Mississippi Power EV rebate",
-      "jurisdiction": { "kind": "utility", "state": "MS", "utility": "Mississippi Power" },
+      "jurisdiction": {
+        "kind": "utility",
+        "state": "MS",
+        "utility": "Mississippi Power"
+      },
       "administrator": "Mississippi Power",
       "kind": "rebate",
       "status": "live",
       "statusAsOf": "2026-09-02",
-      "sources": [{ "url": "https://www.mississippipower.com/residential/products-and-services/electric-vehicles.html", "capturedAt": "2026-09-02", "what": "BEV new $1,250, leased $1,000, used (at least $10,000) $750; PHEV new $750, leased $500, used (at least $10,000) $500; apply within 120 days; active account; not for resale" }],
-      "covers": { "new": true, "used": true, "lease": true },
-      "vehicle": { "kinds": ["BEV", "PHEV"], "usedPriceMinUsd": 10000 },
-      "transaction": { "dealer": "any", "pointOfSale": false, "postPurchase": true, "applyWithinDays": 120 },
-      "purchaserConditions": ["Active Mississippi Power account.", "New-car leases pay $1,000 (BEV) or $500 (PHEV) rather than the purchase figure.", "Not on a car bought for resale."],
+      "sources": [
+        {
+          "url": "https://www.mississippipower.com/residential/products-and-services/electric-vehicles.html",
+          "capturedAt": "2026-09-02",
+          "what": "BEV new $1,250, leased $1,000, used (at least $10,000) $750; PHEV new $750, leased $500, used (at least $10,000) $500; apply within 120 days; active account; not for resale"
+        }
+      ],
+      "covers": {
+        "new": true,
+        "used": true,
+        "lease": true
+      },
+      "vehicle": {
+        "kinds": [
+          "BEV",
+          "PHEV"
+        ],
+        "usedPriceMinUsd": 10000
+      },
+      "transaction": {
+        "dealer": "any",
+        "pointOfSale": false,
+        "postPurchase": true,
+        "applyWithinDays": 120
+      },
+      "purchaserConditions": [
+        "Purchaser must have an active Mississippi Power account.",
+        "New-car leases pay $1,000 (all-electric) or $500 (plug-in hybrid).",
+        "Not on a car bought for resale."
+      ],
       "amounts": [
-        { "usd": 1250, "applies": { "condition": "new", "kind": "BEV" }, "label": "purchase" },
-        { "usd": 750, "applies": { "condition": "new", "kind": "PHEV" }, "label": "purchase" },
-        { "usd": 750, "applies": { "condition": "used", "kind": "BEV" } },
-        { "usd": 500, "applies": { "condition": "used", "kind": "PHEV" } }
+        {
+          "usd": 1250,
+          "applies": {
+            "condition": "new",
+            "kind": "BEV"
+          },
+          "label": "purchase"
+        },
+        {
+          "usd": 750,
+          "applies": {
+            "condition": "new",
+            "kind": "PHEV"
+          },
+          "label": "purchase"
+        },
+        {
+          "usd": 750,
+          "applies": {
+            "condition": "used",
+            "kind": "BEV"
+          }
+        },
+        {
+          "usd": 500,
+          "applies": {
+            "condition": "used",
+            "kind": "PHEV"
+          }
+        }
       ]
     },
     {
       "id": "nm-pnm-income-qualified-ev-rebate",
       "name": "PNM income-qualified EV purchase rebate",
-      "jurisdiction": { "kind": "utility", "state": "NM", "utility": "PNM (Public Service Company of New Mexico)" },
+      "jurisdiction": {
+        "kind": "utility",
+        "state": "NM",
+        "utility": "PNM (Public Service Company of New Mexico)"
+      },
       "administrator": "PNM Transportation Electrification Program",
       "kind": "rebate",
       "status": "live",
       "statusAsOf": "2026-09-02",
       "statusNote": "2024-2026 Transportation Electrification Program; $900,000 budget, about 225 rebates, so it can run out. AFDC filed PNM under Indiana with no vehicle rebate; found on the owner's prompt.",
       "sources": [
-        { "url": "https://www.pnmdriveelectric.com/ev-purchase-rebates", "capturedAt": "2026-09-02", "what": "Up to $4,000 off new, used or leased electric vehicles less than $55,000; income-qualified; participating dealerships; one rebate per PNM account" },
-        { "url": "https://www.pnmdriveelectric.com/assets/uploads/PDF-Resources/2024-2026-PNM-Transportation-Electrification-Program_vf.pdf", "capturedAt": "2026-09-02", "what": "Section 3.1.5: total invoiced purchase price of no more than $55,000; private sales not eligible; point of sale through PNM's dealer network; $900,000 budget" },
-        { "url": "https://ev.pnm.com/income-qualified/", "capturedAt": "2026-09-02", "what": "Income at or below 200% of the federal poverty guidelines (per PNM's income-qualified page)" }
+        {
+          "url": "https://www.pnmdriveelectric.com/ev-purchase-rebates",
+          "capturedAt": "2026-09-02",
+          "what": "Up to $4,000 off new, used or leased electric vehicles less than $55,000; income-qualified; participating dealerships; one rebate per PNM account"
+        },
+        {
+          "url": "https://www.pnmdriveelectric.com/assets/uploads/PDF-Resources/2024-2026-PNM-Transportation-Electrification-Program_vf.pdf",
+          "capturedAt": "2026-09-02",
+          "what": "Section 3.1.5: total invoiced purchase price of no more than $55,000; private sales not eligible; point of sale through PNM's dealer network; $900,000 budget"
+        },
+        {
+          "url": "https://ev.pnm.com/income-qualified/",
+          "capturedAt": "2026-09-02",
+          "what": "Income at or below 200% of the federal poverty guidelines (per PNM's income-qualified page)"
+        }
       ],
-      "covers": { "new": true, "used": true, "lease": true },
-      "vehicle": { "kinds": ["BEV", "PHEV"], "purchasePriceCapUsd": 55000, "purchasePriceCapBasis": "Total invoiced purchase price." },
-      "transaction": { "dealer": "participating", "dealerInState": true, "pointOfSale": true, "postPurchase": false, "dealerNote": "A participating dealership in PNM's service area; the rebate comes off at the point of sale. Private sales are not eligible." },
-      "purchaserConditions": ["PNM residential customer; one rebate per PNM account.", "Household income at or below 200% of the federal poverty guidelines, self-certified.", "Paid from a fixed program budget (about 225 rebates over 2024 to 2026) while it lasts."],
-      "amounts": [{ "usd": 4000, "applies": { "condition": "any" }, "label": "up to, income-qualified", "incomeQualified": true, "upTo": true }]
+      "covers": {
+        "new": true,
+        "used": true,
+        "lease": true
+      },
+      "vehicle": {
+        "kinds": [
+          "BEV",
+          "PHEV"
+        ],
+        "purchasePriceCapUsd": 55000,
+        "purchasePriceCapBasis": "Total invoiced purchase price."
+      },
+      "transaction": {
+        "dealer": "participating",
+        "dealerInState": true,
+        "pointOfSale": true,
+        "postPurchase": false,
+        "dealerNote": "Bought at a participating dealership in PNM's service area; the rebate comes off at sale."
+      },
+      "purchaserConditions": [
+        "Purchaser must be a PNM residential customer; one rebate per account.",
+        "Household income at or below 200% of the federal poverty guidelines.",
+        "Paid from a fixed budget (about 225 rebates over 2024 to 2026) while it lasts."
+      ],
+      "amounts": [
+        {
+          "usd": 4000,
+          "applies": {
+            "condition": "any"
+          },
+          "label": "up to, income-qualified",
+          "incomeQualified": true,
+          "upTo": true
+        }
+      ]
     },
     {
       "id": "wa-clark-public-utilities-used-ev",
       "name": "Clark Public Utilities used EV rebate",
-      "jurisdiction": { "kind": "utility", "state": "WA", "utility": "Clark Public Utilities" },
+      "jurisdiction": {
+        "kind": "utility",
+        "state": "WA",
+        "utility": "Clark Public Utilities"
+      },
       "administrator": "Clark Public Utilities",
       "kind": "rebate",
       "status": "live",
       "statusAsOf": "2026-09-02",
       "statusNote": "Annual budget set by state statute; closes when spent.",
-      "sources": [{ "url": "https://www.clarkpublicutilities.com/residential-customers/reduce-energy-waste-and-lower-your-bill/all-rebates-incentives-and-low-interest-loans/electric-vehicle-program/", "capturedAt": "2026-09-02", "what": "Used EVs only, income-qualified, one per household; the greater of 10% of the price or $1,000, up to $2,000; car priced $5,000 to $20,000" }],
-      "covers": { "new": false, "used": true, "lease": false },
-      "vehicle": { "kinds": ["BEV"], "usedPriceCapUsd": 20000, "usedPriceCapBasis": "Purchase price.", "usedPriceMinUsd": 5000 },
-      "transaction": { "dealer": "any", "pointOfSale": false, "postPurchase": true },
-      "purchaserConditions": ["Clark Public Utilities customer.", "Income-qualified.", "One per household; paid while the year's budget lasts."],
-      "amounts": [{ "usd": 2000, "applies": { "condition": "used", "kind": "BEV" }, "label": "up to; the greater of 10% of the price or $1,000 (income-qualified)", "incomeQualified": true, "upTo": true }]
+      "sources": [
+        {
+          "url": "https://www.clarkpublicutilities.com/residential-customers/reduce-energy-waste-and-lower-your-bill/all-rebates-incentives-and-low-interest-loans/electric-vehicle-program/",
+          "capturedAt": "2026-09-02",
+          "what": "Used EVs only, income-qualified, one per household; the greater of 10% of the price or $1,000, up to $2,000; car priced $5,000 to $20,000"
+        }
+      ],
+      "covers": {
+        "new": false,
+        "used": true,
+        "lease": false
+      },
+      "vehicle": {
+        "kinds": [
+          "BEV"
+        ],
+        "usedPriceCapUsd": 20000,
+        "usedPriceCapBasis": "Purchase price.",
+        "usedPriceMinUsd": 5000
+      },
+      "transaction": {
+        "dealer": "any",
+        "pointOfSale": false,
+        "postPurchase": true
+      },
+      "purchaserConditions": [
+        "Purchaser must be a Clark Public Utilities customer.",
+        "Income-qualified.",
+        "One per household; paid while the year's budget lasts."
+      ],
+      "amounts": [
+        {
+          "usd": 2000,
+          "applies": {
+            "condition": "used",
+            "kind": "BEV"
+          },
+          "label": "up to; the greater of 10% of the price or $1,000 (income-qualified)",
+          "incomeQualified": true,
+          "upTo": true
+        }
+      ]
     }
   ]
 }

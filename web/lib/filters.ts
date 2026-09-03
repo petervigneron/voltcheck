@@ -206,7 +206,7 @@ export function describeFilter(key: string, value: string): string | null {
     case "cut":
       return value === "1" ? "Price cut" : null;
     case "rebate":
-      return value === "1" ? INCENTIVE_COPY.chipLabel : null;
+      return value === "1" ? INCENTIVE_COPY.toggleLabel : null;
     case "deal":
       return value === "1" ? "Deals" : null;
     case "zip":
