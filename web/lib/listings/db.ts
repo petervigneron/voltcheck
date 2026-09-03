@@ -853,6 +853,36 @@ export async function fetchModelYearAsksFromDb(
   }
 }
 
+/** The series a car drew before its current seller (listing_prior_site_series,
+ *  0062), under the same two rules as the current one: the junk floor (a
+ *  lease payment seen on an earlier site is not a prior asking price), and
+ *  the segment must end at the last price that earlier listing showed. When
+ *  the chain does not (its last step was a provenance change 0041 refuses),
+ *  the segment is that last point alone rather than a series ending
+ *  somewhere the earlier listing never stood. */
+function priorSeries(
+  rows: {
+    delisted_at: string;
+    price_usd: number;
+    observed_at: string;
+    prior_price_usd: number;
+    prior_last_seen_at: string;
+  }[],
+  realPrice: (priceUsd: number) => boolean
+): Listing["priorSite"] {
+  const [head] = rows;
+  if (!head || !realPrice(head.prior_price_usd)) return undefined;
+  const chain = rows
+    .filter((r) => realPrice(r.price_usd))
+    .map((r) => ({ priceUsd: r.price_usd, observedAt: r.observed_at }))
+    .sort((a, b) => a.observedAt.localeCompare(b.observedAt));
+  const series =
+    chain.length > 0 && chain[chain.length - 1].priceUsd === head.prior_price_usd
+      ? chain
+      : [{ priceUsd: head.prior_price_usd, observedAt: head.prior_last_seen_at }];
+  return { delistedAt: head.delisted_at, series };
+}
+
 /** The detail-page extras for one listing: the dealer's description and the
  *  price history. Null when the DB is unconfigured, unreachable, or has no
  *  such row — the caller just renders without the extras. */
@@ -882,7 +912,7 @@ export async function fetchListingDetailFromDb(
         { headers: headers(), next: { revalidate: REVALIDATE_SECONDS, tags: [FEED_CACHE_TAG] } }
       ),
       fetch(
-        `${base}/rest/v1/listing_prior_site?select=prior_domain,prior_price_usd,prior_last_seen_at,delisted_at&vin=eq.${vinKey}&limit=1`,
+        `${base}/rest/v1/listing_prior_site_series?select=delisted_at,price_usd,observed_at,prior_price_usd,prior_last_seen_at&vin=eq.${vinKey}&order=observed_at.asc`,
         { headers: headers(), next: { revalidate: REVALIDATE_SECONDS, tags: [FEED_CACHE_TAG] } }
       ),
     ]);
@@ -892,11 +922,12 @@ export async function fetchListingDetailFromDb(
     const [row] = (await res.json()) as DetailRow[];
     if (!row) return null;
     const hist = (await histRes.json()) as { price_usd: number; observed_at: string }[];
-    const [prior] = (await priorRes.json()) as {
-      prior_domain: string;
+    const prior = (await priorRes.json()) as {
+      delisted_at: string;
+      price_usd: number;
+      observed_at: string;
       prior_price_usd: number;
       prior_last_seen_at: string;
-      delisted_at: string;
     }[];
     const realPrice = (priceUsd: number) =>
       hasRealPrice({ priceUsd, condition: row.payload.condition, year: row.payload.year });
@@ -915,17 +946,7 @@ export async function fetchListingDetailFromDb(
           .sort((a, b) => a.observedAt.localeCompare(b.observedAt)),
         row.price_usd ?? undefined
       ),
-      // The same junk floor applies to the previous site's price: a lease
-      // payment observed on another site is not a prior asking price.
-      priorSite:
-        prior && realPrice(prior.prior_price_usd)
-          ? {
-              domain: prior.prior_domain,
-              priceUsd: prior.prior_price_usd,
-              lastSeenAt: prior.prior_last_seen_at,
-              delistedAt: prior.delisted_at,
-            }
-          : undefined,
+      priorSite: priorSeries(prior, realPrice),
     };
   } catch (err) {
     console.error("[listings] Supabase detail read failed:", err);

@@ -206,3 +206,66 @@ test("the chart is legible without colour: nothing carries meaning by hue alone"
   assert.ok(html.includes('role="img"'), html);
   assert.ok(html.includes("aria-label"), html);
 });
+
+// 2026-09-03: the chart can carry the series a car drew before its current
+// seller (1FT6W3L78RWG27106: Hobson $47,230 > $43,924 > $41,581, page gone
+// Sep 2, back on Recharged at $47,500). It draws in grey ahead of a break,
+// and the rise across the break is not a step. Nothing about it is written.
+const SEP1 = "2026-09-01T23:52:00Z";
+const SEP2_GONE = "2026-09-02T18:17:00Z";
+const hobson = {
+  delistedAt: SEP2_GONE,
+  series: [
+    { priceUsd: 47_230, observedAt: "2026-08-26T15:51:00Z" },
+    { priceUsd: 43_924, observedAt: "2026-08-28T00:57:00Z" },
+    { priceUsd: 41_581, observedAt: "2026-08-31T20:38:00Z" },
+  ],
+};
+
+test("an earlier listing draws even when this seller has held one price", () => {
+  const html = renderToStaticMarkup(
+    <PriceSparkline history={[{ priceUsd: 47_500, observedAt: SEP1 }]} prior={hobson} />
+  );
+  assert.notEqual(html, "");
+  assert.match(html, /\$47,230/);
+  assert.match(html, /\$41,581/);
+  assert.match(html, /\$47,500/);
+});
+
+test("the rise across the break is not a step: no signed line for it", () => {
+  const html = renderToStaticMarkup(
+    <PriceSparkline history={[{ priceUsd: 47_500, observedAt: SEP1 }]} prior={hobson} />
+  );
+  assert.doesNotMatch(html, /\+\$5,919/);
+  assert.match(html, /−\$3,306/);
+  assert.match(html, /−\$2,343/);
+});
+
+test("the earlier segment is grey and ends at the day the listing went away, with no words", () => {
+  const html = renderToStaticMarkup(
+    <PriceSparkline history={[{ priceUsd: 47_500, observedAt: SEP1 }]} prior={hobson} />
+  );
+  assert.match(html, /stroke="#9b9a94"/);
+  assert.match(html, />Sep 2</);
+  assert.doesNotMatch(html, /hobson|recharged|sold|dealer|previous/i);
+});
+
+test("without an earlier listing, one held price is still silent", () => {
+  const html = renderToStaticMarkup(<PriceSparkline history={[{ priceUsd: 47_500, observedAt: SEP1 }]} prior={undefined} />);
+  assert.equal(html, "");
+});
+
+test("observations that re-assert one price are a plateau, never a +$0 step", () => {
+  const html = renderToStaticMarkup(
+    <PriceSparkline
+      history={[
+        { priceUsd: 47_500, observedAt: SEP1 },
+        { priceUsd: 47_500, observedAt: "2026-09-02T08:24:00Z" },
+        { priceUsd: 47_500, observedAt: "2026-09-02T21:13:00Z" },
+      ]}
+      prior={hobson}
+    />
+  );
+  assert.doesNotMatch(html, /\$0 on/);
+  assert.match(html, /−\$3,306/);
+});

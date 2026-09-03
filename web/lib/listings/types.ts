@@ -67,12 +67,13 @@ export interface Listing {
   listedOn?: string;
   priceHistory?: { priceUsd: number; observedAt: string }[];
   /**
-   * The most recent other site this car was listed on before its current one,
-   * when that site's page went away and the car came back under a different
-   * domain at a different price (view listing_prior_site, migration 0061). A
-   * fact about a site, not a seller: same-owner rooftop pairs qualify.
+   * The asking-price series this car drew BEFORE its current seller, when
+   * that earlier listing's page went away and the car came back under a
+   * different domain at a different price (views listing_prior_site and
+   * listing_prior_site_series, migrations 0061/0062). The chart draws it in
+   * grey ahead of a break at delistedAt; no words, by the owner's rule.
    */
-  priorSite?: { domain: string; priceUsd: number; lastSeenAt: string; delistedAt: string };
+  priorSite?: { delistedAt: string; series: { priceUsd: number; observedAt: string }[] };
   prevPriceUsd?: number; // the asking price before the current one
   priceChangedAt?: string; // when the current price took effect
   /**
