@@ -16,7 +16,11 @@ const HOVER =
 // On a phone the rail wraps; cells grow to close each row against the right
 // edge — a wall of blocks, not a ragged tetris board. Desktop rows don't wrap,
 // so growth is off and the spacer below handles the slack.
-const BLOCK = `${CELL} flex grow items-center gap-2 px-4 py-2.5 text-[13px] font-bold uppercase tracking-[0.04em] sm:grow-0`;
+// Phone cells are set a size smaller and tighter (12px, 12px padding, 6px
+// gap) so seven toggles pack into three rows at 375px instead of four —
+// the owner's call of 2026-09-03 when the rebate toggle made seven. From sm
+// up the cells are the 13px/16px/8px they always were.
+const BLOCK = `${CELL} flex grow items-center gap-1.5 px-3 py-2.5 text-[12px] font-bold uppercase tracking-[0.02em] sm:grow-0 sm:gap-2 sm:px-4 sm:text-[13px] sm:tracking-[0.04em]`;
 const FIELD =
   "w-full border-[3px] border-ink bg-paper px-2.5 py-1.5 text-[13px] font-semibold text-ink focus:outline-none focus:ring-[3px] focus:ring-cobalt";
 const FIELD_LABEL = "text-[10px] font-extrabold uppercase tracking-[0.14em] text-ink/55";
