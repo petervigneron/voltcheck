@@ -39,6 +39,29 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
+
+      # The tests already ran on push (tests.yml); the deploy never looked.
+      # On 2026-09-03 main sat red for three pushes while deploys went out,
+      # and a fourth push crashed the browse page for every visitor with the
+      # suite unable to say so. Same command as tests.yml's web job, so the
+      # deploy refuses the same commits the badge does — in ~20 s, before the
+      # hours-long wait on the nightly.
+      - name: Refuse to ship a commit whose tests fail
+        working-directory: web
+        run: |
+          files=$(ls tests/*.test.ts | grep -v 'tests/pro-funnel.test.ts')
+          node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs --test $files
+
+      # deploy-site.mjs loads the candidate in a real browser before it
+      # promotes (its `smoke`): Playwright's headless shell, cached on the
+      # lockfile the same way rolling-crawl.yml does it.
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('scraper/package-lock.json') }}
+      - working-directory: scraper
+        run: npm ci --no-audit --no-fund && npx playwright install --with-deps chromium-headless-shell
+
       - run: npm install -g vercel
 
       # With a pre-built --url candidate, the promote at the very end is the

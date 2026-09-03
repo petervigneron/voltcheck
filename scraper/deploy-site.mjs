@@ -28,6 +28,8 @@
 //   node scraper/deploy-site.mjs --url <dep-url>  warm+promote an existing
 //                                                 candidate (skip the build)
 //   node scraper/deploy-site.mjs --no-promote     everything except the last step
+//   node scraper/deploy-site.mjs --smoke <url>    only the browser check, against any URL
+//   node scraper/deploy-site.mjs --no-smoke       skip the browser check (no Playwright here)
 //
 // Exit 0 = promoted (or, with --no-promote, fully warmed and verified).
 // Exit 1 = stopped before promoting. voltcheck.net is untouched either way
@@ -453,6 +455,80 @@ function validate(state, total) {
   return problems;
 }
 
+// ---------------------------------------------------------------- smoke
+// The warm proves the candidate's routes ANSWER. It does not prove the page
+// RUNS: on 2026-09-03 a commit shipped main with the browse page throwing
+// "test is not a function" on first render for every visitor, every path
+// still answered 200, and a deploy of it was in progress when a person
+// noticed. So before promote a real browser loads the candidate's homepage
+// and one listing page behind the bypass and the promote is refused if
+// either throws an uncaught error, or if the rail and the first card never
+// appear. Playwright's headless shell, the same one the browser crawl lanes
+// use; ~20 s. `--no-smoke` skips it (a laptop without Playwright);
+// `--smoke <url>` runs only this, against any deployment or the domain.
+const SMOKE_TIMEOUT_MS = 60_000;
+async function smoke(base, extraHeaders) {
+  let pw;
+  try {
+    pw = await import("playwright");
+  } catch (e) {
+    return [`playwright is not installed here (${e.code ?? e.message}) — run \`npm ci\` in scraper/ and \`npx playwright install chromium-headless-shell\`, or pass --no-smoke`];
+  }
+  const problems = [];
+  const browser = await pw.chromium.launch({ headless: true });
+  try {
+    const context = await browser.newContext({ extraHTTPHeaders: extraHeaders, viewport: { width: 1280, height: 900 } });
+    const page = await context.newPage();
+    const thrown = [];
+    page.on("pageerror", (err) => thrown.push(String(err?.message ?? err).split("\n")[0].slice(0, 200)));
+    const visit = async (path, expect) => {
+      thrown.length = 0;
+      const t0 = Date.now();
+      try {
+        await page.goto(base + path, { waitUntil: "load", timeout: SMOKE_TIMEOUT_MS });
+        for (const [label, selector, min] of expect) {
+          try {
+            await page.waitForFunction(
+              ([sel, n]) => document.querySelectorAll(sel).length >= n,
+              [selector, min],
+              { timeout: SMOKE_TIMEOUT_MS }
+            );
+          } catch {
+            const got = await page.evaluate((sel) => document.querySelectorAll(sel).length, selector);
+            problems.push(`${path}: ${label} never appeared (${got} of ${min} \`${selector}\` after ${SMOKE_TIMEOUT_MS / 1000}s)`);
+          }
+        }
+      } catch (e) {
+        problems.push(`${path}: did not load — ${String(e.message).split("\n")[0].slice(0, 160)}`);
+      }
+      if (thrown.length) problems.push(`${path}: the page threw — ${thrown.join(" | ")}`);
+      console.log(`  smoke ${path}: ${thrown.length ? "THREW" : "ok"} (${((Date.now() - t0) / 1000).toFixed(1)}s)`);
+      return page;
+    };
+    // The browse page: the rail's quick toggles and at least one car card.
+    await visit("/", [
+      ["the filter rail", "button[aria-pressed]", 3],
+      ["the first card", 'a[href^="/listing/"]', 1],
+    ]);
+    // One listing page, reached the way a shopper reaches it.
+    const href = await page.evaluate(() => document.querySelector('a[href^="/listing/"]')?.getAttribute("href") ?? null);
+    if (href) await visit(href, [["the car's heading", "h1", 1]]);
+    else problems.push("/: no card links to a listing page");
+  } finally {
+    await browser.close().catch(() => {});
+  }
+  return problems;
+}
+
+if (has("--smoke")) {
+  const base = arg("--smoke").replace(/\/$/, "");
+  const hdrs = /voltcheck\.net$/.test(new URL(base).host) ? {} : { "x-vercel-protection-bypass": bypassSecret() };
+  console.log(`deploy-site: smoke test only — ${base}`);
+  const problems = await smoke(base, hdrs);
+  for (const p of problems) console.error(`deploy-site: smoke FAILED — ${p}`);
+  process.exit(problems.length ? 1 : 0);
+}
+
 // ---------------------------------------------------------------- main
 const secret = bypassSecret();
 const headers = { "x-vercel-protection-bypass": secret };
@@ -467,6 +543,19 @@ if (problems.length) {
   process.exit(1);
 }
 console.log(`deploy-site: candidate fully warm — ${total} cars across ${SHARD_PATHS.length} shards, all sitemaps rendered`);
+
+if (has("--no-smoke")) {
+  console.log("deploy-site: --no-smoke — skipping the browser check");
+} else {
+  console.log("deploy-site: loading the candidate in a browser");
+  const smokeProblems = await smoke(url, headers);
+  if (smokeProblems.length) {
+    for (const p of smokeProblems) console.error(`deploy-site: NOT promoting — ${p}`);
+    console.error("deploy-site: the candidate answers but does not run. voltcheck.net still serves the previous build. Fix the cause and re-run.");
+    process.exit(1);
+  }
+  console.log("deploy-site: the candidate runs — browse page and a listing page load without throwing");
+}
 
 if (has("--no-promote")) {
   console.log(`deploy-site: --no-promote — done. Promote later with: vercel promote ${url} --yes`);

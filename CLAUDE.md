@@ -28,8 +28,16 @@ working directory. That makes staging a shared resource.
   work was finished.
 - **Check `git status` before staging, and expect to see files that aren't
   yours.** Leave them alone. Their absence from your commit is the point.
-- If work is genuinely parallel and long-running, use a separate worktree
-  rather than sharing this one.
+- **Work in your own worktree by default.** `git worktree add <dir> origin/main`
+  (a scratchpad path is fine), `cp -c -R web/node_modules <dir>/web/node_modules`
+  (an APFS clone, seconds and near-free), copy `web/.env.local` in, and edit,
+  test and commit THERE. Push with fetch → rebase → push from the worktree.
+  The shared directory is for reading, not editing: on 2026-09-03 two
+  sessions edited `web/components/Filters.tsx` at once, one session's
+  half-done feature crashed the browse page for anyone running the dev
+  server here, and a rebase in the shared tree conflicted on another
+  session's uncommitted files and left them staged. None of that can happen
+  in a worktree. `git worktree remove <dir>` when the commit is pushed.
 - Commit messages here are a sentence describing the change from the user's
   side ("Say how many cars a search found without scrolling past 60 of them"),
   then the reasoning: what was wrong, what was measured, what was rejected and
@@ -39,7 +47,12 @@ working directory. That makes staging a shared resource.
 ## Deploys are not automatic
 
 Vercel is **not** hooked to git pushes here. A commit on `main` changes
-nothing that a shopper can see. Deploying is a CLI step — and it is part of
+nothing that a shopper can see. Since 2026-09-03 the deploy workflow refuses
+a commit whose web tests fail and refuses to promote a candidate whose
+browse page or listing page throws in a real browser (`scraper/deploy-site.mjs`
+`smoke`) — so the worst a broken commit can do is fail its own deploy.
+Run `node scraper/deploy-site.mjs --smoke <url>` to check any deployment or
+the domain by hand. Deploying is a CLI step — and it is part of
 finishing: when your work changes `web/`, deploy it (owner, 2026-08-19: "I
 don't like it when you finish code and don't deploy it — hard for me to have
 any idea what needs to go live"). If you genuinely can't deploy (a build
