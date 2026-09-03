@@ -7,7 +7,8 @@
 //   miss    something absent — the only alarm in the system, so it stays rare
 //   flag    an outlier in either direction (4,000 miles, or 149,000)
 //   cut     the price came down — states the amount the ground announces
-export type TileKind = "range" | "spec" | "kit" | "miss" | "flag" | "cut";
+//   rebate  a purchase program names this car — money, so it wears violet
+export type TileKind = "range" | "spec" | "kit" | "miss" | "flag" | "cut" | "rebate";
 
 // Range is ochre, not cobalt: cobalt is the interactive accent on every
 // button and link, and a tile is a fact, not a control (owner, 2026-09-03).
@@ -18,6 +19,7 @@ const KIND: Record<TileKind, string> = {
   miss: "bg-vermilion text-paper",
   flag: "bg-saffron text-ink",
   cut: "bg-violet text-paper",
+  rebate: "bg-violet text-paper",
 };
 
 // On a card that has taken a solid ground, tiles knock out to white so the
@@ -30,6 +32,7 @@ const ON_VIOLET: Record<TileKind, string> = {
   miss: "bg-ink text-paper",
   flag: "bg-saffron text-ink",
   cut: "bg-paper text-violet",
+  rebate: "bg-paper text-violet",
 };
 
 const ON_SAFFRON: Record<TileKind, string> = {
@@ -39,6 +42,7 @@ const ON_SAFFRON: Record<TileKind, string> = {
   miss: "bg-vermilion text-paper",
   flag: "bg-ink text-saffron",
   cut: "bg-violet text-paper",
+  rebate: "bg-violet text-paper",
 };
 
 const ON_TEAL: Record<TileKind, string> = {
@@ -48,6 +52,7 @@ const ON_TEAL: Record<TileKind, string> = {
   miss: "bg-ink text-paper",
   flag: "bg-saffron text-ink",
   cut: "bg-paper text-violet",
+  rebate: "bg-paper text-violet",
 };
 
 export type TileGround = "paper" | "violet" | "saffron" | "teal";

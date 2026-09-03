@@ -120,7 +120,9 @@ export function buildTests(get: (k: string) => string, ctx: MatchContext = {}): 
   // The card's own incentive summary (buildIndex → lib/incentives/match.ts):
   // set only where the car meets a program's car-side conditions under the
   // site policy, so the toggle can never keep a car on a guess.
-  if (get("rebate") === "1") tests.rebate = (r) => r.incentive !== undefined;
+  // Pro only since 2026-09-03, the same way as "deal" below: a stranger's
+  // ?rebate=1 is inert, and the rail hides the toggle without a pass.
+  if (get("rebate") === "1" && ctx.pro) tests.rebate = (r) => r.incentive !== undefined;
   // Pro only. The predicate is the card's own ask-vs-market figure at the
   // threshold in lib/listings/deal.ts; a car with no figure is unjudged and
   // sits the filter out.

@@ -24,6 +24,17 @@ export const INCENTIVE_COPY = {
    *  2026-09-03: each car page is clear that eligibility is the shopper's
    *  to confirm. */
   confirmLine: "Eligibility is for the shopper to confirm with the program.",
+  /** The card's tag when the program the car leads with is a state or
+   *  regional one. "{ST}" is the dealer's state code. Owner's pattern,
+   *  2026-09-03 ("something like 'CA resident rebate'"), replacing the
+   *  figure-and-name tile that overran a narrow card ("$4,000 California
+   *  Clean Cars 4 All"). The figures stay on the car's own page. */
+  residentTag: "{ST} resident rebate",
+  /** The same tag when only a utility's program names the car: a PECO
+   *  customer is a Pennsylvanian, but not every Pennsylvanian is a PECO
+   *  customer, so "resident" would claim too much. Not yet the owner's
+   *  word — flagged for him 2026-09-03. */
+  utilityTag: "{ST} utility rebate",
 } as const;
 
 const MARKER = "[OWNER COPY]";

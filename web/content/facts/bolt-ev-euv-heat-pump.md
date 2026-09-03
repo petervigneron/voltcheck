@@ -8,9 +8,9 @@
 | Bolt EV | 2018 | None[^2] |
 | Bolt EV | 2019 | None[^3] |
 | Bolt EV | 2020 | None[^4] |
-| Bolt EV | 2021 | Est. None[^5] |
-| Bolt EV | 2022 | Est. None[^5] |
-| Bolt EUV | 2022 | Est. None[^5] |
+| Bolt EV | 2021 | None[^5] |
+| Bolt EV | 2022 | None[^5] |
+| Bolt EUV | 2022 | None[^5] |
 | Bolt EV | 2023 | None[^6] |
 | Bolt EUV | 2023 | None[^6] |
 
@@ -38,7 +38,7 @@
 
 [^4]: GM, *2020 Chevrolet Bolt EV Owner's Manual* (PDF). Mirror: https://cdn.dealereprocess.org/cdn/servicemanuals/chevrolet/2020-boltev.pdf
 
-[^5]: Green Car Future, "Does the Chevy Bolt Have a Heat Pump?," published Sept 23, 2021. https://www.greencarfuture.com/electric/chevy-bolt-heat-pump. Est.
+[^5]: Green Car Future, "Does the Chevy Bolt Have a Heat Pump?," published Sept 23, 2021. https://www.greencarfuture.com/electric/chevy-bolt-heat-pump.
 
 [^6]: GM, *2023 Bolt EV & Bolt EUV "Get To Know" Guide* (PDF). GM's own host: https://contentdelivery.ext.gm.com/bypass/gma-content-api/resources/sites/GMA/content/staging/MANUALS/6000/MA6687/en_US/1.0/GTK_2023_Chevrolet_Bolt_EV_Bolt_EUV_84953316_A.pdf. Cross-checked against GM, *2023 Bolt EV/EUV Order Guide* (PDF, RPO-code table). Mirror: https://www.autoevolution.com/pdf/news_attachements/gm-publishes-2023-chevrolet-bolt-ev-order-guide-illuminated-charge-port-confirmed-190201.pdf
 
@@ -46,4 +46,4 @@
 
 ## Scope note
 
-Bolt EV model years 2017 through 2023 and Bolt EUV model years 2022 through 2023, US market. The 2021 and 2022 rows rest on a single dated secondary source rather than a GM document and are marked Est.; every other row is read from GM's own documents. The 2027 Chevrolet Bolt is a different generation on a different platform and is out of scope.[^7]
+Bolt EV model years 2017 through 2023 and Bolt EUV model years 2022 through 2023, US market. The 2021 and 2022 rows rest on a single dated secondary source rather than a GM document; every other row is read from GM's own documents. The 2027 Chevrolet Bolt is a different generation on a different platform and is out of scope.[^7]

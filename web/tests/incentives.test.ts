@@ -24,6 +24,7 @@ import { INCENTIVES_COPY_READY } from "@/lib/incentives/copy";
 import { incentivesToRender } from "@/lib/incentives/visible";
 import { packIndex, unpackIndex } from "@/lib/listings/pack";
 import type { CardRow } from "@/lib/listings/card";
+import { buildTests } from "@/lib/listings/match";
 
 test("site policy: an ask up to 10% over a price cap names the program WITH the cap; further over does not", () => {
   const il: Listing = {
@@ -68,14 +69,45 @@ test("the incentive summary survives the packed feed byte for byte", () => {
   const row: CardRow = {
     id: "1g1fy6s04p4100001", hay: "2023 chevrolet bolt euv lt", year: 2023, make: "Chevrolet", model: "Bolt EUV",
     title: "2023 Chevrolet Bolt EUV LT", priceUsd: 21500, realPrice: true, condition: "used", state: "IL",
-    incentive: { name: "Illinois EV Rebate", usd: 2000, count: 1 }, tiles: [],
+    incentive: { name: "Illinois EV Rebate", usd: 2000, count: 1, utility: false, state: "IL" }, tiles: [],
   };
   const bare: CardRow = { ...row, id: "x", incentive: undefined };
-  const overCap: CardRow = { ...row, id: "y", incentive: { name: "Massachusetts MOR-EV", overCapUsd: 40000, count: 3 } };
-  const back = unpackIndex(packIndex([row, bare, overCap]));
-  assert.deepEqual(back[0].incentive, { name: "Illinois EV Rebate", usd: 2000, overCapUsd: undefined, count: 1 });
+  const overCap: CardRow = { ...row, id: "y", incentive: { name: "Massachusetts MOR-EV", overCapUsd: 40000, count: 3, utility: false, state: "MA" } };
+  const utility: CardRow = { ...row, id: "z", state: "Pennsylvania", incentive: { name: "PECO Smart Driver rebate", usd: 50, count: 1, utility: true, state: "PA" } };
+  // A summary packed before 2026-09-03 carried neither flag nor state.
+  const old: CardRow = { ...row, id: "w", incentive: { name: "Illinois EV Rebate", usd: 2000, count: 1 } };
+  const back = unpackIndex(packIndex([row, bare, overCap, utility, old]));
+  assert.deepEqual(back[0].incentive, { name: "Illinois EV Rebate", usd: 2000, overCapUsd: undefined, count: 1, utility: false, state: "IL" });
   assert.equal(back[1].incentive, undefined);
-  assert.deepEqual(back[2].incentive, { name: "Massachusetts MOR-EV", usd: undefined, overCapUsd: 40000, count: 3 });
+  assert.deepEqual(back[2].incentive, { name: "Massachusetts MOR-EV", usd: undefined, overCapUsd: 40000, count: 3, utility: false, state: "MA" });
+  assert.deepEqual(back[3].incentive, { name: "PECO Smart Driver rebate", usd: 50, overCapUsd: undefined, count: 1, utility: true, state: "PA" });
+  assert.deepEqual(back[4].incentive, { name: "Illinois EV Rebate", usd: 2000, overCapUsd: undefined, count: 1, utility: undefined, state: undefined });
+});
+
+test("the card summary says which kind of program leads and its state, so the tag can be 'resident' or 'utility'", () => {
+  const ca: Listing = {
+    id: "t", vin: "1G1FY6S04P4100001", year: 2023, make: "Chevrolet", model: "Bolt EUV", trim: "LT",
+    priceUsd: 19500, mileage: 24000, state: "California", sellerType: "dealer", condition: "used",
+  };
+  const card = cardIncentive(matchIncentives(enrichListing(ca), SITE_POLICY, INCENTIVE_PROGRAMS, new Date("2026-09-02T12:00:00Z")))!;
+  assert.equal(card.utility, false, "the statewide program leads");
+  assert.equal(card.state, "CA", "the two-letter code, whatever the dealer feed spelled");
+  const pa = cardIncentive(matchIncentives(enrichListing({ ...ca, state: "PA" }), SITE_POLICY, INCENTIVE_PROGRAMS, new Date("2026-09-02T12:00:00Z")))!;
+  assert.equal(pa.utility, true, "Pennsylvania's own program has ended; only PECO names the car");
+  assert.equal(pa.state, "PA");
+});
+
+test("the rebate filter is Pro: without a pass the key is inert, with one it keeps only cars a program names", () => {
+  const get = (k: string) => (k === "rebate" ? "1" : "");
+  assert.equal(buildTests(get).rebate, undefined, "a stranger's ?rebate=1 applies nothing");
+  assert.equal(buildTests(get, { pro: false }).rebate, undefined);
+  const t = buildTests(get, { pro: true }).rebate!;
+  const named: CardRow = {
+    id: "a", hay: "", year: 2023, make: "Chevrolet", model: "Bolt EUV", title: "", priceUsd: 21500, realPrice: true,
+    incentive: { name: "Illinois EV Rebate", usd: 2000, count: 1, utility: false, state: "IL" }, tiles: [],
+  };
+  assert.equal(t(named), true);
+  assert.equal(t({ ...named, incentive: undefined }), false);
 });
 
 test("PNM: a New Mexico car under the $55,000 invoiced-price cap meets the car-side conditions; the $4,000 is stated, never the figure", () => {

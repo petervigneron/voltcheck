@@ -98,7 +98,16 @@ export interface CardRow {
    * Absent means the car meets none under the site policy — never "no data".
    * Powers the rebate toggle and the card tile.
    */
-  incentive?: { name: string; usd?: number; overCapUsd?: number; count: number };
+  incentive?: {
+    name: string;
+    usd?: number;
+    overCapUsd?: number;
+    count: number;
+    /** Set from 2026-09-03; a body packed before then unpacks without them
+     *  and the card prints no tag until the next publish. */
+    utility?: boolean;
+    state?: string;
+  };
   tiles: CardTile[];
 }
 

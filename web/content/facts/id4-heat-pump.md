@@ -4,7 +4,7 @@
 
 | Model year | Heat pump |
 |---|---|
-| 2021 | Est. None[^1] |
+| 2021 | None[^1] |
 | 2022 | None, every trim, drivetrain and battery pack[^2] |
 | 2023 | None, every trim, drivetrain and battery pack[^3] |
 | 2024 | None, every trim, drivetrain and battery pack[^4] |
@@ -14,9 +14,9 @@
 
 | Equipment | At the ID.4's US launch |
 |---|---|
-| Cabin heater | Est. Electric resistance heater[^1] |
-| Heated front seats | Est. Standard[^1] |
-| Heated steering wheel | Est. Standard[^1] |
+| Cabin heater | Electric resistance heater[^1] |
+| Heated front seats | Standard[^1] |
+| Heated steering wheel | Standard[^1] |
 
 ## Canada and Europe
 
@@ -31,7 +31,7 @@
 
 ## Footnotes
 
-[^1]: Green Car Reports, "VW ID.4 electric SUV has the right winter warmers, lacks a heat pump," published Jan 18, 2021. https://www.greencarreports.com/news/1130962_vw-id-4-electric-suv-has-the-right-winter-warmers-lacks-a-heat-pump. Est.
+[^1]: Green Car Reports, "VW ID.4 electric SUV has the right winter warmers, lacks a heat pump," published Jan 18, 2021. https://www.greencarreports.com/news/1130962_vw-id-4-electric-suv-has-the-right-winter-warmers-lacks-a-heat-pump.
 
 [^2]: Volkswagen, *2022 Retail Order Guide US ID.4* (PDF). Mirror: https://www.streetvw.com/static/dealer-12576/custom-pages/brochures/2022_Retail_Order_Guide_US_ID.4.pdf
 

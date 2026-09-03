@@ -383,10 +383,11 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
           <BatteryRisk data={battery} vin={listing.vin} packReplaced={listing.campaignCheck?.packReplaced} />
 
           {/* State and utility purchase programs whose car-side conditions
-              this listing meets (lib/incentives/match.ts, strict policy).
-              Renders nothing when none does. The block says which program
-              and states the buyer's conditions; it never says a shopper
-              qualifies. */}
+              this listing meets (lib/incentives/match.ts, site policy).
+              Renders nothing when none does. One collapsed line per
+              program; the conditions open on a press. Blurred like the
+              trends above until the browser holds a Pro pass (owner,
+              2026-09-03). It never says a shopper qualifies. */}
           <Incentives matches={matchIncentives(e)} />
 
           {/* Cohort answers with their own pages (/facts). The questions are

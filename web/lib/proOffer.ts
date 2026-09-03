@@ -62,9 +62,12 @@ title: "Market trends",
     live: true,
   },
   {
+    // Pro since 2026-09-03: the rail toggle, the card tag and the listing
+    // block (components/Incentives.tsx, blurred like the trends) all read
+    // the pass. Owner: "it should be paywalled like price trends are".
     title: "Rebate eligibility",
     detail: "Many EVs still qualify for local tax credits or utility rebates",
-    live: false,
+    live: true,
   },
   {
     // The standing order (lib/watch.ts, components/WatchForm.tsx).

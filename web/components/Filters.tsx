@@ -611,7 +611,9 @@ export function FilterRail({
   const quick = QUICK_TOGGLES.map((t) => ({ ...t, on: get(t.key) === t.value })).filter((t) => {
     // The rebate toggle stays off the rail until the owner has written its
     // label (lib/incentives/copy.ts): a "[OWNER COPY]" button is not copy.
-    if (t.key === "rebate" && !INCENTIVES_COPY_READY) return false;
+    // And it is Pro, like the deals toggle below (owner, 2026-09-03):
+    // without a pass it is not offered, and match.ts ignores the key.
+    if (t.key === "rebate" && (!INCENTIVES_COPY_READY || pro !== true)) return false;
     if (t.on || !quickCounts) return true;
     const c = quickCounts[`${t.key}=${t.value}`];
     if (!c || c.n === 0) return false;
@@ -626,7 +628,7 @@ export function FilterRail({
   // quick toggle stands in for its chip; for a stranger it is inert anyway.
   const active = REMOVABLE.flatMap((k) => {
     const v = get(k);
-    if (!v || quickOn.has(k) || k === "deal") return [];
+    if (!v || quickOn.has(k) || k === "deal" || k === "rebate") return [];
     const label = describeFilter(k, v);
     return label ? [{ key: k, label }] : [];
   });

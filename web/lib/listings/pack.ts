@@ -73,9 +73,11 @@ interface PackedRow {
   /** Indices into PackedIndex.t. */
   ts?: number[];
   /** [index into PackedIndex.pn, settled figure or 0, cap when over it or 0,
-   *  count of programs met]. The program names repeat per state, so they
-   *  live in a dictionary like the tiles do. */
-  ic?: [number, number, number, number];
+   *  count of programs met, 1 when the lead is a utility program, the
+   *  program's state code]. The program names repeat per state, so they
+   *  live in a dictionary like the tiles do. The last two are optional so a
+   *  body packed before 2026-09-03 still unpacks. */
+  ic?: [number, number, number, number, (0 | 1)?, string?];
 }
 
 /**
@@ -213,6 +215,7 @@ export function packIndex(rows: CardRow[]): PackedIndex {
       let idx = programNames.indexOf(row.incentive.name);
       if (idx === -1) idx = programNames.push(row.incentive.name) - 1;
       p.ic = [idx, row.incentive.usd ?? 0, row.incentive.overCapUsd ?? 0, row.incentive.count];
+      if (row.incentive.state !== undefined) p.ic.push(row.incentive.utility ? 1 : 0, row.incentive.state);
     }
     return p;
   });
@@ -261,6 +264,8 @@ export function unpackIndex(x: PackedIndex): CardRow[] {
             usd: p.ic[1] || undefined,
             overCapUsd: p.ic[2] || undefined,
             count: p.ic[3],
+            utility: p.ic.length > 4 ? p.ic[4] === 1 : undefined,
+            state: p.ic[5],
           }
         : undefined,
     // The dictionary hands back the same tile object to every row that cites

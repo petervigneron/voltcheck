@@ -204,6 +204,7 @@ export function EnrichmentFacts({
                 label="Heat pump"
                 fact={row.thermal?.heatPump}
                 format={(v) => HEAT_PUMP_LABEL[v as HeatPump]}
+                yesNo
               />
             </>
           )}
@@ -233,6 +234,7 @@ export function EnrichmentFacts({
                   label="DC fast charging"
                   fact={row.charging?.dcFastCharging}
                   format={(v) => DCFC_LABEL[v as keyof typeof DCFC_LABEL] ?? String(v)}
+                  yesNo
                 />
               )}
               <FactRow label="Peak DC rate" fact={row.charging?.dcPeakKw} format={(v) => `${v} kW`} />

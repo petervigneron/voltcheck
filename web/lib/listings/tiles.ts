@@ -1,5 +1,6 @@
 import type { EnrichedListing } from "./enrich";
 import type { TileKind } from "@/components/Tile";
+import { vehicleKind } from "./kind";
 
 // The key facts a shopper compares — range, heat pump, drivetrain — come
 // first and always survive the cap; extras (fast charging, new battery, pack
@@ -14,6 +15,14 @@ export function listingTiles(
 ): { kind: TileKind; text: string; title?: string }[] {
   const l = e.listing;
   const t: { kind: TileKind; text: string; title?: string }[] = [];
+  // A plug-in hybrid is not "missing" a heat pump or DC fast charging: almost
+  // none was ever sold with either, so the alarm tile said of 1,641 of the
+  // 1,844 short-range cars in one shard that they lacked something no
+  // shopper for that car expects (owner, 2026-09-03: "I don't think we
+  // should be tagging plug in hybrids as missing fast charging or heat
+  // pumps"). The absence stays on the detail page's spec rows as a plain
+  // value; only the card's alarm is withheld. Equipment present still prints.
+  const plugIn = vehicleKind(e) === "PHEV";
 
   if (e.enrichment.candidates) {
     const ranges = e.enrichment.candidates
@@ -50,12 +59,14 @@ export function listingTiles(
   // not an answer, and the card does not print a question mark for it: if
   // there is nothing to say, print nothing. The rail's toggle already
   // treated "verify" as no answer (2026-08-31).
-  if (e.heatPump?.status === "no") t.push({ kind: "miss", text: "No heat pump", title: e.heatPump.detail });
+  if (e.heatPump?.status === "no" && !plugIn) t.push({ kind: "miss", text: "No heat pump", title: e.heatPump.detail });
   else if (e.heatPump?.status === "yes") t.push({ kind: "kit", text: "Heat pump", title: e.heatPump.detail });
 
   if (l.drive) t.push({ kind: "spec", text: l.drive });
 
-  if (e.fastCharge.status === "no") t.push({ kind: "miss", text: "No fast charging", title: e.fastCharge.detail });
+  if (plugIn) {
+    // nothing: see above
+  } else if (e.fastCharge.status === "no") t.push({ kind: "miss", text: "No fast charging", title: e.fastCharge.detail });
   else if (e.fastCharge.status === "verify") t.push({ kind: "flag", text: "Fast charging?", title: e.fastCharge.detail });
 
   // Which plug the car fast-charges through. J1772 is omitted: it only appears

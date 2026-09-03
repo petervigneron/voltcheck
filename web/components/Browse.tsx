@@ -534,6 +534,7 @@ export function Browse() {
                 distanceMi={origin && r.loc ? Math.round(milesBetween(origin, r.loc)) : undefined}
                 index={i}
                 grounds={grounds}
+                pro={pro}
               />
             ))}
           </div>
@@ -575,7 +576,7 @@ export function Browse() {
         <>
           <div className="grid grid-cols-1 border-t-[3px] border-l-[3px] border-ink sm:grid-cols-2 lg:grid-cols-3">
             {shown.map((r, i) => (
-              <ListingCard key={r.id} r={r} distanceMi={dist.get(r.id)} index={i} grounds={grounds} />
+              <ListingCard key={r.id} r={r} distanceMi={dist.get(r.id)} index={i} grounds={grounds} pro={pro} />
             ))}
           </div>
 

@@ -6,6 +6,7 @@ import { SaveToggle } from "./SaveToggle";
 import { useCardIndex } from "@/lib/listings/useCardIndex";
 import { readSaved, subscribeSaved, type SavedEntry } from "@/lib/saved";
 import { PriceDropSignup } from "./PriceDropSignup";
+import { useProState } from "@/lib/useProState";
 
 // The saved-cars panel of /saved (the tab shell is components/SavedView.tsx).
 // localStorage names the cars, the same card index the browse grid downloads
@@ -40,6 +41,7 @@ export function SavedCars() {
   // null until mount: localStorage is client-only, and the prerendered shell
   // has to match the first client paint.
   const [entries, setEntries] = useState<SavedEntry[] | null>(null);
+  const pro = useProState();
   useEffect(() => {
     const sync = () => setEntries(readSaved());
     sync();
@@ -103,7 +105,7 @@ export function SavedCars() {
       <div className="grid grid-cols-1 border-l-[3px] border-ink sm:grid-cols-2 lg:grid-cols-3">
         {sorted.map((e, i) => {
           const r = byId.get(e.id);
-          return r ? <ListingCard key={e.id} r={r} index={i} /> : <DelistedCard key={e.id} e={e} />;
+          return r ? <ListingCard key={e.id} r={r} index={i} pro={pro} /> : <DelistedCard key={e.id} e={e} />;
         })}
       </div>
     </>

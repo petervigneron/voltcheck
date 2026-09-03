@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Tile, type TileGround, type TileKind } from "./Tile";
 import { SaveToggle } from "./SaveToggle";
 import { askVsMarketTile, type CardRow, type CardTile } from "@/lib/listings/card";
-import { INCENTIVES_COPY_READY } from "@/lib/incentives/copy";
+import { INCENTIVE_COPY, INCENTIVES_COPY_READY } from "@/lib/incentives/copy";
 
 // Renders one precomputed card-index row (lib/listings/card.ts). Everything a
 // card says was decided server-side at index build; this component only lays
@@ -65,11 +65,17 @@ export function ListingCard({
   distanceMi,
   index = 0,
   grounds = "plain",
+  pro,
 }: {
   r: CardRow;
   distanceMi?: number;
   index?: number;
   grounds?: GroundsMode;
+  /** Whether this browser holds a Pro pass (lib/useProState.ts), passed
+   *  down by the client grid that already asked. The rebate tag is Pro
+   *  (owner, 2026-09-03: "paywalled like price trends are"); absent or
+   *  unknown reads as no pass, so the tag never flashes on and off. */
+  pro?: boolean | null;
 }) {
   const cut = grounds === "fact" ? r.cut : undefined;
   const ground: TileGround =
@@ -109,17 +115,16 @@ export function ListingCard({
   if (r.askVsMarket != null) {
     lead.push(askVsMarketTile(r.askVsMarket));
   }
-  // The rebate program this car leads with (buildIndex → cardIncentive). The
-  // tile is data only: the program's own figure and name, or the program's
-  // cap when the ask sits over it. No hover restating it (owner, 2026-09-03:
-  // the value is the answer). Off while the copy gate is shut.
-  if (r.incentive && INCENTIVES_COPY_READY) {
-    const inc = r.incentive;
-    const usd = (n: number) => `$${n.toLocaleString("en-US")}`;
-    lead.push({
-      k: "spec" as TileKind,
-      t: inc.overCapUsd ? `${inc.name}: ${usd(inc.overCapUsd)} cap` : inc.usd ? `${usd(inc.usd)} ${inc.name}` : inc.name,
-    });
+  // A purchase program names this car (buildIndex → cardIncentive). One
+  // short tag in the owner's pattern — "CA resident rebate" — and nothing
+  // else: the figure-and-name tile it replaces ("$4,000 California Clean
+  // Cars 4 All") overran a narrow card, and the figures, caps and
+  // conditions belong to the car's own page (owner, 2026-09-03). Pro only,
+  // and off while the copy gate is shut. A body packed before the state
+  // rode with the summary prints no tag until the next publish.
+  if (r.incentive?.state && INCENTIVES_COPY_READY && pro === true) {
+    const tpl = r.incentive.utility ? INCENTIVE_COPY.utilityTag : INCENTIVE_COPY.residentTag;
+    lead.push({ k: "rebate" as TileKind, t: tpl.replace("{ST}", r.incentive.state) });
   }
   const tiles: CardTile[] = lead.length ? [...lead, ...r.tiles.slice(0, Math.max(0, 5 - lead.length))] : r.tiles;
 

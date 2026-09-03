@@ -121,28 +121,12 @@ export function dealerState(l: Pick<Listing, "state">): string | undefined {
 
 // ---- vehicle kind -------------------------------------------------------
 
-/** BEV or PHEV, from the enrichment row the listing matched — the stored
- *  payload carries no fuel kind (payload->>evKind was null on every live row
- *  read 2026-09-02; crawl.mjs computes it and ingest.mjs's field list drops
- *  it). A row declares a plug-in by `plugIn`, by carrying a total (gas +
- *  electric) range, or by a "PHEV" pack variant; a row with an EPA range and
- *  none of those is a battery-electric. Anything else is unknown, and unknown
- *  is not BEV: New Jersey, Illinois, Massachusetts and Maine pay on BEVs only,
- *  and a Wrangler 4xe matched to no row must not be told it meets them. */
-export function vehicleKind(e: EnrichedListing): VehicleKind | undefined {
-  const rows = e.row ? [e.row] : (e.enrichment.candidates ?? []);
-  if (!rows.length) return undefined;
-  const kinds = new Set<VehicleKind | "?">(
-    rows.map((r) => {
-      if (r.plugIn || r.range?.epaRangeTotalMi || r.packVariant?.toUpperCase() === "PHEV") return "PHEV";
-      if (r.range?.epaRangeMi || r.range?.mfrRangeMi) return "BEV";
-      return "?";
-    })
-  );
-  if (kinds.size !== 1) return undefined;
-  const [k] = [...kinds];
-  return k === "?" ? undefined : k;
-}
+/** Battery-electric or plug-in hybrid, settled from the enrichment row
+ *  alone. Lives in lib/listings/kind.ts since 2026-09-03 so the card tiles
+ *  read the same answer; re-exported here for the callers and tests that
+ *  learned it at this address. */
+import { vehicleKind } from "@/lib/listings/kind";
+export { vehicleKind };
 
 // ---- GVWR -----------------------------------------------------------------
 
@@ -464,6 +448,12 @@ export interface CardIncentive {
   usd?: number;
   overCapUsd?: number;
   count: number;
+  /** The leading program is a utility's, for its own customers only — the
+   *  card's tag says "utility" rather than "resident" (lib/incentives/copy.ts). */
+  utility: boolean;
+  /** The program's two-letter state, so the tag never has to normalise a
+   *  spelled-out dealer state on the client. */
+  state: string;
 }
 
 export function cardIncentive(matches: IncentiveMatch[]): CardIncentive | undefined {
@@ -479,5 +469,7 @@ export function cardIncentive(matches: IncentiveMatch[]): CardIncentive | undefi
     usd: lead.amountUsd,
     overCapUsd: lead.cap?.askOverByUsd ? lead.cap.usd : undefined,
     count: matches.length,
+    utility: lead.program.jurisdiction.kind === "utility",
+    state: lead.program.jurisdiction.state,
   };
 }

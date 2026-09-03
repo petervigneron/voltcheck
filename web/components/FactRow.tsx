@@ -84,6 +84,7 @@ export function FactRow({
   format,
   title,
   hint,
+  yesNo = false,
 }: {
   label: string;
   fact?: Fact<unknown>;
@@ -98,6 +99,15 @@ export function FactRow({
   // CSS-only popover keeps this a server component and works from the
   // keyboard (focus) and touch (tap) as well as the mouse.
   hint?: React.ReactNode;
+  /** A yes-or-no fact (heat pump, DC fast charging). It never carries
+   *  "est.": that mark exists for numbers, where a secondary source's figure
+   *  beside a maker's is a false equivalence. On a fact that is either true
+   *  or not it read as a hedge on a guess, which the claims rule forbids —
+   *  the owner (2026-09-03): "there's not uncertainty around the ID.4 heat
+   *  pump; we just say it doesn't exist," and again the same day, "This is
+   *  empirical information." Either the source clears the bar to print, or
+   *  the row does not exist. Same rule the card tiles took in 2ffa72d. */
+  yesNo?: boolean;
 }) {
   // No fact means no research has settled this for this car — that is
   // silence, not a value, so the row itself doesn't exist. This is distinct
@@ -142,7 +152,7 @@ export function FactRow({
         ) : (
           <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100">{valueText}</span>
         )}{" "}
-        <SourceBadge fact={fact} />
+        {!yesNo && <SourceBadge fact={fact} />}
         {fact.sourceUrl && <Citation fact={fact} />}
       </div>
     </div>
