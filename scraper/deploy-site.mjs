@@ -526,6 +526,47 @@ if (sitemapState.size < SITEMAP_PATHS.length) {
   );
   process.exit(1);
 }
+// The model hubs (/ev and /ev/<make>/<model>, added 2026-09-02). They are the
+// only crawlable path from the home page into the listing corpus — the browse
+// grid builds its links in the browser, so before they existed every listing
+// URL was an orphan — and Google started collecting them the day the 12
+// sitemap files were submitted. A crawler arriving after a promote should not
+// be the one paying for the render.
+//
+// Deliberately NOT in WARM_PATHS, and deliberately not fatal. A hub reads the
+// published hubs.json artifact instead of walking the database, so a cold one
+// is ~1s against a shard's 90-300s, no shopper surface depends on it, and
+// nothing goes red when one is cold the way feed-audits does for a sitemap.
+// Warn and move on.
+//
+// The list is read from the deployed /ev page rather than from
+// web/lib/listings/modelHubs.ts because this lane cannot import TS (see
+// SHARD_PATHS) — and reading the index the site actually shipped means this
+// warm can never drift from the registry.
+let hubsWarmed = 0;
+let hubsCold = 0;
+try {
+  const { text } = await fetchPath("https://voltcheck.net", "/ev", {}, COLD_RENDER_TIMEOUT_MS);
+  const hubPaths = [...new Set([...text.matchAll(/href="(\/ev\/[^"]+)"/g)].map((m) => m[1]))];
+  console.log(`deploy-site: warming /ev and ${hubPaths.length} model hubs`);
+  for (const path of hubPaths) {
+    try {
+      await fetchPath("https://voltcheck.net", path, {}, COLD_RENDER_TIMEOUT_MS);
+      hubsWarmed++;
+    } catch (e) {
+      hubsCold++;
+      console.log(`  ${path}: ${e.message}`);
+    }
+  }
+} catch (e) {
+  console.error(`deploy-site: /ev did not answer (${e.message}) — model hubs left cold, they self-heal on request`);
+}
+if (hubsCold) {
+  console.error(`deploy-site: ${hubsCold} model hub(s) still cold — they self-heal on request, shoppers unaffected`);
+} else if (hubsWarmed) {
+  console.log(`deploy-site: ${hubsWarmed} model hubs warm`);
+}
+
 console.log(
   slowCold === 0
     ? "deploy-site: every path answers warm on voltcheck.net, sitemaps included. Done."
