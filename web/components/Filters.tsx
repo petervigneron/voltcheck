@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { REMOVABLE, QUICK_TOGGLES, BODY_TYPES, describeFilter, dropSpecFilters, splitValues, toggleValue, withCurrent } from "@/lib/filters";
 import { INCENTIVES_COPY_READY } from "@/lib/incentives/copy";
+import { writeShopperZip } from "@/lib/shopperZip";
 import { pushUrl } from "@/lib/pushUrl";
 import { track } from "@/lib/events";
 import { SaveSearchToggle } from "./SaveSearchToggle";
@@ -852,7 +853,11 @@ export function FilterRail({
               maxLength={5}
               placeholder="94568"
               defaultValue={get("zip")}
-              onBlur={(e) => apply({ zip: e.target.value })}
+              onBlur={(e) => {
+                // Remembered for the car page's rebate block (lib/shopperZip.ts).
+                writeShopperZip(e.target.value);
+                apply({ zip: e.target.value });
+              }}
             />
           </label>
 

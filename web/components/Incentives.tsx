@@ -1,29 +1,39 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import type { IncentiveMatch } from "@/lib/incentives/match";
 import { INCENTIVE_COPY } from "@/lib/incentives/copy";
 import { incentivesToRender } from "@/lib/incentives/visible";
+import { useShopperZip } from "@/lib/shopperZip";
 import { ProBlur } from "./ProBlur";
 
-// Incentive programs this car meets the vehicle conditions of.
+// Incentive programs this car meets the vehicle conditions of, narrowed to
+// the ones the shopper's ZIP can use.
 //
-// One collapsed line per program: its name, and its own figure for this
-// car's condition and kind when the matcher settled exactly one, or its price
-// cap when the asking price sits over it. Pressing the line opens the
-// program's conditions — the ones only the buyer can settle and the ones the
-// listing could not (an MSRP on the sticker, an eligible-vehicle list, a
-// participating dealer) — then its further figures with their own labels,
-// then a link to the program's own page. One line at the foot says
-// eligibility is the shopper's to confirm.
+// The matcher names every program the car qualifies for in the dealer's
+// state; a used car in California meets a dozen utility programs at once and
+// the shopper is a customer of one. Given a ZIP — typed on the browse rail or
+// in the field at the foot of this block, else Vercel's IP guess
+// (lib/shopperZip.ts) — /api/rebates/[zip] says which of them hold that ZIP
+// (lib/incentives/territory.ts) and only those render. With no ZIP known,
+// every match renders. Owner, 2026-09-03: a ZIP, not a picker — "I want the
+// site to be easy and smooth to use."
 //
-// Collapsed because a used car in California meets a dozen programs at once
-// and the open form was "an overwhelming amount of information — it's not
-// helpful" (owner, 2026-09-03); the dropdown is how a shopper checks the one
-// program that is theirs. Pro, blurred like the price trends until the
-// browser holds a pass (components/ProBlur.tsx), the same owner decision.
+// One collapsed line per program: its name, and its own figure for this car's
+// condition and kind when the matcher settled exactly one, or its price cap
+// when the asking price sits over it. Pressing the line opens the program's
+// conditions, its further figures with their own labels, and a link to the
+// program's own page. One line at the foot says eligibility is the shopper's
+// to confirm. Pro, blurred like the price trends until the browser holds a
+// pass (components/ProBlur.tsx).
 //
 // It never says a shopper qualifies, never sums figures, and renders nothing
-// when there is no match or while the copy is unwritten (lib/incentives/
-// visible.ts). Every figure is the program's own, so nothing here carries an
-// "est." mark; a derived figure would have to.
+// when there is no match — before or after narrowing — or while the copy is
+// unwritten (lib/incentives/visible.ts). Every figure is the program's own,
+// so nothing here carries an "est." mark; a derived figure would have to.
+//
+// A client component because the page is static and the ZIP is the
+// shopper's; the matches arrive as props, plain data.
 
 const usd = (n: number) => `$${n.toLocaleString("en-US")}`;
 
@@ -36,13 +46,50 @@ function host(url: string): string {
   }
 }
 
+// One answer per ZIP per page load; the route is CDN-cached a day anyway.
+const keepCache = new Map<string, Promise<string[] | null>>();
+function keepFor(zip: string): Promise<string[] | null> {
+  let p = keepCache.get(zip);
+  if (!p) {
+    p = fetch(`/api/rebates/${zip}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((r: { keep?: string[] } | null) => (r && Array.isArray(r.keep) ? r.keep : null))
+      .catch(() => null);
+    keepCache.set(zip, p);
+  }
+  return p;
+}
+
 export function Incentives({ matches: all }: { matches: IncentiveMatch[] }) {
   const matches = incentivesToRender(all);
+  const { zip, setZip } = useShopperZip();
+  // The answer for the ZIP it was asked about; `keep` null means no ZIP, or
+  // the lookup failed — show all. Keyed by ZIP so a stale answer for the
+  // last ZIP is never read as this one's.
+  const [answer, setAnswer] = useState<{ zip: string | null; keep: string[] | null } | undefined>(undefined);
+  useEffect(() => {
+    if (zip === undefined) return;
+    let alive = true;
+    (zip === null ? Promise.resolve(null) : keepFor(zip)).then((k) => {
+      if (alive) setAnswer({ zip, keep: k });
+    });
+    return () => {
+      alive = false;
+    };
+  }, [zip]);
+
   if (matches.length === 0) return null;
+  // Hold the block until the ZIP question is settled, so a pass-holder never
+  // watches twelve lines collapse into one.
+  if (zip === undefined || answer === undefined || answer.zip !== zip) return null;
+
+  const keep = answer.keep;
+  const usable = keep ? matches.filter((m) => keep.includes(m.program.id)) : matches;
+  if (usable.length === 0) return null;
   // Statewide programs first; a utility program is for its own customers only.
   const ordered = [
-    ...matches.filter((m) => m.program.jurisdiction.kind !== "utility"),
-    ...matches.filter((m) => m.program.jurisdiction.kind === "utility"),
+    ...usable.filter((m) => m.program.jurisdiction.kind !== "utility"),
+    ...usable.filter((m) => m.program.jurisdiction.kind === "utility"),
   ];
   return (
     <section className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5">
@@ -117,7 +164,24 @@ export function Incentives({ matches: all }: { matches: IncentiveMatch[] }) {
             );
           })}
         </ul>
-        <p className="mt-3 text-xs text-zinc-500 dark:text-zinc-400">{INCENTIVE_COPY.confirmLine}</p>
+        <div className="mt-3 flex items-baseline justify-between gap-4">
+          <p className="text-xs text-zinc-500 dark:text-zinc-400">{INCENTIVE_COPY.confirmLine}</p>
+          {/* The ZIP the list is answering for, editable in place: five digits
+              and the list re-narrows. Same word the rail's field uses. */}
+          <input
+            type="text"
+            inputMode="numeric"
+            autoComplete="postal-code"
+            maxLength={5}
+            aria-label="ZIP"
+            placeholder="ZIP"
+            defaultValue={zip ?? ""}
+            onChange={(e) => {
+              if (/^\d{5}$/.test(e.target.value)) setZip(e.target.value);
+            }}
+            className="w-16 shrink-0 border-b-2 border-zinc-300 bg-transparent text-right text-xs tabular-nums text-zinc-700 outline-none focus:border-cobalt dark:border-zinc-600 dark:text-zinc-200"
+          />
+        </div>
       </ProBlur>
     </section>
   );

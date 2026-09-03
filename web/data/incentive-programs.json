@@ -1486,7 +1486,10 @@
       "jurisdiction": {
         "kind": "utility",
         "state": "CA",
-        "utility": "Alameda Municipal Power"
+        "utility": "Alameda Municipal Power",
+        "eiaIds": [
+          207
+        ]
       },
       "administrator": "Alameda Municipal Power",
       "kind": "rebate",
@@ -1605,7 +1608,15 @@
       "jurisdiction": {
         "kind": "utility",
         "state": "CA",
-        "utility": "Central Coast Community Energy (3CE)"
+        "utility": "Central Coast Community Energy (3CE)",
+        "counties": [
+          "06053",
+          "06087",
+          "06069",
+          "06079",
+          "06083"
+        ],
+        "territoryNote": "Territory by county (Monterey, Santa Cruz, San Benito, San Luis Obispo, Santa Barbara); 3CE serves part of Santa Barbara County."
       },
       "administrator": "Central Coast Community Energy",
       "kind": "rebate",
@@ -1743,7 +1754,10 @@
       "jurisdiction": {
         "kind": "utility",
         "state": "CA",
-        "utility": "Colton Public Utilities"
+        "utility": "Colton Public Utilities",
+        "eiaIds": [
+          4003
+        ]
       },
       "administrator": "Colton Public Utilities",
       "kind": "rebate",
@@ -1800,7 +1814,10 @@
       "jurisdiction": {
         "kind": "utility",
         "state": "CA",
-        "utility": "Los Angeles Department of Water and Power"
+        "utility": "Los Angeles Department of Water and Power",
+        "eiaIds": [
+          11208
+        ]
       },
       "administrator": "Los Angeles Department of Water and Power",
       "kind": "rebate",
@@ -1863,7 +1880,14 @@
       "jurisdiction": {
         "kind": "utility",
         "state": "CA",
-        "utility": "MCE"
+        "utility": "MCE",
+        "counties": [
+          "06041",
+          "06055",
+          "06013",
+          "06095"
+        ],
+        "territoryNote": "Territory by county (Marin, Napa, Contra Costa, Solano); MCE serves most but not every city in the last two."
       },
       "administrator": "MCE",
       "kind": "rebate",
@@ -1922,7 +1946,12 @@
       "jurisdiction": {
         "kind": "utility",
         "state": "CA",
-        "utility": "Pacific Gas and Electric"
+        "utility": "Pacific Gas and Electric",
+        "eiaIds": [
+          14328,
+          16612
+        ],
+        "territoryNote": "EIA-861 ZIP table plus the City & County of San Francisco entry (PG&E distributes there; its own ZIP report omits the city)."
       },
       "administrator": "Center for Sustainable Energy for PG&E (Low Carbon Fuel Standard funds)",
       "kind": "rebate",
@@ -1984,7 +2013,10 @@
       "jurisdiction": {
         "kind": "utility",
         "state": "CA",
-        "utility": "Pasadena Water & Power"
+        "utility": "Pasadena Water & Power",
+        "eiaIds": [
+          14534
+        ]
       },
       "administrator": "Pasadena Water & Power",
       "kind": "rebate",
@@ -2052,7 +2084,14 @@
       "jurisdiction": {
         "kind": "utility",
         "state": "CA",
-        "utility": "WestLight Energy (formerly Peninsula Clean Energy)"
+        "utility": "WestLight Energy (formerly Peninsula Clean Energy)",
+        "counties": [
+          "06081"
+        ],
+        "zips": [
+          "93635"
+        ],
+        "territoryNote": "Territory: San Mateo County plus Los Banos."
       },
       "administrator": "WestLight Energy",
       "kind": "rebate",
@@ -2104,7 +2143,10 @@
       "jurisdiction": {
         "kind": "utility",
         "state": "CA",
-        "utility": "Riverside Public Utilities"
+        "utility": "Riverside Public Utilities",
+        "eiaIds": [
+          16088
+        ]
       },
       "administrator": "Riverside Public Utilities",
       "kind": "rebate",
@@ -2166,7 +2208,10 @@
       "jurisdiction": {
         "kind": "utility",
         "state": "CA",
-        "utility": "San Diego Gas & Electric"
+        "utility": "San Diego Gas & Electric",
+        "eiaIds": [
+          16609
+        ]
       },
       "administrator": "Center for Sustainable Energy for SDG&E (Low Carbon Fuel Standard funds)",
       "kind": "rebate",
@@ -2226,7 +2271,10 @@
       "jurisdiction": {
         "kind": "utility",
         "state": "CA",
-        "utility": "Silicon Valley Power (Santa Clara)"
+        "utility": "Silicon Valley Power (Santa Clara)",
+        "eiaIds": [
+          16655
+        ]
       },
       "administrator": "Silicon Valley Power",
       "kind": "rebate",
@@ -2306,7 +2354,10 @@
       "jurisdiction": {
         "kind": "utility",
         "state": "CA",
-        "utility": "Southern California Edison"
+        "utility": "Southern California Edison",
+        "eiaIds": [
+          17609
+        ]
       },
       "administrator": "Center for Sustainable Energy for SCE (Low Carbon Fuel Standard funds)",
       "kind": "rebate",
@@ -2366,7 +2417,40 @@
       "jurisdiction": {
         "kind": "utility",
         "state": "CA",
-        "utility": "Silicon Valley Clean Energy"
+        "utility": "Silicon Valley Clean Energy",
+        "zips": [
+          "94022",
+          "94023",
+          "94024",
+          "94039",
+          "94040",
+          "94041",
+          "94042",
+          "94043",
+          "94085",
+          "94086",
+          "94087",
+          "94088",
+          "94089",
+          "95008",
+          "95009",
+          "95011",
+          "95014",
+          "95015",
+          "95020",
+          "95021",
+          "95030",
+          "95031",
+          "95032",
+          "95033",
+          "95035",
+          "95036",
+          "95037",
+          "95038",
+          "95070",
+          "95071"
+        ],
+        "territoryNote": "Territory as the ZIPs of its 13 member cities and towns (not San Jose, Santa Clara or Palo Alto); hand-listed 2026-09-03."
       },
       "administrator": "Silicon Valley Clean Energy",
       "kind": "rebate",
@@ -2421,7 +2505,10 @@
       "jurisdiction": {
         "kind": "utility",
         "state": "VT",
-        "utility": "Burlington Electric Department"
+        "utility": "Burlington Electric Department",
+        "eiaIds": [
+          2548
+        ]
       },
       "administrator": "Burlington Electric Department",
       "kind": "rebate",
@@ -2527,7 +2614,10 @@
       "jurisdiction": {
         "kind": "utility",
         "state": "VT",
-        "utility": "Green Mountain Power"
+        "utility": "Green Mountain Power",
+        "eiaIds": [
+          7601
+        ]
       },
       "administrator": "Green Mountain Power",
       "kind": "rebate",
@@ -2670,7 +2760,10 @@
       "jurisdiction": {
         "kind": "utility",
         "state": "VT",
-        "utility": "Vermont Electric Co-op"
+        "utility": "Vermont Electric Co-op",
+        "eiaIds": [
+          19791
+        ]
       },
       "administrator": "Vermont Electric Co-op",
       "kind": "rebate",
@@ -2818,7 +2911,10 @@
       "jurisdiction": {
         "kind": "utility",
         "state": "VT",
-        "utility": "Washington Electric Co-op"
+        "utility": "Washington Electric Co-op",
+        "eiaIds": [
+          20151
+        ]
       },
       "administrator": "Washington Electric Co-op",
       "kind": "rebate",
@@ -2882,7 +2978,10 @@
       "jurisdiction": {
         "kind": "utility",
         "state": "AK",
-        "utility": "Alaska Power & Telephone"
+        "utility": "Alaska Power & Telephone",
+        "eiaIds": [
+          219
+        ]
       },
       "administrator": "Alaska Power & Telephone",
       "kind": "rebate",
@@ -2932,7 +3031,10 @@
       "jurisdiction": {
         "kind": "utility",
         "state": "CT",
-        "utility": "Norwich Public Utilities"
+        "utility": "Norwich Public Utilities",
+        "eiaIds": [
+          13831
+        ]
       },
       "administrator": "Norwich Public Utilities",
       "kind": "rebate",
@@ -3108,7 +3210,10 @@
       "jurisdiction": {
         "kind": "utility",
         "state": "MA",
-        "utility": "Taunton Municipal Light Plant"
+        "utility": "Taunton Municipal Light Plant",
+        "eiaIds": [
+          18488
+        ]
       },
       "administrator": "Taunton Municipal Light Plant",
       "kind": "rebate",
@@ -3157,7 +3262,10 @@
       "jurisdiction": {
         "kind": "utility",
         "state": "MI",
-        "utility": "HomeWorks Tri-County Electric Cooperative"
+        "utility": "HomeWorks Tri-County Electric Cooperative",
+        "eiaIds": [
+          19396
+        ]
       },
       "administrator": "HomeWorks Tri-County Electric Cooperative",
       "kind": "rebate",
@@ -3212,7 +3320,10 @@
       "jurisdiction": {
         "kind": "utility",
         "state": "PA",
-        "utility": "PECO"
+        "utility": "PECO",
+        "eiaIds": [
+          14940
+        ]
       },
       "administrator": "PECO",
       "kind": "rebate",
@@ -3260,7 +3371,10 @@
       "jurisdiction": {
         "kind": "utility",
         "state": "NC",
-        "utility": "Pee Dee Electric Membership Corporation"
+        "utility": "Pee Dee Electric Membership Corporation",
+        "eiaIds": [
+          14717
+        ]
       },
       "administrator": "Pee Dee Electric Membership Corporation",
       "kind": "rebate",
@@ -3308,7 +3422,10 @@
       "jurisdiction": {
         "kind": "utility",
         "state": "NC",
-        "utility": "Piedmont Electric Membership Corporation"
+        "utility": "Piedmont Electric Membership Corporation",
+        "eiaIds": [
+          15023
+        ]
       },
       "administrator": "Piedmont Electric Membership Corporation",
       "kind": "rebate",
@@ -3364,7 +3481,10 @@
       "jurisdiction": {
         "kind": "utility",
         "state": "GA",
-        "utility": "Snapping Shoals EMC"
+        "utility": "Snapping Shoals EMC",
+        "eiaIds": [
+          17832
+        ]
       },
       "administrator": "Snapping Shoals EMC",
       "kind": "rebate",
@@ -3413,7 +3533,10 @@
       "jurisdiction": {
         "kind": "utility",
         "state": "FL",
-        "utility": "Orlando Utilities Commission"
+        "utility": "Orlando Utilities Commission",
+        "eiaIds": [
+          14610
+        ]
       },
       "administrator": "Orlando Utilities Commission",
       "kind": "rebate",
@@ -3461,7 +3584,10 @@
       "jurisdiction": {
         "kind": "utility",
         "state": "MS",
-        "utility": "Mississippi Power"
+        "utility": "Mississippi Power",
+        "eiaIds": [
+          12686
+        ]
       },
       "administrator": "Mississippi Power",
       "kind": "rebate",
@@ -3536,7 +3662,10 @@
       "jurisdiction": {
         "kind": "utility",
         "state": "NM",
-        "utility": "PNM (Public Service Company of New Mexico)"
+        "utility": "PNM (Public Service Company of New Mexico)",
+        "eiaIds": [
+          15473
+        ]
       },
       "administrator": "PNM Transportation Electrification Program",
       "kind": "rebate",
@@ -3603,7 +3732,10 @@
       "jurisdiction": {
         "kind": "utility",
         "state": "WA",
-        "utility": "Clark Public Utilities"
+        "utility": "Clark Public Utilities",
+        "eiaIds": [
+          3660
+        ]
       },
       "administrator": "Clark Public Utilities",
       "kind": "rebate",

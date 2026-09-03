@@ -22,5 +22,10 @@ export async function GET(req: Request) {
   const lat = coord("x-vercel-ip-latitude");
   const lng = coord("x-vercel-ip-longitude");
   const city = lat !== null && lng !== null ? safeDecode(req.headers.get("x-vercel-ip-city") ?? "") : null;
-  return Response.json({ lat, lng, city }, { headers: { "Cache-Control": "private, no-store" } });
+  // The IP's postal code, when Vercel has one and it is a five-digit US
+  // ZIP: the car page's rebate block uses it as the shopper's ZIP until
+  // they type one (lib/shopperZip.ts). A guess, so it is never stored.
+  const postalRaw = safeDecode(req.headers.get("x-vercel-ip-postal-code") ?? "").trim();
+  const postal = /^\d{5}$/.test(postalRaw) ? postalRaw : null;
+  return Response.json({ lat, lng, city, postal }, { headers: { "Cache-Control": "private, no-store" } });
 }
