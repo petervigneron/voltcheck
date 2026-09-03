@@ -15,7 +15,7 @@ const KIND: Record<TileKind, string> = {
   kit: "bg-teal text-paper",
   miss: "bg-vermilion text-paper",
   flag: "bg-saffron text-ink",
-  cut: "bg-cobalt text-paper",
+  cut: "bg-violet text-paper",
 };
 
 // On a card that has taken a solid ground, tiles knock out to white so the
@@ -26,7 +26,7 @@ const ON_COBALT: Record<TileKind, string> = {
   kit: "bg-paper text-cobalt",
   miss: "bg-ink text-paper",
   flag: "bg-saffron text-ink",
-  cut: "bg-paper text-cobalt",
+  cut: "bg-paper text-violet",
 };
 
 const ON_SAFFRON: Record<TileKind, string> = {
@@ -35,7 +35,7 @@ const ON_SAFFRON: Record<TileKind, string> = {
   kit: "bg-ink text-saffron",
   miss: "bg-vermilion text-paper",
   flag: "bg-ink text-saffron",
-  cut: "bg-cobalt text-paper",
+  cut: "bg-violet text-paper",
 };
 
 const ON_TEAL: Record<TileKind, string> = {

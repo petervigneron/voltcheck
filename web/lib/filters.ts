@@ -61,6 +61,13 @@ export const QUICK_TOGGLES: {
   value: string;
   label: string;
   axis: "variant" | "market";
+  /** What the toggle is about, which is what colors it on the rail
+   *  (components/Filters.tsx TONE): money (violet), range (cobalt), kit —
+   *  equipment the car has (teal), or body (ink). Colors mean one thing each
+   *  on this site (app/globals.css @theme); a toggle wears the meaning of
+   *  what it filters, and its pressed fill is the same color, never the
+   *  interactive cobalt (owner, 2026-09-03). */
+  tone: "money" | "range" | "kit" | "body";
 }[] = [
   // The set and its order are the owner's call of 2026-09-02, made on
   // measured evidence (docs/TOGGLE-EVIDENCE-2026-09-02.md: Google autocomplete
@@ -75,18 +82,18 @@ export const QUICK_TOGGLES: {
   // field). Heat pump and price cut stay on forum and "deals" demand.
   // filter_toggled events (0058) now count every press, so the next revision
   // can be made on the site's own numbers.
-  { key: "maxPrice", value: "20000", label: "Under $20,000", axis: "market" },
-  { key: "body", value: "suv", label: "SUVs", axis: "variant" },
-  { key: "drive", value: "AWD", label: "AWD", axis: "variant" },
-  { key: "minRange", value: "300", label: "300+ mi range", axis: "variant" },
-  { key: "heatPump", value: "1", label: "Heat pump", axis: "variant" },
-  { key: "cut", value: "1", label: "Price cut", axis: "market" },
+  { key: "maxPrice", value: "20000", label: "Under $20,000", axis: "market", tone: "money" },
+  { key: "body", value: "suv", label: "SUVs", axis: "variant", tone: "body" },
+  { key: "drive", value: "AWD", label: "AWD", axis: "variant", tone: "kit" },
+  { key: "minRange", value: "300", label: "300+ mi range", axis: "variant", tone: "range" },
+  { key: "heatPump", value: "1", label: "Heat pump", axis: "variant", tone: "kit" },
+  { key: "cut", value: "1", label: "Price cut", axis: "market", tone: "money" },
   // Owner's call, 2026-09-02: a toggle for cars that might qualify for a
   // rebate. Market axis: which programs pay is a property of this week's
   // listings (their state, price and condition), not of the model. The label
   // comes from lib/incentives/copy.ts and the rail hides the toggle until the
   // owner has written it (components/Filters.tsx).
-  { key: "rebate", value: "1", label: INCENTIVE_COPY.toggleLabel, axis: "market" },
+  { key: "rebate", value: "1", label: INCENTIVE_COPY.toggleLabel, axis: "market", tone: "money" },
 ];
 
 /**

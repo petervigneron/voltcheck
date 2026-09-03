@@ -40,13 +40,18 @@ export function listingTiles(
     });
   }
 
-  // "est" whenever the underlying fact isn't the maker's own figure (ID.4,
-  // Leaf, Ariya, ID. Buzz all ship agg-sourced heat-pump facts) — same
-  // convention as chargeTime1080Min below.
-  const hpEst = e.heatPump && e.heatPump.source !== "mfr" ? " est" : "";
-  if (e.heatPump?.status === "no") t.push({ kind: "miss", text: `No heat pump${hpEst}`, title: e.heatPump.detail });
-  else if (e.heatPump?.status === "verify") t.push({ kind: "flag", text: "Heat pump?", title: e.heatPump.detail });
-  else if (e.heatPump?.status === "yes") t.push({ kind: "kit", text: `Heat pump${hpEst}`, title: e.heatPump.detail });
+  // A heat pump is a yes-or-no fact, so it never carries "est": that suffix
+  // exists for numbers, where a maker's simulation beside an EPA rating is a
+  // false equivalence. "No heat pump est" on an ID.4 read as a hedge on a
+  // guess, which the claims rule forbids — the owner (2026-09-03): "there's
+  // not uncertainty around the ID.4 heat pump; we just say it doesn't
+  // exist." Either the source clears the bar to print, or nothing prints.
+  // "verify" (a factory option, or AWD-only with the drivetrain unknown) is
+  // not an answer, and the card does not print a question mark for it: if
+  // there is nothing to say, print nothing. The rail's toggle already
+  // treated "verify" as no answer (2026-08-31).
+  if (e.heatPump?.status === "no") t.push({ kind: "miss", text: "No heat pump", title: e.heatPump.detail });
+  else if (e.heatPump?.status === "yes") t.push({ kind: "kit", text: "Heat pump", title: e.heatPump.detail });
 
   if (l.drive) t.push({ kind: "spec", text: l.drive });
 

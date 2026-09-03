@@ -20,6 +20,19 @@ const HOVER =
 // gap) so seven toggles pack into three rows at 375px instead of four —
 // the owner's call of 2026-09-03 when the rebate toggle made seven. From sm
 // up the cells are the 13px/16px/8px they always were.
+// A quick toggle wears the color of what it filters (lib/filters.ts `tone`):
+// a 5px left keyline when off, a full fill of the same color when on. The
+// pressed fill is deliberately NOT cobalt — cobalt is the interactive accent
+// everywhere else, and a violet-edged toggle turning blue when pressed read
+// as a contradiction (owner, 2026-09-03: "if colors mean something, we have
+// to be consistent"). SUVs is ink: body has no color of its own until a
+// second surface needs one.
+const TONE: Record<"money" | "range" | "kit" | "body", { off: string; on: string }> = {
+  money: { off: "shadow-[inset_5px_0_0_0_var(--color-violet)]", on: "bg-violet text-paper" },
+  range: { off: "shadow-[inset_5px_0_0_0_var(--color-cobalt)]", on: "bg-cobalt text-paper" },
+  kit: { off: "shadow-[inset_5px_0_0_0_var(--color-teal)]", on: "bg-teal text-paper" },
+  body: { off: "shadow-[inset_5px_0_0_0_var(--color-ink)]", on: "bg-ink text-paper" },
+};
 const BLOCK = `${CELL} flex grow items-center gap-1.5 px-3 py-2.5 text-[12px] font-bold uppercase tracking-[0.02em] sm:grow-0 sm:gap-2 sm:px-4 sm:text-[13px] sm:tracking-[0.04em]`;
 const FIELD =
   "w-full border-[3px] border-ink bg-paper px-2.5 py-1.5 text-[13px] font-semibold text-ink focus:outline-none focus:ring-[3px] focus:ring-cobalt";
@@ -704,7 +717,7 @@ export function FilterRail({
               });
               apply({ [t.key]: t.on ? "" : t.value });
             }}
-            className={`${BLOCK} ${HOVER} ${t.on ? "bg-cobalt text-paper" : "bg-paper text-ink"}`}
+            className={`${BLOCK} ${HOVER} ${t.on ? TONE[t.tone].on : `bg-paper text-ink ${TONE[t.tone].off}`}`}
           >
             <span aria-hidden="true">{t.on ? "✓" : "+"}</span>
             {t.label}

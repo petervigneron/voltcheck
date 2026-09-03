@@ -22,6 +22,7 @@
   --color-saffron: #f7b500; /* outlier — look closer, good or bad */
   --color-vermilion: #e8412a; /* something absent */
   --color-teal: #0c6b5e; /* equipment present */
+  --color-violet: #6b3fa0; /* money — price caps, price cuts, rebates (owner, 2026-09-03) */
 }
 
 body {

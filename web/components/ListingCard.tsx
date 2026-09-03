@@ -22,7 +22,8 @@ function subtitle(r: CardRow, distanceMi?: number) {
   if (r.listedOn && LOADED_AT - Date.parse(r.listedOn) < JUST_LISTED_MS) bits.push("Just listed");
   if (r.condition === "new") bits.push("New");
   else if (r.mileage != null) bits.push(`${r.mileage.toLocaleString()} mi${r.mileage === 0 ? " (dealer-listed)" : ""}`);
-  if (r.city) bits.push(`${r.city}, ${r.state}`);
+  // A city without a state printed "Fontana, undefined" (owner, 2026-09-03).
+  if (r.city) bits.push(r.state ? `${r.city}, ${r.state}` : r.city);
   if (distanceMi !== undefined) bits.push(`${distanceMi} mi away`);
   return bits.join(" · ");
 }
