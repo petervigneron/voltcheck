@@ -146,9 +146,18 @@ export async function browserFetch(url, { settleMs = 1500, waitFor = null, captu
   if (!ctx) return { status: "browser_unavailable", body: null, finalUrl: url, captured: [] };
   await politeDelay(new URL(url).host);
   await acquire();
+  // The whole load is bounded, close included. A Playwright call that never
+  // resolves — seen 2026-09-03, one Dealer Inspire rooftop held a crawl for
+  // eleven hours with no checkpoint — would otherwise keep its concurrency
+  // slot forever and, six hangs later, stall every browser lane in the
+  // process. `withTimeout` turns that into an error:timeout answer, and the
+  // page is closed on a bounded timer of its own so a hung close cannot
+  // block the release.
+  const withTimeout = (p, ms, what) =>
+    Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(Object.assign(new Error(`${what} timed out after ${ms}ms`), { name: "timeout" })), ms))]);
   let page;
   try {
-    page = await ctx.context.newPage();
+    page = await withTimeout(ctx.context.newPage(), 30000, "newPage");
     const captured = [];
     if (capture) {
       page.on("response", async (res) => {
@@ -158,13 +167,13 @@ export async function browserFetch(url, { settleMs = 1500, waitFor = null, captu
         } catch {}
       });
     }
-    const res = await page.goto(url, { waitUntil: "domcontentloaded", timeout: timeoutMs });
+    const res = await withTimeout(page.goto(url, { waitUntil: "domcontentloaded", timeout: timeoutMs }), timeoutMs + 15000, "goto");
     if (waitFor) {
       await page.waitForSelector(waitFor, { timeout: timeoutMs }).catch(() => {});
     } else if (settleMs > 0) {
       await page.waitForTimeout(settleMs);
     }
-    const body = await page.content();
+    const body = await withTimeout(page.content(), 30000, "content");
     // `clicks`: selectors to click IN ORDER after the first page settles, each
     // followed by the same settle, its own body and the responses it fired.
     // This is how a lane follows a site's own pager when the firewall blocks
@@ -181,18 +190,18 @@ export async function browserFetch(url, { settleMs = 1500, waitFor = null, captu
       const el = page.locator(sel).first();
       if (!(await el.count())) break;
       try {
-        await Promise.all([page.waitForLoadState("domcontentloaded", { timeout: timeoutMs }).catch(() => {}), el.click({ timeout: 10000 })]);
+        await withTimeout(Promise.all([page.waitForLoadState("domcontentloaded", { timeout: timeoutMs }).catch(() => {}), el.click({ timeout: 10000 })]), timeoutMs + 15000, "click");
       } catch {
         break;
       }
       if (settleMs > 0) await page.waitForTimeout(settleMs);
-      steps.push({ selector: sel, body: await page.content(), finalUrl: page.url(), captured: captured.slice(before) });
+      steps.push({ selector: sel, body: await withTimeout(page.content(), 30000, "content"), finalUrl: page.url(), captured: captured.slice(before) });
     }
     return { status: res ? res.status() : "error:no-response", body, finalUrl: page.url(), captured, steps };
   } catch (e) {
     return { status: `error:${e.name ?? "unknown"}`, body: null, finalUrl: url, captured: [], steps: [] };
   } finally {
-    if (page) await page.close().catch(() => {});
+    if (page) await withTimeout(page.close(), 15000, "close").catch(() => {});
     release();
   }
 }
