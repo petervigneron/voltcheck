@@ -66,3 +66,14 @@ test("VDP: the Product+Car node for this VIN, and only this VIN", () => {
   assert.equal(v.mileageFromOdometer.value, "134147");
   assert.equal(dealerInspireVdpVehicle(vdp, "KM8KNDAF5PU123456"), null);
 });
+
+test("cards without data-vin are read off the VDP hrefs (the second classic markup)", () => {
+  const html = `<div class="vehicle"><a href="https://www.tonkinchevrolet.com/inventory/used-2023-chevrolet-bolt-euv-lt-front-wheel-drive-1G1FY6S06P4123456/">2023 Bolt EUV</a>
+  <a href="/inventory/used-2023-chevrolet-bolt-euv-lt-front-wheel-drive-1G1FY6S06P4123456/#photos">photos</a></div>
+  <a href="/inventory/used-2019-ford-f-150-xlt-1FTEW1EP5KFA00001/">F-150</a> <a href="/inventory/new-vehicles/">all new</a>`;
+  const cards = dealerInspireCards(html, "https://www.tonkinchevrolet.com/used-vehicles/");
+  assert.deepEqual(cards.map((c) => c.vin), ["1G1FY6S06P4123456", "1FTEW1EP5KFA00001"]);
+  assert.equal(cards[0].url, "https://www.tonkinchevrolet.com/inventory/used-2023-chevrolet-bolt-euv-lt-front-wheel-drive-1G1FY6S06P4123456/");
+  assert.equal(dealerInspireIsCandidate(cards[0]), true);
+  assert.equal(dealerInspireIsCandidate(cards[1]), false);
+});

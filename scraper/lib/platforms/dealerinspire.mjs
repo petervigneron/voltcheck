@@ -74,9 +74,17 @@ export function dealerInspireCards(html, base) {
   const out = [];
   const seen = new Set();
   const src = String(html ?? "");
-  for (const m of src.matchAll(/data-vin=["']([A-HJ-NPR-Z0-9]{17})["']/gi)) {
-    const vin = m[1].toUpperCase();
-    if (seen.has(vin)) continue;
+  // Two card markups in the classic theme (measured 2026-09-02: 322 of 1,496
+  // rooftops carry no data-vin at all — tonkinchevrolet.com, hondaofslidell
+  // .com, nucarchevroletwoburn.com …). The VDP href's slug ends in the VIN on
+  // both, so the href is the identity read and data-vin is only the first
+  // place to look.
+  const vins = [];
+  for (const m of src.matchAll(/data-vin=["']([A-HJ-NPR-Z0-9]{17})["']/gi)) vins.push(m[1]);
+  for (const m of src.matchAll(/href=["'][^"']*\/inventory\/[^"']*?([A-HJ-NPR-Z0-9]{17})\/?["']/gi)) vins.push(m[1]);
+  for (const raw of vins) {
+    const vin = raw.toUpperCase();
+    if (!/\d/.test(vin) || seen.has(vin)) continue;
     seen.add(vin);
     const hrefRe = new RegExp(`href=["']([^"']*?/inventory/[^"']*?${vin}/?)["']`, "i");
     const h = hrefRe.exec(src);
