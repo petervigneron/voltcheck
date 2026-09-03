@@ -189,9 +189,10 @@ export function Browse() {
   // as "no" — a grid never filters on a pass it cannot yet see.
   const pro = useProState();
   const matchCtx = { pro: pro === true };
-  // Prototype flag: ?grounds=fact makes card colors mean something (teal =
-  // new battery, cobalt = recent price cut) instead of the one-in-five rhythm.
-  const grounds: GroundsMode = s("grounds") === "fact" ? "fact" : "rhythm";
+  // Cards sit on paper. ?grounds=fact is the prototype where a ground means
+  // something (teal = new battery, violet = recent price cut); the old
+  // one-in-five colour rhythm is gone (owner, 2026-09-03).
+  const grounds: GroundsMode = s("grounds") === "fact" ? "fact" : "plain";
 
   // The first-paint fetch goes out before the index fetch — hook order is
   // request order, and the payload the first card waits on should never queue

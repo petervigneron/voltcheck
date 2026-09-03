@@ -20,7 +20,7 @@ const HOVER =
 // gap) so seven toggles pack into three rows at 375px instead of four —
 // the owner's call of 2026-09-03 when the rebate toggle made seven. From sm
 // up the cells are the 13px/16px/8px they always were.
-// A quick toggle wears the color of what it filters (lib/filters.ts `tone`):
+// A quick toggle wears the color of what it filters (lib/filters.ts `tone`; ochre = range, since cobalt is the interactive accent):
 // a 5px left keyline when off, a full fill of the same color when on. The
 // pressed fill is deliberately NOT cobalt — cobalt is the interactive accent
 // everywhere else, and a violet-edged toggle turning blue when pressed read
@@ -29,7 +29,7 @@ const HOVER =
 // second surface needs one.
 const TONE: Record<"money" | "range" | "kit" | "body", { off: string; on: string }> = {
   money: { off: "shadow-[inset_5px_0_0_0_var(--color-violet)]", on: "bg-violet text-paper" },
-  range: { off: "shadow-[inset_5px_0_0_0_var(--color-cobalt)]", on: "bg-cobalt text-paper" },
+  range: { off: "shadow-[inset_5px_0_0_0_var(--color-ochre)]", on: "bg-ochre text-paper" },
   kit: { off: "shadow-[inset_5px_0_0_0_var(--color-teal)]", on: "bg-teal text-paper" },
   body: { off: "shadow-[inset_5px_0_0_0_var(--color-ink)]", on: "bg-ink text-paper" },
 };

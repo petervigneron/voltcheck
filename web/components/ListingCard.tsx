@@ -28,34 +28,32 @@ function subtitle(r: CardRow, distanceMi?: number) {
   return bits.join(" · ");
 }
 
-// Two ways a card earns a solid ground:
+// A card's ground is paper unless it states a card-level fact:
 //
-//   rhythm — one card in five, alternating cobalt and saffron; pure pacing,
-//            the colour says nothing about the car (the original scheme).
-//   fact   — the ground IS a card-level fact: teal = the battery pack was
-//            replaced, cobalt = the price came down (≥$500 within 14 days,
-//            see lib/listings/price.ts). Everything else stays paper, and
-//            the rarity is the point — a colored card is an event.
+//   plain — every card on paper. The original scheme gave one card in five a
+//           cobalt or saffron ground as pure pacing ("rhythm"); the owner
+//           turned that off on 2026-09-03 — a colour that means nothing on
+//           one card in five undermines every card where it means something.
+//   fact  — the ground IS a card-level fact: teal = the battery pack was
+//           replaced, violet = the price came down (≥$500 within 14 days,
+//           see lib/listings/price.ts; violet is the money colour). Everything
+//           else stays paper, and the rarity is the point — a colored card is
+//           an event. Still behind ?grounds=fact.
 //
 // The fact never rides on colour alone: a teal card carries the "New
-// battery" tile, a cobalt card gets a "−$2,100" tile prepended.
-export type GroundsMode = "rhythm" | "fact";
-
-function rhythmGround(index: number): TileGround {
-  if (index % 5 !== 1) return "paper";
-  return Math.floor(index / 5) % 2 === 0 ? "cobalt" : "saffron";
-}
+// battery" tile, a violet card gets a "−$2,100" tile prepended.
+export type GroundsMode = "plain" | "fact";
 
 const GROUND_CLS: Record<TileGround, string> = {
   paper: "bg-paper text-ink",
-  cobalt: "bg-cobalt text-paper",
+  violet: "bg-violet text-paper",
   saffron: "bg-saffron text-ink",
   teal: "bg-teal text-paper",
 };
 
 const META_CLS: Record<TileGround, string> = {
   paper: "text-ink/60",
-  cobalt: "text-paper/70",
+  violet: "text-paper/70",
   saffron: "text-ink/70",
   teal: "text-paper/70",
 };
@@ -66,7 +64,7 @@ export function ListingCard({
   r,
   distanceMi,
   index = 0,
-  grounds = "rhythm",
+  grounds = "plain",
 }: {
   r: CardRow;
   distanceMi?: number;
@@ -75,7 +73,7 @@ export function ListingCard({
 }) {
   const cut = grounds === "fact" ? r.cut : undefined;
   const ground: TileGround =
-    grounds === "fact" ? (r.packReplaced ? "teal" : cut ? "cobalt" : "paper") : rhythmGround(index);
+    grounds === "fact" ? (r.packReplaced ? "teal" : cut ? "violet" : "paper") : "paper";
   const lead: CardTile[] = [];
   if (cut) {
     lead.push({

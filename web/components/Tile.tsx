@@ -9,8 +9,10 @@
 //   cut     the price came down — states the amount the ground announces
 export type TileKind = "range" | "spec" | "kit" | "miss" | "flag" | "cut";
 
+// Range is ochre, not cobalt: cobalt is the interactive accent on every
+// button and link, and a tile is a fact, not a control (owner, 2026-09-03).
 const KIND: Record<TileKind, string> = {
-  range: "bg-cobalt text-paper",
+  range: "bg-ochre text-paper",
   spec: "bg-putty text-ink",
   kit: "bg-teal text-paper",
   miss: "bg-vermilion text-paper",
@@ -20,17 +22,18 @@ const KIND: Record<TileKind, string> = {
 
 // On a card that has taken a solid ground, tiles knock out to white so the
 // ground keeps its meaning — except the alarm, which stays loud on purpose.
-const ON_COBALT: Record<TileKind, string> = {
-  range: "bg-paper text-cobalt",
-  spec: "bg-paper text-cobalt",
-  kit: "bg-paper text-cobalt",
+// A violet ground is a price cut (fact grounds, components/ListingCard.tsx).
+const ON_VIOLET: Record<TileKind, string> = {
+  range: "bg-paper text-ochre",
+  spec: "bg-paper text-ink",
+  kit: "bg-paper text-teal",
   miss: "bg-ink text-paper",
   flag: "bg-saffron text-ink",
   cut: "bg-paper text-violet",
 };
 
 const ON_SAFFRON: Record<TileKind, string> = {
-  range: "bg-cobalt text-paper",
+  range: "bg-ochre text-paper",
   spec: "bg-ink text-saffron",
   kit: "bg-ink text-saffron",
   miss: "bg-vermilion text-paper",
@@ -39,15 +42,15 @@ const ON_SAFFRON: Record<TileKind, string> = {
 };
 
 const ON_TEAL: Record<TileKind, string> = {
-  range: "bg-paper text-teal",
+  range: "bg-paper text-ochre",
   spec: "bg-paper text-teal",
   kit: "bg-paper text-teal",
   miss: "bg-ink text-paper",
   flag: "bg-saffron text-ink",
-  cut: "bg-paper text-teal",
+  cut: "bg-paper text-violet",
 };
 
-export type TileGround = "paper" | "cobalt" | "saffron" | "teal";
+export type TileGround = "paper" | "violet" | "saffron" | "teal";
 
 export function Tile({
   kind = "spec",
@@ -66,7 +69,7 @@ export function Tile({
   children: React.ReactNode;
 }) {
   const palette =
-    ground === "cobalt" ? ON_COBALT : ground === "saffron" ? ON_SAFFRON : ground === "teal" ? ON_TEAL : KIND;
+    ground === "violet" ? ON_VIOLET : ground === "saffron" ? ON_SAFFRON : ground === "teal" ? ON_TEAL : KIND;
   return (
     <span
       title={title}

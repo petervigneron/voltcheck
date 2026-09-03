@@ -18,11 +18,12 @@
   --color-ink: #121212;
   --color-paper: #ffffff;
   --color-putty: #e8e7e2;
-  --color-cobalt: #1f3fd1; /* range */
+  --color-cobalt: #1f3fd1; /* interactive — buttons, links, focus, pressed (owner, 2026-09-03: cobalt means this and nothing else) */
   --color-saffron: #f7b500; /* outlier — look closer, good or bad */
   --color-vermilion: #e8412a; /* something absent */
   --color-teal: #0c6b5e; /* equipment present */
   --color-violet: #6b3fa0; /* money — price caps, price cuts, rebates (owner, 2026-09-03) */
+  --color-ochre: #8a6d1f; /* range — the number a shopper compares (owner, 2026-09-03; took over from cobalt) */
 }
 
 body {
