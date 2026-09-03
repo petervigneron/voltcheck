@@ -114,7 +114,7 @@ test("the lineup is the owner's (2026-09-03): four lines, deals filter and deal 
   assert.equal(titles.some((t) => t.toLowerCase().includes("unlimited")), false);
   assert.equal(PRO_BENEFITS.find((b) => b.title === "Filter by deals")?.live, true);
   assert.equal(PRO_BENEFITS.find((b) => b.title === "Deal alert")?.live, true);
-  assert.equal(PRO_BENEFITS.find((b) => b.title === "Market trends")?.live, false);
+  assert.equal(PRO_BENEFITS.find((b) => b.title === "Market trends")?.live, true);
   assert.equal(PRO_BENEFITS.find((b) => b.title === "Rebate eligibility")?.live, false);
   // The page prints the same threshold the filter applies.
   assert.match(PRO_BENEFITS.find((b) => b.title === "Filter by deals")!.detail, /\b\d+% or more below\b/);

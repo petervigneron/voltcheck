@@ -51,9 +51,10 @@ export interface ProBenefit {
  *  cannot disagree about the number. */
 export const PRO_BENEFITS: ProBenefit[] = [
   {
-    title: "Market trends",
+    // 0061/0062 + components/PriceTrend.tsx on the /worth result, 2026-09-03.
+title: "Market trends",
     detail: "Track prices over time, and make informed decisions about when to buy or when to sell",
-    live: false,
+    live: true,
   },
   {
     title: "Filter by deals",

@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { WorthForm } from "@/components/WorthForm";
 import { valueVehicle, vehicleLabel, type Valuation, type WorthInput } from "@/lib/listings/value";
+import { currentPass } from "@/lib/pro";
+import { fetchPriceTrend, type PriceTrend } from "@/lib/trend";
+import { PriceTrendCharts } from "@/components/PriceTrend";
 
 // Same posture as /vin/[vin], for the same two reasons. force-dynamic because
 // a result is a function of numbers the visitor typed and inventory that moves
@@ -87,6 +90,20 @@ export default async function WorthPage(props: Props) {
   const input = readInput(sp);
   const valuation = input ? await valueVehicle(input) : null;
 
+  // Market trends (Pro, owner 2026-09-03): the two charts render under the
+  // answer for a pass-holder. Everyone else keeps the page they had; /pro
+  // lists the benefit. The pass lookup and the trend read both fail closed.
+  let trend: PriceTrend | null = null;
+  if (input && valuation) {
+    try {
+      if ((await currentPass()).active) {
+        trend = await fetchPriceTrend({ make: input.make, model: input.model, year: input.year, vin: input.vin });
+      }
+    } catch {
+      trend = null;
+    }
+  }
+
   // Same container and same construction as the browse grid
   // (components/Browse.tsx): one wall of blocks under a max-w-[1400px], each
   // cell drawing its right and bottom keyline so neighbours share an edge.
@@ -109,6 +126,23 @@ export default async function WorthPage(props: Props) {
             picker becomes the way to adjust, not the way in, so it moves
             below what it produced. The bare form keeps the old order. */}
         {input && valuation && <Result input={input} v={valuation} />}
+        {trend && (trend.sales || trend.asks) && (
+          <section className={`${CELL} bg-paper px-5 py-6 sm:px-8`}>
+            <PriceTrendCharts trend={trend} />
+            {/* ODbL: a sales figure is rendering, so the credit renders with
+                it — the same bare line the result block carries. */}
+            {trend.sales && (
+              <a
+                href="https://data.wa.gov/Transportation/Electric-Vehicle-Title-and-Registration-Activity/rpr4-cgyd"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`${CAPTION} mt-4 inline-block text-ink/45 hover:text-cobalt`}
+              >
+                WA DOL (ODbL)
+              </a>
+            )}
+          </section>
+        )}
 
         <WorthForm
           defaults={{
