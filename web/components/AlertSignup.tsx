@@ -18,11 +18,12 @@ export function AlertSignup() {
   const sp = useSearchParams();
   const [email, setEmail] = useState("");
   const [state, setState] = useState<"idle" | "sending" | "done" | "error">("idle");
-  // Free alerts are price cuts only (owner, 2026-09-02); new-car emails go to
-  // a pass-holder's address (scripts/send-alerts.mjs). The line under the
-  // grid says which one this visitor is signing up for.
+  // Search-based alerts are Pro only (owner, 2026-09-02): the free alert is
+  // price drops on SAVED cars (components/PriceDropSignup.tsx). A visitor
+  // without a pass sees no band here at all; null (pass state still on its
+  // way) reads as "no" so the band never flashes in and out.
   const pro = useProState();
-  if (!ENABLED) return null;
+  if (!ENABLED || pro !== true) return null;
 
   // The subscription is the search: same params the URL carries, minus the
   // ones that don't select cars. Matched nightly by scripts/send-alerts.mjs
@@ -58,9 +59,7 @@ export function AlertSignup() {
       <div className={`${CELL} flex min-w-[240px] flex-1 flex-col justify-center bg-saffron px-5 py-4`}>
         <span className="text-[10.5px] font-extrabold tracking-[0.14em] uppercase">Alerts · {label}</span>
         <span className="text-[15px] leading-tight font-extrabold tracking-[-0.01em]">
-          {pro === true
-            ? "Email me when cars matching this search are listed or cut in price"
-            : "Email me when a car matching this search is cut in price"}
+          Email me when cars matching this search are listed or cut in price
         </span>
       </div>
       {state === "done" ? (

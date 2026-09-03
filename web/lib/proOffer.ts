@@ -75,7 +75,7 @@ export const FREE_FOREVER: string[] = [
   "Every listing, every battery and range fact, every price history",
   "The ask-vs-sold delta, on the card and on the car's page",
   "The VIN check, on any EV, whether or not it is listed here",
-  "Saved-search email alerts",
+  "Price drop alerts on saved cars",
 ];
 
 export type OfferState =

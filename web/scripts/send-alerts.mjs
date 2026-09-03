@@ -26,18 +26,20 @@
 // Both windows are additionally capped at 7 days back, so a subscription
 // that predates a sender outage gets a bounded catch-up, not an archive.
 //
-// Free and Pro (owner, 2026-09-02, both decisions the same evening):
-//   * Price-drop alerts are for everyone, at the same cadence — every
-//     confirmed subscription is matched on every run, and publish-feed.yml
-//     runs this after every feed publish as well as the daily schedule in
-//     alerts.yml. last_sent_at advances per send, so the two cannot
-//     double-mail.
-//   * NEW-CAR emails are Pro. A subscription whose address holds a live pass
-//     (pro_passes, migration 0045) gets the "New listings" section — that is
-//     the standing order, lib/watch.ts — and may use the deals filter
-//     (?deal=1, lib/listings/deal.ts, applied by match.ts only when
-//     MatchContext.pro is true, the same rule the grid follows). A free
-//     subscription gets the "Price cuts" section only.
+// Free and Pro (owner, 2026-09-02, three decisions the same evening):
+//   * FREE is price drops on SAVED cars. A subscription whose params begin
+//     "ids=" (migration 0060, app/api/alerts/watchlist) names listing ids;
+//     it is matched by id, gets the "Price cuts" section only, and belongs
+//     to anyone.
+//   * SEARCH-based subscriptions (a browse query string) are PRO only — the
+//     standing order, lib/watch.ts: new cars that fit, plus cuts on cars that
+//     fit, with the deals filter honoured (match.ts MatchContext.pro). A
+//     search subscription whose address holds no live pass (pro_passes,
+//     0045) is skipped entirely; the free search alert no longer exists.
+//   * Cadence is not tiered: every run matches every eligible subscription,
+//     and publish-feed.yml runs this after every feed publish as well as the
+//     daily schedule in alerts.yml. last_sent_at advances per send, so the
+//     two cannot double-mail.
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
@@ -124,25 +126,34 @@ const carLine = (r) => {
 const now = Date.now();
 let sent = 0;
 for (const sub of subs) {
-  const params = new URLSearchParams(sub.params ?? "");
-  const zip = (params.get("zip") ?? "").trim().slice(0, 5);
-  const origin = /^\d{5}$/.test(zip) ? zips[zip] : undefined;
   const isPro = proEmails.has(String(sub.email).toLowerCase());
-  const tests = buildTests((k) => params.get(k) ?? "", {
-    distanceMi: origin ? (r) => (r.loc ? milesBetween(origin, r.loc) : undefined) : undefined,
-    pro: isPro,
-  });
-  const matches = rows.filter((r) => rowMatches(tests, r));
+  const watchlist = typeof sub.params === "string" && sub.params.startsWith("ids=");
+  if (!watchlist && !isPro) continue; // a free search alert no longer exists (header)
+
+  let matches;
+  if (watchlist) {
+    const ids = new Set(sub.params.slice(4).split(",").filter(Boolean));
+    matches = rows.filter((r) => ids.has(r.id));
+  } else {
+    const params = new URLSearchParams(sub.params ?? "");
+    const zip = (params.get("zip") ?? "").trim().slice(0, 5);
+    const origin = /^\d{5}$/.test(zip) ? zips[zip] : undefined;
+    const tests = buildTests((k) => params.get(k) ?? "", {
+      distanceMi: origin ? (r) => (r.loc ? milesBetween(origin, r.loc) : undefined) : undefined,
+      pro: isPro,
+    });
+    matches = rows.filter((r) => rowMatches(tests, r));
+  }
 
   const since = Math.max(Date.parse(sub.last_sent_at ?? sub.created_at ?? 0) || 0, now - CATCHUP_MS);
-  // New-car emails are the Pro half (header). A free subscription's fresh
-  // list is empty by rule, not by absence of cars.
-  const fresh = isPro ? matches.filter((r) => r.listedOn && Date.parse(r.listedOn) > since) : [];
+  // New-car emails belong to the standing order only; a saved-cars list is
+  // cars the shopper already found, so "new" has no meaning for it.
+  const fresh = watchlist ? [] : matches.filter((r) => r.listedOn && Date.parse(r.listedOn) > since);
   const freshIds = new Set(fresh.map((r) => r.id));
   const cuts = matches.filter((r) => r.cut && Date.parse(r.cut.at) > since && !freshIds.has(r.id));
   if (!fresh.length && !cuts.length) continue;
 
-  const searchUrl = `${ORIGIN}/${sub.params ? `?${sub.params}` : ""}`;
+  const searchUrl = watchlist ? `${ORIGIN}/saved` : `${ORIGIN}/${sub.params ? `?${sub.params}` : ""}`;
   const unsubUrl = `${ORIGIN}/alerts/unsubscribe?token=${sub.unsubscribe_token}`;
   const label = sub.label || "your search";
   const subject =

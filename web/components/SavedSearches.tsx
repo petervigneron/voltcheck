@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useProState } from "@/lib/useProState";
 import {
   alertParamsOf,
   readSavedSearches,
@@ -93,6 +94,9 @@ function AlsoEmailMe({ search }: { search: SavedSearch }) {
 }
 
 function SearchRow({ search }: { search: SavedSearch }) {
+  // Search-based alerts are Pro only (owner, 2026-09-02); the free alert is
+  // price drops on saved cars (components/PriceDropSignup.tsx).
+  const pro = useProState();
   return (
     <div className={`${CELL} flex flex-col gap-2 bg-paper px-5 py-4`}>
       <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
@@ -113,7 +117,7 @@ function SearchRow({ search }: { search: SavedSearch }) {
         >
           View results ▸
         </Link>
-        {ALERTS_ENABLED && <AlsoEmailMe search={search} />}
+        {ALERTS_ENABLED && pro === true && <AlsoEmailMe search={search} />}
         <button
           type="button"
           onClick={() => removeSavedSearch(search.qs)}
