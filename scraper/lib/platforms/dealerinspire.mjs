@@ -165,7 +165,13 @@ async function readSrp(origin, path, { maxPages = DEALERINSPIRE_MAX_PAGES } = {}
       cards.push(c);
       fresh++;
     }
-    if (!fresh) break; // a pager that loops back serves the same cards again
+    if (!fresh) {
+      // A pager that loops back serves the same cards again: that IS the end
+      // of the lot, not a hole in the walk (78 of the first 78 batch-2 walks
+      // read "partial" for want of this line).
+      url = null;
+      break;
+    }
     url = dealerInspireNextUrl(res.body, res.finalUrl || url);
   }
   return { cards, requests, pages, status, complete: pages > 0 && !url };
