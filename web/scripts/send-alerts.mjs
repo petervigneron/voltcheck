@@ -26,14 +26,14 @@
 // Both windows are additionally capped at 7 days back, so a subscription
 // that predates a sender outage gets a bounded catch-up, not an archive.
 //
-// --pro: the Pro cadence. Same subscriptions, same predicates, same windows —
-// only the set of addresses changes: those holding a live pass (pro_passes,
-// migration 0045; expires_at in the future). alerts.yml runs the free digest
-// once a day; publish-feed.yml runs this flavour after EVERY feed publish, so
-// a pass-holder's match is mailed the crawl it lands in. Because last_sent_at
-// advances per send, the daily run then finds nothing new for them — the two
-// cadences cannot double-mail. lib/proOffer.ts states the promise this keeps.
-
+// Pro is not a cadence here (owner, 2026-09-02: price-drop alerts are for
+// everyone, untiered) — every confirmed subscription is matched on every run,
+// and publish-feed.yml runs this after every feed publish as well as the
+// daily schedule in alerts.yml. A pass changes ONE thing: a subscription whose
+// address holds a live pass (pro_passes, migration 0045) may use the deals
+// filter (?deal=1, lib/listings/deal.ts), which match.ts applies only when
+// MatchContext.pro is true — the same rule the grid follows. Because
+// last_sent_at advances per send, the two schedules cannot double-mail.
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
@@ -49,7 +49,6 @@ const FROM = process.env.ALERTS_FROM || "Voltcheck <alerts@voltcheck.net>";
 
 const CATCHUP_MS = 7 * 86_400_000;
 const MAX_PER_SECTION = 12;
-const PRO_ONLY = process.argv.includes("--pro");
 
 if (!SUPABASE_URL || !SERVICE_KEY || !RESEND_KEY) {
   console.log("[alerts] not configured (need SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, RESEND_API_KEY) — nothing to do");
@@ -71,28 +70,25 @@ if (!subsRes.ok) {
   console.error(`[alerts] subscription read failed: ${subsRes.status}`);
   process.exit(1);
 }
-let subs = await subsRes.json();
+const subs = await subsRes.json();
 if (!subs.length) {
   console.log("[alerts] no confirmed subscriptions");
   process.exit(0);
 }
 
-if (PRO_ONLY) {
-  // service_role bypasses 0045's zero-policy RLS; this is the same key the
-  // subscription read above uses, and it is the one place either table is
-  // read outside its RPCs. Emails only — the token column is never selected.
+// Which addresses hold a live pass. service_role bypasses 0045's zero-policy
+// RLS; emails only, the token column is never selected. A failed read is
+// logged and treated as "nobody": the deals filter goes quiet for that run,
+// which is the safe direction — no alert may fire on a filter it cannot
+// justify, and every other alert still goes out.
+const proEmails = new Set();
+{
   const passRes = await fetch(
     `${SUPABASE_URL}/rest/v1/pro_passes?select=email&expires_at=gt.${encodeURIComponent(new Date().toISOString())}`,
     { headers: svc }
   );
-  if (!passRes.ok) {
-    console.error(`[alerts] pro_passes read failed: ${passRes.status}`);
-    process.exit(1);
-  }
-  const proEmails = new Set((await passRes.json()).map((p) => String(p.email).toLowerCase()));
-  subs = subs.filter((s) => proEmails.has(String(s.email).toLowerCase()));
-  console.log(`[alerts] pro run: ${proEmails.size} live pass${proEmails.size === 1 ? "" : "es"}, ${subs.length} of their subscriptions confirmed`);
-  if (!subs.length) process.exit(0);
+  if (passRes.ok) for (const p of await passRes.json()) proEmails.add(String(p.email).toLowerCase());
+  else console.error(`[alerts] pro_passes read failed: ${passRes.status} — deals filters inert this run`);
 }
 
 // The same shard fan-out and same-id dedupe as lib/listings/useCardIndex.ts.
@@ -129,6 +125,7 @@ for (const sub of subs) {
   const origin = /^\d{5}$/.test(zip) ? zips[zip] : undefined;
   const tests = buildTests((k) => params.get(k) ?? "", {
     distanceMi: origin ? (r) => (r.loc ? milesBetween(origin, r.loc) : undefined) : undefined,
+    pro: proEmails.has(String(sub.email).toLowerCase()),
   });
   const matches = rows.filter((r) => rowMatches(tests, r));
 

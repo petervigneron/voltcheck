@@ -116,12 +116,17 @@ export default async function ProPage(props: {
           <h1 className="mt-2 max-w-[22ch] text-[30px] leading-[1.05] font-extrabold tracking-[-0.03em] sm:text-[40px]">
             Pay for the push, never for the facts.
           </h1>
+          {/* Owner's copy, verbatim (2026-09-02). Not ours to edit. */}
           <p className="mt-4 max-w-[62ch] text-[15px] leading-relaxed text-paper/85">
-            Everything we know about a specific car is free forever — the listing, the pack, the
-            range, the warranty clock, the price history, the ask-vs-sold delta, the VIN check.
-            Pro buys speed, breadth and automation: being told first, seeing the whole market
-            ranked at once, being watched over time. If a number a free shopper can see today ever
-            moves behind this, we have broken the promise, not improved the product.
+            Voltcheck makes searching for electric and plug-in hybrid cars easy. We&rsquo;ve built
+            the most comprehensive plug-in-car marketplace anywhere, and we make EV-relevant information simple
+            to find. Many car dealers don&rsquo;t know the battery size, range, or charging speed of
+            the cars on their lot, and other car sites don&rsquo;t even collect that information.
+            Voltcheck lets you search for cars, or research a car you&rsquo;ve got your eye on, with
+            one or two clicks.
+          </p>
+          <p className="mt-3 max-w-[62ch] text-[15px] leading-relaxed text-paper/85">
+            Pro members get a few additional benefits:
           </p>
         </div>
       </div>

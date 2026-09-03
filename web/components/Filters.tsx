@@ -513,8 +513,8 @@ export function FilterRail({
   count?: number;
   quickCounts?: Record<string, { n: number; of: number }>;
   /** Whether this browser holds a Pro pass (lib/useProState.ts): null while
-   *  unknown. Decides only how the deal sort is LABELLED here; whether it
-   *  applies is components/Browse.tsx's decision, from the same answer. */
+   *  unknown. A pass shows the deals toggle; whether the filter applies is
+   *  match.ts's decision from the same answer (MatchContext.pro). */
   pro?: boolean | null;
 }) {
   const sp = useSearchParams();
@@ -601,15 +601,18 @@ export function FilterRail({
 
   // A filter a pressed toggle already represents doesn't also get a chip —
   // two controls for the same state read as two different filters.
+  // "deal" has one control, the Pro toggle below, the same way a pressed
+  // quick toggle stands in for its chip; for a stranger it is inert anyway.
   const active = REMOVABLE.flatMap((k) => {
     const v = get(k);
-    if (!v || quickOn.has(k)) return [];
+    if (!v || quickOn.has(k) || k === "deal") return [];
     const label = describeFilter(k, v);
     return label ? [{ key: k, label }] : [];
   });
 
   const heatPumpOn = get("heatPump") === "1";
   const cutOn = get("cut") === "1";
+  const dealOn = get("deal") === "1";
 
   // A radius chosen against the inferred origin has no ZIP chip to represent
   // it; without one of its own the filter would be invisible.
@@ -700,6 +703,26 @@ export function FilterRail({
           </button>
         ))}
 
+        {/* The Pro deals filter (lib/listings/deal.ts): cars at least
+            DEAL_MIN_PCT under similar listings. Rendered only for a
+            pass-holder — a stranger sees the rail they had, and learns what a
+            pass adds on /pro. */}
+        {pro === true && (
+          <button
+            type="button"
+            aria-pressed={dealOn}
+            title={dealOn ? "Remove: Deals" : "Only cars priced well under similar listings"}
+            onClick={() => {
+              track("filter_toggled", undefined, { key: "deal", value: "1", on: !dealOn, surface: "rail", scoped });
+              apply({ deal: dealOn ? "" : "1" });
+            }}
+            className={`${BLOCK} ${HOVER} ${dealOn ? "bg-cobalt text-paper" : "bg-paper text-ink"}`}
+          >
+            <span aria-hidden="true">{dealOn ? "✓" : "+"}</span>
+            Deals
+          </button>
+        )}
+
         {/* Closes the chip group against the trio (or the right edge, once the
             trio has wrapped below). Phones let the cells themselves grow. */}
         <div className={`${CELL} hidden flex-1 min-w-[40px] bg-paper sm:block`} aria-hidden="true" />
@@ -759,13 +782,6 @@ export function FilterRail({
             {/* Without any origin the option would silently sort by nothing;
                 it still renders if a back-navigated URL already carries it. */}
             {(hasOrigin || get("sort") === "distance") && <option value="distance">Distance: nearest</option>}
-            {/* The deal-ranked screener (lib/listings/dealSort.ts). Offered to
-                everyone so the thing a pass buys is visible where it would be
-                used; without a pass the label says so, and Browse keeps the
-                featured order and points at /pro instead of sorting. Held
-                unlabelled while the pass state is still on its way, so the
-                option never flashes from Pro to plain under the pointer. */}
-            <option value="deal">{pro === false ? "Under market: most · Pro" : "Under market: most"}</option>
           </select>
           <span aria-hidden="true" className="pointer-events-none absolute right-4 text-[10px]">
             ▼

@@ -96,11 +96,14 @@ test("the button appears exactly when there is something to sell and a live key 
   });
 });
 
-test("the lineup is the owner's (2026-08-26, 2026-09-02): cadence and screener live, tracking coming, no alert-count tier", () => {
+test("the lineup is the owner's (2026-09-02): deals filter live, trends and rebates coming, no alert tier", () => {
   const titles = PRO_BENEFITS.map((b) => b.title.toLowerCase());
-  // "Unlimited alerts" was cut: free alerts are already effectively unlimited
-  // and shrinking them to sell the difference is the retraction §1 forbids.
-  assert.equal(titles.some((t) => t.includes("unlimited")), false);
-  assert.equal(PRO_BENEFITS.find((b) => b.title === "Valuation tracking")?.live, false);
-  assert.equal(PRO_BENEFITS.filter((b) => b.live).length, 3);
+  // Alerts are untiered (owner): no alert benefit may sit in the Pro column,
+  // and "unlimited alerts" stays cut.
+  assert.equal(titles.some((t) => t.includes("alert") || t.includes("unlimited")), false);
+  assert.equal(PRO_BENEFITS.find((b) => b.title === "Filter by deals")?.live, true);
+  assert.equal(PRO_BENEFITS.find((b) => b.title === "Market trends")?.live, false);
+  assert.equal(PRO_BENEFITS.find((b) => b.title === "Rebate eligibility")?.live, false);
+  // The page prints the same threshold the filter applies.
+  assert.match(PRO_BENEFITS.find((b) => b.title === "Filter by deals")!.detail, /\b\d+% or more under\b/);
 });

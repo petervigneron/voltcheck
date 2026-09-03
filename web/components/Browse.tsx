@@ -17,7 +17,6 @@ import { firstPaintWonRace, useCardIndex, useFirstPaint } from "@/lib/listings/u
 import { milesBetween } from "@/lib/geo";
 import { pushUrl } from "@/lib/pushUrl";
 import { useProState } from "@/lib/useProState";
-import { DEAL_SORT, compareDeal } from "@/lib/listings/dealSort";
 import { rememberBrowseQuery } from "@/lib/browseState";
 
 const CELL = "border-r-[3px] border-b-[3px] border-ink";
@@ -185,12 +184,11 @@ export function Browse() {
   const radiusParam = s("radius");
   const radius = radiusParam || "50";
   const sort = s("sort") || "featured";
-  // The deal sort is the one order a pass buys (lib/proOffer.ts). Without a
-  // pass, ?sort=deal keeps the featured order and the band below the rail
-  // says why — a URL someone was sent must still show cars, and the honest
-  // answer to "why isn't this sorted" is one line, not an empty grid.
+  // Whether this browser holds a Pro pass: it is what lets match.ts apply the
+  // deals filter (?deal=1). Null while the answer is on its way, which reads
+  // as "no" — a grid never filters on a pass it cannot yet see.
   const pro = useProState();
-  const dealLocked = sort === DEAL_SORT && pro !== true;
+  const matchCtx = { pro: pro === true };
   // Prototype flag: ?grounds=fact makes card colors mean something (teal =
   // new battery, cobalt = recent price cut) instead of the one-in-five rhythm.
   const grounds: GroundsMode = s("grounds") === "fact" ? "fact" : "rhythm";
@@ -238,7 +236,7 @@ export function Browse() {
   // what the server rendered. The dummy distance context makes a zip/radius
   // param count as a filter whether or not an origin has resolved yet.
   const pristine =
-    activeFilterKeys(buildTests(s, { distanceMi: () => undefined })).length === 0 &&
+    activeFilterKeys(buildTests(s, { ...matchCtx, distanceMi: () => undefined })).length === 0 &&
     sort === "featured" &&
     (n("page") ?? 1) === 1;
   const firstView = rows === null && !failed && pristine && first ? first : null;
@@ -261,7 +259,7 @@ export function Browse() {
     // The predicates themselves live in lib/listings/match.ts, shared with
     // the alert sender so an email can never fire on a car this grid
     // wouldn't show. Distance context: only an actual origin filters.
-    const tests = buildTests(s, { distanceMi: origin ? (r) => dist.get(r.id) : undefined });
+    const tests = buildTests(s, { ...matchCtx, distanceMi: origin ? (r) => dist.get(r.id) : undefined });
 
     const activeKeys = activeFilterKeys(tests);
     const matches = (r: CardRow, skip?: string) => rowMatches(tests, r, skip);
@@ -279,11 +277,7 @@ export function Browse() {
 
     // Anything that isn't an explicit sort falls back to the featured order;
     // the day term reshuffles it once a day, not on every render.
-    const explicitSorts = new Set([
-      "price", "price-desc", "year-desc", "miles", "range-desc",
-      ...(origin ? ["distance"] : []),
-      ...(pro === true ? [DEAL_SORT] : []),
-    ]);
+    const explicitSorts = new Set(["price", "price-desc", "year-desc", "miles", "range-desc", ...(origin ? ["distance"] : [])]);
     // The server's first paint and this recompute must score with the same day
     // term, or a payload rendered before UTC midnight and a sort after it
     // would reorder the grid under the shopper. So the payload's day wins for
@@ -315,8 +309,6 @@ export function Browse() {
             return b.year - a.year || a.priceUsd - b.priceUsd;
           case "miles":
             return (a.mileage ?? Infinity) - (b.mileage ?? Infinity);
-          case DEAL_SORT:
-            return compareDeal(a, b);
           default:
             return (b.rangeMi ?? -1) - (a.rangeMi ?? -1);
         }
@@ -521,20 +513,6 @@ export function Browse() {
         quickCounts={rows !== null ? quickCounts : firstView ? firstView.quick : undefined}
         pro={pro}
       />
-
-      {/* Only once the pass state has answered "no": while it is on its way the
-          grid holds the featured order silently rather than flashing a band
-          that a pass-holder would see vanish a moment later. */}
-      {dealLocked && pro === false && (
-        <div className="border-l-[3px] border-ink">
-          <div className={`${CELL} bg-saffron px-5 py-3 text-[13px] font-bold`}>
-            Sorting by how far a car sits under similar listings comes with a Pro pass.{" "}
-            <Link href="/pro" className="text-cobalt underline underline-offset-2">
-              Voltcheck Pro
-            </Link>
-          </div>
-        </div>
-      )}
 
       <SpecFacets facets={facets} />
 

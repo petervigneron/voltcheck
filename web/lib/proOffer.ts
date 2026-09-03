@@ -13,28 +13,19 @@
 // unbuilt and the page said "coming" four times; offerState() refused to take
 // money for it.
 //
-// The lineup changed on 2026-08-26 (owner): "unlimited saved-search alerts"
-// was CUT — alerts are effectively unlimited already (0029 caps an address at
-// 20 searches as an anti-abuse measure and knows nothing about paying), and
-// lowering the free allowance to manufacture scarcity would be exactly the
-// retraction §1 exists to prevent. What replaced it is the thing the free
-// lane genuinely does not do: CADENCE. The free digest goes out once a day
-// (.github/workflows/alerts.yml, 11:30 PT); a pass has the same
-// subscriptions re-run after every feed publish (publish-feed.yml's
-// pro-alerts job, send-alerts.mjs --pro), so a match reaches the shopper the
-// crawl it lands in.
-//
-// And on 2026-09-02 the deal push became USER-DEFINED (owner): "email me any
-// Ioniq 5 SEL AWD under 50,000 miles for under $30,000" is a saved search with
-// the Pro cadence, not a separate feature ranking cars by our own estimate.
-// Whether a car qualifies is the shopper's criteria, which the site can always
-// stand behind; "under what its cohort sold for" is a sold-price claim the
-// site withholds outside Washington (card.ts askVsSold) and could not push.
-//
-// The screener is the one benefit that IS our estimate: the browse sort
-// "Under market: most" orders the grid by the ask-vs-market delta every card
-// already prints (lib/listings/dealSort.ts). Nothing new is claimed; what a
-// free shopper sees on one card, a pass lets them sort the country by.
+// The lineup is the owner's and it has moved three times: 2026-08-26 cut
+// "unlimited alerts" (free alerts are effectively unlimited; shrinking them
+// would be the retraction §1 forbids); 2026-09-02 morning made the deal push
+// user-defined and shipped a deal-ranked SORT plus a Pro alert cadence;
+// 2026-09-02 evening the owner replaced that with the three below, in his own
+// words, and ruled that price-drop alerts are for everyone — untiered — so
+// the cadence distinction was removed (publish-feed.yml now runs the sender
+// for every subscriber after every publish). What a pass buys today is one
+// thing: the deals filter (lib/listings/deal.ts, ≥DEAL_MIN_PCT under similar
+// listings), applied on the grid and honoured in a pass-holder's saved-search
+// emails. The other two are research lanes not yet built, and say so.
+
+import { DEAL_MIN_PCT } from "./listings/deal";
 
 export interface ProBenefit {
   /** One line, in the shopper's terms. */
@@ -45,30 +36,24 @@ export interface ProBenefit {
   live: boolean;
 }
 
-/** The Pro column of docs/MONETIZATION.md §1 (lineup of 2026-08-26 and
- *  2026-09-02), with its honesty attached. */
+/** The Pro column, in the owner's words (2026-09-02, verbatim — copy on this
+ *  site is the owner's, not ours; see docs/MONETIZATION.md §1). The deals
+ *  threshold is read from lib/listings/deal.ts so the page and the filter
+ *  cannot disagree about the number. */
 export const PRO_BENEFITS: ProBenefit[] = [
   {
-    title: "Your search, pushed after every crawl",
-    detail:
-      "Save a search as exact as you like — an Ioniq 5 SEL AWD under 50,000 miles for under $30,000 — and a car that matches reaches you the crawl it lands in. Free alerts go out once a day; a pass sends after each of the day's crawls.",
+    title: "Market trends",
+    detail: "Watch how prices move, and make informed decisions about when to buy, or when to sell",
+    live: false,
+  },
+  {
+    title: "Filter by deals",
+    detail: `Pro members get an extra search filter that shows vehicles priced ${DEAL_MIN_PCT}% or more under the average in the vehicle's category`,
     live: true,
   },
   {
-    title: "Price cuts, the crawl we see them",
-    detail:
-      "A cut on any car matching a search you watch is mailed as soon as a crawl records it, hours ahead of the daily digest.",
-    live: true,
-  },
-  {
-    title: "Deal-ranked screener",
-    detail:
-      "Sort the whole market by how far each car sits under similar listings, adjusted for mileage, instead of by asking price.",
-    live: true,
-  },
-  {
-    title: "Valuation tracking",
-    detail: "Tell me when my own car's value moves, so I know when to sell.",
+    title: "Rebate eligibility",
+    detail: "We've researched with vehicles may qualify for state or local tax credits or utility rebates.",
     live: false,
   },
 ];
@@ -79,7 +64,7 @@ export const FREE_FOREVER: string[] = [
   "Every listing, every battery and range fact, every price history",
   "The ask-vs-sold delta, on the card and on the car's page",
   "The VIN check, on any EV, whether or not it is listed here",
-  "Saved-search email alerts, once a day",
+  "Saved-search email alerts",
 ];
 
 export type OfferState =

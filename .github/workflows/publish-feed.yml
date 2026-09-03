@@ -154,18 +154,15 @@ jobs:
         working-directory: scraper
         run: node feed-shard-check.mjs
 
-  # The Pro alert cadence (lib/proOffer.ts: "pushed after every crawl"). A
-  # publish is the moment new cars and new cuts become visible on the grid —
-  # and send-alerts.mjs reads the grid's own /api/index shards, so this is the
-  # earliest an alert can honestly fire. It runs only the subscriptions held
-  # by a live pass (alerts.yml pro_only); the free digest keeps its once-a-day
-  # schedule. On a run where the walk was declined as redundant, the shards
-  # are unchanged and the sender finds nothing newer than last_sent_at — a
-  # no-op, not a duplicate.
-  pro-alerts:
+  # Alert emails after every publish (owner, 2026-09-02: alerts are for
+  # everyone, not a Pro tier). A publish is the moment new cars and new cuts
+  # become visible on the grid — and send-alerts.mjs reads the grid's own
+  # /api/index shards, so this is the earliest an alert can honestly fire.
+  # The daily schedule in alerts.yml stays as the catch-up. On a run where
+  # the walk was declined as redundant, the shards are unchanged and the
+  # sender finds nothing newer than last_sent_at — a no-op, not a duplicate.
+  alerts:
     needs: publish
     if: ${{ always() && needs.publish.result == 'success' }}
     uses: ./.github/workflows/alerts.yml
-    with:
-      pro_only: true
     secrets: inherit

@@ -21,6 +21,10 @@ export const REMOVABLE = [
   "minRange",
   "heatPump",
   "cut",
+  // The Pro deals filter (lib/listings/deal.ts). In REMOVABLE so it types as a
+  // FilterTest and describes as a chip; applied only for a pass-holder
+  // (match.ts reads MatchContext.pro), so ?deal=1 in a stranger's URL is inert.
+  "deal",
   "zip",
 ] as const;
 
@@ -191,6 +195,8 @@ export function describeFilter(key: string, value: string): string | null {
       return value === "1" ? "Heat pump" : null;
     case "cut":
       return value === "1" ? "Price cut" : null;
+    case "deal":
+      return value === "1" ? "Deals" : null;
     case "zip":
       return `Near ${value}`;
     default:

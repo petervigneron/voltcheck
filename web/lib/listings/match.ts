@@ -1,6 +1,7 @@
 import type { CardRow } from "./card";
 import { REMOVABLE, SPEC_FACETS, splitValues, type FacetKey, type RemovableFilter } from "../filters";
 import { modelKey } from "./modelName";
+import { isDeal } from "./deal";
 
 // The browse grid's filter semantics as one shared function. Extracted from
 // components/Browse.tsx when alert emails became a second consumer: an alert
@@ -25,6 +26,10 @@ export interface MatchContext {
   /** Distance from the search's origin, when one exists. Its absence is what
    *  disables the zip filter — same as Browse with no resolvable origin. */
   distanceMi?: (r: CardRow) => number | undefined;
+  /** Whether the searcher holds a Pro pass. Its absence is what disables the
+   *  deals filter: Browse passes lib/useProState's answer, the alert sender
+   *  passes whether the subscription's address holds a live pass. */
+  pro?: boolean;
 }
 
 export type FilterTests = Partial<Record<RemovableFilter, (r: CardRow) => boolean>>;
@@ -112,6 +117,10 @@ export function buildTests(get: (k: string) => string, ctx: MatchContext = {}): 
   // card.ts `cut`), so the toggle can never surface a cheaper extraction
   // methodology as a discount.
   if (get("cut") === "1") tests.cut = (r) => r.cut !== undefined;
+  // Pro only. The predicate is the card's own ask-vs-market figure at the
+  // threshold in lib/listings/deal.ts; a car with no figure is unjudged and
+  // sits the filter out.
+  if (get("deal") === "1" && ctx.pro) tests.deal = (r) => isDeal(r);
   // Values OR within a spec facet ("Lariat or XLT"), facets AND with each
   // other. A car whose version we can't pin down has no value to match on and
   // sits the facet out, the same way the drivetrain and body filters work.
