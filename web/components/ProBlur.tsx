@@ -19,14 +19,15 @@ import { useProState } from "@/lib/useProState";
 // sees it clear a moment after paint rather than a stranger seeing it clear
 // and then blur.
 
-export function ProBlur({ label, children }: { label: string; children: React.ReactNode }) {
+export function ProBlur({ label, children }: { label?: string; children: React.ReactNode }) {
   const pro = useProState();
   // The label is never blurred: a visitor should know what is behind the
   // blur before deciding whether to want it (owner, 2026-09-03). It is the
   // benefit's own title from /pro, so the page and the promise use one word.
-  const caption = (
+  // Optional, because components/Incentives.tsx carries its own heading.
+  const caption = label ? (
     <p className="mb-3 text-[10.5px] font-extrabold uppercase tracking-[0.14em] text-ink/55">{label}</p>
-  );
+  ) : null;
   if (pro === true) {
     return (
       <>
@@ -43,8 +44,8 @@ export function ProBlur({ label, children }: { label: string; children: React.Re
       </div>
       <Link
         href="/pro"
-        aria-label={`${label}: Voltcheck Pro`}
-        className="absolute inset-x-0 top-8 bottom-0 flex items-center justify-center focus:outline-none focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-cobalt"
+        aria-label={label ? `${label}: Voltcheck Pro` : "Voltcheck Pro"}
+        className={`absolute inset-x-0 ${label ? "top-8" : "top-0"} bottom-0 flex items-center justify-center focus:outline-none focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-cobalt`}
       >
         <span className="border-[3px] border-ink bg-paper px-4 py-2 text-[12px] font-extrabold tracking-[0.08em] text-ink uppercase hover:bg-cobalt hover:text-paper">
           Voltcheck Pro
