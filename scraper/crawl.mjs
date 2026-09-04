@@ -534,7 +534,14 @@ async function crawlDealer(domain) {
     // The lane gets the same clock and budget the walk below would have had;
     // without them a Dealer Inspire rooftop ran 60–160 Chrome loads and the
     // 2026-09-03 06:52 rolling run lost every slice to its job timeout.
-    const r = await BROWSER_LANES[dvPlat](origin, { deadlineAt: domainCapAt || 0, maxLoads: budget });
+    // …and a hard stop five minutes past the crawl's own deadline, whatever
+    // the domain cap says: a rooftop that starts at minute 17.9 with an
+    // 8-minute cap and one 2-minute load in flight ends at minute 28, which
+    // is the slice job's timeout to the minute (measured 2026-09-03 20:52
+    // run: 28 of 48 slices cancelled with two domains in flight).
+    const hardStopAt = Number.isFinite(DEADLINE_AT) ? DEADLINE_AT + 5 * 60_000 : 0;
+    const laneDeadline = [domainCapAt || 0, hardStopAt].filter(Boolean).length ? Math.min(...[domainCapAt || 0, hardStopAt].filter(Boolean)) : 0;
+    const r = await BROWSER_LANES[dvPlat](origin, { deadlineAt: laneDeadline, maxLoads: budget });
     report.fetched += r.requests ?? 0;
     for (const v of r.vehicles ?? []) {
       const cls = classifyEv(v);

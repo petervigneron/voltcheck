@@ -165,7 +165,15 @@ jobs:
       max-parallel: 6
       matrix:
         slice: ${{ fromJson(needs.plan.outputs.matrix) }}
-    timeout-minutes: 28
+    # 34, not 28, since the browser lanes (2026-09-03): a slice now spends
+    # 22–27 minutes crawling — ~30 Dealer Inspire rooftops per slice read by
+    # Chrome — and at 28 the tail of a normal slice was the whole slice: the
+    # 20:52 run lost 28 of 48 slices to this timeout with two ordinary Motive
+    # rooftops still in flight, and a cancelled crawl step skips the sync, so
+    # everything the slice read was thrown away. crawl.mjs also hard-stops
+    # browser lanes five minutes past --deadline-min, so a slice's crawl is
+    # bounded near 26 minutes and 34 is headroom, not a budget.
+    timeout-minutes: 34
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -290,7 +298,7 @@ jobs:
       - name: Crawl the slice
         working-directory: scraper
         run: |
-          BROWSER_CONCURRENCY=6 \
+          BROWSER_CONCURRENCY=8 \
           node crawl.mjs $(cat /tmp/domains.txt) \
             --max-pages 80 --cache-hours 0 --concurrency 32 --deadline-min 18 \
             --domain-cap-min 8
