@@ -39,8 +39,12 @@ export async function withWall(promise, wallAt) {
   let timer;
   const wall = new Promise((resolve) => {
     timer = setTimeout(() => resolve(WALL), Math.max(0, wallAt - Date.now()));
-    // So a wall that will not be needed cannot itself hold the process open.
-    timer.unref?.();
+    // Deliberately NOT unref'd. The `finally` below clears it on both paths,
+    // so it can never outlive the race — and an unref'd wall is a wall that
+    // does not fire when it is the only thing left pending, which is exactly
+    // the case where waiting forever would be worst. (It also made every test
+    // after the first in wall.test.mjs die with "Promise resolution is still
+    // pending but the event loop has already resolved" on CI's node 22.)
   });
   // Abandoned work that rejects later must not take the process down with an
   // unhandled rejection — that would undo the whole point of walking away.
