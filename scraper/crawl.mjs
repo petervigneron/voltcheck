@@ -97,6 +97,7 @@ import { pullDealerInspire } from "./lib/platforms/dealerinspire.mjs";
 import { isChapmanChoice, isChapmanChoiceOrigin, pullChapmanChoice } from "./lib/platforms/chapmanchoice.mjs";
 import { pullDealerCenter } from "./lib/platforms/dealercenter.mjs";
 import { closeBrowser } from "./lib/browser.mjs";
+import { withWall, sealReport } from "./lib/wall.mjs";
 import {
   isDealerFront,
   dealerFrontSeeds,
@@ -155,6 +156,20 @@ const DOMAIN_CAP_MIN = flag("--domain-cap-min", 0);
 // below covers a harder kill). Anchored at process start. 0 = no cap.
 const DEADLINE_MIN = flag("--deadline-min", 0);
 const DEADLINE_AT = DEADLINE_MIN > 0 ? Date.now() + DEADLINE_MIN * 60_000 : Infinity;
+// The wall the whole run stops at, five minutes past --deadline-min. The
+// deadline can only stop workers taking NEW domains; this ends the run
+// whatever is still in flight. It has to exist because the deadline and the
+// per-domain cap are both checked BETWEEN steps, so neither can end a call
+// that never returns — and one call that never returns costs a rolling-crawl
+// slice everything it crawled: on 2026-09-04 06:57, 39 of 48 slices were
+// killed by the job timeout with 398-402 of ~400 domains already crawled and
+// written to out/, one or two domains still in flight, and `Promise.all` over
+// the worker pool waiting on them. A cancelled step skips the sync, so all
+// 400 domains' cars were thrown away for the sake of one. Past this wall the
+// run writes what it has and exits; the domains still in flight file no
+// report, and a domain with no report certifies nothing to db-sync, so
+// nothing is delisted for having been abandoned.
+const HARD_STOP_AT = Number.isFinite(DEADLINE_AT) ? DEADLINE_AT + 5 * 60_000 : 0;
 // --cache-hours N: reuse pages fetched within N hours (0 = always live)
 setCacheTtl(flag("--cache-hours", 0) * 3_600_000);
 const flagIdxs = new Set(
@@ -205,10 +220,38 @@ function evishEntry({ url, name, vin }) {
   return EVISH_RE.test(`${name ?? ""} ${url}`);
 }
 
+// Visits the wall below walked away from. They are still running — nothing
+// here can cancel a call — so their sockets and timers still hold the event
+// loop, and the run has to leave rather than wait for them (see the exit at
+// the bottom of this file).
+const walkedAwayFrom = [];
+
+// --domain-cap-min as a bound rather than a request. crawlDealerInto checks
+// the cap at the top of its walk loop, which ends a domain that is making
+// slow progress but cannot end one that is not returning at all — and the
+// walk is not the only thing a visit does: sitemap discovery, the platform
+// API pulls and the browser lanes all run before or instead of it. Measured
+// 2026-09-04: buckeyenissan.com held a worker 26 minutes under an 8-minute
+// cap without printing a line. So the cap is also a clock the whole visit
+// races. `report` is built up in place, so the losing race still hands back
+// every car the visit had found — abandoning the call costs the pages it had
+// not reached, not the ones it had.
 async function crawlDealer(domain) {
   const budget = pageBudget(domain);
   const domainCapAt = DOMAIN_CAP_MIN > 0 ? Date.now() + DOMAIN_CAP_MIN * 60_000 : 0;
   const report = { domain, budget, fetched: 0, vehiclePages: 0, itemListVdps: 0, evs: [], errors: [], notes: [] };
+  const startedAt = Date.now();
+  // A minute past the cap, so the graceful exits inside the walk — which
+  // leave a truthful stoppedEarly and finish their page — always win the race
+  // when they can. This is the net under them, not the normal path.
+  const walls = [domainCapAt ? domainCapAt + 60_000 : 0, HARD_STOP_AT].filter(Boolean);
+  const { finished } = await withWall(crawlDealerInto(domain, budget, domainCapAt, report), walls.length ? Math.min(...walls) : 0);
+  if (finished) return report;
+  walkedAwayFrom.push(domain);
+  return sealReport(report, `abandoned after ${Math.round((Date.now() - startedAt) / 1000)}s without returning`);
+}
+
+async function crawlDealerInto(domain, budget, domainCapAt, report) {
   // The host to ASK is not always the row's identity. A registry domain that
   // 200s by redirecting to another host has no sitemap and no inventory paths
   // of its own — furymotors.net returns 0 sitemap URLs where
@@ -539,8 +582,7 @@ async function crawlDealer(domain) {
     // 8-minute cap and one 2-minute load in flight ends at minute 28, which
     // is the slice job's timeout to the minute (measured 2026-09-03 20:52
     // run: 28 of 48 slices cancelled with two domains in flight).
-    const hardStopAt = Number.isFinite(DEADLINE_AT) ? DEADLINE_AT + 5 * 60_000 : 0;
-    const laneDeadline = [domainCapAt || 0, hardStopAt].filter(Boolean).length ? Math.min(...[domainCapAt || 0, hardStopAt].filter(Boolean)) : 0;
+    const laneDeadline = [domainCapAt || 0, HARD_STOP_AT].filter(Boolean).length ? Math.min(...[domainCapAt || 0, HARD_STOP_AT].filter(Boolean)) : 0;
     const r = await BROWSER_LANES[dvPlat](origin, { deadlineAt: laneDeadline, maxLoads: budget });
     report.fetched += r.requests ?? 0;
     for (const v of r.vehicles ?? []) {
@@ -1524,9 +1566,11 @@ async function crawlDealer(domain) {
 const allEvs = [];
 const reports = [];
 let next = 0;
+const inFlight = new Set();
 async function worker() {
   while (next < domains.length && Date.now() < DEADLINE_AT) {
     const domain = domains[next++];
+    inFlight.add(domain);
     console.error(`── crawling ${domain}`);
     let rep;
     try {
@@ -1537,6 +1581,7 @@ async function worker() {
       // will not delist this dealer's cars.
       rep = { domain, budget: pageBudget(domain), fetched: 0, vehiclePages: 0, itemListVdps: 0, evs: [], errors: [`crash: ${e.message}`], notes: [], truncated: true };
     }
+    inFlight.delete(domain);
     reports.push(rep);
     allEvs.push(...rep.evs);
     console.error(
@@ -1591,17 +1636,42 @@ async function writeOutput() {
 // alive on its own once the workers are done.
 const checkpoint = setInterval(() => { writeOutput().catch(() => {}); }, 120_000);
 checkpoint.unref?.();
-await Promise.all(Array.from({ length: Math.min(CONCURRENCY, domains.length) }, worker));
+// Never wait on the pool forever. Every worker's domain is bounded now (see
+// crawlDealer's wall), but "bounded" is a claim about code I can read, and
+// what this step is actually for is the calls I cannot — an fs read that
+// never settles, a Playwright handle that never resolves, whatever the next
+// one turns out to be. The rolling crawl's whole slice rides on this process
+// EXITING so its sync step can run, so the process gets a wall of its own
+// and honours it whatever is still in flight.
+const pool = Promise.all(Array.from({ length: Math.min(CONCURRENCY, domains.length) }, worker));
+const abandoned = (await withWall(pool, HARD_STOP_AT)).finished ? [] : [...inFlight];
 clearInterval(checkpoint);
 
 const unique = await writeOutput();
+if (walkedAwayFrom.length) {
+  console.error(
+    `crawl: walked away from ${walkedAwayFrom.length} visit(s) that stopped returning — ` +
+    `${walkedAwayFrom.join(", ")}. Each filed a truncated report holding the cars it had already ` +
+    `found, so none of them can delist anything.`
+  );
+}
+if (abandoned.length) {
+  console.error(
+    `crawl: hard stop ${DEADLINE_MIN + 5} minutes in with ${abandoned.length} domain(s) still in flight — ` +
+    `${abandoned.join(", ")}. They file no report at all, so nothing of theirs is certified or delisted; ` +
+    `everything the other ${reports.length} crawled is written and ships.`
+  );
+}
 if (Number.isFinite(DEADLINE_AT) && reports.length < domains.length) {
   console.error(
     `crawl: stopped at the ${DEADLINE_MIN}-minute deadline after ${reports.length}/${domains.length} domains — ` +
     `wrote what's crawled; the rest are picked up next run`
   );
 }
-await closeBrowser();
+// Bounded, because closing is the last thing between a written out/ and the
+// sync step that ships it: a Chrome that will not close must not be able to
+// hold the process the way a domain that would not return used to.
+await withWall(closeBrowser().catch(() => {}), Date.now() + 20_000);
 console.error(`\n${unique} unique EV listings → scraper/out/listings.json`);
 // Said out loud for the same reason merge-shards says it: on a slice of any
 // size this number is normally in the hundreds, and a zero is far more likely
@@ -1610,3 +1680,16 @@ console.error(
   `crawl: ${lastColisting.length} VINs listed on more than one domain across ` +
   `${colistedDomainCount(lastColisting)} domains → scraper/out/colisting-pairs.json`
 );
+// Everything is on disk and said out loud. Abandoned work is still holding
+// sockets, timers and possibly a browser page open, and node does not exit
+// while it does — so a run that walked away from anything would sit here
+// until the orphan happened to finish, which is the 34-minute job timeout
+// again with the output already written. Leaving IS the fix; there is
+// nothing left in this process anyone is waiting for.
+// Exit 0: a run that walked away from a rooftop still succeeded, and a
+// non-zero here would fail the step and skip the sync — losing the 400
+// domains all over again, for a different reason. The write callback is the
+// flush: stderr to a CI log is a pipe, and pipe writes are asynchronous, so
+// exiting straight after the console.error above can cut the very lines that
+// say what was abandoned.
+if (abandoned.length || walkedAwayFrom.length) process.stderr.write("", () => process.exit(0));
