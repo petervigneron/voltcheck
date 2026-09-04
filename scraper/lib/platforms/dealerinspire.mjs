@@ -209,7 +209,7 @@ export async function pullDealerInspire(origin, { srps = DEALERINSPIRE_SRPS, dea
   const motive = await motiveConfigByBrowser(origin);
   if (motive.unavailable) return { ok: false, complete: false, found: 0, candidates: 0, vehicles: [], requests: 1, vdpFailures: 0, why: "browser_unavailable" };
   if (motive.config) {
-    const r = await pullRideMotiveApi(motive.config, origin);
+    const r = await pullRideMotiveApi(motive.config, origin, { deadlineAt });
     return { ok: Boolean(r.ok), complete: Boolean(r.ok && r.complete), found: r.found ?? 0, vehicles: r.vehicles ?? [], requests: 1 + (r.requests ?? 0), vdpFailures: 0, template: "motive" };
   }
   const cards = [];

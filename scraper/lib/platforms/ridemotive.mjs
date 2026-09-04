@@ -300,13 +300,20 @@ async function search(config, page, hitsPerPage) {
  *  it a short read forever. A mid-stream error or the paging cap leaves
  *  complete=false, so crawl.mjs reports truncated and db-sync never delists a
  *  lot we merely failed to finish reading. */
-export async function pullRideMotiveApi(config, origin) {
+// `deadlineAt` is the crawl's per-domain clock, checked between pages: each
+// page is a 20-second-timeout request and a lot can be 30 pages, so on a
+// slow Algolia night one rooftop is a ten-minute tail — the two stragglers
+// that pushed rolling-crawl slices past their job timeout on 2026-09-03 and
+// 2026-09-04 were both this pull. Past the deadline the pull returns what it
+// has, complete=false, and recheck retires per VIN.
+export async function pullRideMotiveApi(config, origin, { deadlineAt = 0 } = {}) {
   const out = [];
   let found = 0;
   let ok = false;
   let reachedEnd = false;
 
   for (let page = 0; page < MAX_PAGES; page++) {
+    if (deadlineAt && Date.now() > deadlineAt) break;
     const { status, json } = await search(config, page, PAGE_SIZE);
     if (status !== 200 || !json || !Array.isArray(json.hits)) break;
     ok = true;

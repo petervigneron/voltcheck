@@ -752,7 +752,7 @@ async function crawlDealer(domain) {
       if (cfg) {
         rm.done = true;
         const before = report.evs.length;
-        const { vehicles, complete, found } = await pullRideMotiveApi(cfg, origin);
+        const { vehicles, complete, found } = await pullRideMotiveApi(cfg, origin, { deadlineAt: domainCapAt || 0 });
         for (const v of vehicles) {
           const cls = classifyEv(v);
           if (!cls.isEv) continue;
