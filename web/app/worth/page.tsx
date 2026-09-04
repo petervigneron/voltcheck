@@ -128,6 +128,9 @@ export default async function WorthPage(props: Props) {
         {input && valuation && <Result input={input} v={valuation} />}
         {trend && (trend.sales || trend.asks) && (
           <section className={`${CELL} bg-paper px-5 py-6 sm:px-8`}>
+            {/* The same caption the blurred block carries on a car's page —
+                the benefit's own title from /pro. */}
+            <p className="mb-3 text-[10.5px] font-extrabold uppercase tracking-[0.14em] text-ink/55">Market trends</p>
             <PriceTrendCharts trend={trend} />
             {/* ODbL: a sales figure is rendering, so the credit renders with
                 it — the same bare line the result block carries. */}

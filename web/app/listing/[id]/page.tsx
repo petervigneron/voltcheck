@@ -354,7 +354,7 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
 
           {trend && (trend.sales || trend.asks) && (
             <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5">
-              <ProBlur>
+              <ProBlur label="Market trends">
                 <PriceTrendCharts trend={trend} />
                 {trend.sales && (
                   <a
