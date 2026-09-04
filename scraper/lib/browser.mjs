@@ -75,7 +75,19 @@ function release() {
   if (next) next();
 }
 
+// BROWSER_LANES=off makes every call answer browser_unavailable without
+// launching anything: the lanes decline cleanly and their rooftops report
+// partial (never a delisting). The switch exists because the rolling crawl
+// lost 39 of 48 slices to its job timeout on 2026-09-04 06:57 with the
+// browser lanes on, and the crawl has to keep landing everything else while
+// the cause is measured.
+const LANES_OFF = /^(off|0|false)$/i.test(String(process.env.BROWSER_LANES ?? ""));
+
 async function getContext() {
+  if (LANES_OFF) {
+    unavailable = "BROWSER_LANES=off";
+    return null;
+  }
   if (unavailable) return null;
   if (!browserP) {
     browserP = (async () => {

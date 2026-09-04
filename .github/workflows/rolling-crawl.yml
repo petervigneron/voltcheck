@@ -298,7 +298,7 @@ jobs:
       - name: Crawl the slice
         working-directory: scraper
         run: |
-          BROWSER_CONCURRENCY=8 \
+          BROWSER_LANES=off BROWSER_CONCURRENCY=8 \
           node crawl.mjs $(cat /tmp/domains.txt) \
             --max-pages 80 --cache-hours 0 --concurrency 32 --deadline-min 18 \
             --domain-cap-min 8
