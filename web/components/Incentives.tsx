@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import type { IncentiveMatch } from "@/lib/incentives/match";
 import { INCENTIVE_COPY } from "@/lib/incentives/copy";
-import { incentivesToRender } from "@/lib/incentives/visible";
+import { incentivesToRender, narrowToZip, type ZipAnswer } from "@/lib/incentives/visible";
 import { useShopperZip } from "@/lib/shopperZip";
 import { ProBlur } from "./ProBlur";
 
@@ -15,9 +15,12 @@ import { ProBlur } from "./ProBlur";
 // the shopper is a customer of one. Given a ZIP — typed on the browse rail or
 // in the field at the foot of this block, else Vercel's IP guess
 // (lib/shopperZip.ts) — /api/rebates/[zip] says which of them hold that ZIP
-// (lib/incentives/territory.ts) and only those render. With no ZIP known,
-// every match renders. Owner, 2026-09-03: a ZIP, not a picker — "I want the
-// site to be easy and smooth to use."
+// (lib/incentives/territory.ts). Which of the answer's programs that leaves
+// standing is lib/incentives/visible.ts's narrowToZip, and the rules it
+// keeps are the reason this block used to disappear from every car outside
+// the shopper's own state. With no ZIP known, every match renders. Owner,
+// 2026-09-03: a ZIP, not a picker — "I want the site to be easy and smooth
+// to use."
 //
 // One collapsed line per program: its name, and its own figure for this car's
 // condition and kind when the matcher settled exactly one, or its price cap
@@ -47,13 +50,18 @@ function host(url: string): string {
 }
 
 // One answer per ZIP per page load; the route is CDN-cached a day anyway.
-const keepCache = new Map<string, Promise<string[] | null>>();
-function keepFor(zip: string): Promise<string[] | null> {
+// The ZIP's own state rides along with the ids: without it the narrowing
+// cannot tell "no program of yours" from "not your state at all".
+type ZipPrograms = Omit<ZipAnswer, "typed">;
+const keepCache = new Map<string, Promise<ZipPrograms | null>>();
+function keepFor(zip: string): Promise<ZipPrograms | null> {
   let p = keepCache.get(zip);
   if (!p) {
     p = fetch(`/api/rebates/${zip}`)
       .then((res) => (res.ok ? res.json() : null))
-      .then((r: { keep?: string[] } | null) => (r && Array.isArray(r.keep) ? r.keep : null))
+      .then((r: { state?: string; keep?: string[] } | null) =>
+        r && typeof r.state === "string" && Array.isArray(r.keep) ? { state: r.state, keep: r.keep } : null
+      )
       .catch(() => null);
     keepCache.set(zip, p);
   }
@@ -62,16 +70,16 @@ function keepFor(zip: string): Promise<string[] | null> {
 
 export function Incentives({ matches: all }: { matches: IncentiveMatch[] }) {
   const matches = incentivesToRender(all);
-  const { zip, setZip } = useShopperZip();
-  // The answer for the ZIP it was asked about; `keep` null means no ZIP, or
-  // the lookup failed — show all. Keyed by ZIP so a stale answer for the
+  const { zip, typed, setZip } = useShopperZip();
+  // The answer for the ZIP it was asked about; `programs` null means no ZIP,
+  // or the lookup failed — show all. Keyed by ZIP so a stale answer for the
   // last ZIP is never read as this one's.
-  const [answer, setAnswer] = useState<{ zip: string | null; keep: string[] | null } | undefined>(undefined);
+  const [answer, setAnswer] = useState<{ zip: string | null; programs: ZipPrograms | null } | undefined>(undefined);
   useEffect(() => {
     if (zip === undefined) return;
     let alive = true;
-    (zip === null ? Promise.resolve(null) : keepFor(zip)).then((k) => {
-      if (alive) setAnswer({ zip, keep: k });
+    (zip === null ? Promise.resolve(null) : keepFor(zip)).then((programs) => {
+      if (alive) setAnswer({ zip, programs });
     });
     return () => {
       alive = false;
@@ -83,8 +91,7 @@ export function Incentives({ matches: all }: { matches: IncentiveMatch[] }) {
   // watches twelve lines collapse into one.
   if (zip === undefined || answer === undefined || answer.zip !== zip) return null;
 
-  const keep = answer.keep;
-  const usable = keep ? matches.filter((m) => keep.includes(m.program.id)) : matches;
+  const usable = narrowToZip(matches, answer.programs && { ...answer.programs, typed });
   if (usable.length === 0) return null;
   // Statewide programs first; a utility program is for its own customers only.
   const ordered = [

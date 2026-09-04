@@ -21,7 +21,7 @@ import { INCENTIVES_COPY_READY } from "@/lib/incentives/copy";
 // No .tsx import here: the CI test job runs Node's type stripping without
 // node_modules, and the hook transpiles .tsx by requiring typescript. The
 // gate lives in a .ts module for exactly this reason (lib/incentives/visible.ts).
-import { incentivesToRender } from "@/lib/incentives/visible";
+import { incentivesToRender, narrowToZip } from "@/lib/incentives/visible";
 import { packIndex, unpackIndex } from "@/lib/listings/pack";
 import type { CardRow } from "@/lib/listings/card";
 import { buildTests } from "@/lib/listings/match";
@@ -138,6 +138,41 @@ test("the copy gate: open now that the owner's two strings are in, and shut agai
   );
   assert.ok(m.length > 0);
   assert.deepEqual(incentivesToRender(m), m, "with the copy written, what matched is what renders");
+});
+
+test("a ZIP narrows only its own state's programs, and an IP guess never narrows to nothing", () => {
+  // A California car: one statewide program and a pile of utility ones.
+  const ca = matchIncentives(
+    enrichListing({
+      id: "t", vin: "1G1FY6S04P4100001", year: 2023, make: "Chevrolet", model: "Bolt EUV", trim: "LT",
+      priceUsd: 19500, mileage: 24000, state: "CA", sellerType: "dealer", condition: "used",
+    }),
+    SITE_POLICY,
+    INCENTIVE_PROGRAMS,
+    new Date("2026-09-02T12:00:00Z")
+  );
+  assert.ok(ca.length > 1, "a used California car meets more than one program");
+  const ids = (ms: typeof ca) => ms.map((m) => m.program.id).sort();
+
+  // In-state, typed: this is what the ZIP is for — the shopper's own utility
+  // out of the dozen.
+  const sf = narrowToZip(ca, { state: "CA", keep: ["ca-clean-cars-4-all", "ca-pge-pre-owned-ev"], typed: true });
+  assert.deepEqual(ids(sf), ["ca-clean-cars-4-all", "ca-pge-pre-owned-ev"]);
+  assert.ok(sf.length < ca.length, "the other utilities are dropped");
+
+  // Out of state: the ZIP answers nothing about California's programs, so it
+  // drops none of them. Before 2026-09-04 this kept [] and the whole block
+  // disappeared from every car outside the shopper's state.
+  const nmTyped = narrowToZip(ca, { state: "NM", keep: ["nm-clean-car-income-tax-credit"], typed: true });
+  assert.deepEqual(ids(nmTyped), ids(ca), "a New Mexico ZIP cannot answer a California program");
+
+  // An IP guess that would empty the block is not allowed to: it says where
+  // a connection came out, not where anyone lives (owner, 2026-09-04).
+  assert.deepEqual(ids(narrowToZip(ca, { state: "CA", keep: [], typed: false })), ids(ca));
+  // A typed ZIP may: that is the shopper telling us.
+  assert.deepEqual(narrowToZip(ca, { state: "CA", keep: [], typed: true }), []);
+  // No ZIP at all: everything the car meets.
+  assert.deepEqual(ids(narrowToZip(ca, null)), ids(ca));
 });
 
 const RELAXED: MatchPolicy = SITE_POLICY;
