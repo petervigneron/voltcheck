@@ -5,7 +5,7 @@
 //   node discover-autotrader.mjs [--delay-ms 8000] [--cap 1000] [--fuel ELE,PIH]
 //                                [--records 100] [--listing-types USED,CERTIFIED]
 //                                [--filters makeCode=TESLA] [--max-pages N]
-//                                [--fresh] [--diff-only]
+//                                [--max-requests N] [--fresh] [--diff-only]
 //
 // What this is. Every dealer with a used BEV or PHEV listed on Autotrader is
 // a rooftop that sells electrified cars, and the search results name it and
@@ -58,6 +58,30 @@
 // VINs seen match its count; children's counts are summed against their
 // parent's. Disagreements are recorded, not hidden.
 //
+// What the edge tolerates is a budget for the DAY, not a rate. Worth knowing
+// before planning a big walk. On 2026-09-05 the first run of the day reached
+// request 116 before the block page; a second run the same evening, rooted at
+// makeCode=TESLA and deliberately SLOWER (12s between loads against the first
+// run's 8s), was blocked on its third load — request 6 of its checkpoint, on
+// an ordinary year cell, with the two loads before it answered normally. So
+// slowing down did not buy more requests, which is the measurement that
+// matters: the ceiling tracks this identity over hours, not the spacing
+// within one run. Plan for a few hundred loads a day across ALL sessions and
+// spend them where they buy the most dealers, and treat a block as the day's
+// budget being gone rather than as something a longer delay would have
+// avoided. The contract on a block is unchanged and absolute: stop, record
+// the count, do not resume that day, never retry under another identity.
+//
+// The used Tesla cell, measured 2026-09-05 for whoever walks it next:
+// makeCode=TESLA + fuelTypeGroup=ELE + USED,CERTIFIED is 11,511 cars, model
+// years 2008-2026, prices $1,700-$299,995 with a mean of $34,771. At ~90
+// dealers a page that is ~120 walk pages plus its planning probes — two or
+// three days of the budget above, so root a run at ONE make and let the
+// checkpoint accumulate across runs. Note that modelCode carries no options
+// in the page state even with a make pinned (makeCode carries 72), so model
+// is NOT available as a partition dimension from the page's own data; the
+// tree splits such a make by year and then by price band.
+//
 // Outputs (scraper/out/): autotrader-discovery.checkpoint.json (resumable
 // state, rewritten after every page), autotrader-dealers.json (every seller
 // seen), autotrader-new-sites.json (registry-shaped rows for sellers whose
@@ -98,6 +122,12 @@ const ROOT = Object.fromEntries(
   })
 );
 const MAX_PAGES = Number(opt("max-pages", Infinity)); // smoke-test budget; the run stops cleanly when spent
+// A budget on EVERY load this run — probes included, which --max-pages does
+// not count. The Tesla walk plans ~180 cells before it reads a single page of
+// some of them, so "pages" is not the unit that bounds a run's exposure; loads
+// are. Spending it is a clean Stop: the checkpoint is intact and a later run
+// resumes where this one left off.
+const MAX_REQUESTS = Number(opt("max-requests", Infinity));
 const PW_DIR = opt("playwright", process.env.VOLTCHECK_PLAYWRIGHT);
 const SORT = opt("sort", ""); // e.g. derivedpriceASC; measured 23/page under a sort vs 24 by default, so off unless asked
 const ORIGIN = "https://www.autotrader.com";
@@ -153,6 +183,7 @@ async function openBrowser() {
 
 class Stop extends Error {}
 let lastLoad = 0;
+let requestsThisRun = 0;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 async function load(url) {
@@ -160,9 +191,11 @@ async function load(url) {
   if (ck.robots && !robotsRulesAllow(ck.robots, u.pathname + u.search)) {
     throw new Stop(`robots disallows ${u.pathname + u.search} — refusing`);
   }
+  if (requestsThisRun >= MAX_REQUESTS) throw new Stop(`--max-requests ${MAX_REQUESTS} spent`);
   const wait = lastLoad + DELAY_MS - Date.now();
   if (wait > 0) await sleep(wait);
   lastLoad = Date.now();
+  requestsThisRun++;
   ck.requests++;
   const r = await page.goto(u.href, { waitUntil: "domcontentloaded", timeout: 60000 });
   const status = r?.status() ?? 0;
@@ -174,6 +207,7 @@ async function load(url) {
     console.error(`  ${transient ? "empty/unavailable page" : status} on ${u.href}; backing off 120s`);
     await sleep(120000);
     lastLoad = Date.now();
+    requestsThisRun++;
     ck.requests++;
     const r2 = await page.goto(u.href, { waitUntil: "domcontentloaded", timeout: 60000 });
     const html2 = await page.content();
@@ -226,6 +260,12 @@ function parseSrp(html) {
     owners: e.owners ?? {},
     modelOptions: (e.srp_filters?.options?.modelCode?.options ?? []).map((o) => o.value).filter(Boolean),
     makeOptions: (e.srp_filters?.options?.makeCode?.options ?? []).map((o) => o.value).filter(Boolean),
+    // Which dimensions the site itself offers on THIS cell. Recorded so that a
+    // cell the tree runs out of splits for names its own next dimension from
+    // the page's state instead of from a guessed parameter — a guessed one
+    // that the site silently drops reads back as the national query, which is
+    // the failure filtersHonoured exists to catch and would end the run.
+    filterKeys: Object.keys(e.srp_filters?.options ?? {}),
     priceStats: sr.stats?.derivedprice,
     yearStats: sr.stats?.year,
   };
@@ -281,6 +321,7 @@ async function probe(fuel, filters) {
     makeOptions: s.makeOptions.length ? s.makeOptions : undefined,
     priceStats: s.priceStats,
     yearStats: s.yearStats,
+    filterKeys: s.filterKeys?.length ? s.filterKeys : undefined,
   };
   // The probe page is kept in memory only, never in the checkpoint: it holds
   // listing rows, and the checkpoint must stay dealer-level. walk() consumes
@@ -305,15 +346,26 @@ function childrenOf(p) {
     return out;
   }
   if (!f.modelCode && (p.modelOptions ?? []).length > 1) return p.modelOptions.map((m) => ({ ...f, modelCode: m }));
-  // Price bisection. Bounds are inclusive on the site; split at the midpoint
-  // of the partition's own observed price range.
+  // Price bisection. Bounds are inclusive on the site; the split point is the
+  // cell's OWN mean price, not the midpoint of its range.
+  //
+  // Measured 2026-09-05 on Tesla: a make's prices are not spread across their
+  // range, they cluster hard at the bottom of it. The whole used Tesla cell
+  // runs $1,700-$299,995 with a mean of $34,771 — one $300k car stretches a
+  // range whose mass sits near $30k, so a midpoint split at $150,848 puts
+  // essentially every car on one side and bisects nothing. Splitting at the
+  // mean divides the cars rather than the axis, and the page state reports
+  // the mean for free on every probe. Each level of a midpoint split that
+  // fails to divide costs two probe requests and buys nothing, and this lane's
+  // budget is requests: that is what makes this worth the deviation.
   const lo = f.minPrice ?? Math.max(0, Math.floor(p.priceStats?.min ?? 0));
   const hi = f.maxPrice ?? Math.ceil(p.priceStats?.max ?? 0);
   if (!(hi > lo)) return [];
-  const mid = Math.floor((lo + hi) / 2);
+  const mean = Math.round(p.priceStats?.average ?? NaN);
+  const cut = Number.isFinite(mean) && mean > lo && mean < hi ? mean : Math.floor((lo + hi) / 2);
   return [
-    { ...f, minPrice: lo, maxPrice: mid },
-    { ...f, minPrice: mid + 1, maxPrice: hi },
+    { ...f, minPrice: lo, maxPrice: cut },
+    { ...f, minPrice: cut + 1, maxPrice: hi },
   ];
 }
 
@@ -580,6 +632,7 @@ try {
   // between runs and the contract is what they say NOW).
   const r = await page.goto(`${ORIGIN}/robots.txt`, { waitUntil: "domcontentloaded", timeout: 60000 });
   lastLoad = Date.now();
+  requestsThisRun++;
   ck.requests++;
   if (r.status() !== 200) throw new Stop(`robots.txt answered ${r.status()}`);
   const txt = await page.evaluate(() => document.body.innerText);
