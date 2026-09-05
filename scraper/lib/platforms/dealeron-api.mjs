@@ -322,33 +322,79 @@ export function vehicleNode(vc, origin) {
   };
 }
 
-const PAGE_SIZE = 24; // the endpoint's cap — asking for more falls back to 12
-const MAX_PAGES = 400; // runaway guard, well past any single-lot total seen
+// 96, not 24, and the old comment ("the endpoint's cap — asking for more falls
+// back to 12") was half right. The endpoint accepts 12, 24, 48 and 96 and
+// falls back to 12 for everything else — 36, 60, 72, 100, 120, 144, 192, 240
+// and 384 all measured returning 12 on 2026-09-05. So 24 was not the cap, it
+// was one of four accepted values, and the lowest useful one.
+//
+// What that cost: these are group rooftops. Every one of the 28 DealerOn
+// domains the crawl walked away from on the 2026-09-04 20:39 run has TWO lots
+// and 4,300-12,100 cars — familydeal.com 12,108, edmorse.com 10,913,
+// machaik.com 8,403 — which at 24 a page is 505, 455 and 351 requests. At the
+// ~2.5 s a page these endpoints answer in, that is 21, 19 and 15 minutes, and
+// the visit is abandoned at 9. It returned NOTHING, every night, for the same
+// reason each time. At 96 the same three lots are 127, 114 and 88 requests:
+// 5.3 minutes at worst, and the whole class lands inside the wall.
+//
+// Control-tested before changing it: pn=96 pt=1..2 returns exactly the same
+// 192 distinct VINs as pn=24 pt=1..8 on familydeal.com, and the same-set check
+// passes on edmorse, feldmanchevyofnovi, bergstromauto and crainteam. It is
+// also 75% fewer requests at the dealer for identical data — 7,637 down to
+// 1,922 across those 28 rooftops — so this is the polite direction as well as
+// the fast one.
+const PAGE_SIZE = 96;
+const MAX_PAGES = 400; // runaway guard, 38,400 cars at the page size above
 
-function apiUrl(dealerId, pageId, origin, host, pt) {
-  return `${origin}/api/vhcliaa/vehicle-pages/cosmos/srp/vehicles/${dealerId}/${pageId}?pt=${pt}&pn=${PAGE_SIZE}&host=${host}`;
+function apiUrl(dealerId, pageId, origin, host, pt, pn = PAGE_SIZE) {
+  return `${origin}/api/vhcliaa/vehicle-pages/cosmos/srp/vehicles/${dealerId}/${pageId}?pt=${pt}&pn=${pn}&host=${host}`;
 }
+
+// The signature of a rooftop refusing the page size: this endpoint answers an
+// unaccepted `pn` with exactly 12 cards and a 200, never an error. PAGE_SIZE
+// was verified on five rooftops, but "five rooftops" is not "every DealerOn
+// rooftop", and a rooftop that quietly fell back to 12 would be paged in
+// twelves — EIGHT times more requests than at 24, the value this replaced,
+// which would make this change worse than what it fixed on exactly the sites
+// nobody measured. A lot genuinely holding 12 or fewer cars is not this: the
+// fallback only reads as one when the lot says it has more.
+const FALLBACK_PAGE = 12;
+const refusedPageSize = (cards, total, asked) => asked > FALLBACK_PAGE && cards === FALLBACK_PAGE && total > FALLBACK_PAGE;
 
 // Page one lot (a dealerId/pageId pair) to completion. `complete` is true ONLY
 // when the walk reached the reported TotalCount (or a clean empty lot): a
 // partial or failed pull returns complete=false so the caller reports
 // truncated:true and db-sync never delists on an API hiccup.
-async function pullLot(dealerId, pageId, origin, referer) {
+async function pullLot(dealerId, pageId, origin, referer, deadlineAt = 0) {
   const host = new URL(origin).host;
   const out = [];
   let total = 0;
   let fetched = 0;
   let ok = false;
   let reachedEnd = false;
+  // Downgraded once, on the first page, if this rooftop refuses PAGE_SIZE.
+  let pn = PAGE_SIZE;
 
   for (let pt = 1; pt <= MAX_PAGES; pt++) {
-    const { status, json } = await politeGetJson(apiUrl(dealerId, pageId, origin, host, pt), { headers: { referer } });
+    // Stop ASKING at the deadline, rather than being walked away from while
+    // still asking. crawl.mjs's wall (lib/wall.mjs) ends the wait, not the
+    // work: an abandoned pull keeps paging this dealer's API until the whole
+    // process exits, which is both wasted and impolite. Stopping here also
+    // hands back the cars already read — `complete` stays false, so the
+    // caller reports truncated and db-sync delists nothing.
+    if (deadlineAt && Date.now() > deadlineAt) break;
+    const { status, json } = await politeGetJson(apiUrl(dealerId, pageId, origin, host, pt, pn), { headers: { referer } });
     if (status !== 200 || !json || !Array.isArray(json.DisplayCards)) break;
     ok = true;
     const tc = json.Paging?.PaginationDataModel?.TotalCount;
     if (Number.isFinite(tc)) total = tc;
     // Ad cards are interleaved with vehicles; only VehicleCards are inventory.
     const cards = json.DisplayCards.filter((c) => c && !c.IsAdCard && c.VehicleCard).map((c) => c.VehicleCard);
+    if (pt === 1 && refusedPageSize(cards.length, total, pn)) {
+      pn = 24; // the value this file used before, and the one every rooftop took
+      pt = 0; // the loop's ++ makes this page 1 again
+      continue;
+    }
     for (const vc of cards) {
       const node = vehicleNode(vc, origin);
       if (node) out.push(node);
@@ -372,14 +418,18 @@ async function pullLot(dealerId, pageId, origin, referer) {
 // crawl's completeness so db-sync won't delist behind a half-read rooftop.
 // `origin` is the fallback for a lot dealerOnLots couldn't attribute (should
 // not happen in practice, since every lot it returns carries its own).
-export async function pullDealerOnApi(lots, origin) {
+export async function pullDealerOnApi(lots, origin, { deadlineAt = 0 } = {}) {
   const vehicles = [];
   let found = 0;
   let anyOk = false;
   let allComplete = true;
   for (const lot of lots) {
+    if (deadlineAt && Date.now() > deadlineAt) {
+      allComplete = false;
+      break;
+    }
     const lotOrigin = lot.origin || origin;
-    const r = await pullLot(lot.dealerId, lot.pageId, lotOrigin, `${lotOrigin}/searchused.aspx`);
+    const r = await pullLot(lot.dealerId, lot.pageId, lotOrigin, `${lotOrigin}/searchused.aspx`, deadlineAt);
     if (r.ok) anyOk = true;
     if (!r.complete) allComplete = false;
     vehicles.push(...r.vehicles);

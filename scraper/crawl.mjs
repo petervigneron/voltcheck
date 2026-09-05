@@ -1144,7 +1144,7 @@ async function crawlDealerInto(domain, budget, domainCapAt, report) {
       if (cfg) {
         ddcApi.done = true;
         const before = report.evs.length;
-        const { vehicles, ddcByVin, complete, found, ok } = await pullDealerComApi(cfg, origin);
+        const { vehicles, ddcByVin, complete, found, ok } = await pullDealerComApi(cfg, origin, { deadlineAt: domainCapAt || 0 });
         if (ok) {
           for (const v of vehicles) {
             const cls = classifyEv(v);
@@ -1190,7 +1190,7 @@ async function crawlDealerInto(domain, budget, domainCapAt, report) {
       if (lots.length) {
         deolApi.done = true;
         const before = report.evs.length;
-        const { vehicles, complete, found, ok } = await pullDealerOnApi(lots, origin);
+        const { vehicles, complete, found, ok } = await pullDealerOnApi(lots, origin, { deadlineAt: domainCapAt || 0 });
         if (ok) {
           for (const v of vehicles) {
             const cls = classifyEv(v);

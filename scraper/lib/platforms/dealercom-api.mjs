@@ -208,7 +208,7 @@ function requestBody(config, start) {
 // pull returns complete=false so the caller reports truncated:true and db-sync
 // never delists a lot on the strength of an API hiccup. `ok` is false when the
 // first call didn't answer at all, so the caller can fall back to the HTML path.
-export async function pullDealerComApi(config, origin) {
+export async function pullDealerComApi(config, origin, { deadlineAt = 0 } = {}) {
   const apiUrl = `${origin}/api/widget/ws-inv-data/getInventoryAndFacets`;
   const referer = `${origin}/used-inventory/index.htm`;
   const nodes = [];
@@ -219,6 +219,16 @@ export async function pullDealerComApi(config, origin) {
   let reachedEnd = false;
 
   for (let page = 0; page < MAX_PAGES; page++) {
+    // Stop ASKING at the deadline. crawl.mjs's wall ends the crawl's WAIT, not
+    // this loop — an abandoned pull goes on POSTing to the dealer until the
+    // process exits. That matters most here, because this endpoint's pageSize
+    // really is capped (48; 96 and 200 both measured returning ~50 on
+    // 2026-09-05) and the group-aggregator rooftops behind it are enormous:
+    // hendrickcars.com reports 34,168 cars and sonicautomotive.com 43,914,
+    // which are 712 and 915 requests. Neither can finish inside a per-domain
+    // budget and neither should keep going after one. `complete` stays false,
+    // so the caller reports truncated and nothing is delisted.
+    if (deadlineAt && Date.now() > deadlineAt) break;
     const { status, json } = await politePostJson(apiUrl, { body: requestBody(config, start), headers: { referer } });
     if (status !== 200 || !json || !Array.isArray(json.inventory)) break;
     ok = true;
