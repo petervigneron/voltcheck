@@ -5,6 +5,7 @@ import type { IncentiveMatch } from "@/lib/incentives/match";
 import { INCENTIVE_COPY } from "@/lib/incentives/copy";
 import { incentivesToRender, narrowToZip, type ZipAnswer } from "@/lib/incentives/visible";
 import { useShopperZip } from "@/lib/shopperZip";
+import { proBenefitTitle } from "@/lib/proOffer";
 import { ProBlur } from "./ProBlur";
 
 // Incentive programs this car meets the vehicle conditions of, narrowed to
@@ -34,6 +35,12 @@ import { ProBlur } from "./ProBlur";
 // when there is no match — before or after narrowing — or while the copy is
 // unwritten (lib/incentives/visible.ts). Every figure is the program's own,
 // so nothing here carries an "est." mark; a derived figure would have to.
+//
+// The blur carries the benefit's own /pro title as its caption, never blurred
+// itself. Owner, 2026-09-04: a visitor needs "to know what's actually blurred
+// out below the blur, so it should say something about the rebate, not just
+// voltcheck pro." It is read from lib/proOffer.ts rather than retyped, so the
+// caption cannot promise something the /pro page does not sell.
 //
 // A client component because the page is static and the ZIP is the
 // shopper's; the matches arrive as props, plain data.
@@ -100,7 +107,7 @@ export function Incentives({ matches: all }: { matches: IncentiveMatch[] }) {
   ];
   return (
     <section className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5">
-      <ProBlur>
+      <ProBlur label={proBenefitTitle("rebates")}>
         <ul className="divide-y divide-zinc-100 dark:divide-zinc-800">
           {ordered.map((m) => {
             const url = m.program.sources[0]?.url;

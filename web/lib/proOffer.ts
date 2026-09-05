@@ -36,7 +36,13 @@
 
 import { DEAL_MIN_PCT } from "./listings/deal";
 
+/** A stable handle for one benefit, so a surface can name the benefit it is
+ *  gating without copying its title. The titles are the owner's and have
+ *  been rewritten four times; an id has not moved. */
+export type ProBenefitId = "market-trends" | "deals-filter" | "rebates" | "deal-alert";
+
 export interface ProBenefit {
+  id: ProBenefitId;
   /** One line, in the shopper's terms. */
   title: string;
   /** What it does — or, while it is coming, what it will do. */
@@ -52,11 +58,13 @@ export interface ProBenefit {
 export const PRO_BENEFITS: ProBenefit[] = [
   {
     // 0061/0062 + components/PriceTrend.tsx on the /worth result, 2026-09-03.
-title: "Market trends",
+    id: "market-trends",
+    title: "Market trends",
     detail: "Track prices over time, and make informed decisions about when to buy or when to sell",
     live: true,
   },
   {
+    id: "deals-filter",
     title: "Filter by deals",
     detail: `An extra search filter for vehicles priced ${DEAL_MIN_PCT}% or more below average`,
     live: true,
@@ -65,17 +73,32 @@ title: "Market trends",
     // Pro since 2026-09-03: the rail toggle, the card tag and the listing
     // block (components/Incentives.tsx, blurred like the trends) all read
     // the pass. Owner: "it should be paywalled like price trends are".
+    id: "rebates",
     title: "Rebate eligibility",
     detail: "Many EVs still qualify for local tax credits or utility rebates",
     live: true,
   },
   {
     // The standing order (lib/watch.ts, components/WatchForm.tsx).
+    id: "deal-alert",
     title: "Deal alert",
     detail: "Email notification when a car you want appears on the site or drops into your price range",
     live: true,
   },
 ];
+
+/** One benefit's title, for a surface that gates on it — today the two
+ *  blurred blocks on a car's page (components/ProBlur.tsx). Owner, 2026-09-04:
+ *  a visitor "need[s] to know what's actually blurred out below the blur, so
+ *  it should say something about the rebate, not just voltcheck pro." Read
+ *  from here rather than retyped so a blur caption can never promise
+ *  something the /pro page does not sell, the same way the deals threshold is
+ *  read from lib/listings/deal.ts. */
+export function proBenefitTitle(id: ProBenefitId, benefits: ProBenefit[] = PRO_BENEFITS): string {
+  const b = benefits.find((x) => x.id === id);
+  if (!b) throw new Error(`no Pro benefit "${id}"`);
+  return b.title;
+}
 
 export type OfferState =
   /** Benefits exist and Stripe is configured — the buttons work. */

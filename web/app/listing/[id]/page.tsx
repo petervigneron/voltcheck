@@ -30,6 +30,7 @@ import { batteryWarranty } from "@/lib/listings/warranty";
 import { factLinksFor } from "@/lib/facts/links";
 import { matchIncentives } from "@/lib/incentives/match";
 import { Incentives } from "@/components/Incentives";
+import { proBenefitTitle } from "@/lib/proOffer";
 
 // ISR: each listing page renders once, then serves from the CDN for a day —
 // the true cadence of the data underneath it (nightly sync, recheck, price
@@ -354,7 +355,7 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
 
           {trend && (trend.sales || trend.asks) && (
             <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5">
-              <ProBlur label="Market trends">
+              <ProBlur label={proBenefitTitle("market-trends")}>
                 <PriceTrendCharts trend={trend} miles={listing.mileage} />
                 {trend.sales && (
                   <a

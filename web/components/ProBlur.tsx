@@ -23,8 +23,14 @@ export function ProBlur({ label, children }: { label?: string; children: React.R
   const pro = useProState();
   // The label is never blurred: a visitor should know what is behind the
   // blur before deciding whether to want it (owner, 2026-09-03). It is the
-  // benefit's own title from /pro, so the page and the promise use one word.
-  // Optional, because components/Incentives.tsx carries its own heading.
+  // benefit's own title from /pro (lib/proOffer.ts proBenefitTitle), so the
+  // page and the promise use one word.
+  //
+  // Optional in the type only. It was documented as optional "because
+  // Incentives.tsx carries its own heading" — that component has no heading
+  // and never had one, so the rebate block shipped on 2026-09-03 as an
+  // unexplained smear with a "Voltcheck Pro" button on it. Owner, 2026-09-04:
+  // "we need to know what's actually blurred out below the blur." Pass one.
   const caption = label ? (
     <p className="mb-3 text-[10.5px] font-extrabold uppercase tracking-[0.14em] text-ink/55">{label}</p>
   ) : null;

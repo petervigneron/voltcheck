@@ -22,6 +22,7 @@ import { INCENTIVES_COPY_READY } from "@/lib/incentives/copy";
 // node_modules, and the hook transpiles .tsx by requiring typescript. The
 // gate lives in a .ts module for exactly this reason (lib/incentives/visible.ts).
 import { incentivesToRender, narrowToZip } from "@/lib/incentives/visible";
+import { PRO_BENEFITS, proBenefitTitle } from "@/lib/proOffer";
 import { packIndex, unpackIndex } from "@/lib/listings/pack";
 import type { CardRow } from "@/lib/listings/card";
 import { buildTests } from "@/lib/listings/match";
@@ -173,6 +174,21 @@ test("a ZIP narrows only its own state's programs, and an IP guess never narrows
   assert.deepEqual(narrowToZip(ca, { state: "CA", keep: [], typed: true }), []);
   // No ZIP at all: everything the car meets.
   assert.deepEqual(ids(narrowToZip(ca, null)), ids(ca));
+});
+
+test("the blurred blocks caption themselves from the /pro lineup, and every benefit id is unique", () => {
+  // The rebate block shipped blurred with no caption at all on 2026-09-03 —
+  // a smear with a "Voltcheck Pro" button and nothing saying what was under
+  // it. Owner, 2026-09-04. Both captions now read the benefit's own title, so
+  // a blur can never promise something the /pro page does not sell.
+  assert.equal(proBenefitTitle("rebates"), "Rebate eligibility");
+  assert.equal(proBenefitTitle("market-trends"), "Market trends");
+  for (const id of ["rebates", "market-trends"] as const) {
+    assert.ok(proBenefitTitle(id).trim().length > 0, `${id} has a title to show`);
+  }
+  const ids = PRO_BENEFITS.map((b) => b.id);
+  assert.equal(new Set(ids).size, ids.length, "ids are unique, so a lookup cannot silently pick the wrong benefit");
+  assert.throws(() => proBenefitTitle("rebates", []), /no Pro benefit/, "a missing benefit fails loudly rather than captioning nothing");
 });
 
 const RELAXED: MatchPolicy = SITE_POLICY;

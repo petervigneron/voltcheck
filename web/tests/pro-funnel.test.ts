@@ -22,7 +22,12 @@ import { POST as checkoutPOST } from "@/app/api/checkout/route";
 // ── 2. No button that cannot honestly take money ────────────────────────
 
 const live = (n: number): ProBenefit[] =>
-  [0, 1].map((i) => ({ title: `b${i}`, detail: "", live: i < n }));
+  ([0, 1] as const).map((i) => ({
+    id: (["market-trends", "deals-filter"] as const)[i],
+    title: `b${i}`,
+    detail: "",
+    live: i < n,
+  }));
 
 function withEnv(key: string, value: string | undefined, fn: () => void): void {
   const had = Object.hasOwn(process.env, key);
