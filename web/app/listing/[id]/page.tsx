@@ -30,6 +30,8 @@ import { batteryWarranty } from "@/lib/listings/warranty";
 import { factLinksFor } from "@/lib/facts/links";
 import { matchIncentives } from "@/lib/incentives/match";
 import { Incentives } from "@/components/Incentives";
+import { JsonLd } from "@/components/ListingJsonLd";
+import { listingJsonLd } from "@/lib/listings/jsonLd";
 import { proBenefitTitle } from "@/lib/proOffer";
 
 // ISR: each listing page renders once, then serves from the CDN for a day —
@@ -185,6 +187,11 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
 
   return (
     <div className="mx-auto max-w-5xl space-y-5 px-4 py-6">
+      {/* The machine-readable copy of this page, for agents that shop on
+          someone's behalf. Built from the same summaries the tiles and spec
+          rows above are built from, so the two cannot disagree — see
+          lib/listings/jsonLd.ts for what is and is not allowed in it. */}
+      <JsonLd json={listingJsonLd(e)} />
       <BackToResults />
 
       <div className="grid gap-6 md:grid-cols-[1fr_320px]">

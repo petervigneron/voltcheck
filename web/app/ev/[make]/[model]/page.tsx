@@ -5,6 +5,8 @@ import { findModelHub, hubPath } from "@/lib/listings/modelHubs";
 import { hubIndexKey } from "@/lib/listings/hubIndex";
 import { hubEntry } from "@/lib/listings/hubSource";
 import { factLinksFor } from "@/lib/facts/links";
+import { JsonLd } from "@/components/ListingJsonLd";
+import { hubItemListJsonLd } from "@/lib/listings/jsonLd";
 
 // Renders on first request and is CDN-cached from then on — the same shape
 // the browse index and the sitemap shards run on, and for the same reason
@@ -52,6 +54,13 @@ export default async function ModelHubPage(props: PageProps<"/ev/[make]/[model]"
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-16">
+      {/* The cars listed below, as an ItemList — names and links only, and
+          numberOfItems counts what this page shows rather than the hub's
+          total, so the markup can't claim more than the page does. The rows
+          are already in hand, so it costs nothing. */}
+      {cars.length > 0 && (
+        <JsonLd json={hubItemListJsonLd(name, hubPath(hub), cars)} />
+      )}
       <nav
         aria-label="Breadcrumb"
         className="text-[11px] font-bold uppercase tracking-[0.06em] text-ink/40"
