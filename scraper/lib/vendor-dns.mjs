@@ -27,6 +27,20 @@ const VENDOR_CNAME = [
   ["dealerinspire", /\.dealerinspire\.com$/i],
   ["dealereprocess", /\.dealereprocess\.org$/i],
   ["dealercenter", /\.dcdws\.net$|\.dealercenterwebsite\.net(\.cdn\.cloudflare\.net)?$/i],
+  // Porsche's own US dealer-website platform, on Vercel. One deployment
+  // target serves the whole fleet: 77 of the registry's 106 http-429 rows
+  // resolved to this exact name on 2026-09-05, across both the vanity
+  // domains (porschebend.com) and the canonical ones (bend.porsche.com).
+  //
+  // An opaque Vercel id is a weaker mark than a vendor's named host and it is
+  // used anyway, because the alternative is worse. The page cannot be
+  // fingerprinted — it is a Vercel challenge page until a browser solves it —
+  // and the other candidate signal is the string "porsche" in a dealer's
+  // domain, which is the brand-substring guess lib/fingerprint.mjs exists to
+  // forbid. If Porsche moves the project, this stops matching and those
+  // rooftops go back to answering 429, which is loud: they were already in
+  // that pile and it is where they came from.
+  ["porsche", /^0c67b2dc443e4824\.vercel-dns-\d+\.com$/i],
 ];
 // Cars Commerce (Dealer Inspire's owner) — the only vendor here that also
 // serves rooftops with no CNAME at all. Measured on 2026-09-02: every one of

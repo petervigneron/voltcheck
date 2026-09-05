@@ -96,6 +96,7 @@ import { isEBizAutos, ebizAutosOrigins, pullEBizAutos } from "./lib/platforms/eb
 import { pullDealerInspire } from "./lib/platforms/dealerinspire.mjs";
 import { isChapmanChoice, isChapmanChoiceOrigin, pullChapmanChoice } from "./lib/platforms/chapmanchoice.mjs";
 import { pullDealerCenter } from "./lib/platforms/dealercenter.mjs";
+import { pullPorsche } from "./lib/platforms/porsche.mjs";
 import { closeBrowser } from "./lib/browser.mjs";
 import { withWall, sealReport } from "./lib/wall.mjs";
 import {
@@ -566,12 +567,17 @@ async function crawlDealerInto(domain, budget, domainCapAt, report) {
   // skipped — every page it would fetch is the same firewall page. A lane
   // that could not finish (browser missing, a VDP unread) leaves the report
   // truncated so db-sync never reads its silence as a delisting.
+  // Porsche joined this table 2026-09-05. Its wall is Vercel Attack Challenge
+  // Mode, which answers 429 (not 403) with a JS proof-of-work — so 77 of the
+  // registry's 106 "http-429" rows were one platform being challenged, not a
+  // hundred rooftops being busy, and `transient` re-probed them nightly for
+  // ever. Plain headless Chrome passes it with nothing patched.
   // DealerEProcess is deliberately NOT in this table: its VDPs answer the
   // Cloudflare JS challenge to plain headless Chrome on 9 of 10 loads
   // (measured 2026-09-02, themountainhyundai.com), and passing that means
   // disguising the browser, which is the line lib/browser.mjs draws. The lane
   // file stays, parked, with the measurement in its header.
-  const BROWSER_LANES = { dealerinspire: pullDealerInspire, dealercenter: pullDealerCenter };
+  const BROWSER_LANES = { dealerinspire: pullDealerInspire, dealercenter: pullDealerCenter, porsche: pullPorsche };
   if (BROWSER_LANES[dvPlat]) {
     const before = report.evs.length;
     // The lane gets the same clock and budget the walk below would have had;

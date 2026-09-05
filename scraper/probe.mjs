@@ -133,6 +133,7 @@ import { isEBizAutos, ebizAutosOrigins, countEBizAutos } from "./lib/platforms/e
 import { countDealerInspire } from "./lib/platforms/dealerinspire.mjs";
 import { isChapmanChoice, isChapmanChoiceOrigin, countChapmanChoice } from "./lib/platforms/chapmanchoice.mjs";
 import { countDealerCenter } from "./lib/platforms/dealercenter.mjs";
+import { countPorsche } from "./lib/platforms/porsche.mjs";
 import { vendorByDns } from "./lib/vendor-dns.mjs";
 import { closeBrowser } from "./lib/browser.mjs";
 import { isDealerFront, dealerFrontVehicles, DEALERFRONT_SRP_PATH } from "./lib/platforms/dealerfront.mjs";
@@ -290,7 +291,9 @@ async function settleWalledTeamVelocity(site, fetched) {
 // (browser missing on this machine, no cars, no VINs) falls through to the
 // ordinary "homepage 403" verdict, unchanged.
 // dealereprocess is parked — see the note on BROWSER_LANES in crawl.mjs.
-const BROWSER_COUNTS = { dealerinspire: countDealerInspire, dealercenter: countDealerCenter };
+// porsche joined 2026-09-05: its wall answers 429, not 403, so these rows sat
+// in the transient pile being re-probed nightly instead of being read.
+const BROWSER_COUNTS = { dealerinspire: countDealerInspire, dealercenter: countDealerCenter, porsche: countPorsche };
 async function settleWalledBrowserVendor(site, fetched) {
   const vendor = await vendorByDns(site.domain);
   if (!vendor || !BROWSER_COUNTS[vendor]) return false;
