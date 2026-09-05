@@ -240,12 +240,18 @@ function SearchBox({ current, suggestions }: { current: string; suggestions: Sug
                 id={`search-option-${i}`}
                 role="option"
                 aria-selected={i === hi}
-                // Mousedown, not click: it fires before the input's blur closes
-                // the list out from under the cursor.
-                onMouseDown={(e) => {
-                  e.preventDefault();
-                  go(s.label);
-                }}
+                // Mousedown only holds the input's focus (preventDefault), so
+                // its blur can't close the list before the click lands. The
+                // pick itself is on CLICK. It used to be on mousedown, and
+                // that is the bug the owner found on 2026-09-05: the search
+                // navigated on mousedown, the list unmounted, and ~100ms
+                // later the browser fired the click on whatever was now under
+                // the pointer — the popular band's tile beneath the menu. A
+                // shopper choosing "Hyundai Ioniq 5" from the list got a
+                // BMW X5 search. Reproduced with a 200ms mousedown→click gap;
+                // the automation's instant click never showed it.
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => go(s.label)}
                 onMouseEnter={() => setHi(i)}
                 className={`flex cursor-pointer items-baseline justify-between gap-4 px-5 py-2.5 text-[15px] font-semibold ${
                   i === hi ? "bg-putty" : "bg-paper"
