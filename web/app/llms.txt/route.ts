@@ -16,7 +16,7 @@ import { MODEL_HUBS } from "@/lib/listings/modelHubs";
 // database is doing.
 //
 // COPY: the summary paragraph is the owner's own text (2026-09-05), with one
-// word changed on the owner's question — "marketplace" became "listing",
+// word changed on the owner's question — "marketplace" became "index" (the owner's pick),
 // because nothing is bought or sold here and no seller takes part; an agent
 // reading "marketplace" would look for a checkout. The rest is machine-facing
 // documentation, not shopper-facing copy, but every
@@ -27,7 +27,7 @@ import { MODEL_HUBS } from "@/lib/listings/modelHubs";
 
 const BODY = `# Voltcheck
 
-> The most comprehensive listing of electric and plug-in hybrid vehicles for sale in the United States, new, used and certified, with detailed information on battery capacity, range, and warranty, with links back to seller websites and price, mileage, color, and location derived from live listings. Specs come from the manufacturer's spec sheets, press materials and window stickers; EPA range and efficiency from fueleconomy.gov's data; vehicle decode data from NHTSA's vPIC database; battery recalls and complaints from NHTSA; and title records from Washington State DOL.
+> The most comprehensive index of electric and plug-in hybrid vehicles for sale in the United States, new, used and certified, with detailed information on battery capacity, range, and warranty, with links back to seller websites and price, mileage, color, and location derived from live listings. Specs come from the manufacturer's spec sheets, press materials and window stickers; EPA range and efficiency from fueleconomy.gov's data; vehicle decode data from NHTSA's vPIC database; battery recalls and complaints from NHTSA; and title records from Washington State DOL.
 
 ## Pages
 
