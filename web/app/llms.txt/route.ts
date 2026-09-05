@@ -15,7 +15,11 @@ import { MODEL_HUBS } from "@/lib/listings/modelHubs";
 // no data, so it prerenders in milliseconds and stays up whatever the
 // database is doing.
 //
-// COPY: machine-facing documentation, not shopper-facing copy, but every
+// COPY: the summary paragraph is the owner's own text (2026-09-05), with one
+// word changed on the owner's question — "marketplace" became "listing",
+// because nothing is bought or sold here and no seller takes part; an agent
+// reading "marketplace" would look for a checkout. The rest is machine-facing
+// documentation, not shopper-facing copy, but every
 // sentence is built from words the site already publishes — /methodology's
 // source list and its "no default value, no best guess" line, /facts,
 // /ev, /vin and /bot's own descriptions, and the root layout's title
@@ -23,7 +27,7 @@ import { MODEL_HUBS } from "@/lib/listings/modelHubs";
 
 const BODY = `# Voltcheck
 
-> Every electric and plug-in hybrid car for sale in the United States, new, used and certified, with the real pack, the real range, and what the warranty does for you. Price, mileage, color, location and the link back to the seller's own page come from that seller. Specs come from the manufacturer's spec sheets, press materials and window stickers; EPA range and efficiency from fueleconomy.gov's data; vehicle decode data from NHTSA's vPIC database; battery recalls and complaints from NHTSA; and title records from Washington State DOL. Where no primary source exists we use named secondary sources and mark the figure est. When we can't support a claim, we show nothing: no default value, no best guess, no "typically."
+> The most comprehensive listing of electric and plug-in hybrid vehicles for sale in the United States, new, used and certified, with detailed information on battery capacity, range, and warranty, with links back to seller websites and price, mileage, color, and location derived from live listings. Specs come from the manufacturer's spec sheets, press materials and window stickers; EPA range and efficiency from fueleconomy.gov's data; vehicle decode data from NHTSA's vPIC database; battery recalls and complaints from NHTSA; and title records from Washington State DOL.
 
 ## Pages
 

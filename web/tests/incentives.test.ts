@@ -201,26 +201,40 @@ test("the blurred blocks caption themselves from the /pro lineup, and every bene
 });
 
 test("a depleted fund is never named, however loudly the utility still advertises it", () => {
-  // PNM's income-qualified EV purchase rebate, 2026-09-05. Its own 2025
-  // Annual Progress Report to the NMPRC (docket 23-00195-UT) puts the measure
-  // at 243 rebates and $972,000 paid with $18,000 left at 2025-12-31 — four
-  // or five rebates — while pnmdriveelectric.com still offers it. The house
-  // rule is asymmetric here: a fund a shopper cannot draw on is the false
-  // bargain, not a smaller rebate.
+  // The rule, pinned on a synthetic copy of PNM's income-qualified rebate
+  // marked depleted. The real entry went depleted on 2026-09-05 on the
+  // evidence in its statusNote (243 rebates and $972,000 paid, $18,000 left
+  // at 2025-12-31, PNM's own 2026-08-06 motion naming the fund as at or near
+  // exhaustion) and went back to live the same day on the owner's ruling —
+  // "I'm not confident that program is dead and it's worth buyers checking
+  // directly, which motivated ones will" — so the rule is tested here on a
+  // fixture and the live entry is tested below as what the owner decided.
   const pnm = programById("nm-pnm-income-qualified-ev-rebate");
   assert.ok(pnm, "the program stays in the registry with its evidence");
-  assert.equal(pnm!.status, "depleted");
+  const depleted = INCENTIVE_PROGRAMS.map((p) => (p.id === pnm!.id ? { ...p, status: "depleted" as const } : p));
+  const nm: Listing = {
+    id: "t", vin: "1G1FY6S04P4100001", year: 2023, make: "Chevrolet", model: "Bolt EUV", trim: "LT",
+    priceUsd: 21500, mileage: 24000, state: "NM", sellerType: "dealer", condition: "used",
+  };
+  const ms = matchIncentives(enrichListing(nm), SITE_POLICY, depleted, TODAY);
+  assert.equal(ms.find((m) => m.program.id === pnm!.id), undefined,
+    "not named on a car, so no card tag and no listing-page row");
+  // Every non-live status is silent, not just this one.
+  for (const p of depleted.filter((x) => x.status !== "live")) {
+    assert.equal(ms.find((m) => m.program.id === p.id), undefined, `${p.id} is ${p.status} and must not be named`);
+  }
+});
+
+test("PNM's income-qualified rebate is live and named on a New Mexico car — the owner's ruling of 2026-09-05", () => {
+  const pnm = programById("nm-pnm-income-qualified-ev-rebate")!;
+  assert.equal(pnm.status, "live");
+  assert.match(pnm.statusNote ?? "", /Owner, 2026-09-05: kept LIVE/, "the ruling and the evidence it overrides both stay on the entry");
   const nm: Listing = {
     id: "t", vin: "1G1FY6S04P4100001", year: 2023, make: "Chevrolet", model: "Bolt EUV", trim: "LT",
     priceUsd: 21500, mileage: 24000, state: "NM", sellerType: "dealer", condition: "used",
   };
   const ms = matchIncentives(enrichListing(nm), SITE_POLICY, INCENTIVE_PROGRAMS, TODAY);
-  assert.equal(ms.find((m) => m.program.id === "nm-pnm-income-qualified-ev-rebate"), undefined,
-    "not named on a car, so no card tag and no listing-page row");
-  // Every non-live status is silent, not just this one.
-  for (const p of INCENTIVE_PROGRAMS.filter((x) => x.status !== "live")) {
-    assert.equal(ms.find((m) => m.program.id === p.id), undefined, `${p.id} is ${p.status} and must not be named`);
-  }
+  assert.ok(ms.find((m) => m.program.id === pnm.id), "named, so the car carries the tag and the listing-page row");
 });
 
 test("a program with a published open period is named inside it and silent outside", () => {
