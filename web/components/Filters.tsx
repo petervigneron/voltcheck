@@ -2,7 +2,17 @@
 
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { REMOVABLE, QUICK_TOGGLES, BODY_TYPES, describeFilter, dropSpecFilters, splitValues, toggleValue, withCurrent } from "@/lib/filters";
+import {
+  REMOVABLE,
+  QUICK_TOGGLES,
+  BODY_TYPES,
+  describeFilter,
+  dropSpecFilters,
+  splitValues,
+  toggleValue,
+  withCurrent,
+  type FacetGroup,
+} from "@/lib/filters";
 import { INCENTIVES_COPY_READY } from "@/lib/incentives/copy";
 import { writeShopperZip } from "@/lib/shopperZip";
 import { pushUrl } from "@/lib/pushUrl";
@@ -260,17 +270,7 @@ function SearchBox({ current, suggestions }: { current: string; suggestions: Sug
   );
 }
 
-/** One spec axis of a single model, with the count each value would return. */
-export type FacetGroup = {
-  key: string;
-  label: string;
-  /**
-   * Already in display order. `v` is what goes in the URL, `label` is what the
-   * chip reads, and `top` marks the values deep enough in stock to show before
-   * the row is expanded (lib/filters.ts FACET_CAP).
-   */
-  values: { v: string; label: string; n: number; top?: boolean }[];
-};
+export type { FacetGroup };
 
 /**
  * Facets whose values are a long open-ended list get a menu instead of a row of
@@ -397,9 +397,10 @@ function FacetMenu({
  * Only axes that actually vary here get a row, so a model with one battery
  * size never shows a battery row a shopper can't act on.
  */
-export function SpecFacets({ facets }: { facets: FacetGroup[] }) {
+export function SpecFacets({ facets, narrow = [] }: { facets: FacetGroup[]; narrow?: FacetGroup[] }) {
   const sp = useSearchParams();
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  const scoped = !!(sp.get("q") || sp.get("make") || sp.get("model"));
 
   const pick = (key: string, v: string) => {
     const params = new URLSearchParams(sp.toString());
@@ -417,7 +418,22 @@ export function SpecFacets({ facets }: { facets: FacetGroup[] }) {
     pushUrl(params);
   };
 
-  if (facets.length === 0) return null;
+  // A narrowing row (lib/listings/narrow.ts) is single-choice: make and model
+  // are one value everywhere they're read, so a press replaces rather than
+  // ORs. It writes exactly what the panel's <select> would — a new make drops
+  // the model, and either drops the spec facets, which meant nothing under
+  // the last one (FilterRail.apply does the same).
+  const pickOne = (key: string, v: string, n: number) => {
+    const params = new URLSearchParams(sp.toString());
+    params.set(key, v);
+    if (key === "make") params.delete("model");
+    dropSpecFilters(params);
+    params.delete("page");
+    track("filter_toggled", undefined, { key, value: v, on: true, surface: "narrow", scoped, n });
+    pushUrl(params);
+  };
+
+  if (facets.length === 0 && narrow.length === 0) return null;
 
   // The menu facets share one row. A menu is a single 280px control, so on its
   // own row it sat next to some 1,100px of empty cell — and with trim and
@@ -446,8 +462,64 @@ export function SpecFacets({ facets }: { facets: FacetGroup[] }) {
   const menus = facets.filter((f) => MENU_FACETS[f.key]);
   const chipRows = facets.filter((f) => !MENU_FACETS[f.key]);
 
+  // One axis as a row of chips. `on` is the picked value(s), `choose` is what
+  // a press does — OR into the key for a spec facet, replace it for a
+  // narrowing row.
+  const chipRow = (f: FacetGroup, on: Set<string>, choose: (v: string, n: number) => void) => {
+    const open = expanded[f.key];
+    // A value the shopper picked stays put even if it's too thin to have
+    // made the cap — a chip can't vanish out from under its own ✓.
+    const shown = open ? f.values : f.values.filter((v) => v.top || on.has(v.v));
+    const hidden = f.values.length - shown.length;
+    return (
+      <div key={f.key} className="flex flex-wrap items-stretch">
+        {label(f)}
+        {shown.map((v) => {
+          const sel = on.has(v.v);
+          // A value the other facets have already ruled out stays visible —
+          // it's part of what this model comes as — but it can't be picked
+          // into an empty page.
+          const dead = v.n === 0 && !sel;
+          return (
+            <button
+              key={v.v}
+              type="button"
+              aria-pressed={sel}
+              disabled={dead}
+              title={sel ? `Remove: ${v.label}` : `${v.n} ${v.n === 1 ? "car" : "cars"}`}
+              onClick={() => choose(v.v, v.n)}
+              className={`${CELL} flex grow items-center gap-2 px-4 py-2.5 text-[13px] font-bold tracking-[0.04em] uppercase sm:grow-0 ${
+                dead ? "bg-paper text-ink/30" : `${HOVER} ${sel ? "bg-cobalt text-paper" : "bg-paper text-ink"}`
+              }`}
+            >
+              {sel && <span aria-hidden="true">✓</span>}
+              {v.label}
+              <span className={`tabular-nums ${sel ? "text-paper/70" : "text-ink/45"}`}>{v.n}</span>
+            </button>
+          );
+        })}
+        {hidden > 0 && (
+          <button
+            type="button"
+            onClick={() => setExpanded((e) => ({ ...e, [f.key]: true }))}
+            className={`${CELL} ${HOVER} flex grow items-center bg-paper px-4 py-2.5 text-[13px] font-bold tracking-[0.04em] text-ink/60 uppercase sm:grow-0`}
+          >
+            +{hidden} more
+          </button>
+        )}
+        <div className={`${CELL} hidden flex-1 min-w-[40px] bg-paper sm:block`} aria-hidden="true" />
+      </div>
+    );
+  };
+
   return (
     <div className="border-l-[3px] border-ink">
+      {/* The narrowing rows come first: which make, then which model, is a
+          broader question than which version, and by the time the spec rail
+          has anything to say these have nothing left to ask. Nothing is ever
+          pressed in one — a chosen make or model is already the rail's own
+          remove-chip, and the row it answered is gone. */}
+      {narrow.map((f) => chipRow(f, new Set(), (v, n) => pickOne(f.key, v, n)))}
       {menus.length > 0 && (
         <div className="flex flex-wrap items-stretch">
           {menus.map((f) => [
@@ -463,53 +535,7 @@ export function SpecFacets({ facets }: { facets: FacetGroup[] }) {
           ])}
         </div>
       )}
-      {chipRows.map((f) => {
-        const on = new Set(splitValues(sp.get(f.key) ?? ""));
-        const open = expanded[f.key];
-        // A value the shopper picked stays put even if it's too thin to have
-        // made the cap — a chip can't vanish out from under its own ✓.
-        const shown = open ? f.values : f.values.filter((v) => v.top || on.has(v.v));
-        const hidden = f.values.length - shown.length;
-        return (
-          <div key={f.key} className="flex flex-wrap items-stretch">
-            {label(f)}
-            {shown.map((v) => {
-              const sel = on.has(v.v);
-              // A value the other facets have already ruled out stays visible —
-              // it's part of what this model comes as — but it can't be picked
-              // into an empty page.
-              const dead = v.n === 0 && !sel;
-              return (
-                <button
-                  key={v.v}
-                  type="button"
-                  aria-pressed={sel}
-                  disabled={dead}
-                  title={sel ? `Remove: ${v.label}` : `${v.n} ${v.n === 1 ? "car" : "cars"}`}
-                  onClick={() => pick(f.key, v.v)}
-                  className={`${CELL} flex grow items-center gap-2 px-4 py-2.5 text-[13px] font-bold tracking-[0.04em] uppercase sm:grow-0 ${
-                    dead ? "bg-paper text-ink/30" : `${HOVER} ${sel ? "bg-cobalt text-paper" : "bg-paper text-ink"}`
-                  }`}
-                >
-                  {sel && <span aria-hidden="true">✓</span>}
-                  {v.label}
-                  <span className={`tabular-nums ${sel ? "text-paper/70" : "text-ink/45"}`}>{v.n}</span>
-                </button>
-              );
-            })}
-            {hidden > 0 && (
-              <button
-                type="button"
-                onClick={() => setExpanded((e) => ({ ...e, [f.key]: true }))}
-                className={`${CELL} ${HOVER} flex grow items-center bg-paper px-4 py-2.5 text-[13px] font-bold tracking-[0.04em] text-ink/60 uppercase sm:grow-0`}
-              >
-                +{hidden} more
-              </button>
-            )}
-            <div className={`${CELL} hidden flex-1 min-w-[40px] bg-paper sm:block`} aria-hidden="true" />
-          </div>
-        );
-      })}
+      {chipRows.map((f) => chipRow(f, new Set(splitValues(sp.get(f.key) ?? "")), (v) => pick(f.key, v)))}
     </div>
   );
 }

@@ -137,6 +137,22 @@ export const DRIVE_FACET = { key: "drive", label: "Drivetrain", unit: "" } as co
 /** Every axis the spec rail can offer: the model-scoped three plus drivetrain. */
 export type FacetKey = SpecFacet | typeof DRIVE_FACET.key;
 
+/**
+ * One axis of a result set as a row of chips, with the count each value would
+ * return: a version axis of one model (components/Browse.tsx facets), or the
+ * makes and models a filtered result spans (lib/listings/narrow.ts).
+ */
+export type FacetGroup = {
+  key: string;
+  label: string;
+  /**
+   * Already in display order. `v` is what goes in the URL, `label` is what the
+   * chip reads, and `top` marks the values deep enough in stock to show before
+   * the row is expanded (FACET_CAP).
+   */
+  values: { v: string; label: string; n: number; top?: boolean }[];
+};
+
 // Twelve chips is already two rows on a laptop; past that a model's versions
 // stop being scannable, which is the only thing the rail is for. Which twelve
 // is decided by depth of stock, never by position — slicing a range row sorted

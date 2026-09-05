@@ -11,6 +11,7 @@ import { featuredScore, type CardRow } from "@/lib/listings/card";
 import { FIRST_PAGE_SIZE } from "@/lib/listings/firstPaint";
 import { FACET_OF, QUICK_KNOWS, activeFilterKeys, buildTests, rowMatches } from "@/lib/listings/match";
 import { modelTally } from "@/lib/listings/tally";
+import { narrowFacets } from "@/lib/listings/narrow";
 import { facetsFor } from "@/lib/listings/facetSpec";
 import { factLinksFor, type FactLink } from "@/lib/facts/links";
 import { firstPaintWonRace, useCardIndex, useFirstPaint } from "@/lib/listings/useCardIndex";
@@ -249,7 +250,7 @@ export function Browse() {
     rememberBrowseQuery(sp.toString());
   }, [sp]);
 
-  const { results, dist, relief, activeCount, facets, quickCounts, factLinks, factModel } = useMemo(() => {
+  const { results, dist, relief, activeCount, facets, quickCounts, factLinks, factModel, narrow } = useMemo(() => {
     const all = rows ?? [];
 
     const dist = new Map<string, number>();
@@ -474,14 +475,20 @@ export function Browse() {
     const factLinks: FactLink[] = specPool.length ? factLinksFor(specPool[0].make, specPool[0].model) : [];
     const factModel = specPool.length ? `${specPool[0].make} ${specPool[0].model}`.toLowerCase() : "";
 
-    return { results, dist, relief, activeCount: activeKeys.length, facets, quickCounts, factLinks, factModel };
+    // Which make, then which model, a filtered result spans — the rows the
+    // owner asked for on 2026-09-05, when a pressed toggle left thousands of
+    // cars and the only way to a make was the panel's <select>. Counted
+    // against everything else that's on (lib/listings/narrow.ts).
+    const narrow = narrowFacets(all, tests, activeKeys, s, makesModels);
+
+    return { results, dist, relief, activeCount: activeKeys.length, facets, quickCounts, factLinks, factModel, narrow };
     // `first` is read but deliberately not a dependency: it can only change
     // once (null -> loaded), and if that happens after the index already
     // painted, re-sorting a grid the shopper is looking at is exactly the
     // reshuffle this file works to prevent. The next interaction re-runs the
     // memo and picks it up.
     // eslint-disable-next-line react-hooks/exhaustive-deps -- s() reads sp, listed
-  }, [rows, sp, origin, counts, pro]);
+  }, [rows, sp, origin, counts, pro, makesModels]);
 
   // 5,000 cards in one document is not a page anyone can use, and the cards
   // are photo-first. One screenful of grid at a time, paged through the URL.
@@ -522,7 +529,7 @@ export function Browse() {
         pro={pro}
       />
 
-      <SpecFacets facets={facets} />
+      <SpecFacets facets={facets} narrow={narrow} />
 
       <FactLinksNav links={factLinks} model={factModel} />
 
