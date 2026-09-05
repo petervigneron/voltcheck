@@ -49,10 +49,43 @@ test("names the marque the node never names, all the way through normalize", () 
 
 // J1 = Taycan, H1 III = petrol Macan, H2 = electric Macan, E3 II = Cayenne,
 // E4 = electric Cayenne. None of that is a model name to anyone but Porsche.
-test("model is the configuration a shopper reads, not the platform code", () => {
+test("model is a nameplate, not the platform code", () => {
   const n = porscheNode(CAR, ORIGIN);
-  assert.equal(n.model, "Macan 4 Electric");
+  assert.equal(n.model, "Macan");
   assert.notEqual(n.model, "H2");
+});
+
+// Shipped wrong on the first run: the whole configuration went into `model`
+// and nothing into trim, so both came out as the same string and the listing
+// page rendered "2026 PORSCHE Taycan Taycan, Taycan 4" — one value printed
+// twice, which is the copy rule this house breaks most often. The shape below
+// is what every other lane already produces for the same cars (another
+// rooftop's Macan reaches the database as model "Macan", trim "Macan 4
+// Electric"), and this asserts it through normalize because that is where it
+// is read.
+test("model and trim are the nameplate and the configuration, never the same string", () => {
+  for (const [cfg, model] of [
+    ["Macan 4 Electric", "Macan"],
+    ["Taycan 4S Cross Turismo", "Taycan"],
+    ["Cayenne Turbo E-Hybrid Coupe", "Cayenne"],
+    ["Panamera 4", "Panamera"],
+  ]) {
+    const n = porscheNode({ ...CAR, vehicleConfiguration: cfg, name: `2026 Porsche ${cfg}` }, ORIGIN);
+    const rec = normalize(n, { sourceUrl: n.offers.url, dealerDomain: "porschebend.com" });
+    assert.equal(rec.model, model, cfg);
+    assert.equal(rec.trim, cfg, cfg);
+    assert.notEqual(rec.model, rec.trim, `${cfg}: model and trim must not be the same string`);
+  }
+});
+
+// A one-word configuration is the exception that must NOT trip the rule
+// above: "Taycan" is both the nameplate and the whole configuration, and
+// there is nothing to split.
+test("a one-word configuration is left alone", () => {
+  const n = porscheNode({ ...CAR, vehicleConfiguration: "Taycan", name: "2025 Porsche Taycan" }, ORIGIN);
+  const rec = normalize(n, { sourceUrl: n.offers.url, dealerDomain: "d" });
+  assert.equal(rec.model, "Taycan");
+  assert.equal(rec.trim, "Taycan");
 });
 
 test("condition comes from the machine token, not the URL slug", () => {

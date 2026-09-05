@@ -72,6 +72,9 @@ const SEARCH = "/en/inventory/porsche/search";
 // seconds this replaces was 40 minutes of a sweep spent watching a finished
 // page.
 const SETTLE_MS = 1000;
+
+/** "Macan 4 Electric" -> "Macan". Porsche puts the nameplate first, always. */
+const nameplate = (cfg) => (typeof cfg === "string" ? cfg.trim().split(/\s+/)[0] || undefined : undefined);
 const VIN_RE = /^[A-HJ-NPR-Z0-9]{17}$/;
 // 15 cars a page is what the platform serves; the cap is a runaway guard, not
 // a budget — 30 pages is 450 cars, comfortably past the biggest rooftop
@@ -101,10 +104,21 @@ const typesOf = (j) => [].concat(j?.["@type"] ?? []);
  *            reads through it to nothing and every car came out make-less
  *            (measured on the first live run, 2026-09-05). Named here. It is
  *            a Porsche dealer platform; the marque is not in doubt.
- *   model  — the internal platform code ("H1 III"). `vehicleConfiguration` is
- *            Porsche's own configuration string ("Macan 4 Electric",
- *            "Cayenne Coupe Electric", "Taycan 4S Cross Turismo") and is what
- *            a shopper is looking at.
+ *   model / trim — `model` is the internal platform code ("H1 III"), and
+ *            `vehicleConfiguration` is Porsche's own configuration string
+ *            ("Macan 4 Electric", "Cayenne Coupe Electric", "Taycan 4S Cross
+ *            Turismo"). The configuration is the TRIM, and the nameplate in
+ *            front of it is the model — which is the shape every other lane
+ *            produces for the same cars: another rooftop's Macan reaches the
+ *            database as model "Macan", trim "Macan 4 Electric".
+ *
+ *            This lane's first run put the whole configuration in `model` and
+ *            left trim empty, so model and trim came out as the same string
+ *            and the listing page rendered "2026 PORSCHE Taycan Taycan,
+ *            Taycan 4" — a value restated twice, which is the copy rule this
+ *            house breaks most often. Porsche's nameplate is always the first
+ *            token (718, 911, Taycan, Panamera, Macan, Cayenne), so the split
+ *            is that and the rest.
  *   itemCondition — a schema.org URL, which normalize.mjs reduces to
  *            "UsedCondition" and conditionToken then cannot read. Today the
  *            right answer still arrives, but only because the VDP slug
@@ -132,7 +146,8 @@ export function porscheNode(car, origin) {
     // shape, and a `make` field it does not look at is a field that does
     // nothing.
     brand: { "@type": "Brand", name: "Porsche" },
-    model: car.vehicleConfiguration || undefined,
+    model: nameplate(car.vehicleConfiguration),
+    vehicleConfiguration: car.vehicleConfiguration || undefined,
     itemCondition: cond,
     image: stabilizeImages([car.image].flat().filter((s) => typeof s === "string")),
     offers: { ...(car.offers ?? {}), url },
