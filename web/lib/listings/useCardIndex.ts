@@ -5,6 +5,8 @@ import type { CardRow } from "./card";
 import { unpackFirstPaint, type FirstPaintData } from "./firstPaint";
 import { SHARDS, unpackIndex, type PackedIndex } from "./pack";
 import type { WorthTrims } from "./tally";
+import { mergePro, unpackPro, type PackedPro } from "./proSignals";
+import { useProState } from "@/lib/useProState";
 
 // The whole inventory arrives once per visitor (CDN-cached JSON, hourly
 // revalidate) and every filter, sort, and page flip after that is a pure
@@ -16,6 +18,12 @@ import type { WorthTrims } from "./tally";
 // (Extracted from components/Browse.tsx when /saved became a second reader.)
 let indexCache: CardRow[] | null = null;
 let indexPromise: Promise<CardRow[]> | null = null;
+// The Pro fields (lib/listings/proSignals.ts) arrive through their own
+// pass-checked route and are merged into the cached rows once; the public
+// shards stopped carrying them on 2026-09-05. Module-level like the index,
+// so /saved and the grid merge one copy.
+let proMerged = false;
+let proPromise: Promise<void> | null = null;
 
 export function useCardIndex(): { rows: CardRow[] | null; failed: boolean } {
   const [rows, setRows] = useState<CardRow[] | null>(indexCache);
@@ -59,6 +67,29 @@ export function useCardIndex(): { rows: CardRow[] | null; failed: boolean } {
       }
     );
   }, [failed]);
+  // A pass-holder's grid gets its deal and rebate fields from /api/index/pro
+  // once the index is here. A stranger's fetch is never made: the route
+  // would answer 401, and asking it is how a grid learns nothing.
+  const pro = useProState();
+  useEffect(() => {
+    if (pro !== true || !rows || proMerged) return;
+    proPromise ??= fetch("/api/index/pro", { cache: "no-store" })
+      .then(async (res) => {
+        if (!res.ok) return;
+        const packed = (await res.json()) as PackedPro;
+        if (!packed || packed.v !== 1 || !indexCache) return;
+        indexCache = mergePro(indexCache, unpackPro(packed));
+        proMerged = true;
+      })
+      .catch(() => {});
+    let alive = true;
+    proPromise.then(() => {
+      if (alive && proMerged && indexCache) setRows(indexCache);
+    });
+    return () => {
+      alive = false;
+    };
+  }, [pro, rows]);
   return { rows, failed };
 }
 

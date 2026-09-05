@@ -33,6 +33,8 @@ import { SHARDS, packIndex, shardOfId } from "../lib/listings/pack.ts";
 import { worthTrimTally } from "../lib/listings/tally.ts";
 import { buildHubIndex } from "../lib/listings/hubIndex.ts";
 import { buildApiArtifacts } from "../lib/api/records.ts";
+import { packPro, publicRows } from "../lib/listings/proSignals.ts";
+import { seal } from "../lib/listings/proSeal.ts";
 
 const FORCE = process.argv.includes("--force");
 const { SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY } = process.env;
@@ -43,7 +45,11 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
 const SHRINK_TOLERANCE = 0.1;
 
 const t0 = Date.now();
-const { rows, origin, listings, enriched } = await buildCardIndex();
+const { rows: fullRows, origin, listings, enriched } = await buildCardIndex();
+// Everything the public bucket serves is built from rows WITHOUT the Pro
+// fields (lib/listings/proSignals.ts); the Pro artifact below is the only
+// carrier of them, and it goes up sealed.
+const rows = publicRows(fullRows);
 if (origin === "fallback") {
   console.error("publish-feed: the walk fell back to the bundled snapshot — refusing to publish it as the durable feed.");
   process.exit(1);
@@ -69,20 +75,20 @@ try {
   console.error(`publish-feed: no previous manifest readable (${e.message}) — first publish, continuing`);
 }
 
-async function upload(name, body) {
-  const res = await fetch(`${SUPABASE_URL}/storage/v1/object/feed/${name}.json`, {
+async function upload(name, body, { ext = "json", contentType = "application/json" } = {}) {
+  const res = await fetch(`${SUPABASE_URL}/storage/v1/object/feed/${name}.${ext}`, {
     method: "POST",
     headers: {
       apikey: SUPABASE_SERVICE_ROLE_KEY,
       Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
-      "Content-Type": "application/json",
+      "Content-Type": contentType,
       "x-upsert": "true",
     },
     body,
     signal: AbortSignal.timeout(120_000),
   });
   if (!res.ok) throw new Error(`upload ${name}: HTTP ${res.status} — ${(await res.text()).slice(0, 200)}`);
-  console.error(`publish-feed: ${name}.json — ${(Buffer.byteLength(body) / 1e6).toFixed(2)} MB`);
+  console.error(`publish-feed: ${name}.${ext} — ${(Buffer.byteLength(body) / 1e6).toFixed(2)} MB`);
 }
 
 const shardCounts = [];
@@ -109,6 +115,19 @@ const api = buildApiArtifacts(listings, enriched, rows, publishedAt);
 for (const [slug, recs] of api.partitions) await upload(`api-make-${slug}`, JSON.stringify(recs));
 await upload("api-index", JSON.stringify(api.index));
 await upload("api-manifest", JSON.stringify(api.manifest));
+// The Pro fields, sealed. PRO_FEED_KEY is the same secret app/api/index/pro
+// opens it with; without it the publish still lands everything public and
+// says so, and a pass-holder's grid simply carries no deal or rebate until
+// a publish that has the key — never a wrong figure.
+if (process.env.PRO_FEED_KEY) {
+  const pro = JSON.stringify(packPro(fullRows, publishedAt));
+  const sealed = seal(pro, process.env.PRO_FEED_KEY);
+  await upload("pro-index", sealed, { ext: "bin", contentType: "application/octet-stream" });
+  await upload("pro-manifest", JSON.stringify({ v: 1, as_of: publishedAt, bytes: sealed.length }));
+  console.error(`publish-feed: pro-index — ${packPro(fullRows, publishedAt).r.length} cars carry a Pro field`);
+} else {
+  console.error("publish-feed: PRO_FEED_KEY is not set — the Pro artifact was NOT published; pass-holders see no deal/rebate fields until it is");
+}
 await upload(
   "manifest",
   JSON.stringify({ v: 1, publishedAt, total: rows.length, shardCounts })

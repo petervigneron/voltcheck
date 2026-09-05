@@ -22,6 +22,7 @@ import { PriceScatter } from "@/components/PriceScatter";
 import { PriceSparkline } from "@/components/PriceSparkline";
 import { PriceTrendCharts } from "@/components/PriceTrend";
 import { ProBlur } from "@/components/ProBlur";
+import { ProOnly } from "@/components/ProOnly";
 import { fetchPriceTrend } from "@/lib/trend";
 import { BatteryRisk } from "@/components/BatteryRisk";
 import { Gallery } from "@/components/Gallery";
@@ -237,9 +238,11 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
             {(tiles.length > 0 || marketTile) && (
               <div className="mt-3 flex flex-wrap gap-1.5">
                 {marketTile && (
-                  <Tile kind={marketTile.k} title={marketTile.ti}>
-                    {marketTile.t}
-                  </Tile>
+                  <ProOnly>
+                    <Tile kind={marketTile.k} title={marketTile.ti}>
+                      {marketTile.t}
+                    </Tile>
+                  </ProOnly>
                 )}
                 {tiles.map((t, i) => (
                   <Tile key={i} kind={t.kind} title={t.title}>

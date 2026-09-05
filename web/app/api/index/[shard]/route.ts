@@ -4,6 +4,7 @@ import { buildFirstPaint } from "@/lib/listings/firstPaint";
 import { SHARDS, packIndex, shardOfId } from "@/lib/listings/pack";
 import type { FeedOrigin } from "@/lib/listings/source";
 import { worthTrimTally } from "@/lib/listings/tally";
+import { publicRows } from "@/lib/listings/proSignals";
 
 // The browse grid's dataset: CDN-cached JSON the client filters locally.
 // Visitors hit the edge cache, and every filter click after first load is
@@ -184,7 +185,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ shard: 
     // so a thin one understates the whole site's inventory on the first paint
     // of every visit.
     refuseFallback(origin, "the first-paint payload");
-    return Response.json(buildFirstPaint(rows));
+    return Response.json(buildFirstPaint(publicRows(rows)));
   }
   // The eighth body: the trim facets behind /worth's trim dropdown
   // (lib/listings/tally.ts worthTrimTally). Its own body rather than a field
@@ -207,5 +208,5 @@ export async function GET(_req: Request, { params }: { params: Promise<{ shard: 
   if (art) return art;
   const { rows, origin } = await buildCardIndex();
   refuseFallback(origin, `shard ${n}`);
-  return Response.json(packIndex(rows.filter((r) => shardOfId(r.id) === n)));
+  return Response.json(packIndex(publicRows(rows).filter((r) => shardOfId(r.id) === n)));
 }

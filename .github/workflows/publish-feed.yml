@@ -85,6 +85,9 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          # Seals the Pro artifact (lib/listings/proSignals.ts); the same
+          # secret sits in Vercel's production env for app/api/index/pro.
+          PRO_FEED_KEY: ${{ secrets.PRO_FEED_KEY }}
           # 2 lanes, deliberately: this walk has a runner's whole hour, and
           # gentleness is the point — 8 lanes at request time is what drained
           # the burstable instance's CPU credits all week. Publishing slower

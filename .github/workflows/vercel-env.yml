@@ -1,0 +1,45 @@
+name: Copy a GitHub secret into Vercel's production environment
+
+# The laptop's Vercel CLI token is dead and the dashboard is the owner's, so
+# a runtime secret the site needs on Vercel travels this way: set it as a
+# GitHub Actions secret (`gh secret set NAME`), then dispatch this with the
+# name. Only names listed in the `case` below are copied — the workflow will
+# not forward an arbitrary secret to Vercel on the strength of a dispatch
+# input. Added 2026-09-05 for PRO_FEED_KEY (app/api/index/pro opens the
+# sealed Pro artifact with it). A deployment made AFTER this run picks the
+# value up; the running one does not.
+
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: "The secret's name (must be one this workflow knows)"
+        required: true
+        type: string
+
+jobs:
+  copy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm i -g vercel@latest
+      - name: Copy
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          NAME: ${{ inputs.name }}
+          PRO_FEED_KEY: ${{ secrets.PRO_FEED_KEY }}
+          # The project link, the same way deploy-site.yml carries it.
+          VERCEL_ORG_ID: team_8RiMoU4yuMtGM1YLDVCN89Nj
+          VERCEL_PROJECT_ID: prj_SsG72w0Hr1xIlOPQJn4oXc5oVGnq
+        run: |
+          case "$NAME" in
+            PRO_FEED_KEY) VALUE="$PRO_FEED_KEY" ;;
+            *) echo "refusing: $NAME is not a secret this workflow forwards"; exit 1 ;;
+          esac
+          test -n "$VALUE" || { echo "the GitHub secret $NAME is empty"; exit 1; }
+          # `env rm` first so a re-run replaces rather than fails on "already exists".
+          vercel env rm "$NAME" production --yes --token "$VERCEL_TOKEN" --scope petervignerons-projects 2>/dev/null || true
+          printf '%s' "$VALUE" | vercel env add "$NAME" production --token "$VERCEL_TOKEN" --scope petervignerons-projects
+          vercel env ls production --token "$VERCEL_TOKEN" --scope petervignerons-projects | grep -c "$NAME"
