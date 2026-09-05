@@ -271,6 +271,14 @@ export function matchIncentives(
     // it beside a figure is the false bargain the house rule is asymmetric
     // about.
     if (p.status !== "live") continue;
+    // …and paying TODAY. A program that publishes a dated open period is only
+    // named inside it (registry.ts liveFrom/liveUntil): Oregon's runs
+    // 2026-08-25 to 2026-11-04, and before this the window lived in a
+    // statusNote that nothing read, so the claim would have outlived the
+    // program by however long it took someone to notice.
+    const day = today.toISOString().slice(0, 10);
+    if (p.liveFrom && day < p.liveFrom) continue;
+    if (p.liveUntil && day > p.liveUntil) continue;
     if (p.jurisdiction.state !== state) continue;
     if (cond === "new" && !p.covers.new) continue;
     if (cond === "used" && !p.covers.used) continue;

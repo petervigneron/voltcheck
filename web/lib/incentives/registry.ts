@@ -79,6 +79,21 @@ export interface Program {
   status: ProgramStatus;
   statusAsOf: string;
   statusNote?: string;
+  /**
+   * A dated window the program only pays inside, when it publishes one.
+   * `status` is a human's reading on `statusAsOf`; this is the part a clock
+   * can check, and the matcher enforces it (lib/incentives/match.ts).
+   *
+   * Added 2026-09-05, from the PNM audit. Oregon's rebate runs a hard open
+   * period — 2026-08-25 to 2026-11-04 — and the registry recorded it in a
+   * statusNote, which is prose no code reads. On 2026-11-05 the program would
+   * have gone on being named on ~1,974 cars until a person happened to
+   * re-check it, which is the same shape as the PNM failure: a claim that
+   * expires on a known date, guarded only by someone remembering. If only a
+   * human eye can catch it, it is not caught.
+   */
+  liveFrom?: string;
+  liveUntil?: string;
   sources: ProgramSource[];
   covers: { new: boolean; used: boolean; lease: boolean };
   usedNote?: string;
@@ -145,6 +160,11 @@ function validate(file: RegistryFile): Program[] {
     if (!STATE_RE.test(p.jurisdiction.state)) throw new Error(`incentive registry: ${p.id} has no two-letter state`);
     if (p.jurisdiction.kind === "utility" && !p.jurisdiction.utility) throw new Error(`incentive registry: ${p.id} is a utility program with no utility named`);
     if (!["live", "waitlist", "paused", "ended", "depleted"].includes(p.status)) throw new Error(`incentive registry: ${p.id} bad status`);
+    for (const k of ["liveFrom", "liveUntil"] as const) {
+      const v = p[k];
+      if (v !== undefined && !/^\d{4}-\d{2}-\d{2}$/.test(v)) throw new Error(`incentive registry: ${p.id} has a bad ${k}`);
+    }
+    if (p.liveFrom && p.liveUntil && p.liveFrom > p.liveUntil) throw new Error(`incentive registry: ${p.id} window ends before it starts`);
     if (!p.sources.length) throw new Error(`incentive registry: ${p.id} has no source`);
     for (const s of p.sources) {
       if (!/^\d{4}-\d{2}-\d{2}$/.test(s.capturedAt)) throw new Error(`incentive registry: ${p.id} source without a dated capture`);

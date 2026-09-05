@@ -736,7 +736,8 @@
           },
           "label": "2024 to 2026 ($1,480 in 2027)"
         }
-      ]
+      ],
+      "liveUntil": "2029-12-31"
     },
     {
       "id": "ny-drive-clean-rebate",
@@ -841,13 +842,18 @@
       "administrator": "Oregon DEQ",
       "kind": "rebate",
       "status": "live",
-      "statusAsOf": "2026-09-02",
-      "statusNote": "2026 open period 2026-08-25 to 2026-11-04; rebates depend on funding at the time of purchase or lease.",
+      "statusAsOf": "2026-09-05",
+      "statusNote": "2026 open period 2026-08-25 to 2026-11-04, enforced by liveFrom/liveUntil rather than left in prose. DEQ: vehicles bought or leased outside the window are NOT eligible, and none bought while the program is suspended is. DEQ publishes remaining funding for the open period as a dated PDF - that, not the program page, is where exhaustion would show.",
       "sources": [
         {
           "url": "https://www.oregon.gov/deq/aq/programs/pages/applying-for-ev-rebate.aspx",
           "capturedAt": "2026-09-02",
           "what": "Open period, Standard amounts by battery size, Charge Ahead amounts and 400% FPL rule, base MSRP under $50,000, certified dealer or OEM, six-month window, 24-month registration, two rebates per individual"
+        },
+        {
+          "url": "https://www.oregon.gov/deq/aq/Documents/ocvrpAvailFund-UA.pdf",
+          "capturedAt": "2026-09-05",
+          "what": "Oregon DEQ 'Available Rebate Funding for the 2026 Open Period (Aug. 25, 2026 - Nov. 4, 2026)'. The authoritative funding tracker for the program; the eligibility page states the window and the suspension rule."
         }
       ],
       "covers": {
@@ -941,7 +947,9 @@
           "label": "Charge Ahead used (income-qualified)",
           "incomeQualified": true
         }
-      ]
+      ],
+      "liveFrom": "2026-08-25",
+      "liveUntil": "2026-11-04"
     },
     {
       "id": "ri-drive-ev",
@@ -3671,7 +3679,7 @@
       "kind": "rebate",
       "status": "depleted",
       "statusAsOf": "2026-09-05",
-      "statusNote": "Fund essentially spent. PNM's 2025 Annual Progress Report (NMPRC docket 23-00195-UT, filed 2026-06-01) reports the Electric Vehicle Point-of-Sale (LI only) measure at 243 rebates and $972,000 paid against an $18,000 remaining balance at 2025-12-31 - already over its $900,000 design budget, topped up from the Income-Qualified Reserve for what PNM calls \"this incredibly popular measure\". At up to $4,000 each that is four or five rebates left, as of a report nine months old. PNM still advertises the rebate on pnmdriveelectric.com and ev.pnm.com, which is why this is \"depleted\" rather than paused or ended. The 2024-2026 TEP ends 2026-12-31; PNM applied for a 2027-2029 TEP on 2026-06-01 (docket 26-0000115) that carries the measure forward, so re-check on approval.",
+      "statusNote": "Fund essentially spent. PNM's 2025 Annual Progress Report (NMPRC docket 23-00195-UT, filed 2026-06-01) reports the Electric Vehicle Point-of-Sale (LI only) measure at 243 rebates and $972,000 paid against an $18,000 remaining balance at 2025-12-31 - already over its $900,000 design budget, topped up from the Income-Qualified Reserve for what PNM calls \"this incredibly popular measure\". At up to $4,000 each that is four or five rebates left, as of a report nine months old. PNM still advertises the rebate on pnmdriveelectric.com and ev.pnm.com, which is why this is \"depleted\" rather than paused or ended. PNM CONFIRMED the exhaustion itself on 2026-08-06: its Motion to Reopen Docket 23-00195-UT for budget flexibility (docket 26-0000155, DOC-000414653-26) lists Low-Income EV Purchase Rebates among programs that \"have reached or are anticipated to reach budget exhaustion\", and asks to move $840,000 into the measure ($152,500 from Residential L2 Purchase, $87,500 from Fleet L2 Make-Ready, $600,000 from Mass Transit Make-Ready) under Rule 17.9.574.14(A). As of 2026-09-05 that docket holds the motion and NO order. The identical 2025 request (filed 2025-07-10) was granted 2025-09-18, 70 days later. RE-CHECK: an order on docket 26-0000155 or 23-00195-UT - if granted, the measure is re-funded by roughly 210 rebates and goes back to live. The 2024-2026 TEP ends 2026-12-31 and PNM applied on 2026-06-01 for a 2027-2029 TEP (docket 26-0000115) carrying the measure forward.",
       "sources": [
         {
           "url": "https://www.pnmdriveelectric.com/ev-purchase-rebates",
@@ -3692,6 +3700,11 @@
           "url": "https://e360.prc.nm.gov/portal/public/#/public/nm-prc/en/CaseXscreen?screen=external-AdvancedSearch",
           "capturedAt": "2026-09-05",
           "what": "PNM's Transportation Electrification Program 2025 Annual Progress Report, NMPRC docket 23-00195-UT, document DOC-000313303-26, filed 2026-06-01. Table 4: Electric Vehicle Point-of-Sale (LI only) 225 participants paid in 2025, 243 paid to date. Table 8: $900,000 paid in 2025, $972,000 total paid, $18,000 remaining."
+        },
+        {
+          "url": "https://e360.prc.nm.gov/portal/public/#/public/nm-prc/en/CaseXscreen?screen=external-AdvancedSearch",
+          "capturedAt": "2026-09-05",
+          "what": "PNM's Motion to Reopen Docket for the Limited Purpose of Considering a Request for Budget Flexibility, NMPRC docket 26-0000155, DOC-000414653-26, dated 2026-08-06 and filed 2026-08-07. Names Low-Income EV Purchase Rebates as at or nearing budget exhaustion and requests $840,000 be moved into it. No order on the docket as of 2026-09-05."
         }
       ],
       "covers": {

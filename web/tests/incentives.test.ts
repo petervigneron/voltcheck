@@ -223,6 +223,32 @@ test("a depleted fund is never named, however loudly the utility still advertise
   }
 });
 
+test("a program with a published open period is named inside it and silent outside", () => {
+  // Oregon's rebate runs 2026-08-25 to 2026-11-04 and DEQ is explicit that a
+  // car bought outside the window is not eligible. Before liveUntil the
+  // window was prose in a statusNote, so on 2026-11-05 the site would have
+  // gone on offering it — the PNM failure with a date on it.
+  const or = programById("or-clean-vehicle-rebate")!;
+  assert.equal(or.liveFrom, "2026-08-25");
+  assert.equal(or.liveUntil, "2026-11-04");
+  const car: Listing = {
+    id: "t", vin: "1G1FY6S04P4100001", year: 2023, make: "Chevrolet", model: "Bolt EUV", trim: "LT",
+    priceUsd: 21500, mileage: 24000, state: "OR", sellerType: "dealer", condition: "used",
+  };
+  const named = (iso: string) =>
+    matchIncentives(enrichListing(car), SITE_POLICY, INCENTIVE_PROGRAMS, new Date(iso))
+      .some((m) => m.program.id === "or-clean-vehicle-rebate");
+  assert.equal(named("2026-09-05T12:00:00Z"), true, "inside the window");
+  assert.equal(named("2026-11-04T12:00:00Z"), true, "the closing day still counts");
+  assert.equal(named("2026-11-05T12:00:00Z"), false, "the day after it closes, silent — with no one re-checking");
+  assert.equal(named("2026-08-24T12:00:00Z"), false, "before it opened");
+  // The gate is general, not a special case for Oregon.
+  for (const p of INCENTIVE_PROGRAMS) {
+    if (p.liveUntil) assert.match(p.liveUntil, /^\d{4}-\d{2}-\d{2}$/);
+    if (p.liveFrom) assert.match(p.liveFrom, /^\d{4}-\d{2}-\d{2}$/);
+  }
+});
+
 const RELAXED: MatchPolicy = SITE_POLICY;
 const TODAY = new Date("2026-09-02T12:00:00Z");
 
