@@ -1,6 +1,7 @@
 import { allListingsWithOrigin, type FeedOrigin } from "./source";
 import { displayTrim, enrichListing, packIdentity, specTrim } from "./enrich";
 import type { EnrichedListing } from "./enrich";
+import type { Listing } from "./types";
 import { listingTiles } from "./tiles";
 import { bodyTypeOf } from "./bodyType";
 import { hasRealPrice, priceCut } from "./price";
@@ -14,7 +15,11 @@ import { cardIncentive, matchIncentives } from "@/lib/incentives/match";
 // once per request: enrichment, tiles, body type, zip centroid, price-cut
 // eligibility. The 14-day price-cut window and "new battery" grounds are
 // evaluated here; an hour of staleness on a 14-day window is noise.
-export async function buildCardIndex(): Promise<{ rows: CardRow[]; origin: FeedOrigin }> {
+// Also hands back the listings and their enrichment: the feed publisher
+// builds the public API's artifacts from the same walk (lib/api/records.ts),
+// and a second walk for the same rows would be the egress this file's
+// callers exist to avoid.
+export async function buildCardIndex(): Promise<{ rows: CardRow[]; origin: FeedOrigin; listings: Listing[]; enriched: Map<string, EnrichedListing> }> {
   // A few hundred coefficient rows, fetched once and applied to every
   // listing in memory — the whole transaction-price model costs one request.
   //
@@ -132,7 +137,7 @@ export async function buildCardIndex(): Promise<{ rows: CardRow[]; origin: FeedO
     });
   }
   canonicalizeTrims(rows);
-  return { rows, origin };
+  return { rows, origin, listings, enriched };
 }
 
 // specTrim normalizes each listing in isolation, which can't settle casing that

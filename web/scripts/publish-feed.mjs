@@ -32,6 +32,7 @@ import { buildFirstPaint } from "../lib/listings/firstPaint.ts";
 import { SHARDS, packIndex, shardOfId } from "../lib/listings/pack.ts";
 import { worthTrimTally } from "../lib/listings/tally.ts";
 import { buildHubIndex } from "../lib/listings/hubIndex.ts";
+import { buildApiArtifacts } from "../lib/api/records.ts";
 
 const FORCE = process.argv.includes("--force");
 const { SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY } = process.env;
@@ -42,7 +43,7 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
 const SHRINK_TOLERANCE = 0.1;
 
 const t0 = Date.now();
-const { rows, origin } = await buildCardIndex();
+const { rows, origin, listings, enriched } = await buildCardIndex();
 if (origin === "fallback") {
   console.error("publish-feed: the walk fell back to the bundled snapshot — refusing to publish it as the durable feed.");
   process.exit(1);
@@ -96,8 +97,20 @@ await upload("trims", JSON.stringify(worthTrimTally(rows)));
 // cars are spread across every shard, so serving them from the packed feed
 // would cost ~50 MB per hub render. See lib/listings/hubIndex.ts.
 await upload("hubs", JSON.stringify(buildHubIndex(rows)));
+// The public read API (/api/v1, /api/mcp): one query index of every car, one
+// full-record partition per make, and a manifest the routes gate on — built
+// from the same listings and enrichment as the shards, so the API can never
+// say something the grid does not (lib/api/records.ts). Partitions and index
+// first, api-manifest after them, for the same reason the feed manifest goes
+// last: readers gate on the manifest, so a publish that dies halfway leaves
+// the previous coherent set in place.
+const publishedAt = new Date().toISOString();
+const api = buildApiArtifacts(listings, enriched, rows, publishedAt);
+for (const [slug, recs] of api.partitions) await upload(`api-make-${slug}`, JSON.stringify(recs));
+await upload("api-index", JSON.stringify(api.index));
+await upload("api-manifest", JSON.stringify(api.manifest));
 await upload(
   "manifest",
-  JSON.stringify({ v: 1, publishedAt: new Date().toISOString(), total: rows.length, shardCounts })
+  JSON.stringify({ v: 1, publishedAt, total: rows.length, shardCounts })
 );
 console.error(`publish-feed: published ${rows.length} cars across ${SHARDS} shards in ${((Date.now() - t0) / 1000).toFixed(0)}s total`);
