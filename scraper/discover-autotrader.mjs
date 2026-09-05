@@ -2,8 +2,10 @@
 // Autotrader's used-EV search, read as a DEALER DISCOVERY index.
 //
 //   VOLTCHECK_PLAYWRIGHT=/path/to/dir-with-node_modules/playwright \
-//   node discover-autotrader.mjs [--delay-ms 8000] [--cap 960] [--fuel ELE,PIH]
-//                                [--max-pages N] [--fresh] [--diff-only]
+//   node discover-autotrader.mjs [--delay-ms 8000] [--cap 1000] [--fuel ELE,PIH]
+//                                [--records 100] [--listing-types USED,CERTIFIED]
+//                                [--filters makeCode=TESLA] [--max-pages N]
+//                                [--fresh] [--diff-only]
 //
 // What this is. Every dealer with a used BEV or PHEV listed on Autotrader is
 // a rooftop that sells electrified cars, and the search results name it and
@@ -41,10 +43,13 @@
 // nothing is rotated, no challenge is answered. A stop leaves the checkpoint
 // intact so a later run resumes.
 //
-// Pagination and partitioning. The site pages 24 results per `firstRecord`
-// step and refuses offsets past ~1,000 (measured: firstRecord=2400 and 4992
-// re-serve page 1 with count 0), so the national searches (~44k used BEV,
-// ~21k used PHEV) have to be partitioned into searches small enough to walk.
+// Pagination and partitioning. `numRecords=100` is honoured, and the site
+// refuses offsets past 1,000 whatever the page size: measured 2026-09-05,
+// firstRecord=900 is the last honoured offset and 1000, 2000 and 5000 all
+// re-serve page 1 — same leading VINs, firstRecord stripped from the echoed
+// query. So a partition is walkable only if it holds at most 1,000 cars, and
+// the national searches (~47k used BEV, ~21k used PHEV) have to be
+// partitioned into searches small enough to walk.
 // Partitions are filter dimensions the site applies server-side and every
 // listing has exactly one value of: make, then model year, then model, then
 // a price band bisected until the count fits under --cap. The plan is
@@ -71,10 +76,27 @@ const opt = (name, dflt) => {
 const flag = (name) => args.includes(`--${name}`);
 
 const DELAY_MS = Number(opt("delay-ms", 8000));
-const CAP = Number(opt("cap", 960)); // largest partition a walk can finish under the ~1,000-offset ceiling
-const PAGE = 24; // measured: activeResults carries 24 ids per firstRecord step
-const OFFSET_CEILING = Number(opt("ceiling", 984)); // measured: firstRecord=984 answers empty; 2400+ re-serve page 1
+const PAGE = Number(opt("records", 100)); // measured 2026-09-05: numRecords=100 is honoured — 100 ids and up to ~91 owners per load, where the default 24 needed four times the requests for the same dealers
+const OFFSET_CEILING = Number(opt("ceiling", 1000)); // measured 2026-09-05: firstRecord=900 is the last honoured offset; 1000, 2000 and 5000 all re-serve page 1 (identical leading VINs) with firstRecord stripped from the echo
+const CAP = Number(opt("cap", OFFSET_CEILING)); // largest partition a walk can finish under that ceiling
 const FUELS = opt("fuel", "ELE,PIH").split(",");
+// Used AND certified: CPO cars are used cars a shopper can buy, and the
+// registry does not care which bucket a rooftop's stock sits in. Measured
+// 2026-09-05: `listingTypes=USED,CERTIFIED` is echoed back as the array
+// ["CERTIFIED","USED"], which is why filtersHonoured compares as a set.
+const LISTING_TYPES = opt("listing-types", "USED,CERTIFIED").split(",");
+// Where the partition tree is rooted. The default root is the national search,
+// which spends its first requests on count probes; `--filters makeCode=TESLA`
+// roots it at one make instead, so a run with a small budget spends it on
+// pages that carry ~90 dealers each rather than on planning. Repeated runs
+// with different makes accumulate in the one checkpoint.
+const ROOT = Object.fromEntries(
+  opt("filters", "").split(",").filter(Boolean).map((kv) => {
+    const i = kv.indexOf("=");
+    if (i < 0) throw new Error(`--filters wants k=v pairs, got ${kv}`);
+    return [kv.slice(0, i), kv.slice(i + 1)];
+  })
+);
 const MAX_PAGES = Number(opt("max-pages", Infinity)); // smoke-test budget; the run stops cleanly when spent
 const PW_DIR = opt("playwright", process.env.VOLTCHECK_PLAYWRIGHT);
 const SORT = opt("sort", ""); // e.g. derivedpriceASC; measured 23/page under a sort vs 24 by default, so off unless asked
@@ -86,8 +108,6 @@ const CKPT = new URL("./out/autotrader-discovery.checkpoint.json", import.meta.u
 const DEALERS_OUT = new URL("./out/autotrader-dealers.json", import.meta.url);
 const NEW_OUT = new URL("./out/autotrader-new-sites.json", import.meta.url);
 const REGISTRY = new URL("./registry/registry.json", import.meta.url);
-
-const FUEL_PATH = { ELE: "electric", PIH: "plug-in-hybrid" };
 
 // ── checkpoint ──────────────────────────────────────────────────────────────
 // partitions[key] = { fuel, filters, count, pages, vinsSeen, done, short,
@@ -147,17 +167,19 @@ async function load(url) {
   const r = await page.goto(u.href, { waitUntil: "domcontentloaded", timeout: 60000 });
   const status = r?.status() ?? 0;
   const html = await page.content();
-  await refuseIfBlocked(u, status, html);
-  if (status !== 200) {
-    // Back off once, hard; a second non-200 ends the run.
-    console.error(`  ${status} on ${u.href}; backing off 120s`);
+  const transient = await refuseIfBlocked(u, status, html);
+  if (status !== 200 || transient) {
+    // Back off once, hard; a second failure on the same URL ends the run.
+    ck.transients = (ck.transients ?? 0) + 1;
+    console.error(`  ${transient ? "empty/unavailable page" : status} on ${u.href}; backing off 120s`);
     await sleep(120000);
     lastLoad = Date.now();
     ck.requests++;
     const r2 = await page.goto(u.href, { waitUntil: "domcontentloaded", timeout: 60000 });
     const html2 = await page.content();
-    await refuseIfBlocked(u, r2?.status() ?? 0, html2);
+    const transient2 = await refuseIfBlocked(u, r2?.status() ?? 0, html2);
     if ((r2?.status() ?? 0) !== 200) throw new Stop(`${r2?.status()} again on ${u.href}`);
+    if (transient2) throw new Stop(`page still unavailable on the second load of ${u.href} — stopping`);
     return { status: 200, html: html2, finalUrl: r2.url() };
   }
   return { status, html, finalUrl: r.url() };
@@ -165,13 +187,24 @@ async function load(url) {
 
 // The block page answers 200 (`/akamai-block/` assets, title "page
 // unavailable"), so status alone cannot see it. First sighting ends the run.
+//
+// The title on its own is NOT that signal, which cost this lane its first
+// real run. On 2026-09-05 request no 3 of a fresh checkpoint came back titled
+// "Autotrader - page unavailable" and the run hard-stopped as a block; the
+// identical URL, reloaded under the identical identity a minute later, served
+// a normal 1.5 MB result page with 139 cars on it. The block page carries the
+// `/akamai-block/` asset and the transient one does not, so that asset is
+// what ends a run. A titled-but-unblocked page gets ONE back-off and reload
+// under the SAME identity, and a second one on the same URL still stops:
+// nothing is retried under another identity, nothing is rotated.
 async function refuseIfBlocked(u, status, html) {
   const title = await page.title();
-  if (html.includes("/akamai-block/") || /page unavailable|Access Denied/i.test(title)) {
+  if (html.includes("/akamai-block/") || /Access Denied/i.test(title)) {
     ck.blocked++;
     ck.blockedAt = { url: u.href, status, title, at: new Date().toISOString(), requestNo: ck.requests };
     throw new Stop(`edge served the block page for ${u.href} (status ${status}, request #${ck.requests} of this checkpoint) — stopping, not retrying`);
   }
+  return /page unavailable/i.test(title) || !html.includes('id="__NEXT_DATA__"');
 }
 
 // ── page parsing ────────────────────────────────────────────────────────────
@@ -198,19 +231,27 @@ function parseSrp(html) {
   };
 }
 
+// The fuel and the listing type ride in the query string, not the path.
+// Measured 2026-09-05: /cars-for-sale/used-cars/<fuel> reads its filters from
+// the query anyway, and the path has no way to say "certified as well as
+// used" — so /cars-for-sale/all-cars with everything stated explicitly is the
+// URL whose echo can be checked against what was asked.
 function srpUrl(fuel, filters, firstRecord = 0) {
-  const q = new URLSearchParams({ searchRadius: "0", listingType: "USED" });
+  const q = new URLSearchParams({ searchRadius: "0", fuelTypeGroup: fuel, numRecords: String(PAGE) });
+  for (const t of LISTING_TYPES) q.append("listingTypes", t);
   if (SORT) q.set("sortBy", SORT);
   for (const [k, v] of Object.entries(filters)) q.set(k, String(v));
   if (firstRecord) q.set("firstRecord", String(firstRecord));
-  return `${ORIGIN}/cars-for-sale/used-cars/${FUEL_PATH[fuel]}?${q}`;
+  return `${ORIGIN}/cars-for-sale/all-cars?${q}`;
 }
 
 // The site silently drops a filter it does not understand (the page then
 // answers the national query). Compare what came back with what was asked,
 // so a dropped filter can never masquerade as a small partition.
 function filtersHonoured(fuel, filters, got) {
-  const asked = { ...filters, fuelTypeGroup: fuel, listingType: "USED" };
+  const gotTypes = [got.listingType ?? []].flat().map(String).sort();
+  if (gotTypes.join(",") !== [...LISTING_TYPES].sort().join(",")) return false;
+  const asked = { ...filters, fuelTypeGroup: fuel };
   for (const [k, v] of Object.entries(asked)) if (String(got[k] ?? "") !== String(v)) return false;
   return true;
 }
@@ -400,7 +441,32 @@ function normDomain(href) {
 // of the registry rows.
 const NOT_A_ROOFTOP =
   /^(autotrader|kbb|cars|cargurus|carvana|carmax|vroom|shift|driveway|truecar|edmunds|tesla|ford|chevrolet|cadillac|gmc|buick|carbravo|kia|hyundaiusa|honda|toyota|nissanusa|bmwusa|mbusa|audiusa|vw|porsche|volvocars|polestar|rivian|lucidmotors)\.(com|net|us)$/i;
-const apexOf = (host) => (host ? host.split(".").slice(-2).join(".") : null);
+
+// Website hosts that belong to a dealer's WEBSITE VENDOR, not to the dealer.
+// A rooftop served at nissanofhendersonville.cms.dealer.com or
+// sed.balisehyundaifairfield.netlook.com is a real rooftop, but its apex is
+// the vendor's — so folding it to two labels both invents a rooftop called
+// "dealer.com" and merges every one of that vendor's dealers into it. On a
+// vendor apex the FULL hostname is the identity; the bare apex is never one.
+const VENDOR_APEX = new Set([
+  "dealer.com", "dealeron.com", "dealerinspire.com", "dealercarsearch.com",
+  "dealerfire.com", "dealereprocess.com", "dealercenter.net", "carsforsale.com",
+  "teamvelocitymarketing.com", "overfuel.com", "dealrcloud.com", "autofunds.com",
+  "dealersync.com", "ridemotive.com", "automanager.com", "netlook.com",
+  "ebizautos.com", "fusionzone.com", "sincrod.com", "autorevo.com",
+  "porschedealer.com", "mycarsonline.com", "dealerspike.com", "dealervenom.com",
+  "waynereeves.com", "autodealersdigital.com", "dealerclick.com",
+]);
+const apex2 = (host) => (host ? host.split(".").slice(-2).join(".") : null);
+// The registry key for a seller: its apex normally, its full hostname when the
+// apex is a vendor's, and null for the bare vendor apex itself.
+function rooftopKey(host) {
+  if (!host) return null;
+  const a = apex2(host);
+  if (!VENDOR_APEX.has(a)) return a;
+  return host === a ? null : host;
+}
+const apexOf = rooftopKey;
 
 async function writeOutputs() {
   const byOwner = new Map();
@@ -450,7 +516,9 @@ async function writeOutputs() {
   const fresh = [];
   const seenNew = new Map();
   for (const d of dealers) {
-    if (!d.domain || d.privateSeller || NOT_A_ROOFTOP.test(d.apex)) continue;
+    // apex is null when the seller's "website" is a bare vendor host — that
+    // names the vendor, not a rooftop, so there is nothing to add.
+    if (!d.domain || !d.apex || d.privateSeller || NOT_A_ROOFTOP.test(d.apex)) continue;
     const st = known.get(d.domain) ?? known.get(d.apex);
     if (st) {
       d.registryStatus = st;
@@ -485,7 +553,7 @@ async function writeOutputs() {
     generatedAt: new Date().toISOString(),
     requests: ck.requests,
     partitions: { total: Object.keys(ck.partitions).length, leaves: leaves.length, done: leaves.filter((p) => p.done).length, complete: leaves.filter((p) => p.complete).length },
-    listingsByFuel: Object.fromEntries(FUELS.map((f) => [f, { siteCount: ck.partitions[keyOf(f, {})]?.count ?? null, vinsSeen: leaves.filter((p) => p.fuel === f).reduce((n, p) => n + (p.vinsSeen ?? 0), 0), pagesRead: leaves.filter((p) => p.fuel === f).reduce((n, p) => n + (p.pages ?? 0), 0) }])),
+    listingsByFuel: Object.fromEntries(FUELS.map((f) => [f, { siteCount: ck.partitions[keyOf(f, ROOT)]?.count ?? null, vinsSeen: leaves.filter((p) => p.fuel === f).reduce((n, p) => n + (p.vinsSeen ?? 0), 0), pagesRead: leaves.filter((p) => p.fuel === f).reduce((n, p) => n + (p.pages ?? 0), 0) }])),
     dealersSeen: dealers.length,
     withWebsite: dealers.filter((d) => d.domain).length,
     privateSellers: dealers.filter((d) => d.privateSeller).length,
@@ -520,14 +588,14 @@ try {
   ck.robotsHeader = txt.split("\n")[0];
   console.error(`robots.txt: ${ck.robots.disallow.length} disallow / ${ck.robots.allow.length} allow rules in the * group (${ck.robotsHeader})`);
   for (const f of FUELS) {
-    const probeUrl = new URL(srpUrl(f, {}));
+    const probeUrl = new URL(srpUrl(f, ROOT));
     if (!robotsRulesAllow(ck.robots, probeUrl.pathname + probeUrl.search)) throw new Stop(`robots disallows the ${f} search page itself — nothing to do`);
   }
   await save();
 
   for (const fuel of FUELS) {
     console.error(`planning ${fuel}`);
-    const leaves = await plan(fuel, {});
+    const leaves = await plan(fuel, ROOT);
     console.error(`${fuel}: ${leaves.length} leaf partitions`);
     for (const key of leaves) await walk(key);
   }
