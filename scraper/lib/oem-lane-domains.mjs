@@ -25,6 +25,7 @@ export const OEM_LOCATOR_DOMAINS = new Set([
   "enterprisecarsales.com",
   "driveway.com",
   "echopark.com",
+  "drivetime.com",
   "mbusa.com",
   "chevrolet.com",
   "gmc.com",

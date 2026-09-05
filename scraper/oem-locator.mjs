@@ -175,6 +175,15 @@
 //            anonymous-token flow, open to plain Node. One query is their
 //            whole national used stock (~14.5k, ~136 BEV incl. used Teslas)
 //            → lib/oem/enterprise.mjs
+//   DriveTime — the national buy-here-pay-here used chain (~140 stores, one
+//            national stock). Its Angular site serves no VINs, but the Azure
+//            Cognitive Search wrapper the page calls
+//            (search.ext.drivetime.cloud) is open to plain Node. The 2026-08-16
+//            census that found "zero BEVs, no lane" counted only BEVs; the
+//            plug-ins were never counted. The lot is WALKED whole (8 requests
+//            at pageSize 1000) rather than filtered on the fuel facet, because
+//            DriveTime files 40% of its own plug-ins as Gas or Flex Fuel —
+//            ~47 plug-ins where the fuel bucket shows 28 → lib/oem/drivetime.mjs
 //   EchoPark — Sonic Automotive's used-car retailer, 17 stores, one national
 //            stock. Akamai 403s its JSON API, its VDPs and its faceted paths,
 //            but the server-rendered SRP at www.echopark.com/used-cars is open
@@ -203,6 +212,7 @@ import { POLESTAR, pullPolestar } from "./lib/oem/polestar.mjs";
 import { ENTERPRISE, pullEnterprise } from "./lib/oem/enterprise.mjs";
 import { DRIVEWAY, pullDriveway } from "./lib/oem/driveway.mjs";
 import { ECHOPARK, pullEchoPark } from "./lib/oem/echopark.mjs";
+import { DRIVETIME, pullDriveTime } from "./lib/oem/drivetime.mjs";
 import { LEXUS, pullLexus } from "./lib/oem/toyota.mjs";
 import { LUCID, LUCID_NEW, pullLucid, pullLucidNew } from "./lib/oem/lucid.mjs";
 import { HONDA_CPO, pullHondaCpo } from "./lib/oem/honda-cpo.mjs";
@@ -240,6 +250,7 @@ const PULLERS = {
   [ENTERPRISE.key]: { domain: ENTERPRISE.domain, run: () => pullEnterprise({ log }) },
   [DRIVEWAY.key]: { domain: DRIVEWAY.domain, run: () => pullDriveway({ log }) },
   [ECHOPARK.key]: { domain: ECHOPARK.domain, run: () => pullEchoPark({ log }) },
+  [DRIVETIME.key]: { domain: DRIVETIME.domain, run: () => pullDriveTime({ log }) },
   [LEXUS.key]: { domain: LEXUS.domain, run: () => pullLexus({ log }) },
   [LUCID.key]: { domain: LUCID.domain, run: () => pullLucid({ log }) },
   [LUCID_NEW.key]: { domain: LUCID_NEW.domain, run: () => pullLucidNew({ log }) },
@@ -257,7 +268,7 @@ function flag(name, fallback) {
   return i >= 0 ? args[i + 1] : fallback;
 }
 const OUT_DIR = flag("--out", "out");
-const wanted = flag("--brands", "chevrolet,gmc,cadillac,carbravo,hyundai,hyundai-cpo,kia,nissan,nissan-cpo,bmw,bmw-cpo,mercedes,jeep,dodge,chrysler,fiat,genesis,genesis-cpo,ford-blue-advantage,honda,honda-cpo,acura-cpo,stellantis-cpo,audi,vw,volvo,polestar,lexus,lucid,lucid-new,subaru,mazda,mitsubishi,rivian,enterprise,driveway,echopark").split(",").map((s) => s.trim().toLowerCase());
+const wanted = flag("--brands", "chevrolet,gmc,cadillac,carbravo,hyundai,hyundai-cpo,kia,nissan,nissan-cpo,bmw,bmw-cpo,mercedes,jeep,dodge,chrysler,fiat,genesis,genesis-cpo,ford-blue-advantage,honda,honda-cpo,acura-cpo,stellantis-cpo,audi,vw,volvo,polestar,lexus,lucid,lucid-new,subaru,mazda,mitsubishi,rivian,enterprise,driveway,echopark,drivetime").split(",").map((s) => s.trim().toLowerCase());
 const selected = wanted.filter((k) => PULLERS[k]);
 if (!selected.length) {
   console.error(`oem-locator: no known brands in "${wanted}" (have: ${Object.keys(PULLERS).join(",")})`);

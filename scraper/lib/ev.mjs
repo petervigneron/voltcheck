@@ -338,7 +338,19 @@ export function classifyEv(vehicle) {
   // "Rubicon 4xe", "XC90" / "T8 Recharge"), so the trim joins the haystack
   // here. EV_MODEL_RE above keeps its original haystack on purpose: widening
   // it is a change to the BEV rule, not this one.
-  const nameWithTrim = `${name} ${text(vehicle.vehicleConfiguration)}`;
+  // Collapsed to single spaces, because `name` above is a join of three
+  // fields and two of them are usually empty — so the string handed to the
+  // plug-in patterns reads "Toyota Prius Prius  Prime", with a DOUBLE space
+  // exactly where the model meets the trim. Every plug-in badge that is one
+  // token ("4xe", "Energi", "T8") matched anyway, which is why this went
+  // unnoticed; every badge that spans the model/trim join did not. Measured
+  // on the DriveTime lot 2026-09-05: 3 Dodge Hornet R/T, and by the same
+  // rule any feed filing model "Prius" + trim "Prime", "Pacifica" +
+  // "Hybrid Limited" or "Aviator" + "Grand Touring". Widening this cannot
+  // reach EV_MODEL_RE (tested on `name` above, unchanged) and every match it
+  // does enable is a "PHEV?" name_match that vpic-enrich has to confirm
+  // before ingest will publish it.
+  const nameWithTrim = `${name} ${text(vehicle.vehicleConfiguration)}`.replace(/\s+/g, " ").trim();
   const year = Number(text(vehicle.vehicleModelDate).match(/\b(19[89]\d|20\d{2})\b/)?.[0]);
   if (phevNameplate(nameWithTrim, year) || PHEV_NAME_CLAIM_RE.test(nameWithTrim)) {
     return { isEv: true, kind: "PHEV?", confidence: "name_match" };

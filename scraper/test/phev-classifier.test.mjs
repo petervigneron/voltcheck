@@ -371,3 +371,34 @@ test("a dealer-written 4xe badge cannot turn the battery-electric Recon into a p
   // lanes carry, and it must not become a name-matched BEV.
   assert.equal(classifyEv({ name: "2024 Honda FourTrax Recon", fuelType: "Gas" }).isEv, false);
 });
+
+// A plug-in badge that spans the model/trim join used to be lost, because the
+// haystack classifyEv builds is a join of three fields, two of them usually
+// empty — so the string read "Dodge Hornet Hornet  R/T", with a DOUBLE space
+// at exactly the point every model-plus-trim pattern needs one. Single-token
+// badges ("4xe", "Energi", "T8") matched anyway, which is why it went
+// unnoticed for so long. Found on the DriveTime lot 2026-09-05: 4 Dodge
+// Hornet R/T and a Lincoln Corsair Grand Touring, all real plug-ins.
+test("a plug-in badge split across model and trim is found", () => {
+  const split = (make, model, trim, year) =>
+    classifyEv({ name: `${year} ${make} ${model}`, model, vehicleConfiguration: trim, vehicleModelDate: String(year) });
+
+  // Dodge sells the Hornet as a petrol GT and a plug-in R/T; the badge is the
+  // only thing that separates them, and it sits in the trim.
+  assert.equal(split("Dodge", "Hornet", "R/T", 2024).kind, "PHEV?");
+  assert.equal(split("Dodge", "Hornet", "R/T Plus", 2024).kind, "PHEV?");
+  assert.equal(split("Dodge", "Hornet", "GT", 2024).isEv, false);
+
+  assert.equal(split("Toyota", "Prius", "Prime", 2021).kind, "PHEV?");
+  assert.equal(split("Toyota", "Prius", "Two Eco", 2016).isEv, false);
+  assert.equal(split("Chrysler", "Pacifica", "Hybrid Limited", 2022).kind, "PHEV?");
+  assert.equal(split("Chrysler", "Pacifica", "Touring L", 2022).isEv, false);
+  assert.equal(split("Lincoln", "Corsair", "Grand Touring", 2022).kind, "PHEV?");
+  assert.equal(split("Lincoln", "Corsair", "Reserve", 2022).isEv, false);
+
+  // The widening cannot reach EV_MODEL_RE — that is still tested against the
+  // model name alone — so the seam construct echopark.mjs was built to refuse
+  // stays refused: "Grand Wagoneer" + "Series II" is not Jeep's Wagoneer S.
+  assert.equal(split("Jeep", "Grand Wagoneer", "Series II", 2023).isEv, false);
+  assert.equal(split("Hyundai", "IONIQ", "5 SEL", 2024).isEv, false);
+});
