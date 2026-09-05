@@ -51,18 +51,20 @@
 //            is one car per configuration and so can never be certified; its
 //            USED answer is the complete national set. ~110 used/demo +
 //            ~1.6k new Air/Gravity → lib/oem/lucid.mjs
-//   Rivian — NOT BUILDABLE, and the reason is policy, not bot management, so
-//            there is nothing to retry. rivian.com/robots.txt states
-//            `disallow: /api/` for user-agent *, and every inventory path is
-//            under it: the shop SPA at /configurations/list (itself allowed,
-//            including ?INVENTORY_TYPE=PRE_OWNED_VEHICLE) inlines its whole ENV
-//            in the page, and the only data services named there are
-//            rivian.com/api/gql/{gateway,content,orders}/graphql. Confirmed
-//            live: loading the pre-owned list page fires exactly one data
-//            request, to /api/gql/orders/graphql. There is no second host, no
-//            server-rendered payload (0 VINs in the 228KB page) and no
-//            robots-clean route to the same data. Used Rivians reach us only
-//            second-hand, via dealer sites and the Audi/Enterprise lanes.
+//   Rivian — BUILDABLE since 2026-09-05, reversing the 2026-08-11 "no
+//            compliant data route" verdict this comment used to carry. That
+//            verdict was right about the site it described: the shop's only
+//            data service was rivian.com/api/gql/*/graphql, and robots.txt
+//            disallows /api/. Rivian has since moved the shop onto React
+//            Router server routes of its own — /configurations/api/v1/shop/
+//            search for the list, /configurations/inventory/pre-owned/
+//            <configId>/build for the car, which server-renders the VIN. The
+//            /api/ disallow is a prefix rule and does not reach
+//            /configurations/api/; the gateway calls the page still makes are
+//            not read (the probe that found this ran behind lib/browser.mjs's
+//            robots gate, which aborted them). Direct sale, two national
+//            pools (California and everywhere else), ~145 pre-owned BEVs
+//            → lib/oem/rivian.mjs
 //   Subaru — subaru.com's own /services/* JSON (NOT Toyota's GraphQL, despite
 //            the Solterra being a bZ4X sibling — the 2026-08-15 "Subaru = AWS
 //            WAF" verdict was about the rendered page, not these endpoints).
@@ -208,6 +210,7 @@ import { ACURA_CPO, pullAcuraCpo } from "./lib/oem/acura-cpo.mjs";
 import { STELLANTIS_CPO, pullStellantisCpo } from "./lib/oem/stellantis-cpo.mjs";
 import { MAZDA, pullMazda } from "./lib/oem/mazda.mjs";
 import { MITSUBISHI, pullMitsubishi } from "./lib/oem/mitsubishi.mjs";
+import { RIVIAN, pullRivian } from "./lib/oem/rivian.mjs";
 
 // One registry of pullers keyed by brand. Each entry is a thunk returning a
 // crawl.mjs-shaped report; new OEM families plug in here without touching the
@@ -245,6 +248,7 @@ const PULLERS = {
   [STELLANTIS_CPO.key]: { domain: STELLANTIS_CPO.domain, run: () => pullStellantisCpo({ log }) },
   [MAZDA.key]: { domain: MAZDA.domain, run: () => pullMazda({ log }) },
   [MITSUBISHI.key]: { domain: MITSUBISHI.domain, run: () => pullMitsubishi({ log }) },
+  [RIVIAN.key]: { domain: RIVIAN.domain, run: () => pullRivian({ log }) },
 };
 
 const args = process.argv.slice(2);
@@ -253,7 +257,7 @@ function flag(name, fallback) {
   return i >= 0 ? args[i + 1] : fallback;
 }
 const OUT_DIR = flag("--out", "out");
-const wanted = flag("--brands", "chevrolet,gmc,cadillac,carbravo,hyundai,hyundai-cpo,kia,nissan,nissan-cpo,bmw,bmw-cpo,mercedes,jeep,dodge,chrysler,fiat,genesis,genesis-cpo,ford-blue-advantage,honda,honda-cpo,acura-cpo,stellantis-cpo,audi,vw,volvo,polestar,lexus,lucid,lucid-new,subaru,mazda,mitsubishi,enterprise,driveway,echopark").split(",").map((s) => s.trim().toLowerCase());
+const wanted = flag("--brands", "chevrolet,gmc,cadillac,carbravo,hyundai,hyundai-cpo,kia,nissan,nissan-cpo,bmw,bmw-cpo,mercedes,jeep,dodge,chrysler,fiat,genesis,genesis-cpo,ford-blue-advantage,honda,honda-cpo,acura-cpo,stellantis-cpo,audi,vw,volvo,polestar,lexus,lucid,lucid-new,subaru,mazda,mitsubishi,rivian,enterprise,driveway,echopark").split(",").map((s) => s.trim().toLowerCase());
 const selected = wanted.filter((k) => PULLERS[k]);
 if (!selected.length) {
   console.error(`oem-locator: no known brands in "${wanted}" (have: ${Object.keys(PULLERS).join(",")})`);

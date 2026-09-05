@@ -54,6 +54,7 @@ export const OEM_LOCATOR_DOMAINS = new Set([
   "stellantis-cpo",
   "mazdausa.com",
   "mitsubishicars.com",
+  "rivian.com",
 ]);
 
 /** "oem" for a national locator pull, "dealer" for a crawled rooftop. */
