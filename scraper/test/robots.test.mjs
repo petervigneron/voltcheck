@@ -105,3 +105,55 @@ test("query rules bind: /*?* closes the pager, and Allow /*?page= re-opens exact
   assert.equal(robotsRulesAllow(gateway, "/vehicles?page=2"), true);
   assert.equal(robotsRulesAllow(gateway, "/vehicles?make=ford"), false);
 });
+
+// A walled host's robots.txt, read by another client. lib/browser.mjs seeds
+// the cache with what Chrome was served when the plain fetch got a firewall
+// page instead; from then on the site's own rules bind every check. Pinned
+// against DealerCenter's actual file (jordanmotors.co/robots.txt, read in
+// Chrome 2026-09-05): the inventory JSONP the lane used to capture and the
+// pager it followed are both disallowed, the SRP itself is not. This is the
+// measurement that closed lib/platforms/dealercenter.mjs.
+import { robotsEntry, seedRobots } from "../lib/http.mjs";
+
+const DEALERCENTER = `User-agent: *
+Disallow: /_tracking/*
+Disallow: /dealercenter/tracking.html
+Disallow: /inv-scripts/*
+Disallow: /inv-scripts-v2/*
+Disallow: /*?fuel_type=
+Disallow: /*&fuel_type=
+Disallow: /*?sort_by=
+Disallow: /*&sort_by=
+Disallow: /*?page_no=
+Disallow: /*&page_no=
+Disallow: /wp-admin/
+Allow: /wp-admin/admin-ajax.php
+
+User-agent: GPTBot
+User-agent: PerplexityBot
+Disallow: /
+`;
+
+test("a robots.txt seeded from the browser replaces the wall's empty rules and binds", () => {
+  seedRobots("dealercenter.test", DEALERCENTER);
+  const rules = robotsEntry("dealercenter.test");
+  assert.equal(rules.status, 200);
+  assert.equal(rules.via, "browser");
+  assert.equal(robotsRulesAllow(rules, "/inventory/"), true, "the SRP is allowed");
+  assert.equal(robotsRulesAllow(rules, "/inventory/?page_no=2"), false, "the pager is not");
+  assert.equal(robotsRulesAllow(rules, "/inv-scripts-v2/inv/vehicles?vc=a&ps=10&pn=0"), false, "the inventory JSONP is not");
+  assert.equal(robotsRulesAllow(rules, "/inventory/?fuel_type=ELECTRIC"), false, "nor any facet");
+  assert.equal(robotsRulesAllow(rules, "/wp-admin/admin-ajax.php"), true, "the explicit Allow still wins");
+});
+
+test("a robots.txt the browser could not read either keeps the RFC 9309 reading: no rules", () => {
+  seedRobots("walled.test", "", 403);
+  const rules = robotsEntry("walled.test");
+  assert.equal(rules.status, 403);
+  assert.deepEqual([rules.allow, rules.disallow], [[], []]);
+  assert.equal(robotsRulesAllow(rules, "/anything?page_no=2"), true);
+});
+
+test("robotsEntry is undefined for a host nobody has asked about", () => {
+  assert.equal(robotsEntry("never-asked.test"), undefined);
+});

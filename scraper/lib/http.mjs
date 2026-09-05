@@ -327,9 +327,9 @@ export async function robotsAllows(url) {
   if (!robotsCache.has(u.host)) {
     try {
       const { status, body } = await fetchRaw(`${u.origin}/robots.txt`, { timeoutMs: 8000 });
-      robotsCache.set(u.host, status === 200 ? parseRobots(body) : { allow: [], disallow: [] });
+      robotsCache.set(u.host, status === 200 ? { ...parseRobots(body), status } : { allow: [], disallow: [], status });
     } catch {
-      robotsCache.set(u.host, { allow: [], disallow: [] });
+      robotsCache.set(u.host, { allow: [], disallow: [], status: "error" });
     }
   }
   // The QUERY is part of what robots rules match — `Disallow: /*?*` and
@@ -342,6 +342,24 @@ export async function robotsAllows(url) {
   // ours to fetch, and crawl.mjs records the refusal as truncation rather
   // than certifying a walk it did not make.
   return robotsRulesAllow(robotsCache.get(u.host), u.pathname + u.search);
+}
+
+/** The rules cached for a host, or undefined if no fetcher has asked yet.
+ *  `status` is what /robots.txt answered — 200 with rules, or the firewall's
+ *  4xx with none, which RFC 9309 reads as "no restrictions" and which is the
+ *  reading every walled vendor got until 2026-09-05. `via` names the client
+ *  that read it when it was not this file's plain fetch. */
+export function robotsEntry(host) {
+  return robotsCache.get(host);
+}
+
+/** Replace a host's cached rules with a robots.txt another client managed to
+ *  read. lib/browser.mjs calls this when the plain fetch was answered with a
+ *  firewall page: the site's actual rules then bind every later check —
+ *  the browser's navigations, the page's own sub-requests, and this file's
+ *  fetchers — instead of the "no rules" the wall left behind. */
+export function seedRobots(host, txt, status = 200, via = "browser") {
+  robotsCache.set(host, status === 200 ? { ...parseRobots(txt ?? ""), status, via } : { allow: [], disallow: [], status, via });
 }
 
 // Plenty of dealers serve only on www and refuse the apex outright

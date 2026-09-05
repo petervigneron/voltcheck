@@ -33,6 +33,26 @@
 // the dealer's own link, not a guess. Paging: see pullDealerCenter — the
 // site blocks a session after its first page, so this lane reads one.
 //
+// CLOSED BY THE VENDOR'S OWN ROBOTS.TXT, 2026-09-05. The file the plain
+// fetcher could never read (the wall answers /robots.txt too) is readable in
+// Chrome, and it says, for every crawler:
+//
+//   Disallow: /inv-scripts-v2/*      — the inventory JSONP this lane captured
+//   Disallow: /*?page_no=            — the pager it followed
+//   Disallow: /*?fuel_type= …        — every inventory facet
+//
+// (jordanmotors.co/robots.txt, read 2026-09-05; the same file also names
+// GPTBot, PerplexityBot, CCBot and thirty other AI crawlers and disallows
+// them everything.) /inventory/ itself is allowed, but its cars arrive only
+// through the disallowed script, and a resource the site's robots.txt
+// refuses to crawlers is not ours to read off the page's own request any
+// more than it is ours to fetch — lib/browser.mjs now reads a walled host's
+// robots.txt through Chrome and refuses the page's sub-requests by the same
+// rules. So this lane answers `robots_disallowed` before the first load, the
+// rooftops report partial (never a delisting), and the 75 cars it landed on
+// 2026-09-03 retire through recheck. The code below is kept in case
+// DealerCenter opens the endpoint; nothing here works around the rule.
+//
 // PRICE: VehiclePrice (== AskingPrice on every record seen), tagged
 // DEALERCENTER_ASKING. TotalPrice folds the doc fee in and is never read.
 // CONDITION: the record's VehicleClass/VehicleType are undocumented
@@ -41,7 +61,7 @@
 // FUEL: FuelType is the vendor's enum ("GASOLINE", "DIESEL", "ELECTRIC",
 // "HYBRID", "PLUG-IN HYBRID"…); mapped to the words classifyEv reads and
 // otherwise passed through, so vpic-enrich's fuelTextOnly guard applies.
-import { browserFetch } from "../browser.mjs";
+import { browserFetch, browserRobotsAllows } from "../browser.mjs";
 import { DEALERCENTER_ASKING } from "../price-provenance.mjs";
 import { decodeEntities } from "../normalize.mjs";
 
@@ -57,6 +77,11 @@ export function isDealerCenter(html) {
 
 export function dealerCenterSrpUrl(origin, page = 1) {
   return `${origin.replace(/\/$/, "")}${DEALERCENTER_SRP_PATH}${page > 1 ? `?page_no=${page}` : ""}`;
+}
+
+/** The inventory endpoint's path, for the robots check only — never fetched. */
+export function dealerCenterJsonpUrl(origin) {
+  return `${origin.replace(/\/$/, "")}/inv-scripts-v2/inv/vehicles`;
 }
 
 /** The JSONP body → { total, vehicles } (raw vendor records), or null. */
@@ -158,6 +183,7 @@ export function dealerCenterVehicle(r, { vdpUrl } = {}) {
  *  fits on that page. Ten cars of a thirty-one-car lot, honestly partial;
  *  recheck retires per VIN, db-sync never delists on this lane's silence. */
 export async function pullDealerCenter(origin) {
+  if (!(await browserRobotsAllows(dealerCenterJsonpUrl(origin)))) return { ok: false, complete: false, found: 0, vehicles: [], requests: 0, why: "robots_disallowed" };
   const run = await browserFetch(dealerCenterSrpUrl(origin, 1), { capture: DEALERCENTER_JSONP_RE, settleMs: 3000 });
   if (run.status === "browser_unavailable") return { ok: false, complete: false, found: 0, vehicles: [], requests: 1, why: "browser_unavailable" };
   if (run.status !== 200 || !run.body) return { ok: false, complete: false, found: 0, vehicles: [], requests: 1, status: run.status };
@@ -182,6 +208,7 @@ export async function pullDealerCenter(origin) {
 
 /** For probe: the first page — the lot's own total and whether VINs came back. */
 export async function countDealerCenter(origin) {
+  if (!(await browserRobotsAllows(dealerCenterJsonpUrl(origin)))) return { ok: false, found: 0, hasVin: false, why: "robots_disallowed" };
   const res = await browserFetch(dealerCenterSrpUrl(origin, 1), { capture: DEALERCENTER_JSONP_RE, settleMs: 3000 });
   if (res.status === "browser_unavailable") return { ok: false, found: 0, hasVin: false, why: "browser_unavailable" };
   if (res.status !== 200) return { ok: false, found: 0, hasVin: false, status: res.status };

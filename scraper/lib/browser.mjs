@@ -49,7 +49,7 @@
 // without the downloaded headless shell) gets { status: "browser_unavailable" }
 // from every call, the lanes decline cleanly, and the rest of the crawl is
 // untouched. CI installs it in the workflows that run browser lanes.
-import { robotsAllows, politeDelay } from "./http.mjs";
+import { robotsAllows, politeDelay, robotsEntry, robotsRulesAllow, seedRobots, CRAWLER_DECLARATION } from "./http.mjs";
 
 const UA =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36";
@@ -103,9 +103,33 @@ async function getContext() {
       }
       try {
         const browser = await pw.chromium.launch({ headless: true });
-        const context = await browser.newContext({ userAgent: UA, viewport: { width: 1280, height: 900 } });
+        // The same declaration lib/http.mjs puts on every plain request, and
+        // the one voltcheck.net/bot promises is on "every request". Until
+        // 2026-09-05 the browser sent none: a Dealer Inspire operator reading
+        // their logs saw a Mac Chrome and nothing else.
+        const context = await browser.newContext({
+          userAgent: UA,
+          viewport: { width: 1280, height: 900 },
+          extraHTTPHeaders: { "x-crawler": CRAWLER_DECLARATION },
+        });
         await context.route("**/*", (route) => {
-          if (BLOCKED_TYPES.has(route.request().resourceType())) return route.abort();
+          const req = route.request();
+          if (BLOCKED_TYPES.has(req.resourceType())) return route.abort();
+          // The page's own requests are the crawler's requests. A URL the
+          // host's robots.txt disallows is not fetched because a script on an
+          // allowed page asked for it — the rule Googlebot's renderer applies,
+          // and the one that closes DealerCenter's inventory JSONP (their
+          // robots.txt, read through Chrome on 2026-09-05, disallows
+          // /inv-scripts-v2/* and /*?page_no=; see lib/platforms/
+          // dealercenter.mjs). Navigations pass through here too, so a pager
+          // click onto a disallowed URL is refused the same way. Only hosts
+          // whose robots.txt has been read have rules; a CDN host the crawler
+          // never navigated to has no entry and passes.
+          try {
+            const u = new URL(req.url());
+            const rules = robotsEntry(u.host);
+            if (rules && !robotsRulesAllow(rules, u.pathname + u.search)) return route.abort("blockedbyclient");
+          } catch {}
           return route.continue();
         });
         const close = async () => {
@@ -134,6 +158,61 @@ export async function browserUnavailable() {
   return unavailable;
 }
 
+const bounded = (p, ms, what) =>
+  Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(Object.assign(new Error(`${what} timed out after ${ms}ms`), { name: "timeout" })), ms))]);
+
+const robotsReadByBrowser = new Set(); // hosts whose robots.txt Chrome has been asked for, whatever it answered
+
+/**
+ * robots.txt as a real browser reads it. The plain fetcher asks first, and on
+ * the walled vendors it is answered with the firewall page — robots.txt
+ * included — which http.mjs records as "no rules": the RFC 9309 reading of
+ * an unreachable robots.txt, and until 2026-09-05 the only reading these
+ * lanes ever had. It was wrong on the one vendor where it mattered.
+ * jordanmotors.co (DealerCenter) answers a plain GET /robots.txt with
+ * "Attention Required" and Chrome with a real file that disallows
+ * /inv-scripts-v2/* — the inventory JSONP the DealerCenter lane captured —
+ * and /*?page_no=, the pager it followed. The lane had been reading around
+ * rules it never saw.
+ *
+ * So when the plain read did not get a 200, the browser loads robots.txt
+ * itself, once per host, and seeds http.mjs's cache with what the site
+ * actually says. Every later check reads the same rules: this navigation,
+ * the page's own sub-requests in the route handler above, and the plain
+ * fetchers. A host Chrome cannot read either keeps the RFC reading.
+ */
+export async function browserRobotsAllows(url) {
+  const u = new URL(url);
+  await robotsAllows(url); // the plain read, which fills the cache
+  let rules = robotsEntry(u.host);
+  if (rules?.status !== 200 && !robotsReadByBrowser.has(u.host)) {
+    robotsReadByBrowser.add(u.host);
+    const ctx = await getContext();
+    if (ctx) {
+      await politeDelay(u.host);
+      await acquire();
+      let page;
+      try {
+        page = await bounded(ctx.context.newPage(), 30000, "newPage");
+        const res = await bounded(page.goto(`${u.origin}/robots.txt`, { waitUntil: "domcontentloaded", timeout: 20000 }), 35000, "goto");
+        if (res && res.status() === 200) {
+          const text = await bounded(page.evaluate(() => document.body?.innerText ?? ""), 15000, "content");
+          seedRobots(u.host, text, 200);
+        } else if (res) {
+          seedRobots(u.host, "", res.status());
+        }
+      } catch {
+        // Unreadable by Chrome too: the plain fetch's entry stands.
+      } finally {
+        if (page) await bounded(page.close(), 15000, "close").catch(() => {});
+        release();
+      }
+    }
+    rules = robotsEntry(u.host);
+  }
+  return robotsRulesAllow(rules ?? { allow: [], disallow: [] }, u.pathname + u.search);
+}
+
 /**
  * Load one page in Chrome and hand back what a fetch would have: the served
  * status, the document after scripts ran, and the URL it landed on. Also the
@@ -156,7 +235,7 @@ export async function browserFetch(url, { settleMs = 1500, waitFor = null, captu
   } catch {
     return { status: "error:invalid-url", body: null, finalUrl: url, captured: [] };
   }
-  if (!(await robotsAllows(url))) return { status: "robots_disallowed", body: null, finalUrl: url, captured: [] };
+  if (!(await browserRobotsAllows(url))) return { status: "robots_disallowed", body: null, finalUrl: url, captured: [] };
   const ctx = await getContext();
   if (!ctx) return { status: "browser_unavailable", body: null, finalUrl: url, captured: [] };
   await politeDelay(new URL(url).host);
