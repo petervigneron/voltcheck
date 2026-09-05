@@ -112,7 +112,7 @@ import { AUTOCORNER_PRICE } from "../price-provenance.mjs";
 import { priceFloor } from "../price-floor.mjs";
 import { stabilizeImages } from "../images.mjs";
 import { fetchPage } from "../http.mjs";
-import { LOC_RE, decodeEntities, EVISH_RE } from "../sitemap.mjs";
+import { LOC_RE, decodeEntities, evish } from "../sitemap.mjs";
 import { EV_ONLY_WMIS } from "../ev.mjs";
 import { KNOWN_MAKES } from "../makes.mjs";
 
@@ -297,7 +297,7 @@ export function autoCornerNeedsVdp(v, isEv) {
   const hay = [v?.name, v?.model, v?.slug, v?.description, v?.vehicleEngine?.name]
     .filter(Boolean)
     .join(" ");
-  return EVISH_RE.test(hay) || ELECTRIFIED_TEXT_RE.test(hay);
+  return evish(hay) || ELECTRIFIED_TEXT_RE.test(hay);
 }
 
 const stripTags = (s) => String(s ?? "").replace(/<[^>]*>/g, " ");

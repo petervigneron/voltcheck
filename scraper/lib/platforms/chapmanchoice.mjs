@@ -42,7 +42,7 @@
 // model word is on the list — the AutoCorner/DealerEProcess limitation).
 import { fetchPage } from "../http.mjs";
 import { extractVehicles } from "../jsonld.mjs";
-import { LOC_RE, EVISH_RE, decodeEntities } from "../sitemap.mjs";
+import { LOC_RE, evish, decodeEntities } from "../sitemap.mjs";
 
 const CC_RE = /\b(?:photos|assets)\.chapmanchoice\.com\b/i;
 export const CHAPMANCHOICE_SITEMAP_PATH = "/sitemap.xml";
@@ -95,7 +95,7 @@ export function chapmanChoiceEntries(xml) {
 }
 
 export function chapmanChoiceCandidates(entries) {
-  return entries.filter((e) => EVISH_RE.test(`${e.make} ${e.model}`));
+  return entries.filter((e) => evish(`${e.make} ${e.model}`));
 }
 
 /** The page's Car node for the stock asked for, offer's `offeredBy` exposed

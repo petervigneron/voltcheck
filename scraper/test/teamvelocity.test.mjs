@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { teamVelocityApiIds, teamVelocityApiVehicle, teamVelocityRegistryIds, pickTeamVelocityIds } from "../lib/platforms/teamvelocity.mjs";
+import { teamVelocityApiIds, teamVelocityApiVehicle, teamVelocityRegistryIds, pickTeamVelocityIds, dealerHosts } from "../lib/platforms/teamvelocity.mjs";
 import { classifyEv } from "../lib/ev.mjs";
 
 test("teamVelocityApiIds reads accountId/campaignId from inline globals", () => {
@@ -143,4 +143,68 @@ test("pickTeamVelocityIds: the page's ids win; the registry's fill a walled page
 test("the committed team-velocity-ids.json parses and every row validates", () => {
   const ids = teamVelocityRegistryIds("georgehartenissan.com");
   assert.deepEqual(ids, { accountId: "31371", campaignId: "10479" });
+});
+
+// ---------------------------------------------------------------------------
+// The empty vdpUrl. crawl.mjs drops a Team Velocity car with no per-VIN page,
+// because recheck has nothing to retire — and 46% of the records this API
+// serves have none (7,401 records over 40 working rooftops, 2026-09-05; seven
+// of the 40 served an empty vdpUrl on EVERY record, so their whole lot
+// vanished under a note reading "complete"). The rooftop host is the only
+// thing missing, and dealerID names the rooftop: a record that DOES carry a
+// link teaches the map, and a single-dealerID pull may borrow the crawled
+// origin. A group account never borrows it.
+test("a record with no vdpUrl gets the rooftop's /viewdetails path", () => {
+  const hosts = dealerHosts([{ dealerID: 32468, vdpUrl: "" }], "https://www.gebhardtbmw.com");
+  const v = teamVelocityApiVehicle(rec({ dealerID: 32468, vdpUrl: "", type: "Used" }), hosts);
+  assert.equal(v.offers.url, "https://www.gebhardtbmw.com/viewdetails/Used/1HGCV1F30LA123456");
+});
+
+test("a new car takes the New path, and the type is the record's, not the URL's", () => {
+  const hosts = dealerHosts([{ dealerID: 1, vdpUrl: "" }], "https://www.d.com");
+  assert.equal(
+    teamVelocityApiVehicle(rec({ dealerID: 1, vdpUrl: "", type: "New" }), hosts).offers.url,
+    "https://www.d.com/viewdetails/New/1HGCV1F30LA123456",
+  );
+});
+
+test("a linked record in the same pull teaches the host, so the crawled origin is not needed", () => {
+  const hosts = dealerHosts(
+    [
+      { dealerID: 60840, vdpUrl: "https://www.bmwofbrooklyn.com/viewdetails/cpo/x/2023-bmw-x1?type=cash" },
+      { dealerID: 60840, vdpUrl: "" },
+    ],
+    undefined,
+  );
+  assert.equal(
+    teamVelocityApiVehicle(rec({ dealerID: 60840, vdpUrl: "" }), hosts).offers.url,
+    "https://www.bmwofbrooklyn.com/viewdetails/Used/1HGCV1F30LA123456",
+  );
+});
+
+// The guardrail. chulavistaford.com's account 30074 serves three rooftops
+// (30074 → chulavistaford.com, 44185 → cvhonda.com, 60962 → chulavistakia.com)
+// and a synthesised link on the crawled host really does render another
+// rooftop's car (control-tested live 2026-09-05), so the fallback must never
+// fire on a multi-rooftop pull.
+test("a group account never borrows the crawled origin for an unknown rooftop", () => {
+  const hosts = dealerHosts(
+    [
+      { dealerID: 30074, vdpUrl: "https://www.chulavistaford.com/viewdetails/Used/A" },
+      { dealerID: 44185, vdpUrl: "" },
+    ],
+    "https://www.chulavistaford.com",
+  );
+  assert.equal(hosts.get("44185"), undefined);
+  assert.equal(teamVelocityApiVehicle(rec({ dealerID: 44185, vdpUrl: "" }), hosts).offers.url, undefined);
+});
+
+test("a record that carries its own link keeps it, slug and query included", () => {
+  const url = "https://www.bmwofbrooklyn.com/viewdetails/cpo/wbx73ef08p5x85541/2023-bmw-x1-sport-utility?type=cash";
+  const hosts = dealerHosts([{ dealerID: 1, vdpUrl: url }], "https://www.other.com");
+  assert.equal(teamVelocityApiVehicle(rec({ dealerID: 1, vdpUrl: url }), hosts).offers.url, url);
+});
+
+test("no map and no origin leaves the car unlinked rather than guessing a host", () => {
+  assert.equal(teamVelocityApiVehicle(rec({ dealerID: 7, vdpUrl: "" }), dealerHosts([{ dealerID: 7, vdpUrl: "" }])).offers.url, undefined);
 });

@@ -256,5 +256,19 @@ export async function pullDealerComApi(config, origin, { deadlineAt = 0 } = {}) 
     }
   }
 
+  // A lot the endpoint answers with zero records is NOT a certified empty
+  // rooftop — it is the one shape this endpoint's silence and a real empty lot
+  // share, and getting it wrong costs a whole dealer. omearaford.com and
+  // omearagmc.com (2026-09-05) answer 200 with totalCount 0 and every facet
+  // count 0, while their own /used-inventory page server-renders 28 cars and
+  // their sitemap lists 732 inventory URLs; the crawl filed "dealercom-api: 0
+  // in lot, 0 EV(s) admitted (complete)" with truncated:false, which is a
+  // licence for db-sync to delist the rooftop. Reporting ok=false hands the
+  // domain to the HTML extractor instead, which is what a pre-API crawl did.
+  // Measured cost: 0 of 38 sampled working dealer.com rooftops answer zero, so
+  // this is a rare path, and a genuinely empty rooftop just walks to the
+  // dry-hole floor rather than certifying in three fetches.
+  if (ok && nodes.length === 0 && !total) return { vehicles: [], ddcByVin, complete: false, found: 0, ok: false };
+
   return { vehicles: nodes, ddcByVin, complete: ok && reachedEnd, found: total || start, ok };
 }

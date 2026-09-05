@@ -211,12 +211,38 @@ function teamVelocityPrice(r) {
   return { price: live, provenance: TV_RETAIL };
 }
 
+// The VDP path every Team Velocity storefront serves, whatever the record's
+// own vdpUrl field says. Verified live 2026-09-05 on four rooftops
+// (gebhardtbmw, bmwofbrooklyn, oconnorvw, dahlsubarusheboygan) for used, new
+// and certified cars: /viewdetails/Used/<VIN> and /viewdetails/New/<VIN> both
+// render the car's real VDP, and the platform's own populated links are the
+// same path with a slug and a ?type= suffix. It is also SAFE against a wrong
+// host: a VIN the rooftop does not stock renders the search page, not a VDP
+// (control-tested with a made-up VIN and with a car from another account's
+// rooftop — both fell back to the SRP), so a synthesised link never invents a
+// car page.
+const viewDetailsUrl = (host, type, vin) =>
+  `https://${host}/viewdetails/${String(type ?? "").toLowerCase() === "new" ? "New" : "Used"}/${vin}`;
+
 // One API record → schema.org Vehicle node, shaped like the other producers.
 // Exported for the classification and price tests.
-export function teamVelocityApiVehicle(r) {
+//
+// `hostByDealerId` supplies the rooftop host for a record whose own vdpUrl is
+// empty. That is not an edge case: sampled over 40 working Team Velocity
+// rooftops on 2026-09-05, 7,401 records carried 3,428 empty vdpUrl fields —
+// 46% — and every one of those cars was dropped by crawl.mjs, which needs a
+// per-VIN page. Seven of the 40 rooftops served an empty vdpUrl on EVERY
+// record, so the whole lot vanished and the crawl still reported "complete":
+// gebhardtbmw.com's 247-car BMW lot came back with 0 EVs admitted, its 2024 i5
+// M60 included (the Autotrader miss that found this).
+export function teamVelocityApiVehicle(r, hostByDealerId) {
   const vin = String(r?.vin ?? "").toUpperCase();
   if (!TV_VIN_RE.test(vin)) return null;
-  const vdp = typeof r.vdpUrl === "string" && /^https?:\/\//.test(r.vdpUrl) ? r.vdpUrl : undefined;
+  let vdp = typeof r.vdpUrl === "string" && /^https?:\/\//.test(r.vdpUrl) ? r.vdpUrl : undefined;
+  if (!vdp) {
+    const host = hostByDealerId?.get(String(r?.dealerID ?? ""));
+    if (host) vdp = viewDetailsUrl(host, r.type, vin);
+  }
   const cond = String(r.type ?? "").toLowerCase();
   const { price, provenance } = teamVelocityPrice(r);
   return {
@@ -268,8 +294,17 @@ const apiUrl = (ids, page) =>
 // (offset-vs-total is not trusted; the endpoint has no reliable total on this
 // call). A partial pull leaves complete=false so the caller never certifies a
 // crawl it didn't finish.
-export async function pullTeamVelocityApi(ids) {
-  const out = [];
+//
+// `origin` is the rooftop the crawl asked about. It is only ever used to fill
+// in the host for records with an empty vdpUrl, and only when the whole pull
+// carries a single dealerID — one dealerID is one rooftop (verified on
+// chulavistaford.com, whose account 30074 spans three: dealerID 30074 →
+// chulavistaford.com, 44185 → cvhonda.com, 60962 → chulavistakia.com, each
+// record's own link agreeing with its id). Records that DO carry a link teach
+// the map first, so a group account attributes from its own data and never
+// from the crawled host.
+export async function pullTeamVelocityApi(ids, { origin } = {}) {
+  const raw = [];
   let ok = false;
   let reachedEnd = false;
   for (let page = 1; page <= API_MAX_PAGES; page++) {
@@ -277,16 +312,44 @@ export async function pullTeamVelocityApi(ids) {
     const cars = json?.inventoryVehicles;
     if (status !== 200 || !Array.isArray(cars)) break;
     ok = true;
-    for (const r of cars) {
-      const node = teamVelocityApiVehicle(r);
-      if (node) out.push(node);
-    }
+    for (const r of cars) raw.push(r);
     if (cars.length < API_LIMIT) {
       reachedEnd = true;
       break;
     }
   }
+  const hostByDealerId = dealerHosts(raw, origin);
+  const out = [];
+  for (const r of raw) {
+    const node = teamVelocityApiVehicle(r, hostByDealerId);
+    if (node) out.push(node);
+  }
   return { vehicles: out, complete: ok && reachedEnd, found: out.length, ok };
+}
+
+// dealerID → rooftop host, learned from the records that carry a real link.
+// The crawled origin is the fallback for the one-rooftop case only.
+export function dealerHosts(records, origin) {
+  const map = new Map();
+  const ids = new Set();
+  for (const r of records) {
+    const id = String(r?.dealerID ?? "");
+    ids.add(id);
+    if (map.has(id)) continue;
+    if (typeof r?.vdpUrl !== "string" || !/^https?:\/\//.test(r.vdpUrl)) continue;
+    try {
+      map.set(id, new URL(r.vdpUrl).host);
+    } catch {}
+  }
+  if (ids.size === 1 && origin) {
+    const [only] = ids;
+    if (!map.has(only)) {
+      try {
+        map.set(only, new URL(origin).host);
+      } catch {}
+    }
+  }
+  return map;
 }
 
 // Cheap probe liveness: one request, does this rooftop hold VIN'd inventory?

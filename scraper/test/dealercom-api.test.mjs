@@ -151,3 +151,48 @@ test("a used record with a real discount takes the lower advertised field, not t
   };
   assert.equal(pipeline(used).priceUsd, 44000);
 });
+
+// ---------------------------------------------------------------------------
+// The zero-record lot. This endpoint's silence and a genuinely empty rooftop
+// look identical from here — 200, totalCount 0, an empty inventory array — and
+// reading it as "empty" certifies a crawl that found nothing, which is a
+// licence for db-sync to delist the whole rooftop. omearaford.com and
+// omearagmc.com answer exactly that while their own used-inventory page
+// server-renders 28 cars (2026-09-05). ok=false hands the domain back to the
+// HTML extractor.
+import { pullDealerComApi } from "../lib/platforms/dealercom-api.mjs";
+
+function stubFetch(payload) {
+  const real = globalThis.fetch;
+  globalThis.fetch = async (url) => {
+    if (String(url).endsWith("/robots.txt")) return new Response("", { status: 200 });
+    return new Response(JSON.stringify(payload), { status: 200, headers: { "content-type": "application/json" } });
+  };
+  return () => {
+    globalThis.fetch = real;
+  };
+}
+
+test("a lot the endpoint answers with zero records is not a certified empty lot", async () => {
+  const restore = stubFetch({ pageInfo: { totalCount: 0, pageSize: 48, pageStart: 0 }, inventory: [], accounts: {} });
+  try {
+    const r = await pullDealerComApi({ siteId: "omearacenterfordfd" }, "https://www.omearaford-test.invalid");
+    assert.equal(r.ok, false, "ok=false is what makes crawl.mjs fall back to the HTML walk");
+    assert.equal(r.complete, false);
+    assert.equal(r.vehicles.length, 0);
+  } finally {
+    restore();
+  }
+});
+
+test("a lot with records still completes on a short page", async () => {
+  const restore = stubFetch({ pageInfo: { totalCount: 1, pageSize: 48, pageStart: 0 }, inventory: [REC], accounts: {} });
+  try {
+    const r = await pullDealerComApi({ siteId: "x" }, "https://www.ddc-test.invalid");
+    assert.equal(r.ok, true);
+    assert.equal(r.complete, true);
+    assert.equal(r.vehicles.length, 1);
+  } finally {
+    restore();
+  }
+});

@@ -7,6 +7,7 @@ import {
   dealerInspireIsCandidate,
   dealerInspireVdpVehicle,
   dealerInspireSrpUrl,
+  srpLoadLimits,
 } from "../lib/platforms/dealerinspire.mjs";
 
 // Card markup as served on faricykia.com/used-vehicles/ 2026-09-02, trimmed
@@ -87,4 +88,23 @@ test("dealerInspireLimitsExhausted: deadline and page budget, pure", async () =>
   assert.equal(dealerInspireLimitsExhausted({ deadlineAt: Date.now() + 60000, maxLoads: 0 }, 999), false);
   assert.equal(dealerInspireLimitsExhausted({ deadlineAt: 0, maxLoads: 25 }, 24), false);
   assert.equal(dealerInspireLimitsExhausted({ deadlineAt: 0, maxLoads: 25 }, 25), true);
+});
+
+// The budget split. A lot big enough to fill the page budget with SRP pages
+// left nothing for the VDPs the lane exists to read.
+test("half the load budget is reserved for candidate VDPs", () => {
+  assert.equal(srpLoadLimits({ maxLoads: 80 }).maxLoads, 40);
+  assert.equal(srpLoadLimits({ maxLoads: 25 }).maxLoads, 13);
+});
+
+test("a tiny budget still buys the SRP pages a walk needs to start", () => {
+  assert.equal(srpLoadLimits({ maxLoads: 1 }).maxLoads, 2);
+  assert.equal(srpLoadLimits({ maxLoads: 3 }).maxLoads, 2);
+});
+
+test("the deadline is not halved, and no budget means no ceiling", () => {
+  const at = Date.now() + 60_000;
+  assert.equal(srpLoadLimits({ maxLoads: 80, deadlineAt: at }).deadlineAt, at);
+  assert.deepEqual(srpLoadLimits({ deadlineAt: at }), { deadlineAt: at });
+  assert.equal(srpLoadLimits(null), null);
 });

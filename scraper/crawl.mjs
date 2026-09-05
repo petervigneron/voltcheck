@@ -9,9 +9,10 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { fetchPage, setCacheTtl } from "./lib/http.mjs";
 import { extractVehicles, extractItemListEntries } from "./lib/jsonld.mjs";
 import { classifyEv, EV_ONLY_WMIS } from "./lib/ev.mjs";
+import { apiLaneDone, API_LANE_TRIES } from "./lib/api-lane.mjs";
 import { normalize, richness } from "./lib/normalize.mjs";
 import { colistingAccumulator, colistedDomainCount } from "./lib/colisting.mjs";
-import { discoverSitemapUrls, rank, dedupe, SRP_PATHS, VIN_RE, EVISH_RE } from "./lib/sitemap.mjs";
+import { discoverSitemapUrls, rank, dedupe, SRP_PATHS, VIN_RE, evish } from "./lib/sitemap.mjs";
 import { extractDdcVehicles, enrichFromDdc } from "./lib/platforms/dealercom.mjs";
 import { dealerComApiConfig, pullDealerComApi } from "./lib/platforms/dealercom-api.mjs";
 import { extractDealerOn, enrichFromDealerOn } from "./lib/platforms/dealeron.mjs";
@@ -218,7 +219,7 @@ function abs(href, base) {
 
 function evishEntry({ url, name, vin }) {
   if (vin && VIN_RE.test(vin) && EV_ONLY_WMIS.has(vin.slice(0, 3).toUpperCase())) return true;
-  return EVISH_RE.test(`${name ?? ""} ${url}`);
+  return evish(`${name ?? ""} ${url}`);
 }
 
 // Visits the wall below walked away from. They are still running — nothing
@@ -306,8 +307,10 @@ async function crawlDealerInto(domain, budget, domainCapAt, report) {
   const dv = { done: false };
   const of = { done: false };
   const tv = { done: false };
-  const ddcApi = { done: false };
-  const deolApi = { done: false };
+  // `tries` is what stops one silent answer from costing the whole rooftop —
+  // lib/api-lane.mjs carries the rule and the incident it was written for.
+  const ddcApi = { done: false, tries: 0 };
+  const deolApi = { done: false, tries: 0 };
   const rm = { done: false };
   const af = { done: false };
   const wr = { done: false };
@@ -524,18 +527,29 @@ async function crawlDealerInto(domain, budget, domainCapAt, report) {
   async function pullTeamVelocity(ids, via) {
     tv.done = true;
     const before = report.evs.length;
-    const { vehicles: tvVehicles, complete, found } = await pullTeamVelocityApi(ids);
+    const { vehicles: tvVehicles, complete, found } = await pullTeamVelocityApi(ids, { origin });
     report.fetched++;
     let offDomain = false;
+    // Cars this lane could not file because the API record carried no VDP
+    // link and pullTeamVelocityApi could not work out the rooftop. Counted,
+    // because an EV dropped here used to leave the note reading "0 EV(s)
+    // admitted (complete)" — a certified empty lot that db-sync reads as a
+    // whole rooftop's cars having sold. gebhardtbmw.com served 247 cars with
+    // an empty vdpUrl on every one of them (2026-09-05).
+    let unlinked = 0;
     for (const v of tvVehicles) {
       const cls = classifyEv(v);
       if (!cls.isEv) continue;
       const vdp = v.offers?.url;
-      if (!vdp) continue; // no per-VIN page → nothing recheck could retire
+      if (!vdp) {
+        unlinked++;
+        continue; // no per-VIN page → nothing recheck could retire
+      }
       let host;
       try {
         host = new URL(vdp).host.replace(/^www\./, "");
       } catch {
+        unlinked++;
         continue;
       }
       if (host !== domain.replace(/^www\./, "")) offDomain = true;
@@ -549,11 +563,14 @@ async function crawlDealerInto(domain, budget, domainCapAt, report) {
     }
     if (report.evs.length > before) report.vehiclePages++;
     report.notes.push(
-      `team-velocity-api (${via} ids): ${found} used, ${report.evs.length - before} EV(s) admitted (${complete ? "complete" : "partial"}${offDomain ? ", group" : ""})`
+      `team-velocity-api (${via} ids): ${found} used, ${report.evs.length - before} EV(s) admitted (${complete ? "complete" : "partial"}${offDomain ? ", group" : ""}${unlinked ? `, ${unlinked} unlinked` : ""})`
     );
     // Complete only for a true single rooftop; a group spans domains, so its
-    // absence-from-this-query can't license db-sync to delist anyone.
-    if (!complete || offDomain) report.stoppedEarly = "team-velocity api (group or partial)";
+    // absence-from-this-query can't license db-sync to delist anyone. An
+    // unlinked EV is the same kind of hole: this lane SAW the car and could
+    // not file it, so its silence about that rooftop is not evidence the car
+    // is gone.
+    if (!complete || offDomain || unlinked) report.stoppedEarly = "team-velocity api (group or partial)";
     queue.length = 0;
   }
 
@@ -1148,9 +1165,10 @@ async function crawlDealerInto(domain, budget, domainCapAt, report) {
     if (!ddcApi.done) {
       const cfg = dealerComApiConfig(res.body);
       if (cfg) {
-        ddcApi.done = true;
+        ddcApi.tries++;
         const before = report.evs.length;
         const { vehicles, ddcByVin, complete, found, ok } = await pullDealerComApi(cfg, origin, { deadlineAt: domainCapAt || 0 });
+        ddcApi.done = apiLaneDone({ ok, tries: ddcApi.tries });
         if (ok) {
           for (const v of vehicles) {
             const cls = classifyEv(v);
@@ -1176,9 +1194,12 @@ async function crawlDealerInto(domain, budget, domainCapAt, report) {
           queue.length = 0;
           break;
         }
-        // ok=false: the endpoint never answered. Leave the HTML extractor below
-        // to handle this domain rather than certifying an empty API pull.
-        report.notes.push("dealercom-api: no response, falling back to HTML");
+        // ok=false: the endpoint never answered. Try once more on a later page
+        // before giving the domain to the HTML extractor — the silence is far
+        // more often a rate-limit than a template without the endpoint.
+        report.notes.push(
+          `dealercom-api: no response (try ${ddcApi.tries}/${API_LANE_TRIES})${ddcApi.done ? ", falling back to HTML" : ""}`
+        );
       }
     }
 
@@ -1194,9 +1215,10 @@ async function crawlDealerInto(domain, budget, domainCapAt, report) {
       // count that request so coverage accounting stays honest.
       report.fetched++;
       if (lots.length) {
-        deolApi.done = true;
+        deolApi.tries++;
         const before = report.evs.length;
         const { vehicles, complete, found, ok } = await pullDealerOnApi(lots, origin, { deadlineAt: domainCapAt || 0 });
+        deolApi.done = apiLaneDone({ ok, tries: deolApi.tries });
         if (ok) {
           for (const v of vehicles) {
             const cls = classifyEv(v);
@@ -1217,7 +1239,9 @@ async function crawlDealerInto(domain, budget, domainCapAt, report) {
           queue.length = 0;
           break;
         }
-        report.notes.push("dealeron-api: no response, falling back to HTML");
+        report.notes.push(
+          `dealeron-api: no response (try ${deolApi.tries}/${API_LANE_TRIES})${deolApi.done ? ", falling back to HTML" : ""}`
+        );
       }
     }
 

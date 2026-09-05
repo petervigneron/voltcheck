@@ -48,7 +48,7 @@
 import { browserFetch } from "../browser.mjs";
 import { isRideMotive, rideMotiveConfig, pullRideMotiveApi, countRideMotiveApi } from "./ridemotive.mjs";
 import { extractVehicles } from "../jsonld.mjs";
-import { EVISH_RE } from "../sitemap.mjs";
+import { evish } from "../sitemap.mjs";
 import { EV_ONLY_WMIS } from "../ev.mjs";
 import { decodeEntities } from "../normalize.mjs";
 
@@ -124,7 +124,7 @@ export function dealerInspireNextUrl(html, currentUrl) {
 /** Same net as the HTML crawl's evishEntry: an EV-only WMI, or an EV/PHEV word. */
 export function dealerInspireIsCandidate(card) {
   if (card.vin && VIN_RE.test(card.vin) && EV_ONLY_WMIS.has(card.vin.slice(0, 3).toUpperCase())) return true;
-  return EVISH_RE.test(`${card.title ?? ""} ${card.url ?? ""}`);
+  return evish(`${card.title ?? ""} ${card.url ?? ""}`);
 }
 
 /** The VDP's own Vehicle node for this VIN, or null. */
@@ -143,6 +143,25 @@ export function dealerInspireVdpVehicle(html, vin) {
 // inside it looked at the clock. A lane that stops here returns what it has
 // with complete=false, which db-sync reads as "do not delist", and the next
 // slice picks the rooftop up again.
+// Half the load budget for the SRP walk, half kept back for candidate VDPs.
+// The walk used to have the whole budget and the VDPs got the remainder, so a
+// big lot spent every load enumerating cars it then never read:
+// dickhannahford.com's 800-car lot came back "60 candidate(s), 0 EV(s)
+// admitted in 80 browser load(s)" (2026-09-05, four rooftops in one sample),
+// and covinakia.com's 479-car lot admitted 1 of 119. Neither rooftop is walled
+// or broken — the budget simply ran out on the wrong side of the lane.
+// Splitting it turns a guaranteed zero into roughly half the candidates, and
+// the pull is reported partial either way (`stopped`), so db-sync delists
+// nothing and the next visit starts over. Rooftops small enough to finish
+// inside half a budget are unaffected: the reserve is a ceiling on the walk,
+// not a quota it has to spend. The deadline is NOT halved — a clock the walk
+// shares with the VDPs would just move the same starvation to the slow
+// rooftops.
+export function srpLoadLimits(limits) {
+  if (!limits?.maxLoads) return limits ?? null;
+  return { ...limits, maxLoads: Math.max(2, Math.ceil(limits.maxLoads / 2)) };
+}
+
 export function dealerInspireLimitsExhausted(limits, loads) {
   if (!limits) return false;
   if (limits.deadlineAt && Date.now() > limits.deadlineAt) return true;
@@ -218,8 +237,9 @@ export async function pullDealerInspire(origin, { srps = DEALERINSPIRE_SRPS, dea
   let complete = true;
   let anySrp = false;
   let stopped = false;
+  const srpLimits = srpLoadLimits(limits);
   for (const path of srps) {
-    const r = await readSrp(origin, path, { limits, loadsSoFar: requests });
+    const r = await readSrp(origin, path, { limits: srpLimits, loadsSoFar: requests });
     requests += r.requests;
     if (r.exhausted) stopped = true;
     if (r.status === "browser_unavailable") return { ok: false, complete: false, found: 0, candidates: 0, vehicles: [], requests, vdpFailures: 0, why: "browser_unavailable" };

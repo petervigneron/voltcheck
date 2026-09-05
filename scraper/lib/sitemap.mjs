@@ -1,6 +1,7 @@
 // Sitemap discovery + inventory-URL ranking, shared by crawl.mjs (deep
 // crawl) and probe.mjs (cheap validation of discovered domains).
 import { fetchPage } from "./http.mjs";
+import { EV_MODEL_RE, PHEV_MODEL_RE, PHEV_NAME_CLAIM_RE } from "./ev.mjs";
 
 export const LOC_RE = /<loc>\s*([^<\s]+)\s*<\/loc>/gi;
 export const INV_PATH_RE = /(inventory|\/used|\/new-|vehicle|\/vdp|\/detail|listing|search(used|new))/i;
@@ -13,7 +14,36 @@ export const VIN_RE = /[A-HJ-NPR-Z0-9]{17}/i;
 // The plug-in tokens at the end (4xe, phev, plug-in, energi, e-hybrid,
 // pacifica-hybrid) follow lib/ev.mjs's PHEV_MODEL_RE (2026-08-23): on the
 // HTML-walk path a 4xe's VDP URL ranked no higher than a petrol Wrangler's.
-export const EVISH_RE = /(tesla|bolt|leaf|ioniq|ev6|ev9|niro.?ev|kona.?el|id-?\.?4|mach-?e|lightning|ariya|lyriq|blazer.?ev|equinox.?ev|silverado.?ev|sierra.?ev|hummer|escalade.?iq|optiq|vistiq|taycan|e-?tron|polestar|rivian|lucid|solterra|bz4x|\bbz\b|rav4.?prime|prius.?prime|prologue|zdx|i-?miev|eqb|eqe|eqs|i[45x]\b|500e|cooper.?se|charger.?daytona|wagoneer.?s\b|electric|4xe|phev|plug-?in|energi|e-hybrid|pacifica-?hybrid)/i;
+export const EVISH_RE = /(tesla|bolt|leaf|ioniq|ev6|ev9|niro.?ev|kona.?el|\bid-?\.?4|mach-?e|lightning|ariya|lyriq|blazer.?ev|equinox.?ev|silverado.?ev|sierra.?ev|hummer|escalade.?iq|optiq|vistiq|taycan|e-?tron|polestar|rivian|lucid|solterra|bz4x|\bbz\b|rav4.?prime|prius.?prime|prologue|zdx|i-?miev|eqb|eqe|eqs|i[45x]\b|500e|cooper.?se|charger.?daytona|wagoneer.?s\b|electric|4xe|phev|plug-?in|energi|e-hybrid|pacifica-?hybrid)/i;
+
+// The candidacy net, and the only one the crawl should use. EVISH_RE above is
+// a hand-kept nameplate list; lib/ev.mjs keeps the real ones, and the two
+// drifted. Measured 2026-09-05 against feldmanchevyoflivonia.com's whole
+// DealerOn lot — 4,814 cars, 260 of them electrified by classifyEv — EVISH_RE
+// alone could not see 27 of the 260 (10.4%): seven Chrysler "Pacifica Hybrid"
+// (the entry reads `pacifica-?hybrid`, and the maker writes it with a SPACE),
+// a Dodge Hornet R/T, a BMW 530e, and eighteen BrightDrop Zevo vans. Each of
+// those is a nameplate lib/ev.mjs already knows and this list did not. On the
+// HTML-walk and Dealer Inspire paths a car that fails this test never gets its
+// page read at all, so the gap is cars, not ranking.
+//
+// Asking ev.mjs directly is what stops it drifting again: every nameplate
+// added there from now on widens the crawl's net on the same commit.
+// De-hyphenated because these lists are written for names ("prius prime",
+// "grand cherokee 4xe") and this predicate is handed URL slugs
+// ("used-2023-jeep-grand-cherokee-4xe-1c4…"). Ranking and candidacy only — a
+// false match here spends one fetch and makes no claim, which is why the net
+// may be generous where classifyEv may not.
+export function evish(text) {
+  const raw = String(text ?? "");
+  // Both shapes, because neither survives the other's punctuation: a slug
+  // ("…-rav4-prime-xse") needs the hyphens gone before "rav4 prime" can match,
+  // and a rendered name ("Hornet R/T Plus EAWD") needs its slash kept.
+  for (const hay of [raw, raw.replace(/[-_]+/g, " ")]) {
+    if (EVISH_RE.test(hay) || EV_MODEL_RE.test(hay) || PHEV_MODEL_RE.test(hay) || PHEV_NAME_CLAIM_RE.test(hay)) return true;
+  }
+  return false;
+}
 
 // SRP seeds that exist across major dealer platforms
 export const SRP_PATHS = [
@@ -83,7 +113,7 @@ export function rank(urls) {
       u,
       score:
         (VIN_RE.test(u) ? 4 : 0) +
-        (EVISH_RE.test(u) ? 8 : 0) +
+        (evish(u) ? 8 : 0) +
         (/used/i.test(u) ? 2 : 0) +
         (/(vdp|detail|vehicle\/)/i.test(u) ? 2 : 0),
     }))

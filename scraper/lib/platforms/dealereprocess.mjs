@@ -53,7 +53,7 @@
 import { fetchPage } from "../http.mjs";
 import { browserFetch } from "../browser.mjs";
 import { extractVehicles } from "../jsonld.mjs";
-import { LOC_RE, EVISH_RE, decodeEntities } from "../sitemap.mjs";
+import { LOC_RE, evish, decodeEntities } from "../sitemap.mjs";
 
 // The vendor's own hosts on a served page (image CDN, the platform's job
 // board that the pages call home to). Never the word alone in prose.
@@ -96,7 +96,7 @@ export function dealerEProcessEntries(xml) {
 /** Slug words that could be an EV or PHEV — the same net the HTML crawl
  *  throws over sitemap urls. Everything else is left unread on purpose. */
 export function dealerEProcessCandidates(entries) {
-  return entries.filter((e) => EVISH_RE.test(e.slug));
+  return entries.filter((e) => evish(e.slug));
 }
 
 /** The Vehicle node for the id we asked for, offer url absolute, or null

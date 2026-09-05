@@ -93,6 +93,17 @@ export const EV_MODEL_RE = new RegExp(
     // word for the same reason "toyota bz" does — two letters alone is the
     // iX lesson again.
     "\\bgv60\\b", "electrified gv70", "electrified g80", "\\bi-pace\\b", "\\be-golf\\b", "lexus rz\\b",
+    // BrightDrop, GM's electric-van brand. 18 of one Chevrolet rooftop's 260
+    // electrified cars were Zevo 400s and 600s (feldmanchevyoflivonia.com,
+    // 2026-09-05) and no nameplate here knew them, so on any lane that decides
+    // what to FETCH by nameplate they were never read at all. vPIC settles the
+    // claim rather than the badge: 2G58J3TZ1R9102784 decodes Make BRIGHTDROP,
+    // Model Zevo, FuelTypePrimary Electric, ElectrificationLevel "BEV (Battery
+    // Electric Vehicle)", and getmodelsformake/brightdrop returns exactly one
+    // model ever built under the make. Both words, because dealers file these
+    // as make "BrightDrop" model "Zevo 600" and as make "Chevrolet" model
+    // "BrightDrop Zevo 600".
+    "brightdrop", "\\bzevo\\b",
   ].join("|"),
   "i"
 );
