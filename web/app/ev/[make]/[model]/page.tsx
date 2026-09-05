@@ -54,13 +54,6 @@ export default async function ModelHubPage(props: PageProps<"/ev/[make]/[model]"
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-16">
-      {/* The cars listed below, as an ItemList — names and links only, and
-          numberOfItems counts what this page shows rather than the hub's
-          total, so the markup can't claim more than the page does. The rows
-          are already in hand, so it costs nothing. */}
-      {cars.length > 0 && (
-        <JsonLd json={hubItemListJsonLd(name, hubPath(hub), cars)} />
-      )}
       <nav
         aria-label="Breadcrumb"
         className="text-[11px] font-bold uppercase tracking-[0.06em] text-ink/40"
@@ -122,6 +115,13 @@ export default async function ModelHubPage(props: PageProps<"/ev/[make]/[model]"
           ))}
         </ul>
       )}
+
+      {/* The cars listed above, as an ItemList — names and links only, and
+          numberOfItems counts what this page shows rather than the hub's
+          total, so the markup can't claim more than the page does. The rows
+          are already in hand, so it costs nothing. Kept out of first-child
+          position for the reason the listing page's copy gives. */}
+      {cars.length > 0 && <JsonLd json={hubItemListJsonLd(name, hubPath(hub), cars)} />}
 
       {total > cars.length && (
         <p className="mt-6 text-sm">

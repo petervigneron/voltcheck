@@ -187,12 +187,15 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
 
   return (
     <div className="mx-auto max-w-5xl space-y-5 px-4 py-6">
+      <BackToResults />
       {/* The machine-readable copy of this page, for agents that shop on
           someone's behalf. Built from the same summaries the tiles and spec
           rows above are built from, so the two cannot disagree — see
-          lib/listings/jsonLd.ts for what is and is not allowed in it. */}
+          lib/listings/jsonLd.ts for what is and is not allowed in it.
+          NOT the container's first child: space-y-5 puts a margin-top on
+          every child that follows a sibling, so a <script> in first position
+          is invisible itself but pushes "Back to results" down 20px. */}
       <JsonLd json={listingJsonLd(e)} />
-      <BackToResults />
 
       <div className="grid gap-6 md:grid-cols-[1fr_320px]">
         {/* Right: sticky summary. First in the DOM so price and key facts lead
