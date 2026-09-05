@@ -12,8 +12,8 @@
       "administrator": "Colorado Department of Revenue",
       "kind": "tax_credit",
       "status": "live",
-      "statusAsOf": "2026-09-02",
-      "statusNote": "TY2026 amounts; HB26-1289 (signed 2026-06-03) sets 2027-28 and remains subject to the revenue-forecast mechanism.",
+      "statusAsOf": "2026-09-05",
+      "statusNote": "TY2026 amounts, which now carry until=2026-12-31 so a tax-year figure cannot outlive its tax year; the additional credit for an MSRP under $35,000 runs through 2028. HB26-1289 (signed 2026-06-03) sets 2027-28 and the credit remains subject to the revenue-forecast mechanism, so the 2027 figures must be entered from the Department of Revenue's own table rather than assumed. Page re-read 2026-09-05, no change.",
       "sources": [
         {
           "url": "https://tax.colorado.gov/sites/tax/files/documents/ITT_Innovative_Motor_Vehicle_Credit_Nov_2025.pdf",
@@ -60,7 +60,8 @@
           "applies": {
             "condition": "new"
           },
-          "label": "tax year 2026"
+          "label": "tax year 2026",
+          "until": "2026-12-31"
         },
         {
           "usd": 2500,
@@ -69,7 +70,8 @@
             "msrpUnderUsd": 35000
           },
           "label": "additional credit, MSRP under $35,000 (through 2028)",
-          "adder": true
+          "adder": true,
+          "until": "2028-12-31"
         }
       ]
     },
@@ -183,8 +185,8 @@
       "administrator": "Delaware DNREC",
       "kind": "rebate",
       "status": "live",
-      "statusAsOf": "2026-09-02",
-      "statusNote": "New rebate period began 2026-05-01; amounts fixed until the 2027 re-evaluation.",
+      "statusAsOf": "2026-09-05",
+      "statusNote": "New rebate period began 2026-05-01; amounts fixed until the 2027 re-evaluation. Page re-read 2026-09-05: no closure, pause or fund-exhaustion notice, and no published funding-remaining figure.",
       "sources": [
         {
           "url": "https://driveelectricdelaware.org/",
@@ -351,8 +353,8 @@
       "administrator": "Massachusetts DOER (Center for Sustainable Energy administers)",
       "kind": "rebate",
       "status": "live",
-      "statusAsOf": "2026-09-02",
-      "statusNote": "Rule changes filed 2026-07-17 (lower price caps, income threshold for MOR-EV+); public comment through 2026-09-04. Figures below are the rules in force on 2026-09-02.",
+      "statusAsOf": "2026-09-05",
+      "statusNote": "Rule changes filed 2026-07-17 (lower price caps, income threshold for MOR-EV+); public comment through 2026-09-04. Figures below are the rules in force on 2026-09-02. Page re-read 2026-09-05: no closure, pause or fund-exhaustion notice, and no published funding-remaining figure.",
       "sources": [
         {
           "url": "https://mor-ev.org/eligibility",
@@ -762,7 +764,7 @@
       "administrator": "NYSERDA",
       "kind": "rebate",
       "status": "live",
-      "statusAsOf": "2026-09-02",
+      "statusAsOf": "2026-09-05",
       "sources": [
         {
           "url": "https://www.nyserda.ny.gov/All-Programs/Drive-Clean-Rebate-For-Electric-Cars-Program",
@@ -843,7 +845,8 @@
           },
           "label": "MSRP over $42,000"
         }
-      ]
+      ],
+      "statusNote": "Page re-read 2026-09-05: no closure, pause or fund-exhaustion notice, and no published funding-remaining figure."
     },
     {
       "id": "or-clean-vehicle-rebate",
@@ -974,8 +977,8 @@
       "administrator": "Rhode Island Office of Energy Resources",
       "kind": "rebate",
       "status": "live",
-      "statusAsOf": "2026-09-02",
-      "statusNote": "First-come, first-served while funds last; amounts below apply to purchases on or after 2026-01-05 (page dated 2026-05-20).",
+      "statusAsOf": "2026-09-05",
+      "statusNote": "First-come, first-served while funds last; amounts below apply to purchases on or after 2026-01-05 (page dated 2026-05-20). Page re-read 2026-09-05: no closure, pause or fund-exhaustion notice, and no published funding-remaining figure.",
       "sources": [
         {
           "url": "https://drive.ri.gov/drive-ev-project/drive-ev",
@@ -1913,7 +1916,7 @@
       "administrator": "MCE",
       "kind": "rebate",
       "status": "live",
-      "statusAsOf": "2026-09-02",
+      "statusAsOf": "2026-09-05",
       "sources": [
         {
           "url": "https://mcecleanenergy.org/ev-rebate/",
@@ -1959,7 +1962,8 @@
             "condition": "used"
           }
         }
-      ]
+      ],
+      "statusNote": "Re-verified 2026-09-05 in a browser - mcecleanenergy.org 403s to a plain fetch, which is why an earlier sweep read it as a dead source. Page says \"MCE's EV Instant Rebate is available!\": $3,500 new, $2,000 pre-owned, $55,000 Vehicle Cash Price cap, participating dealership, income requirement, one per 24 months. The registry already held all of it."
     },
     {
       "id": "ca-pge-pre-owned-ev",
@@ -2534,8 +2538,8 @@
       "administrator": "Burlington Electric Department",
       "kind": "rebate",
       "status": "live",
-      "statusAsOf": "2026-09-02",
-      "statusNote": "Offer valid through 2026-12-31.",
+      "statusAsOf": "2026-09-05",
+      "statusNote": "BED's own terms say the offer is \"valid through December 31, 2026\" - now enforced by liveUntil rather than left unread. One rebate per household or commercial customer, active BED account required.",
       "sources": [
         {
           "url": "https://www.burlingtonelectric.com/evrebates",
@@ -2627,7 +2631,8 @@
           "label": "income-qualified",
           "incomeQualified": true
         }
-      ]
+      ],
+      "liveUntil": "2026-12-31"
     },
     {
       "id": "vt-green-mountain-power-ev-rebate",
@@ -3060,8 +3065,8 @@
       "administrator": "Norwich Public Utilities",
       "kind": "rebate",
       "status": "live",
-      "statusAsOf": "2026-09-02",
-      "statusNote": "FY27: purchases or leases 2026-07-01 to 2027-06-30; requests by 2027-07-15.",
+      "statusAsOf": "2026-09-05",
+      "statusNote": "FY27: purchases or leases 2026-07-01 to 2027-06-30; requests by 2027-07-15. Page re-read 2026-09-05: no closure, pause or fund-exhaustion notice, and no published funding-remaining figure.",
       "sources": [
         {
           "url": "https://norwichpublicutilities.com/DocumentCenter/View/709/FY-27--EV-Rebate",
@@ -3239,8 +3244,8 @@
       "administrator": "Taunton Municipal Light Plant",
       "kind": "rebate",
       "status": "live",
-      "statusAsOf": "2026-09-02",
-      "statusNote": "\"until the funding has ended\".",
+      "statusAsOf": "2026-09-05",
+      "statusNote": "Page re-read 2026-09-05: rebates are a credit to an active TMLP account and \"will last until the funding has ended\" - no date, no published balance, and a municipal light plant files with no state regulator that would carry one. $450, so the exposure if it does end is small. Undated by nature; recorded as such.",
       "sources": [
         {
           "url": "https://www.tmlp.com/178/EV-Program",
@@ -3291,7 +3296,7 @@
       "administrator": "HomeWorks Tri-County Electric Cooperative",
       "kind": "rebate",
       "status": "live",
-      "statusAsOf": "2026-09-02",
+      "statusAsOf": "2026-09-05",
       "sources": [
         {
           "url": "https://www.homeworks.org/210-2/electric-home/member-services/eo/evprogram/",
@@ -3333,7 +3338,8 @@
             "kind": "BEV"
           }
         }
-      ]
+      ],
+      "statusNote": "Page re-read 2026-09-05: no closure, pause or fund-exhaustion notice, and no published funding-remaining figure."
     },
     {
       "id": "pa-peco-smart-driver",
@@ -3617,7 +3623,7 @@
       "administrator": "Mississippi Power",
       "kind": "rebate",
       "status": "live",
-      "statusAsOf": "2026-09-02",
+      "statusAsOf": "2026-09-05",
       "sources": [
         {
           "url": "https://www.mississippipower.com/residential/products-and-services/electric-vehicles.html",
@@ -3679,7 +3685,8 @@
             "kind": "PHEV"
           }
         }
-      ]
+      ],
+      "statusNote": "Page re-read 2026-09-05: no closure, pause or fund-exhaustion notice, and no published funding-remaining figure."
     },
     {
       "id": "nm-pnm-income-qualified-ev-rebate",
@@ -3775,8 +3782,8 @@
       "administrator": "Clark Public Utilities",
       "kind": "rebate",
       "status": "live",
-      "statusAsOf": "2026-09-02",
-      "statusNote": "Annual budget set by state statute; closes when spent.",
+      "statusAsOf": "2026-09-05",
+      "statusNote": "Annual budget set by state statute; closes when spent. NOT RE-VERIFIED 2026-09-05: clarkpublicutilities.com sits behind a Cloudflare bot wall that did not clear, and defeating it is out of policy, so neither a plain fetch nor a browser could read the page. Nothing suggests a change - this is an unchecked box, not a finding. If it needs settling, the statutory allocation and Clark's own commission materials are the route, not the program page.",
       "sources": [
         {
           "url": "https://www.clarkpublicutilities.com/residential-customers/reduce-energy-waste-and-lower-your-bill/all-rebates-incentives-and-low-interest-loans/electric-vehicle-program/",
