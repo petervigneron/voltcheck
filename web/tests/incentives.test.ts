@@ -242,6 +242,19 @@ test("a program with a published open period is named inside it and silent outsi
   assert.equal(named("2026-11-04T12:00:00Z"), true, "the closing day still counts");
   assert.equal(named("2026-11-05T12:00:00Z"), false, "the day after it closes, silent — with no one re-checking");
   assert.equal(named("2026-08-24T12:00:00Z"), false, "before it opened");
+  // Illinois runs the same shape: IEPA's cycle is 2026-08-01 to 2026-12-31.
+  const il = programById("il-ev-rebate")!;
+  assert.equal(il.liveFrom, "2026-08-01");
+  assert.equal(il.liveUntil, "2026-12-31");
+  const ilCar: Listing = {
+    id: "t", vin: "1G1FY6S04P4100001", year: 2023, make: "Chevrolet", model: "Bolt EUV", trim: "LT",
+    priceUsd: 21500, mileage: 24000, state: "IL", sellerType: "dealer", condition: "used",
+  };
+  const ilNamed = (iso: string) =>
+    matchIncentives(enrichListing(ilCar), SITE_POLICY, INCENTIVE_PROGRAMS, new Date(iso))
+      .some((m) => m.program.id === "il-ev-rebate");
+  assert.equal(ilNamed("2026-09-05T12:00:00Z"), true, "inside the cycle");
+  assert.equal(ilNamed("2027-01-01T12:00:00Z"), false, "the cycle closed on New Year's Eve and nobody was going to notice");
   // The gate is general, not a special case for Oregon.
   for (const p of INCENTIVE_PROGRAMS) {
     if (p.liveUntil) assert.match(p.liveUntil, /^\d{4}-\d{2}-\d{2}$/);

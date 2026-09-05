@@ -83,8 +83,8 @@
       "administrator": "Connecticut DEEP",
       "kind": "rebate",
       "status": "live",
-      "statusAsOf": "2026-09-02",
-      "statusNote": "Program page content dated 2025-10-01; no funding pause stated.",
+      "statusAsOf": "2026-09-05",
+      "statusNote": "No funding pause stated; program page content is dated 2025-10-01, so its silence carries little weight. DEEP's own CHEAPR statistics page says the monthly data \"do not reflect current available funding amounts\", so no public funding-remaining figure exists. Funding is the recurring statutory account under C.G.S. 22a-202 rather than a one-off appropriation, and rebates are point-of-sale through enrolled dealers. If this ever needs settling, the CHEAPR Board's materials are the place, not the program page.",
       "sources": [
         {
           "url": "https://portal.ct.gov/deep/air/mobile-sources/cheapr/cheapr---home",
@@ -286,8 +286,8 @@
       "administrator": "Illinois EPA",
       "kind": "rebate",
       "status": "live",
-      "statusAsOf": "2026-09-02",
-      "statusNote": "Application cycle open 2026-08-01 to 2026-12-31; $14M appropriated this fiscal year.",
+      "statusAsOf": "2026-09-05",
+      "statusNote": "Application cycle 2026-08-01 to 2026-12-31, enforced by liveFrom/liveUntil rather than left in prose. IEPA: applications must be postmarked during an open cycle and within 180 days of purchase. $14M appropriated this fiscal year, and rebates are payable \"only to the extent appropriated annually ... and as long as funds are available in the EV Rebate fund\" - so the cycle closing is the dated risk, fund exhaustion inside it the undated one.",
       "sources": [
         {
           "url": "https://epa.illinois.gov/topics/ceja/electric-vehicle-rebates.html",
@@ -337,7 +337,9 @@
           "label": "low-income applicant",
           "incomeQualified": true
         }
-      ]
+      ],
+      "liveFrom": "2026-08-01",
+      "liveUntil": "2026-12-31"
     },
     {
       "id": "ma-mor-ev",
@@ -1040,8 +1042,8 @@
       "administrator": "California Air Resources Board via five air districts",
       "kind": "rebate",
       "status": "live",
-      "statusAsOf": "2026-09-02",
-      "statusNote": "Income-qualified scrap-and-replace only; each district runs its own funding. DCAP's financing pathway closed 2026-08-21.",
+      "statusAsOf": "2026-09-05",
+      "statusNote": "Income-qualified scrap-and-replace only; each district runs its own funding. DCAP's financing pathway closed 2026-08-21, but its notice of that same date says the Scrap and Replace option, Clean Cars 4 All, \"is still open and accepting applications from all tiers\" - re-read 2026-09-05. That statewide pathway is why a district closing its own funding does not leave a Californian without a route.",
       "sources": [
         {
           "url": "https://ww2.arb.ca.gov/our-work/programs/clean-cars-4-all/about",
@@ -3336,7 +3338,7 @@
       "administrator": "PECO",
       "kind": "rebate",
       "status": "live",
-      "statusAsOf": "2026-09-02",
+      "statusAsOf": "2026-09-05",
       "sources": [
         {
           "url": "https://secure.peco.com/WaystoSave/ForYourHome/Pages/PECOSmartDriverRebate.aspx",
@@ -3371,7 +3373,8 @@
           },
           "label": "per car"
         }
-      ]
+      ],
+      "statusNote": "Re-verified 2026-09-05: the utility's own page still offers $50 per car. A recurring customer bill credit funded from the utility's operating budget, not a fixed grant pot that runs out, so this does not carry the PNM exhaustion risk; the figure is also $50-$360, not thousands."
     },
     {
       "id": "nc-pee-dee-emc-ev-credit",
@@ -3387,7 +3390,7 @@
       "administrator": "Pee Dee Electric Membership Corporation",
       "kind": "rebate",
       "status": "live",
-      "statusAsOf": "2026-09-02",
+      "statusAsOf": "2026-09-05",
       "sources": [
         {
           "url": "https://www.pdemc.com/energy-efficiency/rebates-forms/ev-rebates/",
@@ -3422,7 +3425,8 @@
           },
           "label": "one-time bill credit"
         }
-      ]
+      ],
+      "statusNote": "Re-verified 2026-09-05: the utility's own page still offers $150 one-time bill credit. A recurring customer bill credit funded from the utility's operating budget, not a fixed grant pot that runs out, so this does not carry the PNM exhaustion risk; the figure is also $50-$360, not thousands."
     },
     {
       "id": "nc-piedmont-emc-ev-credit",
@@ -3497,7 +3501,7 @@
       "administrator": "Snapping Shoals EMC",
       "kind": "rebate",
       "status": "live",
-      "statusAsOf": "2026-09-02",
+      "statusAsOf": "2026-09-05",
       "sources": [
         {
           "url": "https://www.ssemc.com/electric-vehicles",
@@ -3533,7 +3537,8 @@
           },
           "label": "$30 a month for 12 months"
         }
-      ]
+      ],
+      "statusNote": "Re-verified 2026-09-05: the utility's own page still offers $30 a month for 12 months. A recurring customer bill credit funded from the utility's operating budget, not a fixed grant pot that runs out, so this does not carry the PNM exhaustion risk; the figure is also $50-$360, not thousands."
     },
     {
       "id": "fl-ouc-ev-rebate",
@@ -3549,7 +3554,7 @@
       "administrator": "Orlando Utilities Commission",
       "kind": "rebate",
       "status": "live",
-      "statusAsOf": "2026-09-02",
+      "statusAsOf": "2026-09-05",
       "sources": [
         {
           "url": "https://www.ouc.com/residential/save-energy-water-money/rebates",
@@ -3584,7 +3589,8 @@
             "condition": "any"
           }
         }
-      ]
+      ],
+      "statusNote": "Re-verified 2026-09-05: the utility's own page still offers $200 rebate. A recurring customer bill credit funded from the utility's operating budget, not a fixed grant pot that runs out, so this does not carry the PNM exhaustion risk; the figure is also $50-$360, not thousands."
     },
     {
       "id": "ms-mississippi-power-ev-rebate",
