@@ -3669,9 +3669,9 @@
       },
       "administrator": "PNM Transportation Electrification Program",
       "kind": "rebate",
-      "status": "live",
-      "statusAsOf": "2026-09-02",
-      "statusNote": "2024-2026 Transportation Electrification Program; $900,000 budget, about 225 rebates, so it can run out. AFDC filed PNM under Indiana with no vehicle rebate; found on the owner's prompt.",
+      "status": "depleted",
+      "statusAsOf": "2026-09-05",
+      "statusNote": "Fund essentially spent. PNM's 2025 Annual Progress Report (NMPRC docket 23-00195-UT, filed 2026-06-01) reports the Electric Vehicle Point-of-Sale (LI only) measure at 243 rebates and $972,000 paid against an $18,000 remaining balance at 2025-12-31 - already over its $900,000 design budget, topped up from the Income-Qualified Reserve for what PNM calls \"this incredibly popular measure\". At up to $4,000 each that is four or five rebates left, as of a report nine months old. PNM still advertises the rebate on pnmdriveelectric.com and ev.pnm.com, which is why this is \"depleted\" rather than paused or ended. The 2024-2026 TEP ends 2026-12-31; PNM applied for a 2027-2029 TEP on 2026-06-01 (docket 26-0000115) that carries the measure forward, so re-check on approval.",
       "sources": [
         {
           "url": "https://www.pnmdriveelectric.com/ev-purchase-rebates",
@@ -3687,6 +3687,11 @@
           "url": "https://ev.pnm.com/income-qualified/",
           "capturedAt": "2026-09-02",
           "what": "Income at or below 200% of the federal poverty guidelines (per PNM's income-qualified page)"
+        },
+        {
+          "url": "https://e360.prc.nm.gov/portal/public/#/public/nm-prc/en/CaseXscreen?screen=external-AdvancedSearch",
+          "capturedAt": "2026-09-05",
+          "what": "PNM's Transportation Electrification Program 2025 Annual Progress Report, NMPRC docket 23-00195-UT, document DOC-000313303-26, filed 2026-06-01. Table 4: Electric Vehicle Point-of-Sale (LI only) 225 participants paid in 2025, 243 paid to date. Table 8: $900,000 paid in 2025, $972,000 total paid, $18,000 remaining."
         }
       ],
       "covers": {

@@ -18,7 +18,17 @@ import raw from "@/data/incentive-programs.json";
 //     something the site evaluates; the site knows nothing about the shopper.
 
 export type VehicleKind = "BEV" | "PHEV";
-export type ProgramStatus = "live" | "waitlist" | "paused" | "ended";
+/** Whether a program is paying today. Only "live" is ever named on a car
+ *  (lib/incentives/match.ts): the house rule is that a fund a shopper cannot
+ *  actually draw on is a false bargain, not a smaller one.
+ *
+ *  "depleted" is the case the other three could not say honestly, added
+ *  2026-09-05 for PNM. The utility still advertises the rebate on its own
+ *  pages — so it is not "paused" or "ended" — but its last accounting to the
+ *  regulator shows the money essentially spent. It is not "waitlist" either:
+ *  no waiting list is published, which is precisely what makes it worse for a
+ *  shopper than Maryland's. */
+export type ProgramStatus = "live" | "waitlist" | "paused" | "ended" | "depleted";
 export type ProgramKind = "rebate" | "tax_credit" | "tax_exemption" | "grant";
 export type DealerRule =
   /** Any seller. */
@@ -134,7 +144,7 @@ function validate(file: RegistryFile): Program[] {
     ids.add(p.id);
     if (!STATE_RE.test(p.jurisdiction.state)) throw new Error(`incentive registry: ${p.id} has no two-letter state`);
     if (p.jurisdiction.kind === "utility" && !p.jurisdiction.utility) throw new Error(`incentive registry: ${p.id} is a utility program with no utility named`);
-    if (!["live", "waitlist", "paused", "ended"].includes(p.status)) throw new Error(`incentive registry: ${p.id} bad status`);
+    if (!["live", "waitlist", "paused", "ended", "depleted"].includes(p.status)) throw new Error(`incentive registry: ${p.id} bad status`);
     if (!p.sources.length) throw new Error(`incentive registry: ${p.id} has no source`);
     for (const s of p.sources) {
       if (!/^\d{4}-\d{2}-\d{2}$/.test(s.capturedAt)) throw new Error(`incentive registry: ${p.id} source without a dated capture`);

@@ -112,16 +112,25 @@ test("the rebate filter is Pro: without a pass the key is inert, with one it kee
 });
 
 test("PNM: a New Mexico car under the $55,000 invoiced-price cap meets the car-side conditions; the $4,000 is stated, never the figure", () => {
+  // PNM went "depleted" on 2026-09-05 (see the test below), so the live
+  // registry no longer names it. The CAP mechanics it was written for are
+  // still the ones a $55,000 total-invoiced-price program exercises — an
+  // "up to" figure that must never settle, and a hard fail past the 10%
+  // margin — so the program is forced live here rather than deleting the
+  // coverage along with the claim.
+  const asLive = INCENTIVE_PROGRAMS.map((p) =>
+    p.id === "nm-pnm-income-qualified-ev-rebate" ? { ...p, status: "live" as const } : p
+  );
   const nm: Listing = {
     id: "t", vin: "1G1FY6S04P4100001", year: 2023, make: "Chevrolet", model: "Bolt EUV", trim: "LT",
     priceUsd: 21500, mileage: 24000, state: "NM", sellerType: "dealer", condition: "used",
   };
-  const m = matchIncentives(enrichListing(nm), SITE_POLICY, INCENTIVE_PROGRAMS, new Date("2026-09-02T12:00:00Z")).find((x) => x.program.id === "nm-pnm-income-qualified-ev-rebate");
+  const m = matchIncentives(enrichListing(nm), SITE_POLICY, asLive, new Date("2026-09-02T12:00:00Z")).find((x) => x.program.id === "nm-pnm-income-qualified-ev-rebate");
   assert.ok(m, "named under the site policy (participating dealer stated)");
   assert.equal(m!.amountUsd, undefined, "an 'up to' figure is never the settled figure");
   assert.ok(m!.purchaserSideAmounts.some((a) => a.usd === 4000));
   assert.ok(m!.toCheckOnTheCar.some((c) => /participating dealership/.test(c)));
-  assert.equal(matchIncentives(enrichListing({ ...nm, priceUsd: 61_000 }), SITE_POLICY, INCENTIVE_PROGRAMS).find((x) => x.program.id === "nm-pnm-income-qualified-ev-rebate"), undefined);
+  assert.equal(matchIncentives(enrichListing({ ...nm, priceUsd: 61_000 }), SITE_POLICY, asLive).find((x) => x.program.id === "nm-pnm-income-qualified-ev-rebate"), undefined);
 });
 
 test("the copy gate: open now that the owner's two strings are in, and shut again the moment a placeholder returns", () => {
@@ -189,6 +198,29 @@ test("the blurred blocks caption themselves from the /pro lineup, and every bene
   const ids = PRO_BENEFITS.map((b) => b.id);
   assert.equal(new Set(ids).size, ids.length, "ids are unique, so a lookup cannot silently pick the wrong benefit");
   assert.throws(() => proBenefitTitle("rebates", []), /no Pro benefit/, "a missing benefit fails loudly rather than captioning nothing");
+});
+
+test("a depleted fund is never named, however loudly the utility still advertises it", () => {
+  // PNM's income-qualified EV purchase rebate, 2026-09-05. Its own 2025
+  // Annual Progress Report to the NMPRC (docket 23-00195-UT) puts the measure
+  // at 243 rebates and $972,000 paid with $18,000 left at 2025-12-31 — four
+  // or five rebates — while pnmdriveelectric.com still offers it. The house
+  // rule is asymmetric here: a fund a shopper cannot draw on is the false
+  // bargain, not a smaller rebate.
+  const pnm = programById("nm-pnm-income-qualified-ev-rebate");
+  assert.ok(pnm, "the program stays in the registry with its evidence");
+  assert.equal(pnm!.status, "depleted");
+  const nm: Listing = {
+    id: "t", vin: "1G1FY6S04P4100001", year: 2023, make: "Chevrolet", model: "Bolt EUV", trim: "LT",
+    priceUsd: 21500, mileage: 24000, state: "NM", sellerType: "dealer", condition: "used",
+  };
+  const ms = matchIncentives(enrichListing(nm), SITE_POLICY, INCENTIVE_PROGRAMS, TODAY);
+  assert.equal(ms.find((m) => m.program.id === "nm-pnm-income-qualified-ev-rebate"), undefined,
+    "not named on a car, so no card tag and no listing-page row");
+  // Every non-live status is silent, not just this one.
+  for (const p of INCENTIVE_PROGRAMS.filter((x) => x.status !== "live")) {
+    assert.equal(ms.find((m) => m.program.id === p.id), undefined, `${p.id} is ${p.status} and must not be named`);
+  }
 });
 
 const RELAXED: MatchPolicy = SITE_POLICY;
