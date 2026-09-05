@@ -53,6 +53,16 @@ A shard body is \`{ v: 1, t, h, pn, r }\`. \`t\` (fact chips), \`h\` (image orig
 
 Where a key is coded, a seller's own string rides in its place when the seller said something the table doesn't list. An absent key means we don't know, never a default.
 
+## API
+
+For a program that would rather ask than read shards. No key. Inventory moves once a night and every response carries \`as_of\`.
+
+- [${BASE}/api/v1/openapi.json](${BASE}/api/v1/openapi.json): the OpenAPI 3.1 document for everything below.
+- [${BASE}/api/v1/listings](${BASE}/api/v1/listings?make=Tesla&model=Model%203&zip=94110&radius_mi=50): search. Parameters: make, model, year_min, year_max, price_min, price_max, mileage_max, condition (new, used, certified), kind (BEV or PHEV), state, zip with radius_mi, range_min, kwh_min, heat_pump, charge_port, drive, body, sort, limit, offset. Each result carries the car, its asking price, the seller's own page, and the battery, range, charge port, heat pump and fast-charge facts the car's page shows, marked estimated where the figure is not the manufacturer's own.
+- [${BASE}/api/v1/listings/{vin}](${BASE}/api/v1/listings/5YJ3E1EA4MF099936): one car with its asking-price history.
+- [${BASE}/api/v1/models](${BASE}/api/v1/models): every make and model with live listings, with counts.
+- [${BASE}/api/mcp](${BASE}/api/mcp): a Model Context Protocol server (Streamable HTTP, POST) with the same three operations as tools: search_listings, get_listing, list_models.
+
 ## Terms
 
 - [robots.txt](${BASE}/robots.txt) says what we ask of a bot reading this site. Everything above is allowed.
