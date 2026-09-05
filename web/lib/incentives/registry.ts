@@ -62,6 +62,16 @@ export interface ProgramAmount {
     epaElectricRangeMaxMi?: number;
   };
   label?: string;
+  /**
+   * A figure can expire on its own while the program carries on. Efficiency
+   * Maine's rebates carry "an additional $1,000 bonus that expires September
+   * 30, 2026" folded into the printed amounts, so from 2026-10-01 those
+   * numbers are $1,000 too high while the rebate itself continues. Same
+   * lesson as liveUntil one level down: a dated claim guarded only by prose
+   * in a label is a claim that goes wrong on a known day.
+   */
+  from?: string;
+  until?: string;
   /** Paid only to an income-qualified purchaser: purchaser-side, so stated, never asserted. */
   incomeQualified?: boolean;
   /** Stacks on top of a base tier rather than replacing it. */
@@ -172,6 +182,10 @@ function validate(file: RegistryFile): Program[] {
     if (!p.vehicle.kinds.length) throw new Error(`incentive registry: ${p.id} names no vehicle kind`);
     for (const a of p.amounts) {
       if (!(a.usd > 0)) throw new Error(`incentive registry: ${p.id} amount without a positive figure`);
+      for (const k of ["from", "until"] as const) {
+        const v = a[k];
+        if (v !== undefined && !/^\d{4}-\d{2}-\d{2}$/.test(v)) throw new Error(`incentive registry: ${p.id} amount has a bad ${k}`);
+      }
     }
     // A live program with a payable figure must say where the figure came from
     // by the same date; an ended one keeps an empty amounts list so nothing

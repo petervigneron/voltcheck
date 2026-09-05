@@ -170,9 +170,14 @@ function listingCondition(l: Listing): Cond | undefined {
   return undefined;
 }
 
-function amountFits(a: ProgramAmount, cond: Cond, kind: VehicleKind | undefined): boolean {
+function amountFits(a: ProgramAmount, cond: Cond, kind: VehicleKind | undefined, day?: string): boolean {
   if (a.applies.condition !== "any" && a.applies.condition !== cond) return false;
   if (a.applies.kind && a.applies.kind !== kind) return false;
+  // A figure that has expired is not a smaller figure, it is the wrong one.
+  if (day !== undefined) {
+    if (a.from && day < a.from) return false;
+    if (a.until && day > a.until) return false;
+  }
   return true;
 }
 
@@ -185,12 +190,13 @@ function settleAmount(
   cond: Cond,
   kind: VehicleKind | undefined,
   e: EnrichedListing,
-  policy: MatchPolicy
+  policy: MatchPolicy,
+  day?: string
 ): { usd: number; label?: string } | undefined {
   const l = e.listing;
   // "Up to" figures are a ceiling on a formula the listing cannot run, so
   // they are never the settled figure; they are stated with their label.
-  const base = program.amounts.filter((a) => !a.incomeQualified && !a.adder && !a.upTo && amountFits(a, cond, kind));
+  const base = program.amounts.filter((a) => !a.incomeQualified && !a.adder && !a.upTo && amountFits(a, cond, kind, day));
   const settled: ProgramAmount[] = [];
   for (const a of base) {
     const ap = a.applies;
@@ -422,9 +428,9 @@ export function matchIncentives(
       toCheck.push("On the program's eligible-vehicle list.");
     }
 
-    const amount = settleAmount(p, cond, kind, e, policy);
+    const amount = settleAmount(p, cond, kind, e, policy, day);
     const purchaserSideAmounts = p.amounts
-      .filter((a) => (a.incomeQualified || a.adder || a.upTo) && amountFits(a, cond, kind))
+      .filter((a) => (a.incomeQualified || a.adder || a.upTo) && amountFits(a, cond, kind, day))
       .map((a) => ({ usd: a.usd, label: a.label ?? (a.adder ? "adder" : a.upTo ? "up to" : "income-qualified") }));
 
     out.push({

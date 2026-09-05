@@ -262,6 +262,29 @@ test("a program with a published open period is named inside it and silent outsi
   }
 });
 
+test("a figure that expires stops being printed, while its program carries on", () => {
+  // Efficiency Maine's rebates fold in "an additional $1,000 bonus that
+  // expires September 30, 2026". From 2026-10-01 those numbers are $1,000
+  // too high — an overstatement, the expensive direction — while the rebate
+  // itself continues. The label said so; nothing read the label.
+  const me = programById("me-efficiency-maine-ev-rebate")!;
+  assert.ok(me.amounts.every((a) => a.until === "2026-09-30"), "every figure carries the bonus, so every figure expires");
+  const car: Listing = {
+    id: "t", vin: "1G1FY6S04P4100001", year: 2023, make: "Chevrolet", model: "Bolt EUV", trim: "LT",
+    priceUsd: 21500, mileage: 24000, state: "ME", sellerType: "dealer", condition: "used",
+  };
+  const at = (iso: string) =>
+    matchIncentives(enrichListing(car), SITE_POLICY, INCENTIVE_PROGRAMS, new Date(iso))
+      .find((m) => m.program.id === "me-efficiency-maine-ev-rebate");
+  const before = at("2026-09-05T12:00:00Z");
+  assert.ok(before, "named today");
+  assert.ok(before!.purchaserSideAmounts.length > 0, "and its figures print today");
+  const after = at("2026-10-01T12:00:00Z");
+  assert.ok(after, "the program itself does not end with the bonus");
+  assert.equal(after!.purchaserSideAmounts.length, 0, "but no stale figure survives it");
+  assert.equal(after!.amountUsd, undefined);
+});
+
 const RELAXED: MatchPolicy = SITE_POLICY;
 const TODAY = new Date("2026-09-02T12:00:00Z");
 

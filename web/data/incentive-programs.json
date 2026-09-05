@@ -501,8 +501,8 @@
       "administrator": "Efficiency Maine Trust",
       "kind": "rebate",
       "status": "live",
-      "statusAsOf": "2026-09-02",
-      "statusNote": "Income-qualified applicants only; the $1,000 bonus inside the figures below expires 2026-09-30.",
+      "statusAsOf": "2026-09-05",
+      "statusNote": "Income-qualified applicants only. Every figure below folds in Efficiency Maine's \"additional $1,000 bonus that expires September 30, 2026\", so each carries until=2026-09-30 and the rebate goes quiet on figures from 2026-10-01 while the program itself continues. The base amounts after the bonus are NOT recorded because Efficiency Maine does not publish them separately - subtracting $1,000 would be our arithmetic, not their figure. Re-read the rebate table after 2026-09-30 and enter what it says.",
       "sources": [
         {
           "url": "https://www.efficiencymaine.com/electric-vehicle-incentives-for-low-and-moderate-income/",
@@ -547,7 +547,8 @@
             "kind": "BEV"
           },
           "label": "low income (includes $1,000 bonus through 2026-09-30)",
-          "incomeQualified": true
+          "incomeQualified": true,
+          "until": "2026-09-30"
         },
         {
           "usd": 6000,
@@ -556,7 +557,8 @@
             "kind": "BEV"
           },
           "label": "moderate income (includes $1,000 bonus through 2026-09-30)",
-          "incomeQualified": true
+          "incomeQualified": true,
+          "until": "2026-09-30"
         },
         {
           "usd": 4000,
@@ -565,7 +567,8 @@
             "kind": "BEV"
           },
           "label": "low income (includes $1,000 bonus through 2026-09-30)",
-          "incomeQualified": true
+          "incomeQualified": true,
+          "until": "2026-09-30"
         },
         {
           "usd": 3000,
@@ -574,7 +577,8 @@
             "kind": "BEV"
           },
           "label": "moderate income (includes $1,000 bonus through 2026-09-30)",
-          "incomeQualified": true
+          "incomeQualified": true,
+          "until": "2026-09-30"
         }
       ]
     },
@@ -588,8 +592,8 @@
       "administrator": "New Jersey Board of Public Utilities",
       "kind": "rebate",
       "status": "live",
-      "statusAsOf": "2026-09-02",
-      "statusNote": "FY27 program, 2026-07-01 to 2027-06-30, point of sale only.",
+      "statusAsOf": "2026-09-05",
+      "statusNote": "FY27 program, 2026-07-01 to 2027-06-30, point of sale only, now enforced by liveFrom/liveUntil. Funding read from the program's own real-time dashboard 2026-09-05: $50,277,800 of $245,000,000 remaining (21%), issued and reserved $194,722,200 - healthy. The 2026-07-24 pause notice on the site is the Clean Fleet EV and EV Charging programs, NOT the consumer Charge Up incentive; do not read it across. This program publishes availability in real time, so it is the one that can actually be checked rather than inferred.",
       "sources": [
         {
           "url": "https://chargeup.njcleanenergy.com/sites/default/files/docs/Charge_Up_New_Jersey_Terms_and_Conditions.pdf",
@@ -600,6 +604,11 @@
           "url": "https://chargeup.njcleanenergy.com/eligibility-guidelines",
           "capturedAt": "2026-09-02",
           "what": "Residency at purchase and two years after; point of sale"
+        },
+        {
+          "url": "https://chargeup.njcleanenergy.com/available-funding",
+          "capturedAt": "2026-09-05",
+          "what": "Charge Up New Jersey real-time available funding: Vehicle total $245,000,000, available remaining 21% ($50,277,800), issued and reserved 79% ($194,722,200)."
         }
       ],
       "covers": {
@@ -649,7 +658,9 @@
           "incomeQualified": true,
           "adder": true
         }
-      ]
+      ],
+      "liveFrom": "2026-07-01",
+      "liveUntil": "2027-06-30"
     },
     {
       "id": "nm-clean-car-income-tax-credit",
