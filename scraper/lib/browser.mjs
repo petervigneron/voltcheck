@@ -77,10 +77,13 @@ function release() {
 
 // BROWSER_LANES=off makes every call answer browser_unavailable without
 // launching anything: the lanes decline cleanly and their rooftops report
-// partial (never a delisting). The switch exists because the rolling crawl
-// lost 39 of 48 slices to its job timeout on 2026-09-04 06:57 with the
-// browser lanes on, and the crawl has to keep landing everything else while
-// the cause is measured.
+// partial (never a delisting). The switch was thrown on 2026-09-04 because
+// the rolling crawl lost 39 of 48 slices to its job timeout with the lanes
+// on. It is back on since the 20:39 run, because that was not what the lanes
+// were doing: the slices were losing one hung rooftop each — ridemotive,
+// dealer.com and dealeron as often as a browser lane — and waiting on it
+// for ever. lib/wall.mjs ends that wait. The first run with it walked away
+// from 36 visits across 30 slices and synced 48 of 48.
 const LANES_OFF = /^(off|0|false)$/i.test(String(process.env.BROWSER_LANES ?? ""));
 
 async function getContext() {

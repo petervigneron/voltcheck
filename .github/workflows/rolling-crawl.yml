@@ -170,9 +170,17 @@ jobs:
     # Chrome — and at 28 the tail of a normal slice was the whole slice: the
     # 20:52 run lost 28 of 48 slices to this timeout with two ordinary Motive
     # rooftops still in flight, and a cancelled crawl step skips the sync, so
-    # everything the slice read was thrown away. crawl.mjs also hard-stops
-    # browser lanes five minutes past --deadline-min, so a slice's crawl is
-    # bounded near 26 minutes and 34 is headroom, not a budget.
+    # everything the slice read was thrown away.
+    #
+    # Since 2026-09-04 that bound is real rather than argued (lib/wall.mjs):
+    # every visit races --domain-cap-min plus a minute, the worker pool races
+    # five minutes past --deadline-min, and past either the run writes what it
+    # has and exits 0. It had to become real because the 06:57 run lost 39 of
+    # 48 slices with 398-402 of ~400 domains ALREADY crawled and checkpointed,
+    # each waiting on one rooftop that never returned. The first run with the
+    # wall walked away from 36 such visits across 30 of the 48 slices and
+    # synced 48 of 48; its crawl steps ran 9.2-18.0 minutes (median 14.3).
+    # So 34 is headroom over a 23-minute ceiling, not a budget.
     timeout-minutes: 34
     steps:
       - uses: actions/checkout@v4
@@ -298,7 +306,7 @@ jobs:
       - name: Crawl the slice
         working-directory: scraper
         run: |
-          BROWSER_LANES=off BROWSER_CONCURRENCY=8 \
+          BROWSER_LANES=on BROWSER_CONCURRENCY=8 \
           node crawl.mjs $(cat /tmp/domains.txt) \
             --max-pages 80 --cache-hours 0 --concurrency 32 --deadline-min 18 \
             --domain-cap-min 8
