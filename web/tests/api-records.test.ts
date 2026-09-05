@@ -3,10 +3,10 @@
 // a number the page would not print.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { enrichListing } from "../lib/listings/enrich.ts";
-import { buildApiArtifacts, makeSlug, toApiListing, slimRow } from "../lib/api/records.ts";
-import type { Listing } from "../lib/listings/types.ts";
-import type { CardRow } from "../lib/listings/card.ts";
+import { enrichListing } from "../lib/listings/enrich";
+import { buildApiArtifacts, makeSlug, toApiListing, slimRow } from "../lib/api/records";
+import type { Listing } from "../lib/listings/types";
+import type { CardRow } from "../lib/listings/card";
 
 const model3: Listing = {
   id: "5yj3e1ea4mf099936",

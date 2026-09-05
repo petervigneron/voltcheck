@@ -2,10 +2,10 @@
 // (lib/listings/proSignals.ts, lib/listings/proSeal.ts).
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { publicRows, packPro, unpackPro, mergePro } from "../lib/listings/proSignals.ts";
-import { packIndex } from "../lib/listings/pack.ts";
-import { seal, open } from "../lib/listings/proSeal.ts";
-import type { CardRow } from "../lib/listings/card.ts";
+import { publicRows, packPro, unpackPro, mergePro } from "../lib/listings/proSignals";
+import { packIndex } from "../lib/listings/pack";
+import { seal, open } from "../lib/listings/proSeal";
+import type { CardRow } from "../lib/listings/card";
 
 const base = (id: string, extra: Partial<CardRow> = {}): CardRow => ({
   id, hay: "", year: 2023, make: "Kia", model: "EV6", title: "2023 Kia EV6", priceUsd: 30000, realPrice: true, tiles: [], ...extra,

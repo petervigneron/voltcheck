@@ -2,7 +2,7 @@
 // notifications, batches, and the errors, driven with plain JSON-RPC.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { createMcpServer, PROTOCOL_VERSION } from "../lib/mcp/server.ts";
+import { createMcpServer, PROTOCOL_VERSION } from "../lib/mcp/server";
 
 const server = createMcpServer({
   name: "t",

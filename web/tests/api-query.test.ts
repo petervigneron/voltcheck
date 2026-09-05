@@ -6,8 +6,8 @@
 //        --test tests/api-query.test.ts
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { parseQuery, runQuery, DEFAULT_LIMIT, DEFAULT_RADIUS_MI } from "../lib/api/query.ts";
-import type { SlimRow } from "../lib/api/records.ts";
+import { parseQuery, runQuery, DEFAULT_LIMIT, DEFAULT_RADIUS_MI } from "../lib/api/query";
+import type { SlimRow } from "../lib/api/records";
 
 // [id, make, model, year, price, mileage, cond, state, lat, lng, kind, range, kwh, hp, port, drive, body, firstSeenDay]
 const rows: SlimRow[] = [
