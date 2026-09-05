@@ -112,8 +112,8 @@ test("the rebate filter is Pro: without a pass the key is inert, with one it kee
 });
 
 test("PNM: a New Mexico car under the $55,000 invoiced-price cap meets the car-side conditions; the $4,000 is stated, never the figure", () => {
-  // PNM went "depleted" on 2026-09-05 (see the test below), so the live
-  // registry no longer names it. The CAP mechanics it was written for are
+  // PNM went "depleted" on 2026-09-05 and back to live the same day on the
+  // owner's ruling (see the two tests below). The CAP mechanics it was written for are
   // still the ones a $55,000 total-invoiced-price program exercises — an
   // "up to" figure that must never settle, and a hard fail past the 10%
   // margin — so the program is forced live here rather than deleting the
