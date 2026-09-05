@@ -101,6 +101,18 @@ export interface Program {
    * re-check it, which is the same shape as the PNM failure: a claim that
    * expires on a known date, guarded only by someone remembering. If only a
    * human eye can catch it, it is not caught.
+   *
+   * ONLY for a close the program states as hard. Oregon's qualifies — DEQ:
+   * vehicles bought after Nov. 4 "are NOT eligible" — and so does Illinois'
+   * application cycle. A plan period a utility can ask to roll over does NOT:
+   * PNM's 2024-2026 TEP ends 2026-12-31, but its 2027-2029 testimony (NMPRC
+   * docket 26-0000115, p.19) asks that "the 2024-2026 TEP offerings continue
+   * after December 31, 2026, until the 2027-2029 TEP is approved", with
+   * approval expected in early 2027. A liveUntil there would take the rebate
+   * off New Mexico cars in exactly the window PNM asked to keep paying it —
+   * the false negative this field exists to avoid, arriving on a schedule.
+   * When the end is a plan period rather than a hard close, the re-check
+   * trigger is an ORDER and belongs in statusNote, not a date here.
    */
   liveFrom?: string;
   liveUntil?: string;
