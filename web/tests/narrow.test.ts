@@ -11,7 +11,6 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { narrowFacets } from "@/lib/listings/narrow";
 import { activeFilterKeys, buildTests } from "@/lib/listings/match";
-import { FACET_CAP } from "@/lib/filters";
 import type { CardRow } from "@/lib/listings/card";
 
 const row = (make: string, model: string, over: Partial<CardRow> = {}): CardRow =>
@@ -56,7 +55,7 @@ test("nothing to narrow on the pristine landing page", () => {
   assert.deepEqual(narrow({}), []);
 });
 
-test("a filtered result spans makes: one row, counted against that filter, deepest first", () => {
+test("a filtered result spans makes: one menu, counted against that filter, by name", () => {
   const [make, ...rest] = narrow({ cut: "1" });
   assert.equal(rest.length, 0);
   assert.equal(make.key, "make");
@@ -64,13 +63,13 @@ test("a filtered result spans makes: one row, counted against that filter, deepe
     make.values.map((v) => [v.v, v.n]),
     [
       ["Ford", 7],
-      ["Tesla", 4],
       ["Kia", 1],
+      ["Tesla", 4],
     ]
   );
-  // Every chip is a live URL value: a make with no car under the filter is
+  // Every entry is a live URL value: a make with no car under the filter is
   // not offered at all, rather than offered dead.
-  assert.ok(make.values.every((v) => v.n > 0 && v.top));
+  assert.ok(make.values.every((v) => v.n > 0));
 });
 
 test("one make in the pool is not a choice", () => {
@@ -111,19 +110,13 @@ test("two filters both count: AWD and price cut together", () => {
   );
 });
 
-test("past the cap the rest wait behind +N more, and which survive is a question of depth", () => {
-  const many: CardRow[] = [];
-  for (let i = 0; i < FACET_CAP + 3; i++) {
-    for (let n = 0; n <= i; n++) many.push(row(`Make${String(i).padStart(2, "0")}`, "X", { cut }));
-  }
+test("names sort case-insensitively, so a shouted feed spelling files with its neighbours", () => {
+  const mixed = [row("audi", "Q4", { cut }), row("BMW", "iX", { cut }), row("Cadillac", "Lyriq", { cut })];
   const get = (k: string) => (k === "cut" ? "1" : "");
   const tests = buildTests(get);
-  const [make] = narrowFacets(many, tests, activeFilterKeys(tests), get, {});
-  assert.equal(make.values.length, FACET_CAP + 3);
-  assert.equal(make.values.filter((v) => v.top).length, FACET_CAP);
-  // The three thinnest are the ones held back.
+  const [make] = narrowFacets(mixed, tests, activeFilterKeys(tests), get, {});
   assert.deepEqual(
-    make.values.filter((v) => !v.top).map((v) => v.n),
-    [3, 2, 1]
+    make.values.map((v) => v.v),
+    ["audi", "BMW", "Cadillac"]
   );
 });

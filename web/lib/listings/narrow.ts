@@ -1,9 +1,9 @@
 import type { CardRow } from "./card";
-import { FACET_CAP, SPEC_FACETS, type FacetGroup, type RemovableFilter } from "../filters";
+import { SPEC_FACETS, type FacetGroup, type RemovableFilter } from "../filters";
 import type { FilterTests } from "./match";
 import { modelKey } from "./modelName";
 
-// The narrowing rows under the filter rail: which makes a filtered result
+// The narrowing menus under the filter rail: which makes a filtered result
 // spans, and once a make is picked, which of its models.
 //
 // Why it exists (owner, 2026-09-05): press "Price cut" or "AWD" or the rebate
@@ -12,7 +12,9 @@ import { modelKey } from "./modelName";
 // make in a <select> whose closed state doesn't even say what's in it. A
 // shopper who has just narrowed by one axis is asked the next question on
 // the page itself, with the count each answer would leave, the same way the
-// spec rail asks "which version" once the results are one model.
+// spec rail asks "which version" once the results are one model. A menu, not
+// a row of chips (owner, same day, after seeing the chips): forty-three makes
+// is a list to scan for a name, and a menu costs one cell of the page.
 //
 // Each row is single-choice, because `make` and `model` are single-valued
 // everywhere they are read (match.ts, the panel, the alert sender), and it
@@ -74,13 +76,11 @@ export function narrowFacets(
   ];
 }
 
-// Deepest stock first, and the deepest FACET_CAP shown before "+N more" —
-// same rule as the spec rail's trim row, for the same reason: a make with
-// 3,000 cars under the filter is the likelier answer than one with 4.
+// By name, not by depth: a shopper opening a list of forty makes is looking
+// for one they already have in mind, and the count beside it says the depth.
+// (The trim menu sorts by depth because nobody knows trim names in advance;
+// everybody knows "Ford".) Case-insensitive, since the names are feed
+// spellings and an ASCII sort files every SHOUTED one above the rest.
 function order(values: FacetGroup["values"]): FacetGroup["values"] {
-  values.sort((a, b) => b.n - a.n || a.v.localeCompare(b.v, "en", { sensitivity: "base" }));
-  values.forEach((v, i) => {
-    v.top = i < FACET_CAP;
-  });
-  return values;
+  return values.sort((a, b) => a.v.localeCompare(b.v, "en", { sensitivity: "base" }));
 }
