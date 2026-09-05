@@ -131,7 +131,7 @@ export default async function WorthPage(props: Props) {
             {/* The same caption the blurred block carries on a car's page —
                 the benefit's own title from /pro. */}
             <p className="mb-3 text-[10.5px] font-extrabold uppercase tracking-[0.14em] text-ink/55">Market trends</p>
-            <PriceTrendCharts trend={trend} />
+            <PriceTrendCharts trend={trend} miles={input?.mileage} />
             {/* ODbL: a sales figure is rendering, so the credit renders with
                 it — the same bare line the result block carries. */}
             {trend.sales && (

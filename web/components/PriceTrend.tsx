@@ -1,15 +1,20 @@
-import type { PriceTrend, TrendPoint, TrendSeries } from "@/lib/trend";
+import { levelTo, type PriceTrend, type TrendPoint, type TrendSeries } from "@/lib/trend";
 
-// Market trends for one car, on the /worth result (Pro): two charts, kept
-// apart on purpose (owner, 2026-09-03) — what a standard car of this cohort
-// FETCHED, by quarter, from Washington title sales; and what one is being
-// ASKED, by week, from our own listings. Different questions, different
-// flaws, and the gap between them is itself the number a buyer negotiates
-// with, so neither is ever drawn over the other.
+// Market trends for one car, on the /worth result and the listing page
+// (Pro): two charts, kept apart on purpose (owner, 2026-09-03) — what a
+// standard car of this cohort FETCHED, by quarter, from Washington title
+// sales; and what one is being ASKED, by day, from our own listings.
+// Different questions, different flaws, and the gap between them is itself
+// the number a buyer negotiates with, so neither is ever drawn over the
+// other.
 //
 // "Standard car": lib/trend.ts. The line moves when the market moves, not
 // when the mix of cars does — which is the whole reason a raw median would
-// not do here.
+// not do here. Both charts are drawn at the SAME odometer — the shopper's
+// own `miles` when it is inside the fitted window, else each series' own —
+// and print it. Two lines at two odometers was the bug 0064 ended: the
+// owner could not read the pair, and the gap it showed pointed the wrong
+// way.
 //
 // Drawn in the same idiom as components/PriceSparkline.tsx: a fixed viewBox,
 // the dollar figures at both ends printed rather than hovered, a y-range
@@ -40,7 +45,9 @@ const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "
 const usd = (n: number) => `$${Math.round(n).toLocaleString("en-US")}`;
 const miles = (n: number) => `${Math.round(n).toLocaleString("en-US")} mi`;
 
-function periodLabel(iso: string, grain: "quarter" | "week"): string {
+type Grain = "quarter" | "day";
+
+function periodLabel(iso: string, grain: Grain): string {
   const d = new Date(iso);
   if (grain === "quarter") return `Q${Math.floor(d.getUTCMonth() / 3) + 1} ${d.getUTCFullYear()}`;
   return `${MONTHS[d.getUTCMonth()]} ${d.getUTCDate()}`;
@@ -54,7 +61,7 @@ function Chart({
   label,
 }: {
   series: TrendSeries;
-  grain: "quarter" | "week";
+  grain: Grain;
   colour: string;
   /** "sales" or "listings" — what n counts. */
   unit: string;
@@ -89,18 +96,23 @@ function Chart({
     `${periodLabel(p.period, grain)}: ${usd(p.price)} (${usd(p.p25)}–${usd(p.p75)}), ${p.n} ${unit}` +
     (p.odometer != null ? `, median ${miles(p.odometer)}` : "");
 
-  const per = grain === "quarter" ? "a quarter" : "a week";
+  const per = grain === "quarter" ? "a quarter" : "a day";
   const std = series.stdOdometer != null ? ` · at ${miles(series.stdOdometer)}` : "";
+  // A quarter gets a dot and a hover per point; a day series is dozens of
+  // points on a 310-wide plot, so it keeps the line and the band and marks
+  // (and describes) only its ends. The count line under the chart carries
+  // the n range.
+  const dots = grain === "quarter" ? pts : [first, last];
 
   return (
     <figure>
       <figcaption className="text-[11px] font-extrabold uppercase tracking-[0.08em] text-ink/50">
         {label}
       </figcaption>
-      <svg viewBox={`0 0 ${W} ${H}`} className="mt-1 w-full" role="img" aria-label={`${label}: ${pts.map(titleOf).join("; ")}`}>
+      <svg viewBox={`0 0 ${W} ${H}`} className="mt-1 w-full" role="img" aria-label={`${label}: ${dots.map(titleOf).join("; ")}`}>
         <path d={band} fill={colour} fillOpacity="0.12" stroke="none" />
         <path d={line} fill="none" stroke={colour} strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
-        {pts.map((p) => (
+        {dots.map((p) => (
           <circle
             key={p.period}
             cx={px(Date.parse(p.period))}
@@ -137,12 +149,14 @@ function Chart({
   );
 }
 
-export function PriceTrendCharts({ trend }: { trend: PriceTrend }) {
+export function PriceTrendCharts({ trend, miles }: { trend: PriceTrend; miles?: number | null }) {
   if (!trend.sales && !trend.asks) return null;
+  const sales = trend.sales && levelTo(trend.sales, miles);
+  const asks = trend.asks && levelTo(trend.asks, miles);
   return (
     <div className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
-      {trend.sales && <Chart series={trend.sales} grain="quarter" colour={TEAL} unit="sales" label="Sale prices, Washington" />}
-      {trend.asks && <Chart series={trend.asks} grain="week" colour={COBALT} unit="listings" label="Listing prices" />}
+      {sales && <Chart series={sales} grain="quarter" colour={TEAL} unit="sales" label="Sale prices, Washington" />}
+      {asks && <Chart series={asks} grain="day" colour={COBALT} unit="listings" label="Listing prices" />}
     </div>
   );
 }

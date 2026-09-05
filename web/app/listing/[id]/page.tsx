@@ -355,7 +355,7 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
           {trend && (trend.sales || trend.asks) && (
             <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5">
               <ProBlur label="Market trends">
-                <PriceTrendCharts trend={trend} />
+                <PriceTrendCharts trend={trend} miles={listing.mileage} />
                 {trend.sales && (
                   <a
                     href="https://data.wa.gov/Transportation/Electric-Vehicle-Title-and-Registration-Activity/rpr4-cgyd"
