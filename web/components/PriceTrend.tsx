@@ -1,35 +1,30 @@
 import { levelTo, type PriceTrend, type TrendPoint, type TrendSeries } from "@/lib/trend";
 
-// Market trends for one car, on the /worth result and the listing page
-// (Pro): two charts, kept apart on purpose (owner, 2026-09-03) — what a
-// standard car of this cohort FETCHED, by quarter, from Washington title
-// sales; and what one is being ASKED, by day, from our own listings.
-// Different questions, different flaws, and the gap between them is itself
-// the number a buyer negotiates with, so neither is ever drawn over the
-// other.
+// Market trend for one car, on the /worth result and the listing page (Pro):
+// what a car like this one is being ASKED, day by day, from our own
+// listings. One line. The owner (2026-09-05) took the Washington sales chart
+// out of this block — two charts at two grains from two sources was the
+// pair nobody could read, and the sale-vs-ask figure already lives on cards
+// and the listing page with its own guardrails.
 //
 // "Standard car": lib/trend.ts. The line moves when the market moves, not
 // when the mix of cars does — which is the whole reason a raw median would
-// not do here. Both charts are drawn at the SAME odometer — the shopper's
-// own `miles` when it is inside the fitted window, else each series' own —
-// and print it. Two lines at two odometers was the bug 0064 ended: the
-// owner could not read the pair, and the gap it showed pointed the wrong
-// way.
+// not do here. It is drawn at the shopper's own `miles` when that is inside
+// the fitted window, else at the series' own odometer, and prints which.
 //
 // Drawn in the same idiom as components/PriceSparkline.tsx: a fixed viewBox,
 // the dollar figures at both ends printed rather than hovered, a y-range
-// floor so a small move draws small, and every point carrying its own n and
+// floor so a small move draws small, and the ends carrying their n and
 // odometer in a <title>. What this file adds is the interquartile band under
-// the line — a quarter with eight sales spread $10k wide should look wider
-// than one with sixty sales stacked at one number.
+// the line — a day with eight listings spread $10k wide should look wider
+// than one with sixty stacked at one number. A day series is dozens of
+// points on a 310-wide plot, so only its ends get a dot.
 //
 // Copy is kept to the axis: what the line is, what the standard car is, and
-// how many sales or listings stand behind each point. Server-rendered, no
-// client JS.
+// how many listings stand behind each day. Server-rendered, no client JS.
 
 const INK = "#121212";
 const COBALT = "#1f3fd1";
-const TEAL = "#0f7b6c";
 const PUTTY = "#e8e7e2";
 const PAPER = "#ffffff";
 
@@ -45,28 +40,12 @@ const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "
 const usd = (n: number) => `$${Math.round(n).toLocaleString("en-US")}`;
 const miles = (n: number) => `${Math.round(n).toLocaleString("en-US")} mi`;
 
-type Grain = "quarter" | "day";
-
-function periodLabel(iso: string, grain: Grain): string {
+function dayLabel(iso: string): string {
   const d = new Date(iso);
-  if (grain === "quarter") return `Q${Math.floor(d.getUTCMonth() / 3) + 1} ${d.getUTCFullYear()}`;
   return `${MONTHS[d.getUTCMonth()]} ${d.getUTCDate()}`;
 }
 
-function Chart({
-  series,
-  grain,
-  colour,
-  unit,
-  label,
-}: {
-  series: TrendSeries;
-  grain: Grain;
-  colour: string;
-  /** "sales" or "listings" — what n counts. */
-  unit: string;
-  label: string;
-}) {
+function Chart({ series, label }: { series: TrendSeries; label: string }) {
   const pts = series.points;
   const t0 = Date.parse(pts[0].period);
   const t1 = Date.parse(pts[pts.length - 1].period);
@@ -89,39 +68,25 @@ function Chart({
 
   const first = pts[0];
   const last = pts[pts.length - 1];
+  const ends = first === last ? [first] : [first, last];
   const ns = pts.map((p) => p.n);
   const nLo = Math.min(...ns);
   const nHi = Math.max(...ns);
   const titleOf = (p: TrendPoint) =>
-    `${periodLabel(p.period, grain)}: ${usd(p.price)} (${usd(p.p25)}–${usd(p.p75)}), ${p.n} ${unit}` +
+    `${dayLabel(p.period)}: ${usd(p.price)} (${usd(p.p25)}–${usd(p.p75)}), ${p.n} listings` +
     (p.odometer != null ? `, median ${miles(p.odometer)}` : "");
-
-  const per = grain === "quarter" ? "a quarter" : "a day";
   const std = series.stdOdometer != null ? ` · at ${miles(series.stdOdometer)}` : "";
-  // A quarter gets a dot and a hover per point; a day series is dozens of
-  // points on a 310-wide plot, so it keeps the line and the band and marks
-  // (and describes) only its ends. The count line under the chart carries
-  // the n range.
-  const dots = grain === "quarter" ? pts : [first, last];
 
   return (
     <figure>
       <figcaption className="text-[11px] font-extrabold uppercase tracking-[0.08em] text-ink/50">
         {label}
       </figcaption>
-      <svg viewBox={`0 0 ${W} ${H}`} className="mt-1 w-full" role="img" aria-label={`${label}: ${dots.map(titleOf).join("; ")}`}>
-        <path d={band} fill={colour} fillOpacity="0.12" stroke="none" />
-        <path d={line} fill="none" stroke={colour} strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
-        {dots.map((p) => (
-          <circle
-            key={p.period}
-            cx={px(Date.parse(p.period))}
-            cy={py(p.price)}
-            r={p === first || p === last ? 3.5 : 2.5}
-            fill={colour}
-            stroke={PAPER}
-            strokeWidth="1.5"
-          >
+      <svg viewBox={`0 0 ${W} ${H}`} className="mt-1 w-full" role="img" aria-label={`${label}: ${ends.map(titleOf).join("; ")}`}>
+        <path d={band} fill={COBALT} fillOpacity="0.12" stroke="none" />
+        <path d={line} fill="none" stroke={COBALT} strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+        {ends.map((p) => (
+          <circle key={p.period} cx={px(Date.parse(p.period))} cy={py(p.price)} r={3.5} fill={COBALT} stroke={PAPER} strokeWidth="1.5">
             <title>{titleOf(p)}</title>
           </circle>
         ))}
@@ -135,14 +100,14 @@ function Chart({
         </text>
         <line x1={M.l} x2={W - M.r} y1={H - M.b + 4} y2={H - M.b + 4} stroke={PUTTY} strokeWidth="1" />
         <text x={M.l} y={H - 8} fontSize="10" fontWeight="700" fill={INK} fillOpacity="0.55" textAnchor="start">
-          {periodLabel(first.period, grain)}
+          {dayLabel(first.period)}
         </text>
         <text x={W - M.r} y={H - 8} fontSize="10" fontWeight="700" fill={INK} fillOpacity="0.55" textAnchor="end">
-          {periodLabel(last.period, grain)}
+          {dayLabel(last.period)}
         </text>
       </svg>
       <p className="mt-1 text-[11px] font-bold text-ink/55 tabular-nums">
-        {nLo === nHi ? `${nLo}` : `${nLo}–${nHi}`} {unit} {per}
+        {nLo === nHi ? `${nLo}` : `${nLo}–${nHi}`} listings a day
         {std}
       </p>
     </figure>
@@ -150,13 +115,10 @@ function Chart({
 }
 
 export function PriceTrendCharts({ trend, miles }: { trend: PriceTrend; miles?: number | null }) {
-  if (!trend.sales && !trend.asks) return null;
-  const sales = trend.sales && levelTo(trend.sales, miles);
-  const asks = trend.asks && levelTo(trend.asks, miles);
+  if (!trend.asks) return null;
   return (
-    <div className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
-      {sales && <Chart series={sales} grain="quarter" colour={TEAL} unit="sales" label="Sale prices, Washington" />}
-      {asks && <Chart series={asks} grain="day" colour={COBALT} unit="listings" label="Listing prices" />}
+    <div className="max-w-[420px]">
+      <Chart series={levelTo(trend.asks, miles)} label="Listing prices" />
     </div>
   );
 }

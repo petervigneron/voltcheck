@@ -126,24 +126,13 @@ export default async function WorthPage(props: Props) {
             picker becomes the way to adjust, not the way in, so it moves
             below what it produced. The bare form keeps the old order. */}
         {input && valuation && <Result input={input} v={valuation} />}
-        {trend && (trend.sales || trend.asks) && (
+        {trend?.asks && (
           <section className={`${CELL} bg-paper px-5 py-6 sm:px-8`}>
             {/* The same caption the blurred block carries on a car's page —
-                the benefit's own title from /pro. */}
+                the benefit's own title from /pro. Asking prices only, so no
+                ODbL credit here; the result block above carries its own. */}
             <p className="mb-3 text-[10.5px] font-extrabold uppercase tracking-[0.14em] text-ink/55">Market trends</p>
             <PriceTrendCharts trend={trend} miles={input?.mileage} />
-            {/* ODbL: a sales figure is rendering, so the credit renders with
-                it — the same bare line the result block carries. */}
-            {trend.sales && (
-              <a
-                href="https://data.wa.gov/Transportation/Electric-Vehicle-Title-and-Registration-Activity/rpr4-cgyd"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`${CAPTION} mt-4 inline-block text-ink/45 hover:text-cobalt`}
-              >
-                WA DOL (ODbL)
-              </a>
-            )}
           </section>
         )}
 

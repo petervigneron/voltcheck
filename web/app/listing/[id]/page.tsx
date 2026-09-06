@@ -366,20 +366,10 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
             </div>
           ) : null}
 
-          {trend && (trend.sales || trend.asks) && (
+          {trend?.asks && (
             <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5">
               <ProBlur label={proBenefitTitle("market-trends")}>
                 <PriceTrendCharts trend={trend} miles={listing.mileage} />
-                {trend.sales && (
-                  <a
-                    href="https://data.wa.gov/Transportation/Electric-Vehicle-Title-and-Registration-Activity/rpr4-cgyd"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-3 inline-block text-[10.5px] font-extrabold uppercase tracking-[0.14em] text-zinc-400 hover:text-cobalt"
-                  >
-                    WA DOL (ODbL)
-                  </a>
-                )}
               </ProBlur>
             </div>
           )}

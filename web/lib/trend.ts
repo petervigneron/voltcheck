@@ -1,32 +1,36 @@
-// The market-trend read for one car: two series from price_trend() (0064),
-// the security-definer RPC that is the ONLY reader of the trend tables.
+// The market-trend read for one car: the asking-price series from
+// price_trend() (0064), the security-definer RPC that is the ONLY reader of
+// the trend tables.
 //
-//   sales — what a standard car of this cohort FETCHED, by quarter, from
-//           arms-length Washington title sales since 2019 (n ≥ 8 a quarter).
-//   asks  — what one is being ASKED, by day, from our own listings since
-//           2026-08-12 (n ≥ 4 a day, used cars, closed days only).
+//   asks — what a standard car of this cohort is being ASKED, by day, from
+//          our own listings since 2026-08-15 (n ≥ 4 a day, used cars, closed
+//          days only).
+//
+// The RPC also returns a Washington SALES series by quarter (0061). It is not
+// read here any more: the owner (2026-09-05) wants one line — what a car
+// like yours is asking, day by day — and the sale-vs-ask figure already
+// lives on cards and the listing page with its own guardrails (comps.ts).
+// Two charts at two grains from two sources was the block nobody could
+// read; the sales views keep refreshing for the valuation, not for this.
 //
 // "Standard car": every price was first moved to one odometer along the
 // cohort's fitted mileage slope, so the line moves when the market moves and
-// not when the mix of cars does. Each series says which odometer that was
+// not when the mix of cars does. The series says which odometer that was
 // (stdOdometer) and the slope it used (usdPerMile), and levelTo() moves the
 // whole series to a different one — the shopper's own mileage — before it
-// is drawn. That is what makes the two charts comparable: until 0064 each
-// was standardized to its own population's median (31,936 mi of Washington
-// titles against 59,736 mi on lots today for a 2021 Model 3), and the gap
-// between them was 28,000 miles of odometer read as a $5,700 bargain.
+// is drawn.
 //
 // The RPC picks the level — the VIN cohort when a VIN was given and it clears
 // the floor, else the model pool — and says which in `level`. Each point
-// carries its n and the period's median odometer, because the chart must
-// print those beside the line (0057/0061 rule).
+// carries its n and the day's median odometer, because the chart must print
+// those beside the line (0057/0061 rule).
 //
-// Anon key, like every other web read; cached an hour. The tables move once
+// Anon key, like every other web read; cached an hour. The table moves once
 // a night, so an hour is freshness enough and one RPC per car per hour is
 // nothing the database notices.
 
 export interface TrendPoint {
-  /** ISO date: the quarter's first day, or the day. */
+  /** ISO date: the day. */
   period: string;
   n: number;
   price: number;
@@ -47,7 +51,6 @@ export interface TrendSeries {
 }
 
 export interface PriceTrend {
-  sales: TrendSeries | null;
   asks: TrendSeries | null;
 }
 
@@ -95,9 +98,9 @@ export async function fetchPriceTrend(a: {
       next: { revalidate: 3600 },
     });
     if (!res.ok) return null;
-    const body = (await res.json()) as PriceTrend;
+    const body = (await res.json()) as { asks?: TrendSeries | null };
     if (!body || typeof body !== "object") return null;
-    return { sales: cleanSeries(body.sales), asks: cleanSeries(body.asks) };
+    return { asks: cleanSeries(body.asks) };
   } catch {
     return null;
   }
