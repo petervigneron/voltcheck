@@ -1,0 +1,55 @@
+name: Browser wall check
+
+# Does a browser lane get the same page on a GitHub runner as it does on a
+# laptop? Manual only, and it writes nothing anywhere — it loads a handful of
+# rooftops in the same Chromium the rolling crawl uses and prints each load's
+# status, title and challenge markers.
+#
+# It exists because the 2026-09-06 04:41 rolling run reported 26 Dealer Inspire
+# rooftops as "browser lane failed" (neither SRP answered 200, twice) that the
+# same code read fine from a laptop the same morning. A crawl log cannot tell a
+# wall from a slow clock; this can, and the answer decides whether CI keeps the
+# lane at all.
+on:
+  workflow_dispatch:
+    inputs:
+      domains:
+        description: "Space-separated rooftop domains."
+        required: false
+        default: >-
+          patrickhyundai.com woburntoyota.com criswellauto.com bridgewaterkia.com
+          kunesmacomb.com showmeautomall.com eastcoasttoyota.com hersonskia.com
+          crownbmw.com temeculanissan.com
+      declaration:
+        description: "Also A/B the x-crawler declaration header ('both'), or 'off'."
+        required: false
+        default: "both"
+      concurrency:
+        description: "BROWSER_CONCURRENCY, to reproduce the crawl's page pressure."
+        required: false
+        default: "1"
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('scraper/package-lock.json') }}
+      - working-directory: scraper
+        run: npm ci --no-audit --no-fund && npx playwright install --with-deps chromium-headless-shell
+      - name: Load the rooftops in Chrome
+        working-directory: scraper
+        env:
+          BROWSER_LANES: "on"
+          BROWSER_CONCURRENCY: ${{ github.event.inputs.concurrency || '1' }}
+        run: |
+          printf '%s\n' ${{ github.event.inputs.domains || 'patrickhyundai.com woburntoyota.com' }} > /tmp/cohort.txt
+          node browser-wall-check.mjs --domains-file /tmp/cohort.txt \
+            --declaration "${{ github.event.inputs.declaration || 'both' }}"
