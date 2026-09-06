@@ -86,6 +86,14 @@ function release() {
 // from 36 visits across 30 slices and synced 48 of 48.
 const LANES_OFF = /^(off|0|false)$/i.test(String(process.env.BROWSER_LANES ?? ""));
 
+// BROWSER_TRACE=1 prints one line per load — status, wall time, bytes, the URL
+// it landed on — and one per robots decision. A lane's own summary cannot say
+// why it came back empty: on 2026-09-06 twenty-six Dealer Inspire rooftops
+// reported "browser lane failed" and the statuses that produced it were gone
+// by the time the crawl printed the line. Off by default; the crawl never
+// turns it on.
+const TRACE = /^(1|on|true|yes)$/i.test(String(process.env.BROWSER_TRACE ?? ""));
+
 async function getContext() {
   if (LANES_OFF) {
     unavailable = "BROWSER_LANES=off";
@@ -210,7 +218,12 @@ export async function browserRobotsAllows(url) {
     }
     rules = robotsEntry(u.host);
   }
-  return robotsRulesAllow(rules ?? { allow: [], disallow: [] }, u.pathname + u.search);
+  const allowed = robotsRulesAllow(rules ?? { allow: [], disallow: [] }, u.pathname + u.search);
+  if (TRACE)
+    console.log(
+      `[browser] robots ${u.host} status=${rules?.status ?? "none"} via=${rules?.via ?? "fetch"} allow=${rules?.allow?.length ?? 0} disallow=${rules?.disallow?.length ?? 0} crawlDelay=${rules?.crawlDelayMs ?? 0} → ${allowed ? "allow" : "DISALLOW"} ${u.pathname}${u.search}`,
+    );
+  return allowed;
 }
 
 /**
@@ -229,7 +242,16 @@ export async function browserRobotsAllows(url) {
  * DOMContentLoaded before reading it; `waitFor` is an optional selector to
  * wait on instead (bounded by `timeoutMs`).
  */
-export async function browserFetch(url, { settleMs = 1500, waitFor = null, capture = null, timeoutMs = 45000, clicks = [] } = {}) {
+export async function browserFetch(url, opts = {}) {
+  if (!TRACE) return browserLoad(url, opts);
+  const t0 = Date.now();
+  const r = await browserLoad(url, opts);
+  const landed = r.finalUrl && r.finalUrl !== url ? ` → ${r.finalUrl}` : "";
+  console.log(`[browser] ${r.status} ${Date.now() - t0}ms ${r.body ? r.body.length : 0}b ${url}${landed}`);
+  return r;
+}
+
+async function browserLoad(url, { settleMs = 1500, waitFor = null, capture = null, timeoutMs = 45000, clicks = [] } = {}) {
   try {
     new URL(url);
   } catch {

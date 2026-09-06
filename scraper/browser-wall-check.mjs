@@ -23,10 +23,32 @@
 // throwaway Playwright context of its own so nothing in lib/browser.mjs has a
 // switch for hiding the declaration — the production path always sends it.
 //
+// AND `--mode lane` RUNS THE LANE ITSELF, because loading three paths one at a
+// time answers a question the crawl was not asking. Two things differ between
+// the two, and both turned out to matter on 2026-09-06:
+//
+//   - the HOST. crawl.mjs builds its origin as `https://${canonicalHost ??
+//     domain}` and the registry has no canonicalHost for any of the 26, so the
+//     lane asks the APEX. The load mode above asks `https://www.<domain>` —
+//     a different host, with its own robots.txt and its own redirect.
+//   - the PRESSURE. The rolling crawl runs BROWSER_CONCURRENCY=8 pages shared
+//     by 13-18 Dealer Inspire domains at once; one rooftop at a time on an
+//     idle runner is a different machine.
+//
+// So `--mode lane --parallel N` calls pullDealerInspire on the apex, N
+// rooftops at a time, under whatever BROWSER_CONCURRENCY the run sets, with
+// the crawl's own clock (--deadline-min) and load budget (--max-loads), and
+// prints the line crawl.mjs would have printed plus every load behind it
+// (BROWSER_TRACE=1).
+//
 //   node browser-wall-check.mjs --domains-file cohort.txt [--declaration both]
 //   node browser-wall-check.mjs a.com b.com --paths /used-vehicles/
+//   BROWSER_TRACE=1 node browser-wall-check.mjs --mode lane --domains-file c.txt \
+//     --parallel 6 --deadline-min 8 --max-loads 80
 import { browserFetch, browserRobotsAllows, closeBrowser } from "./lib/browser.mjs";
 import { robotsEntry, CRAWLER_DECLARATION } from "./lib/http.mjs";
+import { pullDealerInspire } from "./lib/platforms/dealerinspire.mjs";
+import { classifyEv } from "./lib/ev.mjs";
 import { readFileSync } from "node:fs";
 
 const UA =
@@ -49,6 +71,11 @@ export function challengeMarks(body) {
 export function pageTitle(body) {
   const m = /<title[^>]*>([\s\S]{0,200}?)<\/title>/i.exec(String(body ?? ""));
   return m ? m[1].replace(/\s+/g, " ").trim() : "";
+}
+
+function numFlag(name, fallback) {
+  const i = process.argv.indexOf(name);
+  return i >= 0 ? Number(process.argv[i + 1]) : fallback;
 }
 
 function strFlag(name, fallback = null) {
@@ -110,11 +137,77 @@ async function declarationControl(url, withHeader) {
   }
 }
 
+/** One rooftop through the real lane, on the origin crawl.mjs would have
+ *  built. `evs` is what the crawl would have ADMITTED — the lane hands back
+ *  raw JSON-LD and classifyEv is the gate every one of them passes through. */
+async function laneRun(domain, { deadlineMin, maxLoads }) {
+  const origin = `https://${domain.replace(/^https?:\/\//, "").replace(/\/.*$/, "")}`;
+  const t0 = Date.now();
+  let r;
+  try {
+    r = await pullDealerInspire(origin, { deadlineAt: Date.now() + deadlineMin * 60000, maxLoads });
+  } catch (e) {
+    r = { ok: false, complete: false, found: 0, candidates: 0, vehicles: [], requests: 0, why: `threw ${e.name}: ${String(e.message).slice(0, 120)}` };
+  }
+  const evs = (r.vehicles ?? []).filter((v) => classifyEv(v).isEv).length;
+  return {
+    domain,
+    origin,
+    ms: Date.now() - t0,
+    ok: Boolean(r.ok),
+    complete: Boolean(r.complete),
+    found: r.found ?? 0,
+    candidates: r.candidates ?? null,
+    vehicles: (r.vehicles ?? []).length,
+    evs,
+    loads: r.requests ?? 0,
+    vdpFailures: r.vdpFailures ?? 0,
+    template: r.template ?? null,
+    why: r.why ?? null,
+  };
+}
+
+/** The lane cohort, `parallel` rooftops at a time — the crawl's shape, where
+ *  a slice has many domains in flight sharing BROWSER_CONCURRENCY pages. */
+async function laneMain(domains, opts) {
+  console.log(
+    `browser-wall-check --mode lane: ${domains.length} domain(s), ${opts.parallel} at a time, BROWSER_CONCURRENCY=${process.env.BROWSER_CONCURRENCY ?? 3}, deadline ${opts.deadlineMin} min, budget ${opts.maxLoads} loads`,
+  );
+  const out = [];
+  for (let i = 0; i < domains.length; i += opts.parallel) {
+    const wave = domains.slice(i, i + opts.parallel);
+    const rows = await Promise.all(wave.map((d) => laneRun(d, opts)));
+    for (const row of rows) {
+      out.push(row);
+      console.log(
+        `\n── ${row.domain} (${(row.ms / 1000).toFixed(0)}s) ${row.ok ? "ok" : "FAILED"}${row.complete ? " complete" : " partial"}` +
+          ` — ${row.found} in lot, ${row.candidates ?? "?"} candidate(s), ${row.evs} EV(s) admitted of ${row.vehicles} VDP node(s) in ${row.loads} browser load(s)` +
+          `${row.vdpFailures ? `, ${row.vdpFailures} VDP miss(es)` : ""}${row.template ? `, template ${row.template}` : ""}${row.why ? ` — ${row.why}` : ""}`,
+      );
+    }
+  }
+  const ok = out.filter((r) => r.ok);
+  console.log(
+    `\nlane totals: ${ok.length}/${out.length} ok, ${out.reduce((a, r) => a + r.evs, 0)} EVs admitted, ${out.reduce((a, r) => a + r.loads, 0)} loads, ` +
+      `${out.filter((r) => r.ok && r.evs === 0).length} ok-but-empty`,
+  );
+  console.log(`\nJSON\n${JSON.stringify(out)}`);
+  await closeBrowser();
+}
+
 async function main() {
   const file = strFlag("--domains-file");
   const paths = (strFlag("--paths") ?? "/,/used-vehicles/,/new-vehicles/").split(",");
   const declaration = strFlag("--declaration", "off"); // off | both
   const domains = file ? readFileSync(file, "utf-8").split(/\s+/).filter(Boolean) : positionalDomains(process.argv.slice(2));
+
+  if (strFlag("--mode", "loads") === "lane") {
+    return laneMain(domains, {
+      parallel: Math.max(1, numFlag("--parallel", 1)),
+      deadlineMin: numFlag("--deadline-min", 8),
+      maxLoads: numFlag("--max-loads", 80),
+    });
+  }
 
   console.log(`browser-wall-check: ${domains.length} domain(s), paths ${paths.join(" ")}, declaration control: ${declaration}`);
   const out = [];

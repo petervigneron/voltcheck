@@ -28,11 +28,27 @@ on:
         description: "BROWSER_CONCURRENCY, to reproduce the crawl's page pressure."
         required: false
         default: "1"
+      mode:
+        description: "'loads' = three paths per rooftop, one at a time. 'lane' = run pullDealerInspire itself on the apex host, as the crawl does."
+        required: false
+        default: "loads"
+      parallel:
+        description: "lane mode: rooftops in flight at once (the crawl runs 13-18)."
+        required: false
+        default: "1"
+      deadline_min:
+        description: "lane mode: the crawl's --domain-cap-min."
+        required: false
+        default: "8"
+      max_loads:
+        description: "lane mode: the crawl's per-domain page budget."
+        required: false
+        default: "80"
 
 jobs:
   check:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 55
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -49,7 +65,12 @@ jobs:
         env:
           BROWSER_LANES: "on"
           BROWSER_CONCURRENCY: ${{ github.event.inputs.concurrency || '1' }}
+          BROWSER_TRACE: "1"
         run: |
           printf '%s\n' ${{ github.event.inputs.domains || 'patrickhyundai.com woburntoyota.com' }} > /tmp/cohort.txt
           node browser-wall-check.mjs --domains-file /tmp/cohort.txt \
+            --mode "${{ github.event.inputs.mode || 'loads' }}" \
+            --parallel "${{ github.event.inputs.parallel || '1' }}" \
+            --deadline-min "${{ github.event.inputs.deadline_min || '8' }}" \
+            --max-loads "${{ github.event.inputs.max_loads || '80' }}" \
             --declaration "${{ github.event.inputs.declaration || 'both' }}"
