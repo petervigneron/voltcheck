@@ -1,0 +1,233 @@
+name: Crawl a cohort
+
+# A named list of rooftops, crawled in parallel jobs with the browser lanes
+# ON, each job syncing its own share, then one republish.
+#
+# WHY THIS EXISTS. rolling-crawl.yml crawls the registry in 48 slices with
+# the browser lanes OFF (06c0c3e: the lanes cost 39 of 48 slices their job
+# timeout on 2026-09-04). The Dealer Inspire rooftops that only Chrome can
+# read — 408 franchise stores opened 2026-09-05/06 for the USED-car gap on
+# the Toyota/Hyundai/Kia rosters — therefore never get crawled by the
+# schedule. Crawling them from a laptop measured: 22 rooftops an hour at 8
+# in flight, and a lid closed on battery at 17:45 UTC 2026-09-06 cost 80 of
+# a 110-rooftop chunk (every in-flight load timed out on the dark wakes).
+# A runner has no lid.
+#
+# It is the rolling crawl's slice job with the domain list coming from the
+# dispatch instead of the registry, a job cap sized for a few hundred Chrome
+# rooftops instead of 28 minutes, and the lanes on. The sync guard, the
+# vPIC-cache commit and the publish gate are copied, not reinvented — every
+# one of them exists because of a specific incident named in
+# rolling-crawl.yml.
+
+on:
+  workflow_dispatch:
+    inputs:
+      domains:
+        description: "Space-separated rooftop domains (a few hundred is fine)."
+        required: true
+      jobs:
+        description: "How many parallel jobs to split the list across."
+        required: false
+        default: "4"
+      concurrency:
+        description: "Rooftops in flight per job (crawl.mjs --concurrency)."
+        required: false
+        default: "8"
+      browser_concurrency:
+        description: "BROWSER_CONCURRENCY: Chrome pages per job."
+        required: false
+        default: "8"
+      domain_cap_min:
+        description: "crawl.mjs --domain-cap-min."
+        required: false
+        default: "12"
+      max_pages:
+        description: "crawl.mjs --max-pages (the browser lanes' load budget)."
+        required: false
+        default: "160"
+      sync:
+        description: "Push to Supabase. 'false' crawls and reports only."
+        required: false
+        default: "true"
+
+concurrency:
+  group: crawl-cohort
+  cancel-in-progress: false
+
+permissions:
+  contents: write # commits the vPIC decode cache
+  actions: read # reads whether nightly.yml is mid-run, for the sync guard
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      matrix: ${{ steps.build.outputs.matrix }}
+    steps:
+      - id: build
+        run: |
+          N="${{ github.event.inputs.jobs || '4' }}"
+          echo "matrix=$(awk -v n="$N" 'BEGIN{printf "["; for(i=0;i<n;i++) printf "%s%d", (i?",":""), i; printf "]"}')" >> "$GITHUB_OUTPUT"
+
+  slice:
+    needs: plan
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        part: ${{ fromJson(needs.plan.outputs.matrix) }}
+    # crawl.mjs hard-stops five minutes past --deadline-min and the lanes
+    # bound every Playwright call, so the job cap is a net, not the plan.
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('scraper/package-lock.json') }}
+      - working-directory: scraper
+        run: npm ci --no-audit --no-fund && npx playwright install --with-deps chromium-headless-shell
+
+      # Part i takes every Nth domain from the list, so the parts are the
+      # same size and a heavy group site does not land in one job by being
+      # next to another.
+      - name: Choose this job's share
+        id: pick
+        run: |
+          N="${{ github.event.inputs.jobs || '4' }}"
+          I="${{ matrix.part }}"
+          printf '%s\n' ${{ github.event.inputs.domains }} | awk -v n="$N" -v i="$I" 'NF && (NR-1)%n==i' > /tmp/domains.txt
+          echo "part $I/$N: $(wc -l < /tmp/domains.txt) domains"
+          head -3 /tmp/domains.txt
+
+      - name: Crawl the share
+        working-directory: scraper
+        env:
+          BROWSER_LANES: "on"
+          BROWSER_CONCURRENCY: ${{ github.event.inputs.browser_concurrency || '8' }}
+        run: |
+          node crawl.mjs $(cat /tmp/domains.txt) \
+            --max-pages "${{ github.event.inputs.max_pages || '160' }}" --cache-hours 0 \
+            --concurrency "${{ github.event.inputs.concurrency || '8' }}" \
+            --deadline-min 290 --domain-cap-min "${{ github.event.inputs.domain_cap_min || '12' }}"
+
+      # Same order as nightly.yml and rolling-crawl.yml, for the reason their
+      # headers give: ingest keeps only evConfidence "high", and vpic-enrich
+      # is what promotes real EVs whose page omitted fuel type and demotes
+      # the ones vPIC refutes. Never ingest before enriching.
+      - name: VIN enrichment (vpic)
+        working-directory: scraper
+        run: |
+          timeout 15m node vpic-enrich.mjs || \
+            echo "::warning::vpic-enrich hit its 15m cap on part ${{ matrix.part }}; decoded VINs are cached and will not be re-fetched"
+
+      - name: Ingest
+        working-directory: scraper
+        run: node ingest.mjs
+
+      - name: Is the nightly mid-sync?
+        id: nightly
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          BUSY=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow nightly.yml \
+                   --status in_progress --limit 1 --json databaseId --jq 'length' 2>/dev/null || echo 0)
+          echo "busy=$BUSY" >> "$GITHUB_OUTPUT"
+          [ "$BUSY" != "0" ] && echo "::warning::nightly.yml is running; skipping this part's push so the two lanes do not write at once."
+          echo "nightly in progress: $BUSY"
+
+      - name: Sync this share to Supabase
+        if: ${{ github.event.inputs.sync != 'false' && steps.nightly.outputs.busy == '0' }}
+        working-directory: scraper
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_INGEST_TOKEN: ${{ secrets.SUPABASE_INGEST_TOKEN }}
+          # A cohort of Chrome-only rooftops can legitimately land a small
+          # share; db-sync's <50-row refusal guards a broken WHOLE crawl.
+          DB_SYNC_MIN_ROWS: "10"
+        run: node db-sync.mjs
+
+      - name: Commit the vPIC cache
+        if: always()
+        run: |
+          git config user.name "voltcheck-bot"
+          git config user.email "noreply@github.com"
+          unwedge() {
+            git rebase --abort 2>/dev/null || true
+            git merge --abort 2>/dev/null || true
+            git checkout -f HEAD -- scraper/registry 2>/dev/null || true
+            git stash list 2>/dev/null | grep -q . && git stash drop >/dev/null 2>&1
+            return 0
+          }
+          mine="${RUNNER_TEMP:-/tmp}/vpic-cache-mine.json"
+          cp scraper/registry/vpic-cache.json "$mine"
+          for i in 1 2 3 4 5; do
+            git checkout HEAD -- scraper/registry/vpic-cache.json 2>/dev/null || true
+            git fetch origin main || true
+            if ! git pull --rebase --autostash; then
+              unwedge
+              sleep $((i * 10)); continue
+            fi
+            if [ -n "$(git diff --name-only --diff-filter=U)" ]; then
+              unwedge; continue
+            fi
+            node scraper/merge-vin-cache.mjs --file scraper/registry/vpic-cache.json --mine "$mine"
+            git add scraper/registry/vpic-cache.json
+            git diff --staged --quiet && { echo "nothing to commit"; exit 0; }
+            git commit -m "Cohort crawl: vPIC cache after part ${{ matrix.part }} [skip ci]"
+            if git push; then echo "vpic cache pushed"; exit 0; fi
+            [ "$(git log -1 --format=%s)" = "Cohort crawl: vPIC cache after part ${{ matrix.part }} [skip ci]" ] && git reset --soft HEAD~1
+            sleep $((i * 10))
+          done
+          echo "::warning::Could not push the vPIC cache for part ${{ matrix.part }} (raced another run); the decodes will be re-fetched next time."
+
+      - name: What this part did
+        if: always()
+        working-directory: scraper
+        run: |
+          echo "part ${{ matrix.part }}: $(wc -l < /tmp/domains.txt) domains"
+          node -e '
+            const r = JSON.parse(require("fs").readFileSync("out/report.json", "utf8"));
+            const evs = r.reduce((a, x) => a + (x.evs || []).length, 0);
+            const cls = (x) => { const s = x.stoppedEarly || "ok"; return /abandon/.test(s) ? "abandoned" : /no SRP/.test(s) ? "no SRP answered" : /partial/.test(s) ? "partial" : s.slice(0, 40); };
+            const c = {}; for (const x of r) c[cls(x)] = (c[cls(x)] || 0) + 1;
+            console.log(`${r.length} rooftops reported, ${evs} EVs`, c);
+          ' 2>/dev/null || true
+          cat out/sync-totals.json 2>/dev/null || true
+
+  should-publish:
+    needs: slice
+    if: >-
+      ${{ always()
+          && (needs.slice.result == 'success' || needs.slice.result == 'failure')
+          && github.event.inputs.sync != 'false' }}
+    runs-on: ubuntu-latest
+    outputs:
+      go: ${{ steps.gate.outputs.go }}
+    steps:
+      - name: Is the nightly mid-sync?
+        id: gate
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          BUSY=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow nightly.yml \
+                   --status in_progress --limit 1 --json databaseId --jq 'length' 2>/dev/null || echo 0)
+          if [ "$BUSY" != "0" ]; then
+            echo "go=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::nightly.yml is running — not republishing; its own publish covers this run's cars."
+          else
+            echo "go=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  publish-feed:
+    needs: should-publish
+    if: ${{ always() && needs.should-publish.outputs.go == 'true' }}
+    uses: ./.github/workflows/publish-feed.yml # workflow_call is exempt from its 90-min gate
+    secrets: inherit
