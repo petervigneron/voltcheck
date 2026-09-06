@@ -1,5 +1,5 @@
 import type { CardRow } from "./card";
-import { SPEC_FACETS, type FacetGroup, type RemovableFilter } from "../filters";
+import { SPEC_FACETS, splitValues, type FacetGroup, type RemovableFilter } from "../filters";
 import type { FilterTests } from "./match";
 import { modelKey } from "./modelName";
 
@@ -16,24 +16,25 @@ import { modelKey } from "./modelName";
 // a row of chips (owner, same day, after seeing the chips): forty-three makes
 // is a list to scan for a name, and a menu costs one cell of the page.
 //
-// Each row is single-choice, because `make` and `model` are single-valued
-// everywhere they are read (match.ts, the panel, the alert sender), and it
-// stands only while the question is open: a chosen make is already on the
-// rail as its own remove-chip, so repeating it as a pressed row would be two
-// controls for one state and a row of the page for nothing. Pick a make, the
-// make row gives way to the model row; pick a model, and the spec rail takes
-// over. Nothing shows on the pristine landing — there is no result set to
-// narrow yet, and the popular band already answers "where do I start".
+// Each menu takes several values that OR, the way the trim menu does, and
+// stays put reading what's picked ("Ford, Tesla") — the owner's call of
+// 2026-09-05 after a day with the single-choice version: "it would make
+// sense to be able to select multiple brands at once". match.ts ORs the
+// comma list in the same `make` and `model` keys the panel and every saved
+// alert already use. The model menu is offered under exactly one make,
+// because a model belongs to a make and the panel's own model list is keyed
+// the same way. Nothing shows on the pristine landing — there is no result
+// set to narrow yet, and the popular band already answers "where do I start".
 //
-// Counts hold every OTHER filter fixed and lift the row's own key (and the
+// Counts hold every OTHER filter fixed and lift the menu's own key (and the
 // keys below it — a model or a trim means nothing under a different make), so
-// a make's number is what pressing it would leave, never a share of a pool
-// that a stale model choice has already emptied.
+// a make's number is what picking it alone would leave, never a share of a
+// pool that a stale model choice has already emptied.
 
 const LIFT_FOR_MAKE = new Set<string>(["make", "model", ...SPEC_FACETS.map((f) => f.key)]);
 const LIFT_FOR_MODEL = new Set<string>(["model", ...SPEC_FACETS.map((f) => f.key)]);
 
-/** The row whose question is open right now, or nothing. */
+/** The menus this result set can offer, in the order they read. */
 export function narrowFacets(
   all: CardRow[],
   tests: FilterTests,
@@ -45,35 +46,40 @@ export function narrowFacets(
   if (activeKeys.length === 0) return [];
   const passes = (r: CardRow, lift: Set<string>) => activeKeys.every((k) => lift.has(k) || tests[k]!(r));
 
-  const make = get("make");
-  if (!make) {
-    const counts = new Map<string, number>();
-    for (const r of all) if (passes(r, LIFT_FOR_MAKE)) counts.set(r.make, (counts.get(r.make) ?? 0) + 1);
-    // One make isn't a choice: "tesla" typed in the box already answered it.
-    if (counts.size < 2) return [];
-    return [{ key: "make", label: "Make", values: order([...counts].map(([v, n]) => ({ v, label: v, n }))) }];
-  }
+  const out: FacetGroup[] = [];
+  const makes = splitValues(get("make"));
+  const models = splitValues(get("model"));
 
-  if (get("model")) return [];
+  const makeCounts = new Map<string, number>();
+  for (const r of all) if (passes(r, LIFT_FOR_MAKE)) makeCounts.set(r.make, (makeCounts.get(r.make) ?? 0) + 1);
+  // A picked make stays listed even when the other filters have emptied it
+  // (a menu can't lose the value it is showing), and one make isn't a
+  // choice: "tesla" typed in the box already answered it.
+  for (const m of makes) if (!makeCounts.has(m)) makeCounts.set(m, 0);
+  if (makeCounts.size >= 2 || makes.length > 0)
+    out.push({ key: "make", label: "Make", values: order([...makeCounts].map(([v, n]) => ({ v, label: v, n }))) });
+
+  if (makes.length !== 1) return out;
   // The models on offer under this make, under the dropdown's own labels
   // (tally.ts folds the feed's spellings and prunes the single-car tail), so
-  // a chip writes the same URL the panel would and the two never disagree.
+  // the menu writes the same URL the panel would and the two never disagree.
   const labels = new Map<string, string>();
-  for (const l of makesModels[make] ?? []) labels.set(modelKey(l), l);
-  const counts = new Map<string, number>();
+  for (const l of makesModels[makes[0]] ?? []) labels.set(modelKey(l), l);
+  for (const m of models) if (!labels.has(modelKey(m))) labels.set(modelKey(m), m);
+  const modelCounts = new Map<string, number>();
   for (const r of all) {
     if (!passes(r, LIFT_FOR_MODEL)) continue;
     const k = modelKey(r.model);
-    if (labels.has(k)) counts.set(k, (counts.get(k) ?? 0) + 1);
+    if (labels.has(k)) modelCounts.set(k, (modelCounts.get(k) ?? 0) + 1);
   }
-  if (counts.size < 2) return [];
-  return [
-    {
+  for (const m of models) if (!modelCounts.has(modelKey(m))) modelCounts.set(modelKey(m), 0);
+  if (modelCounts.size >= 2 || models.length > 0)
+    out.push({
       key: "model",
       label: "Model",
-      values: order([...counts].map(([k, n]) => ({ v: labels.get(k)!, label: labels.get(k)!, n }))),
-    },
-  ];
+      values: order([...modelCounts].map(([k, n]) => ({ v: labels.get(k)!, label: labels.get(k)!, n }))),
+    });
+  return out;
 }
 
 // By name, not by depth: a shopper opening a list of forty makes is looking

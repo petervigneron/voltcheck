@@ -82,16 +82,25 @@ export function buildTests(get: (k: string) => string, ctx: MatchContext = {}): 
   const maxYear = num("maxYear");
   const maxMiles = num("maxMiles");
   const minRange = num("minRange");
-  if (make) tests.make = (r) => r.make === make;
+  // Values OR, like the spec facets below: the make menu under the rail
+  // (lib/listings/narrow.ts) writes "Ford,Tesla" into the one key the panel's
+  // <select> and every saved alert already use, and a single value is the
+  // one-element case of the same test (owner, 2026-09-05: "it would make
+  // sense to be able to select multiple brands at once").
+  if (make) {
+    const on = new Set(splitValues(make));
+    tests.make = (r) => on.has(r.make);
+  }
   // Folded, not exact: the dropdown now offers one entry per model and the
   // feed spells most of them several ways, so an exact test would answer
   // "Tucson Plug-in Hybrid" with 695 of the 1,125 that exist. Folding also
   // keeps every URL and saved alert that predates the dropdown working — an
   // old ?model=TUCSON+PLUG-IN+HYBRID folds to the same key as the label that
   // replaced it, which is why pruning the tail costs no car its own page.
+  // Several models OR, same as makes.
   if (model) {
-    const k = modelKey(model);
-    tests.model = (r) => modelKey(r.model) === k;
+    const on = new Set(splitValues(model).map(modelKey));
+    tests.model = (r) => on.has(modelKey(r.model));
   }
   if (cond === "new") tests.cond = (r) => r.condition === "new";
   else if (cond === "used") tests.cond = (r) => r.condition === "used" || r.condition === "certified" || !r.condition;

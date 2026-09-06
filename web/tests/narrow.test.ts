@@ -76,9 +76,20 @@ test("one make in the pool is not a choice", () => {
   assert.deepEqual(narrow({ q: "tesla" }), []);
 });
 
-test("a chosen make gives way to its models, folded to the dropdown's labels", () => {
-  const [model, ...rest] = narrow({ cut: "1", make: "Ford" });
+test("a chosen make stays listed and pressed, and its models come alongside, folded to the dropdown's labels", () => {
+  const [make, model, ...rest] = narrow({ cut: "1", make: "Ford" });
   assert.equal(rest.length, 0);
+  assert.equal(make.key, "make");
+  // Counted with the make lifted, so the other makes still say what
+  // switching would leave.
+  assert.deepEqual(
+    make.values.map((v) => [v.v, v.n]),
+    [
+      ["Ford", 7],
+      ["Kia", 1],
+      ["Tesla", 4],
+    ]
+  );
   assert.equal(model.key, "model");
   // "MUSTANG MACH-E" and "Mustang Mach-E" are one chip under the offered
   // spelling, and only the cut cars count.
@@ -91,12 +102,48 @@ test("a chosen make gives way to its models, folded to the dropdown's labels", (
   );
 });
 
-test("a chosen model closes the question; the spec rail takes it from there", () => {
-  assert.deepEqual(narrow({ cut: "1", make: "Ford", model: "Mustang Mach-E" }), []);
+test("a chosen model stays listed too, counted with the model lifted", () => {
+  const groups = narrow({ cut: "1", make: "Ford", model: "Mustang Mach-E" });
+  assert.deepEqual(
+    groups.map((g) => g.key),
+    ["make", "model"]
+  );
+  assert.deepEqual(
+    groups[1].values.map((v) => [v.v, v.n]),
+    [
+      ["F-150 Lightning", 5],
+      ["Mustang Mach-E", 2],
+    ]
+  );
 });
 
-test("a make with one model on offer has no model row", () => {
-  assert.deepEqual(narrow({ cut: "1", make: "Kia" }), []);
+test("two makes OR: both stay pressed, and there is no model menu across makes", () => {
+  const get = (k: string) => ({ cut: "1", make: "Ford,Tesla" })[k] ?? "";
+  const tests = buildTests(get);
+  // Ten Fords and ten Teslas.
+  assert.equal(feed.filter((r) => tests.make!(r)).length, 20);
+  const groups = narrowFacets(feed, tests, activeFilterKeys(tests), get, makesModels);
+  assert.deepEqual(
+    groups.map((g) => g.key),
+    ["make"]
+  );
+});
+
+test("two models OR, folded", () => {
+  const tests = buildTests((k) => ({ make: "Ford", model: "F-150 Lightning,MUSTANG MACH-E" })[k] ?? "");
+  assert.equal(feed.filter((r) => tests.model!(r)).length, 10);
+});
+
+test("a make with one model on offer has a make menu but no model menu", () => {
+  assert.deepEqual(
+    narrow({ cut: "1", make: "Kia" }).map((g) => g.key),
+    ["make"]
+  );
+});
+
+test("a picked make the other filters have emptied stays listed at zero", () => {
+  const [make] = narrow({ drive: "AWD", make: "Tesla", minRange: "9999" });
+  assert.deepEqual(make.values, [{ v: "Tesla", label: "Tesla", n: 0 }]);
 });
 
 test("two filters both count: AWD and price cut together", () => {

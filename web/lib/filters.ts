@@ -198,7 +198,8 @@ export function describeFilter(key: string, value: string): string | null {
       return `“${value}”`;
     case "make":
     case "model":
-      return value;
+      // Several makes or models OR (lib/listings/narrow.ts menus).
+      return orList(value, "");
     case "trim":
       return orList(value, "");
     case "kwh":

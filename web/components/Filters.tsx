@@ -287,12 +287,13 @@ export type { FacetGroup };
  * picked; it doubles as the menu row that clears the facet.
  */
 const MENU_FACETS: Record<string, string> = { trim: "All trims", epa: "Any range" };
-// The narrowing rows (lib/listings/narrow.ts) are menus too — the owner's
-// call of 2026-09-05, an hour after they shipped as chips: forty-three make
-// chips are three rows of the page on a laptop and six on a phone, and a
-// shopper opening this already has a make in mind, which is a list to scan,
-// not a wall to read. As menus the make (or model) sits in the same row as
-// the trim and range menus, one 280px cell each.
+// The narrowing menus (lib/listings/narrow.ts) — the owner's call of
+// 2026-09-05, an hour after they shipped as chips: forty-three make chips are
+// three rows of the page on a laptop and six on a phone, and a shopper
+// opening this already has a make in mind, which is a list to scan, not a
+// wall to read. Several makes can be on at once (owner, same day), so the
+// menu is the trim menu exactly: pick, pick again, and the cell reads
+// "Ford, Tesla".
 const NARROW_MENUS: Record<string, string> = { make: "All makes", model: "All models" };
 
 /** One facet as a closed menu — the label reads what's picked, not what exists. */
@@ -302,16 +303,12 @@ function FacetMenu({
   pick,
   clear,
   allLabel,
-  single,
 }: {
   f: FacetGroup;
   on: Set<string>;
   pick: (key: string, v: string, n: number) => void;
   clear: (key: string) => void;
   allLabel: string;
-  /** One choice, not a set: a press replaces the value and closes the menu
-   *  (the make and model menus, lib/listings/narrow.ts). */
-  single?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const box = useRef<HTMLDivElement>(null);
@@ -359,7 +356,7 @@ function FacetMenu({
       {open && (
         <ul
           role="listbox"
-          aria-multiselectable={!single}
+          aria-multiselectable="true"
           aria-label={f.label}
           className="absolute top-full left-0 z-20 max-h-[340px] w-full min-w-[240px] overflow-y-auto border-[3px] border-ink bg-paper"
         >
@@ -389,10 +386,7 @@ function FacetMenu({
                 <button
                   type="button"
                   disabled={dead}
-                  onClick={() => {
-                    pick(f.key, v.v, v.n);
-                    if (single) setOpen(false);
-                  }}
+                  onClick={() => pick(f.key, v.v, v.n)}
                   className={`flex w-full items-center gap-3 px-4 py-2.5 text-left text-[13px] font-bold tracking-[0.04em] uppercase ${
                     dead ? "bg-paper text-ink/30" : sel ? "bg-cobalt text-paper" : "bg-paper text-ink hover:bg-putty"
                   }`}
@@ -438,18 +432,27 @@ export function SpecFacets({ facets, narrow = [] }: { facets: FacetGroup[]; narr
     pushUrl(params);
   };
 
-  // A narrowing row (lib/listings/narrow.ts) is single-choice: make and model
-  // are one value everywhere they're read, so a press replaces rather than
-  // ORs. It writes exactly what the panel's <select> would — a new make drops
-  // the model, and either drops the spec facets, which meant nothing under
-  // the last one (FilterRail.apply does the same).
-  const pickOne = (key: string, v: string, n: number) => {
+  // A narrowing menu (lib/listings/narrow.ts) ORs its values like the spec
+  // menus, and a change to the make set drops the model, and either drops the
+  // spec facets, which meant nothing under the last make (FilterRail.apply
+  // does the same from the panel).
+  const pickNarrow = (key: string, v: string, n: number) => {
     const params = new URLSearchParams(sp.toString());
-    params.set(key, v);
+    const next = toggleValue(params.get(key) ?? "", v);
+    if (next) params.set(key, next);
+    else params.delete(key);
     if (key === "make") params.delete("model");
     dropSpecFilters(params);
     params.delete("page");
-    track("filter_toggled", undefined, { key, value: v, on: true, surface: "narrow", scoped, n });
+    track("filter_toggled", undefined, { key, value: v, on: splitValues(next).includes(v), surface: "narrow", scoped, n });
+    pushUrl(params);
+  };
+  const clearNarrow = (key: string) => {
+    const params = new URLSearchParams(sp.toString());
+    params.delete(key);
+    if (key === "make") params.delete("model");
+    dropSpecFilters(params);
+    params.delete("page");
     pushUrl(params);
   };
 
@@ -536,19 +539,17 @@ export function SpecFacets({ facets, narrow = [] }: { facets: FacetGroup[]; narr
       {(narrow.length > 0 || menus.length > 0) && (
         <div className="flex flex-wrap items-stretch">
           {/* The narrowing menus lead the row: which make, then which model,
-              is a broader question than which version. Nothing is ever
-              picked in one — a chosen make or model is already the rail's
-              own remove-chip, and the menu that asked is gone. */}
+              is a broader question than which version. A picked make is also
+              the rail's remove-chip, the same way a picked trim is. */}
           {narrow.map((f) => [
             label(f, true),
             <FacetMenu
               key={f.key}
               f={f}
-              on={new Set()}
-              pick={(key, v, n) => pickOne(key, v, n)}
-              clear={clear}
+              on={new Set(splitValues(sp.get(f.key) ?? ""))}
+              pick={pickNarrow}
+              clear={clearNarrow}
               allLabel={NARROW_MENUS[f.key]}
-              single
             />,
           ])}
           {menus.map((f) => [
@@ -612,12 +613,16 @@ export function FilterRail({
   );
 
   const make = get("make");
-  const makes = Object.keys(makesModels).sort();
+  // The panel's <select> is one make; several picked from the menu under the
+  // rail (lib/listings/narrow.ts) show as a single option reading "Ford or
+  // Tesla", and the model list, which belongs to one make, waits for one.
+  const oneMake = splitValues(make).length === 1 ? make : "";
+  const makes = withCurrent(Object.keys(makesModels).sort(), make);
   // The offered models, plus whatever the URL already says even when that
   // spelling is no longer offered (tally.ts prunes single-car feed typos, and
   // a shared link or a back-navigation can still carry one). Without this the
   // select would render blank over a filter that is demonstrably applied.
-  const models = withCurrent(make ? (makesModels[make] ?? []) : [], get("model"));
+  const models = withCurrent(oneMake ? (makesModels[oneMake] ?? []) : [], get("model"));
 
   // A toggle earns its place by dividing the cars it can actually judge — but
   // "enough" depends on what the toggle is asking about (lib/filters.ts axis).
@@ -886,7 +891,9 @@ export function FilterRail({
             <select className={FIELD} value={make} onChange={(e) => apply({ make: e.target.value })}>
               <option value="">All makes</option>
               {makes.map((m) => (
-                <option key={m}>{m}</option>
+                <option key={m} value={m}>
+                  {describeFilter("make", m)}
+                </option>
               ))}
             </select>
           </label>
@@ -897,11 +904,13 @@ export function FilterRail({
               className={FIELD}
               value={get("model")}
               onChange={(e) => apply({ model: e.target.value })}
-              disabled={!make}
+              disabled={!oneMake}
             >
-              <option value="">{make ? `All ${make} models` : "Choose a make first"}</option>
+              <option value="">{oneMake ? `All ${oneMake} models` : "Choose a make first"}</option>
               {models.map((m) => (
-                <option key={m}>{m}</option>
+                <option key={m} value={m}>
+                  {describeFilter("model", m)}
+                </option>
               ))}
             </select>
           </label>
