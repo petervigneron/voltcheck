@@ -81,7 +81,7 @@ const H = { apikey: ANON, authorization: `Bearer ${ANON}`, "accept-encoding": "g
 // than copied and hoped over — see assertSameShapeAsDb().
 const PAGE = 500;
 const BUCKETS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-const SELECT = "vin,payload,first_seen_at,last_seen_at,prev_price_usd,price_changed_at,buyback_disclosed,listed_on";
+const SELECT = "vin,payload,first_seen_at,last_seen_at,prev_price_usd,price_changed_at,buyback_disclosed,branded_title_disclosed,listed_on";
 // CLAUDE.md names FEED_LANES=2 as the way to walk while the database is busy,
 // so the gate honours it exactly as db.ts does — otherwise the gentle walk you
 // asked for is only gentle on one side of the deploy.

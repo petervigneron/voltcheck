@@ -81,6 +81,7 @@ function fakeRow(n: number) {
     prev_price_usd: null,
     price_changed_at: null,
     buyback_disclosed: false,
+    branded_title_disclosed: false,
     listed_on: null,
   };
 }

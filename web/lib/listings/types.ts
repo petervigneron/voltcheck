@@ -85,6 +85,16 @@ export interface Listing {
    * clean-title cohort nowhere on this site.
    */
   buybackDisclosed?: boolean;
+  /**
+   * The seller's own description discloses a branded title — salvage,
+   * rebuilt, flood, lemon, or just "branded" — without saying whose doing it
+   * was (migration 0068). Owner, 2026-09-06: "I do not distinguish between
+   * repurchase and branded title. They both need a warning." Same footing as
+   * buybackDisclosed everywhere a price is claimed: a branded car is priced
+   * against its clean-title cohort nowhere on this site. Where a car carries
+   * both, the repurchase is the more specific fact and is the one printed.
+   */
+  brandedTitleDisclosed?: boolean;
   // Per-VIN campaign history, where an owner portal exposes it (GM today).
   campaignCheck?: {
     packReplaced: boolean;

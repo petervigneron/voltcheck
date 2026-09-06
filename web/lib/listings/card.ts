@@ -64,6 +64,8 @@ export interface CardRow {
    * "$4,000 under sold price" tile would deny.
    */
   buyback?: boolean;
+  /** The seller's own description discloses a branded title (0068). Same rule as buyback. */
+  brandedTitle?: boolean;
   /**
    * The date this car appeared on its seller's site ("2026-08-15"), present
    * only when that is honestly a listing date (migration 0028's guards).

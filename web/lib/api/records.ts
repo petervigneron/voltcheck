@@ -63,6 +63,8 @@ export interface ApiListing {
   battery_replaced?: { date?: string };
   /** The seller's own description discloses a manufacturer repurchase. */
   buyback_disclosed?: true;
+  /** The seller's own description discloses a branded title (salvage, rebuilt, flood, lemon). */
+  branded_title_disclosed?: true;
   /** When the car appeared on its seller's site — only when that is honestly a listing date. */
   listed_on?: string;
   first_seen?: string;
@@ -151,6 +153,7 @@ export function toApiListing(e: EnrichedListing, x: RecordExtras): ApiListing {
   if (e.chargeTime1080Min) rec.charge_time_10_80_min = { min: e.chargeTime1080Min.value, estimated: e.chargeTime1080Min.source !== "mfr" };
   if (l.campaignCheck?.packReplaced) rec.battery_replaced = l.campaignCheck.packReplacedDate ? { date: l.campaignCheck.packReplacedDate } : {};
   if (l.buybackDisclosed) rec.buyback_disclosed = true;
+  if (l.brandedTitleDisclosed) rec.branded_title_disclosed = true;
   if (l.listedOn) rec.listed_on = l.listedOn;
   const fs = day(l.firstSeenAt);
   if (fs) rec.first_seen = fs;

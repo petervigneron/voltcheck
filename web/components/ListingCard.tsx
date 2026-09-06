@@ -91,10 +91,13 @@ export function ListingCard({
   // The seller's own description discloses a manufacturer repurchase. The
   // fact leads the card, and it is the reason no price claim rides with it:
   // buildIndex.ts keeps these cars out of both price models entirely.
-  if (r.buyback) {
+  // A branded title gets the same warning (owner, 2026-09-06). One tile: a
+  // repurchase is the more specific fact, so it is the one printed when a
+  // car carries both.
+  if (r.buyback || r.brandedTitle) {
     lead.push({
       k: "flag" as TileKind,
-      t: "Manufacturer repurchase",
+      t: r.buyback ? "Manufacturer repurchase" : "Branded title",
       w: true,
     });
   }

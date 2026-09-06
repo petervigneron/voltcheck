@@ -62,6 +62,7 @@ const listingSchema = {
     charge_time_10_80_min: { type: "object", properties: { min: { type: "integer" }, estimated: { type: "boolean" } } },
     battery_replaced: { type: "object", properties: { date: { type: "string" } }, description: "The pack was replaced under a manufacturer campaign." },
     buyback_disclosed: { type: "boolean", description: "The seller's own description discloses a manufacturer repurchase." },
+    branded_title_disclosed: { type: "boolean", description: "The seller's own description discloses a branded title (salvage, rebuilt, flood, lemon)." },
     listed_on: { type: "string", format: "date" },
     first_seen: { type: "string", format: "date" },
     last_seen: { type: "string", format: "date" },

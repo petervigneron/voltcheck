@@ -41,7 +41,7 @@ export async function listingPriceSignals(l: Listing): Promise<PriceSignals> {
   // A disclosed manufacturer repurchase gets no price claim on either
   // surface — same rule, same reason as the browse grid: the models price
   // clean-title cars and the seller's own text says this isn't one.
-  if (l.buybackDisclosed) return { peerAsks: [] };
+  if (l.buybackDisclosed || l.brandedTitleDisclosed) return { peerAsks: [] };
   if (!l.vin || l.vin.length < 8) return { peerAsks: [] };
 
   const [comps, cohort] = await Promise.all([
@@ -56,7 +56,7 @@ export async function listingPriceSignals(l: Listing): Promise<PriceSignals> {
   // stand behind it, identity from the enrichment layer, repurchases out of
   // the pool.
   const members = (cohort ?? [])
-    .filter((m) => !m.buybackDisclosed)
+    .filter((m) => !m.buybackDisclosed && !m.brandedTitleDisclosed)
     .map((m) => {
       const t = trimClaim(m).assert ? specTrim(m) : undefined;
       return { ...m, trimKey: t ? t.toUpperCase() : undefined, identity: packIdentity(enrichListing(m)) };

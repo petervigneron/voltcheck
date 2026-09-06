@@ -522,7 +522,7 @@ async function dbCanServeAWalk() {
       signal: AbortSignal.timeout(20_000),
     });
     if (count.status !== 200 && count.status !== 206) return { ok: false, why: `count answered HTTP ${count.status}` };
-    const sel = "vin,payload,first_seen_at,last_seen_at,prev_price_usd,price_changed_at,buyback_disclosed,listed_on";
+    const sel = "vin,payload,first_seen_at,last_seen_at,prev_price_usd,price_changed_at,buyback_disclosed,branded_title_disclosed,listed_on";
     const t0 = Date.now();
     const page = await fetch(
       `${url}/rest/v1/live_listings_feed?select=${sel}&order=vin.asc&limit=500&vin=gte.W`,

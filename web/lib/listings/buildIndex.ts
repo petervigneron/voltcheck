@@ -60,7 +60,7 @@ export async function buildCardIndex(): Promise<{ rows: CardRow[]; origin: FeedO
   // median down and make its clean-title cars read as overpriced.
   const asks = buildAskIndex(
     listings
-      .filter((l) => !l.buybackDisclosed)
+      .filter((l) => !l.buybackDisclosed && !l.brandedTitleDisclosed)
       .map((l) => ({ ...l, trimKey: trimKeys.get(l.vin), identity: packIdentity(enriched.get(l.vin)!) }))
   );
   const rows: CardRow[] = [];
@@ -82,7 +82,7 @@ export async function buildCardIndex(): Promise<{ rows: CardRow[]; origin: FeedO
     // A cohort whose live cars resolve to two different packs gets none
     // either: the sold fit for that VIN prefix is a mixture the trim-span
     // gate can't see (Teslas file no trim), so it prices nothing.
-    const vsSold = l.buybackDisclosed || cohortIdentityMixed(asks, l.vin, l.year, packIdentity(e))
+    const vsSold = l.buybackDisclosed || l.brandedTitleDisclosed || cohortIdentityMixed(asks, l.vin, l.year, packIdentity(e))
       ? undefined
       : askVsSold(comps, l.vin, l.year, l.mileage, l.priceUsd, real);
     // 2026-08-20 (docs/agents/pricing-model-2026-08-20.md): askVsMarket now
@@ -93,7 +93,7 @@ export async function buildCardIndex(): Promise<{ rows: CardRow[]; origin: FeedO
     // offset — vsSold is still computed for slopeFromSales (askVsMarket's
     // mileage adjustment borrows its fitted usd_per_mile) and stays the
     // internal signal the "Recently sold" panel's raw rows already are.
-    const vsMarket = l.buybackDisclosed
+    const vsMarket = l.buybackDisclosed || l.brandedTitleDisclosed
       ? undefined
       : askVsMarket(asks, comps, l.vin, l.year, l.mileage, l.priceUsd, real, trimKeys.get(l.vin), packIdentity(e));
     rows.push({
@@ -125,6 +125,7 @@ export async function buildCardIndex(): Promise<{ rows: CardRow[]; origin: FeedO
       heatPump: e.heatPump?.status,
       packReplaced: l.campaignCheck?.packReplaced || undefined,
       buyback: l.buybackDisclosed || undefined,
+      brandedTitle: l.brandedTitleDisclosed || undefined,
       listedOn: l.listedOn,
       askVsSold: vsSold?.deltaUsd,
       askVsMarket: vsMarket

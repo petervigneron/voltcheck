@@ -65,6 +65,7 @@ interface PackedRow {
   hp?: Coded;
   pr?: 1;
   bb?: 1;
+  bt?: 1;
   /** listedOn, "YYYY-MM-DD" — rare (a few % of rows), so absent pays nothing. */
   lo?: string;
   as?: number;
@@ -206,6 +207,7 @@ export function packIndex(rows: CardRow[]): PackedIndex {
     if (row.heatPump !== undefined) p.hp = code(HEAT_PUMPS, row.heatPump);
     if (row.packReplaced) p.pr = 1;
     if (row.buyback) p.bb = 1;
+    if (row.brandedTitle) p.bt = 1;
     if (row.listedOn !== undefined) p.lo = row.listedOn;
     if (row.askVsSold !== undefined) p.as = row.askVsSold;
     if (row.askVsMarket)
@@ -252,6 +254,7 @@ export function unpackIndex(x: PackedIndex): CardRow[] {
     heatPump: p.hp === undefined ? undefined : decode(HEAT_PUMPS, p.hp),
     packReplaced: p.pr ? true : undefined,
     buyback: p.bb ? true : undefined,
+    brandedTitle: p.bt ? true : undefined,
     listedOn: p.lo,
     askVsSold: p.as,
     askVsMarket: p.am

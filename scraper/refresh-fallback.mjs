@@ -117,7 +117,7 @@
 //
 // It does NOT add the history columns db.ts layers on top of payload
 // (firstSeenAt, lastSeenAt, prevPriceUsd, priceChangedAt, buybackDisclosed,
-// listedOn), even though that would make the snapshot a closer copy of what
+// brandedTitleDisclosed, listedOn), even though that would make the snapshot a closer copy of what
 // fetchListingsFromDb() returns, and that refusal is load-bearing: db-sync.mjs
 // reads THIS PATH and pushes it back into listings.payload. firstSeenAt and
 // lastSeenAt move on their own every night, so putting them in the payload
@@ -201,7 +201,7 @@ const H = { apikey: ANON, authorization: `Bearer ${ANON}`, "accept-encoding": "g
 // over — see assertSameShapeAsDb().
 const PAGE = 500;
 const BUCKETS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-const SELECT = "vin,payload,first_seen_at,last_seen_at,prev_price_usd,price_changed_at,buyback_disclosed,listed_on";
+const SELECT = "vin,payload,first_seen_at,last_seen_at,prev_price_usd,price_changed_at,buyback_disclosed,branded_title_disclosed,listed_on";
 const LANES = Math.max(1, Number(process.env.FEED_LANES) || 8);
 const FEED_URL = `${BASE}/rest/v1/live_listings_feed?select=${SELECT}&order=vin.asc&limit=${PAGE}`;
 

@@ -273,7 +273,7 @@ async function dbCanServeAWalk(creds) {
       signal: AbortSignal.timeout(20_000),
     });
     if (count.status !== 200 && count.status !== 206) return { ok: false, why: `count answered HTTP ${count.status}` };
-    const sel = "vin,payload,first_seen_at,last_seen_at,prev_price_usd,price_changed_at,buyback_disclosed,listed_on";
+    const sel = "vin,payload,first_seen_at,last_seen_at,prev_price_usd,price_changed_at,buyback_disclosed,branded_title_disclosed,listed_on";
     // Three fat pages from different VIN neighborhoods, back-to-back: one page
     // can clear on a budget the walk's concurrent lanes exhaust on contact.
     const times = [];

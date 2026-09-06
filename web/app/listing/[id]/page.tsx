@@ -320,9 +320,11 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
             <Gallery images={gallery} alt={`${listing.year} ${listing.make} ${listing.model}`} />
           )}
 
-          {listing.buybackDisclosed && (
+          {(listing.buybackDisclosed || listing.brandedTitleDisclosed) && (
             <div className={`rounded-lg border p-4 ${NOTE_STYLE}`}>
-              <div className="text-sm font-semibold">Manufacturer repurchase</div>
+              <div className="text-sm font-semibold">
+                {listing.buybackDisclosed ? "Manufacturer repurchase" : "Branded title"}
+              </div>
             </div>
           )}
 

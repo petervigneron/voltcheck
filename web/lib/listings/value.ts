@@ -414,7 +414,7 @@ export function narrowByDrive(pool: AskPool, input: WorthInput): AskPool {
 export function vinCohortPool(rows: Listing[], input: WorthInput): AskPool {
   const self = (input.vin ?? "").toUpperCase();
   const members = rows
-    .filter((m) => !m.buybackDisclosed)
+    .filter((m) => !m.buybackDisclosed && !m.brandedTitleDisclosed)
     .map((m) => {
       const t = trimClaim(m).assert ? specTrim(m) : undefined;
       return { ...m, trimKey: t ? t.toUpperCase() : undefined, identity: packIdentity(enrichListing(m)) };
