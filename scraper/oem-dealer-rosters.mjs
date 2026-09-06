@@ -32,6 +32,42 @@
 //     endpoint: /rest/tcom/dealers and /rest/dealers 301 to the marketing
 //     shell, /rest/toyota/dealers/ 404s into it.)
 //
+//     RE-CHECKED 2026-09-05, because Toyota is where the used-car gap is
+//     widest and it was worth being sure the verdict had not aged. It had
+//     not. robots.txt was rewritten on 2026-09-01 and still carries
+//     `Disallow: /dealers*`. Three fresh candidate doors were walked to the
+//     end, all closed:
+//
+//       - www.buyatoyota.com, the regional dealer-association network, whose
+//         robots.txt is an Allow-list that explicitly names `/*/dealers/` and
+//         `/*/dealer-directory/`. Both 301 straight into www.toyota.com
+//         /dealers/ — e.g. /norcal/dealer-directory/ →
+//         toyota.com/dealers/directory/. The allow leads only to the
+//         disallowed page.
+//       - www.toyotacertified.com, whose robots disallows only `/rest/*`, and
+//         whose /dealers page IS crawlable — but the dealer search it renders
+//         is served from /rest/. The one allowed page carries no roster.
+//       - sitemap-dealers.xml itself, which is fetchable (the disallow is on
+//         /dealers*, not on the sitemap file). 29,496 of its 30,799 URLs are
+//         /dealers/<state>/<city>/dealers/ CITY landing pages, not per-rooftop
+//         pages, and every one of them is inside the disallow. Names without
+//         websites, behind a wall, is not a roster.
+//
+//     Not done, and deliberately: toyota.com's locator API on a sibling
+//     Toyota host, and the /espanol/ mirror of /dealers (which the disallow's
+//     `/dealers*` prefix does not literally match, though /espanol
+//     /dealer-inventory/ IS separately disallowed). Both are the GM move
+//     below under a different name — asking a second address for the bytes
+//     the first one declined — and the answer is the same one.
+//
+//     What DOES reach Toyota rooftops, and is where the 2026-09-05 pass spent
+//     itself instead: the walled-vendor browser lane. 89 Toyota rooftops
+//     already in the registry sit at status http-403/unreachable and
+//     fingerprint (by DNS, lib/vendor-dns.mjs) as Dealer Inspire, whose own
+//     robots.txt allows us and whose pages a real Chrome reads. Those are
+//     franchise stores whose USED lots we were not reading at all. The
+//     registry already knows who they are; it did not need Toyota to say so.
+//
 //   ford.com — DISALLOWED, and already written down in
 //     brand-directory-dealers.mjs: robots Disallows /finder*, the locator,
 //     and there is no dealers_sitemap.xml. Ford rooftops come from the Ford
@@ -133,9 +169,20 @@ async function lexus() {
  *
  *  Verified national by the same control the Lexus endpoint gets: the request
  *  takes a ZIP, but ZIP 66101 (Kansas City) and ZIP 04101 (Portland, Maine)
- *  return the IDENTICAL set of 800 dealer codes — zero symmetric difference.
- *  The ZIP only orders the list by distance. numberOfDealers=5000 still
- *  returns 800, so 800 is the roster and not a page cap.
+ *  return the IDENTICAL set of 800 dealer codes — zero symmetric difference
+ *  (re-run 2026-09-05, and 90045/99501/96813 agree too). numberOfDealers=5000
+ *  still returns 800, so 800 is the roster and not a page cap.
+ *
+ *  `radius` IS LOAD-BEARING and was not, when this was written. On 2026-09-05
+ *  the same request without it answered 8 rooftops — the eight nearest — with
+ *  a 200 and no error, and `numberOfDealers` alone did nothing to widen it
+ *  (5000, 500, 100 and 50 all returned the same 8). Kia now scopes on
+ *  `radius` first and counts second: radius alone gives 20, radius=500 with
+ *  numberOfDealers=500 gives exactly 500 (a cap), radius=5000 with
+ *  numberOfDealers=5000 gives the country. The response envelope changed with
+ *  it — it is now a bare array rather than {dealers:[…]} — which the parse
+ *  below already tolerated. A silent 8-row "success" is the failure mode to
+ *  watch for here: it is not an error, it is a whole country missing.
  *
  *  It is POST-only; a GET answers 405, which is what a first pass mistook for
  *  a wall. robots.txt disallows `*​/search/` (trailing slash — does not match
@@ -144,7 +191,7 @@ async function kia() {
   const res = await politePostJson("https://www.kia.com/us/services/en/dealers/search", {
     // Origin/Referer are load-bearing: without them the edge answers 403.
     headers: { origin: "https://www.kia.com", referer: "https://www.kia.com/us/en/dealer-locator" },
-    body: { type: "zip", zipCode: "66101", dealerCertifications: [], dealerServices: [], numberOfDealers: 5000 },
+    body: { type: "zip", zipCode: "66101", dealerCertifications: [], dealerServices: [], radius: 5000, numberOfDealers: 5000 },
     timeoutMs: 60000,
   });
   const list = res.json?.dealers ?? res.json?.result?.dealers ?? (Array.isArray(res.json) ? res.json : null);
