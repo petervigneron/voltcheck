@@ -323,6 +323,32 @@ jobs:
           timeout 6m node vpic-enrich.mjs || \
             echo "::warning::vpic-enrich hit its 6m cap on slice ${{ steps.pick.outputs.slice }}; decoded VINs are cached and will not be re-fetched"
 
+      # The dealer's own notes off used dealer.com VDPs (vdp-notes.mjs,
+      # lib/dealer-notes.mjs): the only door to a disclosed manufacturer
+      # buyback on a dealer.com lot, whose inventory API carries no free text.
+      #
+      # It lives HERE because this is the lane that crawls dealers. It was
+      # built into nightly.yml on 2026-08-27 — five days after 7972521 moved
+      # the fleet crawl to this file — so the out/listings.json it read there
+      # held OEM locator rows and not one dealer.com car. Every nightly from
+      # 08-27 to 09-06 logged "vdp-notes: 0 used/CPO cars with no notes on
+      # file, doing 0 this run", and a 2023 F-150 Lightning whose notes say
+      # "This is a Lemon Law Buyback vehicle" sat on the site as an ordinary
+      # $40,085 used truck until the owner opened it. Must run before ingest:
+      # it writes `description` onto this slice's records, which is what
+      # buyback_disclosed (0024) reads at write time.
+      #
+      # The cache is committed below, so with the backlog drained (15,549 cars
+      # read 2026-09-06) a slice re-reads only the cars that have fallen due;
+      # the cap is for the day a rooftop turns up with 300 new used cars, and
+      # a capped slice still ships — what it read is cached, what it did not
+      # reach comes round next sweep.
+      - name: Dealer notes (dealer.com used cars)
+        working-directory: scraper
+        run: |
+          timeout 5m node vdp-notes.mjs --limit 600 --concurrency 12 || \
+            echo "::warning::vdp-notes hit its 5m cap on slice ${{ steps.pick.outputs.slice }}; cars already read are cached in registry/vdp-notes.json"
+
       - name: Ingest
         working-directory: scraper
         run: node ingest.mjs
@@ -440,6 +466,10 @@ jobs:
           # saves it: unwedge() rewinds the whole registry directory, and the
           # step below cannot run until after that may already have happened.
           cp scraper/registry/audit-status.json "${RUNNER_TEMP:-/tmp}/audit-status-mine.json" 2>/dev/null || true
+          # And the dealer-notes cache, for the same reason; its own step is
+          # further down and this rewind has happened by then.
+          cp scraper/registry/vdp-notes.json "${RUNNER_TEMP:-/tmp}/vdp-notes-mine.json" 2>/dev/null || true
+          cp scraper/out/vdp-notes-run.json "${RUNNER_TEMP:-/tmp}/vdp-notes-run.json" 2>/dev/null || true
           for i in 1 2 3 4 5; do
             git checkout HEAD -- scraper/registry/vpic-cache.json 2>/dev/null || true
             git fetch origin main || true
@@ -462,6 +492,59 @@ jobs:
             sleep $((i * 10))
           done
           echo "::warning::Could not push the vPIC cache for slice ${{ steps.pick.outputs.slice }} (raced another run). The decodes are not lost from Supabase's point of view; they will simply be re-fetched next time this slice comes round."
+
+      # The dealer-notes cache: same key-merge as the vPIC cache (newer
+      # checkedAt wins, lib/vin-cache-merge.mjs — right for notes, which are
+      # re-read every 30 days), its own commit so neither file's conflict can
+      # take the other down.
+      #
+      # Pushed only by a slice that READ something. The file is ~22 MB and
+      # there are 48 slices a run; once the backlog is drained a slice reads a
+      # few dozen cars a day, so most slices have nothing new and say so. The
+      # gate is this run's own out/vdp-notes-run.json, not the age of the
+      # committed file — actions/checkout is shallow here, so `git log -- file`
+      # would report HEAD's own age and never let anything through. A slice
+      # under the threshold costs its refetches on the next sweep and nothing
+      # else; a car's notes reach the database the moment they are applied to
+      # the slice's records, whether or not the cache commit lands.
+      - name: Commit the dealer-notes cache
+        if: always()
+        continue-on-error: true
+        run: |
+          git config user.name "voltcheck-bot"
+          git config user.email "noreply@github.com"
+          mine="${RUNNER_TEMP:-/tmp}/vdp-notes-mine.json"
+          runfile="${RUNNER_TEMP:-/tmp}/vdp-notes-run.json"
+          [ -f "$mine" ] || { echo "no saved copy of the notes cache; nothing to commit"; exit 0; }
+          node -e '
+            const fs = require("fs");
+            let n = 0;
+            try { const r = JSON.parse(fs.readFileSync(process.argv[1], "utf8")); n = (r.read ?? 0) + (r.empty ?? 0); } catch {}
+            console.log(n + " cars answered this slice");
+            process.exit(n >= 10 ? 0 : 1);
+          ' "$runfile" || { echo "under 10 cars read this slice; leaving the cache commit to a slice with more"; exit 0; }
+          unwedge() {
+            git rebase --abort 2>/dev/null || true
+            git merge --abort 2>/dev/null || true
+            git checkout -f HEAD -- scraper/registry 2>/dev/null || true
+            git stash list 2>/dev/null | grep -q . && git stash drop >/dev/null 2>&1
+            return 0
+          }
+          unwedge
+          for i in 1 2 3; do
+            git checkout HEAD -- scraper/registry/vdp-notes.json 2>/dev/null || true
+            git fetch origin main || true
+            if ! git pull --rebase --autostash; then unwedge; sleep $((i * 10)); continue; fi
+            if [ -n "$(git diff --name-only --diff-filter=U)" ]; then unwedge; continue; fi
+            node scraper/merge-vin-cache.mjs --file scraper/registry/vdp-notes.json --mine "$mine" --indent 1
+            git add scraper/registry/vdp-notes.json
+            git diff --staged --quiet && { echo "nothing to commit"; exit 0; }
+            git commit -m "Rolling crawl: dealer-notes cache after slice ${{ steps.pick.outputs.slice }} [skip ci]"
+            if git push; then echo "notes cache pushed"; exit 0; fi
+            [ "$(git log -1 --format=%s)" = "Rolling crawl: dealer-notes cache after slice ${{ steps.pick.outputs.slice }} [skip ci]" ] && git reset --soft HEAD~1
+            sleep $((i * 10))
+          done
+          echo "::warning::Could not push the dealer-notes cache for slice ${{ steps.pick.outputs.slice }} (raced another writer); its reads are re-fetched next sweep."
 
       # colisting-sync's liveness record, and this is the lane that owes it.
       # colisting-sync runs HERE 48 times a day against real slice data (~1,150

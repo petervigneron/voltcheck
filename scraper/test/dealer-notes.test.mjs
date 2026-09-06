@@ -67,9 +67,9 @@ const truck = {
   dealerDomain: "aaronfordofpoway.com",
 };
 
-test("a raw crawl record has no condition field; the VDP path says it is used", () => {
-  // out/listings.json records carry no `condition` key — it is derived at
-  // ingest. Testing l.condition selected 0 cars on every nightly Aug 27–Sep 5.
+test("a crawl record with no condition field is still a used car when its VDP path says so", () => {
+  // Not every producer sets `condition` (the 2026-09-02 shard sample in
+  // out/ had none); the published condition is derived the way ingest does it.
   assert.equal(needsDealerNotes(truck, { platform: "dealer.com" }), true);
   assert.equal(
     needsDealerNotes({ ...truck, sourceUrl: truck.sourceUrl.replace("/used/", "/new/") }, { platform: "dealer.com" }),

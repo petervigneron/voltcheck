@@ -556,6 +556,11 @@ jobs:
           # this job rather than beside probe.mjs because this is the job whose
           # whole registry/ directory is uploaded and committed.
           timeout 20m node buyback-dealers.mjs --limit 1500 --concurrency 8 || echo "buyback-dealers hit its 20m cap — continuing; it only orders the next step's work"
+          # NOTE 2026-09-06: this file's crawl holds OEM-locator rows only (the
+          # fleet crawl moved to rolling-crawl.yml on 08-22), so this step finds
+          # nothing to read and only re-applies the cache to any listing here.
+          # The lane's real home is rolling-crawl.yml, per slice. Left in place
+          # because the apply is still correct and costs a second.
           # The dealer's own notes off used/CPO VDPs, for the lanes whose
           # inventory API carries none (scraper/lib/dealer-notes.mjs). This is
           # the only door to a disclosed manufacturer buyback on the ~10.4k

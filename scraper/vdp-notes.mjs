@@ -113,11 +113,19 @@ const today = new Date().toISOString().slice(0, 10);
 const dayStr = (n) => new Date(Date.now() - n * 86_400_000).toISOString().slice(0, 10);
 
 // Selection lives in lib/dealer-notes.mjs (needsDealerNotes) so it can be
-// tested against a raw crawl record — the shape that beat the first cut of
-// this loop. That version read `l.condition`, a key out/listings.json
-// records do not have (the published condition is derived at ingest from the
-// VDP path), and so selected 0 cars on every nightly from 2026-08-27 to
-// 09-05. The log said so each night. Nobody was reading the log.
+// unit-tested against a crawl record. It derives the condition with
+// lib/condition.mjs rather than trusting a `condition` field, since the
+// records this reads come from more than one producer and not all of them
+// set one (the 2026-09-02 shard sample in out/ had none).
+//
+// WHY THIS LANE READ NOTHING FOR TEN NIGHTS (2026-08-27 → 09-06): not this
+// loop. It was wired into nightly.yml, and the fleet crawl had moved to
+// rolling-crawl.yml five days earlier (7972521, 08-22), so the
+// out/listings.json here held ~80,000 OEM-locator rows and zero dealer.com
+// cars — the file for 09-06 had 567 .htm URLs in 80,352 records, none of them
+// on a dealer.com rooftop. "0 used/CPO cars with no notes on file" was the
+// truth about that file every night, and nobody read the line. The lane now
+// runs in rolling-crawl.yml, per slice, where the dealers are.
 const refreshCutoff = dayStr(REFRESH_DAYS);
 const retryCutoff = dayStr(RETRY_EMPTY_DAYS);
 const targets = [];
@@ -213,6 +221,12 @@ async function worker() {
 
 await Promise.all(Array.from({ length: Math.min(CONCURRENCY, work.length) }, worker));
 await writeFile(CACHE, JSON.stringify(cache, null, 1));
+// What this run did, for the workflow step that decides whether the 22 MB
+// cache is worth a commit from this slice (rolling-crawl.yml).
+await writeFile(
+  new URL("./out/vdp-notes-run.json", import.meta.url),
+  JSON.stringify({ at: new Date().toISOString(), targets: targets.length, did: work.length, read, empty, errors }),
+).catch(() => {});
 
 // ── The review queue ───────────────────────────────────────────────────────
 //

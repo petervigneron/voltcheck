@@ -125,15 +125,13 @@ const isVdp = (l) =>
 /**
  * Whether vdp-notes.mjs should fetch this record's VDP.
  *
- * THE CONDITION IS DERIVED, NOT READ. A raw out/listings.json record carries
- * no `condition` key at all — the published condition comes out of
- * lib/condition.mjs at ingest, mostly from the VDP path (/used/, /certified/).
- * The first cut of this lane tested `l.condition` and so rejected every car
- * as neither used nor certified: every nightly from 2026-08-27 to 09-05 logged
- * "vdp-notes: 0 used/CPO cars with no notes on file, doing 0 this run" and
- * nobody read the line. gm-warranty.mjs survived the same file because it
- * only skips `=== "new"`. The owner found the result on 09-06 by opening a
- * $40,085 Lightning whose dealer notes say "Lemon Law Buyback".
+ * THE CONDITION IS DERIVED, NOT READ. The published condition comes out of
+ * lib/condition.mjs (a stated token first, then the VDP path — /used/,
+ * /certified/), and this asks it the same way ingest does, so a producer
+ * that sets no `condition` field (the 2026-09-02 shard sample in out/ had
+ * none) still gets its used cars read. Note this was NOT why the lane read
+ * nothing for ten nights — see vdp-notes.mjs: it was running in a workflow
+ * whose crawl file held no dealer.com cars at all.
  *
  * A description that is dealer.com's template sentence counts as no
  * description (lib/normalize.mjs dealerWords); a real one from the car's own
