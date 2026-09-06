@@ -64,7 +64,8 @@
 
 import { readFile, writeFile } from "node:fs/promises";
 import { fetchPage } from "./lib/http.mjs";
-import { extractDealerNotes } from "./lib/dealer-notes.mjs";
+import { extractDealerNotes, needsDealerNotes } from "./lib/dealer-notes.mjs";
+import { dealerWords } from "./lib/normalize.mjs";
 
 const LISTINGS = new URL("./out/listings.json", import.meta.url);
 const REGISTRY = new URL("./registry/registry.json", import.meta.url);
@@ -111,27 +112,18 @@ try {
 const today = new Date().toISOString().slice(0, 10);
 const dayStr = (n) => new Date(Date.now() - n * 86_400_000).toISOString().slice(0, 10);
 
-// A per-VIN VDP on the seller's own site. An OEM lane's sourceUrl is a maker
-// search page and never contains the VIN, which is the cheap way to tell them
-// apart without re-deriving each lane's identity here.
-const isVdp = (l) =>
-  typeof l.sourceUrl === "string" &&
-  /^https?:\/\//i.test(l.sourceUrl) &&
-  (l.sourceUrl.toUpperCase().includes(String(l.vin ?? "").toUpperCase()) || /\.htm[l]?$/i.test(l.sourceUrl));
-
+// Selection lives in lib/dealer-notes.mjs (needsDealerNotes) so it can be
+// tested against a raw crawl record — the shape that beat the first cut of
+// this loop. That version read `l.condition`, a key out/listings.json
+// records do not have (the published condition is derived at ingest from the
+// VDP path), and so selected 0 cars on every nightly from 2026-08-27 to
+// 09-05. The log said so each night. Nobody was reading the log.
+const refreshCutoff = dayStr(REFRESH_DAYS);
+const retryCutoff = dayStr(RETRY_EMPTY_DAYS);
 const targets = [];
 for (const l of listings) {
-  const cond = String(l.condition ?? "").toLowerCase();
-  if (cond !== "used" && cond !== "certified") continue;
-  if (typeof l.description === "string" && l.description.trim()) continue;
-  const vin = String(l.vin ?? "").toUpperCase();
-  if (vin.length !== 17 || !isVdp(l)) continue;
-  if (platformOf.get(l.dealerDomain) !== "dealer.com") continue;
-  const hit = cache[vin];
-  if (hit) {
-    const cutoff = hit.notes ? dayStr(REFRESH_DAYS) : dayStr(RETRY_EMPTY_DAYS);
-    if (String(hit.checkedAt ?? "") >= cutoff) continue;
-  }
+  const cached = cache[String(l.vin ?? "").toUpperCase()];
+  if (!needsDealerNotes(l, { platform: platformOf.get(l.dealerDomain), cached, refreshCutoff, retryCutoff })) continue;
   targets.push(l);
 }
 // Advertised buyback lots first — then ROUND-ROBIN ACROSS ROOFTOPS inside
@@ -269,7 +261,9 @@ if (flagged.length) {
 // is the fresher of the two.
 let applied = 0;
 for (const l of listings) {
-  if (typeof l.description === "string" && l.description.trim()) continue;
+  // dealer.com's template sentence is not a description a lane supplied; the
+  // dealer's notes replace it (lib/normalize.mjs dealerWords).
+  if (dealerWords(l.description)) continue;
   const hit = cache[String(l.vin ?? "").toUpperCase()];
   if (!hit?.notes) continue;
   l.description = hit.notes;

@@ -322,11 +322,7 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
 
           {listing.buybackDisclosed && (
             <div className={`rounded-lg border p-4 ${NOTE_STYLE}`}>
-              <div className="text-sm font-semibold">Manufacturer repurchase (dealer information)</div>
-              <p className="mt-1 text-sm text-zinc-700 dark:text-zinc-300">
-                The dealer&rsquo;s description below discloses that this vehicle was repurchased by its
-                manufacturer. Price comparisons are not shown for repurchased cars.
-              </p>
+              <div className="text-sm font-semibold">Manufacturer repurchase</div>
             </div>
           )}
 

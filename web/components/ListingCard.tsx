@@ -94,8 +94,7 @@ export function ListingCard({
   if (r.buyback) {
     lead.push({
       k: "flag" as TileKind,
-      t: "Manufacturer repurchase (dealer information)",
-      ti: "The dealer's own listing discloses that this vehicle was repurchased by its manufacturer. Price comparisons are not shown for repurchased cars.",
+      t: "Manufacturer repurchase",
       w: true,
     });
   }

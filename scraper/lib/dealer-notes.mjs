@@ -36,7 +36,8 @@
 // "Dealer Notes", so it is honest to carry it — and it is exactly where a
 // disclosure appears when there is one.
 
-import { decodeEntities } from "./normalize.mjs";
+import { decodeEntities, dealerWords } from "./normalize.mjs";
+import { publishedCondition } from "./condition.mjs";
 
 // The widget, then the first .content block inside it. Matched on
 // data-widget-name rather than the class list because the class carries
@@ -48,6 +49,43 @@ const CONTENT_BLOCK = /<div[^>]*class="[^"]*\bcontent\b[^"]*"[^>]*>([\s\S]*)/i;
 // Same ceiling normalize.mjs applies, so a note stored through either door is
 // the same length.
 const MAX = 2000;
+// ...except that the cap must not be allowed to cut the one sentence the lane
+// exists to read. Dealers put the disclosure LAST: aaronfordofpoway.com's
+// 2023 Lightning 1FT6W1EV6PWG56603 (2026-09-06) opens with a price pledge,
+// lists fifteen options, walks through five paragraphs of feature prose, and
+// only then says "This is a Lemon Law Buyback vehicle ... This vehicle was
+// repurchased by the manufacturer" — at character ~3,400. A straight
+// slice(0, 2000) stored the prose and dropped the disclosure, and 152 of the
+// 537 notes in the cache (28%) had hit the cap the same way. So past the cap,
+// sentences that use disclosure vocabulary are kept and everything else is
+// what gets cut. The net here is deliberately broad — it decides only what
+// is STORED; the narrow, audited patterns that set buyback_disclosed live in
+// the migrations. Bounded so a note cannot grow without limit.
+const DISCLOSURE_WORDS = /\b(buy[\s-]?back|lemon[\s-]?law|reac?quired|repurchased?|branded title)\b/i;
+const MAX_KEPT_PAST_CAP = 1000;
+const SENTENCES = /[^.!?]+(?:[.!?]+|$)/g;
+export function capKeepingDisclosures(text) {
+  if (text.length <= MAX) return text;
+  const sentences = text.match(SENTENCES) ?? [text];
+  let head = "";
+  for (const sentence of sentences) {
+    if (head.length + sentence.length > MAX) break;
+    head += sentence;
+  }
+  // One run-on block with no sentence ends (an equipment list): cut it where
+  // the old rule did.
+  if (!head) head = text.slice(0, MAX);
+  const kept = [];
+  let budget = MAX_KEPT_PAST_CAP;
+  for (const sentence of text.slice(head.length).match(SENTENCES) ?? []) {
+    if (!DISCLOSURE_WORDS.test(sentence)) continue;
+    const t = sentence.trim();
+    if (t.length > budget) break;
+    kept.push(t);
+    budget -= t.length + 1;
+  }
+  return kept.length ? `${head.trim()} ${kept.join(" ")}` : head.trim();
+}
 
 /**
  * The dealer's notes from a VDP, or undefined.
@@ -71,5 +109,52 @@ export function extractDealerNotes(html) {
   )
     .replace(/\s+/g, " ")
     .trim();
-  return text ? text.slice(0, MAX) : undefined;
+  return text ? capKeepingDisclosures(text) : undefined;
+}
+
+// ── Which cars the lane reads ──────────────────────────────────────────────
+//
+// A per-VIN VDP on the seller's own site. An OEM lane's sourceUrl is a maker
+// search page and never contains the VIN, which is the cheap way to tell them
+// apart without re-deriving each lane's identity here.
+const isVdp = (l) =>
+  typeof l.sourceUrl === "string" &&
+  /^https?:\/\//i.test(l.sourceUrl) &&
+  (l.sourceUrl.toUpperCase().includes(String(l.vin ?? "").toUpperCase()) || /\.htm[l]?$/i.test(l.sourceUrl));
+
+/**
+ * Whether vdp-notes.mjs should fetch this record's VDP.
+ *
+ * THE CONDITION IS DERIVED, NOT READ. A raw out/listings.json record carries
+ * no `condition` key at all — the published condition comes out of
+ * lib/condition.mjs at ingest, mostly from the VDP path (/used/, /certified/).
+ * The first cut of this lane tested `l.condition` and so rejected every car
+ * as neither used nor certified: every nightly from 2026-08-27 to 09-05 logged
+ * "vdp-notes: 0 used/CPO cars with no notes on file, doing 0 this run" and
+ * nobody read the line. gm-warranty.mjs survived the same file because it
+ * only skips `=== "new"`. The owner found the result on 09-06 by opening a
+ * $40,085 Lightning whose dealer notes say "Lemon Law Buyback".
+ *
+ * A description that is dealer.com's template sentence counts as no
+ * description (lib/normalize.mjs dealerWords); a real one from the car's own
+ * feed record is kept and the VDP is not fetched.
+ *
+ * `cached` is the registry entry for this VIN, if any; `refreshCutoff` and
+ * `retryCutoff` are YYYY-MM-DD strings — an entry checked on or after the
+ * relevant cutoff is fresh enough to skip.
+ */
+export function needsDealerNotes(l, { platform, cached, refreshCutoff = "", retryCutoff = "" } = {}) {
+  const cond = publishedCondition(l);
+  if (cond !== "used" && cond !== "certified") return false;
+  if (dealerWords(l.description)) return false;
+  const vin = String(l.vin ?? "").toUpperCase();
+  if (vin.length !== 17 || !isVdp(l)) return false;
+  // ws-dealernotes is dealer.com's widget; no other platform's page is read
+  // (see vdp-notes.mjs on the DealerOn measurement).
+  if (platform !== "dealer.com") return false;
+  if (cached) {
+    const cutoff = cached.notes ? refreshCutoff : retryCutoff;
+    if (String(cached.checkedAt ?? "") >= cutoff) return false;
+  }
+  return true;
 }

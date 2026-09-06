@@ -212,7 +212,7 @@ export function normalize(vehicle, { sourceUrl, dealerDomain }) {
   const vdpUrl = text(offer?.url);
   return {
     images,
-    description: text(vehicle.description)?.slice(0, 2000),
+    description: dealerWords(text(vehicle.description))?.slice(0, 2000),
     vdpUrl,
     vin: text(vehicle.vehicleIdentificationNumber)?.toUpperCase(),
     year: modelYear(vehicle.vehicleModelDate ?? vehicle.productionDate ?? vehicle.modelDate),
@@ -257,4 +257,28 @@ export function richness(rec) {
     Math.min(rec.images?.length ?? 0, 5) +
     (rec.fromVdp ? 3 : 0)
   );
+}
+
+// ── A description that is nobody's words ───────────────────────────────────
+//
+// dealer.com's schema.org description is template copy, one sentence stamped
+// on every car: "Is this 2023 Ford F-150 Lightning your perfect car? Contact
+// Aaron Ford of Poway to see this Avalanche XLT Truck available for $40085".
+// Measured 2026-09-06: 5,123 live used/CPO rows carried it, every one on a
+// dealer.com (.htm) VDP and none anywhere else. lib/dealer-notes.mjs has said
+// since 08-27 that it is not the seller's words; what nobody had connected is
+// what it COST. vdp-notes.mjs treats a record with a description as already
+// read, so those 5,123 cars were never asked for the dealer's real notes — and
+// on 1FT6W1EV6PWG56603 the real notes said "This is a Lemon Law Buyback
+// vehicle", while the site showed an ordinary $40,085 used truck. Dropped
+// here, at the one door every schema.org node comes through, so nothing
+// downstream has to know the sentence exists.
+const DEALERCOM_TEMPLATE = /^\s*is this \d{4} .{1,120}? your perfect (car|vehicle|truck|suv)\b/i;
+export function isTemplateDescription(s) {
+  return typeof s === "string" && DEALERCOM_TEMPLATE.test(s);
+}
+/** The description if a person wrote it, else undefined — never "" and never the template. */
+export function dealerWords(s) {
+  if (typeof s !== "string" || !s.trim() || isTemplateDescription(s)) return undefined;
+  return s;
 }
