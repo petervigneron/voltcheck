@@ -94,6 +94,63 @@ const LANES_OFF = /^(off|0|false)$/i.test(String(process.env.BROWSER_LANES ?? ""
 // turns it on.
 const TRACE = /^(1|on|true|yes)$/i.test(String(process.env.BROWSER_TRACE ?? ""));
 
+// THE OTHER HOST, ONCE. Plenty of dealer rooftops serve only on www and
+// refuse the apex outright — lib/http.mjs has retried the alternate host
+// since it measured that ("7 of 8 sampled recovered by simply prefixing
+// www"), and this file never did, so every lane that reaches for a URL
+// through Chrome instead of fetchPage was missing the same recovery.
+//
+// It cost the 2026-09-06 04:41 rolling run 26 Dealer Inspire rooftops. They
+// came back "browser lane failed" and the failure looked like a firewall on
+// the GitHub runner, because probe.mjs had promoted every one of them the day
+// before by reading `https://www.${domain}` and recording no canonicalHost,
+// while crawl.mjs builds its origin as `https://${canonicalHost ?? domain}`
+// — the APEX. On patrickhyundai.com, showmeautomall.com and
+// bridgewaterkia.com the apex has no certificate at all: the TLS handshake is
+// refused (`sslv3 alert handshake failure` to curl from a laptop, the same
+// second www served the page), and woburntoyota.com's apex simply never
+// answers. Chrome reports all of it as one flat `error:Error`, four times —
+// two SRP paths, each tried twice — which is exactly the "fetched 5" those
+// rooftops printed.
+//
+// A transport failure is nothing served, so the other host is worth one try.
+// A robots refusal, a missing browser and a served 404 are answers, and are
+// not retried. The attempt is made ONCE per host per process, whatever it
+// answers, so a rooftop that is merely slow cannot double its own load count;
+// a host that answers on the alternate is remembered and every later URL on
+// it — SRP pages, VDPs, its robots.txt — is asked there.
+const hostSwap = new Map(); // host → the host that answered for it
+const altTried = new Set();
+
+export function browserAltUrl(url) {
+  try {
+    const u = new URL(url);
+    if (u.hostname.startsWith("www.")) u.hostname = u.hostname.slice(4);
+    else u.hostname = `www.${u.hostname}`;
+    return u.toString();
+  } catch {
+    return null;
+  }
+}
+
+/** Was nothing served at all? `error:` is Chrome failing to load — a refused
+ *  handshake, a dead host, a timeout. Everything else is an answer. */
+export function browserTransportFailed(status) {
+  return typeof status === "string" && status.startsWith("error:") && status !== "error:invalid-url";
+}
+
+export function browserSwappedUrl(url, map = hostSwap) {
+  try {
+    const u = new URL(url);
+    const to = map.get(u.hostname);
+    if (!to) return url;
+    u.hostname = to;
+    return u.toString();
+  } catch {
+    return url;
+  }
+}
+
 async function getContext() {
   if (LANES_OFF) {
     unavailable = "BROWSER_LANES=off";
@@ -242,13 +299,38 @@ export async function browserRobotsAllows(url) {
  * DOMContentLoaded before reading it; `waitFor` is an optional selector to
  * wait on instead (bounded by `timeoutMs`).
  */
-export async function browserFetch(url, opts = {}) {
+async function tracedLoad(url, opts) {
   if (!TRACE) return browserLoad(url, opts);
   const t0 = Date.now();
   const r = await browserLoad(url, opts);
   const landed = r.finalUrl && r.finalUrl !== url ? ` → ${r.finalUrl}` : "";
   console.log(`[browser] ${r.status} ${Date.now() - t0}ms ${r.body ? r.body.length : 0}b ${url}${landed}`);
   return r;
+}
+
+export async function browserFetch(url, opts = {}) {
+  const target = browserSwappedUrl(url);
+  const r = await tracedLoad(target, opts);
+  if (!browserTransportFailed(r.status)) return r;
+  let host;
+  try {
+    host = new URL(target).hostname;
+  } catch {
+    return r;
+  }
+  if (altTried.has(host)) return r;
+  altTried.add(host);
+  const alt = browserAltUrl(target);
+  if (!alt) return r;
+  const r2 = await tracedLoad(alt, opts);
+  if (browserTransportFailed(r2.status)) return r;
+  const answered = new URL(alt).hostname;
+  hostSwap.set(host, answered);
+  // …and never bounce back. Without this the host that answered gets the
+  // apex offered to it as its own alternate the next time IT fails, which is
+  // one dead load per rooftop on a www host that is merely slow.
+  altTried.add(answered);
+  return r2;
 }
 
 async function browserLoad(url, { settleMs = 1500, waitFor = null, capture = null, timeoutMs = 45000, clicks = [] } = {}) {
