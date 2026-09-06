@@ -303,12 +303,23 @@ function FacetMenu({
   pick,
   clear,
   allLabel,
+  inRail,
 }: {
   f: FacetGroup;
   on: Set<string>;
   pick: (key: string, v: string, n: number) => void;
   clear: (key: string) => void;
   allLabel: string;
+  /** On the rail's count line (the make and model menus) the cell keeps its
+   *  280px and the line's putty spacer takes the slack; alone in a spec row
+   *  a menu grows to close it. On a phone the count line has no slack to
+   *  give — seated between the count and Sort, a menu squeezed Sort down to
+   *  its chevron and pushed the save star onto a line of its own — so there
+   *  the menus go LAST on the line (order-1), after a full-width break, at
+   *  half its width each: the count, Sort and star keep the line they had,
+   *  and make and model share the next one (a lone make menu grows to fill
+   *  it). */
+  inRail?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const box = useRef<HTMLDivElement>(null);
@@ -332,7 +343,9 @@ function FacetMenu({
       ref={box}
       // Grows to close its row instead of sitting at a fixed width beside a
       // spacer — see SpecFacets on why the menus stopped having a row each.
-      className={`${CELL} relative flex grow items-center bg-paper sm:basis-[280px]`}
+      className={`${CELL} relative flex grow items-center bg-paper sm:basis-[280px] ${
+        inRail ? "order-1 basis-1/2 sm:order-none sm:grow-0" : ""
+      }`}
       onKeyDown={(e) => {
         if (e.key === "Escape") setOpen(false);
       }}
@@ -411,10 +424,9 @@ function FacetMenu({
  * Only axes that actually vary here get a row, so a model with one battery
  * size never shows a battery row a shopper can't act on.
  */
-export function SpecFacets({ facets, narrow = [] }: { facets: FacetGroup[]; narrow?: FacetGroup[] }) {
+export function SpecFacets({ facets }: { facets: FacetGroup[] }) {
   const sp = useSearchParams();
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
-  const scoped = !!(sp.get("q") || sp.get("make") || sp.get("model"));
 
   const pick = (key: string, v: string) => {
     const params = new URLSearchParams(sp.toString());
@@ -432,31 +444,7 @@ export function SpecFacets({ facets, narrow = [] }: { facets: FacetGroup[]; narr
     pushUrl(params);
   };
 
-  // A narrowing menu (lib/listings/narrow.ts) ORs its values like the spec
-  // menus, and a change to the make set drops the model, and either drops the
-  // spec facets, which meant nothing under the last make (FilterRail.apply
-  // does the same from the panel).
-  const pickNarrow = (key: string, v: string, n: number) => {
-    const params = new URLSearchParams(sp.toString());
-    const next = toggleValue(params.get(key) ?? "", v);
-    if (next) params.set(key, next);
-    else params.delete(key);
-    if (key === "make") params.delete("model");
-    dropSpecFilters(params);
-    params.delete("page");
-    track("filter_toggled", undefined, { key, value: v, on: splitValues(next).includes(v), surface: "narrow", scoped, n });
-    pushUrl(params);
-  };
-  const clearNarrow = (key: string) => {
-    const params = new URLSearchParams(sp.toString());
-    params.delete(key);
-    if (key === "make") params.delete("model");
-    dropSpecFilters(params);
-    params.delete("page");
-    pushUrl(params);
-  };
-
-  if (facets.length === 0 && narrow.length === 0) return null;
+  if (facets.length === 0) return null;
 
   // The menu facets share one row. A menu is a single 280px control, so on its
   // own row it sat next to some 1,100px of empty cell — and with trim and
@@ -536,22 +524,8 @@ export function SpecFacets({ facets, narrow = [] }: { facets: FacetGroup[]; narr
 
   return (
     <div className="border-l-[3px] border-ink">
-      {(narrow.length > 0 || menus.length > 0) && (
+      {menus.length > 0 && (
         <div className="flex flex-wrap items-stretch">
-          {/* The narrowing menus lead the row: which make, then which model,
-              is a broader question than which version. A picked make is also
-              the rail's remove-chip, the same way a picked trim is. */}
-          {narrow.map((f) => [
-            label(f, true),
-            <FacetMenu
-              key={f.key}
-              f={f}
-              on={new Set(splitValues(sp.get(f.key) ?? ""))}
-              pick={pickNarrow}
-              clear={clearNarrow}
-              allLabel={NARROW_MENUS[f.key]}
-            />,
-          ])}
           {menus.map((f) => [
             label(f, true),
             <FacetMenu
@@ -582,8 +556,14 @@ export function FilterRail({
   count,
   quickCounts,
   pro,
+  narrow = [],
 }: {
   makesModels: Record<string, string[]>;
+  /** The make and model menus (lib/listings/narrow.ts), seated on the count
+   *  line: it had a putty spacer's worth of room between the count and Sort,
+   *  and a menu alone in a row of its own grew to 1,100px of dropdown (owner,
+   *  2026-09-05: "Make does not need its own entire line"). */
+  narrow?: FacetGroup[];
   inferred?: string;
   count?: number;
   quickCounts?: Record<string, { n: number; of: number }>;
@@ -611,6 +591,30 @@ export function FilterRail({
     },
     [sp]
   );
+
+  // A narrowing menu (lib/listings/narrow.ts) ORs its values like the spec
+  // menus, and a change to the make set drops the model, and either drops the
+  // spec facets, which meant nothing under the last make (`apply` above does
+  // the same from the panel).
+  const pickNarrow = (key: string, v: string, n: number) => {
+    const params = new URLSearchParams(sp.toString());
+    const next = toggleValue(params.get(key) ?? "", v);
+    if (next) params.set(key, next);
+    else params.delete(key);
+    if (key === "make") params.delete("model");
+    dropSpecFilters(params);
+    params.delete("page");
+    track("filter_toggled", undefined, { key, value: v, on: splitValues(next).includes(v), surface: "narrow", scoped, n });
+    pushUrl(params);
+  };
+  const clearNarrow = (key: string) => {
+    const params = new URLSearchParams(sp.toString());
+    params.delete(key);
+    if (key === "make") params.delete("model");
+    dropSpecFilters(params);
+    params.delete("page");
+    pushUrl(params);
+  };
 
   const make = get("make");
   // The panel's <select> is one make; several picked from the menu under the
@@ -834,6 +838,31 @@ export function FilterRail({
             {count.toLocaleString()} {count === 1 ? "car" : "cars"}
           </div>
         )}
+        {/* Make, then model: the broader question before the finer ones in
+            the spec rail below. The label is dropped on a phone, as Trim's
+            and Range's are — the menu's own text says what it is. */}
+        {/* On a phone the menus go last on this line, after a zero-height
+            full-width break that forces them onto a line of their own — half
+            a line each, or the whole of it for a lone make menu (FacetMenu
+            inRail). Sharing the count's line squeezed Sort to its chevron. */}
+        {narrow.length > 0 && <div className="order-1 basis-full sm:hidden" aria-hidden="true" />}
+        {narrow.map((f) => [
+          <div
+            key={`${f.key}-label`}
+            className={`${CELL} hidden items-center bg-putty px-4 py-2.5 sm:flex ${FIELD_LABEL}`}
+          >
+            {f.label}
+          </div>,
+          <FacetMenu
+            key={f.key}
+            f={f}
+            on={new Set(splitValues(sp.get(f.key) ?? ""))}
+            pick={pickNarrow}
+            clear={clearNarrow}
+            allLabel={NARROW_MENUS[f.key]}
+            inRail
+          />,
+        ])}
         <div className="hidden min-w-0 flex-1 border-b-[3px] border-ink bg-putty sm:block" aria-hidden="true" />
 
         {/* The select owns the whole cell so label and chevron stay clickable;

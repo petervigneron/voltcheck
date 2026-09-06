@@ -527,9 +527,10 @@ export function Browse() {
         count={rows !== null ? results.length : firstView ? firstView.total : undefined}
         quickCounts={rows !== null ? quickCounts : firstView ? firstView.quick : undefined}
         pro={pro}
+        narrow={narrow}
       />
 
-      <SpecFacets facets={facets} narrow={narrow} />
+      <SpecFacets facets={facets} />
 
       <FactLinksNav links={factLinks} model={factModel} />
 
