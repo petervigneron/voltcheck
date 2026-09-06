@@ -103,6 +103,20 @@ export function dealerInspireCards(html, base) {
   return out;
 }
 
+/** Is a 200 actually this vendor's SRP? A page carrying no cards AND none of
+ *  Dealer Inspire's own marks is not an empty lot — it is somebody else's
+ *  page. temeculanissan.com answered a GitHub runner with a 25 KB "Checking
+ *  your browser - reCAPTCHA" interstitial at HTTP 200 on 2026-09-06 and
+ *  served the real SRP to a laptop the same hour; crownbmw.com has left the
+ *  vendor for a /cars/used-inventory site altogether. Counting either as a
+ *  walked page made the pull COMPLETE with zero cars, and a complete pull is
+ *  what licenses db-sync to delist a rooftop — the lane would have reported
+ *  that every car on that lot was gone. A page that fails this ends the walk
+ *  with `url` still set, so the pull is partial and the cars stay. */
+export function isDealerInspireSrpPage(html, cards = []) {
+  return cards.length > 0 || isDealerInspire(html);
+}
+
 /** The next SRP page, or null on the last one. DI's only pager mark is the
  *  `?_p=N+1` link; the page number is in the current url. */
 export function dealerInspireNextUrl(html, currentUrl) {
@@ -154,12 +168,38 @@ export function dealerInspireVdpVehicle(html, vin) {
 // the pull is reported partial either way (`stopped`), so db-sync delists
 // nothing and the next visit starts over. Rooftops small enough to finish
 // inside half a budget are unaffected: the reserve is a ceiling on the walk,
-// not a quota it has to spend. The deadline is NOT halved — a clock the walk
-// shares with the VDPs would just move the same starvation to the slow
-// rooftops.
-export function srpLoadLimits(limits) {
-  if (!limits?.maxLoads) return limits ?? null;
-  return { ...limits, maxLoads: Math.max(2, Math.ceil(limits.maxLoads / 2)) };
+// not a quota it has to spend.
+//
+// THE CLOCK IS RESERVED THE SAME WAY, and it has to be, because on a GitHub
+// runner the clock is the only limit that ever binds. That reading was wrong
+// when this reserve was written ("the deadline is NOT halved — a clock the
+// walk shares with the VDPs would just move the same starvation to the slow
+// rooftops") and the 2026-09-06 04:41 rolling run measured it: 364 rooftops
+// bailed on the DI lane, every one of them at the 8-minute --domain-cap-min
+// (wall p50 490 s against a 480 s cap) and NONE of them at the 40-load SRP
+// reserve (loads p50 22, max 52). A load costs ~22 s of a rooftop's own wall
+// time on the runner — eight Chromium pages shared by 13-18 Dealer Inspire
+// domains at once — so the walk always ran out of clock first, the load
+// reserve never engaged, and the VDPs got nothing: 296 of those 364 rooftops
+// admitted zero EVs, and the whole lane returned 405 EVs for 8,595 browser
+// loads (0.047 per load, against 0.221 on the Motive-template rooftops that
+// read an API instead).
+//
+// Every EV this lane admits comes from a VDP. A walk that spends the whole
+// clock enumerating cards it then never reads is worth exactly zero, so half
+// the REMAINING clock is now kept back too, on the same terms as the loads: a
+// ceiling on the walk, not a quota, so the rooftops that finish inside it are
+// untouched, and the pull is reported partial either way, so db-sync delists
+// nothing.
+export function srpLoadLimits(limits, now = Date.now()) {
+  if (!limits) return null;
+  if (!limits.maxLoads && !limits.deadlineAt) return limits;
+  const out = { ...limits };
+  if (limits.maxLoads) out.maxLoads = Math.max(2, Math.ceil(limits.maxLoads / 2));
+  // Math.max(0, …) so a deadline already in the past stays in the past rather
+  // than being pushed forward by half a negative remainder.
+  if (limits.deadlineAt) out.deadlineAt = now + Math.max(0, Math.ceil((limits.deadlineAt - now) / 2));
+  return out;
 }
 
 export function dealerInspireLimitsExhausted(limits, loads) {
@@ -191,8 +231,12 @@ async function readSrp(origin, path, { maxPages = DEALERINSPIRE_MAX_PAGES, limit
     }
     status = res.status;
     if (res.status !== 200 || !res.body) break;
-    pages++;
     const page = dealerInspireCards(res.body, res.finalUrl || url);
+    if (!isDealerInspireSrpPage(res.body, page)) {
+      status = "not-dealerinspire";
+      break;
+    }
+    pages++;
     let fresh = 0;
     for (const c of page) {
       if (seen.has(c.vin)) continue;
@@ -237,10 +281,12 @@ export async function pullDealerInspire(origin, { srps = DEALERINSPIRE_SRPS, dea
   let complete = true;
   let anySrp = false;
   let stopped = false;
+  const srpStatus = [];
   const srpLimits = srpLoadLimits(limits);
   for (const path of srps) {
     const r = await readSrp(origin, path, { limits: srpLimits, loadsSoFar: requests });
     requests += r.requests;
+    srpStatus.push(`${path} ${r.exhausted && r.status === null ? "not tried" : (r.status ?? "no response")}`);
     if (r.exhausted) stopped = true;
     if (r.status === "browser_unavailable") return { ok: false, complete: false, found: 0, candidates: 0, vehicles: [], requests, vdpFailures: 0, why: "browser_unavailable" };
     if (r.pages === 0) {
@@ -256,7 +302,16 @@ export async function pullDealerInspire(origin, { srps = DEALERINSPIRE_SRPS, dea
       cards.push(c);
     }
   }
-  if (!anySrp) return { ok: false, complete: false, found: 0, candidates: 0, vehicles: [], requests, vdpFailures: 0 };
+  // NO SRP AT ALL, AND SAY WHICH. This return used to carry no `why`, so
+  // crawl.mjs printed the bare "dealerinspire browser lane failed" — the shape
+  // 26 rooftops came back as on 2026-09-06 — and the log could not distinguish
+  // a firewall from a 404. Every one of the ten checked turned out to be a
+  // path or a platform question rather than a wall (criswellauto.com and
+  // hersonskia.com answer 404 on both paths from a laptop as well as from a
+  // runner; crownbmw.com and temeculanissan.com have left the vendor). The
+  // statuses are what says so.
+  if (!anySrp)
+    return { ok: false, complete: false, found: 0, candidates: 0, vehicles: [], requests, vdpFailures: 0, why: `no SRP answered (${srpStatus.join(", ")})` };
   const cands = cards.filter(dealerInspireIsCandidate);
   const vehicles = [];
   let vdpFailures = 0;

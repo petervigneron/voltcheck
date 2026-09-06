@@ -621,9 +621,14 @@ async function crawlDealerInto(domain, budget, domainCapAt, report) {
       report.evs.push(rec);
     }
     if (report.evs.length > before) report.vehiclePages++;
-    report.notes.push(
-      `${dvPlat} (browser): ${r.found ?? 0} in lot, ${r.candidates != null ? `${r.candidates} candidate(s), ` : ""}${report.evs.length - before} EV(s) admitted in ${r.requests ?? 0} browser load(s)${r.why ? ` — ${r.why}` : ""}`,
-    );
+    // ALSO ON THE DOMAIN'S OWN LINE, not just in a note nothing prints. A
+    // browser lane is the one lane whose cost per rooftop cannot be read off
+    // `fetched`: the split between SRP pages walked and candidate VDPs read is
+    // the whole question, and diagnosing the 2026-09-06 rolling run meant
+    // inferring it from wall-clock arithmetic because 8,595 browser loads had
+    // left no record of which side of the lane they went to.
+    report.laneNote = `${dvPlat} (browser): ${r.found ?? 0} in lot, ${r.candidates != null ? `${r.candidates} candidate(s), ` : ""}${report.evs.length - before} EV(s) admitted in ${r.requests ?? 0} browser load(s)${r.why ? ` — ${r.why}` : ""}`;
+    report.notes.push(report.laneNote);
     if (!r.ok || !r.complete) report.stoppedEarly = `${dvPlat} browser lane ${r.why ?? (r.ok ? "partial" : "failed")}`;
     queue.length = 0;
   }
@@ -1615,7 +1620,7 @@ async function worker() {
     reports.push(rep);
     allEvs.push(...rep.evs);
     console.error(
-      `── ${domain}: fetched ${rep.fetched}, ${rep.vehiclePages} pages w/ vehicles, ${rep.itemListVdps} ItemList VDPs queued, ${rep.evs.length} EVs${rep.stoppedEarly ? ` [bailed: ${rep.stoppedEarly}]` : ""}`
+      `── ${domain}: fetched ${rep.fetched}, ${rep.vehiclePages} pages w/ vehicles, ${rep.itemListVdps} ItemList VDPs queued, ${rep.evs.length} EVs${rep.laneNote ? ` [${rep.laneNote}]` : ""}${rep.stoppedEarly ? ` [bailed: ${rep.stoppedEarly}]` : ""}`
     );
   }
 }

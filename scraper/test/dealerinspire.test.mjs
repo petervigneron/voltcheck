@@ -8,6 +8,7 @@ import {
   dealerInspireVdpVehicle,
   dealerInspireSrpUrl,
   srpLoadLimits,
+  isDealerInspireSrpPage,
 } from "../lib/platforms/dealerinspire.mjs";
 
 // Card markup as served on faricykia.com/used-vehicles/ 2026-09-02, trimmed
@@ -102,9 +103,42 @@ test("a tiny budget still buys the SRP pages a walk needs to start", () => {
   assert.equal(srpLoadLimits({ maxLoads: 3 }).maxLoads, 2);
 });
 
-test("the deadline is not halved, and no budget means no ceiling", () => {
-  const at = Date.now() + 60_000;
-  assert.equal(srpLoadLimits({ maxLoads: 80, deadlineAt: at }).deadlineAt, at);
-  assert.deepEqual(srpLoadLimits({ deadlineAt: at }), { deadlineAt: at });
+// The clock is reserved on the same terms as the loads. It has to be: on a
+// GitHub runner the 8-minute --domain-cap-min is the ONLY limit that ever
+// binds (2026-09-06 rolling run: 364 rooftops bailed, wall p50 490 s against
+// a 480 s cap, loads p50 22 against a 40-load reserve), so a load-only
+// reserve hands the walk the whole visit and the VDPs — the only place this
+// lane finds an EV — never run.
+test("half the remaining clock is kept back for the candidate VDPs", () => {
+  const now = 1_000_000;
+  assert.equal(srpLoadLimits({ maxLoads: 80, deadlineAt: now + 480_000 }, now).deadlineAt, now + 240_000);
+  assert.equal(srpLoadLimits({ deadlineAt: now + 61_000 }, now).deadlineAt, now + 30_500);
+});
+
+test("a deadline already past is not pushed forward by halving it", () => {
+  const now = 1_000_000;
+  assert.equal(srpLoadLimits({ maxLoads: 80, deadlineAt: now - 60_000 }, now).deadlineAt, now);
+});
+
+test("no limits at all still means no ceiling", () => {
   assert.equal(srpLoadLimits(null), null);
+  assert.deepEqual(srpLoadLimits({}), {});
+});
+
+// The 25 KB page a GitHub runner got from temeculanissan.com on 2026-09-06,
+// trimmed. HTTP 200, no cards, none of the vendor's marks.
+const RECAPTCHA_200 = `<!DOCTYPE html><html><head><title>Checking your browser - reCAPTCHA</title></head>
+<body><div id="recaptcha"></div><script src="https://www.google.com/recaptcha/api.js"></script></body></html>`;
+
+test("a 200 that is not a Dealer Inspire page is not an empty lot", () => {
+  assert.equal(isDealerInspireSrpPage(RECAPTCHA_200, []), false);
+  assert.equal(isDealerInspireSrpPage("", []), false);
+  assert.equal(isDealerInspireSrpPage(null, []), false);
+});
+
+test("a real SRP counts, with cards or with the vendor's own marks", () => {
+  assert.equal(isDealerInspireSrpPage(SRP, dealerInspireCards(SRP, "https://www.faricykia.com/used-vehicles/")), true);
+  // A genuinely empty used lot still renders the vendor's theme, and delisting
+  // it is correct — the walk really did enumerate the lot.
+  assert.equal(isDealerInspireSrpPage('<link href="/wp-content/themes/DealerInspireDealerTheme/css/lvrp.css">', []), true);
 });
