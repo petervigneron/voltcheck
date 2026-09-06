@@ -291,14 +291,14 @@ export interface EnrichmentRow {
     powertrainTerms?: Fact<string>;
     extendedCoverage?: Fact<string>;
   };
-  // Free-form flags the report surfaces prominently. `resolvedBy` names the
-  // per-car evidence that retires the note when a listing carries it:
-  // a photo read, a completed campaign check, or the listing's own
-  // trim/drivetrain settling an option ambiguity.
+  // Research flags on a model. NONE of this renders (2026-09-05, same rule
+  // as a Fact's `note`; see lib/enrichment/noteRule.ts and
+  // scripts/note-hygiene.mjs). `resolvedBy` names the per-car evidence that
+  // retires the note when a listing carries it: a photo read, a completed
+  // campaign check, or the listing's own trim/drivetrain settling an option
+  // ambiguity.
   buyerNotes?: {
     headline: string;
-    // Only the headline renders. `body` survives in older data files as
-    // research context; the UI never shows it.
     body?: string;
     severity: "info" | "warning" | "trap";
     resolvedBy?: "photo_dcfc" | "campaign_check" | "config_resolved";

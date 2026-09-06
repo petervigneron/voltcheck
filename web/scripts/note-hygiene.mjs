@@ -50,8 +50,11 @@ const rendered = notes.filter((f) => inlineNote(f.note));
 
 // ---- 2. The render surfaces, which is where this can actually regress. ----
 // A note may reach a hover or be copied onto another Fact. It may not be
-// printed. `severity`/`headline` (buyerNotes) are a different field and not
-// in scope here.
+// printed. buyerNotes (`headline`/`severity`) are the same class of copy in
+// a different field: they escaped every note sweep on that technicality and
+// rendered as a "Notes" block with Warning / Watch for labels until
+// 2026-09-05. No .tsx file may touch them at all; lib/listings may filter
+// and count them, which is not printing.
 const ROOTS = ["components", "app", "lib/listings"];
 const ALLOWED = /(?:title\s*[=:]|note\s*:|aria-label\s*=)/;
 const files = [];
@@ -65,11 +68,13 @@ const collect = (dir) => {
 for (const r of ROOTS) collect(r);
 
 const leaks = [];
+const buyerNoteLeaks = [];
 for (const f of files) {
   readFileSync(f, "utf8").split("\n").forEach((line, i) => {
-    if (!/\.note\b/.test(line)) return;
     const t = line.trim();
-    if (t.startsWith("//") || t.startsWith("*") || t.startsWith("/*")) return;
+    if (t.startsWith("//") || t.startsWith("*") || t.startsWith("/*") || t.startsWith("{/*")) return;
+    if (/buyerNotes/.test(line) && /\.tsx$/.test(f)) buyerNoteLeaks.push(`${f}:${i + 1}\n    ${t}`);
+    if (!/\.note\b/.test(line)) return;
     if (ALLOWED.test(line)) return;
     leaks.push(`${f}:${i + 1}\n    ${t}`);
   });
@@ -78,4 +83,5 @@ for (const f of files) {
 console.log(`${notes.length} facts, ${rendered.length} whose note would render as page copy, ${files.length} render-surface files scanned, ${leaks.length} printing a note`);
 for (const f of rendered.slice(0, 20)) console.log(`  RULE BREACH ${f.where}\n    ${f.note}`);
 for (const l of leaks) console.log(`  PRINTS A NOTE ${l}`);
-process.exit(rendered.length || leaks.length ? 10 : 0);
+for (const l of buyerNoteLeaks) console.log(`  READS buyerNotes IN A COMPONENT ${l}`);
+process.exit(rendered.length || leaks.length || buyerNoteLeaks.length ? 10 : 0);

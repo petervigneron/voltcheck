@@ -61,12 +61,6 @@ const DCFC_LABEL = {
   not_fitted: "Not fitted",
 } as const;
 
-const SEVERITY_LABEL: Record<"info" | "warning" | "trap", string> = {
-  info: "Note",
-  warning: "Warning",
-  trap: "Watch for",
-};
-
 export function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5">
@@ -329,29 +323,15 @@ export function EnrichmentFacts({
         </div>
       </div>
 
-      {/* Below the grid, not above it — a buyer note used to render as a
-          bullet list leading the whole page, ahead of every fact. Same
-          label/value row language as the grid above it now, just with the
-          severity standing in for a label, so a trap or a warning about
-          this car reads as one more line to scan, not a headline. */}
-      {row.buyerNotes && row.buyerNotes.length > 0 && (
-        <div className="mt-5">
-          <h3 className="text-xs font-semibold text-zinc-400">Notes</h3>
-          {row.buyerNotes.map((n) => (
-            <div
-              key={n.headline}
-              className="flex items-baseline justify-between gap-4 py-2 border-b border-zinc-100 dark:border-zinc-800 last:border-0"
-            >
-              <div className="text-sm text-zinc-500 dark:text-zinc-400 shrink-0">
-                {SEVERITY_LABEL[n.severity] ?? "Note"}
-              </div>
-              <div className="text-right text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                {n.headline}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+      {/* buyerNotes do not render. They are the researcher's flags on a
+          model — "no EPA range exists", "towing not recommended", recall
+          summaries — and they reached the page here as a "Notes" block with
+          Warning / Watch for labels until 2026-09-05, when the owner found
+          four of them under a Ram ProMaster EV. They are the same class of
+          copy as a Fact's note (lib/enrichment/noteRule.ts): the value is
+          the answer, and a sentence about a car is never ours to write. The
+          data stays on the row for audit and for enrich.ts's trap count;
+          scripts/note-hygiene.mjs fails if a component reads it again. */}
     </div>
   );
 }
