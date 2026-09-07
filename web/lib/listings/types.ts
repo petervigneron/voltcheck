@@ -95,6 +95,14 @@ export interface Listing {
    * both, the repurchase is the more specific fact and is the one printed.
    */
   brandedTitleDisclosed?: boolean;
+  /**
+   * The title brand off the Carfax Snapshot the seller embeds on its own
+   * page ("Buyback/Lemon", "Salvage", …), read by scraper/carfax-snapshot.mjs
+   * only where the seller published the key. It is an input to the two
+   * flags above (migration 0070), not a surface of its own: the page prints
+   * the same two words it prints for a seller who wrote the sentence.
+   */
+  titleBrand?: string;
   // Per-VIN campaign history, where an owner portal exposes it (GM today).
   campaignCheck?: {
     packReplaced: boolean;

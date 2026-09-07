@@ -558,6 +558,7 @@ async function crawlDealerInto(domain, budget, domainCapAt, report) {
       rec.evKind = cls.kind;
       rec.evConfidence = cls.confidence;
       rec.fromVdp = true;
+      if (v.carfaxSnapshotKey) rec.carfaxSnapshotKey = v.carfaxSnapshotKey; // for carfax-snapshot.mjs
       rec.platform = "team-velocity";
       report.evs.push(rec);
     }

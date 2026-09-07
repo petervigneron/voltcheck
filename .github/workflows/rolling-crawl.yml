@@ -349,6 +349,27 @@ jobs:
           timeout 5m node vdp-notes.mjs --limit 600 --concurrency 12 || \
             echo "::warning::vdp-notes hit its 5m cap on slice ${{ steps.pick.outputs.slice }}; cars already read are cached in registry/vdp-notes.json"
 
+      # The title brand off the Carfax Snapshot each dealer publishes for its
+      # own used cars (scraper/carfax-snapshot.mjs, lib/carfax-snapshot.mjs —
+      # read that header before touching this). Owner, 2026-09-07: a
+      # victoryfordkc.com Lightning was a buyback "but I only saw it on the
+      # carfax"; the dealer wrote nothing and its API carries nothing, and the
+      # snapshot the dealer embeds says "Branded Title: Buyback/Lemon". Only
+      # cars whose seller published a key are asked, only the title-brand line
+      # is kept, one host so ~1 request/1.1 s, cached 45 days. After vdp-notes
+      # (which harvests keys off the VDPs it reads) and before ingest (which
+      # carries titleBrand into the payload for the disclosure columns, 0070).
+      #
+      # CARFAX_SNAPSHOT=off here is the one switch. Cached brands stay applied
+      # until the cars re-sync without them.
+      - name: Carfax snapshot title brands
+        working-directory: scraper
+        env:
+          CARFAX_SNAPSHOT: "on"
+        run: |
+          timeout 4m node carfax-snapshot.mjs --limit 200 || \
+            echo "::warning::carfax-snapshot hit its 4m cap on slice ${{ steps.pick.outputs.slice }}; cars already answered are cached in registry/carfax-snapshot.json"
+
       - name: Ingest
         working-directory: scraper
         run: node ingest.mjs
@@ -470,6 +491,8 @@ jobs:
           # further down and this rewind has happened by then.
           cp scraper/registry/vdp-notes.json "${RUNNER_TEMP:-/tmp}/vdp-notes-mine.json" 2>/dev/null || true
           cp scraper/out/vdp-notes-run.json "${RUNNER_TEMP:-/tmp}/vdp-notes-run.json" 2>/dev/null || true
+          cp scraper/registry/carfax-snapshot.json "${RUNNER_TEMP:-/tmp}/carfax-snapshot-mine.json" 2>/dev/null || true
+          cp scraper/out/carfax-snapshot-run.json "${RUNNER_TEMP:-/tmp}/carfax-snapshot-run.json" 2>/dev/null || true
           for i in 1 2 3 4 5; do
             git checkout HEAD -- scraper/registry/vpic-cache.json 2>/dev/null || true
             git fetch origin main || true
@@ -545,6 +568,48 @@ jobs:
             sleep $((i * 10))
           done
           echo "::warning::Could not push the dealer-notes cache for slice ${{ steps.pick.outputs.slice }} (raced another writer); its reads are re-fetched next sweep."
+
+      # The Carfax snapshot cache: same shape and same gate as the dealer-notes
+      # cache above (key-merge, newer checkedAt wins, pushed by a slice that
+      # answered 10 or more cars). Small — one short line per VIN.
+      - name: Commit the Carfax snapshot cache
+        if: always()
+        continue-on-error: true
+        run: |
+          git config user.name "voltcheck-bot"
+          git config user.email "noreply@github.com"
+          mine="${RUNNER_TEMP:-/tmp}/carfax-snapshot-mine.json"
+          runfile="${RUNNER_TEMP:-/tmp}/carfax-snapshot-run.json"
+          [ -f "$mine" ] || { echo "no saved copy of the snapshot cache; nothing to commit"; exit 0; }
+          node -e '
+            const fs = require("fs");
+            let n = 0;
+            try { const r = JSON.parse(fs.readFileSync(process.argv[1], "utf8")); n = (r.read ?? 0) + (r.clean ?? 0); } catch {}
+            console.log(n + " cars answered this slice");
+            process.exit(n >= 10 ? 0 : 1);
+          ' "$runfile" || { echo "under 10 cars answered this slice; leaving the cache commit to a slice with more"; exit 0; }
+          unwedge() {
+            git rebase --abort 2>/dev/null || true
+            git merge --abort 2>/dev/null || true
+            git checkout -f HEAD -- scraper/registry 2>/dev/null || true
+            git stash list 2>/dev/null | grep -q . && git stash drop >/dev/null 2>&1
+            return 0
+          }
+          unwedge
+          for i in 1 2 3; do
+            git checkout HEAD -- scraper/registry/carfax-snapshot.json 2>/dev/null || true
+            git fetch origin main || true
+            if ! git pull --rebase --autostash; then unwedge; sleep $((i * 10)); continue; fi
+            if [ -n "$(git diff --name-only --diff-filter=U)" ]; then unwedge; continue; fi
+            node scraper/merge-vin-cache.mjs --file scraper/registry/carfax-snapshot.json --mine "$mine" --indent 1
+            git add scraper/registry/carfax-snapshot.json
+            git diff --staged --quiet && { echo "nothing to commit"; exit 0; }
+            git commit -m "Rolling crawl: Carfax snapshot cache after slice ${{ steps.pick.outputs.slice }} [skip ci]"
+            if git push; then echo "snapshot cache pushed"; exit 0; fi
+            [ "$(git log -1 --format=%s)" = "Rolling crawl: Carfax snapshot cache after slice ${{ steps.pick.outputs.slice }} [skip ci]" ] && git reset --soft HEAD~1
+            sleep $((i * 10))
+          done
+          echo "::warning::Could not push the Carfax snapshot cache for slice ${{ steps.pick.outputs.slice }} (raced another writer); its reads are re-fetched next sweep."
 
       # colisting-sync's liveness record, and this is the lane that owes it.
       # colisting-sync runs HERE 48 times a day against real slice data (~1,150

@@ -283,6 +283,9 @@ export function teamVelocityApiVehicle(r, hostByDealerId) {
     },
     // carried through for the caller's per-car rooftop attribution
     certified: r.certified === true || /certified|cpo/i.test(String(r.certifiedType ?? "")) || undefined,
+    // The dealer's per-car Carfax Snapshot key, for carfax-snapshot.mjs. Not a
+    // fact about the car; the lane turns it into one (lib/carfax-snapshot.mjs).
+    carfaxSnapshotKey: typeof r.carFax_SNAPSHOT_KEY === "string" && r.carFax_SNAPSHOT_KEY ? r.carFax_SNAPSHOT_KEY : undefined,
   };
 }
 

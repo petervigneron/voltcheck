@@ -289,6 +289,11 @@ const listings = raw
       description: r.description ? clean(r.description).replace(/<br\s*\/?>/gi, "\n").replace(/<[^>]+>/g, "").replace(/\n{3,}/g, "\n\n").trim() : undefined,
       sourceUrl: r.sourceUrl,
       dealerDomain: r.dealerDomain,
+      // The title brand off the dealer's own Carfax Snapshot
+      // (carfax-snapshot.mjs) — a string like "Buyback/Lemon". Read by the
+      // disclosure columns (0070). Never a timestamp: a re-read that changed
+      // nothing must not rewrite the row.
+      titleBrand: typeof r.titleBrand === "string" && r.titleBrand ? r.titleBrand.slice(0, 60) : undefined,
     };
   });
 
