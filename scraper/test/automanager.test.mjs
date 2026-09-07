@@ -6,6 +6,7 @@ import {
   autoManagerVehicles,
   autoManagerNextPageUrl,
   tilePrices,
+  displayTrim,
 } from "../lib/platforms/automanager.mjs";
 import { classifyEv } from "../lib/ev.mjs";
 import { normalize } from "../lib/normalize.mjs";
@@ -116,6 +117,30 @@ test("a tile normalizes into the record the pipeline stores, and claims no condi
   );
   // The platform states no new/used token anywhere, so the row states none.
   assert.equal(rec.condition, undefined);
+});
+
+test("a pipe-joined displaytrim is the platform's feature line, not a trim", () => {
+  // specialtiesauto.com and umcsales.com, 2026-09-07: the model restated,
+  // the dealer's options, the drivetrain, a digit. Nothing in it is a trim
+  // the model did not already say.
+  assert.equal(displayTrim("Model 3 Long Range | w/ Hardware 4 | AWD | 0", "Model 3 Long Range"), undefined);
+  assert.equal(displayTrim("Model Y Long Range | AWD | AWD | 0", "Model Y Long Range"), undefined);
+  assert.equal(displayTrim("Blazer EV RS | AWD | 2", "Blazer EV RS"), undefined);
+  assert.equal(displayTrim("MODEL 3  LONG RANGE | RWD | 0", "Model 3 Long Range"), undefined);
+  // A first segment that says something the model does not is kept alone.
+  assert.equal(displayTrim("Performance | AWD | LAUNCH PKG", "R2"), "Performance");
+  // The plain case, untouched.
+  assert.equal(displayTrim("LX", "Sportage"), "LX");
+  assert.equal(displayTrim(undefined, "Sportage"), undefined);
+
+  const restated = SRP.replace(
+    'data-displaymodel="Model 3" data-displaytrim=""',
+    'data-displaymodel="Model 3 Long Range" data-displaytrim="Model 3 Long Range | FSD Capable | AWD | 0"',
+  );
+  const tesla = autoManagerVehicles(restated, PAGE_URL)[1];
+  assert.equal(tesla.model, "Model 3 Long Range");
+  assert.equal(tesla.vehicleConfiguration, undefined);
+  assert.equal(normalize(tesla, { sourceUrl: PAGE_URL, dealerDomain: "x.com" }).trim, undefined);
 });
 
 test("the theme's coming-soon graphic is not a photo of the car", () => {

@@ -86,6 +86,26 @@ const attr = (chunk, name) => {
   return v && v.trim() ? v.trim() : undefined;
 };
 
+// data-displaytrim is not always a trim. On every AutoManager rooftop with a
+// Tesla on the lot (specialtiesauto.com, umcsales.com, revolvemotors.com,
+// vdautomall.com, midlinemotors.com, measured 2026-09-07) it is the
+// platform's composite feature line, pipe-joined: the model string restated,
+// then any dealer options, then the drivetrain, then a digit — "Model 3 Long
+// Range | w/ Hardware 4 | AWD | 0", "Blazer EV RS | AWD | 2", "Model Y Long
+// Range | AWD | AWD | 0". The fixture's "LX" is the plain case. A pipe-joined
+// value keeps its first segment only when that segment says something the
+// model does not: a restated model is nothing, and the options, drivetrain
+// and digit are not a trim by any reading. The drivetrain already has its
+// own attribute, and the version a restated model carries ("Long Range")
+// is recovered at ingest by lib/tesla-nameplate.mjs from the model itself.
+const squash = (s) => String(s ?? "").replace(/\s+/g, " ").trim().toLowerCase();
+export function displayTrim(trim, model) {
+  if (!trim || !trim.includes("|")) return trim;
+  const first = trim.split("|")[0].trim();
+  if (!first || squash(first) === squash(model)) return undefined;
+  return first;
+}
+
 /** Every distinct price the tile prints, as numbers. More than one means this
  *  rooftop shows a ladder and we do not know which rung is the ask. */
 export function tilePrices(chunk) {
@@ -132,7 +152,7 @@ function tileVehicle(chunk, pageUrl) {
     vehicleModelDate: attr(chunk, "displayyear"),
     brand: attr(chunk, "displaymake"),
     model: attr(chunk, "displaymodel"),
-    vehicleConfiguration: attr(chunk, "displaytrim"),
+    vehicleConfiguration: displayTrim(attr(chunk, "displaytrim"), attr(chunk, "displaymodel")),
     name: attr(chunk, "displaytitle"),
     mileageFromOdometer: mileage != null ? { "@type": "QuantitativeValue", value: mileage } : undefined,
     color: attr(chunk, "displayextcolor"),

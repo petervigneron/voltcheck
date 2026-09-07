@@ -12,6 +12,7 @@ import { fuelTextOnly } from "./lib/ev.mjs";
 import { priceFloor } from "./lib/price-floor.mjs";
 import { isProvenance } from "./lib/price-provenance.mjs";
 import { decodeEntities } from "./lib/normalize.mjs";
+import { splitTeslaModel } from "./lib/tesla-nameplate.mjs";
 
 const raw = JSON.parse(await readFile(new URL("./out/listings.json", import.meta.url), "utf-8"));
 // Single-rooftop dealers have exactly one address — listings inherit it from
@@ -219,7 +220,14 @@ const listings = raw
     placeholderVins.set(r.dealerDomain, (placeholderVins.get(r.dealerDomain) ?? 0) + 1);
     return false;
   })
-  .map((r) => {
+  .map((raw) => {
+    // A Tesla filed as "Model Y Long Range AWD" is a Model Y whose version
+    // and drivetrain landed in the model box (lib/tesla-nameplate.mjs has the
+    // measurement and the rules). Folded here, at the door every lane comes
+    // through, so eBizAutos, AutoManager and DealerFire cannot each keep a
+    // private spelling of the same four cars — and so the enrichment corpus,
+    // keyed "Model Y", can answer for them.
+    const r = { ...raw, ...splitTeslaModel(raw) };
     // The plausibility gate below can turn a price into an abstain, and the
     // provenance has to follow that decision rather than the raw reading —
     // hence one binding, used twice, instead of the same test written twice.
