@@ -65603,5 +65603,16 @@
  "drivelibertysubaru.com": {
   "hit": false,
   "checkedAt": "2026-09-05"
+ },
+ "victoryfordkc.com": {
+  "hit": true,
+  "evidence": [
+   {
+    "where": "script",
+    "href": "https://www.victoryfordkc.com/manufacturerbuyback",
+    "text": ""
+   }
+  ],
+  "checkedAt": "2026-09-07"
  }
 }
