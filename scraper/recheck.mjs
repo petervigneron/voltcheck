@@ -88,6 +88,19 @@ function flag(name, fallback) {
 }
 const CONCURRENCY = flag("--concurrency", 8);
 const LIMIT = flag("--limit", 0);
+// --vin V[,V...]: recheck only these VINs, same verdict rules and same write
+// path as the nightly — it is the nightly narrowed to a list. An operator's
+// tool for the case that produced it (2026-09-07): a shopper reported a truck
+// still on the site three days after the seller's page said "just sold". The
+// row reached us through a group's Team Velocity account under a domain no
+// crawl certifies complete, so this per-VDP check is its only delisting path,
+// and that path needs two strikes on two consecutive nights. This flag lets
+// the second strike land now instead of tomorrow.
+const ONLY_VINS = new Set(
+  (process.argv[process.argv.indexOf("--vin") + 1] ?? "")
+    .split(",").map((v) => v.trim().toUpperCase()).filter(Boolean)
+    .filter(() => process.argv.includes("--vin"))
+);
 const DRY = process.argv.includes("--dry-run");
 // Stop fetching after this many minutes and write what we have. recheck's
 // whole night rides on the single terminal ingest POST below, so being killed
@@ -205,6 +218,7 @@ for (let after = ""; ; ) {
         `,sourceUrl:payload->>sourceUrl,dealerDomain:payload->>dealerDomain` +
         `,condition:payload->>condition,year:payload->>year` +
         `&delisted_at=is.null` +
+        (ONLY_VINS.size ? `&vin=in.(${[...ONLY_VINS].join(",")})` : "") +
         (after ? `&vin=gt.${encodeURIComponent(after)}` : "") +
         `&order=vin.asc&limit=1000`,
       {
@@ -235,7 +249,9 @@ const targets = listings.filter(
   (l) => l.sourceUrl && !OEM_LOCATOR_DOMAINS.has(l.dealerDomain)
 );
 const skippedOem = listings.filter((l) => OEM_LOCATOR_DOMAINS.has(l.dealerDomain)).length;
-const work = LIMIT ? targets.slice(0, LIMIT) : targets;
+const work = ONLY_VINS.size
+  ? targets.filter((l) => ONLY_VINS.has(l.vin.toUpperCase()))
+  : LIMIT ? targets.slice(0, LIMIT) : targets;
 console.error(
   `recheck: ${work.length} live listings with a source URL ` +
   `(${listings.length - targets.length - skippedOem} without, ${skippedOem} OEM-locator rows skipped)`
