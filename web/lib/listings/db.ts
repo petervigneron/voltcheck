@@ -645,6 +645,70 @@ export async function fetchListingByIdFromDb(id: string): Promise<ListingByIdRea
   }
 }
 
+/** A car that is no longer listed, as delisted_listings_recent (0071)
+ *  serves it: the last public payload, the day the site last saw it on the
+ *  seller's page, and the day the recheck concluded it was gone. */
+export type DelistedListing = Listing & { delistedAt: string; lastSeenAt?: string };
+export type DelistedRead = { answered: boolean; listing: DelistedListing | null };
+
+interface DelistedRow {
+  payload: Listing;
+  first_seen_at: string;
+  last_seen_at: string | null;
+  delisted_at: string;
+  price_usd: number | null;
+  buyback_disclosed: boolean;
+  branded_title_disclosed: boolean;
+}
+
+/** The row behind /listing/<vin> once the live read has said "no live
+ *  listing" (fetchListingByIdFromDb answered with nothing). The view only
+ *  holds cars delisted in the last 30 days; anything older answers empty
+ *  here too and the page 404s as it always did.
+ *
+ *  Same shape as the by-id read: a primary-key lookup, one retry on a
+ *  server error, and none at all while a walk has just failed — during an
+ *  outage this runs right after a by-id read that already missed, and the
+ *  2026-08-22 lesson is not to double the cost of the outage for a page
+ *  the database won't return anyway. */
+export async function fetchDelistedByVinFromDb(vin: string): Promise<DelistedRead> {
+  if (!dbConfigured()) return { answered: false, listing: null };
+  if (feedWalkFailedRecently()) return { answered: false, listing: null };
+  const base = process.env.SUPABASE_URL!.replace(/\/$/, "");
+  try {
+    let res: Response;
+    for (let attempt = 0; ; attempt++) {
+      res = await fetch(
+        `${base}/rest/v1/delisted_listings_recent?select=payload,first_seen_at,last_seen_at,delisted_at,price_usd,buyback_disclosed,branded_title_disclosed&vin=eq.${encodeURIComponent(
+          vin.toUpperCase()
+        )}&limit=1`,
+        { headers: headers(), next: { revalidate: REVALIDATE_SECONDS, tags: [FEED_CACHE_TAG] } }
+      );
+      if (res.status < 500 || attempt >= 1) break;
+      await new Promise((r) => setTimeout(r, 300));
+    }
+    if (!res.ok) throw new Error(`PostgREST ${res.status}`);
+    const [r] = (await res.json()) as DelistedRow[];
+    if (!r) return { answered: true, listing: null };
+    const listing: DelistedListing = {
+      ...r.payload,
+      // The column is the price the row carried when it was delisted; the
+      // payload's copy is the same number in most rows, but the column is
+      // what the price audit maintained, so it wins.
+      priceUsd: r.price_usd ?? r.payload.priceUsd,
+      firstSeenAt: r.first_seen_at,
+      lastSeenAt: r.last_seen_at ?? undefined,
+      delistedAt: r.delisted_at,
+      buybackDisclosed: r.buyback_disclosed || undefined,
+      brandedTitleDisclosed: r.branded_title_disclosed || undefined,
+    };
+    return { answered: true, listing };
+  } catch (err) {
+    console.error("[listings] Supabase delisted read failed:", err);
+    return { answered: false, listing: null };
+  }
+}
+
 /** One listing's price-comparison cohort: every live listing whose VIN 1-8
  *  shares its ask-cohort key for this model year. The caller passes a SQL
  *  LIKE pattern over positions 1-8 (comps.ts askCohortFetchPattern) — a

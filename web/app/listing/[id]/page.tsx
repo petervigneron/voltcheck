@@ -3,7 +3,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BackToResults } from "@/components/BackToResults";
-import { findListing } from "@/lib/listings/source";
+import { findDelistedListing, findListing } from "@/lib/listings/source";
+import { Delisted, delistedMetadata } from "./Delisted";
 import { enrichListing , displayTrim } from "@/lib/listings/enrich";
 import { trimClaim } from "@/lib/listings/trimClaim";
 import { buildChecklist } from "@/lib/checklist";
@@ -61,6 +62,7 @@ export async function generateStaticParams(): Promise<{ id: string }[]> {
 // findListing isn't plain-fetch-memoizable (it branches into a full scan and a
 // second detail read), so React cache() dedupes it explicitly.
 const getListing = cache(findListing);
+const getDelisted = cache(findDelistedListing);
 
 // Per-car title/description/canonical/OG. Without this every listing inherited
 // the one site-wide title from the root layout, so Google saw thousands of
@@ -70,7 +72,10 @@ const getListing = cache(findListing);
 export async function generateMetadata(props: PageProps<"/listing/[id]">): Promise<Metadata> {
   const { id } = await props.params;
   const listing = await getListing(id);
-  if (!listing) return {};
+  if (!listing) {
+    const gone = await getDelisted(id);
+    return gone ? delistedMetadata(gone) : {};
+  }
 
   const claim = trimClaim(listing);
   const trim = claim.assert && displayTrim(listing) ? ` ${claim.trim}` : "";
@@ -126,7 +131,16 @@ function listedValue(listedOn: string): string {
 export default async function ListingPage(props: PageProps<"/listing/[id]">) {
   const { id } = await props.params;
   const listing = await getListing(id);
-  if (!listing) notFound();
+  if (!listing) {
+    // No live listing. Before 2026-09-07 this was a 404 for every car that
+    // had sold — Google indexes a car off the grid, the car goes a week
+    // later, and the result is Next's stock error page. A car delisted in
+    // the last 30 days gets a page that says so (./Delisted.tsx); older
+    // than that, or never ours, is still a 404.
+    const gone = await getDelisted(id);
+    if (!gone) notFound();
+    return <Delisted listing={gone} />;
+  }
 
   const e = enrichListing(listing);
   const tiles = listingTiles(e);

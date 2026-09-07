@@ -1,6 +1,13 @@
 import type { Listing } from "./types";
 import { decodeSnapshot } from "./snapshot";
-import { dbConfigured, fetchListingByIdFromDb, fetchListingDetailFromDb, fetchListingsFromDb } from "./db";
+import {
+  dbConfigured,
+  fetchDelistedByVinFromDb,
+  fetchListingByIdFromDb,
+  fetchListingDetailFromDb,
+  fetchListingsFromDb,
+  type DelistedListing,
+} from "./db";
 
 // Live inventory comes from Supabase (nightly scraper sync, see
 // scraper/db-sync.mjs); the bundled JSON is the fallback when the DB is
@@ -202,6 +209,17 @@ async function resolveListing(id: string): Promise<{ listing?: Listing; live: bo
   if (listing) return { listing: absolutizeImages(listing), live: true };
   if (answered) return { live: true };
   return { listing: await findInSnapshot(id), live: false };
+}
+
+/** The car behind an id that findListing() could not find because it is no
+ *  longer listed — or undefined, which the page turns into the 404 it always
+ *  was. Never consults the snapshot: a snapshot row is by definition a car
+ *  that WAS live when the snapshot was cut, which is the opposite claim. */
+export async function findDelistedListing(id: string): Promise<DelistedListing | undefined> {
+  if (!VIN_SHAPED.test(id)) return undefined;
+  const { listing } = await fetchDelistedByVinFromDb(id);
+  if (!listing) return undefined;
+  return { ...scrubJunkStrings(stripRepeatedMake(absolutizeImages(listing))), delistedAt: listing.delistedAt, lastSeenAt: listing.lastSeenAt };
 }
 
 export async function findListing(id: string): Promise<Listing | undefined> {
