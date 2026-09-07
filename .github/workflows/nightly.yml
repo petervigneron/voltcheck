@@ -1293,6 +1293,32 @@ jobs:
     timeout-minutes: 330
     steps:
       - uses: actions/checkout@v4
+      # recheck.mjs cross-checks its "gone" verdicts on hyundai-cpo,
+      # ford-blue-advantage, honda-prologue and audi-network against tonight's
+      # own locator sweep, read from web/data/scraped-listings.json. That
+      # cross-check was built on 2026-08-21 when finalize-ingest still
+      # committed that file, and it read the fresh feed out of this job's
+      # checkout. finalize-ingest stopped committing it two days later (for
+      # the right reason: a locator-only feed must not become the outage
+      # snapshot). Nothing told this job. Since then the checkout has held
+      # whichever rolling-crawl slice was committed last — 2,760 rows, none
+      # on those four domains — and recheck has logged "0 VINs ... loaded
+      # for cross-check" every night, which is the protection switched off.
+      # Measured 2026-09-07 in listing_events: 350-500 recheck delistings a
+      # day across the four domains since 08-28, with 300-450 of them
+      # relisted by the next sweep. That is the drumbeat the cross-check
+      # exists to stop, running unopposed for two weeks.
+      #
+      # finalize-ingest uploads the same file as an artifact; hand it to this
+      # job. Last night's artifact carried 8,444 VINs on the four domains.
+      # continue-on-error: a missing artifact (finalize-ingest failed before
+      # its upload) must degrade to recheck's documented fallback — every
+      # verdict trusted — not stop the sold-signal for the night.
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: finalize-ingest-listings
+          path: web/data
       - uses: actions/setup-node@v4
         with:
           node-version: "22"

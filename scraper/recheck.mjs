@@ -271,10 +271,15 @@ console.error(
 // synthetic domains are a different case, already excluded from recheck
 // entirely above via OEM_LOCATOR_DOMAINS — see lib/recheck-oem-crosscheck.mjs
 // for why they don't belong here too.) Read from the same merged feed
-// db-sync just wrote to Supabase (this job's own checkout, already fresh
-// from tonight's commit) — no extra fetches, no DB read. Missing/unreadable
-// feed degrades to the unchanged behavior (every verdict trusted), never
-// the reverse.
+// db-sync just wrote to Supabase — no extra fetches, no DB read. In CI that
+// file is NOT in the checkout: finalize-ingest stopped committing it on
+// 2026-08-23, and this read then silently found a stale rolling-crawl slice
+// (0 cross-check VINs, every night, until 2026-09-07). nightly.yml's recheck
+// job now downloads finalize-ingest's `finalize-ingest-listings` artifact
+// into web/data before this runs; the count logged below is the tell — a
+// night that prints 0 here has the protection switched off. Missing/
+// unreadable feed degrades to the unchanged behavior (every verdict
+// trusted), never the reverse.
 let oemAlive = new Set();
 try {
   const feedUrl = new URL("../web/data/scraped-listings.json", import.meta.url);
