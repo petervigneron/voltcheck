@@ -63,6 +63,19 @@ const DENIAL = /\b(not|never|no|don'?t|do not)\b[^.]{0,40}\b(sell|offer|carry|st
 
 const strip = (html) =>
   html.replace(/<(script|style)[\s\S]*?<\/\1>/gi, " ");
+// A programme URL inside a SCRIPT. victoryfordkc.com (Team Velocity, found
+// 2026-09-07 by the owner opening a Lightning whose Carfax says
+// "Buyback/Lemon") keeps its "Manufacturer Buyback" menu item in a Vue
+// config object — `subMenuLink: "https://www.victoryfordkc.com/manufacturerbuyback"`
+// — that the page renders into a nav at load. strip() removes scripts first,
+// so the anchor scan above never saw it and the sweep recorded a clean
+// negative on 08-27. This reads the raw HTML for a URL path that names the
+// programme (buyback / reacquired / lemon-law as a path segment), which is
+// as deliberate as a link: nobody routes /manufacturerbuyback by accident.
+// The same two exclusions apply (a buy-back guarantee, a lease buyback).
+// Verified 2026-09-07: hits victoryfordkc.com, clean on lhmauto.com,
+// dickhannah.com, zeigler.com, hertzcarsales.com, larrygreenchevrolet.com.
+const PROGRAMME_PATH = /["'](?:https?:\/\/[^"'\s]*)?\/[a-z0-9_-]*(?:buy-?back|reacquired|lemon-?law)[a-z0-9_-]*\/?["']/gi;
 
 /** Returns {hit, evidence[]} for one page's HTML. Exported for the tests. */
 export function readBuybackSignals(html) {
@@ -79,6 +92,15 @@ export function readBuybackSignals(html) {
     if (evidence.some((e) => e.href === href)) continue;
     evidence.push({ where: "link", href, text: label.slice(0, 80) });
     if (evidence.length >= 4) break;
+  }
+  if (evidence.length === 0) {
+    for (const m of String(html ?? "").matchAll(PROGRAMME_PATH)) {
+      const href = m[0].slice(1, -1);
+      if (NOT_A_REPURCHASE.test(href)) continue;
+      if (evidence.some((e) => e.href === href)) continue;
+      evidence.push({ where: "script", href, text: "" });
+      if (evidence.length >= 4) break;
+    }
   }
   const body = text.match(BODY_MARKER);
   if (body && !NOT_A_REPURCHASE.test(body[0])) evidence.push({ where: "text", text: body[0].slice(0, 80) });

@@ -88,3 +88,26 @@ test("excluding those does not cost the real inventory categories", () => {
     assert.equal(readBuybackSignals(`<a href="${href}">See inventory</a>`).hit, true, href);
   }
 });
+
+test("a programme URL kept inside a script is still a section (victoryfordkc.com, 2026-09-07)", () => {
+  // Team Velocity renders the nav from a Vue config in a <script>; strip()
+  // drops scripts, so the anchor scan never saw the menu item and the 08-27
+  // sweep recorded a clean negative on a rooftop that sells Ford buybacks.
+  const html = `<html><body><div id="app"></div>
+    <script>window.menu = [{ menuName: "Used", subMenuName: "Manufacturer Buyback",
+      subMenuLink: "https://www.victoryfordkc.com/manufacturerbuyback" }];</script></body></html>`;
+  const r = readBuybackSignals(html);
+  assert.equal(r.hit, true);
+  assert.equal(r.evidence[0].where, "script");
+  assert.match(r.evidence[0].href, /manufacturerbuyback/);
+});
+
+test("a guarantee or a lease buyback inside a script is still not a programme", () => {
+  const html = `<script>var links = ["/hertz-buy-back-guarantee.htm", "/lease-buyback.htm", "/used-inventory/"];</script>`;
+  assert.equal(readBuybackSignals(html).hit, false);
+});
+
+test("an ordinary script with no programme path says nothing", () => {
+  const html = `<script>var cfg = { inventory: "/used-inventory/index.htm", finance: "/finance/apply.htm" };</script>`;
+  assert.equal(readBuybackSignals(html).hit, false);
+});
