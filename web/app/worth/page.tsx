@@ -132,7 +132,7 @@ export default async function WorthPage(props: Props) {
                 the benefit's own title from /pro. Asking prices only, so no
                 ODbL credit here; the result block above carries its own. */}
             <p className="mb-3 text-[10.5px] font-extrabold uppercase tracking-[0.14em] text-ink/55">Market trends</p>
-            <PriceTrendCharts trend={trend} miles={input?.mileage} />
+            <PriceTrendCharts trend={trend} miles={input?.mileage} subject={input ? vehicleLabel(input) : undefined} />
           </section>
         )}
 

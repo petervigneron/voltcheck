@@ -14,6 +14,9 @@ export const REMOVABLE = [
   "cond",
   "drive",
   "body",
+  // Battery-electric or plug-in hybrid (lib/listings/kind.ts), the card's
+  // `kind` field. Owner, 2026-09-07: "There should be EV and PHEV filters."
+  "kind",
   "minPrice",
   "maxPrice",
   "minYear",
@@ -110,6 +113,27 @@ export const BODY_TYPES = [
 ] as const;
 
 export type BodyType = (typeof BODY_TYPES)[number]["value"];
+
+/**
+ * Battery-electric or plug-in hybrid, as a filter. The card's `kind` is
+ * settled from the enrichment row alone (lib/listings/kind.ts), so a car
+ * whose kind we can't verify sits this filter out, the same way body does.
+ * One value at a time: both together is no filter.
+ */
+export const KINDS = [
+  { value: "bev", label: "EV" },
+  { value: "phev", label: "PHEV" },
+] as const;
+
+/**
+ * The keys whose URL value is a comma-list of values that OR together. A rail
+ * toggle on one of these is pressed when its value is IN the list, and a
+ * press adds or removes its value rather than replacing the whole key — so
+ * "SUVs" on the rail and "SUVs + Trucks" in the panel are one filter, not
+ * two fighting over ?body. (Owner, 2026-09-07: "Users should be able to
+ * select multiple vehicle styles at once.")
+ */
+export const LIST_VALUED = new Set<string>(["make", "model", "trim", "kwh", "epa", "drive", "body"]);
 
 /**
  * The spec facets — the versions of one model, offered once the results are
@@ -211,8 +235,14 @@ export function describeFilter(key: string, value: string): string | null {
     case "drive":
       // The drivetrain facet ORs values like the other spec facets do.
       return orList(value, "");
-    case "body":
-      return BODY_TYPES.find((b) => b.value === value)?.label ?? null;
+    case "body": {
+      // Several body styles OR ("SUVs or Trucks"); an unknown value is dropped
+      // rather than described, so a chip never names a filter that isn't one.
+      const labels = splitValues(value).map((v) => BODY_TYPES.find((b) => b.value === v)?.label).filter(Boolean);
+      return labels.length ? labels.join(" or ") : null;
+    }
+    case "kind":
+      return KINDS.find((k) => k.value === value)?.label ?? null;
     case "minPrice":
       return `Over ${money(value)}`;
     case "maxPrice":

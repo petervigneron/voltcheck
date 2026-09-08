@@ -40,6 +40,11 @@ export interface CardRow {
   condition?: "new" | "used" | "certified";
   drive?: "RWD" | "AWD" | "FWD";
   body?: BodyType;
+  /** Battery-electric or plug-in hybrid (lib/listings/kind.ts), when the
+   *  enrichment row settles it. Absent means unknown, which no filter treats
+   *  as either. Set from 2026-09-07; a body packed before then unpacks
+   *  without it and the EV/PHEV filter admits nothing until the next publish. */
+  kind?: "BEV" | "PHEV";
   city?: string;
   state?: string;
   /** Dealer-zip centroid, for distance filtering and sorting. */

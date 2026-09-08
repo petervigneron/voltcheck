@@ -112,7 +112,18 @@ export function buildTests(get: (k: string) => string, ctx: MatchContext = {}): 
     tests.drive = (r) => r.drive !== undefined && on.has(r.drive);
   }
   // Curated model→body map; cars we can't verifiably classify sit this one out.
-  if (body) tests.body = (r) => r.body === body;
+  // Values OR, like drive: the panel writes "suv,truck" into the key the
+  // rail's SUVs toggle already uses (owner, 2026-09-07: several styles at
+  // once), and a single value is the one-element case of the same test.
+  if (body) {
+    const on = new Set(splitValues(body));
+    tests.body = (r) => r.body !== undefined && on.has(r.body);
+  }
+  // Battery-electric or plug-in hybrid (card.ts `kind`, from
+  // lib/listings/kind.ts). A car whose kind we could not settle sits it out:
+  // unknown is not BEV, and it is not PHEV either.
+  const kind = get("kind").toUpperCase();
+  if (kind === "BEV" || kind === "PHEV") tests.kind = (r) => r.kind === kind;
   // A price filter is about price, so a car whose feed gave us a lease
   // payment instead of one can't satisfy it either way.
   if (minPrice) tests.minPrice = (r) => r.realPrice && r.priceUsd >= minPrice;
@@ -170,6 +181,7 @@ export function buildTests(get: (k: string) => string, ctx: MatchContext = {}): 
  */
 export const QUICK_KNOWS: Partial<Record<RemovableFilter, (r: CardRow) => boolean>> = {
   body: (r) => r.body !== undefined,
+  kind: (r) => r.kind !== undefined,
   minRange: (r) => r.rangeMi != null,
   maxMiles: (r) => r.mileage != null,
   drive: (r) => r.drive !== undefined,

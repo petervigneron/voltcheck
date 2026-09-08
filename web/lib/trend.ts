@@ -50,8 +50,29 @@ export interface TrendSeries {
   points: TrendPoint[];
 }
 
+/**
+ * One day of the site-wide line (0072): every used cohort's daily level
+ * chained day to day, so the index moves when prices move and not when the
+ * set of cohorts does. 1.0 on the first day of the archive.
+ */
+export interface SiteTrendPoint {
+  period: string;
+  idx: number;
+  /** How many cohorts and cars the day's step was read from. */
+  cohorts: number;
+  cars: number;
+}
+
+export interface SiteTrend {
+  points: SiteTrendPoint[];
+}
+
 export interface PriceTrend {
   asks: TrendSeries | null;
+  /** The whole site's used-car level, for drawing beside `asks` (owner,
+   *  2026-09-07: show "the trend for all cars on the site"). Dimensionless;
+   *  the chart scales it to the cohort's own first price. */
+  site: SiteTrend | null;
 }
 
 /** value.ts's driven-car window: outside it a mileage is a typo or a car the
@@ -98,12 +119,20 @@ export async function fetchPriceTrend(a: {
       next: { revalidate: 3600 },
     });
     if (!res.ok) return null;
-    const body = (await res.json()) as { asks?: TrendSeries | null };
+    const body = (await res.json()) as { asks?: TrendSeries | null; site?: SiteTrend | null };
     if (!body || typeof body !== "object") return null;
-    return { asks: cleanSeries(body.asks) };
+    return { asks: cleanSeries(body.asks), site: cleanSite(body.site) };
   } catch {
     return null;
   }
+}
+
+function cleanSite(s: SiteTrend | null | undefined): SiteTrend | null {
+  if (!s || !Array.isArray(s.points)) return null;
+  const points = s.points.filter(
+    (p) => p && typeof p.period === "string" && Number.isFinite(p.idx) && p.idx > 0 && Number.isFinite(p.cars) && p.cars > 0
+  );
+  return points.length < 2 ? null : { points };
 }
 
 /** A series with fewer than two points is not a trend; it is one number,

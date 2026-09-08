@@ -22,6 +22,7 @@ const CONDITIONS = ["new", "used", "certified"] as const;
 const DRIVES = ["RWD", "AWD", "FWD"] as const;
 const BODIES = ["suv", "sedan", "truck", "van", "hatchback"] as const;
 const HEAT_PUMPS = ["yes", "no", "verify"] as const;
+const KINDS = ["BEV", "PHEV"] as const;
 
 /** An image URL split at its origin: [index into PackedIndex.h, the rest]. */
 type PackedImage = [number, string];
@@ -55,6 +56,8 @@ interface PackedRow {
   cd?: Coded;
   d?: Coded;
   b?: Coded;
+  /** kind — optional so a body packed before 2026-09-07 still unpacks. */
+  kd?: Coded;
   ct?: string;
   st?: string;
   l?: [number, number];
@@ -197,6 +200,7 @@ export function packIndex(rows: CardRow[]): PackedIndex {
     if (row.condition !== undefined) p.cd = code(CONDITIONS, row.condition);
     if (row.drive !== undefined) p.d = code(DRIVES, row.drive);
     if (row.body !== undefined) p.b = code(BODIES, row.body);
+    if (row.kind !== undefined) p.kd = code(KINDS, row.kind);
     if (row.city !== undefined) p.ct = row.city;
     if (row.state !== undefined) p.st = row.state;
     if (row.loc !== undefined) p.l = row.loc;
@@ -244,6 +248,7 @@ export function unpackIndex(x: PackedIndex): CardRow[] {
     condition: p.cd === undefined ? undefined : decode(CONDITIONS, p.cd),
     drive: p.d === undefined ? undefined : decode(DRIVES, p.d),
     body: p.b === undefined ? undefined : (decode(BODIES, p.b) as BodyType),
+    kind: p.kd === undefined ? undefined : decode(KINDS, p.kd),
     city: p.ct,
     state: p.st,
     loc: p.l,

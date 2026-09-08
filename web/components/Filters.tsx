@@ -6,6 +6,8 @@ import {
   REMOVABLE,
   QUICK_TOGGLES,
   BODY_TYPES,
+  KINDS,
+  LIST_VALUED,
   describeFilter,
   dropSpecFilters,
   splitValues,
@@ -673,7 +675,11 @@ export function FilterRail({
   // A toggle that is currently ON always stays, whatever it counts: the only
   // way to switch it off is for it to be there.
   const MARKET_SHARE = 0.95;
-  const quick = QUICK_TOGGLES.map((t) => ({ ...t, on: get(t.key) === t.value })).filter((t) => {
+  // A toggle on a list-valued key (lib/filters.ts LIST_VALUED) is pressed when
+  // its value is in the list: "SUVs" stays pressed under ?body=suv,truck.
+  const isOn = (key: string, value: string) =>
+    LIST_VALUED.has(key) ? splitValues(get(key)).includes(value) : get(key) === value;
+  const quick = QUICK_TOGGLES.map((t) => ({ ...t, on: isOn(t.key, t.value) })).filter((t) => {
     // The rebate toggle stays off the rail until the owner has written its
     // label (lib/incentives/copy.ts): a "[OWNER COPY]" button is not copy.
     // And it is Pro, like the deals toggle below (owner, 2026-09-03):
@@ -691,11 +697,19 @@ export function FilterRail({
   // two controls for the same state read as two different filters.
   // "deal" has one control, the Pro toggle below, the same way a pressed
   // quick toggle stands in for its chip; for a stranger it is inert anyway.
+  // On a list-valued key the pressed toggle stands in for ITS value only:
+  // Trucks picked in the panel under a pressed SUVs still gets a chip, and
+  // removing that chip takes back only Trucks. Otherwise ?body=suv,truck
+  // read on the rail as "SUVs" and the trucks were invisible.
   const active = REMOVABLE.flatMap((k) => {
     const v = get(k);
-    if (!v || quickOn.has(k) || k === "deal" || k === "rebate") return [];
-    const label = describeFilter(k, v);
-    return label ? [{ key: k, label }] : [];
+    if (!v || k === "deal" || k === "rebate") return [];
+    if (quickOn.has(k) && !LIST_VALUED.has(k)) return [];
+    const held = quick.filter((t) => t.on && t.key === k).map((t) => t.value);
+    const rest = held.length ? splitValues(v).filter((x) => !held.includes(x)) : null;
+    if (rest && !rest.length) return [];
+    const label = describeFilter(k, rest ? rest.join(",") : v);
+    return label ? [{ key: k, label, to: held.join(",") }] : [];
   });
 
   const heatPumpOn = get("heatPump") === "1";
@@ -743,7 +757,7 @@ export function FilterRail({
           <button
             key={f.key}
             type="button"
-            onClick={() => apply({ [f.key]: "" })}
+            onClick={() => apply({ [f.key]: f.to })}
             title={`Remove: ${f.label}`}
             className={`${BLOCK} ${HOVER} bg-vermilion text-paper`}
           >
@@ -782,7 +796,9 @@ export function FilterRail({
                 scoped,
                 ...(c ? { n: c.n, of: c.of } : {}),
               });
-              apply({ [t.key]: t.on ? "" : t.value });
+              // On a list-valued key the press adds or removes ITS value and
+              // leaves the panel's other picks (Trucks, say) in place.
+              apply({ [t.key]: LIST_VALUED.has(t.key) ? toggleValue(get(t.key), t.value) : t.on ? "" : t.value });
             }}
             className={`${BLOCK} ${HOVER} ${t.on ? TONE[t.tone].on : `bg-paper text-ink ${TONE[t.tone].off}`}`}
           >
@@ -1050,7 +1066,20 @@ export function FilterRail({
               options={BODY_TYPES.map((b) => ({ value: b.value, label: b.label }))}
               current={get("body")}
               pick={(v) => apply({ body: v })}
+              multi
               filterKey="body"
+              scoped={scoped}
+            />
+          </div>
+
+          <div className="col-span-2 md:col-span-1">
+            <PanelToggles
+              label="EV or PHEV"
+              hint="Only cars we can tell are battery-electric or plug-in hybrid are included when this is set"
+              options={KINDS.map((k) => ({ value: k.value, label: k.label }))}
+              current={get("kind")}
+              pick={(v) => apply({ kind: v })}
+              filterKey="kind"
               scoped={scoped}
             />
           </div>

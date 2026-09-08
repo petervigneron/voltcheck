@@ -171,10 +171,11 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
   // something two cards should be compared on. Silent for any cohort whose
   // name we could not place in NHTSA's own vocabulary.
   const battery = await batteryRisk(listing.make, listing.model, listing.year);
-  // Market trends (0061/0062): what a standard car of this cohort fetched by
-  // quarter and is asked by week. Rendered for everyone, blurred until the
-  // browser holds a pass (components/ProBlur.tsx) — owner, 2026-09-03. The
-  // VIN narrows it to this car's own cohort when that clears the floor.
+  // Market trends (0064/0072): what a standard car of this cohort is asked
+  // day by day, beside the site-wide index. Rendered for everyone, blurred
+  // until the browser holds a pass (components/ProBlur.tsx) — owner,
+  // 2026-09-03. The VIN narrows it to this car's own cohort when that clears
+  // the floor.
   const trend = await fetchPriceTrend({ make: listing.make, model: listing.model, year: listing.year, vin: listing.vin });
   // Both price signals, decided by the same gates as the browse grid
   // (lib/listings/peers.ts). vsSold (the Washington-title-fit) is computed
@@ -381,7 +382,16 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
           {trend?.asks && (
             <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5">
               <ProBlur label={proBenefitTitle("market-trends")}>
-                <PriceTrendCharts trend={trend} miles={listing.mileage} />
+                {/* This car's own asking price as a rule across the trend, and
+                    its name on the legend beside the site-wide line (owner,
+                    2026-09-07). A lease payment where a price should be is
+                    no price, so the rule follows the same gate as the headline. */}
+                <PriceTrendCharts
+                  trend={trend}
+                  miles={listing.mileage}
+                  price={hasRealPrice(listing) ? listing.priceUsd : undefined}
+                  subject={`${listing.year} ${listing.make} ${listing.model}`}
+                />
               </ProBlur>
             </div>
           )}

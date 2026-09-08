@@ -4,6 +4,7 @@ import type { EnrichedListing } from "./enrich";
 import type { Listing } from "./types";
 import { listingTiles } from "./tiles";
 import { bodyTypeOf } from "./bodyType";
+import { vehicleKind } from "./kind";
 import { hasRealPrice, priceCut } from "./price";
 import { askVsMarket, askVsSold, buildAskIndex, cohortIdentityMixed, fetchCompIndex } from "./comps";
 import { trimClaim } from "./trimClaim";
@@ -115,6 +116,9 @@ export async function buildCardIndex(): Promise<{ rows: CardRow[]; origin: FeedO
       // and 19% of live Ioniq 5s state no drivetrain at all (2026-09-01).
       drive: l.drive ?? e.row?.drive,
       body: bodyTypeOf(l),
+      // The same answer the tiles and the public API give (lib/listings/kind.ts),
+      // so the EV/PHEV filter can never disagree with the card it filters.
+      kind: vehicleKind(e),
       city: l.city,
       state: l.state,
       loc: await zipCoords(l.zip),
