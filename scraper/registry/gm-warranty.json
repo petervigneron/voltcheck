@@ -21519,5 +21519,175 @@
  "3GPKHWRM5SS506217": {
   "unavailable": true,
   "checkedAt": "2026-09-07"
+ },
+ "1G1FZ6S04P4203663": {
+  "coverage": {
+   "startDate": "2024-01-03",
+   "startMileage": 3,
+   "expiresDate": "2032-01-03",
+   "expiresMileage": 100003,
+   "inServiceDate": "2024-01-03",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-09-08"
+ },
+ "3GN7DLRPXRS268703": {
+  "coverage": {
+   "startDate": "2024-09-12",
+   "startMileage": 6,
+   "expiresDate": "2032-09-12",
+   "expiresMileage": 100006,
+   "inServiceDate": "2024-09-12",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-09-08"
+ },
+ "3GN7DSRR1RS281979": {
+  "coverage": {
+   "startDate": "2024-09-18",
+   "startMileage": 1,
+   "expiresDate": "2032-09-18",
+   "expiresMileage": 100001,
+   "inServiceDate": "2024-09-18",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-09-08"
+ },
+ "1G1FX6S05N4121153": {
+  "coverage": {
+   "startDate": "2022-06-28",
+   "startMileage": 3,
+   "expiresDate": "2030-06-28",
+   "expiresMileage": 100003,
+   "inServiceDate": "2022-06-28",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-09-08"
+ },
+ "3GNKDBRJ1RS292601": {
+  "coverage": {
+   "startDate": "2024-11-22",
+   "startMileage": 4,
+   "expiresDate": "2032-11-22",
+   "expiresMileage": 100004,
+   "inServiceDate": "2024-11-22",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-09-08"
+ },
+ "3GN7DSRPXRS252513": {
+  "coverage": {
+   "startDate": "2024-09-05",
+   "startMileage": 142,
+   "expiresDate": "2032-09-05",
+   "expiresMileage": 100142,
+   "inServiceDate": "2024-09-05",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-09-08"
+ },
+ "1GYKPPRL1RZ102680": {
+  "coverage": {
+   "startDate": "2026-05-15",
+   "startMileage": 6,
+   "expiresDate": "2034-05-15",
+   "expiresMileage": 100006,
+   "inServiceDate": "2026-05-15",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-09-08"
+ },
+ "3GNKDCRJ3RS175561": {
+  "coverage": {
+   "startDate": "2024-07-29",
+   "startMileage": 67,
+   "expiresDate": "2032-07-29",
+   "expiresMileage": 100067,
+   "inServiceDate": "2024-07-29",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-09-08"
+ },
+ "1G1FY6S02P4163439": {
+  "coverage": {
+   "startDate": "2023-06-30",
+   "startMileage": 1,
+   "expiresDate": "2031-06-30",
+   "expiresMileage": 100001,
+   "inServiceDate": "2023-06-30",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-09-08"
+ },
+ "1GT401EL0RU400365": {
+  "coverage": {
+   "startDate": "2024-09-16",
+   "startMileage": 24,
+   "expiresDate": "2032-09-16",
+   "expiresMileage": 100024,
+   "inServiceDate": "2024-09-16",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-09-08"
+ },
+ "3GPKHZRJXRS510300": {
+  "unavailable": true,
+  "checkedAt": "2026-09-08"
+ },
+ "3GPKHURM9RS530695": {
+  "unavailable": true,
+  "checkedAt": "2026-09-08"
+ },
+ "3GPKHWRM5SS511174": {
+  "unavailable": true,
+  "checkedAt": "2026-09-08"
+ },
+ "3GPKHWRM5SS500305": {
+  "unavailable": true,
+  "checkedAt": "2026-09-08"
+ },
+ "3GPKHWRM4TS508901": {
+  "unavailable": true,
+  "checkedAt": "2026-09-08"
+ },
+ "3GPKHWRM4TS509305": {
+  "unavailable": true,
+  "checkedAt": "2026-09-08"
+ },
+ "1G1FX6S09P4168494": {
+  "coverage": {
+   "startDate": "2023-07-25",
+   "startMileage": 3,
+   "expiresDate": "2031-07-25",
+   "expiresMileage": 100003,
+   "inServiceDate": "2023-07-25",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-09-08"
+ },
+ "3GPKHZRJ5SS508427": {
+  "unavailable": true,
+  "checkedAt": "2026-09-08"
+ },
+ "1G1FW6S09H4141543": {
+  "coverage": {
+   "startDate": "2023-02-14",
+   "startMileage": 65631,
+   "expiresDate": "2031-02-14",
+   "expiresMileage": 165631,
+   "inServiceDate": "2017-02-27",
+   "fromReplacement": true
+  },
+  "campaign": {
+   "packReplaced": true,
+   "packReplacedDate": "2023-02-14",
+   "odometerAtReplacement": 65631,
+   "gmProgramNumber": "N202311731"
+  },
+  "checkedAt": "2026-09-08"
+ },
+ "3GPKHWRM4RS503044": {
+  "unavailable": true,
+  "checkedAt": "2026-09-08"
  }
 }
