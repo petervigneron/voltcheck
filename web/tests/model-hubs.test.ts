@@ -148,3 +148,44 @@ test("every hub appears in the index even with no live cars", () => {
     assert.ok(index.hubs[hubIndexKey(h)], `${hubPath(h)} is missing from the index`);
   }
 });
+
+// The hub numbers (hubStats). Written against the house rule that an
+// aggregate is a claim: a median that would rest on fewer than STATS_MIN cars
+// is left out, not printed, and an unconfirmed price never enters one.
+test("hub stats: a median needs STATS_MIN confirmed prices, and unconfirmed prices do not count", () => {
+  const hub = MODEL_HUBS.find((h) => h.modelSlug === "ev6" && h.makeSlug === "kia")!;
+  const four = Array.from({ length: 4 }, (_, i) => card("Kia", "EV6", { year: 2023, priceUsd: 30000 + i * 1000 }));
+  const fake = card("Kia", "EV6", { year: 2023, priceUsd: 1, realPrice: false });
+  const thin = buildHubIndex([...four, fake], "2026-09-07").hubs[hubIndexKey(hub)]!.stats!;
+  assert.equal(thin.years[0].n, 5);
+  assert.equal(thin.years[0].priced, 4, "the unconfirmed price is not a priced car");
+  assert.equal(thin.years[0].medianUsd, undefined, "four prices is below the floor");
+
+  const five = [...four, card("Kia", "EV6", { year: 2023, priceUsd: 50000 })];
+  const ok = buildHubIndex([...five, fake], "2026-09-07").hubs[hubIndexKey(hub)]!.stats!;
+  assert.equal(ok.years[0].medianUsd, 32000, "the median of 30,31,32,33,50k — the $1 fake excluded");
+  assert.equal(ok.asOf, "2026-09-07");
+});
+
+test("hub stats: configs and heat pump are floored too, and years come oldest first", () => {
+  const hub = MODEL_HUBS.find((h) => h.modelSlug === "ev6" && h.makeSlug === "kia")!;
+  const rows = [
+    ...Array.from({ length: 5 }, () => card("Kia", "EV6", { year: 2025, kwh: 84, rangeMi: 310, heatPump: "yes", state: "CA" })),
+    ...Array.from({ length: 2 }, () => card("Kia", "EV6", { year: 2022, kwh: 77, rangeMi: 274, heatPump: "no", state: "WA" })),
+  ];
+  const s = buildHubIndex(rows, "2026-09-07").hubs[hubIndexKey(hub)]!.stats!;
+  assert.deepEqual(s.years.map((y) => y.year), [2022, 2025]);
+  assert.deepEqual(s.configs, [{ kwh: 84, rangeMi: 310, n: 5 }], "the two-car config is below the floor");
+  assert.deepEqual(s.heatPump, { yes: 5, no: 2 });
+  assert.deepEqual(s.states, [{ state: "CA", n: 5 }, { state: "WA", n: 2 }]);
+  assert.equal(s.byCondition.new + s.byCondition.used + s.byCondition.certified, 0, "no condition given, none counted");
+});
+
+test("hub stats: a hub with no cars still has stats, all empty", () => {
+  const index = buildHubIndex([], "2026-09-07");
+  for (const e of Object.values(index.hubs)) {
+    assert.equal(e.stats?.years.length, 0);
+    assert.equal(e.stats?.heatPump, undefined);
+  }
+  assert.equal(index.asOf, "2026-09-07");
+});

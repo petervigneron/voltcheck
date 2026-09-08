@@ -2,6 +2,7 @@ import { feedWalkFailedRecently } from "@/lib/listings/db";
 import { allListingsWithOrigin } from "@/lib/listings/source";
 import { FACT_SHEETS } from "@/lib/facts/registry";
 import { MODEL_HUBS, hubPath } from "@/lib/listings/modelHubs";
+import { hubIndexAsOf } from "@/lib/listings/hubSource";
 import { BASE, SITEMAP_SHARDS, type SitemapEntry, renderUrlset, sitemapShardOf } from "@/lib/sitemap";
 
 // The listing sitemap, one shard per file at /sitemap/0.xml … /sitemap/11.xml
@@ -47,12 +48,22 @@ export function generateStaticParams(): { shard: string }[] {
   return [];
 }
 
-function staticRoutes(now: Date): SitemapEntry[] {
+// lastmod is a claim about when a page's content changed, and it is only
+// worth making where the date is real. Until 2026-09-07 every static route,
+// /ev, all 246 hubs and ~70% of the listings (those with no listed-on date)
+// carried the render timestamp — 9,648 of 13,778 URLs in shard 0 had the same
+// lastmod to the millisecond. Google says it stops trusting lastmod when it is
+// the fetch time, and it is lastmod that decides which of a sitemap's URLs
+// get crawled first; on a domain whose 12 shards had sat unfetched for five
+// days, that was a reason handed to Google to discount them. So: a fact sheet
+// carries its own dateModified, a hub carries the day its numbers were
+// computed, a listing carries listed-on, and everything else carries nothing.
+function staticRoutes(hubsAsOf: Date | undefined): SitemapEntry[] {
   return [
-    { url: `${BASE}/`, lastModified: now, changeFrequency: "daily", priority: 1 },
-    { url: `${BASE}/vin`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
-    { url: `${BASE}/bot`, lastModified: now, changeFrequency: "yearly", priority: 0.2 },
-    { url: `${BASE}/facts`, lastModified: now, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${BASE}/`, changeFrequency: "daily", priority: 1 },
+    { url: `${BASE}/vin`, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${BASE}/bot`, changeFrequency: "yearly", priority: 0.2 },
+    { url: `${BASE}/facts`, changeFrequency: "monthly", priority: 0.5 },
     // Each fact sheet's lastModified tracks its audit record's last-checked
     // date (lib/facts/registry.ts dateModified), not build time — same
     // freshness signal its FAQPage JSON-LD carries.
@@ -67,10 +78,10 @@ function staticRoutes(now: Date): SitemapEntry[] {
     // land on, and it is the only crawlable route into the listing corpus —
     // every one of which was an orphan until these existed. Daily, because a
     // hub's cars turn over with the feed.
-    { url: `${BASE}/ev`, lastModified: now, changeFrequency: "daily", priority: 0.7 },
+    { url: `${BASE}/ev`, lastModified: hubsAsOf, changeFrequency: "daily", priority: 0.7 },
     ...MODEL_HUBS.map((h) => ({
       url: `${BASE}${hubPath(h)}`,
-      lastModified: now,
+      lastModified: hubsAsOf,
       changeFrequency: "daily" as const,
       priority: 0.7,
     })),
@@ -127,7 +138,6 @@ export async function GET(_req: Request, { params }: { params: Promise<{ shard: 
     );
   }
 
-  const now = new Date();
   // Real inventory only: a live listing's id is its 17-character lowercase
   // VIN, so the sitemap never points a crawler at a URL that vanishes as
   // coverage grows.
@@ -154,7 +164,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ shard: 
     .sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))
     .map((l) => ({
       url: `${BASE}/listing/${l.id}`,
-      lastModified: l.listedOn ? new Date(l.listedOn) : now,
+      lastModified: l.listedOn ? new Date(l.listedOn) : undefined,
       changeFrequency: "weekly" as const,
       priority: 0.7,
     }));
@@ -163,7 +173,10 @@ export async function GET(_req: Request, { params }: { params: Promise<{ shard: 
   // the 246 model hubs — ride in shard 0 so they are always in a file a
   // crawler is being pointed at, and so they appear once rather than twelve
   // times.
-  const entries = n === 0 ? [...staticRoutes(now), ...listingRoutes] : listingRoutes;
+  // Only shard 0 carries the static routes, so only shard 0 pays for the
+  // hub artifact (one cached fetch, shared with the hub pages' own memo).
+  const entries =
+    n === 0 ? [...staticRoutes(await hubIndexAsOf().catch(() => undefined)), ...listingRoutes] : listingRoutes;
   return new Response(renderUrlset(entries, `sitemap/${n}.xml`), {
     headers: { "Content-Type": "application/xml" },
   });

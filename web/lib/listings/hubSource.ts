@@ -92,6 +92,14 @@ export async function hubEntry(key: string): Promise<HubEntry> {
   return index.hubs[key] ?? { total: 0, cars: [] };
 }
 
+/** The date the hub numbers were computed, or undefined for an artifact that predates them. */
+export async function hubIndexAsOf(): Promise<Date | undefined> {
+  const index = await loadHubIndex();
+  if (!index.asOf) return undefined;
+  const d = new Date(`${index.asOf}T00:00:00.000Z`);
+  return Number.isFinite(d.getTime()) ? d : undefined;
+}
+
 /** Every hub's car count, for the /ev index. */
 export async function hubTotals(): Promise<Record<string, number>> {
   const index = await loadHubIndex();
