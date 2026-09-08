@@ -149,7 +149,9 @@ test("a real SRP counts, with cards or with the vendor's own marks", () => {
 import {
   dealerInspireFuelSrpUrl,
   dealerInspireFuelIsEv,
+  dealerInspireRotate,
   DEALERINSPIRE_EV_FUELTYPES,
+  DEALERINSPIRE_ROTATE_STRIDE,
   pullDealerInspire,
 } from "../lib/platforms/dealerinspire.mjs";
 
@@ -208,11 +210,14 @@ function fakeRooftop() {
     { vin: "5YJ3E1EB8NF359524", slug: "used-2022-tesla-model-3", fuel: "Electric", page: 3 }, // unknown spelling, walk-only
   ];
   const newEv = { vin: "3FMTK1R46TMA23542", slug: "new-2026-ford-mustang-mach-e-select-rwd", fuel: "Electric Fuel System", page: 1 };
+  // Three more new Mach-Es: in the new list, and ALSO the "you may also like"
+  // block a filtered used page carries — a different one per page, as served.
+  const blockEvs = ["3FMTK1R48TMA11408", "3FMTK1R49TMA06394", "3FMTK1R45TMA22334"].map((vin, i) => ({ vin, slug: `new-2026-ford-mustang-mach-e-select-${i}`, fuel: "Electric Fuel System", page: 1 }));
   const filler = (i) => ({ vin: `1FA6P8TH${String(i).padStart(9, "0")}`.slice(0, 17), slug: `used-2019-ford-mustang-gt-${i}`, fuel: "Gasoline Fuel" });
   const usedPages = [1, 2, 3].map((p) => [...evs.filter((e) => e.page === p), ...Array.from({ length: 18 }, (_, i) => filler(p * 100 + i))]);
-  const newPages = [[newEv, ...Array.from({ length: 19 }, (_, i) => ({ ...filler(900 + i), slug: `new-2026-ford-bronco-${i}` }))]];
-  const featured = featuredCard("1FTBW1XMXTKA60009", "new-2026-ford-e-transit-cargo-van");
-  const page = (cars, path, q, p, last) => `<html><body>${featured}${cars.map((c) => blobCard(c.vin, c.slug, c.fuel)).join("")}${last ? "" : `<a href="${path}${q ? q + "&amp;" : "?"}_p=${p + 1}">Next</a>`}</body></html>`;
+  const newPages = [[newEv, ...blockEvs, ...Array.from({ length: 16 }, (_, i) => ({ ...filler(900 + i), slug: `new-2026-ford-bronco-${i}` }))]];
+  const featured = (p, filtered) => featuredCard("1FTBW1XMXTKA60009", "new-2026-ford-e-transit-cargo-van") + (filtered && blockEvs[p - 1] ? featuredCard(blockEvs[p - 1].vin, blockEvs[p - 1].slug) : "");
+  const page = (cars, path, q, p, last) => `<html><body>${featured(p, Boolean(q))}${cars.map((c) => blobCard(c.vin, c.slug, c.fuel)).join("")}${last ? "" : `<a href="${path}${q ? q + "&amp;" : "?"}_p=${p + 1}">Next</a>`}</body></html>`;
   const vdp = (vin) => `<html><script type="application/ld+json">{"@context":"https://schema.org/","@type":["Product","Car"],"vehicleIdentificationNumber":"${vin}","offers":{"@type":"Offer","price":"36485","url":"${origin}/inventory/x-${vin.toLowerCase()}/"},"mileageFromOdometer":{"value":"63826"}}</script></html>`;
   const loads = [];
   const fetch = async (url) => {
@@ -239,40 +244,69 @@ function fakeRooftop() {
     if (m) return { status: 200, body: vdp(m[1].toUpperCase()) };
     return { status: 404, body: "" };
   };
-  return { origin, fetch, loads, evs, newEv };
+  return { origin, fetch, loads, evs, newEv, blockEvs };
 }
 
 test("fast path: under a tight budget every EV the dealer's fuel field names is read before the walk, and the pull says partial", async () => {
-  const { origin, fetch, loads, evs, newEv } = fakeRooftop();
-  // homepage 1 + filtered used 2 pages + 3 VDPs + filtered new 1 + 1 VDP = 8 loads; the walk gets nothing.
-  const r = await pullDealerInspire(origin, { maxLoads: 8, fetch });
+  const { origin, fetch, loads, evs, newEv, blockEvs } = fakeRooftop();
+  // homepage 1 + filtered used 2 pages + filtered new 2 + the 7 real results'
+  // VDPs = 12 loads; the walk gets nothing. (The block's E-Transit carries no
+  // EV word the net knows and no blob, so it is not a candidate at all.)
+  const r = await pullDealerInspire(origin, { maxLoads: 12, fetch, day: 0 });
   const vins = r.vehicles.map((v) => v.vehicleIdentificationNumber).sort();
-  assert.deepEqual(vins, [...evs.filter((e) => DEALERINSPIRE_EV_FUELTYPES.includes(e.fuel)).map((e) => e.vin), newEv.vin].sort());
-  assert.ok(vins.includes("1FTVW1EV3NWG10011"), "the page-three Lightning is read first, not last");
-  assert.equal(r.fast, 4);
+  assert.deepEqual(vins, [...evs.filter((e) => DEALERINSPIRE_EV_FUELTYPES.includes(e.fuel)).map((e) => e.vin), newEv.vin, ...blockEvs.map((b) => b.vin)].sort());
+  assert.ok(vins.includes("1FTVW1EV3NWG10011"), "the page-three Lightning is read before any block card");
+  assert.equal(r.fast, 7, "the seven real results; the block's E-Transit is no candidate");
   assert.equal(r.ok, true);
   assert.equal(r.complete, false, "the walk did not run, so nothing may be delisted");
   assert.match(r.why, /stopped at the crawl's time cap or page budget/);
-  // Order of spend: homepage, then each filtered list followed by its cars —
-  // never an unfiltered page before a car.
-  assert.equal(loads.length, 8);
-  assert.match(loads[1], /_dFR/);
+  // Order of spend: homepage, the filtered lists, then cars — never an
+  // unfiltered page before a car, and the block's E-Transit never opened.
+  assert.equal(loads.length, 12);
+  assert.ok(loads.slice(1, 5).every((l) => /_dFR/.test(l)), loads.join("\n"));
   assert.ok(loads.some((l) => /_dFR.*_p=2/.test(l)), "the filtered list's second page is read");
-  assert.ok(loads.slice(1).every((u) => /_dFR/.test(u) || /\/inventory\//.test(u)), loads.join("\n"));
+  assert.ok(loads.slice(5).every((u) => /\/inventory\//.test(u)), loads.join("\n"));
+  assert.ok(!loads.some((u) => /1ftbw1xmxtka60009/i.test(u)), "the block card is never opened");
+});
+
+test("rotation: a day stride walks a capped list across visits; the block cards never rotate ahead of the real results", async () => {
+  const cards = Array.from({ length: 100 }, (_, i) => ({ vin: String(i) }));
+  assert.equal(dealerInspireRotate(cards, 0)[0].vin, "0");
+  assert.equal(dealerInspireRotate(cards, 1)[0].vin, String(DEALERINSPIRE_ROTATE_STRIDE));
+  assert.equal(dealerInspireRotate(cards, 2)[0].vin, String((2 * DEALERINSPIRE_ROTATE_STRIDE) % 100));
+  assert.equal(dealerInspireRotate(cards, 3).length, 100);
+  assert.deepEqual(dealerInspireRotate([{ vin: "x" }], 7), [{ vin: "x" }]);
+  // Day 1 on the fake rooftop: the 7 real results start from card 40 % 7 = 5,
+  // and the one VDP the budget allows is a real result, never the block's.
+  const { origin, fetch, loads, evs, newEv, blockEvs } = fakeRooftop();
+  await pullDealerInspire(origin, { maxLoads: 6, fetch, day: 1 });
+  const first = loads.filter((u) => /\/inventory\//.test(u));
+  assert.equal(first.length, 1);
+  const realVins = [...evs.filter((e) => DEALERINSPIRE_EV_FUELTYPES.includes(e.fuel)), newEv, ...blockEvs].map((c) => c.vin.toLowerCase());
+  assert.ok(realVins.some((v) => first[0].includes(v)), first[0]);
+  assert.ok(!/1ftbw1xmxtka60009/i.test(first[0]));
 });
 
 test("walk: with budget to spare the unfiltered lists still run, catch the EV the facet could not name, and report its spelling", async () => {
-  const { origin, fetch, loads, evs, newEv } = fakeRooftop();
-  const r = await pullDealerInspire(origin, { maxLoads: 60, fetch });
+  const { origin, fetch, loads, evs, newEv, blockEvs } = fakeRooftop();
+  const r = await pullDealerInspire(origin, { maxLoads: 60, fetch, day: 0 });
   const vins = r.vehicles.map((v) => v.vehicleIdentificationNumber).sort();
-  assert.deepEqual(vins, [...evs.map((e) => e.vin), newEv.vin].sort());
+  assert.deepEqual(vins, [...evs.map((e) => e.vin), newEv.vin, ...blockEvs.map((b) => b.vin)].sort());
   assert.equal(r.complete, true);
-  assert.equal(r.fast, 4);
-  assert.equal(r.candidates, 5);
+  assert.equal(r.fast, 7);
+  assert.equal(r.candidates, 8);
   assert.equal(r.found, evs.length + 3 * 18 + 20 + 1, "the whole lot plus the featured card");
   assert.ok(r.notes.some((n) => /not in the facet list: Electric —/.test(n)), r.notes.join(" | "));
   // Each VDP opened once, whichever path found it first.
   const vdpLoads = loads.filter((u) => /\/inventory\//.test(u));
   assert.equal(new Set(vdpLoads).size, vdpLoads.length);
-  assert.equal(vdpLoads.length, 5);
+  assert.equal(vdpLoads.length, 8);
+});
+
+test("walk: a rooftop that fits the budget still completes — the fast path's loads do not halve what the walk gets", async () => {
+  const { origin, fetch } = fakeRooftop();
+  // home 1 + filtered 4 + 7 VDPs + walk 4 pages + the walk's one VDP = 17 loads exactly.
+  const r = await pullDealerInspire(origin, { maxLoads: 17, fetch, day: 0 });
+  assert.equal(r.complete, true, r.why);
+  assert.equal(r.requests, 17);
 });

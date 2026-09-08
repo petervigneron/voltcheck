@@ -82,11 +82,36 @@
 //     evidence and never from a guess.
 //
 // Order of spend, so the budget goes to cars first: homepage, the filtered
-// used and new lists (usually one page each), their VDPs, then the plain
-// used and new walks under the half-budget reserve with the title/WMI/blob
-// net and their VDPs until the budget ends. A big lot still reports partial
-// (no delisting), as before — but with every EV the dealer's own fuel field
-// names already read.
+// used and new lists (a page or three each), the VDPs of their REAL results,
+// then the VDPs of the block cards those pages carried, then the plain used
+// and new walks with the title/WMI/blob net and their VDPs until the budget
+// ends. A big lot still reports partial (no delisting), as before — but with
+// every EV the dealer's own fuel field names already read.
+//
+// Real results first, measured the hard way on 2026-09-08 03:45 (run
+// 34184195495): the filtered pages' "you may also like" block is not one
+// fixed set but a different handful of new Mach-Es on every page, each a
+// candidate by title, and read in page order they came before page two's
+// results. The Lightning on page three was the 50th load; the runner's cap
+// fell at 48. The block cars are in the new list anyway.
+//
+// The read order ROTATES by day. A group site's filtered list can be the
+// size of a small lot — germain.com answered 364 used plug-ins, victory
+// automotivegroup.com 455 — and a visit reads ~40-55 VDPs before the cap.
+// In a fixed order every visit re-reads the same first fifty and the rest
+// are never reached; rotated by a day-stride of 40 (about one visit's worth
+// of VDPs on a shared runner) each visit starts where the last one roughly
+// left off and a 364-car list is covered in nine. Cars not reached keep
+// their last read (the pull is partial, nothing delists); recheck verifies
+// liveness on its own clock.
+//
+// The walk gets the FULL remaining budget once the fast path has read cars:
+// the half-budget reserve below exists to keep VDP loads back from a walk
+// that used to run first, and with the cars already read it only starved
+// the walk — kerbeckcadillacs.com, complete in 38 loads before, came back
+// partial at 46 with its 29 EVs all read and its 9 walk pages unfinished.
+// The reserve still applies when the fast path found nothing (a rooftop
+// whose facet answers zero), because then the walk is the only path.
 import { browserFetch } from "../browser.mjs";
 import { isRideMotive, rideMotiveConfig, pullRideMotiveApi, countRideMotiveApi } from "./ridemotive.mjs";
 import { extractVehicles } from "../jsonld.mjs";
@@ -355,7 +380,18 @@ async function motiveConfigByBrowser(origin, fetch = browserFetch) {
   return { config: rideMotiveConfig(home.body), requests: 1 };
 }
 
-export async function pullDealerInspire(origin, { srps = DEALERINSPIRE_SRPS, deadlineAt = 0, maxLoads = 0, fetch = browserFetch } = {}) {
+/** The fast path's read order for one visit: the list rotated by a day
+ *  stride, so a capped lot is covered across visits (see the header). `day`
+ *  is injectable for the test. */
+export const DEALERINSPIRE_ROTATE_STRIDE = 40;
+export function dealerInspireRotate(cards, day = Math.floor(Date.now() / 86_400_000)) {
+  const n = cards.length;
+  if (n < 2) return cards;
+  const k = ((day * DEALERINSPIRE_ROTATE_STRIDE) % n + n) % n;
+  return [...cards.slice(k), ...cards.slice(0, k)];
+}
+
+export async function pullDealerInspire(origin, { srps = DEALERINSPIRE_SRPS, deadlineAt = 0, maxLoads = 0, fetch = browserFetch, day = undefined } = {}) {
   const limits = deadlineAt || maxLoads ? { deadlineAt, maxLoads } : null;
   const motive = await motiveConfigByBrowser(origin, fetch);
   if (motive.unavailable) return { ok: false, complete: false, found: 0, candidates: 0, vehicles: [], requests: 1, vdpFailures: 0, why: "browser_unavailable" };
@@ -407,26 +443,34 @@ export async function pullDealerInspire(origin, { srps = DEALERINSPIRE_SRPS, dea
   };
   const gone = () => ({ ok: false, complete: false, found: seen.size, candidates, vehicles, requests, vdpFailures, why: "browser_unavailable" });
 
-  // 1. THE FAST PATH: each list filtered to the electrified fuel facet, then
-  //    those cars' VDPs. Every real result here is a candidate by the
-  //    dealer's own field; the featured block (no blob) goes through the net.
-  //    Under the full limits, not the walk's reserve: these loads ARE the
-  //    cars.
+  // 1. THE FAST PATH: each list filtered to the electrified fuel facet. The
+  //    real results (blob-carrying cards) are candidates by the dealer's own
+  //    field and are read first, in an order that rotates by day; the block
+  //    cards the pages carried go through the net and are read after them.
+  //    Under the full limits, not the walk's reserve: these loads ARE the cars.
   let fast = 0;
+  const real = [];
+  const block = new Map(); // by VIN: a block card is promoted when its real result turns up in the other list
   for (const path of srps) {
     const r = await readSrp(origin, path, { limits, loadsSoFar: requests, startUrl: dealerInspireFuelSrpUrl(origin, path), fetch });
     requests += r.requests;
     if (r.status === "browser_unavailable") return gone();
     if (r.exhausted) stopped = true;
-    const cands = [];
     for (const c of r.cards) {
+      if (c.result && block.has(c.vin)) {
+        block.delete(c.vin);
+        real.push(c);
+        continue;
+      }
       if (seen.has(c.vin)) continue;
       seen.add(c.vin);
-      if (c.result || dealerInspireIsCandidate(c)) cands.push(c);
+      if (c.result) real.push(c);
+      else if (dealerInspireIsCandidate(c)) block.set(c.vin, c);
     }
-    fast += cands.length;
-    if (!(await readVdps(cands))) return gone();
   }
+  fast = real.length + block.size;
+  if (!(await readVdps(dealerInspireRotate(real, day)))) return gone();
+  if (!(await readVdps([...block.values()]))) return gone();
 
   // 2. THE WALK: both lists unfiltered under the half-budget reserve, the
   //    title/WMI/blob net, their VDPs. This is what completeness means; the
@@ -434,7 +478,7 @@ export async function pullDealerInspire(origin, { srps = DEALERINSPIRE_SRPS, dea
   let complete = true;
   let anySrp = false;
   const srpStatus = [];
-  const srpLimits = srpLoadLimits(limits);
+  const srpLimits = fast ? limits : srpLoadLimits(limits);
   const unknownFuel = new Set();
   for (const path of srps) {
     const r = await readSrp(origin, path, { limits: srpLimits, loadsSoFar: requests, fetch });
