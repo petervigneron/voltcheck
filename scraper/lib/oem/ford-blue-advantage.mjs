@@ -69,6 +69,22 @@
 // until every band fits. A band whose halves both equal the parent is a
 // filter being ignored: it is read once and its tail noted, never recursed.
 //
+// NEW as well (2026-09-07, same day): listingType=NEW on the proxy is Ford's
+// new-car inventory — 4,116 BEVs + 348 PHEVs national, the stock ford.com's
+// own Akamai-walled locator has kept from a Node fetch since August. Of 36
+// sampled new VINs, 25 were already live through dealer crawls, so ~1,300
+// net-new. Owner: "build for ford". New slices are big (AWD4WD/2026 = 2,006,
+// RWD/2026 = 1,761) and bisect on price like the used ones; new records carry
+// displayPrice on every row, salePrice on 88% and msrp on 97%, so msrp is the
+// last rung of the ladder for NEW records only — a used car with an msrp and
+// no asking price must stay priceless, not publish its original sticker.
+//
+// NOT other makes. The same proxy answers makeCode=TESLA (11,151 used, ~34%
+// net-new) and no makeCode at all (44,947 used / 52,807 new BEVs — Autotrader's
+// whole EV market). Owner, 2026-09-07: "That feels more like a hack than a
+// permitted scrape." Ford's robots allow the path for Ford's marketplace, not
+// as a door to a competitor's inventory. Do not build it; do not re-propose.
+//
 // Unlike the OEM sweeps (BMW/GM/Genesis), this is a third-party marketplace with
 // no delisting authority over the dealers whose cars it lists — those dealers
 // also live on their own domains that VoltCheck crawls directly. So this lane
@@ -92,10 +108,11 @@ export const FORD_BLUE_ADVANTAGE = {
   // slices. Ford BEVs are AWD or RWD only; FWD/4X2 return zero today but are
   // cheap insurance if Ford adds a front-drive EV.
   drives: ["AWD4WD", "RWD", "FWD", "4X2"],
-  // Certified alone answered ~1,200 on 2026-09-07 and used ~4,150 more, so a
-  // night that collects under this many has lost the USED facet (or the proxy
-  // walled) — loud on purpose.
-  minExpected: 1500,
+  // Certified answered ~1,200 on 2026-09-07, used ~4,150 and new ~4,450, so
+  // a night under this many has lost most of the lane (proxy walled or moved);
+  // a single facet dying is caught by the per-facet zero check — loud on
+  // purpose either way.
+  minExpected: 3000,
 };
 
 // recheck.mjs does NOT skip this: coverage is a truncated sample (never drives
@@ -163,6 +180,7 @@ function toRecord(l, sweep) {
   // VDP (vs a dealer homepage), which is what recheck can verify.
   const vdp = httpsUrl(l.owner?.website?.href);
   const isVdp = Boolean(l.owner?.website?.deepLink && vdp);
+  const listingType = String(l.listingType ?? "").toUpperCase();
   return {
     vin,
     year,
@@ -172,6 +190,9 @@ function toRecord(l, sweep) {
     ...pickTaggedPrice("ford-blue-advantage", [
       ["salePrice", num(l.pricingDetail?.salePrice)],
       ["displayPrice", num(l.pricingDetail?.displayPrice)],
+      // Sticker only for a NEW car with nothing advertised; a used car's msrp
+      // is its original price, never its asking price.
+      ["msrp", listingType === "NEW" ? num(l.pricingDetail?.msrp) : undefined],
     ]),
     mileage: num(l.mileage?.value),
     driveLine: drive(l.driveType?.name),
@@ -183,8 +204,8 @@ function toRecord(l, sweep) {
     zip,
     // The record's own listingType, not the sweep's: a USED page lists certified
     // cars as CERTIFIED too, and the marketplace is the authority on the flag.
-    certified: String(l.listingType ?? "").toUpperCase() === "CERTIFIED",
-    condition: String(l.listingType ?? "").toUpperCase() === "CERTIFIED" ? "certified" : "used",
+    certified: listingType === "CERTIFIED",
+    condition: listingType === "CERTIFIED" ? "certified" : listingType === "NEW" ? "new" : "used",
     imageUrl: imgs[0],
     images: imgs,
     // Real dealer VDP for click-through + recheck liveness; else the FBA search.
@@ -225,8 +246,8 @@ const FUEL_SWEEPS = [
 ];
 // Certified first: a VIN the certified sweep collected keeps that record, and
 // the USED sweep (whose pages restate certified cars as CERTIFIED anyway) only
-// adds VINs the first sweep did not see.
-const LISTING_TYPES = ["CERTIFIED", "USED"];
+// adds VINs the first sweep did not see. NEW is disjoint from both.
+const LISTING_TYPES = ["CERTIFIED", "USED", "NEW"];
 
 // Read one query to the window's end, folding records into byVin. Returns the
 // number of listings the server paged out (not the total it reported).
@@ -295,7 +316,7 @@ async function pullSlice(sweep, lt, dg, year, byVin, report, api) {
   return total;
 }
 
-// Pull the marketplace's national used Ford EV inventory — certified and not —
+// Pull the marketplace's national Ford EV inventory — certified, used and new —
 // over listingType x fuel x driveGroup x year, price-bisected where a slice
 // outgrows the window. Returns a crawl.mjs-shaped report. Always
 // truncated:true — a marketplace snapshot must not drive delisting (see the
@@ -309,7 +330,7 @@ export async function pullFordBlueAdvantage({ log = () => {}, api = apiGet } = {
   // back further than any Mach-E; empty year-slices cost one request each.
   for (let y = 2016; y <= thisYear + 1; y++) years.push(y);
 
-  const reported = { CERTIFIED: 0, USED: 0 };
+  const reported = { CERTIFIED: 0, USED: 0, NEW: 0 };
   for (const lt of LISTING_TYPES) {
     for (const sweep of FUEL_SWEEPS) {
       for (const dg of FORD_BLUE_ADVANTAGE.drives) {
@@ -325,7 +346,12 @@ export async function pullFordBlueAdvantage({ log = () => {}, api = apiGet } = {
   report.vehiclePages = report.fetched;
   const phevN = report.evs.filter((r) => r.evKind === "PHEV").length;
   const certN = report.evs.filter((r) => r.certified).length;
-  report.notes.push(`national used count ${reported.USED} (certified facet ${reported.CERTIFIED}); ${byVin.size} unique collected: ${byVin.size - phevN} BEV + ${phevN} PHEV, ${certN} certified`);
+  const newN = report.evs.filter((r) => r.condition === "new").length;
+  report.notes.push(`national counts: used ${reported.USED} (certified facet ${reported.CERTIFIED}), new ${reported.NEW}; ${byVin.size} unique collected: ${byVin.size - phevN} BEV + ${phevN} PHEV, ${certN} certified, ${newN} new`);
+  // Each facet answered thousands on 2026-09-07; one answering nothing while
+  // the others still do is the marketplace withdrawing that facet, and the
+  // overall floor below would not notice.
+  for (const lt of LISTING_TYPES) if (!reported[lt] && !report.errors.length) report.errors.push(`listingType=${lt} reported zero cars nationally — facet withdrawn or renamed`);
   // Never certify complete: marketplace snapshot with a browsable-window cap. A
   // hard failure (endpoint moved / Akamai now walls the proxy / the USED facet
   // gone) shows as too few collected — surface it so a dead lane doesn't pass

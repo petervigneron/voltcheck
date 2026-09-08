@@ -8,14 +8,14 @@ import { pullFordBlueAdvantage, readBand } from "../lib/oem/ford-blue-advantage.
 
 const WINDOW = 400;
 
-function car(i, { year, dg, lt, price, group = "ELE" }) {
+function car(i, { year, dg, lt, price, group = "ELE", msrp }) {
   const vin = `1FTVW1EV${String(i).padStart(9, "0")}`.slice(0, 17);
   return {
     vin, year, listingType: lt, modelCode: group === "ELE" ? "FORDMACHE" : "ESCAPE",
     model: { name: "Mustang Mach-E" }, trim: { name: "Premium" },
     fuelType: group === "ELE" ? { code: "E", group: "Electric" } : { code: "B", group: "Plug-in Hybrid: Gas/Electric" },
     driveType: { name: dg === "AWD4WD" ? "AWD" : "RWD" },
-    pricingDetail: price == null ? { noPriceLabel: "Contact Dealer For Price" } : { salePrice: price },
+    pricingDetail: { ...(price == null ? { noPriceLabel: "Contact Dealer For Price" } : { salePrice: price }), ...(msrp ? { msrp } : {}) },
     mileage: { value: "12,345" },
     owner: { name: "Test Ford", website: { href: `https://test-ford.example/inventory/${vin}`, deepLink: true }, location: { address: { city: "Buena Park", state: "CA", zip: "90621" } } },
     images: { primary: 0, sources: [] },
@@ -34,9 +34,15 @@ function fakeApi(cars, { ignorePrice = false } = {}) {
     const y = Number(p.get("startYear"));
     const lo = p.has("minPrice") ? Number(p.get("minPrice")) : null, hi = p.has("maxPrice") ? Number(p.get("maxPrice")) : null;
     let hits = cars.filter((c) => c._group === group && c._dg === dg && c.year === y);
-    // USED pages carry certified cars too, restated as CERTIFIED.
+    // USED pages carry certified cars too, restated as CERTIFIED; NEW is its own set.
     if (lt === "CERTIFIED") hits = hits.filter((c) => c.listingType === "CERTIFIED");
-    if (!ignorePrice && lo != null) hits = hits.filter((c) => c.pricingDetail.salePrice != null && c.pricingDetail.salePrice >= lo && c.pricingDetail.salePrice <= hi);
+    else if (lt === "NEW") hits = hits.filter((c) => c.listingType === "NEW");
+    else hits = hits.filter((c) => c.listingType !== "NEW");
+    // The marketplace bands on the price it displays; a new car with only a
+    // sticker displays the sticker, a used car with only a sticker displays
+    // "Contact Dealer" and falls outside every band.
+    const shown = (c) => c.pricingDetail.salePrice ?? (c.listingType === "NEW" ? c.pricingDetail.msrp : null);
+    if (!ignorePrice && lo != null) hits = hits.filter((c) => shown(c) != null && shown(c) >= lo && shown(c) <= hi);
     const fr = Number(p.get("firstRecord")), n = Number(p.get("numRecords"));
     const page = fr >= WINDOW ? [] : hits.slice(fr, Math.min(fr + n, WINDOW));
     return { totalResultCount: hits.length, listings: page };
@@ -55,6 +61,12 @@ function inventory() {
   for (let k = 0; k < 150; k++) cars.push(car(i++, { year: 2022, dg: "RWD", lt: "USED", price: 30_000 + k }));
   // PHEVs, one small FWD slice.
   for (let k = 0; k < 40; k++) cars.push(car(i++, { year: 2017, dg: "FWD", lt: "USED", price: 15_000 + k, group: "PIH" }));
+  // New cars, a slice four times the window (RWD/2026 was 1,761 on the day);
+  // every 10th has only a sticker. Big enough that the whole fake lot clears
+  // the collected floor, so the errors list below must come back empty.
+  for (let k = 0; k < 1600; k++) cars.push(car(i++, { year: 2026, dg: "RWD", lt: "NEW", price: k % 10 === 0 ? null : 45_000 + (k * 53) % 40_000, msrp: 50_000 + k }));
+  // A used car with a sticker and no asking price must stay priceless.
+  cars.push(car(i++, { year: 2022, dg: "RWD", lt: "USED", price: null, msrp: 60_000 }));
   return cars;
 }
 
@@ -63,14 +75,22 @@ test("collects every priced car of a slice three times the window, certified fir
   const { api, calls } = fakeApi(cars);
   const report = await pullFordBlueAdvantage({ api });
   const got = new Set(report.evs.map((r) => r.vin));
-  const priced = cars.filter((c) => c.pricingDetail.salePrice != null);
-  assert.ok(priced.every((c) => got.has(c.vin)), "every priced car is collected");
+  const priced = cars.filter((c) => c.pricingDetail.salePrice != null || (c.listingType === "NEW" && c.pricingDetail.msrp));
+  const missing = priced.filter((c) => !got.has(c.vin));
+  assert.ok(missing.length === 0, `missing ${missing.length}: ${JSON.stringify(missing.slice(0,3).map((c) => ({ vin: c.vin, y: c.year, dg: c._dg, lt: c.listingType, p: c.pricingDetail })))} notes=${report.notes.join(" | ")}`);
   // Priceless cars fall outside every price band, so the bisected slice loses
   // them (ingest drops a priceless row anyway); a slice read whole keeps them.
   assert.ok(got.size <= cars.length && got.size >= priced.length);
   assert.equal(report.evs.filter((r) => r.certified).length, 300);
-  assert.equal(report.evs.filter((r) => r.condition === "used").length, got.size - 300);
+  const newRows = report.evs.filter((r) => r.condition === "new");
+  assert.equal(newRows.length, 1600, "every new car, sticker-only ones included");
+  assert.ok(newRows.every((r) => r.priceUsd > 0 && !r.certified));
+  assert.equal(newRows.filter((r) => r.priceProvenance.endsWith("msrp")).length, 160, "sticker is the price only where nothing is advertised");
+  assert.equal(report.evs.filter((r) => r.condition === "used").length, got.size - 300 - 1600);
+  const stickerOnlyUsed = report.evs.find((r) => r.condition === "used" && r.priceProvenance?.endsWith("msrp"));
+  assert.equal(stickerOnlyUsed, undefined, "a used car's msrp is never its asking price");
   assert.equal(report.evs.filter((r) => r.evKind === "PHEV").length, 40);
+  assert.equal(report.errors.length, 0, report.errors.join(" | "));
   assert.equal(report.truncated, true, "a marketplace snapshot never certifies completeness");
   assert.ok(!report.notes.some((n) => /dropped/.test(n)), `no dropped tails: ${report.notes.join(" | ")}`);
   // No single query was ever asked to page past the window.
@@ -91,10 +111,18 @@ test("a price filter the server ignores is read once and noted, not recursed to 
   assert.ok(calls.length < 10, `bounded probing, made ${calls.length} calls`);
 });
 
-test("the collected-count floor flags a lane that lost the USED facet", async () => {
+test("a facet answering zero nationally is an error even when the others still fill the floor", async () => {
+  const cars = inventory().filter((c) => c.listingType !== "NEW");
+  const { api } = fakeApi(cars);
+  const report = await pullFordBlueAdvantage({ api });
+  assert.ok(report.evs.length > 1000);
+  assert.ok(report.errors.some((e) => /listingType=NEW reported zero/.test(e)), report.errors.join(" | "));
+});
+
+test("the collected-count floor flags a lane that lost most of its facets", async () => {
   const cars = inventory().filter((c) => c.listingType === "CERTIFIED");
   const { api } = fakeApi(cars);
   const report = await pullFordBlueAdvantage({ api });
   assert.equal(report.evs.length, 300); // the certified slice fits the window and is read whole, priceless cars included
-  assert.ok(report.errors.some((e) => /< floor 1500/.test(e)));
+  assert.ok(report.errors.some((e) => /< floor 3000|reported zero/.test(e)));
 });
