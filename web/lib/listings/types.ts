@@ -103,6 +103,13 @@ export interface Listing {
    * the same two words it prints for a seller who wrote the sentence.
    */
   titleBrand?: string;
+  /**
+   * The seller states, on its own site, that every car it sells has a
+   * branded title (scraper/registry/branded-title-dealers.json, curated by
+   * hand with the seller's words quoted). An input to brandedTitleDisclosed
+   * (migration 0074), not a surface of its own.
+   */
+  inventoryBranded?: boolean;
   // Per-VIN campaign history, where an owner portal exposes it (GM today).
   campaignCheck?: {
     packReplaced: boolean;

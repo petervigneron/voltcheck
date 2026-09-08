@@ -77,6 +77,35 @@ const strip = (html) =>
 // dickhannah.com, zeigler.com, hertzcarsales.com, larrygreenchevrolet.com.
 const PROGRAMME_PATH = /["'](?:https?:\/\/[^"'\s]*)?\/[a-z0-9_-]*(?:buy-?back|reacquired|lemon-?law)[a-z0-9_-]*\/?["']/gi;
 
+// ── Branded-title lots ─────────────────────────────────────────────────────
+//
+// The same idea for the other disclosure: a dealer whose homepage says its
+// inventory is branded-title stock. parklinemotors.com (2026-09-08): "Every
+// car in our inventory is handpicked and expertly rebuilt", "Quality
+// Inspected branded title cars in Salt Lake City". This produces CANDIDATES
+// for registry/branded-title-dealers.json, which is curated by hand, because
+// the claim covers a whole lot — a dealer with a "What is a branded title?"
+// FAQ page is worth a look, not a flag. Denials ("we never sell branded
+// title vehicles", "clean title only") are excluded outright.
+const BRANDED_LOT =
+  /(every|all( of)?)( our| the)? (car|vehicle|unit)s? (in our inventory |on our lot |we sell )?(is|are|has been|have been)( carefully| expertly| professionally)? (rebuilt|restored|branded)|(branded|rebuilt|salvage)[ -]title (cars|vehicles|inventory|trucks|suvs|dealer|dealership|specialists?|experts?|expertise|lot)|(specializ(e|ing) in|dealer of|home of) (branded|rebuilt|salvage)[ -]title/i;
+const BRANDED_DENIAL =
+  /\b(not|never|no|don'?t|do not)\b[^.]{0,40}\b(sell|offer|carry|stock)\b[^.]{0,40}(branded|rebuilt|salvage)|clean[ -]title (only|guarantee|vehicles only)|no (branded|rebuilt|salvage)[ -]titles?\b/i;
+/** Returns {hit, evidence[]} — a rooftop that presents itself as a branded-title lot. */
+export function readBrandedTitleSignals(html) {
+  const text = strip(String(html ?? "")).replace(/<[^>]*>/g, " ").replace(/\s+/g, " ");
+  if (BRANDED_DENIAL.test(text)) return { hit: false, evidence: [], denied: true };
+  const evidence = [];
+  for (const m of text.matchAll(new RegExp(BRANDED_LOT.source, "gi"))) {
+    const at = Math.max(0, m.index - 40);
+    const quote = text.slice(at, m.index + m[0].length + 40).trim();
+    if (evidence.some((e) => e.text === quote)) continue;
+    evidence.push({ where: "text", text: quote.slice(0, 160) });
+    if (evidence.length >= 3) break;
+  }
+  return { hit: evidence.length > 0, evidence };
+}
+
 /** Returns {hit, evidence[]} for one page's HTML. Exported for the tests. */
 export function readBuybackSignals(html) {
   const clean = strip(String(html ?? ""));

@@ -11,7 +11,7 @@
 
 import { readFile, writeFile } from "node:fs/promises";
 import { fetchPage } from "./lib/http.mjs";
-import { readBuybackSignals, RECHECK_DAYS } from "./lib/buyback-dealer-signals.mjs";
+import { readBrandedTitleSignals, readBuybackSignals, RECHECK_DAYS } from "./lib/buyback-dealer-signals.mjs";
 
 const REGISTRY = new URL("./registry/registry.json", import.meta.url);
 const CACHE = new URL("./registry/buyback-dealers.json", import.meta.url);
@@ -63,6 +63,11 @@ async function worker() {
       } else {
         const { hit, evidence } = readBuybackSignals(res.body);
         cache[domain] = hit ? { hit: true, evidence, checkedAt: today } : { hit: false, checkedAt: today };
+        // A lot that presents itself as branded-title stock — a CANDIDATE for
+        // registry/branded-title-dealers.json, reviewed by a person; see
+        // lib/branded-title-dealers.mjs on why it is not applied from here.
+        const bt = readBrandedTitleSignals(res.body);
+        if (bt.hit) cache[domain].brandedTitleLot = bt.evidence;
         if (hit) {
           found++;
           console.error(`  ${domain}: ${evidence.map((e) => e.href ?? e.text).join(" | ").slice(0, 100)}`);
@@ -82,6 +87,15 @@ await Promise.all(Array.from({ length: Math.min(CONCURRENCY, work.length) }, wor
 
 await writeFile(CACHE, JSON.stringify(cache, null, 1));
 const total = Object.values(cache).filter((v) => v.hit).length;
+{
+  const { brandedTitleDealers } = await import("./lib/branded-title-dealers.mjs");
+  const known = brandedTitleDealers();
+  const candidates = Object.entries(cache).filter(([d, v]) => v.brandedTitleLot && !known.has(d));
+  if (candidates.length) {
+    console.error(`buyback-dealers: ${candidates.length} rooftop(s) present themselves as branded-title lots and are NOT in registry/branded-title-dealers.json — REVIEW each page and add the ones whose seller says it of every car:`);
+    for (const [d, v] of candidates.slice(0, 20)) console.error(`    ${d}: ${v.brandedTitleLot[0]?.text ?? ""}`);
+  }
+}
 console.error(
   `buyback-dealers: ${found} advertised a buyback programme this run (${total} known), ${errors} unreachable. ` +
     `This list only PRIORITISES vdp-notes.mjs; it flags no car.`

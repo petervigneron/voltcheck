@@ -1,0 +1,13 @@
+{
+ "_comment": "Hand-curated. A rooftop is listed here ONLY when the seller itself states, on its own site, that its whole inventory carries branded titles. Quote the seller's words and where they were read; the rule in lib/branded-title-dealers.mjs applies branded_title_disclosed to every car it lists. Candidates arrive from buyback-dealers.mjs's review line; verify by reading the page before adding.",
+ "parklinemotors.com": {
+  "statement": "Every car in our inventory is handpicked and expertly rebuilt ... Quality Inspected branded title cars in Salt Lake City, Utah",
+  "source": "https://www.parklinemotors.com/ (homepage)",
+  "checkedAt": "2026-09-08"
+ },
+ "stricklandauto.com": {
+  "statement": "At Strickland Auto, we take pride in being a branded-title dealership that builds a high volume of vehicles in-house.",
+  "source": "the dealer's own notes on every car it lists, e.g. https://www.stricklandauto.com/ VIN 7SAYGAEE2SF251148",
+  "checkedAt": "2026-09-08"
+ }
+}

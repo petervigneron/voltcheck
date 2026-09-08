@@ -12,6 +12,7 @@ import { fuelTextOnly } from "./lib/ev.mjs";
 import { priceFloor } from "./lib/price-floor.mjs";
 import { isProvenance } from "./lib/price-provenance.mjs";
 import { decodeEntities } from "./lib/normalize.mjs";
+import { inventoryBrandedFor } from "./lib/branded-title-dealers.mjs";
 import { splitTeslaModel } from "./lib/tesla-nameplate.mjs";
 
 const raw = JSON.parse(await readFile(new URL("./out/listings.json", import.meta.url), "utf-8"));
@@ -302,6 +303,10 @@ const listings = raw
       // disclosure columns (0070). Never a timestamp: a re-read that changed
       // nothing must not rewrite the row.
       titleBrand: typeof r.titleBrand === "string" && r.titleBrand ? r.titleBrand.slice(0, 60) : undefined,
+      // The seller says every car it sells has a branded title
+      // (registry/branded-title-dealers.json, lib/branded-title-dealers.mjs).
+      // Read by branded_title_disclosed (0074).
+      inventoryBranded: inventoryBrandedFor(r.dealerDomain) || undefined,
     };
   });
 
