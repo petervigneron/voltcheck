@@ -55,6 +55,14 @@ const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "
 const usd = (n: number) => `$${Math.round(n).toLocaleString("en-US")}`;
 const miles = (n: number) => `${Math.round(n).toLocaleString("en-US")} mi`;
 
+/** "−1.2%", "+0.4%", "0.0%" — one decimal, a real minus sign. */
+export function pctChange(from: number, to: number): string {
+  const pct = from > 0 ? ((to - from) / from) * 100 : 0;
+  const r = Math.round(pct * 10) / 10;
+  if (r === 0 || !Number.isFinite(r)) return "0.0%";
+  return `${r < 0 ? "−" : "+"}${Math.abs(r).toFixed(1)}%`;
+}
+
 function dayLabel(iso: string): string {
   const d = new Date(iso);
   return `${MONTHS[d.getUTCMonth()]} ${d.getUTCDate()}`;
@@ -141,9 +149,17 @@ function Chart({
     markerLabelY = my <= py(last.price) ? Math.min(my - 5, lastLabelY - 13) : Math.max(my + 13, lastLabelY + 13);
   }
 
+  // Each line's change over the span, printed beside its name. The plot's
+  // vertical range is the cohort's own spread (the band), so a 1.2% move in
+  // the site line is six pixels on an 84-pixel plot and reads as flat —
+  // the owner read the site as showing "no change" (2026-09-08) off a line
+  // that had fallen 1.2%. A figure says what the pixels cannot at this
+  // scale; the scale itself stays honest to the spread.
   const legend = [
-    ...(subject ? [{ swatch: COBALT, opacity: 1, text: subject }] : []),
-    ...(siteLine.length ? [{ swatch: INK, opacity: SITE_OPACITY, text: "All cars on the site" }] : []),
+    ...(subject ? [{ swatch: COBALT, opacity: 1, text: subject, pct: pctChange(first.price, last.price) }] : []),
+    ...(siteLine.length
+      ? [{ swatch: INK, opacity: SITE_OPACITY, text: "All cars on the site", pct: pctChange(siteLine[0].price, siteLine[siteLine.length - 1].price) }]
+      : []),
   ];
 
   return (
@@ -212,6 +228,7 @@ function Chart({
             <li key={l.text} className="flex items-center gap-1.5">
               <span aria-hidden="true" className="inline-block h-[3px] w-4 rounded-full" style={{ background: l.swatch, opacity: l.opacity }} />
               {l.text}
+              <span className="tabular-nums text-ink">{l.pct}</span>
             </li>
           ))}
         </ul>

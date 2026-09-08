@@ -13,7 +13,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { renderToStaticMarkup } from "react-dom/server";
-import { PriceTrendCharts, siteInCohortDollars } from "@/components/PriceTrend";
+import { PriceTrendCharts, pctChange, siteInCohortDollars } from "@/components/PriceTrend";
 import type { PriceTrend, SiteTrend, TrendSeries } from "@/lib/trend";
 
 const series = (points: [string, number, number][], stdOdometer = 40000): TrendSeries => ({
@@ -100,6 +100,18 @@ test("the site index is drawn in the cohort's dollars, anchored to the cohort's 
   assert.match(html, /2021 Chevrolet Bolt EV/);
   // Two lines: the cohort's and the site's (the band and the axis rule are not stroked paths).
   assert.equal((html.match(/<path[^>]*stroke="#/g) ?? []).length, 2);
+  // Each line's change over the span is printed beside its name: the cohort
+  // fell 28,000 → 27,500 (−1.8%), the index 1 → 0.95 (−5.0%). A move too
+  // small to see on the plot is still a figure here.
+  assert.match(html, /2021 Chevrolet Bolt EV<span[^>]*>−1\.8%<\/span>/);
+  assert.match(html, /All cars on the site<span[^>]*>−5\.0%<\/span>/);
+});
+
+test("the legend figure has a sign, one decimal, and a real minus", () => {
+  assert.equal(pctChange(28000, 27500), "−1.8%");
+  assert.equal(pctChange(28000, 28112), "+0.4%");
+  assert.equal(pctChange(28000, 28010), "0.0%");
+  assert.equal(pctChange(0, 100), "0.0%");
 });
 
 test("the site line moves with the shopper's mileage the way the cohort line does", () => {
