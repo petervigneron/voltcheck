@@ -7,14 +7,15 @@
 // a plain Node fetch with clean JSON (verified 2026-08-15):
 //   GET https://www.fordblueadvantage.com/rest/lsc/listing
 //       ?zip=&searchRadius=0&makeCode=FORD&fuelTypeGroup=ELE
-//        &listingType=CERTIFIED&numRecords=100&firstRecord=
+//        &listingType=CERTIFIED|USED&numRecords=100&firstRecord=
 // Note the contrast that makes this fair game, not evasion: autotrader.com's
 // OWN host Akamai-blocks the identical request (returns an HTML challenge), but
 // the fordblueadvantage.com proxy returns JSON and its robots.txt permits
 // /rest/. fuelTypeGroup=ELE is the structured Electric facet (pure BEV) and
-// listingType=CERTIFIED scopes to Ford Blue Advantage certified stock, so every
-// hit is a certified-used Ford BEV (Mustang Mach-E, F-150 Lightning, E-Transit)
-// with VIN, price, real mileage, a dealer VDP and full dealer address.
+// listingType=CERTIFIED scopes to Ford Blue Advantage certified stock and
+// listingType=USED to the marketplace's whole used set (see below); every hit
+// is a used Ford BEV (Mustang Mach-E, F-150 Lightning, E-Transit) with VIN,
+// price, real mileage, a dealer VDP and full dealer address.
 //
 // PHEVs (2026-08-23): fuelTypeGroup=PIH is the marketplace's separate plug-in
 // facet (61 national on probe day: Escape PHEV, Fusion Energi, C-MAX Energi),
@@ -37,6 +38,36 @@
 // x model year. Those slices are disjoint and sum exactly to the national total
 // (measured 1222 == 1222), and the largest slice (~382) sits under the window,
 // so each paginates to completion. Summing them reconstructs the full set.
+//
+// USED as well as CERTIFIED (2026-09-07): listingType=USED on the same proxy
+// answers the marketplace's whole used Ford set — Autotrader's non-certified
+// used inventory, from Buick and independent lots as much as Ford stores — not
+// only Ford Blue Advantage stock. Found chasing a 2022 Lightning
+// (1FTVW1EV3NWG10011, Ken Grody Ford Buena Park) whose dealer page called it
+// "Ford Blue Certified" while the marketplace listed it as USED, so the
+// certified-only pull never saw it and its Dealer Inspire rooftop is
+// browser-lane-only. Measured that day: 3,681 used Ford BEVs and 473 used
+// PHEVs national against 1,164 + 64 certified; of 100 national page-1 VINs, 83
+// were already live on the site through dealer crawls, so the facet is worth
+// ~600 net-new used Ford EVs a night. Owner, 2026-09-07: "If Ford allows it,
+// why not build it" — fordblueadvantage.com's robots.txt allows /rest/ and
+// the proxy answers the same as for certified. USED pages carry both
+// listingTypes (a certified car shows as CERTIFIED there too), so the
+// certified sweep runs first and the USED sweep only adds VINs it did not
+// collect; each record's own listingType decides condition.
+//
+// The USED set breaks the driveGroup x year partition: AWD4WD/2023 was 1,254,
+// RWD/2023 617, AWD4WD/2025 537, against a browsable window that is 400
+// records (firstRecord=300 answers 100 rows, 400 answers none). Two things
+// measured NOT to help: sortBy asc then desc on a 407-car slice returned 400
+// unique VINs, so the sort is applied inside the capped window, not before it;
+// and trimCode/modelCode filters silently return the PARENT total for a value
+// they do not know, so a slice split on a guessed value looks complete while
+// reading the same 400 cars. minPrice/maxPrice are honoured (100 + 298 of a
+// 407 slice; the 9 missing had no price on the marketplace, and ingest drops a
+// row with no price anyway), so an over-window slice is bisected on price
+// until every band fits. A band whose halves both equal the parent is a
+// filter being ignored: it is read once and its tail noted, never recursed.
 //
 // Unlike the OEM sweeps (BMW/GM/Genesis), this is a third-party marketplace with
 // no delisting authority over the dealers whose cars it lists — those dealers
@@ -61,7 +92,10 @@ export const FORD_BLUE_ADVANTAGE = {
   // slices. Ford BEVs are AWD or RWD only; FWD/4X2 return zero today but are
   // cheap insurance if Ford adds a front-drive EV.
   drives: ["AWD4WD", "RWD", "FWD", "4X2"],
-  minExpected: 300,
+  // Certified alone answered ~1,200 on 2026-09-07 and used ~4,150 more, so a
+  // night that collects under this many has lost the USED facet (or the proxy
+  // walled) — loud on purpose.
+  minExpected: 1500,
 };
 
 // recheck.mjs does NOT skip this: coverage is a truncated sample (never drives
@@ -69,7 +103,9 @@ export const FORD_BLUE_ADVANTAGE = {
 export const OEM_LOCATOR_DOMAINS = new Set(); // intentionally empty
 
 const PAGE = 100; // server caps numRecords at 100 whatever you ask
-const WINDOW_MAX_FIRST = 300; // firstRecord past ~300 returns an empty page
+const WINDOW_MAX_FIRST = 300; // firstRecord=300 answers 100 rows, 400 answers none: a 400-record window
+const WINDOW = WINDOW_MAX_FIRST + PAGE; // 400 — the most one query can ever return
+const PRICE_MAX = 400_000; // no used Ford EV lists above this; bands bisect [0, PRICE_MAX]
 const VIN_RE = /^[A-HJ-NPR-Z0-9]{17}$/;
 
 // Known Ford BEV model codes → clean display names; unknown codes fall back to
@@ -145,8 +181,10 @@ function toRecord(l, sweep) {
     city: addr.city || undefined,
     state,
     zip,
-    certified: true,
-    condition: "certified", // listingType=CERTIFIED = Ford Blue Advantage
+    // The record's own listingType, not the sweep's: a USED page lists certified
+    // cars as CERTIFIED too, and the marketplace is the authority on the flag.
+    certified: String(l.listingType ?? "").toUpperCase() === "CERTIFIED",
+    condition: String(l.listingType ?? "").toUpperCase() === "CERTIFIED" ? "certified" : "used",
     imageUrl: imgs[0],
     images: imgs,
     // Real dealer VDP for click-through + recheck liveness; else the FBA search.
@@ -179,71 +217,119 @@ async function apiGet(params, report) {
   }
 }
 
-const FIXED = "zip=66952&searchRadius=0&makeCode=FORD&listingType=CERTIFIED";
+const FIXED = "zip=66952&searchRadius=0&makeCode=FORD";
 // The two electrified facets of the marketplace's fuelTypeGroup filter.
 const FUEL_SWEEPS = [
   { group: "ELE", evKind: "BEV" },
   { group: "PIH", evKind: "PHEV" },
 ];
+// Certified first: a VIN the certified sweep collected keeps that record, and
+// the USED sweep (whose pages restate certified cars as CERTIFIED anyway) only
+// adds VINs the first sweep did not see.
+const LISTING_TYPES = ["CERTIFIED", "USED"];
 
-// Paginate one (driveGroup, year) slice to completion, folding into byVin.
-// Returns the slice's reported total (for the completeness accounting).
-async function pullSlice(sweep, dg, year, byVin, report) {
-  const q = `${FIXED}&fuelTypeGroup=${sweep.group}&driveGroup=${dg}&startYear=${year}&endYear=${year}&numRecords=${PAGE}`;
-  const first = await apiGet(`${q}&firstRecord=0`, report);
-  if (!first) return 0;
-  const total = first.totalResultCount ?? 0;
-  if (!total) return 0;
-  const collect = (j) => {
-    for (const l of j?.listings ?? []) {
-      const rec = toRecord(l, sweep);
-      if (rec) byVin.set(rec.vin, rec);
-    }
-  };
-  collect(first);
-  for (let fr = PAGE; fr <= WINDOW_MAX_FIRST && fr < total; fr += PAGE) {
-    const j = await apiGet(`${q}&firstRecord=${fr}`, report);
+// Read one query to the window's end, folding records into byVin. Returns the
+// number of listings the server paged out (not the total it reported).
+async function readPages(q, sweep, byVin, report, api) {
+  let read = 0;
+  for (let fr = 0; fr <= WINDOW_MAX_FIRST; fr += PAGE) {
+    const j = await api(`${q}&numRecords=${PAGE}&firstRecord=${fr}`, report);
     if (!j) break; // error recorded; flips truncated
-    if (!(j.listings?.length)) break; // window exhausted
-    collect(j);
+    const ls = j.listings ?? [];
+    for (const l of ls) {
+      const rec = toRecord(l, sweep);
+      if (rec && !byVin.has(rec.vin)) byVin.set(rec.vin, rec);
+    }
+    read += ls.length;
+    if (ls.length < PAGE) break; // last page, or the window's end
   }
-  // A slice larger than the browsable window would silently drop its tail. The
-  // driveGroup x year partition keeps every slice under it today; warn if that
-  // ever stops holding so the partition can be refined (e.g. add a price axis).
-  if (total > WINDOW_MAX_FIRST + PAGE) report.notes.push(`slice ${dg}/${year} total ${total} exceeds window — tail dropped`);
+  return read;
+}
+
+async function totalOf(q, report, api) {
+  const j = await api(`${q}&numRecords=1&firstRecord=0`, report);
+  return j ? j.totalResultCount ?? 0 : null; // null = request failed
+}
+
+// Read a price band [lo, hi] of a query, bisecting while it is wider than the
+// window. `total` is the band's reported count. Depth is bounded by the dollar
+// resolution of the band, and a band the server refuses to narrow (both halves
+// answering the parent's total — a filter being ignored) is read once, its
+// dropped tail noted, and never recursed. Exported for the test.
+export async function readBand(q, lo, hi, total, sweep, byVin, report, api, label) {
+  if (total <= WINDOW || hi <= lo) {
+    const read = await readPages(`${q}&minPrice=${lo}&maxPrice=${hi}`, sweep, byVin, report, api);
+    if (total > WINDOW) report.notes.push(`${label} $${lo}-${hi}: ${total} in a one-dollar band, ${total - read} dropped`);
+    return;
+  }
+  const mid = Math.floor((lo + hi) / 2);
+  const loTotal = await totalOf(`${q}&minPrice=${lo}&maxPrice=${mid}`, report, api);
+  const hiTotal = await totalOf(`${q}&minPrice=${mid + 1}&maxPrice=${hi}`, report, api);
+  if (loTotal == null || hiTotal == null) return; // error recorded
+  if (loTotal >= total && hiTotal >= total) {
+    // The price filter is not narrowing anything: read what the window gives
+    // and say what it cost, rather than recurse to the dollar for nothing.
+    const read = await readPages(`${q}&minPrice=${lo}&maxPrice=${hi}`, sweep, byVin, report, api);
+    report.notes.push(`${label} $${lo}-${hi}: price filter ignored, ${total} reported, ${total - read} dropped`);
+    return;
+  }
+  if (loTotal) await readBand(q, lo, mid, loTotal, sweep, byVin, report, api, label);
+  if (hiTotal) await readBand(q, mid + 1, hi, hiTotal, sweep, byVin, report, api, label);
+}
+
+// One (fuel, listingType, driveGroup, year) slice: read whole when it fits the
+// window, bisect on price when it does not. Returns the slice's reported total
+// (for the completeness accounting).
+async function pullSlice(sweep, lt, dg, year, byVin, report, api) {
+  const q = `${FIXED}&listingType=${lt}&fuelTypeGroup=${sweep.group}&driveGroup=${dg}&startYear=${year}&endYear=${year}`;
+  const total = await totalOf(q, report, api);
+  if (!total) return 0;
+  const label = `${sweep.group}/${lt}/${dg}/${year}`;
+  if (total <= WINDOW) {
+    await readPages(q, sweep, byVin, report, api);
+  } else {
+    // Priceless cars fall outside every band; ingest drops them regardless
+    // (priceUsd == null), so the bands lose nothing the site would show.
+    await readBand(q, 0, PRICE_MAX, total, sweep, byVin, report, api, label);
+  }
   return total;
 }
 
-// Pull Ford Blue Advantage's national certified-used BEV inventory over the
-// driveGroup x year partition. Returns a crawl.mjs-shaped report. Always
+// Pull the marketplace's national used Ford EV inventory — certified and not —
+// over listingType x fuel x driveGroup x year, price-bisected where a slice
+// outgrows the window. Returns a crawl.mjs-shaped report. Always
 // truncated:true — a marketplace snapshot must not drive delisting (see the
 // header note and hyundai-cpo); recheck handles liveness via dealer VDPs.
-export async function pullFordBlueAdvantage({ log = () => {} } = {}) {
+export async function pullFordBlueAdvantage({ log = () => {}, api = apiGet } = {}) {
   const report = { domain: FORD_BLUE_ADVANTAGE.domain, kind: "oem-locator", budget: null, fetched: 0, vehiclePages: 0, itemListVdps: 0, evs: [], errors: [], notes: [] };
   const byVin = new Map();
   const thisYear = new Date().getFullYear();
   const years = [];
-  // From 2016: the certified plug-in tail (C-MAX/Fusion Energi) reaches back
-  // further than any certified BEV; empty year-slices cost one request each.
+  // From 2016: the plug-in tail (C-MAX/Fusion Energi, Focus Electric) reaches
+  // back further than any Mach-E; empty year-slices cost one request each.
   for (let y = 2016; y <= thisYear + 1; y++) years.push(y);
 
-  let reportedTotal = 0;
-  for (const sweep of FUEL_SWEEPS) {
-    for (const dg of FORD_BLUE_ADVANTAGE.drives) {
-      let dgTotal = 0;
-      for (const y of years) dgTotal += await pullSlice(sweep, dg, y, byVin, report);
-      if (dgTotal) log(`ford-blue-advantage/${sweep.group}/${dg}: ${dgTotal} reported, ${byVin.size} cumulative VINs`);
-      reportedTotal += dgTotal;
+  const reported = { CERTIFIED: 0, USED: 0 };
+  for (const lt of LISTING_TYPES) {
+    for (const sweep of FUEL_SWEEPS) {
+      for (const dg of FORD_BLUE_ADVANTAGE.drives) {
+        let dgTotal = 0;
+        for (const y of years) dgTotal += await pullSlice(sweep, lt, dg, y, byVin, report, api);
+        if (dgTotal) log(`ford-blue-advantage/${lt}/${sweep.group}/${dg}: ${dgTotal} reported, ${byVin.size} cumulative VINs`);
+        reported[lt] += dgTotal;
+      }
     }
   }
 
   report.evs = [...byVin.values()];
   report.vehiclePages = report.fetched;
   const phevN = report.evs.filter((r) => r.evKind === "PHEV").length;
-  report.notes.push(`national certified count ${reportedTotal} (${byVin.size - phevN} BEV + ${phevN} PHEV unique collected) across 2 fuel groups x ${FORD_BLUE_ADVANTAGE.drives.length} drive groups x ${years.length} years`);
+  const certN = report.evs.filter((r) => r.certified).length;
+  report.notes.push(`national used count ${reported.USED} (certified facet ${reported.CERTIFIED}); ${byVin.size} unique collected: ${byVin.size - phevN} BEV + ${phevN} PHEV, ${certN} certified`);
   // Never certify complete: marketplace snapshot with a browsable-window cap. A
-  // hard failure (endpoint moved / Akamai now walls the proxy) shows as too few
-  // collected — surface it so a dead lane doesn't pass silently.
+  // hard failure (endpoint moved / Akamai now walls the proxy / the USED facet
+  // gone) shows as too few collected — surface it so a dead lane doesn't pass
+  // silently.
   if (byVin.size < FORD_BLUE_ADVANTAGE.minExpected) report.errors.push(`collected ${byVin.size} < floor ${FORD_BLUE_ADVANTAGE.minExpected} — proxy may be walled or moved`);
   report.truncated = true;
   return report;
