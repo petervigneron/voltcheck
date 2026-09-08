@@ -77,5 +77,14 @@ export async function POST(req: Request) {
   // shards, they cost no extra database read: db.ts's ten-minute walk memo is
   // still holding the walk the index warm-up just paid for.
   for (let s = 0; s < SITEMAP_SHARDS; s++) revalidatePath(`/sitemap/${s}.xml`);
+  // The model hubs read hubs.json through a tagged fetch, but on 2026-09-08
+  // the tag alone did not turn the pages over: two hours after a publish that
+  // gave every hub its first stats block, /ev/tesla/model-y still served the
+  // pre-publish render (x-vercel-cache HIT, age 7,723 s). The index routes and
+  // the sitemaps never had this problem because they are named here by path.
+  // So the hubs are too — one call covers all 246, plus the index that links
+  // them — and a publish is what makes a hub's numbers current, not its TTL.
+  revalidatePath("/ev/[make]/[model]", "page");
+  revalidatePath("/ev");
   return Response.json({ revalidated: true });
 }
