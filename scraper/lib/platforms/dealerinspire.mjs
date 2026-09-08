@@ -207,7 +207,11 @@ export function dealerInspireNextUrl(html, currentUrl) {
     page = Number(new URL(currentUrl).searchParams.get("_p") ?? 1) || 1;
   } catch {}
   const next = page + 1;
-  if (!new RegExp(`[?&]_p=${next}\\b`).test(String(html ?? ""))) return null;
+  // `&amp;` as well as `&`: a filtered list's pager keeps the facet query,
+  // so its next link reads `…Gas&amp;_p=2` in served HTML, and the plain
+  // `[?&]` form saw no page two at kengrodyfordorangecounty.com on
+  // 2026-09-08 03:22 — the fast path read page one of 47 cars and stopped.
+  if (!new RegExp(`(?:[?&]|&amp;)_p=${next}\\b`).test(String(html ?? ""))) return null;
   try {
     const u = new URL(currentUrl);
     u.searchParams.set("_p", String(next));

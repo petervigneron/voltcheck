@@ -188,8 +188,10 @@ test("fueltype: the two verified spellings and any plug/electric reading count; 
 test("fuel list URL: the theme's _dFR[fueltype][i] facet, one index per verified spelling", () => {
   const u = dealerInspireFuelSrpUrl("https://www.kengrodyfordorangecounty.com/", "/used-vehicles/");
   assert.equal(u, "https://www.kengrodyfordorangecounty.com/used-vehicles/?_dFR%5Bfueltype%5D%5B0%5D=Electric+Fuel+System&_dFR%5Bfueltype%5D%5B1%5D=Plug-In+Electric%2FGas");
-  // Paging keeps the query.
-  assert.equal(dealerInspireNextUrl(`<a href="${u}&_p=2">next</a>`, u), `${u}&_p=2`);
+  // Paging keeps the query — and served HTML entity-encodes the ampersand.
+  assert.equal(dealerInspireNextUrl(`<a href="${u}&amp;_p=2">next</a>`, u), `${u}&_p=2`);
+  assert.equal(dealerInspireNextUrl(`<a href="${u}&amp;_p=3">next</a>`, `${u}&_p=2`), `${u}&_p=3`);
+  assert.equal(dealerInspireNextUrl(`<a href="${u}&amp;_p=2">next</a>`, `${u}&_p=2`), null);
 });
 
 // A fake classic rooftop: 60 used cars over 3 pages, 3 EVs scattered through
@@ -210,7 +212,7 @@ function fakeRooftop() {
   const usedPages = [1, 2, 3].map((p) => [...evs.filter((e) => e.page === p), ...Array.from({ length: 18 }, (_, i) => filler(p * 100 + i))]);
   const newPages = [[newEv, ...Array.from({ length: 19 }, (_, i) => ({ ...filler(900 + i), slug: `new-2026-ford-bronco-${i}` }))]];
   const featured = featuredCard("1FTBW1XMXTKA60009", "new-2026-ford-e-transit-cargo-van");
-  const page = (cars, path, q, p, last) => `<html><body>${featured}${cars.map((c) => blobCard(c.vin, c.slug, c.fuel)).join("")}${last ? "" : `<a href="${path}${q ? q + "&" : "?"}_p=${p + 1}">Next</a>`}</body></html>`;
+  const page = (cars, path, q, p, last) => `<html><body>${featured}${cars.map((c) => blobCard(c.vin, c.slug, c.fuel)).join("")}${last ? "" : `<a href="${path}${q ? q + "&amp;" : "?"}_p=${p + 1}">Next</a>`}</body></html>`;
   const vdp = (vin) => `<html><script type="application/ld+json">{"@context":"https://schema.org/","@type":["Product","Car"],"vehicleIdentificationNumber":"${vin}","offers":{"@type":"Offer","price":"36485","url":"${origin}/inventory/x-${vin.toLowerCase()}/"},"mileageFromOdometer":{"value":"63826"}}</script></html>`;
   const loads = [];
   const fetch = async (url) => {
@@ -223,9 +225,12 @@ function fakeRooftop() {
     if (list) {
       const q = fuels.length ? fuels.map((f, i) => `_dFR[fueltype][${i}]=${encodeURIComponent(f)}`).join("&").replace(/%20/g, "+") : "";
       if (fuels.length) {
-        // An unknown spelling zeroes the result, as measured; the known ones answer their cars on one page.
+        // An unknown spelling zeroes the result, as measured; the known ones
+        // answer their cars two to a page, paged like the real 47-car list.
         const hits = list.flat().filter((c) => fuels.includes(c.fuel));
-        return { status: 200, body: page(p === 1 ? hits : [], u.pathname, "?" + q, p, true) };
+        const per = 2;
+        const slice = hits.slice((p - 1) * per, p * per);
+        return { status: 200, body: page(slice, u.pathname, "?" + q, p, p * per >= hits.length) };
       }
       if (p > list.length) return { status: 200, body: page([], u.pathname, "", p, true) };
       return { status: 200, body: page(list[p - 1], u.pathname, "", p, p === list.length) };
@@ -239,8 +244,8 @@ function fakeRooftop() {
 
 test("fast path: under a tight budget every EV the dealer's fuel field names is read before the walk, and the pull says partial", async () => {
   const { origin, fetch, loads, evs, newEv } = fakeRooftop();
-  // homepage 1 + filtered used 1 + filtered new 1 + 4 VDPs = 7 loads; the walk gets nothing.
-  const r = await pullDealerInspire(origin, { maxLoads: 7, fetch });
+  // homepage 1 + filtered used 2 pages + 3 VDPs + filtered new 1 + 1 VDP = 8 loads; the walk gets nothing.
+  const r = await pullDealerInspire(origin, { maxLoads: 8, fetch });
   const vins = r.vehicles.map((v) => v.vehicleIdentificationNumber).sort();
   assert.deepEqual(vins, [...evs.filter((e) => DEALERINSPIRE_EV_FUELTYPES.includes(e.fuel)).map((e) => e.vin), newEv.vin].sort());
   assert.ok(vins.includes("1FTVW1EV3NWG10011"), "the page-three Lightning is read first, not last");
@@ -250,8 +255,9 @@ test("fast path: under a tight budget every EV the dealer's fuel field names is 
   assert.match(r.why, /stopped at the crawl's time cap or page budget/);
   // Order of spend: homepage, then each filtered list followed by its cars —
   // never an unfiltered page before a car.
-  assert.equal(loads.length, 7);
+  assert.equal(loads.length, 8);
   assert.match(loads[1], /_dFR/);
+  assert.ok(loads.some((l) => /_dFR.*_p=2/.test(l)), "the filtered list's second page is read");
   assert.ok(loads.slice(1).every((u) => /_dFR/.test(u) || /\/inventory\//.test(u)), loads.join("\n"));
 });
 
