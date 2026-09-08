@@ -630,6 +630,8 @@ async function crawlDealerInto(domain, budget, domainCapAt, report) {
     // left no record of which side of the lane they went to.
     report.laneNote = `${dvPlat} (browser): ${r.found ?? 0} in lot, ${r.candidates != null ? `${r.candidates} candidate(s), ` : ""}${report.evs.length - before} EV(s) admitted in ${r.requests ?? 0} browser load(s)${r.why ? ` — ${r.why}` : ""}`;
     report.notes.push(report.laneNote);
+    if (r.fast != null) report.notes.push(`${dvPlat}: ${r.fast} candidate(s) came off the fuel-facet lists, read before the walk`);
+    for (const n of r.notes ?? []) report.notes.push(`${dvPlat}: ${n}`);
     if (!r.ok || !r.complete) report.stoppedEarly = `${dvPlat} browser lane ${r.why ?? (r.ok ? "partial" : "failed")}`;
     queue.length = 0;
   }

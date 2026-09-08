@@ -142,3 +142,131 @@ test("a real SRP counts, with cards or with the vendor's own marks", () => {
   // it is correct — the walk really did enumerate the lot.
   assert.equal(isDealerInspireSrpPage('<link href="/wp-content/themes/DealerInspireDealerTheme/css/lvrp.css">', []), true);
 });
+
+// ---------------------------------------------------------------------------
+// The fuel facet first (2026-09-08): the card's own `data-vehicle` blob, the
+// filtered list URL, and the order of spend under a budget.
+import {
+  dealerInspireFuelSrpUrl,
+  dealerInspireFuelIsEv,
+  DEALERINSPIRE_EV_FUELTYPES,
+  pullDealerInspire,
+} from "../lib/platforms/dealerinspire.mjs";
+
+// A result card as served on kengrodyfordorangecounty.com/used-vehicles/
+// 2026-09-08: the blob is entity-encoded JSON on `data-vehicle`.
+const blobCard = (vin, slug, fueltype) =>
+  `<div class="result-wrap used-vehicle" data-vehicle="{&quot;vin&quot;:&quot;${vin}&quot;,&quot;type&quot;:&quot;Used&quot;,&quot;price&quot;:36485,&quot;fueltype&quot;:&quot;${fueltype}&quot;}" data-vehicle-vin="${vin}">
+  <a href="/inventory/${slug}-${vin.toLowerCase()}/">card</a><div class="vin-row" data-vin="${vin}"></div></div>`;
+// The "featured" block: data-vin only, no blob, repeated on every page.
+const featuredCard = (vin, slug) => `<div class="featured"><a href="/inventory/${slug}-${vin.toLowerCase()}/">f</a><div data-vin="${vin}"></div></div>`;
+
+test("cards: the data-vehicle blob gives the card its fueltype; a blob-less featured card is not a result", () => {
+  // A slug with no EV signal at all: the blob is the only thing that says plug-in.
+  const html = blobCard("5LMAJ5KP4NUL12345", "used-2022-lincoln-corsair-reserve-awd", "Plug-In Electric/Gas") + featuredCard("1FTBW1XMXTKA60009", "new-2026-ford-e-transit-cargo-van");
+  const cards = dealerInspireCards(html, "https://www.x.com/used-vehicles/");
+  assert.equal(cards.length, 2);
+  assert.equal(cards[0].fuel, "Plug-In Electric/Gas");
+  assert.equal(cards[0].result, true);
+  assert.equal(cards[1].fuel, undefined);
+  assert.equal(cards[1].result, undefined);
+  // Only the blob makes it a candidate.
+  assert.equal(dealerInspireIsCandidate({ ...cards[0], fuel: undefined }), false);
+  assert.equal(dealerInspireIsCandidate(cards[0]), true);
+});
+
+test("fueltype: the two verified spellings and any plug/electric reading count; hybrids that merely say Electric do not", () => {
+  for (const f of DEALERINSPIRE_EV_FUELTYPES) assert.equal(dealerInspireFuelIsEv(f), true, f);
+  assert.equal(dealerInspireFuelIsEv("Electric"), true);
+  assert.equal(dealerInspireFuelIsEv("Hydrogen Fuel"), true);
+  assert.equal(dealerInspireFuelIsEv("Gas/Electric Hybrid"), false);
+  assert.equal(dealerInspireFuelIsEv("Gasoline/Mild Electric Hybrid"), false);
+  assert.equal(dealerInspireFuelIsEv("Gasoline Fuel"), false);
+  assert.equal(dealerInspireFuelIsEv(undefined), false);
+});
+
+test("fuel list URL: the theme's _dFR[fueltype][i] facet, one index per verified spelling", () => {
+  const u = dealerInspireFuelSrpUrl("https://www.kengrodyfordorangecounty.com/", "/used-vehicles/");
+  assert.equal(u, "https://www.kengrodyfordorangecounty.com/used-vehicles/?_dFR%5Bfueltype%5D%5B0%5D=Electric+Fuel+System&_dFR%5Bfueltype%5D%5B1%5D=Plug-In+Electric%2FGas");
+  // Paging keeps the query.
+  assert.equal(dealerInspireNextUrl(`<a href="${u}&_p=2">next</a>`, u), `${u}&_p=2`);
+});
+
+// A fake classic rooftop: 60 used cars over 3 pages, 3 EVs scattered through
+// them (pages 1, 2 and 3), a featured block repeated on every page, a 20-car
+// new list with one EV. The filtered lists answer only the cars whose blob
+// carries a verified spelling; one EV ("Electric", an EV word in its slug)
+// is reachable only by the walk. VDPs carry the JSON-LD the lane reads.
+function fakeRooftop() {
+  const origin = "https://www.fake-di.example";
+  const evs = [
+    { vin: "1FTVW1EV3NWG10011", slug: "used-2022-ford-f-150-lightning-xlt", fuel: "Electric Fuel System", page: 3 },
+    { vin: "5LMAJ5KP4NUL12345", slug: "used-2022-lincoln-corsair-grand-touring", fuel: "Plug-In Electric/Gas", page: 2 },
+    { vin: "KNDC3DLC0P5119438", slug: "used-2023-kia-ev6-wind-awd", fuel: "Electric Fuel System", page: 1 },
+    { vin: "5YJ3E1EB8NF359524", slug: "used-2022-tesla-model-3", fuel: "Electric", page: 3 }, // unknown spelling, walk-only
+  ];
+  const newEv = { vin: "3FMTK1R46TMA23542", slug: "new-2026-ford-mustang-mach-e-select-rwd", fuel: "Electric Fuel System", page: 1 };
+  const filler = (i) => ({ vin: `1FA6P8TH${String(i).padStart(9, "0")}`.slice(0, 17), slug: `used-2019-ford-mustang-gt-${i}`, fuel: "Gasoline Fuel" });
+  const usedPages = [1, 2, 3].map((p) => [...evs.filter((e) => e.page === p), ...Array.from({ length: 18 }, (_, i) => filler(p * 100 + i))]);
+  const newPages = [[newEv, ...Array.from({ length: 19 }, (_, i) => ({ ...filler(900 + i), slug: `new-2026-ford-bronco-${i}` }))]];
+  const featured = featuredCard("1FTBW1XMXTKA60009", "new-2026-ford-e-transit-cargo-van");
+  const page = (cars, path, q, p, last) => `<html><body>${featured}${cars.map((c) => blobCard(c.vin, c.slug, c.fuel)).join("")}${last ? "" : `<a href="${path}${q ? q + "&" : "?"}_p=${p + 1}">Next</a>`}</body></html>`;
+  const vdp = (vin) => `<html><script type="application/ld+json">{"@context":"https://schema.org/","@type":["Product","Car"],"vehicleIdentificationNumber":"${vin}","offers":{"@type":"Offer","price":"36485","url":"${origin}/inventory/x-${vin.toLowerCase()}/"},"mileageFromOdometer":{"value":"63826"}}</script></html>`;
+  const loads = [];
+  const fetch = async (url) => {
+    loads.push(url);
+    const u = new URL(url);
+    if (u.pathname === "/") return { status: 200, body: "<html>classic theme, no motive config</html>" };
+    const p = Number(u.searchParams.get("_p") ?? 1);
+    const fuels = [...u.searchParams.entries()].filter(([k]) => k.startsWith("_dFR[fueltype]")).map(([, v]) => v);
+    const list = u.pathname === "/used-vehicles/" ? usedPages : u.pathname === "/new-vehicles/" ? newPages : null;
+    if (list) {
+      const q = fuels.length ? fuels.map((f, i) => `_dFR[fueltype][${i}]=${encodeURIComponent(f)}`).join("&").replace(/%20/g, "+") : "";
+      if (fuels.length) {
+        // An unknown spelling zeroes the result, as measured; the known ones answer their cars on one page.
+        const hits = list.flat().filter((c) => fuels.includes(c.fuel));
+        return { status: 200, body: page(p === 1 ? hits : [], u.pathname, "?" + q, p, true) };
+      }
+      if (p > list.length) return { status: 200, body: page([], u.pathname, "", p, true) };
+      return { status: 200, body: page(list[p - 1], u.pathname, "", p, p === list.length) };
+    }
+    const m = /\/inventory\/.*-([a-z0-9]{17})\/$/i.exec(u.pathname);
+    if (m) return { status: 200, body: vdp(m[1].toUpperCase()) };
+    return { status: 404, body: "" };
+  };
+  return { origin, fetch, loads, evs, newEv };
+}
+
+test("fast path: under a tight budget every EV the dealer's fuel field names is read before the walk, and the pull says partial", async () => {
+  const { origin, fetch, loads, evs, newEv } = fakeRooftop();
+  // homepage 1 + filtered used 1 + filtered new 1 + 4 VDPs = 7 loads; the walk gets nothing.
+  const r = await pullDealerInspire(origin, { maxLoads: 7, fetch });
+  const vins = r.vehicles.map((v) => v.vehicleIdentificationNumber).sort();
+  assert.deepEqual(vins, [...evs.filter((e) => DEALERINSPIRE_EV_FUELTYPES.includes(e.fuel)).map((e) => e.vin), newEv.vin].sort());
+  assert.ok(vins.includes("1FTVW1EV3NWG10011"), "the page-three Lightning is read first, not last");
+  assert.equal(r.fast, 4);
+  assert.equal(r.ok, true);
+  assert.equal(r.complete, false, "the walk did not run, so nothing may be delisted");
+  assert.match(r.why, /stopped at the crawl's time cap or page budget/);
+  // Order of spend: homepage, then each filtered list followed by its cars —
+  // never an unfiltered page before a car.
+  assert.equal(loads.length, 7);
+  assert.match(loads[1], /_dFR/);
+  assert.ok(loads.slice(1).every((u) => /_dFR/.test(u) || /\/inventory\//.test(u)), loads.join("\n"));
+});
+
+test("walk: with budget to spare the unfiltered lists still run, catch the EV the facet could not name, and report its spelling", async () => {
+  const { origin, fetch, loads, evs, newEv } = fakeRooftop();
+  const r = await pullDealerInspire(origin, { maxLoads: 60, fetch });
+  const vins = r.vehicles.map((v) => v.vehicleIdentificationNumber).sort();
+  assert.deepEqual(vins, [...evs.map((e) => e.vin), newEv.vin].sort());
+  assert.equal(r.complete, true);
+  assert.equal(r.fast, 4);
+  assert.equal(r.candidates, 5);
+  assert.equal(r.found, evs.length + 3 * 18 + 20 + 1, "the whole lot plus the featured card");
+  assert.ok(r.notes.some((n) => /not in the facet list: Electric —/.test(n)), r.notes.join(" | "));
+  // Each VDP opened once, whichever path found it first.
+  const vdpLoads = loads.filter((u) => /\/inventory\//.test(u));
+  assert.equal(new Set(vdpLoads).size, vdpLoads.length);
+  assert.equal(vdpLoads.length, 5);
+});

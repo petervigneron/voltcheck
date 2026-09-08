@@ -45,6 +45,48 @@
 // an EV-only WMI or an EV/PHEV word in the card's title/slug, the same net
 // the HTML crawl throws — and never on the rest of the lot. A typical
 // franchise rooftop is 2–8 SRP pages and 5–30 candidates.
+//
+// THE FUEL FACET FIRST (2026-09-08). The cohort crawl of 2026-09-08 01:27
+// read 448 classic rooftops and 209 of them stopped at the 12-minute domain
+// cap with 3,677 candidates never opened; the capped lots held a median 360
+// cars against 118 for the ones that finished. A 370-car Ford store spent
+// its 35 loads on eleven SRP pages and half its candidates, and a 2022
+// Lightning on page three of its used list was one of the 14 it never
+// reached. Halving the walk's share of the budget (below) turned a certain
+// zero into half the candidates; it could not make the lot smaller.
+//
+// The classic theme's SRP takes its own facet in the URL, server-rendered:
+// /used-vehicles/?_dFR[fueltype][0]=Electric+Fuel+System&_dFR[fueltype][1]=
+// Plug-In+Electric%2FGas answers that store with 47 cars over three pages
+// instead of 171 over five, and the Lightning is on page three of it. The
+// spellings are the vendor feed's (Chrome-style: "Electric Fuel System",
+// "Plug-In Electric/Gas", "Gas/Electric Hybrid", "Gasoline/Mild Electric
+// Hybrid", "Gasoline Fuel"), the same on every rooftop read: the filtered
+// used list at kerbeckcadillacs.com answered exactly the 28 EVs a complete
+// unfiltered walk had admitted, and landrovervannuys.net's seven used
+// plug-ins all carried one of the two. Two things measured that shape the
+// code below:
+//   - A spelling the index does not know returns ZERO cars, not the lot
+//     ("Bogus Fuel Type" → "0 Used Cars"). So the filtered walk can never be
+//     the completeness claim: a rooftop whose feed spells electric some
+//     third way would read as having no EVs and db-sync would delist them.
+//     Only VERIFIED spellings go in the URL, and the unfiltered walk still
+//     runs after it — the filtered walk is a fast path, not the walk.
+//   - Every real result card carries a `data-vehicle` JSON blob (vin, year,
+//     make, model, trim, price, msrp, type, fueltype); the "featured" block
+//     some rooftops repeat on every page carries data-vin only. That blob is
+//     a second candidate net (a Corsair Grand Touring has no EV word in its
+//     slug and "Plug-In Electric/Gas" in its blob) and the place a new
+//     spelling would show up: one seen in an unfiltered walk that reads as
+//     electrified and is not in the list is reported, so the list grows from
+//     evidence and never from a guess.
+//
+// Order of spend, so the budget goes to cars first: homepage, the filtered
+// used and new lists (usually one page each), their VDPs, then the plain
+// used and new walks under the half-budget reserve with the title/WMI/blob
+// net and their VDPs until the budget ends. A big lot still reports partial
+// (no delisting), as before — but with every EV the dealer's own fuel field
+// names already read.
 import { browserFetch } from "../browser.mjs";
 import { isRideMotive, rideMotiveConfig, pullRideMotiveApi, countRideMotiveApi } from "./ridemotive.mjs";
 import { extractVehicles } from "../jsonld.mjs";
@@ -64,6 +106,25 @@ export function isDealerInspire(html) {
 export const DEALERINSPIRE_SRPS = ["/used-vehicles/", "/new-vehicles/"];
 export const DEALERINSPIRE_MAX_PAGES = 40; // 800 cards; a runaway guard, not a budget
 
+// The vendor feed's electrified fuel spellings, as VERIFIED on served pages
+// (see the header): a value the index does not know zeroes the result, so
+// nothing goes here on a guess. Conventional hybrids ("Gas/Electric Hybrid",
+// "Gasoline/Mild Electric Hybrid") are deliberately absent.
+export const DEALERINSPIRE_EV_FUELTYPES = ["Electric Fuel System", "Plug-In Electric/Gas"];
+// What reads as electrified in a card's own fueltype — the candidate net and
+// the new-spelling detector — minus the hybrids that merely contain "Electric".
+const EV_FUEL_RE = /electric|plug|hydrogen|fuel cell|\bbev\b|\bphev\b/i;
+const NOT_PLUG_RE = /gas\/electric hybrid|electric\/gas hybrid|mild/i;
+export const dealerInspireFuelIsEv = (fuel) => Boolean(fuel) && EV_FUEL_RE.test(fuel) && !NOT_PLUG_RE.test(fuel);
+
+/** The same list filtered to the electrified fuel facet, page 1. Paging goes
+ *  through dealerInspireNextUrl, which keeps the query. */
+export function dealerInspireFuelSrpUrl(origin, path, fuels = DEALERINSPIRE_EV_FUELTYPES) {
+  const u = new URL(`${origin.replace(/\/$/, "")}${path}`);
+  fuels.forEach((f, i) => u.searchParams.set(`_dFR[fueltype][${i}]`, f));
+  return u.toString();
+}
+
 export function dealerInspireSrpUrl(origin, path, page = 1) {
   return `${origin.replace(/\/$/, "")}${path}${page > 1 ? `?_p=${page}` : ""}`;
 }
@@ -80,12 +141,28 @@ export function dealerInspireCards(html, base) {
   // both, so the href is the identity read and data-vin is only the first
   // place to look.
   const vins = [];
+  // The result card's own record: `data-vehicle` holds entity-encoded JSON
+  // with vin, fueltype, price, msrp, type. Present on every real result card
+  // of both classic markups read so far (kerbeckcadillacs.com carries it
+  // with no data-vin at all); absent on the repeated "featured" block.
+  const blobs = new Map();
+  for (const m of src.matchAll(/data-vehicle=["'](\{[^"']*\})["']/gi)) {
+    try {
+      const b = JSON.parse(decodeEntities(m[1]));
+      const v = String(b?.vin ?? "").toUpperCase();
+      if (VIN_RE.test(v)) {
+        blobs.set(v, b);
+        vins.push(v);
+      }
+    } catch {}
+  }
   for (const m of src.matchAll(/data-vin=["']([A-HJ-NPR-Z0-9]{17})["']/gi)) vins.push(m[1]);
   for (const m of src.matchAll(/href=["'][^"']*\/inventory\/[^"']*?([A-HJ-NPR-Z0-9]{17})\/?["']/gi)) vins.push(m[1]);
   for (const raw of vins) {
     const vin = raw.toUpperCase();
     if (!/\d/.test(vin) || seen.has(vin)) continue;
     seen.add(vin);
+    const blob = blobs.get(vin);
     const hrefRe = new RegExp(`href=["']([^"']*?/inventory/[^"']*?${vin}/?)["']`, "i");
     const h = hrefRe.exec(src);
     let url = null;
@@ -98,7 +175,12 @@ export function dealerInspireCards(html, base) {
     // which is the most stable place to read it from — the visible heading
     // markup varies by theme.
     const slug = url ? url.replace(/^.*\/inventory\//, "").replace(new RegExp(`-?${vin}/?$`, "i"), "") : "";
-    out.push({ vin, url, title: slug.replace(/-/g, " ") });
+    const card = { vin, url, title: slug.replace(/-/g, " ") };
+    if (blob) {
+      card.fuel = String(blob.fueltype ?? "").trim() || undefined;
+      card.result = true; // a real result, not the featured block
+    }
+    out.push(card);
   }
   return out;
 }
@@ -135,9 +217,11 @@ export function dealerInspireNextUrl(html, currentUrl) {
   }
 }
 
-/** Same net as the HTML crawl's evishEntry: an EV-only WMI, or an EV/PHEV word. */
+/** Same net as the HTML crawl's evishEntry — an EV-only WMI, or an EV/PHEV
+ *  word — plus the card's own fueltype when its blob carries one. */
 export function dealerInspireIsCandidate(card) {
   if (card.vin && VIN_RE.test(card.vin) && EV_ONLY_WMIS.has(card.vin.slice(0, 3).toUpperCase())) return true;
+  if (dealerInspireFuelIsEv(card.fuel)) return true;
   return evish(`${card.title ?? ""} ${card.url ?? ""}`);
 }
 
@@ -209,16 +293,16 @@ export function dealerInspireLimitsExhausted(limits, loads) {
   return false;
 }
 
-async function readSrp(origin, path, { maxPages = DEALERINSPIRE_MAX_PAGES, limits = null, loadsSoFar = 0 } = {}) {
+async function readSrp(origin, path, { maxPages = DEALERINSPIRE_MAX_PAGES, limits = null, loadsSoFar = 0, startUrl = null, fetch = browserFetch } = {}) {
   const cards = [];
   const seen = new Set();
-  let url = dealerInspireSrpUrl(origin, path);
+  let url = startUrl || dealerInspireSrpUrl(origin, path);
   let requests = 0;
   let pages = 0;
   let status = null;
   while (url && pages < maxPages) {
     if (dealerInspireLimitsExhausted(limits, loadsSoFar + requests)) return { cards, requests, pages, status, complete: false, exhausted: true };
-    let res = await browserFetch(url);
+    let res = await fetch(url);
     requests++;
     // One more try on a failed page. Measured 2026-09-02: faricykia.com's 24
     // used pages walk clean one at a time, and the same walk under six
@@ -226,7 +310,7 @@ async function readSrp(origin, path, { maxPages = DEALERINSPIRE_MAX_PAGES, limit
     // 472 cars. A page that fails twice ends the walk honestly (partial).
     if (res.status !== 200 || !res.body) {
       await new Promise((r) => setTimeout(r, 4000));
-      res = await browserFetch(url);
+      res = await fetch(url);
       requests++;
     }
     status = res.status;
@@ -260,35 +344,100 @@ async function readSrp(origin, path, { maxPages = DEALERINSPIRE_MAX_PAGES, limit
  *  out; crawl.mjs classifies and normalizes. */
 /** The homepage by browser: a Motive config when the rooftop is on Cars
  *  Commerce's Motive template, else null (classic theme, or unreadable). */
-async function motiveConfigByBrowser(origin) {
-  const home = await browserFetch(`${origin.replace(/\/$/, "")}/`);
+async function motiveConfigByBrowser(origin, fetch = browserFetch) {
+  const home = await fetch(`${origin.replace(/\/$/, "")}/`);
   if (home.status === "browser_unavailable") return { unavailable: true };
   if (home.status !== 200 || !home.body || !isRideMotive(home.body)) return { config: null };
   return { config: rideMotiveConfig(home.body), requests: 1 };
 }
 
-export async function pullDealerInspire(origin, { srps = DEALERINSPIRE_SRPS, deadlineAt = 0, maxLoads = 0 } = {}) {
+export async function pullDealerInspire(origin, { srps = DEALERINSPIRE_SRPS, deadlineAt = 0, maxLoads = 0, fetch = browserFetch } = {}) {
   const limits = deadlineAt || maxLoads ? { deadlineAt, maxLoads } : null;
-  const motive = await motiveConfigByBrowser(origin);
+  const motive = await motiveConfigByBrowser(origin, fetch);
   if (motive.unavailable) return { ok: false, complete: false, found: 0, candidates: 0, vehicles: [], requests: 1, vdpFailures: 0, why: "browser_unavailable" };
   if (motive.config) {
     const r = await pullRideMotiveApi(motive.config, origin, { deadlineAt });
     return { ok: Boolean(r.ok), complete: Boolean(r.ok && r.complete), found: r.found ?? 0, vehicles: r.vehicles ?? [], requests: 1 + (r.requests ?? 0), vdpFailures: 0, template: "motive" };
   }
-  const cards = [];
-  const seen = new Set();
+  const seen = new Set(); // every card, either walk
+  const read = new Set(); // VDPs opened
+  const vehicles = [];
+  const notes = [];
   let requests = 1; // the homepage read above
+  let stopped = false;
+  let vdpFailures = 0;
+  let candidates = 0;
+
+  // One VDP per candidate, within the limits. Returns false when the browser
+  // went away (the caller returns at once).
+  const readVdps = async (cands) => {
+    for (const c of cands) {
+      if (read.has(c.vin)) continue;
+      candidates++;
+      if (!c.url) {
+        vdpFailures++;
+        continue;
+      }
+      if (dealerInspireLimitsExhausted(limits, requests)) {
+        stopped = true;
+        vdpFailures++;
+        continue;
+      }
+      read.add(c.vin);
+      let res = await fetch(c.url);
+      requests++;
+      if (res.status === "browser_unavailable") return false;
+      if (res.status !== 200 || !res.body) {
+        await new Promise((r) => setTimeout(r, 4000));
+        res = await fetch(c.url);
+        requests++;
+      }
+      const v = res.status === 200 && res.body ? dealerInspireVdpVehicle(res.body, c.vin) : null;
+      if (!v) {
+        vdpFailures++;
+        continue;
+      }
+      vehicles.push(v);
+    }
+    return true;
+  };
+  const gone = () => ({ ok: false, complete: false, found: seen.size, candidates, vehicles, requests, vdpFailures, why: "browser_unavailable" });
+
+  // 1. THE FAST PATH: each list filtered to the electrified fuel facet, then
+  //    those cars' VDPs. Every real result here is a candidate by the
+  //    dealer's own field; the featured block (no blob) goes through the net.
+  //    Under the full limits, not the walk's reserve: these loads ARE the
+  //    cars.
+  let fast = 0;
+  for (const path of srps) {
+    const r = await readSrp(origin, path, { limits, loadsSoFar: requests, startUrl: dealerInspireFuelSrpUrl(origin, path), fetch });
+    requests += r.requests;
+    if (r.status === "browser_unavailable") return gone();
+    if (r.exhausted) stopped = true;
+    const cands = [];
+    for (const c of r.cards) {
+      if (seen.has(c.vin)) continue;
+      seen.add(c.vin);
+      if (c.result || dealerInspireIsCandidate(c)) cands.push(c);
+    }
+    fast += cands.length;
+    if (!(await readVdps(cands))) return gone();
+  }
+
+  // 2. THE WALK: both lists unfiltered under the half-budget reserve, the
+  //    title/WMI/blob net, their VDPs. This is what completeness means; the
+  //    fast path only made sure the cars came before the lot.
   let complete = true;
   let anySrp = false;
-  let stopped = false;
   const srpStatus = [];
   const srpLimits = srpLoadLimits(limits);
+  const unknownFuel = new Set();
   for (const path of srps) {
-    const r = await readSrp(origin, path, { limits: srpLimits, loadsSoFar: requests });
+    const r = await readSrp(origin, path, { limits: srpLimits, loadsSoFar: requests, fetch });
     requests += r.requests;
     srpStatus.push(`${path} ${r.exhausted && r.status === null ? "not tried" : (r.status ?? "no response")}`);
     if (r.exhausted) stopped = true;
-    if (r.status === "browser_unavailable") return { ok: false, complete: false, found: 0, candidates: 0, vehicles: [], requests, vdpFailures: 0, why: "browser_unavailable" };
+    if (r.status === "browser_unavailable") return gone();
     if (r.pages === 0) {
       // A rooftop with no /new-vehicles/ (independents on DI exist) is not a
       // failure; a rooftop with NO SRP at all is.
@@ -296,11 +445,14 @@ export async function pullDealerInspire(origin, { srps = DEALERINSPIRE_SRPS, dea
     }
     anySrp = true;
     if (!r.complete) complete = false;
+    const cands = [];
     for (const c of r.cards) {
+      if (c.fuel && dealerInspireFuelIsEv(c.fuel) && !DEALERINSPIRE_EV_FUELTYPES.includes(c.fuel)) unknownFuel.add(c.fuel);
       if (seen.has(c.vin)) continue;
       seen.add(c.vin);
-      cards.push(c);
+      if (dealerInspireIsCandidate(c)) cands.push(c);
     }
+    if (!(await readVdps(cands))) return gone();
   }
   // NO SRP AT ALL, AND SAY WHICH. This return used to carry no `why`, so
   // crawl.mjs printed the bare "dealerinspire browser lane failed" — the shape
@@ -309,45 +461,21 @@ export async function pullDealerInspire(origin, { srps = DEALERINSPIRE_SRPS, dea
   // path or a platform question rather than a wall (criswellauto.com and
   // hersonskia.com answer 404 on both paths from a laptop as well as from a
   // runner; crownbmw.com and temeculanissan.com have left the vendor). The
-  // statuses are what says so.
-  if (!anySrp)
-    return { ok: false, complete: false, found: 0, candidates: 0, vehicles: [], requests, vdpFailures: 0, why: `no SRP answered (${srpStatus.join(", ")})` };
-  const cands = cards.filter(dealerInspireIsCandidate);
-  const vehicles = [];
-  let vdpFailures = 0;
-  for (const c of cands) {
-    if (!c.url) {
-      vdpFailures++;
-      continue;
-    }
-    if (dealerInspireLimitsExhausted(limits, requests)) {
-      stopped = true;
-      vdpFailures++;
-      continue;
-    }
-    let res = await browserFetch(c.url);
-    requests++;
-    if (res.status === "browser_unavailable") return { ok: false, complete: false, found: cards.length, candidates: cands.length, vehicles, requests, vdpFailures, why: "browser_unavailable" };
-    if (res.status !== 200 || !res.body) {
-      await new Promise((r) => setTimeout(r, 4000));
-      res = await browserFetch(c.url);
-      requests++;
-    }
-    const v = res.status === 200 && res.body ? dealerInspireVdpVehicle(res.body, c.vin) : null;
-    if (!v) {
-      vdpFailures++;
-      continue;
-    }
-    vehicles.push(v);
-  }
+  // statuses are what says so. The fast path's filtered lists answer on the
+  // same paths, so a rooftop with no SRP answers nothing there either.
+  if (!anySrp && !fast)
+    return { ok: false, complete: false, found: 0, candidates, vehicles, requests, vdpFailures: 0, why: `no SRP answered (${srpStatus.join(", ")})` };
+  if (unknownFuel.size) notes.push(`fueltype spelling(s) not in the facet list: ${[...unknownFuel].join(", ")} — verify on a served page before adding`);
   return {
     ok: true,
-    complete: complete && vdpFailures === 0 && !stopped,
-    found: cards.length,
-    candidates: cands.length,
+    complete: complete && anySrp && vdpFailures === 0 && !stopped,
+    found: seen.size,
+    candidates,
+    fast,
     vehicles,
     requests,
     vdpFailures,
+    notes,
     ...(stopped ? { why: "stopped at the crawl's time cap or page budget" } : {}),
   };
 }
