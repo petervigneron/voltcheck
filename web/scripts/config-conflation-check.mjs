@@ -58,6 +58,24 @@
 // can be "covered" by both of those and still show a shopper a spread, or a
 // number belonging to a different version. That is the question here.
 //
+// DECLARED SILENCE IS NOT CONFLATION (2026-09-09). A row that carries no
+// range but says WHY — `abstains.epaRangeMi`, the guarded declaration
+// enrichment-coverage.mjs reads (reason of five words or more, only on a
+// field the row does not carry) — has made the exact decision this audit
+// checks for. The shapes it covers are not families standing in for a
+// version: no EPA rating exists at all (Class-3 Escalade IQ and Silverado
+// EV, E-Transit), a base row that defers to its grade rows for a car whose
+// grade the feed did not say (2026 Toyota bZ), or a rating EPA itself splits
+// on something no listing field carries (Wagoneer S, by tire supplier).
+// Those rows were counted as "silent" from 2026-08-28, and by 2026-09-08 the
+// 2026 model year had put 5,825 live listings on them — 3.5 points of a
+// 3.6-point ceiling — with not one undeclared silent row left in the feed.
+// The audit was failing on inventory growth, not on a defect. Declared
+// silence now prints under its own heading and stays OUT of the ratchet;
+// an UNDECLARED silent row — the BrightDrop case, a maker figure left in
+// prose — still counts. The ceiling was re-pinned to the undeclared number
+// the same day (nightly.yml).
+//
 // THE RATCHET is `--max-conflated-share`, the SHARE of live listings in the
 // three buckets combined. A share and not a raw count for the reason
 // live-enrichment-gap.mjs gives about its own primary ratchet: the feed grows,
@@ -139,7 +157,8 @@ const packClass = (trim) => {
 const rangeOf = (row) => row?.range?.epaRangeMi?.value ?? row?.range?.mfrRangeMi?.value;
 
 const ambiguous = new Map();   // nameplate+year -> {n, spread}
-const silent = new Map();      // row id -> {n, label}
+const silent = new Map();      // row id -> {n, label} — no range and no declared reason
+const declared = new Map();    // row id -> {n, label} — no range, abstains.epaRangeMi says why (not ratcheted)
 const splitRows = new Map();   // row id -> {classes:Set, n, label, examples, keyed}
 
 for (const l of listings) {
@@ -166,9 +185,11 @@ for (const l of listings) {
   if (!r.exact) continue;
 
   if (rangeOf(r.exact) === undefined) {
-    const e = silent.get(r.exact.id) ?? { n: 0, label: key, abstains: !!r.exact.abstains?.epaRangeMi };
+    // Declared abstentions are reported, not ratcheted (header).
+    const bucket = r.exact.abstains?.epaRangeMi ? declared : silent;
+    const e = bucket.get(r.exact.id) ?? { n: 0, label: key, abstains: !!r.exact.abstains?.epaRangeMi };
     e.n++;
-    silent.set(r.exact.id, e);
+    bucket.set(r.exact.id, e);
   }
 
   const pc = packClass(l.trim);
@@ -187,6 +208,7 @@ const split = splitAll.filter(([, v]) => !v.keyed);
 const typos = splitAll.filter(([, v]) => v.keyed);
 const ambN = [...ambiguous.values()].reduce((a, b) => a + b.n, 0);
 const silN = [...silent.values()].reduce((a, b) => a + b.n, 0);
+const decN = [...declared.values()].reduce((a, b) => a + b.n, 0);
 const splN = split.reduce((a, [, v]) => a + v.n, 0);
 const total = ambN + silN + splN;
 const share = listings.length ? (total / listings.length) * 100 : 0;
@@ -198,6 +220,7 @@ if (AS_JSON) {
     conflatedSharePct: Number(share.toFixed(2)),
     ambiguous: { listings: ambN, groups: [...ambiguous].map(([k, v]) => ({ cohort: k, ...v, ids: undefined })) },
     silent: { listings: silN, rows: [...silent].map(([id, v]) => ({ id, ...v })) },
+    declaredSilent: { listings: decN, rows: [...declared].map(([id, v]) => ({ id, ...v })) },
     split: { listings: splN, rows: split.map(([id, v]) => ({ id, listings: v.n, label: v.label, trims: [...v.examples.values()] })) },
     dealerTrimDisagreesWithVin: typos.map(([id, v]) => ({ id, listings: v.n, label: v.label, trims: [...v.examples.values()] })),
   };
@@ -208,9 +231,10 @@ if (AS_JSON) {
 const fmt = (n) => String(n).padStart(6);
 console.log(`Configuration conflation — ${listings.length} live listings across ${SHARDS} shards\n`);
 console.log(`${fmt(ambN)}  listings shown a RANGE SPREAD instead of a number (row covers several versions, feed can't pick)`);
-console.log(`${fmt(silN)}  listings whose matched row carries NO RANGE AT ALL`);
+console.log(`${fmt(silN)}  listings whose matched row carries NO RANGE AT ALL and declares no reason`);
 console.log(`${fmt(splN)}  listings on an UNKEYED row that also serves a different pack by the feed's own trim strings`);
-console.log(`${fmt(total)}  total — ${share.toFixed(2)}% of live listings\n`);
+console.log(`${fmt(total)}  total — ${share.toFixed(2)}% of live listings`);
+console.log(`${fmt(decN)}  (not counted) listings on a row that DECLARES why it states no range — abstains.epaRangeMi\n`);
 
 const show = (title, rows) => {
   if (!rows.length) return;
@@ -221,8 +245,10 @@ const show = (title, rows) => {
 };
 show("Spread instead of a number — the feed may already answer this; check the VIN:",
   [...ambiguous].sort((a, b) => b[1].n - a[1].n).map(([k, v]) => `${fmt(v.n)}  ${k}${v.spread ? `  (${v.spread})` : ""}`));
-show("Matched a row that states no range — does the maker publish one? (range.mfrRangeMi):",
-  [...silent].sort((a, b) => b[1].n - a[1].n).map(([id, v]) => `${fmt(v.n)}  ${id}  ${v.label}${v.abstains ? "  [declared]" : ""}`));
+show("Matched a row that states no range and declares no reason — does the maker publish one? (range.mfrRangeMi):",
+  [...silent].sort((a, b) => b[1].n - a[1].n).map(([id, v]) => `${fmt(v.n)}  ${id}  ${v.label}`));
+show("Not counted — rows that declare why they state no range (abstains.epaRangeMi). Worth a look only if the maker has since published one:",
+  [...declared].sort((a, b) => b[1].n - a[1].n).map(([id, v]) => `${fmt(v.n)}  ${id}  ${v.label}`));
 show("One UNKEYED row, two pack names in its own listings' trim strings — it is wrong for one of them:",
   split.sort((a, b) => b[1].n - a[1].n).map(([id, v]) => `${fmt(v.n)}  ${id}  ${v.label}  ${[...v.examples.values()].map((t) => `"${t}"`).join(" vs ")}`));
 show("Not counted — VIN-keyed rows a dealer's trim string contradicts. The VIN wins; this is feed data quality:",

@@ -668,4 +668,121 @@ const R: EnrichmentRow[] = [];
   );
 }
 
+// ── Kia EV3, MY2027 (2026-09-09) ────────────────────────────────────────────
+//
+// The biggest gap on the site the day this was written: 1,253 live 2027 EV3s
+// and not one enrichment row — a wholly new nameplate that went live without
+// anyone looking it up, which is the case live-enrichment-gap.mjs's group
+// ratchet exists to catch.
+//
+// SOURCES, all Kia's own. The 2027 EV3 specifications page on kiamedia.com
+// carries a seven-column table in trim order (Light FWD, Wind FWD, Land FWD,
+// Wind AWD, Land AWD, GT-Line AWD, GT AWD): "Battery Energy (kWh)" reads
+// 58.3 then 81.4 six times; "All Electric Range (miles)" reads 221, 321,
+// 321, 280, 280, 280, 280. Kia's own pricing release (25004) calls the
+// headline "up to 321 miles of all-electric range (Wind FWD and Land FWD
+// trims)" and lists "Built-in NACS charge port … capability to recharge from
+// 10–80% in approximately 31 minutes with 350kW DC fast charger" and
+// "Cold-weather ready with standard battery heater, available heat pump
+// (AWD)". The debut release (24568) gives the 400V E-GMP platform, the
+// 58.3/81.4 kWh split by grade, and "an estimated 29 minutes for the 58.3 kWh
+// (Light) battery and 31 minutes for the 81.4 kWh". Kia's warranty page:
+// "EV Battery Coverage 10-year/100,000-mile".
+//
+// RANGE FIELD. fueleconomy.gov's 2027 Kia menu has no EV3 as of 2026-09-09
+// (its options call answers an empty menu), so Kia's figures go in
+// `mfrRangeMi` — the maker's own number, rendered with the "est" mark and
+// under "Range (manufacturer estimate)" — not `epaRangeMi`, whose label is
+// "EPA range". Move them across, with the fueleconomy.gov ids, when EPA
+// publishes. "Battery Energy" is Kia's wording; it does not say gross or
+// usable, so it is filed as gross, the way the EV9's 99.8 is.
+//
+// VIN KEYS, read off 1,253 live VINs (WMI 3KM, Kia's Monterrey plant):
+// positions 4-6 encode grade and pack — DA3 Light, DB4 Wind FWD, DC4 Land
+// FWD, DBD Wind AWD, DCD Land AWD, DED GT-Line AWD, DAD GT AWD — and
+// position 8 the drivetrain (A = FWD long range, B = FWD standard, C = AWD).
+// Every one of the seven patterns was seen on at least 13 cars and none was
+// seen with a contradicting dealer trim. The three rows below are cut where
+// Kia's own figures differ: pack and range are identical within each.
+//
+// NO `trim` ON THESE ROWS, on purpose. The matcher applies a row's trim list
+// before its VIN keys, so a VIN-keyed row that also names "Wind" would
+// reject the 30-odd live cars whose dealer wrote "New 2027 Kia EV3" or
+// "InTransit" in the trim field — cars whose VIN answers the question
+// completely. The Class-3 Silverado and GM truck rows are keyed the same
+// way for the same reason. Every live EV3 carries a VIN; a placeholder id
+// (none seen) would fall to drivetrain alone and, on FWD, to two candidates
+// rather than a wrong number.
+//
+// HEAT PUMP. Kia's "available heat pump (AWD)" is read literally: none on
+// the FWD rows, optional on the AWD row. A yes/no fact is never marked
+// estimated (published-vs-estimated rule), so the wording is quoted on each.
+{
+  const AS_OF_EV3 = "2026-09-09";
+  const fk = <T,>(value: T, note?: string, sourceUrl?: string, confidence: Fact<T>["confidence"] = "high"): Fact<T> => ({
+    value,
+    source: "mfr",
+    asOf: AS_OF_EV3,
+    confidence,
+    note,
+    sourceUrl,
+  });
+  const SPECS = "https://www.kiamedia.com/us/en/models/ev3/2027/specifications";
+  const PR_PRICING = "https://www.kiamedia.com/us/en/media/pressreleases/25004/kia-announces-pricing-for-2027-ev3";
+  const PR_DEBUT = "https://www.kiamedia.com/us/en/media/pressreleases/24568/the-all-new-2027-kia-ev3-debuts-at-new-york-international-auto-show";
+  const WARRANTY = "https://www.kia.com/us/en/warranty";
+  const NOT_YET_EPA = "Kia's published figure; fueleconomy.gov carries no 2027 EV3 record as of 2026-09-09 — move to epaRangeMi with the EPA id when it does";
+  const charging = (minutes: number) => ({
+    portStandard: fk<"NACS">("NACS", "“Built-in NACS charge port … (no adapter required for NACS)”", PR_PRICING),
+    superchargerAccess: fk<"native">("native", "Native NACS port with standard Plug and Charge", PR_DEBUT),
+    dcFastCharging: fk<"standard">("standard", undefined, PR_PRICING),
+    chargeTime1080Min: fk(minutes, "10–80% on a 350 kW charger, Kia's estimate", PR_DEBUT),
+    architectureV: fk(400, "Kia's 400V E-GMP platform", PR_DEBUT),
+  });
+  const warranty = {
+    batteryYears: fk(10, "“EV Battery Coverage 10-year/100,000-mile”", WARRANTY),
+    batteryMiles: fk(100_000, "“EV Battery Coverage 10-year/100,000-mile”", WARRANTY),
+  };
+  const KIA_EV3 = { make: "KIA", model: "EV3", modelYears: [2027, 2027] as [number, number] };
+
+  R.push(
+    {
+      id: "ev3-2027-light",
+      ...KIA_EV3,
+      vds: ["DA3"],
+      drive: "FWD",
+      packVariant: "Standard Range",
+      battery: { packGrossKwh: fk(58.3, "Kia's spec sheet “Battery Energy (kWh)”, Light; Kia does not say gross or usable", SPECS) },
+      range: { mfrRangeMi: fk(221, `Light FWD. ${NOT_YET_EPA}`, SPECS) },
+      charging: charging(29),
+      thermal: { heatPump: fk<"none">("none", "“standard battery heater, available heat pump (AWD)” — Kia offers the heat pump on AWD only", PR_PRICING) },
+      warranty,
+    },
+    {
+      id: "ev3-2027-fwd-long-range",
+      ...KIA_EV3,
+      vds: ["DB4", "DC4"],
+      drive: "FWD",
+      packVariant: "Long Range",
+      battery: { packGrossKwh: fk(81.4, "Kia's spec sheet “Battery Energy (kWh)”, Wind and Land; Kia does not say gross or usable", SPECS) },
+      range: { mfrRangeMi: fk(321, `Wind FWD and Land FWD, “up to 321 miles of all-electric range”. ${NOT_YET_EPA}`, SPECS) },
+      charging: charging(31),
+      thermal: { heatPump: fk<"none">("none", "“standard battery heater, available heat pump (AWD)” — Kia offers the heat pump on AWD only", PR_PRICING) },
+      warranty,
+    },
+    {
+      id: "ev3-2027-awd",
+      ...KIA_EV3,
+      vds: ["DBD", "DCD", "DED", "DAD"],
+      drive: "AWD",
+      packVariant: "Long Range",
+      battery: { packGrossKwh: fk(81.4, "Kia's spec sheet “Battery Energy (kWh)”, every AWD grade; Kia does not say gross or usable", SPECS) },
+      range: { mfrRangeMi: fk(280, `Wind AWD, Land AWD, GT-Line and GT all read 280 on Kia's spec sheet. ${NOT_YET_EPA}`, SPECS) },
+      charging: charging(31),
+      thermal: { heatPump: fk<"optional">("optional", "“standard battery heater, available heat pump (AWD)”", PR_PRICING) },
+      warranty,
+    }
+  );
+}
+
 export const RESEARCH_ROWS_12: EnrichmentRow[] = R;

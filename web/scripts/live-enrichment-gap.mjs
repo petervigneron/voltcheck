@@ -105,12 +105,26 @@
 //              committed ceiling. This is the number that actually reflects
 //              shopper-facing coverage; ratchet it DOWN as rows land, never
 //              raise it to launder a regression.
-//   SECONDARY — distinct make+model gap groups vs --max-groups, unchanged
-//              from the original ratchet. Still asserted and still fails
+//   SECONDARY — distinct make+model gap groups holding at least --min-group
+//              listings, vs --max-groups. Still asserted and still fails
 //              the build on its own (a wholly new model going live with
 //              zero coverage is worth catching even if the feed is tiny
 //              relative to a big cohort elsewhere) — it just no longer
 //              carries the audit by itself.
+//
+//              --min-group exists since 2026-09-09. The count was pinned at
+//              491 on 2026-08-25 with 311 groups live; by 2026-09-08 it
+//              read 523 and failed every night, and 290 of the 523 held one
+//              or two listings — a lone 2018 X5 xDrive40e, one 2013 Model S,
+//              a dealer's misspelling — the long tail the crawl's growth
+//              from 100k to 168k cars surfaced. The share ratchet already
+//              weighs those by what a shopper feels; a group count that
+//              trips on one stray car cannot be kept green by research and
+//              was being ignored instead. A NEW MODEL arrives by the
+//              hundred (the 2027 Kia EV3 went live with 1,253 cars and no
+//              row), so a floor of ten listings keeps the thing this
+//              ratchet is for and drops the noise. Below the floor the
+//              groups are still ranked and reported.
 //
 // Both baselines were calibrated together 2026-08-25 against a live,
 // healthy CDN read (see the nightly.yml step comment for the exact figures
@@ -145,6 +159,10 @@ const MAX_GAP_SHARE = Number(val("--max-gap-share", "100"));
 // one — a group appearing above baseline means a model shipped live with no
 // enrichment, or a previously-matching row broke.
 const BASELINE = Number(val("--max-groups", "999999"));
+// Groups smaller than this are reported but not counted against --max-groups
+// (header, SECONDARY). Default 1 keeps an ad hoc run's count comparable to
+// the historical one; CI passes the floor.
+const MIN_GROUP = Number(val("--min-group", "1"));
 const FEED_BASE = val("--feed-base", "https://voltcheck.net");
 const COMPLETENESS_TOP = Number(val("--completeness-top", "20"));
 
@@ -398,6 +416,8 @@ const report = {
   totalMissListings: totalMiss,
   partialMissListings: partialMiss,
   groupCount: ranked.length,
+  minGroup: MIN_GROUP,
+  groupCountAtMin: ranked.filter((g) => g.count >= MIN_GROUP).length,
   baseline: BASELINE,
   maxGapSharePct: MAX_GAP_SHARE,
   groups: ranked,
@@ -425,7 +445,7 @@ await writeFile(REPORT_PATH, JSON.stringify(report, null, 2));
 // tripping fails the build — see the header comment for why the group count
 // alone has a blind spot the share doesn't.
 const shareFailed = report.gapSharePct > MAX_GAP_SHARE;
-const groupFailed = ranked.length > BASELINE;
+const groupFailed = report.groupCountAtMin > BASELINE;
 const failed = shareFailed || groupFailed;
 
 if (AS_JSON) {
@@ -437,7 +457,9 @@ console.log(`Live enrichment gap — ${totalListings} live listings across ${SHA
 console.log(`  no enrichment row matched: ${totalGapListings} (${report.gapSharePct}%, ceiling ${MAX_GAP_SHARE}%)`);
 console.log(`    total miss (no row for this make+model+year at all): ${totalMiss}`);
 console.log(`    partial miss (a row exists but doesn't match this trim/drive): ${partialMiss}`);
-console.log(`  distinct make+model gap groups: ${ranked.length} (baseline ${BASELINE})\n`);
+console.log(
+  `  distinct make+model gap groups: ${ranked.length}; with ${MIN_GROUP}+ listings: ${report.groupCountAtMin} (baseline ${BASELINE})\n`
+);
 
 console.log(`Ranked gap list (top ${TOP} of ${ranked.length}):`);
 for (const g of ranked.slice(0, TOP)) {

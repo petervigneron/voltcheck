@@ -2663,13 +2663,22 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
 
   {
     id: "cadillac-escalade-iq-2026",
-    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain.",  epaRangeMi: "No EPA rating exists: NHTSA's VIN decode puts this in GVWR Class 3, above EPA's labelling threshold, and fueleconomy.gov has no record under either nameplate; Cadillac's own figure is an estimate and stays in the buyer note" },
+    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
     make: "CADILLAC",
     model: "Escalade IQ",
     modelYears: [2025, 2026], // window extended to the MY2025 launch year (2026-08-14)
     drive: "AWD",
     battery: { packGrossKwh: f(205, "mfr", "high") },
+    // No EPA rating exists: NHTSA's VIN decode puts this in GVWR Class 3,
+    // above EPA's labelling threshold, and fueleconomy.gov has no record
+    // under either nameplate. Cadillac's own figure therefore goes in
+    // `mfrRangeMi` (2026-09-09), the field the BrightDrop, Hummer and Class-3
+    // Silverado rows use for the same situation: it renders with the "est"
+    // mark and under "Range (manufacturer estimate)", never as a rating.
+    // Until then this row abstained and the site printed nothing for 1,900
+    // live trucks whose maker states a figure on its own page.
     range: {
+      mfrRangeMi: f(465, "mfr", "high", "Cadillac-estimated; cadillac.com's Escalade IQ page states “Estimated 465 miles”. No EPA rating exists above 10,000 lb GVWR", "https://www.cadillac.com/electric/escalade-iq"),
       testedRangeMi: f(482, "tested", "high", "70-mph steady-state (InsideEVs): 482.2 mi, using 222.7 kWh. Edmunds' own mixed-driving methodology recorded 558 mi; a third-party 60-mph constant-speed test (Tom Moloughney/State of Charge) recorded 607 mi, all three exceed Cadillac's own 465-mi estimate. No EPA-certified figure exists to compare against."),
     },
     charging: {
@@ -2700,17 +2709,22 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
 
   {
     id: "cadillac-escalade-iql-2026",
-    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain.",  epaRangeMi: "No EPA rating exists: NHTSA's VIN decode puts this in GVWR Class 3, above EPA's labelling threshold, and fueleconomy.gov has no record under either nameplate; Cadillac's own figure is an estimate and stays in the buyer note" },
+    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
     make: "CADILLAC",
     model: "Escalade IQL",
     modelYears: [2026, 2026],
     drive: "AWD",
     // No epaRangeMi: EnrichmentReport renders that field under the literal
-    // label "EPA range", and no EPA rating exists for this vehicle. Cadillac's
-    // own 460-mile figure is a manufacturer estimate and stays in the buyer
-    // note, where it is labelled as one; the tested figure is the only number
-    // this card prints, which is right — it is a real measurement with a
-    // stated method, not a government rating in disguise.
+    // label "EPA range", and no EPA rating exists for this vehicle (Class 3
+    // GVWR, no fueleconomy.gov record). Cadillac's own 460-mile figure is a
+    // manufacturer estimate, so it is carried as `mfrRangeMi` (2026-09-09),
+    // which renders with the "est" mark under "Range (manufacturer
+    // estimate)" — the same field the BrightDrop and Class-3 Silverado rows
+    // use. Before that the row abstained and printed nothing for ~690 live
+    // trucks whose maker states a figure on its own page.
+    range: {
+      mfrRangeMi: f(460, "mfr", "high", "Cadillac-estimated; cadillac.com's Escalade IQL page states “Cadillac-estimated 460 miles of range”. No EPA rating exists above 10,000 lb GVWR", "https://www.cadillac.com/electric/escalade-iql"),
+    },
     battery: { packGrossKwh: f(200, "mfr", "medium", "Cadillac's own Escalade IQL specs page states only “over 200 kWh”, vaguer wording than the Escalade IQ page's specific 205 kWh figure") },
     charging: {
       portStandard: f("CCS1", "mfr", "high"),

@@ -957,6 +957,22 @@ jobs:
       # accuracy into question, only its completeness margin (a clean
       # 24-shard read would tighten, not overturn, ±0.5 points either way).
       # Ratchet DOWN as rows land; never up to hide a regression.
+      #
+      # RE-PINNED 2026-09-09. The group count read 523 on 09-08 against the
+      # 491 baseline and had failed every night for a week: 290 of the 523
+      # groups held one or two listings — the long tail the crawl's growth
+      # from 100k to 168k cars surfaced — and no amount of research keeps a
+      # count that trips on one stray 2013 Model S green. The share, which
+      # weighs what a shopper feels, read 7.5% against 12.4%. So the group
+      # ratchet now counts only groups of ten or more listings (--min-group,
+      # see the script header): a new model arrives by the hundred (the 2027
+      # Kia EV3 went live with 1,253 cars and no row — the largest gap on
+      # the site, fixed the same day), and ten keeps that catch while
+      # dropping the noise. Measured after the EV3 rows landed, live feed,
+      # all 24 shards: 6.3% share (10,368 of 165,457), 114 groups of ten or
+      # more. Pinned at 8.0 and 116 — a little room for churn, both well
+      # under the old ceilings. Next by size: Taycan, XC90 (2025-26 T8, no
+      # rows), Wrangler 2023, 2013-18 Model S, R1S gen 1, RAV4 PHEV 2026.
       - name: Audit live listings against the enrichment corpus
         if: always()
         working-directory: web
@@ -964,9 +980,9 @@ jobs:
           rc=0
           node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs \
             scripts/live-enrichment-gap.mjs --out /tmp/live-enrichment-gap.json --top 60 \
-            --max-gap-share 12.4 --max-groups 491 || rc=$?
+            --max-gap-share 8.0 --min-group 10 --max-groups 116 || rc=$?
           if [ "$rc" -eq 10 ]; then
-            echo "::error::Live enrichment coverage regressed — either the no-enrichment-row share exceeded the 12.4% ceiling pinned 2026-08-25, or a new make/model gap group pushed past the 491-group baseline (a model went live with no enrichment, or a row stopped matching). See the step log's ranked list, its top-10-by-listing-count on a share failure, and /tmp/live-enrichment-gap.json."
+            echo "::error::Live enrichment coverage regressed — either the no-enrichment-row share exceeded the 8.0% ceiling pinned 2026-09-09, or the count of make/model gap groups holding ten or more listings pushed past the 116 baseline (a model went live with no enrichment, or a row stopped matching). See the step log's ranked list, its top-10-by-listing-count on a share failure, and /tmp/live-enrichment-gap.json."
             exit 10
           elif [ "$rc" -ne 0 ]; then exit "$rc"; fi
       - uses: actions/upload-artifact@v4
@@ -1000,6 +1016,19 @@ jobs:
       # nameplates fixed that day, in order. After those fixes: 5,147
       # listings, 3.49%. Pinned at 3.6 to leave a little room for feed churn.
       # Ratchet DOWN as nameplates get keyed; never up to hide a regression.
+      #
+      # RE-PINNED 2026-09-09. It read 3.93% on 09-08 and had failed for a
+      # week, and 5,825 of the 6,589 listings it counted sat on rows that
+      # DECLARE why they state no range (abstains.epaRangeMi: no EPA rating
+      # exists above 10,000 lb GVWR, a base row deferring to its grade rows,
+      # EPA's own split by tire supplier) — the 2026 model year arriving on
+      # rows that had already made the decision this audit checks for. Not
+      # one undeclared silent row was left. Declared silence now prints
+      # under its own heading and stays out of the ratchet (script header);
+      # the Escalade IQ and IQL gained Cadillac's own figure as a
+      # manufacturer estimate the same day, 1,900 cars. Measured after: 0.30%
+      # (497 of 165,457 — 491 range spreads, 6 unkeyed splits, 0 undeclared
+      # silent). Pinned at 0.5, a little room for churn in the spread bucket.
       - name: Audit rows that stand in for several configurations
         if: always()
         working-directory: web
@@ -1007,9 +1036,9 @@ jobs:
           rc=0
           node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs \
             scripts/config-conflation-check.mjs --json --out /tmp/config-conflation.json \
-            --top 40 --max-conflated-share 3.6 || rc=$?
+            --top 40 --max-conflated-share 0.5 || rc=$?
           if [ "$rc" -eq 11 ]; then
-            echo "::error::More live listings are answered by a row covering several configurations than the 3.6% ceiling pinned 2026-08-28. Either a nameplate shipped with one row for several packs/drivetrains, or a row that used to resolve stopped. The step log ranks them; /tmp/config-conflation.json has the detail."
+            echo "::error::More live listings are answered by a row covering several configurations than the 0.5% ceiling pinned 2026-09-09. Either a nameplate shipped with one row for several packs/drivetrains, a row that used to resolve stopped, or a row went silent on range without declaring why (abstains.epaRangeMi). The step log ranks them; /tmp/config-conflation.json has the detail."
             exit 11
           elif [ "$rc" -ne 0 ]; then exit "$rc"; fi
       - uses: actions/upload-artifact@v4

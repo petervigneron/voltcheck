@@ -99,16 +99,29 @@ test("the 2017-19 Tesla S/X rows abstain with no siblings to defer to — nothin
 // will be. What makes this worth a test rather than a comment is the label:
 // EnrichmentReport prints this field under the literal words "EPA range", so
 // a maker's own estimate placed here reads as a government rating. Cadillac
-// quotes 465 miles for the Escalade IQ and it is not an EPA number; it lives
-// in the buyer note, and this pins it out of the field.
-test("the Class-3 trucks and Escalade IQ/IQL abstain on EPA range, and print no figure under that label", () => {
-  for (const id of [
-    "silverado-class3-standard", "silverado-class3-extended", "silverado-class3-max",
-    "cadillac-escalade-iq-2026", "cadillac-escalade-iql-2026",
-  ]) {
+// quotes 465 miles for the Escalade IQ and it is not an EPA number; this
+// pins it out of the field.
+test("the Class-3 trucks abstain on EPA range, and print no figure under that label", () => {
+  for (const id of ["silverado-class3-standard", "silverado-class3-extended", "silverado-class3-max"]) {
     const r = byId(id);
     assert.ok(r.abstains?.epaRangeMi, `${id} should declare why it is silent`);
     assert.equal(r.range?.epaRangeMi, undefined, "no EPA rating exists for this vehicle to print");
+  }
+});
+
+// Since 2026-09-09 the Escalade rows carry Cadillac's own figure the way the
+// BrightDrop rows carry GM's: in `mfrRangeMi`, which renders as an estimate
+// under "Range (manufacturer estimate)". The pin that matters is unchanged —
+// nothing under "EPA range" — and the row no longer abstains, because the
+// coverage audit's guard forbids abstaining on a field the row answers.
+test("the Escalade IQ and IQL carry Cadillac's estimate as a manufacturer figure, never under the EPA label", () => {
+  for (const [id, mi] of [["cadillac-escalade-iq-2026", 465], ["cadillac-escalade-iql-2026", 460]] as const) {
+    const r = byId(id);
+    assert.equal(r.range?.epaRangeMi, undefined, "no EPA rating exists for this vehicle to print");
+    assert.equal(r.range?.mfrRangeMi?.value, mi);
+    assert.equal(r.range?.mfrRangeMi?.source, "mfr");
+    assert.match(r.range?.mfrRangeMi?.sourceUrl ?? "", /^https:\/\/www\.cadillac\.com\//);
+    assert.equal(r.abstains?.epaRangeMi, undefined, "a row that answers the field must not also abstain on it");
   }
 });
 
