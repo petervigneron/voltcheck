@@ -2,9 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { WorthForm } from "@/components/WorthForm";
 import { valueVehicle, vehicleLabel, type Valuation, type WorthInput } from "@/lib/listings/value";
-import { currentPass } from "@/lib/pro";
+import { currentPass, currentPassEmail } from "@/lib/pro";
 import { fetchPriceTrend, type PriceTrend } from "@/lib/trend";
 import { PriceTrendCharts } from "@/components/PriceTrend";
+import { TrackValue } from "@/components/TrackValue";
+import { parseWorthInput, worthWatchLabel, worthWatchParams } from "@/lib/worthWatch";
 import { enrichListing, packIdentity } from "@/lib/listings/enrich";
 import type { Listing } from "@/lib/listings/types";
 
@@ -36,8 +38,6 @@ function worthListing(input: WorthInput): Listing {
 // is the entry point people search for, and it self-canonicals to /worth.
 export const dynamic = "force-dynamic";
 
-const VIN_RE = /^[A-HJ-NPR-Z0-9]{17}$/i;
-
 // Spelled out rather than taken from the generated PageProps<"/worth">: the
 // static routes on this site (app/alerts/confirm) read their query the same
 // way, and it keeps `tsc --noEmit` honest outside a build.
@@ -48,41 +48,14 @@ const one = (v: string | string[] | undefined): string | undefined =>
   Array.isArray(v) ? v[0] : v;
 
 /**
- * The typed query, or null for the bare form.
- *
- * A malformed VIN is DROPPED, not rejected: it can only ever have upgraded the
- * answer, so a typo costs the sharper tier and nothing else. Mileage is capped
- * at 300,000 — past that the number is a typo or a car no model on this site
- * has anything to say about, and value.ts's own driven-car window (2,000 to
- * 200,000) does the real work either way.
+ * The typed query, or null for the bare form. The parser lives in
+ * lib/worthWatch.ts since 2026-09-09 because the value watch's sender reads
+ * the same query back out of a subscription row: a malformed VIN is DROPPED,
+ * not rejected (it can only ever have upgraded the answer), and mileage is
+ * capped at 300,000.
  */
 function readInput(sp: Params): WorthInput | null {
-  const year = Number(one(sp.year));
-  const make = (one(sp.make) ?? "").trim();
-  const model = (one(sp.model) ?? "").trim();
-  const mileage = Number(String(one(sp.miles) ?? "").replace(/[,\s]/g, ""));
-  if (!Number.isInteger(year) || year < 1990 || year > 2100) return null;
-  if (!make || !model) return null;
-  if (!Number.isFinite(mileage) || mileage < 0 || mileage > 300_000) return null;
-  const rawVin = (one(sp.vin) ?? "").trim().toUpperCase();
-  const trim = (one(sp.trim) ?? "").trim();
-  // Anything else — including absence, which every URL minted before the
-  // question existed has — reads as "good": the answer those URLs were built
-  // to show. value.ts says what each value does.
-  const rawCond = one(sp.cond);
-  const condition = rawCond === "good" || rawCond === "issues" || rawCond === "branded" ? rawCond : undefined;
-  const rawDrive = one(sp.drive);
-  const drive = rawDrive === "RWD" || rawDrive === "AWD" || rawDrive === "FWD" ? rawDrive : undefined;
-  return {
-    year,
-    make,
-    model,
-    mileage: Math.round(mileage),
-    vin: VIN_RE.test(rawVin) ? rawVin : undefined,
-    trim: trim || undefined,
-    drive,
-    condition,
-  };
+  return parseWorthInput((k) => one(sp[k]));
 }
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
@@ -113,9 +86,15 @@ export default async function WorthPage(props: Props) {
   // answer for a pass-holder. Everyone else keeps the page they had; /pro
   // lists the benefit. The pass lookup and the trend read both fail closed.
   let trend: PriceTrend | null = null;
+  // The pass also decides whether the result offers to track the car's value
+  // (components/TrackValue.tsx); the address is what the watch subscribes.
+  let pro = false;
+  let passEmail: string | null = null;
   if (input && valuation) {
     try {
-      if ((await currentPass()).active) {
+      pro = (await currentPass()).active;
+      if (pro) {
+        passEmail = await currentPassEmail();
         // The trim the valuation matched and, with a VIN, the pack identity
         // the enrichment layer gives the car as described — the same two
         // facts that unlock the trim-level trend on a listing page (0077).
@@ -154,7 +133,7 @@ export default async function WorthPage(props: Props) {
             someone has searched, the number is what the page is FOR — the
             picker becomes the way to adjust, not the way in, so it moves
             below what it produced. The bare form keeps the old order. */}
-        {input && valuation && <Result input={input} v={valuation} />}
+        {input && valuation && <Result input={input} v={valuation} pro={pro} email={passEmail} />}
         {trend?.asks && (
           <section className={`${CELL} bg-paper px-5 py-6 sm:px-8`}>
             {/* The same caption the blurred block carries on a car's page —
@@ -193,7 +172,7 @@ export default async function WorthPage(props: Props) {
 const CELL = "border-r-[3px] border-b-[3px] border-ink";
 const CAPTION = "text-[10.5px] font-extrabold uppercase tracking-[0.14em] sm:text-[11px]";
 
-function Result({ input, v }: { input: WorthInput; v: Valuation }) {
+function Result({ input, v, pro, email }: { input: WorthInput; v: Valuation; pro: boolean; email: string | null }) {
   const miles = `${input.mileage.toLocaleString("en-US")} miles`;
   const subject = (
     <>
@@ -268,9 +247,7 @@ function Result({ input, v }: { input: WorthInput; v: Valuation }) {
       </div>
 
       <div className="flex flex-wrap border-t-[3px] border-ink">
-        <span className={`${CAPTION} flex flex-1 items-center bg-putty px-5 py-3.5 text-ink/45 sm:px-8`}>
-          Track this car&rsquo;s value — coming with Pro
-        </span>
+        <TrackValue params={worthWatchParams(input)} label={worthWatchLabel(input)} pro={pro} email={email} />
         {/* ODbL attribution: required wherever a figure derived from the
             Washington title records renders, so this line is a licence term and
             not a disclaimer. Kept to a bare credit, exactly as

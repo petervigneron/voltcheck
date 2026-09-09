@@ -46,6 +46,7 @@ import path from "node:path";
 import { SHARDS, unpackIndex } from "../lib/listings/pack.ts";
 import { buildTests, rowMatches } from "../lib/listings/match.ts";
 import { milesBetween } from "../lib/geo.ts";
+import { isWorthWatch } from "../lib/worthWatch.ts";
 
 const SUPABASE_URL = process.env.SUPABASE_URL?.replace(/\/$/, "");
 const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -127,6 +128,10 @@ const now = Date.now();
 let sent = 0;
 for (const sub of subs) {
   const isPro = proEmails.has(String(sub.email).toLowerCase());
+  // A value watch (worth=1…, lib/worthWatch.ts) is scripts/send-worth.mjs's
+  // row. Read here it would parse as a browse search for the make and model
+  // and mail every new listing of it.
+  if (isWorthWatch(sub.params)) continue;
   const watchlist = typeof sub.params === "string" && sub.params.startsWith("ids=");
   if (!watchlist && !isPro) continue; // a free search alert no longer exists (header)
 

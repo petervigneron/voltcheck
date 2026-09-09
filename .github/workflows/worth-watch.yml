@@ -1,0 +1,40 @@
+name: Value watch emails
+
+# The Pro value watch (web/scripts/send-worth.mjs): once a week, every
+# tracked car's valuation and how it moved, to the pass-holders who asked.
+# Monday morning US time, after the weekend's crawls have landed and the
+# nightly has synced, so the number stands on this week's listings. The
+# script itself refuses to mail a row twice inside six days, so a manual
+# dispatch is safe.
+#
+# Needs the anon key as well as the service key: the valuation is the /worth
+# page's own code path (lib/listings/value.ts → lib/listings/db.ts) and it
+# reads under the same role the page does.
+on:
+  schedule:
+    - cron: "0 16 * * 1" # 09:00 America/Los_Angeles, Mondays
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    concurrency:
+      group: worth-watch
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Send value watch emails
+        working-directory: web
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+        run: node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs scripts/send-worth.mjs

@@ -23,6 +23,11 @@ export const REMOVABLE = [
   "maxYear",
   "maxMiles",
   "minRange",
+  // A floor on usable pack size, kWh. Added 2026-09-09 for the Pro standing
+  // order: the owner's own order kept matching short-range versions because
+  // the form could only name a trim, and a trim is not a pack. Same shape as
+  // minRange; the rail has no control for it yet, the chip describes it.
+  "minKwh",
   "heatPump",
   "cut",
   // Cars that meet at least one rebate program's car-side conditions under
@@ -255,6 +260,8 @@ export function describeFilter(key: string, value: string): string | null {
       return `Under ${Number(value).toLocaleString()} mi`;
     case "minRange":
       return `${value}+ mi range`;
+    case "minKwh":
+      return `${value}+ kWh`;
     case "heatPump":
       return value === "1" ? "Heat pump" : null;
     case "cut":

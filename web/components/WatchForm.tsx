@@ -13,6 +13,14 @@ import { watchParams } from "@/lib/watch";
 // the market actually carries, never a free-typed trim. Trims are checkboxes:
 // "SEL or higher" is SEL and Limited ticked; nothing ticked means any.
 //
+// Range, battery, heat pump and newest year (2026-09-09): the owner's own
+// order kept mailing him short-range versions of the model he named, because
+// the form could only narrow by trim and a trim is not a range or a pack.
+// Range and battery are typed floors — the trims artifact carries no per-
+// model range or kWh options to offer as chips — and they match the grid's
+// own minRange / minKwh predicates, so a car that clears the order is a car
+// the same search would show.
+//
 // Submits to the same /api/alerts as the band under the grid, under the
 // address that bought the pass (pre-filled from 0059 pro_email; editable only
 // when that lookup failed), because the sender decides "Pro" by address.
@@ -50,6 +58,10 @@ export function WatchForm({ email: passEmail }: { email: string | null }) {
   const [trims, setTrims] = useState<string[]>([]);
   const [drive, setDrive] = useState("");
   const [minYear, setMinYear] = useState("");
+  const [maxYear, setMaxYear] = useState("");
+  const [minRange, setMinRange] = useState("");
+  const [minKwh, setMinKwh] = useState("");
+  const [heatPump, setHeatPump] = useState(false);
   const [maxMiles, setMaxMiles] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [cond, setCond] = useState<"" | "new" | "used">("");
@@ -67,7 +79,7 @@ export function WatchForm({ email: passEmail }: { email: string | null }) {
   const years: number[] = [];
   for (let y = thisYear + 1; y >= FIRST_MODEL_YEAR; y--) years.push(y);
 
-  const params = watchParams({ make, model, trims, drive, minYear, maxMiles, maxPrice, cond, zip, radius });
+  const params = watchParams({ make, model, trims, drive, minYear, maxYear, minRange, minKwh, heatPump, maxMiles, maxPrice, cond, zip, radius });
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -131,6 +143,50 @@ export function WatchForm({ email: passEmail }: { email: string | null }) {
             {years.map((y) => <option key={y} value={y}>{y} or newer</option>)}
           </select>
           <span aria-hidden="true" className={CHEVRON}>▼</span>
+        </div>
+
+        <div className={pick("")}>
+          <label className={LABEL} htmlFor="watch-max-year">
+            Newest year <span className="font-semibold normal-case tracking-normal text-ink/40">optional</span>
+          </label>
+          <select id="watch-max-year" value={maxYear} onChange={(e) => setMaxYear(e.target.value)} className={SELECT}>
+            <option value="">Any</option>
+            {years.filter((y) => !minYear || y >= Number(minYear)).map((y) => <option key={y} value={y}>{y} or older</option>)}
+          </select>
+          <span aria-hidden="true" className={CHEVRON}>▼</span>
+        </div>
+
+        <div className={pick("")}>
+          <label className={LABEL} htmlFor="watch-range">
+            Min range <span className="font-semibold normal-case tracking-normal text-ink/40">optional</span>
+          </label>
+          <input id="watch-range" type="text" inputMode="numeric" autoComplete="off"
+            value={withCommas(minRange)} onChange={(e) => setMinRange(digits(e.target.value).slice(0, 3))} placeholder="250"
+            className={`${CONTROL} tabular-nums placeholder:font-medium placeholder:text-ink/30`} />
+          <span aria-hidden="true" className="pointer-events-none absolute right-4 bottom-3.5 text-[10.5px] font-extrabold tracking-[0.14em] text-ink/35 uppercase sm:right-5">mi</span>
+        </div>
+
+        <div className={pick("")}>
+          <label className={LABEL} htmlFor="watch-kwh">
+            Min battery <span className="font-semibold normal-case tracking-normal text-ink/40">optional</span>
+          </label>
+          <input id="watch-kwh" type="text" inputMode="numeric" autoComplete="off"
+            value={minKwh} onChange={(e) => setMinKwh(digits(e.target.value).slice(0, 3))} placeholder="75"
+            className={`${CONTROL} tabular-nums placeholder:font-medium placeholder:text-ink/30`} />
+          <span aria-hidden="true" className="pointer-events-none absolute right-4 bottom-3.5 text-[10.5px] font-extrabold tracking-[0.14em] text-ink/35 uppercase sm:right-5">kWh</span>
+        </div>
+
+        <div className={pick("")}>
+          <span className={LABEL}>
+            Heat pump <span className="font-semibold normal-case tracking-normal text-ink/40">optional</span>
+          </span>
+          {/* Pressed to teal, the kit colour the rail's own heat-pump toggle
+              wears (lib/filters.ts QUICK_TOGGLES tone) — never the
+              interactive cobalt (owner, 2026-09-03). */}
+          <button type="button" aria-pressed={heatPump} onClick={() => setHeatPump(!heatPump)}
+            className={`mx-4 mt-1 mb-3 border-[3px] border-ink px-3 py-1.5 text-[13px] font-bold sm:mx-5 ${heatPump ? "bg-teal text-paper" : "bg-paper text-ink"} focus:outline-none focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-cobalt`}>
+            {heatPump ? "✓ Heat pump only" : "Any"}
+          </button>
         </div>
 
         <div className={pick("")}>

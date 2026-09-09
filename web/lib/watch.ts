@@ -21,6 +21,16 @@ export interface WatchInput {
   drive: string;
   /** Oldest acceptable model year. */
   minYear: string;
+  /** Newest acceptable model year — "" = any. Optional on the type so the
+   *  four fields added 2026-09-09 do not break a caller built before them. */
+  maxYear?: string;
+  /** EPA range floor, miles. The owner's own order kept surfacing short-range
+   *  versions of the model he named; a trim is not a range. */
+  minRange?: string;
+  /** Usable pack floor, kWh. */
+  minKwh?: string;
+  /** Only cars with a heat pump (the card's own "yes", never "verify"). */
+  heatPump?: boolean;
   maxMiles: string;
   maxPrice: string;
   cond: "" | "new" | "used";
@@ -42,6 +52,12 @@ export function watchParams(w: WatchInput): string {
   if (trims.length) p.set("trim", trims.join(","));
   if (w.drive) p.set("drive", w.drive);
   if (/^\d{4}$/.test(w.minYear)) p.set("minYear", w.minYear);
+  if (w.maxYear && /^\d{4}$/.test(w.maxYear)) p.set("maxYear", w.maxYear);
+  const range = posInt(w.minRange ?? "");
+  if (range) p.set("minRange", String(range));
+  const kwh = posInt(w.minKwh ?? "");
+  if (kwh) p.set("minKwh", String(kwh));
+  if (w.heatPump) p.set("heatPump", "1");
   const miles = posInt(w.maxMiles);
   if (miles) p.set("maxMiles", String(miles));
   const price = posInt(w.maxPrice);

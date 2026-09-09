@@ -82,6 +82,7 @@ export function buildTests(get: (k: string) => string, ctx: MatchContext = {}): 
   const maxYear = num("maxYear");
   const maxMiles = num("maxMiles");
   const minRange = num("minRange");
+  const minKwh = num("minKwh");
   // Values OR, like the spec facets below: the make menu under the rail
   // (lib/listings/narrow.ts) writes "Ford,Tesla" into the one key the panel's
   // <select> and every saved alert already use, and a single value is the
@@ -132,6 +133,9 @@ export function buildTests(get: (k: string) => string, ctx: MatchContext = {}): 
   if (maxYear) tests.maxYear = (r) => r.year <= maxYear;
   if (maxMiles) tests.maxMiles = (r) => r.mileage != null && r.mileage <= maxMiles;
   if (minRange) tests.minRange = (r) => !!r.rangeMi && r.rangeMi >= minRange;
+  // Same rule as range: a car whose pack we never resolved has no kwh and
+  // sits the floor out — it fails, it is never assumed to clear.
+  if (minKwh) tests.minKwh = (r) => !!r.kwh && r.kwh >= minKwh;
   if (get("heatPump") === "1") tests.heatPump = (r) => r.heatPump === "yes";
   // Only cuts the card itself claims (≥$500, ≤14 days, both prices real —
   // card.ts `cut`), so the toggle can never surface a cheaper extraction
@@ -183,6 +187,7 @@ export const QUICK_KNOWS: Partial<Record<RemovableFilter, (r: CardRow) => boolea
   body: (r) => r.body !== undefined,
   kind: (r) => r.kind !== undefined,
   minRange: (r) => r.rangeMi != null,
+  minKwh: (r) => r.kwh != null,
   maxMiles: (r) => r.mileage != null,
   drive: (r) => r.drive !== undefined,
   // A lease payment where a price should be isn't a cheap car, it's no price.

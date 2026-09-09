@@ -35,3 +35,22 @@ test("blank fields write nothing, and a radius without a ZIP is dropped", () => 
 test("zero and junk never become a cap", () => {
   assert.equal(watchParams({ ...blank, maxMiles: "0", maxPrice: "abc", minYear: "20" }), "");
 });
+
+// 2026-09-09: the owner's own order kept surfacing short-range cars because
+// the form had no range or pack field. These four keys are the fix, and each
+// one has to be a predicate the grid applies (match.ts) or the alert would
+// promise a filter the search cannot keep.
+test("range, battery, heat pump and newest year become the grid's own keys", () => {
+  const qs = watchParams({ ...blank, make: "Hyundai", model: "IONIQ 5", minRange: "250", minKwh: "77", heatPump: true, maxYear: "2024", minYear: "2022" });
+  const p = new URLSearchParams(qs);
+  assert.equal(p.get("minRange"), "250");
+  assert.equal(p.get("minKwh"), "77");
+  assert.equal(p.get("heatPump"), "1");
+  assert.equal(p.get("maxYear"), "2024");
+  assert.equal(p.get("minYear"), "2022");
+  for (const k of p.keys()) assert.ok((REMOVABLE as readonly string[]).includes(k), `${k} is not a grid filter`);
+});
+
+test("a blank or zero floor and an unpressed heat pump write nothing", () => {
+  assert.equal(watchParams({ ...blank, minRange: "0", minKwh: "", heatPump: false, maxYear: "" }), "");
+});
