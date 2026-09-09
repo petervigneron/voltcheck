@@ -27,6 +27,12 @@ if (/^(off|0|false|no)$/i.test(process.env.CARFAX_SNAPSHOT ?? "")) {
 // A title brand is a DMV record and does not go away; a clean car can gain
 // one. 45 days keeps the steady state to new arrivals plus a slow re-check.
 const REFRESH_DAYS = 45;
+// Bumped when parseSnapshot learns a row it used to miss. A "clean" answer
+// written by an older parser is not an answer — v1 read only "Branded
+// Title:" and cached 1FTVW3L70RWG09842's "Reacquired by Manufacturer" as
+// clean (2026-09-09). Entries below this version that hold no brand are
+// asked again; entries that hold a brand stand (a brand read is a brand).
+const PARSER_VERSION = 2;
 
 const arg = (name, dflt) => {
   const i = process.argv.indexOf(name);
@@ -49,7 +55,9 @@ const seen = new Set();
 for (const l of listings) {
   const vin = String(l.vin ?? "").toUpperCase();
   if (seen.has(vin)) continue;
-  if (!needsSnapshot(l, { cached: cache[vin], refreshCutoff })) continue;
+  const cached = cache[vin];
+  const staleParser = cached && !cached.brand && (cached.v ?? 1) < PARSER_VERSION;
+  if (!needsSnapshot(l, { cached: staleParser ? undefined : cached, refreshCutoff })) continue;
   seen.add(vin);
   targets.push(l);
 }
@@ -71,7 +79,7 @@ for (const l of work) {
     continue;
   }
   const { titleBrand } = parseSnapshot(json);
-  cache[vin] = { brand: titleBrand ?? null, checkedAt: today };
+  cache[vin] = { brand: titleBrand ?? null, checkedAt: today, v: PARSER_VERSION };
   if (titleBrand) read++;
   else clean++;
   if ((read + clean) % 100 === 0) await writeFile(CACHE, JSON.stringify(cache, null, 1));

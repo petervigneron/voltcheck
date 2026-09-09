@@ -27,6 +27,21 @@ test("a clean snapshot has no title brand, and that asserts nothing", () => {
   assert.equal(parseSnapshot(null).titleBrand, undefined);
 });
 
+test("a buyback that Carfax states as its own row, not under Branded Title, is read", () => {
+  // victoryfordkc.com 1FTVW3L70RWG09842, 2026-09-09: no "Branded Title:" row;
+  // the panel's first row reads "Reacquired by Manufacturer". The first cut of
+  // the parser cached this car as clean.
+  const html = buyback.snapshotReportHtml.replace("Branded Title: Buyback/Lemon", "Reacquired by Manufacturer");
+  assert.equal(parseSnapshot({ snapshotReportHtml: html }).titleBrand, "Reacquired by Manufacturer");
+  const lemon = buyback.snapshotReportHtml.replace("Branded Title: Buyback/Lemon", "Lemon Law Buyback Reported");
+  assert.equal(parseSnapshot({ snapshotReportHtml: lemon }).titleBrand, "Lemon Law Buyback Reported");
+  const salvage = buyback.snapshotReportHtml.replace("Branded Title: Buyback/Lemon", "Salvage Title Reported");
+  assert.equal(parseSnapshot({ snapshotReportHtml: salvage }).titleBrand, "Salvage Title Reported");
+  // The other rows never become the fact, however they are worded.
+  const none = buyback.snapshotReportHtml.replace("Branded Title: Buyback/Lemon", "CARFAX 1-Owner Vehicle");
+  assert.equal(parseSnapshot({ snapshotReportHtml: none }).titleBrand, undefined);
+});
+
 test("other brands come through as their own words", () => {
   const salvage = { snapshotReportHtml: buyback.snapshotReportHtml.replace("Branded Title: Buyback/Lemon", "Branded Title: Salvage") };
   assert.equal(parseSnapshot(salvage).titleBrand, "Salvage");

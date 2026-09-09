@@ -78,6 +78,18 @@ export function snapshotKeyFromHtml(html) {
 const ROW = /<div class="history-row[^"]*">([\s\S]*?)<\/div>\s*<\/div>/g;
 const textOf = (h) => h.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
 
+// The rows that are a title or buyback fact. Carfax does NOT always say it
+// under "Branded Title:" — victoryfordkc.com's 2024 Lightning
+// 1FTVW3L70RWG09842 (2026-09-09, $47,500) has no title-brand row at all and
+// a row of its own reading "Reacquired by Manufacturer". The first cut of
+// this parser read only "Branded Title: …", cached that car as clean, and the
+// owner found it. So any row naming a brand, a buyback or a reacquisition is
+// the fact; the rest of the panel (accidents, owners, service, use, odometer)
+// is deliberately not.
+const FACT_ROW =
+  /^branded title:|\b(salvage|rebuilt|junk|flood|fire|hail|lemon)\b.*\btitle\b|\btitle\b.*\b(salvage|rebuilt|junk|flood|lemon)\b|buy[\s-]?back|reac?quired by (the )?manufacturer|manufacturer (buy[\s-]?back|repurchase|reac?quired)|lemon law/i;
+const NOT_A_FACT = /no accidents|service (history )?records?|owner vehicle|previous owners?|personal vehicle|odometer|reported to carfax/i;
+
 /**
  * The rows of a snapshot response, and the title brand if there is one.
  * Returns { rows, titleBrand } — titleBrand undefined when no row says
@@ -91,6 +103,10 @@ export function parseSnapshot(json) {
     const m = r.match(/^branded title:\s*(.+)$/i);
     if (m) {
       titleBrand = m[1].trim().slice(0, 60);
+      break;
+    }
+    if (FACT_ROW.test(r) && !NOT_A_FACT.test(r)) {
+      titleBrand = r.slice(0, 60);
       break;
     }
   }
