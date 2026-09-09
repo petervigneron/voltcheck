@@ -110,6 +110,13 @@ export interface Listing {
    * (migration 0074), not a surface of its own.
    */
   inventoryBranded?: boolean;
+  /**
+   * Set by the database when the description above was carried across a
+   * marketplace copy of the car (migrations 0076/0077): the domain whose
+   * words these are. Never rendered; it exists so a second copy from the
+   * same marketplace cannot pass for the seller retracting them.
+   */
+  statementsFrom?: string;
   // Per-VIN campaign history, where an owner portal exposes it (GM today).
   campaignCheck?: {
     packReplaced: boolean;
