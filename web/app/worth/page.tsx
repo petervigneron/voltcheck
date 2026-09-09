@@ -5,6 +5,25 @@ import { valueVehicle, vehicleLabel, type Valuation, type WorthInput } from "@/l
 import { currentPass } from "@/lib/pro";
 import { fetchPriceTrend, type PriceTrend } from "@/lib/trend";
 import { PriceTrendCharts } from "@/components/PriceTrend";
+import { enrichListing, packIdentity } from "@/lib/listings/enrich";
+import type { Listing } from "@/lib/listings/types";
+
+/** The shopper's car as the enrichment layer needs to see it — the same
+ *  shape value.ts's cohort pool builds for a listing, with no price. */
+function worthListing(input: WorthInput): Listing {
+  return {
+    id: "worth",
+    vin: input.vin ?? "",
+    year: input.year,
+    make: input.make,
+    model: input.model,
+    trim: input.trim,
+    drive: input.drive,
+    mileage: input.mileage,
+    priceUsd: 0,
+    sellerType: "dealer",
+  };
+}
 
 // Same posture as /vin/[vin], for the same two reasons. force-dynamic because
 // a result is a function of numbers the visitor typed and inventory that moves
@@ -97,7 +116,17 @@ export default async function WorthPage(props: Props) {
   if (input && valuation) {
     try {
       if ((await currentPass()).active) {
-        trend = await fetchPriceTrend({ make: input.make, model: input.model, year: input.year, vin: input.vin });
+        // The trim the valuation matched and, with a VIN, the pack identity
+        // the enrichment layer gives the car as described — the same two
+        // facts that unlock the trim-level trend on a listing page (0077).
+        trend = await fetchPriceTrend({
+          make: input.make,
+          model: input.model,
+          year: input.year,
+          vin: input.vin,
+          trimKey: valuation.tier === "estimate" ? valuation.matchedTrim?.toUpperCase() : undefined,
+          identity: input.vin ? packIdentity(enrichListing(worthListing(input))) : undefined,
+        });
       }
     } catch {
       trend = null;
@@ -132,7 +161,15 @@ export default async function WorthPage(props: Props) {
                 the benefit's own title from /pro. Asking prices only, so no
                 ODbL credit here; the result block above carries its own. */}
             <p className="mb-3 text-[10.5px] font-extrabold uppercase tracking-[0.14em] text-ink/55">Market trends</p>
-            <PriceTrendCharts trend={trend} miles={input?.mileage} subject={input ? vehicleLabel(input) : undefined} />
+            <PriceTrendCharts
+              trend={trend}
+              miles={input?.mileage}
+              subject={
+                input
+                  ? `${vehicleLabel(input)}${trend.asks.level === "trim" && valuation?.tier === "estimate" && valuation.matchedTrim ? ` ${valuation.matchedTrim}` : ""}`
+                  : undefined
+              }
+            />
           </section>
         )}
 

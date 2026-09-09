@@ -14,6 +14,10 @@ on:
         description: "Publish even if the total shrank >10% vs the published manifest (deliberate contraction only)"
         required: false
         default: "false"
+      backfill_trend_keys:
+        description: "Also key the cars delisted since the trend archive began (web/scripts/backfill-trend-keys.mjs, 0077) — one-off after that migration, harmless to repeat"
+        required: false
+        default: "false"
   workflow_call: {}
 
 concurrency: publish-feed
@@ -29,6 +33,20 @@ jobs:
           node-version: "22"
       - run: npm ci
         working-directory: web
+
+      # The trend's trim level (0077) keys live cars from the publish below;
+      # cars that had already left when the keys began are keyed here, once,
+      # so the archive's earlier days get the same key as the present. Runs
+      # only when asked, and outside the age gate: it is not a publish.
+      - name: Key the delisted cars for the trend's trim level
+        if: ${{ github.event.inputs.backfill_trend_keys == 'true' }}
+        working-directory: web
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs \
+            scripts/backfill-trend-keys.mjs
 
       # A publish is ONE FULL WALK of listings, and the walk is the single
       # biggest thing this database does. Measured 2026-08-29 from

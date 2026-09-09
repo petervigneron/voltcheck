@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { BackToResults } from "@/components/BackToResults";
 import { findDelistedListing, findListing } from "@/lib/listings/source";
 import { Delisted, delistedMetadata } from "./Delisted";
-import { enrichListing , displayTrim } from "@/lib/listings/enrich";
+import { enrichListing, displayTrim, packIdentity, specTrim } from "@/lib/listings/enrich";
 import { trimClaim } from "@/lib/listings/trimClaim";
 import { buildChecklist } from "@/lib/checklist";
 import { EnrichmentFacts, Section, NOTE_STYLE } from "@/components/EnrichmentReport";
@@ -171,12 +171,21 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
   // something two cards should be compared on. Silent for any cohort whose
   // name we could not place in NHTSA's own vocabulary.
   const battery = await batteryRisk(listing.make, listing.model, listing.year);
-  // Market trends (0064/0072): what a standard car of this cohort is asked
-  // day by day, beside the site-wide index. Rendered for everyone, blurred
-  // until the browser holds a pass (components/ProBlur.tsx) — owner,
-  // 2026-09-03. The VIN narrows it to this car's own cohort when that clears
-  // the floor.
-  const trend = await fetchPriceTrend({ make: listing.make, model: listing.model, year: listing.year, vin: listing.vin });
+  // Market trends (0064/0072/0077): what a standard car of this cohort is
+  // asked day by day, beside the site-wide index. Rendered for everyone,
+  // blurred until the browser holds a pass (components/ProBlur.tsx) — owner,
+  // 2026-09-03. Read at the level the cards price on — the VIN prefix, the
+  // trim we stand behind and the pack identity — when that clears the floor;
+  // the VIN cohort or the model pool otherwise (owner, 2026-09-09: a
+  // Lightning Platinum ER was being drawn against every Lightning).
+  const trend = await fetchPriceTrend({
+    make: listing.make,
+    model: listing.model,
+    year: listing.year,
+    vin: listing.vin,
+    trimKey: claim.assert ? specTrim(listing)?.toUpperCase() : undefined,
+    identity: packIdentity(e),
+  });
   // Both price signals, decided by the same gates as the browse grid
   // (lib/listings/peers.ts). vsSold (the Washington-title-fit) is computed
   // but, since 2026-08-20 (docs/agents/pricing-model-2026-08-20.md), never
@@ -390,7 +399,7 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
                   trend={trend}
                   miles={listing.mileage}
                   price={hasRealPrice(listing) ? listing.priceUsd : undefined}
-                  subject={`${listing.year} ${listing.make} ${listing.model}`}
+                  subject={`${listing.year} ${listing.make} ${listing.model}${trend.asks.level === "trim" && claim.assert ? ` ${claim.trim}` : ""}`}
                 />
               </ProBlur>
             </div>

@@ -20,7 +20,16 @@ import { cardIncentive, matchIncentives } from "@/lib/incentives/match";
 // builds the public API's artifacts from the same walk (lib/api/records.ts),
 // and a second walk for the same rows would be the egress this file's
 // callers exist to avoid.
-export async function buildCardIndex(): Promise<{ rows: CardRow[]; origin: FeedOrigin; listings: Listing[]; enriched: Map<string, EnrichedListing> }> {
+// `trimKeys` rides out too (2026-09-09): the publisher writes each car's
+// trim key and pack identity to vin_trend_key (0077) so the market trend can
+// be read at the level the cards price on.
+export async function buildCardIndex(): Promise<{
+  rows: CardRow[];
+  origin: FeedOrigin;
+  listings: Listing[];
+  enriched: Map<string, EnrichedListing>;
+  trimKeys: Map<string, string>;
+}> {
   // A few hundred coefficient rows, fetched once and applied to every
   // listing in memory — the whole transaction-price model costs one request.
   //
@@ -142,7 +151,7 @@ export async function buildCardIndex(): Promise<{ rows: CardRow[]; origin: FeedO
     });
   }
   canonicalizeTrims(rows);
-  return { rows, origin, listings, enriched };
+  return { rows, origin, listings, enriched, trimKeys };
 }
 
 // specTrim normalizes each listing in isolation, which can't settle casing that

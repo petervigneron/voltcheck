@@ -20,10 +20,15 @@
 // whole series to a different one — the shopper's own mileage — before it
 // is drawn.
 //
-// The RPC picks the level — the VIN cohort when a VIN was given and it clears
-// the floor, else the model pool — and says which in `level`. Each point
-// carries its n and the day's median odometer, because the chart must print
-// those beside the line (0057/0061 rule).
+// The RPC picks the finest level that clears the floor and says which in
+// `level`: the TRIM cohort (VIN 1-8 + the trim the site stands behind + pack
+// identity, 0077 — the same three facts comps.ts needs before it quotes a
+// peer figure) when the page gave all three, else the VIN cohort, else the
+// model pool. Before 0077 a 2023 Lightning Platinum ER was drawn against
+// every ER Lightning, Pro and XLT included (owner, 2026-09-09: "does not
+// have a mileage adjusted price of $30,000"). Each point carries its n and
+// the day's median odometer, because the chart must print those beside the
+// line (0057/0061 rule).
 //
 // Anon key, like every other web read; cached an hour. The table moves once
 // a night, so an hour is freshness enough and one RPC per car per hour is
@@ -40,8 +45,10 @@ export interface TrendPoint {
   odometer: number | null;
 }
 
+export type TrendLevel = "trim" | "vin8" | "model";
+
 export interface TrendSeries {
-  level: "vin8" | "model";
+  level: TrendLevel;
   /** The odometer every price in this series was moved to. */
   stdOdometer: number | null;
   /** The slope that moved them, dollars per mile (negative). */
@@ -106,6 +113,11 @@ export async function fetchPriceTrend(a: {
   model: string;
   year: number;
   vin?: string;
+  /** The trim the site stands behind for this car (trimClaim + specTrim), and
+   *  its enrichment pack identity (packIdentity). Both, with the VIN, unlock
+   *  the trim level; either missing and the read stays at the VIN cohort. */
+  trimKey?: string;
+  identity?: string;
 }): Promise<PriceTrend | null> {
   const base = process.env.SUPABASE_URL?.replace(/\/$/, "");
   const key = process.env.SUPABASE_ANON_KEY;
@@ -115,7 +127,14 @@ export async function fetchPriceTrend(a: {
     const res = await fetch(`${base}/rest/v1/rpc/price_trend`, {
       method: "POST",
       headers: { apikey: key, Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ _make: a.make, _model: a.model, _model_year: a.year, _vin8: vin8 }),
+      body: JSON.stringify({
+        _make: a.make,
+        _model: a.model,
+        _model_year: a.year,
+        _vin8: vin8,
+        _trim_key: a.trimKey?.trim().toUpperCase() || null,
+        _identity: a.identity?.trim() || null,
+      }),
       next: { revalidate: 3600 },
     });
     if (!res.ok) return null;
@@ -145,7 +164,7 @@ function cleanSeries(s: TrendSeries | null | undefined): TrendSeries | null {
   if (points.length < 2) return null;
   const slope = typeof s.usdPerMile === "number" && Number.isFinite(s.usdPerMile) ? s.usdPerMile : null;
   return {
-    level: s.level === "vin8" ? "vin8" : "model",
+    level: s.level === "trim" ? "trim" : s.level === "vin8" ? "vin8" : "model",
     stdOdometer: s.stdOdometer ?? null,
     usdPerMile: slope,
     slopeFromSales: !!s.slopeFromSales,

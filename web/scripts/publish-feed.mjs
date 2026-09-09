@@ -34,6 +34,7 @@ import { worthTrimTally } from "../lib/listings/tally.ts";
 import { buildHubIndex } from "../lib/listings/hubIndex.ts";
 import { buildApiArtifacts } from "../lib/api/records.ts";
 import { packPro, publicRows } from "../lib/listings/proSignals.ts";
+import { packIdentity } from "../lib/listings/enrich.ts";
 import { seal } from "../lib/listings/proSeal.ts";
 
 const FORCE = process.argv.includes("--force");
@@ -45,7 +46,7 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
 const SHRINK_TOLERANCE = 0.1;
 
 const t0 = Date.now();
-const { rows: fullRows, origin, listings, enriched } = await buildCardIndex();
+const { rows: fullRows, origin, listings, enriched, trimKeys } = await buildCardIndex();
 // Everything the public bucket serves is built from rows WITHOUT the Pro
 // fields (lib/listings/proSignals.ts); the Pro artifact below is the only
 // carrier of them, and it goes up sealed.
@@ -133,3 +134,35 @@ await upload(
   JSON.stringify({ v: 1, publishedAt, total: rows.length, shardCounts })
 );
 console.error(`publish-feed: published ${rows.length} cars across ${SHARDS} shards in ${((Date.now() - t0) / 1000).toFixed(0)}s total`);
+
+// Each car's trend key — the trim the site stands behind and its pack
+// identity, the same two facts the cards price peers on — written to
+// vin_trend_key (0077) so the market trend can be read at that level. After
+// the manifest on purpose: a failure here must not cost the feed, and only
+// rows whose key changed are written (the RPC checks). The night's advance
+// reads these keys the NEXT night, so a car keyed here enters the trim level
+// from the closed day it was first seen.
+try {
+  const keyRows = listings.map((l) => ({
+    vin: l.vin,
+    trim_key: trimKeys.get(l.vin) ?? null,
+    identity: packIdentity(enriched.get(l.vin)) ?? null,
+  }));
+  let changed = 0;
+  for (let i = 0; i < keyRows.length; i += 5000) {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/upsert_vin_trend_keys`, {
+      method: "POST",
+      headers: {
+        apikey: SUPABASE_SERVICE_ROLE_KEY,
+        Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ _rows: keyRows.slice(i, i + 5000) }),
+    });
+    if (!res.ok) throw new Error(`upsert_vin_trend_keys ${res.status}: ${(await res.text()).slice(0, 200)}`);
+    changed += Number(await res.json()) || 0;
+  }
+  console.error(`publish-feed: trend keys — ${keyRows.length} cars sent, ${changed} changed`);
+} catch (e) {
+  console.error(`publish-feed: trend keys NOT written (the feed itself is published): ${e instanceof Error ? e.message : e}`);
+}
