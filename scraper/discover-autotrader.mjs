@@ -66,11 +66,24 @@
 // an ordinary year cell, with the two loads before it answered normally. So
 // slowing down did not buy more requests, which is the measurement that
 // matters: the ceiling tracks this identity over hours, not the spacing
-// within one run. Plan for a few hundred loads a day across ALL sessions and
-// spend them where they buy the most dealers, and treat a block as the day's
-// budget being gone rather than as something a longer delay would have
-// avoided. The contract on a block is unchanged and absolute: stop, record
-// the count, do not resume that day, never retry under another identity.
+// within one run. The contract on a block is unchanged and absolute: stop,
+// record the count, do not resume that day, never retry under another
+// identity.
+//
+// But do NOT read the 116 above as what a fresh day buys. On 2026-09-09 —
+// four days later, the first run against this checkpoint since 09-05, 8s
+// between loads, morning local time — the block page came on the SIXTH load
+// of the run (request 12 of the checkpoint), after five ordinary count
+// probes that answered normally. Three consecutive runs have now ended in
+// single or low double digits, so the honest reading is that 116 was the
+// outlier and this identity's standing budget is now roughly a handful of
+// loads a day, not a hundred. That changes the plan rather than the posture:
+// a cell like used Tesla is ~120 walk pages, which at this rate is not
+// weeks of this lane but never. Before spending another day on it, price
+// what the harvest is worth against a lane that is not rationed — the
+// franchise rolls and OEM locators already land rooftops without asking an
+// edge for permission. Whoever picks this up should decide that first; the
+// script is correct and the budget is the constraint.
 //
 // The used Tesla cell, measured 2026-09-05 for whoever walks it next:
 // makeCode=TESLA + fuelTypeGroup=ELE + USED,CERTIFIED is 11,511 cars, model
