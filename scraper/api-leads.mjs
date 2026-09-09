@@ -15,7 +15,7 @@
 // many distinct rooftops point at each one. A host at the top with no extractor
 // yet is the next lane to build; one we already cover is a re-probe target.
 //
-//   node api-leads.mjs [--min 3] [--json]
+//   node api-leads.mjs [--min 3] [--json] [--sites-file rows.json ...]
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 
 const arg = (name, fallback) => {
@@ -78,7 +78,26 @@ const HAVE_LANE = [
 //   config. No inventory passes through it.
 NOT_INVENTORY.push("remora.inc", "remorainc.com", "connectcdk.com");
 
-const registry = JSON.parse(await readFile(new URL("./registry/registry.json", import.meta.url), "utf-8"));
+// --sites-file <path>: rank leads from a probe output file instead of the
+// registry. A discovery lane probes its candidates into their own file (the
+// same reason probe.mjs takes this flag — the registry is shared and
+// hand-curated), and those rows carry exactly the same `probe.apiHosts` the
+// registry rows do, so the lane's leads should be readable without appending
+// hundreds of unvalidated rows first. Accepts a bare array or {sites:[…]},
+// and may be given more than once to rank several chunks together.
+const siteFiles = process.argv.reduce((acc, a, i) => (a === "--sites-file" ? [...acc, process.argv[i + 1]] : acc), []);
+const registry = siteFiles.length
+  ? {
+      sites: (
+        await Promise.all(
+          siteFiles.map(async (f) => {
+            const j = JSON.parse(await readFile(new URL(f, `file://${process.cwd()}/`), "utf-8"));
+            return Array.isArray(j) ? j : j.sites;
+          }),
+        )
+      ).flat(),
+    }
+  : JSON.parse(await readFile(new URL("./registry/registry.json", import.meta.url), "utf-8"));
 
 // The hosts one row names. probe.mjs writes them as a list on `probe.apiHosts`
 // (since 2026-08-23); older rows only ever had them inside the note's prose,
