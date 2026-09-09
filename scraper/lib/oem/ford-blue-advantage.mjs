@@ -147,6 +147,29 @@ const drive = (v) => {
   return undefined;
 };
 
+// The marketplace's vehicle-history preview — Autotrader's AutoCheck-fed
+// badge codes, one array per listing: SALVAGE_TITLE, FRAME_DAMAGE,
+// ACCIDENTS_REPORTED, ONE_OWNER, and their NO_ negations (NO_SALVAGE_TITLE,
+// NO_FLOOD_WATER_DAMAGE, ...). Owner, 2026-09-09: Total Auto's 2024 Lightning
+// Lariat 1FT6W5L73RWG13125 at $34,900 "should have the warning" — its record
+// reads ["SALVAGE_TITLE","ACCIDENTS_REPORTED","ONE_OWNER"] and the lane had
+// been dropping the field. Only the TITLE codes become a fact here, as the
+// words a person would read on the badge ("Salvage Title"); damage and
+// accident codes are not title facts and are not carried. A NO_ code asserts
+// nothing this site prints. See lib/carfax-snapshot.mjs for how titleBrand
+// reaches the two disclosure columns (0070, 0075).
+const TITLE_CODE = /^(SALVAGE|REBUILT|JUNK|FLOOD|LEMON|BUYBACK|MANUFACTURER_BUYBACK|BRANDED)(_[A-Z]+)*$/;
+export function titleBrandFromVhr(codes) {
+  if (!Array.isArray(codes)) return undefined;
+  for (const c of codes) {
+    const code = String(c ?? "").toUpperCase();
+    if (code.startsWith("NO_") || !TITLE_CODE.test(code)) continue;
+    if (!/TITLE|LEMON|BUYBACK/.test(code)) continue;
+    return code.toLowerCase().split("_").map((w) => w[0].toUpperCase() + w.slice(1)).join(" ");
+  }
+  return undefined;
+}
+
 const httpsUrl = (u) => {
   const s = String(u ?? "").trim();
   if (!s) return undefined;
@@ -211,6 +234,7 @@ function toRecord(l, sweep) {
     // Real dealer VDP for click-through + recheck liveness; else the FBA search.
     sourceUrl: vdp || "https://www.fordblueadvantage.com/cars-for-sale",
     dealerDomain: FORD_BLUE_ADVANTAGE.domain,
+    titleBrand: titleBrandFromVhr(l.vhrPreview),
     evKind: sweep.evKind,
     // The marketplace's own fuel grouping string, restated per record.
     fuelType: l.fuelType?.group || l.fuelType?.name || undefined,

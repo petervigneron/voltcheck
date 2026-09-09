@@ -126,3 +126,18 @@ test("the collected-count floor flags a lane that lost most of its facets", asyn
   assert.equal(report.evs.length, 300); // the certified slice fits the window and is read whole, priceless cars included
   assert.ok(report.errors.some((e) => /< floor 3000|reported zero/.test(e)));
 });
+
+// ── 2026-09-09: the marketplace's own history badge ─────────────────────────
+import { titleBrandFromVhr } from "../lib/oem/ford-blue-advantage.mjs";
+
+test("a SALVAGE_TITLE badge becomes the title brand; damage, owners and NO_ codes do not", () => {
+  // Total Auto's 1FT6W5L73RWG13125, as the /rest/lsc/listing record carried it.
+  assert.equal(titleBrandFromVhr(["SALVAGE_TITLE", "ACCIDENTS_REPORTED", "ONE_OWNER"]), "Salvage Title");
+  assert.equal(titleBrandFromVhr(["NO_SALVAGE_TITLE", "NO_ACCIDENTS_REPORTED", "ONE_OWNER"]), undefined);
+  assert.equal(titleBrandFromVhr(["FRAME_DAMAGE", "ACCIDENTS_REPORTED"]), undefined);
+  assert.equal(titleBrandFromVhr(["NO_FLOOD_WATER_DAMAGE", "FREE_REPORT"]), undefined);
+  assert.equal(titleBrandFromVhr(["LEMON_TITLE"]), "Lemon Title");
+  assert.equal(titleBrandFromVhr(["MANUFACTURER_BUYBACK"]), "Manufacturer Buyback");
+  assert.equal(titleBrandFromVhr(undefined), undefined);
+  assert.equal(titleBrandFromVhr([]), undefined);
+});
