@@ -2,21 +2,21 @@
   "_comment": "Written by scraper/lib/audit-status.mjs. Do not hand-edit — see that file's header.",
   "checks": {
     "feed-shard-health": {
-      "lastRunAt": "2026-09-09T16:56:24.949Z",
-      "result": "ok",
-      "detail": "total 167835; shards 7024/6826/7152/6899/6911/6872/7016/7055/6924/6838/6939/7067/6988/7070/7087/7100/7052/7003/6765/6991/7016/7106/7148/6986; sitemap URLs 168257",
+      "lastRunAt": "2026-09-09T21:13:44.070Z",
+      "result": "warn",
+      "detail": "total 165457; shards 6907/6714/7047/6791/6798/6775/6916/6951/6856/6728/6868/6946/6909/6985/6984/7024/6932/6900/6654/6890/6947/6998/7064/6873; sitemap URLs 165751; the largest shard (15) is 3.31 MB — 74% of the 4.5 MB cold-render cap. Raise SHARDS in web/lib/listings/pack.ts (and its keep-in-step consumers) before it gets there; past the cap, fresh deployments cannot warm the browse grid at all.",
       "expectedEveryHours": 8
     },
     "ev-rules-audit": {
-      "lastRunAt": "2026-09-09T16:55:09.452Z",
+      "lastRunAt": "2026-09-09T21:13:07.066Z",
       "result": "ok",
-      "detail": "167963 live, 0 newly refuted by vPIC, 0 adjudicated-and-kept, 0 undecided",
+      "detail": "165457 live, 0 newly refuted by vPIC, 0 adjudicated-and-kept, 0 undecided",
       "expectedEveryHours": 27
     },
     "completeness-audit": {
-      "lastRunAt": "2026-09-09T16:55:26.440Z",
+      "lastRunAt": "2026-09-09T21:13:36.336Z",
       "result": "ok",
-      "detail": "66186 live, 13 broken-parser lots (baseline 202)",
+      "detail": "65000 live, 14 broken-parser lots (baseline 202)",
       "expectedEveryHours": 27
     },
     "sync-guard": {
@@ -32,9 +32,9 @@
       "expectedEveryHours": 27
     },
     "live-price-audit": {
-      "lastRunAt": "2026-09-09T16:55:28.745Z",
+      "lastRunAt": "2026-09-09T21:13:38.180Z",
       "result": "warn",
-      "detail": "166220 priced, 11 implausible (2 at or below the floor/cohort, 9 above)",
+      "detail": "164198 priced, 9 implausible (0 at or below the floor/cohort, 9 above)",
       "expectedEveryHours": 8
     },
     "price-audit": {
