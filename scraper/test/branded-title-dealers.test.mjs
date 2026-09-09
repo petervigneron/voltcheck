@@ -10,6 +10,13 @@ test("a curated all-branded seller marks its cars, others do not", () => {
   assert.equal(inventoryBrandedFor("www.parklinemotors.com"), true);
   assert.equal(inventoryBrandedFor("aaronfordofpoway.com"), false);
   assert.equal(inventoryBrandedFor(undefined), false);
+  // The same seller on a marketplace row: matched by name prefix, never by a
+  // word inside another dealer's name.
+  assert.equal(inventoryBrandedFor("ford-blue-advantage", "AutoSavvy Fort Worth"), true);
+  assert.equal(inventoryBrandedFor("ford-blue-advantage", "AutoSavvy of Austin LLC"), true);
+  assert.equal(inventoryBrandedFor("ford-blue-advantage", "Total Auto"), false);
+  assert.equal(inventoryBrandedFor("ford-blue-advantage", "Not AutoSavvy Motors"), false);
+  assert.equal(inventoryBrandedFor("autosavvy.com", undefined), true);
   for (const [domain, entry] of brandedTitleDealers()) {
     assert.ok(entry.statement && entry.source && entry.checkedAt, `${domain} must quote the seller and say where`);
   }

@@ -306,7 +306,7 @@ const listings = raw
       // The seller says every car it sells has a branded title
       // (registry/branded-title-dealers.json, lib/branded-title-dealers.mjs).
       // Read by branded_title_disclosed (0074).
-      inventoryBranded: inventoryBrandedFor(r.dealerDomain) || undefined,
+      inventoryBranded: inventoryBrandedFor(r.dealerDomain, r.dealerName) || undefined,
     };
   });
 

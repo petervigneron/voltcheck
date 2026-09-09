@@ -30,14 +30,21 @@ import { readFileSync } from "node:fs";
 
 const FILE = new URL("../registry/branded-title-dealers.json", import.meta.url);
 let table;
+let names;
 function load() {
   if (table) return table;
   table = new Map();
+  names = [];
   try {
     const j = JSON.parse(readFileSync(FILE, "utf8"));
     for (const [domain, entry] of Object.entries(j)) {
       if (domain.startsWith("_") || !entry || typeof entry !== "object" || !entry.statement) continue;
       table.set(domain.toLowerCase().replace(/^www\./, ""), entry);
+      // The same seller on a marketplace feed (Ford Blue Advantage relays
+      // Autotrader inventory under its own dealerDomain): matched by the
+      // seller's name, as a prefix. AutoSavvy's 21 rooftops arrive as
+      // "AutoSavvy Fort Worth", "AutoSavvy of Austin LLC", and so on.
+      for (const n of entry.sellerNames ?? []) if (typeof n === "string" && n.trim()) names.push(n.trim().toLowerCase());
     }
   } catch {
     /* no registry: no seller has said it */
@@ -45,10 +52,18 @@ function load() {
   return table;
 }
 
-/** True when the seller of this rooftop states its whole inventory is branded. */
-export function inventoryBrandedFor(dealerDomain) {
-  if (typeof dealerDomain !== "string" || !dealerDomain) return false;
-  return load().has(dealerDomain.toLowerCase().replace(/^www\./, ""));
+/**
+ * True when the seller states its whole inventory is branded — by the
+ * rooftop's own domain, or by the seller's name on a marketplace row.
+ */
+export function inventoryBrandedFor(dealerDomain, dealerName) {
+  const t = load();
+  if (typeof dealerDomain === "string" && dealerDomain && t.has(dealerDomain.toLowerCase().replace(/^www\./, ""))) return true;
+  if (typeof dealerName === "string" && dealerName.trim()) {
+    const n = dealerName.trim().toLowerCase();
+    if (names.some((p) => n === p || n.startsWith(p + " ") || n.startsWith(p + ","))) return true;
+  }
+  return false;
 }
 
 /** The curated entries, for tests and the candidate review line. */
