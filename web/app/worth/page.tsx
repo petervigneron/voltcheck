@@ -137,12 +137,21 @@ export default async function WorthPage(props: Props) {
         {trend?.asks && (
           <section className={`${CELL} bg-paper px-5 py-6 sm:px-8`}>
             {/* The same caption the blurred block carries on a car's page —
-                the benefit's own title from /pro. Asking prices only, so no
-                ODbL credit here; the result block above carries its own. */}
+                the benefit's own title from /pro. The line is the headline's
+                own arithmetic day by day and ends on the headline (lib/trend.ts
+                valueSeries); the result block above carries the ODbL credit
+                for both, since both stand on the same per-mile rate. */}
             <p className="mb-3 text-[10.5px] font-extrabold uppercase tracking-[0.14em] text-ink/55">Market trends</p>
             <PriceTrendCharts
               trend={trend}
               miles={input?.mileage}
+              today={
+                valuation?.tier === "estimate"
+                  ? { period: new Date().toISOString().slice(0, 10), usd: valuation.valueUsd }
+                  : valuation?.tier === "sold"
+                    ? { period: new Date().toISOString().slice(0, 10), usd: valuation.midUsd }
+                    : undefined
+              }
               subject={
                 input
                   ? `${vehicleLabel(input)}${trend.asks.level === "trim" && valuation?.tier === "estimate" && valuation.matchedTrim ? ` ${valuation.matchedTrim}` : ""}`

@@ -34,6 +34,8 @@
 // a night, so an hour is freshness enough and one RPC per car per hour is
 // nothing the database notices.
 
+import { askToValue } from "./listings/askToSold";
+
 export interface TrendPoint {
   /** ISO date: the day. */
   period: string;
@@ -106,6 +108,41 @@ export function levelTo(s: TrendSeries, miles: number | null | undefined): Trend
     stdOdometer: miles,
     points: s.points.map((p) => ({ ...p, price: p.price + shift, p25: p.p25 + shift, p75: p.p75 + shift })),
   };
+}
+
+/**
+ * The series as the VALUE a car like this one has been worth, day by day —
+ * the /worth headline's own arithmetic applied to each archived day
+ * (owner, 2026-09-09: "we can't simply have two numbers for the same car").
+ *
+ * Three steps, each one the headline takes: level to the shopper's odometer
+ * on the cohort's rate (levelTo), convert asking to transaction (askToValue,
+ * the same constant value.ts uses), and end on TODAY — `today` is the live
+ * headline itself, appended as the last point, so the chart's right-hand
+ * figure and the number above it are one number by construction. The
+ * archive closes a day behind and prices at its own close; today's point
+ * is priced from the listings on the site right now, which is what the
+ * headline is. Its band borrows the last archived day's spread, since a
+ * live point has no quartiles of its own and the cohort's spread barely
+ * moves day to day.
+ */
+export function valueSeries(s: TrendSeries, miles: number | null | undefined, today?: { period: string; usd: number }): TrendSeries {
+  const levelled = levelTo(s, miles);
+  const points = levelled.points.map((p) => ({ ...p, price: askToValue(p.price), p25: askToValue(p.p25), p75: askToValue(p.p75) }));
+  if (today && Number.isFinite(today.usd) && today.usd > 0 && points.length) {
+    const last = points[points.length - 1];
+    if (today.period > last.period) {
+      points.push({
+        period: today.period,
+        n: last.n,
+        price: today.usd,
+        p25: today.usd - Math.max(0, last.price - last.p25),
+        p75: today.usd + Math.max(0, last.p75 - last.price),
+        odometer: null,
+      });
+    }
+  }
+  return { ...levelled, points };
 }
 
 export async function fetchPriceTrend(a: {

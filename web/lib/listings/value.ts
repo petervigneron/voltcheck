@@ -21,6 +21,7 @@ import { fetchCohortFromDb, fetchModelYearAsksFromDb, type ModelYearAsk } from "
 import { enrichListing, packIdentity, specTrim } from "./enrich";
 import { hasRealPrice, PRICE_FLOOR_USD } from "./price";
 import { trimClaim } from "./trimClaim";
+import { ASK_TO_SOLD_DISCOUNT } from "./askToSold";
 
 /**
  * What is this car worth? — /worth, the free valuation tool.
@@ -165,13 +166,14 @@ const round100 = (n: number): number => Math.round(n / 100) * 100;
 // month — the drift extrapolation to "today" is the least-identified piece
 // and each month of data firms it up.
 
-/** Cars clear about this fraction UNDER their asking price, contemporaneously.
- *  Replaces the flat $1,100 (comps.ts ASK_OVER_SOLD_USD, which the comparison
- *  surfaces still use for their own delta claims): the flat figure was
- *  measured in a different market and is directionally wrong above $25k —
- *  it over-penalized a $12k Bolt by ~$750 and under-penalized a $60k car.
- *  Proportional, small, and est-marked, per the calibration. */
-const ASK_TO_SOLD_DISCOUNT = 0.013;
+// Cars clear about this fraction UNDER their asking price, contemporaneously.
+// Replaces the flat $1,100 (comps.ts ASK_OVER_SOLD_USD, which the comparison
+// surfaces still use for their own delta claims): the flat figure was
+// measured in a different market and is directionally wrong above $25k —
+// it over-penalized a $12k Bolt by ~$750 and under-penalized a $60k car.
+// Proportional, small, and est-marked, per the calibration. Since 2026-09-09
+// the constant lives in ./askToSold.ts so the trend chart converts with the
+// same number: ASK_TO_SOLD_DISCOUNT.
 
 /** Washington asking prices run this fraction ABOVE national asks for
  *  identical cohort/mileage cells (83 cells, 957 WA listings). Any WA-anchored

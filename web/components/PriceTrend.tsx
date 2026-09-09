@@ -1,11 +1,20 @@
-import { levelTo, type PriceTrend, type SiteTrend, type TrendPoint, type TrendSeries } from "@/lib/trend";
+import { valueSeries, type PriceTrend, type SiteTrend, type TrendPoint, type TrendSeries } from "@/lib/trend";
 
 // Market trend for one car, on the /worth result and the listing page (Pro):
-// what a car like this one is being ASKED, day by day, from our own
+// what a car like this one has been WORTH, day by day, from our own
 // listings. The owner (2026-09-05) took the Washington sales chart out of
 // this block — two charts at two grains from two sources was the pair nobody
 // could read, and the sale-vs-ask figure already lives on cards and the
 // listing page with its own guardrails.
+//
+// 2026-09-09, owner: "we can't simply have two numbers for the same car".
+// The line had been asking prices moved along one mileage rate while the
+// headline above it was a value moved along another, and the two ended
+// $3,500 apart on his own car. Now the line IS the headline's arithmetic
+// (lib/trend.ts valueSeries): the same per-mile rate (0080), the same
+// ask-to-sale conversion, and on /worth the last point is the headline
+// itself. The caption says "Estimated value" and carries the est. mark the
+// headline carries.
 //
 // 2026-09-07, owner: the block was "still confusing". Three changes, in his
 // words — stop saying how many cars were listed (the "N listings a day" line
@@ -167,6 +176,9 @@ function Chart({
       <figcaption className="text-[11px] font-extrabold uppercase tracking-[0.08em] text-ink/50">
         {label}
         {std}
+        {/* The same provenance mark the headline wears (app/worth/page.tsx):
+            nothing here is a published figure. */}
+        <span className="ml-2 text-amber-700">est.</span>
       </figcaption>
       <svg viewBox={`0 0 ${W} ${H}`} className="mt-1 w-full" role="img" aria-label={`${label}: ${ends.map(titleOf).join("; ")}`}>
         <path d={band} fill={COBALT} fillOpacity="0.12" stroke="none" />
@@ -242,6 +254,7 @@ export function PriceTrendCharts({
   miles,
   price,
   subject,
+  today,
 }: {
   trend: PriceTrend;
   miles?: number | null;
@@ -249,16 +262,19 @@ export function PriceTrendCharts({
   price?: number | null;
   /** The car's name ("2023 Tesla Model Y"), for the legend beside the site line. */
   subject?: string;
+  /** The live headline value and today's date — /worth passes it so the line
+   *  ends on the number above it. The listing page has no valuation. */
+  today?: { period: string; usd: number };
 }) {
   if (!trend.asks) return null;
   return (
     <div className="max-w-[420px]">
       <Chart
-        series={levelTo(trend.asks, miles)}
+        series={valueSeries(trend.asks, miles, today)}
         site={trend.site ?? null}
         price={price ?? undefined}
         subject={subject}
-        label="Mileage-adjusted asking prices"
+        label="Estimated value"
       />
     </div>
   );
