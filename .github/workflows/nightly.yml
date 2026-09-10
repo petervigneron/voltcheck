@@ -973,6 +973,30 @@ jobs:
       # more. Pinned at 8.0 and 116 — a little room for churn, both well
       # under the old ceilings. Next by size: Taycan, XC90 (2025-26 T8, no
       # rows), Wrangler 2023, 2013-18 Model S, R1S gen 1, RAV4 PHEV 2026.
+      #
+      # RE-PINNED AGAIN 2026-09-10, after 116 failed on its first night at
+      # 131. The 114 above was real, but it was not what this step sees.
+      # This step runs before the nightly's own publish job, so it scores
+      # whatever publish is live at the time — normally the previous day's
+      # feed, or a publish another session dispatched mid-nightly. On 09-10
+      # it read the 14:56Z publish (171,166 listings, 131 groups of ten or
+      # more); a local run the same afternoon against the nightly's 18:03Z
+      # publish read 168,742 and 112. The 19-group difference is one day's
+      # ingest rewriting model strings — "BMW i4 eDrive35" fell 44→5,
+      # "LEXUS NXphev" 43→8, "BMW iX xDrive50" 43→5, "SUBARU Solterra" 23
+      # became "SUBARU SOLTERRA" 12, and the X5 total-miss group halved
+      # 417→228 — so two reads hours apart differ by more than a month of
+      # research would move. The 09-09 CI read, before the EV3 and RAV4
+      # rows landed, was already 129; 114 was the local read of the later
+      # publish, and the pin never had room. The floor of ten also has no
+      # quiet zone: 51 groups sit within three listings of it, and the two
+      # CI reads moved 8 groups over it and 4 under (Cayenne Coupe 7→14,
+      # Lexus RX 8→12, XC40 12→8, F-150 10→7 — dealer strings, not models).
+      # Pinned at 140 from CI's own reads of 129 and 131. Always pin from
+      # this job's artifact (live-enrichment-gap.json, groupCountAtMin),
+      # never from a local run. If the ratchet needs to be sharper, the
+      # lever is the floor, not the ceiling: at 25 only 10 groups sit in
+      # the band and the same two CI nights read 86 and 85.
       - name: Audit live listings against the enrichment corpus
         if: always()
         working-directory: web
@@ -980,9 +1004,9 @@ jobs:
           rc=0
           node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs \
             scripts/live-enrichment-gap.mjs --out /tmp/live-enrichment-gap.json --top 60 \
-            --max-gap-share 8.0 --min-group 10 --max-groups 116 || rc=$?
+            --max-gap-share 8.0 --min-group 10 --max-groups 140 || rc=$?
           if [ "$rc" -eq 10 ]; then
-            echo "::error::Live enrichment coverage regressed — either the no-enrichment-row share exceeded the 8.0% ceiling pinned 2026-09-09, or the count of make/model gap groups holding ten or more listings pushed past the 116 baseline (a model went live with no enrichment, or a row stopped matching). See the step log's ranked list, its top-10-by-listing-count on a share failure, and /tmp/live-enrichment-gap.json."
+            echo "::error::Live enrichment coverage regressed — either the no-enrichment-row share exceeded the 8.0% ceiling pinned 2026-09-09, or the count of make/model gap groups holding ten or more listings pushed past the 140 baseline (pinned 2026-09-10 from CI reads of 129 and 131) (a model went live with no enrichment, or a row stopped matching). See the step log's ranked list, its top-10-by-listing-count on a share failure, and /tmp/live-enrichment-gap.json."
             exit 10
           elif [ "$rc" -ne 0 ]; then exit "$rc"; fi
       - uses: actions/upload-artifact@v4

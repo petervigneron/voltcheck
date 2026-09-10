@@ -506,12 +506,12 @@ if (shareFailed) {
 
 console.log(
   `\n${failed ? "FAIL" : "OK"} — ${report.gapSharePct}% of live listings have no enrichment row (ceiling ${MAX_GAP_SHARE}%); ` +
-    `${ranked.length} distinct gap groups (baseline ${BASELINE})`
+    `${report.groupCountAtMin} gap groups of ${MIN_GROUP}+ listings (baseline ${BASELINE}; ${ranked.length} groups in all)`
 );
 if (shareFailed) {
   console.log(`  gap share ${report.gapSharePct}% exceeds the committed ${MAX_GAP_SHARE}% ceiling — live coverage regressed since the baseline was pinned.`);
 }
 if (groupFailed) {
-  console.log(`  ${ranked.length - BASELINE} more gap groups than the committed baseline — a model went live with no enrichment, or a row stopped matching.`);
+  console.log(`  ${report.groupCountAtMin - BASELINE} more gap groups of ${MIN_GROUP}+ listings than the committed baseline — a model went live with no enrichment, or a row stopped matching.`);
 }
 process.exit(failed ? 10 : 0);
