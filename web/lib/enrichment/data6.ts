@@ -1108,11 +1108,22 @@ const R: EnrichmentRow[] = [];
     ),
     ...withAlt(
       {
+        // VIN position 8 is the powertrain on the first-generation Niro: C the
+        // hybrid, D the plug-in, G/H the EV. The key is for /vin/, where the
+        // "PHEV" trim guard alone let hybrids through: vPIC files MY2018 grade
+        // letter C (position 5) as ONE trim string covering both powertrains,
+        // "EX Premium (PHEV), Graphite Edition (HEV)", so a real 2018 Niro
+        // hybrid (KNDCC3LC1J5160937, which vPIC itself reads as Strong HEV)
+        // matched the -alt row and drew the plug-in's 26 electric miles. Found
+        // 2026-09-10 by decoding petrol and hybrid VIN patterns for every
+        // trim-guarded bare-nameplate row. All 43 live 2018-22 plug-in VINs
+        // read D, so no listing loses its row.
         id: "niro-phev-2018-22",
         make: "KIA",
         model: "Niro Plug-In Hybrid",
         modelAliases: ["Niro PHEV"],
         modelYears: [2018, 2022],
+        vin8: ["D"],
         packVariant: "PHEV",
         battery: { packGrossKwh: f(8.9, "mfr", "high", undefined, NIRO_G1_SPECS) },
         range: {
