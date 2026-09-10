@@ -153,6 +153,10 @@ const SHARD_DIR = val("--shard-dir", null);
 // raise it to quiet a new group, because a new group means either a nameplate
 // went live with nothing behind it or a row that used to match stopped.
 const BASELINE = Number(val("--max-groups", "111"));
+// Groups smaller than this are reported but not ratcheted — the same floor
+// live-enrichment-gap.mjs gained on 2026-09-09/10, for the same reason: a
+// group count that trips on one stray car cannot be kept green by research.
+const MIN_GROUP = Number(val("--min-group", "1"));
 
 const norm = (s) => (s ?? "").toUpperCase().replace(/[^A-Z0-9]/g, "");
 // The matcher's own equivalence class for a model string (norm() plus the
@@ -198,7 +202,11 @@ const isPhevRow = (r) => r.plugIn === true || r.packVariant === "PHEV" || !!r.ra
 const matched = (r) => !!(r.exact || (r.candidates && r.candidates.length));
 const rowsOf = (r) => (r.exact ? [r.exact] : (r.candidates ?? []));
 const decodeOf = (l) => ({
-  vin: "", // the shard carries none — see the CAVEAT in the header
+  // The shard's id IS the VIN; passing it runs the matcher's VIN filters
+  // as the listing page does (and since 2026-09-10 a vinRequired row refuses
+  // a decode with no VIN, so a blank here would file every such plug-in as a
+  // gap).
+  vin: /^[A-HJ-NPR-Z0-9]{17}$/i.test(l.id ?? "") ? l.id.toUpperCase() : "",
   usMarket: true,
   make: (l.make ?? "").toUpperCase(),
   model: l.model ?? "",
@@ -365,6 +373,8 @@ const report = {
   totalMissListings: totalMiss,
   partialMissListings: partialMiss,
   groupCount: ranked.length,
+  minGroup: MIN_GROUP,
+  groupCountAtMin: ranked.filter((g) => g.count >= MIN_GROUP).length,
   baseline: BASELINE,
   groups: ranked,
   crossKind: {
@@ -380,7 +390,8 @@ const report = {
 await mkdir(dirname(REPORT_PATH), { recursive: true }).catch(() => {});
 await writeFile(REPORT_PATH, JSON.stringify(report, null, 2));
 
-const failed = ranked.length > BASELINE || crossKindTotal > 0 || !controlOk;
+const groupCountAtMin = ranked.filter((g) => g.count >= MIN_GROUP).length;
+const failed = groupCountAtMin > BASELINE || crossKindTotal > 0 || !controlOk;
 
 if (AS_JSON) {
   console.log(JSON.stringify(report, null, 2));
@@ -393,7 +404,7 @@ console.log(`  matched an enrichment row: ${hit} (${report.coveragePct}%)`);
 console.log(`  no row matched:            ${gapListings} (${pct(gapListings, phev.length)}%)`);
 console.log(`    total   (no row for this make+model+year at all):   ${totalMiss}`);
 console.log(`    partial (rows exist; none survives trim/drivetrain): ${partialMiss}`);
-console.log(`  distinct gap groups: ${ranked.length} (baseline ${BASELINE})\n`);
+console.log(`  distinct gap groups: ${ranked.length}; with ${MIN_GROUP}+ listings: ${groupCountAtMin} (baseline ${BASELINE})\n`);
 
 console.log(`Ranked gap list (top ${Math.min(TOP, ranked.length)} of ${ranked.length}):`);
 for (const g of ranked.slice(0, TOP)) {
@@ -414,11 +425,11 @@ console.log(
 
 console.log(`\nFull report written to ${REPORT_PATH}`);
 console.log(
-  `\n${failed ? "FAIL" : "OK"} — ${ranked.length} gap groups (baseline ${BASELINE}); ` +
+  `\n${failed ? "FAIL" : "OK"} — ${groupCountAtMin} gap groups of ${MIN_GROUP}+ listings (baseline ${BASELINE}; ${ranked.length} in all); ` +
     `${gapListings} of ${phev.length} plug-in listings (${pct(gapListings, phev.length)}%) have no enrichment row`
 );
-if (ranked.length > BASELINE)
-  console.log(`  ${ranked.length - BASELINE} more gap groups than the committed baseline — a nameplate went live with no enrichment, or a row stopped matching.`);
+if (groupCountAtMin > BASELINE)
+  console.log(`  ${groupCountAtMin - BASELINE} more gap groups than the committed baseline — a nameplate went live with no enrichment, or a row stopped matching.`);
 if (crossKindTotal > 0) console.log(`  ${crossKindTotal} plug-in listing(s) are showing a battery-electric car's facts. Fix the row keys; this is a false claim on the site.`);
 if (!controlOk) console.log(`  The cross-kind control test did not fire. Treat the zero above as unproven and fix the predicate.`);
 process.exit(failed ? 10 : 0);
