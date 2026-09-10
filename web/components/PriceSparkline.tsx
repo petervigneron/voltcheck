@@ -41,17 +41,18 @@ import { PRICE_FLOOR_USD } from "@/lib/listings/price";
 // domain at another price; 1FT6W3L78RWG27106 left Hobson at $41,581 and
 // reappeared on Recharged at $47,500). It draws in grey, runs flat to the day
 // that listing went away, and then there is a gap before the current series
-// starts in cobalt. The rise across the gap is NOT a step: no "+$5,919" line
+// starts in ink. The rise across the gap is NOT a step: no "+$5,919" line
 // is printed for it, because nobody raised a price — one listing ended and
 // another began. The owner's rule for this surface is that nothing about it
 // is written: no domain labels, no sentence. Grey is before this listing,
-// blue is this one, and the dollar figures at the ends of each say the rest.
+// ink is this one, and the dollar figures at the ends of each say the rest.
 //
 // Server-rendered SVG, no client JS and no dependencies; the per-path <title>
 // is a bonus hover layer, never the only copy of a number.
 
+// The current series is ink, not cobalt: cobalt means a control and nothing
+// else (owner, 2026-09-03), and a price line is not one (owner, 2026-09-10).
 const INK = "#121212";
-const COBALT = "#1f3fd1";
 const PUTTY = "#e8e7e2";
 const PAPER = "#ffffff";
 // The earlier segment: recessive, so the current series reads as the subject.
@@ -201,8 +202,8 @@ export function PriceSparkline({
             <title>{titleOf(ppts)}</title>
           </path>
         )}
-        <path d={wash} fill={COBALT} fillOpacity="0.1" stroke="none" />
-        <path d={d} fill="none" stroke={COBALT} strokeWidth="2" strokeLinejoin="round" strokeLinecap="round">
+        <path d={wash} fill={INK} fillOpacity="0.07" stroke="none" />
+        <path d={d} fill="none" stroke={INK} strokeWidth="2" strokeLinejoin="round" strokeLinecap="round">
           <title>{titleOf(pts)}</title>
         </path>
 
@@ -226,12 +227,12 @@ export function PriceSparkline({
             cx={px(Date.parse(p.observedAt))}
             cy={py(p.priceUsd)}
             r="2.6"
-            fill={COBALT}
+            fill={INK}
             stroke={PAPER}
             strokeWidth="1.5"
           />
         ))}
-        <circle cx={px(tLast)} cy={yNow} r="4.5" fill={COBALT} stroke={PAPER} strokeWidth="2" />
+        <circle cx={px(tLast)} cy={yNow} r="4.5" fill={INK} stroke={PAPER} strokeWidth="2" />
 
         {/* Both ends carry their dollar value. Placed above their own runs and
             pinned to opposite edges, so they cannot collide however the risers

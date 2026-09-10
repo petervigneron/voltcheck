@@ -23,23 +23,26 @@ export function VinForm({ compact = false }: { compact?: boolean }) {
 
   return (
     <form onSubmit={submit} className={compact ? "" : "w-full max-w-xl"}>
-      <div className="flex gap-2">
+      {/* The browse page's search bar: a keylined field with the button
+          tiled onto its right edge in cobalt, the one interactive colour. */}
+      <div className="flex border-[3px] border-ink bg-paper">
         <input
           value={vin}
           onChange={(e) => setVin(e.target.value)}
           placeholder="Paste a VIN, e.g. 7SAYGDEE5RA235597"
           spellCheck={false}
           autoCapitalize="characters"
-          className="flex-1 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-4 py-3 font-mono text-sm tracking-wide text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          className="min-w-0 flex-1 bg-paper px-4 py-3.5 font-mono text-[15px] tracking-wide text-ink placeholder:text-ink/40 focus:outline-none focus:ring-[3px] focus:ring-inset focus:ring-cobalt"
         />
         <button
           type="submit"
-          className="rounded-lg bg-emerald-600 px-5 py-3 text-sm font-semibold text-white hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          className="border-l-[3px] border-ink bg-cobalt px-6 text-[13px] font-extrabold tracking-[0.06em] text-paper uppercase hover:bg-ink focus:outline-none focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-paper"
         >
           Decode
         </button>
       </div>
-      {error && <p className="mt-2 text-sm text-rose-600 dark:text-rose-400">{error}</p>}
+      {/* A paper chip, so it reads on the ink band as well as on putty. */}
+      {error && <p className="mt-2 inline-block bg-paper px-3 py-1.5 text-[13px] font-semibold text-ink">{error}</p>}
     </form>
   );
 }

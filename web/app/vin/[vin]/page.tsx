@@ -7,10 +7,10 @@ import { decodeTeslaVin, isTeslaVin } from "@/lib/tesla-vin";
 import { matchEnrichment, vpicTrimIsPatternArtifact } from "@/lib/enrichment/match";
 import { vpicEvModelAliases } from "@/lib/enrichment/vpicEvAlias";
 import { withTeslaCollisionAbstention } from "@/lib/listings/teslaRangeAbstain";
-import type { EnrichmentResult, VinDecode } from "@/lib/types";
+import type { EnrichmentResult, Fact, VinDecode } from "@/lib/types";
 import { buildChecklist } from "@/lib/checklist";
 import { FactRow } from "@/components/FactRow";
-import { EnrichmentFacts, Section, NOTE_STYLE } from "@/components/EnrichmentReport";
+import { CandidateRows, EnrichmentFacts, Panel } from "@/components/EnrichmentReport";
 import { AskSeller } from "@/components/AskSeller";
 
 export const dynamic = "force-dynamic";
@@ -58,6 +58,10 @@ export async function generateMetadata(props: PageProps<"/vin/[vin]">): Promise<
   };
 }
 
+// The same dialect as the listing page (owner, 2026-09-10): the ink header
+// runs on into a band carrying what the VIN decodes to, the specifications
+// are solid tiles under an ink bar in the card-tile colours, and every other
+// block is a square 3px-ink panel.
 export default async function VinPage(props: PageProps<"/vin/[vin]">) {
   const { vin: rawVin } = await props.params;
   const vin = decodeURIComponent(rawVin).toUpperCase();
@@ -78,91 +82,82 @@ export default async function VinPage(props: PageProps<"/vin/[vin]">) {
   const identity = [decode.modelYear, decode.make, resolvedModel(decode, enrichment), trimIsArtifact ? undefined : decode.trim]
     .filter(Boolean)
     .join(" ");
+  // vPIC's own electrification field. It only changes a spec tile's colour:
+  // a missing heat pump or DC port is no alarm on a plug-in hybrid.
+  const plugIn = /PHEV/i.test(decode.electrificationLevel ?? "");
+
+  const plant: Fact<string> | undefined = tesla?.plant
+    ? { value: `${tesla.plant.name} (VIN pos. 11 = ${tesla.plant.code})`, source: "vin", asOf: "—", confidence: "high" }
+    : decode.plantCity
+      ? { value: [decode.plantCity, decode.plantState, decode.plantCountry].filter(Boolean).join(", "), source: "vpic", asOf: "—", confidence: "high" }
+      : undefined;
+  const trim = decode.trim && !trimIsArtifact ? decode.trim : undefined;
+  // A heading with nothing under it is a label the shopper scans for nothing.
+  const fromVin = decode.usMarket && (plant || trim || decode.driveType);
 
   return (
-    <div className="mx-auto max-w-4xl space-y-5 px-4 py-10">
-      <div>
-        <Link href="/" className="text-xs text-zinc-400 hover:text-emerald-500">
-          ← new search
-        </Link>
-        <div className="mt-1 font-mono text-sm text-zinc-500 dark:text-zinc-400">{vin}</div>
-        <h1 className="text-2xl font-bold tracking-tight">
-          {decode.usMarket ? identity || "Decoded vehicle" : "Not a US-market vehicle"}
-        </h1>
-        {decode.electrificationLevel && (
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">{decode.electrificationLevel}</p>
-        )}
+    <div className="pb-2">
+      <div className="bg-ink text-paper">
+        <div className="mx-auto max-w-[1100px] px-4 pt-5 pb-8">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1.5 border-[3px] border-paper/50 px-3.5 py-2 text-[12px] font-extrabold tracking-[0.08em] text-paper uppercase hover:border-paper hover:bg-cobalt focus:outline-none focus-visible:border-paper focus-visible:bg-cobalt"
+          >
+            ← new search
+          </Link>
+          <div className="mt-6 font-mono text-[13px] tracking-[0.06em] text-paper/60">{vin}</div>
+          <h1 className="mt-1.5 text-[30px] leading-[1.05] font-extrabold tracking-[-0.03em] sm:text-[42px]">
+            {decode.usMarket ? identity || "Decoded vehicle" : "Not a US-market vehicle"}
+          </h1>
+          {decode.electrificationLevel && (
+            <p className="mt-2 text-[16px] font-semibold text-paper/65">{decode.electrificationLevel}</p>
+          )}
+        </div>
       </div>
 
-      {!decode.usMarket && (
-        <div className={`rounded-lg border p-4 ${NOTE_STYLE}`}>
-          <div className="text-sm font-semibold">
-            Likely a grey import
-          </div>
-          <p className="mt-1 text-sm text-zinc-700 dark:text-zinc-300">
-            This VIN pattern (e.g. Shanghai-built LRW… or Berlin-built XP7… Teslas) is not a
-            US-market car. Parts, warranty, software region, and Supercharger access may
-            differ.
-          </p>
-        </div>
-      )}
-
-      {decode.usMarket && (
-        <Section title="From the VIN">
-          <div className="grid gap-x-10 sm:grid-cols-2">
-            <div>
-              <FactRow
-                label="Assembly plant"
-                fact={
-                  tesla?.plant
-                    ? { value: `${tesla.plant.name} (VIN pos. 11 = ${tesla.plant.code})`, source: "vin", asOf: "—", confidence: "high" }
-                    : decode.plantCity
-                      ? { value: [decode.plantCity, decode.plantState, decode.plantCountry].filter(Boolean).join(", "), source: "vpic", asOf: "—", confidence: "high" }
-                      : undefined
-                }
-              />
-            </div>
-            <div>
-              {decode.trim && !trimIsArtifact && (
-                <FactRow label="Trim" fact={{ value: decode.trim, source: "vpic", asOf: "—", confidence: "medium" }} />
-              )}
-              {decode.driveType && (
-                <FactRow label="Drive type" fact={{ value: decode.driveType, source: "vpic", asOf: "—", confidence: "medium" }} />
-              )}
-            </div>
-          </div>
-        </Section>
-      )}
-
-      {enrichment.exact && (
-        <Section title="Specifications">
-          <EnrichmentFacts row={enrichment.exact} />
-        </Section>
-      )}
-
-      {enrichment.candidates && (
-        <Section title="Possible configurations">
-          {enrichment.discriminator && (
-            <p className="mb-4 rounded-lg border border-amber-300 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/40 p-3 text-sm">
-              {enrichment.discriminator}
+      <div className="mx-auto max-w-[1100px] space-y-5 px-4 pt-5">
+        {!decode.usMarket && (
+          <div className="border-[3px] border-ink bg-paper p-4 text-[14px]">
+            <div className="font-semibold">Likely a grey import</div>
+            <p className="mt-1 text-ink/75">
+              This VIN pattern (e.g. Shanghai-built LRW… or Berlin-built XP7… Teslas) is not a
+              US-market car. Parts, warranty, software region, and Supercharger access may
+              differ.
             </p>
-          )}
-          <div className="space-y-6">
-            {enrichment.candidates.map((row) => (
-              <div key={row.id} className="rounded-lg border border-zinc-200 dark:border-zinc-800 p-4">
-                <div className="mb-2 text-sm font-semibold">
-                  {row.range?.epaRangeMi
-                    ? `${row.range.epaRangeMi.value} mi version${row.battery?.packUsableKwh ? ` · ≈${Math.round(row.battery.packUsableKwh.value)} kWh` : ""}`
-                    : (Array.isArray(row.trim) ? row.trim[0] : row.trim) ?? row.id}
-                </div>
-                <EnrichmentFacts row={row} />
-              </div>
-            ))}
           </div>
-        </Section>
-      )}
+        )}
 
-      <AskSeller items={checklist} />
+        {fromVin && (
+          <Panel title="From the VIN">
+            <div className="flex flex-wrap gap-1.5">
+              <FactRow tile label="Assembly plant" fact={plant} />
+              {trim && <FactRow tile label="Trim" fact={{ value: trim, source: "vpic", asOf: "—", confidence: "medium" }} />}
+              {decode.driveType && (
+                <FactRow tile label="Drive type" fact={{ value: decode.driveType, source: "vpic", asOf: "—", confidence: "medium" }} />
+              )}
+            </div>
+          </Panel>
+        )}
+
+        {enrichment.exact && (
+          <section className="border-[3px] border-ink bg-paper">
+            <h2 className="bg-ink px-5 py-3 text-[13px] font-extrabold tracking-[0.06em] text-paper uppercase">
+              Specifications
+            </h2>
+            <div className="p-5">
+              <EnrichmentFacts tiles plugIn={plugIn} row={enrichment.exact} />
+            </div>
+          </section>
+        )}
+
+        {enrichment.candidates && (
+          <Panel title="Possible configurations">
+            <CandidateRows rows={enrichment.candidates} discriminator={enrichment.discriminator} plugIn={plugIn} />
+          </Panel>
+        )}
+
+        <AskSeller items={checklist} keyline />
+      </div>
     </div>
   );
 }

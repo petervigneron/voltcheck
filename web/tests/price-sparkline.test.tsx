@@ -200,9 +200,10 @@ test("the chart is legible without colour: nothing carries meaning by hue alone"
       ]}
     />
   );
-  // One series, so no legend is owed — but the values must be text, and the
-  // text must not wear the series colour.
-  assert.ok(!html.includes('fill="#1f3fd1"><text') && !html.includes('<text fill="#1f3fd1"'), html);
+  // One series, so no legend is owed — but the values must be text. And no
+  // cobalt anywhere: it means a control, and a price line is not one (owner,
+  // 2026-09-10). The series used to be cobalt; it is ink.
+  assert.ok(!html.includes("#1f3fd1"), html);
   assert.ok(html.includes('role="img"'), html);
   assert.ok(html.includes("aria-label"), html);
 });

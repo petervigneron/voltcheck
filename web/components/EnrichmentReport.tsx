@@ -45,9 +45,6 @@ export const HEAT_PUMP_LABEL: Record<HeatPump, string> = {
   none: "None",
 };
 
-export const NOTE_STYLE =
-  "border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60";
-
 const SUPERCHARGER_LABEL: Record<SuperchargerAccess, string> = {
   native: "Native",
   adapter: "Adapter",
@@ -62,26 +59,47 @@ const DCFC_LABEL = {
   not_fitted: "Not fitted",
 } as const;
 
-export function Section({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <section className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5">
-      <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
-        {title}
-      </h2>
-      <div className="mt-2">{children}</div>
-    </section>
-  );
-}
-
-/** Section in the browse page's dialect: square, a 3px ink keyline, the
- *  tracked uppercase label the grid and filter rail use. The listing page is
- *  built from these; /vin still uses Section above. */
+/** A titled block in the browse page's dialect: square, a 3px ink keyline,
+ *  the tracked uppercase label the grid and filter rail use. The listing,
+ *  delisted and /vin pages are built from these. */
 export function Panel({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="min-w-0 border-[3px] border-ink bg-paper p-5">
       <h2 className="text-[10.5px] font-extrabold tracking-[0.14em] text-ink/55 uppercase">{title}</h2>
       <div className="mt-3">{children}</div>
     </section>
+  );
+}
+
+/** The versions a badge could be ("Two versions wear this badge" on a listing,
+ *  "Possible configurations" on /vin), each a keylined box of spec tiles,
+ *  under the one fact that tells them apart — saffron, the look-closer colour
+ *  the card's range-span tile wears for these cars. */
+export function CandidateRows({
+  rows,
+  discriminator,
+  plugIn = false,
+}: {
+  rows: EnrichmentRow[];
+  discriminator?: string;
+  plugIn?: boolean;
+}) {
+  return (
+    <>
+      {discriminator && <p className="mb-4 bg-saffron p-3 text-[14px] font-semibold text-ink">{discriminator}</p>}
+      <div className="space-y-5">
+        {rows.map((row) => (
+          <div key={row.id} className="border-[3px] border-ink p-4">
+            <div className="mb-3 text-[15px] font-extrabold tracking-[-0.01em]">
+              {row.range?.epaRangeMi
+                ? `${row.range.epaRangeMi.value} mi version${row.battery?.packUsableKwh ? ` · ≈${Math.round(row.battery.packUsableKwh.value)} kWh` : ""}`
+                : (Array.isArray(row.trim) ? row.trim[0] : row.trim) ?? row.id}
+            </div>
+            <EnrichmentFacts tiles plugIn={plugIn} row={row} />
+          </div>
+        ))}
+      </div>
+    </>
   );
 }
 

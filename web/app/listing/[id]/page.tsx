@@ -9,7 +9,7 @@ import { enrichListing, displayTrim, packIdentity, specTrim } from "@/lib/listin
 import { vehicleKind } from "@/lib/listings/kind";
 import { trimClaim } from "@/lib/listings/trimClaim";
 import { buildChecklist } from "@/lib/checklist";
-import { EnrichmentFacts, Panel } from "@/components/EnrichmentReport";
+import { CandidateRows, EnrichmentFacts, Panel } from "@/components/EnrichmentReport";
 import { listingTiles } from "@/lib/listings/tiles";
 import { Tile } from "@/components/Tile";
 import { hasRealPrice } from "@/lib/listings/price";
@@ -486,23 +486,7 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
 
         {e.enrichment.candidates && (
           <Panel title="Two versions wear this badge">
-            {/* Saffron: the tile the card showed for this car was the flag
-                (its range as a span), and this is the look-closer it pointed at. */}
-            {e.enrichment.discriminator && (
-              <p className="mb-4 bg-saffron p-3 text-[14px] font-semibold text-ink">{e.enrichment.discriminator}</p>
-            )}
-            <div className="space-y-5">
-              {e.enrichment.candidates.map((row) => (
-                <div key={row.id} className="border-[3px] border-ink p-4">
-                  <div className="mb-3 text-[15px] font-extrabold tracking-[-0.01em]">
-                    {row.range?.epaRangeMi
-                      ? `${row.range.epaRangeMi.value} mi version${row.battery?.packUsableKwh ? ` · ≈${Math.round(row.battery.packUsableKwh.value)} kWh` : ""}`
-                      : (Array.isArray(row.trim) ? row.trim[0] : row.trim) ?? row.id}
-                  </div>
-                  <EnrichmentFacts tiles plugIn={plugIn} row={row} />
-                </div>
-              ))}
-            </div>
+            <CandidateRows rows={e.enrichment.candidates} discriminator={e.enrichment.discriminator} plugIn={plugIn} />
           </Panel>
         )}
 

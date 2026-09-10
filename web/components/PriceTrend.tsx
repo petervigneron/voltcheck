@@ -48,8 +48,9 @@ import { valueSeries, type PriceTrend, type SiteTrend, type TrendPoint, type Tre
 // owner's own words from 2026-09-07 or the car's own name; nothing explains
 // the number underneath the number.
 
+// The series is ink, not cobalt: cobalt means a control and nothing else
+// (owner, 2026-09-03), and a line on a chart is not one (owner, 2026-09-10).
 const INK = "#121212";
-const COBALT = "#1f3fd1";
 const PUTTY = "#e8e7e2";
 const PAPER = "#ffffff";
 /** The site line is context, not the answer: ink at less than half weight. */
@@ -112,7 +113,7 @@ function Chart({
   site: SiteTrend | null;
   /** The asking price of the car on the page, drawn as a rule across the plot. */
   price?: number;
-  /** What the cobalt line is — the car's own name, for the legend. */
+  /** What the solid line is — the car's own name, for the legend. */
   subject?: string;
   label: string;
 }) {
@@ -168,7 +169,7 @@ function Chart({
   // that had fallen 1.2%. A figure says what the pixels cannot at this
   // scale; the scale itself stays honest to the spread.
   const legend = [
-    ...(subject ? [{ swatch: COBALT, opacity: 1, text: subject, pct: pctChange(first.price, last.price) }] : []),
+    ...(subject ? [{ swatch: INK, opacity: 1, text: subject, pct: pctChange(first.price, last.price) }] : []),
     ...(siteLine.length
       ? [{ swatch: INK, opacity: SITE_OPACITY, text: "All cars on the site", pct: pctChange(siteLine[0].price, siteLine[siteLine.length - 1].price) }]
       : []),
@@ -184,7 +185,7 @@ function Chart({
         <span className="ml-2 text-amber-700">est.</span>
       </figcaption>
       <svg viewBox={`0 0 ${W} ${H}`} className="mt-1 w-full" role="img" aria-label={`${label}: ${ends.map(titleOf).join("; ")}`}>
-        <path d={band} fill={COBALT} fillOpacity="0.12" stroke="none" />
+        <path d={band} fill={INK} fillOpacity="0.08" stroke="none" />
         {siteLine.length > 0 && (
           <path
             d={pathOf(siteLine)}
@@ -196,9 +197,9 @@ function Chart({
             strokeLinecap="round"
           />
         )}
-        <path d={line} fill="none" stroke={COBALT} strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+        <path d={line} fill="none" stroke={INK} strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
         {ends.map((p) => (
-          <circle key={p.period} cx={px(Date.parse(p.period))} cy={py(p.price)} r={3.5} fill={COBALT} stroke={PAPER} strokeWidth="1.5">
+          <circle key={p.period} cx={px(Date.parse(p.period))} cy={py(p.price)} r={3.5} fill={INK} stroke={PAPER} strokeWidth="1.5">
             <title>{titleOf(p)}</title>
           </circle>
         ))}

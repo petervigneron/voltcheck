@@ -1,7 +1,7 @@
 import type { RecentSale } from "@/lib/listings/sales";
 import type { PriceSignals } from "@/lib/listings/peers";
 
-// Price against mileage: real sales (cobalt, WA title records — the card's
+// Price against mileage: real sales (ink, WA title records — the card's
 // attribution line covers them), the cohort's live asks (recessive gray),
 // and this car (saffron diamond — the system's "look closer" color, and the
 // chart's subject). Server-rendered SVG, no client JS; per-point <title>
@@ -21,8 +21,9 @@ import type { PriceSignals } from "@/lib/listings/peers";
 //    mileage) among at least four other points — a chart that can't locate
 //    its subject is decoration.
 
+// Sales are ink, not cobalt: cobalt means a control and nothing else (owner,
+// 2026-09-03), and a data point is not one (owner, 2026-09-10).
 const INK = "#121212";
-const COBALT = "#1f3fd1";
 const GRAY = "#8a887f";
 const SAFFRON = "#f7b500";
 const PUTTY = "#e8e7e2";
@@ -101,12 +102,12 @@ export function PriceScatter({
   const legend: { label: string; swatch: React.ReactNode; show: boolean }[] = [
     {
       label: "Sold, this version",
-      swatch: <circle cx="6" cy="6" r="4" fill={COBALT} />,
+      swatch: <circle cx="6" cy="6" r="4" fill={INK} />,
       show: soldSame.length > 0,
     },
     {
       label: "Sold, other versions",
-      swatch: <circle cx="6" cy="6" r="3.5" fill="none" stroke={COBALT} strokeWidth="1.8" />,
+      swatch: <circle cx="6" cy="6" r="3.5" fill="none" stroke={INK} strokeWidth="1.8" />,
       show: soldOther.length > 0,
     },
     {
@@ -160,12 +161,12 @@ export function PriceScatter({
           </circle>
         ))}
         {soldOther.map((s, i) => (
-          <circle key={`so${i}`} cx={px(s.odometer)} cy={py(s.salePrice)} r="3.5" fill="none" stroke={COBALT} strokeWidth="1.8">
+          <circle key={`so${i}`} cx={px(s.odometer)} cy={py(s.salePrice)} r="3.5" fill="none" stroke={INK} strokeWidth="1.8">
             <title>{soldTitle(s)}</title>
           </circle>
         ))}
         {soldSame.map((s, i) => (
-          <circle key={`ss${i}`} cx={px(s.odometer)} cy={py(s.salePrice)} r="4.5" fill={COBALT} stroke="#ffffff" strokeWidth="1">
+          <circle key={`ss${i}`} cx={px(s.odometer)} cy={py(s.salePrice)} r="4.5" fill={INK} stroke="#ffffff" strokeWidth="1">
             <title>{soldTitle(s)}</title>
           </circle>
         ))}
@@ -175,7 +176,7 @@ export function PriceScatter({
           </rect>
         </g>
       </svg>
-      <figcaption className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-zinc-500 dark:text-zinc-400">
+      <figcaption className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-ink/60">
         {legend
           .filter((l) => l.show)
           .map((l) => (
