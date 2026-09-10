@@ -14,6 +14,7 @@ import { isProvenance } from "./lib/price-provenance.mjs";
 import { decodeEntities } from "./lib/normalize.mjs";
 import { inventoryBrandedFor } from "./lib/branded-title-dealers.mjs";
 import { splitTeslaModel } from "./lib/tesla-nameplate.mjs";
+import { untrustedModel } from "./lib/model-trust.mjs";
 
 const raw = JSON.parse(await readFile(new URL("./out/listings.json", import.meta.url), "utf-8"));
 // Single-rooftop dealers have exactly one address — listings inherit it from
@@ -147,6 +148,7 @@ const unknownMakes = new Map();
 const foreign = new Map();
 const unverified = [];
 const placeholderVins = new Map();
+const unnamed = new Map();
 const listings = raw
   // priceUsd == null means no price signal at all — drop it. priceUsd === 0 is
   // a deliberate abstain (resolveDdcPrice could not name the advertised price
@@ -186,6 +188,17 @@ const listings = raw
   .filter((r) => {
     if (isKnownMake(r.make)) return true;
     unknownMakes.set(r.make, (unknownMakes.get(r.make) ?? 0) + 1);
+    return false;
+  })
+  // A model the feed cannot fold on — the platform's "Other" placeholder, or
+  // the listing headline with the car's own year in it (lib/model-trust.mjs
+  // has the live cases). vpic-enrich.mjs names these from the VIN before this
+  // runs; what reaches here is what vPIC could not name, and it is held
+  // rather than published under a model no shopper can browse to. Held, not
+  // lost: the platform reader or the decode can still name it on a later run.
+  .filter((r) => {
+    if (!untrustedModel(r)) return true;
+    unnamed.set(r.dealerDomain, (unnamed.get(r.dealerDomain) ?? 0) + 1);
     return false;
   })
   // A car outside the United States is not this site's inventory, and until
@@ -311,6 +324,7 @@ const listings = raw
   });
 
 for (const [m, n] of unknownMakes) console.error(`dropped ${n} listing(s) with unrecognized make ${JSON.stringify(m)} — real new brand? add it to lib/makes.mjs`);
+for (const [d, n] of unnamed) console.error(`held ${n} listing(s) from ${d} whose model is a placeholder or the listing headline and vPIC could not name the car — see lib/model-trust.mjs`);
 for (const [d, n] of placeholderVins) console.error(`dropped ${n} listing(s) from ${d} whose VIN is an inventory-system placeholder, not a VIN — a car that is on order or in transit and has no VIN yet`);
 for (const [st, n] of foreign) console.error(`dropped ${n} listing(s) outside the US (state ${JSON.stringify(st)}) — this site lists US inventory, and a foreign rooftop also prices in its own currency; drop the domain from registry/registry.json too`);
 // Loud on purpose. A number here is not an error — it is enrichment having run

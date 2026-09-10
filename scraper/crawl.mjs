@@ -10,7 +10,7 @@ import { fetchPage, setCacheTtl } from "./lib/http.mjs";
 import { extractVehicles, extractItemListEntries } from "./lib/jsonld.mjs";
 import { classifyEv, EV_ONLY_WMIS } from "./lib/ev.mjs";
 import { apiLaneDone, API_LANE_TRIES } from "./lib/api-lane.mjs";
-import { normalize, richness } from "./lib/normalize.mjs";
+import { normalize, keepRicher } from "./lib/normalize.mjs";
 import { colistingAccumulator, colistedDomainCount } from "./lib/colisting.mjs";
 import { discoverSitemapUrls, rank, dedupe, SRP_PATHS, VIN_RE, evish } from "./lib/sitemap.mjs";
 import { extractDdcVehicles, enrichFromDdc } from "./lib/platforms/dealercom.mjs";
@@ -44,6 +44,7 @@ import {
   isAutoManager,
   autoManagerSeeds,
   autoManagerVehicles,
+  autoManagerVdpVehicles,
   autoManagerNextPageUrl,
 } from "./lib/platforms/automanager.mjs";
 import {
@@ -1291,6 +1292,11 @@ async function crawlDealerInto(domain, budget, domainCapAt, report) {
     // survive the byVin dedupe as a phantom listing.
     const dealrVs = dealrVehicles(res.body, res.finalUrl);
     const autoManager = autoManagerVehicles(res.body, res.finalUrl);
+    // An AutoManager VDP's JSON-LD REPLACES the generic reading: the node is
+    // real and priced, but its model is the tile's model and trim run
+    // together, so the platform reader hands it over with both blank and the
+    // tile's split reading is inherited at the byVin merge (keepRicher).
+    const amPage = isAutoManager(res.body);
     // Motorcar Marketing returns a car only on a VDP: its SRP markup is
     // per-rooftop theme and carries no VIN on half the themes, so the SRP
     // contributes LINKS and the VDP contributes the facts.
@@ -1370,9 +1376,11 @@ async function crawlDealerInto(domain, budget, domainCapAt, report) {
             ? arVehicles
             : pmPage
               ? pmVehicles
-              : daSuppressed
-                ? []
-                : extractVehicles(res.body)),
+              : amPage
+                ? autoManagerVdpVehicles(res.body)
+                : daSuppressed
+                  ? []
+                  : extractVehicles(res.body)),
       ...extractDrivewayVehicles(res.body),
       ...dcsVehicles,
       ...dealerFireVehicles(res.body, res.finalUrl),
@@ -1654,7 +1662,7 @@ async function writeOutput() {
     for (const ev of allEvs) {
       const key = ev.vin ?? `${ev.dealerDomain}:${ev.sourceUrl}`;
       const prev = byVin.get(key);
-      if (!prev || richness(ev) > richness(prev)) byVin.set(key, ev);
+      byVin.set(key, prev ? keepRicher(prev, ev) : ev);
       colisted.add(ev);
     }
     await writeFile(new URL("./out/listings.json", import.meta.url), JSON.stringify([...byVin.values()], null, 2));

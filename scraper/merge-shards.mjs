@@ -29,7 +29,7 @@
 // which one wins. scraper/colisting-sync.mjs ships the file (migration 0036),
 // and verify-colisting.mjs is the test.
 import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
-import { richness } from "./lib/normalize.mjs";
+import { keepRicher } from "./lib/normalize.mjs";
 import { colistingAccumulator, colistedDomainCount } from "./lib/colisting.mjs";
 
 const shardsDir = new URL(`./${process.argv[2] ?? "out/shards"}/`, import.meta.url);
@@ -64,7 +64,7 @@ for (const d of dirs) {
     if (!ev) continue;
     const key = ev.vin ?? `${ev.dealerDomain}:${ev.sourceUrl}`;
     const prev = byVin.get(key);
-    if (!prev || richness(ev) > richness(prev)) byVin.set(key, ev);
+    byVin.set(key, prev ? keepRicher(prev, ev) : ev);
 
     colisted.add(ev);
   }

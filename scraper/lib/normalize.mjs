@@ -259,6 +259,31 @@ export function richness(rec) {
   );
 }
 
+// The richer record wins WHOLE, and until 2026-09-09 that was the end of it.
+// AutoManager's VDP is the case that showed the cost: its JSON-LD writes
+// model and trim as one composed string ("RDX SH-AWD w/A-SPEC", "X3 2019
+// xDrive30i NAV PANO BLIND"), so lib/platforms/automanager.mjs now leaves
+// both blank on that page — and the SRP tile, which carries them split, loses
+// on richness to the page with the gallery. Whole-record replacement then
+// shipped a car with no model, which ingest drops. So the winner keeps its
+// own reading of everything it read, and takes an identity field from the
+// record it displaced only where it read nothing at all. Same VIN, same
+// rooftop: the two readings can only disagree on spelling, and on that the
+// richer page still wins.
+const IDENTITY = ["year", "make", "model", "trim"];
+const blank = (v) => v == null || v === "";
+export function keepRicher(prev, next) {
+  const [win, lose] = richness(next) > richness(prev) ? [next, prev] : [prev, next];
+  let out = win;
+  for (const f of IDENTITY) {
+    if (blank(win[f]) && !blank(lose[f])) {
+      if (out === win) out = { ...win };
+      out[f] = lose[f];
+    }
+  }
+  return out;
+}
+
 // ── A description that is nobody's words ───────────────────────────────────
 //
 // dealer.com's schema.org description is template copy, one sentence stamped

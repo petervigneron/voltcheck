@@ -40,8 +40,36 @@
 // are mostly used-only independents — which is a reason to expect "used", not
 // evidence of it. See ../condition.mjs: an absent field became "used" once
 // already and published 150 new cars as used.
+//
+// THE MODEL IS THE DROPDOWN, AND THE DROPDOWN IS SHORT. data-displaymodel is
+// a pick-list, and the list has no entry for most of what an EV lot sells:
+// on ultimatems.com (Houston, 2026-09-09) it read "Other" on every Lyriq,
+// Vistiq, Optiq, Equinox EV, EX90, Ariya, EQE and EQS — 7 of 12 tiles on the
+// first page, 48 of 55 live rows. The dealer types the real name into the
+// headline instead, where it sits between the year-make prefix and a trim
+// field that on this lot begins with the year again ("2026 Luxury AWD NAV
+// PANO SUPERCRUISE 6PASS 1K Mi"). "Other" is not a nameplate and is not
+// emitted as one; the tile goes out with no model, and vpic-enrich.mjs names
+// the car from its VIN (lib/model-trust.mjs, lib/vpic-model.mjs).
+//
+// AND THE VDP'S JSON-LD IS THE TILE RUN TOGETHER. The header above used to
+// say the VDP carries no Vehicle node; that is theme-dependent (crescentauto
+// and concoursnj have none; specialtiesauto, umcsales, revolvemotors and
+// ultimatems each have one, measured 2026-09-09). Where it exists, its
+// `model` is the dropdown model and the trim field as ONE string — "RDX
+// SH-AWD w/A-SPEC" for a tile reading model "RDX", trim "SH-AWD w/A-SPEC";
+// "VISTIQ 2026 Luxury AWD NAV PANO SUPERCRUISE 6PASS 1K Mi" for an "Other"
+// tile — and its `vehicleConfiguration` is that string with the drivetrain
+// and a digit pipe-joined after it. The generic JSON-LD reader took that
+// node as-is, it out-ranked the tile on richness (gallery, description),
+// and 48 listings published with the headline as their model and a further
+// 15 on five other rooftops with "Model Trim" as theirs. The page has no
+// split form anywhere (no data-display* attributes, no spec row for model or
+// trim), so autoManagerVdpVehicles hands the node over with model and trim
+// blank, and lib/normalize.mjs keepRicher fills both from the tile.
 import { AUTOMANAGER_PRICE } from "../price-provenance.mjs";
 import { stabilizeImages } from "../images.mjs";
+import { extractVehicles } from "../jsonld.mjs";
 
 const ASSET_RE = /automanagerprodcdn\.azureedge\.net|automanager\.blob\.core\.windows\.net|wm\.automanager\.com/i;
 
@@ -145,14 +173,17 @@ function tileVehicle(chunk, pageUrl) {
   const mileage = num(attr(chunk, "displaymileage"));
   // The dealer's own fuel string, untouched — classifyEv decides.
   const fuel = attr(chunk, "displayfuel");
+  // The dropdown's placeholder is not a model (see header).
+  const dropdown = attr(chunk, "displaymodel");
+  const model = dropdown && !/^other$/i.test(dropdown) ? dropdown : undefined;
 
   return {
     "@type": "Vehicle",
     vehicleIdentificationNumber: vin,
     vehicleModelDate: attr(chunk, "displayyear"),
     brand: attr(chunk, "displaymake"),
-    model: attr(chunk, "displaymodel"),
-    vehicleConfiguration: displayTrim(attr(chunk, "displaytrim"), attr(chunk, "displaymodel")),
+    model,
+    vehicleConfiguration: displayTrim(attr(chunk, "displaytrim"), dropdown),
     name: attr(chunk, "displaytitle"),
     mileageFromOdometer: mileage != null ? { "@type": "QuantitativeValue", value: mileage } : undefined,
     color: attr(chunk, "displayextcolor"),
@@ -189,4 +220,16 @@ export function autoManagerVehicles(html, pageUrl) {
     out.push(v);
   }
   return out;
+}
+
+/** The JSON-LD Vehicle node(s) of an AutoManager VDP, with `model` and
+ *  `vehicleConfiguration` removed — on this platform both are the tile's
+ *  model and trim written as one string (see header), and the split reading
+ *  is inherited from the tile when the two records meet. Everything else on
+ *  the node (VIN, year, price, odometer, gallery, description) is read as
+ *  the generic reader would have read it. Nothing on a page that is not
+ *  AutoManager's. */
+export function autoManagerVdpVehicles(html) {
+  if (!isAutoManager(html)) return [];
+  return extractVehicles(html).map(({ model, vehicleConfiguration, ...node }) => node);
 }

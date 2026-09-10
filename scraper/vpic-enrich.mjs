@@ -48,6 +48,8 @@ import { readFile, writeFile } from "node:fs/promises";
 import { isKnownMake } from "./lib/makes.mjs";
 import { fuelTextOnly, vpicConfirmsBev, vpicConfirmsPhev, vpicRefutesEv } from "./lib/ev.mjs";
 import { fetchWithRetry } from "./lib/retry.mjs";
+import { untrustedModel } from "./lib/model-trust.mjs";
+import { feedModelFromVpic } from "./lib/vpic-model.mjs";
 
 const src = new URL("./out/listings.json", import.meta.url);
 const listings = JSON.parse(await readFile(src, "utf-8"));
@@ -69,12 +71,15 @@ try {
 // even when their trim/drive/kwh are already filled, so every one gets
 // checked. (Never the reverse: a name match alone never promotes anything.)
 // Same batch also carries listings whose make isn't a real manufacturer
-// (dealer name in the JSON-LD brand — see lib/makes.mjs) and the
-// fuel-text-only classifications above.
+// (dealer name in the JSON-LD brand — see lib/makes.mjs), the
+// fuel-text-only classifications above, and since 2026-09-09 listings whose
+// model the feed cannot fold on (lib/model-trust.mjs: none, the platform's
+// "Other" placeholder, or the headline with the car's own year in it) — vPIC
+// names those from the VIN, and ingest holds what it could not name.
 const needsByVin = new Map();
 for (const l of listings) {
   if (l.vin?.length !== 17) continue;
-  if (!l.trim || !l.driveLine || l.vpicBatteryKwh == null || l.evConfidence === "name_match" || !isKnownMake(l.make) || fuelTextOnly(l)) {
+  if (!l.trim || !l.driveLine || l.vpicBatteryKwh == null || l.evConfidence === "name_match" || !isKnownMake(l.make) || fuelTextOnly(l) || untrustedModel(l)) {
     needsByVin.set(l.vin.toUpperCase(), l);
   }
 }
@@ -126,6 +131,7 @@ let promoted = 0;
 let promotedPhev = 0;
 let unconfirmed = 0;
 let fixedMake = 0;
+let filledModel = 0;
 let demoted = 0;
 let decoded = 0;
 
@@ -170,6 +176,16 @@ function applyDecode(l, r) {
       l.evKind = "BEV"; // dealer said "Plug-In Hybrid" on a battery-electric car
     }
   }
+  // Before the trim: vpicTrim discards a candidate that restates the model,
+  // and the model it should be comparing against is the one being set here.
+  if (untrustedModel(l)) {
+    const model = feedModelFromVpic(r);
+    if (model) {
+      l.model = model;
+      l.modelSource = "vpic";
+      filledModel++;
+    }
+  }
   const trim = vpicTrim(r, l);
   if (!l.trim && trim) {
     l.trim = trim;
@@ -209,7 +225,7 @@ function applyDecode(l, r) {
 // ~150-field response) keeps the committed cache's size proportional to
 // distinct VINs seen, not to vPIC's schema. `checkedAt` is bookkeeping only,
 // same convention as gm-warranty.json's cache entries.
-const CACHE_FIELDS = ["Series", "Trim", "DriveType", "BatteryKWh", "ElectrificationLevel", "FuelTypePrimary", "FuelTypeSecondary", "Make"];
+const CACHE_FIELDS = ["Series", "Trim", "DriveType", "BatteryKWh", "ElectrificationLevel", "FuelTypePrimary", "FuelTypeSecondary", "Make", "Model"];
 function toCacheEntry(r, today) {
   const e = { checkedAt: today };
   for (const f of CACHE_FIELDS) e[f] = r[f] ?? "";
@@ -224,7 +240,11 @@ const fromCache = [];
 const toFetch = [];
 for (const l of needs) {
   const hit = cache[l.vin.toUpperCase()];
-  if (hit) fromCache.push(l);
+  // Entries written before 2026-09-09 hold no Model (the key is absent, not
+  // blank — a blank Model is a real answer). A listing that needs one is
+  // re-asked once; the refreshed entry then carries it. The other fields on
+  // such an entry are still good, so nothing else re-fetches.
+  if (hit && !(untrustedModel(l) && !("Model" in hit))) fromCache.push(l);
   else toFetch.push(l);
 }
 // Order matters now that ingest holds what this pass did not reach. Two very
@@ -238,7 +258,7 @@ for (const l of needs) {
 // were already vPIC-confirmed and only 1,028 had never been decoded at all —
 // and a decode is permanent once made, so that backlog drains and does not
 // come back.
-const critical = (l) => l.evConfidence === "name_match" || fuelTextOnly(l);
+const critical = (l) => l.evConfidence === "name_match" || fuelTextOnly(l) || untrustedModel(l);
 toFetch.sort((a, b) => Number(critical(b)) - Number(critical(a)));
 const criticalCount = toFetch.filter(critical).length;
 console.error(
@@ -319,7 +339,7 @@ await writeOutput();
 // so it has to be visible in the log whether it is 0 or 900.
 const unasked = listings.filter((l) => fuelTextOnly(l) && !l.evVpicAsked).length;
 console.error(
-  `decoded ${decoded}/${needs.length} (${fromCache.length} from cache, ${decoded - fromCache.length}/${toFetch.length} fetched), filled trim on ${filledTrim}, drive on ${filledDrive}, promoted ${promoted} name-match EVs to high confidence (${promotedPhev} of them plug-in hybrids; ${unconfirmed} name matches vPIC answered but did not confirm stay held), repaired ${fixedMake} makes, refuted ${demoted} non-EVs → out/listings.json; cache now holds ${Object.keys(cache).length} VINs → registry/vpic-cache.json`
+  `decoded ${decoded}/${needs.length} (${fromCache.length} from cache, ${decoded - fromCache.length}/${toFetch.length} fetched), filled trim on ${filledTrim}, drive on ${filledDrive}, named the model on ${filledModel}, promoted ${promoted} name-match EVs to high confidence (${promotedPhev} of them plug-in hybrids; ${unconfirmed} name matches vPIC answered but did not confirm stay held), repaired ${fixedMake} makes, refuted ${demoted} non-EVs → out/listings.json; cache now holds ${Object.keys(cache).length} VINs → registry/vpic-cache.json`
 );
 console.error(
   unasked
