@@ -58,6 +58,8 @@ interface PackedRow {
   b?: Coded;
   /** kind — optional so a body packed before 2026-09-07 still unpacks. */
   kd?: Coded;
+  /** vpicEvLevel — optional, same reason; absent before 2026-09-10. */
+  vl?: Coded;
   ct?: string;
   st?: string;
   l?: [number, number];
@@ -201,6 +203,7 @@ export function packIndex(rows: CardRow[]): PackedIndex {
     if (row.drive !== undefined) p.d = code(DRIVES, row.drive);
     if (row.body !== undefined) p.b = code(BODIES, row.body);
     if (row.kind !== undefined) p.kd = code(KINDS, row.kind);
+    if (row.vpicEvLevel !== undefined) p.vl = code(KINDS, row.vpicEvLevel);
     if (row.city !== undefined) p.ct = row.city;
     if (row.state !== undefined) p.st = row.state;
     if (row.loc !== undefined) p.l = row.loc;
@@ -249,6 +252,7 @@ export function unpackIndex(x: PackedIndex): CardRow[] {
     drive: p.d === undefined ? undefined : decode(DRIVES, p.d),
     body: p.b === undefined ? undefined : (decode(BODIES, p.b) as BodyType),
     kind: p.kd === undefined ? undefined : decode(KINDS, p.kd),
+    vpicEvLevel: p.vl === undefined ? undefined : decode(KINDS, p.vl),
     city: p.ct,
     state: p.st,
     loc: p.l,

@@ -349,6 +349,9 @@ for (const l of listings) {
     modelYear: l.year,
     trim: l.trim,
     driveType: l.drive,
+    // The shard carries vPIC's affirmative level (pack.ts `vl`) so the
+    // badge-stripped aliases fire here as they do on the listing page.
+    electrificationLevel: l.vpicEvLevel,
   };
   const full = matchEnrichment(decodeFull, null);
   if (matched(full)) {

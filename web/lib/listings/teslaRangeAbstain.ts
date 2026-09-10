@@ -148,6 +148,7 @@ function collisionProbe(l: TeslaCollisionSubject): EnrichmentResult | undefined 
       trim: undefined,
       driveType: l.drive,
       batteryKwhHint: l.vpicBatteryKwh,
+      electrificationLevel: l.vpicEvLevel,
     },
     tesla
   );

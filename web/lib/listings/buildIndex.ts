@@ -128,6 +128,7 @@ export async function buildCardIndex(): Promise<{
       // The same answer the tiles and the public API give (lib/listings/kind.ts),
       // so the EV/PHEV filter can never disagree with the card it filters.
       kind: vehicleKind(e),
+      vpicEvLevel: l.vpicEvLevel,
       city: l.city,
       state: l.state,
       loc: await zipCoords(l.zip),

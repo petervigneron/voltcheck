@@ -229,6 +229,9 @@ function decodeFromListing(l: Listing): VinDecode {
     trimUntrusted: trimTrust(l, trim).trusted ? undefined : true,
     driveType: l.drive,
     batteryKwhHint: l.vpicBatteryKwh,
+    // vPIC's own level, so the badge-stripped aliases (vpicEvAlias.ts) fire
+    // here under the same proof /vin/ demands. Absent → no aliases.
+    electrificationLevel: l.vpicEvLevel,
   };
 }
 

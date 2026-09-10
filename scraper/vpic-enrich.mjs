@@ -177,6 +177,15 @@ function applyDecode(l, r) {
   }
   const kwh = Number(r.BatteryKWh);
   if (Number.isFinite(kwh) && kwh > 0) l.vpicBatteryKwh = kwh;
+  // vPIC's own electrified level, carried onto the listing (2026-09-10) so
+  // the listing page can consult web/lib/enrichment/vpicEvAlias.ts under the
+  // same gate /vin/ uses: the VIN itself says BEV or PHEV. Only the two
+  // affirmative readings — a blank decode, a conventional hybrid or a petrol
+  // row sets nothing, and nothing is what keeps a petrol XC40 off the
+  // Recharge's battery. Not evKind: that field can come from a dealer's
+  // fuel text, and the alias gate exists precisely to never trust that.
+  if (vpicConfirmsBev(r)) l.vpicEvLevel = "BEV";
+  else if (vpicConfirmsPhev(r)) l.vpicEvLevel = "PHEV";
   // A name match only ever decided that vPIC should be ASKED; the decode
   // decides what the car is. So a "BEV?" that decodes PHEV lands as a PHEV (the
   // Audi A3 e-tron, caught by EV_MODEL_RE's "e-tron", is one) and a "PHEV?"

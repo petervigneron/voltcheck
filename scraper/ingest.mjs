@@ -299,6 +299,10 @@ const listings = raw
       batteryCoverage: r.batteryCoverage ?? undefined,
       campaignCheck: r.campaignCheck ?? undefined,
       vpicBatteryKwh: r.vpicBatteryKwh ?? ariyaVds(r).kwh ?? undefined,
+      // vPIC's affirmative BEV/PHEV reading (vpic-enrich.mjs); the listing
+      // page's gate for the badge-stripped model aliases. Never derived from
+      // dealer text, so never widened here.
+      vpicEvLevel: r.vpicEvLevel === "BEV" || r.vpicEvLevel === "PHEV" ? r.vpicEvLevel : undefined,
       exteriorColor: clean(r.exteriorColor) ?? undefined,
       imageUrl: r.imageUrl ?? r.images?.[0] ?? undefined,
       images: r.images?.length > 1 ? r.images.slice(0, 8) : undefined,

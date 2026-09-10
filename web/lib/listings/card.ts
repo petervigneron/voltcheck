@@ -45,6 +45,10 @@ export interface CardRow {
    *  as either. Set from 2026-09-07; a body packed before then unpacks
    *  without it and the EV/PHEV filter admits nothing until the next publish. */
   kind?: "BEV" | "PHEV";
+  /** vPIC's own affirmative BEV/PHEV reading (Listing.vpicEvLevel), carried
+   *  so scripts reading the shards — live-enrichment-gap.mjs — run the
+   *  matcher under the same alias gate the listing page does. */
+  vpicEvLevel?: "BEV" | "PHEV";
   city?: string;
   state?: string;
   /** Dealer-zip centroid, for distance filtering and sorting. */

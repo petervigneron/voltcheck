@@ -318,8 +318,9 @@ function matchEnrichmentRaw(
   // ("Equinox EV" → "Equinox", "XC90 Recharge" → "XC90"). vpicEvAlias.ts maps
   // those back to their corpus names, gated on the decode's OWN
   // electrificationLevel — so this set only ever grows for a car the VIN
-  // itself proves is a BEV/PHEV, and never on the listing path, where
-  // decodeFromListing doesn't set the field.
+  // itself proves is a BEV/PHEV. Since 2026-09-10 the listing path sets the
+  // field too, from vPIC's affirmative reading carried on the listing as
+  // vpicEvLevel (scraper/vpic-enrich.mjs) — the same proof, never dealer text.
   // The plus-parity check runs against whichever decode-side string matched:
   // an alias target like "TX 550h+" carries the "+" the vPIC model lacks, and
   // comparing it against the bare "TX" would veto the very match the alias

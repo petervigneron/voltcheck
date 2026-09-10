@@ -20,6 +20,16 @@ export interface Listing {
   optionCodes?: string[]; // factory option codes (GM RPO etc.) from the dealer's own data
   vpicBatteryKwh?: number; // NHTSA vPIC battery-size decode — version discriminator
   /**
+   * vPIC's own ElectrificationLevel, affirmative readings only ("BEV" /
+   * "PHEV"; scraper/vpic-enrich.mjs). It is the listing-path gate for
+   * lib/enrichment/vpicEvAlias.ts — vPIC files an XC40 Recharge as "XC40"
+   * and the feed repeats it, so without this a researched car whose dealer
+   * dropped the badge printed nothing (259 live XC40s, 2026-09-10). Absent
+   * on a car crawled before the field existed, and absent is the safe
+   * state: no aliases.
+   */
+  vpicEvLevel?: "BEV" | "PHEV";
+  /**
    * Set when this listing's own description unambiguously names a DIFFERENT
    * version than `trim` claims, to the name the description gave. Decided at
    * sync time (scraper/lib/trim-suspect.mjs), because the judgement needs the

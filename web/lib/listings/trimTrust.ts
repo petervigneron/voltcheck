@@ -70,6 +70,7 @@ export function versionNamedByVinAlone(l: Listing): string | undefined {
       trim: undefined,
       driveType: l.drive,
       batteryKwhHint: l.vpicBatteryKwh,
+      electrificationLevel: l.vpicEvLevel,
     },
     tesla
   );

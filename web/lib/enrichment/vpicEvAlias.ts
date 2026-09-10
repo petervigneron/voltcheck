@@ -17,8 +17,11 @@ import type { VinDecode } from "../types";
 // itself says BEV or PHEV, and only for the level the alias names. Control
 // tests 2026-08-30: petrol F-150/Kona/Equinox VIN patterns decode with the
 // field EMPTY, and a non-plug-in Niro hybrid decodes "Strong HEV" — which
-// evLevel() deliberately does not accept. Listing-side matching is untouched
-// because decodeFromListing never sets electrificationLevel.
+// evLevel() deliberately does not accept. Since 2026-09-10 the listing path
+// sets electrificationLevel too, from the listing's `vpicEvLevel` — vPIC's
+// affirmative reading carried through ingest — so the dealer's "XC40" reaches
+// the Recharge rows under exactly this gate; a listing crawled before the
+// field existed, or one vPIC did not affirm, still gets no aliases.
 //
 // Values are corpus model strings (web/tests/vpic-ev-badge-alias.test.ts
 // fails if one stops resolving). Where vPIC's one name covers materially
