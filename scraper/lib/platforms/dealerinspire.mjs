@@ -322,6 +322,24 @@ export function dealerInspireLimitsExhausted(limits, loads) {
   return false;
 }
 
+// An SRP is read once its RESULT CARDS exist, not once a timer says so.
+// `data-vehicle` is the real-result marker this file already keys on — the
+// repeated "featured" block carries only data-vin, so waiting on that would
+// return before the lot rendered, which is the same wrong answer with extra
+// steps. A rooftop whose theme emits no blob at all waits out waitForMs and
+// its body is read anyway; nothing here decides a lot is empty on a timer.
+const SRP_LOAD = { waitFor: "[data-vehicle]", waitForMs: 25000 };
+
+// A VDP is read for exactly one thing — its schema.org Product+Car node — and
+// that node is in the served HTML. Waiting for it instead of for the page's
+// load event is what makes a big lot affordable: measured 2026-09-10, a
+// Dealer Inspire VDP does not fire `domcontentloaded` inside 45 s (chat and
+// analytics subresources stay open), so every candidate cost the full
+// navigation timeout — 220 candidates at sunroadauto.com would have been two
+// and a half hours of waiting for an event that carries no cars. The JSON-LD
+// is there in about a second.
+const VDP_LOAD = { waitFor: 'script[type="application/ld+json"]', waitForMs: 20000 };
+
 async function readSrp(origin, path, { maxPages = DEALERINSPIRE_MAX_PAGES, limits = null, loadsSoFar = 0, startUrl = null, fetch = browserFetch } = {}) {
   const cards = [];
   const seen = new Set();
@@ -331,7 +349,7 @@ async function readSrp(origin, path, { maxPages = DEALERINSPIRE_MAX_PAGES, limit
   let status = null;
   while (url && pages < maxPages) {
     if (dealerInspireLimitsExhausted(limits, loadsSoFar + requests)) return { cards, requests, pages, status, complete: false, exhausted: true };
-    let res = await fetch(url);
+    let res = await fetch(url, SRP_LOAD);
     requests++;
     // One more try on a failed page. Measured 2026-09-02: faricykia.com's 24
     // used pages walk clean one at a time, and the same walk under six
@@ -339,7 +357,7 @@ async function readSrp(origin, path, { maxPages = DEALERINSPIRE_MAX_PAGES, limit
     // 472 cars. A page that fails twice ends the walk honestly (partial).
     if (res.status !== 200 || !res.body) {
       await new Promise((r) => setTimeout(r, 4000));
-      res = await fetch(url);
+      res = await fetch(url, SRP_LOAD);
       requests++;
     }
     status = res.status;
@@ -424,12 +442,12 @@ export async function pullDealerInspire(origin, { srps = DEALERINSPIRE_SRPS, dea
         continue;
       }
       read.add(c.vin);
-      let res = await fetch(c.url);
+      let res = await fetch(c.url, VDP_LOAD);
       requests++;
       if (res.status === "browser_unavailable") return false;
       if (res.status !== 200 || !res.body) {
         await new Promise((r) => setTimeout(r, 4000));
-        res = await fetch(c.url);
+        res = await fetch(c.url, VDP_LOAD);
         requests++;
       }
       const v = res.status === 200 && res.body ? dealerInspireVdpVehicle(res.body, c.vin) : null;

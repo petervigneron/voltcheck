@@ -333,7 +333,7 @@ export async function browserFetch(url, opts = {}) {
   return r2;
 }
 
-async function browserLoad(url, { settleMs = 1500, waitFor = null, capture = null, timeoutMs = 45000, clicks = [] } = {}) {
+async function browserLoad(url, { settleMs = 1500, waitFor = null, waitForMs = 25000, capture = null, timeoutMs = 45000, clicks = [] } = {}) {
   try {
     new URL(url);
   } catch {
@@ -365,12 +365,90 @@ async function browserLoad(url, { settleMs = 1500, waitFor = null, capture = nul
         } catch {}
       });
     }
-    const res = await withTimeout(page.goto(url, { waitUntil: "domcontentloaded", timeout: timeoutMs }), timeoutMs + 15000, "goto");
-    if (waitFor) {
-      await page.waitForSelector(waitFor, { timeout: timeoutMs }).catch(() => {});
-    } else if (settleMs > 0) {
-      await page.waitForTimeout(settleMs);
+    // The navigation's OWN response, recorded as it lands. `page.goto` only
+    // hands one back if the whole wait completes, and on the rooftops below
+    // it never does — so without this listener a served page is
+    // indistinguishable from a dead host.
+    //
+    // LAST one, not first: goto follows redirects itself, and a redirect's
+    // 301 is a navigation response on the main frame exactly like the page it
+    // points at. Keeping the first cost a whole crawl attempt on 2026-09-10 —
+    // eight of the sixteen rooftops came back "no SRP answered
+    // (/used-vehicles/ 301)" because every Dealer Inspire SRP path redirects
+    // once (apex → www, or the trailing slash), and the lane reads a non-200
+    // as no lot. The last one is the document `page.content()` below actually
+    // returns.
+    let navStatus = null;
+    page.on("response", (r) => {
+      if (r.request().isNavigationRequest() && r.frame() === page.mainFrame()) navStatus = r.status();
+    });
+    // A PAGE THAT ANSWERED IS A PAGE, even if its loading spinner never stops.
+    // Measured 2026-09-10 on the sixteen California Dealer Inspire rooftops
+    // that had hit the previous day's crawl deadline: dgdg.com committed its
+    // response in 485 ms with 41 `data-vehicle` blobs — the cars — already in
+    // the HTML, and then never fired `domcontentloaded` inside 45 s, because
+    // a Dealer Inspire page keeps chat/analytics subresources open long past
+    // the point where its inventory is on screen. Six of the eight rooftops
+    // in the first wave came back "no SRP answered … error:TimeoutError" and
+    // were recorded as having no lot at all: sunroadauto.com, dgdg.com,
+    // hanlees.net, thompsonsauto.com, markchristopher.com and
+    // antiochautocenter.com, whose lots the day before held 359, 198, 155,
+    // 202, 57 and 62 cars. Raising the timeout was rejected — it buys the
+    // same page at three times the wall clock and still loses the rooftop
+    // whose spinner runs for ever — as was switching the wait to "commit",
+    // which would take the body before a server-rendered page has finished
+    // writing its cards and cost the lanes that legitimately wait for XHR.
+    // So the timeout stops being fatal instead: the settle below still runs,
+    // and the body read after it is whatever the page had. Nothing served
+    // (navStatus null — a refused handshake, a dead host) is still an error
+    // and still reports as one, so a transport failure keeps its `error:`
+    // status and the alternate-host retry above still fires on it.
+    //
+    // And when the CALLER has named what it is waiting for, that wait replaces
+    // this one rather than queueing behind it: `commit` returns as soon as the
+    // response is in, and `waitFor` below decides when the page is ready. Left
+    // as `domcontentloaded`, a lane that knows its marker still paid the full
+    // 45 s first — 220 candidate VDPs at sunroadauto.com is two and a half
+    // hours of waiting for an event that never comes, in front of a selector
+    // that resolves in a second.
+    let res = null;
+    try {
+      res = await withTimeout(
+        page.goto(url, { waitUntil: waitFor ? "commit" : "domcontentloaded", timeout: timeoutMs }),
+        timeoutMs + 15000,
+        "goto"
+      );
+    } catch (e) {
+      if (navStatus == null) throw e;
     }
+    // WAIT FOR THE THING, THEN SETTLE — not one or the other.
+    //
+    // `settleMs` alone is a guess about a page whose render time nobody
+    // measured, and on 2026-09-10 the guess was off by an order of magnitude.
+    // Polled at 500 ms intervals from commit, sunroadauto.com's used list had
+    // 0 result cards at 8 s and 20 at 12 s; hoehnmotors.com had 0 at 12 s and
+    // 20 at 20 s. The default settle is 1.5 s, so the lane was reading both
+    // lots before a single card existed — and a Dealer Inspire SRP with no
+    // cards has no pager either, so the walk read "no next page", called
+    // itself finished, and reported a 570-car rooftop as an empty one. That
+    // is worse than a timeout: it is a confident zero.
+    //
+    // A selector wait costs what the page costs and no more: dgdg.com, whose
+    // cards are in the served HTML, returns in under a second, where a settle
+    // long enough for hoehnmotors would have charged it twenty. `waitForMs`
+    // bounds the rooftop that never shows one — 25 s rather than the full
+    // navigation timeout, because past that the answer is that this page has
+    // no cards, and the body is read and judged on its merits either way.
+    // The settle still runs afterwards, so cards arriving just behind the
+    // first are in the body too.
+    // ATTACHED, not visible. `waitForSelector` defaults to waiting for the
+    // element to be painted, and a lane that reads HTML does not care: on
+    // sunroadauto.com's filtered list the cards are in the DOM at 12 s and
+    // laid out at 16-25 s, which straddled a 25 s bound and made the read
+    // flaky — the same rooftop answered 100 candidates on one run and 0 on
+    // the next. Attachment is the condition the parse below actually needs.
+    if (waitFor) await page.waitForSelector(waitFor, { state: "attached", timeout: waitForMs }).catch(() => {});
+    if (settleMs > 0) await page.waitForTimeout(settleMs);
     const body = await withTimeout(page.content(), 30000, "content");
     // `clicks`: selectors to click IN ORDER after the first page settles, each
     // followed by the same settle, its own body and the responses it fired.
@@ -395,7 +473,7 @@ async function browserLoad(url, { settleMs = 1500, waitFor = null, capture = nul
       if (settleMs > 0) await page.waitForTimeout(settleMs);
       steps.push({ selector: sel, body: await withTimeout(page.content(), 30000, "content"), finalUrl: page.url(), captured: captured.slice(before) });
     }
-    return { status: res ? res.status() : "error:no-response", body, finalUrl: page.url(), captured, steps };
+    return { status: res ? res.status() : (navStatus ?? "error:no-response"), body, finalUrl: page.url(), captured, steps };
   } catch (e) {
     return { status: `error:${e.name ?? "unknown"}`, body: null, finalUrl: url, captured: [], steps: [] };
   } finally {
