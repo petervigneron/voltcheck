@@ -2128,6 +2128,66 @@ const R: EnrichmentRow[] = [];
     );
   }
 
+  // VIN-KEYED 2026-09-10. The Panamera rows had no VIN key at all: the year
+  // window plus a dealer trim string picked the grade, and a dealer who left
+  // the trim blank got whichever row happened to carry the bare-nameplate
+  // alias — always the 4 E-Hybrid, whatever the car was. Measured over all
+  // 137 live Panamera listings that day: 61 of them resolved to anything once
+  // the trim was taken away, and five of the 123 that did resolve with the
+  // feed's own trim were on the wrong grade's row (a 680 hp Turbo S E-Hybrid
+  // reading the 4 E-Hybrid's 16 electric miles against its own 14; a 4S
+  // Executive reading the 4's MPGe).
+  //
+  // Porsche's Part 565 filing separates every plug-in grade outright. Read
+  // off all 137 live VINs and confirmed against vPIC's DecodeVINValuesBatch,
+  // plus a COMPLETE sweep of all 23 valid letters at position 5 on both
+  // families and both bodies (MY2014/2016/2017/2018/2020/2022 on 2A7,
+  // MY2024/2025/2026 on 2YA):
+  //
+  //   position 4     A = standard wheelbase, B = Executive (long wheelbase)
+  //   positions 6-8  2A7 = the 970.2 S E-Hybrid AND the whole 971
+  //                        (MY2014-2023 — one family code across two
+  //                        generations, so the row's year window is what
+  //                        tells 970 from 971.1 from 971.2)
+  //                  2YA = the 972 (MY2024 on)
+  //   position 5     on 2A7/971:  E = 4 E-Hybrid, K = 4S E-Hybrid,
+  //                               H = Turbo S E-Hybrid
+  //                  on 2A7/970:  D = S E-Hybrid (no row in this corpus)
+  //                  on 2YA/972:  E = 4 E-Hybrid, C = 4S E-Hybrid,
+  //                               F = Turbo E-Hybrid, H = Turbo S E-Hybrid
+  //
+  // Not one plug-in pattern names two grades, in any year — unlike the
+  // Taycan's AA and AC — so no pattern needs a trimless abstaining base row.
+  // The petrol letters are disjoint from all of them and every one of them
+  // decodes with an EMPTY ElectrificationLevel: A (Panamera/Panamera 4),
+  // B (S/4S), C (970 Turbo), F (971 Turbo/Turbo S), G (GTS), J (971.2
+  // Panamera/4). Position 5 F is the giveaway that a year window alone was
+  // never enough: it is a petrol Turbo on 2A7 and the plug-in Turbo E-Hybrid
+  // on 2YA.
+  //
+  // vPIC's MY2026 filing drops the word "Turbo" — AF2YA decodes Trim
+  // "E-Hybrid" and AH2YA decodes "S E-Hybrid" — which reads like a base car
+  // and is not one. The control is that MY2025 decodes the same two patterns
+  // as "Turbo E-Hybrid" and "Turbo S E-Hybrid", with byte-identical engines
+  // either year: AF is 670 hp / 8 cyl / 4.0 L and AH is 771 hp / 8 cyl /
+  // 4.0 L, against 463 hp / 6 cyl for the 4 E-Hybrid. Live asking prices say
+  // the same thing ($199k-$277k on AF, $289k-$293k on AH, $150k-$157k on AE).
+  // Same artifact the MY2026 Cayenne AM2AY filing has.
+  //
+  // The Executive (position 4 B) rides on the same rows as the standard
+  // wheelbase, which is what the modelAliases already claimed and what EPA
+  // itself says: where fueleconomy.gov rates them separately (MY2018 ids
+  // 40225/40226, MY2019 41291/41292, MY2020 42355/42356, MY2018 Turbo S
+  // 40055/40056) the two records are identical in electric range, total
+  // range, MPGe and gas MPG; from MY2022 EPA folds them into one record
+  // ("Panamera 4 E-Hybrid/Exec/ST").
+  //
+  // The `-alt` rows KEEP their trim guard alongside the VIN key, for the
+  // reason the Cayenne block gives: match.ts skips every VIN filter for a
+  // listing carrying no VIN, so a trimless bare-"Panamera" row would answer a
+  // petrol Panamera, which tests/phev-bare-model-aliases.test.ts pins. What
+  // reaches a trimless car instead is the grade rows' own "Panamera E-Hybrid"
+  // alias — a name no petrol Panamera wears — with the VIN picking the grade.
   const panamera = (id: string, model: string, years: [number, number], trim: string[], over: Partial<EnrichmentRow>): EnrichmentRow[] =>
     withAlt(
       {
@@ -2141,9 +2201,30 @@ const R: EnrichmentRow[] = [];
       } as EnrichmentRow,
       { model: "Panamera", modelAliases: ["Panamera E-Hybrid"], trim }
     );
-  const PAN4_ALIASES = ["Panamera E-Hybrid", "Panamera 4 E-Hybrid Executive", "Panamera 4 E-Hybrid Sport Turismo", "Panamera 4 E-Hybrid ST"];
+  // "Panamera E-Hybrid" is on every grade's alias list, not just the 4's.
+  // The feed writes the nameplate in `model` and the grade in `trim`, so a
+  // "Panamera E-Hybrid" listing whose dealer left the trim blank — or typed
+  // "Automatic" — could previously only ever reach the 4 E-Hybrid row, and
+  // did: a live 680 hp Turbo S E-Hybrid was reading the 4's numbers. With
+  // the `vds` key in place the VIN decides which grade, and the alias is
+  // only what gets the listing into the room. No petrol Panamera is called
+  // an E-Hybrid, so the alias itself claims nothing.
+  const PAN_EH = "Panamera E-Hybrid";
+  const PAN4_ALIASES = [PAN_EH, "Panamera 4 E-Hybrid Executive", "Panamera 4 E-Hybrid Sport Turismo", "Panamera 4 E-Hybrid ST"];
+  // 971 (MY2017-2023) and 972 (MY2024 on) descriptors, position 4 A =
+  // standard wheelbase, B = Executive.
+  // Position 4 is the body: A standard wheelbase, B Executive, C Sport Turismo
+// (the verifier's 33-character sweep, 2026-09-10; the author's table had two
+// bodies and excluded a real cached Sport Turismo, WP0CK2A70PL161021).
+const PAN_971_4 = ["AE2A7", "BE2A7", "CE2A7"];
+  const PAN_971_4S = ["AK2A7", "BK2A7", "CK2A7"];
+  const PAN_971_TS = ["AH2A7", "BH2A7", "CH2A7"];
+  const PAN_972_4 = ["AE2YA"];
+  const PAN_972_4S = ["AC2YA"];
+  const PAN_972_TURBO = ["AF2YA"];
   R.push(
     ...panamera("panamera-4-ehybrid-2018", "Panamera 4 E-Hybrid", [2018, 2018], ["4 E-Hybrid"], {
+      vds: PAN_971_4,
       modelAliases: PAN4_ALIASES,
       battery: { packGrossKwh: f(14.1, "mfr", "high", "Porsche does not label the figure gross or usable", PAN_TSE_PR) },
       range: {
@@ -2156,6 +2237,7 @@ const R: EnrichmentRow[] = [];
       charging: P_AC(3.6, PAN_TSE_PR, "7.2 kW optional"),
     }),
     ...panamera("panamera-4-ehybrid-2019-20", "Panamera 4 E-Hybrid", [2019, 2020], ["4 E-Hybrid"], {
+      vds: PAN_971_4,
       modelAliases: PAN4_ALIASES,
       battery: { packGrossKwh: f(14.1, "mfr", "high", "Porsche does not label the figure gross or usable", PAN_TSE_PR) },
       range: {
@@ -2168,6 +2250,7 @@ const R: EnrichmentRow[] = [];
       charging: P_AC(3.6, PAN_TSE_PR, "7.2 kW optional"),
     }),
     ...panamera("panamera-4-ehybrid-2021-23", "Panamera 4 E-Hybrid", [2021, 2023], ["4 E-Hybrid"], {
+      vds: PAN_971_4,
       modelAliases: PAN4_ALIASES,
       battery: P_PACK_179(PAN_2021_PR),
       range: {
@@ -2180,6 +2263,7 @@ const R: EnrichmentRow[] = [];
       charging: P_AC(7.2, PAN_2021_PR),
     }),
     ...panamera("panamera-4-ehybrid-2025", "Panamera 4 E-Hybrid", [2025, 2025], ["4 E-Hybrid"], {
+      vds: PAN_972_4,
       modelAliases: PAN4_ALIASES,
       battery: P_PACK_259(PAN_2025_PR),
       range: {
@@ -2192,7 +2276,8 @@ const R: EnrichmentRow[] = [];
       charging: P_AC(11, PAN_2025_PR),
     }),
     ...panamera("panamera-4s-ehybrid-2021-23", "Panamera 4S E-Hybrid", [2021, 2023], ["4S E-Hybrid", "4S"], {
-      modelAliases: ["Panamera 4S E-Hybrid Executive", "Panamera 4S E-Hybrid Sport Turismo", "Panamera 4S E-Hybrid ST"],
+      vds: PAN_971_4S,
+      modelAliases: [PAN_EH, "Panamera 4S E-Hybrid Executive", "Panamera 4S E-Hybrid Sport Turismo", "Panamera 4S E-Hybrid ST"],
       battery: P_PACK_179(PAN_2021_PR),
       range: {
         epaRangeMi: f(19, "mfr", "high", "Electric-only EPA range. Identical rating 2021–2023", epa(43916)),
@@ -2204,7 +2289,8 @@ const R: EnrichmentRow[] = [];
       charging: P_AC(7.2, PAN_2021_PR),
     }),
     ...panamera("panamera-4s-ehybrid-2025", "Panamera 4S E-Hybrid", [2025, 2025], ["4S E-Hybrid", "4S"], {
-      modelAliases: ["Panamera 4S E-Hybrid Executive", "Panamera 4S E-Hybrid Sport Turismo"],
+      vds: PAN_972_4S,
+      modelAliases: [PAN_EH, "Panamera 4S E-Hybrid Executive", "Panamera 4S E-Hybrid Sport Turismo"],
       battery: P_PACK_259(PAN_2025_PR),
       range: {
         epaRangeMi: f(28, "mfr", "high", "Electric-only EPA range", epa(49164)),
@@ -2219,25 +2305,29 @@ const R: EnrichmentRow[] = [];
     // pack and charger are Porsche-published for the current cars, range
     // abstains.
     ...panamera("panamera-4-ehybrid-2026", "Panamera 4 E-Hybrid", [2026, 2026], ["4 E-Hybrid"], {
+      vds: PAN_972_4,
       modelAliases: PAN4_ALIASES,
       battery: P_PACK_259(PAN_2025_PR),
       charging: P_AC(11, PAN_2025_PR),
       abstains: { ...PORSCHE_ABSTAINS, epaRangeMi: "fueleconomy.gov holds no 2026 Panamera E-Hybrid rating yet" },
     }),
     ...panamera("panamera-4s-ehybrid-2026", "Panamera 4S E-Hybrid", [2026, 2026], ["4S E-Hybrid", "4S"], {
-      modelAliases: ["Panamera 4S E-Hybrid Executive", "Panamera 4S E-Hybrid Sport Turismo"],
+      vds: PAN_972_4S,
+      modelAliases: [PAN_EH, "Panamera 4S E-Hybrid Executive", "Panamera 4S E-Hybrid Sport Turismo"],
       battery: P_PACK_259(PAN_2025_PR),
       charging: P_AC(11, PAN_2025_PR),
       abstains: { ...PORSCHE_ABSTAINS, epaRangeMi: "fueleconomy.gov holds no 2026 Panamera E-Hybrid rating yet" },
     }),
     ...panamera("panamera-turbo-ehybrid-2025-26", "Panamera Turbo E-Hybrid", [2025, 2026], ["Turbo E-Hybrid", "Turbo"], {
-      modelAliases: ["Panamera Turbo E-Hybrid Executive", "Panamera Turbo E-Hybrid Sport Turismo"],
+      vds: PAN_972_TURBO,
+      modelAliases: [PAN_EH, "Panamera Turbo E-Hybrid Executive", "Panamera Turbo E-Hybrid Sport Turismo"],
       battery: P_PACK_259(PAN_2025_PR),
       charging: P_AC(11, PAN_2025_PR),
       abstains: { ...PORSCHE_ABSTAINS, epaRangeMi: "fueleconomy.gov holds no Panamera Turbo E-Hybrid rating yet" },
     }),
     ...panamera("panamera-turbos-ehybrid-2018-20", "Panamera Turbo S E-Hybrid", [2018, 2020], ["Turbo S E-Hybrid", "Turbo S"], {
-      modelAliases: ["Panamera Turbo S E-Hybrid Executive", "Panamera Turbo S E-Hybrid Sport Turismo", "Panamera Turbo S E-Hybrid ST"],
+      vds: PAN_971_TS,
+      modelAliases: [PAN_EH, "Panamera Turbo S E-Hybrid Executive", "Panamera Turbo S E-Hybrid Sport Turismo", "Panamera Turbo S E-Hybrid ST"],
       battery: { packGrossKwh: f(14.1, "mfr", "high", "Porsche does not label the figure gross or usable", PAN_TSE_PR) },
       range: {
         epaRangeMi: f(14, "mfr", "high", "Electric-only EPA range. Identical rating 2018–2020", epa(40055)),
@@ -2249,7 +2339,8 @@ const R: EnrichmentRow[] = [];
       charging: P_AC(3.6, PAN_TSE_PR, "7.2 kW optional"),
     }),
     ...panamera("panamera-turbos-ehybrid-2021-23", "Panamera Turbo S E-Hybrid", [2021, 2023], ["Turbo S E-Hybrid", "Turbo S"], {
-      modelAliases: ["Panamera Turbo S E-Hybrid Executive", "Panamera Turbo S E-Hybrid Sport Turismo", "Panamera Turbo S E-Hybrid ST"],
+      vds: PAN_971_TS,
+      modelAliases: [PAN_EH, "Panamera Turbo S E-Hybrid Executive", "Panamera Turbo S E-Hybrid Sport Turismo", "Panamera Turbo S E-Hybrid ST"],
       battery: P_PACK_179(PAN_2021_PR),
       range: {
         epaRangeMi: f(17, "mfr", "high", "Electric-only EPA range. Identical rating 2021–2023", epa(43919)),
