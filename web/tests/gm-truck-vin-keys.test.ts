@@ -196,13 +196,19 @@ test("a Blazer EV with no drivetrain and no trim still resolves", () => {
   assert.equal(r.candidates, undefined, "and it is one answer, not a spread");
 });
 
-test("the 2024 police Blazer takes no row rather than the AWD row's smaller pack", () => {
-  // MY2024 position 8 = L decodes "PPV", not SS: X0E+EC6, a 12-module car. No
-  // row covers it. Before the vin8 keys it matched blazer-awd-2024 and printed
-  // that row's 85 kWh and 279 miles onto a 102 kWh vehicle.
+test("the 2024 police Blazer takes the police row, never the AWD row's smaller pack", () => {
+  // MY2024 position 8 = L decodes "PPV", not SS: X0E+EC6, a 12-module car.
+  // Before the vin8 keys it matched blazer-awd-2024 and printed that row's
+  // 85 kWh and 279 miles onto a 102 kWh vehicle; the keys took it to nothing,
+  // which is what this test used to assert. data21.ts now researches the car
+  // and keys it on the descriptor 3GNKDFRL, which no retail Blazer wears — so
+  // the answer is the police row, and the thing still guarded is that it can
+  // never be a retail one.
   const r = matchEnrichment(decode({ make: "CHEVROLET", model: "Blazer EV", modelYear: 2024, vin: "3GNKDFRL0RS281873", trim: "Police" }), null);
-  assert.equal(r.exact, undefined);
+  assert.equal(r.exact?.id, "blazer-ev-ppv-2024");
   assert.equal(r.candidates, undefined);
+  assert.notEqual(r.exact?.battery?.packGrossKwh?.value, 85);
+  assert.equal(r.exact?.range?.epaRangeMi, undefined);
 });
 
 test("MY2027 Blazers resolve, because EPA and vPIC both say nothing changed", () => {

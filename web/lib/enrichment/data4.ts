@@ -734,7 +734,9 @@ const TAYCT = { make: "PORSCHE", model: "Taycan Cross Turismo" };
 // "Macan EV" is 14 live listings and names only the electric car; the bare
 // "Macan" spelling lives on MACALT, where the VIN key is the guard.
 const MAC = { make: "PORSCHE", model: "Macan Electric", modelAliases: ["Macan EV"] };
-const MACALT = { make: "PORSCHE", model: "Macan" };
+// vinRequired: every Macan -alt row is vds-keyed and its guards ("4", "4S",
+// "Base", "Electric") are petrol trims too (types.ts, 2026-09-10).
+const MACALT = { make: "PORSCHE", model: "Macan", vinRequired: true as const };
 // Why the AA and AB base rows say nothing about the pack or the range, in the
 // row's own words. Each is a decision, not a backlog entry.
 const TAY_PACK_ABSTAIN =

@@ -155,11 +155,14 @@ test("each Cayenne E-Hybrid grade resolves from the VIN with no trim", () => {
   assert.equal(ts.exact?.range?.epaRangeMi?.value, 15);
 });
 
-test("a MY2026 Cayenne Electric matches nothing, whatever the dealer typed", () => {
+test("a MY2026 Cayenne Electric lands on its own row, never a plug-in hybrid's, whatever the dealer typed", () => {
   // The most expensive thing these keys fix: 117 live battery-electric
   // Cayennes were answering with a plug-in hybrid's 25.9 kWh pack, 11 kW
-  // charger, J1772 inlet and "no DC fast charging". There is no researched
-  // row for this car, and silence is the honest answer.
+  // charger, J1772 inlet and "no DC fast charging". When this test was
+  // written there was no researched row for the car and silence was the
+  // answer; data21.ts (same day) keys the Cayenne Electric rows on the 2X1
+  // descriptor and aliases the bare names, so now the VIN picks the right
+  // electric row and the E-Hybrid rows stay out of reach.
   const bevs: [string, string, string][] = [
     ["WP1AA2X13TD000160", "Cayenne", ""],
     ["WP1AD2X11TD150419", "Cayenne", "Turbo Electric"],
@@ -169,8 +172,8 @@ test("a MY2026 Cayenne Electric matches nothing, whatever the dealer typed", () 
   ];
   for (const [vin, model, trim] of bevs) {
     const r = matchEnrichment(decode({ vin, model, modelYear: 2026, trim: trim || undefined, electrificationLevel: BEV }), null);
-    assert.equal(r.exact, undefined, `${vin} "${trim}" → ${r.exact?.id}`);
-    assert.equal(r.candidates?.length ?? 0, 0, `${vin} "${trim}" → candidates`);
+    assert.ok(r.exact && /^cayenne-.*electric-2026$/.test(r.exact.id), `${vin} "${trim}" → ${r.exact?.id ?? "no exact"}`);
+    assert.equal(r.exact?.battery?.packGrossKwh?.value, 113, `${vin} "${trim}" → pack ${r.exact?.battery?.packGrossKwh?.value}`);
   }
 });
 

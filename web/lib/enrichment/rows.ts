@@ -19,6 +19,7 @@ import { RESEARCH_ROWS_9 } from "./data9";
 import { RESEARCH_ROWS_10 } from "./data10";
 import { RESEARCH_ROWS_11 } from "./data11";
 import { RESEARCH_ROWS_12 } from "./data12";
+import { RESEARCH_ROWS_21 } from "./data21";
 import { RESEARCH_ROWS_19 } from "./data19";
 import { RESEARCH_ROWS_13 } from "./data13";
 import { RESEARCH_ROWS_16 } from "./data16";
@@ -45,4 +46,5 @@ export const ALL_ROWS: EnrichmentRow[] = [
   ...RESEARCH_ROWS_16,
   ...RESEARCH_ROWS_13,
   ...RESEARCH_ROWS_19,
+  ...RESEARCH_ROWS_21,
 ];

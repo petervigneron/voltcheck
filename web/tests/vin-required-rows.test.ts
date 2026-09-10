@@ -13,6 +13,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { matchEnrichment } from "@/lib/enrichment/match";
 import { ALL_ROWS } from "@/lib/enrichment/rows";
+import { PLUG_IN_TRIM_RE } from "@/lib/enrichment/data6";
 import type { VinDecode } from "@/lib/types";
 
 const d = (over: Partial<VinDecode>): VinDecode => ({ vin: "", usMarket: true, ...over });
@@ -41,11 +42,17 @@ test("a nameplate only an EV wears keeps resolving without a VIN", () => {
 });
 
 test("every flagged row is VIN-keyed, and every VIN-keyed row on a petrol-shared bare name is flagged", () => {
-  const shared = /^(X5|COOPER|HARDTOP 2 DOOR|COUNTRYMAN|SL|AMG GT|MERCEDES-AMG GT|C-CLASS|C-CLASS SEDAN|G-CLASS|G-CLASS SUV|Q5|TONALE)$/i;
+  // Names a combustion car wears. A trim guard does not excuse a row here:
+  // "S", "Turbo", "4S" are petrol trims too (the Porsche -alt rows).
+  const shared = /^(X5|COOPER|HARDTOP 2 DOOR|COUNTRYMAN|SL|AMG GT|MERCEDES-AMG GT|C-CLASS|C-CLASS SEDAN|G-CLASS|G-CLASS SUV|Q5|TONALE|CAYENNE|CAYENNE COUPE|MACAN|PANAMERA)$/i;
   for (const r of ALL_ROWS) {
     const keyed = !!(r.vds || r.vin8 || r.wmi || r.plant);
     if (r.vinRequired) assert.ok(keyed, `${r.id} is flagged but carries no VIN key`);
     const names = [r.model, ...(r.modelAliases ?? [])].map((n) => String(n).trim());
-    if (keyed && !r.trim && names.some((n) => shared.test(n))) assert.ok(r.vinRequired, `${r.id} answers to "${names.find((n) => shared.test(n))}" on VIN keys alone and is not flagged`);
+    // A row whose every trim guard names the plug-in ("E-Hybrid", "LX Phev")
+    // is exempt: the guard itself keeps the petrol car out, VIN or no VIN.
+    const trims = Array.isArray(r.trim) ? r.trim : r.trim ? [r.trim] : [];
+    const guardedByPlugInTrim = trims.length > 0 && trims.every((t) => PLUG_IN_TRIM_RE.test(t));
+    if (keyed && !guardedByPlugInTrim && names.some((n) => shared.test(n))) assert.ok(r.vinRequired, `${r.id} answers to "${names.find((n) => shared.test(n))}" with VIN keys and is not flagged`);
   }
 });

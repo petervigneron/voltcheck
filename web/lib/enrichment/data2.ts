@@ -2187,6 +2187,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Blazer EV",
     modelYears: [2025, 2025],
     vin8: ["L"],
+    vds: ["KDERL"], // the SS pattern; keeps the PPV (KDFRL) off this row (2026-09-10)
     drive: "AWD",
     abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
     battery: { packGrossKwh: f(102, "mfr", "medium", "RWD/SS"), chemistry: f("NCMA", "agg", "medium") },
@@ -2216,6 +2217,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Blazer EV",
     modelYears: [2026, 2026],
     vin8: ["L"],
+    vds: ["KDERL"], // the SS pattern; keeps the PPV (KDFRL) off this row (2026-09-10)
     drive: "AWD",
     abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
     battery: { packGrossKwh: f(102, "mfr", "medium", "RWD/SS"), chemistry: f("NCMA", "agg", "medium") },
@@ -2290,6 +2292,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     model: "Blazer EV",
     modelYears: [2027, 2027],
     vin8: ["L"],
+    vds: ["KDERL"], // the SS pattern; keeps the PPV (KDFRL) off this row (2026-09-10)
     drive: "AWD",
     // Range carried from the pre-split row (same 2026-08 EPA verification).
     range: { epaRangeMi: f(302, "mfr", "high", undefined, epa(49954)) },

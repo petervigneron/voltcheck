@@ -165,15 +165,27 @@ test("bare-model shapes from the data6 tranche resolve through their trim guards
   assert.equal(idOf(decode({ make: "HYUNDAI", model: "Tucson", modelYear: 2023, trim: "SEL Phev" })), "tucson-phev-2022-24-alt");
   assert.equal(idOf(decode({ make: "MITSUBISHI", model: "Outlander", modelYear: 2024, trim: "SE Phev" })), "outlander-phev-2023-25-alt");
   assert.equal(idOf(decode({ make: "LEXUS", model: "NX", modelYear: 2024, trim: "450h+ Premium" })), "nx-450h-plus-2022-25-alt");
+  // The 2021-22 rows carry no VIN keys (958/E3 pre-facelift patterns were
+  // never read), so a VIN-less "Cayenne" "E-Hybrid" still resolves through
+  // its plug-in trim guard; the keyed 2024-26 rows below do not.
   assert.equal(idOf(decode({ make: "PORSCHE", model: "Cayenne", modelYear: 2022, trim: "E-Hybrid" })), "cayenne-ehybrid-2021-22-alt");
   // "Turbo" alone names a different E-Hybrid on either side of the facelift;
   // the year windows are what disambiguate it.
-  assert.equal(idOf(decode({ make: "PORSCHE", model: "Cayenne", modelYear: 2022, trim: "Turbo" })), "cayenne-turbos-ehybrid-2021-23-alt");
-  assert.equal(idOf(decode({ make: "PORSCHE", model: "Cayenne", modelYear: 2025, trim: "Turbo" })), "cayenne-turbo-ehybrid-2025-alt");
+  // Since 2026-09-10 a bare "Cayenne" whose only evidence is a petrol trim
+  // ("Turbo", "S") needs a VIN: the -alt rows are vds-keyed and vinRequired,
+  // because a petrol Cayenne Turbo wears exactly this shape and without a
+  // VIN nothing separates them (three verifiers, same day). With the VIN the
+  // 2AY descriptor picks the plug-in row — porsche-vin-keys.test.ts.
+  assert.equal(idOf(decode({ make: "PORSCHE", model: "Cayenne", modelYear: 2022, trim: "Turbo" })), undefined);
+  assert.equal(idOf(decode({ make: "PORSCHE", model: "Cayenne", modelYear: 2025, trim: "Turbo" })), undefined);
   // A "Cayenne E-Hybrid" whose trim names the S variant resolves to the S
   // row via the guarded alias; without a trim it stays the base variant.
-  assert.equal(idOf(decode({ make: "PORSCHE", model: "Cayenne E-Hybrid", modelYear: 2025, trim: "S" })), "cayenne-s-ehybrid-2025-alt");
-  assert.equal(idOf(decode({ make: "PORSCHE", model: "Cayenne E-Hybrid", modelYear: 2025 })), "cayenne-ehybrid-2025");
+  // The S row's guard list carries the petrol "S", so it is flagged too; a
+  // VIN-less "Cayenne E-Hybrid" with trim "S" falls to nothing rather than
+  // to a guess between the S and the base car.
+  assert.equal(idOf(decode({ make: "PORSCHE", model: "Cayenne E-Hybrid", modelYear: 2025, trim: "S" })), undefined);
+  // 2024-26 rows are vds-keyed and vinRequired: a VIN-less car matches nothing.
+  assert.equal(idOf(decode({ make: "PORSCHE", model: "Cayenne E-Hybrid", modelYear: 2025 })), undefined);
 });
 
 test("the petrol cars sharing those nameplates match nothing", () => {

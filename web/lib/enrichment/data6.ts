@@ -65,11 +65,27 @@ const HP_ABSTAIN = "No US maker document consulted this pass states heat-pump ha
 // plug-in itself, once under the bare nameplate a petrol car shares, guarded
 // by the trim tokens only the plug-in wears. The guard is load-bearing on
 // /vin/ — see the Wrangler comment in data4 — so alt.trim is required.
+// A trim token that names the plug-in itself. Shared with
+// web/tests/vin-required-rows.test.ts, which applies the same exemption.
+export const PLUG_IN_TRIM_RE = /hybrid|phev|\be-|electric|recharge|plug|prime|energi|\bt8\b|\d{3}h\+|4xe|eDrive|xDrive\d{2}e|e-tron|TFSI e/i;
+
 function withAlt(
   row: EnrichmentRow,
   alt: { model: string; modelAliases?: string[]; trim: string[] }
 ): EnrichmentRow[] {
-  return [row, { ...row, id: `${row.id}-alt`, model: alt.model, modelAliases: alt.modelAliases, trim: alt.trim }];
+  // The -alt row answers to the bare nameplate a petrol car shares, behind a
+  // trim guard. Where the primary row carries VIN keys (the Porsche pass,
+  // 2026-09-10), the alt inherits them and must also refuse a VIN-less
+  // decode: "S" and "Turbo" are petrol trims too, and without a VIN the trim
+  // guard alone let a bare "Cayenne S" reach the S E-Hybrid row (types.ts).
+  // Only where a guard token could be a petrol trim: ["E-Hybrid"] or
+  // ["LX Phev"] name the plug-in and stay usable without a VIN (a
+  // placeholder-id Niro "LX Phev" keeps its row); ["S E-Hybrid", "S"] does not.
+  const keyed = !!(row.vds || row.vin8 || row.wmi || row.plant);
+  const petrolGuard = alt.trim.some((t) => !PLUG_IN_TRIM_RE.test(t));
+  // Set explicitly, not inherited: the primary may be flagged (a keyed
+  // "Cayenne E-Hybrid" row) while its alt, guarded by a plug-in trim, is not.
+  return [row, { ...row, id: `${row.id}-alt`, model: alt.model, modelAliases: alt.modelAliases, trim: alt.trim, vinRequired: keyed && petrolGuard ? true : undefined }];
 }
 
 const R: EnrichmentRow[] = [];
@@ -1924,6 +1940,10 @@ const R: EnrichmentRow[] = [];
   // listing into candidates against the base row. The alias rides on the
   // -alt row instead, whose trim guard means it only claims listings whose
   // trim actually names the variant ("Cayenne E-Hybrid" + trim "S").
+  // A vds-keyed Cayenne row needs the VIN it is keyed on: without one the
+  // primary row (no trim list) would answer any grade's car by elimination
+  // once its -alt sibling refuses (types.ts vinRequired, 2026-09-10). The
+  // 958-era rows carry no keys and are unaffected.
   const cayenne = (id: string, model: string, years: [number, number], trim: string[], over: Partial<EnrichmentRow>): EnrichmentRow[] =>
     withAlt(
       {
@@ -1933,6 +1953,7 @@ const R: EnrichmentRow[] = [];
         modelYears: years,
         packVariant: "PHEV",
         abstains: PORSCHE_ABSTAINS,
+        ...(over.vds ? { vinRequired: true } : {}),
         ...over,
       } as EnrichmentRow,
       { model: "Cayenne", modelAliases: ["Cayenne Coupe", "Cayenne E-Hybrid", "Cayenne E-Hybrid Coupe"], trim }
