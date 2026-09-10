@@ -1,7 +1,7 @@
 import { buildCardIndex } from "@/lib/listings/buildIndex";
 import { FEED_CACHE_TAG } from "@/lib/listings/db";
 import { buildFirstPaint } from "@/lib/listings/firstPaint";
-import { SHARDS, packIndex, shardOfId } from "@/lib/listings/pack";
+import { SHARDS, packIndex, shardArtifactName, shardOfId } from "@/lib/listings/pack";
 import type { FeedOrigin } from "@/lib/listings/source";
 import { worthTrimTally } from "@/lib/listings/tally";
 import { publicRows } from "@/lib/listings/proSignals";
@@ -204,7 +204,9 @@ export async function GET(_req: Request, { params }: { params: Promise<{ shard: 
   if (!Number.isInteger(n) || n < 0 || n >= SHARDS) {
     return Response.json({ error: "no such shard" }, { status: 404 });
   }
-  const art = await artifactResponse(`shard-${n}`);
+  // The count is in the file's name (pack.ts shardArtifactName), so this
+  // build can only ever be served the cut it was built for.
+  const art = await artifactResponse(shardArtifactName(n));
   if (art) return art;
   const { rows, origin } = await buildCardIndex();
   refuseFallback(origin, `shard ${n}`);

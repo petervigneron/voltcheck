@@ -106,7 +106,7 @@ const SHARD_BALANCE_TOLERANCE = 0.25;
 // The sitemap lane has warned about its own 50,000-URL cap since it was
 // written (web/lib/sitemap.ts). The index lane had no equivalent, so the only
 // detector was production. This is that equivalent, and it lives here because
-// this script already fetches all 24 bodies — the measurement is free.
+// this script already fetches every shard's body — the measurement is free.
 //
 // Measured, not estimated from the row count: the cap is on the serialised
 // response and rows are not uniform (2.65 MB across ~5,480 rows on
@@ -116,10 +116,15 @@ const SHARD_BYTES_CAP = 4_500_000;
 // 157,000 cars, against 131,671 live on 2026-08-24 — roughly 19% of growth of
 // notice, which is a deliberate raise of SHARDS rather than an incident.
 const SHARD_BYTES_WARN_AT = 0.7;
-// Keep in step with web/lib/listings/pack.ts SHARDS (this lane can't import
-// TS). 6 → 24 on 2026-08-24: a cold shard render is capped at ~4.5 MB and a
-// six-way split of 129k cars was 7.1 MB — pack.ts's comment has the incident.
-const SHARDS = Array.from({ length: 24 }, (_, i) => i);
+// How many index shards the site serves is asked of the site, not copied from
+// web/lib/listings/pack.ts SHARDS: the route answers 404 past its last shard,
+// so the loop below reads shards until the first 404. A hand-kept copy fails
+// this check against a healthy production for as long as main and the
+// deployed build carry different counts, which is every SHARDS raise
+// (6 → 24 on 2026-08-24, 24 → 48 on 2026-09-10; pack.ts has both).
+// MAX_SHARDS only bounds a route that never 404s.
+const MAX_SHARDS = 256;
+const SHARDS = [];
 // Keep in step with web/lib/sitemap.ts SITEMAP_SHARDS — a separate count from
 // the index shards. 6 → 12 on 2026-08-24, for the same ~4.5 MB cold-render
 // cap (each sitemap shard measured 3.6 MB at 129k cars). Only the
@@ -199,7 +204,7 @@ const shardBytes = new Map();
 // with a spelling nobody has seen doesn't quietly repeat it. The shard bodies
 // are already downloaded and parsed here, so it costs nothing.
 const placeholders = [];
-for (const shard of SHARDS) {
+for (let shard = 0; shard < MAX_SHARDS; shard++) {
   try {
     const body = await fetchJson(`/api/index/${shard}`, 120_000);
     const n = rowCount(body);
@@ -209,9 +214,15 @@ for (const shard of SHARDS) {
     for (const id of shardIds(body)) if (isPlaceholderVin(id)) placeholders.push(id);
     console.log(`feed-shard-check: /api/index/${shard} answered — ${n} rows, ${(lastBodyBytes / 1e6).toFixed(2)} MB`);
   } catch (e) {
+    // Past the site's last shard. Any other failure is a shard that exists
+    // and could not be read.
+    if (e.message === "HTTP 404") break;
     problems.push(`/api/index/${shard}: ${e.message}`);
   }
+  SHARDS.push(shard);
 }
+if (SHARDS.length === 0) problems.push("/api/index/0: the site serves no index shards");
+else console.log(`feed-shard-check: the site serves ${SHARDS.length} index shards`);
 
 // The row-count checks. Only run when every shard answered: with one missing
 // there is already a problem reported above, and a sum short by one shard's

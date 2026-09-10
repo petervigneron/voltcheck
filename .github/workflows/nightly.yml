@@ -724,11 +724,11 @@ jobs:
             echo "::warning::/api/revalidate unreachable (route not deployed yet?); site refreshes on the 24h cache backstop instead"
             exit 0
           fi
-          # 24 index shards since 2026-08-24 — keep in step with
-          # web/lib/listings/pack.ts SHARDS, whose comment has the incident.
+          # 48 index shards since 2026-09-10 (24 from 2026-08-24) — keep in
+          # step with web/lib/listings/pack.ts SHARDS, whose comment has both.
           # "trims" is /worth's trim-facet body (2026-08-25), same route, same
           # walk memo, so it rides this loop for free.
-          for s in first trims $(seq 0 23); do
+          for s in first trims $(seq 0 47); do
             curl -fsS --retry 2 --max-time 300 -o /dev/null "https://voltcheck.net/api/index/$s" \
               || echo "::warning::shard $s warm-up failed; its first visitor pays the render"
           done
@@ -1334,12 +1334,12 @@ jobs:
             exit 0
           fi
 
-          # 24 index shards since 2026-08-24 — keep in step with
-          # web/lib/listings/pack.ts SHARDS, whose comment has the incident.
+          # 48 index shards since 2026-09-10 (24 from 2026-08-24) — keep in
+          # step with web/lib/listings/pack.ts SHARDS, whose comment has both.
           # "trims" is /worth's trim-facet body (2026-08-25), same route, same
           # artifact set, so it rides this loop for free.
           if [ "$artifact_fresh" = "1" ] || [ "$db_can_walk" = "1" ]; then
-            for s in first trims $(seq 0 23); do
+            for s in first trims $(seq 0 47); do
               curl -fsS --retry 2 --max-time 300 -o /dev/null "https://voltcheck.net/api/index/$s" \
                 || echo "::warning::shard $s warm-up failed; its first visitor pays the render"
             done

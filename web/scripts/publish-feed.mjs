@@ -29,7 +29,7 @@
 // check — there is no deliberate version of publishing the bundled snapshot.
 import { buildCardIndex } from "../lib/listings/buildIndex.ts";
 import { buildFirstPaint } from "../lib/listings/firstPaint.ts";
-import { SHARDS, packIndex, shardOfId } from "../lib/listings/pack.ts";
+import { SHARDS, packIndex, shardArtifactName, shardOfId } from "../lib/listings/pack.ts";
 import { worthTrimTally } from "../lib/listings/tally.ts";
 import { buildHubIndex } from "../lib/listings/hubIndex.ts";
 import { buildApiArtifacts } from "../lib/api/records.ts";
@@ -96,7 +96,17 @@ const shardCounts = [];
 for (let n = 0; n < SHARDS; n++) {
   const shardRows = rows.filter((r) => shardOfId(r.id) === n);
   shardCounts.push(shardRows.length);
-  await upload(`shard-${n}`, JSON.stringify(packIndex(shardRows)));
+  await upload(shardArtifactName(n), JSON.stringify(packIndex(shardRows)));
+}
+// The retired 24-way cut, under its old bare names (`shard-<n>`), by the same
+// keyed hash. Every deployment built before 2026-09-10 reads these —
+// including whichever one `vercel promote <previous>` would restore — and the
+// route treats an artifact older than 36h as absent and walks the database
+// instead. Keep writing them until no deployment worth rolling back to reads
+// them (after 2026-09-17), then delete this loop and the files.
+const LEGACY_SHARDS = 24;
+for (let n = 0; n < LEGACY_SHARDS; n++) {
+  await upload(`shard-${n}`, JSON.stringify(packIndex(rows.filter((r) => shardOfId(r.id, LEGACY_SHARDS) === n))));
 }
 await upload("first", JSON.stringify(buildFirstPaint(rows)));
 await upload("trims", JSON.stringify(worthTrimTally(rows)));
@@ -131,7 +141,7 @@ if (process.env.PRO_FEED_KEY) {
 }
 await upload(
   "manifest",
-  JSON.stringify({ v: 1, publishedAt, total: rows.length, shardCounts })
+  JSON.stringify({ v: 1, publishedAt, total: rows.length, shards: SHARDS, shardCounts })
 );
 console.error(`publish-feed: published ${rows.length} cars across ${SHARDS} shards in ${((Date.now() - t0) / 1000).toFixed(0)}s total`);
 

@@ -103,17 +103,28 @@ interface PackedRow {
  * been invisible because deployments with EXISTING entries revalidate
  * through the cache-write path (store cap ~19 MB, so 7.1 MB fit) — the same
  * data the cold path refuses. Deploys 9 hours apart straddled the cliff.
- * Twenty-four shards are ~1.8 MB each today and stay under the cold cap
- * past 250k cars, beyond any plausible US EV+PHEV inventory.
+ * Twenty-four shards were ~1.8 MB each that day, and this comment said they
+ * would "stay under the cold cap past 250k cars". They did not: rows got
+ * fatter as enrichment grew, and at 168,742 cars on 2026-09-10 the largest
+ * was 3.38 MB, 75% of the cap, after a 28% inventory rise in 17 days. 24 → 48
+ * that day, ~1.7 MB each, which warns again (feed-shard-check, at 70%)
+ * somewhere past 300k cars. Don't predict the ceiling from row counts;
+ * feed-shard-check measures the bytes on every run.
+ *
+ * The count is part of every shard's storage name (shardArtifactName), so a
+ * deployment reading one cut can never be handed a file cut another way under
+ * the same name — which is exactly what a bare `shard-5` would have been the
+ * moment main and production disagreed on the count.
  *
  * Read by both the route (which renders one response per shard) and the
- * browser (which asks for all of them), so the two can't disagree. The
- * consumers that CANNOT read it — scraper/feed-shard-check.mjs,
- * scraper/live-price-audit.mjs (the .mjs lane can't import TS), the warm
- * loops in nightly.yml / refresh-site.yml, and CLAUDE.md's deploy steps —
- * each carry the count with a keep-in-step note pointing here.
+ * browser (which asks for all of them), so the two can't disagree.
+ * scraper/feed-shard-check.mjs and scraper/live-price-audit.mjs ask the site
+ * how many it serves (the route 404s past the last one). The consumers that
+ * still carry the count by hand — scraper/deploy-site.mjs, the warm loops in
+ * nightly.yml / publish-feed.yml / refresh-site.yml, and CLAUDE.md's deploy
+ * steps — each have a keep-in-step note pointing here.
  */
-export const SHARDS = 24;
+export const SHARDS = 48;
 
 /** Which shard a row belongs to. Round-robin, so the shards stay within a row
  *  or two of each other however the inventory is distributed. */
@@ -125,15 +136,21 @@ export const shardOf = (i: number) => i % SHARDS;
  *  same recipe as card.ts's hash01. Lived as a private copy in
  *  app/api/index/[shard]/route.ts until 2026-08-26, when the feed publisher
  *  (scripts/publish-feed.mjs) needed the identical function — two copies of
- *  shard membership is how a car gets served twice or not at all. */
-export function shardOfId(id: string): number {
+ *  shard membership is how a car gets served twice or not at all. `of` is for
+ *  the publisher, which writes the retired 24-way cut beside the live one
+ *  while a deployment you might roll back to still reads it. */
+export function shardOfId(id: string, of: number = SHARDS): number {
   let h = 2166136261;
   for (let i = 0; i < id.length; i++) {
     h ^= id.charCodeAt(i);
     h = Math.imul(h, 16777619);
   }
-  return (h >>> 0) % SHARDS;
+  return (h >>> 0) % of;
 }
+
+/** The storage name of shard `n` of an `of`-way cut. The count is in the name
+ *  (see SHARDS); the retired 24-way cut used bare `shard-<n>` names. */
+export const shardArtifactName = (n: number, of: number = SHARDS) => `shard-${of}-${n}`;
 
 export interface PackedIndex {
   /** Bumped whenever the shape below changes, so a stale cached body is

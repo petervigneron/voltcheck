@@ -124,9 +124,10 @@ jobs:
           fi
           curl -sf -X POST -H "x-revalidate-secret: $FEED_REVALIDATE_SECRET" https://voltcheck.net/api/revalidate \
             || { echo "::warning::revalidate POST failed; site refreshes on its 24h TTL"; exit 0; }
-          # Artifact-backed re-renders are one CDN fetch each — warming all 38
-          # paths is now cheap enough to just do.
-          for p in first trims $(seq 0 23); do
+          # Artifact-backed re-renders are one CDN fetch each — warming every
+          # path is now cheap enough to just do. 48 index shards since
+          # 2026-09-10; keep in step with web/lib/listings/pack.ts SHARDS.
+          for p in first trims $(seq 0 47); do
             curl -sf -o /dev/null --max-time 120 "https://voltcheck.net/api/index/$p" \
               || echo "::warning::warm of /api/index/$p failed; its first visitor pays the (artifact) render"
           done

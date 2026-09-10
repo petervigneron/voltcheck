@@ -63,9 +63,12 @@ const arg = (n, d) => { const i = process.argv.indexOf(n); return i >= 0 ? proce
 const BASE = arg("--base", "https://voltcheck.net");
 const JSON_OUT = arg("--json", null);
 const MIN_COHORT = Number(arg("--min-cohort", 8));
-// Keep in step with web/lib/listings/pack.ts SHARDS (this lane can't import
-// TS). 6 → 24 on 2026-08-24; pack.ts's comment has the incident.
-const SHARDS = 24;
+// The site is asked how many index shards it serves (the route 404s past its
+// last one) rather than this lane keeping a copy of web/lib/listings/pack.ts
+// SHARDS in step by hand — a copy is wrong against production for as long as
+// main and the deployed build disagree, which is every raise (24 → 48 on
+// 2026-09-10). MAX_SHARDS only bounds a route that never 404s.
+const MAX_SHARDS = 256;
 
 // Wide enough that an ordinary market spread never trips it — a loud check
 // nobody trusts gets muted, which is worse than no check. Every incident this
@@ -85,8 +88,10 @@ async function finish(code, result, detail) {
 // its `v` version guard below is what should notice.
 const CONDITIONS = ["new", "used", "certified"];
 
+/** A shard's rows, or null past the site's last shard. */
 async function loadShard(s) {
   const res = await fetch(`${BASE}/api/index/${s}`, { headers: { accept: "application/json" } });
+  if (res.status === 404) return null;
   if (!res.ok) throw new Error(`shard ${s} HTTP ${res.status}`);
   const body = await res.json();
   if (body?.v !== 1) throw new Error(`shard ${s} unexpected pack version ${body?.v}`);
@@ -95,7 +100,13 @@ async function loadShard(s) {
 
 let packed;
 try {
-  packed = (await Promise.all(Array.from({ length: SHARDS }, (_, s) => loadShard(s)))).flat();
+  packed = [];
+  for (let s = 0; s < MAX_SHARDS; s++) {
+    const rows = await loadShard(s);
+    if (rows === null) break;
+    packed.push(...rows);
+  }
+  if (packed.length === 0) throw new Error("the site served no index shards");
 } catch (e) {
   console.error(`live-price-audit: could not read the feed — ${e.message}`);
   await finish(1, "fail", `feed read failed: ${e.message}`);

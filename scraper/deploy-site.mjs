@@ -45,9 +45,11 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const arg = (n, d) => { const i = process.argv.indexOf(n); return i >= 0 ? process.argv[i + 1] : d; };
 const has = (n) => process.argv.includes(n);
 
-// Keep in step with web/lib/listings/pack.ts SHARDS and web/lib/sitemap.ts
-// SITEMAP_SHARDS (this lane can't import TS) — same rule as feed-shard-check.
-const SHARD_PATHS = Array.from({ length: 24 }, (_, i) => `/api/index/${i}`);
+// Keep in step with web/lib/listings/pack.ts SHARDS (48 since 2026-09-10) and
+// web/lib/sitemap.ts SITEMAP_SHARDS (this lane can't import TS). A hand copy
+// is right here, unlike in feed-shard-check: this script warms a candidate
+// built from the same commit it runs from.
+const SHARD_PATHS = Array.from({ length: 48 }, (_, i) => `/api/index/${i}`);
 const SITEMAP_PATHS = Array.from({ length: 12 }, (_, i) => `/sitemap/${i}.xml`);
 // /api/index/first before everything: it is what the next visitor's first
 // card waits on, and its render is the walk every later path's memo reuses.

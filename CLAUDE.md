@@ -80,7 +80,8 @@ After a deploy reports Ready: **verify the domain moved** (curl voltcheck.net
 for content only the new build has; one 2026-08-16 deploy stayed unaliased
 until `vercel promote <deployment-url>`), then **warm the browse index** —
 `curl voltcheck.net/api/index/first`, `/api/index/trims` (the /worth trim
-facets, since 2026-08-25), and `/api/index/0` through `/23` —
+facets, since 2026-08-25), and `/api/index/0` through `/47` (48 shards since
+2026-09-10) —
 because the first-paint payload and the shards render on first request rather
 than at build time (deliberate: prerendering them put every deploy at the
 database's mercy). Warm `first` first: it is the one the next visitor's first
@@ -90,7 +91,10 @@ payload has outgrown Vercel's ~4.5 MB cold-render cap again** — that is the
 cache entries revalidated fine, fresh ones could not warm at all; recovered
 with `vercel promote <previous>`); the fix is raising SHARDS in
 web/lib/listings/pack.ts and its keep-in-step consumers, never trimming the
-feed. Then **warm the sitemaps** — `/sitemap/0.xml` through `/11.xml` (the
+feed. The count is in each shard file's name, so a raise is safe only in
+order: push, run the publisher (it writes the new cut beside the old one),
+then deploy — never deploy a new count before its files exist (2026-09-10,
+24 → 48). Then **warm the sitemaps** — `/sitemap/0.xml` through `/11.xml` (the
 sitemap shard count is separate: web/lib/sitemap.ts SITEMAP_SHARDS, 12 since
 2026-08-24, raised for the same ~4.5 MB cap) — which render on first request
 for the same reason since 2026-08-22.

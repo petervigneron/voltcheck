@@ -140,14 +140,14 @@ jobs:
             echo "::warning::/api/index/first returned '${CODE:-no response}' — skipping this refresh rather than expiring the cache of a site that is not answering"
             echo "stale=false" >> "$GITHUB_OUTPUT"; echo "broken=false" >> "$GITHUB_OUTPUT"; exit 0
           fi
-          # The sweep. 24 shards since 2026-08-24 — keep in step with
+          # The sweep. 48 shards since 2026-09-10 — keep in step with
           # web/lib/listings/pack.ts SHARDS. A 5xx is a shard shoppers cannot
           # load; anything else (200 from cache, however stale) is "serving".
           # --max-time 90 because a MISS here re-renders at the origin: a
           # healthy render finishes under that, a sick one is indistinguishable
           # from down — either way it is not "serving" right now.
           BROKEN=""
-          for s in $(seq 0 23); do
+          for s in $(seq 0 47); do
             C=$(curl -s -o /dev/null -w "%{http_code}" --max-time 90 "https://voltcheck.net/api/index/$s" || echo 000)
             case "$C" in 5*|000) BROKEN="$BROKEN $s";; esac
           done
@@ -227,9 +227,9 @@ jobs:
           curl -fsS --retry 3 --max-time 60 -X POST \
             -H "x-revalidate-secret: $FEED_REVALIDATE_SECRET" https://voltcheck.net/api/revalidate \
             || { echo "::warning::/api/revalidate unreachable; 24h backstop applies"; exit 0; }
-          # 24 index shards since 2026-08-24 — keep in step with
-          # web/lib/listings/pack.ts SHARDS, whose comment has the incident.
-          for s in first $(seq 0 23); do
+          # 48 index shards since 2026-09-10 (24 from 2026-08-24) — keep in
+          # step with web/lib/listings/pack.ts SHARDS, whose comment has both.
+          for s in first $(seq 0 47); do
             curl -fsS --retry 2 --max-time 300 -o /dev/null "https://voltcheck.net/api/index/$s" \
               || echo "::warning::shard $s warm failed; its first visitor pays the render"
           done
