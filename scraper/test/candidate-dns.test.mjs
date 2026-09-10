@@ -3,7 +3,8 @@ import assert from "node:assert/strict";
 import { mkdtemp, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { parseDohAnswer, dohResolver, classifyUdpError, resolveAll, holdUdpLock, DnsStageError } from "../lib/candidate-dns.mjs";
+import { Resolver } from "node:dns/promises";
+import { parseDohAnswer, dohResolver, udpResolver, classifyUdpError, resolveAll, holdUdpLock, DnsStageError } from "../lib/candidate-dns.mjs";
 
 // Answer bodies in the shape both providers send: Cloudflare's
 // application/dns-json and Google's /resolve are the same JSON API.
@@ -131,6 +132,15 @@ test("UDP codes sort the same way: ENOTFOUND/ENODATA absent, ESERVFAIL servfail,
   assert.equal(classifyUdpError("ENODATA"), "absent");
   assert.equal(classifyUdpError("ESERVFAIL"), "servfail");
   for (const code of ["ECONNREFUSED", "ETIMEOUT", "EREFUSED", "ECANCELLED", undefined]) assert.equal(classifyUdpError(code), "error");
+});
+
+test("a CNAME with no A record behind it is absent over UDP, as it is over DoH", async (t) => {
+  // c-ares answers fairfaxbmw.com (CNAME → 61551.bodis.com, no A) with [], not ENODATA.
+  t.mock.method(Resolver.prototype, "resolve4", async (d) => (d === "fairfaxbmw.com" ? [] : ["23.227.38.65"]));
+  const resolveA = udpResolver();
+  assert.deepEqual(await resolveA("fairfaxbmw.com"), { verdict: "absent", reason: "NODATA" });
+  assert.deepEqual(await resolveA("parksmotors.com"), { verdict: "resolves", addresses: ["23.227.38.65"] });
+  assert.equal(parseDohAnswer(CNAME_ONLY).verdict, "absent");
 });
 
 const doms = (n) => Array.from({ length: n }, (_, i) => `d${i}.com`);

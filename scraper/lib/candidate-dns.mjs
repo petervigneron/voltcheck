@@ -100,7 +100,11 @@ export function udpResolver(servers = ["1.1.1.1", "8.8.8.8"]) {
   resolver.setServers(servers);
   return async function resolveA(domain) {
     try {
-      return { verdict: "resolves", addresses: await resolver.resolve4(domain) };
+      // A CNAME to a name with no A record (fairfaxbmw.com → a Bodis parking
+      // name, 2026-09-10) is a success with no addresses to c-ares, not
+      // ENODATA. It is the same answer parseDohAnswer calls NODATA.
+      const addresses = await resolver.resolve4(domain);
+      return addresses.length ? { verdict: "resolves", addresses } : { verdict: "absent", reason: "NODATA" };
     } catch (e) {
       return { verdict: classifyUdpError(e?.code), reason: e?.code ?? String(e) };
     }

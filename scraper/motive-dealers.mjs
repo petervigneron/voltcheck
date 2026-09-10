@@ -53,8 +53,8 @@
 // This script never emits a vehicle. It counts them, per dealer, so a
 // discovered row can say how much coverage it is worth.
 import { readFile, writeFile, mkdir } from "node:fs/promises";
-import { Resolver } from "node:dns/promises";
 import { fetchPage, politePostJson, CRAWLER_DECLARATION } from "./lib/http.mjs";
+import { dohResolver, udpResolver, resolveAll, holdUdpLock, UDP_MAX_IN_FLIGHT, DnsStageError } from "./lib/candidate-dns.mjs";
 import { rideMotiveConfig } from "./lib/platforms/ridemotive.mjs";
 import { motiveDealerRecords, isPublicDealerDomain, apex } from "./lib/platforms/ridemotive-dealers.mjs";
 import { candidates, squash } from "./lib/dealer-names.mjs";
@@ -65,6 +65,11 @@ const num = (n, d) => { const v = flag(n, null); return v == null ? d : Number(v
 const STAGE = flag("--stage", "emit");
 const CONC = num("--concurrency", 12);
 const BUDGET = num("--budget", 4000);
+// The resolve stage's DNS: over HTTPS by default, --dns udp for a machine that
+// cannot reach the DoH hosts, capped machine-wide (lib/candidate-dns.mjs).
+const DNS_TRANSPORT = flag("--dns", "doh");
+const DNS_CONC = num("--dns-concurrency", DNS_TRANSPORT === "udp" ? UDP_MAX_IN_FLIGHT : 96);
+if (!["doh", "udp"].includes(DNS_TRANSPORT)) { console.error(`--dns takes doh or udp, not ${DNS_TRANSPORT}`); process.exit(1); }
 const OUT = new URL("./out/", import.meta.url);
 const path = (f) => new URL(f, OUT);
 await mkdir(OUT, { recursive: true });
@@ -716,19 +721,30 @@ async function stageResolve() {
   if (args.includes("--from-osm")) console.error(`resolve: ${osmDomains.size} of ${Object.keys(osmCands).length} OSM candidate domains are new and unfetched`);
   console.error(`resolve: ${want.size} candidate domains to DNS-check`);
 
-  const resolver = new Resolver();
-  resolver.setServers(["1.1.1.1", "8.8.8.8"]);
+  // This stage used to carry its own copy of the loop that took the router
+  // down on 2026-09-10: 200 UDP lookups in flight and a bare catch, so a
+  // saturated router's ECONNREFUSED scored as a domain nobody registered.
+  // lib/candidate-dns.mjs is the replacement resolve-dealers.mjs moved to. A
+  // stage whose answers cannot be trusted exits here, before any fetch, and
+  // motive-domains.json is left as it was.
   const doms = [...want.keys()];
-  const live = [];
-  {
-    let next = 0;
-    await Promise.all(Array.from({ length: 200 }, async () => {
-      while (next < doms.length) {
-        const dom = doms[next++];
-        try { await resolver.resolve4(dom); live.push(dom); } catch {}
-      }
-    }));
+  const udp = DNS_TRANSPORT === "udp";
+  const inFlight = udp ? Math.min(DNS_CONC, UDP_MAX_IN_FLIGHT) : DNS_CONC;
+  if (inFlight < DNS_CONC) console.error(`resolve: UDP capped at ${inFlight} in flight (asked for ${DNS_CONC})`);
+  const release = udp ? await holdUdpLock({ log: (m) => console.error(`resolve: ${m}`) }) : null;
+  let dns;
+  try {
+    dns = await resolveAll(doms, udp ? udpResolver() : dohResolver(), { concurrency: inFlight, log: (m) => console.error(m) });
+  } catch (e) {
+    if (!(e instanceof DnsStageError)) throw e;
+    console.error(`resolve: ${e.message}`);
+    process.exit(2);
+  } finally {
+    release?.();
   }
+  // Generation order, not answer order, so which of two equal-priority
+  // domains the budget reaches does not depend on which answer came back first.
+  const live = doms.filter((d) => dns.resolves.has(d));
   // Spend the fetch budget on the dealers that carry the most EVs, .com
   // first. Without this the order is whatever DNS answered in, which on a
   // truncated run means the budget lands on an arbitrary corner of the list.
@@ -743,7 +759,10 @@ async function stageResolve() {
     (osmDomains.has(dom) ? 1e6 : 0) +
     (osmCands[dom]?.how === "phone" ? 1e6 : 0);
   live.sort((a, b) => prio(b) - prio(a) || (a.endsWith(".com") ? 0 : 1) - (b.endsWith(".com") ? 0 : 1));
-  console.error(`resolve: ${live.length} of ${doms.length} candidates resolve in DNS`);
+  console.error(
+    `resolve: ${live.length} of ${doms.length} candidates resolve in DNS ` +
+      `(${DNS_TRANSPORT}, ${inFlight} in flight, ${dns.perSec}/s; ${dns.tally.servfail} SERVFAIL, ${dns.unanswered.length} unanswered)`,
+  );
 
   let next = 0, hits = 0, done = 0;
   const budget = Math.min(live.length, BUDGET);
