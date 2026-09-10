@@ -103,6 +103,26 @@ const MAP: Record<string, string[]> = {
   "FERRARI|SF90|PHEV": ["SF90 Stradale", "SF90 Spider"],
   "MCLAREN|ARTURA|PHEV": ["Artura"],
   "BENTLEY|BENTAYGA|PHEV": ["Bentayga Hybrid"],
+  // Porsche, 2026-09-10. Both nameplates are shared with a petrol car, so
+  // their bare-name rows in data4/data6 are trim-guarded and a listing that
+  // states no trim reaches nothing — 298 live bare "Macan" and 57 bare
+  // "Cayenne" listings on that date. This gate is what those cars are
+  // missing: with vPIC's own BEV/PHEV reading in hand the decode can answer
+  // to the electrified model strings, and the VIN descriptor (added the same
+  // day) then picks the grade, so no trim string is needed anywhere in the
+  // chain. The Cayenne lists all four E-Hybrid grades because the VIN, not
+  // the model string, is what separates them; a MY2026 Cayenne Electric
+  // decodes BEV and has no entry here at all, which is why it stays silent
+  // rather than picking up a plug-in hybrid's pack.
+  "PORSCHE|MACAN|BEV": ["Macan Electric"],
+  "PORSCHE|CAYENNE|PHEV": ["Cayenne E-Hybrid", "Cayenne S E-Hybrid", "Cayenne Turbo E-Hybrid", "Cayenne Turbo S E-Hybrid"],
+  "PORSCHE|CAYENNE COUPE|PHEV": ["Cayenne E-Hybrid", "Cayenne S E-Hybrid", "Cayenne Turbo E-Hybrid", "Cayenne Turbo S E-Hybrid"],
+  // Not a badge-stripped name but the same problem from the other end: the
+  // feed writes the nameplate in `model` and the grade in `trim`, so a
+  // "Cayenne E-Hybrid" listing whose VIN says Turbo or S could only ever
+  // reach the base row. These let the VIN answer instead.
+  "PORSCHE|CAYENNE E-HYBRID|PHEV": ["Cayenne S E-Hybrid", "Cayenne Turbo E-Hybrid", "Cayenne Turbo S E-Hybrid"],
+  "PORSCHE|CAYENNE E-HYBRID COUPE|PHEV": ["Cayenne S E-Hybrid", "Cayenne Turbo E-Hybrid", "Cayenne Turbo S E-Hybrid"],
 };
 
 // Exported for the alias-coverage test and scraper/vpic-model-alias-check.mjs.

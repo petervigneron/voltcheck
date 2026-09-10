@@ -690,10 +690,65 @@ const RIV_PORT1 = { portStandard: f<"CCS1">("CCS1", "mfr") };
 // "Turbo" vs "Turbo S" and "Electric" vs "Electric Turbo" survive via the
 // exact-trim-first rule and compound aliases. Cross Turismo appears both as
 // a trim under model "Taycan" and as its own model string — rows cover both.
+// MY2025 files 79.2 for AA/AB and 97.00 for AC/AD/AE/BA/BB — again the
+// grade's standard pack — and MY2026 files a flat 89 for every pattern.
+// Nothing in the VIN separates a Performance Battery car from a Performance
+// Battery Plus car, which is why the base rows below abstain on the pack
+// rather than reading one out of that field.
+//
+// RE-KEYED ON THE VIN 2026-09-10. These rows were keyed on trim strings
+// alone, and match.ts refuses a trim-keyed row for a listing whose trim is
+// blank (trimMatches). Measured against the live shard cache the same day:
+// 0 of 1,331 Taycans and 0 of 1,044 Macan Electrics resolved to anything once
+// the dealer's trim string was taken away, although every one of those cars
+// was researched. Porsche's Part 565 filing separates them plainly — the
+// patterns below were read off all 3,845 live Porsche VINs and confirmed
+// against vPIC's DecodeVINValuesBatch, which returns Porsche's own pattern
+// trim name for each:
+//
+//   Taycan  WP0 + position 4 = body (A sedan, B Cross Turismo, C Sport
+//           Turismo), position 5 = grade (A base/4, B 4S, C Turbo AND
+//           Turbo S, D GTS, E Turbo GT), positions 6-8 = 2Y1 throughout.
+//   Macan   WP1 + A?2XA, position 5 = grade: A = Macan 4, B = 4S,
+//           C = Turbo, D = base RWD Macan, E = GTS. One grade per pattern,
+//           no ties.
+//
+// So every Macan row and every uniquely-patterned Taycan row now carries a
+// `vds` key and NO trim list: the VIN is the harder evidence, and a row that
+// keeps a trim list still refuses a blank trim no matter what its VIN key
+// says. The four Taycan patterns that cover two versions keep their grade
+// rows' trim lists and gain a trimless base row apiece — see the block above
+// those rows.
+//
+// The bare model string "Macan" is shared with a petrol car, so the `-alt`
+// rows that answer to it KEEP their trim guard alongside the VIN key: a
+// listing with no VIN at all skips every VIN filter in match.ts, and a
+// trimless bare-"Macan" row would then answer a petrol Macan. 298 of the
+// live trimless Macans are filed under that bare string, and what reaches
+// them is not a looser row but vpicEvAlias.ts's PORSCHE|MACAN|BEV entry,
+// added the same day — with vPIC's own BEV reading in hand the listing
+// answers to "Macan Electric", where the trimless VIN-keyed rows are.
+//
 const TAY = { make: "PORSCHE", model: "Taycan" };
 const TAYCT = { make: "PORSCHE", model: "Taycan Cross Turismo" };
-const MAC = { make: "PORSCHE", model: "Macan Electric" };
+// "Macan EV" is 14 live listings and names only the electric car; the bare
+// "Macan" spelling lives on MACALT, where the VIN key is the guard.
+const MAC = { make: "PORSCHE", model: "Macan Electric", modelAliases: ["Macan EV"] };
 const MACALT = { make: "PORSCHE", model: "Macan" };
+// Why the AA and AB base rows say nothing about the pack or the range, in the
+// row's own words. Each is a decision, not a backlog entry.
+const TAY_PACK_ABSTAIN =
+  "The Performance Battery and the Performance Battery Plus share one VIN pattern, and Porsche's Part 565 filing reports the grade's standard pack for both";
+const TAY_PACK_RANGE_ABSTAIN =
+  "The EPA rating follows the pack this car was ordered with, and no VIN position separates the two packs";
+const TAY_AC_RANGE_ABSTAIN =
+  "The Turbo and the Turbo S share one VIN pattern - vPIC decodes it as \"Turbo / Turbo S\" - and their EPA ratings differ";
+const TAY_BC_RANGE_ABSTAIN =
+  "The Turbo and Turbo S Cross Turismo share one VIN pattern, and their EPA ratings differ by more than ten miles";
+const TAY2_AA_PACK_ABSTAIN =
+  "Porsche files the RWD Taycan and the AWD Taycan 4 under one VIN pattern, with either pack, so nothing here fixes the size";
+const TAY2_AA_RANGE_ABSTAIN =
+  "vPIC decodes this VIN pattern as \"Taycan, Taycan 4\", two cars with four EPA ratings between them and nothing to tell them apart";
 const POR_W = {
   batteryYears: f(8, "mfr" as Source),
   batteryMiles: f(100_000, "mfr" as Source),
@@ -4146,7 +4201,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   CLARITY_PHEV_ROW,
 
   {
-    id: "taycan-2020-4s", ...TAY, modelYears: [2020, 2020], trim: ["4S", "4S with Performance Pack"], packVariant: "Performance Battery Plus",
+    id: "taycan-2020-4s", ...TAY, modelYears: [2020, 2020], vds: ["AB2Y1"], packVariant: "Performance Battery Plus",
     battery: PB1P,
     range: { epaRangeMi: f(203, "mfr", "high", "MY2020 4S, EPA certified only the Performance Battery Plus configuration", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=42590") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
@@ -4154,7 +4209,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
   },
   {
-    id: "taycan-2020-turbo", ...TAY, modelYears: [2020, 2020], trim: ["Turbo"], packVariant: "Performance Battery Plus",
+    id: "taycan-2020-turbo", ...TAY, modelYears: [2020, 2020], trim: ["Turbo"], vds: ["AC2Y1"], packVariant: "Performance Battery Plus",
     battery: PB1P,
     range: { epaRangeMi: f(201, "mfr", "high", "MY2020 Turbo, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=42383") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
@@ -4162,7 +4217,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
   },
   {
-    id: "taycan-2020-turbos", ...TAY, modelYears: [2020, 2020], trim: ["Turbo S"], packVariant: "Performance Battery Plus",
+    id: "taycan-2020-turbos", ...TAY, modelYears: [2020, 2020], trim: ["Turbo S"], vds: ["AC2Y1"], packVariant: "Performance Battery Plus",
     battery: PB1P,
     range: { epaRangeMi: f(192, "mfr", "high", "MY2020 Turbo S, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=42427") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
@@ -4170,39 +4225,39 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
   },
   {
-    id: "taycan-2021-22-base-pb", ...TAY, modelYears: [2021, 2022], trim: ["Base", "Performance Battery"], packVariant: "Performance Battery",
+    id: "taycan-2021-22-base-pb", ...TAY, modelYears: [2021, 2022], trim: ["Base", "Performance Battery"], vds: ["AA2Y1"], packVariant: "Performance Battery",
     battery: PB1,
-    range: { epaRangeMi: f(200, "mfr", "high", "MY2021–22 base Taycan, Performance Battery (79.2 kWh, resolved from this VIN), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=43802") },
+    range: { epaRangeMi: f(200, "mfr", "high", "MY2021–22 base Taycan, Performance Battery (79.2 kWh), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=43802") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
     thermal: TAY1_HP,
     warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
   },
   {
-    id: "taycan-2021-22-base-pbp", ...TAY, modelYears: [2021, 2022], trim: ["Base", "Performance Battery Plus"], packVariant: "Performance Battery Plus",
+    id: "taycan-2021-22-base-pbp", ...TAY, modelYears: [2021, 2022], trim: ["Base", "Performance Battery Plus"], vds: ["AA2Y1"], packVariant: "Performance Battery Plus",
     battery: PB1P,
-    range: { epaRangeMi: f(225, "mfr", "high", "MY2021–22 base Taycan, Performance Battery Plus (93.4 kWh, resolved from this VIN), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=43803") },
+    range: { epaRangeMi: f(225, "mfr", "high", "MY2021–22 base Taycan, Performance Battery Plus (93.4 kWh), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=43803") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
     thermal: TAY1_HP,
     warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
   },
   {
-    id: "taycan-2021-22-4s-pb", ...TAY, modelYears: [2021, 2022], trim: ["4S"], packVariant: "Performance Battery",
+    id: "taycan-2021-22-4s-pb", ...TAY, modelYears: [2021, 2022], trim: ["4S"], vds: ["AB2Y1"], packVariant: "Performance Battery",
     battery: PB1,
-    range: { epaRangeMi: f(199, "mfr", "high", "MY2021–22 4S, Performance Battery (79.2 kWh, resolved from this VIN), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=43684") },
+    range: { epaRangeMi: f(199, "mfr", "high", "MY2021–22 4S, Performance Battery (79.2 kWh), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=43684") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
     thermal: TAY1_HP,
     warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
   },
   {
-    id: "taycan-2021-22-4s-pbp", ...TAY, modelYears: [2021, 2022], trim: ["4S"], packVariant: "Performance Battery Plus",
+    id: "taycan-2021-22-4s-pbp", ...TAY, modelYears: [2021, 2022], trim: ["4S"], vds: ["AB2Y1"], packVariant: "Performance Battery Plus",
     battery: PB1P,
-    range: { epaRangeMi: f(227, "mfr", "high", "MY2021–22 4S, Performance Battery Plus (93.4 kWh, resolved from this VIN), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=43685") },
+    range: { epaRangeMi: f(227, "mfr", "high", "MY2021–22 4S, Performance Battery Plus (93.4 kWh), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=43685") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
     thermal: TAY1_HP,
     warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
   },
   {
-    id: "taycan-2022-gts", ...TAY, modelYears: [2022, 2022], trim: ["GTS"], packVariant: "Performance Battery Plus",
+    id: "taycan-2022-gts", ...TAY, modelYears: [2022, 2022], vds: ["AD2Y1"], packVariant: "Performance Battery Plus",
     battery: PB1P,
     range: { epaRangeMi: f(246, "mfr", "high", "MY2022 GTS, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=45715") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
@@ -4210,7 +4265,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
   },
   {
-    id: "taycan-2022-gts-st", ...TAY, modelYears: [2022, 2022], trim: ["GTS Sport Turismo", "GTS Sport Tourismo", "GTS ST", "GTS Wagon"], packVariant: "Performance Battery Plus",
+    id: "taycan-2022-gts-st", ...TAY, modelYears: [2022, 2022], vds: ["CD2Y1"], packVariant: "Performance Battery Plus",
     battery: PB1P,
     range: { epaRangeMi: f(233, "mfr", "high", "MY2022 GTS Sport Turismo, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=45716") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
@@ -4218,7 +4273,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
   },
   {
-    id: "taycan-2021-22-turbo", ...TAY, modelYears: [2021, 2022], trim: ["Turbo"], packVariant: "Performance Battery Plus",
+    id: "taycan-2021-22-turbo", ...TAY, modelYears: [2021, 2022], trim: ["Turbo"], vds: ["AC2Y1"], packVariant: "Performance Battery Plus",
     battery: PB1P,
     range: { epaRangeMi: f(212, "mfr", "high", "MY2021–22 Turbo, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=43910") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
@@ -4226,7 +4281,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
   },
   {
-    id: "taycan-2021-22-turbos", ...TAY, modelYears: [2021, 2022], trim: ["Turbo S"], packVariant: "Performance Battery Plus",
+    id: "taycan-2021-22-turbos", ...TAY, modelYears: [2021, 2022], trim: ["Turbo S"], vds: ["AC2Y1"], packVariant: "Performance Battery Plus",
     battery: PB1P,
     range: { epaRangeMi: f(201, "mfr", "high", "MY2021–22 Turbo S, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=43911") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
@@ -4234,23 +4289,23 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
   },
   {
-    id: "taycan-2023-24-base-pb", ...TAY, modelYears: [2023, 2024], trim: ["Base", "Performance Battery"], packVariant: "Performance Battery",
+    id: "taycan-2023-24-base-pb", ...TAY, modelYears: [2023, 2024], trim: ["Base", "Performance Battery"], vds: ["AA2Y1"], packVariant: "Performance Battery",
     battery: PB1,
-    range: { epaRangeMi: f(208, "mfr", "high", "MY2023–24 base Taycan, Performance Battery (79.2 kWh, resolved from this VIN), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46025") },
+    range: { epaRangeMi: f(208, "mfr", "high", "MY2023–24 base Taycan, Performance Battery (79.2 kWh), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46025") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
     thermal: TAY1_HP,
     warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
   },
   {
-    id: "taycan-2023-24-base-pbp", ...TAY, modelYears: [2023, 2024], trim: ["Base", "Performance Battery Plus"], packVariant: "Performance Battery Plus",
+    id: "taycan-2023-24-base-pbp", ...TAY, modelYears: [2023, 2024], trim: ["Base", "Performance Battery Plus"], vds: ["AA2Y1"], packVariant: "Performance Battery Plus",
     battery: PB1P,
-    range: { epaRangeMi: f(242, "mfr", "high", "MY2023–24 base Taycan, Performance Battery Plus (93.4 kWh, resolved from this VIN), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46024") },
+    range: { epaRangeMi: f(242, "mfr", "high", "MY2023–24 base Taycan, Performance Battery Plus (93.4 kWh), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46024") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
     thermal: TAY1_HP,
     warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
   },
   {
-    id: "taycan-2023-24-4-pbp", ...TAY, modelYears: [2023, 2024], trim: ["4", "4 Black Edition"], packVariant: "Performance Battery Plus",
+    id: "taycan-2023-24-4-pbp", ...TAY, modelYears: [2023, 2024], trim: ["4", "4 Black Edition"], vds: ["BA2Y1"], packVariant: "Performance Battery Plus",
     battery: PB1P,
     range: { epaRangeMi: f(235, "mfr", "high", "MY2023–24 Taycan 4, EPA (the 4 Cross Turismo carries the same 235 rating)", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46018") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
@@ -4258,23 +4313,23 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
   },
   {
-    id: "taycan-2023-24-4s-pb", ...TAY, modelYears: [2023, 2024], trim: ["4S", "4S Black Edition"], packVariant: "Performance Battery",
+    id: "taycan-2023-24-4s-pb", ...TAY, modelYears: [2023, 2024], trim: ["4S", "4S Black Edition"], vds: ["AB2Y1"], packVariant: "Performance Battery",
     battery: PB1,
-    range: { epaRangeMi: f(206, "mfr", "high", "MY2023–24 4S, Performance Battery (79.2 kWh, resolved from this VIN), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46021") },
+    range: { epaRangeMi: f(206, "mfr", "high", "MY2023–24 4S, Performance Battery (79.2 kWh), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46021") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
     thermal: TAY1_HP,
     warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
   },
   {
-    id: "taycan-2023-24-4s-pbp", ...TAY, modelYears: [2023, 2024], trim: ["4S", "4S Black Edition"], packVariant: "Performance Battery Plus",
+    id: "taycan-2023-24-4s-pbp", ...TAY, modelYears: [2023, 2024], trim: ["4S", "4S Black Edition"], vds: ["AB2Y1"], packVariant: "Performance Battery Plus",
     battery: PB1P,
-    range: { epaRangeMi: f(235, "mfr", "high", "MY2023–24 4S, Performance Battery Plus (93.4 kWh, resolved from this VIN), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46020") },
+    range: { epaRangeMi: f(235, "mfr", "high", "MY2023–24 4S, Performance Battery Plus (93.4 kWh), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46020") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
     thermal: TAY1_HP,
     warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
   },
   {
-    id: "taycan-2023-24-gts", ...TAY, modelYears: [2023, 2024], trim: ["GTS"], packVariant: "Performance Battery Plus",
+    id: "taycan-2023-24-gts", ...TAY, modelYears: [2023, 2024], vds: ["AD2Y1"], packVariant: "Performance Battery Plus",
     battery: PB1P,
     range: { epaRangeMi: f(246, "mfr", "high", "MY2023–24 GTS, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46022") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
@@ -4282,7 +4337,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
   },
   {
-    id: "taycan-2023-24-gts-st", ...TAY, modelYears: [2023, 2024], trim: ["GTS Sport Turismo", "GTS Sport Tourismo", "GTS ST", "GTS Wagon"], packVariant: "Performance Battery Plus",
+    id: "taycan-2023-24-gts-st", ...TAY, modelYears: [2023, 2024], vds: ["CD2Y1"], packVariant: "Performance Battery Plus",
     battery: PB1P,
     range: { epaRangeMi: f(233, "mfr", "high", "MY2023–24 GTS Sport Turismo, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46023") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
@@ -4290,7 +4345,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
   },
   {
-    id: "taycan-2023-24-turbo", ...TAY, modelYears: [2023, 2024], trim: ["Turbo"], packVariant: "Performance Battery Plus",
+    id: "taycan-2023-24-turbo", ...TAY, modelYears: [2023, 2024], trim: ["Turbo"], vds: ["AC2Y1"], packVariant: "Performance Battery Plus",
     battery: PB1P,
     range: { epaRangeMi: f(238, "mfr", "high", "MY2023–24 Turbo, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46026") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
@@ -4298,7 +4353,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
   },
   {
-    id: "taycan-2023-24-turbos", ...TAY, modelYears: [2023, 2024], trim: ["Turbo S"], packVariant: "Performance Battery Plus",
+    id: "taycan-2023-24-turbos", ...TAY, modelYears: [2023, 2024], trim: ["Turbo S"], vds: ["AC2Y1"], packVariant: "Performance Battery Plus",
     battery: PB1P,
     range: { epaRangeMi: f(222, "mfr", "high", "MY2023–24 Turbo S, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46028") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
@@ -4324,7 +4379,14 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   // because the 97 and the 89 are pattern constants too; they merely happen
   // to sit inside the tolerance of both packs and so vetoed nothing.
   {
-    id: "taycan-2025-26-base-pb", ...TAY, modelYears: [2025, 2026], trim: ["Base", "Performance Battery"], packVariant: "Performance Battery",
+    // "Black Edition" is on the base rows, not the Taycan 4's, because
+    // trimStringsOverlap is substring-tolerant: without it here, the 4's
+    // "4 Black Edition" key swallowed every bare "Black Edition" listing and
+    // printed the 4's 294 mi. The feed says which car those are — all 6 of
+    // the 23 live bare "Black Edition" listings that state a drivetrain say
+    // RWD, and all 7 "4 Black Edition" listings that state one say AWD — and
+    // the exact-trim pass in match.ts hands the bare string back to this row.
+    id: "taycan-2025-26-base-pb", ...TAY, modelYears: [2025, 2026], trim: ["Base", "Performance Battery", "Black Edition"], vds: ["AA2Y1"], packVariant: "Performance Battery",
     battery: PB2,
     ignoreKwhHint: true,
     range: { epaRangeMi: f(274, "mfr", "high", "MY2025–26 base Taycan (gen-2 facelift), Performance Battery, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48415") },
@@ -4333,7 +4395,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W,
   },
   {
-    id: "taycan-2025-base-pbp", ...TAY, modelYears: [2025, 2025], trim: ["Base", "Performance Battery Plus"], packVariant: "Performance Battery Plus",
+    id: "taycan-2025-base-pbp", ...TAY, modelYears: [2025, 2025], trim: ["Base", "Performance Battery Plus"], vds: ["AA2Y1"], packVariant: "Performance Battery Plus",
     battery: PB2P,
     ignoreKwhHint: true,
     range: { epaRangeMi: f(318, "mfr", "high", "MY2025 base Taycan, Performance Battery Plus, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48414") },
@@ -4342,7 +4404,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W,
   },
   {
-    id: "taycan-2025-26-4-pbp", ...TAY, modelYears: [2025, 2026], trim: ["4", "4 Black Edition"], packVariant: "Performance Battery Plus",
+    id: "taycan-2025-26-4-pbp", ...TAY, modelYears: [2025, 2026], trim: ["4", "4 Black Edition"], vds: ["AA2Y1"], packVariant: "Performance Battery Plus",
     battery: PB2P,
     ignoreKwhHint: true,
     range: { epaRangeMi: f(294, "mfr", "high", "MY2025–26 Taycan 4, Performance Battery Plus, EPA; 315 on 19-inch all-seasons; the 2026 Performance Battery rates 251", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49120") },
@@ -4351,7 +4413,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W,
   },
   {
-    id: "taycan-2025-26-4s-pb", ...TAY, modelYears: [2025, 2026], trim: ["4S", "4S Black Edition"], packVariant: "Performance Battery",
+    id: "taycan-2025-26-4s-pb", ...TAY, modelYears: [2025, 2026], trim: ["4S", "4S Black Edition"], vds: ["AB2Y1"], packVariant: "Performance Battery",
     battery: PB2,
     ignoreKwhHint: true,
     range: { epaRangeMi: f(252, "mfr", "high", "MY2025–26 4S, Performance Battery, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48733") },
@@ -4360,7 +4422,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W,
   },
   {
-    id: "taycan-2025-26-4s-pbp", ...TAY, modelYears: [2025, 2026], trim: ["4S", "4S Black Edition"], packVariant: "Performance Battery Plus",
+    id: "taycan-2025-26-4s-pbp", ...TAY, modelYears: [2025, 2026], trim: ["4S", "4S Black Edition"], vds: ["AB2Y1"], packVariant: "Performance Battery Plus",
     battery: PB2P,
     ignoreKwhHint: true,
     range: { epaRangeMi: f(295, "mfr", "high", "MY2025–26 4S, Performance Battery Plus, EPA; 315 on 19-inch wheels", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48732") },
@@ -4369,7 +4431,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W,
   },
   {
-    id: "taycan-2025-26-gts", ...TAY, modelYears: [2025, 2026], trim: ["GTS"], packVariant: "Performance Battery Plus",
+    id: "taycan-2025-26-gts", ...TAY, modelYears: [2025, 2026], vds: ["AD2Y1"], packVariant: "Performance Battery Plus",
     battery: PB2P,
     ignoreKwhHint: true,
     range: { epaRangeMi: f(293, "mfr", "high", "MY2025–26 GTS, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49121") },
@@ -4378,7 +4440,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W,
   },
   {
-    id: "taycan-2025-26-gts-st", ...TAY, modelYears: [2025, 2026], trim: ["GTS Sport Turismo", "GTS Sport Tourismo", "GTS ST", "GTS Wagon"], packVariant: "Performance Battery Plus",
+    id: "taycan-2025-26-gts-st", ...TAY, modelYears: [2025, 2026], vds: ["CD2Y1"], packVariant: "Performance Battery Plus",
     battery: PB2P,
     ignoreKwhHint: true,
     range: { epaRangeMi: f(279, "mfr", "high", "MY2025–26 GTS Sport Turismo, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49122") },
@@ -4387,7 +4449,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W,
   },
   {
-    id: "taycan-2025-26-turbo", ...TAY, modelYears: [2025, 2026], trim: ["Turbo"], packVariant: "Performance Battery Plus",
+    id: "taycan-2025-26-turbo", ...TAY, modelYears: [2025, 2026], trim: ["Turbo"], vds: ["AC2Y1"], packVariant: "Performance Battery Plus",
     battery: PB2P,
     ignoreKwhHint: true,
     range: { epaRangeMi: f(292, "mfr", "high", "MY2025–26 Turbo, EPA; 317 on 21-inch Aero wheels", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48734") },
@@ -4396,7 +4458,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W,
   },
   {
-    id: "taycan-2025-26-turbogt", ...TAY, modelYears: [2025, 2026], trim: ["Turbo GT"], packVariant: "Performance Battery Plus",
+    id: "taycan-2025-26-turbogt", ...TAY, modelYears: [2025, 2026], vds: ["AE2Y1"], packVariant: "Performance Battery Plus",
     battery: PB2P,
     ignoreKwhHint: true,
     range: { epaRangeMi: f(276, "mfr", "high", "MY2025–26 Turbo GT, EPA; 269 with the Weissach Package", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48737") },
@@ -4405,7 +4467,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W,
   },
   {
-    id: "taycan-2025-26-turbos", ...TAY, modelYears: [2025, 2026], trim: ["Turbo S"], packVariant: "Performance Battery Plus",
+    id: "taycan-2025-26-turbos", ...TAY, modelYears: [2025, 2026], trim: ["Turbo S"], vds: ["AC2Y1"], packVariant: "Performance Battery Plus",
     battery: PB2P,
     ignoreKwhHint: true,
     range: { epaRangeMi: f(266, "mfr", "high", "MY2025–26 Turbo S, EPA; 298 on 21-inch Aero wheels", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48739") },
@@ -4414,7 +4476,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W,
   },
   {
-    id: "taycan-ct-2021-22-4", ...TAY, modelYears: [2021, 2022], trim: ["4 Cross Turismo", "4 Cross Tourismo"], packVariant: "Cross Turismo",
+    id: "taycan-ct-2021-22-4", ...TAY, modelYears: [2021, 2022], vds: ["BA2Y1"], packVariant: "Cross Turismo",
     battery: PB1P,
     range: { epaRangeMi: f(215, "mfr", "high", "MY2021–22 4 Cross Turismo, EPA (4S CT rates the same 215)", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=44721") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
@@ -4422,7 +4484,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
   },
   {
-    id: "taycan-ct-2021-22-4s", ...TAY, modelYears: [2021, 2022], trim: ["4S Cross Turismo", "4S Cross Tourismo"], packVariant: "Cross Turismo",
+    id: "taycan-ct-2021-22-4s", ...TAY, modelYears: [2021, 2022], vds: ["BB2Y1"], packVariant: "Cross Turismo",
     battery: PB1P,
     range: { epaRangeMi: f(215, "mfr", "high", "MY2021–22 4S Cross Turismo, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=44722") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
@@ -4430,7 +4492,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
   },
   {
-    id: "taycan-ct-2021-22-turbo", ...TAY, modelYears: [2021, 2022], trim: ["Turbo Cross Turismo", "Turbo Cross Tourismo"], packVariant: "Cross Turismo",
+    id: "taycan-ct-2021-22-turbo", ...TAY, modelYears: [2021, 2022], trim: ["Turbo Cross Turismo", "Turbo Cross Tourismo"], vds: ["BC2Y1"], packVariant: "Cross Turismo",
     battery: PB1P,
     range: { epaRangeMi: f(204, "mfr", "high", "MY2021–22 Turbo Cross Turismo, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=44724") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
@@ -4438,7 +4500,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
   },
   {
-    id: "taycan-ct-2021-22-turbos", ...TAY, modelYears: [2021, 2022], trim: ["Turbo S Cross Turismo", "Turbo S Cross Tourismo"], packVariant: "Cross Turismo",
+    id: "taycan-ct-2021-22-turbos", ...TAY, modelYears: [2021, 2022], trim: ["Turbo S Cross Turismo", "Turbo S Cross Tourismo"], vds: ["BC2Y1"], packVariant: "Cross Turismo",
     battery: PB1P,
     range: { epaRangeMi: f(202, "mfr", "high", "MY2021–22 Turbo S Cross Turismo, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=44723") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
@@ -4446,7 +4508,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
   },
   {
-    id: "taycan-ct-2023-24-4", ...TAY, modelYears: [2023, 2024], trim: ["4 Cross Turismo", "4 Cross Tourismo"], packVariant: "Cross Turismo",
+    id: "taycan-ct-2023-24-4", ...TAY, modelYears: [2023, 2024], vds: ["BA2Y1"], packVariant: "Cross Turismo",
     battery: PB1P,
     range: { epaRangeMi: f(235, "mfr", "high", "MY2023–24 4 Cross Turismo, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46018") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
@@ -4454,7 +4516,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
   },
   {
-    id: "taycan-ct-2023-24-4s", ...TAY, modelYears: [2023, 2024], trim: ["4S Cross Turismo", "4S Cross Tourismo"], packVariant: "Cross Turismo",
+    id: "taycan-ct-2023-24-4s", ...TAY, modelYears: [2023, 2024], vds: ["BB2Y1"], packVariant: "Cross Turismo",
     battery: PB1P,
     range: { epaRangeMi: f(230, "mfr", "high", "MY2023–24 4S Cross Turismo, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46019") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
@@ -4462,7 +4524,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
   },
   {
-    id: "taycan-ct-2023-24-turbo", ...TAY, modelYears: [2023, 2024], trim: ["Turbo Cross Turismo", "Turbo Cross Tourismo"], packVariant: "Cross Turismo",
+    id: "taycan-ct-2023-24-turbo", ...TAY, modelYears: [2023, 2024], trim: ["Turbo Cross Turismo", "Turbo Cross Tourismo"], vds: ["BC2Y1"], packVariant: "Cross Turismo",
     battery: PB1P,
     range: { epaRangeMi: f(233, "mfr", "high", "MY2023–24 Turbo Cross Turismo, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46027") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
@@ -4470,7 +4532,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
   },
   {
-    id: "taycan-ct-2023-24-turbos", ...TAY, modelYears: [2023, 2024], trim: ["Turbo S Cross Turismo", "Turbo S Cross Tourismo"], packVariant: "Cross Turismo",
+    id: "taycan-ct-2023-24-turbos", ...TAY, modelYears: [2023, 2024], trim: ["Turbo S Cross Turismo", "Turbo S Cross Tourismo"], vds: ["BC2Y1"], packVariant: "Cross Turismo",
     battery: PB1P,
     range: { epaRangeMi: f(222, "mfr", "high", "MY2023–24 Turbo S Cross Turismo, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46029") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
@@ -4478,7 +4540,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
   },
   {
-    id: "taycan-ct-2025-26-4", ...TAY, modelYears: [2025, 2026], trim: ["4 Cross Turismo", "4 Cross Tourismo"], packVariant: "Cross Turismo",
+    id: "taycan-ct-2025-26-4", ...TAY, modelYears: [2025, 2026], vds: ["BA2Y1"], packVariant: "Cross Turismo",
     battery: PB2P,
     ignoreKwhHint: true,
     range: { epaRangeMi: f(277, "mfr", "high", "MY2025–26 4 Cross Turismo, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48730") },
@@ -4487,7 +4549,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W,
   },
   {
-    id: "taycan-ct-2025-26-4s", ...TAY, modelYears: [2025, 2026], trim: ["4S Cross Turismo", "4S Cross Tourismo"], packVariant: "Cross Turismo",
+    id: "taycan-ct-2025-26-4s", ...TAY, modelYears: [2025, 2026], vds: ["BB2Y1"], packVariant: "Cross Turismo",
     battery: PB2P,
     ignoreKwhHint: true,
     range: { epaRangeMi: f(272, "mfr", "high", "MY2025–26 4S Cross Turismo, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48731") },
@@ -4496,7 +4558,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W,
   },
   {
-    id: "taycan-ct-2025-26-turbo", ...TAY, modelYears: [2025, 2026], trim: ["Turbo Cross Turismo", "Turbo Cross Tourismo"], packVariant: "Cross Turismo",
+    id: "taycan-ct-2025-26-turbo", ...TAY, modelYears: [2025, 2026], trim: ["Turbo Cross Turismo", "Turbo Cross Tourismo"], vds: ["BC2Y1"], packVariant: "Cross Turismo",
     battery: PB2P,
     ignoreKwhHint: true,
     range: { epaRangeMi: f(265, "mfr", "high", "MY2025–26 Turbo Cross Turismo, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48736") },
@@ -4505,7 +4567,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W,
   },
   {
-    id: "taycan-ct-2025-26-turbos", ...TAY, modelYears: [2025, 2026], trim: ["Turbo S Cross Turismo", "Turbo S Cross Tourismo"], packVariant: "Cross Turismo",
+    id: "taycan-ct-2025-26-turbos", ...TAY, modelYears: [2025, 2026], trim: ["Turbo S Cross Turismo", "Turbo S Cross Tourismo"], vds: ["BC2Y1"], packVariant: "Cross Turismo",
     battery: PB2P,
     ignoreKwhHint: true,
     range: { epaRangeMi: f(261, "mfr", "high", "MY2025–26 Turbo S Cross Turismo, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48741") },
@@ -4514,7 +4576,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W,
   },
   {
-    id: "tayct-2021-22", ...TAYCT, modelYears: [2021, 2022], trim: ["4", "4S", "4 Cross Turismo", "4S Cross Turismo", "4 Cross Tourismo", "4S Cross Tourismo"], packVariant: "Cross Turismo",
+    id: "tayct-2021-22", ...TAYCT, modelYears: [2021, 2022], vds: ["BA2Y1", "BB2Y1"], packVariant: "Cross Turismo",
     battery: PB1P,
     range: { epaRangeMi: f(215, "mfr", "high", "MY2021–22 4/4S Cross Turismo, EPA, both rate 215", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=44721") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
@@ -4522,7 +4584,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
   },
   {
-    id: "tayct-2023-24-4", ...TAYCT, modelYears: [2023, 2024], trim: ["4", "4 Cross Turismo", "4 Cross Tourismo"], packVariant: "Cross Turismo",
+    id: "tayct-2023-24-4", ...TAYCT, modelYears: [2023, 2024], vds: ["BA2Y1"], packVariant: "Cross Turismo",
     battery: PB1P,
     range: { epaRangeMi: f(235, "mfr", "high", "MY2023–24 4 Cross Turismo, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46018") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
@@ -4530,7 +4592,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
   },
   {
-    id: "tayct-2023-24-4s", ...TAYCT, modelYears: [2023, 2024], trim: ["4S", "4S Cross Turismo", "4S Cross Tourismo"], packVariant: "Cross Turismo",
+    id: "tayct-2023-24-4s", ...TAYCT, modelYears: [2023, 2024], vds: ["BB2Y1"], packVariant: "Cross Turismo",
     battery: PB1P,
     range: { epaRangeMi: f(230, "mfr", "high", "MY2023–24 4S Cross Turismo, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46019") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
@@ -4538,7 +4600,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
   },
   {
-    id: "tayct-2025-26-4", ...TAYCT, modelYears: [2025, 2026], trim: ["4", "4 Cross Turismo", "4 Cross Tourismo"], packVariant: "Cross Turismo",
+    id: "tayct-2025-26-4", ...TAYCT, modelYears: [2025, 2026], vds: ["BA2Y1"], packVariant: "Cross Turismo",
     battery: PB2P,
     ignoreKwhHint: true,
     range: { epaRangeMi: f(277, "mfr", "high", "MY2025–26 4 Cross Turismo, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48730") },
@@ -4547,7 +4609,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W,
   },
   {
-    id: "tayct-2025-26-4s", ...TAYCT, modelYears: [2025, 2026], trim: ["4S", "4S Cross Turismo", "4S Cross Tourismo"], packVariant: "Cross Turismo",
+    id: "tayct-2025-26-4s", ...TAYCT, modelYears: [2025, 2026], vds: ["BB2Y1"], packVariant: "Cross Turismo",
     battery: PB2P,
     ignoreKwhHint: true,
     range: { epaRangeMi: f(272, "mfr", "high", "MY2025–26 4S Cross Turismo, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48731") },
@@ -4556,7 +4618,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W,
   },
   {
-    id: "macan-2024-25-4", ...MAC, modelYears: [2024, 2025], trim: ["4", "Macan 4", "4 Electric"], packVariant: "Macan 4",
+    id: "macan-2024-25-4", ...MAC, modelYears: [2024, 2025], vds: ["AA2XA"], packVariant: "Macan 4",
     battery: MACB,
     range: { epaRangeMi: f(308, "mfr", "high", "MY2024–25 Macan 4 Electric, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48793") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
@@ -4564,7 +4626,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W,
   },
   {
-    id: "macan-2026-4", ...MAC, modelYears: [2026, 2026], trim: ["4", "Macan 4", "4 Electric"], packVariant: "Macan 4",
+    id: "macan-2026-4", ...MAC, modelYears: [2026, 2026], vds: ["AA2XA"], packVariant: "Macan 4",
     battery: MACB,
     range: { epaRangeMi: f(304, "mfr", "high", "MY2026 Macan 4 Electric, EPA; 324 on 20-inch wheels", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50294") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
@@ -4572,7 +4634,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W,
   },
   {
-    id: "macan-2025-base", ...MAC, modelYears: [2025, 2025], trim: ["Electric", "Base"], packVariant: "Macan",
+    id: "macan-2025-base", ...MAC, modelYears: [2025, 2025], vds: ["AD2XA"], packVariant: "Macan",
     battery: MACB,
     range: { epaRangeMi: f(315, "mfr", "high", "MY2025 base Macan Electric (RWD), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49119") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
@@ -4580,7 +4642,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W,
   },
   {
-    id: "macan-2026-base", ...MAC, modelYears: [2026, 2026], trim: ["Electric", "Base"], packVariant: "Macan",
+    id: "macan-2026-base", ...MAC, modelYears: [2026, 2026], vds: ["AD2XA"], packVariant: "Macan",
     battery: MACB,
     range: { epaRangeMi: f(309, "mfr", "high", "MY2026 base Macan Electric (RWD), EPA; 332 on 20-inch wheels", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50296") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
@@ -4588,7 +4650,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W,
   },
   {
-    id: "macan-2025-4s", ...MAC, modelYears: [2025, 2025], trim: ["4S", "4S Electric"], packVariant: "Macan 4S",
+    id: "macan-2025-4s", ...MAC, modelYears: [2025, 2025], vds: ["AB2XA"], packVariant: "Macan 4S",
     battery: MACB,
     range: { epaRangeMi: f(288, "mfr", "high", "MY2025 Macan 4S Electric, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48728") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
@@ -4596,7 +4658,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W,
   },
   {
-    id: "macan-2026-4s", ...MAC, modelYears: [2026, 2026], trim: ["4S", "4S Electric"], packVariant: "Macan 4S",
+    id: "macan-2026-4s", ...MAC, modelYears: [2026, 2026], vds: ["AB2XA"], packVariant: "Macan 4S",
     battery: MACB,
     range: { epaRangeMi: f(290, "mfr", "high", "MY2026 Macan 4S Electric, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50295") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
@@ -4604,7 +4666,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W,
   },
   {
-    id: "macan-2024-25-turbo", ...MAC, modelYears: [2024, 2025], trim: ["Turbo", "Electric Turbo", "Turbo Electric"], packVariant: "Macan Turbo",
+    id: "macan-2024-25-turbo", ...MAC, modelYears: [2024, 2025], vds: ["AC2XA"], packVariant: "Macan Turbo",
     battery: MACB,
     range: { epaRangeMi: f(288, "mfr", "high", "MY2024–25 Macan Turbo Electric, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48794") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
@@ -4612,7 +4674,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W,
   },
   {
-    id: "macan-2026-turbo", ...MAC, modelYears: [2026, 2026], trim: ["Turbo", "Electric Turbo", "Turbo Electric"], packVariant: "Macan Turbo",
+    id: "macan-2026-turbo", ...MAC, modelYears: [2026, 2026], vds: ["AC2XA"], packVariant: "Macan Turbo",
     battery: MACB,
     range: { epaRangeMi: f(293, "mfr", "high", "MY2026 Macan Turbo Electric, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50298") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
@@ -4620,7 +4682,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W,
   },
   {
-    id: "macan-2026-gts", ...MAC, modelYears: [2026, 2026], trim: ["GTS", "GTS Electric"], packVariant: "Macan GTS",
+    id: "macan-2026-gts", ...MAC, modelYears: [2026, 2026], vds: ["AE2XA"], packVariant: "Macan GTS",
     battery: MACB,
     range: { epaRangeMi: f(294, "mfr", "high", "MY2026 Macan GTS Electric, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50297") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
@@ -4628,7 +4690,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W,
   },
   {
-    id: "macan-2024-25-4-alt", ...MACALT, modelYears: [2024, 2025], trim: ["4", "Macan 4", "4 Electric"], packVariant: "Macan 4",
+    id: "macan-2024-25-4-alt", ...MACALT, modelYears: [2024, 2025], trim: ["4", "Macan 4", "4 Electric"], vds: ["AA2XA"], packVariant: "Macan 4",
     battery: MACB,
     range: { epaRangeMi: f(308, "mfr", "high", "MY2024–25 Macan 4 Electric, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48793") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
@@ -4636,7 +4698,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W,
   },
   {
-    id: "macan-2026-4-alt", ...MACALT, modelYears: [2026, 2026], trim: ["4", "Macan 4", "4 Electric"], packVariant: "Macan 4",
+    id: "macan-2026-4-alt", ...MACALT, modelYears: [2026, 2026], trim: ["4", "Macan 4", "4 Electric"], vds: ["AA2XA"], packVariant: "Macan 4",
     battery: MACB,
     range: { epaRangeMi: f(304, "mfr", "high", "MY2026 Macan 4 Electric, EPA; 324 on 20-inch wheels", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50294") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
@@ -4644,7 +4706,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W,
   },
   {
-    id: "macan-2025-base-alt", ...MACALT, modelYears: [2025, 2025], trim: ["Electric", "Base"], packVariant: "Macan",
+    id: "macan-2025-base-alt", ...MACALT, modelYears: [2025, 2025], trim: ["Electric", "Base"], vds: ["AD2XA"], packVariant: "Macan",
     battery: MACB,
     range: { epaRangeMi: f(315, "mfr", "high", "MY2025 base Macan Electric (RWD), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49119") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
@@ -4652,7 +4714,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W,
   },
   {
-    id: "macan-2026-base-alt", ...MACALT, modelYears: [2026, 2026], trim: ["Electric", "Base"], packVariant: "Macan",
+    id: "macan-2026-base-alt", ...MACALT, modelYears: [2026, 2026], trim: ["Electric", "Base"], vds: ["AD2XA"], packVariant: "Macan",
     battery: MACB,
     range: { epaRangeMi: f(309, "mfr", "high", "MY2026 base Macan Electric (RWD), EPA; 332 on 20-inch wheels", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50296") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
@@ -4660,7 +4722,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W,
   },
   {
-    id: "macan-2025-4s-alt", ...MACALT, modelYears: [2025, 2025], trim: ["4S", "4S Electric"], packVariant: "Macan 4S",
+    id: "macan-2025-4s-alt", ...MACALT, modelYears: [2025, 2025], trim: ["4S", "4S Electric"], vds: ["AB2XA"], packVariant: "Macan 4S",
     battery: MACB,
     range: { epaRangeMi: f(288, "mfr", "high", "MY2025 Macan 4S Electric, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48728") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
@@ -4668,7 +4730,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W,
   },
   {
-    id: "macan-2026-4s-alt", ...MACALT, modelYears: [2026, 2026], trim: ["4S", "4S Electric"], packVariant: "Macan 4S",
+    id: "macan-2026-4s-alt", ...MACALT, modelYears: [2026, 2026], trim: ["4S", "4S Electric"], vds: ["AB2XA"], packVariant: "Macan 4S",
     battery: MACB,
     range: { epaRangeMi: f(290, "mfr", "high", "MY2026 Macan 4S Electric, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50295") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
@@ -4676,7 +4738,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W,
   },
   {
-    id: "macan-2024-25-turbo-alt", ...MACALT, modelYears: [2024, 2025], trim: ["Turbo", "Electric Turbo", "Turbo Electric"], packVariant: "Macan Turbo",
+    id: "macan-2024-25-turbo-alt", ...MACALT, modelYears: [2024, 2025], trim: ["Turbo", "Electric Turbo", "Turbo Electric"], vds: ["AC2XA"], packVariant: "Macan Turbo",
     battery: MACB,
     range: { epaRangeMi: f(288, "mfr", "high", "MY2024–25 Macan Turbo Electric, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48794") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
@@ -4684,7 +4746,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W,
   },
   {
-    id: "macan-2026-turbo-alt", ...MACALT, modelYears: [2026, 2026], trim: ["Turbo", "Electric Turbo", "Turbo Electric"], packVariant: "Macan Turbo",
+    id: "macan-2026-turbo-alt", ...MACALT, modelYears: [2026, 2026], trim: ["Turbo", "Electric Turbo", "Turbo Electric"], vds: ["AC2XA"], packVariant: "Macan Turbo",
     battery: MACB,
     range: { epaRangeMi: f(293, "mfr", "high", "MY2026 Macan Turbo Electric, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50298") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
@@ -4692,7 +4754,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W,
   },
   {
-    id: "macan-2026-gts-alt", ...MACALT, modelYears: [2026, 2026], trim: ["GTS", "GTS Electric"], packVariant: "Macan GTS",
+    id: "macan-2026-gts-alt", ...MACALT, modelYears: [2026, 2026], trim: ["GTS", "GTS Electric"], vds: ["AE2XA"], packVariant: "Macan GTS",
     battery: MACB,
     range: { epaRangeMi: f(294, "mfr", "high", "MY2026 Macan GTS Electric, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=50297") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
@@ -4700,7 +4762,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W,
   },
   {
-    id: "tayct-2021-22-turbo", ...TAYCT, modelYears: [2021, 2022], trim: ["Turbo", "Turbo Cross Turismo", "Turbo Cross Tourismo"], packVariant: "Cross Turismo",
+    id: "tayct-2021-22-turbo", ...TAYCT, modelYears: [2021, 2022], trim: ["Turbo", "Turbo Cross Turismo", "Turbo Cross Tourismo"], vds: ["BC2Y1"], packVariant: "Cross Turismo",
     battery: PB1P,
     range: { epaRangeMi: f(204, "mfr", "high", "MY2021–22 Turbo Cross Turismo, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=44724") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
@@ -4708,7 +4770,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
   },
   {
-    id: "tayct-2021-22-turbos", ...TAYCT, modelYears: [2021, 2022], trim: ["Turbo S", "Turbo S Cross Turismo", "Turbo S Cross Tourismo"], packVariant: "Cross Turismo",
+    id: "tayct-2021-22-turbos", ...TAYCT, modelYears: [2021, 2022], trim: ["Turbo S", "Turbo S Cross Turismo", "Turbo S Cross Tourismo"], vds: ["BC2Y1"], packVariant: "Cross Turismo",
     battery: PB1P,
     range: { epaRangeMi: f(202, "mfr", "high", "MY2021–22 Turbo S Cross Turismo, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=44723") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
@@ -4716,7 +4778,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
   },
   {
-    id: "tayct-2023-24-turbo", ...TAYCT, modelYears: [2023, 2024], trim: ["Turbo", "Turbo Cross Turismo", "Turbo Cross Tourismo"], packVariant: "Cross Turismo",
+    id: "tayct-2023-24-turbo", ...TAYCT, modelYears: [2023, 2024], trim: ["Turbo", "Turbo Cross Turismo", "Turbo Cross Tourismo"], vds: ["BC2Y1"], packVariant: "Cross Turismo",
     battery: PB1P,
     range: { epaRangeMi: f(233, "mfr", "high", "MY2023–24 Turbo Cross Turismo, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46027") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
@@ -4724,9 +4786,155 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
   },
   {
-    id: "tayct-2023-24-turbos", ...TAYCT, modelYears: [2023, 2024], trim: ["Turbo S", "Turbo S Cross Turismo", "Turbo S Cross Tourismo"], packVariant: "Cross Turismo",
+    id: "tayct-2023-24-turbos", ...TAYCT, modelYears: [2023, 2024], trim: ["Turbo S", "Turbo S Cross Turismo", "Turbo S Cross Tourismo"], vds: ["BC2Y1"], packVariant: "Cross Turismo",
     battery: PB1P,
     range: { epaRangeMi: f(222, "mfr", "high", "MY2023–24 Turbo S Cross Turismo, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46029") },
+    charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
+    thermal: TAY1_HP,
+    warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
+  },
+
+  // ── Taycan base rows: the four VIN patterns that cover two versions ─────
+  // The grade rows above are keyed on the VDS, and for AD (GTS), AE (Turbo
+  // GT), BA (4 Cross Turismo), BB (4S Cross Turismo) and CD (GTS Sport
+  // Turismo) the pattern names exactly one car, so those rows dropped their
+  // trim lists and a listing with a blank trim reaches them on the VIN alone.
+  // Four patterns name two cars each and cannot do that:
+  //
+  //   AA  base Taycan — Performance Battery or Performance Battery Plus, and
+  //       from MY2025 the AWD Taycan 4 as well (vPIC decodes the MY2026
+  //       pattern as "Taycan, Taycan 4" in as many words)
+  //   AB  4S — Performance Battery or Performance Battery Plus
+  //   AC  Turbo or Turbo S (vPIC: "Turbo / Turbo S", one pattern, both cars)
+  //   BC  Turbo or Turbo S Cross Turismo
+  //
+  // Porsche's Part 565 kWh figure cannot break the pack tie either: it is a
+  // per-PATTERN constant, not the per-VIN fact the header comment above used
+  // to claim. Control test 2026-09-10, 46 live VINs decoded through vPIC's
+  // batch endpoint: every 2022–24 AA and AB VIN reads 79.2 whatever pack the
+  // car was ordered with, and the 93.4 that appears on AC/AD is that grade's
+  // standard pack, not a reading of the individual car.
+  //
+  // So these rows are the bZ shape (data3.ts): one trimless row per pattern
+  // carrying what every version on it shares, abstaining on what they do not.
+  // A blank-trim listing lands here instead of on a grade it might not be;
+  // a listing that DOES name its grade still reaches the grade row, because
+  // the exact-trim pass in match.ts runs before anything else can intervene.
+  // The AC and BC rows can state the pack — Turbo and Turbo S both ship the
+  // Plus pack in every year — and abstain on range alone.
+  {
+    id: "taycan-2020-turbo-base", ...TAY, modelYears: [2020, 2020], vds: ["AC2Y1"], packVariant: "Performance Battery Plus",
+    battery: PB1P,
+    abstains: { epaRangeMi: TAY_AC_RANGE_ABSTAIN },
+    charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
+    thermal: TAY1_HP,
+    warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
+  },
+  {
+    id: "taycan-2021-22-base", ...TAY, modelYears: [2021, 2022], vds: ["AA2Y1"],
+    abstains: { packUsableKwh: TAY_PACK_ABSTAIN, epaRangeMi: TAY_PACK_RANGE_ABSTAIN },
+    charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
+    thermal: TAY1_HP,
+    warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
+  },
+  {
+    id: "taycan-2021-22-4s-base", ...TAY, modelYears: [2021, 2022], vds: ["AB2Y1"],
+    abstains: { packUsableKwh: TAY_PACK_ABSTAIN, epaRangeMi: TAY_PACK_RANGE_ABSTAIN },
+    charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
+    thermal: TAY1_HP,
+    warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
+  },
+  {
+    id: "taycan-2021-22-turbo-base", ...TAY, modelYears: [2021, 2022], vds: ["AC2Y1"], packVariant: "Performance Battery Plus",
+    battery: PB1P,
+    abstains: { epaRangeMi: TAY_AC_RANGE_ABSTAIN },
+    charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
+    thermal: TAY1_HP,
+    warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
+  },
+  {
+    id: "taycan-2023-24-base", ...TAY, modelYears: [2023, 2024], vds: ["AA2Y1"],
+    abstains: { packUsableKwh: TAY_PACK_ABSTAIN, epaRangeMi: TAY_PACK_RANGE_ABSTAIN },
+    charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
+    thermal: TAY1_HP,
+    warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
+  },
+  {
+    id: "taycan-2023-24-4s-base", ...TAY, modelYears: [2023, 2024], vds: ["AB2Y1"],
+    abstains: { packUsableKwh: TAY_PACK_ABSTAIN, epaRangeMi: TAY_PACK_RANGE_ABSTAIN },
+    charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
+    thermal: TAY1_HP,
+    warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
+  },
+  {
+    id: "taycan-2023-24-turbo-base", ...TAY, modelYears: [2023, 2024], vds: ["AC2Y1"], packVariant: "Performance Battery Plus",
+    battery: PB1P,
+    abstains: { epaRangeMi: TAY_AC_RANGE_ABSTAIN },
+    charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
+    thermal: TAY1_HP,
+    warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
+  },
+  {
+    id: "taycan-2025-26-base", ...TAY, modelYears: [2025, 2026], vds: ["AA2Y1"],
+    abstains: { packUsableKwh: TAY2_AA_PACK_ABSTAIN, epaRangeMi: TAY2_AA_RANGE_ABSTAIN },
+    charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
+    thermal: TAY2_HP,
+    warranty: POR_W,
+  },
+  {
+    id: "taycan-2025-26-4s-base", ...TAY, modelYears: [2025, 2026], vds: ["AB2Y1"],
+    abstains: { packUsableKwh: TAY_PACK_ABSTAIN, epaRangeMi: TAY_PACK_RANGE_ABSTAIN },
+    charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
+    thermal: TAY2_HP,
+    warranty: POR_W,
+  },
+  {
+    id: "taycan-2025-26-turbo-base", ...TAY, ignoreKwhHint: true, modelYears: [2025, 2026], vds: ["AC2Y1"], packVariant: "Performance Battery Plus",
+    battery: PB2P,
+    abstains: { epaRangeMi: TAY_AC_RANGE_ABSTAIN },
+    charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
+    thermal: TAY2_HP,
+    warranty: POR_W,
+  },
+  {
+    id: "taycan-ct-2021-22-turbo-base", ...TAY, modelYears: [2021, 2022], vds: ["BC2Y1"], packVariant: "Cross Turismo",
+    battery: PB1P,
+    abstains: { epaRangeMi: TAY_BC_RANGE_ABSTAIN },
+    charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
+    thermal: TAY1_HP,
+    warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
+  },
+  {
+    id: "taycan-ct-2023-24-turbo-base", ...TAY, modelYears: [2023, 2024], vds: ["BC2Y1"], packVariant: "Cross Turismo",
+    battery: PB1P,
+    abstains: { epaRangeMi: TAY_BC_RANGE_ABSTAIN },
+    charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
+    thermal: TAY1_HP,
+    warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
+  },
+  {
+    id: "taycan-ct-2025-26-turbo-base", ...TAY, ignoreKwhHint: true, modelYears: [2025, 2026], vds: ["BC2Y1"], packVariant: "Cross Turismo",
+    battery: PB2P,
+    abstains: { epaRangeMi: TAY_BC_RANGE_ABSTAIN },
+    charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
+    thermal: TAY2_HP,
+    warranty: POR_W,
+  },
+  // The same two rows under the model string "Taycan Cross Turismo", which
+  // 37 live listings use instead of "Taycan". MY2025-26 has no tayct- Turbo
+  // pair to sit beside, so there is no base row for it either.
+  {
+    id: "tayct-2021-22-turbo-base", ...TAYCT, modelYears: [2021, 2022], vds: ["BC2Y1"], packVariant: "Cross Turismo",
+    battery: PB1P,
+    abstains: { epaRangeMi: TAY_BC_RANGE_ABSTAIN },
+    charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
+    thermal: TAY1_HP,
+    warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
+  },
+  {
+    id: "tayct-2023-24-turbo-base", ...TAYCT, modelYears: [2023, 2024], vds: ["BC2Y1"], packVariant: "Cross Turismo",
+    battery: PB1P,
+    abstains: { epaRangeMi: TAY_BC_RANGE_ABSTAIN },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
     thermal: TAY1_HP,
     warranty: POR_W, buyerNotes: [NOTE_TAY_HP],

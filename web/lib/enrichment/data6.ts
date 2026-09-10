@@ -1854,6 +1854,39 @@ const R: EnrichmentRow[] = [];
 // E-Hybrid page states DC capability while the Taycan's page names it
 // plainly, so "none" is stated as est. Warranty abstains: Porsche's
 // E-Hybrid warranty manuals are PDF-only and were not machine-readable.
+//
+// VIN-KEYED 2026-09-10. The year windows and the variant names were doing all
+// the work, and the variant names are the part a dealer feed gets wrong.
+// Porsche's Part 565 filing separates every grade outright, read off all
+// 1,322 live Cayenne listings and confirmed pattern by pattern against
+// vPIC's DecodeVINValuesBatch, which returns Porsche's own pattern trim
+// string for each:
+//
+//   position 4     A = SUV, B = Coupe
+//   position 5     E = E-Hybrid, N = S E-Hybrid, M = Turbo E-Hybrid,
+//                  H = Turbo S E-Hybrid
+//   positions 6-8  2AY = the 9YA/9YB E-Hybrid (MY2019 on)
+//                  2A2 = the 958-era S E-Hybrid (MY2015-18)
+//                  2X1 = the MY2026 Cayenne Electric — a battery-electric
+//                        car this corpus has no row for at all
+//
+// The 2X1 line is why this is urgent rather than tidy. 117 live MY2026
+// Cayenne Electric listings were resolving to Cayenne Turbo/S E-Hybrid rows
+// on the strength of a trim string reading "S" or "Turbo Electric", and were
+// being told they carry a 25.9 kWh plug-in pack, an 11 kW onboard charger, a
+// J1772 inlet and no DC fast charging. The `vds` key ends that: no Cayenne
+// Electric VIN starts WP1?E/N/M/H2AY, so those listings now match nothing,
+// which is the honest answer until the car is researched. It also stops a
+// trimless Turbo S, Turbo or S E-Hybrid landing on the plain E-Hybrid row —
+// 17 electric miles quoted where the Turbo S has 15.
+//
+// The `-alt` rows KEEP their trim guard alongside the VIN key. match.ts
+// skips every VIN filter for a listing that carries no VIN, so a trimless
+// bare-"Cayenne" row would answer a petrol Cayenne, which
+// tests/phev-bare-model-aliases.test.ts pins. What reaches the trimless
+// rows instead is vpicEvAlias.ts's PORSCHE|CAYENNE|PHEV entry, added the
+// same day: vPIC's own PHEV reading lets a bare "Cayenne" answer to all four
+// E-Hybrid model strings, and the VIN then picks which one.
 {
   const CAY_2019_PR = "https://newsroom.porsche.com/en_US/products/the-new-2019-cayenne-e-hybrid-19872.html";
   const CAY_2021_PR = "https://newsroom.porsche.com/en_US/products/porsche-cayenne-e-hybrid-models-updated-high-voltage-battery-22704.html";
@@ -1897,6 +1930,7 @@ const R: EnrichmentRow[] = [];
   R.push(
     // 958-era Cayenne S E-Hybrid: EPA-only rows, pack unresearched.
     ...cayenne("cayenne-s-ehybrid-2017", "Cayenne S E-Hybrid", [2017, 2017], ["S E-Hybrid", "S"], {
+      vds: ["AE2A2"],
       range: {
         epaRangeMi: f(14, "mfr", "high", "Electric-only EPA range", epa(37799)),
         epaRangeTotalMi: f(480, "mfr", "high", undefined, epa(37799)),
@@ -1908,6 +1942,7 @@ const R: EnrichmentRow[] = [];
       abstains: { ...PORSCHE_ABSTAINS, packUsableKwh: "The 958-era pack size was not confirmed from a Porsche document this pass" },
     }),
     ...cayenne("cayenne-s-ehybrid-2018", "Cayenne S E-Hybrid", [2018, 2018], ["S E-Hybrid", "S"], {
+      vds: ["AE2A2"],
       range: {
         epaRangeMi: f(14, "mfr", "high", "Electric-only EPA range", epa(39928)),
         epaRangeTotalMi: f(490, "mfr", "high", undefined, epa(39928)),
@@ -1919,6 +1954,7 @@ const R: EnrichmentRow[] = [];
       abstains: { ...PORSCHE_ABSTAINS, packUsableKwh: "The 958-era pack size was not confirmed from a Porsche document this pass" },
     }),
     ...cayenne("cayenne-ehybrid-2019", "Cayenne E-Hybrid", [2019, 2019], ["E-Hybrid"], {
+      vds: ["AE2AY", "BE2AY"],
       modelAliases: CAYENNE_ALIASES,
       battery: P_PACK_141(CAY_2019_PR),
       range: {
@@ -1931,6 +1967,7 @@ const R: EnrichmentRow[] = [];
       charging: P_AC(3.6, CAY_2019_PR, "7.2 kW optional"),
     }),
     ...cayenne("cayenne-ehybrid-2020", "Cayenne E-Hybrid", [2020, 2020], ["E-Hybrid"], {
+      vds: ["AE2AY", "BE2AY"],
       modelAliases: CAYENNE_ALIASES,
       battery: P_PACK_141(CAY_2019_PR),
       range: {
@@ -1943,6 +1980,7 @@ const R: EnrichmentRow[] = [];
       charging: P_AC(3.6, CAY_2019_PR, "7.2 kW optional"),
     }),
     ...cayenne("cayenne-ehybrid-2021-22", "Cayenne E-Hybrid", [2021, 2022], ["E-Hybrid"], {
+      vds: ["AE2AY", "BE2AY"],
       modelAliases: CAYENNE_ALIASES,
       battery: P_PACK_179(CAY_2021_PR),
       range: {
@@ -1955,6 +1993,7 @@ const R: EnrichmentRow[] = [];
       charging: P_AC(7.2, CAY_2021_PR),
     }),
     ...cayenne("cayenne-turbos-ehybrid-2020", "Cayenne Turbo S E-Hybrid", [2020, 2020], ["Turbo S E-Hybrid", "Turbo S", "Turbo"], {
+      vds: ["AH2AY", "BH2AY"],
       modelAliases: ["Cayenne Turbo S E-Hybrid Coupe"],
       battery: P_PACK_141(CAY_TSE_PR),
       range: {
@@ -1967,6 +2006,7 @@ const R: EnrichmentRow[] = [];
       charging: P_AC(7.2, CAY_TSE_PR),
     }),
     ...cayenne("cayenne-turbos-ehybrid-2021-23", "Cayenne Turbo S E-Hybrid", [2021, 2023], ["Turbo S E-Hybrid", "Turbo S", "Turbo"], {
+      vds: ["AH2AY", "BH2AY"],
       modelAliases: ["Cayenne Turbo S E-Hybrid Coupe"],
       battery: P_PACK_179(CAY_2021_PR),
       range: {
@@ -1979,6 +2019,7 @@ const R: EnrichmentRow[] = [];
       charging: P_AC(7.2, CAY_2021_PR),
     }),
     ...cayenne("cayenne-ehybrid-2025", "Cayenne E-Hybrid", [2025, 2025], ["E-Hybrid"], {
+      vds: ["AE2AY", "BE2AY"],
       modelAliases: CAYENNE_ALIASES,
       battery: P_PACK_259(CAY_2024_S_PR),
       range: {
@@ -1991,6 +2032,7 @@ const R: EnrichmentRow[] = [];
       charging: P_AC(11, CAY_2024_S_PR),
     }),
     ...cayenne("cayenne-s-ehybrid-2025", "Cayenne S E-Hybrid", [2025, 2025], ["S E-Hybrid", "S"], {
+      vds: ["AN2AY", "BN2AY"],
       modelAliases: ["Cayenne S E-Hybrid Coupe"],
       battery: P_PACK_259(CAY_2024_S_PR),
       range: {
@@ -2003,6 +2045,7 @@ const R: EnrichmentRow[] = [];
       charging: P_AC(11, CAY_2024_S_PR),
     }),
     ...cayenne("cayenne-turbo-ehybrid-2025", "Cayenne Turbo E-Hybrid", [2025, 2025], ["Turbo E-Hybrid", "Turbo"], {
+      vds: ["AM2AY", "BM2AY"],
       modelAliases: ["Cayenne Turbo E-Hybrid Coupe"],
       battery: P_PACK_259(CAY_2024_S_PR),
       range: {
@@ -2030,18 +2073,21 @@ const R: EnrichmentRow[] = [];
   ] as Array<[number, string]>) {
     R.push(
       ...cayenne(`cayenne-ehybrid-${year}`, "Cayenne E-Hybrid", [year, year], ["E-Hybrid"], {
+        vds: ["AE2AY", "BE2AY"],
         modelAliases: CAYENNE_ALIASES,
         battery: P_PACK_259(CAY_2024_S_PR),
         charging: P_AC(11, CAY_2024_S_PR),
         abstains: { ...PORSCHE_ABSTAINS, epaRangeMi: reason },
       }),
       ...cayenne(`cayenne-s-ehybrid-${year}`, "Cayenne S E-Hybrid", [year, year], ["S E-Hybrid", "S"], {
+        vds: ["AN2AY", "BN2AY"],
         modelAliases: ["Cayenne S E-Hybrid Coupe"],
         battery: P_PACK_259(CAY_2024_S_PR),
         charging: P_AC(11, CAY_2024_S_PR),
         abstains: { ...PORSCHE_ABSTAINS, epaRangeMi: reason },
       }),
       ...cayenne(`cayenne-turbo-ehybrid-${year}`, "Cayenne Turbo E-Hybrid", [year, year], ["Turbo E-Hybrid", "Turbo"], {
+        vds: ["AM2AY", "BM2AY"],
         modelAliases: ["Cayenne Turbo E-Hybrid Coupe"],
         battery: P_PACK_259(CAY_2024_S_PR),
         charging: P_AC(11, CAY_2024_S_PR),
