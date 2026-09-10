@@ -67,6 +67,7 @@ import { fetchPage } from "./lib/http.mjs";
 import { extractDealerNotes, needsDealerNotes } from "./lib/dealer-notes.mjs";
 import { dealerWords } from "./lib/normalize.mjs";
 import { snapshotKeyFromHtml } from "./lib/carfax-snapshot.mjs";
+import { titleBrandFromPage } from "./lib/title-brand.mjs";
 
 const LISTINGS = new URL("./out/listings.json", import.meta.url);
 const REGISTRY = new URL("./registry/registry.json", import.meta.url);
@@ -211,6 +212,9 @@ async function worker() {
         // one other thing this fetch is worth (lib/carfax-snapshot.mjs).
         const snapshotKey = snapshotKeyFromHtml(res.body);
         if (snapshotKey) cache[vin].snapshotKey = snapshotKey;
+        // And a title brand the page states in a spec row (lib/title-brand.mjs).
+        const titleBrand = titleBrandFromPage(res.body);
+        if (titleBrand) cache[vin].titleBrand = titleBrand;
         if (notes) read++;
         else empty++;
       }
@@ -285,6 +289,7 @@ for (const l of listings) {
   if (dealerWords(l.description)) continue;
   const hit = cache[String(l.vin ?? "").toUpperCase()];
   if (hit?.snapshotKey && !l.carfaxSnapshotKey) l.carfaxSnapshotKey = hit.snapshotKey;
+  if (hit?.titleBrand && !l.titleBrand) l.titleBrand = hit.titleBrand;
   if (!hit?.notes) continue;
   l.description = hit.notes;
   applied++;

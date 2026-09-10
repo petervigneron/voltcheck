@@ -7,6 +7,7 @@
 // page budget is spent on electric cars, not the whole lot.
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { fetchPage, setCacheTtl } from "./lib/http.mjs";
+import { titleBrandFromPage } from "./lib/title-brand.mjs";
 import { extractVehicles, extractItemListEntries } from "./lib/jsonld.mjs";
 import { classifyEv, EV_ONLY_WMIS } from "./lib/ev.mjs";
 import { apiLaneDone, API_LANE_TRIES } from "./lib/api-lane.mjs";
@@ -1394,6 +1395,10 @@ async function crawlDealerInto(domain, budget, domainCapAt, report) {
     ];
     if (vehicles.length) report.vehiclePages++;
     const isSrp = vehicles.length > 1;
+    // A title brand the page states in a spec row ("Title: Rebuilt") is the
+    // car's, on a page that is one car. lib/title-brand.mjs; found on
+    // rebuiltdeals.com 2026-09-10, which no other reader could see.
+    const pageTitleBrand = isSrp ? undefined : titleBrandFromPage(res.body);
     // Platform layer: Dealer.com and DealerOn pages embed full vehicle records
     const ddcByVin = new Map(extractDdcVehicles(res.body).map((d) => [String(d.vin).toUpperCase(), d]));
     const dealerOn = extractDealerOn(res.body);
@@ -1407,6 +1412,7 @@ async function crawlDealerInto(domain, budget, domainCapAt, report) {
       rec.evKind = cls.kind;
       rec.evConfidence = cls.confidence;
       rec.fromVdp = !isSrp;
+      if (pageTitleBrand && !rec.titleBrand) rec.titleBrand = pageTitleBrand;
       if (rec.vin && ddcByVin.has(rec.vin)) rec = enrichFromDdc(rec, ddcByVin.get(rec.vin));
       if (dealerOn) rec = enrichFromDealerOn(rec, dealerOn);
       if (teamVelocity) rec = enrichFromTeamVelocity(rec, teamVelocity);

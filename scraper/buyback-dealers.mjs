@@ -37,6 +37,12 @@ const due = sites
 
 const limitArg = process.argv.indexOf("--limit");
 const LIMIT = limitArg > -1 ? Number(process.argv[limitArg + 1]) : Infinity;
+// A rooftop the sweep has never seen goes first. rebuiltdeals.com was added
+// from the Oregon licence roll on 2026-09-09, crawled within hours, and its
+// three rebuilt-title EVs were on the site before this sweep — which walks
+// 1,500 of ~19,000 rooftops a day in registry order — would have reached it
+// in weeks. New lots are where the unread disclosures are.
+due.sort((a, b) => Number(Boolean(cache[a])) - Number(Boolean(cache[b])));
 const work = due.slice(0, LIMIT);
 console.error(`buyback-dealers: ${sites.length} working rooftops, ${due.length} due, doing ${work.length} this run`);
 
@@ -66,7 +72,7 @@ async function worker() {
         // A lot that presents itself as branded-title stock — a CANDIDATE for
         // registry/branded-title-dealers.json, reviewed by a person; see
         // lib/branded-title-dealers.mjs on why it is not applied from here.
-        const bt = readBrandedTitleSignals(res.body);
+        const bt = readBrandedTitleSignals(res.body, domain);
         if (bt.hit) cache[domain].brandedTitleLot = bt.evidence;
         if (hit) {
           found++;

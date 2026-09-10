@@ -91,11 +91,20 @@ const BRANDED_LOT =
   /(every|all( of)?)( our| the)? (car|vehicle|unit)s? (in our inventory |on our lot |we sell )?(is|are|has been|have been)( carefully| expertly| professionally)? (rebuilt|restored|branded)|(branded|rebuilt|salvage)[ -]title (cars|vehicles|inventory|trucks|suvs|dealer|dealership|specialists?|experts?|expertise|lot)|(specializ(e|ing) in|dealer of|home of) (branded|rebuilt|salvage)[ -]title/i;
 const BRANDED_DENIAL =
   /\b(not|never|no|don'?t|do not)\b[^.]{0,40}\b(sell|offer|carry|stock)\b[^.]{0,40}(branded|rebuilt|salvage)|clean[ -]title (only|guarantee|vehicles only)|no (branded|rebuilt|salvage)[ -]titles?\b/i;
-/** Returns {hit, evidence[]} — a rooftop that presents itself as a branded-title lot. */
-export function readBrandedTitleSignals(html) {
+/**
+ * Returns {hit, evidence[]} — a rooftop that presents itself as a branded-title
+ * lot. `domain` is optional: a name that says it ("rebuiltdeals.com",
+ * "salvagereseller.com") is a candidate on the name alone, since such a lot's
+ * homepage may say only "professionally rebuilt with pride" (rebuiltdeals.com,
+ * 2026-09-10) and never use the word title.
+ */
+export function readBrandedTitleSignals(html, domain) {
   const text = strip(String(html ?? "")).replace(/<[^>]*>/g, " ").replace(/\s+/g, " ");
   if (BRANDED_DENIAL.test(text)) return { hit: false, evidence: [], denied: true };
   const evidence = [];
+  if (typeof domain === "string" && /rebuilt|salvage|branded|lemon|buyback/i.test(domain.replace(/^www\./, ""))) {
+    evidence.push({ where: "domain", text: domain });
+  }
   for (const m of text.matchAll(new RegExp(BRANDED_LOT.source, "gi"))) {
     const at = Math.max(0, m.index - 40);
     const quote = text.slice(at, m.index + m[0].length + 40).trim();
