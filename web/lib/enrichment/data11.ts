@@ -1261,7 +1261,7 @@ const R: EnrichmentRow[] = [];
       chemistry: f<Chemistry>("LFP", "mfr", "medium", "Lithium iron phosphate, replaced by NMC on the S 560e", S560E_RELEASE),
     },
     range: {
-      epaRangeMi: f(14, "mfr", "high", "Electric-only EPA range. Identical rating 2015–2017", epa(38460)),
+      epaRangeMi: f(12, "mfr", "high", "EPA's printed all-electric range, “All Elec: 0-12 mi”. The API's rangeA (14) is EPA's “Elec + Gas” charge-depleting figure, not an electric-only range"+". Identical 2015–2017", epa(38460)),
       epaRangeTotalMi: f(450, "mfr", "high", undefined, epa(38460)),
       mpgeElectric: f(58, "mfr", "high", undefined, epa(38460)),
       mpgeCombined: f(31, "mfr", "high", undefined, epa(38460)),
@@ -1288,7 +1288,7 @@ const R: EnrichmentRow[] = [];
       chemistry: f<Chemistry>("NMC", "mfr", "medium", "Lithium-nickel-manganese-cobalt, replacing the S 550e's LFP", S560E_RELEASE),
     },
     range: {
-      epaRangeMi: f(19, "mfr", "high", "Electric-only EPA range. Identical rating 2019–2020", epa(42209)),
+      epaRangeMi: f(18, "mfr", "high", "EPA's printed all-electric range, “All Elec: 0-18 mi”. The API's rangeA (19) is EPA's “Elec + Gas” charge-depleting figure, not an electric-only range"+". Identical 2019–2020", epa(42209)),
       epaRangeTotalMi: f(510, "mfr", "high", undefined, epa(42209)),
       mpgeElectric: f(64, "mfr", "high", undefined, epa(42209)),
       mpgeCombined: f(33, "mfr", "high", undefined, epa(42209)),
@@ -1349,7 +1349,7 @@ const R: EnrichmentRow[] = [];
 
   R.push(
     s580e("s580e-2023", [2023, 2023], 2023, {
-      epaRangeMi: f(56, "mfr", "high", "Electric-only EPA range", epa(47279)),
+      epaRangeMi: f(46, "mfr", "high", "EPA's printed all-electric range, “All Elec: 0-46 mi”. The API's rangeA (56) is EPA's “Elec + Gas” charge-depleting figure, not an electric-only range", epa(47279)),
       epaRangeTotalMi: f(470, "mfr", "high", undefined, epa(47279)),
       mpgeElectric: f(49, "mfr", "high", undefined, epa(47279)),
       mpgeCombined: f(41, "mfr", "high", undefined, epa(47279)),
@@ -1367,7 +1367,7 @@ const R: EnrichmentRow[] = [];
       )
     ),
     s580e("s580e-2025", [2025, 2025], 2025, {
-      epaRangeMi: f(48, "mfr", "high", "Electric-only EPA range", epa(49021)),
+      epaRangeMi: f(47, "mfr", "high", "EPA's printed all-electric range, “All Elec: 0-47 mi”. The API's rangeA (48) is EPA's “Elec + Gas” charge-depleting figure, not an electric-only range", epa(49021)),
       epaRangeTotalMi: f(470, "mfr", "high", undefined, epa(49021)),
       mpgeElectric: f(63, "mfr", "high", undefined, epa(49021)),
       mpgeCombined: f(42, "mfr", "high", undefined, epa(49021)),

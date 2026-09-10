@@ -2612,7 +2612,6 @@ R.push({
 {
   const E53_PR = "https://media.mbusa.com/releases/release-c510507a2b04ee68bb1eaf8344e88f1e-performance-and-efficiency-in-a-new-combination-the-mercedes-amg-e-53-hybrid";
   const E53_WAGON_PR = "https://media.mbusa.com/releases/release-0aacd0cfec6ffa3ea5c65bd4c210f737-2026-mercedes-amg-e-53-hybrid-wagon";
-  const C63_QRG = "https://media.mbusa.com/releases/release-1d2ba082ef32b72d00f8f4d0180028da-2024-mercedes-amg-c-63-s-e-performance-quick-reference-guide";
   const GLC63_PR = "https://media.mbusa.com/releases/release-abcf6ba2c88042e4283e711ebe00a2f1-the-all-new-mercedes-amg-glc-performance-suv-in-two-high-performance-versions";
   const MB_WARRANTY_ABSTAIN = "Mercedes' US warranty booklets are PDF-walled and no fetched page states the terms";
   const E53_BATTERY = {
@@ -2700,21 +2699,6 @@ R.push({
         mpgGasoline: f(24, "mfr", "high", undefined, epa(49769)),
       },
       charging: E53_CHARGING,
-      abstains: { batteryWarranty: MB_WARRANTY_ABSTAIN, heatPump: HP_ABSTAIN },
-    },
-    {
-      id: "amg-c63-se-2025",
-      make: "MERCEDES-BENZ",
-      model: "AMG C 63",
-      modelAliases: ["AMG C 63 S E Performance", "C 63 S E Performance"],
-      modelYears: [2025, 2026],
-      packVariant: "PHEV",
-      battery: {
-        packGrossKwh: f(6.1, "mfr", "high", undefined, C63_QRG),
-        packUsableKwh: f(4.8, "mfr", "high", undefined, C63_QRG),
-      },
-      range: { epaRangeMi: f(1, "mfr", "high", "Battery built for power delivery, not electric-only driving", epa(49018)) },
-      charging: { portStandard: f<"J1772">("J1772", "mfr", "high", "AC charging only, no DC fast charge"), dcFastCharging: f<"none">("none", "est", "high", "AC charging only") },
       abstains: { batteryWarranty: MB_WARRANTY_ABSTAIN, heatPump: HP_ABSTAIN },
     },
     {

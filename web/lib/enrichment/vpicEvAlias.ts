@@ -91,7 +91,10 @@ const MAP: Record<string, string[]> = {
   "FORD|ESCAPE|PHEV": ["Escape PHEV"],
   "MERCEDES-BENZ|GLC-CLASS|PHEV": ["GLC 350e"],
   "MERCEDES-BENZ|GLE-CLASS|PHEV": ["GLE 450e"],
-  "MERCEDES-BENZ|C-CLASS|PHEV": ["AMG C 63"],
+  // data15.ts keys the C 63 S E on the VIN under model "C-Class" with the
+  // full badge as an alias; the bare "AMG C 63" row it used to name was
+  // superseded 2026-09-10. The C 350e (2017-18) rides the same vPIC name.
+  "MERCEDES-BENZ|C-CLASS|PHEV": ["AMG C 63 S E Performance", "C 350e"],
   "MERCEDES-BENZ|E-CLASS|PHEV": ["AMG E 53 Hybrid"],
   "LEXUS|TX|PHEV": ["TX 550h+"],
   "LAND ROVER|RANGE ROVER|PHEV": ["Range Rover Plug-In Hybrid"],

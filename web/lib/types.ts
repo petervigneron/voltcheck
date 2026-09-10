@@ -188,11 +188,19 @@ export interface EnrichmentRow {
   };
   range?: {
     // BEV: the car's whole EPA range — unchanged meaning, don't repurpose it.
-    // PHEV: the EPA ELECTRIC-ONLY range (fueleconomy.gov's `rangeA`, on
-    // fuelType2/electricity) — the headline number for an EV-shopping site,
-    // and the one a PHEV row should always carry even where the rest of this
-    // group is thin. Never the blended or total figure for a PHEV; that's
-    // epaRangeTotalMi below. A PHEV row with both fields set is how a shopper
+    // PHEV: the EPA ELECTRIC-ONLY range — the headline number for an
+    // EV-shopping site, and the one a PHEV row should always carry even where
+    // the rest of this group is thin. Never the blended or total figure for a
+    // PHEV; that's epaRangeTotalMi below.
+    //
+    // WHICH NUMBER (2026-09-10). fueleconomy.gov's REST `rangeA` is the
+    // figure its page labels "N miles Elec + Gas": the charge-depleting range
+    // with the engine allowed to help. Its page also prints "All Elec: 0-M
+    // mi", and M is the electric-only range this field means. On most
+    // plug-ins the two agree within a mile (Wrangler 22/21, RAV4 Prime 42/42);
+    // on strongly blended cars they do not (S 580e 56 vs 46, AMG C 63 11 vs
+    // 1), and rangeA overstates. No REST field reproduces M — read it off the
+    // Find.do page (<span class="allElecRange">) and cite that page. A PHEV row with both fields set is how a shopper
     // tells them apart on the card; see EnrichmentReport.tsx's label swap.
     epaRangeMi?: Fact<number>;
     // The maker's OWN published range where no EPA rating exists at all —
