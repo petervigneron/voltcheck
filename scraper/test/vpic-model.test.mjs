@@ -58,6 +58,9 @@ const OMITTED = new Set([
   // The web lists every E-Hybrid grade for a bare "Cayenne" decode; the VIN
   // descriptor chooses between them there, a nameplate cannot.
   "PORSCHE|CAYENNE|PHEV", "PORSCHE|CAYENNE COUPE|PHEV", "PORSCHE|CAYENNE E-HYBRID|PHEV", "PORSCHE|CAYENNE E-HYBRID COUPE|PHEV",
+  // The feed keeps the dealer's "Macan" (a BEV Macan decode passes through as
+  // written, pinned above); the web's vds-keyed rows answer to that name.
+  "PORSCHE|MACAN|BEV",
 ]);
 
 test("every badge alias here is one the /vin/ page also makes, and every one it makes is here or deliberately not", () => {

@@ -72,9 +72,6 @@ const BADGE = {
   "SUBARU|CROSSTREK|PHEV": "Crosstrek Hybrid",
   "MCLAREN|ARTURA|PHEV": "Artura",
   "BENTLEY|BENTAYGA|PHEV": "Bentayga Hybrid",
-  // vPIC files the electric Macan as "Macan"; the web map made the same
-  // alias in the Porsche VIN-key pass (493ed23, 2026-09-10).
-  "PORSCHE|MACAN|BEV": "Macan Electric",
 };
 
 const PLAIN = {
