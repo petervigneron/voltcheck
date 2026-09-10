@@ -12,7 +12,7 @@
 // when this shipped in 2026-08-17; re-measured 2026-08-23 on the 7,432 pairs
 // this generator did not itself create, it is 69%, and 83% on the subset
 // carrying a state, which every roll row does. DNS resolution is free and
-// touches nobody's server. Only resolving candidates are fetched, politely,
+// touches no dealer's server. Only resolving candidates are fetched, politely,
 // once per domain. And a match is claimed ONLY when the page itself asserts
 // the identity — lib/dealer-identity.mjs owns those rules and the reason each
 // one exists. A parked domain, a different Eagle Auto Sales three states
@@ -22,11 +22,25 @@
 // Verified dealers are appended to the registry as "discovered", the same
 // contract as every discovery source: probe.mjs validates extraction before
 // anything joins the crawl.
+//
+// The DNS stage runs over DNS-over-HTTPS by default; lib/candidate-dns.mjs
+// says why (on 2026-09-10 a UDP flood from four of these runs took the router
+// down and scored its own outage as "no website"). To run several rolls,
+// split the stages so DNS and fetching never overlap on the machine: every
+// roll's DNS first, then every roll's fetch.
+//
+//   node resolve-dealers.mjs mo.csv --state MO --dns-only --dns-out dns/mo.json
+//   node resolve-dealers.mjs mo.csv --state MO --dns-in dns/mo.json --out mo-added.json
+//
+// DNS_ONLY / DNS_OUT / DNS_IN / DNS_CONC / RESOLVE_OUT are accepted as the
+// environment spellings of --dns-only / --dns-out / --dns-in /
+// --dns-concurrency / --out. --dns udp keeps the old transport, capped at
+// UDP_MAX_IN_FLIGHT for the whole machine.
 import { readFile, writeFile } from "node:fs/promises";
-import { Resolver } from "node:dns/promises";
 import { fetchPage, setCacheTtl } from "./lib/http.mjs";
 import { squash, candidates, BRANDS } from "./lib/dealer-names.mjs";
 import { pageEvidence, identityRule } from "./lib/dealer-identity.mjs";
+import { dohResolver, udpResolver, resolveAll, holdUdpLock, UDP_MAX_IN_FLIGHT, DnsStageError } from "./lib/candidate-dns.mjs";
 
 const args = process.argv.slice(2);
 const WRITE = args.includes("--write");
@@ -40,7 +54,23 @@ const SAMPLE = (() => { const i = args.indexOf("--sample"); return i >= 0 ? Numb
 const SEED = (() => { const i = args.indexOf("--seed"); return i >= 0 ? Number(args[i + 1]) : 20260823; })();
 // Rolls that carry no state column (FL's HTML tables) get it from the flag.
 const STATE = (() => { const i = args.indexOf("--state"); return i >= 0 ? args[i + 1] : null; })();
-const csvPath = args.find((a) => !a.startsWith("--"));
+const opt = (flag, env) => {
+  const i = args.indexOf(flag);
+  return i >= 0 ? args[i + 1] : env ? process.env[env] || null : null;
+};
+const DNS_TRANSPORT = opt("--dns") ?? "doh";
+const DNS_ONLY = args.includes("--dns-only") || !!process.env.DNS_ONLY;
+const DNS_IN = opt("--dns-in", "DNS_IN");
+const DNS_OUT = opt("--dns-out", "DNS_OUT");
+const DNS_CONC = Number(opt("--dns-concurrency", "DNS_CONC")) || (DNS_TRANSPORT === "udp" ? UDP_MAX_IN_FLIGHT : 96);
+const DRY_OUT = opt("--out", "RESOLVE_OUT") ?? "/tmp/resolved-dealers.json";
+// Every flag that takes a value, so a flag placed before the roll path never
+// has its value mistaken for the path.
+const VALUE_FLAGS = new Set(["--limit", "--concurrency", "--dump-unresolved", "--sample", "--seed", "--state", "--tlds", "--dns", "--dns-in", "--dns-out", "--dns-concurrency", "--out"]);
+const csvPath = args.find((a, i) => !a.startsWith("--") && !VALUE_FLAGS.has(args[i - 1]));
+if (!["doh", "udp"].includes(DNS_TRANSPORT)) { console.error(`--dns takes doh or udp, not ${DNS_TRANSPORT}`); process.exit(1); }
+if (DNS_ONLY && !DNS_OUT) { console.error("--dns-only needs --dns-out <file> to keep what it resolved"); process.exit(1); }
+if (DNS_ONLY && DNS_IN) { console.error("--dns-only and --dns-in cannot both be given"); process.exit(1); }
 setCacheTtl(24 * 3600_000);
 
 // ── roll parsing (WA DOL shape; header-driven so other rolls can follow) ────
@@ -108,9 +138,6 @@ const TLDS = (() => {
   if (i < 0) return [".com", ".net", ".biz", ".us"];
   return args[i + 1].split(",").map((t) => (t.startsWith(".") ? t : `.${t}`));
 })();
-const resolver = new Resolver();
-resolver.setServers(["1.1.1.1", "8.8.8.8"]);
-
 const wantDomains = new Map(); // domain -> [dealer indices]
 work.forEach((d, i) => {
   const cands = new Set([...candidates(d.name, d.city, d.state), ...(d.alt ? candidates(d.alt, d.city, d.state) : [])]);
@@ -122,23 +149,45 @@ work.forEach((d, i) => {
 });
 console.error(`${wantDomains.size} candidate domains to DNS-check`);
 
-const resolves = new Set();
-{
-  const doms = [...wantDomains.keys()];
-  let next = 0, done = 0;
-  await Promise.all(Array.from({ length: 200 }, async () => {
-    while (next < doms.length) {
-      const dom = doms[next++];
-      try { await resolver.resolve4(dom); resolves.add(dom); } catch {}
-      if (++done % 5000 === 0) console.error(`  dns ${done}/${doms.length} (${resolves.size} resolve)`);
-    }
-  }));
+let resolves;
+if (DNS_IN) {
+  // A stage file from another roll or another --tlds would name domains this
+  // run never generated; they have no owners here, so they are dropped.
+  const loaded = JSON.parse(await readFile(DNS_IN, "utf-8"));
+  resolves = new Set(loaded.filter((d) => wantDomains.has(d)));
+  const foreign = loaded.length - resolves.size;
+  console.error(`loaded ${resolves.size} resolving candidates from ${DNS_IN}${foreign ? ` (ignored ${foreign} this run did not generate)` : ""}`);
+} else {
+  const udp = DNS_TRANSPORT === "udp";
+  const inFlight = udp ? Math.min(DNS_CONC, UDP_MAX_IN_FLIGHT) : DNS_CONC;
+  if (inFlight < DNS_CONC) console.error(`UDP capped at ${inFlight} in flight (asked for ${DNS_CONC})`);
+  const release = udp ? await holdUdpLock({ log: (m) => console.error(m) }) : null;
+  try {
+    const stage = await resolveAll([...wantDomains.keys()], udp ? udpResolver() : dohResolver(), { concurrency: inFlight, log: (m) => console.error(m) });
+    resolves = stage.resolves;
+    console.error(`${resolves.size} of ${wantDomains.size} candidates resolve (${DNS_TRANSPORT}, ${inFlight} in flight, ${stage.perSec}/s; ${stage.tally.servfail} SERVFAIL, ${stage.unanswered.length} unanswered)`);
+  } catch (e) {
+    if (!(e instanceof DnsStageError)) throw e;
+    console.error(e.message);
+    process.exit(2);
+  } finally {
+    release?.();
+  }
+  if (DNS_OUT) {
+    await writeFile(DNS_OUT, JSON.stringify([...resolves]));
+    console.error(`wrote ${resolves.size} resolving candidates to ${DNS_OUT}`);
+  }
 }
-console.error(`${resolves.size} of ${wantDomains.size} candidates resolve`);
+if (DNS_ONLY) process.exit(0);
 
 // ── stage 3+4: fetch + identity verification ────────────────────────────────
 // .com/.net first; a dealer that already verified stops spending fetches.
-const order = [...resolves].sort((a, b) => TLDS.findIndex((t) => a.endsWith(t)) - TLDS.findIndex((t) => b.endsWith(t)));
+// Within a TLD, the order the candidates were generated in, so which of two
+// verifying domains a dealer gets does not depend on which DNS answer came
+// back first.
+const tldRank = (d) => TLDS.findIndex((t) => d.endsWith(t));
+const genRank = new Map([...wantDomains.keys()].map((d, i) => [d, i]));
+const order = [...resolves].sort((a, b) => tldRank(a) - tldRank(b) || genRank.get(a) - genRank.get(b));
 const verified = new Map(); // dealerIdx -> {domain, how}
 const already = new Map(); // dealerIdx -> domain (known registry domain)
 for (const dom of order) {
@@ -233,6 +282,6 @@ if (WRITE && additions.length) {
   await writeFile(new URL("./registry/registry.json", import.meta.url), JSON.stringify(reg2, null, 2));
   console.error("appended");
 } else if (additions.length) {
-  await writeFile("/tmp/resolved-dealers.json", JSON.stringify(additions, null, 2));
-  console.error("dry run — wrote /tmp/resolved-dealers.json (pass --write to append)");
+  await writeFile(DRY_OUT, JSON.stringify(additions, null, 2));
+  console.error(`dry run — wrote ${DRY_OUT} (pass --write to append)`);
 }
