@@ -15,6 +15,7 @@ export interface TeslaCollisionSubject {
   year: number;
   drive?: string;
   vpicBatteryKwh?: number;
+  vpicEvLevel?: "BEV" | "PHEV";
 }
 
 /**
