@@ -50,6 +50,7 @@ import { fuelTextOnly, vpicConfirmsBev, vpicConfirmsPhev, vpicRefutesEv } from "
 import { fetchWithRetry } from "./lib/retry.mjs";
 import { untrustedModel } from "./lib/model-trust.mjs";
 import { feedModelFromVpic } from "./lib/vpic-model.mjs";
+import { vpicTrim } from "./lib/vpic-trim.mjs";
 
 const src = new URL("./out/listings.json", import.meta.url);
 const listings = JSON.parse(await readFile(src, "utf-8"));
@@ -85,33 +86,9 @@ for (const l of listings) {
 }
 const needs = [...needsByVin.values()];
 
-/**
- * Neither vPIC field is reliably the trim, so take whichever survives a junk
- * filter rather than ranking them. Observed on F-150 Lightnings 2026-08-15:
- *   2022-23  Series ""          Trim "SuperCrew"   -> nothing (cab style)
- *   2024     Series "PRO"/"XLT" Trim ""            -> Series
- *   2025     Series "F-Series"  Trim "XLT"         -> Trim
- * The old `Trim || Series` filled 31 live listings with "SuperCrew" — every
- * Lightning is a SuperCrew, so it names no version — and a naive flip to
- * `Series || Trim` would have stamped "F-Series" on the 2025 trucks instead.
- */
-const CAB_STYLE_RE =
-  /^(super\s*crew|super\s*cab|crew\s*cab|regular\s*cab|extended\s*cab|double\s*cab|quad\s*cab|king\s*cab)$/i;
-// "F-Series", "E-Series": the model family in the trim column.
-const FAMILY_RE = /^[a-z]-?series$/i;
-
-function vpicTrim(r, l) {
-  for (const cand of [r.Series, r.Trim]) {
-    const t = String(cand ?? "").trim();
-    if (!t) continue;
-    if (CAB_STYLE_RE.test(t) || FAMILY_RE.test(t)) continue;
-    // The make or the model restated where the version belongs.
-    const n = (s) => String(s ?? "").toUpperCase().replace(/[^A-Z0-9]/g, "");
-    if (n(t) === n(l.make) || n(t) === n(l.model)) continue;
-    return t;
-  }
-  return "";
-}
+// The trim taken from a decode — lib/vpic-trim.mjs, with the junk filter
+// (cab styles, model families, chassis codes, grade lists, drive-only
+// strings) and the measurements behind each class.
 
 function normDrive(s) {
   const u = String(s ?? "").toUpperCase();
