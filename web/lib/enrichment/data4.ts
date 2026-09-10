@@ -5686,10 +5686,10 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
       // e-tron GT (J1 platform) 2022–23; the 2024 row lives in data3.
       au("etrongt-2022-23", "e-tron GT", [2022, 2023], ["W"], "e-tron GT quattro",
         f(238, "mfr", "high", "MY2022–23 e-tron GT — EPA (44776/45981 rate identically)", epa(44776)),
-        { battery: GT_PACK, charging: { ...AUDI_CHG_800, dcPeakKw: f(270, "mfr", "high", "Audi: “up to 270 kW”") }, thermal: { heatPump: f<"standard">("standard", "mfr", "high", "Audi: the e-tron GT's heat pump is standard") } }),
+        { battery: GT_PACK, charging: { ...AUDI_CHG_800, dcPeakKw: f(270, "mfr", "high", "Audi: “up to 270 kW”") }, thermal: undefined, abstains: { heatPump: "No Audi of America document states a heat pump on the 2022-23 e-tron GT: the 2022 US spec sheet has no thermal section and releases 459/470/481/484/563 never say pump; the only source saying standard is Audi AG's 2021 press kit, which scopes itself to the German range (refuter, 2026-09-10)" } }),
       au("rs-etrongt-2022-23", "RS e-tron GT", [2022, 2023], ["W"], "RS e-tron GT",
         f(232, "mfr", "high", "MY2022–23 RS e-tron GT — EPA (44783/45982 rate identically)", epa(44783)),
-        { battery: GT_PACK, charging: { ...AUDI_CHG_800, dcPeakKw: f(270, "mfr", "high", "Audi: “up to 270 kW”") }, thermal: { heatPump: f<"standard">("standard", "mfr", "high", "Audi: the e-tron GT's heat pump is standard") } }),
+        { battery: GT_PACK, charging: { ...AUDI_CHG_800, dcPeakKw: f(270, "mfr", "high", "Audi: “up to 270 kW”") }, thermal: undefined, abstains: { heatPump: "No Audi of America document states a heat pump on the 2022-23 e-tron GT: the 2022 US spec sheet has no thermal section and releases 459/470/481/484/563 never say pump; the only source saying standard is Audi AG's 2021 press kit, which scopes itself to the German range (refuter, 2026-09-10)" } }),
       // Q6 e-tron / SQ6 e-tron MOVED to data10 (2026-08-25). Same EPA certs
       // and the same 307 / 310 / 325 / 275, and data10 adds the 100 kWh
       // gross / 94.4 net pair, the 8:1:1 chemistry, 270 kW (260 on RWD), the
