@@ -29,29 +29,8 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { FACT_SHEETS } from "@/lib/facts/registry";
 import { loadFactSheet } from "@/lib/facts/content";
-import { ENRICHMENT_ROWS } from "@/lib/enrichment/data";
-import { RESEARCH_ROWS } from "@/lib/enrichment/data2";
-import { RESEARCH_ROWS_3 } from "@/lib/enrichment/data3";
-import { RESEARCH_ROWS_4 } from "@/lib/enrichment/data4";
-import { RESEARCH_ROWS_5 } from "@/lib/enrichment/data5";
-import { RESEARCH_ROWS_6 } from "@/lib/enrichment/data6";
-import { RESEARCH_ROWS_9 } from "@/lib/enrichment/data9";
-import { RESEARCH_ROWS_10 } from "@/lib/enrichment/data10";
-import { RESEARCH_ROWS_11 } from "@/lib/enrichment/data11";
-import { RESEARCH_ROWS_12 } from "@/lib/enrichment/data12";
+import { ALL_ROWS } from "@/lib/enrichment/rows";
 
-const ALL_ROWS = [
-  ...ENRICHMENT_ROWS,
-  ...RESEARCH_ROWS,
-  ...RESEARCH_ROWS_3,
-  ...RESEARCH_ROWS_4,
-  ...RESEARCH_ROWS_5,
-  ...RESEARCH_ROWS_6,
-  ...RESEARCH_ROWS_9,
-  ...RESEARCH_ROWS_10,
-  ...RESEARCH_ROWS_11,
-  ...RESEARCH_ROWS_12,
-];
 
 // Sheet URL identity → the enrichment lane's exact make/model strings.
 // "IONIQ 5 N" is a distinct enrichment model and stays unmapped on purpose:

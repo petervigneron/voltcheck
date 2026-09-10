@@ -17,16 +17,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { matchEnrichment } from "@/lib/enrichment/match";
 import { VPIC_EV_MODEL_ALIAS_MAP, vpicEvModelAliases } from "@/lib/enrichment/vpicEvAlias";
-import { ENRICHMENT_ROWS } from "@/lib/enrichment/data";
-import { RESEARCH_ROWS } from "@/lib/enrichment/data2";
-import { RESEARCH_ROWS_3 } from "@/lib/enrichment/data3";
-import { RESEARCH_ROWS_4 } from "@/lib/enrichment/data4";
-import { RESEARCH_ROWS_5 } from "@/lib/enrichment/data5";
-import { RESEARCH_ROWS_6 } from "@/lib/enrichment/data6";
-import { RESEARCH_ROWS_9 } from "@/lib/enrichment/data9";
-import { RESEARCH_ROWS_10 } from "@/lib/enrichment/data10";
-import { RESEARCH_ROWS_11 } from "@/lib/enrichment/data11";
-import { RESEARCH_ROWS_12 } from "@/lib/enrichment/data12";
+import { ALL_ROWS } from "@/lib/enrichment/rows";
 import type { VinDecode } from "@/lib/types";
 
 const BEV = "BEV (Battery Electric Vehicle)";
@@ -98,11 +89,6 @@ for (const [label, d] of MUST_NOT) {
 // Map hygiene: every alias target must be a model string some corpus row
 // actually answers to, so a row rename breaks this test instead of silently
 // re-opening the hole.
-const ALL_ROWS = [
-  ...ENRICHMENT_ROWS, ...RESEARCH_ROWS, ...RESEARCH_ROWS_3, ...RESEARCH_ROWS_4,
-  ...RESEARCH_ROWS_5, ...RESEARCH_ROWS_6, ...RESEARCH_ROWS_9, ...RESEARCH_ROWS_10,
-  ...RESEARCH_ROWS_11, ...RESEARCH_ROWS_12,
-];
 const norm = (s: string) => s.toUpperCase().replace(/[^A-Z0-9]/g, "");
 const knownByMake = new Map<string, Set<string>>();
 for (const r of ALL_ROWS) {

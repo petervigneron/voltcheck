@@ -1,18 +1,8 @@
 import type { EnrichmentResult, VinDecode, TeslaVinFacts } from "../types";
-import { ENRICHMENT_ROWS } from "./data";
-import { RESEARCH_ROWS } from "./data2";
-import { RESEARCH_ROWS_3 } from "./data3";
-import { RESEARCH_ROWS_4 } from "./data4";
-import { RESEARCH_ROWS_5 } from "./data5";
-import { RESEARCH_ROWS_6 } from "./data6";
-import { RESEARCH_ROWS_9 } from "./data9";
-import { RESEARCH_ROWS_10 } from "./data10";
-import { RESEARCH_ROWS_11 } from "./data11";
-import { RESEARCH_ROWS_12 } from "./data12";
+import { ALL_ROWS } from "./rows";
 import { applyBackfill } from "./backfill";
 import { vpicEvModelAliases } from "./vpicEvAlias";
 
-const ALL_ROWS = [...ENRICHMENT_ROWS, ...RESEARCH_ROWS, ...RESEARCH_ROWS_3, ...RESEARCH_ROWS_4, ...RESEARCH_ROWS_5, ...RESEARCH_ROWS_6, ...RESEARCH_ROWS_9, ...RESEARCH_ROWS_10, ...RESEARCH_ROWS_11, ...RESEARCH_ROWS_12];
 
 const norm = (s?: string) => (s ?? "").toUpperCase().replace(/[^A-Z0-9]/g, "");
 

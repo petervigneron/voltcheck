@@ -17,19 +17,10 @@
 // with 2,589 live listings, and nothing else in the repo would notice.
 import test from "node:test";
 import assert from "node:assert/strict";
-import { ENRICHMENT_ROWS } from "@/lib/enrichment/data";
-import { RESEARCH_ROWS } from "@/lib/enrichment/data2";
-import { RESEARCH_ROWS_3 } from "@/lib/enrichment/data3";
-import { RESEARCH_ROWS_4 } from "@/lib/enrichment/data4";
-import { RESEARCH_ROWS_5 } from "@/lib/enrichment/data5";
-import { RESEARCH_ROWS_6 } from "@/lib/enrichment/data6";
-import { RESEARCH_ROWS_9 } from "@/lib/enrichment/data9";
-import { RESEARCH_ROWS_10 } from "@/lib/enrichment/data10";
-import { RESEARCH_ROWS_11 } from "@/lib/enrichment/data11";
-import { RESEARCH_ROWS_12 } from "@/lib/enrichment/data12";
+import { ALL_ROWS } from "@/lib/enrichment/rows";
 import type { EnrichmentRow, AbstainableField } from "@/lib/types";
 
-const ALL: EnrichmentRow[] = [...ENRICHMENT_ROWS, ...RESEARCH_ROWS, ...RESEARCH_ROWS_3, ...RESEARCH_ROWS_4, ...RESEARCH_ROWS_5, ...RESEARCH_ROWS_6, ...RESEARCH_ROWS_9, ...RESEARCH_ROWS_10, ...RESEARCH_ROWS_11, ...RESEARCH_ROWS_12];
+const ALL: EnrichmentRow[] = ALL_ROWS;
 const byId = (id: string) => {
   const r = ALL.find((x) => x.id === id);
   assert.ok(r, `no row with id ${id}`);

@@ -29,18 +29,8 @@
 // bar, 10 = at least one core field is missing somewhere (so the nightly can
 // shout). --all lists every gap; the default lists only core-bar failures.
 
-import { ENRICHMENT_ROWS } from "../lib/enrichment/data.ts";
-import { RESEARCH_ROWS } from "../lib/enrichment/data2.ts";
-import { RESEARCH_ROWS_3 } from "../lib/enrichment/data3.ts";
-import { RESEARCH_ROWS_4 } from "../lib/enrichment/data4.ts";
-import { RESEARCH_ROWS_5 } from "../lib/enrichment/data5.ts";
-import { RESEARCH_ROWS_6 } from "../lib/enrichment/data6.ts";
-import { RESEARCH_ROWS_9 } from "../lib/enrichment/data9.ts";
-import { RESEARCH_ROWS_10 } from "../lib/enrichment/data10.ts";
-import { RESEARCH_ROWS_11 } from "../lib/enrichment/data11.ts";
-import { RESEARCH_ROWS_12 } from "../lib/enrichment/data12.ts";
+import { ALL_ROWS } from "../lib/enrichment/rows.ts";
 
-const ALL_ROWS = [...ENRICHMENT_ROWS, ...RESEARCH_ROWS, ...RESEARCH_ROWS_3, ...RESEARCH_ROWS_4, ...RESEARCH_ROWS_5, ...RESEARCH_ROWS_6, ...RESEARCH_ROWS_9, ...RESEARCH_ROWS_10, ...RESEARCH_ROWS_11, ...RESEARCH_ROWS_12];
 
 const argv = process.argv.slice(2);
 const has = (f) => argv.includes(f);
