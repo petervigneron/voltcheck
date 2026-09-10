@@ -81,8 +81,6 @@ const PLUG_INS = [
   "2021 Land Rover Range Rover P400e",
   "2023 Land Rover Range Rover Sport P440e",
   "2024 Land Rover Range Rover P550e",
-  "2022 MINI Cooper S E Countryman ALL4",
-  "2020 MINI Cooper SE Countryman ALL4",
   "2021 Bentley Bentayga Hybrid",
   "2023 Bentley Flying Spur Hybrid",
   "2022 Ferrari SF90 Stradale",
@@ -94,6 +92,16 @@ const PLUG_INS = [
   "2021 Karma GS-6",
   "2012 Fisker Karma EcoSport",
 ];
+
+test("the MINI Cooper S E Countryman is a plug-in only for the years it was one", () => {
+  // The same words name the battery-electric Countryman SE from MY2025, so
+  // the plug-in reading is year-gated (a 2027 "Cooper SE Countryman" resolved
+  // by VIN to the electric car and tripped the cross-kind guard 2026-09-10).
+  assert.ok(phevNameplate("MINI Cooper S E Countryman ALL4", 2022));
+  assert.ok(phevNameplate("MINI Cooper SE Countryman ALL4", 2020));
+  assert.ok(!phevNameplate("MINI Cooper SE Countryman ALL4", 2027));
+  assert.ok(!PHEV_MODEL_RE.test("2022 MINI Cooper S E Countryman ALL4"));
+});
 
 test("PHEV_MODEL_RE matches every verified plug-in nameplate", () => {
   for (const n of PLUG_INS) assert.ok(PHEV_MODEL_RE.test(n), `should match: ${n}`);

@@ -55,6 +55,9 @@ const OMITTED = new Set([
   "FERRARI|296|PHEV", "FERRARI|SF90|PHEV",
   "MERCEDES-BENZ|GLC-CLASS|PHEV", "MERCEDES-BENZ|GLE-CLASS|PHEV", "MERCEDES-BENZ|C-CLASS|PHEV", "MERCEDES-BENZ|E-CLASS|PHEV",
   "MINI|COUNTRYMAN|PHEV",
+  // The web lists every E-Hybrid grade for a bare "Cayenne" decode; the VIN
+  // descriptor chooses between them there, a nameplate cannot.
+  "PORSCHE|CAYENNE|PHEV", "PORSCHE|CAYENNE COUPE|PHEV", "PORSCHE|CAYENNE E-HYBRID|PHEV", "PORSCHE|CAYENNE E-HYBRID COUPE|PHEV",
 ]);
 
 test("every badge alias here is one the /vin/ page also makes, and every one it makes is here or deliberately not", () => {

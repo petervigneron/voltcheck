@@ -211,8 +211,9 @@ export const PHEV_MODEL_RE = new RegExp(
     "\\b(xc90|xc60|s60|v60|s90|v90)\\b.*\\b(t8|recharge)\\b", "\\bpolestar engineered\\b", "\\bpolestar 1\\b",
     // Land Rover: the P###e codes are the plug-ins.
     "\\bp(300|400|440|460|510|550)e\\b",
-    // MINI's 2018-23 plug-in, distinct from the Cooper SE hatch (BEV).
-    "\\bcooper s ?e countryman\\b",
+    // MINI's 2018-23 plug-in "Cooper S E Countryman ALL4" is year-gated below:
+    // the same words name the battery-electric Countryman SE from MY2025 on
+    // (a 2027 "Cooper SE Countryman" tripped the cross-kind guard 2026-09-10).
     // Bentley / exotics
     "\\bbentayga hybrid\\b", "\\bflying spur hybrid\\b",
     "\\bsf90\\b", "\\b296 ?(gtb|gts|speciale)\\b", "\\bartura\\b", "\\bmclaren p1\\b", "\\burus se\\b",
@@ -234,6 +235,7 @@ export const PHEV_MODEL_RE = new RegExp(
 //   AMG E 53 Hybrid: the 2019-23 "AMG E 53" was a 48V mild hybrid; the 2025+
 //   car is a plug-in and carries "Hybrid" in its name.
 const PHEV_YEAR_GATED = [
+  { re: /\bcooper s ?e countryman\b/i, from: 2018, to: 2023 },
   { re: /\bcrosstrek hybrid\b/i, from: 2019, to: 2023 },
   { re: /\bm5\b/i, from: 2025 },
   { re: /\bcontinental gtc?\b|\bflying spur\b/i, from: 2025 },
