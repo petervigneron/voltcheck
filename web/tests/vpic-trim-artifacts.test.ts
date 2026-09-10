@@ -35,6 +35,9 @@ const rav4Vpic = (over: Partial<VinDecode> = {}) =>
     series: "64 Series",
     trimFromVpic: true,
     driveType: "AWD/All-Wheel Drive",
+    // vPIC's reading for every VIN below (DecodeVINValuesBatch, 2026-09-10).
+    // Omitted until the /vin/ gate made it load-bearing (needsVpicEvReading).
+    electrificationLevel: "PHEV (Plug-in Hybrid Electric Vehicle)",
     ...over,
   });
 
@@ -103,7 +106,17 @@ test("the 2021–25 RAV4 Prime is out of scope — its filing names real grades"
 // here is the printed trim, not the enrichment; the row must still resolve.
 
 const nxVpic = (over: Partial<VinDecode> = {}) =>
-  decode({ vin: "JTJHKCFZ1T2098854", make: "LEXUS", model: "NX", modelYear: 2026, trim: "450h+ Luxury", series: "26 Series", trimFromVpic: true, ...over });
+  decode({
+    vin: "JTJHKCFZ1T2098854",
+    make: "LEXUS",
+    model: "NX",
+    modelYear: 2026,
+    trim: "450h+ Luxury",
+    series: "26 Series",
+    trimFromVpic: true,
+    electrificationLevel: "PHEV (Plug-in Hybrid Electric Vehicle)",
+    ...over,
+  });
 
 test("2026 NX 450h+: the artifact 'Luxury' label is flagged, and the row still resolves without it", () => {
   const d = nxVpic();

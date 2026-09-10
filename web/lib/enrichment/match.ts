@@ -1,7 +1,7 @@
-import type { EnrichmentResult, VinDecode, TeslaVinFacts } from "../types";
+import type { EnrichmentResult, EnrichmentRow, VinDecode, TeslaVinFacts } from "../types";
 import { ALL_ROWS } from "./rows";
 import { applyBackfill } from "./backfill";
-import { vpicEvModelAliases } from "./vpicEvAlias";
+import { evLevel, vpicEvModelAliases } from "./vpicEvAlias";
 
 
 const norm = (s?: string) => (s ?? "").toUpperCase().replace(/[^A-Z0-9]/g, "");
@@ -149,6 +149,33 @@ export function vpicTrimIsPatternArtifact(decode: VinDecode): boolean {
       a.trims.some((t) => norm(t) === norm(trim)) &&
       (!decode.series || norm(a.series) === norm(decode.series))
   );
+}
+
+// The /vin/ gate (2026-09-10). A row keyed by its trim and nothing on the VIN
+// is only as safe as that trim guard, and the guards were written against
+// dealer spellings. On /vin/ the trim is vPIC's own, and twice it walked
+// straight through one: a petrol 2023 Panamera Turbo S decodes Trim "Turbo S"
+// and drew the Turbo S E-Hybrid's 17.9 kWh pack, and a real 2018 Niro hybrid
+// decodes "EX Premium (PHEV), Graphite Edition (HEV)" — Kia filed one pattern
+// for two powertrains — and drew the plug-in's 26 electric miles. The Niro
+// rows carry a VIN key for it now. A survey only finds the patterns it
+// reaches, though (116,970 synthetic VINs across the 43 nameplates a petrol
+// or hybrid car shares reached no petrol M5, Bentley, CLA or Range Rover
+// Sport), so this is the backstop: when the trim came from vPIC, such a row
+// also needs vPIC's own BEV/PHEV reading.
+//
+// Cost, measured on 2,500 random live VINs: no row lost. vPIC affirms BEV or
+// PHEV on 2,497, and the three it does not reach no trim-guarded row. What it
+// does silence, deliberately, is vPIC calling a real plug-in a hybrid: the
+// MY2018 Sonata PHEV pattern and one MY2022 Crosstrek Hybrid pattern (1 of 36
+// live Crosstreks) decode "HEV", and /vin/ now says nothing about them rather
+// than trusting a trim. Rejected: gating every row, which also silences the
+// 2023 BMW XM (blank decode) and gains nothing, since a VIN-keyed row cannot
+// be reached by a trim string alone; and screening the trim for plug-in words,
+// since the Niro hybrid's own trim says "PHEV". The feed never sets
+// trimFromVpic, so listings are untouched.
+function needsVpicEvReading(r: EnrichmentRow, decode: VinDecode): boolean {
+  return !!decode.trimFromVpic && !!r.trim && !r.vds && !r.wmi && !r.vin8 && !evLevel(decode);
 }
 
 function normalizeDrive(d: string | undefined): "AWD" | "RWD" | "FWD" | undefined {
@@ -327,7 +354,8 @@ function matchEnrichmentRaw(
       // Spanning a cohort's versions is exactly when a feedLabelRow must NOT
       // appear: its trim key catches a label ("64 Series"), not a grade, so
       // it is not one of the versions the car could be.
-      (opts?.ignoreRowTrims ? !r.feedLabelRow : trimMatches(r.trim, decode.trim))
+      (opts?.ignoreRowTrims ? !r.feedLabelRow : trimMatches(r.trim, decode.trim)) &&
+      !needsVpicEvReading(r, decode)
   );
 
   // Every VIN-position filter below reads a fixed offset, so it is only
