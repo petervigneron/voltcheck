@@ -676,13 +676,17 @@ const RIV_PORT1 = { portStandard: f<"CCS1">("CCS1", "mfr") };
 
 
 // ── Porsche Taycan / Macan Electric (same pass) ─────────────────────────
-// Porsche's VIN code never varies, but its Part 565 kWh submissions are
-// genuinely per-VIN: 79.2 = Performance Battery, 93.4 = Performance Battery
-// Plus (gen 1). Rows carry packGrossKwh so the existing kWh-hint filter
-// resolves the pack per car — the exact ambiguity the old compound-trim
-// rows couldn't crack. GTS/Turbo/Turbo S ship the Plus pack only. Gen 2
-// (2025+) packs are 82.3/97; the 2026 submissions read a flat 89, which
-// sits within tolerance of both packs and therefore vetoes nothing.
+// Porsche's Part 565 kWh figure is filed per VIN PATTERN, not per car: it
+// names the grade's standard pack and says nothing about which pack this
+// car was ordered with. This comment used to call it "genuinely per-VIN:
+// 79.2 = Performance Battery, 93.4 = Performance Battery Plus", and a
+// control test on 2026-09-10 falsified that — every live 2021-24 AA and AB
+// VIN decodes 79.2, across four model years and both grades. In gen 1 the
+// error is harmless: 93.4 sits 17.9% from 79.2, inside match.ts's 20%
+// tolerance, so the hint never drops a row and the trim decides. In gen 2
+// it is not harmless, which is why the 2025-26 rows carry ignoreKwhHint (see
+// the block above them). GTS/Turbo/Turbo S ship the Plus pack only. Gen 2
+// (2025+) packs are 82.3/97.
 // "Turbo" vs "Turbo S" and "Electric" vs "Electric Turbo" survive via the
 // exact-trim-first rule and compound aliases. Cross Turismo appears both as
 // a trim under model "Taycan" and as its own model string — rows cover both.
@@ -4301,9 +4305,28 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     thermal: TAY1_HP,
     warranty: POR_W, buyerNotes: [NOTE_TAY_HP],
   },
+  // Gen 2 (MY2025-26) ignores the vPIC kWh hint: nothing Porsche files for
+  // these years says which pack a car has. Decoded 2026-09-10 across all 885
+  // live MY2025-26 Taycan VINs, every pattern reads one constant:
+  //   MY2025  AA, AB (base/4, 4S)            79.2   (85 + 40 VINs)
+  //   MY2025  AC, AD, AE, BA, BB             97.00
+  //   MY2026  all nine patterns              89.00  (719 VINs)
+  // 79.2 is not either gen-2 pack; it is gen 1's Performance Battery figure
+  // (PB1 above), filed against gen-2 cars. It did the damage: the gen-2 Plus
+  // pack's 97 sits 22.5% from it, past match.ts's 20% tolerance, so the hint
+  // dropped every Plus row for a MY2025 AA or AB car. Measured the same day,
+  // it was the only Porsche answer the hint changed anywhere in the live
+  // feed: 35 MY2025 Taycans advertised as "4S" resolved to the Performance
+  // Battery row and printed 252 mi, where a Plus car rates 295. They now
+  // present both 4S rows, and the trim decides only what the trim can.
+  // A MY2025 "4" never lost its row — the exact-trim pass in match.ts runs
+  // before the hint does. The flag is on every gen-2 row, not just AA/AB,
+  // because the 97 and the 89 are pattern constants too; they merely happen
+  // to sit inside the tolerance of both packs and so vetoed nothing.
   {
     id: "taycan-2025-26-base-pb", ...TAY, modelYears: [2025, 2026], trim: ["Base", "Performance Battery"], packVariant: "Performance Battery",
     battery: PB2,
+    ignoreKwhHint: true,
     range: { epaRangeMi: f(274, "mfr", "high", "MY2025–26 base Taycan (gen-2 facelift), Performance Battery, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48415") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
     thermal: TAY2_HP,
@@ -4312,6 +4335,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "taycan-2025-base-pbp", ...TAY, modelYears: [2025, 2025], trim: ["Base", "Performance Battery Plus"], packVariant: "Performance Battery Plus",
     battery: PB2P,
+    ignoreKwhHint: true,
     range: { epaRangeMi: f(318, "mfr", "high", "MY2025 base Taycan, Performance Battery Plus, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48414") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
     thermal: TAY2_HP,
@@ -4320,6 +4344,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "taycan-2025-26-4-pbp", ...TAY, modelYears: [2025, 2026], trim: ["4", "4 Black Edition"], packVariant: "Performance Battery Plus",
     battery: PB2P,
+    ignoreKwhHint: true,
     range: { epaRangeMi: f(294, "mfr", "high", "MY2025–26 Taycan 4, Performance Battery Plus, EPA; 315 on 19-inch all-seasons; the 2026 Performance Battery rates 251", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49120") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
     thermal: TAY2_HP,
@@ -4328,6 +4353,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "taycan-2025-26-4s-pb", ...TAY, modelYears: [2025, 2026], trim: ["4S", "4S Black Edition"], packVariant: "Performance Battery",
     battery: PB2,
+    ignoreKwhHint: true,
     range: { epaRangeMi: f(252, "mfr", "high", "MY2025–26 4S, Performance Battery, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48733") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
     thermal: TAY2_HP,
@@ -4336,6 +4362,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "taycan-2025-26-4s-pbp", ...TAY, modelYears: [2025, 2026], trim: ["4S", "4S Black Edition"], packVariant: "Performance Battery Plus",
     battery: PB2P,
+    ignoreKwhHint: true,
     range: { epaRangeMi: f(295, "mfr", "high", "MY2025–26 4S, Performance Battery Plus, EPA; 315 on 19-inch wheels", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48732") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
     thermal: TAY2_HP,
@@ -4344,6 +4371,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "taycan-2025-26-gts", ...TAY, modelYears: [2025, 2026], trim: ["GTS"], packVariant: "Performance Battery Plus",
     battery: PB2P,
+    ignoreKwhHint: true,
     range: { epaRangeMi: f(293, "mfr", "high", "MY2025–26 GTS, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49121") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
     thermal: TAY2_HP,
@@ -4352,6 +4380,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "taycan-2025-26-gts-st", ...TAY, modelYears: [2025, 2026], trim: ["GTS Sport Turismo", "GTS Sport Tourismo", "GTS ST", "GTS Wagon"], packVariant: "Performance Battery Plus",
     battery: PB2P,
+    ignoreKwhHint: true,
     range: { epaRangeMi: f(279, "mfr", "high", "MY2025–26 GTS Sport Turismo, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=49122") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
     thermal: TAY2_HP,
@@ -4360,6 +4389,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "taycan-2025-26-turbo", ...TAY, modelYears: [2025, 2026], trim: ["Turbo"], packVariant: "Performance Battery Plus",
     battery: PB2P,
+    ignoreKwhHint: true,
     range: { epaRangeMi: f(292, "mfr", "high", "MY2025–26 Turbo, EPA; 317 on 21-inch Aero wheels", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48734") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
     thermal: TAY2_HP,
@@ -4368,6 +4398,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "taycan-2025-26-turbogt", ...TAY, modelYears: [2025, 2026], trim: ["Turbo GT"], packVariant: "Performance Battery Plus",
     battery: PB2P,
+    ignoreKwhHint: true,
     range: { epaRangeMi: f(276, "mfr", "high", "MY2025–26 Turbo GT, EPA; 269 with the Weissach Package", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48737") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
     thermal: TAY2_HP,
@@ -4376,6 +4407,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "taycan-2025-26-turbos", ...TAY, modelYears: [2025, 2026], trim: ["Turbo S"], packVariant: "Performance Battery Plus",
     battery: PB2P,
+    ignoreKwhHint: true,
     range: { epaRangeMi: f(266, "mfr", "high", "MY2025–26 Turbo S, EPA; 298 on 21-inch Aero wheels", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48739") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
     thermal: TAY2_HP,
@@ -4448,6 +4480,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "taycan-ct-2025-26-4", ...TAY, modelYears: [2025, 2026], trim: ["4 Cross Turismo", "4 Cross Tourismo"], packVariant: "Cross Turismo",
     battery: PB2P,
+    ignoreKwhHint: true,
     range: { epaRangeMi: f(277, "mfr", "high", "MY2025–26 4 Cross Turismo, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48730") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
     thermal: TAY2_HP,
@@ -4456,6 +4489,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "taycan-ct-2025-26-4s", ...TAY, modelYears: [2025, 2026], trim: ["4S Cross Turismo", "4S Cross Tourismo"], packVariant: "Cross Turismo",
     battery: PB2P,
+    ignoreKwhHint: true,
     range: { epaRangeMi: f(272, "mfr", "high", "MY2025–26 4S Cross Turismo, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48731") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
     thermal: TAY2_HP,
@@ -4464,6 +4498,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "taycan-ct-2025-26-turbo", ...TAY, modelYears: [2025, 2026], trim: ["Turbo Cross Turismo", "Turbo Cross Tourismo"], packVariant: "Cross Turismo",
     battery: PB2P,
+    ignoreKwhHint: true,
     range: { epaRangeMi: f(265, "mfr", "high", "MY2025–26 Turbo Cross Turismo, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48736") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
     thermal: TAY2_HP,
@@ -4472,6 +4507,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "taycan-ct-2025-26-turbos", ...TAY, modelYears: [2025, 2026], trim: ["Turbo S Cross Turismo", "Turbo S Cross Tourismo"], packVariant: "Cross Turismo",
     battery: PB2P,
+    ignoreKwhHint: true,
     range: { epaRangeMi: f(261, "mfr", "high", "MY2025–26 Turbo S Cross Turismo, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48741") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
     thermal: TAY2_HP,
@@ -4504,6 +4540,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "tayct-2025-26-4", ...TAYCT, modelYears: [2025, 2026], trim: ["4", "4 Cross Turismo", "4 Cross Tourismo"], packVariant: "Cross Turismo",
     battery: PB2P,
+    ignoreKwhHint: true,
     range: { epaRangeMi: f(277, "mfr", "high", "MY2025–26 4 Cross Turismo, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48730") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
     thermal: TAY2_HP,
@@ -4512,6 +4549,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
   {
     id: "tayct-2025-26-4s", ...TAYCT, modelYears: [2025, 2026], trim: ["4S", "4S Cross Turismo", "4S Cross Tourismo"], packVariant: "Cross Turismo",
     battery: PB2P,
+    ignoreKwhHint: true,
     range: { epaRangeMi: f(272, "mfr", "high", "MY2025–26 4S Cross Turismo, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=48731") },
     charging: { portStandard: f("CCS1", "mfr"), architectureV: f(800, "mfr") },
     thermal: TAY2_HP,
