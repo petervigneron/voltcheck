@@ -3448,7 +3448,13 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: volvoWty(VOLVO_WTY_RECHARGE),
   },
   {
-    id: "xc40-recharge-2024-single", make: "VOLVO", model: "XC40 Recharge Pure Electric", modelYears: [2024, 2024], vin8: ["K"], drive: "RWD",
+    // RE-KEYED 2026-09-10: these four MY2024 rows read VIN position 8 as the
+    // motor (K single / M twin). It is the GRADE (K Core, L Plus, M Ultimate)
+    // on both motors; positions 4-5 are the motor (EH single, ER twin), per
+    // vPIC on live VINs and Volvo's MY2026 booklet's "ENGINE VIN CODE" table.
+    // Four twin-motor C40 Cores were printing the single's 297 mi on a 257-mi
+    // car (refuter, docs/agents/research-polestar3-ex40-ocean-2026-09-10-AUDIT.md).
+    id: "xc40-recharge-2024-single", make: "VOLVO", model: "XC40 Recharge Pure Electric", modelYears: [2024, 2024], vds: ["EH"], drive: "RWD",
     abstains: { heatPump: VOLVO_HP_ABSTAIN },
     battery: { packUsableKwh: fb(79, "mfr", "high", "82 kWh nominal, the Single Motor Extended Range pack", VOLVO_SPECS_24_XC40) },
     range: { epaRangeMi: f(293, "mfr", "high", "MY2024 single-motor extended range (VIN code K, Volvo's Part 565 text names it eRWD Single Motor), EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46981") },
@@ -3456,7 +3462,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: volvoWty(VOLVO_WTY_RECHARGE),
   },
   {
-    id: "xc40-recharge-2024-twin", make: "VOLVO", model: "XC40 Recharge Pure Electric", modelYears: [2024, 2024], vin8: ["M"], drive: "AWD",
+    id: "xc40-recharge-2024-twin", make: "VOLVO", model: "XC40 Recharge Pure Electric", modelYears: [2024, 2024], vds: ["ER"], drive: "AWD",
     abstains: { heatPump: VOLVO_HP_ABSTAIN },
     battery: { packUsableKwh: fb(79, "mfr", "medium", "82 kWh nominal on the engineering sheets; Volvo's launch announcement said the Twin kept the 78 kWh pack, an unresolved conflict", VOLVO_SPECS_24_XC40) },
     range: { epaRangeMi: f(254, "mfr", "high", "MY2024 Twin Motor, EPA", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46983") },
@@ -3480,7 +3486,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: volvoWty(VOLVO_WTY_RECHARGE),
   },
   {
-    id: "c40-recharge-2024-single", make: "VOLVO", model: "C40 Recharge Pure Electric", modelYears: [2024, 2024], vin8: ["K"], drive: "RWD",
+    id: "c40-recharge-2024-single", make: "VOLVO", model: "C40 Recharge Pure Electric", modelYears: [2024, 2024], vds: ["EH"], drive: "RWD",
     abstains: { heatPump: VOLVO_HP_ABSTAIN },
     // vPIC decodes these as plain "C40"; the C40 was electric-only in the US.
     modelAliases: ["C40", "C40 Recharge"],
@@ -3490,7 +3496,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     warranty: volvoWty(VOLVO_WTY_RECHARGE),
   },
   {
-    id: "c40-recharge-2024-twin", make: "VOLVO", model: "C40 Recharge Pure Electric", modelYears: [2024, 2024], vin8: ["M"], drive: "AWD",
+    id: "c40-recharge-2024-twin", make: "VOLVO", model: "C40 Recharge Pure Electric", modelYears: [2024, 2024], vds: ["ER"], drive: "AWD",
     abstains: { heatPump: VOLVO_HP_ABSTAIN },
     // vPIC decodes these as plain "C40"; the C40 was electric-only in the US.
     modelAliases: ["C40", "C40 Recharge"],
