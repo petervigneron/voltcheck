@@ -93,7 +93,7 @@
 // including the BrightDrop page the owner opened by hand. That is the
 // verification that this detects the class rather than merely describing it
 // after the fact. After those fixes: 5,147 listings, 3.49%.
-import { unpackIndex, SHARDS } from "../lib/listings/pack.ts";
+import { unpackIndex } from "../lib/listings/pack.ts";
 import { matchEnrichment } from "../lib/enrichment/match.ts";
 import { writeFile, mkdir } from "node:fs/promises";
 import { dirname } from "node:path";
@@ -114,6 +114,7 @@ async function fetchShard(n) {
   for (let attempt = 0; ; attempt++) {
     try {
       const res = await fetch(`${FEED_BASE}/api/index/${n}`, { signal: AbortSignal.timeout(60_000) });
+      if (res.status === 404) return null; // past the site's last shard
       if (!res.ok) {
         const err = new Error(`shard ${n}: HTTP ${res.status}`);
         if (res.status < 500) throw err;
@@ -129,8 +130,16 @@ async function fetchShard(n) {
   }
 }
 
+// Every shard the deployed site serves, until the route's 404 past the last
+// one: its count, not this checkout's pack.ts SHARDS, which runs ahead of
+// production while a raise is on main but not deployed (24 → 48, 2026-09-10;
+// lib/listings/servedShards.ts).
 const listings = [];
-for (let n = 0; n < SHARDS; n++) listings.push(...unpackIndex(await fetchShard(n)));
+let shardCount = 0;
+for (let packed; shardCount < 256 && (packed = await fetchShard(shardCount)) !== null; shardCount++) {
+  listings.push(...unpackIndex(packed));
+}
+if (shardCount === 0) throw new Error(`${FEED_BASE} serves no index shards`);
 
 // A VIN is 17 characters and excludes I, O and Q. The feed carries a handful
 // of placeholder ids ("IONIQ5-22-AWD"); they cannot be VIN-resolved and are
@@ -229,7 +238,7 @@ if (AS_JSON) {
 }
 
 const fmt = (n) => String(n).padStart(6);
-console.log(`Configuration conflation — ${listings.length} live listings across ${SHARDS} shards\n`);
+console.log(`Configuration conflation — ${listings.length} live listings across ${shardCount} shards\n`);
 console.log(`${fmt(ambN)}  listings shown a RANGE SPREAD instead of a number (row covers several versions, feed can't pick)`);
 console.log(`${fmt(silN)}  listings whose matched row carries NO RANGE AT ALL and declares no reason`);
 console.log(`${fmt(splN)}  listings on an UNKEYED row that also serves a different pack by the feed's own trim strings`);

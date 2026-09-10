@@ -43,7 +43,8 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
-import { SHARDS, unpackIndex } from "../lib/listings/pack.ts";
+import { unpackIndex } from "../lib/listings/pack.ts";
+import { fetchServedShards } from "../lib/listings/servedShards.ts";
 import { buildTests, rowMatches } from "../lib/listings/match.ts";
 import { milesBetween } from "../lib/geo.ts";
 import { isWorthWatch } from "../lib/worthWatch.ts";
@@ -98,14 +99,10 @@ const proEmails = new Set();
   else console.error(`[alerts] pro_passes read failed: ${passRes.status} — deals filters inert this run`);
 }
 
-// The same shard fan-out and same-id dedupe as lib/listings/useCardIndex.ts.
-const shards = await Promise.all(
-  Array.from({ length: SHARDS }, async (_, i) => {
-    const res = await fetch(`${ORIGIN}/api/index/${i}`);
-    if (!res.ok) throw new Error(`index shard ${i}: ${res.status}`);
-    return unpackIndex(await res.json());
-  })
-);
+// Every shard the deployed site serves (not pack.ts's SHARDS, which is this
+// checkout's count and ran ahead of production during the 24 → 48 raise —
+// lib/listings/servedShards.ts), with the same-id dedupe as useCardIndex.ts.
+const shards = (await fetchServedShards(ORIGIN)).map(unpackIndex);
 const seen = new Set();
 const rows = shards.flat().filter((r) => !seen.has(r.id) && (seen.add(r.id), true));
 console.log(`[alerts] ${rows.length} cars in index, ${subs.length} confirmed subscriptions`);

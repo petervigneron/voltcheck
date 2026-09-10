@@ -125,7 +125,7 @@
 // count is zero; 10 = a new gap group appeared, the cross-kind guard tripped,
 // or its control test did not.
 
-import { unpackIndex, SHARDS } from "../lib/listings/pack.ts";
+import { unpackIndex } from "../lib/listings/pack.ts";
 import { matchEnrichment, matchIgnoringTrim } from "../lib/enrichment/match.ts";
 import { phevNameplate, PHEV_NAME_CLAIM_RE } from "../../scraper/lib/ev.mjs";
 import { ENRICHMENT_ROWS } from "../lib/enrichment/data.ts";
@@ -217,17 +217,32 @@ const decodeOf = (l) => ({
   driveType: l.drive,
 });
 
+// Every shard the site (or the saved copy in --shard-dir) holds, until the
+// first missing one: the deployed site's count, not this checkout's pack.ts
+// SHARDS, which runs ahead of production while a raise is on main but not
+// deployed (24 → 48, 2026-09-10; lib/listings/servedShards.ts).
+let shardCount = 0;
 async function loadShards() {
   const rows = [];
-  for (let n = 0; n < SHARDS; n++) {
+  for (let n = 0; n < 256; n++) {
     if (SHARD_DIR) {
-      rows.push(...unpackIndex(JSON.parse(await readFile(join(SHARD_DIR, `${n}.json`), "utf8"))));
+      let text;
+      try {
+        text = await readFile(join(SHARD_DIR, `${n}.json`), "utf8");
+      } catch (e) {
+        if (e.code === "ENOENT" && n > 0) break;
+        throw e;
+      }
+      rows.push(...unpackIndex(JSON.parse(text)));
+      shardCount++;
       continue;
     }
     // Sequential on purpose — see the SOURCE note in the header.
     const res = await fetch(`${FEED_BASE}/api/index/${n}`, { signal: AbortSignal.timeout(300_000) });
+    if (res.status === 404 && n > 0) break; // past the site's last shard
     if (!res.ok) throw new Error(`shard ${n}: HTTP ${res.status}`);
     rows.push(...unpackIndex(await res.json()));
+    shardCount++;
   }
   return rows;
 }
@@ -382,7 +397,7 @@ if (AS_JSON) {
   process.exit(failed ? 10 : 0);
 }
 
-console.log(`PHEV enrichment gap — ${phev.length} plug-in-shaped listings of ${listings.length} live, across ${SHARDS} shards`);
+console.log(`PHEV enrichment gap — ${phev.length} plug-in-shaped listings of ${listings.length} live, across ${shardCount} shards`);
 console.log(`  (undercounts: a plug-in whose make/model/trim never says so is invisible here — see the header)\n`);
 console.log(`  matched an enrichment row: ${hit} (${report.coveragePct}%)`);
 console.log(`  no row matched:            ${gapListings} (${pct(gapListings, phev.length)}%)`);

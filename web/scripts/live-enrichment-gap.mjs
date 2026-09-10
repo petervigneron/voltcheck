@@ -144,7 +144,7 @@
 // and the run that produced them). Completeness is reporting only — no
 // baseline has been calibrated for it, so it never affects the exit code.
 
-import { unpackIndex, SHARDS } from "../lib/listings/pack.ts";
+import { unpackIndex } from "../lib/listings/pack.ts";
 import { matchEnrichment, matchIgnoringTrim } from "../lib/enrichment/match.ts";
 import { writeFile, mkdir } from "node:fs/promises";
 import { dirname } from "node:path";
@@ -269,6 +269,7 @@ async function fetchShard(n) {
   for (let attempt = 0; ; attempt++) {
     try {
       const res = await fetch(url, { signal: AbortSignal.timeout(60_000) });
+      if (res.status === 404 && n !== "first") return null; // past the site's last shard
       if (!res.ok) {
         const err = new Error(`shard ${n}: HTTP ${res.status}`);
         if (res.status < 500) throw err;
@@ -291,15 +292,19 @@ async function fetchShard(n) {
   }
 }
 
-// Shards 0..SHARDS-1 partition every live listing exactly once (shardOf in
+// The site's shards partition every live listing exactly once (shardOfId in
 // pack.ts); "first" is a top-of-page subset of shard content, not additional
 // listings, so it is deliberately not fetched here — fetching it too would
-// double-count whatever's on the front page.
+// double-count whatever's on the front page. Read until the route's 404 past
+// the last shard: the deployed site's count, not this checkout's pack.ts
+// SHARDS, which runs ahead of production while a raise is on main but not
+// deployed (24 → 48, 2026-09-10; lib/listings/servedShards.ts).
 const shardRows = [];
-for (let n = 0; n < SHARDS; n++) {
-  const packed = await fetchShard(n);
+let shardCount = 0;
+for (let packed; shardCount < 256 && (packed = await fetchShard(shardCount)) !== null; shardCount++) {
   shardRows.push(...unpackIndex(packed));
 }
+if (shardCount === 0) throw new Error(`${FEED_BASE} serves no index shards`);
 const listings = shardRows;
 
 const matched = (r) => !!(r.exact || (r.candidates && r.candidates.length));
@@ -471,7 +476,7 @@ if (AS_JSON) {
   process.exit(failed ? 10 : 0);
 }
 
-console.log(`Live enrichment gap — ${totalListings} live listings across ${SHARDS} shards\n`);
+console.log(`Live enrichment gap — ${totalListings} live listings across ${shardCount} shards\n`);
 console.log(`  no enrichment row matched: ${totalGapListings} (${report.gapSharePct}%, ceiling ${MAX_GAP_SHARE}%)`);
 console.log(`    total miss (no row for this make+model+year at all): ${totalMiss}`);
 console.log(`    partial miss (rows exist; this listing's trim/drive — usually no trim at all — pins none): ${partialMiss}`);
