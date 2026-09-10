@@ -8,9 +8,9 @@
       "expectedEveryHours": 8
     },
     "ev-rules-audit": {
-      "lastRunAt": "2026-09-10T11:34:45.217Z",
+      "lastRunAt": "2026-09-10T16:52:16.578Z",
       "result": "ok",
-      "detail": "170917 live, 0 newly refuted by vPIC, 0 adjudicated-and-kept, 0 undecided",
+      "detail": "171434 live, 0 newly refuted by vPIC, 0 adjudicated-and-kept, 0 undecided",
       "expectedEveryHours": 27
     },
     "completeness-audit": {
