@@ -22,10 +22,15 @@ const SOFT: Record<string, string> = {
   agg: "est.",
 };
 
-export function SourceBadge({ fact }: { fact: Fact<unknown> }) {
+export function SourceBadge({
+  fact,
+  className = "text-[11px] font-medium text-amber-700 dark:text-amber-500",
+}: {
+  fact: Fact<unknown>;
+  /** A spec tile on a coloured ground needs the mark in its own ink. */
+  className?: string;
+}) {
   const label = SOFT[fact.source];
   if (!label) return null;
-  return (
-    <span className="text-[11px] font-medium text-amber-700 dark:text-amber-500">{label}</span>
-  );
+  return <span className={className}>{label}</span>;
 }

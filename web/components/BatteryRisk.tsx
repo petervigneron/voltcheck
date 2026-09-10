@@ -1,5 +1,5 @@
 import type { BatteryRisk as BatteryRiskData } from "@/lib/nhtsa/battery";
-import { Section } from "./EnrichmentReport";
+import { Panel } from "./EnrichmentReport";
 
 /** What NHTSA has on file for this car's make, model and year.
  *
@@ -50,18 +50,18 @@ export function BatteryRisk({
   const n = data.recalls.length;
 
   return (
-    <Section title="Recalls">
-      <p className="text-sm text-zinc-700">
+    <Panel title="Recalls">
+      <p className="text-[14px] text-ink/80">
         NHTSA has {n === 1 ? "a battery recall" : `${n} battery recalls`} on file for this model.
       </p>
       <a
         href={`https://www.nhtsa.gov/recalls?vin=${encodeURIComponent(vin)}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="mt-2 inline-block text-sm font-medium text-emerald-700 hover:text-emerald-600"
+        className="mt-2 inline-block text-[14px] font-semibold text-cobalt hover:text-ink"
       >
         Check this VIN on NHTSA ↗
       </a>
-    </Section>
+    </Panel>
   );
 }

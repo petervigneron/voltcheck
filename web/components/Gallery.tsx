@@ -26,10 +26,10 @@ export function Gallery({ images, alt }: { images: string[]; alt: string }) {
         <img
           src={images[active]}
           alt={alt}
-          className="aspect-[16/10] w-full rounded-xl object-cover bg-zinc-100"
+          className="aspect-[16/10] w-full border-[3px] border-ink bg-putty object-cover"
         />
         {images.length > 1 && (
-          <span className="absolute bottom-2 right-2 rounded-full bg-black/60 px-2 py-0.5 text-xs font-medium text-white">
+          <span className="absolute right-[3px] bottom-[3px] bg-ink px-2 py-1 text-[11px] font-extrabold tracking-[0.05em] text-paper tabular-nums">
             {active + 1} / {images.length}
           </span>
         )}
@@ -44,8 +44,9 @@ export function Gallery({ images, alt }: { images: string[]; alt: string }) {
               onClick={() => setIndex(i)}
               aria-label={`Photo ${i + 1} of ${images.length}`}
               aria-current={i === active}
-              className={`overflow-hidden rounded-lg ${
-                i === active ? "ring-2 ring-emerald-600" : "opacity-70 hover:opacity-100"
+              // The pressed thumbnail is a control state, so it is cobalt.
+              className={`overflow-hidden border-[3px] focus:outline-none focus-visible:border-cobalt ${
+                i === active ? "border-cobalt" : "border-ink opacity-70 hover:opacity-100"
               }`}
             >
               {/* eslint-disable-next-line @next/next/no-img-element -- external dealer CDN */}

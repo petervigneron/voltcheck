@@ -51,7 +51,8 @@ export function BackToResults() {
           router.back();
         }
       }}
-      className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-300 px-3 py-2 text-sm font-semibold text-zinc-600 hover:border-emerald-500 hover:text-emerald-600 dark:border-zinc-700 dark:text-zinc-300 dark:hover:border-emerald-500"
+      // Sits on the listing page's ink band, so it is drawn in paper.
+      className="inline-flex items-center gap-1.5 border-[3px] border-paper/50 px-3.5 py-2 text-[12px] font-extrabold tracking-[0.08em] text-paper uppercase hover:border-paper hover:bg-cobalt focus:outline-none focus-visible:border-paper focus-visible:bg-cobalt"
     >
       <span aria-hidden="true">←</span> Back to results
     </Link>

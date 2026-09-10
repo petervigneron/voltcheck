@@ -49,10 +49,8 @@ export function SaveToggle({
         type="button"
         onClick={onClick}
         aria-pressed={saved}
-        className={`mt-2 block w-full rounded-lg border py-2.5 text-center text-sm font-semibold ${
-          saved
-            ? "border-emerald-600 bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
-            : "border-zinc-300 text-zinc-700 hover:border-emerald-500 hover:text-emerald-600"
+        className={`block w-full border-[3px] border-ink py-2.5 text-center text-[12.5px] font-extrabold tracking-[0.06em] uppercase focus:outline-none focus-visible:ring-[3px] focus-visible:ring-cobalt focus-visible:ring-offset-2 ${
+          saved ? "bg-ink text-paper hover:bg-cobalt" : "bg-paper text-ink hover:bg-putty"
         }`}
       >
         {saved ? "★ Saved" : "☆ Save"}

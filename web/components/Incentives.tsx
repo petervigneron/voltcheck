@@ -106,7 +106,7 @@ export function Incentives({ matches: all }: { matches: IncentiveMatch[] }) {
     ...usable.filter((m) => m.program.jurisdiction.kind === "utility"),
   ];
   return (
-    <section className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5">
+    <section className="border-[3px] border-ink bg-paper p-5">
       <ProBlur label={proBenefitTitle("rebates")}>
         <ul className="divide-y divide-zinc-100 dark:divide-zinc-800">
           {ordered.map((m) => {

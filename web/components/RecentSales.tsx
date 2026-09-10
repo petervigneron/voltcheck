@@ -74,7 +74,7 @@ export function RecentSales({
   const rows = (
     <>
       {same.length > 0 && (
-        <ul className="mt-3 divide-y divide-zinc-100 dark:divide-zinc-800">
+        <ul className="mt-3 divide-y divide-ink/10">
           {same.map((s, i) => (
             <Row key={i} s={s} />
           ))}
@@ -88,7 +88,7 @@ export function RecentSales({
           {same.length > 0 && (
             <p className="mt-3 text-xs font-medium text-zinc-400 dark:text-zinc-500">Other versions</p>
           )}
-          <ul className={`${same.length > 0 ? "mt-1" : "mt-3"} divide-y divide-zinc-100 dark:divide-zinc-800`}>
+          <ul className={`${same.length > 0 ? "mt-1" : "mt-3"} divide-y divide-ink/10`}>
             {other.map((s, i) => (
               <Row key={i} s={s} />
             ))}
@@ -99,8 +99,8 @@ export function RecentSales({
   );
 
   return (
-    <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5">
-      <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+    <div className="min-w-0 border-[3px] border-ink bg-paper p-5">
+      <h2 className="text-[10.5px] font-extrabold tracking-[0.14em] text-ink/55 uppercase">
         Recently sold
       </h2>
 
@@ -121,7 +121,7 @@ export function RecentSales({
           card, and the rows are one click away for anyone checking. */}
       {sales.length > SHOW_INLINE ? (
         <details className="mt-3">
-          <summary className="cursor-pointer text-sm text-zinc-600 dark:text-zinc-400 hover:text-emerald-600 dark:hover:text-emerald-400">
+          <summary className="cursor-pointer text-[14px] font-semibold text-ink hover:text-cobalt">
             {summary(sales)}
           </summary>
           {rows}
@@ -132,12 +132,12 @@ export function RecentSales({
 
       {/* ODbL attribution: required wherever these rows render, so this line
           is a licence term and not a design choice. Kept to a bare credit. */}
-      <p className="mt-3 border-t border-zinc-100 dark:border-zinc-800 pt-2 text-[11px] text-zinc-400 dark:text-zinc-500">
+      <p className="mt-3 border-t border-ink/10 pt-2">
         <a
           href="https://data.wa.gov/Transportation/Electric-Vehicle-Title-and-Registration-Activity/rpr4-cgyd"
           target="_blank"
           rel="noopener noreferrer"
-          className="hover:text-emerald-600"
+          className="text-[10.5px] font-extrabold tracking-[0.14em] text-ink/40 uppercase hover:text-cobalt"
         >
           WA DOL (ODbL)
         </a>

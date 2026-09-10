@@ -1,5 +1,6 @@
 import type { Fact, Source } from "@/lib/types";
 import { SourceBadge } from "./SourceBadge";
+import { TILE_TONE, type TileKind } from "./Tile";
 
 // A citation, not a chip. The old provenance chip on every row named the
 // pipeline (see SourceBadge above); this names the document instead, and
@@ -51,16 +52,20 @@ function citationText(fact: Fact<unknown>): string {
   return `${kind}, ${publisher}, checked ${fact.asOf}.`;
 }
 
-function Citation({ fact }: { fact: Fact<unknown> }) {
+function Citation({ fact, tile = false }: { fact: Fact<unknown>; tile?: boolean }) {
   if (!fact.sourceUrl) return null;
   return (
-    <span className="group relative ml-1 inline-block align-middle">
+    <span className={`group relative inline-block align-middle ${tile ? "ml-1.5" : "ml-1"}`}>
       <a
         href={fact.sourceUrl}
         target="_blank"
         rel="noopener noreferrer"
         aria-label={`Source: ${citationText(fact)}`}
-        className="text-zinc-300 no-underline hover:text-zinc-500 dark:text-zinc-600 dark:hover:text-zinc-400"
+        className={
+          tile
+            ? "text-current no-underline opacity-50 hover:opacity-100"
+            : "text-zinc-300 no-underline hover:text-zinc-500 dark:text-zinc-600 dark:hover:text-zinc-400"
+        }
       >
         <svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" strokeWidth="1.4" className="inline-block">
           <circle cx="8" cy="8" r="6.3" />
@@ -85,6 +90,8 @@ export function FactRow({
   title,
   hint,
   yesNo = false,
+  tile = false,
+  tone = "spec",
 }: {
   label: string;
   fact?: Fact<unknown>;
@@ -108,6 +115,11 @@ export function FactRow({
    *  empirical information." Either the source clears the bar to print, or
    *  the row does not exist. Same rule the card tiles took in 2ffa72d. */
   yesNo?: boolean;
+  /** Render as one solid tile, label over value (the listing page's spec
+   *  block), instead of a label/value line (/vin). */
+  tile?: boolean;
+  /** The tile's colour, by the card-tile rules (components/Tile.tsx). */
+  tone?: TileKind;
 }) {
   // No fact means no research has settled this for this car — that is
   // silence, not a value, so the row itself doesn't exist. This is distinct
@@ -123,6 +135,49 @@ export function FactRow({
   if (!fact) return null;
 
   const valueText = format ? format(fact.value) : String(fact.value);
+  if (tile) {
+    // One fact, one solid tile, in the colour the card's tile for the same
+    // fact wears. Tiles pair up two to a line; a value too long to share one
+    // takes the whole line, and so does any tile left on its own.
+    const onColour = tone !== "spec" && tone !== "flag";
+    return (
+      <div
+        title={title ?? fact.note}
+        className={`min-w-0 grow px-3.5 pt-3 pb-3.5 ${TILE_TONE[tone]} ${valueText.length > 16 ? "basis-full" : "basis-[calc(50%-3px)]"}`}
+      >
+        <div className={`text-[10.5px] font-extrabold tracking-[0.14em] uppercase ${onColour ? "opacity-75" : "opacity-60"}`}>
+          {label}
+        </div>
+        <div className="mt-1.5 text-[20px] leading-[1.15] font-extrabold tracking-[-0.02em]">
+          {hint ? (
+            <span className="group relative inline-block">
+              <span
+                tabIndex={0}
+                className="cursor-help border-b-2 border-dotted border-current outline-none focus-visible:border-solid"
+              >
+                {valueText}
+              </span>
+              <span
+                role="tooltip"
+                className="pointer-events-none absolute top-full left-0 z-20 mt-2 w-64 border-[3px] border-ink bg-paper p-3 text-left text-xs leading-relaxed font-normal tracking-normal text-ink/75 opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-within:opacity-100"
+              >
+                {hint}
+              </span>
+            </span>
+          ) : (
+            valueText
+          )}
+          {!yesNo && (
+            <SourceBadge
+              fact={fact}
+              className={`ml-1.5 text-[11px] font-bold tracking-normal ${onColour ? "text-current opacity-75" : "text-amber-700"}`}
+            />
+          )}
+          {fact.sourceUrl && <Citation fact={fact} tile />}
+        </div>
+      </div>
+    );
+  }
   return (
     <div
       // A Fact's `note` is the researcher's working — which pack, which trim,

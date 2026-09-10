@@ -57,11 +57,17 @@ const ON_TEAL: Record<TileKind, string> = {
 
 export type TileGround = "paper" | "violet" | "saffron" | "teal";
 
+/** The paper-ground palette, for anything else that renders one fact as one
+ *  solid block (the listing page's spec tiles, components/FactRow.tsx), so a
+ *  fact wears the same colour there as on its card. */
+export const TILE_TONE: Record<TileKind, string> = KIND;
+
 export function Tile({
   kind = "spec",
   ground = "paper",
   title,
   wrap = false,
+  size = "sm",
   children,
 }: {
   kind?: TileKind;
@@ -71,15 +77,19 @@ export function Tile({
    *  longer than a narrow card (the manufacturer-repurchase disclosure) opts
    *  into wrapping instead of overflowing the card edge. */
   wrap?: boolean;
+  /** "lg" is the listing page's band: the card's own tiles at full size,
+   *  growing to share the row, in sentence case. */
+  size?: "sm" | "lg";
   children: React.ReactNode;
 }) {
   const palette =
     ground === "violet" ? ON_VIOLET : ground === "saffron" ? ON_SAFFRON : ground === "teal" ? ON_TEAL : KIND;
+  const shape =
+    size === "lg"
+      ? "min-w-0 grow basis-[150px] px-4 py-3.5 text-[20px] leading-tight font-extrabold tracking-[-0.02em] whitespace-normal sm:text-[24px]"
+      : `${wrap ? "whitespace-normal" : "whitespace-nowrap"} px-2 py-1 text-[11px] font-extrabold tracking-[0.05em] uppercase`;
   return (
-    <span
-      title={title}
-      className={`inline-flex items-center ${wrap ? "whitespace-normal" : "whitespace-nowrap"} px-2 py-1 text-[11px] font-extrabold tracking-[0.05em] uppercase ${palette[kind]}`}
-    >
+    <span title={title} className={`inline-flex items-center ${shape} ${palette[kind]}`}>
       {children}
     </span>
   );
