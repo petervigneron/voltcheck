@@ -333,7 +333,7 @@ export async function browserFetch(url, opts = {}) {
   return r2;
 }
 
-async function browserLoad(url, { settleMs = 1500, waitFor = null, waitForMs = 25000, capture = null, timeoutMs = 45000, clicks = [] } = {}) {
+async function browserLoad(url, { settleMs = 1500, waitFor = null, waitForText = null, waitForMs = 25000, capture = null, timeoutMs = 45000, clicks = [] } = {}) {
   try {
     new URL(url);
   } catch {
@@ -414,7 +414,7 @@ async function browserLoad(url, { settleMs = 1500, waitFor = null, waitForMs = 2
     let res = null;
     try {
       res = await withTimeout(
-        page.goto(url, { waitUntil: waitFor ? "commit" : "domcontentloaded", timeout: timeoutMs }),
+        page.goto(url, { waitUntil: waitFor || waitForText ? "commit" : "domcontentloaded", timeout: timeoutMs }),
         timeoutMs + 15000,
         "goto"
       );
@@ -447,7 +447,53 @@ async function browserLoad(url, { settleMs = 1500, waitFor = null, waitForMs = 2
     // laid out at 16-25 s, which straddled a 25 s bound and made the read
     // flaky — the same rooftop answered 100 candidates on one run and 0 on
     // the next. Attachment is the condition the parse below actually needs.
-    if (waitFor) await page.waitForSelector(waitFor, { state: "attached", timeout: waitForMs }).catch(() => {});
+    // ATTACHED, not visible, and then until the count STOPS GROWING.
+    //
+    // `waitForSelector` defaults to waiting for the element to be painted, and
+    // a lane that reads HTML does not care: sunroadauto.com's cards are in the
+    // DOM at 12 s and laid out at 16-25 s, which straddled a 25 s bound and
+    // made the read flaky — the same rooftop answered 100 candidates on one
+    // run and 0 on the next.
+    //
+    // The first match is not the answer either, and this is the subtler half.
+    // A Dealer Inspire SRP streams its cards in: caminorealchevrolet.com's
+    // used list held 5 `data-vehicle` blobs when the first one attached and 65
+    // twenty seconds later. Returning on the first match read 5 cars off a
+    // 65-car page and, because a page whose pager has not rendered looks like
+    // the last page, ended the walk there. So the wait is for quiescence —
+    // two consecutive polls at the same count — which costs a fast page
+    // (dgdg.com, cards in the served HTML) about a second and an incremental
+    // one what it actually takes. `waitForMs` bounds the whole wait, and a
+    // page that never matches is read on its merits like any other.
+    if (waitFor) {
+      const until = Date.now() + waitForMs;
+      await page.waitForSelector(waitFor, { state: "attached", timeout: waitForMs }).catch(() => {});
+      let last = -1;
+      let stable = 0;
+      while (Date.now() < until && stable < 2) {
+        const n = await page.evaluate((s) => document.querySelectorAll(s).length, waitFor).catch(() => -1);
+        if (n > 0 && n === last) stable++;
+        else {
+          stable = 0;
+          last = n;
+        }
+        if (stable < 2) await page.waitForTimeout(750);
+      }
+    }
+    // `waitForText`: wait for the STRING the caller is going to parse for.
+    // A selector cannot express "the JSON-LD block that holds a VIN", and on a
+    // Dealer Inspire VDP that distinction is the whole read: three
+    // `application/ld+json` scripts (Organization, breadcrumbs) are in the
+    // served 27 KB, and the Product+Car node with the car in it lands later,
+    // in a body that grows to 720 KB. Waiting on the script tag returned at
+    // 9 s with no vehicle; waiting on `vehicleIdentificationNumber` returns
+    // when the car is there and not before, which is what turns candidates
+    // into listings instead of `vdpFailures`.
+    if (waitForText) {
+      await page
+        .waitForFunction((s) => document.documentElement.outerHTML.includes(s), waitForText, { timeout: waitForMs, polling: 500 })
+        .catch(() => {});
+    }
     if (settleMs > 0) await page.waitForTimeout(settleMs);
     const body = await withTimeout(page.content(), 30000, "content");
     // `clicks`: selectors to click IN ORDER after the first page settles, each

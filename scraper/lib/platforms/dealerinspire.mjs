@@ -328,7 +328,7 @@ export function dealerInspireLimitsExhausted(limits, loads) {
 // return before the lot rendered, which is the same wrong answer with extra
 // steps. A rooftop whose theme emits no blob at all waits out waitForMs and
 // its body is read anyway; nothing here decides a lot is empty on a timer.
-const SRP_LOAD = { waitFor: "[data-vehicle]", waitForMs: 25000 };
+const SRP_LOAD = { waitFor: "[data-vehicle]", waitForMs: 30000 };
 
 // A VDP is read for exactly one thing — its schema.org Product+Car node — and
 // that node is in the served HTML. Waiting for it instead of for the page's
@@ -338,7 +338,7 @@ const SRP_LOAD = { waitFor: "[data-vehicle]", waitForMs: 25000 };
 // navigation timeout — 220 candidates at sunroadauto.com would have been two
 // and a half hours of waiting for an event that carries no cars. The JSON-LD
 // is there in about a second.
-const VDP_LOAD = { waitFor: 'script[type="application/ld+json"]', waitForMs: 20000 };
+const VDP_LOAD = { waitForText: "vehicleIdentificationNumber", waitForMs: 30000, settleMs: 0 };
 
 async function readSrp(origin, path, { maxPages = DEALERINSPIRE_MAX_PAGES, limits = null, loadsSoFar = 0, startUrl = null, fetch = browserFetch } = {}) {
   const cards = [];

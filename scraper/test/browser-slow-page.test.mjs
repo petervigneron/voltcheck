@@ -37,6 +37,27 @@ function hangingServer() {
       req.socket.destroy(); // nothing served at all
       return;
     }
+    if (req.url === "/streamed") {
+      // The shape of a Dealer Inspire SRP: a shell, then cards written into
+      // it one batch at a time. The first card is not the page.
+      res.writeHead(200, { "content-type": "text/html" });
+      res.write(`<!doctype html><html><head><script defer src="/hang"></script></head><body><div id="lot"></div><script>
+        var vins = ["1FT6W1EV3PWG00001","5YJ3E1EA7PF000002","1G1FY6S01K4117688","7SAYGDEE0PF000004"];
+        var i = 0;
+        var t = setInterval(function () {
+          if (i >= vins.length) { clearInterval(t); return; }
+          var d = document.createElement("div");
+          d.setAttribute("data-vehicle", '{"vin":"' + vins[i] + '"}');
+          d.textContent = vins[i];
+          document.getElementById("lot").appendChild(d);
+          i++;
+        }, 300);
+      </script>`);
+      // Deliberately never ended: a page that keeps its connection open is
+      // exactly what stops the load event from firing.
+      held.push(res);
+      return;
+    }
     if (req.url === "/redirected") {
       // Every Dealer Inspire SRP path redirects once before it serves.
       res.writeHead(301, { location: "/used-vehicles/" });
@@ -82,6 +103,46 @@ test("the status is the page that served the cars, not the redirect that pointed
     // takes a non-200 as no lot, threw all eight away.
     assert.equal(r.status, 200);
     assert.match(r.body ?? "", /data-vin="1FT6W1EV3PWG00001"/);
+  } finally {
+    for (const res of held) res.destroy();
+    server.close();
+  }
+});
+
+test("a lot that streams its cards in is read whole, not at its first card", async (t) => {
+  const { server, held } = hangingServer();
+  await new Promise((r) => server.listen(0, "127.0.0.1", r));
+  const port = server.address().port;
+  try {
+    const r = await browserFetch(`http://127.0.0.1:${port}/streamed`, {
+      waitFor: "[data-vehicle]",
+      waitForMs: 15000,
+      settleMs: 50,
+    });
+    if (r.status === "browser_unavailable") return t.skip("no Playwright browser on this machine");
+    // Returning on the first match read 5 cars off caminorealchevrolet.com's
+    // 65-car used list on 2026-09-10 — and a Dealer Inspire page whose pager
+    // has not rendered looks like the last page, so the walk stopped there
+    // and called a full lot complete.
+    assert.equal((r.body ?? "").match(/data-vehicle=/g)?.length, 4);
+  } finally {
+    for (const res of held) res.destroy();
+    server.close();
+  }
+});
+
+test("waitForText waits for the string the caller will parse, not for a tag that was already there", async (t) => {
+  const { server, held } = hangingServer();
+  await new Promise((r) => server.listen(0, "127.0.0.1", r));
+  const port = server.address().port;
+  try {
+    const r = await browserFetch(`http://127.0.0.1:${port}/streamed`, {
+      waitForText: "7SAYGDEE0PF000004", // written last, ~1.2 s in
+      waitForMs: 15000,
+      settleMs: 0,
+    });
+    if (r.status === "browser_unavailable") return t.skip("no Playwright browser on this machine");
+    assert.match(r.body ?? "", /7SAYGDEE0PF000004/);
   } finally {
     for (const res of held) res.destroy();
     server.close();
