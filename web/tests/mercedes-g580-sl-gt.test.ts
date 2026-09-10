@@ -103,18 +103,19 @@ test("the two cars called Mercedes-AMG GT never swap: the four-door and the coup
   );
 });
 
-test("a listing with no VIN at all still cannot pick up the wrong body or the wrong year", () => {
+test("a listing with no VIN at all matches nothing on these names, because a petrol car wears them too", () => {
   // 129 of the live G-Class listings carry no trim; some feeds carry no VIN
-  // either. Without a VIN the year alone must still land on one G 580 row —
-  // there is only one per model year — and a bare "Mercedes-AMG GT" with no
-  // VIN must NOT resolve, because two different cars wear that name.
-  assert.equal(matchEnrichment(decode("", "G-Class", 2026), null).exact?.id, "g580-2026");
-  const gt = matchEnrichment(decode("", "Mercedes-AMG GT", 2026), null);
-  assert.equal(gt.exact, undefined);
-  assert.deepEqual(
-    (gt.candidates ?? []).map((c) => c.id).sort(),
-    ["amg-gt63se-4door-2026", "amg-gt63se-coupe-2026"]
-  );
+  // either. "G-Class" is also the G 550 and the AMG G 63, and "Mercedes-AMG
+  // GT" is also the petrol GT 55/63 — so without a VIN there is no evidence
+  // this is the plug-in at all, and the rows are flagged vinRequired
+  // (types.ts, 2026-09-10). An earlier version of this test expected the
+  // year alone to land a VIN-less "G-Class" on the G 580 row; that was the
+  // hole three verifiers found, closed the same day.
+  for (const model of ["G-Class", "Mercedes-AMG GT", "SL", "C-Class"]) {
+    const r = matchEnrichment(decode("", model, 2026), null);
+    assert.equal(r.exact, undefined, `${model}: ${r.exact?.id}`);
+    assert.equal(r.candidates?.length ?? 0, 0, `${model}: ${r.candidates?.map((c) => c.id).join(",")}`);
+  }
 });
 
 test("EPA's blended “Elec + Gas” figure is never published as an electric range", () => {

@@ -369,6 +369,22 @@ function matchEnrichmentRaw(
   // and drivetrain evidence, which is what these listings used to resolve on.
   const vin = decode.vin && /^[A-HJ-NPR-Z0-9]{17}$/i.test(decode.vin) ? decode.vin : undefined;
 
+  // A row that answers to a name a combustion car shares, and is keyed on
+  // the VIN to keep the petrol car out, cannot be answered without a VIN
+  // (2026-09-10). Every VIN filter below is skipped for a decode with no
+  // usable VIN, so such a row used to stay in play: a 2016-18 "X5" with a
+  // placeholder id resolved to the xDrive40e row and would have printed a
+  // 9.2 kWh pack on a petrol truck; a VIN-less "Cooper" reached the Cooper
+  // SE rows; the Porsche "-alt" rows had to keep trim guards for the same
+  // reason. Three independent verifiers found it the same day. Rows say so
+  // themselves (`vinRequired`, see types.ts) rather than every VIN-keyed row
+  // refusing a VIN-less decode: twelve tests pin the deliberate opposite for
+  // nameplates only an EV wears, where a VIN-less car falls to candidates or
+  // to its drivetrain's row instead of to nothing. Exposure measured on the
+  // live feed: 7 of 168,742 listings carry a non-VIN id, all Toyota/Lexus
+  // placeholders; /vin/ always has one.
+  if (!vin) rows = rows.filter((r) => !r.vinRequired);
+
   // VIN positions 1–3 name the body where showroom strings can't: dealers
   // file Mercedes' sedan and SUV under the same model and trim ("EQE",
   // "500 4MATIC"), and only the WMI separates W1K (Bremen sedan) from 4JG

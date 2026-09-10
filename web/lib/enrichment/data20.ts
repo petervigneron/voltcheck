@@ -152,6 +152,7 @@ const R: EnrichmentRow[] = [];
   R.push(
     {
       id: "mini-cooper-se-2020",
+      vinRequired: true, // a combustion car wears this name; the VIN keys keep it out (types.ts)
       make: "MINI",
       model: "Cooper SE",
       modelAliases: HARDTOP_ALIASES,
@@ -184,6 +185,7 @@ const R: EnrichmentRow[] = [];
     },
     {
       id: "mini-cooper-se-2021",
+      vinRequired: true, // a combustion car wears this name; the VIN keys keep it out (types.ts)
       make: "MINI",
       model: "Cooper SE",
       modelAliases: HARDTOP_ALIASES,
@@ -218,6 +220,7 @@ const R: EnrichmentRow[] = [];
     },
     {
       id: "mini-cooper-se-2022-24",
+      vinRequired: true, // a combustion car wears this name; the VIN keys keep it out (types.ts)
       make: "MINI",
       model: "Cooper SE",
       modelAliases: HARDTOP_ALIASES,
@@ -287,6 +290,7 @@ const R: EnrichmentRow[] = [];
   R.push(
     {
       id: "mini-countryman-se-2025-26",
+      vinRequired: true, // a combustion car wears this name; the VIN keys keep it out (types.ts)
       make: "MINI",
       model: "Countryman SE ALL4",
       modelAliases: CTY_ALIASES,
@@ -318,6 +322,7 @@ const R: EnrichmentRow[] = [];
     },
     {
       id: "mini-countryman-se-2027",
+      vinRequired: true, // a combustion car wears this name; the VIN keys keep it out (types.ts)
       make: "MINI",
       model: "Countryman SE ALL4",
       modelAliases: CTY_ALIASES,

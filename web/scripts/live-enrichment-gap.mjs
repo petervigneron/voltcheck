@@ -347,7 +347,11 @@ for (const l of listings) {
   const make = (l.make ?? "").toUpperCase();
   const model = l.model ?? "";
   const decodeFull = {
-    vin: "",
+    // The shard's id IS the VIN (lowercase). Passing it runs the matcher's
+    // VIN filters exactly as the listing page does — and since 2026-09-10 a
+    // VIN-keyed row refuses a decode with no VIN, so without this every
+    // VIN-keyed cohort would read as a gap here.
+    vin: /^[A-HJ-NPR-Z0-9]{17}$/i.test(l.id ?? "") ? l.id.toUpperCase() : "",
     usMarket: true,
     make,
     model,

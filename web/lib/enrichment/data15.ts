@@ -182,6 +182,7 @@ const HEAT_PUMP_ABSTAIN =
 
   R.push({
     id: "g580-2025",
+    vinRequired: true, // a combustion car wears this name; the VIN keys keep it out (types.ts)
     ...G_MODEL,
     modelYears: [2025, 2025],
     vds: ["WM0AB"],
@@ -223,6 +224,7 @@ const HEAT_PUMP_ABSTAIN =
 
   R.push({
     id: "g580-2026",
+    vinRequired: true, // a combustion car wears this name; the VIN keys keep it out (types.ts)
     ...G_MODEL,
     modelYears: [2026, 2026],
     vds: ["WM0AB"],
@@ -275,6 +277,7 @@ const HEAT_PUMP_ABSTAIN =
 
   R.push({
     id: "g580-2027",
+    vinRequired: true, // a combustion car wears this name; the VIN keys keep it out (types.ts)
     ...G_MODEL,
     modelYears: [2027, 2027],
     vds: ["WM0BB"],
@@ -419,6 +422,7 @@ const HEAT_PUMP_ABSTAIN =
 
     R.push({
       id: "amg-sl63se-2024",
+      vinRequired: true, // a combustion car wears this name; the VIN keys keep it out (types.ts)
       ...SL,
       modelYears: [2024, 2024],
       vds: ["VK8CB"],
@@ -431,6 +435,7 @@ const HEAT_PUMP_ABSTAIN =
 
     R.push({
       id: "amg-sl63se-2025",
+      vinRequired: true, // a combustion car wears this name; the VIN keys keep it out (types.ts)
       ...SL,
       modelYears: [2025, 2025],
       vds: ["VK8CB"],
@@ -450,6 +455,7 @@ const HEAT_PUMP_ABSTAIN =
 
     R.push({
       id: "amg-sl63se-2026",
+      vinRequired: true, // a combustion car wears this name; the VIN keys keep it out (types.ts)
       ...SL,
       modelYears: [2026, 2026],
       vds: ["VK8CB"],
@@ -517,6 +523,7 @@ const HEAT_PUMP_ABSTAIN =
 
     R.push({
       id: "amg-gt63se-4door-2024",
+      vinRequired: true, // a combustion car wears this name; the VIN keys keep it out (types.ts)
       ...GT4D,
       modelYears: [2024, 2024],
       vds: ["7X7KB"],
@@ -529,6 +536,7 @@ const HEAT_PUMP_ABSTAIN =
 
     R.push({
       id: "amg-gt63se-4door-2025",
+      vinRequired: true, // a combustion car wears this name; the VIN keys keep it out (types.ts)
       ...GT4D,
       modelYears: [2025, 2025],
       vds: ["7X7KB"],
@@ -548,6 +556,7 @@ const HEAT_PUMP_ABSTAIN =
 
     R.push({
       id: "amg-gt63se-4door-2026",
+      vinRequired: true, // a combustion car wears this name; the VIN keys keep it out (types.ts)
       ...GT4D,
       modelYears: [2026, 2026],
       vds: ["7X7KB"],
@@ -593,6 +602,7 @@ const HEAT_PUMP_ABSTAIN =
 
     R.push({
       id: "amg-gt63se-coupe-2025",
+      vinRequired: true, // a combustion car wears this name; the VIN keys keep it out (types.ts)
       ...GT2D,
       modelYears: [2025, 2025],
       vds: ["RJ8CB"],
@@ -614,6 +624,7 @@ const HEAT_PUMP_ABSTAIN =
 
     R.push({
       id: "amg-gt63se-coupe-2026",
+      vinRequired: true, // a combustion car wears this name; the VIN keys keep it out (types.ts)
       ...GT2D,
       modelYears: [2026, 2026],
       vds: ["RJ8CB"],
@@ -626,6 +637,7 @@ const HEAT_PUMP_ABSTAIN =
 
     R.push({
       id: "amg-gt63se-coupe-2027",
+      vinRequired: true, // a combustion car wears this name; the VIN keys keep it out (types.ts)
       ...GT2D,
       modelYears: [2027, 2027],
       vds: ["RJ8CB"],
@@ -693,6 +705,7 @@ const HEAT_PUMP_ABSTAIN =
 
     R.push({
       id: "amg-c63se-2024",
+      vinRequired: true, // a combustion car wears this name; the VIN keys keep it out (types.ts)
       ...C63,
       modelYears: [2024, 2024],
       vds: ["AF8AB"],
@@ -705,6 +718,7 @@ const HEAT_PUMP_ABSTAIN =
 
     R.push({
       id: "amg-c63se-2025",
+      vinRequired: true, // a combustion car wears this name; the VIN keys keep it out (types.ts)
       ...C63,
       modelYears: [2025, 2025],
       vds: ["AF8AB"],
@@ -724,6 +738,7 @@ const HEAT_PUMP_ABSTAIN =
 
     R.push({
       id: "amg-c63se-2026",
+      vinRequired: true, // a combustion car wears this name; the VIN keys keep it out (types.ts)
       ...C63,
       modelYears: [2026, 2026],
       vds: ["AF8AB"],
@@ -787,6 +802,7 @@ const HEAT_PUMP_ABSTAIN =
 
   R.push({
     id: "c350e-2016",
+    vinRequired: true, // a combustion car wears this name; the VIN keys keep it out (types.ts)
     ...C350E,
     modelYears: [2016, 2016],
     abstains: { heatPump: HEAT_PUMP_ABSTAIN, batteryWarranty: C350E_WARRANTY_ABSTAIN },
@@ -809,6 +825,7 @@ const HEAT_PUMP_ABSTAIN =
 
   R.push({
     id: "c350e-2017",
+    vinRequired: true, // a combustion car wears this name; the VIN keys keep it out (types.ts)
     ...C350E,
     modelYears: [2017, 2017],
     abstains: { heatPump: HEAT_PUMP_ABSTAIN, batteryWarranty: C350E_WARRANTY_ABSTAIN },
@@ -831,6 +848,7 @@ const HEAT_PUMP_ABSTAIN =
 
   R.push({
     id: "c350e-2018",
+    vinRequired: true, // a combustion car wears this name; the VIN keys keep it out (types.ts)
     ...C350E,
     modelYears: [2018, 2018],
     abstains: { heatPump: HEAT_PUMP_ABSTAIN, batteryWarranty: C350E_WARRANTY_ABSTAIN },

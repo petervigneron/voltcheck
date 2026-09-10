@@ -116,6 +116,17 @@ export interface EnrichmentRow {
   // does; the VIN-level wmi filter is what keeps an alias from poaching the
   // other body's listings.
   modelAliases?: string[];
+  /**
+   * The row answers to a model name a combustion car shares ("X5",
+   * "Cooper", "SL", "G-Class", "Q5", "Tonale") and relies on its VIN keys to
+   * keep the petrol car out. match.ts skips every VIN filter for a decode
+   * with no usable VIN, so without this flag such a row would answer a
+   * VIN-less petrol car by elimination. Set it on every VIN-keyed row whose
+   * `model` or `modelAliases` a non-plug-in car also wears; leave it off
+   * nameplates only an EV wears, where a VIN-less car should still fall to
+   * candidates or its drivetrain's row (2026-09-10).
+   */
+  vinRequired?: boolean;
   // Set when the maker's Part 565 battery-kWh figure is a model-level
   // constant, not a per-VIN fact (every 2023 Lightning reads "98", every 2024
   // EV6 reads "58" — including AWD cars that never had that pack). The

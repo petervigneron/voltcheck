@@ -509,6 +509,7 @@ const R: EnrichmentRow[] = [];
 
   R.push({
     id: "x5-40e-2016-18",
+    vinRequired: true, // a combustion car wears this name; the VIN keys keep it out (types.ts)
     make: "BMW",
     model: "X5",
     modelAliases: ["X5 xDrive40e", "X5 xDrive40e iPerformance", "X5 eDrive"],

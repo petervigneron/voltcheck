@@ -235,6 +235,7 @@ const Q5_PHEV = {
 export const RESEARCH_ROWS_13: EnrichmentRow[] = [
   {
     id: "audi-q5-tfsi-e-2020",
+    vinRequired: true, // a combustion car wears this name; the VIN keys keep it out (types.ts)
     ...Q5_PHEV,
     modelYears: [2020, 2020],
     battery: {
@@ -270,6 +271,7 @@ export const RESEARCH_ROWS_13: EnrichmentRow[] = [
   },
   {
     id: "audi-q5-tfsi-e-2021",
+    vinRequired: true, // a combustion car wears this name; the VIN keys keep it out (types.ts)
     ...Q5_PHEV,
     modelYears: [2021, 2021],
     battery: {
@@ -302,6 +304,7 @@ export const RESEARCH_ROWS_13: EnrichmentRow[] = [
   },
   {
     id: "audi-q5-tfsi-e-2022",
+    vinRequired: true, // a combustion car wears this name; the VIN keys keep it out (types.ts)
     ...Q5_PHEV,
     modelYears: [2022, 2022],
     battery: {
@@ -325,6 +328,7 @@ export const RESEARCH_ROWS_13: EnrichmentRow[] = [
   },
   {
     id: "audi-q5-tfsi-e-2023",
+    vinRequired: true, // a combustion car wears this name; the VIN keys keep it out (types.ts)
     ...Q5_PHEV,
     modelYears: [2023, 2023],
     battery: {
@@ -348,6 +352,7 @@ export const RESEARCH_ROWS_13: EnrichmentRow[] = [
   },
   {
     id: "audi-q5-tfsi-e-2024",
+    vinRequired: true, // a combustion car wears this name; the VIN keys keep it out (types.ts)
     ...Q5_PHEV,
     modelYears: [2024, 2024],
     battery: {
@@ -368,6 +373,7 @@ export const RESEARCH_ROWS_13: EnrichmentRow[] = [
   },
   {
     id: "audi-q5-tfsi-e-2025",
+    vinRequired: true, // a combustion car wears this name; the VIN keys keep it out (types.ts)
     ...Q5_PHEV,
     modelYears: [2025, 2025],
     battery: {
