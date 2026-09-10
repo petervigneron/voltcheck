@@ -335,40 +335,144 @@ const R: EnrichmentRow[] = [];
 }
 
 // ───────────────── TOYOTA RAV4 PLUG-IN HYBRID (2026, new generation) ───────
-// The sixth-generation RAV4, revealed May 2025 — the renamed successor to
-// the RAV4 Prime but a genuinely new car, researched fresh on purpose (the
-// alias-to-Prime shortcut was rejected as inventing a fact). fueleconomy.gov
-// carries no 2026 RAV4 PHEV record yet, so every range figure is Toyota's
-// own manufacturer estimate from its launch releases and says so. Range and
-// charging both differ by grade, so the rows are grade-keyed and a listing
-// with no grade matches nothing: XSE and Woodland get an 11 kW onboard
-// charger, a CCS1 port and DC fast charging; SE and GR SPORT get 7 kW and
-// J1772 with no DC. The "64 Series" trim in the feed matched no Toyota grade
-// in the launch materials and is deliberately not keyed.
+// The sixth-generation RAV4 — Toyota's renamed successor to the RAV4 Prime,
+// and a genuinely new car, researched fresh (the alias-to-Prime shortcut was
+// rejected in the 08-23 tranche as inventing a fact). Re-researched
+// 2026-09-09 to close the last gap on the nameplate: 321 of 4,394 live 2026
+// RAV4 PHEVs carry no trim string at all, and every row here was trim-keyed,
+// so `trimMatches` refused all of them and those cars reached the site with
+// an empty card. That is what the base row below is for.
+//
+// THE VIN CANNOT HELP. Every one of the 4,394 live 2026 VINs is JTM7ERAV —
+// identical through position 8, the whole of the WMI and the VDS — with the
+// grade nowhere in it (position 9 is the check digit, 10 the year T, 11 the
+// plant J/D/1). So the EV3's "key on the VDS and carry no trim list" shape is
+// unavailable here and the bZ's shape is the right one: trim-keyed grade rows
+// for the cars whose grade the feed states, plus one base row that carries
+// only what every grade shares and declares its silence on the rest.
+//
+// SOURCES, both Toyota's own, and they DISAGREE on two of the four range
+// figures — see RANGE below.
+//   (1) The launch release, pressroom.toyota.com/the-next-adventure-begins-
+//       2026-rav4-arrives-this-winter/. pressroom.toyota.com now answers a
+//       Cloudflare interstitial to every fetcher (403 to curl under six
+//       user agents, 403 to WebFetch, an unsolved challenge in a real
+//       headless browser), so it was read 2026-09-09 through the Wayback
+//       capture of 2026-05-15 — Toyota's own document, byte-for-byte, at a
+//       different address. Its charging paragraph settles the whole
+//       charging group in two sentences: "The RAV4 Plug-in Hybrid XSE and
+//       Woodland grades will have an 11-kW onboard AC charger with a CCS1
+//       charging port, with DC fast-charging capability, allowing charging
+//       from 10% to 80% in approximately 30 minutes** under ideal
+//       conditions. The SE and GR SPORT Plug-in Hybrid models will have a
+//       7-kW onboard charger and are equipped with a J1772 charging port for
+//       Level One and Level Two charging". Its warranty line: "The hybrid
+//       battery is covered for 10 years/150,000 miles, whichever comes
+//       first, and is transferable across ownership." And its grade count:
+//       "Four grades are available for model year 2026, including the SE,
+//       XSE, Woodland, and GR SPORT models."
+//   (2) toyota.com's own Features & Specs data for the car now on sale,
+//       www.toyota.com/rav4pluginhybrid/2026/features/mechanical_performance/
+//       — a per-grade table (its four grade keys are exactly SE, XSE,
+//       Woodland, GR Sport) whose charging rows mark, per grade, "Level 1-2
+//       J1772 Type 1 charging port (front-passenger-side)", "Level 1-3 CCS1
+//       charging port (driver-side)", "7 kW onboard charger" and "11 kW
+//       onboard charger" each standard or not-available. It agrees with the
+//       release on every charging fact, grade for grade, and on the warranty
+//       ("Hybrid Battery Warranty 120 months/150,000 miles").
+//
+// RANGE — the one place the two documents conflict, and the one judgement
+// call in this block. The launch release states "a manufacturer 52-mile
+// range rating on the SE and XSE grades. The Woodland PHEV model has a
+// manufacturer estimated 49-mile all-electric driving range rating and the
+// GR SPORT PHEV model has a 48-mile all-electric driving range rating".
+// toyota.com's current table reads "EPA-est. all-electric range (mi.)" of
+// 54 / 52 / 49 / 49 for SE / XSE / Woodland / GR Sport — two miles higher on
+// the SE, one on the GR SPORT. Nothing separates them on authority: both are
+// Toyota's, one is later and describes the production car, the other is the
+// launch document. The rows state the LOWER of the two, which is the same
+// call the bZ Limited row makes for its two EPA records ("a 1% choice made
+// in the direction that cannot cost a shopper money"), and the direction the
+// house rule on false bargains points. Both figures are on each fact's note
+// so the next reader can flip it in one line rather than re-derive it.
+//
+// The field is `mfrRangeMi`, not `epaRangeMi` — corrected here. EPA has
+// rated no 2026 RAV4 PHEV: fueleconomy.gov's 2026 Toyota model menu, pulled
+// 2026-09-09, lists RAV4, "RAV4 AWD Limited & XSE", "RAV4 AWD SE & LE",
+// "RAV4 AWD XLE" and "RAV4 Hybrid AWD Woodland Edition" — the hybrid, whose
+// presence is the control test that the model year itself is published —
+// and no plug-in under any spelling ("RAV4 Plug-in Hybrid", "RAV4 Prime",
+// "RAV4 PHEV" all answer an empty options menu). Toyota's own table calls
+// its figure "EPA-est."; EPA has estimated nothing. These rows used to print
+// that number under the card's "EPA range" heading, which is the false
+// claim lib/types.ts wrote mfrRangeMi to end. It now prints under "Range
+// (manufacturer estimate)" with the est mark.
+//
+// NOT CARRIED, deliberately. MPGe and gas MPG: `mpgeElectric`, `mpgeCombined`
+// and `mpgGasoline` are defined in lib/types.ts as fueleconomy.gov's combA08,
+// phevComb and comb08 — EPA fields — and EPA has published none of them for
+// this car. Toyota's own "Est. MPGe rating (combined)" of 101/96/94/86 and
+// its mpg triplets are its estimates, and the two documents disagree on the
+// triplets by grade too (the release gives the Woodland 42/35/38 and the GR
+// SPORT 41/34/37; the site gives 41/34/37 and 40/33/36 — the release's GR
+// SPORT figure is the site's Woodland figure, so one of them has the grades
+// shifted by one). `epaRangeTotalMi` likewise: neither document states a
+// total range. Pack voltage: toyota.com states two of them, "Systems max
+// voltage: 650V" and "Rated voltage: 391 (Li-ion)", and picking one to print
+// as the car's architecture would be a guess. Peak DC kW: neither document
+// states one; the 30-minute figure is a time, not a rate.
+//
+// ABSTENTIONS. Pack capacity: neither document states a kWh figure anywhere
+// — the release's whole disclosure is "a high-capacity traction battery",
+// and toyota.com's Battery group gives voltage and "Type: Sealed
+// Lithium-ion (Li-ion)" and no energy. Heat pump: control-tested rather than
+// assumed — toyota.com's Features & Specs data does not contain the string
+// "heat pump" for the 2026 bZ either, a car this corpus records as having a
+// standard one, so Toyota's silence here carries no information.
+//
+// THE "64 SERIES" ROW (further down this file) is untouched: its trim key
+// catches vPIC's generation code, its abstention still describes a 48-to-52
+// mile span, and the early exact-trim pass in match.ts keeps the 97 live
+// cars carrying that label on it rather than on the base row.
 {
-  const RAV4_2026_LAUNCH = "https://pressroom.toyota.com/the-next-adventure-begins-2026-rav4-arrives-this-winter/";
-  const TOYOTA_EST_NOTE = "Toyota estimate; final EPA rating not yet issued";
+  const AS_OF_RAV4 = "2026-09-09";
+  const fk = <T,>(
+    value: T,
+    note?: string,
+    sourceUrl?: string,
+    confidence: Fact<T>["confidence"] = "high"
+  ): Fact<T> => ({ value, source: "mfr", asOf: AS_OF_RAV4, confidence, note, sourceUrl });
+
+  const LAUNCH = "https://pressroom.toyota.com/the-next-adventure-begins-2026-rav4-arrives-this-winter/";
+  const SPECS = "https://www.toyota.com/rav4pluginhybrid/2026/features/mechanical_performance/";
+
   const RAV4_WARRANTY = {
-    batteryYears: f(10, "mfr", "high", undefined, RAV4_2026_LAUNCH),
-    batteryMiles: f(150_000, "mfr", "high", undefined, RAV4_2026_LAUNCH),
-    batteryTransfers: f(true, "mfr", "high", undefined, RAV4_2026_LAUNCH),
+    batteryYears: fk(10, "“The hybrid battery is covered for 10 years/150,000 miles, whichever comes first, and is transferable across ownership”; toyota.com's warranty table reads “Hybrid Battery Warranty 120 months/150,000 miles”", LAUNCH),
+    batteryMiles: fk(150_000, "“covered for 10 years/150,000 miles, whichever comes first”", LAUNCH),
+    batteryTransfers: fk(true, "“and is transferable across ownership”", LAUNCH),
   };
   const RAV4_ABSTAINS = {
-    packUsableKwh: "Toyota's 2026 RAV4 materials state no battery capacity figure",
-    heatPump: HP_ABSTAIN,
+    packUsableKwh: "Neither Toyota document states an energy figure — the release says only “a high-capacity traction battery” and toyota.com's Battery group gives voltage and cell type without a kWh",
+    heatPump: "Toyota's Features & Specs data names no heat pump for the 2026 bZ either, a car that has one, so its silence on the RAV4 says nothing",
   };
+  // Both Toyota documents put the CCS1 inlet and the 11 kW charger on XSE and
+  // Woodland and the J1772 inlet and the 7 kW charger on SE and GR SPORT, so
+  // the split is stated twice, not inferred once. Neither names NACS anywhere
+  // for MY2026 — checked on this model year's own documents rather than
+  // carried forward, which is the port-by-model-year trap.
   const RAV4_DC_CHARGING = {
-    acOnboardKw: f(11, "mfr", "high", "XSE and Woodland grades", RAV4_2026_LAUNCH),
-    portStandard: f<"CCS1">("CCS1", "mfr", "high", undefined, RAV4_2026_LAUNCH),
-    dcFastCharging: f<"standard">("standard", "mfr", "high", "10–80% in about 30 minutes", RAV4_2026_LAUNCH),
+    acOnboardKw: fk(11, "“XSE and Woodland grades will have an 11-kW onboard AC charger”", LAUNCH),
+    portStandard: fk<"CCS1">("CCS1", "“Level 1-3 CCS1 charging port (driver-side)”, standard on this grade in toyota.com's own per-grade table", SPECS),
+    dcFastCharging: fk<"standard">("standard", "“with CCS1 charging port, with DC fast-charging capability”", LAUNCH),
+    chargeTime1080Min: fk(30, "“charging from 10% to 80% in approximately 30 minutes** under ideal conditions” — Toyota's own footnote calls the time an estimate that varies with weather and other factors, and states no charger power for it", LAUNCH, "medium"),
   };
   const RAV4_AC_CHARGING = {
-    acOnboardKw: f(7, "mfr", "high", "SE and GR SPORT grades", RAV4_2026_LAUNCH),
-    portStandard: f<"J1772">("J1772", "mfr", "high", undefined, RAV4_2026_LAUNCH),
-    dcFastCharging: f<"none">("none", "mfr", "high", "DC fast charging is XSE and Woodland only", RAV4_2026_LAUNCH),
+    acOnboardKw: fk(7, "“The SE and GR SPORT Plug-in Hybrid models will have a 7-kW onboard charger”", LAUNCH),
+    portStandard: fk<"J1772">("J1772", "“equipped with a J1772 charging port for Level One and Level Two charging”; toyota.com marks the CCS1 inlet not-available on this grade", LAUNCH),
+    dcFastCharging: fk<"none">("none", "Toyota gives these two grades the J1772 inlet “for Level One and Level Two charging” and marks “Level 1-3 CCS1 charging port” not-available on them, in the same table that marks it standard on XSE and Woodland", SPECS),
   };
-  const rav4 = (id: string, trim: string[], rangeMi: number, charging: EnrichmentRow["charging"]): EnrichmentRow => ({
-    id,
+
+  const RAV4_BASE = {
     make: "TOYOTA",
     model: "RAV4 Plug-In Hybrid",
     // "RAV4 Prime (PHEV)" is vPIC's model string for the NEW generation too
@@ -381,19 +485,46 @@ const R: EnrichmentRow[] = [];
     // filing, see VPIC_PATTERN_TRIM_ARTIFACTS in match.ts — so a /vin/
     // lookup answers with the grade rows as candidates.
     modelAliases: ["RAV4 PLUG-IN", "RAV4 PHEV", "RAV4 Prime (PHEV)"],
-    modelYears: [2026, 2026],
-    trim,
+    modelYears: [2026, 2026] as [number, number],
+    // "PHEV models will have AWD standard" (launch release). All 4,394 live
+    // 2026 listings agree; the row states it so a future FWD plug-in RAV4
+    // cannot silently inherit these figures.
+    drive: "AWD" as const,
     packVariant: "PHEV",
-    range: { epaRangeMi: f(rangeMi, "mfr", "medium", TOYOTA_EST_NOTE, RAV4_2026_LAUNCH) },
+  };
+  const rav4 = (id: string, trim: string[], rangeMi: number, rangeNote: string, charging: EnrichmentRow["charging"]): EnrichmentRow => ({
+    id,
+    ...RAV4_BASE,
+    trim,
+    range: { mfrRangeMi: fk(rangeMi, rangeNote, LAUNCH) },
     charging,
     warranty: RAV4_WARRANTY,
     abstains: RAV4_ABSTAINS,
   });
   R.push(
-    rav4("rav4-phev-2026-se", ["SE"], 52, RAV4_AC_CHARGING),
-    rav4("rav4-phev-2026-xse", ["XSE"], 52, RAV4_DC_CHARGING),
-    rav4("rav4-phev-2026-woodland", ["Woodland"], 49, RAV4_DC_CHARGING),
-    rav4("rav4-phev-2026-gr-sport", ["GR Sport"], 48, RAV4_AC_CHARGING)
+    // The base row. No trim key, so it is the only row a listing with no trim
+    // string can reach — 321 of the 4,394 live cars on 2026-09-09 — and it
+    // carries only the three things identical across all four grades. It is
+    // `feedLabelRow` for the same reason the "64 Series" row is: it is not
+    // one of the versions the car could be, so it must stay out of the
+    // candidate span a /vin/ lookup shows beside the real grades (this
+    // cohort always takes that path — vPIC's "GR Sport" is an artifact for
+    // every 2026 pattern).
+    {
+      id: "rav4-phev-2026-base",
+      ...RAV4_BASE,
+      feedLabelRow: true,
+      warranty: RAV4_WARRANTY,
+      abstains: {
+        ...RAV4_ABSTAINS,
+        epaRangeMi: "Toyota rates the four grades between 48 and 52 miles and the VIN encodes no grade, so a car whose listing does not name one cannot be given a figure",
+        portStandard: "The inlet is CCS1 on XSE and Woodland and J1772 on SE and GR SPORT, and nothing in a gradeless listing says which",
+      },
+    },
+    rav4("rav4-phev-2026-se", ["SE"], 52, "“a manufacturer 52-mile range rating on the SE and XSE grades”. toyota.com's current table reads 54 for the SE; the lower of Toyota's two figures is stated", RAV4_AC_CHARGING),
+    rav4("rav4-phev-2026-xse", ["XSE"], 52, "“a manufacturer 52-mile range rating on the SE and XSE grades”; toyota.com's current table agrees at 52", RAV4_DC_CHARGING),
+    rav4("rav4-phev-2026-woodland", ["Woodland"], 49, "“The Woodland PHEV model has a manufacturer estimated 49-mile all-electric driving range rating”; toyota.com's current table agrees at 49", RAV4_DC_CHARGING),
+    rav4("rav4-phev-2026-gr-sport", ["GR Sport"], 48, "“the GR SPORT PHEV model has a 48-mile all-electric driving range rating”. toyota.com's current table reads 49; the lower of Toyota's two figures is stated", RAV4_AC_CHARGING)
   );
 }
 

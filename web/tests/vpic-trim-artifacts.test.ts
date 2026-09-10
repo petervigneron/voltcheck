@@ -45,7 +45,11 @@ test("a vPIC decode of ANY 2026 RAV4 PHEV must not resolve exact to the GR Sport
   assert.deepEqual(ids, ["rav4-phev-2026-gr-sport", "rav4-phev-2026-se", "rav4-phev-2026-woodland", "rav4-phev-2026-xse"]);
   // The exact wrong claims the artifact would have printed on an SE: the
   // 52-mile figure must be on the table, and the label row must not be.
-  assert.ok(r.candidates!.some((c) => c.range?.epaRangeMi?.value === 52));
+  // It reads mfrRangeMi, not epaRangeMi, since 2026-09-09: EPA has rated no
+  // 2026 RAV4 PHEV, so Toyota's own figure sits in the field lib/types.ts
+  // reserves for exactly that (data6.ts).
+  assert.ok(r.candidates!.some((c) => c.range?.mfrRangeMi?.value === 52));
+  assert.ok(r.candidates!.every((c) => c.range?.epaRangeMi === undefined));
   assert.ok(!ids.includes("rav4-phev-2026-64-series"), "the 64 Series label is not a version the car could be");
   assert.match(r.discriminator ?? "", /window sticker/i);
 });

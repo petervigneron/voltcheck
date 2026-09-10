@@ -128,6 +128,15 @@ export interface EnrichmentRow {
   // is not a car — so when the matcher spans a cohort's versions with row
   // trims ignored (a distrusted or artifact trim), it must never appear as a
   // "candidate version" beside the real grades.
+  //
+  // The flag says "not one of the versions this car could be", and the
+  // trim-label case is one way to be that, not the only one: a nameplate's
+  // BASE row — no trim key at all, carrying only what every grade shares so
+  // that a listing whose feed states no grade still gets those facts — is the
+  // other, and needs the same exclusion for the same reason (2026 RAV4
+  // Plug-In Hybrid, data6.ts). Set it on a base row only where that cohort
+  // actually reaches the spanning path; the 2026 bZ's base row does not and
+  // is deliberately left unflagged.
   feedLabelRow?: boolean;
   // This row describes a plug-in hybrid. Set it only where the row's own
   // facts cannot say so on their own.
