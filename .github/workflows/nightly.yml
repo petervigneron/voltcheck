@@ -1028,7 +1028,15 @@ jobs:
       # the Escalade IQ and IQL gained Cadillac's own figure as a
       # manufacturer estimate the same day, 1,900 cars. Measured after: 0.30%
       # (497 of 165,457 — 491 range spreads, 6 unkeyed splits, 0 undeclared
-      # silent). Pinned at 0.5, a little room for churn in the spread bucket.
+      # silent). First pinned at 0.5 that afternoon; three readings of the
+      # same day — 0.46% (CI's own 09-08 numbers minus the declared rows),
+      # 0.30% and 0.44% (two local runs eight hours apart, 165k and 169k
+      # cars, the spread bucket 491 then 740 on the same nameplates: Optiq,
+      # Taycan, the 2022 Volvo Recharges) — showed the spread bucket moving a
+      # third of a point with ordinary publish churn, so it went to 0.7
+      # before it ever ran in CI. Calibration, not laundering: nothing
+      # regressed between the readings, and 0.7 is a fifth of the old
+      # ceiling. Ratchet DOWN from here as those spreads get keyed.
       - name: Audit rows that stand in for several configurations
         if: always()
         working-directory: web
@@ -1036,9 +1044,9 @@ jobs:
           rc=0
           node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs \
             scripts/config-conflation-check.mjs --json --out /tmp/config-conflation.json \
-            --top 40 --max-conflated-share 0.5 || rc=$?
+            --top 40 --max-conflated-share 0.7 || rc=$?
           if [ "$rc" -eq 11 ]; then
-            echo "::error::More live listings are answered by a row covering several configurations than the 0.5% ceiling pinned 2026-09-09. Either a nameplate shipped with one row for several packs/drivetrains, a row that used to resolve stopped, or a row went silent on range without declaring why (abstains.epaRangeMi). The step log ranks them; /tmp/config-conflation.json has the detail."
+            echo "::error::More live listings are answered by a row covering several configurations than the 0.7% ceiling pinned 2026-09-09. Either a nameplate shipped with one row for several packs/drivetrains, a row that used to resolve stopped, or a row went silent on range without declaring why (abstains.epaRangeMi). The step log ranks them; /tmp/config-conflation.json has the detail."
             exit 11
           elif [ "$rc" -ne 0 ]; then exit "$rc"; fi
       - uses: actions/upload-artifact@v4
