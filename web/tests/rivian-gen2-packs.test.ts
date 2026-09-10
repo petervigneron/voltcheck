@@ -20,6 +20,12 @@
 //   2. the gen-1 rows still publish 106/141, which are correct THERE — the
 //      bug was one generation borrowing the other's numbers, so a fix that
 //      moved both would have been just as wrong.
+//
+// Updated 2026-09-10, when the gen-2 rows were split into single-year rows and
+// keyed on the VIN descriptor: the ids gained their model year, and the gen-1
+// assertions now hand the matcher a real 2024 VIN instead of a trim alone,
+// because those rows no longer carry the trim lists they used to resolve on.
+// The pack figures — the point of this file — are unchanged.
 import test from "node:test";
 import assert from "node:assert/strict";
 import { matchEnrichment } from "@/lib/enrichment/match";
@@ -41,7 +47,7 @@ test("the gen-2 Standard pack publishes Rivian's 92.5 usable, not vPIC's gen-1 1
     decode({ vin: R1S_26_STD, make: "RIVIAN", model: "R1S", modelYear: 2026, trim: "Standard Pack", driveType: "AWD/All-Wheel Drive", batteryKwhHint: 106 }),
     null
   );
-  assert.equal(r.exact?.id, "r1s-2025-26-std");
+  assert.equal(r.exact?.id, "r1s-2026-std");
   assert.equal(packKwh(r.exact!), 92.5);
   // Rivian's own number, cited to the article it came from — not "vin".
   assert.equal(r.exact!.battery?.packUsableKwh?.source, "mfr");
@@ -53,20 +59,20 @@ test("the gen-2 Max pack publishes 140, not the gen-1 141", () => {
     decode({ vin: R1S_26_MAX, make: "RIVIAN", model: "R1S", modelYear: 2026, trim: "Max Pack", driveType: "AWD/All-Wheel Drive", batteryKwhHint: 141 }),
     null
   );
-  assert.equal(r.exact?.id, "r1s-2025-26-max");
+  assert.equal(r.exact?.id, "r1s-2026-max");
   assert.equal(packKwh(r.exact!), 140);
 });
 
 test("gen-1 keeps 106 and 141 — those figures are right on THOSE rows", () => {
   const std = matchEnrichment(
-    decode({ make: "RIVIAN", model: "R1S", modelYear: 2024, trim: "Standard Pack", driveType: "AWD/All-Wheel Drive" }),
+    decode({ vin: "7PDSGBBA2RN032642", make: "RIVIAN", model: "R1S", modelYear: 2024, trim: "Standard Pack", driveType: "AWD/All-Wheel Drive" }),
     null
   );
   assert.equal(std.exact?.id, "r1s-2024-std");
   assert.equal(packKwh(std.exact!), 106);
 
   const max = matchEnrichment(
-    decode({ make: "RIVIAN", model: "R1S", modelYear: 2024, trim: "Max Pack", driveType: "AWD/All-Wheel Drive" }),
+    decode({ vin: "7PDSGCBA0RN032385", make: "RIVIAN", model: "R1S", modelYear: 2024, trim: "Max Pack", driveType: "AWD/All-Wheel Drive" }),
     null
   );
   assert.equal(max.exact?.id, "r1s-2024-max");
@@ -84,7 +90,7 @@ test("a Dual Motor listing with vPIC's 106 hint still reaches the Standard row",
     null
   );
   const ids = r.exact ? [r.exact.id] : (r.candidates ?? []).map((c) => c.id);
-  assert.ok(ids.includes("r1s-2025-26-std"), `Standard row dropped out: ${ids.join(", ")}`);
+  assert.ok(ids.includes("r1s-2026-std"), `Standard row dropped out: ${ids.join(", ")}`);
 });
 
 // And it gets strictly better: at 106 the Standard row sat 19.1% from a 131
@@ -96,6 +102,6 @@ test("a Large car's 131 hint no longer keeps the Standard row as a candidate", (
     null
   );
   const ids = r.exact ? [r.exact.id] : (r.candidates ?? []).map((c) => c.id);
-  assert.ok(!ids.includes("r1s-2025-26-std"), `Standard row still a candidate: ${ids.join(", ")}`);
-  assert.ok(ids.includes("r1s-2025-26-large"));
+  assert.ok(!ids.includes("r1s-2026-std"), `Standard row still a candidate: ${ids.join(", ")}`);
+  assert.ok(ids.includes("r1s-2026-large"));
 });

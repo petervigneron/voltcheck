@@ -587,6 +587,62 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
   // from rendered page images: 2018 p.8, 2019-2023 p.10, 2024-2025 p.8.
   // ---------------------------------------------------------------------
 
+  // ---------------------------------------------------------------------
+  // LEAF VIN KEYS (2026-09-10). The descriptor carries the pack at position 4
+  // and the grade at position 7, and 49 live MY2024-25 Leafs arrive with an
+  // empty trim field — every one of them matched nothing, because these rows
+  // were keyed on the grade name alone and the matcher applies trim before
+  // VIN keys. Read off 2,252 live VINs and control-tested against vPIC by
+  // sweeping position 4 x position 7 across MY2016-2025:
+  //
+  //   position 4   A = 40 kWh (24 kWh through MY2017)   B = 62 kWh e+
+  //                (30 kWh on MY2016-17)                C = the 60 kWh
+  //                                                     MY2023+ SV PLUS
+  //   position 7   B = S    C = SV    D = SL    E = Platinum+
+  //
+  // THE GRADE CODE ONLY EXISTS FROM MY2020, which is why leaf-s is split
+  // here rather than simply keyed. vPIC decodes a grade for every MY2020-25
+  // pattern and none at all for MY2016-19, where position 7 is a constant C
+  // on S, SV and SL alike — 1N4AZ1CP is every MY2018 Leaf. A vds key on the
+  // undivided 2018-2025 row would therefore have thrown away the 72 live
+  // 2018-19 cars to catch the 2024-25 ones. The MY2018-19 row keeps the trim
+  // key it always had; a 2018 Leaf with no trim still matches nothing, and
+  // that is the honest answer for a VIN that does not name the grade.
+  //
+  // Rows the descriptor settles drop their trim lists. leaf-sv-2018 does not:
+  // it spans 2018-2020, and its 2018-19 half is inside the era above.
+  // ---------------------------------------------------------------------
+
+  {
+    id: "leaf-s-2018-19",
+    make: "NISSAN",
+    model: "Leaf",
+    packVariant: "40 kWh",
+    modelYears: [2018, 2019],
+    trim: "S",
+    battery: { packGrossKwh: f(40, "mfr", "medium", "40 kWh gross"), chemistry: f("NMC", "agg", "medium") },
+    range: { epaRangeMi: f(149, "mfr", "high", "EPA rates the 2018 S at 151 and the 2019 at 150; the row prints the 149 it shares with 2020-25, the lower of the three", "https://www.fueleconomy.gov") },
+    charging: {
+      portStandard: f("CHAdeMO", "mfr", "high", "AC charging is standard J1772"),
+      superchargerAccess: f("none", "mfr", "high", "No CHAdeMO→NACS adapter exists"),
+      dcPeakKw: f(50, "agg", "medium"),
+    },
+    thermal: { heatPump: f("none", "mfr", "medium", "Nissan's Hybrid heater system was never offered on S") },
+    warranty: {
+      batteryYears: f(8, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      batteryTransfers: f(true, "mfr", "high", "“Original and subsequent owner(s)”, voided only if exported within 6 months of first sale"),
+      extendedCoverage: f("Capacity warranty: below 9 of 12 gauge bars (Nissan states no percentage)", "mfr", "high", "2018+ 62/40 kWh: 8yr/100k; 2014-era: 5yr/60k"),
+    },
+    buyerNotes: [
+      {
+        headline: "Air-cooled battery; CHAdeMO fast-charge port",
+        body: "The Leaf's battery is passively air-cooled (no liquid thermal management). Repeated DC fast-charge sessions trigger thermal throttling. The DC port is CHAdeMO, which no US network is expanding, and no CHAdeMO-to-NACS adapter exists. The in-car 12-bar gauge shows battery capacity; the capacity warranty triggers below 9 bars. Recalls 24V-700 (2019–20) and 25V-655 (2021–22): quick-charge fire risk, with owners instructed not to DC fast-charge until the software remedy is applied.",
+        severity: "warning",
+      },
+    ],
+  },
+
   {
     id: "leaf-s",
     make: "NISSAN",
@@ -595,10 +651,10 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     // pooling (lib/listings/enrich.ts packIdentity) - the value restates
     // this row's own battery fact.
     packVariant: "40 kWh",
-    modelYears: [2018, 2025],
-    trim: "S",
+    modelYears: [2020, 2025],
+    vds: ["AZ1B"],
     battery: { packGrossKwh: f(40, "mfr", "medium", "40 kWh gross"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(149, "mfr", "high", "2018: 151; 2019: 150; 2020–25: 149, EPA", "https://www.fueleconomy.gov") },
+    range: { epaRangeMi: f(149, "mfr", "high", "2020–25: 149, EPA", "https://www.fueleconomy.gov") },
     charging: {
       portStandard: f("CHAdeMO", "mfr", "high", "AC charging is standard J1772"),
       superchargerAccess: f("none", "mfr", "high", "No CHAdeMO→NACS adapter exists"),
@@ -704,7 +760,9 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     // this row's own battery fact.
     packVariant: "40 kWh",
     modelYears: [2021, 2022],
-    trim: "SV",
+    // AZ1C is the 40 kWh SV and nothing else in these two years — vPIC
+    // decodes trim "SV" for it and the live feed shows no other grade on it.
+    vds: ["AZ1C"],
     battery: { packGrossKwh: f(40, "mfr", "medium", "40 kWh gross"), chemistry: f("NMC", "agg", "medium") },
     range: { epaRangeMi: f(149, "mfr", "high", "EPA figure, both years", "https://www.fueleconomy.gov") },
     charging: {
@@ -778,7 +836,15 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     // this row's own battery fact.
     packVariant: "62 kWh e+",
     modelYears: [2019, 2022],
-    trim: "S Plus",
+    // BZ1B: the 62 kWh pack at position 4, the S grade at position 7. It is
+    // the key that stops a dealer's "S" on a 62 kWh car from taking the 40 kWh
+    // row's 149 miles — one live MY2020 car, 1N4BZ1BP9LC309618, was doing
+    // exactly that, 77 miles light. MY2019 has no vPIC grade pattern, but the
+    // live MY2019 e+ VIN 1N4BZ1CP4KC316599 is an SV PLUS reading B at
+    // position 4 and C at position 7, so the scheme is already in place that
+    // year; a MY2019 S PLUS that did not read BZ1B would match nothing, which
+    // is the safe direction.
+    vds: ["BZ1B"],
     battery: { packGrossKwh: f(62, "mfr", "medium", "62 kWh gross"), chemistry: f("NMC", "agg", "medium") },
     range: { epaRangeMi: f(226, "mfr", "high", "EPA figure, all years", "https://www.fueleconomy.gov") },
     charging: {
@@ -845,17 +911,63 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
   },
 
   {
-    id: "leaf-sv-plus-2021",
+    // Split 2026-09-10: one row used to span 2021-2025 printing 215 with
+    // "2023-25: 212" in a note — 273 live cars 3 miles over (the keys
+    // verifier caught it). Position 4 already separates the years (BZ1C
+    // through MY2022, CZ1C from MY2023).
+    id: "leaf-sv-plus-2021-22",
     make: "NISSAN",
     model: "Leaf",
     // Same pack as its trim siblings; packVariant groups them for peer
     // pooling (lib/listings/enrich.ts packIdentity) - the value restates
     // this row's own battery fact.
     packVariant: "62 kWh e+",
-    modelYears: [2021, 2025],
-    trim: "SV Plus",
-    battery: { packGrossKwh: f(62, "est", "medium", "62 kWh gross (2023–25: ~60)"), chemistry: f("NMC", "agg", "medium") },
-    range: { epaRangeMi: f(215, "mfr", "high", "2021–22: 215; 2023–25: 212, EPA", "https://www.fueleconomy.gov"), testedRangeMi: f(190, "tested", "medium", "70-mph test of the same-pack 2020 SL Plus: 190 mi") },
+    modelYears: [2021, 2022],
+    // BZ1C in MY2021-22 and CZ1C from MY2023, when Nissan moved the 60 kWh
+    // SV PLUS to its own position-4 code. Both decode grade "SV" in vPIC and
+    // neither carries any other grade in the live feed.
+    vds: ["BZ1C"],
+    battery: { packGrossKwh: f(62, "est", "medium", "62 kWh gross"), chemistry: f("NMC", "agg", "medium") },
+    range: { epaRangeMi: f(215, "mfr", "high", "SV PLUS, EPA (MY2022 id 44448 rates the same 215)", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=43666"), testedRangeMi: f(190, "tested", "medium", "70-mph test of the same-pack 2020 SL Plus: 190 mi") },
+    charging: {
+      portStandard: f("CHAdeMO", "mfr", "high", "AC charging is standard J1772"),
+      superchargerAccess: f("none", "mfr", "high", "No CHAdeMO→NACS adapter exists"),
+      dcPeakKw: f(100, "agg", "medium"),
+    },
+    abstains: {
+      heatPump: leafHybridHeaterAbstain(
+        "Nissan's brochure grids mark the Hybrid heater system standard on the 2021-2025 SV PLUS, the years Nissan stopped gating it behind the All-Weather Package (2021-2023 brochure PDF p.10, 2024-2025 p.8)"
+      ),
+    },
+    warranty: {
+      batteryYears: f(8, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      batteryTransfers: f(true, "mfr", "high", "“Original and subsequent owner(s)”, voided only if exported within 6 months of first sale"),
+      extendedCoverage: f("Capacity warranty: below 9 of 12 gauge bars (Nissan states no percentage)", "mfr", "high", "2018+ 62/40 kWh: 8yr/100k; 2014-era: 5yr/60k"),
+    },
+    buyerNotes: [
+      {
+        headline: "Air-cooled battery; CHAdeMO fast-charge port",
+        body: "The Leaf's battery is passively air-cooled (no liquid thermal management). Repeated DC fast-charge sessions trigger thermal throttling. The DC port is CHAdeMO, which no US network is expanding, and no CHAdeMO-to-NACS adapter exists. The in-car 12-bar gauge shows battery capacity; the capacity warranty triggers below 9 bars. Recalls 24V-700 (2019–20) and 25V-655 (2021–22): quick-charge fire risk, with owners instructed not to DC fast-charge until the software remedy is applied.",
+        severity: "warning",
+      },
+    ],
+  },
+  {
+    id: "leaf-sv-plus-2023-25",
+    make: "NISSAN",
+    model: "Leaf",
+    // Same pack as its trim siblings; packVariant groups them for peer
+    // pooling (lib/listings/enrich.ts packIdentity) - the value restates
+    // this row's own battery fact.
+    packVariant: "62 kWh e+",
+    modelYears: [2023, 2025],
+    // BZ1C in MY2021-22 and CZ1C from MY2023, when Nissan moved the 60 kWh
+    // SV PLUS to its own position-4 code. Both decode grade "SV" in vPIC and
+    // neither carries any other grade in the live feed.
+    vds: ["CZ1C"],
+    battery: { packGrossKwh: f(60, "est", "medium", "≈60 kWh gross from the 2023 refresh"), chemistry: f("NMC", "agg", "medium") },
+    range: { epaRangeMi: f(212, "mfr", "high", "SV PLUS, EPA (MY2024 id 46974 and MY2025 id 48401 rate the same 212)", "https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=46017"), testedRangeMi: f(190, "tested", "medium", "70-mph test of the same-pack 2020 SL Plus: 190 mi") },
     charging: {
       portStandard: f("CHAdeMO", "mfr", "high", "AC charging is standard J1772"),
       superchargerAccess: f("none", "mfr", "high", "No CHAdeMO→NACS adapter exists"),
@@ -890,7 +1002,10 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     // this row's own battery fact.
     packVariant: "62 kWh e+",
     modelYears: [2019, 2022],
-    trim: "SL Plus",
+    // BZ1D, the SL grade on the 62 kWh pack — vPIC decodes trim "SL" for it
+    // in every year from MY2020 and no other grade wears it. Same MY2019
+    // caveat as the S PLUS row above.
+    vds: ["BZ1D"],
     battery: { packGrossKwh: f(62, "mfr", "medium", "62 kWh gross"), chemistry: f("NMC", "agg", "medium") },
     range: { epaRangeMi: f(215, "mfr", "high", "EPA figure", "https://www.fueleconomy.gov"), testedRangeMi: f(190, "tested", "high", "70-mph test (InsideEVs, 2020 SL Plus): 190 mi") },
     charging: {

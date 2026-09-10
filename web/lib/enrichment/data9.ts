@@ -352,7 +352,16 @@ const R: EnrichmentRow[] = [];
   const rz300e = rz({
     id: "rz-300e-2024-25",
     model: "RZ 300e",
-    modelAliases: ["RZ-Series"],
+    // "RZ" joined the aliases 2026-09-10. The bare nameplate is 131 of the
+    // live 2026 cars and 35 of the 2024-25 ones, and a bare-RZ listing with
+    // an empty trim used to reach nothing at all: only the badge-keyed rows
+    // below answer to model "RZ", and a badge key is a trim key. It is safe
+    // on exactly the rows whose descriptor is unshared — ABABB is the 300e
+    // and nothing else, BDADB the 350e and nothing else — because the hard
+    // `vds` filter then does the work the badge was doing. It is NOT added
+    // to the 2026 450e or 550e, which share BCACB; those two get the base row
+    // further down instead.
+    modelAliases: ["RZ-Series", "RZ"],
     years: [2024, 2025],
     drive: "FWD",
     vds: ["ABABB"],
@@ -364,7 +373,7 @@ const R: EnrichmentRow[] = [];
   const rz350e26 = rz({
     id: "rz-350e-2026",
     model: "RZ 350e",
-    modelAliases: ["RZ 350e PREMIUM"],
+    modelAliases: ["RZ 350e PREMIUM", "RZ"],
     years: [2026, 2026],
     drive: "FWD",
     vds: ["BDADB"],
@@ -405,6 +414,59 @@ const R: EnrichmentRow[] = [];
     },
     pre26: false,
   });
+
+  // ── TWO BASE ROWS, for the two places the descriptor stops short ────────
+  // Added 2026-09-10 after measuring what a blank trim field actually costs
+  // this nameplate: 138 of the 250 live RZs with no trim matched nothing.
+  //
+  // The 2023-25 450e is one of them. Its grades are 24 miles apart, so the
+  // rows above are keyed "Premium" and "Luxury" — and a trim key is what
+  // rejects a car with no trim, so a 450e whose dealer left the field empty
+  // fell through both. The VIN cannot rescue it: Lexus filed ONE pattern,
+  // JTJAAAAB, for both grades (the same fact the "15 Series" label row rests
+  // on). So this row carries what the two grades share — the 71.4 kWh pack,
+  // the CCS1 inlet, the warranty — and says nothing about range.
+  //
+  // The 2026 450e and 550e are the other. They share JTJBCACB and differ by
+  // badge, so a listing filed under the bare "RZ" with no trim names neither.
+  // Their packs differ too (74.69 against 76.96 kWh), so this row is thinner:
+  // charging and warranty, which are identical across the 2026 line.
+  //
+  // Neither is a `feedLabelRow`. That flag is for a trim that names a filing
+  // artifact rather than a version, and it keeps such a row out of candidate
+  // spans; these two ARE the car, with one question unanswered.
+  const rz450e2325Base: EnrichmentRow = {
+    id: "rz-450e-2023-25-base",
+    make: "LEXUS",
+    model: "RZ 450e",
+    modelAliases: ["RZ"],
+    modelYears: [2023, 2025],
+    drive: "AWD",
+    vds: ["AAAAB"],
+    packVariant: "71.4 kWh",
+    battery: { packGrossKwh: f(71.4, "mfr", "high", undefined, RZ_MY25_BROCHURE) },
+    charging: RZ_CHARGING_PRE26,
+    warranty: RZ_WARRANTY_PRE26,
+    abstains: {
+      heatPump: RZ_HP_ABSTAIN,
+      epaRangeMi: "Lexus filed one VIN pattern for the 450e Premium and Luxury, whose EPA ratings are 24 miles apart, so a listing that names no grade cannot be given either figure",
+    },
+  };
+  const rz2026AwdBase: EnrichmentRow = {
+    id: "rz-2026-awd-base",
+    make: "LEXUS",
+    model: "RZ",
+    modelYears: [2026, 2026],
+    drive: "AWD",
+    vds: ["BCACB"],
+    charging: RZ_CHARGING_2026,
+    warranty: RZ_WARRANTY_2026,
+    abstains: {
+      heatPump: RZ_HP_ABSTAIN,
+      packUsableKwh: "The 2026 450e and 550e share this VIN descriptor and carry different packs, 74.69 against 76.96 kWh, so a listing badged only RZ cannot be given either",
+      epaRangeMi: "The 2026 450e and 550e share this VIN descriptor and are rated 264 and 229 miles, so a listing badged only RZ cannot be given either figure",
+    },
+  };
 
   // 220 listings arrive under the bare "RZ" with the variant in the trim
   // ("450e PREMIUM AWD", "350e"). No petrol car has ever worn this nameplate,
@@ -451,6 +513,8 @@ const R: EnrichmentRow[] = [];
     rz450ePremium,
     rz450eLuxury,
     rz450eLabel,
+    rz450e2325Base,
+    rz2026AwdBase,
     rz300e,
     rz350e26,
     rz450e26,

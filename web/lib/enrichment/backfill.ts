@@ -224,7 +224,11 @@ export const TESTED_BY_ROWID: Record<string, Fact<number>> = {
   "my-2025-lr-awd": f(298, "tested", "high", "70-mph steady-state highway range test (Out of Spec Reviews)", "https://insideevs.com/news/754181/model-y-juniper-vs-old-model-y/"),
   "my-2026-standard-rwd": f(268, "tested", "high", "70-mph steady-state highway range test (Out of Spec Reviews)", "https://insideevs.com/news/784492/tesla-model-y-standard-70-mph-range-test-video/"),
   "prologue-2025-26-awd-elite": f(240, "tested", "medium", "75-mph steady-state highway range (Car and Driver)", "https://www.caranddriver.com/honda/prologue"),
-  "r1s-2025-26-std": f(241, "tested", "medium", "70-mph steady-state highway (InsideEVs)", "https://insideevs.com/reviews/727916/rivian-r1s-lfp-range-test/"),
+  // The gen-2 rows were split into single-year rows on 2026-09-10 (the VIN
+  // codes swap meaning between MY2025 and MY2026), so each tested figure now
+  // needs both halves; the car it was measured on did not change.
+  "r1s-2025-std": f(241, "tested", "medium", "70-mph steady-state highway (InsideEVs)", "https://insideevs.com/reviews/727916/rivian-r1s-lfp-range-test/"),
+  "r1s-2026-std": f(241, "tested", "medium", "70-mph steady-state highway (InsideEVs)", "https://insideevs.com/reviews/727916/rivian-r1s-lfp-range-test/"),
   "r1t-2022": f(254, "tested", "high", "70-mph steady-state highway (InsideEVs)", "https://insideevs.com/reviews/588696/rivian-r1t-range-test-review/"),
   "r1t-2023-dual": f(308, "tested", "high", "70-mph steady-state highway (InsideEVs)", "https://insideevs.com/news/704160/rivian-r1t-max-pack-vs-large-pack-range-test/"),
   "r1t-2024-large": f(308, "tested", "medium", "70-mph steady-state highway (InsideEVs)", "https://insideevs.com/news/704160/rivian-r1t-max-pack-vs-large-pack-range-test/"),
@@ -350,11 +354,14 @@ export const TESTED_EST_BY_ROWID: Record<string, Fact<number>> = {
   "polestar2-2023-dual": f(226, "est", "medium", "70 mph steady-state highway range test (InsideEVs)", "https://insideevs.com/reviews/508700/polestar-2-highway-range-test/"),
   "prologue-2025-awd": f(240, "est", "medium", "75-mph highway range test (Car and Driver)", "https://www.caranddriver.com/honda/prologue"),
   "r1s-2024-max": f(359, "est", "medium", "70 mph highway range test (Out of Spec Reviews)", "https://www.youtube.com/watch?v=bKl_Vz3K60I"),
-  "r1s-2025-26-tri": f(361, "est", "medium", "Edmunds EV Range Test (Edmunds)", "https://www.edmunds.com/rivian/r1s/"),
+  "r1s-2025-tri": f(361, "est", "medium", "Edmunds EV Range Test (Edmunds)", "https://www.edmunds.com/rivian/r1s/"),
+  "r1s-2026-tri": f(361, "est", "medium", "Edmunds EV Range Test (Edmunds)", "https://www.edmunds.com/rivian/r1s/"),
   "r1t-2023-quad": f(289, "est", "medium", "70 mph highway range test (Out of Spec Reviews (via InsideEVs))", "https://insideevs.com/news/574637/rivian-r1t-70mph-range-test/"),
   "r1t-2024-quad": f(289, "est", "medium", "70 mph highway range test (Out of Spec Reviews (via InsideEVs))", "https://insideevs.com/news/574637/rivian-r1t-70mph-range-test/"),
-  "r1t-2025-26-max": f(266, "est", "medium", "70 mph highway range test (Out of Spec Reviews)", "https://www.rivianforums.com/forum/threads/out-of-spec-highway-range-test-of-gen2-r1t-dual-max-nowhere-near-epa.36760/"),
-  "r1t-2025-26-tri": f(298, "est", "medium", "70 mph highway range test (Out of Spec Reviews)", "https://www.youtube.com/watch?v=Zy0mdwSt8yc"),
+  "r1t-2025-max": f(266, "est", "medium", "70 mph highway range test (Out of Spec Reviews)", "https://www.rivianforums.com/forum/threads/out-of-spec-highway-range-test-of-gen2-r1t-dual-max-nowhere-near-epa.36760/"),
+  "r1t-2026-max": f(266, "est", "medium", "70 mph highway range test (Out of Spec Reviews)", "https://www.rivianforums.com/forum/threads/out-of-spec-highway-range-test-of-gen2-r1t-dual-max-nowhere-near-epa.36760/"),
+  "r1t-2025-tri": f(298, "est", "medium", "70 mph highway range test (Out of Spec Reviews)", "https://www.youtube.com/watch?v=Zy0mdwSt8yc"),
+  "r1t-2026-tri": f(298, "est", "medium", "70 mph highway range test (Out of Spec Reviews)", "https://www.youtube.com/watch?v=Zy0mdwSt8yc"),
   // Edmunds tested an Extended Range Sierra EV. That row split into an
   // Elevation and a Denali on 2026-08-28 (the AT4 Extended is deliberately
   // NOT here: GMC rates it 20 miles lower on the same pack, so a test of the
