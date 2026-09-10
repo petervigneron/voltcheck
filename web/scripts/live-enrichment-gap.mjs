@@ -31,18 +31,31 @@
 // TWO KINDS OF GAP, because they cost different things to fix:
 //   total   — no enrichment row exists for this make+model+year at all. A
 //             research gap: nobody has looked this car up yet.
-//   partial — a row DOES exist for this make+model+year, but this listing's
-//             own trim/drivetrain string doesn't satisfy it (trimMatches or
-//             the drive filter in match.ts rejects every candidate). Either a
-//             matching bug (a spelling the row doesn't anticipate) or a
-//             narrower research gap (this specific trim was never added) —
-//             worth a human's five-second look, not a blind re-run of the
-//             same research.
+//   partial — a row DOES exist for this make+model+year, but this listing
+//             can't be pinned to one from what the shard carries: usually
+//             the shard has NO trim (specTrim blanked it, or the dealer
+//             never said) and every row for the model is keyed by trim,
+//             which match.ts refuses to guess (the untrusted-trim rule).
+//             Sometimes a spelling the rows don't anticipate. The site's
+//             own per-VIN path may still resolve it — a 2024 EV9 AWD with
+//             no trim (kndaefs54r6031652) is fully enriched on its listing
+//             page while this script calls it partial — so a partial is a
+//             "look at one on the site" item, not a research item.
 // The split is measured directly: run the matcher once with this listing's
-// real trim/drive, and once with both stripped (which only asks "does ANY
-// row cover this make+model+year, ignoring trim/drive"). Total = the coarse
-// call already came back empty. Partial = the coarse call found rows but the
-// real one didn't.
+// real trim/drive, and once through matchIgnoringTrim(), which keeps every
+// row for the make+model+year in play with row trims ignored and asks only
+// whether ANY exists. Total = that came back empty. Partial = rows exist
+// but the real call didn't land.
+//
+// Until 2026-09-10 the second call was matchEnrichment with trim/drive
+// stripped — and since match.ts started refusing trim-keyed rows for a
+// trimless decode, that call could not match any model whose rows are all
+// trim-keyed, so every such listing was reported as "total" (no row at
+// all) and partialMiss read 0 on every run. A probe over the live shards
+// that day: EV9 102 misses, all trimless with rows present; ID.4 192, the
+// same; Taycan 477, R1S 339, Polestar 2 240, i4 168 — all "total", none
+// true. The genuine no-row cohorts were the 2012-20 Model S (369), the
+// 2016-18 X5 xDrive40e (31) and the 2014-15 Leaf.
 //
 // CAVEAT this script cannot avoid: the packed browse shard is not the raw
 // listing. Its `trim` field is already lib/listings/enrich.ts's specTrim()
@@ -132,7 +145,7 @@
 // baseline has been calibrated for it, so it never affects the exit code.
 
 import { unpackIndex, SHARDS } from "../lib/listings/pack.ts";
-import { matchEnrichment } from "../lib/enrichment/match.ts";
+import { matchEnrichment, matchIgnoringTrim } from "../lib/enrichment/match.ts";
 import { writeFile, mkdir } from "node:fs/promises";
 import { dirname } from "node:path";
 
@@ -343,8 +356,10 @@ for (const l of listings) {
     continue;
   }
 
-  const decodeCoarse = { ...decodeFull, trim: undefined, driveType: undefined };
-  const coarse = matchEnrichment(decodeCoarse, null);
+  // Existence, not resolution: does ANY row cover this make+model+year with
+  // row trims ignored? (Not matchEnrichment with the trim stripped — see the
+  // header for why that could never match a trim-keyed model.)
+  const coarse = matchIgnoringTrim({ ...decodeFull, driveType: undefined }, null);
   const kind = matched(coarse) ? "partial" : "total";
   if (kind === "total") totalMiss++;
   else partialMiss++;
@@ -456,7 +471,7 @@ if (AS_JSON) {
 console.log(`Live enrichment gap — ${totalListings} live listings across ${SHARDS} shards\n`);
 console.log(`  no enrichment row matched: ${totalGapListings} (${report.gapSharePct}%, ceiling ${MAX_GAP_SHARE}%)`);
 console.log(`    total miss (no row for this make+model+year at all): ${totalMiss}`);
-console.log(`    partial miss (a row exists but doesn't match this trim/drive): ${partialMiss}`);
+console.log(`    partial miss (rows exist; this listing's trim/drive — usually no trim at all — pins none): ${partialMiss}`);
 console.log(
   `  distinct make+model gap groups: ${ranked.length}; with ${MIN_GROUP}+ listings: ${report.groupCountAtMin} (baseline ${BASELINE})\n`
 );

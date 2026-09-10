@@ -889,198 +889,6 @@ jobs:
       # failing — the check going from "never recorded" to "recorded, and
       # wrong", which is worse.
 
-      # Which live listings resolve to NO enrichment row at all — the check
-      # that should have existed from the start. The enrichment corpus
-      # (web/lib/enrichment/data*.ts) is filled in by hand, model by model, as
-      # someone thought of it, and nothing ever reconciled it against what's
-      # actually live: a Ram ProMaster EV reached the site with a completely
-      # empty enrichment card, and the owner found it by eye (2026-08-21).
-      # This runs the production matcher (web/lib/enrichment/match.ts, plus
-      # whatever backfill.ts contributes) against the CDN-cached browse
-      # shards — the same voltcheck.net/api/index/0..5 a shopper's browser
-      # reads — never Supabase directly, so it costs the database nothing and
-      # is safe to run even while a db-sync is still writing. `always()`
-      # because it audits the CURRENT live site, not tonight's crawl: it owes
-      # nothing to finalize-ingest's result and should run whether tonight was
-      # a full crawl, a probe-only night, or an upstream step failed.
-      # Report-only, like the audits above: exit 10 means a NEW gap group
-      # appeared (a model went live with no enrichment, or a previously-
-      # matching row stopped matching) and the ratchet baseline needs
-      # attention, not that tonight's data refresh is bad.
-      #
-      # THE RATCHET CONTRACT (rewritten 2026-08-25 — see
-      # web/scripts/live-enrichment-gap.mjs's header for the full reasoning):
-      # TWO asserts, PRIMARY and SECONDARY, because the group-count assert
-      # alone has a blind spot a shopper would notice and this check
-      # wouldn't. A "new gap group" only appears when a make+model with ZERO
-      # prior listings gets its first one, or a row stops matching — so
-      # filling a 1,653-listing cohort and filling a 38-listing cohort each
-      # move the group count by exactly 1. A feed that's 90% covered but has
-      # one huge uncovered segment can report the SAME group count as a
-      # well-covered one; the count can't see which fix mattered more.
-      #
-      #   PRIMARY   --max-gap-share: the share of live listings with NO
-      #             enrichment row at all, weighted by listings (what a
-      #             shopper actually hits), not by distinct models. This is
-      #             the number that fails the job on its own.
-      #   SECONDARY --max-groups: the original ratchet, unchanged in
-      #             mechanism, kept as a second tripwire for a wholly new
-      #             model going live with zero coverage even when the feed's
-      #             overall share barely moves.
-      # Either one tripping fails the build; the step log names which.
-      #
-      # BOTH baselines calibrated together 2026-08-25, replacing the
-      # 2026-08-22 group-only baseline (491 groups, 19,531 of 100,728 live
-      # listings (19.4%) with no row, from a verified-healthy full walk).
-      # Coverage work since then grew the enrichment corpus faster than the
-      # feed grew: today's measurement is 12.4% of live listings (16,802 of
-      # them) with no enrichment row, 311 distinct gap groups — down from
-      # 19.4% despite the feed growing ~35%. --max-groups stays at 491
-      # (unchanged, still comfortably above today's 311 — recalibrating it is
-      # a separate exercise from today's share-ratchet fix).
-      #
-      # HOW today's number was measured, because it wasn't a clean single
-      # run: shards 12-23 of /api/index/* (half the CDN-cached browse feed)
-      # were serving cached 500s for the ~2h this was being measured — a live
-      # incident discovered while doing this work, matching the exact
-      # "sick database, no previous cache entry to fall back on" failure mode
-      # this file's Supabase-health section describes; shards 0-11 stayed
-      # healthy throughout. 12.4% is a direct measurement from those 12
-      # healthy shards (a random ~50% hash sample per the shard-assignment
-      # scheme in app/api/index/[shard]/route.ts, 67,990 listings, tight
-      # enough that sampling noise is well under 0.5 points) — then verified
-      # by replaying those same real shard bytes through the unmodified,
-      # committed script end-to-end (doubled across all 24 slots via
-      # --feed-base) and confirming it reproduces the identical 12.4%. The
-      # live incident itself is a separate, outstanding problem — flagged
-      # for the owner, not fixed here — and doesn't call this number's
-      # accuracy into question, only its completeness margin (a clean
-      # 24-shard read would tighten, not overturn, ±0.5 points either way).
-      # Ratchet DOWN as rows land; never up to hide a regression.
-      #
-      # RE-PINNED 2026-09-09. The group count read 523 on 09-08 against the
-      # 491 baseline and had failed every night for a week: 290 of the 523
-      # groups held one or two listings — the long tail the crawl's growth
-      # from 100k to 168k cars surfaced — and no amount of research keeps a
-      # count that trips on one stray 2013 Model S green. The share, which
-      # weighs what a shopper feels, read 7.5% against 12.4%. So the group
-      # ratchet now counts only groups of ten or more listings (--min-group,
-      # see the script header): a new model arrives by the hundred (the 2027
-      # Kia EV3 went live with 1,253 cars and no row — the largest gap on
-      # the site, fixed the same day), and ten keeps that catch while
-      # dropping the noise. Measured after the EV3 rows landed, live feed,
-      # all 24 shards: 6.3% share (10,368 of 165,457), 114 groups of ten or
-      # more. Pinned at 8.0 and 116 — a little room for churn, both well
-      # under the old ceilings. Next by size: Taycan, XC90 (2025-26 T8, no
-      # rows), Wrangler 2023, 2013-18 Model S, R1S gen 1, RAV4 PHEV 2026.
-      #
-      # RE-PINNED AGAIN 2026-09-10, after 116 failed on its first night at
-      # 131. The 114 above was real, but it was not what this step sees.
-      # This step runs before the nightly's own publish job, so it scores
-      # whatever publish is live at the time — normally the previous day's
-      # feed, or a publish another session dispatched mid-nightly. On 09-10
-      # it read the 14:56Z publish (171,166 listings, 131 groups of ten or
-      # more); a local run the same afternoon against the nightly's 18:03Z
-      # publish read 168,742 and 112. The 19-group difference is one day's
-      # ingest rewriting model strings — "BMW i4 eDrive35" fell 44→5,
-      # "LEXUS NXphev" 43→8, "BMW iX xDrive50" 43→5, "SUBARU Solterra" 23
-      # became "SUBARU SOLTERRA" 12, and the X5 total-miss group halved
-      # 417→228 — so two reads hours apart differ by more than a month of
-      # research would move. The 09-09 CI read, before the EV3 and RAV4
-      # rows landed, was already 129; 114 was the local read of the later
-      # publish, and the pin never had room. The floor of ten also has no
-      # quiet zone: 51 groups sit within three listings of it, and the two
-      # CI reads moved 8 groups over it and 4 under (Cayenne Coupe 7→14,
-      # Lexus RX 8→12, XC40 12→8, F-150 10→7 — dealer strings, not models).
-      # Pinned at 140 from CI's own reads of 129 and 131. Always pin from
-      # this job's artifact (live-enrichment-gap.json, groupCountAtMin),
-      # never from a local run. If the ratchet needs to be sharper, the
-      # lever is the floor, not the ceiling: at 25 only 10 groups sit in
-      # the band and the same two CI nights read 86 and 85.
-      - name: Audit live listings against the enrichment corpus
-        if: always()
-        working-directory: web
-        run: |
-          rc=0
-          node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs \
-            scripts/live-enrichment-gap.mjs --out /tmp/live-enrichment-gap.json --top 60 \
-            --max-gap-share 8.0 --min-group 10 --max-groups 140 || rc=$?
-          if [ "$rc" -eq 10 ]; then
-            echo "::error::Live enrichment coverage regressed — either the no-enrichment-row share exceeded the 8.0% ceiling pinned 2026-09-09, or the count of make/model gap groups holding ten or more listings pushed past the 140 baseline (pinned 2026-09-10 from CI reads of 129 and 131) (a model went live with no enrichment, or a row stopped matching). See the step log's ranked list, its top-10-by-listing-count on a share failure, and /tmp/live-enrichment-gap.json."
-            exit 10
-          elif [ "$rc" -ne 0 ]; then exit "$rc"; fi
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: live-enrichment-gap
-          path: /tmp/live-enrichment-gap.json
-          if-no-files-found: warn
-          retention-days: 14
-
-      # The third question, and the one nothing asked until 2026-08-28. The
-      # audit above asks whether a row EXISTS for what is live;
-      # enrichment-coverage.mjs asks whether a row that exists is COMPLETE.
-      # Neither asks whether the row that matched is answering about THIS car
-      # or about a family it belongs to — and a listing can pass both while
-      # still showing a shopper a range spread instead of a number, or a
-      # figure belonging to a different version of the car.
-      #
-      # WHY IT EXISTS: the owner opened a BrightDrop page and found no range,
-      # no battery size and no charge time, and asked why a human eye was the
-      # thing that found it. Four more nameplates had the same defect that
-      # day — Sierra EV, both Hummer bodies, Ioniq 5, Blazer EV, ~3,300 cars —
-      # and no check flagged any of them, because every row involved was real
-      # and most were well-researched. See the script header for the three
-      # symptoms it looks for.
-      #
-      # RATCHET: --max-conflated-share, a share for the same reason the audit
-      # above uses one. Calibrated 2026-08-28 by running it against the code
-      # as it stood at the START of that day (commit 36dc64d, same live feed):
-      # 8,450 listings, 5.72%, and the top of its lists was exactly the
-      # nameplates fixed that day, in order. After those fixes: 5,147
-      # listings, 3.49%. Pinned at 3.6 to leave a little room for feed churn.
-      # Ratchet DOWN as nameplates get keyed; never up to hide a regression.
-      #
-      # RE-PINNED 2026-09-09. It read 3.93% on 09-08 and had failed for a
-      # week, and 5,825 of the 6,589 listings it counted sat on rows that
-      # DECLARE why they state no range (abstains.epaRangeMi: no EPA rating
-      # exists above 10,000 lb GVWR, a base row deferring to its grade rows,
-      # EPA's own split by tire supplier) — the 2026 model year arriving on
-      # rows that had already made the decision this audit checks for. Not
-      # one undeclared silent row was left. Declared silence now prints
-      # under its own heading and stays out of the ratchet (script header);
-      # the Escalade IQ and IQL gained Cadillac's own figure as a
-      # manufacturer estimate the same day, 1,900 cars. Measured after: 0.30%
-      # (497 of 165,457 — 491 range spreads, 6 unkeyed splits, 0 undeclared
-      # silent). First pinned at 0.5 that afternoon; three readings of the
-      # same day — 0.46% (CI's own 09-08 numbers minus the declared rows),
-      # 0.30% and 0.44% (two local runs eight hours apart, 165k and 169k
-      # cars, the spread bucket 491 then 740 on the same nameplates: Optiq,
-      # Taycan, the 2022 Volvo Recharges) — showed the spread bucket moving a
-      # third of a point with ordinary publish churn, so it went to 0.7
-      # before it ever ran in CI. Calibration, not laundering: nothing
-      # regressed between the readings, and 0.7 is a fifth of the old
-      # ceiling. Ratchet DOWN from here as those spreads get keyed.
-      - name: Audit rows that stand in for several configurations
-        if: always()
-        working-directory: web
-        run: |
-          rc=0
-          node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs \
-            scripts/config-conflation-check.mjs --json --out /tmp/config-conflation.json \
-            --top 40 --max-conflated-share 0.7 || rc=$?
-          if [ "$rc" -eq 11 ]; then
-            echo "::error::More live listings are answered by a row covering several configurations than the 0.7% ceiling pinned 2026-09-09. Either a nameplate shipped with one row for several packs/drivetrains, a row that used to resolve stopped, or a row went silent on range without declaring why (abstains.epaRangeMi). The step log ranks them; /tmp/config-conflation.json has the detail."
-            exit 11
-          elif [ "$rc" -ne 0 ]; then exit "$rc"; fi
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: config-conflation
-          path: /tmp/config-conflation.json
-          if-no-files-found: warn
-          retention-days: 14
-
       # Washington transaction prices refresh monthly upstream.
       - name: Refresh Washington price comps (5th of the month)
         if: ${{ needs.finalize-ingest.result == 'success' && github.event_name == 'schedule' }}
@@ -1573,3 +1381,228 @@ jobs:
     if: ${{ always() && needs.finalize-ingest.result == 'success' && github.event.inputs.recover_run_id == '' }}
     uses: ./.github/workflows/publish-feed.yml
     secrets: inherit
+
+  # The two enrichment audits, moved here from finalize-audits on 2026-09-10.
+  # They read voltcheck.net/api/index/0..23, which serve the published feed
+  # artifacts (publish-feed.yml) — and finalize-audits runs BEFORE the
+  # night's publish, so from 2026-08-26 to 2026-09-10 they scored the
+  # previous publish: yesterday's inventory, or whatever another session
+  # had dispatched mid-nightly. That is how the group ceiling came to be
+  # pinned from a local read (114) that CI could never reproduce (129, 131),
+  # and why a new nameplate going live tonight was only ever caught
+  # tomorrow. Here, after publish-feed has written the artifacts, POSTed
+  # /api/revalidate and warmed all 26 index paths, the same read scores
+  # tonight's feed — the one a local run of either script sees too.
+  # Gated on publish-feed succeeding rather than `always()`: against a
+  # stale publish these numbers describe the wrong night.
+  audit-published-feed:
+    needs: [publish-feed]
+    if: ${{ always() && needs.publish-feed.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # Which live listings resolve to NO enrichment row at all — the check
+      # that should have existed from the start. The enrichment corpus
+      # (web/lib/enrichment/data*.ts) is filled in by hand, model by model, as
+      # someone thought of it, and nothing ever reconciled it against what's
+      # actually live: a Ram ProMaster EV reached the site with a completely
+      # empty enrichment card, and the owner found it by eye (2026-08-21).
+      # This runs the production matcher (web/lib/enrichment/match.ts, plus
+      # whatever backfill.ts contributes) against the CDN-cached browse
+      # shards — the same voltcheck.net/api/index/0..5 a shopper's browser
+      # reads — never Supabase directly, so it costs the database nothing and
+      # is safe to run even while a db-sync is still writing. `always()`
+      # because it audits the CURRENT live site, not tonight's crawl: it owes
+      # nothing to finalize-ingest's result and should run whether tonight was
+      # a full crawl, a probe-only night, or an upstream step failed.
+      # Report-only, like the checks in finalize-audits: exit 10 means a NEW gap group
+      # appeared (a model went live with no enrichment, or a previously-
+      # matching row stopped matching) and the ratchet baseline needs
+      # attention, not that tonight's data refresh is bad.
+      #
+      # THE RATCHET CONTRACT (rewritten 2026-08-25 — see
+      # web/scripts/live-enrichment-gap.mjs's header for the full reasoning):
+      # TWO asserts, PRIMARY and SECONDARY, because the group-count assert
+      # alone has a blind spot a shopper would notice and this check
+      # wouldn't. A "new gap group" only appears when a make+model with ZERO
+      # prior listings gets its first one, or a row stops matching — so
+      # filling a 1,653-listing cohort and filling a 38-listing cohort each
+      # move the group count by exactly 1. A feed that's 90% covered but has
+      # one huge uncovered segment can report the SAME group count as a
+      # well-covered one; the count can't see which fix mattered more.
+      #
+      #   PRIMARY   --max-gap-share: the share of live listings with NO
+      #             enrichment row at all, weighted by listings (what a
+      #             shopper actually hits), not by distinct models. This is
+      #             the number that fails the job on its own.
+      #   SECONDARY --max-groups: the original ratchet, unchanged in
+      #             mechanism, kept as a second tripwire for a wholly new
+      #             model going live with zero coverage even when the feed's
+      #             overall share barely moves.
+      # Either one tripping fails the build; the step log names which.
+      #
+      # BOTH baselines calibrated together 2026-08-25, replacing the
+      # 2026-08-22 group-only baseline (491 groups, 19,531 of 100,728 live
+      # listings (19.4%) with no row, from a verified-healthy full walk).
+      # Coverage work since then grew the enrichment corpus faster than the
+      # feed grew: today's measurement is 12.4% of live listings (16,802 of
+      # them) with no enrichment row, 311 distinct gap groups — down from
+      # 19.4% despite the feed growing ~35%. --max-groups stays at 491
+      # (unchanged, still comfortably above today's 311 — recalibrating it is
+      # a separate exercise from today's share-ratchet fix).
+      #
+      # HOW today's number was measured, because it wasn't a clean single
+      # run: shards 12-23 of /api/index/* (half the CDN-cached browse feed)
+      # were serving cached 500s for the ~2h this was being measured — a live
+      # incident discovered while doing this work, matching the exact
+      # "sick database, no previous cache entry to fall back on" failure mode
+      # this file's Supabase-health section describes; shards 0-11 stayed
+      # healthy throughout. 12.4% is a direct measurement from those 12
+      # healthy shards (a random ~50% hash sample per the shard-assignment
+      # scheme in app/api/index/[shard]/route.ts, 67,990 listings, tight
+      # enough that sampling noise is well under 0.5 points) — then verified
+      # by replaying those same real shard bytes through the unmodified,
+      # committed script end-to-end (doubled across all 24 slots via
+      # --feed-base) and confirming it reproduces the identical 12.4%. The
+      # live incident itself is a separate, outstanding problem — flagged
+      # for the owner, not fixed here — and doesn't call this number's
+      # accuracy into question, only its completeness margin (a clean
+      # 24-shard read would tighten, not overturn, ±0.5 points either way).
+      # Ratchet DOWN as rows land; never up to hide a regression.
+      #
+      # RE-PINNED 2026-09-09. The group count read 523 on 09-08 against the
+      # 491 baseline and had failed every night for a week: 290 of the 523
+      # groups held one or two listings — the long tail the crawl's growth
+      # from 100k to 168k cars surfaced — and no amount of research keeps a
+      # count that trips on one stray 2013 Model S green. The share, which
+      # weighs what a shopper feels, read 7.5% against 12.4%. So the group
+      # ratchet now counts only groups of ten or more listings (--min-group,
+      # see the script header): a new model arrives by the hundred (the 2027
+      # Kia EV3 went live with 1,253 cars and no row — the largest gap on
+      # the site, fixed the same day), and ten keeps that catch while
+      # dropping the noise. Measured after the EV3 rows landed, live feed,
+      # all 24 shards: 6.3% share (10,368 of 165,457), 114 groups of ten or
+      # more. Pinned at 8.0 and 116 — a little room for churn, both well
+      # under the old ceilings. Next by size: Taycan, XC90 (2025-26 T8, no
+      # rows), Wrangler 2023, 2013-18 Model S, R1S gen 1, RAV4 PHEV 2026.
+      #
+      # RE-PINNED AGAIN 2026-09-10, after 116 failed on its first night at
+      # 131. The 114 above was real, but it was not what this step sees.
+      # This step runs before the nightly's own publish job, so it scores
+      # whatever publish is live at the time — normally the previous day's
+      # feed, or a publish another session dispatched mid-nightly. On 09-10
+      # it read the 14:56Z publish (171,166 listings, 131 groups of ten or
+      # more); a local run the same afternoon against the nightly's 18:03Z
+      # publish read 168,742 and 112. The 19-group difference is one day's
+      # ingest rewriting model strings — "BMW i4 eDrive35" fell 44→5,
+      # "LEXUS NXphev" 43→8, "BMW iX xDrive50" 43→5, "SUBARU Solterra" 23
+      # became "SUBARU SOLTERRA" 12, and the X5 total-miss group halved
+      # 417→228 — so two reads hours apart differ by more than a month of
+      # research would move. The 09-09 CI read, before the EV3 and RAV4
+      # rows landed, was already 129; 114 was the local read of the later
+      # publish, and the pin never had room. The floor of ten also has no
+      # quiet zone: 51 groups sit within three listings of it, and the two
+      # CI reads moved 8 groups over it and 4 under (Cayenne Coupe 7→14,
+      # Lexus RX 8→12, XC40 12→8, F-150 10→7 — dealer strings, not models).
+      # Pinned at 140 from CI's own reads of 129 and 131. Always pin from
+      # this job's artifact (live-enrichment-gap.json, groupCountAtMin),
+      # never from a local run.
+      #
+      # FLOOR RAISED TO 25 the same day (owner: "Raise the floor to 25"). At
+      # ten, the groups that came and went were dealer strings — "BMW i4
+      # eDrive35", "LEXUS NXphev", "BMW X5 eDrive" — not nameplates, and 51
+      # groups sat within three listings of the floor. At 25 the same two
+      # CI nights read 86 and 85 with ten groups in the band, and every
+      # group above it is a model or a model-plus-trim string with dozens
+      # of cars. Pinned at 95. This job now runs AFTER publish-feed (see
+      # the job comment), so its first post-publish reads will come in
+      # lower than 85 (a local read of the 18:03Z publish gave 75); ratchet
+      # the ceiling down toward those once a week of them is in hand.
+      - name: Audit live listings against the enrichment corpus
+        if: always()
+        working-directory: web
+        run: |
+          rc=0
+          node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs \
+            scripts/live-enrichment-gap.mjs --out /tmp/live-enrichment-gap.json --top 60 \
+            --max-gap-share 8.0 --min-group 25 --max-groups 95 || rc=$?
+          if [ "$rc" -eq 10 ]; then
+            echo "::error::Live enrichment coverage regressed — either the no-enrichment-row share exceeded the 8.0% ceiling pinned 2026-09-09, or the count of make/model gap groups holding 25 or more listings pushed past the 95 baseline (floor and ceiling pinned 2026-09-10 from CI reads of 86 and 85 at that floor) (a model went live with no enrichment, or a row stopped matching). See the step log's ranked list, its top-10-by-listing-count on a share failure, and /tmp/live-enrichment-gap.json."
+            exit 10
+          elif [ "$rc" -ne 0 ]; then exit "$rc"; fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: live-enrichment-gap
+          path: /tmp/live-enrichment-gap.json
+          if-no-files-found: warn
+          retention-days: 14
+
+      # The third question, and the one nothing asked until 2026-08-28. The
+      # audit above asks whether a row EXISTS for what is live;
+      # enrichment-coverage.mjs asks whether a row that exists is COMPLETE.
+      # Neither asks whether the row that matched is answering about THIS car
+      # or about a family it belongs to — and a listing can pass both while
+      # still showing a shopper a range spread instead of a number, or a
+      # figure belonging to a different version of the car.
+      #
+      # WHY IT EXISTS: the owner opened a BrightDrop page and found no range,
+      # no battery size and no charge time, and asked why a human eye was the
+      # thing that found it. Four more nameplates had the same defect that
+      # day — Sierra EV, both Hummer bodies, Ioniq 5, Blazer EV, ~3,300 cars —
+      # and no check flagged any of them, because every row involved was real
+      # and most were well-researched. See the script header for the three
+      # symptoms it looks for.
+      #
+      # RATCHET: --max-conflated-share, a share for the same reason the audit
+      # above uses one. Calibrated 2026-08-28 by running it against the code
+      # as it stood at the START of that day (commit 36dc64d, same live feed):
+      # 8,450 listings, 5.72%, and the top of its lists was exactly the
+      # nameplates fixed that day, in order. After those fixes: 5,147
+      # listings, 3.49%. Pinned at 3.6 to leave a little room for feed churn.
+      # Ratchet DOWN as nameplates get keyed; never up to hide a regression.
+      #
+      # RE-PINNED 2026-09-09. It read 3.93% on 09-08 and had failed for a
+      # week, and 5,825 of the 6,589 listings it counted sat on rows that
+      # DECLARE why they state no range (abstains.epaRangeMi: no EPA rating
+      # exists above 10,000 lb GVWR, a base row deferring to its grade rows,
+      # EPA's own split by tire supplier) — the 2026 model year arriving on
+      # rows that had already made the decision this audit checks for. Not
+      # one undeclared silent row was left. Declared silence now prints
+      # under its own heading and stays out of the ratchet (script header);
+      # the Escalade IQ and IQL gained Cadillac's own figure as a
+      # manufacturer estimate the same day, 1,900 cars. Measured after: 0.30%
+      # (497 of 165,457 — 491 range spreads, 6 unkeyed splits, 0 undeclared
+      # silent). First pinned at 0.5 that afternoon; three readings of the
+      # same day — 0.46% (CI's own 09-08 numbers minus the declared rows),
+      # 0.30% and 0.44% (two local runs eight hours apart, 165k and 169k
+      # cars, the spread bucket 491 then 740 on the same nameplates: Optiq,
+      # Taycan, the 2022 Volvo Recharges) — showed the spread bucket moving a
+      # third of a point with ordinary publish churn, so it went to 0.7
+      # before it ever ran in CI. Calibration, not laundering: nothing
+      # regressed between the readings, and 0.7 is a fifth of the old
+      # ceiling. Ratchet DOWN from here as those spreads get keyed.
+      - name: Audit rows that stand in for several configurations
+        if: always()
+        working-directory: web
+        run: |
+          rc=0
+          node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs \
+            scripts/config-conflation-check.mjs --json --out /tmp/config-conflation.json \
+            --top 40 --max-conflated-share 0.7 || rc=$?
+          if [ "$rc" -eq 11 ]; then
+            echo "::error::More live listings are answered by a row covering several configurations than the 0.7% ceiling pinned 2026-09-09. Either a nameplate shipped with one row for several packs/drivetrains, a row that used to resolve stopped, or a row went silent on range without declaring why (abstains.epaRangeMi). The step log ranks them; /tmp/config-conflation.json has the detail."
+            exit 11
+          elif [ "$rc" -ne 0 ]; then exit "$rc"; fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: config-conflation
+          path: /tmp/config-conflation.json
+          if-no-files-found: warn
+          retention-days: 14
