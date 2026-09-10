@@ -165,5 +165,18 @@ export function batteryWarranty(
     };
   }
 
+  // A term with no mileage cap at all (Tesla S/X before 29 Jan 2020, VinFast,
+  // Ferrari) used to fall through to "unknown" because milesSafe could never
+  // be true. The clock is the only limit, so read it the same least-favourable
+  // way: in force through the end of earliestExpiryYear - 1 at minimum.
+  if (miles == null && years != null && timeSafe) {
+    const minYearsLeft = earliestExpiryYear! - 1 - now.getUTCFullYear();
+    return {
+      state: "active",
+      label: minYearsLeft >= 1 ? `In force · ${minYearsLeft}+ yr left` : "In force",
+      why: `${years}-year term with no mileage limit; it runs from an in-service date we don't have, so this is the floor the model year guarantees.`,
+    };
+  }
+
   return { state: "unknown" };
 }

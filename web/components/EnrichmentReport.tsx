@@ -395,7 +395,7 @@ export function EnrichmentFacts({
                 {...t}
                 label="HV battery coverage"
                 fact={row.warranty?.batteryYears}
-                format={(v) => `${v} yr / ${row.warranty?.batteryMiles?.value.toLocaleString() ?? "—"} mi`}
+                format={(v) => (row.warranty?.batteryMiles ? `${v} yr / ${row.warranty.batteryMiles.value.toLocaleString()} mi` : `${v} yr`)}
               />
             )}
             {!expired && (

@@ -108,3 +108,14 @@ test("a cohort with no warranty terms says nothing", () => {
   assert.equal(batteryWarranty(bare, car(2020, 10), NOW).state, "unknown");
   assert.equal(batteryWarranty(undefined, car(2020, 10), NOW).state, "unknown");
 });
+
+test("a term with no mileage cap is in force on the clock alone, not unknown", () => {
+  // Tesla S/X before 29 Jan 2020: "a period of 8 years", no cap. Formerly
+  // fell through to "unknown" because the mileage side could never be safe.
+  const r: EnrichmentRow = { ...row(8, 150_000), warranty: { batteryYears: f(8) } };
+  const w = batteryWarranty(r, car(2022, 180_000), NOW); // 180k mi would be "Expired" under any cap
+  assert.equal(w.state, "active");
+  assert.match(say(w), /In force · \d\+ yr left/);
+  // …and past the term it is still expired.
+  assert.equal(batteryWarranty(r, car(2013, 50_000), NOW).state, "expired");
+});

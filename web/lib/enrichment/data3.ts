@@ -902,10 +902,9 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     },
     thermal: { heatPump: f("none", "agg", "medium", "Octovalve heat pump arrived with the January 2021 Model S/X refresh; pre-refresh cars (through ~end of 2020 production) had resistive heat only, corroborated by NHTSA recall 22V050000, which describes the heat-pump valve hardware as present only on 2021+ cars") },
     warranty: {
-      batteryYears: f(8, "mfr", "high", "“8 years or 150,000 miles, whichever comes first”, Tesla's own vehicle-warranty page (archived capture, live page blocked by bot-detection; dated 2025-04-16, ~16 months old relative to today but Tesla's S/X battery terms have historically been stable)"),
-      batteryMiles: f(150_000, "mfr", "high", "Model S/X get a higher mileage cap than Model 3/Y, same source"),
-      sohFloorPct: f(70, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryYears: f(8, "mfr", "high", "“a period of 8 years” with no mileage cap and no capacity-loss coverage — the S/X warranty in force for this model year. The 150,000 mi / 70% terms are the booklet effective 29 Jan 2020, which limits itself to cars purchased on or after that date; the rows carried them from a 2025 capture until 2026-09-10 (185 live cars)", "https://web.archive.org/web/20180410085207/https://www.tesla.com/sites/default/files/downloads/Model_S_X_Warranty_NA_en.pdf"),
+      batteryTransfers: f(true, "mfr", "high", "“transferable at no cost to any person(s) who subsequently and lawfully assume(s) ownership”", "https://web.archive.org/web/20180410085207/https://www.tesla.com/sites/default/files/downloads/Model_S_X_Warranty_NA_en.pdf"),
+      powertrainTerms: f("Electric drive: 8 yr", "mfr", "high", "Drive unit covered with the battery", "https://web.archive.org/web/20180410085207/https://www.tesla.com/sites/default/files/downloads/Model_S_X_Warranty_NA_en.pdf"),
     },
     buyerNotes: [
       {
@@ -952,10 +951,9 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     },
     thermal: { heatPump: f("none", "agg", "medium", "Octovalve heat pump arrived with the January 2021 Model S/X refresh; 2017 cars have resistive heat only") },
     warranty: {
-      batteryYears: f(8, "mfr", "high", "“8 years or 150,000 miles, whichever comes first”, Tesla's own vehicle-warranty page (archived capture, dated 2025-04-16)"),
-      batteryMiles: f(150_000, "mfr", "high"),
-      sohFloorPct: f(70, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryYears: f(8, "mfr", "high", "“a period of 8 years” with no mileage cap and no capacity-loss coverage — the S/X warranty in force for this model year. The 150,000 mi / 70% terms are the booklet effective 29 Jan 2020, which limits itself to cars purchased on or after that date; the rows carried them from a 2025 capture until 2026-09-10 (185 live cars)", "https://web.archive.org/web/20180410085207/https://www.tesla.com/sites/default/files/downloads/Model_S_X_Warranty_NA_en.pdf"),
+      batteryTransfers: f(true, "mfr", "high", "“transferable at no cost to any person(s) who subsequently and lawfully assume(s) ownership”", "https://web.archive.org/web/20180410085207/https://www.tesla.com/sites/default/files/downloads/Model_S_X_Warranty_NA_en.pdf"),
+      powertrainTerms: f("Electric drive: 8 yr", "mfr", "high", "Drive unit covered with the battery", "https://web.archive.org/web/20180410085207/https://www.tesla.com/sites/default/files/downloads/Model_S_X_Warranty_NA_en.pdf"),
     },
     buyerNotes: [
       {
@@ -1005,10 +1003,9 @@ export const RESEARCH_ROWS_3: EnrichmentRow[] = [
     },
     thermal: { heatPump: f("none", "agg", "medium", "Octovalve heat pump arrived with the January 2021 Model S/X refresh; 2018 cars have resistive heat only") },
     warranty: {
-      batteryYears: f(8, "mfr", "high", "“8 years or 150,000 miles, whichever comes first”, Tesla's own vehicle-warranty page (archived capture, dated 2025-04-16)"),
-      batteryMiles: f(150_000, "mfr", "high"),
-      sohFloorPct: f(70, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
+      batteryYears: f(8, "mfr", "high", "“a period of 8 years” with no mileage cap and no capacity-loss coverage — the S/X warranty in force for this model year. The 150,000 mi / 70% terms are the booklet effective 29 Jan 2020, which limits itself to cars purchased on or after that date; the rows carried them from a 2025 capture until 2026-09-10 (185 live cars)", "https://web.archive.org/web/20180410085207/https://www.tesla.com/sites/default/files/downloads/Model_S_X_Warranty_NA_en.pdf"),
+      batteryTransfers: f(true, "mfr", "high", "“transferable at no cost to any person(s) who subsequently and lawfully assume(s) ownership”", "https://web.archive.org/web/20180410085207/https://www.tesla.com/sites/default/files/downloads/Model_S_X_Warranty_NA_en.pdf"),
+      powertrainTerms: f("Electric drive: 8 yr", "mfr", "high", "Drive unit covered with the battery", "https://web.archive.org/web/20180410085207/https://www.tesla.com/sites/default/files/downloads/Model_S_X_Warranty_NA_en.pdf"),
     },
     buyerNotes: [
       {

@@ -58,8 +58,13 @@ function drive8(make: string): Fact<string> {
 
 // Tesla: 8yr, mileage tier by model/variant. S/X 150k; Model 3/Y Long Range and
 // Performance 120k; RWD/Standard Range 100k.
-function teslaPT(row: EnrichmentRow): Fact<string> {
+function teslaPT(row: EnrichmentRow): Fact<string> | undefined {
   const m = (row.model || "").toUpperCase();
+  // The 150,000-mile S/X cap dates from the booklet effective 29 Jan 2020;
+  // earlier S/X terms had no mileage cap at all (data14.ts, data3.ts). A row
+  // that ends before MY2021 says its own terms or says nothing — this helper
+  // wrote "8 yr / 150,000 mi" onto three pre-2020 rows until 2026-09-10.
+  if ((m.includes("MODEL S") || m.includes("MODEL X")) && row.modelYears[1] < 2021) return undefined;
   const label = `${firstStr(row.trim)} ${row.packVariant || ""}`.toUpperCase();
   let miles = 100_000;
   if (m.includes("MODEL S") || m.includes("MODEL X")) miles = 150_000;
