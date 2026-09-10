@@ -448,3 +448,60 @@ test("trim and drivetrain narrow together, trim first", () => {
   assert.equal(v.tier === "estimate" && v.matchedDrive, "AWD");
   assert.equal(v.tier === "estimate" && v.headline, "$39,500");
 });
+
+// ── The range (owner, 2026-09-09) ──────────────────────────────────────────
+//
+// "Show the sales range and label the retail number." The headline became
+// transactions-low to asking-high; the retail figure is the estimate it was.
+import { dominantVin8, worthRange } from "../lib/listings/value";
+
+test("a pool that is one VIN prefix names its cohort without a VIN; a mixture does not", () => {
+  const same = (n: number, vin8: string): WorthPeer[] =>
+    Array.from({ length: n }, (_, i) => ({ vin: `${vin8}${String(i).padStart(9, "0")}`, mileage: 40000, askUsd: 30000 }));
+  assert.equal(dominantVin8(same(10, "KM8KNDAF")), "KM8KNDAF");
+  assert.equal(dominantVin8([...same(9, "KM8KNDAF"), ...same(1, "KM8KRDAF")]), "KM8KNDAF");
+  // Under four-fifths, or under four peers, no cohort speaks for the pool.
+  assert.equal(dominantVin8([...same(7, "KM8KNDAF"), ...same(3, "KM8KRDAF")]), undefined);
+  assert.equal(dominantVin8(same(3, "KM8KNDAF")), undefined);
+  assert.equal(dominantVin8([]), undefined);
+});
+
+test("the range runs from the sales lower quartile (deflated to national) to the asking median", () => {
+  const est = { valueUsd: 25200, askMedianUsd: 25500, peerN: 229, slopeFromSales: true };
+  const r = worthRange({ n: 12, p25Usd: 21606, medianUsd: 23392, p75Usd: 24614, slopeFromSales: true }, est);
+  // 21,606 / 1.057 = 20,441 → $20,400.
+  assert.deepEqual(r, { lowUsd: 20400, highUsd: 25500, salesN: 12 });
+  // Too few sales, or ends that cross, is no range at all.
+  assert.equal(worthRange({ n: 7, p25Usd: 21606, medianUsd: 23392, p75Usd: 24614, slopeFromSales: true }, est), undefined);
+  assert.equal(worthRange({ n: 12, p25Usd: 28000, medianUsd: 29000, p75Usd: 30000, slopeFromSales: true }, est), undefined);
+  assert.equal(worthRange(null, est), undefined);
+  assert.equal(worthRange({ n: 12, p25Usd: 21606, medianUsd: 23392, p75Usd: 24614, slopeFromSales: true }, undefined), undefined);
+});
+
+test("with a sales band the estimate carries the range and owes the WA credit; the retail figure is unchanged", () => {
+  const sales = { n: 12, p25Usd: 30000, medianUsd: 33000, p75Usd: 35000, slopeFromSales: true };
+  const v = decideValue(picker, empty, pool(FOUR), { dbFailed: false, sales });
+  assert.equal(v.tier, "estimate");
+  assert.equal(v.tier === "estimate" && v.headline, "$36,000");
+  assert.deepEqual(v.tier === "estimate" && v.range, { lowUsd: 28400, highUsd: 36500, salesN: 12 });
+  assert.equal(v.tier === "estimate" && v.waDerived, true);
+  // Without one, the verdict is exactly what it was.
+  const plain = decideValue(picker, empty, pool(FOUR));
+  assert.equal(plain.tier === "estimate" && plain.range, undefined);
+  assert.equal(plain.tier === "estimate" && plain.waDerived, false);
+});
+
+test("a cohort the pool named moves the peers on that cohort's rate, exactly as a VIN would", () => {
+  const c = healthy({ usdPerMile: -0.5 });
+  // Peers at 60,000 miles asked $30,000 each; the shopper's car has 40,000.
+  const far = pool([{ vin: `${VIN8}000000001`, mileage: 60_000, askUsd: 30_000 }, { vin: `${VIN8}000000002`, mileage: 60_000, askUsd: 30_000 }, { vin: `${VIN8}000000003`, mileage: 60_000, askUsd: 30_000 }, { vin: `${VIN8}000000004`, mileage: 60_000, askUsd: 30_000 }]);
+  const byVin = decideValue(withVin, index(c), far);
+  const byPool = decideValue(picker, index(c), far, { dbFailed: false, cohortVin8: VIN8 });
+  const fallback = decideValue(picker, index(c), far);
+  assert.equal(byVin.tier === "estimate" && byVin.valueUsd, byPool.tier === "estimate" && byPool.valueUsd);
+  assert.equal(byPool.tier === "estimate" && byPool.waDerived, true);
+  // −$0.50/mi × 20,000 = +$10,000 vs the fallback's +$1,800: the two must not agree.
+  assert.notEqual(byPool.tier === "estimate" && byPool.valueUsd, fallback.tier === "estimate" && fallback.valueUsd);
+  // Naming a cohort never unlocks the SOLD tier: that still takes the VIN's own identity check.
+  assert.equal(byPool.tier, "estimate");
+});

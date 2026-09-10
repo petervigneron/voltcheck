@@ -112,17 +112,23 @@ for (const sub of subs) {
         ? "Unchanged since last week"
         : "";
   const headline = `${v.headline} est.`;
+  // The /worth headline since 2026-09-09: transactions low to asking high,
+  // when the cohort has the sales for it. The tracked figure stays the
+  // retail one — that is what last_value_usd holds and what moves.
+  const rangeLine = v.tier === "estimate" && v.range ? `Transaction prices and dealer asking prices: ${money(v.range.lowUsd)} – ${money(v.range.highUsd)}` : "";
   const pageUrl = `${ORIGIN}${worthWatchUrl(input)}`;
   const unsubUrl = `${ORIGIN}/alerts/unsubscribe?token=${sub.unsubscribe_token}`;
   const subject = `${label}: ${headline}${moveLine ? ` — ${moveLine.toLowerCase()}` : ""}`;
 
   const text =
-    `${label}\n${headline}\n${moveLine ? `${moveLine}\n` : ""}\n` +
+    `${label}\nDealer retail ${headline}\n${moveLine ? `${moveLine}\n` : ""}${rangeLine ? `${rangeLine}\n` : ""}\n` +
     `${pageUrl}\n\nStop tracking this car: ${unsubUrl}\n`;
   const html =
     `<p style="margin:0 0 4px;color:#666;font-size:12px;text-transform:uppercase;letter-spacing:.1em">${esc(label)}</p>` +
     `<p style="margin:0;font-size:32px;font-weight:800">${esc(headline)}</p>` +
+    `<p style="margin:2px 0 0;color:#666;font-size:12px;text-transform:uppercase;letter-spacing:.1em">Dealer retail</p>` +
     (moveLine ? `<p style="margin:6px 0 0;font-size:15px;font-weight:700">${esc(moveLine)}</p>` : "") +
+    (rangeLine ? `<p style="margin:10px 0 0;font-size:14px">${esc(rangeLine)}</p>` : "") +
     `<p style="margin-top:16px"><a href="${pageUrl}">See the valuation</a></p>` +
     `<p style="color:#666;font-size:12px"><a href="${unsubUrl}">Stop tracking this car</a></p>`;
 

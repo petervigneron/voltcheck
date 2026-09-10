@@ -22,6 +22,7 @@ import { enrichListing, packIdentity, specTrim } from "./enrich";
 import { hasRealPrice, PRICE_FLOOR_USD } from "./price";
 import { trimClaim } from "./trimClaim";
 import { ASK_TO_SOLD_DISCOUNT } from "./askToSold";
+import { fetchSalesBand, type SalesBand } from "./salesBand";
 
 /**
  * What is this car worth? — /worth, the free valuation tool.
@@ -311,6 +312,9 @@ export interface AskPool {
 
 export interface AskEstimate {
   valueUsd: number;
+  /** The mileage-adjusted median ASK itself, before the ask-to-sold
+   *  conversion — the "dealer asking prices" end of the range. */
+  askMedianUsd: number;
   peerN: number;
   /** True when the mileage adjustment used the cohort's own fitted slope
    *  rather than the dataset-wide fallback. */
@@ -357,7 +361,50 @@ export function askEstimate(
   // around: at that level we do not believe a listed number is a price, so we
   // will not publish one as a valuation either.
   if (value < PRICE_FLOOR_USD) return undefined;
-  return { valueUsd: round100(value), peerN: comparable.length, slopeFromSales };
+  return { valueUsd: round100(value), askMedianUsd: round100(askMedian), peerN: comparable.length, slopeFromSales };
+}
+
+/**
+ * The VIN(1-8) cohort a pool of listings belongs to, when it belongs to one.
+ *
+ * What makes a VIN optional on /worth (owner, 2026-08-25) without giving up
+ * the cohort-keyed reads: the peers carry their own VINs, and a pool
+ * narrowed to "SEL AWD" is nearly always one prefix — Hyundai spends VIN
+ * positions 4-8 on exactly the facts the picker asked for. Four-fifths of
+ * the peers sharing a prefix, and at least MIN_PEERS of them, is the bar;
+ * below it the pool is a mixture of cohorts and no single one may speak for
+ * it. Positions 1-8 only, uppercased, so the key matches ev_price_model.
+ */
+export function dominantVin8(peers: WorthPeer[]): string | undefined {
+  const tally = new Map<string, number>();
+  for (const p of peers) {
+    const k = p.vin.slice(0, 8).toUpperCase();
+    if (k.length === 8) tally.set(k, (tally.get(k) ?? 0) + 1);
+  }
+  const [top] = [...tally.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+  if (!top || top[1] < MIN_PEERS || top[1] < 0.8 * peers.length) return undefined;
+  return top[0];
+}
+
+/**
+ * The range a seller can act on: the lower quartile of what the cohort
+ * CLOSED at (0081, deflated to national like the sold band) up to what
+ * dealers are ASKING for it now. Owner, 2026-09-09, on being offered
+ * $19,200 for a car the page valued at $25,200: "we can't tell people what
+ * their cars are actually worth" with one retail number. The transactions
+ * end includes private sales and trade-ins (the record has no seller
+ * field); the asking end is the retail ceiling. Eight sales is the floor,
+ * the same MIN_SOLD_N ev_price_model fits on; a band whose ends cross says
+ * nothing and prints nothing.
+ */
+export function worthRange(sales: SalesBand | null | undefined, est: AskEstimate | undefined): { lowUsd: number; highUsd: number; salesN: number } | undefined {
+  if (!sales || !est) return undefined;
+  if (!Number.isFinite(sales.n) || sales.n < MIN_SOLD_N) return undefined;
+  const nat = 1 / (1 + WA_OVER_NATIONAL);
+  const lowUsd = round100(sales.p25Usd * nat);
+  const highUsd = est.askMedianUsd;
+  if (!Number.isFinite(lowUsd) || lowUsd <= 0 || !(highUsd > lowUsd)) return undefined;
+  return { lowUsd, highUsd, salesN: sales.n };
 }
 
 /**
@@ -531,7 +578,12 @@ export type Valuation =
       basis: PoolBasis;
       matchedTrim?: string;
       matchedDrive?: "RWD" | "AWD" | "FWD";
+      /** The retail figure — "dealer retail" on the page. */
       headline: string;
+      /** Transactions low to asking high (worthRange); absent when the cohort
+       *  has too few recent sales or no cohort could be named. Printed as the
+       *  headline when present; the retail figure is then labeled beside it. */
+      range?: { lowUsd: number; highUsd: number; salesN: number };
     } & WaDerived)
   | { tier: "abstain"; source: string }
   | { tier: "unavailable"; source: string };
@@ -566,7 +618,7 @@ export function decideValue(
   input: WorthInput,
   comps: CompIndex,
   pool: AskPool | null,
-  opts: { dbFailed: boolean } = { dbFailed: false }
+  opts: { dbFailed: boolean; sales?: SalesBand | null; cohortVin8?: string } = { dbFailed: false }
 ): Valuation {
   // Before any pool is consulted: no pool this tool can build makes a number
   // for a branded title honest, so the refusal cannot depend on what was
@@ -574,7 +626,11 @@ export function decideValue(
   if (input.condition === "branded") return { tier: "abstain", source: BRANDED_TITLE_COPY };
   if (!pool) return { tier: opts.dbFailed ? "unavailable" : "abstain", source: opts.dbFailed ? UNAVAILABLE_COPY : abstainCopy(input) };
 
-  const c = compCohort(comps, input.vin, input.year);
+  // The cohort's own rate moves the peers whether the VIN named the cohort
+  // or the pool did (dominantVin8): with a VIN the owner's car valued at
+  // $25,200 and without one at $24,200, the same car on the fallback rate,
+  // which was two numbers for one car by another route (2026-09-09).
+  const c = compCohort(comps, input.vin ?? opts.cohortVin8, input.year);
   const narrowed = narrowByDrive(narrowByTrim(pool, input), input);
 
   // SOLD only where the VIN gave us a cohort AND the live cohort was actually
@@ -594,6 +650,7 @@ export function decideValue(
 
   const est = askEstimate(narrowed, input.mileage, c);
   if (est) {
+    const range = worthRange(opts.sales, est);
     return {
       tier: "estimate",
       estimated: true,
@@ -602,8 +659,10 @@ export function decideValue(
       basis: narrowed.basis,
       matchedTrim: narrowed.matchedTrim,
       matchedDrive: narrowed.matchedDrive,
-      waDerived: est.slopeFromSales,
+      // A range's low end is a Washington sales figure, so the credit is owed.
+      waDerived: est.slopeFromSales || !!range,
       headline: usd(est.valueUsd),
+      ...(range ? { range } : {}),
     };
   }
 
@@ -671,5 +730,17 @@ export async function valueVehicle(input: WorthInput): Promise<Valuation> {
     }
   }
 
-  return decideValue(i, comps, pool, { dbFailed });
+  // The transactions end of the range needs a cohort. The VIN names one; so
+  // does a pool narrowed to a version that is one prefix (dominantVin8 —
+  // the same narrowing decideValue is about to do). A failed read here is
+  // not a failed valuation: the retail figure prints on its own.
+  let sales: SalesBand | null = null;
+  let cohortVin8: string | undefined;
+  if (pool && pool.peers.length >= MIN_PEERS) {
+    const narrowed = narrowByDrive(narrowByTrim(pool, i), i);
+    cohortVin8 = vin ? vin.slice(0, 8) : dominantVin8(narrowed.peers);
+    if (cohortVin8) sales = await fetchSalesBand(cohortVin8, i.year, i.mileage);
+  }
+
+  return decideValue(i, comps, pool, { dbFailed, sales, cohortVin8 });
 }

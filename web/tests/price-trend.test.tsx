@@ -40,7 +40,7 @@ test("one chart: the caption says mileage-adjusted and the odometer, the ends ar
   };
   const html = renderToStaticMarkup(<PriceTrendCharts trend={trend} />);
   assert.equal((html.match(/<svg/g) ?? []).length, 1);
-  assert.match(html, /Estimated value · at 40,000 mi/);
+  assert.match(html, /Dealer retail value · at 40,000 mi/);
   assert.match(html, /est\./);
   assert.doesNotMatch(html, /asking/i);
   assert.doesNotMatch(html, /listings a day|listings a week/);

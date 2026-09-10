@@ -13,8 +13,11 @@ import { valueSeries, type PriceTrend, type SiteTrend, type TrendPoint, type Tre
 // $3,500 apart on his own car. Now the line IS the headline's arithmetic
 // (lib/trend.ts valueSeries): the same per-mile rate (0080), the same
 // ask-to-sale conversion, and on /worth the last point is the headline
-// itself. The caption says "Estimated value" and carries the est. mark the
-// headline carries.
+// itself. The caption names the figure the way the /worth page labels it —
+// "Dealer retail" — and carries the est. mark the headline carries. (Later
+// the same day the /worth headline became a RANGE, transactions to asking,
+// with the retail figure labeled beside it; the line tracks that retail
+// figure, which is the one the weekly value-watch mail reports.)
 //
 // 2026-09-07, owner: the block was "still confusing". Three changes, in his
 // words — stop saying how many cars were listed (the "N listings a day" line
@@ -274,7 +277,7 @@ export function PriceTrendCharts({
         site={trend.site ?? null}
         price={price ?? undefined}
         subject={subject}
-        label="Estimated value"
+        label="Dealer retail value"
       />
     </div>
   );

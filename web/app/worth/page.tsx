@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { WorthForm } from "@/components/WorthForm";
 import { valueVehicle, vehicleLabel, type Valuation, type WorthInput } from "@/lib/listings/value";
+import { usd } from "@/lib/listings/comps";
 import { currentPass, currentPassEmail } from "@/lib/pro";
 import { fetchPriceTrend, type PriceTrend } from "@/lib/trend";
 import { PriceTrendCharts } from "@/components/PriceTrend";
@@ -228,11 +229,16 @@ function Result({ input, v, pro, email }: { input: WorthInput; v: Valuation; pro
       </div>
 
       <div className="px-5 py-7 sm:px-8 sm:py-9">
+        {/* Owner, 2026-09-09: the headline is the RANGE — what cars like this
+            one closed at, up to what dealers ask — and the retail figure is
+            labeled beside it, because one retail number under "what's my car
+            worth" read as an overstatement to a seller holding a $19,200
+            offer. The labels are the owner's phrase and are his to rewrite. */}
         <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
           {/* The listing cards print a price at 32px; this page exists to
               answer one question and prints its answer bigger. */}
           <span className="text-[52px] leading-[0.9] font-extrabold tracking-[-0.045em] text-ink tabular-nums sm:text-[68px]">
-            {v.headline}
+            {v.tier === "estimate" && v.range ? `${usd(v.range.lowUsd)} – ${usd(v.range.highUsd)}` : v.headline}
           </span>
           {/* The site's one visible provenance promise: anything that is not a
               published figure is marked. Same word and same weight as
@@ -240,7 +246,20 @@ function Result({ input, v, pro, email }: { input: WorthInput; v: Valuation; pro
               component reads a Fact, and this is a computation, not a fact. */}
           {v.estimated && <span className={`${CAPTION} text-amber-700`}>est.</span>}
         </div>
-
+        <p className={`${CAPTION} mt-2 text-ink/55`}>
+          {v.tier === "estimate" && v.range
+            ? "Transaction prices and dealer asking prices"
+            : v.tier === "sold"
+              ? "Transaction prices"
+              : "Dealer retail"}
+        </p>
+        {v.tier === "estimate" && v.range && (
+          <p className="mt-5 flex flex-wrap items-baseline gap-x-3 text-[21px] leading-none font-extrabold tracking-[-0.02em] tabular-nums sm:text-[26px]">
+            <span className={`${CAPTION} text-ink/55`}>Dealer retail</span>
+            <span>{v.headline}</span>
+            <span className={`${CAPTION} text-amber-700`}>est.</span>
+          </p>
+        )}
       </div>
 
       {/* The same browse link the abstention carries, same words, by owner
