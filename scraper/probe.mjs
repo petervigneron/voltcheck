@@ -6,7 +6,7 @@
 // no human in the loop.
 //
 //   node probe.mjs [--limit N] [--concurrency N] [--sample N --seed S]
-//                  [--domains-file cohort.txt]
+//                  [--domains-file cohort.txt] [--site-wall-min M]
 //
 // Politeness is enforced per host inside fetchPage, so probing different
 // dealers concurrently is free speed — the 1.1s spacing still applies to
@@ -68,7 +68,9 @@
 // which is its own silent failure: furymotors.net has no sitemap and no
 // inventory paths, saintpaul.furymotors.com (where it redirects) has 848 URLs,
 // and probing the registry domain's origin found neither.
-import { readFile, writeFile } from "node:fs/promises";
+import { readFile, rename, writeFile } from "node:fs/promises";
+import { basename, dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { fetchPage } from "./lib/http.mjs";
 import { extractVehicles, extractItemListEntries } from "./lib/jsonld.mjs";
 import { extractDdcVehicles } from "./lib/platforms/dealercom.mjs";
@@ -136,6 +138,7 @@ import { countDealerCenter } from "./lib/platforms/dealercenter.mjs";
 import { countPorsche } from "./lib/platforms/porsche.mjs";
 import { vendorByDns } from "./lib/vendor-dns.mjs";
 import { closeBrowser } from "./lib/browser.mjs";
+import { withWall } from "./lib/wall.mjs";
 import { isDealerFront, dealerFrontVehicles, DEALERFRONT_SRP_PATH } from "./lib/platforms/dealerfront.mjs";
 import { isDealerClick, dealerClickVehicles, DEALERCLICK_SRP_PATH } from "./lib/platforms/dealerclick.mjs";
 import { discoverSitemapUrls, rank, dedupe, SRP_PATHS } from "./lib/sitemap.mjs";
@@ -210,6 +213,13 @@ const SEED = flag("--seed", 1);
 // retry rescues.
 const RETRY_CONCURRENCY = flag("--retry-concurrency", 1);
 const NO_RETRY = process.argv.includes("--no-retry");
+// --site-wall-min M: how long the pool waits on one rooftop's probe before it
+// walks away and records the row transient (why: "wall") — see
+// probeWithinWall. A probe whose every fetch runs to its deadline (twelve
+// page fetches plus sitemap discovery, each with its alternate host) is about
+// ten minutes; 20 is twice that and hours short of what held the 2026-09-09
+// and 09-10 runs. 0 turns the wall off.
+const SITE_WALL_MIN = flag("--site-wall-min", 20);
 
 // --sites-file <path>: probe rows from a JSON file instead of the registry,
 // and write the verdicts back to that file. A discovery lane that has produced
@@ -831,6 +841,43 @@ async function probeSite(site) {
   console.error(`  ${site.domain} → ${site.status} [${verdict}] (${site.platform})`);
 }
 
+// A wall around each rooftop, because nothing below can promise to return.
+//
+// Two sweeps sat in their serial retry pass for hours at 0% CPU with one
+// ESTABLISHED socket to a dealer: ridesharecarz.com (160.153.0.54) held a
+// chunk 2h+ on 2026-09-09, and on 2026-09-10 an Ohio chunk's retry printed
+// three of its six rows and never the fourth, shanekelley.com. The fetch
+// underneath is not what failed to time out. fetchRaw's abort ends a silent
+// socket, a TLS handshake that never completes and a body stalled after its
+// headers, each at its deadline, and this script run whole against such a
+// server finishes both passes in under a minute (test/probe-hang.test.mjs).
+// Neither host reproduces now. So some call inside a probe stopped returning
+// by a route nobody has reached again — the class crawl.mjs met on 2026-09-04
+// (buckeyenissan.com, 26 minutes under an 8-minute cap) and bounds with
+// lib/wall.mjs. This is the same bound.
+//
+// The probe runs on a copy of the row. A call that was walked away from keeps
+// running and keeps writing to whatever it was handed, and a verdict it lands
+// an hour later must not overwrite the one recorded here — or, once the retry
+// has run, the retry's. The four fields probeSite writes are copied back only
+// when it finished in time.
+const walkedAwayFrom = [];
+async function probeWithinWall(site) {
+  const draft = structuredClone(site);
+  const startedAt = Date.now();
+  const { finished } = await withWall(probeSite(draft), SITE_WALL_MIN > 0 ? startedAt + SITE_WALL_MIN * 60_000 : 0);
+  if (finished) {
+    for (const k of ["status", "notes", "platform", "probe"]) site[k] = draft[k];
+    return;
+  }
+  walkedAwayFrom.push(site.domain);
+  const secs = Math.round((Date.now() - startedAt) / 1000);
+  site.status = "unreachable";
+  site.notes = `${site.notes ?? ""} | probe ${today}: no verdict in ${secs}s, abandoned`.trim();
+  setVerdict(site, "transient", { why: "wall", wallMin: SITE_WALL_MIN });
+  console.error(`  ${site.domain} → unreachable [transient] (abandoned after ${secs}s without returning)`);
+}
+
 // Worker pool: politeness is per-host, so probing distinct dealers in
 // parallel costs them nothing and turns a multi-hour sweep into minutes.
 async function runPool(sites, concurrency) {
@@ -839,7 +886,7 @@ async function runPool(sites, concurrency) {
     while (cursor < sites.length) {
       const site = sites[cursor++];
       try {
-        await probeSite(site);
+        await probeWithinWall(site);
       } catch (e) {
         site.status = "unreachable";
         site.notes = `${site.notes ?? ""} | probe ${today}: ${e.name ?? "error"}`.trim();
@@ -849,6 +896,36 @@ async function runPool(sites, concurrency) {
     }
   }
   await Promise.all(Array.from({ length: Math.max(1, Math.min(concurrency, sites.length)) }, worker));
+}
+
+// Merge-on-write: a long sweep shares this tree with other sessions (and the
+// registry is hand-curated), so rewriting the file from a registry loaded
+// hours ago would clobber any edit made meanwhile. Re-read at write time and
+// fold in only the fields this probe actually changes, keyed by domain.
+//
+// Written after the main pass and again after the retry. Until 2026-09-10 it
+// was written once, at the very end, so a retry that never came back cost
+// every verdict the main pass had reached — the whole Ohio chunk that day,
+// fifteen rows for the one that hung. Each write goes to a temporary file
+// beside the target and is renamed over it: a kill mid-write leaves the last
+// whole file, never half a JSON document.
+async function writeVerdicts() {
+  const reread = JSON.parse(await readFile(regUrl, "utf-8"));
+  const fresh = Array.isArray(reread) ? { sites: reread } : reread;
+  const probed = new Map(candidates.map((s) => [s.domain, s]));
+  for (const site of fresh.sites) {
+    const p = probed.get(site.domain);
+    if (!p) continue;
+    site.status = p.status;
+    site.notes = p.notes;
+    site.platform = p.platform;
+    if (p.probe) site.probe = p.probe;
+  }
+  const target = fileURLToPath(regUrl);
+  const tmp = join(dirname(target), `.${basename(target)}.probe-${process.pid}.tmp`);
+  await writeFile(tmp, JSON.stringify(bareArray ? fresh.sites : fresh, null, 2));
+  await rename(tmp, target);
+  return fresh;
 }
 
 await runPool(candidates, CONCURRENCY);
@@ -868,6 +945,12 @@ const transient = candidates.filter((s) => s.probe?.verdict === "transient");
 const blind = candidates.filter((s) => blindEmpty(s));
 const requeue = [...transient, ...blind];
 if (requeue.length && !NO_RETRY) {
+  // The checkpoint. The rows about to be retried are written with the main
+  // pass's reading — what they would say under --no-retry — and the retry's
+  // own reading replaces it in the final write, note and all, so only the
+  // retry's verdict is recorded whenever the retry finishes.
+  await writeVerdicts();
+  console.error(`probe: checkpoint — main-pass verdicts for ${candidates.length} row(s) written`);
   console.error(
     `probe: re-probing ${transient.length} transient + ${blind.length} blind-empty row(s) at concurrency ${RETRY_CONCURRENCY}`,
   );
@@ -886,24 +969,20 @@ if (requeue.length && !NO_RETRY) {
   );
 }
 
-// Merge-on-write: a long sweep shares this tree with other sessions (and the
-// registry is hand-curated), so rewriting the file from a registry loaded
-// hours ago would clobber any edit made meanwhile. Re-read at write time and
-// fold in only the fields this probe actually changes, keyed by domain.
-const reread = JSON.parse(await readFile(regUrl, "utf-8"));
-const fresh = Array.isArray(reread) ? { sites: reread } : reread;
-const probed = new Map(candidates.map((s) => [s.domain, s]));
-for (const site of fresh.sites) {
-  const p = probed.get(site.domain);
-  if (!p) continue;
-  site.status = p.status;
-  site.notes = p.notes;
-  site.platform = p.platform;
-  if (p.probe) site.probe = p.probe;
-}
-await writeFile(regUrl, JSON.stringify(bareArray ? fresh.sites : fresh, null, 2));
+const fresh = await writeVerdicts();
 const counts = fresh.sites.reduce((a, s) => ((a[s.status] = (a[s.status] ?? 0) + 1), a), {});
 const verdicts = candidates.reduce((a, s) => ((a[s.probe?.verdict ?? "none"] = (a[s.probe?.verdict ?? "none"] ?? 0) + 1), a), {});
-await closeBrowser();
+// Bounded for the reason crawl.mjs bounds it: everything is written, and a
+// Chrome that will not close must not be able to hold the process.
+await withWall(closeBrowser().catch(() => {}), Date.now() + 20_000);
 console.error(`probe: this run's verdicts ${JSON.stringify(verdicts)}`);
 console.error(`probe: done — registry now ${JSON.stringify(counts)}`);
+if (walkedAwayFrom.length) {
+  console.error(`probe: walked away from ${walkedAwayFrom.length} probe(s) that stopped returning — ${walkedAwayFrom.join(", ")}`);
+  // The abandoned calls still hold their sockets, and node does not exit
+  // while they do: without this the run would sit here, written and done, for
+  // as long as the hang lasts. Exit 0 — walking away from one rooftop is not a
+  // failed sweep. The write callback flushes stderr first; to a pipe it is
+  // asynchronous, and exiting straight after console.error can cut the line.
+  process.stderr.write("", () => process.exit(0));
+}
