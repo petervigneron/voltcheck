@@ -2,21 +2,21 @@
   "_comment": "Written by scraper/lib/audit-status.mjs. Do not hand-edit — see that file's header.",
   "checks": {
     "feed-shard-health": {
-      "lastRunAt": "2026-09-10T21:11:10.709Z",
+      "lastRunAt": "2026-09-11T05:04:14.883Z",
       "result": "ok",
-      "detail": "total 168742; shards 3492/3454/3619/3405/3463/3469/3463/3567/3433/3332/3607/3564/3487/3560/3623/3513/3514/3464/3480/3521/3556/3597/3684/3521/3536/3383/3547/3518/3473/3449/3609/3532/3541/3495/3424/3527/3565/3565/3489/3639/3561/3587/3342/3509/3485/3541/3517/3520; sitemap URLs 169036",
+      "detail": "total 171603; shards 3547/3508/3673/3471/3523/3538/3528/3627/3489/3419/3667/3629/3543/3628/3677/3575/3571/3541/3541/3562/3616/3653/3739/3597/3603/3440/3604/3578/3520/3502/3653/3585/3609/3557/3487/3596/3629/3621/3546/3681/3631/3651/3388/3557/3557/3604/3569/3573; sitemap URLs 171897",
       "expectedEveryHours": 8
     },
     "ev-rules-audit": {
-      "lastRunAt": "2026-09-10T21:10:36.807Z",
+      "lastRunAt": "2026-09-11T05:03:39.042Z",
       "result": "ok",
-      "detail": "168742 live, 0 newly refuted by vPIC, 0 adjudicated-and-kept, 0 undecided",
+      "detail": "171800 live, 0 newly refuted by vPIC, 0 adjudicated-and-kept, 0 undecided",
       "expectedEveryHours": 27
     },
     "completeness-audit": {
-      "lastRunAt": "2026-09-10T21:10:58.700Z",
+      "lastRunAt": "2026-09-11T05:03:50.572Z",
       "result": "ok",
-      "detail": "67242 live, 16 broken-parser lots (baseline 202)",
+      "detail": "68604 live, 9 broken-parser lots (baseline 202)",
       "expectedEveryHours": 27
     },
     "sync-guard": {
@@ -32,9 +32,9 @@
       "expectedEveryHours": 27
     },
     "live-price-audit": {
-      "lastRunAt": "2026-09-10T21:11:02.179Z",
+      "lastRunAt": "2026-09-11T05:04:08.227Z",
       "result": "warn",
-      "detail": "167382 priced, 14 implausible (1 at or below the floor/cohort, 13 above)",
+      "detail": "169976 priced, 16 implausible (3 at or below the floor/cohort, 13 above)",
       "expectedEveryHours": 8
     },
     "price-audit": {
