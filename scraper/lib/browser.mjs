@@ -421,6 +421,19 @@ async function browserLoad(url, { settleMs = 1500, waitFor = null, waitForText =
     } catch (e) {
       if (navStatus == null) throw e;
     }
+    // DID THE CALLER'S MARKER EVER APPEAR? `waited` is that answer, and it is
+    // the difference between a page that is empty and a page that was read
+    // before it filled. A load that names a marker and never sees it still
+    // hands back its body and its 200 — the body is judged on its merits, as
+    // before — but the caller can now tell the two apart, and a lane that
+    // reads a lot off cards needs to: on 2026-09-10 nine of sixteen
+    // California Dealer Inspire rooftops answered 200 on every list with not
+    // one `[data-vehicle]` in the body inside the 30 s budget, and the lane
+    // certified nine empty lots. sunroadauto.com answered 359 cars and
+    // hoehnmotors.com 95 when the same two were re-run on their own.
+    // `null` when the caller named no marker: an absent answer, not a false
+    // one, so a lane that never asked is unaffected.
+    let sawMarker = null;
     // WAIT FOR THE THING, THEN SETTLE — not one or the other.
     //
     // `settleMs` alone is a guess about a page whose render time nobody
@@ -472,6 +485,7 @@ async function browserLoad(url, { settleMs = 1500, waitFor = null, waitForText =
       let stable = 0;
       while (Date.now() < until && stable < 2) {
         const n = await page.evaluate((s) => document.querySelectorAll(s).length, waitFor).catch(() => -1);
+        if (n > 0) sawMarker = true;
         if (n > 0 && n === last) stable++;
         else {
           stable = 0;
@@ -479,6 +493,7 @@ async function browserLoad(url, { settleMs = 1500, waitFor = null, waitForText =
         }
         if (stable < 2) await page.waitForTimeout(750);
       }
+      if (sawMarker === null) sawMarker = false;
     }
     // `waitForText`: wait for the STRING the caller is going to parse for.
     // A selector cannot express "the JSON-LD block that holds a VIN", and on a
@@ -490,9 +505,11 @@ async function browserLoad(url, { settleMs = 1500, waitFor = null, waitForText =
     // when the car is there and not before, which is what turns candidates
     // into listings instead of `vdpFailures`.
     if (waitForText) {
-      await page
+      const found = await page
         .waitForFunction((s) => document.documentElement.outerHTML.includes(s), waitForText, { timeout: waitForMs, polling: 500 })
-        .catch(() => {});
+        .then(() => true)
+        .catch(() => false);
+      sawMarker = sawMarker === false ? false : found;
     }
     if (settleMs > 0) await page.waitForTimeout(settleMs);
     const body = await withTimeout(page.content(), 30000, "content");
@@ -519,9 +536,9 @@ async function browserLoad(url, { settleMs = 1500, waitFor = null, waitForText =
       if (settleMs > 0) await page.waitForTimeout(settleMs);
       steps.push({ selector: sel, body: await withTimeout(page.content(), 30000, "content"), finalUrl: page.url(), captured: captured.slice(before) });
     }
-    return { status: res ? res.status() : (navStatus ?? "error:no-response"), body, finalUrl: page.url(), captured, steps };
+    return { status: res ? res.status() : (navStatus ?? "error:no-response"), body, finalUrl: page.url(), captured, steps, waited: sawMarker };
   } catch (e) {
-    return { status: `error:${e.name ?? "unknown"}`, body: null, finalUrl: url, captured: [], steps: [] };
+    return { status: `error:${e.name ?? "unknown"}`, body: null, finalUrl: url, captured: [], steps: [], waited: null };
   } finally {
     if (page) await withTimeout(page.close(), 15000, "close").catch(() => {});
     release();

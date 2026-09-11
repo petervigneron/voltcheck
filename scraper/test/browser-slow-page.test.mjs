@@ -168,6 +168,37 @@ test("nothing served is still an error — the timeout is forgiven, a dead socke
   }
 });
 
+test("a page whose cards never arrive says so, and an empty lot is not claimed for it", async (t) => {
+  const { server, held } = hangingServer();
+  await new Promise((r) => server.listen(0, "127.0.0.1", r));
+  const port = server.address().port;
+  try {
+    // The default route is a served page that never grows a `[data-vehicle]`
+    // — the shape nine of sixteen California rooftops answered on 2026-09-10,
+    // when every one of their four lists came back 200 with no card in the
+    // body and the Dealer Inspire lane certified nine empty lots in five
+    // loads apiece. sunroadauto.com read 359 cars and hoehnmotors.com 95 when
+    // the same two were re-run. The body is still returned and still judged
+    // on its merits; what was missing was any way to tell the caller that the
+    // thing it was waiting for never showed up.
+    const r = await browserFetch(`http://127.0.0.1:${port}/used-vehicles/`, { waitFor: "[data-vehicle]", waitForMs: 3000, settleMs: 50 });
+    if (r.status === "browser_unavailable") return t.skip("no Playwright browser on this machine");
+    assert.equal(r.status, 200);
+    assert.match(r.body ?? "", /data-vin="1FT6W1EV3PWG00001"/);
+    assert.equal(r.waited, false);
+    // The control: the page whose cards DO arrive, read the same way.
+    const ok = await browserFetch(`http://127.0.0.1:${port}/streamed`, { waitFor: "[data-vehicle]", waitForMs: 15000, settleMs: 50 });
+    assert.equal(ok.waited, true);
+    // And a caller that named no marker gets no answer, rather than a false
+    // one: every lane that does not wait on a selector is untouched by this.
+    const plain = await browserFetch(`http://127.0.0.1:${port}/used-vehicles/`, { timeoutMs: 2000, settleMs: 50 });
+    assert.equal(plain.waited, null);
+  } finally {
+    for (const res of held) res.destroy();
+    server.close();
+  }
+});
+
 test.after(async () => {
   await closeBrowser();
 });

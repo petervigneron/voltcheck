@@ -340,6 +340,20 @@ const SRP_LOAD = { waitFor: "[data-vehicle]", waitForMs: 30000 };
 // is there in about a second.
 const VDP_LOAD = { waitForText: "vehicleIdentificationNumber", waitForMs: 30000, settleMs: 0 };
 
+/** The cards on a served SRP, or none when the load did not serve one. */
+function srpCards(res, url) {
+  return res.status === 200 && res.body ? dealerInspireCards(res.body, res.finalUrl || url) : [];
+}
+
+/** A page worth parsing: served, and either carrying cards or read by
+ *  something that never claimed to be waiting for one (`waited` is undefined
+ *  on a plain fetch and on the lane's own tests, so their behaviour is
+ *  unchanged). */
+function srpRead(res, cards) {
+  if (res.status !== 200 || !res.body) return false;
+  return cards.length > 0 || res.waited !== false;
+}
+
 async function readSrp(origin, path, { maxPages = DEALERINSPIRE_MAX_PAGES, limits = null, loadsSoFar = 0, startUrl = null, fetch = browserFetch } = {}) {
   const cards = [];
   const seen = new Set();
@@ -351,18 +365,42 @@ async function readSrp(origin, path, { maxPages = DEALERINSPIRE_MAX_PAGES, limit
     if (dealerInspireLimitsExhausted(limits, loadsSoFar + requests)) return { cards, requests, pages, status, complete: false, exhausted: true };
     let res = await fetch(url, SRP_LOAD);
     requests++;
+    let page = srpCards(res, url);
     // One more try on a failed page. Measured 2026-09-02: faricykia.com's 24
     // used pages walk clean one at a time, and the same walk under six
     // concurrent Chrome pages lost a page to a timeout and stopped at 116 of
     // 472 cars. A page that fails twice ends the walk honestly (partial).
-    if (res.status !== 200 || !res.body) {
+    //
+    // A page that answered 200 and showed NO CARD is a failed page too, and
+    // for this lane it is the expensive one. The load waits on
+    // `[data-vehicle]` and reports whether it ever saw one; when it did not,
+    // the body is a Dealer Inspire page whose cards had not arrived, which is
+    // not the same fact as a dealer with nothing to sell — and the walk used
+    // to read it as the latter. On 2026-09-10 nine of sixteen California
+    // rooftops answered 200 on all four lists with no card in the body, and
+    // the lane certified nine COMPLETE, EMPTY lots in five loads apiece:
+    // sunroadauto.com, hanlees.net, dgdg.com, thompsonsauto.com,
+    // markchristopher.com, antiochautocenter.com, browningautogroup.com,
+    // jerryseiner.com and hoehnmotors.com. Re-run two at a time minutes
+    // later, sunroadauto.com read 359 cars and hoehnmotors.com 95, against
+    // the 27 hoehnmotors and 28 browningautogroup rows the site was already
+    // showing. Nothing was delisted — db-sync delists only inside a domain
+    // that carried rows — so the cost was the cars, not the database. It is
+    // still the worst shape a crawl bug takes here: a confident zero from a
+    // lot that has cars, indistinguishable in the report from a dealer that
+    // has none.
+    if (!srpRead(res, page)) {
       await new Promise((r) => setTimeout(r, 4000));
       res = await fetch(url, SRP_LOAD);
       requests++;
+      page = srpCards(res, url);
     }
-    status = res.status;
+    status = res.status !== 200 || !res.body ? res.status : page.length === 0 && res.waited === false ? "no cards" : res.status;
     if (res.status !== 200 || !res.body) break;
-    const page = dealerInspireCards(res.body, res.finalUrl || url);
+    // Twice with no card: end the walk with what was actually read. `pages`
+    // stays 0 for this list, so a rooftop whose lists all read this way says
+    // "no SRP answered" and certifies nothing.
+    if (page.length === 0 && res.waited === false) break;
     if (!isDealerInspireSrpPage(res.body, page)) {
       status = "not-dealerinspire";
       break;

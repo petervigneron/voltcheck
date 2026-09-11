@@ -310,3 +310,23 @@ test("walk: a rooftop that fits the budget still completes — the fast path's l
   assert.equal(r.complete, true, r.why);
   assert.equal(r.requests, 17);
 });
+
+test("a list that answered 200 with no card is an unread page, not an empty lot", async () => {
+  const loads = [];
+  // Every list answers like the nine California rooftops did on 2026-09-10:
+  // a served Dealer Inspire page, 200, and not one card in the body by the
+  // time the load gave up waiting for one.
+  const fetch = async (url) => {
+    loads.push(url);
+    if (new URL(url).pathname === "/") return { status: 200, body: "<html>classic theme, no motive config</html>" };
+    return { status: 200, body: "<html><body><div id='srp-results'></div></body></html>", waited: false };
+  };
+  const r = await pullDealerInspire("https://www.fake-di.example", { maxLoads: 60, fetch, day: 0 });
+  assert.equal(r.found, 0);
+  assert.equal(r.ok, false, "a rooftop whose lists never showed a card certifies nothing");
+  assert.equal(r.complete, false);
+  assert.match(r.why, /no SRP answered/);
+  // Homepage, then each of the four lists tried twice: a cardless page gets
+  // the same second chance a failed one does, and gives up after it.
+  assert.equal(loads.length, 9);
+});
