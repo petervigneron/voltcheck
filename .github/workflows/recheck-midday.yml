@@ -1,0 +1,69 @@
+# A second daily pass over every live listing's own page (scraper/recheck.mjs).
+#
+# 2026-09-12. The site serves a car only while some source has seen it, or
+# its own page has confirmed it, within 36 hours (migration 0091); the owner
+# wants that at 24 ("three days is not good enough" — "real, active, and
+# timely"). Every source ran once a day, and once a day cannot support a
+# 24-hour window: one slipped nightly — it fires 3–7 h after its 10:30 UTC
+# cron and has failed on ordinary nights — would empty whole lanes. Twice a
+# day can. This is the second pass: the same script, the same verdict rules
+# (404/410 delists; twice "200 without the VIN" delists; a 403 or a timeout
+# says nothing), the same write path, the same cross-check against the
+# nightly's own marketplace sweep (downloaded from the last successful
+# nightly, so a "gone" reading on the four marketplace lanes is still
+# outvoted by a sweep that lists the car).
+#
+# Timing: 19:30 UTC, after the nightly's usual window and ending before the
+# 00:00 publish carries its strikes and confirmations to the site. If a
+# nightly is still running (a late one), this yields — two rechecks writing
+# at once would double-strike a car in one day, which 0004's two-night rule
+# exists to prevent.
+name: Recheck live listings (second daily pass)
+
+on:
+  schedule:
+    - cron: "30 19 * * *"
+  workflow_dispatch: {}
+
+concurrency: recheck-midday
+
+jobs:
+  recheck:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v4
+      - name: Yield to a nightly still in progress
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          n=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow=nightly.yml --status in_progress --json databaseId --jq 'length' 2>/dev/null || echo 0)
+          if [ "${n:-0}" -gt 0 ]; then
+            echo "::notice::A nightly is in progress; its own recheck covers this pass. Yielding."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
+        id: guard
+      # The last successful nightly's merged feed, for the marketplace
+      # cross-check. Missing degrades to recheck's documented fallback (every
+      # verdict trusted), never to striking more.
+      - name: Fetch the last nightly's feed for the cross-check
+        if: ${{ steps.guard.outputs.skip != 'true' }}
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          id=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow=nightly.yml --status success --limit 1 --json databaseId --jq '.[0].databaseId')
+          [ -n "$id" ] && gh run download "$id" --repo "$GITHUB_REPOSITORY" -n finalize-ingest-listings -D web/data && ls -la web/data/scraped-listings.json
+      - uses: actions/setup-node@v4
+        if: ${{ steps.guard.outputs.skip != 'true' }}
+        with:
+          node-version: "22"
+      - name: Recheck live listings
+        if: ${{ steps.guard.outputs.skip != 'true' }}
+        working-directory: scraper
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_INGEST_TOKEN: ${{ secrets.SUPABASE_INGEST_TOKEN }}
+        # Deadline ~50 min under the job timeout so the terminal write lands.
+        run: node recheck.mjs --concurrency 10 --deadline-min 250
