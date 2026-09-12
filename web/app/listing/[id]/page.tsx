@@ -23,6 +23,8 @@ import { askVsMarketTile } from "@/lib/listings/card";
 import { PriceScatter } from "@/components/PriceScatter";
 import { PriceSparkline } from "@/components/PriceSparkline";
 import { PriceTrendCharts } from "@/components/PriceTrend";
+import { PricePace } from "@/components/PricePace";
+import { fetchDealerPace } from "@/lib/listings/pace";
 import { ProBlur } from "@/components/ProBlur";
 import { ProOnly } from "@/components/ProOnly";
 import { fetchPriceTrend } from "@/lib/trend";
@@ -204,6 +206,10 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
   // page repeats and can defend; a claim that vanishes here reads as
   // retracted.
   const { vsSold, vsMarket, peerAsks } = await listingPriceSignals(listing);
+  // What this seller does with a price (dealer_price_behavior, 0084). One row
+  // by dealer_domain, or null for a seller the view holds no row for — under
+  // its eight-listing floor, or an OEM locator lane, which is not a seller.
+  const dealerPace = await fetchDealerPace(listing.dealerDomain);
   const factLinks = factLinksFor(listing.make, listing.model);
   const marketTile = vsMarket ? askVsMarketTile(vsMarket) : undefined;
   // The price-vs-mileage picture, only when this car itself can be plotted —
@@ -433,6 +439,12 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
             {trends}
           </div>
         )}
+
+        {/* How long this car has sat and what the seller did about it, beside
+            the price panels it belongs with. Pro only, and absent — not
+            blurred — for everyone else. */}
+        <PricePace listedOn={listing.listedOn} history={listing.priceHistory} dealer={dealerPace} />
+
 
         {/* The spec block (mockup C2): the same solid tiles as the band, in
             the same colours — range ochre, equipment present teal, an

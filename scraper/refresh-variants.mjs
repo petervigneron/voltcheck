@@ -64,6 +64,11 @@ const VIEWS = [
   "listing_freshness",
   "ev_cohort_trim_spread",
   "ev_cohort_velocity",
+  // After listing_freshness, which it reads: the days-to-first-cut median is
+  // only computed for cars 0028 gives a defensible listing date, so refreshing
+  // this one first would date tonight's cuts against last night's verdicts
+  // (0084). 12.4s measured on prod the day it landed.
+  "dealer_price_behavior",
   // Last on purpose: it ships dark (0057), so it is the one to leave stale
   // if the night runs out of road. Its cost grows with the archive — 0057's
   // header says what to do the night it crowds its 60s budget.
