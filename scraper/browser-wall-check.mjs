@@ -50,28 +50,15 @@ import { robotsEntry, CRAWLER_DECLARATION } from "./lib/http.mjs";
 import { pullDealerInspire } from "./lib/platforms/dealerinspire.mjs";
 import { classifyEv } from "./lib/ev.mjs";
 import { readFileSync } from "node:fs";
+// The challenge regexes and the title reader moved to lib/challenge-page.mjs
+// on 2026-09-12, when recheck-browser.mjs became their second consumer — one
+// list, so the two cannot fork. Re-exported because this file's own tests and
+// any operator script still import them from here.
+import { challengeMarks, pageTitle } from "./lib/challenge-page.mjs";
+export { challengeMarks, pageTitle } from "./lib/challenge-page.mjs";
 
 const UA =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36";
-
-const CHALLENGES = [
-  [/Attention Required!?\s*\|\s*Cloudflare/i, "cf-attention-required"],
-  [/Just a moment…|Just a moment\.\.\./i, "cf-just-a-moment"],
-  [/challenges\.cloudflare\.com\/turnstile/i, "cf-turnstile"],
-  [/<form[^>]+id=["']challenge-form["']|cf-chl-|__cf_chl_|\/cdn-cgi\/challenge-platform\/|id=["']challenge-running["']/i, "cf-challenge-form"],
-  [/Access Denied[\s\S]{0,200}Reference\s*#?\d/i, "akamai-access-denied"],
-  [/Pardon Our Interruption|distil_r_captcha|_Incapsula_/i, "other-interstitial"],
-];
-
-export function challengeMarks(body) {
-  const src = String(body ?? "");
-  return CHALLENGES.filter(([re]) => re.test(src)).map(([, name]) => name);
-}
-
-export function pageTitle(body) {
-  const m = /<title[^>]*>([\s\S]{0,200}?)<\/title>/i.exec(String(body ?? ""));
-  return m ? m[1].replace(/\s+/g, " ").trim() : "";
-}
 
 function numFlag(name, fallback) {
   const i = process.argv.indexOf(name);

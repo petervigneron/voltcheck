@@ -1366,6 +1366,78 @@ jobs:
         # exist to verify, is checked in full.
         run: node feed-shard-check.mjs --skip-sitemaps
 
+  # The residue recheck cannot read at all, in a real browser (2026-09-12).
+  #
+  # ~19,700 of recheck's ~106,000 pages a night answer 403 or time out to the
+  # plain fetch. The cross-check retires the ones the lane's own sweep has
+  # dropped; what is left is the car the marketplace still lists whose dealer
+  # page we cannot read, and in Chrome most of those turn out to be a
+  # missing-vehicle redirect (18 of 24 sampled). scraper/recheck-browser.mjs's
+  # header has the rest.
+  #
+  # ITS OWN JOB, not a step in recheck's, for three reasons: it needs
+  # Playwright's Chromium (recheck is plain Node and installs nothing), its
+  # cost is a wall clock rather than a request budget, and it must not be able
+  # to eat into recheck's 280-minute deadline — recheck is the night's whole
+  # sold-signal and this is a 600-page supplement to it.
+  #
+  # AFTER recheck rather than beside it: recheck's alive verdicts stamp
+  # last_confirmed_at, so running second means the selection below sees
+  # tonight's confirmations and does not spend a browser load on a car the
+  # plain fetch just answered for.
+  #
+  # publish-feed is deliberately NOT gated on this job. Every verdict here is
+  # a soft strike, so the delistings it causes land on a later night anyway,
+  # and making the night's publish wait up to an hour for them would cost
+  # every shopper freshness to hurry a handful of retirements.
+  recheck-browser:
+    needs: [recheck]
+    if: ${{ always() && needs.recheck.result != 'skipped' && github.event.inputs.skip_crawl != 'true' && github.event.inputs.recover_run_id == '' }}
+    runs-on: ubuntu-latest
+    # 90 = the 60-minute deadline below, the Playwright install, and room for
+    # the terminal write. The deadline, not this, is what ends the visiting:
+    # being killed here would forfeit the strikes the way finalize's timeout
+    # forfeited recheck's every night from 08-17.
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      # Tonight's own sweep, for the same reason recheck downloads it: a VIN
+      # the sweep has already dropped is being struck by recheck tonight, so a
+      # browser load on it buys nothing. Missing artifact degrades to skipping
+      # nothing, never to striking more.
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: finalize-ingest-listings
+          path: web/data
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('scraper/package-lock.json') }}
+      - working-directory: scraper
+        run: npm ci --no-audit --no-fund && npx playwright install --with-deps chromium-headless-shell
+      - name: Recheck the unreadable residue in a browser
+        working-directory: scraper
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_INGEST_TOKEN: ${{ secrets.SUPABASE_INGEST_TOKEN }}
+          # listing_seen.last_confirmed_at is what separates the residue from
+          # the 14,000 cars on these lanes recheck reads fine every night, and
+          # 0026 revoked anon's select on that table. Without the key the
+          # script declines out loud rather than spending its cap on the wrong
+          # cars — see its own note.
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          BROWSER_LANES: "on"
+          # 2 pages in flight, the ceiling the Dealer Inspire lane settled on
+          # under runner contention (2026-09-11). This is a politeness budget
+          # spread over ~500 different rooftops, not throughput.
+          BROWSER_CONCURRENCY: "2"
+        run: node recheck-browser.mjs --limit 600 --concurrency 2 --deadline-min 60
+
   # The night's last word (2026-08-26): re-walk once and republish the browse
   # feed artifacts the routes serve first (publish-feed.yml has the whole
   # story). This is what makes the artifacts' 36h freshness ceiling a
