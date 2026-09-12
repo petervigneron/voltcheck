@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -8,6 +9,7 @@ import {
   BODY_TYPES,
   KINDS,
   LIST_VALUED,
+  dealControl,
   describeFilter,
   dropSpecFilters,
   splitValues,
@@ -558,6 +560,7 @@ export function FilterRail({
   count,
   quickCounts,
   pro,
+  proExpired = false,
   narrow = [],
 }: {
   makesModels: Record<string, string[]>;
@@ -573,6 +576,10 @@ export function FilterRail({
    *  unknown. A pass shows the deals toggle; whether the filter applies is
    *  match.ts's decision from the same answer (MatchContext.pro). */
   pro?: boolean | null;
+  /** The pass this browser holds ended (0087). Only ever true with
+   *  `pro === false`; it changes what the unapplied deals filter says, and
+   *  nothing about what applies. */
+  proExpired?: boolean;
 }) {
   const sp = useSearchParams();
   const [open, setOpen] = useState(false);
@@ -715,6 +722,7 @@ export function FilterRail({
   const heatPumpOn = get("heatPump") === "1";
   const cutOn = get("cut") === "1";
   const dealOn = get("deal") === "1";
+  const deals = dealControl(pro, dealOn, proExpired);
 
   // A radius chosen against the inferred origin has no ZIP chip to represent
   // it; without one of its own the filter would be invisible.
@@ -808,10 +816,17 @@ export function FilterRail({
         ))}
 
         {/* The Pro deals filter (lib/listings/deal.ts): cars at least
-            DEAL_MIN_PCT under similar listings. Rendered only for a
-            pass-holder — a stranger sees the rail they had, and learns what a
-            pass adds on /pro. */}
-        {pro === true && (
+            DEAL_MIN_PCT under similar listings. The toggle is offered only to
+            a pass-holder — a stranger sees the rail they had, and learns what
+            a pass adds on /pro.
+            But ?deal=1 without a pass was SILENT: match.ts drops the filter
+            (it has no deal figures to judge by — the data gate in
+            lib/listings/proSignals.ts strips them from the public shards) and
+            the rail showed nothing, so a shared or bookmarked deals link
+            rendered every car in the feed as though that were the answer. A
+            filter that is not applied has to say so, and the count beside it
+            is the unfiltered count, honestly. */}
+        {deals === "toggle" ? (
           <button
             type="button"
             aria-pressed={dealOn}
@@ -825,6 +840,19 @@ export function FilterRail({
             <span aria-hidden="true">{dealOn ? "✓" : "+"}</span>
             Deals
           </button>
+        ) : deals === "none" ? null : (
+          // Saffron is the site's ground for "something needs your attention"
+          // (/pro's ended-pass block, /account's failed link), not vermilion:
+          // nothing here is an error, and it is not a chip that can be
+          // removed — it is the way to switch the filter back on.
+          <Link
+            href="/pro"
+            title="Showing all cars"
+            className={`${BLOCK} ${HOVER} bg-saffron text-ink`}
+          >
+            {deals === "ended" ? "Deals — pass ended" : "Deals — Pro"}
+            <span aria-hidden="true">→</span>
+          </Link>
         )}
 
         {/* Closes the chip group against the trio (or the right edge, once the

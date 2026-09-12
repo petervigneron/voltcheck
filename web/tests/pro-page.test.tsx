@@ -35,8 +35,11 @@ test("renders the logged-out page when the pass lookup cannot run at all", async
   assert.match(html, /Pro member benefits/);
   // The free-forever list left the page 2026-09-03; it must not creep back.
   assert.doesNotMatch(html, /free forever/i);
-  // No claim about a pass it could not look up.
+  // No claim about a pass it could not look up — in either direction. The
+  // ended-pass block (0087) is as much a claim about a shopper as the active
+  // one, and a lookup that failed knows neither.
   assert.doesNotMatch(html, /active\s*through/i);
+  assert.doesNotMatch(html, /—\s*ended/i);
 });
 
 test("a failed access link is explained rather than 404'd", async () => {

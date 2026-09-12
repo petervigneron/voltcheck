@@ -218,6 +218,28 @@ export function toggleValue(current: string, value: string): string {
   return next.join(",");
 }
 
+/** What the rail's Deals control is for this browser.
+ *
+ *  "toggle"     a pass-holder's on/off button.
+ *  "needs-pro"  ?deal=1 without a pass: the filter is NOT applied (match.ts
+ *               reads MatchContext.pro) and the grid is the whole feed, so
+ *               the rail has to say so and offer the way in.
+ *  "ended"      the same, for a browser whose own pass expired (0087).
+ *  "none"       nothing to show: no pass and nothing asked for, or the pass
+ *               answer has not landed yet (null) — a control that flickered
+ *               from "needs Pro" to a toggle would be worse than a late one.
+ *
+ *  Until 2026-09-12 there was no third state: ?deal=1 without a pass rendered
+ *  nothing at all, and a shared or bookmarked deals link showed all 172,003
+ *  cars as though that were the answer. */
+export type DealControl = "toggle" | "needs-pro" | "ended" | "none";
+
+export function dealControl(pro: boolean | null | undefined, dealOn: boolean, expired = false): DealControl {
+  if (pro === true) return "toggle";
+  if (pro !== false || !dealOn) return "none";
+  return expired ? "ended" : "needs-pro";
+}
+
 const money = (v: string) => `$${Number(v).toLocaleString()}`;
 const orList = (v: string, unit: string) => `${splitValues(v).join(" or ")}${unit}`;
 

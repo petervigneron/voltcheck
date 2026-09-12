@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useProState } from "@/lib/useProState";
+import { useProPass } from "@/lib/useProState";
 
 // A Pro-only block on a page that is rendered for everyone: the content is
 // server-rendered with real data and shown BLURRED until this browser's pass
@@ -20,7 +20,12 @@ import { useProState } from "@/lib/useProState";
 // and then blur.
 
 export function ProBlur({ label, children }: { label?: string; children: React.ReactNode }) {
-  const pro = useProState();
+  const pass = useProPass();
+  const pro = pass === null ? null : pass.active;
+  // Someone whose pass ended is not a stranger, and the button that reads
+  // "Voltcheck Pro" to a stranger read as one to them (0087). Same button,
+  // same destination; it just says which of the two this is.
+  const badge = pass?.expired ? "Your pass ended" : "Voltcheck Pro";
   // The label is never blurred: a visitor should know what is behind the
   // blur before deciding whether to want it (owner, 2026-09-03). It is the
   // benefit's own title from /pro (lib/proOffer.ts proBenefitTitle), so the
@@ -50,11 +55,11 @@ export function ProBlur({ label, children }: { label?: string; children: React.R
       </div>
       <Link
         href="/pro"
-        aria-label={label ? `${label}: Voltcheck Pro` : "Voltcheck Pro"}
+        aria-label={label ? `${label}: ${badge}` : badge}
         className={`absolute inset-x-0 ${label ? "top-8" : "top-0"} bottom-0 flex items-center justify-center focus:outline-none focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-cobalt`}
       >
         <span className="border-[3px] border-ink bg-paper px-4 py-2 text-[12px] font-extrabold tracking-[0.08em] text-ink uppercase hover:bg-cobalt hover:text-paper">
-          Voltcheck Pro
+          {badge}
         </span>
       </Link>
     </div>

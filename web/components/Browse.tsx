@@ -17,7 +17,7 @@ import { factLinksFor, type FactLink } from "@/lib/facts/links";
 import { firstPaintWonRace, useCardIndex, useFirstPaint } from "@/lib/listings/useCardIndex";
 import { milesBetween } from "@/lib/geo";
 import { pushUrl } from "@/lib/pushUrl";
-import { useProState } from "@/lib/useProState";
+import { useProPass } from "@/lib/useProState";
 import { rememberBrowseQuery } from "@/lib/browseState";
 
 const CELL = "border-r-[3px] border-b-[3px] border-ink";
@@ -187,8 +187,11 @@ export function Browse() {
   const sort = s("sort") || "featured";
   // Whether this browser holds a Pro pass: it is what lets match.ts apply the
   // deals filter (?deal=1). Null while the answer is on its way, which reads
-  // as "no" — a grid never filters on a pass it cannot yet see.
-  const pro = useProState();
+  // as "no" — a grid never filters on a pass it cannot yet see. `expired` goes
+  // to the rail only, which says so where the unapplied filter would otherwise
+  // be silent; nothing here gates on it.
+  const proPass = useProPass();
+  const pro = proPass === null ? null : proPass.active;
   const matchCtx = { pro: pro === true };
   // Cards sit on paper. ?grounds=fact is the prototype where a ground means
   // something (teal = new battery, violet = recent price cut); the old
@@ -527,6 +530,7 @@ export function Browse() {
         count={rows !== null ? results.length : firstView ? firstView.total : undefined}
         quickCounts={rows !== null ? quickCounts : firstView ? firstView.quick : undefined}
         pro={pro}
+        proExpired={proPass?.expired === true}
         narrow={narrow}
       />
 

@@ -20,6 +20,9 @@ import { currentUser } from "@/lib/auth";
 // Three arrivals to handle, and they are all here:
 //   * a stranger, who sees the promise and the prices;
 //   * someone with a live pass, who sees what they hold and until when;
+//   * someone whose pass ended, who sees which one and when (0087) above the
+//     same prices — not the stranger's page, which is what they got until the
+//     database could tell the two apart;
 //   * someone whose access link failed (?access=expired|invalid), who is here
 //     because /pro/access sent them rather than 404ing at them.
 //
@@ -100,6 +103,21 @@ export default async function ProPage(props: {
             <p className="mt-2 text-[13px] leading-relaxed text-paper/85">
               It does not renew and you will not be charged again.
               {user ? " Sign in on any device and it is there." : " Sign in on any device with the address you paid with and it is there."}
+            </p>
+          </div>
+        </div>
+      ) : pass.expired && pass.expires_at ? (
+        /* The pass this account or this device bought, and when it ran out
+           (0087). Before that answer existed the page could only re-offer the
+           passes as though nothing had been bought — the state the owner's
+           own expired pass landed in on 2026-09-11. The buy buttons below are
+           the way back, so this block says the one thing they cannot. */
+        <div className="border-t-[3px] border-l-[3px] border-ink">
+          <div className={`${CELL} bg-saffron px-5 py-5`}>
+            <span className={EYEBROW}>Your pass</span>
+            <p className="mt-1 text-[19px] leading-tight font-extrabold tracking-[-0.01em]">
+              {pass.tier && TIERS[pass.tier] ? TIERS[pass.tier].label : "Pro pass"} — ended{" "}
+              {day(pass.expires_at)}.
             </p>
           </div>
         </div>

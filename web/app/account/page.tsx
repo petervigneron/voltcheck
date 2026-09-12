@@ -61,12 +61,18 @@ export default async function AccountPage(props: {
     );
   }
 
+  // The pass, live or ended. A pass that ran out used to print nothing at
+  // all, so the only account that ever bought one read here exactly like an
+  // account that never had (0087). The way back is the row below it, which
+  // has always been there and goes to the buy buttons.
   let passLine: string | null = null;
   try {
     const pass = await currentPass();
+    const label = pass.tier && TIERS[pass.tier] ? TIERS[pass.tier].label : "Pro pass";
     if (pass.active) {
-      const label = pass.tier && TIERS[pass.tier] ? TIERS[pass.tier].label : "Pro pass";
       passLine = `${label}${pass.expires_at ? ` through ${day(pass.expires_at)}` : ""}`;
+    } else if (pass.expired && pass.expires_at) {
+      passLine = `${label} ended ${day(pass.expires_at)}`;
     }
   } catch {
     passLine = null;

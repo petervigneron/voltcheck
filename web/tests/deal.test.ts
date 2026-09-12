@@ -10,6 +10,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { DEAL_MIN_PCT, isDeal, pctUnderSimilar } from "@/lib/listings/deal";
+import { dealControl } from "@/lib/filters";
+import { buildTests } from "@/lib/listings/match";
 import type { CardRow } from "@/lib/listings/card";
 
 const row = (priceUsd: number, deltaUsd?: number, realPrice = true): CardRow =>
@@ -41,4 +43,46 @@ test("the threshold is inclusive and lives in one constant", () => {
   assert.equal(isDeal(row(at, at - median)), true);
   assert.equal(isDeal(row(at + 100, at + 100 - median)), false);
   assert.equal(isDeal(row(at + 100, at + 100 - median), DEAL_MIN_PCT - 1), true);
+});
+
+// ── The rail's Deals control (2026-09-12) ───────────────────────────────────
+//
+// The filter itself is Pro and stays Pro — a browser with no pass has no
+// ask-vs-market figures to judge by, because the public shards do not carry
+// them (lib/listings/proSignals.ts publicRows). What changed is what the rail
+// says when the URL asks for a filter that will not be applied: nothing, until
+// today. ?deal=1 signed in with an expired pass showed the whole feed —
+// 172,003 cars — with no chip and no message, which reads as the answer to
+// "show me the deals" rather than as the filter being off.
+
+test("a pass-holder gets the toggle, pressed or not", () => {
+  assert.equal(dealControl(true, true), "toggle");
+  assert.equal(dealControl(true, false), "toggle");
+  // A pass-holder's control is the toggle whatever a stale expired flag says.
+  assert.equal(dealControl(true, true, true), "toggle");
+});
+
+test("?deal=1 without a pass is never silent, and says which kind of nothing", () => {
+  assert.equal(dealControl(false, true), "needs-pro");
+  assert.equal(dealControl(false, true, true), "ended");
+});
+
+test("no pass and nothing asked for offers nothing; an unknown answer waits", () => {
+  // The rail a stranger has always had: the deals control is not advertised
+  // there, it is learned on /pro.
+  assert.equal(dealControl(false, false), "none");
+  assert.equal(dealControl(false, false, true), "none");
+  // Null is "the answer is on its way". Rendering "needs Pro" and then
+  // swapping it for a toggle is worse than rendering it a moment late.
+  assert.equal(dealControl(null, true), "none");
+  assert.equal(dealControl(undefined, true), "none");
+});
+
+test("the filter stays off for a browser without a pass — the count is the whole feed", () => {
+  // The control test behind the chip's honesty: whatever the rail prints, the
+  // grid is unfiltered, so the count beside it is the unfiltered count.
+  const url = (k: string) => (k === "deal" ? "1" : "");
+  assert.equal("deal" in buildTests(url, { pro: false }), false);
+  assert.equal("deal" in buildTests(url, {}), false);
+  assert.equal("deal" in buildTests(url, { pro: true }), true);
 });

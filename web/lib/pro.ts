@@ -65,6 +65,11 @@ export interface PassState {
   active: boolean;
   tier?: TierId;
   expires_at?: string;
+  /** A pass was bought and its time is up (0087). Never true with `active`:
+   *  `active` is still the entitlement, and this is the difference between a
+   *  shopper who never bought and one whose pass ended — which every Pro
+   *  surface read as the same thing until the first pass expired. */
+  expired?: boolean;
 }
 
 export const checkPass = (token: string) => proRpc<PassState>("pro_check", { _token: token });
@@ -97,14 +102,21 @@ export const recoverPass = (email: string) =>
  *  knows the expiry. Deliberately NOT trusted from a cookie's own contents:
  *  the cookies carry a token, never the entitlement. */
 export async function currentPass(): Promise<PassState> {
+  // A pass that ended is carried through rather than flattened to "no": an
+  // account that bought is not a stranger, and the pages say so (0087). An
+  // ACTIVE pass anywhere still wins — the account's, then this device's.
+  let ended: PassState | null = null;
   const user = await currentUser();
   if (user) {
     const mine = await userRpc<PassState>(user.jwt, "pro_mine");
     if (mine?.active) return mine;
+    if (mine?.expired) ended = mine;
   }
   const token = (await cookies()).get(PRO_COOKIE)?.value;
-  if (!token || !/^[0-9a-f-]{36}$/i.test(token)) return { active: false };
-  return (await checkPass(token)) ?? { active: false };
+  if (!token || !/^[0-9a-f-]{36}$/i.test(token)) return ended ?? { active: false };
+  const byToken = await checkPass(token);
+  if (byToken?.active) return byToken;
+  return ended ?? byToken ?? { active: false };
 }
 
 export const isPro = async () => (await currentPass()).active;
