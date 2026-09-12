@@ -86,5 +86,16 @@ export async function POST(req: Request) {
   // them — and a publish is what makes a hub's numbers current, not its TTL.
   revalidatePath("/ev/[make]/[model]", "page");
   revalidatePath("/ev");
+  // The listing pages too (2026-09-12). Each caches for a day
+  // (app/listing/[id]/page.tsx), so a car the database stopped serving at
+  // 04:00 — delisted by the recheck, or withheld by 0089 because nothing
+  // could vouch for it — kept answering 200 with its price until its own
+  // TTL ran out, up to 24 hours later. The owner found the sold Lightning's
+  // page still up after the view had dropped it. A publish is the moment
+  // the data underneath moved, so it is the moment every listing page's
+  // entry is invalidated; each page re-renders once on its next visit,
+  // which is the same one-write-per-page-per-day the TTL already implies,
+  // just aligned to the data instead of to the clock.
+  revalidatePath("/listing/[id]", "page");
   return Response.json({ revalidated: true });
 }
