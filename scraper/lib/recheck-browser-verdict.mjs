@@ -181,14 +181,36 @@ export function classifyBrowserRecheck({ vin, url, status, finalUrl, body }) {
  * round-robin across hosts: lib/http.mjs paces one request per host per 1.1s,
  * so two workers on the same rooftop spend their night waiting on each other.
  */
-export function selectResidue(rows, { now = Date.now(), staleDays = 7, sweepSaysGone = () => false, limit = 0 } = {}) {
+// Two populations (2026-09-12):
+//   * marketplace-lane rows (RECHECK_CROSSCHECK_DOMAINS): never confirmed, or
+//     not within staleDays — the original residue;
+//   * dealer-site rows (a dotted domain): neither seen by any crawl nor
+//     confirmed on their own page within seenHours. Since 0090 these are
+//     withheld from the site at 72 hours; this pass re-admits the live ones
+//     on rooftops only a browser can read (403 to the fetch, browser lane
+//     switched off) and strikes the sold ones. Nissan/Lucid's sweep-only
+//     lanes and the OEM locators are not dotted and are not visited — their
+//     sweeps see them nightly.
+// Oldest evidence first, dealt round-robin across hosts so no one rooftop
+// eats the cap.
+export function selectResidue(rows, { now = Date.now(), staleDays = 7, seenHours = 48, sweepSaysGone = () => false, limit = 0 } = {}) {
   const cutoff = now - staleDays * 86_400_000;
+  const seenCutoff = now - seenHours * 3_600_000;
   const keep = [];
   for (const r of rows ?? []) {
-    if (!r || !RECHECK_CROSSCHECK_DOMAINS.has(r.dealerDomain)) continue;
+    if (!r) continue;
+    const marketplace = RECHECK_CROSSCHECK_DOMAINS.has(r.dealerDomain);
+    const dealerSite = !marketplace && /\./.test(String(r.dealerDomain ?? ""));
+    if (!marketplace && !dealerSite) continue;
     if (!r.sourceUrl || !isPerVinPage(r.sourceUrl, r.vin)) continue;
     const at = r.lastConfirmedAt ? Date.parse(r.lastConfirmedAt) : NaN;
-    if (Number.isFinite(at) && at >= cutoff) continue;
+    if (marketplace) {
+      if (Number.isFinite(at) && at >= cutoff) continue;
+    } else {
+      const seen = r.lastSeenAt ? Date.parse(r.lastSeenAt) : NaN;
+      const latest = Math.max(Number.isFinite(at) ? at : -Infinity, Number.isFinite(seen) ? seen : -Infinity);
+      if (latest >= seenCutoff) continue;
+    }
     if (sweepSaysGone(String(r.vin ?? "").toUpperCase(), r.dealerDomain)) continue;
     keep.push({ ...r, confirmedAt: Number.isFinite(at) ? at : null });
   }

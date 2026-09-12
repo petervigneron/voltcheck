@@ -1394,11 +1394,11 @@ jobs:
     needs: [recheck]
     if: ${{ always() && needs.recheck.result != 'skipped' && github.event.inputs.skip_crawl != 'true' && github.event.inputs.recover_run_id == '' }}
     runs-on: ubuntu-latest
-    # 90 = the 60-minute deadline below, the Playwright install, and room for
+    # 120 = the 90-minute deadline below, the Playwright install, and room for
     # the terminal write. The deadline, not this, is what ends the visiting:
     # being killed here would forfeit the strikes the way finalize's timeout
     # forfeited recheck's every night from 08-17.
-    timeout-minutes: 90
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
       # Tonight's own sweep, for the same reason recheck downloads it: a VIN
@@ -1436,7 +1436,7 @@ jobs:
           # under runner contention (2026-09-11). This is a politeness budget
           # spread over ~500 different rooftops, not throughput.
           BROWSER_CONCURRENCY: "2"
-        run: node recheck-browser.mjs --limit 600 --concurrency 2 --deadline-min 60
+        run: node recheck-browser.mjs --limit 1200 --concurrency 2 --deadline-min 90
 
   # The night's last word (2026-08-26): re-walk once and republish the browse
   # feed artifacts the routes serve first (publish-feed.yml has the whole

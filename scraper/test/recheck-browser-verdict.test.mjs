@@ -127,15 +127,31 @@ const residueRows = [
   { vin: "BBB", dealerDomain: "ford-blue-advantage", sourceUrl: "https://a.com/inventory/BBB", lastConfirmedAt: "2026-09-11T00:00:00Z" },
   { vin: "CCC", dealerDomain: "honda-prologue", sourceUrl: "https://b.com/inventory/CCC", lastConfirmedAt: "2026-08-01T00:00:00Z" },
   { vin: "DDD", dealerDomain: "ford-blue-advantage", sourceUrl: "https://c.com/", lastConfirmedAt: null },
-  { vin: "EEE", dealerDomain: "carvana.com", sourceUrl: "https://carvana.com/vehicle/EEE", lastConfirmedAt: null },
+  { vin: "EEE", dealerDomain: "carvana.com", sourceUrl: "https://carvana.com/vehicle/EEE", lastConfirmedAt: null, lastSeenAt: "2026-09-11T06:00:00Z" },
 ];
 const NOW = Date.parse("2026-09-12T00:00:00Z");
 
 test("the residue is never/stale-confirmed cars on the four lanes with a page about the car", () => {
   const got = selectResidue(residueRows, { now: NOW, staleDays: 7 }).map((r) => r.vin);
   // BBB was confirmed yesterday; DDD's sourceUrl is a homepage (the sweep
-  // judges those); EEE is not a marketplace-fed lane.
+  // judges those); EEE is a dealer-site row a crawl saw 18 hours ago.
   assert.deepEqual(got.sort(), ["AAA", "CCC"]);
+});
+
+test("a dealer-site car neither seen nor confirmed in 48 hours is visited; one seen yesterday is not (2026-09-12, the Mastria truck)", () => {
+  const rows = [
+    // crawled once by a browser lane that was then switched off, 403 to the fetch: the second truck of the night
+    { vin: "1FT6W1EV7NWG11294", dealerDomain: "mastriamazda.com", sourceUrl: "https://www.mastriamazda.com/inventory/used-2022-ford-f-150-lightning-1ft6w1ev7nwg11294/", lastConfirmedAt: null, lastSeenAt: "2026-09-06T00:40:02Z" },
+    { vin: "FRESH1", dealerDomain: "mastriamazda.com", sourceUrl: "https://www.mastriamazda.com/inventory/FRESH1/", lastConfirmedAt: null, lastSeenAt: "2026-09-11T12:00:00Z" },
+    // confirmed on its own page two hours ago, though no crawl has seen it in a week: confirmation counts as sight
+    { vin: "CONF1", dealerDomain: "somedealer.com", sourceUrl: "https://somedealer.com/inventory/CONF1", lastConfirmedAt: "2026-09-11T22:00:00Z", lastSeenAt: "2026-09-04T00:00:00Z" },
+    // a sweep-only lane and an OEM locator are not dotted: never visited here
+    { vin: "NIS1", dealerDomain: "nissan-new", sourceUrl: "https://nissanusa.com/x/NIS1", lastConfirmedAt: null, lastSeenAt: "2026-09-01T00:00:00Z" },
+  ];
+  const got = selectResidue(rows, { now: NOW, staleDays: 7 }).map((r) => r.vin);
+  assert.deepEqual(got, ["1FT6W1EV7NWG11294"]);
+  // the window is a parameter: at 7 days the Mastria truck is still inside it
+  assert.deepEqual(selectResidue(rows, { now: NOW, staleDays: 7, seenHours: 24 * 7 }).map((r) => r.vin), []);
 });
 
 test("a car tonight's sweep has already dropped is left to recheck", () => {

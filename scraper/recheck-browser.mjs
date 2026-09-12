@@ -155,15 +155,20 @@ if (!SERVICE && !ONLY_VINS.size) {
 // test that this select is well-formed and only the grant is missing.
 async function fetchRows() {
   const rows = [];
-  const embed = SERVICE ? ",listing_seen(last_confirmed_at)" : "";
+  const embed = SERVICE ? ",listing_seen(last_confirmed_at,last_seen_at)" : "";
+  // Every live row, not only the four marketplace lanes (2026-09-12, second
+  // truck of the night: 1FT6W1EV7NWG11294 at mastriamazda.com, a dealer-site
+  // row crawled once by a browser lane that was then switched off, page 403
+  // to the fetch, sold in reality, served for six days). Since 0090 a car
+  // unseen and unconfirmed for 72 hours is withheld from the site; this pass
+  // is what re-admits the live ones on rooftops only a browser can read.
+  // ~173k narrow rows, ~350 pages; selectResidue narrows them in memory.
   for (let after = ""; ; ) {
     const url =
       `${SUPABASE_URL}/rest/v1/listings?select=vin,sourceUrl:payload->>sourceUrl` +
       `,dealerDomain:payload->>dealerDomain${embed}` +
       `&delisted_at=is.null` +
-      (ONLY_VINS.size
-        ? `&vin=in.(${[...ONLY_VINS].join(",")})`
-        : `&dealer_domain=in.(${[...RECHECK_CROSSCHECK_DOMAINS].join(",")})`) +
+      (ONLY_VINS.size ? `&vin=in.(${[...ONLY_VINS].join(",")})` : "") +
       (after ? `&vin=gt.${encodeURIComponent(after)}` : "") +
       `&order=vin.asc&limit=500`;
     const res = await fetchWithRetry(`recheck-browser: listing fetch after ${after || "start"}`, () =>
@@ -181,6 +186,7 @@ async function fetchRows() {
         sourceUrl: r.sourceUrl,
         dealerDomain: r.dealerDomain,
         lastConfirmedAt: seen?.last_confirmed_at ?? null,
+        lastSeenAt: seen?.last_seen_at ?? null,
       });
     }
     if (page.length < 500) break;
@@ -216,8 +222,8 @@ const work = selectResidue(rows, {
 });
 console.error(
   `recheck-browser: ${work.length} residue pages to visit ` +
-    `(of ${rows.length} live rows on the four marketplace-fed lanes, ` +
-    `never confirmed or not in ${STALE_DAYS} days, cap ${ONLY_VINS.size ? "none" : LIMIT}, ` +
+    `(of ${rows.length} live rows: marketplace-lane cars never confirmed or not in ${STALE_DAYS} days, ` +
+    `dealer-site cars neither seen nor confirmed in 48 hours; cap ${ONLY_VINS.size ? "none" : LIMIT}, ` +
     `${CONCURRENCY} at a time)`
 );
 const why = await browserUnavailable();
