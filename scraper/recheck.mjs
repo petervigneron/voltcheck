@@ -37,7 +37,8 @@ import { OEM_LOCATOR_DOMAINS as DRIVETIME_LOCATOR_DOMAINS } from "./lib/oem/driv
 import { OEM_LOCATOR_DOMAINS as ACURA_CPO_LOCATOR_DOMAINS } from "./lib/oem/acura-cpo.mjs";
 import { OEM_LOCATOR_DOMAINS as MAZDA_LOCATOR_DOMAINS } from "./lib/oem/mazda.mjs";
 import { OEM_LOCATOR_DOMAINS as MITSUBISHI_LOCATOR_DOMAINS } from "./lib/oem/mitsubishi.mjs";
-import { oemAliveVins, oemSweepCounts, trustGoneVerdict, sweepSaysGone, isPerVinPage } from "./lib/recheck-oem-crosscheck.mjs";
+import { RECHECK_CROSSCHECK_DOMAINS, oemAliveVins, oemSweepCounts, trustGoneVerdict, sweepSaysGone, isPerVinPage } from "./lib/recheck-oem-crosscheck.mjs";
+import { isMotiveChallenge } from "./lib/platforms/ridemotive.mjs";
 import { priceOf } from "./lib/recheck-price.mjs";
 
 // Every OEM-locator source domain: recheck skips these (see the filter below).
@@ -245,16 +246,34 @@ for (let after = ""; ; ) {
 // prove absence), and their VDP pages are client-rendered shells that echo
 // the VIN from the URL, which would read as "alive" forever. They would also
 // be tens of thousands of same-host fetches at the polite rate.
+// A source URL that is the host's root ("https://dealer.example/",
+// "https://dealer.example/?utm_source=…") is not a page about a car, and a
+// homepage never carries a VIN: fetching it is a "200 but no VIN" strike by
+// construction. 1,643 live rows carried one on 2026-09-12 (jimcolemanhonda.com
+// 91, liachryslerdodgejeepram.com 73) and 61 of them were in that week's
+// delist-then-relist churn. They are not rechecked; their delisting path is
+// the crawl's completeness rule, or — for the cross-check lanes — the sweep
+// (see the Ford Blue Advantage branch in the worker).
+const isHostRoot = (u) => {
+  try {
+    const p = new URL(u).pathname.replace(/\/+$/, "");
+    return p === "";
+  } catch {
+    return true;
+  }
+};
 const targets = listings.filter(
-  (l) => l.sourceUrl && !OEM_LOCATOR_DOMAINS.has(l.dealerDomain)
+  (l) => l.sourceUrl && !OEM_LOCATOR_DOMAINS.has(l.dealerDomain) && (!isHostRoot(l.sourceUrl) || RECHECK_CROSSCHECK_DOMAINS.has(l.dealerDomain))
 );
 const skippedOem = listings.filter((l) => OEM_LOCATOR_DOMAINS.has(l.dealerDomain)).length;
+const skippedRoot = listings.filter((l) => l.sourceUrl && !OEM_LOCATOR_DOMAINS.has(l.dealerDomain) && isHostRoot(l.sourceUrl) && !RECHECK_CROSSCHECK_DOMAINS.has(l.dealerDomain)).length;
 const work = ONLY_VINS.size
   ? targets.filter((l) => ONLY_VINS.has(l.vin.toUpperCase()))
   : LIMIT ? targets.slice(0, LIMIT) : targets;
 console.error(
   `recheck: ${work.length} live listings with a source URL ` +
-  `(${listings.length - targets.length - skippedOem} without, ${skippedOem} OEM-locator rows skipped)`
+  `(${listings.length - targets.length - skippedOem - skippedRoot} without, ${skippedOem} OEM-locator rows skipped, ` +
+  `${skippedRoot} with a homepage for a source URL skipped)`
 );
 
 // Four domains (hyundai-cpo, ford-blue-advantage, honda-prologue,
@@ -350,6 +369,14 @@ async function worker() {
         crossChecked++;
         alive.push({ vin }); // tonight's own OEM-locator sweep still lists it
       }
+    } else if (res.status === 200 && res.body && isMotiveChallenge(res.body)) {
+      // Motive's edge answers a challenge page with a 200 on any of its
+      // rooftops' hostnames. crawl.mjs has refused to read those as content
+      // since the platform shipped; this loop read them as "200 but no VIN"
+      // and struck the car — ridemotive rooftops ran a 91% delist-then-relist
+      // rate over Sep 7–11 (1,135 events across 81 domains). A challenge
+      // proves nothing about the car.
+      errors++;
     } else if (res.status === 200 && res.body) {
       if (res.body.toUpperCase().includes(vin)) {
         const { price, provenance } = priceOf(res.body, vin, res.finalUrl ?? l.sourceUrl, l);

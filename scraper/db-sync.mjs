@@ -235,6 +235,26 @@ async function liveCountForDomainsChunked(domains) {
   return total;
 }
 
+// Prior live count per domain, for the per-rooftop guard below. One RPC per
+// 250 domains (0083); the answer is a Map, domains with nothing live absent.
+const PER_ROOFTOP_MIN_PRIOR = Number(process.env.PER_ROOFTOP_MIN_PRIOR ?? 20);
+async function liveCountsByDomain(domains) {
+  const out = new Map();
+  for (let i = 0; i < domains.length; i += COUNT_SLICE) {
+    const slice = domains.slice(i, i + COUNT_SLICE);
+    const res = await fetchWithRetry(`db-sync: live counts by domain (${slice.length} domains)`, () =>
+      fetch(`${SUPABASE_URL}/rest/v1/rpc/live_counts_by_domain`, {
+        method: "POST",
+        headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ _domains: slice }),
+      })
+    );
+    if (!res.ok) throw new Error(`HTTP ${res.status} from live_counts_by_domain`);
+    for (const row of await res.json()) out.set(row.dealer_domain, Number(row.live));
+  }
+  return out;
+}
+
 const laneReport = {};
 if (READ_KEY) {
   try {
@@ -346,6 +366,44 @@ if (READ_KEY) {
               `nothing in this lane is delisted tonight; new rows and price changes still land.`
           );
           for (const d of dealerDomains) completeSet.delete(d);
+        }
+      }
+
+      // Per ROOFTOP, on top of the aggregate (2026-09-12). The aggregate
+      // catches a crawl that broke everywhere; it cannot see one rooftop
+      // certified complete on a walk that saw half its lot — crawl.mjs
+      // certifies completeness when its queue ran dry, which is also what a
+      // walk whose pagination links never resolved looks like. Measured
+      // Sep 7–11: 14,942 crawl delists, 48% relisted within 3 days;
+      // audimv.com flipped 85 cars 962 times, beavertonmazda.com 70 cars 431
+      // times, freemanlexus.com 33 cars 245 times — a rooftop "selling out"
+      // and restocking twice a day. The rule: a rooftop that had at least
+      // PER_ROOFTOP_MIN_PRIOR cars live and comes back with under half of
+      // them is not certified tonight; its rows still land, only the
+      // permission to delist is withheld. The floor of 20 keeps a small
+      // lot's genuine sell-out (3 of 6 cars gone) from tripping it, and
+      // 50% is the same ~20x-over-churn margin the lane guard uses.
+      // Cost: one RPC per 250 domains (0083 live_counts_by_domain), so a
+      // whole-fleet night is ~30 calls and a rolling slice is one.
+      if (dealerDomains.length && SERVICE_KEY) {
+        const prior = await liveCountsByDomain(dealerDomains);
+        const refusedRooftops = [];
+        for (const d of dealerDomains) {
+          const priorLive = prior.get(d) ?? 0;
+          if (priorLive < PER_ROOFTOP_MIN_PRIOR) continue;
+          const incoming = byDomain.get(d)?.length ?? 0;
+          if (incoming / priorLive < DELIST_GUARD_MIN_COVERAGE) {
+            refusedRooftops.push(`${d} ${incoming}/${priorLive}`);
+            completeSet.delete(d);
+          }
+        }
+        laneReport.rooftops = { checked: dealerDomains.length, refused: refusedRooftops.length };
+        if (refusedRooftops.length) {
+          console.error(
+            `db-sync: REFUSING to delist ${refusedRooftops.length} rooftop(s) whose complete crawl carried under ` +
+              `${(DELIST_GUARD_MIN_COVERAGE * 100).toFixed(0)}% of what they had live (incoming/prior): ` +
+              refusedRooftops.slice(0, 12).join(", ") + (refusedRooftops.length > 12 ? ", …" : "")
+          );
         }
       }
     }
