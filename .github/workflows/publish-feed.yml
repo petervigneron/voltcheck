@@ -19,6 +19,20 @@ on:
         required: false
         default: "false"
   workflow_call: {}
+  # Four extra publishes a day (2026-09-12). The grid is only as fresh as the
+  # last publish, and there was one a day: a car the rolling crawl found at
+  # 08:00 sat in the database until the next morning. The owner, shopping
+  # for real: "if we're 48 hours behind everyone, we're a worse version and
+  # nobody should ever come here." Measured the same day: 8,523 rooftops
+  # holding 93,130 cars had been re-crawled within 6 hours, and 48,054 more
+  # within 12 — the crawl was never the bottleneck, the publish was. These
+  # hours sit outside the nightly's 10:30–18:00 UTC window; the nightly's
+  # own call covers that stretch. Five walks a day, four hours apart, is a
+  # different thing from the five-in-an-hour that drained the IO budget on
+  # 2026-08-29 (the gate below still applies to these), and the org is on
+  # Pro (250 GB/mo egress), so ~120 MB a walk is affordable.
+  schedule:
+    - cron: "0 0,4,8,20 * * *"
 
 concurrency: publish-feed
 
@@ -76,11 +90,22 @@ jobs:
       #     change walks once instead of five times.
       - name: Decline a redundant walk
         id: gate
-        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.force != 'true' }}
+        if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && github.event.inputs.force != 'true' }}
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           MIN_AGE_MIN=90
+          # Never walk while a deploy is warming its candidate: two walks at
+          # once against the one database is the 2026-08-16 crash loop
+          # (CLAUDE.md). A scheduled publish simply yields; the next one is
+          # four hours away and the deploy's own warm has refreshed the site.
+          building=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow=deploy-site.yml --status in_progress --json databaseId --jq 'length' 2>/dev/null || echo 0)
+          if [ "${building:-0}" -gt 0 ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "::notice::A deploy is building (${building} run in progress). Declining to walk the database at the same time."
+            exit 0
+          fi
           [ -z "$SUPABASE_URL" ] && { echo "no SUPABASE_URL — cannot check, publishing"; exit 0; }
           man=$(curl -sS --max-time 30 "$SUPABASE_URL/storage/v1/object/public/feed/manifest.json" || echo '')
           published=$(printf '%s' "$man" | sed -n 's/.*"publishedAt"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p')

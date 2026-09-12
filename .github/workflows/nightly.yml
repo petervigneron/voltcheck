@@ -1448,8 +1448,15 @@ jobs:
   # 2026-08-26) must not leave shoppers on yesterday's artifacts when the
   # data underneath is fine — the publisher carries its own refusals
   # (fallback-origin, >10% shrink) and they are the ones that matter.
+  # recheck-browser is in `needs` since 2026-09-12: a marketplace-fed car is
+  # served only once its own seller page has confirmed it (0089), and for the
+  # pages a plain fetch cannot read that confirmation comes from the browser
+  # pass. Publishing before it ran meant every such car — and every such
+  # strike — waited a full day for the next publish. It is `always()`-gated
+  # like recheck: the browser pass failing or being skipped must not hold the
+  # night's crawl off the site.
   publish-feed:
-    needs: [finalize-ingest, recheck]
+    needs: [finalize-ingest, recheck, recheck-browser]
     if: ${{ always() && needs.finalize-ingest.result == 'success' && github.event.inputs.recover_run_id == '' }}
     uses: ./.github/workflows/publish-feed.yml
     secrets: inherit
