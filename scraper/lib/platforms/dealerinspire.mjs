@@ -134,13 +134,38 @@ export const DEALERINSPIRE_MAX_PAGES = 40; // 800 cards; a runaway guard, not a 
 // The vendor feed's electrified fuel spellings, as VERIFIED on served pages
 // (see the header): a value the index does not know zeroes the result, so
 // nothing goes here on a guess. Conventional hybrids ("Gas/Electric Hybrid",
-// "Gasoline/Mild Electric Hybrid") are deliberately absent.
-export const DEALERINSPIRE_EV_FUELTYPES = ["Electric Fuel System", "Plug-In Electric/Gas"];
+// "Gasoline/Mild Electric Hybrid", "Hybrid/Electric") are deliberately absent.
+//
+// "Electric" — a third spelling, in the same index beside the first two.
+// jerryseiner.com's used list on 2026-09-12 carried "Electric Fuel System"
+// on twenty cars a page AND answered `_dFR[fueltype][0]=Electric` with five
+// more the first filter never returns: an Ioniq 5, a BMW iX and three 2027
+// Cadillac Optiqs, blobs spelled "Electric" on two of them and "electric" on
+// three. One filter value returned both cases, so the served index matches a
+// facet value case-insensitively; the known-spelling check below does too,
+// and a lower-case blob is not reported as a spelling to verify. The same
+// filter answered sunroadauto.com with its one 2027 BMW i7 (blob "Electric")
+// and hoehnmotors.com, premierhyundaimv.com, antiochautocenter.com and
+// hanlees.net with no cars — the zero an unknown spelling always gives, and
+// harmless: the URL carries every value at once, so a rooftop whose feed
+// lacks one still answers the rest.
+export const DEALERINSPIRE_EV_FUELTYPES = ["Electric Fuel System", "Plug-In Electric/Gas", "Electric"];
+const KNOWN_FUEL = new Set(DEALERINSPIRE_EV_FUELTYPES.map((f) => f.toLowerCase()));
+/** Is this blob fueltype one the facet URL already asks for? */
+export const dealerInspireFuelKnown = (fuel) => KNOWN_FUEL.has(String(fuel ?? "").trim().toLowerCase());
 // What reads as electrified in a card's own fueltype — the candidate net and
 // the new-spelling detector — minus the hybrids that merely contain "Electric".
+// "Hybrid/Electric" is one of those: on hoehnmotors.com (2026-09-12) the
+// value filters to six cars, every one a 2027 Mercedes-Benz CLA 220 Hybrid —
+// the 48-volt mild hybrid — while that rooftop's RAV4 Plug-in Hybrid, Range
+// Rover Sport PHEV and Q5 55 TFSI e all sit under "Plug-In Electric/Gas".
+// The feed keeps its plug-ins in their own value, so this one names cars
+// that never charge, and reading their VDPs was a load per car for nothing.
+// The five other California rooftops probed the same day do not know the
+// value at all (zero cars), so nothing is lost by leaving it out.
 const EV_FUEL_RE = /electric|plug|hydrogen|fuel cell|\bbev\b|\bphev\b/i;
-const NOT_PLUG_RE = /gas\/electric hybrid|electric\/gas hybrid|mild/i;
-export const dealerInspireFuelIsEv = (fuel) => Boolean(fuel) && EV_FUEL_RE.test(fuel) && !NOT_PLUG_RE.test(fuel);
+const NOT_PLUG_RE = /gas\/electric hybrid|electric\/gas hybrid|^hybrid\/electric$|mild/i;
+export const dealerInspireFuelIsEv = (fuel) => Boolean(fuel) && EV_FUEL_RE.test(fuel) && !NOT_PLUG_RE.test(String(fuel).trim());
 
 /** The same list filtered to the electrified fuel facet, page 1. Paging goes
  *  through dealerInspireNextUrl, which keeps the query. */
@@ -551,7 +576,7 @@ export async function pullDealerInspire(origin, { srps = DEALERINSPIRE_SRPS, dea
     if (!r.complete) complete = false;
     const cands = [];
     for (const c of r.cards) {
-      if (c.fuel && dealerInspireFuelIsEv(c.fuel) && !DEALERINSPIRE_EV_FUELTYPES.includes(c.fuel)) unknownFuel.add(c.fuel);
+      if (c.fuel && dealerInspireFuelIsEv(c.fuel) && !dealerInspireFuelKnown(c.fuel)) unknownFuel.add(c.fuel);
       if (seen.has(c.vin)) continue;
       seen.add(c.vin);
       if (dealerInspireIsCandidate(c)) cands.push(c);

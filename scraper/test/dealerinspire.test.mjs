@@ -9,6 +9,7 @@ import {
   dealerInspireSrpUrl,
   srpLoadLimits,
   isDealerInspireSrpPage,
+  dealerInspireFuelKnown,
 } from "../lib/platforms/dealerinspire.mjs";
 
 // Card markup as served on faricykia.com/used-vehicles/ 2026-09-02, trimmed
@@ -177,7 +178,7 @@ test("cards: the data-vehicle blob gives the card its fueltype; a blob-less feat
   assert.equal(dealerInspireIsCandidate(cards[0]), true);
 });
 
-test("fueltype: the two verified spellings and any plug/electric reading count; hybrids that merely say Electric do not", () => {
+test("fueltype: the verified spellings and any plug/electric reading count; hybrids that merely say Electric do not", () => {
   for (const f of DEALERINSPIRE_EV_FUELTYPES) assert.equal(dealerInspireFuelIsEv(f), true, f);
   assert.equal(dealerInspireFuelIsEv("Electric"), true);
   assert.equal(dealerInspireFuelIsEv("Hydrogen Fuel"), true);
@@ -187,9 +188,33 @@ test("fueltype: the two verified spellings and any plug/electric reading count; 
   assert.equal(dealerInspireFuelIsEv(undefined), false);
 });
 
+test("fueltype: 'Electric' is a verified facet value; the served index matched it to 'electric' blobs too, so the lower case is known, not a spelling to report", () => {
+  // jerryseiner.com/used-vehicles/?_dFR[fueltype][0]=Electric, 2026-09-12:
+  // five cars, blobs "Electric" ×2 and "electric" ×3, none of them under
+  // "Electric Fuel System".
+  assert.ok(DEALERINSPIRE_EV_FUELTYPES.includes("Electric"));
+  assert.equal(dealerInspireFuelKnown("Electric"), true);
+  assert.equal(dealerInspireFuelKnown("electric"), true);
+  assert.equal(dealerInspireFuelKnown(" electric "), true);
+  assert.equal(dealerInspireFuelKnown("Battery Electric"), false, "a spelling nobody has seen served is not known");
+  assert.equal(dealerInspireFuelKnown(undefined), false);
+});
+
+test("fueltype: 'Hybrid/Electric' is the feed's mild-hybrid value, not a plug-in — never a candidate, never reported as a spelling to add", () => {
+  // hoehnmotors.com, 2026-09-12: the value filters to six 2027 CLA 220
+  // Hybrids (48 V mild); the rooftop's RAV4 Plug-in Hybrid, Range Rover
+  // Sport PHEV and Q5 TFSI e are under "Plug-In Electric/Gas".
+  assert.equal(dealerInspireFuelIsEv("Hybrid/Electric"), false);
+  assert.equal(dealerInspireFuelIsEv("hybrid/electric"), false);
+  assert.ok(!DEALERINSPIRE_EV_FUELTYPES.includes("Hybrid/Electric"));
+  assert.equal(dealerInspireIsCandidate({ vin: "W1KSJ4GB1TN123456", url: "/inventory/new-2027-mercedes-benz-cla-cla-220-hybrid-fwd-coupe-w1ksj4gb1tn123456/", title: "new 2027 mercedes benz cla cla 220 hybrid fwd coupe", fuel: "Hybrid/Electric" }), false);
+  // A plug-in under the value the feed actually uses for them still counts.
+  assert.equal(dealerInspireFuelIsEv("Plug-In Electric/Gas"), true);
+});
+
 test("fuel list URL: the theme's _dFR[fueltype][i] facet, one index per verified spelling", () => {
   const u = dealerInspireFuelSrpUrl("https://www.kengrodyfordorangecounty.com/", "/used-vehicles/");
-  assert.equal(u, "https://www.kengrodyfordorangecounty.com/used-vehicles/?_dFR%5Bfueltype%5D%5B0%5D=Electric+Fuel+System&_dFR%5Bfueltype%5D%5B1%5D=Plug-In+Electric%2FGas");
+  assert.equal(u, "https://www.kengrodyfordorangecounty.com/used-vehicles/?_dFR%5Bfueltype%5D%5B0%5D=Electric+Fuel+System&_dFR%5Bfueltype%5D%5B1%5D=Plug-In+Electric%2FGas&_dFR%5Bfueltype%5D%5B2%5D=Electric");
   // Paging keeps the query — and served HTML entity-encodes the ampersand.
   assert.equal(dealerInspireNextUrl(`<a href="${u}&amp;_p=2">next</a>`, u), `${u}&_p=2`);
   assert.equal(dealerInspireNextUrl(`<a href="${u}&amp;_p=3">next</a>`, `${u}&_p=2`), `${u}&_p=3`);
@@ -199,15 +224,18 @@ test("fuel list URL: the theme's _dFR[fueltype][i] facet, one index per verified
 // A fake classic rooftop: 60 used cars over 3 pages, 3 EVs scattered through
 // them (pages 1, 2 and 3), a featured block repeated on every page, a 20-car
 // new list with one EV. The filtered lists answer only the cars whose blob
-// carries a verified spelling; one EV ("Electric", an EV word in its slug)
-// is reachable only by the walk. VDPs carry the JSON-LD the lane reads.
+// carries a verified spelling, matched case-insensitively as the served
+// index does (a lower-case "electric" Tesla is a filtered hit); one EV
+// ("Battery Electric", a spelling nobody has verified, an EV word in its
+// slug) is reachable only by the walk. VDPs carry the JSON-LD the lane reads.
 function fakeRooftop() {
   const origin = "https://www.fake-di.example";
   const evs = [
     { vin: "1FTVW1EV3NWG10011", slug: "used-2022-ford-f-150-lightning-xlt", fuel: "Electric Fuel System", page: 3 },
     { vin: "5LMAJ5KP4NUL12345", slug: "used-2022-lincoln-corsair-grand-touring", fuel: "Plug-In Electric/Gas", page: 2 },
     { vin: "KNDC3DLC0P5119438", slug: "used-2023-kia-ev6-wind-awd", fuel: "Electric Fuel System", page: 1 },
-    { vin: "5YJ3E1EB8NF359524", slug: "used-2022-tesla-model-3", fuel: "Electric", page: 3 }, // unknown spelling, walk-only
+    { vin: "5YJ3E1EB8NF359524", slug: "used-2022-tesla-model-3", fuel: "electric", page: 3 }, // the third spelling, lower case as jerryseiner.com serves it
+    { vin: "7SAYGDEE4PA123456", slug: "used-2023-tesla-model-y", fuel: "Battery Electric", page: 3 }, // unknown spelling, walk-only
   ];
   const newEv = { vin: "3FMTK1R46TMA23542", slug: "new-2026-ford-mustang-mach-e-select-rwd", fuel: "Electric Fuel System", page: 1 };
   // Three more new Mach-Es: in the new list, and ALSO the "you may also like"
@@ -232,7 +260,8 @@ function fakeRooftop() {
       if (fuels.length) {
         // An unknown spelling zeroes the result, as measured; the known ones
         // answer their cars two to a page, paged like the real 47-car list.
-        const hits = list.flat().filter((c) => fuels.includes(c.fuel));
+        const lc = fuels.map((f) => f.toLowerCase());
+        const hits = list.flat().filter((c) => lc.includes(c.fuel.toLowerCase()));
         const per = 2;
         const slice = hits.slice((p - 1) * per, p * per);
         return { status: 200, body: page(slice, u.pathname, "?" + q, p, p * per >= hits.length) };
@@ -249,20 +278,21 @@ function fakeRooftop() {
 
 test("fast path: under a tight budget every EV the dealer's fuel field names is read before the walk, and the pull says partial", async () => {
   const { origin, fetch, loads, evs, newEv, blockEvs } = fakeRooftop();
-  // homepage 1 + filtered used 2 pages + filtered new 2 + the 7 real results'
-  // VDPs = 12 loads; the walk gets nothing. (The block's E-Transit carries no
+  // homepage 1 + filtered used 2 pages + filtered new 2 + the 8 real results'
+  // VDPs = 13 loads; the walk gets nothing. (The block's E-Transit carries no
   // EV word the net knows and no blob, so it is not a candidate at all.)
-  const r = await pullDealerInspire(origin, { maxLoads: 12, fetch, day: 0 });
+  const r = await pullDealerInspire(origin, { maxLoads: 13, fetch, day: 0 });
   const vins = r.vehicles.map((v) => v.vehicleIdentificationNumber).sort();
-  assert.deepEqual(vins, [...evs.filter((e) => DEALERINSPIRE_EV_FUELTYPES.includes(e.fuel)).map((e) => e.vin), newEv.vin, ...blockEvs.map((b) => b.vin)].sort());
+  assert.deepEqual(vins, [...evs.filter((e) => dealerInspireFuelKnown(e.fuel)).map((e) => e.vin), newEv.vin, ...blockEvs.map((b) => b.vin)].sort());
   assert.ok(vins.includes("1FTVW1EV3NWG10011"), "the page-three Lightning is read before any block card");
-  assert.equal(r.fast, 7, "the seven real results; the block's E-Transit is no candidate");
+  assert.ok(vins.includes("5YJ3E1EB8NF359524"), "the lower-case 'electric' Tesla is a filtered hit, read on the fast path");
+  assert.equal(r.fast, 8, "the eight real results; the block's E-Transit is no candidate");
   assert.equal(r.ok, true);
   assert.equal(r.complete, false, "the walk did not run, so nothing may be delisted");
   assert.match(r.why, /stopped at the crawl's time cap or page budget/);
   // Order of spend: homepage, the filtered lists, then cars — never an
   // unfiltered page before a car, and the block's E-Transit never opened.
-  assert.equal(loads.length, 12);
+  assert.equal(loads.length, 13);
   assert.ok(loads.slice(1, 5).every((l) => /_dFR/.test(l)), loads.join("\n"));
   assert.ok(loads.some((l) => /_dFR.*_p=2/.test(l)), "the filtered list's second page is read");
   assert.ok(loads.slice(5).every((u) => /\/inventory\//.test(u)), loads.join("\n"));
@@ -276,13 +306,13 @@ test("rotation: a day stride walks a capped list across visits; the block cards 
   assert.equal(dealerInspireRotate(cards, 2)[0].vin, String((2 * DEALERINSPIRE_ROTATE_STRIDE) % 100));
   assert.equal(dealerInspireRotate(cards, 3).length, 100);
   assert.deepEqual(dealerInspireRotate([{ vin: "x" }], 7), [{ vin: "x" }]);
-  // Day 1 on the fake rooftop: the 7 real results start from card 40 % 7 = 5,
+  // Day 1 on the fake rooftop: the 8 real results start from card 40 % 8 = 0,
   // and the one VDP the budget allows is a real result, never the block's.
   const { origin, fetch, loads, evs, newEv, blockEvs } = fakeRooftop();
   await pullDealerInspire(origin, { maxLoads: 6, fetch, day: 1 });
   const first = loads.filter((u) => /\/inventory\//.test(u));
   assert.equal(first.length, 1);
-  const realVins = [...evs.filter((e) => DEALERINSPIRE_EV_FUELTYPES.includes(e.fuel)), newEv, ...blockEvs].map((c) => c.vin.toLowerCase());
+  const realVins = [...evs.filter((e) => dealerInspireFuelKnown(e.fuel)), newEv, ...blockEvs].map((c) => c.vin.toLowerCase());
   assert.ok(realVins.some((v) => first[0].includes(v)), first[0]);
   assert.ok(!/1ftbw1xmxtka60009/i.test(first[0]));
 });
@@ -293,22 +323,23 @@ test("walk: with budget to spare the unfiltered lists still run, catch the EV th
   const vins = r.vehicles.map((v) => v.vehicleIdentificationNumber).sort();
   assert.deepEqual(vins, [...evs.map((e) => e.vin), newEv.vin, ...blockEvs.map((b) => b.vin)].sort());
   assert.equal(r.complete, true);
-  assert.equal(r.fast, 7);
-  assert.equal(r.candidates, 8);
+  assert.equal(r.fast, 8);
+  assert.equal(r.candidates, 9);
   assert.equal(r.found, evs.length + 3 * 18 + 20 + 1, "the whole lot plus the featured card");
-  assert.ok(r.notes.some((n) => /not in the facet list: Electric —/.test(n)), r.notes.join(" | "));
+  assert.ok(r.notes.some((n) => /not in the facet list: Battery Electric —/.test(n)), r.notes.join(" | "));
+  assert.ok(!r.notes.some((n) => /electric —/.test(n)), "the lower-case 'electric' the facet already returned is not a spelling to verify: " + r.notes.join(" | "));
   // Each VDP opened once, whichever path found it first.
   const vdpLoads = loads.filter((u) => /\/inventory\//.test(u));
   assert.equal(new Set(vdpLoads).size, vdpLoads.length);
-  assert.equal(vdpLoads.length, 8);
+  assert.equal(vdpLoads.length, 9);
 });
 
 test("walk: a rooftop that fits the budget still completes — the fast path's loads do not halve what the walk gets", async () => {
   const { origin, fetch } = fakeRooftop();
-  // home 1 + filtered 4 + 7 VDPs + walk 4 pages + the walk's one VDP = 17 loads exactly.
-  const r = await pullDealerInspire(origin, { maxLoads: 17, fetch, day: 0 });
+  // home 1 + filtered 4 + 8 VDPs + walk 4 pages + the walk's one VDP = 18 loads exactly.
+  const r = await pullDealerInspire(origin, { maxLoads: 18, fetch, day: 0 });
   assert.equal(r.complete, true, r.why);
-  assert.equal(r.requests, 17);
+  assert.equal(r.requests, 18);
 });
 
 test("a list that answered 200 with no card is an unread page, not an empty lot", async () => {
