@@ -27,6 +27,7 @@ import { PricePace } from "@/components/PricePace";
 import { fetchDealerPace } from "@/lib/listings/pace";
 import { ProBlur } from "@/components/ProBlur";
 import { ProOnly } from "@/components/ProOnly";
+import { VinHistory } from "@/components/VinHistory";
 import { fetchPriceTrend } from "@/lib/trend";
 import { BatteryRisk } from "@/components/BatteryRisk";
 import { Gallery } from "@/components/Gallery";
@@ -445,6 +446,20 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
             blurred — for everyone else. */}
         <PricePace listedOn={listing.listedOn} history={listing.priceHistory} dealer={dealerPace} />
 
+        {/* Where this exact car was listed before, and when it was off the
+            market. Pro-only, and silent unless the archive can prove one of
+            those two things about this VIN — 881 of 172,003 live cars can
+            (migration 0085; the odometer was measured and rejected there).
+            Placed with the price panels above rather than with the cohort
+            facts below: it is a fact about this car's own listing. */}
+        <ProOnly>
+          <VinHistory
+            history={listing.vinHistory}
+            realPrice={(priceUsd) =>
+              hasRealPrice({ priceUsd, condition: listing.condition, year: listing.year })
+            }
+          />
+        </ProOnly>
 
         {/* The spec block (mockup C2): the same solid tiles as the band, in
             the same colours — range ochre, equipment present teal, an

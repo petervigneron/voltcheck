@@ -954,9 +954,37 @@ function priorSeries(
 /** The detail-page extras for one listing: the dealer's description and the
  *  price history. Null when the DB is unconfigured, unreachable, or has no
  *  such row — the caller just renders without the extras. */
+/** One row of vin_listing_history (0085), as PostgREST hands it over. Missing
+ *  is the normal answer: the view holds only the 881 live cars that have a
+ *  provable prior site or a provable absence. */
+interface VinHistoryRow {
+  first_seen_at: string | null;
+  prior_domain: string | null;
+  prior_price_usd: number | null;
+  prior_last_seen_at: string | null;
+  absences: { goneAt: string; backAt: string }[] | null;
+}
+
+function vinHistoryOf(rows: VinHistoryRow[]): Listing["vinHistory"] {
+  const [row] = rows;
+  if (!row) return undefined;
+  const priorSite =
+    row.prior_domain && row.prior_price_usd && row.prior_last_seen_at
+      ? { domain: row.prior_domain, priceUsd: row.prior_price_usd, lastSeenAt: row.prior_last_seen_at }
+      : undefined;
+  const absences = row.absences?.length ? row.absences : undefined;
+  if (!priorSite && !absences) return undefined;
+  return { firstSeenAt: row.first_seen_at ?? undefined, priorSite, absences };
+}
+
 export async function fetchListingDetailFromDb(
   vin: string
-): Promise<{ description?: string; priceHistory: Listing["priceHistory"]; priorSite?: Listing["priorSite"] } | null> {
+): Promise<{
+  description?: string;
+  priceHistory: Listing["priceHistory"];
+  priorSite?: Listing["priorSite"];
+  vinHistory?: Listing["vinHistory"];
+} | null> {
   if (!dbConfigured()) return null;
   const base = process.env.SUPABASE_URL!.replace(/\/$/, "");
   const vinKey = encodeURIComponent(vin.toUpperCase());
@@ -970,7 +998,13 @@ export async function fetchListingDetailFromDb(
     // under the new seller's price. It's a windowed view PostgREST can't
     // embed through listings, hence the second request. The third is the
     // site the car was listed on before this one (listing_prior_site, 0061).
-    const [res, histRes, priorRes] = await Promise.all([
+    // The fourth is this VIN's own listing history (vin_listing_history,
+    // 0085) — a keyed lookup on the view's unique index. It is the only one
+    // of the four that may not answer without failing the read: it feeds a
+    // Pro-only decoration on ~0.5% of pages, and losing the description and
+    // the price chart because a materialized view was mid-refresh would be a
+    // bad trade. `catch` below turns its failure into no block.
+    const [res, histRes, priorRes, vinHistRes] = await Promise.all([
       fetch(`${base}/rest/v1/listings?select=payload,price_usd&vin=eq.${vinKey}&limit=1`, {
         headers: headers(),
         next: { revalidate: REVALIDATE_SECONDS, tags: [FEED_CACHE_TAG] },
@@ -983,6 +1017,10 @@ export async function fetchListingDetailFromDb(
         `${base}/rest/v1/listing_prior_site_series?select=delisted_at,price_usd,observed_at,prior_price_usd,prior_last_seen_at&vin=eq.${vinKey}&order=observed_at.asc`,
         { headers: headers(), next: { revalidate: REVALIDATE_SECONDS, tags: [FEED_CACHE_TAG] } }
       ),
+      fetch(
+        `${base}/rest/v1/vin_listing_history?select=first_seen_at,prior_domain,prior_price_usd,prior_last_seen_at,absences&vin=eq.${vinKey}&limit=1`,
+        { headers: headers(), next: { revalidate: REVALIDATE_SECONDS, tags: [FEED_CACHE_TAG] } }
+      ).catch(() => null),
     ]);
     if (!res.ok) throw new Error(`PostgREST ${res.status}`);
     if (!histRes.ok) throw new Error(`PostgREST history ${histRes.status}`);
@@ -1015,6 +1053,7 @@ export async function fetchListingDetailFromDb(
         row.price_usd ?? undefined
       ),
       priorSite: priorSeries(prior, realPrice),
+      vinHistory: vinHistRes?.ok ? vinHistoryOf((await vinHistRes.json()) as VinHistoryRow[]) : undefined,
     };
   } catch (err) {
     console.error("[listings] Supabase detail read failed:", err);

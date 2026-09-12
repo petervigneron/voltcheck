@@ -84,6 +84,14 @@ export interface Listing {
    * grey ahead of a break at delistedAt; no words, by the owner's rule.
    */
   priorSite?: { delistedAt: string; series: { priceUsd: number; observedAt: string }[] };
+  /**
+   * What this VIN's own past listings can be proved to have done: the site it
+   * was listed on before this one, and the spells when it was off the market
+   * (materialized view vin_listing_history, migration 0085). Pro-only, and
+   * absent on the great majority of cars — 881 of 172,003 live listings clear
+   * the evidence bars. Shaped and gated by lib/listings/vinHistory.ts.
+   */
+  vinHistory?: import("./vinHistory").VinHistory;
   prevPriceUsd?: number; // the asking price before the current one
   priceChangedAt?: string; // when the current price took effect
   /**

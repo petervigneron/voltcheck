@@ -79,6 +79,11 @@ const VIEWS = [
   // so a missed night catches up the next one instead of growing forever.
   "ev_price_trend_sales",
   "ev_price_trend_ask_daily",
+  // This VIN's history (0085), ~20s. Last, and the cheapest thing on this
+  // list to lose: it feeds a Pro-only block on 881 of 172,003 listing pages
+  // and nothing else reads it, so a night that runs out of road should stop
+  // here rather than anywhere above.
+  "vin_listing_history",
 ];
 
 const failed = [];
