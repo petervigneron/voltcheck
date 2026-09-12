@@ -37,7 +37,7 @@ import { OEM_LOCATOR_DOMAINS as DRIVETIME_LOCATOR_DOMAINS } from "./lib/oem/driv
 import { OEM_LOCATOR_DOMAINS as ACURA_CPO_LOCATOR_DOMAINS } from "./lib/oem/acura-cpo.mjs";
 import { OEM_LOCATOR_DOMAINS as MAZDA_LOCATOR_DOMAINS } from "./lib/oem/mazda.mjs";
 import { OEM_LOCATOR_DOMAINS as MITSUBISHI_LOCATOR_DOMAINS } from "./lib/oem/mitsubishi.mjs";
-import { RECHECK_CROSSCHECK_DOMAINS, oemAliveVins, oemSweepCounts, trustGoneVerdict, sweepSaysGone, isPerVinPage } from "./lib/recheck-oem-crosscheck.mjs";
+import { RECHECK_CROSSCHECK_DOMAINS, SWEEP_ONLY_DOMAINS, oemAliveVins, oemSweepCounts, trustGoneVerdict, sweepSaysGone, isPerVinPage } from "./lib/recheck-oem-crosscheck.mjs";
 import { isMotiveChallenge } from "./lib/platforms/ridemotive.mjs";
 import { priceOf } from "./lib/recheck-price.mjs";
 
@@ -342,11 +342,15 @@ async function worker() {
       if (sweepSaysGone(vin, domain, oemAlive, oemCounts)) {
         sweepStruck++;
         softGone.push(vin);
-      } else if (oemAlive.has(vin)) {
-        sweepAlive++;
-        alive.push({ vin });
       } else {
-        errors++; // sweep short or missing tonight: no conclusion
+        // The sweep still lists it, or said nothing. NOT an alive verdict:
+        // recheck_listings writes last_confirmed_at from the alive list, and
+        // since 0089 that timestamp is what lets a marketplace-fed car onto
+        // the site at all. A marketplace index listing a car is where we
+        // learned of it, never proof it is still for sale (the owner's
+        // Lightning, 2026-09-12, was in the index days after it sold). A row
+        // with no page of its own therefore stays unconfirmed and unserved.
+        if (oemAlive.has(vin)) sweepAlive++; else errors++;
       }
       continue;
     }
@@ -411,6 +415,24 @@ async function worker() {
 }
 await Promise.all(Array.from({ length: Math.min(CONCURRENCY, work.length) }, worker));
 
+// The sweep-only lanes (nissan-new, nissan-cpo, lucid-new): never fetched —
+// their per-VIN page echoes any VIN — and their sweep is declared truncated,
+// so until 2026-09-12 nothing could ever retire a car on them. Tonight's own
+// full-size sweep not listing the car is a strike; two nights delist. No
+// alive verdicts from here: a sweep is not the car's own page.
+let sweepOnlyStruck = 0, sweepOnlyRows = 0;
+if (!ONLY_VINS.size) {
+  for (const l of listings) {
+    if (!SWEEP_ONLY_DOMAINS.has(l.dealerDomain)) continue;
+    sweepOnlyRows++;
+    const vin = l.vin.toUpperCase();
+    if (sweepSaysGone(vin, l.dealerDomain, oemAlive, oemCounts)) {
+      sweepOnlyStruck++;
+      softGone.push(vin);
+    }
+  }
+}
+
 const changed = alive.filter((a) => {
   const prev = work.find((l) => l.vin.toUpperCase() === a.vin)?.price_usd;
   return a.priceUsd != null && a.priceUsd !== prev;
@@ -427,7 +449,8 @@ console.error(
   `${hardGone.length} pages gone, ${softGone.length} VIN missing, ${errors} inconclusive` +
   (crossChecked ? `, ${crossChecked} OEM-locator gone verdicts overridden by tonight's own sweep` : "") +
   (sweepStruck ? `, ${sweepStruck} struck by absence from tonight's own sweep (page unreadable or not a VIN page)` : "") +
-  (notVinPages ? `, ${notVinPages} Ford Blue Advantage rows with a homepage for a source URL judged by the sweep alone (${sweepAlive} confirmed)` : "")
+  (notVinPages ? `, ${notVinPages} Ford Blue Advantage rows with a homepage for a source URL judged by the sweep alone (${sweepAlive} still in the sweep, not confirmed)` : "") +
+  (sweepOnlyRows ? `, ${sweepOnlyStruck} of ${sweepOnlyRows} sweep-only rows (Nissan, Lucid new) struck by absence from tonight's sweep` : "")
 );
 
 if (DRY) {

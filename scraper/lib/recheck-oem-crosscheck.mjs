@@ -59,10 +59,20 @@ export const RECHECK_CROSSCHECK_DOMAINS = new Set([
 // the cross-check domains. `feedRows` is the full merged nightly feed
 // (web/data/scraped-listings.json) or any subset of it containing at least
 // {vin, dealerDomain} -- rows for other domains are ignored.
+// Lanes recheck never fetches (their per-VIN page is a client-rendered shell
+// that echoes any VIN — see recheck.mjs's skip set) AND whose sweep is
+// declared truncated always, so db-sync never delists them either. Until
+// 2026-09-12 a car on one of these had NO way off the site. Their sweeps are
+// covering grids with a measured one-night miss of 4/2,700 (nissan-new),
+// 6/500 (nissan-cpo) and 7/1,440 (lucid-new) over the 09-10/11/12 feeds, so
+// absence on two consecutive full-size nights is evidence here too.
+export const SWEEP_ONLY_DOMAINS = new Set(["nissan-new", "nissan-cpo", "lucid-new"]);
+const SWEEP_DOMAINS = new Set([...RECHECK_CROSSCHECK_DOMAINS, ...SWEEP_ONLY_DOMAINS]);
+
 export function oemAliveVins(feedRows) {
   const vins = new Set();
   for (const row of feedRows ?? []) {
-    if (!row || !RECHECK_CROSSCHECK_DOMAINS.has(row.dealerDomain)) continue;
+    if (!row || !SWEEP_DOMAINS.has(row.dealerDomain)) continue;
     const vin = String(row.vin ?? "").toUpperCase();
     if (vin) vins.add(vin);
   }
@@ -124,14 +134,20 @@ export const SWEEP_FLOORS = {
   "honda-prologue": 400, //      lib/oem/honda.mjs HONDA.minExpected
   "hyundai-cpo": 300, //         lib/oem/hyundai.mjs HYUNDAI_CPO.minExpected
   "audi-network": 1500, //       lib/oem/audi.mjs AUDI.minExpected
+  // Sweep-only lanes (no minExpected declared in their lane files): floors
+  // set well under the sizes measured 09-10/11/12 — nissan-new 2,711–2,736,
+  // nissan-cpo 489–503 — and lucid-new's own LUCID_NEW.minExpected.
+  "nissan-new": 1000,
+  "nissan-cpo": 200,
+  "lucid-new": 300, //           lib/oem/lucid.mjs LUCID_NEW.minExpected
 };
 
-// How many rows tonight's feed carries per cross-check domain — the sweep's
-// size, which the floor above is checked against.
+// How many rows tonight's feed carries per sweep domain — the sweep's size,
+// which the floor above is checked against.
 export function oemSweepCounts(feedRows) {
   const counts = new Map();
   for (const row of feedRows ?? []) {
-    if (!row || !RECHECK_CROSSCHECK_DOMAINS.has(row.dealerDomain)) continue;
+    if (!row || !SWEEP_DOMAINS.has(row.dealerDomain)) continue;
     if (!String(row.vin ?? "").trim()) continue;
     counts.set(row.dealerDomain, (counts.get(row.dealerDomain) ?? 0) + 1);
   }
@@ -143,7 +159,7 @@ export function oemSweepCounts(feedRows) {
 // domain outside the set, a missing feed, or a short sweep all answer false —
 // absence of evidence, never evidence of absence.
 export function sweepSaysGone(vin, domain, aliveVins, sweepCounts) {
-  if (!RECHECK_CROSSCHECK_DOMAINS.has(domain)) return false;
+  if (!SWEEP_DOMAINS.has(domain)) return false;
   const floor = SWEEP_FLOORS[domain];
   if (!floor || (sweepCounts?.get(domain) ?? 0) < floor) return false;
   return !aliveVins.has(String(vin ?? "").toUpperCase());

@@ -2,6 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
   RECHECK_CROSSCHECK_DOMAINS,
+  SWEEP_ONLY_DOMAINS,
   SWEEP_FLOORS,
   oemAliveVins,
   oemSweepCounts,
@@ -13,6 +14,7 @@ import { FORD_BLUE_ADVANTAGE } from "../lib/oem/ford-blue-advantage.mjs";
 import { HONDA } from "../lib/oem/honda.mjs";
 import { HYUNDAI_CPO } from "../lib/oem/hyundai.mjs";
 import { AUDI } from "../lib/oem/audi.mjs";
+import { LUCID_NEW } from "../lib/oem/lucid.mjs";
 
 test("RECHECK_CROSSCHECK_DOMAINS is exactly the four always-truncated, recheck-active OEM lanes", () => {
   // nissan-new/nissan-cpo are deliberately excluded: they're always-truncated
@@ -78,7 +80,20 @@ test("SWEEP_FLOORS restate each lane's own minExpected, so a walled proxy can ne
   assert.equal(SWEEP_FLOORS["honda-prologue"], HONDA.minExpected);
   assert.equal(SWEEP_FLOORS["hyundai-cpo"], HYUNDAI_CPO.minExpected);
   assert.equal(SWEEP_FLOORS["audi-network"], AUDI.minExpected);
-  assert.deepEqual(Object.keys(SWEEP_FLOORS).sort(), [...RECHECK_CROSSCHECK_DOMAINS].sort());
+  assert.equal(SWEEP_FLOORS["lucid-new"], LUCID_NEW.minExpected);
+  assert.deepEqual(Object.keys(SWEEP_FLOORS).sort(), [...RECHECK_CROSSCHECK_DOMAINS, ...SWEEP_ONLY_DOMAINS].sort());
+});
+
+test("a sweep-only lane (never fetched, never certified) is judged by its own full-size sweep", () => {
+  const feed = fullSweep("nissan-new", SWEEP_FLOORS["nissan-new"]);
+  const alive = oemAliveVins(feed), counts = oemSweepCounts(feed);
+  assert.equal(sweepSaysGone("9ZZZ", "nissan-new", alive, counts), true);
+  assert.equal(sweepSaysGone("sweep000000000002", "nissan-new", alive, counts), false);
+  // a short Nissan night says nothing
+  const short = fullSweep("nissan-new", SWEEP_FLOORS["nissan-new"] - 1);
+  assert.equal(sweepSaysGone("9ZZZ", "nissan-new", oemAliveVins(short), oemSweepCounts(short)), false);
+  // and trustGoneVerdict (the OTHER direction) is untouched for these lanes: they are never fetched
+  assert.equal(trustGoneVerdict("9ZZZ", "nissan-new", alive), true);
 });
 
 test("oemSweepCounts counts tonight's rows per cross-check domain and ignores the rest", () => {
