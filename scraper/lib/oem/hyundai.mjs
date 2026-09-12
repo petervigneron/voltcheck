@@ -94,6 +94,11 @@ export const HYUNDAI_CPO = {
     { slug: "tucson-plugin-hybrid", evKind: "PHEV" },
     { slug: "santa-fe-plugin-hybrid", evKind: "PHEV" },
   ],
+  // The grid answered 799–824 CPO cars a night on 2026-09-10/11/12. Below
+  // this the sweep has lost most of the lane (an endpoint moved, a facet
+  // withdrawn), and recheck must not read absence from it as evidence
+  // (lib/recheck-oem-crosscheck.mjs SWEEP_FLOORS restates this number).
+  minExpected: 300,
 };
 
 const CPO_RADIUS = 100; // keeps the densest metro (LA=99) under the 120 cap

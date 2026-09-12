@@ -37,7 +37,7 @@ import { OEM_LOCATOR_DOMAINS as DRIVETIME_LOCATOR_DOMAINS } from "./lib/oem/driv
 import { OEM_LOCATOR_DOMAINS as ACURA_CPO_LOCATOR_DOMAINS } from "./lib/oem/acura-cpo.mjs";
 import { OEM_LOCATOR_DOMAINS as MAZDA_LOCATOR_DOMAINS } from "./lib/oem/mazda.mjs";
 import { OEM_LOCATOR_DOMAINS as MITSUBISHI_LOCATOR_DOMAINS } from "./lib/oem/mitsubishi.mjs";
-import { oemAliveVins, trustGoneVerdict } from "./lib/recheck-oem-crosscheck.mjs";
+import { oemAliveVins, oemSweepCounts, trustGoneVerdict, sweepSaysGone, isPerVinPage } from "./lib/recheck-oem-crosscheck.mjs";
 import { priceOf } from "./lib/recheck-price.mjs";
 
 // Every OEM-locator source domain: recheck skips these (see the filter below).
@@ -281,15 +281,34 @@ console.error(
 // unreadable feed degrades to the unchanged behavior (every verdict
 // trusted), never the reverse.
 let oemAlive = new Set();
+let oemCounts = new Map();
 try {
   const feedUrl = new URL("../web/data/scraped-listings.json", import.meta.url);
   const feed = await readSnapshot(feedUrl);
   oemAlive = oemAliveVins(feed);
+  oemCounts = oemSweepCounts(feed);
   console.error(`recheck: ${oemAlive.size} VINs from tonight's own OEM-locator sweep loaded for cross-check`);
 } catch {
   console.error("recheck: no nightly feed to cross-check OEM-locator domains against — verdicts pass through unchanged");
 }
 let crossChecked = 0;
+
+// The sweep as evidence of absence, for the same four domains — the other
+// half of the cross-check, added 2026-09-12 (see lib/recheck-oem-crosscheck.mjs
+// sweepSaysGone for the measurement). Two cases reach it:
+//   1. the dealer page could not be read (403, timeout, 5xx, redirect loop);
+//   2. the sourceUrl is not a page about this VIN at all — Ford Blue
+//      Advantage hands a dealer HOMEPAGE as the click-through when the
+//      marketplace has no per-VIN link, and reading that page for the VIN
+//      is a "VIN missing" strike by construction.
+// In both, a sweep that ran at full size tonight and does not list the car
+// lands a soft-gone strike; a sweep that still lists it confirms it alive
+// (case 2) or leaves it untouched (case 1 — the page said nothing, and the
+// sweep only ever confirms these rows through db-sync's own relist path).
+// Two consecutive strikes delist, as everywhere else. Case 2 skips the fetch
+// entirely, which also removes ~hundreds of pointless homepage requests a
+// night.
+let sweepStruck = 0, sweepAlive = 0, notVinPages = 0;
 
 const alive = [], hardGone = [], softGone = [];
 let errors = 0, cursor = 0;
@@ -298,14 +317,32 @@ async function worker() {
   while (cursor < work.length && Date.now() < DEADLINE_AT) {
     const l = work[cursor++];
     const vin = l.vin.toUpperCase();
+    const domain = l.dealerDomain;
+    if (domain === "ford-blue-advantage" && !isPerVinPage(l.sourceUrl, vin)) {
+      notVinPages++;
+      if (sweepSaysGone(vin, domain, oemAlive, oemCounts)) {
+        sweepStruck++;
+        softGone.push(vin);
+      } else if (oemAlive.has(vin)) {
+        sweepAlive++;
+        alive.push({ vin });
+      } else {
+        errors++; // sweep short or missing tonight: no conclusion
+      }
+      continue;
+    }
     let res;
     try {
       res = await fetchRaw(l.sourceUrl, { timeoutMs: 20000 });
     } catch {
-      errors++;
+      if (sweepSaysGone(vin, domain, oemAlive, oemCounts)) {
+        sweepStruck++;
+        softGone.push(vin);
+      } else {
+        errors++;
+      }
       continue;
     }
-    const domain = l.dealerDomain;
     if (res.status === 404 || res.status === 410) {
       if (trustGoneVerdict(vin, domain, oemAlive)) {
         hardGone.push(vin);
@@ -335,6 +372,11 @@ async function worker() {
         crossChecked++;
         alive.push({ vin }); // tonight's own OEM-locator sweep still lists it
       }
+    } else if (sweepSaysGone(vin, domain, oemAlive, oemCounts)) {
+      // The page proved nothing (403, 5xx, redirect loop), but tonight's own
+      // full-size sweep of the lane this row came from no longer lists it.
+      sweepStruck++;
+      softGone.push(vin);
     } else {
       errors++; // 403, 5xx, redirect loop — proves nothing
     }
@@ -356,7 +398,9 @@ if (unchecked > 0 && Number.isFinite(DEADLINE_AT)) {
 console.error(
   `recheck: ${alive.length} still listed (${changed} price changes), ` +
   `${hardGone.length} pages gone, ${softGone.length} VIN missing, ${errors} inconclusive` +
-  (crossChecked ? `, ${crossChecked} OEM-locator gone verdicts overridden by tonight's own sweep` : "")
+  (crossChecked ? `, ${crossChecked} OEM-locator gone verdicts overridden by tonight's own sweep` : "") +
+  (sweepStruck ? `, ${sweepStruck} struck by absence from tonight's own sweep (page unreadable or not a VIN page)` : "") +
+  (notVinPages ? `, ${notVinPages} Ford Blue Advantage rows with a homepage for a source URL judged by the sweep alone (${sweepAlive} confirmed)` : "")
 );
 
 if (DRY) {

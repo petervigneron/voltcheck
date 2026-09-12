@@ -81,3 +81,83 @@ export function trustGoneVerdict(vin, domain, aliveVins) {
   if (!RECHECK_CROSSCHECK_DOMAINS.has(domain)) return true;
   return !aliveVins.has(String(vin ?? "").toUpperCase());
 }
+
+// ── The other direction: the sweep as evidence of ABSENCE ─────────────────
+//
+// 2026-09-12, owner: a 2023 Lightning (1FT6W1EV2PWG58901) on the site that
+// Boniface Hiers Chevrolet's own site did not list. The row came through
+// ford-blue-advantage; its sourceUrl is the dealer's VDP; that host answers
+// 403 to us. Under the rules above a 403 "proves nothing", every night, so a
+// car in that position had NO delisting path at all: db-sync cannot (the
+// lane is truncated always) and recheck never concludes. Measured the same
+// day on the 26 FBA rows recheck had never once confirmed: 24 hosts answer
+// 403 to the crawler, and in a real browser 18 of 24 no longer showed the
+// car. Nightly, ~19,700 of ~106,000 rechecks end inconclusive.
+//
+// What we DO have for these four lanes is the lane's own national sweep,
+// which db-sync already trusts enough to relist a VIN the moment it
+// reappears. So when the dealer page cannot be read, ask the sweep: if it
+// ran tonight at full size and does not list the VIN, that is a soft-gone
+// STRIKE (never a delist on its own — 0004's two-consecutive-nights rule
+// still applies, so one night's sweep miss changes nothing). Measured
+// 2026-09-12 over the 09-10/11/12 nightly feeds — a VIN listed on nights
+// N-1 and N+1 but missing on N, i.e. the sweep's own one-night miss rate:
+//
+//   ford-blue-advantage   31 of ~8,280  (0.4%)   176 gone both later nights
+//   audi-network          14 of ~3,900  (0.4%)    90
+//   hyundai-cpo            5 of   ~800  (0.6%)    30
+//   honda-prologue         0 of ~2,300  (0.0%)    35
+//
+// Two consecutive misses by flicker alone is that rate squared, which is
+// what makes two consecutive misses evidence rather than noise, and the
+// "gone both later nights" column is the class of car this rule can finally
+// retire.
+//
+// "Ran tonight at full size" is the guard against the failure that would
+// otherwise be catastrophic: a lane whose proxy was walled that night lists
+// nothing, and without a floor every one of its cars would be struck. The
+// floors are each lane's own `minExpected` (the count below which the lane
+// itself reports an error), restated here so this module has no lane
+// imports; the test pins them to the lanes' values.
+export const SWEEP_FLOORS = {
+  "ford-blue-advantage": 3000, // lib/oem/ford-blue-advantage.mjs FORD_BLUE_ADVANTAGE.minExpected
+  "honda-prologue": 400, //      lib/oem/honda.mjs HONDA.minExpected
+  "hyundai-cpo": 300, //         lib/oem/hyundai.mjs HYUNDAI_CPO.minExpected
+  "audi-network": 1500, //       lib/oem/audi.mjs AUDI.minExpected
+};
+
+// How many rows tonight's feed carries per cross-check domain — the sweep's
+// size, which the floor above is checked against.
+export function oemSweepCounts(feedRows) {
+  const counts = new Map();
+  for (const row of feedRows ?? []) {
+    if (!row || !RECHECK_CROSSCHECK_DOMAINS.has(row.dealerDomain)) continue;
+    if (!String(row.vin ?? "").trim()) continue;
+    counts.set(row.dealerDomain, (counts.get(row.dealerDomain) ?? 0) + 1);
+  }
+  return counts;
+}
+
+// Did tonight's own sweep run at full size for this domain and NOT list this
+// VIN? True only for a cross-check domain whose sweep cleared its floor; a
+// domain outside the set, a missing feed, or a short sweep all answer false —
+// absence of evidence, never evidence of absence.
+export function sweepSaysGone(vin, domain, aliveVins, sweepCounts) {
+  if (!RECHECK_CROSSCHECK_DOMAINS.has(domain)) return false;
+  const floor = SWEEP_FLOORS[domain];
+  if (!floor || (sweepCounts?.get(domain) ?? 0) < floor) return false;
+  return !aliveVins.has(String(vin ?? "").toUpperCase());
+}
+
+// Is this sourceUrl a page ABOUT this VIN? The Ford Blue Advantage record's
+// dealer link is the dealer's per-VIN page only when the marketplace flags it
+// `deepLink`; otherwise it is the dealer's homepage or a search page, and the
+// lane still hands it over as sourceUrl for the click-through. Fetching a
+// homepage and looking for the VIN in it is the "200 but no VIN" strike by
+// construction — measured 2026-09-12 it is the engine behind FBA's 89%
+// delist-then-relist rate. A URL that does not carry the VIN is not a page
+// recheck can read a verdict from; the sweep rule above is its check instead.
+export function isPerVinPage(url, vin) {
+  const v = String(vin ?? "").toUpperCase();
+  return Boolean(v) && String(url ?? "").toUpperCase().includes(v);
+}
