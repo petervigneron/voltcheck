@@ -110,7 +110,14 @@ export function RecentSales({
           Northwest, so it's withheld from every display surface until a
           second regional dataset validates an offset. vsSold is still
           passed in and still computed (comps.ts); the raw rows below are
-          the honest version of this panel's job — facts, no verdict. */}
+          the honest version of this panel's job — facts, no verdict.
+
+          The second dataset is still outstanding. ca_cc4a_used_ev_sales was
+          measured against WA on 2026-09-12 and is not it — it records the
+          contract total rather than the vehicle price, and lands above WA in
+          15 of 15 nameplates while California's own asking prices sit below
+          WA's. The numbers and the control test are in lib/listings/sales.ts;
+          the offset this panel is waiting on cannot be computed from it. */}
 
       {scatter}
 
