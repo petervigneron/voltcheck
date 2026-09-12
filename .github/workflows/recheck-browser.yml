@@ -1,0 +1,73 @@
+# Visit, in a real browser, the cars whose own page a plain fetch cannot read
+# (scraper/recheck-browser.mjs) — on demand, outside the nightly.
+#
+# Why this exists as its own workflow (2026-09-12): the site now serves a
+# car only while some source has seen it, or its page has confirmed it,
+# within 72 hours (migrations 0089/0090). The evening that rule landed,
+# 5,615 dealer-site cars on 993 rooftops were withheld at once — rooftops
+# that answer 403 to the fetch, or that only the browser crawl lanes could
+# read before those lanes were switched off on 09-04 (06c0c3e). The nightly
+# browser pass is capped at 1,200 pages so it cannot re-admit them in one
+# night. This lets an operator run the same pass over the whole residue
+# with a bigger cap and a longer deadline, one run, when it matters.
+#
+# The owner's standard, in his words: losing those cars is unacceptable,
+# and showing a sold one is unacceptable. This is the tool that satisfies
+# both: every withheld car gets its own page read tonight; the live ones
+# come back at the next publish, the sold ones are struck.
+name: Recheck the unreadable residue in a browser
+
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: "Most pages to visit this run"
+        required: false
+        default: "6000"
+      deadline_min:
+        description: "Stop visiting after this many minutes and write what we have"
+        required: false
+        default: "300"
+      concurrency:
+        description: "Pages in flight (politeness across ~1,000 rooftops, not throughput)"
+        required: false
+        default: "3"
+
+# Never two browser passes at once; and never alongside the nightly's own,
+# which shares this group name's job through the same script and write path.
+concurrency: recheck-browser
+
+jobs:
+  recheck-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('scraper/package-lock.json') }}
+      - working-directory: scraper
+        run: npm ci --no-audit --no-fund && npx playwright install --with-deps chromium-headless-shell
+      - name: Recheck the unreadable residue in a browser
+        working-directory: scraper
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_INGEST_TOKEN: ${{ secrets.SUPABASE_INGEST_TOKEN }}
+          # listing_seen is what tells the residue from the rest; 0026 revoked
+          # anon's read of it. The script declines out loud without this.
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          BROWSER_LANES: "on"
+          BROWSER_CONCURRENCY: ${{ github.event.inputs.concurrency }}
+        run: >
+          node recheck-browser.mjs
+          --limit ${{ github.event.inputs.limit }}
+          --concurrency ${{ github.event.inputs.concurrency }}
+          --deadline-min ${{ github.event.inputs.deadline_min }}
+      # The strikes and confirmations are in the database now; the grid and
+      # the listing pages follow at the next publish (five a day since
+      # 2026-09-12, or `gh workflow run publish-feed.yml -f force=true`).
