@@ -17,9 +17,17 @@ import { dbConfigured } from "./db";
 // The control test that settles it: on our own live inventory, CA asking
 // prices are 7.3% BELOW WA asking prices for the same nameplate/year/mileage
 // band (67 cohorts, 2,093 CA listings vs 785 WA), and below in 17 of the 20
-// nameplates with enough rows. California asks LESS and CC4A records MORE —
-// a number that sits 12-35 points above the local asking market cannot be
-// what the car sold for.
+// nameplates with enough rows. Both sides of that one are same-day, so it
+// carries no time confound. California asks LESS than Washington and CC4A
+// records MORE: the CC4A gap runs 16-33 points wider than the actual CA/WA
+// market level, and that excess is not regional.
+//
+// This corrects docs/transaction-data-requests/FINDING-ca-vs-wa-price-level.md
+// (2026-08-15), which measured the same +7-35% and read it as California
+// genuinely being the pricier market — concluding the gap was "a floor, not a
+// ceiling". The asking-price control says otherwise. That document is also
+// where RecentSales.tsx's "7-35% high outside the Northwest" comes from, so
+// the evidence the comps delta was withheld on is itself this artifact.
 //
 // It is the wrong field, and the loader says so: reference-data.mjs maps
 // sale_price from upstream "Total Vehicle Purchase Price", which is the

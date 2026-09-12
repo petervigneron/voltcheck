@@ -117,7 +117,13 @@ export function RecentSales({
           contract total rather than the vehicle price, and lands above WA in
           15 of 15 nameplates while California's own asking prices sit below
           WA's. The numbers and the control test are in lib/listings/sales.ts;
-          the offset this panel is waiting on cannot be computed from it. */}
+          the offset this panel is waiting on cannot be computed from it.
+
+          Note for whoever revisits: the "7-35%" above is that same CC4A
+          comparison, so this panel's own withholding rests on the artifact.
+          That is an argument for re-measuring the regional question against a
+          real second dataset, not for switching the delta on — nothing here
+          has shown the WA model travels. Owner's call either way. */}
 
       {scatter}
 
