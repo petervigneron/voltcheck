@@ -164,8 +164,8 @@ export const TESTED_BY_ROWID: Record<string, Fact<number>> = {
   "ev6-2022-lr-awd": f(254, "tested", "high", "70-mph steady-state highway (InsideEVs)", "https://insideevs.com/news/576754/kia-ev6-awd-70mph-range/"),
   "ev6-2023-24-lr-awd-19": f(254, "tested", "medium", "70-mph steady-state highway (InsideEVs)", "https://insideevs.com/news/576754/kia-ev6-awd-70mph-range/"),
   "ev6-2023-24-lr-awd-20": f(245, "tested", "medium", "70-mph steady-state highway (InsideEVs)", "https://insideevs.com/reviews/597226/kia-ev6-70mph-range-test/"),
-  "ev9-2024-awd-gtline": f(240, "tested", "high", "75-mph steady-state highway (Car and Driver (reported by InsideEVs))", "https://insideevs.com/news/726683/kia-ev6-range/"),
-  "ev9-2025-awd-gtline": f(240, "tested", "medium", "75-mph steady-state highway (Car and Driver (reported by InsideEVs))", "https://insideevs.com/news/726683/kia-ev6-range/"),
+  "ev9-2024-awd-gtline": f(240, "tested", "high", "75-mph steady-state highway (Car and Driver (reported by InsideEVs))", "https://insideevs.com/news/726683/kia-ev9-range/"),
+  "ev9-2025-awd-gtline": f(240, "tested", "medium", "75-mph steady-state highway (Car and Driver (reported by InsideEVs))", "https://insideevs.com/news/726683/kia-ev9-range/"),
   "hummer-ev-suv-2024": f(250, "tested", "high", "75-mph steady-state highway range (Car and Driver)", "https://www.caranddriver.com/gmc/hummer-ev-suv"),
   "i6-2023-24-lr-awd-20": f(303, "tested", "high", "Edmunds real-world mixed-loop range test (Edmunds)", "https://www.edmunds.com/car-news/hyundai-ioniq-6-gets-more-ev-range-than-any-tesla-model-3.html"),
   "i6-2025-lr-awd-20": f(303, "tested", "medium", "Edmunds real-world mixed-loop range test (Edmunds)", "https://www.edmunds.com/car-news/hyundai-ioniq-6-gets-more-ev-range-than-any-tesla-model-3.html"),
@@ -254,10 +254,30 @@ export const TESTED_BY_ROWID: Record<string, Fact<number>> = {
 
 // Pass 2: parity-derived range where no direct test of the exact config exists;
 // marked "est" so the row wears the estimate badge, not a bare tested figure.
+//
+// Parity means the SAME car in another model year, or the same grade on a pack
+// that did not change. It has never meant another grade of the same nameplate,
+// and on 2026-09-12 nineteen rows were doing exactly that: a Taycan 4 printing
+// the 4S's 337 mi, a Macan 4S and a Macan GTS printing the Turbo's 290, a 4S
+// Cross Turismo printing the Turbo Cross Turismo's 246, an i5 xDrive40
+// printing the M60's 264, an i7 M70 printing the xDrive60's 314, an i4
+// xDrive40 printing the M50's 239. Every one of those sources names the grade
+// it tested in its own title, so the mismatch was visible without leaving this
+// file. Where the right grade had a published figure of its own it replaced
+// the borrowed one (Edmunds' own tested-range table, read 2026-09-12); where
+// it had none, the row went quiet.
+//
+// The Taycan 4 sedan is the second kind. Edmunds' leaderboard lists every car
+// it has range-tested and has no Taycan 4 in either generation (it has the
+// base Taycan, the 4S, the GTS and the 4S Cross Turismo), and InsideEVs'
+// index has none either, so both Taycan 4 rows now print no tested range.
+// The 4 and the 4S are rated within a mile of each other (294 vs 295 for
+// MY2025-26), which is what made the borrow look harmless; the grades differ
+// by ~160 hp, and Edmunds' own Macan pair shows what that is worth in the
+// real world — 4S 323 mi against Turbo 301 on the same loop.
 export const TESTED_EST_BY_ROWID: Record<string, Fact<number>> = {
   "ariya-63-fwd": f(144, "est", "medium", "75 mph constant-speed highway range test (InsideEVs)", "https://insideevs.com/news/613536/base-nissan-ariya-range-test/"),
   "blazer-rwd-2025": f(275, "est", "medium", "70-mph highway range test (MotorTrend)", "https://www.motortrend.com/reviews/2025-chevrolet-blazer-ev-yearlong-review-verdict"),
-  "bmw-i4-xdrive40": f(239, "est", "medium", "InsideEVs 70 mph highway range test (InsideEVs)", "https://insideevs.com/reviews/590360/bmw-i4-m50-range-test/"),
   "bolt-ev-2017-2019": f(180, "est", "medium", "75-mph highway range test (Car and Driver)", "https://www.caranddriver.com/reviews/a15099446/2017-chevrolet-bolt-ev-test-review/"),
   "c40-recharge-2022-23": f(240, "est", "medium", "Edmunds real-world EV range loop (Edmunds)", "https://www.edmunds.com/car-news/2021-volvo-xc40-recharge-electric-suv-beats-epa-range-by-32-miles.html"),
   "cadillac-escalade-iql-2026": f(482, "est", "medium", "70-mph highway range test (InsideEVs)", "https://insideevs.com/reviews/763595/cadillac-escalade-iq-range-test/"),
@@ -279,22 +299,20 @@ export const TESTED_EST_BY_ROWID: Record<string, Fact<number>> = {
   "ex90-2026-twin": f(312, "est", "medium", "Consumer Reports 70 mph highway range test (Consumer Reports)", "https://www.consumerreports.org/cars/volvo/ex90/2025/road-test-report/"),
   "gc-4xe-2022-25": f(26, "est", "medium", "real-world electric-only range test (full-charge depletion) (Cars.com)", "https://www.cars.com/articles/how-far-can-a-jeep-grand-cherokee-4xe-trailhawk-go-on-electric-power-alone-486317/"),
   "hummer-ev-suv-2025": f(250, "est", "medium", "75-mph steady-state highway range (2024 same-config parity) (Car and Driver)", "https://www.caranddriver.com/gmc/hummer-ev-suv"),
-  "i4-2024-xdrive40": f(239, "est", "medium", "InsideEVs 70 mph highway range test (InsideEVs)", "https://insideevs.com/reviews/590360/bmw-i4-m50-range-test/"),
   "i4-2025-edrive40": f(271, "est", "medium", "Constant-speed 120 km/h (75 mph) highway depletion range test (Bjørn Nyland (via InsideEVs))", "https://insideevs.com/news/600092/bmw-i4-edrive40-range-test/"),
   "i4-2026-edrive40": f(271, "est", "medium", "Constant-speed 120 km/h (75 mph) highway depletion range test (Bjørn Nyland (via InsideEVs))", "https://insideevs.com/news/600092/bmw-i4-edrive40-range-test/"),
   "i4-2026-m60": f(239, "est", "medium", "InsideEVs 70 mph highway range test (InsideEVs)", "https://insideevs.com/reviews/590360/bmw-i4-m50-range-test/"),
-  "i4-2026-xdrive40": f(239, "est", "medium", "InsideEVs 70 mph highway range test (InsideEVs)", "https://insideevs.com/reviews/590360/bmw-i4-m50-range-test/"),
   "i5-2024-m60": f(264, "est", "medium", "Edmunds real-world mixed loop range test (Edmunds (via BMWBlog))", "https://www.bmwblog.com/2024/04/23/bmw-i5-m60-overachieves-range-test/"),
   "i5-2025-m60": f(264, "est", "medium", "Edmunds real-world mixed loop range test (Edmunds (via BMWBlog))", "https://www.bmwblog.com/2024/04/23/bmw-i5-m60-overachieves-range-test/"),
-  "i5-2025-xdrive40": f(264, "est", "medium", "Edmunds real-world mixed loop range test (Edmunds (via BMWBlog))", "https://www.bmwblog.com/2024/04/23/bmw-i5-m60-overachieves-range-test/"),
+  "i5-2025-xdrive40": f(282, "est", "medium", "Edmunds EV Range Test (mixed city/highway loop) (Edmunds)", "https://www.edmunds.com/car-news/electric-car-range-and-consumption-epa-vs-edmunds.html"),
   "i5-2026-m60": f(264, "est", "medium", "Edmunds real-world mixed loop range test (Edmunds (via BMWBlog))", "https://www.bmwblog.com/2024/04/23/bmw-i5-m60-overachieves-range-test/"),
-  "i5-2026-xdrive40": f(264, "est", "medium", "Edmunds real-world mixed loop range test (Edmunds (via BMWBlog))", "https://www.bmwblog.com/2024/04/23/bmw-i5-m60-overachieves-range-test/"),
-  "i5-2027-xdrive40": f(264, "est", "medium", "Edmunds real-world mixed loop range test (Edmunds (via BMWBlog))", "https://www.bmwblog.com/2024/04/23/bmw-i5-m60-overachieves-range-test/"),
+  "i5-2026-xdrive40": f(282, "est", "medium", "Edmunds EV Range Test (mixed city/highway loop) (Edmunds)", "https://www.edmunds.com/car-news/electric-car-range-and-consumption-epa-vs-edmunds.html"),
+  "i5-2027-xdrive40": f(282, "est", "medium", "Edmunds EV Range Test (mixed city/highway loop) (Edmunds)", "https://www.edmunds.com/car-news/electric-car-range-and-consumption-epa-vs-edmunds.html"),
   "i6-2023-24-lr-rwd-18": f(310, "est", "medium", "~70-mph highway (rainy, ~50F) (EV Pulse)", "https://www.evpulse.com/features/range-testing-the-2023-hyundai-ioniq-6-se-long-range"),
   "i7-2023-xdrive60": f(314, "est", "medium", "Constant-speed highway (~81 mph) depletion range test (ArenaEV)", "https://www.arenaev.com/bmw_i7_xdrive60_real_world_range_test-news-3062.php"),
-  "i7-2024-m70": f(314, "est", "medium", "Constant-speed highway (~81 mph) depletion range test (ArenaEV)", "https://www.arenaev.com/bmw_i7_xdrive60_real_world_range_test-news-3062.php"),
+  "i7-2024-m70": f(312, "est", "medium", "Edmunds EV Range Test (mixed city/highway loop) (Edmunds)", "https://www.edmunds.com/car-news/electric-car-range-and-consumption-epa-vs-edmunds.html"),
   "i7-2024-xdrive60": f(314, "est", "medium", "Constant-speed highway (~81 mph) depletion range test (ArenaEV)", "https://www.arenaev.com/bmw_i7_xdrive60_real_world_range_test-news-3062.php"),
-  "i7-2025-26-m70": f(314, "est", "medium", "Constant-speed highway (~81 mph) depletion range test (ArenaEV)", "https://www.arenaev.com/bmw_i7_xdrive60_real_world_range_test-news-3062.php"),
+  "i7-2025-26-m70": f(312, "est", "medium", "Edmunds EV Range Test (mixed city/highway loop) (Edmunds)", "https://www.edmunds.com/car-news/electric-car-range-and-consumption-epa-vs-edmunds.html"),
   "i7-2025-26-xdrive60": f(314, "est", "medium", "Constant-speed highway (~81 mph) depletion range test (ArenaEV)", "https://www.arenaev.com/bmw_i7_xdrive60_real_world_range_test-news-3062.php"),
   "i9-2026-awd": f(366, "est", "medium", "Edmunds EV Range Test (real-world loop) (Edmunds)", "https://www.edmunds.com/car-news/2026-hyundai-ioniq-9-sel-calligraphy-range-test.html"),
   "i9-2026-awd-perf": f(349, "est", "medium", "Edmunds EV Range Test (real-world loop) (Edmunds)", "https://www.edmunds.com/car-news/2026-hyundai-ioniq-9-sel-calligraphy-range-test.html"),
@@ -322,12 +340,12 @@ export const TESTED_EST_BY_ROWID: Record<string, Fact<number>> = {
   "m3-2026-perf": f(288, "est", "medium", "70 mph steady-state highway (Out of Spec Reviews (via Notebookcheck))", "https://www.notebookcheck.net/Model-3-Performance-range-test-disappoints-as-LR-RWD-clocks-386-miles-on-a-charge.901574.0.html"),
   "m3-2026-premium-awd": f(370, "est", "medium", "70 mph steady-state highway (InsideEVs (Out of Spec))", "https://insideevs.com/news/733732/2024-tesla-model-3-awd-range-test/"),
   "m3-2026-premium-rwd": f(386, "est", "medium", "70 mph steady-state highway (Out of Spec Reviews (via Notebookcheck))", "https://www.notebookcheck.net/Model-3-Performance-range-test-disappoints-as-LR-RWD-clocks-386-miles-on-a-charge.901574.0.html"),
-  "macan-2025-4s": f(290, "est", "medium", "70 mph constant-speed highway range test (InsideEVs)", "https://insideevs.com/news/740461/porsche-macan-highway-range-test/"),
-  "macan-2025-4s-alt": f(290, "est", "medium", "70 mph constant-speed highway range test (InsideEVs)", "https://insideevs.com/news/740461/porsche-macan-highway-range-test/"),
-  "macan-2026-4s": f(290, "est", "medium", "70 mph constant-speed highway range test (InsideEVs)", "https://insideevs.com/news/740461/porsche-macan-highway-range-test/"),
-  "macan-2026-4s-alt": f(290, "est", "medium", "70 mph constant-speed highway range test (InsideEVs)", "https://insideevs.com/news/740461/porsche-macan-highway-range-test/"),
-  "macan-2026-gts": f(290, "est", "medium", "70 mph constant-speed highway range test (InsideEVs)", "https://insideevs.com/news/740461/porsche-macan-highway-range-test/"),
-  "macan-2026-gts-alt": f(290, "est", "medium", "70 mph constant-speed highway range test (InsideEVs)", "https://insideevs.com/news/740461/porsche-macan-highway-range-test/"),
+  "macan-2025-4s": f(323, "est", "medium", "Edmunds EV Range Test (mixed city/highway loop) (Edmunds)", "https://www.edmunds.com/car-news/electric-car-range-and-consumption-epa-vs-edmunds.html"),
+  "macan-2025-4s-alt": f(323, "est", "medium", "Edmunds EV Range Test (mixed city/highway loop) (Edmunds)", "https://www.edmunds.com/car-news/electric-car-range-and-consumption-epa-vs-edmunds.html"),
+  "macan-2026-4s": f(323, "est", "medium", "Edmunds EV Range Test (mixed city/highway loop) (Edmunds)", "https://www.edmunds.com/car-news/electric-car-range-and-consumption-epa-vs-edmunds.html"),
+  "macan-2026-4s-alt": f(323, "est", "medium", "Edmunds EV Range Test (mixed city/highway loop) (Edmunds)", "https://www.edmunds.com/car-news/electric-car-range-and-consumption-epa-vs-edmunds.html"),
+  "macan-2026-gts": f(298, "est", "medium", "Edmunds EV Range Test (mixed city/highway loop) (Edmunds)", "https://www.edmunds.com/car-news/electric-car-range-and-consumption-epa-vs-edmunds.html"),
+  "macan-2026-gts-alt": f(298, "est", "medium", "Edmunds EV Range Test (mixed city/highway loop) (Edmunds)", "https://www.edmunds.com/car-news/electric-car-range-and-consumption-epa-vs-edmunds.html"),
   "mache-2021-er-rwd": f(287, "est", "medium", "70-mph highway (InsideEVs)", "https://insideevs.com/reviews/527004/mustang-mache-route1-range-test/"),
   "mache-2021-gt": f(272, "est", "medium", "Edmunds EV Range Test (mixed real-world loop) (Edmunds)", "https://www.edmunds.com/car-news/ford-mustang-mach-e-gt-beats-epa-range-estimate.html"),
   "mache-2022-er-awd-cr1": f(283, "est", "medium", "70-mph highway (InsideEVs)", "https://insideevs.com/reviews/502506/mustang-mach-e-70mph-range-test/"),
@@ -375,18 +393,16 @@ export const TESTED_EST_BY_ROWID: Record<string, Fact<number>> = {
   "sierra-ev-2026-denali-extended": f(428, "est", "medium", "Edmunds EV Range Test (mixed city/highway loop) (Edmunds)", "https://www.edmunds.com/car-news/electric-car-range-and-consumption-epa-vs-edmunds.html"),
   "silverado-2024-4wt": f(442, "est", "medium", "70-mph highway range test (2024 RST Max-pack parity) (InsideEVs)", "https://insideevs.com/reviews/736604/chevrolet-silverado-ev-range-test/"),
   "taycan-2021-22-4s-pbp": f(278, "est", "medium", "70-mph constant-speed highway range test (InsideEVs)", "https://insideevs.com/reviews/455628/video-porsche-taycan-4s-range-test/"),
-  "taycan-2023-24-4-pbp": f(278, "est", "medium", "70-mph constant-speed highway range test (InsideEVs)", "https://insideevs.com/reviews/455628/video-porsche-taycan-4s-range-test/"),
   "taycan-2023-24-4s-pbp": f(278, "est", "medium", "70-mph constant-speed highway range test (InsideEVs)", "https://insideevs.com/reviews/455628/video-porsche-taycan-4s-range-test/"),
   "taycan-2023-24-base-pbp": f(306, "est", "medium", "70-mph constant-speed highway range test (InsideEVs)", "https://insideevs.com/reviews/604280/porsche-taycan-new-software-range-test/"),
-  "taycan-2025-26-4-pbp": f(337, "est", "medium", "Edmunds EV Range Test (real-world mixed city/highway loop) (Edmunds)", "https://www.edmunds.com/car-news/2025-porsche-taycan-4s-performance-range-test.html"),
   "taycan-2025-26-4s-pbp": f(337, "est", "medium", "Edmunds EV Range Test (real-world mixed city/highway loop) (Edmunds)", "https://www.edmunds.com/car-news/2025-porsche-taycan-4s-performance-range-test.html"),
-  "taycan-ct-2021-22-4s": f(246, "est", "medium", "70-mph constant-speed highway range test (InsideEVs)", "https://insideevs.com/reviews/511077/taycan-cross-turismo-range-test/"),
+  "taycan-ct-2021-22-4s": f(250, "est", "medium", "Edmunds EV Range Test (mixed city/highway loop) (Edmunds)", "https://www.edmunds.com/car-news/electric-car-range-and-consumption-epa-vs-edmunds.html"),
   "taycan-ct-2023-24-4": f(252, "est", "medium", "70-mph constant-speed highway range test (InsideEVs)", "https://insideevs.com/reviews/540464/porsche-taycan-crossturismo-range-test/"),
-  "taycan-ct-2023-24-4s": f(246, "est", "medium", "70-mph constant-speed highway range test (InsideEVs)", "https://insideevs.com/reviews/511077/taycan-cross-turismo-range-test/"),
+  "taycan-ct-2023-24-4s": f(250, "est", "medium", "Edmunds EV Range Test (mixed city/highway loop) (Edmunds)", "https://www.edmunds.com/car-news/electric-car-range-and-consumption-epa-vs-edmunds.html"),
   "taycan-ct-2023-24-turbo": f(246, "est", "medium", "70-mph constant-speed highway range test (InsideEVs)", "https://insideevs.com/reviews/511077/taycan-cross-turismo-range-test/"),
   "taycan-ct-2025-26-4": f(302, "est", "medium", "70-mph constant-speed highway range test (InsideEVs)", "https://insideevs.com/news/754893/2025-porsche-taycan-cross-turismo-range-test/"),
   "tayct-2023-24-4": f(252, "est", "medium", "70-mph constant-speed highway range test (InsideEVs)", "https://insideevs.com/reviews/540464/porsche-taycan-crossturismo-range-test/"),
-  "tayct-2023-24-4s": f(246, "est", "medium", "70-mph constant-speed highway range test (InsideEVs)", "https://insideevs.com/reviews/511077/taycan-cross-turismo-range-test/"),
+  "tayct-2023-24-4s": f(250, "est", "medium", "Edmunds EV Range Test (mixed city/highway loop) (Edmunds)", "https://www.edmunds.com/car-news/electric-car-range-and-consumption-epa-vs-edmunds.html"),
   "tayct-2023-24-turbo": f(246, "est", "medium", "70-mph constant-speed highway range test (InsideEVs)", "https://insideevs.com/reviews/511077/taycan-cross-turismo-range-test/"),
   "tayct-2025-26-4": f(302, "est", "medium", "70-mph constant-speed highway range test (InsideEVs)", "https://insideevs.com/news/754893/2025-porsche-taycan-cross-turismo-range-test/"),
   // Four keys for one test: the 4xe rows split at the 2021/2022 boundary for
