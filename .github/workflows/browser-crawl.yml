@@ -12,7 +12,7 @@ name: Browser crawl
 # deadline with ~4,200 of 21,116 domains never reached, and of the 1,436
 # Dealer Inspire rooftops it did reach, 1,331 came back partial under the
 # 8-minute cap it shares with plain-fetch rooftops. Measured the same day at
-# 18:30 UTC (browser-lane-dark.mjs): 13,225 live cars on these rooftops,
+# 17:30 UTC (browser-lane-dark.mjs): 13,225 live cars on these rooftops,
 # 4,019 of them dark on 847 rooftops, 211 rooftops fully dark. The nightly
 # browser recheck re-admits live cars one page at a time (1,200 a night) and
 # cannot find a NEW car on any of them. The owner's standard: "comprehensive
@@ -25,7 +25,7 @@ name: Browser crawl
 #     both enforced inside the lane and raced by crawl.mjs's wall;
 #   - per part: --deadline-min stops new rooftops, the hard stop five minutes
 #     later ends the process whatever is in flight, and the job cap is a net
-#     40 minutes past that;
+#     past that (setup, sync, and up to 90 minutes waiting out a nightly);
 #   - per run: its own concurrency group, so two runs never overlap, and
 #     max-parallel = the part count, so it never takes more runners than it
 #     says.
@@ -46,7 +46,20 @@ name: Browser crawl
 # when the plain read is walled), no challenge solving, the x-crawler
 # declaration on every load, one request per host per 1.1 s. BROWSER_CONCURRENCY
 # is pages in flight per RUNNER, not per rooftop: a Dealer Inspire visit is
-# one load at a time.
+# one load at a time, so it is a CPU setting, never a per-host rate.
+#
+# SIZED FROM TWO TRIALS, 2026-09-13, the same 96 rooftops (--key 1000,
+# --limit 96, 8 parts of 12) at 2 and at 6 pages in flight:
+#   pages  loads/min/part  rooftops/hour/part  EVs read  complete  no SRP
+#     2        19.9               30             1,827      24%      1%
+#     6        29.4               47             1,829      18%      1%
+# Six pages read the same cars 1.5x faster with the same false-empty rate —
+# the rate that made 2 the recheck's ceiling on 2026-09-11 is honest since
+# 31cb1ca (a cardless page reports "no SRP answered", never an empty lot),
+# so above 2 the cost is only that a slower page trips the 8-minute cap a
+# little more often (complete 24% → 18%; those rooftops are still read,
+# just not certified). Two pages would need 16 parts to cover 2,230
+# rooftops in a 300-minute run; six needs ten, which is what runs.
 
 on:
   schedule:
@@ -57,11 +70,11 @@ on:
       jobs:
         description: "Parallel parts (runners). Each part crawls every Nth rooftop of the rotated list."
         required: false
-        default: "8"
+        default: "10"
       browser_concurrency:
-        description: "BROWSER_CONCURRENCY: Chrome pages in flight per part."
+        description: "BROWSER_CONCURRENCY: Chrome pages in flight per part (a CPU setting; a rooftop is always one load at a time)."
         required: false
-        default: "2"
+        default: "6"
       max_pages:
         description: "crawl.mjs --max-pages: the lane's browser-load budget per rooftop."
         required: false
@@ -129,13 +142,14 @@ jobs:
     steps:
       - id: build
         run: |
-          N="${{ github.event.inputs.jobs || '8' }}"
+          N="${{ github.event.inputs.jobs || '10' }}"
           echo "matrix=$(awk -v n="$N" 'BEGIN{printf "["; for(i=0;i<n;i++) printf "%s%d", (i?",":""), i; printf "]"}')" >> "$GITHUB_OUTPUT"
           echo "jobs=$N" >> "$GITHUB_OUTPUT"
           # The part job's cap: deadline + 5 (hard stop) + 40 for setup,
-          # enrichment, ingest, sync and the cache commit. Computed here
-          # because a workflow expression has no arithmetic.
-          echo "timeout=$(( ${{ github.event.inputs.deadline_min || '300' }} + 45 ))" >> "$GITHUB_OUTPUT"
+          # enrichment, ingest, sync and the cache commit + 90 the sync may
+          # spend waiting for a nightly. Computed here because a workflow
+          # expression has no arithmetic.
+          echo "timeout=$(( ${{ github.event.inputs.deadline_min || '300' }} + 135 ))" >> "$GITHUB_OUTPUT"
 
   crawl:
     needs: [plan, measure-before]
@@ -145,12 +159,12 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      max-parallel: 8
+      max-parallel: ${{ fromJSON(needs.plan.outputs.jobs) }}
       matrix:
         part: ${{ fromJson(needs.plan.outputs.matrix) }}
-    # deadline + 5 (hard stop) + setup, enrichment, ingest, sync and the cache
-    # commit (the plan job does the sum). The deadline is what ends the
-    # crawling; this is the net.
+    # deadline + 5 (hard stop) + setup, enrichment, ingest, the wait for a
+    # nightly, sync and the cache commit (the plan job does the sum). The
+    # deadline is what ends the crawling; this is the net.
     timeout-minutes: ${{ fromJSON(needs.plan.outputs.timeout) }}
     steps:
       - uses: actions/checkout@v4
@@ -187,7 +201,7 @@ jobs:
         working-directory: scraper
         env:
           BROWSER_LANES: "on"
-          BROWSER_CONCURRENCY: ${{ github.event.inputs.browser_concurrency || '2' }}
+          BROWSER_CONCURRENCY: ${{ github.event.inputs.browser_concurrency || '6' }}
         run: |
           BC="${BROWSER_CONCURRENCY}"
           start=$(date -u +%FT%TZ)
@@ -219,18 +233,33 @@ jobs:
         run: node ingest.mjs
 
       # The rolling crawl's guard, for the rolling crawl's reason: this
-      # instance falls over when writes arrive together. Fails open.
-      - name: Is the nightly mid-sync?
+      # instance falls over when writes arrive together. The rolling crawl
+      # SKIPS its push while a nightly is writing, because its rooftops come
+      # round again in hours; a part here has spent up to five hours of
+      # Chrome on rooftops that come round in twelve, so it WAITS instead —
+      # up to 90 minutes, polling every two — and skips only if the nightly
+      # is still going after that. Measured the day this shipped: the
+      # nightly's 10:30 schedule was delivered at 14:29, and its browser
+      # recheck was still running at 18:05 when the calibration trials
+      # finished, so all 16 trial parts pushed nothing. Fails open, like the
+      # original: a GitHub API hiccup lets the sync proceed.
+      - name: Wait for a running nightly before pushing
         id: nightly
         if: ${{ steps.pick.outputs.count != '0' }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          BUSY=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow nightly.yml \
-                   --status in_progress --limit 1 --json databaseId --jq 'length' 2>/dev/null || echo 0)
+          busy() { gh run list --repo "$GITHUB_REPOSITORY" --workflow nightly.yml \
+                     --status in_progress --limit 1 --json databaseId --jq 'length' 2>/dev/null || echo 0; }
+          BUSY=$(busy)
+          waited=0
+          while [ "$BUSY" != "0" ] && [ "$waited" -lt 90 ]; do
+            echo "nightly.yml is running; waiting (${waited} min so far) so the two lanes do not write at once"
+            sleep 120; waited=$((waited + 2)); BUSY=$(busy)
+          done
           echo "busy=$BUSY" >> "$GITHUB_OUTPUT"
-          [ "$BUSY" != "0" ] && echo "::warning::nightly.yml is running; skipping this part's push so the two lanes do not write at once. These rooftops come round again next run."
-          echo "nightly in progress: $BUSY"
+          [ "$BUSY" != "0" ] && echo "::warning::nightly.yml still running after ${waited} min; skipping this part's push. These rooftops come round again next run."
+          echo "nightly in progress: $BUSY (waited ${waited} min)"
 
       - name: Sync this part to Supabase
         if: ${{ steps.pick.outputs.count != '0' && github.event.inputs.sync != 'false' && steps.nightly.outputs.busy == '0' }}
