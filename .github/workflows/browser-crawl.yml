@@ -196,25 +196,56 @@ jobs:
       # a Chrome page waits on the page semaphore while its domain cap runs,
       # so more domains in flight than pages only burns cap; two extra
       # overlap the robots read and per-host pacing between loads.
+      #
+      # IN SLICES OF 60 ROOFTOPS, ONE PROCESS EACH, merged like the nightly's
+      # shards. The first full run (2026-09-13 18:27 UTC, 10 parts of 223)
+      # lost two parts to "JavaScript heap out of memory" — a 4 GB heap
+      # after 177 rooftops and ~7,000 browser loads, ~0.5 MB retained per
+      # load, about one Dealer Inspire VDP body each. The other eight parts
+      # ran ~7,600 loads apiece and lived, so the limit sat just past a
+      # normal part. A crawl step that dies skips ingest and sync, which
+      # threw away two and a half hours of Chrome on 446 rooftops. Sixty
+      # rooftops is ~1,600 loads, a fifth of the way to the limit, and the
+      # merge (merge-shards.mjs) is the same VIN-keyed dedupe crawl.mjs
+      # applies within one run; a slice that still dies costs its own
+      # rooftops and nothing else. NODE_OPTIONS raises the heap as a belt.
+      # The leak itself is not found; the evidence is above.
+      #
+      # `|| rc=$?` because the runner's bash is -e: without it a crawl that
+      # exits non-zero ends the step before the timing file is written and
+      # the surviving slices are merged.
       - name: Crawl this part
         if: ${{ steps.pick.outputs.count != '0' }}
         working-directory: scraper
         env:
           BROWSER_LANES: "on"
           BROWSER_CONCURRENCY: ${{ github.event.inputs.browser_concurrency || '6' }}
+          NODE_OPTIONS: "--max-old-space-size=5120"
         run: |
           BC="${BROWSER_CONCURRENCY}"
+          DEADLINE="${{ github.event.inputs.deadline_min || '300' }}"
           start=$(date -u +%FT%TZ)
-          node crawl.mjs $(cat /tmp/domains.txt) \
-            --max-pages "${{ github.event.inputs.max_pages || '80' }}" --cache-hours 0 \
-            --concurrency $((BC + 2)) \
-            --deadline-min "${{ github.event.inputs.deadline_min || '300' }}" \
-            --domain-cap-min "${{ github.event.inputs.domain_cap_min || '8' }}"
-          rc=$?
-          mkdir -p out
-          printf '{"startedAt":"%s","endedAt":"%s","asked":%s,"browserConcurrency":%s,"part":%s}\n' \
-            "$start" "$(date -u +%FT%TZ)" "${{ steps.pick.outputs.count }}" "$BC" "${{ matrix.part }}" > out/crawl-timing.json
-          exit $rc
+          start_s=$(date -u +%s)
+          rm -rf out/shards && mkdir -p out/shards
+          tr ' ' '\n' < /tmp/domains.txt | awk 'NF' | split -l 60 -a 3 - /tmp/slice-
+          rc=0; k=0; failed=0
+          for f in /tmp/slice-*; do
+            k=$((k + 1))
+            left=$(( DEADLINE - ( $(date -u +%s) - start_s ) / 60 ))
+            if [ "$left" -lt 3 ]; then echo "deadline reached before slice $k; $(wc -l < "$f") rooftops wait for the next run"; break; fi
+            echo "── slice $k: $(wc -l < "$f") rooftops, ${left} min left"
+            node crawl.mjs $(cat "$f") \
+              --max-pages "${{ github.event.inputs.max_pages || '80' }}" --cache-hours 0 \
+              --concurrency $((BC + 2)) \
+              --deadline-min "$left" \
+              --domain-cap-min "${{ github.event.inputs.domain_cap_min || '8' }}" || { rc=$?; failed=$((failed + 1)); echo "::warning::slice $k of part ${{ matrix.part }} exited $rc; its checkpointed rooftops are merged, the rest wait for the next run"; }
+            mkdir -p "out/shards/$k"
+            for o in listings.json report.json colisting-pairs.json; do [ -f "out/$o" ] && mv "out/$o" "out/shards/$k/$o"; done
+          done
+          node merge-shards.mjs
+          printf '{"startedAt":"%s","endedAt":"%s","asked":%s,"browserConcurrency":%s,"part":%s,"slices":%s,"failedSlices":%s}\n' \
+            "$start" "$(date -u +%FT%TZ)" "${{ steps.pick.outputs.count }}" "$BC" "${{ matrix.part }}" "$k" "$failed" > out/crawl-timing.json
+          cat out/crawl-timing.json
 
       # Same order as nightly.yml and rolling-crawl.yml, for the reason their
       # headers give: ingest keeps only evConfidence "high", and vpic-enrich
