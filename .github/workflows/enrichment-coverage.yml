@@ -98,6 +98,7 @@ on:
     paths:
       - "web/lib/enrichment/**"
       - "web/scripts/enrichment-coverage.mjs"
+      - "web/scripts/tested-range-grades.mjs"
       - "web/content/facts/**"
       - "web/lib/facts/**"
       - "web/tests/factsheet-*.test.ts"
@@ -106,6 +107,7 @@ on:
     paths:
       - "web/lib/enrichment/**"
       - "web/scripts/enrichment-coverage.mjs"
+      - "web/scripts/tested-range-grades.mjs"
       - "web/content/facts/**"
       - "web/lib/facts/**"
       - "web/tests/factsheet-*.test.ts"
@@ -138,6 +140,16 @@ jobs:
         if: always()
         working-directory: web
         run: node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs scripts/note-hygiene.mjs
+      # A range figure under the wrong grade reads exactly like a right one:
+      # it is a real measurement of a real car, just not this car. Nineteen
+      # rows were doing it on 2026-09-12 and the detector was the owner
+      # opening a Taycan 4 listing and recognising the 4S's number. This is
+      # that reading, done offline on every push. `if: always()` for the same
+      # reason as note hygiene above.
+      - name: Check tested-range grades
+        if: always()
+        working-directory: web
+        run: node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs scripts/tested-range-grades.mjs
       # The fact-sheet lane and the enrichment lane research the same cars
       # independently, and on 2026-08-30 they were caught contradicting each
       # other for five days (the Lightning sheet's 2024 heat-pump "None"

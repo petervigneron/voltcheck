@@ -280,7 +280,7 @@ export const TESTED_EST_BY_ROWID: Record<string, Fact<number>> = {
   "blazer-rwd-2025": f(275, "est", "medium", "70-mph highway range test (MotorTrend)", "https://www.motortrend.com/reviews/2025-chevrolet-blazer-ev-yearlong-review-verdict"),
   "bolt-ev-2017-2019": f(180, "est", "medium", "75-mph highway range test (Car and Driver)", "https://www.caranddriver.com/reviews/a15099446/2017-chevrolet-bolt-ev-test-review/"),
   "c40-recharge-2022-23": f(240, "est", "medium", "Edmunds real-world EV range loop (Edmunds)", "https://www.edmunds.com/car-news/2021-volvo-xc40-recharge-electric-suv-beats-epa-range-by-32-miles.html"),
-  "cadillac-escalade-iql-2026": f(482, "est", "medium", "70-mph highway range test (InsideEVs)", "https://insideevs.com/reviews/763595/cadillac-escalade-iq-range-test/"),
+  "cadillac-escalade-iql-2026": f(532, "est", "medium", "Edmunds EV Range Test (mixed city/highway loop) (Edmunds)", "https://www.edmunds.com/car-news/electric-car-range-and-consumption-epa-vs-edmunds.html"),
   // Both year rows: the 2026/2027 split is the charge port only, and the pack,
   // EPA rating and drivetrain are identical either side of it.
   "cadillac-vistiq-2026": f(334, "est", "medium", "Edmunds EV Range Test (real-world mixed loop) (Edmunds)", "https://www.edmunds.com/car-news/cadillac-optiq-vistiq-range-tested.html"),
@@ -324,8 +324,6 @@ export const TESTED_EST_BY_ROWID: Record<string, Fact<number>> = {
   "id4-2026-awd": f(240, "est", "medium", "75-mph highway range test (Car and Driver)", "https://www.caranddriver.com/reviews/a60009160/2024-volkswagen-id4-dual-motor-drive/"),
   "ioniq5-2023-awd": f(227, "est", "medium", "70-mph highway (InsideEVs)", "https://insideevs.com/reviews/443791/ev-range-test-results/"),
   "ioniq5-2024-awd": f(227, "est", "medium", "70-mph highway (InsideEVs)", "https://insideevs.com/reviews/443791/ev-range-test-results/"),
-  "ix-2024-m60": f(345, "est", "medium", "InsideEVs 70 mph highway range test (InsideEVs)", "https://insideevs.com/reviews/593029/bmw-ix-70mph-range-test/"),
-  "ix-2025-m60": f(345, "est", "medium", "InsideEVs 70 mph highway range test (InsideEVs)", "https://insideevs.com/reviews/593029/bmw-ix-70mph-range-test/"),
   "leaf-2026-splus": f(310, "est", "medium", "Edmunds real-world EV Range Test (mixed 60% city / 40% highway loop) (Edmunds)", "https://www.edmunds.com/car-news/2026-nissan-leaf-ev-range-tested.html"),
   "leaf-2026-svplus": f(310, "est", "medium", "Edmunds real-world EV Range Test (mixed 60% city / 40% highway loop) (Edmunds)", "https://www.edmunds.com/car-news/2026-nissan-leaf-ev-range-tested.html"),
   "lightning-2025-er123": f(270, "est", "medium", "70 mph highway range test (InsideEVs)", "https://insideevs.com/reviews/598000/ford-f150-lightning-range-test-review/"),
