@@ -8,15 +8,15 @@
       "expectedEveryHours": 8
     },
     "ev-rules-audit": {
-      "lastRunAt": "2026-09-13T21:05:17.876Z",
+      "lastRunAt": "2026-09-14T05:19:54.591Z",
       "result": "ok",
-      "detail": "171239 live, 0 newly refuted by vPIC, 0 adjudicated-and-kept, 0 undecided",
+      "detail": "172717 live, 0 newly refuted by vPIC, 0 adjudicated-and-kept, 0 undecided",
       "expectedEveryHours": 27
     },
     "completeness-audit": {
-      "lastRunAt": "2026-09-13T21:05:45.775Z",
+      "lastRunAt": "2026-09-14T05:20:31.285Z",
       "result": "ok",
-      "detail": "67892 live, 14 broken-parser lots (baseline 202)",
+      "detail": "68456 live, 7 broken-parser lots (baseline 202)",
       "expectedEveryHours": 27
     },
     "sync-guard": {
