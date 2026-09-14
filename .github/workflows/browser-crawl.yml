@@ -209,7 +209,10 @@ jobs:
       # merge (merge-shards.mjs) is the same VIN-keyed dedupe crawl.mjs
       # applies within one run; a slice that still dies costs its own
       # rooftops and nothing else. NODE_OPTIONS raises the heap as a belt.
-      # The leak itself is not found; the evidence is above.
+      # The leak was found the same evening and fixed in lib/browser.mjs
+      # (closePage: a page closed with a request still being intercepted
+      # kept its whole server-side graph alive — see the comment there); the
+      # slices stay as the belt.
       #
       # `|| rc=$?` because the runner's bash is -e: without it a crawl that
       # exits non-zero ends the step before the timing file is written and

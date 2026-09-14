@@ -223,8 +223,74 @@ export async function browserUnavailable() {
   return unavailable;
 }
 
-const bounded = (p, ms, what) =>
-  Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(Object.assign(new Error(`${what} timed out after ${ms}ms`), { name: "timeout" })), ms))]);
+// A Playwright call bounded by a clock, and the clock is CLEARED when the call
+// settles. A pending timer holds its closure, the closure holds the rejecting
+// promise, and that promise's reaction list holds the race — with the
+// settled VALUE in it. Left to fire on its own, the 30 s `content` timer kept
+// every page body it had already handed back alive for another 30 s: 55 MB
+// of bodies in one heap snapshot (2026-09-13, six pages in flight), all of
+// them already parsed and forgotten by the lane.
+const bounded = (p, ms, what) => {
+  let timer;
+  const clock = new Promise((_, rej) => {
+    timer = setTimeout(() => rej(Object.assign(new Error(`${what} timed out after ${ms}ms`), { name: "timeout" })), ms);
+  });
+  return Promise.race([p, clock]).finally(() => clearTimeout(timer));
+};
+
+// CLOSE A PAGE WITHOUT LEAKING IT. Playwright runs its server in this process,
+// and a page's server-side graph — every Request and Response it ever made,
+// its console messages, frames and execution contexts — is freed when the
+// page's dispatcher is disposed on close. One thing is not: a Route the
+// server has handed to a route handler is held in the context's in-flight
+// set until the handler's continue/abort reaches it, and when the page's
+// dispatcher is disposed FIRST the call finds no object, the route never
+// leaves the set, and the set keeps the whole page alive for the life of the
+// browser. A Dealer Inspire page never stops making requests (chat, analytics
+// beacons), so closing it mid-stream loses that race about half the time:
+// 262 dead pages, 27,042 requests and 210,145 promises after ~540 loads in
+// the 2026-09-13 snapshot, about 1.5 MB a page — the "JavaScript heap out of
+// memory" that took two parts of the first browser-crawl run at 4 GB. The
+// same race parents the dispatchers of any request that lands after the
+// dispose to the context, where nothing disposes them.
+//
+// So the page is parked on about:blank first. That tears the document down,
+// which stops its scripts and cancels its requests while the page's
+// dispatcher is still alive to receive the handlers' replies (a cancelled
+// request's continue is an error Playwright's Chromium delegate tolerates),
+// and a blank page issues nothing — by the time close runs there is no route
+// in flight to lose. Measured on the same 20 rooftops, same flags as the
+// workflow, snapshots at ~540 and ~1,040 loads: 428 KB retained per load
+// before (574 dead pages at the second snapshot), 33 KB after (51). The
+// synthetic busy page in test/browser-page-leak.test.mjs: 47 dead pages in
+// 100 loads before, none after.
+//
+// The short wait between park and close is for what the park itself sets
+// off. A document being unloaded fires its keepalive fetches and beacons on
+// the way out, and its last fonts are still resolving; those are intercepted
+// too, and of the 51 pages the park alone still lost, 38 were held by
+// exactly one such route (fetch, font, a ping). A hundred milliseconds is
+// for the handlers' replies to land, not for the requests to finish — a
+// route leaves the in-flight set when its continue/abort is processed,
+// milliseconds after the pause. Measured on 16 further rooftops: pages held
+// by a route fell from 3.7% of loads to 0.9%.
+//
+// What is left (~1-4% of loads, depending on the rooftops) is Playwright's
+// own: a child-frame or worker session whose target died mid-initialization
+// keeps a pending Runtime.runIfWaitingForDebugger, and the dispose that
+// would clear it waits on a Page.enable the dead target never answers, so
+// the session stays in the connection's map holding the page. Parking makes
+// no difference to that — the frames die at park or at close either way —
+// and it is not fixable from this side of the API.
+//
+// Both Playwright steps are bounded, because a page that will not navigate
+// must not hold its concurrency slot either; the close still runs if the
+// park times out.
+async function closePage(page) {
+  await bounded(page.goto("about:blank", { timeout: 10000 }), 15000, "park").catch(() => {});
+  await new Promise((r) => setTimeout(r, 100));
+  await bounded(page.close(), 15000, "close").catch(() => {});
+}
 
 const robotsReadByBrowser = new Set(); // hosts whose robots.txt Chrome has been asked for, whatever it answered
 
@@ -269,7 +335,7 @@ export async function browserRobotsAllows(url) {
       } catch {
         // Unreadable by Chrome too: the plain fetch's entry stands.
       } finally {
-        if (page) await bounded(page.close(), 15000, "close").catch(() => {});
+        if (page) await closePage(page);
         release();
       }
     }
@@ -348,11 +414,10 @@ async function browserLoad(url, { settleMs = 1500, waitFor = null, waitForText =
   // resolves — seen 2026-09-03, one Dealer Inspire rooftop held a crawl for
   // eleven hours with no checkpoint — would otherwise keep its concurrency
   // slot forever and, six hangs later, stall every browser lane in the
-  // process. `withTimeout` turns that into an error:timeout answer, and the
+  // process. `bounded` turns that into an error:timeout answer, and the
   // page is closed on a bounded timer of its own so a hung close cannot
   // block the release.
-  const withTimeout = (p, ms, what) =>
-    Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(Object.assign(new Error(`${what} timed out after ${ms}ms`), { name: "timeout" })), ms))]);
+  const withTimeout = bounded;
   let page;
   try {
     page = await withTimeout(ctx.context.newPage(), 30000, "newPage");
@@ -540,7 +605,7 @@ async function browserLoad(url, { settleMs = 1500, waitFor = null, waitForText =
   } catch (e) {
     return { status: `error:${e.name ?? "unknown"}`, body: null, finalUrl: url, captured: [], steps: [], waited: null };
   } finally {
-    if (page) await withTimeout(page.close(), 15000, "close").catch(() => {});
+    if (page) await closePage(page);
     release();
   }
 }
