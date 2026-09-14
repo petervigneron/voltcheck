@@ -2,21 +2,21 @@
   "_comment": "Written by scraper/lib/audit-status.mjs. Do not hand-edit — see that file's header.",
   "checks": {
     "feed-shard-health": {
-      "lastRunAt": "2026-09-14T17:34:24.839Z",
+      "lastRunAt": "2026-09-14T22:08:21.330Z",
       "result": "ok",
-      "detail": "total 163668; shards 3372/3339/3482/3296/3356/3380/3329/3418/3339/3255/3483/3435/3390/3466/3514/3412/3438/3312/3378/3395/3431/3484/3592/3411/3404/3276/3414/3388/3363/3329/3478/3429/3422/3431/3367/3451/3477/3488/3404/3539/3458/3464/3263/3436/3403/3431/3424/3422; sitemap URLs 0",
+      "detail": "total 161974; shards 3329/3306/3455/3256/3323/3348/3290/3387/3305/3220/3437/3401/3347/3425/3477/3395/3411/3268/3336/3350/3396/3452/3551/3374/3383/3245/3370/3349/3325/3301/3447/3397/3377/3408/3329/3413/3436/3459/3383/3502/3413/3431/3231/3403/3367/3391/3386/3389; sitemap URLs 162259",
       "expectedEveryHours": 8
     },
     "ev-rules-audit": {
-      "lastRunAt": "2026-09-14T13:01:37.227Z",
+      "lastRunAt": "2026-09-14T22:07:28.644Z",
       "result": "ok",
-      "detail": "172913 live, 0 newly refuted by vPIC, 0 adjudicated-and-kept, 0 undecided",
+      "detail": "170051 live, 0 newly refuted by vPIC, 0 adjudicated-and-kept, 0 undecided",
       "expectedEveryHours": 27
     },
     "completeness-audit": {
-      "lastRunAt": "2026-09-14T13:02:25.213Z",
+      "lastRunAt": "2026-09-14T22:08:09.702Z",
       "result": "ok",
-      "detail": "68470 live, 8 broken-parser lots (baseline 202)",
+      "detail": "67380 live, 9 broken-parser lots (baseline 202)",
       "expectedEveryHours": 27
     },
     "sync-guard": {
@@ -32,9 +32,9 @@
       "expectedEveryHours": 27
     },
     "live-price-audit": {
-      "lastRunAt": "2026-09-14T13:02:28.998Z",
+      "lastRunAt": "2026-09-14T22:08:14.056Z",
       "result": "warn",
-      "detail": "163840 priced, 12 implausible (3 at or below the floor/cohort, 9 above)",
+      "detail": "160696 priced, 10 implausible (1 at or below the floor/cohort, 9 above)",
       "expectedEveryHours": 8
     },
     "price-audit": {
