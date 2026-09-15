@@ -13,9 +13,17 @@
 # browser pass, which visits returning cars first (recheck-browser.yml).
 name: Recheck returning cars
 
+# Two triggers, because GitHub's cron is best-effort: the first day's
+# "*/30" fired once in six and a half hours (2026-09-15, 08:10 UTC, against
+# thirteen slots). Returns are created by ingest, so the pass also runs the
+# moment a crawl that ingests finishes — rolling crawl (every ~2 h), nightly,
+# browser crawl — which is exactly when there is something to ask about.
 on:
   schedule:
     - cron: "*/30 * * * *"
+  workflow_run:
+    workflows: ["Rolling crawl", "Nightly inventory", "Browser crawl"]
+    types: [completed]
   workflow_dispatch:
 
 # Never two of these at once; a slow pass simply hands its remainder to the
