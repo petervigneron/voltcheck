@@ -1,0 +1,48 @@
+# A car that came back after 36 hours unseen is withheld until its own page
+# says it is for sale (migration 0093, rule 3 of live_listings_feed). This is
+# the pass that asks — every half hour, over only those rows — so the wait is
+# minutes, not the next nightly. The owner's standard is comprehensive AND
+# reliable: the lever for both is faster evidence, and this is it.
+#
+# What it does not do: it is not a second nightly. It loads only rows whose
+# listing_seen.returned_at is newer than their last confirmation (a few
+# hundred per half hour; 3,900–7,400 a day measured 2026-09-15), asks each
+# car's own page with the nightly's verdict rules and write path, and waives
+# the return on rows no page can answer for (OEM-locator lanes, homepage
+# sources). Pages a fetch cannot read (403, timeouts) are left for the
+# browser pass, which visits returning cars first (recheck-browser.yml).
+name: Recheck returning cars
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+# Never two of these at once; a slow pass simply hands its remainder to the
+# next one (the deadline below writes what it has).
+concurrency:
+  group: recheck-returning
+  cancel-in-progress: false
+
+jobs:
+  returning:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - working-directory: scraper
+        run: npm ci --no-audit --no-fund
+      - name: Ask the returning cars' own pages
+        working-directory: scraper
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_INGEST_TOKEN: ${{ secrets.SUPABASE_INGEST_TOKEN }}
+          # listing_seen.returned_at is the queue; 0026 revoked anon's read.
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: node recheck.mjs --returning --concurrency 8 --deadline-min 20
+      # The confirmations are in the database; the grid follows at the next
+      # publish (five a day) and the listing page at its next render.

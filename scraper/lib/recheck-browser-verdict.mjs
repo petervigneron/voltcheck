@@ -193,7 +193,18 @@ export function classifyBrowserRecheck({ vin, url, status, finalUrl, body }) {
 //     sweeps see them nightly.
 // Oldest evidence first, dealt round-robin across hosts so no one rooftop
 // eats the cap.
-export function selectResidue(rows, { now = Date.now(), staleDays = 7, seenHours = 48, sweepSaysGone = () => false, limit = 0 } = {}) {
+/** Which of `parts` runners a host belongs to: a stable string hash, so the
+ *  same rooftop lands on the same part from run to run. */
+export function hostPart(host, parts) {
+  let h = 2166136261;
+  for (let i = 0; i < host.length; i++) {
+    h ^= host.charCodeAt(i);
+    h = Math.imul(h, 16777619) >>> 0;
+  }
+  return h % parts;
+}
+
+export function selectResidue(rows, { now = Date.now(), staleDays = 7, seenHours = 48, sweepSaysGone = () => false, limit = 0, part = 0, parts = 1 } = {}) {
   const cutoff = now - staleDays * 86_400_000;
   const seenCutoff = now - seenHours * 3_600_000;
   const keep = [];
@@ -204,6 +215,17 @@ export function selectResidue(rows, { now = Date.now(), staleDays = 7, seenHours
     if (!marketplace && !dealerSite) continue;
     if (!r.sourceUrl || !isPerVinPage(r.sourceUrl, r.vin)) continue;
     const at = r.lastConfirmedAt ? Date.parse(r.lastConfirmedAt) : NaN;
+    // A car that came back after 36 hours unseen is withheld until its own
+    // page confirms it (0093). It is residue whatever its age — the fetch
+    // pass asks first, every half hour, and what it could not read lands
+    // here — and it goes to the front: every hour it waits is an hour a
+    // live car is off the site.
+    const ret = r.returnedAt ? Date.parse(r.returnedAt) : NaN;
+    const returning = Number.isFinite(ret) && (!Number.isFinite(at) || at < ret);
+    if (returning) {
+      keep.push({ ...r, confirmedAt: Number.isFinite(at) ? at : null, returning: true });
+      continue;
+    }
     if (marketplace) {
       if (Number.isFinite(at) && at >= cutoff) continue;
     } else {
@@ -212,19 +234,24 @@ export function selectResidue(rows, { now = Date.now(), staleDays = 7, seenHours
       if (latest >= seenCutoff) continue;
     }
     if (sweepSaysGone(String(r.vin ?? "").toUpperCase(), r.dealerDomain)) continue;
-    keep.push({ ...r, confirmedAt: Number.isFinite(at) ? at : null });
+    keep.push({ ...r, confirmedAt: Number.isFinite(at) ? at : null, returning: false });
   }
-  keep.sort((a, b) => (a.confirmedAt ?? -1) - (b.confirmedAt ?? -1) || String(a.vin).localeCompare(String(b.vin)));
+  keep.sort((a, b) => Number(b.returning) - Number(a.returning) || (a.confirmedAt ?? -1) - (b.confirmedAt ?? -1) || String(a.vin).localeCompare(String(b.vin)));
 
+  // Several runners share the residue by HOST, never by row: a rooftop's
+  // pages all land on one runner, so lib/http.mjs's one-request-per-host
+  // pacing still holds across the fleet (recheck-browser.yml runs 8 parts).
   const byHost = new Map();
   for (const r of keep) {
     const host = normalizeUrl(r.sourceUrl)?.host ?? "";
+    if (parts > 1 && hostPart(host, parts) !== part) continue;
     if (!byHost.has(host)) byHost.set(host, []);
     byHost.get(host).push(r);
   }
   const dealt = [];
   const queues = [...byHost.values()];
-  for (let round = 0; dealt.length < keep.length; round++) {
+  const mine = queues.reduce((n, q) => n + q.length, 0);
+  for (let round = 0; dealt.length < mine; round++) {
     for (const q of queues) if (q[round]) dealt.push(q[round]);
   }
   return limit > 0 ? dealt.slice(0, limit) : dealt;

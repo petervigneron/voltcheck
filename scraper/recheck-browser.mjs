@@ -63,6 +63,11 @@ const LIMIT = flag("--limit", 600);
 const CONCURRENCY = Math.max(1, flag("--concurrency", 2));
 const STALE_DAYS = flag("--stale-days", 7);
 const DEADLINE_MIN = flag("--deadline-min", 0);
+// --part k --parts n: this runner takes the hosts whose hostPart() is k, so a
+// fleet of n runners covers the residue n times faster with every rooftop
+// still paced by one runner (lib/recheck-browser-verdict.mjs).
+const PART = flag("--part", 0);
+const PARTS = Math.max(1, flag("--parts", 1));
 const DEADLINE_AT = DEADLINE_MIN > 0 ? Date.now() + DEADLINE_MIN * 60_000 : Infinity;
 const DRY = process.argv.includes("--dry-run");
 // --vin V[,V…]: visit exactly these, same verdict rules and same write path.
@@ -77,7 +82,7 @@ const ONLY_VINS = new Set(
 // mistyped number fails SILENTLY. `slice(0, NaN)` is an empty list and
 // `Math.min(NaN, n)` workers is no workers, so a typo would spend the night
 // visiting nothing and exit 0.
-for (const [name, value] of [["--limit", LIMIT], ["--concurrency", CONCURRENCY], ["--stale-days", STALE_DAYS], ["--deadline-min", DEADLINE_MIN]]) {
+for (const [name, value] of [["--limit", LIMIT], ["--concurrency", CONCURRENCY], ["--stale-days", STALE_DAYS], ["--deadline-min", DEADLINE_MIN], ["--part", PART], ["--parts", PARTS]]) {
   if (!Number.isFinite(value) || value < 0) {
     console.error(`recheck-browser: ${name} must be a non-negative number, got ${JSON.stringify(process.argv[process.argv.indexOf(name) + 1])}`);
     process.exit(1);
@@ -155,7 +160,7 @@ if (!SERVICE && !ONLY_VINS.size) {
 // test that this select is well-formed and only the grant is missing.
 async function fetchRows() {
   const rows = [];
-  const embed = SERVICE ? ",listing_seen(last_confirmed_at,last_seen_at)" : "";
+  const embed = SERVICE ? ",listing_seen(last_confirmed_at,last_seen_at,returned_at)" : "";
   // Every live row, not only the four marketplace lanes (2026-09-12, second
   // truck of the night: 1FT6W1EV7NWG11294 at mastriamazda.com, a dealer-site
   // row crawled once by a browser lane that was then switched off, page 403
@@ -187,6 +192,7 @@ async function fetchRows() {
         dealerDomain: r.dealerDomain,
         lastConfirmedAt: seen?.last_confirmed_at ?? null,
         lastSeenAt: seen?.last_seen_at ?? null,
+        returnedAt: seen?.returned_at ?? null,
       });
     }
     if (page.length < 500) break;
@@ -216,6 +222,8 @@ try {
 const work = selectResidue(rows, {
   staleDays: STALE_DAYS,
   limit: ONLY_VINS.size ? 0 : LIMIT,
+  part: PART,
+  parts: PARTS,
   // An operator naming VINs gets them visited; the sweep only prunes the
   // nightly's own selection.
   sweepSaysGone: ONLY_VINS.size ? () => false : (vin, domain) => sweepSaysGone(vin, domain, oemAlive, oemCounts),
@@ -223,7 +231,8 @@ const work = selectResidue(rows, {
 console.error(
   `recheck-browser: ${work.length} residue pages to visit ` +
     `(of ${rows.length} live rows: marketplace-lane cars never confirmed or not in ${STALE_DAYS} days, ` +
-    `dealer-site cars neither seen nor confirmed in 48 hours; cap ${ONLY_VINS.size ? "none" : LIMIT}, ` +
+    `dealer-site cars neither seen nor confirmed in 48 hours, cars back after a silence first; ` +
+    `${work.filter((w) => w.returning).length} returning; part ${PART + 1} of ${PARTS}; cap ${ONLY_VINS.size ? "none" : LIMIT}, ` +
     `${CONCURRENCY} at a time)`
 );
 const why = await browserUnavailable();

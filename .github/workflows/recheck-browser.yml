@@ -15,32 +15,79 @@
 # and showing a sold one is unacceptable. This is the tool that satisfies
 # both: every withheld car gets its own page read tonight; the live ones
 # come back at the next publish, the sold ones are struck.
+#
+# 2026-09-15: scheduled, and spread across runners. The nightly's own pass
+# is capped at 1,200 pages and visited 1,200 of a residue several times that
+# size every night, so cars the fetch could not read stayed withheld for
+# days — a coverage loss with no plan to end it. Now: twice a day (after the
+# nightly's own pass has finished, and mid-morning UTC), N runners each take
+# every host whose hash lands on their part (lib/recheck-browser-verdict.mjs
+# hostPart), so a rooftop is paced by one runner and the fleet covers the
+# residue N times faster. Cars back after a silence (0093) are visited first.
 name: Recheck the unreadable residue in a browser
 
 on:
+  schedule:
+    - cron: "30 10,23 * * *"
   workflow_dispatch:
     inputs:
       limit:
-        description: "Most pages to visit this run"
+        description: "Most pages to visit per part this run"
         required: false
-        default: "6000"
+        default: "2500"
       deadline_min:
         description: "Stop visiting after this many minutes and write what we have"
         required: false
-        default: "300"
+        default: "150"
       concurrency:
-        description: "Pages in flight (politeness across ~1,000 rooftops, not throughput)"
+        description: "Pages in flight per part (politeness across ~1,000 rooftops, not throughput)"
         required: false
-        default: "3"
+        default: "2"
+      parts:
+        description: "Runners; each takes the hosts whose hash lands on its part"
+        required: false
+        default: "8"
 
-# Never two browser passes at once; and never alongside the nightly's own,
-# which shares this group name's job through the same script and write path.
+# Never two fleets at once; and never alongside the nightly's own pass, which
+# shares this group name's job through the same script and write path.
 concurrency: recheck-browser
 
 jobs:
-  recheck-browser:
+  plan:
     runs-on: ubuntu-latest
-    timeout-minutes: 340
+    outputs:
+      skip: ${{ steps.guard.outputs.skip }}
+      parts: ${{ steps.build.outputs.parts }}
+      matrix: ${{ steps.build.outputs.matrix }}
+    steps:
+      - name: Yield to a nightly still in progress
+        id: guard
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          n=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow=nightly.yml --status in_progress --json databaseId --jq 'length' 2>/dev/null || echo 0)
+          if [ "${n:-0}" -gt 0 ]; then
+            echo "::notice::A nightly is in progress; its own browser pass runs after its recheck. Yielding."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Build the matrix
+        id: build
+        run: |
+          N="${{ github.event.inputs.parts || '8' }}"
+          echo "parts=$N" >> "$GITHUB_OUTPUT"
+          echo "matrix=$(awk -v n="$N" 'BEGIN{printf "["; for(i=0;i<n;i++) printf "%s%d", (i?",":""), i; printf "]"}')" >> "$GITHUB_OUTPUT"
+
+  recheck-browser:
+    needs: [plan]
+    if: ${{ needs.plan.outputs.skip != 'true' }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        part: ${{ fromJson(needs.plan.outputs.matrix) }}
+    # The deadline below ends the visiting; this only has to outlast it plus
+    # the Playwright install and the terminal write.
+    timeout-minutes: 190
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -62,12 +109,14 @@ jobs:
           # anon's read of it. The script declines out loud without this.
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           BROWSER_LANES: "on"
-          BROWSER_CONCURRENCY: ${{ github.event.inputs.concurrency }}
+          BROWSER_CONCURRENCY: ${{ github.event.inputs.concurrency || '2' }}
         run: >
           node recheck-browser.mjs
-          --limit ${{ github.event.inputs.limit }}
-          --concurrency ${{ github.event.inputs.concurrency }}
-          --deadline-min ${{ github.event.inputs.deadline_min }}
+          --limit ${{ github.event.inputs.limit || '2500' }}
+          --concurrency ${{ github.event.inputs.concurrency || '2' }}
+          --deadline-min ${{ github.event.inputs.deadline_min || '150' }}
+          --part ${{ matrix.part }}
+          --parts ${{ needs.plan.outputs.parts }}
       # The strikes and confirmations are in the database now; the grid and
       # the listing pages follow at the next publish (five a day since
       # 2026-09-12, or `gh workflow run publish-feed.yml -f force=true`).

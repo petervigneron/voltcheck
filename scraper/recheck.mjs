@@ -104,6 +104,14 @@ const ONLY_VINS = new Set(
     .filter(() => process.argv.includes("--vin"))
 );
 const DRY = process.argv.includes("--dry-run");
+// --returning: only the cars that came back after 36 hours unseen and whose
+// own page has not confirmed them since (listing_seen.returned_at, 0093).
+// Those rows are withheld from the site until this pass says yes, so it runs
+// every half hour (recheck-returning.yml), not nightly. Same verdicts, same
+// write path; the one extra write is a waiver for rows this script could
+// never ask — OEM-locator lanes and homepage-sourced rows — so their return
+// does not become a silence that no page can end.
+const RETURNING = process.argv.includes("--returning");
 // Stop fetching after this many minutes and write what we have. recheck's
 // whole night rides on the single terminal ingest POST below, so being killed
 // mid-run (finalize's job timeout did this every night from 08-17, discarding
@@ -137,11 +145,16 @@ async function loadEnv(url) {
 }
 await loadEnv(new URL("./.env", import.meta.url));
 
-const { SUPABASE_URL, SUPABASE_ANON_KEY: ANON, SUPABASE_INGEST_TOKEN: TOKEN } = process.env;
+const { SUPABASE_URL, SUPABASE_ANON_KEY: ANON, SUPABASE_INGEST_TOKEN: TOKEN, SUPABASE_SERVICE_ROLE_KEY: SERVICE } = process.env;
 if (!SUPABASE_URL || !ANON) {
   console.error("recheck: no Supabase credentials (scraper/.env) — nothing to check.");
   process.exit(0);
 }
+if (RETURNING && !SERVICE) {
+  console.error("recheck: --returning reads listing_seen.returned_at, which anon cannot see (0026); SUPABASE_SERVICE_ROLE_KEY is required.");
+  process.exit(0);
+}
+const READ_KEY = RETURNING ? SERVICE : ANON;
 
 // Recheck reads through the same door db-sync and the price audit just
 // leaned on, and both nights it failed (HTTP 521 on 08-15, HTTP 500 on
@@ -219,14 +232,16 @@ for (let after = ""; ; ) {
       `${SUPABASE_URL}/rest/v1/listings?select=vin,price_usd` +
         `,sourceUrl:payload->>sourceUrl,dealerDomain:payload->>dealerDomain` +
         `,condition:payload->>condition,year:payload->>year` +
+        (RETURNING ? `,listing_seen!inner(returned_at,last_confirmed_at)` : "") +
         `&delisted_at=is.null` +
+        (RETURNING ? `&listing_seen.returned_at=not.is.null` : "") +
         (ONLY_VINS.size ? `&vin=in.(${[...ONLY_VINS].join(",")})` : "") +
         (after ? `&vin=gt.${encodeURIComponent(after)}` : "") +
         `&order=vin.asc&limit=1000`,
       {
         headers: {
-          apikey: ANON,
-          Authorization: `Bearer ${ANON}`,
+          apikey: READ_KEY,
+          Authorization: `Bearer ${READ_KEY}`,
           "Accept-Encoding": "gzip",
         },
       }
@@ -237,7 +252,9 @@ for (let after = ""; ; ) {
     process.exit(1);
   }
   const page = await res.json();
-  listings.push(...page);
+  // A returned car already confirmed since its return is served and needs
+  // nothing from this pass; the embed can only say "returned_at is set".
+  listings.push(...(RETURNING ? page.filter((l) => isUnconfirmedReturn(l.listing_seen)) : page));
   if (page.length < 1000) break;
   after = page[page.length - 1].vin;
 }
@@ -255,6 +272,13 @@ for (let after = ""; ; ) {
 // delist-then-relist churn. They are not rechecked; their delisting path is
 // the crawl's completeness rule, or — for the cross-check lanes — the sweep
 // (see the Ford Blue Advantage branch in the worker).
+function isUnconfirmedReturn(seen) {
+  const s = Array.isArray(seen) ? seen[0] : seen;
+  const ret = s?.returned_at ? Date.parse(s.returned_at) : NaN;
+  if (!Number.isFinite(ret)) return false;
+  const conf = s?.last_confirmed_at ? Date.parse(s.last_confirmed_at) : NaN;
+  return !Number.isFinite(conf) || conf < ret;
+}
 const isHostRoot = (u) => {
   try {
     const p = new URL(u).pathname.replace(/\/+$/, "");
@@ -271,8 +295,33 @@ const skippedRoot = listings.filter((l) => l.sourceUrl && !OEM_LOCATOR_DOMAINS.h
 const work = ONLY_VINS.size
   ? targets.filter((l) => ONLY_VINS.has(l.vin.toUpperCase()))
   : LIMIT ? targets.slice(0, LIMIT) : targets;
+// The rows --returning loaded but cannot ask: an OEM-locator lane's nightly
+// sweep is its liveness check (the filter above skips them for that reason),
+// and a homepage is not a page about the car. Their return is waived — the
+// sighting that brought them back is the best evidence their lane has — so
+// the view serves them again. Written straight to listing_seen with the
+// service key; nothing else in the row changes.
+if (RETURNING && !DRY) {
+  const asked = new Set(work.map((l) => l.vin.toUpperCase()));
+  const waive = listings.map((l) => l.vin.toUpperCase()).filter((vin) => !asked.has(vin));
+  for (let i = 0; i < waive.length; i += 200) {
+    const chunk = waive.slice(i, i + 200);
+    const res = await fetchWithRetry(`recheck: waive ${chunk.length} returns this pass cannot ask`, () =>
+      fetch(`${SUPABASE_URL}/rest/v1/listing_seen?vin=in.(${chunk.join(",")})`, {
+        method: "PATCH",
+        headers: { apikey: SERVICE, Authorization: `Bearer ${SERVICE}`, "Content-Type": "application/json", Prefer: "return=minimal" },
+        body: JSON.stringify({ returned_at: null }),
+      })
+    );
+    if (!res.ok) {
+      console.error(`recheck: waiver write failed HTTP ${res.status}: ${(await res.text()).slice(0, 300)}`);
+      process.exit(1);
+    }
+  }
+  if (waive.length) console.error(`recheck: ${waive.length} returned rows waived (OEM-locator lane or homepage source — no page of their own to ask)`);
+}
 console.error(
-  `recheck: ${work.length} live listings with a source URL ` +
+  `recheck${RETURNING ? " (returning)" : ""}: ${work.length} live listings with a source URL ` +
   `(${listings.length - targets.length - skippedOem - skippedRoot} without, ${skippedOem} OEM-locator rows skipped, ` +
   `${skippedRoot} with a homepage for a source URL skipped)`
 );
@@ -444,7 +493,7 @@ await Promise.all(Array.from({ length: Math.min(CONCURRENCY, work.length) }, wor
 // full-size sweep not listing the car is a strike; two nights delist. No
 // alive verdicts from here: a sweep is not the car's own page.
 let sweepOnlyStruck = 0, sweepOnlyRows = 0;
-if (!ONLY_VINS.size) {
+if (!ONLY_VINS.size && !RETURNING) {
   for (const l of listings) {
     if (!SWEEP_ONLY_DOMAINS.has(l.dealerDomain)) continue;
     sweepOnlyRows++;

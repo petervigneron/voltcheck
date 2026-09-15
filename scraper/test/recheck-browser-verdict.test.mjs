@@ -188,3 +188,42 @@ test("Motive bouncing a VDP to a filtered /inventory index is the car being gone
   // The same index asked for directly is not evidence of anything.
   assert.equal(goneUrlReason(landed, landed), null);
 });
+
+// 0093: a car back after a silence is residue whatever its age, and first.
+import { hostPart, normalizeUrl } from "../lib/recheck-browser-verdict.mjs";
+const row = (vin, host, extra = {}) => ({ vin, dealerDomain: host, sourceUrl: `https://www.${host}/inventory/${vin}`, ...extra });
+const T0 = Date.parse("2026-09-15T03:00:00Z");
+const hrsAgo = (h) => new Date(T0 - h * 3_600_000).toISOString();
+
+test("a returned car goes to the front of the residue even when it was seen an hour ago", () => {
+  const rows = [
+    row("1FT6W1EV9NWG03794", "joecooperfordyukon.com", { lastSeenAt: hrsAgo(1), lastConfirmedAt: hrsAgo(140), returnedAt: hrsAgo(1) }),
+    row("5YJ3E1EA3PF581351", "someford.com", { lastSeenAt: hrsAgo(60), lastConfirmedAt: hrsAgo(200) }),
+    row("KMHC65LD0LU196070", "otherford.com", { lastSeenAt: hrsAgo(1), lastConfirmedAt: hrsAgo(1) }),
+  ];
+  const picked = selectResidue(rows, { now: T0 });
+  assert.deepEqual(picked.map((r) => r.vin), ["1FT6W1EV9NWG03794", "5YJ3E1EA3PF581351"]);
+  assert.equal(picked[0].returning, true);
+});
+
+test("a returned car its page has confirmed since is not residue", () => {
+  const rows = [row("1FT6W1EV9NWG03794", "joecooperfordyukon.com", { lastSeenAt: hrsAgo(1), lastConfirmedAt: hrsAgo(0.5), returnedAt: hrsAgo(1) })];
+  assert.deepEqual(selectResidue(rows, { now: T0 }), []);
+});
+
+test("parts split the residue by host, every host on exactly one part, stable", () => {
+  const rows = [];
+  for (let i = 0; i < 40; i++) rows.push(row(`VIN${String(i).padStart(14, "0")}`, `dealer${i % 10}.com`, { lastSeenAt: hrsAgo(60), lastConfirmedAt: hrsAgo(200) }));
+  const parts = 3;
+  const seen = new Map();
+  for (let part = 0; part < parts; part++) {
+    for (const r of selectResidue(rows, { now: T0, part, parts })) {
+      const host = normalizeUrl(r.sourceUrl).host;
+      assert.equal(seen.get(host) ?? part, part, `${host} landed on two parts`);
+      seen.set(host, part);
+      assert.equal(hostPart(host, parts), part);
+    }
+  }
+  assert.equal(seen.size, 10);
+  assert.equal(hostPart("www.joecooperfordyukon.com", 8), hostPart("www.joecooperfordyukon.com", 8));
+});
