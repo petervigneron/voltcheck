@@ -60,14 +60,24 @@ jobs:
       parts: ${{ steps.build.outputs.parts }}
       matrix: ${{ steps.build.outputs.matrix }}
     steps:
-      - name: Yield to a nightly still in progress
+      # Yield only while the nightly's OWN browser pass is queued or running —
+      # the two share the same script and write path. Yielding to the whole
+      # nightly (six hours, most of it crawling) cost the 10:30 slot on
+      # 2026-09-15: the fleet fired at 15:08, the nightly had started at
+      # 15:07, and 166 returned cars that only a browser can read waited for
+      # the nightly's 1,200-page pass instead.
+      - name: Yield to the nightly's own browser pass
         id: guard
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          n=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow=nightly.yml --status in_progress --json databaseId --jq 'length' 2>/dev/null || echo 0)
-          if [ "${n:-0}" -gt 0 ]; then
-            echo "::notice::A nightly is in progress; its own browser pass runs after its recheck. Yielding."
+          busy=0
+          for run in $(gh run list --repo "$GITHUB_REPOSITORY" --workflow=nightly.yml --status in_progress --json databaseId --jq '.[].databaseId' 2>/dev/null); do
+            n=$(gh api "/repos/$GITHUB_REPOSITORY/actions/runs/$run/jobs?per_page=100" --jq '[.jobs[] | select(.name=="recheck-browser" and (.status=="in_progress" or .status=="queued"))] | length' 2>/dev/null || echo 0)
+            busy=$((busy + ${n:-0}))
+          done
+          if [ "$busy" -gt 0 ]; then
+            echo "::notice::The nightly's own browser pass is running; it visits the same residue through the same write path. Yielding."
             echo "skip=true" >> "$GITHUB_OUTPUT"
           fi
       - name: Build the matrix
