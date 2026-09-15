@@ -292,8 +292,16 @@ const targets = listings.filter(
 );
 const skippedOem = listings.filter((l) => OEM_LOCATOR_DOMAINS.has(l.dealerDomain)).length;
 const skippedRoot = listings.filter((l) => l.sourceUrl && !OEM_LOCATOR_DOMAINS.has(l.dealerDomain) && isHostRoot(l.sourceUrl) && !RECHECK_CROSSCHECK_DOMAINS.has(l.dealerDomain)).length;
+// A returning car is asked only through a page ABOUT the car. A row whose
+// source is a search page (the crawl read it off an SRP) would be fetched
+// and struck "VIN missing" by the rule below whenever the SRP has paged on —
+// and under 0093 a struck return stays withheld, so an SRP-sourced car would
+// never be served again. 38 of the first 113 returns (2026-09-15 05:40 UTC)
+// were that shape. Same test the browser residue applies (isPerVinPage);
+// the rest are waived with the OEM-locator rows.
 const work = ONLY_VINS.size
   ? targets.filter((l) => ONLY_VINS.has(l.vin.toUpperCase()))
+  : RETURNING ? targets.filter((l) => isPerVinPage(l.sourceUrl, l.vin.toUpperCase()))
   : LIMIT ? targets.slice(0, LIMIT) : targets;
 // The rows --returning loaded but cannot ask: an OEM-locator lane's nightly
 // sweep is its liveness check (the filter above skips them for that reason),
@@ -318,7 +326,7 @@ if (RETURNING && !DRY) {
       process.exit(1);
     }
   }
-  if (waive.length) console.error(`recheck: ${waive.length} returned rows waived (OEM-locator lane or homepage source — no page of their own to ask)`);
+  if (waive.length) console.error(`recheck: ${waive.length} returned rows waived (OEM-locator lane, or a source URL that is not a page about the car — nothing of their own to ask)`);
 }
 console.error(
   `recheck${RETURNING ? " (returning)" : ""}: ${work.length} live listings with a source URL ` +
