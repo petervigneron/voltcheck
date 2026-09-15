@@ -227,3 +227,38 @@ test("parts split the residue by host, every host on exactly one part, stable", 
   assert.equal(seen.size, 10);
   assert.equal(hostPart("www.joecooperfordyukon.com", 8), hostPart("www.joecooperfordyukon.com", 8));
 });
+
+// isSearchPageUrl — the shapes measured off live sourceUrls on 2026-09-15.
+import { isSearchPageUrl } from "../lib/recheck-browser-verdict.mjs";
+test("search pages: homepage, index paths, city-suffixed and paged lists, filtered searches", () => {
+  for (const u of [
+    "https://www.hixsonford.com/",
+    "https://www.hixsonford.com/?utm_source=autotrader.com&stocknum=A41219&atc_ownerid=65036981",
+    "https://www.capcityhonda.com/new-vehicles/",
+    "https://dealer.example/cars-for-sale",
+    "https://www.mbscottsdale.com/cars-for-sale-scottsdale-az?limit=20&offset=40",
+    "https://www.dcmotorcompany.com/used-vehicles-scottsdale-az?offset=20&limit=20",
+    "https://dealer.example/inventory/new-vehicles/?utm_source=autotrader.com",
+    "https://dealer.example/new-inventory/index.htm?stocknum=123&atc_ownerid=9",
+    "https://dealer.example/VehicleSearchResults?search=new",
+    "https://dealer.example/search/new-ford-garland-tx/?cy=75040&tp=new",
+    "https://www.carbravo.com/shopping/inventory/search?make=Chevrolet&model=Bolt&zipCode=1&radius=50&sort=x",
+    "https://joecooperlincoln.com/inventory?filters=%7B%22appliedFilters%22%3A%7B%7D%7D",
+    "https://www.kia.com/us/en/inventory/result?seriesId=EV6",
+    "https://dealer.example/used-vehicles/?_dFR%5Bfueltype%5D%5B0%5D=Electric",
+  ]) assert.equal(isSearchPageUrl(u), true, u);
+});
+test("pages about one car are never search pages, VIN in the URL or not", () => {
+  for (const u of [
+    "https://www.autoexpressmazda.com/catcher.esl?vehicleId=1234567",
+    "https://www.plattauto.com/VehicleListing?id=98765",
+    "https://www.lucidmotors.com/inventory-vehicle?UUID=abc-def&shortCode=xyz",
+    "https://www.hyundaiusa.com/cars-for-sale/vehicledetails.xhtml?listingId=555",
+    "https://www.21stcenturyautosales.com/used/Tesla/2023-Tesla-Model-3-4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c.htm",
+    "https://dealer.example/auto/2024-hyundai-ioniq-5-sel-san-luis-obispo-ca/12345/",
+    "https://dealer.example/pre-owned-cars/detail/2023-Ford-Mustang-Mach-E/4321?utm_source=autotrader.com&stocknum=Q1",
+    "https://joecooperfordyukon.com/inventory/Used-2022-Ford-F-150_Lightning-Lariat-1FT6W1EV9NWG03794",
+    "https://www.njstateauto.com/vehicle-details/used-2021-ford-mustang-mach-e-premium-jersey-city-nj-id-65598602?",
+    "https://www.capitolhyundaisj.com/inventory/new-2026-hyundai-ioniq-9-sel-awd-sport-utility-7yamufs30ty011949/",
+  ]) assert.equal(isSearchPageUrl(u), false, u);
+});

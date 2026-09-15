@@ -16,7 +16,7 @@
 import { readFile } from "node:fs/promises";
 import { readSnapshot } from "./lib/snapshot.mjs";
 import { fetchRaw } from "./lib/http.mjs";
-import { goneUrlReason } from "./lib/recheck-browser-verdict.mjs";
+import { goneUrlReason, isSearchPageUrl } from "./lib/recheck-browser-verdict.mjs";
 import { fetchWithRetry } from "./lib/retry.mjs";
 import { OEM_LOCATOR_DOMAINS as GM_LOCATOR_DOMAINS } from "./lib/oem/gm.mjs";
 import { HYUNDAI } from "./lib/oem/hyundai.mjs";
@@ -279,10 +279,19 @@ function isUnconfirmedReturn(seen) {
   const conf = s?.last_confirmed_at ? Date.parse(s.last_confirmed_at) : NaN;
   return !Number.isFinite(conf) || conf < ret;
 }
+// A search page — the homepage, an inventory index, a paged or filtered
+// list — proves nothing about a car (lib/recheck-browser-verdict.mjs
+// isSearchPageUrl). Until 2026-09-15 only the bare homepage was skipped;
+// a row the crawl read off /cars-for-sale-scottsdale-az?offset=… was fetched
+// and struck "VIN missing" the night the list paged on, then relisted by
+// the next crawl — part of the churn 0082 measured. Such rows now get no
+// verdict here; their liveness rests on the crawl's completeness (0002/0083)
+// and rule 1's window, as the homepage-sourced rows' always has. Marketplace
+// lanes keep their own rule below (the sweep judges a Blue Advantage row
+// whose link is not a page about the car).
 const isHostRoot = (u) => {
   try {
-    const p = new URL(u).pathname.replace(/\/+$/, "");
-    return p === "";
+    return isSearchPageUrl(u);
   } catch {
     return true;
   }
@@ -292,17 +301,14 @@ const targets = listings.filter(
 );
 const skippedOem = listings.filter((l) => OEM_LOCATOR_DOMAINS.has(l.dealerDomain)).length;
 const skippedRoot = listings.filter((l) => l.sourceUrl && !OEM_LOCATOR_DOMAINS.has(l.dealerDomain) && isHostRoot(l.sourceUrl) && !RECHECK_CROSSCHECK_DOMAINS.has(l.dealerDomain)).length;
-// A returning car is asked only through a page ABOUT the car. A row whose
-// source is a search page (the crawl read it off an SRP) would be fetched
-// and struck "VIN missing" by the rule below whenever the SRP has paged on —
-// and under 0093 a struck return stays withheld, so an SRP-sourced car would
-// never be served again. 38 of the first 113 returns (2026-09-15 05:40 UTC)
-// were that shape. Same test the browser residue applies (isPerVinPage);
-// the rest are waived with the OEM-locator rows.
+// A returning car is asked through every page that is about the car —
+// including a dealer.com VDP whose URL carries no VIN — and waived only when
+// its source is a search page or an OEM-locator lane (the `targets` filter
+// above). de7f106 waived on "VIN in the URL" instead and so waived 38 of the
+// first 113 returns, most of them real VDPs that could have been asked.
 const work = ONLY_VINS.size
   ? targets.filter((l) => ONLY_VINS.has(l.vin.toUpperCase()))
-  : RETURNING ? targets.filter((l) => isPerVinPage(l.sourceUrl, l.vin.toUpperCase()))
-  : LIMIT ? targets.slice(0, LIMIT) : targets;
+  : LIMIT && !RETURNING ? targets.slice(0, LIMIT) : targets;
 // The rows --returning loaded but cannot ask: an OEM-locator lane's nightly
 // sweep is its liveness check (the filter above skips them for that reason),
 // and a homepage is not a page about the car. Their return is waived — the
@@ -326,12 +332,12 @@ if (RETURNING && !DRY) {
       process.exit(1);
     }
   }
-  if (waive.length) console.error(`recheck: ${waive.length} returned rows waived (OEM-locator lane, or a source URL that is not a page about the car — nothing of their own to ask)`);
+  if (waive.length) console.error(`recheck: ${waive.length} returned rows waived (OEM-locator lane, or a search page for a source URL — nothing of their own to ask)`);
 }
 console.error(
   `recheck${RETURNING ? " (returning)" : ""}: ${work.length} live listings with a source URL ` +
   `(${listings.length - targets.length - skippedOem - skippedRoot} without, ${skippedOem} OEM-locator rows skipped, ` +
-  `${skippedRoot} with a homepage for a source URL skipped)`
+  `${skippedRoot} with a search page for a source URL skipped)`
 );
 
 // Four domains (hyundai-cpo, ford-blue-advantage, honda-prologue,

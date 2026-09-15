@@ -99,6 +99,41 @@ export function normalizeUrl(url) {
   }
 }
 
+// Query keys that name ONE car (a page with one of these is a VDP whatever
+// its path) and keys that name a LIST (a page with one of these and no car
+// key is a search page). Both measured off live sourceUrls 2026-09-15:
+// catcher.esl?vehicleId=, /VehicleListing?id=, /inventory-vehicle?UUID=,
+// vehicledetails.xhtml?listingId= are cars; ?offset=&limit=, ?page=,
+// ?filters=, ?search=, ?seriesId= (kia.com), ?make=&model= (carbravo) are
+// lists. `stocknum` is deliberately in neither: Ford Blue Advantage appends
+// it as tracking to homepages and index pages alike.
+const CAR_QUERY_KEYS = new Set(["vin", "vehicleid", "id", "uuid", "listingid", "stockid", "vehicle_id", "listing_id"]);
+const LIST_QUERY_KEYS = new Set(["offset", "limit", "page", "pg", "start", "filters", "sort", "sortby", "search", "seriesid", "view", "make", "model", "condition", "bodystyle", "fueltype", "fuel", "q"]);
+// Index paths that carry a city or brand suffix, or a platform's own index
+// file: /cars-for-sale-scottsdale-az, /new-inventory/index.htm,
+// /inventory/new-vehicles, /search/new-ford-garland-tx, /VehicleSearchResults.
+const SEARCH_PATH_RE =
+  /^\/(?:cars-for-sale(?:-[a-z0-9-]+)?|(?:new|used|certified|pre-owned|all)-(?:vehicles|inventory|cars)(?:-[a-z0-9-]+)?(?:\/index\.htm)?|inventory\/(?:new|used|certified|pre-owned|all)(?:-vehicles|-inventory)?|search(?:\/[a-z0-9-]+)*|vehiclesearchresults|searchnew\.aspx|searchused\.aspx|searchall\.aspx)$/i;
+
+/**
+ * Is this source URL a search page — the homepage, an inventory index, a
+ * paged or filtered list — rather than a page about one car? A recheck can
+ * read no verdict about a car from such a page: the car is not in it once
+ * the list has paged on, and "200 without the VIN" would strike a live car.
+ * Conservative on purpose: a dealer.com VDP carries no VIN in its URL
+ * (/used/Tesla/2023-Tesla-Model-3-<hash>.htm) and is NOT a search page.
+ */
+export function isSearchPageUrl(url) {
+  const u = normalizeUrl(url);
+  if (!u) return false;
+  const keys = new Set([...new URLSearchParams(u.query).keys()].map((k) => k.toLowerCase()));
+  if ([...keys].some((k) => CAR_QUERY_KEYS.has(k))) return false;
+  if (u.path === "/") return true;
+  if (INDEX_PATHS.has(u.path) || SEARCH_PATH_RE.test(u.path)) return true;
+  if ([...keys].some((k) => LIST_QUERY_KEYS.has(k) || k.startsWith("_dfr"))) return true;
+  return false;
+}
+
 /**
  * Did the site answer this VDP request with a page that is not about a car?
  * Returns the reason, or null. `requestedUrl` is only used to tell a redirect
