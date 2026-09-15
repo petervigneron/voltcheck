@@ -173,3 +173,18 @@ test("the cap is a cap", () => {
   const got = selectResidue(residueRows, { now: NOW, staleDays: 7, limit: 1 });
   assert.equal(got.length, 1);
 });
+
+// Motive's missing-vehicle handling, 2026-09-15: every store in the Joe
+// Cooper group answered the VDP of 1FT6W1EV9NWG03794 with a 200 at
+// /inventory?filters={…make:Ford, model:F-150 Lightning…}, while control
+// VDPs on the same stores rendered in place. The landing page's server-
+// rendered JSON-LD still listed the truck InStock, so a VIN-on-page rule
+// read the redirect as alive. recheck.mjs now asks this helper first.
+test("Motive bouncing a VDP to a filtered /inventory index is the car being gone", () => {
+  const vdp = "https://joecooperfordyukon.com/inventory/Used-2022-Ford-F-150_Lightning-Lariat-1FT6W1EV9NWG03794";
+  const landed =
+    "https://joecooperfordyukon.com/inventory?filters=%7B%22appliedFilters%22%3A%7B%22make%22%3A%7B%22value%22%3A%7B%22Ford%22%3Atrue%7D%7D%7D%7D";
+  assert.equal(goneUrlReason(vdp, landed), "redirect-inventory");
+  // The same index asked for directly is not evidence of anything.
+  assert.equal(goneUrlReason(landed, landed), null);
+});

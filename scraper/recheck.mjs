@@ -16,6 +16,7 @@
 import { readFile } from "node:fs/promises";
 import { readSnapshot } from "./lib/snapshot.mjs";
 import { fetchRaw } from "./lib/http.mjs";
+import { goneUrlReason } from "./lib/recheck-browser-verdict.mjs";
 import { fetchWithRetry } from "./lib/retry.mjs";
 import { OEM_LOCATOR_DOMAINS as GM_LOCATOR_DOMAINS } from "./lib/oem/gm.mjs";
 import { HYUNDAI } from "./lib/oem/hyundai.mjs";
@@ -328,6 +329,7 @@ let crossChecked = 0;
 // entirely, which also removes ~hundreds of pointless homepage requests a
 // night.
 let sweepStruck = 0, sweepAlive = 0, notVinPages = 0;
+let redirectedAway = 0;
 
 const alive = [], hardGone = [], softGone = [];
 let errors = 0, cursor = 0;
@@ -382,7 +384,28 @@ async function worker() {
       // proves nothing about the car.
       errors++;
     } else if (res.status === 200 && res.body) {
-      if (res.body.toUpperCase().includes(vin)) {
+      // Checked BEFORE the VIN, the way the browser pass does (lib/
+      // recheck-browser-verdict.mjs): a per-VIN request the site bounced to
+      // its inventory index, homepage or missing-vehicle handler is the site
+      // saying the car is not there, whatever the landing page echoes. Motive
+      // rooftops server-render a static JSON-LD block of ~30 cars on every
+      // /inventory page, and it lags the live index — on 2026-09-15
+      // 1FT6W1EV9NWG03794, sold a week earlier by the owner's account, was
+      // absent from the group's Algolia index and every store's VDP for it
+      // redirected to /inventory?filters=…, whose JSON-LD still listed the
+      // truck InStock at $40,974. Read by the VIN rule below, that redirect
+      // is "alive, jsonld, $40,974". A soft strike, never hard: the landing
+      // is a 200 and the cross-check still gets its vote.
+      const goneUrl = goneUrlReason(l.sourceUrl, res.finalUrl ?? l.sourceUrl);
+      if (goneUrl) {
+        redirectedAway++;
+        if (trustGoneVerdict(vin, domain, oemAlive)) {
+          softGone.push(vin);
+        } else {
+          crossChecked++;
+          alive.push({ vin }); // tonight's own OEM-locator sweep still lists it
+        }
+      } else if (res.body.toUpperCase().includes(vin)) {
         const { price, provenance } = priceOf(res.body, vin, res.finalUrl ?? l.sourceUrl, l);
         // recheck_listings reads `provenance` off each alive row and carries it
         // into listing_price_history alongside the price (0041), and
@@ -446,7 +469,7 @@ if (unchecked > 0 && Number.isFinite(DEADLINE_AT)) {
 }
 console.error(
   `recheck: ${alive.length} still listed (${changed} price changes), ` +
-  `${hardGone.length} pages gone, ${softGone.length} VIN missing, ${errors} inconclusive` +
+  `${hardGone.length} pages gone, ${softGone.length} VIN missing (${redirectedAway} bounced to an index), ${errors} inconclusive` +
   (crossChecked ? `, ${crossChecked} OEM-locator gone verdicts overridden by tonight's own sweep` : "") +
   (sweepStruck ? `, ${sweepStruck} struck by absence from tonight's own sweep (page unreadable or not a VIN page)` : "") +
   (notVinPages ? `, ${notVinPages} Ford Blue Advantage rows with a homepage for a source URL judged by the sweep alone (${sweepAlive} still in the sweep, not confirmed)` : "") +
