@@ -246,6 +246,31 @@ jobs:
           echo "count=$(wc -w < "$RUNNER_TEMP/domains.txt" | tr -d ' ')" >> "$GITHUB_OUTPUT"
           head -c 300 "$RUNNER_TEMP/domains.txt"; echo
 
+      # IS THIS MACHINE PLUGGED IN? On battery macOS takes the machine into
+      # "Maintenance Sleep" whatever assertions are held — measured 2026-09-16
+      # 20:50 and 20:53 UTC at 17% charge, with caffeinate's
+      # PreventUserIdleSystemSleep set the whole time; the runner lost its
+      # connection mid-crawl and GitHub cancelled the job, so every step after
+      # the crawl was skipped. A run on battery is therefore a gamble, and the
+      # summary should say which kind of run this was rather than leave the
+      # next reader guessing at a cancelled job.
+      - name: Power
+        id: power
+        if: ${{ always() }}
+        run: |
+          if command -v pmset >/dev/null; then
+            LINE=$(pmset -g batt | tail -1)
+            SRC=$(pmset -g batt | head -1)
+            echo "$SRC"; echo "$LINE"
+            case "$SRC" in
+              *"AC Power"*) echo "on=ac" >> "$GITHUB_OUTPUT" ;;
+              *) echo "on=battery" >> "$GITHUB_OUTPUT"
+                 echo "::warning::This runner is on BATTERY ($LINE). macOS sleeps on battery whatever this job holds, and a sleep mid-run cancels it. Plug the machine in." ;;
+            esac
+          else
+            echo "on=ac" >> "$GITHUB_OUTPUT"
+          fi
+
       # --concurrency is BROWSER_CONCURRENCY + 2: a rooftop in flight without
       # a Chrome page waits on the page semaphore while its domain cap runs,
       # so more domains in flight than pages only burns cap; two extra overlap
@@ -382,10 +407,23 @@ jobs:
           SUPABASE_INGEST_TOKEN: ${{ secrets.SUPABASE_INGEST_TOKEN }}
         run: |
           CAF=""; command -v caffeinate >/dev/null && CAF="caffeinate -i"
-          $CAF node recheck-browser.mjs \
-            --domains-file "$RUNNER_TEMP/domains.txt" \
-            --limit 1600 --concurrency 3 --deadline-min 45 \
-            || echo "::warning::the returning-car confirmation pass stopped early; the cars it did not reach stay withheld until the next run"
+          # IN SLICES, because recheck-browser writes its confirmations once,
+          # after its last worker finishes. One 1,600-car pass on a machine
+          # that can sleep is 40 minutes of browser that lands nothing if the
+          # lid closes at minute 39. Each slice writes its own, and the next
+          # slice re-selects from the database, so a slice that dies costs
+          # only itself. The loop stops early when a slice finds nothing left
+          # to ask — "0 still listed, 0 struck" with no work is the signal.
+          for i in 1 2 3 4 5 6 7 8; do
+            echo "── confirmation slice $i"
+            out=$($CAF node recheck-browser.mjs \
+              --domains-file "$RUNNER_TEMP/domains.txt" \
+              --limit 200 --concurrency 3 --deadline-min 8 2>&1) || \
+              echo "::warning::confirmation slice $i stopped early; the cars it did not reach stay withheld until the next run"
+            echo "$out" | tail -5
+            echo "$out" | grep -q "live listings with a source URL\|still listed" || break
+            echo "$out" | grep -qE "^recheck-browser: 0 still listed, 0 struck, 0 no conclusion" && { echo "nothing left to confirm"; break; }
+          done
 
       - uses: actions/upload-artifact@v4
         if: always()
