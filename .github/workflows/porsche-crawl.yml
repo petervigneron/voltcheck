@@ -59,9 +59,16 @@ name: Porsche crawl (residential runner)
 #
 # WHEN. Twice a day against a 36-hour rule, so one missed run is survivable:
 # 06:30 and 19:00 UTC. Both are outside the nightly's 10:30–18:00 UTC window
-# and away from browser-crawl.yml's 04:30/18:30 starts. 63 rooftops at 3
-# pages in flight measured from a laptop at roughly half an hour; the
-# 120-minute deadline is a net, not a plan.
+# and away from browser-crawl.yml's 04:30/18:30 starts.
+#
+# HOW LONG, MEASURED (2026-09-16, a laptop on a home line, the command this
+# workflow runs): porscheplano.com, grapevine.porsche.com and
+# porschedowntownla.com — 174, 187 and 325 cars in their lots — read complete
+# in 47 browser loads and 5 minutes at 3 pages in flight, 211 EVs admitted,
+# not one challenge. That is 10.1 loads a minute and ~39 rooftops an hour, and
+# those three are among the biggest lots on the platform, so all 63 rooftops
+# is roughly 75–95 minutes. The deadline is 180, which is a net past a slow
+# night rather than the plan.
 #
 # IF NO RUNNER IS REGISTERED, the crawl job simply queues (GitHub gives up
 # after 24 hours) and the report job still files the dark number. Nothing
@@ -134,7 +141,7 @@ on:
       browser_concurrency:
         description: "BROWSER_CONCURRENCY: Chrome pages in flight on the home box (a rooftop is always one load at a time)."
         required: false
-        default: "3"
+        default: "4"
       max_pages:
         description: "crawl.mjs --max-pages: the lane's browser-load budget per rooftop (the lane's own cap is 30 = 450 cars)."
         required: false
@@ -146,7 +153,7 @@ on:
       deadline_min:
         description: "crawl.mjs --deadline-min; the process hard-stops 5 minutes past it."
         required: false
-        default: "120"
+        default: "180"
       sync:
         description: "Push to Supabase. 'false' crawls and reports only."
         required: false
@@ -194,7 +201,7 @@ jobs:
     runs-on: [self-hosted, residential]
     # deadline + 5 (the hard stop) + setup, enrichment, ingest, the wait for a
     # nightly (up to 90), sync and the cache commit.
-    timeout-minutes: 260
+    timeout-minutes: 320
     steps:
       # checkout runs `git clean -ffdx` on a workspace it has seen before, so
       # a previous run's scraper/out/ cannot be read as this run's — which
@@ -235,8 +242,10 @@ jobs:
       # so more domains in flight than pages only burns cap; two extra overlap
       # the robots read and the per-host pacing between loads.
       #
-      # Three pages, not browser-crawl's six: this is someone's home machine
-      # and their internet line, and 63 rooftops fit the window at three.
+      # Four pages, not browser-crawl's six: this is someone's home machine and
+      # their internet line, and 63 rooftops fit the window at four with room
+      # over (the measurement in the header was taken at three and cleared
+      # ~39 rooftops an hour on the platform's biggest lots).
       #
       # `|| rc=$?` because bash is -e here: without it a crawl that exits
       # non-zero ends the step before the timing file is written.
@@ -245,7 +254,7 @@ jobs:
         working-directory: scraper
         env:
           BROWSER_LANES: "on"
-          BROWSER_CONCURRENCY: ${{ github.event.inputs.browser_concurrency || '3' }}
+          BROWSER_CONCURRENCY: ${{ github.event.inputs.browser_concurrency || '4' }}
           NODE_OPTIONS: "--max-old-space-size=5120"
         run: |
           BC="${BROWSER_CONCURRENCY}"
@@ -254,7 +263,7 @@ jobs:
           node crawl.mjs $(cat "$RUNNER_TEMP/domains.txt") \
             --max-pages "${{ github.event.inputs.max_pages || '30' }}" --cache-hours 0 \
             --concurrency $((BC + 2)) \
-            --deadline-min "${{ github.event.inputs.deadline_min || '120' }}" \
+            --deadline-min "${{ github.event.inputs.deadline_min || '180' }}" \
             --domain-cap-min "${{ github.event.inputs.domain_cap_min || '8' }}" || { rc=$?; echo "::warning::crawl.mjs exited $rc; its checkpointed rooftops are still ingested"; }
           printf '{"startedAt":"%s","endedAt":"%s","asked":%s,"browserConcurrency":%s,"exit":%s}\n' \
             "$start" "$(date -u +%FT%TZ)" "${{ steps.pick.outputs.count }}" "$BC" "$rc" > out/crawl-timing.json
@@ -409,9 +418,15 @@ jobs:
         run: |
           node browser-lane-domains.mjs --platforms porsche --parts 1 --part 0 > /tmp/porsche.txt
           node browser-lane-dark.mjs --label after --domains-file /tmp/porsche.txt --json out/dark-after.json
+      # `mkdir -p` because the crawl job may not have run at all: until the
+      # residential runner is registered it sits queued, and a report that
+      # threw on a missing artifact directory would hide the one number this
+      # job exists to file.
       - name: What this run did
         working-directory: scraper
-        run: node browser-crawl-report.mjs --parts ../parts --before ../before/dark-before.json --after out/dark-after.json
+        run: |
+          mkdir -p ../parts
+          node browser-crawl-report.mjs --parts ../parts --before ../before/dark-before.json --after out/dark-after.json
 
   # Republish so the recovered cars reach the grid (CLAUDE.md: the grid's
   # freshness is the publish cadence and nothing else). publish-feed.yml
