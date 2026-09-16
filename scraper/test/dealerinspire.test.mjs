@@ -361,3 +361,126 @@ test("a list that answered 200 with no card is an unread page, not an empty lot"
   // the same second chance a failed one does, and gives up after it.
   assert.equal(loads.length, 9);
 });
+
+// ---------------------------------------------------------------------------
+// THE FACET IGNORED (2026-09-16). Measured on bismarckmotorcompany.com's used
+// list, jaguarwichita.com's and autosavvy.com's new lists and
+// southbaylexus.com's new list: the filtered URL answers the WHOLE lot. Every
+// card on it carries a `data-vehicle` blob, so every card read as a real
+// result — a candidate by the dealer's own fuel field, no net — and the
+// filtered walk enumerated the lot until the domain cap fell, admitting
+// nothing. jaguarwichita.com spent 36 loads on 634 cards for 0 EVs.
+import { dealerInspireFacetIgnored, DEALERINSPIRE_FACET_MIN_NAMED } from "../lib/platforms/dealerinspire.mjs";
+
+const results = (fuels) => fuels.map((f, i) => ({ vin: `V${i}`, result: true, fuel: f }));
+const rep = (f, n) => Array.from({ length: n }, () => f);
+
+test("facet ignored: judged on the results' own fueltypes, with room between the two clusters", () => {
+  // Every honoured list measured 2026-09-16 served ZERO petrol cards: 36
+  // lists across 20 rooftops (kerbeckcadillacs.com, dgdg.com, germain.com,
+  // group1auto.com, victoryautomotivegroup.com, pacificbmw.com, westherr.com,
+  // drivechoice.com, rickenbaughvolvocars.com …).
+  assert.equal(dealerInspireFacetIgnored(results(rep("Electric Fuel System", 20))), false);
+  assert.equal(dealerInspireFacetIgnored(results([...rep("Electric Fuel System", 16), ...rep("Plug-In Electric/Gas", 4)])), false);
+  // bismarckmotorcompany.com /used-vehicles/ and autosavvy.com
+  // /new-vehicles/: twenty named results, twenty of them petrol.
+  assert.equal(dealerInspireFacetIgnored(results([...rep("Gasoline Fuel", 19), "Flex Fuel Capability"])), true);
+  // jaguarwichita.com /new-vehicles/: the one EV of twenty.
+  assert.equal(dealerInspireFacetIgnored(results([...rep("Gasoline Fuel", 17), "Hybrid Fuel", "Diesel Fuel", "Electric Fuel System"])), true);
+  // southbaylexus.com /new-vehicles/ page one — a feed spelled "Gas",
+  // "Hybrid", "Plug-in Hybrid", "Battery Electric", so none of the three
+  // facet values match and the lot comes back half electrified. This page is
+  // why the line is a quarter and not a half, and why every page is checked.
+  assert.equal(dealerInspireFacetIgnored(results([...rep("Hybrid", 5), ...rep("Gas", 5), ...rep("Battery Electric", 8), ...rep("Plug-in Hybrid", 2)])), true);
+});
+
+test("facet ignored: a card with no fueltype is no evidence, and a short page is not judged at all", () => {
+  // The repeated featured block carries no blob at all.
+  assert.equal(dealerInspireFacetIgnored([{ vin: "V1" }, { vin: "V2" }, { vin: "V3" }]), false);
+  // A theme that emits blobs without the field must not read as ignoring a
+  // facet it honours.
+  assert.equal(dealerInspireFacetIgnored(Array.from({ length: 20 }, (_, i) => ({ vin: `V${i}`, result: true }))), false);
+  // bismarckmotorcompany.com's own new list: four results, all electrified.
+  assert.equal(dealerInspireFacetIgnored(results([...rep("Plug-In Electric/Gas", 3), "Electric Fuel System"])), false);
+  // Under the minimum the page is not judged, whatever it holds.
+  assert.equal(dealerInspireFacetIgnored(results(rep("Gasoline Fuel", DEALERINSPIRE_FACET_MIN_NAMED - 1))), false);
+  assert.equal(dealerInspireFacetIgnored(results(rep("Gasoline Fuel", DEALERINSPIRE_FACET_MIN_NAMED))), true);
+});
+
+// jaguarwichita.com's shape, shrunk: /used-vehicles/ honours the facet (2 EVs
+// of a 40-car used lot), /new-vehicles/ ignores it and answers all 60 new
+// cars, two of which are EVs. 20 cards a page, as served.
+function facetIgnoringRooftop() {
+  const origin = "https://www.fake-ignored.example";
+  const ev = (vin, slug, fuel) => ({ vin, slug, fuel });
+  const usedEvs = [ev("KNDC3DLC0P5119438", "used-2023-kia-ev6-wind-awd", "Electric Fuel System"), ev("5YJ3E1EB8NF359524", "used-2022-tesla-model-3", "Electric Fuel System")];
+  const gas = (i, kind) => ev(`1FA6P8TH${String(i).padStart(9, "0")}`.slice(0, 17), `${kind}-2024-jaguar-f-pace-${i}`, i % 7 === 0 ? "Diesel Fuel" : "Gasoline Fuel");
+  const used = [...usedEvs, ...Array.from({ length: 38 }, (_, i) => gas(i, "used"))];
+  // The new lot's two EVs sit deep in it: page two and page three of the
+  // whole-lot list, which the old code would have walked to find and the new
+  // one reaches through the unfiltered walk's net instead.
+  const newEvs = [ev("SADHD2S18P1123456", "new-2026-jaguar-i-pace-ev400-hse", "Electric Fuel System"), ev("SAL1L9FU8TA123456", "new-2026-range-rover-sport-p550e-autobiography", "Plug-In Electric/Gas")];
+  const nw = Array.from({ length: 60 }, (_, i) => gas(100 + i, "new"));
+  nw[25] = newEvs[0];
+  nw[52] = newEvs[1];
+  const card = (c) =>
+    `<div class="result-wrap" data-vehicle="{&quot;vin&quot;:&quot;${c.vin}&quot;,&quot;fueltype&quot;:&quot;${c.fuel}&quot;}"><a href="/inventory/${c.slug}-${c.vin.toLowerCase()}/">card</a></div>`;
+  const page = (cars, path, q, p, last) =>
+    `<html><body><link href="/wp-content/themes/DealerInspireDealerTheme/css/lvrp.css">${cars.map(card).join("")}${last ? "" : `<a href="${path}${q ? q + "&amp;" : "?"}_p=${p + 1}">Next</a>`}</body></html>`;
+  const vdp = (vin) =>
+    `<html><script type="application/ld+json">{"@context":"https://schema.org/","@type":["Product","Car"],"vehicleIdentificationNumber":"${vin}","offers":{"@type":"Offer","price":"41995"}}</script></html>`;
+  const loads = [];
+  const fetch = async (url) => {
+    loads.push(url);
+    const u = new URL(url);
+    if (u.pathname === "/") return { status: 200, body: "<html>classic theme, no motive config</html>" };
+    const p = Number(u.searchParams.get("_p") ?? 1);
+    const fuels = [...u.searchParams.entries()].filter(([k]) => k.startsWith("_dFR[fueltype]")).map(([, v]) => v.toLowerCase());
+    const q = fuels.length ? "?" + fuels.map((f, i) => `_dFR[fueltype][${i}]=${encodeURIComponent(f)}`).join("&") : "";
+    const lot = u.pathname === "/used-vehicles/" ? used : u.pathname === "/new-vehicles/" ? nw : null;
+    if (lot) {
+      // The used list honours the facet; the new list ignores it and serves
+      // the lot whatever is asked of it.
+      const list = fuels.length && u.pathname === "/used-vehicles/" ? lot.filter((c) => fuels.includes(c.fuel.toLowerCase())) : lot;
+      const slice = list.slice((p - 1) * 20, p * 20);
+      return { status: 200, body: page(slice, u.pathname, q, p, p * 20 >= list.length) };
+    }
+    const m = /\/inventory\/.*-([a-z0-9]{17})\/$/i.exec(u.pathname);
+    if (m) return { status: 200, body: vdp(m[1].toUpperCase()) };
+    return { status: 404, body: "" };
+  };
+  return { origin, fetch, loads, usedEvs, newEvs, nw, used };
+}
+
+test("a filtered list that served the whole lot is not an EV list: its cards go through the net, and the walk gets the clock", async () => {
+  const { origin, fetch, loads, usedEvs, newEvs } = facetIgnoringRooftop();
+  const r = await pullDealerInspire(origin, { maxLoads: 60, fetch, day: 0 });
+  const vins = r.vehicles.map((v) => v.vehicleIdentificationNumber).sort();
+  assert.deepEqual(vins, [...usedEvs, ...newEvs].map((c) => c.vin).sort(), "every EV on the rooftop is read, from whichever list found it");
+  // The filtered new list stopped on its first page instead of walking all
+  // three: the old lane read 60 cards there and made all 60 candidates.
+  const filteredNew = loads.filter((u) => /new-vehicles/.test(u) && /_dFR/.test(u));
+  assert.equal(filteredNew.length, 1, filteredNew.join("\n"));
+  // Not one petrol card off that page was opened.
+  const vdps = loads.filter((u) => /\/inventory\//.test(u));
+  assert.equal(vdps.length, 4, vdps.join("\n"));
+  assert.ok(!vdps.some((u) => /f-pace/.test(u)), vdps.join("\n"));
+  assert.match(
+    r.notes.find((n) => /fuel facet ignored/.test(n)) ?? "",
+    /fuel facet ignored on \/new-vehicles\/ — the filtered list served the whole lot/
+  );
+  assert.ok(!/used-vehicles/.test(r.notes.find((n) => /fuel facet ignored/.test(n)) ?? ""), "the used list honoured the facet and is not named");
+  // The unfiltered walk is still what certifies, and here it finished.
+  assert.equal(r.complete, true, r.why);
+  assert.equal(r.found, 100, "the whole lot, both lists");
+});
+
+test("a rooftop whose facet is ignored still reports partial when the walk cannot finish", async () => {
+  const { origin, fetch } = facetIgnoringRooftop();
+  // homepage 1 + filtered used 1 + filtered new 1 + the used list's 2 EVs = 5.
+  const r = await pullDealerInspire(origin, { maxLoads: 5, fetch, day: 0 });
+  assert.equal(r.ok, true);
+  assert.equal(r.complete, false, "the walk never ran, so nothing may be delisted");
+  assert.match(r.why, /stopped at the crawl's time cap or page budget/);
+  assert.ok(r.notes.some((n) => /fuel facet ignored on \/new-vehicles\//.test(n)), r.notes.join(" | "));
+});

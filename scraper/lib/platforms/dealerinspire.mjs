@@ -81,6 +81,53 @@
 //     electrified and is not in the list is reported, so the list grows from
 //     evidence and never from a guess.
 //
+// THE FACET IS NOT HONOURED EVERYWHERE, and where it is not the fast path
+// walked the whole lot. Measured 2026-09-16 on the 2026-09-16 09:27 run's
+// report and re-read from a laptop the same day: page one of a filtered list
+// carries its cards' own `data-vehicle` fueltypes, and on a rooftop that
+// applies the facet EVERY named result is electrified — 0 petrol cards in 36
+// lists read across 20 rooftops (kerbeckcadillacs.com, dgdg.com, germain.com,
+// group1auto.com, victoryautomotivegroup.com, pacificbmw.com, westherr.com,
+// drivechoice.com, rickenbaughvolvocars.com …). On the rooftops that ignore
+// it the same page is the plain lot: bismarckmotorcompany.com's used list
+// answered 20 named results, 20 of them petrol, the same twenty the
+// unfiltered list serves; jaguarwichita.com's new list 19 of 20 petrol;
+// autosavvy.com's new list 20 of 20. A third shape sits between them —
+// southbaylexus.com spells its feed "Gas", "Hybrid", "Plug-in Hybrid",
+// "Battery Electric", so none of the three values below match and the facet
+// falls back to the lot, whose Lexus pages happen to be half electrified
+// (10, 14 then 18 petrol of 20 across pages one to three).
+//
+// The cost was the whole visit. Every card on a filtered page carries a blob,
+// and a blob-carrying card was read as a REAL RESULT — a candidate by the
+// dealer's own fuel field, no net applied — so an ignored facet made the
+// entire lot candidates and the filtered walk enumerated it page by page
+// until the 8-minute cap fell. jaguarwichita.com: 634 cards, 634 candidates,
+// 36 loads, ZERO EVs admitted. autosavvy.com: 756 cards, 39 loads, zero.
+// bismarckmotorcompany.com: 420 cards, 22 loads, zero. Nothing was read, so
+// nothing could be delisted either — the pull is partial by construction, and
+// a partial pull certifies nothing, which is why these rooftops' sold cars
+// have never left the site.
+//
+// So a filtered page is now checked against its own cards: at least ten
+// results naming a fueltype, and more than a quarter of them naming one that
+// does not charge, means the list is the lot. The threshold sits between the
+// two clusters with room to spare (0 petrol on every honoured list measured,
+// 50-100% on every ignored one), and being wrong is cheap in the direction it
+// can be wrong: a list wrongly called untrusted has its cards put through
+// dealerInspireIsCandidate, which passes any card whose own blob reads
+// electrified, so an EV the facet really did return is still read. Being
+// wrong the other way is what costs a visit. The check runs on every page,
+// not just the first, because southbaylexus.com's page one is exactly at the
+// line and its page two is not.
+//
+// When it fires the filtered walk stops there (the unfiltered walk enumerates
+// the same lot, and that is the walk that certifies), the page's cards go
+// through the title/WMI/blob net like any walk card, and the lane says so in
+// its notes. Completeness is unchanged and still comes from the unfiltered
+// walk alone: an ignored facet is a reason the fast path found nothing, never
+// a reason to certify. What changes is that the clock now reaches the walk.
+//
 // Order of spend, so the budget goes to cars first: homepage, the filtered
 // used and new lists (a page or three each), the VDPs of their REAL results,
 // then the VDPs of the block cards those pages carried, then the plain used
@@ -166,6 +213,19 @@ export const dealerInspireFuelKnown = (fuel) => KNOWN_FUEL.has(String(fuel ?? ""
 const EV_FUEL_RE = /electric|plug|hydrogen|fuel cell|\bbev\b|\bphev\b/i;
 const NOT_PLUG_RE = /gas\/electric hybrid|electric\/gas hybrid|^hybrid\/electric$|mild/i;
 export const dealerInspireFuelIsEv = (fuel) => Boolean(fuel) && EV_FUEL_RE.test(fuel) && !NOT_PLUG_RE.test(String(fuel).trim());
+
+// A filtered list that served the whole lot (see the header). Judged on the
+// page's REAL RESULTS ONLY and on the fueltypes they actually name: the
+// repeated featured block carries no blob, and a result card with no
+// fueltype is no evidence either way — a rooftop whose theme omits the field
+// would otherwise read as ignoring a facet it honours.
+export const DEALERINSPIRE_FACET_MIN_NAMED = 10;
+export function dealerInspireFacetIgnored(cards) {
+  const named = cards.filter((c) => c.result && c.fuel);
+  if (named.length < DEALERINSPIRE_FACET_MIN_NAMED) return false;
+  const petrol = named.filter((c) => !dealerInspireFuelIsEv(c.fuel)).length;
+  return petrol * 4 > named.length;
+}
 
 /** The same list filtered to the electrified fuel facet, page 1. Paging goes
  *  through dealerInspireNextUrl, which keeps the query. */
@@ -379,9 +439,10 @@ function srpRead(res, cards) {
   return cards.length > 0 || res.waited !== false;
 }
 
-async function readSrp(origin, path, { maxPages = DEALERINSPIRE_MAX_PAGES, limits = null, loadsSoFar = 0, startUrl = null, fetch = browserFetch } = {}) {
+async function readSrp(origin, path, { maxPages = DEALERINSPIRE_MAX_PAGES, limits = null, loadsSoFar = 0, startUrl = null, facetCheck = false, fetch = browserFetch } = {}) {
   const cards = [];
   const seen = new Set();
+  let facetIgnored = false;
   let url = startUrl || dealerInspireSrpUrl(origin, path);
   let requests = 0;
   let pages = 0;
@@ -438,6 +499,16 @@ async function readSrp(origin, path, { maxPages = DEALERINSPIRE_MAX_PAGES, limit
       cards.push(c);
       fresh++;
     }
+    // THE FACET, CHECKED AGAINST THE CARDS IT RETURNED (header). Only the
+    // filtered read asks for this. The page's cards are kept — they are real
+    // cards of the lot and the caller nets them — and the walk stops here,
+    // because every further page of this list is the lot the unfiltered walk
+    // is about to enumerate anyway. `url` is still set, so the read reports
+    // incomplete and certifies nothing.
+    if (facetCheck && dealerInspireFacetIgnored(page)) {
+      facetIgnored = true;
+      break;
+    }
     if (!fresh) {
       // A pager that loops back serves the same cards again: that IS the end
       // of the lot, not a hole in the walk (78 of the first 78 batch-2 walks
@@ -447,7 +518,7 @@ async function readSrp(origin, path, { maxPages = DEALERINSPIRE_MAX_PAGES, limit
     }
     url = dealerInspireNextUrl(res.body, res.finalUrl || url);
   }
-  return { cards, requests, pages, status, complete: pages > 0 && !url };
+  return { cards, requests, pages, status, complete: pages > 0 && !url, facetIgnored };
 }
 
 /** Whole lot across both SRPs, candidate VDPs by browser. Raw JSON-LD nodes
@@ -532,23 +603,35 @@ export async function pullDealerInspire(origin, { srps = DEALERINSPIRE_SRPS, dea
   let fast = 0;
   const real = [];
   const block = new Map(); // by VIN: a block card is promoted when its real result turns up in the other list
+  const facetIgnoredPaths = [];
   for (const path of srps) {
-    const r = await readSrp(origin, path, { limits, loadsSoFar: requests, startUrl: dealerInspireFuelSrpUrl(origin, path), fetch });
+    const r = await readSrp(origin, path, { limits, loadsSoFar: requests, startUrl: dealerInspireFuelSrpUrl(origin, path), facetCheck: true, fetch });
     requests += r.requests;
     if (r.status === "browser_unavailable") return gone();
     if (r.exhausted) stopped = true;
+    if (r.facetIgnored) facetIgnoredPaths.push(path);
+    // On a list that honoured the facet, a blob-carrying card IS the claim:
+    // the dealer's own fuel field put it there. On a list that ignored it,
+    // "result" means only "a card with a blob", so the card goes through the
+    // same net a walk card does and most of the lot never costs a load.
+    const trusted = !r.facetIgnored;
     for (const c of r.cards) {
-      if (c.result && block.has(c.vin)) {
+      const isReal = Boolean(c.result) && (trusted || dealerInspireIsCandidate(c));
+      if (isReal && block.has(c.vin)) {
         block.delete(c.vin);
         real.push(c);
         continue;
       }
       if (seen.has(c.vin)) continue;
       seen.add(c.vin);
-      if (c.result) real.push(c);
+      if (isReal) real.push(c);
       else if (dealerInspireIsCandidate(c)) block.set(c.vin, c);
     }
   }
+  if (facetIgnoredPaths.length)
+    notes.push(
+      `fuel facet ignored on ${facetIgnoredPaths.join(" and ")} — the filtered list served the whole lot, so its cards went through the title/WMI/blob net instead of counting as results`
+    );
   fast = real.length + block.size;
   if (!(await readVdps(dealerInspireRotate(real, day)))) return gone();
   if (!(await readVdps([...block.values()]))) return gone();
@@ -593,7 +676,7 @@ export async function pullDealerInspire(origin, { srps = DEALERINSPIRE_SRPS, dea
   // statuses are what says so. The fast path's filtered lists answer on the
   // same paths, so a rooftop with no SRP answers nothing there either.
   if (!anySrp && !fast)
-    return { ok: false, complete: false, found: 0, candidates, vehicles, requests, vdpFailures: 0, why: `no SRP answered (${srpStatus.join(", ")})` };
+    return { ok: false, complete: false, found: 0, candidates, vehicles, requests, vdpFailures: 0, notes, why: `no SRP answered (${srpStatus.join(", ")})` };
   if (unknownFuel.size) notes.push(`fueltype spelling(s) not in the facet list: ${[...unknownFuel].join(", ")} — verify on a served page before adding`);
   return {
     ok: true,
