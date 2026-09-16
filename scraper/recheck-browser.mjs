@@ -70,6 +70,25 @@ const PART = flag("--part", 0);
 const PARTS = Math.max(1, flag("--parts", 1));
 const DEADLINE_AT = DEADLINE_MIN > 0 ? Date.now() + DEADLINE_MIN * 60_000 : Infinity;
 const DRY = process.argv.includes("--dry-run");
+// --domains-file PATH: only rows on these rooftops, filtered AT THE DATABASE
+// so the walk is the rooftops' own rows instead of every live listing.
+//
+// It exists for the Porsche lane (2026-09-16). Those rooftops answer the
+// Vercel challenge to every datacenter address, so their cars can only be
+// read — crawled OR confirmed — from the residential runner
+// (.github/workflows/porsche-crawl.yml). The first full crawl from that
+// runner brought 1,054 cars back from >36 h unseen, which by 0093 makes every
+// one of them a RETURNING car: seen again, but withheld from the site until
+// its own page vouches for it. The half-hourly fetch pass cannot do that
+// asking here (lib/http.mjs is challenged on this platform from any address,
+// which is why the lane needs a browser at all), and this job's usual
+// whole-feed walk would put those 1,054 into a 600-load budget shared with
+// every other returning car in the country. Named rooftops, right after the
+// crawl that created the returns, is the pass that actually reaches them.
+const DOMAINS_FILE = (() => {
+  const i = process.argv.indexOf("--domains-file");
+  return i >= 0 ? process.argv[i + 1] : "";
+})();
 // --vin V[,V…]: visit exactly these, same verdict rules and same write path.
 // The operator's tool — and the only mode that does not need the service key,
 // since the list itself replaces the never/stale-confirmed filter.
@@ -101,6 +120,14 @@ async function loadEnv(url) {
   } catch {}
 }
 await loadEnv(new URL("./.env", import.meta.url));
+
+const ONLY_DOMAINS = new Set(
+  DOMAINS_FILE ? (await readFile(DOMAINS_FILE, "utf-8")).split(/\s+/).map((d) => d.trim().toLowerCase()).filter(Boolean) : []
+);
+if (DOMAINS_FILE && !ONLY_DOMAINS.size) {
+  console.error(`recheck-browser: --domains-file ${DOMAINS_FILE} listed no rooftops; nothing to check.`);
+  process.exit(0);
+}
 
 const {
   SUPABASE_URL,
@@ -161,6 +188,28 @@ if (!SERVICE && !ONLY_VINS.size) {
 async function fetchRows() {
   const rows = [];
   const embed = SERVICE ? ",listing_seen(last_confirmed_at,last_seen_at,returned_at)" : "";
+  // With --domains-file the walk is narrowed at the database by the
+  // dealer_domain COLUMN, in chunks of 100 so the URL stays sane — the same
+  // filter browser-lane-dark.mjs uses. The column is last-writer-wins across
+  // lanes, so it is a net that may catch a row whose own lane says otherwise;
+  // the payload stays the authority and selectResidue re-checks it, exactly
+  // as it does for the unfiltered walk. Narrowing here rather than in memory
+  // is the difference between ~1,500 rows and ~173,000 of them, which is what
+  // makes this pass affordable at the end of a crawl.
+  const chunks = ONLY_DOMAINS.size
+    ? [...ONLY_DOMAINS].reduce((a, d, i) => ((a[Math.floor(i / 100)] ??= []).push(d), a), [])
+    : [null];
+  for (const chunk of chunks) {
+    const domainFilter = chunk ? `&dealer_domain=in.(${chunk.join(",")})` : "";
+    await walk(rows, embed, domainFilter);
+  }
+  if (ONLY_DOMAINS.size) {
+    console.error(`recheck-browser: --domains-file narrowed the walk to ${ONLY_DOMAINS.size} rooftops, ${rows.length} live rows.`);
+  }
+  return rows;
+}
+
+async function walk(rows, embed, domainFilter) {
   // Every live row, not only the four marketplace lanes (2026-09-12, second
   // truck of the night: 1FT6W1EV7NWG11294 at mastriamazda.com, a dealer-site
   // row crawled once by a browser lane that was then switched off, page 403
@@ -174,6 +223,7 @@ async function fetchRows() {
       `,dealerDomain:payload->>dealerDomain${embed}` +
       `&delisted_at=is.null` +
       (ONLY_VINS.size ? `&vin=in.(${[...ONLY_VINS].join(",")})` : "") +
+      domainFilter +
       (after ? `&vin=gt.${encodeURIComponent(after)}` : "") +
       `&order=vin.asc&limit=500`;
     const res = await fetchWithRetry(`recheck-browser: listing fetch after ${after || "start"}`, () =>
@@ -201,7 +251,17 @@ async function fetchRows() {
   return rows;
 }
 
-const rows = await fetchRows();
+let rows = await fetchRows();
+
+// The column caught the rows; the PAYLOAD decides which are really these
+// rooftops', because dealer_domain is last-writer-wins across lanes and the
+// payload is the row's own lane (0001). Without this, "only these rooftops"
+// would be a claim the filter does not actually make.
+if (ONLY_DOMAINS.size) {
+  const before = rows.length;
+  rows = rows.filter((r) => ONLY_DOMAINS.has(String(r.dealerDomain ?? "").toLowerCase()));
+  if (rows.length !== before) console.error(`recheck-browser: ${before - rows.length} row(s) dropped — the dealer_domain column said these rooftops, their own lane did not.`);
+}
 
 // Tonight's own sweep, read from the merged nightly feed the same way
 // recheck.mjs reads it (nightly.yml hands this job the same finalize-ingest

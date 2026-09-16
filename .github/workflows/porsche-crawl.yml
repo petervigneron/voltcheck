@@ -349,6 +349,44 @@ jobs:
           DB_SYNC_SOURCE: "porsche-crawl"
         run: node db-sync.mjs
 
+      # THE CARS ARE SEEN; NOW THEIR PAGES HAVE TO VOUCH FOR THEM.
+      #
+      # Measured on the first full run (2026-09-16, run 35123779757): the
+      # crawl took the dark set from 1,077 to 23 — and the SITE served none of
+      # the difference. Every one of those cars had been unseen for more than
+      # 36 hours, so 0093 marks it returning and live_listings_feed withholds
+      # it until its own page confirms it since the return. The half-hourly
+      # fetch pass (recheck-returning.yml) cannot do that asking on this
+      # platform from anywhere: lib/http.mjs is challenged on every Porsche
+      # path, from a datacenter and from a home line alike — that client check
+      # is why the lane needs a browser at all. So the confirming pass has to
+      # run here, in this browser, on these rooftops, right after the crawl
+      # that created the returns.
+      #
+      # --domains-file keeps it to this lane's rooftops and narrows the walk at
+      # the database (~1,500 rows, not ~173,000). Three pages in flight with
+      # the usual per-host pacing; a deadline well inside the job's cap,
+      # because a pass that runs out of time has still confirmed what it read
+      # and the next run takes the rest. Never fails the job: the cars are in
+      # the database either way, and a failed confirmation costs visibility
+      # until the next pass, not data.
+      - name: Confirm the returning cars' own pages
+        if: ${{ steps.pick.outputs.count != '0' && github.event.inputs.sync != 'false' && steps.nightly.outputs.busy == '0' }}
+        working-directory: scraper
+        env:
+          BROWSER_LANES: "on"
+          BROWSER_CONCURRENCY: "3"
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SUPABASE_INGEST_TOKEN: ${{ secrets.SUPABASE_INGEST_TOKEN }}
+        run: |
+          CAF=""; command -v caffeinate >/dev/null && CAF="caffeinate -i"
+          $CAF node recheck-browser.mjs \
+            --domains-file "$RUNNER_TEMP/domains.txt" \
+            --limit 1600 --concurrency 3 --deadline-min 45 \
+            || echo "::warning::the returning-car confirmation pass stopped early; the cars it did not reach stay withheld until the next run"
+
       - uses: actions/upload-artifact@v4
         if: always()
         with:
