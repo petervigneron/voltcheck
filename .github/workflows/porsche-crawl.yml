@@ -58,8 +58,17 @@ name: Porsche crawl (residential runner)
 # file a number on a day the home box is off.
 #
 # WHEN. Twice a day against a 36-hour rule, so one missed run is survivable:
-# 06:30 and 19:00 UTC. Both are outside the nightly's 10:30–18:00 UTC window
-# and away from browser-crawl.yml's 04:30/18:30 starts.
+# 21:00 and 02:00 UTC — 3 pm and 8 pm in the owner's timezone (MDT, UTC-6).
+#
+# Those hours are chosen for the MACHINE, not for the database. The runner
+# registered on 2026-09-16 is a MacBook Air, which sleeps when its lid closes
+# and after a minute idle on battery; a run that fires at 4 am local finds
+# nothing awake to take it. Mid-afternoon and mid-evening are when the laptop
+# is most likely open and on power. Both slots also sit outside the nightly's
+# real window (the 10:30 UTC cron is delivered ~14:30 and the run lasts ~4.5 h,
+# so ~14:30–19:15 UTC) and away from browser-crawl.yml's 04:30/18:30 starts.
+# When an always-on box takes this over, move them back to the quiet hours —
+# the schedule is the only thing here that is about the laptop.
 #
 # HOW LONG, MEASURED (2026-09-16, a laptop on a home line, the command this
 # workflow runs): porscheplano.com, grapevine.porsche.com and
@@ -122,8 +131,8 @@ name: Porsche crawl (residential runner)
 
 on:
   schedule:
-    - cron: "30 6 * * *"
-    - cron: "0 19 * * *"
+    - cron: "0 21 * * *"
+    - cron: "0 2 * * *"
   workflow_dispatch:
     inputs:
       domains:
@@ -249,6 +258,13 @@ jobs:
       #
       # `|| rc=$?` because bash is -e here: without it a crawl that exits
       # non-zero ends the step before the timing file is written.
+      # `caffeinate -i` holds an idle-sleep assertion for exactly as long as
+      # the crawl runs: this box sleeps after a minute idle on battery, and a
+      # sleeping Mac mid-crawl is the 2026-09-06 failure (every in-flight load
+      # timed out on the dark wake). It cannot defeat a closed lid — nothing
+      # can — so a lid closed mid-run still costs that run's rooftops, which
+      # the next run picks up. Guarded by `command -v` so the step still works
+      # if this lane ever moves to a Linux box.
       - name: Crawl the Porsche rooftops
         if: ${{ steps.pick.outputs.count != '0' }}
         working-directory: scraper
@@ -260,7 +276,8 @@ jobs:
           BC="${BROWSER_CONCURRENCY}"
           start=$(date -u +%FT%TZ)
           rc=0
-          node crawl.mjs $(cat "$RUNNER_TEMP/domains.txt") \
+          CAF=""; command -v caffeinate >/dev/null && CAF="caffeinate -i"
+          $CAF node crawl.mjs $(cat "$RUNNER_TEMP/domains.txt") \
             --max-pages "${{ github.event.inputs.max_pages || '30' }}" --cache-hours 0 \
             --concurrency $((BC + 2)) \
             --deadline-min "${{ github.event.inputs.deadline_min || '180' }}" \
