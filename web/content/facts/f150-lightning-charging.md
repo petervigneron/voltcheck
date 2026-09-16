@@ -11,25 +11,17 @@
 
 ## DC fast charging
 
-| Model year | Pack | 15–80% on a 150 kW charger | 15–80% on a 50 kW charger | Miles added in 10 min on a 150 kW charger |
-|---|---|---|---|---|
-| 2022 | 98 kWh Standard Range | 44 min[^1] | 91 min[^1] | 41 mi[^1] |
-| 2022 | 131 kWh Extended Range | 41 min[^1] | 122 min[^1] | 54 mi[^1] |
-| 2023 | 98 kWh Standard Range | 44 min[^2] | 91 min[^2] | 41 mi[^2] |
-| 2023 | 131 kWh Extended Range | 41 min[^2] | 122 min[^2] | 54 mi[^2] |
-| 2024 | 98 kWh Standard Range | 32 min[^3] | | 62 mi[^3] |
-| 2024 | 131 kWh Extended Range | 38 min[^3] | | 65 mi[^3] |
-| 2025 | 98 kWh Standard Range | 32 min[^4] | | 62 mi[^4] |
-| 2025 | 123 kWh Extended Range | 38 min[^4] | | 65 mi[^4] |
-| 2025 | 131 kWh Extended Range | 38 min[^4] | | 65 mi[^4] |
-
-| Item | Answer |
-|---|---|
-| Peak DC charging current | 500 A[^11]; 2022 and 2023 trucks reach it after Ford's over-the-air software update, 450 A before it[^12] |
-
-| Model year | Pack | 10–80% on a 350 kW charger, measured by InsideEVs |
-|---|---|---|
-| 2022 | 131 kWh Extended Range | 39.5 min after Ford's software update; 44–45 min before it[^13] |
+| Model year | Pack | 15–80% on a 150 kW charger | 15–80% on a 50 kW charger | Miles added in 10 min on a 150 kW charger | Peak DC current | 10–80% on a 350 kW charger, InsideEVs test |
+|---|---|---|---|---|---|---|
+| 2022 | 98 kWh Standard Range | 44 min[^1] | 91 min[^1] | 41 mi[^1] | 500 A[^12] | |
+| 2022 | 131 kWh Extended Range | 41 min[^1] | 122 min[^1] | 54 mi[^1] | 500 A[^12] | 39.5 min[^13] |
+| 2023 | 98 kWh Standard Range | 44 min[^2] | 91 min[^2] | 41 mi[^2] | 500 A[^12] | |
+| 2023 | 131 kWh Extended Range | 41 min[^2] | 122 min[^2] | 54 mi[^2] | 500 A[^12] | |
+| 2024 | 98 kWh Standard Range | 32 min[^3] | | 62 mi[^3] | 500 A[^12] | |
+| 2024 | 131 kWh Extended Range | 38 min[^3] | | 65 mi[^3] | 500 A[^12] | |
+| 2025 | 98 kWh Standard Range | 32 min[^4] | | 62 mi[^4] | 500 A[^11] | |
+| 2025 | 123 kWh Extended Range | 38 min[^4] | | 65 mi[^4] | 500 A[^11] | |
+| 2025 | 131 kWh Extended Range | 38 min[^4] | | 65 mi[^4] | 500 A[^11] | |
 
 ## Home charging (Level 2)
 
@@ -106,9 +98,9 @@
 
 [^11]: Ford, "The 2025 F-150 Lightning Just Landed — Here's the Lowdown," by Megan Gegesky, Ford's From the Road site, March 27, 2025, which states that Ford raised the maximum DC fast charging current from 450 amps to 500 amps and that this can improve charging time in certain situations. https://www.fromtheroad.ford.com/us/en/articles/2025/the-2025-f-150-lightning-just-landed-heres-the-lowdown
 
-[^12]: Green Car Reports, "2022-2023 Ford F-150 Lightning may charge quicker after software update," March 7, 2025, in which Ford spokesperson Sam Schembari confirms that the over-the-air update for 2022 and 2023 trucks raises the maximum DC fast charging current from 450 amps to 500 amps. https://www.greencarreports.com/news/1145922_2022-2023-ford-f-150-lightning-charge-rate-software-update. InsideEVs first reported the update on March 6, 2025: https://insideevs.com/news/752641/2022-2023-ford-f-150-lightning-dc-fast-charging-boost-software/
+[^12]: Green Car Reports, "2022-2023 Ford F-150 Lightning may charge quicker after software update," March 7, 2025, in which Ford spokesperson Sam Schembari confirms that Ford's over-the-air software update raises the maximum DC fast charging current of 2022 and 2023 trucks from 450 amps to 500 amps, the limit 2024 trucks launched with. A 2022 or 2023 truck without the update remains at 450 amps. https://www.greencarreports.com/news/1145922_2022-2023-ford-f-150-lightning-charge-rate-software-update. InsideEVs first reported the update on March 6, 2025: https://insideevs.com/news/752641/2022-2023-ford-f-150-lightning-dc-fast-charging-boost-software/
 
-[^13]: A single 2022 F-150 Lightning Lariat Extended Range, not a Ford figure. InsideEVs, March 6, 2025 (the article in footnote 12): about 45 minutes from 10% to 80% before the update and just under 40 minutes after it, at a 350 kW stall, with the truck drawing 499 amps and about 180 kW at peak. The session table, 39.5 minutes on a 324 kW EVgo charger, is at https://evchargingstations.com/chargingnews/ford-f-150-lightning-dc-fast-charging-analysis-10-80/
+[^13]: Not a Ford figure. InsideEVs, March 6, 2025 (the article in footnote 12), measured one 2022 F-150 Lightning Lariat Extended Range with the software update on a 324 kW EVgo charger: 10% to 80% in 39.5 minutes, drawing 499 amps and about 180 kW at peak, against about 45 minutes before the update. The session table is at https://evchargingstations.com/chargingnews/ford-f-150-lightning-dc-fast-charging-analysis-10-80/
 
 ## Scope note
 
