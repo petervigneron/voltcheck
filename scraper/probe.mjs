@@ -135,6 +135,7 @@ import { isEBizAutos, ebizAutosOrigins, countEBizAutos } from "./lib/platforms/e
 import { countDealerInspire } from "./lib/platforms/dealerinspire.mjs";
 import { isChapmanChoice, isChapmanChoiceOrigin, countChapmanChoice } from "./lib/platforms/chapmanchoice.mjs";
 import { countDealerCenter } from "./lib/platforms/dealercenter.mjs";
+import { countDealerEProcess } from "./lib/platforms/dealereprocess.mjs";
 import { countPorsche } from "./lib/platforms/porsche.mjs";
 import { vendorByDns } from "./lib/vendor-dns.mjs";
 import { closeBrowser } from "./lib/browser.mjs";
@@ -300,10 +301,12 @@ async function settleWalledTeamVelocity(site, fetched) {
 // browser lane and never walks the firewall. A vendor whose lane declines
 // (browser missing on this machine, no cars, no VINs) falls through to the
 // ordinary "homepage 403" verdict, unchanged.
-// dealereprocess is parked — see the note on BROWSER_LANES in crawl.mjs.
+// dealereprocess joined 2026-09-16: one electric-SRP load per rooftop (the
+// second load per host is the challenge; see the lane's header). A rooftop
+// whose page counts zero EVs has no VIN to prove the lane on and stays put.
 // porsche joined 2026-09-05: its wall answers 429, not 403, so these rows sat
 // in the transient pile being re-probed nightly instead of being read.
-const BROWSER_COUNTS = { dealerinspire: countDealerInspire, dealercenter: countDealerCenter, porsche: countPorsche };
+const BROWSER_COUNTS = { dealerinspire: countDealerInspire, dealercenter: countDealerCenter, porsche: countPorsche, dealereprocess: countDealerEProcess };
 async function settleWalledBrowserVendor(site, fetched) {
   const vendor = await vendorByDns(site.domain);
   if (!vendor || !BROWSER_COUNTS[vendor]) return false;

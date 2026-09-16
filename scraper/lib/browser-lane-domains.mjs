@@ -43,7 +43,11 @@
 // and after itself — are asking. Leaving porsche in the default would have
 // put 1,077 cars no hosted run can reach into browser-crawl's own
 // before/after numbers for ever.
-export const BROWSER_LANE_PLATFORMS = ["dealerinspire"];
+// dealereprocess joined the hosted default 2026-09-16: one electric-SRP load
+// per rooftop, 744 of 745 rooftops at 200 on the first load from a
+// residential line (lib/platforms/dealereprocess.mjs); whether GitHub-hosted
+// runners see the same first load is the next run's measurement.
+export const BROWSER_LANE_PLATFORMS = ["dealerinspire", "dealereprocess"];
 
 /** The browser lanes a residential self-hosted runner owns, because the
  *  vendor's wall is keyed on where the request comes from. */

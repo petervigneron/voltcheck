@@ -99,6 +99,7 @@ import { isEBizAutos, ebizAutosOrigins, pullEBizAutos } from "./lib/platforms/eb
 import { pullDealerInspire } from "./lib/platforms/dealerinspire.mjs";
 import { isChapmanChoice, isChapmanChoiceOrigin, pullChapmanChoice } from "./lib/platforms/chapmanchoice.mjs";
 import { pullDealerCenter } from "./lib/platforms/dealercenter.mjs";
+import { pullDealerEProcess } from "./lib/platforms/dealereprocess.mjs";
 import { pullPorsche } from "./lib/platforms/porsche.mjs";
 import { closeBrowser } from "./lib/browser.mjs";
 import { withWall, sealReport } from "./lib/wall.mjs";
@@ -592,12 +593,16 @@ async function crawlDealerInto(domain, budget, domainCapAt, report) {
   // registry's 106 "http-429" rows were one platform being challenged, not a
   // hundred rooftops being busy, and `transient` re-probed them nightly for
   // ever. Plain headless Chrome passes it with nothing patched.
-  // DealerEProcess is deliberately NOT in this table: its VDPs answer the
-  // Cloudflare JS challenge to plain headless Chrome on 9 of 10 loads
-  // (measured 2026-09-02, themountainhyundai.com), and passing that means
-  // disguising the browser, which is the line lib/browser.mjs draws. The lane
-  // file stays, parked, with the measurement in its header.
-  const BROWSER_LANES = { dealerinspire: pullDealerInspire, dealercenter: pullDealerCenter, porsche: pullPorsche };
+  // DealerEProcess joined 2026-09-16 in a one-load shape. Its VDPs still
+  // answer the Cloudflare JS challenge on every load after a session's first
+  // (2026-09-02: first VDP 200, next nine 403; 2026-09-16: the challenge
+  // follows the bot-management cookie, so it is the SECOND load per host
+  // that is walled, whatever the page). The lane therefore loads exactly one
+  // robots-allowed page per rooftop — the electric + plug-in SRP at its
+  // largest page size, 744 of 745 rooftops at 200 on the first load — and
+  // never a second; the header of lib/platforms/dealereprocess.mjs has the
+  // measurement and why a fresh context per page is the disguise it avoids.
+  const BROWSER_LANES = { dealerinspire: pullDealerInspire, dealercenter: pullDealerCenter, porsche: pullPorsche, dealereprocess: pullDealerEProcess };
   if (BROWSER_LANES[dvPlat]) {
     const before = report.evs.length;
     // The lane gets the same clock and budget the walk below would have had;
@@ -619,7 +624,7 @@ async function crawlDealerInto(domain, budget, domainCapAt, report) {
       if (rec.vdpUrl) rec.vdpUrl = abs(rec.vdpUrl, origin) ?? rec.vdpUrl;
       rec.evKind = cls.kind;
       rec.evConfidence = cls.confidence;
-      rec.fromVdp = dvPlat !== "dealercenter"; // DI/DEP nodes are the VDP's own; DealerCenter's is the lot record
+      rec.fromVdp = dvPlat !== "dealercenter" && dvPlat !== "dealereprocess"; // DI/Porsche nodes are the VDP's own; DealerCenter's is the lot record, DealerEProcess's the SRP card's
       rec.platform = dvPlat;
       report.evs.push(rec);
     }

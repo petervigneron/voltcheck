@@ -16,6 +16,8 @@ const registry = {
     { domain: "b-di.com", status: "working", platform: "dealerinspire", probe: { browser: true } },
     { domain: "a-di.com", status: "working", platform: "dealerinspire" },
     { domain: "porsche.example", status: "working", platform: "porsche" },
+    { domain: "dep.example", status: "working", platform: "dealereprocess", probe: { browser: true } },
+    { domain: "walled-dep.com", status: "http-403", platform: "dealereprocess" },
     { domain: "dc.example", status: "working", platform: "dealercenter", probe: { browser: true } },
     { domain: "walled-di.com", status: "http-403", platform: "dealerinspire", probe: { browser: true } },
     { domain: "plain.com", status: "working", platform: "dealer.com" },
@@ -23,8 +25,8 @@ const registry = {
   ],
 };
 
-test("the default rooftops are the working dealerinspire rows, sorted and de-duplicated", () => {
-  assert.deepEqual(browserLaneDomains(registry), ["a-di.com", "b-di.com"]);
+test("the default rooftops are the working dealerinspire and dealereprocess rows, sorted and de-duplicated", () => {
+  assert.deepEqual(browserLaneDomains(registry), ["a-di.com", "b-di.com", "dep.example"]);
 });
 
 // The Porsche platform's wall (Vercel Attack Challenge Mode) is keyed on the
@@ -37,7 +39,7 @@ test("the default rooftops are the working dealerinspire rows, sorted and de-dup
 test("porsche is a residential lane, out of the hosted default and in the whole set", () => {
   assert.ok(!browserLaneDomains(registry).includes("porsche.example"));
   assert.deepEqual(browserLaneDomains(registry, { platforms: RESIDENTIAL_LANE_PLATFORMS }), ["porsche.example"]);
-  assert.deepEqual(browserLaneDomains(registry, { platforms: ALL_BROWSER_LANE_PLATFORMS }), ["a-di.com", "b-di.com", "porsche.example"]);
+  assert.deepEqual(browserLaneDomains(registry, { platforms: ALL_BROWSER_LANE_PLATFORMS }), ["a-di.com", "b-di.com", "dep.example", "porsche.example"]);
   assert.ok(!BROWSER_LANE_PLATFORMS.includes("porsche"));
   assert.deepEqual(ALL_BROWSER_LANE_PLATFORMS, [...BROWSER_LANE_PLATFORMS, ...RESIDENTIAL_LANE_PLATFORMS]);
 });
