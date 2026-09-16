@@ -1,5 +1,6 @@
 import type { Fact, Source } from "@/lib/types";
 import { SourceBadge } from "./SourceBadge";
+import { CitationIcon } from "./CitationIcon";
 import { TILE_TONE, type TileKind } from "./Tile";
 
 // A citation, not a chip. The old provenance chip on every row named the
@@ -67,11 +68,7 @@ function Citation({ fact, tile = false }: { fact: Fact<unknown>; tile?: boolean 
             : "text-zinc-300 no-underline hover:text-zinc-500 dark:text-zinc-600 dark:hover:text-zinc-400"
         }
       >
-        <svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" strokeWidth="1.4" className="inline-block">
-          <circle cx="8" cy="8" r="6.3" />
-          <path d="M8 7.3v4" strokeLinecap="round" />
-          <circle cx="8" cy="5.1" r="0.15" fill="currentColor" stroke="none" />
-        </svg>
+        <CitationIcon />
       </a>
       <span
         role="tooltip"

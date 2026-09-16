@@ -1,18 +1,14 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import type { FactBlock, FactSection, ParsedFactSheet } from "@/lib/facts/parse";
-import { createFootnoteIndex } from "@/lib/facts/footnotes";
+import { citations, type Citation } from "@/lib/facts/cite";
 import { renderInline, renderTextWithEst } from "./Inline";
 
-// renderBlock/renderSection are plain functions, called directly (never as
-// <Capitalized/> JSX), on purpose: a JSX component element defers its body
-// until React's render phase, which would run every nextFootnoteId() call
-// too late to be visible when the Sources list below is built. Calling them
-// as ordinary functions inside FactSheet's own body makes the whole page a
-// single synchronous pass, so the footnote-occurrence map is complete by the
-// time the Sources section reads it.
+// Every [^n] in the body renders as a citation icon (components/facts/Inline.tsx)
+// that links to the footnote's source and names it on hover; the numbered
+// Sources list that used to close the page is gone with the numbers.
 
-function renderBlock(block: FactBlock, i: number, nextFootnoteId: (n: number) => string): ReactNode {
+function renderBlock(block: FactBlock, i: number, cite: (n: number) => Citation | undefined): ReactNode {
   if (block.type === "h3") {
     return (
       <h3 key={i} className="mt-5 text-[13px] font-extrabold tracking-[0.01em] text-ink">
@@ -28,7 +24,7 @@ function renderBlock(block: FactBlock, i: number, nextFootnoteId: (n: number) =>
             <tr className="border-b-2 border-ink text-left">
               {block.header.map((h, j) => (
                 <th key={j} className="py-1.5 pr-4 text-[11px] font-extrabold uppercase tracking-[0.06em] text-ink/60">
-                  {renderTextWithEst(h, nextFootnoteId)}
+                  {renderTextWithEst(h, cite)}
                 </th>
               ))}
             </tr>
@@ -38,7 +34,7 @@ function renderBlock(block: FactBlock, i: number, nextFootnoteId: (n: number) =>
               <tr key={j} className="border-b border-ink/15 align-top">
                 {row.map((cell, k) => (
                   <td key={k} className={`py-2 pr-4 text-ink/85 ${k === 0 ? "font-bold whitespace-nowrap" : ""}`}>
-                    {renderTextWithEst(cell, nextFootnoteId)}
+                    {renderTextWithEst(cell, cite)}
                   </td>
                 ))}
               </tr>
@@ -51,7 +47,7 @@ function renderBlock(block: FactBlock, i: number, nextFootnoteId: (n: number) =>
   if (block.type === "p") {
     return (
       <p key={i} className="mt-3 text-[15px] leading-relaxed text-ink/85">
-        {renderTextWithEst(block.text, nextFootnoteId)}
+        {renderTextWithEst(block.text, cite)}
       </p>
     );
   }
@@ -59,11 +55,11 @@ function renderBlock(block: FactBlock, i: number, nextFootnoteId: (n: number) =>
     <ul key={i} className="mt-3 list-disc space-y-2 pl-5 text-[15px] leading-relaxed text-ink/85">
       {block.items.map((item, j) => (
         <li key={j}>
-          {renderTextWithEst(item.text, nextFootnoteId)}
+          {renderTextWithEst(item.text, cite)}
           {item.sub && (
             <ul className="mt-1.5 list-[circle] space-y-1 pl-5">
               {item.sub.map((s, k) => (
-                <li key={k}>{renderTextWithEst(s, nextFootnoteId)}</li>
+                <li key={k}>{renderTextWithEst(s, cite)}</li>
               ))}
             </ul>
           )}
@@ -73,22 +69,20 @@ function renderBlock(block: FactBlock, i: number, nextFootnoteId: (n: number) =>
   );
 }
 
-function renderSection(section: FactSection, i: number, nextFootnoteId: (n: number) => string): ReactNode {
+function renderSection(section: FactSection, i: number, cite: (n: number) => Citation | undefined): ReactNode {
   return (
     <section key={i} className="mt-9">
       <h2 className="text-[11px] font-extrabold uppercase tracking-[0.08em] text-ink/50">{section.heading}</h2>
-      {section.blocks.map((b, j) => renderBlock(b, j, nextFootnoteId))}
+      {section.blocks.map((b, j) => renderBlock(b, j, cite))}
     </section>
   );
 }
 
 export function FactSheet({ parsed }: { parsed: ParsedFactSheet }) {
-  // Footnote occurrence ids are assigned in rendering order as the sections
-  // below are built, in this same synchronous pass, so this map is complete
-  // before the Sources list at the bottom reads it.
-  const { nextId: nextFootnoteId, occurrences } = createFootnoteIndex();
+  const byNumber = citations(parsed.footnotes);
+  const cite = (n: number) => byNumber.get(n);
 
-  const sectionNodes = parsed.sections.map((s, i) => renderSection(s, i, nextFootnoteId));
+  const sectionNodes = parsed.sections.map((s, i) => renderSection(s, i, cite));
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-16">
@@ -114,35 +108,12 @@ export function FactSheet({ parsed }: { parsed: ParsedFactSheet }) {
           <h2 className="text-[11px] font-extrabold uppercase tracking-[0.08em] text-ink/50">Scope note</h2>
           {parsed.scopeNote.map((p, i) => (
             <p key={i} className="mt-3 text-[13px] leading-relaxed text-ink/60">
-              {renderInline(p, nextFootnoteId)}
+              {renderInline(p, cite)}
             </p>
           ))}
         </section>
       )}
 
-      <section className="mt-9 border-t border-ink/15 pt-5">
-        <h2 className="text-[11px] font-extrabold uppercase tracking-[0.08em] text-ink/50">Sources</h2>
-        <ol className="mt-2 space-y-2.5 text-[13px] leading-relaxed text-ink/70">
-          {parsed.footnotes.map((f) => (
-            <li key={f.n} id={`fn-${f.n}`} className="flex gap-2">
-              <span className="shrink-0 font-mono text-ink/40">[{f.n}]</span>
-              <span>
-                {renderInline(f.text, nextFootnoteId)}{" "}
-                {(occurrences[f.n] ?? []).map((id, i) => (
-                  <a
-                    key={id}
-                    href={`#${id}`}
-                    aria-label={`Back to reference ${f.n} in the text`}
-                    className="text-cobalt no-underline"
-                  >
-                    {i === 0 ? "↑" : `↑${i + 1}`}
-                  </a>
-                ))}
-              </span>
-            </li>
-          ))}
-        </ol>
-      </section>
     </div>
   );
 }

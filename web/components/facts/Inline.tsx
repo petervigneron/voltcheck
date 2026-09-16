@@ -1,37 +1,30 @@
 import type { ReactNode } from "react";
+import type { Citation } from "@/lib/facts/cite";
+import { CitationIcon } from "../CitationIcon";
 
 // Inline markup used by the fact-sheet source files: *italic* document
 // titles, [text](url) markdown links, bare https:// URLs (the footnote
-// definitions end in one), and [^n] footnote reference markers. Handles the
-// same four forms wherever they occur, body text and footnote text alike, so
-// a citation reads the same everywhere it appears.
+// definitions end in one), and [^n] footnote reference markers. A marker
+// renders as the same ⓘ a listing page puts after a cited value: a link to
+// the source document, named on hover (lib/facts/cite.ts) — the number and
+// the Sources list it pointed at no longer render.
 const INLINE_RE =
   /\[\^(\d+)\]|\[([^\]]+)\]\(([^)]+)\)|\*([^*\n]+)\*|(https?:\/\/[^\s)]+)/g;
 
-export function renderInline(text: string, nextFootnoteId: (n: number) => string): ReactNode[] {
+export function renderInline(text: string, cite: (n: number) => Citation | undefined): ReactNode[] {
   const out: ReactNode[] = [];
   let last = 0;
   let key = 0;
-  let fnEnd = -1; // where the previous footnote ref ended, for the separator below
   INLINE_RE.lastIndex = 0;
   let m: RegExpExecArray | null;
   while ((m = INLINE_RE.exec(text))) {
     if (m.index > last) out.push(text.slice(last, m.index));
     const [whole, fnNum, linkText, linkUrl, italic, bareUrl] = m;
     if (fnNum) {
-      const n = Number(fnNum);
-      const id = nextFootnoteId(n);
-      // Back-to-back refs ([^3][^4]) would render as "34", which reads as
-      // footnote 34 — separate them.
-      if (m.index === fnEnd) out.push(<sup key={`fs${key++}`}>,</sup>);
-      fnEnd = m.index + whole.length;
-      out.push(
-        <sup key={`fn${key++}`}>
-          <a id={id} href={`#fn-${n}`} className="text-cobalt no-underline hover:underline">
-            {n}
-          </a>
-        </sup>
-      );
+      const c = cite(Number(fnNum));
+      // A marker with no footnote behind it is a source that was lost; the
+      // structure test fails the sheet, and the page shows nothing for it.
+      if (c) out.push(<Cite key={`fn${key++}`} c={c} />);
     } else if (linkText && linkUrl) {
       out.push(
         <a
@@ -80,14 +73,30 @@ export function renderInline(text: string, nextFootnoteId: (n: number) => string
 }
 
 /** "Est. " prefix becomes a small badge; the rest renders through renderInline. Preserves the marking rule in CLAUDE.md verbatim rather than reformatting the sentence. */
-export function renderTextWithEst(text: string, nextFootnoteId: (n: number) => string): ReactNode {
+export function renderTextWithEst(text: string, cite: (n: number) => Citation | undefined): ReactNode {
   if (text.startsWith("Est. ")) {
     return (
       <>
         <strong className="mr-1 text-[11px] font-bold tracking-[0.02em] text-amber-700">Est.</strong>
-        {renderInline(text.slice(5), nextFootnoteId)}
+        {renderInline(text.slice(5), cite)}
       </>
     );
   }
-  return renderInline(text, nextFootnoteId);
+  return renderInline(text, cite);
+}
+
+function Cite({ c }: { c: Citation }) {
+  const cls = "ml-0.5 inline-block align-middle text-zinc-300 no-underline hover:text-zinc-500 dark:text-zinc-600 dark:hover:text-zinc-400";
+  if (!c.url) {
+    return (
+      <span title={c.title} aria-label={`Source: ${c.title}`} className={cls}>
+        <CitationIcon />
+      </span>
+    );
+  }
+  return (
+    <a href={c.url} target="_blank" rel="noopener noreferrer" title={c.title} aria-label={`Source: ${c.title}`} className={cls}>
+      <CitationIcon />
+    </a>
+  );
 }

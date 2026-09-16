@@ -29,9 +29,9 @@
 
 [^4]: Ford, *2024 Mustang Mach-E Order Guide* (PDF, dated 11/02/23). Mirror: https://dealerimages.dealereprocess.com/image/upload/v1700240772/2024_Mustang_Mach-E_r5kzox.pdf
 
-[^5]: Ford, *2025 Mustang Mach-E Order Guide* (PDF, dated 04/28/25), p. 1 (MECHANICAL "New" for the model year) and p. 3 (Select's "Standard Equipment / MECHANICAL" list), on Ford's own host fromtheroad.ford.com.
+[^5]: Ford, *2025 Mustang Mach-E Order Guide* (PDF, dated 04/28/25), p. 1 (MECHANICAL "New" for the model year) and p. 3 (Select's "Standard Equipment / MECHANICAL" list), on Ford's own host. https://www.fromtheroad.ford.com/content/dam/fordmediasite/us/en/library/2025/order-guides/2025_Mustang_Mach-E_Order_Guide.pdf
 
-[^6]: Same 2025 Ford Order Guide, p. 7 (Premium) and p. 11 (GT), each carrying all Select equipment plus its own additions.
+[^6]: Same order guide as footnote 5, p. 7 (Premium) and p. 11 (GT), each carrying all Select equipment plus its own additions.
 
 [^7]: Electrek, "2025 Mustang Mach-E drops with heatpump, smaller frunk, $36K price, more," Oct 21, 2024. https://electrek.co/2024/10/21/2025-mustang-mach-e-drops-with-heatpump-smaller-frunk-36k-price-more/. Est.: secondary source.
 

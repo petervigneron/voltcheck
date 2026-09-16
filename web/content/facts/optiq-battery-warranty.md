@@ -60,11 +60,11 @@ Cadillac excludes from the New Vehicle Limited Warranty:
 
 [^6]: Cadillac, 2026 booklet as in footnote 2, "California Zero-Emissions Vehicle (ZEV) Warranty Coverage" and its "Requirements" sub-section, printed p. 16.
 
-[^7]: Cadillac, both booklets, "New Vehicle Limited Warranty — What Is Not Covered": "Electric Vehicle Charging Adapters" and "Over-the-Air Software Updates," printed pp. 8–9 in the 2025 edition and pp. 10–11 in the 2026 edition.
+[^7]: Cadillac, both booklets as in footnotes 1 and 2, "New Vehicle Limited Warranty — What Is Not Covered": "Electric Vehicle Charging Adapters" and "Over-the-Air Software Updates," printed pp. 8–9 in the 2025 edition and pp. 10–11 in the 2026 edition.
 
-[^8]: Same booklets, "What Is Not Covered." "Damage Due to Accident, Misuse, Impact, or Alteration" sits on printed p. 7 of the 2025 edition and printed p. 9 of the 2026 edition; "Damage Due to Insufficient or Improper Maintenance" and "Excessive Non-Propulsion Battery Usage" sit on printed p. 8 of the 2025 edition and printed p. 10 of the 2026 edition. All four pages read as rendered images.
+[^8]: Same booklets as footnotes 1 and 2, "What Is Not Covered." "Damage Due to Accident, Misuse, Impact, or Alteration" sits on printed p. 7 of the 2025 edition and printed p. 9 of the 2026 edition; "Damage Due to Insufficient or Improper Maintenance" and "Excessive Non-Propulsion Battery Usage" sit on printed p. 8 of the 2025 edition and printed p. 10 of the 2026 edition. All four pages read as rendered images.
 
-[^9]: Same booklets, "What Is Not Covered," the continuation bullets on alteration, non-GM parts and fluid contamination and the bold "Important" paragraph closing them: printed p. 8 of the 2025 edition and printed p. 10 of the 2026 edition.
+[^9]: Same booklets as footnotes 1 and 2, "What Is Not Covered," the continuation bullets on alteration, non-GM parts and fluid contamination and the bold "Important" paragraph closing them: printed p. 8 of the 2025 edition and printed p. 10 of the 2026 edition.
 
 ## Scope note
 
