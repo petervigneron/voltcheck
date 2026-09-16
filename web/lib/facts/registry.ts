@@ -269,17 +269,17 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     description:
       "Ford's own charge times for the F-150 Lightning, 2022 through 2025, and the onboard-charger change that turns an 8-hour overnight into 13. Sourced to Ford's spec sheets and order guides.",
     breadcrumbLabel: "Ford F-150 Lightning charging",
-    dateModified: "2026-08-30",
+    dateModified: "2026-09-16",
     faq: [
       {
         question: "How long does a Ford F-150 Lightning take to DC fast charge?",
         answer:
-          "Ford publishes a 15% to 80% time, not a 10% to 80% time. For 2022 and 2023 on a 150 kW charger: 44 minutes on the 98 kWh Standard Range pack, 41 minutes on the 131 kWh Extended Range pack. For 2024 on a 150 kW+ charger: 32 minutes Standard Range, 38 minutes Extended Range. For 2025 on a 150 kW+ charger: 32 minutes on the 98 kWh pack and 38 minutes on both the 123 kWh and 131 kWh Extended Range packs. The 2024 truck is markedly quicker than the 2023 one on the same pack.",
+          "Ford publishes a 15% to 80% time, not a 10% to 80% time. For 2022 and 2023 on a 150 kW charger: 44 minutes on the 98 kWh Standard Range pack, 41 minutes on the 131 kWh Extended Range pack. For 2024 on a 150 kW+ charger: 32 minutes Standard Range, 38 minutes Extended Range. For 2025 on a 150 kW+ charger: 32 minutes on the 98 kWh pack and 38 minutes on both the 123 kWh and 131 kWh Extended Range packs. The 2024 truck is markedly quicker than the 2023 one on the same pack. On a charger above 150 kW, a 2022 or 2023 truck charges faster after Ford's over-the-air software update, which raised its maximum DC fast charging current from 450 amps to 500 amps: InsideEVs measured a 2022 Extended Range truck at 39.5 minutes from 10% to 80% on a 350 kW stall after the update, against 44 to 45 minutes before it.",
       },
       {
         question: "What is the F-150 Lightning's peak DC charging speed?",
         answer:
-          "Ford does not publish one. Every Ford document behind this page states DC fast charging as a test condition — a 150 kW charger, or 150 kW+ — rather than a peak the truck can draw, and Ford's order guides state a Level 2 peak rate per configuration while stating no DC peak at all.",
+          "Ford states it as a current, not a power: a maximum DC fast charging current of 500 amps, raised from 450 amps. 2024 and 2025 trucks have the 500 amp limit; 2022 and 2023 trucks get it through Ford's over-the-air software update. Ford's charge times are given for a 150 kW charger, or 150 kW+, and Ford's documents state no peak in kilowatts.",
       },
       {
         question: "How fast does an F-150 Lightning charge at home?",
