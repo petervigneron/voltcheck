@@ -119,3 +119,42 @@ test("a term with no mileage cap is in force on the clock alone, not unknown", (
   // …and past the term it is still expired.
   assert.equal(batteryWarranty(r, car(2013, 50_000), NOW).state, "expired");
 });
+
+// ── A row's documented in-service floor tightens the generic one ───────────
+
+test("a documented production start lifts the years-left floor, and never lowers it", () => {
+  const sept2026 = new Date("2026-09-16T00:00:00Z");
+  const lightning = (iso: string | undefined): EnrichmentRow =>
+    ({
+      id: "l", make: "FORD", model: "F-150 Lightning", modelYears: [2022, 2022],
+      warranty: {
+        batteryYears: f(8), batteryMiles: f(100_000),
+        ...(iso ? { earliestInService: f(iso) } : {}),
+      },
+    }) as EnrichmentRow;
+  const truck = (year: number) => ({ make: "Ford", model: "F-150 Lightning", year, mileage: 26_179 }) as Subject;
+
+  // Generic floor: in service 1 Jan 2021, term ends 1 Jan 2029 — 2 whole years.
+  assert.equal(say(batteryWarranty(lightning(undefined), truck(2022), sept2026)).split(" — ")[0], "In force · 73,821 mi or 2+ yr left");
+  // Ford's production start, 26 Apr 2022: term ends 26 Apr 2030 — 3 whole years.
+  assert.equal(say(batteryWarranty(lightning("2022-04-26"), truck(2022), sept2026)).split(" — ")[0], "In force · 73,821 mi or 3+ yr left");
+  // A floor earlier than the generic one changes nothing: both are lower
+  // bounds, and the later one is the tighter one.
+  assert.equal(say(batteryWarranty(lightning("2019-06-01"), truck(2022), sept2026)).split(" — ")[0], "In force · 73,821 mi or 2+ yr left");
+  // A malformed date falls back to the generic floor rather than throwing.
+  assert.equal(say(batteryWarranty(lightning("spring 2022"), truck(2022), sept2026)).split(" — ")[0], "In force · 73,821 mi or 2+ yr left");
+  // Whole years only: 26 Apr 2030 is 3 yr 7 mo from 16 Sept 2026, never 4.
+  assert.equal(say(batteryWarranty(lightning("2022-04-26"), truck(2022), new Date("2027-04-27T00:00:00Z"))).split(" — ")[0], "In force · 73,821 mi or 2+ yr left");
+  assert.equal(say(batteryWarranty(lightning("2022-04-26"), truck(2022), new Date("2027-04-25T00:00:00Z"))).split(" — ")[0], "In force · 73,821 mi or 3+ yr left");
+});
+
+test("the documented floor cannot keep a warranty in force past its own term", () => {
+  const row = {
+    id: "l", make: "FORD", model: "F-150 Lightning", modelYears: [2022, 2022],
+    warranty: { batteryYears: f(8), batteryMiles: f(100_000), earliestInService: f("2022-04-26") },
+  } as EnrichmentRow;
+  const truck = { make: "Ford", model: "F-150 Lightning", year: 2022, mileage: 30_000 } as Subject;
+  // 26 Apr 2030 has passed: the earliest in-service is out of time, the latest
+  // (a 2023 sale) is not — unknown, exactly as the generic bounds would say.
+  assert.equal(batteryWarranty(row, truck, new Date("2030-05-01T00:00:00Z")).state, "unknown");
+});

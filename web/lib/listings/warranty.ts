@@ -79,6 +79,32 @@ function underPackReplacementRecall(l: Pick<Listing, "make" | "model" | "year">)
 
 const MONTH_YEAR = new Intl.DateTimeFormat("en-US", { month: "short", year: "numeric", timeZone: "UTC" });
 
+/** The earliest date a car of this model year can have gone into service:
+ *  1 January of the year before the model year (a model year goes on sale
+ *  the calendar year before it), or the row's own documented floor where
+ *  that is later. Undefined when there is no model year to reason from. */
+function earliestInServiceDate(row: EnrichmentRow | undefined, year: number | undefined): Date | undefined {
+  if (year == null) return undefined;
+  const generic = new Date(Date.UTC(year - 1, 0, 1));
+  const iso = row?.warranty?.earliestInService?.value;
+  if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return generic;
+  const documented = new Date(iso + "T00:00:00Z");
+  if (!Number.isFinite(documented.getTime())) return generic;
+  return documented.getTime() > generic.getTime() ? documented : generic;
+}
+
+function addYears(d: Date, years: number): Date {
+  return new Date(Date.UTC(d.getUTCFullYear() + years, d.getUTCMonth(), d.getUTCDate()));
+}
+
+/** Whole calendar years from `from` to `to`, floored; 0 when `to` is not
+ *  at least a year away. */
+function wholeYearsBetween(from: Date, to: Date): number {
+  let n = to.getUTCFullYear() - from.getUTCFullYear();
+  if (n > 0 && addYears(from, n).getTime() > to.getTime()) n -= 1;
+  return Math.max(0, n);
+}
+
 export function batteryWarranty(
   row: EnrichmentRow | undefined,
   listing: Pick<Listing, "year" | "mileage" | "make" | "model" | "batteryCoverage">,
@@ -139,8 +165,18 @@ export function batteryWarranty(
   }
 
   // In force on both clocks, under the reading least favourable to the claim.
-  const earliestExpiryYear = years != null && year != null ? year - 1 + years : undefined;
-  const timeSafe = earliestExpiryYear != null && now.getUTCFullYear() < earliestExpiryYear;
+  //
+  // The earliest in-service date is 1 January of the year before the model
+  // year unless the row knows better. A row's `earliestInService` is the
+  // maker's own production-start / Job 1 / order-bank date for that model
+  // year, and it can only move the floor LATER — both are lower bounds on
+  // the truth, so the later one is the tighter one and neither can overstate
+  // coverage. This is what stopped a 2022 F-150 Lightning (built from 26 Apr
+  // 2022, no earlier) reading "2+ yr left" in Sept 2026: 1 Jan 2021 + 8 yr
+  // gave 2 whole years, 26 Apr 2022 + 8 yr gives 3.
+  const earliestInService = earliestInServiceDate(row, year);
+  const earliestExpiry = years != null && earliestInService != null ? addYears(earliestInService, years) : undefined;
+  const timeSafe = earliestExpiry != null && now.getTime() < earliestExpiry.getTime();
   const milesSafe = miles != null && odo != null && odo < miles;
   if (timeSafe && milesSafe) {
     // "In force" with nothing after it answered the question and then dropped
@@ -149,11 +185,10 @@ export function batteryWarranty(
     // side cannot: the term runs from an in-service date we don't have, so we
     // give the floor that assumption can't undercut. Read least-favourably (the
     // earliest in-service the model year allows), coverage is guaranteed on the
-    // clock through the end of earliestExpiryYear - 1, so that many whole years
-    // from now is a minimum, marked "+". Whichever limit lands first ends it,
-    // hence "or".
+    // clock until earliestExpiry, so the whole years between now and then are
+    // a minimum, marked "+". Whichever limit lands first ends it, hence "or".
     const milesLeft = miles! - odo!;
-    const minYearsLeft = earliestExpiryYear! - 1 - now.getUTCFullYear();
+    const minYearsLeft = wholeYearsBetween(now, earliestExpiry!);
     const label =
       minYearsLeft >= 1
         ? `In force · ${milesLeft.toLocaleString()} mi or ${minYearsLeft}+ yr left`
@@ -168,9 +203,9 @@ export function batteryWarranty(
   // A term with no mileage cap at all (Tesla S/X before 29 Jan 2020, VinFast,
   // Ferrari) used to fall through to "unknown" because milesSafe could never
   // be true. The clock is the only limit, so read it the same least-favourable
-  // way: in force through the end of earliestExpiryYear - 1 at minimum.
+  // way: in force until earliestExpiry at minimum.
   if (miles == null && years != null && timeSafe) {
-    const minYearsLeft = earliestExpiryYear! - 1 - now.getUTCFullYear();
+    const minYearsLeft = wholeYearsBetween(now, earliestExpiry!);
     return {
       state: "active",
       label: minYearsLeft >= 1 ? `In force · ${minYearsLeft}+ yr left` : "In force",

@@ -71,6 +71,37 @@ const WARRANTY = {
   batteryTransfers: f(true, "mfr" as Source, "high"),
 };
 
+// The earliest any truck of each model year can have gone into service
+// (2026-09-16). lib/listings/warranty.ts bounds the years left on the
+// battery warranty from this instead of its generic 1 January of the year
+// before the model year, which for a nameplate that launched mid-year is up
+// to two calendar years too pessimistic: every 2022 Lightning on the site
+// read "2+ yr left" in Sept 2026 when the truck could not have been in
+// service before Ford's own 26 Apr 2022 production start, which makes 3+
+// the honest floor. Each date is the EARLIEST documented event for the
+// model year, never the first delivery, so it can only understate coverage:
+//   2022  Ford's newsroom, 26 Apr 2022: "Today marks the launch … full
+//         production of F-150 Lightning trucks begins" at the Rouge EV Center.
+//   2023  Order banks for the 2023 model year opened 9 Aug 2022 (Ford dealer
+//         bulletin, reported by The Detroit News and Ford Authority that day);
+//         Ford's Fleet Distribution News Bulletin of 13 May 2022 scheduled
+//         2023MY Job 1 for 10 Oct 2022. The order-bank date is the floor.
+//   2024  Ford's 2024 order guide is dated 4 Oct 2023 and the 2024 Pro fleet
+//         order banks opened 19 Oct 2023; 1 Oct 2023 is the floor.
+//   2025  Ford scheduled 2025MY Job 1 for 12 Nov 2024 (Ford Authority, Oct
+//         2024) and the line then sat idle until Jan 2025 (Ford Authority,
+//         27 Mar 2025: production "began … back in January"); 1 Nov 2024 is
+//         the floor.
+const AS_OF_IN_SERVICE = "2026-09-16";
+const inService = (iso: string, note: string, url?: string): Fact<string> => ({
+  value: iso, source: "mfr", asOf: AS_OF_IN_SERVICE, confidence: "high", note, sourceUrl: url,
+});
+const PRODUCTION_BEGINS_22 = "https://media.ford.com/content/fordmedia/fna/us/en/news/2022/04/26/production-begins-f-150-lightning.html";
+const WARRANTY_22 = { ...WARRANTY, earliestInService: inService("2022-04-26", "Ford newsroom: full production began 26 Apr 2022", PRODUCTION_BEGINS_22) };
+const WARRANTY_23 = { ...WARRANTY, earliestInService: inService("2022-08-09", "2023MY order banks opened 9 Aug 2022; Ford scheduled Job 1 for 10 Oct 2022") };
+const WARRANTY_24 = { ...WARRANTY, earliestInService: inService("2023-10-01", "2024 order guide dated 4 Oct 2023; Pro fleet order banks opened 19 Oct 2023") };
+const WARRANTY_25 = { ...WARRANTY, earliestInService: inService("2024-11-01", "Ford scheduled 2025MY Job 1 for 12 Nov 2024; production ran from Jan 2025") };
+
 const NO_HEAT_PUMP = f<"none">(
   "none",
   "mfr",
@@ -1567,7 +1598,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packUsableKwh: fb(98, "mfr", "high", "Stated as usable energy; a preproduction figure", FORD_L22_SPECS) },
     range: { epaRangeMi: f(230, "mfr", "high", "EPA rating for the Standard Range pack (VIN engine code L)", epa(45318)) },
     thermal: { heatPump: NO_HEAT_PUMP },
-    warranty: WARRANTY,
+    warranty: WARRANTY_22,
     charging: LIGHTNING_CHARGING,
   },
   {
@@ -1580,7 +1611,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packUsableKwh: fb(131, "mfr", "high", "Stated as usable energy; a preproduction figure", FORD_L22_SPECS) },
     range: { epaRangeMi: f(320, "mfr", "high", "EPA rating for the Extended Range pack (VIN engine code V), non-Platinum trims", epa(45317)) },
     thermal: { heatPump: NO_HEAT_PUMP },
-    warranty: WARRANTY,
+    warranty: WARRANTY_22,
     charging: LIGHTNING_CHARGING,
   },
   {
@@ -1594,7 +1625,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packUsableKwh: fb(131, "mfr", "high", "Stated as usable energy; a preproduction figure", FORD_L22_SPECS) },
     range: { epaRangeMi: f(300, "mfr", "high", "Platinum carries the same Extended Range pack but is EPA-rated 300 (heavier 22\" wheels)", epa(45316)) },
     thermal: { heatPump: NO_HEAT_PUMP },
-    warranty: WARRANTY,
+    warranty: WARRANTY_22,
     charging: LIGHTNING_CHARGING,
   },
 
@@ -1609,7 +1640,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packUsableKwh: f(98, "mfr", "high", undefined, SPECS_23) },
     range: { epaRangeMi: f(240, "mfr", "high", "EPA rating for the Standard Range pack (VIN engine code L)", epa(46329)) },
     thermal: { heatPump: NO_HEAT_PUMP },
-    warranty: WARRANTY,
+    warranty: WARRANTY_23,
     charging: LIGHTNING_CHARGING,
   },
   {
@@ -1622,7 +1653,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packUsableKwh: f(131, "mfr", "high", undefined, SPECS_23) },
     range: { epaRangeMi: f(320, "mfr", "high", "EPA rating for the Extended Range pack (VIN engine code V), non-Platinum trims", epa(46327)) },
     thermal: { heatPump: NO_HEAT_PUMP },
-    warranty: WARRANTY,
+    warranty: WARRANTY_23,
     charging: LIGHTNING_CHARGING,
   },
   {
@@ -1636,7 +1667,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packUsableKwh: f(131, "mfr", "high", undefined, SPECS_23) },
     range: { epaRangeMi: f(300, "mfr", "high", "Platinum carries the same Extended Range pack but is EPA-rated 300 (heavier 22\" wheels)", epa(46328)) },
     thermal: { heatPump: NO_HEAT_PUMP },
-    warranty: WARRANTY,
+    warranty: WARRANTY_23,
     charging: LIGHTNING_CHARGING,
   },
 
@@ -1651,7 +1682,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packUsableKwh: f(98, "mfr", "high", undefined, OG_24) },
     range: { epaRangeMi: f(240, "mfr", "high", "EPA rating for the Standard Range pack (VIN engine code K)", epa(47821)) },
     thermal: { heatPump: HEAT_PUMP_STD },
-    warranty: WARRANTY,
+    warranty: WARRANTY_24,
     charging: LIGHTNING_CHARGING,
   },
   {
@@ -1664,7 +1695,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packUsableKwh: f(131, "mfr", "high", undefined, OG_24) },
     range: { epaRangeMi: f(320, "mfr", "high", "EPA rating for the Extended Range pack (VIN engine code 7, or M with dual onboard chargers), non-Platinum trims", epa(47818)) },
     thermal: { heatPump: HEAT_PUMP_STD },
-    warranty: WARRANTY,
+    warranty: WARRANTY_24,
     charging: LIGHTNING_CHARGING,
   },
   {
@@ -1678,7 +1709,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packUsableKwh: f(131, "mfr", "high", undefined, OG_24) },
     range: { epaRangeMi: f(300, "mfr", "high", "Platinum carries the same Extended Range pack but is EPA-rated 300 (heavier 22\" wheels)", epa(47819)) },
     thermal: { heatPump: HEAT_PUMP_STD },
-    warranty: WARRANTY,
+    warranty: WARRANTY_24,
     charging: LIGHTNING_CHARGING,
   },
 
@@ -1693,7 +1724,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packUsableKwh: f(98, "mfr", "high", undefined, SPECS_25) },
     range: { epaRangeMi: f(240, "mfr", "high", "EPA rating for the Standard Range pack (VIN engine code K)", epa(48707)) },
     thermal: { heatPump: HEAT_PUMP_STD },
-    warranty: WARRANTY,
+    warranty: WARRANTY_25,
     charging: LIGHTNING_CHARGING,
   },
   {
@@ -1706,7 +1737,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packUsableKwh: f(123, "mfr", "high", "The smaller of two 2025 Extended Range packs, new this year (order code 99U)", SPECS_25) },
     range: { epaRangeMi: f(300, "mfr", "high", "EPA rating for the 123 kWh Extended Range pack (VIN engine code U; EPA lists it as “ER2”), standard on Flash, optional on Pro/XLT", epa(49077)) },
     thermal: { heatPump: HEAT_PUMP_STD },
-    warranty: WARRANTY,
+    warranty: WARRANTY_25,
     charging: LIGHTNING_CHARGING,
   },
   {
@@ -1719,7 +1750,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packUsableKwh: f(131, "mfr", "high", undefined, SPECS_25) },
     range: { epaRangeMi: f(320, "mfr", "high", "EPA rating for the 131 kWh Extended Range pack (VIN engine code 7; EPA lists it as “ER1”), non-Platinum trims", epa(48705)) },
     thermal: { heatPump: HEAT_PUMP_STD },
-    warranty: WARRANTY,
+    warranty: WARRANTY_25,
     charging: LIGHTNING_CHARGING,
   },
   {
@@ -1733,7 +1764,7 @@ export const RESEARCH_ROWS_4: EnrichmentRow[] = [
     battery: { packUsableKwh: f(131, "mfr", "high", undefined, SPECS_25) },
     range: { epaRangeMi: f(300, "mfr", "high", "Platinum carries the 131 kWh Extended Range pack but is EPA-rated 300 (heavier 22\" wheels)", epa(48708)) },
     thermal: { heatPump: HEAT_PUMP_STD },
-    warranty: WARRANTY,
+    warranty: WARRANTY_25,
     charging: LIGHTNING_CHARGING,
   },
 

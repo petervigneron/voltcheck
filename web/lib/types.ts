@@ -318,6 +318,18 @@ export interface EnrichmentRow {
     batteryTransfers?: Fact<boolean>;
     powertrainTerms?: Fact<string>;
     extendedCoverage?: Fact<string>;
+    // ISO date (YYYY-MM-DD) before which no car on this row can have gone
+    // into service — the maker's own production start, Job 1 or order-bank
+    // opening for the model year, whichever is documented. It exists because
+    // lib/listings/warranty.ts has to bound the years left on a battery
+    // warranty without the car's in-service date, and its generic floor
+    // (1 January of the year BEFORE the model year) is two calendar years
+    // too pessimistic for a nameplate that launched mid-year: a 2022 F-150
+    // Lightning built from 26 Apr 2022 read "2+ yr left" in Sept 2026 when
+    // 3+ is the honest floor. Only ever a lower bound — a date later than
+    // the truth would overstate coverage, so cite the earliest documented
+    // event, never the first delivery you happen to find.
+    earliestInService?: Fact<string>;
   };
   // Research flags on a model. NONE of this renders (2026-09-05, same rule
   // as a Fact's `note`; see lib/enrichment/noteRule.ts and
