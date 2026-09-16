@@ -1,0 +1,448 @@
+name: Porsche crawl (residential runner)
+
+# The 63 Porsche rooftops, crawled from a self-hosted runner on a home
+# internet line, because their wall is keyed on the address the request comes
+# from and nothing else.
+#
+# WHY THIS EXISTS (2026-09-16). 1,077 live cars on 56 Porsche rooftops were
+# dark — not seen or confirmed in 36 hours, so migration 0091 withheld every
+# one of them from the site. The lane is not broken. The same code, the same
+# Chrome, the same unpatched user-agent, measured the same day:
+#
+#   from a laptop on a home line   porscheplano.com     200, 174 in the lot,
+#                                                       45 read in 3 loads, 31 s
+#                                  porschedowntownla.com 200, 325 in the lot,
+#                                                       30 read in 2 loads, 21 s
+#   from GitHub-hosted runners     all 63 rooftops      59 x 429 on the FIRST
+#     (run 35079549999, 09:27 UTC)                      load, 4 x 404, 0 cars
+#
+# The 429 carries `x-vercel-mitigated: challenge`: Vercel Attack Challenge
+# Mode, a JavaScript proof-of-work served with a 429 status (the full write-up
+# is in the header of scraper/lib/platforms/porsche.mjs). It is not a rate
+# limit — probing in series answered exactly as readily as in parallel — and
+# it is not the lane failing: it is the datacenter address being challenged
+# where a residential one is not. Every browser-crawl.yml run since 2026-09-13
+# has read 0 Porsche cars for 63 challenged loads a run.
+#
+# Solving the challenge is out of policy and is not on the table. The owner's
+# line (2026-09-02, restated in scraper/lib/browser.mjs): plain headless
+# Chrome on robots-allowed pages is fine, and no stealth patches, no
+# fingerprint spoofing, no proxy rotation, no challenge solving. A residential
+# runner changes nothing about the request — same browser, same declaration,
+# same robots gate, same one-request-per-host-per-1.1 s pacing. It changes
+# where it is sent from, which is the one variable the measurement isolates.
+#
+# The four 404s are NOT the challenge and this workflow does not fix them:
+# porschecincinnatikings.com, porscheofgreenville.com, porschesouthaustin.com
+# and jackingramporsche.com answer 404 on the search path from the laptop too
+# (2026-09-16 control). Eighteen of the 1,077 dark cars sit on one of them
+# (porschesouthaustin.com), so a perfect run of this workflow recovers ~1,059
+# cars on 55 rooftops, not 1,077. The other four rooftops are a lane question
+# for another day.
+#
+# WHAT THIS IS. browser-crawl.yml's crawl job with the rooftop list coming
+# from the porsche platform instead of the hosted default, one part instead of
+# ten, and `runs-on: [self-hosted, residential]`. Every guard is copied, not
+# reinvented, and each one exists because of an incident named in
+# rolling-crawl.yml or browser-crawl.yml: the vpic-enrich → ingest → db-sync
+# order (ingest keeps only evConfidence "high", and vpic-enrich is what
+# promotes real EVs whose page omitted fuel type), the wait for a running
+# nightly before pushing (this Supabase instance falls over when writes
+# arrive together), the vPIC-cache commit with its rebase unwedging, and the
+# publish call at the end (CLAUDE.md: the grid's freshness is the publish
+# cadence and nothing else, so a crawl that does not publish changes nothing
+# a shopper sees).
+#
+# The measurement jobs run on GitHub-hosted runners on purpose: they only talk
+# to Supabase, they are the record of what the run did, and they should still
+# file a number on a day the home box is off.
+#
+# WHEN. Twice a day against a 36-hour rule, so one missed run is survivable:
+# 06:30 and 19:00 UTC. Both are outside the nightly's 10:30–18:00 UTC window
+# and away from browser-crawl.yml's 04:30/18:30 starts. 63 rooftops at 3
+# pages in flight measured from a laptop at roughly half an hour; the
+# 120-minute deadline is a net, not a plan.
+#
+# IF NO RUNNER IS REGISTERED, the crawl job simply queues (GitHub gives up
+# after 24 hours) and the report job still files the dark number. Nothing
+# breaks and nothing is recovered — the setup below is what makes it run.
+#
+# ──────────────────────────────────────────────────────────────────────────
+# SETTING UP THE RUNNER (the owner does this once; docs/porsche-residential-
+# runner.md has the same steps with more room)
+#
+# On an always-on Mac or small box at home — not a laptop that closes. The
+# laptop lanes were retired on 2026-09-06 because a closed lid at 17:45 UTC
+# cost 80 of a 110-rooftop chunk (crawl-cohort.yml's header), not because
+# crawling from home was wrong. In System Settings → Displays → Energy /
+# Battery, set "Prevent automatic sleeping when the display is off".
+#
+#   1. GitHub → the repo → Settings → Actions → Runners → New self-hosted
+#      runner → macOS / your arch. Run the download and configure commands it
+#      prints, in a directory you will keep (~/actions-runner).
+#
+#      When ./config.sh asks for labels, type:  residential
+#      (The `self-hosted` label is added for you. This workflow asks for both,
+#      so a runner without the `residential` label will never pick it up.)
+#
+#   2. Install it as a service, so it starts at boot and survives a logout:
+#        cd ~/actions-runner && ./svc.sh install && ./svc.sh start
+#        ./svc.sh status        # should say "started"
+#
+#   3. Node 22 and Chrome, once:
+#        brew install node@22          # actions/setup-node also installs it
+#        cd <repo>/scraper && npm ci && npx playwright install chromium-headless-shell
+#      The workflow runs the playwright install itself every time; it is a
+#      no-op once the browser is on the box.
+#
+#   4. scraper/.env is NOT needed by this workflow — it reads the repository
+#      secrets (SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_INGEST_TOKEN) the
+#      same way a hosted run does. Copy scraper/.env onto the box only if you
+#      want to run scraper scripts there by hand.
+#
+#   5. Check it is picking up jobs:
+#        - Settings → Actions → Runners shows it Idle (green), labels
+#          `self-hosted`, `macOS`/`Linux`, `residential`.
+#        - Actions → Porsche crawl (residential runner) → Run workflow, with
+#          limit = 5 and sync = false. A trial that reads five rooftops and
+#          pushes nothing proves the box, the browser and the address.
+#        - The run's "Crawl the Porsche rooftops" step should report cars,
+#          not `porsche browser lane search 429`. A 429 there means the
+#          runner is not on the residential line you think it is.
+#        - tail -f ~/actions-runner/_diag/Runner_*.log on the box if a job
+#          stays queued.
+# ──────────────────────────────────────────────────────────────────────────
+
+on:
+  schedule:
+    - cron: "30 6 * * *"
+    - cron: "0 19 * * *"
+  workflow_dispatch:
+    inputs:
+      domains:
+        description: "Space-separated rooftops to crawl instead of the registry's porsche rows (a trial)."
+        required: false
+        default: ""
+      limit:
+        description: "Only the first N rooftops of the rotated list (a trial). Blank = all."
+        required: false
+        default: ""
+      key:
+        description: "Rotation key (an integer). Blank = this half-day, as the schedule uses."
+        required: false
+        default: ""
+      browser_concurrency:
+        description: "BROWSER_CONCURRENCY: Chrome pages in flight on the home box (a rooftop is always one load at a time)."
+        required: false
+        default: "3"
+      max_pages:
+        description: "crawl.mjs --max-pages: the lane's browser-load budget per rooftop (the lane's own cap is 30 = 450 cars)."
+        required: false
+        default: "30"
+      domain_cap_min:
+        description: "crawl.mjs --domain-cap-min: minutes one rooftop may hold a worker."
+        required: false
+        default: "8"
+      deadline_min:
+        description: "crawl.mjs --deadline-min; the process hard-stops 5 minutes past it."
+        required: false
+        default: "120"
+      sync:
+        description: "Push to Supabase. 'false' crawls and reports only."
+        required: false
+        default: "true"
+
+concurrency:
+  group: porsche-crawl
+  cancel-in-progress: false
+
+permissions:
+  contents: write # commits the vPIC decode cache
+  actions: read # reads whether nightly.yml is mid-run, for the sync guard
+
+jobs:
+  # THE NUMBER BEFORE, on a hosted runner: the owner's acceptance query over
+  # the Porsche rooftops, taken before a page is loaded. ~1,100 narrow rows;
+  # not a walk.
+  measure-before:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Dark Porsche cars before
+        working-directory: scraper
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          node browser-lane-domains.mjs --platforms porsche --parts 1 --part 0 > /tmp/porsche.txt
+          node browser-lane-dark.mjs --label before --domains-file /tmp/porsche.txt --json out/dark-before.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: porsche-crawl-dark-before
+          path: scraper/out/dark-before.json
+
+  crawl:
+    needs: measure-before
+    # The crawl must not wait on the measurement's luck: a database blip in
+    # measure-before costs the "before" number, not the run.
+    if: ${{ always() }}
+    runs-on: [self-hosted, residential]
+    # deadline + 5 (the hard stop) + setup, enrichment, ingest, the wait for a
+    # nightly (up to 90), sync and the cache commit.
+    timeout-minutes: 260
+    steps:
+      # checkout runs `git clean -ffdx` on a workspace it has seen before, so
+      # a previous run's scraper/out/ cannot be read as this run's — which
+      # matters on a box that keeps its workspace, unlike a hosted runner.
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      # No actions/cache here: the box keeps its own node_modules and browser
+      # between runs, and both commands are near-no-ops when nothing changed.
+      # `install chromium-headless-shell` WITHOUT --with-deps, because the
+      # with-deps form wants sudo and a self-hosted runner should not need it.
+      - working-directory: scraper
+        run: npm ci --no-audit --no-fund && npx playwright install chromium-headless-shell
+
+      # The registry's working porsche rooftops, rotated for this half-day so
+      # a run that hits its deadline drops different rooftops each time
+      # (scraper/lib/browser-lane-domains.mjs).
+      - name: Choose this run's rooftops
+        id: pick
+        working-directory: scraper
+        env:
+          DOMAINS: ${{ github.event.inputs.domains }}
+        run: |
+          if [ -n "$DOMAINS" ]; then
+            printf '%s\n' $DOMAINS | awk 'NF' | tr '\n' ' ' > "$RUNNER_TEMP/domains.txt"
+          else
+            node browser-lane-domains.mjs --platforms porsche \
+              --part 0 --parts 1 \
+              --limit "${{ github.event.inputs.limit || '0' }}" --key "${{ github.event.inputs.key }}" \
+              > "$RUNNER_TEMP/domains.txt"
+          fi
+          echo "count=$(wc -w < "$RUNNER_TEMP/domains.txt" | tr -d ' ')" >> "$GITHUB_OUTPUT"
+          head -c 300 "$RUNNER_TEMP/domains.txt"; echo
+
+      # --concurrency is BROWSER_CONCURRENCY + 2: a rooftop in flight without
+      # a Chrome page waits on the page semaphore while its domain cap runs,
+      # so more domains in flight than pages only burns cap; two extra overlap
+      # the robots read and the per-host pacing between loads.
+      #
+      # Three pages, not browser-crawl's six: this is someone's home machine
+      # and their internet line, and 63 rooftops fit the window at three.
+      #
+      # `|| rc=$?` because bash is -e here: without it a crawl that exits
+      # non-zero ends the step before the timing file is written.
+      - name: Crawl the Porsche rooftops
+        if: ${{ steps.pick.outputs.count != '0' }}
+        working-directory: scraper
+        env:
+          BROWSER_LANES: "on"
+          BROWSER_CONCURRENCY: ${{ github.event.inputs.browser_concurrency || '3' }}
+          NODE_OPTIONS: "--max-old-space-size=5120"
+        run: |
+          BC="${BROWSER_CONCURRENCY}"
+          start=$(date -u +%FT%TZ)
+          rc=0
+          node crawl.mjs $(cat "$RUNNER_TEMP/domains.txt") \
+            --max-pages "${{ github.event.inputs.max_pages || '30' }}" --cache-hours 0 \
+            --concurrency $((BC + 2)) \
+            --deadline-min "${{ github.event.inputs.deadline_min || '120' }}" \
+            --domain-cap-min "${{ github.event.inputs.domain_cap_min || '8' }}" || { rc=$?; echo "::warning::crawl.mjs exited $rc; its checkpointed rooftops are still ingested"; }
+          printf '{"startedAt":"%s","endedAt":"%s","asked":%s,"browserConcurrency":%s,"exit":%s}\n' \
+            "$start" "$(date -u +%FT%TZ)" "${{ steps.pick.outputs.count }}" "$BC" "$rc" > out/crawl-timing.json
+          cat out/crawl-timing.json
+
+      # Same order as nightly.yml, rolling-crawl.yml and browser-crawl.yml,
+      # for the reason their headers give: never ingest before enriching.
+      # A watchdog rather than `timeout 10m …`: coreutils' timeout is not on a
+      # stock macOS, and this runner is someone's Mac. Decoded VINs are cached
+      # (scraper/registry/vpic-cache.json), so a capped run loses nothing.
+      - name: VIN enrichment (vpic)
+        if: ${{ steps.pick.outputs.count != '0' }}
+        working-directory: scraper
+        run: |
+          node vpic-enrich.mjs & pid=$!
+          ( sleep 600; kill "$pid" 2>/dev/null ) & dog=$!
+          wait "$pid" || echo "::warning::vpic-enrich stopped early (its 10m cap, or an error); decoded VINs are cached and will not be re-fetched"
+          kill "$dog" 2>/dev/null || true
+
+      - name: Ingest
+        if: ${{ steps.pick.outputs.count != '0' }}
+        working-directory: scraper
+        run: node ingest.mjs
+
+      # browser-crawl.yml's guard, for its reason: this instance falls over
+      # when writes arrive together. A run here has spent up to two hours of
+      # Chrome on rooftops that come round in twelve, so it WAITS — up to 90
+      # minutes, polling every two — and skips only if the nightly is still
+      # going after that. Fails open: a GitHub API hiccup lets the sync
+      # proceed.
+      - name: Wait for a running nightly before pushing
+        id: nightly
+        if: ${{ steps.pick.outputs.count != '0' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          busy() { gh run list --repo "$GITHUB_REPOSITORY" --workflow nightly.yml \
+                     --status in_progress --limit 1 --json databaseId --jq 'length' 2>/dev/null || echo 0; }
+          BUSY=$(busy)
+          waited=0
+          while [ "$BUSY" != "0" ] && [ "$waited" -lt 90 ]; do
+            echo "nightly.yml is running; waiting (${waited} min so far) so the two lanes do not write at once"
+            sleep 120; waited=$((waited + 2)); BUSY=$(busy)
+          done
+          echo "busy=$BUSY" >> "$GITHUB_OUTPUT"
+          [ "$BUSY" != "0" ] && echo "::warning::nightly.yml still running after ${waited} min; skipping this run's push. These rooftops come round again next run."
+          echo "nightly in progress: $BUSY (waited ${waited} min)"
+
+      - name: Sync to Supabase
+        if: ${{ steps.pick.outputs.count != '0' && github.event.inputs.sync != 'false' && steps.nightly.outputs.busy == '0' }}
+        working-directory: scraper
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_INGEST_TOKEN: ${{ secrets.SUPABASE_INGEST_TOKEN }}
+          # A 5-rooftop trial can legitimately land a small share; db-sync's
+          # <50-row refusal guards a broken WHOLE crawl.
+          DB_SYNC_MIN_ROWS: "10"
+          # ingest_runs.source, so this lane's runs can be told from the
+          # nightly's, the rolling crawl's and the hosted browser crawl's.
+          DB_SYNC_SOURCE: "porsche-crawl"
+        run: node db-sync.mjs
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: porsche-crawl-part-0
+          path: |
+            scraper/out/report.json
+            scraper/out/sync-totals.json
+            scraper/out/crawl-timing.json
+          if-no-files-found: warn
+
+      - name: Commit the vPIC cache
+        if: always()
+        run: |
+          git config user.name "voltcheck-bot"
+          git config user.email "noreply@github.com"
+          unwedge() {
+            git rebase --abort 2>/dev/null || true
+            git merge --abort 2>/dev/null || true
+            git checkout -f HEAD -- scraper/registry 2>/dev/null || true
+            return 0
+          }
+          mine="${RUNNER_TEMP:-/tmp}/vpic-cache-mine.json"
+          cp scraper/registry/vpic-cache.json "$mine"
+          for i in 1 2 3 4 5; do
+            git checkout HEAD -- scraper/registry/vpic-cache.json 2>/dev/null || true
+            git fetch origin main || true
+            if ! git pull --rebase; then
+              unwedge
+              sleep $((i * 10)); continue
+            fi
+            if [ -n "$(git diff --name-only --diff-filter=U)" ]; then
+              unwedge; continue
+            fi
+            node scraper/merge-vin-cache.mjs --file scraper/registry/vpic-cache.json --mine "$mine"
+            git add scraper/registry/vpic-cache.json
+            git diff --staged --quiet && { echo "nothing to commit"; exit 0; }
+            git commit -m "Porsche crawl: vPIC cache [skip ci]"
+            if git push; then echo "vpic cache pushed"; exit 0; fi
+            [ "$(git log -1 --format=%s)" = "Porsche crawl: vPIC cache [skip ci]" ] && git reset --soft HEAD~1
+            sleep $((i * 10))
+          done
+          echo "::warning::Could not push the vPIC cache (raced another run); the decodes will be re-fetched next time."
+
+      # A run from a residential line that still reads 429 is the whole
+      # premise failing, so the summary names that class first.
+      - name: What this run did
+        if: always()
+        working-directory: scraper
+        run: |
+          echo "${{ steps.pick.outputs.count }} rooftops asked"
+          cat out/crawl-timing.json 2>/dev/null || true
+          node -e '
+            const r = JSON.parse(require("fs").readFileSync("out/report.json", "utf8"));
+            const evs = r.reduce((a, x) => a + (x.evs || []).length, 0);
+            const cls = (x) => { const s = x.stoppedEarly || "ok"; return /429/.test(s) ? "CHALLENGED (429)" : /404/.test(s) ? "search 404" : /abandon/.test(s) ? "abandoned" : /no SRP/.test(s) ? "no SRP answered" : /robots/.test(s) ? "robots-disallowed" : /partial|cap|budget/.test(s) ? "partial" : s.slice(0, 40); };
+            const c = {}; for (const x of r) c[cls(x)] = (c[cls(x)] || 0) + 1;
+            console.log(`${r.length} rooftops reported, ${evs} EVs`, c);
+            if (c["CHALLENGED (429)"]) console.log(`::warning::${c["CHALLENGED (429)"]} rooftops still answered the Vercel challenge — this runner is not reaching Porsche from a residential address.`);
+          ' 2>/dev/null || true
+          cat out/sync-totals.json 2>/dev/null || true
+
+  # THE NUMBER AFTER, and the run in outcomes, back on a hosted runner.
+  report:
+    needs: [measure-before, crawl]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: porsche-crawl-part-*
+          path: parts
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: porsche-crawl-dark-before
+          path: before
+      - name: Dark Porsche cars after
+        working-directory: scraper
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          node browser-lane-domains.mjs --platforms porsche --parts 1 --part 0 > /tmp/porsche.txt
+          node browser-lane-dark.mjs --label after --domains-file /tmp/porsche.txt --json out/dark-after.json
+      - name: What this run did
+        working-directory: scraper
+        run: node browser-crawl-report.mjs --parts ../parts --before ../before/dark-before.json --after out/dark-after.json
+
+  # Republish so the recovered cars reach the grid (CLAUDE.md: the grid's
+  # freshness is the publish cadence and nothing else). publish-feed.yml
+  # carries its own refusals — a deploy building, a walk that fell back, a
+  # >10% shrink — and runs on a hosted runner of its own.
+  should-publish:
+    needs: crawl
+    if: >-
+      ${{ always()
+          && (needs.crawl.result == 'success' || needs.crawl.result == 'failure')
+          && github.event.inputs.sync != 'false' }}
+    runs-on: ubuntu-latest
+    outputs:
+      go: ${{ steps.gate.outputs.go }}
+    steps:
+      - name: Is the nightly mid-sync?
+        id: gate
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          BUSY=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow nightly.yml \
+                   --status in_progress --limit 1 --json databaseId --jq 'length' 2>/dev/null || echo 0)
+          if [ "$BUSY" != "0" ]; then
+            echo "go=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::nightly.yml is running — not republishing; its own publish covers this run's cars."
+          else
+            echo "go=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  publish-feed:
+    needs: should-publish
+    if: ${{ always() && needs.should-publish.outputs.go == 'true' }}
+    uses: ./.github/workflows/publish-feed.yml
+    secrets: inherit

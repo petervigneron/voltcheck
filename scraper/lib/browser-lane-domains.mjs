@@ -1,5 +1,7 @@
-// Which registry rooftops the browser crawl (.github/workflows/browser-crawl
-// .yml) owns, and how one run's list is cut into parts and rotated.
+// Which registry rooftops each browser crawl owns — the hosted one
+// (.github/workflows/browser-crawl.yml) and the residential one
+// (.github/workflows/porsche-crawl.yml) — and how one run's list is cut into
+// parts and rotated.
 //
 // A "browser-lane rooftop" is a working registry row whose platform crawl.mjs
 // dispatches to a real Chrome (its BROWSER_LANES table) — the vendors whose
@@ -17,11 +19,43 @@
 // exactly that on 112 of them. A visit that reads nothing and certifies
 // nothing is not worth a runner slot; those cars are the nightly browser
 // recheck's (recheck-browser.mjs, one robots-allowed VDP at a time).
-export const BROWSER_LANE_PLATFORMS = ["dealerinspire", "porsche"];
+//
+// porsche is a browser lane too, and since 2026-09-16 it is not the HOSTED
+// crawl's, for a reason that is about the address the request comes from and
+// nothing else. Porsche's platform runs Vercel Attack Challenge Mode, and the
+// challenge is keyed on the caller's address: from a residential line the
+// lane reads the lot at 200 (porscheplano.com, 2026-09-16: 174 cars in the
+// lot, 45 read in 3 loads, 31 s), while from GitHub-hosted runners every
+// rooftop answers 429 with x-vercel-mitigated: challenge on its FIRST load —
+// 59 of the 63 working rooftops on the 2026-09-16 09:27 UTC run, the other
+// four a genuine 404 the laptop reproduces, and 0 cars read on any of them,
+// which is what every hosted run since 2026-09-13 has done. Solving the
+// challenge is out of policy (lib/browser.mjs), so the rooftops moved to a
+// self-hosted runner on a residential line (.github/workflows/porsche-crawl
+// .yml) and the hosted crawl stopped spending 63 challenged loads a run on
+// them.
+//
+// The split is a ROUTING fact, not a taxonomy: both lists are browser lanes,
+// and anything measuring "the browser lanes" as a whole wants both
+// (ALL_BROWSER_LANE_PLATFORMS). What BROWSER_LANE_PLATFORMS means is "what a
+// hosted runner should visit", because that is what its two callers —
+// browser-crawl.yml's rooftop picker and the dark measurement it takes before
+// and after itself — are asking. Leaving porsche in the default would have
+// put 1,077 cars no hosted run can reach into browser-crawl's own
+// before/after numbers for ever.
+export const BROWSER_LANE_PLATFORMS = ["dealerinspire"];
 
-/** Sorted, de-duplicated domains of the working rooftops on the browser
- *  lanes. Sorted so membership is stable between runs and a rooftop's place
- *  in the list depends on the registry, not on the order it was added. */
+/** The browser lanes a residential self-hosted runner owns, because the
+ *  vendor's wall is keyed on where the request comes from. */
+export const RESIDENTIAL_LANE_PLATFORMS = ["porsche"];
+
+/** Every browser-lane platform, whichever runner visits it. */
+export const ALL_BROWSER_LANE_PLATFORMS = [...BROWSER_LANE_PLATFORMS, ...RESIDENTIAL_LANE_PLATFORMS];
+
+/** Sorted, de-duplicated domains of the working rooftops on the given
+ *  browser lanes (by default the ones a hosted runner owns). Sorted so
+ *  membership is stable between runs and a rooftop's place in the list
+ *  depends on the registry, not on the order it was added. */
 export function browserLaneDomains(registry, { platforms = BROWSER_LANE_PLATFORMS } = {}) {
   const want = new Set(platforms);
   const out = new Set();

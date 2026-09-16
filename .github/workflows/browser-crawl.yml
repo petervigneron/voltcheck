@@ -6,8 +6,8 @@ name: Browser crawl
 # car only while some source saw it, or its own page confirmed it, within 36
 # hours. A rooftop nobody re-reads therefore decays off the site in a day and
 # a half — and the browser-lane rooftops (lib/browser-lane-domains.mjs: 2,167
-# Dealer Inspire and 63 Porsche rooftops on 2026-09-13) were being re-read by
-# nobody in particular. The rolling crawl carries them with its lanes on, but
+# Dealer Inspire and, until 2026-09-16, 63 Porsche rooftops) were being
+# re-read by nobody in particular. The rolling crawl carries them with its lanes on, but
 # measured on its 2026-09-13 07:11 run: 47 of 48 slices hit the 18-minute
 # deadline with ~4,200 of 21,116 domains never reached, and of the 1,436
 # Dealer Inspire rooftops it did reach, 1,331 came back partial under the
@@ -17,6 +17,19 @@ name: Browser crawl
 # browser recheck re-admits live cars one page at a time (1,200 a night) and
 # cannot find a NEW car on any of them. The owner's standard: "comprehensive
 # listings that are real, active, and timely."
+#
+# WHAT IT NO LONGER OWNS (2026-09-16). The 63 Porsche rooftops left this
+# workflow for .github/workflows/porsche-crawl.yml, which runs the same lane
+# from a self-hosted runner on a residential line. Their wall is Vercel Attack
+# Challenge Mode and it is keyed on the CALLER'S ADDRESS: measured on the
+# 09:27 UTC run that day, 59 of the 63 answered 429 with x-vercel-mitigated:
+# challenge on their first load and the other four a genuine 404, for 0 cars
+# read — which is what every run since 2026-09-13 had done — while the same
+# code read porscheplano.com at 200 from a laptop the same morning (174 in the
+# lot, 45 in 3 loads). Solving the challenge is out of policy, so the hosted
+# parts stopped paying 63 challenged loads a run for nothing. This also takes
+# 1,077 permanently-unreachable cars out of the before/after dark numbers
+# below, which are now Dealer Inspire's alone.
 #
 # WHAT THIS IS. crawl-cohort.yml's slice job — the rolling crawl's, with the
 # lanes on — fed from the registry instead of a dispatch, on its own schedule,

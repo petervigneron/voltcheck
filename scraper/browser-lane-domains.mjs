@@ -2,13 +2,16 @@
 // Print the rooftops one browser-crawl job should visit, space-separated.
 //
 //   node browser-lane-domains.mjs [--part I --parts N] [--limit K] [--key KEY]
-//                                 [--platforms dealerinspire,porsche]
+//                                 [--platforms porsche]
 //
-// The list is registry/registry.json's working browser-lane rooftops
-// (lib/browser-lane-domains.mjs), rotated for this run (--key, default the
-// current half-day) and cut into --parts interleaved parts; --limit keeps the
-// first K of the rotated list BEFORE cutting, which is how a trial run reads
-// the same K rooftops whatever --parts it uses.
+// The list is registry/registry.json's working rooftops on the browser lanes
+// a HOSTED runner owns (lib/browser-lane-domains.mjs — porsche is not one of
+// them; its wall is keyed on the caller's address and it is crawled by
+// porsche-crawl.yml from a residential runner, so ask for it by name with
+// --platforms porsche), rotated for this run (--key, default the current
+// half-day) and cut into --parts interleaved parts; --limit keeps the first K
+// of the rotated list BEFORE cutting, which is how a trial run reads the same
+// K rooftops whatever --parts it uses.
 import { readFile } from "node:fs/promises";
 import { browserLaneDomains, rotateForRun, partOf, runKey, BROWSER_LANE_PLATFORMS } from "./lib/browser-lane-domains.mjs";
 
@@ -29,5 +32,5 @@ const key = keyArg === "" ? runKey() : Number(keyArg);
 let list = rotateForRun(all, key);
 if (limit > 0) list = list.slice(0, limit);
 const mine = partOf(list, part, parts);
-console.error(`browser-lane-domains: ${all.length} browser-lane rooftops (${platforms.join(", ")}), key ${key}, ${limit > 0 ? `first ${limit}, ` : ""}part ${part}/${parts}: ${mine.length}`);
+console.error(`browser-lane-domains: ${all.length} rooftops (${platforms.join(", ")}), key ${key}, ${limit > 0 ? `first ${limit}, ` : ""}part ${part}/${parts}: ${mine.length}`);
 console.log(mine.join(" "));

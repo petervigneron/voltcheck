@@ -1,6 +1,14 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { browserLaneDomains, rotateForRun, partOf, runKey } from "../lib/browser-lane-domains.mjs";
+import {
+  browserLaneDomains,
+  rotateForRun,
+  partOf,
+  runKey,
+  BROWSER_LANE_PLATFORMS,
+  RESIDENTIAL_LANE_PLATFORMS,
+  ALL_BROWSER_LANE_PLATFORMS,
+} from "../lib/browser-lane-domains.mjs";
 import { isDark, lastEvidenceAt, summarizeDark, DARK_AFTER_MS } from "../lib/browser-lane-dark.mjs";
 
 const registry = {
@@ -15,14 +23,29 @@ const registry = {
   ],
 };
 
-test("browser-lane rooftops are the working dealerinspire and porsche rows, sorted and de-duplicated", () => {
-  assert.deepEqual(browserLaneDomains(registry), ["a-di.com", "b-di.com", "porsche.example"]);
+test("the default rooftops are the working dealerinspire rows, sorted and de-duplicated", () => {
+  assert.deepEqual(browserLaneDomains(registry), ["a-di.com", "b-di.com"]);
+});
+
+// The Porsche platform's wall (Vercel Attack Challenge Mode) is keyed on the
+// caller's address: 59 of 63 rooftops answered 429 on their first load from
+// every GitHub-hosted run since 2026-09-13, and the same lane reads them at
+// 200 from a residential line. They are crawled by porsche-crawl.yml on a
+// self-hosted runner, so a hosted job must not be handed them — and the dark
+// measurement browser-crawl takes of itself must not count cars no hosted run
+// can reach.
+test("porsche is a residential lane, out of the hosted default and in the whole set", () => {
+  assert.ok(!browserLaneDomains(registry).includes("porsche.example"));
+  assert.deepEqual(browserLaneDomains(registry, { platforms: RESIDENTIAL_LANE_PLATFORMS }), ["porsche.example"]);
+  assert.deepEqual(browserLaneDomains(registry, { platforms: ALL_BROWSER_LANE_PLATFORMS }), ["a-di.com", "b-di.com", "porsche.example"]);
+  assert.ok(!BROWSER_LANE_PLATFORMS.includes("porsche"));
+  assert.deepEqual(ALL_BROWSER_LANE_PLATFORMS, [...BROWSER_LANE_PLATFORMS, ...RESIDENTIAL_LANE_PLATFORMS]);
 });
 
 // The lane is closed by the vendor's robots.txt (lib/platforms/dealercenter
 // .mjs); a visit reads nothing, so the job does not spend a slot on it.
 test("dealercenter is not a browser-crawl rooftop even when probe marked it browser", () => {
-  assert.ok(!browserLaneDomains(registry).includes("dc.example"));
+  assert.ok(!browserLaneDomains(registry, { platforms: ALL_BROWSER_LANE_PLATFORMS }).includes("dc.example"));
   assert.deepEqual(browserLaneDomains(registry, { platforms: ["dealercenter"] }), ["dc.example"]);
 });
 

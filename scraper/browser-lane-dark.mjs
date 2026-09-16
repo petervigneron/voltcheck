@@ -5,8 +5,11 @@
 //                              [--domains-file /tmp/domains.txt]
 //
 // The measurement the browser crawl takes before and after every run: the
-// live rows on the browser-lane rooftops (lib/browser-lane-domains.mjs)
-// that have not been seen or confirmed in 36 hours — the owner's acceptance
+// live rows on the browser-lane rooftops (lib/browser-lane-domains.mjs —
+// Dealer Inspire by default, since the Porsche rooftops became a residential
+// runner's on 2026-09-16; ask for those with --domains-file over
+// `browser-lane-domains.mjs --platforms porsche`, which is what
+// porsche-crawl.yml does) that have not been seen or confirmed in 36 hours — the owner's acceptance
 // query, in lib/browser-lane-dark.mjs. With SUPABASE_SERVICE_ROLE_KEY it
 // reads listing_seen directly (0026 revoked anon's select on it); with only
 // the anon key it asks live_listings_feed which of the live VINs it serves,
