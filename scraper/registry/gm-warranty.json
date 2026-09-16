@@ -24002,5 +24002,283 @@
    "gmProgramNumber": "N212343880"
   },
   "checkedAt": "2026-09-15"
+ },
+ "3GN7DLRP2RS295846": {
+  "coverage": {
+   "startDate": "2024-09-23",
+   "startMileage": 6,
+   "expiresDate": "2032-09-23",
+   "expiresMileage": 100006,
+   "inServiceDate": "2024-09-23",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-09-16"
+ },
+ "3GN7DPRR4RS233924": {
+  "coverage": {
+   "startDate": "2024-07-08",
+   "startMileage": 1339,
+   "expiresDate": "2032-07-08",
+   "expiresMileage": 101339,
+   "inServiceDate": "2024-07-08",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-09-16"
+ },
+ "3GNKDBRJXRS289874": {
+  "coverage": {
+   "startDate": "2025-03-31",
+   "startMileage": 226,
+   "expiresDate": "2033-03-31",
+   "expiresMileage": 100226,
+   "inServiceDate": "2025-03-31",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-09-16"
+ },
+ "3GNKDCRJ6RS209959": {
+  "coverage": {
+   "startDate": "2024-06-03",
+   "startMileage": 3000,
+   "expiresDate": "2032-06-03",
+   "expiresMileage": 103000,
+   "inServiceDate": "2024-06-03",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-09-16"
+ },
+ "3GNKDBRJ1RS267004": {
+  "coverage": {
+   "startDate": "2024-09-03",
+   "startMileage": 14,
+   "expiresDate": "2032-09-03",
+   "expiresMileage": 100014,
+   "inServiceDate": "2024-09-03",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-09-16"
+ },
+ "3GN7DLRP9SS140829": {
+  "coverage": {
+   "startDate": "2024-12-19",
+   "startMileage": 11,
+   "expiresDate": "2032-12-19",
+   "expiresMileage": 100011,
+   "inServiceDate": "2024-12-19",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-09-16"
+ },
+ "3GNKDJRJ7SS213660": {
+  "coverage": {
+   "startDate": "2025-08-06",
+   "expiresDate": "2033-08-06",
+   "expiresMileage": 100000,
+   "inServiceDate": "2025-08-06",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-09-16"
+ },
+ "3GYK3BMR5SS214234": {
+  "coverage": {
+   "startDate": "2025-09-18",
+   "startMileage": 24,
+   "expiresDate": "2033-09-18",
+   "expiresMileage": 100024,
+   "inServiceDate": "2025-09-18",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-09-16"
+ },
+ "3GNKDCRJ4RS125610": {
+  "coverage": {
+   "startDate": "2024-10-03",
+   "startMileage": 3000,
+   "expiresDate": "2032-10-03",
+   "expiresMileage": 103000,
+   "inServiceDate": "2024-10-03",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-09-16"
+ },
+ "3GNKD1RJ8TS111415": {
+  "coverage": {
+   "startDate": "2025-11-12",
+   "expiresDate": "2033-11-12",
+   "expiresMileage": 100000,
+   "inServiceDate": "2025-11-12",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-09-16"
+ },
+ "3GN7DMRP2SS242964": {
+  "coverage": {
+   "startDate": "2025-07-17",
+   "startMileage": 6,
+   "expiresDate": "2033-07-17",
+   "expiresMileage": 100006,
+   "inServiceDate": "2025-07-17",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-09-16"
+ },
+ "1GKB0RDC3SU103706": {
+  "coverage": {
+   "startDate": "2025-02-10",
+   "startMileage": 498,
+   "expiresDate": "2033-02-10",
+   "expiresMileage": 100498,
+   "inServiceDate": "2025-02-10",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-09-16"
+ },
+ "3GNKDCRJ8RS196759": {
+  "coverage": {
+   "startDate": "2024-09-02",
+   "startMileage": 3000,
+   "expiresDate": "2032-09-02",
+   "expiresMileage": 103000,
+   "inServiceDate": "2024-09-02",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-09-16"
+ },
+ "1G1FX6S0XP4116064": {
+  "coverage": {
+   "startDate": "2022-11-30",
+   "startMileage": 13,
+   "expiresDate": "2030-11-30",
+   "expiresMileage": 100013,
+   "inServiceDate": "2022-11-30",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-09-16"
+ },
+ "3GNKDCRJ7RS159864": {
+  "coverage": {
+   "startDate": "2024-04-01",
+   "startMileage": 18,
+   "expiresDate": "2032-04-01",
+   "expiresMileage": 100018,
+   "inServiceDate": "2024-04-01",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-09-16"
+ },
+ "1GYKPTRL5RZ115831": {
+  "coverage": {
+   "startDate": "2024-07-31",
+   "startMileage": 11,
+   "expiresDate": "2032-07-31",
+   "expiresMileage": 100011,
+   "inServiceDate": "2024-07-31",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-09-16"
+ },
+ "1GKB0RDC8SU108805": {
+  "coverage": {
+   "startDate": "2024-12-06",
+   "startMileage": 13,
+   "expiresDate": "2032-12-06",
+   "expiresMileage": 100013,
+   "inServiceDate": "2024-12-06",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-09-16"
+ },
+ "3GN7DNRRXSS264167": {
+  "coverage": {
+   "startDate": "2025-10-28",
+   "startMileage": 19,
+   "expiresDate": "2033-10-28",
+   "expiresMileage": 100019,
+   "inServiceDate": "2025-10-28",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-09-16"
+ },
+ "3GPKHWRM6RS508598": {
+  "unavailable": true,
+  "checkedAt": "2026-09-16"
+ },
+ "3GPKHXRJ2TS503823": {
+  "unavailable": true,
+  "checkedAt": "2026-09-16"
+ },
+ "3GPKHWRMXRS525162": {
+  "unavailable": true,
+  "checkedAt": "2026-09-16"
+ },
+ "3GPKHVRJ4SS526653": {
+  "unavailable": true,
+  "checkedAt": "2026-09-16"
+ },
+ "1GKT0NDE7SU115209": {
+  "coverage": {
+   "startDate": "2026-07-08",
+   "startMileage": 342,
+   "expiresDate": "2034-07-08",
+   "expiresMileage": 100342,
+   "inServiceDate": "2026-07-08",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-09-16"
+ },
+ "3GNKDBRJXRS215659": {
+  "coverage": {
+   "startDate": "2024-07-22",
+   "startMileage": 13,
+   "expiresDate": "2032-07-22",
+   "expiresMileage": 100013,
+   "inServiceDate": "2024-07-22",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-09-16"
+ },
+ "1GYKPURLXTZ311163": {
+  "coverage": {
+   "startDate": "2026-08-05",
+   "expiresDate": "2034-08-05",
+   "expiresMileage": 100000,
+   "inServiceDate": "2026-08-05",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-09-16"
+ },
+ "1G1FY6S03P4196952": {
+  "coverage": {
+   "startDate": "2023-10-25",
+   "startMileage": 9,
+   "expiresDate": "2031-10-25",
+   "expiresMileage": 100009,
+   "inServiceDate": "2023-10-25",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-09-16"
+ },
+ "3GPKHXRJ5RS516218": {
+  "unavailable": true,
+  "checkedAt": "2026-09-16"
+ },
+ "3GPKHZRJ7RS509458": {
+  "unavailable": true,
+  "checkedAt": "2026-09-16"
+ },
+ "3GPKHXRJ0RS505918": {
+  "unavailable": true,
+  "checkedAt": "2026-09-16"
+ },
+ "KL8CL6S08EC498919": {
+  "coverage": {
+   "startDate": "2014-02-22",
+   "startMileage": 22,
+   "expiresDate": "2022-02-22",
+   "expiresMileage": 100022,
+   "inServiceDate": "2014-02-22",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-09-16"
  }
 }
