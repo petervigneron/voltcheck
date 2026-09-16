@@ -311,9 +311,14 @@ jobs:
       # minutes, polling every two — and skips only if the nightly is still
       # going after that. Fails open: a GitHub API hiccup lets the sync
       # proceed.
+      # Not when there is nothing to push: the 2026-09-16 five-rooftop trial
+      # ran with sync=false while a nightly was mid-run and sat in this poll
+      # for its full 90 minutes before skipping a sync it was never going to
+      # do. A trial that takes 90 minutes to say what it read is a trial
+      # nobody runs.
       - name: Wait for a running nightly before pushing
         id: nightly
-        if: ${{ steps.pick.outputs.count != '0' }}
+        if: ${{ steps.pick.outputs.count != '0' && github.event.inputs.sync != 'false' }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
