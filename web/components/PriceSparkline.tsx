@@ -88,6 +88,18 @@ const signed = (n: number) => (n < 0 ? `−${usd(-n)}` : `+${usd(n)}`);
 
 type Pt = { priceUsd: number; observedAt: string };
 
+/** FNV-1a in base 36 — the same recipe as card.ts's hash01, used here only to
+ *  give a <clipPath> an id that depends on the data rather than on render
+ *  order, so the server's markup and the browser's agree. */
+function hash36(s: string): string {
+  let h = 2166136261;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return (h >>> 0).toString(36);
+}
+
 /** Drop each observation whose price equals the one kept before it. */
 const plateaus = (ps: Pt[]) => ps.filter((p, i) => i === 0 || p.priceUsd !== ps[i - 1].priceUsd);
 
@@ -110,17 +122,28 @@ export function PriceSparkline({
   const ppts = plateaus((prior?.series ?? []).filter((h) => h.priceUsd >= PRICE_FLOOR_USD));
   const hasPrior = ppts.length > 0 && pts.length > 0 && prior !== undefined;
 
-  // Both of these used to get a sentence — "No asking-price history recorded
-  // for this listing", "Asking price unchanged since first seen Aug 15" — on
-  // the reasoning that nothing-observed and nothing-changed are different
-  // claims and neither should be silent. The owner overruled that on
-  // 2026-08-25: a line that reports the absence of a price move is a line the
-  // shopper reads for nothing. A price chart appears when the price moved,
-  // and otherwise the price above it stands on its own. An earlier listing
-  // that ended at a different price is a move of that kind, so it draws even
-  // when the current seller has held one price.
+  // A car whose price has never moved now DRAWS — a flat line at the one
+  // price it has always asked (owner, 2026-09-17: "It should always show what
+  // the price has done, even if it has not moved"). Measured that day, the
+  // silence was the common case, not the exception: of 6,000 live cars, 2,480
+  // had one price and drew nothing, against 2,387 that drew a chart. The
+  // tracker was missing from most of the pages that have one.
+  //
+  // This does NOT re-open the 2026-08-25 ruling it looks like it re-opens.
+  // What the owner deleted then was a SENTENCE reporting an absence ("Asking
+  // price unchanged since first seen Aug 15") — a line read for nothing. A
+  // drawn line is not that line: it is the price, its date, and the distance
+  // between them, which is the same thing the moved chart draws and the same
+  // question a shopper asks of both. So the flat chart carries no caption at
+  // all (see the steps block below) — the rule is intact, the chart is not a
+  // sentence, and nothing under it explains what it already shows.
+  //
+  // Still silent with nothing observed at all: 398 of those 6,000 have no
+  // price row to draw, and a chart of nothing is not honest about anything.
   if (pts.length === 0) return null;
-  if (!hasPrior && pts.length < 2) return null;
+
+  /** One price, never moved, and no earlier listing to draw ahead of it. */
+  const flat = !hasPrior && pts.length < 2;
 
   const first = hasPrior ? ppts[0] : pts[0];
   const last = pts[pts.length - 1];
@@ -166,8 +189,27 @@ export function PriceSparkline({
 
   const yNow = py(last.priceUsd);
   // The wash between the path and today's price: its height is what has come
-  // off (or gone on), its width is how long the car asked the older number.
+  // OFF, its width is how long the car asked the older number.
+  //
+  // "Off" is load-bearing and used not to be. This polygon shades the whole
+  // area between the path and today's price in either direction, so a car
+  // whose price ROSE drew the identical grey slab, at the identical opacity,
+  // as a car that had been cut by the same amount — the one thing a price
+  // chart exists to tell apart. On a $41,990 → $43,490 rise the slab sat over
+  // the old price and read as a discount; the start label sat inside it too,
+  // which is what the paper halo on these labels was papering over.
+  //
+  // The fix is a clip, not a branch, because a real series goes both ways: the
+  // wash is cut to the band ABOVE today's price, so only money that has come
+  // off shades. A pure rise clips away to nothing and draws as a bare step —
+  // correct, and the safe direction under the house rule on claims, where a
+  // false bargain is the expensive error. A series that fell and then rose
+  // shades only the part still above what the car asks today.
   const wash = `${d} L ${W - M.r} ${yNow.toFixed(1)} L ${xCur0.toFixed(1)} ${yNow.toFixed(1)} Z`;
+  // Deterministic in the data, so server and client markup agree and two
+  // charts on one page could never share a clip. (Only the listing page draws
+  // one today; this costs nothing and removes the assumption.)
+  const clipId = `pssh-${hash36(`${pts[0].observedAt}|${pts[0].priceUsd}|${last.observedAt}|${last.priceUsd}`)}`;
 
   // Steps are within a segment only. The jump from the earlier listing's last
   // price to this one's first is not a step and gets no signed line.
@@ -195,14 +237,30 @@ export function PriceSparkline({
         aria-label={`Asking price history: ${title}, still ${usd(last.priceUsd)}`}
       >
         {/* Today's price as a recessive rule the whole width, so the distance
-            from the old plateau down to it is readable as a distance. */}
-        <line x1={M.l} x2={W - M.r} y1={yNow} y2={yNow} stroke={PUTTY} strokeWidth="1" />
+            from the old plateau down to it is readable as a distance. On a
+            flat chart the rule would sit exactly under the line and draw a
+            second, fainter line nobody can account for. */}
+        {!flat && <line x1={M.l} x2={W - M.r} y1={yNow} y2={yNow} stroke={PUTTY} strokeWidth="1" />}
         {hasPrior && (
           <path d={dp} fill="none" stroke={ASH} strokeWidth="2" strokeLinejoin="round" strokeLinecap="round">
             <title>{titleOf(ppts)}</title>
           </path>
         )}
-        <path d={wash} fill={INK} fillOpacity="0.07" stroke="none" />
+        {/* The band above today's price. Everything below it is money that
+            went ON, which this wash does not claim (see its definition). A
+            flat chart has no area between the line and today's price at all,
+            so it draws neither — a zero-height clip over a zero-area polygon
+            is markup that has to be reasoned about to be dismissed. */}
+        {!flat && (
+          <>
+            <defs>
+              <clipPath id={clipId}>
+                <rect x="0" y="0" width={W} height={Math.max(yNow, 0)} />
+              </clipPath>
+            </defs>
+            <path d={wash} fill={INK} fillOpacity="0.07" stroke="none" clipPath={`url(#${clipId})`} />
+          </>
+        )}
         <path d={d} fill="none" stroke={INK} strokeWidth="2" strokeLinejoin="round" strokeLinecap="round">
           <title>{titleOf(pts)}</title>
         </path>
@@ -240,20 +298,26 @@ export function PriceSparkline({
             paper halo (paint-order: stroke) keeps them crisp where a rising
             price puts the start label inside the wash. With an earlier
             segment, its last price sits above the point where it ended. */}
-        <text
-          x={M.l}
-          y={py(first.priceUsd) - 9}
-          textAnchor="start"
-          fontSize="11"
-          fill={INK}
-          opacity="0.8"
-          stroke={PAPER}
-          strokeWidth="3"
-          paintOrder="stroke"
-          className="tabular-nums"
-        >
-          {usd(first.priceUsd)}
-        </text>
+        {/* On a flat chart the two ends are the same price on the same line,
+            and printing it twice reads as two numbers rather than one held
+            one. The current price (below, bold, at the right) is the one
+            that stays. */}
+        {!flat && (
+          <text
+            x={M.l}
+            y={py(first.priceUsd) - 9}
+            textAnchor="start"
+            fontSize="11"
+            fill={INK}
+            opacity="0.8"
+            stroke={PAPER}
+            strokeWidth="3"
+            paintOrder="stroke"
+            className="tabular-nums"
+          >
+            {usd(first.priceUsd)}
+          </text>
+        )}
         {priorLast && priorLast.priceUsd !== first.priceUsd && (
           <text
             x={xGone}
@@ -296,8 +360,9 @@ export function PriceSparkline({
         )}
         {/* The last change always lands at the same x (the tail is fixed), so
             this label has a fixed position and can never run into the one on
-            the left. */}
-        {lastChangeFits && (
+            the left — except on a flat chart, where there IS no last change
+            and its x collapses onto the first date's. */}
+        {lastChangeFits && !flat && (
           <text x={xLastChange} y={H - M.b + 15} textAnchor="middle" fontSize="10" fill={INK} opacity="0.5" className="tabular-nums">
             {monthDay(last.observedAt)}
           </text>
@@ -307,7 +372,12 @@ export function PriceSparkline({
       {/* The story, at a size a phone can read. Two or three points is not a
           trend, it is one or two sentences — so print the sentences. With an
           earlier segment and more than three steps in all, only this seller's
-          steps get lines; the grey shape and its end figures carry the rest. */}
+          steps get lines; the grey shape and its end figures carry the rest.
+          A price that never moved has no step to print, and the block is gone
+          entirely rather than reduced to an empty box: "nothing happened" is
+          the sentence the owner deleted on 2026-08-25, and the chart above
+          already shows the price and the day it has held it since. */}
+      {steps.length > 0 && (
       <div className="mt-1.5 space-y-0.5 text-[12px] leading-snug tabular-nums">
         {steps.length <= 3 ? (
           steps.map((s, i) => (
@@ -330,6 +400,7 @@ export function PriceSparkline({
           </p>
         )}
       </div>
+      )}
     </figure>
   );
 }
