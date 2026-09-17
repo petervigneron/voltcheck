@@ -205,8 +205,9 @@ export function classifyBrowserRecheck({ vin, url, status, finalUrl, body }) {
  *      judges those by the sweep alone (lib/recheck-oem-crosscheck.mjs) —
  *      loading a homepage in Chrome would add a browser's cost to a reading
  *      that is a strike by construction;
- *   3. recheck has never once confirmed it, or not inside `staleDays`. A car
- *      whose page recheck reads fine every night is not the residue;
+ *   3. recheck has never once confirmed it, or not inside `confirmHours` —
+ *      which is the window the FEED uses, not a number of this job's own. A
+ *      car whose page recheck reads fine every night is not the residue;
  *   4. tonight's own sweep has NOT dropped it. A car the sweep no longer
  *      lists is already being struck by recheck — spending a browser load on
  *      it buys nothing. `sweepSaysGone` answers false for a missing or short
@@ -218,7 +219,7 @@ export function classifyBrowserRecheck({ vin, url, status, finalUrl, body }) {
  */
 // Two populations (2026-09-12):
 //   * marketplace-lane rows (RECHECK_CROSSCHECK_DOMAINS): never confirmed, or
-//     not within staleDays — the original residue;
+//     not within confirmHours — the original residue;
 //   * dealer-site rows (a dotted domain): neither seen by any crawl nor
 //     confirmed on their own page within seenHours. Since 0090 these are
 //     withheld from the site at 72 hours; this pass re-admits the live ones
@@ -226,6 +227,42 @@ export function classifyBrowserRecheck({ vin, url, status, finalUrl, body }) {
 //     switched off) and strikes the sold ones. Nissan/Lucid's sweep-only
 //     lanes and the OEM locators are not dotted and are not visited — their
 //     sweeps see them nightly.
+//
+// BOTH WINDOWS MUST TRACK THE FEED VIEW, and the marketplace one did not.
+// 2026-09-17: the owner opened a listing page that 404'd and asked whether it
+// was broken or the truck was gone — 1FT6W3L79RWG00996, a Lightning at Long
+// Lewis Ford. Neither. Ford Blue Advantage's sweep had seen it two hours
+// earlier; longlewis.com answers 403 to the fetch, so nothing had confirmed
+// its own page in 41.8 hours; and live_listings_feed withholds a
+// marketplace-lane car at 36 hours (0091). Correct so far — withheld is not
+// delisted, and the 404 is the deliberate "we cannot vouch for this".
+//
+// The fault was that this pass would not look at it for another five and a
+// half days. The feed's window is 36 HOURS; this selector's marketplace
+// branch used `staleDays = 7`, so a car went dark at 36 hours and nothing
+// tried to re-confirm it until day seven. Measured that day: 5,364
+// marketplace-lane cars withheld, of which 798 were never-confirmed and 228
+// were past seven days — both already targeted — and **4,338 sat in the gap**,
+// hidden by the view and invisible to the only job that could re-admit them,
+// a mean 103 hours since their last confirmation. 5,303 of the withheld set
+// had been seen by their own marketplace sweep within twelve hours, so the
+// great majority were live cars that were simply off the site.
+//
+// So the marketplace window is now `confirmHours`, defaulting to the view's
+// own 36. Raising it again re-opens the hole: if 0091's window moves, move
+// this with it. The dealer-site branch already tracked the view at 48h and
+// is unchanged.
+//
+// This does not weaken 0089/0091 — it cannot admit an unconfirmed car, it
+// only asks sooner. A live car comes back at the next publish instead of
+// days later; a sold one takes its strike days earlier. Cost measured before
+// the change: the residue goes from ~2,389 pages a run to ~6,831, spread over
+// 1,432 rooftops twice a day, against a cap of 8 × 2,500. That is a median of
+// two page loads per dealer per run and a 95th percentile of twelve; the
+// largest single recipients are fordblueadvantage.com (337) and
+// autonation.com (53), neither a small operation. Runs took 7-20 min at the
+// old size against a 150-min deadline, and the repo is public so runner
+// minutes are free.
 // Oldest evidence first, dealt round-robin across hosts so no one rooftop
 // eats the cap.
 /** Which of `parts` runners a host belongs to: a stable string hash, so the
@@ -239,8 +276,17 @@ export function hostPart(host, parts) {
   return h % parts;
 }
 
-export function selectResidue(rows, { now = Date.now(), staleDays = 7, seenHours = 48, sweepSaysGone = () => false, limit = 0, part = 0, parts = 1 } = {}) {
-  const cutoff = now - staleDays * 86_400_000;
+/** The feed's own window for a marketplace-lane car (migration 0091): a row
+ *  whose page has not been confirmed inside this is withheld from the site.
+ *  Re-confirming on the same clock is what keeps a withheld car from sitting
+ *  dark — see the note above. Move this only with 0091. */
+export const FEED_CONFIRM_HOURS = 36;
+
+export function selectResidue(
+  rows,
+  { now = Date.now(), confirmHours = FEED_CONFIRM_HOURS, seenHours = 48, sweepSaysGone = () => false, limit = 0, part = 0, parts = 1 } = {}
+) {
+  const cutoff = now - confirmHours * 3_600_000;
   const seenCutoff = now - seenHours * 3_600_000;
   const keep = [];
   for (const r of rows ?? []) {

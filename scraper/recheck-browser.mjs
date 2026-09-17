@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // The cars recheck cannot read at all, looked at in a real browser.
 //
-//   node recheck-browser.mjs [--limit 600] [--concurrency 2] [--stale-days 7]
+//   node recheck-browser.mjs [--limit 600] [--concurrency 2] [--confirm-hours 36]
 //                            [--deadline-min N] [--vin V[,V…]] [--dry-run]
 //
 // WHY THIS EXISTS (measured 2026-09-12)
@@ -52,7 +52,7 @@ import { readFile } from "node:fs/promises";
 import { readSnapshot } from "./lib/snapshot.mjs";
 import { fetchWithRetry } from "./lib/retry.mjs";
 import { browserFetch, browserUnavailable, closeBrowser } from "./lib/browser.mjs";
-import { classifyBrowserRecheck, selectResidue, normalizeUrl } from "./lib/recheck-browser-verdict.mjs";
+import { classifyBrowserRecheck, selectResidue, normalizeUrl, FEED_CONFIRM_HOURS } from "./lib/recheck-browser-verdict.mjs";
 import { RECHECK_CROSSCHECK_DOMAINS, oemAliveVins, oemSweepCounts, sweepSaysGone } from "./lib/recheck-oem-crosscheck.mjs";
 
 function flag(name, fallback) {
@@ -61,7 +61,15 @@ function flag(name, fallback) {
 }
 const LIMIT = flag("--limit", 600);
 const CONCURRENCY = Math.max(1, flag("--concurrency", 2));
-const STALE_DAYS = flag("--stale-days", 7);
+// How stale a marketplace-lane car's own-page confirmation may be before this
+// pass goes and gets a fresh one. It is the FEED's window (0091), not a number
+// of this job's own: a car is withheld from the site at 36 hours, so asking
+// again on a slower clock leaves it dark for the difference. It used to be
+// --stale-days 7, which left 4,338 live cars in that gap — the note over
+// selectResidue has the measurement. --stale-days is still accepted so an
+// operator can widen the sweep by hand.
+const STALE_DAYS = flag("--stale-days", 0);
+const CONFIRM_HOURS = STALE_DAYS > 0 ? STALE_DAYS * 24 : flag("--confirm-hours", FEED_CONFIRM_HOURS);
 const DEADLINE_MIN = flag("--deadline-min", 0);
 // --part k --parts n: this runner takes the hosts whose hostPart() is k, so a
 // fleet of n runners covers the residue n times faster with every rooftop
@@ -101,7 +109,7 @@ const ONLY_VINS = new Set(
 // mistyped number fails SILENTLY. `slice(0, NaN)` is an empty list and
 // `Math.min(NaN, n)` workers is no workers, so a typo would spend the night
 // visiting nothing and exit 0.
-for (const [name, value] of [["--limit", LIMIT], ["--concurrency", CONCURRENCY], ["--stale-days", STALE_DAYS], ["--deadline-min", DEADLINE_MIN], ["--part", PART], ["--parts", PARTS]]) {
+for (const [name, value] of [["--limit", LIMIT], ["--concurrency", CONCURRENCY], ["--confirm-hours", CONFIRM_HOURS], ["--deadline-min", DEADLINE_MIN], ["--part", PART], ["--parts", PARTS]]) {
   if (!Number.isFinite(value) || value < 0) {
     console.error(`recheck-browser: ${name} must be a non-negative number, got ${JSON.stringify(process.argv[process.argv.indexOf(name) + 1])}`);
     process.exit(1);
@@ -280,7 +288,7 @@ try {
 }
 
 const work = selectResidue(rows, {
-  staleDays: STALE_DAYS,
+  confirmHours: CONFIRM_HOURS,
   limit: ONLY_VINS.size ? 0 : LIMIT,
   part: PART,
   parts: PARTS,
@@ -290,7 +298,7 @@ const work = selectResidue(rows, {
 });
 console.error(
   `recheck-browser: ${work.length} residue pages to visit ` +
-    `(of ${rows.length} live rows: marketplace-lane cars never confirmed or not in ${STALE_DAYS} days, ` +
+    `(of ${rows.length} live rows: marketplace-lane cars never confirmed or not in ${CONFIRM_HOURS} hours, ` +
     `dealer-site cars neither seen nor confirmed in 48 hours, cars back after a silence first; ` +
     `${work.filter((w) => w.returning).length} returning; part ${PART + 1} of ${PARTS}; cap ${ONLY_VINS.size ? "none" : LIMIT}, ` +
     `${CONCURRENCY} at a time)`

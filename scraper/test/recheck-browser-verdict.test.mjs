@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { classifyBrowserRecheck, goneUrlReason, selectResidue } from "../lib/recheck-browser-verdict.mjs";
+import { classifyBrowserRecheck, goneUrlReason, selectResidue, FEED_CONFIRM_HOURS } from "../lib/recheck-browser-verdict.mjs";
 import { challengeMarks, wallMarks } from "../lib/challenge-page.mjs";
 
 const VIN = "1FT6W1EV2PWG58901";
@@ -132,7 +132,7 @@ const residueRows = [
 const NOW = Date.parse("2026-09-12T00:00:00Z");
 
 test("the residue is never/stale-confirmed cars on the four lanes with a page about the car", () => {
-  const got = selectResidue(residueRows, { now: NOW, staleDays: 7 }).map((r) => r.vin);
+  const got = selectResidue(residueRows, { now: NOW }).map((r) => r.vin);
   // BBB was confirmed yesterday; DDD's sourceUrl is a homepage (the sweep
   // judges those); EEE is a dealer-site row a crawl saw 18 hours ago.
   assert.deepEqual(got.sort(), ["AAA", "CCC"]);
@@ -148,14 +148,58 @@ test("a dealer-site car neither seen nor confirmed in 48 hours is visited; one s
     // a sweep-only lane and an OEM locator are not dotted: never visited here
     { vin: "NIS1", dealerDomain: "nissan-new", sourceUrl: "https://nissanusa.com/x/NIS1", lastConfirmedAt: null, lastSeenAt: "2026-09-01T00:00:00Z" },
   ];
-  const got = selectResidue(rows, { now: NOW, staleDays: 7 }).map((r) => r.vin);
+  const got = selectResidue(rows, { now: NOW }).map((r) => r.vin);
   assert.deepEqual(got, ["1FT6W1EV7NWG11294"]);
   // the window is a parameter: at 7 days the Mastria truck is still inside it
-  assert.deepEqual(selectResidue(rows, { now: NOW, staleDays: 7, seenHours: 24 * 7 }).map((r) => r.vin), []);
+  assert.deepEqual(selectResidue(rows, { now: NOW, seenHours: 24 * 7 }).map((r) => r.vin), []);
+});
+
+// 2026-09-17: the owner opened a 404ing listing page and asked whether it was
+// broken or the truck was gone. Neither — 1FT6W3L79RWG00996, a Lightning at
+// Long Lewis Ford, seen by Ford Blue Advantage's sweep two hours earlier, its
+// own page 403 to the fetch and unconfirmed for 41.8 hours. The feed withholds
+// a marketplace-lane car at 36 hours (0091), which is correct. The fault was
+// that THIS selector would not look at it for another five and a half days:
+// its marketplace branch used a 7-day window while the feed used 36 hours, so
+// 4,338 live cars sat hidden by the view and invisible to the one job that
+// could re-admit them. These pin the two windows together.
+
+test("a marketplace car goes to the browser as soon as the feed stops serving it", () => {
+  // Confirmed 41.8 hours ago: past the feed's 36, nowhere near the old 7 days.
+  const truck = {
+    vin: "1FT6W3L79RWG00996",
+    dealerDomain: "ford-blue-advantage",
+    sourceUrl: "https://www.longlewis.com/used/Ford/2024-Ford-F-150-Lightning-1FT6W3L79RWG00996.htm",
+    lastConfirmedAt: "2026-09-16T00:35:59Z",
+  };
+  const now = Date.parse("2026-09-17T18:24:00Z");
+  assert.deepEqual(selectResidue([truck], { now }).map((r) => r.vin), ["1FT6W3L79RWG00996"]);
+  // The bug, stated: on the old 7-day window nothing would have visited it.
+  assert.deepEqual(selectResidue([truck], { now, confirmHours: 24 * 7 }), []);
+});
+
+test("the marketplace window is the feed's window, not a number of this job's own", () => {
+  // If 0091 moves, this must move with it — a browser pass that asks more
+  // slowly than the view hides is a car dark for the difference.
+  assert.equal(FEED_CONFIRM_HOURS, 36);
+  const car = (vin, lastConfirmedAt) => ({ vin, dealerDomain: "hyundai-cpo", sourceUrl: `https://d.com/inventory/${vin}`, lastConfirmedAt });
+  const now = Date.parse("2026-09-12T00:00:00Z");
+  // An hour inside the window is served and is not residue; an hour outside
+  // is withheld and is.
+  assert.deepEqual(selectResidue([car("IN", "2026-09-10T13:00:00Z")], { now }), []);
+  assert.deepEqual(selectResidue([car("OUT", "2026-09-10T11:00:00Z")], { now }).map((r) => r.vin), ["OUT"]);
+});
+
+test("asking sooner cannot admit an unconfirmed car — it only asks", () => {
+  // The safety rule (0089/0091) is the view's, and this pass writes nothing
+  // but a confirmation from the car's own page. A homepage sourceUrl is still
+  // judged by the sweep alone, however stale the confirmation.
+  const homepage = { vin: "DDD", dealerDomain: "ford-blue-advantage", sourceUrl: "https://c.com/", lastConfirmedAt: null };
+  assert.deepEqual(selectResidue([homepage], { now: NOW }), []);
 });
 
 test("a car tonight's sweep has already dropped is left to recheck", () => {
-  const got = selectResidue(residueRows, { now: NOW, staleDays: 7, sweepSaysGone: (vin) => vin === "AAA" }).map((r) => r.vin);
+  const got = selectResidue(residueRows, { now: NOW, sweepSaysGone: (vin) => vin === "AAA" }).map((r) => r.vin);
   assert.deepEqual(got, ["CCC"]);
 });
 
@@ -165,12 +209,12 @@ test("never-confirmed first, then oldest, and consecutive targets are different 
     { vin: "A2", dealerDomain: "hyundai-cpo", sourceUrl: "https://one.com/A2", lastConfirmedAt: null },
     { vin: "B1", dealerDomain: "audi-network", sourceUrl: "https://two.com/B1", lastConfirmedAt: "2026-08-02T00:00:00Z" },
   ];
-  const got = selectResidue(rows, { now: NOW, staleDays: 7 }).map((r) => r.vin);
+  const got = selectResidue(rows, { now: NOW }).map((r) => r.vin);
   assert.deepEqual(got, ["A1", "B1", "A2"]);
 });
 
 test("the cap is a cap", () => {
-  const got = selectResidue(residueRows, { now: NOW, staleDays: 7, limit: 1 });
+  const got = selectResidue(residueRows, { now: NOW, limit: 1 });
   assert.equal(got.length, 1);
 });
 
