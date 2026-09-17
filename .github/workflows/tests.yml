@@ -21,8 +21,9 @@ name: Tests
 # had simply been failing, unread, the entire time. The test was never the
 # gap; running it was.
 #
-# Cheap enough that there is no reason to scope it: no install, no secrets, no
-# database, ~8 seconds. Node's type stripping runs the TypeScript directly.
+# Cheap enough that there is no reason to scope it: no secrets, no database,
+# ~8 seconds of tests behind one npm ci. Node's type stripping runs the
+# TypeScript directly.
 
 on:
   push:
@@ -48,23 +49,40 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
-      # Everything in tests/ EXCEPT a named exclusion list, rather than a list
-      # of what to include. That direction matters: an include-list is the same
-      # hand-maintained-index bug as the orphaned row ids above, and it fails
-      # silently — a new test simply never runs and nobody finds out. This way
-      # a new test is picked up the moment it lands, and the only thing needing
-      # a hand edit is the rare test that pulls in a dependency, which fails
-      # loudly with a module-not-found rather than quietly not running.
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - working-directory: web
+        run: npm ci --no-audit --no-fund
+      # Everything in tests/, discovered by glob, with no list of what to run
+      # and no list of what to skip. That direction matters: a hand-kept list
+      # is the same hand-maintained-index bug as the orphaned row ids above,
+      # and it fails silently — a new test simply never runs and nobody finds
+      # out. This way a new test is picked up the moment it lands.
       #
-      # pro-funnel.test.ts imports lib/pro.ts, which imports `next`. The .tsx
-      # tests (battery-risk, price-sparkline, pro-page) need react-testing-
-      # library and a DOM, and are not matched by the *.test.ts glob. Running
-      # those means an npm install and a DOM runner; worth doing, not worth
-      # blocking the other 296 assertions on.
+      # It had an exclusion list until 2026-09-17, and the reason given for it
+      # was wrong. It read: pro-funnel.test.ts imports `next`, and the .tsx
+      # tests "need react-testing-library and a DOM". They do not — every one
+      # of them renders with renderToStaticMarkup from react-dom/server and
+      # asserts on the string. react-testing-library is not a dependency of
+      # this repo and nothing imports jsdom. All five .tsx files run under the
+      # same plain node:test runner as everything else; the only thing they
+      # ever needed was node_modules, which is also all pro-funnel needed. So
+      # the price of the whole suite is the npm ci above (~40s cold, cached on
+      # the lockfile) and the return is the six files nothing had ever run:
+      # pro-funnel's 6 assertions, and 47 across battery-risk,
+      # price-sparkline, price-trend, pro-page and watch-form.
+      #
+      # It was already worth paying. pro-page.test.tsx had been red since
+      # 2026-09-03 and stayed red a fortnight: the owner moved rebates behind
+      # the pass that afternoon (01ad0a83), the test still pinned `live:
+      # false` from that morning's lineup, and no run existed to say so. The
+      # same failure as the orphaned row ids — the test was never the gap,
+      # running it was — and an exclusion list is the very thing the paragraph
+      # above argues against.
       - name: Run tests
         working-directory: web
         run: |
-          files=$(ls tests/*.test.ts | grep -v 'tests/pro-funnel.test.ts')
+          files=$(ls tests/*.test.ts tests/*.test.tsx)
           echo "$files"
           node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs --test $files
 

@@ -109,16 +109,26 @@ test("with a live key, a visitor who is not signed in is offered sign-in, not a 
   });
 });
 
-test("the lineup is the owner's (2026-09-03): four lines, deals filter and deal alert live, trends and rebates not yet", () => {
+// Every line here is an owner decision, so a change to this test is only ever
+// correct with one behind it. The last one landed on 2026-09-03 at 15:55
+// (01ad0a83): rebates moved behind the pass — the rail toggle, the card tag
+// and the listing block all read it now — on the owner's word, "it should be
+// paywalled like price trends are". That made all four live, and this test
+// went red and stayed red for a fortnight, because tests.yml excluded
+// *.test.tsx and nothing ever ran the file. Adding the .tsx tests to the
+// workflow is the other half of this fix.
+test("the lineup is the owner's: the four lines of 2026-09-03, all four live", () => {
   const titles = PRO_BENEFITS.map((b) => b.title);
   assert.deepEqual(titles, ["Market trends", "Filter by deals", "Rebate eligibility", "Deal alert"]);
   // "Unlimited alerts" stays cut (2026-08-26): free price-drop alerts are
   // effectively unlimited and shrinking them would be a retraction.
   assert.equal(titles.some((t) => t.toLowerCase().includes("unlimited")), false);
-  assert.equal(PRO_BENEFITS.find((b) => b.title === "Filter by deals")?.live, true);
-  assert.equal(PRO_BENEFITS.find((b) => b.title === "Deal alert")?.live, true);
-  assert.equal(PRO_BENEFITS.find((b) => b.title === "Market trends")?.live, true);
-  assert.equal(PRO_BENEFITS.find((b) => b.title === "Rebate eligibility")?.live, false);
+  // `live` renders nowhere since the chips came off the page (2026-09-03);
+  // it is what offerState() reads to decide whether a pass may be sold, so a
+  // false here is the difference between selling something and selling
+  // nothing. Deals filter and deal alert shipped 2026-09-02, market trends
+  // and rebates 2026-09-03.
+  for (const b of PRO_BENEFITS) assert.equal(b.live, true, `${b.title} is not live`);
   // The page prints the same threshold the filter applies.
   assert.match(PRO_BENEFITS.find((b) => b.title === "Filter by deals")!.detail, /\b\d+% or more below\b/);
 });
