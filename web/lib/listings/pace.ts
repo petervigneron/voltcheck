@@ -59,6 +59,37 @@ export function daysListed(listedOn: string, now: number = Date.now()): number {
   return Math.max(0, Math.floor((now - Date.parse(listedOn)) / 86_400_000));
 }
 
+/**
+ * Voltcheck started watching on 2026-08-11. A car whose first sighting is that
+ * day was not found then — it is simply when WE started, and dating a car from
+ * it would print our own switch-on as the car's arrival. Read one clear day
+ * past the start, so the boundary is not a question of the crawl's hour.
+ */
+export const FIRST_SEEN_FLOOR = Date.parse("2026-08-13T00:00:00Z");
+
+/**
+ * The day this car turned up on Voltcheck, for the summary card's date row —
+ * and undefined where that day cannot be told apart from the day tracking
+ * began, which is the one case where the number would mean something else
+ * entirely.
+ *
+ * This is NOT a listing date and never wears that label. Migration 0028 owns
+ * that claim, and only 2,195 of 6,000 live cars could support it when the
+ * owner asked for this on 2026-09-17 ("I rarely see information about when
+ * vehicles hit the site. This should be on every car") — so two cars in three
+ * carried no date at all. Every one of those 6,000 had a first sighting, and 8
+ * of them sat at the floor.
+ *
+ * The seller may well have listed the car months before we found it. That is
+ * exactly why the two rows are separate rows with separate labels: this one
+ * reports an observation of ours and claims nothing about the listing's age.
+ */
+export function daysOnVoltcheck(firstSeenAt: string, now: number = Date.now()): number | undefined {
+  const t = Date.parse(firstSeenAt);
+  if (!Number.isFinite(t) || t < FIRST_SEEN_FLOOR) return undefined;
+  return Math.max(0, Math.floor((now - t) / 86_400_000));
+}
+
 /** The asking-price cuts this listing has had: how many, and how much came off
  *  across them. Undefined when there are none — the block simply loses the
  *  tile rather than printing that nothing happened. */

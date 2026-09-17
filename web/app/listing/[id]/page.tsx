@@ -24,7 +24,7 @@ import { PriceScatter } from "@/components/PriceScatter";
 import { PriceSparkline } from "@/components/PriceSparkline";
 import { PriceTrendCharts } from "@/components/PriceTrend";
 import { PricePace } from "@/components/PricePace";
-import { fetchDealerPace } from "@/lib/listings/pace";
+import { daysOnVoltcheck, fetchDealerPace } from "@/lib/listings/pace";
 import { ProBlur } from "@/components/ProBlur";
 import { ProOnly } from "@/components/ProOnly";
 import { VinHistory } from "@/components/VinHistory";
@@ -133,6 +133,18 @@ function listedValue(listedOn: string): string {
   const days = Math.max(0, Math.floor((Date.now() - Date.parse(listedOn)) / 86_400_000));
   const when = days === 0 ? "today" : days === 1 ? "1 day ago" : `${days} days ago`;
   return `${LISTED_FMT.format(new Date(listedOn))} (${when})`;
+}
+
+// The day this car turned up here, for the great majority of cars that cannot
+// have a "Listed" row above. Owner, 2026-09-17: "I rarely see information
+// about when vehicles hit the site. This should be on every car." The gate and
+// the reasoning are in lib/listings/pace.ts daysOnVoltcheck; this is the row's
+// wording of the same number. Undefined at the floor, and Spec drops the row.
+function firstSeenValue(firstSeenAt: string): string | undefined {
+  const days = daysOnVoltcheck(firstSeenAt);
+  if (days === undefined) return undefined;
+  const when = days === 0 ? "today" : days === 1 ? "1 day ago" : `${days} days ago`;
+  return `${LISTED_FMT.format(new Date(firstSeenAt))} (${when})`;
 }
 
 export default async function ListingPage(props: PageProps<"/listing/[id]">) {
@@ -385,12 +397,23 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
                     : undefined
                 }
               />
-              {listing.listedOn && (
+              {/* The seller's own listing date where we can stand behind it,
+                  and our own first sighting where we cannot — never both, and
+                  never one wearing the other's label. See firstSeenValue. */}
+              {listing.listedOn ? (
                 <Spec
                   label="Listed"
                   value={listedValue(listing.listedOn)}
                   title="When this car appeared on the seller's site, from Voltcheck's nightly check — shown only when the seller was already being tracked when it appeared. The true listing date can be up to a day earlier."
                 />
+              ) : (
+                listing.firstSeenAt && (
+                  <Spec
+                    label="On Voltcheck since"
+                    value={firstSeenValue(listing.firstSeenAt)}
+                    title="The day this car first turned up on Voltcheck. The seller may have listed it earlier — this is when we found it, not when it was listed."
+                  />
+                )
               )}
               <Spec label="Previous owners" value={listing.previousOwners} />
               <Spec label="Drivetrain" value={listing.drive} />
