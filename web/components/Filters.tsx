@@ -722,7 +722,7 @@ export function FilterRail({
   const heatPumpOn = get("heatPump") === "1";
   const cutOn = get("cut") === "1";
   const dealOn = get("deal") === "1";
-  const deals = dealControl(pro, dealOn, proExpired);
+  const deals = dealControl(pro, proExpired);
 
   // A radius chosen against the inferred origin has no ZIP chip to represent
   // it; without one of its own the filter would be invisible.
@@ -816,9 +816,12 @@ export function FilterRail({
         ))}
 
         {/* The Pro deals filter (lib/listings/deal.ts): cars at least
-            DEAL_MIN_PCT under similar listings. The toggle is offered only to
-            a pass-holder — a stranger sees the rail they had, and learns what
-            a pass adds on /pro.
+            DEAL_MIN_PCT under similar listings. Since 2026-09-17 the control
+            is on the rail for everyone and the paywall is what a stranger
+            meets on clicking it (owner: "leaves the toggle available but
+            presents a paywall after people click it"); before that it was
+            offered only to a pass-holder, so the feature was discoverable
+            only by finding /pro first.
             But ?deal=1 without a pass was SILENT: match.ts drops the filter
             (it has no deal figures to judge by — the data gate in
             lib/listings/proSignals.ts strips them from the public shards) and
@@ -847,7 +850,13 @@ export function FilterRail({
           // removed — it is the way to switch the filter back on.
           <Link
             href="/pro"
-            title="Showing all cars"
+            // Two different situations behind one chip. A shopper who asked
+            // for deals needs to know the grid is NOT the answer to that
+            // ("Showing all cars"); a shopper who never asked has no such
+            // misreading to correct and needs to know what the control does —
+            // the same words the working toggle carries when it is off. Both
+            // strings are already on this rail; neither is new.
+            title={dealOn ? "Showing all cars" : "Only cars priced well under similar listings"}
             className={`${BLOCK} ${HOVER} bg-saffron text-ink`}
           >
             {deals === "ended" ? "Deals — pass ended" : "Deals — Pro"}

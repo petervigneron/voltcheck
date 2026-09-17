@@ -45,37 +45,44 @@ test("the threshold is inclusive and lives in one constant", () => {
   assert.equal(isDeal(row(at + 100, at + 100 - median), DEAL_MIN_PCT - 1), true);
 });
 
-// ── The rail's Deals control (2026-09-12) ───────────────────────────────────
+// ── The rail's Deals control (2026-09-12, reopened 2026-09-17) ──────────────
 //
 // The filter itself is Pro and stays Pro — a browser with no pass has no
 // ask-vs-market figures to judge by, because the public shards do not carry
-// them (lib/listings/proSignals.ts publicRows). What changed is what the rail
-// says when the URL asks for a filter that will not be applied: nothing, until
-// today. ?deal=1 signed in with an expired pass showed the whole feed —
-// 172,003 cars — with no chip and no message, which reads as the answer to
-// "show me the deals" rather than as the filter being off.
+// them (lib/listings/proSignals.ts publicRows). 2026-09-12 fixed what the rail
+// said when the URL ASKED for a filter that would not be applied: nothing,
+// until then. ?deal=1 with an expired pass showed the whole feed — 172,003
+// cars — with no chip and no message, which reads as the answer to "show me
+// the deals" rather than as the filter being off.
+//
+// 2026-09-17 fixed the larger half: a stranger who had NOT asked for ?deal=1
+// still saw nothing, so the site never mentioned, on the one surface where a
+// shopper is choosing between cars, that it can rank them against similar
+// listings. Owner: "if we withhold this information during a search, nobody
+// will know we even have it." The control is now offered to everyone and the
+// way in is a paywall; the DATA gate is untouched, which the last test here
+// is the control test for.
 
-test("a pass-holder gets the toggle, pressed or not", () => {
-  assert.equal(dealControl(true, true), "toggle");
-  assert.equal(dealControl(true, false), "toggle");
+test("a pass-holder gets the toggle", () => {
+  assert.equal(dealControl(true), "toggle");
   // A pass-holder's control is the toggle whatever a stale expired flag says.
-  assert.equal(dealControl(true, true, true), "toggle");
+  assert.equal(dealControl(true, true), "toggle");
 });
 
-test("?deal=1 without a pass is never silent, and says which kind of nothing", () => {
-  assert.equal(dealControl(false, true), "needs-pro");
-  assert.equal(dealControl(false, true, true), "ended");
+test("a browser without a pass is offered the way in, asked for or not", () => {
+  // The 2026-09-17 change, stated as the two cases it merges: a stranger who
+  // asked for deals and a stranger who never has now get the same control.
+  assert.equal(dealControl(false), "needs-pro");
+  // An expired pass says which kind of nothing it is (0087).
+  assert.equal(dealControl(false, true), "ended");
 });
 
-test("no pass and nothing asked for offers nothing; an unknown answer waits", () => {
-  // The rail a stranger has always had: the deals control is not advertised
-  // there, it is learned on /pro.
-  assert.equal(dealControl(false, false), "none");
-  assert.equal(dealControl(false, false, true), "none");
-  // Null is "the answer is on its way". Rendering "needs Pro" and then
-  // swapping it for a toggle is worse than rendering it a moment late.
+test("an unknown pass answer still waits rather than flickering", () => {
+  // Null is "the answer is on its way". Rendering the paywall chip and then
+  // swapping it for a working toggle is worse than rendering it a moment late.
+  assert.equal(dealControl(null), "none");
+  assert.equal(dealControl(undefined), "none");
   assert.equal(dealControl(null, true), "none");
-  assert.equal(dealControl(undefined, true), "none");
 });
 
 test("the filter stays off for a browser without a pass — the count is the whole feed", () => {

@@ -225,18 +225,33 @@ export function toggleValue(current: string, value: string): string {
  *               reads MatchContext.pro) and the grid is the whole feed, so
  *               the rail has to say so and offer the way in.
  *  "ended"      the same, for a browser whose own pass expired (0087).
- *  "none"       nothing to show: no pass and nothing asked for, or the pass
- *               answer has not landed yet (null) — a control that flickered
- *               from "needs Pro" to a toggle would be worse than a late one.
+ *  "none"       the pass answer has not landed yet (null) — a control that
+ *               flickered from "needs Pro" to a toggle would be worse than a
+ *               late one.
  *
  *  Until 2026-09-12 there was no third state: ?deal=1 without a pass rendered
  *  nothing at all, and a shared or bookmarked deals link showed all 172,003
- *  cars as though that were the answer. */
+ *  cars as though that were the answer.
+ *
+ *  2026-09-17: a stranger who had not asked for ?deal=1 saw NOTHING — the
+ *  control was offered only to a pass-holder, so the one surface where a
+ *  shopper is actually choosing between cars never mentioned that the site
+ *  can rank them by price against similar listings. Owner: "The way visor
+ *  does it is leaves the toggle available but presents a paywall after people
+ *  click it. The problem I see is if we withhold this information during a
+ *  search, nobody will know we even have it."
+ *
+ *  So "needs-pro" is now the resting state for every browser without a pass,
+ *  asked for or not. This gates the CONTROL, never the DATA: the 2026-09-05
+ *  ruling stands untouched — lib/listings/proSignals.ts still strips the deal
+ *  figures from every public artifact, and match.ts still declines to apply a
+ *  filter it holds no figures for. What changes is that the way in is
+ *  visible, which is the whole point of showing it. */
 export type DealControl = "toggle" | "needs-pro" | "ended" | "none";
 
-export function dealControl(pro: boolean | null | undefined, dealOn: boolean, expired = false): DealControl {
+export function dealControl(pro: boolean | null | undefined, expired = false): DealControl {
   if (pro === true) return "toggle";
-  if (pro !== false || !dealOn) return "none";
+  if (pro !== false) return "none";
   return expired ? "ended" : "needs-pro";
 }
 
