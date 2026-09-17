@@ -28,7 +28,27 @@ name: Recheck the unreadable residue in a browser
 
 on:
   schedule:
-    - cron: "30 10,23 * * *"
+    # 2026-09-17, owner: "I want cars that are for sale to have active pages,
+    # and cars that have sold to show that they've sold." There is no third
+    # thing a shopper should ever meet, so the window in which a car is
+    # neither has to be short.
+    #
+    # A marketplace car stops being served 36 hours after its own page was
+    # last confirmed (0091), and on a rooftop that 403s the fetch only this
+    # pass can confirm it. At two slots a day the 23:30 → 10:30 gap meant a
+    # car could sit unserved for ELEVEN hours with a browser available the
+    # whole time. Four slots put the worst gap at seven.
+    #
+    # It costs nothing to run more often, and close to nothing to visit: the
+    # number of cars going stale per day is what it is, so more slots means
+    # fewer cars each, not more requests. The one real increase is the
+    # never-confirmable residue (798 on 2026-09-17) being retried four times
+    # a day instead of twice, which is ~1,600 extra page loads spread over
+    # ~1,400 rooftops. Runner minutes are free: the repo is public.
+    #
+    # 10:30 is the nightly's start and its own browser pass may take that
+    # slot — harmless, since that pass covers the same residue.
+    - cron: "30 4,10,17,23 * * *"
   workflow_dispatch:
     inputs:
       limit:
