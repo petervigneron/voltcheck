@@ -56,7 +56,11 @@ export interface RecentSale {
   sameVariant: boolean;
 }
 
-const REVALIDATE_SECONDS = 86_400; // upstream refreshes monthly
+// Not stored in the data cache (a plain fetch, no `next` option — see the
+// REVALIDATE_SECONDS note in lib/listings/db.ts, 2026-09-19). The body
+// carries this car's own odometer, so the entry's key was effectively
+// per VIN: written once per render, purged with the page on every publish,
+// never read back. The RPC ran on every render before and still does.
 
 // Goes through the recent_sales RPC rather than the table: raw wa_ev_sales
 // reads are revoked for anon (migration 0007), and the RPC caps the excerpt
@@ -100,7 +104,6 @@ export async function fetchRecentSales(
         // zero would band it to ±15,000 of nothing; the year band carries it.
         _odometer: mileage != null && mileage > 0 ? mileage : null,
       }),
-      next: { revalidate: REVALIDATE_SECONDS },
     });
     if (!res.ok) throw new Error(`PostgREST ${res.status}`);
     const rows = (await res.json()) as RecentSale[] | null;

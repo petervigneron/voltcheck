@@ -172,7 +172,16 @@ export async function fetchPriceTrend(a: {
         _trim_key: a.trimKey?.trim().toUpperCase() || null,
         _identity: a.identity?.trim() || null,
       }),
-      next: { revalidate: 3600 },
+      // A DAY, matching the data: ev_price_trend_ask_daily is closed days
+      // only, appended once a night (0077). This was 3600, and in the App
+      // Router a fetch's revalidate lowers the revalidate of the route that
+      // rendered it (lib/listings/db.ts, REVALIDATE_SECONDS) — so from
+      // 2026-09-03, when this fetch joined /listing/[id], every listing page
+      // was back on an hourly cache despite the route's own 86400. Measured
+      // 2026-09-19: 60 random sitemap listing URLs, 52 MISS, 8 REVALIDATED,
+      // 0 HIT, no `age` above 3,013 s. The key is the cohort and trim, not
+      // the VIN, so this entry IS shared between cars and stays cached.
+      next: { revalidate: 86_400 },
     });
     if (!res.ok) return null;
     const body = (await res.json()) as { asks?: TrendSeries | null; site?: SiteTrend | null };

@@ -55,6 +55,11 @@ import { proBenefitTitle } from "@/lib/proOffer";
 // hour (lib/listings/db.ts REVALIDATE_SECONDS, raised to a day on 2026-08-23,
 // with the production measurement that caught it). Changing the number below
 // is not enough by itself — check what the page's fetches ask for too.
+// It happened again: lib/trend.ts joined this page on 2026-09-03 asking for
+// 3600, and the route was hourly until 2026-09-19 (measured there). The
+// per-VIN reads no longer ask for anything — a plain fetch is "auto no
+// cache" in Next 16, which neither stores the row nor lowers this number
+// (lib/listings/db.ts, REVALIDATE_SECONDS, for the billing that decided it).
 // The empty generateStaticParams is what opts the route into static rendering;
 // every real id renders on first visit and is cached from then on.
 export const revalidate = 86400;

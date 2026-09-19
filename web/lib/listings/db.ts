@@ -92,6 +92,36 @@ const FEED_REVALIDATE_SECONDS = 86400;
 // on it. Without that POST the page is now bounded by a day, which is the
 // bound its own route file already claims and the same one the browse feed
 // runs on.
+//
+// Since 2026-09-19 this constant governs only the reads whose cache KEY is
+// shared between cars — the cohort (VIN 1-8 + year) below, dealer pace
+// (lib/listings/pace.ts, keyed by dealer domain), the market trend
+// (lib/trend.ts, keyed by cohort/trim). A crawler working through 5,000
+// Model Ys renders 5,000 pages off one cohort entry, so those earn their
+// place in the data cache. The reads keyed by a single VIN — the by-id row,
+// the delisted row, the four detail reads, recent sales (banded on this
+// car's own odometer) — no longer ask to be stored at all: a plain fetch
+// with no `next` option is "auto no cache" in Next 16 (patch-fetch.js:
+// `autoNoCache` when there is no explicit cache config at request time),
+// which is NOT stored, NOT read back, and explicitly not a reason to make
+// an ISR route dynamic ("we don't consider autoNoCache to switch to dynamic
+// for ISR", same file). The page keeps its `revalidate = 86400`.
+//
+// Why: Vercel bills every stored fetch as an ISR Write ($4/M), and the
+// per-VIN entries were pure writes. /api/revalidate purges /listing/[id] on
+// every publish (five a day, since 2026-09-12), and Next attaches the
+// route's implicit `_N_T_` tags to every fetch entry the render made, so
+// each purge threw every per-VIN entry away with the page — an entry that
+// exists only to serve THIS page's next render was never read back before
+// it was discarded. Measured on the 2026-08-25 → 09-19 billing period:
+// 12.63M ISR Writes ($50.52, the largest line on a $127 bill) against 8.61M
+// reads, and Observability's ISR meter showed ~19 writes per listing render
+// where the page itself is two (HTML + RSC). The other candidate fix —
+// `cache: "no-store"` — was rejected on the same source: an explicit opt-out
+// marks the route dynamic (`markCurrentScopeAsDynamic`), which would turn
+// every crawler hit into an uncached render. The Supabase side is unchanged:
+// these reads already ran on every render, because nothing survived the
+// purge long enough to be reused.
 const REVALIDATE_SECONDS = 86400;
 // Every fetch that reads listings data carries this tag; one
 // revalidateTag(FEED_CACHE_TAG) in /api/revalidate expires them all — with
@@ -618,7 +648,7 @@ export async function fetchListingByIdFromDb(id: string): Promise<ListingByIdRea
         `${base}/rest/v1/live_listings_feed?select=payload,first_seen_at,last_seen_at,prev_price_usd,price_changed_at,buyback_disclosed,branded_title_disclosed,listed_on&vin=eq.${encodeURIComponent(
           id.toUpperCase()
         )}&limit=1`,
-        { headers: headers(), next: { revalidate: REVALIDATE_SECONDS, tags: [FEED_CACHE_TAG] } }
+        { headers: headers() }
       );
       if (res.status < 500 || attempt >= 1 || feedWalkFailedRecently()) break;
       await new Promise((r) => setTimeout(r, 300));
@@ -682,7 +712,7 @@ export async function fetchDelistedByVinFromDb(vin: string): Promise<DelistedRea
         `${base}/rest/v1/delisted_listings_recent?select=payload,first_seen_at,last_seen_at,delisted_at,price_usd,buyback_disclosed,branded_title_disclosed&vin=eq.${encodeURIComponent(
           vin.toUpperCase()
         )}&limit=1`,
-        { headers: headers(), next: { revalidate: REVALIDATE_SECONDS, tags: [FEED_CACHE_TAG] } }
+        { headers: headers() }
       );
       if (res.status < 500 || attempt >= 1) break;
       await new Promise((r) => setTimeout(r, 300));
@@ -1005,21 +1035,18 @@ export async function fetchListingDetailFromDb(
     // the price chart because a materialized view was mid-refresh would be a
     // bad trade. `catch` below turns its failure into no block.
     const [res, histRes, priorRes, vinHistRes] = await Promise.all([
-      fetch(`${base}/rest/v1/listings?select=payload,price_usd&vin=eq.${vinKey}&limit=1`, {
-        headers: headers(),
-        next: { revalidate: REVALIDATE_SECONDS, tags: [FEED_CACHE_TAG] },
-      }),
+      fetch(`${base}/rest/v1/listings?select=payload,price_usd&vin=eq.${vinKey}&limit=1`, { headers: headers() }),
       fetch(
         `${base}/rest/v1/listing_price_display?select=price_usd,observed_at&vin=eq.${vinKey}&order=observed_at.asc`,
-        { headers: headers(), next: { revalidate: REVALIDATE_SECONDS, tags: [FEED_CACHE_TAG] } }
+        { headers: headers() }
       ),
       fetch(
         `${base}/rest/v1/listing_prior_site_series?select=delisted_at,price_usd,observed_at,prior_price_usd,prior_last_seen_at&vin=eq.${vinKey}&order=observed_at.asc`,
-        { headers: headers(), next: { revalidate: REVALIDATE_SECONDS, tags: [FEED_CACHE_TAG] } }
+        { headers: headers() }
       ),
       fetch(
         `${base}/rest/v1/vin_listing_history?select=first_seen_at,prior_domain,prior_price_usd,prior_last_seen_at,absences&vin=eq.${vinKey}&limit=1`,
-        { headers: headers(), next: { revalidate: REVALIDATE_SECONDS, tags: [FEED_CACHE_TAG] } }
+        { headers: headers() }
       ).catch(() => null),
     ]);
     if (!res.ok) throw new Error(`PostgREST ${res.status}`);
