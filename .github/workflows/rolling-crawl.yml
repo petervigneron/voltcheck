@@ -474,13 +474,37 @@ jobs:
           # entries, and `bash -e` ends the step before any retry. See
           # nightly.yml, where the same shape silently dropped the audit record
           # for two days (784f87e).
+          #
+          # AND THE OTHER WAY THE SAME RE-APPLY GOES WRONG (found 2026-09-19). When
+          # the re-apply conflicts, git leaves every file it DID merge cleanly
+          # STAGED. ingest.mjs had rewritten web/data/scraped-listings.json — the
+          # site's outage fallback, deliberately not this lane's to commit (see the
+          # sync step) — so it rode the autostash, merged cleanly, stayed staged
+          # while unwedge() rewound only scraper/registry, and the next iteration's
+          # `git add vpic-cache.json; git commit` carried it: "2 files changed"
+          # under a vPIC-cache message. Slice 0 of run 35467394507 is the log. It
+          # had been doing this since 2026-08-24 (6c3eac71): 62 commits, and the
+          # committed fallback was one slice's 2,985–3,812 cars in place of
+          # refresh-fallback.yml's 163,175 — the 2026-08-16 shape, with the
+          # 09-16, 09-17 and 09-19 deploys bundling it. Hence the three lines now
+          # in every commit-back step: the snapshot is restored before the first
+          # git command, unwedge() resets the whole index before rewinding, and
+          # `git reset -q` runs before every `git add` so a commit can carry only
+          # its named file.
           unwedge() {
             git rebase --abort 2>/dev/null || true
             git merge --abort 2>/dev/null || true
-            git checkout -f HEAD -- scraper/registry 2>/dev/null || true
+            git reset -q 2>/dev/null || true
+            git checkout -f HEAD -- scraper/registry web/data/scraped-listings.json 2>/dev/null || true
             git stash list 2>/dev/null | grep -q . && git stash drop >/dev/null 2>&1
             return 0 # never let this trip `bash -e` -- it is the recovery path
           }
+          # ingest.mjs rewrote the outage snapshot with this run's cars. Put it back
+          # BEFORE the first git command: left dirty it rides the autostash, and a
+          # conflicted re-apply leaves it STAGED for the commit below to sweep up.
+          # rolling-crawl.yml's vPIC step has the incident (62 commits, 2026-08-24
+          # to 09-19, 163,175 cars down to 3,812).
+          git checkout -f HEAD -- web/data/scraped-listings.json 2>/dev/null || true
           mine="${RUNNER_TEMP:-/tmp}/vpic-cache-mine.json"
           cp scraper/registry/vpic-cache.json "$mine"
           # Saved before the first git command for the same reason nightly.yml
@@ -507,6 +531,7 @@ jobs:
               unwedge; continue
             fi
             node scraper/merge-vin-cache.mjs --file scraper/registry/vpic-cache.json --mine "$mine"
+            git reset -q
             git add scraper/registry/vpic-cache.json
             git diff --staged --quiet && { echo "nothing to commit"; exit 0; }
             git commit -m "Rolling crawl: vPIC cache after slice ${{ steps.pick.outputs.slice }} [skip ci]"
@@ -549,10 +574,17 @@ jobs:
           unwedge() {
             git rebase --abort 2>/dev/null || true
             git merge --abort 2>/dev/null || true
-            git checkout -f HEAD -- scraper/registry 2>/dev/null || true
+            git reset -q 2>/dev/null || true
+            git checkout -f HEAD -- scraper/registry web/data/scraped-listings.json 2>/dev/null || true
             git stash list 2>/dev/null | grep -q . && git stash drop >/dev/null 2>&1
             return 0
           }
+          # ingest.mjs rewrote the outage snapshot with this run's cars. Put it back
+          # BEFORE the first git command: left dirty it rides the autostash, and a
+          # conflicted re-apply leaves it STAGED for the commit below to sweep up.
+          # rolling-crawl.yml's vPIC step has the incident (62 commits, 2026-08-24
+          # to 09-19, 163,175 cars down to 3,812).
+          git checkout -f HEAD -- web/data/scraped-listings.json 2>/dev/null || true
           unwedge
           for i in 1 2 3; do
             git checkout HEAD -- scraper/registry/vdp-notes.json 2>/dev/null || true
@@ -560,6 +592,7 @@ jobs:
             if ! git pull --rebase --autostash; then unwedge; sleep $((i * 10)); continue; fi
             if [ -n "$(git diff --name-only --diff-filter=U)" ]; then unwedge; continue; fi
             node scraper/merge-vin-cache.mjs --file scraper/registry/vdp-notes.json --mine "$mine" --indent 1
+            git reset -q
             git add scraper/registry/vdp-notes.json
             git diff --staged --quiet && { echo "nothing to commit"; exit 0; }
             git commit -m "Rolling crawl: dealer-notes cache after slice ${{ steps.pick.outputs.slice }} [skip ci]"
@@ -591,10 +624,17 @@ jobs:
           unwedge() {
             git rebase --abort 2>/dev/null || true
             git merge --abort 2>/dev/null || true
-            git checkout -f HEAD -- scraper/registry 2>/dev/null || true
+            git reset -q 2>/dev/null || true
+            git checkout -f HEAD -- scraper/registry web/data/scraped-listings.json 2>/dev/null || true
             git stash list 2>/dev/null | grep -q . && git stash drop >/dev/null 2>&1
             return 0
           }
+          # ingest.mjs rewrote the outage snapshot with this run's cars. Put it back
+          # BEFORE the first git command: left dirty it rides the autostash, and a
+          # conflicted re-apply leaves it STAGED for the commit below to sweep up.
+          # rolling-crawl.yml's vPIC step has the incident (62 commits, 2026-08-24
+          # to 09-19, 163,175 cars down to 3,812).
+          git checkout -f HEAD -- web/data/scraped-listings.json 2>/dev/null || true
           unwedge
           for i in 1 2 3; do
             git checkout HEAD -- scraper/registry/carfax-snapshot.json 2>/dev/null || true
@@ -602,6 +642,7 @@ jobs:
             if ! git pull --rebase --autostash; then unwedge; sleep $((i * 10)); continue; fi
             if [ -n "$(git diff --name-only --diff-filter=U)" ]; then unwedge; continue; fi
             node scraper/merge-vin-cache.mjs --file scraper/registry/carfax-snapshot.json --mine "$mine" --indent 1
+            git reset -q
             git add scraper/registry/carfax-snapshot.json
             git diff --staged --quiet && { echo "nothing to commit"; exit 0; }
             git commit -m "Rolling crawl: Carfax snapshot cache after slice ${{ steps.pick.outputs.slice }} [skip ci]"
@@ -650,10 +691,17 @@ jobs:
           unwedge() {
             git rebase --abort 2>/dev/null || true
             git merge --abort 2>/dev/null || true
-            git checkout -f HEAD -- scraper/registry 2>/dev/null || true
+            git reset -q 2>/dev/null || true
+            git checkout -f HEAD -- scraper/registry web/data/scraped-listings.json 2>/dev/null || true
             git stash list 2>/dev/null | grep -q . && git stash drop >/dev/null 2>&1
             return 0
           }
+          # ingest.mjs rewrote the outage snapshot with this run's cars. Put it back
+          # BEFORE the first git command: left dirty it rides the autostash, and a
+          # conflicted re-apply leaves it STAGED for the commit below to sweep up.
+          # rolling-crawl.yml's vPIC step has the incident (62 commits, 2026-08-24
+          # to 09-19, 163,175 cars down to 3,812).
+          git checkout -f HEAD -- web/data/scraped-listings.json 2>/dev/null || true
           unwedge
           for i in 1 2 3; do
             git checkout HEAD -- scraper/registry/audit-status.json 2>/dev/null || true
@@ -661,6 +709,7 @@ jobs:
             if ! git pull --rebase --autostash; then unwedge; sleep $((i * 10)); continue; fi
             if [ -n "$(git diff --name-only --diff-filter=U)" ]; then unwedge; continue; fi
             node scraper/merge-audit-status.mjs --mine "$mine"
+            git reset -q
             git add scraper/registry/audit-status.json
             git diff --staged --quiet && { echo "nothing to commit"; exit 0; }
             git commit -m "Rolling crawl: co-listing liveness record [skip ci]"
