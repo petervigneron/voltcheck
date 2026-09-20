@@ -2,9 +2,9 @@
   "_comment": "Written by scraper/lib/audit-status.mjs. Do not hand-edit — see that file's header.",
   "checks": {
     "feed-shard-health": {
-      "lastRunAt": "2026-09-19T20:57:16.127Z",
+      "lastRunAt": "2026-09-20T15:21:55.643Z",
       "result": "ok",
-      "detail": "total 170706; shards 3554/3500/3625/3477/3511/3555/3495/3594/3472/3419/3603/3571/3542/3598/3650/3557/3560/3499/3530/3501/3564/3607/3758/3538/3582/3378/3582/3512/3481/3497/3643/3569/3539/3578/3525/3561/3612/3563/3563/3696/3606/3603/3461/3605/3537/3588/3578/3567; sitemap URLs 169749",
+      "detail": "total 169243; shards 3522/3482/3593/3461/3499/3520/3449/3564/3437/3397/3581/3529/3486/3553/3613/3529/3529/3454/3527/3459/3518/3605/3730/3527/3556/3358/3560/3479/3460/3454/3620/3575/3498/3548/3499/3542/3585/3534/3547/3627/3580/3539/3432/3587/3487/3541/3535/3536; sitemap URLs 0",
       "expectedEveryHours": 8
     },
     "ev-rules-audit": {
@@ -20,15 +20,15 @@
       "expectedEveryHours": 27
     },
     "sync-guard": {
-      "lastRunAt": "2026-09-19T15:01:44.050Z",
+      "lastRunAt": "2026-09-20T15:21:14.500Z",
       "result": "ok",
-      "detail": "total 177083, oem 88397, dealer 88686 | tonight's sync: 87334 seen, 0 delisted (0.0%)",
+      "detail": "total 175738, oem 88274, dealer 87464 | tonight's sync: 87366 seen, 0 delisted (0.0%)",
       "expectedEveryHours": 27
     },
     "lane-flip-check": {
-      "lastRunAt": "2026-09-19T14:32:30.957Z",
+      "lastRunAt": "2026-09-20T14:52:25.362Z",
       "result": "warn",
-      "detail": "55792 cross-lane flips (55792 dealer→locator, 0 locator→dealer), 7 within-lane, 2035 new VINs, 30291 unchanged",
+      "detail": "55145 cross-lane flips (55145 dealer→locator, 0 locator→dealer), 1 within-lane, 1607 new VINs, 31430 unchanged",
       "expectedEveryHours": 27
     },
     "live-price-audit": {
@@ -38,7 +38,7 @@
       "expectedEveryHours": 8
     },
     "price-audit": {
-      "lastRunAt": "2026-09-19T15:00:28.603Z",
+      "lastRunAt": "2026-09-20T15:19:53.905Z",
       "result": "ok",
       "detail": "1 flagged, 0 corrected, 0 confirmed, 1 suppressed",
       "expectedEveryHours": 27
@@ -51,9 +51,9 @@
     }
   },
   "lastGoodCounts": {
-    "total": 177083,
-    "oem": 88397,
-    "dealer": 88686,
-    "at": "2026-09-19T15:01:44.049Z"
+    "total": 175738,
+    "oem": 88274,
+    "dealer": 87464,
+    "at": "2026-09-20T15:21:14.498Z"
   }
 }
