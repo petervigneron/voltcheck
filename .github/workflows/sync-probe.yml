@@ -5,6 +5,12 @@ name: Sync path probe
 # Manual only. Exits green whatever it finds; the answer is in the log and the
 # sync-probe artifact.
 on:
+  # A push trigger scoped to this branch, because GitHub only registers a
+  # workflow_dispatch from the default branch; the push both registers the
+  # workflow and runs the probe once.
+  push:
+    branches: [claude/charming-mayer-cxb66w]
+    paths: [.github/workflows/sync-probe.yml, scraper/sync-probe.mjs]
   workflow_dispatch:
     inputs:
       rounds:
