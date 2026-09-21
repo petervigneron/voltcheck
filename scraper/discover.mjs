@@ -3,7 +3,7 @@
 // registry meta). Finds car dealers with website tags in a bbox, probes each
 // domain, fingerprints its platform, and merges rows into registry.json.
 //   node discover.mjs <south> <west> <north> <east>
-import { readFile, writeFile } from "node:fs/promises";
+import { readFile, rename, writeFile } from "node:fs/promises";
 import { fetchRaw } from "./lib/http.mjs";
 import { fingerprint } from "./lib/fingerprint.mjs";
 
@@ -136,5 +136,10 @@ registry._sources = registry._sources ?? [];
 if (!registry._sources.some((x) => x.startsWith("OpenStreetMap"))) {
   registry._sources.push("OpenStreetMap via Overpass API (ODbL) — © OpenStreetMap contributors");
 }
-await writeFile(regUrl, JSON.stringify(registry, null, 2));
+// Temp file then rename: the weekly sweep can be ended from outside between
+// or during bboxes, and the registry is hand-curated — a half-written one
+// must never be what the commit step finds.
+const regTmp = new URL("./registry/.registry.json.tmp", import.meta.url);
+await writeFile(regTmp, JSON.stringify(registry, null, 2));
+await rename(regTmp, regUrl);
 console.error(`registry now has ${registry.sites.length} sites`);

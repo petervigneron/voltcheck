@@ -32,10 +32,25 @@ jobs:
           # 5 minutes between queries is right on a laptop; in CI the idle
           # time is billed, and 60s is still well inside Overpass's limits.
           SWEEP_SLEEP: "60"
+          # Stop starting new bboxes at 300 minutes so the 330-minute job cap
+          # above never has to. On 2026-09-20 the cap did: this step was
+          # cancelled at 5h30m, the commit below was skipped, and every dealer
+          # found in those five and a half hours was thrown away — the loss
+          # the nightly's finalize split was made to end, here on the lane
+          # that adds rooftops. discover.mjs saves the registry after every
+          # bbox, so a sweep that stops early keeps what it found.
+          SWEEP_DEADLINE_MIN: "300"
         run: bash discover-sweep.sh
 
+      # always(): a sweep still cut off (a runner lost, the cap hit anyway)
+      # has a registry worth committing. The parse check guards the one thing
+      # worse than losing a sweep — committing a truncated registry.json;
+      # discover.mjs writes it atomically, but the check costs a second and
+      # the file is hand-curated.
       - name: Commit discovered dealers
+        if: always()
         run: |
+          node -e 'JSON.parse(require("fs").readFileSync("scraper/registry/registry.json", "utf8"))' || { echo "::error::registry.json does not parse — not committing it"; exit 1; }
           git config user.name "voltcheck-bot"
           git config user.email "noreply@github.com"
           git add scraper/registry/registry.json

@@ -12,10 +12,19 @@ export PATH="/usr/local/bin:/opt/homebrew/bin:$PATH"
 LOG="logs/discover-$(date +%Y%m%d).log"
 mkdir -p logs
 
+# SWEEP_DEADLINE_MIN: stop starting new bboxes this many minutes in, so the
+# caller's own cap never has to cut the sweep off. Unset = no deadline (the
+# laptop's launchd run). discover.mjs saves the registry after every bbox, so
+# a sweep that stops early keeps everything before the stop.
+START=$(date +%s)
 {
   echo "=== discovery sweep $(date)"
   grep -v '^\s*#' registry/bboxes.txt | while read -r S W N E _; do
     [ -z "${S:-}" ] && continue
+    if [ -n "${SWEEP_DEADLINE_MIN:-}" ] && [ $(( ($(date +%s) - START) / 60 )) -ge "$SWEEP_DEADLINE_MIN" ]; then
+      echo "--- deadline: ${SWEEP_DEADLINE_MIN} minutes in, stopping before bbox $S $W $N $E; the rest are next week's"
+      break
+    fi
     echo "--- bbox $S $W $N $E"
     node discover.mjs "$S" "$W" "$N" "$E"
     # Spacing between Overpass queries. Generous by default on a laptop;
