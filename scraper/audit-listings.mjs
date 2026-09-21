@@ -119,10 +119,34 @@ const unvouched = live.filter((r) => !vouched(r) && String(r.vin ?? "").length =
 console.error(`audit: ${live.length - unvouched.length} vouched by WMI or nameplate, ${unvouched.length} need vPIC`);
 if (!unvouched.length) { console.error("audit: clean"); await finish(0, "ok", `${live.length} live, all vouched by WMI or nameplate`); }
 
-// Same decoder, same batch size and courtesy pause as vpic-enrich.mjs.
+// Ask the committed decode cache first (registry/vpic-cache.json, the one
+// vpic-enrich.mjs writes before ingest, so a live listing's VIN is almost
+// always in it) and vPIC only for the rest. The audit used to put all ~30,000
+// unvouched VINs to vPIC every run: 22 minutes on a good afternoon, past the
+// job's 30-minute cap on a slow morning — 2026-09-19 04:33, 09-20 04:49 and
+// 09-20 11:17 were all cancelled mid-decode, every audit behind this one was
+// skipped, and the price audit went stale enough to fail the liveness check.
+// A cache entry holds exactly the fields refutes() and the report read
+// (ElectrificationLevel, the fuel types, Series, Trim, Make); an entry that
+// predates 2026-09-09 lacks Model, which nothing here reads.
 const byVin = new Map();
-for (let i = 0; i < unvouched.length; i += 50) {
-  const batch = unvouched.slice(i, i + 50).map((r) => r.vin);
+let cache = {};
+try {
+  cache = JSON.parse(await readFile(new URL("./registry/vpic-cache.json", import.meta.url), "utf-8"));
+} catch (e) {
+  if (e.code !== "ENOENT") console.error(`audit: vPIC cache unreadable (${e.message}) — asking vPIC for everything`);
+}
+const toFetch = [];
+for (const r of unvouched) {
+  const hit = cache[String(r.vin).toUpperCase()];
+  if (hit) byVin.set(String(r.vin).toUpperCase(), hit);
+  else toFetch.push(r);
+}
+console.error(`audit: ${byVin.size} decodes from registry/vpic-cache.json, ${toFetch.length} to ask vPIC for`);
+
+// Same decoder, same batch size and courtesy pause as vpic-enrich.mjs.
+for (let i = 0; i < toFetch.length; i += 50) {
+  const batch = toFetch.slice(i, i + 50).map((r) => r.vin);
   try {
     const res = await fetch("https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValuesBatch/", {
       method: "POST",
@@ -131,7 +155,7 @@ for (let i = 0; i < unvouched.length; i += 50) {
     });
     if (res.ok) for (const r of (await res.json()).Results ?? []) if (r.VIN) byVin.set(r.VIN.toUpperCase(), r);
   } catch { /* a failed batch leaves those VINs unjudged, which is the safe direction */ }
-  if (i % 1000 === 0) console.error(`  vPIC ${i}/${unvouched.length}`);
+  if (i % 1000 === 0) console.error(`  vPIC ${i}/${toFetch.length}`);
   await new Promise((r) => setTimeout(r, 400));
 }
 
