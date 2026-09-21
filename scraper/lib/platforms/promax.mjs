@@ -70,6 +70,7 @@
 // picks it up unchanged and no VDP parser is needed here.
 
 import { extractNodes } from "../jsonld.mjs";
+import { cut } from "../well-formed.mjs";
 
 // Byte-identical to the promax entry in lib/fingerprint.mjs (test-asserted).
 // The stylesheet library (CX5_Front_Inventory*.css), the inventory image
@@ -426,7 +427,7 @@ export function proMaxEntries(html, pageUrl) {
         : typeof node.vehicleEngine?.name === "string"
           ? node.vehicleEngine.name
           : "";
-    const name = decode([node.name ?? "", engine].filter(Boolean).join(" ")).slice(0, 200);
+    const name = cut(decode([node.name ?? "", engine].filter(Boolean).join(" ")), 200);
     out.push({ url, name: name || undefined, vin: VIN_RE.test(vin) ? vin : undefined });
   }
   return out;

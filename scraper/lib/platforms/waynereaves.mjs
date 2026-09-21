@@ -46,6 +46,7 @@
 import { WAYNEREAVES_PRICE } from "../price-provenance.mjs";
 import { stabilizeImages } from "../images.mjs";
 import { fetchPage } from "../http.mjs";
+import { cut } from "../well-formed.mjs";
 
 const VIN_RE = /^[A-HJ-NPR-Z0-9]{17}$/;
 
@@ -129,7 +130,7 @@ export function wayneReavesVehicle(rec, origin) {
     driveWheelConfiguration: rec?.driveTrain || undefined,
     vehicleTransmission: rec?.transmission || undefined,
     sku: rec?.stockNo ? String(rec.stockNo) : undefined,
-    description: typeof rec?.description === "string" ? rec.description.slice(0, 2000) : undefined,
+    description: typeof rec?.description === "string" ? cut(rec.description, 2000) : undefined,
     image: images.length ? images : undefined,
     fuelType: fuel,
     vehicleEngine: {

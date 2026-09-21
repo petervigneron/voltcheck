@@ -20,6 +20,8 @@
 // way (0070, 0075). "Rebuilt", "Salvage", "Lemon", "Buyback" come through as
 // the dealer's own word.
 
+import { cut } from "./well-formed.mjs";
+
 const BRAND = "(rebuilt|reconstructed|salvage|salvaged|branded|lemon(?: law)?(?: buy[\\s-]?back)?|buy[\\s-]?back|flood|junk|fire|hail)";
 // "Title: Rebuilt", "Title Status: Salvage", "Title Type: Branded Title",
 // "Title Brand: Lemon". Bounded so the row's own words are what is read, not
@@ -47,5 +49,5 @@ export function titleBrandFromPage(html) {
   // A page can carry both a spec row and marketing copy; the spec row wins,
   // and a clean spec row wins over anything else.
   if (NOT_A_BRAND.test(text) && text.search(NOT_A_BRAND) < m.index) return undefined;
-  return pretty(m[1]).slice(0, 60);
+  return cut(pretty(m[1]), 60);
 }

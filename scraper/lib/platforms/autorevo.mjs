@@ -149,6 +149,7 @@
 import { stabilizeImages } from "../images.mjs";
 import { isKnownMake } from "../makes.mjs";
 import { AUTOREVO_PRICE } from "../price-provenance.mjs";
+import { cut } from "../well-formed.mjs";
 
 // The vendor's own hosts, byte-identical to lib/fingerprint.mjs's entry.
 //
@@ -497,7 +498,7 @@ export function autoRevoEntries(html, pageUrl) {
     const words = [...new Set((engine.match(POWERTRAIN_RE) ?? []).map((s) => s.toLowerCase()))];
     out.push({
       url,
-      name: collapse([name ?? "", ...words].join(" ")).slice(0, 200) || undefined,
+      name: cut(collapse([name ?? "", ...words].join(" ")), 200) || undefined,
       vin: plausibleVin(ddValue(tile, "vin_value")),
       sold: SOLD_RE.test(tile),
     });

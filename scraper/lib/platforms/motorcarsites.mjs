@@ -64,6 +64,7 @@ import { conditionToken } from "../condition.mjs";
 import { stabilizeImages } from "../images.mjs";
 import { isKnownMake } from "../makes.mjs";
 import { MOTORCARSITES_PRICE } from "../price-provenance.mjs";
+import { cut } from "../well-formed.mjs";
 
 // The vendor's own hosts. Anchored on the host, never on a brand word: a
 // rooftop is free to run this platform on a domain of its own, and one named
@@ -184,7 +185,7 @@ export function motorcarEntries(html, pageUrl) {
     parts.push(...new Set((text.match(POWERTRAIN_RE) ?? []).map((s) => s.toLowerCase())));
     out.push({
       url,
-      name: collapse(parts.join(" ")).slice(0, 200),
+      name: cut(collapse(parts.join(" ")), 200),
       vin: vin && VIN_RE.test(vin) ? vin : undefined,
       sold: /price-sold|sold_text/i.test(tile),
     });

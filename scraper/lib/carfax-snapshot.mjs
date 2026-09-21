@@ -57,6 +57,7 @@
 // rule); the date lives in registry/carfax-snapshot.json.
 
 import { publishedCondition } from "./condition.mjs";
+import { cut } from "./well-formed.mjs";
 
 export const SNAPSHOT_HOST = "https://snapshot.carfax.com";
 export const snapshotUrl = (key) =>
@@ -102,11 +103,11 @@ export function parseSnapshot(json) {
   for (const r of rows) {
     const m = r.match(/^branded title:\s*(.+)$/i);
     if (m) {
-      titleBrand = m[1].trim().slice(0, 60);
+      titleBrand = cut(m[1].trim(), 60);
       break;
     }
     if (FACT_ROW.test(r) && !NOT_A_FACT.test(r)) {
-      titleBrand = r.slice(0, 60);
+      titleBrand = cut(r, 60);
       break;
     }
   }

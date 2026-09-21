@@ -20,6 +20,7 @@ import { loadFordStickers, applyFordStickerTrims } from "./lib/ford-sticker-trim
 import { fetchWithRetry } from "./lib/retry.mjs";
 import { laneOf, OEM_LOCATOR_DOMAINS } from "./lib/oem-lane-domains.mjs";
 import { readSnapshot } from "./lib/snapshot.mjs";
+import { repairWellFormed } from "./lib/well-formed.mjs";
 
 // Minimal .env parser — launchd jobs carry no shell environment.
 async function loadEnv(url) {
@@ -44,6 +45,22 @@ if (!SUPABASE_URL || (!SERVICE_KEY && !GATEWAY)) {
 }
 
 const listings = await readSnapshot(new URL("../web/data/scraped-listings.json", import.meta.url));
+
+// A string ending in half a character (a description cut mid-emoji) is legal
+// to Node and invalid JSON to PostgREST, which then refuses the whole chunk:
+// HTTP 400 PGRST102, every rolling/browser crawl run 2026-09-19..21, ~1,700
+// rows a time. Repair here, at the last point before the body is built, and
+// name each one — lib/well-formed.mjs has the measurement.
+const repaired = repairWellFormed(listings);
+if (repaired.length) {
+  const byDomainCount = new Map();
+  for (const r of repaired) byDomainCount.set(r.domain, (byDomainCount.get(r.domain) || 0) + 1);
+  console.error(
+    `db-sync: repaired ${repaired.length} string(s) ending in half a character (PostgREST would have refused their chunk) — ` +
+      [...byDomainCount].map(([d, n]) => `${d}: ${n}`).join(", ")
+  );
+  for (const r of repaired.slice(0, 20)) console.error(`db-sync:   ${r.vin} ${r.domain} ${r.field} …${r.before}`);
+}
 
 // A catastrophically small feed means the crawl broke, not that the
 // inventory vanished. Don't push it — a fetch failure is never evidence

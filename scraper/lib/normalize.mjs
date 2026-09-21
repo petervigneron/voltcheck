@@ -1,5 +1,6 @@
 // schema.org Vehicle → one normalized listing record, VIN-keyed.
 import { JSONLD, offerProvenance } from "./price-provenance.mjs";
+import { cut } from "./well-formed.mjs";
 
 // Feeds hand us HTML-encoded text, and an undecoded entity is not a cosmetic
 // problem — it changes what the string IS. web/lib/enrichment/match.ts keys on
@@ -212,7 +213,7 @@ export function normalize(vehicle, { sourceUrl, dealerDomain }) {
   const vdpUrl = text(offer?.url);
   return {
     images,
-    description: dealerWords(text(vehicle.description))?.slice(0, 2000),
+    description: cut(dealerWords(text(vehicle.description)), 2000),
     vdpUrl,
     vin: text(vehicle.vehicleIdentificationNumber)?.toUpperCase(),
     year: modelYear(vehicle.vehicleModelDate ?? vehicle.productionDate ?? vehicle.modelDate),

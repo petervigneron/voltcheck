@@ -15,6 +15,7 @@ import { decodeEntities } from "./lib/normalize.mjs";
 import { inventoryBrandedFor } from "./lib/branded-title-dealers.mjs";
 import { splitTeslaModel } from "./lib/tesla-nameplate.mjs";
 import { untrustedModel } from "./lib/model-trust.mjs";
+import { cut } from "./lib/well-formed.mjs";
 
 const raw = JSON.parse(await readFile(new URL("./out/listings.json", import.meta.url), "utf-8"));
 // Single-rooftop dealers have exactly one address — listings inherit it from
@@ -319,7 +320,7 @@ const listings = raw
       // (carfax-snapshot.mjs) — a string like "Buyback/Lemon". Read by the
       // disclosure columns (0070). Never a timestamp: a re-read that changed
       // nothing must not rewrite the row.
-      titleBrand: typeof r.titleBrand === "string" && r.titleBrand ? r.titleBrand.slice(0, 60) : undefined,
+      titleBrand: typeof r.titleBrand === "string" && r.titleBrand ? cut(r.titleBrand, 60) : undefined,
       // The seller says every car it sells has a branded title
       // (registry/branded-title-dealers.json, lib/branded-title-dealers.mjs).
       // Read by branded_title_disclosed (0074).

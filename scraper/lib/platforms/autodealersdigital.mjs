@@ -133,6 +133,7 @@
 // overstate what it holds.
 import { stabilizeImages } from "../images.mjs";
 import { ADD_DISPLAY_PRICE } from "../price-provenance.mjs";
+import { cut } from "../well-formed.mjs";
 
 // The vendor's own hosts, and its theme directory as a path. Anchored on a
 // host or a path, never on the bare brand words: a dealer is free to be named
@@ -260,7 +261,7 @@ export function autoDealersDigitalEntries(html, pageUrl) {
     const vin = tile.match(/class="vin-text vin"[^>]*>[\s\S]{0,160}?<span>\s*([A-HJ-NPR-Z0-9]{17})\s*<\/span>/i)?.[1];
     out.push({
       url,
-      name: collapse([title, banner === title ? "" : banner].join(" ")).slice(0, 200),
+      name: cut(collapse([title, banner === title ? "" : banner].join(" ")), 200),
       vin: vin && VIN_RE.test(vin) ? vin.toUpperCase() : undefined,
       sold: SOLD_BADGE_RE.test(tile),
     });
