@@ -181,7 +181,19 @@ jobs:
     # wall walked away from 36 such visits across 30 of the 48 slices and
     # synced 48 of 48; its crawl steps ran 9.2-18.0 minutes (median 14.3).
     # So 34 is headroom over a 23-minute ceiling, not a budget.
-    timeout-minutes: 34
+    #
+    # 34 → 45 on 2026-09-21. The 23-minute ceiling still holds for the crawl,
+    # but the slice job is no longer crawl + a minute: since 2026-09-12 it also
+    # reads dealer notes and Carfax title brands and commits four caches, each
+    # commit racing 47 sibling slices for the same branch with a retry ladder
+    # of sleeps. Measured on the 2026-09-18 00:00 run: crawl 23:00, Carfax
+    # 1:40-3:44, the four commits 5:07-6:09 between them — a clean slice
+    # finished at 32:04 and six were cancelled by this cap at 34:32-34:49 with
+    # their sync DONE and only a cache commit left. The cancellations cost
+    # nothing a shopper sees; they cost an alert and a decode cache that had to
+    # be re-fetched. 45 covers the measured worst case (setup 0:30, crawl 23,
+    # vPIC 6 cap, notes 1, Carfax 4, sync 1, commits 8) with a few minutes over.
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -303,13 +315,22 @@ jobs:
       # `queue.length > 0 || Boolean(report.stoppedEarly)`, control-tested), so
       # db-sync will not delist its cars — the pages it did not reach are that
       # rooftop's next visit, not a deletion.
+      # `timeout 26m` is a net over crawl.mjs's own hard stop (deadline 18 +
+      # 5). The 2026-09-20 07:27 run's slice 6 sat in this step for 38 minutes
+      # — past the hard stop, past the job cap — and was cancelled with its
+      # checkpoint written and nothing synced. Past 26 minutes the process is
+      # ended from outside, the step goes on to enrich, ingest and sync
+      # whatever out/listings.json holds (crawl.mjs checkpoints it every two
+      # minutes and writes it atomically, so it is never a half-written file),
+      # and the rooftops still in flight are simply next sweep's.
       - name: Crawl the slice
         working-directory: scraper
         run: |
           BROWSER_LANES=on BROWSER_CONCURRENCY=8 \
-          node crawl.mjs $(cat /tmp/domains.txt) \
+          timeout -k 20s 26m node crawl.mjs $(cat /tmp/domains.txt) \
             --max-pages 80 --cache-hours 0 --concurrency 32 --deadline-min 18 \
-            --domain-cap-min 8
+            --domain-cap-min 8 \
+            || { rc=$?; echo "::warning::crawl.mjs exited $rc on slice ${{ matrix.slice }} (124 = ended by the 26-minute net); syncing what its last checkpoint holds"; }
 
       # Bare invocation, capped from outside — vpic-enrich.mjs takes no flags
       # and reads out/listings.json, which for this run holds only the slice.

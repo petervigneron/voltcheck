@@ -5,7 +5,7 @@
 // (DealerOn-style sites list no VDPs in their sitemap). Extraction: schema.org
 // Vehicle JSON-LD. EV-targeting: ItemList names/VINs are pre-filtered so the
 // page budget is spent on electric cars, not the whole lot.
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import { fetchPage, setCacheTtl } from "./lib/http.mjs";
 import { titleBrandFromPage } from "./lib/title-brand.mjs";
 import { extractVehicles, extractItemListEntries } from "./lib/jsonld.mjs";
@@ -1676,12 +1676,21 @@ async function writeOutput() {
       byVin.set(key, prev ? keepRicher(prev, ev) : ev);
       colisted.add(ev);
     }
-    await writeFile(new URL("./out/listings.json", import.meta.url), JSON.stringify([...byVin.values()], null, 2));
+    // Temp file then rename, so a process ended from outside mid-checkpoint
+    // (rolling-crawl.yml's `timeout` net) leaves the previous complete file,
+    // never a truncated one for ingest to choke on.
+    const writeAtomic = async (name, text) => {
+      const dest = new URL(`./out/${name}`, import.meta.url);
+      const tmp = new URL(`./out/.${name}.tmp`, import.meta.url);
+      await writeFile(tmp, text);
+      await rename(tmp, dest);
+    };
+    await writeAtomic("listings.json", JSON.stringify([...byVin.values()], null, 2));
     for (const r of reports) r.crawledAt ??= new Date().toISOString();
-    await writeFile(new URL("./out/report.json", import.meta.url), JSON.stringify(reports, null, 2));
+    await writeAtomic("report.json", JSON.stringify(reports, null, 2));
     // Unindented on purpose, same as merge-shards: transport, not reading.
     const colisting = colisted.pairs();
-    await writeFile(new URL("./out/colisting-pairs.json", import.meta.url), JSON.stringify(colisting));
+    await writeAtomic("colisting-pairs.json", JSON.stringify(colisting));
     lastColisting = colisting;
     return byVin.size;
   } finally {
