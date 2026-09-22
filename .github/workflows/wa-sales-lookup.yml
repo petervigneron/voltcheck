@@ -1,0 +1,36 @@
+name: What did a model sell for in Washington
+
+# Manual lookup against WA DOL's EV title-transfer dataset (data.wa.gov
+# rpr4-cgyd, ODbL), the same public source the nightly's wa-prices.mjs loads
+# into wa_ev_sales. Prints prices PAID, by model year, VIN position-8 pack code
+# and odometer band, into the job log. No secrets, writes nothing.
+on:
+  workflow_dispatch:
+    inputs:
+      make:
+        description: "Make as WA spells it (e.g. FORD)"
+        required: true
+        default: "FORD"
+      model:
+        description: "Model substring as WA spells it (e.g. F-150 LIGHTNING)"
+        required: true
+        default: "F-150 LIGHTNING"
+      months:
+        description: "How far back"
+        required: false
+        default: "18"
+
+permissions:
+  contents: read
+
+jobs:
+  lookup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - working-directory: scraper
+        run: node wa-sales-lookup.mjs --make "${{ github.event.inputs.make }}" --model "${{ github.event.inputs.model }}" --months "${{ github.event.inputs.months }}"
