@@ -822,14 +822,19 @@ export function FilterRail({
             presents a paywall after people click it"); before that it was
             offered only to a pass-holder, so the feature was discoverable
             only by finding /pro first.
-            But ?deal=1 without a pass was SILENT: match.ts drops the filter
-            (it has no deal figures to judge by — the data gate in
-            lib/listings/proSignals.ts strips them from the public shards) and
-            the rail showed nothing, so a shared or bookmarked deals link
-            rendered every car in the feed as though that were the answer. A
-            filter that is not applied has to say so, and the count beside it
-            is the unfiltered count, honestly. */}
-        {deals === "toggle" ? (
+            2026-09-23, owner: "throw up a paywall after that toggle is
+            clicked, not mark the toggle itself." Until then a browser
+            without a pass got a saffron chip reading "Deals — pass ended" or
+            "Deals — Pro" in the toggle's place. Now the control looks the
+            same for everyone: the unpressed toggle. A pass-holder's click
+            applies the filter; anyone else's click goes to /pro, which is
+            the paywall, and which already says whether a pass ended (0087).
+            The toggle never shows pressed without a pass, because match.ts
+            does not apply the filter without one (the data gate in
+            lib/listings/proSignals.ts strips the figures from the public
+            shards): a shared ?deal=1 link renders the whole feed, and the
+            hover on the toggle says so rather than the toggle itself. */}
+        {deals === "none" ? null : deals === "toggle" ? (
           <button
             type="button"
             aria-pressed={dealOn}
@@ -843,24 +848,18 @@ export function FilterRail({
             <span aria-hidden="true">{dealOn ? "✓" : "+"}</span>
             Deals
           </button>
-        ) : deals === "none" ? null : (
-          // Saffron is the site's ground for "something needs your attention"
-          // (/pro's ended-pass block, /account's failed link), not vermilion:
-          // nothing here is an error, and it is not a chip that can be
-          // removed — it is the way to switch the filter back on.
+        ) : (
           <Link
             href="/pro"
-            // Two different situations behind one chip. A shopper who asked
-            // for deals needs to know the grid is NOT the answer to that
-            // ("Showing all cars"); a shopper who never asked has no such
-            // misreading to correct and needs to know what the control does —
-            // the same words the working toggle carries when it is off. Both
-            // strings are already on this rail; neither is new.
+            aria-pressed={false}
             title={dealOn ? "Showing all cars" : "Only cars priced well under similar listings"}
-            className={`${BLOCK} ${HOVER} bg-saffron text-ink`}
+            onClick={() => {
+              track("filter_toggled", undefined, { key: "deal", value: "1", on: true, surface: "rail", scoped, paywall: deals });
+            }}
+            className={`${BLOCK} ${HOVER} bg-paper text-ink`}
           >
-            {deals === "ended" ? "Deals — pass ended" : "Deals — Pro"}
-            <span aria-hidden="true">→</span>
+            <span aria-hidden="true">+</span>
+            Deals
           </Link>
         )}
 
