@@ -2,21 +2,21 @@
   "_comment": "Written by scraper/lib/audit-status.mjs. Do not hand-edit — see that file's header.",
   "checks": {
     "feed-shard-health": {
-      "lastRunAt": "2026-09-27T16:58:12.277Z",
+      "lastRunAt": "2026-09-27T21:19:55.786Z",
       "result": "ok",
-      "detail": "total 169655; shards 3562/3496/3638/3507/3501/3572/3433/3585/3483/3371/3619/3475/3502/3577/3587/3544/3485/3486/3539/3518/3543/3541/3685/3506/3543/3409/3541/3534/3550/3468/3633/3575/3515/3568/3512/3567/3533/3556/3589/3613/3569/3521/3474/3590/3473/3517/3542/3508; sitemap URLs 170345",
+      "detail": "total 169655; shards 3562/3496/3638/3507/3501/3572/3433/3585/3483/3371/3619/3475/3502/3577/3587/3544/3485/3486/3539/3518/3543/3541/3685/3506/3543/3409/3541/3534/3550/3468/3633/3575/3515/3568/3512/3567/3533/3556/3589/3613/3569/3521/3474/3590/3473/3517/3542/3508; sitemap URLs 168495",
       "expectedEveryHours": 8
     },
     "ev-rules-audit": {
-      "lastRunAt": "2026-09-27T16:56:32.553Z",
+      "lastRunAt": "2026-09-27T21:19:16.132Z",
       "result": "ok",
-      "detail": "173933 live, 0 newly refuted by vPIC, 0 adjudicated-and-kept, 0 undecided",
+      "detail": "171325 live, 0 newly refuted by vPIC, 0 adjudicated-and-kept, 0 undecided",
       "expectedEveryHours": 27
     },
     "completeness-audit": {
-      "lastRunAt": "2026-09-27T16:56:52.070Z",
+      "lastRunAt": "2026-09-27T21:19:39.916Z",
       "result": "ok",
-      "detail": "70368 live, 9 broken-parser lots (baseline 202)",
+      "detail": "69022 live, 9 broken-parser lots (baseline 202)",
       "expectedEveryHours": 27
     },
     "sync-guard": {
@@ -32,7 +32,7 @@
       "expectedEveryHours": 27
     },
     "live-price-audit": {
-      "lastRunAt": "2026-09-27T16:57:02.720Z",
+      "lastRunAt": "2026-09-27T21:19:50.763Z",
       "result": "warn",
       "detail": "167644 priced, 23 implausible (2 at or below the floor/cohort, 21 above)",
       "expectedEveryHours": 8
