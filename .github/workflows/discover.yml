@@ -47,12 +47,41 @@ jobs:
       # worse than losing a sweep — committing a truncated registry.json;
       # discover.mjs writes it atomically, but the check costs a second and
       # the file is hand-curated.
+      #
+      # The push retries on a moved main. On 2026-09-27 the sweep ran 5h29m,
+      # found 9 dealers, committed them, and a bare `git push` was rejected
+      # because the rolling crawl and the browser crawl had pushed cache
+      # commits in the meantime — which over a five-hour job they always
+      # will. Nothing else had touched registry.json, so a rebase would have
+      # landed it cleanly; there just wasn't one. If a rebase ever does
+      # conflict on registry.json, the step aborts it and fails loudly rather
+      # than resolve a hand-curated file by machine; the artifact below still
+      # holds the sweep's registry.
       - name: Commit discovered dealers
         if: always()
         run: |
           node -e 'JSON.parse(require("fs").readFileSync("scraper/registry/registry.json", "utf8"))' || { echo "::error::registry.json does not parse — not committing it"; exit 1; }
           git config user.name "voltcheck-bot"
           git config user.email "noreply@github.com"
+          git reset -q
           git add scraper/registry/registry.json
-          git diff --staged --quiet || git commit -m "Weekly discovery sweep [skip ci]"
-          git push
+          git diff --staged --quiet && { echo "no new dealers"; exit 0; }
+          git commit -m "Weekly discovery sweep [skip ci]"
+          for i in 1 2 3 4 5; do
+            if git push; then echo "discovered dealers pushed"; exit 0; fi
+            if ! git pull --rebase; then
+              git rebase --abort || true
+              echo "::error::registry.json conflicted with a newer main — not resolving a hand-curated file by machine. The sweep's registry is in this run's discover-registry artifact."
+              exit 1
+            fi
+            sleep $((i * 10))
+          done
+          echo "::error::Could not push the discovered dealers after 5 tries; the sweep's registry is in this run's discover-registry artifact."
+          exit 1
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: discover-registry
+          path: scraper/registry/registry.json
+          retention-days: 14
