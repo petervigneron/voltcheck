@@ -180,7 +180,7 @@ try {
     if (m && !line.trimStart().startsWith("#") && !(m[1] in process.env)) process.env[m[1]] = m[2].replace(/^["']|["']$/g, "");
   }
 } catch {}
-const { SUPABASE_URL, SUPABASE_ANON_KEY: ANON } = process.env;
+const { SUPABASE_URL, SUPABASE_ANON_KEY: ANON, SUPABASE_SERVICE_ROLE_KEY: SERVICE } = process.env;
 if (!SUPABASE_URL || !ANON) {
   // Not the "inconclusive, exit 0" the report-only audits answer with. Silence
   // here would leave the old snapshot in place while the workflow went green,
@@ -294,15 +294,30 @@ async function fetchWithRetry(url, init) {
 }
 
 /** The expected count, so a walk that "succeeds" while quietly returning half
- *  the feed still fails. db.ts's shape exactly: the `listings` TABLE rather
- *  than the view (the view's price-history join costs the whole aggregation to
- *  produce one integer), carrying the view's own `delisted_at is null` so the
- *  number is the same by construction. Range 0-0 and NO `limit`: a `limit`
- *  alongside the Range makes PostgREST answer without a content-range total,
- *  which silently disables the whole check. */
+ *  the feed still fails. It counts the VIEW the walk reads, live_listings_feed,
+ *  with the service key — only the count; the walk itself stays anon.
+ *
+ *  This used to count the `listings` table with `delisted_at is null`, on the
+ *  reasoning that the view's only filter was that same clause, so the two were
+ *  equal by construction. They stopped being equal on 2026-09-12, when
+ *  0089/0090 made the view show a car only while it is provably for sale (seen
+ *  or confirmed in the last 48 h, and the marketplace and returned-car rules).
+ *  From then on the table counted ~2-4% more cars than the view could ever
+ *  serve, the 50-row slack below failed every run, and the snapshot was
+ *  refused three Sundays in a row (09-13, 09-20, 09-27: 168,412 walked
+ *  against 171,703 "live" — every one of the 3,291 was a car the feed hides
+ *  on purpose). Measured 2026-09-28: count(*) on the view = 165,355 in 7.5 s,
+ *  byte-for-byte the rows the view returns, and 7.5 s is past anon's 3 s
+ *  timeout — hence the service key (60 s). Rebuilding the view's WHERE on
+ *  the table as PostgREST filters is not possible (it reads listing_seen and
+ *  listing_offers) and would drift from the view the next time the rule moves.
+ *
+ *  Range 0-0 and NO `limit`: a `limit` alongside the Range makes PostgREST
+ *  answer without a content-range total, which silently disables the whole
+ *  check. */
 async function liveCount() {
-  const res = await fetchWithRetry(`${BASE}/rest/v1/listings?select=vin&delisted_at=is.null`, {
-    headers: { ...H, range: "0-0", prefer: "count=exact" },
+  const res = await fetchWithRetry(`${BASE}/rest/v1/live_listings_feed?select=vin`, {
+    headers: { apikey: SERVICE, authorization: `Bearer ${SERVICE}`, range: "0-0", prefer: "count=exact" },
   });
   if (!res.ok) throw new Error(`PostgREST ${res.status}`);
   const n = Number(res.headers.get("content-range")?.split("/")[1]);
@@ -350,8 +365,9 @@ try {
 const t0 = Date.now();
 let expected = null;
 try {
+  if (!SERVICE) throw new Error("no SUPABASE_SERVICE_ROLE_KEY — the feed view's count needs more than anon's 3 s");
   expected = await liveCount();
-  console.error(`refresh-fallback: database reports ${expected} live listings; walking them in ${LANES} lane${LANES === 1 ? "" : "s"}`);
+  console.error(`refresh-fallback: the feed view reports ${expected} cars; walking them in ${LANES} lane${LANES === 1 ? "" : "s"}`);
 } catch (e) {
   // db.ts treats its own count failure as non-fatal — fresh-but-unchecked beats
   // provably stale for a render that has to answer something. This has no such
@@ -421,9 +437,25 @@ process.stderr.write("\n");
 const listings = collected.flat();
 const seconds = Number(((Date.now() - t0) / 1000).toFixed(1));
 
+// Count again now the walk is done, and hold it to the smaller of the two. The
+// view's 48 h window slides while the walk runs, so cars can age out between
+// the first count and the page that would have held them; that is not a short
+// read. Cars that arrive mid-walk only make the walk longer, never shorter.
+if (expected !== null) {
+  try {
+    const after = await liveCount();
+    if (after < expected) {
+      console.error(`refresh-fallback: the feed view reports ${after} cars after the walk (${expected - after} aged out while it ran); checking against that`);
+      expected = after;
+    }
+  } catch (e) {
+    console.error(`refresh-fallback: could not recount after the walk (${e.message}); checking against the count taken before it`);
+  }
+}
+
 if (expected !== null && listings.length < expected - SHORT_READ_SLACK_ROWS) {
   problems.push(
-    `the walk returned ${listings.length} rows against the ${expected} the database says are live — ` +
+    `the walk returned ${listings.length} rows against the ${expected} the feed view reports — ` +
       `${expected - listings.length} missing. Every request answered; the cars simply were not there. ` +
       "This is the silent short read, or a read that landed mid-write."
   );
