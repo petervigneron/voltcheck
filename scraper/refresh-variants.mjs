@@ -75,19 +75,30 @@ const VIEWS = [
   "ev_cohort_ask_weekly",
   // The market-trend views (0061/0064). Sales is cheap (0.2s, quarterly over
   // WA sales since 2019). The daily asks target is not a matview refresh: it
-  // APPENDS the closed days the table lacks, up to three a call (~5s each),
-  // so a missed night catches up the next one instead of growing forever.
+  // APPENDS one closed day per call (0104: fold the night's price rows into
+  // the per-chain state, ~6s, then the day's cohort medians, ~10s), and says
+  // how many days it is still "behind" — see DAY_TARGETS below.
   "ev_price_trend_sales",
   "ev_price_trend_ask_daily",
-  // This VIN's history (0085), ~20s. Last, and the cheapest thing on this
-  // list to lose: it feeds a Pro-only block on 881 of 172,003 listing pages
-  // and nothing else reads it, so a night that runs out of road should stop
-  // here rather than anywhere above.
+  // This VIN's history (0085). Last, and the cheapest thing on this list to
+  // lose: it feeds a Pro-only block on ~2.3k listing pages and nothing else
+  // reads it, so a night that runs out of road should stop here rather than
+  // anywhere above. 0104 took it from 101s back to 8-41s (cache-dependent).
   "vin_listing_history",
 ];
 
+// Targets that advance one closed day per call and answer {"behind": n}.
+// Each call is its own statement with its own 60s budget, so a missed night
+// (or the six days 2026-09-22..27 that piled up while one day cost 54s) is
+// caught up by calling again, never by fitting several days into one call.
+// Bounded: a week of catch-up is the most one night will attempt; anything
+// past that is a reason to look, not to loop.
+const DAY_TARGETS = new Set(["ev_price_trend_ask_daily"]);
+const MAX_DAY_CALLS = 7;
+
 const failed = [];
-for (const view of VIEWS) {
+
+async function refreshOnce(view) {
   const t0 = Date.now();
   // x-ingest-rpc streams the body straight through to the RPC, so this needs
   // no gateway change: refresh_vin_variants is already on its allowlist.
@@ -108,10 +119,33 @@ for (const view of VIEWS) {
   const secs = ((Date.now() - t0) / 1000).toFixed(1);
   if (!res.ok) {
     console.error(`refresh-variants: ${view} FAILED HTTP ${res.status} after ${secs}s — ${text.slice(0, 300)}`);
-    failed.push(view);
-    continue;
+    return null;
   }
   console.error(`refresh-variants: ${view} ${text.trim()} in ${secs}s`);
+  try {
+    return JSON.parse(text);
+  } catch {
+    return {};
+  }
+}
+
+for (const view of VIEWS) {
+  if (!DAY_TARGETS.has(view)) {
+    if ((await refreshOnce(view)) === null) failed.push(view);
+    continue;
+  }
+  let calls = 0;
+  let out;
+  do {
+    out = await refreshOnce(view);
+    calls++;
+  } while (out !== null && Number(out.behind) > 0 && calls < MAX_DAY_CALLS);
+  if (out === null) {
+    failed.push(view);
+  } else if (Number(out.behind) > 0) {
+    console.error(`refresh-variants: ${view} still ${out.behind} day(s) behind after ${calls} calls`);
+    failed.push(view);
+  }
 }
 
 if (failed.length) {
