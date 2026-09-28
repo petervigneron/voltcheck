@@ -6,9 +6,11 @@
 // The identifier is the listing id, which is the lowercase VIN
 // (scraper/ingest.mjs): the VIN is the listings table's primary key, it
 // survives every nightly re-crawl, re-listing, and dealer-feed churn, and it
-// is exactly what /listing/[id] resolves. Each entry also snapshots the title
-// and (real) price at save time, so a car that has since been delisted can
-// still be named honestly on /saved instead of showing as a bare VIN.
+// is exactly what /listing/[id] resolves. Each entry also snapshots the title,
+// (real) price and odometer at save time, so a car that has since been
+// delisted can still be named honestly on /saved instead of showing as a bare
+// VIN — and still compared, once /listing/[id] stops carrying it 30 days after
+// delisting (migration 0071).
 //
 // Client-only: every reader guards on `typeof window`, and the components
 // that use this read it in an effect so the server render (always "unsaved")
@@ -23,6 +25,8 @@ export interface SavedEntry {
   title?: string;
   /** Asking price at save time, only when it passed the junk-price floor. */
   priceUsd?: number;
+  /** Odometer at save time, when the seller published one above zero. */
+  mileage?: number;
 }
 
 const KEY = "voltcheck.saved.v1";

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { ListingCard } from "./ListingCard";
 import { SaveToggle } from "./SaveToggle";
 import { useCardIndex } from "@/lib/listings/useCardIndex";
@@ -14,6 +15,11 @@ import { useProState } from "@/lib/useProState";
 // carries has been delisted — it renders as exactly that, with the title and
 // price snapshotted at save time, rather than vanishing (a shopper wondering
 // where their car went) or rendering stale data as if it were live.
+//
+// It links to /listing/<vin>, which for 30 days after delisting still serves
+// the car's last odometer, colours and specs (app/listing/[id]/Delisted.tsx).
+// The card itself can't know which side of those 30 days a car is on, so it
+// carries its own odometer snapshot for after.
 
 const CELL = "border-r-[3px] border-b-[3px] border-ink";
 
@@ -21,7 +27,10 @@ const SAVED_DATE_FMT = new Intl.DateTimeFormat("en-US", { month: "short", day: "
 
 function DelistedCard({ e }: { e: SavedEntry }) {
   return (
-    <div className={`${CELL} relative flex flex-col bg-paper text-ink`}>
+    <Link
+      href={`/listing/${e.id}`}
+      className={`${CELL} group relative flex flex-col bg-paper text-ink focus:outline-none`}
+    >
       <div className="border-b-[3px] border-ink bg-putty px-4 py-2 text-[10.5px] font-extrabold tracking-[0.14em] text-ink/55 uppercase">
         No longer listed
       </div>
@@ -29,11 +38,13 @@ function DelistedCard({ e }: { e: SavedEntry }) {
         <h2 className="text-[15px] leading-tight font-bold">{e.title ?? e.id.toUpperCase()}</h2>
         <p className="text-[12.5px] text-ink/60 tabular-nums">
           Saved {SAVED_DATE_FMT.format(new Date(e.savedAt))}
+          {e.mileage != null ? ` · ${e.mileage.toLocaleString()} mi` : ""}
           {e.priceUsd != null ? ` · was $${e.priceUsd.toLocaleString()}` : ""}
         </p>
       </div>
-      <SaveToggle id={e.id} title={e.title ?? e.id.toUpperCase()} priceUsd={e.priceUsd} />
-    </div>
+      <SaveToggle id={e.id} title={e.title ?? e.id.toUpperCase()} priceUsd={e.priceUsd} mileage={e.mileage} />
+      <span className="pointer-events-none absolute inset-0 ring-0 ring-inset ring-cobalt transition-none group-hover:ring-[6px] group-focus-visible:ring-[6px]" />
+    </Link>
   );
 }
 

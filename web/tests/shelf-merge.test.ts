@@ -45,6 +45,23 @@ test("validShelf keeps well-formed entries newest first and drops the rest", () 
   assert.equal(s.searches[0].label, "", "missing label becomes empty, not undefined");
 });
 
+test("validShelf keeps a sane odometer snapshot and drops the rest", () => {
+  const s = validShelf({
+    cars: [
+      car(1, "2026-09-01T00:00:00.000Z", { mileage: 33492.6 }),
+      car(2, "2026-09-02T00:00:00.000Z", { mileage: 0 }),
+      car(3, "2026-09-03T00:00:00.000Z", { mileage: "33492" }),
+      car(4, "2026-09-04T00:00:00.000Z", { mileage: 5_000_000 }),
+    ],
+    searches: [],
+  });
+  const byId = new Map(s.cars.map((c) => [c.id, c]));
+  assert.equal(byId.get(VIN(1))?.mileage, 33493, "rounded");
+  assert.equal(byId.get(VIN(2))?.mileage, undefined, "zero is no reading");
+  assert.equal(byId.get(VIN(3))?.mileage, undefined, "strings are not numbers");
+  assert.equal(byId.get(VIN(4))?.mileage, undefined, "implausible odometer dropped");
+});
+
 test("duplicates collapse to the later save, and the caps hold", () => {
   const s = validShelf({
     cars: [car(1, "2026-09-01T00:00:00.000Z", { title: "old" }), car(1, "2026-09-05T00:00:00.000Z", { title: "new" })],

@@ -16,6 +16,7 @@ export function SaveToggle({
   id,
   title,
   priceUsd,
+  mileage,
   variant = "card",
 }: {
   /** Listing id (lowercase VIN) — see lib/saved.ts. */
@@ -24,6 +25,8 @@ export function SaveToggle({
   title: string;
   /** Real asking price at save time, when there is one. */
   priceUsd?: number;
+  /** Odometer at save time — kept for the same delisted-save reason. */
+  mileage?: number;
   variant?: "card" | "detail";
 }) {
   const [saved, setSaved] = useState(false);
@@ -38,7 +41,7 @@ export function SaveToggle({
     // navigate.
     e.preventDefault();
     e.stopPropagation();
-    const now = toggleSaved({ id, title, priceUsd });
+    const now = toggleSaved({ id, title, priceUsd, mileage: mileage != null && mileage > 0 ? mileage : undefined });
     setSaved(now);
     track(now ? "listing_saved" : "listing_unsaved", id);
   };

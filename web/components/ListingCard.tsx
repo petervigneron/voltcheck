@@ -185,7 +185,7 @@ export function ListingCard({
 
       {/* Save toggle, keylined into the top-right corner. It preventDefaults
           its own click so saving never navigates. */}
-      <SaveToggle id={r.id} title={r.title} priceUsd={r.realPrice ? r.priceUsd : undefined} />
+      <SaveToggle id={r.id} title={r.title} priceUsd={r.realPrice ? r.priceUsd : undefined} mileage={r.mileage} />
 
       {/* Hover and keyboard focus both draw the same inset keyline — no shadow,
           nothing that moves the card off the grid. */}

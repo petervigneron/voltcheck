@@ -41,11 +41,12 @@ export function validShelf(raw: { cars?: unknown; searches?: unknown }): Shelf {
   if (Array.isArray(raw.cars)) {
     for (const e of raw.cars) {
       if (!e || typeof e !== "object") continue;
-      const { id, savedAt, title, priceUsd } = e as Record<string, unknown>;
+      const { id, savedAt, title, priceUsd, mileage } = e as Record<string, unknown>;
       if (typeof id !== "string" || !VIN_RE.test(id.toLowerCase()) || !isIso(savedAt)) continue;
       const entry: SavedEntry = { id: id.toLowerCase(), savedAt };
       if (typeof title === "string" && title.length <= 200) entry.title = title;
       if (typeof priceUsd === "number" && Number.isFinite(priceUsd) && priceUsd > 0) entry.priceUsd = Math.round(priceUsd);
+      if (typeof mileage === "number" && Number.isFinite(mileage) && mileage > 0 && mileage < 1_000_000) entry.mileage = Math.round(mileage);
       cars.push(entry);
     }
   }

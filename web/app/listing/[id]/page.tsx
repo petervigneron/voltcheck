@@ -370,6 +370,7 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
                 id={listing.id}
                 title={`${listing.year} ${listing.make} ${listing.model}`}
                 priceUsd={hasRealPrice(listing) ? listing.priceUsd : undefined}
+                mileage={listing.mileage}
               />
             </div>
 
