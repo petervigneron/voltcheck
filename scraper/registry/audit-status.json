@@ -2,21 +2,21 @@
   "_comment": "Written by scraper/lib/audit-status.mjs. Do not hand-edit — see that file's header.",
   "checks": {
     "feed-shard-health": {
-      "lastRunAt": "2026-09-29T17:26:41.477Z",
+      "lastRunAt": "2026-09-29T22:13:12.909Z",
       "result": "ok",
-      "detail": "total 166825; shards 3495/3458/3571/3432/3461/3529/3368/3512/3454/3316/3543/3472/3454/3522/3513/3474/3433/3427/3462/3476/3491/3501/3619/3440/3496/3367/3469/3492/3483/3379/3570/3526/3428/3498/3455/3510/3491/3523/3516/3530/3516/3472/3396/3519/3406/3451/3471/3438; sitemap URLs 0",
+      "detail": "total 166825; shards 3495/3458/3571/3432/3461/3529/3368/3512/3454/3316/3543/3472/3454/3522/3513/3474/3433/3427/3462/3476/3491/3501/3619/3440/3496/3367/3469/3492/3483/3379/3570/3526/3428/3498/3455/3510/3491/3523/3516/3530/3516/3472/3396/3519/3406/3451/3471/3438; sitemap URLs 165233",
       "expectedEveryHours": 8
     },
     "ev-rules-audit": {
-      "lastRunAt": "2026-09-29T12:47:21.703Z",
+      "lastRunAt": "2026-09-29T22:12:30.875Z",
       "result": "ok",
-      "detail": "170113 live, 0 newly refuted by vPIC, 0 adjudicated-and-kept, 0 undecided",
+      "detail": "168211 live, 0 newly refuted by vPIC, 0 adjudicated-and-kept, 0 undecided",
       "expectedEveryHours": 27
     },
     "completeness-audit": {
-      "lastRunAt": "2026-09-29T12:47:30.199Z",
+      "lastRunAt": "2026-09-29T22:13:01.869Z",
       "result": "ok",
-      "detail": "68519 live, 9 broken-parser lots (baseline 202)",
+      "detail": "67626 live, 9 broken-parser lots (baseline 202)",
       "expectedEveryHours": 27
     },
     "sync-guard": {
@@ -32,9 +32,9 @@
       "expectedEveryHours": 27
     },
     "live-price-audit": {
-      "lastRunAt": "2026-09-29T12:47:34.478Z",
+      "lastRunAt": "2026-09-29T22:13:07.350Z",
       "result": "warn",
-      "detail": "165227 priced, 23 implausible (3 at or below the floor/cohort, 20 above)",
+      "detail": "164950 priced, 23 implausible (3 at or below the floor/cohort, 20 above)",
       "expectedEveryHours": 8
     },
     "price-audit": {
