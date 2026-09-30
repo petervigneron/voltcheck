@@ -2,21 +2,21 @@
   "_comment": "Written by scraper/lib/audit-status.mjs. Do not hand-edit — see that file's header.",
   "checks": {
     "feed-shard-health": {
-      "lastRunAt": "2026-09-29T22:13:12.909Z",
+      "lastRunAt": "2026-09-30T05:30:39.498Z",
       "result": "ok",
-      "detail": "total 166825; shards 3495/3458/3571/3432/3461/3529/3368/3512/3454/3316/3543/3472/3454/3522/3513/3474/3433/3427/3462/3476/3491/3501/3619/3440/3496/3367/3469/3492/3483/3379/3570/3526/3428/3498/3455/3510/3491/3523/3516/3530/3516/3472/3396/3519/3406/3451/3471/3438; sitemap URLs 165233",
+      "detail": "total 165825; shards 3490/3425/3532/3398/3426/3515/3351/3488/3431/3313/3528/3464/3432/3503/3494/3455/3414/3380/3432/3440/3475/3511/3581/3422/3448/3337/3453/3476/3459/3371/3557/3502/3436/3486/3425/3484/3470/3509/3499/3533/3512/3450/3359/3497/3387/3416/3442/3417; sitemap URLs 166118",
       "expectedEveryHours": 8
     },
     "ev-rules-audit": {
-      "lastRunAt": "2026-09-29T22:12:30.875Z",
+      "lastRunAt": "2026-09-30T05:29:17.934Z",
       "result": "ok",
-      "detail": "168211 live, 0 newly refuted by vPIC, 0 adjudicated-and-kept, 0 undecided",
+      "detail": "169101 live, 0 newly refuted by vPIC, 0 adjudicated-and-kept, 0 undecided",
       "expectedEveryHours": 27
     },
     "completeness-audit": {
-      "lastRunAt": "2026-09-29T22:13:01.869Z",
+      "lastRunAt": "2026-09-30T05:30:29.107Z",
       "result": "ok",
-      "detail": "67626 live, 9 broken-parser lots (baseline 202)",
+      "detail": "68550 live, 9 broken-parser lots (baseline 202)",
       "expectedEveryHours": 27
     },
     "sync-guard": {
@@ -32,9 +32,9 @@
       "expectedEveryHours": 27
     },
     "live-price-audit": {
-      "lastRunAt": "2026-09-29T22:13:07.350Z",
+      "lastRunAt": "2026-09-30T05:30:34.286Z",
       "result": "warn",
-      "detail": "164950 priced, 23 implausible (3 at or below the floor/cohort, 20 above)",
+      "detail": "164135 priced, 22 implausible (2 at or below the floor/cohort, 20 above)",
       "expectedEveryHours": 8
     },
     "price-audit": {
