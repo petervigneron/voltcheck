@@ -136,9 +136,29 @@ jobs:
           # the burstable instance's CPU credits all week. Publishing slower
           # costs nothing anyone can see.
           FEED_LANES: "2"
+        # Up to three walks, five minutes apart, but ONLY when a walk fell back
+        # to the bundled snapshot. 2026-09-28..10-01: 5 of ~14 publishes died
+        # this way, each ~30 s in, every one on anon's 3 s statement timeout
+        # (postgres_logs) while the nightly's db-sync or the evening crawls
+        # were writing. db.ts's page retry (2 s, 6 s) is right for a site
+        # render and too short for a one-minute write burst; the publisher has
+        # the runner's hour to wait one out. Any other refusal (the shrink
+        # guard) is a verdict about the data, and re-walking cannot change it.
         run: |
-          node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs \
-            scripts/publish-feed.mjs ${{ github.event.inputs.force == 'true' && '--force' || '' }}
+          set -o pipefail
+          for i in 1 2 3; do
+            rc=0
+            node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs \
+              scripts/publish-feed.mjs ${{ github.event.inputs.force == 'true' && '--force' || '' }} \
+              2>&1 | tee "$RUNNER_TEMP/publish.log" || rc=$?
+            [ "$rc" = 0 ] && exit 0
+            grep -q "fell back to the bundled snapshot" "$RUNNER_TEMP/publish.log" || exit "$rc"
+            [ "$i" = 3 ] && break
+            echo "::warning::walk $i fell back (database busy); waiting 5 minutes before walk $((i + 1))"
+            sleep 300
+          done
+          echo "::error::three walks fell back to the bundled snapshot; the previous artifacts stay published"
+          exit 1
       - name: Refresh the site onto the new artifacts
         if: ${{ steps.gate.outputs.skip != 'true' }}
         env:
