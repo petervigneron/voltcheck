@@ -59,6 +59,14 @@ import { writeFile } from "node:fs/promises";
 import { priceFloor } from "./lib/price-floor.mjs";
 import { recordRun } from "./lib/audit-status.mjs";
 
+// 12, not 8: feed-audits.yml is "15 */6", but GitHub delivers scheduled runs
+// up to ~5 h late and dropped the 18:15 slot every day 2026-09-28..30, so the
+// gap before the evening run was 9.4-9.7 h and this check failed its own
+// staleness test three nights running with nothing wrong. 12 h absorbs one
+// late or dropped slot; an audit that has actually stopped still shows within
+// a day.
+const AUDIT_EVERY_HOURS = 12;
+
 const arg = (n, d) => { const i = process.argv.indexOf(n); return i >= 0 ? process.argv[i + 1] : d; };
 const BASE = arg("--base", "https://voltcheck.net");
 const JSON_OUT = arg("--json", null);
@@ -77,7 +85,7 @@ const LOW_RATIO = 0.35;
 const HIGH_RATIO = 3;
 
 async function finish(code, result, detail) {
-  await recordRun("live-price-audit", { result, detail, expectedEveryHours: 8 });
+  await recordRun("live-price-audit", { result, detail, expectedEveryHours: AUDIT_EVERY_HOURS });
   process.exit(code);
 }
 

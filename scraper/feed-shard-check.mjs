@@ -58,6 +58,14 @@
 import { readStatus, recordRun } from "./lib/audit-status.mjs";
 import { isPlaceholderVin } from "./lib/vin-placeholder.mjs";
 
+// 12, not 8: feed-audits.yml is "15 */6", but GitHub delivers scheduled runs
+// up to ~5 h late and dropped the 18:15 slot every day 2026-09-28..30, so the
+// gap before the evening run was 9.4-9.7 h and this check failed its own
+// staleness test three nights running with nothing wrong. 12 h absorbs one
+// late or dropped slot; an audit that has actually stopped still shows within
+// a day.
+const AUDIT_EVERY_HOURS = 12;
+
 const arg = (n, d) => { const i = process.argv.indexOf(n); return i >= 0 ? process.argv[i + 1] : d; };
 const BASE = (arg("--base", "https://voltcheck.net")).replace(/\/$/, "");
 // How far BELOW sync-guard's last stable read the served total may sit. One
@@ -435,7 +443,7 @@ for (const w of warnings) console.error(`::warning::feed-shard-check: ${w}`);
 if (problems.length) {
   for (const p of problems) console.error(`::error::feed-shard-check: ${p}`);
   await clearPoisonedCache();
-  await recordRun("feed-shard-health", { result: "fail", detail: problems.join("; ").slice(0, 300), expectedEveryHours: 8 });
+  await recordRun("feed-shard-health", { result: "fail", detail: problems.join("; ").slice(0, 300), expectedEveryHours: AUDIT_EVERY_HOURS });
   process.exit(1);
 }
 await recordRun("feed-shard-health", {
@@ -446,7 +454,7 @@ await recordRun("feed-shard-health", {
   detail:
     `total ${firstTotal}; shards ${SHARDS.map((s) => shardRows.get(s) ?? "?").join("/")}; sitemap URLs ${sitemapUrls}` +
     (warnings.length ? `; ${warnings.join("; ")}` : ""),
-  expectedEveryHours: 8,
+  expectedEveryHours: AUDIT_EVERY_HOURS,
 });
 process.exit(0);
 
