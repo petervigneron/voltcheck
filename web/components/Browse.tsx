@@ -7,7 +7,7 @@ import { ListingCard, type GroundsMode } from "./ListingCard";
 import { SearchBar, FilterRail, SpecFacets, type FacetGroup } from "./Filters";
 import { AlertSignup } from "./AlertSignup";
 import { SPEC_FACETS, FACET_CAP, QUICK_TOGGLES, describeFilter, dropSpecFilters } from "@/lib/filters";
-import { featuredScore, type CardRow } from "@/lib/listings/card";
+import { featuredScore, listedSortKey, type CardRow } from "@/lib/listings/card";
 import { FIRST_PAGE_SIZE } from "@/lib/listings/firstPaint";
 import { FACET_OF, QUICK_KNOWS, activeFilterKeys, buildTests, rowMatches } from "@/lib/listings/match";
 import { modelTally } from "@/lib/listings/tally";
@@ -339,18 +339,18 @@ export function Browse() {
       // And a payload that lost the race to the index never pins at all —
       // adopting its order mid-session would repage a grid the shopper has
       // already been paging under the index's own ordering.
+      // The pin holds the featured page in place; a "Recently listed" sort is
+      // a different order being asked for, so it never pins.
       const pin =
-        first && firstPaintWonRace() && activeKeys.length === 0
+        first && firstPaintWonRace() && activeKeys.length === 0 && sort !== "listed"
           ? new Map(first.rows.map((r, i) => [r.id, i]))
           : null;
-      const scored = results.map((r) => ({
-        r,
-        k:
-          pin?.has(r.id)
-            ? 1e6 - pin.get(r.id)!
-            : featuredScore(r, counts.get(`${r.make} ${r.model}`.toLowerCase()) ?? 0, day) +
-              (identityHit(r) ? 1000 : 0),
-      }));
+      const scored = results.map((r) => {
+        if (pin?.has(r.id)) return { r, k: 1e6 - pin.get(r.id)! };
+        const k =
+          featuredScore(r, counts.get(`${r.make} ${r.model}`.toLowerCase()) ?? 0, day) + (identityHit(r) ? 1000 : 0);
+        return { r, k: sort === "listed" ? listedSortKey(r, k) : k };
+      });
       scored.sort((a, b) => b.k - a.k);
       for (let i = 0; i < scored.length; i++) results[i] = scored[i].r;
     }

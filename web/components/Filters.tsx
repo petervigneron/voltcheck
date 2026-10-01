@@ -950,6 +950,7 @@ export function FilterRail({
             <option value="year-desc">Year: newest</option>
             <option value="miles">Mileage: lowest</option>
             <option value="range-desc">Range: highest</option>
+            <option value="listed">Recently listed</option>
             {/* Without any origin the option would silently sort by nothing;
                 it still renders if a back-navigated URL already carries it. */}
             {(hasOrigin || get("sort") === "distance") && <option value="distance">Distance: nearest</option>}

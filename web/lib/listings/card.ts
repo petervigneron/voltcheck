@@ -163,6 +163,22 @@ function hash01(s: string): number {
   return (h >>> 0) / 4294967296;
 }
 
+/**
+ * The "Recently listed" sort (owner, 2026-10-01). Cars with a seller listing
+ * date come first, newest day first; within a day, and for every car without
+ * one, the featured order decides. Only `listedOn` counts: it exists where
+ * migration 0028 can call an appearance a listing date (49% of the grid on
+ * 2026-10-01). first_seen_at was rejected — it is when WE found the car, and
+ * the day a new dealer lane lands, its whole lot would lead as "newest",
+ * cars that sat for months included. Undated cars are not pushed down as
+ * old; they simply can't claim to be new.
+ */
+export function listedSortKey(r: CardRow, featured: number): number {
+  // A day is worth 10,000: more than any featured score, search bonus
+  // included (~1,300), so a day's spacing is never bridged by the tiebreak.
+  return r.listedOn ? Math.floor(Date.parse(r.listedOn) / 86_400_000) * 10_000 + featured : featured;
+}
+
 export function featuredScore(r: CardRow, modelCount: number, day: number): number {
   let s = 0;
   // A card with no photo or no believable price can't lead the page.
