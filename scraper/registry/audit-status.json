@@ -2,21 +2,21 @@
   "_comment": "Written by scraper/lib/audit-status.mjs. Do not hand-edit — see that file's header.",
   "checks": {
     "feed-shard-health": {
-      "lastRunAt": "2026-10-02T17:11:48.018Z",
+      "lastRunAt": "2026-10-02T22:11:37.542Z",
       "result": "ok",
-      "detail": "total 164880; shards 3488/3393/3516/3382/3373/3453/3339/3444/3415/3262/3483/3416/3402/3483/3531/3452/3400/3349/3394/3429/3456/3498/3606/3407/3426/3314/3437/3436/3413/3367/3543/3509/3426/3508/3392/3463/3456/3496/3487/3486/3477/3423/3384/3492/3366/3391/3410/3407; sitemap URLs 0",
+      "detail": "total 164253; shards 3478/3378/3516/3380/3356/3454/3312/3425/3404/3268/3475/3402/3387/3483/3524/3441/3364/3329/3369/3436/3444/3489/3577/3387/3404/3307/3432/3414/3393/3356/3514/3479/3400/3501/3378/3456/3431/3482/3473/3470/3457/3438/3377/3479/3353/3377/3399/3405; sitemap URLs 164547",
       "expectedEveryHours": 12
     },
     "ev-rules-audit": {
-      "lastRunAt": "2026-10-02T12:28:31.043Z",
+      "lastRunAt": "2026-10-02T22:10:51.435Z",
       "result": "ok",
-      "detail": "169623 live, 0 newly refuted by vPIC, 0 adjudicated-and-kept, 0 undecided",
+      "detail": "168833 live, 0 newly refuted by vPIC, 0 adjudicated-and-kept, 0 undecided",
       "expectedEveryHours": 27
     },
     "completeness-audit": {
-      "lastRunAt": "2026-10-02T12:28:58.146Z",
+      "lastRunAt": "2026-10-02T22:11:14.435Z",
       "result": "ok",
-      "detail": "69772 live, 8 broken-parser lots (baseline 202)",
+      "detail": "69235 live, 9 broken-parser lots (baseline 202)",
       "expectedEveryHours": 27
     },
     "sync-guard": {
@@ -32,9 +32,9 @@
       "expectedEveryHours": 27
     },
     "live-price-audit": {
-      "lastRunAt": "2026-10-02T12:29:02.765Z",
+      "lastRunAt": "2026-10-02T22:11:28.153Z",
       "result": "warn",
-      "detail": "163668 priced, 21 implausible (2 at or below the floor/cohort, 19 above)",
+      "detail": "162966 priced, 20 implausible (2 at or below the floor/cohort, 18 above)",
       "expectedEveryHours": 12
     },
     "price-audit": {
