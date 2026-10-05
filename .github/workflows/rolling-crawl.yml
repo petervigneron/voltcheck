@@ -383,10 +383,20 @@ jobs:
       #
       # CARFAX_SNAPSHOT=off here is the one switch. Cached brands stay applied
       # until the cars re-sync without them.
+      #
+      # OFF since 2026-10-05, by the owner's decision. Carfax's terms of use
+      # (consumer and business) prohibit "robots, spiders, or similar data
+      # mining, data gathering or extraction tools … to collect, gather or
+      # copy any content or information from any services", and "systematic
+      # retrieval" of Carfax data to compile a database without Carfax's
+      # written permission. That the dealer publishes the key, and that
+      # snapshot.carfax.com has no robots.txt, answers crawler etiquette, not
+      # the terms. The owner's rule: stay within Carfax's rules. Turning this
+      # back on needs Carfax's written permission, not a code change.
       - name: Carfax snapshot title brands
         working-directory: scraper
         env:
-          CARFAX_SNAPSHOT: "on"
+          CARFAX_SNAPSHOT: "off"
         run: |
           timeout 4m node carfax-snapshot.mjs --limit 200 || \
             echo "::warning::carfax-snapshot hit its 4m cap on slice ${{ steps.pick.outputs.slice }}; cars already answered are cached in registry/carfax-snapshot.json"

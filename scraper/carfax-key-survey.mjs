@@ -35,14 +35,16 @@
 //   * any carfax URL at all in the HTML or the request list, so a page whose
 //     badge is wired some other way (a partner report link keyed on VIN) is
 //     told apart from a page with no badge.
-// A key it finds is tried once against the Snapshot endpoint, exactly as
-// carfax-snapshot.mjs would, and only the answer's shape is reported: did it
-// answer, how many panel rows, whether a title-brand row was present.
+// It never requests anything from Carfax itself. Carfax's terms prohibit
+// automated collection from its services (see the CARFAX_SNAPSHOT note in
+// rolling-crawl.yml, off since 2026-10-05); the first run of this survey made
+// one Snapshot request per key found, and that was removed the same day. What
+// the dealer's own page loads on its own is still recorded, as the page's
+// behaviour, and its contents are not kept.
 
 import { readFile, writeFile, appendFile, mkdir } from "node:fs/promises";
 import { browserFetch, closeBrowser } from "./lib/browser.mjs";
-import { politeGetJson } from "./lib/http.mjs";
-import { parseSnapshot, snapshotUrl, isSnapshotKey, snapshotKeyFromHtml } from "./lib/carfax-snapshot.mjs";
+import { isSnapshotKey, snapshotKeyFromHtml } from "./lib/carfax-snapshot.mjs";
 
 const arg = (name, dflt) => {
   const i = process.argv.indexOf(`--${name}`);
@@ -165,9 +167,6 @@ async function survey(car) {
   if (key) {
     out.keyVia = keyVia;
     out.keySource = sourceOf(key, r.body, captured);
-    const { status, json } = await politeGetJson(snapshotUrl(key), { headers: { referer: `https://${car.domain}/` } });
-    const parsed = json ? parseSnapshot(json) : { rows: [] };
-    out.snapshot = { status, rows: parsed.rows.length, titleBrandRow: !!parsed.titleBrand };
   }
   return out;
 }
@@ -179,7 +178,7 @@ for (const platform of PLATFORMS) {
   for (const car of cars) {
     const r = await survey(car);
     console.log(
-      `  ${r.domain} ${r.status} carfax=${r.carfaxMentioned ? "y" : "n"} key=${r.keyFound ? `y (${r.keyVia}; from ${r.keySource}; snapshot ${r.snapshot?.status}, ${r.snapshot?.rows} rows)` : "n"}` +
+      `  ${r.domain} ${r.status} carfax=${r.carfaxMentioned ? "y" : "n"} key=${r.keyFound ? `y (${r.keyVia}; from ${r.keySource}; )` : "n"}` +
         (r.carfaxLinks?.length ? `\n      links: ${r.carfaxLinks.join("  ")}` : "")
     );
     results.push(r);
@@ -190,14 +189,13 @@ await closeBrowser();
 await mkdir(new URL("./out/", import.meta.url), { recursive: true });
 await writeFile(new URL("./out/carfax-key-survey.json", import.meta.url), JSON.stringify(results, null, 1));
 
-const lines = ["| Platform | Loaded | Carfax on page | Key found | Snapshot answered | Key came from |", "|---|---|---|---|---|---|"];
+const lines = ["| Platform | Loaded | Carfax on page | Key found | Key came from |", "|---|---|---|---|---|"];
 for (const p of PLATFORMS) {
   const rs = results.filter((r) => r.platform === p);
   const loaded = rs.filter((r) => r.status === 200);
   const keyed = rs.filter((r) => r.keyFound);
-  const answered = keyed.filter((r) => r.snapshot?.status === 200 && r.snapshot.rows > 0);
   const sources = [...new Set(keyed.map((r) => r.keySource ?? "?"))].join(", ") || "—";
-  lines.push(`| ${p} | ${loaded.length}/${rs.length} | ${loaded.filter((r) => r.carfaxMentioned).length} | ${keyed.length} | ${answered.length} | ${sources} |`);
+  lines.push(`| ${p} | ${loaded.length}/${rs.length} | ${loaded.filter((r) => r.carfaxMentioned).length} | ${keyed.length} | ${sources} |`);
 }
 const summary = lines.join("\n");
 console.log("\n" + summary);
@@ -214,7 +212,7 @@ if (process.env.GITHUB_ACTIONS) {
       .map(
         (r) =>
           `${r.domain} ${r.status} carfax=${r.carfaxMentioned ? "y" : "n"} key=${
-            r.keyFound ? `y via ${r.keyVia} from ${r.keySource} snapshot=${r.snapshot?.status}/${r.snapshot?.rows}rows brandRow=${r.snapshot?.titleBrandRow}` : "n"
+            r.keyFound ? `y via ${r.keyVia} from ${r.keySource}` : "n"
           } links=${(r.carfaxLinks ?? []).join(" ") || "-"}`
       );
     console.log(`::notice title=Carfax key survey: ${p}::${esc(rows.join("\n"))}`);
