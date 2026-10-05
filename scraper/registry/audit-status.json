@@ -44,9 +44,9 @@
       "expectedEveryHours": 27
     },
     "colisting-sync": {
-      "lastRunAt": "2026-10-04T21:35:22.428Z",
+      "lastRunAt": "2026-10-05T03:29:36.056Z",
       "result": "ok",
-      "detail": "120 multi-domain VINs across 14 domains, 120 inserted",
+      "detail": "1 multi-domain VINs across 2 domains, 1 inserted",
       "expectedEveryHours": 27
     }
   },
