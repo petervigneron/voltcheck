@@ -202,3 +202,21 @@ for (const p of PLATFORMS) {
 const summary = lines.join("\n");
 console.log("\n" + summary);
 if (process.env.GITHUB_STEP_SUMMARY) await appendFile(process.env.GITHUB_STEP_SUMMARY, `## Carfax key survey\n\n${summary}\n`);
+
+// One annotation per platform as well: annotations are readable through the
+// REST API (check-runs/<id>/annotations), where logs and artifacts are served
+// off a storage host some API-only clients cannot reach.
+if (process.env.GITHUB_ACTIONS) {
+  const esc = (s) => String(s).replace(/%/g, "%25").replace(/\r/g, "%0D").replace(/\n/g, "%0A");
+  for (const p of PLATFORMS) {
+    const rows = results
+      .filter((r) => r.platform === p)
+      .map(
+        (r) =>
+          `${r.domain} ${r.status} carfax=${r.carfaxMentioned ? "y" : "n"} key=${
+            r.keyFound ? `y via ${r.keyVia} from ${r.keySource} snapshot=${r.snapshot?.status}/${r.snapshot?.rows}rows brandRow=${r.snapshot?.titleBrandRow}` : "n"
+          } links=${(r.carfaxLinks ?? []).join(" ") || "-"}`
+      );
+    console.log(`::notice title=Carfax key survey: ${p}::${esc(rows.join("\n"))}`);
+  }
+}
