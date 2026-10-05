@@ -1,0 +1,63 @@
+name: Carfax key survey
+
+# Where does each dealer-website platform hand its Carfax badge the Snapshot
+# key? scraper/carfax-key-survey.mjs says why this is asked. Manual, and it
+# writes nothing anywhere but this run's summary and artifact: one used-car
+# VDP per rooftop, loaded once in the browser lanes' Chrome, plus one Snapshot
+# request per key found.
+#
+# Also runs on a push that changes the survey itself, so a first result
+# doesn't wait on this file reaching main (workflow_dispatch only lists
+# workflows on the default branch).
+on:
+  workflow_dispatch:
+    inputs:
+      platforms:
+        description: "Comma-separated registry platforms."
+        required: false
+        default: "dealer.com,dealeron"
+      per_platform:
+        description: "Rooftops per platform (one car each)."
+        required: false
+        default: "8"
+      seed:
+        description: "Sample seed; the same seed surveys the same rooftops."
+        required: false
+        default: "1"
+  push:
+    paths:
+      - scraper/carfax-key-survey.mjs
+      - .github/workflows/carfax-key-survey.yml
+
+jobs:
+  survey:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('scraper/package-lock.json') }}
+      - working-directory: scraper
+        run: npm ci --no-audit --no-fund && npx playwright install --with-deps chromium-headless-shell
+      - name: Survey
+        working-directory: scraper
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          BROWSER_CONCURRENCY: "1"
+        run: |
+          node carfax-key-survey.mjs \
+            --platforms "${{ github.event.inputs.platforms || 'dealer.com,dealeron' }}" \
+            --per-platform "${{ github.event.inputs.per_platform || '8' }}" \
+            --seed "${{ github.event.inputs.seed || '1' }}"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: carfax-key-survey
+          path: scraper/out/carfax-key-survey.json
+          if-no-files-found: ignore
