@@ -1402,10 +1402,10 @@ jobs:
   # tonight's confirmations and does not spend a browser load on a car the
   # plain fetch just answered for.
   #
-  # publish-feed is deliberately NOT gated on this job. Every verdict here is
-  # a soft strike, so the delistings it causes land on a later night anyway,
-  # and making the night's publish wait up to an hour for them would cost
-  # every shopper freshness to hurry a handful of retirements.
+  # publish-feed is NOT gated on this job — it was from 2026-09-12 to
+  # 2026-10-05, for rule 2 (see the note over publish-feed). Its results
+  # reach the site at the next scheduled publish (publish-feed.yml, 00/04/08/
+  # 20 UTC), a few hours later.
   recheck-browser:
     needs: [recheck]
     if: ${{ always() && needs.recheck.result != 'skipped' && github.event.inputs.skip_crawl != 'true' && github.event.inputs.recover_run_id == '' }}
@@ -1464,19 +1464,17 @@ jobs:
   # 2026-08-26) must not leave shoppers on yesterday's artifacts when the
   # data underneath is fine — the publisher carries its own refusals
   # (fallback-origin, >10% shrink) and they are the ones that matter.
-  # recheck-browser is in `needs` since 2026-09-12, when a marketplace-fed
-  # car was served only once its own seller page had confirmed it (0089's
-  # rule 2) and for pages a plain fetch cannot read that confirmation came
-  # from the browser pass. 0107 removed rule 2, so that reason is gone. What
-  # the wait still buys tonight's publish: dealer-site cars past rule 1's 48
+  # recheck-browser is NOT in `needs` (2026-10-05, owner's call). It was from
+  # 2026-09-12, when a marketplace-fed car was served only once its own
+  # seller page had confirmed it (0089's rule 2) and for pages a plain fetch
+  # cannot read that confirmation came from the browser pass. 0107 removed
+  # rule 2. What waiting still bought — dealer-site cars past rule 1's 48
   # hours that the browser re-admits, returning cars it vouches for (rule 3),
-  # and second strikes that delist. Without the wait those land at the next
-  # publish (five a day), not a day later as in September. The wait itself is
-  # the job's 54–67 minutes (2026-09-26..10-04). It is `always()`-gated
-  # like recheck: the browser pass failing or being skipped must not hold the
-  # night's crawl off the site.
+  # second strikes that delist — now lands at the next scheduled publish, a
+  # few hours later. What waiting cost was the browser job's whole run,
+  # 54–67 minutes (2026-09-26..10-04), between the night's crawl and the site.
   publish-feed:
-    needs: [finalize-ingest, recheck, recheck-browser]
+    needs: [finalize-ingest, recheck]
     if: ${{ always() && needs.finalize-ingest.result == 'success' && github.event.inputs.recover_run_id == '' }}
     uses: ./.github/workflows/publish-feed.yml
     secrets: inherit
