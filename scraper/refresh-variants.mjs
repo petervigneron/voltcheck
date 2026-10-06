@@ -148,6 +148,38 @@ for (const view of VIEWS) {
   }
 }
 
+// ONE MORE PASS, LATER (2026-10-06). Both nights this script failed in the
+// last ten (09-30, 10-03) had the same shape: a view that costs 45-50s every
+// other night (ev_cohort_ask_weekly) or the daily fold timed out at 60s, and
+// pg_stat_user_tables shows an autovacuum starting on a neighbouring table
+// minutes before the step began — listing_seen at 17:18 UTC against a
+// 17:22-17:43 step on 09-30, listing_events at 15:35 against 15:45-16:21 on
+// 10-03 — while no CI job was writing to the database at all. A refresh that
+// loses its budget to a vacuum is not a reason to leave the view stale for a
+// day; it is a reason to ask again once the vacuum has moved on. So the
+// failures are retried once, after a wait long enough for an autovacuum pass
+// on a 150 MB table to finish, and only a view that fails twice is reported.
+// A DAY_TARGET is retried the same way: a call that times out advanced
+// nothing, so calling again is the same request, not a double fold.
+const RETRY_WAIT_S = Number(process.env.REFRESH_RETRY_WAIT_S ?? 600);
+if (failed.length && RETRY_WAIT_S > 0) {
+  console.error(`refresh-variants: ${failed.join(", ")} failed — waiting ${RETRY_WAIT_S}s and trying once more`);
+  await new Promise((r) => setTimeout(r, RETRY_WAIT_S * 1000));
+  const again = failed.splice(0);
+  for (const view of again) {
+    if (!DAY_TARGETS.has(view)) {
+      if ((await refreshOnce(view)) === null) failed.push(view);
+      continue;
+    }
+    let calls = 0;
+    let out;
+    do {
+      out = await refreshOnce(view);
+      calls++;
+    } while (out !== null && Number(out.behind) > 0 && calls < MAX_DAY_CALLS);
+    if (out === null || Number(out.behind) > 0) failed.push(view);
+  }
+}
 if (failed.length) {
   console.error(`refresh-variants: FAILED — ${failed.join(", ")} left stale (${VIEWS.length - failed.length}/${VIEWS.length} refreshed)`);
   process.exit(1);
