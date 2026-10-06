@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Grow the registry from the Ford Blue Advantage dealer roster.
 //
-//   node fba-dealers.mjs [--write] [--dump file.json] [--radius N]
+//   node fba-dealers.mjs [--write] [--dump file.json] [--unresolved file.json] [--radius N]
 //   node fba-dealers.mjs --from file.json [--write]     (append from a dump)
 //
 // The sweep and the append are separable because politeGetJson does not use
@@ -52,6 +52,7 @@ const WRITE = args.includes("--write");
 const DUMP = (() => { const i = args.indexOf("--dump"); return i >= 0 ? args[i + 1] : null; })();
 const RADIUS = (() => { const i = args.indexOf("--radius"); return i >= 0 ? Number(args[i + 1]) : 50; })();
 const FROM = (() => { const i = args.indexOf("--from"); return i >= 0 ? args[i + 1] : null; })();
+const UNRESOLVED = (() => { const i = args.indexOf("--unresolved"); return i >= 0 ? args[i + 1] : null; })();
 
 const API = "https://www.fordblueadvantage.com/rest/lsc/listing";
 const REFERER = "https://www.fordblueadvantage.com/cars-for-sale";
@@ -87,11 +88,41 @@ async function get(qs) {
   }
 }
 
+// Rooftops whose listings carry NO owner.website at all, keyed by the
+// marketplace's owner id. Measured 2026-10-06 on the national certified sweep:
+// 529 of 1,597 Ford Blue Advantage rooftops were like this, and it tracks the
+// marketplace contract, not the dealer: 1,062 of the 1,068 records that carry a
+// website are contractDealerLevel PARTNER, 493 of the 529 that don't have no
+// contract level at all. Until then this script dropped them without a word. Al Piemonte Ford (Melrose Park IL, 34
+// certified Fords on the marketplace) was one, which is how apford.com stayed
+// out of the registry while four sister stores were in it. They cannot be
+// appended directly (there is no domain to append), so --unresolved writes
+// them out for resolve-dealers.mjs, which accepts this file as its roll.
+const siteless = new Map(); // owner id -> { name, city, state, zip, phone, cars }
+const sited = new Set();     // owner ids seen WITH a website on some listing
+
 function collect(j) {
   for (const l of j?.listings ?? []) {
     const domain = hostOf(l.owner?.website?.href);
-    if (!domain || !domain.includes(".") || NOT_A_ROOFTOP.test(domain)) continue;
     const addr = l.owner?.location?.address ?? {};
+    if (!domain && l.owner?.id && !l.owner.privateSeller) {
+      const id = l.owner.id;
+      if (!siteless.has(id)) {
+        const phone = (l.owner.phoneNumbers ?? []).find((p) => p.type === "PRIMARY_OFFICE") ?? l.owner.phoneNumbers?.[0];
+        siteless.set(id, {
+          name: String(l.owner.name ?? "").replace(/\s+/g, " ").trim(),
+          city: addr.city || undefined,
+          state: /^[A-Z]{2}$/i.test(String(addr.state ?? "")) ? String(addr.state).toUpperCase() : undefined,
+          zip: /^\d{5}/.test(String(addr.zip ?? "")) ? String(addr.zip).slice(0, 5) : undefined,
+          phone: String(phone?.value ?? "").replace(/\D/g, "").slice(-10) || undefined,
+          cars: 0,
+        });
+      }
+      siteless.get(id).cars++;
+      continue;
+    }
+    if (l.owner?.id) sited.add(l.owner.id);
+    if (!domain || !domain.includes(".") || NOT_A_ROOFTOP.test(domain)) continue;
     if (!dealers.has(domain)) {
       dealers.set(domain, {
         name: String(l.owner?.name ?? "").replace(/\s+/g, " ").trim(),
@@ -141,8 +172,13 @@ if (FROM) {
     }
     if (++n % 25 === 0) console.error(`  ${n}/${cells.length} cells, ${dealers.size} rooftops, ${requests} requests, ${subdivided} subdivided`);
   }
-  console.error(`fba-dealers: ${dealers.size} rooftops from ${requests} requests (${subdivided} cells subdivided)`);
+  for (const id of sited) siteless.delete(id);
+  console.error(`fba-dealers: ${dealers.size} rooftops from ${requests} requests (${subdivided} cells subdivided), plus ${siteless.size} with no website on any listing`);
   if (DUMP) await writeFile(DUMP, JSON.stringify([...dealers.entries()].map(([domain, d]) => ({ domain, ...d })), null, 2));
+  if (UNRESOLVED) {
+    await writeFile(UNRESOLVED, JSON.stringify([...siteless.values()], null, 2));
+    console.error(`fba-dealers: wrote ${siteless.size} website-less rooftops to ${UNRESOLVED} — resolve with: node resolve-dealers.mjs ${UNRESOLVED} --source "the Ford Blue Advantage roster"`);
+  }
 }
 
 // ── append ──────────────────────────────────────────────────────────────────

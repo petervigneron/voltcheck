@@ -64,9 +64,13 @@ const DNS_IN = opt("--dns-in", "DNS_IN");
 const DNS_OUT = opt("--dns-out", "DNS_OUT");
 const DNS_CONC = Number(opt("--dns-concurrency", "DNS_CONC")) || (DNS_TRANSPORT === "udp" ? UDP_MAX_IN_FLIGHT : 96);
 const DRY_OUT = opt("--out", "RESOLVE_OUT") ?? "/tmp/resolved-dealers.json";
+// What the input list IS, for the appended rows' notes. A license roll by
+// default; a marketplace roster (fba-dealers.mjs --unresolved names rooftops
+// whose listings carry no website) says so instead of claiming a state roll.
+const SOURCE = opt("--source");
 // Every flag that takes a value, so a flag placed before the roll path never
 // has its value mistaken for the path.
-const VALUE_FLAGS = new Set(["--limit", "--concurrency", "--dump-unresolved", "--sample", "--seed", "--state", "--tlds", "--dns", "--dns-in", "--dns-out", "--dns-concurrency", "--out"]);
+const VALUE_FLAGS = new Set(["--limit", "--concurrency", "--dump-unresolved", "--sample", "--seed", "--state", "--tlds", "--dns", "--dns-in", "--dns-out", "--dns-concurrency", "--out", "--source"]);
 const csvPath = args.find((a, i) => !a.startsWith("--") && !VALUE_FLAGS.has(args[i - 1]));
 if (!["doh", "udp"].includes(DNS_TRANSPORT)) { console.error(`--dns takes doh or udp, not ${DNS_TRANSPORT}`); process.exit(1); }
 if (DNS_ONLY && !DNS_OUT) { console.error("--dns-only needs --dns-out <file> to keep what it resolved"); process.exit(1); }
@@ -204,11 +208,23 @@ await Promise.all(Array.from({ length: CONC }, async () => {
     const res = await fetchPage(`https://${dom}/`);
     fetched++;
     if (fetched % 200 === 0) console.error(`  fetched ${fetched}/${fetchList.length} (${verified.size} verified)`);
+    // Dealers park old and vanity domains as redirects to the site they use.
+    // Measured 2026-10-06 on the Ford Blue Advantage roster: 11 of 47
+    // "verified, new" domains were exactly that — kriegerfordcolumbus.com →
+    // kriegerford.com, lufkinford.com → lufkintxford.com — and 10 of their
+    // landing hosts were already registry rows, crawled for weeks. Judge a
+    // candidate by where it lands, not by the name it was guessed under.
+    let landed = dom;
+    try { landed = new URL(res.finalUrl).hostname.toLowerCase().replace(/^www\./, ""); } catch {}
+    if (landed !== dom && knownDomains.has(landed)) {
+      for (const i of owners) if (!already.has(i)) already.set(i, landed);
+      continue;
+    }
     if (res.status !== 200 || !res.body) continue;
     const evidence = pageEvidence(res.body);
     for (const i of owners) {
       const how = identityRule(work[i], evidence);
-      if (how) verified.set(i, { domain: dom, how });
+      if (how) verified.set(i, { domain: landed, how });
     }
   }
 }));
@@ -269,7 +285,7 @@ for (const [i, v] of verified) {
     platform: "unknown",
     robots: "unknown",
     status: "discovered",
-    notes: `Resolved from the ${d.state} license roll by name→domain candidate generation; identity verified on the page by ${HOW_TEXT[v.how]}${classNote(d)}${flClassNote(d)} (${today})`,
+    notes: `Resolved from ${SOURCE ?? `the ${d.state} license roll`} by name→domain candidate generation; identity verified on the page by ${HOW_TEXT[v.how]}${classNote(d)}${flClassNote(d)} (${today})`,
     location: { city: d.city, state: d.state, zip: d.zip },
   });
 }
