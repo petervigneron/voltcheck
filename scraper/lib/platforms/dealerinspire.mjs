@@ -159,12 +159,50 @@
 // partial at 46 with its 29 EVs all read and its 9 walk pages unfinished.
 // The reserve still applies when the fast path found nothing (a rooftop
 // whose facet answers zero), because then the walk is the only path.
+//
+// ADMIT FROM THE CARD (2026-10-06). A load per candidate was the whole cost
+// of this lane, and it was never affordable: the 2026-10-05 11:46 browser
+// crawl read 2,199 classic rooftops and 1,645 of them stopped at the clock
+// with 54,523 candidates found and 26,094 opened — 28,429 cars the dealer's
+// own fuel field had named, never read, on the lane that already holds the
+// most cars of any (22,345 live). Forty-four more rooftops admitted NOTHING
+// across 15,928 cards: kengarff.com's own facet answers 768 electrified cars
+// and 148 of them used, and its VDPs answer headless Chrome with Cloudflare's
+// "Attention Required" firewall page while its SRP serves — the same on
+// fletcherjones.com, morganautogroup.com, victoryautomotivegroup.com and the
+// Hendrick Cadillac stores. Zero EVs in 39 loads, every visit.
+//
+// The result card already says what the VDP was being opened for. Its
+// `data-vehicle` blob (kengarff.com, read in a real browser the same day)
+// carries vin, stock, type (New/Used), year, make, model, trim,
+// exterior_color, price, msrp, bodystyle, fueltype and date_in_stock, and the
+// card's own text carries the mileage ("Mileage: 47,403" in
+// li.vehicle-details--item.mileage). So a card the dealer's fuel field puts
+// on the filtered list — or whose blob names an electrified fuel on the walk
+// — is admitted from the card, at once, with no load. What is NOT admitted
+// from a card: a card with no blob (the featured block, the data-vin-only
+// markup), and a title/WMI hit whose blob names no fuel — those are our
+// guess, and still cost the VDP that confirms them.
+//
+// The VDP is still read, afterwards, as ENRICHMENT: it carries the mileage
+// on themes that omit it from the card, the images, the description, and
+// its JSON-LD offer. It runs last, under whatever budget is left, in the same
+// rotated order, and running out of budget there stops nothing: the pull is
+// complete when the WALK completed and every VDP a car NEEDED was read.
+// Order of spend is now: homepage, the filtered lists (the cars, admitted),
+// the unfiltered walk (completeness, and the EVs the facet could not name),
+// the VDPs the walk's net-only candidates need, then the enrichment VDPs.
+//
+// The card's price is its own field (price-provenance DI_CARD_PRICE), never
+// paired with the VDP offer: faricykia.com's VDP offer folds D&H in and its
+// card does not, and a card-then-VDP pair would print a cut nobody made.
 import { browserFetch } from "../browser.mjs";
 import { isRideMotive, rideMotiveConfig, pullRideMotiveApi, countRideMotiveApi } from "./ridemotive.mjs";
 import { extractVehicles } from "../jsonld.mjs";
 import { evish } from "../sitemap.mjs";
 import { EV_ONLY_WMIS } from "../ev.mjs";
 import { decodeEntities } from "../normalize.mjs";
+import { DI_CARD_PRICE } from "../price-provenance.mjs";
 
 // The vendor's own hosts and theme names on a served page. Never the bare
 // word: fingerprint.mjs's /dealerinspire/i is for pages we already read.
@@ -256,16 +294,22 @@ export function dealerInspireCards(html, base) {
   // of both classic markups read so far (kerbeckcadillacs.com carries it
   // with no data-vin at all); absent on the repeated "featured" block.
   const blobs = new Map();
-  for (const m of src.matchAll(/data-vehicle=["'](\{[^"']*\})["']/gi)) {
+  const miles = new Map();
+  const blobMatches = [...src.matchAll(/data-vehicle=["'](\{[^"']*\})["']/gi)];
+  blobMatches.forEach((m, i) => {
     try {
       const b = JSON.parse(decodeEntities(m[1]));
       const v = String(b?.vin ?? "").toUpperCase();
       if (VIN_RE.test(v)) {
         blobs.set(v, b);
         vins.push(v);
+        // The card's own text, from its blob to the next card's: the mileage
+        // is printed there ("Mileage: 47,403"), never in the blob.
+        const mi = cardMileage(src.slice(m.index, blobMatches[i + 1]?.index ?? m.index + CARD_SEGMENT_MAX));
+        if (mi != null) miles.set(v, mi);
       }
     } catch {}
-  }
+  });
   for (const m of src.matchAll(/data-vin=["']([A-HJ-NPR-Z0-9]{17})["']/gi)) vins.push(m[1]);
   for (const m of src.matchAll(/href=["'][^"']*\/inventory\/[^"']*?([A-HJ-NPR-Z0-9]{17})\/?["']/gi)) vins.push(m[1]);
   for (const raw of vins) {
@@ -289,10 +333,85 @@ export function dealerInspireCards(html, base) {
     if (blob) {
       card.fuel = String(blob.fueltype ?? "").trim() || undefined;
       card.result = true; // a real result, not the featured block
+      card.blob = blob;
+      if (miles.has(vin)) card.mileage = miles.get(vin);
     }
     out.push(card);
   }
   return out;
+}
+
+// A card's text runs from its blob to the next card's blob; the cap is for
+// the last card on a page, whose segment would otherwise be the footer.
+const CARD_SEGMENT_MAX = 20000;
+// In order of trust: a labelled odometer ("Mileage: 47,403", "Odometer:
+// 12,004"), a labelled "Miles: 47,403", then a suffixed "47,403 mi". The
+// label forms are what the classic theme prints (li.vehicle-details--item
+// .mileage on kengarff.com, 2026-10-06); the suffix is the fallback and asks
+// for at least three digits so a "25 mi away" distance never reads as one.
+const MILEAGE_RES = [
+  /(?:mileage|odometer)\s*:?\s*(?:<[^>]*>\s*)*(\d{1,3}(?:,\d{3})+|\d{1,7})\b/i,
+  /\bmiles\s*:\s*(?:<[^>]*>\s*)*(\d{1,3}(?:,\d{3})+|\d{1,7})\b/i,
+  /\b(\d{1,3}(?:,\d{3})+|\d{3,7})\s*(?:<[^>]*>\s*)*(?:mi\b|miles\b)/i,
+];
+export function cardMileage(segment) {
+  const s = String(segment ?? "");
+  for (const re of MILEAGE_RES) {
+    const m = re.exec(s);
+    if (!m) continue;
+    const n = Number(m[1].replace(/,/g, ""));
+    return Number.isFinite(n) && n >= 0 && n <= 500000 ? n : null;
+  }
+  return null;
+}
+
+/** The listing a result card already states, as the schema.org-shaped node
+ *  crawl.mjs normalizes — or null when the blob cannot name the car (no
+ *  year, make or model), in which case the VDP is still needed. `__fromCard`
+ *  marks it for crawl.mjs (fromVdp false) and for the lane's own enrichment
+ *  pass, which replaces it with the VDP's node when that is read. The
+ *  blob's `type` is the dealer's condition word; its `price` is the card's
+ *  own field and carries DI_CARD_PRICE, never the VDP offer's tag. */
+export function dealerInspireCardVehicle(card) {
+  const b = card?.blob;
+  if (!b || !card.vin || !VIN_RE.test(card.vin)) return null;
+  const s = (x) => (x == null ? "" : String(x).trim());
+  const year = s(b.year).match(/\b(19[89]\d|20\d{2})\b/)?.[0];
+  const make = s(b.make);
+  const model = s(b.model);
+  if (!year || !make || !model) return null;
+  const trim = s(b.trim);
+  const type = s(b.type);
+  const price = Number(s(b.price).replace(/[^0-9.]/g, ""));
+  const itemCondition = /certified|cpo/i.test(type)
+    ? "Certified Pre-Owned"
+    : /^new$/i.test(type)
+      ? "https://schema.org/NewCondition"
+      : /used|pre-?owned/i.test(type)
+        ? "https://schema.org/UsedCondition"
+        : undefined;
+  const offer = { "@type": "Offer", url: card.url, priceCurrency: "USD", availability: "https://schema.org/InStock", priceProvenance: DI_CARD_PRICE };
+  if (price > 0) offer.price = String(price);
+  if (itemCondition) offer.itemCondition = itemCondition;
+  const v = {
+    "@type": ["Product", "Car"],
+    name: [year, make, model, trim].filter(Boolean).join(" "),
+    vehicleIdentificationNumber: card.vin,
+    vehicleModelDate: year,
+    brand: make,
+    model,
+    url: card.url,
+    offers: offer,
+    __fromCard: true,
+  };
+  if (trim) v.vehicleConfiguration = trim;
+  if (itemCondition) v.itemCondition = itemCondition;
+  if (s(b.fueltype)) v.fuelType = s(b.fueltype);
+  if (s(b.exterior_color)) v.color = s(b.exterior_color);
+  if (s(b.stock)) v.sku = s(b.stock);
+  if (s(b.bodystyle)) v.bodyType = s(b.bodystyle);
+  if (card.mileage != null) v.mileageFromOdometer = { "@type": "QuantitativeValue", value: String(card.mileage), unitCode: "SMI" };
+  return v;
 }
 
 /** Is a 200 actually this vendor's SRP? A page carrying no cards AND none of
@@ -553,24 +672,44 @@ export async function pullDealerInspire(origin, { srps = DEALERINSPIRE_SRPS, dea
   }
   const seen = new Set(); // every card, either walk
   const read = new Set(); // VDPs opened
-  const vehicles = [];
+  const byVin = new Map(); // vin → the node admitted: a card's until its VDP replaces it
+  const cardAdmitted = []; // the cards admitted without a load, in admission order, for the enrichment pass
   const notes = [];
   let requests = 1; // the homepage read above
   let stopped = false;
   let vdpFailures = 0;
   let candidates = 0;
+  let fromCards = 0;
+  let enriched = 0;
 
-  // One VDP per candidate, within the limits. Returns false when the browser
-  // went away (the caller returns at once).
-  const readVdps = async (cands) => {
+  // A card whose blob names the car is the listing (header, ADMIT FROM THE
+  // CARD): no load. False when the blob cannot name it, and the VDP is owed.
+  const admitCard = (c) => {
+    if (byVin.has(c.vin)) return true;
+    const v = dealerInspireCardVehicle(c);
+    if (!v) return false;
+    byVin.set(c.vin, v);
+    cardAdmitted.push(c);
+    candidates++;
+    fromCards++;
+    return true;
+  };
+
+  // One VDP per card, within the limits. A NEEDED read has no node yet, so a
+  // VDP that cannot be read is a failure and a spent budget is a stop; an
+  // enrichment read already has the card's node, so neither is — the pass
+  // simply ends. Returns false when the browser went away (the caller
+  // returns at once).
+  const readVdps = async (cands, { needed }) => {
     for (const c of cands) {
       if (read.has(c.vin)) continue;
-      candidates++;
+      if (needed) candidates++;
       if (!c.url) {
-        vdpFailures++;
+        if (needed) vdpFailures++;
         continue;
       }
       if (dealerInspireLimitsExhausted(limits, requests)) {
+        if (!needed) return true;
         stopped = true;
         vdpFailures++;
         continue;
@@ -586,20 +725,22 @@ export async function pullDealerInspire(origin, { srps = DEALERINSPIRE_SRPS, dea
       }
       const v = res.status === 200 && res.body ? dealerInspireVdpVehicle(res.body, c.vin) : null;
       if (!v) {
-        vdpFailures++;
+        if (needed) vdpFailures++;
         continue;
       }
-      vehicles.push(v);
+      if (!needed) enriched++;
+      byVin.set(c.vin, v);
     }
     return true;
   };
-  const gone = () => ({ ok: false, complete: false, found: seen.size, candidates, vehicles, requests, vdpFailures, why: "browser_unavailable" });
+  const vehiclesSoFar = () => [...byVin.values()];
+  const gone = () => ({ ok: false, complete: false, found: seen.size, candidates, vehicles: vehiclesSoFar(), requests, vdpFailures, why: "browser_unavailable" });
 
   // 1. THE FAST PATH: each list filtered to the electrified fuel facet. The
-  //    real results (blob-carrying cards) are candidates by the dealer's own
-  //    field and are read first, in an order that rotates by day; the block
-  //    cards the pages carried go through the net and are read after them.
-  //    Under the full limits, not the walk's reserve: these loads ARE the cars.
+  //    real results (blob-carrying cards) are the dealer's own claim and are
+  //    admitted from their cards at once; the block cards the pages carried
+  //    go through the net and, having no blob, are owed a VDP. Under the full
+  //    limits, not the walk's reserve: these loads ARE the cars.
   let fast = 0;
   const real = [];
   const block = new Map(); // by VIN: a block card is promoted when its real result turns up in the other list
@@ -633,17 +774,25 @@ export async function pullDealerInspire(origin, { srps = DEALERINSPIRE_SRPS, dea
       `fuel facet ignored on ${facetIgnoredPaths.join(" and ")} — the filtered list served the whole lot, so its cards went through the title/WMI/blob net instead of counting as results`
     );
   fast = real.length + block.size;
-  if (!(await readVdps(dealerInspireRotate(real, day)))) return gone();
-  if (!(await readVdps([...block.values()]))) return gone();
+  // Admitted from the card where the card can name the car; the rest — and
+  // every block card, which has no blob — are owed a VDP now, in the rotated
+  // order, because without one they are not listings at all.
+  const owed = [];
+  for (const c of dealerInspireRotate(real, day)) if (!admitCard(c)) owed.push(c);
+  for (const c of block.values()) if (!admitCard(c)) owed.push(c);
+  if (!(await readVdps(owed, { needed: true }))) return gone();
 
   // 2. THE WALK: both lists unfiltered under the half-budget reserve, the
-  //    title/WMI/blob net, their VDPs. This is what completeness means; the
-  //    fast path only made sure the cars came before the lot.
+  //    title/WMI/blob net. This is what completeness means; the fast path
+  //    only made sure the cars came before the lot. A walk card whose blob
+  //    names an electrified fuel is the dealer's claim and is admitted from
+  //    the card; a title/WMI hit is our guess and is owed its VDP.
   let complete = true;
   let anySrp = false;
   const srpStatus = [];
   const srpLimits = fast ? limits : srpLoadLimits(limits);
   const unknownFuel = new Set();
+  const walkOwed = [];
   for (const path of srps) {
     const r = await readSrp(origin, path, { limits: srpLimits, loadsSoFar: requests, fetch });
     requests += r.requests;
@@ -657,15 +806,24 @@ export async function pullDealerInspire(origin, { srps = DEALERINSPIRE_SRPS, dea
     }
     anySrp = true;
     if (!r.complete) complete = false;
-    const cands = [];
     for (const c of r.cards) {
       if (c.fuel && dealerInspireFuelIsEv(c.fuel) && !dealerInspireFuelKnown(c.fuel)) unknownFuel.add(c.fuel);
       if (seen.has(c.vin)) continue;
       seen.add(c.vin);
-      if (dealerInspireIsCandidate(c)) cands.push(c);
+      if (!dealerInspireIsCandidate(c)) continue;
+      if (dealerInspireFuelIsEv(c.fuel) && admitCard(c)) continue;
+      walkOwed.push(c);
     }
-    if (!(await readVdps(cands))) return gone();
   }
+  if (!(await readVdps(walkOwed, { needed: true }))) return gone();
+
+  // 3. ENRICHMENT: the VDPs of the cars admitted from their cards, in the
+  //    same rotated order, with whatever budget is left. The VDP's node
+  //    replaces the card's (mileage, images, description, the JSON-LD
+  //    offer). Running out here stops nothing and fails nothing.
+  if (!(await readVdps(dealerInspireRotate(cardAdmitted, day), { needed: false }))) return gone();
+
+  const vehicles = vehiclesSoFar();
   // NO SRP AT ALL, AND SAY WHICH. This return used to carry no `why`, so
   // crawl.mjs printed the bare "dealerinspire browser lane failed" — the shape
   // 26 rooftops came back as on 2026-09-06 — and the log could not distinguish
@@ -678,12 +836,15 @@ export async function pullDealerInspire(origin, { srps = DEALERINSPIRE_SRPS, dea
   if (!anySrp && !fast)
     return { ok: false, complete: false, found: 0, candidates, vehicles, requests, vdpFailures: 0, notes, why: `no SRP answered (${srpStatus.join(", ")})` };
   if (unknownFuel.size) notes.push(`fueltype spelling(s) not in the facet list: ${[...unknownFuel].join(", ")} — verify on a served page before adding`);
+  if (fromCards) notes.push(`${fromCards} car(s) admitted from the dealer's own result cards, ${enriched} of them read again from their VDPs`);
   return {
     ok: true,
     complete: complete && anySrp && vdpFailures === 0 && !stopped,
     found: seen.size,
     candidates,
     fast,
+    fromCards,
+    enriched,
     vehicles,
     requests,
     vdpFailures,

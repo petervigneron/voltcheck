@@ -151,16 +151,28 @@ import {
   dealerInspireFuelSrpUrl,
   dealerInspireFuelIsEv,
   dealerInspireRotate,
+  dealerInspireCardVehicle,
+  cardMileage,
   DEALERINSPIRE_EV_FUELTYPES,
   DEALERINSPIRE_ROTATE_STRIDE,
   pullDealerInspire,
 } from "../lib/platforms/dealerinspire.mjs";
+import { DI_CARD_PRICE } from "../lib/price-provenance.mjs";
 
 // A result card as served on kengrodyfordorangecounty.com/used-vehicles/
 // 2026-09-08: the blob is entity-encoded JSON on `data-vehicle`.
-const blobCard = (vin, slug, fueltype) =>
-  `<div class="result-wrap used-vehicle" data-vehicle="{&quot;vin&quot;:&quot;${vin}&quot;,&quot;type&quot;:&quot;Used&quot;,&quot;price&quot;:36485,&quot;fueltype&quot;:&quot;${fueltype}&quot;}" data-vehicle-vin="${vin}">
-  <a href="/inventory/${slug}-${vin.toLowerCase()}/">card</a><div class="vin-row" data-vin="${vin}"></div></div>`;
+// Since 2026-10-06 the fixture carries the blob's naming fields too, as
+// kengarff.com serves them (year, make, model, trim, exterior_color, stock),
+// and the card's mileage line; `bare` drops the naming fields for the test
+// of a blob that cannot name its car.
+const blobCard = (vin, slug, fueltype, { bare = false, type = "Used", price = 36485 } = {}) => {
+  const [, year = "2022", make = "ford", model = "x"] = /^(?:used|new)-(\d{4})-([a-z]+)-([a-z0-9]+)/.exec(slug) ?? [];
+  const naming = bare ? "" : `,&quot;year&quot;:&quot;${year}&quot;,&quot;make&quot;:&quot;${make[0].toUpperCase()}${make.slice(1)}&quot;,&quot;model&quot;:&quot;${model.toUpperCase()}&quot;,&quot;trim&quot;:&quot;Premium&quot;,&quot;exterior_color&quot;:&quot;Gray&quot;,&quot;stock&quot;:&quot;P${vin.slice(-5)}&quot;,&quot;msrp&quot;:0`;
+  const priceJson = typeof price === "string" ? `&quot;${price}&quot;` : String(price);
+  return `<div class="result-wrap used-vehicle" data-vehicle="{&quot;vin&quot;:&quot;${vin}&quot;,&quot;type&quot;:&quot;${type}&quot;,&quot;price&quot;:${priceJson},&quot;fueltype&quot;:&quot;${fueltype}&quot;${naming}}" data-vehicle-vin="${vin}">
+  <a href="/inventory/${slug}-${vin.toLowerCase()}/">card</a><div class="vin-row" data-vin="${vin}"></div>
+  <ul class="vehicle-details"><li class="vehicle-details--item mileage" data-testid="mileage">Mileage: 47,403</li><li>Location: 25 mi away</li></ul></div>`;
+};
 // The "featured" block: data-vin only, no blob, repeated on every page.
 const featuredCard = (vin, slug) => `<div class="featured"><a href="/inventory/${slug}-${vin.toLowerCase()}/">f</a><div data-vin="${vin}"></div></div>`;
 
@@ -276,27 +288,126 @@ function fakeRooftop() {
   return { origin, fetch, loads, evs, newEv, blockEvs };
 }
 
-test("fast path: under a tight budget every EV the dealer's fuel field names is read before the walk, and the pull says partial", async () => {
+// ADMIT FROM THE CARD (2026-10-06): the result card's blob names the car, so
+// the fast path costs the filtered pages and nothing per car.
+test("cards: the blob names the car and the card text its mileage; a blob that cannot name it is owed the VDP", () => {
+  const html = blobCard("KNDC3DLC0P5119438", "used-2023-kia-ev6-wind-awd", "Electric Fuel System") + blobCard("5YJ3E1EB8NF359524", "used-2022-tesla-model-3", "electric", { bare: true });
+  const [named, bare] = dealerInspireCards(html, "https://www.x.com/used-vehicles/");
+  assert.equal(named.mileage, 47403, "the labelled mileage, not the '25 mi away' distance");
+  assert.equal(named.blob.make, "Kia");
+  const v = dealerInspireCardVehicle(named);
+  assert.equal(v.vehicleIdentificationNumber, "KNDC3DLC0P5119438");
+  assert.equal(v.vehicleModelDate, "2023");
+  assert.equal(v.brand, "Kia");
+  assert.equal(v.model, "EV6");
+  assert.equal(v.vehicleConfiguration, "Premium");
+  assert.equal(v.fuelType, "Electric Fuel System");
+  assert.equal(v.color, "Gray");
+  assert.equal(v.itemCondition, "https://schema.org/UsedCondition");
+  assert.equal(v.offers.price, "36485");
+  assert.equal(v.offers.priceProvenance, DI_CARD_PRICE, "the card's price is its own field, never the VDP offer's");
+  assert.equal(v.offers.url, "https://www.x.com/inventory/used-2023-kia-ev6-wind-awd-knd c3dlc0p5119438/".replace(" ", ""));
+  assert.equal(v.mileageFromOdometer.value, "47403");
+  assert.equal(v.__fromCard, true);
+  assert.equal(bare.blob.year, undefined);
+  assert.equal(dealerInspireCardVehicle(bare), null, "no year/make/model → not a listing yet");
+  // A card with no blob (featured block) is never a card listing.
+  assert.equal(dealerInspireCardVehicle({ vin: "1FTBW1XMXTKA60009", url: "https://www.x.com/inventory/x/" }), null);
+});
+
+test("cards: condition and price read off the blob — New, Certified, a zero price is no price", () => {
+  const html = blobCard("3FMTK1R46TMA23542", "new-2026-ford-mustang-mach-e-select-rwd", "Electric Fuel System", { type: "New", price: 0 }) + blobCard("1FTVW1EV3NWG10011", "used-2022-ford-f-150-lightning-xlt", "Electric Fuel System", { type: "Certified Used", price: "52,990" });
+  const [n, c] = dealerInspireCards(html, "https://www.x.com/");
+  assert.equal(dealerInspireCardVehicle(n).itemCondition, "https://schema.org/NewCondition");
+  assert.equal(dealerInspireCardVehicle(n).offers.price, undefined, "a zero price is 'call', not $0");
+  assert.equal(dealerInspireCardVehicle(c).itemCondition, "Certified Pre-Owned");
+  assert.equal(dealerInspireCardVehicle(c).offers.price, "52990");
+});
+
+test("cardMileage: labelled forms first, suffix needs three digits, nothing absurd", () => {
+  assert.equal(cardMileage("<li>Mileage: 47,403</li>"), 47403);
+  assert.equal(cardMileage("Odometer <span>12,004</span>"), 12004);
+  assert.equal(cardMileage("Miles: 8"), 8);
+  assert.equal(cardMileage("<span>63,826</span> mi"), 63826);
+  assert.equal(cardMileage("Location: 25 mi away"), null, "a distance is not an odometer");
+  assert.equal(cardMileage("Mileage: 9,999,999"), null);
+  assert.equal(cardMileage("no odometer here"), null);
+});
+
+test("fast path: under a tight budget every EV the dealer's fuel field names is admitted from its card, the walk still runs, and the leftover goes to VDPs", async () => {
   const { origin, fetch, loads, evs, newEv, blockEvs } = fakeRooftop();
-  // homepage 1 + filtered used 2 pages + filtered new 2 + the 8 real results'
-  // VDPs = 13 loads; the walk gets nothing. (The block's E-Transit carries no
-  // EV word the net knows and no blob, so it is not a candidate at all.)
+  // homepage 1 + filtered used 2 pages + filtered new 2 = 5 loads and the 8
+  // real results are already listings. The walk's 4 pages make 9 and admit
+  // the "Battery Electric" Model Y off its own blob; the remaining 4 loads
+  // enrich 4 of the 9 from their VDPs. Before 2026-10-06 the same 13 loads
+  // bought 8 VDPs and no walk.
   const r = await pullDealerInspire(origin, { maxLoads: 13, fetch, day: 0 });
   const vins = r.vehicles.map((v) => v.vehicleIdentificationNumber).sort();
-  assert.deepEqual(vins, [...evs.filter((e) => dealerInspireFuelKnown(e.fuel)).map((e) => e.vin), newEv.vin, ...blockEvs.map((b) => b.vin)].sort());
-  assert.ok(vins.includes("1FTVW1EV3NWG10011"), "the page-three Lightning is read before any block card");
-  assert.ok(vins.includes("5YJ3E1EB8NF359524"), "the lower-case 'electric' Tesla is a filtered hit, read on the fast path");
+  assert.deepEqual(vins, [...evs.map((e) => e.vin), newEv.vin, ...blockEvs.map((b) => b.vin)].sort());
+  assert.ok(vins.includes("1FTVW1EV3NWG10011"), "the page-three Lightning");
+  assert.ok(vins.includes("5YJ3E1EB8NF359524"), "the lower-case 'electric' Tesla is a filtered hit");
   assert.equal(r.fast, 8, "the eight real results; the block's E-Transit is no candidate");
+  assert.equal(r.fromCards, 9);
+  assert.equal(r.enriched, 4);
+  assert.equal(r.candidates, 9);
   assert.equal(r.ok, true);
-  assert.equal(r.complete, false, "the walk did not run, so nothing may be delisted");
-  assert.match(r.why, /stopped at the crawl's time cap or page budget/);
-  // Order of spend: homepage, the filtered lists, then cars — never an
-  // unfiltered page before a car, and the block's E-Transit never opened.
+  assert.equal(r.complete, true, "the walk finished, so the pull certifies; enrichment running out stops nothing");
+  assert.equal(r.why, undefined);
+  // Order of spend: homepage, the filtered lists, the walk, then VDPs — and
+  // the block's E-Transit never opened.
   assert.equal(loads.length, 13);
   assert.ok(loads.slice(1, 5).every((l) => /_dFR/.test(l)), loads.join("\n"));
   assert.ok(loads.some((l) => /_dFR.*_p=2/.test(l)), "the filtered list's second page is read");
-  assert.ok(loads.slice(5).every((u) => /\/inventory\//.test(u)), loads.join("\n"));
+  assert.ok(loads.slice(5, 9).every((u) => /vehicles\/(\?_p=\d)?$/.test(u)), loads.join("\n"));
+  assert.ok(loads.slice(9).every((u) => /\/inventory\//.test(u)), loads.join("\n"));
   assert.ok(!loads.some((u) => /1ftbw1xmxtka60009/i.test(u)), "the block card is never opened");
+  // The enriched four carry the VDP's node; the other five the card's.
+  const enriched = r.vehicles.filter((v) => !v.__fromCard);
+  assert.equal(enriched.length, 4);
+  assert.ok(enriched.every((v) => v.mileageFromOdometer.value === "63826"));
+  assert.ok(r.vehicles.filter((v) => v.__fromCard).every((v) => v.mileageFromOdometer.value === "47403" && v.offers.priceProvenance === DI_CARD_PRICE));
+  assert.ok(r.notes.some((n) => /9 car\(s\) admitted from the dealer's own result cards, 4 of them read again/.test(n)), r.notes.join(" | "));
+});
+
+test("fast path: with only the filtered pages affordable, the cars are still listings and the pull says partial", async () => {
+  const { origin, fetch, loads } = fakeRooftop();
+  const r = await pullDealerInspire(origin, { maxLoads: 5, fetch, day: 0 });
+  assert.equal(r.vehicles.length, 8);
+  assert.ok(r.vehicles.every((v) => v.__fromCard && v.brand && v.vehicleModelDate));
+  assert.equal(r.complete, false, "the walk never ran, so nothing may be delisted");
+  assert.match(r.why, /stopped at the crawl's time cap or page budget/);
+  assert.equal(loads.filter((u) => /\/inventory\//.test(u)).length, 0, "not one VDP was needed");
+});
+
+test("a VDP the firewall refuses costs the card nothing: kengarff.com's shape", async () => {
+  // SRPs serve, every VDP answers Cloudflare's firewall page (403): the 44
+  // zero-admit rooftops of the 2026-10-05 run.
+  const base = fakeRooftop();
+  const fetch = async (url, opts) => (/\/inventory\//.test(url) ? { status: 403, body: "<html>Attention Required! | Cloudflare</html>" } : base.fetch(url, opts));
+  const r = await pullDealerInspire(base.origin, { maxLoads: 60, fetch, day: 0 });
+  assert.equal(r.vehicles.length, 9, "every card-named car is a listing");
+  assert.ok(r.vehicles.every((v) => v.__fromCard));
+  assert.equal(r.enriched, 0);
+  assert.equal(r.vdpFailures, 0, "an enrichment read that fails is not a failure");
+  assert.equal(r.complete, true, "the walk finished and no car was owed a VDP");
+});
+
+test("a card that cannot name its car is still owed a VDP, and that failure still counts", async () => {
+  const origin = "https://www.fake-bare.example";
+  const html = `<html><body>${blobCard("KNDC3DLC0P5119438", "used-2023-kia-ev6-wind-awd", "Electric Fuel System", { bare: true })}</body></html>`;
+  const loads = [];
+  const fetch = async (url) => {
+    loads.push(url);
+    const u = new URL(url);
+    if (u.pathname === "/") return { status: 200, body: "<html>classic theme</html>" };
+    if (/vehicles\/$/.test(u.pathname)) return { status: 200, body: html };
+    return { status: 403, body: "Attention Required" };
+  };
+  const r = await pullDealerInspire(origin, { maxLoads: 60, fetch, day: 0 });
+  assert.equal(r.vehicles.length, 0);
+  assert.equal(r.vdpFailures, 1);
+  assert.equal(r.complete, false);
+  assert.ok(loads.filter((u) => /\/inventory\//.test(u)).length >= 1, "the VDP was asked for");
 });
 
 test("rotation: a day stride walks a capped list across visits; the block cards never rotate ahead of the real results", async () => {
@@ -306,10 +417,12 @@ test("rotation: a day stride walks a capped list across visits; the block cards 
   assert.equal(dealerInspireRotate(cards, 2)[0].vin, String((2 * DEALERINSPIRE_ROTATE_STRIDE) % 100));
   assert.equal(dealerInspireRotate(cards, 3).length, 100);
   assert.deepEqual(dealerInspireRotate([{ vin: "x" }], 7), [{ vin: "x" }]);
-  // Day 1 on the fake rooftop: the 8 real results start from card 40 % 8 = 0,
-  // and the one VDP the budget allows is a real result, never the block's.
+  // Day 1 on the fake rooftop: home 1 + filtered 4 + walk 4 = 9 loads, and
+  // the one enrichment VDP the tenth allows is a real result, never the
+  // block's (the block cards are real results in the new list, so they too
+  // sit in the rotated list — but behind the eight that came first).
   const { origin, fetch, loads, evs, newEv, blockEvs } = fakeRooftop();
-  await pullDealerInspire(origin, { maxLoads: 6, fetch, day: 1 });
+  await pullDealerInspire(origin, { maxLoads: 10, fetch, day: 1 });
   const first = loads.filter((u) => /\/inventory\//.test(u));
   assert.equal(first.length, 1);
   const realVins = [...evs.filter((e) => dealerInspireFuelKnown(e.fuel)), newEv, ...blockEvs].map((c) => c.vin.toLowerCase());
@@ -336,7 +449,7 @@ test("walk: with budget to spare the unfiltered lists still run, catch the EV th
 
 test("walk: a rooftop that fits the budget still completes — the fast path's loads do not halve what the walk gets", async () => {
   const { origin, fetch } = fakeRooftop();
-  // home 1 + filtered 4 + 8 VDPs + walk 4 pages + the walk's one VDP = 18 loads exactly.
+  // home 1 + filtered 4 + walk 4 pages + the 9 enrichment VDPs = 18 loads exactly.
   const r = await pullDealerInspire(origin, { maxLoads: 18, fetch, day: 0 });
   assert.equal(r.complete, true, r.why);
   assert.equal(r.requests, 18);

@@ -264,6 +264,15 @@ export const DEALERFRONT_ASKING = "dealerfront-asking";
 // ("Doc /Dealer Prep 499": 50,995 → 51,494) and would publish a phantom
 // markup against every other lane's pre-fee ask.
 export const DEALERCENTER_ASKING = "dealercenter-asking";
+// Dealer Inspire's SRP result card: the `price` in the card's own
+// `data-vehicle` blob (2026-10-06, lib/platforms/dealerinspire.mjs "ADMIT
+// FROM THE CARD"). Split from the VDP's JSON-LD offer on purpose: rooftops
+// that fold delivery and handling into the VDP offer print a different
+// number there (faricykia.com: card 5,303, VDP offer 5,998), and a card
+// reading paired with a VDP reading would publish a step the dealer never
+// made. The same car read twice from cards pairs; read once each way, the
+// claim goes quiet.
+export const DI_CARD_PRICE = "di-card-price";
 // one vendor's endpoint; none of them shares a code path with any other, so
 // each gets its own tag rather than a single "oem" bucket that would let a
 // Hyundai field pair against a Kia one on a co-listed VIN.
@@ -320,7 +329,7 @@ const KNOWN = new Set([
   ONEAUDI_SALE, WAYNEREAVES_PRICE, ADD_DISPLAY_PRICE,
   DEALERSYNC_FINAL, RECHARGED_PRICE, EVERCARS_PRICE, VEHICA_PRICE,
   DEALERSPIKE_PRICE, DEALERSPIKE_CACHE_PRICE, AUTOCORNER_PRICE, AUTOREVO_PRICE, DEALERFRONT_ASKING,
-  DEALERCENTER_ASKING,
+  DEALERCENTER_ASKING, DI_CARD_PRICE,
 ]);
 
 /** True for a tag this build knows how to emit. OEM lane tags are accepted by

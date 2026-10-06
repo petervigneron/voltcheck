@@ -206,6 +206,12 @@ function pageBudget(domain) {
 // seeds, which are queued first — a real inventory shows itself long before.
 const NO_VEHICLE_FLOOR = 25; // no vehicle record and no ItemList by here => not a shoppable site
 const NO_EV_FLOOR = 40; // sells cars, just none of them electric
+// The EV-dense raise (see raiseIfEvDense in crawlDealerInto): at least this
+// many EVs read, and at least one per page fetched, before a spent budget is
+// raised; never past the cap. 600 pages at the crawl's ~1.1 s/host pacing is
+// eleven minutes, past any --domain-cap-min in use, so the clock decides.
+const EV_DENSE_MIN_EVS = 10;
+const EV_DENSE_CAP = 600;
 
 // Dealer platforms emit VDP links in every shape: absolute, root-relative
 // ("/inventory/..."), even bare-relative ("used-2022-volvo-..."). Resolve
@@ -624,7 +630,11 @@ async function crawlDealerInto(domain, budget, domainCapAt, report) {
       if (rec.vdpUrl) rec.vdpUrl = abs(rec.vdpUrl, origin) ?? rec.vdpUrl;
       rec.evKind = cls.kind;
       rec.evConfidence = cls.confidence;
-      rec.fromVdp = dvPlat !== "dealercenter" && dvPlat !== "dealereprocess"; // DI/Porsche nodes are the VDP's own; DealerCenter's is the lot record, DealerEProcess's the SRP card's
+      // Porsche nodes are the VDP's own; DealerCenter's is the lot record,
+      // DealerEProcess's the SRP card's; Dealer Inspire's is the VDP's unless
+      // the lane says it came off the result card (`__fromCard`, 2026-10-06 —
+      // the VDP is read afterwards when the budget allows and replaces it).
+      rec.fromVdp = dvPlat !== "dealercenter" && dvPlat !== "dealereprocess" && !v.__fromCard;
       rec.platform = dvPlat;
       report.evs.push(rec);
     }
@@ -652,7 +662,32 @@ async function crawlDealerInto(domain, budget, domainCapAt, report) {
     if (pinned) await pullTeamVelocity(pinned, "registry");
   }
 
-  while (queue.length && report.fetched < budget) {
+  // AN EV-DENSE LOT EARNS A BIGGER BUDGET (2026-10-06). The page budget is
+  // sized for a franchise lot where a few cars in a hundred are electric; an
+  // EV specialist is the opposite shape, and the budget cut it off at the
+  // knees. Measured from the worktree the same day, default budget 25:
+  // evauto.com read 20 SRP pages carrying 181 EVs, queued 168 VDPs, fetched
+  // none of them, and wrote 26 listings (the SRP nodes carry no VIN; the VDPs
+  // do) — 16 of the 16 used Teslas Autotrader lists there were absent from
+  // the site; karstenandmooreauto.com read 25 pages, 63 EVs, 39 written, 5 of
+  // 10 absent. When the budget runs out with the queue still holding pages
+  // and the lot has read as at least one EV per page fetched, the budget is
+  // raised once, to four times itself or twice the EVs seen, whichever is
+  // larger, under a hard cap. A rooftop with nothing electric never raises
+  // (NO_EV_FLOOR still ends it), and the per-domain clock still bounds the
+  // visit, so a slice cannot be held by one lot.
+  const raiseIfEvDense = () => {
+    if (report.evDenseRaised || !queue.length) return false;
+    if (report.evs.length < EV_DENSE_MIN_EVS || report.evs.length < report.fetched) return false;
+    const raised = Math.min(EV_DENSE_CAP, Math.max(budget * 4, report.fetched + report.evs.length * 2));
+    if (raised <= budget) return false;
+    report.notes.push(`ev-dense lot: ${report.evs.length} EVs in ${report.fetched} pages with ${queue.length} urls still queued — budget ${budget} → ${raised}`);
+    report.evDenseRaised = true;
+    budget = raised;
+    report.budget = raised;
+    return true;
+  };
+  while (queue.length && (report.fetched < budget || raiseIfEvDense())) {
     // A completed DCS search walk has enumerated every car the dealer lists,
     // so whatever is left in the queue can only re-find them — one page at a
     // time, at the cost of the whole budget. Keep the EV detail pages still
