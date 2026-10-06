@@ -52,7 +52,7 @@ import { readFile } from "node:fs/promises";
 import { readSnapshot } from "./lib/snapshot.mjs";
 import { fetchWithRetry } from "./lib/retry.mjs";
 import { browserFetch, browserUnavailable, closeBrowser } from "./lib/browser.mjs";
-import { classifyBrowserRecheck, selectResidue, normalizeUrl, FEED_CONFIRM_HOURS } from "./lib/recheck-browser-verdict.mjs";
+import { classifyBrowserRecheck, selectResidue, normalizeUrl, MARKETPLACE_RECHECK_HOURS } from "./lib/recheck-browser-verdict.mjs";
 import { RECHECK_CROSSCHECK_DOMAINS, oemAliveVins, oemSweepCounts, sweepSaysGone } from "./lib/recheck-oem-crosscheck.mjs";
 
 function flag(name, fallback) {
@@ -62,14 +62,13 @@ function flag(name, fallback) {
 const LIMIT = flag("--limit", 600);
 const CONCURRENCY = Math.max(1, flag("--concurrency", 2));
 // How stale a marketplace-lane car's own-page confirmation may be before this
-// pass goes and gets a fresh one. It is the FEED's window (0091), not a number
-// of this job's own: a car is withheld from the site at 36 hours, so asking
-// again on a slower clock leaves it dark for the difference. It used to be
-// --stale-days 7, which left 4,338 live cars in that gap — the note over
-// selectResidue has the measurement. --stale-days is still accepted so an
-// operator can widen the sweep by hand.
+// pass goes and gets a fresh one. Until 0107 this was the feed's own window
+// (rule 2 withheld the car past it); since then those cars are served on
+// their marketplace sighting, and the window is how often we ask whether a
+// served one has sold — the note over selectResidue has both stories.
+// --stale-days is still accepted so an operator can widen the sweep by hand.
 const STALE_DAYS = flag("--stale-days", 0);
-const CONFIRM_HOURS = STALE_DAYS > 0 ? STALE_DAYS * 24 : flag("--confirm-hours", FEED_CONFIRM_HOURS);
+const CONFIRM_HOURS = STALE_DAYS > 0 ? STALE_DAYS * 24 : flag("--confirm-hours", MARKETPLACE_RECHECK_HOURS);
 const DEADLINE_MIN = flag("--deadline-min", 0);
 // --part k --parts n: this runner takes the hosts whose hostPart() is k, so a
 // fleet of n runners covers the residue n times faster with every rooftop
@@ -150,7 +149,7 @@ if (!SUPABASE_URL || !ANON) {
 
 // THE SERVICE KEY, and why this job needs one where recheck does not.
 //
-// "Never confirmed, or not in a week" is what separates the residue from the
+// "Never confirmed, or not in 36 hours" is what separates the residue from the
 // 14,000 cars on these lanes whose pages recheck reads fine every night, and
 // that fact lives in listing_seen.last_confirmed_at. 0026 revoked anon's
 // select on listing_seen (the sighting history of delisted cars is archive,
@@ -221,8 +220,8 @@ async function walk(rows, embed, domainFilter) {
   // Every live row, not only the four marketplace lanes (2026-09-12, second
   // truck of the night: 1FT6W1EV7NWG11294 at mastriamazda.com, a dealer-site
   // row crawled once by a browser lane that was then switched off, page 403
-  // to the fetch, sold in reality, served for six days). Since 0090 a car
-  // unseen and unconfirmed for 72 hours is withheld from the site; this pass
+  // to the fetch, sold in reality, served for six days). Rule 1 withholds a
+  // car unseen and unconfirmed for 48 hours (0090, 0101); this pass
   // is what re-admits the live ones on rooftops only a browser can read.
   // ~173k narrow rows, ~350 pages; selectResidue narrows them in memory.
   for (let after = ""; ; ) {

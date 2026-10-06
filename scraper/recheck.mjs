@@ -104,10 +104,11 @@ const ONLY_VINS = new Set(
     .filter(() => process.argv.includes("--vin"))
 );
 const DRY = process.argv.includes("--dry-run");
-// --returning: only the cars that came back after 36 hours unseen and whose
+// --returning: only the cars that came back after 48 hours unseen and whose
 // own page has not confirmed them since (listing_seen.returned_at, 0093).
-// Those rows are withheld from the site until this pass says yes, so it runs
-// every half hour (recheck-returning.yml), not nightly. Same verdicts, same
+// Those rows are withheld from the site until this pass says yes (or, since
+// 0102, two sightings six hours apart do), so it runs every half hour
+// (recheck-returning.yml), not nightly. Same verdicts, same
 // write path; the one extra write is a waiver for rows this script could
 // never ask — OEM-locator lanes and homepage-sourced rows — so their return
 // does not become a silence that no page can end.
@@ -410,11 +411,13 @@ async function worker() {
       } else {
         // The sweep still lists it, or said nothing. NOT an alive verdict:
         // recheck_listings writes last_confirmed_at from the alive list, and
-        // since 0089 that timestamp is what lets a marketplace-fed car onto
-        // the site at all. A marketplace index listing a car is where we
-        // learned of it, never proof it is still for sale (the owner's
-        // Lightning, 2026-09-12, was in the index days after it sold). A row
-        // with no page of its own therefore stays unconfirmed and unserved.
+        // that stamp means "its own page said so" — rule 1 reads it as
+        // freshness and rule 3 as the end of a return. A marketplace index
+        // listing a car is where we learned of it, never proof it is still
+        // for sale (the owner's Lightning, 2026-09-12, was in the index days
+        // after it sold). Until 0107 this also kept the row off the site
+        // (rule 2); now its marketplace sighting serves it, and this branch
+        // matters for the strike above, not for admission.
         if (oemAlive.has(vin)) sweepAlive++; else errors++;
       }
       continue;

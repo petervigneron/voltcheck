@@ -6,14 +6,15 @@
 //   select count(*) from listings l join listing_seen s using (vin)
 //   where l.delisted_at is null and l.dealer_domain = any(<browser-lane domains>)
 //     and greatest(s.last_seen_at, coalesce(s.last_confirmed_at, s.last_seen_at))
-//         < now() - interval '36 hours'
+//         < now() - interval '48 hours'
 //
-// which is the complement of live_listings_feed's rule 1 (migration 0091):
-// a car is served only while some source saw it, or its own page confirmed
-// it, within 36 hours. Postgres's greatest() ignores nulls, so the later of
+// which is the complement of live_listings_feed's rule 1: a car is served
+// only while some source saw it, or its own page confirmed it, within 48
+// hours. The query was written at 36 (0091); 0101 widened rule 1 to 48, and
+// a threshold left at 36 counted cars the site was still showing. Postgres's greatest() ignores nulls, so the later of
 // whichever stamps exist is what is compared; a row with neither is not dark
 // (it is not served either, but for a reason this rule does not own).
-export const DARK_AFTER_MS = 36 * 3_600_000;
+export const DARK_AFTER_MS = 48 * 3_600_000;
 
 /** Epoch ms of the later of last_seen_at / last_confirmed_at, or -Infinity
  *  when the row has neither. */

@@ -1,5 +1,6 @@
-# A car that came back after 36 hours unseen is withheld until its own page
-# says it is for sale (migration 0093, rule 3 of live_listings_feed). This is
+# A car that came back after 48 hours unseen is withheld until its own page
+# says it is for sale (migration 0093, rule 3 of live_listings_feed), or
+# until it is seen twice six hours apart (0102; every lane since 0107). This is
 # the pass that asks — every half hour, over only those rows — so the wait is
 # minutes, not the next nightly. The owner's standard is comprehensive AND
 # reliable: the lever for both is faster evidence, and this is it.

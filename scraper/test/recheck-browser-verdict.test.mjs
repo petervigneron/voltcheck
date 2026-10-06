@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { classifyBrowserRecheck, goneUrlReason, selectResidue, FEED_CONFIRM_HOURS } from "../lib/recheck-browser-verdict.mjs";
+import { classifyBrowserRecheck, goneUrlReason, selectResidue, MARKETPLACE_RECHECK_HOURS } from "../lib/recheck-browser-verdict.mjs";
 import { challengeMarks, wallMarks } from "../lib/challenge-page.mjs";
 
 const VIN = "1FT6W1EV2PWG58901";
@@ -162,10 +162,12 @@ test("a dealer-site car neither seen nor confirmed in 48 hours is visited; one s
 // that THIS selector would not look at it for another five and a half days:
 // its marketplace branch used a 7-day window while the feed used 36 hours, so
 // 4,338 live cars sat hidden by the view and invisible to the one job that
-// could re-admit them. These pin the two windows together.
+// could re-admit them. 0107 removed the feed's marketplace window, so the
+// truck would be served today; the browser still visits it on the 36-hour
+// clock, now to find out sooner whether it has sold.
 
-test("a marketplace car goes to the browser as soon as the feed stops serving it", () => {
-  // Confirmed 41.8 hours ago: past the feed's 36, nowhere near the old 7 days.
+test("a marketplace car goes to the browser once its own page's word is 36 hours old", () => {
+  // Confirmed 41.8 hours ago: past 36, nowhere near the old 7 days.
   const truck = {
     vin: "1FT6W3L79RWG00996",
     dealerDomain: "ford-blue-advantage",
@@ -178,14 +180,13 @@ test("a marketplace car goes to the browser as soon as the feed stops serving it
   assert.deepEqual(selectResidue([truck], { now, confirmHours: 24 * 7 }), []);
 });
 
-test("the marketplace window is the feed's window, not a number of this job's own", () => {
-  // If 0091 moves, this must move with it — a browser pass that asks more
-  // slowly than the view hides is a car dark for the difference.
-  assert.equal(FEED_CONFIRM_HOURS, 36);
+test("the marketplace window is a 36-hour sold-car cadence", () => {
+  // Not the feed's window since 0107 (there is none for these lanes); see
+  // the note over selectResidue before widening it.
+  assert.equal(MARKETPLACE_RECHECK_HOURS, 36);
   const car = (vin, lastConfirmedAt) => ({ vin, dealerDomain: "hyundai-cpo", sourceUrl: `https://d.com/inventory/${vin}`, lastConfirmedAt });
   const now = Date.parse("2026-09-12T00:00:00Z");
-  // An hour inside the window is served and is not residue; an hour outside
-  // is withheld and is.
+  // An hour inside the window is not residue; an hour outside is.
   assert.deepEqual(selectResidue([car("IN", "2026-09-10T13:00:00Z")], { now }), []);
   assert.deepEqual(selectResidue([car("OUT", "2026-09-10T11:00:00Z")], { now }).map((r) => r.vin), ["OUT"]);
 });

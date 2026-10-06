@@ -1464,11 +1464,15 @@ jobs:
   # 2026-08-26) must not leave shoppers on yesterday's artifacts when the
   # data underneath is fine — the publisher carries its own refusals
   # (fallback-origin, >10% shrink) and they are the ones that matter.
-  # recheck-browser is in `needs` since 2026-09-12: a marketplace-fed car is
-  # served only once its own seller page has confirmed it (0089), and for the
-  # pages a plain fetch cannot read that confirmation comes from the browser
-  # pass. Publishing before it ran meant every such car — and every such
-  # strike — waited a full day for the next publish. It is `always()`-gated
+  # recheck-browser is in `needs` since 2026-09-12, when a marketplace-fed
+  # car was served only once its own seller page had confirmed it (0089's
+  # rule 2) and for pages a plain fetch cannot read that confirmation came
+  # from the browser pass. 0107 removed rule 2, so that reason is gone. What
+  # the wait still buys tonight's publish: dealer-site cars past rule 1's 48
+  # hours that the browser re-admits, returning cars it vouches for (rule 3),
+  # and second strikes that delist. Without the wait those land at the next
+  # publish (five a day), not a day later as in September. The wait itself is
+  # the job's 54–67 minutes (2026-09-26..10-04). It is `always()`-gated
   # like recheck: the browser pass failing or being skipped must not hold the
   # night's crawl off the site.
   publish-feed:

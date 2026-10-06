@@ -81,22 +81,22 @@ test("the run key changes twice a day", () => {
 });
 
 // The owner's acceptance rule: greatest(last_seen_at, coalesce(last_confirmed_at,
-// last_seen_at)) < now() - 36h. Postgres's greatest() skips nulls.
-test("a car is dark when its later stamp is over 36 hours old", () => {
+// last_seen_at)) < now() - 48h (rule 1 since 0101). Postgres's greatest() skips nulls.
+test("a car is dark when its later stamp is over 48 hours old", () => {
   const now = Date.parse("2026-09-13T12:00:00Z");
   const h = 3_600_000;
   const at = (hoursAgo) => new Date(now - hoursAgo * h).toISOString();
-  assert.equal(isDark({ last_seen_at: at(35) }, now), false);
-  assert.equal(isDark({ last_seen_at: at(37) }, now), true);
+  assert.equal(isDark({ last_seen_at: at(47) }, now), false);
+  assert.equal(isDark({ last_seen_at: at(49) }, now), true);
   // an own-page confirmation counts even when the crawl has not seen it
   assert.equal(isDark({ last_seen_at: at(80), last_confirmed_at: at(10) }, now), false);
   assert.equal(isDark({ last_seen_at: at(10), last_confirmed_at: at(80) }, now), false);
-  assert.equal(isDark({ last_seen_at: null, last_confirmed_at: at(40) }, now), true);
+  assert.equal(isDark({ last_seen_at: null, last_confirmed_at: at(50) }, now), true);
   // neither stamp: not this rule's business
   assert.equal(isDark({}, now), false);
   assert.equal(isDark(null, now), false);
   assert.equal(lastEvidenceAt({ last_seen_at: at(80), last_confirmed_at: at(10) }), now - 10 * h);
-  assert.equal(DARK_AFTER_MS, 36 * h);
+  assert.equal(DARK_AFTER_MS, 48 * h);
 });
 
 test("the summary counts dark cars and rooftops by cluster, and a fully dark rooftop", () => {

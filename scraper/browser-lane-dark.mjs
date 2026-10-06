@@ -9,13 +9,14 @@
 // Dealer Inspire by default, since the Porsche rooftops became a residential
 // runner's on 2026-09-16; ask for those with --domains-file over
 // `browser-lane-domains.mjs --platforms porsche`, which is what
-// porsche-crawl.yml does) that have not been seen or confirmed in 36 hours — the owner's acceptance
-// query, in lib/browser-lane-dark.mjs. With SUPABASE_SERVICE_ROLE_KEY it
-// reads listing_seen directly (0026 revoked anon's select on it); with only
-// the anon key it asks live_listings_feed which of the live VINs it serves,
-// which is the same rule from the other side for a dealer-site rooftop (the
-// view's rule 2 names only the four marketplace lanes). Both are said in the
-// output, so a number is never read without knowing which door it came in.
+// porsche-crawl.yml does) that have not been seen or confirmed in 48 hours —
+// the owner's acceptance query, in lib/browser-lane-dark.mjs. With
+// SUPABASE_SERVICE_ROLE_KEY it reads listing_seen directly (0026 revoked
+// anon's select on it); with only the anon key it asks live_listings_feed
+// which of the live VINs it serves. The two doors differ by rule 3 alone: a
+// car back after a silence and not yet vouched for is dark to the view and
+// not to the rule here. Both are said in the output, so a number is never
+// read without knowing which door it came in.
 //
 // Cost: ~13,000 rows read in pages of 1,000 by domain chunk, plus (anon) the
 // view by VIN in chunks of 200. Measured 2026-09-13 from a laptop over anon:

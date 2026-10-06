@@ -3,7 +3,7 @@
 #
 # Why this exists as its own workflow (2026-09-12): the site now serves a
 # car only while some source has seen it, or its page has confirmed it,
-# within 72 hours (migrations 0089/0090). The evening that rule landed,
+# within 72 hours (migrations 0089/0090; 48 since 0101). The evening that rule landed,
 # 5,615 dealer-site cars on 993 rooftops were withheld at once — rooftops
 # that answer 403 to the fetch, or that only the browser crawl lanes could
 # read before those lanes were switched off on 09-04 (06c0c3e). The nightly
@@ -24,6 +24,15 @@
 # every host whose hash lands on their part (lib/recheck-browser-verdict.mjs
 # hostPart), so a rooftop is paced by one runner and the fleet covers the
 # residue N times faster. Cars back after a silence (0093) are visited first.
+#
+# 2026-10-05 (0107): marketplace cars no longer need their own page's word to
+# be served, so for them this pass is now a SOLD check only — its strikes
+# still take cars off the site, its confirmations no longer put any on.
+# What it still decides for every lane: dealer-site cars past rule 1's 48
+# hours on rooftops that 403 the fetch (re-admitted when alive), returning
+# cars (rule 3), and strikes. Measured over the twelve runs 2026-10-02..05:
+# 1,611–2,445 pages selected, 33–949 confirmed and 138–439 struck a run, of
+# which 5–60 strikes were marketplace cars.
 name: Recheck the unreadable residue in a browser
 
 on:
@@ -33,18 +42,24 @@ on:
     # thing a shopper should ever meet, so the window in which a car is
     # neither has to be short.
     #
-    # A marketplace car stops being served 36 hours after its own page was
-    # last confirmed (0091), and on a rooftop that 403s the fetch only this
-    # pass can confirm it. At two slots a day the 23:30 → 10:30 gap meant a
-    # car could sit unserved for ELEVEN hours with a browser available the
-    # whole time. Four slots put the worst gap at seven.
+    # Written for rule 2, which 0107 removed: a marketplace car then stopped
+    # being served 36 hours after its own page was last confirmed (0091), and
+    # on a rooftop that 403s the fetch only this pass could confirm it. At two
+    # slots a day the 23:30 → 10:30 gap meant a car could sit unserved for
+    # ELEVEN hours with a browser available the whole time. Four slots put the
+    # worst gap at seven. The same arithmetic still holds for a dealer-site
+    # car past rule 1's 48 hours and for a returning car, which only this
+    # pass can vouch for when the fetch is refused; the marketplace case is
+    # gone.
     #
     # It costs nothing to run more often, and close to nothing to visit: the
     # number of cars going stale per day is what it is, so more slots means
     # fewer cars each, not more requests. The one real increase is the
     # never-confirmable residue (798 on 2026-09-17) being retried four times
     # a day instead of twice, which is ~1,600 extra page loads spread over
-    # ~1,400 rooftops. Runner minutes are free: the repo is public.
+    # ~1,400 rooftops. Runner minutes are free: the repo is public. Measured
+    # 2026-10-02..05: 59–94 runner-minutes a run across the 8 parts, 12–20
+    # minutes wall clock.
     #
     # 10:30 is the nightly's start and its own browser pass may take that
     # slot — harmless, since that pass covers the same residue.

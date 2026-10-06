@@ -4,8 +4,9 @@ name: Browser crawl
 #
 # WHY THIS EXISTS (2026-09-13). Since migrations 0089–0091 the site serves a
 # car only while some source saw it, or its own page confirmed it, within 36
-# hours. A rooftop nobody re-reads therefore decays off the site in a day and
-# a half — and the browser-lane rooftops (lib/browser-lane-domains.mjs: 2,167
+# hours (48 since 0101 — rule 1 of live_listings_feed, the only clock these
+# rooftops answer to). A rooftop nobody re-reads therefore decays off the site
+# in a day or two — and the browser-lane rooftops (lib/browser-lane-domains.mjs: 2,167
 # Dealer Inspire and, until 2026-09-16, 63 Porsche rooftops) were being
 # re-read by nobody in particular. The rolling crawl carries them with its lanes on, but
 # measured on its 2026-09-13 07:11 run: 47 of 48 slices hit the 18-minute
@@ -51,8 +52,8 @@ name: Browser crawl
 # lands a 300-minute run before 10:30, and 18:30 runs beside the evening
 # rolling crawls (which is fine — the two lanes are correct when they overlap,
 # ingest_listings refuses stale overwrites by observedAt — and the sync below
-# still yields to a nightly). Twice a day against a 36-hour rule leaves a
-# margin for one missed run.
+# still yields to a nightly). Twice a day against a 48-hour rule leaves a
+# margin for one missed run, with room to spare.
 #
 # POLITENESS is the lanes' own and is not configurable here: robots-allowed
 # pages only (lib/browser.mjs reads the vendor's robots.txt through Chrome
