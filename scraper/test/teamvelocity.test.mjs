@@ -199,6 +199,44 @@ test("a group account never borrows the crawled origin for an unknown rooftop", 
   assert.equal(teamVelocityApiVehicle(rec({ dealerID: 44185, vdpUrl: "" }), hosts).offers.url, undefined);
 });
 
+// tetontoyota.com, 2026-10-06: account 36280 = dealerIDs 36280 (Teton Toyota)
+// + 73614 (Teton Auto Credit), and no record carries a link. The account's own
+// dealerID takes the crawled origin; the sister rooftop still does not.
+test("in an unlinked group pull, the account's own dealerID takes the crawled origin and only it", () => {
+  const hosts = dealerHosts(
+    [
+      { dealerID: 36280, vdpUrl: "" },
+      { dealerID: 73614, vdpUrl: "" },
+    ],
+    "https://www.tetontoyota.com",
+    "36280",
+  );
+  assert.equal(
+    teamVelocityApiVehicle(rec({ dealerID: 36280, vdpUrl: "", type: "Used" }), hosts).offers.url,
+    "https://www.tetontoyota.com/viewdetails/Used/1HGCV1F30LA123456",
+  );
+  assert.equal(hosts.get("73614"), undefined);
+  assert.equal(teamVelocityApiVehicle(rec({ dealerID: 73614, vdpUrl: "" }), hosts).offers.url, undefined);
+});
+
+test("a linked record still outranks the account rule", () => {
+  const hosts = dealerHosts(
+    [
+      { dealerID: 30074, vdpUrl: "https://www.castlecars.com/viewdetails/Used/A" },
+      { dealerID: 44185, vdpUrl: "" },
+    ],
+    "https://www.castlevwdownersgrove.com",
+    "30074",
+  );
+  assert.equal(hosts.get("30074"), "www.castlecars.com");
+  assert.equal(hosts.get("44185"), undefined);
+});
+
+test("an account id absent from the pull borrows nothing", () => {
+  const hosts = dealerHosts([{ dealerID: 1, vdpUrl: "" }, { dealerID: 2, vdpUrl: "" }], "https://www.d.com", "99");
+  assert.equal(hosts.size, 0);
+});
+
 test("a record that carries its own link keeps it, slug and query included", () => {
   const url = "https://www.bmwofbrooklyn.com/viewdetails/cpo/wbx73ef08p5x85541/2023-bmw-x1-sport-utility?type=cash";
   const hosts = dealerHosts([{ dealerID: 1, vdpUrl: url }], "https://www.other.com");

@@ -321,7 +321,7 @@ export async function pullTeamVelocityApi(ids, { origin } = {}) {
       break;
     }
   }
-  const hostByDealerId = dealerHosts(raw, origin);
+  const hostByDealerId = dealerHosts(raw, origin, ids.accountId);
   const out = [];
   for (const r of raw) {
     const node = teamVelocityApiVehicle(r, hostByDealerId);
@@ -331,8 +331,25 @@ export async function pullTeamVelocityApi(ids, { origin } = {}) {
 }
 
 // dealerID → rooftop host, learned from the records that carry a real link.
-// The crawled origin is the fallback for the one-rooftop case only.
-export function dealerHosts(records, origin) {
+// The crawled origin is the fallback for two cases only: a pull with a single
+// dealerID, and — in a group pull — the dealerID that IS the account the
+// crawled page named.
+//
+// The second case is tetontoyota.com (2026-10-06). Its account 36280 holds two
+// dealerIDs — 36280 (Teton Toyota, 469 cars) and 73614 (Teton Auto Credit, 25)
+// — and not one of the 494 records carried a vdpUrl, so nothing taught the map
+// and the single-dealerID fallback could not fire: every car, a used 2023
+// F-150 Lightning among 25 plug-ins, was dropped as unlinked every night while
+// the registry row read "working". The account's own dealerID is the rooftop
+// whose page we read: tetonautocredit.com's own page names account 73614,
+// which is exactly the other dealerID. Control-tested over 112 sampled working
+// Team Velocity rooftops by the records' own location fields (not their link
+// host, which is often a group site): in all 81 with a registry ZIP, the
+// account's own dealerID was that store — 77 on the same ZIP, 4 the same
+// named store on a neighbouring one. Sister dealerIDs still never borrow the
+// origin; the guardrail below stands, because tetontoyota.com's /viewdetails
+// path renders Teton Auto Credit's cars too (checked live, same day).
+export function dealerHosts(records, origin, accountId) {
   const map = new Map();
   const ids = new Set();
   for (const r of records) {
@@ -344,13 +361,11 @@ export function dealerHosts(records, origin) {
       map.set(id, new URL(r.vdpUrl).host);
     } catch {}
   }
-  if (ids.size === 1 && origin) {
-    const [only] = ids;
-    if (!map.has(only)) {
-      try {
-        map.set(only, new URL(origin).host);
-      } catch {}
-    }
+  const own = ids.size === 1 ? [...ids][0] : accountId != null && ids.has(String(accountId)) ? String(accountId) : null;
+  if (own != null && origin && !map.has(own)) {
+    try {
+      map.set(own, new URL(origin).host);
+    } catch {}
   }
   return map;
 }
