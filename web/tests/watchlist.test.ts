@@ -4,7 +4,7 @@
 //
 // The free alert sends the saved shelf to the server as a list of listing
 // ids. The server (0060) refuses anything that is not lowercase 17-character
-// ids, at most fifty — so the client must never build a list it would refuse.
+// ids, at most two hundred (0108) — so the client must never build a list it would refuse.
 
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -17,11 +17,11 @@ test("ids are lowercased, de-duplicated, and junk is dropped", () => {
 });
 
 test("the list is capped at the server's ceiling, keeping the first (newest) ids", () => {
-  const many = Array.from({ length: 80 }, (_, i) => vin(i));
+  const many = Array.from({ length: 250 }, (_, i) => vin(i));
   const out = watchlistIds(many);
   assert.equal(out.length, WATCHLIST_MAX);
   assert.equal(out[0], vin(0));
   assert.equal(out.at(-1), vin(WATCHLIST_MAX - 1));
   // And what it builds is exactly the shape 0060 accepts.
-  assert.match(`ids=${out.join(",")}`, /^ids=([a-z0-9]{17}(,[a-z0-9]{17}){0,49})?$/);
+  assert.match(`ids=${out.join(",")}`, /^ids=([a-z0-9]{17}(,[a-z0-9]{17}){0,199})?$/);
 });

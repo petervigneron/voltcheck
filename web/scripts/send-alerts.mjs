@@ -21,8 +21,16 @@
 //   new listing — the row's listedOn is newer than the last digest. listedOn
 //     exists only where migration 0028's guards say the appearance date is
 //     real, so "newly listed" here can never mean "newly crawled".
-//   price cut — the row's cut (≥$500 within 14 days, lib/listings/price.ts)
-//     is newer than the last digest. Same bar the card colour uses.
+//   price cut, search subscriptions — the row's cut (≥$500 within 14 days,
+//     lib/listings/price.ts) is newer than the last digest. Same bar the
+//     card colour uses.
+//   price drop, saved cars — the car's current price is ≥$250 under the
+//     lowest real price any reader reported in the 14 days up to the last
+//     digest (lib/listings/savedDrop.ts, from listing_price_history read
+//     here with the service key). Not the card's cut: that bar missed a
+//     $400-a-day slide and a $1,369 drop across a reader change on cars the
+//     owner had starred (2026-10-09). The file explains why "lowest" is the
+//     claim that cannot flap or overstate.
 // Both windows are additionally capped at 7 days back, so a subscription
 // that predates a sender outage gets a bounded catch-up, not an archive.
 //
@@ -48,6 +56,7 @@ import { fetchServedShards } from "../lib/listings/servedShards.ts";
 import { buildTests, rowMatches } from "../lib/listings/match.ts";
 import { milesBetween } from "../lib/geo.ts";
 import { isWorthWatch } from "../lib/worthWatch.ts";
+import { savedDrop } from "../lib/listings/savedDrop.ts";
 
 const SUPABASE_URL = process.env.SUPABASE_URL?.replace(/\/$/, "");
 const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -123,6 +132,51 @@ const carLine = (r) => {
 
 const now = Date.now();
 let sent = 0;
+
+// Price history for every saved car any watch-list names, keyed by listing
+// id. The whole history, not a window: rows are written only when a price
+// changes, so the price a car has held for a month is one row a month old,
+// and lib/listings/savedDrop.ts needs it as the baseline. On-change rows
+// are few — 200 cars is a few thousand rows at most. The index carries only
+// the card's own cut; the saved-car rule needs every reader's readings
+// (header). VINs are stored upper-case; ids are lower. A failed read skips
+// every watch-list this run and leaves last_sent_at alone, so the next run
+// mails the same window — the safe direction.
+const history = new Map();
+let historyOk = true;
+{
+  const watched = new Set();
+  for (const s of subs) {
+    if (typeof s.params !== "string" || !s.params.startsWith("ids=")) continue;
+    for (const id of s.params.slice(4).split(",")) if (id) watched.add(id.toUpperCase());
+  }
+  const vins = [...watched];
+  const PAGE = 1000;
+  read: for (let i = 0; i < vins.length; i += 50) {
+    const chunk = vins.slice(i, i + 50).join(",");
+    for (let offset = 0; ; offset += PAGE) {
+      const res = await fetch(
+        `${SUPABASE_URL}/rest/v1/listing_price_history?select=vin,price_usd,observed_at` +
+          `&vin=in.(${chunk})&order=vin.asc,observed_at.asc&limit=${PAGE}&offset=${offset}`,
+        { headers: svc }
+      );
+      if (!res.ok) {
+        console.error(`[alerts] price history read failed: ${res.status} — saved-car alerts skipped this run`);
+        historyOk = false;
+        break read;
+      }
+      const page = await res.json();
+      for (const h of page) {
+        const id = String(h.vin).toLowerCase();
+        let list = history.get(id);
+        if (!list) history.set(id, (list = []));
+        list.push({ priceUsd: h.price_usd, observedAt: h.observed_at });
+      }
+      if (page.length < PAGE) break;
+    }
+  }
+  console.log(`[alerts] price history for ${history.size} of ${vins.length} saved cars`);
+}
 for (const sub of subs) {
   const isPro = proEmails.has(String(sub.email).toLowerCase());
   // A value watch (worth=1…, lib/worthWatch.ts) is scripts/send-worth.mjs's
@@ -152,7 +206,21 @@ for (const sub of subs) {
   // cars the shopper already found, so "new" has no meaning for it.
   const fresh = watchlist ? [] : matches.filter((r) => r.listedOn && Date.parse(r.listedOn) > since);
   const freshIds = new Set(fresh.map((r) => r.id));
-  const cuts = matches.filter((r) => r.cut && Date.parse(r.cut.at) > since && !freshIds.has(r.id));
+  // Saved cars: the drop against the car's own history (header). Searches:
+  // the card's cut, newer than the last digest.
+  const drops = new Map();
+  let cuts;
+  if (watchlist) {
+    if (!historyOk) continue;
+    for (const r of matches) {
+      const d = savedDrop(r, history.get(r.id) ?? [], since, now);
+      if (d) drops.set(r.id, d);
+    }
+    cuts = matches.filter((r) => drops.has(r.id));
+  } else {
+    cuts = matches.filter((r) => r.cut && Date.parse(r.cut.at) > since && !freshIds.has(r.id));
+  }
+  const cutUsd = (r) => (drops.get(r.id) ?? r.cut).amountUsd;
   if (!fresh.length && !cuts.length) continue;
 
   const searchUrl = watchlist ? `${ORIGIN}/saved` : `${ORIGIN}/${sub.params ? `?${sub.params}` : ""}`;
@@ -188,7 +256,7 @@ for (const sub of subs) {
     }) +
     textSection("Price cuts", cuts, (r) => {
       const c = carLine(r);
-      return `- ${c.title}, ${c.price} (cut ${money(r.cut.amountUsd)})${c.where}\n  ${c.url}`;
+      return `- ${c.title}, ${c.price} (cut ${money(cutUsd(r))})${c.where}\n  ${c.url}`;
     }) +
     `See the full search: ${searchUrl}\nUnsubscribe: ${unsubUrl}\n`;
   const html =
@@ -198,7 +266,7 @@ for (const sub of subs) {
     }) +
     htmlSection("Price cuts", cuts, (r) => {
       const c = carLine(r);
-      return `<li style="margin:4px 0"><a href="${c.url}">${esc(c.title)}</a>, ${esc(c.price)} <b>(cut ${money(r.cut.amountUsd)})</b>${esc(c.where)}</li>`;
+      return `<li style="margin:4px 0"><a href="${c.url}">${esc(c.title)}</a>, ${esc(c.price)} <b>(cut ${money(cutUsd(r))})</b>${esc(c.where)}</li>`;
     }) +
     `<p style="margin-top:16px"><a href="${searchUrl}">See the full search</a></p>` +
     `<p style="color:#666;font-size:12px"><a href="${unsubUrl}">Unsubscribe</a></p>`;

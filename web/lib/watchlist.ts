@@ -9,7 +9,7 @@
 // whether that is a new subscription (confirm mail), an update (silent), or
 // a removal (empty list).
 
-export const WATCHLIST_MAX = 50;
+export const WATCHLIST_MAX = 200;
 const KEY = "voltcheck.watchlist.v1";
 const VIN_RE = /^[a-z0-9]{17}$/;
 
