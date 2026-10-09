@@ -24,13 +24,14 @@
 //   price cut, search subscriptions — the row's cut (≥$500 within 14 days,
 //     lib/listings/price.ts) is newer than the last digest. Same bar the
 //     card colour uses.
-//   price drop, saved cars — the car's current price is ≥$250 under the
-//     lowest real price any reader reported in the 14 days up to the last
-//     digest (lib/listings/savedDrop.ts, from listing_price_history read
-//     here with the service key). Not the card's cut: that bar missed a
-//     $400-a-day slide and a $1,369 drop across a reader change on cars the
-//     owner had starred (2026-10-09). The file explains why "lowest" is the
-//     claim that cannot flap or overstate.
+//   price drop, saved cars — on the chain the listing page draws
+//     (listing_price_display, read here with the service key), the car's
+//     current price is ≥$250 under the lower of the price in force at the
+//     last digest and the window's low (lib/listings/savedDrop.ts). Not the
+//     card's cut: that bar missed a $400-a-day slide on cars the owner had
+//     starred (2026-10-09). And not listing_price_history's every reader:
+//     that mailed him a "$1,369 cut" that was two readers' numbers for one
+//     truck, the same day. The file has both.
 // Both windows are additionally capped at 7 days back, so a subscription
 // that predates a sender outage gets a bounded catch-up, not an archive.
 //
@@ -133,15 +134,16 @@ const carLine = (r) => {
 const now = Date.now();
 let sent = 0;
 
-// Price history for every saved car any watch-list names, keyed by listing
-// id. The whole history, not a window: rows are written only when a price
-// changes, so the price a car has held for a month is one row a month old,
-// and lib/listings/savedDrop.ts needs it as the baseline. On-change rows
-// are few — 200 cars is a few thousand rows at most. The index carries only
-// the card's own cut; the saved-car rule needs every reader's readings
-// (header). VINs are stored upper-case; ids are lower. A failed read skips
-// every watch-list this run and leaves last_sent_at alone, so the next run
-// mails the same window — the safe direction.
+// The listing page's price chain for every saved car any watch-list names,
+// keyed by listing id: listing_price_display (0061), the same view the
+// page's sparkline reads, so the alert and the chart see one series. The
+// whole chain, not a window: rows are written only when a price changes,
+// so the price a car has held for a month is one row a month old, and
+// lib/listings/savedDrop.ts needs it as the baseline. On-change rows are
+// few — 200 cars is a few thousand rows at most. VINs are stored
+// upper-case; ids are lower. A failed read skips every watch-list this run
+// and leaves last_sent_at alone, so the next run mails the same window —
+// the safe direction.
 const history = new Map();
 let historyOk = true;
 {
@@ -156,12 +158,12 @@ let historyOk = true;
     const chunk = vins.slice(i, i + 50).join(",");
     for (let offset = 0; ; offset += PAGE) {
       const res = await fetch(
-        `${SUPABASE_URL}/rest/v1/listing_price_history?select=vin,price_usd,observed_at` +
+        `${SUPABASE_URL}/rest/v1/listing_price_display?select=vin,price_usd,observed_at` +
           `&vin=in.(${chunk})&order=vin.asc,observed_at.asc&limit=${PAGE}&offset=${offset}`,
         { headers: svc }
       );
       if (!res.ok) {
-        console.error(`[alerts] price history read failed: ${res.status} — saved-car alerts skipped this run`);
+        console.error(`[alerts] price chain read failed: ${res.status} — saved-car alerts skipped this run`);
         historyOk = false;
         break read;
       }
@@ -175,7 +177,7 @@ let historyOk = true;
       if (page.length < PAGE) break;
     }
   }
-  console.log(`[alerts] price history for ${history.size} of ${vins.length} saved cars`);
+  console.log(`[alerts] price chain for ${history.size} of ${vins.length} saved cars`);
 }
 for (const sub of subs) {
   const isPro = proEmails.has(String(sub.email).toLowerCase());
