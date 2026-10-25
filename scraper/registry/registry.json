@@ -824389,6 +824389,15 @@
         "state": "OH",
         "zip": "45177"
       }
+    },
+    {
+      "domain": "moorevalue.com",
+      "name": "Moore Buick GMC",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "http-403",
+      "notes": "Discovered via OSM Overpass bbox (37.2,-122.05,37.45,-121.75); brand: Buick;GMC"
     }
   ],
   "_sources": [
