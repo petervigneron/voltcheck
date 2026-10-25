@@ -164,3 +164,50 @@ test("no sticker of either kind leaves the offer standing (astonmartinchicago Mo
   );
   assert.equal(got.priceUsd, 95800);
 });
+
+// ---------------------------------------------------------------- 2026-10-25
+// dealer.com's `msrp` on a USED car is the dealer's retail book value, not a
+// sticker and not an ask. Five VDPs on camelbackcars.com, read live:
+//
+//   car                 msrp    internet  rendered
+//   2023 GV60           38530   34990     $34,990
+//   2022 Ioniq 5        29500   21450     $21,450
+//   2023 Mach-E         28020   27909     $27,909
+//   2020 Model S        35434   31900     $31,900
+//   2023 F-150 Lightning 36560  0         "Please Call"
+//
+// The Lightning had arrived the day before and had no selling field set and
+// no JSON-LD offer; we published its book value as the price.
+
+test("a used car with no advertised price abstains instead of printing msrp (camelbackcars Lightning)", () => {
+  const got = resolveDdcPriceTagged(
+    { priceUsd: undefined, condition: "used", year: 2023 },
+    { msrp: "36560", retailValue: "36560", internetPrice: "0", askingPrice: "0", salePrice: "0", newOrUsed: "used" }
+  );
+  assert.equal(got.priceUsd, PRICE_ABSTAIN);
+  assert.equal(got.provenance, undefined);
+});
+
+test("a used car's msrp never stands in when the only other signal is junk", () => {
+  // The new-car vanhyundai rule (junk JSON-LD, no DDC field → MSRP) must not
+  // carry over to used stock, where the field is a book value.
+  assert.equal(run({ jsonld: 2293, msrp: 36560, newOrUsed: "used", year: 2023 }), PRICE_ABSTAIN);
+});
+
+test("a new car with no advertised price still falls back to its sticker", () => {
+  // Unchanged: the manufacturer's figure is a real ceiling on a new car.
+  const got = resolveDdcPriceTagged(
+    { priceUsd: undefined, condition: "new", year: 2026 },
+    { msrp: "52000", internetPrice: "0", askingPrice: "0", salePrice: "0", newOrUsed: "new" }
+  );
+  assert.equal(got.priceUsd, 52000);
+  assert.equal(got.provenance, "ddc-msrp");
+});
+
+test("a used car's advertised DDC field still wins over its book value (camelbackcars GV60)", () => {
+  const got = resolveDdcPriceTagged(
+    { priceUsd: 34990, condition: "used", year: 2023 },
+    { msrp: "38530", retailValue: "38530", internetPrice: "34990", askingPrice: "38530", salePrice: "34990", newOrUsed: "used" }
+  );
+  assert.equal(got.priceUsd, 34990);
+});

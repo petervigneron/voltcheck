@@ -172,7 +172,24 @@ export function resolveDdcPriceTagged(rec, d) {
   } else {
     // No usable JSON-LD offer price (missing, junk-low, or sub-floor): the
     // lowest plausible DDC field is the best remaining served signal.
-    picked = ddcFields[0] ?? (msrp != null ? { price: msrp, provenance: DDC_MSRP } : null);
+    //
+    // Failing that, the sticker — on a NEW car only. There it is a real
+    // ceiling the manufacturer published, and showing it beats hiding a car
+    // we have a defensible number for (the vanhyundai case above). On a used
+    // car `msrp` is not a sticker at all: dealer.com's feed fills it with the
+    // dealer's own retail book value, the strike-through anchor it renders a
+    // discount against. Read off camelbackcars.com on 2026-10-25, four priced
+    // used cars carried msrp $38,530 / $29,500 / $28,020 / $35,434 against
+    // rendered asks of $34,990 / $21,450 / $27,909 / $31,900 — never the
+    // price, always above it. A fifth, a 2023 F-150 Lightning that had landed
+    // the day before, had every selling field at 0, no JSON-LD offer, and
+    // msrp 36560 with wholesalePrice 40038 (a "sticker" below the dealer's
+    // own wholesale figure); the page printed "Please Call". We published
+    // $36,560 as its price, and seven more used cars on seven rooftops sat on
+    // the same rung that day. A book value nobody advertises is not a price
+    // this site can stand behind, so a used car with nothing advertised
+    // abstains: the car stays listed, the number is withheld.
+    picked = ddcFields[0] ?? (msrp != null && isNew ? { price: msrp, provenance: DDC_MSRP } : null);
   }
 
   return picked != null && picked.price >= floor
