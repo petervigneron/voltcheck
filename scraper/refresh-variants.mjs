@@ -98,22 +98,32 @@ const MAX_DAY_CALLS = 7;
 
 const failed = [];
 
+// PostgREST's body for a cancelled statement: {"code":"57014",...}.
+const STATEMENT_TIMEOUT = /"code"\s*:\s*"57014"/;
+
 async function refreshOnce(view) {
   const t0 = Date.now();
   // x-ingest-rpc streams the body straight through to the RPC, so this needs
   // no gateway change: refresh_vin_variants is already on its allowlist.
-  const res = await fetchWithRetry(`refresh-variants ${view}`, () =>
-    fetch(`${SUPABASE_URL}/functions/v1/ingest`, {
-      method: "POST",
-      headers: {
-        apikey: ANON,
-        Authorization: `Bearer ${ANON}`,
-        "x-ingest-token": TOKEN,
-        "x-ingest-rpc": "refresh_vin_variants",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ target: view }),
-    })
+  // A statement_timeout (57014) is the one 500 that is NOT transient here: the
+  // view outgrew its 60 s budget and will again in 30 s. Retrying it four
+  // times is what stretched two failing views into a 54-minute step (see
+  // retry.mjs). Fail fast and let the later pass below ask once more.
+  const res = await fetchWithRetry(
+    `refresh-variants ${view}`,
+    () =>
+      fetch(`${SUPABASE_URL}/functions/v1/ingest`, {
+        method: "POST",
+        headers: {
+          apikey: ANON,
+          Authorization: `Bearer ${ANON}`,
+          "x-ingest-token": TOKEN,
+          "x-ingest-rpc": "refresh_vin_variants",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ target: view }),
+      }),
+    { fatal: (_res, body) => STATEMENT_TIMEOUT.test(body) }
   );
   const text = await res.text();
   const secs = ((Date.now() - t0) / 1000).toFixed(1);

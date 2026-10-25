@@ -22,7 +22,19 @@ export const TRANSIENT = new Set([429, 500, 502, 503, 504, 520, 521, 522, 523, 5
 // transient event, same retry (status 0 below). The caller still checks
 // res.ok; after the last wait the failing response is returned, not thrown,
 // so call sites keep their own exit semantics.
-export async function fetchWithRetry(label, doFetch, { waits = [30, 120, 240] } = {}) {
+//
+// `fatal(res)` — optional, async — lets a caller name a response that LOOKS
+// transient but is not. The case that needed it: PostgREST answers a
+// statement_timeout (Postgres 57014) as HTTP 500, and a statement that ran
+// out of its budget once will run out of it again in thirty seconds. The
+// schedule above was built for a database that is down, not for a query that
+// is too big; applied to 57014 it spent ~10.5 minutes per view re-running the
+// same 60-second timeout four times, and refresh-variants.mjs's two outgrown
+// views turned a one-minute failure into a 54-minute one every night from
+// 2026-10-14 (nightly's finalize-audits ran into its 60-minute cap and the
+// whole run read "cancelled"). The body is read once here and handed back
+// re-readable, so the caller's own res.text() still works.
+export async function fetchWithRetry(label, doFetch, { waits = [30, 120, 240], fatal } = {}) {
   const attempt = async () => {
     try {
       return await doFetch();
@@ -33,6 +45,14 @@ export async function fetchWithRetry(label, doFetch, { waits = [30, 120, 240] } 
   let res = await attempt();
   for (const waitS of waits) {
     if (res.ok || !(res.status === 0 || TRANSIENT.has(res.status))) break;
+    if (fatal) {
+      const body = await res.text();
+      res = { ok: res.ok, status: res.status, text: async () => body };
+      if (await fatal(res, body)) {
+        console.error(`${label}: HTTP ${res.status} is not transient — not retrying`);
+        break;
+      }
+    }
     const why = res.status === 0 ? `network error (${(await res.text()).slice(0, 120)})` : `HTTP ${res.status}`;
     console.error(`${label}: ${why} — retrying in ${waitS}s`);
     await new Promise((r) => setTimeout(r, waitS * 1000));
