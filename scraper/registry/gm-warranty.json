@@ -38269,5 +38269,101 @@
  "3GPKHURMXRS521780": {
   "unavailable": true,
   "checkedAt": "2026-10-24"
+ },
+ "3GNKDCRJ7RS267434": {
+  "coverage": {
+   "startDate": "2024-10-01",
+   "startMileage": 11,
+   "expiresDate": "2032-10-01",
+   "expiresMileage": 100011,
+   "inServiceDate": "2024-10-01",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-10-25"
+ },
+ "3GN7DLRP3RS246770": {
+  "coverage": {
+   "startDate": "2024-11-19",
+   "startMileage": 62,
+   "expiresDate": "2032-11-19",
+   "expiresMileage": 100062,
+   "inServiceDate": "2024-11-19",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-10-25"
+ },
+ "3GN7DLRP1SS121093": {
+  "coverage": {
+   "startDate": "2024-10-15",
+   "startMileage": 1,
+   "expiresDate": "2032-10-15",
+   "expiresMileage": 100001,
+   "inServiceDate": "2024-10-15",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-10-25"
+ },
+ "3GNKDCRJ4RS166030": {
+  "coverage": {
+   "startDate": "2024-10-09",
+   "startMileage": 374,
+   "expiresDate": "2032-10-09",
+   "expiresMileage": 100374,
+   "inServiceDate": "2024-10-09",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-10-25"
+ },
+ "1G1FZ6S01M4103595": {
+  "coverage": {
+   "startDate": "2022-11-02",
+   "startMileage": 8789,
+   "expiresDate": "2030-11-02",
+   "expiresMileage": 108789,
+   "inServiceDate": "2021-05-31",
+   "fromReplacement": true
+  },
+  "campaign": {
+   "packReplaced": true,
+   "packReplacedDate": "2022-11-02",
+   "odometerAtReplacement": 8789,
+   "gmProgramNumber": "N212345940"
+  },
+  "checkedAt": "2026-10-25"
+ },
+ "1GYC3KML7TZ700662": {
+  "coverage": {
+   "startDate": "2025-11-19",
+   "startMileage": 113,
+   "expiresDate": "2033-11-19",
+   "expiresMileage": 100113,
+   "inServiceDate": "2025-11-19",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-10-25"
+ },
+ "3GYK3GMR8SS109183": {
+  "coverage": {
+   "startDate": "2024-12-10",
+   "expiresDate": "2032-12-10",
+   "expiresMileage": 100000,
+   "inServiceDate": "2024-12-10",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-10-25"
+ },
+ "1GYTEFKL4TU104393": {
+  "coverage": {
+   "startDate": "2025-10-08",
+   "expiresDate": "2033-10-08",
+   "expiresMileage": 100000,
+   "inServiceDate": "2025-10-08",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-10-25"
+ },
+ "3GPKHWRM8RS538511": {
+  "unavailable": true,
+  "checkedAt": "2026-10-25"
  }
 }
