@@ -20,15 +20,15 @@
       "expectedEveryHours": 27
     },
     "sync-guard": {
-      "lastRunAt": "2026-10-24T15:02:02.552Z",
+      "lastRunAt": "2026-10-25T15:20:58.406Z",
       "result": "ok",
-      "detail": "total 177399, oem 37864, dealer 139535 | tonight's sync: 83774 seen, 0 delisted (0.0%)",
+      "detail": "total 176575, oem 38064, dealer 138511 | tonight's sync: 83715 seen, 0 delisted (0.0%)",
       "expectedEveryHours": 27
     },
     "lane-flip-check": {
-      "lastRunAt": "2026-10-24T14:40:48.642Z",
+      "lastRunAt": "2026-10-25T15:03:24.794Z",
       "result": "warn",
-      "detail": "47430 cross-lane flips (47430 dealer→locator, 0 locator→dealer), 9 within-lane, 1800 new VINs, 35041 unchanged",
+      "detail": "47270 cross-lane flips (47270 dealer→locator, 0 locator→dealer), 6 within-lane, 1210 new VINs, 35727 unchanged",
       "expectedEveryHours": 27
     },
     "live-price-audit": {
@@ -38,7 +38,7 @@
       "expectedEveryHours": 12
     },
     "price-audit": {
-      "lastRunAt": "2026-10-24T14:57:54.234Z",
+      "lastRunAt": "2026-10-25T15:17:31.964Z",
       "result": "ok",
       "detail": "2 flagged, 0 corrected, 0 confirmed, 2 suppressed",
       "expectedEveryHours": 27
@@ -51,9 +51,9 @@
     }
   },
   "lastGoodCounts": {
-    "total": 177399,
-    "oem": 37864,
-    "dealer": 139535,
-    "at": "2026-10-24T15:02:02.550Z"
+    "total": 176575,
+    "oem": 38064,
+    "dealer": 138511,
+    "at": "2026-10-25T15:20:58.405Z"
   }
 }
