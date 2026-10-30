@@ -82,6 +82,16 @@ export interface CardRow {
    */
   listedOn?: string;
   /**
+   * When Voltcheck first saw the car, to the second ("YYYY-MM-DDTHH:MM:SSZ").
+   * Every row has one. This is NOT a listing date — it is the start of our
+   * tracking, which is why the card prints it as "On Voltcheck since" (owner,
+   * 2026-09-17) and never as "listed". It is what a new-listing alert keys on
+   * since 2026-10-30 (owner: "newly listed" means new on our site; an alert
+   * must go out the publish a car lands in, and `listedOn` is stamped once a
+   * night, which held a truck's alert for 16 hours).
+   */
+  firstSeenAt?: string;
+  /**
    * Ask minus what this variant actually sells for (lib/listings/comps.ts).
    * Positive = asking above transaction prices. Only set when the gap clears
    * its cohort's own error bar, so any value here is already meaningful.

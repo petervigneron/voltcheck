@@ -73,6 +73,8 @@ interface PackedRow {
   bt?: 1;
   /** listedOn, "YYYY-MM-DD" — rare (a few % of rows), so absent pays nothing. */
   lo?: string;
+  /** firstSeenAt as epoch seconds — every row, ~16 bytes; absent before 2026-10-30. */
+  fs?: number;
   as?: number;
   /** [delta, peerN, trimMatched] — the flag rides as 0/1 to stay one byte. */
   am?: [number, number, 0 | 1];
@@ -233,6 +235,7 @@ export function packIndex(rows: CardRow[]): PackedIndex {
     if (row.buyback) p.bb = 1;
     if (row.brandedTitle) p.bt = 1;
     if (row.listedOn !== undefined) p.lo = row.listedOn;
+    if (row.firstSeenAt !== undefined) p.fs = Math.floor(Date.parse(row.firstSeenAt) / 1000);
     if (row.askVsSold !== undefined) p.as = row.askVsSold;
     if (row.askVsMarket)
       p.am = [row.askVsMarket.deltaUsd, row.askVsMarket.peerN, row.askVsMarket.trimMatched ? 1 : 0];
@@ -282,6 +285,7 @@ export function unpackIndex(x: PackedIndex): CardRow[] {
     buyback: p.bb ? true : undefined,
     brandedTitle: p.bt ? true : undefined,
     listedOn: p.lo,
+    firstSeenAt: p.fs === undefined ? undefined : new Date(p.fs * 1000).toISOString().replace(/\.\d{3}Z$/, "Z"),
     askVsSold: p.as,
     askVsMarket: p.am
       ? { deltaUsd: p.am[0], peerN: p.am[1], trimMatched: p.am[2] === 1 }

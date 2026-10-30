@@ -141,6 +141,9 @@ export async function buildCardIndex(): Promise<{
       buyback: l.buybackDisclosed || undefined,
       brandedTitle: l.brandedTitleDisclosed || undefined,
       listedOn: l.listedOn,
+      // Second precision, canonical form: pack.ts carries it as epoch seconds
+      // and must unpack to the very same string.
+      firstSeenAt: l.firstSeenAt ? new Date(l.firstSeenAt).toISOString().replace(/\.\d{3}Z$/, "Z") : undefined,
       askVsSold: vsSold?.deltaUsd,
       askVsMarket: vsMarket
         ? { deltaUsd: vsMarket.deltaUsd, peerN: vsMarket.peerN, trimMatched: vsMarket.trimMatched }

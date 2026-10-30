@@ -18,9 +18,17 @@
 // will show the car; reading anything else lets the two drift.
 //
 // What counts as news, and why it can't overclaim:
-//   new listing — the row's listedOn is newer than the last digest. listedOn
-//     exists only where migration 0028's guards say the appearance date is
-//     real, so "newly listed" here can never mean "newly crawled".
+//   new listing — the row's firstSeenAt (when Voltcheck first saw it) is
+//     newer than the last digest. Until 2026-10-30 this keyed on listedOn,
+//     migration 0028's guarded listing date, so "newly listed" could never
+//     mean "newly crawled" — and it cost the feature its point: listedOn is
+//     stamped by the nightly's listing_freshness refresh, so a car that
+//     landed at 01:04 UTC and was on the grid at 05:42 carried no date
+//     through two daytime publishes and was mailed at 22:13, after the
+//     nightly (1FT6W1EV4PWG00997, 2026-10-29). The owner ruled that day:
+//     "newly listed" means new on our site, and the alert goes out the
+//     publish the car lands in. firstSeenAt is on every row the moment it
+//     is published, so that is now true by construction.
 //   price cut, search subscriptions — the row's cut (≥$500 within 14 days,
 //     lib/listings/price.ts) is newer than the last digest. Same bar the
 //     card colour uses.
@@ -206,7 +214,7 @@ for (const sub of subs) {
   const since = Math.max(Date.parse(sub.last_sent_at ?? sub.created_at ?? 0) || 0, now - CATCHUP_MS);
   // New-car emails belong to the standing order only; a saved-cars list is
   // cars the shopper already found, so "new" has no meaning for it.
-  const fresh = watchlist ? [] : matches.filter((r) => r.listedOn && Date.parse(r.listedOn) > since);
+  const fresh = watchlist ? [] : matches.filter((r) => r.firstSeenAt && Date.parse(r.firstSeenAt) > since);
   const freshIds = new Set(fresh.map((r) => r.id));
   // Saved cars: the drop against the car's own history (header). Searches:
   // the card's cut, newer than the last digest.
