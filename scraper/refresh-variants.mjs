@@ -69,21 +69,29 @@ const VIEWS = [
   // this one first would date tonight's cuts against last night's verdicts
   // (0084). 12.4s measured on prod the day it landed.
   "dealer_price_behavior",
-  // Last on purpose: it ships dark (0057), so it is the one to leave stale
-  // if the night runs out of road. Its cost grows with the archive — 0057's
-  // header says what to do the night it crowds its 60s budget.
-  "ev_cohort_ask_weekly",
   // The market-trend views (0061/0064). Sales is cheap (0.2s, quarterly over
   // WA sales since 2019). The daily asks target is not a matview refresh: it
   // APPENDS one closed day per call (0104: fold the night's price rows into
   // the per-chain state, ~6s, then the day's cohort medians, ~10s), and says
-  // how many days it is still "behind" — see DAY_TARGETS below.
+  // how many days it is still "behind" — see DAY_TARGETS below. Since 0109
+  // a Monday close also writes the week that closed there, once.
   "ev_price_trend_sales",
   "ev_price_trend_ask_daily",
+  // AFTER the daily advance, which it reads: this rewrites only the open
+  // week, from the chain state at the close the advance just reached (0109;
+  // ~10 s). It ships dark (0057), so it is still the one to leave stale if
+  // the night runs out of road. The night 0057 foresaw came on 2026-10-14:
+  // 150 s at nine weeks of archive, then 57014 nightly until 0109 froze the
+  // closed weeks.
+  "ev_cohort_ask_weekly",
   // This VIN's history (0085). Last, and the cheapest thing on this list to
   // lose: it feeds a Pro-only block on ~2.3k listing pages and nothing else
   // reads it, so a night that runs out of road should stop here rather than
   // anywhere above. 0104 took it from 101s back to 8-41s (cache-dependent).
+  // By 10-25 it was 68s and timing out nightly, so 0109 split it: the
+  // candidates (summary merge + gates, ~22s) in one statement, the view
+  // (~25s) in the next.
+  "vin_listing_history_candidates",
   "vin_listing_history",
 ];
 
