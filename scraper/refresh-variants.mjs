@@ -91,7 +91,13 @@ const VIEWS = [
   // By 10-25 it was 68s and timing out nightly, so 0109 split it: the
   // candidates (summary merge + gates, ~22s) in one statement, the view
   // (~25s) in the next.
+  // 0110 took the prior-site rows out of the view too: 45 s for the ~6.5k
+  // candidates on their own, so they are written in three hash slices, each
+  // its own statement, and the view is the absence half plus a join.
   "vin_listing_history_candidates",
+  "vin_listing_history_prior_0",
+  "vin_listing_history_prior_1",
+  "vin_listing_history_prior_2",
   "vin_listing_history",
 ];
 
