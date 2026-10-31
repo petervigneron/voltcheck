@@ -3,25 +3,37 @@
 import { useEffect, useState } from "react";
 import { SavedCars } from "./Saved";
 import { SavedSearches } from "./SavedSearches";
+import { MyAlerts } from "./MyAlerts";
 import { readSaved, subscribeSaved } from "@/lib/saved";
 import { readSavedSearches, subscribeSavedSearches } from "@/lib/savedSearches";
+import { useMyAlerts } from "@/lib/useMyAlerts";
+import { useUser } from "@/lib/useUser";
 
 // /saved, in two tabs: the cars a shopper starred (components/Saved.tsx) and
 // the searches they kept (components/SavedSearches.tsx). Both shelves live in
 // localStorage, so this owns the page shell and the counts and hands each tab
 // its panel. Tab choice is local state, not the URL — /saved is a personal
 // view, and which tab you're on isn't worth a shareable link.
+//
+// A third tab, Alerts, for a signed-in shopper when alerts are switched on:
+// every subscription the senders will mail this account, with a Remove
+// (components/MyAlerts.tsx, 0112). The shelves are bookmarks; this is what
+// actually sends email, and until 2026-10-31 it was shown nowhere.
 
 const CELL = "border-r-[3px] border-b-[3px] border-ink";
+const ALERTS_ENABLED = process.env.NEXT_PUBLIC_ALERTS_ENABLED === "1";
 const TAB = "px-5 py-4 text-[10.5px] font-extrabold tracking-[0.14em] uppercase tabular-nums focus:outline-none focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-cobalt";
 
-type Tab = "cars" | "searches";
+type Tab = "cars" | "searches" | "alerts";
 
 export function SavedView() {
   const [tab, setTab] = useState<Tab>("cars");
   // Counts are null until mount so the server render and first client paint
   // agree (localStorage is client-only).
   const [counts, setCounts] = useState<{ cars: number; searches: number } | null>(null);
+  const user = useUser();
+  const alerts = useMyAlerts();
+  const showAlerts = ALERTS_ENABLED && !!user;
 
   useEffect(() => {
     const sync = () => setCounts({ cars: readSaved().length, searches: readSavedSearches().length });
@@ -56,11 +68,21 @@ export function SavedView() {
           >
             {label("Searches", counts?.searches)}
           </button>
+          {showAlerts && (
+            <button
+              type="button"
+              aria-pressed={tab === "alerts"}
+              onClick={() => setTab("alerts")}
+              className={`${CELL} ${TAB} ${tab === "alerts" ? "bg-ink text-paper" : "bg-paper text-ink hover:bg-putty"}`}
+            >
+              {label("Alerts", alerts ? alerts.length : undefined)}
+            </button>
+          )}
           <div className={`${CELL} flex-1 min-w-[40px] bg-paper`} aria-hidden="true" />
         </div>
       </div>
 
-      {tab === "cars" ? <SavedCars /> : <SavedSearches />}
+      {tab === "cars" ? <SavedCars /> : tab === "searches" ? <SavedSearches /> : <MyAlerts />}
     </div>
   );
 }

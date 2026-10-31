@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { refreshMyAlerts } from "@/lib/myAlerts";
+import { useMyAlerts } from "@/lib/useMyAlerts";
 import { useProState } from "@/lib/useProState";
 import { useUser } from "@/lib/useUser";
 import {
@@ -28,6 +30,11 @@ function AlsoEmailMe({ search }: { search: SavedSearch }) {
   // "done": a confirm mail went out. "on": signed in, live at once (0063).
   const [state, setState] = useState<"idle" | "sending" | "done" | "on" | "error">("idle");
   const user = useUser();
+  // Signed in, the account's own list says whether this search already has
+  // an alert (0112) — so a search subscribed on another day, or another
+  // device, reads "Alerts on" instead of offering the button again.
+  const mine = useMyAlerts();
+  const already = !!mine && mine.some((a) => a.params === alertParamsOf(search.qs));
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,15 +52,16 @@ function AlsoEmailMe({ search }: { search: SavedSearch }) {
       });
       const body = (await res.json().catch(() => ({}))) as { status?: string };
       setState(res.ok ? (body.status === "confirmed" ? "on" : "done") : "error");
+      if (res.ok && body.status === "confirmed") void refreshMyAlerts();
     } catch {
       setState("error");
     }
   };
 
-  if (state === "done" || state === "on") {
+  if (state === "done" || state === "on" || already) {
     return (
       <span className="text-[11px] font-extrabold tracking-[0.08em] text-teal uppercase">
-        {state === "on" ? "Alerts on" : "Check your inbox to confirm"}
+        {state === "done" ? "Check your inbox to confirm" : "Alerts on"}
       </span>
     );
   }
