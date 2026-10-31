@@ -54,6 +54,7 @@ on:
 
 permissions:
   contents: write # commits registry/audit-status.json forward
+  actions: read # the publish-dispatcher check lists this repo's runs
 
 concurrency:
   group: feed-audits
@@ -231,6 +232,38 @@ jobs:
           done
           echo "::warning::Could not push audit-status.json (raced another commit) — it will catch up next run."
 
+      # Did the publish fire ON TIME? Since 2026-10-30 publish-feed.yml is
+      # dispatched by pg_cron (supabase/migrations/0111) at 00/04/08/20 UTC,
+      # because GitHub delivers the repo's own crons 2–7 h late, and the alert
+      # emails ride on that publish. Nothing else watches the dispatcher: if
+      # its token expires or pg_net stalls, the scheduled backstop quietly
+      # takes over and the site drifts back to publishing hours late with no
+      # failure anywhere. So: find the most recent slot at least 20 minutes
+      # old and demand a workflow_dispatch run created within 15 minutes of
+      # it. Only slots after the dispatcher went live are judged.
+      - name: Publish dispatcher fired on time
+        id: dispatcher
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          now=$(date -u +%s)
+          slot=""
+          for back in 0 1; do
+            day=$(date -u -d "@$((now - back*86400))" +%Y-%m-%d)
+            for h in 20 08 04 00; do
+              t=$(date -u -d "${day}T${h}:00:00Z" +%s)
+              if [ $((now - t)) -ge 1200 ] && [ -z "$slot" ]; then slot=$t; fi
+            done
+          done
+          [ "$slot" -ge "$(date -u -d '2026-10-31T04:00:00Z' +%s)" ] || { echo "dispatcher not yet live for this slot"; exit 0; }
+          lo=$(date -u -d "@$slot" +%Y-%m-%dT%H:%M:%SZ); hi=$(date -u -d "@$((slot + 900))" +%Y-%m-%dT%H:%M:%SZ)
+          n=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow=publish-feed.yml --event workflow_dispatch --limit 20 --json createdAt \
+            | jq --arg lo "$lo" --arg hi "$hi" '[.[] | select(.createdAt >= $lo and .createdAt <= $hi)] | length')
+          if [ "${n:-0}" -gt 0 ]; then echo "publish dispatched within 15 min of $lo"; exit 0; fi
+          echo "::error::No dispatched publish within 15 min of the $lo slot — check cron.job_run_details and ops.workflow_dispatches (0111); the GitHub PAT in Vault may have expired. Alerts are going out late until this is fixed."
+          exit 1
+
       # Every check above uses continue-on-error so the rest still run and
       # still commit their result even when one fails — but that means none
       # of them, alone, turns this JOB red. This step is what does: it reads
@@ -246,4 +279,5 @@ jobs:
           check "listing completeness audit"     "${{ steps.completeness.outcome }}"
           check "feed shard health"              "${{ steps.feed_shards.outcome }}"
           check "live feed price plausibility"   "${{ steps.live_prices.outcome }}"
+          check "publish dispatcher on time"     "${{ steps.dispatcher.outcome }}"
           [ "$bad" -eq 0 ] || exit 1

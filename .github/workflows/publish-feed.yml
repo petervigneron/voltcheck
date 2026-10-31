@@ -31,6 +31,20 @@ on:
   # different thing from the five-in-an-hour that drained the IO budget on
   # 2026-08-29 (the gate below still applies to these), and the org is on
   # Pro (250 GB/mo egress), so ~120 MB a walk is affordable.
+  #
+  # 2026-10-30: these slots are no longer what fires the publish. GitHub
+  # created the scheduled run a median 3.2 h after its cron (max 7.5 h, and
+  # the 04:00 slot was simply never delivered — 45 runs for 61 slots over
+  # two weeks), with zero queue time once created, so nothing in this file
+  # could fix it. The alert emails ride on this workflow and the owner ruled
+  # the same day that they must go out in the publish a car lands in, so the
+  # clock moved to pg_cron in the database (supabase/migrations/0111), which
+  # fires within 0.2 s and POSTs a workflow_dispatch here at the same four
+  # hours. The entries stay as the backstop for the day that dispatcher or
+  # its token dies: the gate below makes a scheduled run yield whenever a
+  # dispatch was created in the last 4 h, so while the dispatcher works a
+  # late scheduled run walks nothing, and when it stops, this is exactly the
+  # cadence we had before — late, but there.
   schedule:
     - cron: "0 0,4,8,20 * * *"
 
@@ -105,6 +119,23 @@ jobs:
             echo "skip=true" >> "$GITHUB_OUTPUT"
             echo "::notice::A deploy is building (${building} run in progress). Declining to walk the database at the same time."
             exit 0
+          fi
+          # A scheduled run is the backstop since 2026-10-30 (see the schedule
+          # note above): pg_cron dispatches this workflow on the hour, and
+          # GitHub delivers the cron 2–7 h late. If a dispatch was created in
+          # the last 4 h the slot this run stands for has already been
+          # published; walking again would be the redundant walk this whole
+          # step exists to decline.
+          if [ "$GITHUB_EVENT_NAME" = "schedule" ]; then
+            since=$(date -u -d '-4 hours' +%Y-%m-%dT%H:%M:%SZ)
+            recent=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow=publish-feed.yml --event workflow_dispatch --limit 10 --json createdAt 2>/dev/null \
+              | jq --arg since "$since" '[.[] | select(.createdAt >= $since)] | length' 2>/dev/null || echo 0)
+            if [ "${recent:-0}" -gt 0 ]; then
+              echo "skip=true" >> "$GITHUB_OUTPUT"
+              echo "::notice::A dispatched publish ran in the last 4 h (${recent}); this late scheduled run is the backstop and yields to it."
+              exit 0
+            fi
+            echo "no dispatched publish in the last 4 h — the dispatcher (0111) may be down; the scheduled backstop proceeds"
           fi
           [ -z "$SUPABASE_URL" ] && { echo "no SUPABASE_URL — cannot check, publishing"; exit 0; }
           man=$(curl -sS --max-time 30 "$SUPABASE_URL/storage/v1/object/public/feed/manifest.json" || echo '')
