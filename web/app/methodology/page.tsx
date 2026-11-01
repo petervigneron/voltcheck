@@ -28,7 +28,7 @@ export default function MethodologyPage() {
 
       <p className="mt-6 text-sm leading-relaxed text-ink/80">
         Where no primary source exists, we use named secondary sources (a spec aggregator, an
-        outlet&rsquo;s instrumented test) and mark the figure <strong>est</strong>.
+        outlet&rsquo;s instrumented test) and mark the figure (est).
       </p>
 
       <p className="mt-4 text-sm leading-relaxed text-ink/80">

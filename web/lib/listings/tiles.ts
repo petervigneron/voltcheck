@@ -44,7 +44,7 @@ export function listingTiles(
     // convention as the port and heat-pump tiles below.
     t.push({
       kind: "range",
-      text: `${e.realRangeMi.value} mi${e.rangeIsMfrEstimate ? " est" : ""}`,
+      text: `${e.realRangeMi.value} mi${e.rangeIsMfrEstimate ? " (est)" : ""}`,
       title: e.realRangeMi.note ?? undefined,
     });
   }
@@ -74,7 +74,7 @@ export function listingTiles(
   // "est" whenever the port fact is agg-sourced rather than the maker's own
   // spec (GM Ultium, Cadillac Lyriq, Audi e-tron GT, Mercedes EQE rows among
   // others) — same convention as chargeTime1080Min.
-  const portEst = e.port && e.port.source !== "mfr" ? " est" : "";
+  const portEst = e.port && e.port.source !== "mfr" ? " (est)" : "";
   if (e.port?.value === "NACS") t.push({ kind: "kit", text: `NACS${portEst}`, title: e.port.note ?? "Tesla-style port; plugs into the Supercharger network" });
   else if (e.port?.value === "CCS1") t.push({ kind: "spec", text: `CCS${portEst}`, title: e.port.note ?? undefined });
   else if (e.port?.value === "CHAdeMO") t.push({ kind: "flag", text: `CHAdeMO${portEst}`, title: e.port.note ?? "Aging fast-charge standard; new public CHAdeMO stations are rare" });
@@ -88,7 +88,7 @@ export function listingTiles(
     const { value, source, note } = e.chargeTime1080Min;
     t.push({
       kind: "spec",
-      text: `${value} min 10–80%${source !== "mfr" ? " est" : ""}`,
+      text: `${value} min 10–80%${source !== "mfr" ? " (est)" : ""}`,
       title: note ?? undefined,
     });
   }
@@ -100,7 +100,7 @@ export function listingTiles(
     const { value, source, note } = e.chargeTimeTo80Min;
     t.push({
       kind: "spec",
-      text: `${value} min to 80%${source !== "mfr" ? " est" : ""}`,
+      text: `${value} min to 80%${source !== "mfr" ? " (est)" : ""}`,
       title: note ?? undefined,
     });
   }
@@ -129,7 +129,7 @@ export function listingTiles(
           : "estimated, the maker publishes no figure";
     t.push({
       kind: "spec",
-      text: `${Math.round(value)} kWh${estimated ? " est" : ""}`,
+      text: `${Math.round(value)} kWh${estimated ? " (est)" : ""}`,
       title: `${what}, ${how}${note ? ` · ${note}` : ""}`,
     });
   }
