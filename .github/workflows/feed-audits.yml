@@ -261,7 +261,14 @@ jobs:
           n=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow=publish-feed.yml --event workflow_dispatch --limit 20 --json createdAt \
             | jq --arg lo "$lo" --arg hi "$hi" '[.[] | select(.createdAt >= $lo and .createdAt <= $hi)] | length')
           if [ "${n:-0}" -gt 0 ]; then echo "publish dispatched within 15 min of $lo"; exit 0; fi
-          echo "::error::No dispatched publish within 15 min of the $lo slot — check cron.job_run_details and ops.workflow_dispatches (0111); the GitHub PAT in Vault may have expired. Alerts are going out late until this is fixed."
+          # Two different failures look the same from here; ops.workflow_dispatches
+          # (0111) tells them apart. A row at the slot with status_code 204 means
+          # pg_cron fired and GitHub itself created the run late — that happened
+          # on 2026-11-01: 204 at 08:00:00, run created 09:00:01 — and there is
+          # nothing on our side to fix. A missing row, or a non-204, means the
+          # dispatcher failed: check cron.job_run_details and whether the Vault
+          # secret github_actions_dispatch still opens the door.
+          echo "::error::No dispatched publish within 15 min of the $lo slot, so this slot's alert emails went out late. Read ops.workflow_dispatches (0111) for the row at $lo: status_code 204 = our dispatch was accepted on time and GitHub created the run late (nothing to fix here); no row or non-204 = the dispatcher failed — check cron.job_run_details and the Vault PAT github_actions_dispatch."
           exit 1
 
       # Every check above uses continue-on-error so the rest still run and

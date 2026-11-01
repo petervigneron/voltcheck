@@ -127,15 +127,30 @@ jobs:
           # published; walking again would be the redundant walk this whole
           # step exists to decline.
           if [ "$GITHUB_EVENT_NAME" = "schedule" ]; then
-            since=$(date -u -d '-4 hours' +%Y-%m-%dT%H:%M:%SZ)
+            # This late scheduled run belongs to the most recent 00/04/08/20
+            # UTC slot. If the dispatcher (0111) already got a publish created
+            # for that slot, this run is the backstop and yields. The lookback
+            # is "since that slot", not a fixed 4 h: on 2026-11-01 GitHub took
+            # the 08:00 dispatch at 08:00:00 (204) but created the run at
+            # 09:00:01, and the 14:55 backstop, looking back only to 10:55,
+            # walked the database a second time for nothing.
+            now=$(date -u +%s); slot=""
+            for back in 0 1; do
+              day=$(date -u -d "@$((now - back*86400))" +%Y-%m-%d)
+              for h in 20 08 04 00; do
+                t=$(date -u -d "${day}T${h}:00:00Z" +%s)
+                if [ "$t" -le "$now" ] && [ -z "$slot" ]; then slot=$t; fi
+              done
+            done
+            since=$(date -u -d "@$((slot - 300))" +%Y-%m-%dT%H:%M:%SZ)
             recent=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow=publish-feed.yml --event workflow_dispatch --limit 10 --json createdAt 2>/dev/null \
               | jq --arg since "$since" '[.[] | select(.createdAt >= $since)] | length' 2>/dev/null || echo 0)
             if [ "${recent:-0}" -gt 0 ]; then
               echo "skip=true" >> "$GITHUB_OUTPUT"
-              echo "::notice::A dispatched publish ran in the last 4 h (${recent}); this late scheduled run is the backstop and yields to it."
+              echo "::notice::A dispatched publish ran for the $(date -u -d "@$slot" +%H:%M) UTC slot (${recent} since $since); this late scheduled run is the backstop and yields to it."
               exit 0
             fi
-            echo "no dispatched publish in the last 4 h — the dispatcher (0111) may be down; the scheduled backstop proceeds"
+            echo "no dispatched publish since the $(date -u -d "@$slot" +%H:%M) UTC slot — the dispatcher (0111) may be down; the scheduled backstop proceeds"
           fi
           [ -z "$SUPABASE_URL" ] && { echo "no SUPABASE_URL — cannot check, publishing"; exit 0; }
           man=$(curl -sS --max-time 30 "$SUPABASE_URL/storage/v1/object/public/feed/manifest.json" || echo '')
