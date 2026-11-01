@@ -72,7 +72,7 @@ Ford's figures for a 2025 Mustang Mach-E, 0% to 100%:
 
 [^5]: Ford, *2025 Mustang Mach-E Order Guide* (PDF, dated 10/22/24, 18 pages), p. 4, "SELECT / STANDARD EQUIPMENT," Charge Capability block. Mirror: https://mustangattitude.com/25MustangMachEOrderGuide.pdf
 
-[^6]: Ford, *2025 Mustang Mach-E Order Guide*, 04/28/25 revision (PDF, 19 pages), p. 1, "MAJOR PRODUCT CHANGES — SERIES/EQUIPMENT GROUP AVAILABILITY / Series Line Up," read from the Internet Archive capture of Ford's own URL: https://web.archive.org/web/20251206151250if_/https://www.fromtheroad.ford.com/content/dam/fordmediasite/us/en/library/2025/order-guides/2025_Mustang_Mach-E_Order_Guide.pdf
+[^6]: Ford, *2025 Mustang Mach-E Order Guide*, 04/28/25 revision (PDF, 19 pages), p. 1, "MAJOR PRODUCT CHANGES — SERIES/EQUIPMENT GROUP AVAILABILITY / Series Line Up," read from the Internet Archive capture of Ford's URL: https://web.archive.org/web/20251206151250if_/https://www.fromtheroad.ford.com/content/dam/fordmediasite/us/en/library/2025/order-guides/2025_Mustang_Mach-E_Order_Guide.pdf
 
 [^7]: Ford Motor Company, "Eligible Electric Vehicle Customers Get Complimentary Tesla Supercharger Adapter," Ford HQ, 01.31.24. https://www.fromtheroad.ford.com/us/en/articles/2024/ford-to-offer-complimentary-tesla-supercharger-adapter-to-eligib
 
@@ -86,4 +86,4 @@ Ford's figures for a 2025 Mustang Mach-E, 0% to 100%:
 
 ## Scope note
 
-Model years 2021 through 2025, each checked against Ford's own order guide for that year; model year 2026 was not checked and is not claimed. Model year 2025 has two revisions and both are used: the charging lines are identical in each, and only the later 04/28/25 revision publishes battery capacities rather than "TBD". The adapter, Supercharger and preconditioning facts come from Ford pages that describe Ford's EV lineup rather than the Mustang Mach-E alone.
+Model years 2021 through 2025, each checked against Ford's order guide for that year; model year 2026 was not checked and is not claimed. Model year 2025 has two revisions and both are used: the charging lines are identical in each, and only the later 04/28/25 revision publishes battery capacities rather than "TBD". The adapter, Supercharger and preconditioning facts come from Ford pages that describe Ford's EV lineup rather than the Mustang Mach-E alone.

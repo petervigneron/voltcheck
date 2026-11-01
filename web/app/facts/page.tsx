@@ -17,7 +17,7 @@ export default function FactSheetsIndex() {
     <div className="mx-auto max-w-2xl px-4 py-16">
       <h1 className="text-2xl font-bold tracking-tight text-ink">EV fact sheets</h1>
       <p className="mt-3 text-sm leading-relaxed text-ink/70">
-        One page per question, sourced to the manufacturer&rsquo;s own documents wherever one exists.
+        One page per question, sourced to the manufacturer&rsquo;s documents wherever one exists.
         Every non-manufacturer figure is marked{" "}
         <strong className="text-[11px] font-bold tracking-[0.02em] text-amber-700">Est.</strong>
       </p>

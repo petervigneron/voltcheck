@@ -33,7 +33,7 @@ Kia excludes EV System and Lithium-Ion Polymer Battery damage or failure caused 
 
 ## Footnotes
 
-[^1]: Kia America, *2024 Warranty and Consumer Information Manual* (electric-vehicle edition, PDF, 99 pages, Publication No. UM 170 PS 001, printing date Jun. 20, 2023, InDesign file name "24MY EV"), "What is Covered — New Vehicle Limited Warranty," the "Electric Vehicle (EV) System Warranty" bullet on printed p. 5 (PDF p. 6). Read from the pages rendered as images. md5 623dae7a7c80a35efafe3edf7a3df094. The Kia-branded document, hosted on a Kia dealer's site rather than on Kia's own host: https://pictures.dealer.com/d/dutchesskia/4ef818fe4a754121b76ba5fce76083e3.pdf
+[^1]: Kia America, *2024 Warranty and Consumer Information Manual* (electric-vehicle edition, PDF, 99 pages, Publication No. UM 170 PS 001, printing date Jun. 20, 2023, InDesign file name "24MY EV"), "What is Covered — New Vehicle Limited Warranty," the "Electric Vehicle (EV) System Warranty" bullet on printed p. 5 (PDF p. 6). Read from the pages rendered as images. md5 623dae7a7c80a35efafe3edf7a3df094. The Kia-branded document, hosted on a Kia dealer's site rather than on Kia's host: https://pictures.dealer.com/d/dutchesskia/4ef818fe4a754121b76ba5fce76083e3.pdf
 
 [^2]: Same manual as footnote 1, "Lithium-Ion Polymer Battery Capacity Coverage," printed p. 6 (PDF p. 7).
 
@@ -51,4 +51,4 @@ Kia excludes EV System and Lithium-Ion Polymer Battery damage or failure caused 
 
 ## Scope note
 
-Kia writes one Warranty and Consumer Information Manual per model year for its electric vehicles rather than one per model, and the 2024 electric-vehicle edition is the one read here; nothing in it names the EV9. The 2025 and 2026 electric-vehicle editions are not on Kia's own hosts; Kia's undated US warranty page states the same ten-year, 100,000-mile terms and 70% floor for those years, and the exclusions and transfer terms above are the 2024 edition's. The manual delivered with a specific car is the authority for that car.
+Kia writes one Warranty and Consumer Information Manual per model year for its electric vehicles rather than one per model, and the 2024 electric-vehicle edition is the one read here; nothing in it names the EV9. The 2025 and 2026 electric-vehicle editions are not on Kia's hosts; Kia's undated US warranty page states the same ten-year, 100,000-mile terms and 70% floor for those years, and the exclusions and transfer terms above are the 2024 edition's. The manual delivered with a specific car is the authority for that car.

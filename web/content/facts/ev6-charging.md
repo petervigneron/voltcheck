@@ -100,4 +100,4 @@
 
 ## Scope note
 
-Model years 2022 through 2026 are verified against Kia's own US specification spreadsheets, where each figure is tied to a named trim column in the file itself. Preconditioning is verified against the 2025 owner's manual only and should not be read as applying to any other model year. The 2026 EV6's charge-port type is not claimed: no Kia document opened for this sheet states it.
+Model years 2022 through 2026 are verified against Kia's US specification spreadsheets, where each figure is tied to a named trim column in the file itself. Preconditioning is verified against the 2025 owner's manual only and should not be read as applying to any other model year. The 2026 EV6's charge-port type is not claimed: no Kia document opened for this sheet states it.

@@ -8,7 +8,7 @@
 | 2019, 62 kWh and 2024, 60 kWh | CHAdeMO, factory option[^1][^2] | Up to 100 kW[^1][^2] | Approximately 60 minutes on a 50 kW charger, approximately 45 minutes on a 100 kW charger, at the gauge's middle reading; longer when cold or hot[^1][^2] |
 | 2026, 75 kWh liquid-cooled | NACS, passenger-side fender[^3] | Up to 150 kW[^3] | 10% to 80% in 35 minutes[^3] |
 
-Nissan's own words: "Quick charge capability is only available on vehicles manufactured with the quick charge option, which includes the quick charge port. If your vehicle does not have such a port, quick charging cannot be used."[^1][^2]
+Nissan's words: "Quick charge capability is only available on vehicles manufactured with the quick charge option, which includes the quick charge port. If your vehicle does not have such a port, quick charging cannot be used."[^1][^2]
 
 - Nothing in the model name or the trim says which Leaf has the port, so it is a per-car check.[^1][^2]
 - The 100 kW figure carries Nissan's asterisk: subject to the charging equipment's capability to output 100 kW.[^1][^2]
@@ -22,7 +22,7 @@ Nissan's own words: "Quick charge capability is only available on vehicles manuf
 | 2026 | J1772, driver's-side fender[^3] | NACS, passenger-side fender[^3] |
 
 - A quick-charge-equipped Leaf works with most CHAdeMO connectors on charging stations.[^1][^2]
-- Nissan's own caution in the manual: it supports CHAdeMO, but the connector may not become the US SAE standard.[^1][^2]
+- Nissan's caution in the manual: it supports CHAdeMO, but the connector may not become the US SAE standard.[^1][^2]
 - The 2026 car's NACS port reaches over 20,000 Tesla Superchargers.[^3]
 - Plug and Charge: the 2026 Leaf is the first Nissan with it, and it requires a subscription and activation through the MyNISSAN app.[^3]
 
@@ -78,4 +78,4 @@ Nissan's own words: "Quick charge capability is only available on vehicles manuf
 
 ## Scope note
 
-Model years 2019 and 2024 were read directly from Nissan's own owner's manuals; 2011 through 2018, 2020 through 2023 and 2025 were not checked and are not claimed. Every 2026 figure comes from Nissan's June 17, 2025 press release for the third-generation Leaf, and none of it is applied to an earlier car. Nissan's times to 80% are keyed to the battery-temperature gauge, and the figures above are the gauge's middle reading, which is the best case.
+Model years 2019 and 2024 were read directly from Nissan's owner's manuals; 2011 through 2018, 2020 through 2023 and 2025 were not checked and are not claimed. Every 2026 figure comes from Nissan's June 17, 2025 press release for the third-generation Leaf, and none of it is applied to an earlier car. Nissan's times to 80% are keyed to the battery-temperature gauge, and the figures above are the gauge's middle reading, which is the best case.

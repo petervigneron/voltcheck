@@ -143,4 +143,4 @@
 
 ## Scope note
 
-Model years 2022 through 2025, non-N Ioniq 5, US market, verified against Hyundai's own spec sheets and owner's manuals. Hyundai's 2022 owner's manual gives a pack lineup and an AC charge time that conflict with the 2022 spec sheet; the spec sheet's figures are the ones shown above.[^25] The Ioniq 5 N and model year 2026 are out of scope — no 2026 non-N spec sheet could be located, and the N's charging hardware, connector and preconditioning behavior were not checked.
+Model years 2022 through 2025, non-N Ioniq 5, US market, verified against Hyundai's spec sheets and owner's manuals. Hyundai's 2022 owner's manual gives a pack lineup and an AC charge time that conflict with the 2022 spec sheet; the spec sheet's figures are the ones shown above.[^25] The Ioniq 5 N and model year 2026 are out of scope — no 2026 non-N spec sheet could be located, and the N's charging hardware, connector and preconditioning behavior were not checked.

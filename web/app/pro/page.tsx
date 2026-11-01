@@ -129,7 +129,7 @@ export default async function ProPage(props: {
               The link works; the pass behind it has run out.
             </p>
             <p className="mt-2 text-[13px] leading-relaxed text-ink/80">
-              Passes expire on their own — that is the point of them. Nothing was charged when it
+              Passes expire by themselves — that is the point of them. Nothing was charged when it
               did.
             </p>
           </div>

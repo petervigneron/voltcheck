@@ -7,7 +7,7 @@
 | 63 kWh | Engage FWD, Engage Dual Motor AWD | 130 kW, capped at 130 kW on any higher-rated charger[^1][^2] | Low-battery warning to 80%: 35 min[^3] |
 | 87 kWh | Venture+, Engage+ Dual Motor AWD, Evolve+, Evolve+ Dual Motor AWD, Empower+, Platinum+ Dual Motor AWD | 130 kW, capped at 130 kW on any higher-rated charger[^1][^2] | Low-battery warning to 80%: 40 min[^3] |
 
-- Est. An independent test of a 2025 Platinum+ e-4ORCE (87 kWh usable) on a 325 kW charger peaked at 130 kW, averaged 110 kW from 10% to 80%, and finished in 31.5 minutes — faster than Nissan's own 40-minute estimate for that pack.[^4]
+- Est. An independent test of a 2025 Platinum+ e-4ORCE (87 kWh usable) on a 325 kW charger peaked at 130 kW, averaged 110 kW from 10% to 80%, and finished in 31.5 minutes — faster than Nissan's 40-minute estimate for that pack.[^4]
 
 ## Home charging (Level 2)
 
@@ -20,7 +20,7 @@
 | Item | Answer |
 |---|---|
 | Built-in DC fast-charge port | CCS1. No native NACS port[^2] |
-| Tesla Supercharger access | Requires Nissan's own NACS adapter, MSRP $235, sold by Nissan dealers and NissanUSA.com[^5] |
+| Tesla Supercharger access | Requires Nissan's NACS adapter, MSRP $235, sold by Nissan dealers and NissanUSA.com[^5] |
 | Supercharger stalls covered | V3 and V4 only. Older stalls are not included[^5] |
 | Speed through the adapter | Approximately the same as the native CCS1 port[^5] |
 | Tesla Destination Chargers, Wall Connectors, Mobile Connectors | Not compatible, with or without the adapter[^5] |
@@ -64,4 +64,4 @@
 
 ## Scope note
 
-Every non-"est." figure here comes from Nissan's own 2024-model-year brochure and owner's manual. The 2023 and 2025 model years were not checked against their own documents and are not claimed. The connector and adapter answers are accurate as of Nissan's February 13, 2025 statement, the most recent Nissan source found describing the Ariya's port.
+Every non-"est." figure here comes from Nissan's 2024-model-year brochure and owner's manual. The 2023 and 2025 model years were not checked against their documents and are not claimed. The connector and adapter answers are accurate as of Nissan's February 13, 2025 statement, the most recent Nissan source found describing the Ariya's port.

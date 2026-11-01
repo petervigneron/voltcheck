@@ -26,4 +26,4 @@
 
 ## Scope note
 
-US model years 2020 through 2026, read from Tesla's own owner's manual in its two editions. The Standard (base RWD) trim's specific hardware revision within model years 2025–2026 is not covered.
+US model years 2020 through 2026, read from Tesla's owner's manual in its two editions. The Standard (base RWD) trim's specific hardware revision within model years 2025–2026 is not covered.

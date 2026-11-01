@@ -38,10 +38,10 @@
 
 [^5]: Same manual as footnote 4, "Specifications, Consumer information and Reporting safety defects → Air conditioning system" — the table's Refrigerant rows, "With heat pump" 1300 ± 25 and "Without heat pump" 1125 ± 25, classification R-1234yf, under the column heading "Weight of volume (g)". https://ownersmanual.kia.com/full_webhelp/MV1/2024/en_US/topics/t00890.html
 
-[^6]: Kia, *2025 EV9 Owner's Manual* (PDF, 639 pages; the Kia-branded document, mirrored on cdn.dealereprocess.org rather than Kia's own host — Kia's ownersmanual.kia.com carries the 2024 and 2026 editions but not 2025), "Air conditioning system", printed page 10-5 (PDF page 611), same rows and figures. Read from the page rendered as an image. md5 5ebeead5dad71cd4d36368a6dcd0e488. https://cdn.dealereprocess.org/cdn/servicemanuals/kia/2025-ev9.pdf
+[^6]: Kia, *2025 EV9 Owner's Manual* (PDF, 639 pages; the Kia-branded document, mirrored on cdn.dealereprocess.org rather than Kia's host — Kia's ownersmanual.kia.com carries the 2024 and 2026 editions but not 2025), "Air conditioning system", printed page 10-5 (PDF page 611), same rows and figures. Read from the page rendered as an image. md5 5ebeead5dad71cd4d36368a6dcd0e488. https://cdn.dealereprocess.org/cdn/servicemanuals/kia/2025-ev9.pdf
 
 [^7]: Kia, *2026 EV9 Owner's Manual*, US edition published by Kia at ownersmanual.kia.com (publication MV1, model year 2026), "Specifications, Consumer information and Reporting safety defects → Air conditioning system", same rows and figures. https://ownersmanual.kia.com/full_webhelp/MV1/2026/en_US/topics/chapter10_3.html
 
 ## Scope note
 
-Model years 2024 through 2026, US market, each read from Kia America's own Features & Options table for that model year. Kia marks the heat pump Optional on the 2025 Light Long Range and Not Available on the same trim for 2024 and 2026, so a 2025 Light Long Range has to be checked car by car.
+Model years 2024 through 2026, US market, each read from Kia America's Features & Options table for that model year. Kia marks the heat pump Optional on the 2025 Light Long Range and Not Available on the same trim for 2024 and 2026, so a 2025 Light Long Range has to be checked car by car.

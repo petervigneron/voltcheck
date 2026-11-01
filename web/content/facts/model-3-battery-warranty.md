@@ -62,4 +62,4 @@
 
 ## Scope note
 
-Everything above is from the New Vehicle Limited Warranty Tesla publishes today, effective 2025/06/05, and Tesla's current support page; no model year is named in the sentences that state the two coverage tiers. Tesla's own rule is that a vehicle purchased before a warranty's effective date is covered by the warranty in effect on its purchase date.[^2] The booklet delivered with a specific car is the authority for that car, and this sheet does not claim what an older Model 3's booklet says.
+Everything above is from the New Vehicle Limited Warranty Tesla publishes today, effective 2025/06/05, and Tesla's current support page; no model year is named in the sentences that state the two coverage tiers. Tesla's rule is that a vehicle purchased before a warranty's effective date is covered by the warranty in effect on its purchase date.[^2] The booklet delivered with a specific car is the authority for that car, and this sheet does not claim what an older Model 3's booklet says.

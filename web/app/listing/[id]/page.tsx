@@ -299,7 +299,7 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
                 <p className="mt-2 text-[18px] font-semibold text-paper/65">{claim.trim}</p>
               ) : claim.reason === "contradicted" ? (
                 <p className="mt-2 max-w-xl text-[15px] leading-snug text-paper/70">
-                  Listed as {claim.feedTrim}, but the dealer&rsquo;s own description says{" "}
+                  Listed as {claim.feedTrim}, but the dealer&rsquo;s description says{" "}
                   {claim.proseTrim.charAt(0) + claim.proseTrim.slice(1).toLowerCase()}
                 </p>
               ) : null}
@@ -311,7 +311,7 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
             ) : (
               <div
                 className="text-[26px] leading-none font-extrabold tracking-[-0.02em]"
-                title="Voltcheck couldn't confirm this car's advertised price from the dealer's feed; see the dealer's own page"
+                title="Voltcheck couldn't confirm this car's advertised price from the dealer's feed; see the dealer's page"
               >
                 See dealer for price
               </div>

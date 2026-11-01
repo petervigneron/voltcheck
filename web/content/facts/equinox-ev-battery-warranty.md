@@ -7,7 +7,7 @@
 | What is covered | The propulsion battery pack and its internal components[^1][^2][^3][^4] |
 | Term | 8 years or 100,000 miles, whichever comes first[^1][^2][^3][^4] |
 | Capacity floor | The battery is replaced or repaired if capacity falls below 75% of its original value during the warranty period, as determined by a certified dealer[^1][^2][^3][^4] |
-| Replacement battery | One appropriate for the age and mileage of the vehicle. Chevrolet repairs or replaces the propulsion battery with new or refurbished components at its own discretion[^1][^2][^3][^4] |
+| Replacement battery | One appropriate for the age and mileage of the vehicle. Chevrolet repairs or replaces the propulsion battery with new or refurbished components at its discretion[^1][^2][^3][^4] |
 | Transfers to a second owner | Yes[^1][^2][^3][^4] |
 | Clock starts | The date the vehicle is first delivered or put in use[^1][^2][^3][^4] |
 | Cost of a covered repair | No charge, including towing, parts and labor[^1][^2][^3][^4] |
@@ -77,7 +77,7 @@
 
 [^4]: General Motors, *2027 Chevrolet Electric Vehicle Limited Warranty and Owner Assistance Information* (PDF, 26 pages, Part No. 20551651A, dated 2026FEB13, md5 e7e3ec9e69adf2c674ec49f7dfa54513), "New Vehicle Limited Warranty," printed p. 3, same sections as footnote 2. https://contentdelivery.ext.gm.com/content/dam/cope/en_us/public/pdf_assets/active/warranty_manuals_browse/2027/chevrolet/27_CHEV_Chevrolet_Electric_Vehicle_WM_en_US_U_20551651A_2026FEB13.pdf
 
-[^5]: Same booklet as footnote 3, "Warranty Coverage at a Glance," printed p. 3: the chart "CALIFORNIA ZERO-EMISSIONS VEHICLE (ZEV) WARRANTY COVERAGE," California (under 10,000 lbs GVWR), with its three bars and the note "Whichever comes first" — and the chart's own notes, printed on p. 4, whose note 3 reads "These parts are determined to have an individual replacement cost exceeding the cost threshold for 'high priced warranted parts' at the time of certification" and whose note 2 names the five additional states. Both pages rendered to images at 200–250 dpi and read.
+[^5]: Same booklet as footnote 3, "Warranty Coverage at a Glance," printed p. 3: the chart "CALIFORNIA ZERO-EMISSIONS VEHICLE (ZEV) WARRANTY COVERAGE," California (under 10,000 lbs GVWR), with its three bars and the note "Whichever comes first" — and the chart's notes, printed on p. 4, whose note 3 reads "These parts are determined to have an individual replacement cost exceeding the cost threshold for 'high priced warranted parts' at the time of certification" and whose note 2 names the five additional states. Both pages rendered to images at 200–250 dpi and read.
 
 [^6]: Same booklet as footnote 3, "Things to Know About the New Vehicle Limited Warranty," printed pp. 16–18: "California Zero-Emissions Vehicle (ZEV) Warranty Coverage," its "Requirements" list, the reproduced CARB "CALIFORNIA WARRANTY STATEMENT" (including the 7-years-or-70,000-miles long-term defects paragraph, which covers a propulsion-related part "listed in this warranty booklet specifically noted with coverage for 7 years or 70,000 miles," and the 8-years-or-100,000-miles battery state-of-health paragraph ending "This is your high voltage battery warranty"), and the "California Propulsion Related Parts Warranty List" with its asterisk key. Printed pp. 17 and 18 — the two pages the parts list runs across — were rendered to images at 250 dpi and read, so every asterisk was read off the printed page rather than from extracted text.
 

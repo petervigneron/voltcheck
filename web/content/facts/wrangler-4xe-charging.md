@@ -36,7 +36,7 @@
 | 2021, 2022, 2024 | 120 Volt AC, SAE J1772 Level 1 EVSE — the Portable Charging Cordset — stored in the rear cargo area below the load floor[^6][^7][^8] | A 40 Amp Level 2 EVSE[^6][^7][^8] |
 | 2025, 2026 | 120 Volt AC, SAE J1772 Level 1 EVSE — the Portable Charging Cordset — stored in the rear cargo area below the load floor[^9][^10] | A Level 2 EVSE charger with up to 48 amps[^9][^10] |
 
-- Level 1 charging needs a conventional NEMA 5-15R 120 Volt AC grounded wall outlet; the cordset's own AC plug is a NEMA 5-15P right-angle plug.[^6][^7][^8][^9][^10]
+- Level 1 charging needs a conventional NEMA 5-15R 120 Volt AC grounded wall outlet; the cordset's AC plug is a NEMA 5-15P right-angle plug.[^6][^7][^8][^9][^10]
 - On 2025 and 2026 trucks Jeep directs owners to use only UL-certified (UL 2594) charging equipment.[^9][^10]
 
 ## Charging behavior
@@ -86,11 +86,11 @@
 
 [^7]: Jeep (FCA US LLC), *2022 Wrangler Hybrid Supplement* (PDF, 88 pages, `22_JL_H_SU_EN_USC`), printed pp. 10-25, same sections (the e-Save screen sits on printed p. 25). The charging-times table on printed p. 21 was rendered as an image at 200 dpi and read from the image. https://vehicleinfo.mopar.com/assets/publications/en-us/Jeep/2022/Wrangler_4xe/P133041_22_JL_H_SU_EN_USC_DIGITAL.pdf
 
-[^8]: Jeep (FCA US LLC), *2024 Jeep Wrangler Owner's Manual*, chapter "Getting To Know Your Vehicle," topic "High Voltage Charging Operation," from Mopar's own HTML edition of the manual. https://vehicleinfo.mopar.com/assets/publications/en-us/Jeep/2024/Wrangler/om_html/GUID-EBD57CD1-FDDD-4904-8DCB-C8555349BA84.html
+[^8]: Jeep (FCA US LLC), *2024 Jeep Wrangler Owner's Manual*, chapter "Getting To Know Your Vehicle," topic "High Voltage Charging Operation," from Mopar's HTML edition of the manual. https://vehicleinfo.mopar.com/assets/publications/en-us/Jeep/2024/Wrangler/om_html/GUID-EBD57CD1-FDDD-4904-8DCB-C8555349BA84.html
 
 [^9]: Jeep (FCA US LLC), *2025 Jeep Wrangler Owner's Manual*, same chapter and topic. https://vehicleinfo.mopar.com/assets/publications/en-us/Jeep/2025/Wrangler/om_html/GUID-EBD57CD1-FDDD-4904-8DCB-C8555349BA84.html
 
-[^10]: Jeep (FCA US LLC), *2026 Jeep Wrangler Owner's Manual*, chapter "Starting And Operating," topic "Charging," from Mopar's own HTML edition of the manual. https://vehicleinfo.mopar.com/assets/publications/en-us-ca/2026/Jeep/Wrangler/om_html/GUID-D14D9204-410D-4F6F-A5A3-F0B51E8F86B7.html
+[^10]: Jeep (FCA US LLC), *2026 Jeep Wrangler Owner's Manual*, chapter "Starting And Operating," topic "Charging," from Mopar's HTML edition of the manual. https://vehicleinfo.mopar.com/assets/publications/en-us-ca/2026/Jeep/Wrangler/om_html/GUID-D14D9204-410D-4F6F-A5A3-F0B51E8F86B7.html
 
 [^11]: Stellantis (Jeep), *Press Kit: 2022 Jeep Wrangler 4xe*, "2022 Jeep Wrangler Fact Sheet," the Wrangler 4xe powertrain paragraph. https://media.stellantisnorthamerica.com/newsrelease.do?id=23685&mid=1368
 
@@ -100,10 +100,10 @@
 
 [^14]: Stellantis (Jeep), *Press Kit: 2025 Jeep Wrangler 4xe*, "What's New for 2025: Jeep Wrangler / Jeep Wrangler 4xe," the powertrain paragraph and the "Jeep Wrangler 4xe Highlights" list, whose powertrain component list reads "400-volt, 17-kWh, 96-cell, lithium-ion, nickel manganese cobalt battery pack." https://media.stellantisnorthamerica.com/newsrelease.do?id=26169&mid=1368
 
-[^15]: Jeep (FCA US LLC), *2024 Jeep Wrangler Owner's Manual*, chapter "Getting To Know Your Vehicle," topic "High Voltage Battery," sub-headings "Battery Conditioning" and "Max Regeneration," from Mopar's own HTML edition of the manual. https://vehicleinfo.mopar.com/assets/publications/en-us/Jeep/2024/Wrangler/om_html/GUID-08A99F74-849F-404D-A8A2-47FF813947E5.html
+[^15]: Jeep (FCA US LLC), *2024 Jeep Wrangler Owner's Manual*, chapter "Getting To Know Your Vehicle," topic "High Voltage Battery," sub-headings "Battery Conditioning" and "Max Regeneration," from Mopar's HTML edition of the manual. https://vehicleinfo.mopar.com/assets/publications/en-us/Jeep/2024/Wrangler/om_html/GUID-08A99F74-849F-404D-A8A2-47FF813947E5.html
 
 [^16]: Jeep (FCA US LLC), *2025 Jeep Wrangler Owner's Manual*, same chapter, topic and sub-headings. https://vehicleinfo.mopar.com/assets/publications/en-us/Jeep/2025/Wrangler/om_html/GUID-08A99F74-849F-404D-A8A2-47FF813947E5.html
 
 ## Scope note
 
-US market, model years 2021 through 2026, from Jeep's own specification sheets, press kits, hybrid supplements and owner's manuals. Stellantis's specifications library holds no Wrangler 4xe sheet for 2022 or 2026, and Mopar's publication host served no 2023 hybrid supplement, so those year-and-source combinations carry no row here. Where a year's specification sheet and that year's press kit give different pack figures, both are shown.
+US market, model years 2021 through 2026, from Jeep's specification sheets, press kits, hybrid supplements and owner's manuals. Stellantis's specifications library holds no Wrangler 4xe sheet for 2022 or 2026, and Mopar's publication host served no 2023 hybrid supplement, so those year-and-source combinations carry no row here. Where a year's specification sheet and that year's press kit give different pack figures, both are shown.

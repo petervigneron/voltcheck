@@ -45,4 +45,4 @@
 
 ## Scope note
 
-Model years 2021 through 2025, US market; model year 2026 is not checked and not claimed. The 2021 row and the launch-equipment rows rest on secondary reporting dated to launch rather than a Volkswagen document, and are marked Est.; 2022 through 2025 come from Volkswagen's own US retail order guides. Canadian and European ID.4 equipment is cited only where labeled as such, never as a US-market fact.
+Model years 2021 through 2025, US market; model year 2026 is not checked and not claimed. The 2021 row and the launch-equipment rows rest on secondary reporting dated to launch rather than a Volkswagen document, and are marked Est.; 2022 through 2025 come from Volkswagen's US retail order guides. Canadian and European ID.4 equipment is cited only where labeled as such, never as a US-market fact.

@@ -73,4 +73,4 @@
 
 ## Scope note
 
-Model years 2021 through 2025, US market, from Volkswagen's own order guide for each of those years plus its 2021, 2023, 2024 and 2025 ID.4 press kits and its November 2025 Supercharger release. Volkswagen published no 2022 ID.4 press kit, so model year 2022 rests on the order guide alone. Where the order guide and the press kit differ on a peak DC rate, both figures are shown; model year 2026 was not checked and is not claimed, beyond Volkswagen's own statement that an adapter ships with every 2026 Volkswagen EV.
+Model years 2021 through 2025, US market, from Volkswagen's order guide for each of those years plus its 2021, 2023, 2024 and 2025 ID.4 press kits and its November 2025 Supercharger release. Volkswagen published no 2022 ID.4 press kit, so model year 2022 rests on the order guide alone. Where the order guide and the press kit differ on a peak DC rate, both figures are shown; model year 2026 was not checked and is not claimed, beyond Volkswagen's statement that an adapter ships with every 2026 Volkswagen EV.

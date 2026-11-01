@@ -34,7 +34,7 @@
 | 2024 | Combined Charging System (CCS), not a native NACS port[^4] | Rear quarter, passenger side[^2] |
 | 2025 | Combined Charging System (CCS), not a native NACS port[^4] | Rear quarter, passenger side[^3] |
 
-- Hyundai's adapter-giveaway eligibility list states the covered span in its own words: "22MY-25MY IONIQ 6."[^5]
+- Hyundai's adapter-giveaway eligibility list states the covered span as "22MY-25MY IONIQ 6."[^5]
 - The Ioniq 6 is not among the models Hyundai names as getting a built-in NACS port; that group is the 2025 IONIQ 5, the upcoming 2026 IONIQ 9, and future EVs.[^4]
 - Reaching a Tesla Supercharger requires a Hyundai CCS-to-NACS adapter, which Hyundai says is essential for reliable charging at V3 Tesla Superchargers and other NACS DC fast charging stations.[^4]
 
@@ -55,7 +55,7 @@
 
 - What it does: raises battery temperature to maintain optimal driving and DC charging performance when a low high-voltage battery temperature would degrade performance.[^8][^9]
 - Setting a DC charging station as the navigation destination optimizes the battery for charging only while the mode is already switched on.[^8][^9]
-- It also engages on its own when the battery temperature is low during driving, or when the scheduled air conditioner or heater is activated.[^8][^9]
+- It also engages by itself when the battery temperature is low during driving, or when the scheduled air conditioner or heater is activated.[^8][^9]
 - It will not operate when the battery level is too low.[^8][^9]
 - Running it reduces driving distance, since energy goes to raising battery temperature.[^8][^9]
 
@@ -101,4 +101,4 @@
 
 ## Scope note
 
-Model years 2023, 2024 and 2025, verified against Hyundai's own US spec sheets; preconditioning against Hyundai's own 2023 and 2024 US owner's manuals, as a 2025 Ioniq 6 manual could not be retrieved from Hyundai's host. Model year 2026 is not covered: Hyundai says the IONIQ 6 sedan has been discontinued and the lineup will consist of the all-new IONIQ 6 N, a different car whose charging hardware was not checked here.[^10] The Supercharger speeds above are Hyundai's specification for its CCS-to-NACS adapter, not for the Ioniq 6, for which Hyundai publishes no Supercharger rate.
+Model years 2023, 2024 and 2025, verified against Hyundai's US spec sheets; preconditioning against Hyundai's 2023 and 2024 US owner's manuals, as a 2025 Ioniq 6 manual could not be retrieved from Hyundai's host. Model year 2026 is not covered: Hyundai says the IONIQ 6 sedan has been discontinued and the lineup will consist of the all-new IONIQ 6 N, a different car whose charging hardware was not checked here.[^10] The Supercharger speeds above are Hyundai's specification for its CCS-to-NACS adapter, not for the Ioniq 6, for which Hyundai publishes no Supercharger rate.

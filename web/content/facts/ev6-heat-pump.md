@@ -37,7 +37,7 @@
 
 [^5]: Kia, *2026 Kia EV6 Features & Options* (spreadsheet, document ID 24328), same row positions as the 2025 file. https://www.kiamedia.com/us/en/download/24328/file/xlsx
 
-[^6]: Kia, *2025 EV6 Owner's Manual* (PDF, 593 pages; the Kia-branded document, mirrored on cdn.dealereprocess.org rather than Kia's own host), "Refrigerant label," printed page 10-10 (PDF page 572). Read from the page rendered as an image. https://cdn.dealereprocess.org/cdn/servicemanuals/kia/2025-ev6.pdf
+[^6]: Kia, *2025 EV6 Owner's Manual* (PDF, 593 pages; the Kia-branded document, mirrored on cdn.dealereprocess.org rather than Kia's host), "Refrigerant label," printed page 10-10 (PDF page 572). Read from the page rendered as an image. https://cdn.dealereprocess.org/cdn/servicemanuals/kia/2025-ev6.pdf
 
 [^7]: Same manual as footnote 6, "Air conditioning refrigerant label (if equipped)," printed page 5-124 (PDF page 242) — the "Example" label illustration (Kia figure OCV041068L), its six-item legend, whose item 2 reads "Amount of refrigerant", and the asterisked caveat beneath it: "The A/C refrigerant label in the vehicle may differ from the illustration."
 
@@ -45,4 +45,4 @@
 
 ## Scope note
 
-Model years 2022 through 2026, US market, each read from Kia America's own Features & Options file for that model year. Trim lineups change year to year and are listed as Kia lists them: the Light disappears for 2023 and returns for 2024 split into Light Short Range and Light Long Range, and the GT arrives for 2023. What "Optional" meant in practice — whether the heat pump could be ordered on its own or arrived only bundled — is not stated in any Kia document, so a Wind, a GT-Line or a Light Long Range has to be checked car by car.
+Model years 2022 through 2026, US market, each read from Kia America's Features & Options file for that model year. Trim lineups change year to year and are listed as Kia lists them: the Light disappears for 2023 and returns for 2024 split into Light Short Range and Light Long Range, and the GT arrives for 2023. What "Optional" meant in practice — whether the heat pump could be ordered by itself or arrived only bundled — is not stated in any Kia document, so a Wind, a GT-Line or a Light Long Range has to be checked car by car.

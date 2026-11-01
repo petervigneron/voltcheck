@@ -313,7 +313,7 @@ export function enrichListing(l: Listing): EnrichedListing {
           asOf: dcfcFact.asOf,
           confidence: fitted ? "high" : "medium",
           note: fitted
-            ? "Option code CBT (DC fast charging) present in the dealer's own data for this car"
+            ? "Option code CBT (DC fast charging) present in the dealer's data for this car"
             : "Option code CBT absent from the dealer's option list. This car likely cannot fast-charge; confirm with a charge-port photo",
         },
       },
@@ -461,7 +461,7 @@ export function enrichListing(l: Listing): EnrichedListing {
   } else if (photo === "confirmed_absent") {
     fastCharge = { status: "no", detail: "Charge-port photo shows no DC pins; this car cannot fast-charge, and it is not retrofittable" };
   } else if (dcfc === "fitted") {
-    fastCharge = { status: "yes", detail: "DC fast-charge option confirmed in the dealer's own data" };
+    fastCharge = { status: "yes", detail: "DC fast-charge option confirmed in the dealer's data" };
   } else if (dcfc === "not_fitted") {
     fastCharge = { status: "no", detail: "Fast-charge option absent from the dealer's option data; likely cannot fast-charge" };
   } else if (dcfc === "optional") {

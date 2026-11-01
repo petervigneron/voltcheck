@@ -43,4 +43,4 @@
 
 ## Scope note
 
-US model years 2023, 2024 and 2025, read from Hyundai's own features grid for each year. Model year 2026 is not covered: Hyundai calls it a Product Enhancement Model with details to come and has published no features grid for it.[^6] The Ioniq 6 N is a different model and is out of scope, as are non-US builds.
+US model years 2023, 2024 and 2025, read from Hyundai's features grid for each year. Model year 2026 is not covered: Hyundai calls it a Product Enhancement Model with details to come and has published no features grid for it.[^6] The Ioniq 6 N is a different model and is out of scope, as are non-US builds.

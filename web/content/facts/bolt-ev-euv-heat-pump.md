@@ -30,9 +30,9 @@
 
 ## Footnotes
 
-[^1]: GM, *2017 Chevrolet Bolt EV Owner's Manual* (PDF, 361 pages), fuse table, printed page 267. GM's own host: https://www.chevrolet.com/ownercenter/content/dam/gmownercenter/gmna/dynamic/manuals/2017/Chevrolet/BOLT%20EV/Owner's%20Manual.pdf
+[^1]: GM, *2017 Chevrolet Bolt EV Owner's Manual* (PDF, 361 pages), fuse table, printed page 267. GM's host: https://www.chevrolet.com/ownercenter/content/dam/gmownercenter/gmna/dynamic/manuals/2017/Chevrolet/BOLT%20EV/Owner's%20Manual.pdf
 
-[^2]: GM, *2018 Chevrolet Bolt EV Owner's Manual* (PDF, 370 pages), fuse table, printed page 275. GM's own host: https://www.gmc.com/ownercenter/content/dam/gmownercenter/gmna/dynamic/manuals/2018/Chevrolet/Bolt/2018-chevrolet-bolt-ev-owners-manual.pdf
+[^2]: GM, *2018 Chevrolet Bolt EV Owner's Manual* (PDF, 370 pages), fuse table, printed page 275. GM's host: https://www.gmc.com/ownercenter/content/dam/gmownercenter/gmna/dynamic/manuals/2018/Chevrolet/Bolt/2018-chevrolet-bolt-ev-owners-manual.pdf
 
 [^3]: GM, *2019 Chevrolet Bolt EV Order Guide* (PDF, RPO-code table, 33 pages). Mirror: https://gmauthority.com/blog/wp-content/uploads/2018/05/2019-Chevrolet-Bolt-EV-Order-Guide-May-4-2018.pdf
 
@@ -40,10 +40,10 @@
 
 [^5]: Green Car Future, "Does the Chevy Bolt Have a Heat Pump?," published Sept 23, 2021. https://www.greencarfuture.com/electric/chevy-bolt-heat-pump.
 
-[^6]: GM, *2023 Bolt EV & Bolt EUV "Get To Know" Guide* (PDF). GM's own host: https://contentdelivery.ext.gm.com/bypass/gma-content-api/resources/sites/GMA/content/staging/MANUALS/6000/MA6687/en_US/1.0/GTK_2023_Chevrolet_Bolt_EV_Bolt_EUV_84953316_A.pdf. Cross-checked against GM, *2023 Bolt EV/EUV Order Guide* (PDF, RPO-code table). Mirror: https://www.autoevolution.com/pdf/news_attachements/gm-publishes-2023-chevrolet-bolt-ev-order-guide-illuminated-charge-port-confirmed-190201.pdf
+[^6]: GM, *2023 Bolt EV & Bolt EUV "Get To Know" Guide* (PDF). GM's host: https://contentdelivery.ext.gm.com/bypass/gma-content-api/resources/sites/GMA/content/staging/MANUALS/6000/MA6687/en_US/1.0/GTK_2023_Chevrolet_Bolt_EV_Bolt_EUV_84953316_A.pdf. Cross-checked against GM, *2023 Bolt EV/EUV Order Guide* (PDF, RPO-code table). Mirror: https://www.autoevolution.com/pdf/news_attachements/gm-publishes-2023-chevrolet-bolt-ev-order-guide-illuminated-charge-port-confirmed-190201.pdf
 
 [^7]: GM press release, "2027 Chevrolet Bolt," dated Oct 9, 2025. https://pressroom.chevrolet.com/gmbx/us/en/chevrolet/pressroom/news.detail.html/Pages/news/us/en/2025/oct/1009-2027-Chevrolet-Bolt.html
 
 ## Scope note
 
-Bolt EV model years 2017 through 2023 and Bolt EUV model years 2022 through 2023, US market. The 2021 and 2022 rows rest on a single dated secondary source rather than a GM document; every other row is read from GM's own documents. The 2027 Chevrolet Bolt is a different generation on a different platform and is out of scope.[^7]
+Bolt EV model years 2017 through 2023 and Bolt EUV model years 2022 through 2023, US market. The 2021 and 2022 rows rest on a single dated secondary source rather than a GM document; every other row is read from GM's documents. The 2027 Chevrolet Bolt is a different generation on a different platform and is out of scope.[^7]

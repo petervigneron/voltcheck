@@ -93,4 +93,4 @@ Chevrolet excludes from the New Vehicle Limited Warranty:
 
 ## Scope note
 
-Chevrolet writes one electric-vehicle warranty booklet per model year covering its whole EV line rather than one per model, and the 2024, 2025, 2026 and 2027 editions are the ones read here; the Blazer EV is not named in any of them, and the model-specific 8-year/100,000-mile term comes from Chevrolet's own Blazer EV specification pages. The California ZEV section appears in the 2026 edition, and the two exclusions marked 2025 and later were added after the 2024 edition. The booklet delivered with a specific car is the authority for that car.
+Chevrolet writes one electric-vehicle warranty booklet per model year covering its whole EV line rather than one per model, and the 2024, 2025, 2026 and 2027 editions are the ones read here; the Blazer EV is not named in any of them, and the model-specific 8-year/100,000-mile term comes from Chevrolet's Blazer EV specification pages. The California ZEV section appears in the 2026 edition, and the two exclusions marked 2025 and later were added after the 2024 edition. The booklet delivered with a specific car is the authority for that car.

@@ -18,7 +18,7 @@
 | Heated 2nd-row outboard seats with separate controls | Standard, all five trims[^1] |
 | Heated windshield | Pro S Plus 4MOTION only[^1] |
 
-Volkswagen's own words: "the ID. Buzz also has an electric resistance heater as part of the Climatronic system".[^2]
+Volkswagen's words: "the ID. Buzz also has an electric resistance heater as part of the Climatronic system".[^2]
 
 ## See it for yourself
 
@@ -29,9 +29,9 @@ Volkswagen's own words: "the ID. Buzz also has an electric resistance heater as 
 
 ## Footnotes
 
-[^1]: Volkswagen, *VW MY25 Price and Order Guide for CW34-2024 - ID.Buzz* (PDF, 5 pages, dated 2024-08-22), "Available Features" tables, pp. 4-5. Mirror: https://volkswagenorderguides.com/wp-content/uploads/2024/09/2025_Volkswagen_ID.Buzz_Order_Guide.pdf. An identical copy is served from a Volkswagen dealer's own asset store: https://di-uploads-pod16.s3.us-east-1.amazonaws.com/emichvw/uploads/2024/08/VW-MY25-RETAIL-Price-and-Order-Guide-for-CW34-2024-ID.-Buzz.pdf
+[^1]: Volkswagen, *VW MY25 Price and Order Guide for CW34-2024 - ID.Buzz* (PDF, 5 pages, dated 2024-08-22), "Available Features" tables, pp. 4-5. Mirror: https://volkswagenorderguides.com/wp-content/uploads/2024/09/2025_Volkswagen_ID.Buzz_Order_Guide.pdf. An identical copy is served from a Volkswagen dealer's asset store: https://di-uploads-pod16.s3.us-east-1.amazonaws.com/emichvw/uploads/2024/08/VW-MY25-RETAIL-Price-and-Order-Guide-for-CW34-2024-ID.-Buzz.pdf
 
-[^2]: Volkswagen of America press release, *2025 ID. Buzz* (PDF, 23 pages), "Comfort and Convenience," p. 8 and p. 9. Volkswagen's own host: https://media.vw.com/assets/applications/original/18552-2025-id-buzz-release.pdf
+[^2]: Volkswagen of America press release, *2025 ID. Buzz* (PDF, 23 pages), "Comfort and Convenience," p. 8 and p. 9. Volkswagen's host: https://media.vw.com/assets/applications/original/18552-2025-id-buzz-release.pdf
 
 ## Scope note
 

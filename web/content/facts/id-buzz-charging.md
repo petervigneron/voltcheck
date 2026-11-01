@@ -68,4 +68,4 @@ Volkswagen on what a second owner gets: "Not valid for subsequent owners."[^2]
 
 ## Scope note
 
-Model year 2025 only, US market. Volkswagen's own 2025 order guide and 2025 press kit are the sources for every vehicle figure, and its November 2025 release for everything about the adapter. No other model year is claimed; the only 2026 statement here is Volkswagen's own, that an adapter ships with every 2026 Volkswagen EV.
+Model year 2025 only, US market. Volkswagen's 2025 order guide and 2025 press kit are the sources for every vehicle figure, and its November 2025 release for everything about the adapter. No other model year is claimed; the only 2026 statement here is Volkswagen's, that an adapter ships with every 2026 Volkswagen EV.

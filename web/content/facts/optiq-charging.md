@@ -72,11 +72,11 @@
 
 ## Footnotes
 
-[^1]: Cadillac, *2025 OPTIQ — Vehicle Specifications* (cadillac.com), sections "RANGE AND PERFORMANCE," "CHARGING," "POWERUP CHARGERS" and "DUAL-LEVEL CHARGING CORD INCLUDED." Read from the Internet Archive capture of Cadillac's own URL, taken while the page carried the 2025 model year: https://web.archive.org/web/20250710193128if_/https://www.cadillac.com/electric/optiq/specs
+[^1]: Cadillac, *2025 OPTIQ — Vehicle Specifications* (cadillac.com), sections "RANGE AND PERFORMANCE," "CHARGING," "POWERUP CHARGERS" and "DUAL-LEVEL CHARGING CORD INCLUDED." Read from the Internet Archive capture of Cadillac's URL, taken while the page carried the 2025 model year: https://web.archive.org/web/20250710193128if_/https://www.cadillac.com/electric/optiq/specs
 
-[^2]: Cadillac, "2025 Cadillac OPTIQ: New entry-point EV luxury, 302 miles of range," Cadillac Pressroom, 2024-05-29, sections "SPECIFICATIONS — BATTERY SYSTEM," "ELECTRIC DRIVE" and "CHARGING TIMES," including the table's own footnotes 1 and 2 naming the 60A and 100A dedicated charge stations. https://media.cadillac.com/media/us/en/cadillac/home.detail.html/content/Pages/news/us/en/2024/may/0529-optiq.html
+[^2]: Cadillac, "2025 Cadillac OPTIQ: New entry-point EV luxury, 302 miles of range," Cadillac Pressroom, 2024-05-29, sections "SPECIFICATIONS — BATTERY SYSTEM," "ELECTRIC DRIVE" and "CHARGING TIMES," including the table's footnotes 1 and 2 naming the 60A and 100A dedicated charge stations. https://media.cadillac.com/media/us/en/cadillac/home.detail.html/content/Pages/news/us/en/2024/may/0529-optiq.html
 
-[^3]: Cadillac, *2026 OPTIQ — Electric SUV Specifications* (cadillac.com), sections "RANGE AND PERFORMANCE," "CHARGING" and "DUAL-LEVEL CHARGING CORD INCLUDED." Read from the Internet Archive capture of Cadillac's own URL, taken while the page carried the 2026 model year: https://web.archive.org/web/20260513160143if_/https://www.cadillac.com/electric/optiq/specs. The same content was served live on 2026-09-01 at https://www.cadillac.com/electric/preceding-year/optiq/specs
+[^3]: Cadillac, *2026 OPTIQ — Electric SUV Specifications* (cadillac.com), sections "RANGE AND PERFORMANCE," "CHARGING" and "DUAL-LEVEL CHARGING CORD INCLUDED." Read from the Internet Archive capture of Cadillac's URL, taken while the page carried the 2026 model year: https://web.archive.org/web/20260513160143if_/https://www.cadillac.com/electric/optiq/specs. The same content was served live on 2026-09-01 at https://www.cadillac.com/electric/preceding-year/optiq/specs
 
 [^4]: Cadillac, *2026 OPTIQ 5 Passenger SUV — Vehicle Features* (cadillac.com), sections "CHARGING AND RANGE," "STANDARD NACS CHARGING PORT" and "19.2 kW AC AND DC FAST CHARGING." https://www.cadillac.com/electric/preceding-year/optiq/features
 

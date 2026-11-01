@@ -52,14 +52,14 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     contentFile: "ariya-charging",
     pageTitle: "Nissan Ariya charging: DC fast-charge speed, connector, preconditioning | Voltcheck",
     description:
-      "How fast the Nissan Ariya charges, its CCS1 port and NACS adapter, and how to precondition the battery before a fast charge. Sourced to Nissan's own brochure and owner's manual.",
+      "How fast the Nissan Ariya charges, its CCS1 port and NACS adapter, and how to precondition the battery before a fast charge. Sourced to Nissan's brochure and owner's manual.",
     breadcrumbLabel: "Nissan Ariya charging",
     dateModified: "2026-08-20",
     faq: [
       {
         question: "How fast does the Nissan Ariya charge on a DC fast charger?",
         answer:
-          "The Nissan Ariya has a peak DC fast-charge rate of 130 kW on every trim, on both the 63 kWh and 87 kWh battery packs. A charger rated above 130 kW will not charge it any faster, since Nissan caps input at 130 kW. Nissan's own estimate for charging from a low-battery warning to 80% is 35 minutes on the 63 kWh battery (Engage FWD, Engage Dual Motor AWD) and 40 minutes on the 87 kWh battery (Venture+, Engage+ Dual Motor AWD, Evolve+, Evolve+ Dual Motor AWD, Empower+, Platinum+ Dual Motor AWD).",
+          "The Nissan Ariya has a peak DC fast-charge rate of 130 kW on every trim, on both the 63 kWh and 87 kWh battery packs. A charger rated above 130 kW will not charge it any faster, since Nissan caps input at 130 kW. Nissan's estimate for charging from a low-battery warning to 80% is 35 minutes on the 63 kWh battery (Engage FWD, Engage Dual Motor AWD) and 40 minutes on the 87 kWh battery (Venture+, Engage+ Dual Motor AWD, Evolve+, Evolve+ Dual Motor AWD, Empower+, Platinum+ Dual Motor AWD).",
       },
       {
         question: "What charging connector does the Nissan Ariya use?",
@@ -84,7 +84,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     contentFile: "ioniq5-charging",
     pageTitle: "Hyundai Ioniq 5 charging by model year: DC speed, NACS port, preconditioning | Voltcheck",
     description:
-      "How Hyundai Ioniq 5 charging changed from the CCS1 port (2022-2024) to the native NACS port (2025), by the numbers in Hyundai's own spec sheets and owner's manuals.",
+      "How Hyundai Ioniq 5 charging changed from the CCS1 port (2022-2024) to the native NACS port (2025), by the numbers in Hyundai's spec sheets and owner's manuals.",
     breadcrumbLabel: "Hyundai Ioniq 5 charging",
     dateModified: "2026-08-20",
     faq: [
@@ -101,7 +101,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       {
         question: "How fast does the 2022-2024 Hyundai Ioniq 5 charge on a DC fast charger?",
         answer:
-          "On a 150 kW (400V-class) charger, the 2022-2024 Ioniq 5 with the 77.4 kWh pack charges 10% to 80% in about 25 minutes, Hyundai's own estimate. On a charger above 250 kW (800V-class), the same charge takes about 18 minutes, for the 77.4 kWh pack and, from 2023, the 58.0 kWh Standard Range pack.",
+          "On a 150 kW (400V-class) charger, the 2022-2024 Ioniq 5 with the 77.4 kWh pack charges 10% to 80% in about 25 minutes, Hyundai's estimate. On a charger above 250 kW (800V-class), the same charge takes about 18 minutes, for the 77.4 kWh pack and, from 2023, the 58.0 kWh Standard Range pack.",
       },
       {
         question: "What NACS adapter does a 2022-2024 Hyundai Ioniq 5 need for a Tesla Supercharger?",
@@ -117,14 +117,14 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     contentFile: "mach-e-heat-pump",
     pageTitle: "Ford Mustang Mach-E heat pump by year: which model years have one | Voltcheck",
     description:
-      "Whether the Ford Mustang Mach-E has a heat pump, by model year, sourced to Ford's own order guides. No 2021-2024 Mach-E has one; every 2025 does.",
+      "Whether the Ford Mustang Mach-E has a heat pump, by model year, sourced to Ford's order guides. No 2021-2024 Mach-E has one; every 2025 does.",
     breadcrumbLabel: "Ford Mustang Mach-E heat pump",
     dateModified: "2026-08-20",
     faq: [
       {
         question: "Does the 2021-2024 Ford Mustang Mach-E have a heat pump?",
         answer:
-          "No. No Mustang Mach-E built for model years 2021 through 2024 has a heat pump, on any trim or battery pack, per Ford's own order guides for each of those years.",
+          "No. No Mustang Mach-E built for model years 2021 through 2024 has a heat pump, on any trim or battery pack, per Ford's order guides for each of those years.",
       },
       {
         question: "Does the 2025 Ford Mustang Mach-E have a heat pump?",
@@ -140,14 +140,14 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     contentFile: "id4-heat-pump",
     pageTitle: "Volkswagen ID.4 heat pump: does it have one | Voltcheck",
     description:
-      "No US-market Volkswagen ID.4, model years 2021 through 2025, has a heat pump. Sourced to Volkswagen's own US retail order guides.",
+      "No US-market Volkswagen ID.4, model years 2021 through 2025, has a heat pump. Sourced to Volkswagen's US retail order guides.",
     breadcrumbLabel: "Volkswagen ID.4 heat pump",
     dateModified: "2026-08-20",
     faq: [
       {
         question: "Does the Volkswagen ID.4 have a heat pump?",
         answer:
-          "No. No US-market Volkswagen ID.4 built for model years 2021 through 2025 has a heat pump, on any trim, drivetrain, or battery pack, per Volkswagen's own US retail order guides for each of those years. It uses an electric-resistance heater instead, with heated front seats and a heated steering wheel standard.",
+          "No. No US-market Volkswagen ID.4 built for model years 2021 through 2025 has a heat pump, on any trim, drivetrain, or battery pack, per Volkswagen's US retail order guides for each of those years. It uses an electric-resistance heater instead, with heated front seats and a heated steering wheel standard.",
       },
     ],
   },
@@ -158,14 +158,14 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     contentFile: "bolt-ev-euv-heat-pump",
     pageTitle: "Chevrolet Bolt EV & Bolt EUV heat pump: does either have one | Voltcheck",
     description:
-      "Neither the Chevrolet Bolt EV (2017-2023) nor the Bolt EUV (2022-2023) has a heat pump. Sourced to GM's own owner's manuals and order guides.",
+      "Neither the Chevrolet Bolt EV (2017-2023) nor the Bolt EUV (2022-2023) has a heat pump. Sourced to GM's owner's manuals and order guides.",
     breadcrumbLabel: "Chevrolet Bolt EV & Bolt EUV heat pump",
     dateModified: "2026-08-20",
     faq: [
       {
         question: "Does the Chevrolet Bolt EV or Bolt EUV have a heat pump?",
         answer:
-          "No. GM's own owner's manuals and order guides show no heat pump on the Bolt EV for model years 2017 through 2020 or 2023, or on the Bolt EUV for 2023. Model years 2021-2022 rely on a single secondary source rather than a GM document. Both use an HVAC electric heater instead. The redesigned 2027 Chevrolet Bolt, a different platform launching after the Bolt EUV ended production, does have a heat pump, but is out of scope for this page.",
+          "No. GM's owner's manuals and order guides show no heat pump on the Bolt EV for model years 2017 through 2020 or 2023, or on the Bolt EUV for 2023. Model years 2021-2022 rely on a single secondary source rather than a GM document. Both use an HVAC electric heater instead. The redesigned 2027 Chevrolet Bolt, a different platform launching after the Bolt EUV ended production, does have a heat pump, but is out of scope for this page.",
       },
     ],
   },
@@ -176,14 +176,14 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     contentFile: "model-y-heat-pump",
     pageTitle: "Tesla Model Y heat pump: which model years have one | Voltcheck",
     description:
-      "Every Tesla Model Y, model years 2020 through 2026, has a Heat Pump Assembly, per Tesla's own owner's manual.",
+      "Every Tesla Model Y, model years 2020 through 2026, has a Heat Pump Assembly, per Tesla's owner's manual.",
     breadcrumbLabel: "Tesla Model Y heat pump",
     dateModified: "2026-08-20",
     faq: [
       {
         question: "Does the Tesla Model Y have a heat pump?",
         answer:
-          "Yes. Every Tesla Model Y built for model years 2020 through 2026 has a Heat Pump Assembly, listed by Tesla among the car's High Voltage Components in its own owner's manual. It shipped with this system from its first customer deliveries in March 2020.",
+          "Yes. Every Tesla Model Y built for model years 2020 through 2026 has a Heat Pump Assembly, listed by Tesla among the car's High Voltage Components in its owner's manual. It shipped with this system from its first customer deliveries in March 2020.",
       },
     ],
   },
@@ -196,19 +196,19 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     contentFile: "id4-charging",
     pageTitle: "Volkswagen ID.4 charging by year: DC speed, CCS port, NACS adapter | Voltcheck",
     description:
-      "How fast a Volkswagen ID.4 fast-charges, by model year and battery pack, from Volkswagen's own order guides — including the 2023 split between LG and SK On packs.",
+      "How fast a Volkswagen ID.4 fast-charges, by model year and battery pack, from Volkswagen's order guides — including the 2023 split between LG and SK On packs.",
     breadcrumbLabel: "Volkswagen ID.4 charging",
     dateModified: "2026-08-25",
     faq: [
       {
         question: "How fast does the Volkswagen ID.4 charge on a DC fast charger?",
         answer:
-          "It depends on the model year and the battery pack. Volkswagen's own order guides state 125 kW for 2021, 135 kW for 2022, and 170 kW for the 82 kWh pack in 2024 and 2025. The 62 kWh pack is rated 140 kW in 2023 and 2024. In 2023 the 82 kWh pack splits by cell supplier: 135 kW with LG Energy Solution components, 170 kW with SK On components. Volkswagen's press kits state different 82 kWh figures for three of those years: 175 kW for 2024 and 2025 where the order guides say 170 kW, and a flat 170 kW for every 2023 Pro model where the order guide gives the LG-pack cars 135 kW. Both documents are Volkswagen's own, so both figures are stated here.",
+          "It depends on the model year and the battery pack. Volkswagen's order guides state 125 kW for 2021, 135 kW for 2022, and 170 kW for the 82 kWh pack in 2024 and 2025. The 62 kWh pack is rated 140 kW in 2023 and 2024. In 2023 the 82 kWh pack splits by cell supplier: 135 kW with LG Energy Solution components, 170 kW with SK On components. Volkswagen's press kits state different 82 kWh figures for three of those years: 175 kW for 2024 and 2025 where the order guides say 170 kW, and a flat 170 kW for every 2023 Pro model where the order guide gives the LG-pack cars 135 kW. Both documents are Volkswagen's, so both figures are stated here.",
       },
       {
         question: "How long does a Volkswagen ID.4 take to charge from 10% to 80%?",
         answer:
-          "Around 30 minutes, per Volkswagen's 2023, 2024 and 2025 press kits — the 2025 sentence generalises to all ID.4 trims from a paragraph naming the Pro, Pro S and Pro S Plus, and Volkswagen publishes no separate figure for the 62 kWh Limited and S Limited cars built early in the 2025 model year. For 2021, Volkswagen's own figure is five to 80 percent charged in about 38 minutes, at that year's 125 kW rate.",
+          "Around 30 minutes, per Volkswagen's 2023, 2024 and 2025 press kits — the 2025 sentence generalises to all ID.4 trims from a paragraph naming the Pro, Pro S and Pro S Plus, and Volkswagen publishes no separate figure for the 62 kWh Limited and S Limited cars built early in the 2025 model year. For 2021, Volkswagen's figure is five to 80 percent charged in about 38 minutes, at that year's 125 kW rate.",
       },
       {
         question: "What charging connector does the Volkswagen ID.4 use?",
@@ -229,7 +229,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     contentFile: "mach-e-charging",
     pageTitle: "Ford Mustang Mach-E charging: DC speed, CCS port, Supercharger adapter | Voltcheck",
     description:
-      "What Ford's own order guides say about Mustang Mach-E charging, 2021 through 2025: 150 kW DC, the onboard AC charger by year, and what the Fast Charging Adapter does and does not do.",
+      "What Ford's order guides say about Mustang Mach-E charging, 2021 through 2025: 150 kW DC, the onboard AC charger by year, and what the Fast Charging Adapter does and does not do.",
     breadcrumbLabel: "Ford Mustang Mach-E charging",
     dateModified: "2026-08-25",
     faq: [
@@ -241,7 +241,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       {
         question: "What charging connector does the Ford Mustang Mach-E use?",
         answer:
-          "An SAE J1772 CCS (Combo Connector System) charge port, on every model year from 2021 through 2025, capable of charging on 120V, 240V and DC fast charge. Ford said in January 2024 it would start transitioning to a NACS port from 2025, but Ford's own 2025 Mach-E order guide still lists the CCS port.",
+          "An SAE J1772 CCS (Combo Connector System) charge port, on every model year from 2021 through 2025, capable of charging on 120V, 240V and DC fast charge. Ford said in January 2024 it would start transitioning to a NACS port from 2025, but Ford's 2025 Mach-E order guide still lists the CCS port.",
       },
       {
         question: "Can a Ford Mustang Mach-E charge at a Tesla Supercharger?",
@@ -267,7 +267,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     contentFile: "f150-lightning-charging",
     pageTitle: "Ford F-150 Lightning charging: charge times, onboard charger by year | Voltcheck",
     description:
-      "Ford's own charge times for the F-150 Lightning, 2022 through 2025, and the onboard-charger change that turns an 8-hour overnight into 13. Sourced to Ford's spec sheets and order guides.",
+      "Ford's charge times for the F-150 Lightning, 2022 through 2025, and the onboard-charger change that turns an 8-hour overnight into 13. Sourced to Ford's spec sheets and order guides.",
     breadcrumbLabel: "Ford F-150 Lightning charging",
     dateModified: "2026-09-16",
     faq: [
@@ -305,7 +305,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     contentFile: "bolt-ev-euv-charging",
     pageTitle: "Chevrolet Bolt EV & EUV charging: why some can't fast charge at all | Voltcheck",
     description:
-      "GM sold DC fast charging as an option on the Bolt EV through 2021, so some used cars cannot fast charge at any speed. Charge times by model year, from GM's own manuals and order guides.",
+      "GM sold DC fast charging as an option on the Bolt EV through 2021, so some used cars cannot fast charge at any speed. Charge times by model year, from GM's manuals and order guides.",
     breadcrumbLabel: "Chevrolet Bolt EV & Bolt EUV charging",
     dateModified: "2026-08-25",
     faq: [
@@ -338,19 +338,19 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     contentFile: "leaf-charging",
     pageTitle: "Nissan Leaf charging: CHAdeMO, the optional fast-charge port, and 2026's NACS | Voltcheck",
     description:
-      "Nissan sold the Leaf's fast-charge port as an option, and it is CHAdeMO, not CCS or NACS. What Nissan's own manuals say about charging a Leaf, and what changes for 2026.",
+      "Nissan sold the Leaf's fast-charge port as an option, and it is CHAdeMO, not CCS or NACS. What Nissan's manuals say about charging a Leaf, and what changes for 2026.",
     breadcrumbLabel: "Nissan Leaf charging",
     dateModified: "2026-08-25",
     faq: [
       {
         question: "What charging connector does the Nissan Leaf use?",
         answer:
-          "CHAdeMO for DC fast charging, and SAE J1772 for AC. Nissan's own manual says a quick-charge-equipped Leaf \"is compatible with most CHAdeMO (Japanese industry standard) connectors on charging stations,\" and adds that \"While supported by NISSAN, this connector may not become the US SAE standard.\" The all-new 2026 Leaf changes this: a J1772 port on the driver's-side fender and a NACS fast-charge port on the passenger's-side fender, which Nissan says unlocks over 20,000 Tesla Superchargers.",
+          "CHAdeMO for DC fast charging, and SAE J1772 for AC. Nissan's manual says a quick-charge-equipped Leaf \"is compatible with most CHAdeMO (Japanese industry standard) connectors on charging stations,\" and adds that \"While supported by NISSAN, this connector may not become the US SAE standard.\" The all-new 2026 Leaf changes this: a J1772 port on the driver's-side fender and a NACS fast-charge port on the passenger's-side fender, which Nissan says unlocks over 20,000 Tesla Superchargers.",
       },
       {
         question: "Do all Nissan Leafs have DC fast charging?",
         answer:
-          "No. Nissan's own words, unchanged from the 2019 manual to the 2024 one: \"Quick charge capability is only available on vehicles manufactured with the quick charge option, which includes the quick charge port. If your vehicle does not have such a port, quick charging cannot be used.\" It is a per-car check, not a per-trim one.",
+          "No. Nissan's words, unchanged from the 2019 manual to the 2024 one: \"Quick charge capability is only available on vehicles manufactured with the quick charge option, which includes the quick charge port. If your vehicle does not have such a port, quick charging cannot be used.\" It is a per-car check, not a per-trim one.",
       },
       {
         question: "How fast does a Nissan Leaf fast charge?",
@@ -360,7 +360,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       {
         question: "Does fast charging hurt a Nissan Leaf's battery?",
         answer:
-          "Nissan's own manual asks owners to limit it: \"NISSAN recommends using normal charging for usual charging of the vehicle. Use of quick charge should be minimized in order to help prolong Li-ion battery life.\" Nissan also lists avoiding sustained high battery temperatures, including from extended highway driving with multiple quick charges, among the ways to extend battery life, and states that quick-charging power is limited when the battery temperature is near the red zone.",
+          "Nissan's manual asks owners to limit it: \"NISSAN recommends using normal charging for usual charging of the vehicle. Use of quick charge should be minimized in order to help prolong Li-ion battery life.\" Nissan also lists avoiding sustained high battery temperatures, including from extended highway driving with multiple quick charges, among the ways to extend battery life, and states that quick-charging power is limited when the battery temperature is near the red zone.",
       },
     ],
   },
@@ -371,7 +371,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     contentFile: "id-buzz-charging",
     pageTitle: "Volkswagen ID. Buzz charging: 200 kW, 26 minutes, and a plan that doesn't transfer | Voltcheck",
     description:
-      "How fast the 2025 Volkswagen ID. Buzz charges, how its automatic battery preconditioning works, and why its Plug&Charge plan stops at the first owner. Volkswagen's own figures.",
+      "How fast the 2025 Volkswagen ID. Buzz charges, how its automatic battery preconditioning works, and why its Plug&Charge plan stops at the first owner. Volkswagen's figures.",
     breadcrumbLabel: "Volkswagen ID. Buzz charging",
     dateModified: "2026-08-25",
     faq: [
@@ -409,7 +409,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     contentFile: "model-3-battery-warranty",
     pageTitle: "Tesla Model 3 battery warranty: years, miles, and the 70% floor | Voltcheck",
     description:
-      "What Tesla's own Battery and Drive Unit Limited Warranty covers on a Model 3 — 8 years and 100,000 or 120,000 miles by trim, a 70% capacity floor, and what Tesla excludes.",
+      "What Tesla's Battery and Drive Unit Limited Warranty covers on a Model 3 — 8 years and 100,000 or 120,000 miles by trim, a 70% capacity floor, and what Tesla excludes.",
     breadcrumbLabel: "Tesla Model 3 battery warranty",
     dateModified: "2026-08-25",
     faq: [
@@ -464,7 +464,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       {
         question: "Do the ZEV warranties apply to my Tesla Model Y?",
         answer:
-          "Two conditions gate them. Model year: Tesla's own note reads \"The ZEV Limited Warranties apply only to vehicles of Model Year 2026 and later.\" Warranty Region: Tesla states the four ZEV Limited Warranties apply to vehicles with a Warranty Region of the United States and Canada, except as its document specifically notes. Where they apply, the Battery ZEV Limited Warranty runs 8 years or 100,000 miles and the High-Priced Propulsion-Related Parts ZEV Limited Warranty runs 7 years or 70,000 miles.",
+          "Two conditions gate them. Model year: Tesla's note reads \"The ZEV Limited Warranties apply only to vehicles of Model Year 2026 and later.\" Warranty Region: Tesla states the four ZEV Limited Warranties apply to vehicles with a Warranty Region of the United States and Canada, except as its document specifically notes. Where they apply, the Battery ZEV Limited Warranty runs 8 years or 100,000 miles and the High-Priced Propulsion-Related Parts ZEV Limited Warranty runs 7 years or 70,000 miles.",
       },
     ],
   },
@@ -475,7 +475,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     contentFile: "ioniq5-battery-warranty",
     pageTitle: "Hyundai Ioniq 5 battery warranty: 10 years, 100,000 miles, and the transfer question | Voltcheck",
     description:
-      "What Hyundai's own warranty handbook covers on an Ioniq 5 battery, what its two paragraphs about the 70% figure actually say, and what it does not say about a second owner.",
+      "What Hyundai's warranty handbook covers on an Ioniq 5 battery, what its two paragraphs about the 70% figure actually say, and what it does not say about a second owner.",
     breadcrumbLabel: "Hyundai Ioniq 5 battery warranty",
     dateModified: "2026-08-25",
     faq: [
@@ -508,7 +508,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     contentFile: "ev6-battery-warranty",
     pageTitle: "Kia EV6 battery warranty: two coverages, and when the clock started | Voltcheck",
     description:
-      "Kia covers an EV6's electric drivetrain and its battery capacity separately, both for 10 years or 100,000 miles from the date of first service — a date that can precede the first sale. From Kia's own EV warranty manual.",
+      "Kia covers an EV6's electric drivetrain and its battery capacity separately, both for 10 years or 100,000 miles from the date of first service — a date that can precede the first sale. From Kia's EV warranty manual.",
     breadcrumbLabel: "Kia EV6 battery warranty",
     dateModified: "2026-08-25",
     faq: [
@@ -542,7 +542,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     contentFile: "ioniq6-charging",
     pageTitle: "Hyundai Ioniq 6 charging: DC speed, CCS port, NACS adapter, preconditioning | Voltcheck",
     description:
-      "How fast the Hyundai Ioniq 6 charges, why it needs a NACS adapter for a Supercharger, and how its battery conditioning mode works. Sourced to Hyundai's own spec sheets and owner's manuals.",
+      "How fast the Hyundai Ioniq 6 charges, why it needs a NACS adapter for a Supercharger, and how its battery conditioning mode works. Sourced to Hyundai's spec sheets and owner's manuals.",
     breadcrumbLabel: "Hyundai Ioniq 6 charging",
     dateModified: "2026-08-25",
     faq: [
@@ -564,7 +564,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       {
         question: "Does the Hyundai Ioniq 6 precondition its battery before fast charging?",
         answer:
-          "On the 2023 and 2024 Ioniq 6, whose owner's manuals are the only ones this answer rests on: the battery heater is standard on every trim, and battery conditioning is a driver-selected mode reached through EV Settings on the infotainment screen. Setting a DC charging station as the navigation destination optimizes battery temperature only while that mode is already switched on. The mode also engages on its own if the battery temperature is low during driving or when the scheduled air conditioner/heater is activated, and will not engage when the battery level is too low. No 2025 Ioniq 6 owner's manual could be retrieved from Hyundai's own host, so no 2025-specific preconditioning behavior is claimed.",
+          "On the 2023 and 2024 Ioniq 6, whose owner's manuals are the only ones this answer rests on: the battery heater is standard on every trim, and battery conditioning is a driver-selected mode reached through EV Settings on the infotainment screen. Setting a DC charging station as the navigation destination optimizes battery temperature only while that mode is already switched on. The mode also engages on its if the battery temperature is low during driving or when the scheduled air conditioner/heater is activated, and will not engage when the battery level is too low. No 2025 Ioniq 6 owner's manual could be retrieved from Hyundai's host, so no 2025-specific preconditioning behavior is claimed.",
       },
     ],
   },
@@ -575,14 +575,14 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     contentFile: "ev6-charging",
     pageTitle: "Kia EV6 charging by model year: DC speed, CCS1 to NACS port switch | Voltcheck",
     description:
-      "How fast the Kia EV6 charges by model year and trim, and which years have the native NACS port. Sourced to Kia's own specification sheets, press releases, and owner's manual.",
+      "How fast the Kia EV6 charges by model year and trim, and which years have the native NACS port. Sourced to Kia's specification sheets, press releases, and owner's manual.",
     breadcrumbLabel: "Kia EV6 charging",
     dateModified: "2026-08-25",
     faq: [
       {
         question: "Does the Kia EV6 have a native NACS port?",
         answer:
-          "Model year 2025 does. Kia's own words: \"2025 model year Kia EV6 and 2026 model year EV9 come standard with NACS charging ports.\" Model years 2022, 2023, and 2024 ship with a CCS1 port instead, and Kia sells a NACS-to-CCS1 adapter through its dealers for those cars. The 2026 EV6's port type is not stated in any Kia document cited here.",
+          "Model year 2025 does. Kia's words: \"2025 model year Kia EV6 and 2026 model year EV9 come standard with NACS charging ports.\" Model years 2022, 2023, and 2024 ship with a CCS1 port instead, and Kia sells a NACS-to-CCS1 adapter through its dealers for those cars. The 2026 EV6's port type is not stated in any Kia document cited here.",
       },
       {
         question: "How fast does the Kia EV6 charge on a DC fast charger?",
@@ -597,7 +597,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       {
         question: "Does the Kia EV6 precondition its battery before fast charging?",
         answer:
-          "On the 2025 EV6, battery conditioning is a mode marked \"if equipped\" that the driver turns on and off with a switch on the infotainment screen, and can also start remotely from a smartphone app, in which case it ends when the battery reaches temperature or after 30 minutes. Kia's own words on the navigation link: \"When setting a DC charging station as a waypoint or destination in the navigation system, optimizing the battery temperature during the journey can reduce charging time to room temperature depending on the required time.\"",
+          "On the 2025 EV6, battery conditioning is a mode marked \"if equipped\" that the driver turns on and off with a switch on the infotainment screen, and can also start remotely from a smartphone app, in which case it ends when the battery reaches temperature or after 30 minutes. Kia's words on the navigation link: \"When setting a DC charging station as a waypoint or destination in the navigation system, optimizing the battery temperature during the journey can reduce charging time to room temperature depending on the required time.\"",
       },
     ],
   },
@@ -608,19 +608,19 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     contentFile: "id-buzz-heat-pump",
     pageTitle: "Volkswagen ID. Buzz heat pump: does it have one | Voltcheck",
     description:
-      "No US-market 2025 Volkswagen ID. Buzz has a heat pump. Volkswagen's own press release names an electric resistance heater instead. Sourced to Volkswagen's own documents.",
+      "No US-market 2025 Volkswagen ID. Buzz has a heat pump. Volkswagen's press release names an electric resistance heater instead. Sourced to Volkswagen's documents.",
     breadcrumbLabel: "Volkswagen ID. Buzz heat pump",
     dateModified: "2026-08-25",
     faq: [
       {
         question: "Does the Volkswagen ID. Buzz have a heat pump?",
         answer:
-          "No. No US-market 2025 Volkswagen ID. Buzz has a heat pump, on any of its five trims. Volkswagen's own press release names the heating hardware instead: \"the ID. Buzz also has an electric resistance heater as part of the Climatronic system.\" The word \"pump\" does not appear in Volkswagen's US order guide, press release, At a Glance sheet, or Tech Specs sheet for the 2025 ID. Buzz.",
+          "No. No US-market 2025 Volkswagen ID. Buzz has a heat pump, on any of its five trims. Volkswagen's press release names the heating hardware instead: \"the ID. Buzz also has an electric resistance heater as part of the Climatronic system.\" The word \"pump\" does not appear in Volkswagen's US order guide, press release, At a Glance sheet, or Tech Specs sheet for the 2025 ID. Buzz.",
       },
       {
         question: "How does the 2025 Volkswagen ID. Buzz warm its battery before fast charging?",
         answer:
-          "On the 2025 ID. Buzz, with the same electric resistance heater. Volkswagen's own words: \"This heater can also precondition the battery for DC fast charging—either automatically, when a charger is input as a destination in navigation, or manually triggered by the driver.\" Model year 2025 is the ID. Buzz's first US model year and the only one this page covers.",
+          "On the 2025 ID. Buzz, with the same electric resistance heater. Volkswagen's words: \"This heater can also precondition the battery for DC fast charging—either automatically, when a charger is input as a destination in navigation, or manually triggered by the driver.\" Model year 2025 is the ID. Buzz's first US model year and the only one this page covers.",
       },
       {
         question: "What cold-weather equipment does the 2025 Volkswagen ID. Buzz have instead?",
@@ -636,19 +636,19 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     contentFile: "f-150-lightning-heat-pump",
     pageTitle: "Ford F-150 Lightning heat pump by year: which model years have one | Voltcheck",
     description:
-      "Whether the Ford F-150 Lightning has a heat pump, by model year. Standard on all trims from 2024 on; no 2022 or 2023 Lightning has one. Sourced to Ford's own support site and order guides.",
+      "Whether the Ford F-150 Lightning has a heat pump, by model year. Standard on all trims from 2024 on; no 2022 or 2023 Lightning has one. Sourced to Ford's support site and order guides.",
     breadcrumbLabel: "Ford F-150 Lightning heat pump",
     dateModified: "2026-08-30",
     faq: [
       {
         question: "Does the Ford F-150 Lightning have a heat pump?",
         answer:
-          "Model years 2024 and newer do, on every trim. Ford's own words: \"The Ford Vapor Injection Heat Pump is standard on all trims of the 2024 and newer F-150 Lightning.\" Model years 2022 and 2023 do not — Ford's 2024 order guide introduces the Vapor Injection Heat Pump as New/Changed for MY2024, and the 2022 and 2023 order guides carry no heat-pump line.",
+          "Model years 2024 and newer do, on every trim. Ford's words: \"The Ford Vapor Injection Heat Pump is standard on all trims of the 2024 and newer F-150 Lightning.\" Model years 2022 and 2023 do not — Ford's 2024 order guide introduces the Vapor Injection Heat Pump as New/Changed for MY2024, and the 2022 and 2023 order guides carry no heat-pump line.",
       },
       {
         question: "Does the 2024 Ford F-150 Lightning have a heat pump?",
         answer:
-          "Yes. Every 2024 F-150 Lightning has the Vapor Injection Heat Pump as standard equipment, on all trims, per Ford's own support site and Ford's 2024 order guide, which lists it as New/Changed for MY2024.",
+          "Yes. Every 2024 F-150 Lightning has the Vapor Injection Heat Pump as standard equipment, on all trims, per Ford's support site and Ford's 2024 order guide, which lists it as New/Changed for MY2024.",
       },
     ],
   },
@@ -659,7 +659,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     contentFile: "leaf-heat-pump",
     pageTitle: "Nissan Leaf heat pump by year: hybrid heater system, trim by trim | Voltcheck",
     description:
-      "Which Nissan Leaf model years and trims get the Hybrid heater system, and which year Nissan actually says \"heat pump.\" On the 2026 Leaf it is standard on SV+ and Platinum+ and not offered on S+. Sourced to Nissan's own brochures and press kit.",
+      "Which Nissan Leaf model years and trims get the Hybrid heater system, and which year Nissan actually says \"heat pump.\" On the 2026 Leaf it is standard on SV+ and Platinum+ and not offered on S+. Sourced to Nissan's brochures and press kit.",
     breadcrumbLabel: "Nissan Leaf heat pump",
     dateModified: "2026-08-25",
     faq: [
@@ -676,7 +676,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       {
         question: "Does the 2026 Nissan Leaf have a heat pump?",
         answer:
-          "On two of its three trims. Nissan's own 2026 LEAF Press Kit specification grid gives the row \"Hybrid heater system (heat pump)\" an \"S\" for standard on SV+ and PLATINUM+, and a dash on the base S+ — and Nissan's legend for that grid defines only \"S – Standard\" and \"O – Optional,\" so a dash is neither. It is not in the press kit's factory-installed options either, so an S+ buyer cannot add it. Nissan's press release separately calls the heat pump \"standard\" without naming a trim; the per-trim grid is what this answer follows. The battery heater is separate: the grid marks it optional on SV+ and PLATINUM+ and not offered on S+, and the press kit prices it at $300. Nissan also says the 2026 Leaf captures waste heat from the drive motor and the on-board charger and re-purposes it to warm the battery.",
+          "On two of its three trims. Nissan's 2026 LEAF Press Kit specification grid gives the row \"Hybrid heater system (heat pump)\" an \"S\" for standard on SV+ and PLATINUM+, and a dash on the base S+ — and Nissan's legend for that grid defines only \"S – Standard\" and \"O – Optional,\" so a dash is neither. It is not in the press kit's factory-installed options either, so an S+ buyer cannot add it. Nissan's press release separately calls the heat pump \"standard\" without naming a trim; the per-trim grid is what this answer follows. The battery heater is separate: the grid marks it optional on SV+ and PLATINUM+ and not offered on S+, and the press kit prices it at $300. Nissan also says the 2026 Leaf captures waste heat from the drive motor and the on-board charger and re-purposes it to warm the battery.",
       },
     ],
   },
@@ -685,21 +685,21 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     model: "ariya",
     topic: "heat-pump",
     contentFile: "ariya-heat-pump",
-    pageTitle: "Nissan Ariya heat pump: what Nissan's own documents say | Voltcheck",
+    pageTitle: "Nissan Ariya heat pump: what Nissan's documents say | Voltcheck",
     description:
-      "No Nissan document published for the US-market Ariya, model years 2023 through 2025, says it has a heat pump. Nissan's own high-voltage component list names a PTC heater. Twelve Nissan documents checked.",
+      "No Nissan document published for the US-market Ariya, model years 2023 through 2025, says it has a heat pump. Nissan's high-voltage component list names a PTC heater. Twelve Nissan documents checked.",
     breadcrumbLabel: "Nissan Ariya heat pump",
     dateModified: "2026-08-25",
     faq: [
       {
         question: "Does the Nissan Ariya have a heat pump?",
         answer:
-          "For the US-market Ariya, model years 2023 through 2025: no Nissan document published for it says it has one. Twelve Nissan documents were checked for this page — the 2023, 2024, and 2025 owner's manuals, brochures, press-kit specification sets, and Quick Reference Guides — and the word \"pump\" appears in none of them in connection with the Ariya's climate system, apart from one conditional line of shared Nissan-EV boilerplate that reads \"(heat pump, if so equipped)\" and appears identically in the Leaf guides. Nissan's own twelve-item list of the Ariya's high-voltage components names a PTC heater in the heating position, alongside the air conditioner compressor. Non-US Ariya builds are out of scope: Nissan UK does list a heat pump as standard on the European car, which is a different specification.",
+          "For the US-market Ariya, model years 2023 through 2025: no Nissan document published for it says it has one. Twelve Nissan documents were checked for this page — the 2023, 2024, and 2025 owner's manuals, brochures, press-kit specification sets, and Quick Reference Guides — and the word \"pump\" appears in none of them in connection with the Ariya's climate system, apart from one conditional line of shared Nissan-EV boilerplate that reads \"(heat pump, if so equipped)\" and appears identically in the Leaf guides. Nissan's twelve-item list of the Ariya's high-voltage components names a PTC heater in the heating position, alongside the air conditioner compressor. Non-US Ariya builds are out of scope: Nissan UK does list a heat pump as standard on the European car, which is a different specification.",
       },
       {
         question: "What cold-weather equipment does the Nissan Ariya have?",
         answer:
-          "A battery heater, standard on every trim for 2023 and 2024 per Nissan's own press-kit specification tables and the 2024 brochure grid. Dual-zone Automatic Temperature Control is standard across the trim span. Heated front seats, a heated steering wheel, heated outboard rear seats, and climate-controlled heated-and-cooled front seats are each broken out by trim.",
+          "A battery heater, standard on every trim for 2023 and 2024 per Nissan's press-kit specification tables and the 2024 brochure grid. Dual-zone Automatic Temperature Control is standard across the trim span. Heated front seats, a heated steering wheel, heated outboard rear seats, and climate-controlled heated-and-cooled front seats are each broken out by trim.",
       },
       {
         question: "How was the Nissan Ariya's heat pump claim checked?",
@@ -715,14 +715,14 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     contentFile: "model-3-charging",
     pageTitle: "Tesla Model 3 charging: Supercharger speed, home rate by circuit, adapters | Voltcheck",
     description:
-      "How fast a Tesla Model 3 charges at a Supercharger and at home by circuit size, which trims cap at 32 amps, and which adapters it needs. Sourced to Tesla's own manual and support pages.",
+      "How fast a Tesla Model 3 charges at a Supercharger and at home by circuit size, which trims cap at 32 amps, and which adapters it needs. Sourced to Tesla's manual and support pages.",
     breadcrumbLabel: "Tesla Model 3 charging",
     dateModified: "2026-08-25",
     faq: [
       {
         question: "How fast does the Tesla Model 3 charge at a Supercharger?",
         answer:
-          "Tesla publishes a distance rather than a time to 80%, and publishes two of them at different scopes. Its support site gives the nameplate figure, \"Model 3 Up to 175 miles in 15 minutes.\" Its compare page gives a per-trim figure for the Model 3 Rear-Wheel Drive, \"Up to 170 mi\" in 15 minutes, measured at a constant 65 mph. Tesla does not reconcile the two. V3 Superchargers peak at up to 250 kW, and a V4 Supercharger does not make a Model 3 faster — Tesla's own words are that in North America V4 Superchargers charge up to 250 kW for Model S, Model 3, Model X and Model Y, with only Cybertruck able to take 325 kW. Tesla also says not every car reaches 250 kW, because rates vary with pack size and age, state of charge, ambient temperature, and vehicle configuration.",
+          "Tesla publishes a distance rather than a time to 80%, and publishes two of them at different scopes. Its support site gives the nameplate figure, \"Model 3 Up to 175 miles in 15 minutes.\" Its compare page gives a per-trim figure for the Model 3 Rear-Wheel Drive, \"Up to 170 mi\" in 15 minutes, measured at a constant 65 mph. Tesla does not reconcile the two. V3 Superchargers peak at up to 250 kW, and a V4 Supercharger does not make a Model 3 faster — Tesla's words are that in North America V4 Superchargers charge up to 250 kW for Model S, Model 3, Model X and Model Y, with only Cybertruck able to take 325 kW. Tesla also says not every car reaches 250 kW, because rates vary with pack size and age, state of charge, ambient temperature, and vehicle configuration.",
       },
       {
         question: "How fast does a Tesla Model 3 charge at home?",
@@ -732,12 +732,12 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       {
         question: "What adapter does a Tesla Model 3 need at a CCS charger?",
         answer:
-          "Tesla's CCS Combo 1 Adapter, rated 500V DC. Tesla's own words: \"Use only to connect the charge cable on a CCS Combo 1 charging station to a Tesla vehicle that is capable of Combo 1 DC charging,\" and \"Not all Tesla vehicles are equipped with CCS charging capability. To determine if your vehicle is compatible, touch Controls > Software > Additional Vehicle Information on the touchscreen, or contact Tesla.\" A separate SAE J1772 adapter is needed for J1772 AC stations.",
+          "Tesla's CCS Combo 1 Adapter, rated 500V DC. Tesla's words: \"Use only to connect the charge cable on a CCS Combo 1 charging station to a Tesla vehicle that is capable of Combo 1 DC charging,\" and \"Not all Tesla vehicles are equipped with CCS charging capability. To determine if your vehicle is compatible, touch Controls > Software > Additional Vehicle Information on the touchscreen, or contact Tesla.\" A separate SAE J1772 adapter is needed for J1772 AC stations.",
       },
       {
         question: "Does the Tesla Model 3 precondition its battery before fast charging?",
         answer:
-          "Yes, automatically, when the car is navigating to one. Tesla's own words: \"Your vehicle preconditions its high voltage Battery when navigating to Supercharger.\" The same works for non-Tesla fast chargers if the charger is entered as the navigation destination, though third-party stations are hidden on the map until enabled under Controls > Navigation > Third-Party Charging Stations. At home it is not automatic: without a scheduled Precondition, the car only warms the battery if it is too cold to charge.",
+          "Yes, automatically, when the car is navigating to one. Tesla's words: \"Your vehicle preconditions its high voltage Battery when navigating to Supercharger.\" The same works for non-Tesla fast chargers if the charger is entered as the navigation destination, though third-party stations are hidden on the map until enabled under Controls > Navigation > Third-Party Charging Stations. At home it is not automatic: without a scheduled Precondition, the car only warms the battery if it is too cold to charge.",
       },
     ],
   },
@@ -748,14 +748,14 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     contentFile: "model-y-charging",
     pageTitle: "Tesla Model Y charging: Supercharger speed, home rate by circuit, adapters | Voltcheck",
     description:
-      "How fast a Tesla Model Y charges at a Supercharger and at home by circuit size, why RWD and AWD cars cap at 32 amps, and which adapters they need. Sourced to Tesla's own manual and support pages.",
+      "How fast a Tesla Model Y charges at a Supercharger and at home by circuit size, why RWD and AWD cars cap at 32 amps, and which adapters they need. Sourced to Tesla's manual and support pages.",
     breadcrumbLabel: "Tesla Model Y charging",
     dateModified: "2026-08-25",
     faq: [
       {
         question: "How fast does the Tesla Model Y charge at a Supercharger?",
         answer:
-          "Tesla publishes a distance rather than a time to 80%, and publishes two of them at different scopes. Its support site gives the nameplate figure, \"Model Y Up to 162 miles in 15 minutes.\" Its compare page gives a per-trim figure for the Model Y Rear-Wheel Drive, \"Up to 160 mi\" in 15 minutes, measured at a constant 65 mph. Tesla does not reconcile the two. In the support site's five-row table the Model Y sits above the Cybertruck at 137 miles and below Model S at 200 and Model 3 and Model X at 175. V3 Superchargers peak at up to 250 kW, and a V4 Supercharger does not make a Model Y faster — Tesla's own words are that in North America V4 Superchargers charge up to 250 kW for Model S, Model 3, Model X and Model Y, with only Cybertruck able to take 325 kW.",
+          "Tesla publishes a distance rather than a time to 80%, and publishes two of them at different scopes. Its support site gives the nameplate figure, \"Model Y Up to 162 miles in 15 minutes.\" Its compare page gives a per-trim figure for the Model Y Rear-Wheel Drive, \"Up to 160 mi\" in 15 minutes, measured at a constant 65 mph. Tesla does not reconcile the two. In the support site's five-row table the Model Y sits above the Cybertruck at 137 miles and below Model S at 200 and Model 3 and Model X at 175. V3 Superchargers peak at up to 250 kW, and a V4 Supercharger does not make a Model Y faster — Tesla's words are that in North America V4 Superchargers charge up to 250 kW for Model S, Model 3, Model X and Model Y, with only Cybertruck able to take 325 kW.",
       },
       {
         question: "How fast does a Tesla Model Y charge at home?",
@@ -765,12 +765,12 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       {
         question: "What adapter does a Tesla Model Y need at a CCS charger?",
         answer:
-          "Tesla's CCS Combo 1 Adapter, rated 500V DC. Tesla's own words: \"Use only to connect the charge cable on a CCS Combo 1 charging station to a Tesla vehicle that is capable of Combo 1 DC charging,\" and \"Not all Tesla vehicles are equipped with CCS charging capability. To determine if your vehicle is compatible, touch Controls > Software > Additional Vehicle Information on the touchscreen, or contact Tesla.\" A separate SAE J1772 adapter is needed for J1772 AC stations.",
+          "Tesla's CCS Combo 1 Adapter, rated 500V DC. Tesla's words: \"Use only to connect the charge cable on a CCS Combo 1 charging station to a Tesla vehicle that is capable of Combo 1 DC charging,\" and \"Not all Tesla vehicles are equipped with CCS charging capability. To determine if your vehicle is compatible, touch Controls > Software > Additional Vehicle Information on the touchscreen, or contact Tesla.\" A separate SAE J1772 adapter is needed for J1772 AC stations.",
       },
       {
         question: "Does the Tesla Model Y precondition its battery before fast charging?",
         answer:
-          "Yes, automatically, when the car is navigating to one. Tesla's own words: \"Your vehicle preconditions its high voltage Battery when navigating to Supercharger.\" The same works for non-Tesla fast chargers if the charger is entered as the navigation destination, though third-party stations are hidden on the map until enabled under Controls > Navigation > Third-Party Charging Stations. At home it is not automatic: without a scheduled Precondition, the car only warms the battery if it is too cold to charge.",
+          "Yes, automatically, when the car is navigating to one. Tesla's words: \"Your vehicle preconditions its high voltage Battery when navigating to Supercharger.\" The same works for non-Tesla fast chargers if the charger is entered as the navigation destination, though third-party stations are hidden on the map until enabled under Controls > Navigation > Third-Party Charging Stations. At home it is not automatic: without a scheduled Precondition, the car only warms the battery if it is too cold to charge.",
       },
     ],
   },
@@ -783,19 +783,19 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     contentFile: "model-3-heat-pump",
     pageTitle: "Tesla Model 3 heat pump: which cars have one, by build date | Voltcheck",
     description:
-      "Tesla says Model 3 cars built between about July 2017 and October 2020 do not have a heat pump, and cars built afterward do. Sourced to Tesla's own owner's manual.",
+      "Tesla says Model 3 cars built between about July 2017 and October 2020 do not have a heat pump, and cars built afterward do. Sourced to Tesla's owner's manual.",
     breadcrumbLabel: "Tesla Model 3 heat pump",
     dateModified: "2026-08-25",
     faq: [
       {
         question: "Does the Tesla Model 3 have a heat pump?",
         answer:
-          "It depends on when the car was built, and Tesla states the boundary as a manufacture date rather than a model year. Tesla's own words in the Model 3 Owner's Manual: \"Vehicles manufactured between approximately July 2017 and October 2020 do not have a heat pump,\" and \"Vehicles manufactured afterward have a heat pump.\" The word \"approximately\" is Tesla's. No Tesla document behind this page maps that date to a model year, so a Model 3 built near October 2020 cannot be resolved from its model year alone.",
+          "It depends on when the car was built, and Tesla states the boundary as a manufacture date rather than a model year. Tesla's words in the Model 3 Owner's Manual: \"Vehicles manufactured between approximately July 2017 and October 2020 do not have a heat pump,\" and \"Vehicles manufactured afterward have a heat pump.\" The word \"approximately\" is Tesla's. No Tesla document behind this page maps that date to a model year, so a Model 3 built near October 2020 cannot be resolved from its model year alone.",
       },
       {
         question: "How do I tell if a used Tesla Model 3 has a heat pump?",
         answer:
-          "Tesla publishes a per-car check, in its own words: \"to determine if your vehicle has a heat pump, touch Controls > Software > Additional Vehicle Information.\" The instruction appears on four pages of the Model 3 Owner's Manual's 2017-2023 edition: Operating Climate Controls, Acceleration Modes, Charging Instructions, and Cold Weather Best Practices.",
+          "Tesla publishes a per-car check: \"to determine if your vehicle has a heat pump, touch Controls > Software > Additional Vehicle Information.\" The instruction appears on four pages of the Model 3 Owner's Manual's 2017-2023 edition: Operating Climate Controls, Acceleration Modes, Charging Instructions, and Cold Weather Best Practices.",
       },
       {
         question: "Tesla's manual lists a Heat Pump Assembly for the Model 3 — doesn't that settle it?",
@@ -816,19 +816,19 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     contentFile: "ioniq5-heat-pump",
     pageTitle: "Hyundai Ioniq 5 heat pump: AWD only, every model year | Voltcheck",
     description:
-      "The Hyundai Ioniq 5's heat pump is AWD-only in every trim and every model year from 2022 through 2026, per Hyundai's own equipment grids. No rear-wheel-drive Ioniq 5 has one.",
+      "The Hyundai Ioniq 5's heat pump is AWD-only in every trim and every model year from 2022 through 2026, per Hyundai's equipment grids. No rear-wheel-drive Ioniq 5 has one.",
     breadcrumbLabel: "Hyundai Ioniq 5 heat pump",
     dateModified: "2026-08-25",
     faq: [
       {
         question: "Does the Hyundai Ioniq 5 have a heat pump?",
         answer:
-          "Only if it is all-wheel drive. Hyundai's own Features grid gives the Heat Pump row the value \"AWD only\" in every trim column in 2022, 2023 and 2024 (SE, SEL, Limited) and \"AWD-only\" in every trim column in 2025 and 2026 (SE, SEL, XRT, Limited). Every rear-wheel-drive Ioniq 5 in those five model years is a car without a heat pump, including every SE Standard Range, which Hyundai builds only as RWD.",
+          "Only if it is all-wheel drive. Hyundai's Features grid gives the Heat Pump row the value \"AWD only\" in every trim column in 2022, 2023 and 2024 (SE, SEL, Limited) and \"AWD-only\" in every trim column in 2025 and 2026 (SE, SEL, XRT, Limited). Every rear-wheel-drive Ioniq 5 in those five model years is a car without a heat pump, including every SE Standard Range, which Hyundai builds only as RWD.",
       },
       {
         question: "Which Hyundai Ioniq 5 trims have a heat pump?",
         answer:
-          "The trim is not what decides it — the drivetrain is, and in each model year from 2022 through 2026 Hyundai gives every trim column the same cell value. The XRT, offered for 2025 and 2026, is the one trim that resolves on its own: Hyundai lists an XRT range figure only in the AWD column of the range table in both of those years — though every range figure in the 2026 table is still a TBD placeholder — and XRT appears in neither the RWD column nor the RWD Standard Range column of either.",
+          "The trim is not what decides it — the drivetrain is, and in each model year from 2022 through 2026 Hyundai gives every trim column the same cell value. The XRT, offered for 2025 and 2026, is the one trim that resolves on its: Hyundai lists an XRT range figure only in the AWD column of the range table in both of those years — though every range figure in the 2026 table is still a TBD placeholder — and XRT appears in neither the RWD column nor the RWD Standard Range column of either.",
       },
       {
         question: "What does a rear-wheel-drive Hyundai Ioniq 5 use to heat the cabin?",
@@ -838,7 +838,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       {
         question: "Does the 2026 Hyundai Ioniq 5 have a heat pump?",
         answer:
-          "Only if it is all-wheel drive, the same as every year before it. Hyundai's own 2026 IONIQ 5 Features and Specifications marks the Heat Pump row \"AWD-only\" in all four trim columns — SE, SEL, XRT and Limited — exactly as the 2025 document does. Hyundai's separate 2026 Model Year Changes document agrees by omission: it lists the car as a Carry-over Model and names only the included charging cable and three color items as changes from 2025.",
+          "Only if it is all-wheel drive, the same as every year before it. Hyundai's 2026 IONIQ 5 Features and Specifications marks the Heat Pump row \"AWD-only\" in all four trim columns — SE, SEL, XRT and Limited — exactly as the 2025 document does. Hyundai's separate 2026 Model Year Changes document agrees by omission: it lists the car as a Carry-over Model and names only the included charging cable and three color items as changes from 2025.",
       },
     ],
   },
@@ -849,14 +849,14 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     contentFile: "ioniq6-heat-pump",
     pageTitle: "Hyundai Ioniq 6 heat pump: standard on every one but the Standard Range | Voltcheck",
     description:
-      "Hyundai marks the Ioniq 6's heat pump standard on SE Long Range, SEL and Limited for 2023 through 2025, and absent on the 53 kWh SE Standard Range. From Hyundai's own equipment grids.",
+      "Hyundai marks the Ioniq 6's heat pump standard on SE Long Range, SEL and Limited for 2023 through 2025, and absent on the 53 kWh SE Standard Range. From Hyundai's equipment grids.",
     breadcrumbLabel: "Hyundai Ioniq 6 heat pump",
     dateModified: "2026-08-25",
     faq: [
       {
         question: "Does the Hyundai Ioniq 6 have a heat pump?",
         answer:
-          "Every Ioniq 6 for model years 2023, 2024 and 2025 does except the Standard Range car. Hyundai's own equipment grid says it two ways: for 2023 and 2024 the SE cell reads \"S (LR only)\" while SEL and Limited read \"S\"; for 2025 Hyundai splits the Standard Range into its own SE (SR) column and marks it \"-\", with SE, SEL and Limited reading \"S\". Both notations name the same car, because the 53.0 kWh Standard Range battery is sold only as an SE.",
+          "Every Ioniq 6 for model years 2023, 2024 and 2025 does except the Standard Range car. Hyundai's equipment grid says it two ways: for 2023 and 2024 the SE cell reads \"S (LR only)\" while SEL and Limited read \"S\"; for 2025 Hyundai splits the Standard Range into its SE (SR) column and marks it \"-\", with SE, SEL and Limited reading \"S\". Both notations name the same car, because the 53.0 kWh Standard Range battery is sold only as an SE.",
       },
       {
         question: "Do you need all-wheel drive to get a heat pump on a Hyundai Ioniq 6?",
@@ -871,7 +871,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       {
         question: "Does the 2026 Hyundai Ioniq 6 have a heat pump?",
         answer:
-          "Not covered here. Hyundai's own 2026 Model Year Changes document lists the 2026 IONIQ 6 as a Product Enhancement Model and its page for the car reads, in full, \"Product Enhancement Model, details to come.\" No 2026 IONIQ 6 features grid was found on Hyundai's newsroom, so no 2026 claim is made.",
+          "Not covered here. Hyundai's 2026 Model Year Changes document lists the 2026 IONIQ 6 as a Product Enhancement Model and its page for the car reads, in full, \"Product Enhancement Model, details to come.\" No 2026 IONIQ 6 features grid was found on Hyundai's newsroom, so no 2026 claim is made.",
       },
     ],
   },
@@ -882,14 +882,14 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     contentFile: "ev6-heat-pump",
     pageTitle: "Kia EV6 heat pump: optional on most trims, so check the car | Voltcheck",
     description:
-      "Kia marks the EV6's heat pump Optional on Wind and GT-Line in every model year from 2022 to 2026, standard only on the GT, and not available on the Light. From Kia's own Features & Options files.",
+      "Kia marks the EV6's heat pump Optional on Wind and GT-Line in every model year from 2022 to 2026, standard only on the GT, and not available on the Light. From Kia's Features & Options files.",
     breadcrumbLabel: "Kia EV6 heat pump",
     dateModified: "2026-08-25",
     faq: [
       {
         question: "Does the Kia EV6 have a heat pump?",
         answer:
-          "It depends on the individual car, not just the trim. Kia's own Features & Options grid marks the heat pump Optional on the Wind and GT-Line in every model year from 2022 through 2026, Standard on the GT from 2023 on, and Not Available on the 2022 Light and on the Light Short Range from 2024 on. For 2024 through 2026 the Light Long Range is Optional too. Kia's legend, printed in each file: S = Standard, O = Optional, - = Not Available.",
+          "It depends on the individual car, not just the trim. Kia's Features & Options grid marks the heat pump Optional on the Wind and GT-Line in every model year from 2022 through 2026, Standard on the GT from 2023 on, and Not Available on the 2022 Light and on the Light Short Range from 2024 on. For 2024 through 2026 the Light Long Range is Optional too. Kia's legend, printed in each file: S = Standard, O = Optional, - = Not Available.",
       },
       {
         question: "Which Kia EV6 trims always have a heat pump?",
@@ -904,7 +904,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       {
         question: "How can I tell whether a used Kia EV6 has a heat pump?",
         answer:
-          "Not from the model name or the trim, on a Wind or GT-Line of any year. Kia's own 2025 EV6 Owner's Manual confirms the car is built both ways: its air conditioning table gives two refrigerant charges, \"With heat pump\" 850±25 g and \"Without heat pump\" 750±25 g, both R-1234yf. Kia also says where the refrigerant label is — \"located on the underside of the hood\" — and what it carries: Kia's own legend for the label names field 2 as \"Amount of refrigerant\", keyed in its illustration to a mass printed as \"XXX±XXg\". Two things stop that short of a guarantee. Kia prints a caveat under the illustration, \"The A/C refrigerant label in the vehicle may differ from the illustration,\" and no Kia document states that the number on the label is the same number as in the specification table.",
+          "Not from the model name or the trim, on a Wind or GT-Line of any year. Kia's 2025 EV6 Owner's Manual confirms the car is built both ways: its air conditioning table gives two refrigerant charges, \"With heat pump\" 850±25 g and \"Without heat pump\" 750±25 g, both R-1234yf. Kia also says where the refrigerant label is — \"located on the underside of the hood\" — and what it carries: Kia's legend for the label names field 2 as \"Amount of refrigerant\", keyed in its illustration to a mass printed as \"XXX±XXg\". Two things stop that short of a guarantee. Kia prints a caveat under the illustration, \"The A/C refrigerant label in the vehicle may differ from the illustration,\" and no Kia document states that the number on the label is the same number as in the specification table.",
       },
     ],
   },
@@ -997,7 +997,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     contentFile: "lyriq-charging",
     pageTitle: "Cadillac Lyriq charging: the model year the plug changes | Voltcheck",
     description:
-      "The Lyriq takes CCS1 through 2026 and a native NACS port for 2027, at 190 kW either way. Cadillac's own charge times per year, drive and onboard charger.",
+      "The Lyriq takes CCS1 through 2026 and a native NACS port for 2027, at 190 kW either way. Cadillac's charge times per year, drive and onboard charger.",
     breadcrumbLabel: "Cadillac Lyriq charging",
     dateModified: "2026-09-01",
     faq: [
@@ -1073,14 +1073,14 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     contentFile: "equinox-ev-charging",
     pageTitle: "Chevrolet Equinox EV charging: 150 kW DC, CCS1 through 2026, NACS in 2027 | Voltcheck",
     description:
-      "Chevrolet's own charging figures for the Equinox EV: 150 kW DC fast charging, 85 kWh in 2026, CCS1 through 2026 and a native NACS port for 2027.",
+      "Chevrolet's charging figures for the Equinox EV: 150 kW DC fast charging, 85 kWh in 2026, CCS1 through 2026 and a native NACS port for 2027.",
     breadcrumbLabel: "Chevrolet Equinox EV charging",
     dateModified: "2026-09-01",
     faq: [
       {
         question: "What charging connector does the Chevrolet Equinox EV use?",
         answer:
-          "It depends on the model year. The 2024, 2025 and 2026 Equinox EV owner's manuals each say the vehicle is compatible with a Combined Charging System 1 connector, the port usually written CCS1. The 2027 Equinox EV owner's manual instead says the vehicle is compatible with a North American Charging Standard connector, and GM's own August 2026 NACS release marks the Equinox EV as NACS-native for the 2027 model year only.",
+          "It depends on the model year. The 2024, 2025 and 2026 Equinox EV owner's manuals each say the vehicle is compatible with a Combined Charging System 1 connector, the port usually written CCS1. The 2027 Equinox EV owner's manual instead says the vehicle is compatible with a North American Charging Standard connector, and GM's August 2026 NACS release marks the Equinox EV as NACS-native for the 2027 model year only.",
       },
       {
         question: "How fast does the Chevrolet Equinox EV charge on a DC fast charger?",
@@ -1123,7 +1123,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       {
         question: "At what point does Chevrolet replace the Equinox EV battery under warranty?",
         answer:
-          "The battery is replaced or repaired if its capacity falls below 75 percent of its original value during the warranty period, as determined by a certified dealer. The replacement is a battery appropriate for the age and mileage of the vehicle, and Chevrolet repairs or replaces the propulsion battery with new or refurbished components at its own discretion.",
+          "The battery is replaced or repaired if its capacity falls below 75 percent of its original value during the warranty period, as determined by a certified dealer. The replacement is a battery appropriate for the age and mileage of the vehicle, and Chevrolet repairs or replaces the propulsion battery with new or refurbished components at its discretion.",
       },
       {
         question: "Does the Chevrolet Equinox EV battery warranty transfer to a second owner?",
@@ -1149,7 +1149,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     contentFile: "blazer-ev-charging",
     pageTitle: "Chevrolet Blazer EV charging: 85 vs 102 kWh packs, and the 2027 NACS switch | Voltcheck",
     description:
-      "Blazer EV DC rates by pack: 150 kW on 85 kWh, 190 kW on 102 kWh. CCS1 through 2026, NACS from 2027. Sourced to Chevrolet's own specs and owner manuals.",
+      "Blazer EV DC rates by pack: 150 kW on 85 kWh, 190 kW on 102 kWh. CCS1 through 2026, NACS from 2027. Sourced to Chevrolet's specs and owner manuals.",
     breadcrumbLabel: "Chevrolet Blazer EV charging",
     dateModified: "2026-09-01",
     faq: [
@@ -1166,7 +1166,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       {
         question: "Does the Chevrolet Blazer EV have a NACS charge port?",
         answer:
-          "From the 2027 model year, yes. The 2027 Blazer EV owner manual states the vehicle is compatible with a North American Charging Standard connector, and GM's own per-model table marks the Blazer EV NACS-native for 2027. Model years 2024, 2025 and 2026 have a Combined Charging System 1 port, and GM lists the 2026 Blazer EV among the models that need an adapter to use Tesla Superchargers.",
+          "From the 2027 model year, yes. The 2027 Blazer EV owner manual states the vehicle is compatible with a North American Charging Standard connector, and GM's per-model table marks the Blazer EV NACS-native for 2027. Model years 2024, 2025 and 2026 have a Combined Charging System 1 port, and GM lists the 2026 Blazer EV among the models that need an adapter to use Tesla Superchargers.",
       },
       {
         question: "Can a Chevrolet Blazer EV use Tesla Superchargers?",
@@ -1187,14 +1187,14 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     contentFile: "blazer-ev-battery-warranty",
     pageTitle: "Chevrolet Blazer EV battery warranty: 8 years, and the 75% floor | Voltcheck",
     description:
-      "Blazer EV battery coverage is 8 years or 100,000 miles, replaced below 75% capacity, and it transfers to you. Sourced to Chevrolet's own warranty booklets.",
+      "Blazer EV battery coverage is 8 years or 100,000 miles, replaced below 75% capacity, and it transfers to you. Sourced to Chevrolet's warranty booklets.",
     breadcrumbLabel: "Chevrolet Blazer EV battery warranty",
     dateModified: "2026-09-01",
     faq: [
       {
         question: "How long is the Chevrolet Blazer EV battery warranty?",
         answer:
-          "The propulsion battery pack and its internal components are covered for 8 years or 100,000 miles, whichever comes first. Chevrolet states the same term on its own Blazer EV specification pages for the 2024, 2025 and 2026 model years. The clock starts on the date the vehicle is first delivered or put in use.",
+          "The propulsion battery pack and its internal components are covered for 8 years or 100,000 miles, whichever comes first. Chevrolet states the same term on its Blazer EV specification pages for the 2024, 2025 and 2026 model years. The clock starts on the date the vehicle is first delivered or put in use.",
       },
       {
         question: "Does the Chevrolet Blazer EV battery warranty transfer to a second owner?",
@@ -1225,7 +1225,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     contentFile: "ev9-charging",
     pageTitle: "Kia EV9 charging: 235 kW peak, and NACS only from 2026 | Voltcheck",
     description:
-      "10-80% in 20-24 min on a 350 kW charger for 2024 and 2026, peak 235 or 210 kW by pack, CCS1 through 2025 and NACS from 2026. Kia's own tables.",
+      "10-80% in 20-24 min on a 350 kW charger for 2024 and 2026, peak 235 or 210 kW by pack, CCS1 through 2025 and NACS from 2026. Kia's tables.",
     breadcrumbLabel: "Kia EV9 charging",
     dateModified: "2026-09-01",
     faq: [
@@ -1263,7 +1263,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     contentFile: "ev9-heat-pump",
     pageTitle: "Kia EV9 heat pump: standard on AWD, absent on the RWD Light | Voltcheck",
     description:
-      "Kia's own tables: the EV9 heat pump is standard on Wind, Land and GT-Line for 2024-2026 and not available on the RWD Light. Optional on the 2025 Light LR.",
+      "Kia's tables: the EV9 heat pump is standard on Wind, Land and GT-Line for 2024-2026 and not available on the RWD Light. Optional on the 2025 Light LR.",
     breadcrumbLabel: "Kia EV9 heat pump",
     dateModified: "2026-09-01",
     faq: [
@@ -1334,7 +1334,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     contentFile: "wrangler-4xe-charging",
     pageTitle: "Jeep Wrangler 4xe charging: 12 hours on Level 1, about 2 on Level 2 | Voltcheck",
     description:
-      "Jeep's own figures: a 17.3 kWh gross pack, a 7.2 kW max charge rate, J1772 AC only, and about 2 hours on Level 2 from under 1% charge.",
+      "Jeep's figures: a 17.3 kWh gross pack, a 7.2 kW max charge rate, J1772 AC only, and about 2 hours on Level 2 from under 1% charge.",
     breadcrumbLabel: "Jeep Wrangler 4xe charging",
     dateModified: "2026-09-01",
     faq: [
@@ -1410,7 +1410,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     contentFile: "prologue-charging",
     pageTitle: "Honda Prologue charging: 85 kWh pack, 150 kW DC, 20-80% in 35 minutes | Voltcheck",
     description:
-      "Every Honda Prologue carries an 85 kWh pack, DC fast charges at up to 150 kW, and goes 20% to 80% in 35 minutes. Honda's own figures, 2024 to 2026.",
+      "Every Honda Prologue carries an 85 kWh pack, DC fast charges at up to 150 kW, and goes 20% to 80% in 35 minutes. Honda's figures, 2024 to 2026.",
     breadcrumbLabel: "Honda Prologue charging",
     dateModified: "2026-09-01",
     faq: [
@@ -1479,7 +1479,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       {
         question: "What voids the Honda Prologue's battery warranty?",
         answer:
-          "Failure to follow Honda's recommended battery maintenance and charging procedures voids the High Voltage Battery Warranty. Honda also excludes damage from flooding the battery, exposing it to direct flame, and damaging it or intentionally attempting to extend its life by means other than those its own documentation specifies, or to reduce it. Gradual energy and power loss with time and use falls outside the warranty except to the extent the High Voltage Battery Warranty itself specifies.",
+          "Failure to follow Honda's recommended battery maintenance and charging procedures voids the High Voltage Battery Warranty. Honda also excludes damage from flooding the battery, exposing it to direct flame, and damaging it or intentionally attempting to extend its life by means other than those its documentation specifies, or to reduce it. Gradual energy and power loss with time and use falls outside the warranty except to the extent the High Voltage Battery Warranty itself specifies.",
       },
     ],
   },

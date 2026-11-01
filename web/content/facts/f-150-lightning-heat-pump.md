@@ -10,7 +10,7 @@
 | 2025 | Standard, all trims — Vapor Injection Heat Pump[^3][^5] |
 | 2026 | Standard, all trims — Vapor Injection Heat Pump[^3][^6] |
 
-Ford's own words: "The Ford Vapor Injection Heat Pump is standard on all trims of the 2024 and newer F-150 Lightning."[^3]
+Ford's words: "The Ford Vapor Injection Heat Pump is standard on all trims of the 2024 and newer F-150 Lightning."[^3]
 
 ## See it for yourself
 
@@ -35,4 +35,4 @@ Ford's own words: "The Ford Vapor Injection Heat Pump is standard on all trims o
 
 ## Scope note
 
-US retail trucks, model years 2022 through 2026. Commercial and fleet-only variants are not covered. An earlier version of this page said no 2024 Lightning has a heat pump, based on a third-party mirror of the 2024 order guide; Ford's own support page and Ford's own copy of the 2024 order guide both say otherwise, and this page was corrected on 2026-08-30.
+US retail trucks, model years 2022 through 2026. Commercial and fleet-only variants are not covered. An earlier version of this page said no 2024 Lightning has a heat pump, based on a third-party mirror of the 2024 order guide; Ford's support page and Ford's copy of the 2024 order guide both say otherwise, and this page was corrected on 2026-08-30.

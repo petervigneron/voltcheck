@@ -9,7 +9,7 @@ Tesla draws the line at a manufacture date, not a model year.
 | Built approximately July 2017 to October 2020 | None[^1] |
 | Built after approximately October 2020 | Standard[^1] |
 
-Tesla's own words: "Vehicles manufactured between approximately July 2017 and October 2020 do not have a heat pump." The word "approximately" is Tesla's.[^1]
+Tesla's words: "Vehicles manufactured between approximately July 2017 and October 2020 do not have a heat pump." The word "approximately" is Tesla's.[^1]
 
 - To check one specific car, touch Controls > Software > Additional Vehicle Information.[^2]
 

@@ -162,7 +162,7 @@ export function ListingCard({
         ) : (
           <div
             className="text-[22px] leading-none font-extrabold tracking-[-0.02em]"
-            title="Voltcheck couldn't confirm this car's advertised price from the dealer's feed; see the dealer's own page"
+            title="Voltcheck couldn't confirm this car's advertised price from the dealer's feed; see the dealer's page"
           >
             See dealer for price
           </div>

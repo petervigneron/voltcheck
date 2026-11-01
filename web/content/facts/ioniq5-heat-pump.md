@@ -49,10 +49,10 @@
 
 [^6]: Hyundai, *2022 Ioniq 5 Owner's Manual* (PDF, 663 pages), "AIR CONDITIONING SYSTEM" table, printed page 2-11 (PDF page 81). Read from the page rendered as an image. https://owners.hyundaiusa.com/content/dam/hyundai/us/myhyundai/manuals/glovebox-manual/2022/ioniq5/2022-Ioniq-5-Owners-Manual.pdf
 
-[^7]: Hyundai, *2025 IONIQ 5 Owner's Manual* (PDF, 639 pages; the Hyundai-branded document, mirrored on cdn.dealereprocess.org rather than Hyundai's own host), "Air Conditioning System" table, printed page 10-5 (PDF page 615). https://cdn.dealereprocess.org/cdn/servicemanuals/hyundai/2025-ioniq5.pdf
+[^7]: Hyundai, *2025 IONIQ 5 Owner's Manual* (PDF, 639 pages; the Hyundai-branded document, mirrored on cdn.dealereprocess.org rather than Hyundai's host), "Air Conditioning System" table, printed page 10-5 (PDF page 615). https://cdn.dealereprocess.org/cdn/servicemanuals/hyundai/2025-ioniq5.pdf
 
 [^8]: Hyundai, *2026 IONIQ 5 N Specs and Features* (PDF, 25 pages), HVAC/Defogger table, PDF page 17, single column headed "N AWD", Heat Pump row "S". https://www.hyundainews.com/assets/documents/original/68164-2026IONIQ5NSpecsFeatures20250722A.pdf. Cited only as a boundary marker for a different model.
 
 ## Scope note
 
-Model years 2022 through 2026, US market, each read from Hyundai's own Features grid for that model year, every Heat Pump row read from a rendered image of its page. The Ioniq 5 N is a different model and is out of scope; Hyundai's 2026 IONIQ 5 N grid marks its Heat Pump row standard.[^8] Non-US Ioniq 5 builds are out of scope entirely.
+Model years 2022 through 2026, US market, each read from Hyundai's Features grid for that model year, every Heat Pump row read from a rendered image of its page. The Ioniq 5 N is a different model and is out of scope; Hyundai's 2026 IONIQ 5 N grid marks its Heat Pump row standard.[^8] Non-US Ioniq 5 builds are out of scope entirely.

@@ -22,7 +22,7 @@
 
 Honda excludes from the High Voltage Battery Warranty:
 
-- Damaging the battery, or intentionally attempting — by physical means, programming, or other methods — to extend the life of the battery by means other than those the owner manual and Honda's own documentation specify, or to reduce its life.[^2]
+- Damaging the battery, or intentionally attempting — by physical means, programming, or other methods — to extend the life of the battery by means other than those the owner manual and Honda's documentation specify, or to reduce its life.[^2]
 - Exposing the battery to direct flame.[^2]
 - Flooding the battery.[^2]
 - Gradual energy or power loss with time and use, and loss resulting from battery usage, except to the extent the High Voltage Battery Warranty specifies.[^2][^6]

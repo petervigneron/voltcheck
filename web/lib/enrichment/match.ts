@@ -123,7 +123,7 @@ export const canonicalMake = (make: string | undefined, model: string | undefine
 // the false exact), a different series does not.
 const VPIC_PATTERN_TRIM_ARTIFACTS: {
   make: string;
-  models: string[]; // vPIC's own model strings, not a feed's
+  models: string[]; // vPIC's model strings, not a feed's
   years: [number, number];
   series: string;
   trims: string[];
@@ -299,7 +299,7 @@ function matchWithoutTrustedTrim(
   return {
     candidates: rows,
     discriminator:
-      "The listing's trim and its own description disagree. The window sticker or the door-jamb label settles which version this is.",
+      "The listing's trim and its description disagree. The window sticker or the door-jamb label settles which version this is.",
   };
 }
 
