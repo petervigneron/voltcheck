@@ -40014,5 +40014,90 @@
    "fromReplacement": false
   },
   "checkedAt": "2026-11-01"
+ },
+ "2G5ZJ3TYXR9102472": {
+  "coverage": {
+   "startDate": "2025-07-10",
+   "startMileage": 16,
+   "expiresDate": "2033-07-10",
+   "expiresMileage": 100016,
+   "inServiceDate": "2025-07-10",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-11-02"
+ },
+ "3GNKDCRJXRS213108": {
+  "coverage": {
+   "startDate": "2024-09-30",
+   "startMileage": 19,
+   "expiresDate": "2032-09-30",
+   "expiresMileage": 100019,
+   "inServiceDate": "2024-09-30",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-11-02"
+ },
+ "3GNKDBRJ1RS200354": {
+  "coverage": {
+   "startDate": "2024-08-28",
+   "startMileage": 24,
+   "expiresDate": "2032-08-28",
+   "expiresMileage": 100024,
+   "inServiceDate": "2024-08-28",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-11-02"
+ },
+ "3GNKDBRJ1RS227330": {
+  "coverage": {
+   "startDate": "2024-07-31",
+   "startMileage": 6,
+   "expiresDate": "2032-07-31",
+   "expiresMileage": 100006,
+   "inServiceDate": "2024-07-31",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-11-02"
+ },
+ "3GNKDCRJ9RS168078": {
+  "coverage": {
+   "startDate": "2024-09-24",
+   "startMileage": 65,
+   "expiresDate": "2032-09-24",
+   "expiresMileage": 100065,
+   "inServiceDate": "2024-09-24",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-11-02"
+ },
+ "1G1FY6S02P4174389": {
+  "coverage": {
+   "startDate": "2023-09-14",
+   "startMileage": 83,
+   "expiresDate": "2031-09-14",
+   "expiresMileage": 100083,
+   "inServiceDate": "2023-09-14",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-11-02"
+ },
+ "3GPKHURM2RS537813": {
+  "unavailable": true,
+  "checkedAt": "2026-11-02"
+ },
+ "3GPKHXRJ5RS521337": {
+  "unavailable": true,
+  "checkedAt": "2026-11-02"
+ },
+ "1G1FY6S09L4122168": {
+  "coverage": {
+   "startDate": "2021-01-20",
+   "startMileage": 57,
+   "expiresDate": "2029-01-20",
+   "expiresMileage": 100057,
+   "inServiceDate": "2021-01-20",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-11-02"
  }
 }
