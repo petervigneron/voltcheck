@@ -23,7 +23,7 @@
 // contributes at match time) against every live listing and reports exactly
 // what it resolves to.
 //
-// SOURCE: the CDN-cached browse shards (voltcheck.net/api/index/0..5) — never
+// SOURCE: the CDN-cached browse shards (censusev.com/api/index/0..5) — never
 // Supabase directly. Those six files ARE the live feed (lib/listings/pack.ts),
 // fetched once each, so this is gentle load on a database that a nightly
 // db-sync may be mid-write against.
@@ -71,7 +71,7 @@
 //
 // A THIRD kind this script used to miss entirely: a listing can match a row
 // and that row can still be full of holes. 2023 F-150 Lightning Pro
-// (voltcheck.net/listing/1ft6w1ev4pwg56454) matched a real row and still
+// (censusev.com/listing/1ft6w1ev4pwg56454) matched a real row and still
 // showed four blank fields — this script would have called that listing
 // "covered" right alongside a fully-researched one, because it only ever
 // asked "did the matcher return something," never "is what it returned any
@@ -176,7 +176,7 @@ const BASELINE = Number(val("--max-groups", "999999"));
 // (header, SECONDARY). Default 1 keeps an ad hoc run's count comparable to
 // the historical one; CI passes the floor.
 const MIN_GROUP = Number(val("--min-group", "1"));
-const FEED_BASE = val("--feed-base", "https://voltcheck.net");
+const FEED_BASE = val("--feed-base", "https://censusev.com");
 const COMPLETENESS_TOP = Number(val("--completeness-top", "20"));
 
 // The fields an exact-matched row is expected to carry — see the

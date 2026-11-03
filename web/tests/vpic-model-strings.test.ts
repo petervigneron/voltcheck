@@ -9,7 +9,7 @@
 // a car nobody has researched. No error, no log line, nothing a reader could
 // tell apart.
 //
-// Found 2026-08-22 by opening voltcheck.net/vin/JTDACACU4P3005078, a 2023
+// Found 2026-08-22 by opening censusev.com/vin/JTDACACU4P3005078, a 2023
 // Prius Prime, while verifying an unrelated deploy. Sweeping every covered
 // nameplate against a live decode (scraper/vpic-model-alias-check.mjs) turned
 // up 19, including the F-150 Lightning, Equinox EV and Kona Electric.

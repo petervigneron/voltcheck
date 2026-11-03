@@ -52,8 +52,8 @@ export async function generateMetadata(
   const month = statsMonth(stats);
   return {
     title: month
-      ? `${name} for sale, ${month}: prices, range and battery | Voltcheck`
-      : `Used and new ${name} for sale | Voltcheck`,
+      ? `${name} for sale, ${month}: prices, range and battery | Census`
+      : `Used and new ${name} for sale | Census`,
     description:
       total > 0
         ? `${nf.format(total)} ${name} for sale in the United States${month ? ` as of ${month}` : ""}, with asking price by model year, battery, range and charging details on each car.`
@@ -85,7 +85,7 @@ export default async function ModelHubPage(props: PageProps<"/ev/[make]/[model]"
         className="text-[11px] font-bold uppercase tracking-[0.06em] text-ink/40"
       >
         <Link href="/" className="hover:text-cobalt">
-          Voltcheck
+          Census
         </Link>{" "}
         /{" "}
         <Link href="/ev" className="hover:text-cobalt">

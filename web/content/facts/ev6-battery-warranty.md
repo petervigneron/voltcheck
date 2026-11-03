@@ -28,8 +28,8 @@ Kia excludes EV System and Lithium-Ion Polymer Battery damage or failure caused 
 
 ## See it for yourself
 
-- [Live Kia EV6 listings on Voltcheck](https://voltcheck.net/?make=Kia&model=EV6)
-- [Check a VIN before you buy](https://voltcheck.net/vin)
+- [Live Kia EV6 listings on Census](https://censusev.com/?make=Kia&model=EV6)
+- [Check a VIN before you buy](https://censusev.com/vin)
 
 ---
 

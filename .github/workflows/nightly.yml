@@ -720,7 +720,7 @@ jobs:
             exit 1
           fi
           [ -z "$FEED_REVALIDATE_SECRET" ] && { echo "::warning::FEED_REVALIDATE_SECRET unset; site refreshes on the 24h cache backstop instead"; exit 0; }
-          if ! curl -fsS --retry 3 --max-time 60 -X POST -H "x-revalidate-secret: $FEED_REVALIDATE_SECRET" https://voltcheck.net/api/revalidate; then
+          if ! curl -fsS --retry 3 --max-time 60 -X POST -H "x-revalidate-secret: $FEED_REVALIDATE_SECRET" https://censusev.com/api/revalidate; then
             echo "::warning::/api/revalidate unreachable (route not deployed yet?); site refreshes on the 24h cache backstop instead"
             exit 0
           fi
@@ -729,7 +729,7 @@ jobs:
           # "trims" is /worth's trim-facet body (2026-08-25), same route, same
           # walk memo, so it rides this loop for free.
           for s in first trims $(seq 0 47); do
-            curl -fsS --retry 2 --max-time 300 -o /dev/null "https://voltcheck.net/api/index/$s" \
+            curl -fsS --retry 2 --max-time 300 -o /dev/null "https://censusev.com/api/index/$s" \
               || echo "::warning::shard $s warm-up failed; its first visitor pays the render"
           done
           # The sitemaps used to be warmed here too, and were removed on
@@ -1345,7 +1345,7 @@ jobs:
           fi
 
           [ -z "$FEED_REVALIDATE_SECRET" ] && { echo "::warning::FEED_REVALIDATE_SECRET unset; site refreshes on the 24h cache backstop instead"; exit 0; }
-          if ! curl -fsS --retry 3 --max-time 60 -X POST -H "x-revalidate-secret: $FEED_REVALIDATE_SECRET" https://voltcheck.net/api/revalidate; then
+          if ! curl -fsS --retry 3 --max-time 60 -X POST -H "x-revalidate-secret: $FEED_REVALIDATE_SECRET" https://censusev.com/api/revalidate; then
             echo "::warning::/api/revalidate unreachable; site refreshes on the 24h cache backstop instead"
             exit 0
           fi
@@ -1356,7 +1356,7 @@ jobs:
           # artifact set, so it rides this loop for free.
           if [ "$artifact_fresh" = "1" ] || [ "$db_can_walk" = "1" ]; then
             for s in first trims $(seq 0 47); do
-              curl -fsS --retry 2 --max-time 300 -o /dev/null "https://voltcheck.net/api/index/$s" \
+              curl -fsS --retry 2 --max-time 300 -o /dev/null "https://censusev.com/api/index/$s" \
                 || echo "::warning::shard $s warm-up failed; its first visitor pays the render"
             done
           else
@@ -1480,7 +1480,7 @@ jobs:
     secrets: inherit
 
   # The two enrichment audits, moved here from finalize-audits on 2026-09-10.
-  # They read voltcheck.net/api/index/0..23, which serve the published feed
+  # They read censusev.com/api/index/0..23, which serve the published feed
   # artifacts (publish-feed.yml) — and finalize-audits runs BEFORE the
   # night's publish, so from 2026-08-26 to 2026-09-10 they scored the
   # previous publish: yesterday's inventory, or whatever another session
@@ -1511,7 +1511,7 @@ jobs:
       # empty enrichment card, and the owner found it by eye (2026-08-21).
       # This runs the production matcher (web/lib/enrichment/match.ts, plus
       # whatever backfill.ts contributes) against the CDN-cached browse
-      # shards — the same voltcheck.net/api/index/0..5 a shopper's browser
+      # shards — the same censusev.com/api/index/0..5 a shopper's browser
       # reads — never Supabase directly, so it costs the database nothing and
       # is safe to run even while a db-sync is still writing. `always()`
       # because it audits the CURRENT live site, not tonight's crawl: it owes

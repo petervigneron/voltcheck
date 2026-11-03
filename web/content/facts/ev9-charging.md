@@ -52,8 +52,8 @@
 
 ## See it for yourself
 
-- [Live Kia EV9 listings on Voltcheck](https://voltcheck.net/?make=Kia&model=EV9)
-- [Check a VIN before you buy](https://voltcheck.net/vin)
+- [Live Kia EV9 listings on Census](https://censusev.com/?make=Kia&model=EV9)
+- [Check a VIN before you buy](https://censusev.com/vin)
 
 ---
 

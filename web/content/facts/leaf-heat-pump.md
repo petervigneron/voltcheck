@@ -36,8 +36,8 @@ Nissan's brochures for the 2018 through 2025 Leaf list a row called "Hybrid heat
 
 ## See it for yourself
 
-- [Live Nissan Leaf listings on Voltcheck](https://voltcheck.net/?make=Nissan&model=Leaf)
-- [Check a VIN before you buy](https://voltcheck.net/vin)
+- [Live Nissan Leaf listings on Census](https://censusev.com/?make=Nissan&model=Leaf)
+- [Check a VIN before you buy](https://censusev.com/vin)
 
 ---
 

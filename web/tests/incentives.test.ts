@@ -187,7 +187,7 @@ test("a ZIP narrows only its own state's programs, and an IP guess never narrows
 
 test("the blurred blocks caption themselves from the /pro lineup, and every benefit id is unique", () => {
   // The rebate block shipped blurred with no caption at all on 2026-09-03 —
-  // a smear with a "Voltcheck Pro" button and nothing saying what was under
+  // a smear with a "Census Pro" button and nothing saying what was under
   // it. Owner, 2026-09-04. Both captions now read the benefit's own title, so
   // a blur can never promise something the /pro page does not sell.
   assert.equal(proBenefitTitle("rebates"), "Rebate eligibility");

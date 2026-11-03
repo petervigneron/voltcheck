@@ -15,7 +15,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { inlineNote } from "@/lib/enrichment/noteRule";
 
-// Every one of these was live on voltcheck.net. The first four are the ones
+// Every one of these was live on censusev.com. The first four are the ones
 // the owner read on the Ioniq 5 card; the rest are the shapes the two earlier
 // sweeps deleted, kept here so the list reads as the full history.
 const WAS_ON_THE_PAGE = [

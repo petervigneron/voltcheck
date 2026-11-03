@@ -15,8 +15,8 @@ Tesla's words: "Vehicles manufactured between approximately July 2017 and Octobe
 
 ## See it for yourself
 
-- [Live Tesla Model 3 listings on Voltcheck](https://voltcheck.net/?make=Tesla&model=Model+3)
-- [Check a VIN before you buy](https://voltcheck.net/vin)
+- [Live Tesla Model 3 listings on Census](https://censusev.com/?make=Tesla&model=Model+3)
+- [Check a VIN before you buy](https://censusev.com/vin)
 
 ---
 

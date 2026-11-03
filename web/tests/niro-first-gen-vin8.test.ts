@@ -11,7 +11,7 @@
 //
 // Every decode below is vPIC's own answer for a real car, fetched through
 // DecodeVINValuesBatch on 2026-09-10: the hybrids are auction and history-
-// report listings, the plug-ins are live Voltcheck listings. The /vin/ gate
+// report listings, the plug-ins are live Census listings. The /vin/ gate
 // (tests/vin-page-ev-gate.test.ts) would also refuse the hybrids on their
 // "Strong HEV" reading; the listing-shape test below pins the VIN key on its
 // own, so neither guard is load-bearing for the other.

@@ -14,8 +14,8 @@
 
 ## See it for yourself
 
-- [Live Ford Mustang Mach-E listings on Voltcheck](https://voltcheck.net/?make=Ford&model=Mustang+Mach-E)
-- [Check a VIN before you buy](https://voltcheck.net/vin)
+- [Live Ford Mustang Mach-E listings on Census](https://censusev.com/?make=Ford&model=Mustang+Mach-E)
+- [Check a VIN before you buy](https://censusev.com/vin)
 
 ---
 

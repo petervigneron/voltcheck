@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { SavedView } from "@/components/SavedView";
 
-export const metadata: Metadata = { title: "Saved — Voltcheck" };
+export const metadata: Metadata = { title: "Saved — Census" };
 
 // Static shell, like the browse page: the saved cars and saved searches both
 // live in the visitor's localStorage and the inventory arrives client-side

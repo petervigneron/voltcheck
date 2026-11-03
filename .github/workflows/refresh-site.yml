@@ -133,7 +133,7 @@ jobs:
         if: ${{ steps.nightly.outputs.busy == '0' }}
         run: |
           MIN_AGE=39600 # 11h
-          H=$(curl -sI --max-time 20 https://voltcheck.net/api/index/first || true)
+          H=$(curl -sI --max-time 20 https://censusev.com/api/index/first || true)
           CODE=$(printf '%s' "$H" | head -1 | awk '{print $2}')
           AGE=$(printf '%s' "$H" | grep -i '^age:' | tr -d '\r' | awk '{print $2}' | head -1)
           if [ "$CODE" != "200" ]; then
@@ -148,7 +148,7 @@ jobs:
           # from down — either way it is not "serving" right now.
           BROKEN=""
           for s in $(seq 0 47); do
-            C=$(curl -s -o /dev/null -w "%{http_code}" --max-time 90 "https://voltcheck.net/api/index/$s" || echo 000)
+            C=$(curl -s -o /dev/null -w "%{http_code}" --max-time 90 "https://censusev.com/api/index/$s" || echo 000)
             case "$C" in 5*|000) BROKEN="$BROKEN $s";; esac
           done
           if [ -n "$BROKEN" ]; then
@@ -225,18 +225,18 @@ jobs:
             echo "::warning::FEED_REVALIDATE_SECRET unset; the site refreshes on its 24h cache backstop instead"; exit 0
           fi
           curl -fsS --retry 3 --max-time 60 -X POST \
-            -H "x-revalidate-secret: $FEED_REVALIDATE_SECRET" https://voltcheck.net/api/revalidate \
+            -H "x-revalidate-secret: $FEED_REVALIDATE_SECRET" https://censusev.com/api/revalidate \
             || { echo "::warning::/api/revalidate unreachable; 24h backstop applies"; exit 0; }
           # 48 index shards since 2026-09-10 (24 from 2026-08-24) — keep in
           # step with web/lib/listings/pack.ts SHARDS, whose comment has both.
           for s in first $(seq 0 47); do
-            curl -fsS --retry 2 --max-time 300 -o /dev/null "https://voltcheck.net/api/index/$s" \
+            curl -fsS --retry 2 --max-time 300 -o /dev/null "https://censusev.com/api/index/$s" \
               || echo "::warning::shard $s warm failed; its first visitor pays the render"
           done
           # 12 sitemap shards since 2026-08-24 — keep in step with
           # web/lib/sitemap.ts SITEMAP_SHARDS, whose comment has the incident.
           for s in $(seq 0 11); do
-            curl -fsS --retry 2 --max-time 300 -o /dev/null "https://voltcheck.net/sitemap/$s.xml" \
+            curl -fsS --retry 2 --max-time 300 -o /dev/null "https://censusev.com/sitemap/$s.xml" \
               || echo "::warning::sitemap $s warm failed; crawlers keep the previous copy"
           done
 

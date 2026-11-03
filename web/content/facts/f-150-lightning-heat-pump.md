@@ -14,8 +14,8 @@ Ford's words: "The Ford Vapor Injection Heat Pump is standard on all trims of th
 
 ## See it for yourself
 
-- [Live Ford F-150 Lightning listings on Voltcheck](https://voltcheck.net/?make=Ford&model=F-150%20Lightning)
-- [Check a VIN before you buy](https://voltcheck.net/vin)
+- [Live Ford F-150 Lightning listings on Census](https://censusev.com/?make=Ford&model=F-150%20Lightning)
+- [Check a VIN before you buy](https://censusev.com/vin)
 
 ---
 

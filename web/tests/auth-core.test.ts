@@ -59,17 +59,17 @@ test("a session becomes two HttpOnly cookies; clearing zeroes both", () => {
 });
 
 test("verifyLink lands on this site's /account/verify whatever redirect_to said", () => {
-  const origin = "https://voltcheck.net";
+  const origin = "https://censusev.com";
   const ours = verifyLink(origin, {
     token_hash: "abc123",
     email_action_type: "signup",
-    redirect_to: "https://voltcheck.net/account/verify?next=%2Fpro",
+    redirect_to: "https://censusev.com/account/verify?next=%2Fpro",
   });
-  assert.equal(ours, "https://voltcheck.net/account/verify?next=%2Fpro&token_hash=abc123&type=signup");
+  assert.equal(ours, "https://censusev.com/account/verify?next=%2Fpro&token_hash=abc123&type=signup");
   // Another origin, or another path on ours, is not followed.
-  for (const redirect_to of ["https://evil.example/account/verify", "https://voltcheck.net/pro", "not a url", undefined]) {
+  for (const redirect_to of ["https://evil.example/account/verify", "https://censusev.com/pro", "not a url", undefined]) {
     const link = verifyLink(origin, { token_hash: "abc123", email_action_type: "recovery", redirect_to });
-    assert.equal(link, "https://voltcheck.net/account/verify?token_hash=abc123&type=recovery", String(redirect_to));
+    assert.equal(link, "https://censusev.com/account/verify?token_hash=abc123&type=recovery", String(redirect_to));
   }
   // Without a token hash there is no link — and so no mail.
   assert.equal(verifyLink(origin, { email_action_type: "signup" }), null);

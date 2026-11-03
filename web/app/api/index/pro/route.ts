@@ -49,7 +49,7 @@ export async function GET(): Promise<Response> {
   } catch {
     active = false;
   }
-  if (!active) return new Response(JSON.stringify({ error: "Voltcheck Pro" }), { status: 401, headers });
+  if (!active) return new Response(JSON.stringify({ error: "Census Pro" }), { status: 401, headers });
   try {
     const body = await proBody();
     if (!body) return new Response(JSON.stringify({ error: "unavailable" }), { status: 503, headers });

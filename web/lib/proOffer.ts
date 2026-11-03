@@ -1,4 +1,4 @@
-// What Voltcheck Pro currently is, and whether we are in a position to sell
+// What Census Pro currently is, and whether we are in a position to sell
 // it. Deliberately separate from lib/pro.ts: that file is the billing spine
 // (tokens, Stripe, entitlement), this one is the claim the /pro page makes.
 //

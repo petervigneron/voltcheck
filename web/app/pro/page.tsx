@@ -36,9 +36,9 @@ import { currentUser } from "@/lib/auth";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Voltcheck Pro",
+  title: "Census Pro",
   description:
-    "Everything Voltcheck knows about a specific car is free, permanently. Pro pays for speed, breadth and automation — being told first, and being watched over time.",
+    "Everything Census knows about a specific car is free, permanently. Pro pays for speed, breadth and automation — being told first, and being watched over time.",
   alternates: { canonical: "/pro" },
 };
 
@@ -167,17 +167,17 @@ export default async function ProPage(props: {
       {/* ── The promise ──────────────────────────────────────────────── */}
       <div className="border-t-[3px] border-l-[3px] border-ink">
         <div className={`${CELL} bg-ink px-5 py-8 text-paper sm:px-8 sm:py-10`}>
-          <span className={EYEBROW}>Voltcheck Pro</span>
+          <span className={EYEBROW}>Census Pro</span>
           <h1 className="mt-2 max-w-[22ch] text-[30px] leading-[1.05] font-extrabold tracking-[-0.03em] sm:text-[40px]">
             Pro member benefits
           </h1>
           {/* Owner's copy, verbatim (2026-09-02). Not ours to edit. */}
           <p className="mt-4 max-w-[62ch] text-[15px] leading-relaxed text-paper/85">
-            Voltcheck makes searching for electric and plug-in hybrid cars easy. We&rsquo;ve built
+            Census makes searching for electric and plug-in hybrid cars easy. We&rsquo;ve built
             the most comprehensive plug-in-car marketplace anywhere, and we make EV-relevant information simple
             to find. Many car dealers don&rsquo;t know the battery size, range, or charging speed of
             the cars on their lot, and other car sites don&rsquo;t even collect that information.
-            Voltcheck lets you search for cars, or research a car you&rsquo;ve got your eye on, with
+            Census lets you search for cars, or research a car you&rsquo;ve got your eye on, with
             one or two clicks.
           </p>
           <p className="mt-3 max-w-[62ch] text-[15px] leading-relaxed text-paper/85">

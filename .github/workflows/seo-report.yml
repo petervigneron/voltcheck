@@ -1,4 +1,4 @@
-# Weekly Search Console reading for voltcheck.net.
+# Weekly Search Console reading for censusev.com.
 #
 # Answers "is anyone arriving from search, and for what" with Google's own
 # numbers. Read-only: the service account is a Restricted user on the
@@ -53,7 +53,7 @@ jobs:
         if: always()
         run: |
           {
-            echo '## Search Console — voltcheck.net'
+            echo '## Search Console — censusev.com'
             echo '```'
             cat report.txt 2>/dev/null || echo 'report failed'
             echo '```'
@@ -75,7 +75,7 @@ jobs:
             // The headline numbers ride in the subject so the week can be
             // read without opening anything.
             const num = (label) => (body.match(new RegExp(`^${label}\\s+(\\d+)`, "m")) || [])[1] ?? "?";
-            const subject = `Voltcheck search: ${num("clicks")} clicks, ${num("impressions")} impressions this week`;
+            const subject = `Census search: ${num("clicks")} clicks, ${num("impressions")} impressions this week`;
             fetch("https://api.resend.com/emails", {
               method: "POST",
               headers: {

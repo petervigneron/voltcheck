@@ -36,7 +36,7 @@ test("a record carries the listing, the seller's own page, and marked facts — 
   const e = enrichListing(model3);
   const rec = toApiListing(e, { realPrice: true, loc: [32.78, -96.8], body: "sedan", trim: "Standard Range Plus" });
   assert.equal(rec.vin, "5YJ3E1EA4MF099936");
-  assert.equal(rec.url, "https://voltcheck.net/listing/5yj3e1ea4mf099936");
+  assert.equal(rec.url, "https://censusev.com/listing/5yj3e1ea4mf099936");
   assert.equal(rec.price_usd, 23990);
   assert.equal(rec.previous_price_usd, 24990);
   assert.equal(rec.seller.url, model3.sourceUrl);

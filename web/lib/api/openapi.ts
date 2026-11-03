@@ -20,7 +20,7 @@ const listingSchema = {
   properties: {
     id: { type: "string" },
     vin: { type: "string" },
-    url: { type: "string", description: "The car's page on Voltcheck." },
+    url: { type: "string", description: "The car's page on Census." },
     year: { type: "integer" },
     make: { type: "string" },
     model: { type: "string" },
@@ -74,10 +74,10 @@ const listingSchema = {
 export const OPENAPI = {
   openapi: "3.1.0",
   info: {
-    title: "Voltcheck API",
+    title: "Census API",
     version: "1.0.0",
     description:
-      "Every electric and plug-in hybrid vehicle listed for sale in the United States that Voltcheck tracks — new, used and certified — read from dealers' own sites and manufacturer inventory. Read-only, no key. Inventory moves once a night; every response carries `as_of`. A Model Context Protocol endpoint with the same three operations is at /api/mcp.",
+      "Every electric and plug-in hybrid vehicle listed for sale in the United States that Census tracks — new, used and certified — read from dealers' own sites and manufacturer inventory. Read-only, no key. Inventory moves once a night; every response carries `as_of`. A Model Context Protocol endpoint with the same three operations is at /api/mcp.",
   },
   servers: [{ url: SITE }],
   paths: {

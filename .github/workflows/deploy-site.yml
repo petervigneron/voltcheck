@@ -3,7 +3,7 @@
 # closed their machine mid-deploy-window and every local waiter died with it).
 # This is scraper/deploy-site.mjs, unchanged, on neutral ground: the candidate
 # is warmed on its own URL behind Protection Bypass, validated, and promoted —
-# voltcheck.net is untouched until every check passes. See the script's header
+# censusev.com is untouched until every check passes. See the script's header
 # for the whole story.
 #
 # Dispatch-only, deliberately. A deploy is a decision, not a schedule.

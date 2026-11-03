@@ -104,7 +104,7 @@ const val = (f, d) => { const i = argv.indexOf(f); return i >= 0 ? argv[i + 1] :
 const AS_JSON = has("--json");
 const TOP = Number(val("--top", "25"));
 const OUT = val("--out", "/tmp/config-conflation.json");
-const FEED_BASE = val("--feed-base", "https://voltcheck.net");
+const FEED_BASE = val("--feed-base", "https://censusev.com");
 // 999999 effectively disables the ratchet for an ad hoc run; CI pins the real
 // ceiling. See the header.
 const MAX_SHARE = Number(val("--max-conflated-share", "100"));

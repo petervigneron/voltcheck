@@ -41,8 +41,8 @@ Cadillac excludes from the New Vehicle Limited Warranty:
 
 ## See it for yourself
 
-- [Live Cadillac Optiq listings on Voltcheck](https://voltcheck.net/?make=Cadillac&model=Optiq)
-- [Check a VIN before you buy](https://voltcheck.net/vin)
+- [Live Cadillac Optiq listings on Census](https://censusev.com/?make=Cadillac&model=Optiq)
+- [Check a VIN before you buy](https://censusev.com/vin)
 
 ---
 

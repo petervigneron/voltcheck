@@ -4,9 +4,9 @@ import type { Metadata } from "next";
 // the home page's (web/app/page.tsx): a layout canonical inherits into every
 // child route and would point every other page at "/methodology" too.
 export const metadata: Metadata = {
-  title: "Where this data comes from | Voltcheck",
+  title: "Where this data comes from | Census",
   description:
-    "The manufacturer, EPA, NHTSA, and state title sources behind every spec, price, and warranty fact on Voltcheck.",
+    "The manufacturer, EPA, NHTSA, and state title sources behind every spec, price, and warranty fact on Census.",
   alternates: { canonical: "/methodology" },
 };
 

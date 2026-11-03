@@ -57,8 +57,8 @@ Nissan's words: "Quick charge capability is only available on vehicles manufactu
 
 ## See it for yourself
 
-- [Live Nissan Leaf listings on Voltcheck](https://voltcheck.net/?make=Nissan&model=Leaf)
-- [Check a VIN before you buy](https://voltcheck.net/vin)
+- [Live Nissan Leaf listings on Census](https://censusev.com/?make=Nissan&model=Leaf)
+- [Check a VIN before you buy](https://censusev.com/vin)
 
 ---
 

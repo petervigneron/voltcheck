@@ -24,7 +24,7 @@ import { PriceScatter } from "@/components/PriceScatter";
 import { PriceSparkline } from "@/components/PriceSparkline";
 import { PriceTrendCharts } from "@/components/PriceTrend";
 import { PricePace } from "@/components/PricePace";
-import { daysOnVoltcheck, fetchDealerPace } from "@/lib/listings/pace";
+import { daysOnCensus, fetchDealerPace } from "@/lib/listings/pace";
 import { ProBlur } from "@/components/ProBlur";
 import { ProOnly } from "@/components/ProOnly";
 import { VinHistory } from "@/components/VinHistory";
@@ -95,10 +95,10 @@ export async function generateMetadata(props: PageProps<"/listing/[id]">): Promi
   const path = `/listing/${listing.id}`;
   const image = listing.images?.[0] ?? listing.imageUrl ?? undefined;
 
-  const title = `${name}${miles ? `, ${miles}` : ""} | Voltcheck`;
+  const title = `${name}${miles ? `, ${miles}` : ""} | Census`;
   const description =
     `${name}${where}, ${price}${miles ? `, ${miles}` : ""}. ` +
-    `Voltcheck breaks down the real battery pack, EPA range, and warranty status behind VIN ${listing.vin.toUpperCase()}.`;
+    `Census breaks down the real battery pack, EPA range, and warranty status behind VIN ${listing.vin.toUpperCase()}.`;
 
   return {
     title,
@@ -143,10 +143,10 @@ function listedValue(listedOn: string): string {
 // The day this car turned up here, for the great majority of cars that cannot
 // have a "Listed" row above. Owner, 2026-09-17: "I rarely see information
 // about when vehicles hit the site. This should be on every car." The gate and
-// the reasoning are in lib/listings/pace.ts daysOnVoltcheck; this is the row's
+// the reasoning are in lib/listings/pace.ts daysOnCensus; this is the row's
 // wording of the same number. Undefined at the floor, and Spec drops the row.
 function firstSeenValue(firstSeenAt: string): string | undefined {
-  const days = daysOnVoltcheck(firstSeenAt);
+  const days = daysOnCensus(firstSeenAt);
   if (days === undefined) return undefined;
   const when = days === 0 ? "today" : days === 1 ? "1 day ago" : `${days} days ago`;
   return `${LISTED_FMT.format(new Date(firstSeenAt))} (${when})`;
@@ -311,7 +311,7 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
             ) : (
               <div
                 className="text-[26px] leading-none font-extrabold tracking-[-0.02em]"
-                title="Voltcheck couldn't confirm this car's advertised price from the dealer's feed; see the dealer's page"
+                title="Census couldn't confirm this car's advertised price from the dealer's feed; see the dealer's page"
               >
                 See dealer for price
               </div>
@@ -409,14 +409,14 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
                 <Spec
                   label="Listed"
                   value={listedValue(listing.listedOn)}
-                  title="When this car appeared on the seller's site, from Voltcheck's nightly check — shown only when the seller was already being tracked when it appeared. The true listing date can be up to a day earlier."
+                  title="When this car appeared on the seller's site, from Census's nightly check — shown only when the seller was already being tracked when it appeared. The true listing date can be up to a day earlier."
                 />
               ) : (
                 listing.firstSeenAt && (
                   <Spec
-                    label="On Voltcheck since"
+                    label="On Census since"
                     value={firstSeenValue(listing.firstSeenAt)}
-                    title="The day this car first turned up on Voltcheck. The seller may have listed it earlier — this is when we found it, not when it was listed."
+                    title="The day this car first turned up on Census. The seller may have listed it earlier — this is when we found it, not when it was listed."
                   />
                 )
               )}

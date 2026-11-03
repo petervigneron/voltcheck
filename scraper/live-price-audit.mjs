@@ -68,7 +68,7 @@ import { recordRun } from "./lib/audit-status.mjs";
 const AUDIT_EVERY_HOURS = 12;
 
 const arg = (n, d) => { const i = process.argv.indexOf(n); return i >= 0 ? process.argv[i + 1] : d; };
-const BASE = arg("--base", "https://voltcheck.net");
+const BASE = arg("--base", "https://censusev.com");
 const JSON_OUT = arg("--json", null);
 const MIN_COHORT = Number(arg("--min-cohort", 8));
 // The site is asked how many index shards it serves (the route 404s past its

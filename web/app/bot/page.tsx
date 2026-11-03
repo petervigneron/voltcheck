@@ -7,7 +7,7 @@ export default function BotPage() {
     <div className="mx-auto max-w-2xl space-y-4 px-4 py-10 text-sm leading-relaxed">
       <h1 className="text-xl font-bold">VoltcheckBot</h1>
       <p>
-        VoltcheckBot is the crawler behind Voltcheck, a site that helps shoppers find
+        VoltcheckBot is the crawler behind Census, a site that helps shoppers find
         electric vehicles for sale. It visits public dealer inventory pages and reads the
         structured vehicle data (schema.org JSON-LD) those pages publish, and links every
         listing back to its source page on the dealer&apos;s site.

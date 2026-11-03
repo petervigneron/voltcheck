@@ -25,7 +25,7 @@ name: Feed audits
 #     most worth running, skipped them along with the artifact-dependent
 #     step they happened to be bundled next to.
 #   - feed-shard-check.mjs — hits the actual production CDN endpoints a
-#     shopper's browser reads (voltcheck.net/api/index/*) and cross-checks
+#     shopper's browser reads (censusev.com/api/index/*) and cross-checks
 #     the reported total against sync-guard's own last confirmed count
 #     (scraper/registry/audit-status.json's lastGoodCounts). A mismatch is
 #     the signature of the 2026-08-21 poisoned-cache incident (a render

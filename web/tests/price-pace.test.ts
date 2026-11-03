@@ -10,7 +10,7 @@
 // the VIN and the measurement).
 import test from "node:test";
 import assert from "node:assert/strict";
-import { daysListed, daysOnVoltcheck, listingCuts, pricePaceTiles } from "../lib/listings/pace";
+import { daysListed, daysOnCensus, listingCuts, pricePaceTiles } from "../lib/listings/pace";
 
 const at = (day: number) => `2026-09-${String(day).padStart(2, "0")}T00:00:00Z`;
 const series = (...prices: number[]) => prices.map((priceUsd, i) => ({ priceUsd, observedAt: at(i + 1) }));
@@ -135,7 +135,7 @@ test("the tiles wear the colours their meaning earns", () => {
   );
 });
 
-// ── "On Voltcheck since" (2026-09-17) ───────────────────────────────────────
+// ── "On Census since" (2026-09-17) ───────────────────────────────────────
 //
 // Owner: "I rarely see information about when vehicles hit the site. This
 // should be on every car." He was right, and the cause was not a bug: the
@@ -148,29 +148,29 @@ test("the tiles wear the colours their meaning earns", () => {
 
 test("a car we found after tracking began is dated from the day we found it", () => {
   const now = Date.parse("2026-09-17T12:00:00Z");
-  assert.equal(daysOnVoltcheck("2026-09-03T04:00:00Z", now), 14);
-  assert.equal(daysOnVoltcheck("2026-09-17T01:00:00Z", now), 0);
-  assert.equal(daysOnVoltcheck("2026-09-16T01:00:00Z", now), 1);
+  assert.equal(daysOnCensus("2026-09-03T04:00:00Z", now), 14);
+  assert.equal(daysOnCensus("2026-09-17T01:00:00Z", now), 0);
+  assert.equal(daysOnCensus("2026-09-16T01:00:00Z", now), 1);
 });
 
 test("the day tracking began is not a date about the car, and prints nothing", () => {
-  // Voltcheck started watching 2026-08-11. A car first seen that day was not
+  // Census started watching 2026-08-11. A car first seen that day was not
   // found then — that is when WE started, and dating the car from it would
   // print our own switch-on as the car's arrival. This is the same confusion
   // migration 0028's guards exist to keep off the "Listed" row.
   const now = Date.parse("2026-09-17T12:00:00Z");
-  assert.equal(daysOnVoltcheck("2026-08-11T09:00:00Z", now), undefined);
-  assert.equal(daysOnVoltcheck("2026-08-12T23:59:00Z", now), undefined);
+  assert.equal(daysOnCensus("2026-08-11T09:00:00Z", now), undefined);
+  assert.equal(daysOnCensus("2026-08-12T23:59:00Z", now), undefined);
   // One clear day past the start, the date is the car's own again.
-  assert.equal(daysOnVoltcheck("2026-08-13T00:00:00Z", now), 35);
+  assert.equal(daysOnCensus("2026-08-13T00:00:00Z", now), 35);
 });
 
 test("an unparseable timestamp prints nothing rather than a number", () => {
-  assert.equal(daysOnVoltcheck("", Date.now()), undefined);
-  assert.equal(daysOnVoltcheck("not a date", Date.now()), undefined);
+  assert.equal(daysOnCensus("", Date.now()), undefined);
+  assert.equal(daysOnCensus("not a date", Date.now()), undefined);
 });
 
 test("a clock skew cannot print a negative age", () => {
   const now = Date.parse("2026-09-17T12:00:00Z");
-  assert.equal(daysOnVoltcheck("2026-09-18T12:00:00Z", now), 0);
+  assert.equal(daysOnCensus("2026-09-18T12:00:00Z", now), 0);
 });

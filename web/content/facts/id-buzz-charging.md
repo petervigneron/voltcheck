@@ -53,8 +53,8 @@ Volkswagen on what a second owner gets: "Not valid for subsequent owners."[^2]
 
 ## See it for yourself
 
-- [Live Volkswagen ID. Buzz listings on Voltcheck](https://voltcheck.net/?make=Volkswagen&model=ID.+Buzz)
-- [Check a VIN before you buy](https://voltcheck.net/vin)
+- [Live Volkswagen ID. Buzz listings on Census](https://censusev.com/?make=Volkswagen&model=ID.+Buzz)
+- [Check a VIN before you buy](https://censusev.com/vin)
 
 ---
 

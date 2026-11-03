@@ -39,8 +39,8 @@ The booklet's general exclusions reach the battery too:
 
 ## See it for yourself
 
-- [Live Honda Prologue listings on Voltcheck](https://voltcheck.net/?make=Honda&model=Prologue)
-- [Check a VIN before you buy](https://voltcheck.net/vin)
+- [Live Honda Prologue listings on Census](https://censusev.com/?make=Honda&model=Prologue)
+- [Check a VIN before you buy](https://censusev.com/vin)
 
 ---
 

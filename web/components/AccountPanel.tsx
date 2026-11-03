@@ -36,10 +36,10 @@ export function AccountPanel({ email, passLine }: { email: string; passLine: str
       <div className={`${CELL} bg-ink px-5 py-6 text-paper sm:px-8`}>
         <span className={EYEBROW}>Signed in as</span>
         <p className="mt-1 text-[19px] leading-tight font-extrabold tracking-[-0.01em] break-all">{email}</p>
-        {passLine && <p className="mt-2 text-[13px] leading-relaxed text-paper/85">Voltcheck Pro: {passLine}</p>}
+        {passLine && <p className="mt-2 text-[13px] leading-relaxed text-paper/85">Census Pro: {passLine}</p>}
       </div>
       <Link href="/saved" className={ROW}>Saved cars and searches</Link>
-      <Link href="/pro" className={ROW}>Voltcheck Pro</Link>
+      <Link href="/pro" className={ROW}>Census Pro</Link>
       <Link href="/account/password" className={ROW}>Change password</Link>
       <button
         type="button"

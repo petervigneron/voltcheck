@@ -56,8 +56,8 @@ Chevrolet excludes from the New Vehicle Limited Warranty:
 
 ## See it for yourself
 
-- [Live Chevrolet Blazer EV listings on Voltcheck](https://voltcheck.net/?make=Chevrolet&model=Blazer+EV)
-- [Check a VIN before you buy](https://voltcheck.net/vin)
+- [Live Chevrolet Blazer EV listings on Census](https://censusev.com/?make=Chevrolet&model=Blazer+EV)
+- [Check a VIN before you buy](https://censusev.com/vin)
 
 ---
 

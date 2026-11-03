@@ -67,7 +67,7 @@ export async function POST(req: Request): Promise<Response> {
       const what = label ? `your search — ${label}` : "your search";
       await sendEmail({
         to: email,
-        subject: "Confirm your Voltcheck alert",
+        subject: "Confirm your Census alert",
         text:
           `Confirm to turn on this alert for ${what}:\n\n${confirmUrl}\n\n` +
           `If you didn't ask for this, ignore it — nothing will be sent.`,

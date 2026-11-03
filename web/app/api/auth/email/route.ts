@@ -21,19 +21,19 @@ import { sendEmail, siteOrigin } from "@/lib/alerts";
 export const dynamic = "force-dynamic";
 
 const SUBJECT: Record<string, string> = {
-  signup: "Confirm your Voltcheck email",
-  recovery: "Reset your Voltcheck password",
-  magiclink: "Your Voltcheck sign-in link",
-  email_change: "Confirm your new Voltcheck email",
-  invite: "Your Voltcheck account",
+  signup: "Confirm your Census email",
+  recovery: "Reset your Census password",
+  magiclink: "Your Census sign-in link",
+  email_change: "Confirm your new Census email",
+  invite: "Your Census account",
 };
 
 const LEAD: Record<string, string> = {
-  signup: "Confirm this address to finish creating your Voltcheck account:",
-  recovery: "Choose a new password for your Voltcheck account:",
-  magiclink: "Sign in to Voltcheck:",
-  email_change: "Confirm this as the new address for your Voltcheck account:",
-  invite: "Create your Voltcheck account:",
+  signup: "Confirm this address to finish creating your Census account:",
+  recovery: "Choose a new password for your Census account:",
+  magiclink: "Sign in to Census:",
+  email_change: "Confirm this as the new address for your Census account:",
+  invite: "Create your Census account:",
 };
 
 export async function POST(req: Request): Promise<Response> {
@@ -60,8 +60,8 @@ export async function POST(req: Request): Promise<Response> {
   const link = verifyLink(siteOrigin(), mail.email_data ?? {});
   if (!to || !link) return Response.json({ error: { http_code: 400, message: "unusable" } }, { status: 400 });
 
-  const subject = SUBJECT[type] ?? "Voltcheck";
-  const lead = LEAD[type] ?? "Continue on Voltcheck:";
+  const subject = SUBJECT[type] ?? "Census";
+  const lead = LEAD[type] ?? "Continue on Census:";
   const sent = await sendEmail({
     to,
     subject,

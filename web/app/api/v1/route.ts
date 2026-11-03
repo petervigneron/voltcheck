@@ -9,7 +9,7 @@ export const OPTIONS = options;
 export function GET(): Response {
   return json(
     {
-      name: "Voltcheck API",
+      name: "Census API",
       version: "1",
       openapi: `${SITE}/api/v1/openapi.json`,
       mcp: `${SITE}/api/mcp`,

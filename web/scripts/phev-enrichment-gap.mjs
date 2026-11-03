@@ -28,7 +28,7 @@
 // and a few thousand plug-ins moving inside that total is exactly the kind of
 // change a whole-feed number absorbs without a sound.
 //
-// SOURCE: the CDN-cached browse shards (voltcheck.net/api/index/0..5) — never
+// SOURCE: the CDN-cached browse shards (censusev.com/api/index/0..5) — never
 // Supabase. Those six files ARE the live feed (lib/listings/pack.ts), fetched
 // once each and sequentially: six at once is enough to set six cold ISR
 // renders walking the database in parallel, which is the load this project's
@@ -142,7 +142,7 @@ const val = (f, d) => {
 const AS_JSON = has("--json");
 const TOP = Number(val("--top", "40"));
 const REPORT_PATH = val("--out", "/tmp/phev-enrichment-gap.json");
-const FEED_BASE = val("--feed-base", "https://voltcheck.net");
+const FEED_BASE = val("--feed-base", "https://censusev.com");
 const SHARD_DIR = val("--shard-dir", null);
 // The ratchet, calibrated 2026-08-23 against a settled feed of 100,883 live
 // listings (4,541 of them plug-in-shaped) AFTER that day's alias work landed:

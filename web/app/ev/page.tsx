@@ -10,7 +10,7 @@ export const dynamic = "force-static";
 export const revalidate = 86400;
 
 export const metadata: Metadata = {
-  title: "Every electric and plug-in model for sale | Voltcheck",
+  title: "Every electric and plug-in model for sale | Census",
   description:
     "One page per nameplate, covering every electric and plug-in hybrid model on sale in the United States.",
   alternates: { canonical: "/ev" },
@@ -47,7 +47,7 @@ export default async function ModelIndexPage() {
         className="text-[11px] font-bold uppercase tracking-[0.06em] text-ink/40"
       >
         <Link href="/" className="hover:text-cobalt">
-          Voltcheck
+          Census
         </Link>{" "}
         / <span className="text-ink/70">Models</span>
       </nav>

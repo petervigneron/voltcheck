@@ -3,7 +3,7 @@ import type { PackedIndex } from "./pack";
 /**
  * Every index shard a DEPLOYED site serves, read until the route's 404 past
  * its last one (app/api/index/[shard]/route.ts). For scripts that read
- * voltcheck.net: the count that matters is the deployment's, not this
+ * censusev.com: the count that matters is the deployment's, not this
  * checkout's pack.ts SHARDS, and the two differ for as long as a SHARDS raise
  * is on main but not yet deployed. On 2026-09-10 (24 → 48) send-alerts
  * fanned out over pack.ts's 48 against a production still serving 24, got

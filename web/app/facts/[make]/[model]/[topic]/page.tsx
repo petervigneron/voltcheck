@@ -55,7 +55,7 @@ export default async function FactSheetPage(props: PageProps<"/facts/[make]/[mod
       <FactJsonLd entry={entry} path={path} />
       <nav aria-label="Breadcrumb" className="mx-auto max-w-2xl px-4 pt-8 text-[11px] font-bold uppercase tracking-[0.06em] text-ink/40">
         <Link href="/" className="hover:text-cobalt">
-          Voltcheck
+          Census
         </Link>{" "}
         /{" "}
         <Link href="/facts" className="hover:text-cobalt">

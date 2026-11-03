@@ -44,8 +44,8 @@
 
 ## See it for yourself
 
-- [Live Volkswagen ID.4 listings on Voltcheck](https://voltcheck.net/?make=Volkswagen&model=ID.4)
-- [Check a VIN before you buy](https://voltcheck.net/vin)
+- [Live Volkswagen ID.4 listings on Census](https://censusev.com/?make=Volkswagen&model=ID.4)
+- [Check a VIN before you buy](https://censusev.com/vin)
 
 ---
 

@@ -63,14 +63,14 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   const input = readInput(await props.searchParams);
   if (!input) {
     return {
-      title: "What's my EV worth? | Voltcheck",
+      title: "What's my EV worth? | Census",
       description:
         "A free value estimate for any electric or plug-in hybrid, built from what these cars are selling for and what they are listed at right now. No account, no VIN required.",
       alternates: { canonical: "/worth" },
     };
   }
   return {
-    title: `What's a ${vehicleLabel(input)} worth? | Voltcheck`,
+    title: `What's a ${vehicleLabel(input)} worth? | Census`,
     description: `An estimate for a ${vehicleLabel(input)} with ${input.mileage.toLocaleString(
       "en-US"
     )} miles, from live listings and Washington State title sales.`,

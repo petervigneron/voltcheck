@@ -102,7 +102,7 @@ test("as shipped today, /pro sells only on a live-mode key", () => {
 test("/api/checkout refuses in exactly the cases the page hides the button", async () => {
   const post = () =>
     checkoutPOST(
-      new Request("https://voltcheck.net/api/checkout", {
+      new Request("https://censusev.com/api/checkout", {
         method: "POST",
         body: JSON.stringify({ tier: "quarter" }),
       }),

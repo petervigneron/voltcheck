@@ -11,8 +11,8 @@
 
 ## See it for yourself
 
-- [Live Tesla Model Y listings on Voltcheck](https://voltcheck.net/?make=Tesla&model=Model+Y)
-- [Check a VIN before you buy](https://voltcheck.net/vin)
+- [Live Tesla Model Y listings on Census](https://censusev.com/?make=Tesla&model=Model+Y)
+- [Check a VIN before you buy](https://censusev.com/vin)
 
 ---
 

@@ -22,9 +22,9 @@
 
 ## See it for yourself
 
-- [Live Chevrolet Bolt EV listings on Voltcheck](https://voltcheck.net/?make=Chevrolet&model=Bolt+EV)
-- [Live Chevrolet Bolt EUV listings on Voltcheck](https://voltcheck.net/?make=Chevrolet&model=Bolt+EUV)
-- [Check a VIN before you buy](https://voltcheck.net/vin)
+- [Live Chevrolet Bolt EV listings on Census](https://censusev.com/?make=Chevrolet&model=Bolt+EV)
+- [Live Chevrolet Bolt EUV listings on Census](https://censusev.com/?make=Chevrolet&model=Bolt+EUV)
+- [Check a VIN before you buy](https://censusev.com/vin)
 
 ---
 

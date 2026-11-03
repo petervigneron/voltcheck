@@ -18,7 +18,7 @@
 // will show the car; reading anything else lets the two drift.
 //
 // What counts as news, and why it can't overclaim:
-//   new listing — the row's firstSeenAt (when Voltcheck first saw it) is
+//   new listing — the row's firstSeenAt (when Census first saw it) is
 //     newer than the last digest. Until 2026-10-30 this keyed on listedOn,
 //     migration 0028's guarded listing date, so "newly listed" could never
 //     mean "newly crawled" — and it cost the feature its point: listedOn is
@@ -70,8 +70,8 @@ import { savedDrop } from "../lib/listings/savedDrop.ts";
 const SUPABASE_URL = process.env.SUPABASE_URL?.replace(/\/$/, "");
 const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const RESEND_KEY = process.env.RESEND_API_KEY;
-const ORIGIN = (process.env.SITE_ORIGIN || "https://voltcheck.net").replace(/\/$/, "");
-const FROM = process.env.ALERTS_FROM || "Voltcheck <alerts@voltcheck.net>";
+const ORIGIN = (process.env.SITE_ORIGIN || "https://censusev.com").replace(/\/$/, "");
+const FROM = process.env.ALERTS_FROM || "Census <alerts@voltcheck.net>";
 
 const CATCHUP_MS = 7 * 86_400_000;
 const MAX_PER_SECTION = 12;

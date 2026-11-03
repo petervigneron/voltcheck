@@ -34,7 +34,7 @@
 // WHY NOT THE CDN, WHICH IS FREE
 //
 // CLAUDE.md says "don't point full-feed scripts at Supabase when
-// voltcheck.net/api/index/0-5 already serve the same rows off Vercel's CDN for
+// censusev.com/api/index/0-5 already serve the same rows off Vercel's CDN for
 // free," and that rule is right — but it does not reach this file, because the
 // shards do NOT serve the same rows. They serve a display projection.
 // /api/index/[shard] returns packIndex(CardRow[]) (web/lib/listings/pack.ts):
@@ -167,7 +167,7 @@ const DRY = process.argv.includes("--dry-run");
 const FORCE = process.argv.includes("--force");
 const SNAPSHOT = new URL("../web/data/scraped-listings.json", import.meta.url);
 const OUT = arg("--out", null);
-const CDN_BASE = arg("--base", "https://voltcheck.net").replace(/\/$/, "");
+const CDN_BASE = arg("--base", "https://censusev.com").replace(/\/$/, "");
 
 // Wrapped, because NO .env FILE IS A SUPPORTED STATE — it is the normal state
 // on CI, where the workflow supplies SUPABASE_URL and SUPABASE_ANON_KEY as step
@@ -470,6 +470,20 @@ if (expected !== null && listings.length < expected - SHORT_READ_SLACK_ROWS) {
 const unidentifiable = listings.filter((l) => !l?.id || !l?.vin).length;
 if (unidentifiable) {
   problems.push(`${unidentifiable} row(s) came back with no id or no vin — the snapshot is looked up by both, so a row without them can never be served`);
+}
+// And the id must be the VIN itself. On 2026-11-03 six rows whose "vin" was a
+// six-digit dealer stock number (mountainhyundai.com, hanoverchryslerdodge.com,
+// first seen 2026-10-30) rode into the committed snapshot under a [skip ci]
+// refresh, find-listing.test.ts went red on main, and deploy-site.yml refused
+// every deploy until the file was rewritten by hand. The feed is the lane's
+// problem; the snapshot refusing them is this script's.
+const notVins = listings.filter((l) => !/^[a-z0-9]{17}$/.test(String(l?.id)) || l.id !== String(l.vin).toLowerCase());
+if (notVins.length) {
+  problems.push(
+    `${notVins.length} row(s) are not keyed by a 17-character VIN (${notVins.slice(0, 5).map((l) => l.vin).join(", ")}) — ` +
+      "web/tests/find-listing.test.ts asserts every snapshot id is VIN-shaped, so writing them makes main red and blocks deploys. " +
+      "Fix the lane that produced them (a stock number is not a VIN) and delist the rows."
+  );
 }
 
 if (previous !== null && listings.length < previous * (1 - SHRINK_TOLERANCE)) {

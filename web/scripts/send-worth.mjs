@@ -33,8 +33,8 @@ import { isWorthWatch, readWorthWatch, worthWatchLabel, worthWatchUrl } from "..
 const SUPABASE_URL = process.env.SUPABASE_URL?.replace(/\/$/, "");
 const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const RESEND_KEY = process.env.RESEND_API_KEY;
-const ORIGIN = (process.env.SITE_ORIGIN || "https://voltcheck.net").replace(/\/$/, "");
-const FROM = process.env.ALERTS_FROM || "Voltcheck <alerts@voltcheck.net>";
+const ORIGIN = (process.env.SITE_ORIGIN || "https://censusev.com").replace(/\/$/, "");
+const FROM = process.env.ALERTS_FROM || "Census <alerts@voltcheck.net>";
 
 const WEEK_MS = 6 * 86_400_000;
 const MIN_MOVE_USD = 100;

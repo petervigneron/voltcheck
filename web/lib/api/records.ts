@@ -18,12 +18,12 @@ import { modelKey } from "@/lib/listings/modelName";
 // is a Pro feature; a free API that carries the delta is that filter for
 // free). Incentive eligibility is Pro-gated for the same reason.
 
-export const SITE = "https://voltcheck.net";
+export const SITE = "https://censusev.com";
 
 export interface ApiListing {
   id: string;
   vin: string;
-  /** The car's page on Voltcheck. */
+  /** The car's page on Census. */
   url: string;
   year: number;
   make: string;

@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { currentUser, userRpc } from "./auth";
 
-// Voltcheck Pro: the paid side. Backed by migration 0045 (pro_passes) —
+// Census Pro: the paid side. Backed by migration 0045 (pro_passes) —
 // no recurring billing, expires_at fixed at purchase — and, since 0063, by
 // the account: a pass is keyed to the buyer's email, checkout requires
 // sign-in and pins that email onto the Stripe session, and currentPass asks
@@ -163,7 +163,7 @@ export async function createCheckout(tier: TierId, origin: string, email: string
       "line_items[0][quantity]": 1,
       "line_items[0][price_data][currency]": "usd",
       "line_items[0][price_data][unit_amount]": t.amountCents,
-      "line_items[0][price_data][product_data][name]": `Voltcheck Pro — ${t.label}`,
+      "line_items[0][price_data][product_data][name]": `Census Pro — ${t.label}`,
       ...(t.blurb ? { "line_items[0][price_data][product_data][description]": t.blurb } : {}),
       // The tier has to survive the round trip to Stripe and back, and the
       // webhook must not infer it from the amount — a future price change

@@ -1,6 +1,6 @@
 import type { FactSheetEntry } from "@/lib/facts/registry";
 
-const BASE = "https://voltcheck.net";
+const BASE = "https://censusev.com";
 
 // FAQPage + BreadcrumbList only, per the publication-shape recommendation
 // (docs/agents/factsheet-queries-2026-08-20.md §4): no Product/Vehicle
@@ -29,7 +29,7 @@ export function FactJsonLd({ entry, path }: { entry: FactSheetEntry; path: strin
         "@type": "BreadcrumbList",
         "@id": `${url}#breadcrumb`,
         itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Voltcheck", item: BASE },
+          { "@type": "ListItem", position: 1, name: "Census", item: BASE },
           { "@type": "ListItem", position: 2, name: "Fact sheets", item: `${BASE}/facts` },
           { "@type": "ListItem", position: 3, name: entry.breadcrumbLabel, item: url },
         ],

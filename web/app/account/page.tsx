@@ -19,7 +19,7 @@ import { safeNext } from "@/lib/apiBody";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Account — Voltcheck",
+  title: "Account — Census",
   robots: { index: false, follow: true },
 };
 

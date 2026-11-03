@@ -37,7 +37,7 @@ export interface ZipAnswer {
  *    another state kept nothing at all: the block did not shrink, it
  *    vanished. Every car outside your state showed a "CA resident rebate"
  *    tag on the card and then said nothing whatsoever on the car's own page.
- *    Reproduced on voltcheck.net with the live feed: the block was absent on
+ *    Reproduced on censusev.com with the live feed: the block was absent on
  *    a CA-tagged Charger and rendered in full the moment the ZIP was set to
  *    94110.
  *

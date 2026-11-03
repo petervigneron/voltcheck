@@ -65,7 +65,7 @@ export function delistedMetadata(l: DelistedListing): Metadata {
   const name = carName(l);
   const miles = l.mileage != null ? `, ${l.mileage.toLocaleString()} mi` : "";
   const path = `/listing/${l.id}`;
-  const title = `${name}${miles} | Voltcheck`;
+  const title = `${name}${miles} | Census`;
   const description = `No longer listed as of ${lastSeen(l)}. The battery pack, EPA range and warranty behind VIN ${l.vin.toUpperCase()}.`;
   return {
     title,

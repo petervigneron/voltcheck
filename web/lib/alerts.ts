@@ -27,7 +27,7 @@ export async function alertRpc<T>(fn: string, args: Record<string, unknown>): Pr
   }
 }
 
-export const siteOrigin = () => process.env.SITE_ORIGIN?.replace(/\/$/, "") || "https://voltcheck.net";
+export const siteOrigin = () => process.env.SITE_ORIGIN?.replace(/\/$/, "") || "https://censusev.com";
 
 /** Send one email through Resend. Returns whether Resend accepted it. */
 export async function sendEmail(msg: { to: string; subject: string; text: string; html: string }): Promise<boolean> {
@@ -38,7 +38,7 @@ export async function sendEmail(msg: { to: string; subject: string; text: string
       method: "POST",
       headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        from: process.env.ALERTS_FROM || "Voltcheck <alerts@voltcheck.net>",
+        from: process.env.ALERTS_FROM || "Census <alerts@voltcheck.net>",
         ...msg,
       }),
       cache: "no-store",

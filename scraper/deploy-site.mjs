@@ -32,7 +32,7 @@
 //   node scraper/deploy-site.mjs --no-smoke       skip the browser check (no Playwright here)
 //
 // Exit 0 = promoted (or, with --no-promote, fully warmed and verified).
-// Exit 1 = stopped before promoting. voltcheck.net is untouched either way
+// Exit 1 = stopped before promoting. censusev.com is untouched either way
 //          once the script says "candidate"; only `vercel promote` changes
 //          what shoppers see, and it runs only after every check passes.
 import { execFileSync, execFile } from "node:child_process";
@@ -538,7 +538,7 @@ async function smoke(base, extraHeaders) {
 
 if (has("--smoke")) {
   const base = arg("--smoke").replace(/\/$/, "");
-  const hdrs = /voltcheck\.net$/.test(new URL(base).host) ? {} : { "x-vercel-protection-bypass": bypassSecret() };
+  const hdrs = /censusev\.com$/.test(new URL(base).host) ? {} : { "x-vercel-protection-bypass": bypassSecret() };
   console.log(`deploy-site: smoke test only — ${base}`);
   const problems = await smoke(base, hdrs);
   for (const p of problems) console.error(`deploy-site: smoke FAILED — ${p}`);
@@ -549,13 +549,13 @@ if (has("--smoke")) {
 const secret = bypassSecret();
 const headers = { "x-vercel-protection-bypass": secret };
 const url = arg("--url") ?? buildCandidate(arg("--ref", "HEAD"));
-console.log(`deploy-site: candidate ${url} — warming behind the SSO bypass; voltcheck.net is untouched`);
+console.log(`deploy-site: candidate ${url} — warming behind the SSO bypass; censusev.com is untouched`);
 
 const { state, total } = await warmAll(url, headers);
 const problems = validate(state, total);
 if (problems.length) {
   for (const p of problems) console.error(`deploy-site: NOT promoting — ${p}`);
-  console.error("deploy-site: voltcheck.net still serves the previous build, fully cached. Fix the cause and re-run with --url " + url + " (the warm entries it did fill are kept).");
+  console.error("deploy-site: censusev.com still serves the previous build, fully cached. Fix the cause and re-run with --url " + url + " (the warm entries it did fill are kept).");
   process.exit(1);
 }
 console.log(`deploy-site: candidate fully warm — ${total} cars across ${SHARD_PATHS.length} shards, all sitemaps rendered`);
@@ -567,7 +567,7 @@ if (has("--no-smoke")) {
   const smokeProblems = await smoke(url, headers);
   if (smokeProblems.length) {
     for (const p of smokeProblems) console.error(`deploy-site: NOT promoting — ${p}`);
-    console.error("deploy-site: the candidate answers but does not run. voltcheck.net still serves the previous build. Fix the cause and re-run.");
+    console.error("deploy-site: the candidate answers but does not run. censusev.com still serves the previous build. Fix the cause and re-run.");
     process.exit(1);
   }
   console.log("deploy-site: the candidate runs — browse page and a listing page load without throwing");
@@ -583,12 +583,12 @@ vercel(["promote", url, "--yes"], { cwd: join(ROOT, "web"), stdio: "inherit" });
 // Promote is an alias move, so the cache the shoppers now read is the one we
 // just filled — but probe it anyway (2026-08-25: promote-candidate caches can
 // be sparse) and re-warm any miss through the domain itself.
-console.log("deploy-site: promoted — probing voltcheck.net");
+console.log("deploy-site: promoted — probing censusev.com");
 let slowCold = 0;
 let failed = 0;
 for (const path of WARM_PATHS) {
   try {
-    const { secs, cache } = await fetchPath("https://voltcheck.net", path, {}, COLD_RENDER_TIMEOUT_MS);
+    const { secs, cache } = await fetchPath("https://censusev.com", path, {}, COLD_RENDER_TIMEOUT_MS);
     if (secs > 10) {
       slowCold++;
       console.log(`  ${path}: answered but slow (${secs.toFixed(1)}s, ${cache}) — was cold on the domain; this probe just warmed it`);
@@ -613,7 +613,7 @@ const sitemapState = new Set();
 for (let attempt = 1; attempt <= 3 && sitemapState.size < SITEMAP_PATHS.length; attempt++) {
   for (const path of SITEMAP_PATHS.filter((p) => !sitemapState.has(p))) {
     try {
-      const { text, secs } = await fetchPath("https://voltcheck.net", path, {}, COLD_RENDER_TIMEOUT_MS);
+      const { text, secs } = await fetchPath("https://censusev.com", path, {}, COLD_RENDER_TIMEOUT_MS);
       if (!(text.match(/<loc>/g) ?? []).length) throw new Error("no <loc> entries");
       sitemapState.add(path);
       console.log(`  ${path}: ok (${secs.toFixed(1)}s)`);
@@ -651,12 +651,12 @@ if (sitemapState.size < SITEMAP_PATHS.length) {
 let hubsWarmed = 0;
 let hubsCold = 0;
 try {
-  const { text } = await fetchPath("https://voltcheck.net", "/ev", {}, COLD_RENDER_TIMEOUT_MS);
+  const { text } = await fetchPath("https://censusev.com", "/ev", {}, COLD_RENDER_TIMEOUT_MS);
   const hubPaths = [...new Set([...text.matchAll(/href="(\/ev\/[^"]+)"/g)].map((m) => m[1]))];
   console.log(`deploy-site: warming /ev and ${hubPaths.length} model hubs`);
   for (const path of hubPaths) {
     try {
-      await fetchPath("https://voltcheck.net", path, {}, COLD_RENDER_TIMEOUT_MS);
+      await fetchPath("https://censusev.com", path, {}, COLD_RENDER_TIMEOUT_MS);
       hubsWarmed++;
     } catch (e) {
       hubsCold++;
@@ -674,7 +674,7 @@ if (hubsCold) {
 
 console.log(
   slowCold === 0
-    ? "deploy-site: every path answers warm on voltcheck.net, sitemaps included. Done."
+    ? "deploy-site: every path answers warm on censusev.com, sitemaps included. Done."
     : `deploy-site: done — ${slowCold} path(s) were cold on the domain (sparse promote cache) and are warm now; sitemaps all answer.`
 );
 process.exit(0);

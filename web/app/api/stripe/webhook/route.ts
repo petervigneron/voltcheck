@@ -94,7 +94,7 @@ export async function POST(req: Request): Promise<Response> {
 
   const ok = await sendEmail({
     to: email,
-    subject: `Your Voltcheck Pro ${label}`,
+    subject: `Your Census Pro ${label}`,
     text:
       `Your ${label} is active${until ? ` through ${until}` : ""}.\n\n` +
       `Sign in at ${siteOrigin()}/account with this address on any device and it is there.\n` +

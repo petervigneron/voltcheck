@@ -60,7 +60,7 @@ export function daysListed(listedOn: string, now: number = Date.now()): number {
 }
 
 /**
- * Voltcheck started watching on 2026-08-11. A car whose first sighting is that
+ * Census started watching on 2026-08-11. A car whose first sighting is that
  * day was not found then — it is simply when WE started, and dating a car from
  * it would print our own switch-on as the car's arrival. Read one clear day
  * past the start, so the boundary is not a question of the crawl's hour.
@@ -68,7 +68,7 @@ export function daysListed(listedOn: string, now: number = Date.now()): number {
 export const FIRST_SEEN_FLOOR = Date.parse("2026-08-13T00:00:00Z");
 
 /**
- * The day this car turned up on Voltcheck, for the summary card's date row —
+ * The day this car turned up on Census, for the summary card's date row —
  * and undefined where that day cannot be told apart from the day tracking
  * began, which is the one case where the number would mean something else
  * entirely.
@@ -84,7 +84,7 @@ export const FIRST_SEEN_FLOOR = Date.parse("2026-08-13T00:00:00Z");
  * exactly why the two rows are separate rows with separate labels: this one
  * reports an observation of ours and claims nothing about the listing's age.
  */
-export function daysOnVoltcheck(firstSeenAt: string, now: number = Date.now()): number | undefined {
+export function daysOnCensus(firstSeenAt: string, now: number = Date.now()): number | undefined {
   const t = Date.parse(firstSeenAt);
   if (!Number.isFinite(t) || t < FIRST_SEEN_FLOOR) return undefined;
   return Math.max(0, Math.floor((now - t) / 86_400_000));
@@ -131,7 +131,7 @@ export function pricePaceTiles(input: {
       kind: "spec",
       text: d === 0 ? "Listed today" : d === 1 ? "1 day listed" : `${d} days listed`,
       title:
-        "When this car appeared on the seller's site, from Voltcheck's nightly check — shown only when the seller was already being tracked when it appeared.",
+        "When this car appeared on the seller's site, from Census's nightly check — shown only when the seller was already being tracked when it appeared.",
     });
   }
 
@@ -141,7 +141,7 @@ export function pricePaceTiles(input: {
     tiles.push({
       kind: "cut",
       text: cuts.count === 1 ? off(cuts.totalUsd) : `${off(cuts.totalUsd)} in ${cuts.count} cuts`,
-      title: "Off this listing's asking price since Voltcheck first saw it.",
+      title: "Off this listing's asking price since Census first saw it.",
     });
   }
 
@@ -162,7 +162,7 @@ export function pricePaceTiles(input: {
       tiles.push({
         kind: "spec",
         text: `First cut at ${days} day${days === 1 ? "" : "s"} est`,
-        title: `Median across ${d.datedN} of this seller's cars whose listing date Voltcheck can stand behind.`,
+        title: `Median across ${d.datedN} of this seller's cars whose listing date Census can stand behind.`,
       });
     }
   }

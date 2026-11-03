@@ -3,10 +3,10 @@ import { Suspense } from "react";
 import { Browse } from "@/components/Browse";
 
 // Self-canonical to the apex home URL. Google was reaching the site through
-// http:// and www. variants (each 308s to https://voltcheck.net/), and with
+// http:// and www. variants (each 308s to https://censusev.com/), and with
 // no canonical here it had nothing pinning the home page to one address. The
-// path resolves against layout.tsx's metadataBase (https://voltcheck.net), so
-// this renders <link rel="canonical" href="https://voltcheck.net/">. Kept on
+// path resolves against layout.tsx's metadataBase (https://censusev.com), so
+// this renders <link rel="canonical" href="https://censusev.com/">. Kept on
 // the page, not the root layout, because a layout canonical inherits into
 // every child route and would wrongly point /vin, /saved, etc. at "/".
 export const metadata: Metadata = {

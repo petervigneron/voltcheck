@@ -32,7 +32,7 @@
 // public API and would break on a minor upgrade; the sitemaps.org format we
 // actually use is four elements deep.
 
-export const BASE = "https://voltcheck.net";
+export const BASE = "https://censusev.com";
 
 /**
  * How many files the listing sitemap is split across.

@@ -50,7 +50,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     model: "ariya",
     topic: "charging",
     contentFile: "ariya-charging",
-    pageTitle: "Nissan Ariya charging: DC fast-charge speed, connector, preconditioning | Voltcheck",
+    pageTitle: "Nissan Ariya charging: DC fast-charge speed, connector, preconditioning | Census",
     description:
       "How fast the Nissan Ariya charges, its CCS1 port and NACS adapter, and how to precondition the battery before a fast charge. Sourced to Nissan's brochure and owner's manual.",
     breadcrumbLabel: "Nissan Ariya charging",
@@ -82,7 +82,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     model: "ioniq-5",
     topic: "charging",
     contentFile: "ioniq5-charging",
-    pageTitle: "Hyundai Ioniq 5 charging by model year: DC speed, NACS port, preconditioning | Voltcheck",
+    pageTitle: "Hyundai Ioniq 5 charging by model year: DC speed, NACS port, preconditioning | Census",
     description:
       "How Hyundai Ioniq 5 charging changed from the CCS1 port (2022-2024) to the native NACS port (2025), by the numbers in Hyundai's spec sheets and owner's manuals.",
     breadcrumbLabel: "Hyundai Ioniq 5 charging",
@@ -115,7 +115,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     model: "mustang-mach-e",
     topic: "heat-pump",
     contentFile: "mach-e-heat-pump",
-    pageTitle: "Ford Mustang Mach-E heat pump by year: which model years have one | Voltcheck",
+    pageTitle: "Ford Mustang Mach-E heat pump by year: which model years have one | Census",
     description:
       "Whether the Ford Mustang Mach-E has a heat pump, by model year, sourced to Ford's order guides. No 2021-2024 Mach-E has one; every 2025 does.",
     breadcrumbLabel: "Ford Mustang Mach-E heat pump",
@@ -138,7 +138,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     model: "id-4",
     topic: "heat-pump",
     contentFile: "id4-heat-pump",
-    pageTitle: "Volkswagen ID.4 heat pump: does it have one | Voltcheck",
+    pageTitle: "Volkswagen ID.4 heat pump: does it have one | Census",
     description:
       "No US-market Volkswagen ID.4, model years 2021 through 2025, has a heat pump. Sourced to Volkswagen's US retail order guides.",
     breadcrumbLabel: "Volkswagen ID.4 heat pump",
@@ -156,7 +156,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     model: "bolt-ev-euv",
     topic: "heat-pump",
     contentFile: "bolt-ev-euv-heat-pump",
-    pageTitle: "Chevrolet Bolt EV & Bolt EUV heat pump: does either have one | Voltcheck",
+    pageTitle: "Chevrolet Bolt EV & Bolt EUV heat pump: does either have one | Census",
     description:
       "Neither the Chevrolet Bolt EV (2017-2023) nor the Bolt EUV (2022-2023) has a heat pump. Sourced to GM's owner's manuals and order guides.",
     breadcrumbLabel: "Chevrolet Bolt EV & Bolt EUV heat pump",
@@ -174,7 +174,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     model: "model-y",
     topic: "heat-pump",
     contentFile: "model-y-heat-pump",
-    pageTitle: "Tesla Model Y heat pump: which model years have one | Voltcheck",
+    pageTitle: "Tesla Model Y heat pump: which model years have one | Census",
     description:
       "Every Tesla Model Y, model years 2020 through 2026, has a Heat Pump Assembly, per Tesla's owner's manual.",
     breadcrumbLabel: "Tesla Model Y heat pump",
@@ -194,7 +194,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     model: "id-4",
     topic: "charging",
     contentFile: "id4-charging",
-    pageTitle: "Volkswagen ID.4 charging by year: DC speed, CCS port, NACS adapter | Voltcheck",
+    pageTitle: "Volkswagen ID.4 charging by year: DC speed, CCS port, NACS adapter | Census",
     description:
       "How fast a Volkswagen ID.4 fast-charges, by model year and battery pack, from Volkswagen's order guides — including the 2023 split between LG and SK On packs.",
     breadcrumbLabel: "Volkswagen ID.4 charging",
@@ -227,7 +227,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     model: "mustang-mach-e",
     topic: "charging",
     contentFile: "mach-e-charging",
-    pageTitle: "Ford Mustang Mach-E charging: DC speed, CCS port, Supercharger adapter | Voltcheck",
+    pageTitle: "Ford Mustang Mach-E charging: DC speed, CCS port, Supercharger adapter | Census",
     description:
       "What Ford's order guides say about Mustang Mach-E charging, 2021 through 2025: 150 kW DC, the onboard AC charger by year, and what the Fast Charging Adapter does and does not do.",
     breadcrumbLabel: "Ford Mustang Mach-E charging",
@@ -265,7 +265,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     model: "f-150-lightning",
     topic: "charging",
     contentFile: "f150-lightning-charging",
-    pageTitle: "Ford F-150 Lightning charging: charge times, onboard charger by year | Voltcheck",
+    pageTitle: "Ford F-150 Lightning charging: charge times, onboard charger by year | Census",
     description:
       "Ford's charge times for the F-150 Lightning, 2022 through 2025, and the onboard-charger change that turns an 8-hour overnight into 13. Sourced to Ford's spec sheets and order guides.",
     breadcrumbLabel: "Ford F-150 Lightning charging",
@@ -303,7 +303,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     model: "bolt-ev-euv",
     topic: "charging",
     contentFile: "bolt-ev-euv-charging",
-    pageTitle: "Chevrolet Bolt EV & EUV charging: why some can't fast charge at all | Voltcheck",
+    pageTitle: "Chevrolet Bolt EV & EUV charging: why some can't fast charge at all | Census",
     description:
       "GM sold DC fast charging as an option on the Bolt EV through 2021, so some used cars cannot fast charge at any speed. Charge times by model year, from GM's manuals and order guides.",
     breadcrumbLabel: "Chevrolet Bolt EV & Bolt EUV charging",
@@ -336,7 +336,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     model: "leaf",
     topic: "charging",
     contentFile: "leaf-charging",
-    pageTitle: "Nissan Leaf charging: CHAdeMO, the optional fast-charge port, and 2026's NACS | Voltcheck",
+    pageTitle: "Nissan Leaf charging: CHAdeMO, the optional fast-charge port, and 2026's NACS | Census",
     description:
       "Nissan sold the Leaf's fast-charge port as an option, and it is CHAdeMO, not CCS or NACS. What Nissan's manuals say about charging a Leaf, and what changes for 2026.",
     breadcrumbLabel: "Nissan Leaf charging",
@@ -369,7 +369,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     model: "id-buzz",
     topic: "charging",
     contentFile: "id-buzz-charging",
-    pageTitle: "Volkswagen ID. Buzz charging: 200 kW, 26 minutes, and a plan that doesn't transfer | Voltcheck",
+    pageTitle: "Volkswagen ID. Buzz charging: 200 kW, 26 minutes, and a plan that doesn't transfer | Census",
     description:
       "How fast the 2025 Volkswagen ID. Buzz charges, how its automatic battery preconditioning works, and why its Plug&Charge plan stops at the first owner. Volkswagen's figures.",
     breadcrumbLabel: "Volkswagen ID. Buzz charging",
@@ -407,7 +407,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     model: "model-3",
     topic: "battery-warranty",
     contentFile: "model-3-battery-warranty",
-    pageTitle: "Tesla Model 3 battery warranty: years, miles, and the 70% floor | Voltcheck",
+    pageTitle: "Tesla Model 3 battery warranty: years, miles, and the 70% floor | Census",
     description:
       "What Tesla's Battery and Drive Unit Limited Warranty covers on a Model 3 — 8 years and 100,000 or 120,000 miles by trim, a 70% capacity floor, and what Tesla excludes.",
     breadcrumbLabel: "Tesla Model 3 battery warranty",
@@ -440,7 +440,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     model: "model-y",
     topic: "battery-warranty",
     contentFile: "model-y-battery-warranty",
-    pageTitle: "Tesla Model Y battery warranty: 100,000 or 120,000 miles, by trim | Voltcheck",
+    pageTitle: "Tesla Model Y battery warranty: 100,000 or 120,000 miles, by trim | Census",
     description:
       "Tesla publishes the Model Y's battery coverage twice, in two different sets of trim names. Both lists are quoted here, with what the 70% capacity floor actually promises.",
     breadcrumbLabel: "Tesla Model Y battery warranty",
@@ -473,7 +473,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     model: "ioniq-5",
     topic: "battery-warranty",
     contentFile: "ioniq5-battery-warranty",
-    pageTitle: "Hyundai Ioniq 5 battery warranty: 10 years, 100,000 miles, and the transfer question | Voltcheck",
+    pageTitle: "Hyundai Ioniq 5 battery warranty: 10 years, 100,000 miles, and the transfer question | Census",
     description:
       "What Hyundai's warranty handbook covers on an Ioniq 5 battery, what its two paragraphs about the 70% figure actually say, and what it does not say about a second owner.",
     breadcrumbLabel: "Hyundai Ioniq 5 battery warranty",
@@ -506,7 +506,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     model: "ev6",
     topic: "battery-warranty",
     contentFile: "ev6-battery-warranty",
-    pageTitle: "Kia EV6 battery warranty: two coverages, and when the clock started | Voltcheck",
+    pageTitle: "Kia EV6 battery warranty: two coverages, and when the clock started | Census",
     description:
       "Kia covers an EV6's electric drivetrain and its battery capacity separately, both for 10 years or 100,000 miles from the date of first service — a date that can precede the first sale. From Kia's EV warranty manual.",
     breadcrumbLabel: "Kia EV6 battery warranty",
@@ -540,7 +540,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     model: "ioniq-6",
     topic: "charging",
     contentFile: "ioniq6-charging",
-    pageTitle: "Hyundai Ioniq 6 charging: DC speed, CCS port, NACS adapter, preconditioning | Voltcheck",
+    pageTitle: "Hyundai Ioniq 6 charging: DC speed, CCS port, NACS adapter, preconditioning | Census",
     description:
       "How fast the Hyundai Ioniq 6 charges, why it needs a NACS adapter for a Supercharger, and how its battery conditioning mode works. Sourced to Hyundai's spec sheets and owner's manuals.",
     breadcrumbLabel: "Hyundai Ioniq 6 charging",
@@ -573,7 +573,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     model: "ev6",
     topic: "charging",
     contentFile: "ev6-charging",
-    pageTitle: "Kia EV6 charging by model year: DC speed, CCS1 to NACS port switch | Voltcheck",
+    pageTitle: "Kia EV6 charging by model year: DC speed, CCS1 to NACS port switch | Census",
     description:
       "How fast the Kia EV6 charges by model year and trim, and which years have the native NACS port. Sourced to Kia's specification sheets, press releases, and owner's manual.",
     breadcrumbLabel: "Kia EV6 charging",
@@ -606,7 +606,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     model: "id-buzz",
     topic: "heat-pump",
     contentFile: "id-buzz-heat-pump",
-    pageTitle: "Volkswagen ID. Buzz heat pump: does it have one | Voltcheck",
+    pageTitle: "Volkswagen ID. Buzz heat pump: does it have one | Census",
     description:
       "No US-market 2025 Volkswagen ID. Buzz has a heat pump. Volkswagen's press release names an electric resistance heater instead. Sourced to Volkswagen's documents.",
     breadcrumbLabel: "Volkswagen ID. Buzz heat pump",
@@ -634,7 +634,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     model: "f-150-lightning",
     topic: "heat-pump",
     contentFile: "f-150-lightning-heat-pump",
-    pageTitle: "Ford F-150 Lightning heat pump by year: which model years have one | Voltcheck",
+    pageTitle: "Ford F-150 Lightning heat pump by year: which model years have one | Census",
     description:
       "Whether the Ford F-150 Lightning has a heat pump, by model year. Standard on all trims from 2024 on; no 2022 or 2023 Lightning has one. Sourced to Ford's support site and order guides.",
     breadcrumbLabel: "Ford F-150 Lightning heat pump",
@@ -657,7 +657,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     model: "leaf",
     topic: "heat-pump",
     contentFile: "leaf-heat-pump",
-    pageTitle: "Nissan Leaf heat pump by year: hybrid heater system, trim by trim | Voltcheck",
+    pageTitle: "Nissan Leaf heat pump by year: hybrid heater system, trim by trim | Census",
     description:
       "Which Nissan Leaf model years and trims get the Hybrid heater system, and which year Nissan actually says \"heat pump.\" On the 2026 Leaf it is standard on SV+ and Platinum+ and not offered on S+. Sourced to Nissan's brochures and press kit.",
     breadcrumbLabel: "Nissan Leaf heat pump",
@@ -685,7 +685,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     model: "ariya",
     topic: "heat-pump",
     contentFile: "ariya-heat-pump",
-    pageTitle: "Nissan Ariya heat pump: what Nissan's documents say | Voltcheck",
+    pageTitle: "Nissan Ariya heat pump: what Nissan's documents say | Census",
     description:
       "No Nissan document published for the US-market Ariya, model years 2023 through 2025, says it has a heat pump. Nissan's high-voltage component list names a PTC heater. Twelve Nissan documents checked.",
     breadcrumbLabel: "Nissan Ariya heat pump",
@@ -713,7 +713,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     model: "model-3",
     topic: "charging",
     contentFile: "model-3-charging",
-    pageTitle: "Tesla Model 3 charging: Supercharger speed, home rate by circuit, adapters | Voltcheck",
+    pageTitle: "Tesla Model 3 charging: Supercharger speed, home rate by circuit, adapters | Census",
     description:
       "How fast a Tesla Model 3 charges at a Supercharger and at home by circuit size, which trims cap at 32 amps, and which adapters it needs. Sourced to Tesla's manual and support pages.",
     breadcrumbLabel: "Tesla Model 3 charging",
@@ -746,7 +746,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     model: "model-y",
     topic: "charging",
     contentFile: "model-y-charging",
-    pageTitle: "Tesla Model Y charging: Supercharger speed, home rate by circuit, adapters | Voltcheck",
+    pageTitle: "Tesla Model Y charging: Supercharger speed, home rate by circuit, adapters | Census",
     description:
       "How fast a Tesla Model Y charges at a Supercharger and at home by circuit size, why RWD and AWD cars cap at 32 amps, and which adapters they need. Sourced to Tesla's manual and support pages.",
     breadcrumbLabel: "Tesla Model Y charging",
@@ -781,7 +781,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     model: "model-3",
     topic: "heat-pump",
     contentFile: "model-3-heat-pump",
-    pageTitle: "Tesla Model 3 heat pump: which cars have one, by build date | Voltcheck",
+    pageTitle: "Tesla Model 3 heat pump: which cars have one, by build date | Census",
     description:
       "Tesla says Model 3 cars built between about July 2017 and October 2020 do not have a heat pump, and cars built afterward do. Sourced to Tesla's owner's manual.",
     breadcrumbLabel: "Tesla Model 3 heat pump",
@@ -814,7 +814,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     model: "ioniq-5",
     topic: "heat-pump",
     contentFile: "ioniq5-heat-pump",
-    pageTitle: "Hyundai Ioniq 5 heat pump: AWD only, every model year | Voltcheck",
+    pageTitle: "Hyundai Ioniq 5 heat pump: AWD only, every model year | Census",
     description:
       "The Hyundai Ioniq 5's heat pump is AWD-only in every trim and every model year from 2022 through 2026, per Hyundai's equipment grids. No rear-wheel-drive Ioniq 5 has one.",
     breadcrumbLabel: "Hyundai Ioniq 5 heat pump",
@@ -847,7 +847,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     model: "ioniq-6",
     topic: "heat-pump",
     contentFile: "ioniq6-heat-pump",
-    pageTitle: "Hyundai Ioniq 6 heat pump: standard on every one but the Standard Range | Voltcheck",
+    pageTitle: "Hyundai Ioniq 6 heat pump: standard on every one but the Standard Range | Census",
     description:
       "Hyundai marks the Ioniq 6's heat pump standard on SE Long Range, SEL and Limited for 2023 through 2025, and absent on the 53 kWh SE Standard Range. From Hyundai's equipment grids.",
     breadcrumbLabel: "Hyundai Ioniq 6 heat pump",
@@ -880,7 +880,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     model: "ev6",
     topic: "heat-pump",
     contentFile: "ev6-heat-pump",
-    pageTitle: "Kia EV6 heat pump: optional on most trims, so check the car | Voltcheck",
+    pageTitle: "Kia EV6 heat pump: optional on most trims, so check the car | Census",
     description:
       "Kia marks the EV6's heat pump Optional on Wind and GT-Line in every model year from 2022 to 2026, standard only on the GT, and not available on the Light. From Kia's Features & Options files.",
     breadcrumbLabel: "Kia EV6 heat pump",
@@ -919,7 +919,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     model: "optiq",
     topic: "charging",
     contentFile: "optiq-charging",
-    pageTitle: "Cadillac Optiq charging: the 2026 NACS port, the 2025 CCS1 port, 150 kW | Voltcheck",
+    pageTitle: "Cadillac Optiq charging: the 2026 NACS port, the 2025 CCS1 port, 150 kW | Census",
     description:
       "The Optiq's charge port changed with the model year: 2025 cars are CCS1, 2026 cars are NACS from the factory. Peak 150 kW, 11.5 kW or 19.2 kW at home.",
     breadcrumbLabel: "Cadillac Optiq charging",
@@ -957,7 +957,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     model: "optiq",
     topic: "battery-warranty",
     contentFile: "optiq-battery-warranty",
-    pageTitle: "Cadillac Optiq battery warranty: 8 years, 100,000 miles, 75% floor | Voltcheck",
+    pageTitle: "Cadillac Optiq battery warranty: 8 years, 100,000 miles, 75% floor | Census",
     description:
       "Cadillac covers the Optiq propulsion battery for 8 years or 100,000 miles and replaces it below 75% capacity. It transfers to every subsequent owner.",
     breadcrumbLabel: "Cadillac Optiq battery warranty",
@@ -995,7 +995,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     model: "lyriq",
     topic: "charging",
     contentFile: "lyriq-charging",
-    pageTitle: "Cadillac Lyriq charging: the model year the plug changes | Voltcheck",
+    pageTitle: "Cadillac Lyriq charging: the model year the plug changes | Census",
     description:
       "The Lyriq takes CCS1 through 2026 and a native NACS port for 2027, at 190 kW either way. Cadillac's charge times per year, drive and onboard charger.",
     breadcrumbLabel: "Cadillac Lyriq charging",
@@ -1033,7 +1033,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     model: "lyriq",
     topic: "battery-warranty",
     contentFile: "lyriq-battery-warranty",
-    pageTitle: "Cadillac Lyriq battery warranty: 75% floor, and it transfers | Voltcheck",
+    pageTitle: "Cadillac Lyriq battery warranty: 75% floor, and it transfers | Census",
     description:
       "Cadillac covers the Lyriq propulsion battery for 8 years or 100,000 miles and replaces it below 75% capacity. It runs from first delivery and follows the car.",
     breadcrumbLabel: "Cadillac Lyriq battery warranty",
@@ -1071,7 +1071,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     model: "equinox-ev",
     topic: "charging",
     contentFile: "equinox-ev-charging",
-    pageTitle: "Chevrolet Equinox EV charging: 150 kW DC, CCS1 through 2026, NACS in 2027 | Voltcheck",
+    pageTitle: "Chevrolet Equinox EV charging: 150 kW DC, CCS1 through 2026, NACS in 2027 | Census",
     description:
       "Chevrolet's charging figures for the Equinox EV: 150 kW DC fast charging, 85 kWh in 2026, CCS1 through 2026 and a native NACS port for 2027.",
     breadcrumbLabel: "Chevrolet Equinox EV charging",
@@ -1109,7 +1109,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     model: "equinox-ev",
     topic: "battery-warranty",
     contentFile: "equinox-ev-battery-warranty",
-    pageTitle: "Chevrolet Equinox EV battery warranty: 8 years, 100,000 miles, 75% floor | Voltcheck",
+    pageTitle: "Chevrolet Equinox EV battery warranty: 8 years, 100,000 miles, 75% floor | Census",
     description:
       "Chevrolet covers the Equinox EV propulsion battery for 8 years or 100,000 miles and replaces it below 75% capacity, for the first owner and every later one.",
     breadcrumbLabel: "Chevrolet Equinox EV battery warranty",
@@ -1147,7 +1147,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     model: "blazer-ev",
     topic: "charging",
     contentFile: "blazer-ev-charging",
-    pageTitle: "Chevrolet Blazer EV charging: 85 vs 102 kWh packs, and the 2027 NACS switch | Voltcheck",
+    pageTitle: "Chevrolet Blazer EV charging: 85 vs 102 kWh packs, and the 2027 NACS switch | Census",
     description:
       "Blazer EV DC rates by pack: 150 kW on 85 kWh, 190 kW on 102 kWh. CCS1 through 2026, NACS from 2027. Sourced to Chevrolet's specs and owner manuals.",
     breadcrumbLabel: "Chevrolet Blazer EV charging",
@@ -1185,7 +1185,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     model: "blazer-ev",
     topic: "battery-warranty",
     contentFile: "blazer-ev-battery-warranty",
-    pageTitle: "Chevrolet Blazer EV battery warranty: 8 years, and the 75% floor | Voltcheck",
+    pageTitle: "Chevrolet Blazer EV battery warranty: 8 years, and the 75% floor | Census",
     description:
       "Blazer EV battery coverage is 8 years or 100,000 miles, replaced below 75% capacity, and it transfers to you. Sourced to Chevrolet's warranty booklets.",
     breadcrumbLabel: "Chevrolet Blazer EV battery warranty",
@@ -1223,7 +1223,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     model: "ev9",
     topic: "charging",
     contentFile: "ev9-charging",
-    pageTitle: "Kia EV9 charging: 235 kW peak, and NACS only from 2026 | Voltcheck",
+    pageTitle: "Kia EV9 charging: 235 kW peak, and NACS only from 2026 | Census",
     description:
       "10-80% in 20-24 min on a 350 kW charger for 2024 and 2026, peak 235 or 210 kW by pack, CCS1 through 2025 and NACS from 2026. Kia's tables.",
     breadcrumbLabel: "Kia EV9 charging",
@@ -1261,7 +1261,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     model: "ev9",
     topic: "heat-pump",
     contentFile: "ev9-heat-pump",
-    pageTitle: "Kia EV9 heat pump: standard on AWD, absent on the RWD Light | Voltcheck",
+    pageTitle: "Kia EV9 heat pump: standard on AWD, absent on the RWD Light | Census",
     description:
       "Kia's tables: the EV9 heat pump is standard on Wind, Land and GT-Line for 2024-2026 and not available on the RWD Light. Optional on the 2025 Light LR.",
     breadcrumbLabel: "Kia EV9 heat pump",
@@ -1294,7 +1294,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     model: "ev9",
     topic: "battery-warranty",
     contentFile: "ev9-battery-warranty",
-    pageTitle: "Kia EV9 battery warranty: 10 years, 100,000 miles, 70% floor | Voltcheck",
+    pageTitle: "Kia EV9 battery warranty: 10 years, 100,000 miles, 70% floor | Census",
     description:
       "Kia covers the EV9 battery for 120 months or 100,000 miles, repairs capacity loss below 70% back to at least 70%, and transfers the coverage to a second owner.",
     breadcrumbLabel: "Kia EV9 battery warranty",
@@ -1332,7 +1332,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     model: "wrangler-4xe",
     topic: "charging",
     contentFile: "wrangler-4xe-charging",
-    pageTitle: "Jeep Wrangler 4xe charging: 12 hours on Level 1, about 2 on Level 2 | Voltcheck",
+    pageTitle: "Jeep Wrangler 4xe charging: 12 hours on Level 1, about 2 on Level 2 | Census",
     description:
       "Jeep's figures: a 17.3 kWh gross pack, a 7.2 kW max charge rate, J1772 AC only, and about 2 hours on Level 2 from under 1% charge.",
     breadcrumbLabel: "Jeep Wrangler 4xe charging",
@@ -1370,7 +1370,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     model: "wrangler-4xe",
     topic: "battery-warranty",
     contentFile: "wrangler-4xe-battery-warranty",
-    pageTitle: "Jeep Wrangler 4xe battery warranty: the term changed three times | Voltcheck",
+    pageTitle: "Jeep Wrangler 4xe battery warranty: the term changed three times | Census",
     description:
       "A 2021 Wrangler 4xe carries 10 years or 100,000 miles. A 2022 or 2023 carries 8 years or 100,000. 2024 and 2025 add 10 years or 150,000 in TZEV states.",
     breadcrumbLabel: "Jeep Wrangler 4xe battery warranty",
@@ -1408,7 +1408,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     model: "prologue",
     topic: "charging",
     contentFile: "prologue-charging",
-    pageTitle: "Honda Prologue charging: 85 kWh pack, 150 kW DC, 20-80% in 35 minutes | Voltcheck",
+    pageTitle: "Honda Prologue charging: 85 kWh pack, 150 kW DC, 20-80% in 35 minutes | Census",
     description:
       "Every Honda Prologue carries an 85 kWh pack, DC fast charges at up to 150 kW, and goes 20% to 80% in 35 minutes. Honda's figures, 2024 to 2026.",
     breadcrumbLabel: "Honda Prologue charging",
@@ -1450,7 +1450,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     model: "prologue",
     topic: "battery-warranty",
     contentFile: "prologue-battery-warranty",
-    pageTitle: "Honda Prologue battery warranty: 8 years, 100,000 miles, 75% floor | Voltcheck",
+    pageTitle: "Honda Prologue battery warranty: 8 years, 100,000 miles, 75% floor | Census",
     description:
       "Honda's 2025 warranty booklet covers the Prologue's high voltage battery for 8 years or 100,000 miles, and replaces it below 75% of its original capacity.",
     breadcrumbLabel: "Honda Prologue battery warranty",

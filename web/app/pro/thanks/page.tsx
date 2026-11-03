@@ -20,7 +20,7 @@ import Link from "next/link";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Thanks — Voltcheck Pro",
+  title: "Thanks — Census Pro",
   // A transactional dead end with no index value, and one that would read as
   // a purchase confirmation to anyone who found it in search results.
   robots: { index: false, follow: true },
@@ -43,7 +43,7 @@ export default async function ProThanksPage(props: {
         {fromStripe ? (
           <>
             <div className={`${CELL} bg-teal px-5 py-8 text-paper sm:px-8`}>
-              <span className={EYEBROW}>Voltcheck Pro</span>
+              <span className={EYEBROW}>Census Pro</span>
               <h1 className="mt-2 text-[30px] leading-[1.05] font-extrabold tracking-[-0.03em] sm:text-[36px]">
                 Thanks — check your email.
               </h1>
@@ -82,7 +82,7 @@ export default async function ProThanksPage(props: {
 
         <div className={`${CELL} bg-putty px-5 py-5 text-[13px] font-bold sm:px-8`}>
           <Link href="/pro" className="text-cobalt underline underline-offset-2">
-            Voltcheck Pro
+            Census Pro
           </Link>
           <span className="px-3 text-ink/30">·</span>
           <Link href="/" className="text-cobalt underline underline-offset-2">

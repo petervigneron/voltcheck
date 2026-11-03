@@ -5,7 +5,7 @@ import { ForgotForm } from "@/components/ForgotForm";
 // account exists. The page says the same thing whichever is true.
 
 export const metadata: Metadata = {
-  title: "Reset your password — Voltcheck",
+  title: "Reset your password — Census",
   robots: { index: false, follow: true },
 };
 

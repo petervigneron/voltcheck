@@ -3,9 +3,9 @@
 // from web/:
 //
 //   node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs \
-//     scripts/incentive-counts.mjs [--host https://voltcheck.net]
+//     scripts/incentive-counts.mjs [--host https://censusev.com]
 //
-// Reads the published browse index off the CDN (voltcheck.net/api/index/0..N),
+// Reads the published browse index off the CDN (censusev.com/api/index/0..N),
 // never the database: CLAUDE.md's rule for full-feed scripts. Each packed row
 // is unpacked into the minimal Listing the matcher needs (VIN, year, make,
 // model, trim, price, mileage, condition, state) and run through
@@ -23,7 +23,7 @@ import { matchIncentives, STRICT_POLICY, SITE_POLICY } from "../lib/incentives/m
 import { INCENTIVE_PROGRAMS } from "../lib/incentives/registry.ts";
 
 const args = process.argv.slice(2);
-const host = args.includes("--host") ? args[args.indexOf("--host") + 1] : "https://voltcheck.net";
+const host = args.includes("--host") ? args[args.indexOf("--host") + 1] : "https://censusev.com";
 const RELAXED = SITE_POLICY;
 
 async function fetchJson(path) {

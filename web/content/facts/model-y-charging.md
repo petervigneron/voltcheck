@@ -55,9 +55,9 @@
 
 ## See it for yourself
 
-- [Live Tesla Model Y listings on Voltcheck](https://voltcheck.net/?make=Tesla&model=Model+Y)
-- [Does the Tesla Model Y have a heat pump](https://voltcheck.net/facts/tesla/model-y/heat-pump)
-- [Check a VIN before you buy](https://voltcheck.net/vin)
+- [Live Tesla Model Y listings on Census](https://censusev.com/?make=Tesla&model=Model+Y)
+- [Does the Tesla Model Y have a heat pump](https://censusev.com/facts/tesla/model-y/heat-pump)
+- [Check a VIN before you buy](https://censusev.com/vin)
 
 ---
 

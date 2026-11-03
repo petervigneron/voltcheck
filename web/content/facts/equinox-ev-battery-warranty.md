@@ -62,8 +62,8 @@
 
 ## See it for yourself
 
-- [Live Chevrolet Equinox EV listings on Voltcheck](https://voltcheck.net/?make=Chevrolet&model=Equinox+EV)
-- [Check a VIN before you buy](https://voltcheck.net/vin)
+- [Live Chevrolet Equinox EV listings on Census](https://censusev.com/?make=Chevrolet&model=Equinox+EV)
+- [Check a VIN before you buy](https://censusev.com/vin)
 
 ---
 

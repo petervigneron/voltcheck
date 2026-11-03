@@ -213,13 +213,13 @@ jobs:
           if [ -z "$FEED_REVALIDATE_SECRET" ]; then
             echo "no FEED_REVALIDATE_SECRET — site refreshes on its 24h TTL"; exit 0
           fi
-          curl -sf -X POST -H "x-revalidate-secret: $FEED_REVALIDATE_SECRET" https://voltcheck.net/api/revalidate \
+          curl -sf -X POST -H "x-revalidate-secret: $FEED_REVALIDATE_SECRET" https://censusev.com/api/revalidate \
             || { echo "::warning::revalidate POST failed; site refreshes on its 24h TTL"; exit 0; }
           # Artifact-backed re-renders are one CDN fetch each — warming every
           # path is now cheap enough to just do. 48 index shards since
           # 2026-09-10; keep in step with web/lib/listings/pack.ts SHARDS.
           for p in first trims $(seq 0 47); do
-            curl -sf -o /dev/null --max-time 120 "https://voltcheck.net/api/index/$p" \
+            curl -sf -o /dev/null --max-time 120 "https://censusev.com/api/index/$p" \
               || echo "::warning::warm of /api/index/$p failed; its first visitor pays the (artifact) render"
           done
           # The other 12 of those 38, which this loop was missing (2026-08-28).
@@ -246,7 +246,7 @@ jobs:
           # Sequential and unhurried on purpose: each is a walk-path render,
           # and db.ts's ten-minute memo means the first one pays for the rest.
           for s in $(seq 0 11); do
-            curl -sf -o /dev/null --max-time 300 "https://voltcheck.net/sitemap/$s.xml" \
+            curl -sf -o /dev/null --max-time 300 "https://censusev.com/sitemap/$s.xml" \
               || echo "::warning::warm of /sitemap/$s.xml failed; crawlers keep yesterday's copy until a request renders it"
           done
 

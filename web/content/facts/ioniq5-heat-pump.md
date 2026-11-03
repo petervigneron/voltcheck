@@ -30,8 +30,8 @@
 
 ## See it for yourself
 
-- [Live Hyundai Ioniq 5 listings on Voltcheck](https://voltcheck.net/?make=Hyundai&model=Ioniq%205)
-- [Check a VIN before you buy](https://voltcheck.net/vin)
+- [Live Hyundai Ioniq 5 listings on Census](https://censusev.com/?make=Hyundai&model=Ioniq%205)
+- [Check a VIN before you buy](https://censusev.com/vin)
 
 ---
 

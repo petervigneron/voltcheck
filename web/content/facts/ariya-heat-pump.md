@@ -18,8 +18,8 @@
 
 ## See it for yourself
 
-- [Live Nissan Ariya listings on Voltcheck](https://voltcheck.net/?make=Nissan&model=Ariya)
-- [Check a VIN before you buy](https://voltcheck.net/vin)
+- [Live Nissan Ariya listings on Census](https://censusev.com/?make=Nissan&model=Ariya)
+- [Check a VIN before you buy](https://censusev.com/vin)
 
 ---
 

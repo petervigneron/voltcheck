@@ -6,7 +6,7 @@ import { FACT_SHEETS } from "@/lib/facts/registry";
 // web/app/methodology/page.tsx: a layout canonical would point every child
 // route (every /facts/... sheet) back at /facts too.
 export const metadata: Metadata = {
-  title: "EV fact sheets | Voltcheck",
+  title: "EV fact sheets | Census",
   description:
     "Sourced answers to the questions shoppers actually ask about specific EVs: charging speed, connector type, and which model years have a heat pump.",
   alternates: { canonical: "/facts" },

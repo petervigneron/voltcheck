@@ -68,8 +68,8 @@ A 2026 Lyriq carries both floors: 75% under Battery Capacity Coverage everywhere
 
 ## See it for yourself
 
-- [Live Cadillac Lyriq listings on Voltcheck](https://voltcheck.net/?make=Cadillac&model=Lyriq)
-- [Check a VIN before you buy](https://voltcheck.net/vin)
+- [Live Cadillac Lyriq listings on Census](https://censusev.com/?make=Cadillac&model=Lyriq)
+- [Check a VIN before you buy](https://censusev.com/vin)
 
 ---
 

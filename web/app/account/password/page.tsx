@@ -10,7 +10,7 @@ import { PasswordForm } from "@/components/PasswordForm";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "New password — Voltcheck",
+  title: "New password — Census",
   robots: { index: false, follow: true },
 };
 

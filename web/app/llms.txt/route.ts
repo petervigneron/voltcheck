@@ -25,7 +25,7 @@ import { MODEL_HUBS } from "@/lib/listings/modelHubs";
 // /ev, /vin and /bot's own descriptions, and the root layout's title
 // description. Nothing here makes a claim a page doesn't already make.
 
-const BODY = `# Voltcheck
+const BODY = `# Census
 
 > The most comprehensive index of electric and plug-in hybrid vehicles for sale in the United States, new, used and certified, with detailed information on battery capacity, range, and warranty, with links back to seller websites and price, mileage, color, and location derived from live listings. Specs come from the manufacturer's spec sheets, press materials and window stickers; EPA range and efficiency from fueleconomy.gov's data; vehicle decode data from NHTSA's vPIC database; battery recalls and complaints from NHTSA; and title records from Washington State DOL.
 
@@ -39,7 +39,7 @@ const BODY = `# Voltcheck
 - [What's my car worth?](${BASE}/worth): a valuation from a make, model, year, trim and odometer reading.
 - [VIN check](${BASE}/vin): paste any EV's VIN and get the same report our listings carry: the pack this exact car has, heat pump, fast-charge status, what the warranty does on resale, and the questions to ask the seller. The path is /vin/{VIN}.
 - [Where this data comes from](${BASE}/methodology): the manufacturer, EPA, NHTSA and state title sources behind every spec, price and warranty fact.
-- [About Voltcheck](${BASE}/about)
+- [About Census](${BASE}/about)
 - [VoltcheckBot](${BASE}/bot): what our own bot is, how it behaves, and how a site operator can exclude it.
 - [Sitemap](${BASE}/sitemap.xml)
 
@@ -55,7 +55,7 @@ A shard body is \`{ v: 1, t, h, r }\`. \`t\` (fact chips) and \`h\` (image origi
 
 \`i\` id, the VIN in lower case · \`q\` a lower-case string of the words the car can be searched by · \`y\` year · \`k\` make · \`o\` model · \`n\` title · \`p\` asking price in dollars · \`f\` present and 0 when that price is not one we could confirm · \`m\` odometer miles · \`cd\` condition, 0 new 1 used 2 certified · \`d\` drive, 0 RWD 1 AWD 2 FWD · \`b\` body, 0 suv 1 sedan 2 truck 3 van 4 hatchback · \`ct\` city · \`st\` state · \`l\` [latitude, longitude] · \`g\` image, [index into \`h\`, the rest of the URL] · \`tr\` trim · \`kw\` battery capacity in kWh · \`rm\` range in miles · \`hp\` heat pump, 0 yes 1 no 2 verify · \`pr\` 1 when this car's battery has been replaced · \`bb\` 1 when the seller's own description discloses a manufacturer repurchase · \`lo\` the date the car appeared on the seller's site · \`c\` the latest price cut, \`{a: amount, t: date, pv: the price before}\` · \`ts\` indices into \`t\`.
 
-How a price compares with the same version listed right now, and which purchase programs a car qualifies for, are part of [Voltcheck Pro](${BASE}/pro) and are not in these files.
+How a price compares with the same version listed right now, and which purchase programs a car qualifies for, are part of [Census Pro](${BASE}/pro) and are not in these files.
 
 Where a key is coded, a seller's own string rides in its place when the seller said something the table doesn't list. An absent key means we don't know, never a default.
 

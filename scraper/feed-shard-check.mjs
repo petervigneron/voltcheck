@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Confirms the production CDN endpoints a shopper's browser actually reads
-// (voltcheck.net/api/index/first + the numbered shards) are (a) serving at
+// (censusev.com/api/index/first + the numbered shards) are (a) serving at
 // all and (b) reporting a total that roughly matches what sync-guard last
 // confirmed straight from the database.
 //
@@ -41,7 +41,7 @@
 // database's hands and put the sitemaps into the same
 // "what got cached, and was it right?" question the index shards live in.
 //
-//   node feed-shard-check.mjs [--base https://voltcheck.net] [--skip-sitemaps]
+//   node feed-shard-check.mjs [--base https://censusev.com] [--skip-sitemaps]
 //
 // Exit 0 = every shard answered, with a plausible number of rows in it, and
 //          the reported total is plausible.
@@ -67,7 +67,7 @@ import { isPlaceholderVin } from "./lib/vin-placeholder.mjs";
 const AUDIT_EVERY_HOURS = 12;
 
 const arg = (n, d) => { const i = process.argv.indexOf(n); return i >= 0 ? process.argv[i + 1] : d; };
-const BASE = (arg("--base", "https://voltcheck.net")).replace(/\/$/, "");
+const BASE = (arg("--base", "https://censusev.com")).replace(/\/$/, "");
 // How far BELOW sync-guard's last stable read the served total may sit. One
 // direction only, and that is the fix, not a loosening. Every incident this
 // comparison was built for serves FEWER cars than the database holds: 58,730

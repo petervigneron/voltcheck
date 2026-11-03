@@ -46,7 +46,7 @@ test("the core node names the car and its VIN", () => {
   const j = ld(base);
   assert.equal(j["@type"], "Car");
   assert.equal(j.vehicleIdentificationNumber, "1G1FZ6EV2VF100001");
-  assert.equal(j.url, "https://voltcheck.net/listing/1g1fz6ev2vf100001");
+  assert.equal(j.url, "https://censusev.com/listing/1g1fz6ev2vf100001");
   assert.deepEqual(j.brand, { "@type": "Brand", name: "Chevrolet" });
   assert.equal(j.model, "Bolt EUV");
   assert.equal(j.vehicleModelDate, "2023");
@@ -209,7 +209,7 @@ test("the hub's ItemList counts what the page shows", () => {
   assert.deepEqual((j.itemListElement as Record<string, unknown>[])[0], {
     "@type": "ListItem",
     position: 1,
-    url: "https://voltcheck.net/listing/a",
+    url: "https://censusev.com/listing/a",
     name: "2023 Chevrolet Bolt EUV LT",
   });
 });

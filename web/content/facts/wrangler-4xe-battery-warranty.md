@@ -61,8 +61,8 @@ Both booklets state that the battery will experience gradual capacity loss with 
 
 ## See it for yourself
 
-- [Live Jeep Wrangler 4xe listings on Voltcheck](https://voltcheck.net/?make=Jeep&model=Wrangler+4xe)
-- [Check a VIN before you buy](https://voltcheck.net/vin)
+- [Live Jeep Wrangler 4xe listings on Census](https://censusev.com/?make=Jeep&model=Wrangler+4xe)
+- [Check a VIN before you buy](https://censusev.com/vin)
 
 ---
 

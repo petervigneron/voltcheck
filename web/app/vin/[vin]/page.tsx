@@ -39,7 +39,7 @@ export async function generateMetadata(props: PageProps<"/vin/[vin]">): Promise<
   const { vin: rawVin } = await props.params;
   const vin = decodeURIComponent(rawVin).toUpperCase();
   const noindex = { robots: { index: false, follow: true } };
-  if (!isValidVin(vin)) return { title: "VIN check | Voltcheck", ...noindex };
+  if (!isValidVin(vin)) return { title: "VIN check | Census", ...noindex };
 
   const decode = await getDecode(vin);
   const tesla = isTeslaVin(vin) ? decodeTeslaVin(vin) : null;
@@ -51,7 +51,7 @@ export async function generateMetadata(props: PageProps<"/vin/[vin]">): Promise<
   const name = decode.usMarket ? identity || "Vehicle" : "Non-US-market vehicle";
 
   return {
-    title: `${name} — VIN ${vin} | Voltcheck`,
+    title: `${name} — VIN ${vin} | Census`,
     description: `What VIN ${vin} decodes to: ${name}. Battery pack, EPA range, and warranty for this configuration.`,
     openGraph: { title: `${name} — VIN check`, description: `The battery, range, and warranty behind VIN ${vin}.`, type: "website", url: `/vin/${vin}` },
     ...noindex,

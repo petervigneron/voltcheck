@@ -23,9 +23,9 @@ export function ProBlur({ label, children }: { label?: string; children: React.R
   const pass = useProPass();
   const pro = pass === null ? null : pass.active;
   // Someone whose pass ended is not a stranger, and the button that reads
-  // "Voltcheck Pro" to a stranger read as one to them (0087). Same button,
+  // "Census Pro" to a stranger read as one to them (0087). Same button,
   // same destination; it just says which of the two this is.
-  const badge = pass?.expired ? "Your pass ended" : "Voltcheck Pro";
+  const badge = pass?.expired ? "Your pass ended" : "Census Pro";
   // The label is never blurred: a visitor should know what is behind the
   // blur before deciding whether to want it (owner, 2026-09-03). It is the
   // benefit's own title from /pro (lib/proOffer.ts proBenefitTitle), so the
@@ -34,7 +34,7 @@ export function ProBlur({ label, children }: { label?: string; children: React.R
   // Optional in the type only. It was documented as optional "because
   // Incentives.tsx carries its own heading" — that component has no heading
   // and never had one, so the rebate block shipped on 2026-09-03 as an
-  // unexplained smear with a "Voltcheck Pro" button on it. Owner, 2026-09-04:
+  // unexplained smear with a "Census Pro" button on it. Owner, 2026-09-04:
   // "we need to know what's actually blurred out below the blur." Pass one.
   const caption = label ? (
     <p className="mb-3 text-[10.5px] font-extrabold uppercase tracking-[0.14em] text-ink/55">{label}</p>

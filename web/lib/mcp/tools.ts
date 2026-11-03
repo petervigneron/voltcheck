@@ -38,7 +38,7 @@ export const TOOLS: McpTool[] = [
   {
     name: "search_listings",
     description:
-      "Search every electric and plug-in hybrid vehicle listed for sale in the United States that Voltcheck tracks — new, used and certified, from dealers' own sites and manufacturer inventory. Returns matching listings with price, mileage, location, the dealer's own page, and the EV facts the site stands behind (battery kWh, EPA range, charge port, heat pump, DC fast charging), each marked estimated when it is not the manufacturer's own figure. Inventory is as of the `as_of` timestamp in the result.",
+      "Search every electric and plug-in hybrid vehicle listed for sale in the United States that Census tracks — new, used and certified, from dealers' own sites and manufacturer inventory. Returns matching listings with price, mileage, location, the dealer's own page, and the EV facts the site stands behind (battery kWh, EPA range, charge port, heat pump, DC fast charging), each marked estimated when it is not the manufacturer's own figure. Inventory is as of the `as_of` timestamp in the result.",
     inputSchema: SEARCH_SCHEMA,
     handler: async (args) => {
       const r = await searchListings(args);
@@ -69,4 +69,4 @@ export const TOOLS: McpTool[] = [
 ];
 
 export const INSTRUCTIONS =
-  "Voltcheck lists electric and plug-in hybrid vehicles for sale in the United States. Call list_models to learn make and model spellings, search_listings to find cars (give a zip for nearby results), get_listing for one car's price history. Every record carries the dealer's own page in seller.url; send people there to buy. Facts marked estimated are not the manufacturer's own figure. Results are as of the as_of timestamp.";
+  "Census lists electric and plug-in hybrid vehicles for sale in the United States. Call list_models to learn make and model spellings, search_listings to find cars (give a zip for nearby results), get_listing for one car's price history. Every record carries the dealer's own page in seller.url; send people there to buy. Facts marked estimated are not the manufacturer's own figure. Results are as of the as_of timestamp.";

@@ -71,7 +71,7 @@ export async function POST(req: Request): Promise<Response> {
       const confirmUrl = `${siteOrigin()}/alerts/confirm?token=${r.confirm_token}`;
       await sendEmail({
         to: email,
-        subject: "Confirm your Voltcheck alert",
+        subject: "Confirm your Census alert",
         text:
           `Confirm to turn on this alert for your saved cars:\n\n${confirmUrl}\n\n` +
           `If you didn't ask for this, ignore it — nothing will be sent.`,
