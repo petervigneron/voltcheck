@@ -39,15 +39,20 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               shrinks to fit at phone sizes, and wraps rather than overflowing
               if it still can't (320px screens), because a header that pushes
               the page sideways breaks every page on the site, not just itself. */}
-          <div className="mx-auto flex max-w-[1400px] flex-wrap items-stretch px-0 sm:px-6">
+          {/* Phones get two rows (owner, 2026-11-04, "H3"): the lockup with the
+              account link beside it, then the three site sections spread edge to
+              edge under a hairline — a deliberate toolbar, not the leftover
+              right-aligned cluster a flex-wrap produced once the lockup grew.
+              From 640px up it is the one-row bar: lockup, then nav and account
+              pushed right. One DOM order serves both; `order` does the rest. */}
+          <div className="mx-auto flex max-w-[1400px] flex-wrap items-stretch px-0 sm:flex-nowrap sm:px-6">
             {/* The wordmark is a two-line lockup (owner, 2026-11-04): CENSUS EV
                 with EV in the light ochre, and the tagline under it. The second
                 line is what lets phones carry the tagline at all — beside the
-                wordmark it was a fifth item and wrapped the bar (2026-09-03),
-                under it it costs 3px of bar height. */}
+                wordmark it was a fifth item and wrapped the bar (2026-09-03). */}
             <Link
               href="/"
-              className="flex flex-col justify-center px-4 py-[9px] leading-[1.15] focus:outline-none focus:ring-[3px] focus:ring-inset focus:ring-cobalt sm:px-5 sm:py-[11px]"
+              className="order-1 flex flex-col justify-center px-4 py-[9px] leading-[1.15] focus:outline-none focus:ring-[3px] focus:ring-inset focus:ring-cobalt sm:px-5 sm:py-[11px]"
             >
               <span className="text-[18px] font-extrabold tracking-[-0.03em] sm:text-[21px]">
                 CENSUS<span className="ml-[0.3em] text-ochre-lt">EV</span>
@@ -56,30 +61,30 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
                 Every electric car. One site.
               </span>
             </Link>
-            {/* No "Browse" link: the wordmark is the way home, and a fifth
-                item wrapped the phone header onto two lines (owner,
-                2026-09-03: "on mobile the header is really squished"). */}
-            <nav className="ml-auto flex items-stretch text-[11.5px] font-extrabold tracking-[0.04em] uppercase sm:text-[12.5px] sm:tracking-[0.06em]">
+            {/* No "Browse" link: the wordmark is the way home. */}
+            <nav className="order-3 mx-4 flex basis-full items-stretch justify-between border-t border-paper/15 text-[11.5px] font-extrabold tracking-[0.04em] uppercase sm:order-2 sm:mx-0 sm:ml-auto sm:basis-auto sm:justify-start sm:border-0 sm:text-[12.5px] sm:tracking-[0.06em]">
               <Link
                 href="/worth"
-                className="flex items-center px-3 hover:bg-cobalt sm:px-5 focus:outline-none focus:ring-[3px] focus:ring-inset focus:ring-cobalt"
+                className="flex items-center py-[9px] hover:bg-cobalt focus:outline-none focus:ring-[3px] focus:ring-inset focus:ring-cobalt sm:px-5 sm:py-0"
               >
                 Values
               </Link>
               <Link
                 href="/saved"
-                className="flex items-center px-3 hover:bg-cobalt sm:px-5 focus:outline-none focus:ring-[3px] focus:ring-inset focus:ring-cobalt"
+                className="flex items-center py-[9px] hover:bg-cobalt focus:outline-none focus:ring-[3px] focus:ring-inset focus:ring-cobalt sm:px-5 sm:py-0"
               >
                 Saved
               </Link>
               <Link
                 href="/vin"
-                className="flex items-center px-3 hover:bg-cobalt sm:px-5 focus:outline-none focus:ring-[3px] focus:ring-inset focus:ring-cobalt"
+                className="flex items-center py-[9px] hover:bg-cobalt focus:outline-none focus:ring-[3px] focus:ring-inset focus:ring-cobalt sm:px-5 sm:py-0"
               >
                 VIN check
               </Link>
-              <AccountLink />
             </nav>
+            <div className="order-2 ml-auto flex items-stretch pr-1 text-[11.5px] font-extrabold tracking-[0.04em] uppercase sm:order-3 sm:ml-0 sm:pr-0 sm:text-[12.5px] sm:tracking-[0.06em]">
+              <AccountLink />
+            </div>
           </div>
         </header>
 
