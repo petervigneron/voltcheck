@@ -62,7 +62,7 @@ export default async function ProThanksPage(props: {
               </p>
               <p className="mt-3 max-w-[64ch] text-[13.5px] leading-relaxed text-ink/80">
                 Nothing after a few minutes? Look in spam for{" "}
-                <span className="font-bold">alerts@voltcheck.net</span>, then have the link sent
+                <span className="font-bold">alerts@censusev.com</span>, then have the link sent
                 again from the Pro page — the form at the bottom does exactly that.
               </p>
             </div>

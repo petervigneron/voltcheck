@@ -38,7 +38,7 @@ export async function sendEmail(msg: { to: string; subject: string; text: string
       method: "POST",
       headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        from: process.env.ALERTS_FROM || "Census <alerts@voltcheck.net>",
+        from: process.env.ALERTS_FROM || "Census <alerts@censusev.com>",
         ...msg,
       }),
       cache: "no-store",

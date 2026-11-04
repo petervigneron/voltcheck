@@ -24,8 +24,8 @@ export default function AboutPage() {
 
       <p className="mt-4 text-sm leading-relaxed text-ink/80">
         Questions? Email{" "}
-        <a href="mailto:peter@voltcheck.net" className="font-semibold text-cobalt hover:underline">
-          peter@voltcheck.net
+        <a href="mailto:peter@censusev.com" className="font-semibold text-cobalt hover:underline">
+          peter@censusev.com
         </a>
         .
       </p>

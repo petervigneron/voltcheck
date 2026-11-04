@@ -71,7 +71,7 @@ const SUPABASE_URL = process.env.SUPABASE_URL?.replace(/\/$/, "");
 const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const RESEND_KEY = process.env.RESEND_API_KEY;
 const ORIGIN = (process.env.SITE_ORIGIN || "https://censusev.com").replace(/\/$/, "");
-const FROM = process.env.ALERTS_FROM || "Census <alerts@voltcheck.net>";
+const FROM = process.env.ALERTS_FROM || "Census <alerts@censusev.com>";
 
 const CATCHUP_MS = 7 * 86_400_000;
 const MAX_PER_SECTION = 12;

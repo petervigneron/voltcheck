@@ -83,7 +83,7 @@ jobs:
                 "content-type": "application/json",
               },
               body: JSON.stringify({
-                from: "alerts@voltcheck.net",
+                from: "alerts@censusev.com",
                 to: "peter.vigneron@gmail.com",
                 subject,
                 text: body,
