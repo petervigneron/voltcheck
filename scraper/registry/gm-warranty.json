@@ -40208,5 +40208,355 @@
  "3GPKHXRJ6RS536686": {
   "unavailable": true,
   "checkedAt": "2026-11-03"
+ },
+ "3GN7DNRP1RS206327": {
+  "coverage": {
+   "startDate": "2024-10-25",
+   "startMileage": 98,
+   "expiresDate": "2032-10-25",
+   "expiresMileage": 100098,
+   "inServiceDate": "2024-10-25",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-11-04"
+ },
+ "1GYKPPRK8RZ100982": {
+  "coverage": {
+   "startDate": "2024-07-08",
+   "startMileage": 572,
+   "expiresDate": "2032-07-08",
+   "expiresMileage": 100572,
+   "inServiceDate": "2024-07-08",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-11-04"
+ },
+ "3GN7DNRPXTS149326": {
+  "coverage": {
+   "startDate": "2026-01-23",
+   "startMileage": 9,
+   "expiresDate": "2034-01-23",
+   "expiresMileage": 100009,
+   "inServiceDate": "2026-01-23",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-11-04"
+ },
+ "3GNKDBRJ1RS277838": {
+  "coverage": {
+   "startDate": "2024-10-12",
+   "startMileage": 14,
+   "expiresDate": "2032-10-12",
+   "expiresMileage": 100014,
+   "inServiceDate": "2024-10-12",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-11-04"
+ },
+ "1G1FZ6S05N4126475": {
+  "coverage": {
+   "startDate": "2022-06-16",
+   "startMileage": 3,
+   "expiresDate": "2030-06-16",
+   "expiresMileage": 100003,
+   "inServiceDate": "2022-06-16",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHZRJ8RS535065": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHZRJXRS528487": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHXRJ3RS520087": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHXRJ5RS518440": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHZRJ7RS515969": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHZRJ9RS534264": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHVRJXRS517532": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHZRJ1RS539829": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHZRJ2RS501591": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHZRJ6RS516725": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHZRJ4SS511187": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHZRJ7SS524712": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHZRJ5TS507571": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHVRJ5SS519629": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHZRJ7RS507631": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHXRJ1SS526931": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHXRJ7RS544750": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHXRJ9SS501534": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHZRJ8RS519254": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHXRJ9RS513130": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHZRJXRS500091": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHWRM7TS508052": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHZRJ1RS502652": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHXRJ1RS519598": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHWRM8RS531171": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHXRJXRS500192": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHURM9RS533709": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHVRJ7RS517133": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHVRJ8RS511468": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHZRJ2RS512980": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHXRJ0RS506048": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHWRM5SS515645": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHWRM3RS515704": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHWRM4RS503898": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHWRM6RS529774": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHXRJ7RS516074": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHXRJXRS505988": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHXRJXRS511063": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHZRJ7SS518795": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHZRJ4RS512754": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHZRJ4RS512902": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHZRJXRS509812": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHURM2RS530652": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHWRMXRS509205": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHWRM6RS517527": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHWRMXRS542561": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHWRMXSS516502": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHURM0RS531038": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHURM8RS539663": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHURM9RS545679": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHWRM3RS520434": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHZRJ5RS513458": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHZRJ1RS511772": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHURM9RS545861": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHURMXRS530642": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHWRM9RS526559": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHXRJ6RS510315": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHZRJ6RS515459": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GNKDBRJ4RS230884": {
+  "coverage": {
+   "startDate": "2024-07-17",
+   "startMileage": 3000,
+   "expiresDate": "2032-07-17",
+   "expiresMileage": 103000,
+   "inServiceDate": "2024-07-17",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-11-04"
+ },
+ "3GN7DLRP6RS289659": {
+  "coverage": {
+   "startDate": "2024-09-07",
+   "startMileage": 229,
+   "expiresDate": "2032-09-07",
+   "expiresMileage": 100229,
+   "inServiceDate": "2024-09-07",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-11-04"
+ },
+ "3GN7DLRP5RS271038": {
+  "coverage": {
+   "startDate": "2024-09-13",
+   "startMileage": 11,
+   "expiresDate": "2032-09-13",
+   "expiresMileage": 100011,
+   "inServiceDate": "2024-09-13",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-11-04"
+ },
+ "1GYKPVRL6RZ113436": {
+  "coverage": {
+   "startDate": "2023-12-28",
+   "startMileage": 39,
+   "expiresDate": "2031-12-28",
+   "expiresMileage": 100039,
+   "inServiceDate": "2023-12-28",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHXRJ4RS511060": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "3GPKHXRJ5RS533228": {
+  "unavailable": true,
+  "checkedAt": "2026-11-04"
+ },
+ "1G1FZ6S0XN4109008": {
+  "coverage": {
+   "startDate": "2022-09-26",
+   "startMileage": 8,
+   "expiresDate": "2030-09-26",
+   "expiresMileage": 100008,
+   "inServiceDate": "2022-09-26",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-11-04"
  }
 }
