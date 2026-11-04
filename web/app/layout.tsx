@@ -18,9 +18,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Census: Every EV. One site.",
+  title: "Census EV: Every electric car. One site.",
   description:
-    "Every EV. One site. New and used, with what actually matters: the real pack, the real range, and what the warranty does for you.",
+    "Every electric car. One site. New and used, with what actually matters: the real pack, the real range, and what the warranty does for you.",
   metadataBase: new URL("https://censusev.com"),
 };
 
@@ -40,17 +40,22 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               if it still can't (320px screens), because a header that pushes
               the page sideways breaks every page on the site, not just itself. */}
           <div className="mx-auto flex max-w-[1400px] flex-wrap items-stretch px-0 sm:px-6">
+            {/* The wordmark is a two-line lockup (owner, 2026-11-04): CENSUS EV
+                with EV in the light ochre, and the tagline under it. The second
+                line is what lets phones carry the tagline at all — beside the
+                wordmark it was a fifth item and wrapped the bar (2026-09-03),
+                under it it costs 3px of bar height. */}
             <Link
               href="/"
-              className="px-4 py-3.5 text-[18px] font-extrabold tracking-[-0.03em] focus:outline-none focus:ring-[3px] focus:ring-inset focus:ring-cobalt sm:px-5 sm:py-4 sm:text-[21px]"
+              className="flex flex-col justify-center px-4 py-[9px] leading-[1.15] focus:outline-none focus:ring-[3px] focus:ring-inset focus:ring-cobalt sm:px-5 sm:py-[11px]"
             >
-              CENSUS
+              <span className="text-[18px] font-extrabold tracking-[-0.03em] sm:text-[21px]">
+                CENSUS<span className="ml-[0.3em] text-ochre-lt">EV</span>
+              </span>
+              <span className="mt-[3px] text-[11px] font-medium text-paper/70 sm:text-[12px]">
+                Every electric car. One site.
+              </span>
             </Link>
-            {/* The tagline rides beside the wordmark from 640px up; the phone header
-                has no room for a fifth item (2026-09-03), so phones get it in the footer. */}
-            <span className="hidden items-center pl-0.5 text-[13px] font-medium text-paper/70 sm:flex">
-              Every EV. One site.
-            </span>
             {/* No "Browse" link: the wordmark is the way home, and a fifth
                 item wrapped the phone header onto two lines (owner,
                 2026-09-03: "on mobile the header is really squished"). */}
@@ -59,7 +64,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
                 href="/worth"
                 className="flex items-center px-3 hover:bg-cobalt sm:px-5 focus:outline-none focus:ring-[3px] focus:ring-inset focus:ring-cobalt"
               >
-                What&rsquo;s it worth
+                Values
               </Link>
               <Link
                 href="/saved"
@@ -88,7 +93,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               methodology link is the one place that longer explanation still
               lives, one unobtrusive line down, not narrated here. */}
           <div className="mx-auto flex max-w-[1400px] flex-wrap items-center gap-x-3 gap-y-1 px-5 py-4 text-[11px] font-semibold tracking-[0.08em] uppercase sm:px-6">
-            <span className="text-paper">Every EV. One site.</span>
+            <span className="text-paper">Every electric car. One site.</span>
             <span>Estimated figures are marked.</span>
             <Link href="/methodology" className="underline decoration-paper/40 underline-offset-2 hover:text-paper hover:decoration-paper">
               How we source this data

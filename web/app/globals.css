@@ -24,6 +24,7 @@
   --color-teal: #0c6b5e; /* equipment present */
   --color-violet: #6b3fa0; /* money — price caps, price cuts, rebates (owner, 2026-09-03) */
   --color-ochre: #8a6d1f; /* range — the number a shopper compares (owner, 2026-09-03; took over from cobalt) */
+  --color-ochre-lt: #e0bf5a; /* the EV in the header wordmark only — ochre itself is unreadable on ink (owner picked ochre, 2026-11-04) */
 }
 
 body {
