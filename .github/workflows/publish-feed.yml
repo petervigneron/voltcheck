@@ -267,6 +267,18 @@ jobs:
         working-directory: scraper
         run: node feed-shard-check.mjs
 
+      # Hand Bing (and the assistants that search through it) the pages this
+      # publish changed, instead of waiting for a crawler to find them on a
+      # domain that is days old (2026-11-05). Hubs and facts every time; the
+      # listings first seen since the previous publish. web/scripts/indexnow.mjs
+      # explains the key file. Non-fatal for the same reason the check above
+      # is: the grid is live either way.
+      - name: Tell IndexNow what changed
+        if: ${{ always() && steps.gate.outputs.skip != 'true' }}
+        continue-on-error: true
+        working-directory: web
+        run: node --experimental-strip-types --import ./scripts/ts-resolve-hook.mjs scripts/indexnow.mjs
+
   # Alert emails after every publish (owner, 2026-09-02: alerts are for
   # everyone, not a Pro tier). A publish is the moment new cars and new cuts
   # become visible on the grid — and send-alerts.mjs reads the grid's own
