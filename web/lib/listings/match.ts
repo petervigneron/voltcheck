@@ -39,6 +39,28 @@ export type FilterTests = Partial<Record<RemovableFilter, (r: CardRow) => boolea
  * result say how many cars dropping any single one would give back.
  * `get` returns the raw URL value for a key, "" when absent.
  */
+/**
+ * The footing the search box compares on: lowercased, with the punctuation
+ * that splits a nameplate — hyphen, period, apostrophe — dropped from both
+ * the typed words and the card's haystack.
+ *
+ * The model dropdown already folds spellings (modelName.ts modelKey), and the
+ * search box did not, which is how one 2023 Lightning a Jacksonville dealer
+ * listed as "F150 Lightning" was in every make+model search and missing from
+ * the saved search "Ford F-150 Lightning · 300+ mi range" (2026-11-05): the
+ * token "f-150" is not a substring of "f150". The same gap stood between
+ * "e-tron"/"etron", "ID.4"/"ID4" and "Plug-In"/"Plugin". Only these three
+ * characters fold — not every non-alphanumeric — so "+" keeps telling EQE350+
+ * from EQE350 (tests/match.test.ts), and spaces keep splitting tokens.
+ *
+ * What it costs: a one- or two-letter token still has to be a whole word of
+ * the FOLDED haystack, so "4" alone — including the "4" in "id 4" — no longer
+ * finds "ID.4", which folds to the single word "id4". "id4" and "id.4" do.
+ */
+export function searchFold(s: string): string {
+  return s.toLowerCase().replace(/[-.'\u2019]/g, "");
+}
+
 export function buildTests(get: (k: string) => string, ctx: MatchContext = {}): FilterTests {
   const num = (k: string) => Number(get(k)) || undefined;
   const tests: FilterTests = {};
@@ -64,12 +86,22 @@ export function buildTests(get: (k: string) => string, ctx: MatchContext = {}): 
     // "tesla model y" lands inside "grey" and drags in every Model 3 painted
     // Stealth Grey. Short tokens have to match a whole word; longer ones keep
     // matching inside one, which is what lets "buzz" find "ID. Buzz".
-    const toks = q.split(/\s+/).map((tok) => {
-      if (tok.length > 2) return (hay: string) => hay.includes(tok);
-      const re = new RegExp(`\\b${tok.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`);
-      return (hay: string) => re.test(hay);
-    });
-    tests.q = (r) => toks.every((match) => match(r.hay));
+    //
+    // Both sides go through searchFold first, so the words typed and the
+    // dealer's spelling meet on the same footing — see searchFold for the
+    // truck that was reachable from the model dropdown and not from the box.
+    const toks = searchFold(q)
+      .split(/\s+/)
+      .filter(Boolean)
+      .map((tok) => {
+        if (tok.length > 2) return (hay: string) => hay.includes(tok);
+        const re = new RegExp(`\\b${tok.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`);
+        return (hay: string) => re.test(hay);
+      });
+    tests.q = (r) => {
+      const hay = searchFold(r.hay);
+      return toks.every((match) => match(hay));
+    };
   }
   const make = get("make");
   const model = get("model");

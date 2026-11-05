@@ -2,7 +2,7 @@ import { QUICK_TOGGLES } from "@/lib/filters";
 import { featuredScore, type CardRow } from "./card";
 import { QUICK_KNOWS, buildTests } from "./match";
 import { packIndex, unpackIndex, type PackedIndex } from "./pack";
-import { modelTally, type ModelCount } from "./tally";
+import { depthKey, modelTally, type ModelCount } from "./tally";
 
 // The first-paint payload for the pristine landing page — /api/index/first.
 //
@@ -60,7 +60,7 @@ export function buildFirstPaint(rows: CardRow[]): FirstPaint {
   // recompute reproduces this exact page.
   const scored = rows.map((r) => ({
     r,
-    k: featuredScore(r, counts.get(`${r.make} ${r.model}`.toLowerCase()) ?? 0, day),
+    k: featuredScore(r, counts.get(depthKey(r)) ?? 0, day),
   }));
   scored.sort((a, b) => b.k - a.k);
   const quick: Record<string, { n: number; of: number }> = {};

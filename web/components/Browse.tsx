@@ -9,8 +9,8 @@ import { AlertSignup } from "./AlertSignup";
 import { SPEC_FACETS, FACET_CAP, QUICK_TOGGLES, describeFilter, dropSpecFilters } from "@/lib/filters";
 import { featuredScore, listedSortKey, type CardRow } from "@/lib/listings/card";
 import { FIRST_PAGE_SIZE } from "@/lib/listings/firstPaint";
-import { FACET_OF, QUICK_KNOWS, activeFilterKeys, buildTests, rowMatches } from "@/lib/listings/match";
-import { modelTally } from "@/lib/listings/tally";
+import { FACET_OF, QUICK_KNOWS, activeFilterKeys, buildTests, rowMatches, searchFold } from "@/lib/listings/match";
+import { depthKey, modelTally } from "@/lib/listings/tally";
 import { narrowFacets } from "@/lib/listings/narrow";
 import { facetsFor } from "@/lib/listings/facetSpec";
 import { factLinksFor, type FactLink } from "@/lib/facts/links";
@@ -296,9 +296,14 @@ export function Browse() {
     // words typed is what was meant; a colour match is a bonus hit, not the
     // answer. Ranking only — nothing is filtered out, and an explicit sort
     // still wins outright.
-    const qToks = q ? q.split(/\s+/) : [];
-    const identityHit = (r: CardRow) =>
-      qToks.length > 0 && qToks.every((tok) => r.title.toLowerCase().includes(tok));
+    // Folded on both sides like the filter itself (match.ts searchFold), so
+    // the car the words reach is also the car they rank.
+    const qToks = q ? searchFold(q).split(/\s+/).filter(Boolean) : [];
+    const identityHit = (r: CardRow) => {
+      if (qToks.length === 0) return false;
+      const title = searchFold(r.title);
+      return qToks.every((tok) => title.includes(tok));
+    };
 
     if (explicitSorts.has(sort)) {
       results.sort((a, b) => {
@@ -348,7 +353,7 @@ export function Browse() {
       const scored = results.map((r) => {
         if (pin?.has(r.id)) return { r, k: 1e6 - pin.get(r.id)! };
         const k =
-          featuredScore(r, counts.get(`${r.make} ${r.model}`.toLowerCase()) ?? 0, day) + (identityHit(r) ? 1000 : 0);
+          featuredScore(r, counts.get(depthKey(r)) ?? 0, day) + (identityHit(r) ? 1000 : 0);
         return { r, k: sort === "listed" ? listedSortKey(r, k) : k };
       });
       scored.sort((a, b) => b.k - a.k);

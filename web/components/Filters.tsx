@@ -18,6 +18,7 @@ import {
   type FacetGroup,
 } from "@/lib/filters";
 import { INCENTIVES_COPY_READY } from "@/lib/incentives/copy";
+import { searchFold } from "@/lib/listings/match";
 import { writeShopperZip } from "@/lib/shopperZip";
 import { pushUrl } from "@/lib/pushUrl";
 import { track } from "@/lib/events";
@@ -146,12 +147,13 @@ function SearchBox({ current, suggestions }: { current: string; suggestions: Sug
   const [hi, setHi] = useState(-1);
   const input = useRef<HTMLInputElement>(null);
 
-  const toks = text.toLowerCase().trim().split(/\s+/).filter(Boolean);
+  const toks = searchFold(text).trim().split(/\s+/).filter(Boolean);
   // "buzz" should surface "Volkswagen ID. Buzz": every typed token has to land
-  // somewhere in the make+model string, not prefix it.
+  // somewhere in the make+model string, not prefix it. Folded on both sides
+  // (match.ts searchFold) so "f150" offers "Ford F-150 Lightning" too.
   const hits =
     open && text.trim().length >= 2
-      ? suggestions.filter((s) => toks.every((t) => s.label.toLowerCase().includes(t))).slice(0, 7)
+      ? suggestions.filter((s) => toks.every((t) => searchFold(s.label).includes(t))).slice(0, 7)
       : [];
 
   const go = (q: string) => {

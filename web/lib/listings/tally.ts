@@ -18,7 +18,7 @@ export interface ModelCount {
 }
 
 export interface ModelTally {
-  /** Cars per model, keyed lowercased "make model" — featuredScore's depth term. */
+  /** Cars per model, keyed by depthKey — featuredScore's depth term. */
   counts: Map<string, number>;
   /** Every model listed at least twice, deepest first, for the search box.
    *  A model listed once is as likely a feed typo as a car. */
@@ -158,21 +158,36 @@ function foldTrimContaminated(
   }
 }
 
+/**
+ * The key the featured sort's depth term counts under: lowercased make, then
+ * the model folded the way the dropdown folds it (modelKey). components/
+ * Browse.tsx and firstPaint.ts both look counts up by it, and the two have to
+ * agree — a grid that reshuffles under the shopper is what disagreeing costs —
+ * so neither spells the key itself.
+ *
+ * Until 2026-11-05 this was the raw lowercased string, and a dealer's spelling
+ * set a car's place on the page: a 2023 Lightning listed as "F150 Lightning"
+ * counted as a 2-car model (+0.1) against the ~750 "F-150 Lightning" (+20),
+ * and sat at 281 of 395 in its own make+model search, the cheapest truck in
+ * it. Folding here also merges the typo's forms into the real model's entry
+ * below, so it stops being offered as a search suggestion of its own.
+ */
+export function depthKey(r: { make: string; model: string }): string {
+  return `${r.make.toLowerCase()} ${modelKey(r.model)}`;
+}
+
 export function modelTally(rows: CardRow[]): ModelTally {
   const tally = new Map<string, { count: number; forms: Map<string, { make: string; model: string; n: number }> }>();
   const offered = offeredFold(rows);
   for (const r of rows) {
-    // `tally` below keys on the RAW lowercased string and stays that way. It
-    // feeds the featured sort's depth term, which components/Browse.tsx and
-    // firstPaint.ts both recompute — the two have to agree on the key, and a
-    // grid that reshuffles under the shopper is what that costs.
+    const key = depthKey(r);
     const form = `${r.make} ${r.model}`;
-    const t = tally.get(form.toLowerCase()) ?? { count: 0, forms: new Map() };
+    const t = tally.get(key) ?? { count: 0, forms: new Map() };
     t.count += 1;
     const f = t.forms.get(form) ?? { make: r.make, model: r.model, n: 0 };
     f.n += 1;
     t.forms.set(form, f);
-    tally.set(form.toLowerCase(), t);
+    tally.set(key, t);
   }
   // Sorted case-insensitively, because the labels are feed spellings and an
   // ASCII sort files every SHOUTED one in its own block above the lowercase
