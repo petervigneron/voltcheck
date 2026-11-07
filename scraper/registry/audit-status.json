@@ -2,21 +2,21 @@
   "_comment": "Written by scraper/lib/audit-status.mjs. Do not hand-edit — see that file's header.",
   "checks": {
     "feed-shard-health": {
-      "lastRunAt": "2026-11-06T19:23:02.346Z",
+      "lastRunAt": "2026-11-07T05:56:59.505Z",
       "result": "ok",
-      "detail": "total 169397; shards 3470/3588/3560/3538/3450/3561/3505/3503/3459/3465/3482/3546/3548/3643/3610/3429/3514/3544/3506/3469/3494/3538/3598/3516/3552/3369/3570/3492/3490/3457/3624/3583/3504/3599/3528/3586/3531/3628/3562/3526/3529/3598/3496/3569/3490/3580/3483/3515; sitemap URLs 171139",
+      "detail": "total 169989; shards 3506/3585/3585/3551/3471/3554/3512/3524/3461/3475/3520/3555/3572/3660/3625/3420/3504/3548/3553/3494/3493/3551/3592/3526/3568/3361/3562/3498/3523/3458/3626/3595/3525/3623/3541/3617/3550/3639/3581/3542/3550/3611/3503/3548/3493/3590/3505/3543; sitemap URLs 170277",
       "expectedEveryHours": 12
     },
     "ev-rules-audit": {
-      "lastRunAt": "2026-11-06T19:21:34.555Z",
+      "lastRunAt": "2026-11-07T05:55:48.349Z",
       "result": "ok",
-      "detail": "174862 live, 0 newly refuted by vPIC, 0 adjudicated-and-kept, 0 undecided",
+      "detail": "174531 live, 0 newly refuted by vPIC, 0 adjudicated-and-kept, 0 undecided",
       "expectedEveryHours": 27
     },
     "completeness-audit": {
-      "lastRunAt": "2026-11-06T19:22:33.121Z",
+      "lastRunAt": "2026-11-07T05:56:32.387Z",
       "result": "warn",
-      "detail": "72135 live, 222 broken-parser lots (baseline 202)",
+      "detail": "71925 live, 224 broken-parser lots (baseline 202)",
       "expectedEveryHours": 27
     },
     "sync-guard": {
@@ -32,9 +32,9 @@
       "expectedEveryHours": 27
     },
     "live-price-audit": {
-      "lastRunAt": "2026-11-06T19:22:44.778Z",
+      "lastRunAt": "2026-11-07T05:56:50.926Z",
       "result": "warn",
-      "detail": "167951 priced, 25 implausible (4 at or below the floor/cohort, 21 above)",
+      "detail": "168666 priced, 26 implausible (3 at or below the floor/cohort, 23 above)",
       "expectedEveryHours": 12
     },
     "price-audit": {
