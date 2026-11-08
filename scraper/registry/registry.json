@@ -825517,6 +825517,15 @@
         "via": "dealersync",
         "found": 95
       }
+    },
+    {
+      "domain": "lexus.com",
+      "name": "The Lexus Experience",
+      "kind": "rooftop",
+      "platform": "unknown",
+      "robots": "unknown",
+      "status": "discovered",
+      "notes": "Discovered via OSM Overpass bbox (33.6,-117.95,33.95,-117.55); brand: Lexus"
     }
   ],
   "_sources": [
