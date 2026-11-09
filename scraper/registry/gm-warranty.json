@@ -41366,5 +41366,39 @@
    "fromReplacement": false
   },
   "checkedAt": "2026-11-08"
+ },
+ "3GN7DLRR7RS297254": {
+  "coverage": {
+   "startDate": "2024-09-24",
+   "startMileage": 121,
+   "expiresDate": "2032-09-24",
+   "expiresMileage": 100121,
+   "inServiceDate": "2024-09-24",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-11-09"
+ },
+ "1G1FY6S04P4195812": {
+  "coverage": {
+   "startDate": "2023-11-06",
+   "startMileage": 4,
+   "expiresDate": "2031-11-06",
+   "expiresMileage": 100004,
+   "inServiceDate": "2023-11-06",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-11-09"
+ },
+ "3GPKHXRJ8TS508332": {
+  "unavailable": true,
+  "checkedAt": "2026-11-09"
+ },
+ "3GPKHZRJ8RS502504": {
+  "unavailable": true,
+  "checkedAt": "2026-11-09"
+ },
+ "3GPKHWRM8RS532868": {
+  "unavailable": true,
+  "checkedAt": "2026-11-09"
  }
 }
