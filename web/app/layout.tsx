@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { WatchlistSync } from "@/components/WatchlistSync";
 import { ShelfSync } from "@/components/ShelfSync";
+import { VisitBeacon } from "@/components/VisitBeacon";
 import { AccountLink } from "@/components/AccountLink";
 import "./globals.css";
 
@@ -124,6 +125,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             validation question this answers is "does the delta move organic
             traffic" — nothing here identifies a visitor. */}
         <Analytics />
+        {/* One page_view row per page a person opens, with the referring
+            site on the first (components/VisitBeacon.tsx). Renders nothing. */}
+        <VisitBeacon />
         {/* Keeps the free price-drop alert's list in step with the ☆ on any
             page (components/WatchlistSync.tsx). Renders nothing. */}
         <WatchlistSync />

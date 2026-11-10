@@ -10,7 +10,9 @@
 // read paths; nothing here touches the feed, the index, or any per-listing
 // query.
 
-const ALLOWED = new Set(["listing_saved", "listing_unsaved", "dealer_click", "filter_toggled"]);
+import { automatedAgent } from "@/lib/visit";
+
+const ALLOWED = new Set(["listing_saved", "listing_unsaved", "dealer_click", "filter_toggled", "page_view"]);
 const MAX_BODY = 4096;
 const MAX_CLIENT_ID = 64;
 const MAX_LISTING = 32; // listing id = lowercase VIN, 17 chars in practice
@@ -20,6 +22,9 @@ const noContent = () => new Response(null, { status: 204 });
 
 export async function POST(req: Request): Promise<Response> {
   try {
+    // A crawler that runs JavaScript is not a shopper: it would count as a
+    // visitor, and as one more every time it came back without storage.
+    if (automatedAgent(req.headers.get("user-agent"))) return noContent();
     // sendBeacon delivers a Blob body; read as text and parse ourselves so
     // the content-type header doesn't matter.
     const raw = await req.text();

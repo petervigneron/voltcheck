@@ -49,11 +49,26 @@ jobs:
           fi
           node scraper/gsc-report.mjs --days "${{ inputs.days || 28 }}" | tee report.txt
 
+      # The site's own count of who arrived and what it earned, put ahead of
+      # the search numbers in the same email. A failure prints as a failure
+      # in the body: a missing section would read as a week with no visitors.
+      - name: Visitor report
+        if: always()
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          if ! node scraper/visit-report.mjs --days 7 > visits.txt 2> visits.err; then
+            { echo "Visitors — censusev.com"; echo "visitor report FAILED:"; cat visits.err; } > visits.txt
+          fi
+          { cat visits.txt; echo; echo "----"; echo; cat report.txt 2>/dev/null || echo "search report failed"; } > combined.txt
+          cp combined.txt report.txt
+
       - name: Publish to job summary
         if: always()
         run: |
           {
-            echo '## Search Console — censusev.com'
+            echo '## Weekly report — censusev.com'
             echo '```'
             cat report.txt 2>/dev/null || echo 'report failed'
             echo '```'
@@ -75,7 +90,8 @@ jobs:
             // The headline numbers ride in the subject so the week can be
             // read without opening anything.
             const num = (label) => (body.match(new RegExp(`^${label}\\s+(\\d+)`, "m")) || [])[1] ?? "?";
-            const subject = `Census search: ${num("clicks")} clicks, ${num("impressions")} impressions this week`;
+            const passes = (body.match(/^passes sold\s+(\d+)/m) || [])[1] ?? "?";
+            const subject = `Census: ${num("visitors")} visitors, ${passes} passes sold, ${num("clicks")} search clicks this week`;
             fetch("https://api.resend.com/emails", {
               method: "POST",
               headers: {
