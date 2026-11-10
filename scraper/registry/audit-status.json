@@ -2,9 +2,9 @@
   "_comment": "Written by scraper/lib/audit-status.mjs. Do not hand-edit — see that file's header.",
   "checks": {
     "feed-shard-health": {
-      "lastRunAt": "2026-11-10T07:18:05.408Z",
+      "lastRunAt": "2026-11-10T18:57:39.981Z",
       "result": "ok",
-      "detail": "total 168488; shards 3463/3540/3533/3530/3445/3517/3493/3487/3432/3470/3466/3516/3526/3595/3618/3408/3459/3518/3490/3474/3439/3556/3555/3509/3537/3339/3523/3471/3489/3441/3596/3523/3465/3605/3527/3595/3532/3609/3550/3508/3514/3566/3461/3514/3479/3567/3504/3534; sitemap URLs 167753",
+      "detail": "total 167626; shards 3439/3545/3515/3525/3417/3523/3461/3482/3430/3454/3441/3499/3507/3593/3594/3380/3439/3517/3457/3450/3426/3547/3539/3482/3519/3329/3497/3458/3473/3414/3571/3497/3460/3593/3494/3580/3531/3586/3543/3480/3483/3555/3445/3495/3436/3540/3469/3516; sitemap URLs 0",
       "expectedEveryHours": 12
     },
     "ev-rules-audit": {
@@ -20,15 +20,15 @@
       "expectedEveryHours": 27
     },
     "sync-guard": {
-      "lastRunAt": "2026-11-09T21:42:02.930Z",
+      "lastRunAt": "2026-11-10T18:56:56.513Z",
       "result": "ok",
-      "detail": "total 175086, oem 36054, dealer 139032 | tonight's sync: 78994 seen, 526 delisted (0.7%)",
+      "detail": "total 174496, oem 35166, dealer 139330 | tonight's sync: 77041 seen, 1171 delisted (1.5%)",
       "expectedEveryHours": 27
     },
     "lane-flip-check": {
-      "lastRunAt": "2026-11-09T21:31:55.004Z",
+      "lastRunAt": "2026-11-10T18:42:48.690Z",
       "result": "warn",
-      "detail": "44448 cross-lane flips (44448 dealer→locator, 0 locator→dealer), 4 within-lane, 1489 new VINs, 33868 unchanged",
+      "detail": "43307 cross-lane flips (43307 dealer→locator, 0 locator→dealer), 36 within-lane, 1494 new VINs, 32988 unchanged",
       "expectedEveryHours": 27
     },
     "live-price-audit": {
@@ -38,9 +38,9 @@
       "expectedEveryHours": 12
     },
     "price-audit": {
-      "lastRunAt": "2026-11-09T21:41:39.761Z",
+      "lastRunAt": "2026-11-10T18:56:33.351Z",
       "result": "ok",
-      "detail": "78994 listings, 45757 audited against WA medians, 0 flagged",
+      "detail": "77041 listings, 45740 audited against WA medians, 0 flagged",
       "expectedEveryHours": 27
     },
     "colisting-sync": {
@@ -51,9 +51,9 @@
     }
   },
   "lastGoodCounts": {
-    "total": 175086,
-    "oem": 36054,
-    "dealer": 139032,
-    "at": "2026-11-09T21:42:02.928Z"
+    "total": 174496,
+    "oem": 35166,
+    "dealer": 139330,
+    "at": "2026-11-10T18:56:56.481Z"
   }
 }
