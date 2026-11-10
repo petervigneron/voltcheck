@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Search Console reporting for voltcheck.net.
+// Search Console reporting for censusev.com.
 //
 // Answers three questions with Google's own numbers: is anyone arriving from
 // search, what are they searching for, and which pages Google is willing to
@@ -8,7 +8,7 @@
 //
 // Credentials: GSC_SERVICE_ACCOUNT_JSON (raw JSON, for CI) or, locally,
 // docs/gsc-service-account.json. The account is a Restricted user on the
-// sc-domain:voltcheck.net property, which is read-only by construction.
+// sc-domain:censusev.com property, which is read-only by construction.
 //
 // Usage:
 //   node scraper/gsc-report.mjs                 # last 28d, vs the 28d before
@@ -18,7 +18,7 @@ import fs from "node:fs";
 import crypto from "node:crypto";
 import path from "node:path";
 
-const SITE = "sc-domain:voltcheck.net";
+const SITE = "sc-domain:censusev.com";
 const API = "https://searchconsole.googleapis.com/webmasters/v3";
 
 const argv = process.argv.slice(2);
@@ -170,12 +170,12 @@ async function inspect(token, urls) {
 // change in the report is a change at Google rather than a change of sample.
 // One of each kind the site actually publishes.
 const PROBE_URLS = [
-  "https://voltcheck.net/",
-  "https://voltcheck.net/facts",
-  "https://voltcheck.net/worth",
-  "https://voltcheck.net/vin",
-  "https://voltcheck.net/facts/nissan/ariya/charging",
-  "https://voltcheck.net/facts/hyundai/ioniq-5/charging",
+  "https://censusev.com/",
+  "https://censusev.com/facts",
+  "https://censusev.com/worth",
+  "https://censusev.com/vin",
+  "https://censusev.com/facts/nissan/ariya/charging",
+  "https://censusev.com/facts/hyundai/ioniq-5/charging",
 ];
 
 const ZERO = { clicks: 0, impressions: 0, ctr: 0, position: 0 };
@@ -212,7 +212,7 @@ async function main() {
   // corpus is reachable at all, not whether one VIN survived the week.
   let sampledListing = null;
   try {
-    const xml = await fetchRetry("https://voltcheck.net/sitemap/0.xml").then((r) => r.text());
+    const xml = await fetchRetry("https://censusev.com/sitemap/0.xml").then((r) => r.text());
     const first = xml.match(/<loc>(https:\/\/voltcheck\.net\/listing\/[^<]+)<\/loc>/);
     if (first) sampledListing = first[1];
   } catch {
@@ -307,7 +307,7 @@ async function main() {
     console.log(`  child sitemaps registered by Google: ${sitemaps.children.length}`);
     for (const c of sitemaps.children) {
       console.log(
-        `    ${c.path.replace("https://voltcheck.net", "")} ` +
+        `    ${c.path.replace("https://censusev.com", "")} ` +
           `downloaded ${c.lastDownloaded?.slice(0, 10) ?? "never"}, ${c.errors ?? 0} errors`,
       );
     }
@@ -319,7 +319,7 @@ async function main() {
   } else {
     for (const p of probes) {
       console.log(
-        `  ${p.url.replace("https://voltcheck.net", "").padEnd(46) || "/".padEnd(46)}` +
+        `  ${p.url.replace("https://censusev.com", "").padEnd(46) || "/".padEnd(46)}` +
           ` ${p.state}${p.lastCrawled ? `, crawled ${p.lastCrawled}` : ""}`,
       );
     }
