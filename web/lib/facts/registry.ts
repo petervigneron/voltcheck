@@ -1483,6 +1483,191 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       },
     ],
   },
+  {
+    make: "nissan",
+    model: "ariya",
+    topic: "battery-warranty",
+    contentFile: "ariya-battery-warranty",
+    pageTitle: "Nissan Ariya battery warranty: 96 months, 100,000 miles, nine-segment floor | Census",
+    description:
+      "Nissan covers the Ariya's lithium-ion battery for 96 months or 100,000 miles against defects and against capacity loss below nine of the 12 segments on its capacity gauge, model years 2023 through 2025, and the coverage transfers to later owners.",
+    breadcrumbLabel: "Nissan Ariya battery warranty",
+    dateModified: "2026-11-11",
+    faq: [
+      {
+        question: "How long is the Nissan Ariya battery warranty?",
+        answer:
+          "96 months or 100,000 miles, whichever comes first, for model years 2023, 2024 and 2025. That term applies both to the Lithium-Ion Battery Coverage for defects in materials or workmanship and to the Lithium-Ion Battery Capacity Coverage.",
+      },
+      {
+        question: "What battery capacity does Nissan guarantee on the Ariya?",
+        answer:
+          "Nissan covers capacity loss below nine segments on the vehicle's battery capacity level gauge. A repair returns the battery to nine segments or more, which may fall short of an \"as new\" condition with all 12 segments, and a replacement battery may be new, remanufactured or factory reconditioned.",
+      },
+      {
+        question: "Does the Nissan Ariya battery warranty transfer to a second owner?",
+        answer:
+          "Yes. The warranty transfers to subsequent owners at any change of ownership without any action by the owner. It is void if, during the first six months after delivery to the original owner, ownership is transferred and the vehicle is registered outside the United States.",
+      },
+      {
+        question: "When does the Nissan Ariya battery warranty clock start?",
+        answer:
+          "On the date the vehicle is delivered to the first retail buyer or put into use, whichever is earlier.",
+      },
+      {
+        question: "What is not covered by the Nissan Ariya battery warranty?",
+        answer:
+          "Nissan excludes damage or failures caused by ambient temperatures above 120F (49C) for over 24 hours, storage below -13F (-25C) for over seven days, leaving the car over 14 days at or near a zero state of charge, physical damage, direct flame or immersion, opening the battery enclosure or service by anyone other than a Nissan Ariya certified technician (2023, 2024) or a Nissan Electric Vehicle certified technician (2025), incorrect charging procedures or incompatible charging devices, and any car with a salvage title or a total-loss determination. Gradual capacity loss is not covered beyond the terms of the capacity coverage.",
+      },
+    ],
+  },
+  {
+    make: "hyundai",
+    model: "ioniq-6",
+    topic: "battery-warranty",
+    contentFile: "ioniq6-battery-warranty",
+    pageTitle: "Hyundai Ioniq 6 battery warranty: 10 years, 100,000 miles | Census",
+    description:
+      "Hyundai covers the Ioniq 6 high voltage battery for 10 years or 100,000 miles in every model year from 2023 through 2025, and a warranty repair or replacement restores at least 70% of original capacity.",
+    breadcrumbLabel: "Hyundai Ioniq 6 battery warranty",
+    dateModified: "2026-11-11",
+    faq: [
+      {
+        question: "How long is the Hyundai Ioniq 6 battery warranty?",
+        answer:
+          "10 years or 100,000 miles, whichever occurs first, from the date of original retail delivery or date of first use. Hyundai's handbooks for 2023, 2024 and 2025 all state the same term.",
+      },
+      {
+        question: "What battery capacity does a warranty repair restore on the Ioniq 6?",
+        answer:
+          "A repair or replacement under the warranty keeps at least the energy capacity the battery had before the failure, and no less than 70% of original capacity. The replacement pack may be a new or refurbished Lithium ion Battery. Each handbook says both that loss of battery capacity is covered not to degrade more than 70% of the original battery capacity under this Battery Limited Warranty, and that loss of battery energy or power over time or from usage is NOT covered under the Hybrid, Plug-in Hybrid, and Electric Vehicle Warranty.",
+      },
+      {
+        question: "What does the Ioniq 6 battery warranty cover besides the battery?",
+        answer:
+          "The Battery Management System, Blower Assembly, Electronic Air Compressor, Power Relay Assembly, Hybrid Starter & Generator, Traction Motor including housing case, Hybrid Power Control Unit, OBC and Electric Power Control unit. The 12 Volt battery is not part of it.",
+      },
+      {
+        question: "What is not covered by the Ioniq 6 battery warranty?",
+        answer:
+          "Damage from intentional actions such as intentionally abusing the vehicle or ignoring active vehicle warnings, a collision or accident, servicing or opening of the battery by non-authorized personnel, physically damaging the battery or intentionally attempting to extend or reduce battery life, exposure to direct flame including from body repairs, flooding, anything excluded under the New Vehicle Limited Warranty, and incidental or consequential damages.",
+      },
+    ],
+  },
+  {
+    make: "ford",
+    model: "f-150-lightning",
+    topic: "battery-warranty",
+    contentFile: "f-150-lightning-battery-warranty",
+    pageTitle: "Ford F-150 Lightning battery warranty: 8 years, 100,000 miles, 70% floor | Census",
+    description:
+      "Ford covers the F-150 Lightning's high voltage battery for 8 years or 100,000 miles in every model year from 2022 through 2025, including capacity below 70 percent of beginning-of-life capacity, and a later owner keeps any remaining coverage.",
+    breadcrumbLabel: "Ford F-150 Lightning battery warranty",
+    dateModified: "2026-11-11",
+    faq: [
+      {
+        question: "How long is the Ford F-150 Lightning battery warranty?",
+        answer:
+          "8 years or 100,000 miles, whichever comes first, for both the Electric Vehicle Component coverage and the High Voltage Lithium-Ion Battery Capacity Coverage, in every model year from 2022 through 2025.",
+      },
+      {
+        question: "What battery capacity does Ford guarantee on the F-150 Lightning?",
+        answer:
+          "Ford covers capacity below 70 percent of the high voltage battery's beginning-of-life capacity, as determined by an authorized EV Certified Ford Dealer. The measurement method is at Ford's sole discretion.",
+      },
+      {
+        question: "Does the F-150 Lightning battery warranty transfer to a second owner?",
+        answer:
+          "Yes. Ford's warranty guide for each model year states that a buyer of a previously owned vehicle of that model year is eligible for any remaining warranty coverages.",
+      },
+      {
+        question: "When does the F-150 Lightning battery warranty clock start?",
+        answer:
+          "On the Warranty Start Date: the day the new vehicle is delivered or the day it is first put into service, for example as a dealer demonstrator, whichever occurs first. For new retail sales on or after July 1, 2023 sold from a California retailer and/or to a California resident, the 2023 guide's March 2025 Fifth Printing and the 2024 and 2025 guides start the date and mileage no earlier than delivery to the customer.",
+      },
+      {
+        question: "What is not covered by the F-150 Lightning battery warranty?",
+        answer:
+          "Gradual capacity loss with time and use is normal wear and tear. Ford excludes damage caused by accidents, collision or objects striking the vehicle, fire or explosion, immersion or flooding of the battery, abuse or misuse including using the truck as a permanent stationary power source, failing to resolve battery warnings or to complete Ford Power-Up software updates within a reasonable amount of time, incompatible charging devices or methods, modifications to the high voltage system, intense heat such as paint booth conditions that exceed Ford's recommendations, leaving the battery at or near zero charge for more than 14 days, unauthorized repairs, and improper storage.",
+      },
+    ],
+  },
+  {
+    make: "nissan",
+    model: "leaf",
+    topic: "battery-warranty",
+    contentFile: "leaf-battery-warranty",
+    pageTitle: "Nissan Leaf battery warranty: 96 months or 100,000 miles, capacity terms by year | Census",
+    description:
+      "Nissan covers the Leaf's lithium-ion battery for 96 months or 100,000 miles in every model year from 2013 through 2026. Its capacity coverage is 60 months or 60,000 miles on 2013 through 2015 cars and 24 kWh 2016 and 2017 cars, and 96 months or 100,000 miles on 30 kWh 2016 and 2017 cars and every 2018 through 2026 car.",
+    breadcrumbLabel: "Nissan Leaf battery warranty",
+    dateModified: "2026-11-11",
+    faq: [
+      {
+        question: "How long is the Nissan Leaf battery warranty?",
+        answer:
+          "The Lithium-Ion Battery Coverage for defects in materials or workmanship is 96 months or 100,000 miles, whichever comes first, in every model year from 2013 through 2026.",
+      },
+      {
+        question: "What battery capacity does Nissan guarantee on the Leaf?",
+        answer:
+          "On 2013 through 2017 cars Nissan covers capacity loss below nine bars on the battery capacity level gauge, and on 2018 through 2025 cars below nine segments; a repair returns the battery to at least nine. The 2026 booklet covers capacity loss below 70% and restores the battery to at least 70%.",
+      },
+      {
+        question: "How long does the Nissan Leaf capacity coverage last?",
+        answer:
+          "60 months or 60,000 miles for 2013 through 2015 cars and for 2016 and 2017 cars with the 24 kWh battery; 96 months or 100,000 miles for 2016 and 2017 cars with the 30 kWh battery and for every 2018 through 2026 car.",
+      },
+      {
+        question: "Does the Nissan Leaf battery warranty transfer to a second owner?",
+        answer:
+          "Yes. The warranty transfers to subsequent owners without any action on their part. It is instead void if, in the first six months after delivery to the original owner, ownership is transferred and the vehicle is registered outside the United States.",
+      },
+      {
+        question: "When does the Nissan Leaf battery warranty clock start?",
+        answer:
+          "On the date the vehicle is delivered to the first retail buyer or put into use, whichever is earlier.",
+      },
+    ],
+  },
+  {
+    make: "ford",
+    model: "mustang-mach-e",
+    topic: "battery-warranty",
+    contentFile: "mach-e-battery-warranty",
+    pageTitle: "Ford Mustang Mach-E battery warranty: 8 years, 100,000 miles, 70% floor | Census",
+    description:
+      "Ford covers the Mustang Mach-E high voltage battery for 8 years or 100,000 miles in every model year from 2021 through 2026, including capacity loss below 70 percent of beginning-of-life capacity, and a later owner gets any remaining coverage.",
+    breadcrumbLabel: "Ford Mustang Mach-E battery warranty",
+    dateModified: "2026-11-11",
+    faq: [
+      {
+        question: "How long is the Ford Mustang Mach-E battery warranty?",
+        answer:
+          "8 years or 100,000 miles, whichever comes first, for both the Electric Vehicle Component coverage and the High Voltage Battery Capacity Coverage, in every model year from 2021 through 2026.",
+      },
+      {
+        question: "What battery capacity does Ford guarantee on the Mustang Mach-E?",
+        answer:
+          "Ford treats capacity below 70 percent of the high voltage battery's beginning-of-life capacity, as determined by an authorized EV Certified Ford Dealer, as excessive, and covers the component repair or replacement necessary to correct it. The measurement method is at Ford's sole discretion, and a replacement may be new, factory remanufactured, or factory refurbished.",
+      },
+      {
+        question: "Does the Mustang Mach-E battery warranty transfer to a second owner?",
+        answer:
+          "Yes. Ford's warranty guide for each model year states that a buyer of a previously owned vehicle of that model year is eligible for any remaining warranty coverages.",
+      },
+      {
+        question: "When does the Mustang Mach-E battery warranty clock start?",
+        answer:
+          "On the Warranty Start Date: the day of delivery of the new vehicle or the day it is first put into service, for example as a dealer demonstrator, whichever occurs first. The 2023 guide (March 2025 Fifth Printing) and the 2024, 2025 and 2026 guides add that for new retail sales on or after July 1, 2023 sold from a California retailer and/or to a California resident, the Warranty Start Date and mileage start no earlier than when the goods are delivered to the customer.",
+      },
+      {
+        question: "What is not covered by the Mustang Mach-E battery warranty?",
+        answer:
+          "Under \"Damage Caused By,\" Ford excludes damage caused by accidents, collision or objects striking the vehicle, theft, vandalism or riot, fire or explosion, contaminated or improper fluids, customer-applied chemicals or spills, driving through water deep enough to be ingested into any component, immersion or flooding of the battery, abuse or misuse including racing or using the vehicle as a permanent stationary power source, exceeding the certification-label load limits, unresolved battery warnings, uncompleted software updates, incompatible charging devices or methods, modifications to the high voltage system, intense heat such as paint booth conditions that exceed Ford's recommendations, leaving the battery fully discharged or near zero state of charge for more than 14 days, unauthorized repairs, and improper storage. The New Vehicle Limited Warranty does not cover a vehicle ever labeled or branded as dismantled, fire, flood, junk, rebuilt, reconstructed, or salvaged, or one determined to be a total loss by an insurance company; either voids it.",
+      },
+    ],
+  },
 ];
 
 export function findFactSheet(make: string, model: string, topic: string): FactSheetEntry | undefined {

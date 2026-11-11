@@ -43,8 +43,8 @@ test("feed spellings reach their sheets through the modelKey fold", () => {
   assert.equal(factLinksFor("TESLA", "MODEL 3").length, 3);
   assert.equal(factLinksFor("Volkswagen", "ID.4").length, 2);
   assert.equal(factLinksFor("Volkswagen", "ID. Buzz").length, 2);
-  assert.equal(factLinksFor("Ford", "Mustang Mach-E").length, 2);
-  assert.equal(factLinksFor("Ford", "F-150 Lightning").length, 2);
+  assert.equal(factLinksFor("Ford", "Mustang Mach-E").length, 3);
+  assert.equal(factLinksFor("Ford", "F-150 Lightning").length, 3);
   assert.equal(factLinksFor("Hyundai", "IONIQ 5").length, 3);
   // Both nameplates on the shared Bolt sheet.
   assert.equal(factLinksFor("Chevrolet", "Bolt EV").length, 2);

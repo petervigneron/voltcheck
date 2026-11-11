@@ -40,13 +40,13 @@ export const FACT_LINK_MODELS: {
   /** modelKey() spellings that are this model. */
   keys: string[];
 }[] = [
-  { make: "nissan", model: "ariya", topics: ["charging", "heat-pump"], name: "Nissan Ariya", keys: ["ariya"] },
-  { make: "nissan", model: "leaf", topics: ["charging", "heat-pump"], name: "Nissan Leaf", keys: ["leaf"] },
+  { make: "nissan", model: "ariya", topics: ["charging", "heat-pump", "battery-warranty"], name: "Nissan Ariya", keys: ["ariya"] },
+  { make: "nissan", model: "leaf", topics: ["charging", "heat-pump", "battery-warranty"], name: "Nissan Leaf", keys: ["leaf"] },
   { make: "hyundai", model: "ioniq-5", topics: ["charging", "heat-pump", "battery-warranty"], name: "Hyundai Ioniq 5", keys: ["ioniq5"] },
-  { make: "hyundai", model: "ioniq-6", topics: ["charging", "heat-pump"], name: "Hyundai Ioniq 6", keys: ["ioniq6"] },
+  { make: "hyundai", model: "ioniq-6", topics: ["charging", "heat-pump", "battery-warranty"], name: "Hyundai Ioniq 6", keys: ["ioniq6"] },
   { make: "kia", model: "ev6", topics: ["charging", "heat-pump", "battery-warranty"], name: "Kia EV6", keys: ["ev6"] },
-  { make: "ford", model: "mustang-mach-e", topics: ["charging", "heat-pump"], name: "Ford Mustang Mach-E", keys: ["mustangmache"] },
-  { make: "ford", model: "f-150-lightning", topics: ["charging", "heat-pump"], name: "Ford F-150 Lightning", keys: ["f150lightning"] },
+  { make: "ford", model: "mustang-mach-e", topics: ["charging", "heat-pump", "battery-warranty"], name: "Ford Mustang Mach-E", keys: ["mustangmache"] },
+  { make: "ford", model: "f-150-lightning", topics: ["charging", "heat-pump", "battery-warranty"], name: "Ford F-150 Lightning", keys: ["f150lightning"] },
   { make: "volkswagen", model: "id-4", topics: ["charging", "heat-pump"], name: "Volkswagen ID.4", keys: ["id4"] },
   { make: "volkswagen", model: "id-buzz", topics: ["charging", "heat-pump"], name: "Volkswagen ID. Buzz", keys: ["idbuzz"] },
   // One sheet covers both nameplates (registry.ts says why), so both keys
