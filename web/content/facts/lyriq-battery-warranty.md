@@ -9,7 +9,7 @@
 | Capacity floor | 75% of original value; the battery is replaced or repaired if capacity falls below it during the warranty period, as determined by a certified dealer[^1][^2][^3][^4] |
 | Replacement battery | One appropriate for the age and mileage of the vehicle[^1][^2][^3][^4] |
 | Repair parts | New or refurbished components, at Cadillac's discretion[^1][^2][^3][^4] |
-| Where repairs are done | An authorized Cadillac dealership; Cadillac has a network of certified dealers trained to repair electric-vehicle battery packs[^1][^2][^3][^4] |
+| Where repairs are done | A Cadillac dealer facility (2023, 2024) or an authorized Cadillac dealership (2025, 2026); Cadillac has a network of certified dealers trained to repair electric-vehicle battery packs[^1][^2][^3][^4] |
 | Clock starts | The date the vehicle is first delivered or put in use[^1][^2][^3][^4] |
 | Cost to the owner | Parts, labor and towing at no charge[^1][^2][^3][^4] |
 | Bumper-to-bumper coverage | 4 years or 50,000 miles, whichever comes first[^1][^2][^3][^4] |
@@ -81,7 +81,7 @@ A 2026 Lyriq carries both floors: 75% under Battery Capacity Coverage everywhere
 
 [^3]: Cadillac, *2025 Cadillac Electric Vehicle Limited Warranty and Owner Assistance Information* (PDF, 24 pages, publication 18456082A, printed 2024JUN25), "Warranty Coverage at a Glance" chart, printed p. 2, read as a 200 dpi rendered page image; "New Vehicle Limited Warranty," printed p. 3 ("What Is Covered," "Warranty Applies," "Repairs Covered," "No Charge," "Warranty Period," "Bumper-to-Bumper Coverage," "Electric Vehicle Propulsion Battery Coverage," "Battery Capacity Coverage," "Propulsion Battery Service," "Non-Propulsion Battery Usage"); "What Is Not Covered," printed pp. 7–9. https://contentdelivery.ext.gm.com/content/dam/cope/en_us/public/pdf_assets/active/warranty_manuals_browse/2025/cadillac/25_CAD_Electric_Vehicle_WM_en_US_U_18456082A_2024JUN25.pdf (md5 773107c6f9b9aaf5d0097b8ea879becb)
 
-[^4]: Cadillac, *2026 Cadillac Electric Vehicle Limited Warranty and Owner Assistance Information* (PDF, 30 pages, publication 19680748C, printed 2025DEC12), "Warranty Coverage at a Glance" chart, printed p. 2, read as a 190 dpi rendered page image; "New Vehicle Limited Warranty," printed p. 5 (same subsections as footnote 3); "What Is Not Covered," printed pp. 9–12. https://contentdelivery.ext.gm.com/content/dam/cope/en_us/public/pdf_assets/active/warranty_manuals_browse/2026/cadillac/26_CAD_Electric_Vehicle_WM_en_US_U_19680748C_2025DEC12_3P.pdf (md5 68162ef28babbc3709cbaf52b61c38be)
+[^4]: Cadillac, *2026 Cadillac Electric Vehicle Limited Warranty and Owner Assistance Information* (PDF, 30 pages, publication 19680748C, printed 2025DEC12), "Warranty Coverage at a Glance" chart, printed p. 2, read as a 190 dpi rendered page image; "New Vehicle Limited Warranty," printed p. 5 (same subsections as footnote 3); "What Is Not Covered," printed pp. 9–12. https://contentdelivery.ext.gm.com/content/dam/cope/en_us/public/pdf_assets/active/warranty_manuals_browse/2026/cadillac/26_CAD_Electric_Vehicle_WM_en_US_U_19680748C_2025DEC12_3P.pdf (md5 3f4949699cd24eeab78d2bfc37538659)
 
 [^5]: Same manual as footnote 4, "Warranty Coverage at a Glance," printed p. 3: the "CALIFORNIA ZERO-EMISSIONS VEHICLE (ZEV) WARRANTY COVERAGE" chart, read as a 190 dpi rendered page image. The chart's California heading carries footnote 2 on printed p. 4, "Also applies to Massachusetts, New York, Oregon, Vermont, and Washington."
 

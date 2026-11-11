@@ -961,7 +961,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     description:
       "Cadillac covers the Optiq propulsion battery for 8 years or 100,000 miles and replaces it below 75% capacity. It transfers to every subsequent owner.",
     breadcrumbLabel: "Cadillac Optiq battery warranty",
-    dateModified: "2026-09-01",
+    dateModified: "2026-11-11",
     faq: [
       {
         question: "How long is the Cadillac Optiq battery warranty?",
@@ -981,7 +981,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       {
         question: "Is a Cadillac Optiq bought in California covered differently?",
         answer:
-          "The 2026 warranty booklet adds California Zero-Emissions Vehicle coverage, under which General Motors warrants that the battery is free from defects causing its state of health to deteriorate to less than 70% for 8 years or 100,000 miles, and covers propulsion-related parts for 7 years or 70,000 miles against long-term defects and 3 years or 50,000 miles against short-term defects. It applies only if the vehicle is certified for sale in California and is serviced by an authorized GMC or GM dealership in California or in Colorado, Delaware, Maryland, Massachusetts, New Jersey, New York, Oregon, Rhode Island, Vermont, Washington or Washington D.C.",
+          "The 2026 warranty booklet adds California Zero-Emissions Vehicle coverage, under which General Motors warrants that the battery is free from defects causing its state of health to deteriorate to less than 70% for 8 years or 100,000 miles, and covers propulsion-related parts for 7 years or 70,000 miles against long-term defects and 3 years or 50,000 miles against short-term defects. It applies only if the vehicle is certified for sale in California and is serviced by an authorized GMC or GM dealership in California or in Massachusetts, New York, Oregon, Vermont or Washington.",
       },
       {
         question: "What can void a Cadillac Optiq battery warranty?",
@@ -1037,7 +1037,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     description:
       "Cadillac covers the Lyriq propulsion battery for 8 years or 100,000 miles and replaces it below 75% capacity. It runs from first delivery and follows the car.",
     breadcrumbLabel: "Cadillac Lyriq battery warranty",
-    dateModified: "2026-09-01",
+    dateModified: "2026-11-11",
     faq: [
       {
         question: "How long is the Cadillac Lyriq battery warranty?",
@@ -1113,7 +1113,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     description:
       "Chevrolet covers the Equinox EV propulsion battery for 8 years or 100,000 miles and replaces it below 75% capacity, for the first owner and every later one.",
     breadcrumbLabel: "Chevrolet Equinox EV battery warranty",
-    dateModified: "2026-09-01",
+    dateModified: "2026-11-11",
     faq: [
       {
         question: "How long is the Chevrolet Equinox EV battery warranty?",
@@ -1189,7 +1189,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     description:
       "Blazer EV battery coverage is 8 years or 100,000 miles, replaced below 75% capacity, and it transfers to you. Sourced to Chevrolet's warranty booklets.",
     breadcrumbLabel: "Chevrolet Blazer EV battery warranty",
-    dateModified: "2026-09-01",
+    dateModified: "2026-11-11",
     faq: [
       {
         question: "How long is the Chevrolet Blazer EV battery warranty?",
@@ -1214,7 +1214,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       {
         question: "What voids the Chevrolet Blazer EV battery warranty?",
         answer:
-          "On 2025 and later cars Chevrolet excludes damage from incompatible charging methods or from an adapter General Motors does not sell or approve, and excessive use of the main battery for non-propulsion purposes such as semi-permanent or permanent daily power provisions. Also excluded are alteration or modification of the vehicle after final assembly including its software, installation of non-GM parts, and damage from failing to follow the recommended maintenance intervals. The warranty is void on any vehicle whose odometer has been disconnected or altered, or that is currently or previously titled as salvaged, scrapped, junked or a total loss.",
+          "On 2025 and later cars Chevrolet excludes damage from incompatible charging methods or from an adapter General Motors does not sell or approve (on 2027 cars, an adapter or charger), and excessive use of the main battery for non-propulsion purposes such as semi-permanent or permanent daily power provisions. Also excluded are alteration or modification of the vehicle after final assembly including its software, installation of non-GM parts, and damage from failing to follow the recommended maintenance intervals. The warranty is void on any vehicle whose odometer has been disconnected or altered, or that is currently or previously titled as salvaged, scrapped, junked or a total loss.",
       },
     ],
   },

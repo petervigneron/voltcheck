@@ -24,7 +24,7 @@
 | Propulsion-related part short-term defects | 3 years or 50,000 miles, whichever first occurs[^4][^5] |
 | Propulsion-related part long-term defects | 7 years or 70,000 miles, whichever first occurs[^4][^5] |
 | Who qualifies | Both must be true: the vehicle is certified for sale in California, per its emission control information label; and it is serviced by an authorized GMC or GM dealership located in California or in another state that has specifically adopted California's emission warranty requirements[^6] |
-| Those other states | Colorado, Delaware, Maryland, Massachusetts, New Jersey, New York, Oregon, Rhode Island, Vermont, Washington, and Washington D.C.[^6] |
+| Those other states | Massachusetts, New York, Oregon, Vermont, and Washington[^6] |
 | If either condition fails | The California Zero-Emissions Vehicle coverage above does not apply[^6] |
 
 ## What is not covered
@@ -50,17 +50,17 @@ Cadillac excludes from the New Vehicle Limited Warranty:
 
 [^1]: Cadillac, *2025 Cadillac Electric Vehicle Limited Warranty and Owner Assistance Information* (PDF, 24 pages, publication 25Cadillac_EV_WM_enUS_18456082A, dated 2024JUN25), "New Vehicle Limited Warranty — What Is Covered," printed p. 3: the sub-sections "Warranty Applies," "Repairs Covered," "Warranty Period," "Bumper-to-Bumper Coverage," "Electric Vehicle Propulsion Battery Coverage," "Battery Capacity Coverage," "Propulsion Battery Service" and "Non-Propulsion Battery Usage." Page read as a rendered image (pdftoppm, 200 dpi). md5 54e33fd0760ef971546dcb3f50a17730. GM's host: https://contentdelivery.ext.gm.com/bypass/gma-content-api/resources/sites/GMA/content/staging/MANUALS/9000/MA9264/en_US/3.0/25_CAD_Electric_Vehicle_WM_en_US_U_18456082A_2024JUN25.pdf. GM's manuals index files this booklet against the Optiq, Escalade, Celestiq, Lyriq and Escalade IQ for 2025.
 
-[^2]: Cadillac, *2026 Cadillac Electric Vehicle Limited Warranty and Owner Assistance* (PDF, 30 pages, publication 26Cadillac_EV_WM_enUS_19680748B, dated 2025MAR25), same sub-sections, printed p. 5, read as a rendered image. md5 5417a22b146a98b084332f0e0d2e8594. https://contentdelivery.ext.gm.com/bypass/gma-content-api/resources/sites/GMA/content/staging/MANUALS/9000/MA9595/en_US/2.0/26_CAD_Electric_Vehicle_WM_en_US_U_19680748B_2025MAR25_2P.pdf. GM's manuals index files this booklet against the Optiq, Escalade, Celestiq, Lyriq, Vistiq and Escalade IQ for 2026.
+[^2]: Cadillac, *2026 Cadillac Electric Vehicle Limited Warranty and Owner Assistance Information* (PDF, 30 pages, publication 19680748C, dated 2025DEC12), same sub-sections, printed p. 5, read as a rendered image. md5 3f4949699cd24eeab78d2bfc37538659. https://contentdelivery.ext.gm.com/content/dam/cope/en_us/public/pdf_assets/active/warranty_manuals_browse/2026/cadillac/26_CAD_Electric_Vehicle_WM_en_US_U_19680748C_2025DEC12_3P.pdf. GM's manuals index files this booklet against the Optiq, Escalade, Celestiq, Lyriq, Vistiq and Escalade IQ for 2026.
 
 [^3]: Same booklets as footnotes 1 and 2, "Warranty Coverage at a Glance," printed p. 2 in both: the NEW VEHICLE LIMITED WARRANTY bar chart, whose "Electric Vehicle Propulsion Battery Warranty" bar reads 8 years/100,000 miles and whose "Bumper to Bumper (including tires)" bar reads 4 years/50,000 miles, both marked "Whichever comes first."
 
-[^4]: Cadillac, 2026 booklet as in footnote 2, "Warranty Coverage at a Glance — California Zero-Emissions Vehicle (ZEV) Warranty Coverage," printed p. 3: the CALIFORNIA ZERO-EMISSIONS VEHICLE (ZEV) WARRANTY COVERAGE bar chart, rows "Propulsion Related Part Short-Term Defects Warranty," "Propulsion Related Part Long-Term Defects Warranty" and "High Voltage Battery Warranty," under the heading "California (under 14,000 lbs GVWR)." Chart read as a rendered image at 220 dpi.
+[^4]: Cadillac, 2026 booklet as in footnote 2, "Warranty Coverage at a Glance — California Zero-Emissions Vehicle (ZEV) Warranty Coverage," printed p. 3: the CALIFORNIA ZERO-EMISSIONS VEHICLE (ZEV) WARRANTY COVERAGE bar chart, rows "Propulsion Related Part Short-Term Defects Warranty," "Propulsion Related Part Long-Term Defects Warranty" and "High Voltage Battery Warranty," under the heading "California (under 10,000 lbs GVWR)." Chart read as a rendered image at 220 dpi.
 
 [^5]: Cadillac, 2026 booklet as in footnote 2, "Things to Know About the New Vehicle Limited Warranty," "MANUFACTURER'S WARRANTY COVERAGE": the 3-year/50,000-mile paragraph on printed p. 16 and the 7-year/70,000-mile and 8-year/100,000-mile paragraphs on printed p. 17. Pages read as rendered images (pdftoppm, 250 dpi).
 
 [^6]: Cadillac, 2026 booklet as in footnote 2, "California Zero-Emissions Vehicle (ZEV) Warranty Coverage" and its "Requirements" sub-section, printed p. 16.
 
-[^7]: Cadillac, both booklets as in footnotes 1 and 2, "New Vehicle Limited Warranty — What Is Not Covered": "Electric Vehicle Charging Adapters" and "Over-the-Air Software Updates," printed pp. 8–9 in the 2025 edition and pp. 10–11 in the 2026 edition.
+[^7]: Cadillac, both booklets as in footnotes 1 and 2, "New Vehicle Limited Warranty — What Is Not Covered": "Electric Vehicle Charging Adapters" and "Over-the-Air Software Updates," printed pp. 8–9 in the 2025 edition; printed p. 10 ("Electric Vehicle Charging Adapters") and p. 12 ("Over-the-Air Software Updates") in the 2026 edition.
 
 [^8]: Same booklets as footnotes 1 and 2, "What Is Not Covered." "Damage Due to Accident, Misuse, Impact, or Alteration" sits on printed p. 7 of the 2025 edition and printed p. 9 of the 2026 edition; "Damage Due to Insufficient or Improper Maintenance" and "Excessive Non-Propulsion Battery Usage" sit on printed p. 8 of the 2025 edition and printed p. 10 of the 2026 edition. All four pages read as rendered images.
 
