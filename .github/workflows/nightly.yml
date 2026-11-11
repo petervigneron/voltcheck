@@ -889,32 +889,12 @@ jobs:
       # failing — the check going from "never recorded" to "recorded, and
       # wrong", which is worse.
 
-      # Washington transaction prices refresh monthly upstream.
-      - name: Refresh Washington price comps (5th of the month)
-        if: ${{ needs.finalize-ingest.result == 'success' && github.event_name == 'schedule' }}
-        working-directory: scraper
-        env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-          SUPABASE_INGEST_TOKEN: ${{ secrets.SUPABASE_INGEST_TOKEN }}
-        # --months 0 = the whole archive back to 2016. The load REPLACES the
-        # table, so a windowed pull here would truncate the full history the
-        # model's depreciation work depends on.
-        run: '[ "$(date +%d)" = "05" ] && node wa-prices.mjs --months 0 || echo "not the 5th, skipping"'
-
-      # Name the versions behind those sales (migration 0016). Runs with the
-      # price refresh because that is when new VIN cohorts appear — a model
-      # year nobody has decoded shows up as "Unknown" until this runs.
-      # Only the vPIC half needs a job; vin_variant_observed is a view over
-      # live listings and is always current.
-      - name: Refresh VIN variant decodes (5th of the month)
-        if: ${{ needs.finalize-ingest.result == 'success' && github.event_name == 'schedule' }}
-        working-directory: scraper
-        env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-          SUPABASE_INGEST_TOKEN: ${{ secrets.SUPABASE_INGEST_TOKEN }}
-        run: '[ "$(date +%d)" = "05" ] && node vpic-variants.mjs || echo "not the 5th, skipping"'
+      # The Washington sale-price refresh and its VIN-variant decode used to
+      # be two steps here, gated on `date +%d` = 05. They never ran: this job
+      # reaches them ~5 hours after an 18:00-19:00 UTC start, so on the 5th
+      # the clock already read the 6th. wa_ev_sales sat at 2026-07-31 from
+      # August to November while the state published two more months.
+      # They live in wa-sales.yml now, on their own schedule.
 
       # The JSON snapshot is the web app's fallback when Supabase is
       # unreachable, so it needs to stay current in the repo.

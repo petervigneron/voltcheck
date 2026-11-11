@@ -1,0 +1,65 @@
+name: Washington sale prices
+
+# What people actually PAID: WA DOL's EV title transactions (data.wa.gov
+# rpr4-cgyd, ODbL) into wa_ev_sales, then the VIN-variant names for any new
+# cohort those sales introduce. Every sold-price figure on the site — the
+# /worth range, the recently-sold chart, ev_price_model — stands on this
+# table.
+#
+# This was two steps at the end of nightly.yml, gated on the shell's
+# `date +%d` being "05". That job reaches them about five hours after it
+# starts, and it starts at 18:00-19:00 UTC, so on the 5th the test ran on
+# the 6th and printed "not the 5th, skipping" — every month. The table sat
+# at 2026-07-31 (132,396 rows) from August until 2026-11-10, when the owner
+# asked for fresh sales and the gap was found; the state had published
+# August and most of September by then (file updated 2026-10-14).
+#
+# Twice a month rather than once: the state does not publish on a fixed day,
+# the load replaces the whole table from the full archive so a second run
+# costs a few minutes and changes nothing when the file has not moved, and a
+# run that fails has a second chance inside the month instead of a 30-day
+# wait.
+on:
+  schedule:
+    - cron: "40 9 6,20 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: wa-sales
+  cancel-in-progress: false
+
+jobs:
+  load:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - working-directory: scraper
+        run: npm ci --no-audit --no-fund
+
+      # --months 0 = the whole archive back to 2016. The load REPLACES the
+      # table (migration 0033), so a windowed pull would truncate the history
+      # the depreciation curves and the trend model depend on.
+      - name: Load Washington sales
+        working-directory: scraper
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_INGEST_TOKEN: ${{ secrets.SUPABASE_INGEST_TOKEN }}
+        run: node wa-prices.mjs --months 0
+
+      # Name the versions behind those sales (migration 0016): a model year
+      # nobody has decoded shows up as "Unknown" until this runs.
+      - name: Refresh VIN variant decodes
+        working-directory: scraper
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_INGEST_TOKEN: ${{ secrets.SUPABASE_INGEST_TOKEN }}
+        run: node vpic-variants.mjs
