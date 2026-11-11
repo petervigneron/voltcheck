@@ -86,6 +86,9 @@ export async function POST(req: Request) {
   // them — and a publish is what makes a hub's numbers current, not its TTL.
   revalidatePath("/ev/[make]/[model]", "page");
   revalidatePath("/ev");
+  // The market page reads the nightly trend tables, not the feed, but a
+  // publish is the one signal the site gets that a day has turned over.
+  revalidatePath("/market");
   // The listing pages too (2026-09-12). Each caches for a day
   // (app/listing/[id]/page.tsx), so a car the database stopped serving at
   // 04:00 — delisted by the recheck, or withheld by 0089 because nothing

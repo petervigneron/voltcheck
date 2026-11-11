@@ -62,6 +62,7 @@ function staticRoutes(hubsAsOf: Date | undefined): SitemapEntry[] {
   return [
     { url: `${BASE}/`, changeFrequency: "daily", priority: 1 },
     { url: `${BASE}/vin`, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${BASE}/market`, changeFrequency: "daily", priority: 0.8 },
     { url: `${BASE}/bot`, changeFrequency: "yearly", priority: 0.2 },
     { url: `${BASE}/facts`, changeFrequency: "monthly", priority: 0.5 },
     // Each fact sheet's lastModified tracks its audit record's last-checked
