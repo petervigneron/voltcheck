@@ -33,6 +33,8 @@ export interface RawMarket {
   asOf: string;
   site: { d: string; i: number; c: number }[] | null;
   models: RawMarketModel[] | null;
+  /** Washington sold prices, one row per complete month (migration 0116). */
+  sold?: { m: string; pct: number; cohorts: number; sales: number }[] | null;
 }
 
 export interface MarketRow {
@@ -46,8 +48,54 @@ export interface MarketRow {
   change60: number | null;
 }
 
+/** One month of the sold-price series. */
+export interface SoldMonth {
+  /** First day of the month, ISO. */
+  month: string;
+  /** Percent change from the month before, same model and model year. */
+  change: number;
+  /** Chained level, 100 in the month before the first one shown. */
+  idx: number;
+  /** Arms-length sales in the month. */
+  sales: number;
+}
+
+/** How many months of sold prices the page draws. */
+export const SOLD_MONTHS = 20;
+
+/**
+ * The monthly changes chained into a level. Only an unbroken run counts: a
+ * gap (a month the database withheld) would chain two non-adjacent months as
+ * if they were neighbours, so the series restarts after one and the page
+ * draws the most recent run.
+ */
+export function chainSold(raw: RawMarket["sold"], months = SOLD_MONTHS): SoldMonth[] {
+  const rows = (raw ?? [])
+    .filter((r) => r && /^\d{4}-\d{2}-01$/.test(r.m) && Number.isFinite(Number(r.pct)) && Number(r.sales) > 0)
+    .map((r) => ({ month: r.m, change: Number(r.pct), sales: Number(r.sales) }))
+    .sort((a, b) => a.month.localeCompare(b.month));
+  const next = (iso: string) => {
+    const d = new Date(`${iso}T00:00:00Z`);
+    d.setUTCMonth(d.getUTCMonth() + 1);
+    return d.toISOString().slice(0, 10);
+  };
+  let run: typeof rows = [];
+  for (const r of rows) {
+    if (run.length && next(run[run.length - 1].month) !== r.month) run = [];
+    run.push(r);
+  }
+  const shown = run.slice(-months);
+  let idx = 100;
+  return shown.map((r) => {
+    idx *= 1 + r.change / 100;
+    return { ...r, idx: Math.round(idx * 100) / 100 };
+  });
+}
+
 export interface Market {
   asOf: string;
+  /** Washington sold prices by month; empty when there is no unbroken run. */
+  sold: SoldMonth[];
   /** The site index, 1.0 on its first day. */
   site: { day: string; idx: number; cars: number }[];
   rows: MarketRow[];
@@ -96,7 +144,7 @@ export function shapeMarket(raw: RawMarket, hubs: ModelHub[] = MODEL_HUBS): Mark
   const site = (raw.site ?? [])
     .filter((p) => p && typeof p.d === "string" && Number.isFinite(p.i) && p.i > 0)
     .map((p) => ({ day: p.d, idx: Number(p.i), cars: Number(p.c) || 0 }));
-  return { asOf: raw.asOf, site, rows };
+  return { asOf: raw.asOf, sold: chainSold(raw.sold), site, rows };
 }
 
 /**

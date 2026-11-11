@@ -2,7 +2,7 @@
 // allowed to be printed.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { shapeMarket, type RawMarket } from "../lib/market";
+import { chainSold, shapeMarket, type RawMarket } from "../lib/market";
 import type { ModelHub } from "../lib/listings/modelHubs";
 
 const hub = (make: string, model: string, keys: string[]): ModelHub => ({
@@ -94,4 +94,50 @@ test("junk rows and junk index points are dropped, not shown as zero", () => {
   );
   assert.equal(m.rows.length, 0);
   assert.equal(m.site.length, 1);
+});
+
+test("sold months chain into a level, and each keeps its own change and n", () => {
+  const s = chainSold([
+    { m: "2026-04-01", pct: 5, cohorts: 38, sales: 1635 },
+    { m: "2026-05-01", pct: 3, cohorts: 42, sales: 1864 },
+    { m: "2026-06-01", pct: -2, cohorts: 41, sales: 1616 },
+  ]);
+  assert.deepEqual(s.map((r) => [r.month, r.change, r.idx, r.sales]), [
+    ["2026-04-01", 5, 105, 1635],
+    ["2026-05-01", 3, 108.15, 1864],
+    ["2026-06-01", -2, 105.99, 1616],
+  ]);
+});
+
+test("a withheld month breaks the chain: only the latest unbroken run is drawn", () => {
+  // July is missing (the database withheld it), so June and August are not
+  // neighbours and must not be chained as if they were.
+  const s = chainSold([
+    { m: "2026-05-01", pct: 3, cohorts: 42, sales: 1864 },
+    { m: "2026-06-01", pct: 2, cohorts: 41, sales: 1616 },
+    { m: "2026-08-01", pct: -1, cohorts: 40, sales: 1515 },
+    { m: "2026-09-01", pct: -2, cohorts: 30, sales: 1400 },
+  ]);
+  assert.deepEqual(s.map((r) => r.month), ["2026-08-01", "2026-09-01"]);
+  assert.equal(s[0].idx, 99);
+});
+
+test("the series is cut to the months asked for, across a year boundary", () => {
+  const s = chainSold(
+    [
+      { m: "2025-11-01", pct: -4, cohorts: 21, sales: 1117 },
+      { m: "2025-12-01", pct: -2, cohorts: 22, sales: 1193 },
+      { m: "2026-01-01", pct: -1, cohorts: 23, sales: 1162 },
+    ],
+    2,
+  );
+  assert.deepEqual(s.map((r) => [r.month, r.idx]), [
+    ["2025-12-01", 98],
+    ["2026-01-01", 97.02],
+  ]);
+});
+
+test("no sold rows is an empty series, not a flat line", () => {
+  assert.deepEqual(chainSold(null), []);
+  assert.deepEqual(shapeMarket(raw([])).sold, []);
 });
