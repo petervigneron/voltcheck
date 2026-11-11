@@ -63,6 +63,8 @@ jobs:
           fi
           { cat visits.txt; echo; echo "----"; echo; cat report.txt 2>/dev/null || echo "search report failed"; } > combined.txt
           cp combined.txt report.txt
+          # In the log too, so a dispatch with email off can still be read.
+          cat visits.txt
 
       - name: Publish to job summary
         if: always()
