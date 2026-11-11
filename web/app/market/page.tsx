@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { fetchMarket } from "@/lib/market";
 import { openGraph, OWN_IMAGE } from "@/lib/og/meta";
+import { fetchSpeed } from "@/lib/listings/speed";
 
 // The public market page: what used EVs sold for, month by month, and where
 // asking prices stand now, site-wide and per model. lib/market.ts and
@@ -138,13 +139,15 @@ function BarChart({ values, marks, label }: { values: number[]; marks: { i: numb
 const sectionLabel = "text-[10.5px] font-extrabold uppercase tracking-[0.14em] text-ink/60";
 
 export default async function MarketPage() {
-  const market = await fetchMarket();
+  const [market, speed] = await Promise.all([fetchMarket(), fetchSpeed()]);
   const { sold, national, site } = market;
   const first = site[0];
   const last = site[site.length - 1];
   const move = (last.idx / first.idx - 1) * 100;
   const rows = market.rows.filter((r) => r.cars >= MIN_CARS);
   const strip = sold.slice(-STRIP);
+  // Every row shares one window (migration 0120), so any entry names it.
+  const speedWindow = speed.values().next().value;
   const quarters = national.slice(-STRIP);
 
   const jsonLd = {
@@ -166,6 +169,7 @@ export default async function MarketPage() {
       "Asking price at 40,000 miles",
       "30-day change",
       "60-day change",
+      "Share of used cars no longer listed 30 days after appearing",
     ],
   };
 
@@ -253,14 +257,15 @@ export default async function MarketPage() {
       <section className="mt-8">
         <h2 className={sectionLabel}>By model · used · asking prices</h2>
         <div className="mt-2 overflow-x-auto border-[3px] border-ink bg-paper">
-          <table className="w-full min-w-[520px] text-left text-[14px]">
+          <table className="w-full min-w-[640px] text-left text-[14px]">
             <thead>
               <tr className="border-b-[3px] border-ink text-[10.5px] font-extrabold uppercase tracking-[0.1em] text-ink/60">
                 <th className="px-4 py-2.5">Model</th>
                 <th className="px-3 py-2.5 text-right">For sale</th>
                 <th className="px-3 py-2.5 text-right">Asking at 40,000 mi</th>
                 <th className="px-3 py-2.5 text-right">30 days</th>
-                <th className="px-4 py-2.5 text-right">60 days</th>
+                <th className="px-3 py-2.5 text-right">60 days</th>
+                <th className="px-4 py-2.5 text-right">Not listed after 30 days</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-ink/10">
@@ -274,14 +279,16 @@ export default async function MarketPage() {
                   <td className="px-3 py-2.5 text-right tabular-nums text-ink/70">{nf.format(r.cars)}</td>
                   <td className="px-3 py-2.5 text-right font-semibold tabular-nums">{usd(r.ask)}</td>
                   <td className="px-3 py-2.5 text-right tabular-nums">{r.change30 == null ? "" : pct(r.change30)}</td>
-                  <td className="px-4 py-2.5 text-right tabular-nums">{r.change60 == null ? "" : pct(r.change60)}</td>
+                  <td className="px-3 py-2.5 text-right tabular-nums">{r.change60 == null ? "" : pct(r.change60)}</td>
+                  <td className="px-4 py-2.5 text-right tabular-nums">{speed.get(r.path) ? `${speed.get(r.path)!.pct}%` : ""}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
         <p className="mt-3 text-[12px] text-ink/50">
-          {longDay(market.asOf)} ·{" "}
+          {longDay(market.asOf)}
+          {speedWindow ? ` · not listed after 30 days: used cars listed ${shortDay(speedWindow.from)} to ${shortDay(speedWindow.to)}` : ""} ·{" "}
           <Link href="/methodology" className="underline underline-offset-2 hover:text-cobalt">
             How we source this data
           </Link>

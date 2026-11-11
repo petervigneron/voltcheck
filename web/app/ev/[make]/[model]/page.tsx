@@ -8,6 +8,7 @@ import { factLinksFor } from "@/lib/facts/links";
 import { JsonLd } from "@/components/ListingJsonLd";
 import { hubItemListJsonLd } from "@/lib/listings/jsonLd";
 import { openGraph, OWN_IMAGE } from "@/lib/og/meta";
+import { fetchSpeed } from "@/lib/listings/speed";
 
 // Renders on first request and is CDN-cached from then on — the same shape
 // the browse index and the sitemap shards run on, and for the same reason
@@ -30,6 +31,7 @@ const money = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 0,
 });
 const monthOf = new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric", timeZone: "UTC" });
+const dayOf = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
 
 /** "September 2026" from the stats' YYYY-MM-DD, or undefined when there are none. */
 function statsMonth(stats: HubStats | undefined): string | undefined {
@@ -73,6 +75,9 @@ export default async function ModelHubPage(props: PageProps<"/ev/[make]/[model]"
 
   const { total, cars, stats } = await hubEntry(hubIndexKey(hub));
   const name = `${hub.make} ${hub.model}`;
+  // Absent under 100 cars or when the table cannot be read; the line below
+  // simply is not there.
+  const speed = (await fetchSpeed()).get(hubPath(hub));
   const facts = factLinksFor(hub.make, hub.model);
   const month = statsMonth(stats);
   // A year row earns a place in the table when it has something to say
@@ -207,6 +212,16 @@ export default async function ModelHubPage(props: PageProps<"/ev/[make]/[model]"
                 </>
               )}
             </dl>
+          )}
+
+          {/* One sentence, because the figure is nothing without the cars and
+              the dates it was counted on. "No longer listed" and never
+              "sold": lib/listings/speed.ts says why. */}
+          {speed && (
+            <p className="mt-4 text-[13px] text-ink/80">
+              <span className="font-bold text-ink">{speed.pct}%</span> of {nf.format(speed.listed)} used cars listed{" "}
+              {dayOf.format(new Date(`${speed.from}T00:00:00Z`))} to {dayOf.format(new Date(`${speed.to}T00:00:00Z`))} were no longer listed 30 days later.
+            </p>
           )}
         </section>
       )}
