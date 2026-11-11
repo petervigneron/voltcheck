@@ -1668,6 +1668,115 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       },
     ],
   },
+  {
+    make: "volkswagen",
+    model: "id-4",
+    topic: "battery-warranty",
+    contentFile: "id4-battery-warranty",
+    pageTitle: "Volkswagen ID.4 battery warranty: 8 years, 100,000 miles, 70% floor | Census",
+    description:
+      "Volkswagen covers the ID.4 high-voltage battery for 8 years or 100,000 miles against defects and against capacity loss below 70% (net capacity through 2025, State of Health for 2026), model years 2021 through 2026, and the coverage transfers to a later owner.",
+    breadcrumbLabel: "Volkswagen ID.4 battery warranty",
+    dateModified: "2026-11-11",
+    faq: [
+      {
+        question: "How long is the Volkswagen ID.4 battery warranty?",
+        answer:
+          "8 years or 100,000 miles, whichever occurs first, for every model year from 2021 through 2026. The rest of the high-voltage system, including the power electronics, electric motor, charger and charging socket, is covered for 4 years or 50,000 miles.",
+      },
+      {
+        question: "What battery capacity does Volkswagen guarantee on the ID.4?",
+        answer:
+          "Volkswagen covers net capacity loss below 70% on 2021–2025 cars and State of Health loss below 70% on 2026 cars. Repairs return the battery to that 70% level, and a complete replacement battery provides at least 70%; Volkswagen does not commit to an \"as new\" 100%.",
+      },
+      {
+        question: "Does the Volkswagen ID.4 battery warranty transfer to a second owner?",
+        answer:
+          "Yes, automatically and without cost, when ownership changes within the warranty period.",
+      },
+      {
+        question: "When does the Volkswagen ID.4 battery warranty clock start?",
+        answer:
+          "On the original in-service date: the date the car was delivered to the original purchaser or original lessee, or the date it was first placed in service as a \"demonstrator\" or \"company\" car.",
+      },
+      {
+        question: "What is not covered by the Volkswagen ID.4 battery warranty?",
+        answer:
+          "Volkswagen's 2021 through 2026 booklets exclude vehicles used for commercial purposes such as taxi, courier or delivery service, battery defects caused by not using, handling or maintaining the battery as the owner's manual describes, improper charging, operating the vehicle in areas flooded with water higher than the bottom of the vehicle body, high-pressure water or harsh chemicals applied directly to the battery, accident, collision, fire, and vehicles declared a total loss by an insurer.",
+      },
+    ],
+  },
+  {
+    make: "chevrolet",
+    model: "bolt-ev-euv",
+    topic: "battery-warranty",
+    contentFile: "bolt-ev-euv-battery-warranty",
+    pageTitle: "Chevrolet Bolt EV & Bolt EUV battery warranty: 8 years, 100,000 miles | Census",
+    description:
+      "Chevrolet covers the Bolt EV and Bolt EUV battery for 8 years or 100,000 miles in every model year from 2017 through 2023 and on the 2027 Bolt. A battery replaced under the 2017-2022 recall carries its own 8-year/100,000-mile parts warranty that starts at the date and mileage of replacement.",
+    breadcrumbLabel: "Chevrolet Bolt EV & Bolt EUV battery warranty",
+    dateModified: "2026-11-11",
+    faq: [
+      {
+        question: "How long is the Chevrolet Bolt EV and Bolt EUV battery warranty?",
+        answer:
+          "8 years or 100,000 miles, whichever comes first, for the 2017 through 2023 Bolt EV, the 2022 and 2023 Bolt EUV, and the 2027 Bolt. The clock starts on the date the vehicle is first delivered or put in use.",
+      },
+      {
+        question: "What battery capacity does Chevrolet guarantee on the Bolt?",
+        answer:
+          "For 2022 and 2023, GM's current booklets (January 2025 and December 2024 editions) state that Chevrolet replaces or repairs the battery if its capacity falls below 60% of its original value during the warranty period, as determined by a certified dealer. For the 2027 Bolt the figure is 75%. GM's terms for 2017 through 2021 state no capacity floor; they state the battery may degrade as little as 10% to as much as 40% of capacity over the warranty period.",
+      },
+      {
+        question: "Does a Bolt battery replaced under the recall have its own warranty?",
+        answer:
+          "Yes. High voltage batteries and battery components installed under the High Voltage Battery safety recalls on 2017-2022 Bolt EV and 2022 Bolt EUV carry an 8-year/100,000-mile GM Service Replacement Parts Limited Warranty. Its term begins at the date and mileage at the time of battery replacement, and it runs concurrent with any remaining term of the original 8-year/100,000-mile warranty for electric vehicle components. It applies only to batteries installed under the recall.",
+      },
+      {
+        question: "Does the Bolt battery warranty transfer to a second owner?",
+        answer:
+          "Yes. For 2017 through 2023 the electric vehicle coverage is transferable at no cost to any subsequent owner within the 8 years or 100,000 miles term, with no deductibles. For the 2027 Bolt the warranty is provided to the original owner and any subsequent owners during the warranty period.",
+      },
+    ],
+  },
+  {
+    make: "kia",
+    model: "niro-ev",
+    topic: "battery-warranty",
+    contentFile: "niro-ev-battery-warranty",
+    pageTitle: "Kia Niro EV battery warranty: 10 years, 100,000 miles, 70% floor (65% on 2020) | Census",
+    description:
+      "Kia covers the 2019 to 2026 Niro EV battery for 10 years or 100,000 miles and repairs capacity loss below 70% of original, 65% on 2020 cars; the coverage transfers to later owners.",
+    breadcrumbLabel: "Kia Niro EV battery warranty",
+    dateModified: "2026-11-11",
+    faq: [
+      {
+        question: "How long is the Kia Niro EV battery warranty?",
+        answer:
+          "For every model year from 2019 to 2026, the EV System Warranty runs 120 months or 100,000 miles and the Lithium-Ion Polymer Battery Capacity Coverage runs 10 years or 100,000 miles, whichever comes first.",
+      },
+      {
+        question: "What battery capacity does Kia guarantee on the Niro EV?",
+        answer:
+          "Kia covers capacity loss below 70% of the original battery capacity on 2019 and 2021 to 2026 cars, and below 65% on 2020 cars. A repair returns the pack to at least that same figure, may not restore an as-new 100% capacity, and may use a new or remanufactured Lithium-Ion Polymer Battery.",
+      },
+      {
+        question: "Does the Kia Niro EV battery warranty transfer to a second owner?",
+        answer:
+          "Yes. Every Niro EV manual from 2019 to 2026 states that any remaining portion of any warranty is fully transferable to subsequent owners except the 120 months/100,000 miles Power Train (Original Owner) warranty.",
+      },
+      {
+        question: "When does the Kia Niro EV battery warranty clock start?",
+        answer:
+          "At the Date of First Service: the earliest of delivery to the first retail purchaser, lease, or placement into service as a company vehicle such as a demonstrator, rental or fleet vehicle.",
+      },
+      {
+        question: "What is not covered by the Kia Niro EV battery warranty?",
+        answer:
+          "Kia excludes damage or failure caused by ambient temperatures above 122F for over 24 hours or storage below -22F for over seven days, by leaving the car over 14 days at or near a zero state of charge, by physical damage, direct flame or immersion, by opening the battery enclosure or having it serviced by anyone other than a Kia certified EV technician, and by incorrect charging procedures or incompatible charging devices. The 2023 to 2026 manuals also exclude damage caused by a public charger, a non-Kia supplied charge cord or other third-party EVSE.",
+      },
+    ],
+  },
 ];
 
 export function findFactSheet(make: string, model: string, topic: string): FactSheetEntry | undefined {

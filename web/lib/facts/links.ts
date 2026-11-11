@@ -47,11 +47,11 @@ export const FACT_LINK_MODELS: {
   { make: "kia", model: "ev6", topics: ["charging", "heat-pump", "battery-warranty"], name: "Kia EV6", keys: ["ev6"] },
   { make: "ford", model: "mustang-mach-e", topics: ["charging", "heat-pump", "battery-warranty"], name: "Ford Mustang Mach-E", keys: ["mustangmache"] },
   { make: "ford", model: "f-150-lightning", topics: ["charging", "heat-pump", "battery-warranty"], name: "Ford F-150 Lightning", keys: ["f150lightning"] },
-  { make: "volkswagen", model: "id-4", topics: ["charging", "heat-pump"], name: "Volkswagen ID.4", keys: ["id4"] },
+  { make: "volkswagen", model: "id-4", topics: ["charging", "heat-pump", "battery-warranty"], name: "Volkswagen ID.4", keys: ["id4"] },
   { make: "volkswagen", model: "id-buzz", topics: ["charging", "heat-pump"], name: "Volkswagen ID. Buzz", keys: ["idbuzz"] },
   // One sheet covers both nameplates (registry.ts says why), so both keys
   // answer to the one row.
-  { make: "chevrolet", model: "bolt-ev-euv", topics: ["charging", "heat-pump"], name: "Chevrolet Bolt EV or EUV", keys: ["boltev", "bolteuv"] },
+  { make: "chevrolet", model: "bolt-ev-euv", topics: ["charging", "heat-pump", "battery-warranty"], name: "Chevrolet Bolt EV or EUV", keys: ["boltev", "bolteuv"] },
   { make: "tesla", model: "model-3", topics: ["charging", "heat-pump", "battery-warranty"], name: "Tesla Model 3", keys: ["model3"] },
   { make: "tesla", model: "model-y", topics: ["charging", "heat-pump", "battery-warranty"], name: "Tesla Model Y", keys: ["modely"] },
   // batch6 (2026-09-01). Heat-pump rows deliberately absent for the GM-platform
@@ -61,6 +61,8 @@ export const FACT_LINK_MODELS: {
   // "Wrangler Unlimited 4xe" spellings are one vehicle and share the row (the
   // Bolt EV/EUV precedent). Petrol "Wrangler" stays unmatched.
   { make: "jeep", model: "wrangler-4xe", topics: ["charging", "battery-warranty"], name: "Jeep Wrangler 4xe", keys: ["wrangler4xe", "wranglerunlimited4xe"] },
+  // Battery-electric Niro only; "Niro" and "Niro Plug-In Hybrid" stay unmatched.
+  { make: "kia", model: "niro-ev", topics: ["battery-warranty"], name: "Kia Niro EV", keys: ["niroev"] },
   { make: "kia", model: "ev9", topics: ["charging", "heat-pump", "battery-warranty"], name: "Kia EV9", keys: ["ev9"] },
   // The Lyriq-V and Optiq-V are separate feed models (like the Ioniq 5 N) and get no link.
   { make: "cadillac", model: "lyriq", topics: ["charging", "battery-warranty"], name: "Cadillac Lyriq", keys: ["lyriq"] },

@@ -2559,11 +2559,74 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     ],
   },
 
+  // Split by year on 2026-11-11. One row covered 2019-2022 at a 70% capacity
+  // floor, but Kia's 2020 Niro EV Warranty and Consumer Information Manual
+  // says 65% (three times, printed pp. 6-7; read as page images by the fact
+  // sheet's author and again by its independent refuter, who also ruled out
+  // its being a Soul EV edition). 2019 and 2021-2022 say 70%. Every 2020
+  // Niro EV listing had been printing 70%. The fact sheet and its audit:
+  // content/facts/niro-ev-battery-warranty.md.
   {
-    id: "kia-niro-ev-2019-22",
+    id: "kia-niro-ev-2019",
     make: "KIA",
     model: "Niro EV",
-    modelYears: [2019, 2022],
+    modelYears: [2019, 2019],
+    battery: { packGrossKwh: f(64, "mfr", "high", "Kia-quoted 64 kWh"), chemistry: f("NMC", "agg", "medium") },
+    range: { epaRangeMi: f(239, "mfr", "high", "All trims, EPA figure", "https://www.fueleconomy.gov") },
+    charging: {
+      portStandard: f("CCS1", "mfr"),
+      superchargerAccess: f("adapter", "mfr", "high", "Kia NACS adapter ($249), live April 2025"),
+      dcPeakKw: f(77, "agg", "medium", "~77–85 kW real peak; slow DC charging regardless of trim"),
+    },
+    thermal: { heatPump: f("optional", "mfr", "high", "Optional every year (Cold Weather Package, ~$1,100: heat pump + battery heater), window sticker check") },
+    warranty: {
+      batteryYears: f(10, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      sohFloorPct: f(70, "mfr"),
+      batteryTransfers: f(true, "mfr", "high", "Kia: everything except the original-owner powertrain warranty transfers in full"),
+      powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr", "high"),
+    },
+    buyerNotes: [
+      {
+        headline: "Without the cold-weather package, winter is rough",
+        body: "The heat pump AND battery heater were a single option package every year. A car without it loses more range in winter and DC-charges very slowly in the cold. The window sticker is the authority.",
+        severity: "trap",
+      },
+    ],
+  },
+  {
+    id: "kia-niro-ev-2020",
+    make: "KIA",
+    model: "Niro EV",
+    modelYears: [2020, 2020],
+    battery: { packGrossKwh: f(64, "mfr", "high", "Kia-quoted 64 kWh"), chemistry: f("NMC", "agg", "medium") },
+    range: { epaRangeMi: f(239, "mfr", "high", "All trims, EPA figure", "https://www.fueleconomy.gov") },
+    charging: {
+      portStandard: f("CCS1", "mfr"),
+      superchargerAccess: f("adapter", "mfr", "high", "Kia NACS adapter ($249), live April 2025"),
+      dcPeakKw: f(77, "agg", "medium", "~77–85 kW real peak; slow DC charging regardless of trim"),
+    },
+    thermal: { heatPump: f("optional", "mfr", "high", "Optional every year (Cold Weather Package, ~$1,100: heat pump + battery heater), window sticker check") },
+    warranty: {
+      batteryYears: f(10, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      sohFloorPct: f(65, "mfr", "high", "Kia 2020 Niro EV Warranty and Consumer Information Manual, printed pp. 6-7: capacity loss below 65%", "https://owners.kia.com/us/en/manuals.html"),
+      batteryTransfers: f(true, "mfr", "high", "Kia: everything except the original-owner powertrain warranty transfers in full"),
+      powertrainTerms: f("1st owner 10yr/100k; subsequent owners 5yr/60k", "mfr", "high"),
+    },
+    buyerNotes: [
+      {
+        headline: "Without the cold-weather package, winter is rough",
+        body: "The heat pump AND battery heater were a single option package every year. A car without it loses more range in winter and DC-charges very slowly in the cold. The window sticker is the authority.",
+        severity: "trap",
+      },
+    ],
+  },
+  {
+    id: "kia-niro-ev-2021-22",
+    make: "KIA",
+    model: "Niro EV",
+    modelYears: [2021, 2022],
     battery: { packGrossKwh: f(64, "mfr", "high", "Kia-quoted 64 kWh"), chemistry: f("NMC", "agg", "medium") },
     range: { epaRangeMi: f(239, "mfr", "high", "All trims, EPA figure", "https://www.fueleconomy.gov") },
     charging: {

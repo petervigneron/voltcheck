@@ -54,6 +54,7 @@ const MODEL_MAP: Record<string, { make: string; models: string[] }> = {
   // uniform-claim comparison skips it — mapped anyway so the tripwire reaches
   // it if the sheet ever gains a two-column year table.
   "kia/ev9": { make: "KIA", models: ["EV9"] },
+  "kia/niro-ev": { make: "KIA", models: ["Niro EV"] },
   "volkswagen/id-4": { make: "VOLKSWAGEN", models: ["ID.4"] },
   "volkswagen/id-buzz": { make: "VOLKSWAGEN", models: ["ID. Buzz"] },
   "chevrolet/bolt-ev-euv": { make: "CHEVROLET", models: ["Bolt EV", "Bolt EUV"] },

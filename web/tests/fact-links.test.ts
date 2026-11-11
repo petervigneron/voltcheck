@@ -41,14 +41,14 @@ test("feed spellings reach their sheets through the modelKey fold", () => {
   // Casing and punctuation as the feeds actually type them.
   assert.equal(factLinksFor("Tesla", "Model Y").length, 3);
   assert.equal(factLinksFor("TESLA", "MODEL 3").length, 3);
-  assert.equal(factLinksFor("Volkswagen", "ID.4").length, 2);
+  assert.equal(factLinksFor("Volkswagen", "ID.4").length, 3);
   assert.equal(factLinksFor("Volkswagen", "ID. Buzz").length, 2);
   assert.equal(factLinksFor("Ford", "Mustang Mach-E").length, 3);
   assert.equal(factLinksFor("Ford", "F-150 Lightning").length, 3);
   assert.equal(factLinksFor("Hyundai", "IONIQ 5").length, 3);
   // Both nameplates on the shared Bolt sheet.
-  assert.equal(factLinksFor("Chevrolet", "Bolt EV").length, 2);
-  assert.equal(factLinksFor("Chevrolet", "Bolt EUV").length, 2);
+  assert.equal(factLinksFor("Chevrolet", "Bolt EV").length, 3);
+  assert.equal(factLinksFor("Chevrolet", "Bolt EUV").length, 3);
 });
 
 test("no prefix matching: a different car sharing the nameplate's start gets nothing", () => {
