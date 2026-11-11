@@ -1,5 +1,6 @@
 import { grantPass, isTierId, verifyStripeSignature, TIERS } from "@/lib/pro";
 import { sendEmail, siteOrigin } from "@/lib/alerts";
+import { DATA_PLAN, fetchSubscription, grantKey, stripeToState } from "@/lib/dataKey";
 
 // Stripe → us: the only thing in the system allowed to mint paid access.
 //
@@ -25,8 +26,77 @@ interface CheckoutSession {
   customer?: string | null;
   customer_details?: { email?: string | null } | null;
   customer_email?: string | null;
-  metadata?: { tier?: string } | null;
+  metadata?: { tier?: string; kind?: string } | null;
   payment_status?: string | null;
+  mode?: string | null;
+  subscription?: string | null;
+}
+
+/** A data-key subscription was paid for (migration 0117, lib/dataKey.ts).
+ *
+ *  The session says a subscription exists; the subscription says when its
+ *  first period ends, so Stripe is asked for it here rather than the period
+ *  being guessed as "a month from now". Same retry rule as the pass below:
+ *  500 only where a retry can succeed — the database or Stripe not
+ *  answering — and 200 for anything a retry cannot fix. */
+async function grantDataKey(s: CheckoutSession, email: string): Promise<Response> {
+  if (s.payment_status && s.payment_status !== "paid") {
+    console.warn("[data-key] session completed but not paid:", s.id, s.payment_status);
+    return Response.json({ ok: true, pending: true });
+  }
+  if (!s.id || !email || !s.subscription) {
+    console.error("[data-key] unusable session:", s.id, { hasEmail: !!email, hasSubscription: !!s.subscription });
+    return Response.json({ ok: true, unusable: true });
+  }
+  const sub = await fetchSubscription(s.subscription);
+  if (!sub) {
+    console.error("[data-key] could not read subscription for session", s.id);
+    return new Response("subscription unreadable", { status: 500 });
+  }
+  const state = stripeToState(sub);
+  if (state.status === "ended" || !state.periodEnd) {
+    console.error("[data-key] subscription not live at grant:", s.id, sub.status);
+    return Response.json({ ok: true, unusable: true });
+  }
+  const granted = await grantKey({
+    email,
+    sessionId: s.id,
+    subscriptionId: s.subscription,
+    customerId: s.customer ?? null,
+    periodEnd: state.periodEnd,
+  });
+  if (!granted || !granted.api_key) {
+    console.error("[data-key] grant failed for session", s.id, granted?.status);
+    return new Response("grant failed", { status: 500 });
+  }
+
+  const origin = siteOrigin();
+  const host = origin.replace(/^https?:\/\//, "");
+  const renews = new Date(granted.current_period_end ?? state.periodEnd).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+  const price = `$${(DATA_PLAN.amountCents / 100).toFixed(0)}`;
+  // A replay re-sends the same key; that is the point of keying on the session.
+  const ok = await sendEmail({
+    to: email,
+    subject: `Your ${DATA_PLAN.label}`,
+    text:
+      `Your key:\n\n${granted.api_key}\n\n` +
+      `Send it as a header: Authorization: Bearer <key>\n` +
+      `Docs: ${origin}/api/v1/openapi.json\n\n` +
+      `It renews at ${price} a month, next on ${renews}, until you cancel.\n` +
+      `Cancel any time at ${origin}/account. The key keeps working to the end of the month you have paid for.\n`,
+    html:
+      `<p>Your key:</p><p><code style="font-size:13px;word-break:break-all">${granted.api_key}</code></p>` +
+      `<p>Send it as a header: <code>Authorization: Bearer &lt;key&gt;</code>. ` +
+      `<a href="${origin}/api/v1/openapi.json">API documentation</a>.</p>` +
+      `<p>It renews at ${price} a month, next on ${renews}, until you cancel. ` +
+      `Cancel any time at <a href="${origin}/account">${host}/account</a>; the key keeps working to the end of the month you have paid for.</p>`,
+  });
+  if (!ok) console.error("[data-key] key granted but email failed:", s.id);
+  return Response.json({ ok: true, status: granted.status, emailed: ok });
 }
 
 export async function POST(req: Request): Promise<Response> {
@@ -54,6 +124,16 @@ export async function POST(req: Request): Promise<Response> {
   const s = event.data?.object ?? {};
   const email = s.customer_details?.email || s.customer_email || "";
   const tier = s.metadata?.tier;
+
+  // The data key is a subscription and has no tier; it is told apart by the
+  // metadata createDataCheckout put on the session, never by the amount.
+  if (s.mode === "subscription" || s.metadata?.kind === "data") {
+    if (s.mode !== "subscription" || s.metadata?.kind !== "data") {
+      console.error("[data-key] session is half a key purchase:", s.id, s.mode, s.metadata?.kind);
+      return Response.json({ ok: true, unusable: true });
+    }
+    return grantDataKey(s, email);
+  }
 
   // An async payment method can complete the session before the money
   // settles. Only 'paid' buys access; the unpaid case resolves later via

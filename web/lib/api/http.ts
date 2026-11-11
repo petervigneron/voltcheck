@@ -6,13 +6,20 @@
 export const CORS = {
   "access-control-allow-origin": "*",
   "access-control-allow-methods": "GET, POST, OPTIONS",
-  "access-control-allow-headers": "content-type, accept, mcp-protocol-version, mcp-session-id",
+  "access-control-allow-headers": "content-type, accept, authorization, x-api-key, mcp-protocol-version, mcp-session-id",
   "access-control-expose-headers": "x-as-of, mcp-session-id",
 };
 
-export function json(body: unknown, { status = 200, maxAge = 0, asOf }: { status?: number; maxAge?: number; asOf?: string } = {}): Response {
+export function json(
+  body: unknown,
+  { status = 200, maxAge = 0, asOf, keyed = false }: { status?: number; maxAge?: number; asOf?: string; keyed?: boolean } = {},
+): Response {
   const headers: Record<string, string> = { "content-type": "application/json; charset=utf-8", ...CORS };
-  headers["cache-control"] = maxAge > 0 ? `public, s-maxage=${maxAge}, stale-while-revalidate=86400` : "no-store";
+  // A response a data key bought (lib/api/paid.ts) never enters a shared
+  // cache: the CDN keys on the URL, not the Authorization header, so a
+  // cached keyed answer would be served to the next caller without a key.
+  headers["cache-control"] = keyed ? "private, no-store" : maxAge > 0 ? `public, s-maxage=${maxAge}, stale-while-revalidate=86400` : "no-store";
+  if (keyed) headers["vary"] = "authorization, x-api-key";
   if (asOf) headers["x-as-of"] = asOf;
   return new Response(JSON.stringify(body), { status, headers });
 }

@@ -40,6 +40,7 @@ export function AccountPanel({ email, passLine }: { email: string; passLine: str
       </div>
       <Link href="/saved" className={ROW}>Saved cars and searches</Link>
       <Link href="/pro" className={ROW}>Census Pro</Link>
+      <Link href="/data" className={ROW}>Data key</Link>
       <Link href="/account/password" className={ROW}>Change password</Link>
       <button
         type="button"

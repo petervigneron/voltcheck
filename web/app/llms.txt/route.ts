@@ -68,6 +68,7 @@ For a program that would rather ask than read shards. No key. Inventory moves on
 - [${BASE}/api/v1/listings/{vin}](${BASE}/api/v1/listings/5YJ3E1EA4MF099936): one car with its asking-price history.
 - [${BASE}/api/v1/models](${BASE}/api/v1/models): every make and model with live listings, with counts.
 - [${BASE}/api/mcp](${BASE}/api/mcp): a Model Context Protocol server (Streamable HTTP, POST) with the same three operations as tools: search_listings, get_listing, list_models.
+- [${BASE}/data](${BASE}/data): the paid tier. A data key ($29 a month) opens \`/api/v1/data/export\` (every listing, one NDJSON file per make) and \`/api/v1/data/listings\` (search and per-VIN with two more fields: \`ask_vs_similar\`, the asking price against similar listings, and \`incentive\`). Sent as \`Authorization: Bearer <key>\`.
 
 ## Terms
 

@@ -19,6 +19,14 @@ export function GET(): Response {
         listing: `${SITE}/api/v1/listings/{vin}`,
         models: `${SITE}/api/v1/models`,
       },
+      // The paid tier (lib/api/paid.ts): a data key, $29 a month, bought at /data.
+      data_key: {
+        about: `${SITE}/data`,
+        auth: "Authorization: Bearer <key>",
+        export: `${SITE}/api/v1/data/export`,
+        listings: `${SITE}/api/v1/data/listings`,
+        listing: `${SITE}/api/v1/data/listings/{vin}`,
+      },
     },
     { maxAge: 86400 }
   );

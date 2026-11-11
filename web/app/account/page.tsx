@@ -3,6 +3,8 @@ import { currentUser } from "@/lib/auth";
 import { currentPass, TIERS } from "@/lib/pro";
 import { AccountForms } from "@/components/AccountForms";
 import { AccountPanel } from "@/components/AccountPanel";
+import { DataKeyPanel } from "@/components/DataKeyPanel";
+import { accountKey } from "@/lib/dataKey";
 import { safeNext } from "@/lib/apiBody";
 
 // /account: sign in or create an account; or, signed in, who you are, what
@@ -78,9 +80,35 @@ export default async function AccountPage(props: {
     passLine = null;
   }
 
+  // The data key, if this account has ever bought one (migration 0117).
+  // keyForEmail asks Stripe first when the stored month has ended, so the
+  // line printed here is the renewal as it stands, not as last cached. An
+  // account with no key gets no block — the way to one is the /data row.
+  let dataKey: Awaited<ReturnType<typeof accountKey>> = null;
+  try {
+    dataKey = await accountKey(user.email, day);
+  } catch {
+    dataKey = null;
+  }
+  const justBought = sp.key === "new";
+
   return (
     <div className="mx-auto max-w-[640px] px-0 py-0 sm:px-6 sm:py-10">
       <AccountPanel email={user.email} passLine={passLine} />
+      {dataKey ? (
+        <DataKeyPanel apiKey={dataKey.apiKey} status={dataKey.status} line={dataKey.line} justBought={justBought} />
+      ) : (
+        justBought && (
+          // Checkout redirects here the instant the card clears; the signed
+          // webhook that mints the key can land a few seconds later.
+          <div className="mt-6 border-[3px] border-ink bg-saffron px-5 py-5 sm:px-8">
+            <span className={EYEBROW}>Payment received</span>
+            <p className="mt-1 text-[15px] leading-snug font-bold">
+              Your key is being issued and will be emailed to you. Reload this page in a moment to see it here.
+            </p>
+          </div>
+        )
+      )}
     </div>
   );
 }

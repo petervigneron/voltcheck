@@ -196,6 +196,91 @@ export const OPENAPI = {
         },
       },
     },
+    // ── The paid tier: a data key (lib/api/paid.ts, /data). Own paths, so a
+    // keyed answer can never share a CDN entry with a free one. ──
+    "/api/v1/data/listings": {
+      get: {
+        operationId: "searchListingsPaid",
+        summary: "Search listings, with the paid fields (data key)",
+        description:
+          "Takes every parameter /api/v1/listings takes and returns the same records, plus `ask_vs_similar` and `incentive` on each car that has one.",
+        security: [{ dataKey: [] }],
+        responses: {
+          "200": { description: "As /api/v1/listings, each result a PaidListing.", content: { "application/json": { schema: { type: "object", properties: { results: { type: "array", items: { $ref: "#/components/schemas/PaidListing" } } } } } } },
+          "401": { description: "No key, or a key that is not active." },
+        },
+      },
+    },
+    "/api/v1/data/listings/{vin}": {
+      get: {
+        operationId: "getListingPaid",
+        summary: "One car with its price history and the paid fields (data key)",
+        security: [{ dataKey: [] }],
+        parameters: [{ name: "vin", in: "path", required: true, schema: { type: "string" } }],
+        responses: {
+          "200": { description: "The listing.", content: { "application/json": { schema: { $ref: "#/components/schemas/PaidListing" } } } },
+          "401": { description: "No key, or a key that is not active." },
+          "404": { description: "No live listing for this VIN." },
+        },
+      },
+    },
+    "/api/v1/data/export": {
+      get: {
+        operationId: "exportIndex",
+        summary: "The bulk export's index: one file per make (data key)",
+        security: [{ dataKey: [] }],
+        responses: { "200": { description: "Makes, counts and the URL of each file." }, "401": { description: "No key, or a key that is not active." } },
+      },
+    },
+    "/api/v1/data/export/{make}": {
+      get: {
+        operationId: "exportMake",
+        summary: "Every listing of one make, as NDJSON, with the paid fields (data key)",
+        description: "One PaidListing per line. As of the last publish; the `x-as-of` header says when. `x-total` is the line count.",
+        security: [{ dataKey: [] }],
+        parameters: [{ name: "make", in: "path", required: true, description: "A make slug from /api/v1/data/export.", schema: { type: "string" } }],
+        responses: {
+          "200": { description: "NDJSON.", content: { "application/x-ndjson": { schema: { $ref: "#/components/schemas/PaidListing" } } } },
+          "401": { description: "No key, or a key that is not active." },
+          "404": { description: "No such make." },
+        },
+      },
+    },
   },
-  components: { schemas: { Listing: listingSchema } },
+  components: {
+    schemas: {
+      Listing: listingSchema,
+      PaidListing: {
+        allOf: [
+          { $ref: "#/components/schemas/Listing" },
+          {
+            type: "object",
+            properties: {
+              ask_vs_similar: {
+                type: "object",
+                description:
+                  "The asking price minus the mileage-adjusted median ASKING price of the same variant listed now. Negative is below similar listings. Not a sale price and not a valuation. Absent when fewer than four comparable cars exist or a guardrail withheld it, which is most cars.",
+                properties: { delta_usd: { type: "integer" }, peers: { type: "integer" }, trim_matched: { type: "boolean" } },
+              },
+              incentive: {
+                type: "object",
+                description: "The state or utility incentive program this car leads with under the site's eligibility policy. Absent means it meets none.",
+                properties: {
+                  program: { type: "string" },
+                  usd: { type: "integer" },
+                  over_cap_usd: { type: "integer", description: "How far the asking price sits over the program's price cap, when it does." },
+                  programs: { type: "integer", description: "How many programs the car meets." },
+                  state: { type: "string" },
+                  utility: { type: "boolean" },
+                },
+              },
+            },
+          },
+        ],
+      },
+    },
+    securitySchemes: {
+      dataKey: { type: "http", scheme: "bearer", description: `A data key from ${SITE}/data. Also accepted as an X-Api-Key header. Never in the query string.` },
+    },
+  },
 };
