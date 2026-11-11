@@ -2,7 +2,7 @@
 // allowed to be printed.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { chainSold, shapeMarket, type RawMarket } from "../lib/market";
+import { chainNational, chainSold, shapeMarket, type RawMarket } from "../lib/market";
 import type { ModelHub } from "../lib/listings/modelHubs";
 
 const hub = (make: string, model: string, keys: string[]): ModelHub => ({
@@ -140,4 +140,25 @@ test("the series is cut to the months asked for, across a year boundary", () => 
 test("no sold rows is an empty series, not a flat line", () => {
   assert.deepEqual(chainSold(null), []);
   assert.deepEqual(shapeMarket(raw([])).sold, []);
+});
+
+test("the national series chains by quarter and restarts after a withheld one", () => {
+  const s = chainNational([
+    { q: "2025-04-01", pct: 2, cohorts: 23, sales: 1096 },
+    // 2025-07-01 withheld: the next row is not this one's neighbour.
+    { q: "2025-10-01", pct: 0.08, cohorts: 18, sales: 1027 },
+    { q: "2026-01-01", pct: -5.31, cohorts: 24, sales: 1311 },
+    { q: "2026-04-01", pct: 4.32, cohorts: 29, sales: 1575 },
+  ]);
+  assert.deepEqual(s.map((r) => r.month), ["2025-10-01", "2026-01-01", "2026-04-01"]);
+  assert.equal(s[2].change, 4.32);
+  assert.equal(s[2].sales, 1575);
+  assert.equal(s[2].idx, Math.round(100 * 1.0008 * 0.9469 * 1.0432 * 100) / 100);
+});
+
+test("a market with no national rows has an empty national series, and it never leaks into sold", () => {
+  assert.deepEqual(shapeMarket(raw([])).national, []);
+  const m = shapeMarket({ ...raw([]), filed: [{ q: "2026-01-01", pct: -5.31, cohorts: 24, sales: 1311 }, { q: "2026-04-01", pct: 4.32, cohorts: 29, sales: 1575 }] });
+  assert.equal(m.national.length, 2);
+  assert.deepEqual(m.sold, []);
 });

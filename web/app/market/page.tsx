@@ -7,6 +7,12 @@ import { fetchMarket } from "@/lib/market";
 // migrations 0115/0116 say what every figure is and which guards it passed;
 // this file only draws.
 //
+// The national section (0119) is a second measurement, not a second line on
+// the first chart: one retailer's fixed prices by quarter, beside a state's
+// title records by month. The source is described and not named — the
+// owner's decision, 2026-11-10 — and the label must keep saying "one
+// retailer": without it the section claims to be the market.
+//
 // ORDER IS THE POINT. The first version (2026-11-10) led with the asking
 // index alone: "-5.0%, Aug 15 to Nov 8". True for its window, and the owner
 // read it as contradicting a year of coverage about used-EV prices rising —
@@ -49,6 +55,8 @@ const longDay = (iso: string) => utc(iso, { month: "short", day: "numeric", year
 const shortDay = (iso: string) => utc(iso, { month: "short", day: "numeric" });
 const monthName = (iso: string) => utc(iso, { month: "short" });
 const monthYear = (iso: string) => utc(iso, { month: "short", year: "numeric" });
+const quarter = (iso: string) => `Q${Math.floor((Number(iso.slice(5, 7)) - 1) / 3) + 1}`;
+const quarterYear = (iso: string) => `${quarter(iso)} ${iso.slice(0, 4)}`;
 
 function LineChart({ values, marks, label }: { values: number[]; marks: { i: number; text: string }[]; label: string }) {
   const W = 640;
@@ -83,16 +91,56 @@ function LineChart({ values, marks, label }: { values: number[]; marks: { i: num
   );
 }
 
+// The national series is drawn as each quarter's own change, not chained into
+// a level. A cohort is a fixed model year, so every quarter carries three
+// months of ageing; chained over six years the line falls from 100 to 56 and
+// reads as "EV prices fell 44%", which nothing here measured. As bars, the
+// usual few points of ageing are a visible baseline and the quarters that
+// broke from it (2021's rises, early 2023's fall) stand out as what they were.
+function BarChart({ values, marks, label }: { values: number[]; marks: { i: number; text: string }[]; label: string }) {
+  const W = 640;
+  const H = 220;
+  const pad = { l: 44, r: 12, t: 12, b: 26 };
+  const hi = Math.max(5, Math.ceil(Math.max(...values) / 5) * 5);
+  const lo = Math.min(-5, Math.floor(Math.min(...values) / 5) * 5);
+  const slot = (W - pad.l - pad.r) / values.length;
+  const x = (i: number) => pad.l + i * slot;
+  const y = (v: number) => pad.t + ((hi - v) / (hi - lo)) * (H - pad.t - pad.b);
+  const ticks: number[] = [];
+  for (let v = lo; v <= hi; v += 5) ticks.push(v);
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} className="mt-5 w-full" role="img" aria-label={label}>
+      {ticks.map((v) => (
+        <g key={v}>
+          <line x1={pad.l} x2={W - pad.r} y1={y(v)} y2={y(v)} stroke="currentColor" className={v === 0 ? "text-ink/40" : "text-ink/10"} />
+          <text x={pad.l - 8} y={y(v) + 4} textAnchor="end" className="fill-ink/50 text-[11px]">
+            {v > 0 ? `+${v}` : v}%
+          </text>
+        </g>
+      ))}
+      {values.map((v, i) => (
+        <rect key={i} x={x(i) + slot * 0.15} width={slot * 0.7} y={Math.min(y(v), y(0))} height={Math.max(1, Math.abs(y(v) - y(0)))} fill="var(--color-violet)" />
+      ))}
+      {marks.map((m) => (
+        <text key={m.i} x={x(m.i) + slot * 0.15} y={H - 6} textAnchor="start" className="fill-ink/50 text-[11px]">
+          {m.text}
+        </text>
+      ))}
+    </svg>
+  );
+}
+
 const sectionLabel = "text-[10.5px] font-extrabold uppercase tracking-[0.14em] text-ink/60";
 
 export default async function MarketPage() {
   const market = await fetchMarket();
-  const { sold, site } = market;
+  const { sold, national, site } = market;
   const first = site[0];
   const last = site[site.length - 1];
   const move = (last.idx / first.idx - 1) * 100;
   const rows = market.rows.filter((r) => r.cars >= MIN_CARS);
   const strip = sold.slice(-STRIP);
+  const quarters = national.slice(-STRIP);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -108,6 +156,7 @@ export default async function MarketPage() {
     isBasedOn: "https://data.wa.gov/d/rpr4-cgyd",
     variableMeasured: [
       "Monthly change in sale price, same model and model year",
+      "Quarterly change in sale price nationwide, one retailer, same model and model year",
       "Asking price index",
       "Asking price at 40,000 miles",
       "30-day change",
@@ -150,6 +199,30 @@ export default async function MarketPage() {
           />
           <p className="mt-2 text-[12px] text-ink/50">
             {monthYear(sold[0].month)} to {monthYear(sold[sold.length - 1].month)} · month before the first = 100 · WA DOL (ODbL)
+          </p>
+        </section>
+      )}
+
+      {national.length >= 2 && (
+        <section className="mt-8 border-[3px] border-ink bg-paper p-5">
+          <h2 className={sectionLabel}>Sales prices nationwide · one national used-car retailer · same model and model year</h2>
+          <ol className="mt-4 grid grid-cols-3 gap-px bg-ink/10 sm:grid-cols-6">
+            {quarters.map((m) => (
+              <li key={m.month} className="bg-paper px-2 py-2.5 text-center">
+                <div className="text-[10.5px] font-extrabold uppercase tracking-[0.1em] text-ink/50">{quarterYear(m.month)}</div>
+                <div className="mt-1 text-xl font-extrabold tracking-tight tabular-nums text-violet">{pct(m.change)}</div>
+                <div className="mt-0.5 text-[11px] tabular-nums text-ink/50">{nf.format(m.sales)} sales</div>
+              </li>
+            ))}
+          </ol>
+          <BarChart
+            values={national.map((m) => m.change)}
+            marks={national.map((m, i) => ({ i, text: m.month.slice(5, 7) === "01" ? m.month.slice(0, 4) : "" })).filter((m) => m.text)}
+            label="Quarterly change in used EV sale prices nationwide, one retailer"
+          />
+          <p className="mt-2 text-[12px] text-ink/50">
+            Change from the quarter before · {quarterYear(national[0].month)} to {quarterYear(national[national.length - 1].month)} · financed
+            purchases, from public financial filings · not mileage-adjusted
           </p>
         </section>
       )}

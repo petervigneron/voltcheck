@@ -35,6 +35,8 @@ export interface RawMarket {
   models: RawMarketModel[] | null;
   /** Washington sold prices, one row per complete month (migration 0116). */
   sold?: { m: string; pct: number; cohorts: number; sales: number }[] | null;
+  /** One national retailer's sold prices, one row per quarter (migration 0119). */
+  filed?: { q: string; pct: number; cohorts: number; sales: number }[] | null;
 }
 
 export interface MarketRow {
@@ -62,6 +64,22 @@ export interface SoldMonth {
 
 /** How many months of sold prices the page draws. */
 export const SOLD_MONTHS = 20;
+/** How many quarters of the national series the page draws. */
+export const NATIONAL_QUARTERS = 24;
+
+/**
+ * The national series is the same chain stepped by quarter: `month` is the
+ * quarter's first day and `change` is quarter over quarter. Kept apart from
+ * `sold` on purpose — one retailer's prices and a state's title records are
+ * two measurements, never one line.
+ */
+export function chainNational(raw: RawMarket["filed"], quarters = NATIONAL_QUARTERS): SoldMonth[] {
+  return chainSold(
+    (raw ?? []).filter((r) => r && typeof r.q === "string").map((r) => ({ m: r.q, pct: r.pct, cohorts: r.cohorts, sales: r.sales })),
+    quarters,
+    3,
+  );
+}
 
 /**
  * The monthly changes chained into a level. Only an unbroken run counts: a
@@ -69,14 +87,14 @@ export const SOLD_MONTHS = 20;
  * if they were neighbours, so the series restarts after one and the page
  * draws the most recent run.
  */
-export function chainSold(raw: RawMarket["sold"], months = SOLD_MONTHS): SoldMonth[] {
+export function chainSold(raw: RawMarket["sold"], months = SOLD_MONTHS, step = 1): SoldMonth[] {
   const rows = (raw ?? [])
     .filter((r) => r && /^\d{4}-\d{2}-01$/.test(r.m) && Number.isFinite(Number(r.pct)) && Number(r.sales) > 0)
     .map((r) => ({ month: r.m, change: Number(r.pct), sales: Number(r.sales) }))
     .sort((a, b) => a.month.localeCompare(b.month));
   const next = (iso: string) => {
     const d = new Date(`${iso}T00:00:00Z`);
-    d.setUTCMonth(d.getUTCMonth() + 1);
+    d.setUTCMonth(d.getUTCMonth() + step);
     return d.toISOString().slice(0, 10);
   };
   let run: typeof rows = [];
@@ -96,6 +114,8 @@ export interface Market {
   asOf: string;
   /** Washington sold prices by month; empty when there is no unbroken run. */
   sold: SoldMonth[];
+  /** One national retailer's sold prices by quarter; empty when there is no unbroken run. */
+  national: SoldMonth[];
   /** The site index, 1.0 on its first day. */
   site: { day: string; idx: number; cars: number }[];
   rows: MarketRow[];
@@ -144,7 +164,7 @@ export function shapeMarket(raw: RawMarket, hubs: ModelHub[] = MODEL_HUBS): Mark
   const site = (raw.site ?? [])
     .filter((p) => p && typeof p.d === "string" && Number.isFinite(p.i) && p.i > 0)
     .map((p) => ({ day: p.d, idx: Number(p.i), cars: Number(p.c) || 0 }));
-  return { asOf: raw.asOf, sold: chainSold(raw.sold), site, rows };
+  return { asOf: raw.asOf, sold: chainSold(raw.sold), national: chainNational(raw.filed), site, rows };
 }
 
 /**
