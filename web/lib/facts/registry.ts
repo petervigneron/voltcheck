@@ -1924,6 +1924,82 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       },
     ],
   },
+  {
+    make: "jeep",
+    model: "grand-cherokee-4xe",
+    topic: "battery-warranty",
+    contentFile: "grand-cherokee-4xe-battery-warranty",
+    pageTitle: "Jeep Grand Cherokee 4xe battery warranty: 8 or 10 years by state, 8 for 2026 | Census",
+    description:
+      "A 2022 through 2025 Grand Cherokee 4xe carries 10 years or 150,000 miles if certified for sale and registered in California or a listed state, and 8 years or 100,000 miles otherwise. Jeep's 2026 booklet gives plug-in hybrids 8 years or 100,000 miles.",
+    breadcrumbLabel: "Jeep Grand Cherokee 4xe battery warranty",
+    dateModified: "2026-11-11",
+    faq: [
+      {
+        question: "How long is the Jeep Grand Cherokee 4xe battery warranty?",
+        answer:
+          "It depends on the model year and where the car is registered. A 2022, 2023, 2024 or 2025 Grand Cherokee 4xe is covered for 10 years or 150,000 miles if it was certified for sale and registered in California or a state Jeep lists for that year, and for 8 years or 100,000 miles otherwise. Jeep's 2026 booklet gives plug-in hybrids 8 years or 100,000 miles.",
+      },
+      {
+        question: "Which states get the 10-year Grand Cherokee 4xe battery warranty?",
+        answer:
+          "On a 2024 or 2025 car: California, Colorado, Connecticut, Maine, Maryland, Massachusetts, Minnesota, Nevada, New Jersey, New York, Oregon, Rhode Island, Vermont, Virginia and Washington. On a 2023 car: California, Colorado, Connecticut, Maine, Maryland, Massachusetts, New Jersey, New York, Oregon, Rhode Island and Vermont. Jeep's 2022 booklet says California and states that adopt California ZEV regulations, and its 2022 California Emission Warranty booklet for the Grand Cherokee 4xe names Connecticut, Maine, Maryland, Massachusetts, New Jersey, New York, Oregon, Rhode Island and Vermont for TZEV models.",
+      },
+      {
+        question: "When does the Grand Cherokee 4xe battery warranty clock start?",
+        answer:
+          "At the start date of the Basic Limited Warranty, which is the earlier of the date you take delivery and the date the vehicle was first put into use, for example as a dealer demo or an FCA US LLC company vehicle.",
+      },
+      {
+        question: "Is there a battery warranty extension on the Grand Cherokee 4xe?",
+        answer:
+          "Yes, for select 2022 through 2026 Grand Cherokee with the 2.0L I4 turbo PHEV engine; a dealer's VIN lookup shows whether a car is included. FCA US LLC extended the high voltage battery pack warranty to unlimited years and unlimited miles from the in-service date for a fault that sets one of five named battery diagnostic codes. Once the standard battery warranty has expired, FCA US LLC may cap the payment at the lower of the pack's replacement cost and the vehicle's retail value before the fault codes appeared, taken from the current NADA Used Car Pricing Guide for the car's location, mileage and condition, or from another nationally published guide if NADA's is not available. Any other warranty-qualifying battery issue is covered under the standard high voltage battery warranty.",
+      },
+      {
+        question: "Does the Grand Cherokee 4xe battery warranty cover capacity loss?",
+        answer:
+          "No. Jeep's 2024, 2025 and 2026 booklets place gradual capacity loss outside the High Voltage Lithium-Ion Battery Limited Warranty.",
+      },
+    ],
+  },
+  {
+    make: "toyota",
+    model: "prius-plug-in-hybrid",
+    topic: "battery-warranty",
+    contentFile: "prius-plug-in-hybrid-battery-warranty",
+    pageTitle: "Toyota Prius Prime and Prius Plug-in Hybrid battery warranty: 10 years or 150,000 miles from 2020 | Census",
+    description:
+      "Toyota covers the hybrid battery of the 2020 and later Prius Prime and Prius Plug-in Hybrid for 10 years or 150,000 miles nationwide; 2017 to 2019 Prius Prime batteries carry 8 years or 100,000 miles outside the California-term states.",
+    breadcrumbLabel: "Toyota Prius Plug-in Hybrid battery warranty",
+    dateModified: "2026-11-11",
+    faq: [
+      {
+        question: "How long is the Toyota Prius Prime and Prius Plug-in Hybrid battery warranty?",
+        answer:
+          "For model years 2020 through 2027, the hybrid battery warranty runs 10 years or 150,000 miles from the in-service date nationwide. For 2017 through 2019 Prius Prime cars, the hybrid battery is covered for 8 years (96 months) or 100,000 miles under the Hybrid System Warranty, and for 10 years or 150,000 miles in California and the selected states with California-certified emission systems.",
+      },
+      {
+        question: "Which model year did Toyota lengthen the Prius plug-in hybrid battery warranty?",
+        answer:
+          "2020. The 2019 Prius Prime guide lists the hybrid battery under the 8-year or 100,000-mile Hybrid System Warranty, and the 2020 Prius Prime guide gives it its own Hybrid Battery Warranty of 10 years or 150,000 miles.",
+      },
+      {
+        question: "Does the Toyota Prius plug-in hybrid battery warranty cover capacity loss?",
+        answer:
+          "Not nationwide: every guide from 2017 through 2027 lists gradual reduction of lithium-ion battery capacity among the things the New Vehicle Limited Warranty does not cover. Capacity coverage comes only with the state term: a 2026 Prius Plug-in Hybrid in California, Massachusetts, New York, Oregon, Vermont or Washington, and a 2027 Prius Plug-in Hybrid registered and operated in California, Colorado, Delaware, Maryland, Massachusetts, New Jersey, New Mexico, New York, Oregon, Rhode Island, Vermont, Washington or Washington, D.C., is covered for 8 years or 100,000 miles if the battery's chargeable capacity drops below 70% of its original capacity, alongside 15-year or 150,000-mile defect coverage.",
+      },
+      {
+        question: "Does the Prius Prime battery warranty transfer to a second owner?",
+        answer:
+          "Yes. Toyota's guides state that warranty coverage is automatically transferred at no cost to subsequent vehicle owners.",
+      },
+      {
+        question: "When does the Toyota hybrid battery warranty clock start?",
+        answer:
+          "At the in-service date, which is the first date the vehicle is delivered to an ultimate purchaser, leased, or used as a company car or demonstrator.",
+      },
+    ],
+  },
 ];
 
 export function findFactSheet(make: string, model: string, topic: string): FactSheetEntry | undefined {

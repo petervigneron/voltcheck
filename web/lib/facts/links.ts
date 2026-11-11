@@ -60,6 +60,8 @@ export const FACT_LINK_MODELS: {
   // Every Wrangler 4xe is the four-door body, so the feed's "Wrangler 4xe" and
   // "Wrangler Unlimited 4xe" spellings are one vehicle and share the row (the
   // Bolt EV/EUV precedent). Petrol "Wrangler" stays unmatched.
+  // Exact key only: the feed's bare "Grand Cherokee" spelling stays unlinked.
+  { make: "jeep", model: "grand-cherokee-4xe", topics: ["battery-warranty"], name: "Jeep Grand Cherokee 4xe", keys: ["grandcherokee4xe"] },
   { make: "jeep", model: "wrangler-4xe", topics: ["charging", "battery-warranty"], name: "Jeep Wrangler 4xe", keys: ["wrangler4xe", "wranglerunlimited4xe"] },
   // Battery-electric Niro only; "Niro" and "Niro Plug-In Hybrid" stay unmatched.
   { make: "kia", model: "niro-ev", topics: ["battery-warranty"], name: "Kia Niro EV", keys: ["niroev"] },
@@ -73,6 +75,8 @@ export const FACT_LINK_MODELS: {
   { make: "bmw", model: "x5", topics: ["battery-warranty"], name: "BMW X5 plug-in hybrid", keys: ["x5", "x5phev", "x5xdrive50e"] },
   // Toyota renamed the RAV4 Prime (2021-2024) to RAV4 Plug-in Hybrid for 2025; one sheet, two exact keys.
   { make: "toyota", model: "rav4-plug-in-hybrid", topics: ["battery-warranty"], name: "Toyota RAV4 Plug-in Hybrid or RAV4 Prime", keys: ["rav4pluginhybrid", "rav4prime"] },
+  // Prius Prime (2017-2024) became Prius Plug-in Hybrid for 2025; one sheet, two exact keys.
+  { make: "toyota", model: "prius-plug-in-hybrid", topics: ["battery-warranty"], name: "Toyota Prius Plug-in Hybrid or Prius Prime", keys: ["priuspluginhybrid", "priusprime"] },
   { make: "cadillac", model: "vistiq", topics: ["battery-warranty"], name: "Cadillac Vistiq", keys: ["vistiq"] },
   { make: "cadillac", model: "optiq", topics: ["charging", "battery-warranty"], name: "Cadillac Optiq", keys: ["optiq"] },
   // "Blazer EV Police Package" is a separate fleet spelling and gets no link;

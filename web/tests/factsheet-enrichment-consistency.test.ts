@@ -56,6 +56,7 @@ const MODEL_MAP: Record<string, { make: string; models: string[] }> = {
   "kia/ev9": { make: "KIA", models: ["EV9"] },
   "kia/niro-ev": { make: "KIA", models: ["Niro EV"] },
   "cadillac/vistiq": { make: "CADILLAC", models: ["Vistiq"] },
+  "jeep/grand-cherokee-4xe": { make: "JEEP", models: ["Grand Cherokee 4xe"] },
   "volkswagen/id-4": { make: "VOLKSWAGEN", models: ["ID.4"] },
   "volkswagen/id-buzz": { make: "VOLKSWAGEN", models: ["ID. Buzz"] },
   "chevrolet/bolt-ev-euv": { make: "CHEVROLET", models: ["Bolt EV", "Bolt EUV"] },
