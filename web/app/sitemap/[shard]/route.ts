@@ -2,6 +2,7 @@ import { feedWalkFailedRecently } from "@/lib/listings/db";
 import { allListingsWithOrigin } from "@/lib/listings/source";
 import { FACT_SHEETS } from "@/lib/facts/registry";
 import { MODEL_HUBS, hubPath } from "@/lib/listings/modelHubs";
+import { SPEC_HUBS, specPath } from "@/lib/facts/specs";
 import { hubIndexAsOf } from "@/lib/listings/hubSource";
 import { BASE, SITEMAP_SHARDS, type SitemapEntry, renderUrlset, sitemapShardOf } from "@/lib/sitemap";
 
@@ -85,6 +86,13 @@ function staticRoutes(hubsAsOf: Date | undefined): SitemapEntry[] {
       lastModified: hubsAsOf,
       changeFrequency: "daily" as const,
       priority: 0.7,
+    })),
+    // A model's spec page (lib/facts/specs.ts). No lastModified: it changes
+    // when the enrichment table does, which is a commit, not a date we hold.
+    ...SPEC_HUBS.map((h) => ({
+      url: `${BASE}${specPath(h)}`,
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
     })),
   ];
 }

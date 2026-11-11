@@ -9,6 +9,7 @@ import { JsonLd } from "@/components/ListingJsonLd";
 import { hubItemListJsonLd } from "@/lib/listings/jsonLd";
 import { openGraph, OWN_IMAGE } from "@/lib/og/meta";
 import { fetchSpeed } from "@/lib/listings/speed";
+import { hasSpecs, specPath } from "@/lib/facts/specs";
 
 // Renders on first request and is CDN-cached from then on — the same shape
 // the browse index and the sitemap shards run on, and for the same reason
@@ -112,8 +113,15 @@ export default async function ModelHubPage(props: PageProps<"/ev/[make]/[model]"
         )}
       </div>
 
-      {facts.length > 0 && (
+      {(facts.length > 0 || hasSpecs(hub)) && (
         <ul className="mt-6 space-y-1">
+          {hasSpecs(hub) && (
+            <li>
+              <Link href={specPath(hub)} className="text-[15px] text-cobalt hover:underline">
+                {name} specs by model year
+              </Link>
+            </li>
+          )}
           {facts.map((f) => (
             <li key={f.path}>
               <Link href={f.path} className="text-[15px] text-cobalt hover:underline">
