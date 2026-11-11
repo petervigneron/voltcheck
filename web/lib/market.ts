@@ -168,6 +168,19 @@ export function shapeMarket(raw: RawMarket, hubs: ModelHub[] = MODEL_HUBS): Mark
 }
 
 /**
+ * Reads the stored snapshot (migration 0121), not market_index() itself.
+ *
+ * It called the function directly until 2026-11-11, when a deploy died on
+ * it: /market is a static route, so Next prerenders it in every build, the
+ * function runs ~1 s on a quiet database, the nightly crawl was running, and
+ * anon's 3 s limit turned that into a 500 and the 500 into a failed build —
+ * of a commit that had nothing to do with /market. A page that puts every
+ * deploy at the database's mercy is the thing CLAUDE.md's deploy section is
+ * about. The snapshot is one primary-key row, refilled by pg_cron four times
+ * a day, and reads in ~0.2 s whatever else the database is doing.
+ *
+ * Two tries, because the build has only this one chance.
+ *
  * Throws when the database does not answer or answers something that is not
  * a market. The page is cached for a day, and a throw leaves yesterday's
  * render in place; returning an empty market would cache a blank page under
@@ -177,16 +190,26 @@ export async function fetchMarket(): Promise<Market> {
   const base = process.env.SUPABASE_URL?.replace(/\/$/, "");
   const key = process.env.SUPABASE_ANON_KEY;
   if (!base || !key) throw new Error("market: Supabase is not configured");
-  const res = await fetch(`${base}/rest/v1/rpc/market_index`, {
-    method: "POST",
-    headers: { apikey: key, Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-    body: "{}",
-    next: { revalidate: 86_400 },
-  });
-  if (!res.ok) throw new Error(`market: market_index answered ${res.status}`);
-  const raw = (await res.json()) as RawMarket;
-  if (!raw || typeof raw.asOf !== "string") throw new Error("market: no asOf");
-  const market = shapeMarket(raw);
-  if (market.site.length < 2 || !market.rows.length) throw new Error("market: empty");
-  return market;
+  let last = "no attempt";
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const res = await fetch(`${base}/rest/v1/market_snapshot?select=payload&limit=1`, {
+        headers: { apikey: key, Authorization: `Bearer ${key}` },
+        next: { revalidate: 86_400 },
+      });
+      if (!res.ok) {
+        last = `market_snapshot answered ${res.status}`;
+        continue;
+      }
+      const rows = (await res.json()) as { payload: RawMarket }[] | null;
+      const raw = rows?.[0]?.payload;
+      if (!raw || typeof raw.asOf !== "string") throw new Error("market: no asOf");
+      const market = shapeMarket(raw);
+      if (market.site.length < 2 || !market.rows.length) throw new Error("market: empty");
+      return market;
+    } catch (err) {
+      last = err instanceof Error ? err.message : String(err);
+    }
+  }
+  throw new Error(`market: ${last}`);
 }
