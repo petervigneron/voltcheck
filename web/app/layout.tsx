@@ -6,6 +6,7 @@ import { WatchlistSync } from "@/components/WatchlistSync";
 import { ShelfSync } from "@/components/ShelfSync";
 import { VisitBeacon } from "@/components/VisitBeacon";
 import { AccountLink } from "@/components/AccountLink";
+import { OG_BASE } from "@/lib/og/meta";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -18,11 +19,22 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const SITE_TITLE = "Census EV: Every electric car. One site.";
+const SITE_DESCRIPTION =
+  "Every electric car. One site. New and used, with what actually matters: the real pack, the real range, and what the warranty does for you.";
+
 export const metadata: Metadata = {
-  title: "Census EV: Every electric car. One site.",
-  description:
-    "Every electric car. One site. New and used, with what actually matters: the real pack, the real range, and what the warranty does for you.",
+  title: SITE_TITLE,
+  description: SITE_DESCRIPTION,
   metadataBase: new URL("https://censusev.com"),
+  // Link previews (lib/og/meta.ts). A page that names itself builds its own
+  // block. What is set here is only what is true of EVERY page, because a
+  // page with no block inherits this one whole: a title or url here would
+  // make /worth unfurl as the home page (og:url is what Facebook and
+  // LinkedIn file a share under). Their title falls back to <title>. The
+  // large card is set once: no page defines `twitter`, so it holds everywhere.
+  openGraph: OG_BASE,
+  twitter: { card: "summary_large_image" },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

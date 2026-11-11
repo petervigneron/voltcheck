@@ -7,6 +7,7 @@ import { hubEntry } from "@/lib/listings/hubSource";
 import { factLinksFor } from "@/lib/facts/links";
 import { JsonLd } from "@/components/ListingJsonLd";
 import { hubItemListJsonLd } from "@/lib/listings/jsonLd";
+import { openGraph, OWN_IMAGE } from "@/lib/og/meta";
 
 // Renders on first request and is CDN-cached from then on — the same shape
 // the browse index and the sitemap shards run on, and for the same reason
@@ -50,15 +51,18 @@ export async function generateMetadata(
   // whatever standing it has earned.
   const { total, stats } = await hubEntry(hubIndexKey(hub));
   const month = statsMonth(stats);
+  const title = month
+    ? `${name} for sale, ${month}: prices, range and battery | Census`
+    : `Used and new ${name} for sale | Census`;
+  const description =
+    total > 0
+      ? `${nf.format(total)} ${name} for sale in the United States${month ? ` as of ${month}` : ""}, with asking price by model year, battery, range and charging details on each car.`
+      : `Every ${name} we can find for sale in the United States, with battery, range and charging details on each car.`;
   return {
-    title: month
-      ? `${name} for sale, ${month}: prices, range and battery | Census`
-      : `Used and new ${name} for sale | Census`,
-    description:
-      total > 0
-        ? `${nf.format(total)} ${name} for sale in the United States${month ? ` as of ${month}` : ""}, with asking price by model year, battery, range and charging details on each car.`
-        : `Every ${name} we can find for sale in the United States, with battery, range and charging details on each car.`,
+    title,
+    description,
     alternates: { canonical: hubPath(hub) },
+    openGraph: openGraph(title, description, hubPath(hub), OWN_IMAGE),
   };
 }
 

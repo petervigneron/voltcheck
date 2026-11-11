@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { fetchMarket } from "@/lib/market";
+import { openGraph, OWN_IMAGE } from "@/lib/og/meta";
 
 // The public market page: what used EVs sold for, month by month, and where
 // asking prices stand now, site-wide and per model. lib/market.ts and
@@ -39,11 +40,15 @@ const MIN_CARS = 100;
 /** Months printed as figures above the sold chart. */
 const STRIP = 6;
 
+const TITLE = "Used EV prices: monthly sold prices and asking-price index | Census EV";
+const DESCRIPTION =
+  "What used electric cars sold for month by month, from Washington title records, and mileage-adjusted asking prices by model across the US. Updated daily from every listing on Census EV.";
+
 export const metadata: Metadata = {
-  title: "Used EV prices: monthly sold prices and asking-price index | Census EV",
-  description:
-    "What used electric cars sold for month by month, from Washington title records, and mileage-adjusted asking prices by model across the US. Updated daily from every listing on Census EV.",
+  title: TITLE,
+  description: DESCRIPTION,
   alternates: { canonical: "/market" },
+  openGraph: openGraph(TITLE, DESCRIPTION, "/market", OWN_IMAGE),
 };
 
 const nf = new Intl.NumberFormat("en-US");

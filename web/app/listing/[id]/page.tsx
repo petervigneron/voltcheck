@@ -1,4 +1,5 @@
 import { cache } from "react";
+import { openGraph } from "@/lib/og/meta";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -104,13 +105,8 @@ export async function generateMetadata(props: PageProps<"/listing/[id]">): Promi
     title,
     description,
     alternates: { canonical: path },
-    openGraph: {
-      title,
-      description,
-      type: "website",
-      url: path,
-      images: image ? [image] : undefined,
-    },
+    // The seller's own photo where there is one, else the site's default card.
+    openGraph: openGraph(title, description, path, image),
   };
 }
 

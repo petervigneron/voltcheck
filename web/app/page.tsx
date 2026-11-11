@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { openGraph } from "@/lib/og/meta";
 import { Suspense } from "react";
 import { Browse } from "@/components/Browse";
 
@@ -11,6 +12,13 @@ import { Browse } from "@/components/Browse";
 // every child route and would wrongly point /vin, /saved, etc. at "/".
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
+  // The layout's title and description, repeated: this block replaces the
+  // layout's, and the home page is the one link most likely to be pasted.
+  openGraph: openGraph(
+    "Census EV: Every electric car. One site.",
+    "Every electric car. One site. New and used, with what actually matters: the real pack, the real range, and what the warranty does for you.",
+    "/",
+  ),
 };
 
 // The browse page is a static shell — prerendered at build, served from the

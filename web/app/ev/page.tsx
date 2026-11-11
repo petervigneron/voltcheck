@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { openGraph } from "@/lib/og/meta";
 import Link from "next/link";
 import { MODEL_HUBS, hubPath } from "@/lib/listings/modelHubs";
 import { hubIndexKey } from "@/lib/listings/hubIndex";
@@ -9,11 +10,14 @@ import { hubTotals } from "@/lib/listings/hubSource";
 export const dynamic = "force-static";
 export const revalidate = 86400;
 
+const TITLE = "Every electric and plug-in model for sale | Census";
+const DESCRIPTION = "One page per nameplate, covering every electric and plug-in hybrid model on sale in the United States.";
+
 export const metadata: Metadata = {
-  title: "Every electric and plug-in model for sale | Census",
-  description:
-    "One page per nameplate, covering every electric and plug-in hybrid model on sale in the United States.",
+  title: TITLE,
+  description: DESCRIPTION,
   alternates: { canonical: "/ev" },
+  openGraph: openGraph(TITLE, DESCRIPTION, "/ev"),
 };
 
 const nf = new Intl.NumberFormat("en-US");
