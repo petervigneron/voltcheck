@@ -177,57 +177,58 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
     listing.condition
   );
   const gallery = listing.images?.length ? listing.images : listing.imageUrl ? [listing.imageUrl] : [];
-  // Recent real-world sales of the same make/model — transaction prices.
-  // The VIN goes with it so sales of this car's own version sort first.
-  const recentSales = await fetchRecentSales(
-    listing.make,
-    listing.model,
-    listing.vin,
-    listing.year,
-    listing.mileage
-  );
-  // Same title records as the list above, but fitted to this car's exact
-  // variant and odometer rather than eyeballed across model years.
   // Whether we'll print the dealer's trim as a fact. Corpus-free: the
   // contradiction judgement was made at sync time and rides the payload
   // (scraper/lib/trim-suspect.mjs), so this page needs nothing but its own row.
   const claim = trimClaim(listing);
-  // What NHTSA holds against this car's make/model/year: battery recalls, and
-  // a count of the battery complaints owners have filed. Read from a file the
-  // scraper refreshes monthly, on the server, on this page only — the browse
-  // index has no room for it and a count with no fleet size behind it is not
-  // something two cards should be compared on. Silent for any cohort whose
-  // name we could not place in NHTSA's own vocabulary.
-  const battery = await batteryRisk(listing.make, listing.model, listing.year);
-  // Market trends (0064/0072/0077): what a standard car of this cohort is
-  // asked day by day, beside the site-wide index. Rendered for everyone,
-  // blurred until the browser holds a pass (components/ProBlur.tsx) — owner,
-  // 2026-09-03. Read at the level the cards price on — the VIN prefix, the
-  // trim we stand behind and the pack identity — when that clears the floor;
-  // the VIN cohort or the model pool otherwise (owner, 2026-09-09: a
-  // Lightning Platinum ER was being drawn against every Lightning).
-  const trend = await fetchPriceTrend({
-    make: listing.make,
-    model: listing.model,
-    year: listing.year,
-    vin: listing.vin,
-    trimKey: claim.assert ? specTrim(listing)?.toUpperCase() : undefined,
-    identity: packIdentity(e),
-  });
-  // Both price signals, decided by the same gates as the browse grid
-  // (lib/listings/peers.ts). vsSold (the Washington-title-fit) is computed
-  // but, since 2026-08-20 (docs/agents/pricing-model-2026-08-20.md), never
-  // rendered as its own claim — see the comment at ListingCard.tsx's
-  // askVsMarket tile for why. vsMarket, the ask-side comparison against the
-  // same cohort listed right now, is this page's only price-comparison tile,
-  // matching the card. Whatever claim the card made to earn the click, this
-  // page repeats and can defend; a claim that vanishes here reads as
-  // retracted.
-  const { vsSold, vsMarket, peerAsks } = await listingPriceSignals(listing);
-  // What this seller does with a price (dealer_price_behavior, 0084). One row
-  // by dealer_domain, or null for a seller the view holds no row for — under
-  // its eight-listing floor, or an OEM locator lane, which is not a seller.
-  const dealerPace = await fetchDealerPace(listing.dealerDomain);
+  // Five reads, none of which needs another's answer, started together.
+  // They used to be five awaits in a row, so a page nobody had opened that
+  // day (nearly every listing, at ~150,000 cars on a one-day cache) waited
+  // for the SUM of them: 1.4-3.0 s to first byte measured on six uncached
+  // listings on 2026-11-11, and several times that whenever a crawl had the
+  // database busy, which is the "intermittently very slow" the owner saw.
+  // Together the page waits for the slowest one only.
+  const [recentSales, battery, trend, { vsSold, vsMarket, peerAsks }, dealerPace] = await Promise.all([
+    // Recent real-world sales of the same make/model — transaction prices.
+    // The VIN goes with it so sales of this car's own version sort first.
+    fetchRecentSales(listing.make, listing.model, listing.vin, listing.year, listing.mileage),
+    // What NHTSA holds against this car's make/model/year: battery recalls, and
+    // a count of the battery complaints owners have filed. Read from a file the
+    // scraper refreshes monthly, on the server, on this page only — the browse
+    // index has no room for it and a count with no fleet size behind it is not
+    // something two cards should be compared on. Silent for any cohort whose
+    // name we could not place in NHTSA's own vocabulary.
+    batteryRisk(listing.make, listing.model, listing.year),
+    // Market trends (0064/0072/0077): what a standard car of this cohort is
+    // asked day by day, beside the site-wide index. Rendered for everyone,
+    // blurred until the browser holds a pass (components/ProBlur.tsx) — owner,
+    // 2026-09-03. Read at the level the cards price on — the VIN prefix, the
+    // trim we stand behind and the pack identity — when that clears the floor;
+    // the VIN cohort or the model pool otherwise (owner, 2026-09-09: a
+    // Lightning Platinum ER was being drawn against every Lightning).
+    fetchPriceTrend({
+      make: listing.make,
+      model: listing.model,
+      year: listing.year,
+      vin: listing.vin,
+      trimKey: claim.assert ? specTrim(listing)?.toUpperCase() : undefined,
+      identity: packIdentity(e),
+    }),
+    // Both price signals, decided by the same gates as the browse grid
+    // (lib/listings/peers.ts). vsSold (the Washington-title-fit) is computed
+    // but, since 2026-08-20 (docs/agents/pricing-model-2026-08-20.md), never
+    // rendered as its own claim — see the comment at ListingCard.tsx's
+    // askVsMarket tile for why. vsMarket, the ask-side comparison against the
+    // same cohort listed right now, is this page's only price-comparison tile,
+    // matching the card. Whatever claim the card made to earn the click, this
+    // page repeats and can defend; a claim that vanishes here reads as
+    // retracted.
+    listingPriceSignals(listing),
+    // What this seller does with a price (dealer_price_behavior, 0084). One row
+    // by dealer_domain, or null for a seller the view holds no row for — under
+    // its eight-listing floor, or an OEM locator lane, which is not a seller.
+    fetchDealerPace(listing.dealerDomain),
+  ]);
   const factLinks = factLinksFor(listing.make, listing.model);
   const marketTile = vsMarket ? askVsMarketTile(vsMarket) : undefined;
   // The price-vs-mileage picture, only when this car itself can be plotted —

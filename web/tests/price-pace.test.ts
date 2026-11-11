@@ -29,11 +29,19 @@ test("two markdowns count twice and sum", () => {
   assert.deepEqual(listingCuts(series(50_000, 48_000, 46_000)), { count: 2, totalUsd: 4_000 });
 });
 
-test("a move under $500 is not a cut", () => {
-  // PRICE_CUT_MIN_USD. Below it, a "cut" chip teaches the shopper nothing and
-  // is indistinguishable from two of our lanes rounding differently.
-  assert.equal(listingCuts(series(42_000, 41_600)), undefined);
-  assert.deepEqual(listingCuts(series(42_000, 41_500)), { count: 1, totalUsd: 500 });
+test("the tile counts every cut the chart above it lists", () => {
+  // 1FT6W1EV2PWG58462, 2026-11-11: the chart captioned three steps down and
+  // the tile said "2 cuts", because the third ($488) was under the $500 floor
+  // this function used to share with the card chip. One page, one count.
+  assert.deepEqual(listingCuts(series(48_929, 40_068, 39_160, 38_672)), { count: 3, totalUsd: 10_257 });
+  assert.deepEqual(listingCuts(series(42_000, 41_600)), { count: 1, totalUsd: 400 });
+});
+
+test("repeats of one price and junk prices are read the way the chart reads them", () => {
+  // The history view records every observation that re-asserted a price; the
+  // chart folds them into one plateau and drops anything under the junk floor.
+  assert.deepEqual(listingCuts(series(42_000, 42_000, 40_000, 40_000)), { count: 1, totalUsd: 2_000 });
+  assert.deepEqual(listingCuts(series(42_000, 399, 42_000, 40_000)), { count: 1, totalUsd: 2_000 });
 });
 
 test("the nightly-vs-recheck flap is not a markdown", () => {
@@ -94,18 +102,18 @@ test("one cut says the amount; several say how many", () => {
 test("the seller's habit is marked est, and its median waits for five cars", () => {
   const now = Date.parse("2026-09-12T12:00:00Z");
   const dealer = { listingsN: 258, cutN: 67, cutShare: 0.2597, datedN: 19, medianDaysToCut: 5.4 };
-  assert.deepEqual(texts({ dealer, now }), ["26% of this seller's EVs cut est", "First cut at 5 days est"]);
+  assert.deepEqual(texts({ dealer, now }), ["26% of this seller's EVs cut (est)", "First cut at 5 days (est)"]);
   // dated_n under the floor: the view ships median_days_to_cut null, and the
   // share still prints. A median of three cars is one car's story.
   assert.deepEqual(texts({ dealer: { ...dealer, datedN: 1, medianDaysToCut: null }, now }), [
-    "26% of this seller's EVs cut est",
+    "26% of this seller's EVs cut (est)",
   ]);
 });
 
 test("a seller that cuts nothing says so; a seller too small says nothing", () => {
   const now = Date.parse("2026-09-12T12:00:00Z");
   assert.deepEqual(texts({ dealer: { listingsN: 97, cutN: 0, cutShare: 0, datedN: 0, medianDaysToCut: null }, now }), [
-    "0% of this seller's EVs cut est",
+    "0% of this seller's EVs cut (est)",
   ]);
   // Under MIN_DEALER_LISTINGS the view holds no row at all; this is the belt
   // for a hand-built one.
@@ -116,7 +124,7 @@ test("a seller that cuts nothing says so; a seller too small says nothing", () =
 test("a median under a day rounds up rather than claiming a same-day cut", () => {
   const now = Date.parse("2026-09-12T12:00:00Z");
   const dealer = { listingsN: 40, cutN: 20, cutShare: 0.5, datedN: 9, medianDaysToCut: 0.2 };
-  assert.deepEqual(texts({ dealer, now }), ["50% of this seller's EVs cut est", "First cut at 1 day est"]);
+  assert.deepEqual(texts({ dealer, now }), ["50% of this seller's EVs cut (est)", "First cut at 1 day (est)"]);
 });
 
 test("the tiles wear the colours their meaning earns", () => {

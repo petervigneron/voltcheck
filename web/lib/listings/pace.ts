@@ -1,6 +1,6 @@
 import type { TileKind } from "@/components/Tile";
 import { dbConfigured, FEED_CACHE_TAG } from "./db";
-import { PRICE_CUT_MIN_USD } from "./price";
+import { PRICE_FLOOR_USD } from "./price";
 
 // How long this car has sat, and what the seller did about it — the numbers
 // behind the Pro block on the listing page (components/PricePace.tsx).
@@ -21,9 +21,10 @@ import { PRICE_CUT_MIN_USD } from "./price";
 //   habit         refreshed nightly. No row means the site has fewer than
 //                 eight readable listings, and nothing prints.
 //
-// A cut is the same thing in both places: a step DOWN to a price this listing
-// has never shown before, at least PRICE_CUT_MIN_USD below the one before it.
-// Both halves of that are load-bearing and 0084's header has the measurement —
+// A cut is a step DOWN to a price this listing has never shown before. The
+// seller's habit (0084) also requires the step to be at least $500; this
+// car's own tile does not, because it has to agree with the chart above it
+// (listingCuts says why). 0084's header has the measurement behind both —
 // a $85 nightly-vs-recheck disagreement on the same domain with the same
 // provenance clears every guard listing_price_display has, and counted raw it
 // read as three Toyota stores marking down 100% of their inventory. A price
@@ -92,20 +93,38 @@ export function daysOnCensus(firstSeenAt: string, now: number = Date.now()): num
 
 /** The asking-price cuts this listing has had: how many, and how much came off
  *  across them. Undefined when there are none — the block simply loses the
- *  tile rather than printing that nothing happened. */
+ *  tile rather than printing that nothing happened.
+ *
+ *  No dollar floor, since 2026-11-11. This tile sits under the chart that
+ *  draws the same series (components/PriceSparkline.tsx) and that chart
+ *  captions every step, so a floor here made the two disagree on one page:
+ *  1FT6W1EV2PWG58462 came down $8,861, $908 and $488, the chart printed three
+ *  lines and the tile said "2 cuts" because $488 is under PRICE_CUT_MIN_USD.
+ *  The floor belongs to the two places it was measured for — the card's cut
+ *  chip (lib/listings/price.ts) and the seller's habit (0084) — where a small
+ *  step is a claim about attention or behaviour. Here it is a count of what
+ *  the shopper is already looking at.
+ *
+ *  The series is read the way the chart reads it: junk prices dropped,
+ *  repeats of one price folded into one plateau. The new-low rule stays — a
+ *  price that returns to a level already shown is a return, not a markdown,
+ *  and two readers flapping between two prices must not count a cut a night. */
 export function listingCuts(history?: PricePoint[]): { count: number; totalUsd: number } | undefined {
-  if (!history || history.length < 2) return undefined;
-  let low = history[0].priceUsd;
+  const pts = (history ?? [])
+    .filter((p) => p.priceUsd >= PRICE_FLOOR_USD)
+    .filter((p, i, ps) => i === 0 || p.priceUsd !== ps[i - 1].priceUsd);
+  if (pts.length < 2) return undefined;
+  let low = pts[0].priceUsd;
   let count = 0;
   let totalUsd = 0;
-  for (let i = 1; i < history.length; i++) {
-    const price = history[i].priceUsd;
-    const prev = history[i - 1].priceUsd;
-    if (price < prev && price < low && prev - price >= PRICE_CUT_MIN_USD) {
+  for (let i = 1; i < pts.length; i++) {
+    const price = pts[i].priceUsd;
+    const prev = pts[i - 1].priceUsd;
+    if (price < low) {
       count += 1;
       totalUsd += prev - price;
+      low = price;
     }
-    if (price < low) low = price;
   }
   return count > 0 ? { count, totalUsd } : undefined;
 }
@@ -151,7 +170,7 @@ export function pricePaceTiles(input: {
     // and one violet tile per block keeps the colour meaning what it means.
     tiles.push({
       kind: "spec",
-      text: `${Math.round(d.cutShare * 100)}% of this seller's EVs cut est`,
+      text: `${Math.round(d.cutShare * 100)}% of this seller's EVs cut (est)`,
       title: `${d.cutN} of ${d.listingsN} of this seller's live EVs came down by $500 or more in the last 30 days. Asking prices, not sales.`,
     });
     if (d.medianDaysToCut != null) {
@@ -161,7 +180,7 @@ export function pricePaceTiles(input: {
       const days = Math.max(1, Math.round(d.medianDaysToCut));
       tiles.push({
         kind: "spec",
-        text: `First cut at ${days} day${days === 1 ? "" : "s"} est`,
+        text: `First cut at ${days} day${days === 1 ? "" : "s"} (est)`,
         title: `Median across ${d.datedN} of this seller's cars whose listing date Census can stand behind.`,
       });
     }

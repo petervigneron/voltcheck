@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { valueSeries, type PriceTrend, type SiteTrend, type TrendPoint, type TrendSeries } from "@/lib/trend";
 
 // Market trend for one car, on the /worth result and the listing page (Pro):
@@ -41,7 +42,8 @@ import { valueSeries, type PriceTrend, type SiteTrend, type TrendPoint, type Tre
 // floor so a small move draws small, and the ends carrying their n and
 // odometer in a <title>. What this file adds is the interquartile band under
 // the line — a day with eight listings spread $10k wide should look wider
-// than one with sixty stacked at one number. A day series is dozens of
+// than one with sixty stacked at one number (and since 2026-11-11 a day far
+// wider than the rest runs off the plot rather than flattening the line). A day series is dozens of
 // points on a 310-wide plot, so only its ends get a dot.
 //
 // Server-rendered, no client JS. The strings here (caption, legend) are the
@@ -56,9 +58,27 @@ const PAPER = "#ffffff";
 /** The site line is context, not the answer: ink at less than half weight. */
 const SITE_OPACITY = 0.38;
 
+// 2026-11-11, owner: "unreadable, at least in mobile". Three things were
+// wrong on his Lightning Pro (1FT6W1EV2PWG58462) and each has its answer here:
+//
+//  - The y-range was stretched to hold the whole interquartile band, and a
+//    thin day (four listings) throws a spike $6,000 tall. The line the chart
+//    exists for was pressed into the middle fifth of the plot. The range is
+//    now the lines themselves plus the band's TYPICAL width (its median
+//    edges); a spike runs off the plot and is clipped there.
+//  - The last value was printed over the line it labels, and the car's price
+//    was printed 13px under it: "$38,924" struck through, "$38,672" beneath,
+//    and nothing saying which was which. The last value now sits in a gutter
+//    to the right of the plot, beside its own point, over no ink at all.
+//  - The dashed rule had no name anywhere. It is now a legend row, in the
+//    words the owner gave the same thing on the scatter beside this chart
+//    (2026-09-12: "This car"), carrying the price the rule is drawn at, so
+//    the figure no longer needs a second label inside the plot.
 const W = 310;
-const H = 132;
-const M = { l: 10, r: 12, t: 22, b: 26 };
+const H = 150;
+/** The right margin is the gutter the last value is printed in: 11px/800
+ *  digits, "$123,456" wide. */
+const M = { l: 10, r: 60, t: 22, b: 26 };
 const PLOT_W = W - M.l - M.r;
 const PLOT_H = H - M.t - M.b;
 const Y_RANGE_FLOOR = 0.08;
@@ -102,6 +122,12 @@ export function siteInCohortDollars(series: TrendSeries, site: SiteTrend | null)
   return out.length >= 2 ? out : [];
 }
 
+const median = (xs: number[]) => {
+  const v = xs.filter((x) => Number.isFinite(x)).sort((a, b) => a - b);
+  if (v.length === 0) return NaN;
+  return v.length % 2 ? v[(v.length - 1) / 2] : (v[v.length / 2 - 1] + v[v.length / 2]) / 2;
+};
+
 function Chart({
   series,
   site,
@@ -117,6 +143,7 @@ function Chart({
   subject?: string;
   label: string;
 }) {
+  const clipId = useId();
   const pts = series.points;
   const siteLine = siteInCohortDollars(series, site);
   const t0 = Date.parse(pts[0].period);
@@ -124,7 +151,9 @@ function Chart({
   const span = Math.max(t1 - t0, 1);
   const marker = price != null && Number.isFinite(price) && price > 0 ? price : undefined;
   const vals = [
-    ...pts.flatMap((p) => [p.price, p.p25, p.p75]),
+    ...pts.map((p) => p.price),
+    median(pts.map((p) => p.p25)),
+    median(pts.map((p) => p.p75)),
     ...siteLine.map((p) => p.price),
     ...(marker != null ? [marker] : []),
   ].filter((v) => Number.isFinite(v));
@@ -153,26 +182,22 @@ function Chart({
     (p.odometer != null ? `, median ${miles(p.odometer)}` : "");
   const std = series.stdOdometer != null ? ` · at ${miles(series.stdOdometer)}` : "";
 
-  // The marker's figure sits at the right end, on whichever side of the rule
-  // keeps it clear of the last point's own figure (printed 8px above it).
-  let markerLabelY = 0;
-  if (marker != null) {
-    const my = py(marker);
-    const lastLabelY = py(last.price) - 8;
-    markerLabelY = my <= py(last.price) ? Math.min(my - 5, lastLabelY - 13) : Math.max(my + 13, lastLabelY + 13);
-  }
+  // The last value's baseline in the gutter: level with its point, held
+  // inside the plot's own height.
+  const lastLabelY = Math.min(Math.max(py(last.price) + 4, M.t + 8), H - M.b);
 
   // Each line's change over the span, printed beside its name. The plot's
-  // vertical range is the cohort's own spread (the band), so a 1.2% move in
+  // vertical range follows the cohort's typical spread, so a 1.2% move in
   // the site line is six pixels on an 84-pixel plot and reads as flat —
   // the owner read the site as showing "no change" (2026-09-08) off a line
   // that had fallen 1.2%. A figure says what the pixels cannot at this
   // scale; the scale itself stays honest to the spread.
   const legend = [
-    ...(subject ? [{ swatch: INK, opacity: 1, text: subject, pct: pctChange(first.price, last.price) }] : []),
+    ...(subject ? [{ dashed: false, opacity: 1, text: subject, figure: pctChange(first.price, last.price) }] : []),
     ...(siteLine.length
-      ? [{ swatch: INK, opacity: SITE_OPACITY, text: "All cars on the site", pct: pctChange(siteLine[0].price, siteLine[siteLine.length - 1].price) }]
+      ? [{ dashed: false, opacity: SITE_OPACITY, text: "All cars on the site", figure: pctChange(siteLine[0].price, siteLine[siteLine.length - 1].price) }]
       : []),
+    ...(marker != null ? [{ dashed: true, opacity: 1, text: "This car", figure: usd(marker) }] : []),
   ];
 
   return (
@@ -185,7 +210,12 @@ function Chart({
         <span className="ml-2 text-amber-700">est.</span>
       </figcaption>
       <svg viewBox={`0 0 ${W} ${H}`} className="mt-1 w-full" role="img" aria-label={`${label}: ${ends.map(titleOf).join("; ")}`}>
-        <path d={band} fill={INK} fillOpacity="0.08" stroke="none" />
+        <defs>
+          <clipPath id={clipId}>
+            <rect x={M.l} y={4} width={PLOT_W} height={H - M.b - 4} />
+          </clipPath>
+        </defs>
+        <path d={band} fill={INK} fillOpacity="0.08" stroke="none" clipPath={`url(#${clipId})`} />
         {siteLine.length > 0 && (
           <path
             d={pathOf(siteLine)}
@@ -205,30 +235,36 @@ function Chart({
         ))}
         {/* The figures at both ends, printed: a shopper reads the shape first
             and the digits second, and neither should need a hover. */}
-        <text x={px(t0)} y={py(first.price) - 8} fontSize="11" fontWeight="800" fill={INK} textAnchor="start">
+        <text
+          x={px(t0)}
+          y={py(first.price) - 9}
+          fontSize="11"
+          fontWeight="800"
+          fill={INK}
+          stroke={PAPER}
+          strokeWidth="3"
+          paintOrder="stroke"
+          textAnchor="start"
+          className="tabular-nums"
+        >
           {usd(first.price)}
         </text>
-        <text x={px(t1)} y={py(last.price) - 8} fontSize="11" fontWeight="800" fill={INK} textAnchor="end">
+        <text x={W - M.r + 8} y={lastLabelY} fontSize="11" fontWeight="800" fill={INK} textAnchor="start" className="tabular-nums">
           {usd(last.price)}
         </text>
         {marker != null && (
-          <>
-            <line
-              x1={M.l}
-              x2={W - M.r}
-              y1={py(marker)}
-              y2={py(marker)}
-              stroke={INK}
-              strokeWidth="1.5"
-              strokeDasharray="4 3"
-              strokeLinecap="round"
-            >
-              <title>{usd(marker)}</title>
-            </line>
-            <text x={W - M.r} y={markerLabelY} fontSize="11" fontWeight="800" fill={INK} textAnchor="end">
-              {usd(marker)}
-            </text>
-          </>
+          <line
+            x1={M.l}
+            x2={W - M.r}
+            y1={py(marker)}
+            y2={py(marker)}
+            stroke={INK}
+            strokeWidth="1.5"
+            strokeDasharray="4 3"
+            strokeLinecap="round"
+          >
+            <title>{usd(marker)}</title>
+          </line>
         )}
         <line x1={M.l} x2={W - M.r} y1={H - M.b + 4} y2={H - M.b + 4} stroke={PUTTY} strokeWidth="1" />
         <text x={M.l} y={H - 8} fontSize="10" fontWeight="700" fill={INK} fillOpacity="0.55" textAnchor="start">
@@ -242,9 +278,15 @@ function Chart({
         <ul className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-[11px] font-bold text-ink/55">
           {legend.map((l) => (
             <li key={l.text} className="flex items-center gap-1.5">
-              <span aria-hidden="true" className="inline-block h-[3px] w-4 rounded-full" style={{ background: l.swatch, opacity: l.opacity }} />
+              {l.dashed ? (
+                <svg aria-hidden="true" width="16" height="3" viewBox="0 0 16 3" className="shrink-0">
+                  <line x1="1" x2="15" y1="1.5" y2="1.5" stroke={INK} strokeWidth="1.5" strokeDasharray="4 3" strokeLinecap="round" />
+                </svg>
+              ) : (
+                <span aria-hidden="true" className="inline-block h-[3px] w-4 shrink-0 rounded-full" style={{ background: INK, opacity: l.opacity }} />
+              )}
               {l.text}
-              <span className="tabular-nums text-ink">{l.pct}</span>
+              <span className="tabular-nums text-ink">{l.figure}</span>
             </li>
           ))}
         </ul>
