@@ -1777,6 +1777,153 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       },
     ],
   },
+  {
+    make: "cadillac",
+    model: "vistiq",
+    topic: "battery-warranty",
+    contentFile: "vistiq-battery-warranty",
+    pageTitle: "Cadillac Vistiq battery warranty: 8 years, 100,000 miles, 75% floor | Census",
+    description:
+      "Cadillac covers the 2026 Vistiq's propulsion battery for 8 years or 100,000 miles and replaces or repairs it if capacity falls below 75% of its original value. The coverage passes to subsequent owners during the warranty period.",
+    breadcrumbLabel: "Cadillac Vistiq battery warranty",
+    dateModified: "2026-11-11",
+    faq: [
+      {
+        question: "How long is the Cadillac Vistiq battery warranty?",
+        answer:
+          "For the 2026 Vistiq, the propulsion battery pack and its internal components are covered for 8 years or 100,000 miles, whichever comes first, starting on the date the vehicle is first delivered or put in use.",
+      },
+      {
+        question: "What battery capacity does Cadillac guarantee on the Vistiq?",
+        answer:
+          "The battery is replaced or repaired if its capacity falls below 75% of its original value during the warranty period, as determined by a certified dealer, with a battery appropriate for the age and mileage of the vehicle. Under the California Zero-Emissions Vehicle warranty coverage, where it applies, General Motors warrants the battery against defects that cause its state of health to deteriorate to less than 70% for 8 years or 100,000 miles.",
+      },
+      {
+        question: "Does the Cadillac Vistiq battery warranty transfer to a second owner?",
+        answer:
+          "Yes. The warranty is provided to the original owner and any subsequent owners of the vehicle during the warranty period.",
+      },
+      {
+        question: "What is not covered by the Cadillac Vistiq battery warranty?",
+        answer:
+          "The booklet's exclusions include damage to the battery from incompatible charging methods or an adapter not sold or approved by General Motors, excessive non-propulsion use of the battery including semi-permanent or permanent daily power provisions, damage from failure to install Over-the-Air software updates, alterations to the vehicle, and vehicles titled as salvaged, scrapped, junked or a total loss.",
+      },
+    ],
+  },
+  {
+    make: "toyota",
+    model: "bz",
+    topic: "battery-warranty",
+    contentFile: "bz-battery-warranty",
+    pageTitle: "Toyota bZ and bZ4X battery warranty: 8 years, 100,000 miles, 70% floor | Census",
+    description:
+      "Toyota covers the traction battery of every 2023-2025 bZ4X and 2026-2027 bZ and bZ Woodland for 8 years or 100,000 miles, including capacity loss below 70% of original, and the coverage transfers to later owners at no cost.",
+    breadcrumbLabel: "Toyota bZ battery warranty",
+    dateModified: "2026-11-11",
+    faq: [
+      {
+        question: "How long is the Toyota bZ and bZ4X battery warranty?",
+        answer:
+          "8 years or 100,000 miles from the in-service date, whichever occurs first, under the Electric Vehicle Drive Components Warranty, for the 2023, 2024 and 2025 bZ4X, the 2026 bZ and bZ Woodland, and the 2027 bZ and bZ Woodland.",
+      },
+      {
+        question: "What battery capacity does Toyota guarantee on the bZ4X and bZ?",
+        answer:
+          "The warranty covers the traction battery below 70% of original capacity. Toyota considers a reduction of 30 percent or less normal and not covered. A warranty replacement may not restore the vehicle to an \"as new\" condition. Taking into consideration other factors, including the age and mileage of the vehicle, Toyota will ensure that the energy capacity of the replacement battery is at least equal to that of the original battery before the failure occurred.",
+      },
+      {
+        question: "Does the Toyota bZ4X battery warranty transfer to a second owner?",
+        answer:
+          "Yes. Warranty coverage is automatically transferred at no cost to subsequent vehicle owners. A vehicle that has ever been branded salvage, total loss, true mileage unknown or similar title, or declared a total loss by an insurer or financial institution, is excluded.",
+      },
+      {
+        question: "When does the Toyota bZ battery warranty start?",
+        answer:
+          "On the in-service date: the first date the vehicle is delivered to an ultimate purchaser, leased, or used as a company car or demonstrator.",
+      },
+      {
+        question: "Does the 2027 bZ have an emissions warranty on the battery?",
+        answer:
+          "Yes. The 2027 guide adds a federal Zero-Emission Control Warranty of 8 years or 80,000 miles on the onboard charger assembly, high-voltage traction battery assembly, transaxle assembly and traction motor. It is in addition to the 8-year/100,000-mile Electric Vehicle Drive Components Warranty.",
+      },
+    ],
+  },
+  {
+    make: "bmw",
+    model: "x5",
+    topic: "battery-warranty",
+    contentFile: "x5-battery-warranty",
+    pageTitle: "BMW X5 plug-in hybrid battery warranty: 8 years, 80,000 or 100,000 miles by year | Census",
+    description:
+      "BMW covers the X5 plug-in hybrid's high-voltage battery for 8 years or 80,000 miles on 2016–2018 and 2021–2022 cars and 8 years or 100,000 miles from 2023, with 10 years or 150,000 miles for TZEV-certified 2021 and 2023–2025 cars in California and listed states.",
+    breadcrumbLabel: "BMW X5 plug-in hybrid battery warranty",
+    dateModified: "2026-11-11",
+    faq: [
+      {
+        question: "How long is the BMW X5 plug-in hybrid battery warranty?",
+        answer:
+          "8 years or 80,000 miles, whichever occurs first, on the 2016–2018 X5 xDrive40e and the 2021–2022 X5 xDrive45e; 8 years or 100,000 miles on the 2023 X5 xDrive45e (BMW's 2024 reissue of the 2023 booklet) and the 2024–2026 X5 xDrive50e. There was no plug-in X5 for 2019 or 2020.",
+      },
+      {
+        question: "Is the X5 plug-in hybrid battery warranty longer in California?",
+        answer:
+          "For TZEV-certified cars, BMW's 2021, 2023, 2024 and 2025 booklets cover the high-voltage battery for 10 years or 150,000 miles, whichever occurs first, when the car is registered in California or another listed state. BMW states the California TZEV program does not apply to 2026 plug-in hybrids.",
+      },
+      {
+        question: "Does BMW guarantee a minimum battery capacity on the X5 plug-in hybrid?",
+        answer:
+          "No. The 2026 booklet's coverage for capacity below 70 percent applies to battery electric models, not plug-in hybrids.",
+      },
+      {
+        question: "Does the X5 plug-in hybrid battery warranty transfer to a second owner?",
+        answer:
+          "On 2016–2025 cars, yes: the battery warranty is part of the New Vehicle Limited Warranty, which BMW NA gives to the first retail purchaser and each subsequent purchaser.",
+      },
+      {
+        question: "When does the X5 plug-in hybrid battery warranty start?",
+        answer:
+          "On 2016–2025 cars, on the date of first retail sale or the date the vehicle is first placed into service as a sales demonstrator, Aftersales Mobility Program (AMP) Vehicle or company vehicle, whichever is earlier.",
+      },
+    ],
+  },
+  {
+    make: "toyota",
+    model: "rav4-plug-in-hybrid",
+    topic: "battery-warranty",
+    contentFile: "rav4-plug-in-hybrid-battery-warranty",
+    pageTitle: "Toyota RAV4 Plug-in Hybrid and RAV4 Prime battery warranty: 10 years, 150,000 miles | Census",
+    description:
+      "Toyota covers the hybrid battery of the 2021–2024 RAV4 Prime and the 2025–2026 RAV4 Plug-in Hybrid for 10 years or 150,000 miles, and the coverage transfers to later owners. On a 2026 car in California, Massachusetts, New York, Oregon, Vermont or Washington, defects are covered for 15 years or 150,000 miles.",
+    breadcrumbLabel: "Toyota RAV4 Plug-in Hybrid battery warranty",
+    dateModified: "2026-11-11",
+    faq: [
+      {
+        question: "How long is the Toyota RAV4 Prime and RAV4 Plug-in Hybrid battery warranty?",
+        answer:
+          "Toyota's Hybrid Battery Warranty runs 10 years or 150,000 miles from the in-service date in every state, for every model year from the 2021 RAV4 Prime through the 2026 RAV4 Plug-in Hybrid. The Hybrid System Warranty covers the hybrid battery control module, the hybrid control module and the inverter with converter for 8 years or 100,000 miles.",
+      },
+      {
+        question: "Is the RAV4 plug-in hybrid battery warranty longer in California?",
+        answer:
+          "For model years 2021 through 2025, no: the guide gives the hybrid battery 10 years or 150,000 miles in California Emission Control Warranty states too. For model year 2026, a car in California, Massachusetts, New York, Oregon, Vermont or Washington has hybrid battery defect coverage of 15 years or 150,000 miles, and capacity coverage of 8 years or 100,000 miles if chargeable capacity drops below 70% of original; in Connecticut, Delaware, Maine, Maryland, Minnesota, Nevada, New Jersey, Pennsylvania and Virginia the defect coverage is 10 years or 150,000 miles.",
+      },
+      {
+        question: "Does Toyota cover battery capacity loss on the RAV4 Prime or RAV4 Plug-in Hybrid?",
+        answer:
+          "Toyota's New Vehicle Limited Warranty does not cover reduction of lithium-ion battery capacity in any guide from 2021 through 2026. The 2026 guide's California Emission Control Warranty covers chargeable capacity that drops below 70% of original for 8 years or 100,000 miles in California, Massachusetts, New York, Oregon, Vermont and Washington.",
+      },
+      {
+        question: "Does the RAV4 plug-in hybrid battery warranty transfer to a second owner?",
+        answer:
+          "Yes. Warranty coverage is automatically transferred at no cost to subsequent vehicle owners. The clock starts at the in-service date, the first date the vehicle is delivered to an ultimate purchaser, leased, or used as a company car or demonstrator.",
+      },
+      {
+        question: "What is not covered by the RAV4 plug-in hybrid battery warranty?",
+        answer:
+          "The guides' exclusions include reduction of lithium-ion battery capacity, except that on a 2026 car in California, Massachusetts, New York, Oregon, Vermont or Washington the California Emission Control Warranty covers capacity below 70% of original for 8 years or 100,000 miles; damage from fire, accidents or theft, abuse or negligence, misuse, improper repairs, alteration or tampering, lack of or improper maintenance, non-Toyota Genuine Parts, environmental conditions and water contamination; and any vehicle ever branded as salvage, total loss or true mileage unknown, an exclusion that does not apply to the emission control warranties or to any open Safety Recalls/SSCs/LSCs.",
+      },
+    ],
+  },
 ];
 
 export function findFactSheet(make: string, model: string, topic: string): FactSheetEntry | undefined {

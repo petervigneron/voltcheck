@@ -56,5 +56,8 @@ test("no prefix matching: a different car sharing the nameplate's start gets not
   assert.deepEqual(factLinksFor("Hyundai", "Ioniq 5 N"), []);
   // Trim-in-the-model-field rows stay unlinked rather than half-matched.
   assert.deepEqual(factLinksFor("Tesla", "Model Y Long Range"), []);
-  assert.deepEqual(factLinksFor("Toyota", "bZ4X"), []);
+  // The bZ4X has a sheet of its own now (the bZ line's), reached by its exact key;
+  // a trim riding in the model field still gets nothing.
+  assert.equal(factLinksFor("Toyota", "bZ4X").length, 1);
+  assert.deepEqual(factLinksFor("Toyota", "bZ4X Limited"), []);
 });
