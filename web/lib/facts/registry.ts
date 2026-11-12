@@ -2360,6 +2360,120 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       },
     ],
   },
+  {
+    make: "mazda",
+    model: "cx-90-phev",
+    topic: "battery-warranty",
+    contentFile: "cx-90-plug-in-hybrid-battery-warranty",
+    pageTitle: "Mazda CX-90 Plug-in Hybrid battery warranty: 8 years or 100,000 miles | Census",
+    description:
+      "Mazda's 2024 through 2026 warranty booklets give the CX-90 Plug-in Hybrid's high voltage battery 96 months or 100,000 miles, whichever comes first. A 2024 or 2025 car certified as a TZEV and currently registered in a state Mazda lists carries 10 years or 150,000 miles on the battery.",
+    breadcrumbLabel: "Mazda CX-90 Plug-in Hybrid battery warranty",
+    dateModified: "2026-11-11",
+    faq: [
+      {
+        question: "How long is the Mazda CX-90 Plug-in Hybrid battery warranty?",
+        answer:
+          "Mazda's High Voltage Battery Limited Warranty runs 96 months (8 years) or 100,000 miles, whichever comes first, in its 2024, 2025 and 2026 booklets. A 2024 or 2025 CX-90 Plug-in Hybrid certified as a TZEV and currently registered in a state Mazda lists for that year has 10 years or 150,000 miles on the high voltage battery under the TZEV Emission Warranty.",
+      },
+      {
+        question: "Which states get the 10-year CX-90 Plug-in Hybrid battery warranty?",
+        answer:
+          "On a 2025 car: California, Colorado, Connecticut, Maine, Maryland, Massachusetts, Minnesota, Nevada, New Jersey, New Mexico, New York, Oregon, Rhode Island, Vermont, Virginia and Washington. On a 2024 car: the same states except Virginia and Washington. The term applies to a car certified as a TZEV and currently registered in one of those states.",
+      },
+      {
+        question: "Does the CX-90 Plug-in Hybrid battery warranty transfer to a second owner?",
+        answer:
+          "Yes, during the warranty period. Mazda's battery warranty takes the New Vehicle Limited Warranty's Warranty Application, under which the warranty is transferable to subsequent owners during the warranty period.",
+      },
+      {
+        question: "When does the CX-90 Plug-in Hybrid battery warranty clock start?",
+        answer:
+          "On the Date of First Service: the first date the vehicle is delivered to the first retail purchaser or lessee, or is placed into service as a company vehicle such as a demonstrator, rental or fleet vehicle.",
+      },
+      {
+        question: "What does Mazda do if the CX-90 Plug-in Hybrid battery fails under warranty?",
+        answer:
+          "An Authorized Mazda Dealer repairs or replaces the defective High Voltage Battery without charge for parts or labor, using a new, remanufactured or factory reconditioned High Voltage Battery with a suitable energy capacity level at the time of warranty repair.",
+      },
+    ],
+  },
+  {
+    make: "mercedes-benz",
+    model: "eqe",
+    topic: "battery-warranty",
+    contentFile: "eqe-battery-warranty",
+    pageTitle: "Mercedes-Benz EQE battery warranty by model year: 204 Ah capacity floor | Census",
+    description:
+      "Mercedes-Benz USA covers the lithium-ion battery in the 2023, 2025 and 2026 EQE Sedan and EQE SUV for 10 years or 155,000 miles for a battery maintaining its certified status, warrants it to keep at least 204 Ah, and extends the coverage to each subsequent owner.",
+    breadcrumbLabel: "Mercedes-Benz EQE battery warranty",
+    dateModified: "2026-11-11",
+    faq: [
+      {
+        question: "How long is the Mercedes-Benz EQE battery warranty?",
+        answer:
+          "For the 2023, 2025 and 2026 EQE Sedan and EQE SUV, including the AMG EQE, Mercedes-Benz USA's Battery Limited Warranty runs 10 years or 155,000 miles, whichever occurs first, for a battery maintaining its certified status. It supplements the New Vehicle Limited Warranty of 48 months or 50,000 miles and covers defects arising after that warranty expires.",
+      },
+      {
+        question: "What battery capacity does Mercedes-Benz guarantee on the EQE?",
+        answer:
+          "204 Ah, for the Sedan and the SUV. Mercedes-Benz USA repairs or replaces the battery if its capacity drops below 204 Ah during the coverage. A repair or replacement may not return the battery to \"as new\" or 100% energy content, but will have at least 204 Ah; if necessary, the battery is replaced with a new or factory re-manufactured lithium-ion battery. The measurement method and the repair decision are at the sole discretion of Mercedes-Benz.",
+      },
+      {
+        question: "Does the EQE battery warranty transfer to a second owner?",
+        answer:
+          "Yes. Mercedes-Benz USA warrants the battery to the original and each subsequent owner.",
+      },
+      {
+        question: "When does the EQE battery warranty start?",
+        answer:
+          "On the same date as the New Vehicle Limited Warranty: delivery to the first retail purchaser, or entry into service as an authorized dealership demonstrator or an MBUSA, MBUSI or MBRDNA company vehicle, but no later than 18 months from the production date for 2023 and 2025 cars and 24 months for 2026 cars, whose booklet opens the clause with \"Except as otherwise required by applicable law\" and also names delivery to a first lessee.",
+      },
+      {
+        question: "What does the EQE battery warranty not cover?",
+        answer:
+          "Among other exclusions, damage or failures caused by leaving the vehicle parked for more than 14 days with a 0% battery charge displayed, physically damaging the battery, a direct flame, immersion in water or fluids, opening the battery enclosure or having it serviced by someone other than an authorized Mercedes-Benz Dealership, incorrect charging procedures or incompatible charging devices, and using the vehicle as a power source for functions other than factory installed equipment. Gradual capacity loss is not covered beyond the warranty's terms, and a vehicle declared a total loss or write-off has no coverage.",
+      },
+    ],
+  },
+  {
+    make: "hyundai",
+    model: "tucson-plug-in-hybrid",
+    topic: "battery-warranty",
+    contentFile: "tucson-plug-in-hybrid-battery-warranty",
+    pageTitle: "Hyundai Tucson Plug-in Hybrid battery warranty: 10 years, 100,000 miles | Census",
+    description:
+      "Hyundai's Hybrid, Plug-in Hybrid, and Electric Vehicle Warranty covers the Tucson Plug-in Hybrid's high voltage battery for 10 years or 100,000 miles in model years 2022 through 2026. For California-certified TZEV cars in the states each handbook names, the 2022 through 2025 handbooks give the Plug-in Hybrid Battery 10 years or 150,000 miles.",
+    breadcrumbLabel: "Hyundai Tucson Plug-in Hybrid battery warranty",
+    dateModified: "2026-11-11",
+    faq: [
+      {
+        question: "How long is the Hyundai Tucson Plug-in Hybrid battery warranty?",
+        answer:
+          "10 years or 100,000 miles, whichever occurs first, in every model year from 2022 through 2026, under Hyundai's Hybrid, Plug-in Hybrid, and Electric Vehicle Warranty. It covers the High Voltage Battery along with the Battery Management System, Blower Assembly, Electronic Air Compressor, Power Relay Assembly, Hybrid Starter & Generator, Traction Motor including housing case, Hybrid Power Control Unit, OBC and Electric Power Control unit. For 2026, Hyundai's Tucson Plug-in Hybrid web page says this coverage \"does not apply to lease and commercial vehicles or vehicles serviced or registered outside the U.S.\"",
+      },
+      {
+        question: "Is the Tucson Plug-in Hybrid battery warranty longer in California?",
+        answer:
+          "For 2022 through 2025, the Plug-in Hybrid Battery of a California-certified TZEV car is covered for 10 years or 150,000 miles, whichever occurs first (2023 also names SULEV cars), in the states each handbook lists. The 2025 handbook prints two different state lists, one on printed p. 40 and one on printed p. 41. The 2026 handbook's California sections state the high voltage battery's term as 8 years or 100,000 miles on printed pp. 46 and 49 and as 10 years or 100,000 miles on printed p. 48, mark the Battery System Assembly \"7/70\" (7 years or 70,000 miles) for the Tucson PHEV on printed p. 49, and its p. 41 note gives 10 years or 150,000 miles for specific 2025 model year cars.",
+      },
+      {
+        question: "When does the Tucson Plug-in Hybrid battery warranty start?",
+        answer:
+          "On the date of original retail delivery or the date of first use.",
+      },
+      {
+        question: "What does a warranty battery repair restore?",
+        answer:
+          "At least the energy capacity the battery had before the failure occurred, and no less than 70% of the original battery capacity. If possible the battery components are repaired or replaced and the original battery is returned to the vehicle; if necessary the battery is replaced with a new or refurbished one.",
+      },
+      {
+        question: "What is not covered by the Tucson Plug-in Hybrid battery warranty?",
+        answer:
+          "Damage from intentional actions, a collision or accident, or servicing or opening of the battery by non-authorized personnel; physically damaging the battery, or intentionally attempting, by physical means, programming or other methods, to extend (other than as specified in the Owner's Manual) or reduce its life; exposing the battery to direct flame or flooding; loss of battery energy or power over time or from battery usage (the same handbook page also says such loss \"is covered not to degrade more than 70% of the original battery capacity\" under the Battery Limited Warranty); the exclusions of the New Vehicle Limited Warranty's What is Not Covered section; and incidental or consequential damages.",
+      },
+    ],
+  },
 ];
 
 export function findFactSheet(make: string, model: string, topic: string): FactSheetEntry | undefined {

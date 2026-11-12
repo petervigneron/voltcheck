@@ -78,6 +78,9 @@ export const FACT_LINK_MODELS: {
   { make: "mercedes-benz", model: "gle", topics: ["battery-warranty"], name: "Mercedes-Benz GLE plug-in hybrid", keys: ["gle", "gle450e"] },
   { make: "bmw", model: "ix", topics: ["battery-warranty"], name: "BMW iX", keys: ["ix"] },
   { make: "bmw", model: "i4", topics: ["battery-warranty"], name: "BMW i4", keys: ["i4"] },
+  { make: "mazda", model: "cx-90-phev", topics: ["battery-warranty"], name: "Mazda CX-90 Plug-in Hybrid", keys: ["cx90phev", "cx90pluginhybrid"] },
+  { make: "mercedes-benz", model: "eqe", topics: ["battery-warranty"], name: "Mercedes-Benz EQE", keys: ["eqe", "eqesuv", "eqe350", "eqe350+", "eqe320", "eqe320+suv"] },
+  { make: "hyundai", model: "tucson-plug-in-hybrid", topics: ["battery-warranty"], name: "Hyundai Tucson Plug-in Hybrid", keys: ["tucsonpluginhybrid"] },
   { make: "bmw", model: "x5", topics: ["battery-warranty"], name: "BMW X5 plug-in hybrid", keys: ["x5", "x5phev", "x5xdrive50e"] },
   // Toyota renamed the RAV4 Prime (2021-2024) to RAV4 Plug-in Hybrid for 2025; one sheet, two exact keys.
   { make: "toyota", model: "rav4-plug-in-hybrid", topics: ["battery-warranty"], name: "Toyota RAV4 Plug-in Hybrid or RAV4 Prime", keys: ["rav4pluginhybrid", "rav4prime"] },
