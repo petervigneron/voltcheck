@@ -17,7 +17,7 @@
 | What is covered, 2023 | The high-voltage lithium-ion (traction) battery assembly, against defects in materials or workmanship[^2] |
 | What is covered, 2024–2025 | The high-voltage (traction) battery assembly, against defects in materials or workmanship[^3][^4] |
 | Repair standard | Repair or replacement of the defective part(s) with new or authorized remanufactured parts, without charge for parts and labor (including diagnosis), at BMW NA's sole choice[^1][^2][^3][^4] |
-| Transfers to a second owner | Yes. The battery warranty is part of the New Vehicle Limited Warranty, which BMW NA gives to the first retail purchaser and each subsequent purchaser[^1][^2][^3][^4] |
+| Transfers to a second owner | Yes. The battery warranty is part of the New Vehicle Limited Warranty, which BMW NA gives on U.S.-specification vehicles distributed by BMW NA or sold through the BMW NA European Delivery Program, to the first retail purchaser and each subsequent purchaser[^1][^2][^3][^4] |
 | Clock starts | The date of first retail sale or the date the vehicle is first placed into service as a sales demonstrator, Aftersales Mobility Program (AMP) Vehicle or company vehicle, whichever is earlier[^1][^2][^3][^4] |
 | Where it is valid | U.S.-specification vehicles, at an authorized BMW center in the United States, including Puerto Rico[^1][^2][^3][^4] |
 

@@ -69,6 +69,7 @@ export const FACT_LINK_MODELS: {
   { make: "kia", model: "niro-ev", topics: ["battery-warranty"], name: "Kia Niro EV", keys: ["niroev"] },
   { make: "kia", model: "ev3", topics: ["battery-warranty"], name: "Kia EV3", keys: ["ev3"] },
   { make: "kia", model: "sportage-plug-in-hybrid", topics: ["battery-warranty"], name: "Kia Sportage Plug-in Hybrid", keys: ["sportagepluginhybrid"] },
+  { make: "kia", model: "sorento-plug-in-hybrid", topics: ["battery-warranty"], name: "Kia Sorento Plug-in Hybrid", keys: ["sorentopluginhybrid"] },
   { make: "kia", model: "ev9", topics: ["charging", "heat-pump", "battery-warranty"], name: "Kia EV9", keys: ["ev9"] },
   // The Lyriq-V and Optiq-V are separate feed models (like the Ioniq 5 N) and get no link.
   { make: "cadillac", model: "lyriq", topics: ["charging", "battery-warranty"], name: "Cadillac Lyriq", keys: ["lyriq"] },
@@ -89,6 +90,10 @@ export const FACT_LINK_MODELS: {
   { make: "chevrolet", model: "silverado-ev", topics: ["battery-warranty"], name: "Chevrolet Silverado EV", keys: ["silveradoev"] },
   { make: "gmc", model: "hummer-ev", topics: ["battery-warranty"], name: "GMC Hummer EV", keys: ["hummerev", "hummerevsuv"] },
   { make: "mitsubishi", model: "outlander-phev", topics: ["battery-warranty"], name: "Mitsubishi Outlander Plug-in Hybrid", keys: ["outlanderphev", "outlanderpluginhybrid"] },
+  { make: "tesla", model: "model-s", topics: ["battery-warranty"], name: "Tesla Model S", keys: ["models"] },
+  { make: "tesla", model: "model-x", topics: ["battery-warranty"], name: "Tesla Model X", keys: ["modelx"] },
+  { make: "bmw", model: "i7", topics: ["battery-warranty"], name: "BMW i7", keys: ["i7"] },
+  { make: "audi", model: "q4-e-tron", topics: ["battery-warranty"], name: "Audi Q4 e-tron", keys: ["q4etron", "q4sportbacketron", "q4etronsportback"] },
   { make: "bmw", model: "x5", topics: ["battery-warranty"], name: "BMW X5 plug-in hybrid", keys: ["x5", "x5phev", "x5xdrive50e"] },
   // Toyota renamed the RAV4 Prime (2021-2024) to RAV4 Plug-in Hybrid for 2025; one sheet, two exact keys.
   { make: "toyota", model: "rav4-plug-in-hybrid", topics: ["battery-warranty"], name: "Toyota RAV4 Plug-in Hybrid or RAV4 Prime", keys: ["rav4pluginhybrid", "rav4prime"] },

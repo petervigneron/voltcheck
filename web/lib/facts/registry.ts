@@ -411,7 +411,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     description:
       "What Tesla's Battery and Drive Unit Limited Warranty covers on a Model 3 — 8 years and 100,000 or 120,000 miles by trim, a 70% capacity floor, and what Tesla excludes.",
     breadcrumbLabel: "Tesla Model 3 battery warranty",
-    dateModified: "2026-08-25",
+    dateModified: "2026-11-11",
     faq: [
       {
         question: "How long is the Tesla Model 3 battery warranty?",
@@ -421,17 +421,17 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       {
         question: "Does the Tesla Model 3 battery warranty cover normal degradation?",
         answer:
-          "No. Tesla writes that the battery \"will experience gradual energy or power loss with time and use\" and that loss of battery energy or power over time or resulting from battery usage is not covered, except as specified in the warranty. The Battery and Drive Unit Limited Warranty states the floor only as \"minimum 70% retention of Battery capacity over the warranty period,\" without defining how retention is measured. Tesla does phrase the 70% floor as a defect standard — free from defects that would cause capacity retention to fall below 70% — but that wording belongs to the separate Battery ZEV Limited Warranty, which Tesla limits to model year 2026 and later. Tesla also states that range estimates are an imperfect measure of battery capacity, and that the measurement method is at Tesla's sole discretion.",
+          "No. Tesla writes that the battery \"will experience gradual energy or power loss with time and use\" and that loss of battery energy or power over time or resulting from battery usage is not covered, except as specified in the warranty. The Battery and Drive Unit Limited Warranty states the floor only as \"minimum 70% retention of Battery capacity over the warranty period,\" without defining how retention is measured. Tesla does phrase the 70% floor as a defect standard — free from defects that would cause capacity retention to fall below 70% — but that wording belongs to the Battery ZEV Limited Warranty, which Tesla limits to model year 2026 and later. Tesla also states that range estimates are an imperfect measure of battery capacity, and that the measurement method is at Tesla's sole discretion.",
       },
       {
         question: "Does the Tesla Model 3 battery warranty transfer to a second owner?",
         answer:
-          "Yes. Tesla's warranty document states it \"is transferable at no cost to any person(s) who subsequently and lawfully assume(s) ownership of the vehicle after the first retail purchaser.\" Tesla's support page adds that it transfers when a vehicle ownership transfer is performed through Tesla.",
+          "Tesla's warranty document, effective 2026/09/01, states it \"is transferable at no cost to any person(s) who subsequently and lawfully assume(s) ownership of the vehicle after the first retail purchaser within the described limitations of this New Vehicle Limited Warranty.\" A later owner must return to the car's Warranty Region for warranty service, wherever they bought the car; with a United States or Canada Warranty Region, service may be sought in either country.",
       },
       {
         question: "What is excluded from the Tesla Model 3 battery warranty?",
         answer:
-          "Tesla excludes damage from intentional actions, including ignoring active vehicle warnings or service notifications, from a collision or accident, and from the servicing or opening of the battery or drive unit by non-Tesla or non-certified personnel. Also excluded: attempting to extend or reduce the battery's life by physical means or programming, exposing the battery to direct flame, and flooding it. Battery fires run the other way, covered even if the result of driver error, but with a carve-back: coverage does not extend to damage already sustained before the fire, or to any damage if the fire occurred after the vehicle had already been totaled. Separately from these exclusions, Tesla's Voided Warranty section lists circumstances in which the whole warranty can be voided for a car, including a defaced VIN, a tampered odometer, a branded title, or an insurer's total-loss determination.",
+          "Tesla excludes damage from intentional actions, including ignoring active vehicle warnings or service notifications, from a collision or accident, and from the servicing or opening of the battery or drive unit by non-Tesla or non-certified personnel. Also excluded: damaging the battery, or intentionally attempting, by physical means, programming or other methods, to extend (other than as specified in the owner manual and any documentation provided by Tesla) or reduce its life; exposing it to direct flame, except a battery fire; flooding it; and issues resulting from failing to follow the recommended battery maintenance and charging procedures in the owner documentation. Battery fires run the other way, covered even if the result of driver error, but with a carve-back: coverage does not extend to damage already sustained before the fire, or to any damage if the fire occurred after the vehicle had already been totaled. Separately from these exclusions, Tesla's Voided Warranty section lists circumstances in which the whole warranty can be voided for a car, including a defaced VIN, a tampered odometer, a branded title, or an insurer's total-loss determination.",
       },
     ],
   },
@@ -444,7 +444,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     description:
       "Tesla publishes the Model Y's battery coverage twice, in two different sets of trim names. Both lists are quoted here, with what the 70% capacity floor actually promises.",
     breadcrumbLabel: "Tesla Model Y battery warranty",
-    dateModified: "2026-08-25",
+    dateModified: "2026-11-11",
     faq: [
       {
         question: "How long is the Tesla Model Y battery warranty?",
@@ -454,12 +454,12 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       {
         question: "Does the Tesla Model Y battery warranty cover normal degradation?",
         answer:
-          "No. Tesla writes that the battery \"will experience gradual energy or power loss with time and use\" and that loss of battery energy or power over time or resulting from battery usage is not covered, except as specified in the warranty. The Battery and Drive Unit Limited Warranty states the floor only as \"minimum 70% retention of Battery capacity over the warranty period,\" without defining how retention is measured. Tesla does phrase the 70% floor as a defect standard, but that wording belongs to the separate Battery ZEV Limited Warranty, which Tesla limits to model year 2026 and later. Tesla also states that range estimates are an imperfect measure of battery capacity, and that the measurement method is at Tesla's sole discretion.",
+          "No. Tesla writes that the battery \"will experience gradual energy or power loss with time and use\" and that loss of battery energy or power over time or resulting from battery usage is not covered, except as specified in the warranty. The Battery and Drive Unit Limited Warranty states the floor only as \"minimum 70% retention of Battery capacity over the warranty period,\" without defining how retention is measured. Tesla does phrase the 70% floor as a defect standard, but that wording belongs to the Battery ZEV Limited Warranty, which Tesla limits to model year 2026 and later. Tesla also states that range estimates are an imperfect measure of battery capacity, and that the measurement method is at Tesla's sole discretion.",
       },
       {
         question: "Does the Tesla Model Y battery warranty transfer to a second owner?",
         answer:
-          "Yes. Tesla's warranty document states it \"is transferable at no cost to any person(s) who subsequently and lawfully assume(s) ownership of the vehicle after the first retail purchaser.\" Tesla's support page adds that it transfers when a vehicle ownership transfer is performed through Tesla.",
+          "Tesla's warranty document, effective 2026/09/01, states it \"is transferable at no cost to any person(s) who subsequently and lawfully assume(s) ownership of the vehicle after the first retail purchaser within the described limitations of this New Vehicle Limited Warranty.\" A later owner must return to the car's Warranty Region for warranty service, wherever they bought the car; with a United States or Canada Warranty Region, service may be sought in either country.",
       },
       {
         question: "Do the ZEV warranties apply to my Tesla Model Y?",
@@ -2252,7 +2252,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       {
         question: "What is not covered by the Sportage Plug-in Hybrid battery warranty?",
         answer:
-          "The Hybrid System Warranty uses the New Vehicle Limited Warranty's exclusions: damage from factors beyond the manufacturer's control such as misuse, accidents, alteration and environmental damage; lack of maintenance or the wrong fuel, oil or lubricants; altered mileage; incidental and consequential damages; and any vehicle that has ever been or should have been issued a salvage or similar branded title, or declared a total loss. The salvage exclusion does not apply to Emission Warranties, and the Federal Emission Control Warranty lists the Hybrid Battery Pack Assy for 10 years or 100,000 miles.",
+          "The Hybrid System Warranty uses the New Vehicle Limited Warranty's exclusions, among them damage from factors beyond the manufacturer's control such as misuse, accidents, alteration and environmental damage; lack of maintenance or the wrong fuel, oil or lubricants; altered mileage; incidental and consequential damages; and any vehicle that has ever been or should have been issued a salvage or similar branded title, or declared a total loss. The salvage exclusion does not apply to Emission Warranties, and the Federal Emission Control Warranty lists the Hybrid Battery Pack Assy for 10 years or 100,000 miles.",
       },
     ],
   },
@@ -2318,7 +2318,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       {
         question: "Does the BMW iX battery warranty transfer to a second owner?",
         answer:
-          "On 2022–2025 cars, yes: the battery warranty is part of the New Vehicle Limited Warranty, which BMW NA gives to the first retail purchaser and each subsequent purchaser.",
+          "On 2022–2025 cars, yes: the battery warranty is part of the New Vehicle Limited Warranty, which BMW NA gives on U.S.-specification vehicles distributed by BMW NA or sold through the BMW NA European Delivery Program, to the first retail purchaser and each subsequent purchaser.",
       },
       {
         question: "When does the BMW iX battery warranty start?",
@@ -2351,7 +2351,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       {
         question: "Does the BMW i4 battery warranty transfer to a second owner?",
         answer:
-          "Yes. On 2022–2025 cars the battery warranty is part of the New Vehicle Limited Warranty, which BMW NA gives to the first retail purchaser and each subsequent purchaser.",
+          "Yes. On 2022–2025 cars the battery warranty is part of the New Vehicle Limited Warranty, which BMW NA gives on U.S.-specification vehicles distributed by BMW NA or sold through the BMW NA European Delivery Program, to the first retail purchaser and each subsequent purchaser.",
       },
       {
         question: "When does the BMW i4 battery warranty start?",
@@ -2498,7 +2498,7 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       {
         question: "Does the BMW i5 battery warranty transfer to a second owner?",
         answer:
-          "On 2024–2025 cars, yes: the battery warranty is part of the New Vehicle Limited Warranty, which BMW NA gives to the first retail purchaser and each subsequent purchaser.",
+          "On 2024–2025 cars, yes: the battery warranty is part of the New Vehicle Limited Warranty, which BMW NA gives on U.S.-specification vehicles distributed by BMW NA or sold through the BMW NA European Delivery Program, to the first retail purchaser and each subsequent purchaser.",
       },
       {
         question: "When does the BMW i5 battery warranty start?",
@@ -2755,6 +2755,191 @@ export const FACT_SHEETS: FactSheetEntry[] = [
         question: "When does the Outlander Plug-in Hybrid battery warranty start?",
         answer:
           "On the date of original retail delivery or original use, whichever occurs first. Mileage limits are actual odometer miles.",
+      },
+    ],
+  },
+  {
+    make: "tesla",
+    model: "model-s",
+    topic: "battery-warranty",
+    contentFile: "model-s-battery-warranty",
+    pageTitle: "Tesla Model S battery warranty for cars bought new from Tesla on or after Sept 1, 2026 | Census",
+    description:
+      "A Model S bought before September 1, 2026 is under the Battery and Drive Unit Warranty in effect on its date of purchase. For a Model S bought new from Tesla under the New Vehicle Limited Warranty effective 2026/09/01: 8 years or 150,000 miles, with minimum 70% retention of battery capacity.",
+    breadcrumbLabel: "Tesla Model S battery warranty",
+    dateModified: "2026-11-11",
+    faq: [
+      {
+        question: "How long is the Tesla Model S battery warranty?",
+        answer:
+          "It depends on when the car was bought new from Tesla. A Model S bought before September 1, 2026 is subject to the Battery and Drive Unit Warranty effective as of its date of purchase. Under Tesla's New Vehicle Limited Warranty effective 2026/09/01, the Model S Battery and Drive Unit are covered for 8 years or 150,000 miles (240,000 km), whichever comes first, with minimum 70% retention of Battery capacity over the warranty period.",
+      },
+      {
+        question: "What battery capacity does Tesla guarantee on the Model S?",
+        answer:
+          "Under the New Vehicle Limited Warranty effective 2026/09/01: Minimum 70% retention of Battery capacity over the warranty period. For a capacity claim, the replacement Battery is in a condition appropriate to the vehicle's age and mileage, sufficient to achieve or exceed the minimum Battery capacity for the remainder of the original Battery's warranty period. Tesla measures capacity at its sole discretion and calls the range estimate an imperfect measure.",
+      },
+      {
+        question: "Does the Tesla Model S battery warranty transfer to a second owner?",
+        answer:
+          "Under the New Vehicle Limited Warranty effective 2026/09/01, the warranty is transferable at no cost to any person who subsequently and lawfully assumes ownership of the vehicle after the first retail purchaser, within the described limitations of the warranty. A later owner must return to the car's Warranty Region for service; one in the United States or Canada may be serviced in either country. Tesla may void the whole warranty for a defaced or altered VIN, a disconnected or altered odometer, a title that is not clean or is branded dismantled, fire-damaged, flood-damaged, junk, rebuilt, salvage, reconstructed, irreparable or a total loss, or a vehicle an insurer has determined to be a total loss.",
+      },
+      {
+        question: "When does the Tesla Model S battery warranty clock start?",
+        answer:
+          "Under the New Vehicle Limited Warranty effective 2026/09/01, on the first day a new vehicle is delivered by Tesla to the first retail or corporate purchaser(s) or lessor(s).",
+      },
+      {
+        question: "Does a 2026 Model S carry ZEV warranties?",
+        answer:
+          "Yes. Under the New Vehicle Limited Warranty effective 2026/09/01, Model Year 2026 and later vehicles with a Warranty Region of the United States and Canada carry a Battery ZEV Limited Warranty of 8 years or 100,000 miles against defects that would cause battery capacity retention to fall below 70%, and a High-Priced Propulsion-Related Parts ZEV Limited Warranty of 7 years or 70,000 miles whose Model S parts list includes the High Voltage Battery assembly. Tesla calls these minimum coverages set by regulation; their expiration does not diminish coverage under any other limited warranty in the New Vehicle Limited Warranty.",
+      },
+    ],
+  },
+  {
+    make: "tesla",
+    model: "model-x",
+    topic: "battery-warranty",
+    contentFile: "model-x-battery-warranty",
+    pageTitle: "Tesla Model X battery warranty for cars bought new from Tesla on or after Sept 1, 2026 | Census",
+    description:
+      "A Model X bought before September 1, 2026 is under the Battery and Drive Unit Warranty effective as of its date of purchase. For a Model X bought new from Tesla under the New Vehicle Limited Warranty effective 2026/09/01: 8 years or 150,000 miles, with minimum 70% retention of Battery capacity.",
+    breadcrumbLabel: "Tesla Model X battery warranty",
+    dateModified: "2026-11-11",
+    faq: [
+      {
+        question: "How long is the Tesla Model X battery warranty?",
+        answer:
+          "It depends on when the car was bought new from Tesla. A Model X bought before September 1, 2026 is subject to the Battery and Drive Unit Warranty effective as of its date of purchase. Under Tesla's New Vehicle Limited Warranty effective 2026/09/01, the Model X Battery and Drive Unit are covered for 8 years or 150,000 miles (240,000 km), whichever comes first, with minimum 70% retention of Battery capacity over the warranty period, from the first day a new vehicle is delivered by Tesla to the first retail or corporate purchaser(s) or lessor(s).",
+      },
+      {
+        question: "What battery warranty applies to a Model X purchased before September 1, 2026?",
+        answer:
+          "Tesla's warranty effective 2026/09/01 states that any Model S or Model X purchased prior to its effective date \"is subject to the applicable Battery and Drive Unit Warranty effective as of the date of purchase.\"",
+      },
+      {
+        question: "Does the Tesla Model X battery warranty cover normal capacity loss?",
+        answer:
+          "Under the New Vehicle Limited Warranty effective 2026/09/01, gradual energy or power loss over time or from Battery usage is not covered, except to the extent specified in the Battery and Drive Unit Limited Warranty, which carries a minimum 70% retention of Battery capacity over the warranty period. The measurement method used to determine Battery capacity is at the sole discretion of Tesla, and Tesla states that the vehicle's range estimates are an imperfect measure of Battery capacity.",
+      },
+      {
+        question: "Does the Tesla Model X battery warranty transfer to a second owner?",
+        answer:
+          "Under the New Vehicle Limited Warranty effective 2026/09/01, the warranty is transferable at no cost to any person(s) who subsequently and lawfully assume(s) ownership of the vehicle after the first retail purchaser, within the warranty's described limitations. A later owner must return to the car's Warranty Region for service wherever they bought the car; a United States or Canada Warranty Region may be serviced in either country. Tesla may void the whole warranty for a defaced or altered VIN, a disconnected or altered odometer, a title that is not clean or is branded dismantled, fire-damaged, flood-damaged, junk, rebuilt, salvage, reconstructed, irreparable or a total loss, or a vehicle an insurer has determined to be a total loss.",
+      },
+      {
+        question: "Do the ZEV warranties apply to a Tesla Model X?",
+        answer:
+          "Under the New Vehicle Limited Warranty effective 2026/09/01, they apply to vehicles of Model Year 2026 and later with a Warranty Region of the United States and Canada. The Battery ZEV Limited Warranty runs 8 years or 100,000 miles and covers defects in material and workmanship that would cause the retention of Battery capacity to fall below 70%. The High-Priced Propulsion-Related Parts ZEV Limited Warranty runs 7 years or 70,000 miles, and Tesla's Model X parts list for it names the High Voltage Battery (HVB) assembly. Tesla calls these minimum coverages set by regulation; their expiration does not diminish coverage under any other limited warranty in the New Vehicle Limited Warranty.",
+      },
+    ],
+  },
+  {
+    make: "bmw",
+    model: "i7",
+    topic: "battery-warranty",
+    contentFile: "i7-battery-warranty",
+    pageTitle: "BMW i7 battery warranty: 8 years or 100,000 miles | Census",
+    description:
+      "BMW covers the i7's high-voltage battery for 8 years or 100,000 miles, whichever occurs first, on 2023–2026 cars, and on 2026 cars also covers capacity below 70 percent for the same term.",
+    breadcrumbLabel: "BMW i7 battery warranty",
+    dateModified: "2026-11-11",
+    faq: [
+      {
+        question: "How long is the BMW i7 battery warranty?",
+        answer:
+          "8 years or 100,000 miles, whichever occurs first, on every 2023–2026 i7.",
+      },
+      {
+        question: "Does BMW guarantee a minimum battery capacity on the i7?",
+        answer:
+          "On 2026 cars, yes: if usable (net) capacity/State of Health falls below 70 percent within 96 months (8 years) or 100,000 miles, as confirmed by an authorized BMW center, BMW restores the battery's capacity to at least 70 percent.",
+      },
+      {
+        question: "Does the BMW i7 battery warranty transfer to a second owner?",
+        answer:
+          "On 2023–2025 cars, yes: the battery warranty is part of the New Vehicle Limited Warranty, which BMW NA gives on U.S.-specification vehicles distributed by BMW NA or sold through the BMW NA European Delivery Program, to the first retail purchaser and each subsequent purchaser.",
+      },
+      {
+        question: "When does the BMW i7 battery warranty start?",
+        answer:
+          "On 2023–2025 cars, on the date of first retail sale or the date the vehicle is first placed into service as a sales demonstrator, Aftersales Mobility Program (AMP) Vehicle or company vehicle, whichever is earlier.",
+      },
+    ],
+  },
+  {
+    make: "audi",
+    model: "q4-e-tron",
+    topic: "battery-warranty",
+    contentFile: "q4-e-tron-battery-warranty",
+    pageTitle: "Audi Q4 e-tron battery warranty: 8 years or 100,000 miles | Census",
+    description:
+      "Audi covers the Q4 e-tron's and Q4 Sportback e-tron's high-voltage battery for 8 years or 100,000 miles, whichever occurs first, on 2022 through 2026 cars.",
+    breadcrumbLabel: "Audi Q4 e-tron battery warranty",
+    dateModified: "2026-11-11",
+    faq: [
+      {
+        question: "How long is the Audi Q4 e-tron battery warranty?",
+        answer:
+          "8 years or 100,000 miles, whichever occurs first, on 2022 through 2026 Q4 e-tron and Q4 Sportback e-tron models.",
+      },
+      {
+        question: "Does the Audi Q4 e-tron battery warranty cover loss of capacity?",
+        answer:
+          "Yes. Within 8 years or 100,000 miles, whichever occurs first, the 2022–2023 booklets cover repair to correct a manufacturer's defect in material or workmanship when the remaining energy content of the battery is below 70% compared to the condition at the time of delivery. The 2024–2026 booklets cover repair to correct a manufacturer's defect in material or workmanship, or when the remaining energy content of the battery SOH (State of Health) is below 70% compared to the condition at the time of delivery.",
+      },
+      {
+        question: "What does a replacement Q4 e-tron battery provide?",
+        answer:
+          "In the 2022–2023 booklets, a net capacity level of at least 70%, and it may not be of an \"as new\" condition with 100% net capacity. In the 2024–2026 booklets, an SOH of at least 70%, and it may not be of an \"as new\" condition with an SOH of 100%.",
+      },
+      {
+        question: "Is there a California battery warranty on the 2026 Q4 e-tron?",
+        answer:
+          "Yes, for 2026 cars distributed for sale and registration in California, Massachusetts, New York, Oregon, Vermont or Washington: a high-voltage battery warranty of 8 years or 100,000 miles, whichever occurs first.",
+      },
+      {
+        question: "Who can repair the Audi Q4 e-tron battery under warranty?",
+        answer:
+          "An Audi dealer designated as an Audi e-tron certified dealer, with a certified technician. Service, repair, or any damage resulting from services or repairs performed at a facility that is not an Audi e-tron certified dealer by a non-certified technician is not covered.",
+      },
+    ],
+  },
+  {
+    make: "kia",
+    model: "sorento-plug-in-hybrid",
+    topic: "battery-warranty",
+    contentFile: "sorento-plug-in-hybrid-battery-warranty",
+    pageTitle: "Kia Sorento Plug-in Hybrid battery warranty: 10 years, 100,000 miles | Census",
+    description:
+      "Kia's Hybrid System Warranty covers the Sorento Plug-in Hybrid's hybrid battery pack for 10 years or 100,000 miles in model years 2022 through 2026, and the coverage transfers to later owners. California Emissions Vehicles get 10 years or 150,000 miles for 2022 through 2025, excluding Pennsylvania and Washington, and a 70% battery state-of-health warranty for 8 years or 100,000 miles for 2026.",
+    breadcrumbLabel: "Kia Sorento Plug-in Hybrid battery warranty",
+    dateModified: "2026-11-11",
+    faq: [
+      {
+        question: "How long is the Kia Sorento Plug-in Hybrid battery warranty?",
+        answer:
+          "Kia's Hybrid System Warranty covers the Hybrid Battery Pack Assy for 10 years or 100,000 miles, whichever comes first, for every model year from 2022 through 2026. It also covers the Hybrid Starter & Generator, Hybrid Power Control Unit, Traction Motor, clutch, On board charger (OBC) and all internal parts.",
+      },
+      {
+        question: "Is the Sorento Plug-in Hybrid battery warranty longer in California?",
+        answer:
+          "For model years 2022 through 2025, the Hybrid System of a California Emissions Vehicle is covered for 10 years or 150,000 miles, excluding Pennsylvania and Washington, and note 1 of the California Emission Control Warranty parts list warrants the listed parts of a Sorento plug-in hybrid that is a SULEV for 15 years or 150,000 miles, with the exception of Pennsylvania and Washington. For 2026, the California Emission Control Warranty's parts list gives the Hybrid Battery Pack Assy 10 years or 100,000 miles, and its note excepts the high voltage battery from the 15-year or 150,000-mile term it gives a Sorento plug-in hybrid's other listed parts, while the warranty statement on printed pp. 25 and 27 says all listed parts of a plug-in hybrid get 15 years or 150,000 miles. The 2026 battery is warranted to deteriorate to no less than 70% battery state of health for 8 years or 100,000 miles. The 2022 through 2026 manuals name California, Connecticut, Delaware, Maine, Maryland, Massachusetts, New Jersey, New York, Oregon, Pennsylvania, Rhode Island, Vermont and Washington for the California Emission Warranty.",
+      },
+      {
+        question: "Does the Kia Sorento Plug-in Hybrid battery warranty transfer to a second owner?",
+        answer:
+          "Yes. Kia states that any remaining portion of any warranty, except the 120 month/100,000 mile Power Train (Original Owner) warranty, is fully transferable to subsequent owners. The Power Train Limited Warranty is a separate coverage of the engine, transaxle, axles, transmission, differentials and propeller shafts; the hybrid battery is covered by the Hybrid System Warranty.",
+      },
+      {
+        question: "When does the Sorento Plug-in Hybrid battery warranty start?",
+        answer:
+          "At the Date of First Service: the first date the vehicle is delivered to the first retail purchaser, is leased, or is placed into service as a company vehicle, for example as a demonstrator, rental or fleet vehicle, whichever is earliest.",
+      },
+      {
+        question: "What is not covered by the Sorento Plug-in Hybrid battery warranty?",
+        answer:
+          "The Hybrid System Warranty uses the New Vehicle Limited Warranty's exclusions, among them damage from factors beyond the manufacturer's control such as misuse, accidents, alteration and environmental damage; lack of maintenance or the wrong fuel, oil or lubricants; altered mileage; incidental and consequential damages; and any vehicle that has ever been or should have been issued a salvage or similar branded title, or declared a total loss. The salvage exclusion does not apply to Emission Warranties, and the Federal Emission Control Warranty lists the Hybrid Battery Pack Assy for 10 years or 100,000 miles.",
       },
     ],
   },
