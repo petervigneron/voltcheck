@@ -2720,6 +2720,44 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       },
     ],
   },
+  {
+    make: "mitsubishi",
+    model: "outlander-phev",
+    topic: "battery-warranty",
+    contentFile: "outlander-phev-battery-warranty",
+    pageTitle: "Mitsubishi Outlander Plug-in Hybrid battery warranty: 10 years or 100,000 miles | Census",
+    description:
+      "Mitsubishi's 2018 through 2025 Outlander PHEV warranty manuals cover the plug-in hybrid's Main Drive Lithium-ion Battery for 10 years or 100,000 miles, for all owners of the vehicle. A car equipped with a California Certified Emission Control System and registered in a state Mitsubishi lists carries 10 years or 150,000 miles on the battery.",
+    breadcrumbLabel: "Mitsubishi Outlander Plug-in Hybrid battery warranty",
+    dateModified: "2026-11-11",
+    faq: [
+      {
+        question: "How long is the Mitsubishi Outlander Plug-in Hybrid battery warranty?",
+        answer:
+          "Mitsubishi's Main Drive Lithium-ion Battery Coverage runs 10 years or 100,000 miles, whichever comes first, in its 2018 through 2025 Outlander PHEV warranty manuals. It covers the battery for defects in material and workmanship.",
+      },
+      {
+        question: "Which states get the 10-year, 150,000-mile Outlander Plug-in Hybrid battery warranty?",
+        answer:
+          "It applies to a car equipped with a California Certified Emission Control System and registered in a listed state. On a 2025 car: California, Colorado, Connecticut, Maine, Maryland, Massachusetts, Minnesota, Nevada, New Jersey, New York, Oregon, Rhode Island, Vermont, Virginia and Washington. On a 2023 or 2024 car: California, Colorado, Connecticut, Maine, Maryland, Massachusetts, New Jersey, New York, Oregon, Rhode Island and Vermont. On a 2018 through 2022 car: the same states without Colorado.",
+      },
+      {
+        question: "Does the Outlander Plug-in Hybrid battery warranty transfer to a second owner?",
+        answer:
+          "Yes. The battery coverage is part of the New Vehicle Limited Warranty, whose coverage applies to all owners of the vehicle during the stated time and mileage limitations.",
+      },
+      {
+        question: "Does Mitsubishi cover battery capacity loss on the Outlander Plug-in Hybrid?",
+        answer:
+          "No. Mitsubishi's manuals state: \"Gradual capacity loss of the Main Drive Lithium-ion Battery based on time and usage is NOT covered under this warranty.\"",
+      },
+      {
+        question: "When does the Outlander Plug-in Hybrid battery warranty start?",
+        answer:
+          "On the date of original retail delivery or original use, whichever occurs first. Mileage limits are actual odometer miles.",
+      },
+    ],
+  },
 ];
 
 export function findFactSheet(make: string, model: string, topic: string): FactSheetEntry | undefined {

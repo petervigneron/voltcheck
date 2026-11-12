@@ -88,6 +88,7 @@ export const FACT_LINK_MODELS: {
   { make: "gmc", model: "sierra-ev", topics: ["battery-warranty"], name: "GMC Sierra EV", keys: ["sierraev"] },
   { make: "chevrolet", model: "silverado-ev", topics: ["battery-warranty"], name: "Chevrolet Silverado EV", keys: ["silveradoev"] },
   { make: "gmc", model: "hummer-ev", topics: ["battery-warranty"], name: "GMC Hummer EV", keys: ["hummerev", "hummerevsuv"] },
+  { make: "mitsubishi", model: "outlander-phev", topics: ["battery-warranty"], name: "Mitsubishi Outlander Plug-in Hybrid", keys: ["outlanderphev", "outlanderpluginhybrid"] },
   { make: "bmw", model: "x5", topics: ["battery-warranty"], name: "BMW X5 plug-in hybrid", keys: ["x5", "x5phev", "x5xdrive50e"] },
   // Toyota renamed the RAV4 Prime (2021-2024) to RAV4 Plug-in Hybrid for 2025; one sheet, two exact keys.
   { make: "toyota", model: "rav4-plug-in-hybrid", topics: ["battery-warranty"], name: "Toyota RAV4 Plug-in Hybrid or RAV4 Prime", keys: ["rav4pluginhybrid", "rav4prime"] },
