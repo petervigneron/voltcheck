@@ -28871,7 +28871,7 @@
  },
  "3FMTK3RM7NMA40025": {
   "unavailable": true,
-  "checkedAt": "2026-09-16"
+  "checkedAt": "2026-11-12"
  },
  "3FMTK3R73PMA61600": {
   "unavailable": true,
@@ -33345,7 +33345,7 @@
  },
  "3FMTK1R49TMA28041": {
   "unavailable": true,
-  "checkedAt": "2026-09-17"
+  "checkedAt": "2026-11-12"
  },
  "3FMTK1R41TMA16787": {
   "unavailable": true,
@@ -36041,7 +36041,7 @@
  },
  "3FMTK4SX6PMA16831": {
   "unavailable": true,
-  "checkedAt": "2026-09-19"
+  "checkedAt": "2026-11-12"
  },
  "3FMTK4SE5PMA28578": {
   "unavailable": true,
@@ -36264,7 +36264,7 @@
  },
  "3FMTK1RM8PMA15142": {
   "unavailable": true,
-  "checkedAt": "2026-09-19"
+  "checkedAt": "2026-11-12"
  },
  "3FMTK1R41PMA66210": {
   "unavailable": true,
@@ -44876,7 +44876,7 @@
  },
  "3FMTK3SU2PMA37983": {
   "unavailable": true,
-  "checkedAt": "2026-09-27"
+  "checkedAt": "2026-11-12"
  },
  "3FMTK1SS1PMA40893": {
   "unavailable": true,
@@ -44896,11 +44896,11 @@
  },
  "3FMTK4SE9PMA38157": {
   "unavailable": true,
-  "checkedAt": "2026-09-27"
+  "checkedAt": "2026-11-12"
  },
  "3FMTK3SUXPMA63067": {
   "unavailable": true,
-  "checkedAt": "2026-09-27"
+  "checkedAt": "2026-11-12"
  },
  "1FTVW1EL3PWG63406": {
   "group": "312A",
@@ -44913,7 +44913,7 @@
  },
  "1FTVW1EL8PWG45189": {
   "unavailable": true,
-  "checkedAt": "2026-09-27"
+  "checkedAt": "2026-11-12"
  },
  "1FTVW1EL6PWG24583": {
   "unavailable": true,
@@ -44943,7 +44943,7 @@
  },
  "3FMTK3S59RMA39693": {
   "unavailable": true,
-  "checkedAt": "2026-09-27"
+  "checkedAt": "2026-11-12"
  },
  "3FMTK3SU3RMA19110": {
   "unavailable": true,
@@ -44991,7 +44991,7 @@
  },
  "3FMTK3R4XPMA71319": {
   "unavailable": true,
-  "checkedAt": "2026-09-27"
+  "checkedAt": "2026-11-12"
  },
  "1FTBW1YK0RKA25548": {
   "unavailable": true,
@@ -44999,11 +44999,11 @@
  },
  "1FADP3R49HL232214": {
   "unavailable": true,
-  "checkedAt": "2026-09-27"
+  "checkedAt": "2026-11-12"
  },
  "1FADP5CU9GL117342": {
   "unavailable": true,
-  "checkedAt": "2026-09-27"
+  "checkedAt": "2026-11-12"
  },
  "3FA6P0PU6JR286992": {
   "unavailable": true,
@@ -45011,7 +45011,7 @@
  },
  "1FMCU0KZ4NUB90166": {
   "unavailable": true,
-  "checkedAt": "2026-09-27"
+  "checkedAt": "2026-11-12"
  },
  "1FMCU0KZ8NUB94950": {
   "unavailable": true,
@@ -45031,7 +45031,7 @@
  },
  "3FMTK3SU5TMA23666": {
   "unavailable": true,
-  "checkedAt": "2026-09-27"
+  "checkedAt": "2026-11-12"
  },
  "3FMTK4SX0TMA14650": {
   "unavailable": true,
@@ -45047,7 +45047,7 @@
  },
  "3FMTK3R74TMA27000": {
   "unavailable": true,
-  "checkedAt": "2026-09-27"
+  "checkedAt": "2026-11-12"
  },
  "3FMTK4SX8PMA99775": {
   "unavailable": true,
@@ -68572,5 +68572,544 @@
  "3FMTK4SX3PMA13501": {
   "unavailable": true,
   "checkedAt": "2026-11-11"
+ },
+ "3FMTK3SU2PMA57036": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK3SU7PMA87052": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "1FTVW1EV8PWG26028": {
+  "group": "511A",
+  "series": "LARIAT LIGHTNING SERIES",
+  "checkedAt": "2026-11-12"
+ },
+ "1FT6W5L72RWG20812": {
+  "group": "511A",
+  "series": "LARIAT SERIES",
+  "checkedAt": "2026-11-12"
+ },
+ "1FT6W3L76RWG11793": {
+  "group": "312A",
+  "series": "FLASH",
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK3SUXRMA29407": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK3R41PMB04935": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "1FTBW9CKXPKA92628": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK3R71SMA41449": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK1R42SMA33306": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK1SS7MMA41266": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK3SU9MMA18620": {
+  "group": "300A",
+  "series": "2021 MODEL YEAR",
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK3SS7MMA35771": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK3SU1MMA01567": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "1FTVW1EV0NWG02917": {
+  "group": "511A",
+  "series": "LARIAT LIGHTNING SERIES",
+  "checkedAt": "2026-11-12"
+ },
+ "1FTVW1EL4NWG05575": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK3SU1NMA24820": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK4SE4NMA52111": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "1FTVW1EL1NWG16615": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "1FT6W1EV4NWG07090": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK3SU1NMA23912": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK1S54PMA85109": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK3SU7PMA53578": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK3SU5PMA56673": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK4SX7PMA55038": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK1S52PMB03087": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK1SS2PMA17462": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK3SU3PMA84763": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK1S52PMA81883": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK1S59PMB07508": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK1SS7PMA28456": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK4SX9PMB04787": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK3SU3PMA88666": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK3SU8PMA71426": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK3SU4PMA88806": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK4SE5PMA58163": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK4SXXPMA54451": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK4SE6PMA99563": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "1FTVW1EL6PWG35616": {
+  "group": "312A",
+  "series": "XLT LIGHTNING SERIES",
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK3SU8PMA62614": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "1FT6W1EV4PWG36172": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "1FTVW1EL6PWG02986": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK4SX2PMA53651": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "1FTVW1EL3PWG52356": {
+  "group": "312A",
+  "series": "XLT LIGHTNING SERIES",
+  "checkedAt": "2026-11-12"
+ },
+ "1FTVW1ELXPWG60471": {
+  "group": "311A",
+  "series": "XLT LIGHTNING SERIES",
+  "checkedAt": "2026-11-12"
+ },
+ "1FT6W1EV5PWG35693": {
+  "group": "312A",
+  "series": "XLT LIGHTNING SERIES",
+  "checkedAt": "2026-11-12"
+ },
+ "1FTVW1EL7PWG23099": {
+  "group": "311A",
+  "series": "XLT LIGHTNING SERIES",
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK4SX2PMA24490": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "1FT6W1EV1PWG13917": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "1FTVW1EV3PWG63651": {
+  "group": "511A",
+  "series": "LARIAT LIGHTNING SERIES",
+  "checkedAt": "2026-11-12"
+ },
+ "1FT6W1EV8PWG45621": {
+  "group": "511A",
+  "series": "LARIAT LIGHTNING SERIES",
+  "checkedAt": "2026-11-12"
+ },
+ "1FTVW1EL7PWG42865": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "1FTVW3LK4RWG22789": {
+  "group": "311A",
+  "series": "XLT SERIES",
+  "checkedAt": "2026-11-12"
+ },
+ "1FT6W3L72RWG21771": {
+  "group": "312A",
+  "series": "FLASH",
+  "checkedAt": "2026-11-12"
+ },
+ "1FTVW3LK1RWG17176": {
+  "group": "311A",
+  "series": "XLT SERIES",
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK4SX2RMA25223": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK3SUXRMA37460": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK3SU2RMA35203": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK3SU7RMA32989": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK3SU7RMA12452": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "1FT6W5L72RWG08501": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "1FTVW3L75RWG23557": {
+  "group": "312A",
+  "series": "FLASH",
+  "checkedAt": "2026-11-12"
+ },
+ "1FT6W5L72RWG20082": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "1FT6W5L73RWG24870": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "1FT6W5L75RWG31917": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "1FT6W3L79RWG25039": {
+  "group": "312A",
+  "series": "FLASH",
+  "checkedAt": "2026-11-12"
+ },
+ "1FTVW3LKXSWG13200": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK4SX2SMA32274": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK3SUXSMA05548": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK4SX6SMA24081": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK4SX5SMA05635": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "1FT6W3L7XSWG01984": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "1FT6W5L75SWG08000": {
+  "group": "511A",
+  "series": "LARIAT SERIES",
+  "checkedAt": "2026-11-12"
+ },
+ "1FT6W7L73SWG05754": {
+  "group": "710A",
+  "series": "PLATINUM SERIES",
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK3SU6TMA23398": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "1FTBW1XK3NKA51623": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "1FTBW3XK7NKA12979": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "1FTBW9CK1NKA29964": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK1RM8PMA39988": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK1R40PMA87209": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK3R79PMA12353": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK3RM7PMA48614": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK3R71PMA62499": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK3R40PMA72303": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK3R79PMA62525": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK3R49PMA89388": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "1FTBW9CK9PKA05205": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "1FTBW9CK9PKA17726": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK1R42PMA64790": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK1R45RMA35464": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK3R41RMA32850": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK3R75RMA31565": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK3R76RMA28934": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK3R72SMA12834": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK3R40SMA00820": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK1R46SMA47550": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK3R74TMA26722": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "1FMCU0KZ6NUB95403": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "1FMCU0E11RUB12424": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "1FMCU0E1XRUA53972": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "1FMCU0E13SUA17255": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "1FMCU0E16SUB67215": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "1FMCU0E18SUA90203": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "1FMCU0E17TUA08852": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK4SX0TMA11599": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK3SU8TMA32779": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK3SU6TMA21750": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK3SUXTMA27339": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK3SU9TMA32290": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK4SX6TMA23658": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK4SX0TMA23624": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK3SU4TMA32651": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK4SX7TMA23426": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK1R46TMA32046": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK1R4XTMA32065": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK1R42TMA26051": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK1R43TMA28066": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK3R44TMA31618": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK1R46TMA31706": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK1R44TMA33390": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK1R47TMA31956": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK1R4XTMA31546": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK1R49TMA30162": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK1R47TMA29995": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK3R41TMA27476": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK3R7XTMA32086": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK3R77TMA32885": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK3R73TMA26792": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK4SE3PMA91081": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
+ },
+ "3FMTK3S51PMA89338": {
+  "unavailable": true,
+  "checkedAt": "2026-11-12"
  }
 }
