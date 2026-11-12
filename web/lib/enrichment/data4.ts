@@ -1457,7 +1457,17 @@ const PS2_PLUS_PACK = "https://web.archive.org/web/20220520094320/https://www.po
     dcFastCharging: fp<"none">("none", "mfr", "high", "Control-tested: the same Stellantis spec-sheet family names DC fast charging for the Wagoneer S; neither the 2020 nor the 2024 Pacifica sheet does", PACIFICA_2024_SPEC),
   };
   const PACIFICA_THERMAL = { heatPump: fp<"none">("none", "est", "medium", "Resistive electric heater plus engine coolant; the engine is required for heat and defrost") };
-  const PACIFICA_WARRANTY = { batteryYears: fp(8, "mfr", "high", "10 yr / 150,000 mi in California and other ZEV-adopting states"), batteryMiles: fp(100_000, "mfr", "high") };
+  // Split by year 2026-11-11, when the battery-warranty sheet was audited
+  // against Chrysler's booklet for each model year. One value used to print
+  // 8 years on every Pacifica Hybrid. The 2017-2021 booklets give the high
+  // voltage battery 10 years or 100,000 miles outside the California group
+  // (read from each year's chart and battery section, by author and second
+  // reader), so those cars were being shown two years short. 2022 on is 8
+  // years. The 2026 booklet has one term and no state split, so its note goes.
+  const PACIFICA_CA_NOTE = "10 yr / 150,000 mi where certified for sale and registered in California or a state adopting its ZEV rules";
+  const PACIFICA_WARRANTY_2017_21 = { batteryYears: fp(10, "mfr", "high", PACIFICA_CA_NOTE), batteryMiles: fp(100_000, "mfr", "high") };
+  const PACIFICA_WARRANTY_2022_25 = { batteryYears: fp(8, "mfr", "high", PACIFICA_CA_NOTE), batteryMiles: fp(100_000, "mfr", "high") };
+  const PACIFICA_WARRANTY_2026 = { batteryYears: fp(8, "mfr", "high"), batteryMiles: fp(100_000, "mfr", "high") };
   const PACIFICA_ROWS: EnrichmentRow[] = [
     {
       id: "pacifica-hybrid-2017-19", make: "CHRYSLER", model: "Pacifica Hybrid", modelYears: [2017, 2019],
@@ -1472,10 +1482,10 @@ const PS2_PLUS_PACK = "https://web.archive.org/web/20220520094320/https://www.po
       },
       charging: PACIFICA_CHARGING,
       thermal: PACIFICA_THERMAL,
-      warranty: PACIFICA_WARRANTY,
+      warranty: PACIFICA_WARRANTY_2017_21,
     },
     {
-      id: "pacifica-hybrid-2020-25", make: "CHRYSLER", model: "Pacifica Hybrid", modelYears: [2020, 2026],
+      id: "pacifica-hybrid-2020-21", make: "CHRYSLER", model: "Pacifica Hybrid", modelYears: [2020, 2021],
       modelAliases: PACIFICA_ALIASES,
       battery: PACIFICA_BATTERY,
       range: {
@@ -1487,7 +1497,37 @@ const PS2_PLUS_PACK = "https://web.archive.org/web/20220520094320/https://www.po
       },
       charging: PACIFICA_CHARGING,
       thermal: PACIFICA_THERMAL,
-      warranty: PACIFICA_WARRANTY,
+      warranty: PACIFICA_WARRANTY_2017_21,
+    },
+    {
+      id: "pacifica-hybrid-2020-25", make: "CHRYSLER", model: "Pacifica Hybrid", modelYears: [2022, 2025],
+      modelAliases: PACIFICA_ALIASES,
+      battery: PACIFICA_BATTERY,
+      range: {
+        epaRangeMi: fp(32, "mfr", "high", "Electric-only EPA range. Identical rating 2020–2026", epa(41943)),
+        epaRangeTotalMi: fp(520, "mfr", "high", undefined, epa(41943)),
+        mpgeElectric: fp(82, "mfr", "high", undefined, epa(41943)),
+        mpgeCombined: fp(48, "mfr", "high", undefined, epa(41943)),
+        mpgGasoline: fp(30, "mfr", "high", undefined, epa(41943)),
+      },
+      charging: PACIFICA_CHARGING,
+      thermal: PACIFICA_THERMAL,
+      warranty: PACIFICA_WARRANTY_2022_25,
+    },
+    {
+      id: "pacifica-hybrid-2026", make: "CHRYSLER", model: "Pacifica Hybrid", modelYears: [2026, 2026],
+      modelAliases: PACIFICA_ALIASES,
+      battery: PACIFICA_BATTERY,
+      range: {
+        epaRangeMi: fp(32, "mfr", "high", "Electric-only EPA range. Identical rating 2020–2026", epa(41943)),
+        epaRangeTotalMi: fp(520, "mfr", "high", undefined, epa(41943)),
+        mpgeElectric: fp(82, "mfr", "high", undefined, epa(41943)),
+        mpgeCombined: fp(48, "mfr", "high", undefined, epa(41943)),
+        mpgGasoline: fp(30, "mfr", "high", undefined, epa(41943)),
+      },
+      charging: PACIFICA_CHARGING,
+      thermal: PACIFICA_THERMAL,
+      warranty: PACIFICA_WARRANTY_2026,
     },
   ];
 

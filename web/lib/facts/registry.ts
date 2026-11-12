@@ -2943,6 +2943,110 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       },
     ],
   },
+  {
+    make: "subaru",
+    model: "solterra",
+    topic: "battery-warranty",
+    contentFile: "solterra-battery-warranty",
+    pageTitle: "Subaru Solterra battery warranty: 8 years, 100,000 miles, 70% capacity | Census",
+    description:
+      "Subaru covers the high voltage battery pack and electric drive units of the 2023-2026 Solterra for 8 years or 100,000 miles with retention of 70% or more of the original battery capacity, and every owner during the warranty period is entitled to the coverage.",
+    breadcrumbLabel: "Subaru Solterra battery warranty",
+    dateModified: "2026-11-11",
+    faq: [
+      {
+        question: "How long is the Subaru Solterra battery warranty?",
+        answer:
+          "8 years or 100,000 miles, whichever comes first, under the Battery and Electric Drive Unit Limited Warranty, for the 2023, 2024, 2025 and 2026 Solterra. It covers the high voltage battery pack, the AC/DC inverter, the DC/DC converter, and the transmission and electric motor assemblies.",
+      },
+      {
+        question: "What does Subaru's Solterra battery warranty say about capacity?",
+        answer:
+          "Retention of 70% or more of the original battery capacity over the 8-year or 100,000-mile period. Subaru's booklets add that high voltage battery capacity will decrease over time and with use, and that gradual capacity loss with time and use is expected and considered normal wear. The measurement method used to determine the capacity is at Subaru's sole discretion.",
+      },
+      {
+        question: "Does the Subaru Solterra battery warranty transfer to a second owner?",
+        answer:
+          "Yes. Every owner of the vehicle during the warranty period is entitled to the benefits of the warranties. Subaru recommends and requests that a new owner promptly send written notice of the transfer of ownership to Subaru. A vehicle declared a total loss or sold for salvage purposes is not eligible for warranty coverage.",
+      },
+      {
+        question: "When does the Subaru Solterra battery warranty start?",
+        answer:
+          "On the date the vehicle is delivered to the first retail purchaser. For a vehicle used as a demonstrator or company vehicle before retail sale, it starts on the date the vehicle was first placed in such service.",
+      },
+    ],
+  },
+  {
+    make: "lucid",
+    model: "air",
+    topic: "battery-warranty",
+    contentFile: "air-battery-warranty",
+    pageTitle: "Lucid Air battery warranty: 8 years, 100,000 miles, 70% capacity | Census",
+    description:
+      "Lucid covers the high voltage battery of every 2022 to 2027 Air for 8 years or 100,000 miles with a minimum 70% retention of battery capacity over the warranty period, and the warranty passes to later owners with proof of ownership transfer.",
+    breadcrumbLabel: "Lucid Air battery warranty",
+    dateModified: "2026-11-11",
+    faq: [
+      {
+        question: "How long is the Lucid Air battery warranty?",
+        answer:
+          "8 years or 100,000 miles for every Air from 2022 through 2027, with a minimum 70% retention of battery capacity over the warranty period. For 2024 cars purchased or leased on or after April 16, 2024, and for 2025 to 2027 cars, the clock starts on the date the new vehicle is delivered to the first buyer or lessee, or the day it is first put into service as a demonstrator or fleet vehicle, whichever occurs first.",
+      },
+      {
+        question: "Which Lucid warranty applies to a 2024 Lucid Air?",
+        answer:
+          "It depends on the purchase or lease date. A 2024 Air purchased or leased before April 16, 2024 has the warranty Lucid lists for model years 2022, 2023 and 2024 (purchased/leased before April 16, 2024); one purchased or leased on or after April 16, 2024 has the warranty Lucid lists for model years 2024 and 2025. Both cover the high voltage battery for 8 years or 100,000 miles with a minimum 70% retention of battery capacity.",
+      },
+      {
+        question: "Does the Lucid Air battery warranty transfer to a second owner?",
+        answer:
+          "Yes. The warranty for 2022, 2023 and 2024 cars purchased or leased before April 16, 2024 can be transferred from the original owner to a subsequent owner, and the new owner must provide proof of ownership transfer. For 2024 cars purchased or leased on or after April 16, 2024, and for 2025 to 2027 cars, the warranty is provided to subsequent owners if the vehicle is within the applicable coverage period, and any subsequent owner must provide proof of ownership transfer (2026 and 2027: to be eligible for benefits under the warranty). A vehicle branded as salvage, rebuilt, flood-damaged, junk or a total loss, among other brands, has its warranty voided: outright for 2022, 2023 and 2024 cars purchased or leased before April 16, 2024 and for 2027 cars, and at Lucid's sole and exclusive discretion for 2024 cars purchased or leased on or after April 16, 2024 and for 2025 and 2026 cars.",
+      },
+      {
+        question: "What does Lucid do if an Air battery falls below 70% capacity?",
+        answer:
+          "For 2024 cars purchased or leased on or after April 16, 2024, and for 2025 to 2027 cars, if the high voltage battery falls below 70% capacity during the warranty period, as determined at the sole discretion of Lucid's trained and authorized representatives, Lucid will replace the high voltage battery. In every year, if it is determined that the battery requires warranty repair, Lucid will repair, replace, or adjust it with a new, reconditioned, or remanufactured part at its discretion, and the measurement method used to determine battery capacity is at the sole discretion of Lucid's trained and authorized representatives.",
+      },
+      {
+        question: "What is not covered by the Lucid Air battery warranty?",
+        answer:
+          "Among the exclusions in every year: damage from incompatible charging devices or methods, from modifications to the high voltage battery assembly, high voltage system or associated wiring (for 2024 cars purchased or leased on or after April 16, 2024, and 2025 to 2027 cars: alteration of them by non-Lucid personnel), and from improper storage that damages the battery. The warranty for 2022, 2023 and 2024 cars purchased or leased before April 16, 2024 also excludes leaving the battery fully discharged or near zero state of charge for more than 14 days; later warranties exclude allowing it to discharge to a 0% state of charge or 0 miles of range. Loss of energy or power over time beyond the warranty's terms is not covered.",
+      },
+    ],
+  },
+  {
+    make: "chrysler",
+    model: "pacifica-hybrid",
+    topic: "battery-warranty",
+    contentFile: "pacifica-hybrid-battery-warranty",
+    pageTitle: "Chrysler Pacifica Plug-in Hybrid battery warranty: 8 or 10 years by model year | Census",
+    description:
+      "Chrysler covers the 2017 through 2021 Pacifica Plug-in Hybrid battery for 10 years, with a 150,000-mile cap in California and ZEV states and 100,000 miles elsewhere. A 2022 through 2025 car gets 10 years or 150,000 miles in California and the ZEV or TZEV states for its model year, and 8 years or 100,000 miles elsewhere; a 2026 car gets 8 years or 100,000 miles.",
+    breadcrumbLabel: "Chrysler Pacifica Plug-in Hybrid battery warranty",
+    dateModified: "2026-11-11",
+    faq: [
+      {
+        question: "How long is the Chrysler Pacifica Plug-in Hybrid battery warranty?",
+        answer:
+          "It depends on the model year and the state where the car was certified for sale and registered. A 2017 through 2021 Pacifica Hybrid is covered for 10 years or 150,000 miles in California and states that adopt California ZEV regulations, and 10 years or 100,000 miles elsewhere. A 2022 car is covered for 10 years or 150,000 miles in California and states that adopt California ZEV regulations, and 8 years or 100,000 miles elsewhere. A 2023, 2024 or 2025 car is covered for 10 years or 150,000 miles in California and the states Chrysler lists for that year, and 8 years or 100,000 miles elsewhere. Chrysler's 2026 booklet gives 8 years or 100,000 miles.",
+      },
+      {
+        question: "Which states get the 150,000-mile Pacifica Hybrid battery warranty?",
+        answer:
+          "Chrysler's 2024 and 2025 booklets each print two lists. On a 2025 car, section 2.5 names California, Massachusetts, New York, Oregon, Vermont and Washington; the same booklet's California Emission Warranty names California, Colorado, Connecticut, Maine, Maryland, Massachusetts, Minnesota, Nevada, New Jersey, New York, Oregon, Rhode Island, Vermont, Virginia and Washington for Transitional Zero Emission Vehicles. On a 2024 car, section 2.5 names California, Colorado, Connecticut, Delaware, Maine, Maryland, Massachusetts, New Jersey, New York, Oregon, Pennsylvania, Rhode Island, Vermont and Washington; the same booklet's California Emission Warranty names the same 15 as the 2025 booklet for Transitional Zero Emission Vehicles and restates the 10-year, 150,000-mile battery term. On a 2023 car: California, Colorado, Connecticut, Maine, Maryland, Massachusetts, New Jersey, New York, Oregon, Rhode Island and Vermont. For 2017 through 2022, Chrysler's booklets say California and states that adopt California ZEV regulations.",
+      },
+      {
+        question: "When does the Pacifica Hybrid battery warranty clock start?",
+        answer:
+          "At the start date of the Basic Limited Warranty, which is the earlier of the date you take delivery and the date the vehicle was first put into use, for example as a dealer demo or an FCA US company vehicle.",
+      },
+      {
+        question: "Does the 2024–2026 Pacifica Hybrid battery warranty cover gradual capacity loss?",
+        answer:
+          "No. Chrysler's 2024, 2025 and 2026 booklets place gradual capacity loss outside the High Voltage Lithium-Ion Battery Limited Warranty.",
+      },
+    ],
+  },
 ];
 
 export function findFactSheet(make: string, model: string, topic: string): FactSheetEntry | undefined {

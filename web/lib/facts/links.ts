@@ -94,6 +94,9 @@ export const FACT_LINK_MODELS: {
   { make: "tesla", model: "model-x", topics: ["battery-warranty"], name: "Tesla Model X", keys: ["modelx"] },
   { make: "bmw", model: "i7", topics: ["battery-warranty"], name: "BMW i7", keys: ["i7"] },
   { make: "audi", model: "q4-e-tron", topics: ["battery-warranty"], name: "Audi Q4 e-tron", keys: ["q4etron", "q4sportbacketron", "q4etronsportback"] },
+  { make: "subaru", model: "solterra", topics: ["battery-warranty"], name: "Subaru Solterra", keys: ["solterra"] },
+  { make: "lucid", model: "air", topics: ["battery-warranty"], name: "Lucid Air", keys: ["air"] },
+  { make: "chrysler", model: "pacifica-hybrid", topics: ["battery-warranty"], name: "Chrysler Pacifica Plug-in Hybrid", keys: ["pacificahybrid", "pacificapluginhybrid", "pacifica"] },
   { make: "bmw", model: "x5", topics: ["battery-warranty"], name: "BMW X5 plug-in hybrid", keys: ["x5", "x5phev", "x5xdrive50e"] },
   // Toyota renamed the RAV4 Prime (2021-2024) to RAV4 Plug-in Hybrid for 2025; one sheet, two exact keys.
   { make: "toyota", model: "rav4-plug-in-hybrid", topics: ["battery-warranty"], name: "Toyota RAV4 Plug-in Hybrid or RAV4 Prime", keys: ["rav4pluginhybrid", "rav4prime"] },
