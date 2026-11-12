@@ -1599,34 +1599,34 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     contentFile: "leaf-battery-warranty",
     pageTitle: "Nissan Leaf battery warranty: 96 months or 100,000 miles, capacity terms by year | Census",
     description:
-      "Nissan covers the Leaf's lithium-ion battery for 96 months or 100,000 miles in every model year from 2013 through 2026. Its capacity coverage is 60 months or 60,000 miles on 2013 through 2015 cars and 24 kWh 2016 and 2017 cars, and 96 months or 100,000 miles on 30 kWh 2016 and 2017 cars and every 2018 through 2026 car.",
+      "Nissan covers the Leaf's lithium-ion battery for 96 months or 100,000 miles in every model year from 2011 through 2026. Its capacity coverage is 60 months or 60,000 miles on 2011 through 2015 cars and 24 kWh 2016 and 2017 cars, and 96 months or 100,000 miles on 30 kWh 2016 and 2017 cars and every 2018 through 2026 car; for 2011 and 2012 cars it comes from a later Nissan owner letter.",
     breadcrumbLabel: "Nissan Leaf battery warranty",
     dateModified: "2026-11-11",
     faq: [
       {
         question: "How long is the Nissan Leaf battery warranty?",
         answer:
-          "The Lithium-Ion Battery Coverage for defects in materials or workmanship is 96 months or 100,000 miles, whichever comes first, in every model year from 2013 through 2026.",
+          "The Lithium-Ion Battery Coverage for defects in materials or workmanship is 96 months or 100,000 miles, whichever comes first, in every model year from 2011 through 2026.",
       },
       {
         question: "What battery capacity does Nissan guarantee on the Leaf?",
         answer:
-          "On 2013 through 2017 cars Nissan covers capacity loss below nine bars on the battery capacity level gauge, and on 2018 through 2025 cars below nine segments; a repair returns the battery to at least nine. The 2026 booklet covers capacity loss below 70% and restores the battery to at least 70%.",
+          "On 2011 through 2017 cars Nissan covers capacity loss below nine bars on the battery capacity level gauge, and on 2018 through 2025 cars below nine segments; a repair returns the battery to at least nine. The 2026 booklet covers capacity loss below 70% and restores the battery to at least 70%.",
       },
       {
         question: "How long does the Nissan Leaf capacity coverage last?",
         answer:
-          "60 months or 60,000 miles for 2013 through 2015 cars and for 2016 and 2017 cars with the 24 kWh battery; 96 months or 100,000 miles for 2016 and 2017 cars with the 30 kWh battery and for every 2018 through 2026 car.",
+          "60 months or 60,000 miles for 2011 through 2015 cars and for 2016 and 2017 cars with the 24 kWh battery; 96 months or 100,000 miles for 2016 and 2017 cars with the 30 kWh battery and for every 2018 through 2026 car.",
+      },
+      {
+        question: "Does the 2011 or 2012 Nissan Leaf have battery capacity coverage?",
+        answer:
+          "Yes, from Nissan's owner letter rather than the original booklet: it covers capacity loss below nine bars on the battery capacity level gauge for 60 months or 60,000 miles, whichever comes first, and repairs return the battery to at least nine bars.",
       },
       {
         question: "Does the Nissan Leaf battery warranty transfer to a second owner?",
         answer:
           "Yes. The warranty transfers to subsequent owners without any action on their part. It is instead void if, in the first six months after delivery to the original owner, ownership is transferred and the vehicle is registered outside the United States.",
-      },
-      {
-        question: "When does the Nissan Leaf battery warranty clock start?",
-        answer:
-          "On the date the vehicle is delivered to the first retail buyer or put into use, whichever is earlier.",
       },
     ],
   },
@@ -1969,24 +1969,24 @@ export const FACT_SHEETS: FactSheetEntry[] = [
     contentFile: "prius-plug-in-hybrid-battery-warranty",
     pageTitle: "Toyota Prius Prime and Prius Plug-in Hybrid battery warranty: 10 years or 150,000 miles from 2020 | Census",
     description:
-      "Toyota covers the hybrid battery of the 2020 and later Prius Prime and Prius Plug-in Hybrid for 10 years or 150,000 miles nationwide; 2017 to 2019 Prius Prime batteries carry 8 years or 100,000 miles outside the California-term states.",
+      "Toyota covers the hybrid battery of the 2020 and later Prius Prime and Prius Plug-in Hybrid for 10 years or 150,000 miles nationwide; 2012 to 2015 Prius Plug-in and 2017 to 2019 Prius Prime batteries carry 8 years or 100,000 miles outside the California-term states.",
     breadcrumbLabel: "Toyota Prius Plug-in Hybrid battery warranty",
     dateModified: "2026-11-11",
     faq: [
       {
         question: "How long is the Toyota Prius Prime and Prius Plug-in Hybrid battery warranty?",
         answer:
-          "For model years 2020 through 2027, the hybrid battery warranty runs 10 years or 150,000 miles from the in-service date nationwide. For 2017 through 2019 Prius Prime cars, the hybrid battery is covered for 8 years (96 months) or 100,000 miles under the Hybrid System Warranty, and for 10 years or 150,000 miles in California and the selected states with California-certified emission systems.",
+          "For model years 2020 through 2027, the hybrid battery warranty runs 10 years or 150,000 miles from the in-service date nationwide. For the 2012 to 2015 Prius Plug-in and the 2017 to 2019 Prius Prime, the hybrid battery is covered for 8 years (96 months) or 100,000 miles under the Hybrid System Warranty, and for 10 years or 150,000 miles in California and the selected states with California-certified emission systems.",
       },
       {
         question: "Which model year did Toyota lengthen the Prius plug-in hybrid battery warranty?",
         answer:
-          "2020. The 2019 Prius Prime guide lists the hybrid battery under the 8-year or 100,000-mile Hybrid System Warranty, and the 2020 Prius Prime guide gives it its own Hybrid Battery Warranty of 10 years or 150,000 miles.",
+          "2020. The 2012 to 2015 Prius Plug-in guides and the 2017 to 2019 Prius Prime guides list the hybrid battery under the 8-year or 100,000-mile Hybrid System Warranty, and the 2020 Prius Prime guide gives it its own Hybrid Battery Warranty of 10 years or 150,000 miles.",
       },
       {
         question: "Does the Toyota Prius plug-in hybrid battery warranty cover capacity loss?",
         answer:
-          "Not nationwide: every guide from 2017 through 2027 lists gradual reduction of lithium-ion battery capacity among the things the New Vehicle Limited Warranty does not cover. Capacity coverage comes only with the state term: a 2026 Prius Plug-in Hybrid in California, Massachusetts, New York, Oregon, Vermont or Washington, and a 2027 Prius Plug-in Hybrid registered and operated in California, Colorado, Delaware, Maryland, Massachusetts, New Jersey, New Mexico, New York, Oregon, Rhode Island, Vermont, Washington or Washington, D.C., is covered for 8 years or 100,000 miles if the battery's chargeable capacity drops below 70% of its original capacity, alongside 15-year or 150,000-mile defect coverage.",
+          "Not nationwide: every guide from 2012 through 2027 lists gradual reduction of lithium-ion battery capacity among the things the New Vehicle Limited Warranty does not cover. Capacity coverage comes only with the state term: a 2026 Prius Plug-in Hybrid in California, Massachusetts, New York, Oregon, Vermont or Washington, and a 2027 Prius Plug-in Hybrid registered and operated in California, Colorado, Delaware, Maryland, Massachusetts, New Jersey, New Mexico, New York, Oregon, Rhode Island, Vermont, Washington or Washington, D.C., is covered for 8 years or 100,000 miles if the battery's chargeable capacity drops below 70% of its original capacity, alongside 15-year or 150,000-mile defect coverage.",
       },
       {
         question: "Does the Prius Prime battery warranty transfer to a second owner?",
@@ -1997,6 +1997,120 @@ export const FACT_SHEETS: FactSheetEntry[] = [
         question: "When does the Toyota hybrid battery warranty clock start?",
         answer:
           "At the in-service date, which is the first date the vehicle is delivered to an ultimate purchaser, leased, or used as a company car or demonstrator.",
+      },
+    ],
+  },
+  {
+    make: "toyota",
+    model: "c-hr",
+    topic: "battery-warranty",
+    contentFile: "c-hr-battery-warranty",
+    pageTitle: "Toyota C-HR electric battery warranty: 8 years, 100,000 miles, 70% floor | Census",
+    description:
+      "Toyota covers the traction battery of the 2026 and 2027 electric C-HR for 8 years or 100,000 miles, including capacity loss below 70% of original, and the coverage transfers to later owners at no cost.",
+    breadcrumbLabel: "Toyota C-HR (electric) battery warranty",
+    dateModified: "2026-11-11",
+    faq: [
+      {
+        question: "How long is the battery warranty on the electric Toyota C-HR?",
+        answer:
+          "8 years or 100,000 miles from the in-service date, whichever occurs first, under the Electric Vehicle Drive Components Warranty, for the 2026 and 2027 C-HR.",
+      },
+      {
+        question: "What battery capacity does Toyota guarantee on the electric C-HR?",
+        answer:
+          "The warranty covers the traction battery below 70% of original capacity. Toyota considers a reduction of 30 percent or less normal and not covered. A warranty replacement may not restore the vehicle to an \"as new\" condition. Taking into consideration other factors, including the age and mileage of the vehicle, Toyota will ensure that the energy capacity of the replacement battery is at least equal to that of the original battery before the failure occurred.",
+      },
+      {
+        question: "Does the electric C-HR battery warranty transfer to a second owner?",
+        answer:
+          "Yes. Warranty coverage is automatically transferred at no cost to subsequent vehicle owners. A vehicle that has ever been branded salvage, total loss, true mileage unknown or similar title, or declared a total loss by an insurer or financial institution, is excluded from the Electric Vehicle Drive Components Warranty. On a 2027 car this exclusion does not apply to the emission control warranties.",
+      },
+      {
+        question: "When does the electric C-HR battery warranty start?",
+        answer:
+          "On the in-service date: the first date the vehicle is delivered to an ultimate purchaser, leased, or used as a company car or demonstrator.",
+      },
+      {
+        question: "Does the 2027 electric C-HR have an emissions warranty on the battery?",
+        answer:
+          "Yes. The 2027 guide adds a federal Zero-Emission Control Warranty of 8 years or 80,000 miles on the onboard charger assembly, high-voltage traction battery assembly, transaxle assembly and traction motor. It is in addition to the 8-year/100,000-mile Electric Vehicle Drive Components Warranty.",
+      },
+    ],
+  },
+  {
+    make: "lucid",
+    model: "gravity",
+    topic: "battery-warranty",
+    contentFile: "gravity-battery-warranty",
+    pageTitle: "Lucid Gravity battery warranty: 8 years, 100,000 miles, 70% capacity | Census",
+    description:
+      "Lucid covers the high voltage battery of every 2025, 2026 and 2027 Gravity for 8 years or 100,000 miles with a minimum 70% retention of battery capacity, and the coverage passes to later owners within the coverage period.",
+    breadcrumbLabel: "Lucid Gravity battery warranty",
+    dateModified: "2026-11-11",
+    faq: [
+      {
+        question: "How long is the Lucid Gravity battery warranty?",
+        answer:
+          "8 years or 100,000 miles, whichever comes first, under the High Voltage Battery Limited Warranty, for the 2025, 2026 and 2027 Gravity. The clock starts on the date the new vehicle is delivered to the first buyer or lessee, or the day it is first put into service as a demonstrator or fleet vehicle, whichever occurs first.",
+      },
+      {
+        question: "What battery capacity does Lucid guarantee on the Gravity?",
+        answer:
+          "A minimum 70% retention of battery capacity over the warranty period. If the high voltage battery falls below 70% capacity during the warranty period, as determined at the sole discretion of Lucid's trained and authorized representatives, Lucid will replace the high voltage battery. Lucid repairs, replaces, or adjusts the battery with a new, reconditioned, or remanufactured part at its discretion; the 2025 warranty adds that a replacement battery's capacity will be equal to or greater than that of the replaced battery at the time of replacement.",
+      },
+      {
+        question: "Does the Lucid Gravity battery warranty transfer to a second owner?",
+        answer:
+          "Yes. The warranty is provided to subsequent owners while the vehicle is within the applicable coverage period, and a subsequent owner must provide proof of ownership transfer. A vehicle branded as salvage, rebuilt, flood-damaged, junk or a total loss, among other brands, has its warranty voided: at Lucid's sole and exclusive discretion for 2025 and 2026, and outright for 2027.",
+      },
+      {
+        question: "What is not covered by the Lucid Gravity battery warranty?",
+        answer:
+          "Among the exclusions: damage caused by non-recommended or incompatible charging devices or methods, by alteration of the high voltage battery assembly, high voltage system or wiring by non-Lucid personnel, by failure to store the vehicle as the Owner's Manual describes, and by allowing the battery to discharge to a 0% state of charge or 0 miles of range. Loss of energy or power over time beyond the warranty's terms, and performance metrics such as EPA estimated range, are not covered.",
+      },
+      {
+        question: "Does the 2026 or 2027 Gravity have a California battery warranty?",
+        answer:
+          "Yes. For vehicles certified for sale in California and registered in a state that, at the time of delivery and of the claim, has adopted and is enforcing California's Advanced Clean Cars II regulations, the 2026 and 2027 warranties include a ZEV Battery Warranty: the battery is free from defects in materials and workmanship which cause its state of health to deteriorate to less than 70%, for 8 years or 100,000 miles, whichever first occurs.",
+      },
+    ],
+  },
+  {
+    make: "kia",
+    model: "ev3",
+    topic: "battery-warranty",
+    contentFile: "ev3-battery-warranty",
+    pageTitle: "Kia EV3 battery warranty: 10 years, 100,000 miles, 70% floor | Census",
+    description:
+      "Kia covers the 2027 EV3's EV system for 120 months or 100,000 miles, covers battery capacity loss below 70% for 10 years or 100,000 miles, and transfers the coverage to later owners.",
+    breadcrumbLabel: "Kia EV3 battery warranty",
+    dateModified: "2026-11-11",
+    faq: [
+      {
+        question: "How long is the Kia EV3 battery warranty?",
+        answer:
+          "On the 2027 EV3, the EV System Warranty runs 120 months or 100,000 miles and the Lithium-Ion Polymer Battery Capacity Coverage runs 10 years or 100,000 miles, whichever comes first in each case.",
+      },
+      {
+        question: "What battery capacity does Kia guarantee on the EV3?",
+        answer:
+          "Kia covers capacity loss below 70% of the original battery capacity, and a repair returns the pack to at least 70% of original. If possible, the battery's components are repaired or replaced and the original battery is returned to the vehicle; if necessary, it is replaced with a new or remanufactured Lithium-Ion Polymer Battery, and a repair or replacement may not return it to an \"as new\" 100% capacity.",
+      },
+      {
+        question: "Does the Kia EV3 battery warranty transfer to a second owner?",
+        answer:
+          "Yes. Any remaining portion of any warranty is fully transferable to subsequent owners except the 120 months/100,000 miles Power Train (Original Owner) warranty.",
+      },
+      {
+        question: "When does the Kia EV3 battery warranty clock start?",
+        answer:
+          "At the Date of First Service: the earliest of delivery to the first retail purchaser, lease, or placement into service as a company vehicle such as a demonstrator, rental or fleet vehicle.",
+      },
+      {
+        question: "What is not covered by the Kia EV3 battery warranty?",
+        answer:
+          "Besides its general exclusions, such as accidents, fire, theft, alteration and environmental damage including floods, Kia excludes EV System and Lithium-Ion Polymer Battery damage or failure caused by ambient temperatures above 122F (50C) for over 24 hours, storage below -22F (-30C) for over seven days, leaving the vehicle over 14 days at a zero or near zero state of charge, physical damage or intentionally attempting to reduce the battery's life, direct flame, immersion in water or fluids, opening the battery enclosure or service by someone other than a Kia certified EV technician, neglecting correct charging procedures, incompatible charging devices, damage from a public charger, non-Kia supplied charge cord or other third party EVSE, and incidental or consequential damage caused by the failure to repair an existing problem.",
       },
     ],
   },

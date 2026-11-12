@@ -65,6 +65,7 @@ export const FACT_LINK_MODELS: {
   { make: "jeep", model: "wrangler-4xe", topics: ["charging", "battery-warranty"], name: "Jeep Wrangler 4xe", keys: ["wrangler4xe", "wranglerunlimited4xe"] },
   // Battery-electric Niro only; "Niro" and "Niro Plug-In Hybrid" stay unmatched.
   { make: "kia", model: "niro-ev", topics: ["battery-warranty"], name: "Kia Niro EV", keys: ["niroev"] },
+  { make: "kia", model: "ev3", topics: ["battery-warranty"], name: "Kia EV3", keys: ["ev3"] },
   { make: "kia", model: "ev9", topics: ["charging", "heat-pump", "battery-warranty"], name: "Kia EV9", keys: ["ev9"] },
   // The Lyriq-V and Optiq-V are separate feed models (like the Ioniq 5 N) and get no link.
   { make: "cadillac", model: "lyriq", topics: ["charging", "battery-warranty"], name: "Cadillac Lyriq", keys: ["lyriq"] },
@@ -77,6 +78,9 @@ export const FACT_LINK_MODELS: {
   { make: "toyota", model: "rav4-plug-in-hybrid", topics: ["battery-warranty"], name: "Toyota RAV4 Plug-in Hybrid or RAV4 Prime", keys: ["rav4pluginhybrid", "rav4prime"] },
   // Prius Prime (2017-2024) became Prius Plug-in Hybrid for 2025; one sheet, two exact keys.
   { make: "toyota", model: "prius-plug-in-hybrid", topics: ["battery-warranty"], name: "Toyota Prius Plug-in Hybrid or Prius Prime", keys: ["priuspluginhybrid", "priusprime"] },
+  // The feed's "C-HR" is the electric car; the petrol C-HR left the US after 2022 and is not listed.
+  { make: "toyota", model: "c-hr", topics: ["battery-warranty"], name: "electric Toyota C-HR", keys: ["chr"] },
+  { make: "lucid", model: "gravity", topics: ["battery-warranty"], name: "Lucid Gravity", keys: ["gravity"] },
   { make: "cadillac", model: "vistiq", topics: ["battery-warranty"], name: "Cadillac Vistiq", keys: ["vistiq"] },
   { make: "cadillac", model: "optiq", topics: ["charging", "battery-warranty"], name: "Cadillac Optiq", keys: ["optiq"] },
   // "Blazer EV Police Package" is a separate fleet spelling and gets no link;

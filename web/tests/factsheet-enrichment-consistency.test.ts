@@ -55,6 +55,9 @@ const MODEL_MAP: Record<string, { make: string; models: string[] }> = {
   // it if the sheet ever gains a two-column year table.
   "kia/ev9": { make: "KIA", models: ["EV9"] },
   "kia/niro-ev": { make: "KIA", models: ["Niro EV"] },
+  "kia/ev3": { make: "KIA", models: ["EV3"] },
+  "lucid/gravity": { make: "LUCID", models: ["Gravity"] },
+  "toyota/c-hr": { make: "TOYOTA", models: ["C-HR"] },
   "cadillac/vistiq": { make: "CADILLAC", models: ["Vistiq"] },
   "jeep/grand-cherokee-4xe": { make: "JEEP", models: ["Grand Cherokee 4xe"] },
   "volkswagen/id-4": { make: "VOLKSWAGEN", models: ["ID.4"] },
