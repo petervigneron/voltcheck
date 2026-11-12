@@ -58,3 +58,25 @@ test("batches and garbage", async () => {
   assert.equal((await server.handle({ hello: "world" })).status, 400);
   assert.equal((await server.handle([])).status, 400);
 });
+
+test("tools/list carries each tool's title and annotations, and omits them when a tool has none", async () => {
+  const s = createMcpServer({
+    name: "t",
+    title: "T Server",
+    version: "1",
+    tools: [
+      { name: "a", title: "Tool A", description: "d", inputSchema: {}, annotations: { readOnlyHint: true, destructiveHint: false }, handler: async () => 1 },
+      { name: "b", description: "d", inputSchema: {}, handler: async () => 1 },
+    ],
+  });
+  const init = (await s.handle({ jsonrpc: "2.0", id: 1, method: "initialize", params: {} })).body as { result: { serverInfo: { title?: string } } };
+  assert.equal(init.result.serverInfo.title, "T Server");
+  const list = (await s.handle({ jsonrpc: "2.0", id: 2, method: "tools/list" })).body as {
+    result: { tools: { name: string; title?: string; annotations?: Record<string, unknown> }[] };
+  };
+  const [a, b] = list.result.tools;
+  assert.equal(a.title, "Tool A");
+  assert.deepEqual(a.annotations, { title: "Tool A", readOnlyHint: true, destructiveHint: false });
+  assert.equal("title" in b, false);
+  assert.equal("annotations" in b, false);
+});

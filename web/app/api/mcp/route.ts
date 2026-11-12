@@ -9,7 +9,7 @@ import { INSTRUCTIONS, TOOLS } from "@/lib/mcp/tools";
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
-const server = createMcpServer({ name: "census", version: "1.0.0", instructions: INSTRUCTIONS, tools: TOOLS });
+const server = createMcpServer({ name: "census", title: "Census EV", version: "1.1.0", instructions: INSTRUCTIONS, tools: TOOLS });
 
 export const OPTIONS = options;
 

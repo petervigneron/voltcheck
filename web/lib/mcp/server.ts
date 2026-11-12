@@ -8,15 +8,34 @@
 // read-only search needs. Pure: no I/O of its own, so the tests can drive
 // it with plain objects.
 
+/**
+ * What a tool does to the world, as the spec's hints. A host uses them to
+ * decide whether a call needs the user's confirmation, and a directory uses
+ * them to decide whether to list the server at all (Claude's connector
+ * directory requires a title and a read-only or destructive hint on every
+ * tool). They are hints, not enforcement: the handler is what is true.
+ */
+export interface McpToolAnnotations {
+  readOnlyHint?: boolean;
+  destructiveHint?: boolean;
+  idempotentHint?: boolean;
+  openWorldHint?: boolean;
+}
+
 export interface McpTool {
   name: string;
+  /** Human-readable name for a host's UI. */
+  title?: string;
   description: string;
   inputSchema: Record<string, unknown>;
+  annotations?: McpToolAnnotations;
   handler: (args: Record<string, unknown>) => Promise<unknown>;
 }
 
 export interface McpServerOptions {
   name: string;
+  /** Human-readable name for a host's UI. */
+  title?: string;
   version: string;
   instructions?: string;
   tools: McpTool[];
@@ -56,14 +75,22 @@ export function createMcpServer(o: McpServerOptions): { handle: (body: unknown) 
         return ok(id, {
           protocolVersion: SUPPORTED.has(asked) ? asked : PROTOCOL_VERSION,
           capabilities: { tools: { listChanged: false } },
-          serverInfo: { name: o.name, version: o.version },
+          serverInfo: { name: o.name, ...(o.title ? { title: o.title } : {}), version: o.version },
           ...(o.instructions ? { instructions: o.instructions } : {}),
         });
       }
       case "ping":
         return notification ? undefined : ok(id, {});
       case "tools/list":
-        return ok(id, { tools: o.tools.map(({ name, description, inputSchema }) => ({ name, description, inputSchema })) });
+        return ok(id, {
+          tools: o.tools.map(({ name, title, description, inputSchema, annotations }) => ({
+            name,
+            ...(title ? { title } : {}),
+            description,
+            inputSchema,
+            ...(annotations ? { annotations: { ...(title ? { title } : {}), ...annotations } } : {}),
+          })),
+        });
       case "tools/call": {
         const name = String(req.params?.name ?? "");
         const tool = tools.get(name);
