@@ -2545,6 +2545,148 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       },
     ],
   },
+  {
+    make: "audi",
+    model: "q6-e-tron",
+    topic: "battery-warranty",
+    contentFile: "q6-e-tron-battery-warranty",
+    pageTitle: "Audi Q6 e-tron battery warranty: 8 years or 100,000 miles | Census",
+    description:
+      "Audi covers the Q6 e-tron's high-voltage battery for 8 years or 100,000 miles, whichever occurs first, including repair when its State of Health is below 70% compared to the condition at delivery, on 2025 and 2027 cars; 2027 cars also carry a federal RESS warranty of 8 years or 80,000 miles.",
+    breadcrumbLabel: "Audi Q6 e-tron battery warranty",
+    dateModified: "2026-11-11",
+    faq: [
+      {
+        question: "How long is the Audi Q6 e-tron battery warranty?",
+        answer:
+          "8 years or 100,000 miles, whichever occurs first, on 2025 and 2027 Q6 e-tron, SQ6 e-tron and Sportback models.",
+      },
+      {
+        question: "Does the Audi Q6 e-tron battery warranty cover loss of capacity?",
+        answer:
+          "Yes. Within 8 years or 100,000 miles, whichever occurs first, the warranty covers repair when the battery's SOH (State of Health) is below 70% compared to the condition at the time of delivery. A replacement high-voltage battery provides an SOH of at least 70% and may not be of an \"as new\" condition with an SOH of 100%.",
+      },
+      {
+        question: "What is the federal RESS warranty on the 2027 Q6 e-tron?",
+        answer:
+          "A Rechargeable Energy Storage System warranty of 8 years or 80,000 miles from the in-service date, whichever occurs first, covering defects in manufacturer's material and workmanship on all components which have the primary purpose of high voltage system charging, high voltage system energy storage, and transmission of electrical power to move the vehicle.",
+      },
+      {
+        question: "Who can repair the Audi Q6 e-tron battery under warranty?",
+        answer:
+          "An Audi dealer designated as an Audi e-tron certified dealer, with a certified technician. Service, repair, or any damage resulting from services or repairs performed at a facility that is not an Audi e-tron certified dealer by a non-certified technician is not covered.",
+      },
+    ],
+  },
+  {
+    make: "mercedes-benz",
+    model: "eqs",
+    topic: "battery-warranty",
+    contentFile: "eqs-battery-warranty",
+    pageTitle: "Mercedes-Benz EQS battery warranty by model year: 192 Ah sedan, 197 Ah SUV | Census",
+    description:
+      "Mercedes-Benz USA covers the lithium-ion battery in the 2023, 2025 and 2026 EQS Sedan and EQS SUV for 10 years or 155,000 miles for a battery maintaining its certified status, warrants it to keep at least 192 Ah (EQS) or 197 Ah (EQS SUV), and extends the coverage to each subsequent owner.",
+    breadcrumbLabel: "Mercedes-Benz EQS battery warranty",
+    dateModified: "2026-11-11",
+    faq: [
+      {
+        question: "How long is the Mercedes-Benz EQS battery warranty?",
+        answer:
+          "For the 2023, 2025 and 2026 EQS Sedan and EQS SUV, Mercedes-Benz USA's Battery Limited Warranty runs 10 years or 155,000 miles, whichever occurs first, for a battery maintaining its certified status. It supplements the New Vehicle Limited Warranty of 48 months or 50,000 miles and covers defects arising after that warranty expires.",
+      },
+      {
+        question: "What battery capacity does Mercedes-Benz guarantee on the EQS?",
+        answer:
+          "192 Ah for the EQS and 197 Ah for the EQS SUV. Mercedes-Benz USA repairs or replaces the battery if its capacity drops below that figure during the coverage. A repair or replacement may not return the battery to \"as new\" or 100% energy content, but will have at least that figure; if necessary, the battery is replaced with a new or factory re-manufactured lithium-ion battery. The measurement method and the repair decision are at the sole discretion of Mercedes-Benz.",
+      },
+      {
+        question: "Does the EQS battery warranty transfer to a second owner?",
+        answer:
+          "Yes. Mercedes-Benz USA warrants the battery to the original and each subsequent owner.",
+      },
+      {
+        question: "When does the EQS battery warranty start?",
+        answer:
+          "On the same date as the New Vehicle Limited Warranty. For 2023 and 2025 cars that is delivery to the first retail purchaser, or entry into service as an authorized dealership demonstrator or an MBUSA, MBUSI or MBRDNA company vehicle, but no later than 18 months from the production date. For 2026 cars, except as otherwise required by applicable law, it is delivery to the first retail purchaser or lessee, or entry into service as such a demonstrator or company vehicle, but no later than 24 months from the production date.",
+      },
+      {
+        question: "What does the EQS battery warranty not cover?",
+        answer:
+          "Among other exclusions, damage or failures caused by leaving the vehicle parked for more than 14 days with a 0% battery charge displayed, physically damaging the battery, a direct flame, immersion in water or fluids, opening the battery enclosure or having it serviced by someone other than an authorized Mercedes-Benz Dealership, incorrect charging procedures or incompatible charging devices, and using the vehicle as a power source for functions other than factory installed equipment. Gradual capacity loss is not covered beyond the warranty's terms, and a vehicle declared a total loss or write-off has no coverage.",
+      },
+    ],
+  },
+  {
+    make: "gmc",
+    model: "sierra-ev",
+    topic: "battery-warranty",
+    contentFile: "sierra-ev-battery-warranty",
+    pageTitle: "GMC Sierra EV battery warranty: 8 years or 100,000 miles, 75% floor | Census",
+    description:
+      "GMC Sierra EV battery coverage, model years 2024 to 2027: 8 years or 100,000 miles, a repair or replacement below 75% capacity, and it transfers to later owners. Sourced to GMC's own warranty booklets.",
+    breadcrumbLabel: "GMC Sierra EV battery warranty",
+    dateModified: "2026-11-11",
+    faq: [
+      {
+        question: "How long is the GMC Sierra EV battery warranty?",
+        answer:
+          "The propulsion battery pack and its internal components are covered for 8 years or 100,000 miles, whichever comes first, in the 2024, 2025, 2026 and 2027 booklets. The clock starts on the date the vehicle is first delivered or put in use.",
+      },
+      {
+        question: "At what point does GMC replace a degraded Sierra EV battery?",
+        answer:
+          "The battery is replaced or repaired if its capacity falls below 75% of its original value during the warranty period, as determined by a certified dealer, with a battery appropriate for the age and mileage of the vehicle. Repairs use new or refurbished components, at GMC's discretion.",
+      },
+      {
+        question: "Does the GMC Sierra EV battery warranty transfer to a second owner?",
+        answer:
+          "Yes. The warranty is provided to the original and any subsequent owners of the vehicle during the warranty period. For 2024 trucks the booklet adds that the battery warranty is transferable at no cost to any subsequent person who assumes ownership within the 8 years or 100,000 miles term, with no deductibles.",
+      },
+      {
+        question: "What is not covered by the GMC Sierra EV battery warranty?",
+        answer:
+          "The booklets' exclusions include alteration, modification or tampering after final assembly, damage from collision, fire, theft or water or fluid contamination, and damage from failure to follow the recommended maintenance schedule intervals. On 2025 to 2027 trucks they also exclude damage from incompatible charging methods or an adapter General Motors does not sell or approve, excessive non-propulsion use of the battery, and damage from failure to install GMC Over-the-Air software updates within 45 days. The warranty is void on vehicles currently or previously titled as salvaged, scrapped, junked, or otherwise considered a total loss.",
+      },
+    ],
+  },
+  {
+    make: "chevrolet",
+    model: "silverado-ev",
+    topic: "battery-warranty",
+    contentFile: "silverado-ev-battery-warranty",
+    pageTitle: "Chevrolet Silverado EV battery warranty: 8 years, 100,000 miles, 75% floor | Census",
+    description:
+      "Chevrolet covers the propulsion battery of the 2024 through 2027 Silverado EV for 8 years or 100,000 miles and replaces or repairs it if capacity falls below 75% of its original value. The coverage passes to later owners within the warranty period.",
+    breadcrumbLabel: "Chevrolet Silverado EV battery warranty",
+    dateModified: "2026-11-11",
+    faq: [
+      {
+        question: "How long is the Chevrolet Silverado EV battery warranty?",
+        answer:
+          "For model years 2024 through 2027, the propulsion battery pack and its internal components are covered for 8 years or 100,000 miles, whichever comes first. The warranty period begins on the date the vehicle is first delivered or put in use.",
+      },
+      {
+        question: "What battery capacity does Chevrolet guarantee on the Silverado EV?",
+        answer:
+          "The battery is replaced or repaired if its capacity falls below 75% of its original value during the warranty period, as determined by a certified dealer, with a battery appropriate for the age and mileage of the vehicle. Chevrolet repairs or replaces a propulsion battery that needs service due to a defect in materials or workmanship with new or refurbished components, at its discretion.",
+      },
+      {
+        question: "Does the Chevrolet Silverado EV battery warranty transfer to a second owner?",
+        answer:
+          "Yes. The 2024 booklet says the battery coverage is transferable at no cost to any subsequent person who assumes ownership of the vehicle within the 8 years or 100,000 miles term, with no deductibles. The 2025, 2026 and 2027 booklets say the warranty is provided to the original owner and any subsequent owners of the vehicle during the warranty period.",
+      },
+      {
+        question: "Can I use the Silverado EV battery to power a job site or my home without losing the warranty?",
+        answer:
+          "For model years 2025 through 2027, normal use of the main battery for backup power during outages, reasonably selling energy back to the electrical grid, and reasonable use as a mobile power source such as job site power or vehicle to vehicle charging is covered. Excessive use for non-propulsion purposes, including semi-permanent or permanent daily power provisions, is not covered, and General Motors reserves the right to curtail excessive non-propulsion use that is determined to be harmful to the battery.",
+      },
+      {
+        question: "What is not covered by the Chevrolet Silverado EV battery warranty?",
+        answer:
+          "The booklets' exclusions include damage from collision, fire, theft, freezing, vandalism, riot, explosion or objects striking the vehicle; alteration, modification or tampering after final assembly; installation of non-GM parts; water or fluid contamination; and failure to follow the recommended maintenance schedule. The warranty is void on vehicles currently or previously titled as salvaged, scrapped, junked or otherwise considered a total loss. The 2025 through 2027 booklets add damage to the battery from incompatible charging methods or an adapter not sold or approved by General Motors (in 2027, an adapter or charger), and damage from failure to install Chevrolet provided Over-the-Air software updates within 45 days of availability.",
+      },
+    ],
+  },
 ];
 
 export function findFactSheet(make: string, model: string, topic: string): FactSheetEntry | undefined {
