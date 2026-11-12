@@ -41,6 +41,7 @@ export const FACT_LINK_MODELS: {
   keys: string[];
 }[] = [
   { make: "nissan", model: "ariya", topics: ["charging", "heat-pump", "battery-warranty"], name: "Nissan Ariya", keys: ["ariya"] },
+  { make: "nissan", model: "rogue-plug-in-hybrid", topics: ["battery-warranty"], name: "Nissan Rogue Plug-in Hybrid", keys: ["roguepluginhybrid"] },
   { make: "nissan", model: "leaf", topics: ["charging", "heat-pump", "battery-warranty"], name: "Nissan Leaf", keys: ["leaf"] },
   { make: "hyundai", model: "ioniq-5", topics: ["charging", "heat-pump", "battery-warranty"], name: "Hyundai Ioniq 5", keys: ["ioniq5"] },
   { make: "hyundai", model: "ioniq-6", topics: ["charging", "heat-pump", "battery-warranty"], name: "Hyundai Ioniq 6", keys: ["ioniq6"] },
@@ -66,6 +67,7 @@ export const FACT_LINK_MODELS: {
   // Battery-electric Niro only; "Niro" and "Niro Plug-In Hybrid" stay unmatched.
   { make: "kia", model: "niro-ev", topics: ["battery-warranty"], name: "Kia Niro EV", keys: ["niroev"] },
   { make: "kia", model: "ev3", topics: ["battery-warranty"], name: "Kia EV3", keys: ["ev3"] },
+  { make: "kia", model: "sportage-plug-in-hybrid", topics: ["battery-warranty"], name: "Kia Sportage Plug-in Hybrid", keys: ["sportagepluginhybrid"] },
   { make: "kia", model: "ev9", topics: ["charging", "heat-pump", "battery-warranty"], name: "Kia EV9", keys: ["ev9"] },
   // The Lyriq-V and Optiq-V are separate feed models (like the Ioniq 5 N) and get no link.
   { make: "cadillac", model: "lyriq", topics: ["charging", "battery-warranty"], name: "Cadillac Lyriq", keys: ["lyriq"] },
@@ -82,6 +84,8 @@ export const FACT_LINK_MODELS: {
   { make: "toyota", model: "c-hr", topics: ["battery-warranty"], name: "electric Toyota C-HR", keys: ["chr"] },
   { make: "lucid", model: "gravity", topics: ["battery-warranty"], name: "Lucid Gravity", keys: ["gravity"] },
   { make: "cadillac", model: "vistiq", topics: ["battery-warranty"], name: "Cadillac Vistiq", keys: ["vistiq"] },
+  { make: "cadillac", model: "escalade-iq", topics: ["battery-warranty"], name: "Cadillac Escalade IQ", keys: ["escaladeiq", "escaladeiql"] },
+  { make: "porsche", model: "taycan", topics: ["battery-warranty"], name: "Porsche Taycan", keys: ["taycan"] },
   { make: "cadillac", model: "optiq", topics: ["charging", "battery-warranty"], name: "Cadillac Optiq", keys: ["optiq"] },
   // "Blazer EV Police Package" is a separate fleet spelling and gets no link;
   // petrol "BLAZER" and "Equinox" stay unmatched.

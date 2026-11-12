@@ -2114,6 +2114,148 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       },
     ],
   },
+  {
+    make: "cadillac",
+    model: "escalade-iq",
+    topic: "battery-warranty",
+    contentFile: "escalade-iq-battery-warranty",
+    pageTitle: "Cadillac Escalade IQ and IQL battery warranty: 8 years, 100,000 miles, 75% floor | Census",
+    description:
+      "Cadillac covers the propulsion battery of the 2025 and 2026 Escalade IQ and the 2026 Escalade IQL for 8 years or 100,000 miles and replaces or repairs it if capacity falls below 75% of its original value. The coverage passes to subsequent owners during the warranty period.",
+    breadcrumbLabel: "Cadillac Escalade IQ and IQL battery warranty",
+    dateModified: "2026-11-11",
+    faq: [
+      {
+        question: "How long is the Cadillac Escalade IQ battery warranty?",
+        answer:
+          "For the 2025 and 2026 Escalade IQ and the 2026 Escalade IQL, the propulsion battery pack and its internal components are covered for 8 years or 100,000 miles, whichever comes first, starting on the date the vehicle is first delivered or put in use.",
+      },
+      {
+        question: "What battery capacity does Cadillac guarantee on the Escalade IQ?",
+        answer:
+          "The battery is replaced or repaired if its capacity falls below 75% of its original value during the warranty period, as determined by a certified dealer, with a battery appropriate for the age and mileage of the vehicle.",
+      },
+      {
+        question: "Does the Cadillac Escalade IQ battery warranty transfer to a second owner?",
+        answer:
+          "Yes. The warranty is provided to the original owner and any subsequent owners of the vehicle during the warranty period.",
+      },
+      {
+        question: "What is not covered by the Cadillac Escalade IQ battery warranty?",
+        answer:
+          "The booklets' exclusions include damage to the battery from incompatible charging methods or an adapter not sold or approved by General Motors, excessive non-propulsion use of the battery including semi-permanent or permanent daily power provisions, damage from failure to install Over-the-Air software updates within 45 days of availability, alterations to the vehicle, and vehicles titled as salvaged, scrapped, junked or a total loss.",
+      },
+    ],
+  },
+  {
+    make: "nissan",
+    model: "rogue-plug-in-hybrid",
+    topic: "battery-warranty",
+    contentFile: "rogue-plug-in-hybrid-battery-warranty",
+    pageTitle: "Nissan Rogue Plug-in Hybrid battery warranty: 96 months, 100,000 miles | Census",
+    description:
+      "Nissan covers the 2026 Rogue Plug-in Hybrid's lithium-ion battery under its PHEV System Coverage for 96 months or 100,000 miles, and the coverage transfers to later owners.",
+    breadcrumbLabel: "Nissan Rogue Plug-in Hybrid battery warranty",
+    dateModified: "2026-11-11",
+    faq: [
+      {
+        question: "How long is the Nissan Rogue Plug-in Hybrid battery warranty?",
+        answer:
+          "For model year 2026, 96 months or 100,000 miles, whichever comes first, under Nissan's Plug-In Hybrid Electric Vehicle (PHEV) System Coverage. It covers repairs needed to correct defects in materials or workmanship.",
+      },
+      {
+        question: "What parts does the Rogue Plug-in Hybrid's PHEV System Coverage include?",
+        answer:
+          "Nissan's 2026 booklet lists nine PHEV System components: the Lithium-Ion Battery, HPCM/VCM, Lithium-Ion Battery Controller, Inverter, DC/DC Converter, Motor, Gear Box, Lithium-Ion Battery Cooling System and INV Cooling System.",
+      },
+      {
+        question: "Does the Rogue Plug-in Hybrid battery warranty transfer to a second owner?",
+        answer:
+          "Yes, without any action on the owner's part. The warranty is instead void if, in the first six months after delivery to the original owner, ownership is transferred and the vehicle is registered outside the United States.",
+      },
+      {
+        question: "When does the Rogue Plug-in Hybrid battery warranty start?",
+        answer:
+          "On the date the vehicle is delivered to the first retail buyer or put into use, whichever is earlier.",
+      },
+    ],
+  },
+  {
+    make: "porsche",
+    model: "taycan",
+    topic: "battery-warranty",
+    contentFile: "taycan-battery-warranty",
+    pageTitle: "Porsche Taycan battery warranty by model year: 8 years, 70% floor | Census",
+    description:
+      "Porsche covers the Taycan high-voltage battery for 8 years or 100,000 miles (2021 and 2022 original printings: 80,000 miles) against defects and against net capacity falling below 80% within 3 years/37,500 miles or 70% within 8 years/100,000 miles (80,000 in those printings), model years 2020 through 2027.",
+    breadcrumbLabel: "Porsche Taycan battery warranty",
+    dateModified: "2026-11-11",
+    faq: [
+      {
+        question: "How long is the Porsche Taycan battery warranty?",
+        answer:
+          "8 years or 100,000 miles, whichever comes first, for model years 2020 and 2023 through 2027. For 2021 and 2022, Porsche's original printings give 8 years or 80,000 miles and its January 2024 editions give 8 years or 100,000 miles. The coverage is against defects in materials or workmanship and against excessive loss of capacity.",
+      },
+      {
+        question: "What battery capacity does Porsche guarantee on the Taycan?",
+        answer:
+          "Porsche's Warranted Value is 80% of net battery capacity within the first 3 years/37,500 miles and 70% within the first 8 years/100,000 miles, measured at an authorized Porsche dealer or Center. For 2021 and 2022, the original printings tie the 70% to 8 years/80,000 miles and the January 2024 editions to 8 years/100,000 miles. The 2020 through 2025 booklets also set 100% of net battery capacity at first delivery or first use.",
+      },
+      {
+        question: "What does Porsche do if a Taycan battery fails under warranty?",
+        answer:
+          "PCNA repairs the battery or replaces it with a new, reconditioned, or remanufactured part, at its sole discretion. The repaired or replacement battery has at least the Warranted Value of energy capacity, and the warranty repair or replacement may not return net battery capacity to 100%.",
+      },
+      {
+        question: "When does the Porsche Taycan battery warranty start?",
+        answer:
+          "On the date the car is first delivered to the first retail purchaser or the date it is first used as a demonstrator, lease, or company car, whichever comes first.",
+      },
+      {
+        question: "What is not covered by the Porsche Taycan battery warranty?",
+        answer:
+          "Porsche excludes damage or capacity loss caused by abuse, misuse, negligence, accident, improper maintenance, operation, storage, or transport, including removing or improperly opening the battery, motorsport use or overloading, open flame, immersion, high-pressure or steam cleaning, accidents, hail and floods, unapproved parts or tuning, leaving the car over 14 days at or near a zero state of charge, neglecting to follow correct or recommended charging procedures, and incompatible charging devices.",
+      },
+    ],
+  },
+  {
+    make: "kia",
+    model: "sportage-plug-in-hybrid",
+    topic: "battery-warranty",
+    contentFile: "sportage-plug-in-hybrid-battery-warranty",
+    pageTitle: "Kia Sportage Plug-in Hybrid battery warranty: 10 years, 100,000 miles | Census",
+    description:
+      "Kia's Hybrid System Warranty covers the Sportage Plug-in Hybrid's hybrid battery pack for 10 years or 100,000 miles in model years 2023 through 2027, and the coverage transfers to later owners. California Emissions Vehicles get 10 years or 150,000 miles for 2023 through 2025, excluding Pennsylvania and Washington, and a 70% battery state-of-health warranty for 8 years or 100,000 miles for 2026 and 2027.",
+    breadcrumbLabel: "Kia Sportage Plug-in Hybrid battery warranty",
+    dateModified: "2026-11-11",
+    faq: [
+      {
+        question: "How long is the Kia Sportage Plug-in Hybrid battery warranty?",
+        answer:
+          "Kia's Hybrid System Warranty covers the Hybrid Battery Pack Assy for 10 years or 100,000 miles, whichever comes first, for every model year from 2023 through 2027. It also covers the Hybrid Starter & Generator, Hybrid Power Control Unit, Traction Motor, clutch, On board charger (OBC) and all internal parts.",
+      },
+      {
+        question: "Is the Sportage Plug-in Hybrid battery warranty longer in California?",
+        answer:
+          "For model years 2023 through 2025, the Hybrid System of a California Emissions Vehicle is covered for 10 years or 150,000 miles, excluding Pennsylvania and Washington. For 2026 and 2027, the California Emission Control Warranty's parts list gives the Hybrid Battery Pack Assy 10 years or 100,000 miles, and its note excepts the high voltage battery from the 15-year or 150,000-mile term it gives a Sportage plug-in hybrid's other listed parts, while the warranty statement on printed pp. 25 and 27 says all listed parts of a plug-in hybrid get 15 years or 150,000 miles. The battery is warranted to deteriorate to no less than 70% battery state of health for 8 years or 100,000 miles. The 2023 through 2026 manuals name California, Connecticut, Delaware, Maine, Maryland, Massachusetts, New Jersey, New York, Oregon, Pennsylvania, Rhode Island, Vermont and Washington for the California Emission Warranty; the 2027 manual's Federal Emission Control Warranty section adds Colorado, Minnesota, Nevada, New Mexico and Virginia, while its California Emission Control Warranty section keeps the earlier list.",
+      },
+      {
+        question: "Does the Kia Sportage Plug-in Hybrid battery warranty transfer to a second owner?",
+        answer:
+          "Yes. Kia states that any remaining portion of any warranty, except the 120 month/100,000 mile Power Train (Original Owner) warranty, is fully transferable to subsequent owners. The Power Train Limited Warranty is a separate coverage of the engine, transaxle, axles, transmission, differentials and propeller shafts; the hybrid battery is covered by the Hybrid System Warranty.",
+      },
+      {
+        question: "When does the Sportage Plug-in Hybrid battery warranty start?",
+        answer:
+          "At the Date of First Service: the first date the vehicle is delivered to the first retail purchaser, is leased, or is placed into service as a company vehicle, for example as a demonstrator, rental or fleet vehicle, whichever is earliest.",
+      },
+      {
+        question: "What is not covered by the Sportage Plug-in Hybrid battery warranty?",
+        answer:
+          "The Hybrid System Warranty uses the New Vehicle Limited Warranty's exclusions: damage from factors beyond the manufacturer's control such as misuse, accidents, alteration and environmental damage; lack of maintenance or the wrong fuel, oil or lubricants; altered mileage; incidental and consequential damages; and any vehicle that has ever been or should have been issued a salvage or similar branded title, or declared a total loss. The salvage exclusion does not apply to Emission Warranties, and the Federal Emission Control Warranty lists the Hybrid Battery Pack Assy for 10 years or 100,000 miles.",
+      },
+    ],
+  },
 ];
 
 export function findFactSheet(make: string, model: string, topic: string): FactSheetEntry | undefined {
