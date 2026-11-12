@@ -2256,6 +2256,44 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       },
     ],
   },
+  {
+    make: "mercedes-benz",
+    model: "gle",
+    topic: "battery-warranty",
+    contentFile: "gle-battery-warranty",
+    pageTitle: "Mercedes-Benz GLE plug-in hybrid battery warranty: 6 years or 62,000 miles | Census",
+    description:
+      "Mercedes-Benz USA covers the high-voltage battery in the 2024 through 2026 GLE plug-in hybrids for 6 years or 62,000 miles, and for 10 years or 150,000 miles on SULEV cars registered in California and the other listed states.",
+    breadcrumbLabel: "Mercedes-Benz GLE plug-in hybrid battery warranty",
+    dateModified: "2026-11-11",
+    faq: [
+      {
+        question: "How long is the Mercedes-Benz GLE plug-in hybrid battery warranty?",
+        answer:
+          "For the 2024 through 2026 model years, Mercedes-Benz USA's High-Voltage Battery Limited Warranty runs 6 years or 62,000 miles, whichever occurs first. It supplements the New Vehicle Limited Warranty of 48 months or 50,000 miles and covers defects arising after that warranty expires.",
+      },
+      {
+        question: "Is the GLE plug-in hybrid battery warranty longer in California?",
+        answer:
+          "Yes, for new plug-in hybrids that meet the SULEV emission standard, are first sold by an authorized Mercedes-Benz dealership and are registered in a listed state: 10 years or 150,000 miles, whichever occurs first. The 2024 booklet lists CA, CO, CT, MA, MD, ME, NJ, NY, OR, RI and VT; the 2025 and 2026 booklets' coverage chart and California Extended section list CA, CO, CT, MA, MD, ME, MN, NJ, NV, NY, OR, RI, VA, VT and WA, while their emission parts-list note names 11 states, leaving out MN, NV, VA and WA. SULEV status is shown on the VECI label in the engine compartment.",
+      },
+      {
+        question: "Does the GLE plug-in hybrid battery warranty transfer to a second owner?",
+        answer:
+          "Yes. Mercedes-Benz USA warrants the high-voltage battery to the original and each subsequent owner.",
+      },
+      {
+        question: "When does the GLE plug-in hybrid battery warranty start?",
+        answer:
+          "On the same date as the New Vehicle Limited Warranty: delivery to the first retail purchaser, or entry into service as an authorized dealership demonstrator or an MBUSA, MBUSI or MBRDNA company vehicle, but no later than 18 months from the production date for 2024 and 2025 cars and 24 months for 2026 cars, whose booklet also names delivery to a first lessee.",
+      },
+      {
+        question: "What does the GLE plug-in hybrid battery warranty not cover?",
+        answer:
+          "Among other exclusions, damage or failures caused by physically damaging the battery, a direct flame, immersion in water or fluids, opening the battery enclosure or having it serviced by someone other than an authorized Mercedes-Benz Dealership, incorrect charging procedures or incompatible charging devices, and using the vehicle as a power source for functions other than factory installed equipment. Gradual capacity loss is not covered beyond the warranty's terms, and a vehicle declared a total loss or write-off has no coverage.",
+      },
+    ],
+  },
 ];
 
 export function findFactSheet(make: string, model: string, topic: string): FactSheetEntry | undefined {
