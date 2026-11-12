@@ -8,7 +8,7 @@
 // in-service bounds must come back "unknown", and none may come back "active".
 import test from "node:test";
 import assert from "node:assert/strict";
-import { batteryWarranty } from "@/lib/listings/warranty";
+import { batteryWarranty, warrantyUnknowableForTitle } from "@/lib/listings/warranty";
 import type { EnrichmentRow } from "@/lib/types";
 import type { Listing } from "@/lib/listings/types";
 
@@ -157,4 +157,11 @@ test("the documented floor cannot keep a warranty in force past its own term", (
   // 26 Apr 2030 has passed: the earliest in-service is out of time, the latest
   // (a 2023 sale) is not — unknown, exactly as the generic bounds would say.
   assert.equal(batteryWarranty(row, truck, new Date("2030-05-01T00:00:00Z")).state, "unknown");
+});
+
+test("a branded title of unstated kind silences the warranty block; a repurchase does not", () => {
+  assert.equal(warrantyUnknowableForTitle({ brandedTitleDisclosed: true }), true);
+  assert.equal(warrantyUnknowableForTitle({ brandedTitleDisclosed: true, buybackDisclosed: true }), false);
+  assert.equal(warrantyUnknowableForTitle({ buybackDisclosed: true }), false);
+  assert.equal(warrantyUnknowableForTitle({}), false);
 });

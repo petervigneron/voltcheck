@@ -6,7 +6,7 @@ import { vehicleKind } from "@/lib/listings/kind";
 import { trimClaim } from "@/lib/listings/trimClaim";
 import { hasRealPrice } from "@/lib/listings/price";
 import { EnrichmentFacts } from "@/components/EnrichmentReport";
-import { batteryWarranty } from "@/lib/listings/warranty";
+import { batteryWarranty, warrantyUnknowableForTitle } from "@/lib/listings/warranty";
 import { factLinksFor } from "@/lib/facts/links";
 import { hubFor, hubPath } from "@/lib/listings/modelHubs";
 import { BackToResults } from "@/components/BackToResults";
@@ -155,6 +155,7 @@ export function Delisted({ listing }: { listing: DelistedListing }) {
                     plugIn={vehicleKind(e) === "PHEV"}
                     row={e.row}
                     warranty={batteryWarranty(e.row, listing)}
+                    titleBranded={warrantyUnknowableForTitle(listing)}
                   />
                 </div>
               </section>

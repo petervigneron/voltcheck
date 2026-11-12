@@ -141,6 +141,7 @@ export function EnrichmentFacts({
   warranty,
   tiles = false,
   plugIn = false,
+  titleBranded = false,
 }: {
   row: EnrichmentRow;
   /** This car's own battery-warranty standing, when it can be settled.
@@ -151,6 +152,10 @@ export function EnrichmentFacts({
   /** The car is a plug-in hybrid (lib/listings/kind.ts). Only changes a
    *  tile's colour: a missing heat pump or DC port is no alarm on a PHEV. */
   plugIn?: boolean;
+  /** The listing carries a branded title of unstated kind
+   *  (lib/listings/warranty.ts warrantyUnknowableForTitle). The warranty
+   *  group is not printed: a maker's coverage may not survive the brand. */
+  titleBranded?: boolean;
 }) {
   // A dead warranty has nothing to transfer to a second owner and no capacity
   // floor to hold the pack to, so those rows go with it rather than sitting
@@ -205,7 +210,7 @@ export function EnrichmentFacts({
   // a batteryYears or batteryMiles fact — see lib/listings/warranty.ts — so
   // it counts as content on its own; the raw fields cover candidate rows,
   // which get no `warranty` prop at all (see the JSDoc above).
-  const hasWarranty = !!(
+  const hasWarranty = !titleBranded && !!(
     (warranty && warranty.state !== "unknown") ||
     row.warranty?.batteryYears ||
     row.warranty?.sohFloorPct ||

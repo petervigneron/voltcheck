@@ -105,6 +105,24 @@ function wholeYearsBetween(from: Date, to: Date): number {
   return Math.max(0, n);
 }
 
+/**
+ * A branded title of unstated kind (salvage, rebuilt, flood, "branded") is one
+ * the maker's warranty may not survive: BMW, GM, Tesla, Lucid, Subaru, Kia and
+ * Mitsubishi booklets read for the battery-warranty sheets all void or exclude
+ * coverage on a total loss or a car sold for salvage (audited 2026-11-11; the
+ * BMW i7 check is where it surfaced). The listing cannot tell which kind of
+ * brand it is, so the page cannot tell a shopper the battery is covered or
+ * that the coverage transfers. It prints no warranty block at all.
+ *
+ * A manufacturer repurchase is left alone: a buyback is not a total loss, and
+ * no booklet read voids coverage for one.
+ */
+export function warrantyUnknowableForTitle(
+  listing: Pick<Listing, "brandedTitleDisclosed" | "buybackDisclosed">
+): boolean {
+  return !!listing.brandedTitleDisclosed && !listing.buybackDisclosed;
+}
+
 export function batteryWarranty(
   row: EnrichmentRow | undefined,
   listing: Pick<Listing, "year" | "mileage" | "make" | "model" | "batteryCoverage">,

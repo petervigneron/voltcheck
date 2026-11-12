@@ -33,7 +33,7 @@ import { fetchPriceTrend } from "@/lib/trend";
 import { BatteryRisk } from "@/components/BatteryRisk";
 import { Gallery } from "@/components/Gallery";
 import { batteryRisk } from "@/lib/nhtsa/battery";
-import { batteryWarranty } from "@/lib/listings/warranty";
+import { batteryWarranty, warrantyUnknowableForTitle } from "@/lib/listings/warranty";
 import { factLinksFor } from "@/lib/facts/links";
 import { matchIncentives } from "@/lib/incentives/match";
 import { Incentives } from "@/components/Incentives";
@@ -496,7 +496,7 @@ export default async function ListingPage(props: PageProps<"/listing/[id]">) {
               {claim.assert && displayTrim(listing) ? ` ${claim.trim}` : ""}
             </h2>
             <div className="p-5">
-              <EnrichmentFacts tiles plugIn={plugIn} row={e.row} warranty={batteryWarranty(e.row, listing)} />
+              <EnrichmentFacts tiles plugIn={plugIn} row={e.row} warranty={batteryWarranty(e.row, listing)} titleBranded={warrantyUnknowableForTitle(listing)} />
             </div>
           </section>
         )}
