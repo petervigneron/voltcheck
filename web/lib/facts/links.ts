@@ -44,6 +44,7 @@ export const FACT_LINK_MODELS: {
   { make: "nissan", model: "rogue-plug-in-hybrid", topics: ["battery-warranty"], name: "Nissan Rogue Plug-in Hybrid", keys: ["roguepluginhybrid"] },
   { make: "nissan", model: "leaf", topics: ["charging", "heat-pump", "battery-warranty"], name: "Nissan Leaf", keys: ["leaf"] },
   { make: "hyundai", model: "ioniq-5", topics: ["charging", "heat-pump", "battery-warranty"], name: "Hyundai Ioniq 5", keys: ["ioniq5"] },
+  { make: "hyundai", model: "ioniq-9", topics: ["battery-warranty"], name: "Hyundai Ioniq 9", keys: ["ioniq9"] },
   { make: "hyundai", model: "ioniq-6", topics: ["charging", "heat-pump", "battery-warranty"], name: "Hyundai Ioniq 6", keys: ["ioniq6"] },
   { make: "kia", model: "ev6", topics: ["charging", "heat-pump", "battery-warranty"], name: "Kia EV6", keys: ["ev6"] },
   { make: "ford", model: "mustang-mach-e", topics: ["charging", "heat-pump", "battery-warranty"], name: "Ford Mustang Mach-E", keys: ["mustangmache"] },
@@ -81,6 +82,7 @@ export const FACT_LINK_MODELS: {
   { make: "mazda", model: "cx-90-phev", topics: ["battery-warranty"], name: "Mazda CX-90 Plug-in Hybrid", keys: ["cx90phev", "cx90pluginhybrid"] },
   { make: "mercedes-benz", model: "eqe", topics: ["battery-warranty"], name: "Mercedes-Benz EQE", keys: ["eqe", "eqesuv", "eqe350", "eqe350+", "eqe320", "eqe320+suv"] },
   { make: "hyundai", model: "tucson-plug-in-hybrid", topics: ["battery-warranty"], name: "Hyundai Tucson Plug-in Hybrid", keys: ["tucsonpluginhybrid"] },
+  { make: "bmw", model: "i5", topics: ["battery-warranty"], name: "BMW i5", keys: ["i5"] },
   { make: "bmw", model: "x5", topics: ["battery-warranty"], name: "BMW X5 plug-in hybrid", keys: ["x5", "x5phev", "x5xdrive50e"] },
   // Toyota renamed the RAV4 Prime (2021-2024) to RAV4 Plug-in Hybrid for 2025; one sheet, two exact keys.
   { make: "toyota", model: "rav4-plug-in-hybrid", topics: ["battery-warranty"], name: "Toyota RAV4 Plug-in Hybrid or RAV4 Prime", keys: ["rav4pluginhybrid", "rav4prime"] },

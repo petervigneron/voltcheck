@@ -2474,6 +2474,77 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       },
     ],
   },
+  {
+    make: "bmw",
+    model: "i5",
+    topic: "battery-warranty",
+    contentFile: "i5-battery-warranty",
+    pageTitle: "BMW i5 battery warranty: 8 years or 100,000 miles | Census",
+    description:
+      "BMW covers the i5's high-voltage battery for 8 years or 100,000 miles, whichever occurs first, on 2024–2026 cars, and on 2026 cars also covers capacity below 70 percent for the same term.",
+    breadcrumbLabel: "BMW i5 battery warranty",
+    dateModified: "2026-11-11",
+    faq: [
+      {
+        question: "How long is the BMW i5 battery warranty?",
+        answer:
+          "8 years or 100,000 miles, whichever occurs first, on every 2024–2026 i5.",
+      },
+      {
+        question: "Does BMW guarantee a minimum battery capacity on the i5?",
+        answer:
+          "On 2026 cars, yes: if usable (net) capacity/State of Health falls below 70 percent within 96 months (8 years) or 100,000 miles, as confirmed by an authorized BMW center, BMW restores the battery's capacity to at least 70 percent.",
+      },
+      {
+        question: "Does the BMW i5 battery warranty transfer to a second owner?",
+        answer:
+          "On 2024–2025 cars, yes: the battery warranty is part of the New Vehicle Limited Warranty, which BMW NA gives to the first retail purchaser and each subsequent purchaser.",
+      },
+      {
+        question: "When does the BMW i5 battery warranty start?",
+        answer:
+          "On 2024–2025 cars, on the date of first retail sale or the date the vehicle is first placed into service as a sales demonstrator, Aftersales Mobility Program (AMP) Vehicle or company vehicle, whichever is earlier.",
+      },
+    ],
+  },
+  {
+    make: "hyundai",
+    model: "ioniq-9",
+    topic: "battery-warranty",
+    contentFile: "ioniq-9-battery-warranty",
+    pageTitle: "Hyundai Ioniq 9 battery warranty: 10 years, 100,000 miles | Census",
+    description:
+      "Hyundai's Hybrid, Plug-in Hybrid, and Electric Vehicle Warranty covers the 2026 Ioniq 9's high voltage battery for 10 years or 100,000 miles, and a warranty repair or replacement maintains no less than 70% of the original battery capacity.",
+    breadcrumbLabel: "Hyundai Ioniq 9 battery warranty",
+    dateModified: "2026-11-11",
+    faq: [
+      {
+        question: "How long is the Hyundai Ioniq 9 battery warranty?",
+        answer:
+          "10 years or 100,000 miles, whichever occurs first, for the 2026 Ioniq 9, under Hyundai's Hybrid, Plug-in Hybrid, and Electric Vehicle Warranty. Section 6 lists the High Voltage Battery along with the Battery Management System, Blower Assembly, Electronic Air Compressor, Power Relay Assembly, Hybrid Starter & Generator, Traction Motor including housing case, Hybrid Power Control Unit, OBC and Electric Power Control unit. Hyundai's Ioniq 9 web page, in its 2026 warranty table, says this coverage \"does not apply to lease and commercial vehicles or vehicles serviced or registered outside the U.S.\"",
+      },
+      {
+        question: "What capacity does a warranty battery repair leave the Ioniq 9 with?",
+        answer:
+          "At least the energy capacity the battery had before the failure occurred, and no less than 70% of the original battery capacity. If possible the battery components are repaired or replaced and the original battery is returned to the vehicle; if necessary the battery is replaced with a new or refurbished one.",
+      },
+      {
+        question: "Is the Ioniq 9 battery warranty different for California-certified cars?",
+        answer:
+          "The 2026 handbook's California Propulsion-Related Part Warranty, for applicable 2026 cars certified to California standards and registered in California, Massachusetts, New York, Oregon, Vermont or Washington, states the high voltage battery's term as 8 years or 100,000 miles on printed pp. 46, 48 and 49; printed p. 48 also says Hyundai provides 10 years or 100,000 miles coverage for high voltage battery; and printed p. 49 marks the Battery System Assembly \"7/70\" (7 years or 70,000 miles) for the Ioniq 9.",
+      },
+      {
+        question: "When does the Ioniq 9 battery warranty start?",
+        answer:
+          "On the date of original retail delivery or the date of first use.",
+      },
+      {
+        question: "What is not covered by the Ioniq 9 battery warranty?",
+        answer:
+          "Damage from intentional actions, a collision or accident, or servicing or opening of the battery by non-authorized personnel; physical battery damage, or intentionally attempting, by physical means, programming or other methods, to extend (other than as specified in the owner documentation) or reduce its life; exposing the battery to direct flame or flooding; the exclusions of the New Vehicle Limited Warranty's What is Not Covered section; loss of battery energy or power over time or from battery usage (the same handbook page also says such loss \"is covered not to degrade more than 70% of the original battery capacity\" under the Battery Limited Warranty); and incidental or consequential damages.",
+      },
+    ],
+  },
 ];
 
 export function findFactSheet(make: string, model: string, topic: string): FactSheetEntry | undefined {

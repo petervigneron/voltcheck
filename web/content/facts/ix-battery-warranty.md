@@ -17,7 +17,7 @@
 | What is covered, 2022 | The high-voltage lithium-ion battery assembly, against defects in materials or workmanship[^1] |
 | What is covered, 2023–2025 | The high-voltage (traction) battery assembly, against defects in materials or workmanship[^2][^3][^4] |
 | What is covered, 2026 | The high-voltage traction battery assembly and its internal components, against defects in materials and/or workmanship[^5] |
-| Capacity coverage, 2026 | Usable (net) capacity/State of Health below 70 percent, for 96 months (8 years) or 100,000 miles, whichever occurs first; BMW restores the battery's capacity to at least 70 percent[^5] |
+| Capacity coverage, 2026 | Usable (net) capacity/State of Health below 70 percent, as confirmed by an authorized BMW center, for 96 months (8 years) or 100,000 miles, whichever occurs first; BMW restores the battery's capacity to at least 70 percent[^5] |
 | Repair standard, 2022–2025 | Repair or replacement of the defective part(s) with new or authorized remanufactured parts, at BMW NA's sole choice[^1][^2][^3][^4] |
 | Repair standard, 2026 | A software update, or repair and/or replacement of the appropriate HV battery components with new, refurbished and/or reconditioned parts, at BMW NA's sole choice; the minimum net HV battery capacity after repair is at least 70 percent[^5] |
 | Transfers to a second owner, 2022–2025 | Yes. The battery warranty is part of the New Vehicle Limited Warranty, which BMW NA gives to the first retail purchaser and each subsequent purchaser[^1][^2][^3][^4] |
@@ -36,8 +36,11 @@ The 2026 high-voltage battery warranty's "What Is Not Covered" section lists:
 - Non-compliance with the BEV model's load limits and/or towing capacities, when applicable, as specified by BMW.[^5]
 - Use and operation of the BEV model as an off-board power source for functions other than driving the vehicle, its factory-installed equipment and/or BMW approved accessories.[^5]
 - Use and operation of the HV battery after its removal from the vehicle.[^5]
-- BMW NA is not obligated to pay for repairs of non-genuine BMW parts, or of damage resulting from their use.[^5]
-- The warranty is null and void for specific vehicle components that were previously replaced with used or salvaged automobile parts, including repairs of any damage resulting from the use of these parts; if the odometer has been replaced or altered and the true mileage cannot be determined, or the VIN is altered or cannot be determined; if the vehicle has been declared a total loss or sold for salvage; or if it has been used in any competitive event activities (for example, overstraining the HV battery).[^5]
+- Non-genuine BMW parts: BMW NA is not obligated to pay for repairs of the non-genuine BMW parts or for repairs of any damage resulting from the use of non-genuine parts.[^5]
+- The warranty is null and void for specific vehicle components that were previously replaced with used or salvaged automobile parts, including repairs of any damage resulting from the use of these parts.[^5]
+- The warranty is null and void if the odometer has been replaced or altered and the true mileage cannot be determined, and/or the Vehicle Identification Number (VIN) is altered and/or cannot be determined.[^5]
+- The warranty is null and void if the vehicle has been declared a total loss or sold for salvage purposes.[^5]
+- The warranty is null and void if the vehicle has been used in any competitive event activities (for example, overstraining the HV battery).[^5]
 
 ## See it for yourself
 
