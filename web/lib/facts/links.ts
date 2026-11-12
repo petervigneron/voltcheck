@@ -76,6 +76,8 @@ export const FACT_LINK_MODELS: {
   { make: "toyota", model: "bz", topics: ["battery-warranty"], name: "Toyota bZ4X or bZ", keys: ["bz", "bz4x", "bzwoodland"] },
   // The site lists only plug-in X5s; the petrol X5 is never in the feed.
   { make: "mercedes-benz", model: "gle", topics: ["battery-warranty"], name: "Mercedes-Benz GLE plug-in hybrid", keys: ["gle", "gle450e"] },
+  { make: "bmw", model: "ix", topics: ["battery-warranty"], name: "BMW iX", keys: ["ix"] },
+  { make: "bmw", model: "i4", topics: ["battery-warranty"], name: "BMW i4", keys: ["i4"] },
   { make: "bmw", model: "x5", topics: ["battery-warranty"], name: "BMW X5 plug-in hybrid", keys: ["x5", "x5phev", "x5xdrive50e"] },
   // Toyota renamed the RAV4 Prime (2021-2024) to RAV4 Plug-in Hybrid for 2025; one sheet, two exact keys.
   { make: "toyota", model: "rav4-plug-in-hybrid", topics: ["battery-warranty"], name: "Toyota RAV4 Plug-in Hybrid or RAV4 Prime", keys: ["rav4pluginhybrid", "rav4prime"] },

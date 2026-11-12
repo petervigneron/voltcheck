@@ -2294,6 +2294,72 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       },
     ],
   },
+  {
+    make: "bmw",
+    model: "ix",
+    topic: "battery-warranty",
+    contentFile: "ix-battery-warranty",
+    pageTitle: "BMW iX battery warranty: 8 years or 100,000 miles | Census",
+    description:
+      "BMW covers the iX's high-voltage battery for 8 years or 100,000 miles, whichever occurs first, on 2022–2026 cars, and on 2026 cars also covers capacity below 70 percent for the same term.",
+    breadcrumbLabel: "BMW iX battery warranty",
+    dateModified: "2026-11-11",
+    faq: [
+      {
+        question: "How long is the BMW iX battery warranty?",
+        answer:
+          "8 years or 100,000 miles, whichever occurs first, on every 2022–2026 iX.",
+      },
+      {
+        question: "Does BMW guarantee a minimum battery capacity on the iX?",
+        answer:
+          "On 2026 cars, yes: if usable (net) capacity/State of Health falls below 70 percent within 96 months (8 years) or 100,000 miles, as confirmed by an authorized BMW center, BMW restores the battery's capacity to at least 70 percent.",
+      },
+      {
+        question: "Does the BMW iX battery warranty transfer to a second owner?",
+        answer:
+          "On 2022–2025 cars, yes: the battery warranty is part of the New Vehicle Limited Warranty, which BMW NA gives to the first retail purchaser and each subsequent purchaser.",
+      },
+      {
+        question: "When does the BMW iX battery warranty start?",
+        answer:
+          "On 2022–2025 cars, on the date of first retail sale or the date the vehicle is first placed into service as a sales demonstrator, Aftersales Mobility Program (AMP) Vehicle or company vehicle, whichever is earlier.",
+      },
+    ],
+  },
+  {
+    make: "bmw",
+    model: "i4",
+    topic: "battery-warranty",
+    contentFile: "i4-battery-warranty",
+    pageTitle: "BMW i4 battery warranty: 8 years or 100,000 miles, 2022–2025 | Census",
+    description:
+      "BMW covers the i4's high-voltage battery assembly against defects in materials or workmanship for 8 years or 100,000 miles, whichever occurs first, on 2022–2025 cars, and the coverage passes to each subsequent purchaser.",
+    breadcrumbLabel: "BMW i4 battery warranty",
+    dateModified: "2026-11-11",
+    faq: [
+      {
+        question: "How long is the BMW i4 battery warranty?",
+        answer:
+          "8 years or 100,000 miles, whichever occurs first, in BMW's booklets for the 2022, 2023, 2024 and 2025 i4. The 2023 figure is from BMW's 2024 reissue of the 2023 booklet.",
+      },
+      {
+        question: "What does the BMW i4 battery warranty cover?",
+        answer:
+          "On 2022–2025 cars, the high-voltage battery assembly, against defects in materials or workmanship. An authorized BMW center repairs or replaces the defective part(s) with new or authorized remanufactured parts, without charge for parts and labor (including diagnosis); the choice between repair and replacement is BMW NA's.",
+      },
+      {
+        question: "Does the BMW i4 battery warranty transfer to a second owner?",
+        answer:
+          "Yes. On 2022–2025 cars the battery warranty is part of the New Vehicle Limited Warranty, which BMW NA gives to the first retail purchaser and each subsequent purchaser.",
+      },
+      {
+        question: "When does the BMW i4 battery warranty start?",
+        answer:
+          "On 2022–2025 cars, on the date of first retail sale or the date the vehicle is first placed into service as a sales demonstrator, Aftersales Mobility Program (AMP) Vehicle or company vehicle, whichever is earlier.",
+      },
+    ],
+  },
 ];
 
 export function findFactSheet(make: string, model: string, topic: string): FactSheetEntry | undefined {
