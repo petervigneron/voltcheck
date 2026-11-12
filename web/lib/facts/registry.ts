@@ -2687,6 +2687,39 @@ export const FACT_SHEETS: FactSheetEntry[] = [
       },
     ],
   },
+  {
+    make: "gmc",
+    model: "hummer-ev",
+    topic: "battery-warranty",
+    contentFile: "hummer-ev-battery-warranty",
+    pageTitle: "GMC Hummer EV Pickup and SUV battery warranty: 8 years, 100,000 miles | Census",
+    description:
+      "GMC covers the propulsion battery of the 2022 to 2026 Hummer EV Pickup and the 2024 to 2026 Hummer EV SUV for 8 years or 100,000 miles. The capacity floor is 75% of original value in every booklet read except the first printing of the 2022 booklet, which states 60%.",
+    breadcrumbLabel: "GMC Hummer EV battery warranty",
+    dateModified: "2026-11-11",
+    faq: [
+      {
+        question: "How long is the GMC Hummer EV battery warranty?",
+        answer:
+          "For the 2022 to 2026 Hummer EV Pickup and the 2024 to 2026 Hummer EV SUV, the battery is covered for 8 years or 100,000 miles, whichever comes first, starting on the date the vehicle is first delivered or put in use.",
+      },
+      {
+        question: "What battery capacity does GMC guarantee on the Hummer EV?",
+        answer:
+          "The battery is replaced or repaired if its capacity falls below 75% of its original value during the warranty period, as determined by a certified dealer, in the 2022 (December 2024 edition), 2023 (December 2024 edition), 2024 (January 2025 edition), 2025 and 2026 booklets. The first printing of the 2022 booklet, 15835627A from September 2021, states 60%.",
+      },
+      {
+        question: "Does the GMC Hummer EV battery warranty transfer to a second owner?",
+        answer:
+          "Yes, to subsequent owners during the warranty period. The 2023 (December 2024 edition) booklet says, and the 2024 (January 2025 edition) booklet says for Hummer EV only, that certain Electric Vehicle Propulsion Coverages will be voided if ownership is transferred from the original owner within the first 6 months after delivery; the 2025 and 2026 booklets say, for Hummer EV only, that coverage will be voided in that case.",
+      },
+      {
+        question: "What is not covered by the GMC Hummer EV battery warranty?",
+        answer:
+          "The booklets' exclusions include damage from collision, fire, theft, freezing, vandalism, riot, explosion or objects striking the vehicle, alteration of the vehicle after final assembly, water or fluid contamination, and vehicles titled as salvaged, scrapped, junked or a total loss. For 2025 and 2026 they add damage from incompatible charging methods or an adapter not sold or approved by General Motors, excessive non-propulsion use of the battery, and failure to install Over-the-Air software updates within 45 days of availability.",
+      },
+    ],
+  },
 ];
 
 export function findFactSheet(make: string, model: string, topic: string): FactSheetEntry | undefined {

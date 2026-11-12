@@ -2308,6 +2308,46 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
   },
 
   {
+    // Split from the 2022-2025 row 2026-11-11, when the battery-warranty sheet
+    // was audited. GMC's two printings of the 2022 booklet disagree on the
+    // capacity floor (15835627A says 60%, the December 2024 re-issue 15835627B
+    // says 75%), so 2022 prints no floor. 2022 is also the only year whose
+    // booklet says the coverage transfers at no cost without condition.
+    id: "hummer-ev-pickup-2022",
+    make: "GMC",
+    model: "Hummer EV",
+    // vPIC calls the truck "Hummer EV Pickup" (the SUV rows decode as
+    // "Hummer EV SUV", which the corpus already answers to). Safe as an
+    // alias because GMC's Hummer EV has only ever been electric — there is
+    // no combustion car of that name for it to poach.
+    modelAliases: ["Hummer EV Pickup"],
+    modelYears: [2022, 2022],
+    abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
+    battery: { packUsableKwh: f(205, "est", "medium", "213.7 kWh gross; 2024+ 2M20 variants are smaller"), chemistry: f("NCMA", "agg", "medium") },
+    range: { epaRangeMi: f(314, "mfr", "high", "2024–25: 298–318 by config/tires, EPA. 2022–23: no EPA rating exists (GM est. 329)", "https://www.fueleconomy.gov"), testedRangeMi: f(343, "tested", "high", "70-mph (InsideEVs, 2022 Edition 1): 343 mi, beat its 329 GM estimate; 75-mph (C&D): 290") },
+    charging: {
+      ...GM_PORT_CCS_ADAPTER,
+      dcPeakKw: f(350, "agg", "medium"),
+    },
+    warranty: {
+      batteryYears: f(8, "mfr"),
+      batteryMiles: f(100_000, "mfr"),
+      batteryTransfers: f(true, "mfr", "high"),
+    },
+    buyerNotes: [
+      {
+        headline: "2022–23 trucks have no EPA range rating",
+        body: "2022–23 Hummer EVs exceed the GVWR class the EPA rates, so any range figure quoted for them is GM's estimate (Edition 1: 329 mi), not an EPA rating. Curb weight ~9,000 lb; EPA efficiency (2024+, rated trucks): 47–53 MPGe. Recalls: 22V-771 (water intrusion in the HV battery enclosure, 2022–23 pickups) and 23V-367 (HV battery pack connections).",
+        severity: "info",
+      },
+    ],
+  },
+
+  {
+    // 2023 on: no "transfers" flag. GMC's 2023-2026 booklets void Hummer EV
+    // coverage if the first owner transfers the truck within six months of
+    // delivery, so an unconditional "Yes" on a used listing is a claim the
+    // booklet does not support. See content/facts/hummer-ev-battery-warranty.md.
     id: "hummer-ev-pickup",
     make: "GMC",
     model: "Hummer EV",
@@ -2316,7 +2356,7 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
     // alias because GMC's Hummer EV has only ever been electric — there is
     // no combustion car of that name for it to poach.
     modelAliases: ["Hummer EV Pickup"],
-    modelYears: [2022, 2025],
+    modelYears: [2023, 2025],
     abstains: { heatPump: "GM does not name cabin-heating hardware in its own vehicle documents - even the Blazer EV owner manual, whose press release touts the Ultium heat pump, never says the words. The control test is the 2027 Bolt, whose GM press release DOES name one: GM states it when it means to, so silence on the other cars is evidence rather than an omission. These rows previously asserted `standard` from the platform-wide Ultium claim plus a trade-press writeup - the same source class that produced the falsified Volvo heat-pump claim. Owner decision 2026-08-26: abstain." },
     battery: { packUsableKwh: f(205, "est", "medium", "213.7 kWh gross; 2024+ 2M20 variants are smaller"), chemistry: f("NCMA", "agg", "medium") },
     range: { epaRangeMi: f(314, "mfr", "high", "2024–25: 298–318 by config/tires, EPA. 2022–23: no EPA rating exists (GM est. 329)", "https://www.fueleconomy.gov"), testedRangeMi: f(343, "tested", "high", "70-mph (InsideEVs, 2022 Edition 1): 343 mi, beat its 329 GM estimate; 75-mph (C&D): 290") },
@@ -2328,7 +2368,6 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(75, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -2365,7 +2404,6 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(75, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
@@ -2402,7 +2440,6 @@ export const RESEARCH_ROWS: EnrichmentRow[] = [
       batteryYears: f(8, "mfr"),
       batteryMiles: f(100_000, "mfr"),
       sohFloorPct: f(75, "mfr", "high"),
-      batteryTransfers: f(true, "mfr", "high"),
     },
     buyerNotes: [
       {
