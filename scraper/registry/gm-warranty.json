@@ -42559,5 +42559,57 @@
    "gmProgramNumber": "N202311730"
   },
   "checkedAt": "2026-11-15"
+ },
+ "1GC10VEL0RU203819": {
+  "coverage": {
+   "startDate": "2024-06-04",
+   "startMileage": 311,
+   "expiresDate": "2032-06-04",
+   "expiresMileage": 100311,
+   "inServiceDate": "2024-06-04",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-11-16"
+ },
+ "3GN7DLRP7RS293283": {
+  "coverage": {
+   "startDate": "2024-11-16",
+   "startMileage": 8,
+   "expiresDate": "2032-11-16",
+   "expiresMileage": 100008,
+   "inServiceDate": "2024-11-16",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-11-16"
+ },
+ "3GPKHURM7SS525792": {
+  "unavailable": true,
+  "checkedAt": "2026-11-16"
+ },
+ "3GPKHWRM7RS519223": {
+  "unavailable": true,
+  "checkedAt": "2026-11-16"
+ },
+ "1GKB0RDC5RU100347": {
+  "coverage": {
+   "startDate": "2023-08-25",
+   "startMileage": 218,
+   "expiresDate": "2031-08-25",
+   "expiresMileage": 100218,
+   "inServiceDate": "2023-08-25",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-11-16"
+ },
+ "1GC10VEL8RU202787": {
+  "coverage": {
+   "startDate": "2024-03-20",
+   "startMileage": 9,
+   "expiresDate": "2032-03-20",
+   "expiresMileage": 100009,
+   "inServiceDate": "2024-03-20",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-11-16"
  }
 }
