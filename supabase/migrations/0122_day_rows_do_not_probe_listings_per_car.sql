@@ -1,0 +1,36 @@
+-- The market page moves again: a day's trend rows are no longer built by
+-- probing listings once per car.
+--
+-- /market sat at 2026-11-11 for six days. refresh_market_snapshot (0121) ran
+-- on time and succeeded every six hours; what it read had stopped. The
+-- nightly's ev_price_trend_ask_daily target (advance_price_trend_ask_daily,
+-- one closed day per call) timed out at the service_role 60 s ceiling (57014)
+-- on every night from 2026-11-13 to 11-16, both tries, so no day after 11-11
+-- was written and the fold's mark stayed at the 11-12 close.
+--
+-- Not the fold this time. Measured 2026-11-17 for the 11-13 close, inside a
+-- transaction that was rolled back:
+--   price_trend_state_fold           5.1 s  (57,598 new rows, 28,130 chains,
+--                                           0 re-derived)
+--   price_trend_day_rows(11-12)     94.5 s  (10,591 rows)
+--   rebuild_price_trend_site_daily   1.4 s
+--
+-- Cause, from the plan: `s` (each car's price at the close, 402,479 rows from
+-- the chain state) was joined to listings by a Nested Loop — 402,479 index
+-- probes into a table that had already been seq-scanned once in 4.5 s — and
+-- then to vin_trend_key by another. 211,117 buffers read, 56 s in that one
+-- join. `s` is a UNION ALL of two branches behind one-time filters, so its row
+-- estimate is a guess, and the guess is what picks the join; the same coin
+-- toss as 0105, in the next function down.
+--
+-- Fix: enable_nestloop is off for this function. Same rows in, same rows out
+-- (10,591 both ways for 11-12); the joins hash instead. 71.9 s → 17.6 s for
+-- the query, so a nightly call is ~25 s against the 60 s ceiling. Set on the
+-- function rather than rewritten into it so the body 0104 proved against the
+-- view stays byte-for-byte what it was.
+--
+-- No reseed: every failed call rolled back whole, so the chain state sits at
+-- the 11-12 close and the days 11-12 onward are folded forward from it, one
+-- call each.
+
+alter function price_trend_day_rows(date) set enable_nestloop = off;
