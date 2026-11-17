@@ -50,6 +50,9 @@ export function AccountPanel({ email, passLine }: { email: string; passLine: str
       >
         {state === "going" ? "…" : "Sign out"}
       </button>
+      <Link href="/account/delete" className={`${CELL} block bg-paper px-5 py-3 text-[12px] font-bold text-ink/50 underline underline-offset-2 hover:bg-putty hover:text-ink sm:px-8`}>
+        Delete account
+      </Link>
     </div>
   );
 }
