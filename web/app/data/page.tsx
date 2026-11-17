@@ -72,6 +72,9 @@ export default async function DataPage() {
         <Link href="/api/v1/openapi.json" className={`${CELL} block bg-paper px-5 py-4 text-[14px] font-bold text-cobalt underline underline-offset-2 hover:bg-putty sm:px-8`}>
           API documentation
         </Link>
+        <Link href="/mcp" className={`${CELL} block bg-paper px-5 py-4 text-[14px] font-bold text-cobalt underline underline-offset-2 hover:bg-putty sm:px-8`}>
+          Connector for Claude and other AI assistants
+        </Link>
         <div className={`${CELL} bg-putty px-5 py-4 sm:px-8`}>
           <p className="text-[13px] leading-relaxed font-semibold text-ink">
             {price} is charged today and again every month until you cancel. Cancel on your account page; the key works to the

@@ -68,6 +68,7 @@ function staticRoutes(hubsAsOf: Date | undefined): SitemapEntry[] {
     { url: `${BASE}/market`, changeFrequency: "daily", priority: 0.8 },
     { url: `${BASE}/warranty`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE}/bot`, changeFrequency: "yearly", priority: 0.2 },
+    { url: `${BASE}/mcp`, changeFrequency: "monthly", priority: 0.5 },
     { url: `${BASE}/facts`, changeFrequency: "monthly", priority: 0.5 },
     // Each fact sheet's lastModified tracks its audit record's last-checked
     // date (lib/facts/registry.ts dateModified), not build time — same

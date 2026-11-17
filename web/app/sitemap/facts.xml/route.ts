@@ -12,6 +12,8 @@ export const dynamic = "force-static";
 export function GET() {
   const entries: SitemapEntry[] = [
     { url: `${BASE}/facts`, changeFrequency: "monthly", priority: 0.5 },
+    // The connector's documentation: a page written to be found, like the sheets.
+    { url: `${BASE}/mcp`, changeFrequency: "monthly", priority: 0.5 },
     // The checker sits on top of the battery-warranty sheets, so it rides
     // with them here as well as in shard 0.
     { url: `${BASE}/warranty`, changeFrequency: "monthly", priority: 0.7 },
