@@ -222,6 +222,14 @@ export async function findDelistedListing(id: string): Promise<DelistedListing |
   return { ...scrubJunkStrings(stripRepeatedMake(absolutizeImages(listing))), delistedAt: listing.delistedAt, lastSeenAt: listing.lastSeenAt };
 }
 
+/** The stored photo URL of a live listing, absolute, or undefined. The same
+ *  row findListing() resolves (database first, snapshot when the database is
+ *  silent) without its second read for description and price history, which
+ *  a photo does not need. For /img/<vin> (lib/img.ts). */
+export async function findListingImageUrl(id: string): Promise<string | undefined> {
+  return (await resolveListing(id)).listing?.imageUrl;
+}
+
 export async function findListing(id: string): Promise<Listing | undefined> {
   const { listing, live } = await resolveListing(id);
   if (!listing) return undefined;

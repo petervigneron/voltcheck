@@ -1,5 +1,5 @@
 import type { McpTool } from "./server";
-import { searchListings, listingByVin, listModels, BREAKDOWN_TRIMS } from "@/lib/api/search";
+import { searchListings, listingByVin, listModels, BREAKDOWN_TRIMS, type SearchResponse } from "@/lib/api/search";
 import { SORTS, MAX_LIMIT } from "@/lib/api/query";
 import { SITE } from "@/lib/api/records";
 import { apiHubIndex } from "@/lib/api/artifacts";
@@ -124,6 +124,30 @@ export function labelled<T extends { url?: unknown; vin?: unknown; seller?: unkn
   return out;
 }
 
+/**
+ * search_listings, both halves: `result` is what the tool returns (and what
+ * the model reads), `search` is the search behind it with its records as the
+ * REST API has them, for the in-chat card (lib/mcp/ui/), which needs to know
+ * which cars have a photo after compact() has dropped image_url.
+ */
+export async function runSearch(args: Record<string, unknown>): Promise<{ result: unknown; search: SearchResponse }> {
+  const { detail = "compact", ...query } = args;
+  if (detail !== "compact" && detail !== "full") throw new Error('invalid query: detail: expected "compact" or "full"');
+  const r = await searchListings(query, { breakdown: true });
+  // The details are the point: "invalid query" alone does not tell an
+  // agent which argument to fix, and the REST door has always said.
+  if ("error" in r) throw new Error(r.details?.length ? `${r.error}: ${r.details.join("; ")}` : r.error);
+  const { results, breakdown, ...rest } = r;
+  return {
+    result: sourced({
+      ...rest,
+      breakdown,
+      results: results.map((rec) => (detail === "full" ? labelled(rec) : compact(labelled(rec)))),
+    }),
+    search: r,
+  };
+}
+
 export const TOOLS: McpTool[] = [
   {
     name: "search_listings",
@@ -131,20 +155,7 @@ export const TOOLS: McpTool[] = [
     annotations: READ_ONLY,
     description: `Search every electric and plug-in hybrid vehicle listed for sale in the United States that Census tracks — new, used and certified, from dealers' own sites and manufacturer inventory. Returns matching listings with price, mileage, location, the seller's name and website, a seller link that forwards through censusev.com to the dealer's own page for the car, and the EV facts the site stands behind (battery kWh, EPA range, charge port, heat pump, DC fast charging), each marked estimated when it is not the manufacturer's own figure. Also returns a breakdown of every matching car, not only the returned page: cars per model year, cars per trim (top ${BREAKDOWN_TRIMS}, when every match is one model), and the lowest, median and highest asking price. Inventory is as of the \`as_of\` timestamp in the result.`,
     inputSchema: SEARCH_SCHEMA,
-    handler: async (args) => {
-      const { detail = "compact", ...query } = args;
-      if (detail !== "compact" && detail !== "full") throw new Error('invalid query: detail: expected "compact" or "full"');
-      const r = await searchListings(query, { breakdown: true });
-      // The details are the point: "invalid query" alone does not tell an
-      // agent which argument to fix, and the REST door has always said.
-      if ("error" in r) throw new Error(r.details?.length ? `${r.error}: ${r.details.join("; ")}` : r.error);
-      const { results, breakdown, ...rest } = r;
-      return sourced({
-        ...rest,
-        breakdown,
-        results: results.map((rec) => (detail === "full" ? labelled(rec) : compact(labelled(rec)))),
-      });
-    },
+    handler: async (args) => (await runSearch(args)).result,
   },
   {
     name: "get_listing",

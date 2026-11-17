@@ -11,7 +11,8 @@ import { AT_COOKIE, RT_COOKIE, clearedCookies, needsRefresh, refreshSession, ses
 // It runs ONLY on requests that carry vc_rt — the matcher's `has` clause —
 // so a visitor who never signed in costs nothing here, and it never touches
 // the cached feed routes (/api/index/*), the sitemaps, the Stripe webhook or
-// static files, which are excluded by path as well.
+// static files, which are excluded by path as well. Nor /img/<vin>
+// (lib/img.ts): a CDN-cached photo must never carry a Set-Cookie.
 //
 // A refresh that GoTrue refuses (a revoked or already-rotated token — refresh
 // token rotation is on, with a 10-second reuse window) clears both cookies:
@@ -52,7 +53,7 @@ export const config = {
   matcher: [
     {
       source:
-        "/((?!_next/static|_next/image|favicon\\.ico|robots\\.txt|sitemap|api/(?:index|events|zip|whereami|revalidate|stripe|auth/email)|.*\\.(?:png|jpg|jpeg|gif|svg|ico|txt|xml|webmanifest)$).*)",
+        "/((?!_next/static|_next/image|favicon\\.ico|robots\\.txt|sitemap|img/|api/(?:index|events|zip|whereami|revalidate|stripe|auth/email)|.*\\.(?:png|jpg|jpeg|gif|svg|ico|txt|xml|webmanifest)$).*)",
       has: [{ type: "cookie", key: "vc_rt" }],
     },
   ],
