@@ -72,7 +72,12 @@ export const TOOLS: McpTool[] = [
     name: "list_models",
     title: "List makes and models",
     annotations: READ_ONLY,
-    description: "Every make and model with live listings, with counts. Use it to learn the exact make and model spellings before searching.",
+    // A description says what the tool returns and nothing about when to
+    // call it or what to call next: a connector directory's policy is that
+    // tool descriptions carry no instructions about other tools, and the
+    // old second sentence ("Use it ... before searching") was one. The
+    // server's own `instructions` field is where that guidance lives.
+    description: "Every make and model with live listings, with counts, in the exact spellings the listing search accepts.",
     inputSchema: {
       type: "object",
       properties: { make: { type: "string", description: 'Limit the list to one make, e.g. "Kia". Omit for every make.' } },
