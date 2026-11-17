@@ -115,6 +115,10 @@ export default function ConnectorPage() {
         <a href="mailto:peter@censusev.com" className="font-semibold text-cobalt hover:underline">
           peter@censusev.com
         </a>
+        {" · "}
+        <Link href="/privacy" className="font-semibold text-cobalt hover:underline">
+          Privacy
+        </Link>
       </p>
     </div>
   );
