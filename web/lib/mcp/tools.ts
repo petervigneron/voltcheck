@@ -17,13 +17,13 @@ const SEARCH_SCHEMA = {
     price_max: { type: "integer", description: "Maximum asking price in USD. Cars with no real asking price are excluded when a price bound is given." },
     mileage_max: { type: "integer", description: "Maximum odometer reading in miles. Cars with no stated mileage are excluded when this is given." },
     condition: { type: "string", description: 'Comma-separated: "new", "used", "certified".' },
-    kind: { type: "string", enum: ["BEV", "PHEV"], description: "Battery-electric or plug-in hybrid." },
+    kind: { type: "string", enum: ["BEV", "PHEV"], description: "Battery-electric or plug-in hybrid. A car whose kind is not established matches neither; the result counts those in not_established.kind." },
     state: { type: "string", description: 'Comma-separated two-letter state codes, e.g. "CA,OR".' },
     zip: { type: "string", description: "5-digit US ZIP; results are limited to radius_mi of it and sorted by distance unless sort is given." },
     radius_mi: { type: "integer", description: "Search radius around zip, in miles. Default 100." },
     range_min: { type: "integer", description: "Minimum EPA range in miles (electric-only for a plug-in hybrid)." },
     kwh_min: { type: "integer", description: "Minimum battery capacity in kWh." },
-    heat_pump: { type: "string", enum: ["yes", "no"], description: "Only cars known to have (yes) or not have (no) a heat pump. Cars where it is not established match neither." },
+    heat_pump: { type: "string", enum: ["yes", "no"], description: "Only cars known to have (yes) or not have (no) a heat pump. Cars where it is not established match neither, and are counted in not_established.heat_pump." },
     charge_port: { type: "string", description: 'Comma-separated: "NACS", "CCS1", "CHAdeMO".' },
     drive: { type: "string", description: 'Comma-separated: "AWD", "RWD", "FWD".' },
     body: { type: "string", description: 'Comma-separated: "suv", "sedan", "truck", "van", "hatchback".' },
@@ -50,7 +50,9 @@ export const TOOLS: McpTool[] = [
     inputSchema: SEARCH_SCHEMA,
     handler: async (args) => {
       const r = await searchListings(args);
-      if ("error" in r) throw new Error(r.error);
+      // The details are the point: "invalid query" alone does not tell an
+      // agent which argument to fix, and the REST door has always said.
+      if ("error" in r) throw new Error(r.details?.length ? `${r.error}: ${r.details.join("; ")}` : r.error);
       return r;
     },
   },

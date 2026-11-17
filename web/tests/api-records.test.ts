@@ -6,6 +6,7 @@ import assert from "node:assert/strict";
 import { enrichListing } from "../lib/listings/enrich";
 import { buildApiArtifacts, makeSlug, toApiListing, slimRow } from "../lib/api/records";
 import type { Listing } from "../lib/listings/types";
+import { foldModels } from "../lib/api/search";
 import type { CardRow } from "../lib/listings/card";
 
 const model3: Listing = {
@@ -84,4 +85,27 @@ test("artifacts: one partition per make, a slim row per car, a manifest with cou
   assert.equal(makeSlug("Mercedes-Benz"), "mercedes-benz");
   assert.equal(makeSlug("Land rover"), "land-rover");
   assert.equal(slimRow(a.partitions.get("tesla")![0], enriched.get(model3.vin)!)[16], "sedan");
+});
+
+// Audit, 2026-11-17: 18,917 cars had no kind because no enrichment row
+// matched them, and `kind=BEV` hid every one. NHTSA's decode of the VIN
+// settles it where the row cannot — and only then.
+test("kind: the enrichment row's answer, else NHTSA's decode of the VIN, else absent", () => {
+  const unmatched = { ...model3, make: "Nomake", model: "Nomodel", trim: undefined };
+  const kind = (l: Listing) => toApiListing(enrichListing(l), { realPrice: true }).kind;
+  assert.equal(kind(unmatched), undefined);
+  assert.equal(kind({ ...unmatched, vpicEvLevel: "BEV" }), "BEV");
+  assert.equal(kind({ ...unmatched, vpicEvLevel: "PHEV" }), "PHEV");
+  // A matched row speaks first.
+  assert.equal(kind({ ...model3, vpicEvLevel: "PHEV" }), "BEV");
+  const e = enrichListing({ ...unmatched, vpicEvLevel: "PHEV" });
+  assert.equal(slimRow(toApiListing(e, { realPrice: true }), e)[10], 1);
+});
+
+test("the model list has one entry per model, in the spelling most sellers use", () => {
+  const folded = foldModels({ "Prius Plug-in Hybrid": 1679, "Prius Plug-In Hybrid": 439, "PRIUS PLUG-IN HYBRID": 2, "Prius Prime": 605, "PRIUS PRIME": 7, bZ: 3168 });
+  assert.deepEqual(folded, { bZ: 3168, "Prius Plug-in Hybrid": 2120, "Prius Prime": 612 });
+  assert.deepEqual(Object.keys(folded), ["bZ", "Prius Plug-in Hybrid", "Prius Prime"]);
+  // Different cars stay apart: the plus is identity (lib/listings/modelName.ts).
+  assert.deepEqual(foldModels({ "EQS 450+": 3, "EQS 450": 2 }), { "EQS 450+": 3, "EQS 450": 2 });
 });

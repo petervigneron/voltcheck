@@ -32,7 +32,8 @@ export interface ApiListing {
   trim?: string;
   title: string;
   condition?: "new" | "used" | "certified";
-  /** Battery-electric or plug-in hybrid; absent when the enrichment cannot settle it. */
+  /** Battery-electric or plug-in hybrid: the enrichment row's answer, else
+   *  NHTSA's own decode of this VIN; absent when neither settles it. */
   kind?: VehicleKind;
   body?: string;
   drive?: "RWD" | "AWD" | "FWD";
@@ -100,7 +101,16 @@ export interface RecordExtras {
 
 export function toApiListing(e: EnrichedListing, x: RecordExtras): ApiListing {
   const l = e.listing;
-  const kind = vehicleKind(e);
+  // The enrichment row first; where it cannot settle the kind, NHTSA's
+  // affirmative decode of this VIN (Listing.vpicEvLevel — "BEV" or "PHEV" or
+  // absent, never a guess). Measured on the 2026-11-17 feed: 18,917 of
+  // 170,946 cars had no kind from enrichment — mostly 2027s with no spec row
+  // yet, and 2,001 Teslas — so `kind=BEV` hid 11% of the site; vPIC settles
+  // 18,312 of them. Control: on the 152,029 cars where both speak, they
+  // disagree on none. The fallback is here and not in vehicleKind, which the
+  // incentive matcher and the card tiles share and whose guardrails were
+  // written against the row alone.
+  const kind = vehicleKind(e) ?? l.vpicEvLevel;
   const rec: ApiListing = {
     id: l.id,
     vin: l.vin.toUpperCase(),
