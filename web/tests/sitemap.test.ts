@@ -20,6 +20,8 @@ import {
   renderUrlset,
   shardUrls,
   sitemapShardOf,
+  sitemapUrls,
+  FACTS_SITEMAP_URL,
 } from "../lib/sitemap";
 
 // VIN-shaped ids, the same 17 lowercase characters a real listing id is.
@@ -110,4 +112,13 @@ test("the index lists every shard robots.txt does, and nothing else", () => {
   for (const u of urls) assert.ok(index.includes(`<loc>${u}</loc>`), `${u} missing from the sitemap index`);
   assert.equal((index.match(/<sitemap>/g) ?? []).length, SITEMAP_SHARDS);
   assert.ok(index.startsWith('<?xml version="1.0" encoding="UTF-8"?><sitemapindex'));
+});
+
+test("the fact-sheet sitemap is listed first, ahead of every listing shard", () => {
+  // Google had fetched the index and none of its files on 2026-11-16; the
+  // file a crawler opens first should be the one holding the audited pages.
+  const urls = sitemapUrls();
+  assert.equal(urls[0], FACTS_SITEMAP_URL);
+  assert.deepEqual(urls.slice(1), shardUrls());
+  assert.ok(renderSitemapIndex(urls).indexOf(FACTS_SITEMAP_URL) < renderSitemapIndex(urls).indexOf(shardUrls()[0]));
 });

@@ -1,4 +1,4 @@
-import { renderSitemapIndex, shardUrls } from "@/lib/sitemap";
+import { renderSitemapIndex, sitemapUrls } from "@/lib/sitemap";
 
 // The sitemap index: the file every crawler and SEO audit tool probes first.
 // Until now /sitemap.xml was a 404 — Next's metadata convention serves no
@@ -24,7 +24,7 @@ export const maxDuration = 800;
 export const dynamic = "force-static";
 
 export function GET() {
-  return new Response(renderSitemapIndex(shardUrls()), {
+  return new Response(renderSitemapIndex(sitemapUrls()), {
     headers: { "Content-Type": "application/xml" },
   });
 }

@@ -166,3 +166,24 @@ export function renderSitemapIndex(shardUrls: string[]): string {
 export function shardUrls(): string[] {
   return Array.from({ length: SITEMAP_SHARDS }, (_, i) => `${BASE}/sitemap/${i}.xml`);
 }
+
+/**
+ * The fact-sheet sitemap, a file of its own listed ahead of the shards.
+ *
+ * On 2026-11-16, twelve days after the move to this domain, Google had
+ * fetched the sitemap index once and none of the twelve shards, and reported
+ * every fact sheet as a URL it had never heard of. The sheets were in shard
+ * 0, as 86 addresses among 14,772, in a set of files that advertises about
+ * 170,000 listing pages: nothing told a crawler with a small budget for a new
+ * domain which hundred pages were the ones written to be found. This file is
+ * that statement. It reads no data (the registry is compiled in), so it
+ * prerenders at build and cannot be delayed by the database the way a shard
+ * can. The sheets stay in shard 0 as well; a URL in two sitemaps is allowed,
+ * and scripts/indexnow.mjs reads them from there.
+ */
+export const FACTS_SITEMAP_URL = `${BASE}/sitemap/facts.xml`;
+
+/** Every sitemap file, in the order robots.txt and the index list them. */
+export function sitemapUrls(): string[] {
+  return [FACTS_SITEMAP_URL, ...shardUrls()];
+}

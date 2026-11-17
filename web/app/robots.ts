@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { BASE, shardUrls } from "@/lib/sitemap";
+import { BASE, sitemapUrls } from "@/lib/sitemap";
 
 // Tells crawlers what to index and where the sitemaps are. Everything public is
 // crawlable; the disallowed paths are per-user or token surfaces with no
@@ -27,7 +27,7 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: ["/saved", "/alerts/", "/pro/access", "/pro/thanks"],
     },
-    sitemap: [`${BASE}/sitemap.xml`, ...shardUrls()],
+    sitemap: [`${BASE}/sitemap.xml`, ...sitemapUrls()],
     host: BASE,
   };
 }
