@@ -3,6 +3,7 @@ import Link from "next/link";
 import { fetchMarket } from "@/lib/market";
 import { openGraph, OWN_IMAGE } from "@/lib/og/meta";
 import { fetchSpeed } from "@/lib/listings/speed";
+import { monthReports } from "@/lib/marketMonths";
 
 // The public market page: what used EVs sold for, month by month, and where
 // asking prices stand now, site-wide and per model. lib/market.ts and
@@ -149,6 +150,8 @@ export default async function MarketPage() {
   // Every row shares one window (migration 0120), so any entry names it.
   const speedWindow = speed.values().next().value;
   const quarters = national.slice(-STRIP);
+  // Finished months, each at an address of its own (lib/marketMonths.ts).
+  const months = monthReports(market);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -294,6 +297,21 @@ export default async function MarketPage() {
           </Link>
         </p>
       </section>
+
+      {months.length > 0 && (
+        <section className="mt-8">
+          <h2 className={sectionLabel}>By month</h2>
+          <ul className="mt-3 columns-2 gap-x-6 text-[13px] leading-7 sm:columns-4">
+            {months.map((m) => (
+              <li key={m.month}>
+                <Link href={`/market/${m.month}`} className="text-ink/80 underline decoration-ink/20 underline-offset-2 hover:text-cobalt hover:decoration-cobalt">
+                  {monthYear(`${m.month}-01`)}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
     </div>
   );
 }

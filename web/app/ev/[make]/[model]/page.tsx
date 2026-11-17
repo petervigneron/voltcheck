@@ -275,6 +275,18 @@ export default async function ModelHubPage(props: PageProps<"/ev/[make]/[model]"
           </Link>
         </p>
       )}
+
+      {/* The way to /embed from the page a model's own writers are on. Until
+          2026-11-17 the footer was the only link to it, so the person
+          posting about one model in a forum or a blog never met the card
+          made for that post. Opens the picker on this model. */}
+      {total > 0 && (
+        <p className="mt-3 text-sm">
+          <Link href={`/embed?model=${hub.makeSlug}/${hub.modelSlug}`} className="text-cobalt hover:underline">
+            Embed these figures
+          </Link>
+        </p>
+      )}
     </div>
   );
 }

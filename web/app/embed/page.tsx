@@ -59,6 +59,12 @@ export default async function EmbedPage() {
         / <span className="text-ink/70">Embed</span>
       </nav>
       <h1 className="mt-6 text-2xl font-bold tracking-tight text-ink">Embed a model</h1>
+      {/* What the card is, once: the frame below shows one, but a search
+          result or a pasted link lands here cold. */}
+      <p className="mt-3 text-sm leading-relaxed text-ink/70">
+        A card for any electric or plug-in hybrid model: how many are for sale in the US and the median asking price by
+        model year. Updated daily. Free to use on any site.
+      </p>
       <EmbedBuilder options={options} initial="tesla/model-3" />
     </div>
   );

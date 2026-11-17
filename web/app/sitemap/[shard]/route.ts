@@ -4,6 +4,8 @@ import { FACT_SHEETS } from "@/lib/facts/registry";
 import { MODEL_HUBS, hubPath } from "@/lib/listings/modelHubs";
 import { SPEC_HUBS, specPath } from "@/lib/facts/specs";
 import { hubIndexAsOf } from "@/lib/listings/hubSource";
+import { fetchMarket } from "@/lib/market";
+import { monthReports } from "@/lib/marketMonths";
 import { BASE, SITEMAP_SHARDS, type SitemapEntry, renderUrlset, sitemapShardOf } from "@/lib/sitemap";
 
 // The listing sitemap, one shard per file at /sitemap/0.xml … /sitemap/11.xml
@@ -184,8 +186,19 @@ export async function GET(_req: Request, { params }: { params: Promise<{ shard: 
   // times.
   // Only shard 0 carries the static routes, so only shard 0 pays for the
   // hub artifact (one cached fetch, shared with the hub pages' own memo).
+  // The finished months of /market (lib/marketMonths.ts). They come from the
+  // market snapshot, one primary-key read; if it does not answer the months
+  // are left out of this render and nothing else is held up.
+  const monthRoutes: SitemapEntry[] =
+    n === 0
+      ? await fetchMarket()
+          .then((m) => monthReports(m).map((r) => ({ url: `${BASE}/market/${r.month}`, priority: 0.5 })))
+          .catch(() => [])
+      : [];
   const entries =
-    n === 0 ? [...staticRoutes(await hubIndexAsOf().catch(() => undefined)), ...listingRoutes] : listingRoutes;
+    n === 0
+      ? [...staticRoutes(await hubIndexAsOf().catch(() => undefined)), ...monthRoutes, ...listingRoutes]
+      : listingRoutes;
   return new Response(renderUrlset(entries, `sitemap/${n}.xml`), {
     headers: { "Content-Type": "application/xml" },
   });

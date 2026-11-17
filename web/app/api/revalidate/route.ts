@@ -89,6 +89,7 @@ export async function POST(req: Request) {
   // The market page reads the nightly trend tables, not the feed, but a
   // publish is the one signal the site gets that a day has turned over.
   revalidatePath("/market");
+  revalidatePath("/market/[month]", "page");
   // The listing pages too (2026-09-12). Each caches for a day
   // (app/listing/[id]/page.tsx), so a car the database stopped serving at
   // 04:00 — delisted by the recheck, or withheld by 0089 because nothing

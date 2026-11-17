@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useSyncExternalStore } from "react";
 
 // The picker on /embed: choose a model, see its card, copy the snippet.
 // The snippets are built on the server (lib/embed/card.ts) and handed in
@@ -9,8 +9,19 @@ import { useMemo, useState } from "react";
 export type EmbedOption = { key: string; name: string; path: string; snippet: string; height: number };
 
 export function EmbedBuilder({ options, initial }: { options: EmbedOption[]; initial: string }) {
-  const [key, setKey] = useState(initial);
   const [copied, setCopied] = useState(false);
+  // /embed?model=<make>/<model> opens on that model: the link each model
+  // page carries. Read from the address in the browser only (the server
+  // snapshot is empty), so the page itself stays static; a choice made in
+  // the picker wins over it from then on.
+  const asked = useSyncExternalStore(
+    () => () => {},
+    () => new URLSearchParams(window.location.search).get("model") ?? "",
+    () => "",
+  );
+  const [picked, setPicked] = useState<string | undefined>(undefined);
+  const key = picked ?? (options.some((o) => o.key === asked) ? asked : initial);
+  const setKey = setPicked;
   const chosen = useMemo(() => options.find((o) => o.key === key) ?? options[0], [options, key]);
 
   async function copy() {
