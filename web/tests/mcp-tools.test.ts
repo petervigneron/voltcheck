@@ -4,7 +4,8 @@
 // hint, so an argument added without a description is a regression.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { TOOLS } from "../lib/mcp/tools";
+import { TOOLS, MCP_REF, labelled } from "../lib/mcp/tools";
+import { visitSrc } from "../lib/visit";
 
 test("every tool has a title and says it only reads", () => {
   assert.equal(TOOLS.length, 3);
@@ -22,4 +23,19 @@ test("every argument of every tool is described", () => {
       assert.ok(spec.description && spec.description.length > 8, `${t.name}.${arg} has no description`);
     }
   }
+});
+
+test("a connector result's Census link carries the label the visit report reads, and nothing else is touched", () => {
+  const rec = { url: "https://censusev.com/listing/kndc3dlc8p5104606", seller: { url: "https://dealer.example/car?id=1" }, vin: "X" };
+  const out = labelled(rec);
+  assert.equal(out.url, `https://censusev.com/listing/kndc3dlc8p5104606?ref=${MCP_REF}`);
+  // What the page will record for that visit.
+  assert.equal(visitSrc(new URL(out.url).search), MCP_REF);
+  // The dealer's own link is the dealer's.
+  assert.deepEqual(out.seller, rec.seller);
+  assert.equal(rec.url, "https://censusev.com/listing/kndc3dlc8p5104606", "the input record is not mutated");
+  // No url, or one that already has a query, is left alone.
+  const bare: { url?: string; vin: string } = { vin: "X" };
+  assert.deepEqual(labelled(bare), { vin: "X" });
+  assert.equal(labelled({ url: "https://censusev.com/x?a=1" }).url, "https://censusev.com/x?a=1");
 });

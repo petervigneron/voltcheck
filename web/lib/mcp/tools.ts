@@ -40,6 +40,32 @@ const SEARCH_SCHEMA = {
 // a host decides from them whether a call needs the user's say-so.
 const READ_ONLY = { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false } as const;
 
+/** The label a visit from a connector result arrives with (lib/visit.ts
+ *  visitSrc), so the weekly report can count them. Same device as the embed
+ *  card's EMBED_REF. */
+export const MCP_REF = "mcp";
+
+/**
+ * A record as the connector returns it: the same record the REST API gives,
+ * with its Census page link labelled.
+ *
+ * Why: when an assistant shows a car and the person opens its page here,
+ * that visit carried no referrer and no label, so it landed in the weekly
+ * report's "direct or unknown" pile with everything else. The owner's
+ * question on 2026-11-17 was whether being used by assistants does anything
+ * for the site, and without this the honest answer was "no way to tell".
+ *
+ * Only `url`, our own page, is touched. `seller.url` is the dealer's page
+ * and is passed through exactly as the dealer publishes it. The REST API's
+ * records are not labelled: a program that stores them should get the plain
+ * address. The label is not a tracker of a person: it is one fixed word, the
+ * same for every result, and the listing page's canonical ignores it.
+ */
+export function labelled<T extends { url?: unknown }>(record: T): T {
+  if (typeof record.url !== "string" || record.url.includes("?")) return record;
+  return { ...record, url: `${record.url}?ref=${MCP_REF}` };
+}
+
 export const TOOLS: McpTool[] = [
   {
     name: "search_listings",
@@ -53,7 +79,7 @@ export const TOOLS: McpTool[] = [
       // The details are the point: "invalid query" alone does not tell an
       // agent which argument to fix, and the REST door has always said.
       if ("error" in r) throw new Error(r.details?.length ? `${r.error}: ${r.details.join("; ")}` : r.error);
-      return r;
+      return { ...r, results: r.results.map(labelled) };
     },
   },
   {
@@ -65,7 +91,7 @@ export const TOOLS: McpTool[] = [
     handler: async (args) => {
       const r = await listingByVin(String(args.vin ?? ""));
       if ("error" in r) throw new Error(r.error);
-      return r;
+      return labelled(r);
     },
   },
   {
