@@ -1,6 +1,6 @@
-import { apiIndex, apiManifest, hydrate } from "./artifacts";
+import { apiIndex, apiManifest, apiPartition, hydrate } from "./artifacts";
 import { parseQuery, resolveMake, runQuery } from "./query";
-import { toApiListing, withPriceHistory, type ApiListing, type ApiListingDetail, type ApiManifest } from "./records";
+import { toApiListing, withPriceHistory, type ApiListing, type ApiListingDetail, type ApiManifest, type SlimRow } from "./records";
 import { modelKey, preferredForm } from "@/lib/listings/modelName";
 import { zipCoords } from "@/lib/zips";
 import { findListing } from "@/lib/listings/source";
@@ -26,11 +26,78 @@ export interface SearchResponse {
    *  not file cars under. Present only on an empty result. */
   notes?: string[];
   results: (ApiListing & { distance_mi?: number })[];
+  /** Only when asked for (the connector asks; the REST routes do not). */
+  breakdown?: SearchBreakdown;
+}
+
+/** A summary of every car a search matched, not just the page returned. */
+export interface SearchBreakdown {
+  /** Cars per model year, newest first. */
+  by_year: { year: number; n: number }[];
+  /** Cars per trim, most first, at most BREAKDOWN_TRIMS. Only cars whose trim
+   *  the site states (a record's `trim`) are counted, and only when every
+   *  matched car is one model: trims of different models are not one list. */
+  by_trim?: { trim: string; n: number }[];
+  /** Asking price across the cars with a real one. Absent when none has. */
+  asking_usd?: { n: number; min: number; median: number; max: number };
+}
+
+export const BREAKDOWN_TRIMS = 8;
+
+/** Min, median and max of a non-empty list. The median is hubIndex.ts's
+ *  (the mean of the middle two on an even count, rounded). No spread into
+ *  Math.min: a search can match 170,000 cars, past the engine's argument cap. */
+function spread(xs: number[]): { min: number; median: number; max: number } {
+  const s = Float64Array.from(xs).sort();
+  const mid = s.length >> 1;
+  return { min: s[0], median: s.length % 2 ? s[mid] : Math.round((s[mid - 1] + s[mid]) / 2), max: s[s.length - 1] };
+}
+
+/** The breakdown of a matched set. `trimOf` answers for a car id when the
+ *  caller could read the trims; without it there is no by_trim. Pure. */
+export function breakdownOf(hits: SlimRow[], trimOf?: (id: string) => string | undefined): SearchBreakdown {
+  const years = new Map<number, number>();
+  const prices: number[] = [];
+  const trims = new Map<string, number>();
+  for (const r of hits) {
+    years.set(r[3], (years.get(r[3]) ?? 0) + 1);
+    if (r[4] > 0) prices.push(r[4]);
+    const t = trimOf?.(r[0]);
+    if (t) trims.set(t, (trims.get(t) ?? 0) + 1);
+  }
+  const out: SearchBreakdown = {
+    by_year: [...years].sort((a, b) => b[0] - a[0]).map(([year, n]) => ({ year, n })),
+  };
+  if (trimOf) {
+    out.by_trim = [...trims]
+      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+      .slice(0, BREAKDOWN_TRIMS)
+      .map(([trim, n]) => ({ trim, n }));
+  }
+  if (prices.length) out.asking_usd = { n: prices.length, ...spread(prices) };
+  return out;
+}
+
+/** The trim reader for a matched set, when every car in it is one model.
+ *  Reads the make partitions the page is hydrated from (memoised), so it
+ *  costs no fetch the page did not already make in the common case. */
+async function trimReader(m: ApiManifest, hits: SlimRow[]): Promise<((id: string) => string | undefined) | undefined> {
+  if (!hits.length || hits.some((r) => r[2] !== hits[0][2])) return undefined;
+  const slugs = [...new Set(hits.map((r) => r[1]))];
+  if (slugs.length > 2) return undefined;
+  const parts = await Promise.all(slugs.map((s) => apiPartition(m, s)));
+  if (parts.some((p) => p === null)) return undefined;
+  const byId = new Map<string, string>();
+  for (const p of parts) for (const rec of p ?? []) if (rec.trim) byId.set(rec.id, rec.trim);
+  return (id) => byId.get(id);
 }
 
 export type ApiError = { error: string; details?: string[] };
 
-export async function searchListings(params: URLSearchParams | Record<string, unknown>): Promise<SearchResponse | ApiError> {
+export async function searchListings(
+  params: URLSearchParams | Record<string, unknown>,
+  opts: { breakdown?: boolean } = {},
+): Promise<SearchResponse | ApiError> {
   const { query, errors } = parseQuery(params);
   if (errors.length) return { error: "invalid query", details: errors };
   const m = await apiManifest();
@@ -43,6 +110,7 @@ export async function searchListings(params: URLSearchParams | Record<string, un
   const r = runQuery(idx.r, query, origin);
   const recs = await hydrate(m, r.page);
   const notes = r.total === 0 ? emptyNotes(m, query.make, query.model) : [];
+  const breakdown = opts.breakdown ? breakdownOf(r.hits, await trimReader(m, r.hits)) : undefined;
   return {
     as_of: m.as_of,
     total: r.total,
@@ -55,6 +123,7 @@ export async function searchListings(params: URLSearchParams | Record<string, un
       const d = r.distances?.get(rec.id);
       return d === undefined ? rec : { ...rec, distance_mi: Math.round(d) };
     }),
+    ...(breakdown ? { breakdown } : {}),
   };
 }
 

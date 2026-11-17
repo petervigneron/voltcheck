@@ -64,7 +64,13 @@ function summarise(evts, from, to) {
     return t >= from && t < to;
   });
   const views = inWin.filter((e) => e.name === "page_view");
-  const clicks = inWin.filter((e) => e.name === "dealer_click");
+  // A click through a connector's seller link (/go/<vin>, web/lib/go.ts) is
+  // recorded server-side under the fixed client_id "go": there is no browser
+  // id behind it, so it is not a person and is kept out of the site's own
+  // "dealer clicks N by M" line, counted on a line of its own instead.
+  const allClicks = inWin.filter((e) => e.name === "dealer_click");
+  const clicks = allClicks.filter((e) => e.client_id !== "go");
+  const goClicks = allClicks.filter((e) => e.client_id === "go");
   const ids = (list) => new Set(list.map((e) => e.client_id)).size;
   const landings = views.filter((e) => e.props?.land);
   const tally = (list, key) => {
@@ -85,6 +91,7 @@ function summarise(evts, from, to) {
     reachedPro: ids(views.filter((e) => e.props?.p === "/pro")),
     dealerClicks: clicks.length,
     dealerClickers: ids(clicks),
+    goClicks: goClicks.length,
     sources: tally(landings, (e) => e.props?.src ?? e.props?.ref ?? "(direct or unknown)"),
     landingPages: tally(landings, (e) => e.props?.p ?? "?"),
   };
@@ -117,6 +124,7 @@ viewLine("visits", cur.visits, was.visits);
 viewLine("pages opened", cur.pages, was.pages);
 viewLine("reached /pro", cur.reachedPro, was.reachedPro);
 line("dealer clicks", `${cur.dealerClicks} by ${cur.dealerClickers}`, `${was.dealerClicks} by ${was.dealerClickers}`);
+console.log(`dealer clicks from AI connector links: ${cur.goClicks}  (was ${was.goClicks}; not in the line above, no browser behind them)`);
 line("passes sold", `${soldNow.length} (${usd(soldNow)})`, `${soldWas.length} (${usd(soldWas)})`);
 
 const table = (title, list) => {

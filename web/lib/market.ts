@@ -19,6 +19,11 @@ import { MODEL_HUBS, hubPath, type ModelHub } from "./listings/modelHubs";
 
 export const MIN_SHARE = 0.5;
 
+/** Models with fewer used cars than this are left off /market's table and
+ *  left to their hub pages. Here rather than in the page so the connector's
+ *  market_snapshot prints exactly the rows /market prints. */
+export const MARKET_MIN_CARS = 100;
+
 export interface RawMarketModel {
   cohort: string;
   cars: number;
@@ -186,7 +191,7 @@ export function shapeMarket(raw: RawMarket, hubs: ModelHub[] = MODEL_HUBS): Mark
  * render in place; returning an empty market would cache a blank page under
  * a heading that promises numbers.
  */
-export async function fetchMarket(): Promise<Market> {
+export async function fetchMarket(opts: { signal?: AbortSignal } = {}): Promise<Market> {
   const base = process.env.SUPABASE_URL?.replace(/\/$/, "");
   const key = process.env.SUPABASE_ANON_KEY;
   if (!base || !key) throw new Error("market: Supabase is not configured");
@@ -196,6 +201,7 @@ export async function fetchMarket(): Promise<Market> {
       const res = await fetch(`${base}/rest/v1/market_snapshot?select=payload&limit=1`, {
         headers: { apikey: key, Authorization: `Bearer ${key}` },
         next: { revalidate: 86_400 },
+        signal: opts.signal,
       });
       if (!res.ok) {
         last = `market_snapshot answered ${res.status}`;

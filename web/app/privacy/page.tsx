@@ -10,7 +10,9 @@ import Link from "next/link";
 //   alerts              0029_alert_subscriptions.sql, app/alerts/unsubscribe
 //   payments            app/api/checkout, app/api/stripe/webhook
 //   deletion            0123_account_delete.sql, app/api/account/delete
-//   API and connector   app/api/v1, app/api/mcp (neither writes a record)
+//   API and connector   app/api/v1, app/api/mcp (neither writes a record);
+//                       app/go/[vin], lib/go.ts (one dealer_click per seller
+//                       link followed, client_id "go", no browser ID)
 // A change to any of those is a change to this page. A privacy page that
 // has drifted from the code is a false claim with the owner's name on it.
 export const metadata: Metadata = {
@@ -27,7 +29,7 @@ export default function PrivacyPage() {
   return (
     <div className="mx-auto max-w-2xl px-4 py-16">
       <h1 className="text-2xl font-bold tracking-tight text-ink">Privacy</h1>
-      <p className="mt-2 text-[12px] text-ink/50">November 17, 2026</p>
+      <p className="mt-2 text-[12px] text-ink/50">November 18, 2026</p>
 
       <p className={p}>
         Census EV does not show ads, does not sell or share personal information, and loads no advertising or
@@ -73,7 +75,9 @@ export default function PrivacyPage() {
           connector
         </Link>{" "}
         need no account. A request carries only the search it asks for: no conversation, name or email reaches us,
-        and we keep no record of what was searched. A paid data key is tied to the email address that bought it.
+        and we keep no record of what was searched. Links to sellers given out by the connector pass through Census
+        EV, which counts the click and which car it was for, with no name, email or browser ID, and forwards to the
+        seller&rsquo;s page. A paid data key is tied to the email address that bought it.
       </p>
 
       <h2 className={h2}>Who handles data for us</h2>

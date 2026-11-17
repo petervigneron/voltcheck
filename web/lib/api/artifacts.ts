@@ -1,4 +1,5 @@
 import type { ApiIndex, ApiListing, ApiManifest } from "./records";
+import type { HubIndex } from "@/lib/listings/hubIndex";
 
 // The API's data plane: the artifacts scripts/publish-feed.mjs uploads to the
 // public `feed` bucket, memoised per function instance. Nothing here touches
@@ -68,4 +69,46 @@ export async function hydrate(m: ApiManifest, page: [string, string][]): Promise
   const byId = new Map<string, ApiListing>();
   for (const [, recs] of parts) for (const r of recs ?? []) byId.set(r.id, r);
   return page.map(([id]) => byId.get(id)).filter((r): r is ApiListing => r !== undefined);
+}
+
+// ------------------------------------------------------------ model hubs
+// The model pages' own numbers (lib/listings/hubIndex.ts), from the same
+// hubs.json the pages read, behind the same 36h gate on the feed manifest
+// (lib/listings/hubSource.ts). Read here rather than through hubEntry()
+// because hubEntry() falls back to walking the database when the artifact is
+// missing, and nothing on the API's side of the house may do that.
+
+const HUB_MAX_AGE_MS = 36 * 60 * 60 * 1000;
+const HUB_TIMEOUT_MS = 15_000;
+// The manifest is re-read every few minutes; the ~1.5 MB body only when the
+// manifest says a new one was published, so a warm instance does not pull it
+// again on every check (the egress budget is why the pages cache a day).
+let hubManifestMemo: { at: number; publishedAt: string | null } | undefined;
+let hubBodyMemo: { publishedAt: string; value: HubIndex } | undefined;
+
+async function fetchBounded<T>(name: string): Promise<T | null> {
+  if (!base()) return null;
+  try {
+    const res = await fetch(url(name), { cache: "no-store", signal: AbortSignal.timeout(HUB_TIMEOUT_MS) });
+    if (!res.ok) return null;
+    return (await res.json()) as T;
+  } catch {
+    return null;
+  }
+}
+
+/** The published hub index, or null when it is missing, stale or unreadable. */
+export async function apiHubIndex(): Promise<HubIndex | null> {
+  if (!hubManifestMemo || Date.now() - hubManifestMemo.at >= MANIFEST_TTL_MS) {
+    const m = await fetchBounded<{ v: number; publishedAt: string }>("manifest");
+    const ok = m && m.v === 1 && typeof m.publishedAt === "string" && Number.isFinite(Date.parse(m.publishedAt));
+    hubManifestMemo = { at: Date.now(), publishedAt: ok ? m.publishedAt : null };
+  }
+  const publishedAt = hubManifestMemo.publishedAt;
+  if (!publishedAt || Date.now() - Date.parse(publishedAt) > HUB_MAX_AGE_MS) return null;
+  if (hubBodyMemo?.publishedAt === publishedAt) return hubBodyMemo.value;
+  const h = await fetchBounded<HubIndex>("hubs");
+  if (!h || h.v !== 1 || !h.hubs) return null;
+  hubBodyMemo = { publishedAt, value: h };
+  return h;
 }

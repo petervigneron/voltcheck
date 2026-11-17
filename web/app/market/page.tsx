@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { fetchMarket } from "@/lib/market";
+import { fetchMarket, MARKET_MIN_CARS as MIN_CARS } from "@/lib/market";
 import { openGraph, OWN_IMAGE } from "@/lib/og/meta";
 import { fetchSpeed } from "@/lib/listings/speed";
 import { monthReports } from "@/lib/marketMonths";
@@ -37,8 +37,6 @@ import { monthReports } from "@/lib/marketMonths";
 export const dynamic = "force-static";
 export const revalidate = 86400;
 
-/** Models with fewer used cars than this are left to their hub pages. */
-const MIN_CARS = 100;
 /** Months printed as figures above the sold chart. */
 const STRIP = 6;
 

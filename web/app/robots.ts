@@ -6,7 +6,9 @@ import { BASE, sitemapUrls } from "@/lib/sitemap";
 // index value — /saved is a client-only local list, /alerts/* are one-shot
 // email-token pages, /pro/access carries a pass token and /pro/thanks is a
 // purchase dead end that would read as a confirmation to anyone who found it
-// in search results. /pro itself IS crawlable: it is where the free-forever
+// in search results. /go/<vin> is a counted redirect to a seller's page
+// (lib/go.ts): following it would count a crawler as a buyer, and it has no
+// content of its own to index. /pro itself IS crawlable: it is where the free-forever
 // promise is published. /api is left crawlable on purpose: Googlebot fetches
 // /api/index/* when it renders the client browse grid.
 //
@@ -25,7 +27,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/saved", "/alerts/", "/pro/access", "/pro/thanks"],
+      disallow: ["/saved", "/alerts/", "/pro/access", "/pro/thanks", "/go/"],
     },
     sitemap: [`${BASE}/sitemap.xml`, ...sitemapUrls()],
     host: BASE,

@@ -44,11 +44,16 @@ export function visitRef(referrer: string, ownHost: string): string | undefined 
   }
 }
 
+/** A campaign label, lowercased, when it is a plain one; anything else is dropped. */
+export function plainLabel(raw: string | null | undefined): string | undefined {
+  const s = (raw ?? "").trim().toLowerCase();
+  return LABEL.test(s) ? s : undefined;
+}
+
 /** utm_source, else ref=, when it is a plain label; anything else is dropped. */
 export function visitSrc(search: string): string | undefined {
   const q = new URLSearchParams(search);
-  const raw = (q.get("utm_source") ?? q.get("ref") ?? "").trim().toLowerCase();
-  return LABEL.test(raw) ? raw : undefined;
+  return plainLabel(q.get("utm_source") ?? q.get("ref"));
 }
 
 export function visitProps(a: {

@@ -198,6 +198,8 @@ export interface QueryResult {
    *  was asked — left out of `total`, and counted here so the caller knows
    *  how many the question could not be put to. */
   notEstablished: { condition?: number; kind?: number; heat_pump?: number };
+  /** Every matched row, in result order: what a summary of the whole set reads. */
+  hits: SlimRow[];
 }
 
 /** Run a query over the slim index. `origin` is the query zip's centroid;
@@ -270,5 +272,5 @@ export function runQuery(rows: SlimRow[], q: ListingQuery, origin?: [number, num
   // order rather than shuffling equal-priced cars between pages.
   hits.sort((a, b) => cmp[sort](a, b) || (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0));
   const page = hits.slice(q.offset, q.offset + q.limit).map((r): [string, string] => [r[0], r[1]]);
-  return { total: hits.length, page, distances, notEstablished };
+  return { total: hits.length, page, distances, notEstablished, hits };
 }

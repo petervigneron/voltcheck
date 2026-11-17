@@ -3,13 +3,14 @@ import { createMcpServer } from "@/lib/mcp/server";
 import { INSTRUCTIONS, TOOLS } from "@/lib/mcp/tools";
 
 // POST /api/mcp — the Model Context Protocol endpoint (Streamable HTTP,
-// stateless). An agent host points at this URL and gets three tools:
-// search_listings, get_listing, list_models. See lib/mcp/server.ts for
+// stateless). An agent host points at this URL and gets five tools:
+// search_listings, get_listing, list_models, battery_warranty and
+// market_snapshot. See lib/mcp/server.ts for
 // the transport and lib/mcp/tools.ts for what the tools promise.
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
-const server = createMcpServer({ name: "census", title: "Census EV", version: "1.1.0", instructions: INSTRUCTIONS, tools: TOOLS });
+const server = createMcpServer({ name: "census", title: "Census EV", version: "1.2.0", instructions: INSTRUCTIONS, tools: TOOLS });
 
 export const OPTIONS = options;
 

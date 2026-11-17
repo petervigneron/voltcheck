@@ -141,6 +141,13 @@ export { warrantyStatus } from "./warrantyVerdict";
 const FIRST_YEAR = Math.min(...ALL_ROWS.map((r) => r.modelYears[0]));
 const LAST_YEAR = Math.max(...ALL_ROWS.map((r) => r.modelYears[1]));
 
+/** A hub's battery-warranty fact sheet, when one exists. */
+export function warrantySheet(h: Pick<ModelHub, "make" | "model">): { href: string; label: string } | undefined {
+  const link = factLinksFor(h.make, h.model).find((l) => l.path.endsWith("/battery-warranty"));
+  const sheet = link && FACT_SHEETS.find((s) => `/facts/${s.make}/${s.model}/${s.topic}` === link.path);
+  return sheet ? { href: link!.path, label: sheet.breadcrumbLabel } : undefined;
+}
+
 /**
  * The picker's data: every hub with at least one model year the rows cover,
  * and that year's answer (null where the cohort goes quiet). A year no row
@@ -155,14 +162,12 @@ export function warrantyModels(hubs: ModelHub[]): WarrantyModel[] {
       years.push({ year: y, answer: warrantyAnswer(h.make, h.model, y) });
     }
     if (years.length === 0) continue;
-    const link = factLinksFor(h.make, h.model).find((l) => l.path.endsWith("/battery-warranty"));
-    const sheet = link && FACT_SHEETS.find((s) => `/facts/${s.make}/${s.model}/${s.topic}` === link.path);
     out.push({
       makeSlug: h.makeSlug,
       make: h.make,
       modelSlug: h.modelSlug,
       model: h.model,
-      sheet: sheet ? { href: link!.path, label: sheet.breadcrumbLabel } : undefined,
+      sheet: warrantySheet(h),
       years,
     });
   }

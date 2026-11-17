@@ -35,6 +35,8 @@ const PROMPTS = [
   "Find used Kia EV6s under $28,000 within 100 miles of 60614, lowest mileage first.",
   "Which plug-in hybrid SUVs with a heat pump are for sale in Colorado under $35,000?",
   "Has the asking price changed on the car with VIN 5YJ3E1EA4MF099936?",
+  "Is the battery warranty still in force on a 2023 Kia EV6 with 42,000 miles?",
+  "What are used Hyundai Ioniq 5s asking by model year, and which way are prices moving?",
 ];
 
 const h2 = "mt-10 text-[10.5px] font-extrabold uppercase tracking-[0.14em] text-ink/60";
@@ -80,7 +82,7 @@ export default function ConnectorPage() {
           </div>
         ))}
       </dl>
-      <p className={p}>Search filters: {FILTERS}. All three tools only read; none changes anything.</p>
+      <p className={p}>Search filters: {FILTERS}. All {TOOLS.length} tools only read; none changes anything.</p>
 
       <h2 className={h2}>Things to ask</h2>
       <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm leading-relaxed text-ink/80">
@@ -92,14 +94,25 @@ export default function ConnectorPage() {
       <h2 className={h2}>What comes back</h2>
       <p className={p}>
         Each car carries its asking price, mileage, location, battery size, EPA range, charge port, heat pump and DC
-        fast-charging rate, and a link to the seller&rsquo;s page, which is where the car is bought. A figure that is
-        not the manufacturer&rsquo;s is marked estimated. Every response states the time its inventory was read, as{" "}
-        <code className="text-[13px]">as_of</code>.
+        fast-charging rate, the seller&rsquo;s name and website, and a link to the seller. That link passes through
+        Census EV, which counts the click, and forwards to the dealer&rsquo;s own page for the car, which is where the
+        car is bought. A search also counts every matching car by model year and trim and gives the lowest, median and
+        highest asking price. The warranty tool gives the battery warranty for a model year and, with a mileage,
+        whether it is still in force, as the{" "}
+        <Link href="/warranty" className="font-semibold text-cobalt hover:underline">
+          warranty checker
+        </Link>{" "}
+        does. The market tool gives the figures on a model&rsquo;s page here and on{" "}
+        <Link href="/market" className="font-semibold text-cobalt hover:underline">
+          the market page
+        </Link>
+        . A figure that is not the manufacturer&rsquo;s is marked estimated. Every response states the time its
+        inventory was read, as <code className="text-[13px]">as_of</code>.
       </p>
 
       <h2 className={h2}>Without MCP</h2>
       <p className={p}>
-        The same three operations are a plain JSON API at{" "}
+        The search, listing and model operations are also a plain JSON API at{" "}
         <Link href="/api/v1" className="font-semibold text-cobalt hover:underline">
           censusev.com/api/v1
         </Link>

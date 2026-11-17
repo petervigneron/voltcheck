@@ -82,7 +82,7 @@ export function shapeSpeed(rows: RawSpeedRow[] | null | undefined, hubs: ModelHu
  * that are about something else, and a model page without it is still the
  * page. Cached for a day; the table is refilled once a day.
  */
-export async function fetchSpeed(): Promise<Map<string, ModelSpeed>> {
+export async function fetchSpeed(opts: { signal?: AbortSignal } = {}): Promise<Map<string, ModelSpeed>> {
   const base = process.env.SUPABASE_URL?.replace(/\/$/, "");
   const key = process.env.SUPABASE_ANON_KEY;
   if (!base || !key) return new Map();
@@ -90,6 +90,7 @@ export async function fetchSpeed(): Promise<Map<string, ModelSpeed>> {
     const res = await fetch(`${base}/rest/v1/model_selling_speed?select=make,model,listed,gone,window_from,window_to&limit=2000`, {
       headers: { apikey: key, Authorization: `Bearer ${key}` },
       next: { revalidate: 86_400 },
+      signal: opts.signal,
     });
     if (!res.ok) return new Map();
     return shapeSpeed((await res.json()) as RawSpeedRow[]);
