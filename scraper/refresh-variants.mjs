@@ -67,7 +67,16 @@ const VIEWS = [
   // After listing_freshness, which it reads: the days-to-first-cut median is
   // only computed for cars 0028 gives a defensible listing date, so refreshing
   // this one first would date tonight's cuts against last night's verdicts
-  // (0084). 12.4s measured on prod the day it landed.
+  // (0084). 12.4s measured on prod the day it landed; 60s and cancelled by
+  // 2026-11-17, because it read every live car's whole price history in one
+  // statement. 0124 writes the per-car rows in four hash slices (37-40 s
+  // each, most of it one pass over listing_price_history) and the view is a
+  // group-by over them (0.6 s). A slice that fails leaves its cars at last
+  // night's answer; the view still refreshes over the other three.
+  "dealer_price_behavior_car_0",
+  "dealer_price_behavior_car_1",
+  "dealer_price_behavior_car_2",
+  "dealer_price_behavior_car_3",
   "dealer_price_behavior",
   // The market-trend views (0061/0064). Sales is cheap (0.2s, quarterly over
   // WA sales since 2019). The daily asks target is not a matview refresh: it
