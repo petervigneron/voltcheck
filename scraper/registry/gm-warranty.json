@@ -42611,5 +42611,145 @@
    "fromReplacement": false
   },
   "checkedAt": "2026-11-16"
+ },
+ "1G1FZ6S05P4120744": {
+  "coverage": {
+   "startDate": "2023-01-28",
+   "startMileage": 3,
+   "expiresDate": "2031-01-28",
+   "expiresMileage": 100003,
+   "inServiceDate": "2023-01-28",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-11-17"
+ },
+ "3GPKHWRM8RS505301": {
+  "unavailable": true,
+  "checkedAt": "2026-11-17"
+ },
+ "1G1FY6S00K4136622": {
+  "coverage": {
+   "startDate": "2021-12-21",
+   "startMileage": 16893,
+   "expiresDate": "2029-12-21",
+   "expiresMileage": 116893,
+   "inServiceDate": "2019-04-29",
+   "fromReplacement": true
+  },
+  "campaign": {
+   "packReplaced": true,
+   "packReplacedDate": "2021-12-21",
+   "odometerAtReplacement": 16893,
+   "gmProgramNumber": "N212343881"
+  },
+  "checkedAt": "2026-11-17"
+ },
+ "1G1FW6S04H4173705": {
+  "coverage": {
+   "startDate": "2023-01-31",
+   "startMileage": 18358,
+   "expiresDate": "2031-01-31",
+   "expiresMileage": 118358,
+   "inServiceDate": "2017-10-02",
+   "fromReplacement": true
+  },
+  "campaign": {
+   "packReplaced": true,
+   "packReplacedDate": "2023-01-31",
+   "odometerAtReplacement": 18358,
+   "gmProgramNumber": "N202311731"
+  },
+  "checkedAt": "2026-11-17"
+ },
+ "3GYK3GMRXSS230779": {
+  "coverage": {
+   "startDate": "2025-07-18",
+   "startMileage": 4,
+   "expiresDate": "2033-07-18",
+   "expiresMileage": 100004,
+   "inServiceDate": "2025-07-18",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-11-17"
+ },
+ "1GYKPRRL9RZ126950": {
+  "coverage": {
+   "startDate": "2024-05-06",
+   "startMileage": 2484,
+   "expiresDate": "2032-05-06",
+   "expiresMileage": 102484,
+   "inServiceDate": "2024-05-06",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-11-17"
+ },
+ "1GYKPVRL3RZ125480": {
+  "coverage": {
+   "startDate": "2024-09-17",
+   "startMileage": 6,
+   "expiresDate": "2032-09-17",
+   "expiresMileage": 100006,
+   "inServiceDate": "2024-09-17",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-11-17"
+ },
+ "1GYKPURL1TZ312010": {
+  "coverage": {
+   "startDate": "2026-08-17",
+   "startMileage": 6,
+   "expiresDate": "2034-08-17",
+   "expiresMileage": 100006,
+   "inServiceDate": "2026-08-17",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-11-17"
+ },
+ "3GN7DMRP8TS145687": {
+  "coverage": {
+   "startDate": "2026-01-27",
+   "startMileage": 9,
+   "expiresDate": "2034-01-27",
+   "expiresMileage": 100009,
+   "inServiceDate": "2026-01-27",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-11-17"
+ },
+ "3GN7DLRP6RS275583": {
+  "coverage": {
+   "startDate": "2024-09-28",
+   "startMileage": 16,
+   "expiresDate": "2032-09-28",
+   "expiresMileage": 100016,
+   "inServiceDate": "2024-09-28",
+   "fromReplacement": false
+  },
+  "checkedAt": "2026-11-17"
+ },
+ "3GPKHXRJ7RS527737": {
+  "unavailable": true,
+  "checkedAt": "2026-11-17"
+ },
+ "1G1FY6S02M4114107": {
+  "coverage": {
+   "startDate": "2023-01-18",
+   "startMileage": 29274,
+   "expiresDate": "2031-01-18",
+   "expiresMileage": 129274,
+   "inServiceDate": "2021-05-31",
+   "fromReplacement": true
+  },
+  "campaign": {
+   "packReplaced": true,
+   "packReplacedDate": "2023-01-18",
+   "odometerAtReplacement": 29274,
+   "gmProgramNumber": "N212345940"
+  },
+  "checkedAt": "2026-11-17"
+ },
+ "1G1RC6S50JU146489": {
+  "unavailable": true,
+  "checkedAt": "2026-11-17"
  }
 }
