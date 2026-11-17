@@ -580,7 +580,7 @@ jobs:
           # minute. Must run before ingest: it writes `description` onto
           # out/listings.json records, which is what buyback_disclosed (0024)
           # is computed from.
-          timeout 20m node vdp-notes.mjs --limit 4000 --concurrency 12 || echo "vdp-notes hit its 20m cap — continuing; cars already read are cached in registry/vdp-notes.json"
+          timeout 20m node vdp-notes.mjs --limit 4000 --concurrency 12 || echo "vdp-notes hit its 20m cap — continuing; cars already read are cached in registry/vdp-notes/"
           node ingest.mjs
 
       - name: Sync to Supabase
@@ -1005,7 +1005,7 @@ jobs:
           specs=("registry/registry.json:0:registry"
                  "registry/gm-warranty.json:1:GM warranty cache"
                  "registry/ford-sticker.json:1:Ford window-sticker cache"
-                 "registry/vdp-notes.json:1:dealer-notes cache"
+                 "registry/vdp-notes:1:dealer-notes cache"
                  "registry/buyback-dealers.json:1:buyback-dealer list"
                  "registry/vpic-cache.json:0:vPIC cache")
           # Copy ALL of them up front, before any git command. unwedge() rewinds
@@ -1016,7 +1016,11 @@ jobs:
           # exists to prevent, arriving through the fix for it.
           for spec in "${specs[@]}"; do
             f="${spec%%:*}"
-            cp "scraper/$f" "${RUNNER_TEMP:-/tmp}/$(basename "$f")" 2>/dev/null || true
+            # -R and the rm: registry/vdp-notes is a DIRECTORY of shard files
+            # since 2026-11-17 (scraper/lib/vin-cache-io.mjs), and copying a
+            # directory onto an existing one nests it instead of replacing it.
+            rm -rf "${RUNNER_TEMP:-/tmp}/$(basename "$f")"
+            cp -R "scraper/$f" "${RUNNER_TEMP:-/tmp}/$(basename "$f")" 2>/dev/null || true
           done
           # audit-status.json is saved HERE, by the step that does not commit it,
           # and that is the point. unwedge() rewinds the whole registry directory,
@@ -1030,7 +1034,7 @@ jobs:
           for spec in "${specs[@]}"; do
             file="${spec%%:*}"; rest="${spec#*:}"; indent="${rest%%:*}"; label="${rest#*:}"
             mine="${RUNNER_TEMP:-/tmp}/$(basename "$file")"
-            [ -f "$mine" ] || continue
+            [ -e "$mine" ] || continue
             pushed=0
             for i in 1 2 3 4 5; do
               git checkout HEAD -- "scraper/$file" 2>/dev/null || true

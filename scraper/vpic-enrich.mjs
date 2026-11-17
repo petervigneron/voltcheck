@@ -51,6 +51,7 @@ import { fetchWithRetry } from "./lib/retry.mjs";
 import { untrustedModel } from "./lib/model-trust.mjs";
 import { feedModelFromVpic } from "./lib/vpic-model.mjs";
 import { vpicTrim } from "./lib/vpic-trim.mjs";
+import { readVinCache, writeVinCache } from "./lib/vin-cache-io.mjs";
 
 const src = new URL("./out/listings.json", import.meta.url);
 const listings = JSON.parse(await readFile(src, "utf-8"));
@@ -58,7 +59,10 @@ const listings = JSON.parse(await readFile(src, "utf-8"));
 const cacheUrl = new URL("./registry/vpic-cache.json", import.meta.url);
 let cache = {};
 try {
-  cache = JSON.parse(await readFile(cacheUrl, "utf-8"));
+  // Stored as deduplicated rows since 2026-11-17 (lib/vin-cache-io.mjs: the
+  // one-object-per-VIN file reached GitHub's 100 MB limit and stopped being
+  // pushable). readVinCache hands back the same { VIN: entry } object.
+  cache = await readVinCache(cacheUrl);
 } catch (e) {
   // Missing (first run) or corrupt (bad commit, disk issue) — either way,
   // starting empty is safe: it costs a slow night of re-decoding, never a
@@ -270,10 +274,9 @@ async function writeOutput() {
   try {
     await Promise.all([
       writeFile(src, JSON.stringify(listings, null, 2)),
-      // Compact, not indented: this file's growth is bounded by distinct
-      // VINs ever decoded (all makes, not just GM's gm-warranty.json), so it
-      // is sized to stay small rather than to stay human-readable.
-      writeFile(cacheUrl, JSON.stringify(cache)),
+      // Each distinct decode once, each VIN a pointer to it: ~33 bytes a VIN
+      // where the plain object was 261 (lib/vin-cache-io.mjs).
+      writeVinCache(cacheUrl, cache),
     ]);
   } finally {
     writing = false;

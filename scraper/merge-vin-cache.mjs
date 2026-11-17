@@ -32,8 +32,18 @@
 // git, check the file out at the remote tip, and call this with --mine; the
 // commit is then a clean addition on top of what is already published and a
 // rebase has nothing to reconcile.
-import { readFile, writeFile } from "node:fs/promises";
+//
+// ON-DISK SHAPE (2026-11-17). Reading and writing go through
+// lib/vin-cache-io.mjs, which stores vpic-cache.json as deduplicated rows and
+// the dealer-notes cache as ten shard files under registry/vdp-notes/ — both
+// because the single files hit GitHub's 100 MB limit and every push after
+// 2026-11-05 was refused. --file may therefore be a directory, and --mine a
+// copy of one. This script also says so, as an error annotation, when what it
+// just wrote is past half that limit: a cache that cannot be pushed fails as a
+// warning nobody reads, eleven nights running.
+import path from "node:path";
 import { mergeVinCache } from "./lib/vin-cache-merge.mjs";
+import { readVinCache, writeVinCache, REGISTRY_FILE_BUDGET, GITHUB_FILE_LIMIT } from "./lib/vin-cache-io.mjs";
 
 const arg = (n, d) => { const i = process.argv.indexOf(n); return i >= 0 ? process.argv[i + 1] : d; };
 const FILE = arg("--file", null);
@@ -51,20 +61,41 @@ if (!FILE || !MINE) {
 
 const readJson = async (src, what) => {
   try {
-    return JSON.parse(await readFile(src, "utf-8"));
+    return await readVinCache(src);
   } catch (e) {
     console.log(`merge-vin-cache: ${what} unreadable (${e.code ?? e.message}) — treated as empty`);
     return {};
   }
 };
 
+// registry/vdp-notes.json is retired: the cache is the registry/vdp-notes/
+// directory now. A run that checked out before the split still names the old
+// path here, and writing it would put an 80 MB file back beside the shards
+// that nothing reads. Refuse quietly — the caller then finds nothing staged,
+// and that run's reads are re-fetched on the next sweep.
+if (path.basename(FILE) === "vdp-notes.json") {
+  console.log(`merge-vin-cache: ${FILE} is retired (the cache is ${path.join(path.dirname(FILE), "vdp-notes")}/ now) — nothing written`);
+  process.exit(0);
+}
+
 const mine = await readJson(MINE, "this run's saved copy");
 const published = await readJson(FILE, "the checked-out file");
 const merged = mergeVinCache(mine, published);
 
-await writeFile(FILE, JSON.stringify(merged, null, INDENT || undefined));
+const largest = await writeVinCache(FILE, merged, { indent: INDENT });
 
 const added = Object.keys(merged).length - Object.keys(published).length;
 console.log(
   `merge-vin-cache: ${FILE} — ${Object.keys(published).length} published + ${Object.keys(mine).length} from this run = ${Object.keys(merged).length} (${added} new)`
 );
+const mb = (n) => (n / 1024 / 1024).toFixed(1);
+if (largest > REGISTRY_FILE_BUDGET) {
+  // GitHub Actions turns this line into a red annotation on the run.
+  console.log(
+    `::error title=Registry cache near GitHub's file limit::${FILE} wrote a ${mb(largest)} MB file. ` +
+      `GitHub refuses pushes of files over ${mb(GITHUB_FILE_LIMIT)} MB, and a refused cache push loses every entry this run added. ` +
+      `See scraper/lib/vin-cache-io.mjs.`
+  );
+} else {
+  console.log(`merge-vin-cache: largest file written ${mb(largest)} MB (budget ${mb(REGISTRY_FILE_BUDGET)}, GitHub limit ${mb(GITHUB_FILE_LIMIT)})`);
+}

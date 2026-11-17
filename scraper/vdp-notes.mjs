@@ -68,10 +68,16 @@ import { extractDealerNotes, needsDealerNotes } from "./lib/dealer-notes.mjs";
 import { dealerWords } from "./lib/normalize.mjs";
 import { snapshotKeyFromHtml } from "./lib/carfax-snapshot.mjs";
 import { titleBrandFromPage } from "./lib/title-brand.mjs";
+import { readVinCache, writeVinCache } from "./lib/vin-cache-io.mjs";
 
 const LISTINGS = new URL("./out/listings.json", import.meta.url);
 const REGISTRY = new URL("./registry/registry.json", import.meta.url);
-const CACHE = new URL("./registry/vdp-notes.json", import.meta.url);
+// A directory of ten shard files (by the VIN's last digit) since 2026-11-17:
+// the single vdp-notes.json was 81.5 MB, growing ~1.4 MB a day toward
+// GitHub's 100 MB file limit. lib/vin-cache-io.mjs reads and writes it as one
+// { VIN: entry } object.
+const CACHE = new URL("./registry/vdp-notes", import.meta.url);
+const saveCache = () => writeVinCache(CACHE, cache, { indent: 1 });
 const BUYBACK_DEALERS = new URL("./registry/buyback-dealers.json", import.meta.url);
 
 // Notes are edited — a price is quoted in them, "Recent Arrival!" ages — so
@@ -93,7 +99,7 @@ const CONCURRENCY = Math.max(1, arg("--concurrency", 6));
 const listings = JSON.parse(await readFile(LISTINGS, "utf-8"));
 let cache = {};
 try {
-  cache = JSON.parse(await readFile(CACHE, "utf-8"));
+  cache = await readVinCache(CACHE);
 } catch {
   /* first run */
 }
@@ -223,13 +229,13 @@ async function worker() {
     }
     if (++done % 200 === 0) {
       console.error(`vdp-notes: ${done}/${work.length} (${read} with notes)`);
-      await writeFile(CACHE, JSON.stringify(cache, null, 1));
+      await saveCache();
     }
   }
 }
 
 await Promise.all(Array.from({ length: Math.min(CONCURRENCY, work.length) }, worker));
-await writeFile(CACHE, JSON.stringify(cache, null, 1));
+await saveCache();
 // What this run did, for the workflow step that decides whether the 22 MB
 // cache is worth a commit from this slice (rolling-crawl.yml).
 await writeFile(

@@ -32,6 +32,7 @@ import { readdir, readFile, writeFile } from "node:fs/promises";
 import { EV_ONLY_WMIS, nameplateVouches, vpicRefutesEv } from "./lib/ev.mjs";
 import { recordRun } from "./lib/audit-status.mjs";
 import { fetchWithRetry } from "./lib/retry.mjs";
+import { readVinCache } from "./lib/vin-cache-io.mjs";
 
 const arg = (n, d) => { const i = process.argv.indexOf(n); return i >= 0 ? process.argv[i + 1] : d; };
 const LIMIT = Number(arg("--limit", 0));
@@ -132,7 +133,7 @@ if (!unvouched.length) { console.error("audit: clean"); await finish(0, "ok", `$
 const byVin = new Map();
 let cache = {};
 try {
-  cache = JSON.parse(await readFile(new URL("./registry/vpic-cache.json", import.meta.url), "utf-8"));
+  cache = await readVinCache(new URL("./registry/vpic-cache.json", import.meta.url));
 } catch (e) {
   if (e.code !== "ENOENT") console.error(`audit: vPIC cache unreadable (${e.message}) — asking vPIC for everything`);
 }

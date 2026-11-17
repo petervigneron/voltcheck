@@ -368,7 +368,7 @@ jobs:
         working-directory: scraper
         run: |
           timeout 5m node vdp-notes.mjs --limit 600 --concurrency 12 || \
-            echo "::warning::vdp-notes hit its 5m cap on slice ${{ steps.pick.outputs.slice }}; cars already read are cached in registry/vdp-notes.json"
+            echo "::warning::vdp-notes hit its 5m cap on slice ${{ steps.pick.outputs.slice }}; cars already read are cached in registry/vdp-notes/"
 
       # The title brand off the Carfax Snapshot each dealer publishes for its
       # own used cars (scraper/carfax-snapshot.mjs, lib/carfax-snapshot.mjs —
@@ -534,7 +534,12 @@ jobs:
           cp scraper/registry/audit-status.json "${RUNNER_TEMP:-/tmp}/audit-status-mine.json" 2>/dev/null || true
           # And the dealer-notes cache, for the same reason; its own step is
           # further down and this rewind has happened by then.
-          cp scraper/registry/vdp-notes.json "${RUNNER_TEMP:-/tmp}/vdp-notes-mine.json" 2>/dev/null || true
+          # A directory since 2026-11-17 (ten shard files; the single
+          # vdp-notes.json was 81.5 MB and two weeks from GitHub's 100 MB file
+          # limit, which the vPIC cache above had already hit — see
+          # scraper/lib/vin-cache-io.mjs).
+          rm -rf "${RUNNER_TEMP:-/tmp}/vdp-notes-mine"
+          cp -R scraper/registry/vdp-notes "${RUNNER_TEMP:-/tmp}/vdp-notes-mine" 2>/dev/null || true
           cp scraper/out/vdp-notes-run.json "${RUNNER_TEMP:-/tmp}/vdp-notes-run.json" 2>/dev/null || true
           cp scraper/registry/carfax-snapshot.json "${RUNNER_TEMP:-/tmp}/carfax-snapshot-mine.json" 2>/dev/null || true
           cp scraper/out/carfax-snapshot-run.json "${RUNNER_TEMP:-/tmp}/carfax-snapshot-run.json" 2>/dev/null || true
@@ -567,7 +572,8 @@ jobs:
       # re-read every 30 days), its own commit so neither file's conflict can
       # take the other down.
       #
-      # Pushed only by a slice that READ something. The file is ~22 MB and
+      # Pushed only by a slice that READ something. The cache is ~80 MB (ten
+      # shard files under registry/vdp-notes/ since 2026-11-17) and
       # there are 48 slices a run; once the backlog is drained a slice reads a
       # few dozen cars a day, so most slices have nothing new and say so. The
       # gate is this run's own out/vdp-notes-run.json, not the age of the
@@ -582,9 +588,9 @@ jobs:
         run: |
           git config user.name "voltcheck-bot"
           git config user.email "noreply@github.com"
-          mine="${RUNNER_TEMP:-/tmp}/vdp-notes-mine.json"
+          mine="${RUNNER_TEMP:-/tmp}/vdp-notes-mine"
           runfile="${RUNNER_TEMP:-/tmp}/vdp-notes-run.json"
-          [ -f "$mine" ] || { echo "no saved copy of the notes cache; nothing to commit"; exit 0; }
+          [ -d "$mine" ] || { echo "no saved copy of the notes cache; nothing to commit"; exit 0; }
           node -e '
             const fs = require("fs");
             let n = 0;
@@ -608,13 +614,13 @@ jobs:
           git checkout -f HEAD -- web/data/scraped-listings.json 2>/dev/null || true
           unwedge
           for i in 1 2 3; do
-            git checkout HEAD -- scraper/registry/vdp-notes.json 2>/dev/null || true
+            git checkout HEAD -- scraper/registry/vdp-notes 2>/dev/null || true
             git fetch origin main || true
             if ! git pull --rebase --autostash; then unwedge; sleep $((i * 10)); continue; fi
             if [ -n "$(git diff --name-only --diff-filter=U)" ]; then unwedge; continue; fi
-            node scraper/merge-vin-cache.mjs --file scraper/registry/vdp-notes.json --mine "$mine" --indent 1
+            node scraper/merge-vin-cache.mjs --file scraper/registry/vdp-notes --mine "$mine" --indent 1
             git reset -q
-            git add scraper/registry/vdp-notes.json
+            git add scraper/registry/vdp-notes
             git diff --staged --quiet && { echo "nothing to commit"; exit 0; }
             git commit -m "Rolling crawl: dealer-notes cache after slice ${{ steps.pick.outputs.slice }} [skip ci]"
             if git push; then echo "notes cache pushed"; exit 0; fi
