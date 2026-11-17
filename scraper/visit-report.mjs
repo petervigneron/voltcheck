@@ -74,6 +74,11 @@ function summarise(evts, from, to) {
   };
   return {
     visitors: ids(views),
+    // People who opened a second page. Most single-page visits arrive with no
+    // referrer on the home page and leave; whatever they are, they did not
+    // shop. This is the count to watch (2026-11-16: 138 visitors, 24 of these).
+    engaged: [...views.reduce((m, e) => m.set(e.client_id, (m.get(e.client_id) ?? 0) + 1), new Map()).values()]
+      .filter((n) => n >= 2).length,
     newVisitors: ids(views.filter((e) => e.props?.new)),
     visits: landings.length,
     pages: views.length,
@@ -94,16 +99,23 @@ const soldWas = sold(prior, start);
 const usd = (list) => `$${(list.reduce((s, p) => s + (p.amount_cents ?? 0), 0) / 100).toFixed(2)}`;
 
 const day = (ms) => iso(ms).slice(0, 10);
-const line = (label, value, before) => console.log(`${label.padEnd(15)}${value}  (was ${before})`);
+const line = (label, value, before) => console.log(`${label.padEnd(16)}${value}  (was ${before})`);
+// Page views were first recorded on 2026-11-11. A week with none before it is
+// a week nobody was counting, not a week nobody came: "was 0" there read as
+// growth from nothing in the first report that carried it.
+const counted = was.pages > 0;
+const viewLine = (label, value, before) =>
+  counted ? line(label, value, before) : console.log(`${label.padEnd(16)}${value}  (not counted the week before)`);
 
 console.log("Visitors — censusev.com");
 console.log(`${day(start)} to ${day(now)} (${DAYS} days)`);
 console.log("");
-line("visitors", cur.visitors, was.visitors);
-line("first-time", cur.newVisitors, was.newVisitors);
-line("visits", cur.visits, was.visits);
-line("pages opened", cur.pages, was.pages);
-line("reached /pro", cur.reachedPro, was.reachedPro);
+viewLine("visitors", cur.visitors, was.visitors);
+viewLine("opened 2+ pages", cur.engaged, was.engaged);
+viewLine("first-time", cur.newVisitors, was.newVisitors);
+viewLine("visits", cur.visits, was.visits);
+viewLine("pages opened", cur.pages, was.pages);
+viewLine("reached /pro", cur.reachedPro, was.reachedPro);
 line("dealer clicks", `${cur.dealerClicks} by ${cur.dealerClickers}`, `${was.dealerClicks} by ${was.dealerClickers}`);
 line("passes sold", `${soldNow.length} (${usd(soldNow)})`, `${soldWas.length} (${usd(soldWas)})`);
 
