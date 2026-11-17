@@ -36,6 +36,7 @@ const BODY = `# Census
 - [Model page](${BASE}/ev/hyundai/ioniq-5): one nameplate's cars, each linking to its own listing page. The path is /ev/{make}/{model}.
 - [Listing page](${BASE}/listing/1g1fz6ev2vf106485): one car, for as long as it is for sale. The path is /listing/{VIN in lower case}. Carries schema.org Car JSON-LD — VIN, name, brand, model, year, odometer, condition, fuel type, color, drivetrain, the offer and its seller — plus the battery, range, charge port and heat pump the page itself shows.
 - [EV fact sheets](${BASE}/facts): one page per question, sourced to the manufacturer's own documents wherever one exists. Each carries FAQPage JSON-LD.
+- [Battery warranty checker](${BASE}/warranty): the manufacturer's high-voltage battery warranty term for a make, model and model year, and whether it is still in force at a given odometer reading. Links to the battery-warranty fact sheet for each model that has one.
 - [What's my car worth?](${BASE}/worth): a valuation from a make, model, year, trim and odometer reading.
 - [VIN check](${BASE}/vin): paste any EV's VIN and get the same report our listings carry: the pack this exact car has, heat pump, fast-charge status, what the warranty does on resale, and the questions to ask the seller. The path is /vin/{VIN}.
 - [Where this data comes from](${BASE}/methodology): the manufacturer, EPA, NHTSA and state title sources behind every spec, price and warranty fact.

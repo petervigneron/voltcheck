@@ -12,6 +12,9 @@ export const dynamic = "force-static";
 export function GET() {
   const entries: SitemapEntry[] = [
     { url: `${BASE}/facts`, changeFrequency: "monthly", priority: 0.5 },
+    // The checker sits on top of the battery-warranty sheets, so it rides
+    // with them here as well as in shard 0.
+    { url: `${BASE}/warranty`, changeFrequency: "monthly", priority: 0.7 },
     // lastModified is the sheet's audit date, the same one its JSON-LD
     // carries and the same one shard 0 prints for it.
     ...FACT_SHEETS.map((s) => ({

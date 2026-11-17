@@ -127,6 +127,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <Link href="/market" className="underline decoration-paper/40 underline-offset-2 hover:text-paper hover:decoration-paper">
               Market
             </Link>
+            <Link href="/warranty" className="underline decoration-paper/40 underline-offset-2 hover:text-paper hover:decoration-paper">
+              Warranty
+            </Link>
             <Link href="/facts" className="underline decoration-paper/40 underline-offset-2 hover:text-paper hover:decoration-paper">
               Fact sheets
             </Link>
