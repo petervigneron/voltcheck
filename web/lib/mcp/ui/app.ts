@@ -52,7 +52,12 @@ export function withCards(tools: McpTool[]): McpTool[] {
           _meta: CARD_TOOL_META,
           handler: async (args) => {
             const { result, search } = await runSearch(args);
-            return new AppResult(result, { ...cardOf(search, search.results) });
+            // The whole result, with the card's cars added. Some clients hand
+            // the model structuredContent in place of the text (the quickstart
+            // names Claude Code), so it must never hold less than the text
+            // does: with only the card in it, such a client would have seen
+            // eight slim cars where the search returned twenty-five full ones.
+            return new AppResult(result, { ...(result as Record<string, unknown>), ...cardOf(search, search.results) });
           },
         },
   );

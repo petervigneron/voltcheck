@@ -77,7 +77,9 @@ export default function PrivacyPage() {
         need no account. A request carries only the search it asks for: no conversation, name or email reaches us,
         and we keep no record of what was searched. Links to sellers given out by the connector pass through Census
         EV, which counts the click and which car it was for, with no name, email or browser ID, and forwards to the
-        seller&rsquo;s page. A paid data key is tied to the email address that bought it.
+        seller&rsquo;s page. Where an assistant shows the connector&rsquo;s cars as cards, their photos load from
+        Census EV, and nothing is recorded about who viewed them. A paid data key is tied to the email address that
+        bought it.
       </p>
 
       <h2 className={h2}>Who handles data for us</h2>

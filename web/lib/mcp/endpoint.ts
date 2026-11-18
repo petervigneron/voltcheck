@@ -28,8 +28,14 @@ export function cardsMcpServer(): Promise<ReturnType<typeof createMcpServer>> {
 }
 
 /** The card UI is on for this request: /api/mcp?ui=1 exactly. */
+/**
+ * Cards are on for every request since 2026-11-18 (the owner tried them in
+ * Claude and said to switch them on). `?ui=0` still answers as the server
+ * did before cards existed: it is what the parity test replays, and a way to
+ * compare the two if a client ever misbehaves.
+ */
 export function wantsCards(req: Request): boolean {
-  return new URL(req.url).searchParams.get("ui") === "1";
+  return new URL(req.url).searchParams.get("ui") !== "0";
 }
 
 export async function mcpPost(req: Request, cards: boolean): Promise<Response> {
@@ -41,7 +47,10 @@ export async function mcpPost(req: Request, cards: boolean): Promise<Response> {
   } catch {
     return json({ jsonrpc: "2.0", id: null, error: { code: -32700, message: "parse error" } }, { status: 400 });
   }
-  const res = await (cards ? await cardsMcpServer() : PLAIN_SERVER).handle(body);
+  // If the card module ever fails to load, answer as the plain server: a
+  // connector with no cards is still a connector.
+  const server = cards ? await cardsMcpServer().catch(() => PLAIN_SERVER) : PLAIN_SERVER;
+  const res = await server.handle(body);
   if (res.status === 202) return new Response(null, { status: 202, headers: CORS });
   return json(res.body, { status: res.status });
 }

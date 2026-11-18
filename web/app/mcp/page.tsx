@@ -109,6 +109,11 @@ export default function ConnectorPage() {
         . A figure that is not the manufacturer&rsquo;s is marked estimated. Every response states the time its
         inventory was read, as <code className="text-[13px]">as_of</code>.
       </p>
+      <p className={p}>
+        In Claude, a search also shows the cars as cards: a photo, the price and mileage, where the car is, its range
+        and battery, and a button to the car&rsquo;s page here. The photos are the dealers&rsquo; and are passed
+        through Census EV.
+      </p>
 
       <h2 className={h2}>Without MCP</h2>
       <p className={p}>

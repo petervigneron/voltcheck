@@ -177,8 +177,13 @@ const SCRIPT = `
     const price = num(car.price_usd);
     const miles = num(car.mileage);
     const dist = num(car.distance_mi);
+    // Price and mileage share the first line, place and distance the second.
+    // With all three on one line the distance was cut off ("7 m...") at the
+    // card's width, seen in Claude on 2026-11-17.
+    const first = [];
+    if (price !== undefined) first.push(usd.format(price));
+    if (miles !== undefined) first.push(nf.format(miles) + " mi");
     const second = [];
-    if (miles !== undefined) second.push(nf.format(miles) + " mi");
     const p = place(car);
     if (p) second.push(p);
     if (dist !== undefined) second.push(nf.format(dist) + " mi away");
@@ -187,7 +192,7 @@ const SCRIPT = `
     if (range !== undefined) third.push(nf.format(range) + " mi " + (car.range_electric_only ? "electric range" : "range") + (car.range_estimated ? " (est.)" : ""));
     const kwh = num(car.battery_kwh);
     if (kwh !== undefined) third.push(nf.format(kwh) + " kWh" + (car.battery_estimated ? " (est.)" : ""));
-    return [price !== undefined ? usd.format(price) : "", second.join(" \\u00b7 "), third.join(" \\u00b7 ")];
+    return [first.join(" \\u00b7 "), second.join(" \\u00b7 "), third.join(" \\u00b7 ")];
   };
 
   const card = function (car) {

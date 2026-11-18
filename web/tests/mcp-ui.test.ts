@@ -42,29 +42,30 @@ type Tool = { name: string; _meta?: Record<string, unknown> };
 
 // ------------------------------------------------------------ switch off
 
-test("switch off: /api/mcp answers byte for byte as before the cards", async () => {
-  const t = await transcript(POST, "https://censusev.com/api/mcp");
+test("switch off (?ui=0): /api/mcp answers byte for byte as before the cards", async () => {
+  const t = await transcript(POST, "https://censusev.com/api/mcp?ui=0");
   assert.equal(createHash("sha256").update(t.join("\n---\n")).digest("hex"), WIRE_SHA256);
   // And in particular: no resources capability, no _meta on any tool,
   // resources/* unknown, structuredContent is the model's own result.
-  const init = await call(POST, "https://censusev.com/api/mcp", "initialize", {});
+  const init = await call(POST, "https://censusev.com/api/mcp?ui=0", "initialize", {});
   assert.deepEqual((init.result as { capabilities: unknown }).capabilities, { tools: { listChanged: false } });
-  const list = await call(POST, "https://censusev.com/api/mcp", "tools/list");
+  const list = await call(POST, "https://censusev.com/api/mcp?ui=0", "tools/list");
   for (const tool of (list.result as { tools: Tool[] }).tools) assert.equal("_meta" in tool, false, tool.name);
   for (const m of ["resources/list", "resources/read"]) {
-    assert.equal(((await call(POST, "https://censusev.com/api/mcp", m, { uri: CARD_URI })).error as { code: number }).code, -32601, m);
+    assert.equal(((await call(POST, "https://censusev.com/api/mcp?ui=0", m, { uri: CARD_URI })).error as { code: number }).code, -32601, m);
   }
-  // Anything but ui=1 is the published connector.
-  for (const q of ["?ui=0", "?ui=true", "?UI=1", "?ui=1x"]) {
+  // Cards are the default since 2026-11-18: only ui=0 turns them off.
+  for (const q of ["", "?ui=1", "?ui=true", "?UI=0", "?ui=0x"]) {
     const l = await call(POST, `https://censusev.com/api/mcp${q}`, "tools/list");
-    for (const tool of (l.result as { tools: Tool[] }).tools) assert.equal("_meta" in tool, false, q);
+    const search = (l.result as { tools: Tool[] }).tools.find((t) => t.name === "search_listings")!;
+    assert.equal("_meta" in search, true, q || "(no query)");
   }
 });
 
 // ------------------------------------------------------------ switch on
 
 test("switch on: search_listings points at the card, nothing else changes in tools/list", async () => {
-  const off = (await call(POST, "https://censusev.com/api/mcp", "tools/list")).result as { tools: Tool[] };
+  const off = (await call(POST, "https://censusev.com/api/mcp?ui=0", "tools/list")).result as { tools: Tool[] };
   for (const [post, url] of [[POST, UI], [POST_UI, "https://censusev.com/api/mcp/ui"]] as const) {
     const on = (await call(post, url, "tools/list")).result as { tools: Tool[] };
     assert.deepEqual(on.tools.map((t) => t.name), off.tools.map((t) => t.name));
@@ -101,7 +102,7 @@ test("switch on: resources/list and resources/read", async () => {
 
 test("switch on: the model's text is unchanged; structuredContent is the card", async () => {
   const args = { make: "Kia", model: "EV6", limit: 10 };
-  const off = (await call(POST, "https://censusev.com/api/mcp", "tools/call", { name: "search_listings", arguments: args })).result as {
+  const off = (await call(POST, "https://censusev.com/api/mcp?ui=0", "tools/call", { name: "search_listings", arguments: args })).result as {
     content: { text: string }[];
     structuredContent: Record<string, unknown>;
   };
@@ -113,7 +114,12 @@ test("switch on: the model's text is unchanged; structuredContent is the card", 
   assert.equal(on.isError, false);
   assert.deepEqual(on.content, off.content, "content text byte for byte");
   const sc = on.structuredContent;
-  assert.deepEqual(Object.keys(sc).sort(), ["as_of", "breakdown", "cars", "total"]);
+  // The model's whole result, plus the card's cars: a client that hands the
+  // model structuredContent in place of the text must lose nothing.
+  const { cars: _cars, ...rest } = sc as Record<string, unknown>;
+  void _cars;
+  assert.deepEqual(rest, JSON.parse(off.content[0].text));
+  assert.ok(Array.isArray((sc as { cars: unknown[] }).cars));
   assert.equal(sc.total, 30);
   assert.equal(sc.as_of, off.structuredContent.as_of);
   assert.deepEqual(sc.breakdown, off.structuredContent.breakdown);
@@ -135,14 +141,14 @@ test("switch on: the model's text is unchanged; structuredContent is the card", 
   }
   // Whole result far under the ~150,000-character cap; the card itself small.
   assert.ok(JSON.stringify(on).length < 150_000);
-  assert.ok(JSON.stringify(sc).length < 12_000, String(JSON.stringify(sc).length));
+  assert.ok(JSON.stringify((sc as { cars: unknown }).cars).length < 12_000);
 });
 
 test("switch on: other tools and errors are exactly the published connector's", async () => {
   for (const r of WIRE_REQUESTS) {
     const req = r as { method: string; params?: { name?: string } };
     if (req.method !== "tools/call" || req.params?.name === "search_listings") continue;
-    const a = await call(POST, "https://censusev.com/api/mcp", "tools/call", req.params);
+    const a = await call(POST, "https://censusev.com/api/mcp?ui=0", "tools/call", req.params);
     const b = await call(POST, UI, "tools/call", req.params);
     assert.deepEqual(b, a, req.params?.name);
   }
