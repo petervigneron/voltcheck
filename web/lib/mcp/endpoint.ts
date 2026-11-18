@@ -11,7 +11,7 @@ import { INSTRUCTIONS, TOOLS } from "@/lib/mcp/tools";
 // document is assembled at its module's load, and nothing that module does
 // (or fails to do) can reach the published connector's requests.
 
-const INFO = { name: "census", title: "Census EV", version: "1.2.0", instructions: INSTRUCTIONS } as const;
+const INFO = { name: "census", title: "Census EV", version: "1.3.0", instructions: INSTRUCTIONS } as const;
 
 export const PLAIN_SERVER = createMcpServer({ ...INFO, tools: TOOLS });
 

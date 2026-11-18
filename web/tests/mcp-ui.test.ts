@@ -7,10 +7,10 @@
 // WIRE_REQUESTS, taken from origin/main a42510ddc's route before any of this
 // was written, and reproduced by this code. If you change what the published
 // connector says on purpose, re-take it and say so in the commit.
-import { test } from "node:test";
+import { test, mock } from "node:test";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { stubFeed, WIRE_REQUESTS, kia } from "./fixtures/mcp-wire";
+import { stubFeed, WIRE_REQUESTS, kia, AS_OF } from "./fixtures/mcp-wire";
 import { POST } from "../app/api/mcp/route";
 import { POST as POST_UI } from "../app/api/mcp/ui/route";
 import { CARD_URI, CARD_MAX, CARD_REF, cardOf, cardCar } from "../lib/mcp/ui/card";
@@ -19,9 +19,27 @@ import { MCP_APP_MIME } from "../lib/mcp/ui/app";
 import { EXT_APPS_APP_WITH_DEPS, EXT_APPS_SHA256, EXT_APPS_VERSION } from "../lib/mcp/ui/ext-apps-app-with-deps";
 import { visitSrc } from "../lib/visit";
 
+// The clock is held a few hours after the fixture's publish time, for every
+// test in this file. Without it this file had an expiry date: the fixture's
+// as_of is a fixed instant, lib/api/artifacts.ts refuses a manifest older
+// than 48 hours, so from 2026-11-19 06:00 UTC the fixture search would have
+// answered "inventory data is not available", the pinned transcript hash
+// would have stopped matching, and the deploy workflow, which refuses a
+// commit whose web tests fail, would have refused every deploy from then on.
+// The battery-warranty label in the transcript also depends on today's date.
+// Only Date is held; timers run, so timeouts in the code under test still fire.
+mock.timers.enable({ apis: ["Date"], now: Date.parse(AS_OF) + 6 * 3_600_000 });
+
 stubFeed();
 
-const WIRE_SHA256 = "83747b200610a64401cc61dc7bc5bf8c82f75b76607c26b1e2b9bcb4137a520f";
+// Re-taken 2026-11-18 for server 1.3.0, on purpose. What the published
+// connector says differently, and nothing else: initialize (version 1.3.0,
+// instructions naming compare_listings, last_seen, battery_warranty and
+// asking_vs_similar); tools/list (compare_listings added, search_listings'
+// and get_listing's descriptions, the detail description without last_seen);
+// and compact search records now carry last_seen. The fixture feed has no
+// Pro artifact, so no record here carries asking_vs_similar.
+const WIRE_SHA256 = "21b543c7bdd87f92b72c3473c87b05d441c6f38557e602cc347008c3be4b3463";
 
 async function transcript(post: (r: Request) => Promise<Response>, url: string): Promise<string[]> {
   const out: string[] = [];

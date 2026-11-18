@@ -1,4 +1,4 @@
-// lib/mcp/tools.ts: what the five tools tell an agent about themselves.
+// lib/mcp/tools.ts: what the six tools tell an agent about themselves.
 // Agents choose a tool and fill its arguments from these strings alone, and
 // directories refuse a server whose tools carry no read-only or destructive
 // hint, so an argument added without a description is a regression.
@@ -8,7 +8,7 @@ import { TOOLS, MCP_REF, labelled, goLink } from "../lib/mcp/tools";
 import { visitSrc } from "../lib/visit";
 
 test("every tool has a title and says it only reads", () => {
-  assert.deepEqual(TOOLS.map((t) => t.name), ["search_listings", "get_listing", "list_models", "battery_warranty", "market_snapshot"]);
+  assert.deepEqual(TOOLS.map((t) => t.name), ["search_listings", "get_listing", "compare_listings", "list_models", "battery_warranty", "market_snapshot"]);
   for (const t of TOOLS) {
     assert.ok(t.title && t.title.length > 3, `${t.name} has no title`);
     assert.equal(t.annotations?.readOnlyHint, true, `${t.name} does not say it is read-only`);

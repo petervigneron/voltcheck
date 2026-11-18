@@ -48,6 +48,13 @@ let memo: { asOf: string; signals: ProSignals } | undefined;
 /** Null when the artifact or its key is unavailable: the caller answers 503
  *  rather than serving a paid response with the paid fields silently gone. */
 export async function paidSignals(): Promise<ProSignals | null> {
+  return (await paidSignalSet())?.signals ?? null;
+}
+
+/** The same, with the publish it came from. The connector's coarse price
+ *  signal (lib/mcp/carSignals.ts) needs `asOf` to refuse a Pro artifact from a
+ *  different publish than the records it is paired with. */
+export async function paidSignalSet(): Promise<{ asOf: string; signals: ProSignals } | null> {
   const base = process.env.SUPABASE_URL;
   const secret = process.env.PRO_FEED_KEY;
   if (!base || !secret) return null;
@@ -56,13 +63,13 @@ export async function paidSignals(): Promise<ProSignals | null> {
     if (!mRes.ok) return null;
     const m = (await mRes.json()) as { v: number; as_of: string };
     if (m.v !== 1 || !Number.isFinite(Date.parse(m.as_of))) return null;
-    if (memo?.asOf === m.as_of) return memo.signals;
+    if (memo?.asOf === m.as_of) return memo;
     const res = await fetch(`${base}/storage/v1/object/public/feed/pro-index.bin`, { cache: "no-store", signal: AbortSignal.timeout(60_000) });
     if (!res.ok) return null;
     const packed = JSON.parse(open(new Uint8Array(await res.arrayBuffer()), secret)) as PackedPro;
     if (packed.v !== 1) return null;
     memo = { asOf: m.as_of, signals: unpackPro(packed) };
-    return memo.signals;
+    return memo;
   } catch (e) {
     console.error("[api/paid] signals unavailable:", e instanceof Error ? e.message : e);
     return null;

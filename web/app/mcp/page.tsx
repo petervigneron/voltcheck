@@ -36,6 +36,7 @@ const PROMPTS = [
   "Which plug-in hybrid SUVs with a heat pump are for sale in Colorado under $35,000?",
   "Has the asking price changed on the car with VIN 5YJ3E1EA4MF099936?",
   "Is the battery warranty still in force on a 2023 Kia EV6 with 42,000 miles?",
+  "Compare the three cheapest used Ioniq 5s near 98101: which has the most battery warranty left, and is any priced above similar cars?",
   "What are used Hyundai Ioniq 5s asking by model year, and which way are prices moving?",
 ];
 
@@ -94,10 +95,13 @@ export default function ConnectorPage() {
       <h2 className={h2}>What comes back</h2>
       <p className={p}>
         Each car carries its asking price, mileage, location, battery size, EPA range, charge port, heat pump and DC
-        fast-charging rate, the seller&rsquo;s name and website, and a link to the seller. That link passes through
-        Census EV, which counts the click, and forwards to the dealer&rsquo;s own page for the car, which is where the
-        car is bought. A search also counts every matching car by model year and trim and gives the lowest, median and
-        highest asking price. The warranty tool gives the battery warranty for a model year and, with a mileage,
+        fast-charging rate, the day it was last seen for sale, the seller&rsquo;s name and website, and a link to the
+        seller. That link passes through Census EV, which counts the click, and forwards to the dealer&rsquo;s own page
+        for the car, which is where the car is bought. Where enough similar cars are listed to say so, a car also
+        carries whether its asking price is below, typical of or above theirs: a comparison of asking prices on Census
+        EV, not an appraisal. A search also counts every matching car by model year and trim and gives the lowest,
+        median and highest asking price. One car by VIN, or two to five side by side, adds its price history and, where
+        its page gives one, whether its own battery warranty is still in force. The warranty tool gives the battery warranty for a model year and, with a mileage,
         whether it is still in force, as the{" "}
         <Link href="/warranty" className="font-semibold text-cobalt hover:underline">
           warranty checker

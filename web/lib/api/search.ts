@@ -4,7 +4,8 @@ import { toApiListing, withPriceHistory, type ApiListing, type ApiListingDetail,
 import { modelKey, preferredForm } from "@/lib/listings/modelName";
 import { zipCoords } from "@/lib/zips";
 import { findListing } from "@/lib/listings/source";
-import { enrichListing, displayTrim, specTrim } from "@/lib/listings/enrich";
+import { enrichListing, displayTrim, specTrim, type EnrichedListing } from "@/lib/listings/enrich";
+import type { Listing } from "@/lib/listings/types";
 import { trimClaim } from "@/lib/listings/trimClaim";
 import { hasRealPrice, priceCut } from "@/lib/listings/price";
 import { bodyTypeOf } from "@/lib/listings/bodyType";
@@ -175,6 +176,17 @@ const VIN_RE = /^[A-HJ-NPR-Z0-9]{17}$/i;
 /** One car, read live from the database the way its own page is — so the
  *  price history and the latest price are current, not as of the publish. */
 export async function listingByVin(vin: string): Promise<(ApiListingDetail & { as_of: string }) | ApiError> {
+  const r = await liveListingByVin(vin);
+  return "error" in r ? r : r.record;
+}
+
+/** listingByVin with what it was built from: the listing and its enrichment,
+ *  exactly as the car's own page holds them (findListing, enrichListing). The
+ *  connector reads its per-car battery-warranty answer from these; the REST
+ *  record is the same either way. */
+export async function liveListingByVin(
+  vin: string,
+): Promise<{ record: ApiListingDetail & { as_of: string }; listing: Listing; enriched: EnrichedListing } | ApiError> {
   if (!VIN_RE.test(vin)) return { error: "invalid vin", details: ["expected 17 characters"] };
   const l = await findListing(vin.toLowerCase());
   if (!l) return { error: "no live listing for this VIN" };
@@ -190,7 +202,7 @@ export async function listingByVin(vin: string): Promise<(ApiListingDetail & { a
     trim,
     title: `${l.year} ${l.make} ${l.model}${shown ? ` ${shown}` : ""}`,
   });
-  return { ...withPriceHistory(rec, l), as_of: new Date().toISOString() };
+  return { record: { ...withPriceHistory(rec, l), as_of: new Date().toISOString() }, listing: l, enriched: e };
 }
 
 export async function listModels(make?: string): Promise<{ as_of: string; total: number; makes: unknown[] } | ApiError> {
